@@ -1,0 +1,31 @@
+<mujoco model="one_joint_arm">
+  <compiler angle="degree"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"/>
+
+  <visual>
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.7 0.7 0.7" specular="0.2 0.2 0.2"/>
+  </visual>
+
+  <default>
+    <joint damping="0.15" armature="0.01"/>
+    <geom friction="0.8 0.05 0.01" rgba="0.2 0.55 0.9 1"/>
+  </default>
+
+  <worldbody>
+    <light pos="0 -2 3" dir="0 1 -1"/>
+    <camera name="overview" pos="1.6 -2.2 1.4" xyaxes="0.81 0.59 0 -0.28 0.39 0.88"/>
+    <geom name="floor" type="plane" size="3 3 0.1" rgba="0.9 0.9 0.92 1"/>
+    <body name="mount" pos="0 0 0.8">
+      <geom type="sphere" size="0.075" rgba="0.15 0.15 0.18 1"/>
+      <body name="arm">
+        <joint name="shoulder" type="hinge" axis="0 1 0" range="-170 170"/>
+        <geom name="link" type="capsule" fromto="0 0 0 0 0 -0.5" size="0.045" density="650"/>
+        <site name="tip" pos="0 0 -0.5" size="0.025" rgba="1 0.25 0.1 1"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="shoulder_motor" joint="shoulder" ctrllimited="true" ctrlrange="-5 5" gear="1"/>
+  </actuator>
+</mujoco>
