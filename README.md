@@ -43,6 +43,8 @@ flowchart LR
 
 机器可读的公司与问题数据位于 [`research/`](research/)，可复用实验模板位于 [`experiments/`](experiments/)。已有的 [`mujoco-intuition-lab/`](mujoco-intuition-lab/) 是第一块仿真学习资产；两个课程仓库继续保持独立 Git 历史，不进入本公开仓库。
 
+[MicroDuck 本地环境](microduck-sim/README.md)包含浏览器仿真、训练源码和双击启动脚本；仿真与训练仓库各自保留独立 Git 历史，整套环境不纳入本公开仓库。
+
 ## 工作方式
 
 每两周只押一个可能改变方向的不确定性，并交付四样东西：
