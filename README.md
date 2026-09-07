@@ -45,6 +45,8 @@ flowchart LR
 
 [MicroDuck 本地环境](microduck-sim/README.md)包含浏览器仿真、训练源码和双击启动脚本；仿真与训练仓库各自保留独立 Git 历史，整套环境不纳入本公开仓库。
 
+[SO-101 与 LeRobot 本地环境](lerobot-sim/README.md)提供免费物理仿真、手动演示记录、LeRobot 数据集导出与动作重放，并整理了 CMU 共享硬件的申请路径。
+
 ## 工作方式
 
 每两周只押一个可能改变方向的不确定性，并交付四样东西：

@@ -23,7 +23,8 @@ VALID_LAYERS = {
     "vertical-robot",
     "autonomous-science",
 }
-SKIP_TOP_LEVEL = {"berkeley-deeprl-homework-spring2026", "ethz-course-2026"}
+# These environments keep independent histories; their dependencies are not research-map documents.
+SKIP_TOP_LEVEL = {"berkeley-deeprl-homework-spring2026", "ethz-course-2026", "microduck-sim"}
 
 
 def load_json(name: str) -> dict:

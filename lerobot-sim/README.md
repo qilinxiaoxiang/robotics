@@ -1,0 +1,70 @@
+# SO-101 本地仿真与 LeRobot 学习环境
+
+先在电脑上练习机械臂控制和收集演示，再用校内共享硬件验证真实效果。此环境推进 **P1：对齐观察与动作的演示数据**；用动作重放误差做最基本的 **P0：结果验证**。重放准确不代表机器人学会了抓取。
+
+## 直接开始
+
+双击本目录的 **启动 SO-101.command**。它会在 Chrome 打开 <http://127.0.0.1:8766>。本地端口只对本机开放。
+
+1. 小幅拖动「底座转向」，再尝试「肩部抬臂」「肘部弯曲」，观察夹爪位置。
+2. 点击「开始记录」，移动机械臂，再点「结束并保存」。每段最多 30 秒。
+3. 等待转换完成，点「重放演示」，观察相同动作是否产生相同运动。
+4. 先保存演示，再关闭启动它的终端，或在终端按 Control-C 停止程序。
+
+这是本项目提供的练习界面。MuJoCo 是计算碰撞、重力与关节运动的物理仿真器；LeRobot 提供机器人学习和数据处理工具。界面不是 LeRobot 官方图形界面，也没有加载训练好的抓取策略。
+
+安装、仿真、记录与本地数据转换不收软件费，不需要云端账户，不调用付费接口。后续租用云端计算资源另行计费，本环境没有开通这类服务。
+
+## 已安装
+
+- Python 3.12.11，LeRobot 0.6.1，MuJoCo 3.11.0，PyTorch 2.11.0。
+- LeRobot 的训练组件、PushT 推物体环境、Feetech 舵机通信组件。硬件通信没有连接真机测试。
+- Google DeepMind MuJoCo Menagerie 的 `robotstudio_so101` 模型，锁定提交 `8161bba264d7fa7c99ca301e91e7fb44737676ad`。
+- 完整依赖版本记录在 `uv.lock`；模型来源、文件大小和 SHA-256 校验值记录在 `model-manifest.json`。
+
+本机已验证物理画面渲染、关节动作、PushT 的重置/一步执行/渲染，以及 LeRobot 数据集的写入和重新读取。Apple GPU 的 MPS 后端可被 PyTorch 识别，但本次没有完成策略训练或训练速度测试。
+
+## 记录了什么
+
+`outputs/demo-日期时间.npz` 保留每秒 10 帧的关节位置、目标关节角度、320×240 RGB 图像，以及重放所需的初始机器人和物体状态。每帧的图像和关节位置在对应动作执行前采样。角度单位是弧度。
+
+保存后自动生成同名目录，包含 LeRobot 的图像数据、Parquet 数据文件和元数据。转换程序会用 LeRobot 重新打开结果验证；不会上传 Hugging Face。转换日志保存在同名 `.log`。转换失败时，原始 `.npz` 仍保留。
+
+```bash
+# 必要时重新转换一个尚未成功转换的文件：
+.venv/bin/python export_dataset.py outputs/demo-日期时间.npz
+```
+
+重放从记录时的物理状态开始，执行记录的关节目标，并报告最大关节偏差。它不会直接把每一帧关节位置写回仿真。绿色方块是自由物体，通过碰撞接触运动，没有焊接、吸附或隐藏抓取开关。
+
+## 下一步怎么玩
+
+第一阶段先完成「观察 → 手动操作 → 记录 → 重放」。它教会我们数据采集流程。
+
+想验证机器学习算法，可以使用已安装的 PushT 环境：任务是在平面上推动 T 形物体到目标区域。先在这个标准任务上训练、对比成功率，再扩展自定义机械臂任务。
+
+想做 SO-101 自主抓取，需要补充任务环境、成功判定、足够多的成功与失败演示，以及训练和评估配置。目前单段数据用于练习和验证格式，不能据此宣称已经具备可训练成功的抓取数据。当前界面也不是完整的 Gymnasium 训练环境。
+
+真实硬件阶段优先考虑校内共享机械臂。仿真 SO-101 的关节角度不能直接发给另一款机器人；即使同型号，也需要确认标定、单位、限位、相机和控制接口。
+
+## 恢复安装与验证
+
+需要已安装的 `uv` 和 Python 3.12。此 Mac 的依赖已安装在本目录 `.venv` 中。
+
+```bash
+uv sync --frozen --python 3.12
+.venv/bin/python download_model.py
+.venv/bin/python verify.py
+.venv/bin/python server.py
+```
+
+图片数据显式使用 PyAV 后端，避开这台 Mac 上 TorchCodec 的动态库加载兼容问题。PyAV 和 OpenCV 同时加载时可能输出重复媒体类警告；已完成的数据写入、读取与渲染检查通过，但这不是所有视频格式和训练路径的全面兼容保证。
+
+## 来源与许可
+
+核验日期：2026-09-07。
+
+- [LeRobot 官方安装文档](https://huggingface.co/docs/lerobot/installation) 与 [源码 / Apache-2.0 许可](https://github.com/huggingface/lerobot)。
+- [MuJoCo](https://github.com/google-deepmind/mujoco)，Apache-2.0。
+- [SO-101 官方 Menagerie 模型](https://github.com/google-deepmind/mujoco_menagerie/tree/8161bba264d7fa7c99ca301e91e7fb44737676ad/robotstudio_so101)，模型许可保存在下载目录 `LICENSE`。
+- [CMU 硬件资源与申请路径](CAMPUS_RESOURCES.md)。
