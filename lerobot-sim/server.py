@@ -19,6 +19,7 @@ import numpy as np
 from flask import Flask, Response, abort, jsonify, request, send_from_directory
 from PIL import Image
 from werkzeug.serving import make_server
+from cartesian import move_tool
 
 ROOT = Path(__file__).resolve().parent
 PORT = 8766
@@ -59,7 +60,7 @@ def frame():
 def command():
     value = request.get_json()
     if not isinstance(value, dict) or value.get("op") not in {
-        "control", "reset", "record", "save", "replay", "camera", "shutdown"
+        "control", "move", "grip", "reset", "record", "save", "replay", "camera", "shutdown"
     }:
         abort(400)
     try:
@@ -69,6 +70,13 @@ def command():
             if not 0 <= value["index"] < 6 or not np.isfinite(value["value"]):
                 abort(400)
         if value["op"] == "camera" and value.get("view") not in {"front", "side", "top"}:
+            abort(400)
+        if value["op"] == "move":
+            delta = np.asarray(value.get("delta"), dtype=float)
+            if delta.shape != (3,) or not np.isfinite(delta).all() or np.linalg.norm(delta) > .020001:
+                abort(400)
+            value["delta"] = delta.tolist()
+        if value["op"] == "grip" and value.get("open") not in (True, False):
             abort(400)
         commands.put_nowait(value)
     except (KeyError, ValueError, TypeError):
@@ -90,13 +98,14 @@ def main():
     recording = False
     samples = []
     initial = None
-    last_path = None
+    saved_episodes = sorted((ROOT / "outputs").glob("demo-*.npz"))
+    last_path = saved_episodes[-1] if saved_episodes else None
     playback = None
     play_index = 0
     max_error = 0.0
     exporter = None
     export_log = None
-    status = "拖动右侧滑块，观察机械臂如何运动。"
+    status = "用方向按钮移动夹爪，或用 W / A / S / D、R / F 键操作。"
 
     def reset():
         mujoco.mj_resetData(model, data)
@@ -131,6 +140,13 @@ def main():
                 elif op == "control" and playback is None:
                     i = cmd["index"]
                     data.ctrl[i] = np.clip(cmd["value"], *model.actuator_ctrlrange[i])
+                elif op == "move" and playback is None:
+                    new_controls, status = move_tool(model, data.ctrl, cmd["delta"])
+                    if new_controls is not None:
+                        data.ctrl[:] = new_controls
+                elif op == "grip" and playback is None:
+                    data.ctrl[5] = 1.2 if cmd["open"] else 0.0
+                    status = "夹爪张开。" if cmd["open"] else "夹爪闭合；夹住物体需要两侧接触。"
                 elif op == "reset" and not recording:
                     playback = None
                     reset()

@@ -11,6 +11,7 @@ import numpy as np
 import torch
 
 from download_model import main as verify_model
+from cartesian import move_tool
 
 ROOT = Path(__file__).resolve().parent
 
@@ -22,6 +23,24 @@ def main():
     data.ctrl[:] = data.qpos[:6]
     data.qpos[6:13] = [.22, .02, .03, 1, 0, 0, 0]
     initial = (data.qpos.copy(), data.qvel.copy(), data.ctrl.copy())
+    ik_errors = []
+    for offset in (0., .15, -.15):
+        reference = initial[2].copy()
+        reference[0] = offset
+        for axis in range(3):
+            for sign in (-1, 1):
+                delta = np.eye(3)[axis] * .01 * sign
+                joint_target, message = move_tool(model, reference, delta)
+                assert joint_target is not None, message
+                scratch = mujoco.MjData(model)
+                scratch.qpos[:6] = reference
+                mujoco.mj_forward(model, scratch)
+                before = scratch.site("gripperframe").xpos.copy()
+                scratch.qpos[:6] = joint_target
+                mujoco.mj_forward(model, scratch)
+                error = float(np.linalg.norm(scratch.site("gripperframe").xpos - before - delta))
+                assert error < .004 and joint_target[5] == reference[5]
+                ik_errors.append(error)
     controls = np.tile(initial[2], (20, 1)).astype(np.float32)
     controls[5:10, 0] = .3
     controls[10:, 0] = -.2
@@ -73,6 +92,7 @@ def main():
         "versions": {key: version(key) for key in ("lerobot", "mujoco", "torch", "gym-pusht")},
         "mps_available": torch.backends.mps.is_available(), "render_shape": [240, 320, 3],
         "end_effector_movement_m": movement, "replay_max_joint_error_rad": replay_error,
+        "cartesian_checks": len(ik_errors), "cartesian_max_position_error_m": max(ik_errors),
         "lerobot_dataset_written_and_read_frames": 20, "pusht_render_shape": frame_shape,
         "pusht_step_reward": float(reward), "act_policy_import": ACTPolicy.__name__,
         "limits": ["No trained policy", "No grasp success claim", "No hardware validation", "No paid service"]}
