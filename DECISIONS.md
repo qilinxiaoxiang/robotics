@@ -27,3 +27,10 @@
 
 - **Date:** 2026-08-04
 - **Decision:** Public documents contain the thesis, research decisions, and reproducible evidence. Personal facts remain in the private memory repository and are consulted locally when needed.
+
+## D-006 — MicroDuck runs on USB-C 5 V with no soldered power wiring
+
+- **Date:** 2026-10-13
+- **Decision:** The robot's supply is a USB-C PD charger into an Adafruit 5991 (HUSB238) set to 5 V on the bench, a 22 AWG solid pair screwed into the OpenRB-150 J4 terminal, and two jumper wires sharing those screws for the Raspberry Pi. No converter, XT30, 12 V adapter or power soldering on the robot. Contract and review-passed picture: `microduck-sim/bringup/build/power-diagram/`.
+- **Why:** The earlier 20 V and 12 V chains existed only to give headroom over *simulated* walking peaks (about 2 A mean, 5.4 A for 20 ms at 5 V) against the 3 A limit of USB-C PD at 5 V, and every converter route forced soldering on bare pads. Bring-up draws far less than 3 A. Measured evidence, not a simulation, decides whether a converter comes back.
+- **Revisit when:** the guide's `current` step (OpenRB `current_watch.py`) or a charger brown-out shows the 5 V/3 A budget is exceeded. First response is the 5991 `ISet` cut (3.25 A request); only then a converter in the pack channel kept empty for it, with the 5991 switched to 12 V.
