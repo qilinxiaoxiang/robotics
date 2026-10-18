@@ -114,10 +114,10 @@
    ]
   },
   "a7z_network": {
-   "value": "Wi-Fi CMU-DEVICE, MAC 90:30:d6:03:5e:79 registered in CMU GetOnline as microducka7z.wifi.local.cmu.edu (fixed 172.26.167.157); Tailscale node microduck-a7z 100.75.239.56 (key expiry 2027-04-16); Mac ssh alias 'a7z'",
+   "value": "Wi-Fi CMU-DEVICE, MAC 90:30:d6:03:5e:79 registered in CMU GetOnline as microducka7z.wifi.local.cmu.edu (fixed 172.26.167.157); Tailscale node microduck-a7z 100.75.239.56 (key expiry 2027-04-16); Mac ssh alias 'a7z'; fallback Wi-Fi profile iphone-hotspot (SSID 项峥’s iPhone, autoconnect priority -10, below CMU-DEVICE)",
    "meaning": "How to reach the A7Z without the USB cable. CMU-DEVICE blocks TCP for unregistered MACs; registrations are purged after 6 months unused.",
    "verified_at": "2026-10-18",
-   "source": "2026-10-18: GetOnline registration success page; after Wi-Fi reconnect wlan0 got 172.26.167.157 and HTTPS worked; tailscale status Running; ssh a7z over Tailscale and tailscale ping direct via 172.26.167.157:41641 in 6 ms",
+   "source": "2026-10-18: GetOnline registration success page; after Wi-Fi reconnect wlan0 got 172.26.167.157 and HTTPS worked; tailscale status Running; ssh a7z over Tailscale and tailscale ping direct via 172.26.167.157:41641 in 6 ms; 2026-10-18 23:3x UTC: forced switch to iphone-hotspot got 172.20.10.6 and ssh a7z worked over Tailscale (direct via cellular), then back to CMU-DEVICE",
    "max_age_days": 30,
    "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
   }

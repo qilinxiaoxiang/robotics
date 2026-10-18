@@ -947,8 +947,7 @@
    },
    "open": [
     "Camera corner screws get 2.4 mm of thread (M2 x 4 into the 1.3 mm face plate bosses).",
-    "A733 camera pipeline (en-awisp) and the 90 degree image rotation are untested on this robot.",
-    "I2S0 overlay is a 2-channel demo card; MAX98357A playback untested."
+    "Bring-up results moved to current_build.a7z_bringup_20261018 (IMU, speaker, camera capture, network all working)."
    ],
    "sd_card_20261017": {
     "image": "Radxa A733 unified Debian 11 CLI rsdk-r6 (radxa-a733_bullseye_cli_r6.output_512.img.xz, sha512 matches the release sha512sum; docs.radxa.com/cubie/a7z/download lists R6 as latest, read 2026-10-17)",
@@ -1008,6 +1007,26 @@
     "guide/extension-20261015-a7z-led-window/led_sightline.json",
     "guide/extension-20261015-a7z-led-window/led-window-front.png"
    ]
+  },
+  "a7z_bringup_20261018": {
+   "date": "2026-10-18",
+   "status": "The A7Z is the running head board: it boots on the robot without USB, reads the IMU and feeds it to the OpenRB over the J12 UART, plays the speaker, captures from the camera, and is reached over Wi-Fi from anywhere through Tailscale. Current values live in CURRENT-STATE.json (a7z_imu_bus, a7z_network, imu_rate_hz).",
+   "working": {
+    "boot": "Debian 11 rsdk-r6 card; repeated ssh reboots, shutdowns and power-ups on 2026-10-18 all came back; ssh about 35 s after power-on. The USB-C data link is not needed (usb0 down while running in the robot).",
+    "imu": "BNO085 on i2c-7. Root cause of the 10/17 'no answer': the BSP sunxi-twi driver in drv mode (set by Radxa's own twi7 overlay) wedges after boot, after zero-length writes and after reads during an IMU reset. Fix: overlay zz-duck-twi7-engine.dtbo puts TWI7 in engine mode (source guide/firmware/pi/duck-twi7-engine.dts). Wires and header pins 3/5 were proven good by GPIO bit-bang.",
+    "imu_to_openrb": "J12 UART at 500 kbaud (A7Z UART2 clock 24 MHz cannot make 1 Mbaud); walk_wired gets a fresh IMU sample every tick, about 51/s (commits 988e0eb, 03b2b45).",
+    "speaker": "ALSA /etc/asound.conf on card sndi2s0 with the -3 dB softvol ceiling, PulseAudio masked for user radxa; Shawn confirmed audible (2026-10-17).",
+    "camera": "Radxa Camera 13M 214 captures 1080p on /dev/video0 (en-awisp=1, 2026-10-17).",
+    "network": "CMU-DEVICE registered (fixed 172.26.167.157); Tailscale node microduck-a7z, Mac alias `ssh a7z`; iPhone hotspot profile as fallback for places without CMU-DEVICE, switch tested 2026-10-18 (172.20.10.6, ssh over Tailscale). New-location procedure: turn on the hotspot with Allow Others to Join, then power the robot.",
+    "admin": "Passwordless sudo for radxa (/etc/sudoers.d/90-radxa-nopasswd), so every board change runs over ssh without Shawn typing."
+   },
+   "robot_runs": "2026-10-18 with the A7Z in the loop: walk61 3 s clean twice, ft3 loses balance at 2.5-4 s (commit d230b89).",
+   "open": [
+    "Camera 90 degree image rotation and the perception pipeline on the A7Z (pickup) are not yet run on this board.",
+    "The 10/17 boot failures were never tied to a cause (card content vs the 5 V lead on pins 2/6); boots since 10/18 on robot power are clean, so it stays a watch item, not a task.",
+    "Touch board paused until Shawn says start."
+   ],
+   "service_without_opening": "Only a broken network or boot config needs the head opened (USB-C or SD card). The USB-C service opening study in guide/print/a7z-head/usb-service/ is shelved: the hotspot covers the new-location case."
   }
  }
 }
