@@ -2,7 +2,7 @@
 
 Official reference: Pollen's maintainer notes that the real Microduck has a grippy polyurethane (PU) sole, while training randomised foot friction mu 0.7-1.3 (`microduck_rl/scripts/infer_policy.py`, `--foot-friction` help, commit bfc0ed4, 2026-08-19). The runtime repo (pollen-robotics/microduck, read 2026-10-18) names no sole material.
 
-Our feet ran on sandpaper over 0.5 mm 3M foam tape. RoboClub had only a 2 mm rubber roll. Selected: 0.8 mm 60A silicone sheet with adhesive backing, Amazon B0B4X47N19 (9 x 12 in, arrives Tue 10/20), $14.99, in the cart, not paid ([offers](offers.json), [authorization](authorization.json)).
+Our feet ran on sandpaper over 0.5 mm 3M foam tape. RoboClub had only a 2 mm rubber roll. Withdrawn: the 0.8 mm 60A silicone sheet (Amazon B0B4X47N19, $14.99) was removed from the cart at the user's word; nothing ordered. Free routes first: sandpaper stuck directly with thin double-sided tape (no foam layer), or a discarded bicycle inner tube (butyl, about 1 mm) ([offers](offers.json), [authorization](authorization.json)).
 
 Cutting: the foot bottom is flat over about 39 x 27 mm and curves up 1 mm at 3.5 mm and 2 mm at 5 mm past that edge. In the sim walk at 0.25 m/s about 90 % of floor contacts sit on that curve (foot tilt 6-10 deg), so the sheet covers it: trace the foot outline on the backing paper, cut 2 mm inside the line (about 50 x 38 mm), cut a small V notch at each corner, and press the sheet over the curve from the centre outward.
 
