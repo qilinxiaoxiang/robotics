@@ -7,8 +7,9 @@
 The newest run is the newest /tmp/duck_wired_log*.jsonl; its stdout is the file with the same suffix
 (/tmp/duck_wired_<sfx>.out, or /tmp/duck_wired_stdout<sfx>.txt for the default log name). If that run's stdout was not
 captured, the imu probe reads the newest older stdout and reports the newer run as unmeasured evidence.
-- imu_rate_hz: median of the runtime's own 'imu N/s' status lines with torque on; ok is false when more than
-  max_low_share of the lines sit two tolerances below the recorded rate (a mid-walk IMU dropout).
+- imu_rate_hz: median of the runtime's own 'imu N/s' status lines in walk or groundpick mode with torque on (the
+  fact is the rate while walking; stand-mode lines after the head board is shut down would read 0); ok is false when
+  more than max_low_share of the lines sit two tolerances below the recorded rate (a mid-walk IMU dropout).
 - servo_read_drop_fraction: ticks with fresh=False or missing servos while the legs move, from the JSONL log.
 """
 import argparse
@@ -28,6 +29,7 @@ CHECKER = os.path.expanduser("~/code/claude-config/scripts/state_check.py")
 
 def imu_rates(out_path):
     return [int(m.group(1)) for line in open(out_path, errors="replace") if "torque True" in line
+            and line.split(" ", 1)[0] in ("walk", "groundpick")
             for m in [re.search(r"imu\s+(\d+)/s", line)] if m]
 
 
