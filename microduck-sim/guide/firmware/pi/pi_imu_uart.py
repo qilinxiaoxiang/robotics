@@ -12,7 +12,8 @@ Pi read age only, the pre-2026-10-15 behaviour.
 quaternion plus angular velocity in one report, gyro integrated at every gyro sample with the fusion only as a
 periodic correction (see imu_reader.ThreadedIMUReader). Default game = Game Rotation Vector 0x08 + gyro 0x02.
 
-  python3 pi_imu_uart.py [--port /dev/serial0] [--imu-bus 1] [--hz 100] [--raw-age] [--rv-report game|gyro_integrated]
+  A7Z: python3 pi_imu_uart.py --port /dev/ttyAS2 --imu-bus 7
+  python3 pi_imu_uart.py [--port /dev/serial0] [--imu-bus 1] [--baud 500000] [--hz 100] [--raw-age] [--rv-report game|gyro_integrated]
 """
 import argparse
 import os
@@ -43,6 +44,8 @@ def build_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", default="/dev/serial0")
     ap.add_argument("--imu-bus", type=int, default=1)
+    ap.add_argument("--baud", type=int, default=500_000,
+                    help="J12 UART rate, must match PI_BAUD in openrb_dual_host.ino (the A7Z cannot make 1 Mbaud)")
     ap.add_argument("--hz", type=float, default=100.0)
     ap.add_argument("--raw-age", action="store_true",
                     help="age_s = Pi read age only, without the BNO's reported sample delay (old behaviour)")
@@ -62,7 +65,7 @@ def main():
     signal.signal(signal.SIGTERM, lambda *_: stop.update(now=True))
     signal.signal(signal.SIGINT, lambda *_: stop.update(now=True))
 
-    ser = serial.Serial(args.port, 1_000_000, timeout=0)
+    ser = serial.Serial(args.port, args.baud, timeout=0)
     imu = ThreadedIMUReader(i2c_bus=args.imu_bus, frequency_hz=args.hz, rv_report=args.rv_report, raw_gyro=args.raw_gyro)
     imu.start()
     print(f"imu rv report {imu.rv_report} at {args.hz:g} Hz", flush=True)

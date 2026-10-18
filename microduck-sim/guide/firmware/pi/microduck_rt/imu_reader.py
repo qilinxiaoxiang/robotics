@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2026 Marc Duclusaud
 
+from __future__ import annotations  # the A7Z runs Python 3.9
+
 import fcntl
 import glob
 import os

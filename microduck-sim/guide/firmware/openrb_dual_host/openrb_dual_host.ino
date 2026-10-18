@@ -1,6 +1,7 @@
 // MicroDuck OpenRB-150 dual-host bridge: wired MacBook control with the Pi as the IMU relay.
 //
-// Hosts: USB (MacBook) and Serial2 (Pi Zero UART on J12, 1 Mbps; pad 3 RX <- Pi pin 8 TXD, pad 4 TX -> Pi pin 10 RXD).
+// Hosts: USB (MacBook) and Serial2 (head board UART on J12 at PI_BAUD; pad 3 RX <- board TXD, pad 4 TX -> board RXD;
+// A7Z UART2 pins 7 TX / 11 RX, Pi Zero pins 8 / 10).
 // The DYNAMIXEL bus (Serial1) is driven by whichever host sent the last instruction packet; status packets go
 // back to that host. Either host can therefore run the servos alone (the Pi bridge keeps working when no Mac is
 // plugged in).
@@ -22,6 +23,9 @@
 #define USB_HOST Serial
 
 const uint32_t BAUD = 1000000;
+// The A7Z UART runs from a 24 MHz clock (base 1.5 Mbaud), so 1 Mbaud is out of its range and arrives garbled;
+// 500 kbaud divides exactly on the A7Z, the Pi and the SAMD21, and carries the 53-byte IMU frames at 200/s easily.
+const uint32_t PI_BAUD = 500000;
 const int MAX_PKT = 512;
 
 struct Parser {
@@ -120,7 +124,7 @@ void busPacket(uint8_t *b, int n) {
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   USB_HOST.begin(BAUD);
-  PI_HOST.begin(BAUD);
+  PI_HOST.begin(PI_BAUD);
   dxl.begin(BAUD);
 }
 
