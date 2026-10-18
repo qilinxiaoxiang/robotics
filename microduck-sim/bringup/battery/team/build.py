@@ -7,9 +7,9 @@ from pathlib import Path
 from PIL import Image
 HERE = Path(__file__).resolve().parent
 MS = HERE.parents[2]
-R = MS / 'guide/print/back-plate/battery-backpack-20261015/renders'
-IMGS = {'swann': HERE.parent / 'img/swann39_side.jpg', 'side': R / 'BP_side_0.png', 'rear': R / 'BP_rear_0.png',
-        'low': R / 'BP_low_0.png', 'swap': R / 'BP_swap_0.png', 'out': R / 'BP_out_0.png'}
+R = MS / 'guide/print/back-plate/battery-backpack-20261015/renders/team'      # render_team.py (Swann 39 drawn to size)
+IMGS = {'swann': HERE.parent / 'img/swann39_side.jpg', 'switch': R / 'TEAM_switch_0.png', 'side': R / 'TEAM_side_0.png',
+        'rear': R / 'TEAM_rear_0.png', 'low': R / 'TEAM_low_0.png', 'swap': R / 'TEAM_plugs_0.png', 'out': R / 'TEAM_out_0.png'}
 def uri(p, w=900):
     im = Image.open(p).convert('RGB'); im.thumbnail((w, w * 2))
     b = io.BytesIO(); im.save(b, 'JPEG', quality=82, optimize=True)

@@ -270,24 +270,25 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
 <section id="interface">
   <h2><span class="sn">01</span>The robot side: what you plug into</h2>
-  <p>The robot already has exactly two power leads coming out behind its electronics pack. Your backpack has to supply both, through the matching plug halves. All the wiring logic lives in the backpack, so the desk supply and the battery look identical to the robot.</p>
+  <p>The robot has exactly two power leads, and they stay as they are: the same wires along the same route. Only their free ends, behind the electronics pack, carry a plug half. Shawn fits those two plugs once. Every power source then carries the matching sockets: your battery backpack, and the desk box through two short adapter leads screwed into its converters. Swapping is two plugs, nothing else.</p>
   <div class="leads">
     <div class="lead">
       <div class="tag">J4 <small>servo power</small></div>
-      <dl><dt>Wires</dt><dd>red + black pair from the OpenRB-150 board's J4 terminal</dd>
+      <dl><dt>Wires</dt><dd>22 AWG solid red + black pair from the OpenRB-150 board's J4 terminal</dd>
       <dt>Ends in</dt><dd><span class="chip">XT30 male</span> (pins)</dd>
       <dt>Wants</dt><dd>6.6–8.4 V, about 1.3 A walking, 8 A peaks</dd>
       <dt>Mates</dt><dd>your plug 3 (lead D)</dd></dl>
     </div>
     <div class="lead">
       <div class="tag">A7Z <small>head computer</small></div>
-      <dl><dt>Wires</dt><dd>red + black pair from header pin 2 (5 V) and pin 6 (GND)</dd>
+      <dl><dt>Wires</dt><dd>Dupont jumper pair from header pin 2 (5 V) and pin 6 (GND)</dd>
       <dt>Ends in</dt><dd><span class="chip">MR30 male</span>, outer two pins only</dd>
       <dt>Wants</dt><dd>4.95–5.05 V, up to about 2.2 A</dd>
       <dt>Mates</dt><dd>your plug 4 (lead E)</dd></dl>
     </div>
   </div>
-  <p>XT30 and MR30 have different shapes and cannot be plugged into each other. That is on purpose: battery voltage can never reach the 5 V computer by mistake.</p>
+  <p>Why plugs and not screw terminals: a swap with screw terminals means loosening four wires and clamping them somewhere else, and the 5 V lead could end up under a battery-voltage screw. XT30 and MR30 have different shapes and only fit one way round, so battery voltage can never reach the 5 V computer and the polarity cannot be reversed.</p>
+  <p>Your job ends at the two sockets (plugs 3 and 4). You do not touch the robot or the desk box.</p>
 </section>
 
 <section id="parts">
@@ -346,7 +347,7 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
   <ol class="steps">
     <li><div><b>XT30 males</b> (for lead C and the battery end of S): plug each onto the battery's XT30. Put a dot on the shell on the same side as the battery's red wire. Unplug.</div></li>
     <li><div><b>XT30 females</b> (for lead D and the far end of S): plug each onto a male you just marked. Dot the side facing the male's dot.</div></li>
-    <li><div><b>MR30 female</b> (lead E): plug it onto the robot's MR30 male and dot the side facing its dot. The middle contact stays empty.</div></li>
+    <li><div><b>MR30 female</b> (lead E): plug it onto the robot's MR30 male and dot the side facing its dot. If the robot's plug is not fitted yet, dot one side of a spare MR30 male from the same bag, use it as the reference, and give it to Shawn for the robot lead. The middle contact stays empty.</div></li>
     <li><div>Plug every pair together once more and look: both dots on the same side.</div></li>
   </ol>
 </section>
@@ -566,12 +567,13 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
     <li><div><b>Plug C into S</b> (plug 2) and tuck it into the space on the robot's left side of the battery bay. It stays plugged; it only exists so the switch can be replaced.</div></li>
   </ol>
   <div class="gallery">
+    <figure><div class="fig narrow"><img src="{{IMG:switch}}" alt="Close-up render of the Swann 39 switch in the floor panel, rocker down, lugs up"></div><figcaption>The Swann 39 seated in the floor panel: lugs up inside the box, snap wings over the 3 mm panel, rocker flush underneath.</figcaption></figure>
     <figure><div class="fig narrow"><img src="{{IMG:side}}" alt="Side see-through render of the backpack: DFR1202 against the front plate, battery upright, switch at the bottom"></div><figcaption>Side view, robot front to the left. Battery stands upright behind the converter; switch at the bottom.</figcaption></figure>
     <figure><div class="fig narrow"><img src="{{IMG:rear}}" alt="Rear see-through render: battery in the middle, plug 1 on the right, plug 2 on the left, balance plug on top"></div><figcaption>From behind. Plug 1 on the robot's right of the battery, plug 2 on its left, balance plug on top.</figcaption></figure>
     <figure><div class="fig narrow"><img src="{{IMG:low}}" alt="Render from below showing the switch rocker flush in a floor pocket and the two lower fixing screws"></div><figcaption>From below. The rocker sits flush in the floor pocket; you press it with a finger from underneath.</figcaption></figure>
     <figure><div class="fig narrow"><img src="{{IMG:swap}}" alt="Render of the two swap plugs standing in the channel behind the OpenRB board"></div><figcaption>Plugs 3 and 4 stand in the channel behind the OpenRB, robot half on top.</figcaption></figure>
   </div>
-  <p style="font-size:13.5px;color:var(--muted);margin-top:10px">Renders are from the 2026-10-15 CAD. Your V1.20 print is the same layout with a slightly wider switch hole for the Swann 39.</p>
+  <p style="font-size:13.5px;color:var(--muted);margin-top:10px">Renders of the V1.20 print geometry with the Swann 39 drawn to its measured size (body 27.3 × 11.5 mm, flange 30 × 13.8 mm).</p>
 </section>
 
 <section id="mount">
@@ -579,7 +581,7 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
   <p>Do the first mount together with Shawn. After that, a swap takes about a minute.</p>
   <ol class="steps">
     <li><div><b>Shut the A7Z down</b> (<code>sudo shutdown -h now</code>), wait 10–15 s, then unplug the desk supply's USB-C.</div></li>
-    <li><div><b>Take the desk box off.</b> Remove its cap (four M2 × 10). Lift the top converter off its two lower M2 × 4 and let it hang on its wires, so you can reach the upper cover screws. Remove all four cover screws (M2 × 6, keep them), pull the box back about 4 cm and unplug its XT30 and MR30 from the robot's two leads.</div></li>
+    <li><div><b>Take the desk box off.</b> Remove its cap (four M2 × 10). Lift the top converter off its two lower M2 × 4 and let it hang on its wires, so you can reach the upper cover screws. Remove all four cover screws (M2 × 6, keep them), pull the box back about 4 cm and unplug its two adapter sockets from the robot's XT30 and MR30.</div></li>
     <li><div><b>Plug in the backpack</b> about 4 cm behind the robot: plug 3 onto the robot's XT30, plug 4 onto its MR30. Stand both plugs in the channel.</div></li>
     <li><div><b>Fix the frame</b> with four M2 × 6: the upper two through the empty battery bay, the lower two from behind under the box floor. Start all four, then tighten evenly.</div></li>
     <li><div><b>Battery in.</b> Switch off. Plug the battery into plug 1 outside the box, stand it upright with leads at the top on the robot's right side, slide it in against the foam. Nothing under the battery.</div></li>
