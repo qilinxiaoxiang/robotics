@@ -1,0 +1,140 @@
+[
+ {
+  "part": "shell_left_v20 / shell_right_v20",
+  "date": "2026-10-14",
+  "rule": "PRINT-ORIENTATION-PRACTICE.md R1 then R2; the 10/1 pose is the regression floor",
+  "screen": {
+   "outer face down (release), orientation-check.json": {
+    "left": {
+     "heightMm": 33.97,
+     "contactMm2": 1228.2,
+     "firstLayerSectionMm2": 1400.3,
+     "tipAngleDeg": 46.7,
+     "supportProxyMm3": 3809.0,
+     "supportOnModelMm2": 32.8,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 4,
+     "penalty": 110.04
+    },
+    "right": {
+     "heightMm": 32.01,
+     "contactMm2": 1228.0,
+     "firstLayerSectionMm2": 1400.4,
+     "tipAngleDeg": 48.0,
+     "supportProxyMm3": 3786.0,
+     "supportOnModelMm2": 32.6,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 3,
+     "penalty": 99.72
+    }
+   },
+   "10/1 pose, orientation-check-draft.json": {
+    "left": {
+     "heightMm": 33.71,
+     "contactMm2": 8.8,
+     "firstLayerSectionMm2": 158.1,
+     "tipAngleDeg": -28.9,
+     "supportProxyMm3": 4596.0,
+     "supportOnModelMm2": 32.7,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 4,
+     "penalty": 1142.95
+    },
+    "right": {
+     "heightMm": 32.02,
+     "contactMm2": 43.6,
+     "firstLayerSectionMm2": 1382.2,
+     "tipAngleDeg": 47.6,
+     "supportProxyMm3": 3805.0,
+     "supportOnModelMm2": 32.6,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 3,
+     "penalty": 103.3
+    }
+   },
+   "best other": {
+    "left": {
+     "heightMm": 41.48,
+     "contactMm2": 1.0,
+     "firstLayerSectionMm2": 133.4,
+     "tipAngleDeg": 8.9,
+     "supportProxyMm3": 4939.0,
+     "supportOnModelMm2": 160.3,
+     "holeEndsFacingDown": 2,
+     "bossFacesFacingDown": 2,
+     "penalty": 119.22
+    },
+    "right": {
+     "heightMm": 41.49,
+     "contactMm2": 1.1,
+     "firstLayerSectionMm2": 139.2,
+     "tipAngleDeg": 7.6,
+     "supportProxyMm3": 4755.0,
+     "supportOnModelMm2": 158.3,
+     "holeEndsFacingDown": 2,
+     "bossFacesFacingDown": 2,
+     "penalty": 123.73
+    }
+   }
+  },
+  "decision": "Outer face down for both. It is the 10/1 pose with the flat outer side face exactly on the bed: the 10/1 left shell stood 2 deg off that face on an edge (8.8 mm2, tip margin below zero, R1 fail). Both shells now stand on 1228 mm2 at a 47 to 48 deg tip angle. The best other poses stand on about 1 mm2 (R1 fail). The four down-facing hole ends and boss faces per shell are the horn-screw counterbore floors (dia 4.4, about 15.5 to 16 mm above the bed): static screw-head seats on support, as in the 10/1 shells (R2 inference: a rough seat under a screw head still clamps). The pack-screw clearance hole (dia 2.2) prints with a horizontal axis; the guide says to check an M2 passes and open it with a 2 mm drill if not."
+ },
+ {
+  "part": "thigh_left / thigh_right",
+  "date": "2026-10-14",
+  "rule": "R1 then R2; regression floor 10/1",
+  "screen": {
+   "10/1 pose (release)": {
+    "heightMm": 28.0,
+    "contactMm2": 1368.8,
+    "firstLayerSectionMm2": 1497.0,
+    "tipAngleDeg": 59.1,
+    "supportProxyMm3": 129.0,
+    "supportOnModelMm2": 0.0,
+    "holeEndsFacingDown": 2,
+    "bossFacesFacingDown": 2,
+    "penalty": 46.85
+   },
+   "stable p=0.18 (best alternative)": {
+    "heightMm": 46.33,
+    "contactMm2": 748.1,
+    "firstLayerSectionMm2": 816.5,
+    "tipAngleDeg": 11.8,
+    "supportProxyMm3": 1228.0,
+    "supportOnModelMm2": 114.1,
+    "holeEndsFacingDown": 0,
+    "bossFacesFacingDown": 0,
+    "penalty": 36.86
+   },
+   "stable p=0.06 (the 10-SURFACE side pose, 59.4 mm)": {
+    "heightMm": 59.36,
+    "contactMm2": 408.3,
+    "firstLayerSectionMm2": 467.9,
+    "tipAngleDeg": 7.2,
+    "supportProxyMm3": 1216.0,
+    "supportOnModelMm2": 100.3,
+    "holeEndsFacingDown": 0,
+    "bossFacesFacingDown": 0,
+    "penalty": 49.53
+   }
+  },
+  "decision": "KEEP the 10/1 pose. It is a colour-only reprint of a part that printed and assembled in this pose. Both poses pass R1 (59.1 deg on 1369 mm2 against 11.8 deg on 748 mm2). The alternative takes the two rear-centre M2.6 seats off support (R2), but those are static clamp seats under a screw head (R2 inference), it is 18 mm taller and puts 114 mm2 of support on the part. The 10-SURFACE side pose stands at 7.2 deg and would need a brim. The alternative was not sliced (release time box)."
+ },
+ {
+  "part": "head_cap_v19_white",
+  "date": "2026-10-14",
+  "screen": {
+   "heightMm": 47.06,
+   "contactMm2": 104.4,
+   "firstLayerSectionMm2": 463.8,
+   "tipAngleDeg": 7.7,
+   "supportProxyMm3": 8792.0,
+   "supportOnModelMm2": 19.2,
+   "holeEndsFacingDown": 9,
+   "bossFacesFacingDown": 0,
+   "penalty": 185.23,
+   "bestAlternative": "stable p=0.07: 116 mm tall on 29.4 mm2, penalty 592.14"
+  },
+  "decision": "KEEP the V1.9 roof-down pose: the same STL that printed and assembled in this pose (PLAN-V1.12.md C3/C4). Rim-down puts every post and pilot on support (R2). 4 mm outer brim on this object only (R1, 7.7 deg tip angle)."
+ }
+]

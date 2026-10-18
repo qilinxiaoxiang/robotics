@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "verified_date": "2026-09-12",
+  "problem_id": "P5",
+  "purpose": "Mass and envelope inputs for whole robot feasibility sensitivity; not an electrically or mechanically accepted BOM.",
+  "units": {
+    "mass": "kg",
+    "envelope": "mm"
+  },
+  "critical_accounting_rule": "These absolute BOM masses are NOT delta payload. Existing MJCF has lumped body inertias. Keep Pi; resolve and remove old battery/robot_hat/speaker/camera masses and inertia before calling the model a replacement model. Removing visual/collision geoms does not change an explicit inertial.",
+  "parts": [
+    {
+      "id": "battery_2s_850",
+      "label": "Gens ace GEA8502S60E2 / GA-B-60C-850-2S1P-HC101-EC2",
+      "quantity": 1,
+      "mass_nominal_kg": 0.057,
+      "envelope_nominal_mm": [
+        58,
+        32,
+        20
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.genstattu.com/gens-ace-850mah-2s-7-4v-60c-lipo-battery-pack-with-ec2-plug/",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.037,
+        0.077
+      ],
+      "mass_interval_kind": "manufacturer_published_tolerance_plus_minus_20_g",
+      "envelope_interval_mm": [
+        [
+          53,
+          30,
+          18
+        ],
+        [
+          63,
+          34,
+          22
+        ]
+      ],
+      "envelope_interval_kind": "manufacturer_published_plus_minus_5_2_2_mm",
+      "connector_keepout_note": "EC2 discharge cable 100 mm, 18 AWG; JST-XHR-3P balance lead 45 mm. Bare pack envelope excludes cable bend/plug access; battery net weight is not split into pack and attached leads.",
+      "model_action": "replace_existing_battery_after_resolving_existing_lumped_mass",
+      "voltage_nominal_v": 7.4,
+      "voltage_charge_max_v": 8.4
+    },
+    {
+      "id": "servo_regulator",
+      "label": "Pololu D24V150F5 #2881",
+      "quantity": 1,
+      "mass_nominal_kg": 0.019,
+      "envelope_nominal_mm": [
+        43.18,
+        31.75,
+        10.922
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.pololu.com/product/2881/specs",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.0171,
+        0.0209
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "install_envelope_mm": [
+        45.2,
+        33.8,
+        14
+      ],
+      "exclusions": "Optional hardware, terminal blocks, headers and wiring excluded by manufacturer.",
+      "model_action": "add_to_chosen_power_deck",
+      "voltage_output_v": 5
+    },
+    {
+      "id": "logic_regulator",
+      "label": "Pololu S13V30F5 #4082",
+      "quantity": 1,
+      "mass_nominal_kg": 0.0035,
+      "envelope_nominal_mm": [
+        22.86,
+        22.86,
+        9.652
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.pololu.com/product/4082/specs",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.00315,
+        0.00385
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "install_envelope_mm": [
+        25,
+        25,
+        14
+      ],
+      "exclusions": "Optional headers/terminal blocks excluded. Manufacturer states terminal-block height about 12.7 mm.",
+      "model_action": "add_to_chosen_power_deck",
+      "voltage_output_v": 5
+    },
+    {
+      "id": "audio_amplifier",
+      "label": "Adafruit MAX98357A #3006",
+      "quantity": 1,
+      "mass_nominal_kg": 0.0012,
+      "envelope_nominal_mm": [
+        19.4,
+        17.8,
+        3
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.adafruit.com/product/3006",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.0012,
+        0.005
+      ],
+      "mass_interval_kind": "engineering_allowance_for_2024_presoldered_terminal_revision_not_verified_tolerance",
+      "install_envelope_mm": [
+        22,
+        21,
+        12
+      ],
+      "exclusions": "Page lists 3 mm and 1.2 g yet current version has presoldered terminal; current fitted mass/height not established.",
+      "model_action": "add_new_amp_after_old_robot_hat_removal"
+    },
+    {
+      "id": "speaker",
+      "label": "Adafruit mini oval 8 ohm 1 W #3923",
+      "quantity": 1,
+      "mass_nominal_kg": 0.003,
+      "envelope_nominal_mm": [
+        30,
+        20,
+        5
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.adafruit.com/product/3923",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.0027,
+        0.0033
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "install_envelope_mm": [
+        31,
+        21,
+        6
+      ],
+      "connector_keepout_note": "30 mm wire and Molex PicoBlade connector. Do not add the same supplied lead mass again.",
+      "model_action": "replace_official_35x25x7_speaker_after_resolving_existing_mass"
+    },
+    {
+      "id": "camera",
+      "label": "Raspberry Pi Camera Module 3 Wide",
+      "quantity": 1,
+      "mass_nominal_kg": 0.004,
+      "envelope_nominal_mm": [
+        25,
+        24,
+        12.4
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.raspberrypi.com/documentation/accessories/camera.html",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.0036,
+        0.0044
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "mechanical_drawing_pcb_mm": [
+        25,
+        23.862,
+        1.12
+      ],
+      "install_envelope_mm": [
+        25,
+        24,
+        12.4
+      ],
+      "exclusions": "Mount, fasteners, Pi Zero 15-to-22 pin FFC and cable bend excluded; detailed CAD support comes from camera/ folder.",
+      "model_action": "replace_existing_head_camera_lens_assembly_after_resolving_old_parts"
+    },
+    {
+      "id": "openrb",
+      "label": "ROBOTIS OpenRB-150",
+      "quantity": 1,
+      "mass_nominal_kg": 0.013,
+      "envelope_nominal_mm": [
+        66,
+        25,
+        18.85
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://en.robotis.com/shop_en/item.php?it_id=902-0183-000",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.0117,
+        0.0143
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "envelope_source_url": "https://www.robotis.com/service/download.php?no=2120",
+      "official_step_envelope_mm": [
+        25.4,
+        66.89,
+        19.04
+      ],
+      "envelope_note": "Manufacturer STEP additionally measured 25.4 x 66.89 x 19.04 mm including protrusions; see sources/openrb-step-bounds.json. Drawing: 10 mm from PCB underside to highest upper feature, plus 8.85 mm pin projection below PCB = 18.85 mm with headers. Do not use 10 mm as total height.",
+      "install_envelope_mm": [
+        68,
+        27,
+        21
+      ],
+      "mount_hole_pitch_mm": [
+        61.5,
+        20.5
+      ],
+      "mount_hole_diameter_mm": 2.5,
+      "model_action": "not_named_in_either_model_add_as_replacement_for_official_hat_bus_interface"
+    },
+    {
+      "id": "pi",
+      "label": "Raspberry Pi Zero 2 W without header",
+      "quantity": 1,
+      "mass_nominal_kg": 0.01,
+      "envelope_nominal_mm": [
+        65,
+        30,
+        5.3
+      ],
+      "mass_source_kind": "reseller_measured_product_spec_manufacturer_weight_not_found",
+      "source_url": "https://www.adafruit.com/product/5291",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.009,
+        0.013
+      ],
+      "mass_interval_kind": "engineering_allowance_for_headers_not_supplier_tolerance",
+      "manufacturer_dimensions_source_url": "https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/",
+      "install_envelope_mm": [
+        67,
+        32,
+        16
+      ],
+      "exclusions": "microSD, connectors/cables, standoffs and full header projection are separate.",
+      "model_action": "retain_existing_pi_in_official_model_do_not_add_again"
+    },
+    {
+      "id": "imu",
+      "label": "Adafruit BNO085 STEMMA QT #4754",
+      "quantity": 1,
+      "mass_nominal_kg": 0.0025,
+      "envelope_nominal_mm": [
+        25.6,
+        22.7,
+        4.6
+      ],
+      "mass_source_kind": "manufacturer",
+      "source_url": "https://www.adafruit.com/product/4754",
+      "verified_date": "2026-09-12",
+      "mass_interval_kg": [
+        0.00225,
+        0.00275
+      ],
+      "mass_interval_kind": "engineering_sensitivity_plus_minus_10_percent_not_supplier_tolerance",
+      "install_envelope_mm": [
+        28,
+        25,
+        8
+      ],
+      "exclusions": "Header and external Qwiic/I2C cable not guaranteed included. This specifies one concrete breakout; a generic BNO08x module need not share dimensions.",
+      "model_action": "install_on_trunk_base_not_moving_head; original sensor site is not a known breakout mass"
+    }
+  ],
+  "non_supplier_allowances": [
+    {
+      "id": "microsd",
+      "mass_nominal_kg": 0.0005,
+      "mass_interval_kg": [
+        0.0003,
+        0.001
+      ],
+      "envelope_mm": [
+        15,
+        11,
+        1
+      ],
+      "basis": "engineering allowance until exact card selected",
+      "attached_to": "pi"
+    },
+    {
+      "id": "pi_usb_and_camera_cables",
+      "mass_nominal_kg": 0.008,
+      "mass_interval_kg": [
+        0.003,
+        0.015
+      ],
+      "envelope_mm": null,
+      "basis": "engineering allowance for short USB OTG-to-USB-C link, 15-to-22 FFC and 5 V lead; exact lengths not frozen",
+      "attached_to": "split_head_and_trunk"
+    },
+    {
+      "id": "new_distribution_harness_connectors",
+      "mass_nominal_kg": 0.018,
+      "mass_interval_kg": [
+        0.008,
+        0.035
+      ],
+      "envelope_mm": null,
+      "basis": "engineering allowance; excludes battery supplied leads and existing servo wires; layout and conductor lengths not frozen",
+      "attached_to": "trunk"
+    },
+    {
+      "id": "fuse_holder_and_fuse",
+      "mass_nominal_kg": 0.01,
+      "mass_interval_kg": [
+        0.005,
+        0.02
+      ],
+      "envelope_mm": null,
+      "basis": "Littelfuse 0FHM0003ZXJB and 0297010.L10A: source did not provide assembled mass; engineering sweep only, must not masquerade as known official value",
+      "source_url": "https://www.littelfuse.com/assetdocs/mini-fhm-datasheet?assetguid=339fa35e-eabc-45c5-9093-8abceaa8a2cf",
+      "attached_to": "trunk"
+    },
+    {
+      "id": "enable_switch",
+      "mass_nominal_kg": 0.001,
+      "mass_interval_kg": [
+        0.0003,
+        0.003
+      ],
+      "envelope_mm": null,
+      "basis": "Pololu #1408 fitted mass including leads not recovered; engineering sweep only",
+      "source_url": "https://www.pololu.com/product/1408",
+      "attached_to": "trunk"
+    },
+    {
+      "id": "board_headers_terminal_hardware",
+      "mass_nominal_kg": 0.003,
+      "mass_interval_kg": [
+        0.001,
+        0.007
+      ],
+      "envelope_mm": null,
+      "basis": "engineering allowance; avoid duplicating parts already counted by selected product mass",
+      "attached_to": "split_head_and_trunk"
+    }
+  ],
+  "absolute_electronics_nominal_kg": 0.1132,
+  "absolute_electronics_and_allowances_nominal_kg": 0.1537,
+  "mass_delta_from_existing_kg": null,
+  "envelope_limitations": [
+    "Installed envelope allowances are design reservations, not measured supplier dimensions.",
+    "Header, connector, cable routing and bend radii require geometry checking.",
+    "Printed structures and M2/M3 hardware belong to mechanical manifest, not this electronics subtotal.",
+    "EC2-to-XT60 21 g adapter is intended for bench/charging here and is not silently counted onboard."
+  ],
+  "existing_component_audit": "existing-model-mass-audit.json",
+  "rebuild_command": "python3 build_component_manifest.py"
+}

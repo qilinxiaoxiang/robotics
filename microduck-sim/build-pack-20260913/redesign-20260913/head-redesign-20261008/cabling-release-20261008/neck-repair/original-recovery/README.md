@@ -1,0 +1,17 @@
+# Original mouth support recovery and one small ring
+
+Original AI-FanGe source is local `Microduck-build-tutorial` commit `49678215d0b40529522772a40c06c216390449dd`; source3MF SHA256 `e78a329d264bc5050c00b8ff6a37d6b1195b6ea128bd9760492f31b4a91cc71e`.
+
+Use original support community24 (`assembly/print-parts/community-24.stl`, Black×1), original jaw community4 and original lower pad community42. The earlier closed coaxial support and later split jaw/cheek/pad relief are not this recovery. The new neck channels/split carrier/clamps are likewise excluded.
+
+The one additional candidate is `mouth-ring-retained-print.stl`, Black×1, specified by `mouth-ring-print-manifest.json`. It is already flat with its wider rear flange on the bed. Preserve the0.3mm flange with0.10mm or0.15mm layers. Its sleeve has ID10.4/OD14.4/t2.1mm; the rear flange OD16.4/ID12.4/t0.3mm makes total height2.4mm. This is a newly matched printed sliding ring, not a claimed missing original community part or an unpurchased metal bearing.
+
+`mouth-ring-retained-report.json` binds the exact source and exports. Local static interfaces, ring-on-loose-jaw insertion, original support lowered over the seated ring/jaw, relative jaw rotation0–45°, and both directions of axial capture are checked. The nominal smallest gap is about0.094mm to the V1 head-bottom; flange axial clearance is about0.10mm at each side. These are CAD gaps, not certified printer tolerance or material-strength allowances. Check that the printed ring slides freely and that its flange remains intact. Do not tighten the support to force a binding ring into place.
+
+Assembly dependency: keep pads/cap off; put the ring over the loose original jaw boss, with the wider flange toward the outside jaw ear; seat the original jaw in the V1 head-bottom; locate motor15 at the active-side output; place the original open support from above; fasten accessible output/support screws before closing the cap; pads last. Only the ring insertion and support drop-in are rigid-path accepted here. The original jaw-to-shell seating and motor15 insertion are not a completed rigid-path acceptance. `ear-splay-diagnostic.json` quantifies a local ear-offset proxy, not a deformation or PLA strength model. The original one-piece jaw is preserved; limited rigid failures do not prove that the original part is defective or requires splitting.
+
+Negative controls are retained: the ID9.65 approximate source-ring bore intersects the actual Ø10 boss; OD14.6 slightly intersects the V1 bottom edge; the simple loose OD14.4/ID10.4 ring can escape axially inward; an attempted second/front flange hits original support/bottom. The accepted ring uses only the rear flange.
+
+Evidence correction: the original tutorial https://www.youtube.com/watch?v=Vep8AjoCnEM at9:14 calls a plastic disc a bearing substitute, but the visible disc is the large head-roll ring at motor14. It does not identify the mouth-ring SKU or dimensions. At8:46, “下巴” refers to head_bottom, not the separately hinged jaw_frame. Earlier attribution of these frames to the mouth ring was incorrect and is withdrawn.
+
+Original cap print orientation: community sourceID6/5.obj/plate2. World→original print rotation is `[[-0.000109256228,-0.999999986,0.000124820653],[0.132400213,0.000109256228,0.991196334],[-0.991196334,0.000124820653,0.1324002]]`, then centerXY and groundZ. It is a near-vertical tilted source print pose, not an X180 concave-up pose.

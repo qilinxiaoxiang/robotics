@@ -1,0 +1,31 @@
+{
+  "change": "Exact purchased cable SKU must resolve to manufacturer drawing/revision before requesting dimensions; unverified narrow substitutes cannot pass acceptance.",
+  "canonical": "/Users/xiangzheng/code/claude-config/skills/assembly-guide-review/SKILL.md",
+  "charactersBefore": 3398,
+  "charactersAfter": 3587,
+  "installedEntrypoints": [
+    {
+      "path": "/Users/xiangzheng/.codex/skills/assembly-guide-review/SKILL.md",
+      "canonicalResolved": true
+    },
+    {
+      "path": "/Users/xiangzheng/.claude/skills/assembly-guide-review/SKILL.md",
+      "canonicalResolved": true
+    }
+  ],
+  "reviewCases": [
+    {
+      "case": "Purchased exact SKU has official drawing",
+      "expected": "Use that drawing revision before asking dimensions."
+    },
+    {
+      "case": "Actual wide connector unknown; narrower assumed model clears shell",
+      "expected": "Reject acceptance; find exact purchased SKU and official drawing."
+    },
+    {
+      "case": "Official data still omits a critical installed dimension",
+      "expected": "Request only that missing measurement, after primary-source lookup."
+    }
+  ],
+  "caseScope": "Rule-text review only, not claimed real-world cable execution."
+}

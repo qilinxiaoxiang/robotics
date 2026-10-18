@@ -1,0 +1,159 @@
+{
+  "passed": true,
+  "marker": "GUIDE_SERVER_REGRESSION_PASS",
+  "host": "127.0.0.1",
+  "port": 64314,
+  "connection_timeout_s": 3.0,
+  "transfer_timeout_s": 60.0,
+  "checks": [
+    {
+      "check": "normal_HEAD_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.0017504589923191816,
+      "received_bytes": 0
+    },
+    {
+      "check": "normal_GET_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.020839541000896133,
+      "received_bytes": 31953518
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/LEFT-LEG.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/HEAD-EYE-REVIEW.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/REPRINT-PLAN.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/REPRINT-PARTS.zip",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.zip",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/print-colors.json",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/motor-fasteners.json",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/viewer.js",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/../README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%2e%2e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/%2e%2e%2fREADME.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%252e%252e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/etc/passwd",
+      "passed": true
+    },
+    {
+      "check": "idle_times_out_and_closes",
+      "passed": true,
+      "wait_s": 2.7455636660015443
+    },
+    {
+      "check": "incomplete_headers_times_out_and_closes",
+      "passed": true,
+      "wait_s": 1.2541000614874065e-05
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip",
+      "passed": true,
+      "wire_bytes": 22424244,
+      "decoded_bytes": 31953518
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip;q=0.5",
+      "passed": true,
+      "wire_bytes": 22424244,
+      "decoded_bytes": 31953518
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip;q=0",
+      "passed": true,
+      "wire_bytes": 31953518,
+      "decoded_bytes": 31953518
+    },
+    {
+      "passed": true,
+      "pause_s": 4.00020525000582,
+      "header_timeout_s": 3.0,
+      "advertised_bytes": 31953518,
+      "received_bytes": 31953518,
+      "exact_body": true,
+      "drain_s": 0.04338991700205952,
+      "check": "large_body_remains_exact_after_reader_pauses_past_header_timeout"
+    },
+    {
+      "passed": true,
+      "pause_s": 4.001724125002511,
+      "header_timeout_s": 3.0,
+      "advertised_bytes": 31953518,
+      "received_bytes": 458128,
+      "exact_body": false,
+      "drain_s": 0.00036216700391378254,
+      "check": "legacy_header_timeout_reused_for_body_truncates_large_download"
+    }
+  ],
+  "script_sha256": "f2e42da7c7a313157590b1924084e986ff6e4abd45de67769c1c0aaafcb1f0e2"
+}

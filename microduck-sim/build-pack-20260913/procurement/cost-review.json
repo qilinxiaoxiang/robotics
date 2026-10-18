@@ -1,0 +1,181 @@
+{
+  "checked_at": "2026-09-13T21:25:12.593824-04:00",
+  "problem_ids": [
+    "P5",
+    "P6"
+  ],
+  "scope": "Existing integrated design: remove surplus purchase quantities and one optional audio service connector; no claim of global minimum hardware cost.",
+  "objective": "Meet the required functionality and electrical/mechanical constraints, then minimize remaining landed spending, order count and assembly work.",
+  "removed_spare_units": {
+    "main_fuse": 1,
+    "branch_fuse": 1,
+    "input_fuse": 1,
+    "audio_fuse": 2,
+    "audio_gain_resistor": 2
+  },
+  "removed_optional_items": [
+    "audio_power_connector"
+  ],
+  "original_merchandise_usd": 122.21,
+  "revised_merchandise_usd": 114.61,
+  "merchandise_savings_usd": 7.6,
+  "original_failure_evidence": "cost-original-rejection.json",
+  "decisions": [
+    {
+      "item_id": "camera",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Wide-angle color video, visible-light IR-filter version; neither NoIR nor stereo.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 35
+    },
+    {
+      "item_id": "camera_ffc",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Connects the camera's 15-pin port to the Zero 2 W 22-pin CSI port.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1
+    },
+    {
+      "item_id": "imu",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Measures body orientation from its fixed trunk mount.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 29.5
+    },
+    {
+      "item_id": "imu_cable",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Connects to the Pi I2C bus.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 0.95
+    },
+    {
+      "item_id": "amp",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Converts the Pi digital audio stream and drives the speaker.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 5.95
+    },
+    {
+      "item_id": "speaker",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "The component that produces sound; neither Pi nor OpenRB includes this speaker.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.34
+    },
+    {
+      "item_id": "main_fuse",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Supplemental protection on the motor branch at the shared 5V output.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.24
+    },
+    {
+      "item_id": "branch_fuse",
+      "required_units": 9,
+      "purchase_units": 9,
+      "role": "Eight motor branches and one Pi logic branch.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.024
+    },
+    {
+      "item_id": "usb_c_data",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Intact short data cable from the OTG adapter to OpenRB-150.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 2.95
+    },
+    {
+      "item_id": "audio_fuse",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Separate 0.5A branch fuse at the common 5V star, before the audio power lead.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.37
+    },
+    {
+      "item_id": "audio_gain_resistor",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Connects GAIN through 100k to VIN for 3dB gain.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 0.1
+    },
+    {
+      "item_id": "pd_receiver",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Requests fixed 20V from MDY-14-ED through its original modified USB-A to USB-C cable.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 9.95
+    },
+    {
+      "item_id": "shared_regulator",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Onboard common 5V conversion for motors, Pi and audio.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 12.9
+    },
+    {
+      "item_id": "input_fuse",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "External fuse immediately after PD positive output and before the long tether.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.24
+    },
+    {
+      "item_id": "power_disconnect",
+      "required_units": 1,
+      "purchase_units": 1,
+      "role": "Polarized detachable interface between the source tether and onboard regulator.",
+      "decision": "retain working quantity",
+      "unit_price_usd": 1.9
+    }
+  ],
+  "branch_fuse_quantity_comparison": {
+    "nine_usd": 9.22,
+    "ten_usd": 9.45,
+    "source": "https://www.digikey.com/en/products/detail/littelfuse-inc/0251003-MXL/700737",
+    "verdict": "The cart quantity selector quoted nine at $9.22 and ten at $9.45. Selected nine; saved cart confirms $9.22 plus $1.13 estimated line tariff."
+  },
+  "audio_wire_change": {
+    "before": "24AWG wire plus two <=50mm26AWG connector tails",
+    "after": "direct24AWG wire <=250mm per conductor",
+    "reason": "Removes connector and thinner tails while keeping the same0.5A protection; fewer interfaces and no added purchase.",
+    "tradeoff": "Head service requires disconnecting the direct supply joints; reserve slack for access.",
+    "source": "../redesign-20260913/design-contract.json"
+  },
+  "original_whole_order": {
+    "subtotal_usd": 122.21,
+    "shipping_estimate_usd": 4.99,
+    "tariff_estimate_usd": 10.97,
+    "total_estimate_usd": 138.17,
+    "sales_tax_usd": null
+  },
+  "revised_whole_order": {
+    "subtotal_usd": 114.61,
+    "shipping_estimate_usd": 4.99,
+    "tariff_estimate_usd": 10.28,
+    "total_estimate_usd": 129.88,
+    "sales_tax_usd": null
+  },
+  "whole_order_estimated_savings_usd": 8.29,
+  "current_cart_evidence": "cart-status-r3.json",
+  "browser_readback_sha256": "ac756ac4b5b72b23b1bb5064465efe816f9bca8a342d02cc7045e16476f668b5",
+  "verification": {
+    "passed": true,
+    "checked_at": "2026-09-13T21:26:17.705288-04:00",
+    "report": "../redesign-20260913/current-build-verification.json",
+    "scope": "design and procurement consistency; not physical hardware acceptance"
+  }
+}

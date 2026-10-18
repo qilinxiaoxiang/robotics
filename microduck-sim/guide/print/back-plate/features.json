@@ -1,0 +1,90 @@
+{
+ "frame": [
+  {
+   "id": "cover_plate",
+   "what": "rear_pack_cover plate x -47..-45 (outline, top corners r1.5, back edges r1), from build_rear_pack.build_cover(); top edge z 29.5 exactly as the cover (the cover has no top notch; the 12 x 6.1 cable notch is in the pack front plate at x -21..-19)",
+   "purpose": "unchanged interface to the V1.8 and V1.9 packs; closes the converter channel"
+  },
+  {
+   "id": "cover_holes",
+   "what": "four dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5), cut again after the web",
+   "purpose": "four M2 x 6 into the pack posts, driven from the back with the frame empty (frame-first assembly)"
+  },
+  {
+   "id": "cover_lip",
+   "what": "x -45..-37.5, |y| <= 13.2, z 27.3..28.5 (as the cover)",
+   "purpose": "kept by the brief (interface identical to the cover); locates the frame between the pack side walls (0.4 per side); it decides the print pose (see checks)"
+  },
+  {
+   "id": "lower_web",
+   "what": "plate continued to the side walls: x -47..-45, |y| <= 32.05, z -44..-2",
+   "purpose": "joins the wall ring to the plate (the cover outline alone meets the walls only along the bottom edge); carries the two lower outer XL4015 bosses; the shells start at z 0.26, so nothing is in front of it"
+  },
+  {
+   "id": "side_walls",
+   "what": "|y| 30.85..32.05, x -65.9..-47, z -44..46.5",
+   "purpose": "box sides flush with the shells (0.55 to the board edges)"
+  },
+  {
+   "id": "top_wall",
+   "what": "z 45.3..46.5, x -65.9..-47, no openings",
+   "purpose": "box top, 4.0 above the board top edges (z 41.3) so the OUT pairs bend over inside the box; carries the top lid boss"
+  },
+  {
+   "id": "bottom_wall",
+   "what": "z -44..-42.8, x -65.9..-47 (pack floor level)",
+   "purpose": "box floor under the 5991; carries the bottom lid boss"
+  },
+  {
+   "id": "xl_bosses",
+   "what": "eight dia 4.5 bosses on the board holes, seat at the PCB back face x -50.205 (local X -2.0 at the plated holes), dia 1.6 pilots to x -45.3 (M2 x 6, 4.35 engagement); lower four end in the plate/web, upper four (z 38.7) run to x -45 with 3 mm ribs x -50.205..-47 up to the top wall (z 45.3) and, for |y| 27.7, to the side wall",
+   "purpose": "XL4015 standoffs (pins 2.74 + 0.52 clearance), screws from the component side; the ribs stay forward of the OUT wire run (x -54.7)"
+  },
+  {
+   "id": "pd_bosses",
+   "what": "four dia 4.5 bosses x -50..-47 at the 5991 corner holes, dia 1.6 pilots to x -45.3",
+   "purpose": "5991 standoffs (3.0 for the through-hole pins), M2 x 6 from the component side"
+  },
+  {
+   "id": "lid_bosses",
+   "what": "two dia 5 bosses x -65.9..-60.3 on the top wall (y 0, z 43.0) and the bottom wall (y 22, z -40.3), dia 1.6 pilots 5.2 deep",
+   "purpose": "two M2 x 6 through the lid; top: the 8.2 mm lane between the boards is the only top-wall room that is not over a board, and the boss sits behind the OUT wire run (x -60.3 vs -54.7); bottom: +y corner, outside the 5991 insertion path and below its terminal wire exit"
+  },
+  {
+   "id": "wire_passage",
+   "what": "rounded rectangle 7 (y) x 4 (z), r 1, through the cover plate x -47..-45 at y -3.5..3.5, z 23..27 (top at the channel top z 27.0, pack_lib.DFR_BOX; 0.3 under the lip)",
+   "purpose": "both OUT pairs (two flat 22 AWG pairs 1.6 x 3.2, stacked: 3.2 x 3.2) pass from the centre lane between the boards into the pack channel x -45..-37"
+  },
+  {
+   "id": "usb_opening",
+   "what": "-y wall cut x -57.5..-49.0, z -39.14..-25.14",
+   "purpose": "USB-C plug overmold 13 x 7.5 with 0.5 all round, centred on the 5991 socket"
+  }
+ ],
+ "wiring": [
+  {
+   "id": "out_route",
+   "rule": "each OUT pair leaves its terminal upward (entries z 40.6, terminal end z 41.21), bends over in the 4.0 room under the top wall (z 41.3..45.3) at x about -54.7, runs inward to the centre lane (|y| <= 4.1), down the lane to z 25 and forward through the wire passage into the pack channel; 7 V (left board) continues to OpenRB J4 (-30, -6, 26), 5 V (right board) to the pack front-plate notch (y +-6, z 32.7..38.8 at x -21..-19)"
+  },
+  {
+   "id": "in_route",
+   "rule": "at each IN terminal (entries face down, z -19.7) the wire bends outward, toward its own side wall, within the first 2 mm, then runs down the 5.7 mm lane behind the 5991 (x -65.9..-60.2) to the 5991 terminal; the 15 V daisy chain between the two IN terminals runs along the floor lane behind the 5991 (x -65.9..-60.2, z -42.8..-37.7)"
+  },
+  {
+   "id": "pd5991_terminal",
+   "rule": "5991 screw-terminal entry faces: plane y 13.70 (facing +y), x -60.1..-51.6, z -35.74..-28.74; entry centres (-54.1, 13.7, -30.39) and (-54.1, 13.7, -33.89)"
+  }
+ ],
+ "lid": [
+  {
+   "id": "lid_plate",
+   "what": "1.2 mm plate x -67.1..-65.9, |y| <= 32.05, z -44..46.5",
+   "purpose": "closes the box; removed (two screws) to set the trimmers and DIP switches"
+  },
+  {
+   "id": "lid_holes",
+   "what": "dia 2.2 at (0, 43.0) and (22, -40.3)",
+   "purpose": "two M2 x 6 into the lid bosses"
+  }
+ ]
+}

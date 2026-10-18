@@ -1,0 +1,6742 @@
+{
+ "meta": {
+  "generated": "2026-10-12T11:48:05",
+  "frame": "mm, x forward, y left, z up (guide = MuJoCo trunk_base)",
+  "body": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack/rear_pack-world.stl",
+  "cover": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack/rear_pack_cover-world.stl",
+  "scripts": [
+   "build_rear_pack.py (geometry + features.json)",
+   "pack_lib.py",
+   "check_fit.py (checks 1-4)",
+   "pack_sweep2.py (check 5)",
+   "check_assembly.py (check 6)",
+   "check_print.py (check 7)",
+   "render_views.py / render_pack.py / raster.py (renders)",
+   "assemble_checks.py"
+  ],
+  "python": "/tmp/microduck-cad-venv/bin/python (trimesh 5.1.1, manifold3d, shapely 2.2, mujoco 3.15)",
+  "boardsFixedLayoutL": {
+   "openrb": [
+    [
+     -10.54,
+     -39.75
+    ],
+    [
+     9.96,
+     -39.75
+    ],
+    [
+     -10.54,
+     21.75
+    ],
+    [
+     9.96,
+     21.75
+    ]
+   ],
+   "dfr": [
+    [
+     -45.0,
+     -13.0,
+     -3.0
+    ],
+    [
+     -37.0,
+     13.0,
+     27.0
+    ]
+   ]
+  }
+ },
+ "check1_manifold": {
+  "result": {
+   "body": {
+    "watertight": true,
+    "windingConsistent": true,
+    "manifoldStatus": "Error.NoError",
+    "bodies": 1,
+    "genus": 9,
+    "volumeMm3": 17174.58,
+    "areaMm2": 17903.2,
+    "tris": 6628,
+    "bounds": [
+     [
+      -45.0,
+      -27.2,
+      -44.0
+     ],
+     [
+      -13.5,
+      27.195,
+      38.799
+     ]
+    ],
+    "euler": -16
+   },
+   "cover": {
+    "watertight": true,
+    "windingConsistent": true,
+    "manifoldStatus": "Error.NoError",
+    "bodies": 1,
+    "genus": 4,
+    "volumeMm3": 5569.16,
+    "areaMm2": 6202.91,
+    "tris": 1392,
+    "bounds": [
+     [
+      -47.0,
+      -18.6,
+      -44.0
+     ],
+     [
+      -37.5,
+      18.6,
+      29.5
+     ]
+    ],
+    "euler": -6
+   },
+   "coverBodyOverlapMm3": -0.0,
+   "coverBodyGapMm": 0.0
+  },
+  "reloadedStl": {
+   "bodyWatertight": true,
+   "coverWatertight": true,
+   "bodyVolumeMm3": 17174.58,
+   "coverVolumeMm3": 5569.16
+  },
+  "pass": true
+ },
+ "check2_interfaceFidelity": {
+  "screws": [
+   {
+    "id": "S10-case-069",
+    "centerXY": [
+     -16.5,
+     9.5
+    ],
+    "seatZ": -3.094,
+    "fidelityBox_y4.5_14.5": {
+     "box": [
+      [
+       -19.0,
+       4.5,
+       -6.0
+      ],
+      [
+       -13.5,
+       14.5,
+       -0.5
+      ]
+     ],
+     "bodyVolMm3": 53.038,
+     "psVolMm3": 53.038,
+     "xorVolMm3": 0.0
+    },
+    "fidelityBox_y6.6_14.5": {
+     "box": [
+      [
+       -19.0,
+       6.6,
+       -6.0
+      ],
+      [
+       -13.5,
+       14.5,
+       -0.5
+      ]
+     ],
+     "bodyVolMm3": 47.839,
+     "psVolMm3": 47.839,
+     "xorVolMm3": 0.0
+    },
+    "seatFaces": {
+     "body": {
+      "topFaceZ": [
+       -1.332,
+       -1.272
+      ],
+      "bottomFaceZ": [
+       -3.174,
+       -3.114
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     },
+     "ps": {
+      "topFaceZ": [
+       -1.332,
+       -1.272
+      ],
+      "bottomFaceZ": [
+       -3.174,
+       -3.114
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     }
+    },
+    "shankDia2.5_overlapMm3": {
+     "body": 0.0017,
+     "ps": 0.0017
+    },
+    "headDia4_overlapMm3": {
+     "body": 0.3788,
+     "ps": 0.3788
+    }
+   },
+   {
+    "id": "S05-case-074",
+    "centerXY": [
+     -16.5,
+     -9.5
+    ],
+    "seatZ": -3.094,
+    "fidelityBox_y4.5_14.5": {
+     "box": [
+      [
+       -19.0,
+       -14.5,
+       -6.0
+      ],
+      [
+       -13.5,
+       -4.5,
+       -0.5
+      ]
+     ],
+     "bodyVolMm3": 53.277,
+     "psVolMm3": 53.277,
+     "xorVolMm3": 0.0
+    },
+    "fidelityBox_y6.6_14.5": {
+     "box": [
+      [
+       -19.0,
+       -14.5,
+       -6.0
+      ],
+      [
+       -13.5,
+       -6.6,
+       -0.5
+      ]
+     ],
+     "bodyVolMm3": 48.084,
+     "psVolMm3": 48.084,
+     "xorVolMm3": 0.0
+    },
+    "seatFaces": {
+     "body": {
+      "topFaceZ": [
+       -1.332,
+       -1.272
+      ],
+      "bottomFaceZ": [
+       -3.174,
+       -3.114
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     },
+     "ps": {
+      "topFaceZ": [
+       -1.332,
+       -1.272
+      ],
+      "bottomFaceZ": [
+       -3.174,
+       -3.114
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     }
+    },
+    "shankDia2.5_overlapMm3": {
+     "body": 0.0016,
+     "ps": 0.0016
+    },
+    "headDia4_overlapMm3": {
+     "body": 0.3788,
+     "ps": 0.3788
+    }
+   },
+   {
+    "id": "S10-case-072",
+    "centerXY": [
+     -16.5,
+     9.5
+    ],
+    "seatZ": 25.049,
+    "fidelityBox_y4.5_14.5": {
+     "box": [
+      [
+       -19.0,
+       4.5,
+       22.5
+      ],
+      [
+       -13.5,
+       14.5,
+       27.5
+      ]
+     ],
+     "bodyVolMm3": 50.035,
+     "psVolMm3": 61.643,
+     "xorVolMm3": 11.6081
+    },
+    "fidelityBox_y6.6_14.5": {
+     "box": [
+      [
+       -19.0,
+       6.6,
+       22.5
+      ],
+      [
+       -13.5,
+       14.5,
+       27.5
+      ]
+     ],
+     "bodyVolMm3": 48.097,
+     "psVolMm3": 48.097,
+     "xorVolMm3": 0.0
+    },
+    "seatFaces": {
+     "body": {
+      "topFaceZ": [
+       25.07,
+       25.128
+      ],
+      "bottomFaceZ": [
+       23.226,
+       23.285
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     },
+     "ps": {
+      "topFaceZ": [
+       25.07,
+       25.128
+      ],
+      "bottomFaceZ": [
+       23.226,
+       23.285
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     }
+    },
+    "shankDia2.5_overlapMm3": {
+     "body": 0.0017,
+     "ps": 0.0017
+    },
+    "headDia4_overlapMm3": {
+     "body": 0.3809,
+     "ps": 0.3809
+    }
+   },
+   {
+    "id": "S05-case-076",
+    "centerXY": [
+     -16.5,
+     -9.5
+    ],
+    "seatZ": 25.049,
+    "fidelityBox_y4.5_14.5": {
+     "box": [
+      [
+       -19.0,
+       -14.5,
+       22.5
+      ],
+      [
+       -13.5,
+       -4.5,
+       27.5
+      ]
+     ],
+     "bodyVolMm3": 53.378,
+     "psVolMm3": 81.09,
+     "xorVolMm3": 27.7128
+    },
+    "fidelityBox_y6.6_14.5": {
+     "box": [
+      [
+       -19.0,
+       -14.5,
+       22.5
+      ],
+      [
+       -13.5,
+       -6.6,
+       27.5
+      ]
+     ],
+     "bodyVolMm3": 47.849,
+     "psVolMm3": 47.849,
+     "xorVolMm3": 0.0
+    },
+    "seatFaces": {
+     "body": {
+      "topFaceZ": [
+       25.07,
+       25.128
+      ],
+      "bottomFaceZ": [
+       23.226,
+       23.285
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     },
+     "ps": {
+      "topFaceZ": [
+       25.07,
+       25.128
+      ],
+      "bottomFaceZ": [
+       23.226,
+       23.285
+      ],
+      "holeDiaMinMax": [
+       2.496,
+       2.504
+      ]
+     }
+    },
+    "shankDia2.5_overlapMm3": {
+     "body": 0.0016,
+     "ps": 0.0016
+    },
+    "headDia4_overlapMm3": {
+     "body": 0.381,
+     "ps": 0.381
+    }
+   }
+  ],
+  "tabNeighbourGaps": {
+   "motor10": {
+    "bodyTabs": 0.2242,
+    "psTabs": 0.2242,
+    "bodyWhole": 0.2242,
+    "bodyOverlapMm3": 0.0
+   },
+   "motor5": {
+    "bodyTabs": 0.2242,
+    "psTabs": 0.2242,
+    "bodyWhole": 0.2242,
+    "bodyOverlapMm3": 0.0
+   },
+   "torso_base": {
+    "bodyTabs": 0.0,
+    "psTabs": 0.2574,
+    "bodyWhole": 0.0,
+    "bodyOverlapMm3": 0.0
+   },
+   "ring10_torso": {
+    "bodyTabs": 6.0,
+    "psTabs": 6.0,
+    "bodyWhole": 6.0,
+    "bodyOverlapMm3": 0.0
+   },
+   "ring5_torso": {
+    "bodyTabs": 6.0,
+    "psTabs": 6.0,
+    "bodyWhole": 6.0,
+    "bodyOverlapMm3": 0.0
+   }
+  },
+  "upperGussetBoxes": {
+   "upperGussetBox_plus_y": {
+    "box": [
+     [
+      -21.0,
+      11.5,
+      25.2
+     ],
+     [
+      -16.5,
+      13.0,
+      27.4
+     ]
+    ],
+    "bodyVolMm3": 10.659,
+    "psVolMm3": 7.908
+   },
+   "upperGussetBox_minus_y": {
+    "box": [
+     [
+      -21.0,
+      -13.0,
+      25.2
+     ],
+     [
+      -16.5,
+      -11.5,
+      27.4
+     ]
+    ],
+    "bodyVolMm3": 10.426,
+    "psVolMm3": 7.608
+   }
+  },
+  "notes": [
+   "fidelity boxes sit in front of the new plate (x -19..-13.5); the box |y| 6.6..14.5 holds the lugs, holes and gussets: XOR 0 on all four",
+   "the box |y| 4.5..14.5 also holds the retired small-regulator holder of the integrated power_support and the thin centre web (removed for the IMU board), hence the non-zero XOR on the upper screws",
+   "seat faces and hole diameters identical to the current power_support; dia 2.5 shank and dia 4 head test cylinders give the same (tiny, polygonal) overlaps on both parts",
+   "the pads of the lower lugs touch torso_base (gap 0) only through the plate front face at x -19, the same plane the base plate ends on; the lugs themselves keep the 0.257 mm of the current part"
+  ],
+  "pass": true
+ },
+ "check3_boardsAndRooms": {
+  "result": {
+   "openrb_model": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 4.9315
+    }
+   },
+   "imu_model": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 10.0
+    }
+   },
+   "dfr_box": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    }
+   },
+   "dfr_pad_room": {
+    "body": {
+     "overlapMm3": 82.485,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    }
+   },
+   "room_leg_plugs": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 9.3
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 2.55
+    }
+   },
+   "room_neck_plug": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 1.25
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 10.0
+    }
+   },
+   "room_terminal": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 1.4
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 2.8
+    }
+   },
+   "room_usb": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 10.0
+    }
+   },
+   "room_imu_plug_top": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 5.5905
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 10.0
+    }
+   },
+   "room_imu_socket_top": {
+    "body": {
+     "overlapMm3": 0.0,
+     "gapMm": 4.93
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 10.0
+    }
+   },
+   "openrb_body_box": {
+    "body": {
+     "overlapMm3": 166.6965,
+     "gapMm": 0.0
+    },
+    "cover": {
+     "overlapMm3": 0.0,
+     "gapMm": 3.4655
+    }
+   },
+   "imu_model_slotOnly": {
+    "gapMm": 0.185
+   },
+   "openrb_screwHeads_dia4_x-28.4..-26.4": {
+    "overlapWithOpenrbModelMm3": 0.0,
+    "overlapWithBodyMm3": 0.0
+   }
+  },
+  "allowedContacts": {
+   "openrb_model gap 0": "PCB back face rests on the four pads (seat)",
+   "imu_model gap 0": "board bottom edge rests on the shelf; slot-only clearance 0.185",
+   "dfr_box gap 0": "the planning box touches the lips, feet and cover lip that locate the board",
+   "room_usb gap 0": "the bottom-wall opening equals the room footprint",
+   "dfr_pad_room overlap": "the two corner feet specified in the brief (|y| 10.3..13.6, z -7.3..-3) sit inside the pad-wire room; the three pads stay inside |y| <= 10",
+   "openrb_body_box overlap": "the box reaches x -22.4 (trimmed solder tails); the pads occupy x -24.8..-21 behind the real PCB back face at x -24.8; the model itself has zero overlap"
+  },
+  "pass": true
+ },
+ "check4_guideParts": {
+  "retired": [
+   "power_support",
+   "regulator_insert",
+   "openrb_tray",
+   "fuse_main",
+   "imu_clamp",
+   "imu_cover",
+   "junction_j",
+   "regulator",
+   "openrb_board",
+   "imu_board",
+   "xt30_robot",
+   "imu_sh4_receiving"
+  ],
+  "under2mm": [
+   {
+    "key": "motor10",
+    "module": "left-leg",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.2242,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "motor5",
+    "module": "right-leg",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.2242,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "shell_left",
+    "module": "neck",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.5483,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": 1.4003
+   },
+   {
+    "key": "shell_right",
+    "module": "neck",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.7045,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": 1.8992
+   },
+   {
+    "key": "torso_base",
+    "module": "torso",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   }
+  ],
+  "overlaps": [],
+  "all": [
+   {
+    "key": "amplifier",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "ankle",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "camera_board",
+    "module": "camera",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "eye_trim",
+    "module": "camera",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "face_panel",
+    "module": "camera",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "foot",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "head_bottom",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_cap",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_bottom-usb-edge-context",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_csi-connector-body-conservative-hull",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_csi-connector-pins-conservative-hull",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_indicator-body-and-outline",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_left-lower-rectangular-component",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_left-square-component",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_left-upper-rectangular-component",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_lower-passive-a",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_lower-passive-b",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_lower-passive-c",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_middle-passive-a",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_middle-passive-b",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_component_octagonal-component",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_01_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_02_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_03_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_04_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_05_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_06_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_08_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_09_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_10_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_12_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_14_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_35_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_gpio_pin_40_receiving",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_gpio_solder_tails",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_base",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_01",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_02",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_03",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_04",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_05",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_06",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_07",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_08",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_09",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_10",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_11",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_12",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_13",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_14",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_15",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_16",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_17",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_18",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_19",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_20",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_21",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_22",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_23",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_24",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_25",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_26",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_27",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_28",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_29",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_30",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_31",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_32",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_33",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_34",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_35",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_36",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_37",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_38",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_39",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_pi_zero_w_header_pin_40",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_roll_ring_a",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_roll_ring_b",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "head_yaw_link",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "hip",
+    "module": "left-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "idler11",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "idler12",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "idler_cap11",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "idler_cap12",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "jaw_frame",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "jaw_support",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "lower",
+    "module": "left-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "lower_pad",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor1",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor10",
+    "module": "left-leg",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.2242,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "motor11",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor12",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor13",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor14",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor15",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "motor2",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor3",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor4",
+    "module": "right-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "motor5",
+    "module": "right-leg",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.2242,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "motor6",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor7",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor8",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "motor9",
+    "module": "left-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "mouth_sliding_ring",
+    "module": "head",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "neck_link_a",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "neck_link_b",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "neck_pitch",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "neck_pitch_ring",
+    "module": "neck",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "passive",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "pi",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "plate",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_ankle",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_foot",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_hip",
+    "module": "right-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "right_lower",
+    "module": "right-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "right_passive",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_plate",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_smallring",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_thigh",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "right_yaw",
+    "module": "right-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 6.6962,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "ring10_torso",
+    "module": "torso",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "ring2",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "ring3",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "ring4",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "ring5_torso",
+    "module": "torso",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "ring7",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "ring8",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "ring9",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "shell_left",
+    "module": "neck",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.5483,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": 1.4003
+   },
+   {
+    "key": "shell_right",
+    "module": "neck",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.7045,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": 1.8992
+   },
+   {
+    "key": "smallring",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "speaker",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "speaker_cradle",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "speaker_keeper",
+    "module": "electronics",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "thigh",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "torso_base",
+    "module": "torso",
+    "leg": false,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 0.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "upper_pad",
+    "module": "head-close",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": false
+   },
+   {
+    "key": "washer1",
+    "module": "right-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "washer4",
+    "module": "right-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "washer6",
+    "module": "left-leg",
+    "bodyGapMm": ">8",
+    "coverGapMm": ">8",
+    "leg": true
+   },
+   {
+    "key": "washer9",
+    "module": "left-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 8.0,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   },
+   {
+    "key": "yaw",
+    "module": "left-leg",
+    "leg": true,
+    "closed": true,
+    "bodyOverlapMm3": 0.0,
+    "bodyGapMm": 6.6962,
+    "coverOverlapMm3": 0.0,
+    "coverGapMm": ">8"
+   }
+  ],
+  "notes": [
+   "motor10 / motor5 0.224 mm = the current power_support lugs (identical donor geometry)",
+   "torso_base 0 = plate front face on the base-plate edge plane x -19 (allowed by the brief)",
+   "shells: body 0.55 / 0.70 mm at the head top edge (edge lowered 0.6 below the shell rear-top edge), cover 1.40 / 1.90 mm"
+  ],
+  "pass": true
+ },
+ "check5_walkingSweep": {
+  "method": "torso-fit/pack_sweep.py (leg_reach.py): all 304253 recorded phase-1 frames, 283500 adopted; 1 mm distance-field screening then exact manifold min_gap on flagged frames; hip yaw/roll bodies on the unique (yaw, roll) grid",
+  "obstacle": "rear_pack-world.stl + rear_pack_cover-world.stl + neck plug room box",
+  "targetMm": 2.0,
+  "left": {
+   "adopted": {
+    "frames": 283500,
+    "pitchChain": {
+     "minGapMm": 3.729009363791064,
+     "exactChecked": true,
+     "worstGlobalFrame": 221613,
+     "worstFile": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "worstFrameInRun": 1360,
+     "worstPart": "lower",
+     "label": "shin",
+     "framesUnder1": 0,
+     "framesUnder2": 0,
+     "framesUnder3": 0,
+     "q": {
+      "left_hip_yaw": -0.3218618997732125,
+      "left_hip_roll": -0.14103074019490755,
+      "left_hip_pitch": -0.2881412112181175,
+      "left_knee": -0.12162509262041571,
+      "left_ankle": 0.11558194912809676
+     },
+     "attribution": {
+      "closestComponent": "body",
+      "componentGaps": {
+       "body": 3.729,
+       "cover": 10.427,
+       "neckPlugRoom": 12.0
+      },
+      "penetrationVolumeMm3": 0.0,
+      "closestLegPointXYZ": [
+       -29.13,
+       18.37,
+       -46.11
+      ],
+      "vertexGap": 3.729,
+      "note": "closest point from a subset of the leg vertices (memory bound); minGapMm is the exact manifold value"
+     }
+    },
+    "hipBodies": {
+     "minGapMm": 4.941507863023385,
+     "worstGlobalFrame": 34634,
+     "worstFile": "phase1-candidate-old120-push.json",
+     "worstFrameInRun": 263,
+     "worstPart": "yaw",
+     "componentGaps": {
+      "body": 4.935,
+      "cover": 12.0,
+      "neckPlugRoom": 12.0
+     }
+    }
+   },
+   "allFrames": {
+    "frames": 304253,
+    "pitchChain": {
+     "minGapMm": 0.0,
+     "exactChecked": true,
+     "worstGlobalFrame": 100497,
+     "worstFile": "phase1-old120-push.json",
+     "worstFrameInRun": 305,
+     "worstPart": "thigh",
+     "label": "thigh/knee",
+     "framesUnder1": 31,
+     "framesUnder2": 33,
+     "framesUnder3": 35,
+     "q": {
+      "left_hip_yaw": -0.46348558805113343,
+      "left_hip_roll": -0.3917698780036149,
+      "left_hip_pitch": -0.6362289998985357,
+      "left_knee": -0.9088123332118783,
+      "left_ankle": 0.7421530613877931
+     },
+     "attribution": {
+      "closestComponent": "body",
+      "componentGaps": {
+       "body": 0.0,
+       "neckPlugRoom": 2.809,
+       "cover": 3.71
+      },
+      "penetrationVolumeMm3": 7.835,
+      "closestLegPointXYZ": [
+       -38.23,
+       15.31,
+       -39.87
+      ],
+      "vertexGap": 0.091,
+      "note": "closest point from a subset of the leg vertices (memory bound); minGapMm is the exact manifold value"
+     }
+    },
+    "hipBodies": {
+     "minGapMm": 4.091544901507865,
+     "worstGlobalFrame": 124979,
+     "worstFile": "phase1-scan-high-old120-delay2-kp250.json",
+     "worstFrameInRun": 1460,
+     "worstPart": "yaw",
+     "componentGaps": {
+      "body": 4.092,
+      "cover": 12.0,
+      "neckPlugRoom": 12.0
+     }
+    }
+   },
+   "flagged": 85,
+   "elapsed_s": 159.3,
+   "rssBytes": 771555328
+  },
+  "right": {
+   "adopted": {
+    "frames": 283500,
+    "pitchChain": {
+     "minGapMm": 5.021363182672512,
+     "exactChecked": true,
+     "worstGlobalFrame": 120040,
+     "worstFile": "phase1-scan-high-old0-delay2-kp300.json",
+     "worstFrameInRun": 1021,
+     "worstPart": "right_lower",
+     "label": "shin",
+     "framesUnder1": 0,
+     "framesUnder2": 0,
+     "framesUnder3": 0,
+     "q": {
+      "right_hip_yaw": 0.22827944789141877,
+      "right_hip_roll": 0.17438208151375748,
+      "right_hip_pitch": 0.19433733567289285,
+      "right_knee": -0.021089114977078504,
+      "right_ankle": -0.12487053324945724
+     },
+     "attribution": {
+      "closestComponent": "body",
+      "componentGaps": {
+       "body": 5.021,
+       "cover": 9.322,
+       "neckPlugRoom": 12.0
+      },
+      "penetrationVolumeMm3": 0.0,
+      "closestLegPointXYZ": [
+       -31.36,
+       -20.28,
+       -44.64
+      ],
+      "vertexGap": 5.022,
+      "note": "closest point from a subset of the leg vertices (memory bound); minGapMm is the exact manifold value"
+     }
+    },
+    "hipBodies": {
+     "minGapMm": 4.671585651684455,
+     "worstGlobalFrame": 91641,
+     "worstFile": "phase1-old120-action40.json",
+     "worstFrameInRun": 270,
+     "worstPart": "right_yaw",
+     "componentGaps": {
+      "body": 4.684,
+      "cover": 12.0,
+      "neckPlugRoom": 12.0
+     }
+    }
+   },
+   "allFrames": {
+    "frames": 304253,
+    "pitchChain": {
+     "minGapMm": 5.021363182672512,
+     "exactChecked": true,
+     "worstGlobalFrame": 120040,
+     "worstFile": "phase1-scan-high-old0-delay2-kp300.json",
+     "worstFrameInRun": 1021,
+     "worstPart": "right_lower",
+     "label": "shin",
+     "framesUnder1": 0,
+     "framesUnder2": 0,
+     "framesUnder3": 0,
+     "q": {
+      "right_hip_yaw": 0.22827944789141877,
+      "right_hip_roll": 0.17438208151375748,
+      "right_hip_pitch": 0.19433733567289285,
+      "right_knee": -0.021089114977078504,
+      "right_ankle": -0.12487053324945724
+     },
+     "attribution": {
+      "closestComponent": "body",
+      "componentGaps": {
+       "body": 5.021,
+       "cover": 9.322,
+       "neckPlugRoom": 12.0
+      },
+      "penetrationVolumeMm3": 0.0,
+      "closestLegPointXYZ": [
+       -31.36,
+       -20.28,
+       -44.64
+      ],
+      "vertexGap": 5.022,
+      "note": "closest point from a subset of the leg vertices (memory bound); minGapMm is the exact manifold value"
+     }
+    },
+    "hipBodies": {
+     "minGapMm": 4.091545757518305,
+     "worstGlobalFrame": 100504,
+     "worstFile": "phase1-old120-push.json",
+     "worstFrameInRun": 312,
+     "worstPart": "right_yaw",
+     "componentGaps": {
+      "body": 4.091,
+      "cover": 12.0,
+      "neckPlugRoom": 12.0
+     }
+    }
+   },
+   "flagged": 14,
+   "elapsed_s": 170.4,
+   "rssBytes": 786546688
+  },
+  "fitStudyReference": "4.50 / 5.32 mm (hull of Layout L)",
+  "pass": true
+ },
+ "check6_assembly": {
+  "result": {
+   "pack_body_plus_x_30": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "torso_base",
+    "closestOffset": [
+     -0.0,
+     -0.0,
+     -0.0
+    ],
+    "steps": 61,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       -30.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -29.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -29.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -28.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -28.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -27.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -27.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -26.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -26.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -25.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -25.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -24.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -24.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -23.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -23.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -22.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -22.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -21.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -21.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -20.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -20.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -19.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -19.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -18.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -18.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -17.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -17.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -16.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -16.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -15.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -15.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -9.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -9.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -8.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -8.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -7.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.5238,
+      "torso_base"
+     ],
+     [
+      [
+       -7.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.0297,
+      "torso_base"
+     ],
+     [
+      [
+       -6.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.5393,
+      "torso_base"
+     ],
+     [
+      [
+       -6.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.0581,
+      "torso_base"
+     ],
+     [
+      [
+       -5.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.6079,
+      "torso_base"
+     ],
+     [
+      [
+       -5.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3441,
+      "torso_base"
+     ],
+     [
+      [
+       -4.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3354,
+      "torso_base"
+     ],
+     [
+      [
+       -4.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.293,
+      "motor5"
+     ],
+     [
+      [
+       -3.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2844,
+      "motor5"
+     ],
+     [
+      [
+       -3.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2758,
+      "motor10"
+     ],
+     [
+      [
+       -2.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2673,
+      "motor10"
+     ],
+     [
+      [
+       -2.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2593,
+      "motor5"
+     ],
+     [
+      [
+       -1.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2506,
+      "motor5"
+     ],
+     [
+      [
+       -1.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2413,
+      "motor10"
+     ],
+     [
+      [
+       -0.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2327,
+      "motor10"
+     ],
+     [
+      [
+       -0.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.0,
+      "torso_base"
+     ]
+    ]
+   },
+   "cover_plus_x_15_shells_off": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "body",
+    "closestOffset": [
+     -0.0,
+     -0.0,
+     -0.0
+    ],
+    "steps": 31,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       -15.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.5179,
+      "dfr_box"
+     ],
+     [
+      [
+       -9.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.0224,
+      "dfr_box"
+     ],
+     [
+      [
+       -9.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.5297,
+      "dfr_box"
+     ],
+     [
+      [
+       -8.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.044,
+      "dfr_box"
+     ],
+     [
+      [
+       -8.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.5831,
+      "dfr_box"
+     ],
+     [
+      [
+       -7.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -7.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -6.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -6.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -5.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -5.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -4.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -4.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -3.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -3.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -2.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -2.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -1.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -1.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -0.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -0.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "cover_plus_x_15_shells_on": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "body",
+    "closestOffset": [
+     -0.0,
+     -0.0,
+     -0.0
+    ],
+    "steps": 31,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       -15.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -14.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -13.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -12.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -11.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       -10.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.5179,
+      "dfr_box"
+     ],
+     [
+      [
+       -9.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      2.0224,
+      "dfr_box"
+     ],
+     [
+      [
+       -9.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.5297,
+      "dfr_box"
+     ],
+     [
+      [
+       -8.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      1.044,
+      "dfr_box"
+     ],
+     [
+      [
+       -8.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.5831,
+      "dfr_box"
+     ],
+     [
+      [
+       -7.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -7.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -6.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -6.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -5.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -5.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -4.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -4.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -3.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -3.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -2.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -2.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -1.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -1.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -0.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.3,
+      "dfr_box"
+     ],
+     [
+      [
+       -0.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "openrb_plus_x_20_straight": {
+    "maxOverlapMm3": 46.6449,
+    "minGapMm": 0.0,
+    "firstCollision": {
+     "offset": [
+      -20.0,
+      -0.0,
+      -0.0
+     ],
+     "obstacle": "body",
+     "overlapMm3": 1.847
+    },
+    "closestObstacle": "body",
+    "closestOffset": [
+     -20.0,
+     -0.0,
+     -0.0
+    ],
+    "steps": 41,
+    "stepMm": 0.5,
+    "collisionSteps": 33,
+    "pass": false,
+    "stepTable": [
+     [
+      [
+       -20.0,
+       -0.0,
+       -0.0
+      ],
+      1.847,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -19.5,
+       -0.0,
+       -0.0
+      ],
+      6.4645,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -19.0,
+       -0.0,
+       -0.0
+      ],
+      11.082,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -18.5,
+       -0.0,
+       -0.0
+      ],
+      14.9352,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -18.0,
+       -0.0,
+       -0.0
+      ],
+      16.5275,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -17.5,
+       -0.0,
+       -0.0
+      ],
+      18.1361,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -17.0,
+       -0.0,
+       -0.0
+      ],
+      19.7686,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -16.5,
+       -0.0,
+       -0.0
+      ],
+      21.4011,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -16.0,
+       -0.0,
+       -0.0
+      ],
+      23.0102,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -15.5,
+       -0.0,
+       -0.0
+      ],
+      24.6024,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -15.0,
+       -0.0,
+       -0.0
+      ],
+      26.1947,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -14.5,
+       -0.0,
+       -0.0
+      ],
+      27.787,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -14.0,
+       -0.0,
+       -0.0
+      ],
+      29.3792,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -13.5,
+       -0.0,
+       -0.0
+      ],
+      29.1245,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -13.0,
+       -0.0,
+       -0.0
+      ],
+      26.0993,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -12.5,
+       -0.0,
+       -0.0
+      ],
+      23.0839,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -12.0,
+       -0.0,
+       -0.0
+      ],
+      26.0041,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -11.5,
+       -0.0,
+       -0.0
+      ],
+      38.92,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -11.0,
+       -0.0,
+       -0.0
+      ],
+      46.6449,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -10.5,
+       -0.0,
+       -0.0
+      ],
+      44.0245,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -10.0,
+       -0.0,
+       -0.0
+      ],
+      30.7978,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -9.5,
+       -0.0,
+       -0.0
+      ],
+      18.8688,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -9.0,
+       -0.0,
+       -0.0
+      ],
+      17.2766,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -8.5,
+       -0.0,
+       -0.0
+      ],
+      15.6843,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -8.0,
+       -0.0,
+       -0.0
+      ],
+      14.092,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -7.5,
+       -0.0,
+       -0.0
+      ],
+      12.4998,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -7.0,
+       -0.0,
+       -0.0
+      ],
+      10.9075,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -6.5,
+       -0.0,
+       -0.0
+      ],
+      9.3152,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -6.0,
+       -0.0,
+       -0.0
+      ],
+      7.7131,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -5.5,
+       -0.0,
+       -0.0
+      ],
+      6.0996,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -5.0,
+       -0.0,
+       -0.0
+      ],
+      4.4915,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -4.5,
+       -0.0,
+       -0.0
+      ],
+      2.8981,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -4.0,
+       -0.0,
+       -0.0
+      ],
+      1.3058,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       -3.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.041,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -2.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -2.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -1.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -1.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.2632,
+      "body"
+     ],
+     [
+      [
+       -0.5,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.5,
+      "body"
+     ],
+     [
+      [
+       -0.0,
+       -0.0,
+       -0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "openrb_drop_in_z30_at_xminus3_then_plus_x_3": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "body",
+    "closestOffset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "steps": 67,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       -3.0,
+       0.0,
+       30.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       29.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       29.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       28.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       28.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       27.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       27.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       26.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       26.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       25.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       25.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       24.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       24.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       23.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       23.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       22.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       22.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       21.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       21.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       20.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       20.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       19.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       19.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       18.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       18.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       17.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       17.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       16.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       16.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       15.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       15.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       14.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       14.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       13.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       13.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       12.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       12.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       11.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       11.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       10.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       10.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       9.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       9.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       8.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       8.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       7.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       7.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       6.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       6.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       5.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       5.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       4.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       4.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       3.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       3.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       2.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       2.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       1.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       1.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       0.5
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -3.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -2.5,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -2.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -1.5,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.26,
+      "body"
+     ],
+     [
+      [
+       -1.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.2632,
+      "body"
+     ],
+     [
+      [
+       -0.5,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.5,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "dfr_from_above_35": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "body",
+    "closestOffset": [
+     0.0,
+     0.0,
+     21.0
+    ],
+    "steps": 71,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       0.0,
+       0.0,
+       35.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       34.5
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       34.0
+      ],
+      0.0,
+      2.571,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       33.5
+      ],
+      0.0,
+      2.0881,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       33.0
+      ],
+      0.0,
+      1.6155,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       32.5
+      ],
+      0.0,
+      1.1662,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       32.0
+      ],
+      0.0,
+      0.781,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       31.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       31.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       30.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       30.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       29.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       29.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       28.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       28.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       27.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       27.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       26.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       26.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       25.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       25.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       24.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       24.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       23.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       23.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       22.5
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       22.0
+      ],
+      0.0,
+      0.6,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       21.5
+      ],
+      0.0,
+      0.5,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       21.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       20.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       20.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       19.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       19.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       18.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       18.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       17.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       17.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       16.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       16.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       15.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       15.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       14.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       14.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       13.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       13.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       12.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       12.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       11.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       11.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       10.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       10.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       9.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       9.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       8.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       8.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       7.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       7.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       6.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       6.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       5.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       5.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       4.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       4.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       3.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       3.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       2.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       2.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       1.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       1.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       0.5
+      ],
+      0.0,
+      0.0,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "imu_from_above_30": {
+    "maxOverlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "firstCollision": null,
+    "closestObstacle": "body",
+    "closestOffset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "steps": 61,
+    "stepMm": 0.5,
+    "collisionSteps": 0,
+    "pass": true,
+    "stepTable": [
+     [
+      [
+       0.0,
+       0.0,
+       30.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       29.5
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       29.0
+      ],
+      0.0,
+      3.0,
+      null
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       28.5
+      ],
+      0.0,
+      2.5068,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       28.0
+      ],
+      0.0,
+      2.0085,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       27.5
+      ],
+      0.0,
+      1.5114,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       27.0
+      ],
+      0.0,
+      1.017,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       26.5
+      ],
+      0.0,
+      0.5331,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       26.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       25.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       25.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       24.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       24.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       23.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       23.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       22.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       22.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       21.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       21.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       20.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       20.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       19.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       19.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       18.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       18.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       17.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       17.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       16.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       16.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       15.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       15.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       14.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       14.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       13.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       13.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       12.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       12.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       11.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       11.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       10.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       10.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       9.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       9.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       8.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       8.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       7.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       7.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       6.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       6.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       5.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       5.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       4.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       4.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       3.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       3.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       2.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       2.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       1.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       1.0
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       0.5
+      ],
+      0.0,
+      0.185,
+      "body"
+     ],
+     [
+      [
+       0.0,
+       0.0,
+       0.0
+      ],
+      0.0,
+      0.0,
+      "body"
+     ]
+    ]
+   },
+   "screwdriver_dia6_len60": {
+    "openrb_screw_y-10.54_z-39.75": {
+     "tipX": -28.4,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.05
+      },
+      "openrb": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.9213
+      }
+     },
+     "shellsOn": {
+      "shell_left": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      },
+      "shell_right": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      }
+     },
+     "shaftRadiusLimits": {
+      "openrbComponentsMm": 6.182,
+      "dia6_overlapOpenrbMm3": 0.0,
+      "dia6_overlapBodyMm3": 0.0,
+      "dia5_overlapOpenrbMm3": 0.0,
+      "dia5_overlapBodyMm3": 0.0,
+      "dia4.5_overlapOpenrbMm3": 0.0,
+      "dia4.5_overlapBodyMm3": 0.0,
+      "dia4_overlapOpenrbMm3": 0.0,
+      "dia4_overlapBodyMm3": 0.0
+     },
+     "pass": true
+    },
+    "openrb_screw_y9.96_z-39.75": {
+     "tipX": -28.4,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.05
+      },
+      "openrb": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.9032
+      }
+     },
+     "shellsOn": {
+      "shell_left": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      },
+      "shell_right": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      }
+     },
+     "shaftRadiusLimits": {
+      "openrbComponentsMm": 6.154,
+      "dia6_overlapOpenrbMm3": 0.0,
+      "dia6_overlapBodyMm3": 0.0,
+      "dia5_overlapOpenrbMm3": 0.0,
+      "dia5_overlapBodyMm3": 0.0,
+      "dia4.5_overlapOpenrbMm3": 0.0,
+      "dia4.5_overlapBodyMm3": 0.0,
+      "dia4_overlapOpenrbMm3": 0.0,
+      "dia4_overlapBodyMm3": 0.0
+     },
+     "pass": true
+    },
+    "openrb_screw_y-10.54_z21.75": {
+     "tipX": -28.4,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.06
+      },
+      "openrb": {
+       "overlapMm3": 1.4315,
+       "gapMm": 0.0
+      }
+     },
+     "shellsOn": {
+      "shell_left": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      },
+      "shell_right": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      }
+     },
+     "shaftRadiusLimits": {
+      "openrbComponentsMm": 3.036,
+      "dia6_overlapOpenrbMm3": 1.4315,
+      "dia6_overlapBodyMm3": 0.0,
+      "dia5_overlapOpenrbMm3": 0.0,
+      "dia5_overlapBodyMm3": 0.0,
+      "dia4.5_overlapOpenrbMm3": 0.0,
+      "dia4.5_overlapBodyMm3": 0.0,
+      "dia4_overlapOpenrbMm3": 0.0,
+      "dia4_overlapBodyMm3": 0.0
+     },
+     "pass": false
+    },
+    "openrb_screw_y9.96_z21.75": {
+     "tipX": -28.4,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.64
+      },
+      "openrb": {
+       "overlapMm3": 1.6954,
+       "gapMm": 0.0
+      }
+     },
+     "shellsOn": {
+      "shell_left": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      },
+      "shell_right": {
+       "overlapMm3": 0.0,
+       "gapMm": 3.0
+      }
+     },
+     "shaftRadiusLimits": {
+      "openrbComponentsMm": 3.048,
+      "dia6_overlapOpenrbMm3": 1.6954,
+      "dia6_overlapBodyMm3": 0.0,
+      "dia5_overlapOpenrbMm3": 0.0,
+      "dia5_overlapBodyMm3": 0.0,
+      "dia4.5_overlapOpenrbMm3": 0.0,
+      "dia4.5_overlapBodyMm3": 0.0,
+      "dia4_overlapOpenrbMm3": 0.0,
+      "dia4_overlapBodyMm3": 0.0
+     },
+     "pass": false
+    },
+    "cover_screw_y16.1_z26.0": {
+     "tipX": -47.0,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 2.0
+      },
+      "cover": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.0
+      },
+      "shell_left": {
+       "overlapMm3": 0.0,
+       "gapMm": 1.1337
+      }
+     },
+     "pass": true
+    },
+    "cover_screw_y16.1_z-36.5": {
+     "tipX": -47.0,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 2.0
+      },
+      "cover": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.0
+      }
+     },
+     "pass": true
+    },
+    "cover_screw_y-16.1_z26.0": {
+     "tipX": -47.0,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 2.0
+      },
+      "cover": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.0
+      },
+      "shell_right": {
+       "overlapMm3": 0.0,
+       "gapMm": 1.5576
+      }
+     },
+     "pass": true
+    },
+    "cover_screw_y-16.1_z-36.5": {
+     "tipX": -47.0,
+     "nearest": {
+      "body": {
+       "overlapMm3": 0.0,
+       "gapMm": 2.0
+      },
+      "cover": {
+       "overlapMm3": 0.0,
+       "gapMm": 0.0
+      }
+     },
+     "pass": true
+    }
+   },
+   "elapsed_s": 8.2
+  },
+  "notes": [
+   "pack: body alone, +x 30 mm, legs and shells off",
+   "cover: +x 15 mm with the boards in, shells off and on",
+   "OpenRB straight +x 20 mm fails by design: the channel feet, the lips and the corner posts sit in its shadow; the board goes in from above at x -3 (tails clear the pads) and then +x 3 mm onto the pads, which passes",
+   "DFR1202: 35 mm from above; IMU: 30 mm from above; J: +x 20 mm from the rear into its pocket (cover off)",
+   "screwdriver dia 6 x 60 along +x: lower OpenRB screws pass with 0.05 mm to the bottom wall; upper screws: the dia 6 shaft touches the OpenRBs own components next to the holes (see shaftRadiusLimits), the pack itself leaves 0.06 / 0.64 mm; cover screws pass"
+  ],
+  "pass": true
+ },
+ "check7_printability": {
+  "result": {
+   "body": {
+    "printFrameNote": "as modelled: world z up, standing on the bottom wall (z -44)",
+    "bedContactAreaMm2": 660.6,
+    "bedZ": -44.0,
+    "heightMm": 82.8,
+    "footprintXY": [
+     [
+      -45.0,
+      -27.2
+     ],
+     [
+      -13.5,
+      27.2
+     ]
+    ],
+    "overhangFaces": 1170,
+    "overhangAreaMm2": 327.41,
+    "horizontalUndersideAreaMm2": 209.91,
+    "slopedOver45AreaMm2": 117.5,
+    "overhangRegionsLargestFirst": [
+     {
+      "areaMm2": 33.76,
+      "bbox": [
+       [
+        -19.0,
+        -6.6,
+        -2.69
+       ],
+       [
+        -15.5,
+        6.6,
+        -2.63
+       ]
+      ],
+      "centroid": [
+       -17.64,
+       0.03,
+       -2.66
+      ],
+      "faces": 6
+     },
+     {
+      "areaMm2": 23.9,
+      "bbox": [
+       [
+        -19.0,
+        6.53,
+        23.21
+       ],
+       [
+        -14.0,
+        12.47,
+        23.3
+       ]
+      ],
+      "centroid": [
+       -16.7,
+       9.51,
+       23.25
+      ],
+      "faces": 199
+     },
+     {
+      "areaMm2": 23.85,
+      "bbox": [
+       [
+        -19.0,
+        -12.46,
+        23.21
+       ],
+       [
+        -14.0,
+        -6.54,
+        23.3
+       ]
+      ],
+      "centroid": [
+       -16.71,
+       -9.44,
+       23.25
+      ],
+      "faces": 203
+     },
+     {
+      "areaMm2": 21.69,
+      "bbox": [
+       [
+        -19.0,
+        6.53,
+        -3.19
+       ],
+       [
+        -14.0,
+        12.42,
+        -3.1
+       ]
+      ],
+      "centroid": [
+       -16.68,
+       9.46,
+       -3.15
+      ],
+      "faces": 196
+     },
+     {
+      "areaMm2": 21.54,
+      "bbox": [
+       [
+        -19.0,
+        -12.42,
+        -3.19
+       ],
+       [
+        -14.0,
+        -6.54,
+        -3.1
+       ]
+      ],
+      "centroid": [
+       -16.71,
+       -9.44,
+       -3.15
+      ],
+      "faces": 197
+     },
+     {
+      "areaMm2": 20.53,
+      "bbox": [
+       [
+        -17.3,
+        -4.6,
+        4.3
+       ],
+       [
+        -14.3,
+        4.6,
+        4.3
+       ]
+      ],
+      "centroid": [
+       -15.83,
+       -0.95,
+       4.3
+      ],
+      "faces": 23
+     },
+     {
+      "areaMm2": 14.91,
+      "bbox": [
+       [
+        -24.8,
+        -12.31,
+        -42.25
+       ],
+       [
+        -21.0,
+        -8.77,
+        -41.52
+       ]
+      ],
+      "centroid": [
+       -22.9,
+       -10.54,
+       -42.0
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 14.91,
+      "bbox": [
+       [
+        -24.8,
+        8.19,
+        -42.25
+       ],
+       [
+        -21.0,
+        11.73,
+        -41.52
+       ]
+      ],
+      "centroid": [
+       -22.9,
+       9.96,
+       -42.0
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 14.91,
+      "bbox": [
+       [
+        -24.8,
+        -12.31,
+        19.25
+       ],
+       [
+        -21.0,
+        -8.77,
+        19.98
+       ]
+      ],
+      "centroid": [
+       -22.9,
+       -10.54,
+       19.5
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 14.91,
+      "bbox": [
+       [
+        -24.8,
+        8.19,
+        19.25
+       ],
+       [
+        -21.0,
+        11.73,
+        19.98
+       ]
+      ],
+      "centroid": [
+       -22.9,
+       9.96,
+       19.5
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 11.54,
+      "bbox": [
+       [
+        -21.0,
+        21.21,
+        32.0
+       ],
+       [
+        -19.0,
+        26.91,
+        32.29
+       ]
+      ],
+      "centroid": [
+       -20.0,
+       25.68,
+       32.09
+      ],
+      "faces": 6
+     },
+     {
+      "areaMm2": 11.39,
+      "bbox": [
+       [
+        -31.9,
+        13.6,
+        -16.5
+       ],
+       [
+        -25.2,
+        15.3,
+        -16.5
+       ]
+      ],
+      "centroid": [
+       -28.55,
+       14.45,
+       -16.5
+      ],
+      "faces": 2
+     },
+     {
+      "areaMm2": 11.35,
+      "bbox": [
+       [
+        -21.0,
+        -20.86,
+        -40.0
+       ],
+       [
+        -19.0,
+        -15.3,
+        -39.56
+       ]
+      ],
+      "centroid": [
+       -20.0,
+       -19.31,
+       -39.91
+      ],
+      "faces": 9
+     },
+     {
+      "areaMm2": 11.35,
+      "bbox": [
+       [
+        -21.0,
+        15.3,
+        -40.0
+       ],
+       [
+        -19.0,
+        20.86,
+        -39.56
+       ]
+      ],
+      "centroid": [
+       -20.07,
+       19.44,
+       -39.87
+      ],
+      "faces": 9
+     },
+     {
+      "areaMm2": 11.34,
+      "bbox": [
+       [
+        -21.0,
+        -26.83,
+        32.0
+       ],
+       [
+        -19.0,
+        -21.21,
+        32.23
+       ]
+      ],
+      "centroid": [
+       -20.0,
+       -25.6,
+       32.06
+      ],
+      "faces": 6
+     },
+     {
+      "areaMm2": 6.53,
+      "bbox": [
+       [
+        -24.8,
+        -11.11,
+        -39.18
+       ],
+       [
+        -19.6,
+        -9.97,
+        -38.95
+       ]
+      ],
+      "centroid": [
+       -22.2,
+       -10.54,
+       -39.03
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.53,
+      "bbox": [
+       [
+        -24.8,
+        9.39,
+        -39.18
+       ],
+       [
+        -19.6,
+        10.53,
+        -38.95
+       ]
+      ],
+      "centroid": [
+       -22.2,
+       9.96,
+       -39.03
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.53,
+      "bbox": [
+       [
+        -24.8,
+        -11.11,
+        22.32
+       ],
+       [
+        -19.6,
+        -9.97,
+        22.55
+       ]
+      ],
+      "centroid": [
+       -22.2,
+       -10.54,
+       22.47
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.53,
+      "bbox": [
+       [
+        -24.8,
+        9.39,
+        22.32
+       ],
+       [
+        -19.6,
+        10.53,
+        22.55
+       ]
+      ],
+      "centroid": [
+       -22.2,
+       9.96,
+       22.47
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.03,
+      "bbox": [
+       [
+        -45.0,
+        15.53,
+        26.57
+       ],
+       [
+        -40.2,
+        16.67,
+        26.8
+       ]
+      ],
+      "centroid": [
+       -42.6,
+       16.1,
+       26.72
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.03,
+      "bbox": [
+       [
+        -45.0,
+        15.53,
+        -35.93
+       ],
+       [
+        -40.2,
+        16.67,
+        -35.7
+       ]
+      ],
+      "centroid": [
+       -42.6,
+       16.1,
+       -35.78
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.03,
+      "bbox": [
+       [
+        -45.0,
+        -16.67,
+        26.57
+       ],
+       [
+        -40.2,
+        -15.53,
+        26.8
+       ]
+      ],
+      "centroid": [
+       -42.6,
+       -16.1,
+       26.72
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 6.03,
+      "bbox": [
+       [
+        -45.0,
+        -16.67,
+        -35.93
+       ],
+       [
+        -40.2,
+        -15.53,
+        -35.7
+       ]
+      ],
+      "centroid": [
+       -42.6,
+       -16.1,
+       -35.78
+      ],
+      "faces": 24
+     },
+     {
+      "areaMm2": 4.69,
+      "bbox": [
+       [
+        -19.0,
+        0.5,
+        23.71
+       ],
+       [
+        -15.5,
+        6.6,
+        23.77
+       ]
+      ],
+      "centroid": [
+       -18.21,
+       5.48,
+       23.73
+      ],
+      "faces": 7
+     },
+     {
+      "areaMm2": 2.26,
+      "bbox": [
+       [
+        -19.0,
+        -6.56,
+        23.71
+       ],
+       [
+        -17.45,
+        -3.5,
+        23.74
+       ]
+      ],
+      "centroid": [
+       -18.43,
+       -5.82,
+       23.72
+      ],
+      "faces": 6
+     }
+    ],
+    "regionsCount": 31,
+    "selfSupportingUndersideAreaMm2": 280.52
+   },
+   "cover": {
+    "printFrameNote": "rotated: x' = y, y' = z, z' = x; outer face x = -47 lies on the bed",
+    "bedContactAreaMm2": 2547.3,
+    "bedZ": -47.0,
+    "heightMm": 9.5,
+    "footprintXY": [
+     [
+      -18.6,
+      -44.0
+     ],
+     [
+      18.6,
+      29.5
+     ]
+    ],
+    "overhangFaces": 124,
+    "overhangAreaMm2": 103.77,
+    "horizontalUndersideAreaMm2": 0.0,
+    "slopedOver45AreaMm2": 103.77,
+    "overhangRegionsLargestFirst": [
+     {
+      "areaMm2": 48.94,
+      "bbox": [
+       [
+        17.65,
+        -37.65,
+        -47.0
+       ],
+       [
+        18.31,
+        29.38,
+        -46.71
+       ]
+      ],
+      "centroid": [
+       18.0,
+       -3.37,
+       -46.89
+      ],
+      "faces": 32
+     },
+     {
+      "areaMm2": 48.94,
+      "bbox": [
+       [
+        -18.31,
+        -37.65,
+        -47.0
+       ],
+       [
+        -17.65,
+        29.39,
+        -46.71
+       ]
+      ],
+      "centroid": [
+       -18.0,
+       -3.38,
+       -46.89
+      ],
+      "faces": 32
+     },
+     {
+      "areaMm2": 2.94,
+      "bbox": [
+       [
+        14.35,
+        -44.0,
+        -47.0
+       ],
+       [
+        15.01,
+        -40.0,
+        -46.71
+       ]
+      ],
+      "centroid": [
+       14.7,
+       -42.0,
+       -46.89
+      ],
+      "faces": 30
+     },
+     {
+      "areaMm2": 2.94,
+      "bbox": [
+       [
+        -15.01,
+        -44.0,
+        -47.0
+       ],
+       [
+        -14.35,
+        -40.0,
+        -46.71
+       ]
+      ],
+      "centroid": [
+       -14.7,
+       -42.0,
+       -46.89
+      ],
+      "faces": 30
+     }
+    ],
+    "regionsCount": 4,
+    "selfSupportingUndersideAreaMm2": 108.72
+   }
+  },
+  "bedContactTargetMm2": 300,
+  "pass": true
+ },
+ "check8_features": {
+  "file": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack/features.json",
+  "bodyFeatures": 16,
+  "coverFeatures": 3,
+  "pass": true
+ },
+ "coordinatorConditions": {
+  "1_notUgly": {
+   "outerSilhouette": {
+    "maxAbsY_z_between_-40_and_30": 21.3,
+    "maxAbsY_z_below_-40": 15.3,
+    "maxAbsY_z_above_32": 27.2,
+    "maxAbsY_z_30_to_32": 26.2,
+    "topZ": 38.799,
+    "bottomZ": -44.0,
+    "minX": -45.0,
+    "maxAbsY_x_behind_-21": 18.6,
+    "coverMinX": -47.0,
+    "coverMaxAbsY": 18.6
+   },
+   "requirement": "|y| <= 21.3 below z 30 (plate), 15.3 behind the plate below z -40, cover flush",
+   "coverFlush": {
+    "coverBodyGapMm": 0.0,
+    "coverBodyOverlapMm3": -0.0,
+    "coverHalfWidth": 18.6,
+    "postsHalfWidth": 18.6,
+    "note": "cover outline = post outline (18.6 above z -36.7, 45-degree corners to 15.3 at z -40, 15.3 below)"
+   },
+   "featuresWithPurpose": 19,
+   "strayFeatures": "none: every boss, rib, slot and opening is listed in features.json with its purpose",
+   "pass": true
+  },
+  "2_lowerFrontCornerChamferable": {
+   "region": {
+    "regionBox": [
+     [
+      -30,
+      -15.3,
+      -44
+     ],
+     [
+      -19,
+      15.3,
+      -35
+     ]
+    ],
+    "materialInRegionMm3": 1147.43,
+    "plainShellMm3": 1017.48,
+    "featureMaterialBeyondPlainShellMm3": 135.56,
+    "featureMaterialBounds": [
+     [
+      -30.0,
+      -15.4,
+      -44.0
+     ],
+     [
+      -19.0,
+      15.4,
+      -35.0
+     ]
+    ],
+    "note": "material beyond the plain shell in this region is the two lower OpenRB pads on the plate rear face (x -24.8..-21, z -42.25..-37.25) and nothing else; they sit inside the bay"
+   },
+   "freeToChamfer": [
+    "plate front face x = -19 for |y| <= 15.3, z -44..-35 (plain, no feature)",
+    "bottom face z = -44 for x -30..-19, |y| <= 15.3 (plain; the USB opening starts at x -23.9 inside the wall)",
+    "the front-bottom edge between them (x -19, z -44)"
+   ],
+   "parameter": "build_rear_pack.py CHAMFER (cx, cz): plane through (x -19-cx, z -44) and (x -19, z -44+cz), full width",
+   "limits": [
+    "cx <= 4.9 keeps the cut in front of the USB opening (x -23.9)",
+    "cz * (1 - 2/cx) <= 1.2 for cx > 2 keeps the cut below the bay floor (z -42.8) behind the plate (x < -21); for cx <= 2 the cut stays in the plate slab and cz may reach 9",
+    "the lower OpenRB pads (z >= -42.25 at x -24.8..-21) are then automatically clear"
+   ],
+   "reachResult": "coordinator hip-pitch reach check: the bay corner is not a limiter (contacts at 24-26 deg occur where the original battery touched at 10 deg); no chamfer applied (cx = cz = 0)",
+   "pass": true
+  },
+  "3_easyToAssembleAndPlug": {
+   "portsFaceOpenBack": "OpenRB components (all four DXL ports, terminal) face -x = the open back of the bay; DFR1202 components and pads face -x = the cover side; cover off gives straight access",
+   "neckPortFingerRoom": {
+    "windowXmm": 6.7,
+    "windowZmm": 12.5,
+    "requiredMm": 6.6,
+    "nothingOutsideWall": true
+   },
+   "boardsEnterFromRearOrAbove": {
+    "OpenRB": "from above at x -3 then +x 3 onto the pads (cover off): pass",
+    "DFR1202": "from above: pass",
+    "IMU": "from above: pass",
+    "cover": "+x: pass"
+   },
+   "screwHeadsFromBehind": {
+    "cover screws": "four heads on the flat back face, straight dia 6 driver passes",
+    "OpenRB screws": "heads on the component side, straight lane from the back with the DFR out; dia 6 passes the pack, the boards own components limit the shaft near the upper holes (see check6)"
+   },
+   "noScrewHiddenBehindCable": "cover screws sit at |y| 16.1 outside the wiring volume (|y| <= 13.6); the OpenRB lanes (|y| 7..13.5) run beside the central cable paths (terminal |y| <= 4.8, centre ports |y| <= 4.3, tether |y| <= 3) and the OpenRB is screwed before any cable is plugged",
+   "onlyClampIsFourHipYawScrews": true,
+   "noFuses": true,
+   "belowShellsVsBatteryDepth": {
+    "packBottomZ": -44.0,
+    "originalBatteryFloorZ": -39.38,
+    "deeperByMm": 4.62,
+    "coverBackX": -47.0,
+    "originalBatteryBackX": -46.83,
+    "pass": false,
+    "note": "the brief fixes the OpenRB at z -42 with a 2 mm wall below it, so the pack bottom cannot stay within the original 39 mm battery depth without moving the boards; recorded as a deviation"
+   },
+   "pass": true
+  }
+ },
+ "junctionJRemoved": {
+  "reason": "2026-10-12 decision: servo power goes through the OpenRB-150 DXL ports as on the original MicroDuck (and on Microban, whose HAT carries the whole servo chain on two ports); the 3 A port rating is to be checked by summing XL330 Present Current while walking, not pre-empted with a bypass",
+  "choice": "J pocket (floor, divider, front stop) removed; the +y wall window is back to z -29..-16.5 (neck plug room only); the 5 V leads to the OpenRB terminal and the Pi leave the DFR1202 5V/GND pads directly",
+  "sweepNote": "the walking sweep ran on the geometry with the J pocket and the z -29 window; removing the pocket only takes material away, so the sweep clearances still bound this body"
+ },
+ "deviationsFromBrief": [
+  "OpenRB pads are 3.8 mm tall (x -24.8..-21) with M2x6 screws, not 1.4 mm / M2x4: the model PCB back face is at x -24.8 (the briefs -22.4 is the trimmed solder-tail plane)",
+  "OpenRB hole centres at z -39.75 / 21.75 (model), 0.45 below the briefs -39.3 / 22.2; y -10.54 / 9.96",
+  "cover posts: the briefs dia 5 posts at y +-13.8 would sit inside the DFR1202 corners; the posts are corner blocks |y| 13.6..18.6 with pilots at (+-16.1, 26.0) and (+-16.1, -36.5), the cover is 37.2 wide above z -36.7",
+  "side walls are 1.7 thick with the inner face at |y| 13.6 (not 13..15) and the bottom wall 1.2 thick (z -44..-42.8): both leave the dia 6 screwdriver lane to the lower OpenRB screws",
+  "DFR lips span |y| 11.9..13.6 and z -3.5..18 only: outside the OpenRB drop-in shadow and the upper driver lane; feet stop at x -38.5 for the same reason",
+  "the original upper-tab thin web (|y| < 6.6) is removed so the IMU board can stand through it; lugs, holes, seats and gussets are the original ones",
+  "head top edge lowered 0.6 mm under the shell rear-top edge (38.8 at the notch instead of 39.4); notch 12 x 6.1",
+  "no junction J: the servos take power through the OpenRB ports (see junctionJRemoved)",
+  "pack bottom z -44 is 4.62 mm below the original battery floor (z -39.38); cover back x -47 is 0.17 behind the battery back",
+  "IMU four-pin pattern not used: the pins would run along y through the slot; the board is held by the edge slot, the shelf and one zip tie"
+ ],
+ "notVerified": [
+  "DFR1202 product page could not be fetched (wrong product id / bot check); the pad side (three pads on one 26 mm edge, VIN-GND-5V) comes from the guide step text",
+  "OpenRB screw heads on the component side: checked only against the guide board model (dia 4 x 2 head cylinders, zero overlap)",
+  "print tolerances (slot and channel clearances 0.19-0.6 mm) are nominal CAD values",
+  "cable routing inside the bay was not modelled; the sweeps use the briefs plug rooms only"
+ ]
+}

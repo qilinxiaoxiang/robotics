@@ -1,0 +1,1734 @@
+{
+ "_method": "Which plug housings and wire groups can be threaded through the narrow passages, at rest and at a threading pose.\n\nUses the exact sections of sections.py (same planes, same 0.05 mm raster, existing cables as obstacles). A housing is\nthreaded end first, so its cross-section (a rectangle perpendicular to the wire) must fit inside the free passage at\nsome position and angle: the free component is tested against the rectangle (plus 0.1 mm clearance all round) rotated in\n5 deg steps (FFT correlation: every rectangle pixel must be free). A round group of diameter d fits when the distance\nraster reaches d/2. Each passage is checked at q = 0 and at every head roll in sections.ROLLS; the threading pose is the\nroll that gives the most room (servos are back-drivable by hand with the power off), the running condition is the worst\nroll inside the policy range.\nHousing outlines: Dupont from the 2.54 mm pitch (nominal); JST outlines are nominal catalogue sizes quoted from memory\n(inference) and must be checked against the datasheet of the part actually bought.\nWrites connector-fit.json.",
+ "clearanceMm": 0.1,
+ "passages": {
+  "slot-minus-y-z129": {
+   "label": "slot between yaw link and jaw support, -y side, narrowest height",
+   "atQ0": {
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": 5.0,
+    "radiusMm": 11.325,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": 0.0,
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": false,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 4.125,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 3.975,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 3.625,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 3.225,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 2.825,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 2.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 11.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 11.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 11.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 11.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 11.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "chan-minus-y-z106": {
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 106",
+   "atQ0": {
+    "radiusMm": 3.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.475,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": 0.0,
+    "radiusMm": 3.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": true,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 11.475,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 11.475,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 11.475,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 11.475,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 5.414,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 3.625,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 3.925,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 4.148,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 4.324,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 4.425,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 4.43,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "chan-minus-y-z108": {
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 108",
+   "atQ0": {
+    "radiusMm": 3.675,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.575,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -5.0,
+    "radiusMm": 3.423,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": true,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 11.575,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 11.575,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 11.575,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 3.975,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 3.423,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 3.675,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 3.912,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 4.075,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 4.175,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 4.175,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 4.125,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "chan-minus-y-z110": {
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 110",
+   "atQ0": {
+    "radiusMm": 3.695,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -10.0,
+    "radiusMm": 3.245,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": false,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 11.625,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 11.625,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 3.825,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 3.245,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 3.5,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 3.695,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 3.875,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 3.945,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 3.975,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 3.912,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 3.775,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "gap-plus-y-z127": {
+   "label": "servo-cable gap behind the jaw servo, +y side, narrowest height",
+   "atQ0": {
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": 25.0,
+    "radiusMm": 4.475,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -5.0,
+    "radiusMm": 2.125,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": false,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 3.575,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 3.425,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 2.775,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 2.23,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 2.125,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 2.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 2.775,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 3.213,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 3.652,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 4.075,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 4.475,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "gap-plus-y-z115": {
+   "label": "servo-cable gap behind the jaw servo, +y side (yaw link | jaw servo), mid height",
+   "atQ0": {
+    "radiusMm": 2.375,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -5.0,
+    "radiusMm": 2.419,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 2.325,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": false,
+    "dupont-1x5 (12.7 x 2.54)": false,
+    "dupont-2x4 (10.16 x 5.08)": false,
+    "dupont-2x5 (12.7 x 5.08)": false,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": false,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 2.375,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 2.419,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 2.375,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 2.375,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 2.325,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "pi-top-minus-y-x61": {
+   "label": "over the Pi top edge, -y",
+   "atQ0": {
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": true,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 4.275,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "dupont-2x5 (12.7 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  },
+  "pi-top-plus-y-x61": {
+   "label": "over the Pi top edge, +y (where the current route crosses)",
+   "atQ0": {
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": false,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   },
+   "groupFitsAtEveryPolicyRoll": {
+    "round bundle 6.7 mm (V1.8)": true,
+    "four 22-26 AWG wires twisted, about 4.1 mm": true,
+    "one 22 AWG silicone wire 1.7 mm": true
+   },
+   "rows": [
+    {
+     "rollDeg": -25.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -21.4,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -15.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -10.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": -5.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 0.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 5.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 9.9,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 15.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 20.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    },
+    {
+     "rollDeg": 25.0,
+     "radiusMm": 4.094,
+     "housingsThatFit": [
+      "dupont-1pin (2.54 x 2.54)",
+      "dupont-1x2 (5.08 x 2.54)",
+      "dupont-1x4 (10.16 x 2.54)",
+      "dupont-1x5 (12.7 x 2.54)",
+      "dupont-2x4 (10.16 x 5.08)",
+      "jst-sh-4 housing (6.0 x 2.95, nominal, inference)",
+      "jst-ph-4 housing (9.9 x 4.5, nominal, inference)"
+     ]
+    }
+   ]
+  }
+ }
+}

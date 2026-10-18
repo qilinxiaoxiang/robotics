@@ -1,0 +1,70 @@
+{
+ "rows": 3000,
+ "span_s": 68.24,
+ "method": "Reconstruct the measured Pi <-> Mac control timeline from the Mac-side walk log.\n\nInput: link-log-last3000.jsonl, the last 3000 rows of /tmp/duck_walk_log.jsonl copied 2026-10-14 01:10 EDT.\nRow fields used: t (Mac receive time, time.time()), pi_t (Pi time.time() when the state packet was packed, right\nafter the joint read), read_ms (Pi joint sync_read duration), imu_age (Pi perf_counter age of the IMU snapshot at\npacking; host-receipt based, BNO085 internal latency not included).\n\nPi loop (guide/firmware/pi/pi_bridge.py): drain UDP commands -> sync_write goals -> sync_read joints -> pack/send.\nMac loop (guide/firmware/mac/walk_brain.py): every received state -> policy -> command packet back.\n\nPer state i (Pi clock; the two clocks are treated as equal because min(rx_lag) = 0.16 ms over the window, so the\noffset is below that and is absorbed as transit):\n  joint sample   s_j[i] = pi_t[i] - read_ms[i]/2           (bridge stamps the middle of the read)\n  imu sample     s_i[i] = pi_t[i] - imu_age[i]\n  Mac receive    r[i]   = t[i]\n  Mac send       r[i] + 1 ms                               (assumption: ONNX + packing)\n  Pi arrival     a[i]   = r[i] + 1 ms + back[i]            back[i]: return one-way latency, drawn without\n                                                           replacement from the measured forward rx_lag set\n                                                           (assumption: symmetric Wi-Fi path), rng seed 0\n  Pi write times W[k]   = pi_t[k] - read_ms[k]             (goals are written immediately before the read)\n  Pi drain times D[k]   = W[k] - 1 ms                      (assumption: sync_write takes ~1 ms)\nA command is applied at the first W[k] whose D[k] >= a[i]; if several arrive before one drain, only the newest is\napplied (pi_bridge keeps the highest sequence). Applied age = W[k] - s_j[i] (what pi_bridge reports as\napplied_age). Between writes the goal in force is held; the age of the goal in force at time T is T - s_j[i*].\n",
+ "mac_receive_interval": {
+  "p5_ms": 1.32,
+  "p50_ms": 21.0,
+  "p95_ms": 48.87,
+  "p99_ms": 78.1,
+  "max_ms": 308.58
+ },
+ "pi_send_interval": {
+  "p5_ms": 14.37,
+  "p50_ms": 21.98,
+  "p95_ms": 32.65,
+  "p99_ms": 37.29,
+  "max_ms": 44.84
+ },
+ "joint_read": {
+  "p5_ms": 9.08,
+  "p50_ms": 11.87,
+  "p95_ms": 20.05,
+  "p99_ms": 23.6,
+  "max_ms": 29.53
+ },
+ "imu_age_at_send": {
+  "p5_ms": 6.64,
+  "p50_ms": 13.69,
+  "p95_ms": 27.42,
+  "p99_ms": 35.79,
+  "max_ms": 51.13
+ },
+ "rx_lag": {
+  "p5_ms": 1.46,
+  "p50_ms": 7.53,
+  "p95_ms": 47.07,
+  "p99_ms": 197.35,
+  "max_ms": 512.57
+ },
+ "fraction_commands_applied": 0.706,
+ "applied_joint_age": {
+  "p5_ms": 15.17,
+  "p50_ms": 36.79,
+  "p95_ms": 68.78,
+  "p99_ms": 165.63,
+  "max_ms": 526.0
+ },
+ "goal_in_force_joint_age_20ms_ticks": {
+  "p5_ms": 23.77,
+  "p50_ms": 53.21,
+  "p95_ms": 108.43,
+  "p99_ms": 270.87,
+  "max_ms": 552.11
+ },
+ "goal_in_force_imu_age_20ms_ticks": {
+  "p5_ms": 31.11,
+  "p50_ms": 61.1,
+  "p95_ms": 119.86,
+  "p99_ms": 277.79,
+  "max_ms": 557.21
+ },
+ "walk_brain_predicted_joint_age": {
+  "p5_ms": 34.66,
+  "p50_ms": 36.59,
+  "p95_ms": 50.55,
+  "p99_ms": 60.38,
+  "max_ms": 64.15
+ },
+ "fraction_ticks_walk_brain_would_hold_MAX_AGE_40ms": 1.0
+}

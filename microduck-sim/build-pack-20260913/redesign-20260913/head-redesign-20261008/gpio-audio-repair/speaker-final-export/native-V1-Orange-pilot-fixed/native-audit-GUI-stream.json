@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "archiveSha256": "38abaa6db4199a939fd8ee016e2c7a80fa789a33f2946c64364f0918a91fc88e",
+  "gcodeSha256": "1f881ffc69408a80094e620f37aafebdb0332cdd5787aa075d9f38b875ffba83",
+  "objectCount": 3,
+  "objects": {
+    "speaker_cradle": {
+      "bounds": [
+        92.54887285633966,
+        151.96,
+        119.00200000000001,
+        183.66299999999998
+      ],
+      "segments": 2185,
+      "modelLayers": 6,
+      "supportPlanes": 0
+    },
+    "speaker_keeper": {
+      "bounds": [
+        136.99887285633966,
+        151.96,
+        163.452,
+        183.66299999999998
+      ],
+      "segments": 1767,
+      "modelLayers": 5,
+      "supportPlanes": 0
+    },
+    "head_cap": {
+      "bounds": [
+        79.274,
+        71.41642981952617,
+        176.728,
+        137.276
+      ],
+      "segments": 309381,
+      "modelLayers": 580,
+      "supportPlanes": 472
+    }
+  },
+  "pairs": [
+    {
+      "a": "speaker_cradle",
+      "b": "speaker_keeper",
+      "boundingBoxGapLowerBoundMm": 17.99687285633965
+    },
+    {
+      "a": "speaker_cradle",
+      "b": "head_cap",
+      "boundingBoxGapLowerBoundMm": 14.683999999999997
+    },
+    {
+      "a": "speaker_keeper",
+      "b": "head_cap",
+      "boundingBoxGapLowerBoundMm": 14.683999999999997
+    }
+  ],
+  "bedMarginMm": 71.41642981952617,
+  "firstLayer": [
+    {
+      "name": "speaker_cradle",
+      "model_area_mm2": 207.96164562976838,
+      "support_area_mm2": 0.0,
+      "types_mm2": {
+        "Outer wall": 99.2500231197132,
+        "Inner wall": 90.01857393294834,
+        "Gap infill": 32.980735310514135
+      }
+    },
+    {
+      "name": "speaker_keeper",
+      "model_area_mm2": 207.80092773909723,
+      "support_area_mm2": 0.0,
+      "types_mm2": {
+        "Outer wall": 99.16219172971034,
+        "Inner wall": 90.03206302400487,
+        "Gap infill": 32.97543809919573
+      }
+    },
+    {
+      "name": "head_cap",
+      "model_area_mm2": 108.8763011398711,
+      "support_area_mm2": 1855.6684922672637,
+      "types_mm2": {
+        "Support": 1855.6684922672644,
+        "Outer wall": 108.8763011398711
+      }
+    }
+  ],
+  "unownedExtrusions": 0,
+  "orphanBrimSegmentsAssignedToHeadCap": 869,
+  "brimAssignment": "Native unowned TYPE Brim on Z0.2 only, included in head_cap full bounds and gap checks against both speaker parts, never discarded.",
+  "method": "Streaming actual arc extrema plus native width/2 and .002mm allowance; conservative per-object XY boxes contain all model/support/brim paths. Retain only initial-layer paths for area union.",
+  "scope": "Full extrusion extent/count/spacing and first layer; head-cap functional bores require separate check."
+}

@@ -1,0 +1,51 @@
+{
+  "incidentDate": "2026-10-08",
+  "userScreenshot": {
+    "ChatGPTGiBDisplayed": 17.58,
+    "ChromeGiBDisplayed": 4.72,
+    "systemAlert": "application memory exhausted"
+  },
+  "hostPhysicalMemoryGiB": 16,
+  "observedSwapMiB": {
+    "first": 11818,
+    "afterStoppingAndCleanup": 11035.88
+  },
+  "observedLoadAverage1Min": {
+    "first": 95.94,
+    "afterStoppingAndCleanup": 11.99
+  },
+  "confirmedWorkloadIssue": "An audio pose search cached full transformed scenes for229 poses. The owner removed that cache; that earlier process exited137. Other geometry searches ran in parallel. Exact application-memory peak attribution is unavailable.",
+  "stoppedJobs": [
+    {
+      "owner": "method_review",
+      "session": 23976,
+      "script": "camera-ribbon-repair/refine_vertical_pi.py",
+      "exitCode": 130
+    },
+    {
+      "owner": "leg_paths",
+      "pid": 42554,
+      "script": "gpio-audio-repair/search_amp_pose.py",
+      "exitCode": 143,
+      "lastRssKiB": 767072
+    },
+    {
+      "owner": "assembly_audit",
+      "session": 61644,
+      "script": "cabling-release-20261008/neck-repair/controlled_loop.py320",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    "No owned CAD calculation remains running",
+    "Closed temporary Chrome head inspection tab1892336561",
+    "Reset current computer-use JS kernel; live deployed guides remain online"
+  ],
+  "resumeFiles": [
+    "camera-ribbon-repair/RESUME-STATE.json",
+    "gpio-audio-repair/RESOURCE-PAUSE.json",
+    "cabling-release-20261008/neck-repair/RESUME.json"
+  ],
+  "nextRunPolicy": "One CAD process, one candidate and sequential pose/pair iteration;768MiB sampled process-treeRSS guard,180second defaultbudget; no full transformed-scene cache. Guard tests include real memory cutoff, time cutoff and lock refusal.",
+  "limitation": "RSS is not macOS application footprint; stopping CAD does not prove all17.58GB was released. Do not terminate unrelated app/tool sessions."
+}

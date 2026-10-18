@@ -1,0 +1,3409 @@
+{
+  "schema_version": 1,
+  "language": "en",
+  "verified": "2026-10-07",
+  "title": "Wire the robot \u00b7 power disconnected",
+  "physical_pin_numbering": true,
+  "header_orientation_note": "Header schematic lists physical pins; identify the actual pin 1 marking. Column layout is logical and does not assert photographic board orientation.",
+  "single_source": "Owned MDY-14-ED \u2192 original cable \u2192 5991 fixed 20 V \u2192 external 5 A fuse \u2192 2 m XT30 tether \u2192 onboard DFR1202 \u2192 shared 5 V star",
+  "steps": [
+    {
+      "id": "identify",
+      "title": "Identify connectors with power disconnected",
+      "actions": [
+        "Disconnect the charger, Pi and motors while making the harness.",
+        "Locate physical pin 1 from the actual Pi marking. Numbers shown here are header positions, not BCM GPIO numbers.",
+        "Label both ends of each lead and read actual connector polarity."
+      ],
+      "connections": [],
+      "connectionIds": [],
+      "check": "Each physical cable matches its named endpoints; no stock shortage is assumed.",
+      "powered": false
+    },
+    {
+      "id": "input20",
+      "title": "Prepare the 20 V input",
+      "actions": [
+        "Set only the 20 V switch on receiver 5991; keep ISET open.",
+        "Fit the external 5 A input fuse immediately after the positive terminal, before the 2 m tether.",
+        "Insulate and retain the receiver and cable joints."
+      ],
+      "connections": [
+        {
+          "id": "charger-usb",
+          "from": "MDY-14-ED USB-A socket",
+          "to": "5991 USB-C socket",
+          "pins": [],
+          "wire": "Original intact Xiaomi A-male/C-male cable, about 1 m",
+          "purpose": "Power negotiation",
+          "voltage": "20 V after negotiation",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "charger"
+          ],
+          "toNodeIds": [
+            "receiver"
+          ]
+        },
+        {
+          "id": "input-fuse",
+          "from": "5991 + screw terminal",
+          "to": "External 5 A fuse \u2192 robot XT30 +",
+          "pins": [
+            {
+              "from": "+",
+              "to": "XT30 +",
+              "signal": "20 V"
+            }
+          ],
+          "wire": "18 AWG positive conductor, 2 m",
+          "purpose": "Protect the tether",
+          "voltage": "20 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "receiver"
+          ],
+          "toNodeIds": [
+            "inputFuse",
+            "xt30"
+          ]
+        },
+        {
+          "id": "input-return",
+          "from": "5991 \u2212 screw terminal",
+          "to": "Robot XT30 \u2212",
+          "pins": [
+            {
+              "from": "\u2212",
+              "to": "XT30 \u2212",
+              "signal": "GND"
+            }
+          ],
+          "wire": "18 AWG return conductor, 2 m",
+          "purpose": "Source return",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "receiver"
+          ],
+          "toNodeIds": [
+            "xt30"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "charger-usb",
+        "input-fuse",
+        "input-return"
+      ],
+      "check": "Source-side XT30 contacts are recessed female. Confirm markings with a meter; keep the source unplugged.",
+      "powered": false
+    },
+    {
+      "id": "converter",
+      "title": "Connect the converter and 5 V star",
+      "actions": [
+        "Keep the 20 V input distinguishable from all 5 V loads.",
+        "Fit DFR1202 in the open insert with insulation, rear heat spreading and airflow.",
+        "Make separate insulated positive and ground star joins."
+      ],
+      "connections": [
+        {
+          "id": "regulator-input",
+          "from": "Robot XT30 solder cups",
+          "to": "DFR1202 VIN+ / GND",
+          "pins": [
+            {
+              "from": "XT30 +",
+              "to": "VIN+",
+              "signal": "20 V"
+            },
+            {
+              "from": "XT30 \u2212",
+              "to": "GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "18 AWG pair, \u2264100 mm",
+          "purpose": "Onboard input",
+          "voltage": "20 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "xt30"
+          ],
+          "toNodeIds": [
+            "regulator"
+          ]
+        },
+        {
+          "id": "star-output",
+          "from": "DFR1202 5 V / GND",
+          "to": "5 V positive star / ground star",
+          "pins": [
+            {
+              "from": "5 V",
+              "to": "5 V star",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND",
+              "to": "GND star",
+              "signal": "GND"
+            }
+          ],
+          "wire": "16 AWG pair, \u2264100 mm",
+          "purpose": "Shared regulated power",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "regulator"
+          ],
+          "toNodeIds": [
+            "star"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "regulator-input",
+        "star-output"
+      ],
+      "check": "No direct 20 V connection reaches a Pi, motor or amplifier.",
+      "powered": false
+    },
+    {
+      "id": "fuses",
+      "title": "Assign motor, Pi and audio branches",
+      "actions": [
+        "F0 is the 10 A motor main; F1\u2013F8 are eight 3 A motor branches. Split into two four-branch trunks within 100 mm of the converter.",
+        "F9 is the separate 3 A Pi branch; F10 is the 0.5 A audio branch.",
+        "Grounds are common and unfused. Carrier slot numbers do not determine electrical assignments."
+      ],
+      "connections": [
+        {
+          "id": "motor-main",
+          "from": "5 V positive star",
+          "to": "F0 10 A \u2192 F1\u2013F8 inputs",
+          "pins": [],
+          "wire": "Short insulated motor trunks",
+          "purpose": "Motor protection",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "F0",
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8"
+          ]
+        },
+        {
+          "id": "pi-fuse",
+          "from": "5 V positive star",
+          "to": "F9 3 A input",
+          "pins": [],
+          "wire": "Separate logic branch",
+          "purpose": "Pi, camera and OpenRB logic",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "F9"
+          ]
+        },
+        {
+          "id": "audio-fuse",
+          "from": "5 V positive star",
+          "to": "F10 0.5 A input",
+          "pins": [],
+          "wire": "Separate audio branch",
+          "purpose": "Amplifier protection",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "F10"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "motor-main",
+        "pi-fuse",
+        "audio-fuse"
+      ],
+      "check": "11 onboard fuses fit the carrier; the 5 A input fuse stays outside the robot.",
+      "powered": false
+    },
+    {
+      "id": "motor-power",
+      "title": "Wire the eight motor groups",
+      "actions": [
+        "Label fifteen X3P cables before modifying power conductors.",
+        "The receiving servo plug keeps pin 1 GND, pin 2 VDD and pin 3 DATA. Pins 1/2 join that servo\u2019s assigned branch.",
+        "At the preceding outgoing plug remove and insulate pins 1/2, retain pin 3 DATA. OpenRB\u2019s first plug uses the separately specified ground connection.",
+        "Locate the F7 split 20 mm and F8 split 30 mm toward the torso from the pair midpoint; keep at least 30 mm tail allowance and 40 mm on the long branch before trimming."
+      ],
+      "connections": [
+        {
+          "id": "motor-F1",
+          "from": "F1 3 A output + common ground",
+          "to": "XL330 IDs 1, 2 individual power tails",
+          "pins": [
+            {
+              "from": "F1 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F1",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor1",
+            "motor2"
+          ]
+        },
+        {
+          "id": "motor-F2",
+          "from": "F2 3 A output + common ground",
+          "to": "XL330 IDs 3, 4 individual power tails",
+          "pins": [
+            {
+              "from": "F2 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F2",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor3",
+            "motor4"
+          ]
+        },
+        {
+          "id": "motor-F3",
+          "from": "F3 3 A output + common ground",
+          "to": "XL330 IDs 5, 10 individual power tails",
+          "pins": [
+            {
+              "from": "F3 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F3",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor5",
+            "motor10"
+          ]
+        },
+        {
+          "id": "motor-F4",
+          "from": "F4 3 A output + common ground",
+          "to": "XL330 IDs 6, 7 individual power tails",
+          "pins": [
+            {
+              "from": "F4 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F4",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor6",
+            "motor7"
+          ]
+        },
+        {
+          "id": "motor-F5",
+          "from": "F5 3 A output + common ground",
+          "to": "XL330 IDs 8, 9 individual power tails",
+          "pins": [
+            {
+              "from": "F5 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F5",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor8",
+            "motor9"
+          ]
+        },
+        {
+          "id": "motor-F6",
+          "from": "F6 3 A output + common ground",
+          "to": "XL330 IDs 11, 12 individual power tails",
+          "pins": [
+            {
+              "from": "F6 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F6",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor11",
+            "motor12"
+          ]
+        },
+        {
+          "id": "motor-F7",
+          "from": "F7 3 A output + common ground",
+          "to": "XL330 IDs 13, 14 individual power tails",
+          "pins": [
+            {
+              "from": "F7 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F7",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor13",
+            "motor14"
+          ]
+        },
+        {
+          "id": "motor-F8",
+          "from": "F8 3 A output + common ground",
+          "to": "XL330 IDs 15 individual power tails",
+          "pins": [
+            {
+              "from": "F8 output",
+              "to": "Each assigned motor pin 2 VDD",
+              "signal": "5 V"
+            },
+            {
+              "from": "GND star",
+              "to": "Each assigned motor pin 1 GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+          "purpose": "Power this motor group",
+          "voltage": "5 V",
+          "notes": [
+            "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+            "Retain factory JST-EH crimps."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F8",
+            "star"
+          ],
+          "toNodeIds": [
+            "motor15"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "motor-F1",
+        "motor-F2",
+        "motor-F3",
+        "motor-F4",
+        "motor-F5",
+        "motor-F6",
+        "motor-F7",
+        "motor-F8"
+      ],
+      "check": "Each positive reaches only its assigned motors. Grounds return to the common star.",
+      "powered": false
+    },
+    {
+      "id": "motor-data",
+      "title": "Connect the DATA chain",
+      "actions": [
+        "At the first OpenRB outgoing plug remove VDD pin 2; retain DATA pin 3 and connect pin 1 separately to the ground star.",
+        "Leave OpenRB VIN, XT60 pads and its other three motor ports unused.",
+        "Follow OpenRB \u219215\u219214\u219213\u219211\u219212\u21925\u21924\u21923\u21922\u21921\u21926\u21927\u21928\u21929\u219210."
+      ],
+      "connections": [
+        {
+          "id": "data-01",
+          "from": "OpenRB DYNAMIXEL port",
+          "to": "XL330 ID 15",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "openrb"
+          ],
+          "toNodeIds": [
+            "motor15"
+          ]
+        },
+        {
+          "id": "data-02",
+          "from": "XL330 ID 15",
+          "to": "XL330 ID 14",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor15"
+          ],
+          "toNodeIds": [
+            "motor14"
+          ]
+        },
+        {
+          "id": "data-03",
+          "from": "XL330 ID 14",
+          "to": "XL330 ID 13",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor14"
+          ],
+          "toNodeIds": [
+            "motor13"
+          ]
+        },
+        {
+          "id": "data-04",
+          "from": "XL330 ID 13",
+          "to": "XL330 ID 11",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor13"
+          ],
+          "toNodeIds": [
+            "motor11"
+          ]
+        },
+        {
+          "id": "data-05",
+          "from": "XL330 ID 11",
+          "to": "XL330 ID 12",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor11"
+          ],
+          "toNodeIds": [
+            "motor12"
+          ]
+        },
+        {
+          "id": "data-06",
+          "from": "XL330 ID 12",
+          "to": "XL330 ID 5",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor12"
+          ],
+          "toNodeIds": [
+            "motor5"
+          ]
+        },
+        {
+          "id": "data-07",
+          "from": "XL330 ID 5",
+          "to": "XL330 ID 4",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor5"
+          ],
+          "toNodeIds": [
+            "motor4"
+          ]
+        },
+        {
+          "id": "data-08",
+          "from": "XL330 ID 4",
+          "to": "XL330 ID 3",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor4"
+          ],
+          "toNodeIds": [
+            "motor3"
+          ]
+        },
+        {
+          "id": "data-09",
+          "from": "XL330 ID 3",
+          "to": "XL330 ID 2",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor3"
+          ],
+          "toNodeIds": [
+            "motor2"
+          ]
+        },
+        {
+          "id": "data-10",
+          "from": "XL330 ID 2",
+          "to": "XL330 ID 1",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor2"
+          ],
+          "toNodeIds": [
+            "motor1"
+          ]
+        },
+        {
+          "id": "data-11",
+          "from": "XL330 ID 1",
+          "to": "XL330 ID 6",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 400 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star.",
+            "Route up the right leg, across the torso and down the left leg; extend about 220 mm."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor1"
+          ],
+          "toNodeIds": [
+            "motor6"
+          ]
+        },
+        {
+          "id": "data-12",
+          "from": "XL330 ID 6",
+          "to": "XL330 ID 7",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor6"
+          ],
+          "toNodeIds": [
+            "motor7"
+          ]
+        },
+        {
+          "id": "data-13",
+          "from": "XL330 ID 7",
+          "to": "XL330 ID 8",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor7"
+          ],
+          "toNodeIds": [
+            "motor8"
+          ]
+        },
+        {
+          "id": "data-14",
+          "from": "XL330 ID 8",
+          "to": "XL330 ID 9",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor8"
+          ],
+          "toNodeIds": [
+            "motor9"
+          ]
+        },
+        {
+          "id": "data-15",
+          "from": "XL330 ID 9",
+          "to": "XL330 ID 10",
+          "pins": [
+            {
+              "from": "pin 3 DATA",
+              "to": "pin 3 DATA",
+              "signal": "TTL DATA"
+            }
+          ],
+          "wire": "Factory data lead, planned 180 mm route",
+          "purpose": "Motor commands and feedback",
+          "voltage": "3.3 V TTL, 5 V tolerant",
+          "notes": [
+            "VDD conductors are isolated; motor grounds return to the common star."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "motor9"
+          ],
+          "toNodeIds": [
+            "motor10"
+          ]
+        },
+        {
+          "id": "openrb-ground",
+          "from": "OpenRB outgoing pin 1 GND",
+          "to": "Common ground star",
+          "pins": [
+            {
+              "from": "pin 1 GND",
+              "to": "GND star",
+              "signal": "GND"
+            }
+          ],
+          "wire": "Separate ground connection",
+          "purpose": "Motor bus reference",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "openrb"
+          ],
+          "toNodeIds": [
+            "star"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "data-01",
+        "data-02",
+        "data-03",
+        "data-04",
+        "data-05",
+        "data-06",
+        "data-07",
+        "data-08",
+        "data-09",
+        "data-10",
+        "data-11",
+        "data-12",
+        "data-13",
+        "data-14",
+        "data-15",
+        "openrb-ground"
+      ],
+      "check": "Motor VDD has no path to OpenRB VDD or USB VBUS. Planned IDs require later readback; factory OMX IDs may repeat.",
+      "powered": false
+    },
+    {
+      "id": "pi-usb",
+      "title": "Fit Pi power and OpenRB USB",
+      "actions": [
+        "Use physical pins 2/4 for 5 V and 6/14 for ground.",
+        "All twelve power, IMU and audio contacts share the retained 40-position housing.",
+        "Keep Pi PWR IN empty and covered; set OpenRB jumper to USB/VIN 5 V while disconnected."
+      ],
+      "connections": [
+        {
+          "id": "pi-5v-2",
+          "from": "F9 3 A output",
+          "to": "Pi physical pin 2",
+          "pins": [
+            {
+              "from": "F9 output",
+              "to": "2 (5 V)",
+              "signal": "5 V"
+            }
+          ],
+          "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+          "purpose": "Parallel Pi positive lead",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F9"
+          ],
+          "toNodeIds": [
+            "pi"
+          ]
+        },
+        {
+          "id": "pi-5v-4",
+          "from": "F9 3 A output",
+          "to": "Pi physical pin 4",
+          "pins": [
+            {
+              "from": "F9 output",
+              "to": "4 (5 V)",
+              "signal": "5 V"
+            }
+          ],
+          "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+          "purpose": "Parallel Pi positive lead",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F9"
+          ],
+          "toNodeIds": [
+            "pi"
+          ]
+        },
+        {
+          "id": "pi-gnd-6",
+          "from": "Ground star",
+          "to": "Pi physical pin 6",
+          "pins": [
+            {
+              "from": "GND star",
+              "to": "6 (GND)",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+          "purpose": "Parallel Pi return",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "pi"
+          ]
+        },
+        {
+          "id": "pi-gnd-14",
+          "from": "Ground star",
+          "to": "Pi physical pin 14",
+          "pins": [
+            {
+              "from": "GND star",
+              "to": "14 (GND)",
+              "signal": "GND"
+            }
+          ],
+          "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+          "purpose": "Parallel Pi return",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "pi"
+          ]
+        },
+        {
+          "id": "pi-otg",
+          "from": "Pi socket labeled USB, Micro-B",
+          "to": "SC0727 USB-A female socket",
+          "pins": [],
+          "wire": "SC0727 Micro-B male OTG adapter, about 80 mm",
+          "purpose": "USB host path",
+          "voltage": "5 V USB",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "openrb"
+          ]
+        },
+        {
+          "id": "openrb-usb",
+          "from": "SC0727 USB-A female socket",
+          "to": "OpenRB USB-C socket",
+          "pins": [],
+          "wire": "Adafruit 4472 A-male/C-male data cable, 152 mm",
+          "purpose": "USB data and OpenRB logic power",
+          "voltage": "5 V USB",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "openrb"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "pi-5v-2",
+        "pi-5v-4",
+        "pi-gnd-6",
+        "pi-gnd-14",
+        "pi-otg",
+        "openrb-usb"
+      ],
+      "check": "Housing and wire exits \u22647\u00d752\u00d715 mm; compatible contacts rated \u22651.5 A. The physical Pi/OpenRB USB bridge is retained.",
+      "powered": false
+    },
+    {
+      "id": "imu",
+      "title": "Connect the torso IMU",
+      "actions": [
+        "Mount BNO085 on the fixed torso with axis markings visible.",
+        "Read each signal at both connector ends before placing its contact in the Pi housing."
+      ],
+      "connections": [
+        {
+          "id": "imu-vin",
+          "from": "Pi physical pin 1",
+          "to": "BNO085 STEMMA QT VIN",
+          "pins": [
+            {
+              "from": "1",
+              "to": "VIN",
+              "signal": "3.3 V"
+            }
+          ],
+          "wire": "4397 four-wire lead, extended to 250 mm",
+          "purpose": "Orientation sensing",
+          "voltage": "3.3 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "imu"
+          ]
+        },
+        {
+          "id": "imu-sda",
+          "from": "Pi physical pin 3",
+          "to": "BNO085 STEMMA QT SDA",
+          "pins": [
+            {
+              "from": "3 / GPIO 2",
+              "to": "SDA",
+              "signal": "I2C data"
+            }
+          ],
+          "wire": "4397 four-wire lead, extended to 250 mm",
+          "purpose": "Orientation sensing",
+          "voltage": "3.3 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "imu"
+          ]
+        },
+        {
+          "id": "imu-scl",
+          "from": "Pi physical pin 5",
+          "to": "BNO085 STEMMA QT SCL",
+          "pins": [
+            {
+              "from": "5 / GPIO 3",
+              "to": "SCL",
+              "signal": "I2C clock"
+            }
+          ],
+          "wire": "4397 four-wire lead, extended to 250 mm",
+          "purpose": "Orientation sensing",
+          "voltage": "3.3 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "imu"
+          ]
+        },
+        {
+          "id": "imu-gnd",
+          "from": "Pi physical pin 9",
+          "to": "BNO085 STEMMA QT GND",
+          "pins": [
+            {
+              "from": "9",
+              "to": "GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "4397 four-wire lead, extended to 250 mm",
+          "purpose": "Orientation sensing",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "imu"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "imu-vin",
+        "imu-sda",
+        "imu-scl",
+        "imu-gnd"
+      ],
+      "check": "1\u2192VIN, 3\u2192SDA, 5\u2192SCL, 9\u2192GND. Manufacturer cable colors are a reference, not proof of the loose cable\u2019s identity.",
+      "powered": false
+    },
+    {
+      "id": "camera",
+      "title": "Latch the camera ribbon",
+      "actions": [
+        "Open both latches with power disconnected.",
+        "Fit the 15-contact end to Camera Module 3 Wide and 22-contact end to Pi Zero.",
+        "Contacts face connector contacts; insert squarely, lock, then route a smooth loop clear of jaw and screw posts."
+      ],
+      "connections": [
+        {
+          "id": "camera-ribbon",
+          "from": "SC1224 camera 15-contact CSI latch",
+          "to": "Pi Zero 22-contact CSI latch",
+          "pins": [
+            {
+              "from": "15-contact",
+              "to": "22-contact",
+              "signal": "CSI data + power"
+            }
+          ],
+          "wire": "SC1892 Standard-Mini flat-flex, 200 mm",
+          "purpose": "Camera observation",
+          "voltage": null,
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "camera"
+          ],
+          "toNodeIds": [
+            "pi"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "camera-ribbon"
+      ],
+      "check": "Confirm the actual board connector and both latches. Blue tabs alone do not determine insertion orientation.",
+      "powered": false
+    },
+    {
+      "id": "audio",
+      "title": "Connect audio and speaker",
+      "actions": [
+        "Power the amplifier through F10.",
+        "Fit 100 k\u03a9 from GAIN to VIN for 3 dB gain; retain amplifier and speaker with narrow ties.",
+        "Connect both speaker outputs only to speaker pads; insulate solder joints and strain-relieve."
+      ],
+      "connections": [
+        {
+          "id": "audio-vin",
+          "from": "F10 0.5 A output",
+          "to": "MAX98357A VIN",
+          "pins": [
+            {
+              "from": "F10 output",
+              "to": "VIN",
+              "signal": "5 V"
+            }
+          ],
+          "wire": "Direct 24 AWG lead, \u2264250 mm, service loop",
+          "purpose": "Amplifier power",
+          "voltage": "5 V",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "F10"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-return",
+          "from": "Common ground star",
+          "to": "MAX98357A GND",
+          "pins": [
+            {
+              "from": "GND star",
+              "to": "GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "Direct 24 AWG lead, \u2264250 mm",
+          "purpose": "Amplifier return",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "star"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-12",
+          "from": "Pi physical pin 12",
+          "to": "MAX98357A BCLK",
+          "pins": [
+            {
+              "from": "12 / GPIO 18",
+              "to": "BCLK",
+              "signal": "I2S bit clock"
+            }
+          ],
+          "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+          "purpose": "Digital sound",
+          "voltage": "3.3 V logic",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-35",
+          "from": "Pi physical pin 35",
+          "to": "MAX98357A LRC / LRCLK",
+          "pins": [
+            {
+              "from": "35 / GPIO 19",
+              "to": "LRC / LRCLK",
+              "signal": "I2S word clock"
+            }
+          ],
+          "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+          "purpose": "Digital sound",
+          "voltage": "3.3 V logic",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-40",
+          "from": "Pi physical pin 40",
+          "to": "MAX98357A DIN",
+          "pins": [
+            {
+              "from": "40 / GPIO 21",
+              "to": "DIN",
+              "signal": "I2S data"
+            }
+          ],
+          "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+          "purpose": "Digital sound",
+          "voltage": "3.3 V logic",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-20",
+          "from": "Pi physical pin 20",
+          "to": "MAX98357A GND",
+          "pins": [
+            {
+              "from": "20",
+              "to": "GND",
+              "signal": "GND"
+            }
+          ],
+          "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+          "purpose": "Digital sound",
+          "voltage": "GND",
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "pi"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "audio-gain",
+          "from": "MAX98357A GAIN",
+          "to": "MAX98357A VIN",
+          "pins": [
+            {
+              "from": "GAIN",
+              "to": "VIN through 100 k\u03a9",
+              "signal": "3 dB gain"
+            }
+          ],
+          "wire": "100 k\u03a9 resistor",
+          "purpose": "Gain setting",
+          "voltage": null,
+          "notes": [],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "amp"
+          ],
+          "toNodeIds": [
+            "amp"
+          ]
+        },
+        {
+          "id": "speaker",
+          "from": "MAX98357A speaker + / \u2212 terminals",
+          "to": "8 \u03a9 1 W speaker pads",
+          "pins": [
+            {
+              "from": "speaker +",
+              "to": "speaker pad 1",
+              "signal": "Floating audio +"
+            },
+            {
+              "from": "speaker \u2212",
+              "to": "speaker pad 2",
+              "signal": "Floating audio \u2212"
+            }
+          ],
+          "wire": "Two stranded head-local wires",
+          "purpose": "Speaker drive",
+          "voltage": null,
+          "notes": [
+            "Neither output is grounded.",
+            "A software volume ceiling is still required for the 1 W speaker at 5 V."
+          ],
+          "physical_cable_identification_confirmed": false,
+          "fromNodeIds": [
+            "amp"
+          ],
+          "toNodeIds": [
+            "speaker"
+          ]
+        }
+      ],
+      "connectionIds": [
+        "audio-vin",
+        "audio-return",
+        "audio-12",
+        "audio-35",
+        "audio-40",
+        "audio-20",
+        "audio-gain",
+        "speaker"
+      ],
+      "check": "12\u2192BCLK, 35\u2192LRC, 40\u2192DIN, 20\u2192GND. Speaker output floats.",
+      "powered": false
+    },
+    {
+      "id": "inspect",
+      "title": "Complete the unpowered inspection",
+      "actions": [
+        "With electronics and source unplugged, check continuity, polarity, insulation and unintended positive-to-ground paths.",
+        "Remove each fuse and confirm its positive branch is isolated.",
+        "Confirm motor VDD is isolated from OpenRB VDD and USB VBUS.",
+        "Move joints with torque off to check slack, rubbing and strain relief; preserve service allowance."
+      ],
+      "connections": [],
+      "connectionIds": [],
+      "check": "Ready for a separate recorded commissioning procedure; no source, firmware or motor is activated here.",
+      "powered": false
+    }
+  ],
+  "connections": [
+    {
+      "id": "charger-usb",
+      "from": "MDY-14-ED USB-A socket",
+      "to": "5991 USB-C socket",
+      "pins": [],
+      "wire": "Original intact Xiaomi A-male/C-male cable, about 1 m",
+      "purpose": "Power negotiation",
+      "voltage": "20 V after negotiation",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "charger"
+      ],
+      "toNodeIds": [
+        "receiver"
+      ]
+    },
+    {
+      "id": "input-fuse",
+      "from": "5991 + screw terminal",
+      "to": "External 5 A fuse \u2192 robot XT30 +",
+      "pins": [
+        {
+          "from": "+",
+          "to": "XT30 +",
+          "signal": "20 V"
+        }
+      ],
+      "wire": "18 AWG positive conductor, 2 m",
+      "purpose": "Protect the tether",
+      "voltage": "20 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "receiver"
+      ],
+      "toNodeIds": [
+        "inputFuse",
+        "xt30"
+      ]
+    },
+    {
+      "id": "input-return",
+      "from": "5991 \u2212 screw terminal",
+      "to": "Robot XT30 \u2212",
+      "pins": [
+        {
+          "from": "\u2212",
+          "to": "XT30 \u2212",
+          "signal": "GND"
+        }
+      ],
+      "wire": "18 AWG return conductor, 2 m",
+      "purpose": "Source return",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "receiver"
+      ],
+      "toNodeIds": [
+        "xt30"
+      ]
+    },
+    {
+      "id": "regulator-input",
+      "from": "Robot XT30 solder cups",
+      "to": "DFR1202 VIN+ / GND",
+      "pins": [
+        {
+          "from": "XT30 +",
+          "to": "VIN+",
+          "signal": "20 V"
+        },
+        {
+          "from": "XT30 \u2212",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "18 AWG pair, \u2264100 mm",
+      "purpose": "Onboard input",
+      "voltage": "20 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "xt30"
+      ],
+      "toNodeIds": [
+        "regulator"
+      ]
+    },
+    {
+      "id": "star-output",
+      "from": "DFR1202 5 V / GND",
+      "to": "5 V positive star / ground star",
+      "pins": [
+        {
+          "from": "5 V",
+          "to": "5 V star",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND",
+          "to": "GND star",
+          "signal": "GND"
+        }
+      ],
+      "wire": "16 AWG pair, \u2264100 mm",
+      "purpose": "Shared regulated power",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "regulator"
+      ],
+      "toNodeIds": [
+        "star"
+      ]
+    },
+    {
+      "id": "motor-main",
+      "from": "5 V positive star",
+      "to": "F0 10 A \u2192 F1\u2013F8 inputs",
+      "pins": [],
+      "wire": "Short insulated motor trunks",
+      "purpose": "Motor protection",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "F0",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8"
+      ]
+    },
+    {
+      "id": "pi-fuse",
+      "from": "5 V positive star",
+      "to": "F9 3 A input",
+      "pins": [],
+      "wire": "Separate logic branch",
+      "purpose": "Pi, camera and OpenRB logic",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "F9"
+      ]
+    },
+    {
+      "id": "audio-fuse",
+      "from": "5 V positive star",
+      "to": "F10 0.5 A input",
+      "pins": [],
+      "wire": "Separate audio branch",
+      "purpose": "Amplifier protection",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "F10"
+      ]
+    },
+    {
+      "id": "motor-F1",
+      "from": "F1 3 A output + common ground",
+      "to": "XL330 IDs 1, 2 individual power tails",
+      "pins": [
+        {
+          "from": "F1 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F1",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor1",
+        "motor2"
+      ]
+    },
+    {
+      "id": "motor-F2",
+      "from": "F2 3 A output + common ground",
+      "to": "XL330 IDs 3, 4 individual power tails",
+      "pins": [
+        {
+          "from": "F2 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F2",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor3",
+        "motor4"
+      ]
+    },
+    {
+      "id": "motor-F3",
+      "from": "F3 3 A output + common ground",
+      "to": "XL330 IDs 5, 10 individual power tails",
+      "pins": [
+        {
+          "from": "F3 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F3",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor5",
+        "motor10"
+      ]
+    },
+    {
+      "id": "motor-F4",
+      "from": "F4 3 A output + common ground",
+      "to": "XL330 IDs 6, 7 individual power tails",
+      "pins": [
+        {
+          "from": "F4 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F4",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor6",
+        "motor7"
+      ]
+    },
+    {
+      "id": "motor-F5",
+      "from": "F5 3 A output + common ground",
+      "to": "XL330 IDs 8, 9 individual power tails",
+      "pins": [
+        {
+          "from": "F5 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F5",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor8",
+        "motor9"
+      ]
+    },
+    {
+      "id": "motor-F6",
+      "from": "F6 3 A output + common ground",
+      "to": "XL330 IDs 11, 12 individual power tails",
+      "pins": [
+        {
+          "from": "F6 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F6",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor11",
+        "motor12"
+      ]
+    },
+    {
+      "id": "motor-F7",
+      "from": "F7 3 A output + common ground",
+      "to": "XL330 IDs 13, 14 individual power tails",
+      "pins": [
+        {
+          "from": "F7 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F7",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor13",
+        "motor14"
+      ]
+    },
+    {
+      "id": "motor-F8",
+      "from": "F8 3 A output + common ground",
+      "to": "XL330 IDs 15 individual power tails",
+      "pins": [
+        {
+          "from": "F8 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 20 AWG pair including 20 mm fuse pigtail; about 90 mm factory tails",
+      "purpose": "Power this motor group",
+      "voltage": "5 V",
+      "notes": [
+        "Give each motor its own tail; do not pass a pair\u2019s current through one tiny servo plug.",
+        "Retain factory JST-EH crimps."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F8",
+        "star"
+      ],
+      "toNodeIds": [
+        "motor15"
+      ]
+    },
+    {
+      "id": "data-01",
+      "from": "OpenRB DYNAMIXEL port",
+      "to": "XL330 ID 15",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "openrb"
+      ],
+      "toNodeIds": [
+        "motor15"
+      ]
+    },
+    {
+      "id": "data-02",
+      "from": "XL330 ID 15",
+      "to": "XL330 ID 14",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor15"
+      ],
+      "toNodeIds": [
+        "motor14"
+      ]
+    },
+    {
+      "id": "data-03",
+      "from": "XL330 ID 14",
+      "to": "XL330 ID 13",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor14"
+      ],
+      "toNodeIds": [
+        "motor13"
+      ]
+    },
+    {
+      "id": "data-04",
+      "from": "XL330 ID 13",
+      "to": "XL330 ID 11",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor13"
+      ],
+      "toNodeIds": [
+        "motor11"
+      ]
+    },
+    {
+      "id": "data-05",
+      "from": "XL330 ID 11",
+      "to": "XL330 ID 12",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor11"
+      ],
+      "toNodeIds": [
+        "motor12"
+      ]
+    },
+    {
+      "id": "data-06",
+      "from": "XL330 ID 12",
+      "to": "XL330 ID 5",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor12"
+      ],
+      "toNodeIds": [
+        "motor5"
+      ]
+    },
+    {
+      "id": "data-07",
+      "from": "XL330 ID 5",
+      "to": "XL330 ID 4",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor5"
+      ],
+      "toNodeIds": [
+        "motor4"
+      ]
+    },
+    {
+      "id": "data-08",
+      "from": "XL330 ID 4",
+      "to": "XL330 ID 3",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor4"
+      ],
+      "toNodeIds": [
+        "motor3"
+      ]
+    },
+    {
+      "id": "data-09",
+      "from": "XL330 ID 3",
+      "to": "XL330 ID 2",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor3"
+      ],
+      "toNodeIds": [
+        "motor2"
+      ]
+    },
+    {
+      "id": "data-10",
+      "from": "XL330 ID 2",
+      "to": "XL330 ID 1",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor2"
+      ],
+      "toNodeIds": [
+        "motor1"
+      ]
+    },
+    {
+      "id": "data-11",
+      "from": "XL330 ID 1",
+      "to": "XL330 ID 6",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 400 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star.",
+        "Route up the right leg, across the torso and down the left leg; extend about 220 mm."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor1"
+      ],
+      "toNodeIds": [
+        "motor6"
+      ]
+    },
+    {
+      "id": "data-12",
+      "from": "XL330 ID 6",
+      "to": "XL330 ID 7",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor6"
+      ],
+      "toNodeIds": [
+        "motor7"
+      ]
+    },
+    {
+      "id": "data-13",
+      "from": "XL330 ID 7",
+      "to": "XL330 ID 8",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor7"
+      ],
+      "toNodeIds": [
+        "motor8"
+      ]
+    },
+    {
+      "id": "data-14",
+      "from": "XL330 ID 8",
+      "to": "XL330 ID 9",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor8"
+      ],
+      "toNodeIds": [
+        "motor9"
+      ]
+    },
+    {
+      "id": "data-15",
+      "from": "XL330 ID 9",
+      "to": "XL330 ID 10",
+      "pins": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "wire": "Factory data lead, planned 180 mm route",
+      "purpose": "Motor commands and feedback",
+      "voltage": "3.3 V TTL, 5 V tolerant",
+      "notes": [
+        "VDD conductors are isolated; motor grounds return to the common star."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "motor9"
+      ],
+      "toNodeIds": [
+        "motor10"
+      ]
+    },
+    {
+      "id": "openrb-ground",
+      "from": "OpenRB outgoing pin 1 GND",
+      "to": "Common ground star",
+      "pins": [
+        {
+          "from": "pin 1 GND",
+          "to": "GND star",
+          "signal": "GND"
+        }
+      ],
+      "wire": "Separate ground connection",
+      "purpose": "Motor bus reference",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "openrb"
+      ],
+      "toNodeIds": [
+        "star"
+      ]
+    },
+    {
+      "id": "pi-5v-2",
+      "from": "F9 3 A output",
+      "to": "Pi physical pin 2",
+      "pins": [
+        {
+          "from": "F9 output",
+          "to": "2 (5 V)",
+          "signal": "5 V"
+        }
+      ],
+      "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+      "purpose": "Parallel Pi positive lead",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F9"
+      ],
+      "toNodeIds": [
+        "pi"
+      ]
+    },
+    {
+      "id": "pi-5v-4",
+      "from": "F9 3 A output",
+      "to": "Pi physical pin 4",
+      "pins": [
+        {
+          "from": "F9 output",
+          "to": "4 (5 V)",
+          "signal": "5 V"
+        }
+      ],
+      "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+      "purpose": "Parallel Pi positive lead",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F9"
+      ],
+      "toNodeIds": [
+        "pi"
+      ]
+    },
+    {
+      "id": "pi-gnd-6",
+      "from": "Ground star",
+      "to": "Pi physical pin 6",
+      "pins": [
+        {
+          "from": "GND star",
+          "to": "6 (GND)",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+      "purpose": "Parallel Pi return",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "pi"
+      ]
+    },
+    {
+      "id": "pi-gnd-14",
+      "from": "Ground star",
+      "to": "Pi physical pin 14",
+      "pins": [
+        {
+          "from": "GND star",
+          "to": "14 (GND)",
+          "signal": "GND"
+        }
+      ],
+      "wire": "250 mm 22 AWG with rated female pre-crimp contact",
+      "purpose": "Parallel Pi return",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "pi"
+      ]
+    },
+    {
+      "id": "pi-otg",
+      "from": "Pi socket labeled USB, Micro-B",
+      "to": "SC0727 USB-A female socket",
+      "pins": [],
+      "wire": "SC0727 Micro-B male OTG adapter, about 80 mm",
+      "purpose": "USB host path",
+      "voltage": "5 V USB",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "openrb"
+      ]
+    },
+    {
+      "id": "openrb-usb",
+      "from": "SC0727 USB-A female socket",
+      "to": "OpenRB USB-C socket",
+      "pins": [],
+      "wire": "Adafruit 4472 A-male/C-male data cable, 152 mm",
+      "purpose": "USB data and OpenRB logic power",
+      "voltage": "5 V USB",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "openrb"
+      ]
+    },
+    {
+      "id": "imu-vin",
+      "from": "Pi physical pin 1",
+      "to": "BNO085 STEMMA QT VIN",
+      "pins": [
+        {
+          "from": "1",
+          "to": "VIN",
+          "signal": "3.3 V"
+        }
+      ],
+      "wire": "4397 four-wire lead, extended to 250 mm",
+      "purpose": "Orientation sensing",
+      "voltage": "3.3 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "imu"
+      ]
+    },
+    {
+      "id": "imu-sda",
+      "from": "Pi physical pin 3",
+      "to": "BNO085 STEMMA QT SDA",
+      "pins": [
+        {
+          "from": "3 / GPIO 2",
+          "to": "SDA",
+          "signal": "I2C data"
+        }
+      ],
+      "wire": "4397 four-wire lead, extended to 250 mm",
+      "purpose": "Orientation sensing",
+      "voltage": "3.3 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "imu"
+      ]
+    },
+    {
+      "id": "imu-scl",
+      "from": "Pi physical pin 5",
+      "to": "BNO085 STEMMA QT SCL",
+      "pins": [
+        {
+          "from": "5 / GPIO 3",
+          "to": "SCL",
+          "signal": "I2C clock"
+        }
+      ],
+      "wire": "4397 four-wire lead, extended to 250 mm",
+      "purpose": "Orientation sensing",
+      "voltage": "3.3 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "imu"
+      ]
+    },
+    {
+      "id": "imu-gnd",
+      "from": "Pi physical pin 9",
+      "to": "BNO085 STEMMA QT GND",
+      "pins": [
+        {
+          "from": "9",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "4397 four-wire lead, extended to 250 mm",
+      "purpose": "Orientation sensing",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "imu"
+      ]
+    },
+    {
+      "id": "camera-ribbon",
+      "from": "SC1224 camera 15-contact CSI latch",
+      "to": "Pi Zero 22-contact CSI latch",
+      "pins": [
+        {
+          "from": "15-contact",
+          "to": "22-contact",
+          "signal": "CSI data + power"
+        }
+      ],
+      "wire": "SC1892 Standard-Mini flat-flex, 200 mm",
+      "purpose": "Camera observation",
+      "voltage": null,
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "camera"
+      ],
+      "toNodeIds": [
+        "pi"
+      ]
+    },
+    {
+      "id": "audio-vin",
+      "from": "F10 0.5 A output",
+      "to": "MAX98357A VIN",
+      "pins": [
+        {
+          "from": "F10 output",
+          "to": "VIN",
+          "signal": "5 V"
+        }
+      ],
+      "wire": "Direct 24 AWG lead, \u2264250 mm, service loop",
+      "purpose": "Amplifier power",
+      "voltage": "5 V",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "F10"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-return",
+      "from": "Common ground star",
+      "to": "MAX98357A GND",
+      "pins": [
+        {
+          "from": "GND star",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "Direct 24 AWG lead, \u2264250 mm",
+      "purpose": "Amplifier return",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "star"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-12",
+      "from": "Pi physical pin 12",
+      "to": "MAX98357A BCLK",
+      "pins": [
+        {
+          "from": "12 / GPIO 18",
+          "to": "BCLK",
+          "signal": "I2S bit clock"
+        }
+      ],
+      "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+      "purpose": "Digital sound",
+      "voltage": "3.3 V logic",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-35",
+      "from": "Pi physical pin 35",
+      "to": "MAX98357A LRC / LRCLK",
+      "pins": [
+        {
+          "from": "35 / GPIO 19",
+          "to": "LRC / LRCLK",
+          "signal": "I2S word clock"
+        }
+      ],
+      "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+      "purpose": "Digital sound",
+      "voltage": "3.3 V logic",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-40",
+      "from": "Pi physical pin 40",
+      "to": "MAX98357A DIN",
+      "pins": [
+        {
+          "from": "40 / GPIO 21",
+          "to": "DIN",
+          "signal": "I2S data"
+        }
+      ],
+      "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+      "purpose": "Digital sound",
+      "voltage": "3.3 V logic",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-20",
+      "from": "Pi physical pin 20",
+      "to": "MAX98357A GND",
+      "pins": [
+        {
+          "from": "20",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "wire": "Head-local signal lead; Pi female contact / amp solder pad",
+      "purpose": "Digital sound",
+      "voltage": "GND",
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "pi"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "audio-gain",
+      "from": "MAX98357A GAIN",
+      "to": "MAX98357A VIN",
+      "pins": [
+        {
+          "from": "GAIN",
+          "to": "VIN through 100 k\u03a9",
+          "signal": "3 dB gain"
+        }
+      ],
+      "wire": "100 k\u03a9 resistor",
+      "purpose": "Gain setting",
+      "voltage": null,
+      "notes": [],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "amp"
+      ],
+      "toNodeIds": [
+        "amp"
+      ]
+    },
+    {
+      "id": "speaker",
+      "from": "MAX98357A speaker + / \u2212 terminals",
+      "to": "8 \u03a9 1 W speaker pads",
+      "pins": [
+        {
+          "from": "speaker +",
+          "to": "speaker pad 1",
+          "signal": "Floating audio +"
+        },
+        {
+          "from": "speaker \u2212",
+          "to": "speaker pad 2",
+          "signal": "Floating audio \u2212"
+        }
+      ],
+      "wire": "Two stranded head-local wires",
+      "purpose": "Speaker drive",
+      "voltage": null,
+      "notes": [
+        "Neither output is grounded.",
+        "A software volume ceiling is still required for the 1 W speaker at 5 V."
+      ],
+      "physical_cable_identification_confirmed": false,
+      "fromNodeIds": [
+        "amp"
+      ],
+      "toNodeIds": [
+        "speaker"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "charger",
+      "label": "Owned MDY-14-ED",
+      "kind": "source"
+    },
+    {
+      "id": "receiver",
+      "label": "5991 \u00b7 20 V receiver",
+      "kind": "receiver"
+    },
+    {
+      "id": "inputFuse",
+      "label": "External 5 A fuse",
+      "kind": "fuse"
+    },
+    {
+      "id": "xt30",
+      "label": "XT30 input",
+      "kind": "connector"
+    },
+    {
+      "id": "regulator",
+      "label": "DFR1202 \u00b7 20 V \u2192 5 V",
+      "kind": "converter"
+    },
+    {
+      "id": "star",
+      "label": "5 V positive / ground star",
+      "kind": "distribution"
+    },
+    {
+      "id": "F0",
+      "label": "10 A motor main",
+      "kind": "fuse"
+    },
+    {
+      "id": "F9",
+      "label": "3 A Pi branch",
+      "kind": "fuse"
+    },
+    {
+      "id": "F10",
+      "label": "0.5 A audio branch",
+      "kind": "fuse"
+    },
+    {
+      "id": "pi",
+      "label": "Pi Zero \u00b7 40-pin header",
+      "kind": "compute"
+    },
+    {
+      "id": "openrb",
+      "label": "OpenRB-150 \u00b7 USB 5 V logic",
+      "kind": "controller"
+    },
+    {
+      "id": "camera",
+      "label": "Camera Module 3 Wide",
+      "kind": "sensor"
+    },
+    {
+      "id": "imu",
+      "label": "BNO085 \u00b7 fixed torso",
+      "kind": "sensor"
+    },
+    {
+      "id": "amp",
+      "label": "MAX98357A",
+      "kind": "audio"
+    },
+    {
+      "id": "speaker",
+      "label": "8 \u03a9 1 W speaker",
+      "kind": "audio"
+    },
+    {
+      "id": "F1",
+      "label": "F1 \u00b7 3 A \u00b7 IDs 1, 2",
+      "kind": "fuse"
+    },
+    {
+      "id": "F2",
+      "label": "F2 \u00b7 3 A \u00b7 IDs 3, 4",
+      "kind": "fuse"
+    },
+    {
+      "id": "F3",
+      "label": "F3 \u00b7 3 A \u00b7 IDs 5, 10",
+      "kind": "fuse"
+    },
+    {
+      "id": "F4",
+      "label": "F4 \u00b7 3 A \u00b7 IDs 6, 7",
+      "kind": "fuse"
+    },
+    {
+      "id": "F5",
+      "label": "F5 \u00b7 3 A \u00b7 IDs 8, 9",
+      "kind": "fuse"
+    },
+    {
+      "id": "F6",
+      "label": "F6 \u00b7 3 A \u00b7 IDs 11, 12",
+      "kind": "fuse"
+    },
+    {
+      "id": "F7",
+      "label": "F7 \u00b7 3 A \u00b7 IDs 13, 14",
+      "kind": "fuse"
+    },
+    {
+      "id": "F8",
+      "label": "F8 \u00b7 3 A \u00b7 IDs 15",
+      "kind": "fuse"
+    },
+    {
+      "id": "motor1",
+      "label": "XL330 \u00b7 planned ID 1",
+      "kind": "motor"
+    },
+    {
+      "id": "motor2",
+      "label": "XL330 \u00b7 planned ID 2",
+      "kind": "motor"
+    },
+    {
+      "id": "motor3",
+      "label": "XL330 \u00b7 planned ID 3",
+      "kind": "motor"
+    },
+    {
+      "id": "motor4",
+      "label": "XL330 \u00b7 planned ID 4",
+      "kind": "motor"
+    },
+    {
+      "id": "motor5",
+      "label": "XL330 \u00b7 planned ID 5",
+      "kind": "motor"
+    },
+    {
+      "id": "motor6",
+      "label": "XL330 \u00b7 planned ID 6",
+      "kind": "motor"
+    },
+    {
+      "id": "motor7",
+      "label": "XL330 \u00b7 planned ID 7",
+      "kind": "motor"
+    },
+    {
+      "id": "motor8",
+      "label": "XL330 \u00b7 planned ID 8",
+      "kind": "motor"
+    },
+    {
+      "id": "motor9",
+      "label": "XL330 \u00b7 planned ID 9",
+      "kind": "motor"
+    },
+    {
+      "id": "motor10",
+      "label": "XL330 \u00b7 planned ID 10",
+      "kind": "motor"
+    },
+    {
+      "id": "motor11",
+      "label": "XL330 \u00b7 planned ID 11",
+      "kind": "motor"
+    },
+    {
+      "id": "motor12",
+      "label": "XL330 \u00b7 planned ID 12",
+      "kind": "motor"
+    },
+    {
+      "id": "motor13",
+      "label": "XL330 \u00b7 planned ID 13",
+      "kind": "motor"
+    },
+    {
+      "id": "motor14",
+      "label": "XL330 \u00b7 planned ID 14",
+      "kind": "motor"
+    },
+    {
+      "id": "motor15",
+      "label": "XL330 \u00b7 planned ID 15",
+      "kind": "motor"
+    }
+  ],
+  "pi_header_pins": [
+    {
+      "physical_pin": 1,
+      "row": 0,
+      "column": 0,
+      "used": true,
+      "role": "3.3 V \u2192 IMU VIN"
+    },
+    {
+      "physical_pin": 2,
+      "row": 0,
+      "column": 1,
+      "used": true,
+      "role": "F9 \u2192 5 V"
+    },
+    {
+      "physical_pin": 3,
+      "row": 1,
+      "column": 0,
+      "used": true,
+      "role": "GPIO 2 / SDA \u2192 IMU SDA"
+    },
+    {
+      "physical_pin": 4,
+      "row": 1,
+      "column": 1,
+      "used": true,
+      "role": "F9 \u2192 5 V"
+    },
+    {
+      "physical_pin": 5,
+      "row": 2,
+      "column": 0,
+      "used": true,
+      "role": "GPIO 3 / SCL \u2192 IMU SCL"
+    },
+    {
+      "physical_pin": 6,
+      "row": 2,
+      "column": 1,
+      "used": true,
+      "role": "Ground star"
+    },
+    {
+      "physical_pin": 7,
+      "row": 3,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 8,
+      "row": 3,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 9,
+      "row": 4,
+      "column": 0,
+      "used": true,
+      "role": "IMU ground"
+    },
+    {
+      "physical_pin": 10,
+      "row": 4,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 11,
+      "row": 5,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 12,
+      "row": 5,
+      "column": 1,
+      "used": true,
+      "role": "GPIO 18 \u2192 amp BCLK"
+    },
+    {
+      "physical_pin": 13,
+      "row": 6,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 14,
+      "row": 6,
+      "column": 1,
+      "used": true,
+      "role": "Ground star"
+    },
+    {
+      "physical_pin": 15,
+      "row": 7,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 16,
+      "row": 7,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 17,
+      "row": 8,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 18,
+      "row": 8,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 19,
+      "row": 9,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 20,
+      "row": 9,
+      "column": 1,
+      "used": true,
+      "role": "Amp ground"
+    },
+    {
+      "physical_pin": 21,
+      "row": 10,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 22,
+      "row": 10,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 23,
+      "row": 11,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 24,
+      "row": 11,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 25,
+      "row": 12,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 26,
+      "row": 12,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 27,
+      "row": 13,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 28,
+      "row": 13,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 29,
+      "row": 14,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 30,
+      "row": 14,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 31,
+      "row": 15,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 32,
+      "row": 15,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 33,
+      "row": 16,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 34,
+      "row": 16,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 35,
+      "row": 17,
+      "column": 0,
+      "used": true,
+      "role": "GPIO 19 \u2192 amp LRC"
+    },
+    {
+      "physical_pin": 36,
+      "row": 17,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 37,
+      "row": 18,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 38,
+      "row": 18,
+      "column": 1,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 39,
+      "row": 19,
+      "column": 0,
+      "used": false,
+      "role": "Unused by this wiring contract"
+    },
+    {
+      "physical_pin": 40,
+      "row": 19,
+      "column": 1,
+      "used": true,
+      "role": "GPIO 21 \u2192 amp DIN"
+    }
+  ],
+  "motor_fused_groups": [
+    {
+      "id": "F1",
+      "fuse_a": 3,
+      "motor_ids": [
+        1,
+        2
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F2",
+      "fuse_a": 3,
+      "motor_ids": [
+        3,
+        4
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F3",
+      "fuse_a": 3,
+      "motor_ids": [
+        5,
+        10
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F4",
+      "fuse_a": 3,
+      "motor_ids": [
+        6,
+        7
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F5",
+      "fuse_a": 3,
+      "motor_ids": [
+        8,
+        9
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F6",
+      "fuse_a": 3,
+      "motor_ids": [
+        11,
+        12
+      ],
+      "pair_split_offset_toward_torso_mm": 0,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F7",
+      "fuse_a": 3,
+      "motor_ids": [
+        13,
+        14
+      ],
+      "pair_split_offset_toward_torso_mm": 20,
+      "service_allowance_mm_at_tail_min": 30
+    },
+    {
+      "id": "F8",
+      "fuse_a": 3,
+      "motor_ids": [
+        15
+      ],
+      "pair_split_offset_toward_torso_mm": 30,
+      "service_allowance_mm_at_tail_min": 30
+    }
+  ],
+  "sources": [
+    {
+      "id": "omx-assembly",
+      "url": "https://docs.robotis.com/docs/systems/omx/quick_start_guide/assembly_guide/",
+      "verified": "2026-10-07",
+      "use": "Before-you-begin,3D assembly,videos; identify actuator IDs/reference posture; rotate/zoom individual connections; disconnect power before cable fitting. OMX factoryIDs/posture are not MicroDuck calibration."
+    },
+    {
+      "id": "openrb",
+      "url": "https://emanual.robotis.com/docs/en/parts/controller/openrb-150/",
+      "verified": "2026-10-07",
+      "use": "USB5V,3000mA DXL-port capacity,USB500mA built-in fuse,3pinTTL pinout1GND2VDD3DATA,jumper role."
+    },
+    {
+      "id": "xl330",
+      "url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
+      "verified": "2026-10-07",
+      "use": "Input3.7\u20136V/recommended5V,TTL,motor form factor,assembly screw constraints."
+    },
+    {
+      "id": "receiver",
+      "url": "https://learn.adafruit.com/adafruit-usb-type-c-power-delivery-switchable-breakout?view=all",
+      "verified": "2026-10-07",
+      "use": "5991 switch20V; ISET open3.25A; receiver negotiates voltage and does not convert to5V."
+    },
+    {
+      "id": "converter",
+      "url": "https://www.dfrobot.com/product-2907.html",
+      "verified": "2026-10-07",
+      "use": "DFR1202 input6\u201324V/output5V; vendor max16A is not this robot continuous load acceptance."
+    },
+    {
+      "id": "bno085",
+      "url": "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts",
+      "verified": "2026-10-07",
+      "use": "STEMMAQT/VIN/GND/SDA/SCL; power same3.3V logic asPi."
+    },
+    {
+      "id": "bno085-pi",
+      "url": "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/python-circuitpython",
+      "verified": "2026-10-07",
+      "use": "Manufacturer explicitly documentsPi I2C wiring and recommends400kHz, operation remains physical test."
+    },
+    {
+      "id": "camera",
+      "url": "https://www.raspberrypi.com/documentation/accessories/camera.html",
+      "verified": "2026-10-07",
+      "use": "Camera15-contact toZero22-contact Standard-Mini ribbon, disconnected whilefitting."
+    },
+    {
+      "id": "pi",
+      "url": "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html",
+      "verified": "2026-10-07",
+      "use": "GPIO physical header numbering andZero board/header identification."
+    },
+    {
+      "id": "audio",
+      "url": "https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts",
+      "verified": "2026-10-07",
+      "use": "VIN2.5\u20135.5V,BCLK/LRC/DIN,100kGAIN-toVIN3dB,bridge-tied speaker pair."
+    }
+  ],
+  "local_contract": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/design-contract.json",
+  "local_contract_sha256": "66128444fc990ea72b93f56a823316e228fb3751e23fb77983bbaeee19e7f03d",
+  "current_compute_note": "Mac runs control and policy; Pi acquires and forwards sensors. The retained Pi USB/OpenRB bridge is the physical transport; bus ownership, software migration and timing need separate commissioning.",
+  "stock_note": "All prints, user-owned OMX parts and all 15 DigiKey lines are received per user reports. This guide requests no purchases or printing.",
+  "fuse_stage_note": "Mechanical modules can precede harness fabrication. Current wiring includes an external 5 A input fuse and 11 onboard fuses; the OpenRB USB fuse protects another path.",
+  "physical_unknowns": [
+    "Actual borrowedPi model/revision/header operation",
+    "Each physical servo model/ID/calibration",
+    "Which loose cable in userstock corresponds toX3P/SC1892/4397/4472/SC0727",
+    "Physicalsocket view andcamera contactside",
+    "Actualprinted fit,terminals/polarity/insulation,continuity andfree-jointslack",
+    "Measured source20V negotiation,loaded5V,thermal/regenerative behavior",
+    "Motor-bus owner andMac/Pi transport implementation"
+  ],
+  "hardware_actions_performed": [],
+  "energizing_performed": false,
+  "physical_commissioning_verified": false,
+  "source_map_sha256": "aefab920be0d9dacee25fd3bcf2dd6a782dfb159710c80e3cab6fec5a627ed24"
+}

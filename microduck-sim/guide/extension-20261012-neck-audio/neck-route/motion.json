@@ -1,0 +1,4901 @@
+{
+ "_method": "Slack and pinch clearance of candidate bundle routes over the neck and jaw motion.\n\nA route (route-candidates.json) is a polyline whose points each ride on one MJCF body ('tie' = fixed to that body by a\ntie or clip; 'guide' = held in a passage of that body). At pose q every point moves with its body; spans between points\non different bodies are free spans, modelled taut (straight). For each route and pose set:\n  slack needed  = max over poses of (route length at q - route length at q = 0), total and per free span;\n  pinch         = smallest exact distance from the route centreline to a part on a body other than the two bodies the\n                  span is attached to (minus the conductor-group radius = clearance of the wire surface);\n  wrap          = free-span samples (farther than 3 mm from their end points) that lie inside a solid at that pose:\n                  the taut line would cut through a part, so the real cable wraps it (length then exceeds the taut value).\nPose sets: 'policy' (box over the walking-policy trace ranges), 'pickup' (neck pitched forward/down, head pitched down,\nthe bend-forward beak-pickup family), 'mjcf' (each joint alone over its full MJCF range in 10 deg steps).\nJaw 0 and 40 deg (open) in every set. Writes motion.json.\nUsage: motion.py [route ...]",
+ "_poseSets": {
+  "policy": 162,
+  "pickup": 54,
+  "mjcf": 164,
+  "yawSweep": 35
+ },
+ "current-external": {
+  "description": "V1.8 as built: torso tie at the plate notch to the cap-notch hood tie, one free span behind the neck (taut model of the 130 mm service loop)",
+  "groupRadiusMm": 3.35,
+  "lengthAtQ0Mm": 78.7,
+  "sets": {
+   "policy": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.5,
+      "part": "motor11",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 162,
+    "slackNeededMm": 61.5,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 68.2,
+     "head_yaw": 34.0,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "segment": 0,
+      "lengthQ0Mm": 78.7,
+      "slackNeededMm": 61.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -2.85,
+     "centrelineDistanceMm": 0.5,
+     "inside": false,
+     "part": "motor11",
+     "body": "neck",
+     "at": [
+      38.76,
+      -8.16,
+      90.39
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 158,
+     "examples": [
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 8,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 8,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "pickup": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.48,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     }
+    ],
+    "poses": 54,
+    "slackNeededMm": 79.3,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 45.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "segment": 0,
+      "lengthQ0Mm": 78.7,
+      "slackNeededMm": 79.3,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -3.83,
+     "centrelineDistanceMm": 0.48,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      53.17,
+      -5.92,
+      47.82
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -60.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 54,
+     "examples": [
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "mjcf": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "idler11",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 164,
+    "slackNeededMm": 57.3,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "segment": 0,
+      "lengthQ0Mm": 78.7,
+      "slackNeededMm": 57.3,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -3.46,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "idler11",
+     "body": "neck_pitch",
+     "at": [
+      29.41,
+      -11.71,
+      77.52
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "head_yaw": 170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 128,
+     "examples": [
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "yawSweep": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "idler11",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 35,
+    "slackNeededMm": 47.8,
+    "worstPoseDeg": {
+     "head_yaw": -170.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "segment": 0,
+      "lengthQ0Mm": 78.7,
+      "slackNeededMm": 47.8,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -3.46,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "idler11",
+     "body": "neck_pitch",
+     "at": [
+      29.41,
+      -11.71,
+      77.52
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "head_yaw": 170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 35,
+     "examples": [
+      {
+       "part": "motor11",
+       "body": "neck",
+       "segment": 0,
+       "samples": 9,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor11",
+       "body": "neck",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 7,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor11",
+       "body": "neck",
+       "segment": 0,
+       "samples": 2,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 6,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "A-minus-y-channel": {
+  "description": "Inside route, -y side: pack exit -> tie on ID12 case near the neck-pitch axis -> straight up behind the -y neck links -> tie on the -y arm of the head-pitch bracket at the head-pitch axis -> up through the lower-shell floor opening -> -y channel between ID13 and the jaw-support/lower-shell collar -> above the servos -> over the Pi top edge (current tail) -> header",
+  "groupRadiusMm": 0.0,
+  "lengthAtQ0Mm": 223.1,
+  "sets": {
+   "policy": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 1.54,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 4.7,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.01,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.21,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.49,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.25,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 162,
+    "slackNeededMm": 27.0,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 68.2,
+     "head_yaw": 34.0,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 35.4,
+      "slackNeededMm": 6.3,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.3,
+      "slackNeededMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 14.1,
+      "slackNeededMm": 13.2,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "at": [
+      57.43,
+      -19.29,
+      84.78
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 120,
+     "examples": [
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 4.7,
+        "head_roll": 9.9,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 4.7,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": 9.9,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "pickup": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.45,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.03,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.89,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.56,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 54,
+    "slackNeededMm": 41.7,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 35.4,
+      "slackNeededMm": 23.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.3,
+      "slackNeededMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 14.1,
+      "slackNeededMm": 10.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.27,
+     "centrelineDistanceMm": 0.27,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      26.43,
+      -9.75,
+      43.19
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 36,
+     "examples": [
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 1,
+       "samples": 3,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "mjcf": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.19,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.24,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -140.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.28,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.17,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.08,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 10.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 164,
+    "slackNeededMm": 33.6,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 35.4,
+      "slackNeededMm": 23.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.3,
+      "slackNeededMm": 7.6,
+      "worstPoseDeg": {
+       "head_pitch": 80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 14.1,
+      "slackNeededMm": 33.6,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      4.18,
+      11.87,
+      104.47
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -130.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 59,
+     "examples": [
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "motor14",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "head_pitch": -90.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor14",
+       "body": "jaw_soft",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "head_pitch": -90.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "yawSweep": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 7.63,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.5,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 35,
+    "slackNeededMm": 33.6,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 35.4,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.3,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 14.1,
+      "slackNeededMm": 33.6,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      4.18,
+      11.87,
+      104.47
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -130.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 16,
+     "examples": [
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 6,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "body": "jaw_soft",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 5,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 4,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -140.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "B-plus-y-gap": {
+  "description": "Inside route, +y side beside the ID11->ID13 servo cable: pack exit -> tie on ID12 case (+y) -> straight up behind the +y neck links -> tie on the +y bracket arm at the head-pitch axis -> floor opening rear +y corner -> gap between the yaw link and the jaw servo ID15 -> above the servos -> over the Pi top (current tail) -> header",
+  "groupRadiusMm": 0.0,
+  "lengthAtQ0Mm": 203.4,
+  "sets": {
+   "policy": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 3.66,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.02,
+      "part": "shell_left",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.8,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 4.68,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.95,
+      "part": "neck_pitch",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.04,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.01,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 162,
+    "slackNeededMm": 25.0,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 68.2,
+     "head_yaw": 34.0,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 33.5,
+      "slackNeededMm": 6.6,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.2,
+      "slackNeededMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 8.4,
+      "slackNeededMm": 10.9,
+      "worstPoseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": 0.02,
+     "centrelineDistanceMm": 0.02,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      6.41,
+      15.75,
+      39.42
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": 39.8,
+      "head_pitch": 68.2,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 36,
+     "examples": [
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 2,
+       "poseDeg": {
+        "neck_pitch": 39.8,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "pickup": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.38,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.01,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 5.25,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.75,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.18,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.12,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 54,
+    "slackNeededMm": 40.7,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 33.5,
+      "slackNeededMm": 24.5,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.2,
+      "slackNeededMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 8.4,
+      "slackNeededMm": 8.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.11,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      28.18,
+      15.5,
+      50.86
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 9,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 0,
+       "samples": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 1,
+       "samples": 12,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 1,
+       "samples": 28,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 0,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 1,
+       "samples": 12,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 1,
+       "samples": 28,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "mjcf": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.1,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.26,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": 130.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.27,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.83,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.06,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.55,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": -10.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 164,
+    "slackNeededMm": 29.9,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 33.5,
+      "slackNeededMm": 24.5,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.2,
+      "slackNeededMm": 7.6,
+      "worstPoseDeg": {
+       "head_pitch": 80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 8.4,
+      "slackNeededMm": 29.9,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.26,
+     "centrelineDistanceMm": 0.26,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      15.54,
+      17.92,
+      75.31
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": 130.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 46,
+     "examples": [
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_left",
+       "body": "trunk_base",
+       "segment": 1,
+       "samples": 4,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "yawSweep": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 7.34,
+      "part": "shell_left",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.59,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": 130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -160.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.75,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -110.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.18,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.12,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 35,
+    "slackNeededMm": 29.9,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 0,
+      "lengthQ0Mm": 33.5,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 1,
+      "lengthQ0Mm": 41.2,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 3,
+      "lengthQ0Mm": 8.4,
+      "slackNeededMm": 29.9,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.09,
+     "centrelineDistanceMm": 0.09,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      33.43,
+      0.05,
+      101.2
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -160.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 15,
+     "examples": [
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 3,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 3,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 3,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 3,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch_ring",
+       "body": "neck_pitch",
+       "segment": 3,
+       "samples": 3,
+       "poseDeg": {
+        "head_yaw": -140.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "A2-minus-y-clips": {
+  "description": "Route A with every tie moved next to the joint axis it serves, each held by a clip under an existing screw head (no new holes): from the V1.8 torso exit over the shell top to a torso clip under the -y shell screw S12-horn-025 beside the neck-pitch pivot (6 mm from the axis); neck clip under the -y link screw S11-case-094 (ID11 case); bracket clip under the -y bracket screw S11-horn-040 beside the head-pitch axis (6 mm from it); then up the bracket plate, through the lower-shell floor opening and the -y channel as route A. Wire points sit 3 mm outboard of the screw seat (screw head plus clip plus half a wire).",
+  "groupRadiusMm": 0.0,
+  "lengthAtQ0Mm": 251.3,
+  "sets": {
+   "policy": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.98,
+      "part": "neck_link_a",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.02,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -4.87,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.51,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.06,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.01,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.21,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.49,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.25,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 162,
+    "slackNeededMm": 21.4,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 68.2,
+     "head_yaw": 34.0,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 3,
+      "lengthQ0Mm": 27.9,
+      "slackNeededMm": 2.3,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 4,
+      "lengthQ0Mm": 22.9,
+      "slackNeededMm": 6.0,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 6,
+      "lengthQ0Mm": 14.2,
+      "slackNeededMm": 13.1,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.09,
+     "centrelineDistanceMm": 0.09,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      13.3,
+      -20.15,
+      82.41
+     ],
+     "routeSegment": 4,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 37.1,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 45,
+     "examples": [
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": 9.9,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 34.0,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 4,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": 34.0,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   },
+   "pickup": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.99,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.42,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.12,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.19,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.1,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.89,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 54,
+    "slackNeededMm": 24.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 3,
+      "lengthQ0Mm": 27.9,
+      "slackNeededMm": 6.8,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 4,
+      "lengthQ0Mm": 22.9,
+      "slackNeededMm": 6.9,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 6,
+      "lengthQ0Mm": 14.2,
+      "slackNeededMm": 10.2,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.12,
+     "centrelineDistanceMm": 0.12,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      34.83,
+      -17.72,
+      51.26
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 9,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 11,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 7,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 9,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 11,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 8,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 12,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "mjcf": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "head_cap_nonotch",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.04,
+      "part": "motor14",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.88,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.0,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.4,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -110.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.21,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.17,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.08,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 10.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 164,
+    "slackNeededMm": 34.7,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 3,
+      "lengthQ0Mm": 27.9,
+      "slackNeededMm": 6.8,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 4,
+      "lengthQ0Mm": 22.9,
+      "slackNeededMm": 6.9,
+      "worstPoseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 6,
+      "lengthQ0Mm": 14.2,
+      "slackNeededMm": 34.7,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.22,
+     "centrelineDistanceMm": 0.22,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      17.73,
+      22.53,
+      104.33
+     ],
+     "routeSegment": 6,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 44,
+     "examples": [
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 3,
+       "samples": 19,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 3,
+       "samples": 19,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 3,
+       "samples": 19,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "body": "trunk_base",
+       "segment": 3,
+       "samples": 19,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 8,
+       "poseDeg": {
+        "head_pitch": 80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 3,
+       "samples": 9,
+       "poseDeg": {
+        "head_pitch": 90.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "yawSweep": {
+    "perSegment": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 12.29,
+      "part": "motor12",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 9.76,
+      "part": "motor12",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 4.66,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -160.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "poses": 35,
+    "slackNeededMm": 34.7,
+    "worstPoseDeg": {
+     "head_yaw": 160.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck",
+      "segment": 3,
+      "lengthQ0Mm": 27.9,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck",
+      "to": "neck_pitch",
+      "segment": 4,
+      "lengthQ0Mm": 22.9,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 6,
+      "lengthQ0Mm": 14.2,
+      "slackNeededMm": 34.7,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -0.22,
+     "centrelineDistanceMm": 0.22,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      13.7,
+      20.77,
+      104.33
+     ],
+     "routeSegment": 6,
+     "poseDeg": {
+      "head_yaw": -160.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 16,
+     "examples": [
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 7,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 5,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 6,
+       "samples": 1,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 5,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "neck_pitch",
+       "body": "neck_pitch",
+       "segment": 6,
+       "samples": 3,
+       "poseDeg": {
+        "head_yaw": -140.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

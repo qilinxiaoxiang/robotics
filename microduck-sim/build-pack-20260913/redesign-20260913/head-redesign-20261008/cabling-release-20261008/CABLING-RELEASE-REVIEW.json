@@ -1,0 +1,1152 @@
+{
+  "date": "2026-10-08",
+  "problemIds": [
+    "P0",
+    "P5",
+    "P6"
+  ],
+  "status": "PARTIAL_CABLING_ENGINEERING_REVIEW_NOT_PRINT_RELEASE",
+  "allCableRoutesVerified": false,
+  "canonicalGeometryModified": false,
+  "obstacleCount": 94,
+  "actualPurchasedAudio": {
+    "speaker": "Same Sky CMS-30204-18SP solder-pad variant; notL200 and notAdafruit3923",
+    "amp": "Adafruit3006",
+    "gain": "YageoMFR-25FBF52-100K"
+  },
+  "audioCandidate": {
+    "ampRotationDegreesZ": 90,
+    "ampTranslationYmm": 0.8,
+    "newRoofPillars": [
+      [
+        26.287000884999998,
+        -29.549999389600003,
+        133.5849994
+      ],
+      [
+        26.287000885,
+        -16.8499993896,
+        133.5849994
+      ]
+    ],
+    "speakerWireLengthsMm": [
+      58.12515883486409,
+      64.8925654343297
+    ],
+    "wireODmm": 1.5,
+    "bendRmm": 2,
+    "wirePairGapMm": 0.45473761413161073,
+    "closureSamples": 161,
+    "closurePeak": {},
+    "benchInsertionSamples": 121,
+    "drivers": [
+      {
+        "centerMm": [
+          26.287000884999998,
+          -29.549999389600003,
+          132.0149994
+        ],
+        "hits": {}
+      },
+      {
+        "centerMm": [
+          26.287000885,
+          -16.8499993896,
+          132.0149994
+        ],
+        "hits": {}
+      }
+    ],
+    "keeperLocalReliefRemovedMm3": 3.3455806529062246,
+    "capAndKeeperWatertightSingleBody": true,
+    "limitations": [
+      "Cable OD1.5mm and static R2 are receiving parameters, not exact purchased wire specifications.",
+      "Speaker pad XY centers from dimension-scaled manufacturer diagram, not separately dimensioned; +/-0.5mm to be tested.",
+      "Terminal exit direction from official Eagle package; height138.5mm and1.8mm mating aperture are receiving assumptions."
+    ],
+    "headShellExteriorRule": "Only former/new inward roof pillar volumes change; base native curved surface retained. No expanded box or outer stretch."
+  },
+  "headerProbe": {
+    "straightDeparture5mmBlockedGridLocations": 32,
+    "locations": 40,
+    "scope": "20x2 standard2.54mm grid inside the frozen15mm housing/lead receiving box. This is neither actual plug model nor electricalpin mapping. All other physical obstacles retained. \u00d81.5 wire5mm straight exit normal to board.",
+    "implication": "A full header receiver fitting does not prove lead departure. Need actual selected female mating contact shape/lead orientation; pinmapping not inferred from receiver."
+  },
+  "neckLengthDiagnostic": [
+    {
+      "from": "imu",
+      "to": "pi",
+      "specifiedWireLengthMm": 250,
+      "neutralCenterDistanceMm": 170.6458983525745,
+      "minimumSampleMm": 103.58713222945504,
+      "maximumSample": {
+        "jointDegrees": {
+          "neck_pitch": -55.0
+        },
+        "componentCenterDistanceMm": 192.0502267556695
+      },
+      "scope": "Component-center chord diagnostic ONLY: not connector coordinates, not cable routed length, not a clearance/slack pass. Existing rigid collision poses not filtered."
+    },
+    {
+      "from": "F10",
+      "to": "amp",
+      "specifiedWireLengthMm": 250,
+      "neutralCenterDistanceMm": 224.8070506783845,
+      "minimumSampleMm": 160.35552022371755,
+      "maximumSample": {
+        "jointDegrees": {
+          "neck_pitch": -20,
+          "head_pitch": 0,
+          "head_yaw": 0,
+          "head_roll": 20
+        },
+        "componentCenterDistanceMm": 235.88836017543812
+      },
+      "scope": "Component-center chord diagnostic ONLY: not connector coordinates, not cable routed length, not a clearance/slack pass. Existing rigid collision poses not filtered."
+    },
+    {
+      "from": "F9",
+      "to": "pi",
+      "specifiedWireLengthMm": null,
+      "neutralCenterDistanceMm": 228.93198491858877,
+      "minimumSampleMm": 158.133728421408,
+      "maximumSample": {
+        "jointDegrees": {
+          "neck_pitch": -20,
+          "head_pitch": -30,
+          "head_yaw": 0,
+          "head_roll": 0
+        },
+        "componentCenterDistanceMm": 235.79690443539255
+      },
+      "scope": "Component-center chord diagnostic ONLY: not connector coordinates, not cable routed length, not a clearance/slack pass. Existing rigid collision poses not filtered."
+    }
+  ],
+  "cameraNewBoundedAttempt": {
+    "rows": {
+      "camera180": {
+        "boundsMm": [
+          [
+            74.22999572753906,
+            -12.591378211975105,
+            121.65259246830624
+          ],
+          [
+            86.4000015258789,
+            12.408621788024899,
+            145.51459960941952
+          ]
+        ],
+        "intersectionsMm3": {
+          "face_panel": 20.922411059956044
+        },
+        "retainerIntersectionsMm3": 3.328508292827024e-15
+      },
+      "first12mmRibbon180": {
+        "boundsMm": [
+          [
+            74.58,
+            -8.0913782119751,
+            109.65259552006405
+          ],
+          [
+            74.88000000000001,
+            7.9086217880249,
+            121.65259552006405
+          ]
+        ],
+        "intersectionsMm3": {
+          "head_bottom": 7.510704043950055
+        },
+        "retainerIntersectionsMm3": 9.599853515625
+      }
+    },
+    "ribbonBoundary": "Camera-end16mm-wide by0.3mm-thick receiving strip,12mmstraight below movedmouth; thickness and12mmstraightlead are assumptions, not actual SC1892 stiffness specification."
+  },
+  "connections": [
+    {
+      "id": "charger-usb",
+      "from": "MDY-14-ED USB-A socket",
+      "to": "5991 USB-C socket",
+      "pinMapping": [],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "input-fuse",
+      "from": "5991 + screw terminal",
+      "to": "External 5 A fuse \u2192 robot XT30 +",
+      "pinMapping": [
+        {
+          "from": "+",
+          "to": "XT30 +",
+          "signal": "20 V"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "input-return",
+      "from": "5991 \u2212 screw terminal",
+      "to": "Robot XT30 \u2212",
+      "pinMapping": [
+        {
+          "from": "\u2212",
+          "to": "XT30 \u2212",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "regulator-input",
+      "from": "Robot XT30 solder cups",
+      "to": "DFR1202 VIN+ / GND",
+      "pinMapping": [
+        {
+          "from": "XT30 +",
+          "to": "VIN+",
+          "signal": "20 V"
+        },
+        {
+          "from": "XT30 \u2212",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "star-output",
+      "from": "DFR1202 5 V / GND",
+      "to": "5 V positive star / ground star",
+      "pinMapping": [
+        {
+          "from": "5 V",
+          "to": "5 V star",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND",
+          "to": "GND star",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-main",
+      "from": "5 V positive star",
+      "to": "F0 10 A \u2192 F1\u2013F8 inputs",
+      "pinMapping": [],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "pi-fuse",
+      "from": "5 V positive star",
+      "to": "F9 3 A input",
+      "pinMapping": [],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "audio-fuse",
+      "from": "5 V positive star",
+      "to": "F10 0.5 A input",
+      "pinMapping": [],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "motor-F1",
+      "from": "F1 3 A output + common ground",
+      "to": "XL330 IDs 1, 2 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F1 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F2",
+      "from": "F2 3 A output + common ground",
+      "to": "XL330 IDs 3, 4 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F2 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F3",
+      "from": "F3 3 A output + common ground",
+      "to": "XL330 IDs 5, 10 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F3 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F4",
+      "from": "F4 3 A output + common ground",
+      "to": "XL330 IDs 6, 7 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F4 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F5",
+      "from": "F5 3 A output + common ground",
+      "to": "XL330 IDs 8, 9 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F5 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F6",
+      "from": "F6 3 A output + common ground",
+      "to": "XL330 IDs 11, 12 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F6 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F7",
+      "from": "F7 3 A output + common ground",
+      "to": "XL330 IDs 13, 14 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F7 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "motor-F8",
+      "from": "F8 3 A output + common ground",
+      "to": "XL330 IDs 15 individual power tails",
+      "pinMapping": [
+        {
+          "from": "F8 output",
+          "to": "Each assigned motor pin 2 VDD",
+          "signal": "5 V"
+        },
+        {
+          "from": "GND star",
+          "to": "Each assigned motor pin 1 GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-01",
+      "from": "OpenRB DYNAMIXEL port",
+      "to": "XL330 ID 15",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-02",
+      "from": "XL330 ID 15",
+      "to": "XL330 ID 14",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-03",
+      "from": "XL330 ID 14",
+      "to": "XL330 ID 13",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-04",
+      "from": "XL330 ID 13",
+      "to": "XL330 ID 11",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-05",
+      "from": "XL330 ID 11",
+      "to": "XL330 ID 12",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-06",
+      "from": "XL330 ID 12",
+      "to": "XL330 ID 5",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-07",
+      "from": "XL330 ID 5",
+      "to": "XL330 ID 4",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-08",
+      "from": "XL330 ID 4",
+      "to": "XL330 ID 3",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-09",
+      "from": "XL330 ID 3",
+      "to": "XL330 ID 2",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-10",
+      "from": "XL330 ID 2",
+      "to": "XL330 ID 1",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-11",
+      "from": "XL330 ID 1",
+      "to": "XL330 ID 6",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-12",
+      "from": "XL330 ID 6",
+      "to": "XL330 ID 7",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-13",
+      "from": "XL330 ID 7",
+      "to": "XL330 ID 8",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-14",
+      "from": "XL330 ID 8",
+      "to": "XL330 ID 9",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "data-15",
+      "from": "XL330 ID 9",
+      "to": "XL330 ID 10",
+      "pinMapping": [
+        {
+          "from": "pin 3 DATA",
+          "to": "pin 3 DATA",
+          "signal": "TTL DATA"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "openrb-ground",
+      "from": "OpenRB outgoing pin 1 GND",
+      "to": "Common ground star",
+      "pinMapping": [
+        {
+          "from": "pin 1 GND",
+          "to": "GND star",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "EXISTING_SCHEMATIC_ONLY_NOT_ROUTE_ACCEPTED",
+      "minimumAssemblyDependency": "Route free ends before closing affected shell; actual connector bodies, terminal access and full motion still required."
+    },
+    {
+      "id": "pi-5v-2",
+      "from": "F9 3 A output",
+      "to": "Pi physical pin 2",
+      "pinMapping": [
+        {
+          "from": "F9 output",
+          "to": "2 (5 V)",
+          "signal": "5 V"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "pi-5v-4",
+      "from": "F9 3 A output",
+      "to": "Pi physical pin 4",
+      "pinMapping": [
+        {
+          "from": "F9 output",
+          "to": "4 (5 V)",
+          "signal": "5 V"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "pi-gnd-6",
+      "from": "Ground star",
+      "to": "Pi physical pin 6",
+      "pinMapping": [
+        {
+          "from": "GND star",
+          "to": "6 (GND)",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "pi-gnd-14",
+      "from": "Ground star",
+      "to": "Pi physical pin 14",
+      "pinMapping": [
+        {
+          "from": "GND star",
+          "to": "14 (GND)",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "pi-otg",
+      "from": "Pi socket labeled USB, Micro-B",
+      "to": "SC0727 USB-A female socket",
+      "pinMapping": [],
+      "geometryStatus": "CONDITIONAL_EXTERNAL_ROUTE_ONLY",
+      "minimumAssemblyDependency": "Internal wiring and cap first; MicroB inserted from above, complete27mmCplug inserted from behind; mate freeUSB-A pair before cable restraints. Unplug both board ends before reopening cap.",
+      "evidence": "../usb-access/full-harness/USB-HARNESS-REVIEW.json",
+      "remaining": "SC0727flexible-length definition/mould unknown; externalcoupling strain relief not validated; reject prior clip that blockedIMU during neck pitch."
+    },
+    {
+      "id": "openrb-usb",
+      "from": "SC0727 USB-A female socket",
+      "to": "OpenRB USB-C socket",
+      "pinMapping": [],
+      "geometryStatus": "CONDITIONAL_EXTERNAL_ROUTE_ONLY",
+      "minimumAssemblyDependency": "Internal wiring and cap first; MicroB inserted from above, complete27mmCplug inserted from behind; mate freeUSB-A pair before cable restraints. Unplug both board ends before reopening cap.",
+      "evidence": "../usb-access/full-harness/USB-HARNESS-REVIEW.json",
+      "remaining": "SC0727flexible-length definition/mould unknown; externalcoupling strain relief not validated; reject prior clip that blockedIMU during neck pitch."
+    },
+    {
+      "id": "imu-vin",
+      "from": "Pi physical pin 1",
+      "to": "BNO085 STEMMA QT VIN",
+      "pinMapping": [
+        {
+          "from": "1",
+          "to": "VIN",
+          "signal": "3.3 V"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "imu-sda",
+      "from": "Pi physical pin 3",
+      "to": "BNO085 STEMMA QT SDA",
+      "pinMapping": [
+        {
+          "from": "3 / GPIO 2",
+          "to": "SDA",
+          "signal": "I2C data"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "imu-scl",
+      "from": "Pi physical pin 5",
+      "to": "BNO085 STEMMA QT SCL",
+      "pinMapping": [
+        {
+          "from": "5 / GPIO 3",
+          "to": "SCL",
+          "signal": "I2C clock"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "imu-gnd",
+      "from": "Pi physical pin 9",
+      "to": "BNO085 STEMMA QT GND",
+      "pinMapping": [
+        {
+          "from": "9",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "camera-ribbon",
+      "from": "SC1224 camera 15-contact CSI latch",
+      "to": "Pi Zero 22-contact CSI latch",
+      "pinMapping": [
+        {
+          "from": "15-contact",
+          "to": "22-contact",
+          "signal": "CSI data + power"
+        }
+      ],
+      "geometryStatus": "BLOCKED_SOURCE_WIDTH_AND_END_STIFFENER_ROUTE",
+      "minimumAssemblyDependency": "Both FFC latches open and free connector threaded before both endpoints are seated; final end taper/stiffener must avoid immediate mini-end bend; full200mm length remains unresolved.",
+      "evidence": "../camera-retainer/cabling/conditional-U-verification.json + camera-down-exit-probe.json",
+      "decision": "Keep existing cap/face/retainer/eye final release on hold; original upward outlet not solved;90deg route remains conditional; new180deg optical-preserving alternative explicitly rejected."
+    },
+    {
+      "id": "audio-vin",
+      "from": "F10 0.5 A output",
+      "to": "MAX98357A VIN",
+      "pinMapping": [
+        {
+          "from": "F10 output",
+          "to": "VIN",
+          "signal": "5 V"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "audio-return",
+      "from": "Common ground star",
+      "to": "MAX98357A GND",
+      "pinMapping": [
+        {
+          "from": "GND star",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "BLOCKED_PIN_SPECIFIC_CONNECTOR_AND_DYNAMIC_SERVICE_LOOP",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json"
+    },
+    {
+      "id": "audio-12",
+      "from": "Pi physical pin 12",
+      "to": "MAX98357A BCLK",
+      "pinMapping": [
+        {
+          "from": "12 / GPIO 18",
+          "to": "BCLK",
+          "signal": "I2S bit clock"
+        }
+      ],
+      "geometryStatus": "CONDITIONAL_COMPLETE_STATIC_I2S_ROUTE_CLEAR",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "gpio-candidate.json",
+      "remaining": "InstalledGPIOhousing<=11mm receivingdepth must be met; fullFFCco-existence and inextensiblecapservicepath remain unverified."
+    },
+    {
+      "id": "audio-35",
+      "from": "Pi physical pin 35",
+      "to": "MAX98357A LRC / LRCLK",
+      "pinMapping": [
+        {
+          "from": "35 / GPIO 19",
+          "to": "LRC / LRCLK",
+          "signal": "I2S word clock"
+        }
+      ],
+      "geometryStatus": "CONDITIONAL_COMPLETE_STATIC_I2S_ROUTE_CLEAR",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "gpio-candidate.json",
+      "remaining": "InstalledGPIOhousing<=11mm receivingdepth must be met; fullFFCco-existence and inextensiblecapservicepath remain unverified."
+    },
+    {
+      "id": "audio-40",
+      "from": "Pi physical pin 40",
+      "to": "MAX98357A DIN",
+      "pinMapping": [
+        {
+          "from": "40 / GPIO 21",
+          "to": "DIN",
+          "signal": "I2S data"
+        }
+      ],
+      "geometryStatus": "CONDITIONAL_COMPLETE_STATIC_I2S_ROUTE_CLEAR",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "gpio-candidate.json",
+      "remaining": "InstalledGPIOhousing<=11mm receivingdepth must be met; fullFFCco-existence and inextensiblecapservicepath remain unverified."
+    },
+    {
+      "id": "audio-20",
+      "from": "Pi physical pin 20",
+      "to": "MAX98357A GND",
+      "pinMapping": [
+        {
+          "from": "20",
+          "to": "GND",
+          "signal": "GND"
+        }
+      ],
+      "geometryStatus": "CONDITIONAL_COMPLETE_STATIC_I2S_ROUTE_CLEAR",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "gpio-candidate.json",
+      "remaining": "InstalledGPIOhousing<=11mm receivingdepth must be met; fullFFCco-existence and inextensiblecapservicepath remain unverified."
+    },
+    {
+      "id": "audio-gain",
+      "from": "MAX98357A GAIN",
+      "to": "MAX98357A VIN",
+      "pinMapping": [
+        {
+          "from": "GAIN",
+          "to": "VIN through 100 k\u03a9",
+          "signal": "3 dB gain"
+        }
+      ],
+      "geometryStatus": "PART_DIMENSIONS_CONFIRMED_FORMED_LEADS_UNMODELED",
+      "minimumAssemblyDependency": "Solder amp leads on bench, identify physical Pi header pins and fit actual female housings before closure. Header departure path must stay clear of jaw_support/motor15. Cross-neck service loop must accommodate all four neck axes plus detached-cap travel; connecting both ends at nominal pose is insufficient.",
+      "evidence": "interface-checks.json + neck-length-bounds.json",
+      "remaining": "100kMFR25 worstbody6.8x2.6mm plus insulated formed leads must be placed on amp before installing cap; no PCB-only acceptance."
+    },
+    {
+      "id": "speaker",
+      "from": "MAX98357A speaker + / \u2212 terminals",
+      "to": "8 \u03a9 1 W speaker pads",
+      "pinMapping": [
+        {
+          "from": "speaker +",
+          "to": "speaker pad 1",
+          "signal": "Floating audio +"
+        },
+        {
+          "from": "speaker \u2212",
+          "to": "speaker pad 2",
+          "signal": "Floating audio \u2212"
+        }
+      ],
+      "geometryStatus": "CONDITIONAL_INTERNAL_ROUTE_CANDIDATE_CLEAR",
+      "minimumAssemblyDependency": "Solder both speaker pads and clamp amplifier terminal screws with detached loose components; then mount both to detached cap, keep paths with the cap; close populated cap. Do not insert preterminated wire through keeper: keeper fits separately after soldering.",
+      "evidence": "audio-candidate-verification.json",
+      "receivingBoundary": "OD<=1.5mm,R>=2mm model; actual wire specified stock and terminal exit/hole height not certified; no strain restraint retention claim."
+    }
+  ],
+  "printDecisions": [
+    {
+      "parts": [
+        "jaw_main",
+        "jaw_passive_cheek",
+        "lower_pad",
+        "head_bottom"
+      ],
+      "decision": "MECHANICAL_PROTOTYPE_ONLY",
+      "reason": "Existing jaw route fixes can be prototyped independently; no new adopted cable route changes these parts. This is not complete final-cable compatibility."
+    },
+    {
+      "parts": [
+        "head_cap",
+        "face_panel",
+        "eye_trim",
+        "camera_retainer",
+        "speaker_cradle",
+        "speaker_keeper"
+      ],
+      "decision": "HOLD_FINAL_PRINT_RELEASE",
+      "reason": "Head closure/FFC remain unresolved. Cap and keeper have new improved audio candidates; accept neither as final until wire dimensions, terminal and complete signal/power routes are resolved."
+    }
+  ],
+  "smallestMissingFactsAfterSourceReview": [
+    "SC1892 receivedRev1/Rev2 identification and mini-end rigid stiffener projection after full seating; officialPCN already gives16/11.5width, do not ask user to rediscover dimensions.",
+    "Exact available GPIO female housing/lead geometry and audio wire insulationOD; these club/precrimp stock items have no selected manufacturerSKU in current contract.",
+    "SC0727 actually available identity and mould/flexible-span boundary; official80mm lacks endpoint definition."
+  ],
+  "agentWorkStillRequired": [
+    "Route actual Pi pins to amp and torso after matching housing, including GAIN resistor and all fourI2S leads.",
+    "Route neck power/IMU/motor bundles through source openings and validate articulated and open-cap service states.",
+    "Finalize a full200mmFFC with correctly straight stiffened ends for receivedrevision; current finite alternatives do not establish impossibility of all designs.",
+    "Provide cable restraints after full route to avoid accepted static route transferring load to sockets."
+  ],
+  "primarySources": [
+    {
+      "url": "https://www.sameskydevices.com/product/resource/cms-30204-18x.pdf",
+      "verified": "2026-10-08",
+      "facts": [
+        "CMS-30204-18SP solder-pad variant30x20x4mm; outline20/30 and4/2.5depths each+/-0.2mm; unspecified dims+/-0.3.",
+        "Backside solder pads at one narrow end; drawing does not dimension pad centers."
+      ],
+      "local": "../curved-head/sources/cms-30204-18x.pdf"
+    },
+    {
+      "url": "https://www.adafruit.com/product/3006",
+      "verified": "2026-10-08",
+      "facts": [
+        "MAX98357A breakout; terminal pre-soldered sinceJune13,2024; product bareboard dimensions do not prove terminal receiving height."
+      ]
+    },
+    {
+      "url": "https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts",
+      "verified": "2026-10-08",
+      "facts": [
+        "Speaker outputs bridge-tied: neither is ground.",
+        "100k GAIN-to-VIN gives3dB.",
+        "I2S BCLK/LRC/DIN, noMCLK."
+      ]
+    },
+    {
+      "url": "https://github.com/adafruit/Adafruit-MAX98357-I2S-Amp-Breakout",
+      "verified": "2026-10-08",
+      "facts": [
+        "EagleX1=3.5mm2pin footprint; JP1 padnames and mounting axes used."
+      ]
+    },
+    {
+      "url": "https://pip-assets.raspberrypi.com/categories/1267-pcn/documents/RP-009201-PC-1-15%20to%2022%20pin%20camera%20cables%20Rev%202.pdf",
+      "verified": "2026-10-08",
+      "facts": [
+        "SC1892 family15to22pin200mm Rev1body16mm,Rev2body11.5mm; transitionAug2025, both revisions can be in channel.",
+        "Does not specify installed stiffener projection, thickness or Rmin."
+      ]
+    },
+    {
+      "url": "https://cdn-shop.adafruit.com/product-files/4472/4472_PCM-0207_TYPE_C_M-USB2.0_A_M__.pdf",
+      "verified": "2026-10-08",
+      "facts": [
+        "4472 nominal152.4 shoulder-span minus22.9A and27C mould/strain gives102.5flexible span; Cbody12mmwidth."
+      ]
+    },
+    {
+      "url": "https://www.raspberrypi.com/products/micro-usb-male-to-usb-a-female-cable/",
+      "verified": "2026-10-08",
+      "facts": [
+        "SC0727 nominal80mm, endpoint definition and mould sizes not dimensioned on official page."
+      ]
+    },
+    {
+      "url": "https://yageogroup.com/content/Resource%20Library/Datasheet/YAGEO-MFR_DATASHEET.pdf",
+      "verified": "2026-10-08",
+      "facts": [
+        "PurchasedMFR-25FBF52-100K body6.3+/-0.5 by2.4+/-0.2mm, lead0.55+/-0.05mm. Resistor body and insulated formed leads still require routing."
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "redesign-20260913/leg-guide-20261006/full-build-data.json": "7c0c10dd22e44ae6d79bd7f24cf448f49c67b3b14e8e2c2d55f393d16ca5d95d",
+    "redesign-20260913/leg-guide-20261006/wiring-guide-data.json": "f56138c8696b37aebbc614f7c984a79e2061fbf1f23ac7ad9f6412e949512c59",
+    "redesign-20260913/leg-guide-20261006/wiring-spatial-data.json": "99d70f47cb83dc4c7908f2780a14db85a3a9458ab9fef73233e8ad447d23d7ca",
+    "redesign-20260913/head-redesign-20261008/viewer-candidate.json": "74197f4194a213a19ddfcdf2e3ab544a642f1aaa1dc125f3943a698e40ab8eae",
+    "redesign-20260913/design-contract.json": "d88f6b136569e41102c8ec75020934cacaf00f4ac54a37a44ec217e2034ff1a2",
+    "procurement/order-101587695-received.json": "73a7b1ce25157668907ca79a799e740930eaa6c3a7eb8d40e35a0cfca3667519",
+    "redesign-20260913/head-redesign-20261008/curved-head/sources/cms-30204-18x.pdf": "959a00b17840d1eae603e6d901b958b902ffaed3104d19913954b06c1e9ff4a5",
+    "redesign-20260913/head-redesign-20261008/curved-head/sources/adafruit-3006.brd": "de54250dee04ac9aa117992ecf2da398a11785ee4310fdfde1480231e2b54f84",
+    "redesign-20260913/head-redesign-20261008/curved-head/sources/adafruit-3006.step": "bdc3c4c3dcbb7402eb73427a87efb1fe99a8b674fa7217ac56fc2315b027ec93",
+    "redesign-20260913/head-redesign-20261008/camera-retainer/cabling/sc1892-official-spec.json": "d15a7d17706969a9a07e3eea6edb451ec959fd11325d64ea8010904788411a3b",
+    "redesign-20260913/head-redesign-20261008/camera-retainer/cabling/conditional-U-verification.json": "0a2991b3892f10d5157870bac528657c081ac63405a3e4abd98c925ea7fe7304",
+    "redesign-20260913/head-redesign-20261008/usb-access/full-harness/USB-HARNESS-REVIEW.json": "79b8d8ac94b14f6522c2efe456b33493f2a9126c4e40d3e859818c32e112e9a5"
+  },
+  "ownedEvidenceHashes": {
+    "finalize_report.py": "8dc468a270bdb2a1eeb723a37c0d91d27565dc8757cf394147a1c94966309d8b",
+    "verify_release.py": "03a1c6c178ed1944ef40228819b8dd5b3b7e828e59e419595eec897d8479f37a",
+    "neck-slot-closure.json": "df922e20886751eae5efd224935050276242d7fb4b0753b4813d566b3ee241bf",
+    "build_neck_channel_candidate.py": "6d6a32ae3fa5ca60ef1865aa8cebf610fae32bd6e65e90b98c1dae20d30c73aa",
+    "gpio-40-candidate-world.stl": "632e584e4a7a64892950f67ec1a613dd6abea3f88ab56c74a8d85ea6890707b7",
+    "gpio-12-candidate-world.stl": "9fc989cce91bbde65d2d646300b00544e475e0729d4eb2fa4301094d90f98247",
+    "neck-length-bounds.json": "16a4a5dc64b3ad435e1963f67bbe55177bf0aad04992f71c6e62609ca52f4b2a",
+    "interface-checks.json": "2b4ece612821ea7263be2202343d73b68d4092055afc0a0170ecb6d897a64a54",
+    "head-neck-exit-probe.json": "ebaf67cf78fb0acbc14281f377aafcc4a7c9a184ad37a738a7d76fff2968d612",
+    "neck-loop-family.json": "58c5d78a9f76f3a41a90508b1f1c1d45b6b22594e9d24a93958b5b2ab7447134",
+    "header_channel_probe.py": "79d7a9cf2ea694074651151acdd3e92338794caa68a79a635f320b716ef6170a",
+    "hardware-audio-rotation-candidate-world.stl": "cab94fa156c3ea41b8297b03a4dc3f4fc58cf0409d17a355f626cbf4008b04fc",
+    "neck_length_bounds.py": "2a177b97c5d64ed05732ec1202e689a5538206ca0adcf982f4705b09e15f9275",
+    "verify_neck_loop_family.py": "cd62264b3610fb6006f5ddf59ce9212d29bff150e61a06c12176a0918c2457fa",
+    "amplifier-audio-rotation-candidate-world.stl": "dc92d61b5600971e0f614a2b2b3c088533a19d184690d0f664ea48cc1a5e16d3",
+    "audio-candidate-verification.json": "4056f9738c2c25db2fdb9a433ddf0a4a7a2f7dcc2dec25e2cc8a24f2853c5b8c",
+    "head_neck_exit_probe.py": "d1f873fab5ed6857f7249ed53bca1987d3dd1555180a0b66236f2504a0848ec2",
+    "interface_checks.py": "98514a3cb3f84b72ae6a2e0c952a84fc8a01b900ba80a5bfab579f5037bd3d7b",
+    "camera_down_exit_probe.py": "395e3f5c44aa59b3125f5da1120cbcec63af60a4ca4f36082815664b22f3b7c7",
+    "cap-audio-rotation-candidate-world.stl": "dbad1646dc48064322a825a4d2faa17357af366496c6ab9f61d8608cdbbebfcc",
+    "neck-loop-neutral-receiving-world.stl": "00ddb27073f599ca15119497b131dc854b704ac9b155b6ff213d97a8d1876be1",
+    "header-channel-probe.json": "4f6f5fd04d6e9110cb9ffb7af71ebb0f6ead2fe7ba866945a52f24dda4a83417",
+    "audio-bounded-candidates.json": "ff1652ffcfc7d86128be2dc6db58566b503897056d30efeb9a61721d2e2ee016",
+    "camera180-rejected-probe-world.stl": "51a268be6360e83997c9eb19b7a163adb4547c845b92ccdd405da21b60173ae4",
+    "audio_candidates.py": "cea55a71dd2dc0ddb30fa3d71e27b06ebc7a54cfa491dfb7ff74d0762c44c2a9",
+    "build_audio_route_candidate.py": "7b46c1c461bc91ca5228e843815f14f4b81799b6ff7958efe089ab3de6e9c007",
+    "camera-down-exit-probe.json": "5d812d1054d0540d99c9731391328db25da65546e1908da3bdfb17397d34d1fb",
+    "gpio-35-candidate-world.stl": "e394618dd3176ea0525e2d6aec43fac7ec6065421bdc2c70baaf59a10931ccdb",
+    "amplifier-rotated--90-candidate-world.stl": "c8a9025ff3578b47adbe115fee5f22fc52590af0bb1aeea89898d350000fb10b",
+    "speaker-keeper-wire-relief-candidate-world.stl": "480bea47c9d5918d0a0ac46b7e86a0ae21b75c320241ce5c0474fcc882a17cf3",
+    "neck-flat-bundle-head-receiving-world.stl": "95422a6a71f8abf657b8fca13ef3f494ddd2acc973120de2bd1329fdc7e37770",
+    "check_routes.py": "a8c2f9743389b3b5502fee6ee519d843c61ce324ea17a619f28528558cb1e2b6",
+    "verify_audio_candidate.py": "46c527ed6a7bee9e211e5570428c4a27130760730580a9d86ed3b6aa18b5d36c",
+    "amp_reorientation.py": "8a7f8659fc7de5ac83a75f87c431a79e443862ea6896dd88c6758586607147da",
+    "cap-neck-slot-closure-candidate-world.stl": "c10b8aa46f14859e467c19ac626c4843a03838d6661c3d109c0a7f2cbd9a2170",
+    "initial-audio-probe.json": "b1d3d9342607bf3af54e8de4def9f8645b1005a2f5dab6c7b96beae5ea414b76",
+    "cap-neck-portal-candidate-world.stl": "03575b7bc5de4a78f8862840befe9b349c8a781b4eb94e161fed32f191ed0d71",
+    "check_neck_slot_closure.py": "b2366953c3805a28fea585114960f9ec5a85b5fc8404c6732346f33d036e914c",
+    "neck-channel-candidate.json": "600cd2b6af1b2476d5afe72d6c19fb0eaa8fa0e2823aaf193cd3eb32b63763cf",
+    "build_gpio_candidate.py": "838c85ee653e5ec94bb1c05fe7300575cd618bc872fc2bd38949713d5cf6522a",
+    "gpio-candidate.json": "c6fc95d820c34bdec164ff06b15f5f94005ebaa2d728b65d8bddee071120af9a",
+    "speaker-wire-1-candidate-world.stl": "da4ce477080d5244534da1381852438c8dd17b2c04d08fb768c02fe689dfb0af",
+    "speaker-wire-0-candidate-world.stl": "e9f8335c8bb0cc733aa2ab9593b67f72513d7ca5b60ca6c4a2fc616ddfe3aeb8",
+    "audio-route-candidate.json": "a20cef40265f7e9525964c6ab493389c1b893efab1cb0a67ee817c76b28f666c",
+    "first12mmRibbon180-rejected-probe-world.stl": "63d5e95054e824e2a1dcb00a4095a4712ba7aaeb784e5acc9c1e8a0d345959b2",
+    "amp-reorientation.json": "d525eedc34e72041eff245bd26f0308f046762411c6e24107457e672a7854650",
+    "gpio-20-candidate-world.stl": "6d77eb7e1c1d1eacf11d4f12ae00d2172c16c1508df92cd33be0fb4194be3e27",
+    "sources/adafruit-4754.step": "115ae06a3215c4eb6bb0eb5f4aeeaa39f13fe0a76d8be2ef1416dc8a85b804d1",
+    "sources/adafruit-4754.brd": "ee62fe200964f49c09ce0fc0ec7f07cc4bebda074a07c79749befbf5aa2712d6",
+    "sources/adafruit-4397-drawing.pdf": "cc3ecc3eadccf9e9a5bd26a6d5537c48c89f051cca5d51e0171ed5b1c20d3ccb"
+  },
+  "physicalAcceptance": false,
+  "manufacturingAcceptance": false,
+  "continuedEngineering": {
+    "gpio": {
+      "report": "gpio-candidate.json",
+      "staticFourLinesClear": true,
+      "receivingSpec": "Header plus fully seated female housing totaldepth<=11mm from component-sidePCBface; pins on standard2.54grid, pin1 atSD/-Y end and oddrowboardedge/-Z. Map must match actual marked pin1. OD1.5/R2 are receiving specs.",
+      "remaining": "No constant-length opening/closing service path or full FFC co-existence acceptance."
+    },
+    "headTrunk": {
+      "report": "neck-channel-candidate.json",
+      "slotClosureReport": "neck-slot-closure.json",
+      "capacity": "Two rows of6 \u00d81.5mm conductors with1.7mm lateral pitch,10.2x3.2 receiving rectangle; route does not yet include pin fanouts or individual wire bendstrain.",
+      "onlyHeadCapNeedsLocalPortal": true,
+      "remaining": "Pin fanouts, connector threading, slot edge protection and restraint remain; this is a receiving trunk, not all individual nets."
+    },
+    "neckLoop": {
+      "report": "neck-loop-family.json",
+      "status": "REJECTED_FINITE_FAMILY",
+      "samples": 229,
+      "collisionSamples": 34,
+      "lengthUnavailableSamples": 7,
+      "minimumSampledRadiusMm": 0.03331939319117253,
+      "requiredNextDesignCriteria": [
+        "Full endpoint-to-endpoint modeled available wire length including fanouts and splices",
+        "Every bend centerlineR>=2mm (or higher manufacturer limit)",
+        "229 sourcejoint states clear plus closure sequence; continuous path andstrain considerations retained",
+        "No newly blockedneckstate, connector carries no loopweight"
+      ],
+      "notOnlyWaitingForMeasurement": true
+    }
+  },
+  "received4397ManufacturerEvidence": {
+    "url": "https://cdn-shop.adafruit.com/product-files/4397/4397_C13908-001_CBH-100-04-150D_with_correct_color_wire_order.pdf",
+    "local": "sources/adafruit-4397-drawing.pdf",
+    "sha256": "cc3ecc3eadccf9e9a5bd26a6d5537c48c89f051cca5d51e0171ed5b1c20d3ccb",
+    "femaleEnd": true,
+    "wire": "UL1571 28AWG7/0.127TS",
+    "wireODmm": 0.8,
+    "flexibleLengthBetweenPlasticShouldersMm": 150,
+    "lengthToleranceMm": 10,
+    "housingVendorIdentifier": "KWQS205 DuPont P2.54 Housing1Pin",
+    "housingAxialDimensionInDrawing": false
+  },
+  "exactPhysicalFactsToResolve": [
+    {
+      "item": "Received4397 female header fully mated to ownedZeroW",
+      "measurement": "Distance from PCB component-side face to the female housing wire-exit shoulder; measure perpendicular to PCB after full seating. Also record housing width/height if it exceeds2.54mm cell.",
+      "criterion": "Current GPIO candidate requires cumulative installeddepth<=11mm; it must not be inferred from naked8.5mm maleheader.",
+      "why": "This locates the first permissible bend relative tojaw_support, rather than shrinking an unknown housing."
+    },
+    {
+      "item": "ReceivedSC1892",
+      "measurement": "Identify Rev1/16mm or Rev2/11.5mm middle ribbon; measure reinforcing/stiffener length still outside Pi22pin closedlatch after complete seating, and the analogous camera15pin end; total thickness incl stiffener.",
+      "criterion": "Existing conditionalU needs immediatePiendbend and is rejected if any stiffener occupies that bend; revisedroute must use full stiffenedstraightlength, actualwidth and200mm complete length.",
+      "manufacturerAlreadyKnown": "200mm length and16/11.5mm revisionwidths alreadyverified; no request to rediscover those published facts."
+    }
+  ]
+}

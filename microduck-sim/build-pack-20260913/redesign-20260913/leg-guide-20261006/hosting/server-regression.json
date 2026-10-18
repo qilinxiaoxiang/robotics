@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "marker": "GUIDE_SERVER_REGRESSION_PASS",
+  "host": "127.0.0.1",
+  "port": 55638,
+  "connection_timeout_s": 3.0,
+  "transfer_timeout_s": 60.0,
+  "checks": [
+    {
+      "check": "normal_HEAD_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.0013057910109637305,
+      "received_bytes": 0
+    },
+    {
+      "check": "normal_GET_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.14378150000993628,
+      "received_bytes": 31912487
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/LEFT-LEG.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/HEAD-EYE-REVIEW.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.zip",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/print-colors.json",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/motor-fasteners.json",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/viewer.js",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/../README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%2e%2e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/%2e%2e%2fREADME.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%252e%252e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/etc/passwd",
+      "passed": true
+    },
+    {
+      "check": "idle_times_out_and_closes",
+      "passed": true,
+      "wait_s": 2.5479954579932382
+    },
+    {
+      "check": "incomplete_headers_times_out_and_closes",
+      "passed": true,
+      "wait_s": 1.1791009455919266e-05
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip",
+      "passed": true,
+      "wire_bytes": 22418293,
+      "decoded_bytes": 31912487
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip;q=0.5",
+      "passed": true,
+      "wire_bytes": 22418293,
+      "decoded_bytes": 31912487
+    },
+    {
+      "check": "encoding_exact_body_and_etag_304",
+      "accept_encoding": "gzip;q=0",
+      "passed": true,
+      "wire_bytes": 31912487,
+      "decoded_bytes": 31912487
+    },
+    {
+      "passed": true,
+      "pause_s": 4.004362333987956,
+      "header_timeout_s": 3.0,
+      "advertised_bytes": 31912487,
+      "received_bytes": 31912487,
+      "exact_body": true,
+      "drain_s": 0.042491500003961846,
+      "check": "large_body_remains_exact_after_reader_pauses_past_header_timeout"
+    },
+    {
+      "passed": true,
+      "pause_s": 4.00009383399447,
+      "header_timeout_s": 3.0,
+      "advertised_bytes": 31912487,
+      "received_bytes": 458128,
+      "exact_body": false,
+      "drain_s": 0.0004562499962048605,
+      "check": "legacy_header_timeout_reused_for_body_truncates_large_download"
+    }
+  ],
+  "script_sha256": "023acb7aab9fe3ddeb3ffedb512168e3e372bd74a769e4ededb093ed45089b04"
+}

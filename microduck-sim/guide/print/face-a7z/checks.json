@@ -1,0 +1,708 @@
+{
+ "_doc": "face-a7z checks; robot frame mm (x forward, y left, z up). Regenerate with build_face_a7z.py.",
+ "sources": {
+  "world/camera_board-cm3.stl": "b16909c03a00cc5f7f6a95eaeac9945331840b64f9614f0756c3540e1869603c",
+  "world/face_panel-v18.stl": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+  "world/eye_trim.stl": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa",
+  "world/head_cap.stl": "bbedb8044687c86906cdcf1adb82eae5c3c5f8bb84fc8bdd24f5824375b5e257",
+  "world/head_bottom.stl": "1046c62e7abb292a39ca683651666e5ef775b970032c64ebde4355d8fe1dc3ff",
+  "world/jaw_frame.stl": "0afeeee701671616b368977826fb82d4431540c70a8358adeb11d593fca655a1",
+  "world/clip_cap.stl": "ab50937dac7f6bf43bca5eb083d28a1369cedc7a97082f6abc8ddaa85d562d21",
+  "world/clip_head.stl": "a800af0d807386fddeade3623b976af9743010db7d85e61a7ea25f7b579edbff",
+  "world/amplifier.stl": "d57c9f1edbb6c8b0a3ac4fb71177855adc4d9d2c9b647125b7b1c73138154842",
+  "world/speaker.stl": "02eba9066f6b49b6d094f1699e09bc7812d5bb66e8b902a60a371635fbe5a856"
+ },
+ "assumptions": {
+  "connectorSide": "lens side, per the two Radxa photos (the brief said back side; the photos show the connector next to the lens and the ribbon plugged on that side). Height modelled 2.0 mm (typical 0.3 mm flip-lock parts are 0.9 to 1.2 mm).",
+  "smallHoleDiameter": "about 1.8 mm measured on the Radxa drawing (corner holes about 2.0 mm): too small for M2.",
+  "pupilRadius": 1.0,
+  "screwHeadHeight": 1.6,
+  "backLayer": "full PCB footprint, 1.5 mm, less 4 x 4 mm squares at the corner holes for the screw heads"
+ },
+ "axis": {
+  "eyeOpeningCentre_face_x80.75": [
+   -0.09,
+   131.114
+  ],
+  "eyeOpeningRadius": 7.25,
+  "trimBoreCentre_x86": [
+   -0.091,
+   131.115
+  ],
+  "trimBoreRadius_x86": 7.2,
+  "cm3LensCentre": [
+   -0.089,
+   131.105
+  ],
+  "cm3LensFrontX": 87.3,
+  "used": [
+   -0.09,
+   131.114
+  ]
+ },
+ "meshes": {
+  "face_panel_a7z": {
+   "file": "face_panel_a7z.stl",
+   "watertight": true,
+   "volumeMm3": 4198.59,
+   "bounds": [
+    [
+     77.8,
+     -43.916,
+     110.315
+    ],
+    [
+     81.399,
+     43.734,
+     154.941
+    ]
+   ],
+   "sha256": "ff0fa31c726fa0bd5b8d31602126bf4995d445b7d60c0e8e7c9e634314611ef1"
+  },
+  "eye_trim_a7z": {
+   "file": "eye_trim_a7z.stl",
+   "watertight": true,
+   "volumeMm3": 4213.08,
+   "bounds": [
+    [
+     80.0,
+     -15.091,
+     116.115
+    ],
+    [
+     89.4,
+     14.909,
+     146.115
+    ]
+   ],
+   "sha256": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa"
+  },
+  "camera_13m214": {
+   "file": "camera_13m214.stl",
+   "watertight": true,
+   "volumeMm3": 2546.9,
+   "bounds": [
+    [
+     70.0,
+     -16.09,
+     115.114
+    ],
+    [
+     84.18,
+     33.3,
+     147.114
+    ]
+   ],
+   "sha256": "1b1fdfde75103de58d4467726f1a588c8c3938aea60bc87f8daf3e40db53414f"
+  },
+  "face_panel_v18_volumeMm3": 4130.02,
+  "face_removed_v18_lands_pegs_mm3": 75.79,
+  "eye_trim_identical_to_v18": true
+ },
+ "printPoses": {
+  "face_panel": {
+   "file": "face_panel_a7z-print.stl",
+   "minZ": 0.0,
+   "bedContactMm2": 3124.7,
+   "overhangOver45degMm2": 3.28,
+   "v18OverhangOver45degMm2": 7.86,
+   "v18BedContactMm2": 3124.7,
+   "heightMm": 3.6
+  },
+  "eye_trim": {
+   "file": "eye_trim_a7z-print.stl",
+   "minZ": 0.0,
+   "bedContactMm2": 394.1,
+   "overhangOver45degMm2": 23.66,
+   "v18OverhangOver45degMm2": 23.66,
+   "v18BedContactMm2": 394.1,
+   "heightMm": 9.4
+  }
+ },
+ "frontUnchanged": {
+  "face_raysOnGrid1mm": 3104,
+  "face_maxFrontDeviationMm": 0.0,
+  "face_hitMaskSame": true,
+  "eye_trim": "byte-identical copy of world/eye_trim.stl"
+ },
+ "optics": {
+  "lensAxis_yz": [
+   -0.09,
+   131.114
+  ],
+  "lensFrontX": 84.18,
+  "cm3LensFrontX": 87.3,
+  "lensFrontBehindCm3Mm": 3.12,
+  "coneHalfAngleDeg": 39.2,
+  "pupilRadiusMm": 1.0,
+  "method": "circular cone of the 78.4 deg diagonal from a 1.0 mm pupil disc at the lens front; clearance of every vertex and 200k surface samples of each part in front of the lens. Negative = clipped. The rectangular field (66.2 x 51.6, turned portrait) lies inside this cone.",
+  "perPart": {
+   "eye_trim_a7z": {
+    "minNormalClearanceMm": 2.765,
+    "minRadialClearanceMm": 3.568,
+    "minAngularMarginDeg": 18.29,
+    "closestPoint": [
+     87.4,
+     -2.25,
+     137.97
+    ],
+    "pointsInsideRectangularField": 0
+   },
+   "head_cap": {
+    "minNormalClearanceMm": 12.557,
+    "minRadialClearanceMm": 16.204,
+    "minAngularMarginDeg": 31.32,
+    "closestPoint": [
+     92.23,
+     0.0,
+     154.89
+    ],
+    "pointsInsideRectangularField": 0
+   },
+   "head_bottom": {
+    "minNormalClearanceMm": 13.2,
+    "minRadialClearanceMm": 17.033,
+    "minAngularMarginDeg": 44.22,
+    "closestPoint": [
+     86.35,
+     -0.0,
+     111.31
+    ],
+    "pointsInsideRectangularField": 0
+   },
+   "jaw_frame": {
+    "minNormalClearanceMm": 16.794,
+    "minRadialClearanceMm": 21.671,
+    "minAngularMarginDeg": 46.74,
+    "closestPoint": [
+     85.81,
+     0.0,
+     107.11
+    ],
+    "pointsInsideRectangularField": 0
+   }
+  },
+  "clipped": false,
+  "imageRotation": "connector edge = image bottom, now on robot +Y: the image comes out turned 90 deg; rotate it 90 deg clockwise for an upright view (check with one frame)."
+ },
+ "clearances": {
+  "note": "Minimum distances in mm (0.25 mm sampling). Camera parts modelled as boxes. Board space = x < 74.5, y -32.5..32.5, z 114.8..144.6. Expected designed contacts: PCB front on the four boss tops (distance 0).",
+  "table": {
+   "pcb": {
+    "head_cap": 5.922,
+    "head_bottom": 3.907,
+    "jaw_frame": 7.014,
+    "clip_cap": 7.559,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 0.0,
+    "eye_trim_a7z": 2.2,
+    "board_space_box": 1.7
+   },
+   "lens_holder": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 16.445,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 1.466,
+    "eye_trim_a7z": 1.188,
+    "board_space_box": 3.3
+   },
+   "connector_front": {
+    "head_cap": 15.263,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 11.414,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 0.3,
+    "eye_trim_a7z": 1.598,
+    "board_space_box": 3.3
+   },
+   "ribbon_flat": {
+    "head_cap": 2.177,
+    "head_bottom": 11.165,
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 12.2,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 1.7,
+    "eye_trim_a7z": 2.998,
+    "board_space_box": 3.6
+   },
+   "ribbon_fold": {
+    "head_cap": 1.654,
+    "head_bottom": 11.044,
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 7.361,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 1.7,
+    "eye_trim_a7z": ">12 (nothing within 12 mm)",
+    "board_space_box": 0.5
+   },
+   "back_layer": {
+    "head_cap": 6.318,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 6.082,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "face_panel_a7z": 1.6,
+    "eye_trim_a7z": 3.8,
+    "board_space_box": 0.2
+   },
+   "_intersectionVolumeCameraMm3": {
+    "head_cap": 0.0,
+    "head_bottom": 0.0,
+    "jaw_frame": 0.0,
+    "clip_cap": 0.0,
+    "clip_head": 0.0,
+    "amplifier": 0.0,
+    "speaker": null,
+    "face_panel_a7z": -0.0,
+    "eye_trim_a7z": 0.0
+   },
+   "head_of_camera_corner_1": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": 3.895,
+    "jaw_frame": 7.0,
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 0.1,
+    "lens_holder": 11.076,
+    "connector_front": 24.567,
+    "ribbon_flat": 25.78
+   },
+   "head_of_camera_corner_2": {
+    "head_cap": 6.268,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 0.1,
+    "lens_holder": 11.076,
+    "connector_front": 24.567,
+    "ribbon_flat": 25.78
+   },
+   "head_of_camera_corner_3": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": 3.894,
+    "jaw_frame": 7.001,
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 0.1,
+    "lens_holder": 11.076,
+    "connector_front": 5.25,
+    "ribbon_flat": 6.294
+   },
+   "head_of_camera_corner_4": {
+    "head_cap": 6.311,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 5.984,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 0.1,
+    "lens_holder": 11.076,
+    "connector_front": 5.25,
+    "ribbon_flat": 6.294
+   },
+   "head_of_trim_lower": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": 7.414,
+    "jaw_frame": 10.521,
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 4.0,
+    "lens_holder": 4.264,
+    "connector_front": 10.203,
+    "ribbon_flat": 11.371,
+    "pcb_front_gap": 0.7
+   },
+   "head_of_trim_upper": {
+    "head_cap": 10.464,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "board_space_box": 4.0,
+    "lens_holder": 4.236,
+    "connector_front": 10.198,
+    "ribbon_flat": 11.365,
+    "pcb_front_gap": 0.7
+   },
+   "_intersectionVolumeFaceA7zMm3": {
+    "head_cap": 0.0,
+    "head_bottom": 0.1537,
+    "jaw_frame": 0.0,
+    "clip_cap": 0.0,
+    "clip_head": 0.0,
+    "amplifier": 0.0,
+    "speaker": null
+   },
+   "_intersectionVolumeFaceV18Mm3": {
+    "head_cap": 0.0,
+    "head_bottom": 0.1537,
+    "jaw_frame": 0.0,
+    "clip_cap": 0.0,
+    "clip_head": 0.0,
+    "amplifier": 0.0,
+    "speaker": null
+   },
+   "boss_1": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": 3.522,
+    "jaw_frame": 6.629,
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "ribbon_flat": 25.229,
+    "connector_front": 24.044
+   },
+   "boss_2": {
+    "head_cap": 5.314,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "ribbon_flat": 25.229,
+    "connector_front": 24.044
+   },
+   "boss_3": {
+    "head_cap": ">12 (nothing within 12 mm)",
+    "head_bottom": 3.521,
+    "jaw_frame": 6.629,
+    "clip_cap": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "ribbon_flat": 5.6,
+    "connector_front": 4.6
+   },
+   "boss_4": {
+    "head_cap": 5.346,
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_cap": 9.066,
+    "clip_head": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "ribbon_flat": 5.6,
+    "connector_front": 4.6
+   }
+  },
+  "smallest10": {
+   "pcb vs face_panel_a7z": 0.0,
+   "head_of_camera_corner_1 vs board_space_box": 0.1,
+   "head_of_camera_corner_2 vs board_space_box": 0.1,
+   "head_of_camera_corner_3 vs board_space_box": 0.1,
+   "head_of_camera_corner_4 vs board_space_box": 0.1,
+   "back_layer vs board_space_box": 0.2,
+   "connector_front vs face_panel_a7z": 0.3,
+   "ribbon_fold vs board_space_box": 0.5,
+   "head_of_trim_lower vs pcb_front_gap": 0.7,
+   "head_of_trim_upper vs pcb_front_gap": 0.7
+  }
+ },
+ "ribbonExitBand": {
+  "box": [
+   [
+    77.8,
+    11.91,
+    124.11
+   ],
+   [
+    80.09,
+    33.0,
+    138.11
+   ]
+  ],
+  "faceDistanceMm": 0.01,
+  "trimDistanceMm": 1.308,
+  "capDistanceAtFoldMm": 1.654
+ },
+ "faceOnInsertion": {
+  "note": "Each rigid box swept straight down from +40 mm to the installed pose; min distance to the parts already in the head. CM3 bounding box swept the same way for comparison.",
+  "sweptMinDistance": {
+   "pcb": {
+    "head_bottom": 3.907,
+    "jaw_frame": 7.014,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "lens_holder": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "connector_front": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "back_layer": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "boss_1": {
+    "head_bottom": 3.522,
+    "jaw_frame": 6.629,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "boss_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "boss_3": {
+    "head_bottom": 3.521,
+    "jaw_frame": 6.629,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "boss_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_1": {
+    "head_bottom": 3.895,
+    "jaw_frame": 7.0,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_3": {
+    "head_bottom": 3.894,
+    "jaw_frame": 7.001,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_trim_lower": {
+    "head_bottom": 7.414,
+    "jaw_frame": 10.521,
+    "clip_head": ">12 (nothing within 12 mm)"
+   },
+   "head_trim_upper": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "clip_head": ">12 (nothing within 12 mm)"
+   }
+  },
+  "cm3BoundingBoxSweep": {
+   "head_bottom": 7.292,
+   "jaw_frame": 10.497,
+   "clip_head": ">12 (nothing within 12 mm)"
+  }
+ },
+ "screws": {
+  "rows": [
+   {
+    "screw": "camera_corner_1",
+    "type": "M2 x 4 self-tapping",
+    "at_yz": [
+     -14.09,
+     117.11
+    ],
+    "from": "behind the camera (head on the PCB back pad)",
+    "passes": "camera PCB plated corner hole x 76.2..77.8",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 77.8..80.2",
+    "threadEngagementMm": 2.4,
+    "tipX": 80.2,
+    "materialInFrontOfTipMm": 1.2,
+    "headX": [
+     74.6,
+     76.2
+    ]
+   },
+   {
+    "screw": "camera_corner_2",
+    "type": "M2 x 4 self-tapping",
+    "at_yz": [
+     -14.09,
+     145.11
+    ],
+    "from": "behind the camera (head on the PCB back pad)",
+    "passes": "camera PCB plated corner hole x 76.2..77.8",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 77.8..80.2",
+    "threadEngagementMm": 2.4,
+    "tipX": 80.2,
+    "materialInFrontOfTipMm": 1.2,
+    "headX": [
+     74.6,
+     76.2
+    ]
+   },
+   {
+    "screw": "camera_corner_3",
+    "type": "M2 x 4 self-tapping",
+    "at_yz": [
+     13.91,
+     117.11
+    ],
+    "from": "behind the camera (head on the PCB back pad)",
+    "passes": "camera PCB plated corner hole x 76.2..77.8",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 77.8..80.2",
+    "threadEngagementMm": 2.4,
+    "tipX": 80.2,
+    "materialInFrontOfTipMm": 1.2,
+    "headX": [
+     74.6,
+     76.2
+    ]
+   },
+   {
+    "screw": "camera_corner_4",
+    "type": "M2 x 4 self-tapping",
+    "at_yz": [
+     13.91,
+     145.11
+    ],
+    "from": "behind the camera (head on the PCB back pad)",
+    "passes": "camera PCB plated corner hole x 76.2..77.8",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 77.8..80.2",
+    "threadEngagementMm": 2.4,
+    "tipX": 80.2,
+    "materialInFrontOfTipMm": 1.2,
+    "headX": [
+     74.6,
+     76.2
+    ]
+   },
+   {
+    "screw": "trim_lower",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -0.18,
+     120.6
+    ],
+    "from": "the back of the face, before the camera goes on (head between face and camera PCB)",
+    "passes": "face plate 2.2 mm hole x 80.1..81.4",
+    "threadsInto": "V1.8 eye-trim 1.7 mm pilot x 81.3..87.0",
+    "threadEngagementMm": 4.7,
+    "tipX": 86.1,
+    "pilotEndX": 87.0,
+    "materialInFrontOfTipMm": 3.3,
+    "headX": [
+     78.5,
+     80.1
+    ],
+    "headToPcbFrontGapMm": 0.7
+   },
+   {
+    "screw": "trim_upper",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -0.18,
+     141.6
+    ],
+    "from": "the back of the face, before the camera goes on (head between face and camera PCB)",
+    "passes": "face plate 2.2 mm hole x 80.1..81.4",
+    "threadsInto": "V1.8 eye-trim 1.7 mm pilot x 81.3..87.0",
+    "threadEngagementMm": 4.7,
+    "tipX": 86.1,
+    "pilotEndX": 87.0,
+    "materialInFrontOfTipMm": 3.3,
+    "headX": [
+     78.5,
+     80.1
+    ],
+    "headToPcbFrontGapMm": 0.7
+   }
+  ],
+  "requirementThread3p5mm": {
+   "camera_corner": false,
+   "trim": true,
+   "why": "The corner holes lie at radius 19.8 mm from the lens axis, outside the eye trim (radius 15), so they land on the 1.3 mm face plate. Everything in front of the PCB is boss 2.3 + plate 1.3 = 3.6 mm; leaving 1.2 mm in front of the tip gives 2.4 mm of thread. The PCB cannot move further back (board space) and the face front must not change."
+  }
+ },
+ "printability": {
+  "bossWallMm": 1.55,
+  "pilotFloorSkinMm": 1.2,
+  "faceFrontHitAtCorners": {
+   "camera_corner_1": 81.399,
+   "camera_corner_2": 81.399,
+   "camera_corner_3": 81.399,
+   "camera_corner_4": 81.399
+  },
+  "minimumWallRule": 1.2,
+  "pass": true,
+  "poses": "same sourceToPrint matrices as release-V1.8/manifest-V1.8.json (face: front on the bed, bosses up; trim unchanged)"
+ },
+ "placement": {
+  "pcbFrontX": 77.8,
+  "pcbBackX": 76.2,
+  "backComponentsToX": 74.7,
+  "connectorOnLensSide": true,
+  "connectorEdge": "+Y",
+  "connectorBox": [
+   [
+    77.8,
+    11.91,
+    124.11
+   ],
+   [
+    79.8,
+    15.91,
+    138.11
+   ]
+  ],
+  "cornerHoles_yz": [
+   [
+    -14.09,
+    117.11
+   ],
+   [
+    -14.09,
+    145.11
+   ],
+   [
+    13.91,
+    117.11
+   ],
+   [
+    13.91,
+    145.11
+   ]
+  ],
+  "smallHoles_yz_unused": [
+   [
+    -0.09,
+    121.11
+   ],
+   [
+    -0.09,
+    141.11
+   ]
+  ]
+ }
+}

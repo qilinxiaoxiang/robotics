@@ -1,0 +1,479 @@
+{
+ "_method": "Connector insertion with plug and wire exit, V1.9 scene.\n\nEach female Dupont housing is pulled straight off its pins by TRAVEL (12 mm) along the pin axis; the moving solid is\nthe housing plus a wire-exit stub (r 0.65 mm, 6 mm straight out of the housing's back before the wire bends). The swept\nsolid (hull of start and end; the housings are boxes, so the hull is the exact sweep up to the stub) is tested with\nexact manifold3d booleans against:\n  state A (cap on): every part at q = 0 (release cap, V1.9 pack, new parts);\n  state B (cap lifted, how the Pi housings are actually plugged): the cap-group parts in place and the lower-head\n  parts 40 mm lower.\nHousings: the eight Pi-header housings of the neck bundle (guide meshes head_pi_gpio_pin_XX_receiving), the five\nPi-header housings of the amp jumpers (pins 4, 12, 34, 35, 40) and the six amp-header housings (audio study solids).\nExcluded per housing: the board and pins it plugs onto and the neighbouring housings in the same header (they touch).\nFor every housing that hits something, the free pull before the first contact is found by bisection (0.1 mm), with\nand without the wire stub. A Dupont female contact leaves a 2.54 mm header pin after about 6 mm of pull (inference\nfrom the usual 5.8-6.0 mm mating length).\nWrites ../checks/insertion-v19.json.",
+ "travelMm": 12.0,
+ "stub": [
+  6.0,
+  0.65
+ ],
+ "housings": {
+  "head_pi_gpio_pin_01_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "head_bottom": {
+     "overlapMm3": 3.678,
+     "newPart": false
+    },
+    "face_panel": {
+     "overlapMm3": 9.751,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 0.404,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.7,
+     "withWireStub": 5.9
+    }
+   }
+  },
+  "head_pi_gpio_pin_02_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.751,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {}
+  },
+  "head_pi_gpio_pin_03_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "head_bottom": {
+     "overlapMm3": 3.678,
+     "newPart": false
+    },
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 2.97,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.5,
+     "withWireStub": 3.7
+    }
+   }
+  },
+  "head_pi_gpio_pin_05_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "head_bottom": {
+     "overlapMm3": 3.678,
+     "newPart": false
+    },
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 5.294,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.4,
+     "withWireStub": 1.8
+    }
+   }
+  },
+  "head_pi_gpio_pin_06_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "_near": {
+     "face_panel": 0.156
+    }
+   }
+  },
+  "head_pi_gpio_pin_09_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "head_bottom": {
+     "overlapMm3": 3.732,
+     "newPart": false
+    },
+    "face_panel": {
+     "overlapMm3": 10.756,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 9.235,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.3,
+     "withWireStub": 0.3
+    }
+   }
+  },
+  "head_pi_gpio_pin_08_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 0.207,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 12.0,
+     "withWireStub": 0.5
+    }
+   }
+  },
+  "head_pi_gpio_pin_10_receiving": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 1.152,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.7,
+     "withWireStub": 0.3
+    }
+   }
+  },
+  "pi_housing_pin04": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "_near": {
+     "face_panel": 0.801
+    }
+   }
+  },
+  "pi_housing_pin12": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 2.103,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.3
+    }
+   }
+  },
+  "pi_housing_pin35": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "head_bottom": {
+     "overlapMm3": 3.678,
+     "newPart": false
+    },
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.2,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 5.43,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 6.4,
+     "withWireStub": 1.6
+    }
+   }
+  },
+  "pi_housing_pin40": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {}
+  },
+  "pi_housing_pin34": {
+   "pullDirection": [
+    0.985,
+    -0.0,
+    -0.174
+   ],
+   "kind": "pi",
+   "A": {
+    "face_panel": {
+     "overlapMm3": 9.741,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 5.8,
+     "withWireStub": 0.2
+    }
+   },
+   "B": {
+    "face_panel": {
+     "overlapMm3": 0.29,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 12.0,
+     "withWireStub": 0.4
+    }
+   }
+  },
+  "amp_housing_0": {
+   "pullDirection": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "amp",
+   "A": {
+    "pi": {
+     "overlapMm3": 15.441,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   },
+   "B": {
+    "pi": {
+     "overlapMm3": 15.441,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   }
+  },
+  "amp_housing_1": {
+   "pullDirection": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "amp",
+   "A": {
+    "pi": {
+     "overlapMm3": 15.441,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   },
+   "B": {
+    "pi": {
+     "overlapMm3": 15.441,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   }
+  },
+  "amp_housing_2": {
+   "pullDirection": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "amp",
+   "A": {
+    "pi": {
+     "overlapMm3": 7.72,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   },
+   "B": {
+    "pi": {
+     "overlapMm3": 7.72,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   }
+  },
+  "amp_housing_3": {
+   "pullDirection": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "kind": "amp",
+   "A": {
+    "pi": {
+     "overlapMm3": 7.721,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   },
+   "B": {
+    "pi": {
+     "overlapMm3": 7.721,
+     "newPart": false
+    },
+    "_freeTravelMm": {
+     "housingOnly": 3.5,
+     "withWireStub": 0.0
+    }
+   }
+  }
+ },
+ "collisionsWithNewParts": []
+}

@@ -1,0 +1,173 @@
+{
+  "boardIdentities": {
+    "small": "First-generation Raspberry Pi Zero W with soldered40-pin header; possible factory WH",
+    "large": "Raspberry Pi3 ModelB v1.2"
+  },
+  "checked": "2026-10-08",
+  "officialSources": [
+    {
+      "url": "https://datasheets.raspberrypi.com/rpizero/raspberry-pi-zero-w-mechanical-drawing.pdf",
+      "facts": "65x30mm board;58x23mm mounting pattern; no header height dimension in drawing."
+    },
+    {
+      "url": "https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-mechanical-drawing.pdf",
+      "facts": "RPI-3B-V1_2 drawing:85x56mm board, USB connector height16mm, Ethernet13.5mm, GPIO8.5mm, HDMI6.5mm; CSI15pin. These populated components must be included in any Pi3 layout."
+    }
+  ],
+  "zeroWReceivingEnvelopes": {
+    "zero_w_components": {
+      "bodyCenterMm": [
+        15.435,
+        -0.011,
+        -57.31
+      ],
+      "bodySizeMm": [
+        28,
+        63,
+        3.8
+      ],
+      "worldBoundsMm": [
+        [
+          63.50999999999998,
+          -31.510999999999974,
+          117.04959999999997
+        ],
+        [
+          67.30999999999997,
+          31.488999999999983,
+          145.04959999999994
+        ]
+      ],
+      "evidenceBoundary": "Existing conservative component height4mm and board edge clearance; USB/HDMI ports modeled separately."
+    },
+    "zero_w_header_and_housing": {
+      "bodyCenterMm": [
+        3.935,
+        -0.011,
+        -51.71
+      ],
+      "bodySizeMm": [
+        7,
+        52,
+        15
+      ],
+      "worldBoundsMm": [
+        [
+          52.30999999999998,
+          -26.010999999999978,
+          116.04959999999997
+        ],
+        [
+          67.30999999999997,
+          25.988999999999987,
+          123.04959999999997
+        ]
+      ],
+      "evidenceBoundary": "15mm complete mating housing plus lead exit; bounds standard8.5mm header but actual soldered header must be measured."
+    },
+    "zero_w_gpio_solder_tails": {
+      "bodyCenterMm": [
+        3.935,
+        -0.011,
+        -61.81
+      ],
+      "bodySizeMm": [
+        5.2,
+        50.8,
+        2.0
+      ],
+      "worldBoundsMm": [
+        [
+          68.90999999999997,
+          -25.410999999999976,
+          116.94959999999996
+        ],
+        [
+          70.90999999999997,
+          25.388999999999985,
+          122.14959999999996
+        ]
+      ],
+      "evidenceBoundary": "2mm solder-tail receiving allowance behind PCB; actual protrusion unknown."
+    },
+    "zero_w_usb_moulding": {
+      "bodyCenterMm": [
+        42.935,
+        8.9,
+        -56.1
+      ],
+      "bodySizeMm": [
+        25,
+        18,
+        8
+      ],
+      "worldBoundsMm": [
+        [
+          60.199999999999974,
+          -0.09999999999999602,
+          146.04959999999994
+        ],
+        [
+          68.19999999999996,
+          17.89999999999999,
+          171.04959999999994
+        ]
+      ],
+      "evidenceBoundary": "Existing25x18x8mm cable receiving envelope; not supplier-warranted moulding."
+    },
+    "zero_w_csi_latch_exit": {
+      "bodyCenterMm": [
+        15.435,
+        35.49,
+        -56.1
+      ],
+      "bodySizeMm": [
+        12,
+        6,
+        6
+      ],
+      "worldBoundsMm": [
+        [
+          61.199999999999974,
+          32.48999999999998,
+          125.04959999999996
+        ],
+        [
+          67.19999999999996,
+          38.48999999999998,
+          137.04959999999994
+        ]
+      ],
+      "evidenceBoundary": "6mm latch/FFC initial exit receiving envelope; full bend route remains pending."
+    }
+  },
+  "zeroWExistingPoseIntersectionsMm3": {
+    "zero_w_components": {},
+    "zero_w_header_and_housing": {},
+    "zero_w_gpio_solder_tails": {},
+    "zero_w_usb_moulding": {
+      "head_cap": 244.47464570381422
+    },
+    "zero_w_csi_latch_exit": {
+      "head_cap": 17.09798785241032
+    }
+  },
+  "zeroWPhysicalDimensionsVerified": false,
+  "pi3BAtExistingZeroPose": {
+    "pcbDimensionsMm": [
+      85,
+      56,
+      1.6
+    ],
+    "intersectionsBeforeComponentsMm3": {
+      "head_bottom": 231.15418410542847,
+      "upper_pad": 118.21130136352565,
+      "lower_pad": 686.3102584934294,
+      "head_cap": 326.76922693896154,
+      "face_panel": 0.5027728902777028
+    },
+    "fits": false,
+    "scope": "Rejects reusing the Zero pose only. Does not prove all rotated Pi3 layouts impossible."
+  },
+  "zeroWFullCableRoutingVerified": false
+}

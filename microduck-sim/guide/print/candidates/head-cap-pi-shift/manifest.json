@@ -1,0 +1,339 @@
+{
+ "name": "head_cap Pi seat moved 4.6 mm back (candidate)",
+ "status": "Candidate only. Not released, not sliced, not zipped. The V1.6 release folder is untouched.",
+ "problem": "Step cap-on: the plugged 2x20 GPIO crimp housing on the Pi header sweeps through camera_clamp_screw_3, camera_retainer, camera_board and face_panel while the populated cap is lowered straight down.",
+ "evidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/interference-audit/verify-cap/README.md",
+ "measurements": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/interference-audit/verify-cap/measurements.json",
+ "generator": {
+  "script": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/interference-audit/verify-cap/scripts/build_candidate.py",
+  "command": "DX=4.6 X_TRIM=52.8 python build_candidate.py <outdir>",
+  "python": "/tmp/microduck-cad-venv/bin/python (trimesh, manifold3d, numpy)"
+ },
+ "change": {
+  "piSeatShiftRobotFrameMm": [
+   -4.6,
+   0.0,
+   0.0
+  ],
+  "rails": "Both Pi side rails (final-integration-20261009/pi-roof-side-rail-0.stl and -1.stl) removed and re-added translated by [-4.6, 0, 0], clipped 0.1 mm under the outer roof as union_cap.py does.",
+  "trim": "Only the +y rail is trimmed to x >= 52.8 (robot frame); jaw_support ends at x 52.3 in that y band. The -y rail needs no trim.",
+  "bossesRemoved": "The two former OpenRB front roof bosses (controller-roof-boss-0 and -2, y about +-10, x 57.3 to 62.6) are removed. guide/content/fasteners.json lists them as unassigned holes; left in place they would overlap the moved Pi PCB by 9.2 mm3 each.",
+  "unchanged": "Everything outside the six edit boxes; XOR volume outside them 6.4e-13 mm3. The rear cable notch, tie hood, speaker and amplifier posts, rim and rear bosses are identical.",
+  "editBoxesRobotFrame": [
+   [
+    [
+     55.026,
+     -32.7,
+     113.862
+    ],
+    [
+     65.465,
+     -25.3,
+     148.594
+    ]
+   ],
+   [
+    [
+     55.026,
+     25.3,
+     113.862
+    ],
+    [
+     65.465,
+     32.7,
+     148.582
+    ]
+   ],
+   [
+    [
+     50.426,
+     -32.7,
+     113.862
+    ],
+    [
+     60.865,
+     -25.3,
+     148.594
+    ]
+   ],
+   [
+    [
+     50.426,
+     25.3,
+     113.862
+    ],
+    [
+     60.865,
+     32.7,
+     148.582
+    ]
+   ],
+   [
+    [
+     56.83,
+     -13.049,
+     141.179
+    ],
+    [
+     63.057,
+     -7.451,
+     154.503
+    ]
+   ],
+   [
+    [
+     56.831,
+     7.451,
+     141.179
+    ],
+    [
+     63.057,
+     13.049,
+     154.484
+    ]
+   ]
+  ]
+ },
+ "volumesMm3": {
+  "V1.6": 32118.39,
+  "candidate": 31700.19,
+  "removed": 1221.73,
+  "added": 803.53,
+  "net": -418.2,
+  "removedByFeature": {
+   "rail_-y": 433.47,
+   "rail_+y": 433.44,
+   "formerOpenRB_boss_-y": 178.23,
+   "formerOpenRB_boss_+y": 177.94
+  },
+  "plusYRailTrimmed": 45.99
+ },
+ "readback": {
+  "watertight": true,
+  "windingConsistent": true,
+  "bodies": 1,
+  "genus": 6,
+  "genusV16": 6,
+  "boundsRobotFrame": [
+   [
+    -33.8242,
+    -45.8797,
+    111.1132
+   ],
+   [
+    92.29,
+    45.8798,
+    157.4494
+   ]
+  ],
+  "boundsV16RobotFrame": [
+   [
+    -33.8242,
+    -45.8797,
+    111.1132
+   ],
+   [
+    92.29,
+    45.8798,
+    157.4494
+   ]
+  ]
+ },
+ "transforms": {
+  "worldToStlFrame": {
+   "matrix": [
+    [
+     -0.988183102,
+     0.081194766,
+     0.130006027,
+     14.693802528
+    ],
+    [
+     0.135649942,
+     0.068347699,
+     0.988396522,
+     -136.692789427
+    ],
+    [
+     0.071367012,
+     0.994352051,
+     -0.078554107,
+     48.411404133
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "how": "Kabsch fit of guide/print/world/head_cap.stl vertices to guide/print/stl/head_cap.stl vertices (88776 each)",
+   "residualMm": {
+    "max": 1.8702802178468564e-12,
+    "mean": 1.651490385100244e-12
+   }
+  },
+  "sourceToPrint": {
+   "matrix": [
+    [
+     0.978259423,
+     -0.207384911,
+     0.0,
+     0.0
+    ],
+    [
+     0.012930877,
+     0.060996495,
+     0.998054217,
+     0.0
+    ],
+    [
+     -0.206981385,
+     -0.976355942,
+     0.062352065,
+     16.829193133
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "source": "guide/print/release-V1.6-final/final-V1.6.json, parts[key=head_cap].sourceToPrint (unchanged)"
+  },
+  "worldToFlatPrint": {
+   "matrix": [
+    [
+     -0.994831182,
+     0.065255263,
+     -0.077798904,
+     42.722372704
+    ],
+    [
+     0.066724243,
+     0.997636148,
+     -0.016431442,
+     40.169428725
+    ],
+    [
+     0.07654276,
+     -0.021537584,
+     -0.996833656,
+     150.267217814
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "definition": "sourceToPrint @ worldToStlFrame"
+  },
+  "supportBlockerShiftInSourceFrame": {
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     4.545642269
+    ],
+    [
+     0.0,
+     1.0,
+     -0.0,
+     -0.623989732
+    ],
+    [
+     0.0,
+     -0.0,
+     1.0,
+     -0.328288253
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "definition": "worldToStlFrame @ T([-4.6,0,0]) @ inverse(worldToStlFrame)"
+  }
+ },
+ "printPose": {
+  "flatContactAreaMm2": 104.39,
+  "releasedFlatContactAreaMm2": 104.39,
+  "minimumRequiredMm2": 100,
+  "boundsPrintFrame": [
+   [
+    -62.046,
+    -1.841,
+    0.0
+   ],
+   [
+    67.866,
+    89.713,
+    47.056
+   ]
+  ],
+  "releasedBoundsPrintFrame": [
+   [
+    -62.046,
+    -1.841,
+    0.0
+   ],
+   [
+    67.866,
+    89.713,
+    47.056
+   ]
+  ],
+  "trimFaceNormalPrintFrame": [
+   0.9948,
+   -0.0667,
+   -0.0765
+  ],
+  "trimFaceAngleFromPrintDownDeg": 85.6,
+  "tieSlotBlocker": "release-V1.6-orange-pose/tie-slot-support-blocker-print.stl applies unchanged (notch region XOR 0 mm3)."
+ },
+ "inputs": {
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/head_cap.stl": "5c22fbf6186e089f9f1238baf9fc4e87493610710dba745e8b7d74eaec1a5428",
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/stl/head_cap.stl": "f59be5c4fb60385dd654f6ea45aa26329f9f0c8e7f0cda480f10066140fe807f",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/curved-head/community-curved-head-world.stl": "a4b8a357b466d5d131710ffa5a7ef36ff5e2182410e6074eaeeb03b1846a7b61",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/pi-roof-side-rail-0.stl": "f786211d8269d9af41a89470c2d9ead7826b0e0bb6fdf9c2d681dffc39f2e4cc",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/pi-roof-side-rail-1.stl": "48e53ae8174fa424767141200f1025ca3453ead4e020ac77eb4a2b27f77ea1b7",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/controller-roof-boss-0.stl": "249ae09d2e63afffc07436c0d62d37165503427868b113a89bbd234c2b67be7f",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/controller-roof-boss-2.stl": "3bf2366474356762cd0c0c59c8cb5b48a56c5cfcb5d7530e36f3097102c15151",
+  "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/pi-positive-y-upper-hole-support-blocker-print.stl": "dd8b47d349494ec43e4095f1d21ca9ff1b92737931fb215aa81c30417c863473"
+ },
+ "files": {
+  "head_cap-pi-shift-world.stl": {
+   "sha256": "5c2364f2ee31c8baef24eb93dcaeb8126125f5dcaf3d73b9826d004fcca78572",
+   "bytes": 7836286,
+   "frame": "Robot frame (mm, x forward, y left, z up); same frame as guide/print/world/head_cap.stl."
+  },
+  "head_cap-pi-shift-stlframe.stl": {
+   "sha256": "c38e4f51b65cbe28c1a86490f9ed65e4283040a0dbf42d88862b5949e8b5a946",
+   "bytes": 8140371,
+   "frame": "Release source frame; drop-in replacement for guide/print/stl/head_cap.stl. The V1.6 release places it with the unchanged sourceToPrint below."
+  },
+  "head_cap-pi-shift-print.stl": {
+   "sha256": "4d5947370965167593057c17762e7e46d309b15cfdce8fd32e7dc3403a8d74f4",
+   "bytes": 8095068,
+   "frame": "Flat print pose of the V1.6 release (sourceToPrint applied to the source-frame file). Same bounds and flat contact as the released cap."
+  },
+  "pi-positive-y-upper-hole-support-blocker-shifted.stl": {
+   "sha256": "f7059537c01580a26782e7601b937890cb8c746d76429003b3d9e35477bd96a1",
+   "bytes": 56030,
+   "frame": "The Bambu non-printing support blocker for the +y upper Pi pilot (14-HEAD-TRIAL functional review), moved with the rail. It is in the same frame as the V1.6 blocker file, which the pilot-mouth test places in the release source frame."
+  }
+ },
+ "requiredCompanionChanges": [
+  "Fastener E-pi-02 (+y lower Pi screw): M2x4 instead of M2x6. With the trim, an M2x6 tip leaves the rail and sweeps 10.03 mm3 into jaw_support during cap-on (M2x5: 0.28 mm3); M2x4 is clear and engages 2.46 mm (rail material 2.9 to 3.24 mm on that axis). E-pi-01, -03 and -04 keep M2x6 with 4.4 mm of material. The Pi step text in guide/content/steps.py (four M2 x 6) must change to three M2 x 6 and one M2 x 4 at the +y lower corner.",
+  "Guide data: move the Pi group, the GPIO housing envelopes and the cable ends at the header by [-4.6, 0, 0]; update fastener seats E-pi-01..04 by the same vector.",
+  "routes.json bundle_head: re-route the last segment. With only the end moved, the drawn centreline passes 0.9 mm from the moved +y rail (V1.6: 3.37 mm minimum, at the notch).",
+  "routes.json head_csi: path grows by about 1.0 mm (straight 28.44 to 29.44 mm); the 200 mm ribbon covers it.",
+  "Slicing: re-slice both machines, use the shifted Pi support blocker for Bambu and review the +y upper pilot again."
+ ]
+}

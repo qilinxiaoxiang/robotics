@@ -1,0 +1,78 @@
+{
+  "dynamics": "45/45 repaired original cases passed under unchanged gates",
+  "trajectory_mesh_checks": 367750,
+  "trajectory_mesh_collisions": 0,
+  "eight_print_parts": "closed, connected, positive volume after disk readback",
+  "runtime_offline": "passed",
+  "part_sha256": {
+    "whole-robot-20260912/printing/power-support-integrated-print.stl": "b3083807b30143641b3a263d629a37fec58732f4fc73b184d7f449dda412c53f",
+    "whole-robot-20260912/printing/small-regulator-cover-print.stl": "8b7288f3ced9725c8c6dbb0f497059057a609152a198219a6320cf4a7ba17b21",
+    "whole-robot-20260912/electrical/head-layout/final/head_cap_print.stl": "e8e44de2b54b974c5eb274ee6463c8ace8c6f74493714330370d72d618634f28",
+    "whole-robot-20260912/electrical/head-layout/final/audio_carrier_print.stl": "9537ff49b9ee58bca9634233ca764c99778497eba0e2545df7f1f64e4c5fffea",
+    "camera/camera_pitch_foot.stl": "c9124bdbb75dbb6fa2a43d965539a0ef5a2e65abd85c4c382bcc1da5e3635d14",
+    "camera/camera_cradle.stl": "3fb3ccd54c5d700858244a0ba7564113e8c1c91d7b39f181e7ed52988627c2a4",
+    "whole-robot-20260912/assembly/trunk-imu/imu_clamp_holder_print.stl": "0b045754055bf66f652d3cc7bb8c0eb420da062fb52603ae534d4f0891a10a45",
+    "whole-robot-20260912/assembly/trunk-imu/imu_rear_cover_print.stl": "67a9c2b11cbb7a45d8e84972ae151291a138cc5d1c99fad6b610c02430664990"
+  },
+  "bambu_projects": {
+    "printing/MicroDuck-compact-power-X1C-CoolPlate.3mf": {
+      "sha256": "80c3a4f8a3d4cdc74d1038978938478696af21ef8864ae8b5e73aad0b590eb0e",
+      "saved_settings": "4 walls, 30% gyroid, tree support enabled",
+      "gui_preview_readback": "passed"
+    },
+    "printing/head/MicroDuck-head-camera-IMU-X1C-CoolPlate.3mf": {
+      "sha256": "3b04f5f8a3af09ab5daa6faa96df478533adc0dba06b9d27c344871ef66b2236",
+      "saved_settings": "4 walls, 30% gyroid, tree support enabled",
+      "gui_preview_readback": "passed"
+    }
+  },
+  "dynamics_baseline": "43/45 passed; two falls retained",
+  "delay_repair": {
+    "report": "delay-repair-20260912/README.md",
+    "summary": "delay-repair-20260912/results-summary.json",
+    "original45_pass": 45,
+    "extra_0_20_40ms_pass": "27/27",
+    "extra_60ms_pass": "0/9; all fell",
+    "stop_phase_limit": "One 3-degree IMU-noise case reached 45.609 degrees at 28.66 s, outside the original 3-28 s heading gate.",
+    "runtime": "Separate opt-in helper; unknown sample age disables compensation; not integrated or hardware-tested.",
+    "geometry_unchanged": true,
+    "mesh_checks": {
+      "cases": [
+        {
+          "report": "mesh-old0-sensor40/full-assembly-final-trajectory.json",
+          "sampled_frames": 250,
+          "pair_checks": 367750,
+          "cross_body_collisions": 0,
+          "trajectory_sha256": "419a6e27ac7961ae3d81f43604b0ad29398cb033bc224bf8507644390266a9b7",
+          "maximum_sample_gap_s": 0.14000000000000057,
+          "same_body_overlaps_above_threshold": 5,
+          "mujoco_forward_kinematics_version": "3.13.0"
+        },
+        {
+          "report": "mesh-old60-sensor40/full-assembly-final-trajectory.json",
+          "sampled_frames": 250,
+          "pair_checks": 367750,
+          "cross_body_collisions": 0,
+          "trajectory_sha256": "6239a694993c043c80139a5529672c16f4a1baee66efabab2136304dc69b3ee8",
+          "maximum_sample_gap_s": 0.14000000000000057,
+          "same_body_overlaps_above_threshold": 5,
+          "mujoco_forward_kinematics_version": "3.13.0"
+        },
+        {
+          "report": "mesh-old120-sensor40/full-assembly-final-trajectory.json",
+          "sampled_frames": 250,
+          "pair_checks": 367750,
+          "cross_body_collisions": 0,
+          "trajectory_sha256": "52e8440ae9521cf8b0dcfa3d020b68c165cb269c8af476f1148777522b5ac476",
+          "maximum_sample_gap_s": 0.14000000000000057,
+          "same_body_overlaps_above_threshold": 5,
+          "mujoco_forward_kinematics_version": "3.13.0"
+        }
+      ],
+      "sampled_frames": 750,
+      "pair_checks": 1103250,
+      "cross_body_collisions_above_0_005_mm3": 0,
+      "scope": "Sampled mesh intersections along repaired 40 ms trajectories; no continuous swept volume or physical acceptance. Same-body contacts and padded connector proxies retain the original static audit."
+    }
+  }
+}

@@ -1,0 +1,294 @@
+{
+ "_method": "How close the open jaw comes to the neck-side wire spans, compared with how close it comes to the neck itself.\n\nFor every pose of the policy and pickup sets with the jaw open (40 deg) and closed (0 deg), exact smallest gaps\n(manifold3d min_gap, 10 mm search) between the jaw frame and\n  (a) each wire span of a route below the head (the conductor group as a tube of radius r = 1.7 mm, a flat group of\n      eight wires lying two deep; the tube follows the taut centreline between the clip points), and\n  (b) the parts the span lies on (torso shell, ID12/ID11 cases and links, head-pitch bracket).\nPoses where the jaw already touches a neck part (gap < 0.2 mm) cannot be reached by the robot itself and are reported\nseparately; in the remaining (reachable) poses the wire group must stay clear of the jaw. Routes from route-candidates.json; spans on bodies below the\nhead only. Writes jaw-check.json.\nUsage: jaw_check.py [route ...]",
+ "A3-integrated": {
+  "groupRadiusMm": 1.7,
+  "policy": {
+   "poses": 162,
+   "posesBlockedByJawOnNeckParts": 78,
+   "blockedExamples": [
+    {
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     },
+     "part": "motor11"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -5.7,
+      "jaw": 40.0
+     },
+     "part": "motor11"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": 9.9,
+      "jaw": 40.0
+     },
+     "part": "motor11"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": 4.7,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     },
+     "part": "neck_pitch"
+    }
+   ],
+   "spans": [
+    {
+     "segment": 0,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 1,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 2,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 3,
+     "from": "trunk_base",
+     "to": "neck",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 4,
+     "from": "neck",
+     "to": "neck_pitch",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 7.09,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 5,
+     "from": "neck_pitch",
+     "to": "neck_pitch",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 6.11,
+     "atPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    }
+   ]
+  },
+  "pickup": {
+   "poses": 54,
+   "posesBlockedByJawOnNeckParts": 29,
+   "blockedExamples": [
+    {
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     },
+     "part": "motor11"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     },
+     "part": "motor11"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 45.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     },
+     "part": "motor12"
+    },
+    {
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 45.0,
+      "head_yaw": 0.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     },
+     "part": "motor12"
+    }
+   ],
+   "spans": [
+    {
+     "segment": 0,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 1,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 2,
+     "from": "trunk_base",
+     "to": "trunk_base",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 3,
+     "from": "trunk_base",
+     "to": "neck",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 4,
+     "from": "neck",
+     "to": "neck_pitch",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    },
+    {
+     "segment": 5,
+     "from": "neck_pitch",
+     "to": "neck_pitch",
+     "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+     "atPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     },
+     "jawToNeckPartsAtThatPoseMm": 10.0,
+     "reachablePosesWhereJawTouchesWire": 0,
+     "examples": []
+    }
+   ]
+  }
+ }
+}

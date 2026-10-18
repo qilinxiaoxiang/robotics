@@ -1,0 +1,89 @@
+{
+  "integrationReady": false,
+  "complete200mmRouteAccepted": false,
+  "fixedHardware": "Existing positive-x225 Pi, its GPIO receiving bodies and existing audio/OpenRB retained; optional camera roll180 about optical axis only within route family, not deployed.",
+  "actualCableContactFaces": "Pi contact side+X confirmed from Zero-camera drawing; flipped camera contact side+X. Old opposite-normal route is not reused as acceptance.",
+  "receivingDimensions": {
+    "widthMm": 16,
+    "baselineThicknessMm": 0.6,
+    "minimumBendRadiusMm": 3,
+    "insertedMiniMm": 4.4,
+    "insertedCameraMm": 5,
+    "freeStraightAtBothPortsMm": 4,
+    "totalCableLengthMm": 200,
+    "thinSensitivityMm": 0.3
+  },
+  "finiteWorkCompleted": {
+    "planarDoglegFits": 12,
+    "planarFitsOutcome": "Could not satisfy full end position/frame and length; residual2.781mm-equivalent.",
+    "obliqueDoubleDoglegFits": 12,
+    "obliqueOutcome": "All fit exact200mm/same-normal end frames but every screened route collided with Pi/components or cap. Best tradeoff is a finite family failure, not proof all old-Pi routes impossible.",
+    "coilStorageCases": 12,
+    "coilBaselineClearCases": [
+      {
+        "lengthStoredMm": 80.0,
+        "centerXZ": [
+          59.5,
+          124.0
+        ],
+        "boundsMm": [
+          53.54820099355867,
+          -20.0,
+          117.97322249157959,
+          65.00196800886987,
+          -4.0,
+          129.57694069424892
+        ],
+        "minimumSampledRadiusMm": 3.1041463954686885,
+        "mesh": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/coil-0.6-80.0-59.5.stl"
+      },
+      {
+        "lengthStoredMm": 100.0,
+        "centerXZ": [
+          59.5,
+          124.0
+        ],
+        "boundsMm": [
+          53.54857979003802,
+          -20.0,
+          117.97331003943681,
+          65.90152992283205,
+          -4.0,
+          130.4763120705551
+        ],
+        "minimumSampledRadiusMm": 3.1041463954686885,
+        "mesh": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/coil-0.6-100.0-59.5.stl"
+      }
+    ],
+    "coilThinSensitivityClearCases": 5
+  },
+  "specificBottlenecks": [
+    {
+      "family": "double dogleg200",
+      "bottleneck": "The returning16mm vertical band crosses the Pi near its negativeY edge unless it moves past roughlyY-36.8; at band topZ139 the cap occupies the path from roughlyY-34.9. The tested family either enters PCB/components or original curved shell.",
+      "evidence": "candidate-intersection-bounds.json"
+    },
+    {
+      "family": "100mm true spiral storage plus ordinary inner lead",
+      "bottleneck": "The storage solid clears the screened internal bodies, but a4mm inner tangent lead intersects outer turns15.201mm3.8mm lead intersects23.785mm3. Ordinary adjacent seam was excluded.",
+      "evidence": "coil-inner-exit-negative.json"
+    },
+    {
+      "family": "adjacent-arm bifilar coil",
+      "bottleneck": "A direct inner semicircular U joining two adjacent arms0.9mm apart would requireR0.45, belowR3. MaintainingR3 requiresatleast6mm arm separation locally; current tightly packed coil does not provide that. This only rules out the direct U connection, not all3D transitions."
+    }
+  ],
+  "nextEngineeringBoundary": "A real developable3D axial inner exit, or different storage architecture, must be designed before any complete route can be accepted. A visually twisted rectangular ribbon is not evidence. None of the coil-only outputs may be used as an assembly step or full200mm routing claim.",
+  "resourceUse": "All five numeric/geometry workers used guard512MiB/120s, each finished; observed peak<=181MiB and elapsed<=5.7s. No broad dynamic search.",
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/screen_double_dogleg.py": "412c8e24e6122c530bb9344a70dc3ae7155fc2ff334c5f0bd5a223e38efea66d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/double-dogleg-screen.json": "663e17cc83b8ed4929c3b0c4a302489e2362523a94ee8be84c1e5ffbd802f2df",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/planar-double-dogleg-screen.json": "13aa07bff3f6c228c63d0083b003382225ba50b18ec13d676992f32a406853cf",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/candidate-intersection-bounds.json": "f15522f2e76d3a8f5475db3fca7ec085885941aeae221a0e9d366910b4388e49",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/screen_coils.py": "737ea669ccb4d70ff605c1fb095faf9ee4f0e22de468261c8e14667751ef0558",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/coil-screen.json": "1fed03cbc359e0e8f419e0cf274cd52aa1c5c826474ba28318558430766f4c1d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/check_coil_inner_exit.py": "4bcaf2bcbe67629592780d6d12e097a34c61b7fe05abc67b9d64b216c6c89ce1",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/coil-inner-exit-negative.json": "353148f4af777df3126e5cc1d5531228fff60592d1fef7c8a67c2a84793ea286",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/old-pi-storage-alt/mac-openrb-architecture-evidence.json": "4d4575c4a506cb3d528c9b14787dfc918f213a70767e70e85479f23114ddc979"
+  }
+}

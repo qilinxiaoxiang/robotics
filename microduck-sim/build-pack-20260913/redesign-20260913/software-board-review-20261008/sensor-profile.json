@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "problemIds": [
+    "P0",
+    "P5",
+    "P6"
+  ],
+  "role": "sensor-capture-and-forward-only",
+  "board": "Raspberry Pi Zero W first generation, soldered 40-pin header",
+  "os": "Raspberry Pi OS Lite 32-bit, current supported libcamera stack",
+  "cpuArchitecture": "ARMv6",
+  "policyHost": "MacBook Pro",
+  "policyOnPi": false,
+  "aptPackages": [
+    "python3-picamera2",
+    "python3-numpy",
+    "python3-venv"
+  ],
+  "aptInstallSuggestion": "sudo apt install --no-install-recommends python3-picamera2 python3-numpy python3-venv",
+  "venvSuggestion": "python3 -m venv --system-site-packages .venv-sensors",
+  "excludeFromPiSensorEnvironment": [
+    "onnxruntime",
+    "torch",
+    "mujoco",
+    "placo",
+    "rustypot"
+  ],
+  "camera": {
+    "model": "Camera Module 3 Wide / IMX708",
+    "driver": "Picamera2/libcamera from matching OS packages",
+    "initialMeasurementProfile": {
+      "width": 640,
+      "height": 480,
+      "frameRate": 15,
+      "encoder": "hardware H.264"
+    },
+    "profileQualified": false,
+    "requiredMetadata": [
+      "frame sequence",
+      "camera SensorTimestamp and its clock domain",
+      "exposure duration",
+      "Pi send time",
+      "Mac receive/decode time",
+      "latest-frame replacement / dropped-frame count"
+    ],
+    "clockRule": "Do not subtract Pi and Mac monotonic clocks without a measured mapping. Preserve capture timestamp separately from receipt timestamp."
+  },
+  "imu": {
+    "existingSource": "../../phase1/runtime/torso_imu.py + ../../phase1/runtime/bundle/community/src/imu_reader.py",
+    "transport": "Linux I2C /dev/i2c-N; sensor-only reader to be extracted without importing robot_controller",
+    "timestampMeaning": "Existing timestamp is oldest quaternion/gyro receipt on the Pi, not sensor sampling time",
+    "mountCalibrationRequired": true
+  },
+  "motorBusOwner": "UNRESOLVED: a separate deployment decision; no actuator runtime in this profile",
+  "implementedScope": "Dependency separation profile and read-only preflight only",
+  "sensorForwarderImplemented": false,
+  "macPolicyIntegrationImplemented": false,
+  "liveHardwareValidated": false
+}

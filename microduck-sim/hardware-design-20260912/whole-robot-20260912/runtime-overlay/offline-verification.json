@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "real_observation_class": "<class 'observer.Observation'>",
+  "real_onnx_sessions": [
+    "walk61.onnx",
+    "stand61.onnx"
+  ],
+  "observation_shape": [
+    1,
+    61
+  ],
+  "action_shape": [
+    1,
+    14
+  ],
+  "checks": [
+    "61 fields and order",
+    "negative-Z body gravity",
+    "inverse mount gyro",
+    "metadata",
+    "previous action",
+    "walk direct-forward parity",
+    "stand switching",
+    "1.5s startup and KP200",
+    "offset preservation",
+    "heading gain/saturation/manual turn/wrap",
+    "fall hold",
+    "invalid quaternion rejection",
+    "stop gain restoration",
+    "install/uninstall byte-for-byte restoration"
+  ],
+  "hardware_access": false,
+  "scope": "Offline compatibility; not Pi timing or real-servo validation."
+}

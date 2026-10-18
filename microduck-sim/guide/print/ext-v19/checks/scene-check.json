@@ -1,0 +1,3726 @@
+{
+ "_method": "Print-gate equivalent for the V1.9 scene: final-pose overlap and motion sweeps of every new part.\n\nScene = every solid in the guide audit cache (guide-data.json parts at q = 0), with head_cap replaced by the release\ncap (head_cap_v19-world.stl) and rear_pack replaced by the V1.9 pack (guide/print/rear-pack-v19/rear_pack-world.stl),\nplus the new parts: release cap, speaker retainer, four clips (with their screws at the new lengths), speaker,\namplifier, amp housings, Pi-end audio housings, resistor envelope (if present), the four clip screw heads lifted by\nthe tab, and the Pi mini-HDMI socket envelope (assumed from the Raspberry Pi drawing; not in the guide meshes).\nChecks (exact manifold3d booleans and min_gap):\n  1. final pose: every new part against every scene part and every other new part: overlap volume and gap;\n  2. joint sweeps: each new part against every part on another body, moving only the joints between the two bodies:\n     'sweep' = each of those joints alone over its full MJCF range (GRID steps: 5 deg, roll 2.5 deg, jaw 2 deg), the\n     others at 0; 'grid2' = when exactly two joints lie between the bodies, their full-range product (GRID_MULTI);\n  3. 'policy' box (3 levels per neck joint, jaw 0 and 40) and 'pickup' set (27 beak-pickup postures, jaw 0 and 40),\n     neck-route motion.py;\n  4. 'walking': every adopted phase-1 walking frame (not fallen, not a blend run), neck joints rounded to 1 deg, jaw\n     closed; for new parts on trunk_base also every 20th adopted frame with the leg parts moved by MuJoCo FK\n     (robot_allcollisions.xml, power-support-origin pso_lib.FK);\n  5. cap descent: cap-group parts lowered 40 mm onto the lower head (0.5 mm steps) against the parts already there;\n  6. screw access: every screw within 15 mm of a new part (fasteners.json plus the four new audio screws): its head and\n     a straight 3 mm driver 30 mm out along its axis, against the part.\nThe release cap is mostly the V1.8 cap. In the motion and descent checks it is represented by its difference from the\nV1.8 cap (head_cap_v19 minus the V1.8 head_cap, 'head_cap_v19_added'): any overlap the V1.9 cap has and the V1.8 cap\ndoes not lies in that difference, so this tests exactly for new overlap. Final pose reports the whole cap and, per\npart, the overlap of the V1.8 cap for comparison.\nMotion poses are culled conservatively before the exact booleans: box test, then a surface-sample distance test\n(samples cover every surface within SAMPLE_E / sqrt(3); 1.5 mm, 2.0 mm on the cap difference), then a winding-number containment test of one point each way.\nA pose is skipped only when neither surface comes within NEAR_M + both cover radii of the other and neither part\ncontains a point of the other.\nIntended contacts: a clip against the part its tab sits on (gap 0, no overlap), a screw in its hole.\nUsage: scene_check.py [part ...]   -> ../checks/scene-check.json (merged per part)",
+ "_walking": {
+  "framesTotal": 304253,
+  "framesAdopted": 283500,
+  "sources": 227,
+  "sourcesAdopted": 189,
+  "uniqueNeckPoses1deg": 15298,
+  "neckRangeDeg": [
+   [
+    -22.6,
+    -0.9,
+    -26.8,
+    -21.4
+   ],
+   [
+    44.0,
+    68.2,
+    34.0,
+    11.2
+   ]
+  ]
+ },
+ "_capAddedVsV18Mm3": 5054.902,
+ "clip_torso_v19": {
+  "body": "trunk_base",
+  "capGroup": false,
+  "volumeMm3": 247.8886,
+  "bounds": [
+   [
+    16.8313,
+    -27.301,
+    29.322
+   ],
+   [
+    27.6,
+    -18.4012,
+    39.6
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "shell_right",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "screw_head_S12-horn-025",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "idler12",
+    "overlapMm3": 0.0,
+    "gapMm": 3.901
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S12-rear_center-117",
+    "step": "neck-lower-fasten",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.931,
+    "driverOverlapMm3": 33.5204,
+    "driverGapMm": 0.0,
+    "driverBlockedOnAssembledV18By": {
+     "shell_right": 16.153
+    }
+   },
+   {
+    "screw": "S12-horn-028",
+    "step": "shells",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.28,
+    "driverOverlapMm3": 31.6983,
+    "driverGapMm": 0.0,
+    "driverBlockedOnAssembledV18By": {}
+   },
+   {
+    "screw": "S12-horn-025",
+    "step": "shells",
+    "ownClipScrew": true,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.02,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.1
+   },
+   {
+    "screw": "S12-horn-026",
+    "step": "shells",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 2.416,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 2.9
+   },
+   {
+    "screw": "S12-horn-027",
+    "step": "shells",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 2.78,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.28
+   },
+   {
+    "screw": "S05-case-075",
+    "step": "shells",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 56.5422,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 0.9468,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 68.2,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionOverlaps": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 56.5422,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 0.9468,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 68.2,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionCounts": {
+   "sweep": {
+    "poses": 31,
+    "pairPoses": 15346,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 3,
+    "pairPoses": 7707,
+    "boxPass": 10,
+    "exact": 9
+   },
+   "pickup": {
+    "poses": 3,
+    "pairPoses": 2685,
+    "boxPass": 6,
+    "exact": 3
+   },
+   "walking": {
+    "poses": 68,
+    "pairPoses": 1441514,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 304,
+    "pairPoses": 1824,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "walkingLegs": {
+   "framesChecked": 14175,
+   "legParts": 36,
+   "closest": [
+    {
+     "part": "right_thigh",
+     "body": "upper_leg_right",
+     "overlapMm3": 0.0,
+     "boxGapMm": 29.26,
+     "exact": false
+    },
+    {
+     "part": "motor3",
+     "body": "upper_leg_right",
+     "overlapMm3": 0.0,
+     "boxGapMm": 30.6,
+     "exact": false
+    },
+    {
+     "part": "right_yaw",
+     "body": "bearing_roll",
+     "overlapMm3": 0.0,
+     "boxGapMm": 31.32,
+     "exact": false
+    },
+    {
+     "part": "right_passive",
+     "body": "bearing_roll",
+     "overlapMm3": 0.0,
+     "boxGapMm": 31.32,
+     "exact": false
+    },
+    {
+     "part": "right_plate",
+     "body": "upper_leg_right",
+     "overlapMm3": 0.0,
+     "boxGapMm": 33.37,
+     "exact": false
+    }
+   ],
+   "overlaps": []
+  },
+  "elapsedS": 345.7
+ },
+ "clip_bracket_v19": {
+  "body": "neck_pitch",
+  "capGroup": false,
+  "volumeMm3": 211.8426,
+  "bounds": [
+   [
+    16.8,
+    -24.5,
+    79.221
+   ],
+   [
+    29.6,
+    -17.5,
+    85.621
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "neck_pitch",
+    "overlapMm3": -0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "screw_head_S11-horn-040",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "idler11",
+    "overlapMm3": 0.0,
+    "gapMm": 3.0
+   },
+   {
+    "part": "idler_cap11",
+    "overlapMm3": 0.0,
+    "gapMm": 3.2
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S11-rear_center-118",
+    "step": "neck-lower-fasten",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.03,
+    "driverOverlapMm3": 12.1947,
+    "driverGapMm": 0.0,
+    "driverBlockedOnAssembledV18By": {}
+   },
+   {
+    "screw": "S11-horn-040",
+    "step": "neck-upper-join",
+    "ownClipScrew": true,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.02,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.9
+   },
+   {
+    "screw": "S11-horn-037",
+    "step": "neck-upper-join",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.4,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.9
+   },
+   {
+    "screw": "S11-horn-038",
+    "step": "neck-upper-join",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.143,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.647
+   },
+   {
+    "screw": "S11-horn-039",
+    "step": "neck-upper-join",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.143,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.647
+   }
+  ],
+  "motion": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 30.0562,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 13.6362,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "head_bottom",
+    "body": "jaw_soft",
+    "poseSet": "grid2",
+    "overlapMm3": 0.0,
+    "gapMm": 0.808,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": 0.0,
+     "head_yaw": 10.0,
+     "head_roll": -25.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "head_bottom",
+    "body": "jaw_soft",
+    "poseSet": "sweep",
+    "overlapMm3": 0.0,
+    "gapMm": 0.88,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": 0.0,
+     "head_yaw": 0.0,
+     "head_roll": -25.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "sweep",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": 0.0,
+     "head_yaw": 0.0,
+     "head_roll": -25.0,
+     "jaw": 0.0
+    }
+   }
+  ],
+  "motionOverlaps": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 30.0562,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 13.6362,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionCounts": {
+   "sweep": {
+    "poses": 67,
+    "pairPoses": 12250,
+    "boxPass": 3,
+    "exact": 2
+   },
+   "grid2": {
+    "poses": 304,
+    "pairPoses": 51451,
+    "boxPass": 17,
+    "exact": 15
+   },
+   "policy": {
+    "poses": 9,
+    "pairPoses": 1347,
+    "boxPass": 5,
+    "exact": 4
+   },
+   "pickup": {
+    "poses": 9,
+    "pairPoses": 789,
+    "boxPass": 1,
+    "exact": 1
+   },
+   "walking": {
+    "poses": 1073,
+    "pairPoses": 107766,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "elapsedS": 1.6
+ },
+ "screw_head_S12-horn-025": {
+  "body": "trunk_base",
+  "capGroup": false,
+  "volumeMm3": 20.0488,
+  "bounds": [
+   [
+    18.0,
+    -22.001,
+    30.522
+   ],
+   [
+    22.0,
+    -20.401,
+    34.522
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "shell_right",
+    "overlapMm3": 0.0,
+    "gapMm": 0.222
+   }
+  ],
+  "motion": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 0.0,
+    "gapMm": 0.175,
+    "poseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 68.2,
+     "head_yaw": 4.7,
+     "head_roll": -21.4,
+     "jaw": 40.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.776,
+    "poseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 31,
+    "pairPoses": 15346,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 3,
+    "pairPoses": 7707,
+    "boxPass": 2,
+    "exact": 2
+   },
+   "pickup": {
+    "poses": 3,
+    "pairPoses": 2685,
+    "boxPass": 2,
+    "exact": 2
+   },
+   "walking": {
+    "poses": 68,
+    "pairPoses": 1441514,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 304,
+    "pairPoses": 1824,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "walkingLegs": {
+   "framesChecked": 14175,
+   "legParts": 36,
+   "closest": [
+    {
+     "part": "right_thigh",
+     "body": "upper_leg_right",
+     "overlapMm3": 0.0,
+     "boxGapMm": 32.4,
+     "exact": false
+    },
+    {
+     "part": "right_yaw",
+     "body": "bearing_roll",
+     "overlapMm3": 0.0,
+     "boxGapMm": 32.52,
+     "exact": false
+    },
+    {
+     "part": "right_passive",
+     "body": "bearing_roll",
+     "overlapMm3": 0.0,
+     "boxGapMm": 32.52,
+     "exact": false
+    },
+    {
+     "part": "motor3",
+     "body": "upper_leg_right",
+     "overlapMm3": 0.0,
+     "boxGapMm": 34.09,
+     "exact": false
+    },
+    {
+     "part": "right_hip",
+     "body": "hip_l_2",
+     "overlapMm3": 0.0,
+     "boxGapMm": 35.43,
+     "exact": false
+    }
+   ],
+   "overlaps": []
+  },
+  "elapsedS": 339.6
+ },
+ "screw_head_S11-horn-040": {
+  "body": "neck_pitch",
+  "capGroup": false,
+  "volumeMm3": 20.0488,
+  "bounds": [
+   [
+    18.0,
+    -21.1,
+    80.421
+   ],
+   [
+    22.0,
+    -19.5,
+    84.421
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "neck_pitch",
+    "overlapMm3": 0.0,
+    "gapMm": 2.0
+   }
+  ],
+  "motion": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 1.9077,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionOverlaps": [
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 1.9077,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 40.0
+    }
+   }
+  ],
+  "motionCounts": {
+   "sweep": {
+    "poses": 67,
+    "pairPoses": 12250,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 304,
+    "pairPoses": 51451,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 9,
+    "pairPoses": 1347,
+    "boxPass": 2,
+    "exact": 1
+   },
+   "pickup": {
+    "poses": 9,
+    "pairPoses": 789,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 1073,
+    "pairPoses": 107766,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "elapsedS": 0.2
+ },
+ "speaker_retainer_v19": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 588.1706,
+  "bounds": [
+   [
+    -13.1219,
+    -17.8,
+    134.739
+   ],
+   [
+    19.9746,
+    17.8,
+    144.6226
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "speaker",
+    "overlapMm3": 0.0002,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker_screws_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker_leads_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 0.3
+   },
+   {
+    "part": "amplifier",
+    "overlapMm3": 0.0,
+    "gapMm": 1.801
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-096",
+    "step": "neck-yaw-case",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 5.2555,
+    "driverGapMm": 0.0,
+    "driverBlockedOnAssembledV18By": {
+     "head_cap": 11.906
+    }
+   },
+   {
+    "screw": "H-speaker_retainer-01",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.012,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.593
+   },
+   {
+    "screw": "H-speaker_retainer-02",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.02,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.6
+   },
+   {
+    "screw": "S14-horn-052",
+    "step": "neck-roll",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-case-098",
+    "step": "neck-yaw-case",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-01",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-02",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 25,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 3,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 11,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 3.8
+ },
+ "clip_head_v19": {
+  "body": "jaw_soft",
+  "capGroup": false,
+  "volumeMm3": 426.2195,
+  "bounds": [
+   [
+    38.9,
+    -33.2,
+    113.215
+   ],
+   [
+    52.6,
+    -18.1,
+    124.415
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "jaw_support",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "screw_head_H-jaw_support-03",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.5
+   },
+   {
+    "part": "head_pi_zero_w_gpio_solder_tails",
+    "overlapMm3": 0.0,
+    "gapMm": 0.794
+   },
+   {
+    "part": "head_bottom",
+    "overlapMm3": 0.0,
+    "gapMm": 1.7
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.607
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "H-jaw_support-03",
+    "step": "head-bottom",
+    "ownClipScrew": true,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.02,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.75
+   },
+   {
+    "screw": "S13-case-097",
+    "step": "neck-yaw-case",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "E-pi-01",
+    "step": "pi",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 42,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 5,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 5,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 33,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 8,
+    "exact": 0
+   }
+  },
+  "capDescent": [
+   {
+    "part": "head_cap_v19",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 0.5,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_gpio_solder_tails",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 0.794,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "pi",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 2.607,
+    "overlapSeatedMm3": 0.0
+   }
+  ],
+  "elapsedS": 2.1
+ },
+ "clip_cap_v19": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 251.8091,
+  "bounds": [
+   [
+    60.8589,
+    14.2,
+    137.5933
+   ],
+   [
+    69.0324,
+    32.0,
+    151.0385
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "screw_head_E-pi-04",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.152
+   },
+   {
+    "part": "pi_mini_hdmi_envelope_assumed",
+    "overlapMm3": 0.0,
+    "gapMm": 0.3
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-04",
+    "step": "pi",
+    "ownClipScrew": true,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 0.02,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.6
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.3
+ },
+ "resistor_envelope_v19": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 248.496,
+  "bounds": [
+   [
+    33.76,
+    -1.2,
+    134.23
+   ],
+   [
+    39.96,
+    8.82,
+    138.23
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "amplifier",
+    "overlapMm3": 89.187,
+    "gapMm": 0.0
+   },
+   {
+    "part": "jaw_support",
+    "overlapMm3": 0.0,
+    "gapMm": 3.918
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-095",
+    "step": "neck-yaw-case",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 16.4102,
+    "driverGapMm": 0.0,
+    "driverBlockedOnAssembledV18By": {
+     "head_cap": 11.938
+    }
+   },
+   {
+    "screw": "H-amplifier-01",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-02",
+    "step": null,
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 3,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [
+   {
+    "part": "jaw_support",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 3.918,
+    "overlapSeatedMm3": 0.0
+   }
+  ],
+  "elapsedS": 1.1
+ },
+ "screw_head_H-jaw_support-03": {
+  "body": "jaw_soft",
+  "capGroup": false,
+  "volumeMm3": 34.2631,
+  "bounds": [
+   [
+    39.6,
+    -32.5,
+    115.215
+   ],
+   [
+    44.6,
+    -27.5,
+    116.965
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "clip_head_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "jaw_support",
+    "overlapMm3": 0.0,
+    "gapMm": 0.428
+   },
+   {
+    "part": "head_bottom",
+    "overlapMm3": 0.0,
+    "gapMm": 3.72
+   }
+  ],
+  "motion": [
+   {
+    "part": "head_yaw_link",
+    "body": "yaw_roll_motion",
+    "poseSet": "sweep",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": 0.0,
+     "head_yaw": 0.0,
+     "head_roll": 25.0,
+     "jaw": 0.0
+    }
+   }
+  ],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 25,
+    "exact": 1
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 3,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 2,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "elapsedS": 1.2
+ },
+ "screw_head_E-pi-04": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 20.0488,
+  "bounds": [
+   [
+    62.9573,
+    27.0,
+    138.3003
+   ],
+   [
+    65.2276,
+    31.0,
+    142.5173
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "clip_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "pi_mini_hdmi_envelope_assumed",
+    "overlapMm3": 0.0,
+    "gapMm": 1.5
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 1.957
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 3.023
+   }
+  ],
+  "motion": [
+   {
+    "part": "hip",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   }
+  ],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 1,
+    "exact": 1
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "pi_mini_hdmi_envelope_assumed": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 278.9208,
+  "bounds": [
+   [
+    60.7197,
+    14.7,
+    136.7419
+   ],
+   [
+    65.4417,
+    25.5,
+    144.6355
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "pi",
+    "overlapMm3": 2.8425,
+    "gapMm": 0.0
+   },
+   {
+    "part": "clip_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.3
+   },
+   {
+    "part": "screw_head_E-pi-04",
+    "overlapMm3": 0.0,
+    "gapMm": 1.5
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 1.588
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-04",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.5,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 2.002
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "head_cap_v19": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 35303.6115,
+  "bounds": [
+   [
+    -30.4,
+    -45.8797,
+    111.1132
+   ],
+   [
+    92.29,
+    45.8798,
+    157.4494
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_bottom",
+    "overlapMm3": 67.4984,
+    "gapMm": 0.0,
+    "overlapV18CapMm3": 63.0255,
+    "newOverlapMm3": 4.4729
+   },
+   {
+    "part": "amp_screws_envelope",
+    "overlapMm3": 7.6361,
+    "gapMm": 0.0,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 7.6361
+   },
+   {
+    "part": "speaker_screws_envelope",
+    "overlapMm3": 7.5844,
+    "gapMm": 0.0,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 7.5844
+   },
+   {
+    "part": "speaker_retainer_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "amplifier",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 0.001,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "face_panel",
+    "overlapMm3": 0.0,
+    "gapMm": 0.064,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "motor15",
+    "overlapMm3": 0.0,
+    "gapMm": 0.1,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "jaw_support",
+    "overlapMm3": 0.0,
+    "gapMm": 0.141,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "speaker_leads_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 0.15,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "clip_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.152,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "speaker",
+    "overlapMm3": 0.0,
+    "gapMm": 0.2,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_gpio_solder_tails",
+    "overlapMm3": 0.0,
+    "gapMm": 0.4,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "clip_head_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.5,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "motor14",
+    "overlapMm3": 0.0,
+    "gapMm": 0.725,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "mouth_sliding_ring",
+    "overlapMm3": 0.0,
+    "gapMm": 1.293,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "pi_mini_hdmi_envelope_assumed",
+    "overlapMm3": 0.0,
+    "gapMm": 1.588,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 1.6,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_indicator-body-and-outline",
+    "overlapMm3": 0.0,
+    "gapMm": 1.602,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_csi-connector-body-conservative-hull",
+    "overlapMm3": 0.0,
+    "gapMm": 1.619,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_bottom-usb-edge-context",
+    "overlapMm3": 0.0,
+    "gapMm": 1.694,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_lower-passive-c",
+    "overlapMm3": 0.0,
+    "gapMm": 2.57,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_csi-connector-pins-conservative-hull",
+    "overlapMm3": 0.0,
+    "gapMm": 2.776,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_lower-passive-b",
+    "overlapMm3": 0.0,
+    "gapMm": 2.78,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_left-upper-rectangular-component",
+    "overlapMm3": 0.0,
+    "gapMm": 2.883,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_left-lower-rectangular-component",
+    "overlapMm3": 0.0,
+    "gapMm": 2.908,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "screw_head_E-pi-04",
+    "overlapMm3": 0.0,
+    "gapMm": 3.023,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_lower-passive-a",
+    "overlapMm3": 0.0,
+    "gapMm": 3.083,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_middle-passive-b",
+    "overlapMm3": 0.0,
+    "gapMm": 3.71,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   },
+   {
+    "part": "head_pi_component_octagonal-component",
+    "overlapMm3": 0.0,
+    "gapMm": 3.777,
+    "overlapV18CapMm3": 0.0,
+    "newOverlapMm3": 0.0
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 6.6927,
+    "driverGapMm": 0.0
+   },
+   {
+    "screw": "H-jaw_support-03",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.0
+   },
+   {
+    "screw": "H-jaw_support-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 1.286
+   },
+   {
+    "screw": "E-pi-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.569,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.149
+   },
+   {
+    "screw": "E-pi-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.569,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.149
+   },
+   {
+    "screw": "E-pi-03",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.569,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.149
+   },
+   {
+    "screw": "H-amplifier-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.59,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.17
+   },
+   {
+    "screw": "H-amplifier-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.59,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.17
+   },
+   {
+    "screw": "H-speaker_retainer-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.612,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.193
+   },
+   {
+    "screw": "H-speaker_retainer-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.62,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.2
+   },
+   {
+    "screw": "K-head_close-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 2.755,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "E-pi-04",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.101,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.853
+   },
+   {
+    "screw": "S13-case-097",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.489
+   },
+   {
+    "screw": "K-head_close-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.542,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-horn-041",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-horn-042",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-horn-043",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-horn-044",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S14-horn-049",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S14-horn-050",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S14-horn-051",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S14-horn-052",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-case-095",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-case-098",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S15-horn-045",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S15-horn-046",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S15-horn-047",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S15-horn-048",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-jaw_support-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-jaw_support-04",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "C-camera-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "C-camera-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "K-head_close-03",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [
+   {
+    "part": "shell_left",
+    "body": "trunk_base",
+    "poseSet": "sweep",
+    "overlapMm3": 58.4586,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": -75.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "rear_pack",
+    "body": "trunk_base",
+    "poseSet": "sweep",
+    "overlapMm3": 10.2408,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": -80.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "right_hip",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.9416,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "hip",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "yaw",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "passive",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "ring9",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "motor9",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "motor10",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "right_yaw",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "right_passive",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "ring4",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "motor4",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "motor5",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "torso_base",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "ring10_torso",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "ring5_torso",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "shell_right",
+    "body": "trunk_base",
+    "poseSet": "sweep",
+    "overlapMm3": 0.0,
+    "gapMm": 0.192,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": -90.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "shell_left",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "shell_right",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "sweep",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": 0.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "policy",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "pickup",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "jaw_frame",
+    "body": "jaw",
+    "poseSet": "walking",
+    "overlapMm3": 0.0,
+    "gapMm": 1.0,
+    "poseDeg": {
+     "neck_pitch": -23.0,
+     "head_pitch": 32.0,
+     "head_yaw": 4.0,
+     "head_roll": -4.0,
+     "jaw": 0.0
+    }
+   }
+  ],
+  "motionOverlaps": [
+   {
+    "part": "shell_left",
+    "body": "trunk_base",
+    "poseSet": "sweep",
+    "overlapMm3": 58.4586,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": -75.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "rear_pack",
+    "body": "trunk_base",
+    "poseSet": "sweep",
+    "overlapMm3": 10.2408,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": 0.0,
+     "head_pitch": -80.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   },
+   {
+    "part": "right_hip",
+    "body": "trunk_base",
+    "poseSet": "pickup",
+    "overlapMm3": 0.9416,
+    "gapMm": 0.0,
+    "poseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    }
+   }
+  ],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 236,
+    "exact": 31
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 156,
+    "exact": 2
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 151,
+    "exact": 28
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 5738,
+    "exact": 1
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 490,
+    "exact": 0
+   }
+  },
+  "capDescent": [
+   {
+    "part": "head_bottom",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 0.0,
+    "overlapSeatedMm3": 4.4729
+   },
+   {
+    "part": "jaw_support",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 0.5,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "motor15",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 0.849,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "face_panel",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 1.001,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "clip_head_v19",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 1.249,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "mouth_sliding_ring",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 1.307,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "jaw_frame",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 1.498,
+    "overlapSeatedMm3": 0.0
+   }
+  ],
+  "elapsedS": 223.2
+ },
+ "speaker": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 1473.8474,
+  "bounds": [
+   [
+    -11.6073,
+    -10.0,
+    136.8327
+   ],
+   [
+    18.081,
+    10.0,
+    146.6633
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "speaker_retainer_v19",
+    "overlapMm3": 0.0002,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker_leads_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.2
+   },
+   {
+    "part": "speaker_screws_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 3.053
+   },
+   {
+    "part": "amplifier",
+    "overlapMm3": 0.0,
+    "gapMm": 3.669
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.896
+   },
+   {
+    "screw": "H-speaker_retainer-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.046,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-speaker_retainer-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 3.064,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "S13-case-098",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "amplifier": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 2135.2777,
+  "bounds": [
+   [
+    21.75,
+    -8.89,
+    136.73
+   ],
+   [
+    42.53,
+    8.89,
+    149.8
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "resistor_envelope_v19",
+    "overlapMm3": 89.187,
+    "gapMm": 0.0
+   },
+   {
+    "part": "amp_screws_envelope",
+    "overlapMm3": 37.4573,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": -0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "amp_housings",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker_retainer_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 1.801
+   },
+   {
+    "part": "speaker_leads_envelope",
+    "overlapMm3": 0.0,
+    "gapMm": 2.805
+   },
+   {
+    "part": "speaker",
+    "overlapMm3": 0.0,
+    "gapMm": 3.669
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-095",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 23.7338,
+    "driverGapMm": 0.0
+   },
+   {
+    "screw": "H-amplifier-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.5452,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.1
+   },
+   {
+    "screw": "H-amplifier-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.5452,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.1
+   },
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 2.75
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "amp_housings": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 541.933,
+  "bounds": [
+   [
+    42.53,
+    -8.89,
+    142.55
+   ],
+   [
+    56.53,
+    8.89,
+    145.09
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "amplifier",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 3.47
+   }
+  ],
+  "screwAccess": [],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "amp_screws_envelope": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 74.7273,
+  "bounds": [
+   [
+    22.79,
+    -8.35,
+    136.73
+   ],
+   [
+    26.79,
+    8.35,
+    144.23
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "amplifier",
+    "overlapMm3": 37.4573,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 7.6361,
+    "gapMm": 0.0
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "H-amplifier-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.4745,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.1
+   },
+   {
+    "screw": "H-amplifier-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.4745,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.1
+   },
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 3.39
+   },
+   {
+    "screw": "S13-case-095",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "speaker_screws_envelope": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 74.7273,
+  "bounds": [
+   [
+    1.4899,
+    -16.6,
+    137.0388
+   ],
+   [
+    6.249,
+    16.6,
+    145.0474
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 7.5844,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker_retainer_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "speaker",
+    "overlapMm3": 0.0,
+    "gapMm": 3.053
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "H-speaker_retainer-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.4707,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.1
+   },
+   {
+    "screw": "H-speaker_retainer-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 18.4544,
+    "headGapMm": 0.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 0.093
+   },
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "speaker_leads_envelope": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 100.8824,
+  "bounds": [
+   [
+    14.2048,
+    -3.6,
+    139.8614
+   ],
+   [
+    18.9452,
+    3.6,
+    144.2892
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "speaker",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.15
+   },
+   {
+    "part": "speaker_retainer_v19",
+    "overlapMm3": 0.0,
+    "gapMm": 0.3
+   },
+   {
+    "part": "amplifier",
+    "overlapMm3": 0.0,
+    "gapMm": 2.805
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "S13-case-096",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 2.4
+   },
+   {
+    "screw": "H-amplifier-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "H-amplifier-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 0,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.1
+ },
+ "pi_housing_pin04": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 91.9353,
+  "bounds": [
+   [
+    59.8923,
+    20.3196,
+    115.3202
+   ],
+   [
+    74.3669,
+    22.8596,
+    120.2961
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_pi_zero_w_header_pin_04",
+    "overlapMm3": 2.4412,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_03_receiving",
+    "overlapMm3": 0.0001,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_01_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_02_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_05_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_06_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_02",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_03",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_06",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_01",
+    "overlapMm3": 0.0,
+    "gapMm": 1.343
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_05",
+    "overlapMm3": 0.0,
+    "gapMm": 1.344
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_gpio_pin_08_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_08",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_07",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 12,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 4,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.2
+ },
+ "pi_housing_pin12": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 91.9353,
+  "bounds": [
+   [
+    59.8923,
+    10.1596,
+    115.3202
+   ],
+   [
+    74.3669,
+    12.6996,
+    120.2961
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_pi_zero_w_header_pin_12",
+    "overlapMm3": 2.4412,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_09_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_gpio_pin_10_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_10",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_11",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_14",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_13",
+    "overlapMm3": 0.0,
+    "gapMm": 1.343
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_09",
+    "overlapMm3": 0.0,
+    "gapMm": 1.344
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_gpio_pin_08_receiving",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_08",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_16",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "camera_board",
+    "overlapMm3": 0.0,
+    "gapMm": 3.599
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_07",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_15",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "H-jaw_support-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   },
+   {
+    "screw": "C-camera-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 12,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 4,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [
+   {
+    "part": "camera_board",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 3.513,
+    "overlapSeatedMm3": 0.0
+   },
+   {
+    "part": "face_panel",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 3.633,
+    "overlapSeatedMm3": 0.0
+   }
+  ],
+  "elapsedS": 1.3
+ },
+ "pi_housing_pin35": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 91.9354,
+  "bounds": [
+   [
+    59.4512,
+    -20.3204,
+    112.8188
+   ],
+   [
+    73.9258,
+    -17.7804,
+    117.7947
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_pi_zero_w_header_pin_35",
+    "overlapMm3": 2.4412,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "pi_housing_pin34",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_33",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_36",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_37",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_34",
+    "overlapMm3": 0.0,
+    "gapMm": 1.344
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_38",
+    "overlapMm3": 0.0,
+    "gapMm": 1.344
+   },
+   {
+    "part": "head_bottom",
+    "overlapMm3": 0.0,
+    "gapMm": 1.568
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "pi_housing_pin40",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_31",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_39",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_32",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_40",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 14,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 3,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [
+   {
+    "part": "head_bottom",
+    "excessOverlapMm3": 0.0,
+    "minGapAlongPathMm": 1.568,
+    "overlapSeatedMm3": 0.0
+   }
+  ],
+  "elapsedS": 1.3
+ },
+ "pi_housing_pin40": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 91.9353,
+  "bounds": [
+   [
+    59.8923,
+    -25.4004,
+    115.3202
+   ],
+   [
+    74.3669,
+    -22.8604,
+    120.2961
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_pi_zero_w_header_pin_40",
+    "overlapMm3": 2.4412,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_38",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_39",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_37",
+    "overlapMm3": 0.0,
+    "gapMm": 1.344
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "pi_housing_pin35",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_component_left-upper-rectangular-component",
+    "overlapMm3": 0.0,
+    "gapMm": 2.8
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_36",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_35",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   },
+   {
+    "part": "head_pi_component_csi-connector-body-conservative-hull",
+    "overlapMm3": 0.0,
+    "gapMm": 3.819
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 1.871,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 2.1
+   },
+   {
+    "screw": "K-head_close-02",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 12,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 4,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.2
+ },
+ "pi_housing_pin34": {
+  "body": "jaw_soft",
+  "capGroup": true,
+  "volumeMm3": 91.9353,
+  "bounds": [
+   [
+    59.8923,
+    -17.7804,
+    115.3202
+   ],
+   [
+    74.3669,
+    -15.2404,
+    120.2961
+   ]
+  ],
+  "finalPose": [
+   {
+    "part": "head_pi_zero_w_header_pin_34",
+    "overlapMm3": 2.4412,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_base",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "pi_housing_pin35",
+    "overlapMm3": 0.0,
+    "gapMm": 0.0
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_32",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_33",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_36",
+    "overlapMm3": 0.0,
+    "gapMm": 0.95
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_31",
+    "overlapMm3": 0.0,
+    "gapMm": 1.343
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_35",
+    "overlapMm3": 0.0,
+    "gapMm": 1.343
+   },
+   {
+    "part": "pi",
+    "overlapMm3": 0.0,
+    "gapMm": 2.54
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_30",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_38",
+    "overlapMm3": 0.0,
+    "gapMm": 3.49
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_29",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   },
+   {
+    "part": "head_pi_zero_w_header_pin_37",
+    "overlapMm3": 0.0,
+    "gapMm": 3.617
+   },
+   {
+    "part": "head_pi_component_left-upper-rectangular-component",
+    "overlapMm3": 0.0,
+    "gapMm": 3.806
+   }
+  ],
+  "screwAccess": [
+   {
+    "screw": "E-pi-01",
+    "ownClipScrew": false,
+    "headOverlapMm3": 0.0,
+    "headGapMm": 4.0,
+    "driverOverlapMm3": 0.0,
+    "driverGapMm": 4.0
+   }
+  ],
+  "motion": [],
+  "motionOverlaps": [],
+  "motionCounts": {
+   "sweep": {
+    "poses": 155,
+    "pairPoses": 9509,
+    "boxPass": 12,
+    "exact": 0
+   },
+   "policy": {
+    "poses": 81,
+    "pairPoses": 4550,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "pickup": {
+    "poses": 27,
+    "pairPoses": 1518,
+    "boxPass": 3,
+    "exact": 0
+   },
+   "walking": {
+    "poses": 15298,
+    "pairPoses": 846081,
+    "boxPass": 1,
+    "exact": 0
+   },
+   "grid2": {
+    "poses": 385,
+    "pairPoses": 2310,
+    "boxPass": 0,
+    "exact": 0
+   }
+  },
+  "capDescent": [],
+  "elapsedS": 1.2
+ }
+}

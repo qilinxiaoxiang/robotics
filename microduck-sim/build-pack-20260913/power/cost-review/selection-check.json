@@ -1,0 +1,77 @@
+{
+  "checked_date": "2026-09-13",
+  "problem_ids": [
+    "P5",
+    "P6"
+  ],
+  "verdict": "SELECT_GEA8502S60E2_PLUS_D42V110F5_KEEP_S13V30F5",
+  "criteria": {
+    "servo_rail_v": 5,
+    "servo_startup_screen_a": 8.5,
+    "whole_robot_walking_assumption_a_at5v": 5.2,
+    "battery_low_v": 6.6,
+    "battery_full_v": 8.4
+  },
+  "checks": {
+    "new_board_hole_pattern_matches_existing_mount": true,
+    "new_board_nominal_plan_matches_old_envelope": true,
+    "dimensioned_new_profile_below_old_reserved_height": true,
+    "nominal_underside_projection_clears_2mm_shelf_spacing": true,
+    "14a_conservative_graph_reading_exceeds_8p5a_screen": true,
+    "low_battery_has_dropout_headroom_before_wiring_sag": true,
+    "checked_anker_pack_exceeds_every_axis_aligned_slot_orientation": true,
+    "checked_anker_single_5v_port_below_walking_assumption": true,
+    "cheaper_2866_curve_below_unchanged_screen": true,
+    "cheaper_5571_curve_below_unchanged_screen": true
+  },
+  "all_checks_passed": true,
+  "mechanical": {
+    "existing_cad_hole_pitch_mm": [
+      38.861999999999995,
+      25.4
+    ],
+    "new_board_hole_pitch_mm": [
+      38.862,
+      25.4
+    ],
+    "old_reserved_box_mm": [
+      43.19999885559082,
+      31.799999237060547,
+      11.0
+    ],
+    "new_dimensioned_height_sum_mm": 9.47,
+    "nominal_underside_clearance_mm": 0.2,
+    "both_boards_edge_tolerance_mm": 0.3,
+    "both_boards_hole_location_tolerance_mm": 0.1,
+    "print_geometry_changed": false,
+    "scope": "Nominal mounting/profile comparison only. Check board underside, spacer edges and solder against actual print before tightening. Frozen old box omits detailed underside component shapes; no claim of complete component-level collision proof."
+  },
+  "electrical": {
+    "graph_current_screen_a": 14,
+    "graph_conditions": "room temperature, still air, no additional heat sink",
+    "dropout_screen_v_at_up_to10a": 0.3,
+    "startup_pulse_duration_and_enclosed_temperature_measured": false
+  },
+  "cost_usd": {
+    "battery": 17.99,
+    "old_servo_regulator": 79.95,
+    "new_servo_regulator": 59.95,
+    "logic_regulator": 17.95,
+    "old_battery_and_two_boards": 115.89,
+    "new_battery_and_two_boards": 95.89,
+    "saved": 20,
+    "excludes": "charger, protection parts, wiring, connectors, shipping and tax"
+  },
+  "source_hashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/compact-battery/large_regulator-envelope-body.stl": "3c290049eba7f5d6ff35e3abea70055c1e9d10ec1d15d33d924e120cfd651fac",
+    "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/compact-battery/design.json": "6fa185daccc5566a7b2d1066efd12aba35831d803c7c870295bdfe2a8cb5e0b0",
+    "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/build_compact_battery.py": "8bc459f02a4143c27613b1aad46a28d06ef982566cebc61be5cc38dcdedfc247",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/2881-dimensions.pdf": "dc83f5ace4631840b0e1c55312fe5c072995414b6a59296ccc3f1d505490b961",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/5671-dimensions.pdf": "45253bfac50cd41a6a05cccd06056d54186013002878900868b79baeed017d61",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/5671-0J13892.png": "5eb33d58f36adc57bcb628641dbeb9e4f30c37427edbb6f9794a300ef7a7dae5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/5671-0J13895.jpg": "c835a947688df846fcee608694e309939b345e291a39693865c6ffa9e84609d9",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/2866-0J7442.png": "b246cd543ee378b170e35fa7f2a33bdbe5837bfb94a40f063c4ef5ee07fb0359",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/power/cost-review/sources/5571-0J13530.png": "85581d162c109d888483d15e76d1b8ddbfc4a6c65682de33cc13cc5070438bae"
+  },
+  "hardware_tests": 0
+}

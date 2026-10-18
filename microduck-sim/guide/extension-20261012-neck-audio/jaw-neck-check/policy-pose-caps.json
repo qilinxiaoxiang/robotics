@@ -1,0 +1,1060 @@
+{
+ "_method": "Which simulated policy rows would the jaw pose cap clamp?\n\nInputs: ../postures-rows.npz and ../postures.json (every simulated pickup row: neck_pitch, head_pitch, head_yaw,\nhead_roll, jaw in deg; per-trace family and accepted flag), and the three jaw-limit release acceptances in\nmicroduck-simulator/rl/runs/jaw-limit-eval-20261013 (rows with joint = JOINT_NAMES order, ctrl and jaw in rad).\nThe cap is guide/firmware/pi/jaw_limits.py pose_jaw_cap_deg(): for the posture rows the measured head pose only\n(the logs hold no commanded pose); for the acceptance runs the box between the measured neck/head joints and the logged ctrl\n(ctrl ignores the gravity offset bias/kp, about 1 deg, so this box is a slightly widened stand-in for the runtime box).\nA row is clamped when its jaw opening exceeds the cap by more than 0.01 deg. Many recorded rows predate the 65 deg\nhead_pitch interlock (releases at head_pitch 71..85 with the jaw open); rows the interlock already rules out (jaw above\n2 deg and head_pitch above 65 deg) are reported separately from the new pose-cap clamps. Vectorised lookup, checked against\njaw_limits.pose_contact_deg on a random subset. Writes ../policy-pose-caps.json.",
+ "table": "jaw_pose_caps.json",
+ "tableSha256": "e503a9a38ed740ab7f7c3f75566e820cb928a8d84f720a0add45c1e97d7ddad4",
+ "tableMinContactDeg": 0.0,
+ "postures": {
+  "rows": 1153913,
+  "rowsOffGrid": 0,
+  "lookupSelfCheckRows": 3000,
+  "maxJawDeg": 20.42,
+  "minCapDeg": 0.0,
+  "rowsClamped": 11738,
+  "rowsClampedAccepted": 5053,
+  "tracesClamped": 101,
+  "tracesClampedAccepted": 77,
+  "rowsInClosedZone": 921,
+  "rowsInClosedZoneJawOpen": 921,
+  "clampedByFamily": {
+   "ground": 7902,
+   "household": 3836
+  },
+  "clampedByPhase": {
+   "release": 8681,
+   "done": 84,
+   "failed": 15,
+   "reach": 2958
+  },
+  "clampedAcceptedByFamilyPhase": {
+   "ground/release": 4162,
+   "ground/done": 40,
+   "household/release": 814,
+   "household/done": 37
+  },
+  "jawOpenRows": 1130056,
+  "rowsRuledOutBy65degInterlock": 11507,
+  "rowsClampedAlsoInterlocked": 10817,
+  "new": {
+   "rows": 921,
+   "rowsAccepted": 0,
+   "traces": 1,
+   "tracesAccepted": 0,
+   "byFamilyPhase": {
+    "household/reach": 920,
+    "household/failed": 1
+   },
+   "byFamilyPhaseAccepted": {},
+   "closedZoneRows": 921,
+   "maxExcessDeg": 18.31,
+   "zones": [
+    {
+     "neck_pitch": 30,
+     "head_pitch": -50,
+     "head_yaw": 110,
+     "head_roll": 10,
+     "rows": 299
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 40,
+     "head_roll": 20,
+     "rows": 111
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -50,
+     "head_yaw": 100,
+     "head_roll": 5,
+     "rows": 105
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 80,
+     "head_roll": -5,
+     "rows": 75
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 90,
+     "head_roll": 0,
+     "rows": 72
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 50,
+     "head_roll": 15,
+     "rows": 42
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 50,
+     "head_roll": 10,
+     "rows": 35
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 60,
+     "head_roll": 0,
+     "rows": 33
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 40,
+     "head_roll": 15,
+     "rows": 30
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 70,
+     "head_roll": -5,
+     "rows": 29
+    },
+    {
+     "neck_pitch": 15,
+     "head_pitch": -55,
+     "head_yaw": 40,
+     "head_roll": 15,
+     "rows": 23
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 50,
+     "head_roll": 5,
+     "rows": 21
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 100,
+     "head_roll": 0,
+     "rows": 18
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 70,
+     "head_roll": 0,
+     "rows": 12
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 60,
+     "head_roll": 5,
+     "rows": 7
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -50,
+     "head_yaw": 100,
+     "head_roll": 0,
+     "rows": 4
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -50,
+     "head_yaw": 100,
+     "head_roll": 10,
+     "rows": 3
+    },
+    {
+     "neck_pitch": 30,
+     "head_pitch": -55,
+     "head_yaw": 90,
+     "head_roll": -5,
+     "rows": 2
+    }
+   ],
+   "worst": [
+    {
+     "neck_pitch": 27.23,
+     "head_pitch": -54.22,
+     "head_yaw": 58.77,
+     "head_roll": 1.17,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.17,
+     "head_pitch": -54.23,
+     "head_yaw": 58.62,
+     "head_roll": 1.26,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.11,
+     "head_pitch": -54.25,
+     "head_yaw": 58.46,
+     "head_roll": 1.36,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.29,
+     "head_pitch": -54.21,
+     "head_yaw": 58.96,
+     "head_roll": 1.06,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.05,
+     "head_pitch": -54.27,
+     "head_yaw": 58.26,
+     "head_roll": 1.48,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 26.97,
+     "head_pitch": -54.29,
+     "head_yaw": 58.05,
+     "head_roll": 1.62,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 26.52,
+     "head_pitch": -54.42,
+     "head_yaw": 56.71,
+     "head_roll": 2.5,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.39,
+     "head_pitch": -54.19,
+     "head_yaw": 59.23,
+     "head_roll": 0.93,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 28.04,
+     "head_pitch": -54.12,
+     "head_yaw": 61.03,
+     "head_roll": 0.13,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.94,
+     "head_pitch": -54.13,
+     "head_yaw": 60.78,
+     "head_roll": 0.23,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 26.89,
+     "head_pitch": -54.32,
+     "head_yaw": 57.81,
+     "head_roll": 1.77,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 26.57,
+     "head_pitch": -54.41,
+     "head_yaw": 56.85,
+     "head_roll": 2.41,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.85,
+     "head_pitch": -54.13,
+     "head_yaw": 60.5,
+     "head_roll": 0.34,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 28.13,
+     "head_pitch": -54.11,
+     "head_yaw": 61.26,
+     "head_roll": 0.05,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    },
+    {
+     "neck_pitch": 27.5,
+     "head_pitch": -54.17,
+     "head_yaw": 59.54,
+     "head_roll": 0.78,
+     "jaw": 18.31,
+     "capDeg": 0.0,
+     "contactDeg": 0.0,
+     "closedZone": true,
+     "excessDeg": 18.31,
+     "family": "household",
+     "phase": "reach",
+     "accepted": false,
+     "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+    }
+   ]
+  },
+  "interlockedRowsAt65": {
+   "rows": 11507,
+   "clamped": 997,
+   "clampedAccepted": 0,
+   "tracesClamped": 2,
+   "tracesClampedAccepted": 0,
+   "byFamilyPhase": {
+    "household/reach": 995,
+    "household/failed": 2
+   },
+   "minCapDeg": 15.11,
+   "closedZoneRows": 0,
+   "maxExcessDeg": 3.19
+  },
+  "worstClamped": [
+   {
+    "neck_pitch": 27.23,
+    "head_pitch": -54.22,
+    "head_yaw": 58.77,
+    "head_roll": 1.17,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.17,
+    "head_pitch": -54.23,
+    "head_yaw": 58.62,
+    "head_roll": 1.26,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.11,
+    "head_pitch": -54.25,
+    "head_yaw": 58.46,
+    "head_roll": 1.36,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.29,
+    "head_pitch": -54.21,
+    "head_yaw": 58.96,
+    "head_roll": 1.06,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.05,
+    "head_pitch": -54.27,
+    "head_yaw": 58.26,
+    "head_roll": 1.48,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 26.97,
+    "head_pitch": -54.29,
+    "head_yaw": 58.05,
+    "head_roll": 1.62,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 26.52,
+    "head_pitch": -54.42,
+    "head_yaw": 56.71,
+    "head_roll": 2.5,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.39,
+    "head_pitch": -54.19,
+    "head_yaw": 59.23,
+    "head_roll": 0.93,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 28.04,
+    "head_pitch": -54.12,
+    "head_yaw": 61.03,
+    "head_roll": 0.13,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.94,
+    "head_pitch": -54.13,
+    "head_yaw": 60.78,
+    "head_roll": 0.23,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 26.89,
+    "head_pitch": -54.32,
+    "head_yaw": 57.81,
+    "head_roll": 1.77,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 26.57,
+    "head_pitch": -54.41,
+    "head_yaw": 56.85,
+    "head_roll": 2.41,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.85,
+    "head_pitch": -54.13,
+    "head_yaw": 60.5,
+    "head_roll": 0.34,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 28.13,
+    "head_pitch": -54.11,
+    "head_yaw": 61.26,
+    "head_roll": 0.05,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   },
+   {
+    "neck_pitch": 27.5,
+    "head_pitch": -54.17,
+    "head_yaw": 59.54,
+    "head_roll": 0.78,
+    "jaw": 18.31,
+    "capDeg": 0.0,
+    "contactDeg": 0.0,
+    "closedZone": true,
+    "excessDeg": 18.31,
+    "family": "household",
+    "phase": "reach",
+    "accepted": false,
+    "trace": "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json"
+   }
+  ],
+  "clampedZones": [
+   {
+    "neck_pitch": 15,
+    "head_pitch": 85,
+    "head_yaw": 0,
+    "head_roll": 0,
+    "rows": 7718
+   },
+   {
+    "neck_pitch": 15,
+    "head_pitch": 80,
+    "head_yaw": 0,
+    "head_roll": 0,
+    "rows": 565
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": 10,
+    "head_roll": 20,
+    "rows": 391
+   },
+   {
+    "neck_pitch": 15,
+    "head_pitch": 75,
+    "head_yaw": 0,
+    "head_roll": 0,
+    "rows": 364
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -20,
+    "head_roll": -10,
+    "rows": 333
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -50,
+    "head_yaw": 110,
+    "head_roll": 10,
+    "rows": 299
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -10,
+    "head_roll": -15,
+    "rows": 281
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -10,
+    "head_roll": -10,
+    "rows": 279
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -10,
+    "head_roll": -5,
+    "rows": 201
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -20,
+    "head_roll": -15,
+    "rows": 136
+   },
+   {
+    "neck_pitch": 15,
+    "head_pitch": 70,
+    "head_yaw": 0,
+    "head_roll": 0,
+    "rows": 130
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 40,
+    "head_roll": 20,
+    "rows": 111
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -50,
+    "head_yaw": 100,
+    "head_roll": 5,
+    "rows": 105
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": -20,
+    "head_roll": -20,
+    "rows": 81
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 80,
+    "head_roll": -5,
+    "rows": 75
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 75,
+    "head_yaw": 30,
+    "head_roll": 20,
+    "rows": 72
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 90,
+    "head_roll": 0,
+    "rows": 72
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 75,
+    "head_yaw": 20,
+    "head_roll": 20,
+    "rows": 70
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 65,
+    "head_yaw": -10,
+    "head_roll": -20,
+    "rows": 51
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 70,
+    "head_yaw": 20,
+    "head_roll": 20,
+    "rows": 44
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 50,
+    "head_roll": 15,
+    "rows": 42
+   },
+   {
+    "neck_pitch": 60,
+    "head_pitch": 65,
+    "head_yaw": -10,
+    "head_roll": -15,
+    "rows": 40
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 50,
+    "head_roll": 10,
+    "rows": 35
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 60,
+    "head_roll": 0,
+    "rows": 33
+   },
+   {
+    "neck_pitch": 30,
+    "head_pitch": -55,
+    "head_yaw": 40,
+    "head_roll": 15,
+    "rows": 30
+   }
+  ]
+ },
+ "acceptances": [
+  {
+   "file": "limited-nominal-learned.json",
+   "accepted": true,
+   "rows": 623,
+   "rowsOffGrid": 0,
+   "maxJawDeg": 18.34,
+   "minCapDeg": 23.97,
+   "minCapDegJawOpen": 23.97,
+   "minMarginDeg": 5.63,
+   "rowsClamped": 0,
+   "clampedPhases": {},
+   "widened2deg": {
+    "rowsClamped": 0,
+    "minMarginDeg": 2.19
+   },
+   "tightestRows": [
+    {
+     "neck_pitch": 11.96,
+     "head_pitch": 61.26,
+     "head_yaw": -1.43,
+     "head_roll": -0.89,
+     "jaw": 18.34,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.96,
+     "head_pitch": 60.08,
+     "head_yaw": -1.34,
+     "head_roll": -0.9,
+     "jaw": 18.34,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.95,
+     "head_pitch": 64.14,
+     "head_yaw": -1.68,
+     "head_roll": -0.85,
+     "jaw": 18.34,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.95,
+     "head_pitch": 62.26,
+     "head_yaw": -1.51,
+     "head_roll": -0.87,
+     "jaw": 18.34,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.95,
+     "head_pitch": 64.46,
+     "head_yaw": -1.71,
+     "head_roll": -0.84,
+     "jaw": 18.34,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    }
+   ]
+  },
+  {
+   "file": "limited-household-pen.json",
+   "accepted": true,
+   "rows": 770,
+   "rowsOffGrid": 0,
+   "maxJawDeg": 18.33,
+   "minCapDeg": 25.0,
+   "minCapDegJawOpen": 25.0,
+   "minMarginDeg": 6.67,
+   "rowsClamped": 0,
+   "clampedPhases": {},
+   "widened2deg": {
+    "rowsClamped": 0,
+    "minMarginDeg": 6.67
+   },
+   "tightestRows": [
+    {
+     "neck_pitch": 12.17,
+     "head_pitch": 22.61,
+     "head_yaw": -1.72,
+     "head_roll": -0.93,
+     "jaw": 18.33,
+     "capDeg": 25.0,
+     "contactDeg": 27.0,
+     "closedZone": false,
+     "phase": "manual",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 12.1,
+     "head_pitch": 22.52,
+     "head_yaw": -1.41,
+     "head_roll": -0.89,
+     "jaw": 18.33,
+     "capDeg": 25.0,
+     "contactDeg": 27.0,
+     "closedZone": false,
+     "phase": "descend",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.87,
+     "head_pitch": 21.77,
+     "head_yaw": -1.19,
+     "head_roll": -0.51,
+     "jaw": 18.33,
+     "capDeg": 25.0,
+     "contactDeg": 27.0,
+     "closedZone": false,
+     "phase": "descend",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 12.17,
+     "head_pitch": 22.61,
+     "head_yaw": -1.71,
+     "head_roll": -0.94,
+     "jaw": 18.33,
+     "capDeg": 25.0,
+     "contactDeg": 27.0,
+     "closedZone": false,
+     "phase": "manual",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 12.17,
+     "head_pitch": 22.62,
+     "head_yaw": -1.71,
+     "head_roll": -0.94,
+     "jaw": 18.33,
+     "capDeg": 25.0,
+     "contactDeg": 27.0,
+     "closedZone": false,
+     "phase": "manual",
+     "jawCmdDeg": 18.33
+    }
+   ]
+  },
+  {
+   "file": "limited-household-sock.json",
+   "accepted": true,
+   "rows": 775,
+   "rowsOffGrid": 0,
+   "maxJawDeg": 18.33,
+   "minCapDeg": 23.97,
+   "minCapDegJawOpen": 23.97,
+   "minMarginDeg": 5.64,
+   "rowsClamped": 0,
+   "clampedPhases": {},
+   "widened2deg": {
+    "rowsClamped": 0,
+    "minMarginDeg": 2.2
+   },
+   "tightestRows": [
+    {
+     "neck_pitch": 11.54,
+     "head_pitch": 64.64,
+     "head_yaw": -1.69,
+     "head_roll": -0.85,
+     "jaw": 18.33,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.54,
+     "head_pitch": 64.42,
+     "head_yaw": -1.68,
+     "head_roll": -0.85,
+     "jaw": 18.33,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.36,
+     "head_pitch": 63.29,
+     "head_yaw": -1.74,
+     "head_roll": -0.8,
+     "jaw": 18.33,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "done",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.54,
+     "head_pitch": 64.1,
+     "head_yaw": -1.65,
+     "head_roll": -0.86,
+     "jaw": 18.33,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    },
+    {
+     "neck_pitch": 11.55,
+     "head_pitch": 60.03,
+     "head_yaw": -1.29,
+     "head_roll": -0.89,
+     "jaw": 18.33,
+     "capDeg": 23.97,
+     "contactDeg": 25.97,
+     "closedZone": false,
+     "phase": "release",
+     "jawCmdDeg": 18.33
+    }
+   ]
+  }
+ ]
+}

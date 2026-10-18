@@ -1,0 +1,15 @@
+import { launch } from '/Users/xiangzheng/code/robotics/microduck-sim/bringup/build/probe/cdp.mjs';
+import fs from 'node:fs';
+const S = '/private/tmp/claude-501/-Users-xiangzheng-code-robotics/a31c9141-e2ff-4587-af63-558109797950/scratchpad/robotis';
+const b = await launch({ profile: S + '/.profile' });
+await b.page('Network.enable');
+const url = 'https://docs.robotis.com/docs/systems/omx/quick_start_guide/assembly_guide/?model=follower&converter=xl4015&step=59&view=3d';
+await b.page('Page.navigate', { url });
+await new Promise(r => setTimeout(r, 25000));
+const reqs = b.events.filter(e => e.method === 'Network.requestWillBeSent').map(e => e.params.request.url);
+const uniq = [...new Set(reqs)].filter(u => !/\.(css|woff2?|png|svg|ico)(\?|$)/.test(u));
+fs.writeFileSync(S + '/requests.txt', uniq.join('\n'));
+console.log(uniq.filter(u => /glb|gltf|stl|obj|bin|draco|model|3d|xl4015|converter/i.test(u)).join('\n'));
+console.log('total', uniq.length);
+await b.screenshot(S + '/page.png');
+await b.close();

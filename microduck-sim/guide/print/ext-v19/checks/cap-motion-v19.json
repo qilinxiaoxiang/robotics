@@ -1,0 +1,142 @@
+{
+ "_method": "Cap motion hits: does the release cap add contact in a pose the V1.8 robot can reach?\n\nscene_check.py represents the release cap in motion by its difference from the V1.8 cap (head_cap_v19 minus head_cap,\n'cap added'). It found that difference overlapping a few parts on other bodies in some joint-sweep or pickup poses.\nFor every partner it listed (head_cap_v19 'motionOverlaps' in ../checks/scene-check.json) and every pose of every\npose set (scene_check.relation_poses) in which the cap difference overlaps that partner by more than 0.01 mm3, this\nscript measures, in the same pose, the overlap of the V1.8 head with the same partner: the V1.8 cap and every other\nV1.8 part on the head body (head_bottom, face_panel, eye_trim, camera_board, jaw_support, motor14, motor15,\nmouth_sliding_ring, the Pi). A pose where the V1.8 head already overlaps that partner cannot be reached by the V1.8\nrobot either, so the cap difference adds no new restriction there. For single-joint sweeps it also reports the first\nangle (from 0 outwards, in the sweep's steps) at which the V1.8 head and the cap difference touch the partner.\nWrites ../checks/cap-motion-v19.json.",
+ "partners": {
+  "rear_pack": {
+   "body": "trunk_base",
+   "sets": {
+    "sweep": {
+     "posesWithCapAddedOverlap": 2,
+     "notBlockedOnV18": [],
+     "examples": [
+      {
+       "poseDeg": {
+        "neck_pitch": 0.0,
+        "head_pitch": -80.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 10.241,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 220.96
+       },
+       "blockedOnV18": true
+      },
+      {
+       "poseDeg": {
+        "neck_pitch": 0.0,
+        "head_pitch": -75.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 1.934,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 47.3
+       },
+       "blockedOnV18": true
+      }
+     ],
+     "firstContact": {
+      "head_pitch-": {
+       "firstContactV18HeadDeg": -75.0,
+       "firstContactCapAddedDeg": -75.0,
+       "capAddedFirst": false
+      }
+     }
+    }
+   }
+  },
+  "right_hip": {
+   "body": "trunk_base",
+   "sets": {
+    "pickup": {
+     "posesWithCapAddedOverlap": 1,
+     "notBlockedOnV18": [],
+     "examples": [
+      {
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 0.942,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 146.47
+       },
+       "blockedOnV18": true
+      }
+     ]
+    }
+   }
+  },
+  "shell_left": {
+   "body": "trunk_base",
+   "sets": {
+    "sweep": {
+     "posesWithCapAddedOverlap": 4,
+     "notBlockedOnV18": [],
+     "examples": [
+      {
+       "poseDeg": {
+        "neck_pitch": 0.0,
+        "head_pitch": -75.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 58.459,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 190.25,
+        "head_bottom": 108.32
+       },
+       "blockedOnV18": true
+      },
+      {
+       "poseDeg": {
+        "neck_pitch": 0.0,
+        "head_pitch": -80.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 33.502,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 252.29,
+        "head_bottom": 88.65
+       },
+       "blockedOnV18": true
+      },
+      {
+       "poseDeg": {
+        "neck_pitch": 0.0,
+        "head_pitch": -70.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 0.0
+       },
+       "capAddedOverlapMm3": 0.075,
+       "v18HeadOverlapMm3": {
+        "head_cap(V1.8)": 48.03,
+        "head_bottom": 45.88
+       },
+       "blockedOnV18": true
+      }
+     ],
+     "firstContact": {
+      "head_pitch-": {
+       "firstContactV18HeadDeg": -70.0,
+       "firstContactCapAddedDeg": -70.0,
+       "capAddedFirst": false
+      }
+     }
+    }
+   }
+  }
+ },
+ "summary": {
+  "newRestrictions": 0
+ }
+}

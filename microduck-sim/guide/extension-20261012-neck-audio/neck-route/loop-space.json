@@ -1,0 +1,318 @@
+{
+ "_method": "Where the yaw/roll service loop can hang beside the head-pitch bracket without being reached by a moving part.\n\nGrid in the head-pitch bracket's own frame (MJCF body neck_pitch; equal to the robot frame at q = 0), 1 mm voxels,\nx 4..46, y -36..-14, z 60..104 (the -y side of the bracket under the head). At every pose of a pose set, every part on\nanother body (torso, neck, yaw link, head, jaw) is moved into the bracket frame and sliced exactly (manifold3d) at each\ngrid z; voxel centres inside a section are 'reached' at that pose. The bracket's own parts are occupied at every pose.\nA voxel is 'always free' when no pose reaches it. Reports the always-free volume, its largest inscribed sphere (EDT on\nthe 1 mm grid, so +-0.5 mm), and the always-free space within 6 mm outside the bracket's -y plate (where a loop held by\nthe bracket clip would lie), per z band. Pose sets: policy (jaw 0 only, and jaw 0 + 40) and pickup, from motion.py.\nWrites loop-space.json.",
+ "gridMm": [
+  [
+   4.0,
+   -36.0,
+   60.0
+  ],
+  [
+   46.0,
+   -14.0,
+   104.0
+  ],
+  1.0
+ ],
+ "sets": {
+  "policy-jaw-closed": {
+   "poses": 81,
+   "alwaysFreeVolumeMm3": 31433,
+   "largestSphereRadiusMm": 26.3,
+   "largestSphereCentreBracketFrame": [
+    42.0,
+    -36.0,
+    60.0
+   ],
+   "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+    {
+     "zMm": [
+      60,
+      64
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 17.2
+    },
+    {
+     "zMm": [
+      64,
+      68
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 14.1
+    },
+    {
+     "zMm": [
+      68,
+      72
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 11.4
+    },
+    {
+     "zMm": [
+      72,
+      76
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 9.4
+    },
+    {
+     "zMm": [
+      76,
+      80
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 8.3
+    },
+    {
+     "zMm": [
+      80,
+      84
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 8.1
+    },
+    {
+     "zMm": [
+      84,
+      88
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 5.1
+    },
+    {
+     "zMm": [
+      88,
+      92
+     ],
+     "alwaysFreeVoxelsBesidePlate": 293,
+     "largestSphereRadiusBesidePlateMm": 2.8
+    },
+    {
+     "zMm": [
+      92,
+      96
+     ],
+     "alwaysFreeVoxelsBesidePlate": 284,
+     "largestSphereRadiusBesidePlateMm": 3.0
+    },
+    {
+     "zMm": [
+      96,
+      100
+     ],
+     "alwaysFreeVoxelsBesidePlate": 347,
+     "largestSphereRadiusBesidePlateMm": 5.0
+    },
+    {
+     "zMm": [
+      100,
+      104
+     ],
+     "alwaysFreeVoxelsBesidePlate": 391,
+     "largestSphereRadiusBesidePlateMm": 5.7
+    }
+   ]
+  },
+  "policy": {
+   "poses": 162,
+   "alwaysFreeVolumeMm3": 20958,
+   "largestSphereRadiusMm": 14.7,
+   "largestSphereCentreBracketFrame": [
+    17.0,
+    -36.0,
+    60.0
+   ],
+   "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+    {
+     "zMm": [
+      60,
+      64
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 14.4
+    },
+    {
+     "zMm": [
+      64,
+      68
+     ],
+     "alwaysFreeVoxelsBesidePlate": 531,
+     "largestSphereRadiusBesidePlateMm": 12.1
+    },
+    {
+     "zMm": [
+      68,
+      72
+     ],
+     "alwaysFreeVoxelsBesidePlate": 477,
+     "largestSphereRadiusBesidePlateMm": 9.5
+    },
+    {
+     "zMm": [
+      72,
+      76
+     ],
+     "alwaysFreeVoxelsBesidePlate": 329,
+     "largestSphereRadiusBesidePlateMm": 6.6
+    },
+    {
+     "zMm": [
+      76,
+      80
+     ],
+     "alwaysFreeVoxelsBesidePlate": 183,
+     "largestSphereRadiusBesidePlateMm": 4.6
+    },
+    {
+     "zMm": [
+      80,
+      84
+     ],
+     "alwaysFreeVoxelsBesidePlate": 258,
+     "largestSphereRadiusBesidePlateMm": 3.2
+    },
+    {
+     "zMm": [
+      84,
+      88
+     ],
+     "alwaysFreeVoxelsBesidePlate": 357,
+     "largestSphereRadiusBesidePlateMm": 4.2
+    },
+    {
+     "zMm": [
+      88,
+      92
+     ],
+     "alwaysFreeVoxelsBesidePlate": 255,
+     "largestSphereRadiusBesidePlateMm": 2.8
+    },
+    {
+     "zMm": [
+      92,
+      96
+     ],
+     "alwaysFreeVoxelsBesidePlate": 282,
+     "largestSphereRadiusBesidePlateMm": 3.0
+    },
+    {
+     "zMm": [
+      96,
+      100
+     ],
+     "alwaysFreeVoxelsBesidePlate": 347,
+     "largestSphereRadiusBesidePlateMm": 5.0
+    },
+    {
+     "zMm": [
+      100,
+      104
+     ],
+     "alwaysFreeVoxelsBesidePlate": 391,
+     "largestSphereRadiusBesidePlateMm": 5.7
+    }
+   ]
+  },
+  "pickup": {
+   "poses": 54,
+   "alwaysFreeVolumeMm3": 33500,
+   "largestSphereRadiusMm": 29.5,
+   "largestSphereCentreBracketFrame": [
+    4.0,
+    -36.0,
+    60.0
+   ],
+   "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+    {
+     "zMm": [
+      60,
+      64
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 17.2
+    },
+    {
+     "zMm": [
+      64,
+      68
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 14.1
+    },
+    {
+     "zMm": [
+      68,
+      72
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 11.4
+    },
+    {
+     "zMm": [
+      72,
+      76
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 9.4
+    },
+    {
+     "zMm": [
+      76,
+      80
+     ],
+     "alwaysFreeVoxelsBesidePlate": 510,
+     "largestSphereRadiusBesidePlateMm": 8.3
+    },
+    {
+     "zMm": [
+      80,
+      84
+     ],
+     "alwaysFreeVoxelsBesidePlate": 382,
+     "largestSphereRadiusBesidePlateMm": 8.1
+    },
+    {
+     "zMm": [
+      84,
+      88
+     ],
+     "alwaysFreeVoxelsBesidePlate": 386,
+     "largestSphereRadiusBesidePlateMm": 7.1
+    },
+    {
+     "zMm": [
+      88,
+      92
+     ],
+     "alwaysFreeVoxelsBesidePlate": 496,
+     "largestSphereRadiusBesidePlateMm": 7.0
+    },
+    {
+     "zMm": [
+      92,
+      96
+     ],
+     "alwaysFreeVoxelsBesidePlate": 532,
+     "largestSphereRadiusBesidePlateMm": 7.1
+    },
+    {
+     "zMm": [
+      96,
+      100
+     ],
+     "alwaysFreeVoxelsBesidePlate": 503,
+     "largestSphereRadiusBesidePlateMm": 5.1
+    },
+    {
+     "zMm": [
+      100,
+      104
+     ],
+     "alwaysFreeVoxelsBesidePlate": 437,
+     "largestSphereRadiusBesidePlateMm": 6.4
+    }
+   ]
+  }
+ }
+}

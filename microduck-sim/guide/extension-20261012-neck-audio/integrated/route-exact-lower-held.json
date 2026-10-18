@@ -1,0 +1,185 @@
+{
+ "_method": "Exact clearance along a found in-head route (route_search.py output) in the integrated head.\n\n1. The voxel path is smoothed (moving average over 7 voxels, end points kept) and resampled every 0.5 mm.\n2. Profile: at every sample, the exact unsigned distance from the centreline to every solid of route_scene.scene() at\n   every sampled pose of its sweep (jaw 0..40 deg every 2 deg, head roll -25..+25 deg every 2.5 deg), via trimesh\n   closest-point queries (unsigned: the route lies in free voxels by construction). This is the free radius of a round tube on that centreline (not re-centred). The re-centred\n   radius is the largest such distance over offsets up to 1.5 mm (0.5 mm steps) in the plane perpendicular to the\n   route: the free radius of the passage at that point, where the group may shift sideways.\n3. Sections: at the narrowest places of the profile (local minima at least 6 mm apart, lowest first) the plane through\n   the sample perpendicular to the route is cut exactly through every solid and pose (manifold3d slice in a rotated\n   frame), rasterised at 0.05 mm, and a Euclidean distance transform gives the largest inscribed circle of the free\n   region holding the route (radius, width = 2 x radius) and how many 1.7 mm / 1.3 mm round wires fit side by side within\n   +-8 mm of its centre (greedy packing, a lower bound), and whether a 1-pin Dupont housing (2.54 mm square, diagonal\n   3.59 mm) passes.\n4. Descent: every sample is classified inside or outside the cap-descent mask (route-occ.npz): inside = must ride with\n   the cap (or be free slack), outside = may be clipped to the lower head.\nUsage: route_exact.py <scenario>. Writes ../route-exact-<scenario>.json and SCRATCH/route-exact-<scenario>.npz.",
+ "scenario": "lower-held",
+ "lengthMm": 148.2,
+ "profile": {
+  "minRadiusMm": 1.825,
+  "at": [
+   39.77,
+   -28.4,
+   131.92
+  ],
+  "atMm": 4.5,
+  "nearest": "jaw_support",
+  "lengthBelowRadius": {
+   "1.0": 0.0,
+   "1.5": 0.0,
+   "2.0": 3.0,
+   "2.5": 82.5,
+   "3.0": 117.5
+  }
+ },
+ "recentredProfile": {
+  "minRadiusMm": 2.137,
+  "atMm": 31.4,
+  "at": [
+   52.68,
+   -30.21,
+   113.5
+  ],
+  "lengthBelowRadius": {
+   "2.5": 15.0,
+   "3.0": 36.0,
+   "3.5": 54.0,
+   "4.0": 107.5,
+   "5.0": 134.5
+  },
+  "minRadiusExcludingFirst5mm": 2.137,
+  "atExcludingFirst5mm": [
+   52.68,
+   -30.21,
+   113.5
+  ]
+ },
+ "sections": [
+  {
+   "localRadiusMm": 3.83,
+   "localWidthMm": 7.66,
+   "radiusMm": 10.897,
+   "widthMm": 21.79,
+   "centre": [
+    47.11,
+    -21.66,
+    139.83
+   ],
+   "note": "local = largest free circle centred within 2 mm of the route; radius/width = largest anywhere in the free region of the +-9 mm window that holds the route",
+   "boundedBy": [
+    "jaw_support"
+   ],
+   "capacityWithin8mm": {
+    "22AWG_silicone_1p7": 27,
+    "26AWG_silicone_1p3": 43,
+    "dupontHousingFits": true
+   },
+   "stripLengthHolding1p7WireMm": 8.0,
+   "touchesWindowEdge": true,
+   "atMm": 4.5,
+   "point": [
+    39.77,
+    -28.4,
+    131.92
+   ],
+   "profileRadiusMm": 1.825,
+   "nearestOnProfile": "jaw_support"
+  },
+  {
+   "localRadiusMm": 2.84,
+   "localWidthMm": 5.68,
+   "radiusMm": 4.33,
+   "widthMm": 8.66,
+   "centre": [
+    62.08,
+    -27.35,
+    115.2
+   ],
+   "note": "local = largest free circle centred within 2 mm of the route; radius/width = largest anywhere in the free region of the +-9 mm window that holds the route",
+   "boundedBy": [
+    "head_bottom",
+    "pi_screws"
+   ],
+   "capacityWithin8mm": {
+    "22AWG_silicone_1p7": 21,
+    "26AWG_silicone_1p3": 33,
+    "dupontHousingFits": true
+   },
+   "stripLengthHolding1p7WireMm": 13.0,
+   "touchesWindowEdge": true,
+   "atMm": 36.4,
+   "point": [
+    55.85,
+    -33.85,
+    114.53
+   ],
+   "profileRadiusMm": 2.05,
+   "nearestOnProfile": "head_cap_integrated"
+  },
+  {
+   "localRadiusMm": 3.25,
+   "localWidthMm": 6.5,
+   "radiusMm": 10.704,
+   "widthMm": 21.41,
+   "centre": [
+    69.43,
+    -26.66,
+    144.62
+   ],
+   "note": "local = largest free circle centred within 2 mm of the route; radius/width = largest anywhere in the free region of the +-9 mm window that holds the route",
+   "boundedBy": [
+    "csi_ribbon_strip",
+    "face_panel"
+   ],
+   "capacityWithin8mm": {
+    "22AWG_silicone_1p7": 34,
+    "26AWG_silicone_1p3": 53,
+    "dupontHousingFits": true
+   },
+   "stripLengthHolding1p7WireMm": 11.09,
+   "touchesWindowEdge": true,
+   "atMm": 80.9,
+   "point": [
+    77.7,
+    -20.93,
+    140.07
+   ],
+   "profileRadiusMm": 2.08,
+   "nearestOnProfile": "csi_ribbon_strip"
+  },
+  {
+   "localRadiusMm": 3.955,
+   "localWidthMm": 7.91,
+   "radiusMm": 9.413,
+   "widthMm": 18.83,
+   "centre": [
+    68.5,
+    12.94,
+    141.28
+   ],
+   "note": "local = largest free circle centred within 2 mm of the route; radius/width = largest anywhere in the free region of the +-9 mm window that holds the route",
+   "boundedBy": [
+    "camera_board",
+    "face_panel"
+   ],
+   "capacityWithin8mm": {
+    "22AWG_silicone_1p7": 40,
+    "26AWG_silicone_1p3": 64,
+    "dupontHousingFits": true
+   },
+   "stripLengthHolding1p7WireMm": 12.25,
+   "touchesWindowEdge": true,
+   "atMm": 119.3,
+   "point": [
+    77.5,
+    15.15,
+    145.48
+   ],
+   "profileRadiusMm": 2.093,
+   "nearestOnProfile": "camera_board"
+  }
+ ],
+ "descentMaskStretchesMm": [
+  [
+   127.8,
+   128.8
+  ]
+ ],
+ "start": [
+  36.5,
+  -25.5,
+  132.5
+ ],
+ "end": [
+  74.5,
+  24.5,
+  121.0
+ ]
+}

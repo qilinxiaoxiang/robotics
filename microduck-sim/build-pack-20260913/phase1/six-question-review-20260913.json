@@ -1,0 +1,169 @@
+{
+  "checked_at": "2026-09-13T17:18:39.491848-04:00",
+  "problem_ids": [
+    "P5",
+    "P6"
+  ],
+  "review_kind": "Source-backed answers and proposed feature expansion; no cart mutation or purchase",
+  "servo_order_status": {
+    "status": "ordered",
+    "evidence": "user report in this conversation; no merchant receipt independently inspected"
+  },
+  "coverage": {
+    "groups": [
+      [
+        1,
+        2
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        15
+      ]
+    ],
+    "all_15_exactly_once": true,
+    "verdict": "PASS"
+  },
+  "fuse_review": {
+    "verdict": "Supplemental protection only; selective clearing and whole-system fault response are not established",
+    "manufacturer_examples": [
+      "3A part: 6A, maximum opening time 1 second",
+      "10A part: 20A, maximum opening time 60 seconds"
+    ],
+    "source": "https://www.littelfuse.com/assetdocs/fuse-251-datasheet?assetguid=f47a0bb7-8ede-4679-9646-7114c3787688",
+    "constraint": "5A design budget is not a measured short-circuit current limit. Do not infer zero fault-clearing possibility or guaranteed selective operation from nameplate power alone."
+  },
+  "usb_mapping": {
+    "bank": "Integrated USB-C plug to Adafruit5991 USB-C receptacle",
+    "pi_power": "Common converter5V to Pi Micro-B PWR IN",
+    "data": "Pi Micro-B USB host to OpenRB USB-C; selected cable USB-A end is replaced by bare Micro-B",
+    "manufacturer_source": "https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/"
+  },
+  "pickup_review": {
+    "goal": "Camera-guided learned beak pickup",
+    "prior_training": "Completed jaw PPO: 6144 decisions; recorded 0/12 initial, 12/12 trained and scripted; hashes verified 2026-09-13",
+    "current_hardware_adapter": "Teleoperated walk and scripted jaw bring-up only; visual policy transfer remains missing",
+    "camera_required": true,
+    "full_goal_ready": false
+  },
+  "audio_goods_quote": {
+    "lines": [
+      {
+        "item": "speaker",
+        "model": "CMS-30204-18SP",
+        "quantity": 1,
+        "unit_price_usd": 1.34,
+        "subtotal_usd": 1.34,
+        "source": "https://www.digikey.com/en/products/detail/same-sky-formerly-cui-devices/CMS-30204-18SP/29778290"
+      },
+      {
+        "item": "amplifier",
+        "model": "Adafruit 3006 MAX98357A",
+        "quantity": 1,
+        "unit_price_usd": 5.95,
+        "subtotal_usd": 5.95,
+        "source": "https://www.digikey.com/en/products/detail/adafruit-industries-llc/3006/6058477"
+      },
+      {
+        "item": "audio_power_connector",
+        "model": "Adafruit 1131",
+        "quantity": 1,
+        "unit_price_usd": 1.95,
+        "subtotal_usd": 1.95,
+        "source": "https://www.digikey.com/en/products/detail/adafruit-industries-llc/1131/5761282"
+      },
+      {
+        "item": "audio_fuse",
+        "model": "Littelfuse 0251.500MXL",
+        "quantity": 3,
+        "unit_price_usd": 1.37,
+        "subtotal_usd": 4.11,
+        "source": "https://www.digikey.com/en/products/detail/littelfuse-inc/0251-500MXL/700707"
+      },
+      {
+        "item": "gain_resistor",
+        "model": "YAGEO MFR-25FBF52-100K",
+        "quantity": 3,
+        "unit_price_usd": 0.1,
+        "subtotal_usd": 0.3,
+        "source": "https://www.digikey.com/en/products/detail/yageo/MFR-25FBF52-100K/13473"
+      }
+    ],
+    "merchandise_usd": 13.65,
+    "installed_audio_fuses": 1,
+    "spare_audio_fuses": 2,
+    "installed_resistors": 1,
+    "spare_resistors": 2,
+    "wire_fasteners_prints": "RoboClub-first; no new purchase authorization inferred",
+    "envelope_screen_mm": {
+      "speaker_max": [
+        30,
+        20,
+        4.2
+      ],
+      "reserved": [
+        31,
+        21,
+        6
+      ]
+    },
+    "physical_mount_fit": false,
+    "notes": [
+      "Adafruit3923 not stocked at DigiKey; Adafruit4227 zero stock at latest live page read.",
+      "Replacement requires insulated soldered leads and frame retention without touching diaphragm.",
+      "No expanded-cart shipping/tariff quote or payment; goods-only comparison."
+    ]
+  },
+  "camera_goods_quote": {
+    "model": "Camera Module3Wide SC1224 visible-light",
+    "camera_usd": 35.0,
+    "camera_source": "https://www.digikey.com/en/products/detail/raspberry-pi/SC1224/17278644",
+    "cable": "Raspberry Pi SC1892 200mm camera cable, 15-to-22 pins",
+    "cable_usd": 1.0,
+    "cable_source": "https://www.digikey.com/en/products/detail/raspberry-pi/SC1892/21658272",
+    "compatibility_source": "https://www.raspberrypi.com/products/camera-cable/",
+    "merchandise_usd": 36.0,
+    "note": "Existing camera mount dimensions retained; longer200mm cable needs physical flex routing. Camera included15-to15 cable does not fitPiZero."
+  },
+  "power_review": {
+    "base_output_design_a": 5.0,
+    "base_static_screen_pass": true,
+    "base_pi_endpoint_v": 4.790405167333334,
+    "base_worst_motor_endpoint_v": 4.42746181979,
+    "added_camera_a_assumption": 0.25,
+    "added_audio_a_assumption": 0.25,
+    "base_plus_camera_static_screen_pass": false,
+    "base_plus_camera_audio_output_a": 5.5,
+    "base_plus_camera_audio_input_w_at90pct": 30.861111111111107,
+    "base_plus_camera_audio_input_w_at85pct": 32.67647058823529,
+    "bank_single_port_w": 30.0,
+    "verdict": "REJECT adding camera and audio on top of the unchanged5A base budget. Single-source topology is feasible in principle, but actual gait-current/thermal/transient acceptance requires assembled hardware.",
+    "external_dependency": "Servos were just ordered; assembled instrumented robot required for simultaneous endpoint voltage, input/output current, thermal, stop/regeneration and actual walk/pickup tests.",
+    "onboard_bank_acceptance": false,
+    "current_bank_location": "Offboard beside test lane, one bundled tether"
+  },
+  "orders_placed_by_assistant": false,
+  "project_context": "../../PROJECT-CONTEXT.json"
+}

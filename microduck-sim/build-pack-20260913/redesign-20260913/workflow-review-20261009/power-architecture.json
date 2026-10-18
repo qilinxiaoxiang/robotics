@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "verifiedDate": "2026-10-09",
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "status": "source_review_complete_physical_commissioning_pending",
+  "decision": {
+    "externalElevenFuseArrayRequired": false,
+    "preferredCandidate": "single_PB1033MI_USB_C_PD20V_to_received_5991_to_DFR1202_to_central_5V_distribution",
+    "selectedFinalHarness": false,
+    "reason": "Multi-port total is 15W; single USB-C 20V mode is 30W. Central power protection/feed topology still needs load and fault coordination.",
+    "purchaseAuthorized": false,
+    "canonicalWiringChanged": false
+  },
+  "ratings": {
+    "pbMultiPort": {
+      "volts": 5,
+      "ampsTotal": 3,
+      "wattsTotal": 15
+    },
+    "pbSinglePD": {
+      "volts": 20,
+      "amps": 1.5,
+      "watts": 30
+    },
+    "openrb": {
+      "usbFuseNominalA": 0.5,
+      "dxlPortsRatedA": 3,
+      "terminalFuseInReviewedSchematic": false,
+      "motorFETIsVerifiedCurrentLimiter": false,
+      "terminalJumper": "VIN(DXL)"
+    },
+    "xl330": {
+      "minV": 3.7,
+      "maxV": 6,
+      "recommendedV": 5,
+      "stallAt5VA": 1.47,
+      "fifteenSimultaneousStallReferenceA": 22.05,
+      "stallReferenceIsGaitPrediction": false
+    },
+    "ehConnector": {
+      "ratedA": 3,
+      "ratingWire": "AWG22"
+    },
+    "dfr1202": {
+      "inputMinV": 6,
+      "inputMaxV": 24,
+      "outputV": 5,
+      "outputTolerancePercent": 1,
+      "maxOutputA": 16,
+      "shortCircuitProtectionDocumented": true,
+      "shortCircuitTripThresholdKnown": false,
+      "overtemperatureC": 125
+    },
+    "derived": {
+      "singlePDIdealOutputUpperBoundA": 6,
+      "illustrative90percentOutputA": 5.4,
+      "measured": false
+    }
+  },
+  "candidateDispositions": {
+    "dualDirect5V": "conditional_low_load_bringup_only_shared_3A",
+    "singleDirect5V": "conditional_low_load_simpler_same_3A_budget",
+    "singlePD20V": "preferred_source_candidate_not_harness_release",
+    "allMotorsViaOpenRBUSB": "rejected",
+    "allFifteenVDDViaOneEH": "not_accepted_without_rated_current_evidence",
+    "elevenExternalFuseArray": "not_a_required_architecture"
+  },
+  "notMeasured": [
+    "PB_multiport_transition_duration_and_recovery",
+    "PB_DFR20V_efficiency_and_transient_budget",
+    "robot_motion_peak_and_regional_currents",
+    "branch_fault_energy_and_thermal_coordination",
+    "powered_stop_and_reset_behavior"
+  ],
+  "importantDistinctions": [
+    "Board current rating is not an automatic trip threshold",
+    "USB PTC does not protect terminal motor path",
+    "External motor-power injection bypasses OpenRB motor power-off unless separately switched",
+    "Bank two outputs are not independent 30W supplies",
+    "Stock fuses do not require installing all of them"
+  ],
+  "sources": [
+    {
+      "id": "xiaomi",
+      "urlOrPath": "https://www.mi.com/global/product/xiaomi-33w-power-bank-10000-integrated-cable/specs/"
+    },
+    {
+      "id": "xiaomi_manual",
+      "urlOrPath": "sources/pb1033mi-manual.pdf"
+    },
+    {
+      "id": "openrb",
+      "urlOrPath": "https://emanual.robotis.com/docs/en/parts/controller/openrb-150/"
+    },
+    {
+      "id": "openrb_schematic",
+      "urlOrPath": "sources/openrb-150-schematic-20231130.pdf"
+    },
+    {
+      "id": "ptc",
+      "urlOrPath": "https://www.bourns.com/docs/product-datasheets/mfmsmf.pdf"
+    },
+    {
+      "id": "xl330",
+      "urlOrPath": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+    },
+    {
+      "id": "eh",
+      "urlOrPath": "https://www.jst-mfg.com/product/pdf/eng/eEH.pdf"
+    },
+    {
+      "id": "dfr1202",
+      "urlOrPath": "https://www.dfrobot.com/product-2907.html"
+    },
+    {
+      "id": "5991",
+      "urlOrPath": "https://www.adafruit.com/product/5991"
+    },
+    {
+      "id": "omx",
+      "urlOrPath": "https://docs.robotis.com/docs/systems/omx/specifications/hardware/"
+    }
+  ],
+  "report": "power-architecture.md",
+  "reportSha256": "1344baa0d3bc5c10ecfdc5abe88c7d38ef9e96a4a90fd45f8437c13dcc62db89",
+  "sourceHashes": {
+    "sources/bourns-mfmsmf.pdf": "50d80228581842471d563e28ba0f1b67ab095ee95dfac4079f4a49f7f7bbf3c8",
+    "sources/bourns-mfmsmf.txt": "9f472c67b38374511d364fab8ed8f00651988d096f10441c3599f7749645ce4f",
+    "sources/openrb-150-schematic-20231130.pdf": "e99f0c09593b7e595cf9895830c00876d4eb3e1ef5b03869e4b14e984cff47cb",
+    "sources/openrb-150-schematic-20231130.txt": "8a9c160bc2567bce5b98587e9eefa2278f470ea7b60c637435b0f033a4e5c7e9",
+    "sources/pb1033mi-manual.pdf": "24b3d44af2f54100d1a21d176163773132b4d302f4114db7359fb8aefbcf6475",
+    "sources/pb1033mi-manual.txt": "05511ec10760a80cdbb705afc0edd55be423fd7a24954ee4a6ffd7be13a5b7dd"
+  },
+  "stockReceipt": {
+    "path": "../../procurement/order-101587695-received.json",
+    "sha256": "73a7b1ce25157668907ca79a799e740930eaa6c3a7eb8d40e35a0cfca3667519"
+  },
+  "physicalAcceptance": false,
+  "fullRobotAcceptance": false
+}

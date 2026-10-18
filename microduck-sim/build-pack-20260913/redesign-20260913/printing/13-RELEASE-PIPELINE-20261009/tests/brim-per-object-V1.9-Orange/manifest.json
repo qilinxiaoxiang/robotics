@@ -1,0 +1,398 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "fixture",
+ "version": "V1.9-BRIM-PER-OBJECT-TEST",
+ "prototype": true,
+ "prototypeScope": "Pipeline v2 per-object brim acceptance on the V1.9 Orange plate. Not a release.",
+ "knownFitBoundary": "BNO085: two M2 x 4 through the board into the pack rib at the bench, before pack-in. Shells: the printed V1.8 shells rest on the pack bars (0.15/0.27 mm roof gap). Cap: same three closure screws as V1.8; E-pi-04 becomes M2 x 8 under the cap clip; speaker retainer 2 x M2 x 6, amplifier 2 x M2 x 6. Clips: 2 mm tabs under S12-horn-025 (M2 x 8), S11-horn-040 (M2 x 8), H-jaw_support-03 (M2.5 x 8) and E-pi-04. Physical checks remain: clip shapes are untested in print, and the jaw pose-cap table does not yet model the clips and wires (ext-v19/README.md).",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Yellow_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
+   "sha256": "061290b612bb407903c874c609e73bef25480985e6eae3703b08c298fc5bb060"
+  },
+  "Yellow_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
+   "sha256": "c737d7bca008862c870a734859bbfd9afed6b76e12309865b1dd3df80e8e31df"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+   "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+   "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+  },
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  },
+  "Black_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
+   "sha256": "ef9593097fb01bef35b9cb2e8e57f6f539362f8c341b01fdfa78ec74151243a4"
+  },
+  "Black_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",
+   "sha256": "c2954f042a62096191201a4a355c356247b084f8ae5b08398d1db4a612585163"
+  }
+ },
+ "processOverrides": {},
+ "processOverrideReason": "No plate-wide brim: the brim is set per part (objectSettings, R1 default from the tip angle).",
+ "parts": [
+  {
+   "key": "rear_pack",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "2"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/rear_pack-world.stl",
+   "sha256": "e2d58d22231e43690aa274925fc9c91146b4a7e7109247a269b6ffc72a9eba00",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     44.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 600
+   },
+   "poseOrigin": "V1.8 rear_pack pose (release-V1.8/scripts/rows.json): upright as in the robot, floor (robot z -44) on the bed; 660.6 mm2 bed contact, rank 1 of 11 in rear-pack-v19/orientation-check.json. Tree support for the ear and shoulder-bar undersides (rear-pack-v19/check_print.json).",
+   "changeReason": "V1.9 rear electronics pack: a BNO085 rib on the plate front face with two M2 x 4 pilots replaces the shelf and its zip-tie slots (the board is screwed on at the bench before pack-in); the T-head is grown 0.4 mm all round and two 3 mm shoulder bars behind the plate seat the printed V1.8 side shells (roof gap 0.15 mm left, 0.27 mm right instead of 0.55/0.71). The DFR1202 front lips and corner feet are removed, so the OpenRB-150 slides straight in and out from behind with both side shells on and only the cover off (0 collisions, 0.6 mm side clearance; rear-pack-v19/check_v19_board_rear.json). Notch, cable lanes, cover posts, the empty DFR channel, OpenRB pads and the four hip-yaw screw tabs are unchanged from V1.8; the V1.8 cover stays.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/check_v19_seat.json",
+    "sha256": "e9422e2b997b7db740e1ef698b319c9af6ff68a4a97682952208997925bc4a7a"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "head_cap_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "4"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/head_cap_v19-world.stl",
+   "sha256": "da655c657979c9290a1aa12d813901062baea2c38c0da31db085c986277976c2",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     -0.994831182,
+     0.065255263,
+     -0.077798904,
+     41.502281705
+    ],
+    [
+     0.066724243,
+     0.997636148,
+     -0.016431442,
+     -3.766984888
+    ],
+    [
+     0.07654276,
+     -0.021537584,
+     -0.996833656,
+     150.267217814
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 93.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: V1.8 cap pose (roof on the bed), rotation from release-V1.8/manifest-V1.8.json; 104.39 mm2 contact, tip angle 7.7 deg so the Orange 4 mm outer brim override stays",
+   "changeReason": "V1.9 head cap for the neck-route and audio extension: the speaker collar and two retainer screw bosses in the roof, two amplifier posts, and the cap clip seat under E-pi-04; the rear cable notch and its zip tie are removed (closed into a seat band). Pi rails, the three closure screws and the outer skin stay as in V1.8 (ext-v19/README.md; volume 35303.6 mm3 against 30676.3 for the V1.8 cap).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/cap-build-v19.json",
+    "sha256": "31d4e9bbb6787dd214d7c0800c945b72190d37515753a1b2b86cb80e54d5e64f"
+   },
+   "supportBlockers": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.8/blockers/pi-positive-y-upper-hole-support-blocker-v18-world.stl",
+     "sha256": "a7cf2fbdd28c048aa1d5509f3e6223fe65e446dbdf1c1f5c44d5ef31b43929af",
+     "machines": [
+      "Bambu"
+     ],
+     "reason": "Keep the +y upper Pi pilot (E-pi-04) free of internal support; the V1.6 Bambu slice put 15 support segments in it. Moved with the rails (+1 mm z over V1.7). Non-printing slicer modifier, robot frame."
+    }
+   ]
+  },
+  {
+   "key": "speaker_retainer_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/speaker_retainer_v19-world.stl",
+   "sha256": "1d0a76b28bf7b35b48de616fd88545660be2eef404df2c1b3b947e92d920fb75",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     -0.969030725,
+     0.0,
+     -0.246940185,
+     37.813030653
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     1.7166e-05
+    ],
+    [
+     0.246940185,
+     0.0,
+     -0.969030725,
+     135.308943538
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 330.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: flat on its speaker-side face; 367.61 mm2 contact",
+   "changeReason": "New V1.9 part: 1.6 mm speaker retainer frame that holds the speaker and its 1 mm foam ring in the cap roof collar with two M2 x 6 screws (no glue).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/retainer-build-v19.json",
+    "sha256": "5f28574fb73a06bef38487de314529dd055e2ccca933bd93ef0df3989aeaaa3c"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "clip_torso_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_torso_v19-world.stl",
+   "sha256": "910908747a32f32cf468eae1cd0d52b3c1e1bc68a088c0b76965f071207fa389",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -22.2156744
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     -34.460999489
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     -18.401193619
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 54.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 60.26 mm2 contact",
+   "changeReason": "New V1.9 part: torso cable clip, a 2 mm tab under S12-horn-025 with a 4.8 x 4.8 mm channel (2.4 mm slot) for the 8-wire neck bundle. Mesh note (2026-10-13 rebuild, sha256 910908747a32...): watertight, one body, manifold3d NoError, 0 separation defects; meshcheck's only flag is one pair of near-coincident needle faces (2e-5 mm2 each), a check false positive rather than a fin, so the clip is treated as clean.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+    "sha256": "e6e40d4254028f09db81c436e23e1931140d7b3d1501e3f962dda9c540aa69d3"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "clip_bracket_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_bracket_v19-world.stl",
+   "sha256": "a2b796315cc039f49ff4c796624045aa23bfb8c6ac46c1fce4fb37a529a71015",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -23.199999809
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     -82.421001434
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     -17.5
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 61.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 67.91 mm2 contact",
+   "changeReason": "New V1.9 part: neck bracket cable clip, a 2 mm tab under S11-horn-040 on the head-pitch axis with a 4.8 x 4.8 mm channel (2.4 mm slot), rounded mouth corners and 1.5 mm end chamfers.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+    "sha256": "e6e40d4254028f09db81c436e23e1931140d7b3d1501e3f962dda9c540aa69d3"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "clip_head_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_head_v19-world.stl",
+   "sha256": "a800af0d807386fddeade3623b976af9743010db7d85e61a7ea25f7b579edbff",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -45.75
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     25.650000572
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     -113.214996338
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 107.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 119.97 mm2 contact",
+   "changeReason": "New V1.9 part: head cable clip, a 2 mm tab under H-jaw_support-03 with a channel that takes the bundle down and out through a side window.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+    "sha256": "e6e40d4254028f09db81c436e23e1931140d7b3d1501e3f962dda9c540aa69d3"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "clip_cap_v19",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_cap_v19-world.stl",
+   "sha256": "dc1973a6e640e730fe272ec3c3bda9202eb1ac4771636de608fba8a18231723e",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     -0.173602778,
+     0.0,
+     -0.984815757,
+     153.053491272
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     -23.099999905
+    ],
+    [
+     0.984815757,
+     0.0,
+     -0.173602778,
+     -35.943847213
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 31.0
+   },
+   "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 35.39 mm2 contact",
+   "changeReason": "New V1.9 part: cap cable clip, a 2 mm tab under E-pi-04 over the Pi top edge with a 4.8 x 4.8 mm channel (2.4 mm slot).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+    "sha256": "e6e40d4254028f09db81c436e23e1931140d7b3d1501e3f962dda9c540aa69d3"
+   },
+   "supportBlockers": []
+  }
+ ],
+ "deliveryContract": {
+  "colors": [
+   "Orange"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 2,
+  "baseline": "printed V1.6 set with the V1.7 and V1.8 reprints",
+  "supersedes": [
+   "head_cap (printed V1.8)",
+   "rear_pack (printed V1.8)"
+  ],
+  "status": "INCREMENTAL_REPRINT"
+ }
+}

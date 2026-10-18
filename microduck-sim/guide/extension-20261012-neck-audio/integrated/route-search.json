@@ -1,0 +1,176 @@
+{
+ "_method": "Task 2: widest way for the neck bundle from the top of the -y slot to the front of the 8 bundle housings\n(Pi pins 1, 2, 3, 5, 6, 8, 9, 10), through the closed integrated head with every audio part, the Pi-mount A rails, the\ncamera ribbon, the head servo cables, the jaw sweep and the head-roll sweep in place (route-occ.npz).\n\nGrid search (0.5 mm voxels): clearance(voxel) = distance from the voxel centre to the nearest occupied voxel centre\nminus 0.25 mm. Domain: free voxels inside the convex hull of the closed head (integrated cap + lower shell + face).\nA corridor is a maximin path: the largest clearance t at which start and goal connect (26-connected), then the\nshortest path inside that set. route_exact.py re-measures every clearance exactly.\nStart: free voxels within 2 mm of the top of the -y slot route (neck-route A2 head points up to its head tie).\nGoal: the space in front of the 8 housings' wire-exit faces (x 74.6..77, y 12.7..25.4, z 112..121).\nScenarios:\n  any          everything allowed\n  over-top     around the Pi over its top edge (the Pi zone x 50..66 closed below z 146)\n  under        around the Pi under its bottom edge (the Pi zone closed above z 114)\n  lower-held   any way, but outside the cap-descent mask (a route held only on the lower head)\n  over-top-plus-y / over-top-minus-y   over the Pi top edge at y > 15 (where V1.8 crosses) / at y < -15\n  A3-clip-over-top-plus-y   as over-top-plus-y but starting at the head clip (H-jaw_support-03) instead of the slot top\n  A3-slot-to-clip           from the slot top to the head clip (goal: around the clip hook)\nWrites ../route-search.json and SCRATCH/route-search-<scenario>.npz (path voxels).",
+ "start": [
+  [
+   33.3,
+   -26.9,
+   118.9
+  ],
+  [
+   34.0,
+   -26.3,
+   130.8
+  ],
+  [
+   35.6,
+   -23.0,
+   136.3
+  ]
+ ],
+ "goal": [
+  [
+   74.6,
+   12.7,
+   112.0
+  ],
+  [
+   77.0,
+   25.4,
+   121.0
+  ]
+ ],
+ "scenarios": {
+  "any": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 3.35,
+   "pathVoxels": 141,
+   "gridPathLengthMm": 94.298,
+   "bottleneckAt": [
+    59.0,
+    -14.5,
+    149.0
+   ],
+   "bottleneckNeighbours": {
+    "head_cap_integrated": 3.64,
+    "audio_wire_amp_din_pin40": 4.301,
+    "pi": 4.743,
+    "head_pi_component_bottom-usb-edge-context": 6.69
+   },
+   "pointsInCapDescentMask": 55,
+   "firstPointInDescentMask": 33
+  },
+  "over-top": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 3.35,
+   "pathVoxels": 141,
+   "gridPathLengthMm": 94.298,
+   "bottleneckAt": [
+    59.0,
+    -14.5,
+    149.0
+   ],
+   "bottleneckNeighbours": {
+    "head_cap_integrated": 3.64,
+    "audio_wire_amp_din_pin40": 4.301,
+    "pi": 4.743,
+    "head_pi_component_bottom-usb-edge-context": 6.69
+   },
+   "pointsInCapDescentMask": 55,
+   "firstPointInDescentMask": 33
+  },
+  "under": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "pathVoxels": 169,
+   "gridPathLengthMm": 96.932,
+   "bottleneckAt": [
+    38.0,
+    -27.0,
+    132.5
+   ],
+   "bottleneckNeighbours": {
+    "jaw_support": 2.5,
+    "head_yaw_link": 4.416
+   },
+   "pointsInCapDescentMask": 18,
+   "firstPointInDescentMask": 93
+  },
+  "lower-held": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "pathVoxels": 238,
+   "gridPathLengthMm": 152.445,
+   "bottleneckAt": [
+    38.0,
+    -27.0,
+    132.5
+   ],
+   "bottleneckNeighbours": {
+    "jaw_support": 2.5,
+    "head_yaw_link": 4.416
+   },
+   "pointsInCapDescentMask": 0,
+   "firstPointInDescentMask": null
+  },
+  "over-top-plus-y": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 3.25,
+   "pathVoxels": 159,
+   "gridPathLengthMm": 97.644,
+   "bottleneckAt": [
+    49.5,
+    -8.5,
+    148.5
+   ],
+   "bottleneckNeighbours": {
+    "audio_amp_housings": 3.5,
+    "head_cap_integrated": 3.905
+   },
+   "pointsInCapDescentMask": 58,
+   "firstPointInDescentMask": 27
+  },
+  "over-top-minus-y": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 3.25,
+   "pathVoxels": 146,
+   "gridPathLengthMm": 94.12,
+   "bottleneckAt": [
+    60.5,
+    -15.5,
+    148.0
+   ],
+   "bottleneckNeighbours": {
+    "pi": 3.5,
+    "head_cap_integrated": 4.555,
+    "audio_wire_amp_din_pin40": 4.555,
+    "head_pi_component_bottom-usb-edge-context": 4.743
+   },
+   "pointsInCapDescentMask": 37,
+   "firstPointInDescentMask": 32
+  },
+  "A3-clip-over-top-plus-y": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 3.25,
+   "pathVoxels": 176,
+   "gridPathLengthMm": 109.732,
+   "bottleneckAt": [
+    49.5,
+    -7.0,
+    139.5
+   ],
+   "bottleneckNeighbours": {
+    "audio_amp_housings": 3.5
+   },
+   "pointsInCapDescentMask": 28,
+   "firstPointInDescentMask": 99
+  },
+  "A3-slot-to-clip": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 4.75,
+   "pathVoxels": 43,
+   "gridPathLengthMm": 26.158,
+   "bottleneckAt": [
+    35.5,
+    -24.0,
+    138.0
+   ],
+   "bottleneckNeighbours": {
+    "head_yaw_link": 5.0,
+    "motor13": 6.042,
+    "head_cap_integrated": 8.139
+   },
+   "pointsInCapDescentMask": 0,
+   "firstPointInDescentMask": null
+  }
+ }
+}

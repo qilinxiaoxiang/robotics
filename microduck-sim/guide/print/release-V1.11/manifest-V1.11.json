@@ -1,0 +1,235 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "incremental",
+ "version": "V1.11",
+ "prototype": true,
+ "prototypeScope": "V1.11 Orange increment on top of the printed V1.9 set: the rear converter box, layout F (guide/print/back-plate/layout-F/), printed as the frame and a lid. The frame replaces the printed V1.8 rear pack cover and supersedes the V1.10 frame and lid (layout C revision 2), which should not be printed. It carries two XL4015 step-down boards (7 V top tier, 5 V middle tier) and one Adafruit 5991 USB-C PD trigger (bottom tier). Every other printed part stays; the printed V1.8 pack stays as built.",
+ "knownFitBoundary": "Frame to pack: the four V1.8 cover screws (M2 x 6) at (-47, +-16.1, 26.0) and (-47, +-16.1, -36.5); the frame goes on empty. Boards: 8 x M2 x 6 into the XL4015 bosses, 4 x M2 x 6 into the 5991 standoff bosses, cap: two tongues under the top wall with teeth in the top-wall slots (slide on 1.2 mm low, lift) and 2 x M2 x 6 through the ears at (y -23.8, z -17.4) and (y +23.8, z -33.6); the lower cover screws sit in dia 4.4 driver lanes. HOME: frame to shells 1.04 / 1.175 mm, to the OpenRB 4.931 mm. Hip sweep (each hip pitch HOME +-30 deg with hip roll +-10 deg, layout-F/hip_sweep.json): USB-C plug envelope to the left upper leg 4.28 mm minimum, frame to the legs at least 6 mm, cap at least 6 mm, window loops at least 13.9 mm. XL4015 IN ends face -y and OUT ends +y (kit photo and mesh); read the printed IN/OUT labels before wiring. The tether hole in the V1.8 pack stays open and unused. Boss tips print on support: clean them flat.",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Yellow_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
+   "sha256": "061290b612bb407903c874c609e73bef25480985e6eae3703b08c298fc5bb060"
+  },
+  "Yellow_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
+   "sha256": "c737d7bca008862c870a734859bbfd9afed6b76e12309865b1dd3df80e8e31df"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+   "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+   "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+  },
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  },
+  "Black_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
+   "sha256": "ef9593097fb01bef35b9cb2e8e57f6f539362f8c341b01fdfa78ec74151243a4"
+  },
+  "Black_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",
+   "sha256": "c2954f042a62096191201a4a355c356247b084f8ae5b08398d1db4a612585163"
+  }
+ },
+ "processOverrides": {
+  "Orange_Bambu": {
+   "brim_type": "no_brim"
+  },
+  "Orange_Elegoo": {
+   "brim_type": "no_brim"
+  }
+ },
+ "processOverrideReason": "Supports: no support override. The Orange donor profiles (12-REPAIR-V1-20261008/dual-printer/Orange_*_editable.3mf) already set enable_support 1, support_type tree(auto), support_threshold_angle 30, bridge_no_support 0 and support_on_build_plate_only 0, so the frame's front plate (a ceiling 12.1 mm above the bed inside the rim-down box) and the cover flap below the box floor get tree support, and the cap (outer face down) gets tree support under its rounded rear edges and screw ears; the native slices confirm it (review/Orange_*-review.json supportByRegion). The boss tips (PCB seats) sit under the ceiling and print on support: clean them flat before mounting the boards. Brim: rear_frame stands 21.6 mm tall on a 1.2 mm wall ring (296.8 mm2) spread over a 64.1 x 87.0 mm footprint, tip angle 71.5 degrees; the cap lies on its outer face (85.4 degrees) (orientation-check.json). Neither needs a brim (guide/print/orientation-study/PRINT-ORIENTATION-PRACTICE.md R1: a brim only below a 10 degree tip angle), so brim_type is no_brim on both machines; it is set explicitly because the donor profiles default to auto_brim. The plate-wide 4 mm outer brim carried since V1.9 (head cap, 7.7 degrees) is dropped: a 0.1 mm-gap brim on the frame's 1.2 mm wall ring is very hard to peel.",
+ "parts": [
+  {
+   "key": "rear_frame",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_frame-world.stl",
+   "sha256": "dc9fcdaccee61641e20766fbf8ee8398df21f62f29b5af82a100be61cdb59234",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     0.0,
+     1.0,
+     0.0,
+     32.04999923706055
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     44.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0,
+     59.099998474121094
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 260
+   },
+   "poseOrigin": "back-plate/layout-F/build.json printPoses.frame and back-plate/layout-F/rear_frame-print.stl: rim-down, the frame rim (robot x -59.1, the cap seam) on the bed, x' = y, y' = z, z' = x; 296.8 mm2 bed contact (the 1.2 mm wall ring and the two cap-screw boss ends on a 64.1 x 87.0 mm footprint), height 21.6 mm; no brim (R1: tip angle 71.5 deg). The front plate (x -47 inner face) spans the inside of the box as a ceiling 12.1 mm above the bed and the cover flap below the box floor (z -44..-36.02) overhangs the bed: both get tree support from the Orange profiles, and the boss tips (PCB seats at x -50.205 and -50.0) print on support. Upright (z -44 down) was rejected: 60.8 mm2 contact (the cover strip only) under an 87.0 mm tall part (layout-F/checks.json 7_printability).",
+   "poseCheck": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.11/scripts/pose-check.json",
+    "sha256": "5c6d3a6819ac36c886c211462e7366eca719e5464c8ef3d604766a36405845b7",
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_frame-print.stl",
+     "sha256": "848dcc6e5ff9e40e4b6897edb3b0b2f66ccd60543f62de5bf0a0e65d7720370f"
+    },
+    "maxVertexDeviationMm": 5.3947966093944364e-06,
+    "bedContactMm2": 296.79
+   },
+   "changeReason": "V1.11 rear converter box, layout F (back-plate/layout-F/README.md): replaces the V1.10 layout C revision 2 frame and the printed V1.8 rear pack cover. The frame carries the exact cover outline, four cover holes and lip (x -47..-45) and a stepped box behind the pack with a square rim at x -59.1 and a constant cross-section, so the boards slide straight in from the rear: a wide tier |y| <= 32.05, z -15.2..43 with the two XL4015s horizontal (IN ends -y, OUT ends +y, as the kit photo and mesh show) and a narrow tier |y| <= 15.61, z -36.02..-15.2 with the Adafruit 5991 (terminal -y, USB-C +y). Closed bottom, side windows at each terminal, a USB-C slot in the +y wall, front passage P1 into the pack channel, eight XL4015 bosses (5.0 / 4.2 / 3.2 mm long, shell limited), four 5991 bosses on 3.0 mm standoffs, two cap screw bosses at (y -23.8, z -17.4) and (y +23.8, z -33.6), two tooth slots in the top wall and driver lanes for the two lower cover screws. Volume 10502.4 mm3, watertight, one body (layout-F/checks.json).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+    "sha256": "0e1c348363a22ba9e6c59c790d1959278cf581a5a78b2a11fc5b5fc3aad381fa"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/build.json",
+     "sha256": "f128b282764578aa8dfc130878eece147be814727e30ea8e7c6331168b98c8f2"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/README.md",
+     "sha256": "a843cd37df20055d0a48effda1aa6583e97e44a6b923112b6ebf7d8c3561bd47"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/layout_f.json",
+     "sha256": "15c8ace197564bb5bd2f482f4c78cc9af68d4f110dad2315d57d54f97fda1654"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/hip_sweep.json",
+     "sha256": "691a6af25f022d12d3294b4ff0bc748775ea1bfac02ee24ba8ec4f8ecd7508be"
+    }
+   ],
+   "supportBlockers": []
+  },
+  {
+   "key": "rear_lid",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_lid-world.stl",
+   "sha256": "5773e28d642889283a434eee40beef91b98f93280528f999a55f5e584bf2e671",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     0.0,
+     1.0,
+     0.0,
+     32.04999923706055
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     36.0192985534668
+    ],
+    [
+     1.0,
+     0.0,
+     0.0,
+     67.1016845703125
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 1900
+   },
+   "poseOrigin": "back-plate/layout-F/build.json printPoses.lid and back-plate/layout-F/rear_lid-print.stl: outer rear face (robot x -67.1) on the bed, x' = y, y' = z, z' = x; 2643.2 mm2 bed contact, 13.5 mm tall (the tongues point up). The rounded rear edges (R 4.3..8.0) leave the bed at a shallow angle and the two screw ears overhang at the top: tree support under both. The open side cannot go down because the tongues stand 5.5 mm proud of the rim.",
+   "poseCheck": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.11/scripts/pose-check.json",
+    "sha256": "5c6d3a6819ac36c886c211462e7366eca719e5464c8ef3d604766a36405845b7",
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_lid-print.stl",
+     "sha256": "79447e7e80da8dc2c68f595abafc7287d27a1377d941b14288176872e9e6acb1"
+    },
+    "maxVertexDeviationMm": 5.3947966093944364e-06,
+    "bedContactMm2": 2643.22
+   },
+   "changeReason": "New V1.11 part: the rounded cap (x -67.1..-59.1, 1.2 mm walls) that closes the back of the layout F box and carries every rear-edge rounding (rear vertical edges R 7.4, rear top edge 7.8, step 4.3, narrow tier 4.5 / 8.0). Two tongues at the top corners run under the frame top wall with a tooth in a top-wall slot; two ears take M2 x 6 into the frame bosses at (y -23.8, z -17.4) and (y +23.8, z -33.6). Volume 6276.0 mm3, watertight (back-plate/layout-F/README.md).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+    "sha256": "0e1c348363a22ba9e6c59c790d1959278cf581a5a78b2a11fc5b5fc3aad381fa"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/build.json",
+     "sha256": "f128b282764578aa8dfc130878eece147be814727e30ea8e7c6331168b98c8f2"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/README.md",
+     "sha256": "a843cd37df20055d0a48effda1aa6583e97e44a6b923112b6ebf7d8c3561bd47"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/layout_f.json",
+     "sha256": "15c8ace197564bb5bd2f482f4c78cc9af68d4f110dad2315d57d54f97fda1654"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/hip_sweep.json",
+     "sha256": "691a6af25f022d12d3294b4ff0bc748775ea1bfac02ee24ba8ec4f8ecd7508be"
+    }
+   ],
+   "supportBlockers": []
+  }
+ ],
+ "retiredParts": [
+  {
+   "part": "rear_pack_cover",
+   "printed": "V1.8 (Black)",
+   "reason": "replaced by the V1.11 rear_frame, which carries the same cover outline, holes and lip"
+  },
+  {
+   "part": "rear_frame (V1.10, layout C revision 2)",
+   "printed": "V1.10 release (Orange)",
+   "reason": "superseded by the V1.11 layout F rear_frame; do not print or fit"
+  },
+  {
+   "part": "rear_lid (V1.10, layout C revision 2)",
+   "printed": "V1.10 release (Orange)",
+   "reason": "superseded by the V1.11 layout F rear_lid; do not print or fit"
+  }
+ ],
+ "deliveryContract": {
+  "colors": [
+   "Orange"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 2,
+  "baseline": "printed V1.6 set with the V1.7, V1.8 and V1.9 reprints",
+  "supersedes": [
+   "rear_pack_cover (printed V1.8)",
+   "release V1.10 (rear_frame and rear_lid, layout C revision 2)"
+  ],
+  "status": "INCREMENTAL_REPRINT"
+ }
+}

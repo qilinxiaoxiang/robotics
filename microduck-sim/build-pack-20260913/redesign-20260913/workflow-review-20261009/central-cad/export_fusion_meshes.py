@@ -1,0 +1,12 @@
+from pathlib import Path
+import json,struct,array,base64,hashlib
+D=Path(__file__).resolve().parent;contract=json.loads((D/'current-coordinate-contract.json').read_text());out=D/'fusion-C-meshes';out.mkdir(exist_ok=True);rows=[]
+for r in contract['parts']:
+ key=r['key'];p=json.loads((D/'current-mesh'/f'{key}.json').read_text());a=array.array('f');a.frombytes(base64.b64decode(p['positionB64']));ix=array.array('I');ix.frombytes(base64.b64decode(p['indexB64']));dy=r['cLayoutTranslationMm'][1];path=out/f'{key}.stl';h=hashlib.sha256()
+ with path.open('wb')as f:
+  b=b'CURRENT C CONFIG MESH REFERENCE MM NOT PRINT'.ljust(80,b' ')+struct.pack('<I',len(ix)//3);f.write(b)
+  for k in range(0,len(ix),3):
+   xyz=[a[3*ix[k+j]+i]+(dy if i==1 else 0)for j in range(3)for i in range(3)];b=struct.pack('<12fH',0,0,0,*xyz,0);f.write(b)
+ h.update(path.read_bytes());rows.append({'key':key,'name':p.get('name',key),'file':str(path),'sha256':h.hexdigest(),'units':'mm','coordinates':'current guide world; C leg translation already applied','group':'Left leg +11 mm'if dy==11 else 'Right leg -11 mm'if dy==-11 else 'Head current reference'if 'final-viewer' in r['source']else 'Unchanged central structure requiring redesign','color':p.get('color','#8b929a'),'representation':'mesh','triangles':len(ix)//3,'translationFromBaselineMm':[0,dy,0],'sourcePartJson':str(D/'current-mesh'/f'{key}.json'),'sourcePartSha256':hashlib.sha256((D/'current-mesh'/f'{key}.json').read_bytes()).hexdigest()})
+manifest={'status':'C layout reference only; no replacement structure or print release','units':'mm','meshWorldCoordinates':True,'meshImportsNeedAdditionalTransform':False,'batterySolid':{'name':'PB1033MI nominal battery CONCEPT','originMinMm':[-45.45,-13,-38.95],'dimensionsMm':[80.9,26,65.9],'color':'#56a9d4','status':'Nominal manufacturer envelope, not modeled internal contents or tolerance'},'parts':rows,'coordinateContract':str(D/'current-coordinate-contract.json'),'notes':['No early humanoid STEP parts used.','No conversion of mesh faces into invented feature-history solids.','Orange torso sides and power structure still overlap battery intentionally: baseline geometry requiring redesign.'],'sourceHashes':{str(p):hashlib.sha256(p.read_bytes()).hexdigest()for p in [D/'current-coordinate-contract.json',Path(__file__)]}}
+(D/'fusion-import-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print('exported',len(rows),'parts')

@@ -1,0 +1,97 @@
+{
+ "method": "Static mass and whole-robot COM estimate for layout F (no simulation). Printed parts: solid volume x 1.24 g/cm3 x the slicer\nfill fraction recorded in hardware-design-20260912/whole-robot-20260912/dynamics/v19-20261014/v19-mass-items.json. Boards:\nXL4015 20 g each (estimate from similar modules), 5991 3.5 g (Adafruit datasheet). Screws: 14 x M2 (12 x M2 x 6: 6 XL4015, 4 5991, 2 cap ears; 2 x M2 x 4 at the z 17.7 XL4015 holes) at 0.17 g each (estimate, upper bound).\nThe V1.8 cover (slicer mass, v19-mass-items.json) is removed. Baseline: v19-walk-summary.json mass/asbuilt-batteryremove60\n(COM at HOME in the trunk frame). Wires are not included. Writes mass_estimate.json.",
+ "baseline": {
+  "case": "asbuilt-batteryremove60",
+  "totalMassG": 792.6,
+  "comMm": [
+   0.57,
+   -0.22,
+   21.86
+  ]
+ },
+ "items": [
+  {
+   "id": "rear_frame",
+   "g": 11.08,
+   "com": [
+    -48.44,
+    -0.14,
+    -1.29
+   ],
+   "label": "CAD volume 10.50 cm3 x 1.24 x 0.851"
+  },
+  {
+   "id": "rear_lid",
+   "g": 6.62,
+   "com": [
+    -64.97,
+    0.2,
+    7.57
+   ],
+   "label": "CAD volume 6.28 cm3 x 1.24 x 0.851"
+  },
+  {
+   "id": "xl4015_left",
+   "g": 20.0,
+   "com": [
+    -56.45,
+    0.0,
+    28.2
+   ],
+   "label": "estimate (similar modules); COM = mesh bounding-box centre"
+  },
+  {
+   "id": "xl4015_right",
+   "g": 20.0,
+   "com": [
+    -56.45,
+    0.0,
+    -0.4
+   ],
+   "label": "estimate (similar modules); COM = mesh bounding-box centre"
+  },
+  {
+   "id": "pd5991",
+   "g": 3.5,
+   "com": [
+    -55.05,
+    0.57,
+    -24.16
+   ],
+   "label": "datasheet 3.5 g"
+  },
+  {
+   "id": "screws_14xM2x6",
+   "g": 2.38,
+   "com": [
+    -55.0,
+    0.0,
+    0.0
+   ],
+   "label": "estimate"
+  },
+  {
+   "id": "rear_pack_cover_removed",
+   "g": -6.304,
+   "com": [
+    -45.8,
+    -0.0,
+    -5.3
+   ],
+   "label": "slicer (V1.8 cover)"
+  }
+ ],
+ "printedG": 17.7,
+ "netAddedG": 57.3,
+ "newTotalG": 849.9,
+ "comShiftMm": [
+  -3.87,
+  0.02,
+  -0.84
+ ],
+ "newComMm": [
+  -3.3,
+  -0.2,
+  21.02
+ ]
+}

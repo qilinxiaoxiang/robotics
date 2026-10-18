@@ -1,0 +1,508 @@
+// Actual geometry and current schedule are embedded by build_leg_guide.py.
+const $ = id => document.getElementById(id);
+const SERVICE = typeof TORSO_SERVICE==='undefined' ? null : TORSO_SERVICE;
+if((SERVICE && (SERVICE.integrationReady!==true || SERVICE.module?.id!=='torso')) || (DATA.modules?.some(module=>module.id==='torso') && !SERVICE))throw new Error('The torso service workflow is missing or has not passed verification. Rebuild the guide with its verified service data.');
+const MODULES = DATA.modules?.map(module => module.id==='torso' && SERVICE?.module ? SERVICE.module : module);
+const panel = $('panel'), host = $('viewport'), labelHost = $('labels');
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#e8ede7');
+const camera = new THREE.PerspectiveCamera(34,1,.1,4000);camera.up.set(0,0,1);
+let renderer;
+try { renderer = new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); }
+catch(e){$('error').style.display='block';$('error').textContent='3D could not start: '+e.message;throw e;}
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;host.append(renderer.domElement);
+const controls = new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;
+scene.add(new THREE.HemisphereLight(0xffffff,0x7a8d7d,2.1));
+const light=new THREE.DirectionalLight(0xffffff,2.8);light.position.set(-120,-200,240);scene.add(light);
+const fill=new THREE.DirectionalLight(0xffffff,1.2);fill.position.set(160,160,80);scene.add(fill);
+const meshes=[], markers=[], labels=[], screwModels=[];
+const motorRoles={1:'Right ankle pitch',2:'Right knee pitch',3:'Right hip pitch',4:'Right hip roll',5:'Right hip yaw',11:'Head pitch',12:'Neck pitch',13:'Head yaw',14:'Head roll',15:'Beak',6:'Ankle pitch',7:'Knee pitch',8:'Hip pitch',9:'Hip roll',10:'Hip yaw'};
+const ringRoles={ring7:'Knee',ring8:'Hip pitch',ring9:'Hip roll'};
+const screwKinds={electronics:'Electronics',mount:'Mount',horn:'Output',case:'Case',rear_center:'Rear center',print_retainer:'Ankle-to-foot'};
+const screwPrefixes={electronics:'E',mount:'M',horn:'O',case:'C',rear_center:'R',print_retainer:'F'};
+const screwCounts={};
+const screwCode=new Map([...DATA.screws].sort((a,b)=>a.stage-b.stage).map(c=>[c.id,(screwPrefixes[c.category]||'E')+(screwCounts[c.category]=(screwCounts[c.category]||0)+1)]));
+let selectedScrew=null, highlighted=null, washerInspection=null, pathInspection=null, motionProgress=1, playing=false, animationToken=0;
+const screwEnvelope=new THREE.Group();scene.add(screwEnvelope);
+function stopMotion(){playing=false;animationToken++;host.dataset.playing='false';if($('play-motion'))$('play-motion').textContent=isClosureStep()?'Play approach':motionLabels(currentOperation()).play;}
+function resetInteraction(){clearWireScene();stopMotion();assemblyPhase='assemble';for(const k of ['motionStopped','motionContactPair','targetReached','fixedPoses','pathId','pathFraction','contactStopped','closurePath','closureIsolated','closureTargetReached','closureContactPair','closureStopTranslation'])delete host.dataset[k];screwModels.forEach(m=>m.visible=false);washerInspection=null;pathInspection=null;highlighted=null;motionProgress=1;screwEnvelope.visible=false;}
+
+function decode(s,Type){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new Type(u.buffer);}
+for(const p of DATA.parts){
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(decode(p.positionB64,Float32Array),3));geo.setIndex(new THREE.BufferAttribute(decode(p.indexB64,Uint32Array),1));geo.computeVertexNormals();
+ const material=new THREE.MeshStandardMaterial({color:p.color,roughness:p.colorName==='Metal'?.28:.66,metalness:p.colorName==='Metal'?.65:p.colorName==='Motor'?.12:0,side:THREE.FrontSide});
+ const mesh=new THREE.Mesh(geo,material);mesh.userData={part:p};scene.add(mesh);meshes.push(mesh);
+ const label=document.createElement('div');label.className='label';label.textContent=p.key.startsWith('motor')?'Motor ID'+p.key.slice(5)+' · '+motorRoles[p.key.slice(5)]:ringRoles[p.key]?'Ø22 ring · '+ringRoles[p.key]:p.name;label.style.pointerEvents='auto';label.setAttribute('role','button');label.tabIndex=0;label.onclick=()=>highlightPart(p.key);label.onkeydown=e=>{if(e.key==='Enter')highlightPart(p.key);};labelHost.append(label);labels.push({el:label,mesh,center:new THREE.Vector3(...p.center)});
+}
+const markerColors={electronics:0x58796b,mount:0x58796b,horn:0x1680be,case:0xd47429,rear_center:0x8a53a1,print_retainer:0x16836a};
+for(const c of DATA.screws){const group=new THREE.Group();const direction=new THREE.Vector3(...c.world_axis).normalize();
+ const base=new THREE.Vector3(...c.world_center_mm);const head=base.clone().addScaledVector(direction,6);
+ group.add(new THREE.ArrowHelper(direction.clone().negate(),head,6,(markerColors[c.category]||0x58796b),2,1.2));
+ const dot=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),new THREE.MeshBasicMaterial({color:(markerColors[c.category]||0x58796b),depthTest:false}));dot.position.copy(base);dot.renderOrder=8;group.add(dot);
+ const sourceAlias={20:'plate',22:'plate',14:'hip',60:'hip',30:'lower',32:'lower',36:'yaw',38:'yaw',50:'passive',51:'passive',74:'thigh',66:'ankle'};
+ group.userData={screw:c,partKey:c.partKey||sourceAlias[c.source_ids?.[0]]||'motor'+c.servo_ids[0]};scene.add(group);markers.push(group);group.visible=false;
+ const label=document.createElement('button');label.className='label screwlabel';label.textContent=screwCode.get(c.id);label.style.borderColor='#'+(markerColors[c.category]||0x58796b).toString(16).padStart(6,'0');
+ label.title=`${screwCode.get(c.id)} · ${c.servo_ids[0]?'Motor ID'+c.servo_ids[0]:c.ownerLabel||'Mount'} · ${screwKinds[c.category]||c.category} · ${c.spec.replace(' x ',' × ')}`;
+ label.setAttribute('aria-label',label.title);label.onclick=()=>selectScrew(c);labelHost.append(label);labels.unshift({el:label,mesh:group,center:head});
+}
+for(const c of DATA.screws){
+ const group=new THREE.Group(),d=Number(c.spec.match(/M([\d.]+)/)?.[1]||2),len=c.length_mm||Number(c.spec.match(/x (\d+)/)?.[1]||6),mat=new THREE.MeshStandardMaterial({color:0x353e42,metalness:.4,roughness:.6});
+ const sh=new THREE.Mesh(new THREE.CylinderGeometry(d/2,d/2,len,12),mat);sh.rotation.x=Math.PI/2;sh.position.z=-len/2;group.add(sh);const hd=new THREE.Mesh(new THREE.CylinderGeometry(d*.85,d*.85,1,16),mat.clone());hd.rotation.x=Math.PI/2;hd.position.z=.5;group.add(hd);
+ group.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),new THREE.Vector3(...c.world_axis).normalize());group.visible=false;group.userData.screw=c;scene.add(group);screwModels.push(group);
+}
+const grid=new THREE.GridHelper(420,28,0xc2cec1,0xd5ded2);grid.rotation.x=Math.PI/2;grid.position.z=-145;scene.add(grid);
+let operation=0, assemblyPhase='assemble';
+let section='parts', stage=1, selected=null, mode='kit', showLabels=true, showScrews=false, ghost=false, separation=0;
+let partGroups=[
+ {keys:['thigh'],name:'Left thigh body',quantity:1}, {keys:['plate'],name:'Thigh reinforcing plate',quantity:1},
+ {keys:['lower'],name:DATA.parts.find(p=>p.key==='lower')?.name||'Lower-leg link',quantity:1},{keys:['ankle'],name:'Left ankle bracket',quantity:1},
+ {keys:['foot'],name:'Left foot',quantity:1},{keys:['hip'],name:'Hip bracket',quantity:1},
+ {keys:['yaw'],name:'Yaw-to-roll link',quantity:1},{keys:['passive'],name:'Roll support plate',quantity:1},
+ {keys:['ring7','ring8','ring9'],name:'22 mm sliding rings',quantity:3},{keys:['smallring'],name:'14.6 mm ankle ring',quantity:1},
+ {keys:['motor6','motor7','motor8','motor9','motor10'],name:'XL330-M288-T motors',quantity:5},
+ {keys:['washer6','washer9'],name:'0.5 mm metal washers',quantity:2}
+];
+const leftKneeWashers=DATA.parts.filter(p=>p.moduleId==='left-leg'&&p.fastenerRevision?.kind==='knee-washer-repair');
+if(leftKneeWashers.length)partGroups.push({keys:leftKneeWashers.map(p=>p.key),name:'Knee repair metal washers',quantity:leftKneeWashers.length});
+const thumbs={};
+function thumbnails(){const rr=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});rr.setSize(210,150);rr.setPixelRatio(1);rr.outputColorSpace=THREE.SRGBColorSpace;
+ const ss=new THREE.Scene();ss.background=new THREE.Color('#eef1eb');ss.add(new THREE.HemisphereLight(0xffffff,0x849882,2.5));const ll=new THREE.DirectionalLight(0xffffff,3);ll.position.set(-90,-120,140);ss.add(ll);
+ for(const group of partGroups){if(thumbs[group.keys[0]])continue;const original=meshes.find(m=>m.userData.part.key===group.keys[0]);const mm=new THREE.Mesh(original.geometry,original.material.clone());ss.add(mm);const b=new THREE.Box3().setFromObject(mm);const cent=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3());const ca=new THREE.PerspectiveCamera(32,1.4,.1,1000);ca.up.set(0,0,1);ca.position.copy(cent).add(new THREE.Vector3(-1.2,-1.8,1.15).normalize().multiplyScalar(Math.max(...sz.toArray())*2.8));ca.lookAt(cent);rr.render(ss,ca);thumbs[group.keys[0]]=rr.domElement.toDataURL('image/png');ss.remove(mm);mm.material.dispose();}rr.dispose();}
+// Thumbnails are generated after choosing a build section.
+let steps=[
+ {title:'Build the thigh module',keys:['thigh','plate','motor7','motor8','ring7'],
+  bullets:['Identify orange left thigh 74 and the thin black reinforcing plate 20/22. Put the two XL330 cases into their seats; ID7 is the knee end, ID8 is the hip-pitch end.',
+   'Place the 22 mm printed ring at the opposite support of the knee axis. Match the existing locating pegs and round seats. Do not drill through solid locating pegs.',
+   'Fit the thin plate against the case side of BOTH motors. Use two M2×8 TAP case screws per motor, four total. Rear-center retainers: one M2.6×6 TAP per motor, no washer.',
+   'Keep the four-hole rotating outputs accessible for the lower-leg and hip links. Leave those output screws for the next steps.'],
+  check:'Two cases are fixed to the orange thigh; the rotating output faces remain free. Hand-tighten and check movement without torque.'},
+ {title:'Connect the lower leg and ankle',keys:['lower','motor6','ankle','foot','smallring','washer6'],
+  bullets:[`Attach the upper end of the lower-leg link to the ID7 knee output using four ${kneeScrewSpec()} screws. Match the link revision shown in this guide. Keep the orange thigh stationary and the black link on the rotating face.`,
+   'Fit ID6 at the bottom of the link. Fasten its case to that link with two M2×10 TAP screws. The integrated rear-center retainer takes one M2.6×8 TAP screw AND the specified 0.5 mm washer.',
+   'Attach orange LEFT ankle 66 to the ID6 rotating output using four M2×4 TAP screws. The corresponding right ankle 64 has the opposite geometry.',
+   'Fit the Ø14.6 printed sleeve around the black lower-link boss and into the Ø15 orange ankle pocket. The ring can stay with the link; relative motion must remain possible between its outer surface and the orange ankle. This is a single printed sleeve, not a rolling bearing.',
+   'Fit yellow LEFT foot 44 to orange ankle 66. Align its single pilot hole with the countersunk clearance hole in the ankle. From inside the orange ankle, insert one M2×6 TAP into the yellow foot. Hand-tighten only and confirm the foot seats without deforming the pilot boss. This additional print-to-print screw was recovered from the actual meshes, not specified in the old motor-only schedule.'],
+  check:'The knee output moves the lower-leg link. The ankle output moves the orange bracket and foot. The small sleeve sits around the printed lower-link boss; the orange ankle must rotate around its outside without binding.'},
+ {title:'Build and connect the hip-roll module',keys:['yaw','passive','hip','motor9','ring8','ring9','washer9'],
+  bullets:['Fit ID9 between the short black yaw-to-roll link 36/38 and the tall black support plate 50/51. The case uses two M2×8 TAP screws through each piece, four total.',
+   'The integrated rear-center retainer of ID9 uses one M2.6×6 TAP screw with the specified 0.5 mm washer. Fit the 22 mm sliding ring on the passive roll support.',
+   'Orange hip bracket 14/60 connects the perpendicular outputs: four M2×6 TAP screws into ID9, then four M2×6 TAP into ID8. Match both round support seats before tightening. The remaining 22 mm ring supports the ID8 output side.',
+   'Look from both sides in the 3D view. A motor case and its output must be fixed to different rigid links, or the joint will be locked.'],
+  check:'Yaw-to-roll link carries the roll case; the orange bridge turns with ID9 and joins ID8. Both perpendicular joints remain free.'},
+ {title:'Add the hip-yaw motor',keys:['motor10'],
+  bullets:['Attach the top of black yaw-to-roll link to ID10 output using four M2×6 TAP screws. Hold the motor case while aligning the link.',
+   'Keep ID10 case loose from the torso for this workbench task. Its four torso case screws are a separate future operation: three M2×10 TAP and one M2×8 TAP, with different hole locations.',
+   'The completed chain is ID10 yaw → ID9 roll → ID8 hip pitch → ID7 knee → ID6 ankle. These are planned IDs: existing OMX motors must be re-addressed one at a time during separate commissioning.',
+   'Keep this mechanical subassembly unpowered. Complete its local cables and the separate body supply connections before connecting source power.'],
+  check:'Check all axes gently with torque off, screw heads clear, and no rubbing or forced fits. This is mechanical assembly, not motor-zero calibration.'}
+];
+
+let operations=[
+ [
+  {kind:'place',title:'Seat the two motors and reinforcing plate',add:['thigh','motor7','motor8','plate'],text:'Use orange left thigh 74 and black plate 20/22. Motor ID7 is the knee end; ID8 is the hip-pitch end. Seat the cases, then place the thin reinforcing plate against their stationary case corners. Keep the output faces accessible.'},
+  {kind:'fasten',title:'Fasten the four case corners',screws:c=>c.stage===1&&c.category==='case',text:'Install C1–C4: M2×8 TAP, two for each motor. These orange markers identify case attachment holes.'},
+  {kind:'place',title:'Place the knee support ring',add:['ring7'],text:'Place one black Ø22 × 4 mm support ring at the opposite support of the knee axis. Match the existing locating features. Do not drill through solid locating pegs.'},
+  {kind:'fasten',title:'Install the two rear-center retainers',screws:c=>c.stage===1&&c.category==='rear_center',text:'Install R1 and R2: one M2.6×6 TAP per motor, without a washer. They use separate rear-center holes, not the orange case-corner holes.'}
+ ],
+ [
+  {kind:'place',title:'Place the lower-leg link on the knee output',add:['lower'],text:'Align the upper end of black link 30/32 with the ID7 rotating knee output. Keep the orange thigh stationary.'},
+  {kind:'fasten',title:'Fasten the knee output',screws:c=>c.stage===2&&c.servo_ids[0]===7,text:`Install the four ${kneeScrewSpec()} screws at the ID7 output. Match the indicated link revision. The link and output rotate together.`},
+  {kind:'place',title:'Seat the ankle motor in the lower-leg link',add:['motor6'],text:'Fit motor ID6 at the lower end of the black link. Its case stays with the link.'},
+  {kind:'fasten',title:'Fasten the ankle motor case and rear retainer',add:['washer6'],screws:c=>c.stage===2&&c.servo_ids[0]===6&&['case','rear_center'].includes(c.category),text:'Use two M2×10 TAP case screws. The rear-center retainer uses one M2.6×8 TAP with one 0.5 mm metal washer. Put the washer directly under the screw head, outside the printed rear-retainer shoulder: screw head → washer → printed retainer → motor rear pilot.'},
+  {kind:'place',title:'Place the ankle ring and orange bracket',add:['smallring','ankle'],text:'Fit the black Ø14.6 printed sleeve around the lower-link boss and into the Ø15 pocket of orange LEFT ankle 66. Align the bracket with the ID6 output. The sleeve may stay fixed on the black boss; its outer surface must allow the orange ankle to turn. The right ankle 64 is the opposite version.'},
+  {kind:'fasten',title:'Fasten the ankle output',screws:c=>c.stage===2&&c.category==='horn'&&c.servo_ids[0]===6,text:'Install four M2×4 TAP screws into the ID6 rotating output. The orange bracket turns with the output.'},
+  {kind:'place',title:'Seat the yellow left foot',add:['foot'],text:'Fit yellow foot 44 into orange ankle 66. Align the foot pilot hole with the ankle retaining hole.'},
+  {kind:'fasten',title:'Retain the foot',screws:c=>c.category==='print_retainer',text:'From inside the orange ankle, install one M2×6 TAP into the yellow foot. Hand-tighten and check that the pilot boss is not deformed.'}
+ ],
+ [
+  {kind:'place',title:'Place the hip-roll motor and its supports',add:['yaw','passive','motor9','ring9'],text:'Seat ID9 between the short black yaw-to-roll link 36/38 and tall support plate 50/51. Place the Ø22 support ring on the passive roll support.'},
+  {kind:'fasten',title:'Fasten the hip-roll case and rear retainer',add:['washer9'],screws:c=>c.stage===3&&c.servo_ids[0]===9&&['case','rear_center'].includes(c.category),text:'Use four M2×8 TAP case screws: two through each black support. Add one M2.6×6 TAP rear-center screw and one 0.5 mm metal washer. Put the washer directly under its head, outside the printed retainer: screw head → washer → printed retainer → motor rear pilot.'},
+  {kind:'place',title:'Place the orange hip bridge and remaining ring',add:['hip','ring8'],text:'Align orange bridge 14/60 with the perpendicular ID9 and ID8 outputs. Place the remaining Ø22 support ring at the hip-pitch support.'},
+  {kind:'fasten',title:'Fasten the two perpendicular outputs',screws:c=>c.stage===3&&c.category==='horn',text:'Install four M2×6 TAP into ID9 and four M2×6 TAP into ID8. Each motor case and output attach to different rigid links.'}
+ ],
+ [
+  {kind:'place',title:'Place the hip-yaw motor',add:['motor10'],text:'Align the top of the yaw-to-roll link with the ID10 output. Leave the motor case detached from the torso for this one-leg workbench task.'},
+  {kind:'fasten',title:'Fasten the hip-yaw output',screws:c=>c.stage===4,text:'Install four M2×6 TAP output screws. The four torso case screws belong to a later operation. Check the assembled axes gently with torque off; motor IDs and mechanical zero have not been commissioned.'}
+ ]
+];
+const leftGroups=partGroups;let leftSteps=steps,leftOperations=operations;
+if(MODULES){const leftModule=MODULES.find(m=>m.id==='left-leg');if(leftModule){leftOperations=[leftModule.operations.map(o=>({...o,screws:c=>(o.screwIds||[]).includes(c.id)}))];leftSteps=[{title:'Left leg',shortTitle:'Left leg',keys:leftModule.partKeys,check:leftModule.checks.join(' ')}];steps=leftSteps;operations=leftOperations;}}
+if(DATA.leftScrewIds){const allowed=new Set(DATA.leftScrewIds);for(const o of leftOperations.flat()){if(o.screws){const original=o.screws;o.screws=c=>allowed.has(c.id)&&original(c);}}}
+let buildSection='left-leg',sectionKeys=new Set(leftGroups.flatMap(g=>g.keys));
+function currentHeadPrototypeSection(id=buildSection){return ['head','camera','electronics','head-close'].includes(id)&&DATA.headPrototypeRevision?.status==='CURRENT_PRINT_PROTOTYPE_GUIDE';}
+function legacyHeadSection(id=buildSection){return ['head','camera','electronics','head-close'].includes(id)&&!currentHeadPrototypeSection(id);}
+function displayModuleTitle(module){return module?(currentHeadPrototypeSection(module.id)?'V1.5 prototype · ':legacyHeadSection(module.id)?'Legacy reference · ':'')+module.title:'MicroDuck';}
+function legacyHeadNotice(){
+ if(currentHeadPrototypeSection())return '<div class="note" data-head-revision="V1.5"><strong>V1.5 print-and-fit assembly</strong><p>These steps use the current incremental parts: eye camera, original jaw support and the curved cap with integral board mounts. Preconnect on the open bench. The internal USB cable ends and populated cap closure still require a fit check.</p></div>';
+ if(!legacyHeadSection())return '';
+ return '<div class="note amber" data-legacy-head="true"><strong>Legacy head geometry · reference only</strong><p>These parts and steps show the superseded head and rooftop camera arrangement. Use the current guide build and the <a href="/REPRINT-PLAN.html">V1.5 incremental print set</a> for the replacement parts.</p></div>';
+}
+function sectionParts(){return DATA.parts.filter(p=>sectionKeys.has(p.key));}
+function sectionScrews(){if(buildSection==='left-leg')return DATA.screws.filter(c=>leftOperations.flat().some(o=>o.screws?.(c)));const mod=MODULES?.find(m=>m.id===buildSection);const ids=new Set(mod?.operations.flatMap(o=>o.screwIds||[])||[]);return DATA.screws.filter(c=>ids.has(c.id));}
+function selectBuildSection(id){
+ resetInteraction();buildSection=id;wiringReturnOperation=null;
+ if(id==='left-leg'){partGroups=leftGroups;steps=leftSteps;operations=leftOperations;sectionKeys=new Set(leftGroups.flatMap(g=>g.keys));}
+ else {const mod=MODULES.find(m=>m.id===id);sectionKeys=new Set(mod.partKeys);partGroups=mod.partKeys.map(k=>({keys:[k],name:DATA.parts.find(p=>p.key===k).name,quantity:1}));steps=[{title:displayModuleTitle(mod),shortTitle:displayModuleTitle(mod),keys:mod.partKeys,check:(mod.checks||[]).join(' ')}];operations=[mod.operations.map(o=>({...o,screws:c=>(o.screwIds||[]).includes(c.id)}))];}
+ stage=1;operation=0;document.querySelector('h1').textContent=(id==='left-leg'?'Left leg':displayModuleTitle(MODULES.find(m=>m.id===id)))+' · identify, prepare, assemble';document.querySelector('.tag').textContent=currentHeadPrototypeSection()?'V1.5 replacement parts · unpowered trial fit':sectionParts().filter(p=>p.key.startsWith('motor')).length+' motors · existing printed parts · unpowered assembly';setSection('parts');host.dataset.buildSection=id;
+}
+function initBuildSections(){const headLink=$('head-review-link');if(headLink){headLink.hidden=!DATA.headPrototypeRevision;headLink.onclick=()=>{$('build-section').value='electronics';selectBuildSection('electronics');setSection('assembly');};}if(!MODULES)return;const sel=$('build-section');sel.hidden=false;sel.innerHTML='<option value="left-leg">Left leg</option>'+MODULES.filter(m=>m.id!=='left-leg').map(m=>`<option value="${m.id}">${displayModuleTitle(m)}</option>`).join('');sel.onchange=e=>selectBuildSection(e.target.value);}
+function currentOperation(){return operations[stage-1][operation];}
+function isServiceModule(){return buildSection==='torso' && !!SERVICE?.module;}
+function isScrewRemoval(op){return op?.screwAction==='remove';}
+function isPartRemoval(op){
+ if(!isServiceModule() || !op?.motionWaypoints)return false;
+ const points=op.motionWaypoints.points;
+ return points?.length>1 && Math.hypot(...points[points.length-1])>Math.hypot(...points[0]);
+}
+function operationLabel(op,compact=false){
+ if(isScrewRemoval(op))return compact?'Remove':'Remove screws';
+ if(op?.screwAction==='refasten')return compact?'Refasten':'Refasten saved screws';
+ if(isPartRemoval(op))return compact?'Take out':'Take out assembly';
+ if(op?.kind==='place')return 'Place parts';
+ if(op?.kind==='inspect')return compact?'Inspect':'Prepare / inspect';
+ return compact?'Fasten':(op?.screwIds?.length || op?.screws && DATA.screws.some(op.screws))?'Install screws':'Retain / check';
+}
+function motionLabels(op){
+ let labels={play:'Play insertion',start:'Pull apart',end:'Seated'};
+ if(!pathInspection && !washerInspection){
+  if(op?.motionStop)labels={play:'Play to contact',start:'Pull apart',end:'Stop before contact'};
+  else if(isScrewRemoval(op))labels={play:'Play removal',start:'Fastened',end:'Removed'};
+  else if(op?.screwAction==='refasten')labels={play:'Play refastening',start:'Saved screws out',end:'Refastened'};
+  else if(isPartRemoval(op))labels={play:'Play removal',start:'In place',end:'Removed'};
+  labels={...labels,...(op?.motionLabels||{})};
+ }
+ return labels;
+}
+function assemblyIntro(){
+ if(currentOperation()?.kind==='inspect')return 'Follow Prepare, Assemble and Check in order. Open the linked cable views to inspect the named connection before closing its cover.';
+ return isServiceModule() ? SERVICE.module.intro || 'For legs whose hip joints are already fastened, follow the matching left or right removal steps and save seven screws per leg. The other joints stay assembled. If both hip connections are still open, begin at operation 11; do not fasten them just to remove them again.' : 'Place parts → fasten them → place the next parts → fasten again. Only parts introduced so far are shown; current parts stay solid, earlier parts are faded.';
+}
+function serviceFastenerSummary(){
+ if(!isServiceModule())return null;
+ const ops=SERVICE.module.operations;
+ const reused=new Set(ops.filter(op=>['remove','refasten'].includes(op.screwAction)).flatMap(op=>op.screwIds||[]));
+ const installed=new Set(ops.filter(op=>op.screwAction==='install').flatMap(op=>op.screwIds||[]).filter(id=>!reused.has(id)));
+ return {reused:reused.size,installed:installed.size};
+}
+function fastenerPreparationIntro(){
+ const counts=serviceFastenerSummary();
+ return counts ? `For already fastened hip joints, save seven screws per leg for reuse (${counts.reused} if both sides are closed). The remaining leg screws stay in place. The ${counts.installed} torso fasteners come from the existing hardware; additional hardware required: 0.` : 'Prepare these fasteners before this module. Click the numbered insertion markers during its fastening operations.';
+}
+function nonFastenerNote(op){
+ if(op?.kind==='inspect')return 'Complete the listed check before continuing. Install only the fasteners explicitly listed for this operation.';
+ if(isServiceModule())return isPartRemoval(op)?'Keep the removed assembly supported on the bench. Its retained screws and joints move together.':'Follow the shown bench setup. Only the screws explicitly named in a removal step are taken out.';
+ return 'Seat the shown parts first. The next operation identifies their exact screws.';
+}
+function screwApproachMm(op,c){return op?.screwApproachMm??c?.fastenerRevision?.approachMm??18;}
+function screwTravelFraction(op,t){return isScrewRemoval(op)?t:1-t;}
+function movingPartKeys(){return [...new Set([...(currentOperation().add||[]),...(currentOperation().moveKeys||[]),...(currentOperation().motionWaypoints?.movingKeys||[])])];}
+function activeScrews(){return section==='assembly'?(currentOperation().screws?DATA.screws.filter(currentOperation().screws):[]):DATA.screws;}
+function assembledKeys(){
+ const op=currentOperation();
+ if(isServiceModule()){
+  const explicit=op.visiblePartKeys??op.visibleKeys??op.isolatedPartKeys;
+  if(Array.isArray(explicit))return new Set(explicit);
+ }
+ const mod=MODULES?.find(m=>m.id===buildSection),context=mod?.partKeys.filter(k=>!(mod.ownedPartKeys||[]).includes(k))||[];
+ return new Set([...context,...operations.flatMap((ops,i)=>i<stage-1?ops.filter(o=>o.add).flatMap(o=>o.add):i===stage-1?ops.slice(0,operation+1).filter(o=>o.add).flatMap(o=>o.add):[])]);
+}
+function goOperation(delta){resetInteraction();mode='assembly';operation+=delta;if(operation>=operations[stage-1].length){if(stage<operations.length){stage++;operation=0;}else operation=operations[operations.length-1].length-1;}if(operation<0){if(stage>1){stage--;operation=operations[stage-1].length-1;}else operation=0;}selectedScrew=null;showScrews=currentOperation().kind==='fasten';$('screws-toggle').classList.toggle('active',showScrews);$('screws-toggle').setAttribute('aria-pressed',showScrews);assemblyPanel();applyView();panel.scrollTop=0;}
+
+function kneeScrewSpec(){
+ const c=DATA.screws.find(c=>c.servo_ids.includes(7)&&c.category==='horn');
+ return c?c.spec.replace(' x ',' × '):'the listed output';
+}
+function kneeFastenerExplanation(){
+ const c=DATA.screws.find(c=>c.servo_ids.includes(7)&&c.category==='horn');
+ if(!c)return '';
+ if(c.fastenerRevision)return c.fastenerRevision.notice;
+ const stack=Array.isArray(c.stack_mm)?c.stack_mm[0]:null,entry=Array.isArray(c.engagement_mm)?c.engagement_mm[0]:null;
+ return `Use the listed ${kneeScrewSpec()} with its matching link. The source head-seat stack is ${stack} mm and the audited entry is ${entry} mm. A different screw length needs a matching stack-depth check against the 3 mm output-hole limit.`;
+}
+function fastenerRevisionNotice(){
+ if(!DATA.fastenerRevision)return '';
+ const parts=sectionParts().filter(p=>p.fastenerRevision),screws=sectionScrews().filter(c=>c.fastenerRevision);
+ if(!parts.length&&!screws.length)return '';
+ const notices=[...new Set([...parts.map(p=>p.fastenerRevision.notice),...screws.map(c=>c.fastenerRevision.notice)])];
+ return `<div class="note amber" data-fastener-revision="${safe(DATA.fastenerRevision.id)}"><strong>6 mm fastener revision · match the shown parts</strong>${notices.map(n=>`<p>${safe(n)}</p>`).join('')}${parts.some(p=>['lower','right_lower'].includes(p.key)||p.fastenerRevision?.kind==='knee-washer-repair')?'<p><a href="/REPRINT-PLAN.html#knee-repair">Existing-knee repair status and new-build alternatives</a></p>':''}</div>`;
+}
+function fastenerRevisionSourceNote(){
+ if(!DATA.fastenerRevision)return '';
+ return '<p>The black neck support uses integral 1 mm seats: four M2 × 6 screws, without the retired loose neck washers. Preserve the assembled legs. Tighten the IMU pressure screws only until they contact the board; their heads remain 1.8 mm proud. The existing knee repair still needs a separate physical check.</p>'+(DATA.headPrototypeRevision?'<p>The V1.5 head steps on this page match the current incremental print set. The internal USB cable ends and populated closure remain physical fit checks.</p>':'');
+}
+
+function sourceFooter(){return `<div class="sources"><details><summary>Sources and build notes</summary><p>Colors: saved <a href="sources/print-colors.json">89-instance print manifest</a>. Orange/black retained plates use their recorded print groups; old filament presets still show green. Colors have not been checked in individual new photos.</p><p>Shapes: FanGe repo's actual community 3MF meshes, rigidly placed against the current robot model. Foot 44 and ankle 66 are aligned by their native retaining holes and mating faces; exact physical fit requires a dry-fit.</p><p>Fasteners: <a href="sources/motor-fasteners.json">current per-hole geometry audit</a> plus the recovered ankle-to-foot M2×6 TAP. That extra screw is a geometric inference: 2 mm head-seat stack, 4 mm pilot engagement, 1 mm of pilot remaining before the boss exit. Manufacturer <a href="https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/">XL330 documentation</a>. CAD checks are distinct from physical assembly.</p>${fastenerRevisionSourceNote()}<p>P5 / P6 · Assembly sequence reviewed 8 October 2026. No hardware has been powered or physically inspected by this page.</p></details></div>`;}
+function partPanel(){thumbnails();panel.innerHTML=`<div class="eyebrow">01 · Identify each item</div><h2>${isServiceModule()?'Identify the leg assemblies and torso parts':'Put these parts on the desk'}</h2><p class="intro">${isServiceModule()?'The cards identify parts within each leg. Keep assembled joints together until their specified removal step.':'Match shape first, then color.'} Click a card to inspect that exact part in 3D. Drag to rotate; scroll to zoom.</p>${legacyHeadNotice()}${fastenerRevisionNotice()}<div id="part-detail"></div><div class="cards">${partGroups.map((g,i)=>{const p=DATA.parts.find(p=>p.key===g.keys[0]);return `<button class="partcard" data-part="${i}" aria-label="Inspect ${g.name}"><img alt="Actual shape of ${g.name}" src="${thumbs[g.keys[0]]}"><div class="body"><span class="name">${g.name}</span><div class="meta"><span class="count">×${g.quantity}</span><span class="swatch" style="background:${p.color}"></span>${p.colorName==='Motor'?'Black case':p.colorName}</div></div></button>`;}).join('')}</div><div class="note">${buildSection.includes('leg')?'These leg stations use integrated printed rear retainers and the sliding rings shown above.':'Match the source ID and shape of each printed part. The neck has separate idler pieces; other modules use the retainers listed in their own steps.'}</div><button class="more" id="to-screws">Next · prepare the screws</button>${sourceFooter()}`;
+ panel.querySelectorAll('[data-part]').forEach(b=>b.onclick=()=>choosePart(+b.dataset.part));$('to-screws').onclick=()=>setSection('screws');}
+function choosePart(i){selected=partGroups[i];mode='single';const p=DATA.parts.find(p=>p.key===selected.keys[0]);$('part-detail').innerHTML=`<div class="detail"><h3>${selected.name} · ${selected.quantity} required</h3><p>${p.description}</p><p><strong>${p.colorName==='Motor'?'Black case':p.colorName}</strong> · ${p.dimensions.join(' × ')} mm bounding size</p><p>${p.aliases}</p><button id="all-parts">Back to all individual parts</button></div>`;$('all-parts').onclick=()=>{selected=null;mode='kit';$('part-detail').innerHTML='';applyView();};applyView();panel.scrollTop=0;}
+function screwSvg(d,l){const len=l*7;return `<svg viewBox="0 0 105 42" aria-hidden="true"><rect x="9" y="15" width="10" height="14" rx="4" fill="#343c39"/><rect x="19" y="20" width="${len}" height="4" fill="#525b56"/>${Array.from({length:l*2},(_,i)=>`<path d="M${20+i*3.5} 18 l2 8" stroke="#7e8780" stroke-width="1.5"/>`).join('')}<path d="M19 35H${19+len}" stroke="#799081"/><text x="${19+len/2}" y="12" font-size="9" text-anchor="middle" fill="#637a6b">${l} mm</text></svg>`;}
+function leftScrewPanel(){panel.innerHTML=`<div class="eyebrow">02 · Prepare fasteners</div><h2>${sectionScrews().length} screws + ${sectionParts().filter(p=>p.geometryKind==='specified-fastener-envelope'&&p.key.startsWith('washer')).length} washers</h2><p class="intro">For the detached leg, including the ID10 output. Includes 34 motor-joint screws and one ankle-to-foot screw. The four ID10 torso case screws are deferred.</p>${Object.entries(sectionScrews().reduce((a,c)=>{a[c.spec]=(a[c.spec]||0)+c.quantity;return a;},{})).map(([spec,q])=>{const m=spec.match(/M([\d.]+) x (\d+)/);const l=+m[2];return `<div class="spec">${screwSvg(+m[1],l)}<div><strong>${spec.replace(' x ',' × ')}</strong><small>${+m[1]===2.6?'Match ROBOTIS BHS rounded head':'PHS / pan head; correct TAP thread required'}</small></div><span class="quantity">× ${q}</span></div>`;}).join('')}${washerPreparationRows()}${fastenerRevisionNotice()}<div class="note">Match the listed screw lengths and the small metal washers against the existing hardware. Match the M2 diameter as well as length; an M3 screw is a different diameter.</div><div class="note">TAP means self-tapping. PHS_M2X06 without TAP is not automatically equivalent. Match diameter, length under the head, thread and head profile—not screw color.</div><details><summary>Knee screw length and matching link</summary><p>${safe(kneeFastenerExplanation())}</p></details><div class="note amber"><strong>One additional M2×6 TAP:</strong> the yellow foot has a retaining pilot hole matching the orange ankle. Its fastener was missing from the old motor-only schedule; it is included here from native-mesh depth measurements. Keep this screw hand-tight and check the real fit.</div><button class="more" id="to-assembly">Next · assemble the leg</button>${sourceFooter()}`;$('to-assembly').onclick=()=>setSection('assembly');}
+function headPrototypeScrewPanel(){
+ const rows=DATA.headPrototypeRevision.moduleFasteners[buildSection]||[];
+ panel.innerHTML=`<div class="eyebrow">02 · Prepare fasteners</div><h2>${rows.reduce((n,r)=>n+r.quantity,0)} specified screws</h2>${legacyHeadNotice()}<p>Prepare these screws for the open-bench steps. Match TAP and machine threads; do not use the retired board screws or Pi spacers.</p>${rows.map(r=>`<div class="spec"><strong>${safe(r.spec)}</strong><span class="quantity">× ${r.quantity}</span></div><p>${safe(r.use)}</p>`).join('')}<button class="more" id="to-assembly">Next · assemble this module</button>${sourceFooter()}`;
+ $('to-assembly').onclick=()=>setSection('assembly');
+}
+function screwPanel(){if(currentHeadPrototypeSection()){headPrototypeScrewPanel();return;}if(buildSection==='left-leg'){leftScrewPanel();return;}const ss=sectionScrews(),washers=sectionParts().filter(p=>p.key.startsWith('washer'));panel.innerHTML=`<div class="eyebrow">02 · Prepare fasteners</div><h2>${ss.reduce((n,c)=>n+(c.quantity||1),0)} specified screws</h2>${legacyHeadNotice()}<p>${safe(fastenerPreparationIntro())}</p>${fastenerRevisionNotice()}${Object.entries(ss.reduce((a,c)=>{a[c.spec]=(a[c.spec]||0)+(c.quantity||1);return a;},{})).map(([spec,q])=>{const m=spec.match(/M([\d.]+)\s*[x×]\s*(\d+)/);return `<div class="spec">${m?screwSvg(+m[1],+m[2]):''}<strong>${spec.replace(' x ',' × ')}</strong><span class="quantity">× ${q}</span></div>`;}).join('')}${washers.map(p=>`<div class="note"><strong>${p.name}</strong><p>${p.description}</p><button data-find-washer="${p.key}">Show this washer</button></div>`).join('')}<div class="note">Match thread type, diameter, length under the head and head shape. Screw heads and threads in the viewer are schematic; use the listed physical screw specification. Any fitting-only operation explains its separate retention method.</div><button class="more" id="to-assembly">Next · assemble this module</button>${sourceFooter()}`;$('to-assembly').onclick=()=>setSection('assembly');panel.querySelectorAll('[data-find-washer]').forEach(b=>b.onclick=()=>{const p=DATA.parts.find(p=>p.key===b.dataset.findWasher),c=DATA.screws.find(c=>c.id===p.fastenerId);if(c)viewWasher(c);else highlightPart(p.key);});}
+function assemblyTutorialPanel(op){
+ const tutorial=op.tutorial;
+ if(!tutorial || !['prepare','assemble','check'].every(key=>Array.isArray(tutorial[key])&&tutorial[key].length))return `<p>${op.text}</p>`;
+ const phaseNames={prepare:'1 · Prepare',assemble:'2 · Assemble',check:'3 · Check'};
+ return `<div class="assembly-phases" role="group" aria-label="Operation phases">${Object.entries(phaseNames).map(([key,label])=>`<button data-assembly-phase="${key}" class="${assemblyPhase===key?'active':''}" aria-pressed="${assemblyPhase===key}">${label}</button>`).join('')}</div><ol class="assembly-instructions" aria-live="polite">${tutorial[assemblyPhase].map(text=>{const label=String(text).replace(/\bS\d{2}-(?:case|horn|rear_center)-\d+\b/g,id=>{const c=DATA.screws.find(c=>c.id===id);return c?`${screwCode.get(id)} (motor ID ${c.servo_ids[0]})`:id;});return `<li>${safe(label)}</li>`;}).join('')}</ol>`;
+}
+function setAssemblyPhase(phase){
+ if(!['prepare','assemble','check'].includes(phase))return;
+ stopMotion();assemblyPhase=phase;
+ const op=currentOperation(),canMove=isClosureStep()||!op.animationBlockedReason||!!op.motionStop;
+ motionProgress=phase==='check'||!canMove?1:0;
+ assemblyPanel();applyView();host.dataset.assemblyPhase=phase;
+}
+function assemblyPanel(){if(isClosureStep()){closurePanel();return;}const st=steps[stage-1],op=currentOperation(),number=operations.slice(0,stage-1).reduce((n,a)=>n+a.length,0)+operation+1;
+ panel.innerHTML=`<div class="eyebrow">03 · Assembly · operation ${number} of ${operations.reduce((n,a)=>n+a.length,0)}</div><div class="steps">${steps.map((s,i)=>`<button data-stage="${i+1}" class="${stage===i+1?'active':''}">${i+1} · ${s.shortTitle||['Thigh','Lower leg','Hip roll','Hip yaw'][i]||s.title}</button>`).join('')}</div><div class="opprogress">${operations[stage-1].map((o,i)=>`<button data-operation="${i}" class="${operation===i?'active':''}">${i+1} · ${safe(operationLabel(o,true))}</button>`).join('')}</div>${legacyHeadNotice()}${operationCablePanel(op)}<div class="operation"><div class="optype">${currentHeadPrototypeSection()?'V1.5 PROTOTYPE · ':legacyHeadSection()?'LEGACY REFERENCE · ':''}${safe(operationLabel(op).toUpperCase())} · ${operation+1} / ${operations[stage-1].length}</div><h2>${op.title}</h2>${assemblyTutorialPanel(op)}${buildSection==='head-close'?'<div class="note amber">Complete the wiring stages and continuity checks before closing this cap. <button id="closure-wire">Open wiring guide</button></div>':''}</div><p class="intro">${safe(assemblyIntro())}</p>${fastenerRevisionNotice()}${operationAccessPanel(op)}${motionPanel(op)}${op.retentionNotes?.length?`<div class="note">${op.retentionNotes.map(safe).join('<br>')}</div>`:''}${op.kind==='fasten'?`<div class="legend"><span><i class="dot" style="background:#1680be"></i>O · Output</span><span><i class="dot" style="background:#d47429"></i>C · Case</span><span><i class="dot" style="background:#8a53a1"></i>R · Rear center</span>${stage===2?'<span><i class="dot" style="background:#16836a"></i>F · Foot</span>':''}</div><p class="intro">${buildSection.includes('leg')?'Orange marks case screws, not orange printed screws. One motor ID can have several screw types.':'Each numbered marker matches one fastener below; mount fasteners are labeled M.'} Click a marker to see its fixing relationship.</p><div class="screw-list">${screwGroups(activeScrews())}</div><div id="screw-detail" class="note" aria-live="polite">Click a numbered marker or matching button to identify that exact screw.</div>${activeScrews().filter(c=>c.washer_mm||c.washerKey).map(c=>`<button data-washer-view="${c.id}">View ${c.servo_ids[0]?'ID'+c.servo_ids[0]:c.ownerLabel} washer stack</button>`).join('')}`:`<div class="note">${safe(nonFastenerNote(op))}</div>`}${false?'<div class="note amber">Native dimensions: sleeve OD 14.6 mm, bore about 9.65 mm; lower-link boss about 10 mm; ankle pocket about 15 mm. The inner fit is already tight in CAD. Pressing it on can expand its outside, so nominal outer clearance does not prove a free real fit.</div><details><summary>Why keep this sleeve separate?</summary><p>A sleeve integrated into the lower link could still let the ankle rotate around its outer surface. A separate sleeve allows independent fit adjustment or replacement of a worn contact surface; these are engineering tradeoffs, not an explanation stated by the author. The ankle also has an axial retaining shoulder, so an integrated version would need an assembly-path check; simply merging these STLs does not establish that it can be installed. Current geometry is preserved. Check relative motion at sleeve outside ↔ orange ankle and its shoulder, not sleeve ↔ black link.</p></details>':''}<div class="row"><button id="previous" ${number===1?'disabled':''}>Previous operation</button><button id="next" ${number===operations.reduce((n,a)=>n+a.length,0)?'disabled':''}>Next operation</button><button id="fit-module">Focus this module</button></div><details><summary>Module check and fitting notes</summary><p>${st.check}</p><p>Mechanical alignment is separate from motor calibration. Leave output connections hand-snug for dry-fit; the pictured pose is not a calibrated motor zero.</p></details>${sourceFooter()}`;
+ panel.querySelectorAll('[data-assembly-phase]').forEach(b=>b.onclick=()=>setAssemblyPhase(b.dataset.assemblyPhase));
+ panel.querySelectorAll('[data-screw]').forEach(b=>b.onclick=()=>selectScrew(DATA.screws.find(c=>c.id===b.dataset.screw)));
+ panel.querySelectorAll('[data-washer-view]').forEach(b=>b.onclick=()=>viewWasher(DATA.screws.find(c=>c.id===b.dataset.washerView)));
+ panel.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>{stage=+b.dataset.stage;operation=0;mode='assembly';goOperation(0);});panel.querySelectorAll('[data-operation]').forEach(b=>b.onclick=()=>{operation=+b.dataset.operation;mode='assembly';goOperation(0);});
+ if($('closure-wire'))$('closure-wire').onclick=()=>setSection('wiring');bindOperationAccess();bindMotionControls();$('previous').onclick=()=>goOperation(-1);$('next').onclick=()=>goOperation(1);$('fit-module').onclick=()=>fit(meshes.filter(m=>m.visible&&steps[stage-1].keys.includes(m.userData.part.key)));
+}
+// Assembly access stays next to the operation that would close it.
+function operationAccessPanel(op){return `<div class="row"><button id="work-view">Work area</button><button id="reverse-view">Reverse side</button></div>${op.access?`<div class="note"><strong>Tool access</strong><p>${safe(op.access)}</p></div>`:''}${op.beforeClose?.length?`<div class="note"><strong>Before closing</strong><ol>${op.beforeClose.map(x=>`<li>${safe(x)}</li>`).join('')}</ol></div>`:''}${Number.isInteger(op.wiringStage)?'<button id="operation-wire">Open this wiring stage</button>':''}`;}
+function operationCamera(reverse=false){const op=currentOperation(),active=activeScrews(),keys=[...movingPartKeys(),...(op.highlightKeys||[])];let box=new THREE.Box3();const work=meshes.filter(m=>m.visible&&keys.includes(m.userData.part.key));if(work.length)for(const m of work)box.expandByObject(m);else if(active.length)for(const c of active)box.expandByPoint(new THREE.Vector3(...c.world_center_mm));else for(const m of meshes.filter(m=>m.visible))box.expandByObject(m);if(box.isEmpty())return;const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());let direction=active.length?new THREE.Vector3(...active[0].world_axis):new THREE.Vector3(...(op.approachVector||[0,-1,.5]));if(direction.length()<.01)direction.set(0,-1,.5);direction.normalize();if(reverse)direction.negate();direction.add(new THREE.Vector3(.18,0,.18)).normalize();const d=Math.max(35,size.length())*2.5;camera.position.copy(center).addScaledVector(direction,d);controls.target.copy(center);camera.near=.1;camera.far=Math.max(1000,d*5);camera.updateProjectionMatrix();controls.update();host.dataset.accessView=reverse?'reverse':'work';requestRender();}
+function operationCablePanel(op){
+ const requirements=WIRING.assemblyCablePrerequisites?.[op.id]||[];
+ if(!requirements.length)return '';
+ return `<div class="note operation-cables"><strong>Connect cables before this operation</strong>${requirements.map(r=>`<p>${safe(r.text)}${r.motorIds.length?' · Motor ID '+r.motorIds.join(', ID '):''}.</p><div class="row">${r.connectionIds.map(id=>{const c=WIRING.connections.find(x=>x.id===id);return c?`<button data-operation-cable="${safe(id)}">${safe(c.purpose)}</button>`:'';}).join('')}</div>`).join('')}<p>Keep power disconnected. Hold the plug housing; feed the soft leads by hand while seating the parts. Keep each free end accessible.</p></div>`;
+}
+function openOperationCable(id){
+ const c=WIRING.connections.find(x=>x.id===id),groups=wiringGroups();
+ const group=c&&groups.find(g=>(c.groupIds||[]).includes(g.id)&&g.connectionIds.includes(id))||groups.find(g=>g.connectionIds.includes(id));
+ if(!c||!group)throw new Error('Assembly operation refers to an unavailable cable: '+id);
+ wiringReturnOperation={moduleId:buildSection,stage,operation,phase:assemblyPhase,progress:motionProgress,showScrews};
+ setWiring(group.id);selectWiringEntry(wiringEntries().findIndex(e=>e.connection.id===id));wiringPanel();
+}
+function returnToWiringOperation(){
+ const saved=wiringReturnOperation;if(!saved)return;wiringReturnOperation=null;
+ if(buildSection!==saved.moduleId)selectBuildSection(saved.moduleId);
+ setSection('assembly');stage=saved.stage;operation=saved.operation;assemblyPhase=saved.phase;motionProgress=saved.progress;showScrews=saved.showScrews??currentOperation().kind==='fasten';$('screws-toggle').classList.toggle('active',showScrews);$('screws-toggle').setAttribute('aria-pressed',showScrews);
+ assemblyPanel();applyView();panel.scrollTop=0;
+}
+function bindOperationAccess(){panel.querySelectorAll('[data-operation-cable]').forEach(button=>button.onclick=()=>openOperationCable(button.dataset.operationCable));if($('work-view'))$('work-view').onclick=()=>operationCamera(false);if($('reverse-view'))$('reverse-view').onclick=()=>operationCamera(true);if($('operation-wire'))$('operation-wire').onclick=()=>{setWiring(wiringGroupForModule(),currentOperation().wiringStage);};}
+function screwGroups(screws){const motors={};for(const c of screws){const id=c.servo_ids[0]||c.ownerLabel||'Printed mount';(motors[id]??={});const key=c.category+'|'+c.spec;(motors[id][key]??=[]).push(c);}return Object.entries(motors).map(([id,groups])=>`<div class="screwgroup"><strong>${motorRoles[id]?'Motor ID'+id+' · '+motorRoles[id]:id}</strong>${Object.values(groups).map(cs=>`<div class="screwline"><span><i class="dot" style="background:#${markerColors[cs[0].category].toString(16).padStart(6,'0')}"></i>${screwKinds[cs[0].category]} · ${cs[0].spec.replace(' x ',' × ')} <strong>× ${cs.length}</strong>${cs[0].washer_mm?' + '+safe(washerQuantityDescription(cs[0]))+' per screw':''}</span><span>${cs.map(c=>`<button class="screwcode" data-screw="${c.id}">${screwCode.get(c.id)}</button>`).join(' ')}</span></div>`).join('')}</div>`).join('');}
+function washerDimensions(c){
+ if(c?.washerDimensionsMm)return c.washerDimensionsMm;
+ return c?.servo_ids.length?{inner:2.7,outer:5,thickness:.5}:{inner:3.2,outer:7,thickness:.5};
+}
+function washerQuantityDescription(c){
+ const d=washerDimensions(c),count=c?.washersPerScrew??c?.washerKeys?.length??1;
+ return `${count} × ${d.thickness} mm metal washer${count===1?'':'s'}`;
+}
+function washerPreparationRows(){
+ const groups=new Map();
+ for(const p of sectionParts().filter(p=>p.key.startsWith('washer'))){
+  const c=DATA.screws.find(c=>c.id===p.fastenerId),d=washerDimensions(c),key=JSON.stringify(d);
+  if(!groups.has(key))groups.set(key,{d,count:0});groups.get(key).count++;
+ }
+ return [...groups.values()].map(({d,count})=>`<div class="spec"><svg viewBox="0 0 105 42"><ellipse cx="42" cy="22" rx="18" ry="10" fill="#9baba0"/><ellipse cx="42" cy="22" rx="9.5" ry="5" fill="#fbfcf8"/></svg><div><strong>Metal small washer · ${d.thickness} mm</strong><small>ID ${d.inner} · OD ${d.outer} · ${d.thickness} mm thick</small></div><span class="quantity">× ${count}</span></div>`).join('');
+}
+function washerStackDescription(c){
+ if(c.fastenerRevision?.kind==='knee-washer-repair')return ` Stack: screw head → ${washerQuantityDescription(c)} → original lower-leg link → motor output pilot. Keep the complete washer stack directly under the head.`;
+ return ' Stack: screw head → 0.5 mm metal washer → printed rear-retainer shoulder → motor rear pilot. The silver ring is shown at this shoulder.';
+}
+function selectScrew(c){stopMotion();motionProgress=1;selectedScrew=c;showScrews=true;$('screws-toggle').classList.add('active');$('screws-toggle').setAttribute('aria-pressed',true);applyView();const box=$('screw-detail');if(box)box.innerHTML=`<strong>${isServiceModule()?safe(operationLabel(currentOperation()))+' · ':''}${screwCode.get(c.id)} · ${c.servo_ids[0]?'Motor ID'+c.servo_ids[0]:c.ownerLabel||'Mount'} · ${screwKinds[c.category]||c.category}</strong><br>${c.spec.replace(' x ',' × ')}${c.fastenerRevision?'<p>'+safe(c.fastenerRevision.notice)+'</p>':' · '}${c.category==='case'?'Fastens the reinforcing plate or link to the stationary motor case.':c.category==='rear_center'?'Retains the printed rear support at the motor case center; this is a different hole from the two case-corner screws.':c.category==='horn'?'Fastens the moving link to the rotating motor output.':c.category==='print_retainer'?'Fastens the yellow foot to the orange ankle.':safe(c.component||c.ownerLabel||'Fastens this printed mount at its indicated hole.')}${c.washer_mm?safe(washerStackDescription(c)):''}`;}
+function viewWasher(c){
+ $('wiring-view').hidden=true;host.style.visibility='visible';labelHost.hidden=false;document.querySelector('.hud').hidden=false;document.querySelector('.tools').hidden=false;
+ resetInteraction();washerInspection=c;selectedScrew=c;highlighted=c.washerKey||'washer'+c.servo_ids[0];motionProgress=0;mode='washer';showScrews=false;
+ const kneeWasher=c.fastenerRevision?.kind==='knee-washer-repair',washerSize=washerDimensions(c);
+ const sid=c.servo_ids[0],support=({6:'lower',9:'yaw',1:'right_lower',4:'right_yaw',7:'lower',2:'right_lower'})[sid]||c.partKey,washerKeys=c.washerKeys||[c.washerKey||'washer'+sid],hardware=[...washerKeys,...(c.nutKeys||[])],wp=DATA.parts.find(p=>p.key===washerKeys[0]);
+ for(const m of meshes){const k=m.userData.part.key;m.position.set(0,0,0);m.quaternion.identity();m.visible=[support,...hardware,...(sid?['motor'+sid]:(c.groupId==='camera_hinge'?['camera_pitch_foot','camera_cradle']:['camera_pitch_foot','head_cap']))].includes(k);m.material.transparent=!hardware.includes(k);m.material.opacity=hardware.includes(k)?1:.13;m.material.depthWrite=hardware.includes(k);m.material.side=THREE.FrontSide;m.material.color.set(m.userData.part.color);m.material.emissive.set(k===highlighted?0x8c7300:0);m.material.needsUpdate=true;}
+ markers.forEach(m=>m.visible=false);host.dataset.visibleScrews='[]';grid.visible=false;
+ while(screwEnvelope.children.length){const o=screwEnvelope.children[0];screwEnvelope.remove(o);o.geometry?.dispose();o.material?.dispose();}
+ const mat=new THREE.MeshStandardMaterial({color:0x454b52,metalness:.55,roughness:.4});
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(Number(c.spec.match(/M([\d.]+)/)?.[1]||3)/2,Number(c.spec.match(/M([\d.]+)/)?.[1]||3)/2,c.length_mm,24),mat);shaft.rotation.x=Math.PI/2;shaft.position.z=-c.length_mm/2;screwEnvelope.add(shaft);
+ const headRadius=kneeWasher?1.75:2.5,headHeight=kneeWasher?1.273:1.5;
+ const head=new THREE.Mesh(new THREE.CylinderGeometry(headRadius,headRadius,headHeight,32),mat.clone());head.rotation.x=Math.PI/2;head.position.z=headHeight/2;screwEnvelope.add(head);
+ screwEnvelope.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),new THREE.Vector3(...c.world_axis));screwEnvelope.visible=true;
+ const center=new THREE.Vector3(...c.world_center_mm),axis=new THREE.Vector3(...c.world_axis),side=new THREE.Vector3(0,0,1);if(Math.abs(axis.dot(side))>.8)side.set(0,1,0);
+ controls.target.copy(center).addScaledVector(axis,sid?7:-7);const viewScale=sid?1:1.3;camera.position.copy(controls.target).addScaledVector(axis,40*viewScale).addScaledVector(side,32*viewScale).add(new THREE.Vector3(27*viewScale,0,0));camera.near=.5;camera.far=180;camera.updateProjectionMatrix();controls.update();
+ panel.innerHTML=`<div class="eyebrow">Washer location · ${sid?'motor ID'+sid:safe(c.ownerLabel)}</div><h2>This thin silver ring is the washer</h2><p>The yellow highlight marks the <strong>metal washer</strong>. Each washer is Ø${washerSize.outer} outside × Ø${washerSize.inner} inside × ${washerSize.thickness} mm thick.</p><div class="stack-order"><span>1 · Screw head</span><b>↓</b><span class="washer-chip">2 · ${safe(washerQuantityDescription(c))}</span><b>↓</b><span>3 · ${kneeWasher?'Original black lower-leg link':sid?'Black printed rear retainer':'Printed mounting faces'}</span><b>↓</b><span>4 · ${kneeWasher?'Motor output pilot':sid?'Motor rear-center hole':c.washerKeys?.length===2?'Opposite washer, then nut':'Retaining nut'}</span></div><p><strong>${sid?'ID'+sid:safe(c.ownerLabel)}: ${c.spec.replace(' x ',' × ')}</strong>. ${kneeWasher?'Keep the ankle and foot assembled. Remove one knee screw, add its specified washer stack directly under the head, and refasten before moving to the next screw.':sid?'Slide the washer onto this screw before inserting it. The washer sits outside the printed shoulder, directly under the head.':c.washerKeys?.length===2?'One washer goes outside each hinge ear. The nut goes against the far washer; keep the tilt joint adjustable.':'The washer spreads the head load against the printed foot; the nut retains the other end.'}</p><div class="note">Parts are pulled apart along the screw axis to expose the stack. The screw shaft shows nominal size; its head and threads are simplified. Match the listed physical screw specification. The washer retains its actual dimensions.</div>${motionPanel({add:hardware})}<div class="row">${DATA.screws.filter(s=>s.washerKey||s.washer_mm).map(s=>`<button data-washer-jump="${s.id}">${s.servo_ids[0]?'ID'+s.servo_ids[0]:safe(s.ownerLabel)+' · '+screwCode.get(s.id)} washer</button>`).join('')}<button id="washer-return">Return to assembly step</button></div>`;
+ bindMotionControls();panel.querySelectorAll('[data-washer-jump]').forEach(b=>b.onclick=()=>viewWasher(DATA.screws.find(c=>c.id===b.dataset.washerJump)));$('washer-return').onclick=()=>{resetInteraction();section='assembly';for(const name of ['parts','screws','assembly','wiring'])$('tab-'+name)?.classList.toggle('active',name==='assembly');mode='assembly';assemblyPanel();applyView();};
+ $('viewtitle').textContent='Washer highlighted · '+(sid?'ID'+sid:c.ownerLabel)+' · exploded stack';applyMotion();
+}
+function viewAnklePath(id='blocked-preassembled-top-insertion'){
+ resetInteraction();pathInspection=PATHS.paths.find(p=>p.id===id);const a=pathInspection.animation;mode='path';section='assembly';motionProgress=0;
+ $('wiring-view').hidden=true;host.style.visibility='visible';labelHost.hidden=false;document.querySelector('.hud').hidden=false;document.querySelector('.tools').hidden=false;
+ for(const m of meshes){const k=m.userData.part.key;m.position.set(0,0,0);m.quaternion.identity();m.visible=[...a.fixedKeys,...a.movingKeys].includes(k);m.material.transparent=false;m.material.opacity=1;m.material.depthWrite=true;m.material.side=THREE.FrontSide;m.material.needsUpdate=true;m.material.color.set(m.userData.part.color);m.material.emissive.set(a.movingKeys.includes(k)?0x403b09:0);}
+ markers.forEach(m=>m.visible=false);host.dataset.visibleScrews='[]';screwModels.forEach(m=>m.visible=false);grid.visible=false;
+ const blocked=pathInspection.result==='rigid_blocked';
+ panel.innerHTML=`<div class="eyebrow">Ankle fitting · actual source geometry</div><h2>${safe(pathInspection.title)}</h2><div class="row">${PATHS.paths.map(p=>`<button data-path="${p.id}" class="${id===p.id?'active':''}">${p.id==='ring-inside-pocket'?'1 · Ring from inside':p.id==='bare-motor-into-open-fork'?'2 · Loose motor':'Why the assembled group jams'}</button>`).join('')}</div><p>${blocked?'The ring reaches the orange fork before the assembled group can seat. Playback stops at the checked contact boundary; it does not pass through the bracket.':'This isolated bench motion was sampled every 0.25 mm against the shown fixed parts, with no detected overlap above the 0.02 mm³ threshold. It does not validate the later lower-link closure.'}</p>${motionPanel({add:a.movingKeys})}<div id="path-result" class="note"></div><div class="note amber"><strong>Final closure is a separate fit checkpoint.</strong> The source sleeve bore is about 9.65 mm while the lower-link boss is about 10 mm. Their nominal final models already overlap by about 14.96 mm³. A fully rigid, non-overlapping path cannot end at that source pose; real printed compliance and actual sizes matter. Keep the ankle off the knee while fitting and do not tighten case screws before the passive seat aligns.</div><p>The sleeve is tight on the lower-link boss; relative rotation is expected at its outside against the ankle pocket. A separate sleeve permits independent fitting and replacement. Integrating it into the link could still permit outer rotation, but needs an assembly-access check. These are engineering interpretations, not a documented author rationale. A split or removable passive cheek, or revised sleeve fit, could improve assembly access. Those are redesign candidates requiring new fit and strength checks; this guide keeps your existing geometry.</p><button id="path-return">Return to assembly</button>`;
+ bindMotionControls();$('motion-end').textContent=blocked?'Show contact limit':'Seated';$('play-motion').textContent=blocked?'Play to contact':'Play insertion';panel.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>viewAnklePath(b.dataset.path));$('path-return').onclick=()=>{resetInteraction();mode='assembly';assemblyPanel();applyView();};
+ const moving=meshes.filter(m=>a.movingKeys.includes(m.userData.part.key));for(const m of moving)m.position.set(...a.frames[0].translation);fit(meshes.filter(m=>m.visible));$('viewtitle').textContent=blocked?'Blocked insertion · playback stops before overlap':'Isolated ankle · sampled partial path';applyMotion();
+}
+function motionPanel(op){if(currentHeadPrototypeSection()&&op.animationBlockedReason)return `<div class="note"><strong>Bench assembly view</strong><p>${safe(op.animationBlockedReason)}</p><div class="row">${[...new Set(op.add||[])].map(k=>`<button data-highlight="${k}">Show ${safe(DATA.parts.find(p=>p.key===k)?.name||k)}</button>`).join('')}</div><div id="part-selection" aria-live="polite"></div></div>`;if(!pathInspection&&!washerInspection&&!(op.add||[]).length&&!(op.moveKeys||[]).length&&!activeScrews().length)return '<div class="note">This is a fitting or retention check. No new screw or animated part is added.</div>';if(op.animationBlockedReason&&!op.motionStop)return `<div class="note amber"><strong>Physical fitting checkpoint</strong><p>${safe(op.animationBlockedReason)}</p><p>The target pose is shown. A complete rigid insertion path has not been established, so this step does not play a pass-through animation.</p><div class="row">${[...new Set([...(op.add||[]),...(op.moveKeys||[])])].map(k=>`<button data-highlight="${k}">Highlight ${DATA.parts.find(p=>p.key===k)?.name||k}</button>`).join('')}</div><div id="part-selection" aria-live="polite"></div></div>`;return `<div class="motion-controls"><div class="row"><button id="play-motion">${safe(motionLabels(op).play)}</button><button id="motion-start">${safe(motionLabels(op).start)}</button><button id="motion-end">${safe(motionLabels(op).end)}</button></div><label>Assembly progress <input id="motion-progress" aria-label="Assembly progress" type="range" min="0" max="100" value="${Math.round(motionProgress*100)}"><output id="motion-readout">${Math.round(motionProgress*100)}%</output></label><p class="motion-caption">${!pathInspection&&!washerInspection&&op.motionEvidence?.caption?safe(op.motionEvidence.caption):op.motionWaypoints?safe(op.motionWaypoints.reason||'The indicated group moves together between the shown bench positions. Pause or drag to inspect the route.'):op.motionStop?safe(op.motionStop.reason)+' The preview stops before contact; 100% is not a seated joint.':pathInspection?'Pause or drag to inspect this measured path. The assembled-group example stops at first contact.':washerInspection?(washerInspection.servo_ids.length?'Washer first, screw second. Pause or drag to inspect each layer.':'Stack separation preview. One washer at each indicated outer face; pause to inspect the nut and both faces.'):op.assemblyPathStatus?.includes('sampled')?'Ring and loose-motor motions are isolated partial paths. Their sampled clearance does not establish the later lower-link closure.':'Illustrative approach, not collision-validated. Parts move one at a time to show orientation and target seats. Use the ankle fitting check for measured partial paths.'}</p><div class="row">${[...new Set([...(op.add||[]),...(op.moveKeys||[])])].map(k=>{const p=DATA.parts.find(p=>p.key===k);return `<button class="part-pick" data-highlight="${k}">${p?.name||k}</button>`;}).join('')}</div><div id="part-selection" aria-live="polite"></div></div>`;}
+function bindMotionControls(){
+ panel.querySelectorAll('[data-highlight]').forEach(b=>b.onclick=()=>highlightPart(b.dataset.highlight));if(!$('play-motion'))return;if(currentOperation()?.motionStop&&!pathInspection&&!washerInspection){$('motion-end').textContent='Stop before contact';$('play-motion').textContent='Play to contact';}
+ $('play-motion').onclick=()=>{if(playing){stopMotion();return;}if(motionProgress>=1)motionProgress=0;playing=true;$('play-motion').textContent='Pause';const token=++animationToken,start=performance.now(),from=motionProgress;function tick(now){if(token!==animationToken)return;motionProgress=Math.min(1,from+(now-start)/6000);applyMotion();if(motionProgress<1)requestAnimationFrame(tick);else stopMotion();}requestAnimationFrame(tick);};
+ $('motion-progress').oninput=e=>{stopMotion();motionProgress=+e.target.value/100;applyMotion();};
+ $('motion-start').onclick=()=>{stopMotion();motionProgress=0;applyMotion();};$('motion-end').onclick=()=>{stopMotion();motionProgress=1;applyMotion();};
+ panel.querySelectorAll('[data-highlight]').forEach(b=>b.onclick=()=>highlightPart(b.dataset.highlight));
+}
+function approachVector(p){
+ if(currentOperation()?.partApproachVectors?.[p.key])return new THREE.Vector3(...currentOperation().partApproachVectors[p.key]);
+ if(currentOperation()?.moveKeys?.includes(p.key)&&currentOperation().approachVector)return new THREE.Vector3(...currentOperation().approachVector);
+ const vectors={thigh:[0,0,0],plate:[0,90,0],motor7:[0,40,0],motor8:[0,60,0],lower:[0,-40,0],motor6:[0,-38,0],smallring:[0,32,0],ankle:[0,40,0],foot:[0,0,-32],hip:[0,40,0],yaw:[40,0,0],passive:[0,0,38],motor9:[0,0,42],motor10:[0,0,45],ring7:[0,26,0],ring8:[0,26,0],ring9:[28,0,0]};
+ if(p.key.startsWith('washer')||p.key.startsWith('nut_')){const c=DATA.screws.find(c=>c.id===p.fastenerId);return new THREE.Vector3(...c.world_axis).multiplyScalar(p.key.startsWith('nut_')||p.name.includes('nut side')?-12:12);}
+ return new THREE.Vector3(...(currentOperation()?.partApproachVectors?.[p.key]||currentOperation()?.approachVector||vectors[p.key]||p.approachVector||[0,35,20]));
+}
+function highlightPart(key){highlighted=key;for(const m of meshes)m.material.emissive.set(m.userData.part.key===key?0x796600:0x000000);const p=DATA.parts.find(p=>p.key===key);const box=$('part-selection');if(box&&p)box.innerHTML=`<strong>${p.name}</strong> · ${p.colorName} · ${p.dimensions.join(' × ')} mm. ${p.description}`;host.dataset.highlighted=key;requestRender();}
+function waypointOffset(points,progress){
+ const vectors=points.map(p=>new THREE.Vector3(...p));
+ if(vectors.length<2)return vectors[0]?.clone()||new THREE.Vector3();
+ const lengths=vectors.slice(1).map((p,i)=>p.distanceTo(vectors[i]));
+ let remaining=Math.max(0,Math.min(1,progress))*lengths.reduce((a,b)=>a+b,0),index=0;
+ while(index<lengths.length-1&&remaining>lengths[index])remaining-=lengths[index++];
+ return vectors[index].clone().lerp(vectors[index+1],lengths[index]?Math.min(1,remaining/lengths[index]):1);
+}
+function applyWaypointMotion(op,progress){
+ const a=op.motionWaypoints,v=waypointOffset(a.points,progress);
+ for(const m of meshes)if(a.movingKeys.includes(m.userData.part.key))m.position.copy(v);
+ const retained=new Set(op.movingScrewIds||[]),prior=new Set(op.priorScrewIds||[]),screwPositions=[];
+ for(const m of screwModels){
+  const c=m.userData.screw;m.visible=retained.has(c.id)||prior.has(c.id);
+  if(!m.visible)continue;
+  const offset=retained.has(c.id)?v:new THREE.Vector3();
+  m.position.set(...c.world_center_mm).addScaledVector(new THREE.Vector3(...c.world_axis),c.washer_mm||0).add(offset);
+  if(retained.has(c.id))screwPositions.push({key:c.id,offset:offset.toArray()});
+ }
+ host.dataset.movingScrews=JSON.stringify(screwPositions);
+ host.dataset.motionParts=JSON.stringify([...a.movingKeys.map(key=>({key,offset:v.toArray()})),...screwPositions]);
+}
+function updateScrewArrow(marker,removing){
+ const c=marker.userData.screw,axis=new THREE.Vector3(...c.world_axis).normalize(),arrow=marker.children[0];
+ arrow.position.set(...c.world_center_mm).addScaledVector(axis,removing?0:6);
+ arrow.setDirection(axis.multiplyScalar(removing?1:-1));
+}
+function applyMotion(){
+ host.dataset.movingScrews='[]';
+ host.dataset.screwAction=currentOperation()?.screwAction||'install';
+ host.dataset.serviceWorkflow=String(isServiceModule());
+ if(isClosureStep()){applyClosureMotion();}else if(pathInspection){const a=pathInspection.animation,t=motionProgress*(a.stopAtT??1),first=a.frames[0],last=a.frames.find(f=>Math.abs(f.t-(a.stopAtT??1))<1e-8)||a.frames[a.frames.length-1],v=new THREE.Vector3(...first.translation).lerp(new THREE.Vector3(...last.translation),motionProgress);for(const m of meshes){if(a.movingKeys.includes(m.userData.part.key))m.position.copy(v);if(pathInspection.result==='rigid_blocked'&&['smallring','ankle'].includes(m.userData.part.key))m.material.emissive.set(motionProgress>=.995?0x9d2414:0);}host.dataset.motionParts=JSON.stringify(a.movingKeys.map(key=>({key,offset:v.toArray()})));host.dataset.pathId=pathInspection.id;host.dataset.pathFraction=t.toFixed(6);host.dataset.contactStopped=String(pathInspection.result==='rigid_blocked'&&motionProgress>=.995);if($('path-result'))$('path-result').textContent=pathInspection.result==='rigid_blocked'?(motionProgress>=.995?'Stopped at the contact limit: small ring ↔ orange ankle. The group is still about 16.48 mm above its final target.':'Move the preassembled group toward the orange fork; it will stop at the ring contact.'):'Isolated partial path: no overlap detected at the sampled poses. Continue only to the separate physical fitting checkpoint.';}else if(section==='assembly'&&mode==='assembly'&&currentOperation()?.motionWaypoints&&!washerInspection){applyWaypointMotion(currentOperation(),motionProgress);}else if(section==='assembly'&&mode==='assembly'&&currentOperation()?.motionStop&&!washerInspection){const a=currentOperation().motionStop,v=new THREE.Vector3(...a.start).lerp(new THREE.Vector3(...a.stop),motionProgress);for(const m of meshes)if(a.movingKeys.includes(m.userData.part.key))m.position.copy(v);const op=currentOperation(),retained=new Set(op.movingScrewIds||[]),prior=new Set(op.priorScrewIds||[]),screwPositions=[];for(const m of screwModels){const c=m.userData.screw;m.visible=retained.has(c.id)||prior.has(c.id);if(!m.visible)continue;const offset=retained.has(c.id)?v:new THREE.Vector3();m.position.set(...c.world_center_mm).addScaledVector(new THREE.Vector3(...c.world_axis),c.washer_mm||0).add(offset);if(retained.has(c.id))screwPositions.push({key:c.id,offset:offset.toArray()});}host.dataset.movingScrews=JSON.stringify(screwPositions);host.dataset.motionParts=JSON.stringify([...a.movingKeys.map(key=>({key,offset:v.toArray()})),...screwPositions]);host.dataset.motionStopped=String(motionProgress>=.995);host.dataset.motionContactPair=JSON.stringify(a.contactPair||[]);host.dataset.targetReached='false';}else if(washerInspection){const c=washerInspection,screwSeparation=c.fastenerRevision?.approachMm||16,axis=new THREE.Vector3(...c.world_axis),keys=[...(c.washerKeys||[c.washerKey||'washer'+c.servo_ids[0]]),...(c.nutKeys||[])],wp=Math.min(1,motionProgress*2),sp=Math.max(0,motionProgress*2-1),readback=[];
+ keys.forEach((k,i)=>{const w=meshes.find(m=>m.userData.part.key===k),distance=c.fastenerRevision?.kind==='knee-washer-repair'?screwSeparation:i===0?8:12+i*3,sign=c.fastenerRevision?.kind==='knee-washer-repair'?1:i===0?1:-1;w.position.copy(axis).multiplyScalar(sign*distance*(1-wp));readback.push({key:k,offset:w.position.toArray()});});screwEnvelope.position.set(...c.world_center_mm).addScaledVector(axis,(c.washer_mm||0)+screwSeparation*(1-sp));readback.push({key:'screw-envelope',offset:axis.clone().multiplyScalar(screwSeparation*(1-sp)).toArray()});host.dataset.motionParts=JSON.stringify(readback);
+ }else if(section==='assembly'&&mode==='assembly'){
+ const keys=currentOperation().animationBlockedReason?[]:movingPartKeys(),positions=[];const active=activeScrews();const movingKeys=keys.filter(k=>{const p=DATA.parts.find(p=>p.key===k);return p&&approachVector(p).length()>0;});const grouped=!!currentOperation().moveKeys?.length;const motionSlots=grouped?(movingKeys.length?1:0):movingKeys.length;const count=motionSlots+active.length;keys.forEach((key,i)=>{const m=meshes.find(m=>m.userData.part.key===key);if(!m)return;const t=Math.max(0,Math.min(1,motionProgress*Math.max(1,count)-(grouped?0:movingKeys.indexOf(key)))),ease=t*t*(3-2*t);const p=m.userData.part;m.position.copy(approachVector(p).multiplyScalar(1-ease));positions.push({key,offset:m.position.toArray()});});
+ const op=currentOperation(),retained=new Set(op.movingScrewIds||[]),prior=new Set(op.priorScrewIds||[]),retainedPositions=[];
+ for(const m of screwModels){
+  const c=m.userData.screw,i=active.findIndex(a=>a.id===c.id);m.visible=i>=0||retained.has(c.id)||prior.has(c.id);if(!m.visible)continue;
+  let offset=new THREE.Vector3();
+  if(i>=0){const t=Math.max(0,Math.min(1,motionProgress*Math.max(1,count)-motionSlots-i));offset=new THREE.Vector3(...c.world_axis).multiplyScalar(screwApproachMm(op,c)*screwTravelFraction(op,t));}
+  else if(retained.has(c.id)){
+   const owner=op.movingScrewPartKeys?.[c.id]||op.moveKeys?.[0]||op.add?.[0],part=meshes.find(m=>m.userData.part.key===owner);
+   if(part)offset.copy(part.position);
+   retainedPositions.push({key:c.id,offset:offset.toArray()});
+  }
+  m.position.set(...c.world_center_mm).addScaledVector(new THREE.Vector3(...c.world_axis),c.washer_mm||0).add(offset);positions.push({key:c.id,offset:offset.toArray()});
+ }
+ host.dataset.movingScrews=JSON.stringify(retainedPositions);
+ host.dataset.motionParts=JSON.stringify(positions);
+ }
+ if($('motion-progress'))$('motion-progress').value=Math.round(motionProgress*100);if($('motion-readout'))$('motion-readout').textContent=Math.round(motionProgress*100)+'%';host.dataset.motionProgress=motionProgress.toFixed(3);host.dataset.assemblyPhase=assemblyPhase;host.dataset.playing=String(playing);host.dataset.inspection=washerInspection?(washerInspection.washerKey||'washer'+washerInspection.servo_ids[0]):'';host.dataset.highlighted=highlighted||'';host.dataset.visibleParts=JSON.stringify(meshes.filter(m=>m.visible).map(m=>m.userData.part.key));requestRender();
+}
+// Keep original stage/connection indices for the 3D renderer; navigation uses one scoped cable list.
+let wiringStep=0,wiringConnection=0,wiringGroupId=null,wiringPhase='prepare',wiringReturnOperation=null;
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function wireColor(c){return /GND|return/i.test(c.voltage+' '+c.purpose)?'#56646a':/20/.test(c.voltage)?'#b54726':/5 V/.test(c.voltage)?'#a96819':'#257aa0';}
+function wiringGroups(){
+ const groups=WIRING.groups;
+ if(!Array.isArray(groups)||!groups.length)throw new Error('Wiring groups are missing. Rebuild the guide with its current wiring instructions.');
+ return groups;
+}
+function wiringEntries(groupId=wiringGroupId){
+ const group=wiringGroups().find(g=>g.id===groupId);
+ if(!group)throw new Error('Unknown wiring group: '+groupId);
+ return group.connectionIds.map(id=>{
+  for(let stageIndex=0;stageIndex<WIRING.steps.length;stageIndex++){
+   const connectionIndex=WIRING.steps[stageIndex].connections.findIndex(c=>c.id===id);
+   if(connectionIndex>=0)return {stageIndex,connectionIndex,connection:WIRING.steps[stageIndex].connections[connectionIndex]};
+  }
+  throw new Error('Wiring group refers to a missing connection: '+id);
+ });
+}
+function wiringGroupForModule(moduleId=buildSection){
+ const preferred=['left-leg','right-leg'].includes(moduleId)?moduleId:['head','camera','electronics','head-close','neck'].includes(moduleId)?'head':moduleId==='imu'?'data':'torso-power';
+ if(!wiringGroups().some(g=>g.id===preferred))throw new Error('Wiring instructions are missing for '+moduleId);
+ return preferred;
+}
+function currentWiringEntryIndex(){return wiringEntries().findIndex(e=>e.stageIndex===wiringStep&&e.connectionIndex===wiringConnection);}
+function selectWiringEntry(index){
+ const entries=wiringEntries();
+ if(!Number.isInteger(index)||index<0||index>=entries.length)return false;
+ const entry=entries[index];wiringStep=entry.stageIndex;wiringConnection=entry.connectionIndex;wireMode='installed';wiringPhase='prepare';
+ if(typeof wireResetMating==='function')wireResetMating();
+ return true;
+}
+function goWiringConnection(delta){const index=currentWiringEntryIndex();if(selectWiringEntry(index+delta)){wiringPanel();panel.scrollTop=0;}}
+function wiringTutorial(connection){
+ const tutorial=connection.tutorial;
+ if(!tutorial||['prepare','assemble','check'].some(key=>!Array.isArray(tutorial[key])||!tutorial[key].length))throw new Error('One-cable instructions are missing for '+connection.id);
+ const phases=['prepare','assemble','check'];
+ return `<div class="wire-mode-switch" aria-label="Cable assembly phase">${phases.map((key,i)=>`<button data-wire-phase="${key}" class="${wiringPhase===key?'active':''}" aria-pressed="${wiringPhase===key}">${i+1} · ${key[0].toUpperCase()+key.slice(1)}</button>`).join('')}</div><section class="wire-instruction" data-current-wire-phase="${wiringPhase}"><h3>${wiringPhase[0].toUpperCase()+wiringPhase.slice(1)}</h3><ol>${tutorial[wiringPhase].map(text=>`<li>${safe(text)}</li>`).join('')}</ol></section>`;
+}
+function wiringPanel(){
+ const groups=wiringGroups(),group=groups.find(g=>g.id===wiringGroupId),entries=wiringEntries();
+ if(!entries.length)throw new Error('This wiring group has no connection instructions: '+wiringGroupId);
+ if(currentWiringEntryIndex()<0)selectWiringEntry(0);
+ const index=currentWiringEntryIndex(),entry=entries[index],c=entry.connection;
+ host.dataset.wiringGroup=group.id;host.dataset.wiringPhase=wiringPhase;host.dataset.wiringConnectionIndex=String(index);host.dataset.wiringConnectionCount=String(entries.length);
+ document.querySelector('h1').textContent=group.title+' · wiring';
+ panel.innerHTML=`<div class="eyebrow">04 · ${safe(group.title)} · cable ${index+1} of ${entries.length}</div>${wiringReturnOperation?'<button id="wire-return-assembly">Return to assembly operation</button>':''}<button id="wire-all-groups">Whole-robot wiring · choose a group</button><div id="wire-group-chooser" hidden><p>Choose the part you are wiring. Each group has its own cable sequence.</p><div class="wire-connections">${groups.map(g=>`<button data-wire-group="${safe(g.id)}" class="${g.id===group.id?'active':''}">${safe(g.title)}<small>${safe(g.description)}</small></button>`).join('')}</div></div><p class="intro">${safe(group.description)}</p><label for="wire-step">Cable in ${safe(group.title)}</label><select id="wire-step">${entries.map((e,i)=>`<option value="${i}" ${i===index?'selected':''}>${i+1} · ${safe(e.connection.purpose)}</option>`).join('')}</select><h2>${safe(c.purpose)}</h2><p class="intro">${safe(c.from)} → ${safe(c.to)}</p><div id="wire-tutorial">${wiringTutorial(c)}</div><div class="wire-mode-switch"><button id="wire-installed">On robot · 3D</button><button id="wire-detail">Connector · 3D</button></div><div id="wire-selected-detail"></div><div class="row"><button id="wire-prev" ${index===0?'disabled':''}>Previous cable</button><button id="wire-next" ${index===entries.length-1?'disabled':''}>Next cable</button>${['head','data'].includes(group.id)?'<button id="wire-header">Pi header pin map</button>':''}</div><details class="sources"><summary>Reference and hardware checks</summary><p>${safe(c.checkedLegRoute?'Source: the eight-cable local leg manifest and registered XL330 ports. These instructions do not release a revised whole-robot power architecture.':WIRING.current_compute_note)}</p><p>${safe(c.checkedLegRoute?'Insert blocked connectors before the named closure; do not attempt to push the whole routed cable through closed covers.':WIRING.power_stage_note)}</p><p>Match the connector key and physical pin markings before inserting either end. Complete this cable's check before moving to the next cable.</p>${(WIRING.sources||[]).map(v=>`<p><a href="${safe(v.url||v.href||'')}">${safe(v.title||v.name||v.id||v.url)}</a></p>`).join('')}</details>`;
+ $('wire-step').onchange=e=>{if(selectWiringEntry(+e.target.value))wiringPanel();};
+ if($('wire-return-assembly'))$('wire-return-assembly').onclick=returnToWiringOperation;
+ $('wire-prev').onclick=()=>goWiringConnection(-1);$('wire-next').onclick=()=>goWiringConnection(1);
+ $('wire-all-groups').onclick=()=>{$('wire-group-chooser').hidden=!$('wire-group-chooser').hidden;};
+ panel.querySelectorAll('[data-wire-group]').forEach(button=>button.onclick=()=>setWiring(button.dataset.wireGroup));
+ bindWiringPhases();
+ if($('wire-header'))$('wire-header').onclick=()=>headerMap();
+ $('wire-installed').onclick=()=>{wireMode='installed';drawConnection();};$('wire-detail').onclick=()=>{wireMode='connector';drawConnection();};drawConnection();
+}
+function bindWiringPhases(){
+ panel.querySelectorAll('[data-wire-phase]').forEach(button=>button.onclick=()=>{
+  wiringPhase=button.dataset.wirePhase;host.dataset.wiringPhase=wiringPhase;
+  $('wire-tutorial').innerHTML=wiringTutorial(WIRING.steps[wiringStep].connections[wiringConnection]);bindWiringPhases();
+  if(typeof wireSetTutorialPhase==='function')wireSetTutorialPhase(wiringPhase);
+ });
+}
+function drawConnection(){renderWire3D();if(typeof wireSetTutorialPhase==='function')wireSetTutorialPhase(wiringPhase);}
+function headerMap(){wireMode='header';renderWire3D();}
+function setWiring(groupId=wiringGroupForModule(),requestedStage=null){
+ wiringGroupId=groupId;const entries=wiringEntries();
+ const requested=requestedStage===null?-1:entries.findIndex(e=>e.stageIndex===requestedStage);
+ selectWiringEntry(requested>=0?requested:0);
+ document.querySelector('.tag').textContent='Power disconnected · prepare, connect, check';resetInteraction();section='wiring';wireMode='installed';$('wiring-view').hidden=true;host.style.visibility='visible';labelHost.hidden=true;document.querySelector('.hud').hidden=false;document.querySelector('.tools').hidden=true;$('wire-tools').hidden=false;for(const name of ['parts','screws','assembly','wiring'])$('tab-'+name)?.classList.toggle('active',name==='wiring');wiringPanel();panel.scrollTop=0;
+}
+function setSection(s){if(s==='wiring'){setWiring();return;}$('wire-tools').hidden=true;$('wire-labels').hidden=true;document.querySelector('h1').textContent=(buildSection==='left-leg'?'Left leg':displayModuleTitle(MODULES?.find(m=>m.id===buildSection)))+' · identify, prepare, assemble';document.querySelector('.tag').textContent=sectionParts().filter(p=>p.key.startsWith('motor')).length+' motors · unpowered assembly';$('wiring-view').hidden=true;host.style.visibility='visible';labelHost.hidden=false;document.querySelector('.hud').hidden=false;document.querySelector('.tools').hidden=false;$('tab-wiring')?.classList.remove('active');resetInteraction();section=s;selected=null;selectedScrew=null;operation=0;showScrews=isServiceModule()&&s==='assembly'&&currentOperation().kind==='fasten';$('screws-toggle').classList.toggle('active',showScrews);$('screws-toggle').setAttribute('aria-pressed',showScrews);mode=s==='parts'?'kit':s==='assembly'?'assembly':'assembled';separation=0;$('explode').value=0;for(const name of ['parts','screws','assembly'])$('tab-'+name).classList.toggle('active',name===s);if(s==='parts')partPanel();else if(s==='screws')screwPanel();else assemblyPanel();applyView();panel.scrollTop=0;}
+function fit(list){if(!list.length)return;const box=new THREE.Box3();for(const m of list){box.expandByObject(m);if(section==='assembly'&&mode==='assembly'&&movingPartKeys().includes(m.userData.part.key)){const op=currentOperation(),key=m.userData.part.key,offsets=op.motionWaypoints?.movingKeys.includes(key)?op.motionWaypoints.points:op.motionStop?.movingKeys.includes(key)?[op.motionStop.start,op.motionStop.stop]:[approachVector(m.userData.part).toArray()];for(const offset of offsets){const b=new THREE.Box3().setFromObject(m);b.translate(new THREE.Vector3(...offset).sub(m.position));box.union(b);}}}const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());const d=Math.max(size.x,size.z,size.y)*2.8;camera.position.copy(center).add(new THREE.Vector3(-.95,-1.5,.65).normalize().multiplyScalar(d));controls.target.copy(center);camera.near=Math.max(.5,d/20);camera.far=d*3+Math.max(size.x,size.z,size.y);camera.updateProjectionMatrix();controls.update();requestRender();}
+function applyView(refit=true){
+ if(isClosureStep()){setupClosureView(refit);return;}
+ document.querySelector('.tools').hidden=false;
+ if(washerInspection){viewWasher(washerInspection);return;}
+ let ki=0;const list=[];for(const m of meshes){const p=m.userData.part;m.position.set(0,0,0);m.quaternion.identity();m.visible=sectionKeys.has(p.key);m.material.transparent=ghost;m.material.opacity=ghost?.33:1;m.material.depthWrite=!ghost;const wantedSide=ghost?THREE.DoubleSide:THREE.FrontSide;if(m.material.side!==wantedSide){m.material.side=wantedSide;m.material.needsUpdate=true;}m.material.color.set(p.color);m.material.emissive.set(highlighted===p.key?0x796600:0x000000);
+ if(mode==='kit'&&m.visible){const col=ki%4,row=Math.floor(ki/4);m.position.set(-120+col*80-p.center[0],50-p.center[1],100-row*62-p.center[2]);ki++;}
+ if(mode==='single'){m.visible=selected.keys[0]===p.key;if(m.visible)m.position.copy(new THREE.Vector3(...p.center).negate());}
+ if(mode==='assembly'){m.visible=assembledKeys().has(p.key)&&(!currentOperation().isolatedPartKeys||currentOperation().isolatedPartKeys.includes(p.key));const current=currentOperation().kind==='place'?movingPartKeys():steps[stage-1].keys;if(!current.includes(p.key)){m.material.color.lerp(new THREE.Color('#d0d8d0'),.6);}else m.material.emissive.set(0x151e12);}
+ if(mode==='assembled'||mode==='assembly'){const f=separation/100;m.position.x+=(p.colorName==='Motor'?0:p.key==='plate'?-1:1)*22*f;m.position.y+=(p.body==='yaw2roll'?0:p.body==='hip_l'?1:2)*8*f;m.position.z+=(5-p.stage)*22*f;}
+ if(mode==='assembly')for(const pose of currentOperation().fixedPoses||[]){if(pose.keys.includes(p.key)){const pivot=new THREE.Vector3(...pose.pivot);m.quaternion.setFromAxisAngle(new THREE.Vector3(...pose.axis).normalize(),THREE.MathUtils.degToRad(pose.degrees));m.position.add(pivot.clone().sub(pivot.clone().applyQuaternion(m.quaternion)));}}
+ if(m.visible)list.push(m);
+ }
+ for(const marker of markers){updateScrewArrow(marker,section==='assembly'&&mode==='assembly'&&isScrewRemoval(currentOperation()));const c=marker.userData.screw, motor=meshes.find(m=>m.userData.part.key===marker.userData.partKey);if(!motor){marker.visible=false;continue;}marker.position.copy(motor.position);marker.visible=showScrews&&(mode==='assembled'||mode==='assembly')&&motor.visible&&(section!=='assembly'||activeScrews().some(a=>a.id===c.id));marker.children[1].scale.setScalar(selectedScrew?.id===c.id?1.6:1);}
+ host.dataset.visibleParts=JSON.stringify(meshes.filter(m=>m.visible).map(m=>m.userData.part.key));host.dataset.visibleScrews=JSON.stringify(markers.filter(m=>m.visible).map(m=>m.userData.screw.id));host.dataset.operation=String(operation);host.dataset.stage=String(stage);host.dataset.fixedPoses=JSON.stringify(currentOperation()?.fixedPoses||[]);
+ $('assembled').textContent=mode==='assembled'?'Return to step':'Assembled view';grid.visible=mode!=='single';$('viewtitle').textContent=mode==='kit'?'Individual parts · saved print colors':mode==='single'?selected.name:mode==='assembly'?operationLabel(currentOperation())+' · '+currentOperation().title:(buildSection==='left-leg'?'Left leg':displayModuleTitle(MODULES?.find(m=>m.id===buildSection)))+' · assembled reference pose';$('status').textContent=sectionParts().length+' displayed module meshes · click a part to highlight · drag to rotate';if(refit)fit(list);applyMotion();}
+function resize(){renderer.setSize(host.clientWidth,host.clientHeight);camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();requestRender();}new ResizeObserver(resize).observe(host);
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let startPoint=null;
+renderer.domElement.addEventListener('pointerdown',e=>startPoint=[e.clientX,e.clientY]);renderer.domElement.addEventListener('pointerup',e=>{if(section==='wiring'){wirePointerPick(e,startPoint);return;}if(!startPoint||Math.hypot(e.clientX-startPoint[0],e.clientY-startPoint[1])>5)return;const b=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(meshes.filter(m=>m.visible))[0];if(hit){const i=partGroups.findIndex(g=>g.keys.includes(hit.object.userData.part.key));if(section==='parts')choosePart(i);else highlightPart(hit.object.userData.part.key);}});
+for(const s of ['parts','screws','assembly'])$('tab-'+s).onclick=()=>setSection(s);
+$('reset').onclick=()=>{if(isClosureStep()){stopMotion();closurePanel();setupClosureView(true);return;}if(pathInspection){viewAnklePath(pathInspection.id);return;}if(washerInspection){viewWasher(washerInspection);return;}resetInteraction();separation=0;$('explode').value=0;applyView();};$('assembled').onclick=()=>{resetInteraction();mode=mode==='assembled'?(section==='assembly'?'assembly':'kit'):'assembled';$('assembled').textContent=mode==='assembled'?'Return to step':'Assembled view';applyView();};$('explode').oninput=e=>{resetInteraction();separation=+e.target.value;if(mode==='kit'||mode==='single')mode='assembled';applyView();};
+$('labels-toggle').onclick=()=>{showLabels=!showLabels;$('labels-toggle').textContent=showLabels?'Labels on':'Labels off';$('labels-toggle').setAttribute('aria-pressed',showLabels);requestRender();};
+$('screws-toggle').onclick=()=>{showScrews=!showScrews;$('screws-toggle').classList.toggle('active',showScrews);$('screws-toggle').setAttribute('aria-pressed',showScrews);applyView();};$('ghost-toggle').onclick=()=>{ghost=!ghost;$('ghost-toggle').classList.toggle('active',ghost);$('ghost-toggle').setAttribute('aria-pressed',ghost);applyView();};
+let framePending=false,renderedFrames=0;
+function requestRender(){if(framePending)return;framePending=true;requestAnimationFrame(()=>{framePending=false;draw();});}
+function draw(){renderer.render(scene,camera);if(section==='wiring')updateWireLabels();renderedFrames++;host.dataset.renderedFrames=String(renderedFrames);let occupied=[];for(const l of labels){if(!showLabels||!l.mesh.visible){l.el.style.display='none';continue;}const v=l.center.clone().applyQuaternion(l.mesh.quaternion).add(l.mesh.position).project(camera);const x=(v.x*.5+.5)*host.clientWidth,y=(-v.y*.5+.5)*host.clientHeight;l.el.style.display=v.z>1||x<10||x>host.clientWidth-10||y<45||y>host.clientHeight-90?'none':'block';if(l.el.style.display==='none')continue;let yy=y;for(let i=0;i<occupied.length;i++)if(Math.abs(occupied[i][0]-x)<90&&Math.abs(occupied[i][1]-yy)<23)yy+=24;occupied.push([x,yy]);l.el.style.left=x+'px';l.el.style.top=yy+'px';}}
+controls.addEventListener('change',requestRender);
+$('ankle-fit').onclick=()=>viewAnklePath();$('ankle-fit').hidden=!PATHS;$('tab-wiring').onclick=()=>setSection('wiring');$('tab-wiring').hidden=!WIRING;$('find-washers').onclick=()=>viewWasher(DATA.screws.find(c=>c.servo_ids[0]===6&&c.washer_mm));initBuildSections();resize();setSection('parts');requestRender();
+window.LEG_GUIDE_STATE=()=>({section,stage,operation,operationKind:currentOperation().kind,activeScrewCodes:activeScrews().map(c=>screwCode.get(c.id)),visibleParts:meshes.filter(m=>m.visible).map(m=>m.userData.part.key),mode,separation,showScrews,meshes:meshes.length,visible:meshes.filter(m=>m.visible).length,triangles:DATA.parts.reduce((n,p)=>n+p.triangles,0),renderedFrames,cameraNear:camera.near,cameraFar:camera.far,renderCalls:renderer.info.render.calls});

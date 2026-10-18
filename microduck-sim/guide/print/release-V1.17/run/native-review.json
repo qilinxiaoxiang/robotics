@@ -1,0 +1,53 @@
+{
+ "passed": true,
+ "preparationSha256": "b204092a37d43692c1be2f27d986a7edc3572f15bb09f8d78532ae50b8a73e24",
+ "nativeArchives": {
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/run/native/White_Bambu/sliced.3mf": "cdb1c1c5e854ceec2b7b11a9290b85045826168b42936c3f0866848971250af7",
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/run/native/White_Elegoo/sliced.3mf": "1ce585463c1b7a52bf624c31e46f272bc580b86fc82d22d23c2703204b513b18",
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/run/native/Orange_Bambu/sliced.3mf": "20a55b4f3a65e4e9dbf650544edcc0c65a186ede6060dcfd7d767188cf0082e8",
+  "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/run/native/Orange_Elegoo/sliced.3mf": "a17cfe38982c0e46d65eece83b2e33608478e543cde8eb3f8e2239bece93dd28"
+ },
+ "reviews": {
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/Orange_Bambu-review.json",
+   "sha256": "23058a412da9b37a9e9fd3bffa6a633d0587c53175efc6e1f4e32f4bcaf0874a"
+  },
+  "Orange_Bambu_brim": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/Orange_Bambu-brim.json",
+   "sha256": "90db278fc1abd1e63b8b7a3e0ac6a4aa7a566284461e2b4984c0f101b4d6a5b7"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/Orange_Elegoo-review.json",
+   "sha256": "e82923aa344b67cb2030fb2413f31455f065f0a47900bd705aec5851179a8a2f"
+  },
+  "Orange_Elegoo_brim": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/Orange_Elegoo-brim.json",
+   "sha256": "a002b66157a35bd2ccb19c37e0cfaf7d739d398f703b1f2f8e0fb351b67d0096"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/White_Bambu-review.json",
+   "sha256": "08fb2af118e1d25a1d0fe595da97b71da1377174e2aa5b894a153036db4a212b"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/White_Elegoo-review.json",
+   "sha256": "455e53a09028f9734e254edcaa8509a27270279a7979495a5e791c5407133090"
+  },
+  "a7z-printability": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/a7z-printability.json",
+   "sha256": "8637dad396e743af952e367d08b42cd57a3aa6d50ed8e373ddd3b344db99a292"
+  },
+  "a7z-native-Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/a7z-native-Bambu.json",
+   "sha256": "28888aea83f94370c70703264e98d13d6efea7c0a7a336da2fff33e9009aea1d"
+  },
+  "a7z-native-Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/a7z-native-Elegoo.json",
+   "sha256": "1f364e5c55365807da41ed138c03002232f172520284c9506c823bb1e42aaeef"
+  },
+  "a7z-overhang-clusters": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.17/review/a7z-overhang-clusters.json",
+   "sha256": "cbe96fadb606695bc214049bf40bdf29059e9b01f58964805f881b5124c64d8e"
+  }
+ },
+ "reviewNotes": "V1.17 = V1.16 plus three A7Z head parts. The face is bound to the robot-frame face_panel_a7z.stl (= world/face_panel.stl, the guide geometry) under the V1.8 face transform, the same pose as face_panel_a7z-print.stl (2e-6 mm); its first layer and per-feature toolpaths match the first V1.17 slice. Orange plate: the V1.16 layout F box frame and cap (unchanged geometry, pose and placement; first layer, support regions and no-brim identical to V1.16) plus the A7Z cap clip in the V1.9 clip pose (bed contact 25.1 mm2: the micro HDMI notch opens into the tab seat face, 10.3 mm2 ceiling at print z 3.65, no new island; first layer 44.75 mm2 in 3 islands; Bambu puts 296.7 mm of support toolpath in the notch, Elegoo bridges it). Reviewed by scripts/review_v115.py and review_brim.py. White plate: the A7Z head cap replaces the white V1.9 cap in the V1.9 pose (same 4 mm brim, Bambu E-pi-04 blocker, support overrides, 0.2 mm first layer) and the A7Z face panel is added (V1.8 face pose, no brim); V1.16 layout moved 12 mm forward. scripts/review_v117.py: six objects, cap brim only, support interface 3 layers at 0.15 mm, support ironing on, no support under boss faces or in or under any of the 15 pilots. Pre-slice: A7Z cap = V1.9 cap minus 327.7 mm3 (added 0.5672 mm3 of STL rounding slivers), no new layer islands, new down-facing area 51.86 mm2 over 45 deg (rail relief ledges); support near the cap +168.4 mm Bambu, +2857.0 mm Elegoo against V1.16. orientation_check: all three current poses rank 1. Orange Bambu: passed, 6624 s, 28.97 g; Orange Elegoo: passed, 6483 s, 27.71 g; White Bambu: passed, 15063 s, 92.44 g; White Elegoo: passed, 15951 s, 91.93 g"
+}

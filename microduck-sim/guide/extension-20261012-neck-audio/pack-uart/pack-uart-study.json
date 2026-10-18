@@ -1,0 +1,243 @@
+{
+ "problem": "P5/P6: Pi <-> OpenRB-150 UART with Dupont jumpers in the V1.8 rear pack",
+ "date": "2026-10-12",
+ "measured": {
+  "socketTopX": -34.96,
+  "coverInnerFaceX": -45.0,
+  "socketTopToCoverMm": 10.04,
+  "pitchMeasured": {
+   "J6": 2.542,
+   "J7": 2.542
+  },
+  "J7": {
+   "4": {
+    "name": "GND",
+    "y": 9.93,
+    "z": -7.72,
+    "freeDepth": {
+     "rear_pack_cover": 10.04
+    }
+   },
+   "6": {
+    "name": "D14 (PB22, Serial3 TX)",
+    "y": 9.93,
+    "z": -2.67,
+    "freeDepth": {
+     "regulator": 2.04,
+     "rear_pack": 3.54,
+     "rear_pack_cover": 10.04
+    }
+   },
+   "7": {
+    "name": "D13 (PB23, Serial3 RX)",
+    "y": 9.93,
+    "z": -0.12,
+    "freeDepth": {
+     "regulator": 2.04,
+     "rear_pack_cover": 10.04
+    }
+   }
+  },
+  "J6": {
+   "3": {
+    "name": "A1 (PB02, SERCOM5 PAD0)",
+    "y": -10.43,
+    "z": -10.29,
+    "freeDepth": {
+     "vin20": 1.34,
+     "rear_pack_cover": 10.04
+    }
+   },
+   "4": {
+    "name": "A2 (PB03, SERCOM5 PAD1)",
+    "y": -10.43,
+    "z": -7.74,
+    "freeDepth": {
+     "vin20": 1.34,
+     "rear_pack_cover": 10.04
+    }
+   }
+  },
+  "converterBox": [
+   [
+    -45.0,
+    -13.0,
+    -3.0
+   ],
+   [
+    -37.0,
+    13.0,
+    27.0
+   ]
+  ],
+  "socketTopToConverterBackMm": 2.04,
+  "windowJ6": {
+   "box": [
+    [
+     -47.6,
+     -12.2,
+     -12.06
+    ],
+    [
+     -44.4,
+     -8.66,
+     -5.97
+    ]
+   ],
+   "sizeYxZ": [
+    3.54,
+    6.09
+   ],
+   "removedFromCoverMm3": 43.12
+  },
+  "windowJ7GND": {
+   "box": [
+    [
+     -47.6,
+     8.16,
+     -9.49
+    ],
+    [
+     -44.4,
+     11.7,
+     -5.95
+    ]
+   ],
+   "sizeYxZ": [
+    3.54,
+    3.54
+   ],
+   "removedFromCoverMm3": 25.06
+  },
+  "shellBand": {
+   "lowestShellZ_over_x-48..-27_y+-12": {
+    "shell_left": 31.45,
+    "shell_right": 31.71
+   },
+   "coverTopZ": 29.5,
+   "packWallAndLipTopZ": 28.5
+  },
+  "outsideRun": {
+   "verticalOnCoverBackX": -50.6,
+   "coverOuterFaceX": -47.0,
+   "plugTailX": -48.96,
+   "plugProtrusionBeyondCoverMm": 1.96,
+   "wireProtrusionBeyondCoverMm": 4.25
+  },
+  "wireLengths": {
+   "A1_to_notch_row_mm": 79.2,
+   "A2_to_notch_row_mm": 76.0,
+   "GND_to_notch_row_mm": 75.2,
+   "guide_uart_lower_mm": 39.7,
+   "note": "from the plug tail to the notch exit (-19.5, y, 37); the rest of the run (neck + head) is the guide uart path"
+  }
+ },
+ "optionWorstPairs": {
+  "D0": {
+   "solid": "plug_D13",
+   "neighbour": "regulator",
+   "gapMm": 0.0,
+   "overlapMm3": 51.613
+  },
+  "D1_minusY": {
+   "solid": "bent_D13",
+   "neighbour": "regulator",
+   "gapMm": 0.0,
+   "overlapMm3": 29.939
+  },
+  "D1_plusY": {
+   "solid": "bent_D13",
+   "neighbour": "rear_pack",
+   "gapMm": 0.0,
+   "overlapMm3": 16.907
+  },
+  "C": {
+   "solid": "dupont_on_J12_pad3",
+   "neighbour": "regulator",
+   "gapMm": 0.0,
+   "overlapMm3": 51.613
+  },
+  "B": {
+   "solid": "bent_A2",
+   "neighbour": "cable_dxl10",
+   "gapMm": 0.0,
+   "overlapMm3": 9.125
+  },
+  "A": {
+   "solid": "wire_A2",
+   "neighbour": "cable_trunk",
+   "gapMm": 0.0,
+   "overlapMm3": 0.243
+  },
+  "A+G": {
+   "solid": "wire_A2",
+   "neighbour": "cable_trunk",
+   "gapMm": 0.0,
+   "overlapMm3": 0.243
+  },
+  "vin20_reroute": {
+   "solid": "vin20_rerouted",
+   "neighbour": "cable_dxl5",
+   "gapMm": 0.272,
+   "overlapMm3": 0.0
+  }
+ },
+ "optionA_insertion": {
+  "solid": "ins_A1",
+  "neighbour": "openrb_board",
+  "gapMm": 0.051,
+  "overlapMm3": 0.0
+ },
+ "optionAG_insertion": {
+  "solid": "ins_A1",
+  "neighbour": "openrb_board",
+  "gapMm": 0.051,
+  "overlapMm3": 0.0
+ },
+ "plugsVsGuideVin20Route": {
+  "plug_A1": {
+   "cable_vin20_guide": {
+    "gapMm": 0.0,
+    "overlapMm3": 7.62
+   }
+  },
+  "plug_A2": {
+   "cable_vin20_guide": {
+    "gapMm": 0.0,
+    "overlapMm3": 3.298
+   }
+  },
+  "plug_GND": {}
+ },
+ "bentPinBudget_inference": {
+  "pinOutMm": 6.0,
+  "liftToHousingAxisMm": 1.6,
+  "bendArcMm": 1.41,
+  "straightBeforeHousingMm": 0.5,
+  "insertionLeftMm": 3.39,
+  "straightPlugInsertionMm": 6.0
+ },
+ "walkingSweepAddedMaterial": {
+  "left": {
+   "adoptedFrames": 283500,
+   "legMinGapMm": "no frame within the 5.1 mm screen (>= 2 mm by the method bound)",
+   "hipBodiesMinGapMm": ">= 8 (min_gap search cap)",
+   "allFramesLegMinGapMm": 2.41,
+   "allFrames": 304253
+  },
+  "right": {
+   "adoptedFrames": 283500,
+   "legMinGapMm": "no frame within the 5.1 mm screen (>= 2 mm by the method bound)",
+   "hipBodiesMinGapMm": ">= 8 (min_gap search cap)",
+   "allFramesLegMinGapMm": "no frame within the 5.1 mm screen (>= 2 mm by the method bound)",
+   "allFrames": 304253
+  }
+ },
+ "inference": [
+  "Dupont housing 2.54 x 2.54 x 14 mm and about 6 mm of male pin (vendor listings; measure the owned jumpers)",
+  "wire OD 1.3 mm, 3 mm straight before a bend",
+  "bent-pin insertion 3.4 mm",
+  "firmware pad move compiles and runs (not built here)",
+  "common ground through the 5 V pairs is adequate at 1 Mbps (calculation, not measured)"
+ ]
+}

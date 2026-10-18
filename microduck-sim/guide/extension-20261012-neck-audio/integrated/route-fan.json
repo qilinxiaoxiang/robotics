@@ -1,0 +1,388 @@
+{
+ "_method": "Where the 8 bundle wires leave the group and reach their Pi-header housings (pins 1, 2, 3, 5, 6, 8, 9, 10).\n\nThe housings' wire-exit faces point along the header axis (+x, 10 deg down; face centres: odd row x 73.705 z 114.07,\neven row x 74.146 z 116.571, measured on the V1.8 housing meshes). In front of them run\ntwo audio jumpers: pin 4 (climbs at x ~76.4, y 21.6, z 117..121.5) and pin 12 (drops at y 11.4, runs +y under the housing\nends at z 113.9 and climbs at y 16.3, right in front of pin 8). Below is the head floor (head_bottom top z 111.5).\nFurther forward the camera board and face panel are lower-head parts, so any cap-held wire must also stay out of the\n40 mm column under them (the cap, with the Pi and these wires, is lowered the last 40 mm onto the lower head).\n\nGrid search on route-occ.npz (0.5 mm voxels, every jaw and roll pose occupied, same as route_search.py):\n  domain   = free voxels inside the head hull, minus voxels that have a lower-head / jaw / yaw voxel within 40 mm above\n             them (cap-descent sweep of a cap-held wire)\n  group    = maximin corridor from the end of the A3 corridor (route-exact-A3-clip-over-top-plus-y) to a gather point G\n  wire n   = maximin corridor from a stub point 0.8 mm out of housing n's exit face (along the axis) to G. Voxels within 1.2 mm of\n             the stub point are exempt from the clearance threshold (the wire leaves its own housing there).\nEach voxel path is simplified (Ramer-Douglas-Peucker 0.35 mm) and starts at the real exit-face centre.\nExact clearances of the resulting wire solids are measured by pairwise.py; this script only finds the paths.\nWrites ../route-fan.json.",
+ "gatherPoint": [
+  77.0,
+  27.5,
+  115.5
+ ],
+ "corridorEnd": [
+  75.0,
+  25.5,
+  121.0
+ ],
+ "descentSweepMm": 40.0,
+ "wires": {
+  "1": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "bottleneckAt": [
+    76.0,
+    25.0,
+    114.5
+   ],
+   "polyline": [
+    [
+     73.705,
+     24.13,
+     114.07
+    ],
+    [
+     75.5,
+     24.5,
+     114.0
+    ],
+    [
+     77.0,
+     26.0,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 5.932
+  },
+  "2": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "bottleneckAt": [
+    76.5,
+    25.0,
+    116.0
+   ],
+   "polyline": [
+    [
+     74.146,
+     24.13,
+     116.571
+    ],
+    [
+     76.0,
+     24.5,
+     116.5
+    ],
+    [
+     77.0,
+     25.5,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 5.624
+  },
+  "3": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "bottleneckAt": [
+    76.0,
+    22.5,
+    114.0
+   ],
+   "polyline": [
+    [
+     73.705,
+     21.59,
+     114.07
+    ],
+    [
+     75.5,
+     22.0,
+     114.0
+    ],
+    [
+     77.0,
+     23.5,
+     114.5
+    ],
+    [
+     77.0,
+     24.5,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 8.436
+  },
+  "5": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "bottleneckAt": [
+    76.0,
+    20.0,
+    114.0
+   ],
+   "polyline": [
+    [
+     73.705,
+     19.05,
+     114.07
+    ],
+    [
+     75.5,
+     19.5,
+     114.0
+    ],
+    [
+     77.0,
+     21.0,
+     114.0
+    ],
+    [
+     77.0,
+     22.5,
+     114.0
+    ],
+    [
+     77.0,
+     24.0,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 11.095
+  },
+  "6": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 2.25,
+   "bottleneckAt": [
+    76.5,
+    19.0,
+    115.5
+   ],
+   "polyline": [
+    [
+     74.146,
+     19.05,
+     116.571
+    ],
+    [
+     76.5,
+     19.0,
+     115.5
+    ],
+    [
+     77.0,
+     20.5,
+     114.0
+    ],
+    [
+     77.0,
+     22.5,
+     114.0
+    ],
+    [
+     77.0,
+     24.0,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 12.387
+  },
+  "8": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 1.331,
+   "bottleneckAt": [
+    75.5,
+    18.0,
+    115.5
+   ],
+   "polyline": [
+    [
+     74.146,
+     16.51,
+     116.571
+    ],
+    [
+     74.934,
+     16.51,
+     116.432
+    ],
+    [
+     75.0,
+     17.5,
+     116.0
+    ],
+    [
+     76.0,
+     18.5,
+     115.0
+    ],
+    [
+     77.0,
+     19.5,
+     115.0
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 13.044
+  },
+  "9": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 1.164,
+   "bottleneckAt": [
+    75.0,
+    15.0,
+    112.5
+   ],
+   "polyline": [
+    [
+     73.705,
+     13.97,
+     114.07
+    ],
+    [
+     74.493,
+     13.97,
+     113.931
+    ],
+    [
+     75.0,
+     14.5,
+     113.0
+    ],
+    [
+     75.0,
+     15.5,
+     112.5
+    ],
+    [
+     74.5,
+     17.0,
+     114.0
+    ],
+    [
+     76.0,
+     18.5,
+     115.5
+    ],
+    [
+     77.0,
+     19.5,
+     115.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 17.295
+  },
+  "10": {
+   "connected": true,
+   "gridBottleneckRadiusMm": 1.75,
+   "bottleneckAt": [
+    76.0,
+    14.0,
+    117.0
+   ],
+   "polyline": [
+    [
+     74.146,
+     13.97,
+     116.571
+    ],
+    [
+     76.0,
+     14.0,
+     117.0
+    ],
+    [
+     76.0,
+     14.0,
+     118.5
+    ],
+    [
+     74.5,
+     14.5,
+     120.0
+    ],
+    [
+     74.0,
+     15.0,
+     120.0
+    ],
+    [
+     74.0,
+     23.0,
+     120.0
+    ],
+    [
+     76.5,
+     25.5,
+     118.0
+    ],
+    [
+     76.5,
+     27.0,
+     116.5
+    ],
+    [
+     77.0,
+     27.5,
+     115.5
+    ]
+   ],
+   "lengthMm": 21.698
+  }
+ },
+ "group": {
+  "gridBottleneckRadiusMm": 3.75,
+  "bottleneckAt": [
+   76.5,
+   27.0,
+   120.5
+  ],
+  "polyline": [
+   [
+    75.0,
+    25.5,
+    121.0
+   ],
+   [
+    76.5,
+    27.0,
+    120.5
+   ],
+   [
+    76.5,
+    28.5,
+    119.0
+   ],
+   [
+    76.5,
+    28.5,
+    115.5
+   ],
+   [
+    77.0,
+    27.5,
+    115.5
+   ]
+  ],
+  "lengthMm": 8.919
+ }
+}

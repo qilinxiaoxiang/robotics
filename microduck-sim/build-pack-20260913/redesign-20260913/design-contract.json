@@ -1,0 +1,453 @@
+{
+  "revision": "microduck-charger-camera-r3",
+  "problem_ids": [
+    "P0",
+    "P5",
+    "P6"
+  ],
+  "goal": "Build a low-cost MicroDuck for camera-guided beak pickup and reinforcement-learning experiments: perceive the target, align, grasp, lift, and assess success. Continue from the completed jaw training. Use one power source and consolidate purchases.",
+  "designed_capabilities": [
+    "camera_observation",
+    "visual_alignment",
+    "learned_jaw_control",
+    "pickup_success_check",
+    "single_source_power"
+  ],
+  "implemented_capabilities": [],
+  "implementation_scope": "Hardware architecture and build instructions; unassembled, visual software integration remains.",
+  "active_robot_sources": [
+    "ROBOTIS SMPS 12V 5A (PS-10)"
+  ],
+  "source": {
+    "model": "ROBOTIS SMPS 12V 5A (PS-10)",
+    "nominal_v": 12,
+    "rated_a": 5,
+    "rated_w": 60,
+    "screen_v_min": 11.5,
+    "screen_v_basis": "lowest accepted reading at the XT30 female before the robot is connected (guide step pd-tether)",
+    "adapter": "ROBOTIS SMPS2DXL (SMPS2Dynamixel)",
+    "cable": "ROBOTIS 3-wire cable plugged into the SMPS2DXL, far servo plug cut off",
+    "cable_wires": {
+      "pin2_vdd": "+12 V, spliced to the tether red wire",
+      "pin1_gnd": "GND, found with a meter, spliced to the tether black wire",
+      "pin3_data": "cut short and insulated"
+    },
+    "origin": "owned set from an OMX-AI kit allocated to the duck (order 2034348); not the arm set, not the reserved third kit",
+    "fuse": null,
+    "decided": "2026-10-13 (PROJECT-CONTEXT current_build.wall_power_change_20261013)"
+  },
+  "power": {
+    "regulator": "DFRobot DFR1202",
+    "regulator_location": "on robot, original battery cavity",
+    "regulator_output_v": 5,
+    "continuous_budget_a": 5,
+    "short_peak_budget_a": 7.4,
+    "budget_basis": "Calculation allocations at 5 V, not measured: 3 A sustained servo acceptance limit (guide step current, PROJECT-CONTEXT current_build.servo_power_path) or 5.4 A simulated 20 ms servo peaks (guide/extension-20261012-neck-audio/page/power_section.py), plus the 2 A non-motor reserve.",
+    "superseded_budget": {
+      "continuous_a": 9,
+      "short_peak_a": 9.5,
+      "source": "r3 screen against the 20 V/3.25 A PD source (power-calculation.json); exceeds the 60 W 12 V supply"
+    },
+    "nonmotor_reserve_a": 2,
+    "pi_branch_budget_a": 1.5,
+    "long_tether_v": 12,
+    "long_tether_m": 2,
+    "long_tether_awg": 18,
+    "twelve_v_loads": [
+      "DFR1202 VIN"
+    ],
+    "input_connector": "FIT0586 XT30 pair",
+    "input_source_contacts": "recessed female",
+    "main_5v_awg": 16,
+    "main_5v_length_m_max": 0.1,
+    "motor_power_via_openrb": false,
+    "pi_power": "parallel header leads",
+    "pi_branch_budget_scope": "Unvalidated Zero-form-factor baseline; 1.5 A is not an accepted Pi 3 demand budget.",
+    "pi_pwr_in_usb": "empty and covered",
+    "physical_current_limiter": false
+  },
+  "fuses": {
+    "input": {
+      "a": 5,
+      "installed": 1,
+      "spare": 0
+    },
+    "motor_main": {
+      "a": 10,
+      "installed": 1,
+      "spare": 0
+    },
+    "motor_branches": {
+      "a": 3,
+      "groups": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          15
+        ]
+      ]
+    },
+    "pi": {
+      "a": 3,
+      "installed": 1
+    },
+    "branch_3a_spares": 0,
+    "audio": {
+      "a": 0.5,
+      "installed": 1,
+      "spare": 0
+    }
+  },
+  "servo_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "motor_data_chain": [
+    "OpenRB",
+    15,
+    14,
+    13,
+    11,
+    12,
+    5,
+    4,
+    3,
+    2,
+    1,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "motor_branch_y_shift_toward_torso_mm": {
+    "F7": 20,
+    "F8": 30
+  },
+  "servo_order": "Order 2034348 (ROBOTIS US, merchant-confirmed 2026-09-18): three OMX-AI kits. Two kits supply 16 XL330-M288-T and 4 OpenRB-150 for the 15-servo/1-controller build; the third kit stays intact for leader/follower experiments. Received: the user photo IMG_6972 (2026-10-13) shows XL330 servos with ID 3 and ID 15 stickers assembled on the robot and an OpenRB-150 on the bench. No tracking record is needed. One SMPS 12V 5A + SMPS2DXL + 3-wire cable set from a kit allocated to the duck is the robot wall supply (wall_power_change_20261013). Original servo/controller order fully refunded at merchant.",
+  "training": {
+    "checkpoint": {
+      "path": "microduck-simulator/rl/models/jaw-ppo.zip",
+      "sha256": "ffcdd40c32635db0c9fbdfa32dbca3eb5ee3869b5ded7993115d8d0c1268656d"
+    },
+    "exported_actor": {
+      "path": "microduck-simulator/app/public/policies/jaw-ppo.json",
+      "sha256": "fda7a44c0787232377da9082cd72ccd66bd7d93184f20069e0b381fc7365e759"
+    }
+  },
+  "compute": {
+    "pi": "First-generation Raspberry Pi Zero W with soldered 40-pin header; preferred integration board",
+    "pi_options": [
+      "Raspberry Pi Zero W (first generation, soldered 40-pin header)",
+      "Raspberry Pi 3 Model B V1.2"
+    ],
+    "pi_selected_variant": null,
+    "pi_preferred_variant": "Raspberry Pi Zero W (first generation)",
+    "board_identity_confirmed": true,
+    "pi_qualification": {
+      "cad_envelope": "existing Pi Zero form factor only",
+      "selected_board_qualified": false,
+      "pi3_mount_verified": false,
+      "pi3_power_budget_verified": false,
+      "zero1_runtime_verified": false,
+      "wireless_available_verified": false,
+      "connection_scope": "Existing GPIO, SC1892 CSI ribbon and SC0727 OTG plan is a Zero-form-factor baseline. User identified Zero W with soldered 40-pin header and Pi 3B V1.2. Verify populated-board geometry, mated plugs, camera transport and USB host route before installation."
+    },
+    "mac": "existing MacBook Pro",
+    "local_loop_hz": 50,
+    "current_runtime_motor_stop_a": 5,
+    "runtime_limit_not_increased_without_measurement": true,
+    "link": "Wi-Fi",
+    "camera": "SC1224",
+    "camera_cable": "SC1892",
+    "imu": "BNO085",
+    "audio_amp": "Adafruit 3006",
+    "speaker": "CMS-30204-18SP",
+    "speaker_ohm": 8,
+    "speaker_w": 1,
+    "gain_resistor_ohm": 100000,
+    "otg": "SC0727",
+    "openrb_data_cable": "Adafruit 4472"
+  },
+  "pi_physical_pins": {
+    "power_positive": [
+      2,
+      4
+    ],
+    "power_ground": [
+      6,
+      14
+    ],
+    "imu_3v3": [
+      1
+    ],
+    "imu_sda": [
+      3
+    ],
+    "imu_scl": [
+      5
+    ],
+    "imu_ground": [
+      9
+    ],
+    "amp_bclk": [
+      12
+    ],
+    "amp_lrclk": [
+      35
+    ],
+    "amp_din": [
+      40
+    ],
+    "amp_ground": [
+      20
+    ]
+  },
+  "connections": [
+    {
+      "id": "wall_supply",
+      "start": "ROBOTIS SMPS 12V 5A DC plug",
+      "end": "SMPS2DXL power jack",
+      "medium": "supply DC lead",
+      "length": "as supplied",
+      "termination": "plug",
+      "role": "12 V supply into the adapter board"
+    },
+    {
+      "id": "tether",
+      "start": "SMPS2DXL 3-wire cable with the far plug cut off: pin 2 VDD (+12 V) and pin 1 GND; pin 3 DATA insulated",
+      "end": "XT30 female (tether side, recessed contacts), mating the robot XT30 male",
+      "medium": "18 AWG red/black pair, no fuse",
+      "length": "2 m",
+      "termination": "wire-to-wire solder splices with heat shrink and cable-tie strain relief; solder the XT30 cups",
+      "role": "12 V power"
+    },
+    {
+      "id": "regulator_input",
+      "start": "robot XT30 male solder cups",
+      "end": "DFR1202 VIN+/GND solder pads",
+      "medium": "18 AWG pair",
+      "length": "<=100 mm",
+      "termination": "solder both ends",
+      "role": "12 V power"
+    },
+    {
+      "id": "star_output",
+      "start": "DFR1202 5 V/GND solder pads",
+      "end": "insulated 5 V star distribution",
+      "medium": "16 AWG pair",
+      "length": "<=100 mm",
+      "termination": "solder and insulate",
+      "role": "common 5 V power"
+    },
+    {
+      "id": "motor_groups",
+      "start": "10 A motor main, then eight 3 A fuses",
+      "end": "15 motors in declared groups",
+      "medium": "20 AWG pair per group + original 3-pin tails",
+      "length": "250 mm per branch conductor incl20mm fuse pigtail +90mm per-servo tail",
+      "termination": "solder feeds; plug factory tails",
+      "role": "5 V motor power"
+    },
+    {
+      "id": "pi_power",
+      "start": "3 A Pi fuse + star ground",
+      "end": "Pi male header physical 2/4 and 6/14",
+      "medium": "2 positive + 2 ground female pre-crimp sockets, 22 AWG copper",
+      "length": "250 mm each",
+      "termination": "solder supply joins; plug header sockets",
+      "role": "5 V Pi/camera/OpenRB logic power",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "pi_usb",
+      "start": "Pi USB Micro-B female",
+      "end": "SC0727 USB-A female",
+      "medium": "SC0727 Micro-B male OTG adapter",
+      "length": "80 mm",
+      "termination": "plug",
+      "role": "USB host data + OpenRB logic power",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "openrb_usb",
+      "start": "SC0727 USB-A female",
+      "end": "OpenRB USB-C female",
+      "medium": "4472 USB-A male / USB-C male",
+      "length": "152 mm",
+      "termination": "plug both ends",
+      "role": "USB data + OpenRB logic power",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "motor_data",
+      "start": "OpenRB DYNAMIXEL DATA",
+      "end": "15 servo DATA terminals",
+      "medium": "factory data chain, external group power",
+      "length": "14 links180mm; ID1-to-ID6 length400mm routed via torso",
+      "termination": "depin/insulate cross-group power; plug data links",
+      "role": "bidirectional motor commands and feedback"
+    },
+    {
+      "id": "camera",
+      "start": "SC1224 camera 15-contact latch",
+      "end": "Pi Zero 22-contact CSI latch",
+      "medium": "SC1892 flat-flex cable",
+      "length": "200 mm",
+      "termination": "open latch, insert, lock",
+      "role": "camera data + power",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "imu",
+      "start": "BNO085 STEMMA QT socket",
+      "end": "Pi header 1/3/5/9",
+      "medium": "4397 four-wire pre-crimp lead",
+      "length": "250 mm after four-wire extension; torso routing",
+      "termination": "plug; secure strain relief",
+      "role": "3.3 V + I2C orientation data",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "audio_power",
+      "start": "0.5 A fused 5 V + ground",
+      "end": "MAX98357A VIN/GND",
+      "medium": "direct 24 AWG copper pair, no service connector",
+      "length": "up to 250 mm per conductor with service loop",
+      "termination": "solder fuse-side supply and amplifier pads; insulate and strain-relieve",
+      "role": "5 V amplifier power"
+    },
+    {
+      "id": "audio_data",
+      "start": "Pi header 12/35/40/20",
+      "end": "MAX98357A BCLK/LRCLK/DIN/GND",
+      "medium": "four pre-crimp signal leads",
+      "length": "head-local",
+      "termination": "plug Pi; solder amplifier pads",
+      "role": "digital sound",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    },
+    {
+      "id": "speaker",
+      "start": "amplifier two speaker screw terminals",
+      "end": "speaker two solder pads",
+      "medium": "two stranded wires",
+      "length": "head-local",
+      "termination": "screw clamp at amp; solder at speaker",
+      "role": "floating speaker output, neither terminal grounded"
+    },
+    {
+      "id": "mac_wifi",
+      "start": "Pi local camera/control service",
+      "end": "Mac vision/training client",
+      "medium": "existing Wi-Fi network",
+      "length": "test area",
+      "termination": "network setup",
+      "role": "frames, timestamps, bounded commands, logs",
+      "board_scope": "existing_pi_zero_form_factor_baseline_unqualified_for_selected_board"
+    }
+  ],
+  "mechanical": {
+    "base_instances": 85,
+    "expected_instances": 89,
+    "replace": {
+      "head_cap": "head-cap-usb-service-print.stl"
+    },
+    "add": [
+      "regulator-open-insert-print.stl",
+      "../assembly/print-parts/current/camera_pitch_foot.stl",
+      "../assembly/print-parts/current/camera_cradle.stl",
+      "../assembly/print-parts/current/audio_carrier_print.stl"
+    ],
+    "original_battery_envelope_mm": [
+      22,
+      34,
+      63
+    ],
+    "owned_bank_mm": [
+      80.9,
+      65.9,
+      26
+    ],
+    "owned_bank_fits_original_bay": false,
+    "battery_retention": "two ties; no quick-release door",
+    "usb_plug_acceptance_envelope_mm": [
+      25,
+      18,
+      8
+    ],
+    "header_housing_acceptance_envelope_mm": [
+      7,
+      52,
+      15
+    ],
+    "usb_plug_vendor_dimensions_verified": false
+  },
+  "assembly": {
+    "schedule": "assembly-fasteners.json",
+    "guide": "ASSEMBLY.html",
+    "geometry_reports": [
+      "fastener-audit/electronics-fasteners.json",
+      "fastener-audit/joint-fasteners.json"
+    ],
+    "required_motor_count": 15
+  },
+  "required_resources": [
+    "Available first-generation Zero W with soldered 40-pin header (preferred) and Pi 3 Model B V1.2; use existing boards first. Bootable microSD, populated-board mounting, loaded power and camera transport need validation.",
+    "SC0727 USB OTG adapter: preserve borrow-first policy only if the selected board requires this Zero-baseline adapter",
+    "One 2x20 2.54 mm socket housing for ALL12 power/IMU/audio contacts; compatible pre-crimp contacts rated >=1.5 A; four22 AWG250mm power leads: club first",
+    "18 AWG red/black 2 m each; short 16 AWG star wire; 20 AWG group wire: club first",
+    "Copper heat spreader compatible with DFR1202 rear thermal pad; insulating film; open airflow: club first",
+    "Print material, mounting fasteners, ties, heat shrink, solder, labels: club first",
+    "Tether splice heat shrink and three cable ties for strain relief at the SMPS2DXL end: club first",
+    "About0.3m26AWGsignalwire plusspliceinsulation to extendID1-to-ID6 DATA link: club first",
+    "Multimeter, current/load measurement, oscilloscope and temperature probe: borrow first",
+    "ROBOTIS SMPS 12V 5A + SMPS2DXL + its 3-wire cable (owned, duck-allocated OMX-AI kit), Mac, local Wi-Fi: existing",
+    "Camera PCB screws: four M2x10 + nuts; one M3x20 + two M3x10 + three nuts + four washers"
+  ],
+  "acceptance": {
+    "design": "Computed Zero-form-factor baseline only; does not qualify Pi 3 mounting, power, connectors or either board runtime.",
+    "physical_tests": 0,
+    "visual_trials": 0,
+    "old_cart_evidence": "stale after r3 substitutions"
+  }
+}

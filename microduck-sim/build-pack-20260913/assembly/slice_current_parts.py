@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,subprocess,hashlib
+H=Path(__file__).resolve().parent;D=H.parents[1]/'hardware-design-20260912';O=H/'printing';O.mkdir(exist_ok=True);W=D/'whole-robot-20260912';profiles=D/'slicing'
+parts=[W/'printing/power-support-integrated-print.stl',W/'printing/small-regulator-cover-print.stl',H/'mouth-clearance/head-cap-mouth-clearance-print.stl',W/'electrical/head-layout/final/audio_carrier_print.stl',D/'camera/camera_pitch_foot.stl',D/'camera/camera_cradle.stl',W/'assembly/trunk-imu/imu_clamp_holder_print.stl',W/'assembly/trunk-imu/imu_rear_cover_print.stl',H/'service-mounts/fuse-bank-print.stl',H/'service-mounts/voltage-alarm-carrier-print.stl',H/'mouth-support/motor-support-coaxial-print.stl']
+cmd=['/Applications/BambuStudio.app/Contents/MacOS/BambuStudio','--load-settings',f'{profiles}/machine.json;{profiles}/head-process.json','--load-filaments',str(profiles/'filament.json'),'--arrange','1','--orient','0','--slice','0','--export-3mf','current-eleven-parts-raw.3mf','--outputdir',str(O)]+list(map(str,parts))
+with (O/'slice.log').open('w') as log:r=subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT)
+r.check_returncode();data=json.loads((O/'result.json').read_text());assert data['return_code']==0 and data.get('sliced_plates')
+subprocess.run(['python3',str(profiles/'embed_presets.py'),str(O/'current-eleven-parts-raw.3mf'),str(O/'MicroDuck-current-11-parts-X1C-CoolPlate.3mf')],check=True)
+manifest={'parts':[{'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in parts],'slicer_version':'BambuStudio 02.07.01.62','result':data,'scope':'Slice and toolpath only; not actual print, material strength, or printer availability.'};(O/'slice-verification.json').write_text(json.dumps(manifest,indent=2));print(json.dumps(data,indent=2))

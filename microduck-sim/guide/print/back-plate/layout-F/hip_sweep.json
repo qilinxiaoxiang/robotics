@@ -1,0 +1,282 @@
+{
+ "method": "Layout F hip-swing sweep (2026-10-14): minimum clearance of the rear box (frame, lid), the USB-C plug envelope and\nevery wire (all segments, capsule chains) to every leg geom while each hip pitch swings over HOME +-30 deg (no walk61 joint range is\nrecorded in the repository, so the coordinator's fallback range is used) combined with hip roll HOME +-10 deg; the\nother joints stay at HOME. STAND moves only the ankles and the neck/head, so it is covered by the same sweep.\n\nModel: the as-built MuJoCo scene (evaluate_delay.MODEL_DIR/scene.xml) with the box parts added to trunk_base, as\nrender_scene.py does. Distances come from mujoco.mj_geomDistance, which treats every mesh as its convex hull: the\nframe's hull covers the box, and each leg mesh hull covers its link, so the reported minimum is a lower bound of the\ntrue gap. Wires are chains of 0.9 mm capsules (wire radius) along every third point of wires_F.json.\n\n    ~/.venvs/microduck-dyn/bin/python hip_sweep.py      (writes hip_sweep.json)",
+ "grid": {
+  "hipPitchDeltaDeg": [
+   -30,
+   30,
+   5
+  ],
+  "hipRollDeltaDeg": [
+   -10,
+   10,
+   5
+  ],
+  "posesPerLeg": 65
+ },
+ "homeJointsRad": {
+  "left_hip_yaw": 0.0,
+  "left_hip_roll": -0.0873,
+  "left_hip_pitch": -0.4579,
+  "left_knee": -0.0049,
+  "left_ankle": 0.453,
+  "neck_pitch": 0.3491,
+  "head_pitch": 0.3491,
+  "head_yaw": 0.0,
+  "head_roll": 0.0,
+  "right_hip_yaw": 0.0,
+  "right_hip_roll": 0.0873,
+  "right_hip_pitch": 0.4579,
+  "right_knee": 0.0049,
+  "right_ankle": -0.453
+ },
+ "minimumOverSweep": {
+  "frame": {
+   "minMm": 0.0,
+   "legGeom": "upper_leg_left#geom193",
+   "side": "left",
+   "hipPitchDeltaDeg": -20.0,
+   "hipRollDeltaDeg": 0.0,
+   "refinedTrueSurfaceMinMm": 6.0,
+   "refinedAt": "frame | left pitch -20 roll +0",
+   "refinedLegGeom": "none within 6 mm of the target box"
+  },
+  "lid": {
+   "minMm": 17.68,
+   "legGeom": "upper_leg_right#geom245",
+   "side": "right",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0
+  },
+  "usbc_plug": {
+   "minMm": 0.0,
+   "legGeom": "hip_l#geom191",
+   "side": "left",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0,
+   "refinedTrueSurfaceMinMm": 4.28,
+   "refinedAt": "usbc_plug | left pitch +30 roll -10",
+   "refinedLegGeom": "upper_leg_left#geom193"
+  },
+  "wire 15V_link_p": {
+   "minMm": 10.1,
+   "legGeom": "upper_leg_right#geom245",
+   "side": "right",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0
+  },
+  "wire 15V_link_q": {
+   "minMm": 16.06,
+   "legGeom": "upper_leg_right#geom245",
+   "side": "right",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0
+  },
+  "wire 15V_feed_q": {
+   "minMm": 10.93,
+   "legGeom": "upper_leg_right#geom245",
+   "side": "right",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0
+  },
+  "wire 15V_feed_p": {
+   "minMm": 14.31,
+   "legGeom": "upper_leg_right#geom245",
+   "side": "right",
+   "hipPitchDeltaDeg": -30.0,
+   "hipRollDeltaDeg": -10.0
+  },
+  "wire 7V_a": {
+   "minMm": 32.32,
+   "legGeom": "upper_leg_left#geom193",
+   "side": "left",
+   "hipPitchDeltaDeg": 30.0,
+   "hipRollDeltaDeg": 10.0
+  },
+  "wire 7V_b": {
+   "minMm": 36.52,
+   "legGeom": "upper_leg_left#geom193",
+   "side": "left",
+   "hipPitchDeltaDeg": 30.0,
+   "hipRollDeltaDeg": 10.0
+  },
+  "wire 5V_a": {
+   "minMm": 14.87,
+   "legGeom": "upper_leg_left#geom193",
+   "side": "left",
+   "hipPitchDeltaDeg": 30.0,
+   "hipRollDeltaDeg": 10.0
+  },
+  "wire 5V_b": {
+   "minMm": 9.25,
+   "legGeom": "upper_leg_left#geom193",
+   "side": "left",
+   "hipPitchDeltaDeg": 30.0,
+   "hipRollDeltaDeg": 10.0
+  }
+ },
+ "atHomeConvexHull": {
+  "frame | left leg": {
+   "minMm": 16.35,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "lid | left leg": {
+   "minMm": 25.86,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left leg": {
+   "minMm": 9.12,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "wire 15V_link_p | left leg": {
+   "minMm": 50.0,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 15V_link_q | left leg": {
+   "minMm": 50.0,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 15V_feed_q | left leg": {
+   "minMm": 49.62,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 15V_feed_p | left leg": {
+   "minMm": 50.0,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 7V_a | left leg": {
+   "minMm": 38.71,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 7V_b | left leg": {
+   "minMm": 39.09,
+   "legGeom": "yaw2roll#geom186"
+  },
+  "wire 5V_a | left leg": {
+   "minMm": 32.99,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "wire 5V_b | left leg": {
+   "minMm": 26.06,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "frame | right leg": {
+   "minMm": 16.35,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "lid | right leg": {
+   "minMm": 25.86,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "usbc_plug | right leg": {
+   "minMm": 46.22,
+   "legGeom": "bearing_roll#geom235"
+  },
+  "wire 15V_link_p | right leg": {
+   "minMm": 27.23,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "wire 15V_link_q | right leg": {
+   "minMm": 33.65,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "wire 15V_feed_q | right leg": {
+   "minMm": 19.5,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "wire 15V_feed_p | right leg": {
+   "minMm": 24.01,
+   "legGeom": "upper_leg_right#geom245"
+  },
+  "wire 7V_a | right leg": {
+   "minMm": 39.09,
+   "legGeom": "bearing_roll#geom235"
+  },
+  "wire 7V_b | right leg": {
+   "minMm": 38.71,
+   "legGeom": "bearing_roll#geom235"
+  },
+  "wire 5V_a | right leg": {
+   "minMm": 42.64,
+   "legGeom": "bearing_roll#geom235"
+  },
+  "wire 5V_b | right leg": {
+   "minMm": 44.86,
+   "legGeom": "bearing_roll#geom235"
+  }
+ },
+ "under2mm": [],
+ "refinedPoses": {
+  "usbc_plug | left pitch -30 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch -25 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch -20 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "frame | left pitch -20 roll +0": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch -15 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch -10 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch -5 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch +0 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch +5 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch +10 roll -10": {
+   "sampledMinMm": 6.0,
+   "legGeom": "none within 6 mm of the target box"
+  },
+  "usbc_plug | left pitch +15 roll -10": {
+   "sampledMinMm": 5.64,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +20 roll -10": {
+   "sampledMinMm": 5.23,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +25 roll -10": {
+   "sampledMinMm": 4.91,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +25 roll -5": {
+   "sampledMinMm": 4.98,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +30 roll -10": {
+   "sampledMinMm": 4.28,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +30 roll -5": {
+   "sampledMinMm": 4.6,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "usbc_plug | left pitch +30 roll +0": {
+   "sampledMinMm": 4.9,
+   "legGeom": "upper_leg_left#geom193"
+  },
+  "frame | right pitch -15 roll +0": {
+   "sampledMinMm": 19.11,
+   "legGeom": "leg_2#geom248"
+  }
+ }
+}

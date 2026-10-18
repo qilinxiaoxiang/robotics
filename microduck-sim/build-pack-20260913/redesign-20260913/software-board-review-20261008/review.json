@@ -1,0 +1,102 @@
+{
+  "verifiedDate": "2026-10-08",
+  "problemIds": [
+    "P0",
+    "P5",
+    "P6"
+  ],
+  "conclusion": "The old Pi-local ARM64 runtime needs migration for Zero W; CPU bitness does not itself require retraining. The intended Mac-policy/Pi-sensor split is not implemented by the existing keyboard SSH controller.",
+  "originalZeroW": {
+    "cpu": "ARMv6 ARM11",
+    "userlandBits": 32
+  },
+  "zero2W": {
+    "cpu": "ARMv8-A Cortex-A53",
+    "capableUserlandBits": [
+      32,
+      64
+    ]
+  },
+  "frozenPolicies": {
+    "weights": "float32",
+    "sameWeightsCanRemainOnMac": true,
+    "actualModelsLoadedAndSmokeTested": true,
+    "livePolicyValidated": false
+  },
+  "publisherBinaryInstallBlockedOnArmv6": [
+    "numpy==2.2.6",
+    "onnxruntime==1.26.0",
+    "rustypot==1.4.2"
+  ],
+  "sensorSupport": "Official Picamera2 supports original Zero and 32-bit Raspberry Pi OS; timing unmeasured",
+  "implementedHere": [
+    "sensor dependency profile",
+    "read-only board/dependency preflight",
+    "publisher wheel inventory reproducer",
+    "actual ONNX model reader and CPU smoke test"
+  ],
+  "notImplemented": [
+    "camera/IMU network forwarder",
+    "Mac combined policy runtime migration",
+    "motor bus owner protocol and local stop path"
+  ],
+  "physicalHardwareOpened": false,
+  "requiresRetrainingBecauseCpuWidth": false,
+  "observationInterfaceAdaptationSeparate": true,
+  "sourceHashes": {
+    "PROJECT-CONTEXT.json": "0067bfcc914928a60dacd14468c56941ba520adba1bcb34b961a6dccef605da1",
+    "build-pack-20260913/phase1/runtime/README.md": "540ea34bc4ffbf1cb8b4eecfea285f9b2900976e37f5f8759490ca2093b759de",
+    "build-pack-20260913/phase1/runtime/requirements.txt": "a1a34a98e9d13f76959a27e821245695726d4c66adf9d39cc9f9f373867a44fd",
+    "build-pack-20260913/phase1/runtime/mac_control.py": "fba3b5da091226a4a44501fa39253f263188857ab6d81a21418884a6ffe13802",
+    "build-pack-20260913/phase1/runtime/phase1.py": "f40b24a50e57b6a690e2dbfb9d974b7c0dd8e5be5d6917c06d3eac11eb88d624",
+    "build-pack-20260913/phase1/runtime/policy.py": "f9c9d45a1ee84ba9db55d8dcf22e9dfff27d7043ddd4b3c11edce888afebeda5",
+    "build-pack-20260913/phase1/runtime/torso_imu.py": "25f74ad134fecd12cc46d4867e0aec3a8f32bcf6d7243878a38f4c710895e145",
+    "build-pack-20260913/phase1/runtime/bundle/bundle-lock.json": "582809a09b1e69976d6831c758f9baee27d94e411fe359bccb0680aa04ea3d77",
+    "build-pack-20260913/phase1/runtime/bundle/community/src/imu_reader.py": "e9533d671840e8eea9114acf894297373dea0d5f510c1e5c76841df042a2d853",
+    "build-pack-20260913/phase1/runtime/bundle/community/src/moves/walk.py": "ec7b2de0bdf9230022484f507344054a7bc9c77e5224c284b64b2dea7f209964",
+    "microduck-simulator/rl/README.md": "b8325737e3d2919eff801da6cfb34b867947a3931c9d90308fa7c580f1ea5b09",
+    "microduck-simulator/rl/results/training-summary.json": "ac8ae89534ed2630fe3d1924c398b5e0a68919cd46833be6ff2270cf1ff9c515",
+    "microduck-simulator/rl/results/validation.json": "b936a2780a99a500d6f240c8df9e8b0761009d3f52264f48c275c67627e58ff1",
+    "Microduck-build-tutorial/microduck/pyproject.toml": "cb526d25b4f8b85a9b3e1cc00b013dcd06ec6e9036c7ea03a89ff861fe2a1554"
+  },
+  "evidence": [
+    "dependency-wheel-review.json",
+    "model-inspection.json",
+    "preflight-tests.json",
+    "local-preflight.json"
+  ],
+  "primarySources": [
+    {
+      "url": "https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://www.raspberrypi.com/products/raspberry-pi-zero-w/",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://www.raspberrypi.com/documentation/computers/os.html",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://github.com/raspberrypi/picamera2#installation",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-vid",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://onnxruntime.ai/docs/install/",
+      "verifiedDate": "2026-10-08"
+    },
+    {
+      "url": "https://onnx.ai/onnx/intro/concepts.html",
+      "verifiedDate": "2026-10-08"
+    }
+  ]
+}

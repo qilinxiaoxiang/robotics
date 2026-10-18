@@ -1,0 +1,12 @@
+# Front/rear packing landmarks
+
+No new collision check or search was run. Coordinates are millimetres. Full precision and source hashes are in `front-rear-partition-landmarks.json`.
+
+- **Pi, original failed front pose:** PCB long axis is −Y; its populated face/individual GPIO contacts point +Z. MicroUSB exits −X. PCB bounds are X44–74, Y−33.5–31.5, Z130.2–131.8. All 68 independent parts, with only the 12 female receiving housings reduced to the separately documented 16.79 mm class hardware bound, occupy X43.410–74.000, Y−33.500–31.500, Z128.200–148.590. The 1.21 mm additional assembly margin is excluded from these bounds. The male pins are unchanged.
+- **Pi at the proposed centre [55,0,126], preserving this orientation:** this is simply delta [−4,+1,−5] from the failed pose. Populated bounds become X39.410–70, Y−32.500–32.500, Z123.200–143.590; the PCB itself is Z125.2–126.8. This is only a coordinate translation, not a clearance result. The PCB overlaps the jaw-support bounding region X≤52.3/Z≤130.315, so native interference should examine that specific underside region before making supports.
+- **OpenRB, manufacturer native frame:** PCB X−12.5–12.5, Y−33–33, Z0–1.6; long axis +Y, component face +Z. Complete populated source bounds X−12.71–12.69, Y−33.89–33, Z−8.85–10.19. The long lower male pins are actual source geometry and cannot be omitted.
+- **OpenRB USB-C:** actual native mouth centre [0.015,32.9,3.23], outward +Y. This comes from 300 front-face source vertices and the independently agreeing tongue centre. The prior mould shoulder [0,34.1,2.7] was misregistered vertically by −0.53 mm. The corrected shoulder is [0.015,34.1,3.23] only if the inherited 1.2 mm mouth-to-mould gap is retained; that gap is an assumption, not an official mating-depth dimension. `openrb-usbc-native-port.json` separates these facts. The plug builder now uses this corrected registration; old plug results are superseded, not accepted.
+
+Useful fixed landmarks: motor15 occupies X16.6–50.6/Y14–40/Z108.615–128.615; jaw support X−1.9–52.3/Y−39.5–34/Z111.515–130.315; camera X75.13–87.3/Y−14.491–9.371/Z118.615–143.615. These are material bounds, not solid rectangular obstacles.
+
+The central inner roof is Z152.854 at [55,10], Z153.212 at [60,10], Z153.928 at [70,10], but falls to Z139.466 at [55,35] and Z140.196 at [60,35]. An original inner feature lowers it to Z150.744 at [52.5,10]. The full outer shell box is not usable cavity space.

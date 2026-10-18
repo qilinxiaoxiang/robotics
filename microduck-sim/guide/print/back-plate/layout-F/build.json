@@ -1,0 +1,815 @@
+{
+ "variant": "F (V1.11 release source)",
+ "worldFrame": "real world (mm, x forward, y left, z up)",
+ "source": "build_f.py (python build_f.py F)",
+ "handedness": {
+  "result": "XL4015 IN terminal at board-local -Y; with R_XL (local Y -> +y) the IN ends face world -y, OUT ends +y.",
+  "evidence": [
+   "bringup/parts/photos/xl4015_robotis_kit_top.jpg: component side, trimmers at the bottom, OUT+ on the left, IN+ on the right; the TO-263 regulator sits right of centre toward IN, the coil left of centre.",
+   "board_facts.json bodiesLocal (ROBOTIS mesh): regulator_ic Y -10.94..-0.76, inductor Y 1.74..8.95, trimmers Z 7.99..12.82; viewed from +X, screen right = -Y and screen down = +Z, so IN (right) = local -Y."
+  ],
+  "fix": "the whole layout is the y-mirror of the first F render (IN windows -y, OUT +y, 5991 turned 180 deg about x: terminal -y, USB-C +y); the 5 V pair moves outboard of the inductor and the top lid screw moves over the regulator IC."
+ },
+ "boards": {
+  "top_7V": {
+   "worldStl": "xl4015_top_7V-world.stl",
+   "worldKey": "xl4015_left",
+   "role": "XL4015 #1, 7 V rail (6.80 V) to OpenRB J4",
+   "pcbMidX": -51.03,
+   "seatX": -50.205,
+   "centreZ": 28.199999999999996,
+   "pcbZ": [
+    15.099999999999996,
+    41.3
+   ],
+   "rotationLocalToWorld": [
+    [
+     -1,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     -1
+    ]
+   ],
+   "inEnd": "-y",
+   "outEnd": "+y",
+   "screwHoles": [
+    [
+     -51.03,
+     28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     28.25,
+     38.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     38.7
+    ]
+   ]
+  },
+  "mid_5V": {
+   "worldStl": "xl4015_mid_5V-world.stl",
+   "worldKey": "xl4015_right",
+   "role": "XL4015 #2, 5.0 V Pi lead",
+   "pcbMidX": -51.03,
+   "seatX": -50.205,
+   "centreZ": -0.40000000000000346,
+   "pcbZ": [
+    -13.500000000000004,
+    12.699999999999996
+   ],
+   "rotationLocalToWorld": [
+    [
+     -1,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     -1
+    ]
+   ],
+   "inEnd": "-y",
+   "outEnd": "+y",
+   "screwHoles": [
+    [
+     -51.03,
+     28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     28.25,
+     10.1
+    ],
+    [
+     -51.03,
+     -28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     -28.25,
+     10.1
+    ]
+   ]
+  }
+ },
+ "pd5991": {
+  "worldStl": "pd5991_F-world.stl",
+  "worldKey": "pd5991",
+  "pcbBackX": -50.0,
+  "standoffMm": 3.0,
+  "pcbZ": [
+   -34.32,
+   -14.000000000000004
+  ],
+  "terminalSide": "-y",
+  "usbSide": "+y",
+  "terminalEntries": [
+   [
+    -54.6,
+    -13.2,
+    -25.81
+   ],
+   [
+    -54.6,
+    -13.2,
+    -22.31
+   ]
+  ],
+  "usbSocketCentre": [
+   -53.25,
+   15.05,
+   -24.16
+  ],
+  "screwHoles": [
+   [
+    -50.0,
+    11.37,
+    -31.91
+   ],
+   [
+    -50.0,
+    11.37,
+    -16.67
+   ],
+   [
+    -50.0,
+    -11.37,
+    -31.78
+   ],
+   [
+    -50.0,
+    -11.37,
+    -16.54
+   ]
+  ]
+ },
+ "holes": {
+  "coverScrews": [
+   [
+    -47.0,
+    16.1,
+    26.0
+   ],
+   [
+    -47.0,
+    16.1,
+    -36.5
+   ],
+   [
+    -47.0,
+    -16.1,
+    26.0
+   ],
+   [
+    -47.0,
+    -16.1,
+    -36.5
+   ]
+  ],
+  "capScrew": {
+   "axisYZ": [
+    11.367,
+    -16.667
+   ],
+   "axis": "+x",
+   "screw": "M2 x 10",
+   "driverHoleDia": 4.4,
+   "driverHoleX": [
+    -67.10000000000001,
+    -56.1
+   ],
+   "columnDia": 5.6,
+   "columnX": [
+    -67.10000000000001,
+    -53.1
+   ],
+   "seatX": -56.1,
+   "floorX": [
+    -56.1,
+    -53.1
+   ],
+   "clearHoleDia": 2.3,
+   "tipX": -46.1,
+   "throughPcbX": [
+    -51.6,
+    -50.0
+   ],
+   "bossPilotX": [
+    -50.0,
+    -45.3
+   ],
+   "engagementMm": 3.9,
+   "gapColumnToPcbMm": 1.5,
+   "usbcRearX": -54.9,
+   "note": "the 5991 hole at real (+11.37, -16.67) takes this screw instead of its own M2 x 6; the column ends 1.5 behind the PCB and its underside is flattened 0.5 above the USB-C socket"
+  },
+  "xl4015Bosses": {
+   "top_7V": [
+    [
+     -51.03,
+     28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     28.25,
+     38.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     38.7
+    ]
+   ],
+   "mid_5V": [
+    [
+     -51.03,
+     28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     28.25,
+     10.1
+    ],
+    [
+     -51.03,
+     -28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     -28.25,
+     10.1
+    ]
+   ]
+  },
+  "pd5991Bosses": [
+   [
+    -50.0,
+    11.37,
+    -31.91
+   ],
+   [
+    -50.0,
+    11.37,
+    -16.67
+   ],
+   [
+    -50.0,
+    -11.37,
+    -31.78
+   ],
+   [
+    -50.0,
+    -11.37,
+    -16.54
+   ]
+  ]
+ },
+ "envelope": {
+  "box": {
+   "xExtent": [
+    -67.1,
+    -37.5
+   ],
+   "frameRimX": -59.1,
+   "capX": [
+    -67.10000000000001,
+    -59.1
+   ],
+   "capInnerRearFaceX": -65.9,
+   "frontPlateX": [
+    -47.0,
+    -45.0
+   ],
+   "outerDepthBehindFrontPlate": 20.1,
+   "absY": 32.05,
+   "zTop": 43.0,
+   "zBottom": -36.02000000000001,
+   "packFloorZ": -44.0,
+   "bottomAbovePackFloorMm": 7.98
+  },
+  "stack": {
+   "topWallInner": 41.8,
+   "top7V": {
+    "zc": 28.199999999999996,
+    "pcbZ": [
+     15.099999999999996,
+     41.3
+    ]
+   },
+   "tierGap": {
+    "pcbGapMm": 2.4,
+    "wirePlaneZ": 13.899999999999997
+   },
+   "mid5V": {
+    "zc": -0.40000000000000346,
+    "pcbZ": [
+     -13.500000000000004,
+     12.699999999999996
+    ]
+   },
+   "stepInnerZ": -14.000000000000004,
+   "stepOuterZ": -15.200000000000003,
+   "pd5991": {
+    "pcbZ": [
+     -34.32,
+     -14.000000000000004
+    ],
+    "pcbBackX": -50.0,
+    "narrowInnerAbsY": 14.406,
+    "narrowOuterAbsY": 15.606,
+    "narrowWidth": 31.21,
+    "floorInnerZ": -34.82,
+    "floorOuterZ": -36.02,
+    "terminalEntryZ": [
+     -25.81,
+     -22.31
+    ],
+    "usbSocketCentre": [
+     -53.25,
+     15.05,
+     -24.16
+    ],
+    "terminalSide": "-y",
+    "usbSide": "+y"
+   }
+  },
+  "rounding": {
+   "R": {
+    "side": 7.4,
+    "top": 7.8,
+    "step": 4.3,
+    "nside": 4.5,
+    "nbot": 8.0
+   },
+   "rcTop": 1.8,
+   "rcStep": 1.8,
+   "rcNbot": 2.1,
+   "rf": 3.0,
+   "frameRimX": -59.1
+  }
+ },
+ "windows": {
+  "top_7V_IN": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "top_7V_OUT": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "mid_5V_IN": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "mid_5V_OUT": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "pd5991_term": {
+   "x": [
+    -65.9,
+    -53.1
+   ],
+   "side": -1,
+   "yWall": [
+    14.4065,
+    15.606499999999999
+   ],
+   "z": [
+    -28.06,
+    -20.06
+   ]
+  },
+  "pd5991_usbc": {
+   "x": [
+    -65.9,
+    -49.0
+   ],
+   "side": 1,
+   "yWall": [
+    14.4065,
+    15.606499999999999
+   ],
+   "z": [
+    -31.16,
+    -17.16
+   ]
+  }
+ },
+ "passages": {},
+ "capRetention": {
+  "screw": {
+   "axisYZ": [
+    11.367,
+    -16.667
+   ],
+   "axis": "+x",
+   "screw": "M2 x 10",
+   "driverHoleDia": 4.4,
+   "driverHoleX": [
+    -67.10000000000001,
+    -56.1
+   ],
+   "columnDia": 5.6,
+   "columnX": [
+    -67.10000000000001,
+    -53.1
+   ],
+   "seatX": -56.1,
+   "floorX": [
+    -56.1,
+    -53.1
+   ],
+   "clearHoleDia": 2.3,
+   "tipX": -46.1,
+   "throughPcbX": [
+    -51.6,
+    -50.0
+   ],
+   "bossPilotX": [
+    -50.0,
+    -45.3
+   ],
+   "engagementMm": 3.9,
+   "gapColumnToPcbMm": 1.5,
+   "usbcRearX": -54.9,
+   "note": "the 5991 hole at real (+11.37, -16.67) takes this screw instead of its own M2 x 6; the column ends 1.5 behind the PCB and its underside is flattened 0.5 above the USB-C socket"
+  },
+  "screw2": {
+   "axisYZ": [
+    -11.366,
+    -16.54
+   ],
+   "axis": "+x",
+   "screw": "M2 x 10",
+   "driverHoleDia": 4.4,
+   "driverHoleX": [
+    -67.10000000000001,
+    -56.1
+   ],
+   "columnDia": 5.6,
+   "columnX": [
+    -67.10000000000001,
+    -53.1
+   ],
+   "seatX": -56.1,
+   "floorX": [
+    -56.1,
+    -53.1
+   ],
+   "clearHoleDia": 2.3,
+   "tipX": -46.1,
+   "throughPcbX": [
+    -51.6,
+    -50.0
+   ],
+   "bossPilotX": [
+    -50.0,
+    -45.3
+   ],
+   "engagementMm": 3.9,
+   "gapColumnToPcbMm": 1.5,
+   "usbcRearX": -54.9,
+   "note": "the 5991 hole at real (-11.37, -16.54), terminal side, takes this screw instead of its own M2 x 6 (Shawn 2026-10-15); same column, seat and engagement as capScrew"
+  },
+  "topScrews": {
+   "axesYZ": [
+    [
+     28.25,
+     38.699999999999996
+    ],
+    [
+     -28.25,
+     38.699999999999996
+    ]
+   ],
+   "axis": "+x",
+   "screw": "M2 x 10",
+   "driverHoleDia": 4.4,
+   "columnDia": 5.6,
+   "columnX": [
+    -67.10000000000001,
+    -52.6
+   ],
+   "seatX": -55.6,
+   "floorX": [
+    -55.6,
+    -52.6
+   ],
+   "clearHoleDia": 2.3,
+   "tipX": -45.6,
+   "boardSeatX": -50.205,
+   "bossPilotX": [
+    -50.205,
+    -45.3
+   ],
+   "engagementMm": 4.6,
+   "columnFlattenedTo": {
+    "absY": 30.6,
+    "zMax": 41.55
+   },
+   "note": "the 7 V board top corner holes take these screws instead of its own two M2 x 6; with the cap off the board hangs on its two lower M2 x 4"
+  },
+  "fitting": "push the cap straight forward onto the rim, then drive the four M2 x 10 through the driver holes in the cap back (two at the top corners into the 7 V board corner bosses, two low into the 5991 upper corner bosses)",
+  "approachPath": [
+   [
+    -15.0,
+    0.0,
+    -0.0
+   ],
+   [
+    0.0,
+    0.0,
+    -0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ]
+ },
+ "screws": [
+  {
+   "where": "XL4015 bosses at z -10.9 (y +-28.25), 5.0 long (5 V board lower corners); the 7 V board top corners at z 38.7 take the cap top screws",
+   "count": 2,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 from the seat x -50.205 to x -45.3",
+   "engagementMm": 4.35
+  },
+  {
+   "where": "XL4015 bosses at z 10.1 (y +-28.25), 4.2 long (stub to x -46.0, shell limited)",
+   "count": 2,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 through the stub (tip 0.15 past the stub end)",
+   "engagementMm": 4.2
+  },
+  {
+   "where": "XL4015 bosses at z 17.7 (y +-28.25), 3.2 long (no stub: the torso shells are 1.29 / 1.17 mm ahead)",
+   "count": 2,
+   "screw": "M2 x 4",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 through the boss",
+   "engagementMm": 2.35
+  },
+  {
+   "where": "Adafruit 5991 to the standoff bosses (5.0 long) at (y +11.37, z -31.91) and (y -11.37, z -31.78); the two upper holes take cap screws",
+   "count": 2,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.6 mm",
+   "pilotMm": "dia 1.6 from the seat x -50.0 (3.0 standoff) to x -45.3 (4.7 deep)",
+   "engagementMm": 4.4
+  },
+  {
+   "where": "cap: through the driver holes in the cap back and the column floors, through the 5991 upper holes (y, z) [11.367, -16.667] and [-11.366, -16.54] into their standoff bosses; heads on the column floors at x -56.1, tip x -46.1",
+   "count": 2,
+   "screw": "M2 x 10",
+   "stack": "column floor 3.0 mm + gap 1.5 mm + PCB 1.6 mm",
+   "pilotMm": "existing 5991 boss pilot dia 1.6 from x -50.0 to x -45.3",
+   "engagementMm": 3.9
+  },
+  {
+   "where": "cap top: through the driver holes in the cap back and the column floors, through the 7 V board top corner holes (y, z) [[28.25, 38.699999999999996], [-28.25, 38.699999999999996]] into their 5.0 long bosses; heads on the column floors at x -55.6, tip x -45.6",
+   "count": 2,
+   "screw": "M2 x 10",
+   "stack": "column floor 3.0 mm + gap + PCB 1.65 mm",
+   "pilotMm": "existing XL4015 boss pilot dia 1.6 from the seat x -50.205 to x -45.3",
+   "engagementMm": 4.6
+  },
+  {
+   "where": "frame to the V1.8 pack cover posts (reused V1.8 screws); the lower two heads sit in dia 4.4 driver lanes",
+   "count": 4,
+   "screw": "M2 x 6",
+   "stack": "front plate 2.0 mm",
+   "pilotMm": "V1.8 pack posts (4.8 deep pilots)",
+   "engagementMm": 4.0
+  }
+ ],
+ "wires": {
+  "15V_link_p": {
+   "net": "p",
+   "lengthMm": 43.5,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.495,
+   "gapLidMm": 4.32,
+   "gapBoardsMm": {
+    "top_7V": 0.47,
+    "mid_5V": 0.464,
+    "pd5991": 10.0
+   }
+  },
+  "15V_link_q": {
+   "net": "q",
+   "lengthMm": 37.1,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 1.003,
+   "gapLidMm": 3.977,
+   "gapBoardsMm": {
+    "top_7V": 1.571,
+    "mid_5V": 1.571,
+    "pd5991": 10.0
+   }
+  },
+  "15V_feed_q": {
+   "net": "q",
+   "lengthMm": 46.9,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.6,
+   "gapLidMm": 3.155,
+   "gapBoardsMm": {
+    "top_7V": 10.0,
+    "mid_5V": 1.571,
+    "pd5991": 0.453
+   }
+  },
+  "15V_feed_p": {
+   "net": "p",
+   "lengthMm": 50.0,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.6,
+   "gapLidMm": 1.592,
+   "gapBoardsMm": {
+    "top_7V": 10.0,
+    "mid_5V": 0.476,
+    "pd5991": 0.751
+   }
+  },
+  "7V_a": {
+   "net": "7V",
+   "lengthMm": 104.0,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.3,
+   "gapLidMm": 1.1,
+   "gapBoardsMm": {
+    "top_7V": 0.456,
+    "mid_5V": 10.0,
+    "pd5991": 10.0
+   }
+  },
+  "7V_b": {
+   "net": "7V",
+   "lengthMm": 96.6,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.6,
+   "gapLidMm": 1.1,
+   "gapBoardsMm": {
+    "top_7V": 0.47,
+    "mid_5V": 10.0,
+    "pd5991": 10.0
+   }
+  },
+  "5V_a": {
+   "net": "5V",
+   "lengthMm": 144.3,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.549,
+   "gapLidMm": 2.802,
+   "gapBoardsMm": {
+    "top_7V": 1.505,
+    "mid_5V": 0.471,
+    "pd5991": 10.0
+   }
+  },
+  "5V_b": {
+   "net": "5V",
+   "lengthMm": 152.3,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.451,
+   "gapLidMm": 4.32,
+   "gapBoardsMm": {
+    "top_7V": 1.505,
+    "mid_5V": 0.457,
+    "pd5991": 10.0
+   }
+  }
+ },
+ "frame": {
+  "volume_mm3": 10292.8,
+  "grams": 10.86,
+  "genus": 16,
+  "bodies": 1,
+  "bounds": [
+   [
+    -59.1,
+    -32.05,
+    -44.0
+   ],
+   [
+    -37.5,
+    32.05,
+    43.0
+   ]
+  ]
+ },
+ "lid": {
+  "volume_mm3": 6562.4,
+  "grams": 6.92,
+  "genus": 4,
+  "bodies": 1,
+  "bounds": [
+   [
+    -67.1,
+    -32.05,
+    -36.02
+   ],
+   [
+    -52.6,
+    32.05,
+    43.0
+   ]
+  ]
+ },
+ "massTotalG": 17.78,
+ "printPoses": {
+  "frame": "rear_frame-print.stl: rim-down, the open back (x -65.9, lid seat) on the bed; x' = y, y' = z, z' = x",
+  "lid": "rear_lid-print.stl: inner face (x -65.9) on the bed; x' = y, y' = -z, z' = -x"
+ },
+ "sha256": {
+  "rear_frame-world.stl": "2f1f81bf63216c1a279c4f1f071c2f79d1a2c49de7382b9e945cb2a753032d92",
+  "rear_lid-world.stl": "ee096c39ac2da0eef539a8aa47b4c28a6f6b3d7ba9e450a02896be59fcc22a17",
+  "xl4015_top_7V-world.stl": "ec7632d204f56d8bf98b29e22897c6874b8f1b7667573c9b8b26d534039cd67a",
+  "xl4015_mid_5V-world.stl": "109b788755069a37fe0d9804357ac16578f6cd2f04faf04f49070e54006db9c8",
+  "pd5991_F-world.stl": "d4fdcbfb2459af6ea812181ab211487ba787b79a8a71e37379ee330ba8e08f56",
+  "wires_F.json": "4be12280b849c956f498dc8bf467bae95027734173197e4e7e2feb3a28e98524"
+ }
+}

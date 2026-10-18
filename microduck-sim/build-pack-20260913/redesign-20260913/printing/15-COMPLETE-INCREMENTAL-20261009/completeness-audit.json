@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "status": "INVENTORY_CORRECTIONS_IDENTIFIED_NOT_A_SLICE_RELEASE",
+  "scope": "Read-only completeness audit. No CAD, route simulation, source geometry changes, or final slicer validation. Prototype delivery does not require full flexible-wire simulation or completed USB closure.",
+  "requiredOutput": {
+    "colors": [
+      "Yellow",
+      "White",
+      "Orange",
+      "Black"
+    ],
+    "machines": [
+      "Bambu X1 Carbon",
+      "Elegoo Centauri Carbon"
+    ],
+    "files": 8,
+    "prefix": "zhengxia_",
+    "metadataInDeliveryZip": false
+  },
+  "addRequiredReplacements": [
+    {
+      "key": "imu_clamp",
+      "color": "Orange",
+      "quantity": 1,
+      "replacesStockIds": [
+        "10"
+      ],
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-clamp-retained-world.stl",
+      "sha256": "f12de417a60da17c0262daa272257164955c7afd187f0580eb039cc4fa4d9dc6",
+      "coordinates": "world millimetres; requires proper print orientation, not direct placement",
+      "reason": "Current local BNO085 assembly modifies original holder/cover; neither is in V1.4 or the three-part head trial."
+    },
+    {
+      "key": "imu_cover",
+      "color": "Black",
+      "quantity": 1,
+      "replacesStockIds": [
+        "76"
+      ],
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-cover-retained-world.stl",
+      "sha256": "847781991afe5f24ae1c923160f3a16320bc9b7cacdf7269bead7baefe9e3fc7",
+      "coordinates": "world millimetres; requires proper print orientation, not direct placement",
+      "reason": "Current local BNO085 assembly modifies original holder/cover; neither is in V1.4 or the three-part head trial."
+    }
+  ],
+  "retireFromV14": [
+    {
+      "key": "pi_2mm_spacer",
+      "quantity": 3,
+      "reason": "Head prototype assembly step4 uses four M2x6 TAP on two cap-integrated Pi side rails. The former three face-mounted 2mm spacers are not in current integrated-rigid-package and must not be counted as current required parts."
+    }
+  ],
+  "replaceDoNotAppend": [
+    {
+      "keys": [
+        "head_cap",
+        "speaker_cradle",
+        "speaker_keeper"
+      ],
+      "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/head-trial.json",
+      "reason": "Print14 three Orange assets replace their V1.4 counterparts, not three additional duplicate parts."
+    }
+  ],
+  "reusePrintedStock": [
+    {
+      "key": "power_support",
+      "stockId": "2"
+    },
+    {
+      "key": "regulator_insert",
+      "stockId": "52"
+    }
+  ],
+  "excluded": [
+    {
+      "keys": [
+        "controller-roof-boss-0",
+        "controller-roof-boss-1",
+        "controller-roof-boss-2",
+        "controller-roof-boss-3",
+        "pi-roof-side-rail-0",
+        "pi-roof-side-rail-1",
+        "speaker_roof_posts",
+        "amp_roof_post_0",
+        "amp_roof_post_1"
+      ],
+      "reason": "Already integrated into the single head-cap prototype mesh; do not separately print feature STLs."
+    },
+    {
+      "keys": [
+        "fuse_carrier",
+        "fuse-bank",
+        "battery tray",
+        "body-controller carrier",
+        "body USB-passage shells",
+        "six rectangular cable-tie receiving frames",
+        "SMT2187 receiving solids",
+        "USB plug receiving solids",
+        "wire solids",
+        "support blockers"
+      ],
+      "reason": "Withdrawn/unadopted architecture, diagnostic receivers, flexible wiring or nonprinting slicer modifiers; not incremental printed parts."
+    },
+    {
+      "keys": [
+        "neck_m2_spacer"
+      ],
+      "quantity": 4,
+      "reason": "User-selected integral neck seat replaces these loose spacers; do not revive V1.3 extras."
+    }
+  ],
+  "expectedInventoryAfterCorrections": {
+    "partTypes": 12,
+    "quantity": 12,
+    "colorCounts": {
+      "Yellow": 1,
+      "White": 1,
+      "Orange": 4,
+      "Black": 6
+    },
+    "calculation": "V1.4 11 types/13 units; replace its3 Orange types one-for-one; retire1 Pi-spacer type/3 units; add2 IMU replacement types/units. No evidence of V1.4 physically printed; compare against89 printed baseline."
+  },
+  "findings": [
+    {
+      "id": "MISSING-IMU",
+      "severity": "fix-before-complete-inventory-claim",
+      "action": "Add current IMU holder and rear cover as stock10/76 replacements."
+    },
+    {
+      "id": "OBSOLETE-PI-SPACERS",
+      "severity": "fix-before-complete-inventory-claim",
+      "action": "Remove three old Pi face spacers; cap rails already provide the new mounting interface."
+    },
+    {
+      "id": "DUPLICATE-ORANGE",
+      "severity": "avoid-duplicate",
+      "action": "Replace three old Orange assets by Print14 assets; include no loose cap features."
+    },
+    {
+      "id": "UNCHANGED-BODY",
+      "severity": "avoid-unnecessary-reprint",
+      "action": "Reuse original power support and regulator insert; body distribution manifest explicitly has no print changes."
+    },
+    {
+      "id": "WITHDRAWN-DIAGNOSTICS",
+      "severity": "avoid-obsolete-parts",
+      "action": "Exclude fuse array, failed battery/body-controller alternatives, artificial tie frames, connector envelopes and wire meshes."
+    }
+  ],
+  "sourceBindings": {
+    "context": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/PROJECT-CONTEXT.json",
+      "sha256": "f7caf8e630206c58e7454397b7b6e88e3358daf2f94e720e2a3d464c68fa8d95"
+    },
+    "stock89": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+      "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+    },
+    "v14": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/incremental-audit/incremental-audit-V1.4.json",
+      "sha256": "4f4d9b0fa7a23251889b977dfb959aa4021a1dab77fa7f02d59b62c33aed1a98"
+    },
+    "headTrial": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/head-trial.json",
+      "sha256": "6c9cedac11ace220b0dd2b4115d1db4ca6448491312ff8a4da045d85ab8e0112"
+    },
+    "imu": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-local-manifest.json",
+      "sha256": "b85d5e941b7b25a5e7a290b6a0aaa5daa470f048d074c504328399f8bc94fc0c"
+    },
+    "body": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/integrated-harness-20261009/body-distribution-manifest.json",
+      "sha256": "41d7e8f1f0c0a1c5734fa965b367270d13c86859820e15ddcddd92aaa9b1b66d"
+    },
+    "headAdoption": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/prototype-adoption/prototype-adoption.json",
+      "sha256": "dad2dd3eed321340375b6407b7798e266b57caaa6a794d314e50a81cbed3b511"
+    }
+  },
+  "physicalFitVerified": false,
+  "completeHeadAccepted": false,
+  "finalNativeFilesVerified": false
+}

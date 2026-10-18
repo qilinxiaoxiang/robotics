@@ -1,0 +1,95 @@
+{
+ "_method": "Can the bundle's Pi-end contacts sit in multi-way Dupont housings next to the audio Pi-end housings?\n\nPhase 1 put the eight bundle contacts into two 1 x 5 housings (odd row 1, 3, 5, empty 7, 9; even row 2, empty 4, 6, 8,\n10). The audio study now uses pin 4 (amplifier Vin) with its own 1-pin housing, so the even-row 1 x 5 cannot be used.\nCandidate blocks, each modelled as the convex hull of the V1.8 1-pin receiving housings it replaces (same pitch, same\nlength): odd 1 x 5 (pins 1..9), even 1 x 1 at pin 2, even 1 x 3 (pins 6, 8, 10). Each block is checked (manifold3d\nintersection volume and min_gap) against the audio Pi-end housings (pins 4, 12, 34, 35, 40), the audio jumpers, the\nother blocks, the Pi header pins it does not own, and the A3 fan wires except its own wire ends.\nWrites ../housing-blocks.json.",
+ "blocks": {
+  "odd_1x5_pins_1_3_5_7_9": {
+   "pins": [
+    1,
+    3,
+    5,
+    7,
+    9
+   ],
+   "nearest": {
+    "pi_housing_pin04": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "pi_housing_pin12": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "even_1x1_pin_2": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "even_1x3_pins_6_8_10": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    }
+   },
+   "A3FanWires": {
+    "overlapMm3": 1.9775,
+    "gapMm": 0.0
+   },
+   "clearOfAllButOwnWires": true
+  },
+  "even_1x1_pin_2": {
+   "pins": [
+    2
+   ],
+   "nearest": {
+    "pi_housing_pin04": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "odd_1x5_pins_1_3_5_7_9": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "audio_wire_amp_vin_pin04": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.57
+    },
+    "header_pin_01": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.95
+    }
+   },
+   "A3FanWires": {
+    "overlapMm3": 0.4946,
+    "gapMm": 0.0
+   },
+   "clearOfAllButOwnWires": true
+  },
+  "even_1x3_pins_6_8_10": {
+   "pins": [
+    6,
+    8,
+    10
+   ],
+   "nearest": {
+    "pi_housing_pin04": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "pi_housing_pin12": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "odd_1x5_pins_1_3_5_7_9": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.0
+    },
+    "audio_wire_amp_vin_pin04": {
+     "overlapMm3": 0.0,
+     "gapMm": 0.57
+    }
+   },
+   "A3FanWires": {
+    "overlapMm3": 1.4877,
+    "gapMm": 0.0
+   },
+   "clearOfAllButOwnWires": true
+  }
+ }
+}

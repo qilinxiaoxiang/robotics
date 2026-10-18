@@ -1,0 +1,11 @@
+import argparse,json
+from pathlib import Path
+import bounded_amp_check as c
+import precision_mesh as pm
+import check_speaker_rewire as s
+D=Path(__file__).resolve().parent;H=D.parent;O=D/'gpio-fanout/x225';P=O/'i2s-route-proposal.json';M=H/'camera-ribbon-repair/positive-x225/candidate-manifest.json';p=argparse.ArgumentParser();p.add_argument('--pin',type=int,required=True);p.add_argument('--mode',choices=['build','pair'],required=True);p.add_argument('--key');p.add_argument('--actual',action='store_true');a=p.parse_args();c.guarded_import();routes=json.loads(P.read_text())['routes'];route=next(x for x in routes if x['pin']==a.pin);assert route['constructionError'] is None;wf=(O/'actual4397' if a.actual else O)/f'i2s-pin{a.pin}-world.stl'
+if a.mode=='build':
+ w=s.tube(route['centerlineMm'],.75);r=pm.export(c,w,wf);r.update(inputHashes=c.fingerprint([Path(__file__),P,D/'check_speaker_rewire.py']),meshSha256=c.sha(wf),integrationReady=False);c.atomic_json(wf.with_suffix('.json'),r);print(json.dumps({'pin':a.pin,'built':True}));raise SystemExit
+if a.actual:
+ receipt=json.loads((wf.parent/f'i2s-pin{a.pin}.json').read_text());assert receipt['outputSha256']==c.sha(wf), 'Stale wire mesh';assert receipt['inputHashes'][str(P)]==c.sha(P), 'Wire build does not bind current route';assert receipt['inputHashes'][str(D/'build_actual_i2s_tails.py')]==c.sha(D/'build_actual_i2s_tails.py'), 'Wire builder changed; rebuild before testing'
+manifest=json.loads(M.read_text());rows=json.loads((D/'speaker-rewire/scene-plan.json').read_text())['rows'];idx={k:{'path':str(H/v)} for k,v in manifest['replacementMeshes'].items()};idx.update({x['key']:{'path':str(H/x['mesh'])} for x in manifest['additionalParts']});row=idx.get(a.key) or rows[a.key];f=Path(row.get('path') or row['dataFile']);w=pm.load(c,wf);ob=s.solid(row);inter=w^ob;v=max(0,float(inter.volume()));out={'pin':a.pin,'obstacle':a.key,'passed':v<1e-4,'overlapMm3':v,'boundsMm':list(inter.bounding_box()) if v>1e-4 else None,'minimumGapMm':w.min_gap(ob,2) if v<1e-4 else 0,'integrationReady':False,'inputHashes':c.fingerprint([Path(__file__),wf,P,M,f])};c.atomic_json((O/'actual4397' if a.actual else O)/f'pair-pin{a.pin}-{a.key}.json',out);print(json.dumps({k:v for k,v in out.items() if k!='inputHashes'}));raise SystemExit(0 if out['passed'] else 2)

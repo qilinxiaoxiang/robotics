@@ -1,0 +1,103 @@
+{
+ "_doc": "Print poses of the three V1.17 A7Z head parts, written to pose-sources-a7z.json (read by make_manifest.py next to the V1.16\npose-sources.json, which is copied unchanged). Read-only on every source.\n\n    /tmp/microduck-cad-venv/bin/python scripts/pose_sources_a7z.py\n\n- head_cap_a7z (world frame): the V1.9 cap pose, release-V1.9/manifest-V1.9.json head_cap_v19.sourceToPrint (roof on the bed);\n  the A7Z cap is the V1.9 cap with material removed inside only, so the pose, contact strip and tip angle carry over.\n- clip_cap_a7z (world frame): the V1.9 cap clip pose, release-V1.9/manifest-V1.9.json clip_cap_v19.sourceToPrint (tab seat face\n  on the bed, screw hole vertical).\n- face_panel_a7z (face-a7z/face_panel_a7z.stl, robot frame, byte-identical to world/face_panel.stl): the V1.8 face transform,\n  release-V1.8/manifest-V1.8.json face_panel.sourceToPrint (front on the bed, bosses up). The registration check maps it through\n  that transform plus the drop to the bed and compares the sorted vertices with face-a7z/face_panel_a7z-print.stl.\n",
+ "poses": {
+  "head_cap_a7z": {
+   "V1.9 pose": {
+    "sourceToPrint": [
+     [
+      -0.994831182,
+      0.065255263,
+      -0.077798904,
+      41.502281705
+     ],
+     [
+      0.066724243,
+      0.997636148,
+      -0.016431442,
+      -3.766984888
+     ],
+     [
+      0.07654276,
+      -0.021537584,
+      -0.996833656,
+      150.267217814
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "release-V1.9/manifest-V1.9.json head_cap_v19",
+    "poseOrigin": "ext-v19/manifest-ext-v19.json: V1.8 cap pose (roof on the bed), rotation from release-V1.8/manifest-V1.8.json; 104.39 mm2 contact, tip angle 7.7 deg so the Orange 4 mm outer brim override stays"
+   }
+  },
+  "clip_cap_a7z": {
+   "V1.9 pose": {
+    "sourceToPrint": [
+     [
+      -0.173602778,
+      0.0,
+      -0.984815757,
+      153.053491272
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      -23.099999905
+     ],
+     [
+      0.984815757,
+      0.0,
+      -0.173602778,
+      -35.943847213
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "release-V1.9/manifest-V1.9.json clip_cap_v19",
+    "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 35.39 mm2 contact"
+   }
+  },
+  "face_panel_a7z": {
+   "V1.8 pose": {
+    "sourceToPrint": [
+     [
+      0.0,
+      -1.0,
+      0.0,
+      -0.0913772583008
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      -132.627841949463
+     ],
+     [
+      -1.0,
+      0.0,
+      0.0,
+      81.39900207519531
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "release-V1.8/manifest-V1.8.json face_panel",
+    "note": "robot-frame face_panel_a7z.stl (= world/face_panel.stl) under the V1.8 face transform; checked against face_panel_a7z-print.stl",
+    "registeredTo": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-a7z/face_panel_a7z-print.stl",
+    "maxVertexDeviationMm": 1.907348611496218e-06
+   }
+  }
+ }
+}

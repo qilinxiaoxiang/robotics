@@ -1,0 +1,18 @@
+{
+ "note": "Servo bus currents: simulation at 7.4 V (../../../hardware-design-20260912/whole-robot-20260912/dynamics/power-2s-20261015/README.md), mean over the case window; the model overestimates holding current 3-10x against the one hardware reading (0.165 A at 5 V). 5 V branch: A7Z + IMX214 camera + BNO085 + MAX98357A from published measurements and estimates (research 2026-10-15, sources in README.md section 1). 'pessimistic' doubles the simulated walking servo current as a margin for the untested hardware gait.",
+ "buck_efficiency": 0.9,
+ "usable_energy_fraction": 0.8,
+ "packs": [
+  {"name": "2S 650", "mah": 650},
+  {"name": "2S 1000", "mah": 1000},
+  {"name": "2S 1300", "mah": 1300}
+ ],
+ "scenarios": [
+  {"name": "idle, torque on", "servo_bus_a": 0.30, "five_volt_w": 2.2},
+  {"name": "standing, camera on", "servo_bus_a": 0.45, "five_volt_w": 4.0},
+  {"name": "walking vx 0.3", "servo_bus_a": 0.71, "five_volt_w": 4.0},
+  {"name": "walking + heavy compute", "servo_bus_a": 0.71, "five_volt_w": 7.0},
+  {"name": "walking pessimistic", "servo_bus_a": 1.42, "five_volt_w": 5.0}
+ ],
+ "peak": {"note": "sit to stand 20 ms peak at the 1.75 A servo limit plus the 5 V branch short peak", "servo_bus_a": 6.6, "five_volt_w": 11.0}
+}

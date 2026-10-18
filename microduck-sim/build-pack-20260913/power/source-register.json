@@ -1,0 +1,377 @@
+{
+  "verified_date": "2026-09-13",
+  "hardware_measurements_performed": 0,
+  "method": "Primary pages opened live or explicit access exception; no procurement. Prices/warehouse status are observations at lookup time, not reservations.",
+  "sources": [
+    {
+      "id": "xl330",
+      "title": "ROBOTIS XL330-M288 e-Manual",
+      "url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "5V stall 1.47A; standby 17mA; 3.7–6V input",
+        "Present Current is input-power current for XL330; Current Limit active in modes 0 and 5",
+        "EH pin 1 GND / 2 VDD / 3 DATA; manufacturer 21AWG cable"
+      ],
+      "unknown_or_not_proven": [
+        "whole-robot running currents and peaks"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "openrb",
+      "title": "ROBOTIS OpenRB-150 e-Manual",
+      "url": "https://emanual.robotis.com/docs/en/parts/controller/openrb-150/",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "all DXL ports combined 3A; USB fuse 500mA",
+        "external servo VDD bypass means board power switch cannot turn off external rail"
+      ],
+      "unknown_or_not_proven": [
+        "USB-only board typical current"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "servo_reg",
+      "title": "Pololu D42V110F5 #5671",
+      "url": "https://www.pololu.com/product/5671",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "5V +/-3%; about 15A curve at 6.6-8.4V in room-temperature still air; conservative review allowance 14A",
+        "ENA pulled up to VIN; ground to disable. ENB/PFM left open",
+        "low-input dropout about 0.3V or less through 10A; no robot transients measured"
+      ],
+      "unknown_or_not_proven": [
+        "enclosed temperature and transient response with this battery/harness"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": "cost-review/sources/pololu-5671.html"
+    },
+    {
+      "id": "servo_reg_specs",
+      "title": "Pololu #5671 specifications and dimension diagram",
+      "url": "https://www.pololu.com/product/5671/specs",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "43.2x31.8x9mm nominal, 15g",
+        "Dimension drawing profile sums to 9.47mm; 1.8mm underside matches former board; hole spacing 38.862x25.4mm"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": "cost-review/sources/5671-dimensions.pdf"
+    },
+    {
+      "id": "logic_reg",
+      "title": "Pololu S13V30F5 #4082",
+      "url": "https://www.pololu.com/product/4082",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "5V ±3%, 3A typical, ~5.1A output limit",
+        "10–20mA quiescent; no configured per-cell battery cutoff"
+      ],
+      "unknown_or_not_proven": [
+        "this board plus USB cable cannot guarantee Pi >4.8V by worst-case specifications"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "battery",
+      "title": "Gens ace GEA8502S60E2",
+      "url": "https://www.genstattu.com/gens-ace-850mah-2s-60c-7-4v-lipo-battery-ec2-plug-car-classic-non-g-tech/",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "850mAh 2S 7.4V 60C; 57g ±20g",
+        "58×32×20mm (+/-5/2/2mm); EC2, JST-XHR-3P; stock 18AWG 100mm"
+      ],
+      "unknown_or_not_proven": [
+        "actual internal resistance, delivered capacity, peak current and thermal performance"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "battery_use",
+      "title": "Gens ace / Tattu battery maintenance",
+      "url": "https://genstattu.com/bw/",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "LiPo charging and monitoring instructions; ordinary 2S target 8.4V",
+        "absolute discharge lower bound is not a routine operating target"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "battery_adapter",
+      "title": "Gens ace XT60 female to EC2 male charging cable",
+      "url": "https://www.genstattu.com/gens-ace-xt60-female-to-ec2-charging-cable/",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "GEAX6F2E2M; full adapter 21g ±5g",
+        "one intact charging adapter plus one shortened device-side EC2 is the chosen assembly path"
+      ],
+      "unknown_or_not_proven": [
+        "mass of cut and soldered final short pigtail"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "pi_power",
+      "title": "Raspberry Pi hardware documentation",
+      "url": "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "Zero 2 W typical bare active current 0.35A; generic camera budget 0.25A",
+        "Zero range excluded from usual low-voltage detection"
+      ],
+      "unknown_or_not_proven": [
+        "Camera Module 3 Wide exact peak; simultaneous 61D inference, streaming and audio load"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "pi_voltage",
+      "title": "Raspberry Pi official configuration source",
+      "url": "https://github.com/raspberrypi/documentation/blob/master/documentation/asciidoc/computers/config_txt/overclocking.adoc",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "5V pin should exceed 4.8V for reliable operation"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "amp_ic",
+      "title": "Analog Devices MAX98357A",
+      "url": "https://www.analog.com/en/products/max98357a.html",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "2.4mA quiescent; 92% efficiency at 8ohm 1W"
+      ],
+      "unknown_or_not_proven": [
+        "speaker-end volume calibration and I2S startup transient"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "amp_wiring",
+      "title": "Adafruit MAX98357 I2S amplifier pinouts",
+      "url": "https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "100k GAIN to VIN gives 3dB",
+        "OUT+ / OUT- are bridge outputs; neither is GND"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "speaker",
+      "title": "Adafruit #3923 mini speaker",
+      "url": "https://www.adafruit.com/product/3923",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "8ohm 1W, 30×20×5mm, 3g"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "imu_board",
+      "title": "Adafruit BNO085 breakout pinouts",
+      "url": "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "VIN 3–5V; 3Vo is regulated output",
+        "use 3.3V supply so I2C pull-ups match Pi"
+      ],
+      "unknown_or_not_proven": [
+        "whole breakout current and Pi I2C clock-stretch timing"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "imu_chip",
+      "title": "CEVA BNO080/085 datasheet",
+      "url": "https://www.ceva-ip.com/wp-content/uploads/2019/10/BNO080_085-Datasheet.pdf",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "official indexed PDF power table gives 34.41mW at 100Hz sensor fusion"
+      ],
+      "unknown_or_not_proven": [
+        "breakout power is not chip-only power; 25mA@3.3V is engineering allowance"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null,
+      "access_note": "Official PDF facts returned in web search; direct open failed. No local copy. Power budget uses explicit 25mA breakout allowance, not the chip-only number."
+    },
+    {
+      "id": "jst",
+      "title": "JST EH manufacturer datasheet",
+      "url": "https://www.jst-mfg.com/product/pdf/eng/eEH.pdf",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "2.5mm pitch; 3A with 22AWG",
+        "10mohm initial maximum contact resistance, 20mohm after environmental tests",
+        "SEH-001T-P0.6 nominal crimp wire range 30–22AWG"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": "sources/jst-eh.pdf",
+      "sha256": "9e35874bf27505bab79d6af783118fa926ceef7a91b7cb8421f108ff69a1b7f2"
+    },
+    {
+      "id": "fuses",
+      "title": "Littelfuse 251/253 datasheet",
+      "url": "https://www.littelfuse.com/assetdocs/littelfuse_fuse_251_253_datasheet.pdf?assetguid=f47a0bb7-8ede-4679-9646-7114c3787688",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "0251010.MXL 10A, 0251003.MXL 3A, 0251.500MXL 0.5A",
+        "125V DC; 300A interrupting capacity at listed voltage",
+        "7.11mm body length, 3.18mm conservative maximum body diameter; 24×5×5mm is our finished assembly allowance",
+        "10A hot drop 0.1V; 3A hot drop 0.131V; 0.5A hot drop 0.2165V at rated current"
+      ],
+      "unknown_or_not_proven": [
+        "pulse survival at actual temperature; manufacturer nominal drop is not guaranteed maximum resistance"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "fuse_derating",
+      "title": "Littelfuse Fuseology Selection Guide",
+      "url": "https://www.littelfuse.com/assetdocs/fuseology-selection-guide?assetguid=fa4aa360-f6c4-4eec-88a6-3d7ec3fe57d5",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "75% rated-current loading guidance at 25C; additional derating for temperature and application"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "switch",
+      "title": "Pololu #1408 SPDT slide switch",
+      "url": "https://www.pololu.com/product/1408",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "0.3A at 50VDC; selected for EN only, not in motor power path"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "alarm",
+      "title": "HobbyKing DL-Volt-Alarm",
+      "url": "https://hobbyking.com/en_us/hobbykingtm-lipoly-low-voltage-alarm-2s-4s.html?___from_store=en_us",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "2S–4S; per-cell 3.3V alarm, stated accuracy +/-0.03V",
+        "38×25×11mm, 7g; no separate 2S extension cable listed",
+        "live public page showed $2.00 and In Stock; warehouse-specific availability not established"
+      ],
+      "unknown_or_not_proven": [
+        "38mm may or may not include projecting pins; no dimensioned mechanical drawing"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "alarm_photo",
+      "title": "HobbyKing actual product photo",
+      "url": "https://cdn-global-hk.hobbyking.com/media/catalog/product/cache/1/image/660x415/17f82f742ffe127f42dca9de82fb58b1/legacy/catalog/voltalarm-18987.jpg",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "visually inspected 2026-09-13 in Chrome: 5 right-angle pins on LED-side short edge, projecting along long axis",
+        "negative-end silk marking visible; not a dimensioned drawing"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_photo_visual_observation",
+      "local_copy": null
+    },
+    {
+      "id": "audio_connector",
+      "title": "Adafruit #1131 JST-PH 2-pin matched cable pair",
+      "url": "https://www.adafruit.com/product/1131",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "500mm cable, 26AWG, 80C insulation",
+        "retain <=50mm of each original tail for low-current fused audio only"
+      ],
+      "unknown_or_not_proven": [],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "micro_usb",
+      "title": "Adafruit #1826 slim DIY MicroB",
+      "url": "https://www.adafruit.com/product/1826",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "all five pins accessible; bare 14×8.5×6mm and 0.6g",
+        "full plastic assembly 26×10×7mm, 1.22g; not used in compact head layout"
+      ],
+      "unknown_or_not_proven": [
+        "final soldered/insulated envelope, contact resistance and data quality"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "usb_cable",
+      "title": "Adafruit #4472 USB-A to C data cable",
+      "url": "https://www.adafruit.com/product/4472",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "6 inch / 152mm data cable; retain C-end and internal paired wires, replace A with bare MicroB"
+      ],
+      "unknown_or_not_proven": [
+        "actual C plug body envelope; cut-end wire assembly quality"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "otg",
+      "title": "Raspberry Pi official USB boot/OTG documentation source",
+      "url": "https://github.com/raspberrypi/documentation/blob/master/documentation/asciidoc/computers/raspberry-pi/boot-usb.adoc",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "OTGID grounded selects host; Zero makes OTGID accessible at USB connector"
+      ],
+      "unknown_or_not_proven": [
+        "target OS host configuration and actual stable USB enumeration"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    },
+    {
+      "id": "regen",
+      "title": "Pololu shunt regulator category and operating explanation",
+      "url": "https://www.pololu.com/category/249/shunt-regulators",
+      "checked_date": "2026-09-13 America/New_York",
+      "facts_used": [
+        "motor regenerative current can raise rail voltage; TVS clamp voltage is not a precision 5V limit",
+        "no untested shunt hardware is silently included in this design"
+      ],
+      "unknown_or_not_proven": [
+        "actual regenerated pulse energy and whether a shunt redesign is required"
+      ],
+      "source_kind": "manufacturer_primary",
+      "local_copy": null
+    }
+  ]
+}

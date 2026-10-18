@@ -1,0 +1,129 @@
+{
+  "verified_date": "2026-10-06",
+  "exit_status": 155,
+  "source_code": -101,
+  "source_symbol": "CLI_GCODE_PATH_CONFLICTS",
+  "source_url": "https://github.com/OrcaSlicer/OrcaSlicer/blob/v2.4.2/src/libslic3r/Utils.hpp#L73",
+  "mapping": "(-101) & 255 =155; intentional error exit, not SIGSEGV",
+  "source_detection_sites": [
+    "Print.cpp2586..2608",
+    "OrcaSlicer.cpp6164..6169",
+    "ConflictChecker.cpp160..195,220..335"
+  ],
+  "source_log_path": "/Users/xiangzheng/code/robotics/00000.log",
+  "source_log_input_line": "read model file:/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/projects/Elegoo/black/MicroDuck_Elegoo_black_SURFACE_editable.3mf",
+  "native_conflict_names": [
+    "community-81.stl",
+    "community-38.stl"
+  ],
+  "native_conflict_log_snapshot": "black155-native-conflict-log.txt",
+  "project_sha256": "6aa16fbaa7dfd52c08c2fa230c744ccf32595a9bcff449e205adff9a0e929000",
+  "pair_geometry": {
+    "community-38.stl": {
+      "object_id": "40",
+      "world_bounds": [
+        [
+          15.325164687707202,
+          187.411948084574,
+          0.0
+        ],
+        [
+          41.1251638877072,
+          207.90994908457398,
+          22.998001
+        ]
+      ],
+      "project_transform": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          28.2251642877072
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          197.660948584574
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          11.4990005
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "community-81.stl": {
+      "object_id": "136",
+      "world_bounds": [
+        [
+          6.776391941671984,
+          214.76866377860398,
+          0.0
+        ],
+        [
+          22.772586410328014,
+          230.76485824726,
+          4.14999962
+        ]
+      ],
+      "project_transform": [
+        [
+          -0.876729785,
+          0.480983247,
+          0.0,
+          14.774489176
+        ],
+        [
+          -0.480983247,
+          -0.876729785,
+          0.0,
+          222.766761012932
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.07499981
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "minimum_projected_mesh_hull_gap_mm": 6.868596173914484,
+    "model_hulls_intersect": false
+  },
+  "supported_causal_inference": "Named model convexXYhulls are disjoint by6.868596mm. Given the detector only gathers modelperimeters/fill/support(and optionalwipetower), and this is a named modelpair rather thanWipeTower, the reportedpairconflict requires a generatedsupportpath to intersect anotherinstance model/supportpath. Brim/skirt is not inthisdetector. Exact conflictingline andZnotreturned inCLIstdout; collisionis withinshortidlerhorn4.15mmheight or its supportlayerheight.",
+  "detector_semantics": {
+    "different_instances_only": true,
+    "included": [
+      "model perimeters",
+      "model fills",
+      "support fills",
+      "optional wipe tower"
+    ],
+    "excluded_from_collection": [
+      "skirt",
+      "brim"
+    ],
+    "ordinary_crossing_endpoint_margin_mm": 0.01,
+    "support_support_crossing_endpoint_margin_mm": 100,
+    "collinear_overlap_trigger_mm": 0.01,
+    "collinear_check_before_support_role_threshold": true
+  },
+  "targeted_root_fix": "Repositionobject136community81(idlerhorn) awayfromobject40community38generatedsupportfootprint; recompute fullnativepaths andall50part model+support/brim/bedspacing; preserve89instances, geometry, orientations, supportcriteria andenabledcollisioncheck.",
+  "forbidden_bypass": "--no-check would suppress this check and cannot establish correctedpathclearance.",
+  "reviewer_orca_launches": 0,
+  "targeted_runtime_acceptance": "pending mainagent"
+}

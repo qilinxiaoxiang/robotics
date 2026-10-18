@@ -1,0 +1,1548 @@
+{
+ "meta": {
+  "frame": "guide world mm, x forward, y left, z up",
+  "method": "Two-piece converter-box layouts for Shawn's choice (envelope solids only: no bosses, windows or vents).\nFrame = cover plate x -47..-45 (build_rear_pack.build_cover: outline, four dia 2.2 holes, lip) + side/top/bottom walls 1.2 mm\n(x -65.9..-47); lid = 1.2 mm back plate x -67.1..-65.9. Inner depth 18.9: XL4015 PCB mid-plane x -51.03 leaves 0.52 mm from\nthe pin tips to the plate (x -47) and from the inductor to the lid (x -65.9).\nLayouts: A (wide, horizontal boards, 5991 under the lower board), B (flush, vertical boards, IN bottom / OUT top, as briefed),\nB_flip (B with OUT bottom / IN top, so the OUT pairs reach plate passages into the pack channel).\nWrites <layout>/*.stl (world frame) and numbers.json.",
+  "xl4015MidPlaneX": -51.03,
+  "xl4015PoseNote": "the IN end is assumed to be local +Y of the ROBOTIS mesh (not on the mesh); read the board label",
+  "boardSolids": "convex hull of each connected body of the ROBOTIS mesh",
+  "massMethod": "solid volume x 1.24 g/cm3 x 0.851 (v19-mass-items.json) + XL4015 20 g each (estimate) + 5991 3.5 g (datasheet) - V1.8 cover 6.304 g (slicer); baseline asbuilt-batteryremove60 792.6 g, COM [0.57, -0.22, 21.86]",
+  "shellMaxAbsYBehindXm40": {
+   "shell_left": 31.362,
+   "shell_right": 31.845
+  }
+ },
+ "A": {
+  "title": "A wide: horizontal XL4015 x2, 5991 under the lower board",
+  "outer": {
+   "x": [
+    -67.1,
+    -45.0
+   ],
+   "absY": 37.55,
+   "z": [
+    -44.0,
+    43.0
+   ]
+  },
+  "inner": {
+   "x": [
+    -65.9,
+    -47.0
+   ],
+   "absY": 36.349999999999994,
+   "z": [
+    -42.8,
+    41.8
+   ]
+  },
+  "boards": {
+   "lower_7V": {
+    "origin": [
+     -51.029999999999994,
+     0.0,
+     0.5
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      -30.85,
+      -12.6
+     ],
+     [
+      -47.52,
+      30.85,
+      13.6
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      -28.25,
+      11.0
+     ],
+     [
+      -51.03,
+      -28.25,
+      -10.0
+     ],
+     [
+      -51.03,
+      28.25,
+      11.0
+     ],
+     [
+      -51.03,
+      28.25,
+      -10.0
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     false,
+     false,
+     false,
+     false
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      10.44,
+      12.07
+     ],
+     "trimmer_b": [
+      -63.36,
+      -0.06,
+      12.07
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      -30.15,
+      3.0
+     ],
+     [
+      -54.7,
+      -30.15,
+      -2.0
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      30.15,
+      3.0
+     ],
+     [
+      -54.7,
+      30.15,
+      -2.0
+     ]
+    ]
+   },
+   "upper_5V": {
+    "origin": [
+     -51.029999999999994,
+     0.0,
+     27.9
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      -30.85,
+      14.8
+     ],
+     [
+      -47.52,
+      30.85,
+      41.0
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      -28.25,
+      38.4
+     ],
+     [
+      -51.03,
+      -28.25,
+      17.4
+     ],
+     [
+      -51.03,
+      28.25,
+      38.4
+     ],
+     [
+      -51.03,
+      28.25,
+      17.4
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     false,
+     false,
+     false,
+     false
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      10.44,
+      39.47
+     ],
+     "trimmer_b": [
+      -63.36,
+      -0.06,
+      39.47
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      -30.15,
+      30.4
+     ],
+     [
+      -54.7,
+      -30.15,
+      25.4
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      30.15,
+      30.4
+     ],
+     [
+      -54.7,
+      30.15,
+      25.4
+     ]
+    ]
+   }
+  },
+  "pd5991": {
+   "pose": {
+    "back_x": -49.0,
+    "usb_face_z": -42.8,
+    "yc": -3.0
+   },
+   "boxes": {
+    "pcb": [
+     [
+      -50.6,
+      -13.16,
+      -41.657
+     ],
+     [
+      -49.0,
+      7.16,
+      -13.844
+     ]
+    ],
+    "usbc": [
+     [
+      -53.9,
+      -7.47,
+      -42.8
+     ],
+     [
+      -50.6,
+      1.47,
+      -35.45
+     ]
+    ],
+    "term": [
+     [
+      -59.1,
+      -6.4,
+      -21.054
+     ],
+     [
+      -50.6,
+      0.6,
+      -14.054
+     ]
+    ],
+    "dip": [
+     [
+      -52.6,
+      -0.239,
+      -30.387
+     ],
+     [
+      -50.6,
+      5.161,
+      -22.447
+     ]
+    ],
+    "qt": [
+     [
+      -53.6,
+      -12.642,
+      -33.2
+     ],
+     [
+      -50.6,
+      -8.342,
+      -27.1
+     ]
+    ]
+   },
+   "holesWorld": [
+    [
+     -49.0,
+     -10.747,
+     -39.117
+    ],
+    [
+     -49.0,
+     4.493,
+     -39.117
+    ],
+    [
+     -49.0,
+     -10.62,
+     -16.384
+    ],
+    [
+     -49.0,
+     4.62,
+     -16.384
+    ]
+   ],
+   "terminalEntriesWorld": [
+    [
+     -53.1,
+     -4.75,
+     -14.05
+    ],
+    [
+     -53.1,
+     -1.25,
+     -14.05
+    ]
+   ],
+   "gapToLowerBoardMm": 1.244,
+   "terminalTopZ": -14.054,
+   "lowerBoardBottomZ": -12.6,
+   "terminalWireRoomAboveMm": 1.454,
+   "heightAlongZ": 28.956
+  },
+  "clearances": {
+   "lower_7V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 2.205,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 5.5,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 5.5,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    }
+   },
+   "upper_5V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 2.655,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 5.5,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 5.5,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 0.8,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    }
+   },
+   "pd5991": {
+    "lid": {
+     "gapMm": 6.8,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 2.0,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 0.0,
+     "overlapMm3": 0.0
+    }
+   },
+   "lower_7V__upper_5V": {
+    "gapMm": 1.2,
+    "overlapMm3": 0.0
+   },
+   "lower_7V__pd5991": {
+    "gapMm": 1.244,
+    "overlapMm3": 0.0
+   },
+   "upper_5V__pd5991": {
+    "gapMm": 15.0,
+    "overlapMm3": 0.0
+   }
+  },
+  "freeZ": {
+   "aboveBoards": 0.8,
+   "belowBoards": 30.2
+  },
+  "freeAbsYBeyondBoardEnds": 5.5,
+  "coverScrewsDia5Lanes": {
+   "y16.1_z26.0": {
+    "coveredBy": {
+     "upper_5V": 154.88
+    },
+    "coveredByBoards": true
+   },
+   "y16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   },
+   "y-16.1_z26.0": {
+    "coveredBy": {
+     "upper_5V": 155.04
+    },
+    "coveredByBoards": true
+   },
+   "y-16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   }
+  },
+  "fitAtRest": {
+   "shell_left": {
+    "gapMm": 1.4,
+    "overlapMm3": 0.0
+   },
+   "shell_right": {
+    "gapMm": 1.899,
+    "overlapMm3": 0.0
+   },
+   "lower": {
+    "gapMm": 5.236,
+    "overlapMm3": 0.0
+   },
+   "right_lower": {
+    "gapMm": 5.235,
+    "overlapMm3": 0.0
+   },
+   "ring2": {
+    "gapMm": 4.404,
+    "overlapMm3": 0.0
+   },
+   "ring7": {
+    "gapMm": 4.406,
+    "overlapMm3": 0.0
+   },
+   "rear_pack-v18.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": 0.0
+   },
+   "rear_pack.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": 0.0
+   },
+   "openrb": {
+    "gapMm": 4.931,
+    "overlapMm3": 0.0
+   }
+  },
+  "shellOverhangPerSideMm": {
+   "shell_left": 6.188,
+   "shell_right": 5.705
+  },
+  "holes": [
+   {
+    "id": "usbc_opening",
+    "wall": "bottom",
+    "kind": "box",
+    "lo": [
+     -56.25,
+     -10.0,
+     -45.0
+    ],
+    "hi": [
+     -48.25,
+     4.0,
+     -42.8
+    ],
+    "purpose": "USB-C plug overmold (13 x 7 + 0.5 all round), long side along y"
+   },
+   {
+    "id": "out7V_passage",
+    "wall": "plate",
+    "axis": "x",
+    "y": 11.0,
+    "z": -20.0,
+    "d": 4.0,
+    "purpose": "7 V pair from the lower board OUT (+y end, down the end lane) into the pack channel"
+   },
+   {
+    "id": "out5V_passage",
+    "wall": "plate",
+    "axis": "x",
+    "y": 11.0,
+    "z": -26.0,
+    "d": 4.5,
+    "purpose": "5 V jumpers from the upper board OUT (+y end, down the end lane) into the pack channel"
+   }
+  ],
+  "mass": {
+   "frameCm3": 12.62,
+   "lidCm3": 7.84,
+   "items": {
+    "xl4015_lower_7V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      0.0,
+      0.5
+     ]
+    },
+    "xl4015_upper_5V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      0.0,
+      27.9
+     ]
+    },
+    "pd5991": {
+     "g": 3.5,
+     "com": [
+      -54.05,
+      -3.0,
+      -28.32
+     ]
+    },
+    "frame": {
+     "g": 13.32,
+     "com": [
+      -51.84,
+      -0.02,
+      -2.07
+     ]
+    },
+    "lid": {
+     "g": 8.27,
+     "com": [
+      -66.5,
+      0.0,
+      -0.5
+     ]
+    },
+    "rear_pack_cover_removed": {
+     "g": -6.3,
+     "com": [
+      -45.8,
+      -0.0,
+      -5.3
+     ]
+    }
+   },
+   "printedG": 21.6,
+   "netAddedG": 58.8,
+   "totalRobotG": 851.4,
+   "comShiftMm": [
+    -4.03,
+    0.0,
+    -0.96
+   ],
+   "newComMm": [
+    -3.46,
+    -0.22,
+    20.9
+   ],
+   "note": "envelope solids (no bosses, windows, vents); wires excluded"
+  }
+ },
+ "B": {
+  "title": "B flush: vertical XL4015 x2, IN bottom / OUT top (as briefed), 5991 on the bench",
+  "outer": {
+   "x": [
+    -67.1,
+    -45.0
+   ],
+   "absY": 32.05,
+   "z": [
+    -44.0,
+    43.0
+   ]
+  },
+  "inner": {
+   "x": [
+    -65.9,
+    -47.0
+   ],
+   "absY": 30.849999999999998,
+   "z": [
+    -42.8,
+    41.8
+   ]
+  },
+  "boards": {
+   "plusY_7V": {
+    "origin": [
+     -51.029999999999994,
+     13.7,
+     -0.5
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      0.6,
+      -31.35
+     ],
+     [
+      -47.52,
+      26.8,
+      30.35
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      3.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      24.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      3.2,
+      27.75
+     ],
+     [
+      -51.03,
+      24.2,
+      27.75
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     true,
+     false,
+     false,
+     false
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      2.13,
+      9.94
+     ],
+     "trimmer_b": [
+      -63.36,
+      2.13,
+      -0.56
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      11.2,
+      -30.65
+     ],
+     [
+      -54.7,
+      16.2,
+      -30.65
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      11.2,
+      29.65
+     ],
+     [
+      -54.7,
+      16.2,
+      29.65
+     ]
+    ]
+   },
+   "minusY_5V": {
+    "origin": [
+     -51.029999999999994,
+     -13.7,
+     -0.5
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      -26.8,
+      -31.35
+     ],
+     [
+      -47.52,
+      -0.6,
+      30.35
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      -24.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      -3.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      -24.2,
+      27.75
+     ],
+     [
+      -51.03,
+      -3.2,
+      27.75
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     false,
+     true,
+     false,
+     false
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      -25.27,
+      9.94
+     ],
+     "trimmer_b": [
+      -63.36,
+      -25.27,
+      -0.56
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      -16.2,
+      -30.65
+     ],
+     [
+      -54.7,
+      -11.2,
+      -30.65
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      -16.2,
+      29.65
+     ],
+     [
+      -54.7,
+      -11.2,
+      29.65
+     ]
+    ]
+   }
+  },
+  "clearances": {
+   "plusY_7V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 4.05,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    }
+   },
+   "minusY_5V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 4.05,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    }
+   },
+   "plusY_7V__minusY_5V": {
+    "gapMm": 1.2,
+    "overlapMm3": 0.0
+   }
+  },
+  "freeZ": {
+   "aboveBoards": 11.45,
+   "belowBoards": 11.45
+  },
+  "freeAbsYBeyondBoardEnds": 4.05,
+  "coverScrewsDia5Lanes": {
+   "y16.1_z26.0": {
+    "coveredBy": {
+     "plusY_7V": 231.85
+    },
+    "coveredByBoards": true
+   },
+   "y16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   },
+   "y-16.1_z26.0": {
+    "coveredBy": {
+     "minusY_5V": 232.02
+    },
+    "coveredByBoards": true
+   },
+   "y-16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   }
+  },
+  "fitAtRest": {
+   "shell_left": {
+    "gapMm": 1.4,
+    "overlapMm3": 0.0
+   },
+   "shell_right": {
+    "gapMm": 1.899,
+    "overlapMm3": 0.0
+   },
+   "lower": {
+    "gapMm": 6.805,
+    "overlapMm3": 0.0
+   },
+   "right_lower": {
+    "gapMm": 6.806,
+    "overlapMm3": 0.0
+   },
+   "ring2": {
+    "gapMm": 7.878,
+    "overlapMm3": 0.0
+   },
+   "ring7": {
+    "gapMm": 7.878,
+    "overlapMm3": 0.0
+   },
+   "rear_pack-v18.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": 0.0
+   },
+   "rear_pack.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": 0.0
+   },
+   "openrb": {
+    "gapMm": 4.931,
+    "overlapMm3": 0.0
+   }
+  },
+  "shellOverhangPerSideMm": {
+   "shell_left": 0.688,
+   "shell_right": 0.205
+  },
+  "holes": [
+   {
+    "id": "in15V_hole",
+    "wall": "bottom",
+    "axis": "z",
+    "x": -56.5,
+    "y": 0.0,
+    "d": 4.0,
+    "purpose": "one stranded 22 AWG 15 V pair from the bench 5991, daisy-chained between the two IN terminals"
+   },
+   {
+    "id": "out7V_top_hole",
+    "wall": "top",
+    "axis": "z",
+    "x": -54.7,
+    "y": 11.6,
+    "d": 4.0,
+    "purpose": "7 V pair, +y board OUT (entries y 11.2 / 16.2); centre held inside |y| 13.6 - 2"
+   },
+   {
+    "id": "out5V_top_hole",
+    "wall": "top",
+    "axis": "z",
+    "x": -54.7,
+    "y": -11.35,
+    "d": 4.5,
+    "purpose": "5 V jumpers, -y board OUT"
+   }
+  ],
+  "mass": {
+   "frameCm3": 12.27,
+   "lidCm3": 6.69,
+   "items": {
+    "xl4015_plusY_7V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      13.7,
+      -0.5
+     ]
+    },
+    "xl4015_minusY_5V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      -13.7,
+      -0.5
+     ]
+    },
+    "frame": {
+     "g": 12.94,
+     "com": [
+      -51.62,
+      0.0,
+      -2.76
+     ]
+    },
+    "lid": {
+     "g": 7.06,
+     "com": [
+      -66.5,
+      0.0,
+      -0.5
+     ]
+    },
+    "rear_pack_cover_removed": {
+     "g": -6.3,
+     "com": [
+      -45.8,
+      -0.0,
+      -5.3
+     ]
+    }
+   },
+   "printedG": 20.0,
+   "netAddedG": 53.7,
+   "totalRobotG": 846.3,
+   "comShiftMm": [
+    -3.71,
+    0.01,
+    -1.42
+   ],
+   "newComMm": [
+    -3.14,
+    -0.21,
+    20.44
+   ],
+   "note": "envelope solids (no bosses, windows, vents); wires excluded"
+  },
+  "topWallRouteEvidence": {
+   "shellTopZ": {
+    "shell_left_x-44_y2": 35.65,
+    "shell_left_x-44_y8": 35.14,
+    "shell_left_x-44_y14": 34.6,
+    "shell_left_x-40_y2": 38.87,
+    "shell_left_x-40_y8": 38.52,
+    "shell_left_x-40_y14": 38.16,
+    "shell_left_x-36_y2": 40.38,
+    "shell_left_x-36_y8": 40.06,
+    "shell_left_x-36_y14": 39.74,
+    "shell_left_x-32_y2": 41.16,
+    "shell_left_x-32_y8": 40.84,
+    "shell_left_x-32_y14": 40.52,
+    "shell_left_x-28_y2": 41.56,
+    "shell_left_x-28_y8": 41.25,
+    "shell_left_x-28_y14": 40.93,
+    "shell_left_x-24_y2": 41.76,
+    "shell_left_x-24_y8": 41.44,
+    "shell_left_x-24_y14": 41.14,
+    "shell_left_x-20_y2": null,
+    "shell_left_x-20_y8": null,
+    "shell_left_x-20_y14": null,
+    "shell_right_x-44_y-2": 35.77,
+    "shell_right_x-44_y-8": 35.27,
+    "shell_right_x-44_y-14": 34.72,
+    "shell_right_x-40_y-2": 38.98,
+    "shell_right_x-40_y-8": 38.63,
+    "shell_right_x-40_y-14": 38.27,
+    "shell_right_x-36_y-2": 40.49,
+    "shell_right_x-36_y-8": 40.17,
+    "shell_right_x-36_y-14": 39.84,
+    "shell_right_x-32_y-2": 41.27,
+    "shell_right_x-32_y-8": 40.94,
+    "shell_right_x-32_y-14": 40.62,
+    "shell_right_x-28_y-2": 41.66,
+    "shell_right_x-28_y-8": 41.35,
+    "shell_right_x-28_y-14": 41.03,
+    "shell_right_x-24_y-2": 41.86,
+    "shell_right_x-24_y-8": 41.54,
+    "shell_right_x-24_y-14": 41.23,
+    "shell_right_x-20_y-2": null,
+    "shell_right_x-20_y-8": null,
+    "shell_right_x-20_y-14": null
+   },
+   "note": "the torso shell skin closes the top behind the neck (z 35..42 for x -44..-24 at |y| <= 14); the first opening is at x about -20 (no hit at |y| < 14), the neck. A pair leaving the top wall therefore runs about 30 mm over the outside of the shell to x -20 before it can drop to J4 (-29, 1.5, 27.5) or the notch; it cannot reach the pack channel. Plate passages inside |y| <= 13.6 are reachable only below the boards (z < -31.9) via the 4.05 mm lanes beside the board edges, or by flipping the boards (B_flip)."
+  }
+ },
+ "B_flip": {
+  "title": "B flipped: vertical XL4015 x2, OUT bottom into the pack channel / IN top, 5991 on the bench",
+  "outer": {
+   "x": [
+    -67.1,
+    -45.0
+   ],
+   "absY": 32.05,
+   "z": [
+    -44.0,
+    43.0
+   ]
+  },
+  "inner": {
+   "x": [
+    -65.9,
+    -47.0
+   ],
+   "absY": 30.849999999999998,
+   "z": [
+    -42.8,
+    41.8
+   ]
+  },
+  "boards": {
+   "plusY_7V": {
+    "origin": [
+     -51.029999999999994,
+     13.7,
+     -0.5
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      0.6,
+      -31.35
+     ],
+     [
+      -47.52,
+      26.8,
+      30.35
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      24.2,
+      27.75
+     ],
+     [
+      -51.03,
+      3.2,
+      27.75
+     ],
+     [
+      -51.03,
+      24.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      3.2,
+      -28.75
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     false,
+     false,
+     false,
+     true
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      25.27,
+      -10.94
+     ],
+     "trimmer_b": [
+      -63.36,
+      25.27,
+      -0.44
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      16.2,
+      29.65
+     ],
+     [
+      -54.7,
+      11.2,
+      29.65
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      16.2,
+      -30.65
+     ],
+     [
+      -54.7,
+      11.2,
+      -30.65
+     ]
+    ]
+   },
+   "minusY_5V": {
+    "origin": [
+     -51.029999999999994,
+     -13.7,
+     -0.5
+    ],
+    "rotationLocalToWorld": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ]
+    ],
+    "worldBounds": [
+     [
+      -65.38,
+      -26.8,
+      -31.35
+     ],
+     [
+      -47.52,
+      -0.6,
+      30.35
+     ]
+    ],
+    "boardScrews_holeAxesWorld": [
+     [
+      -51.03,
+      -3.2,
+      27.75
+     ],
+     [
+      -51.03,
+      -24.2,
+      27.75
+     ],
+     [
+      -51.03,
+      -3.2,
+      -28.75
+     ],
+     [
+      -51.03,
+      -24.2,
+      -28.75
+     ]
+    ],
+    "boardScrewsOnPlateMaterial": [
+     false,
+     false,
+     true,
+     false
+    ],
+    "trimmerScrewTopsWorld": {
+     "trimmer_a": [
+      -63.36,
+      -2.13,
+      -10.94
+     ],
+     "trimmer_b": [
+      -63.36,
+      -2.13,
+      -0.44
+     ]
+    },
+    "inEntriesWorld": [
+     [
+      -54.7,
+      -11.2,
+      29.65
+     ],
+     [
+      -54.7,
+      -16.2,
+      29.65
+     ]
+    ],
+    "outEntriesWorld": [
+     [
+      -54.7,
+      -11.2,
+      -30.65
+     ],
+     [
+      -54.7,
+      -16.2,
+      -30.65
+     ]
+    ]
+   }
+  },
+  "clearances": {
+   "plusY_7V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 4.05,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    }
+   },
+   "minusY_5V": {
+    "lid": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "plate": {
+     "gapMm": 0.52,
+     "overlapMm3": 0.0
+    },
+    "side_minus_y": {
+     "gapMm": 4.05,
+     "overlapMm3": 0.0
+    },
+    "side_plus_y": {
+     "gapMm": 15.0,
+     "overlapMm3": 0.0
+    },
+    "top": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    },
+    "bottom": {
+     "gapMm": 11.45,
+     "overlapMm3": 0.0
+    }
+   },
+   "plusY_7V__minusY_5V": {
+    "gapMm": 1.2,
+    "overlapMm3": 0.0
+   }
+  },
+  "freeZ": {
+   "aboveBoards": 11.45,
+   "belowBoards": 11.45
+  },
+  "freeAbsYBeyondBoardEnds": 4.05,
+  "coverScrewsDia5Lanes": {
+   "y16.1_z26.0": {
+    "coveredBy": {
+     "plusY_7V": 231.93
+    },
+    "coveredByBoards": true
+   },
+   "y16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   },
+   "y-16.1_z26.0": {
+    "coveredBy": {
+     "minusY_5V": 232.04
+    },
+    "coveredByBoards": true
+   },
+   "y-16.1_z-36.5": {
+    "coveredBy": {},
+    "coveredByBoards": false
+   }
+  },
+  "fitAtRest": {
+   "shell_left": {
+    "gapMm": 1.4,
+    "overlapMm3": 0.0
+   },
+   "shell_right": {
+    "gapMm": 1.899,
+    "overlapMm3": 0.0
+   },
+   "lower": {
+    "gapMm": 6.805,
+    "overlapMm3": 0.0
+   },
+   "right_lower": {
+    "gapMm": 6.806,
+    "overlapMm3": 0.0
+   },
+   "ring2": {
+    "gapMm": 7.878,
+    "overlapMm3": 0.0
+   },
+   "ring7": {
+    "gapMm": 7.878,
+    "overlapMm3": 0.0
+   },
+   "rear_pack-v18.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": 0.0
+   },
+   "rear_pack.stl": {
+    "gapMm": 0.0,
+    "overlapMm3": -0.0
+   },
+   "openrb": {
+    "gapMm": 4.931,
+    "overlapMm3": 0.0
+   }
+  },
+  "shellOverhangPerSideMm": {
+   "shell_left": 0.688,
+   "shell_right": 0.205
+  },
+  "holes": [
+   {
+    "id": "in15V_hole",
+    "wall": "top",
+    "axis": "z",
+    "x": -56.5,
+    "y": 0.0,
+    "d": 4.0,
+    "purpose": "one stranded 22 AWG 15 V pair from the bench 5991, daisy-chained between the two IN terminals"
+   },
+   {
+    "id": "out7V_passage",
+    "wall": "plate",
+    "axis": "x",
+    "y": 8.0,
+    "z": -37.0,
+    "d": 4.0,
+    "purpose": "7 V pair into the channel floor; joins the current supply route (+Y side of the channel, up the lane to J4 at (-29, 1.5, 27.5))"
+   },
+   {
+    "id": "out5V_passage",
+    "wall": "plate",
+    "axis": "x",
+    "y": -8.0,
+    "z": -37.0,
+    "d": 4.5,
+    "purpose": "5 V jumpers into the channel floor; up the channel and lane to the pack top notch (pi_trunk path)"
+   }
+  ],
+  "mass": {
+   "frameCm3": 12.24,
+   "lidCm3": 6.69,
+   "items": {
+    "xl4015_plusY_7V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      13.7,
+      -0.5
+     ]
+    },
+    "xl4015_minusY_5V": {
+     "g": 20.0,
+     "com": [
+      -56.45,
+      -13.7,
+      -0.5
+     ]
+    },
+    "frame": {
+     "g": 12.92,
+     "com": [
+      -51.65,
+      0.0,
+      -2.58
+     ]
+    },
+    "lid": {
+     "g": 7.06,
+     "com": [
+      -66.5,
+      0.0,
+      -0.5
+     ]
+    },
+    "rear_pack_cover_removed": {
+     "g": -6.3,
+     "com": [
+      -45.8,
+      -0.0,
+      -5.3
+     ]
+    }
+   },
+   "printedG": 20.0,
+   "netAddedG": 53.7,
+   "totalRobotG": 846.3,
+   "comShiftMm": [
+    -3.71,
+    0.01,
+    -1.41
+   ],
+   "newComMm": [
+    -3.14,
+    -0.21,
+    20.45
+   ],
+   "note": "envelope solids (no bosses, windows, vents); wires excluded"
+  }
+ },
+ "elapsed_s": 22.3
+}

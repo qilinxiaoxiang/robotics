@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src data: blob:; font-src data:; media-src data: blob:; base-uri 'none'; form-action 'none'">
+<meta name="guide-build" content="__GUIDE_BUILD__">
+<title>__GUIDE_TITLE__</title>
+<style>/*__STYLE__*/</style>
+</head>
+<body>
+<a class="skip-link" href="#panel">Skip to the step instructions</a>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open the step list">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">MD</span>
+    <span class="brand-text">
+      <span class="brand-title" id="guide-title">__GUIDE_TITLE__</span>
+      <span class="brand-sub" id="guide-subtitle"></span>
+    </span>
+  </div>
+  <div class="top-progress" id="top-progress"></div>
+</header>
+<div class="shell" id="shell">
+  <aside class="sidebar" id="sidebar" aria-label="Chapters and steps">
+    <div class="side-head">
+      <div class="side-head-row">
+        <div>
+          <div class="eyebrow">Your build, step by step</div>
+          <div class="side-title-row"><h1 class="side-title">Assembly</h1><span class="side-count" id="side-count"></span></div>
+        </div>
+        <button class="icon-btn drawer-close" id="drawer-close" type="button" aria-label="Close the step list">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <span class="sr-only">Find a step or part</span>
+        <input id="search" type="search" placeholder="Find a step or part" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="progress-row"><span id="done-count">0 of 0 done</span><button type="button" class="link-btn" id="reset-progress">Reset progress</button></div>
+      <div class="bar" aria-hidden="true"><div class="bar-fill" id="done-bar"></div></div>
+    </div>
+    <nav class="toc" id="toc" aria-label="Steps"></nav>
+    <p class="toc-empty" id="toc-empty" hidden>No step matches that search.</p>
+    <div class="side-foot" id="side-foot"></div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+  <main class="main" id="main">
+    <section class="stage" aria-label="3D assembly view">
+      <div class="stage-head">
+        <div class="crumbs" id="crumbs"></div>
+        <div class="step-of" id="step-of"></div>
+        <button class="page-id" id="page-id" type="button" title="Copy a link to this page" aria-label="Copy a link to this page"></button>
+      </div>
+      <div class="viewer" id="viewer">
+        <div class="viewer-tools">
+          <button id="reset-btn" class="tool-btn" type="button" aria-label="Reset the camera view" title="Reset the camera view">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.5"/></svg><span class="tool-text">Reset view</span>
+          </button>
+          <button id="flip-btn" class="tool-btn" type="button" aria-label="Look at the reverse side" title="Turn the view to the reverse side">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg><span class="tool-text">Reverse side</span>
+          </button>
+          <button id="labels-btn" class="tool-btn" type="button" aria-pressed="true" aria-label="Show part names" title="Show the names of the parts added in this step">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10l5 6-5 6H4z"/></svg><span class="tool-text">Labels</span>
+          </button>
+          <div class="seg" role="group" aria-label="Context parts">
+            <span class="seg-label" aria-hidden="true">Context</span>
+            <button type="button" data-mode="ghost" aria-pressed="true">Ghost</button>
+            <button type="button" data-mode="solid" aria-pressed="false">Solid</button>
+            <button type="button" data-mode="hidden" aria-pressed="false">Hide</button>
+          </div>
+        </div>
+        <div class="labels" id="labels"></div>
+        <div class="timeline" id="timeline" hidden>
+          <button id="tl-play" class="tl-btn tl-play" type="button" aria-label="Play the assembly motion">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><span>Play</span>
+          </button>
+          <button id="tl-apart" class="tl-btn" type="button" title="Show the parts and screws pulled back along their paths">Pull apart</button>
+          <button id="tl-seat" class="tl-btn" type="button" title="Show everything in its final position">Seated</button>
+          <input id="tl-range" class="tl-range" type="range" min="0" max="1000" step="1" value="1000" aria-label="Assembly progress">
+        </div>
+        <div class="legend" id="legend" hidden></div>
+        <div class="viewer-status" id="viewer-status" role="status">Loading the guide&hellip;</div>
+        <div class="viewer-hint" id="viewer-hint"><span class="hint-wide">Drag to orbit · right-drag to pan · scroll to zoom · click a part or cable to identify it</span><span class="hint-narrow">Drag to orbit · pinch to zoom · tap a part to name it</span></div>
+      </div>
+    </section>
+    <section class="panel" id="panel" tabindex="-1" aria-label="Step instructions">
+      <div class="panel-scroll" id="panel-scroll"><div class="step-body" id="step-body"></div></div>
+      <nav class="panel-foot" aria-label="Step navigation">
+        <button id="prev-btn" class="nav-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Previous</span></button>
+        <button id="done-btn" class="done-btn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span id="done-text">Mark done</span></button>
+        <button id="next-btn" class="nav-btn primary" type="button"><span>Next</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </nav>
+    </section>
+  </main>
+</div>
+<div class="sr-only" id="announcer" aria-live="polite"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Reference photo">
+  <figure><img id="lightbox-img" alt=""><figcaption id="lightbox-caption"></figcaption></figure>
+  <button type="button" class="nav-btn" id="lightbox-close">Close</button>
+</dialog>
+<div class="fatal" id="fatal" role="alert" hidden></div>
+<!--__SCRIPTS__-->
+</body>
+</html>

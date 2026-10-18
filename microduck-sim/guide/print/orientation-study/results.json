@@ -1,0 +1,7311 @@
+{
+ "study": "MicroDuck V1.6 print orientation study",
+ "date": "2026-10-09",
+ "manifest": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.6-final/final-V1.6.json",
+ "manifestSha256": "edbc2ab28f791a3252cae27d10b807aa3bd60ab3402255a2ebae74801b000c3c",
+ "scope": "Read-only study. No release, sliced delivery, Downloads or build-pack file was changed. Native slices are single-part STUDY manifests through the unmodified 13-RELEASE-PIPELINE (BambuStudio 02.08.02.61, OrcaSlicer 2.4.2 for Elegoo), each run under run_bounded_cad.py.",
+ "summary": {
+  "keep": [
+   "camera_retainer",
+   "eye_trim",
+   "face_panel",
+   "head_bottom",
+   "head_cap",
+   "imu_clamp",
+   "imu_cover",
+   "jaw_support_original",
+   "mouth_sliding_ring",
+   "neck_pitch_integrated_1mm_seats",
+   "openrb_tray",
+   "speaker_cradle",
+   "speaker_keeper"
+  ],
+  "change": [],
+  "nativeSlices": 38
+ },
+ "criteria": [
+  {
+   "id": "R1",
+   "rule": "Stable flat base: real flat contact, centre of mass well inside the first-layer hull, no part that leans on support or brim to stay up.",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/filament-acc/filament/print-quality/warping-falling-off-collapsing",
+     "quote": "Consider reorienting the model to lie flat.",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/auto-orientation",
+     "note": "Auto orientation prefers a larger bottom area and a larger bottom convex hull (stability).",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/auto-brim",
+     "quote": "A taller part with a smaller footprint usually needs a wider brim",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://help.prusa3d.com/article/skirt-and-brim_133969",
+     "quote": "use at least a 3 mm brim",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.elegoo.com/en/troubleshooting/fdm-printer/edge-warping",
+     "note": "Lists small bottom contact area as a warping cause; brim first.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": "The tip-angle threshold (10 degrees) and the 0.01 mm contact rule are project choices; the contact rule is the release pipeline flatContact check."
+  },
+  {
+   "id": "R2",
+   "rule": "Functional faces off support: screw-head seats, bearing and sliding seats, PCB pads and mating faces should face up, sit on the bed, or be vertical walls.",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/auto-orientation",
+     "quote": "supports can damage the interface surface more or less",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/support",
+     "note": "Top Z distance and interface layers trade removal ease against surface quality.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": "Ranking a moving fit (sliding seat) above a static clamp seat, and treating a down-facing end under 0.6 mm as bridged, are project inferences checked against native slices here."
+  },
+  {
+   "id": "R3",
+   "rule": "Holes and bores that must be round or accurately pitched print with a vertical axis.",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/manual/auto-circle-contour-compensation",
+     "quote": "semicircles or circles in the vertical direction will not be compensated",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://www.hubs.com/knowledge-base/how-does-part-orientation-affect-3d-print/",
+     "note": "Non-official: vertical-axis cylinders are smooth and accurate; horizontal ones facet.",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://www.makerverse.com/resources/the-fused-deposition-modeling-fdm-design-guide/",
+     "note": "Non-official: horizontal holes step and turn slightly elliptical.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": "No official slicer or printer source covers horizontal-hole droop or teardrop holes."
+  },
+  {
+   "id": "R4",
+   "rule": "Do not make layers carry the main load: keep bending and tension of thin arms, pins and clips in the layer plane when the load is significant.",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/knowledge-sharing/common-print-quality-problem",
+     "quote": "avoid having the layers bear the main load",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+     "quote": "FFF prints are stronger in one direction than another",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://www.hubs.com/knowledge-base/how-does-part-orientation-affect-3d-print/",
+     "quote": "Z tension increases the risk of delamination and fracture.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": "Whether a MicroDuck load is significant is judged per part (for example the neck ears, about 1.5 MPa estimated); no printed strength test was run."
+  },
+  {
+   "id": "R5",
+   "rule": "Cosmetic faces and elephant foot: the bed face is flat but flared and takes the plate texture; supported faces print rough.",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/parameter/elephant-foot",
+     "quote": "the flared base directly affects fit",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.bambulab.com/en/filament-acc/acc/plates",
+     "quote": "Adds a unique textured finish to the bottom surface of printed parts.",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://help.prusa3d.com/article/elephant-foot-compensation_114487",
+     "note": "About 0.2 mm for a 0.4 mm nozzle.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": null
+  },
+  {
+   "id": "R6",
+   "rule": "Support volume, removal access and overhangs: prefer poses with less support, none trapped in cavities or hole cores; slopes under 45 degrees from the bed need support (profile threshold 30 degrees).",
+   "sources": [
+    {
+     "url": "https://wiki.bambulab.com/en/software/bambu-studio/support",
+     "quote": "The default threshold angle is 30 degrees.",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://wiki.bambulab.com/en/filament-acc/filament/print-quality/overhang",
+     "quote": "smaller than 45°, it is recommended to add supports",
+     "accessed": "2026-10-09"
+    },
+    {
+     "url": "https://help.prusa3d.com/article/support-material_1698",
+     "note": "Reorient or split the model to reduce supports.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": null
+  },
+  {
+   "id": "R7",
+   "rule": "Height, time and filament decide only between poses that tie on R1-R6.",
+   "sources": [
+    {
+     "url": "https://www.hubs.com/knowledge-base/how-does-part-orientation-affect-3d-print/",
+     "note": "Non-official: layer count scales with height.",
+     "accessed": "2026-10-09"
+    }
+   ],
+   "inference": "No official FDM source gives a numeric orientation-to-time rule; native slice ETA is the measure."
+  }
+ ],
+ "sourceGaps": [
+  "No official Bambu, Prusa, Orca or Elegoo page covers horizontal-hole droop or teardrop holes.",
+  "No official source covers screw-boss or thread orientation.",
+  "Elegoo publishes no orientation guidance.",
+  "No official numeric rule links orientation to print time."
+ ],
+ "checkerPenaltyWeights": {
+  "notSelfStanding": 1000.0,
+  "noFlatContact": 300.0,
+  "lowTipAnglePerDeg": 4.0,
+  "smallContactPerMm2": 0.5,
+  "horizontalHole": 6.0,
+  "inclinedHole": 3.0,
+  "seatDown": 10.0,
+  "overhang60PerCm2": 1.0,
+  "supportProxyPerCm3": 1.5,
+  "supportOnModelPerCm2": 1.0,
+  "heightPerMm": 0.15,
+  "tooBig": 10000.0
+ },
+ "knownCheckerLimits": [
+  "It does not know which curved faces are sliding or bearing fits (jaw support flip screens best but puts the sliding seat on support).",
+  "Penalty weights are heuristic; the screen orders candidates for slicing and review only."
+ ],
+ "acceptance": {
+  "problems": [],
+  "passed": true
+ },
+ "inputs": {
+  "evidence/check-v16-screen.json": "d5dc3d0bf34b4bc444e7859527050bf35eb38e044296c4a40ec13e14c2abb794",
+  "evidence/register-10-1.json": "b4d7e06d764931b5c384a0270494045b4f7e5b49c64bd26a977eaf376c95a2b1",
+  "candidates/verdicts.json": "a3e1d996aba3fb5224faf69da9a2030bfbd1c5f49898bab4244c12c1d1917b2b",
+  "evidence/jaw-bearing-seat.json": "2711b88ea1f6b6e42e7f845b163a247def56fdb9aac42b9c6336fce311c81abf",
+  "orientation_check.py": "34afc54c4527e84f9c9f6a69958362fd028ab697a6ec19c141b2fb50d552b5e8"
+ },
+ "parts": [
+  {
+   "key": "head_bottom",
+   "color": "Yellow",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/head-neck-local-20261009/head-bottom-eh14-clearance-world.stl",
+   "features": {
+    "holes": 7,
+    "bosses": 10,
+    "holeDiametersMm": [
+     2.2,
+     2.2,
+     2.2,
+     2.2,
+     2.69,
+     2.69,
+     2.7
+    ],
+    "volumeMm3": 22941.7,
+    "triangles": 30586
+   },
+   "flags": [
+    "3 hole end(s) face down above the bed",
+    "3 boss/pin face(s) face down above the bed"
+   ],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.56",
+      "flat facet 224 mm2",
+      "flat facet 143 mm2",
+      "flat facet 127 mm2",
+      "flat facet 63 mm2",
+      "flat facet 63 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 20.05,
+     "contactMm2": 193.6,
+     "firstLayerSectionMm2": 1333.2,
+     "tipAngleDeg": 70.9,
+     "overhang45Mm2": 4985.7,
+     "overhang60Mm2": 4735.0,
+     "supportProxyMm3": 31322.0,
+     "supportOnModelMm2": 0.1,
+     "holesVertical": 7,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 3,
+     "bossFacesFacingDown": 3,
+     "pinsVertical": 4,
+     "pinsHorizontal": 0,
+     "penalty": 157.34,
+     "penaltyTerms": {
+      "seatsDown": 30.0,
+      "bossFacesDown": 30.0,
+      "overhang60": 47.35,
+      "supportProxy": 46.98,
+      "supportOnModel": 0.0,
+      "height": 3.01
+     },
+     "bedFacingSourceDir": [
+      -0.0085,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.0,
+       1.0,
+       0.0,
+       -3.814697265625e-05
+      ],
+      [
+       -0.9999636988970905,
+       -0.0,
+       0.008520615473600326,
+       27.024663762032922
+      ],
+      [
+       0.008520615473600324,
+       0.0,
+       0.9999636988970904,
+       -99.06181710375041
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 2,
+     "heightMm": 90.91,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 3.5,
+     "tipAngleDeg": 2.8,
+     "overhang45Mm2": 3763.8,
+     "overhang60Mm2": 3204.0,
+     "supportProxyMm3": 72031.0,
+     "supportOnModelMm2": 1526.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 7,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 539.8,
+     "penaltyTerms": {
+      "lowTipAngle": 28.8,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 42.0,
+      "overhang60": 32.04,
+      "supportProxy": 108.05,
+      "supportOnModel": 15.27,
+      "height": 13.64
+     },
+     "bedFacingSourceDir": [
+      -0.0813,
+      -0.9808,
+      0.1772
+     ],
+     "sourceToPrint": [
+      [
+       -0.9961888028327548,
+       0.07432778591056917,
+       -0.04564262648309743,
+       34.45984768331502
+      ],
+      [
+       -0.031591793584476474,
+       0.1802850900876283,
+       0.9831069346059013,
+       -103.92712295269968
+      ],
+      [
+       0.08130084678992452,
+       0.9808020526761394,
+       -0.17724983999291188,
+       58.411955199406464
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.43",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 19.52,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 19.3,
+     "tipAngleDeg": 57.9,
+     "overhang45Mm2": 6370.5,
+     "overhang60Mm2": 6088.1,
+     "supportProxyMm3": 56182.0,
+     "supportOnModelMm2": 22.8,
+     "holesVertical": 7,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 10,
+     "bossFacesFacingDown": 9,
+     "pinsVertical": 4,
+     "pinsHorizontal": 0,
+     "penalty": 638.31,
+     "penaltyTerms": {
+      "noFlatContact": 300.0,
+      "seatsDown": 100.0,
+      "bossFacesDown": 90.0,
+      "overhang60": 60.88,
+      "supportProxy": 84.27,
+      "supportOnModel": 0.23,
+      "height": 2.93
+     },
+     "bedFacingSourceDir": [
+      -0.0032,
+      0.0586,
+      0.9983
+     ],
+     "sourceToPrint": [
+      [
+       0.000187005490678672,
+       0.9982839340212887,
+       -0.05855896262678926,
+       6.5027410219476565
+      ],
+      [
+       0.9999949009572912,
+       -1.20641077668812e-16,
+       0.003193440060087745,
+       -28.32946841202422
+      ],
+      [
+       0.0031879599062455675,
+       -0.05855926122296323,
+       -0.9982788437288737,
+       116.35854310534621
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 71 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 91.42,
+     "contactMm2": 87.7,
+     "firstLayerSectionMm2": 147.2,
+     "tipAngleDeg": -26.2,
+     "overhang45Mm2": 3677.0,
+     "overhang60Mm2": 3134.4,
+     "supportProxyMm3": 51781.0,
+     "supportOnModelMm2": 2199.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 7,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 1186.71,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 42.0,
+      "overhang60": 31.34,
+      "supportProxy": 77.67,
+      "supportOnModel": 21.99,
+      "height": 13.71
+     },
+     "bedFacingSourceDir": [
+      -0.0703,
+      -0.9961,
+      -0.0524
+     ],
+     "sourceToPrint": [
+      [
+       0.9975226385946225,
+       -0.07015488124374927,
+       -0.005184412107213582,
+       -28.75828110275067
+      ],
+      [
+       -0.0014896443792895586,
+       0.052616025190013044,
+       -0.9986137065216095,
+       109.01747564750113
+      ],
+      [
+       0.07033040914743237,
+       0.9961475023965474,
+       0.05238117045537849,
+       33.98301590958882
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 71 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 91.42,
+     "contactMm2": 94.5,
+     "firstLayerSectionMm2": 147.2,
+     "tipAngleDeg": -25.5,
+     "overhang45Mm2": 3694.5,
+     "overhang60Mm2": 3173.8,
+     "supportProxyMm3": 59158.0,
+     "supportOnModelMm2": 2180.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 7,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 1197.99,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 42.0,
+      "overhang60": 31.74,
+      "supportProxy": 88.74,
+      "supportOnModel": 21.8,
+      "height": 13.71
+     },
+     "bedFacingSourceDir": [
+      -0.0704,
+      0.9961,
+      -0.0524
+     ],
+     "sourceToPrint": [
+      [
+       -0.9975028122581111,
+       -0.06998225757118048,
+       0.009519619866391027,
+       28.27238096498901
+      ],
+      [
+       -0.005817776848623065,
+       -0.05291162081009752,
+       -0.9985822519230892,
+       107.13357354953587
+      ],
+      [
+       0.07038673887671783,
+       -0.9961439875883854,
+       0.05237234940129509,
+       33.981190703309466
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "V1.4-V1.5 on-edge",
+     "origin": "extra",
+     "sameAs": [
+      "flat facet 331 mm2"
+     ],
+     "rank": 6,
+     "heightMm": 115.71,
+     "contactMm2": 332.6,
+     "firstLayerSectionMm2": 336.4,
+     "tipAngleDeg": -9.5,
+     "overhang45Mm2": 3581.9,
+     "overhang60Mm2": 2951.0,
+     "supportProxyMm3": 68205.0,
+     "supportOnModelMm2": 1915.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 7,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 1210.34,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 42.0,
+      "overhang60": 29.51,
+      "supportProxy": 102.31,
+      "supportOnModel": 19.16,
+      "height": 17.36
+     },
+     "bedFacingSourceDir": [
+      0.9911,
+      -0.0,
+      -0.1329
+     ],
+     "sourceToPrint": [
+      [
+       -0.1318038102786791,
+       0.1290110709266804,
+       -0.9828447986913238,
+       110.02897860226594
+      ],
+      [
+       -0.01715953689250203,
+       -0.9916431529028341,
+       -0.1278647991418018,
+       15.542972315862585
+      ],
+      [
+       -0.9911272903173445,
+       1.2093851716279997e-05,
+       0.13291611622971072,
+       70.78669847547373
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-02/01_community-2.stl",
+    "stockExtentMm": [
+     91.76,
+     117.12,
+     20.06
+    ],
+    "newToOldMm": {
+     "p50": 0.027,
+     "p90": 0.066,
+     "within0p5": 0.999
+    },
+    "oldToNewMm": {
+     "p50": 0.027,
+     "p90": 0.072,
+     "within0p5": 0.977
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 115.8,
+     "totalGrams": 37.39,
+     "supportGrams": 8.71,
+     "gramsByFeature": {
+      "bridge": 0.91,
+      "machine": 0.1,
+      "model": 27.08,
+      "overhangWall": 0.36,
+      "support": 6.9,
+      "supportInterface": 1.81
+     },
+     "layers": 100,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      1297.0
+     ],
+     "supportUnderDownHoleEndsMm": 351.9,
+     "supportUnderDownBossFacesMm": 351.9,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_bottom/current/run/native/Yellow_Bambu/sliced.3mf",
+      "sha256": "458c9e359ff0ecd763f8f6de3641528d76962a6e0bbe27ac515e31478adb2b3e"
+     },
+     "readback": "slices/head_bottom/current/readback-Bambu.json"
+    },
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Elegoo",
+     "etaMinutes": 101.0,
+     "totalGrams": 39.64,
+     "supportGrams": 11.41,
+     "gramsByFeature": {
+      "bridge": 0.89,
+      "machine": 0.13,
+      "model": 26.91,
+      "overhangWall": 0.31,
+      "support": 8.9,
+      "supportInterface": 2.51
+     },
+     "layers": 117,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      1298.2
+     ],
+     "supportUnderDownHoleEndsMm": 353.1,
+     "supportUnderDownBossFacesMm": 353.1,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_bottom/current/run/native/Yellow_Elegoo/sliced.3mf",
+      "sha256": "35abf4034ae70498b2b1e30d7b3abe9f2fb53d771c2fda87700e84346e34c3c9"
+     },
+     "readback": "slices/head_bottom/current/readback-Elegoo.json"
+    },
+    {
+     "slug": "v14-on-edge",
+     "poseName": "V1.4-V1.5 on-edge",
+     "machine": "Bambu",
+     "etaMinutes": 158.3,
+     "totalGrams": 49.29,
+     "supportGrams": 21.44,
+     "gramsByFeature": {
+      "bridge": 0.11,
+      "brimSkirt": 0.1,
+      "machine": 0.1,
+      "model": 26.85,
+      "overhangWall": 0.46,
+      "support": 20.52,
+      "supportInterface": 0.92
+     },
+     "layers": 578,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      308.8
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_bottom/v14-on-edge/run/native/Yellow_Bambu/sliced.3mf",
+      "sha256": "9d065aace22454c582a90cde53f56e03d80c4c8980d68d16e2aedd4e9a03f9ba"
+     },
+     "readback": "slices/head_bottom/v14-on-edge/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Upright, open top up (robot upright). Same as the 10/1 batch and the upstream community-2 pose.",
+    "function": "Yellow lower head shell. Four blind 2.2 mm pilots receive the jaw-support M2.5 screws from above; three 2.7 mm tabs at 13-14 mm take screws from below into the head-cap posts; curved visible outer skin.",
+    "loadPath": "Screw clamp loads at the pilots and tabs; light shell loads. No member is loaded across layers in a way that changes between candidate poses.",
+    "ranking": [
+     "1 current upright: 20.1 mm tall, first layer 1297 mm2, tip angle 70.9 deg, all 7 holes vertical. Bambu 115.8 / 37.39 / 8.71 / 1297; Elegoo 101.0 / 39.64 / 11.41 / 1298.",
+     "2 V1.4-V1.5 on-edge: 115.7 mm tall, centre of mass outside the first-layer hull (tip -9.5 deg), all 7 holes horizontal. Bambu 158.3 / 49.29 / 21.44 / 309 (+42.5 min, +11.9 g, support +12.7 g, 578 layers).",
+     "3 rim-down (stable p=0.43): first-layer section only 19.3 mm2, 10 hole ends and 9 boss faces face down above the bed. Not sliced: fails the flat-base rule before support is counted.",
+     "4+ standing on end (91 mm): no flat contact or not self-standing."
+    ],
+    "counterexampleCheck": "The upright pose prints the three cap-screw head seats (tab undersides, world-down) on support: 352 mm of support toolpath under them on Bambu, 353 mm on Elegoo. Probe of head_bottom and the world-frame head cap confirms the screws enter from below (tab material z 112.6-114.6 world, cap post with pilot from 114.6 up). Every pose that frees these seats loses the flat base (rim-down) or stands 116 mm tall (on-edge), so the seats are a known cost of the best pose.",
+    "residual": "Clean the support interface off the three tab undersides and check each screw head sits flat.",
+    "evidence": [
+     "slices/head_bottom/current",
+     "slices/head_bottom/v14-on-edge",
+     "evidence/renders/head_bottom.png",
+     "evidence/register-10-1.json"
+    ]
+   }
+  },
+  {
+   "key": "face_panel",
+   "color": "White",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/positive-x225/face_three_screw_camera-world.stl",
+   "features": {
+    "holes": 5,
+    "bosses": 22,
+    "holeDiametersMm": [
+     1.6,
+     1.6,
+     1.6,
+     2.05,
+     14.59
+    ],
+    "volumeMm3": 4800.8,
+    "triangles": 8026
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.48",
+      "flat facet 3075 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 4.3,
+     "contactMm2": 3075.5,
+     "firstLayerSectionMm2": 3074.5,
+     "tipAngleDeg": 87.3,
+     "overhang45Mm2": 3.4,
+     "overhang60Mm2": 3.4,
+     "supportProxyMm3": 1.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 5,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 15,
+     "pinsHorizontal": 0,
+     "penalty": 0.67,
+     "penaltyTerms": {
+      "overhang60": 0.03,
+      "supportProxy": 0.0,
+      "height": 0.64
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       -1.0,
+       0.0,
+       -0.09137725830077868
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       -132.6278419494629
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       81.39900207519531
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 114 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 44.63,
+     "contactMm2": 113.8,
+     "firstLayerSectionMm2": 113.8,
+     "tipAngleDeg": 0.9,
+     "overhang45Mm2": 238.3,
+     "overhang60Mm2": 182.6,
+     "supportProxyMm3": 1810.0,
+     "supportOnModelMm2": 117.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 5,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 15,
+     "penalty": 78.8,
+     "penaltyTerms": {
+      "lowTipAngle": 36.4,
+      "horizontalHoles": 30.0,
+      "overhang60": 1.83,
+      "supportProxy": 2.71,
+      "supportOnModel": 1.17,
+      "height": 6.69
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       1.0,
+       0.0,
+       0.09137725830077414
+      ],
+      [
+       -1.0,
+       6.123233995736766e-17,
+       0.0,
+       79.2490005493164
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       -110.3148422241211
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.51",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 39 mm2",
+      "flat facet 28 mm2",
+      "flat facet 28 mm2",
+      "flat facet 28 mm2",
+      "flat facet 28 mm2"
+     ],
+     "rank": 3,
+     "heightMm": 4.3,
+     "contactMm2": 152.2,
+     "firstLayerSectionMm2": 152.2,
+     "tipAngleDeg": 76.7,
+     "overhang45Mm2": 2914.0,
+     "overhang60Mm2": 2914.0,
+     "supportProxyMm3": 8390.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 5,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 17,
+     "pinsVertical": 15,
+     "pinsHorizontal": 0,
+     "penalty": 252.37,
+     "penaltyTerms": {
+      "seatsDown": 40.0,
+      "bossFacesDown": 170.0,
+      "overhang60": 29.14,
+      "supportProxy": 12.59,
+      "height": 0.64
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.6135687032370712e-16,
+       -2.5208595868166676e-15,
+       -0.9999999999999999,
+       132.62784194946283
+      ],
+      [
+       -1.8879581450021584e-05,
+       0.9999999998217807,
+       -2.5208580658639625e-15,
+       0.09291403737440262
+      ],
+      [
+       0.9999999998217807,
+       1.8879581450021584e-05,
+       0.0,
+       -77.09939564368676
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-04/01_community-76.stl",
+    "stockExtentMm": [
+     87.65,
+     44.63,
+     12.5
+    ],
+    "newToOldMm": {
+     "p50": 0.003,
+     "p90": 0.114,
+     "within0p5": 0.935
+    },
+    "oldToNewMm": {
+     "p50": 0.003,
+     "p90": 3.771,
+     "within0p5": 0.817
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 18.8,
+     "totalGrams": 6.18,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "bridge": 0.0,
+      "machine": 0.1,
+      "model": 5.85,
+      "overhangWall": 0.0
+     },
+     "layers": 21,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      3020.5
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/face_panel/current/run/native/White_Bambu/sliced.3mf",
+      "sha256": "5655c9c6c985ec43c7699d03843707c8bd752ca923b9d76cdbdcb0e2c36626bb"
+     },
+     "readback": "slices/face_panel/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.51",
+     "machine": "Bambu",
+     "etaMinutes": 37.9,
+     "totalGrams": 10.04,
+     "supportGrams": 4.13,
+     "gramsByFeature": {
+      "bridge": 0.65,
+      "machine": 0.1,
+      "model": 4.74,
+      "overhangWall": 0.19,
+      "support": 3.25,
+      "supportInterface": 0.88
+     },
+     "layers": 21,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      133.4
+     ],
+     "supportUnderDownHoleEndsMm": 1053.1,
+     "supportUnderDownBossFacesMm": 2678.7,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/face_panel/flip/run/native/White_Bambu/sliced.3mf",
+      "sha256": "e8aca54249a50d05437c90eb4c293d385892da92081f26a682425ce7167f30fa"
+     },
+     "readback": "slices/face_panel/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Outer face down on the plate (10/1 pose).",
+    "function": "White face panel; three-screw eye-camera clamp interface (1.6 mm pilots), 14.6 mm eye opening, small locating bosses.",
+    "loadPath": "Panel loads in plane; screw pilots vertical.",
+    "ranking": [
+     "1 current: 4.3 mm tall, contact 3075 mm2, all holes vertical. Bambu 18.8 / 6.18 / 0 / 3021.",
+     "2 flip (stable p=0.51): Bambu 37.9 / 10.04 / 4.13 / 133; 1053 mm of support under hole ends and 2679 mm under boss faces.",
+     "3 on edge (44.6 mm): tip 0.9 deg."
+    ],
+    "counterexampleCheck": "The outer face takes the plate texture (Bambu: Textured PEI adds texture to the bottom face; the Bambu White profile uses Cool Plate, the Elegoo profiles in this study use Textured PEI). That is a cosmetic choice, not a reason to flip: the flip puts the bosses and seats on support.",
+    "evidence": [
+     "slices/face_panel/current",
+     "slices/face_panel/flip",
+     "evidence/renders/face_panel.png"
+    ]
+   }
+  },
+  {
+   "key": "head_cap",
+   "color": "Orange",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/stl/head_cap.stl",
+   "features": {
+    "holes": 18,
+    "bosses": 25,
+    "holeDiametersMm": [
+     1.7,
+     1.7,
+     1.7,
+     1.7,
+     1.7,
+     1.7,
+     1.7,
+     1.7,
+     2.1,
+     2.1,
+     2.1,
+     2.1,
+     2.1,
+     2.1,
+     2.1,
+     2.8,
+     2.8,
+     2.8
+    ],
+    "volumeMm3": 32118.4,
+    "triangles": 29592
+   },
+   "flags": [
+    "4 hole(s) print with a horizontal axis"
+   ],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.33",
+      "stable p=0.32"
+     ],
+     "rank": 1,
+     "heightMm": 47.06,
+     "contactMm2": 104.4,
+     "firstLayerSectionMm2": 463.8,
+     "tipAngleDeg": 9.0,
+     "overhang45Mm2": 6124.0,
+     "overhang60Mm2": 4407.2,
+     "supportProxyMm3": 11282.0,
+     "supportOnModelMm2": 50.9,
+     "holesVertical": 14,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 17,
+     "pinsHorizontal": 0,
+     "penalty": 96.56,
+     "penaltyTerms": {
+      "lowTipAngle": 4.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 44.07,
+      "supportProxy": 16.92,
+      "supportOnModel": 0.51,
+      "height": 7.06
+     },
+     "bedFacingSourceDir": [
+      0.207,
+      0.9764,
+      -0.0624
+     ],
+     "sourceToPrint": [
+      [
+       0.9782594230769246,
+       -0.20738491064010095,
+       0.0,
+       -2.910403253999803
+      ],
+      [
+       0.012930877448215444,
+       0.06099649522873068,
+       0.9980542169532829,
+       -43.93641367525987
+      ],
+      [
+       -0.2069813845968325,
+       -0.9763559424762103,
+       0.06235206509626871,
+       16.82919313285194
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [
+      "stable p=0.00"
+     ],
+     "rank": 2,
+     "heightMm": 130.77,
+     "contactMm2": 3.1,
+     "firstLayerSectionMm2": 17.0,
+     "tipAngleDeg": 0.6,
+     "overhang45Mm2": 2636.6,
+     "overhang60Mm2": 1755.7,
+     "supportProxyMm3": 45596.0,
+     "supportOnModelMm2": 1090.1,
+     "holesVertical": 0,
+     "holesInclined": 18,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 4,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 311.52,
+     "penaltyTerms": {
+      "lowTipAngle": 37.6,
+      "smallContact": 23.45,
+      "inclinedHoles": 54.0,
+      "seatsDown": 40.0,
+      "bossFacesDown": 40.0,
+      "overhang60": 17.56,
+      "supportProxy": 68.39,
+      "supportOnModel": 10.9,
+      "height": 19.62
+     },
+     "bedFacingSourceDir": [
+      -0.9006,
+      0.4339,
+      0.0266
+     ],
+     "sourceToPrint": [
+      [
+       0.06584107982184209,
+       0.07576116914737341,
+       0.9949498467045045,
+       -40.72518237186025
+      ],
+      [
+       -0.4297124657199898,
+       -0.8977625055068346,
+       0.09679711003401616,
+       -10.569564522879702
+      ],
+      [
+       0.9005621294573409,
+       -0.43391557814339177,
+       -0.026554133985985384,
+       64.72137163273273
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.07",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 120.48,
+     "contactMm2": 29.4,
+     "firstLayerSectionMm2": 109.9,
+     "tipAngleDeg": 20.0,
+     "overhang45Mm2": 3294.8,
+     "overhang60Mm2": 2317.0,
+     "supportProxyMm3": 127768.0,
+     "supportOnModelMm2": 529.0,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 14,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 4,
+     "pinsVertical": 0,
+     "pinsHorizontal": 17,
+     "penalty": 412.48,
+     "penaltyTerms": {
+      "smallContact": 10.3,
+      "horizontalHoles": 84.0,
+      "seatsDown": 40.0,
+      "bossFacesDown": 40.0,
+      "overhang60": 23.17,
+      "supportProxy": 191.65,
+      "supportOnModel": 5.29,
+      "height": 18.07
+     },
+     "bedFacingSourceDir": [
+      -0.9967,
+      0.0027,
+      0.0812
+     ],
+     "sourceToPrint": [
+      [
+       0.0812075079417197,
+       0.06351111113856187,
+       0.9946716440191914,
+       -40.07732863275064
+      ],
+      [
+       0.002431931092272321,
+       -0.9979773710990153,
+       0.06352363721844557,
+       -2.445093879224922
+      ],
+      [
+       0.9966942491883145,
+       -0.002739623376211943,
+       -0.08119770993506248,
+       59.68381466026073
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "rim-down (robot upright)",
+     "origin": "extra",
+     "sameAs": [
+      "stable p=0.28"
+     ],
+     "rank": 4,
+     "heightMm": 46.34,
+     "contactMm2": 178.0,
+     "firstLayerSectionMm2": 178.0,
+     "tipAngleDeg": 57.8,
+     "overhang45Mm2": 7178.2,
+     "overhang60Mm2": 5674.4,
+     "supportProxyMm3": 199153.0,
+     "supportOnModelMm2": 47.6,
+     "holesVertical": 14,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 14,
+     "bossFacesFacingDown": 21,
+     "pinsVertical": 17,
+     "pinsHorizontal": 0,
+     "penalty": 736.9,
+     "penaltyTerms": {
+      "horizontalHoles": 24.0,
+      "seatsDown": 140.0,
+      "bossFacesDown": 210.0,
+      "overhang60": 56.74,
+      "supportProxy": 298.73,
+      "supportOnModel": 0.48,
+      "height": 6.95
+     },
+     "bedFacingSourceDir": [
+      -0.13,
+      -0.9884,
+      0.0786
+     ],
+     "sourceToPrint": [
+      [
+       -0.9881831019313346,
+       0.1356499418291018,
+       0.07136701156085153,
+       0.3746464074387994
+      ],
+      [
+       0.08119476605488171,
+       0.06834769933321803,
+       0.9943520513184199,
+       -39.988475579055816
+      ],
+      [
+       0.13000602687052032,
+       0.9883965222913411,
+       -0.07855410682914189,
+       25.886066314998693
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 190 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 50.38,
+     "contactMm2": 107.8,
+     "firstLayerSectionMm2": 462.7,
+     "tipAngleDeg": -19.8,
+     "overhang45Mm2": 6335.7,
+     "overhang60Mm2": 4612.1,
+     "supportProxyMm3": 13601.0,
+     "supportOnModelMm2": 51.0,
+     "holesVertical": 14,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 17,
+     "pinsHorizontal": 0,
+     "penalty": 1098.59,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 46.12,
+      "supportProxy": 20.4,
+      "supportOnModel": 0.51,
+      "height": 7.56
+     },
+     "bedFacingSourceDir": [
+      0.1923,
+      0.9658,
+      -0.1742
+     ],
+     "sourceToPrint": [
+      [
+       0.9678208948644956,
+       -0.2159846818377331,
+       -0.12912525963242133,
+       3.210872373263104
+      ],
+      [
+       0.16233233596583335,
+       0.14378847785211576,
+       0.976203404182165,
+       -33.67067870619812
+      ],
+      [
+       -0.19227825712639177,
+       -0.9657512572336755,
+       0.1742227912415949,
+       12.87272746902837
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 109 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 90.28,
+     "contactMm2": 64.0,
+     "firstLayerSectionMm2": 288.5,
+     "tipAngleDeg": -24.4,
+     "overhang45Mm2": 6828.0,
+     "overhang60Mm2": 4218.7,
+     "supportProxyMm3": 60381.0,
+     "supportOnModelMm2": 1244.2,
+     "holesVertical": 0,
+     "holesInclined": 14,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 1224.74,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 24.0,
+      "inclinedHoles": 42.0,
+      "overhang60": 42.19,
+      "supportProxy": 90.57,
+      "supportOnModel": 12.44,
+      "height": 13.54
+     },
+     "bedFacingSourceDir": [
+      0.1913,
+      0.3366,
+      0.922
+     ],
+     "sourceToPrint": [
+      [
+       0.9781137511082452,
+       -0.14366155238341755,
+       -0.15051527583519306,
+       4.153584088016352
+      ],
+      [
+       -0.08179281858801153,
+       -0.9306231570652653,
+       0.356721844524984,
+       -17.42537563232046
+      ],
+      [
+       -0.19132021513783193,
+       -0.3366034727994719,
+       -0.9220057903174732,
+       73.05747629460274
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 161 mm2",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 107 mm2"
+     ],
+     "rank": 7,
+     "heightMm": 90.44,
+     "contactMm2": 63.4,
+     "firstLayerSectionMm2": 364.7,
+     "tipAngleDeg": -29.6,
+     "overhang45Mm2": 6923.1,
+     "overhang60Mm2": 4436.2,
+     "supportProxyMm3": 80047.0,
+     "supportOnModelMm2": 1561.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 18,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 17,
+     "penalty": 1301.61,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 108.0,
+      "overhang60": 44.36,
+      "supportProxy": 120.07,
+      "supportOnModel": 15.61,
+      "height": 13.57
+     },
+     "bedFacingSourceDir": [
+      0.02,
+      0.1545,
+      -0.9878
+     ],
+     "sourceToPrint": [
+      [
+       -0.9914189542573035,
+       0.1307221762167197,
+       0.0004120491713983234,
+       3.102287643708472
+      ],
+      [
+       -0.12919020052018035,
+       -0.9793091999308594,
+       -0.15576707938565118,
+       3.6379243312092644
+      ],
+      [
+       -0.01995868805584059,
+       -0.15448366766731378,
+       0.9877937270478815,
+       -2.6490048871545033
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 160 mm2",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 110 mm2"
+     ],
+     "rank": 8,
+     "heightMm": 90.43,
+     "contactMm2": 63.4,
+     "firstLayerSectionMm2": 361.0,
+     "tipAngleDeg": -29.5,
+     "overhang45Mm2": 7008.8,
+     "overhang60Mm2": 4494.4,
+     "supportProxyMm3": 80265.0,
+     "supportOnModelMm2": 1567.8,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 18,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 17,
+     "penalty": 1302.58,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 108.0,
+      "overhang60": 44.94,
+      "supportProxy": 120.4,
+      "supportOnModel": 15.68,
+      "height": 13.56
+     },
+     "bedFacingSourceDir": [
+      0.1775,
+      0.2871,
+      0.9413
+     ],
+     "sourceToPrint": [
+      [
+       0.9798643303925285,
+       -0.14044856618235163,
+       -0.1419157999721092,
+       3.615723483080771
+      ],
+      [
+       -0.09146542112320322,
+       -0.9475534353056658,
+       0.30622959357186086,
+       -14.941519723148309
+      ],
+      [
+       -0.1774823111274959,
+       -0.2870830672431823,
+       -0.941319999648945,
+       74.93133856036917
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "V1.4-V1.5 on-edge",
+     "origin": "extra",
+     "sameAs": [
+      "flat facet 150 mm2"
+     ],
+     "rank": 9,
+     "heightMm": 91.29,
+     "contactMm2": 149.9,
+     "firstLayerSectionMm2": 300.0,
+     "tipAngleDeg": -31.0,
+     "overhang45Mm2": 7133.3,
+     "overhang60Mm2": 4919.2,
+     "supportProxyMm3": 137345.0,
+     "supportOnModelMm2": 2355.9,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 18,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 17,
+     "penalty": 1400.46,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 108.0,
+      "overhang60": 49.19,
+      "supportProxy": 206.02,
+      "supportOnModel": 23.56,
+      "height": 13.69
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -2.6799016695677196
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.1982813392319045
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       1.3726328518259834e-08
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 150 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 10,
+     "heightMm": 91.29,
+     "contactMm2": 149.9,
+     "firstLayerSectionMm2": 300.0,
+     "tipAngleDeg": -30.9,
+     "overhang45Mm2": 7185.8,
+     "overhang60Mm2": 4977.3,
+     "supportProxyMm3": 139135.0,
+     "supportOnModelMm2": 2385.2,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 18,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 17,
+     "penalty": 1404.01,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 108.0,
+      "overhang60": 49.77,
+      "supportProxy": 208.7,
+      "supportOnModel": 23.85,
+      "height": 13.69
+     },
+     "bedFacingSourceDir": [
+      0.1615,
+      0.1359,
+      0.9775
+     ],
+     "sourceToPrint": [
+      [
+       0.9798201608645458,
+       -0.14031924856207184,
+       -0.14234802719514908,
+       3.641607389962026
+      ],
+      [
+       -0.11780964899949568,
+       -0.980731991944875,
+       0.15583852725963823,
+       -7.115483528343187
+      ],
+      [
+       -0.1614724093026142,
+       -0.13592375972880144,
+       -0.9774719395334044,
+       79.52508423505576
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": false,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-01/02_head-cap-usb-service-print.stl",
+    "stockExtentMm": [
+     91.76,
+     122.69,
+     47.17
+    ],
+    "newToOldMm": {
+     "p50": 1.575,
+     "p90": 6.9,
+     "within0p5": 0.265
+    },
+    "oldToNewMm": {
+     "p50": 3.654,
+     "p90": 12.852,
+     "within0p5": 0.169
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 135.1,
+     "totalGrams": 42.65,
+     "supportGrams": 4.59,
+     "gramsByFeature": {
+      "bridge": 0.71,
+      "machine": 0.1,
+      "model": 36.26,
+      "overhangWall": 0.77,
+      "support": 3.68,
+      "supportInterface": 0.91
+     },
+     "layers": 235,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      450.6
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_cap/current/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "0e5fbad935ccf04909eae0993f867c77ec0c7e7b24b61a607842a0035efe9a1c"
+     },
+     "readback": "slices/head_cap/current/readback-Bambu.json"
+    },
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Elegoo",
+     "etaMinutes": 148.1,
+     "totalGrams": 44.33,
+     "supportGrams": 6.81,
+     "gramsByFeature": {
+      "bridge": 0.67,
+      "machine": 0.13,
+      "model": 36.04,
+      "overhangWall": 0.67,
+      "support": 3.82,
+      "supportInterface": 2.99
+     },
+     "layers": 235,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      451.4
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_cap/current/run/native/Orange_Elegoo/sliced.3mf",
+      "sha256": "0e4a34598ba62de0091100352b9c03c3ead8d030280d7837e5f6cad77a7ec4b8"
+     },
+     "readback": "slices/head_cap/current/readback-Elegoo.json"
+    },
+    {
+     "slug": "rim-down",
+     "poseName": "rim-down (robot upright)",
+     "machine": "Bambu",
+     "etaMinutes": 214.1,
+     "totalGrams": 57.81,
+     "supportGrams": 19.68,
+     "gramsByFeature": {
+      "bridge": 0.92,
+      "machine": 0.1,
+      "model": 35.94,
+      "overhangWall": 0.94,
+      "support": 18.1,
+      "supportInterface": 1.58
+     },
+     "layers": 232,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      174.5
+     ],
+     "supportUnderDownHoleEndsMm": 2868.7,
+     "supportUnderDownBossFacesMm": 2655.1,
+     "supportInHoleCoresMm": 156.9,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_cap/rim-down/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "81840e20003e22c152994b9cd8ff192eba684c80b10ca90df818c55e97973e07"
+     },
+     "readback": "slices/head_cap/rim-down/readback-Bambu.json"
+    },
+    {
+     "slug": "rim-down",
+     "poseName": "rim-down (robot upright)",
+     "machine": "Elegoo",
+     "etaMinutes": 258.6,
+     "totalGrams": 64.0,
+     "supportGrams": 26.04,
+     "gramsByFeature": {
+      "bridge": 0.91,
+      "brimSkirt": 0.43,
+      "machine": 0.13,
+      "model": 35.68,
+      "overhangWall": 0.82,
+      "support": 21.38,
+      "supportInterface": 4.66
+     },
+     "layers": 232,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      174.5
+     ],
+     "supportUnderDownHoleEndsMm": 2983.6,
+     "supportUnderDownBossFacesMm": 2903.8,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_cap/rim-down/run/native/Orange_Elegoo/sliced.3mf",
+      "sha256": "62f11c3ecae98ab783569312e82c66479c9570e297701379146aca6a05768994"
+     },
+     "readback": "slices/head_cap/rim-down/readback-Elegoo.json"
+    },
+    {
+     "slug": "v14-on-edge",
+     "poseName": "V1.4-V1.5 on-edge",
+     "machine": "Bambu",
+     "etaMinutes": 183.2,
+     "totalGrams": 55.58,
+     "supportGrams": 17.54,
+     "gramsByFeature": {
+      "bridge": 0.21,
+      "brimSkirt": 0.14,
+      "machine": 0.1,
+      "model": 36.61,
+      "overhangWall": 0.75,
+      "support": 16.55,
+      "supportInterface": 0.99
+     },
+     "layers": 456,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      288.2
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 2.1,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/head_cap/v14-on-edge/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "bed5749e0e3c4c281d6269eecdb0cced8c2b3601340ff0774536c933ebff9722"
+     },
+     "readback": "slices/head_cap/v14-on-edge/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": {
+    "head_cap-current-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 3742.6,
+      "side": 31.6,
+      "up": 0.0
+     },
+     "supportToolpathMm": 46504.5
+    }
+   },
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Top down (dome on the plate), the V1.6 cap pose; same family as the 10/1 top-down cap, which registered as a different geometry.",
+    "function": "Orange head cap: Pi mounting pilots and rails, speaker holes, cable notch with zip-tie hood, visible dome.",
+    "loadPath": "Screw pilots and posts loaded along their axes; shell loads light.",
+    "ranking": [
+     "1 current top-down: 47.1 mm tall, true contact 104 mm2, first-layer section 464 mm2, tip 9.0 deg, 14 holes vertical and 4 horizontal, no hole end facing down. Bambu 135.1 / 42.65 / 4.59 / 451; Elegoo 148.1 / 44.33 / 6.81 / 451.",
+     "2 V1.4-V1.5 on-edge: 91 mm tall, tip -31 deg. Bambu 183.2 / 55.58 / 17.54 / 288 (+48 min).",
+     "3 rim-down (robot upright): 14 hole ends and 21 boss faces face down; 2869 mm support under them. Bambu 214.1 / 57.81 / 19.68 / 174 (+79 min, +15.2 g); Elegoo 258.6 / 64.0 / 26.04 / 174."
+    ],
+    "counterexampleCheck": "Rim-down would give the best visible dome (it faces up) but puts every mounting post and pilot end on support and costs 79 min. Top-down keeps all functional ends clean; its cost is cosmetic: 3743 mm2 of the outer dome near the bed rests on support interface (evidence/support-maps/head_cap-current-Bambu.png).",
+    "residual": "Lowest tipping margin of the set after the IMU clamp (9.0 deg) and only 104 mm2 of true flat contact. The release Orange plates contain no brim on either printer (auto brim chose none; zero Brim features in release-V1.6-final/run/native/Orange_*/plate_1.gcode). A 3-5 mm brim on this object is cheap insurance (inference from the Bambu and Prusa brim guidance).",
+    "evidence": [
+     "slices/head_cap/current",
+     "slices/head_cap/rim-down",
+     "slices/head_cap/v14-on-edge",
+     "evidence/support-maps/head_cap-current-Bambu.png"
+    ]
+   }
+  },
+  {
+   "key": "speaker_cradle",
+   "color": "Orange",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/speaker-mount-repair/speaker_cradle-print.stl",
+   "features": {
+    "holes": 2,
+    "bosses": 0,
+    "holeDiametersMm": [
+     2.8,
+     2.8
+    ],
+    "volumeMm3": 300.1,
+    "triangles": 1588
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.48",
+      "flat facet 183 mm2",
+      "flat facet 33 mm2",
+      "flat facet 33 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 1.2,
+     "contactMm2": 250.1,
+     "firstLayerSectionMm2": 250.1,
+     "tipAngleDeg": 86.8,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.18,
+     "penaltyTerms": {
+      "height": 0.18
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       8.881784197001252e-16
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.48",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 184 mm2",
+      "flat facet 33 mm2",
+      "flat facet 33 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 1.2,
+     "contactMm2": 250.1,
+     "firstLayerSectionMm2": 250.1,
+     "tipAngleDeg": 86.8,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.18,
+     "penaltyTerms": {
+      "height": 0.18
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       -8.881784197001252e-16
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       1.1999999999999886
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 21.7,
+     "contactMm2": 12.0,
+     "firstLayerSectionMm2": 15.3,
+     "tipAngleDeg": 3.2,
+     "overhang45Mm2": 66.6,
+     "overhang60Mm2": 50.4,
+     "supportProxyMm3": 491.0,
+     "supportOnModelMm2": 25.2,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 62.94,
+     "penaltyTerms": {
+      "lowTipAngle": 27.2,
+      "smallContact": 19.0,
+      "horizontalHoles": 12.0,
+      "overhang60": 0.5,
+      "supportProxy": 0.74,
+      "supportOnModel": 0.25,
+      "height": 3.25
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       0.5999999999999943
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       10.850000000000001
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 21.7,
+     "contactMm2": 12.0,
+     "firstLayerSectionMm2": 15.3,
+     "tipAngleDeg": 3.2,
+     "overhang45Mm2": 66.1,
+     "overhang60Mm2": 49.9,
+     "supportProxyMm3": 491.0,
+     "supportOnModelMm2": 25.2,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 62.94,
+     "penaltyTerms": {
+      "lowTipAngle": 27.2,
+      "smallContact": 19.0,
+      "horizontalHoles": 12.0,
+      "overhang60": 0.5,
+      "supportProxy": 0.74,
+      "supportOnModel": 0.25,
+      "height": 3.25
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       1.0,
+       -0.5999999999999943
+      ],
+      [
+       -1.0,
+       0.0,
+       6.123233995736766e-17,
+       0.0
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       10.85
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": null,
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 8.9,
+     "totalGrams": 0.68,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.34
+     },
+     "layers": 6,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      228.9
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/speaker_cradle/current/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "2089d3041f88baa82a2ebd4850385d8e0201aceb8f5b9ff5d143686776d08297"
+     },
+     "readback": "slices/speaker_cradle/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.48",
+     "machine": "Bambu",
+     "etaMinutes": 8.9,
+     "totalGrams": 0.68,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.34
+     },
+     "layers": 6,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      228.9
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/speaker_cradle/flip/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "e96d1d70f3e8e0cda5406ae04261bd8f675793f65addcdc7fecd209a07aaf274"
+     },
+     "readback": "slices/speaker_cradle/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Flat plate on the bed.",
+    "function": "1.2 mm cradle with two 2.8 mm mounting ears.",
+    "loadPath": "In-plane; holes vertical.",
+    "ranking": [
+     "1 current = flip (symmetric 1.2 mm plate): Bambu 8.9 / 0.68 / 0 / 229 both ways.",
+     "3 on edge: 21.7 mm tall, contact 12 mm2."
+    ],
+    "counterexampleCheck": "No candidate differs functionally; either face down is equivalent.",
+    "evidence": [
+     "slices/speaker_cradle/current",
+     "slices/speaker_cradle/flip"
+    ]
+   }
+  },
+  {
+   "key": "speaker_keeper",
+   "color": "Orange",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/speaker-mount-repair/speaker_keeper-print.stl",
+   "features": {
+    "holes": 2,
+    "bosses": 0,
+    "holeDiametersMm": [
+     2.8,
+     2.8
+    ],
+    "volumeMm3": 247.5,
+    "triangles": 1508
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "flat facet 249 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 1.0,
+     "contactMm2": 248.9,
+     "firstLayerSectionMm2": 248.8,
+     "tipAngleDeg": 87.3,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.15,
+     "penaltyTerms": {
+      "height": 0.15
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       4.7683716530855236e-08
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 179 mm2",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 33 mm2",
+      "flat facet 33 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 1.0,
+     "contactMm2": 245.3,
+     "firstLayerSectionMm2": 245.9,
+     "tipAngleDeg": 87.3,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.15,
+     "penaltyTerms": {
+      "height": 0.15
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       -4.7683716530855236e-08
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       1.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 21.7,
+     "contactMm2": 10.0,
+     "firstLayerSectionMm2": 12.8,
+     "tipAngleDeg": 2.7,
+     "overhang45Mm2": 55.1,
+     "overhang60Mm2": 41.6,
+     "supportProxyMm3": 409.0,
+     "supportOnModelMm2": 21.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 65.69,
+     "penaltyTerms": {
+      "lowTipAngle": 29.2,
+      "smallContact": 20.0,
+      "horizontalHoles": 12.0,
+      "overhang60": 0.42,
+      "supportProxy": 0.61,
+      "supportOnModel": 0.21,
+      "height": 3.25
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       1.0,
+       -0.5
+      ],
+      [
+       -1.0,
+       0.0,
+       6.123233995736766e-17,
+       0.0
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       10.849999904632568
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 21.7,
+     "contactMm2": 9.2,
+     "firstLayerSectionMm2": 11.4,
+     "tipAngleDeg": 2.6,
+     "overhang45Mm2": 55.7,
+     "overhang60Mm2": 39.8,
+     "supportProxyMm3": 408.0,
+     "supportOnModelMm2": 21.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 66.47,
+     "penaltyTerms": {
+      "lowTipAngle": 29.6,
+      "smallContact": 20.4,
+      "horizontalHoles": 12.0,
+      "overhang60": 0.4,
+      "supportProxy": 0.61,
+      "supportOnModel": 0.21,
+      "height": 3.25
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       0.5
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       0.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       10.850000000000001
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": null,
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 8.8,
+     "totalGrams": 0.62,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.28
+     },
+     "layers": 5,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      227.4
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/speaker_keeper/current/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "8dbd2fa2e1689124716858aac186e65feb50d18f5f3661cb9b3cb6333d8c6b5f"
+     },
+     "readback": "slices/speaker_keeper/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "flat facet 179 mm2",
+     "machine": "Bambu",
+     "etaMinutes": 8.8,
+     "totalGrams": 0.62,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.28
+     },
+     "layers": 5,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      224.7
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/speaker_keeper/flip/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "77ff6378bb13f90a20940be778272cd85a3895369ac7a352a284fead7747b8a6"
+     },
+     "readback": "slices/speaker_keeper/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Flat ring on the bed.",
+    "function": "1.0 mm retaining ring with two 2.8 mm holes.",
+    "loadPath": "In-plane; holes vertical.",
+    "ranking": [
+     "1 current: Bambu 8.8 / 0.62 / 0 / 227.",
+     "2 flip: Bambu 8.8 / 0.62 / 0 / 225.",
+     "3 on edge: 21.7 mm tall, contact 10 mm2."
+    ],
+    "counterexampleCheck": "Equivalent faces; nothing to gain.",
+    "evidence": [
+     "slices/speaker_keeper/current",
+     "slices/speaker_keeper/flip"
+    ]
+   }
+  },
+  {
+   "key": "eye_trim",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/eye_trim-print.stl",
+   "features": {
+    "holes": 2,
+    "bosses": 1,
+    "holeDiametersMm": [
+     14.5,
+     18.4
+    ],
+    "volumeMm3": 4238.5,
+    "triangles": 1072
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.38",
+      "flat facet 394 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 9.4,
+     "contactMm2": 394.1,
+     "firstLayerSectionMm2": 409.0,
+     "tipAngleDeg": 74.3,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 1.41,
+     "penaltyTerms": {
+      "height": 1.41
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -15.0
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -14.999996185300006
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.37",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 2,
+     "heightMm": 9.4,
+     "contactMm2": 6.4,
+     "firstLayerSectionMm2": 6.4,
+     "tipAngleDeg": 47.7,
+     "overhang45Mm2": 537.0,
+     "overhang60Mm2": 537.0,
+     "supportProxyMm3": 758.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 1,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 39.72,
+     "penaltyTerms": {
+      "smallContact": 21.8,
+      "seatsDown": 10.0,
+      "overhang60": 5.37,
+      "supportProxy": 1.14,
+      "height": 1.41
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.6085301393199188,
+       -0.7935307615582904,
+       0.0,
+       21.029509056138963
+      ],
+      [
+       -0.7935307615582904,
+       0.6085301393199188,
+       0.0,
+       2.774826377566453
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       9.40000152588
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.3,
+     "tipAngleDeg": 6.8,
+     "overhang45Mm2": 226.6,
+     "overhang60Mm2": 128.1,
+     "supportProxyMm3": 673.0,
+     "supportOnModelMm2": 42.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.11,
+     "penaltyTerms": {
+      "lowTipAngle": 12.8,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.28,
+      "supportProxy": 1.01,
+      "supportOnModel": 0.42,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      0.5377,
+      -0.8432,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.1888290137323357e-16,
+       -1.1528266926341603e-16,
+       -1.0,
+       4.700000762940004
+      ],
+      [
+       -0.8431572552659218,
+       -0.5376670372009404,
+       1.8039439463891433e-16,
+       20.710446599886485
+      ],
+      [
+       -0.5376670372009404,
+       0.8431572552659217,
+       0.0,
+       10.403376761186399
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.4,
+     "tipAngleDeg": 6.9,
+     "overhang45Mm2": 223.4,
+     "overhang60Mm2": 145.8,
+     "supportProxyMm3": 818.0,
+     "supportOnModelMm2": 53.4,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.22,
+     "penaltyTerms": {
+      "lowTipAngle": 12.4,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.46,
+      "supportProxy": 1.23,
+      "supportOnModel": 0.53,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      -0.0428,
+      -0.9991,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.9990847712170636,
+       0.04277405664825005,
+       3.693500571127995e-16,
+       14.344661044872472
+      ],
+      [
+       3.6889101623223695e-16,
+       1.032875328122007e-16,
+       1.0,
+       -4.7000007629400065
+      ],
+      [
+       0.04277405664825005,
+       0.9990847712170636,
+       0.0,
+       -0.6416108729882344
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.1,
+     "tipAngleDeg": 6.8,
+     "overhang45Mm2": 232.6,
+     "overhang60Mm2": 138.4,
+     "supportProxyMm3": 684.0,
+     "supportOnModelMm2": 41.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.22,
+     "penaltyTerms": {
+      "lowTipAngle": 12.8,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.38,
+      "supportProxy": 1.03,
+      "supportOnModel": 0.41,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      0.6751,
+      -0.7377,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.7851058844017962e-17,
+       -3.354048527968691e-16,
+       -1.0000000000000002,
+       4.700000762940006
+      ],
+      [
+       -0.7377233239423281,
+       -0.675103175308399,
+       2.508015744120598e-16,
+       21.190982511264696
+      ],
+      [
+       -0.6751031753083991,
+       0.7377233239423281,
+       -2.220446049250313e-16,
+       14.046612292910828
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.1,
+     "tipAngleDeg": 6.8,
+     "overhang45Mm2": 226.4,
+     "overhang60Mm2": 138.4,
+     "supportProxyMm3": 684.0,
+     "supportOnModelMm2": 41.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.22,
+     "penaltyTerms": {
+      "lowTipAngle": 12.8,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.38,
+      "supportProxy": 1.03,
+      "supportOnModel": 0.41,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      -0.6751,
+      -0.7377,
+      -0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.7377233239283993,
+       0.6751031753236196,
+       2.0829163132995682e-14,
+       0.9392418668898603
+      ],
+      [
+       1.5306533352815184e-14,
+       -1.4103008244832889e-14,
+       1.0,
+       -4.700000762939966
+      ],
+      [
+       0.6751031753236196,
+       0.7377233239283993,
+       1.1102230246251565e-16,
+       -6.20513285788618
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 7,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.1,
+     "tipAngleDeg": 6.8,
+     "overhang45Mm2": 226.6,
+     "overhang60Mm2": 145.0,
+     "supportProxyMm3": 675.0,
+     "supportOnModelMm2": 41.6,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.28,
+     "penaltyTerms": {
+      "lowTipAngle": 12.8,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.45,
+      "supportProxy": 1.01,
+      "supportOnModel": 0.42,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      -0.4612,
+      -0.8873,
+      -0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.8872929172141925,
+       0.4612063302487599,
+       -9.46269723703501e-17,
+       6.390872528875693
+      ],
+      [
+       -8.979538967555375e-17,
+       2.3330979404664767e-17,
+       1.0,
+       -4.700000762939999
+      ],
+      [
+       0.4612063302487599,
+       0.8872929172141925,
+       0.0,
+       -5.239805189697432
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 8,
+     "heightMm": 29.97,
+     "contactMm2": 9.8,
+     "firstLayerSectionMm2": 27.1,
+     "tipAngleDeg": 6.8,
+     "overhang45Mm2": 228.1,
+     "overhang60Mm2": 138.8,
+     "supportProxyMm3": 734.0,
+     "supportOnModelMm2": 46.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 52.35,
+     "penaltyTerms": {
+      "lowTipAngle": 12.8,
+      "smallContact": 20.1,
+      "horizontalHoles": 12.0,
+      "overhang60": 1.39,
+      "supportProxy": 1.1,
+      "supportOnModel": 0.46,
+      "height": 4.5
+     },
+     "bedFacingSourceDir": [
+      0.2169,
+      -0.9762,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.2489019821150896e-17,
+       -8.166905723558738e-17,
+       -1.0,
+       4.700000762940001
+      ],
+      [
+       -0.9761863745796776,
+       -0.21693354301487217,
+       3.8223600987858415e-17,
+       17.895605006402626
+      ],
+      [
+       -0.21693354301487217,
+       0.9761863745796776,
+       0.0,
+       3.5982819127806156
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-05/02_community-48.stl",
+    "stockExtentMm": [
+     30.0,
+     30.0,
+     9.5
+    ],
+    "newToOldMm": {
+     "p50": 0.009,
+     "p90": 0.016,
+     "within0p5": 0.985
+    },
+    "oldToNewMm": {
+     "p50": 0.008,
+     "p90": 0.015,
+     "within0p5": 0.987
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 21.4,
+     "totalGrams": 4.13,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "bridge": 0.14,
+      "machine": 0.1,
+      "model": 3.66
+     },
+     "layers": 93,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      392.0
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/eye_trim/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "d3ed7a7cbbf3eceb963a1bb5c134ca7b7e1987f3f84215fed2b1dc46b1aa383d"
+     },
+     "readback": "slices/eye_trim/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.37",
+     "machine": "Bambu",
+     "etaMinutes": 28.5,
+     "totalGrams": 4.47,
+     "supportGrams": 0.49,
+     "gramsByFeature": {
+      "bridge": 0.04,
+      "machine": 0.1,
+      "model": 3.58,
+      "overhangWall": 0.03,
+      "support": 0.34,
+      "supportInterface": 0.15
+     },
+     "layers": 93,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      6.2
+     ],
+     "supportUnderDownHoleEndsMm": 943.2,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/eye_trim/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "ec6d98774e52ba525749122f5eb24451510e800ef2a5da3fda3af607c51f1f4a"
+     },
+     "readback": "slices/eye_trim/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Flange down (10/1 pose).",
+    "function": "Black eye trim; 14.5 and 18.4 mm bores around the camera eye.",
+    "loadPath": "Press fit in the face panel; bores vertical.",
+    "ranking": [
+     "1 current: contact 394 mm2, bores vertical, no support. Bambu 21.4 / 4.13 / 0 / 392.",
+     "2 flip: contact 6.4 mm2, 943 mm support under the down-facing bore end. Bambu 28.5 / 4.47 / 0.49 / 6.",
+     "3+ on edge: 30 mm tall, bores horizontal."
+    ],
+    "counterexampleCheck": "No candidate improves any criterion.",
+    "evidence": [
+     "slices/eye_trim/current",
+     "slices/eye_trim/flip"
+    ]
+   }
+  },
+  {
+   "key": "camera_retainer",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/camera_retainer-print.stl",
+   "features": {
+    "holes": 3,
+    "bosses": 0,
+    "holeDiametersMm": [
+     2.2,
+     2.2,
+     2.2
+    ],
+    "volumeMm3": 554.7,
+    "triangles": 2550
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.47",
+      "flat facet 252 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 2.4,
+     "contactMm2": 252.3,
+     "firstLayerSectionMm2": 252.3,
+     "tipAngleDeg": 85.3,
+     "overhang45Mm2": 0.0,
+     "overhang60Mm2": 0.0,
+     "supportProxyMm3": 0.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 3,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.36,
+     "penaltyTerms": {
+      "height": 0.36
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -20.799999999999997
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -16.900000000000006
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.48",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 196 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 2.4,
+     "contactMm2": 195.9,
+     "firstLayerSectionMm2": 195.9,
+     "tipAngleDeg": 83.1,
+     "overhang45Mm2": 56.4,
+     "overhang60Mm2": 56.4,
+     "supportProxyMm3": 51.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 3,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 3,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 31.0,
+     "penaltyTerms": {
+      "seatsDown": 30.0,
+      "overhang60": 0.56,
+      "supportProxy": 0.08,
+      "height": 0.36
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       -1.0,
+       0.0,
+       16.900000000000006
+      ],
+      [
+       -1.0,
+       -6.123233995736766e-17,
+       0.0,
+       20.799999999999997
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       2.4
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 35.2,
+     "contactMm2": 1.3,
+     "firstLayerSectionMm2": 5.5,
+     "tipAngleDeg": 3.5,
+     "overhang45Mm2": 111.2,
+     "overhang60Mm2": 33.7,
+     "supportProxyMm3": 326.0,
+     "supportOnModelMm2": 5.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 3,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 74.52,
+     "penaltyTerms": {
+      "lowTipAngle": 26.0,
+      "smallContact": 24.35,
+      "horizontalHoles": 18.0,
+      "overhang60": 0.34,
+      "supportProxy": 0.49,
+      "supportOnModel": 0.06,
+      "height": 5.28
+     },
+     "bedFacingSourceDir": [
+      0.8225,
+      0.5688,
+      -0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.5688013708020483,
+       0.8224749239786651,
+       -4.7192269214564506e-14,
+       -2.0687577025568054
+      ],
+      [
+       2.6786633820382025e-14,
+       -3.8822010153580045e-14,
+       -1.0,
+       1.2000000000000413
+      ],
+      [
+       -0.822474923978665,
+       -0.5688013708020483,
+       0.0,
+       36.30124806654766
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 49.04,
+     "contactMm2": 0.5,
+     "firstLayerSectionMm2": 2.2,
+     "tipAngleDeg": 0.9,
+     "overhang45Mm2": 179.6,
+     "overhang60Mm2": 40.3,
+     "supportProxyMm3": 456.0,
+     "supportOnModelMm2": 21.2,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 3,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 87.8,
+     "penaltyTerms": {
+      "lowTipAngle": 36.4,
+      "smallContact": 24.75,
+      "horizontalHoles": 18.0,
+      "overhang60": 0.4,
+      "supportProxy": 0.68,
+      "supportOnModel": 0.21,
+      "height": 7.36
+     },
+     "bedFacingSourceDir": [
+      -0.5556,
+      0.8315,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.598749494112924e-16,
+       -1.5907354315296748e-16,
+       0.9999999999999999,
+       -1.199999999999995
+      ],
+      [
+       -0.8314696122579637,
+       -0.5555702330863231,
+       -2.5969823922060067e-16,
+       18.850164587607352
+      ],
+      [
+       0.5555702330863231,
+       -0.8314696122579637,
+       0.0,
+       27.013966312411537
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 33.63,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 5.4,
+     "tipAngleDeg": 3.2,
+     "overhang45Mm2": 172.7,
+     "overhang60Mm2": 152.2,
+     "supportProxyMm3": 1943.0,
+     "supportOnModelMm2": 73.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 3,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 355.4,
+     "penaltyTerms": {
+      "lowTipAngle": 27.2,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 18.0,
+      "overhang60": 1.52,
+      "supportProxy": 2.91,
+      "supportOnModel": 0.73,
+      "height": 5.04
+     },
+     "bedFacingSourceDir": [
+      0.1108,
+      0.9938,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.9938482317075584,
+       0.11075058614634678,
+       -9.02508688659652e-15,
+       18.800358313643958
+      ],
+      [
+       8.974439391956797e-15,
+       -8.425652407401163e-16,
+       -1.0,
+       1.19999999999981
+      ],
+      [
+       -0.1107505861463468,
+       -0.9938482317075584,
+       -2.220446049250313e-16,
+       33.918841232997565
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 41.6,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 4.4,
+     "tipAngleDeg": 1.5,
+     "overhang45Mm2": 104.2,
+     "overhang60Mm2": 87.4,
+     "supportProxyMm3": 358.0,
+     "supportOnModelMm2": 22.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 3,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 359.87,
+     "penaltyTerms": {
+      "lowTipAngle": 34.0,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 18.0,
+      "overhang60": 0.87,
+      "supportProxy": 0.54,
+      "supportOnModel": 0.22,
+      "height": 6.24
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       -6.123233995736766e-17,
+       -16.900000000000006
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       1.0,
+       -1.2000000000000008
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 7,
+     "heightMm": 33.8,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 4.4,
+     "tipAngleDeg": 1.5,
+     "overhang45Mm2": 181.8,
+     "overhang60Mm2": 168.2,
+     "supportProxyMm3": 1074.0,
+     "supportOnModelMm2": 87.4,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 3,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 361.23,
+     "penaltyTerms": {
+      "lowTipAngle": 34.0,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 18.0,
+      "overhang60": 1.68,
+      "supportProxy": 1.61,
+      "supportOnModel": 0.87,
+      "height": 5.07
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       1.1999999999999984
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       20.799999999999997
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": null,
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 11.8,
+     "totalGrams": 0.99,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.66
+     },
+     "layers": 23,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      225.9
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/camera_retainer/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "141c4f0d36f1fe282145899fd9cbda9e8b9770427a79e4663715d6325fdde212"
+     },
+     "readback": "slices/camera_retainer/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.48",
+     "machine": "Bambu",
+     "etaMinutes": 12.6,
+     "totalGrams": 1.05,
+     "supportGrams": 0.05,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.66,
+      "overhangWall": 0.01,
+      "support": 0.04,
+      "supportInterface": 0.01
+     },
+     "layers": 23,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      175.4
+     ],
+     "supportUnderDownHoleEndsMm": 536.3,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/camera_retainer/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "08341bca962b2cd7e054e3d16f1eb8e1292dcc78106365df7e28b43ae95f29be"
+     },
+     "readback": "slices/camera_retainer/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Larger flat face (252 mm2) down.",
+    "function": "Three-screw removable camera frame (2.2 mm holes).",
+    "loadPath": "Clamp load along the screw axes; holes vertical.",
+    "ranking": [
+     "1 current: contact 252 mm2. Bambu 11.8 / 0.99 / 0 / 226.",
+     "2 flip: contact 196 mm2, 3 hole ends face down with 536 mm of support under them. Bambu 12.6 / 1.05 / 0.05 / 175."
+    ],
+    "counterexampleCheck": "Settles the earlier open question about the opposite face: in V1.6 the current pose already uses the larger face, and the flip would put the three screw ends on support.",
+    "evidence": [
+     "slices/camera_retainer/current",
+     "slices/camera_retainer/flip"
+    ]
+   }
+  },
+  {
+   "key": "jaw_support_original",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/jaw_support_original-print.stl",
+   "features": {
+    "holes": 4,
+    "bosses": 0,
+    "holeDiametersMm": [
+     2.7,
+     2.7,
+     2.7,
+     2.7
+    ],
+    "volumeMm3": 7514.0,
+    "triangles": 3726
+   },
+   "flags": [
+    "4 hole end(s) face down above the bed",
+    "alternative 'stable p=0.37' screens better by 25.0; slice both"
+   ],
+   "candidates": [
+    {
+     "name": "stable p=0.37",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 294 mm2",
+      "flat facet 207 mm2",
+      "flat facet 141 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 18.8,
+     "contactMm2": 642.8,
+     "firstLayerSectionMm2": 643.3,
+     "tipAngleDeg": 66.3,
+     "overhang45Mm2": 1302.7,
+     "overhang60Mm2": 1208.7,
+     "supportProxyMm3": 18133.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 42.11,
+     "penaltyTerms": {
+      "overhang60": 12.09,
+      "supportProxy": 27.2,
+      "height": 2.82
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       0.9999999998346669,
+       5.841875735096527e-10,
+       -1.818423589966773e-05,
+       -27.099829475500233
+      ],
+      [
+       -2.008742234543157e-16,
+       -0.9999999994839579,
+       -3.212607623981563e-05,
+       36.75015576037841
+      ],
+      [
+       -1.8184235909051558e-05,
+       3.212607623450413e-05,
+       -0.9999999993186246,
+       18.798326059065076
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.46",
+      "flat facet 851 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 18.8,
+     "contactMm2": 850.8,
+     "firstLayerSectionMm2": 850.8,
+     "tipAngleDeg": 65.1,
+     "overhang45Mm2": 1108.7,
+     "overhang60Mm2": 1025.6,
+     "supportProxyMm3": 9372.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 67.14,
+     "penaltyTerms": {
+      "seatsDown": 40.0,
+      "overhang60": 10.26,
+      "supportProxy": 14.06,
+      "height": 2.82
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -27.100000381499996
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -36.75
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.03",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 100 mm2"
+     ],
+     "rank": 3,
+     "heightMm": 73.5,
+     "contactMm2": 99.7,
+     "firstLayerSectionMm2": 99.9,
+     "tipAngleDeg": 10.8,
+     "overhang45Mm2": 853.9,
+     "overhang60Mm2": 763.1,
+     "supportProxyMm3": 26671.0,
+     "supportOnModelMm2": 260.9,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 85.28,
+     "penaltyTerms": {
+      "horizontalHoles": 24.0,
+      "overhang60": 7.63,
+      "supportProxy": 40.01,
+      "supportOnModel": 2.61,
+      "height": 11.03
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       9.399999618549998
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       27.100000381499996
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.05",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 123 mm2"
+     ],
+     "rank": 4,
+     "heightMm": 54.2,
+     "contactMm2": 123.4,
+     "firstLayerSectionMm2": 125.8,
+     "tipAngleDeg": 10.3,
+     "overhang45Mm2": 1785.6,
+     "overhang60Mm2": 1470.6,
+     "supportProxyMm3": 39471.0,
+     "supportOnModelMm2": 502.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 111.07,
+     "penaltyTerms": {
+      "horizontalHoles": 24.0,
+      "overhang60": 14.71,
+      "supportProxy": 59.21,
+      "supportOnModel": 5.02,
+      "height": 8.13
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       0.0,
+       -1.0,
+       9.39999961855
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -36.75
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 73.5,
+     "contactMm2": 25.6,
+     "firstLayerSectionMm2": 25.6,
+     "tipAngleDeg": 2.6,
+     "overhang45Mm2": 954.0,
+     "overhang60Mm2": 850.3,
+     "supportProxyMm3": 20458.0,
+     "supportOnModelMm2": 257.3,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 118.59,
+     "penaltyTerms": {
+      "lowTipAngle": 29.6,
+      "smallContact": 12.2,
+      "horizontalHoles": 24.0,
+      "overhang60": 8.5,
+      "supportProxy": 30.69,
+      "supportOnModel": 2.57,
+      "height": 11.03
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -1.0,
+       0.0,
+       1.0106430996148606e-15,
+       27.100000381499985
+      ],
+      [
+       -1.0106430996148606e-15,
+       0.0,
+       -1.0,
+       9.399999618550012
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       73.5
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.03",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 65.08,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 0.9,
+     "tipAngleDeg": 1.4,
+     "overhang45Mm2": 1631.0,
+     "overhang60Mm2": 326.6,
+     "supportProxyMm3": 6387.0,
+     "supportOnModelMm2": 139.2,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 382.4,
+     "penaltyTerms": {
+      "lowTipAngle": 34.4,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 3.27,
+      "supportProxy": 9.58,
+      "supportOnModel": 1.39,
+      "height": 9.76
+     },
+     "bedFacingSourceDir": [
+      -0.804,
+      -0.5723,
+      -0.1614
+     ],
+     "sourceToPrint": [
+      [
+       0.5717951065903599,
+       -0.8186081782190415,
+       0.05413877198663478,
+       10.955345129564067
+      ],
+      [
+       0.16314453816538804,
+       0.04878666378900377,
+       -0.9853952106150816,
+       3.8407210845178144
+      ],
+      [
+       0.8040113281205192,
+       0.5722766044398816,
+       0.16144742879537666,
+       -13.58457532635724
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.06",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 68 mm2"
+     ],
+     "rank": 7,
+     "heightMm": 54.33,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 72.1,
+     "tipAngleDeg": 0.5,
+     "overhang45Mm2": 1757.1,
+     "overhang60Mm2": 1503.5,
+     "supportProxyMm3": 24618.0,
+     "supportOnModelMm2": 468.1,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 426.8,
+     "penaltyTerms": {
+      "lowTipAngle": 38.0,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 15.04,
+      "supportProxy": 36.93,
+      "supportOnModel": 4.68,
+      "height": 8.15
+     },
+     "bedFacingSourceDir": [
+      0.986,
+      0.164,
+      -0.0302
+     ],
+     "sourceToPrint": [
+      [
+       0.16404375572708096,
+       -0.9864530633572759,
+       -3.912317118780774e-18,
+       30.204512872729737
+      ],
+      [
+       0.029788755745141948,
+       0.004953767748704184,
+       0.99954394111327,
+       -10.469117267185664
+      ],
+      [
+       -0.9860031826713899,
+       -0.16396894211446905,
+       0.030197844024894116,
+       56.97523190107057
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 136 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 8,
+     "heightMm": 54.2,
+     "contactMm2": 135.7,
+     "firstLayerSectionMm2": 137.3,
+     "tipAngleDeg": -24.1,
+     "overhang45Mm2": 1768.8,
+     "overhang60Mm2": 1506.4,
+     "supportProxyMm3": 27089.0,
+     "supportOnModelMm2": 517.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 1092.99,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 15.06,
+      "supportProxy": 40.63,
+      "supportOnModel": 5.17,
+      "height": 8.13
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       2.83276944882399e-16,
+       -36.75
+      ],
+      [
+       0.0,
+       2.83276944882399e-16,
+       -1.0,
+       9.39999961854999
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       54.20000076299999
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-03/01_motor-support-coaxial-print.stl",
+    "stockExtentMm": [
+     54.2,
+     73.7,
+     19.2
+    ],
+    "newToOldMm": {
+     "p50": 0.011,
+     "p90": 0.023,
+     "within0p5": 0.996
+    },
+    "oldToNewMm": {
+     "p50": 0.011,
+     "p90": 0.023,
+     "within0p5": 0.963
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 70.1,
+     "totalGrams": 11.62,
+     "supportGrams": 2.43,
+     "gramsByFeature": {
+      "bridge": 0.06,
+      "machine": 0.1,
+      "model": 8.73,
+      "overhangWall": 0.06,
+      "support": 2.2,
+      "supportInterface": 0.23
+     },
+     "layers": 187,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      814.3
+     ],
+     "supportUnderDownHoleEndsMm": 1553.2,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/jaw_support_original/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "25f31e87ba07dd157628657007d84369dc72036cef46c5f32ccd73d9d910c1f5"
+     },
+     "readback": "slices/jaw_support_original/current/readback-Bambu.json"
+    },
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Elegoo",
+     "etaMinutes": 59.5,
+     "totalGrams": 13.3,
+     "supportGrams": 4.37,
+     "gramsByFeature": {
+      "bridge": 0.05,
+      "machine": 0.13,
+      "model": 8.7,
+      "overhangWall": 0.05,
+      "support": 3.77,
+      "supportInterface": 0.6
+     },
+     "layers": 235,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      813.3
+     ],
+     "supportUnderDownHoleEndsMm": 1017.4,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/jaw_support_original/current/run/native/Black_Elegoo/sliced.3mf",
+      "sha256": "f06568ef71e5dcd7d585d9f849adc79332f7373d003c0ea28a3dce23b04c8d25"
+     },
+     "readback": "slices/jaw_support_original/current/readback-Elegoo.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.37",
+     "machine": "Bambu",
+     "etaMinutes": 85.4,
+     "totalGrams": 12.94,
+     "supportGrams": 3.76,
+     "gramsByFeature": {
+      "bridge": 0.09,
+      "machine": 0.1,
+      "model": 8.71,
+      "overhangWall": 0.04,
+      "support": 3.48,
+      "supportInterface": 0.28
+     },
+     "layers": 187,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      608.1
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/jaw_support_original/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "96fd64467a52a0e1ef155ed5238b01d519079763d421e74ba3e97d783befa0f5"
+     },
+     "readback": "slices/jaw_support_original/flip/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.37",
+     "machine": "Elegoo",
+     "etaMinutes": 63.1,
+     "totalGrams": 14.52,
+     "supportGrams": 5.59,
+     "gramsByFeature": {
+      "bridge": 0.09,
+      "machine": 0.13,
+      "model": 8.68,
+      "overhangWall": 0.04,
+      "support": 4.77,
+      "supportInterface": 0.82
+     },
+     "layers": 231,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      609.9
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/jaw_support_original/flip/run/native/Black_Elegoo/sliced.3mf",
+      "sha256": "11b7beeadac411367b5ddfcb125a6cf2782d18073de7884c1fa42113e67e5546"
+     },
+     "readback": "slices/jaw_support_original/flip/readback-Elegoo.json"
+    },
+    {
+     "slug": "on-end",
+     "poseName": "stable p=0.03 (on end, cradle axis vertical)",
+     "machine": "Bambu",
+     "etaMinutes": 90.7,
+     "totalGrams": 13.2,
+     "supportGrams": 4.02,
+     "gramsByFeature": {
+      "bridge": 0.05,
+      "machine": 0.1,
+      "model": 8.74,
+      "overhangWall": 0.06,
+      "support": 3.88,
+      "supportInterface": 0.14
+     },
+     "layers": 734,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      87.8
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/jaw_support_original/on-end/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "bb155872df9e119b8fe572877722825750b0f576b7fe9e1e4862766472a308ad"
+     },
+     "readback": "slices/jaw_support_original/on-end/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": {
+    "jaw_support_original-current-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 973.7,
+      "side": 113.4,
+      "up": 0.0
+     },
+     "supportToolpathMm": 40853.6
+    },
+    "jaw_support_original-flip-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 1184.2,
+      "side": 153.1,
+      "up": 0.0
+     },
+     "supportToolpathMm": 60466.0
+    },
+    "jaw_support_original-on-end-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 693.2,
+      "side": 42.1,
+      "up": 0.0
+     },
+     "supportToolpathMm": 69744.1
+    }
+   },
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Upside down relative to the robot (world-up = print -Z). Same as the 10/1 batch and upstream community-24.",
+    "function": "Black jaw support. Mouth sliding ring (OD 16.4 mm) turns in its half-bore seat (D 16.8 mm, 0.2 mm radial clearance, D 14.9 mm retaining lip). Four M2.5 screws pass through 2.7 mm holes in a 1.7 mm flange into head_bottom pilots; their heads seat on the flange's world-top face.",
+    "loadPath": "Sliding contact on the half-bore; screw clamp through the flange.",
+    "ranking": [
+     "1 current: sliding seat faces up (0 of 240.5 mm2 on support); the four screw-head seats face down and 423 of 435 mm2 rest on support (1553 mm toolpath Bambu, 1017 mm Elegoo). Bambu 70.1 / 11.62 / 2.43 / 814; Elegoo 59.5 / 13.3 / 4.37 / 813.",
+     "2 flip (robot upright, screens best): screw seats clean, but 175.8 mm2 of the sliding seat faces down and 83.8 mm2 rests on support. Bambu 85.4 / 12.94 / 3.76 / 608 (+15.3 min); Elegoo 63.1 / 14.52 / 5.59 / 610.",
+     "3 on end, seat axis vertical: both seats clean, but 73.5 mm tall on 100 mm2 (tip 10.8 deg, first layer 88 mm2, 734 layers) and the four M2.5 holes print horizontal. Bambu 90.7 / 13.2 / 4.02 / 88 (+20.6 min). Repeats the V1.4 on-edge failure pattern."
+    ],
+    "counterexampleCheck": "This is the case where the screen is wrong. It ranks the flip first because it counts down-facing screw seats but does not know the curved half-bore is a sliding fit. Native support mapping shows the flip trades the static screw seats for the moving seat. A rough screw-head seat still clamps; a supported 0.2 mm-clearance sliding seat can bind or rattle (inference).",
+    "residual": "Clean the four seat areas on the flange (world-top face) and check the M2.5 heads sit flat; a thin washer is an option if a seat is uneven.",
+    "evidence": [
+     "slices/jaw_support_original/current",
+     "slices/jaw_support_original/flip",
+     "slices/jaw_support_original/on-end",
+     "evidence/jaw-bearing-seat.json",
+     "evidence/support-maps/jaw_support_original-current-Bambu.png",
+     "evidence/support-maps/jaw_support_original-flip-Bambu.png",
+     "evidence/support-maps/jaw_support_original-on-end-Bambu.png"
+    ]
+   },
+   "seatSupport": [
+    {
+     "slug": "current",
+     "bearingSeatAreaMm2": 240.5,
+     "bearingSeatOnSupportMm2": 0.0,
+     "bearingSeatFacingDownMm2": 0.0,
+     "screwHeadSeatAreaMm2": 435.1,
+     "screwHeadSeatOnSupportMm2": 423.2
+    },
+    {
+     "slug": "flip",
+     "bearingSeatAreaMm2": 240.5,
+     "bearingSeatOnSupportMm2": 83.8,
+     "bearingSeatFacingDownMm2": 175.8,
+     "screwHeadSeatAreaMm2": 435.1,
+     "screwHeadSeatOnSupportMm2": 0.0
+    },
+    {
+     "slug": "on-end",
+     "bearingSeatAreaMm2": 240.5,
+     "bearingSeatOnSupportMm2": 0.0,
+     "bearingSeatFacingDownMm2": 0.0,
+     "screwHeadSeatAreaMm2": 435.1,
+     "screwHeadSeatOnSupportMm2": 0.0
+    }
+   ]
+  },
+  {
+   "key": "mouth_sliding_ring",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/mouth_sliding_ring-print.stl",
+   "features": {
+    "holes": 2,
+    "bosses": 3,
+    "holeDiametersMm": [
+     10.4,
+     12.4
+    ],
+    "volumeMm3": 190.7,
+    "triangles": 2048
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.43",
+      "flat facet 90 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 2.4,
+     "contactMm2": 90.4,
+     "firstLayerSectionMm2": 90.4,
+     "tipAngleDeg": 81.8,
+     "overhang45Mm2": 35.8,
+     "overhang60Mm2": 35.8,
+     "supportProxyMm3": 11.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 0.74,
+     "penaltyTerms": {
+      "overhang60": 0.36,
+      "supportProxy": 0.02,
+      "height": 0.36
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -8.200000000000003
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -8.199999999999989
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.57",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 78 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 2.4,
+     "contactMm2": 77.9,
+     "firstLayerSectionMm2": 77.9,
+     "tipAngleDeg": 80.4,
+     "overhang45Mm2": 48.4,
+     "overhang60Mm2": 48.4,
+     "supportProxyMm3": 102.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 1,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 10.99,
+     "penaltyTerms": {
+      "bossFacesDown": 10.0,
+      "overhang60": 0.48,
+      "supportProxy": 0.15,
+      "height": 0.36
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.9996988186960589,
+       -0.024541228528832473,
+       0.0,
+       8.398768387244113
+      ],
+      [
+       -0.024541228528832473,
+       0.9996988186960589,
+       0.0,
+       -7.996292239371245
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       2.4
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": null,
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 10.1,
+     "totalGrams": 0.56,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.22,
+      "overhangWall": 0.0
+     },
+     "layers": 23,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      81.4
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/mouth_sliding_ring/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "c07b6bac623ee7507b149fc7ece032edf3898023d4e27c769359f513a89bd266"
+     },
+     "readback": "slices/mouth_sliding_ring/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.57",
+     "machine": "Bambu",
+     "etaMinutes": 11.1,
+     "totalGrams": 0.72,
+     "supportGrams": 0.17,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 0.22,
+      "overhangWall": 0.01,
+      "support": 0.17
+     },
+     "layers": 23,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      70.1
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 472.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/mouth_sliding_ring/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "c96ee6024ade3a32f2b58bf676b897856ff80cb19ec06b6bf81dfb19cd2cd476"
+     },
+     "readback": "slices/mouth_sliding_ring/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "12.4 mm counterbore side on the bed.",
+    "function": "2.4 mm ring, OD 16.4 mm, bores 12.4 and 10.4 mm with a 0.3 mm step; turns in the jaw-support seat.",
+    "loadPath": "Sliding on its outer diameter (vertical wall in every flat pose).",
+    "ranking": [
+     "1 current: the 0.3 mm step faces down only 0.3 mm above the bed and slices with zero support. Bambu 10.1 / 0.56 / 0 / 81.",
+     "2 flip: 472 mm support under boss faces. Bambu 11.1 / 0.72 / 0.17 / 70."
+    ],
+    "counterexampleCheck": "The screen first flagged the 0.3 mm step as a down-facing seat; the native slice showed no support, so the checker now treats down-facing ends lower than 0.6 mm as bridged by the first layers.",
+    "evidence": [
+     "slices/mouth_sliding_ring/current",
+     "slices/mouth_sliding_ring/flip"
+    ]
+   }
+  },
+  {
+   "key": "neck_pitch_integrated_1mm_seats",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/neck_pitch_integrated_1mm_seats-print.stl",
+   "features": {
+    "holes": 10,
+    "bosses": 8,
+    "holeDiametersMm": [
+     2.2,
+     2.2,
+     2.2,
+     2.2,
+     2.4,
+     2.4,
+     2.4,
+     2.4,
+     6.0,
+     6.0
+    ],
+    "volumeMm3": 4147.1,
+    "triangles": 11130
+   },
+   "flags": [
+    "2 boss/pin face(s) face down above the bed",
+    "5 hole(s) print with a horizontal axis"
+   ],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.26",
+      "flat facet 154 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 27.69,
+     "contactMm2": 154.5,
+     "firstLayerSectionMm2": 154.5,
+     "tipAngleDeg": 40.6,
+     "overhang45Mm2": 423.8,
+     "overhang60Mm2": 385.7,
+     "supportProxyMm3": 1065.0,
+     "supportOnModelMm2": 44.4,
+     "holesVertical": 5,
+     "holesInclined": 0,
+     "holesHorizontal": 5,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 2,
+     "pinsVertical": 4,
+     "pinsHorizontal": 0,
+     "penalty": 60.05,
+     "penaltyTerms": {
+      "horizontalHoles": 30.0,
+      "bossFacesDown": 20.0,
+      "overhang60": 3.86,
+      "supportProxy": 1.6,
+      "supportOnModel": 0.44,
+      "height": 4.15
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -17.5
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -8.999000549319987
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.31",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 253 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 18.0,
+     "contactMm2": 253.5,
+     "firstLayerSectionMm2": 261.3,
+     "tipAngleDeg": 39.5,
+     "overhang45Mm2": 213.7,
+     "overhang60Mm2": 138.4,
+     "supportProxyMm3": 437.0,
+     "supportOnModelMm2": 94.6,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 10,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 65.69,
+     "penaltyTerms": {
+      "horizontalHoles": 60.0,
+      "overhang60": 1.38,
+      "supportProxy": 0.66,
+      "supportOnModel": 0.95,
+      "height": 2.7
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       1.0,
+       -13.847000122056677
+      ],
+      [
+       -1.0,
+       0.0,
+       6.123233995736766e-17,
+       17.5
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       17.998001098639975
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.31",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 253 mm2"
+     ],
+     "rank": 3,
+     "heightMm": 18.0,
+     "contactMm2": 253.5,
+     "firstLayerSectionMm2": 261.3,
+     "tipAngleDeg": 39.5,
+     "overhang45Mm2": 213.7,
+     "overhang60Mm2": 138.4,
+     "supportProxyMm3": 437.0,
+     "supportOnModelMm2": 94.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 10,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 65.69,
+     "penaltyTerms": {
+      "horizontalHoles": 60.0,
+      "overhang60": 1.38,
+      "supportProxy": 0.66,
+      "supportOnModel": 0.95,
+      "height": 2.7
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       13.847000122056674
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       17.5
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.06",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 314 mm2"
+     ],
+     "rank": 4,
+     "heightMm": 35.0,
+     "contactMm2": 313.9,
+     "firstLayerSectionMm2": 315.7,
+     "tipAngleDeg": 11.4,
+     "overhang45Mm2": 386.8,
+     "overhang60Mm2": 325.6,
+     "supportProxyMm3": 7709.0,
+     "supportOnModelMm2": 299.7,
+     "holesVertical": 5,
+     "holesInclined": 0,
+     "holesHorizontal": 5,
+     "holeEndsFacingDown": 5,
+     "bossFacesFacingDown": 1,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 113.07,
+     "penaltyTerms": {
+      "horizontalHoles": 30.0,
+      "seatsDown": 50.0,
+      "bossFacesDown": 10.0,
+      "overhang60": 3.26,
+      "supportProxy": 11.56,
+      "supportOnModel": 3.0,
+      "height": 5.25
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       -1.7151244994428829e-15,
+       -8.99900054931997
+      ],
+      [
+       0.0,
+       -1.7151244994428829e-15,
+       -1.0,
+       13.847000122056684
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       35.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.06",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 314 mm2"
+     ],
+     "rank": 5,
+     "heightMm": 35.0,
+     "contactMm2": 313.9,
+     "firstLayerSectionMm2": 315.7,
+     "tipAngleDeg": 11.4,
+     "overhang45Mm2": 363.1,
+     "overhang60Mm2": 325.6,
+     "supportProxyMm3": 7709.0,
+     "supportOnModelMm2": 299.8,
+     "holesVertical": 5,
+     "holesInclined": 0,
+     "holesHorizontal": 5,
+     "holeEndsFacingDown": 5,
+     "bossFacesFacingDown": 1,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 113.07,
+     "penaltyTerms": {
+      "horizontalHoles": 30.0,
+      "seatsDown": 50.0,
+      "bossFacesDown": 10.0,
+      "overhang60": 3.26,
+      "supportProxy": 11.56,
+      "supportOnModel": 3.0,
+      "height": 5.25
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       0.0,
+       -1.0,
+       13.847000122056675
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -8.999000549319987
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 76 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 40.16,
+     "contactMm2": 76.4,
+     "firstLayerSectionMm2": 80.0,
+     "tipAngleDeg": -20.8,
+     "overhang45Mm2": 386.4,
+     "overhang60Mm2": 3.6,
+     "supportProxyMm3": 15.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 0,
+     "holesInclined": 10,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 15,
+     "bossFacesFacingDown": 4,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 1226.08,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "inclinedHoles": 30.0,
+      "seatsDown": 150.0,
+      "bossFacesDown": 40.0,
+      "overhang60": 0.04,
+      "supportProxy": 0.02,
+      "height": 6.02
+     },
+     "bedFacingSourceDir": [
+      0.7071,
+      0.0,
+      -0.7071
+     ],
+     "sourceToPrint": [
+      [
+       -0.7071067249915955,
+       1.6314977212781423e-08,
+       -0.707106837381495,
+       24.25164147183385
+      ],
+      [
+       1.7088476911216232e-09,
+       -0.9999999999999997,
+       -2.4781707629996774e-08,
+       8.999000789521778
+      ],
+      [
+       -0.7071068373814952,
+       -1.8731650008381933e-08,
+       0.7071067249915952,
+       20.576808551902097
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 76 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 7,
+     "heightMm": 40.16,
+     "contactMm2": 76.4,
+     "firstLayerSectionMm2": 80.0,
+     "tipAngleDeg": -20.8,
+     "overhang45Mm2": 386.7,
+     "overhang60Mm2": 3.6,
+     "supportProxyMm3": 15.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 0,
+     "holesInclined": 10,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 15,
+     "bossFacesFacingDown": 4,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 1226.08,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "inclinedHoles": 30.0,
+      "seatsDown": 150.0,
+      "bossFacesDown": 40.0,
+      "overhang60": 0.04,
+      "supportProxy": 0.02,
+      "height": 6.02
+     },
+     "bedFacingSourceDir": [
+      -0.7071,
+      0.0,
+      -0.7071
+     ],
+     "sourceToPrint": [
+      [
+       0.7071067249915953,
+       0.0,
+       -0.7071068373814954,
+       -0.4978004010406458
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -8.999000549319987
+      ],
+      [
+       0.7071068373814954,
+       0.0,
+       0.7071067249915953,
+       -4.171931093582492
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-03/06_community-28.stl",
+    "stockExtentMm": [
+     35.0,
+     18.0,
+     27.69
+    ],
+    "newToOldMm": {
+     "p50": 0.003,
+     "p90": 0.011,
+     "within0p5": 0.993
+    },
+    "oldToNewMm": {
+     "p50": 0.003,
+     "p90": 0.013,
+     "within0p5": 0.982
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 42.7,
+     "totalGrams": 5.75,
+     "supportGrams": 0.57,
+     "gramsByFeature": {
+      "bridge": 0.07,
+      "machine": 0.1,
+      "model": 4.76,
+      "overhangWall": 0.02,
+      "support": 0.49,
+      "supportInterface": 0.08
+     },
+     "layers": 276,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      143.1
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 1844.7,
+     "supportInHoleCoresMm": 296.4,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/neck_pitch_integrated_1mm_seats/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "9990cc17bd458ec8f6d961796afd24ae1be13e4f213a85f68f7c03adf974c930"
+     },
+     "readback": "slices/neck_pitch_integrated_1mm_seats/current/readback-Bambu.json"
+    },
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Elegoo",
+     "etaMinutes": 38.2,
+     "totalGrams": 5.93,
+     "supportGrams": 1.02,
+     "gramsByFeature": {
+      "bridge": 0.06,
+      "machine": 0.13,
+      "model": 4.7,
+      "overhangWall": 0.02,
+      "support": 0.79,
+      "supportInterface": 0.23
+     },
+     "layers": 336,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      144.5
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 455.9,
+     "supportInHoleCoresMm": 292.9,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/neck_pitch_integrated_1mm_seats/current/run/native/Black_Elegoo/sliced.3mf",
+      "sha256": "f43fbb995926cdbb9d9b4c7e3f3af47c125fc70b1830e50b6a0515c0f8165da2"
+     },
+     "readback": "slices/neck_pitch_integrated_1mm_seats/current/readback-Elegoo.json"
+    },
+    {
+     "slug": "on-ear",
+     "poseName": "stable p=0.06",
+     "machine": "Bambu",
+     "etaMinutes": 52.2,
+     "totalGrams": 6.37,
+     "supportGrams": 1.32,
+     "gramsByFeature": {
+      "bridge": 0.1,
+      "machine": 0.1,
+      "model": 4.61,
+      "overhangWall": 0.02,
+      "support": 1.25,
+      "supportInterface": 0.07
+     },
+     "layers": 349,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      301.1
+     ],
+     "supportUnderDownHoleEndsMm": 2029.4,
+     "supportUnderDownBossFacesMm": 3242.2,
+     "supportInHoleCoresMm": 2567.5,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/neck_pitch_integrated_1mm_seats/on-ear/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "281753d06046efea75438b55942bd3d7ffc940940cab7ad69e9cbc682aa19e45"
+     },
+     "readback": "slices/neck_pitch_integrated_1mm_seats/on-ear/readback-Bambu.json"
+    },
+    {
+     "slug": "side",
+     "poseName": "stable p=0.31",
+     "machine": "Bambu",
+     "etaMinutes": 34.6,
+     "totalGrams": 5.39,
+     "supportGrams": 0.16,
+     "gramsByFeature": {
+      "bridge": 0.0,
+      "machine": 0.1,
+      "model": 4.89,
+      "overhangWall": 0.0,
+      "support": 0.16,
+      "supportInterface": 0.0
+     },
+     "layers": 179,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      246.8
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 15.3,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/neck_pitch_integrated_1mm_seats/side/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "1e0437d3ceae3bfa7a7b30f2d907dd5b0aa09eef9b1eacc59cd1fc3e0176c1d1"
+     },
+     "readback": "slices/neck_pitch_integrated_1mm_seats/side/readback-Bambu.json"
+    },
+    {
+     "slug": "side",
+     "poseName": "stable p=0.31",
+     "machine": "Elegoo",
+     "etaMinutes": 31.6,
+     "totalGrams": 5.51,
+     "supportGrams": 0.52,
+     "gramsByFeature": {
+      "bridge": 0.0,
+      "machine": 0.13,
+      "model": 4.86,
+      "overhangWall": 0.0,
+      "support": 0.46,
+      "supportInterface": 0.06
+     },
+     "layers": 219,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      246.6
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 627.2,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/neck_pitch_integrated_1mm_seats/side/run/native/Black_Elegoo/sliced.3mf",
+      "sha256": "b603201ee19423cc4e0afeaf361418045694b3181e39816830dc358ce28a88ad"
+     },
+     "readback": "slices/neck_pitch_integrated_1mm_seats/side/readback-Elegoo.json"
+    }
+   ],
+   "supportMaps": {
+    "neck_pitch_integrated_1mm_seats-current-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 350.7,
+      "side": 155.8,
+      "up": 28.2
+     },
+     "supportToolpathMm": 8767.7
+    }
+   },
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Horn boss on the bed, ears up (10/1 and upstream community-28 pose).",
+    "function": "Black neck pitch bracket. The 16.4 mm horn boss face mates the ID13 horn; four 2.4 mm holes with integral 1 mm M2x6 seats; 6 mm centre bore; four 2.2 mm ear holes; two ears 27.7 mm tall.",
+    "loadPath": "Horn screws along the vertical axis; ear bending at the ear roots crosses layers in this pose.",
+    "ranking": [
+     "1 current: horn face on the bed, horn holes and seats vertical, seats face up. Bambu 42.7 / 5.75 / 0.57 / 143; Elegoo 38.2 / 5.93 / 1.02 / 145.",
+     "2 side (stable p=0.31): all 10 holes horizontal, horn face becomes a vertical wall, ears lie in-plane. Bambu 34.6 / 5.39 / 0.16 / 247 (-8.1 min); Elegoo 31.6 / 5.51 / 0.52 / 247.",
+     "3 on-ear: 5 hole ends and boss faces down; 2029 mm support under seats and 2568 mm in hole cores. Bambu 52.2 / 6.37 / 1.32 / 301."
+    ],
+    "counterexampleCheck": "The side pose is faster and loads the ears in-plane, but makes the horn hole pattern and the 6 mm bore horizontal and moves the horn face off the bed. Ear-root stress estimate: about 1.5 MPa at 0.25 N m per ear across an 18 x 3 mm section, far below PLA interlayer strength (inference, not tested). Keep.",
+    "residual": "The 6 mm centre bore keeps a 0.25 mm membrane at 1.70-1.95 mm above the bed (the four 2.4 mm membranes were removed in V1.6). In the current pose the 1.7 mm recess under it fills with support (296 mm toolpath Bambu, 293 mm Elegoo). Clear the recess and confirm whether the membrane should be opened.",
+    "evidence": [
+     "slices/neck_pitch_integrated_1mm_seats/current",
+     "slices/neck_pitch_integrated_1mm_seats/side",
+     "slices/neck_pitch_integrated_1mm_seats/on-ear",
+     "evidence/support-maps/neck_pitch_integrated_1mm_seats-current-Bambu.png"
+    ]
+   }
+  },
+  {
+   "key": "imu_cover",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-cover-retained-world.stl",
+   "features": {
+    "holes": 8,
+    "bosses": 4,
+    "holeDiametersMm": [
+     2.2,
+     2.2,
+     2.2,
+     2.2,
+     2.8,
+     2.8,
+     2.8,
+     2.8
+    ],
+    "volumeMm3": 1149.9,
+    "triangles": 6280
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.46",
+      "flat facet 689 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 7.77,
+     "contactMm2": 688.7,
+     "firstLayerSectionMm2": 688.7,
+     "tipAngleDeg": 83.2,
+     "overhang45Mm2": 10.5,
+     "overhang60Mm2": 10.5,
+     "supportProxyMm3": 12.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 8,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 4,
+     "pinsHorizontal": 0,
+     "penalty": 1.29,
+     "penaltyTerms": {
+      "overhang60": 0.1,
+      "supportProxy": 0.02,
+      "height": 1.17
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       0.0,
+       6.75
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       -16.150000005960464
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       62.599998474121094
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.54",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 2,
+     "heightMm": 7.77,
+     "contactMm2": 36.2,
+     "firstLayerSectionMm2": 36.2,
+     "tipAngleDeg": 51.9,
+     "overhang45Mm2": 663.0,
+     "overhang60Mm2": 663.0,
+     "supportProxyMm3": 4271.0,
+     "supportOnModelMm2": 0.0,
+     "holesVertical": 8,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 4,
+     "pinsHorizontal": 0,
+     "penalty": 61.11,
+     "penaltyTerms": {
+      "smallContact": 6.9,
+      "seatsDown": 40.0,
+      "overhang60": 6.63,
+      "supportProxy": 6.41,
+      "height": 1.17
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       6.123233995736766e-17,
+       6.749999999999998
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       -1.0,
+       16.150000005960464
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       -54.83000183105469
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 47 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 30.7,
+     "contactMm2": 46.8,
+     "firstLayerSectionMm2": 46.8,
+     "tipAngleDeg": -1.4,
+     "overhang45Mm2": 231.5,
+     "overhang60Mm2": 177.6,
+     "supportProxyMm3": 2022.0,
+     "supportOnModelMm2": 109.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 8,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 4,
+     "penalty": 1060.1,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "smallContact": 1.6,
+      "horizontalHoles": 48.0,
+      "overhang60": 1.78,
+      "supportProxy": 3.03,
+      "supportOnModel": 1.09,
+      "height": 4.6
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       1.0,
+       0.0,
+       6.750000000000005
+      ],
+      [
+       -1.0,
+       6.123233995736766e-17,
+       0.0,
+       -58.71500015258789
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       -0.800000011920929
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": false,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-05/07_imu_rear_cover_print.stl",
+    "stockExtentMm": [
+     28.7,
+     39.0,
+     1.2
+    ],
+    "newToOldMm": {
+     "p50": 0.876,
+     "p90": 5.541,
+     "within0p5": 0.336
+    },
+    "oldToNewMm": {
+     "p50": 0.471,
+     "p90": 0.999,
+     "within0p5": 0.52
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 17.9,
+     "totalGrams": 1.69,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "machine": 0.1,
+      "model": 1.36,
+      "overhangWall": 0.0
+     },
+     "layers": 77,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      654.2
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_cover/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "11775ad0f9cb43d9817fc454eb6804a1438607342f5f14155cad88cee424e0b3"
+     },
+     "readback": "slices/imu_cover/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.54",
+     "machine": "Bambu",
+     "etaMinutes": 33.5,
+     "totalGrams": 3.61,
+     "supportGrams": 1.9,
+     "gramsByFeature": {
+      "bridge": 0.02,
+      "machine": 0.1,
+      "model": 1.29,
+      "overhangWall": 0.05,
+      "support": 1.71,
+      "supportInterface": 0.19
+     },
+     "layers": 77,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      36.2
+     ],
+     "supportUnderDownHoleEndsMm": 1329.9,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_cover/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "7c960695c7065b21e75244a735820bb6a7028fac52e2cffe32cc0418a2fefe79"
+     },
+     "readback": "slices/imu_cover/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Flat back (689 mm2) on the bed.",
+    "function": "BNO085 rear cover with board-hole stops and lead tie land; 2.2 and 2.8 mm holes.",
+    "loadPath": "Screw clamp along vertical axes.",
+    "ranking": [
+     "1 current: Bambu 17.9 / 1.69 / 0 / 654.",
+     "2 flip: contact 36 mm2, 1330 mm support under hole ends. Bambu 33.5 / 3.61 / 1.9 / 36."
+    ],
+    "counterexampleCheck": "No candidate improves any criterion.",
+    "evidence": [
+     "slices/imu_cover/current",
+     "slices/imu_cover/flip"
+    ]
+   }
+  },
+  {
+   "key": "imu_clamp",
+   "color": "Orange",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-clamp-retained-world.stl",
+   "features": {
+    "holes": 6,
+    "bosses": 8,
+    "holeDiametersMm": [
+     1.6,
+     1.6,
+     1.6,
+     1.6,
+     1.6,
+     1.6
+    ],
+    "volumeMm3": 3235.4,
+    "triangles": 7304
+   },
+   "flags": [
+    "2 hole end(s) face down above the bed",
+    "4 hole(s) print with a horizontal axis"
+   ],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "10/1 pose",
+      "stable p=0.05",
+      "flat facet 314 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 32.9,
+     "contactMm2": 314.0,
+     "firstLayerSectionMm2": 314.0,
+     "tipAngleDeg": 6.9,
+     "overhang45Mm2": 618.8,
+     "overhang60Mm2": 604.0,
+     "supportProxyMm3": 13624.0,
+     "supportOnModelMm2": 366.5,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 2,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 91.48,
+     "penaltyTerms": {
+      "lowTipAngle": 12.4,
+      "horizontalHoles": 24.0,
+      "seatsDown": 20.0,
+      "overhang60": 6.04,
+      "supportProxy": 20.44,
+      "supportOnModel": 3.67,
+      "height": 4.93
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       54.150001525878906
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       -0.800000011920929
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.29",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 200 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 14.5,
+     "contactMm2": 199.9,
+     "firstLayerSectionMm2": 199.9,
+     "tipAngleDeg": 49.5,
+     "overhang45Mm2": 612.9,
+     "overhang60Mm2": 609.7,
+     "supportProxyMm3": 5249.0,
+     "supportOnModelMm2": 19.0,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 8,
+     "pinsVertical": 8,
+     "pinsHorizontal": 0,
+     "penalty": 108.33,
+     "penaltyTerms": {
+      "horizontalHoles": 12.0,
+      "bossFacesDown": 80.0,
+      "overhang60": 6.1,
+      "supportProxy": 7.87,
+      "supportOnModel": 0.19,
+      "height": 2.17
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       -6.123233995736766e-17,
+       1.7763568394002505e-15
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       1.0,
+       -17.25000038743019
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       61.400001525878906
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.16",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 3,
+     "heightMm": 30.21,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 18.9,
+     "tipAngleDeg": 15.2,
+     "overhang45Mm2": 477.1,
+     "overhang60Mm2": 455.5,
+     "supportProxyMm3": 7828.0,
+     "supportOnModelMm2": 32.1,
+     "holesVertical": 0,
+     "holesInclined": 6,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 2,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 359.14,
+     "penaltyTerms": {
+      "noFlatContact": 300.0,
+      "inclinedHoles": 18.0,
+      "seatsDown": 20.0,
+      "overhang60": 4.55,
+      "supportProxy": 11.74,
+      "supportOnModel": 0.32,
+      "height": 4.53
+     },
+     "bedFacingSourceDir": [
+      -0.4307,
+      0.0,
+      0.9025
+     ],
+     "sourceToPrint": [
+      [
+       -5.52610274037236e-17,
+       1.0,
+       -2.6374576905413185e-17,
+       -3.552713678800501e-15
+      ],
+      [
+       0.9024810654336985,
+       6.123233995736766e-17,
+       0.4307295282815615,
+       41.43926654057704
+      ],
+      [
+       0.4307295282815615,
+       0.0,
+       -0.9024810654336985,
+       53.069985124023084
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.39",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 15.46,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 19.9,
+     "tipAngleDeg": 35.1,
+     "overhang45Mm2": 403.2,
+     "overhang60Mm2": 400.0,
+     "supportProxyMm3": 1512.0,
+     "supportOnModelMm2": 27.8,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 8,
+     "pinsHorizontal": 0,
+     "penalty": 360.87,
+     "penaltyTerms": {
+      "noFlatContact": 300.0,
+      "horizontalHoles": 12.0,
+      "seatsDown": 40.0,
+      "overhang60": 4.0,
+      "supportProxy": 2.27,
+      "supportOnModel": 0.28,
+      "height": 2.32
+     },
+     "bedFacingSourceDir": [
+      0.9804,
+      0.0,
+      -0.197
+     ],
+     "sourceToPrint": [
+      [
+       1.2060184296063035e-17,
+       1.0,
+       6.00329193976075e-17,
+       -1.7763568394002505e-15
+      ],
+      [
+       -0.19695775638265345,
+       6.123233995736766e-17,
+       -0.9804119757534132,
+       6.246844152933206
+      ],
+      [
+       -0.9804119757534132,
+       0.0,
+       0.19695775638265345,
+       -50.55074325716943
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 42.36,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 7.2,
+     "tipAngleDeg": 6.3,
+     "overhang45Mm2": 572.6,
+     "overhang60Mm2": 553.7,
+     "supportProxyMm3": 8472.0,
+     "supportOnModelMm2": 137.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 376.77,
+     "penaltyTerms": {
+      "lowTipAngle": 14.8,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.54,
+      "supportProxy": 12.71,
+      "supportOnModel": 1.37,
+      "height": 6.35
+     },
+     "bedFacingSourceDir": [
+      -0.168,
+      0.9858,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -5.980813511996811e-17,
+       -9.867085970931784e-17,
+       1.0,
+       -17.250000387430195
+      ],
+      [
+       -0.9857817256865998,
+       -0.16803091769775383,
+       -6.297320239208083e-17,
+       -53.25405876183961
+      ],
+      [
+       0.16803091769775383,
+       -0.9857817256865998,
+       0.0,
+       29.539842253925613
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 42.36,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 7.2,
+     "tipAngleDeg": 6.3,
+     "overhang45Mm2": 572.6,
+     "overhang60Mm2": 553.7,
+     "supportProxyMm3": 9308.0,
+     "supportOnModelMm2": 171.8,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 378.37,
+     "penaltyTerms": {
+      "lowTipAngle": 14.8,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.54,
+      "supportProxy": 13.96,
+      "supportOnModel": 1.72,
+      "height": 6.35
+     },
+     "bedFacingSourceDir": [
+      -0.168,
+      -0.9858,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       -0.9857817256865997,
+       0.1680309176977538,
+       4.0216276448051203e-16,
+       -53.254058761839616
+      ],
+      [
+       4.120366503457234e-16,
+       2.2343026766338324e-17,
+       1.0,
+       -17.250000387430166
+      ],
+      [
+       0.16803091769775383,
+       0.9857817256865998,
+       0.0,
+       29.539842253925613
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.03",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 7,
+     "heightMm": 42.43,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 6.6,
+     "tipAngleDeg": 3.5,
+     "overhang45Mm2": 593.3,
+     "overhang60Mm2": 574.5,
+     "supportProxyMm3": 8599.0,
+     "supportOnModelMm2": 205.6,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 389.07,
+     "penaltyTerms": {
+      "lowTipAngle": 26.0,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.75,
+      "supportProxy": 12.9,
+      "supportOnModel": 2.06,
+      "height": 6.36
+     },
+     "bedFacingSourceDir": [
+      -0.0862,
+      0.9959,
+      -0.0265
+     ],
+     "sourceToPrint": [
+      [
+       -0.002289032132478715,
+       0.026435391488830458,
+       0.9996479032182927,
+       -17.433010178664695
+      ],
+      [
+       -0.9962720638832013,
+       -0.08626688081706768,
+       -7.306544360691728e-17,
+       -53.883433618853076
+      ],
+      [
+       0.08623650652596407,
+       -0.9959212796958032,
+       0.026534309700296577,
+       24.66231796694823
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.03",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 8,
+     "heightMm": 42.43,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 6.6,
+     "tipAngleDeg": 3.4,
+     "overhang45Mm2": 593.3,
+     "overhang60Mm2": 574.5,
+     "supportProxyMm3": 9180.0,
+     "supportOnModelMm2": 286.6,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 391.15,
+     "penaltyTerms": {
+      "lowTipAngle": 26.4,
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.75,
+      "supportProxy": 13.77,
+      "supportOnModel": 2.87,
+      "height": 6.36
+     },
+     "bedFacingSourceDir": [
+      -0.0862,
+      -0.9959,
+      -0.0265
+     ],
+     "sourceToPrint": [
+      [
+       0.002289032132478604,
+       0.026435391488830468,
+       -0.9996479032182927,
+       17.433010178664688
+      ],
+      [
+       -0.9962720638832013,
+       0.08626688081706768,
+       3.7504029936325836e-17,
+       -53.883433618853076
+      ],
+      [
+       0.08623650652596407,
+       0.9959212796958032,
+       0.026534309700296577,
+       24.66231796694823
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 235 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 9,
+     "heightMm": 32.9,
+     "contactMm2": 235.4,
+     "firstLayerSectionMm2": 235.4,
+     "tipAngleDeg": -5.3,
+     "overhang45Mm2": 697.5,
+     "overhang60Mm2": 682.2,
+     "supportProxyMm3": 9415.0,
+     "supportOnModelMm2": 362.7,
+     "holesVertical": 2,
+     "holesInclined": 0,
+     "holesHorizontal": 4,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 1053.5,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 24.0,
+      "overhang60": 6.82,
+      "supportProxy": 14.12,
+      "supportOnModel": 3.63,
+      "height": 4.93
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       -1.0,
+       0.0,
+       3.552713678800501e-15
+      ],
+      [
+       -1.0,
+       -6.123233995736766e-17,
+       0.0,
+       -54.150001525878906
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       33.70000076293945
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 191 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 10,
+     "heightMm": 14.5,
+     "contactMm2": 191.2,
+     "firstLayerSectionMm2": 191.2,
+     "tipAngleDeg": -20.6,
+     "overhang45Mm2": 621.6,
+     "overhang60Mm2": 618.4,
+     "supportProxyMm3": 3042.0,
+     "supportOnModelMm2": 16.5,
+     "holesVertical": 4,
+     "holesInclined": 0,
+     "holesHorizontal": 2,
+     "holeEndsFacingDown": 4,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 8,
+     "pinsHorizontal": 0,
+     "penalty": 1065.08,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 12.0,
+      "seatsDown": 40.0,
+      "overhang60": 6.18,
+      "supportProxy": 4.56,
+      "supportOnModel": 0.17,
+      "height": 2.17
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       6.123233995736766e-17,
+       -1.7763568394002505e-15
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       -1.0,
+       17.25000038743019
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       -46.900001525878906
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 47 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 11,
+     "heightMm": 42.0,
+     "contactMm2": 46.8,
+     "firstLayerSectionMm2": 46.8,
+     "tipAngleDeg": -11.2,
+     "overhang45Mm2": 582.5,
+     "overhang60Mm2": 563.5,
+     "supportProxyMm3": 8565.0,
+     "supportOnModelMm2": 274.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 1065.13,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "smallContact": 1.6,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.63,
+      "supportProxy": 12.85,
+      "supportOnModel": 2.75,
+      "height": 6.3
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       1.0,
+       -17.250000387430187
+      ],
+      [
+       -1.0,
+       0.0,
+       6.123233995736766e-17,
+       -54.150001525878906
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       21.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 47 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 12,
+     "heightMm": 42.0,
+     "contactMm2": 46.8,
+     "firstLayerSectionMm2": 46.8,
+     "tipAngleDeg": -11.0,
+     "overhang45Mm2": 582.5,
+     "overhang60Mm2": 563.5,
+     "supportProxyMm3": 9361.0,
+     "supportOnModelMm2": 308.3,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 8,
+     "penalty": 1066.65,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "smallContact": 1.6,
+      "horizontalHoles": 36.0,
+      "overhang60": 5.63,
+      "supportProxy": 14.04,
+      "supportOnModel": 3.08,
+      "height": 6.3
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       17.25000038743019
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       -54.150001525878906
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       21.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": {
+    "accepted": true,
+    "stockCopy": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/01-STL/plate-01/05_imu_clamp_holder_print.stl",
+    "stockExtentMm": [
+     14.5,
+     42.0,
+     32.9
+    ],
+    "newToOldMm": {
+     "p50": 0.006,
+     "p90": 0.014,
+     "within0p5": 0.978
+    },
+    "oldToNewMm": {
+     "p50": 0.006,
+     "p90": 0.013,
+     "within0p5": 0.993
+    }
+   },
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 31.8,
+     "totalGrams": 6.15,
+     "supportGrams": 2.13,
+     "gramsByFeature": {
+      "bridge": 0.07,
+      "machine": 0.1,
+      "model": 3.55,
+      "overhangWall": 0.07,
+      "support": 1.85,
+      "supportInterface": 0.28
+     },
+     "layers": 165,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      304.6
+     ],
+     "supportUnderDownHoleEndsMm": 263.7,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_clamp/current/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "52fdad99eb99c3e0f2fb9a06e8bd13edf1d8ee552aebaf0e992ec037196d5b35"
+     },
+     "readback": "slices/imu_clamp/current/readback-Bambu.json"
+    },
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Elegoo",
+     "etaMinutes": 27.0,
+     "totalGrams": 6.23,
+     "supportGrams": 2.46,
+     "gramsByFeature": {
+      "bridge": 0.07,
+      "machine": 0.13,
+      "model": 3.52,
+      "overhangWall": 0.06,
+      "support": 2.19,
+      "supportInterface": 0.27
+     },
+     "layers": 165,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      304.0
+     ],
+     "supportUnderDownHoleEndsMm": 303.9,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_clamp/current/run/native/Orange_Elegoo/sliced.3mf",
+      "sha256": "cdec267e5eaa82d5858b4e8d5ccddeed38ee6f649e2c6082b21232694afc81eb"
+     },
+     "readback": "slices/imu_clamp/current/readback-Elegoo.json"
+    },
+    {
+     "slug": "lying",
+     "poseName": "stable p=0.29",
+     "machine": "Bambu",
+     "etaMinutes": 29.1,
+     "totalGrams": 5.94,
+     "supportGrams": 1.8,
+     "gramsByFeature": {
+      "bridge": 0.08,
+      "machine": 0.1,
+      "model": 3.65,
+      "overhangWall": 0.07,
+      "support": 1.5,
+      "supportInterface": 0.3
+     },
+     "layers": 73,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      170.7
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 1147.3,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_clamp/lying/run/native/Orange_Bambu/sliced.3mf",
+      "sha256": "b9f7f31fd04d6ce3c131339a2c715b559ed9251d23ae69c5150ac8338f8c3111"
+     },
+     "readback": "slices/imu_clamp/lying/readback-Bambu.json"
+    },
+    {
+     "slug": "lying",
+     "poseName": "stable p=0.29",
+     "machine": "Elegoo",
+     "etaMinutes": 23.4,
+     "totalGrams": 5.77,
+     "supportGrams": 1.9,
+     "gramsByFeature": {
+      "bridge": 0.08,
+      "machine": 0.13,
+      "model": 3.6,
+      "overhangWall": 0.06,
+      "support": 1.63,
+      "supportInterface": 0.27
+     },
+     "layers": 73,
+     "layerHeight": 0.2,
+     "firstLayerModelMm2": [
+      170.6
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 1206.6,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/imu_clamp/lying/run/native/Orange_Elegoo/sliced.3mf",
+      "sha256": "9d93cf81f809ca2752a480d556f5d61e822443068383d0d76830b84fe4af74fd"
+     },
+     "readback": "slices/imu_clamp/lying/readback-Elegoo.json"
+    }
+   ],
+   "supportMaps": {
+    "imu_clamp-current-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 289.2,
+      "side": 33.7,
+      "up": 0.0
+     },
+     "supportToolpathMm": 19972.0
+    },
+    "imu_clamp-lying-Bambu": {
+     "machine": "Bambu",
+     "supportTouchedFaceMm2": {
+      "down": 592.8,
+      "side": 68.7,
+      "up": 0.0
+     },
+     "supportToolpathMm": 15627.2
+    }
+   },
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Standing on its 314 mm2 end, 32.9 mm tall (10/1 pose).",
+    "function": "Orange IMU holder. A 5 mm plate with four 1.6 mm pilots; four 4.4 mm PCB pads with 2.0 mm locating pins that hold the BNO085 board; two 1.6 mm pilots at the top; side connector aperture.",
+    "loadPath": "Board located by pins and clamped against the pads; screws along the pilot axes.",
+    "ranking": [
+     "1 current: PCB pads are vertical walls, pins horizontal; four plate pilots horizontal; two top pilot ends face down (264 mm support). Bambu 31.8 / 6.15 / 2.13 / 305; Elegoo 27.0 / 6.23 / 2.46 / 304.",
+     "2 lying (plate on the bed): four plate pilots vertical, but all four PCB pads and their pins face down and print on support (1147 mm Bambu, 1207 mm Elegoo). Bambu 29.1 / 5.94 / 1.8 / 171; Elegoo 23.4 / 5.77 / 1.9 / 171."
+    ],
+    "counterexampleCheck": "The lying pose looked better on holes, height and time until the checker learned to count down-facing boss faces; the native slice then confirmed the PCB seats print on support. The board seats outrank the small time saving.",
+    "residual": "Lowest tipping margin of all 13 (tip 6.9 deg, 32.9 mm tall). Release Orange plates have no brim. The 10/1 project also used no brim and printed this pose, so a 3-5 mm brim on this object is optional insurance (inference).",
+    "evidence": [
+     "slices/imu_clamp/current",
+     "slices/imu_clamp/lying",
+     "evidence/support-maps/imu_clamp-current-Bambu.png",
+     "evidence/support-maps/imu_clamp-lying-Bambu.png"
+    ]
+   }
+  },
+  {
+   "key": "openrb_tray",
+   "color": "Black",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/stl/openrb_tray.stl",
+   "features": {
+    "holes": 6,
+    "bosses": 2,
+    "holeDiametersMm": [
+     1.7,
+     1.7,
+     6.0,
+     6.0,
+     6.0,
+     6.0
+    ],
+    "volumeMm3": 5997.6,
+    "triangles": 6944
+   },
+   "flags": [],
+   "candidates": [
+    {
+     "name": "current",
+     "origin": "manifest",
+     "sameAs": [
+      "stable p=0.45",
+      "flat facet 2284 mm2"
+     ],
+     "rank": 1,
+     "heightMm": 12.0,
+     "contactMm2": 2284.5,
+     "firstLayerSectionMm2": 2284.5,
+     "tipAngleDeg": 81.6,
+     "overhang45Mm2": 15.6,
+     "overhang60Mm2": 15.6,
+     "supportProxyMm3": 29.0,
+     "supportOnModelMm2": 15.3,
+     "holesVertical": 6,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 2,
+     "pinsHorizontal": 0,
+     "penalty": 2.15,
+     "penaltyTerms": {
+      "overhang60": 0.16,
+      "supportProxy": 0.04,
+      "supportOnModel": 0.15,
+      "height": 1.8
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      -1.0
+     ],
+     "sourceToPrint": [
+      [
+       1.0,
+       0.0,
+       0.0,
+       -37.275001525878906
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       -17.200000762939453
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.02",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 112 mm2"
+     ],
+     "rank": 2,
+     "heightMm": 74.55,
+     "contactMm2": 112.9,
+     "firstLayerSectionMm2": 114.9,
+     "tipAngleDeg": 4.5,
+     "overhang45Mm2": 151.8,
+     "overhang60Mm2": 132.3,
+     "supportProxyMm3": 4059.0,
+     "supportOnModelMm2": 79.8,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 77.39,
+     "penaltyTerms": {
+      "lowTipAngle": 22.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 1.32,
+      "supportProxy": 6.09,
+      "supportOnModel": 0.8,
+      "height": 11.18
+     },
+     "bedFacingSourceDir": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       -6.123233995736766e-17,
+       -17.200000762939453
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       1.0,
+       -6.000000000000001
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.01",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 108 mm2"
+     ],
+     "rank": 3,
+     "heightMm": 74.55,
+     "contactMm2": 108.8,
+     "firstLayerSectionMm2": 109.4,
+     "tipAngleDeg": 3.4,
+     "overhang45Mm2": 162.0,
+     "overhang60Mm2": 144.9,
+     "supportProxyMm3": 3751.0,
+     "supportOnModelMm2": 68.0,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 81.34,
+     "penaltyTerms": {
+      "lowTipAngle": 26.4,
+      "horizontalHoles": 36.0,
+      "overhang60": 1.45,
+      "supportProxy": 5.63,
+      "supportOnModel": 0.68,
+      "height": 11.18
+     },
+     "bedFacingSourceDir": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       0.0,
+       1.0,
+       6.123233995736766e-17,
+       -17.200000762939453
+      ],
+      [
+       0.0,
+       6.123233995736766e-17,
+       -1.0,
+       5.999999999999999
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       74.55000305175781
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 4,
+     "heightMm": 74.82,
+     "contactMm2": 1.0,
+     "firstLayerSectionMm2": 3.7,
+     "tipAngleDeg": 0.8,
+     "overhang45Mm2": 231.7,
+     "overhang60Mm2": 205.4,
+     "supportProxyMm3": 6103.0,
+     "supportOnModelMm2": 15.1,
+     "holesVertical": 0,
+     "holesInclined": 6,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 0,
+     "penalty": 101.87,
+     "penaltyTerms": {
+      "lowTipAngle": 36.8,
+      "smallContact": 24.5,
+      "inclinedHoles": 18.0,
+      "overhang60": 2.05,
+      "supportProxy": 9.15,
+      "supportOnModel": 0.15,
+      "height": 11.22
+     },
+     "bedFacingSourceDir": [
+      -0.9638,
+      -0.0,
+      0.2667
+     ],
+     "sourceToPrint": [
+      [
+       -1.6333470210359057e-17,
+       1.0,
+       -5.901370355724133e-17,
+       -17.200000762939453
+      ],
+      [
+       0.26674581147366005,
+       6.123233995736766e-17,
+       0.9637669179118251,
+       -13.990772320227958
+      ],
+      [
+       0.9637669179118251,
+       0.0,
+       -0.26674581147366005,
+       2.9701356595343533
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.35",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 5,
+     "heightMm": 13.9,
+     "contactMm2": 0.8,
+     "firstLayerSectionMm2": 20.3,
+     "tipAngleDeg": 39.9,
+     "overhang45Mm2": 2167.8,
+     "overhang60Mm2": 2153.0,
+     "supportProxyMm3": 19118.0,
+     "supportOnModelMm2": 24.1,
+     "holesVertical": 6,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 6,
+     "bossFacesFacingDown": 2,
+     "pinsVertical": 2,
+     "pinsHorizontal": 0,
+     "penalty": 157.13,
+     "penaltyTerms": {
+      "smallContact": 24.6,
+      "seatsDown": 60.0,
+      "bossFacesDown": 20.0,
+      "overhang60": 21.53,
+      "supportProxy": 28.68,
+      "supportOnModel": 0.24,
+      "height": 2.08
+     },
+     "bedFacingSourceDir": [
+      0.0741,
+      0.0,
+      0.9972
+     ],
+     "sourceToPrint": [
+      [
+       -6.106377460062174e-17,
+       1.0,
+       4.540362119821352e-18,
+       -17.20000076293945
+      ],
+      [
+       0.9972471188123255,
+       6.123233995736766e-17,
+       -0.07414974052898402,
+       -36.76333072149146
+      ],
+      [
+       -0.07414974052898402,
+       0.0,
+       -0.9972471188123255,
+       13.904740702424686
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.08",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 6,
+     "heightMm": 34.09,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 43.1,
+     "tipAngleDeg": 16.1,
+     "overhang45Mm2": 899.7,
+     "overhang60Mm2": 875.0,
+     "supportProxyMm3": 12443.0,
+     "supportOnModelMm2": 385.5,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 372.37,
+     "penaltyTerms": {
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 8.75,
+      "supportProxy": 18.66,
+      "supportOnModel": 3.85,
+      "height": 5.11
+     },
+     "bedFacingSourceDir": [
+      -0.0,
+      0.9849,
+      0.1733
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       -0.17326523282655049,
+       0.9848751997555636,
+       -2.7644870409690285
+      ],
+      [
+       -1.0,
+       -1.0609435639227798e-17,
+       6.030621304701305e-17,
+       37.275001525878906
+      ],
+      [
+       0.0,
+       -0.9848751997555636,
+       -0.17326523282655049,
+       34.08762678597443
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "stable p=0.09",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 7,
+     "heightMm": 34.09,
+     "contactMm2": 0.0,
+     "firstLayerSectionMm2": 43.1,
+     "tipAngleDeg": 16.2,
+     "overhang45Mm2": 899.7,
+     "overhang60Mm2": 875.0,
+     "supportProxyMm3": 12486.0,
+     "supportOnModelMm2": 391.3,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 372.5,
+     "penaltyTerms": {
+      "noFlatContact": 300.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 8.75,
+      "supportProxy": 18.73,
+      "supportOnModel": 3.91,
+      "height": 5.11
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -0.9849,
+      0.1733
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       -0.1732651484697738,
+       -0.9848752145961169,
+       8.724809950210524
+      ],
+      [
+       -1.0,
+       -1.0609430473864972e-17,
+       -6.030621395573485e-17,
+       37.275001525878906
+      ],
+      [
+       0.0,
+       0.9848752145961169,
+       -0.1732651484697738,
+       0.2079183103545462
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 56 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 8,
+     "heightMm": 34.4,
+     "contactMm2": 56.1,
+     "firstLayerSectionMm2": 56.8,
+     "tipAngleDeg": -4.4,
+     "overhang45Mm2": 1176.2,
+     "overhang60Mm2": 1159.3,
+     "supportProxyMm3": 11358.0,
+     "supportOnModelMm2": 678.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 1076.58,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 11.59,
+      "supportProxy": 17.04,
+      "supportOnModel": 6.79,
+      "height": 5.16
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      -1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       -1.0,
+       5.999999999999997
+      ],
+      [
+       -1.0,
+       0.0,
+       -6.123233995736766e-17,
+       37.275001525878906
+      ],
+      [
+       0.0,
+       1.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 56 mm2",
+     "origin": "generated",
+     "sameAs": [],
+     "rank": 9,
+     "heightMm": 34.4,
+     "contactMm2": 56.1,
+     "firstLayerSectionMm2": 56.8,
+     "tipAngleDeg": -4.3,
+     "overhang45Mm2": 1176.2,
+     "overhang60Mm2": 1159.3,
+     "supportProxyMm3": 11470.0,
+     "supportOnModelMm2": 678.7,
+     "holesVertical": 0,
+     "holesInclined": 0,
+     "holesHorizontal": 6,
+     "holeEndsFacingDown": 0,
+     "bossFacesFacingDown": 0,
+     "pinsVertical": 0,
+     "pinsHorizontal": 2,
+     "penalty": 1076.74,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "horizontalHoles": 36.0,
+      "overhang60": 11.59,
+      "supportProxy": 17.2,
+      "supportOnModel": 6.79,
+      "height": 5.16
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       0.0,
+       1.0,
+       -6.000000000000001
+      ],
+      [
+       -1.0,
+       0.0,
+       6.123233995736766e-17,
+       37.275001525878906
+      ],
+      [
+       0.0,
+       -1.0,
+       0.0,
+       34.400001525878906
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    },
+    {
+     "name": "flat facet 50 mm2",
+     "origin": "generated",
+     "sameAs": [
+      "flat facet 50 mm2"
+     ],
+     "rank": 10,
+     "heightMm": 12.0,
+     "contactMm2": 101.2,
+     "firstLayerSectionMm2": 103.9,
+     "tipAngleDeg": -28.4,
+     "overhang45Mm2": 2185.8,
+     "overhang60Mm2": 2179.2,
+     "supportProxyMm3": 21266.0,
+     "supportOnModelMm2": 22.8,
+     "holesVertical": 6,
+     "holesInclined": 0,
+     "holesHorizontal": 0,
+     "holeEndsFacingDown": 6,
+     "bossFacesFacingDown": 2,
+     "pinsVertical": 2,
+     "pinsHorizontal": 0,
+     "penalty": 1135.72,
+     "penaltyTerms": {
+      "notSelfStanding": 1000.0,
+      "seatsDown": 60.0,
+      "bossFacesDown": 20.0,
+      "overhang60": 21.79,
+      "supportProxy": 31.9,
+      "supportOnModel": 0.23,
+      "height": 1.8
+     },
+     "bedFacingSourceDir": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       -1.0,
+       0.0,
+       17.20000076293945
+      ],
+      [
+       -1.0,
+       -6.123233995736766e-17,
+       0.0,
+       37.275001525878906
+      ],
+      [
+       0.0,
+       0.0,
+       -1.0,
+       12.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ]
+    }
+   ],
+   "batch10_1": null,
+   "nativeSlices": [
+    {
+     "slug": "current",
+     "poseName": "current",
+     "machine": "Bambu",
+     "etaMinutes": 34.0,
+     "totalGrams": 7.26,
+     "supportGrams": 0,
+     "gramsByFeature": {
+      "bridge": 0.22,
+      "machine": 0.1,
+      "model": 6.7,
+      "overhangWall": 0.0
+     },
+     "layers": 119,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      2240.4
+     ],
+     "supportUnderDownHoleEndsMm": 0.0,
+     "supportUnderDownBossFacesMm": 0.0,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/openrb_tray/current/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "70ddeccc1aa8effa164b41537ae784216ceee2f644555c0d5f02f24114b695d2"
+     },
+     "readback": "slices/openrb_tray/current/readback-Bambu.json"
+    },
+    {
+     "slug": "flip",
+     "poseName": "stable p=0.35",
+     "machine": "Bambu",
+     "etaMinutes": 103.0,
+     "totalGrams": 13.33,
+     "supportGrams": 5.97,
+     "gramsByFeature": {
+      "bridge": 0.23,
+      "machine": 0.1,
+      "model": 6.56,
+      "overhangWall": 0.23,
+      "support": 5.41,
+      "supportInterface": 0.56
+     },
+     "layers": 138,
+     "layerHeight": 0.1,
+     "firstLayerModelMm2": [
+      20.0
+     ],
+     "supportUnderDownHoleEndsMm": 3401.6,
+     "supportUnderDownBossFacesMm": 952.7,
+     "supportInHoleCoresMm": 0.0,
+     "archive": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/orientation-study/slices/openrb_tray/flip/run/native/Black_Bambu/sliced.3mf",
+      "sha256": "dc10d780023208859ca016053f5ccef4384c4247c26e166c5d06bbb88afcfb90"
+     },
+     "readback": "slices/openrb_tray/flip/readback-Bambu.json"
+    }
+   ],
+   "supportMaps": null,
+   "verdict": {
+    "recommendation": "keep",
+    "currentPose": "Base (2284 mm2) on the bed.",
+    "function": "OpenRB-150 tray; 1.7 mm pilots and 6 mm holes; PCB slot under the front lip kept free of support by blockers.",
+    "loadPath": "Board load into the base; holes vertical.",
+    "ranking": [
+     "1 current: Bambu 34.0 / 7.26 / 0 / 2240.",
+     "2 flip: first layer 20 mm2, 3402 mm support under hole ends. Bambu 103.0 / 13.33 / 5.97 / 20.",
+     "3 on end: 74.6 mm tall, tip 4.5 deg."
+    ],
+    "counterexampleCheck": "No candidate improves any criterion.",
+    "evidence": [
+     "slices/openrb_tray/current",
+     "slices/openrb_tray/flip"
+    ]
+   }
+  }
+ ]
+}

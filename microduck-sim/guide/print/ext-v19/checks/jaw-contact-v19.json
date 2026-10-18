@@ -1,0 +1,1332 @@
+{
+ "_method": "Jaw opening against the two lower clips: does a V1.9 addition stop the jaw earlier than the V1.8 robot already does?\n\nThe scene check found jaw_frame overlapping the torso clip, the bracket clip and the bracket clip's raised screw head\nat jaw 40 deg in some policy-box and beak-pickup postures. In those postures the open jaw may already hit V1.8 parts\n(neck servo cases, bracket, shells), which the integrated study reported (jaw-pickup.json, neck_checks jaw).\nFor every posture of the policy box (81 neck/head poses) and the beak-pickup set (27): the jaw at 40 deg is tested\nagainst the V1.9 additions (clip_torso_v19, clip_bracket_v19 and the two raised screw heads). Where it hits, the jaw\nis opened from 0 to 40 deg in 0.5 deg steps and two first-contact angles are found (exact manifold3d overlap\n> 0.01 mm3):\n  theta18 = first contact with any V1.8 part on the torso, neck, bracket or yaw bodies (the jaw's own head parts\n            excluded);\n  theta19 = first contact with a V1.9 addition.\nA new restriction is a posture with theta19 < theta18 (or theta18 none). Also reported against the planned jaw limit\n(jaw-neck-check/README.md and HANDOFF-20261013.md open item 3): jaw at most 25 deg, head_pitch at most 65 deg while the\njaw is open.\nWrites ../checks/jaw-contact-v19.json.",
+ "postures": {
+  "policy": 81,
+  "pickup": 27
+ },
+ "hits": [
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 38.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.024
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 37.05,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "motor11",
+    "overlapMm3": 0.099
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 21.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 24.5,
+    "part": "neck_link_a",
+    "overlapMm3": 0.156
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 23.5,
+    "part": "motor12",
+    "overlapMm3": 9.204
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": -22.6,
+    "head_pitch": 68.2,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 16.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.091
+   },
+   "theta19": {
+    "jawDeg": 24.0,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.365
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 38.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.024
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 37.05,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "motor11",
+    "overlapMm3": 0.099
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 21.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 24.5,
+    "part": "neck_link_a",
+    "overlapMm3": 0.156
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 23.5,
+    "part": "motor12",
+    "overlapMm3": 9.204
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 8.6,
+    "head_pitch": 68.2,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_torso_v19",
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 16.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.091
+   },
+   "theta19": {
+    "jawDeg": 22.5,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.873
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 38.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.024
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 31.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.038
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": true,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": true
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.068
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.5,
+    "part": "neck_pitch",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 37.05,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "motor11",
+    "overlapMm3": 0.099
+   },
+   "theta19": {
+    "jawDeg": 35.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.027
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_bracket_v19",
+    "screw_head_S11-horn-040"
+   ],
+   "theta18": {
+    "jawDeg": 21.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.115
+   },
+   "theta19": {
+    "jawDeg": 22.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.019
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 24.5,
+    "part": "neck_link_a",
+    "overlapMm3": 0.156
+   },
+   "theta19": {
+    "jawDeg": 36.0,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.01
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 68.2,
+    "head_yaw": -24.6,
+    "head_roll": 9.9
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 23.5,
+    "part": "motor12",
+    "overlapMm3": 9.204
+   },
+   "theta19": {
+    "jawDeg": 39.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.048
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 68.2,
+    "head_yaw": 4.7,
+    "head_roll": -21.4
+   },
+   "hitAt40": [
+    "clip_torso_v19",
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 16.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.091
+   },
+   "theta19": {
+    "jawDeg": 18.5,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.021
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "policy",
+   "poseDeg": {
+    "neck_pitch": 39.8,
+    "head_pitch": 68.2,
+    "head_yaw": 4.7,
+    "head_roll": -5.75
+   },
+   "hitAt40": [
+    "clip_torso_v19"
+   ],
+   "theta18": {
+    "jawDeg": 25.0,
+    "part": "neck_link_a",
+    "overlapMm3": 0.018
+   },
+   "theta19": {
+    "jawDeg": 31.0,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.023
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -90.0,
+    "head_pitch": 0.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -90.0,
+    "head_pitch": 45.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -90.0,
+    "head_pitch": 90.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 0.0,
+    "part": "shell_left",
+    "overlapMm3": 485.569
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -90.0,
+    "head_pitch": 90.0,
+    "head_yaw": 34.0,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_torso_v19"
+   ],
+   "theta18": {
+    "jawDeg": 0.0,
+    "part": "shell_left",
+    "overlapMm3": 470.333
+   },
+   "theta19": {
+    "jawDeg": 26.0,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.186
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -60.0,
+    "head_pitch": 0.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -60.0,
+    "head_pitch": 45.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -60.0,
+    "head_pitch": 90.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 0.0,
+    "part": "shell_left",
+    "overlapMm3": 158.768
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -60.0,
+    "head_pitch": 90.0,
+    "head_yaw": 34.0,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_torso_v19"
+   ],
+   "theta18": {
+    "jawDeg": 0.0,
+    "part": "shell_left",
+    "overlapMm3": 90.367
+   },
+   "theta19": {
+    "jawDeg": 26.0,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.051
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -45.0,
+    "head_pitch": 0.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -45.0,
+    "head_pitch": 45.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 34.0,
+    "part": "neck_pitch",
+    "overlapMm3": 0.019
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": true,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -45.0,
+    "head_pitch": 90.0,
+    "head_yaw": -24.6,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_bracket_v19"
+   ],
+   "theta18": {
+    "jawDeg": 6.5,
+    "part": "shell_left",
+    "overlapMm3": 0.029
+   },
+   "theta19": {
+    "jawDeg": 37.5,
+    "part": "clip_bracket_v19",
+    "overlapMm3": 0.075
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  },
+  {
+   "set": "pickup",
+   "poseDeg": {
+    "neck_pitch": -45.0,
+    "head_pitch": 90.0,
+    "head_yaw": 34.0,
+    "head_roll": 0.0
+   },
+   "hitAt40": [
+    "clip_torso_v19"
+   ],
+   "theta18": {
+    "jawDeg": 3.5,
+    "part": "shell_right",
+    "overlapMm3": 0.24
+   },
+   "theta19": {
+    "jawDeg": 26.0,
+    "part": "clip_torso_v19",
+    "overlapMm3": 0.158
+   },
+   "newRestriction": false,
+   "jawOpenAllowedByPitchRule": false,
+   "newRestrictionWithinPlannedLimit": false
+  }
+ ],
+ "summary": {
+  "posturesHitAt40": 49,
+  "newRestrictions": [
+   {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   },
+   {
+    "neck_pitch": -22.6,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 38.5,
+    "theta19": 35.5
+   },
+   {
+    "neck_pitch": -22.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   },
+   {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   },
+   {
+    "neck_pitch": 8.6,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 38.5,
+    "theta19": 35.5
+   },
+   {
+    "neck_pitch": 8.6,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   },
+   {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   },
+   {
+    "neck_pitch": 39.8,
+    "head_pitch": 5.9,
+    "head_yaw": 4.7,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 38.5,
+    "theta19": 35.5
+   },
+   {
+    "neck_pitch": 39.8,
+    "head_pitch": 37.05,
+    "head_yaw": -24.6,
+    "head_roll": -21.4,
+    "set": "policy",
+    "theta18": 31.5,
+    "theta19": 22.0
+   }
+  ],
+  "newRestrictionsWithinPlannedLimit": 6
+ }
+}

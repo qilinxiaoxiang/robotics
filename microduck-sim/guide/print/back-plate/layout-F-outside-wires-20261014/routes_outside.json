@@ -1,0 +1,745 @@
+{
+ "method": "Outside wire routes for layout F without passage P1 (draft, 2026-10-14). World frame (guide), mm.\n\nEvery wire leaves its terminal straight out through its side window and stays outside the box. 22 AWG, tube dia 1.8,\ncentreline bend radius 3 (shellkit.fillet_path). Terminal entry points are the V1.11 ones (wires_F_inside_reference.json).\n- 15 V link (-y): mid IN -> top IN up the outside of the -y wall; link_p (both lower screws) runs at y -34.0, x -51.4,\n  link_q at y -36.2, x -54.705, so the two never cross.\n- 15 V feed (-y): mid IN -> 5991 terminal: down the outside of the -y wall (feed_p y -34.0 at x -58.0, feed_q y -36.2 at\n  x -54.705), inward under the step and down to the 5991 window; feed_q inner (y -17.4), feed_p outer (y -19.8), + lower\n  at both ends.\n- 7 V and 5 V (+y): out of the OUT windows, up the outside of the +y wall at y 34.0 in four x columns (7V_a -58.0,\n  7V_b -54.705, 5V_a -51.4, 5V_b -48.1), over the top edge, inward across the box top at z 45.0, forward over the\n  shell roof. 7 V: round the front edge of the shell roof, down in front of the pack plate and back through the plate's\n  head notch to OpenRB J4. 5 V: forward over the neck base to the neck bundle point (-6, -14, 43.5) of the current\n  pi-lead route, which it follows to the Pi.\nWrites wires_F.json (same format as layout-F/wires_F.json) and routes_outside.json (lengths and clearances).",
+ "boxParts": "frame_hidden_noP1 (this folder) + lid_hidden + screw_hidden (layout-F-ear-20261014/options)",
+ "perWire": {
+  "15V_link_p": {
+   "net": "p",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 42.5,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "frame_hidden_noP1": {
+     "gapMm": 0.27,
+     "at": [
+      -54.2,
+      -32.6,
+      25.7
+     ],
+     "arcMm": 40.0
+    },
+    "xl4015_mid": {
+     "gapMm": 0.99,
+     "at": [
+      -54.6,
+      -31.9,
+      -1.9
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 1.12,
+     "at": [
+      -54.6,
+      -31.9,
+      25.7
+     ],
+     "arcMm": 40.8
+    },
+    "lid_hidden": {
+     "gapMm": 4.38,
+     "at": [
+      -54.6,
+      -31.9,
+      25.7
+     ],
+     "arcMm": 40.8
+    },
+    "shell_right": {
+     "gapMm": 5.35,
+     "at": [
+      -48.5,
+      -34.0,
+      22.6
+     ],
+     "arcMm": 32.0
+    }
+   }
+  },
+  "15V_link_q": {
+   "net": "q",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 37.1,
+   "minBendRadius": 3.0,
+   "maxAbsY": 37.1,
+   "nearestParts": {
+    "frame_hidden_noP1": {
+     "gapMm": 0.6,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_mid": {
+     "gapMm": 0.87,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 0.92,
+     "at": [
+      -54.7,
+      -31.8,
+      30.7
+     ],
+     "arcMm": 35.5
+    },
+    "lid_hidden": {
+     "gapMm": 3.81,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    }
+   }
+  },
+  "15V_feed_q": {
+   "net": "q",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 46.9,
+   "minBendRadius": 3.0,
+   "maxAbsY": 37.1,
+   "nearestParts": {
+    "pd5991": {
+     "gapMm": 0.21,
+     "at": [
+      -54.6,
+      -14.8,
+      -22.3
+     ],
+     "arcMm": 45.2
+    },
+    "frame_hidden_noP1": {
+     "gapMm": 0.6,
+     "at": [
+      -54.7,
+      -31.9,
+      1.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_mid": {
+     "gapMm": 1.04,
+     "at": [
+      -54.7,
+      -31.9,
+      1.1
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.97,
+     "at": [
+      -54.6,
+      -16.0,
+      -21.8
+     ],
+     "arcMm": 44.0
+    }
+   }
+  },
+  "15V_feed_p": {
+   "net": "p",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 49.1,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "pd5991": {
+     "gapMm": 0.41,
+     "at": [
+      -54.6,
+      -15.0,
+      -25.8
+     ],
+     "arcMm": 47.2
+    },
+    "frame_hidden_noP1": {
+     "gapMm": 0.6,
+     "at": [
+      -54.6,
+      -15.5,
+      -25.8
+     ],
+     "arcMm": 46.8
+    },
+    "xl4015_mid": {
+     "gapMm": 0.79,
+     "at": [
+      -54.8,
+      -31.9,
+      -3.9
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.09,
+     "at": [
+      -60.5,
+      -34.0,
+      -5.5
+     ],
+     "arcMm": 9.0
+    }
+   }
+  },
+  "7V_b": {
+   "net": "7V",
+   "ends": [
+    "terminal",
+    "J4"
+   ],
+   "lengthMm": 115.7,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "shell_left": {
+     "gapMm": 0.42,
+     "at": [
+      -33.7,
+      -0.0,
+      34.2
+     ],
+     "arcMm": 105.8
+    },
+    "frame_hidden_noP1": {
+     "gapMm": 0.6,
+     "at": [
+      -54.7,
+      31.9,
+      30.8
+     ],
+     "arcMm": 1.8
+    },
+    "shell_right": {
+     "gapMm": 0.61,
+     "at": [
+      -33.8,
+      -0.3,
+      33.5
+     ],
+     "arcMm": 106.5
+    },
+    "xl4015_top": {
+     "gapMm": 1.03,
+     "at": [
+      -54.7,
+      31.9,
+      30.8
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.3,
+     "at": [
+      -54.7,
+      30.1,
+      45.0
+     ],
+     "arcMm": 19.5
+    },
+    "openrb_board": {
+     "gapMm": 1.85,
+     "at": [
+      -33.0,
+      -1.2,
+      27.0
+     ],
+     "arcMm": 113.5
+    }
+   }
+  },
+  "7V_a": {
+   "net": "7V",
+   "ends": [
+    "terminal",
+    "J4"
+   ],
+   "lengthMm": 120.5,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "frame_hidden_noP1": {
+     "gapMm": 0.27,
+     "at": [
+      -54.3,
+      32.6,
+      25.7
+     ],
+     "arcMm": 2.5
+    },
+    "shell_left": {
+     "gapMm": 0.93,
+     "at": [
+      -21.1,
+      3.6,
+      43.6
+     ],
+     "arcMm": 82.0
+    },
+    "xl4015_top": {
+     "gapMm": 1.09,
+     "at": [
+      -54.6,
+      31.9,
+      25.7
+     ],
+     "arcMm": 1.8
+    },
+    "rear_pack": {
+     "gapMm": 1.7,
+     "at": [
+      -19.1,
+      1.9,
+      35.3
+     ],
+     "arcMm": 97.8
+    },
+    "openrb_board": {
+     "gapMm": 2.04,
+     "at": [
+      -33.0,
+      1.2,
+      27.1
+     ],
+     "arcMm": 118.2
+    },
+    "shell_right": {
+     "gapMm": 2.83,
+     "at": [
+      -32.9,
+      1.5,
+      32.1
+     ],
+     "arcMm": 113.0
+    }
+   }
+  },
+  "5V_a": {
+   "net": "5V",
+   "ends": [
+    "terminal",
+    "bundle"
+   ],
+   "lengthMm": 142.6,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "shell_right": {
+     "gapMm": 0.71,
+     "at": [
+      -21.2,
+      -1.3,
+      43.6
+     ],
+     "arcMm": 122.8
+    },
+    "frame_hidden_noP1": {
+     "gapMm": 0.74,
+     "at": [
+      -54.8,
+      31.9,
+      2.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_mid": {
+     "gapMm": 0.97,
+     "at": [
+      -54.8,
+      31.9,
+      2.1
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.1,
+     "at": [
+      -59.1,
+      -0.9,
+      45.0
+     ],
+     "arcMm": 84.8
+    },
+    "shell_left": {
+     "gapMm": 1.19,
+     "at": [
+      -21.9,
+      -1.2,
+      43.6
+     ],
+     "arcMm": 122.0
+    },
+    "xl4015_top": {
+     "gapMm": 8.82,
+     "at": [
+      -60.9,
+      33.8,
+      43.1
+     ],
+     "arcMm": 48.5
+    }
+   }
+  },
+  "5V_b": {
+   "net": "5V",
+   "ends": [
+    "terminal",
+    "bundle"
+   ],
+   "lengthMm": 153.3,
+   "minBendRadius": 3.0,
+   "maxAbsY": 34.9,
+   "nearestParts": {
+    "frame_hidden_noP1": {
+     "gapMm": 0.74,
+     "at": [
+      -54.8,
+      31.9,
+      -2.9
+     ],
+     "arcMm": 1.8
+    },
+    "shell_right": {
+     "gapMm": 0.84,
+     "at": [
+      -21.1,
+      -3.7,
+      43.6
+     ],
+     "arcMm": 135.0
+    },
+    "xl4015_mid": {
+     "gapMm": 0.97,
+     "at": [
+      -54.8,
+      31.9,
+      -2.9
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.1,
+     "at": [
+      -59.1,
+      -3.6,
+      45.0
+     ],
+     "arcMm": 97.0
+    },
+    "shell_left": {
+     "gapMm": 2.39,
+     "at": [
+      -21.9,
+      -3.6,
+      43.6
+     ],
+     "arcMm": 134.2
+    },
+    "xl4015_top": {
+     "gapMm": 9.68,
+     "at": [
+      -63.3,
+      33.8,
+      43.0
+     ],
+     "arcMm": 55.8
+    }
+   }
+  }
+ },
+ "wireWireGapMm": {
+  "5V_a|5V_b": 0.15,
+  "7V_b|7V_a": 0.4,
+  "7V_b|5V_a": 0.6,
+  "15V_link_p|15V_feed_q": 1.2,
+  "15V_link_p|15V_link_q": 1.21,
+  "15V_feed_q|15V_feed_p": 1.21,
+  "7V_b|5V_b": 3.0,
+  "7V_a|5V_a": 3.0,
+  "15V_link_q|15V_feed_q": 3.31,
+  "15V_link_q|15V_feed_p": 5.2,
+  "7V_a|5V_b": 5.4,
+  "15V_link_p|15V_feed_p": 5.87,
+  "15V_link_q|5V_b": 29.79,
+  "15V_link_q|5V_a": 31.94,
+  "15V_link_p|5V_b": 32.48,
+  "15V_link_q|7V_b": 34.26,
+  "15V_link_p|5V_a": 34.48,
+  "15V_link_p|7V_b": 34.52,
+  "15V_link_p|7V_a": 36.89,
+  "15V_link_q|7V_a": 37.37,
+  "15V_feed_q|7V_b": 43.79,
+  "15V_feed_q|7V_a": 45.57,
+  "15V_feed_p|7V_b": 46.86,
+  "15V_feed_p|7V_a": 48.54,
+  "15V_feed_q|5V_b": 48.75,
+  "15V_feed_p|5V_b": 50.39,
+  "15V_feed_q|5V_a": 50.86,
+  "15V_feed_p|5V_a": 52.77
+ },
+ "existingCableGapsMm": {
+  "15V_link_p": {},
+  "15V_link_q": {},
+  "15V_feed_q": {},
+  "15V_feed_p": {},
+  "7V_b": {
+   "uart": {
+    "gapMm": -1.05,
+    "at": [
+     -17.8,
+     1.5,
+     39.6
+    ],
+    "cableRadius": 0.7
+   },
+   "dxl-l10": {
+    "gapMm": 0.12,
+    "at": [
+     -21.5,
+     1.5,
+     37.6
+    ],
+    "cableRadius": 1.1
+   },
+   "imu": {
+    "gapMm": 0.52,
+    "at": [
+     -17.6,
+     1.5,
+     41.0
+    ],
+    "cableRadius": 0.8
+   },
+   "dxl-r5": {
+    "gapMm": 0.92,
+    "at": [
+     -30.4,
+     1.1,
+     37.4
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-n12": {
+    "gapMm": 1.54,
+    "at": [
+     -24.9,
+     1.4,
+     37.5
+    ],
+    "cableRadius": 1.1
+   }
+  },
+  "7V_a": {
+   "dxl-r5": {
+    "gapMm": -1.17,
+    "at": [
+     -31.3,
+     1.8,
+     34.5
+    ],
+    "cableRadius": 1.1
+   },
+   "imu": {
+    "gapMm": -1.16,
+    "at": [
+     -15.3,
+     3.1,
+     41.3
+    ],
+    "cableRadius": 0.8
+   },
+   "dxl-n12": {
+    "gapMm": -0.66,
+    "at": [
+     -25.1,
+     1.9,
+     35.2
+    ],
+    "cableRadius": 1.1
+   },
+   "uart": {
+    "gapMm": 0.13,
+    "at": [
+     -15.2,
+     3.0,
+     40.8
+    ],
+    "cableRadius": 0.7
+   },
+   "dxl-l10": {
+    "gapMm": 0.38,
+    "at": [
+     -21.1,
+     1.9,
+     35.3
+    ],
+    "cableRadius": 1.1
+   }
+  },
+  "5V_a": {
+   "uart": {
+    "gapMm": -1.33,
+    "at": [
+     -8.9,
+     -10.3,
+     43.5
+    ],
+    "cableRadius": 0.7
+   },
+   "imu": {
+    "gapMm": -1.27,
+    "at": [
+     -8.9,
+     -10.3,
+     43.5
+    ],
+    "cableRadius": 0.8
+   },
+   "dxl-r5": {
+    "gapMm": 4.48,
+    "at": [
+     -19.9,
+     -2.0,
+     43.6
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-n12": {
+    "gapMm": 4.76,
+    "at": [
+     -8.3,
+     -10.8,
+     43.5
+    ],
+    "cableRadius": 1.1
+   }
+  },
+  "5V_b": {
+   "imu": {
+    "gapMm": -0.46,
+    "at": [
+     -7.1,
+     -14.6,
+     43.5
+    ],
+    "cableRadius": 0.8
+   },
+   "uart": {
+    "gapMm": -0.37,
+    "at": [
+     -7.1,
+     -14.6,
+     43.5
+    ],
+    "cableRadius": 0.7
+   },
+   "dxl-r5": {
+    "gapMm": 4.26,
+    "at": [
+     -23.1,
+     -3.6,
+     43.6
+    ],
+    "cableRadius": 1.1
+   }
+  }
+ },
+ "currentPiLeadVsCablesNotchToBundleMm": {
+  "imu": -1.7,
+  "uart": -1.59,
+  "dxl-l10": 0.02,
+  "dxl-n12": 0.72,
+  "dxl-r5": 2.12,
+  "dxl-5-4": 13.02
+ },
+ "piLeadBeyondJoinMm": 291.5,
+ "joinPoint": [
+  -6.0,
+  -14.0,
+  43.5
+ ],
+ "note": "gaps exclude 1.6 mm inside each terminal clamp (2.0 at J4); negative = tube overlap",
+ "hookTabMargins": {
+  "15V_feed_p": {
+   "capHookTab": {
+    "gapMm": 3.91,
+    "at": [
+     -54.6,
+     -18.39,
+     -24.01
+    ]
+   },
+   "frameAroundTabNotch": {
+    "gapMm": 4.57,
+    "at": [
+     -54.6,
+     -18.92,
+     -23.48
+    ]
+   }
+  },
+  "15V_feed_q": {
+   "capHookTab": {
+    "gapMm": 1.97,
+    "at": [
+     -54.6,
+     -15.95,
+     -21.78
+    ]
+   },
+   "frameAroundTabNotch": {
+    "gapMm": 1.73,
+    "at": [
+     -54.6,
+     -15.05,
+     -22.2
+    ]
+   }
+  },
+  "tabBounds": [
+   [
+    -62.61,
+    -15.61,
+    -21.26
+   ],
+   [
+    -57.4,
+    -14.41,
+    -18.42
+   ]
+  ],
+  "frameCropBounds": [
+   [
+    -59.1,
+    -15.61,
+    -20.06
+   ],
+   [
+    -55.35,
+    -14.41,
+    -18.42
+   ]
+  ]
+ }
+}

@@ -1,0 +1,289 @@
+{
+ "method": "Flexible-wire screen for the recommended layout: hand-set centrelines of the five I2S/power jumpers (amp header\nhousings -> Pi pins 4, 12, 14, 35, 40) and the speaker lead pair, checked against every rigid solid near them.\n\nThis is a route-plausibility screen, not a cable model: wires are tubes (jumper r 0.7 mm, speaker lead r 0.6 mm), each\nend is allowed to sit in its own housing / terminal for its last 2 mm, and the yaw body is taken at its worst roll.\nWrites ../wires.json and ../wire-routes.json (polylines in the routes.json format).\n",
+ "wires": {
+  "amp_vin_pin04": {
+   "lengthMm": 48.9,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "head_pi_gpio_pin_02_receiving",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "head_pi_gpio_pin_03_receiving",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "head_pi_gpio_pin_06_receiving",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    }
+   ],
+   "clear": true
+  },
+  "amp_lrc_pin35": {
+   "lengthMm": 50.7,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    },
+    {
+     "with": "pi_housing_pin35",
+     "clearanceMm": 1.21
+    },
+    {
+     "with": "pi",
+     "clearanceMm": 1.65
+    },
+    {
+     "with": "head_bottom",
+     "clearanceMm": 2.11
+    }
+   ],
+   "clear": true
+  },
+  "amp_din_pin40": {
+   "lengthMm": 54.6,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    },
+    {
+     "with": "pi_housing_pin40",
+     "clearanceMm": 1.2
+    },
+    {
+     "with": "head_pi_component_bottom-usb-edge-context",
+     "clearanceMm": 1.44
+    },
+    {
+     "with": "pi",
+     "clearanceMm": 1.65
+    }
+   ],
+   "clear": true
+  },
+  "alt_gnd_pin34": {
+   "lengthMm": 54.0,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    },
+    {
+     "with": "pi_housing_pin35",
+     "clearanceMm": 1.1
+    },
+    {
+     "with": "pi",
+     "clearanceMm": 1.65
+    },
+    {
+     "with": "face_panel",
+     "clearanceMm": 3.0
+    }
+   ],
+   "clear": true
+  },
+  "amp_bclk_pin12": {
+   "lengthMm": 69.8,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "head_pi_gpio_pin_10_receiving",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "pi_housing_pin14",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    },
+    {
+     "with": "head_pi_gpio_pin_09_receiving",
+     "clearanceMm": 1.1
+    }
+   ],
+   "clear": true
+  },
+  "amp_gnd_pin14": {
+   "lengthMm": 66.2,
+   "radiusMm": 0.7,
+   "closest": [
+    {
+     "with": "pi_housing_pin12",
+     "clearanceMm": 0.57
+    },
+    {
+     "with": "amp_housings",
+     "clearanceMm": 0.61
+    },
+    {
+     "with": "head_bottom",
+     "clearanceMm": 0.7
+    },
+    {
+     "with": "head_pi_gpio_pin_08_receiving",
+     "clearanceMm": 1.33
+    }
+   ],
+   "clear": true
+  },
+  "spk_plus": {
+   "lengthMm": 8.5,
+   "radiusMm": 0.6,
+   "closest": [
+    {
+     "with": "speaker",
+     "clearanceMm": 0.84
+    },
+    {
+     "with": "head_cap",
+     "clearanceMm": 1.05
+    },
+    {
+     "with": "amplifier",
+     "clearanceMm": 1.4
+    },
+    {
+     "with": "speaker_retainer",
+     "clearanceMm": 1.55
+    }
+   ],
+   "clear": true
+  },
+  "spk_minus": {
+   "lengthMm": 8.5,
+   "radiusMm": 0.6,
+   "closest": [
+    {
+     "with": "speaker",
+     "clearanceMm": 0.84
+    },
+    {
+     "with": "head_cap",
+     "clearanceMm": 1.05
+    },
+    {
+     "with": "amplifier",
+     "clearanceMm": 1.4
+    },
+    {
+     "with": "speaker_retainer",
+     "clearanceMm": 1.55
+    }
+   ],
+   "clear": true
+  }
+ },
+ "descentWithCap": {
+  "amp_vin_pin04": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 4.646
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.0
+   }
+  },
+  "amp_lrc_pin35": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 2.112
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.0
+   },
+   "eye_trim": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 5.681
+   },
+   "jaw_frame": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 5.239
+   }
+  },
+  "amp_din_pin40": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 4.63
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.0
+   }
+  },
+  "alt_gnd_pin34": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 4.63
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.0
+   },
+   "eye_trim": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 4.501
+   }
+  },
+  "amp_bclk_pin12": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 1.997
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 0.9
+   },
+   "eye_trim": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.748
+   },
+   "camera_board": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 0.78
+   },
+   "jaw_frame": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 5.103
+   }
+  },
+  "amp_gnd_pin14": {
+   "head_bottom": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 0.697
+   },
+   "face_panel": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 0.9
+   },
+   "eye_trim": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 2.9
+   },
+   "camera_board": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 0.78
+   },
+   "jaw_frame": {
+    "excessMm3": 0.0,
+    "minGapAlongPathMm": 3.803
+   }
+  },
+  "spk_plus": {},
+  "spk_minus": {}
+ }
+}

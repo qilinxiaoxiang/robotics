@@ -1,0 +1,95 @@
+[
+ {
+  "group": "torso",
+  "key": "rear_frame",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "supersedes": "rear_pack_cover (printed V1.8) and the V1.10 rear_frame (layout C revision 2, superseded)",
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_frame-world.stl",
+  "sourceToPrint": [
+   [
+    0.0,
+    1.0,
+    0.0,
+    32.04999923706055
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    44.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0,
+    59.099998474121094
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 250,
+  "poseOrigin": "back-plate/layout-F/build.json printPoses.frame and back-plate/layout-F/rear_frame-print.stl: rim-down, the frame rim (robot x -59.1, the cap seam) on the bed, x' = y, y' = z, z' = x; 296.8 mm2 bed contact (the 1.2 mm wall ring and the two cap-screw boss ends on a 64.1 x 87.0 mm footprint), height 21.6 mm; no brim (R1: tip angle 71.5 deg). The front plate (x -47 inner face) spans the inside of the box as a ceiling 12.1 mm above the bed and the cover flap below the box floor (z -44..-36.02) overhangs the bed: both get tree support from the Orange profiles, and the boss tips (PCB seats at x -50.205 and -50.0) print on support. Upright (z -44 down) was rejected: 60.8 mm2 contact (the cover strip only) under an 87.0 mm tall part (layout-F/checks.json 7_printability).",
+  "changeReason": "V1.11 rear converter box, layout F (back-plate/layout-F/README.md): replaces the V1.10 layout C revision 2 frame and the printed V1.8 rear pack cover. The frame carries the exact cover outline, four cover holes and lip (x -47..-45) and a stepped box behind the pack with a square rim at x -59.1 and a constant cross-section, so the boards slide straight in from the rear: a wide tier |y| <= 32.05, z -15.2..43 with the two XL4015s horizontal (IN ends -y, OUT ends +y, as the kit photo and mesh show) and a narrow tier |y| <= 15.61, z -36.02..-15.2 with the Adafruit 5991 (terminal -y, USB-C +y). Closed bottom, side windows at each terminal, a USB-C slot in the +y wall, front passage P1 into the pack channel, eight XL4015 bosses (5.0 / 4.2 / 3.2 mm long, shell limited), four 5991 bosses on 3.0 mm standoffs, two cap screw bosses at (y -23.8, z -17.4) and (y +23.8, z -33.6), two tooth slots in the top wall and driver lanes for the two lower cover screws. Volume 10502.4 mm3, watertight, one body (layout-F/checks.json).",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+  "evidenceAlso": [
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/build.json",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/README.md",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/layout_f.json",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/hip_sweep.json"
+  ],
+  "supportBlockers": [],
+  "flatContactMinimumReason": "V1.15: the two cap-screw boss ends no longer touch the bed (ears removed, hidden M2 x 10 instead), so the rim-down contact is the 1.2 mm wall ring alone, 252.0 mm2 (layout-F/post_build.json); V1.11 row minimum was 260 with the boss ends."
+ },
+ {
+  "group": "torso",
+  "key": "rear_lid",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "supersedes": "the V1.10 rear_lid (layout C revision 2, superseded), together with rear_frame",
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_lid-world.stl",
+  "sourceToPrint": [
+   [
+    0.0,
+    1.0,
+    0.0,
+    32.04999923706055
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    36.0192985534668
+   ],
+   [
+    1.0,
+    0.0,
+    0.0,
+    67.1016845703125
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 1900,
+  "poseOrigin": "back-plate/layout-F/build.json printPoses.lid and back-plate/layout-F/rear_lid-print.stl: outer rear face (robot x -67.1) on the bed, x' = y, y' = z, z' = x; 2643.2 mm2 bed contact, 13.5 mm tall (the tongues point up). The rounded rear edges (R 4.3..8.0) leave the bed at a shallow angle and the two screw ears overhang at the top: tree support under both. The open side cannot go down because the tongues stand 5.5 mm proud of the rim.",
+  "changeReason": "New V1.11 part: the rounded cap (x -67.1..-59.1, 1.2 mm walls) that closes the back of the layout F box and carries every rear-edge rounding (rear vertical edges R 7.4, rear top edge 7.8, step 4.3, narrow tier 4.5 / 8.0). Two tongues at the top corners run under the frame top wall with a tooth in a top-wall slot; two ears take M2 x 6 into the frame bosses at (y -23.8, z -17.4) and (y +23.8, z -33.6). Volume 6276.0 mm3, watertight (back-plate/layout-F/README.md).",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+  "evidenceAlso": [
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/build.json",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/README.md",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/layout_f.json",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/hip_sweep.json"
+  ],
+  "supportBlockers": []
+ }
+]

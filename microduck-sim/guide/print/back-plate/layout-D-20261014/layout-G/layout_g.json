@@ -1,0 +1,655 @@
+{
+ "variant": "G",
+ "rounding": {
+  "W top corners (y-z)": {
+   "radius": 1.8,
+   "limitedBy": "top_7V:board end at the side wall at [-54.8, -30.85, 41.3]"
+  },
+  "W step corners (y-z, convex)": {
+   "radius": 1.8,
+   "limitedBy": "mid_5V:board end at the side wall at [-54.8, -30.85, -13.5]"
+  },
+  "rear vertical edges, full width": {
+   "radius": 7.4,
+   "limitedBy": "wire 15V_link_p at [-67.6, 24.66, 5.51]"
+  },
+  "rear top edge": {
+   "radius": 5.8,
+   "limitedBy": "lid screw head seat (flat lid face) at (-2.0, 35.0)"
+  },
+  "rear bottom edge": {
+   "radius": 4.0,
+   "limitedBy": "lid screw head seat (flat lid face) at (-22.5, -9.0)"
+  },
+  "bodiesOnlyNoLidScrews": {
+   "W top corners (y-z)": {
+    "radius": 1.8,
+    "limitedBy": "top_7V:board end at the side wall at [-54.8, -30.85, 41.3]"
+   },
+   "W step corners (y-z, convex)": {
+    "radius": 1.8,
+    "limitedBy": "mid_5V:board end at the side wall at [-54.8, -30.85, -13.5]"
+   },
+   "rear vertical edges, full width": {
+    "radius": 7.4,
+    "limitedBy": "wire 15V_link_p at [-67.6, 24.66, 5.51]"
+   },
+   "rear top edge": {
+    "radius": 8.0,
+    "limitedBy": "cap 8.0"
+   },
+   "rear bottom edge": {
+    "radius": 6.0,
+    "limitedBy": "mid_5V:body at [-66.36, -10.51, -13.08]"
+   }
+  },
+  "note": "outer radii; inner radius = outer - 1.2 (constant wall). Limits from every board-mesh vertex (per-body, 0.3 clearance; PCB ends may touch the side wall as in D), the 5991 part boxes, the wire centrelines (0.9 + 0.3) and the flat seat of each lid screw head (dia 4.2). Bodies inside a window band do not limit (the wall is cut there).",
+  "final": {
+   "R": {
+    "side": 7.4,
+    "top": 5.8,
+    "step": 4.0
+   },
+   "rcTop": 1.8,
+   "rcStep": 1.8,
+   "rcNbot": null,
+   "rf": 0.0
+  }
+ },
+ "frame_G-world.stl": {
+  "volume_mm3": 12082.4,
+  "grams": 12.75,
+  "genus": 12,
+  "bodies": 1,
+  "bounds": [
+   [
+    -68.9,
+    -32.05,
+    -44.0
+   ],
+   [
+    -40.5,
+    32.05,
+    43.0
+   ]
+  ]
+ },
+ "lid_G-world.stl": {
+  "volume_mm3": 3466.0,
+  "grams": 3.66,
+  "genus": 3,
+  "bodies": 1,
+  "bounds": [
+   [
+    -70.1,
+    -29.89,
+    -14.06
+   ],
+   [
+    -68.9,
+    29.45,
+    40.77
+   ]
+  ]
+ },
+ "massTotalG": 16.41,
+ "box": {
+  "xExtent": [
+   -70.1,
+   -40.5
+  ],
+  "frameRimX": -68.9,
+  "lidX": [
+   -70.10000000000001,
+   -68.9
+  ],
+  "frontPlateX": [
+   -50.0,
+   -48.0
+  ],
+  "outerDepthBehindFrontPlate": 20.1,
+  "absY": 32.05,
+  "zTop": 43.0,
+  "zBottom": -15.200000000000003,
+  "packFloorZ": -44.0,
+  "bottomAbovePackFloorMm": 28.8
+ },
+ "stack": {
+  "topWallInner": 41.8,
+  "top7V": {
+   "zc": 28.199999999999996,
+   "pcbZ": [
+    15.099999999999996,
+    41.3
+   ]
+  },
+  "tierGap": {
+   "pcbGapMm": 2.4,
+   "wirePlaneZ": 13.899999999999997
+  },
+  "mid5V": {
+   "zc": -0.40000000000000346,
+   "pcbZ": [
+    -13.500000000000004,
+    12.699999999999996
+   ]
+  },
+  "stepInnerZ": -14.000000000000004,
+  "stepOuterZ": -15.200000000000003
+ },
+ "lane": {
+  "wirePlaneX": -67.6,
+  "lidInnerX": -68.9,
+  "extraDepthVsLayoutD": 0.0,
+  "note": "lid inner face kept at layout D depth (inductor top x -68.375 needs 0.3); every lane run crosses only terminals, caps, diode and screw heads, never the inductor or the trimmers"
+ },
+ "windows": {
+  "top_7V_IN": {
+   "x": [
+    -68.9,
+    -56.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "top_7V_OUT": {
+   "x": [
+    -68.9,
+    -56.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "mid_5V_IN": {
+   "x": [
+    -68.9,
+    -56.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "mid_5V_OUT": {
+   "x": [
+    -68.9,
+    -56.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  }
+ },
+ "passages": {
+  "P1_out": {
+   "x": [
+    -50.0,
+    -48.0
+   ],
+   "y": [
+    -12.7,
+    -2.9
+   ],
+   "z": [
+    12.499999999999996,
+    15.299999999999997
+   ]
+  },
+  "P2_15V": {
+   "x": [
+    -50.0,
+    -48.0
+   ],
+   "y": [
+    7.6,
+    13.0
+   ],
+   "z": [
+    12.499999999999996,
+    15.299999999999997
+   ]
+  }
+ },
+ "lidScrews": [
+  [
+   -2.0,
+   35.0
+  ],
+  [
+   -22.5,
+   -9.0
+  ],
+  [
+   22.5,
+   -9.0
+  ]
+ ],
+ "pd5991InPackVsFrameG": {
+  "gap": 0.94,
+  "overlapMm3": 0.0
+ },
+ "usbcPlugVsFrameG": 4.04,
+ "wires": {
+  "perWire": {
+   "7V_a": {
+    "net": "7V",
+    "lengthMm": 61.6,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.56,
+    "frameNearest": [
+     0.545,
+     [
+      -50.36,
+      -11.1,
+      13.9
+     ],
+     [
+      -50.0,
+      -11.1,
+      12.5
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.3,
+     "mid_5V": 0.3
+    },
+    "maxAbsY": 35.3
+   },
+   "7V_b": {
+    "net": "7V",
+    "lengthMm": 68.8,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.577,
+    "frameNearest": [
+     0.576,
+     [
+      -67.6,
+      -23.0,
+      30.7
+     ],
+     [
+      -68.9,
+      -22.85,
+      31.38
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.3,
+     "mid_5V": 0.3
+    },
+    "maxAbsY": 35.3
+   },
+   "5V_a": {
+    "net": "5V",
+    "lengthMm": 72.1,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.4,
+    "frameNearest": [
+     0.4,
+     [
+      -67.6,
+      -14.16,
+      2.1
+     ],
+     [
+      -68.9,
+      -14.16,
+      2.1
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.58,
+     "mid_5V": 0.356
+    },
+    "maxAbsY": 35.3
+   },
+   "5V_b": {
+    "net": "5V",
+    "lengthMm": 79.3,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.4,
+    "frameNearest": [
+     0.4,
+     [
+      -67.6,
+      -20.05,
+      -2.9
+     ],
+     [
+      -68.9,
+      -20.05,
+      -2.9
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.58,
+     "mid_5V": 0.37
+    },
+    "maxAbsY": 35.3
+   },
+   "15V_link_p": {
+    "net": "p",
+    "lengthMm": 67.9,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.393,
+    "frameNearest": [
+     0.393,
+     [
+      -67.6,
+      24.97,
+      4.69
+     ],
+     [
+      -68.89,
+      25.04,
+      4.8
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.356,
+     "mid_5V": 1.771
+    },
+    "maxAbsY": 37.3
+   },
+   "15V_link_q": {
+    "net": "q",
+    "lengthMm": 74.3,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.632,
+    "frameNearest": [
+     0.62,
+     [
+      -67.6,
+      23.28,
+      29.82
+     ],
+     [
+      -68.9,
+      22.85,
+      30.48
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.37,
+     "mid_5V": 0.376
+    },
+    "maxAbsY": 35.3
+   },
+   "15V_feed_p": {
+    "net": "p",
+    "lengthMm": 99.8,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.5,
+    "frameNearest": [
+     0.5,
+     [
+      -48.07,
+      9.0,
+      13.9
+     ],
+     [
+      -48.07,
+      9.0,
+      12.5
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.3,
+     "mid_5V": 0.3
+    },
+    "maxAbsY": 35.3,
+    "gapPd5991InPack": 0.47,
+    "gapOpenRB": 5.758,
+    "gapAsBuiltPackV18": 0.0,
+    "packPortionNote": "x > -48 runs inside the reprinted pack; as-built V18 contact is the side-wall recess listed in pack_study"
+   },
+   "15V_feed_q": {
+    "net": "q",
+    "lengthMm": 94.7,
+    "minBendRadius": 3.0,
+    "gapFrame": 0.36,
+    "frameNearest": [
+     0.362,
+     [
+      -47.09,
+      12.12,
+      13.9
+     ],
+     [
+      -48.0,
+      13.0,
+      13.9
+     ]
+    ],
+    "gapLid": 0.4,
+    "gapBoards": {
+     "top_7V": 0.3,
+     "mid_5V": 0.3
+    },
+    "maxAbsY": 35.3,
+    "gapPd5991InPack": 0.47,
+    "gapOpenRB": 7.157,
+    "gapAsBuiltPackV18": 0.0,
+    "packPortionNote": "x > -48 runs inside the reprinted pack; as-built V18 contact is the side-wall recess listed in pack_study"
+   }
+  },
+  "wireWireGapMm": {
+   "15V_feed_p|15V_feed_q": 0.03,
+   "15V_link_p|15V_link_q": 0.194,
+   "15V_link_p|15V_feed_q": 0.2,
+   "7V_a|7V_b": 0.4,
+   "7V_b|5V_a": 0.4,
+   "5V_a|5V_b": 0.4,
+   "15V_link_q|15V_feed_q": 0.795,
+   "15V_link_p|15V_feed_p": 1.454,
+   "7V_a|5V_a": 2.6,
+   "7V_b|5V_b": 2.6,
+   "15V_link_q|15V_feed_p": 3.2,
+   "7V_a|5V_b": 4.8,
+   "7V_a|15V_link_p": 5.0,
+   "7V_a|15V_link_q": 5.0,
+   "7V_a|15V_feed_p": 5.0,
+   "7V_a|15V_feed_q": 5.0,
+   "7V_b|15V_link_p": 5.0,
+   "7V_b|15V_link_q": 5.0,
+   "7V_b|15V_feed_p": 5.0,
+   "7V_b|15V_feed_q": 5.0,
+   "5V_a|15V_link_p": 5.0,
+   "5V_a|15V_link_q": 5.0,
+   "5V_a|15V_feed_p": 5.0,
+   "5V_a|15V_feed_q": 5.0,
+   "5V_b|15V_link_p": 5.0,
+   "5V_b|15V_link_q": 5.0,
+   "5V_b|15V_feed_p": 5.0,
+   "5V_b|15V_feed_q": 5.0
+  },
+  "note": "gaps exclude the 1.6 mm inside each terminal clamp; same-pole wires sharing a clamp are compared from 6 mm out; a negative wire-wire gap would be interpenetration (touching insulation is fine)"
+ },
+ "clearancesHOME": {
+  "rear_pack-v18 (as built)": {
+   "boxGapMm": 0.4,
+   "wiresGapMm": 0.0,
+   "note": "G needs the pack 3 mm deeper (pack_study)"
+  },
+  "shell_left": {
+   "module": "neck",
+   "boxGapMm": 2.134,
+   "wiresGapMm": 2.7,
+   "overlapMm3": 0.0
+  },
+  "shell_right": {
+   "module": "neck",
+   "boxGapMm": 2.485,
+   "wiresGapMm": 8.499,
+   "overlapMm3": 0.0
+  },
+  "openrb-board-upright": {
+   "boxGapMm": 7.067,
+   "wiresGapMm": 5.766
+  },
+  "thigh": {
+   "module": "left-leg",
+   "boxGapMm": 11.179,
+   "wiresGapMm": 18.56,
+   "overlapMm3": 0.0
+  },
+  "right_thigh": {
+   "module": "right-leg",
+   "boxGapMm": 11.179,
+   "wiresGapMm": 19.006,
+   "overlapMm3": 0.0
+  },
+  "plate": {
+   "module": "left-leg",
+   "boxGapMm": 11.771,
+   "wiresGapMm": 19.871,
+   "overlapMm3": 0.0
+  },
+  "right_plate": {
+   "module": "right-leg",
+   "boxGapMm": 11.771,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor7": {
+   "module": "left-leg",
+   "boxGapMm": 13.364,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor2": {
+   "module": "right-leg",
+   "boxGapMm": 13.364,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "lower": {
+   "module": "left-leg",
+   "boxGapMm": 18.371,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "right_lower": {
+   "module": "right-leg",
+   "boxGapMm": 18.372,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "ring2": {
+   "module": "right-leg",
+   "boxGapMm": 19.947,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "ring7": {
+   "module": "left-leg",
+   "boxGapMm": 19.948,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor6": {
+   "module": "left-leg",
+   "boxGapMm": 20.0,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor8": {
+   "module": "left-leg",
+   "boxGapMm": 20.0,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor1": {
+   "module": "right-leg",
+   "boxGapMm": 20.0,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  },
+  "motor3": {
+   "module": "right-leg",
+   "boxGapMm": 20.0,
+   "wiresGapMm": 20.0,
+   "overlapMm3": 0.0
+  }
+ },
+ "shellPerWire": {
+  "7V_a": {
+   "shell_left": 19.553,
+   "shell_right": 8.499
+  },
+  "7V_b": {
+   "shell_left": 18.666,
+   "shell_right": 10.699
+  },
+  "5V_a": {
+   "shell_left": 18.005,
+   "shell_right": 12.899
+  },
+  "5V_b": {
+   "shell_left": 17.576,
+   "shell_right": 15.099
+  },
+  "15V_link_p": {
+   "shell_left": 11.658,
+   "shell_right": 20.0
+  },
+  "15V_link_q": {
+   "shell_left": 12.17,
+   "shell_right": 20.0
+  },
+  "15V_feed_p": {
+   "shell_left": 2.7,
+   "shell_right": 19.745
+  },
+  "15V_feed_q": {
+   "shell_left": 2.703,
+   "shell_right": 20.0
+  }
+ },
+ "boardsVsFrame": {
+  "top_7V": {
+   "overlapMm3": 0.145,
+   "gapMm": 0.0
+  },
+  "mid_5V": {
+   "overlapMm3": 0.053,
+   "gapMm": 0.0
+  }
+ },
+ "boardsVsLid": {
+  "top_7V": 0.52,
+  "mid_5V": 0.52
+ }
+}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "status": "PROTOTYPE_FUNCTIONAL_ACCESS_ACCEPTED_WITH_ORDINARY_SUPPORT_REMOVAL",
+  "prototypeOnly": true,
+  "wholeHeadAssemblyAccepted": false,
+  "physicalSupportRemovalVerified": false,
+  "scope": "Actual native toolpaths: 4 OpenRB pilots, 4 Pi pilots, 2 amplifier pilots, 2 speaker pilots, 3 original cap-closure pilots, and 4 separate speaker-ring through-holes per machine. Root owns first-layer/bed/footprint review.",
+  "inspection": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/hole-readback.json",
+    "sha256": "e50f163f3b37e7fec494bb2e1eb4674f3a4d690e8d46c32d3e5b1f5505f30b0b"
+  },
+  "script": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/audit_holes.py",
+    "sha256": "0d5ca8bf6093803944ac53863a3acbfccfe6c1fb731212829bdf87f50293e9ee"
+  },
+  "manifest": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/head-trial.json",
+    "sha256": "6c9cedac11ace220b0dd2b4115d1db4ca6448491312ff8a4da045d85ab8e0112"
+  },
+  "preparation": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/run/preparation.json",
+    "sha256": "355fb2612d6d646ff17ba4944244c7a3035d37249625e4785a3a11b3d9bceb02"
+  },
+  "results": [
+    {
+      "machine": "Bambu",
+      "archive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "6b376d952787356aa94f9668b95a44d2c5ce41c0db00841160fc556f49de4591"
+      },
+      "gcodeSha256": "b47e21ca0d84dfc1902cd4a3a55efd8ca48517d5007364616fcf8a6e1b87af7a",
+      "archiveGcodeMatchesInspectedFile": true,
+      "checkedHoles": 19,
+      "holesWithoutSupportCore": 18,
+      "requiredOrdinaryCleanup": [
+        "Remove the single support arc at the exposed positive-Y lower Pi pilot mouth before fitting the PCB or inserting its screw. Use tweezers or fine pliers from the open cap interior; check the clear mouth by hand, do not force the screw through support."
+      ],
+      "deepBoreSupportBlockageFound": false,
+      "additionalBlockerRequired": false
+    },
+    {
+      "machine": "Elegoo",
+      "archive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "17a980d9f44d54fb80ae79a7f0f1ec9d84ce3ebccc89195ec37cd3fda6654c3a"
+      },
+      "gcodeSha256": "b5f479da15a60d2ba273fcd3fe1113506bd048fa6bcf2a7a009f2c4b42252154",
+      "archiveGcodeMatchesInspectedFile": true,
+      "checkedHoles": 19,
+      "holesWithoutSupportCore": 19,
+      "requiredOrdinaryCleanup": [],
+      "deepBoreSupportBlockageFound": false,
+      "additionalBlockerRequired": false
+    }
+  ],
+  "remediedFailure": {
+    "baselineReadback": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/hole-readback-before-blocker.json",
+      "sha256": "9c0f6ac42bf464849a9ca651446e76e5c0eef17f7e0363e622ac3b39fef6b1e8"
+    },
+    "problem": "15 sampled support core segments in positive-Y upper Pi bore",
+    "repair": "One Bambu-only local non-printing support blocker; printable geometry unchanged",
+    "blocker": {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/pi-positive-y-upper-hole-support-blocker-print.stl",
+      "sha256": "dd8b47d349494ec43e4095f1d21ca9ff1b92737931fb215aa81c30417c863473"
+    },
+    "recheckCoreSegments": 0
+  },
+  "remainingMouthSupport": {
+    "machine": "Bambu",
+    "feature": "pi-pilot-1-1",
+    "gcodeLines": [
+      399985
+    ],
+    "arcSubsegments": 3,
+    "sourceHoleAxisRangeMm": [
+      0.4,
+      4.8
+    ],
+    "supportAxisRangeMm": [
+      4.5838423035320925,
+      4.590077686135782
+    ],
+    "depthFromOpenBoardFacingMouthMm": [
+      0.209922313864218,
+      0.2161576964679075
+    ],
+    "assessment": "One exposed mouth-edge support arc. This is accessible before board installation, rather than a lodged deep-bore fill. Ordinary manual removal is accepted for the print-and-fit prototype; no repeated re-slicing is required."
+  },
+  "supportAccess": "Remove cap cavity/tree supports while the cap is empty, before installing boards, speaker or wiring. The open underside permits ordinary access to board/speaker seats. Clear contact faces and hole mouths by hand; this review does not certify actual printed shrinkage, tapping quality, removal force, or unseen support adhesion.",
+  "boundary": "Does not establish USB cable suitability, GPIO flexible-wire clearance, closed complete head fit, powered operation, or full assembly acceptance. No zero-support claim."
+}

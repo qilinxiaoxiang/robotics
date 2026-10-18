@@ -1,0 +1,206 @@
+{
+  "status": "BASELINE_RECONCILIATION_NOT_PRINT_HANDOFF",
+  "date": "2026-10-08",
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "intent": "One complete color-separated print handoff after current structural repairs converge. Never ask the user to print this incomplete staging directory.",
+  "machineByColor": {
+    "Yellow": "Bambu X1 Carbon / 0.4 mm / Cool Plate / Bambu PLA Basic",
+    "White": "Bambu X1 Carbon / 0.4 mm / Cool Plate / Bambu PLA Basic",
+    "Orange": "Elegoo Centauri Carbon / 0.4 mm / Textured PEI / MicroDuck Generic PLA",
+    "Black": "Elegoo Centauri Carbon / 0.4 mm / Textured PEI / MicroDuck Generic PLA"
+  },
+  "frozenGeometry": [
+    {
+      "id": "09",
+      "key": "speaker_cradle",
+      "name": "Speaker lower perimeter cradle",
+      "quantity": 1,
+      "color": "Orange",
+      "old": "New internal speaker mount",
+      "source": "head-redesign-20261008/curved-head/speaker-cradle-world.stl",
+      "reason": "Retains received speaker by its perimeter with removable keeper.",
+      "group": "audio",
+      "status": "prototype",
+      "printRotationMatrix": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "orientationSource": "gpio-audio-repair/audio-print-components.json"
+    },
+    {
+      "id": "10",
+      "key": "speaker_keeper",
+      "name": "Speaker rear keeper",
+      "quantity": 1,
+      "color": "Orange",
+      "old": "New internal speaker mount",
+      "source": "head-redesign-20261008/curved-head/speaker-keeper-world.stl",
+      "reason": "Retains received speaker by its perimeter with removable keeper.",
+      "group": "audio",
+      "status": "prototype",
+      "printRotationMatrix": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "orientationSource": "gpio-audio-repair/audio-print-components.json"
+    }
+  ],
+  "pendingStructural": [
+    "Reconcile remaining local camera/audio/assembly changes with original GitHub design before freezing any further geometry."
+  ],
+  "excludedExistingAssembled": [
+    "ankles",
+    "feet",
+    "lower links"
+  ],
+  "deliveryRule": "No partial print handoff. Populate final explicit parts and quantities, native slice and inspect all color plates before publishing.",
+  "supportBlockerManifest": "head-redesign-20261008/gpio-audio-repair/jaw-print-blockers/manifest.json",
+  "additionalFastenersUnderDesign": [],
+  "withdrawnGeometry": [
+    {
+      "id": "04",
+      "key": "head_bottom",
+      "name": "Split lower head shell",
+      "quantity": 1,
+      "color": "Yellow",
+      "source": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/head_bottom-split-channel-world.stl",
+      "reason": "Flat-wire passages and separable keyed bearing carrier preserve assembly access.",
+      "group": "neck",
+      "status": "prototype",
+      "orientationSourceKey": "head_bottom",
+      "geometryManifest": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/split-print-manifest.json",
+      "geometryManifestSha256": "f22761a0a21585fa024fa2e64cfd87c445d77fabffff39c74349d920dfcc9136",
+      "withdrawalReason": "Not an established upstream assembly defect. Added to accommodate our unaccepted 11-wire double-loop routing; slot then required a new bearing carrier. User rejected expanding the repair scope on 2026-10-08. Preserve as diagnostic only, exclude from print handoff."
+    },
+    {
+      "id": "12",
+      "key": "head_roll_bearing_carrier",
+      "name": "Keyed passive head-roll bearing carrier",
+      "quantity": 1,
+      "color": "Yellow",
+      "source": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/head_roll_bearing_carrier-split-channel-world.stl",
+      "reason": "Flat-wire passages and separable keyed bearing carrier preserve assembly access.",
+      "group": "neck",
+      "status": "prototype",
+      "orientationSourceKey": "head_bottom",
+      "geometryManifest": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/split-print-manifest.json",
+      "geometryManifestSha256": "f22761a0a21585fa024fa2e64cfd87c445d77fabffff39c74349d920dfcc9136",
+      "withdrawalReason": "Not an established upstream assembly defect. Added to accommodate our unaccepted 11-wire double-loop routing; slot then required a new bearing carrier. User rejected expanding the repair scope on 2026-10-08. Preserve as diagnostic only, exclude from print handoff."
+    },
+    {
+      "id": "05",
+      "key": "jaw_support",
+      "name": "Jaw motor frame with flat-wire channels and locating pocket",
+      "quantity": 1,
+      "color": "Black",
+      "source": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/jaw_support-split-channel-world.stl",
+      "reason": "Flat-wire passages and separable keyed bearing carrier preserve assembly access.",
+      "group": "neck",
+      "status": "prototype",
+      "orientationSourceKey": "jaw_support",
+      "geometryManifest": "head-redesign-20261008/cabling-release-20261008/neck-repair/flat-ribbon-sweep/split-print-manifest.json",
+      "geometryManifestSha256": "f22761a0a21585fa024fa2e64cfd87c445d77fabffff39c74349d920dfcc9136",
+      "printRotationMatrix": [
+        [
+          0,
+          -1,
+          0
+        ],
+        [
+          -1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          -1
+        ]
+      ],
+      "orientationSource": "Original motor-support-coaxial assembly/print corresponding triangles rigid fit <=2.48 micrometres, then native existing black plate Rz\u221290; final shallow locating pocket faces upward.",
+      "withdrawalReason": "Not an established upstream assembly defect. Added to accommodate our unaccepted 11-wire double-loop routing; slot then required a new bearing carrier. User rejected expanding the repair scope on 2026-10-08. Preserve as diagnostic only, exclude from print handoff."
+    },
+    {
+      "id": "01",
+      "key": "jaw_frame",
+      "name": "Split jaw main body",
+      "quantity": 1,
+      "color": "Yellow",
+      "old": "community-4.stl",
+      "source": "head-redesign-20261008/jaw-access/jaw_main-world.stl",
+      "reason": "The one-piece passive bearing traps the assembled motor shaft. The removable cheek allows rigid assembly.",
+      "group": "jaw",
+      "status": "prototype",
+      "withdrawalReason": "Original community support has zero collision in the existing jaw+motor+pad insertion test; our earlier added closed coaxial bearing sleeve causes61.6437mm3 collision. Split cheek and pad relief fix that self-created obstruction, not an established upstream defect. Restore original support/ring assembly before considering new jaw geometry."
+    },
+    {
+      "id": "02",
+      "key": "jaw_passive_cheek",
+      "name": "Removable passive-side jaw cheek",
+      "quantity": 1,
+      "color": "Yellow",
+      "old": "New part; joins 01",
+      "source": "head-redesign-20261008/jaw-access/jaw_passive_cheek-world.stl",
+      "reason": "Retains the original complete coaxial bearing; two M2.5 \u00d7 8 tapping screws close the cheek after the jaw is seated.",
+      "group": "jaw",
+      "status": "prototype",
+      "withdrawalReason": "Original community support has zero collision in the existing jaw+motor+pad insertion test; our earlier added closed coaxial bearing sleeve causes61.6437mm3 collision. Split cheek and pad relief fix that self-created obstruction, not an established upstream defect. Restore original support/ring assembly before considering new jaw geometry."
+    },
+    {
+      "id": "03",
+      "key": "lower_pad",
+      "name": "Lower lip pad with internal access relief",
+      "quantity": 1,
+      "color": "White",
+      "old": "community-42.stl",
+      "source": "head-redesign-20261008/jaw-access/lower_pad_jaw_access-world.stl",
+      "reason": "Provides room for the cheek joints and screwdriver without changing the exposed lip surface.",
+      "group": "jaw",
+      "status": "prototype",
+      "withdrawalReason": "Original community support has zero collision in the existing jaw+motor+pad insertion test; our earlier added closed coaxial bearing sleeve causes61.6437mm3 collision. Split cheek and pad relief fix that self-created obstruction, not an established upstream defect. Restore original support/ring assembly before considering new jaw geometry."
+    },
+    {
+      "id": "11",
+      "key": "neck_pitch",
+      "name": "Head-pitch bracket with even-length screw seats",
+      "quantity": 1,
+      "color": "Black",
+      "old": "community-28.stl",
+      "source": "fastener-review-20261008/neck_pitch-m2x6-seat-world.stl",
+      "reason": "Adds 1 mm under the four ID13 output screw heads for M2 \u00d7 6 tapping screws; clears the four existing thin bore membranes.",
+      "group": "fasteners",
+      "status": "prototype",
+      "withdrawalReason": "Original recess accepts separate OD4/ID2.2/t1 spacers; M2x6 nominal2.10044mm engagement. Original0.2mm hole membranes can be cleared locally. Whole bracket reprint is unnecessary; OD5 loose washers do not fit."
+    }
+  ],
+  "priorSliceBoundary": "All existing four-color preflights are diagnostic only. Yellow jaw/neck and White lower-pad designs have been withdrawn; Black neck_pitch remains under minimal-change review. Do not reuse prior plate archives as delivery."
+}

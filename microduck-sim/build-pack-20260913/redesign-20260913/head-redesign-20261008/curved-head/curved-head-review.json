@@ -1,0 +1,182 @@
+{
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "status": "rigid-curved-head-review-ready",
+  "integrationReady": true,
+  "shell": {
+    "watertightAfterStlReload": true,
+    "connectedBodiesAfterStlReload": 1,
+    "volumeMm3": 30142.799284075285,
+    "boundsWorldMm": [
+      [
+        -30.372861862182617,
+        -45.855560302734375,
+        111.41016387939453
+      ],
+      [
+        92.2900161743164,
+        45.85557174682617,
+        157.4493865966797
+      ]
+    ],
+    "nativeVolumeMm3": 29873.169828363152,
+    "addedMaterialVertexRoofTestCount": 4778,
+    "roofRayMisses": 3,
+    "roofBoundaryMissNearestSurfaceDistancesMm": [
+      4.408948592890351e-07,
+      6.836060773947413e-08,
+      5.36084605746858e-07
+    ],
+    "numericalExteriorComparisonToleranceMm": 0.0001,
+    "maxAddedVertexAboveNativeRoofMm": 0.00019079626126483618,
+    "maxOutsideVertexNearestNativeSurfaceMm": 7.4742861195221415e-06,
+    "stlSimplificationToleranceMm": 3e-05,
+    "outerSurfaceRule": "Exact original curved shell retained, with explicitly declared USB-A-side micro-B receiving opening, rear USB-C service opening, and lower mating-seam relief. Internal bosses are constrained below original roof. No squared replacement or expanded shell.",
+    "railRelief": {
+      "removedVolumeMm3": 165.1921276036713,
+      "boundsWorldMm": [
+        [
+          -30.399999618530273,
+          -45.87965393066406,
+          111.11324310302734
+        ],
+        [
+          86.40190356497793,
+          45.87980270385742,
+          113.01426488567272
+        ]
+      ],
+      "clearancePerSideMm": 0.2
+    },
+    "usbCOpeningRemovedMm3": 333.68955459991093
+  },
+  "closure": {
+    "samples": 161,
+    "stepMm": 0.25,
+    "startOffsetMm": [
+      0,
+      0,
+      40
+    ],
+    "moving": [
+      "head_cap",
+      "openrb",
+      "amplifier",
+      "speaker",
+      "speaker_cradle",
+      "speaker_keeper",
+      "curved_cap_hardware"
+    ],
+    "fixedCount": 85,
+    "peakIntersectionsMm3": {},
+    "report": "populated-cap-assembly.json"
+  },
+  "bench": {
+    "operations": 9,
+    "allInsertionPathsClear": true,
+    "driverCorridors": 8,
+    "allDriverCorridorsClear": true,
+    "wrongLateFasteningNegativeControl": [
+      {
+        "id": "E-openrb-04",
+        "intersectionsMm3": {
+          "speaker": 33.17309973848904
+        }
+      }
+    ],
+    "report": "mount-access-verification.json"
+  },
+  "shellFasteners": [
+    {
+      "id": "E-head_cap_closure-01",
+      "axisIntersectionsFromSeatMm": [
+        14.634502304891631,
+        14.634502305055724,
+        26.1731986768367
+      ],
+      "tappingShaftCapIntersectionMm3": 7.459552108441993,
+      "closedJawNegativeControlMm3": {
+        "jaw_frame": 12.03239485229604,
+        "upper_pad": 5.691471723330628,
+        "lower_pad": 53.84527358052137
+      },
+      "requiredState": "jaw and lower pad opened30deg worldY about[26.1,0,118.6146]; upper pad installed after cap fastening",
+      "driverIntersectionsMm3": {}
+    },
+    {
+      "id": "E-head_cap_closure-02",
+      "axisIntersectionsFromSeatMm": [
+        14.63450230497505,
+        26.1731986768367
+      ],
+      "tappingShaftCapIntersectionMm3": 7.4595521084419945,
+      "closedJawNegativeControlMm3": {
+        "jaw_frame": 11.996113805751799,
+        "upper_pad": 5.6911243994710174,
+        "lower_pad": 53.80524280220197
+      },
+      "requiredState": "jaw and lower pad opened30deg worldY about[26.1,0,118.6146]; upper pad installed after cap fastening",
+      "driverIntersectionsMm3": {}
+    },
+    {
+      "id": "E-head_cap_closure-03",
+      "axisIntersectionsFromSeatMm": [
+        22.41027828580971
+      ],
+      "tappingShaftCapIntersectionMm3": 7.4595372142334,
+      "closedJawNegativeControlMm3": {},
+      "requiredState": "jaw and lower pad opened30deg worldY about[26.1,0,118.6146]; upper pad installed after cap fastening",
+      "driverIntersectionsMm3": {}
+    }
+  ],
+  "boardDecision": {
+    "inside": "First-generation Pi Zero W with soldered40pin header, conservative receiving envelopes; actual mating female housing and plug dimensions remain to be measured",
+    "bench": "Pi3 ModelB V1.2: old Zero pose rejected, not claimed to fit curved shell"
+  },
+  "assemblyOrder": [
+    "Detached cap: load four M2 nuts from accessible side windows (rear nuts from +localX).",
+    "Seat OpenRB from below and tighten four M2x6 before speaker is installed.",
+    "Seat and fasten prewired amplifier with two M2.5x8.",
+    "Seat speaker rear keeper, speaker, then lower cradle; fasten two M2.5x8.",
+    "Assemble camera/retainer onto detached face and mount populated Zero W per camera-retainer procedure.",
+    "Route and inspect full harness before closure; flexible-route gate is independent and not passed by rigid cap scan.",
+    "Bring populated cap down40mm along-Z; digital rigid scan uses161poses at0.25mm.",
+    "Open jaw30deg and leave upper pad off; fasten the three existing shell screws. Fit upper pad afterwards.",
+    "Insert USB-C after shell closure along measured receiving-envelope axis; actual complete SC0727+4472 cable route is separate."
+  ],
+  "remaining": [
+    "FFC route and movement through closure (camera-retainer/cabling owner)",
+    "Full USB cable connection and strain relief beyond local plug insertion",
+    "Actual borrowed Zero W header/female-housing dimensions and owned USB mouldings",
+    "Printed fit, tapping torque, boss strength, acoustic performance and live commissioning"
+  ],
+  "digitalRigidAssemblyAccepted": true,
+  "manufacturingAccepted": false,
+  "physicalFitVerified": false,
+  "sourceHashes": {
+    "curved-head/amplifier-curved-layout-world.stl": "7053963fa94dfa93d6a75caefd9f1a7fc4b2c8d2638e4e80a534b9e9d784546c",
+    "curved-head/cap-eight-screw-heads-four-nuts-world.stl": "5caa65db471683b1f3854e1f69971efc981997c68337749afe77a45ef38c1234",
+    "curved-head/curved-cap-final-candidate-world.stl": "fd812e02beb1b97c1f75905e801ece41732cf0fd4ae3c701018bc03c7ebedba8",
+    "curved-head/openrb-curved-layout-world.stl": "88a5808b033d679554ef181536e7f829bcd6c29925a32d7a466d35ce6a2684b0",
+    "curved-head/speaker-cradle-world.stl": "37a399b6f34ea2a2cd615fa1c00ecfe26e1e5faa286a96992328fbe3d595309e",
+    "curved-head/speaker-curved-layout-world.stl": "55c2d93fced870ae2efb69544262c3ef5766c27a6993c41d4c74c453009525b9",
+    "curved-head/speaker-keeper-world.stl": "94149b35d1c94914e3f2009c31dd8ddb5fa85d3a4804ec844c1ce880cb5bbe71",
+    "curved-head/zero-w-populated-receiving-union-world.stl": "488e890a77cfd5a0f2b13b33827ad0d44f02f32459ef33df3e9af0c2da5b6524",
+    "curved-head/build_curved_layout.py": "7b030aa9a18f03f8a5ea244b2db6b6383564d30f02dd8c2bfb71e55ad8441c9e",
+    "curved-head/build_mounts_and_paths.py": "558c154b08810e9454c20b28b29d711d1425cd5c53a25e97d9c1ae590ca58e35",
+    "curved-head/build_audio_mounts.py": "7e09e1a918b7513f4bd678bf367ff96ce2490a116d47dddc555c2ac0f4764cf1",
+    "curved-head/finalize_cap.py": "c5d8e1f439883ac5a7917161fa5785f934cfb3a61041ca2923a094569453a676",
+    "curved-head/verify_populated_cap.py": "00adff7215b2c5fb3d82354562202cd67d6cfad8d1d6bb26c5cb64adb250b38a",
+    "curved-head/verify_mount_access.py": "0e61406519717f351deab2178bb9e9b4afbfc3898b01c59700bad2ae9830f97e",
+    "curved-head/check_cap_fasteners.py": "0e2e8ecf39ad0bd296cd10f9f719e0c7cd864b55e013c797074813660040b68c",
+    "curved-head/populated-cap-assembly.json": "5b24b4fab9253589a66ac3f660e87c3f0033842b7453418083d6b07f90a7b01d",
+    "curved-head/mount-access-verification.json": "c86a2e62b48265474752cd8c308d89de3da6f94377c366ffed2becf3ec9c9a0d",
+    "curved-head/cap-fastener-investigation.json": "a51160664c36e1cf5e136d8fcd3b23625bbcdd7f93c18bbf5c0b7db4578fbf5b",
+    "camera-retainer/face-with-camera-anchors-world.stl": "4ede158b5867e463cf92071422db8252b6287b7b0c451c07b4b10b1fb205e97b",
+    "camera-retainer/camera-shifted-reference-world.stl": "f9f04c89bfa87da9fe76d9be41e364531a12bcd062c8a5d9a31d52bab384d511",
+    "camera-retainer/camera-retainer-world.stl": "df9c549f8b91cb71eceef9097f383112b0ba9e45e01d478b126d8d75a20034bc",
+    "camera-retainer/camera-all-six-screw-envelopes-world.stl": "825d4ce0b8f3ed429d493c9fdccc47ae761a34673fd29e4cd77de2d6504b9e48"
+  }
+}

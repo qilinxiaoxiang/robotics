@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroDuck 台架联调</title>
+<style>
+:root{color-scheme:light;--bg:#f6f5f1;--card:#fff;--ink:#1f2328;--muted:#5b636b;--line:#e3e1da;--soft:#f1efe9;
+--accent:#0f6e56;--accentbg:#e3f4ee;--mac:#2457c5;--macbg:#e8effd;--pi:#0f6e56;--pibg:#e3f4ee;--hand:#8a5a00;--handbg:#fbf1dc;
+--warn:#9a3412;--warnbg:#fdeee6;--ok:#2f6b1f;--okbg:#eaf4e2;
+--hdr:104px;--bar:0px}
+/* --hdr: measured height of the sticky header; --bar: height of the step bar when it is a sticky horizontal bar (steps 10-13 and phones), else 0 */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+input,select,textarea,button{font-size:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Helvetica Neue",sans-serif}
+a{color:var(--mac)}
+code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+header.top{position:sticky;top:0;z-index:20;background:rgba(246,245,241,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topin{max-width:1160px;margin:0 auto;padding:12px 16px 0}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand b{font-size:20px;font-weight:650}
+.brand span{color:var(--muted);font-size:14px}
+.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;border:0;background:none;padding:10px 14px;font:inherit;font-size:16px;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+main{max-width:1160px;margin:0 auto;padding:20px 16px 60px}
+.tab{display:none}.tab.on{display:block}
+h1{font-size:26px;line-height:1.3;margin:0 0 8px}
+h2{font-size:22px;line-height:1.35;margin:0 0 6px}
+h3{font-size:18px;margin:22px 0 8px}
+p{margin:8px 0}
+.muted{color:var(--muted)}
+.lead{font-size:17px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+/* steps layout */
+.stepsgrid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}
+.steplist{position:sticky;top:calc(var(--hdr) + 8px);max-height:calc(100vh - var(--hdr) - 16px);overflow-y:auto;scrollbar-width:thin;list-style:none;margin:0;padding:2px}
+.steplist li{margin:0}
+.steplist button{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:10px;font:inherit;font-size:15px;line-height:1.4;color:var(--ink);cursor:pointer}
+.steplist button:hover{background:var(--soft)}
+.steplist button.on{background:var(--card);box-shadow:0 0 0 1px var(--line)}
+.steplist .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--muted)}
+.steplist .done .n{background:var(--accent);color:#fff}
+.steplist .opt{color:var(--muted);font-size:13px}
+.step{display:none}.step.on{display:block}
+.step,.subsec{scroll-margin-top:calc(var(--hdr) + var(--bar) + 12px)}
+/* visible anchor id on each step and section heading; click copies the link */
+.idtag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:400;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:0 6px;line-height:20px;vertical-align:middle;margin-left:8px;white-space:nowrap;cursor:pointer}
+.idtag:hover{color:var(--ink);border-color:var(--muted)}
+.idtag.copied{color:var(--accent);border-color:var(--accent);background:var(--accentbg)}
+.stephead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.stepno{color:var(--muted);font-size:14px;font-weight:600;letter-spacing:.02em}
+.donebox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px 6px 10px;font-size:15px;cursor:pointer;user-select:none}
+.donebox input{width:20px;height:20px;accent-color:var(--accent);margin:0}
+.goal{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px;margin:12px 0}
+.goal b{display:block;font-size:14px;color:var(--accent);margin-bottom:2px}
+.why{font-size:15px;color:var(--muted);margin:8px 0 0}
+.sec{margin-top:22px}
+.sec>h3{margin:0 0 10px;font-size:17px;display:flex;align-items:center;gap:8px}
+.sec>h3 i{font-style:normal;font-size:13px;font-weight:600;color:var(--muted);background:var(--soft);border-radius:6px;padding:1px 8px}
+.need{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.chip{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.chip img{width:56px;height:56px;object-fit:contain;background:#fff;border-radius:8px;flex:none}
+.chip b{display:block;font-size:15px;line-height:1.35}
+.chip small{display:block;color:var(--muted);font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.chip .nodk{font-style:normal}
+ol.acts{list-style:none;margin:0;padding:0;counter-reset:a}
+ol.acts>li{counter-increment:a;position:relative;padding:14px 0 14px 44px;border-top:1px solid var(--line)}
+ol.acts>li:first-child{border-top:0}
+ol.acts>li::before{content:counter(a);position:absolute;left:4px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:14px;font-weight:600;display:grid;place-items:center}
+.where{display:inline-block;font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin-right:6px;vertical-align:1px;white-space:nowrap}
+.where.mac{background:var(--macbg);color:var(--mac)}
+.where.pi{background:var(--pibg);color:var(--pi)}
+.where.hand{background:var(--handbg);color:var(--hand)}
+.cmd{position:relative;display:flex;align-items:center;gap:8px;background:#1f2328;color:#f4f4f2;border-radius:10px;padding:10px 10px 10px 14px;margin:8px 0;max-width:100%}
+.cmd code{flex:1;min-width:0;overflow-x:auto;white-space:pre;font-size:15px;line-height:1.5;scrollbar-width:thin}
+.cmd button{flex:none;font:inherit;font-size:14px;border:1px solid #4b5157;background:#2c3136;color:#f4f4f2;border-radius:8px;padding:5px 10px;cursor:pointer}
+.cmd .tagw{position:absolute;top:-10px;left:12px;font-size:12px;font-weight:600;border-radius:6px;padding:0 7px;line-height:20px}
+.cmd .tagw.mac{background:var(--mac);color:#fff}.cmd .tagw.pi{background:var(--pi);color:#fff}
+.expect{border:1px dashed #c9c6bc;border-radius:10px;padding:8px 12px;margin:8px 0;background:#fbfaf7}
+.expect>b{display:block;font-size:13px;color:var(--muted);font-weight:600}
+.expect pre{margin:4px 0 0;font-size:14px;line-height:1.5;white-space:pre;overflow-x:auto}
+.pass{background:var(--okbg);border:1px solid #cfe4c0;border-radius:10px;padding:12px 16px}
+.pass b{color:var(--ok)}
+.warnbox{background:var(--warnbg);border:1px solid #f3cdb9;border-radius:10px;padding:12px 16px;margin:10px 0}
+.warnbox b{color:var(--warn)}
+.note{background:var(--soft);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+.photoslot{border:2px dashed var(--line);border-radius:10px;padding:18px 14px;color:var(--muted);text-align:center;font-size:15px;margin:10px 0}
+details.trouble{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 16px;margin-top:12px}
+details.trouble summary{cursor:pointer;padding:12px 0;font-weight:600}
+details.trouble ul{margin:0 0 12px;padding-left:20px}
+details.trouble li{margin:6px 0}
+.stepnav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.stepnav button{font:inherit;font-size:16px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 16px;cursor:pointer;color:var(--ink)}
+.stepnav button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.stepnav button[disabled]{visibility:hidden}
+/* photo overlay */
+.ovwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+figure.pic{margin:0 0 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}figure.pic img{display:block;width:100%;height:auto;border-radius:8px}figure.pic figcaption{font-size:15px;font-weight:600;margin:8px 2px 0}
+figure.ov{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+figure.ov .ovimg{position:relative;line-height:0;width:fit-content;max-width:100%;margin:0 auto}
+figure.ov .ovimg>img{max-width:100%;max-height:440px;width:auto;height:auto;border-radius:8px;display:block}
+.ovimg{position:relative;line-height:0}
+figure.ov .ovimg.crop,.ovimg.crop{width:100%;overflow:hidden;border-radius:8px}
+.ovimg.crop>img{position:absolute;max-width:none!important;max-height:none!important;border-radius:0!important;height:auto}
+.pinscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px}
+.pinscroll .ovimg{min-width:720px}
+.scrollhint{display:none;font-size:13px;color:var(--muted);margin-top:6px}
+@media (max-width:760px){.scrollhint{display:block}}
+
+.ovimg .dot{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#d7263d;color:#fff;font:600 13px/24px -apple-system,sans-serif;text-align:center;box-shadow:0 0 0 2px #fff,0 1px 4px rgba(0,0,0,.35);cursor:pointer}
+.ovimg .leaders{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.ovimg .anchor{position:absolute;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px #fff}
+.ovimg .dot.small{width:18px;height:18px;font-size:11px;line-height:18px}
+figure.ov figcaption{font-size:15px;font-weight:600;margin:8px 2px 0}
+figure.ov ol{margin:6px 0 0;padding-left:0;list-style:none;font-size:15px;line-height:1.5}
+figure.ov ol li{display:flex;gap:8px;margin:4px 0}
+figure.ov ol li i{flex:none;width:22px;height:22px;border-radius:50%;color:#fff;font:600 12px/22px -apple-system,sans-serif;text-align:center;font-style:normal;margin-top:1px}
+figure.ov .src{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:6px;overflow-wrap:anywhere}
+/* pin map */
+.pinpick{font-size:15px;min-height:26px;margin-top:6px}
+/* records */
+.rec{display:grid;gap:10px;margin-top:6px}
+.rec label{display:grid;gap:4px;font-size:15px}
+.rec input,.rec textarea,.rec select{font:inherit;font-size:16px;padding:9px 12px;border:1px solid #c9c6bc;border-radius:10px;background:#fff;color:var(--ink);width:100%;min-width:0}
+.rec .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* overview */
+.flow{display:grid;gap:10px}
+.link{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.end{display:flex;align-items:center;gap:10px;min-width:0}
+.end img{width:52px;height:52px;object-fit:contain;flex:none;background:#fff;border-radius:8px}
+.end b{font-size:15px;line-height:1.35;display:block}
+.end small{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.via{text-align:center;font-size:13px;color:var(--muted);line-height:1.35;max-width:150px}
+.via em{display:block;font-style:normal;font-size:20px;color:var(--ink)}
+.link .stepref{grid-column:1/-1;font-size:13px;color:var(--muted);margin-top:-2px}
+.link.skip{opacity:.7;border-style:dashed}
+/* parts tab */
+.pgroup{margin-top:24px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.pcard img{width:100%;height:190px;object-fit:contain;background:#fff;border-radius:8px}
+.pcard h4{margin:4px 0 0;font-size:17px}
+.pcard .en{font-size:14px;color:var(--muted);line-height:1.4}
+.pcard dl,#dlgbody dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:4px 0 0;font-size:14px}
+.pcard dt,#dlgbody dt{color:var(--muted)}
+.pcard dd,#dlgbody dd{margin:0;overflow-wrap:anywhere}
+#dlgbody figure.ov{margin-top:12px}
+#dlgbody h2{margin-right:70px}
+.pcard .use{font-size:15px}
+.pcard button{align-self:flex-start;font:inherit;font-size:15px;border:1px solid var(--line);background:var(--soft);border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+dialog{border:0;border-radius:14px;padding:0;max-width:min(760px,calc(100vw - 24px));width:100%;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,20,20,.45)}
+dialog .dlgin{padding:14px;max-height:85vh;overflow:auto}
+dialog .close{float:right;font:inherit;font-size:15px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;cursor:pointer}
+/* head fit */
+.seg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.seg>span{font-size:15px;color:var(--muted);min-width:64px}
+.seg button{font:inherit;font-size:16px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.svgbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;margin-top:10px}
+.svgbox svg{display:block;width:100%;height:auto;max-width:520px;margin:0 auto}
+.headwrap{display:grid;grid-template-columns:minmax(0,540px) minmax(0,1fr);gap:16px;align-items:center;margin-top:10px}
+.headwrap .svgbox{margin-top:0}
+.verdict{display:grid;gap:4px;font-size:15px;color:var(--muted)}
+.verdict b{font-size:18px;color:var(--ink)}
+.verdict strong{font-size:20px}.verdict strong.bad{color:#A32D2D}.verdict strong.good{color:var(--ok)}
+.verdict .hatchnote{color:#A32D2D}
+.measlist{margin:10px 0 0;padding-left:20px}
+@media (max-width:700px){.headwrap{grid-template-columns:minmax(0,1fr)}}
+.readouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+.ro{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.ro span{display:block;font-size:13px;color:var(--muted);line-height:1.35}
+.ro b{display:block;font-size:22px}
+.ro.ok{background:var(--okbg);border-color:#cfe4c0}.ro.bad{background:var(--warnbg);border-color:#f3cdb9}
+/* cad */
+.cadsteps{counter-reset:c;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.cadsteps li{counter-increment:c;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 52px;position:relative}
+.cadsteps li::before{content:counter(c);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:600}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btnrow button{font:inherit;font-size:16px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;cursor:pointer;color:var(--ink)}
+.btnrow button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+textarea#exportbox{width:100%;min-height:220px;font:16px/1.5 ui-monospace,Menlo,monospace;border:1px solid #c9c6bc;border-radius:10px;padding:10px}
+footer{max-width:1160px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+/*WK_CSS*/
+/* steps 10-12: big wiring drawings at the full content width */
+.stepsgrid.wide{grid-template-columns:minmax(0,1fr)}
+.stepsgrid.wide .steplist{position:sticky;top:var(--hdr);z-index:15;max-height:none;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:8px 16px;scrollbar-width:none;background:rgba(246,245,241,.96);backdrop-filter:blur(6px)}
+.stepsgrid.wide .steplist::-webkit-scrollbar{display:none}
+.stepsgrid.wide .steplist li{flex:none}
+.stepsgrid.wide .steplist button{width:auto;white-space:nowrap;background:var(--card);box-shadow:0 0 0 1px var(--line);padding:7px 12px}
+.stepsgrid.wide .steplist button.on{box-shadow:0 0 0 2px var(--accent)}
+.stepsgrid.wide .steplist .opt{display:none}
+.bigwire{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.bwbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bwbar span{font-size:15px;min-width:0;flex:1 1 260px}
+.fullbtn{flex:none;font:inherit;font-size:16px;font-weight:600;border:1px solid var(--accent);background:var(--accentbg);color:var(--accent);border-radius:10px;padding:8px 14px;cursor:pointer}
+.wkbig .wk-caption{font-size:18px}
+.wkbig .wk-info,.wkfull .wk-info{font-size:16px}
+.setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.stepsgrid.wide .ovwrap{grid-template-columns:repeat(auto-fit,minmax(280px,540px))}
+.setcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.setcard b{display:block;font-size:16px;margin-bottom:4px}
+.setcard p{margin:0;font-size:15px}
+.budget{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0}
+.bud{border-radius:12px;padding:12px 14px;border:1px solid var(--line);background:var(--card)}
+.bud b{display:block;font-size:18px;margin-bottom:4px}
+.bud span{display:block}
+.bud em{display:block;font-style:normal;font-size:15px;color:var(--muted);margin-top:6px}
+.bud.ok{background:var(--okbg);border-color:#cfe4c0}.bud.ok b{color:var(--ok)}
+.bud.hold{background:var(--handbg);border-color:#efd9a8}.bud.hold b{color:var(--hand)}
+.bud.no{background:var(--warnbg);border-color:#f3cdb9}.bud.no b{color:var(--warn)}
+ol.sockets{list-style:none;margin:10px 0;padding:0;display:grid;gap:6px;max-width:620px}
+ol.sockets li{display:grid;grid-template-columns:40px minmax(90px,auto) minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+ol.sockets li.top{display:block;background:none;border:0;padding:0 4px;color:var(--muted);font-size:15px}
+ol.sockets b{width:32px;height:32px;border-radius:8px;background:#23272b;color:#fff;display:grid;place-items:center;font-size:16px}
+ol.sockets span{font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px}
+ol.sockets em{font-style:normal;color:var(--muted);overflow-wrap:anywhere}
+ol.sockets li.used{border-color:var(--c);box-shadow:inset 6px 0 0 var(--c)}
+ol.sockets li.used em{color:var(--ink);font-weight:600}
+ol.chain{list-style:none;margin:12px 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center}
+ol.chain li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:15px;line-height:1.4}
+ol.chain li.arrow{background:none;border:0;padding:0 2px;color:var(--muted)}
+ol.chain li.hot{border-color:#f3cdb9;background:var(--warnbg)}
+ol.chain li.five{border-color:#cfe4c0;background:var(--okbg)}
+.subsec{margin-top:30px;padding-top:18px;border-top:2px solid var(--line)}
+.subsec>h2{font-size:21px}
+.checks{background:var(--okbg);border:1px solid #cfe4c0;border-radius:10px;padding:12px 16px;margin-top:12px}
+.checks>b{color:var(--ok)}
+.checks ul{margin:6px 0 0;padding-left:20px}
+.checks li{margin:4px 0}
+.cmd .tagw.ide{background:var(--hand);color:#fff}
+/* full-screen drawing */
+dialog.wkfull{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:#fff;color:var(--ink)}
+dialog.wkfull[open]{display:flex;flex-direction:column}
+dialog.wkfull::backdrop{background:#fff}
+.wkf-head{flex:none;display:flex;align-items:center;gap:12px;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));border-bottom:1px solid var(--line);background:#fff}
+.wkf-head h2{flex:1;min-width:0;margin:0;font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+.wkf-close{flex:none;font:inherit;font-size:16px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 14px;cursor:pointer}
+.wkf-body{flex:1;min-height:0;overflow:auto;padding:10px max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+html.wkfull-open,html.wkfull-open body{overflow:hidden}
+@media (max-width:900px){
+ .stepsgrid{grid-template-columns:minmax(0,1fr)}
+ .steplist{position:sticky;top:var(--hdr);z-index:15;max-height:none;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;margin:0 -16px;padding:8px 16px;scrollbar-width:none;background:rgba(246,245,241,.96);backdrop-filter:blur(6px)}
+ .steplist::-webkit-scrollbar{display:none}
+ .steplist li{flex:none}
+ .steplist button{width:auto;white-space:nowrap;background:var(--card);box-shadow:0 0 0 1px var(--line);padding:7px 12px}
+ .steplist button.on{box-shadow:0 0 0 2px var(--accent)}
+ .steplist .opt{display:none}
+}
+@media (max-width:600px){
+ .cmd code{white-space:normal;font-size:14px}
+ .cmd code .tok{white-space:nowrap}
+ .cmd code .tok.long{white-space:normal}
+ .pcard img{height:150px}
+ h1{font-size:22px}h2{font-size:20px}
+ .link{grid-template-columns:1fr}
+ .via{max-width:none;text-align:left;padding-left:62px}
+ .via em{display:inline;margin-right:6px}
+ .readouts{grid-template-columns:1fr}
+ .rec .two{grid-template-columns:1fr}
+ ol.acts>li{padding-left:38px}
+ ol.acts>li::before{left:0}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+  <div class="brand"><b>MicroDuck 台架联调</b><span>第 1 天 · 2026 年 10 月 10 日</span></div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="steps" class="on">今天的步骤</button>
+    <button data-tab="parts">元器件</button>
+    <button data-tab="head">头部间隙</button>
+    <button data-tab="cad">下一步：CAD</button>
+    <button data-tab="log">记录</button>
+  </nav>
+</div></header>
+
+<main>
+<!-- ================= STEPS ================= -->
+<div class="tab on" id="tab-steps">
+<div class="stepsgrid">
+<ol class="steplist" id="steplist"></ol>
+<div id="steps">
+
+<section class="step" id="s0" data-title="先看全局">
+  <div class="stepno">第 0 步 · 5 分钟</div>
+  <h1>今天要接通什么</h1>
+  <div class="goal"><b>做完是这样</b>每个零件单独接在桌上，一个一个确认能用：Mac 能远程登录 Pi；摄像头拍出一张照片；Pi 读到姿态传感器（IMU）；Mac 通过 OpenRB 转动舵机；插着杜邦线的 Pi 装进头壳，看盖不盖得上。</div>
+  <div class="sec"><h3>桌上的连接</h3>
+    <div class="flow" id="flow"></div>
+  </div>
+  <div class="sec"><h3>先备好</h3>
+    <ul>
+      <li>Mac、一张 8 GB 以上的 microSD 卡、读卡器</li>
+      <li>手机充电头和一根 micro-USB 线，给 Pi 供电</li>
+      <li>一根能传数据的 USB-C 线，接 Mac 和 OpenRB（OMX 套件里那根，或手机数据线）</li>
+      <li>万用表、小一字螺丝刀</li>
+      <li>第 6 步：22 AWG 红线、黑线各一段，约 10 cm</li>
+      <li>第 8 步：V1.6 头壳和下壳、两根母对母杜邦线、卡尺</li>
+    </ul>
+  </div>
+</section>
+
+<section class="step" id="s1" data-title="给 Pi 装系统">
+  <div class="stepno">第 1 步 · 15 分钟 · 在 Mac 上做</div>
+  <h1>给 Pi 的 microSD 卡装系统</h1>
+  <div class="goal"><b>做完是这样</b>microSD 卡里装好系统，Wi-Fi 和远程登录也设好了。Pi 开机自己上网，不用接显示器和键盘。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="pi_zero_w"></div></div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where mac">Mac</span>装好并打开 <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener">Raspberry Pi Imager</a>。microSD 卡插进读卡器，接到 Mac。</li>
+    <li><span class="where mac">Mac</span>Imager 依次问三项：
+      <ul>
+        <li><b>Device</b>：Raspberry Pi Zero</li>
+        <li><b>OS</b>：Raspberry Pi OS Lite (32-bit)。第一层没有就点 Raspberry Pi OS (other) 进去找。</li>
+        <li><b>Storage</b>：你的 microSD 卡。卡会被清空。</li>
+      </ul></li>
+    <li><span class="where mac">Mac</span>Customisation 里填这几项：
+      <ul>
+        <li><b>Hostname</b>：<code>microduck</code></li>
+        <li><b>Localisation</b>：时区选 New York</li>
+        <li><b>User</b>：用户名 <code>duck</code>，密码自己定，记下来。用了别的用户名就填在下面，页面上的命令会跟着换：
+          <div class="rec" style="max-width:320px"><label>你在 Imager 里填的用户名<input id="uname" value="duck" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div></li>
+        <li><b>Wi-Fi</b>：家里 Wi-Fi 的名称和密码。只能用 2.4 GHz 的网络。</li>
+        <li><b>Remote access</b>：打开 SSH，选密码登录。</li>
+      </ul></li>
+    <li><span class="where mac">Mac</span>点 Write，等写完、校验完，拔下读卡器。</li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>Imager 显示写入完成，没有报错。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li>写入失败：换个读卡器或换张卡再写。</li>
+    <li>第 2 步时 Pi 连不上网：回来重写一次卡，点 Write 前确认上面的设置都还在。Imager 2.0 有时会丢设置。</li>
+  </ul></details>
+</section>
+
+<section class="step" id="s2" data-title="第一次登录 Pi">
+  <div class="stepno">第 2 步 · 10 分钟</div>
+  <h1>给 Pi 通电，从 Mac 远程登录</h1>
+  <div class="goal"><b>做完是这样</b>Mac 的终端窗口登录到了 Pi 上。后面所有 Pi 上的命令都在这个窗口里打。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="pi_zero_w"></div></div>
+  <div class="sec"><h3>Pi 上的口</h3>
+    <div class="ovwrap"><figure class="ov" data-part="pi_zero_w" data-marks='[["microSD","microSD 卡槽：触点朝板子，推到底"],["PWR IN","PWR IN：插充电器"],["USB","USB：不用"],["ACT","ACT 绿灯：亮或闪就是在工作"]]' data-cap="Pi Zero W 正面，排针在上边"></figure></div>
+  </div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where hand">手上</span>写好的 microSD 卡插进 Pi 左端的卡槽（图上 1）。</li>
+    <li><span class="where hand">手上</span>充电器插 <b>PWR IN</b>（图上 2，靠边角的那个口）。等 2 到 3 分钟，第一次开机慢。</li>
+    <li><span class="where mac">Mac</span>打开 Terminal（⌘ + 空格，输入 Terminal，回车），确认 Pi 上网了：
+      <div class="cmd" data-where="mac"><code>ping -c 3 microduck.local</code></div>
+      <div class="expect"><b>应该看到三行回复，类似</b><pre>64 bytes from 192.168.1.37: icmp_seq=0 ttl=64 time=8.1 ms</pre></div></li>
+    <li><span class="where mac">Mac</span>登录：
+      <div class="cmd" data-where="mac"><code>ssh {{u}}@microduck.local</code></div>
+      问 <code>Are you sure you want to continue connecting</code> 时输入 <code>yes</code> 回车，再输入密码回车。输密码时屏幕上什么都不显示。</li>
+    <li><span class="where pi">Pi</span>命令行开头变成 <code>{{u}}@microduck:~ $</code>，就是在 Pi 上了。运行：
+      <div class="cmd" data-where="pi"><code>uname -m</code></div>
+      <div class="expect"><b>应该看到</b><pre>armv6l</pre></div></li>
+  </ol></div>
+  <div class="note">开头是你 Mac 的名字，就在 Mac 上；是 <code>{{u}}@microduck</code>，就在 Pi 上。输入 <code>exit</code> 回车回到 Mac。</div>
+  <div class="pass"><b>成功：</b>ssh 登录上了，<code>uname -m</code> 显示 <code>armv6l</code>。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li><code>ping</code> 显示 <code>cannot resolve microduck.local</code>：再等 2 分钟重试。还不行，到路由器管理页面看有没有叫 microduck 的设备。</li>
+    <li>ACT 绿灯完全不亮：卡没插好，或者充电器插到了 USB 口。</li>
+    <li>一直连不上：多半是 Wi-Fi 是 5 GHz 的，或者密码填错了。回第 1 步重写卡。</li>
+  </ul></details>
+</section>
+
+<section class="step" id="s3" data-title="摄像头">
+  <div class="stepno">第 3 步 · 15 分钟</div>
+  <h1>接摄像头，拍一张照片</h1>
+  <div class="goal"><b>做完是这样</b>摄像头用 SC1892 排线接在 Pi 上，Pi 拍了一张照片，在 Mac 上打开是清楚的。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="pi_zero_w,camera_module_3_wide,camera_cable_sc1892"></div></div>
+  <div class="sec"><h3>接口在哪</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="pi_zero_w" data-marks='[["CAMERA 22-pin","摄像头口：右端，和 microSD 卡槽相对"]]' data-cap="Pi"></figure>
+      <figure class="ov" data-part="camera_cable_sc1892" data-marks='[["22-pin, 0.5 mm (narrow end)","窄头：插 Pi"],["15-pin, 1 mm (wide end)","宽头：插摄像头"]]' data-cap="SC1892 排线：一头窄，一头宽"></figure>
+      <figure class="ov" data-part="camera_module_3_wide" data-marks='[["CSI 15-pin FPC","摄像头背面的口"],["15-15 cable","自带的这根线拆掉，换成 SC1892"]]' data-cap="Camera Module 3 Wide"></figure>
+    </div>
+  </div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where pi">Pi</span>关机：
+      <div class="cmd" data-where="pi"><code>sudo poweroff</code></div>
+      绿灯灭了（约 20 秒）再拔电源。</li>
+    <li><span class="where hand">手上</span>摄像头口上的黑色卡扣往外拉约 1 mm，抽出摄像头自带的排线。</li>
+    <li><span class="where hand">手上</span>SC1892 的宽头插摄像头：<b>金属触点朝摄像头的电路板</b>，插到底，推回卡扣。</li>
+    <li><span class="where hand">手上</span>窄头插 Pi 右端的摄像头口：拉出卡扣，<b>金属触点朝下，朝 Pi 的电路板</b>，插到底，推回卡扣。这边卡扣很细，用指甲推。</li>
+    <li><span class="where hand">手上</span>接电源，等 1 分钟。<span class="where mac">Mac</span>重新 <code>ssh {{u}}@microduck.local</code> 登录。</li>
+    <li><span class="where pi">Pi</span>找摄像头：
+      <div class="cmd" data-where="pi"><code>rpicam-hello --list-cameras</code></div>
+      <div class="expect"><b>应该看到一行写着 imx708_wide，类似</b><pre>Available cameras
+-----------------
+0 : imx708_wide [4608x2592 10-bit RGGB] (/base/soc/i2c0mux/i2c@1/imx708@1a)</pre></div>
+      显示 <code>command not found</code> 就先装：
+      <div class="cmd" data-where="pi"><code>sudo apt install -y rpicam-apps-lite</code></div></li>
+    <li><span class="where pi">Pi</span>拍一张：
+      <div class="cmd" data-where="pi"><code>rpicam-still -n --width 2304 --height 1296 -o test.jpg</code></div></li>
+    <li><span class="where mac">Mac</span>在 Mac 上新开一个终端窗口（⌘ + N），运行这两条，照片拷到桌面并打开：
+      <div class="cmd" data-where="mac"><code>scp {{u}}@microduck.local:test.jpg ~/Desktop/</code></div>
+      <div class="cmd" data-where="mac"><code>open ~/Desktop/test.jpg</code></div></li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>列出 imx708_wide，Mac 上的照片清楚。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li><code>No cameras available</code>：多半是排线反了或没插到底。关机，查两头触点朝向和卡扣，再试。</li>
+    <li>反复查过还是找不到：可能一代 Zero W 带不动这个摄像头（官方没说能用）。把命令输出拍下来发给我。</li>
+    <li>照片全黑或全白：镜头盖或保护膜没撕。</li>
+  </ul></details>
+</section>
+
+<section class="step" id="s4" data-title="姿态传感器 IMU">
+  <div class="stepno">第 4 步 · 15 分钟</div>
+  <h1>接姿态传感器（IMU），让 Pi 读到它</h1>
+  <div class="goal"><b>做完是这样</b>IMU 用一根 4397 线接在 Pi 的 1、7、9、13 号针上，Pi 在 3 号 I2C 总线上扫到 IMU 的地址 4a，并读出倾斜角度。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="bno085_4754,stemma_qt_cable_4397,pi_zero_w"></div>
+    <p class="muted">4397 线一头是白色小插头，另一头是红、黑、蓝、黄四个黑色小插孔。不用别的线。</p></div>
+  <div class="sec"><h3>接线图 <i>点"逐根接线"一根一根看</i></h3>
+    <div class="wkhost" data-bench="imu"></div>
+  </div>
+  <div class="sec"><h3>Pi 上插哪四根针</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="pi_zero_w" data-crop="0.04,0.04,0.44,0.50" data-marks='[["pin:1","红：1 号针","#d7263d"],["pin:7","蓝：7 号针","#1f6fd1"],["pin:9","黑：9 号针","#1d1d1f"],["pin:13","黄：13 号针","#c99a00"],["microSD","microSD 卡这一头","#8a9199"]]' data-cap="Pi 的左端"></figure>
+      <figure class="ov" data-part="bno085_4754" data-marks='[["STEMMA QT left","白色小插座：左右两个都能用，扫不到 4a 就换另一个"]]' data-cap="IMU"></figure>
+    </div>
+    <p>用<b>靠板子中间的那一排</b>（不是靠板边那排），从 microSD 卡那一头数：<b>第 1 根插红，第 4 根插蓝，第 5 根插黑，第 7 根插黄；第 2、3、6 根空着</b>。翻到背面看，1 号针的焊点是方的。</p>
+    <p class="muted">为什么不插 3、5 号针：那是 Pi 自带的 I2C，它处理不好 BNO085 的时钟拉伸（clock stretching，传感器忙时按住时钟线让 Pi 等一下），见 <a href="https://learn.adafruit.com/raspberry-pi-i2c-clock-stretching-fixes/example-issue" target="_blank" rel="noopener">Adafruit 的说明</a>。所以 7 号针（GPIO4）当 SDA、13 号针（GPIO27）当 SCL，由软件做一条 3 号 I2C 总线。</p>
+  </div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where pi">Pi</span>关机：<div class="cmd" data-where="pi"><code>sudo poweroff</code></div>绿灯灭了再拔电源。</li>
+    <li><span class="where hand">手上</span>4397 线的白色小插头插进 IMU 的白色插座。插不进就翻过来。</li>
+    <li><span class="where hand">手上</span>四个插孔按上面数的插到 Pi 上：红 1 号，蓝 7 号，黑 9 号，黄 13 号。</li>
+    <li><span class="where hand">手上</span>接电源，IMU 上的小绿灯亮。<span class="where mac">Mac</span>重新 ssh 登录。</li>
+    <li><span class="where pi">Pi</span>打开 I2C：
+      <div class="cmd" data-where="pi"><code>sudo raspi-config nonint do_i2c 0</code></div></li>
+    <li><span class="where pi">Pi</span>在 7、13 号针上加一条软件 I2C 总线（3 号总线）：
+      <div class="cmd" data-where="pi"><code>echo 'dtoverlay=i2c-gpio,i2c_gpio_sda=4,i2c_gpio_scl=27,bus=3,i2c_gpio_delay_us=2' | sudo tee -a /boot/firmware/config.txt</code></div>
+      应该看到引号里的那一行原样打出来。已经加过就不要再加。然后重启，1 分钟后重新 ssh 登录：
+      <div class="cmd" data-where="pi"><code>sudo reboot</code></div></li>
+    <li><span class="where pi">Pi</span>装扫描工具（装过会直接提示）：
+      <div class="cmd" data-where="pi"><code>sudo apt install -y i2c-tools</code></div></li>
+    <li><span class="where pi">Pi</span>扫描 3 号总线（不是 1 号）：
+      <div class="cmd" data-where="pi"><code>sudo i2cdetect -y -r 3</code></div>
+      <div class="expect"><b>应该看到一张表，40 那一行的 a 列出现 4a</b><pre>     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:                         -- -- -- -- -- -- -- --
+...
+40: -- -- -- -- -- -- -- -- -- -- 4a -- -- -- -- --
+...</pre></div>
+      出现 4b 也对。<code>i2cdetect -y 1</code> 扫出来是空的，这是正常的。</li>
+    <li><span class="where mac">Mac</span>把读数程序传到 Pi：
+      <div class="cmd" data-where="mac"><code>scp ~/code/robotics/microduck-sim/guide/firmware/pi/imu_read.py {{u}}@microduck.local:</code></div></li>
+    <li><span class="where pi">Pi</span>装读数用的库（第一次要几分钟）：
+      <div class="cmd" data-where="pi"><code>python3 -m venv --system-site-packages ~/duck-venv</code></div>
+      <div class="cmd" data-where="pi"><code>~/duck-venv/bin/pip install adafruit-circuitpython-bno08x adafruit-extended-bus</code></div></li>
+    <li><span class="where pi">Pi</span>读 10 秒，同时用手把 IMU 慢慢歪一歪：
+      <div class="cmd" data-where="pi"><code>~/duck-venv/bin/python imu_read.py 10</code></div>
+      <div class="expect"><b>每半秒一行，类似</b><pre>roll     1.2  pitch    -0.8  yaw   153.4   acc  0.12 -0.20  9.79 m/s2</pre></div>
+      歪 IMU 时 roll 或 pitch 跟着变；放平不动时三个 acc 数平方和开根号约等于 9.8。</li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>3 号总线的表里有 4a 或 4b，imu_read.py 的角度跟着手动。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li>表里全是 <code>--</code>，IMU 绿灯不亮：红线或黑线插错了针。</li>
+    <li>表里全是 <code>--</code>，绿灯亮：蓝线和黄线插反了，或插偏了一根。再数一遍：蓝 7 号，黄 13 号。</li>
+    <li>针都对，还是全是 <code>--</code>：把白色小插头换到 IMU 的另一个白色插座。这台机器人上第一个插座的 SCL 一直没接通。</li>
+    <li>想单独查一根线通不通：先把这根针设成下拉，再读它。蓝线（7 号针）：
+      <div class="cmd" data-where="pi"><code>pinctrl set 4 ip pd</code></div>
+      <div class="cmd" data-where="pi"><code>pinctrl lev 4</code></div>
+      黄线（13 号针）把 4 换成 27。读到 1，说明线连到了 IMU 板上的上拉电阻，是通的；读到 0 就是没接通。查完 <code>sudo reboot</code>，让这两根针回到 3 号总线。</li>
+    <li>提示 <code>Could not open file /dev/i2c-3</code>：第 6 条那行没加上，或者加完没重启。<code>grep i2c-gpio /boot/firmware/config.txt</code> 看一下，再 <code>sudo reboot</code>。</li>
+  </ul></details>
+  <div class="sec"><h3>记录</h3><div class="rec"><label>扫到的地址<input data-r="imu_addr" placeholder="例如 4a"></label></div></div>
+</section>
+
+<section class="step" id="s5" data-title="OpenRB 和一个舵机">
+  <div class="stepno">第 5 步 · 20 分钟</div>
+  <h1>用 Mac 通过 OpenRB 转动一个舵机</h1>
+  <div class="goal"><b>做完是这样</b>一个舵机用三芯舵机线插在 OpenRB 上，OpenRB 用 USB-C 线接 Mac。Mac 上的 DYNAMIXEL Wizard 扫到舵机，能让它转。只靠 USB 供电，所以一次只接一个舵机。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="openrb_150,xl330_m288_t"></div></div>
+  <div class="sec"><h3>OpenRB 上看哪里</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="openrb_150" data-marks='[["J1","USB-C 口：接 Mac"],["pin:JP1-3","+5V 这一侧：今天跳线帽套这边","#0f6e56"],["pin:JP1-1","VIN(DXL) 这一侧：今天不用","#8a9199"],["J8","舵机口：J8 到 J11 哪个都行"],["PWR","绿灯：通电"]]' data-cap="OpenRB-150 正面，USB-C 口朝上"></figure>
+      <figure class="ov" data-part="xl330_m288_t" data-marks='[["Left TTL port","舵机线插口：左右两个哪个都行"]]' data-cap="XL330 舵机背面"></figure>
+    </div>
+  </div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where mac">Mac</span>装 <a href="https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/" target="_blank" rel="noopener">DYNAMIXEL Wizard 2.0</a> 的 macOS 版。macOS 不让打开时，到 System Settings → Privacy &amp; Security，点 Open Anyway。</li>
+    <li><span class="where hand">手上</span>看 OpenRB 下方的三根针（上图 2 和 3 之间）：跳线帽（小塑料帽）要套住<b>中间那根和 +5V 那根</b>。不在这边就拔下来换过去。</li>
+    <li><span class="where hand">手上</span>用套件里的三芯舵机线，一头插舵机，一头插 OpenRB 任意一个舵机口。插头只有一个方向插得进。</li>
+    <li><span class="where hand">手上</span>USB-C 线连 Mac 和 OpenRB，OpenRB 绿灯亮。</li>
+    <li><span class="where mac">Mac</span>Wizard 菜单 Options，Scan 设置：Protocol 2.0；Port 选带 <code>usbmodem</code> 的；Baudrate 全勾；ID 0 到 252。点 OK，再点工具栏的放大镜（Scan）。</li>
+    <li><span class="where mac">Mac</span>左边出现一行，类似 <code>[ID:001] XL330-M288</code>。点它，右边找 Present Voltage，约 50，就是 5.0 V。</li>
+    <li><span class="where mac">Mac</span>打开 Torque，把右边的目标角度转盘拖一点，舵机跟着转。再关掉 Torque。</li>
+    <li><span class="where hand">手上</span>拔下这个舵机，贴一小块胶带写上 ID。换下一个，重复第 5 到 7 条。</li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>每个舵机都扫得到，电压约 5.0 V，开扭矩能转。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li>Port 里没有 usbmodem：这根 USB-C 线只能充电，换一根。</li>
+    <li>有 Port 但扫不到：查跳线帽在不在 +5V 一侧，舵机线两头插到底没有。</li>
+    <li>还不行：按 <a href="https://emanual.robotis.com/docs/en/parts/controller/openrb-150/" target="_blank" rel="noopener">ROBOTIS 的 OpenRB-150 说明</a>，用 Arduino IDE 重新上传 usb_to_dynamixel。</li>
+  </ul></details>
+  <div class="sec"><h3>记录</h3><div class="rec"><label>扫到的舵机 ID（用逗号分开）<input data-r="servo_ids" placeholder="例如 1, 2, 3"></label></div></div>
+</section>
+
+<section class="step" id="s6" data-title="给整条舵机链供电" data-opt="可选">
+  <div class="stepno">第 6 步 · 可选 · 20 分钟</div>
+  <h1>用 5991 取电板给 OpenRB 供电</h1>
+  <div class="goal"><b>做完是这样</b>小米充电器插 5991 取电板，两根 22 AWG 线把 5 V 送到 OpenRB 的螺丝端子，多个舵机一起用也够电。只试一个舵机就跳过这步。这只是桌上试舵机；机器人最后改用 15 V 加两块降压板（舵机 7 V，Pi 5 V），见第 12 步。</div>
+  <div class="warnbox"><b>插充电器前：</b>5991 上只把 <b>5V</b> 那一个开关拨到 ON，其余 5 个关着。6 个全关时它输出 20 V，会烧掉舵机（最高 6 V）。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="usb_pd_5991,openrb_150"></div>
+    <p class="muted">另外：小米充电器和它原装的 USB-C 线；22 AWG 红线、黑线各一段，约 10 cm，两头各剥 6 mm；万用表；小一字螺丝刀。</p></div>
+  <div class="sec"><h3>5991 和 OpenRB 上看哪里</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="usb_pd_5991" data-marks='[["USB-C","USB-C：插小米充电器"],["5V / 6","5V 开关：拨 ON","#0f6e56"],["20V / 1","其余 5 个：关","#8a9199"],["+","+ 端子：红线"],["-","− 端子：黑线"]]' data-cap="Adafruit 5991"></figure>
+      <figure class="ov" data-part="openrb_150" data-crop="0,0.55,1,1" data-marks='[["+","+ 端子：红线"],["-","− 端子：黑线"],["pin:JP1-1","跳线帽换到 VIN(DXL) 这一侧","#0f6e56"]]' data-cap="OpenRB-150 下半部分"></figure>
+    </div></div>
+  <div class="sec"><h3>接线图</h3><div class="wkhost" data-bench="power"></div></div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where hand">手上</span>先拨开关，什么都不接。5991 的 USB-C 口朝上，开关块左边印着 ON。5V 那一格推到左边（ON），其余 5 格推到右边。</li>
+    <li><span class="where hand">手上</span>插上充电器。万用表打直流电压档，红表笔碰 5991 的 +，黑表笔碰 −。读数要在 4.9 到 5.2 V。不对就拔掉充电器，重查开关。读数对也先拔掉充电器。</li>
+    <li><span class="where hand">手上</span>拧松端子螺丝，红线一头拧进 5991 的 +，另一头拧进 OpenRB 的 +；黑线同样接两边的 −。拧紧后拉一下，不脱。</li>
+    <li><span class="where hand">手上</span>OpenRB 的跳线帽换到 <b>VIN(DXL)</b> 一侧：套住中间那根和 VIN(DXL) 那根。</li>
+    <li><span class="where hand">手上</span>插上充电器，量 OpenRB 的 + 和 −，还是 4.9 到 5.2 V。再接舵机，USB-C 线接 Mac，照第 5 步扫描。</li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>两处都量到约 5 V，Wizard 里舵机电压约 5.0 V。</div>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li>5991 量到的不是 5 V：开关拨错，或者充电器不支持 USB PD。小米原装充电器支持。</li>
+    <li>OpenRB 上量到负数：+ 和 − 接反了。马上拔充电器，对调两根线。</li>
+  </ul></details>
+  <div class="sec"><h3>记录</h3><div class="rec two"><label>5991 输出电压（V）<input data-r="pd_volts" inputmode="decimal" placeholder="例如 5.05"></label><label>OpenRB 端子电压（V）<input data-r="rb_volts" inputmode="decimal" placeholder="例如 5.03"></label></div></div>
+</section>
+
+<section class="step" id="s7" data-title="功放和喇叭：先认零件">
+  <div class="stepno">第 7 步 · 2 分钟</div>
+  <h1>功放和喇叭：先认一下，第 13 步再接</h1>
+  <div class="goal"><b>做完是这样</b>认出功放下排的 7 个小孔、功放上的两个螺丝端子，和喇叭背面的 + − 两个焊点。今天不焊。</div>
+  <div class="sec"><h3>零件</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="max98357a_3006" data-marks='[["-","喇叭 − 线拧在这里"],["+","喇叭 + 线拧在这里"]]' data-cap="功放 MAX98357A：下排 7 个孔现在是空的"></figure>
+      <figure class="ov" data-part="speaker_cms_30204_18sp" data-marks='[["+","+：要焊一根线"],["-","−：要焊一根线"]]' data-cap="喇叭 CMS-30204-18SP 背面"></figure>
+    </div>
+    <p>第 13 步做这些：功放下排其中 5 个孔直接焊线，线的另一头是杜邦母头，插 Pi；GAIN 和 SD 两个孔空着，不焊电阻，音量上限由 Pi 的软件设；喇叭两个焊点各焊一根短线，拧进功放的螺丝端子。做法见 <a href="#s13">第 13 步</a>。</p></div>
+</section>
+
+<section class="step" id="s8" data-title="头壳试装：盖不盖得上">
+  <div class="stepno">第 8 步 · 10 分钟</div>
+  <h1>头壳试装：插着杜邦线，头壳盖不盖得上</h1>
+  <div class="goal"><b>做完是这样</b>Pi 装在 V1.6 头壳里，排针上插着两根杜邦线，你知道头壳和下壳能不能合上。合不上的话，量了缝宽、拍了照。杜邦线的黑色插头可能会顶到下壳里固定摄像头的螺丝。</div>
+  <div class="sec"><h3>要用的东西</h3><ul>
+    <li>打印好的 V1.6 头壳（上半，装 Pi）和下壳（下半，装摄像头）</li>
+    <li>Pi Zero W</li>
+    <li>两根母对母杜邦线（两头都是黑色小插孔）</li>
+    <li>卡尺</li></ul></div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where hand">手上</span>Pi 拧到头壳里的四个小圆柱上，和正式装的位置一样。</li>
+    <li><span class="where hand">手上</span>两根杜邦线插到 Pi 的 <b>2 号针</b>和 <b>5 号针</b>上，另一头垂着。从 microSD 卡那头数：2 号针是靠板边那排的第 1 根，5 号针是靠中间那排的第 3 根。</li>
+    <li><span class="where hand">手上</span>下壳放桌上，头壳按装配方向对准，竖直慢慢往下盖。碰到东西就停，不要压。</li>
+    <li><span class="where hand">手上</span>看两个壳之间的缝：
+      <ul><li><b>合上了，没有缝</b>：记"能合上"，这步结束。</li>
+      <li><b>合不上</b>：保持不动，用卡尺从外面量缝最宽处差几毫米。再从缝里看是什么顶住了，手机拍一张。</li></ul></li>
+  </ol></div>
+  <div class="sec"><h3>记录</h3><div class="rec">
+    <label>能不能合上<input data-r="closes" placeholder="能合上 / 合不上"></label>
+    <label>合不上时，接缝最宽处差多少（mm）<input data-r="seam_gap" inputmode="decimal" placeholder="例如 4.5"></label>
+    <label>是什么顶住了<input data-r="first_touch" placeholder="例如 黑色插头顶到右边固定摄像头的螺丝"></label></div>
+    <p class="muted">照片发给我。</p></div>
+</section>
+
+<section class="step" id="s9" data-title="收尾">
+  <div class="stepno">第 9 步 · 5 分钟</div>
+  <h1>收尾：导出记录，认一下电源件</h1>
+  <div class="goal"><b>做完是这样</b>到"记录"页导出今天的结果，发给我。</div>
+  <div class="sec"><h3>机器人上的电源件：今天不接，第 12 步再拧</h3>
+    <p>路线：USB-C 充电器 → 桌上的 5991 取电板（拨到 5 V）→ 两根红黑线进背包 → OpenRB 的螺丝端子；同一对螺丝上再夹两根杜邦线去 Pi 的 2、6 号针。全程不焊。</p>
+    <div class="ovwrap">
+      <figure class="ov" data-part="usb_pd_5991" data-marks='[["5V / 6","只开这一个开关：5V","#0f6e56"],["+","+ 螺丝：红线","#d7263d"],["-","− 螺丝：黑线","#1d1d1f"]]' data-cap="Adafruit 5991：放桌上"></figure>
+      <figure class="ov" data-part="openrb_150" data-crop="0,0.55,1,1" data-marks='[["+","+ 螺丝：红线和红杜邦线","#d7263d"],["-","− 螺丝：黑线和黑杜邦线","#1d1d1f"],["pin:JP1-1","跳线帽套 VIN(DXL) 这边","#0f6e56"]]' data-cap="OpenRB 下半部分：在背包里"></figure>
+    </div></div>
+</section>
+
+<section class="step" id="s10" data-title="Mac 用 USB 直连 OpenRB 标定舵机">
+  <div class="stepno">第 10 步 · 30 分钟</div>
+  <h1>Mac 用一根 USB-C 线直连 OpenRB，标定舵机</h1>
+  <div class="goal"><b>做完是这样</b>Mac 只用一根 USB-C 线连 OpenRB，供电和发命令都靠它。DYNAMIXEL Wizard 扫到全部舵机，记下每个舵机的 ID 和位置读数。舵机全程不承重。</div>
+  <div class="sec"><h3>需要</h3><div class="need" data-parts="openrb_150,xl330_m288_t"></div>
+    <p class="muted">另外：一根能传数据的 USB-C 对 USB-C 线；Mac 上装好 DYNAMIXEL Wizard 2.0 和 Arduino IDE 2。</p></div>
+  <div class="warnbox"><b>USB 最多给 500 mA。</b>超了 OpenRB 会复位，所有舵机一下全软。机器人这时靠舵机撑着，就会塌下来。</div>
+  <div class="sec"><h3>USB 供电能做什么</h3>
+    <div class="budget">
+      <div class="bud ok"><b>可以</b><span>扫 ID、改 ID 和波特率、读每个关节的位置、关节不承重时小角度转一下。</span><em>15 个舵机静止一共约 0.26 A。</em></div>
+      <div class="bud hold"><b>要托着</b><span>让它站一下：先用手托住或吊起来，再开扭矩，手一直不松。</span><em>站着时腿上的舵机一直出力，USB 撑不住整机。</em></div>
+      <div class="bud no"><b>不行</b><span>走路。</span><em>走路约 2 A，是 USB 上限的 4 倍。</em></div>
+    </div></div>
+  <div class="sec"><h3>Wizard 扫描设置</h3>
+    <div class="setgrid">
+      <div class="setcard"><b>Options 里这样填</b><p>Protocol 2.0；Port 选带 usbmodem 的；Baudrate 全勾（新 XL330 是 57600，按组装指南改过的是 1 Mbps）；ID 0 到 252。</p></div>
+    </div></div>
+  <div class="sec"><h3>OpenRB 上看哪里</h3>
+    <div class="ovwrap">
+      <figure class="ov" data-part="openrb_150" data-marks='[["J1","J1：USB-C，接 Mac"],["PWR","PWR 绿灯：通电"],["F1","F1：USB 保险丝，500 mA","#9a3412"],["pin:JP1-3","+5V 一侧：今天跳线帽套这边","#0f6e56"],["pin:JP1-1","VIN(DXL) 一侧：今天不用","#8a9199"],["J11","舵机口 J11"],["J9","舵机口 J9"],["J8","舵机口 J8"],["J10","舵机口 J10。6 到 9 哪个口都行"]]' data-cap="OpenRB-150 正面，USB-C 口朝上"></figure>
+      <figure class="ov" data-part="xl330_m288_t" data-marks='[["Left TTL port","舵机线插口：两个一样，另一个串下一个舵机"]]' data-cap="XL330 舵机背面"></figure>
+    </div></div>
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where hand">手上</span>先不插线。看 JP1（上图 4 和 5 之间的三根针）：跳线帽套住中间那根和 +5V 那根（上图 4 这一侧）。不在就用镊子换过去。J8 到 J11 四个舵机口是连通的，插哪个都行。</li>
+    <li><span class="where mac">Mac</span>OpenRB 里要是 usb_to_dynamixel 这个程序。传过第 11 步的 openrb_uart_bridge 的话，Mac 一个舵机都扫不到。不确定就重传，装过的部分跳过：
+      <ul>
+        <li>打开 Arduino IDE 2，菜单 Arduino IDE → Settings，在 Additional boards manager URLs 里粘贴这一行，点 OK：
+          <div class="cmd" data-where="ide"><code>https://raw.githubusercontent.com/ROBOTIS-GIT/OpenRB-150/master/package_openrb_index.json</code></div></li>
+        <li>左边栏 Boards Manager 搜 OpenRB-150，点 Install；Library Manager 搜 Dynamixel2Arduino，点 Install。</li>
+        <li>USB-C 线连 Mac 和 OpenRB。Tools → Board 选 OpenRB-150；Tools → Port 选带 usbmodem 的。</li>
+        <li>File → Examples，在 OpenRB-150 那一栏打开 usb_to_dynamixel，点左上角的 Upload（向右的箭头）。</li>
+      </ul>
+      <div class="expect"><b>窗口下方应该提示</b><pre>Done uploading.</pre></div>
+      以后传过第 11 步的程序，再想用 Mac 直连舵机，就重做这一条。</li>
+    <li><span class="where hand">手上</span>三芯舵机线把舵机一个接一个串起来，插任意一个舵机口（上图 6 到 9）。插头只有一个方向插得进。USB-C 线一头插 Mac，一头插 OpenRB 的 J1（上图 1），PWR 绿灯（上图 2）亮。</li>
+    <li><span class="where mac">Mac</span>打开 DYNAMIXEL Wizard 2.0，菜单 Options 里按上面的扫描设置填好，点 OK，再点工具栏的放大镜（Scan）。
+      <div class="expect"><b>应该看到</b>左边列表里每个舵机一行，类似 <code>[ID:011] XL330-M288</code>。</div></li>
+    <li><span class="where mac">Mac</span>点一个舵机，右边找 Present Voltage，约 50，就是 5.0 V。Torque 保持关闭，用手慢慢转这个关节，Present Position 跟着变。记下要用的读数。</li>
+    <li><span class="where mac">Mac</span>改 ID 或波特率时，<b>一次只接一个舵机</b>：新 XL330 都是 ID 1、57600 bps，两个同 ID 的舵机在一条线上会互相干扰。设成：ID 按下面的对照，Protocol 2.0，波特率 1 Mbps，Return Delay Time 0。</li>
+    <li><span class="where hand">手上</span>想让它站一下：先用手托住身体或把它吊起来，再在 Wizard 里打开腿上舵机的 Torque。手一直托着，看完马上关掉 Torque。</li>
+  </ol></div>
+  <div class="pass"><b>成功：</b>每个舵机都扫得到，Present Voltage 约 5.0 V，全程 OpenRB 没复位，舵机没突然全软。</div>
+  <details class="trouble"><summary>舵机 ID 对照（和 Pi 上 scan_bus.py 用的一样）</summary><ul>
+    <li>右腿：1 踝 pitch，2 膝 pitch，3 髋 pitch，4 髋 roll，5 髋 yaw</li>
+    <li>左腿：6 踝 pitch，7 膝 pitch，8 髋 pitch，9 髋 roll，10 髋 yaw</li>
+    <li>头和脖子：11 头 pitch（俯仰），12 脖子 pitch，13 头 yaw（左右转），14 头 roll（左右歪），15 嘴</li>
+  </ul></details>
+  <details class="trouble"><summary>不成功时</summary><ul>
+    <li>有 usbmodem，但一个舵机都扫不到：OpenRB 里多半是第 11 步的程序，重做第 2 条。再查跳线帽在不在 +5V 一侧。</li>
+    <li>扫描或转动时 Port 突然消失、舵机全软：OpenRB 复位了，电流超过 500 mA。关掉所有 Torque，少让几个舵机同时出力。</li>
+    <li>Port 里没有 usbmodem：这根线只能充电，换一根能传数据的。</li>
+  </ul></details>
+  <div class="sec"><h3>记录</h3><div class="rec two"><label>扫到的舵机 ID（用逗号分开）<input data-r="usb_ids" placeholder="例如 1, 2, 3 … 15"></label><label>USB 供电时的 Present Voltage（V）<input data-r="usb_volts" inputmode="decimal" placeholder="例如 5.0"></label></div></div>
+</section>
+
+<section class="step" id="s11" data-title="OpenRB 和 Pi 之间焊两根线" data-wide="1">
+  <div class="stepno">第 11 步 · 焊接 · 舵机标定做完后再做</div>
+  <h1>OpenRB 和 Pi 之间焊两根线</h1>
+  <div class="goal"><b>做完是这样</b>两根线，一头焊在 OpenRB 的两个小孔里，另一头是杜邦插头，插在 Pi 的 8 号和 10 号针上。以后 Pi 通过这两根线控制舵机。</div>
+
+  <div class="sec"><h3>用什么线</h3>
+    <p><b>母对母杜邦线</b>（两头都是黑色小插孔的那种），一根绿、一根白；没有这两个颜色就用别的，记住哪根当绿线、哪根当白线。每根要 <b>{{UART_MM}} mm</b> 长。杜邦线一般只有 200 或 300 mm，所以每根用两条接起来，做法在下面第 2 条。</p>
+    <p class="muted">工具：烙铁、焊锡、剥线钳、斜口钳、电工胶带、万用表。孔里还焊着之前的座子的话，再拿吸锡带。</p>
+  </div>
+
+  <div class="sec"><h3>OpenRB 上焊哪两个孔</h3>
+    <div class="ovwrap"><figure class="ov" data-part="openrb_150" data-crop="0.2,0.64,0.8,0.84" data-marks='[["pin:J12-1","G：不用","#1d1d1f"],["pin:J12-2","V：不用","#8a9199"],["pin:J12-3","Rx：焊绿线","#1f9d55"],["pin:J12-4","Tx：焊白线","#9aa3ab"]]' data-cap="OpenRB 正面，USB-C 口朝上。板子中下部这一排 4 个小孔"></figure></div>
+    <p>USB-C 口朝上放，板子中下部有一排 4 个小孔，旁边印着 <b>Tx Rx V G</b>。只用 <b>Rx</b> 和 <b>Tx</b> 两个孔，V 和 G 不碰。</p>
+  </div>
+
+  <div class="sec"><h3>Pi 上插哪两根针</h3>
+    <div class="ovwrap"><figure class="ov" data-part="pi_zero_w" data-crop="0.04,0.02,0.48,0.55" data-marks='[["pin:8","8 号针：绿线","#1f9d55"],["pin:10","10 号针：白线","#9aa3ab"],["microSD","microSD 卡这一头","#2457c5"]]' data-cap="Pi 的左端"></figure></div>
+    <p>靠板边的那一排针，从 microSD 卡那一头数：<b>第 4 根是 8 号针，第 5 根是 10 号针</b>。</p>
+  </div>
+
+  <div class="sec"><h3>步骤</h3>
+  <ol class="acts">
+    <li><span class="where hand">手上</span>孔里还焊着座子的话，先拆：斜口钳剪掉塑料壳，烙铁从背面加热一根针，同时用镊子从正面把针拔出来，4 根逐根拔。再用吸锡带把 Rx、Tx 两个孔里的锡吸干净。</li>
+    <li><span class="where hand">手上</span>做线：拿两条绿色杜邦线，各剪掉一头的插头，剥 5 mm，两个线头拧在一起焊上，缠三圈电工胶带。从剩下的那个插头量起，量到 {{UART_MM}} mm 剪断，剪口剥 3 mm。白线同样做一根。</li>
+    <li><span class="where hand">手上</span>焊：绿线的剥口从正面（有元件的那面）插进 Rx 孔，白线插进 Tx 孔，翻到背面焊好，剪掉露出来的线头。</li>
+    <li><span class="where hand">手上</span>插：绿线的插头插 Pi 8 号针，白线的插头插 10 号针。在两个插头后面各贴一条胶带，写上 8 和 10。</li>
+    <li><span class="where mac">Mac</span>给 OpenRB 换程序：OpenRB 用 USB 线接 Mac，在 Mac 终端运行
+      <div class="cmd" data-where="mac"><code>open -a "Arduino IDE" ~/code/robotics/microduck-sim/guide/firmware/openrb_uart_bridge/openrb_uart_bridge.ino</code></div>
+      Arduino IDE 打开后：Tools → Board 选 OpenRB-150，Port 选带 usbmodem 的那个，点 Upload。
+      <div class="expect"><b>窗口下方出现</b><pre>Done uploading.</pre></div></li>
+  </ol></div>
+
+  <div class="checks"><b>检查（万用表蜂鸣档）：</b><ul>
+    <li>Rx 孔和 Tx 孔之间不响。</li>
+    <li>绿线插头的金属口碰 Rx 孔的焊点，响；白线插头碰 Tx 孔，响。</li>
+  </ul></div>
+
+  <div class="sec"><h3>以后怎么确认通了</h3>
+    <p>等组装指南里 <a href="MICRODUCK-BUILD.html#pi-config" target="_blank" rel="noopener">Set up the Pi software</a> 那一步做完，在 Pi 上运行：</p>
+    <div class="cmd" data-where="pi"><code>python3 scan_bus.py</code></div>
+    <div class="expect"><b>最后一行应该是</b><pre>15/15 servos answered</pre></div>
+  </div>
+  <details class="trouble"><summary>扫不到舵机时</summary><ul>
+    <li>先把 Pi 上的两个插头对调一下再试。接反了不会坏任何东西。</li>
+    <li>Pi 和 OpenRB 要插在同一台 Mac 上供电。Pi 用别的充电器的话，再加一根公对母杜邦线：公头插 OpenRB 右边那排插孔、从 USB-C 那头数第 4 个孔，母头插 Pi 14 号针（靠板边那排，从 microSD 卡那头数第 7 根）。</li>
+    <li>运行 scan_bus.py 时 OpenRB 上的橙灯不闪：程序没传上，重做第 5 条。</li>
+    <li>想回到第 10 步用 Dynamixel Wizard：给 OpenRB 重新上传 usb_to_dynamixel。</li>
+  </ul></details>
+</section>
+
+<section class="step" id="s12" data-title="给 OpenRB 和 Pi 接电源" data-wide="1">
+  <div class="stepno">第 12 步 · 不用焊 · 分五段</div>
+  <h1>给 OpenRB 和 Pi 接电源：15 V 进，7 V 给舵机，5 V 给 Pi</h1>
+  <div class="goal"><b>做完是这样</b>充电器 → USB-C 线 → 5991 取电板（拨到 15 V）→ 两块 XL4015 降压板：#1 调到 7.40 V（就是“7 V 线”），接 OpenRB 的螺丝端子，所有舵机经 OpenRB 的舵机口吃这路电；#2 调到 5.00 V，接 Pi 的 2、6 号针。三块板都装在机器人背后的<b>转换盒</b>里，盒子的前板就是背包的后盖。从背后看：最上层 #1，中间层 #2，最下层 5991。落到桌上的只有两根线：5991 的 USB-C 电源线（从盒子左边、也就是机器人左边低处的窗口出来）和 OpenRB 的 USB 数据线（从背包底部出来，接 Mac）。断电就拔 USB-C 线。</div>
+  <div class="warnbox"><b>安全：15 V 和 7 V 绝不能碰到 Pi 的针，Pi 只吃 5 V。</b>每块 XL4015 都先在输出什么都不接的时候用万用表量好，再接东西。没调过的降压板可能直接输出接近 15 V。</div>
+  <div class="note"><b>为什么是 7.4 V（2026-10-15 起，原来是 6.80 V）：</b>我们用的 Pollen 走路和站立策略，是在舵机电压 6.5 到 8.2 V 之间训练的；Pollen 自己的机器人，舵机直接接 7.2 V 电池，Shutdown 设成 52。XL330 出厂的 Max Voltage Limit 是 7.0 V（地址 32，值 70），出厂 Shutdown 53（第 0 位开着）时超过 7.0 V 舵机会自己断扭矩。现在 15 个舵机的 Shutdown（地址 63）都写成了 <b>52</b>（set_shutdown.py，15/15 读回）：超过 7.0 V 只亮“输入电压”标志，不断扭矩；过载、过热、电冲击照样断。所以 #1 调到 <b>7.40 V</b>（7.35 到 7.45 V 都行）：这就是以后背包里 2S 锂电池的标称电压，台上和电池给舵机的电一样。仿真里按实测的 7.87° 前倾：6.8 V 站得住但往后漂 8 cm，7.4 V 站得住，8.0 V 站得住但往前漂 8.7 cm。ROBOTIS 手册给 XL330 写的是 3.7 到 6.0 V，这里是照训练和 Pollen 的做法来。</div>
+  <div class="sec"><h3>用什么</h3><ul>
+    <li><b>充电器</b>：要能给 15 V 3 A（45 W）。你的小米 67 W 可以（5、9、15、20 V）。再加一根 3 A 的 USB-C 线。</li>
+    <li><b>Adafruit 5991 取电板</b>（DigiKey 1528-5991-ND），第 6 步用过的那块。</li>
+    <li><b>XL4015 降压板 2 块</b>：另外两套 OMX-AI 套件里的 DC converter，第三块留在 OMX-F 机械臂上。这两块的端子里拧着 ROBOTIS 原配的线（两头是 JST EH 插头，螺丝下是压线头），先拆下来，跟套件放一起。</li>
+    <li><b>22 AWG 红黑实心线</b>（社团那盒 Adafruit 的）三对，每对红黑剪一样长：15 V 进线（5991 → #2）每根 <b>105 mm</b>；15 V 跨接线（#2 → #1）每根 <b>105 mm</b>；7 V 线（#1 → OpenRB）每根 <b>125 mm</b>。长度是这样算的：按组装指南 3D 模型里的走线（包括窗口外的 U 形弯）量出路径，每个螺丝端子那头再加 15 mm，取整到 5 mm。这三对都是固定不动的短线，所以用实心线；会动或拖在外面的线才用多股线。</li>
+    <li><b>杜邦线</b> 4 根，30 cm 的：公对母 2 根、母对母 2 根。红的两根接成一条、黑的两根接成一条，接头缠胶带，给 Pi 供电；路线要每根约 <b>500 mm</b>（降压板那头剪掉公头再剥线）。</li>
+    <li><b>转换盒的框架和盖子</b>（layout F，橙色打印件），和 M2 自攻螺丝：框架 4 根 M2 × 6（就是原来背包盖上那 4 根），5991 4 根 M2 × 6，两块 XL4015 6 根 M2 × 6 加 2 根 M2 × 4（短的两根只用在 #1 下面两个孔），盖子 2 根 M2 × 6。</li>
+    <li>万用表、小一字螺丝刀、细杆十字螺丝刀（杆不粗于 3 mm）、剥线钳、记号笔、纸胶带、电工胶带、一根 4 mm 钻头或螺丝刀杆（用来弯线）。</li>
+  </ul><div class="need" data-parts="usb_pd_5991,xl4015_robotis,openrb_150,pi_zero_w"></div></div>
+  <figure class="pic"><img alt="电源线路图：充电器、5991、两块 XL4015、OpenRB 端子、Pi 的 2 和 6 号针" src="power-diagram/power-web.jpg" style="max-width:100%"><figcaption>整条线路：背后转换盒里三块板，背包里 OpenRB，头里 Pi</figcaption></figure>
+  <div class="sec"><h3>接线图（和组装指南同一张）</h3>
+    <div class="bigwire"><div class="bwbar"><span class="muted">红黑只表示正负。这张接线图是从背后看拆掉盖子的转换盒：XL4015 #1 在最上层、#2 在中间层，都平躺，IN 在右、OUT 在左，元件朝你，蓝色旋钮在下边；这个方向下每个端子的 + 都是下面那颗螺丝（以板上印的字为准）。5991 在最下层，USB-C 口朝左，螺丝端子朝右，+ 也是下面那颗。层与层之间画得比实际宽。</span><button class="fullbtn" data-bench="power7" data-title="电源和 UART：每一根线">全屏看大图</button></div>
+      <div class="wkhost wkbig" data-bench="power7"></div></div></div>
+
+  <div class="subsec" id="pw-1">
+    <h2>① 5991 拨到 15 V</h2>
+    <div class="ovwrap"><figure class="ov" data-part="usb_pd_5991" data-marks='[["USB-C","USB-C 口：插充电器的线"],["15V / 3","开关 3（15V）：ON","#0f6e56"],["5V / 6","其余 5 个：OFF（5V 也要关）","#8a9199"],["+","+ 螺丝：红线到 #2 IN+","#d7263d"],["-","− 螺丝：黑线到 #2 IN−","#1d1d1f"],["ISet","ISet 跳线：不要剪","#8a9199"]]' data-cap="Adafruit 5991，USB-C 口朝上（装进盒子时转到左边，+ 螺丝在下）"></figure></div>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>什么都不接，先拨开关。开关块左边印着 5V、9V、12V、15V、18V、20V，右边是编号 6 到 1。只把 <b>15V（3 号）</b>推到 ON（推向电压字那一边），其余 5 个推到另一边。<b>只能有一个开着</b>：5V 也开着时，板子会要 5 V（2026-10-15 实测 5.167 V）；只开 15V 才是 15 V。<b>不要用 9V</b>：2026-10-15 用 9 V（约 27 W）时，第一条走路指令后半秒内整机掉电，15 个舵机都断了扭矩，OpenRB 的 USB 重连，Pi 掉线。走路要 15 V（45 W）。板子只在插上 USB-C 的那一刻读开关：拨过开关以后，拔掉 USB-C 再插上，再量。</li>
+      <li><span class="where hand">手上</span>ISet 跳线不要剪。不剪时它向充电器要“15 V、1.25 A”，小米的 15 V 3 A 能满足；剪了就变成要 3.25 A，充电器给不了，5991 会退到更低的电压。</li>
+      <li><span class="where hand">手上</span>充电器插墙，USB-C 线插 5991。万用表直流电压档，红表笔碰 +，黑表笔碰 −：14.5 到 15.5 V。量到 5、9、12 或 20 V 左右就是开关不对（多开了一个，或者开错了），拔掉、改好、再插。量完拔掉 USB-C 线。
+        <div class="rec" style="max-width:360px;margin-top:8px"><label>5991 端子的电压，15 V（V）<input data-r="pd15_volts" inputmode="decimal" placeholder="例如 15.1"></label></div></li>
+    </ol>
+  </div>
+
+  <div class="subsec" id="pw-2">
+    <h2>② 两块 XL4015：输出什么都不接，调到 7.40 V 和 5.00 V</h2>
+    <div class="ovwrap"><figure class="ov" data-part="xl4015_robotis" data-marks='[["IN+","IN+：15 V 红线","#d7263d"],["IN-","IN−：黑线","#1d1d1f"],["OUT+","OUT+：先空着量","#0f6e56"],["OUT-","OUT−：先空着","#8a9199"],["trim L","左旋钮：应该是限流 (CC)","#2457c5"],["trim R","右旋钮：应该是调电压 (CV)","#2457c5"],["R LED","R 红灯","#9a3412"]]' data-cap="XL4015：左边 OUT，右边 IN，旋钮在下边，+ 是下面那颗螺丝。装进盒子时从背后看就是这个方向"></figure></div>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>拆原配线：两块板各有 IN、OUT 两个端子，每个端子两颗螺丝。四颗螺丝都拧松，把 ROBOTIS 原配的线抽出来，放回它的套件盒。</li>
+      <li><span class="where hand">手上</span>两块板各贴一条纸胶带，写“#1 7V”和“#2 5V”。</li>
+      <li><span class="where hand">手上</span>接 15 V：红黑实心线两头各剥 6 mm，铜线直接压在螺丝下：不套压线头，也不上锡（整条电源线都不焊）。用 15 V 进线那对（105 mm）：5991 的 + 接 #2 的 IN+，− 接 #2 的 IN−；再用跨接线那对（105 mm）从 #2 的 IN+、IN− 接到 #1 的 IN+、IN−。#2 的 IN 每个螺丝下压两根线，5991 和 #1 每个螺丝一根。拧紧后每根都拉一下，不脱。XL4015 没有防反接，+ 只进 IN+。</li>
+      <li><span class="where hand">手上</span>两块板的 OUT 都空着，什么都不接。线先保持直的，等第 ④ 段装盒子时再弯。两块板分开放，螺丝不互相碰。</li>
+      <li><span class="where hand">手上</span>插上 USB-C 线。<b>找调电压的旋钮</b>：板子拿成 OUT 在左、IN 在右、旋钮在下（和装进盒子时一样）。按板子布局看，<b>右边</b>那个旋钮挨着主芯片 XL4015（U1），应该是调电压（CV）；<b>左边</b>那个挨着 8 脚的 LM358，应该是限流（CC）。这是从布局推出来的，还要用万用表确认：量 #1 的 OUT+ 和 OUT−，把右边旋钮顺时针拧两整圈：读数变了，它就是调电压的，用记号笔点一下；读数不动，它是调限流的（空载时它不起作用），拧回两圈，换另一个。
+        <figure class="pic"><img alt="XL4015 两个旋钮：左边限流，右边调电压" src="power-diagram/img/xl4015_trimmers_web.jpg" style="max-width:100%"><figcaption>XL4015 的两个旋钮（OUT 在左，IN 在右，旋钮朝下）。右边挨着 U1 的是调电压，左边挨着 LM358 的是限流：按布局推断，以上面的万用表测试为准</figcaption></figure></li>
+      <li><span class="where hand">手上</span>慢慢拧 #1 的电压旋钮，调到 <b>7.40 V</b>（7.35 到 7.45 V 都行）。一般顺时针升压，以万用表为准。比 7.0 V 高是故意的：舵机的 Shutdown 在第 ⑤ 段写成 52，超过 7.0 V 也不断扭矩。
+        <div class="photoslot">照片待补：#1 调好后，万用表读 7.40 V</div>
+        <div class="rec" style="max-width:360px;margin-top:8px"><label>#1 空载输出（V）<input data-r="xl1_volts" inputmode="decimal" placeholder="例如 7.40"></label></div></li>
+      <li><span class="where hand">手上</span>#1 的限流旋钮顺时针一直拧到头（打滑或咔哒响，最多约 25 圈），让限流在最大，不挡舵机的电流尖峰。拧它时读数不该变。</li>
+      <li><span class="where hand">手上</span>#2 一样：找到电压旋钮，调到 <b>4.95 到 5.10 V</b>，限流旋钮顺时针拧到头。
+        <div class="photoslot">照片待补：#2 调好后，万用表读 5.00 V</div>
+        <div class="rec" style="max-width:360px;margin-top:8px"><label>#2 空载输出（V）<input data-r="xl2_volts" inputmode="decimal" placeholder="例如 5.03"></label></div></li>
+      <li><span class="where hand">手上</span>拔掉 USB-C 线，等板上的灯灭，再插上，两块再量一次，读数还在范围里。把读数写在各自的胶带上，拔掉 USB-C 线。</li>
+    </ol>
+  </div>
+
+  <div class="subsec" id="pw-3">
+    <h2>③ 7 V 线进 OpenRB；Pi 的杜邦线从 OpenRB 挪到 #2</h2>
+    <div class="ovwrap">
+      <figure class="ov" data-part="openrb_150" data-crop="0,0.55,1,1" data-marks='[["+","+ 右螺丝：7 V 红线","#d7263d"],["-","− 左螺丝：7 V 黑线","#1d1d1f"],["pin:JP1-1","跳线帽套 VIN(DXL) 这边","#0f6e56"],["pin:JP1-3","+5V 这边空着","#8a9199"]]' data-cap="OpenRB 下半部分，USB-C 口朝上"></figure>
+      <figure class="ov" data-part="pi_zero_w" data-crop="0.04,0.02,0.40,0.55" data-marks='[["pin:2","2 号针：红杜邦线（来自 #2）","#d7263d"],["pin:6","6 号针：黑杜邦线（来自 #2）","#1d1d1f"],["microSD","microSD 卡这一头","#2457c5"]]' data-cap="Pi 的左端"></figure>
+    </div>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>7 V 线（125 mm 那对）：一头拧进 OpenRB 的端子，红进 +（右），黑进 −（左），一个螺丝一根线，拉一下不脱。从端子往后越过板子顶边，放进背包后面的空槽（以前放 DFR1202 的地方），从背后看沿槽的<b>左边</b>往下放到一半高。另一头先用胶带包开，等第 ⑤ 段量完 #1 再拧上 #1 的 OUT。</li>
+      <li><span class="where hand">手上</span>Pi 的两根杜邦线以前夹在 OpenRB 端子的螺丝下，现在<b>拆出来</b>，OpenRB 端子上只留 7 V 那两根。杜邦线这头剥 10 mm，细铜丝拧成一股再对折，让螺丝压住双层，从背包上沿的缺口往后，越过板子顶边，和 7 V 线一起沿空槽左边往下放；等第 ⑤ 段量完 #2 再拧进 #2 的 OUT+（红）和 OUT−（黑）。</li>
+      <li><span class="where hand">手上</span>端子上方那排 3 根针，跳线帽套在印着 VIN(DXL) 的那两根上。这样 7 V 直接到舵机口。</li>
+      <li><span class="where hand">手上</span>杜邦线的母头插 Pi：红的插 2 号针，黑的插 6 号针（靠板边那排，从 microSD 卡那头数第 1 根和第 3 根）。</li>
+    </ol>
+  </div>
+
+  <div class="subsec" id="pw-4">
+    <h2>④ 装进背后的转换盒</h2>
+    <div class="note"><b>线怎么过窗口：</b>每块板的两头紧贴盒子的侧墙，盒子里面没有地方把硬的实心线从端子拐向后面。所以每根线都从端子横着出来，直接穿过旁边侧墙上的窗口，在墙外弯一个扁平的 U：往盒子后面拐，贴着墙外走约 10 mm，再拐回来（U 离墙约 3 mm），从同一个窗口靠开口的那一头回到盒子里，躺在板子元件和盖子之间那层浅浅的空间里。U 的两个角绕着 4 mm 钻头杆弯，弯得圆，不打折。窗口是从框架后边沿切进去的，所以 U 的两条腿可以从后面直接滑进窗口；窗口的后半截开在盖子的侧壁上，盖子最后装，正好把 U 圈在里面。</div>
+    <div class="photoslot">照片待补：装好的转换盒，盖子拿掉，从背后看</div>
+    <div class="photoslot">照片待补：盖子正面，标记 1、2 是两个小齿，3、4 是框架顶板上的两条缝，5、6 是两个耳朵（右边那个在台阶下面，左边那个在下面窄的那段旁边、USB-C 插头下面）</div>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>背包原来的盖子拧下来（4 根 M2 × 6，螺丝留着，它们固定框架）。盖子不再用。</li>
+      <li><span class="where hand">手上</span>找前板上的扁口 P1：约 10 mm 宽、3 mm 高，从背后看在正中<b>偏左</b>一点，高度在两层降压板之间。把 7 V 线和 Pi 杜邦线从背包里并排穿过去：7 V 线在外侧（从背后看靠左），Pi 线在内侧。线头先留在盒子开口外面。</li>
+      <li><span class="where hand">手上</span>框架往前推，前板贴上背包两根柱子的端面。盒子还空着，从后面把 4 根 M2 × 6 拧进四个角：下面两根贴着最下层的窄墙，用杆不粗于 3 mm 的螺丝刀。先都带上，再均匀拧紧。</li>
+      <li><span class="where hand">手上</span>5991：元件朝你，USB-C 口朝<b>左</b>，螺丝端子朝右，从盒子开口那边推进最下层，背面压在四个柱子上，USB-C 口正对左墙低处那个高窗口。4 根 M2 × 6 从元件面拧进去，螺丝头碰到板子就停。拨码开关再看一眼：只有 3 号（15V）在 ON。</li>
+      <li><span class="where hand">手上</span>5991 的 15 V 线：两根从端子往右出最下层右边的窗口，在墙外弯 U，再从开口那头回到盒子里。这个方向下 <b>+ 是下面那颗螺丝</b>（旁边印着 ⊕），所以红线在黑线下面出来。然后沿盒子背面往上，到盒子变宽的台阶下面往右，再往上到中间层右边。两头都是红线接 +；往上走的路上，红黑两根在中间层下面交叉一次。线不要压在拨码开关上。</li>
+      <li><span class="where hand">手上</span>#2（贴着“#2 5V”）：元件朝你，<b>IN 在右</b>（蓝色旋钮在下边）。IN 的螺丝下已经压着 15 V 进线和跨接线，两对线一起从中间层右边的窗口弯 U 出去再回来。板子从开口那边推进去，放到四个柱子上，四个孔都拧 M2 × 6，从元件面拧，螺丝头碰到板子就停。</li>
+      <li><span class="where hand">手上</span>7 V 线和 Pi 线从 P1 往后，平放在 #2 上边沿上方的缝里，不要压在元件上。</li>
+      <li><span class="where hand">手上</span>#1（贴着“#1 7V”）：同样元件朝你、IN 在右。跨接线从最上层右边的窗口弯 U。板子从开口那边推进去，放上去时别夹住下面那两对线。上面两个孔拧 M2 × 6，<b>下面两个孔拧 M2 × 4</b>：那两个柱子短，前面紧挨着外壳，用 6 mm 的会顶出来。</li>
+      <li><span class="where hand">手上</span>7 V 线：从 P1 往后、往左，到盒子开口那边沿 #1 背后（元件和盖子之间）往上，到 OUT 端子高度，从最上层<b>左边</b>的窗口弯 U，回到 #1 的 OUT 旁边。Pi 线：从 P1 往后、稍微往左，在 #2 那个大黑线圈的外侧往下，不要压在线圈上（它是板上最高的零件，盖子离它很近），到 OUT 端子高度，沿板子背后往左，从中间层<b>左边</b>的窗口弯 U，回到 #2 的 OUT 旁边。</li>
+      <li><span class="where hand">手上</span>两对线的线头先不拧：红的放在 OUT+（下面那颗）旁边，黑的放在 OUT− 旁边，每根单独缠胶带，等第 ⑤ 段复查电压后再拧。盖子先不装。</li>
+    </ol>
+    <div class="pass"><b>检查：</b>两块 XL4015 的 IN 都在右边，#1 在最上层，#2 在中间层；窗口外每个 U 离墙约 3 mm，没有折死；USB-C 插头从左边低处的窗口能直接插进 5991；7 V 线和 Pi 线只从 P1 和左边两个窗口出盒子，在两层板之间的缝里拉一下能动。</div>
+    <details class="trouble"><summary>装不进去时</summary><ul>
+      <li>板子四个孔对称，OUT 在右也装得上，但那样 15 V 会接到 OUT，烧板子。拧螺丝前看清板上印的 IN+、OUT+。</li>
+      <li>U 形弯顶到旁边的腿或外壳：把 U 再压扁一点，贴近墙，但别贴死。</li>
+    </ul></details>
+  </div>
+
+  <div class="subsec" id="pw-5">
+    <h2>⑤ 先复查电压，再接上，通电，扫舵机，写 Shutdown 52，读电压上限，装盖子</h2>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>机器人右侧朝下躺着，腿悬空，USB-C 插头朝上，转换盒开口朝你。7 V 线和 Pi 杜邦线都还没拧上降压板。USB-C 线从盒子左边低处的窗口插进 5991，量 #1 的 OUT：7.35 到 7.45 V；量 #2 的 OUT：4.95 到 5.10 V。不对就用做了记号的旋钮重调。拔掉 USB-C 线。</li>
+      <li><span class="where hand">手上</span>拔掉 USB-C 线。7 V 线拧上 #1 的 OUT（最上层左端：红线到下面那颗 +，黑线到上面那颗 −），Pi 杜邦线拧上 #2 的 OUT（中间层左端，同样红下黑上）。每根拉一下。左边窗口外的 U 保持原样。</li>
+      <li><span class="where hand">手上</span>拔掉 Pi 自己的 USB 电源线。插上 USB-C 线：5991 绿灯亮，OpenRB 的 PWR 绿灯亮，Pi 的灯亮。</li>
+      <li><span class="where hand">手上</span>量 OpenRB 端子：7.2 到 7.45 V。量 Pi 的 2 号针和 6 号针：4.9 到 5.1 V。Pi 超过 5.25 V 马上拔线。
+        <div class="rec two" style="margin-top:8px"><label>OpenRB 端子电压（V）<input data-r="rb7_volts" inputmode="decimal" placeholder="例如 7.38"></label><label>Pi 2、6 号针电压（V）<input data-r="pi5_volts" inputmode="decimal" placeholder="例如 5.0"></label></div></li>
+      <li><span class="where pi">Pi</span>ssh 登录 Pi（Pi 软件还没装的话先做组装指南里 <a href="MICRODUCK-BUILD.html#pi-config" target="_blank" rel="noopener">Set up the Pi software</a>）：
+        <div class="cmd" data-where="pi"><code>python3 scan_bus.py</code></div>
+        <div class="expect"><b>最后一行应该是</b><pre>15/15 servos answered</pre></div>
+        第一次通电时，还是出厂 Shutdown 53 的舵机读到 7.3 到 7.4 V，超过了 7.0 V，会锁住“输入电压”错误，所以每行后面是 error 0x80。这一步这是正常的；刚通电扭矩是关的，什么都不会动。</li>
+      <li><span class="where pi">Pi</span>把 15 个舵机的 Shutdown（地址 63）写成 52。这个寄存器存在舵机里，只能在扭矩关着时写。脚本先读 15 个舵机的扭矩和 Shutdown，只要有一个没回答或扭矩开着，它一个都不写；然后把不是 52 的写成 52，再把 15 个都读回来：
+        <div class="cmd" data-where="pi"><code>python3 set_shutdown.py</code></div>
+        <div class="expect"><b>最后应该是</b><pre>PASS: 15/15 servos read back 52.</pre>（后面还会提示：断电重启，再跑 check_voltage_limit.py --rail battery）</div>
+        用 Mac 有线控制时，在 Mac 上也能跑（OpenRB 里是 openrb_dual_host）：
+        <div class="cmd" data-where="mac"><code>~/.venvs/microduck-walk/bin/python ~/code/robotics/microduck-sim/guide/firmware/pi/set_shutdown.py</code></div>
+        已经写过 52 的舵机（Shawn 这台 2026-10-15 已经 15/15 写好）它不会再写，只读回。</li>
+      <li><span class="where hand">手上</span><b>断电重启</b>：拔掉 USB-C 线，等灯都灭了再插上。这样锁住的错误清掉，舵机用新的 Shutdown 52 启动。然后确认一次：
+        <div class="cmd" data-where="pi"><code>python3 set_shutdown.py --check</code></div>
+        <div class="expect"><b>最后应该是</b><pre>PASS: every servo holds 52</pre></div></li>
+      <li><span class="where pi">Pi</span>读每个舵机的电压上限、Shutdown 和现在的电压（只读，不改任何设置）。这路电是 7.4 V，要加 <code>--rail battery</code>：不加的话它按旧的 6.80 V 检查，超过 7.0 V 就判失败。
+        <div class="cmd" data-where="pi"><code>python3 check_voltage_limit.py --rail battery</code></div>
+        <div class="expect"><b>最后应该是</b><pre>PASS: 15/15 servos, Max Voltage Limit 7.0 V on all, Shutdown 52 on all, supply 6.4-8.4 V on all</pre></div>
+        每个舵机的 HWerr 是 0x01 是正常的：这是超过 7.0 V 时的输入电压标志，Shutdown 52 不让它断扭矩，脚本也会多打一行说明。某个舵机读到 7.0 V 以下也算通过，但会多打一行 warning：说明电压偏低了，把 #1 重新调回 7.40 V。
+        Mac 上：
+        <div class="cmd" data-where="mac"><code>~/.venvs/microduck-walk/bin/python ~/code/robotics/microduck-sim/guide/firmware/pi/check_voltage_limit.py --rail battery</code></div>
+        以后在 Mac 上用 walk_wired.py 有线控制（默认 --supply auto）：舵机读到 7.2 V 或更高时它会打开电池保护，在 7.4 V 一开始就会打开（打印 battery guard armed），打开后才接受带这个标志的回包；低于 7.0 V 提醒，6.6 V 停。如果打印 battery guard not armed，就是电压低于 7.2 V，把 #1 调回 7.40 V。</li>
+      <li><span class="where hand">手上</span>都通过以后拔掉 USB-C 线，装盖子：再看一眼盒子里，每根线平躺在元件上方，没有压在旋钮上。盖子是个圆角的罩子，上面两个角各有一个带小齿的舌头，框架顶板上有两条对应的窄缝；还有两个带螺丝孔的耳朵：右边（−Y）那个在盒子变窄的台阶下面，左边（+Y）那个更低，在下面窄的那段旁边、USB-C 插头下面。装法：把盖子比最终位置放低约 1.2 mm（就是盖子壁厚），平着往前推，舌头滑进框架顶板下面，推到盖子边沿碰到框架一圈；推的时候把每个 U 形弯放进盖子侧壁上对应的窗口。然后把盖子往上抬 1.2 mm，两个小齿“咔”一声落进顶板的缝里，盖子就拔不出来了。最后从后往前在两个耳朵里各拧一根 M2 × 6（右边台阶下面一根，左边 USB-C 插头下面一根），螺丝头碰到耳朵就停。以后要调电压：拧下这两根螺丝，把盖子往下压 1.2 mm 让小齿出缝，再直着往后拉下来。</li>
+    </ol>
+    <div class="pass"><b>成功：</b>两块板空载 7.40 V 和 5.00 V；盒子盖好，只有 USB-C 线和 OpenRB 数据线出来；接上以后 OpenRB 约 7.4 V、Pi 约 5 V；15 个舵机都回答；15 个舵机都是 Shutdown 52；check_voltage_limit.py --rail battery 显示 PASS。</div>
+    <details class="trouble"><summary>读数不对时</summary><ul>
+      <li>5991 不是 15 V：开关拨错（只能开 15V 一个；5V 也开着就会是 5 V），或者充电器没有 15 V 档，5991 退到更低一档。改好开关后一定要拔掉 USB-C 再插上，板子只在插上时读开关。不要改用 9V：#1 从 9 V 也能调出 7.40 V，但 9 V 档（约 27 W）在 2026-10-15 第一条走路指令后半秒内让整机掉电。</li>
+      <li>拧电压旋钮读数一点不动：拧的是限流旋钮，换另一个。两个都不动：先确认 5991 那边有 15 V、IN 的螺丝拧紧了。</li>
+      <li>Pi 不亮灯或低于 4.9 V：量 #2 的 OUT。OUT 正常就查杜邦线在螺丝下有没有压紧、母头有没有插到底。</li>
+      <li>check_voltage_limit.py 说某个舵机 Max Voltage Limit 低于 7.0 V：在 DYNAMIXEL Wizard 里把地址 32 改回 70，断电重启。这个脚本自己不写任何东西。</li>
+      <li>check_voltage_limit.py 说某个舵机 Shutdown 不是 52：再跑一次 set_shutdown.py，断电重启。set_shutdown.py 说 REFUSED、扭矩开着：先停掉所有控制程序（walk_wired.py、stand.py、pi_bridge.py），扶住机器人，断电重启再跑。</li>
+      <li>某个舵机 Shutdown 还是 53，又有 Input Voltage Error（HWerr 0x01）：它的扭矩会被切断。写 52（set_shutdown.py），断电重启。Shutdown 52 时 HWerr 0x01 是正常的。</li>
+      <li>舵机一出力就全软、5991 绿灯一闪：先别剪 ISet，记下当时在做什么，停下告诉我。</li>
+      <li>扫不到舵机：按第 11 步“扫不到舵机时”查。</li>
+    </ul></details>
+  </div>
+</section>
+
+<section class="step" id="s13" data-title="功放：焊 5 根线，接 Pi 试声音" data-wide="1">
+  <style>
+  /* audio bench section: scoped helpers, everything else uses the page's classes */
+  #s13 .ab-jump{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  #s13 .ab-jump a{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:15px;line-height:1.4;color:var(--ink);text-decoration:none}
+  #s13 .ab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:12px}
+  #s13 .ab-grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  #s13 .ab-grid.four{grid-template-columns:repeat(2,minmax(0,1fr));max-width:840px}
+  @media (max-width:600px){#s13 .ab-grid.four{grid-template-columns:minmax(0,1fr)}}
+  #s13 .ab-fig{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+  #s13 .ab-fig>img,#s13 .ab-fig .ovimg>img{display:block;width:100%;height:auto;border-radius:8px;margin:0 auto}
+  #s13 .ab-fig.mid{max-width:560px}
+  #s13 .ab-fig.big{max-width:620px}
+  #s13 .ab-fig figcaption{font-size:15px;font-weight:600;margin:8px 2px 0}
+  #s13 .ab-fig .src{display:block;font-size:12px;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}
+  #s13 .ab-fig ol{margin:6px 0 0;padding-left:0;list-style:none;font-size:15px;line-height:1.5}
+  #s13 .ab-fig ol li{display:flex;gap:8px;margin:4px 0}
+  #s13 .ab-fig ol li i{flex:none;width:22px;height:22px;border-radius:50%;background:#d7263d;color:#fff;font:600 12px/22px -apple-system,sans-serif;text-align:center;font-style:normal;margin-top:1px}
+  #s13 .ab-fig .ovimg{position:relative;line-height:0}
+  #s13 .ab-fig .ovimg .dot{cursor:default}
+  #s13 .ab-row{display:grid;grid-template-columns:minmax(0,620px) minmax(0,1fr);gap:16px;align-items:start;margin-top:12px}
+  @media (max-width:900px){#s13 .ab-row{grid-template-columns:minmax(0,1fr)}}
+  #s13 .ab-row>ol.acts{margin-top:0}
+  #s13 .cmd.multi{align-items:flex-start}
+  #s13 .cmd.multi code,#s13 .cmd.multi code .tok{white-space:pre!important}
+  #s13 .cmd.multi code{overflow-x:auto}
+  #s13 kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+  </style>
+  <div class="stepno">第 13 步 · 焊接 · 在桌上做，功放装进头壳之前</div>
+  <h1>功放：焊 5 根线，接 Pi 试声音</h1>
+  <div class="goal"><b>做完是这样</b>功放焊着 5 根线，插头插在 Pi 上；GAIN 和 SD 两个孔空着；喇叭拧在绿色端子上，Pi 能放出声音，音量上限写在 Pi 的配置里（-6 dB：满音量约 0.4 W，喇叭是 1 W 的）。</div>
+  <div class="warnbox"><b>不焊电阻：</b>GAIN 什么都不接就是 9 dB 增益，音量上限我在第 ⑦ 段通过 ssh 写进 Pi 的配置。烙铁碰一个焊点不超过 3 秒。</div>
+  <ol class="ab-jump" aria-label="这一步的小节">
+    <li><a href="#ab-1">① 用什么</a></li><li><a href="#ab-2">② 认孔</a></li><li><a href="#ab-3">③ 焊 5 根线</a></li><li><a href="#ab-6">④ 万用表检查</a></li><li><a href="#ab-7">⑤ 接喇叭</a></li><li><a href="#ab-8">⑥ 插到 Pi 上</a></li><li><a href="#ab-9">⑦ Pi 设置和试听</a></li>
+  </ol>
+  <div class="note">装进头壳：<a href="MICRODUCK-BUILD.html#amplifier" target="_blank" rel="noopener">Mount the amplifier on its two posts</a>。所有焊线的长度：<a href="MICRODUCK-BUILD.html#wire-list" target="_blank" rel="noopener">Soldering and wire list</a>。</div>
+
+  <div class="subsec" id="ab-1">
+    <h2>① 用什么</h2>
+    <div class="sec"><h3>零件</h3><div class="need" data-parts="max98357a_3006,speaker_cms_30204_18sp,pi_zero_w"></div></div>
+    <div class="ab-grid two">
+      <div class="setcard">
+        <b>线</b>
+        <ul style="margin:4px 0 0;padding-left:20px">
+          <li>5 根<b>母对母杜邦线</b>（两头都是黑色小插孔），颜色随意。剪掉一头插头，连插头留：LRC <b>{{AMP_LRC_MM}} mm</b>，BCLK <b>{{AMP_BCLK_MM}} mm</b>，DIN <b>{{AMP_DIN_MM}} mm</b>，GND <b>{{AMP_GND_MM}} mm</b>，Vin <b>{{AMP_VIN_MM}} mm</b>。</li>
+          <li>BCLK 用 100 mm 的杜邦线不够长，就用 150 或 200 mm 的。</li>
+          <li>喇叭两根线：从一根杜邦线上剪 2 段 30 mm（多股细铜丝的软线，约 26 AWG）。不用 22 AWG 实心线：太硬，装喇叭时会把小焊盘撬掉；更不用 16 AWG，比焊盘还粗。厂家带线的同款喇叭用的是 30 AWG，喇叭只走零点几安，细线足够。</li>
+        </ul>
+        <b style="margin-top:10px">其他</b>
+        <ul style="margin:4px 0 0;padding-left:20px">
+          <li>纸胶带做小旗。不用电阻，不用 Kapton 胶带，不用热缩管。</li>
+          <li>功放袋里的排针不用。</li>
+          <li>工具：烙铁、焊锡、助焊剂、吸锡带、剥线钳、斜口钳、小一字螺丝刀、万用表。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted">绿色的喇叭端子出厂已经焊好，不用焊。</p>
+  </div>
+
+  <div class="subsec" id="ab-2">
+    <h2>② 认孔</h2>
+    <p>正面（有芯片的一面）7 个孔下面印着字，从左到右：<b>LRC BCLK DIN GAIN SD GND Vin</b>。GAIN 和 SD 空着，其余 5 个焊线。</p>
+    <div class="ab-grid two">
+      <figure class="ov" data-part="max98357a_3006" data-marks='[["pin:1","LRC：焊线","#5b636b"],["pin:2","BCLK：焊线","#5b636b"],["pin:3","DIN：焊线","#5b636b"],["pin:4","GAIN：空着","#7d2fb8"],["pin:5","SD：不用","#5b636b"],["pin:6","GND：焊线","#5b636b"],["pin:7","Vin：焊线","#d7263d"],["-","喇叭 −","#1f2328"],["+","喇叭 +","#1f2328"]]' data-cap="正面：7 个孔，从左到右 1 到 7"></figure>
+      <figure class="ab-fig">
+        <div class="ovimg"><img alt="功放背面照片" src="audio-bench/img/max98357a_3006_back.jpg">
+          <span class="dot" style="left:10.35%;top:84.8%;background:#d7263d">7</span>
+          <span class="dot" style="left:23.82%;top:84.8%;background:#5b636b">6</span>
+          <span class="dot" style="left:37.29%;top:84.8%;background:#5b636b">5</span>
+          <span class="dot" style="left:50.76%;top:84.8%;background:#7d2fb8">4</span>
+          <span class="dot" style="left:64.22%;top:84.8%;background:#5b636b">3</span>
+          <span class="dot" style="left:77.70%;top:84.8%;background:#5b636b">2</span>
+          <span class="dot" style="left:91.16%;top:84.8%;background:#5b636b">1</span>
+        </div>
+        <figcaption>背面没有字，顺序左右反过来</figcaption>
+        <ol>
+          <li><i style="background:#d7263d">7</i><span>最左边是 Vin。</span></li>
+          <li><i style="background:#7d2fb8">4</i><span>正中间（左数第 4 个）是 GAIN，空着。</span></li>
+          <li><i style="background:#5b636b">5</i><span>5 号 SD 也空着。焊 6 号 GND 和 3 号 DIN 时，锡别流进旁边这两个空孔。</span></li>
+        </ol>
+        <span class="src">照片：Adafruit 产品页。编号和左图一致。</span>
+      </figure>
+    </div>
+  </div>
+
+  <div class="subsec" id="ab-3">
+    <h2>③ 焊 5 根线</h2>
+    <div class="ab-row">
+      <figure class="ab-fig big">
+        <img alt="侧面图：线从正面插入、背面焊点、线尾约 1 mm" src="audio-bench/img/endview.png">
+        <figcaption>侧面看：线从正面插进孔，在背面焊，线尾剪到约 1 mm</figcaption>
+        <span class="src">按 Adafruit 板子文件画：板厚 1.57 mm，孔径 1.0 mm。</span>
+      </figure>
+      <ol class="acts">
+        <li><span class="where hand">手上</span>按 ① 的长度剪线。插头后面贴小旗，写 Pi 针号：LRC 写 <b>35</b>，BCLK 写 <b>12</b>，DIN 写 <b>40</b>，GND 写 <b>34</b>，Vin 写 <b>4</b>。</li>
+        <li><span class="where hand">手上</span>剪口剥 3 mm，拧紧，薄薄上锡（烙铁 320 到 340 °C），厚了插不进孔。</li>
+        <li><span class="where hand">手上</span>5 根线都从正面插进各自的孔（LRC、BCLK、DIN、GND、Vin），插到线皮碰板子。线平贴板子，从这排孔旁边的板边伸出去，一条纸胶带把 5 根一起贴住。GAIN 和 SD 两个孔空着。</li>
+        <li><span class="where hand">手上</span>翻到背面，5 个点各焊 2 到 3 秒。只翻这一次。</li>
+        <li><span class="where hand">手上</span>凉了把 5 个线尾都剪到约 1 mm。撕掉纸胶带。</li>
+      </ol>
+    </div>
+    <div class="checks"><b>检查：</b><ul>
+      <li>5 个焊点光亮，相邻的不连锡（手机拍照放大看）；轻拉不动。</li>
+    </ul></div>
+    <details class="trouble"><summary>不成功时</summary><ul>
+      <li>线插不进孔：锡太厚或铜丝散了，剪掉重剥。</li>
+      <li>孔被锡堵住：背面压一段吸锡带加热，把锡吸走。</li>
+      <li>两个焊点连锡：涂助焊剂，干净的烙铁从两点之间往外拖。</li>
+    </ul></details>
+  </div>
+
+  <div class="subsec" id="ab-6">
+    <h2>④ 万用表检查</h2>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>蜂鸣档：表笔伸进每个插头，另一根碰它的焊点，5 根都响。</li>
+      <li><span class="where hand">手上</span>背面这排 7 个孔，相邻两个之间<b>不能一直响</b>。GND 和 Vin “嘀” 一声就停是正常的。</li>
+    </ol>
+    <details class="trouble"><summary>不成功时</summary><ul>
+      <li>插头到焊点不响：补焊；还不响就换线。</li>
+      <li>相邻两点一直响：连锡了，涂助焊剂往外拖。</li>
+    </ul></details>
+  </div>
+
+  <div class="subsec" id="ab-7">
+    <h2>⑤ 接喇叭</h2>
+    <div class="ab-grid two">
+      <figure class="ov" data-part="speaker_cms_30204_18sp" data-marks='[["+","+ 焊点"],["-","− 焊点"]]' data-cap="喇叭背面：没带线的话，线焊在这两个点上"></figure>
+      <figure class="ov" data-part="max98357a_3006" data-crop="0.1,0.0,0.9,0.42" data-marks='[["-","端子 −：拧左边螺丝"],["+","端子 +：拧右边螺丝"]]' data-cap="功放正面上方的绿色端子"></figure>
+    </div>
+    <ol class="acts" style="margin-top:14px">
+      <li><span class="where hand">手上</span>这颗喇叭出厂就是两个裸焊盘，没有线：先给每个焊盘点一点锡；两段 30 mm 的线一头剥 2 mm 上锡，搭在焊盘上，烙铁碰 2 秒就走（360 到 380 °C，3 秒内）。</li>
+      <li><span class="where hand">手上</span>另一头剥 5 mm，拧紧对折，<b>不上锡</b>（上锡会慢慢松脱）。</li>
+      <li><span class="where hand">手上</span>拧松端子螺丝，线插到底拧紧：+ 接 +，− 接 −。轻拉不掉，不露铜丝。</li>
+    </ol>
+    <figure class="ab-fig big" style="margin-top:14px">
+      <img alt="喇叭装进头壳的剖面：金属网朝头壳顶，泡棉胶沿边缘一整圈，磁铁和焊点朝压板" src="audio-bench/img/speaker-section.png">
+      <figcaption>装进头壳时的朝向：带 7 个孔的平金属网朝头壳顶；凸起的圆磁铁和两个焊点朝压板，焊点在靠功放那一头。泡棉双面胶剪两条，每条约 40 × 1.5 mm，贴在金属网这一面的最外圈：从一个短头的正中开始，绕过弯、走完长边、再绕过另一个弯，停在另一个短头正中；第二条贴另一半，两头对上，合成封闭的一圈。7 个孔一个都不能盖</figcaption>
+    </figure>
+    <div class="note">喇叭装进头壳是装配指南里的 3D 步骤 <a href="MICRODUCK-BUILD.html#speaker" target="_blank" rel="noopener">Seat the speaker in the cap collar</a>：头壳透明显示，金属网上的 7 个孔、黄色的一圈泡棉胶都能转着看。金属网只护住纸盆，胶还是要贴：头壳在喇叭边缘留了 0.6 mm 高的一圈台阶，压板拧紧后 1 mm 的胶被压到 0.6 mm，靠它夹紧喇叭、不让它嗡嗡响；整圈封住，喇叭背面的声音才不会从边缘绕到前面把声音抵消掉。</div>
+  </div>
+
+  <div class="subsec" id="ab-8">
+    <h2>⑥ 5 个插头插到 Pi 上</h2>
+    <div class="bigwire"><div class="bwbar"><span class="muted">颜色只为区分，手上的线随意。</span><button class="fullbtn" data-bench="amp_bench" data-title="功放 ↔ Pi：5 根焊好的线">全屏看大图</button></div>
+      <div class="wkhost wkbig" data-bench="amp_bench"></div></div>
+    <div class="ab-grid two">
+      <figure class="ov" data-part="pi_zero_w" data-crop="0.04,0.02,0.45,0.52" data-marks='[["pin:4","4 号针 ← Vin（5 V）","#d7263d"],["pin:12","12 号针 ← BCLK","#1f9d55"],["microSD","microSD 卡这一头","#2457c5"]]' data-cap="Pi 的左端"></figure>
+      <figure class="ov" data-part="pi_zero_w" data-crop="0.60,0.02,0.98,0.58" data-marks='[["pin:34","34 号针 ← GND","#1d1d1f"],["pin:35","35 号针 ← LRC","#7d4cc2"],["pin:40","40 号针 ← DIN","#e07b00"],["CAMERA 22-pin","摄像头接口这一头","#2457c5"]]' data-cap="Pi 的右端"></figure>
+    </div>
+    <p>靠板边那排叫外排，另一排叫里排，都从 microSD 卡那头数：</p>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>小旗 4（Vin）插<b>外排第 2 根</b>（4 号针）。</li>
+      <li><span class="where hand">手上</span>小旗 12（BCLK）插<b>外排第 6 根</b>（12 号针）。</li>
+      <li><span class="where hand">手上</span>小旗 34（GND）插<b>外排第 17 根</b>，倒数第 4（34 号针）。</li>
+      <li><span class="where hand">手上</span>小旗 35（LRC）插<b>里排第 18 根</b>，倒数第 3（35 号针）。</li>
+      <li><span class="where hand">手上</span>小旗 40（DIN）插<b>外排最后一根</b>（40 号针）。</li>
+    </ol>
+    <div class="warnbox"><b>4 号针是 5 V：</b>Vin 线插错针会烧坏 Pi，插完再数一遍。</div>
+  </div>
+
+  <div class="subsec" id="ab-9">
+    <h2>⑦ Pi 的声音设置和试听</h2>
+    <p>Pi 上的设置我来做，页面上不放命令。你只做这几件：</p>
+    <ol class="acts">
+      <li><span class="where hand">手上</span>5 个插头插好、喇叭拧好以后，给 Pi 插电（PWR IN 口）。</li>
+      <li><span class="where mac">Mac</span>在聊天里告诉我"功放接好了"。我通过 ssh 给 Pi 装声音驱动、写 -6 dB 的音量上限，需要的话重启一次（约 1 分钟），然后放三段试音。</li>
+      <li><span class="where hand">手上</span>听：喇叭先后说 "Front Left"、"Front Right"、"Front Center"。人声清楚、不破音、不嗡嗡响就算过。</li>
+    </ol>
+    <div class="pass"><b>成功：</b>三段人声都清楚。我会把读数记在记录页。</div>
+    <details class="trouble"><summary>不成功时</summary><ul>
+      <li>完全没声音：先查 12、35、40 三个插头有没有插到底，喇叭端子的两根线有没有夹紧；我这边查驱动。</li>
+      <li>很响或破音：马上拔 Pi 的电，告诉我；是上限没生效。</li>
+    </ul></details>
+    <div class="checks"><b>收尾：</b><ul>
+      <li>试完我把 Pi 关机，你再拔电、拔下 5 个插头。功放等装头壳时再装。</li>
+    </ul></div>
+  </div>
+</section>
+
+
+<div class="stepnav" id="stepnav"><button id="prevStep">← 上一步</button><button id="nextStep" class="primary">下一步 →</button></div>
+</div><!-- #steps -->
+</div>
+</div>
+
+<!-- ================= PARTS ================= -->
+<div class="tab" id="tab-parts">
+  <h1>元器件</h1>
+  <p class="lead">桌上每个零件的实物照片、商品名和 DigiKey 货号。点"看接口"可以看到照片上每个接口的位置。</p>
+  <div class="pgroup"><h2>Pi 的 40 根针</h2>
+    <p>Pi 正面朝上、排针在上边、microSD 卡槽在左边时，1 号针在左端、靠板子中间的那一排（翻到背面看，1 号针的焊点是方的）。单数针都在这一排，靠板边的外排是双数针。点照片上的点看每根针的名字。</p>
+    <div class="card"><div id="pinmap"></div><div class="pinpick" id="pinpick">点一根针。</div></div>
+  </div>
+  <div id="partsgroups"></div>
+</div>
+
+<!-- ================= HEAD FIT ================= -->
+<div class="tab" id="tab-head">
+  <h1>头部间隙</h1>
+  <p class="lead">侧面看头里面：Pi 竖着放，排针朝前。插在排针上的插头会被三样东西挡住：前面的相机螺丝，下面的底板，Pi 后面的下巴支架。选头壳和插头，看三个间隙够不够。规则是硬零件之间至少留 2 mm。</p>
+  <div class="card">
+    <div class="seg" id="seatseg"><span>头壳</span><button data-seat="v16" class="on">V1.6（已打印）</button><button data-seat="v17">V1.7（没打印）</button><button data-seat="v18">V1.8（已发布）</button></div>
+    <div class="seg" id="connseg"><span>插头</span><button data-h="14.0" class="on">单根跳线套 14 mm</button><button data-h="10.5">3M 排线插座 10.5 mm</button><button data-h="9.27">Samtec 排线插座 9.27 mm</button></div>
+    <label style="display:block;font-size:15px">插头高度：<b id="hval">14.0</b> mm<input type="range" id="hs" min="4" max="16" step="0.1" value="14"></label>
+    <div class="headwrap"><div class="svgbox"><svg id="headsvg" viewBox="40 24 340 256" role="img" aria-label="头部侧视图"></svg></div><div class="verdict" id="headverdict"></div></div>
+    <div class="readouts"><div class="ro" id="ro_front"></div><div class="ro" id="ro_floor"></div><div class="ro" id="ro_rear"></div></div>
+    <p class="muted" id="headnote"></p>
+    <p class="muted">数字来自 10 月 10 日的头壳模型测量。单根跳线套插上以后，线还要往下或往旁边弯，模型里任何一种头壳都放不下这个弯，滑块没有画出这一点。</p>
+  </div>
+</div>
+
+<!-- ================= CAD ================= -->
+<div class="tab" id="tab-cad">
+  <h1>下一步：在 Fusion 里调头壳</h1>
+  <p class="lead">量完真实尺寸以后，在你 Mac 上的 Fusion 360（教育版）里做。原版头壳不动，在里面加一个小支架，只反复打印这个小支架。</p>
+  <div class="note">为什么用 Fusion：鸭子能用的原始模型是 fanhao375 发布的 SolidWorks 文件，Fusion 能直接打开。你和 ChatGPT 之前已经把原版上壳导入过 Fusion。导入后只有外形，没有设计历史，所以改的是我们新画的支架，外壳本身不改。</div>
+  <ol class="cadsteps">
+    <li><b>打开原版上壳</b>：Fusion 里打开 <span class="mono">top-head-native.f3d</span>（在 microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/sources/）。</li>
+    <li><b>放进 Pi</b>：Insert 菜单插入 Pi Zero 零件，用 Joint（配合）把它的四个孔对准头壳的四个柱子。</li>
+    <li><b>剖开看</b>：Inspect → Section Analysis（剖视），沿 Pi 的位置切开，看到的就是"头部间隙"页那张侧视图，只是真 3D 的。</li>
+    <li><b>画插头方块，查碰撞</b>：按第 8 步量到的尺寸画一个方块放在排针上，Inspect → Interference（干涉检查），看撞到哪个零件、撞了多少。</li>
+    <li><b>画小支架</b>：在空位里画一个用螺丝固定在原有柱子上的支架，再查一次干涉。没问题就导出 STL 去切片打印。</li>
+  </ol>
+  <p class="muted">每一步具体点哪个按钮，等你量完数字后再按实际情况补上。</p>
+</div>
+
+<!-- ================= LOG ================= -->
+<div class="tab" id="tab-log">
+  <h1>记录</h1>
+  <p class="lead">每一步打的勾和填的数字都保存在这个浏览器里。做完以后导出，发给我。</p>
+  <div class="btnrow"><button class="primary" id="copyLog">复制为文字</button><button id="dlLog">下载 JSON 文件</button><button id="clearLog">清空记录</button></div>
+  <textarea id="exportbox" readonly></textarea>
+</div>
+</main>
+<dialog id="dlg"><div class="dlgin"><button class="close" id="dlgclose">关闭</button><div id="dlgbody"></div></div></dialog>
+<dialog id="wkfull" class="wkfull" aria-labelledby="wkf-title"><div class="wkf-head"><h2 id="wkf-title"></h2><button class="wkf-close" id="wkf-close" type="button">关闭 ✕</button></div><div class="wkf-body"><div id="wkf-holder"></div></div></dialog>
+<footer>MicroDuck 台架联调页。零件照片来自 Adafruit、Raspberry Pi、ROBOTIS、DFRobot、CUI Devices、Littelfuse 的产品页，仅作私人参考。接线图的板子图来自 Adafruit Fritzing Library 和 Fritzing 零件库（CC BY-SA）。接线图由 wiring-kit 生成；第 11、12 步的接线图和组装指南用同一份接线数据。</footer>
+
+<script>/*WK_JS*/</script>
+<script>
+const BENCHES = /*BENCHES*/null;
+const PARTS = /*PARTS*/null;
+const SVGS = /*SVGS*/null;
+const PHOTOS = /*PHOTOS*/null;
+for (const k in PARTS) if (typeof PARTS[k].img === 'number') PARTS[k].img = PHOTOS[PARTS[k].img];
+for (const b of Object.values(BENCHES)) for (const m of b.modules) {
+  const s = m.drawing && m.drawing.svg;
+  if (typeof s === 'string' && s.startsWith('@svg:')) m.drawing.svg = SVGS[+s.slice(5)].replace(/@part-photo:([a-z0-9_]+)/g, (x, id) => PARTS[id].img);
+}
+</script>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='md-bringup-v2';
+let store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){store={};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}renderExport();}
+
+/* ---------- user name substitution ---------- */
+const tplNodes=[];
+function collectTemplates(){
+  const walker=document.createTreeWalker($('#steps'),NodeFilter.SHOW_TEXT);
+  let n;while((n=walker.nextNode())){if(n.nodeValue.includes('{{u}}'))tplNodes.push([n,n.nodeValue]);}
+}
+function applyUser(){
+  const u=(store.user||'duck').trim()||'duck';
+  for(const [n,t] of tplNodes)n.nodeValue=t.split('{{u}}').join(u);
+}
+
+/* ---------- tabs ---------- */
+function showTab(id){
+  $$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.id==='tab-'+id));
+  if(id==='steps')renderWiringIn($('.step.on'));
+  if(id==='parts')renderPinMap();
+  if(id==='head')drawHead();
+  if(id==='log')renderExport();
+  store.tab=id;save();window.scrollTo(0,0);
+}
+// Tab clicks go through the hash too (#parts, #head, #cad, #log; the steps tab uses the current step id), so Back/Forward
+// and reload keep the tab. The hashchange listener (init section) does the showing.
+const TABS=['steps','parts','head','cad','log'];
+function goTab(id){if(id==='steps'){goStep(cur);return;}if(location.hash==='#'+id){showTab(id);return;}location.hash=id;}
+$$('#tabs button').forEach(b=>b.addEventListener('click',()=>goTab(b.dataset.tab)));
+
+/* ---------- part chips ---------- */
+function partThumb(p){return p.img;}
+function chipHTML(id){
+  const p=PARTS[id];if(!p)return '';
+  const dk=p.dk?'DigiKey '+esc(p.dk):'<span class="nodk">'+esc(p.source||'')+'</span>';
+  return '<button class="chip" data-part="'+id+'"><img alt="" src="'+partThumb(p)+'"><span><b>'+esc(p.zh)+'</b><small>'+esc(p.name)+'</small><small>'+dk+'</small></span></button>';
+}
+$$('.need').forEach(el=>{el.innerHTML=el.dataset.parts.split(',').map(chipHTML).join('');});
+document.addEventListener('click',e=>{const c=e.target.closest('.chip[data-part]');if(c)openPart(c.dataset.part);});
+
+/* ---------- photo overlays ---------- */
+function markPos(p,key){
+  if(key.startsWith('pin:')){const k=key.slice(4);return (p.pins||[]).find(x=>x.pin===k);}
+  return (p.conns||[]).find(x=>x.label===key);
+}
+function imgBox(p,crop,dotsHTML){
+  if(!crop)return '<div class="ovimg"><img alt="'+esc(p.zh)+'" src="'+p.img+'">'+dotsHTML+'</div>';
+  const [x0,y0,x1,y1]=crop, w=p.w*(x1-x0), h=p.h*(y1-y0);
+  return '<div class="ovimg crop" style="aspect-ratio:'+w.toFixed(1)+' / '+h.toFixed(1)+'"><img alt="'+esc(p.zh)+'" src="'+p.img+'" style="width:'+(100/(x1-x0))+'%;left:'+(-x0/(x1-x0)*100)+'%;top:'+(-y0/(y1-y0)*100)+'%">'+dotsHTML+'</div>';
+}
+// Push overlapping markers apart (sized for the narrowest phone layout) and keep a leader line to the true point.
+function spread(pts,aspect,R,maxW){
+  const W=maxW,H=W*aspect;
+  const q=pts.map(p=>({x:p.x*W,y:p.y*H,ox:p.x*W,oy:p.y*H}));
+  for(let it=0;it<80;it++){let moved=false;
+    for(let i=0;i<q.length;i++)for(let j=i+1;j<q.length;j++){
+      let dx=q[j].x-q[i].x,dy=q[j].y-q[i].y,d=Math.hypot(dx,dy);
+      if(d<2*R+2){if(d<0.01){dx=1;dy=0.4;d=Math.hypot(dx,dy);}const push=(2*R+2-d)/2+0.3,ux=dx/d,uy=dy/d;q[i].x-=ux*push;q[i].y-=uy*push;q[j].x+=ux*push;q[j].y+=uy*push;moved=true;}
+    }
+    for(const p of q){p.x=Math.max(R,Math.min(W-R,p.x));p.y=Math.max(R,Math.min(H-R,p.y));}
+    if(!moved)break;}
+  return q.map(p=>({x:p.x/W,y:p.y/H,ox:p.ox/W,oy:p.oy/H,moved:Math.hypot(p.x-p.ox,p.y-p.oy)>2}));
+}
+function overlayHTML(id,marks,cap,small,crop){
+  const p=PARTS[id];if(!p)return '';
+  const [x0,y0,x1,y1]=crop||[0,0,1,1];
+  const aspect=(p.h*(y1-y0))/(p.w*(x1-x0));
+  const dispW=crop?330:Math.min(330,440/aspect);
+  const R=small?10:13;
+  const placed=[],idx=[];
+  marks.forEach((m,i)=>{const pos=markPos(p,m[0]);if(pos){placed.push({x:(pos.x-x0)/(x1-x0),y:(pos.y-y0)/(y1-y0)});idx.push(i);}});
+  const sp=spread(placed,aspect,R,dispW);
+  let dots='',lines='',items='';
+  sp.forEach((q,k)=>{const i=idx[k],m=marks[i],col=m[2]||'#d7263d';
+    if(q.moved){lines+='<line x1="'+q.ox*100+'" y1="'+q.oy*100+'" x2="'+q.x*100+'" y2="'+q.y*100+'" stroke="#fff" stroke-width="4" vector-effect="non-scaling-stroke"/><line x1="'+q.ox*100+'" y1="'+q.oy*100+'" x2="'+q.x*100+'" y2="'+q.y*100+'" stroke="'+col+'" stroke-width="2" vector-effect="non-scaling-stroke"/>';
+      dots+='<span class="anchor" style="left:'+q.ox*100+'%;top:'+q.oy*100+'%;background:'+col+'"></span>';}
+    dots+='<span class="dot'+(small?' small':'')+'" style="left:'+q.x*100+'%;top:'+q.y*100+'%;background:'+col+'" title="'+esc(m[1])+'">'+(i+1)+'</span>';});
+  marks.forEach((m,i)=>{const col=m[2]||'#d7263d';items+='<li><i style="background:'+col+'">'+(i+1)+'</i><span>'+esc(m[1])+'</span></li>';});
+  if(lines)dots='<svg class="leaders" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+lines+'</svg>'+dots;
+  return imgBox(p,crop,dots)+(cap?'<figcaption>'+esc(cap)+'</figcaption>':'')+'<ol>'+items+'</ol>'+'<span class="src">照片：'+esc(p.photoSrc||'')+'</span>';
+}
+$$('figure.ov').forEach(f=>{let m=[];try{m=JSON.parse(f.dataset.marks||'[]');}catch(e){}const crop=f.dataset.crop?f.dataset.crop.split(',').map(Number):null;f.innerHTML=overlayHTML(f.dataset.part,m,f.dataset.cap,f.dataset.small,crop);});
+
+/* ---------- part dialog ---------- */
+function openPart(id){
+  const p=PARTS[id];if(!p)return;
+  const WIRE={'blue = SDA':'#1f6fd1','black = GND':'#1d1d1f','red = 3.3 V':'#d7263d','yellow = SCL':'#c99a00'};
+  const marks=(p.conns||[]).map(c=>[c.label,c.zh||c.label,WIRE[c.label]]);
+  if(id==='max98357a_3006')(p.pins||[]).forEach(q=>marks.push(['pin:'+q.pin,q.name+' 孔：出厂是空的，要焊排针','#8a9199']));
+  $('#dlgbody').innerHTML='<h2>'+esc(p.zh)+'</h2><p class="muted">'+esc(p.name)+'</p>'+partFacts(p)+'<figure class="ov">'+overlayHTML(id,marks,'',marks.length>8)+'</figure>';
+  const d=$('#dlg');if(d.showModal)d.showModal();else d.setAttribute('open','');
+}
+$('#dlgclose').addEventListener('click',()=>$('#dlg').close());
+$('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close();});
+function partFacts(p){
+  const dk=p.dk?'<a href="https://www.digikey.com/en/products/result?keywords='+encodeURIComponent(p.dk)+'" target="_blank" rel="noopener">'+esc(p.dk)+'</a>':esc(p.source||'不是从 DigiKey 买的');
+  return '<dl><dt>DigiKey</dt><dd>'+dk+'</dd><dt>厂家型号</dt><dd>'+esc(p.mfr+' '+p.mpn)+'</dd><dt>官方页面</dt><dd><a href="'+esc(p.url)+'" target="_blank" rel="noopener">打开</a></dd></dl>';
+}
+
+/* ---------- parts tab ---------- */
+const GROUPS=[
+  ['今天要用的',['pi_zero_w','camera_module_3_wide','camera_cable_sc1892','bno085_4754','stemma_qt_cable_4397','openrb_150','xl330_m288_t','usb_pd_5991','usb_cable_4472']],
+  ['第 13 步：功放和喇叭（焊 5 根线）',['max98357a_3006','speaker_cms_30204_18sp']],
+  ['不再装进机器人的电源件（10 月 13 日改用 USB-C 5 V，留作记录）',['dfr1202','xt30_fit0586']],
+  ['不再使用的保险丝（10 月 11 日取消，留作记录）',['fuse_0251500_0p5a','fuse_0251003_3a','fuse_0251005_5a','fuse_0251010_10a']],
+];
+function renderParts(){
+  $('#partsgroups').innerHTML=GROUPS.map(([t,ids])=>'<div class="pgroup"><h2>'+esc(t)+'</h2><div class="pgrid">'+ids.map(id=>{
+    const p=PARTS[id];if(!p)return '';
+    return '<div class="pcard"><img alt="" src="'+p.img+'"><h4>'+esc(p.zh)+'</h4><div class="en">'+esc(p.name)+'</div><div class="use">'+esc(p.use)+'</div>'+partFacts(p)+'<button data-open="'+id+'">看接口</button></div>';
+  }).join('')+'</div></div>').join('');
+  $$('#partsgroups [data-open]').forEach(b=>b.addEventListener('click',()=>openPart(b.dataset.open)));
+}
+
+/* ---------- pin map ---------- */
+const USED={1:['IMU 红线','#d7263d'],7:['IMU 蓝线（SDA）','#1f6fd1'],13:['IMU 黄线（SCL）','#c99a00'],9:['IMU 黑线','#1d1d1f'],4:['功放 Vin（第 13 步）','#8a9199'],34:['功放 GND（第 13 步）','#8a9199'],12:['功放 BCLK（第 13 步）','#8a9199'],35:['功放 LRC（第 13 步）','#8a9199'],40:['功放 DIN（第 13 步）','#8a9199']};
+let pinDone=false;
+function renderPinMap(){
+  if(pinDone)return;pinDone=true;
+  const p=PARTS.pi_zero_w;
+  let dots='';
+  (p.pins||[]).forEach(pin=>{const u=USED[pin.pin];const col=u?u[1]:'rgba(255,255,255,.85)';const fg=u?'#fff':'#1f2328';
+    dots+='<span class="dot" data-pin="'+pin.pin+'" style="left:'+(pin.x*100)+'%;top:'+(pin.y*100)+'%;background:'+col+';color:'+fg+'">'+pin.pin+'</span>';});
+  const crop=[0.06,0.02,0.92,0.34],[x0,y0,x1,y1]=crop;
+  dots=dots.replace(/left:([\d.]+)%;top:([\d.]+)%/g,(m,l,t)=>'left:'+((l/100-x0)/(x1-x0)*100)+'%;top:'+((t/100-y0)/(y1-y0)*100)+'%');
+  $('#pinmap').innerHTML='<div class="pinscroll">'+imgBox(p,crop,dots)+'</div><div class="scrollhint">左右滑动看全部 40 根针。</div>';
+  $$('#pinmap .dot').forEach(d=>d.addEventListener('click',()=>{const n=d.dataset.pin;const pin=p.pins.find(x=>x.pin===n);const u=USED[n];
+    $('#pinpick').innerHTML='<b>'+n+' 号针</b>：'+esc(pin.zhname||pin.name)+(u?' · '+esc(u[0]):' · 今天不用')+'，'+(pin.row.startsWith('inner')?'内排（靠板子中间）':'外排（靠板边）');}));
+}
+
+/* ---------- wiring ---------- */
+const WK_TEXT={all:'全部',step:'逐根接线',exitStep:'显示全部',prev:'← 上一根',next:'下一根 →',stepOf:(n,t)=>'第 '+n+' 根，共 '+t+' 根',zoomIn:'放大两端',zoomOut:'收起放大图',hint:'点一下针脚或导线看详情。',wires:'导线',noWire:'这根针没有接线。',issues:'检查',part:'型号',unrouted:'找不到不遮挡的走线，用虚线直连表示。',roles:{power:'电源',ground:'地线',signal:'信号',nc:'不接'}};
+const views={};
+const clone=o=>JSON.parse(JSON.stringify(o));
+// Benches copied from the assembly guide carry Chinese marker text per pin ("module.pin").
+const markerLabel=b=>{const t=b.pinText||{};return (pin,m)=>t[m.id+'.'+pin.id]||(pin.label===pin.name?pin.label:pin.label+' · '+pin.name);};
+// Big drawings: tall overview; in wire-by-wire mode the overview shrinks so the step bar and the
+// close-ups of both wire ends (zoomBelow: always) fit on screen under it.
+const BIG={fontSize:15,keyboard:false,overviewLabels:'always',zoomBelow:100000,zoomScale:10};
+function bigOptions(bench,fit,extra){
+  const ref={view:null};
+  const o=Object.assign({text:WK_TEXT,pinLabel:markerLabel(bench)},BIG,extra||{});
+  // wiring-kit reads maxHeight on every layout, so a getter follows step mode and window size.
+  Object.defineProperty(o,'maxHeight',{enumerable:true,get:()=>fit(!!(ref.view&&ref.view.state.step!==null))});
+  return {o,ref};
+}
+const inlineFit=stepping=>!stepping?1250:window.innerWidth>=720?Math.max(320,window.innerHeight-560):Math.max(380,Math.round(window.innerHeight*0.55));
+function renderWiringIn(scope){
+  if(!scope||!window.WiringKit)return;
+  $$('.wkhost',scope).forEach(h=>{const k=h.dataset.bench;if(views[k]||!BENCHES[k])return;
+    if(h.classList.contains('wkbig')){const b=bigOptions(BENCHES[k],inlineFit);views[k]=b.ref.view=WiringKit.render(h,clone(BENCHES[k]),b.o);return;}
+    views[k]=WiringKit.render(h,BENCHES[k],{text:WK_TEXT,pinLabel:(pin,m)=>m.id==='pi'?pin.label+' 号':pin.label});});
+}
+/* ---------- full-screen drawing ---------- */
+const fdlg=$('#wkfull'),fhold=$('#wkf-holder');
+let fullView=null,fullOpener=null;
+function fullFitHeight(){
+  const body=$('.wkf-body',fdlg),stage=$('.wk-stage',fdlg);
+  const top=stage?stage.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop:64;
+  return Math.max(300,body.clientHeight-top-(parseFloat(getComputedStyle(body).paddingBottom)||0)-4);
+}
+function openFull(k,title,opener){
+  if(!window.WiringKit||!BENCHES[k])return;
+  if(fullView){try{fullView.destroy();}catch(e){}fullView=null;}
+  fhold.textContent='';
+  $('#wkf-title').textContent=title||'接线图';
+  fullOpener=opener||null;
+  document.documentElement.classList.add('wkfull-open');
+  if(!fdlg.open){if(fdlg.showModal)fdlg.showModal();else fdlg.setAttribute('open','');}
+  $('.wkf-body',fdlg).scrollTop=0;
+  // Fitted to the visible area; on wide screens step mode leaves room for the close-ups below it.
+  const b=bigOptions(BENCHES[k],stepping=>{const f=fullFitHeight();return stepping&&window.innerWidth>=720?Math.max(300,f-380):f;},{fontSize:window.innerWidth<600?16:17,keyboard:true});
+  fullView=b.ref.view=WiringKit.render(fhold,clone(BENCHES[k]),b.o);
+  $('#wkf-close').focus({preventScroll:true});
+}
+function closeFull(){if(fdlg.open)fdlg.close();}
+fdlg.addEventListener('close',()=>{
+  if(fullView){try{fullView.destroy();}catch(e){}fullView=null;}
+  fhold.textContent='';document.documentElement.classList.remove('wkfull-open');
+  const back=fullOpener;fullOpener=null;if(back&&document.contains(back))back.focus({preventScroll:true});
+});
+$('#wkf-close').addEventListener('click',closeFull);
+$$('.fullbtn').forEach(b=>b.addEventListener('click',()=>openFull(b.dataset.bench,b.dataset.title,b)));
+
+/* ---------- steps ---------- */
+const steps=$$('.step');
+function stepDone(id){return !!(store.done&&store.done[id]);}
+function buildStepList(){
+  $('#steplist').innerHTML=steps.map((s,i)=>'<li class="'+(stepDone(s.id)?'done':'')+'"><button data-i="'+i+'"><span class="n">'+(stepDone(s.id)?'✓':i)+'</span><span>'+esc(s.dataset.title)+(s.dataset.opt?' <span class="opt">'+esc(s.dataset.opt)+'</span>':'')+'</span></button></li>').join('');
+  $$('#steplist button').forEach(b=>b.addEventListener('click',()=>goStep(+b.dataset.i)));
+  markCurrent();
+}
+let cur=0;
+const listIsBar=()=>getComputedStyle($('#steplist')).display==='flex';
+function markCurrent(){$$('#steplist button').forEach(b=>b.classList.toggle('on',+b.dataset.i===cur));
+  const on=$('#steplist button.on');if(on&&on.scrollIntoView&&listIsBar())on.scrollIntoView({block:'nearest',inline:'center'});}
+// Sticky offsets: the header height and, when the step list is a horizontal bar, its height too (see --hdr / --bar in the CSS).
+function measureBars(){const r=document.documentElement.style;r.setProperty('--hdr',Math.round($('header.top').getBoundingClientRect().height)+'px');
+  r.setProperty('--bar',(listIsBar()?Math.round($('#steplist').getBoundingClientRect().height):0)+'px');}
+if(window.ResizeObserver){const ro=new ResizeObserver(measureBars);ro.observe($('header.top'));ro.observe($('#steplist'));}
+window.addEventListener('resize',measureBars);
+function showStep(i,scroll){
+  cur=Math.max(0,Math.min(steps.length-1,i));
+  steps.forEach((s,j)=>s.classList.toggle('on',j===cur));
+  $('.stepsgrid').classList.toggle('wide',!!steps[cur].dataset.wide);
+  measureBars();
+  markCurrent();
+  $('#prevStep').disabled=cur===0;
+  $('#nextStep').disabled=cur===steps.length-1;
+  renderWiringIn(steps[cur]);
+  store.step=cur;save();
+  if(scroll)window.scrollTo({top:0});
+}
+// User navigation sets location.hash to the step id, so every step is a history entry and Back/Forward work;
+// the hashchange listener (init section) shows the step. Same hash again: just show it.
+function goStep(i){i=Math.max(0,Math.min(steps.length-1,i));const id=steps[i].id;
+  if(location.hash==='#'+id){showStep(i,true);return;}
+  location.hash=id;}
+$('#prevStep').addEventListener('click',()=>goStep(cur-1));
+$('#nextStep').addEventListener('click',()=>goStep(cur+1));
+// Visible anchor ids: a small tag after each step title and each section heading; clicking copies the full link.
+function idTag(id){const a=document.createElement('a');a.className='idtag';a.href='#'+id;a.textContent='#'+id;a.title='复制这一节的链接';
+  a.addEventListener('click',e=>{e.preventDefault();const url=location.href.replace(/[?#].*$/,'')+'#'+id;
+    const done=()=>{a.textContent='已复制链接';a.classList.add('copied');setTimeout(()=>{a.textContent='#'+id;a.classList.remove('copied');},1400);};
+    const ask=()=>{try{prompt('复制这个链接：',url);}catch(e){}};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,ask);else ask();});
+  return a;}
+steps.forEach(s=>{const h=s.querySelector('h1');if(h)h.appendChild(idTag(s.id));});
+$$('.subsec[id]').forEach(d=>{const h=d.querySelector('h2');if(h)h.appendChild(idTag(d.id));});
+steps.forEach(s=>{
+  if(s.id==='s0')return;
+  const head=document.createElement('div');head.className='stephead';
+  const lab=document.createElement('label');lab.className='donebox';
+  lab.innerHTML='<input type="checkbox"> 这一步做完了';
+  const cb=lab.querySelector('input');cb.checked=stepDone(s.id);
+  cb.addEventListener('change',()=>{store.done=store.done||{};store.done[s.id]=cb.checked;save();buildStepList();});
+  const no=s.querySelector('.stepno');head.appendChild(no.cloneNode(true));head.appendChild(lab);no.replaceWith(head);
+});
+
+/* ---------- commands ---------- */
+$$('.cmd').forEach(c=>{
+  const code=c.querySelector('code');code.innerHTML=code.textContent.split(' ').map(t=>t.length>22?'<span class="tok long">'+esc(t).replace(/([@:\/,])/g,'$1<wbr>')+'</span>':'<span class="tok">'+esc(t)+'</span>').join(' ');
+  const w=c.dataset.where;const tag=document.createElement('span');tag.className='tagw '+w;tag.textContent=w==='mac'?'在 Mac 终端运行':w==='ide'?'粘贴到 Mac 上的 Arduino IDE':'在 Pi 上运行（ssh 登录后）';c.prepend(tag);
+  const b=document.createElement('button');b.textContent='复制';c.appendChild(b);
+  b.addEventListener('click',()=>{const t=c.querySelector('code').textContent;
+    const done=()=>{b.textContent='已复制';setTimeout(()=>b.textContent='复制',1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done));else fallbackCopy(t,done);});
+});
+function fallbackCopy(t,done){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){}ta.remove();}
+
+/* ---------- records ---------- */
+$$('[data-r]').forEach(inp=>{store.rec=store.rec||{};inp.value=store.rec[inp.dataset.r]||'';
+  inp.addEventListener('input',()=>{store.rec[inp.dataset.r]=inp.value;save();
+});});
+const uname=$('#uname');uname.value=store.user||'duck';
+uname.addEventListener('input',()=>{store.user=uname.value;save();applyUser();});
+
+/* ---------- overview flow ---------- */
+const FLOW=[
+  ['pi_zero_w','Mac','Wi-Fi 远程登录（ssh）','第 1、2 步',''],
+  ['pi_zero_w','camera_module_3_wide','SC1892 排线','第 3 步',''],
+  ['pi_zero_w','bno085_4754','4397 线，4 根','第 4 步',''],
+  ['openrb_150','Mac','USB-C 数据线','第 5 步',''],
+  ['openrb_150','xl330_m288_t','套件里的舵机线','第 5 步',''],
+  ['usb_pd_5991','openrb_150','两根 22 AWG 线，螺丝端子','第 6 步（可选）、第 12 步',''],
+  ['openrb_150','pi_zero_w','两根杜邦线，夹在 OpenRB 端子上，插 Pi 2、6 号针','第 12 步',''],
+  ['pi_zero_w','max98357a_3006','功放上直接焊 5 根线，杜邦头插 Pi；不焊电阻，音量上限在软件里','第 13 步',''],
+];
+function endHTML(id){
+  if(id==='Mac')return '<div class="end"><img alt="" src="data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><rect x="8" y="12" width="36" height="24" rx="3" fill="#d9dde3" stroke="#5b636b" stroke-width="2"/><rect x="4" y="37" width="44" height="4" rx="2" fill="#5b636b"/></svg>')+'"><span><b>你的 Mac</b><small>终端、DYNAMIXEL Wizard</small></span></div>';
+  const p=PARTS[id];return '<div class="end"><img alt="" src="'+p.img+'"><span><b>'+esc(p.zh)+'</b><small>'+esc(p.short||'')+'</small></span></div>';
+}
+$('#flow').innerHTML=FLOW.map(f=>'<div class="link '+f[4]+'">'+endHTML(f[0])+'<div class="via"><em>⟷</em>'+esc(f[2])+'</div>'+endHTML(f[1])+'<div class="stepref">'+esc(f[3])+'</div></div>').join('');
+
+/* ---------- head fit ---------- */
+const SEATS={v16:{name:'V1.6（已打印）',dx:0,dz:0,front:10.1,floor:0.6,rear:5.7},v17:{name:'V1.7（没打印）',dx:4.6,dz:0,front:14.8,floor:0.6,rear:1.1},v18:{name:'V1.8（已发布）',dx:4.6,dz:1.0,front:17.6,floor:1.6,rear:1.1}};
+let seat='v16',H=14.0;
+const fmt=v=>(Math.round(v*10)/10).toFixed(1);
+function ro(id,label,v){const el=$('#'+id);const ok=v>=2;el.className='ro '+(ok?'ok':'bad');el.innerHTML='<span>'+label+'</span><b>'+fmt(v)+' mm</b><span>'+(ok?'够 2 mm':(v<0?'会撞上':'不到 2 mm'))+'</span>';}
+function drawHead(){
+  const S=SEATS[seat],k=6;
+  const mA=NaN,mB=NaN;
+  const front0=(seat==='v16'&&isFinite(mA))?mA:S.front, floor=(seat==='v16'&&isFinite(mB))?mB:S.floor, rear=S.rear;
+  const dx=S.dx*k,dz=S.dz*k,floorY=226;
+  const piBack=154-dx,piF=piBack+10,hdF=piF+15,hdTop=190-dz,hdBot=222-dz,piTop=60-dz,piBot=222-dz;
+  const sx=hdF+front0*k;
+  const front=front0-H, connEnd=hdF+H*k, bad=front<0||floor<0||rear<0, tight=front<2||floor<2||rear<2;
+  const cf=bad?'#F7C1C1':'#9FE1CB',cs=bad?'#A32D2D':'#0F6E56';
+  let s='<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#A32D2D"/></pattern></defs>';
+  s+='<rect x="90" y="60" width="30" height="166" rx="2" fill="#F1EFE8" stroke="#888780" stroke-width="0.8"/><text x="105" y="48" text-anchor="middle" font-size="14" fill="#5F5E5A">下巴支架</text>';
+  s+='<rect x="'+sx+'" y="150" width="46" height="76" rx="2" fill="#F1EFE8" stroke="#888780" stroke-width="0.8"/><text x="'+(sx+23)+'" y="138" text-anchor="middle" font-size="14" fill="#5F5E5A">相机螺丝</text>';
+  s+='<rect x="60" y="'+floorY+'" width="'+Math.max(300,sx+70-60)+'" height="16" rx="1" fill="#D3D1C7" stroke="#888780" stroke-width="0.8"/><text x="210" y="268" text-anchor="middle" font-size="14" fill="#5F5E5A">下壳底板</text>';
+  s+='<rect x="'+piBack+'" y="'+piTop+'" width="10" height="'+(piBot-piTop)+'" rx="1" fill="#D3D1C7" stroke="#888780" stroke-width="0.8"/><text x="'+(piBack+5)+'" y="'+(piTop-12)+'" text-anchor="middle" font-size="14" fill="#5F5E5A">Pi</text>';
+  s+='<rect x="'+piF+'" y="'+hdTop+'" width="15" height="'+(hdBot-hdTop)+'" fill="#B4B2A9" stroke="#888780" stroke-width="0.8"/>';
+  s+='<rect x="'+hdF+'" y="'+(hdTop+1)+'" width="'+(H*k)+'" height="'+(hdBot-hdTop-2)+'" rx="2" fill="'+cf+'" stroke="'+cs+'" stroke-width="1"/>';
+  if(connEnd>sx)s+='<rect x="'+sx+'" y="'+(hdTop+1)+'" width="'+(connEnd-sx)+'" height="'+(hdBot-hdTop-2)+'" fill="url(#hatch)" stroke="#A32D2D" stroke-width="1"/>';
+  $('#headsvg').innerHTML=s;
+  $('#headverdict').innerHTML='<b>'+S.name+'</b><span>'+(S.dx||S.dz?'Pi 比 V1.6 后移 '+S.dx+' mm，上移 '+S.dz+' mm':'Pi 在原来的位置')+'</span><span>插头高 '+fmt(H)+' mm</span><strong class="'+(bad?'bad':'good')+'">'+(bad?'放不下':(tight?'放得下，有间隙不到 2 mm':'三面都够 2 mm'))+'</strong>'+(connEnd>sx?'<span class="hatchnote">红色斜线：插头撞进相机螺丝的部分</span>':'');
+  ro('ro_front','前面：插头到相机螺丝',front);ro('ro_floor','下面：最下排针到底板',floor);ro('ro_rear','后面：Pi 焊点到下巴支架',rear);
+  const notes={v16:'已打印的 V1.6：排针前面约 10 mm，最下排针离底板 0.6 mm。只有低于 8 mm、而且线不用弯的插头才放得下，没有这样的零件。',v17:'Pi 往后挪 4.6 mm，前面空出来了，但 Pi 背面焊点离下巴支架只剩 1.1 mm，底板间隙还是 0.6 mm。不值得打印。',v18:'已发布的 V1.8 头盖：Pi 往后 4.6 mm、往上 1 mm，摄像头改到新面板上。14 mm 跳线套前面离相机板还有 3.6 mm。下面离底板 1.6 mm、后面焊点离下巴支架 1.1 mm，这两处低于 2 mm 的规则，是接受的：都是不动的零件，间隙为正。再往后挪就得削下巴支架。'};
+  $('#headnote').textContent=notes[seat]+((seat==='v16'&&(isFinite(mA)||isFinite(mB)))?' 当前用的是你的实测值。':'');
+}
+$$('#seatseg [data-seat]').forEach(b=>b.addEventListener('click',()=>{seat=b.dataset.seat;$$('#seatseg button').forEach(x=>x.classList.toggle('on',x===b));drawHead();}));
+$$('#connseg [data-h]').forEach(b=>b.addEventListener('click',()=>{H=parseFloat(b.dataset.h);$('#hs').value=H;$('#hval').textContent=fmt(H);$$('#connseg button').forEach(x=>x.classList.toggle('on',x===b));drawHead();}));
+$('#hs').addEventListener('input',e=>{H=parseFloat(e.target.value);$('#hval').textContent=fmt(H);$$('#connseg button').forEach(x=>x.classList.toggle('on',Math.abs(parseFloat(x.dataset.h)-H)<.05));drawHead();});
+
+/* ---------- export ---------- */
+const LABELS={imu_addr:'IMU 地址',servo_ids:'舵机 ID',pd_volts:'5991 输出电压 (V)',rb_volts:'OpenRB 端子电压 (V)',closes:'头壳能不能合上',seam_gap:'接缝差多少 (mm)',first_touch:'什么顶住了',
+  usb_ids:'USB 直连扫到的舵机 ID',usb_volts:'USB 供电时舵机电压 (V)',pd5_volts:'第 12 步 5991 端子电压，旧 5 V 方案 (V)',pd15_volts:'第 12 步 5991 端子电压，15 V (V)',pd9_volts:'第 12 步 5991 端子电压，9 V 试用 (V)',xl1_volts:'第 12 步 XL4015 #1 空载 (V)',xl2_volts:'第 12 步 XL4015 #2 空载 (V)',rb7_volts:'第 12 步 OpenRB 端子电压，7 V (V)',pi5_volts:'第 12 步 Pi 2-6 号针电压 (V)'};
+function exportData(){return {page:'MicroDuck bring-up day 1',exported:new Date().toISOString(),user:store.user||'duck',steps_done:steps.filter(s=>stepDone(s.id)).map(s=>s.dataset.title),records:store.rec||{}};}
+function renderExport(){const box=$('#exportbox');if(!box)return;const d=exportData();
+  box.value='MicroDuck 台架联调 第 1 天\n导出时间：'+new Date(d.exported).toLocaleString('zh-CN',{hour12:false})+'\n\n做完的步骤：\n'+(d.steps_done.length?d.steps_done.map(t=>'- '+t).join('\n'):'（还没有）')+'\n\n记录：\n'+Object.keys(LABELS).map(k=>'- '+LABELS[k]+'：'+((d.records[k]||'').trim()||'（空）')).join('\n');}
+$('#copyLog').addEventListener('click',()=>{const t=$('#exportbox').value;const b=$('#copyLog');const done=()=>{b.textContent='已复制';setTimeout(()=>b.textContent='复制为文字',1400);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done));else fallbackCopy(t,done);});
+$('#dlLog').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(exportData(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='microduck-bringup-day1.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);});
+$('#clearLog').addEventListener('click',()=>{if(!confirm('清空所有打勾和填写的记录？'))return;const u=store.user;store={user:u};save();$$('[data-r]').forEach(i=>i.value='');buildStepList();});
+
+/* ---------- init ---------- */
+collectTemplates();applyUser();renderParts();buildStepList();
+const hashTarget=()=>{const id=decodeURIComponent(location.hash.slice(1));return id?document.getElementById(id):null;};
+const stepFromHash=()=>{const t=hashTarget();return t?steps.findIndex(s=>s===t||s.contains(t)):-1;};
+// Scroll handling is ours: sections are shown and hidden, so the browser's saved positions do not apply.
+try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}
+// A step hash (#s13) lands at the top of the step; a section hash (#ab-8) lands on that heading, under the sticky
+// header and bar (scroll-margin-top). The wiring drawings and images shift the layout after the first paint, so the
+// section scroll is repeated after two frames, after 300 ms and at window load.
+let scrollJob=0;
+const scrollToHash=()=>{const job=++scrollJob;const t=hashTarget();const sub=t&&!t.classList.contains('step');
+  const go=()=>{if(job!==scrollJob)return;const el=hashTarget();if(el&&!el.classList.contains('step'))el.scrollIntoView({block:'start'});else window.scrollTo(0,0);};
+  go();requestAnimationFrame(()=>requestAnimationFrame(go));
+  if(sub){setTimeout(go,300);if(document.readyState!=='complete')window.addEventListener('load',()=>setTimeout(go,0),{once:true});}};
+const hashTab=()=>{const h=decodeURIComponent(location.hash.slice(1));return TABS.includes(h)&&h!=='steps'?h:null;};
+const hashStep=stepFromHash();
+const startTab=hashStep>=0?'steps':(hashTab()||new URLSearchParams(location.search).get('tab')||store.tab||'steps');
+const qs=new URLSearchParams(location.search).get('step');
+showStep(hashStep>=0?hashStep:qs!==null?+qs:(store.step||0),false);
+const tab0=TABS.includes(startTab)?startTab:'steps';
+showTab(tab0);
+// First entry: make the URL name what is on screen (replaceState, so Back from the next step returns here without a
+// duplicate entry). A hash that already points inside the shown step (#ab-8) is kept as is.
+if(history.replaceState){const want=tab0==='steps'?steps[cur].id:tab0;const t=hashTarget();
+  if(!(tab0==='steps'&&t&&steps[cur].contains(t))&&location.hash!=='#'+want){try{history.replaceState(null,'','#'+want);}catch(e){}}}
+if(tab0==='steps')scrollToHash();
+window.addEventListener('hashchange',()=>{const tab=hashTab();if(tab){closeFull();showTab(tab);return;}
+  const i=stepFromHash();if(i<0)return;closeFull();showTab('steps');showStep(i,false);scrollToHash();});
+})();
+</script>
+</body>
+</html>

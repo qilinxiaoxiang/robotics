@@ -1,0 +1,246 @@
+{
+ "_doc": "Candidate print poses for the V1.12 White plate, written to pose-sources.json (read by make_manifest.py and the\norientation check). Read-only on every source.\n\n    /tmp/microduck-cad-venv/bin/python scripts/pose_sources.py\n\n- shell_left_v20 / shell_right_v20 (world frame): the 10/1 pose is the rigid transform that maps the printed shell as the\n  guide drew it before V1.12 (full-build export, the same solid v20-source was built from) onto the 10/1 print STL\n  community-8.stl / community-10.stl. Found by ICP on the unique vertices and re-orthonormalised; the residual is\n  recorded (float32 export rounding). 'outer face down' turns that pose by the smallest rotation that lays the largest flat\n  facet within 5 degrees of the bed exactly on it: the 10/1 left shell stood on one edge of its flat outer side face\n  (8.8 mm2 contact, not self-standing), 2 degrees off.\n- head_cap_v19_white (world frame, the V1.9 cap STL reprinted white): the V1.9 cap pose, release-V1.9/manifest-V1.9.json head_cap_v19.sourceToPrint.\n- thigh_left / thigh_right (stock STL, already in the 10/1 print pose): identity. The 10-SURFACE-QUALITY side pose\n  (59.4 mm tall, about 466 mm2 first layer, rear-centre seats off support) is among the poses orientation_check.py generates\n  ('stable p=0.06'), so it needs no entry here.",
+ "oldGuideShells": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.12/scripts/guide-data-aaf3d6ba-shells.json",
+  "sha256": "f8f7df34359c2ced7c52f7419abace27024fd0595c6d2a7e414c3113272b12ef"
+ },
+ "poses": {
+  "shell_left_v20": {
+   "10/1 pose": {
+    "sourceToPrint": [
+     [
+      -4.0154035652051334e-10,
+      -5.862993498648845e-09,
+      1.0,
+      -21.102608161424907
+     ],
+     [
+      -0.9999999999999999,
+      3.860660432359773e-09,
+      -4.0154047740691364e-10,
+      -5.9450327213675696
+     ],
+     [
+      -3.8606604638177485e-09,
+      -1.0000000000000002,
+      -5.862993650228369e-09,
+      31.764244642988896
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "registeredTo": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-8.stl",
+    "registeredToSha256": "c8f0753778630d8e6a0ff56daea9c00a37f7426ba743eba3493c054aa7750f02",
+    "maxVertexDeviationMm": 2.289749066321242e-06,
+    "worldVertices": 10438,
+    "stockVertices": 10438
+   },
+   "outer face down": {
+    "sourceToPrint": [
+     [
+      -4.153803498940789e-07,
+      0.03480230861929409,
+      0.9993942161702736,
+      -21.102608161424907
+     ],
+     [
+      -0.999999999715636,
+      -2.3844419799563497e-05,
+      4.147117329389838e-07,
+      -5.9450327213675696
+     ],
+     [
+      2.384440816133202e-05,
+      -0.999394215885909,
+      0.03480230861930209,
+      31.764244642988896
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "10/1 pose",
+    "turnDeg": 1.9944289526107108,
+    "facetAreaMm2": 753.506445406412,
+    "facetNormalWorld": [
+     -0.0,
+     0.9994,
+     -0.0348
+    ]
+   }
+  },
+  "shell_right_v20": {
+   "10/1 pose": {
+    "sourceToPrint": [
+     [
+      -0.03780901619228949,
+      0.03487807587614879,
+      -0.9986761227333661,
+      21.28390518542577
+     ],
+     [
+      -0.9992847657056265,
+      -0.0006597889292512349,
+      0.03780901621597764,
+      -7.035665189568495
+     ],
+     [
+      0.0006597902866963732,
+      0.9993913570277394,
+      0.03487807585047,
+      31.119015600420468
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "registeredTo": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-10.stl",
+    "registeredToSha256": "18e766ee969fab35151581c6c3b92d83854779139a92591e6fba945ad732012c",
+    "maxVertexDeviationMm": 4.040496286199092e-06,
+    "worldVertices": 10438,
+    "stockVertices": 10438
+   },
+   "outer face down": {
+    "sourceToPrint": [
+     [
+      -0.037809017351465135,
+      0.034874702837432776,
+      -0.9986762404848315,
+      21.28390518542577
+     ],
+     [
+      -0.9992849831114191,
+      -0.001292409309081033,
+      0.037786931685287045,
+      -7.035665189568495
+     ],
+     [
+      2.7109543702105752e-05,
+      0.9993908568624083,
+      0.034898631561912107,
+      31.119015600420468
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "10/1 pose",
+    "turnDeg": 0.03626907577761568,
+    "facetAreaMm2": 788.1312771389693,
+    "facetNormalWorld": [
+     -0.0,
+     -0.9994,
+     -0.0349
+    ]
+   }
+  },
+  "head_cap_v19_white": {
+   "V1.9 pose": {
+    "sourceToPrint": [
+     [
+      -0.994831182,
+      0.065255263,
+      -0.077798904,
+      41.502281705
+     ],
+     [
+      0.066724243,
+      0.997636148,
+      -0.016431442,
+      -3.766984888
+     ],
+     [
+      0.07654276,
+      -0.021537584,
+      -0.996833656,
+      150.267217814
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "from": "release-V1.9/manifest-V1.9.json head_cap_v19",
+    "poseOrigin": "ext-v19/manifest-ext-v19.json: V1.8 cap pose (roof on the bed), rotation from release-V1.8/manifest-V1.8.json; 104.39 mm2 contact, tip angle 7.7 deg so the Orange 4 mm outer brim override stays",
+    "flatContactMinimumMm2": 93.0
+   }
+  },
+  "thigh_left": {
+   "10/1 pose": {
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "note": "the stock STL is the 10/1 print pose"
+   }
+  },
+  "thigh_right": {
+   "10/1 pose": {
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "note": "the stock STL is the 10/1 print pose"
+   }
+  }
+ }
+}

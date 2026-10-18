@@ -1,0 +1,96 @@
+{
+  "scope": "Read-only independent handoff-boundary audit; no geometry or topology edits",
+  "problemIds": [
+    "P0",
+    "P5",
+    "P6"
+  ],
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/build_review.py": "c5b1c3fdca9fe9aa7394bf2a3be46934e9d359814098a1df70c88b2081e3adf3",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/prepare_fusion.py": "38f19d3caf59042d41a36ccf137bf95e441daeba761aaeb5c8f33a6ef2c89652",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/fusion/fusion-receipt.json": "cfcd533c86721ed7ff1373bf858cbabc980c50827810c44026c8b6908e1a93d2",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/roof/patch-static-check.json": "02247b480288d2180823b49d3a192d5ff0c6fe544002a908f099b4cfee421ba6",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/fusion/motor-wires-stage-summary.json": "f1e4e436c36c07cfa74afa6b20fc5f9ea0c94b7c482da1cd9eea50f90afe87d5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/fusion/head-wires-stage-summary.json": "2b92679457f5b09b3436b057b09e64b5352e33215a4dd00459c0a523ad540c4d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/design-verifier.log": "5fcc385971e5bb8dba345fa0011ea0043af720cc815988b7686fcfbb40869053",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/verify_current_build.py": "5d762ab5798d63e4e7830fe4b5447910cff0c482a140819a0d6d6c1fab3847a2",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/verify_design.py": "29c58840cbc786d7266d4068a65e24e46f6e6d57effdfd36e3ee9ea3f58c4f7b"
+  },
+  "concreteFalsePass": {
+    "actualPublisherPreconditions": {
+      "fusionStatusComplete": true,
+      "fusionReadbackPassed": true,
+      "addedRoofPatchStaticPassed": true
+    },
+    "publisherAllowsPage": true,
+    "motorRouteCount": 15,
+    "motorClear": 4,
+    "motorFailedOrUnresolved": 11,
+    "headFailures": [
+      "I2S pin40 touches restored roof by0.002044771 mm3; no tolerance exemption",
+      "Pi power/return and IMU candidates cross head_bottom/jaw_support",
+      "Initial power candidates cross IMU installation envelope; some also regulator_insert",
+      "Amp/OpenRB power candidate paths cross restored cap; J4 endpoint correction is not a full-route clearance claim",
+      "Speaker source wires each touch speaker_keeper by approximately0.0496 mm3 in expanded current screen; not silently waived"
+    ],
+    "rearServiceHoleRetained": true,
+    "wholeHarnessIntegrationReady": false,
+    "interpretation": "Reports accurately retained failures, but these failure fields do not control the deliverable gate. Render/readback success and one patch check were substituted for task-completion evidence."
+  },
+  "rootCauses": [
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/build_review.py",
+      "lines": [
+        4,
+        6
+      ],
+      "cause": "Only Fusion status/readback and added-patch static pass are asserted. Motor failures and head failures are interpolated as prose after the acceptance assertions."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/prepare_fusion.py",
+      "lines": [
+        17,
+        18
+      ],
+      "cause": "Each wire defaults to adopted=True; integrationReady=False and known failures do not prevent default inclusion in a completion-oriented deliverable."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/build_review.py",
+      "cause": "Closed head / Closed robot labels mean cap visibility, but read as enclosure success. Rear USB aperture is deliberately retained. No required-opening inventory or complete-enclosure check exists."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/CONNECTION-DECISION.md",
+      "cause": "Changing the motor-data connection to external Mac USB was used to remove the upward Pi USB conflict; that substitutes architecture for repairing the requested internal Pi-to-OpenRB connection and complete enclosure."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/verify_current_build.py",
+      "cause": "Current-design command runs the old design/reach/budget baseline and does not consume the exported roof-wiring-stage manifest or route checks. Its passing exit cannot qualify this assembly revision."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/head-wires/check_local.py",
+      "cause": "New wires were first generated as illustrative polylines without obstacle-constrained construction; direct known failures were tolerated as stage output. Fixing a collision requires changing the route or confirmed placement, not adding a warning."
+    }
+  ],
+  "minimalCorrectGate": {
+    "location": "Existing build_review.py immediately before completion-oriented page generation, shared by prepare_fusion final handoff",
+    "requiredRevision": "Explicit active requirement record: internal Pi-to-OpenRB USB; original outer crown and rear enclosure; complete named electrical net inventory",
+    "mechanicalConjunction": [
+      "All required routes and parts bind to the exact adopted component transforms and geometry hashes",
+      "All mandatory route IDs present exactly once; both registered endpoints and conductor/return nets present",
+      "Required path/self/connector/closure/motion checks complete for the declared scope; expected tests minus completed tests must be empty",
+      "Known unintended intersections count zero; invalid boolean/open-mesh/unrun results are incomplete, not pass",
+      "Intentional inserted contacts have pair-, region-, operation- and depth-specific evidence; no global epsilon waiver",
+      "Required enclosure openings inventory matches active requirement; a patch-only static check does not prove full enclosure",
+      "No electrical architecture or component substitution is accepted solely to make the mechanical check pass"
+    ],
+    "failureBehavior": "The repair task remains active. Keep diagnostics locally and communicate progress without generating a completion title or treating an annotated failure page as the repaired handoff. Explicitly requested failure review can be shown as a diagnostic, separate from repair acceptance.",
+    "negativeControls": [
+      "Current11failedOf15motorRoutes must reject",
+      "Restored crown with rear service aperture under fully-enclosed requirement must reject",
+      "Any one route still colliding, omitted, timed out, stale or checked against hidden obstacles must reject",
+      "Same STL with changed active port transform must reject stale route receipts",
+      "Fusion readback true plus collision report false must reject"
+    ]
+  },
+  "skillReviewPending": "Root upcoming shared skill change not yet provided; existing skill explicitly prohibits teleport/warning substitution but staged-review wording lacks a concrete deliverable veto."
+}

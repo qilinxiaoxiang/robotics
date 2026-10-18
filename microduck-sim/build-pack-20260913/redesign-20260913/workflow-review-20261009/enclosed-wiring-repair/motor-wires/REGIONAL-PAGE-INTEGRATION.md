@@ -1,0 +1,16 @@
+# Safe regional wiring integration scope — no page modified
+
+The current producer chain is `G/build_wiring_guidance.py` → `G/wiring-guide-data.json` (WIRING) and `G/build_wiring_spatial.py` → `G/wiring-spatial-data.json` (SPATIAL). `G/bundle_guide.py` lines 213 and 220–223 embed these files. Here G is `redesign-20260913/leg-guide-20261006`.
+
+The regional navigation is already implemented in `viewer.js` at `wiringGroups`, `wiringEntries`, `wiringGroupForModule`, `selectWiringEntry`, `goWiringConnection`, `wiringPanel` and `setWiring` (roughly lines 355–423). `wiringGroupForModule` selects the current leg group; next/previous use that group's connection IDs. The renderer entry is `wiring3d.js:renderWire3D`, which resolves WIRING step/connection indices, then looks up the same ID in SPATIAL.connections.
+
+The safe change is a source-bound regional adapter, not a hand edit of bundled HTML:
+
+1. Consume `active-topology.json` and `shared-port-repair/eight-leg-manifest.json` once. Map the right-leg group to IDs5→1 and left-leg group to IDs10→6. Export current English prepare/assemble/check text and the explicit operation dependencies from `shared-port-repair/operation-dependencies.json`. Every referenced connection must appear in both WIRING.connections and its WIRING.steps copy.
+2. All eight internal links are present: 5→4→3→2→1 and 10→9→8→7→6. Keep new OpenRB→10 and other trunk/head feeds separately unresolved. Remove obsolete 1→6 from active navigation. It is historical failure evidence only.
+3. Use the exact registered endpoints and verified receiving geometry. The current renderer's `wireTube` and insertion-update loop both use CatmullRomCurve3, and the installed renderer applies artificial lane offsets; these must be bypassed for source-bound accepted routes. Rendering those 180 mm paths by interpolating a few points would recreate the overshoot failure. Load checked meshes for the installed neutral view; use the ordered native curve contract when an editable path is needed.
+4. Limit mating animation to the explicitly checked endpoint/housing scope. Do not move the whole fixed neutral cable shape through a cover merely because one plug delta passed. Unknown or unverified insertion stages must remain stated as such.
+
+Do not run the current guidance/spatial builders unchanged and treat the result as current: guidance presently reloads the obsolete ledger, still describes the removed cross-leg cable, contains Chinese UI text, and preserves the old independent-fuse/data-only topology. The spatial builder still asserts the original 51-connection chain and synthesizes paths from component locations. Those are separate electrical-contract choices and cannot be silently overwritten from three geometric conductors. The region adapter may present the current eight mechanical routes with explicit pin-order/receiving limits; power-net instructions require the parent's current architecture source.
+
+No change to DATA.modules, printed parts, active motor IDs, head layout, acquisition stock or other page sections is required by these eight local route repairs. Rebuild and perform live regional UI checks only after the parent's architecture/data integration is ready.

@@ -1,0 +1,341 @@
+(lldb) target create /Volumes/OrcaSlicer/OrcaSlicer.app/Contents/MacOS/OrcaSlicer
+Current executable set to '/Volumes/OrcaSlicer/OrcaSlicer.app/Contents/MacOS/OrcaSlicer' (arm64).
+(lldb) disassemble -s 0x10003f180 -e 0x10003f6c0
+OrcaSlicer`Slic3r::CLI::run:
+OrcaSlicer[0x10003f180] <+198528>: ldr    x0, [sp, #0x2f70]
+OrcaSlicer[0x10003f184] <+198532>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f188] <+198536>: ldr    w8, [sp, #0x208]
+OrcaSlicer[0x10003f18c] <+198540>: and    w8, w8, #0x1
+OrcaSlicer[0x10003f190] <+198544>: ldr    w9, [sp, #0x1e0]
+OrcaSlicer[0x10003f194] <+198548>: orr    w8, w9, w8
+OrcaSlicer[0x10003f198] <+198552>: cmp    w8, #0x0
+OrcaSlicer[0x10003f19c] <+198556>: cset   w19, ne
+OrcaSlicer[0x10003f1a0] <+198560>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f1a4] <+198564>: ldr    x8, [x8]
+OrcaSlicer[0x10003f1a8] <+198568>: ldur   x20, [x8, #-0x50]
+OrcaSlicer[0x10003f1ac] <+198572>: adrp   x1, 18265
+OrcaSlicer[0x10003f1b0] <+198576>: add    x1, x1, #0xc50            ; "filament_type"
+OrcaSlicer[0x10003f1b4] <+198580>: add    x0, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f1b8] <+198584>: add    x0, x0, #0xf70
+OrcaSlicer[0x10003f1bc] <+198588>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f1c0] <+198592>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f1c4] <+198596>: add    x0, x8, x20
+OrcaSlicer[0x10003f1c8] <+198600>: ldr    x8, [x0]
+OrcaSlicer[0x10003f1cc] <+198604>: ldr    x8, [x8, #0x20]
+OrcaSlicer[0x10003f1d0] <+198608>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f1d4] <+198612>: add    x1, x1, #0xf70
+OrcaSlicer[0x10003f1d8] <+198616>: mov    w2, #0x0                  ; =0 
+OrcaSlicer[0x10003f1dc] <+198620>: blr    x8
+OrcaSlicer[0x10003f1e0] <+198624>: cbz    x0, 0x10003f1fc           ; <+198652>
+OrcaSlicer[0x10003f1e4] <+198628>: adrp   x1, 18937
+OrcaSlicer[0x10003f1e8] <+198632>: add    x1, x1, #0x430            ; typeinfo for Slic3r::ConfigOption
+OrcaSlicer[0x10003f1ec] <+198636>: adrp   x2, 18937
+OrcaSlicer[0x10003f1f0] <+198640>: add    x2, x2, #0x4b8            ; typeinfo for Slic3r::ConfigOptionStrings
+OrcaSlicer[0x10003f1f4] <+198644>: mov    x3, #0x0                  ; =0 
+OrcaSlicer[0x10003f1f8] <+198648>: bl     0x103d21f28               ; symbol stub for: __dynamic_cast
+OrcaSlicer[0x10003f1fc] <+198652>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f200] <+198656>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f204] <+198660>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f208] <+198664>: tbz    w8, #0x1f, 0x10003f214    ; <+198676>
+OrcaSlicer[0x10003f20c] <+198668>: ldr    x0, [sp, #0x2f70]
+OrcaSlicer[0x10003f210] <+198672>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f214] <+198676>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f218] <+198680>: ldr    x8, [x8]
+OrcaSlicer[0x10003f21c] <+198684>: ldur   x20, [x8, #-0x50]
+OrcaSlicer[0x10003f220] <+198688>: adrp   x1, 18236
+OrcaSlicer[0x10003f224] <+198692>: add    x1, x1, #0x556            ; "filament_colour"
+OrcaSlicer[0x10003f228] <+198696>: add    x0, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f22c] <+198700>: add    x0, x0, #0xf70
+OrcaSlicer[0x10003f230] <+198704>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f234] <+198708>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f238] <+198712>: add    x0, x8, x20
+OrcaSlicer[0x10003f23c] <+198716>: ldr    x8, [x0]
+OrcaSlicer[0x10003f240] <+198720>: ldr    x8, [x8, #0x20]
+OrcaSlicer[0x10003f244] <+198724>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f248] <+198728>: add    x1, x1, #0xf70
+OrcaSlicer[0x10003f24c] <+198732>: mov    w2, #0x0                  ; =0 
+OrcaSlicer[0x10003f250] <+198736>: blr    x8
+OrcaSlicer[0x10003f254] <+198740>: cbz    x0, 0x10003f278           ; <+198776>
+OrcaSlicer[0x10003f258] <+198744>: adrp   x1, 18937
+OrcaSlicer[0x10003f25c] <+198748>: add    x1, x1, #0x430            ; typeinfo for Slic3r::ConfigOption
+OrcaSlicer[0x10003f260] <+198752>: adrp   x2, 18937
+OrcaSlicer[0x10003f264] <+198756>: add    x2, x2, #0x4b8            ; typeinfo for Slic3r::ConfigOptionStrings
+OrcaSlicer[0x10003f268] <+198760>: mov    x3, #0x0                  ; =0 
+OrcaSlicer[0x10003f26c] <+198764>: bl     0x103d21f28               ; symbol stub for: __dynamic_cast
+OrcaSlicer[0x10003f270] <+198768>: str    x0, [sp, #0x310]
+OrcaSlicer[0x10003f274] <+198772>: b      0x10003f27c               ; <+198780>
+OrcaSlicer[0x10003f278] <+198776>: str    xzr, [sp, #0x310]
+OrcaSlicer[0x10003f27c] <+198780>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f280] <+198784>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f284] <+198788>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f288] <+198792>: tbz    w8, #0x1f, 0x10003f294    ; <+198804>
+OrcaSlicer[0x10003f28c] <+198796>: ldr    x0, [sp, #0x2f70]
+OrcaSlicer[0x10003f290] <+198800>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f294] <+198804>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f298] <+198808>: ldr    x8, [x8]
+OrcaSlicer[0x10003f29c] <+198812>: ldur   x20, [x8, #-0x50]
+OrcaSlicer[0x10003f2a0] <+198816>: adrp   x1, 18237
+OrcaSlicer[0x10003f2a4] <+198820>: add    x1, x1, #0x362            ; "filament_ids"
+OrcaSlicer[0x10003f2a8] <+198824>: add    x0, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f2ac] <+198828>: add    x0, x0, #0xf70
+OrcaSlicer[0x10003f2b0] <+198832>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f2b4] <+198836>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f2b8] <+198840>: add    x0, x8, x20
+OrcaSlicer[0x10003f2bc] <+198844>: ldr    x8, [x0]
+OrcaSlicer[0x10003f2c0] <+198848>: ldr    x8, [x8, #0x20]
+OrcaSlicer[0x10003f2c4] <+198852>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f2c8] <+198856>: add    x1, x1, #0xf70
+OrcaSlicer[0x10003f2cc] <+198860>: mov    w2, #0x0                  ; =0 
+OrcaSlicer[0x10003f2d0] <+198864>: blr    x8
+OrcaSlicer[0x10003f2d4] <+198868>: cbz    x0, 0x10003f2f8           ; <+198904>
+OrcaSlicer[0x10003f2d8] <+198872>: adrp   x1, 18937
+OrcaSlicer[0x10003f2dc] <+198876>: add    x1, x1, #0x430            ; typeinfo for Slic3r::ConfigOption
+OrcaSlicer[0x10003f2e0] <+198880>: adrp   x2, 18937
+OrcaSlicer[0x10003f2e4] <+198884>: add    x2, x2, #0x4b8            ; typeinfo for Slic3r::ConfigOptionStrings
+OrcaSlicer[0x10003f2e8] <+198888>: mov    x3, #0x0                  ; =0 
+OrcaSlicer[0x10003f2ec] <+198892>: bl     0x103d21f28               ; symbol stub for: __dynamic_cast
+OrcaSlicer[0x10003f2f0] <+198896>: mov    x20, x0
+OrcaSlicer[0x10003f2f4] <+198900>: b      0x10003f2fc               ; <+198908>
+OrcaSlicer[0x10003f2f8] <+198904>: mov    x20, #0x0                 ; =0 
+OrcaSlicer[0x10003f2fc] <+198908>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f300] <+198912>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f304] <+198916>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f308] <+198920>: tbz    w8, #0x1f, 0x10003f314    ; <+198932>
+OrcaSlicer[0x10003f30c] <+198924>: ldr    x0, [sp, #0x2f70]
+OrcaSlicer[0x10003f310] <+198928>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f314] <+198932>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f318] <+198936>: ldr    x8, [x8]
+OrcaSlicer[0x10003f31c] <+198940>: ldur   x21, [x8, #-0x50]
+OrcaSlicer[0x10003f320] <+198944>: adrp   x1, 18263
+OrcaSlicer[0x10003f324] <+198948>: add    x1, x1, #0xa84            ; "nozzle_diameter"
+OrcaSlicer[0x10003f328] <+198952>: add    x0, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f32c] <+198956>: add    x0, x0, #0xf70
+OrcaSlicer[0x10003f330] <+198960>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f334] <+198964>: ldr    x8, [sp, #0x2d8]
+OrcaSlicer[0x10003f338] <+198968>: add    x0, x8, x21
+OrcaSlicer[0x10003f33c] <+198972>: ldr    x8, [x0]
+OrcaSlicer[0x10003f340] <+198976>: ldr    x8, [x8, #0x20]
+OrcaSlicer[0x10003f344] <+198980>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f348] <+198984>: add    x1, x1, #0xf70
+OrcaSlicer[0x10003f34c] <+198988>: mov    w2, #0x0                  ; =0 
+OrcaSlicer[0x10003f350] <+198992>: blr    x8
+OrcaSlicer[0x10003f354] <+198996>: cbz    x0, 0x10003f378           ; <+199032>
+OrcaSlicer[0x10003f358] <+199000>: adrp   x1, 18937
+OrcaSlicer[0x10003f35c] <+199004>: add    x1, x1, #0x430            ; typeinfo for Slic3r::ConfigOption
+OrcaSlicer[0x10003f360] <+199008>: adrp   x2, 18937
+OrcaSlicer[0x10003f364] <+199012>: add    x2, x2, #0x4e8            ; typeinfo for Slic3r::ConfigOptionFloatsTempl<false>
+OrcaSlicer[0x10003f368] <+199016>: mov    x3, #0x0                  ; =0 
+OrcaSlicer[0x10003f36c] <+199020>: bl     0x103d21f28               ; symbol stub for: __dynamic_cast
+OrcaSlicer[0x10003f370] <+199024>: mov    x21, x0
+OrcaSlicer[0x10003f374] <+199028>: b      0x10003f37c               ; <+199036>
+OrcaSlicer[0x10003f378] <+199032>: mov    x21, #0x0                 ; =0 
+OrcaSlicer[0x10003f37c] <+199036>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f380] <+199040>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f384] <+199044>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f388] <+199048>: tbz    w8, #0x1f, 0x10003f394    ; <+199060>
+OrcaSlicer[0x10003f38c] <+199052>: ldr    x0, [sp, #0x2f70]
+OrcaSlicer[0x10003f390] <+199056>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f394] <+199060>: str    xzr, [sp, #0x888]
+OrcaSlicer[0x10003f398] <+199064>: str    xzr, [sp, #0x880]
+OrcaSlicer[0x10003f39c] <+199068>: str    xzr, [sp, #0x890]
+OrcaSlicer[0x10003f3a0] <+199072>: cbz    x21, 0x10003f3e8          ; <+199144>
+OrcaSlicer[0x10003f3a4] <+199076>: ldr    x8, [x21]
+OrcaSlicer[0x10003f3a8] <+199080>: ldr    x9, [x8, #0x18]
+OrcaSlicer[0x10003f3ac] <+199084>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f3b0] <+199088>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f3b4] <+199092>: mov    x0, x21
+OrcaSlicer[0x10003f3b8] <+199096>: blr    x9
+OrcaSlicer[0x10003f3bc] <+199100>: ldrsb  w8, [sp, #0x897]
+OrcaSlicer[0x10003f3c0] <+199104>: tbz    w8, #0x1f, 0x10003f3cc    ; <+199116>
+OrcaSlicer[0x10003f3c4] <+199108>: ldr    x0, [sp, #0x880]
+OrcaSlicer[0x10003f3c8] <+199112>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f3cc] <+199116>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f3d0] <+199120>: add    x8, x8, #0xf70
+OrcaSlicer[0x10003f3d4] <+199124>: ldr    q0, [x8]
+OrcaSlicer[0x10003f3d8] <+199128>: add    x8, sp, #0x880
+OrcaSlicer[0x10003f3dc] <+199132>: str    q0, [x8]
+OrcaSlicer[0x10003f3e0] <+199136>: ldr    x8, [sp, #0x2f80]
+OrcaSlicer[0x10003f3e4] <+199140>: str    x8, [sp, #0x890]
+OrcaSlicer[0x10003f3e8] <+199144>: ldr    w8, [sp, #0x200]
+OrcaSlicer[0x10003f3ec] <+199148>: orr    w8, w19, w8
+OrcaSlicer[0x10003f3f0] <+199152>: str    w8, [sp, #0x278]
+OrcaSlicer[0x10003f3f4] <+199156>: ldr    x9, [sp, #0x8f0]
+OrcaSlicer[0x10003f3f8] <+199160>: ldr    x8, [sp, #0x8e8]
+OrcaSlicer[0x10003f3fc] <+199164>: cmp    x9, x8
+OrcaSlicer[0x10003f400] <+199168>: b.eq   0x100040270               ; <+202864>
+OrcaSlicer[0x10003f404] <+199172>: mov    x24, #0x0                 ; =0 
+OrcaSlicer[0x10003f408] <+199176>: str    wzr, [sp, #0x2a8]
+OrcaSlicer[0x10003f40c] <+199180>: str    wzr, [sp, #0x2a0]
+OrcaSlicer[0x10003f410] <+199184>: str    wzr, [sp, #0x2b0]
+OrcaSlicer[0x10003f414] <+199188>: add    x27, sp, #0x2, lsl #12    ; =0x2000 
+OrcaSlicer[0x10003f418] <+199192>: add    x27, x27, #0xea0
+OrcaSlicer[0x10003f41c] <+199196>: adrp   x26, 18921
+OrcaSlicer[0x10003f420] <+199200>: ldr    x26, [x26, #0xfb0]
+OrcaSlicer[0x10003f424] <+199204>: adrp   x22, 18922
+OrcaSlicer[0x10003f428] <+199208>: ldr    x22, [x22, #0x2a0]
+OrcaSlicer[0x10003f42c] <+199212>: adrp   x23, 18922
+OrcaSlicer[0x10003f430] <+199216>: ldr    x23, [x23, #0x40]
+OrcaSlicer[0x10003f434] <+199220>: adrp   x25, 18922
+OrcaSlicer[0x10003f438] <+199224>: ldr    x25, [x25, #0x330]
+OrcaSlicer[0x10003f43c] <+199228>: ldr    w9, [sp, #0x278]
+OrcaSlicer[0x10003f440] <+199232>: str    w9, [sp, #0x2e0]
+OrcaSlicer[0x10003f444] <+199236>: str    w9, [sp, #0x298]
+OrcaSlicer[0x10003f448] <+199240>: str    w9, [sp, #0x2c0]
+OrcaSlicer[0x10003f44c] <+199244>: b      0x10003f484               ; <+199300>
+OrcaSlicer[0x10003f450] <+199248>: ldr    w8, [sp, #0x2f8]
+OrcaSlicer[0x10003f454] <+199252>: eor    w8, w8, #0x1
+OrcaSlicer[0x10003f458] <+199256>: ldr    w9, [sp, #0x2e0]
+OrcaSlicer[0x10003f45c] <+199260>: orr    w9, w8, w9
+OrcaSlicer[0x10003f460] <+199264>: str    w9, [sp, #0x2e0]
+OrcaSlicer[0x10003f464] <+199268>: ldr    w9, [sp, #0x2a8]
+OrcaSlicer[0x10003f468] <+199272>: orr    w9, w8, w9
+OrcaSlicer[0x10003f46c] <+199276>: str    w9, [sp, #0x2a8]
+OrcaSlicer[0x10003f470] <+199280>: ldr    x9, [sp, #0x8f0]
+OrcaSlicer[0x10003f474] <+199284>: ldr    x8, [sp, #0x8e8]
+OrcaSlicer[0x10003f478] <+199288>: sub    x9, x9, x8
+OrcaSlicer[0x10003f47c] <+199292>: cmp    x24, x9, asr #3
+OrcaSlicer[0x10003f480] <+199296>: b.hs   0x10004028c               ; <+202892>
+OrcaSlicer[0x10003f484] <+199300>: mov    x10, x24
+OrcaSlicer[0x10003f488] <+199304>: ldr    x21, [x8, x24, lsl #3]
+OrcaSlicer[0x10003f48c] <+199308>: ldr    w8, [sp, #0x2bb4]
+OrcaSlicer[0x10003f490] <+199312>: cmp    x8, #0x0
+OrcaSlicer[0x10003f494] <+199316>: add    x24, x24, #0x1
+OrcaSlicer[0x10003f498] <+199320>: ccmp   x24, x8, #0x4, ne
+OrcaSlicer[0x10003f49c] <+199324>: cset   w8, ne
+OrcaSlicer[0x10003f4a0] <+199328>: str    w8, [sp, #0x2f8]
+OrcaSlicer[0x10003f4a4] <+199332>: ldr    x8, [sp, #0xce0]
+OrcaSlicer[0x10003f4a8] <+199336>: mov    w9, #0x18                 ; =24 
+OrcaSlicer[0x10003f4ac] <+199340>: str    x10, [sp, #0x308]
+OrcaSlicer[0x10003f4b0] <+199344>: madd   x9, x10, x9, x8
+OrcaSlicer[0x10003f4b4] <+199348>: add    x0, x21, #0x1a8
+OrcaSlicer[0x10003f4b8] <+199352>: cmp    x0, x9
+OrcaSlicer[0x10003f4bc] <+199356>: b.eq   0x10003f4e0               ; <+199392>
+OrcaSlicer[0x10003f4c0] <+199360>: ldr    x1, [x9]
+OrcaSlicer[0x10003f4c4] <+199364>: mov    w9, #0x18                 ; =24 
+OrcaSlicer[0x10003f4c8] <+199368>: ldr    x10, [sp, #0x308]
+OrcaSlicer[0x10003f4cc] <+199372>: madd   x8, x10, x9, x8
+OrcaSlicer[0x10003f4d0] <+199376>: ldr    x2, [x8, #0x8]
+OrcaSlicer[0x10003f4d4] <+199380>: sub    x8, x2, x1
+OrcaSlicer[0x10003f4d8] <+199384>: asr    x3, x8, #3
+OrcaSlicer[0x10003f4dc] <+199388>: bl     0x101cfdd74               ; void std::__1::vector<unsigned long, std::__1::allocator<unsigned long>>::__assign_with_size[abi:ue170006]<unsigned long*, unsigned long*>(unsigned long*, unsigned long*, long)
+OrcaSlicer[0x10003f4e0] <+199392>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f4e4] <+199396>: add    x8, x8, #0x878
+OrcaSlicer[0x10003f4e8] <+199400>: ldrb   w8, [x8, #0x1d7]
+OrcaSlicer[0x10003f4ec] <+199404>: sxtb   w9, w8
+OrcaSlicer[0x10003f4f0] <+199408>: ldr    x10, [sp, #0x2a40]
+OrcaSlicer[0x10003f4f4] <+199412>: cmp    w9, #0x0
+OrcaSlicer[0x10003f4f8] <+199416>: csel   x8, x10, x8, lt
+OrcaSlicer[0x10003f4fc] <+199420>: cbz    x8, 0x10003f510           ; <+199440>
+OrcaSlicer[0x10003f500] <+199424>: add    x0, x21, #0x38
+OrcaSlicer[0x10003f504] <+199428>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f508] <+199432>: add    x1, x1, #0xa38
+OrcaSlicer[0x10003f50c] <+199436>: bl     0x103d211b4               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::operator=(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f510] <+199440>: ldrb   w8, [sp, #0x897]
+OrcaSlicer[0x10003f514] <+199444>: sxtb   w9, w8
+OrcaSlicer[0x10003f518] <+199448>: ldr    x10, [sp, #0x888]
+OrcaSlicer[0x10003f51c] <+199452>: cmp    w9, #0x0
+OrcaSlicer[0x10003f520] <+199456>: csel   x8, x10, x8, lt
+OrcaSlicer[0x10003f524] <+199460>: cbz    x8, 0x10003f534           ; <+199476>
+OrcaSlicer[0x10003f528] <+199464>: add    x0, x21, #0x50
+OrcaSlicer[0x10003f52c] <+199468>: add    x1, sp, #0x880
+OrcaSlicer[0x10003f530] <+199472>: bl     0x103d211b4               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::operator=(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f534] <+199476>: ldr    x19, [x21, #0x190]
+OrcaSlicer[0x10003f538] <+199480>: b      0x10003f540               ; <+199488>
+OrcaSlicer[0x10003f53c] <+199484>: add    x19, x19, #0x108
+OrcaSlicer[0x10003f540] <+199488>: ldr    x8, [x21, #0x198]
+OrcaSlicer[0x10003f544] <+199492>: cmp    x19, x8
+OrcaSlicer[0x10003f548] <+199496>: b.eq   0x10003f6c8               ; <+199880>
+OrcaSlicer[0x10003f54c] <+199500>: add    x28, sp, #0x2, lsl #12    ; =0x2000 
+OrcaSlicer[0x10003f550] <+199504>: add    x28, x28, #0xf70
+OrcaSlicer[0x10003f554] <+199508>: str    xzr, [sp, #0x2f78]
+OrcaSlicer[0x10003f558] <+199512>: str    xzr, [sp, #0x2f70]
+OrcaSlicer[0x10003f55c] <+199516>: str    xzr, [sp, #0x2f80]
+OrcaSlicer[0x10003f560] <+199520>: ldr    w2, [x19]
+OrcaSlicer[0x10003f564] <+199524>: add    x8, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f568] <+199528>: add    x8, x8, #0x120
+OrcaSlicer[0x10003f56c] <+199532>: add    x1, sp, #0x2, lsl #12     ; =0x2000 
+OrcaSlicer[0x10003f570] <+199536>: add    x1, x1, #0xf70
+OrcaSlicer[0x10003f574] <+199540>: ldr    x0, [sp, #0x2d8]
+OrcaSlicer[0x10003f578] <+199544>: bl     0x10086429c               ; Slic3r::DynamicPrintConfig::get_filament_type(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>&, int)
+OrcaSlicer[0x10003f57c] <+199548>: add    x28, x19, #0x8
+OrcaSlicer[0x10003f580] <+199552>: ldrsb  w8, [x19, #0x1f]
+OrcaSlicer[0x10003f584] <+199556>: tbz    w8, #0x1f, 0x10003f590    ; <+199568>
+OrcaSlicer[0x10003f588] <+199560>: ldr    x0, [x28]
+OrcaSlicer[0x10003f58c] <+199564>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f590] <+199568>: add    x8, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f594] <+199572>: add    x8, x8, #0x120
+OrcaSlicer[0x10003f598] <+199576>: ldr    q0, [x8]
+OrcaSlicer[0x10003f59c] <+199580>: ldr    x8, [sp, #0x3130]
+OrcaSlicer[0x10003f5a0] <+199584>: str    x8, [x28, #0x10]
+OrcaSlicer[0x10003f5a4] <+199588>: str    q0, [x28]
+OrcaSlicer[0x10003f5a8] <+199592>: ldr    x10, [sp, #0x310]
+OrcaSlicer[0x10003f5ac] <+199596>: cbz    x10, 0x10003f5f4          ; <+199668>
+OrcaSlicer[0x10003f5b0] <+199600>: ldrsw  x8, [x19]
+OrcaSlicer[0x10003f5b4] <+199604>: ldp    x10, x9, [x10, #0x8]
+OrcaSlicer[0x10003f5b8] <+199608>: sub    x9, x9, x10
+OrcaSlicer[0x10003f5bc] <+199612>: asr    x9, x9, #3
+OrcaSlicer[0x10003f5c0] <+199616>: mov    x11, #-0x5555555555555556 ; =-6148914691236517206 
+OrcaSlicer[0x10003f5c4] <+199620>: movk   x11, #0xaaab
+OrcaSlicer[0x10003f5c8] <+199624>: mul    x9, x9, x11
+OrcaSlicer[0x10003f5cc] <+199628>: cmp    x9, x8
+OrcaSlicer[0x10003f5d0] <+199632>: csel   x8, x8, xzr, hi
+OrcaSlicer[0x10003f5d4] <+199636>: mov    w9, #0x18                 ; =24 
+OrcaSlicer[0x10003f5d8] <+199640>: madd   x1, x8, x9, x10
+OrcaSlicer[0x10003f5dc] <+199644>: add    x0, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f5e0] <+199648>: add    x0, x0, #0x120
+OrcaSlicer[0x10003f5e4] <+199652>: add    x28, sp, #0x2, lsl #12    ; =0x2000 
+OrcaSlicer[0x10003f5e8] <+199656>: add    x28, x28, #0xf70
+OrcaSlicer[0x10003f5ec] <+199660>: bl     0x103d2119c               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f5f0] <+199664>: b      0x10003f610               ; <+199696>
+OrcaSlicer[0x10003f5f4] <+199668>: add    x0, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f5f8] <+199672>: add    x0, x0, #0x120
+OrcaSlicer[0x10003f5fc] <+199676>: adrp   x1, 18237
+OrcaSlicer[0x10003f600] <+199680>: add    x1, x1, #0x636            ; "#FFFFFF"
+OrcaSlicer[0x10003f604] <+199684>: add    x28, sp, #0x2, lsl #12    ; =0x2000 
+OrcaSlicer[0x10003f608] <+199688>: add    x28, x28, #0xf70
+OrcaSlicer[0x10003f60c] <+199692>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f610] <+199696>: add    x0, x19, #0x20
+OrcaSlicer[0x10003f614] <+199700>: add    x1, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f618] <+199704>: add    x1, x1, #0x120
+OrcaSlicer[0x10003f61c] <+199708>: bl     0x103d211b4               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::operator=(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f620] <+199712>: add    x8, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f624] <+199716>: add    x8, x8, #0x120
+OrcaSlicer[0x10003f628] <+199720>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f62c] <+199724>: tbz    w8, #0x1f, 0x10003f638    ; <+199736>
+OrcaSlicer[0x10003f630] <+199728>: ldr    x0, [sp, #0x3120]
+OrcaSlicer[0x10003f634] <+199732>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f638] <+199736>: cbz    x20, 0x10003f678          ; <+199800>
+OrcaSlicer[0x10003f63c] <+199740>: ldrsw  x8, [x19]
+OrcaSlicer[0x10003f640] <+199744>: ldp    x10, x9, [x20, #0x8]
+OrcaSlicer[0x10003f644] <+199748>: sub    x9, x9, x10
+OrcaSlicer[0x10003f648] <+199752>: asr    x9, x9, #3
+OrcaSlicer[0x10003f64c] <+199756>: mov    x11, #-0x5555555555555556 ; =-6148914691236517206 
+OrcaSlicer[0x10003f650] <+199760>: movk   x11, #0xaaab
+OrcaSlicer[0x10003f654] <+199764>: mul    x9, x9, x11
+OrcaSlicer[0x10003f658] <+199768>: cmp    x9, x8
+OrcaSlicer[0x10003f65c] <+199772>: csel   x8, x8, xzr, hi
+OrcaSlicer[0x10003f660] <+199776>: mov    w9, #0x18                 ; =24 
+OrcaSlicer[0x10003f664] <+199780>: madd   x1, x8, x9, x10
+OrcaSlicer[0x10003f668] <+199784>: add    x0, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f66c] <+199788>: add    x0, x0, #0x120
+OrcaSlicer[0x10003f670] <+199792>: bl     0x103d2119c               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f674] <+199796>: b      0x10003f68c               ; <+199820>
+OrcaSlicer[0x10003f678] <+199800>: add    x0, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f67c] <+199804>: add    x0, x0, #0x120
+OrcaSlicer[0x10003f680] <+199808>: adrp   x1, 18258
+OrcaSlicer[0x10003f684] <+199812>: add    x1, x1, #0x37c            ; ""
+OrcaSlicer[0x10003f688] <+199816>: bl     0x101c0b2d4               ; std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*)
+OrcaSlicer[0x10003f68c] <+199820>: add    x0, x19, #0x38
+OrcaSlicer[0x10003f690] <+199824>: add    x1, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f694] <+199828>: add    x1, x1, #0x120
+OrcaSlicer[0x10003f698] <+199832>: bl     0x103d211b4               ; symbol stub for: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::operator=(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+OrcaSlicer[0x10003f69c] <+199836>: add    x8, sp, #0x3, lsl #12     ; =0x3000 
+OrcaSlicer[0x10003f6a0] <+199840>: add    x8, x8, #0x120
+OrcaSlicer[0x10003f6a4] <+199844>: ldrsb  w8, [x8, #0x17]
+OrcaSlicer[0x10003f6a8] <+199848>: tbz    w8, #0x1f, 0x10003f6b4    ; <+199860>
+OrcaSlicer[0x10003f6ac] <+199852>: ldr    x0, [sp, #0x3120]
+OrcaSlicer[0x10003f6b0] <+199856>: bl     0x103d21df0               ; symbol stub for: operator delete(void*)
+OrcaSlicer[0x10003f6b4] <+199860>: ldrsb  w8, [x28, #0x17]
+OrcaSlicer[0x10003f6b8] <+199864>: tbz    w8, #0x1f, 0x10003f53c    ; <+199484>
+OrcaSlicer[0x10003f6bc] <+199868>: ldr    x0, [sp, #0x2f70]
+(lldb) quit

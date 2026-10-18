@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,zipfile,xml.etree.ElementTree as E,numpy as np,hashlib
+D=Path(__file__).resolve().parent;P=D.parents[1];N='{http://schemas.microsoft.com/3dmanufacturing/core/2015/02}';PN='{http://schemas.microsoft.com/3dmanufacturing/production/2015/06}';E.register_namespace('',N[1:-1]);E.register_namespace('p',PN[1:-1])
+def matrix(s):
+ m=np.eye(4);m[:3,:]=np.array(list(map(float,s.split()))).reshape(4,3).T;return m
+q=json.loads((D.parent/'geometry/surface-audit.json').read_text());row=next(r for r in q['instances'] if r['name']=='community-66.stl');delta=np.array(row['alternatives'][0]['delta4x4']);base=D/'dense_interface_bridge30/ankle66-dense_interface_bridge30.3mf'
+with zipfile.ZipFile(base) as z:members={n:z.read(n) for n in z.namelist()}
+source=P/'09-REPRINT-READY-20260930/Elegoo/old-orange-plate1/MicroDuck_Elegoo_old-orange-plate1_REPRINT_editable.3mf'
+with zipfile.ZipFile(source) as z:rt=E.fromstring(z.read('3D/3dmodel.model'));orig=next(i for i in rt.find(N+'build') if i.get('objectid')=='20')
+m=delta@matrix(orig.get('transform'));rt=E.fromstring(members['3D/3dmodel.model']);item=next(iter(rt.find(N+'build')));comp=next(iter(rt.find(N+'resources'))).find(N+'components')[0];child=E.fromstring(members[comp.get(PN+'path').lstrip('/')]);me=next(o for o in child.find(N+'resources') if o.get('id')==comp.get('objectid')).find(N+'mesh');v=np.array([[float(a.get(k)) for k in ('x','y','z')] for a in me.find(N+'vertices')]);t=m@matrix(comp.get('transform'));world=v@t[:3,:3].T+t[:3,3];bounds=np.array([world.min(0),world.max(0)]);shift=128-bounds[:,:2].mean(0);m[:2,3]+=shift;assert abs(bounds[0,2])<.01;assert np.allclose(m[:3,:3].T@m[:3,:3],np.eye(3),atol=1e-7)
+item.set('transform',' '.join(map(str,m[:3,:].T.ravel())));members['3D/3dmodel.model']=E.tostring(rt,encoding='utf-8',xml_declaration=True);cfg=json.loads(members['Metadata/project_settings.config']);cfg['filename_format']='ankle66-flip_dense.gcode';cfg['brim_type']='auto_brim';members['Metadata/project_settings.config']=json.dumps(cfg,indent=2).encode();out=D/'flip_dense';out.mkdir(exist_ok=True);dest=out/'ankle66-flip_dense.3mf'
+with zipfile.ZipFile(dest,'w',zipfile.ZIP_DEFLATED) as z:
+ for n,data in members.items():z.writestr(n,data)
+bounds[:,:2]+=shift;report={'project':str(dest),'sha256':hashlib.sha256(dest.read_bytes()).hexdigest(),'source_geometry_audit':str(D.parent/'geometry/surface-audit.json'),'selected_alternative':0,'source_project':str(source),'selected_object':'20','mesh_members_byte_identical':True,'delta4x4':delta.tolist(),'transform':m.tolist(),'bounds_mm':bounds.tolist(),'exact_xy_bbox_center_mm':bounds[:,:2].mean(0).tolist(),'brim_type':cfg['brim_type'],'geometry_candidate_metrics':row['alternatives'][0]['metrics'],'native_slice_pending':True};(out/'orientation-preparation.json').write_text(json.dumps(report,indent=2)+'\n');print(dest)

@@ -1,0 +1,502 @@
+{
+ "frame": "robot frame, mm; x forward, y left, z up",
+ "method": "V1.8 head screws: ray-cast the camera screws (C-camera-01/02) and the moved Pi screws (E-pi-01..04) against the\nmeshes the guide draws, and write the measured evidence into fasteners.json.\n\nMethod (as fastener-audit/probe.py): rays parallel to the screw axis, one on the axis and eight at each radius in\nRADII, from 70 mm behind the nominal centre to 12 mm past the tip. Solid intervals come from entry/exit crossings\n(face normal against the ray). t runs along the insertion axis from the nominal centre (the head seat).\nPer screw: head seat, the stack of parts along the shank with their hole diameter range, thread engagement in\nintoPart (less 0.3 mm tip lead-in, the fasteners.json convention), margin from the tip to the next solid,\nintrusion of the shank into any other part, head clash, and straight 3 mm driver clearance behind the head at the\nstep (bench: only the step's parts) and on the assembled robot. Writes camera-screws-v18.json and updates the\nrecords in ../fasteners.json (evidence, stack, checks, engagement, pilot range, tip margin, driver clearance).",
+ "screws": {
+  "C-camera-01": {
+   "center": [
+    77.88,
+    -0.18,
+    120.6
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "spec": "M2 \u00d7 8 TAP",
+   "seatMm": -0.0,
+   "stack": [
+    {
+     "part": "camera_board",
+     "fromMm": -0.0,
+     "toMm": 1.12,
+     "holeDiameterRangeMm": [
+      2.1,
+      2.2
+     ],
+     "hit": true
+    },
+    {
+     "part": "face_panel",
+     "fromMm": 1.12,
+     "toMm": 3.52,
+     "holeDiameterRangeMm": [
+      2.1,
+      2.2
+     ],
+     "hit": true
+    },
+    {
+     "part": "eye_trim",
+     "fromMm": 3.52,
+     "toMm": 11.52,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 4.18,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": 1.12,
+   "tipPart": "eye_trim",
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": null,
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 15.88,
+   "driverRobotObstacle": "head_pi_zero_w_header_base",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "head_yaw_link",
+    "head_roll_ring_a",
+    "head_roll_ring_b",
+    "motor13",
+    "motor14",
+    "jaw_support",
+    "jaw_frame",
+    "camera_board",
+    "eye_trim",
+    "head_bottom",
+    "face_panel",
+    "head_cap",
+    "pi",
+    "head_pi_zero_w_gpio_solder_tails",
+    "head_pi_zero_w_header_base",
+    "head_pi_zero_w_header_pin_17",
+    "head_pi_zero_w_header_pin_18",
+    "head_pi_zero_w_header_pin_19",
+    "head_pi_zero_w_header_pin_20",
+    "head_pi_zero_w_header_pin_21",
+    "head_pi_zero_w_header_pin_22",
+    "head_pi_zero_w_header_pin_23",
+    "head_pi_zero_w_header_pin_24"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on camera_board -0.00 mm from the nominal centre; stack camera_board -0.0-1.12 mm (hole 2.1-2.2 mm); face_panel 1.12-3.52 mm (hole 2.1-2.2 mm); eye_trim 3.52-11.52 mm (hole 1.6-1.7 mm); thread engagement in eye_trim 4.18 mm (4.48 mm of shank in the pilot less 0.3 mm tip lead-in); 1.12 mm to the first solid past the tip (eye_trim); intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the camera step, 15.88 mm on the assembled robot (then head_pi_zero_w_header_base)."
+  },
+  "C-camera-02": {
+   "center": [
+    77.88,
+    -0.18,
+    141.6
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "spec": "M2 \u00d7 8 TAP",
+   "seatMm": -0.0,
+   "stack": [
+    {
+     "part": "camera_board",
+     "fromMm": -0.0,
+     "toMm": 1.12,
+     "holeDiameterRangeMm": [
+      2.1,
+      2.2
+     ],
+     "hit": true
+    },
+    {
+     "part": "face_panel",
+     "fromMm": 1.12,
+     "toMm": 3.52,
+     "holeDiameterRangeMm": [
+      2.1,
+      2.2
+     ],
+     "hit": true
+    },
+    {
+     "part": "eye_trim",
+     "fromMm": 3.52,
+     "toMm": 11.52,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 4.18,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": 1.12,
+   "tipPart": "eye_trim",
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": {
+    "fromMm": 3.27,
+    "toMm": 3.52,
+    "atRadiusMm": 1.0
+   },
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 14.61,
+   "driverRobotObstacle": "pi",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "camera_board",
+    "eye_trim",
+    "face_panel",
+    "head_cap",
+    "pi"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on camera_board -0.00 mm from the nominal centre; stack camera_board -0.0-1.12 mm (hole 2.1-2.2 mm); face_panel 1.12-3.52 mm (hole 2.1-2.2 mm); eye_trim 3.52-11.52 mm (hole 1.6-1.7 mm); thread engagement in eye_trim 4.18 mm (4.48 mm of shank in the pilot less 0.3 mm tip lead-in); before the pilot wall one shank ray at radius 1.0 mm grazes eye_trim material from 3.27 to 3.52 mm (not counted); 1.12 mm to the first solid past the tip (eye_trim); intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the camera step, 14.61 mm on the assembled robot (then pi)."
+  },
+  "E-pi-01": {
+   "center": [
+    57.341,
+    -29.0,
+    118.245
+   ],
+   "axis": [
+    -0.984808,
+    0.0,
+    0.173648
+   ],
+   "spec": "M2 \u00d7 6 TAP",
+   "seatMm": -0.042,
+   "stack": [
+    {
+     "part": "pi",
+     "fromMm": -0.04,
+     "toMm": 1.54,
+     "holeDiameterRangeMm": [
+      2.6,
+      2.7
+     ],
+     "hit": true
+    },
+    {
+     "part": "head_cap",
+     "fromMm": 1.55,
+     "toMm": 5.95,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 4.15,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": null,
+   "tipPart": null,
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": null,
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 21.35,
+   "driverRobotObstacle": "face_panel",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "jaw_support",
+    "jaw_frame",
+    "head_bottom",
+    "face_panel",
+    "head_cap",
+    "pi",
+    "head_pi_zero_w_gpio_solder_tails",
+    "head_pi_zero_w_header_base",
+    "head_pi_component_left-upper-rectangular-component",
+    "head_pi_component_octagonal-component",
+    "head_pi_component_csi-connector-body-conservative-hull",
+    "head_pi_component_csi-connector-pins-conservative-hull"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on pi -0.04 mm from the nominal centre; stack pi -0.04-1.54 mm (hole 2.6-2.7 mm); head_cap 1.55-5.95 mm (hole 1.6-1.7 mm); thread engagement in head_cap 4.15 mm (4.45 mm of shank in the pilot less 0.3 mm tip lead-in); pilot open past the tip; intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the pi step, 21.35 mm on the assembled robot (then face_panel)."
+  },
+  "E-pi-02": {
+   "center": [
+    57.341,
+    29.0,
+    118.245
+   ],
+   "axis": [
+    -0.984808,
+    0.0,
+    0.173648
+   ],
+   "spec": "M2 \u00d7 4 TAP",
+   "seatMm": -0.042,
+   "stack": [
+    {
+     "part": "pi",
+     "fromMm": -0.04,
+     "toMm": 1.54,
+     "holeDiameterRangeMm": [
+      2.6,
+      2.7
+     ],
+     "hit": true
+    },
+    {
+     "part": "head_cap",
+     "fromMm": 1.55,
+     "toMm": 4.96,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 2.15,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": 2.84,
+   "tipPart": "motor15",
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": null,
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 21.35,
+   "driverRobotObstacle": "face_panel",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "motor15",
+    "jaw_support",
+    "jaw_frame",
+    "head_bottom",
+    "face_panel",
+    "head_cap",
+    "pi",
+    "head_pi_zero_w_gpio_solder_tails",
+    "head_pi_gpio_pin_01_receiving",
+    "head_pi_gpio_pin_02_receiving",
+    "head_pi_zero_w_header_base"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on pi -0.04 mm from the nominal centre; stack pi -0.04-1.54 mm (hole 2.6-2.7 mm); head_cap 1.55-4.96 mm (hole 1.6-1.7 mm); thread engagement in head_cap 2.15 mm (2.45 mm of shank in the pilot less 0.3 mm tip lead-in); 2.84 mm to the first solid past the tip (motor15); intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the pi step, 21.35 mm on the assembled robot (then face_panel)."
+  },
+  "E-pi-03": {
+   "center": [
+    61.335,
+    -29.0,
+    140.895
+   ],
+   "axis": [
+    -0.984808,
+    0.0,
+    0.173648
+   ],
+   "spec": "M2 \u00d7 6 TAP",
+   "seatMm": -0.042,
+   "stack": [
+    {
+     "part": "pi",
+     "fromMm": -0.04,
+     "toMm": 1.54,
+     "holeDiameterRangeMm": [
+      2.6,
+      2.7
+     ],
+     "hit": true
+    },
+    {
+     "part": "head_cap",
+     "fromMm": 1.55,
+     "toMm": 5.95,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 4.15,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": null,
+   "tipPart": null,
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": null,
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 17.29,
+   "driverRobotObstacle": "face_panel",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "jaw_support",
+    "jaw_frame",
+    "face_panel",
+    "head_cap",
+    "pi",
+    "head_pi_component_left-upper-rectangular-component",
+    "head_pi_component_octagonal-component",
+    "head_pi_component_middle-passive-a",
+    "head_pi_component_middle-passive-b",
+    "head_pi_component_lower-passive-a",
+    "head_pi_component_lower-passive-b",
+    "head_pi_component_lower-passive-c",
+    "head_pi_component_indicator-body-and-outline",
+    "head_pi_component_bottom-usb-edge-context",
+    "head_pi_component_csi-connector-body-conservative-hull",
+    "head_pi_component_csi-connector-pins-conservative-hull"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on pi -0.04 mm from the nominal centre; stack pi -0.04-1.54 mm (hole 2.6-2.7 mm); head_cap 1.55-5.95 mm (hole 1.6-1.7 mm); thread engagement in head_cap 4.15 mm (4.45 mm of shank in the pilot less 0.3 mm tip lead-in); pilot open past the tip; intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the pi step, 17.29 mm on the assembled robot (then face_panel)."
+  },
+  "E-pi-04": {
+   "center": [
+    61.335,
+    29.0,
+    140.895
+   ],
+   "axis": [
+    -0.984808,
+    0.0,
+    0.173648
+   ],
+   "spec": "M2 \u00d7 6 TAP",
+   "seatMm": -0.042,
+   "stack": [
+    {
+     "part": "pi",
+     "fromMm": -0.04,
+     "toMm": 1.54,
+     "holeDiameterRangeMm": [
+      2.6,
+      2.7
+     ],
+     "hit": true
+    },
+    {
+     "part": "head_cap",
+     "fromMm": 1.55,
+     "toMm": 5.95,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.7
+     ],
+     "hit": true
+    }
+   ],
+   "engagementMm": 4.15,
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.7
+   ],
+   "tipMarginMm": null,
+   "tipPart": null,
+   "intrusions": {},
+   "headClash": {},
+   "preEngagementContact": null,
+   "driverClearAtStepMm": ">66.5",
+   "driverStepObstacle": null,
+   "driverClearOnRobotMm": 17.29,
+   "driverRobotObstacle": "face_panel",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "candidateParts": [
+    "motor15",
+    "jaw_support",
+    "jaw_frame",
+    "face_panel",
+    "head_cap",
+    "pi"
+   ],
+   "evidence": "Ray cast, guide meshes (print/world V1.8 files for the head set; full-build source meshes moved by their shiftMm for the rest): head seats on pi -0.04 mm from the nominal centre; stack pi -0.04-1.54 mm (hole 2.6-2.7 mm); head_cap 1.55-5.95 mm (hole 1.6-1.7 mm); thread engagement in head_cap 4.15 mm (4.45 mm of shank in the pilot less 0.3 mm tip lead-in); pilot open past the tip; intrusions 0; head clash 0; straight 3 mm driver clear >66.5 mm at the pi step, 17.29 mm on the assembled robot (then face_panel)."
+  },
+  "_cameraBoardToJumperEnds": {
+   "minMm": 3.599,
+   "nearest": "head_pi_gpio_pin_10_receiving",
+   "perPin": {
+    "head_pi_gpio_pin_01_receiving": 9.975,
+    "head_pi_gpio_pin_02_receiving": 9.275,
+    "head_pi_gpio_pin_03_receiving": 7.907,
+    "head_pi_gpio_pin_05_receiving": 6.201,
+    "head_pi_gpio_pin_06_receiving": 4.998,
+    "head_pi_gpio_pin_09_receiving": 5.141,
+    "head_pi_gpio_pin_08_receiving": 3.717,
+    "head_pi_gpio_pin_10_receiving": 3.599
+   },
+   "note": "exact distance from each jumper-wire end envelope (sampled surface + vertices) to the camera board solid, both seated"
+  }
+ }
+}

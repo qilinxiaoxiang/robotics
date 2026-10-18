@@ -1,0 +1,75 @@
+{
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "verifiedOn": "2026-10-09",
+  "scope": "Targeted component research; no purchase, cart, CAD, topology or released-file changes.",
+  "decision": "Evaluate Adafruit 4432 as the minimum-change USB-C elbow. Direct Micro-B-host to C single cable not qualified by this bounded review.",
+  "policy": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/procurement/sourcing-policy.json",
+    "sha256": "11b0e268d2c4f23c53591ae0edfe66f663d54d5d72522e220c9ef5b8f74ddfe3",
+    "existingOtgHoldPreserved": true,
+    "purchaseAuthorized": false
+  },
+  "candidates": [
+    {
+      "id": "adafruit-4432",
+      "source": "https://www.adafruit.com/product/4432",
+      "kind": "USB-C male/female right-angle passive adapter",
+      "officialOverallDimensionsMm": [
+        23.71,
+        19,
+        6
+      ],
+      "manufacturerDrawingFound": false,
+      "matingDatumAndSeatedProjectionVerified": false,
+      "dataEvidence": "Supplier states every pin connects end-to-end; no active components. Existing Micro-B OTG host cable remains.",
+      "priceUSD": 3.95,
+      "availability": "In stock at US Adafruit store on verification date",
+      "existingCablePreserved": true,
+      "removesUsbACoupler": false,
+      "assembledFitVerified": false,
+      "nextEvidence": "Socket-axis position and seated projection plus actual coupled-4472 clearance. Overall size is not a complete mated assembly."
+    },
+    {
+      "id": "adafruit-3610-plus-4299",
+      "sources": [
+        "https://www.adafruit.com/product/3610",
+        "https://www.adafruit.com/product/4299"
+      ],
+      "kind": "Micro-B OTG cable plus Micro-B-female / C-male adapter; secondary incomplete candidate, not a qualified single cable",
+      "cableLengthMm": [
+        250,
+        300
+      ],
+      "microHostEvidence": "3610 explicitly supports Pi Zero OTG and grounds the ID pin at both Micro-B ends.",
+      "adapterOverallDimensionsMm": [
+        20,
+        10.7,
+        4.9
+      ],
+      "cableMouldDimensionsVerified": false,
+      "diagramFetch": "Supplier-linked 3610 diagram returned HTTP404; no substitute dimensions inferred.",
+      "combinedUsbCcAndDataVerified": false,
+      "combinedFitVerified": false,
+      "priceUSD": 3.2,
+      "availability": "3610 in stock; 4299 72 listed at US Adafruit store on verification date",
+      "removesUsbACoupler": true,
+      "nextEvidence": "Cable-end mould dimensions, joined Micro-B/adapter projection, adapter CC termination, and enumerating OpenRB from Pi. More flexible cable length does not prove it can be stowed."
+    }
+  ],
+  "negativeControls": [
+    {
+      "source": "https://www.icomjapan.com/lineup/options/OPC-2418/",
+      "reason": "1060mm cable to connect Micro-B radio to C PC/Android; does not establish Micro-B-host direction and is not a compact selection."
+    },
+    {
+      "source": "https://www.usbfever.com/DUAL-Right-Angled-USB-3-Type-C-Male-to-Micro-B-OTG-Cable",
+      "reason": "Primary description expressly restricts operation to C host and USB3 Micro-B peripheral; wrong host direction and wrong Micro-B form for Pi Zero."
+    }
+  ],
+  "physicalValidated": false,
+  "headAccepted": false,
+  "ordersOrMessagesSent": false
+}

@@ -1,0 +1,187 @@
+{
+  "transforms": {},
+  "replacementMeshes": {
+    "head_cap": "curved-head/curved-cap-final-candidate-world.stl",
+    "amplifier": "curved-head/amplifier-curved-layout-world.stl",
+    "face_panel": "camera-retainer/face-with-camera-anchors-world.stl",
+    "eye_trim": "curved-head/../eye-trim-camera-clearance-world.stl",
+    "openrb": "curved-head/openrb-curved-layout-world.stl",
+    "speaker": "curved-head/speaker-curved-layout-world.stl",
+    "camera_board": "camera-retainer/camera-shifted-reference-world.stl",
+    "jaw_frame": "jaw-access/jaw_main-world.stl",
+    "lower_pad": "jaw-access/lower_pad_jaw_access-world.stl",
+    "head_bottom": "jaw-access/head_bottom_clearance-world.stl"
+  },
+  "additionalParts": [
+    {
+      "key": "camera_retainer",
+      "mesh": "camera-retainer/camera-retainer-world.stl",
+      "color": "#303833",
+      "name": "Removable camera frame",
+      "receivingAssembly": null
+    },
+    {
+      "key": "camera_mount_screws",
+      "mesh": "camera-retainer/camera-all-six-screw-envelopes-world.stl",
+      "color": "#a1acb3",
+      "name": "Six camera/frame fasteners",
+      "receivingAssembly": null
+    },
+    {
+      "key": "speaker_cradle",
+      "name": "Speaker removable lower cradle",
+      "color": "#f0a34b",
+      "mesh": "curved-head/speaker-cradle-world.stl"
+    },
+    {
+      "key": "speaker_keeper",
+      "name": "Speaker removable rear keeper",
+      "color": "#f0a34b",
+      "mesh": "curved-head/speaker-keeper-world.stl"
+    },
+    {
+      "key": "curved_cap_hardware",
+      "name": "Internal cap screw heads and side-loaded M2 nuts",
+      "color": "#aaaaaa",
+      "mesh": "curved-head/cap-eight-screw-heads-four-nuts-world.stl",
+      "geometryKind": "fastener"
+    },
+    {
+      "key": "zero_w_populated_receiving",
+      "name": "Zero W header, female housing and component receiving space",
+      "color": "#8fb9d0",
+      "mesh": "curved-head/zero-w-populated-receiving-union-world.stl"
+    },
+    {
+      "key": "jaw_passive_cheek",
+      "mesh": "jaw-access/jaw_passive_cheek-world.stl",
+      "name": "\u53ef\u62c6\u88ab\u52a8\u8f74\u4fa7\u988a",
+      "color": "#e5ba54"
+    },
+    {
+      "key": "jaw_cheek_screw_1",
+      "mesh": "jaw-access/jaw_cheek_screw_1-world.stl",
+      "name": "M2.5\u00d78 TAP \u4fa7\u988a\u87ba\u4e1d",
+      "color": "#7c8490"
+    },
+    {
+      "key": "jaw_cheek_screw_2",
+      "mesh": "jaw-access/jaw_cheek_screw_2-world.stl",
+      "name": "M2.5\u00d78 TAP \u4fa7\u988a\u87ba\u4e1d",
+      "color": "#7c8490"
+    },
+    {
+      "key": "pi_usb_receiving",
+      "mesh": "curved-head/zero_w_usb_moulding-world.stl",
+      "color": "#448aca",
+      "name": "Pi USB plug receiving space",
+      "plugEnvelope": true,
+      "opacity": 0.32
+    },
+    {
+      "key": "openrb_usb_receiving",
+      "mesh": "usb-access/full-harness/openrb-usb-c-published-envelope-world.stl",
+      "color": "#448aca",
+      "name": "OpenRB USB-C plug receiving space",
+      "plugEnvelope": true,
+      "opacity": 0.32
+    }
+  ],
+  "removedParts": [
+    "audio_carrier",
+    "camera_cradle",
+    "camera_pitch_foot",
+    "nut_E-audio_carrier-01",
+    "nut_E-audio_carrier-02",
+    "nut_E-camera_foot-01",
+    "nut_E-camera_foot-02",
+    "nut_E-camera_hinge-01",
+    "nut_E-camera_pcb_10-01",
+    "nut_E-camera_pcb_10-02",
+    "nut_E-camera_pcb_10-03",
+    "nut_E-camera_pcb_10-04",
+    "nut_E-openrb-01",
+    "nut_E-openrb-02",
+    "nut_E-openrb-03",
+    "nut_E-openrb-04",
+    "washer_E-camera_foot-01_1",
+    "washer_E-camera_foot-02_1",
+    "washer_E-camera_hinge-01_1",
+    "washer_E-camera_hinge-01_2"
+  ],
+  "boardScope": {
+    "userClarification": "User confirmed first-generation Raspberry Pi Zero W with soldered 40-pin header and Pi 3 Model B V1.2 on 2026-10-08.",
+    "referenceModel": "First-generation Pi Zero outline reference",
+    "referenceMeshKind": "65 x 30 mm PCB slab only; populated components, connectors and cables are not represented.",
+    "referenceMeshWorldBoundsMm": [
+      [
+        67.30999755859375,
+        -32.511375427246094,
+        116.04959869384766
+      ],
+      [
+        68.91000366210938,
+        32.48862075805664,
+        146.0496063232422
+      ]
+    ],
+    "referenceMeshWorldExtentsMm": [
+      1.600006103515625,
+      65.0,
+      30.00000762939453
+    ],
+    "referenceVerticesSha256": "db56352049e2930c2074561d2092a586b3c043af0540254238833aa422f642cd",
+    "pi3FitVerified": false,
+    "exactBorrowedBoardIdentified": true,
+    "completeZeroBoardFitVerified": false,
+    "placementConclusion": "This earlier study checks only the Zero PCB slab; current populated Zero W receiving envelopes are checked separately in curved-head/board-envelope-review.json and the camera-retainer report.",
+    "cameraCableConclusion": "Preferred Zero W has the 22-pin board CSI connector and uses the existing 15-to-22-pin camera cable; alternative Pi 3B V1.2 has 15-pin CSI and needs a matching 15-to-15-pin cable. Actual connector dimensions, routing and operation remain to be checked."
+  },
+  "description": "The original community curved shell is restored. The camera sits behind the existing eye on a removable internal frame. The controller and audio parts are rearranged inside the curved head.",
+  "findings": [
+    "Original curved shell replaces the rejected box conversion.",
+    "Camera and frame fasten on the detached face before the Pi is installed.",
+    "Preferred board: first-generation Zero W with soldered 40-pin header. Pi 3B remains the bench alternative.",
+    "The Pi USB plug space extends about 14 mm above the shell; use Show plug clearance to inspect it.",
+    "Full camera-ribbon and USB-cable routing remains a separate gate."
+  ],
+  "boundary": "Digital design review. No complete physical fit or commissioning claim. Actual plugs, camera rear components, screw heads and printed joints must match the declared receiving envelopes. Pi 3 fit unverified; A7Z purchase is not needed on current evidence.",
+  "evidence": {
+    "curved-head/curved-layout.json": "d2554ba17f2da0bf6ba1dc6bdf96a1f461d4e18a79eee9f125c7fdf154ff5ec3",
+    "camera-retainer/camera-retainer-report.json": "3f7d9c11aa412c7963e80ea77fdb82cbeb5ab7c55bcc311e2af454b873128d7c",
+    "board-scope.json": "2ce6cf7694a8d8106b5c030791b0c0dbc7ba3d7abfe71ce91c3d35e709cd3df9",
+    "curved-head/viewer-fragment.json": "a77f9dddd5cc3f9d7207431fd9eaf9ff293055166f4d5295522f94bbd5c7bf00",
+    "jaw-access/viewer-fragment.json": "b3ee40ba538f74ca4381d04951ac25da0f4b4aa1e4c7ea42eb2757e5ac0de81a",
+    "curved-head/curved-head-review.json": "9f4d188ddd7421a8232271814c4bd026b39811add7491d310f03cf99ce1764d8",
+    "jaw-access/report.json": "f75d27707351228a5a9d55a1421e24fd98012b448872a3b8993f4f02ed1933dd"
+  },
+  "meshHashes": {
+    "camera-retainer/camera-all-six-screw-envelopes-world.stl": "825d4ce0b8f3ed429d493c9fdccc47ae761a34673fd29e4cd77de2d6504b9e48",
+    "camera-retainer/camera-retainer-world.stl": "df9c549f8b91cb71eceef9097f383112b0ba9e45e01d478b126d8d75a20034bc",
+    "camera-retainer/camera-shifted-reference-world.stl": "f9f04c89bfa87da9fe76d9be41e364531a12bcd062c8a5d9a31d52bab384d511",
+    "camera-retainer/face-with-camera-anchors-world.stl": "4ede158b5867e463cf92071422db8252b6287b7b0c451c07b4b10b1fb205e97b",
+    "curved-head/../eye-trim-camera-clearance-world.stl": "97c59c15cf74a5e54a3b3dbbed1d05096c52fa868fc33883b7b86bba80eb09d0",
+    "curved-head/amplifier-curved-layout-world.stl": "7053963fa94dfa93d6a75caefd9f1a7fc4b2c8d2638e4e80a534b9e9d784546c",
+    "curved-head/cap-eight-screw-heads-four-nuts-world.stl": "5caa65db471683b1f3854e1f69971efc981997c68337749afe77a45ef38c1234",
+    "curved-head/curved-cap-final-candidate-world.stl": "fd812e02beb1b97c1f75905e801ece41732cf0fd4ae3c701018bc03c7ebedba8",
+    "curved-head/openrb-curved-layout-world.stl": "88a5808b033d679554ef181536e7f829bcd6c29925a32d7a466d35ce6a2684b0",
+    "curved-head/speaker-cradle-world.stl": "37a399b6f34ea2a2cd615fa1c00ecfe26e1e5faa286a96992328fbe3d595309e",
+    "curved-head/speaker-curved-layout-world.stl": "55c2d93fced870ae2efb69544262c3ef5766c27a6993c41d4c74c453009525b9",
+    "curved-head/speaker-keeper-world.stl": "94149b35d1c94914e3f2009c31dd8ddb5fa85d3a4804ec844c1ce880cb5bbe71",
+    "curved-head/zero-w-populated-receiving-union-world.stl": "488e890a77cfd5a0f2b13b33827ad0d44f02f32459ef33df3e9af0c2da5b6524",
+    "curved-head/zero_w_usb_moulding-world.stl": "87fc818f068280971c3e63b7e5bc79bcde40f086e66f79bc39ee8f4a3fdca38f",
+    "jaw-access/head_bottom_clearance-world.stl": "349bc58eb338bd1ec3053c454c759ce10ce316e9cbeb197d5cf985f687321b78",
+    "jaw-access/jaw_cheek_screw_1-world.stl": "42081f864f3f8223e50c2be5e6d561a26c5bb2e710123dba83160371e5ba1ca6",
+    "jaw-access/jaw_cheek_screw_2-world.stl": "421cf4181feff35bb958aea44ebefb4e4416df667255c5315b81e1864dc8efe8",
+    "jaw-access/jaw_main-world.stl": "47501bffab3c619844ecac2b76de17dff0dda9fda65996bebbbab85a8d51c452",
+    "jaw-access/jaw_passive_cheek-world.stl": "9575ca37fb8da57a1efa0750ac847684df27a1f4a7d61215bed812e89e4a2bdf",
+    "jaw-access/lower_pad_jaw_access-world.stl": "f1d8c8efaaee0982213ec5f7cd46cee404b90b96f0fd9cd56bfb6c68a819107b",
+    "usb-access/full-harness/openrb-usb-c-published-envelope-world.stl": "d122a463738b5a4066ec2255f202427005446bfb632a9700c16990178e0fb3b3"
+  },
+  "sourceDataSha256": "7c0c10dd22e44ae6d79bd7f24cf448f49c67b3b14e8e2c2d55f393d16ca5d95d",
+  "geometryChanges": {
+    "head_cap": "Restore true source curvature; local Pi USB and rear USB-C service openings, internal mounts and lower mating-rim relief are documented in the curved-head report.",
+    "face_panel": "Original exterior with local internal camera clearance and two internal retainer anchors.",
+    "camera_board": "Existing camera envelope moved behind eye; drilled mounting holes follow official drawing."
+  }
+}

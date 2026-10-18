@@ -1,0 +1,116 @@
+{
+  "status": "L_SHAPE_RIGID_CANDIDATE_REJECTED",
+  "wholeHeadAccepted": false,
+  "sourceManifestSha256": "cc5bd39f7135bcc6fab95dc39f1b6d2de56be98d4527b612fa70be88682a0b53",
+  "checkSha256": "68da98603822c591023cc2e3997df6de9f806d4b963a43df3a232c3855a5d134",
+  "parts": 270,
+  "expectedCrossGroupPairs": 22156,
+  "completedPairs": 22156,
+  "keyContacts": [
+    {
+      "a": "OpenRB_141",
+      "b": "REFERENCE fixed head motor13/2",
+      "groups": [
+        "controller",
+        "fixed"
+      ],
+      "volumeMm3": 141.03174768247231,
+      "method": "valid-solid-intersection",
+      "boundsMm": [
+        15.999999609375017,
+        -21.600007038716697,
+        122.1146,
+        35.999999609375024,
+        -19.999986161137386,
+        127.1146
+      ]
+    },
+    {
+      "a": "OpenRB_141",
+      "b": "REFERENCE fixed head head_yaw_link",
+      "groups": [
+        "controller",
+        "fixed"
+      ],
+      "volumeMm3": 123.04235820347873,
+      "method": "valid-solid-intersection",
+      "boundsMm": [
+        12.99899959564209,
+        -21.600007015766938,
+        120.41380052576613,
+        38.999000549316406,
+        -19.999986305446345,
+        129.11459350585938
+      ]
+    },
+    {
+      "a": "OpenRB_90",
+      "b": "current_cap",
+      "groups": [
+        "controller",
+        "fixed"
+      ],
+      "volumeMm3": 165.69858715511526,
+      "method": "valid-solid-intersection",
+      "boundsMm": [
+        -7.919995960931196,
+        -30.159012529712186,
+        140.9370002746582,
+        27.6399996657862,
+        -21.64999514128762,
+        143.35000038146973
+      ]
+    },
+    {
+      "a": "C22-receiving",
+      "b": "REFERENCE Pi current pi",
+      "groups": [
+        "controller",
+        "pi"
+      ],
+      "volumeMm3": 129.89152085539962,
+      "method": "valid-solid-intersection",
+      "boundsMm": [
+        60.19999860899719,
+        -26.49999951551744,
+        125.9850001335144,
+        61.800008260725335,
+        -19.729999989271164,
+        137.9850001335144
+      ]
+    },
+    {
+      "a": "REFERENCE MicroB photo receiving",
+      "b": "current_cap",
+      "groups": [
+        "pi_interface_conditional",
+        "fixed"
+      ],
+      "volumeMm3": 131.4522902996906,
+      "method": "valid-solid-intersection",
+      "boundsMm": [
+        60.099999999999994,
+        -9.411377299999998,
+        153.29142023394147,
+        66.1,
+        3.588622700000002,
+        155.7584988400979
+      ]
+    }
+  ],
+  "scope": "One complete rigid configuration, no mounts manufactured or connector purchases. Flexible wiring was not extended after hard-body failure. Photo plug and conditional A join contacts do not alone prove actual cable incompatibility.",
+  "oldFailureComparison": "Earlier SIDE_LANE_POSE_REJECTED used oblique native side arrangement and separately positioned Pi. This candidate is orthogonal: front YZ Pi, XZ controller with C +X. Long controller header-cap contact recurs; it is not solved by the change of topology.",
+  "decision": "No second arbitrary pose: outward controller motion clears motor case but worsens outer-wall contact; raising it clears lower mechanisms but worsens upper header/roof contact. Forward C also crosses Pi PCB independently. A single contact-normal translation cannot repair this candidate. Reject this configuration, not all possible internal arrangements.",
+  "unchanged": [
+    "Original closed shell",
+    "Camera eye location",
+    "Jaw and neck mechanisms",
+    "Actual soldered Pi header",
+    "Complete manufacturer OpenRB including long headers"
+  ],
+  "conditionalInputs": [
+    "Historical photo-based MicroB 25x13x6 receiver; no confirmed SC0727 shoulder drawing",
+    "Historical 47.9x20x12 A join only if SC0727+4472 topology is selected; not confirmed stock"
+  ],
+  "noPrintReleaseChanged": true
+}

@@ -1,0 +1,2802 @@
+{
+ "_method": "Slack and pinch of the V1.9 bundle route (route-v19.json) over neck and head motion, including the recorded\nwalking frames. Same model as neck-route/motion.py (taut straight spans between points riding on their bodies;\npinch = exact distance from the span centreline to parts on bodies other than the span's two end bodies, minus the\ngroup radius; wrap = free-span samples inside a solid), with the V1.9 scene: release head cap, V1.9 rear pack and the\nnew parts (clips, retainer, speaker, amplifier) added to their bodies.\nPose sets: policy box, beak pickup, each joint alone over its MJCF range, head yaw sweep (motion.py), plus 'walking':\nevery adopted phase-1 frame (not fallen, not a blend run), neck joints rounded to 1 deg, jaw closed.\nFan and audio wires (all on the head body) are checked for pinch against the other bodies.\nUsage: route_motion_v19.py  -> ../checks/route-v19-motion.json",
+ "_walking": {
+  "framesTotal": 304253,
+  "framesAdopted": 283500,
+  "sources": 227,
+  "sourcesAdopted": 189,
+  "uniqueNeckPoses1deg": 15298,
+  "neckRangeDeg": [
+   [
+    -22.6,
+    -0.9,
+    -26.8,
+    -21.4
+   ],
+   [
+    44.0,
+    68.2,
+    34.0,
+    11.2
+   ]
+  ]
+ },
+ "_poseSets": {
+  "policy": 162,
+  "pickup": 54,
+  "mjcf": 164,
+  "yawSweep": 35,
+  "walking": 15298
+ },
+ "capLiftSlack": {
+  "fromTie": [
+   49.6,
+   -17.5,
+   117.915,
+   "jaw_soft",
+   "tie"
+  ],
+  "toTie": [
+   62.585,
+   18.0,
+   147.986,
+   "jaw_soft",
+   "tie"
+  ],
+  "closedLengthMm": 62.6,
+  "straightToRaisedCapTieMm": 79.6,
+  "extraNeededTautMm": 17.0,
+  "method": "taut lower bound: straight line from the head clip exit to the cap clip tie raised 40 mm"
+ },
+ "neck-bundle-v19": {
+  "description": "pack notch -> torso side -> torso clip (S12-horn-025) -> up the neck -> bracket clip (S11-horn-040) -> -y head slot -> over the jaw-support cross wall -> down the head clip (H-jaw_support-03), out of its window -> under the amplifier housings behind the Pi -> cap clip (E-pi-04) over the Pi top edge -> down the Pi front to the gather point -> fan",
+  "groupRadiusMm": 1.7,
+  "lengthAtQ0Mm": 305.7,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 18.5,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 68.2,
+     "head_yaw": 34.0,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck_pitch",
+      "segment": 5,
+      "lengthQ0Mm": 42.7,
+      "slackNeededMm": 6.0,
+      "worstPoseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 8,
+      "lengthQ0Mm": 11.8,
+      "slackNeededMm": 12.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -1.84,
+     "centrelineDistanceMm": 0.14,
+     "inside": true,
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "at": [
+      -6.42,
+      -21.82,
+      79.47
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": 39.8,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 23,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": 4.7,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 12.8,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck_pitch",
+      "segment": 5,
+      "lengthQ0Mm": 42.7,
+      "slackNeededMm": 3.5,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 8,
+      "lengthQ0Mm": 11.8,
+      "slackNeededMm": 9.3,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -1.83,
+     "centrelineDistanceMm": 0.13,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      45.05,
+      -22.47,
+      53.89
+     ],
+     "routeSegment": 5,
+     "poseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 9,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "head_pitch": 90.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ]
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 38.8,
+    "worstPoseDeg": {
+     "head_yaw": 170.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck_pitch",
+      "segment": 5,
+      "lengthQ0Mm": 42.7,
+      "slackNeededMm": 6.1,
+      "worstPoseDeg": {
+       "neck_pitch": 60.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 8,
+      "lengthQ0Mm": 11.8,
+      "slackNeededMm": 38.8,
+      "worstPoseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -1.97,
+     "centrelineDistanceMm": 0.27,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      26.0,
+      -21.34,
+      87.14
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": -80.0,
+      "jaw": 40.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 41,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "head_pitch": 60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "head_pitch": 70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "head_pitch": 80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "head_pitch": 90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 5,
+       "poseDeg": {
+        "head_pitch": 90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 38.8,
+    "worstPoseDeg": {
+     "head_yaw": 170.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck_pitch",
+      "segment": 5,
+      "lengthQ0Mm": 42.7,
+      "slackNeededMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 8,
+      "lengthQ0Mm": 11.8,
+      "slackNeededMm": 38.8,
+      "worstPoseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -1.75,
+     "centrelineDistanceMm": 0.05,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      14.09,
+      20.14,
+      104.17
+     ],
+     "routeSegment": 8,
+     "poseDeg": {
+      "head_yaw": -160.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 14,
+     "examples": [
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -170.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -160.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -150.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -140.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -130.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "motor13",
+       "body": "yaw_roll_motion",
+       "segment": 8,
+       "poseDeg": {
+        "head_yaw": -120.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   },
+   "walking": {
+    "poses": 15298,
+    "posesWithPinchCheck": 1816,
+    "slackNeededMm": 11.4,
+    "worstPoseDeg": {
+     "neck_pitch": -0.0,
+     "head_pitch": 29.0,
+     "head_yaw": 33.0,
+     "head_roll": 6.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [
+     {
+      "from": "trunk_base",
+      "to": "neck_pitch",
+      "segment": 5,
+      "lengthQ0Mm": 42.7,
+      "slackNeededMm": 4.4,
+      "worstPoseDeg": {
+       "neck_pitch": 44.0,
+       "head_pitch": 3.0,
+       "head_yaw": -4.0,
+       "head_roll": 1.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "segment": 8,
+      "lengthQ0Mm": 11.8,
+      "slackNeededMm": 10.9,
+      "worstPoseDeg": {
+       "neck_pitch": -0.0,
+       "head_pitch": 29.0,
+       "head_yaw": 33.0,
+       "head_roll": 6.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pinch": {
+     "clearanceMm": -1.82,
+     "centrelineDistanceMm": 0.12,
+     "inside": true,
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "at": [
+      44.62,
+      -21.82,
+      84.0
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -12.0,
+      "head_pitch": 60.0,
+      "head_yaw": -4.0,
+      "head_roll": -21.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 3,
+     "examples": [
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 8,
+       "poseDeg": {
+        "neck_pitch": 8.0,
+        "head_pitch": 41.0,
+        "head_yaw": 6.0,
+        "head_roll": 7.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 8,
+       "poseDeg": {
+        "neck_pitch": 33.0,
+        "head_pitch": 12.0,
+        "head_yaw": 5.0,
+        "head_roll": 6.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "body": "jaw",
+       "segment": 8,
+       "poseDeg": {
+        "neck_pitch": 34.0,
+        "head_pitch": 17.0,
+        "head_yaw": 6.0,
+        "head_roll": 7.0,
+        "jaw": 0.0
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "fan-1": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 5.9,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      71.83,
+      28.51,
+      58.27
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 68.2,
+      "head_yaw": 4.7,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -60.0,
+     "head_pitch": 0.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.86,
+     "centrelineDistanceMm": 1.51,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      18.18,
+      3.77,
+      -0.66
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      61.71,
+      24.5,
+      129.03
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -50.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -18.49,
+      -32.72,
+      114.0
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-2": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 5.6,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      90.34,
+      49.78,
+      103.15
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 45.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.86,
+     "centrelineDistanceMm": 1.51,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      18.18,
+      3.77,
+      -0.66
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -30.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      102.34,
+      25.5,
+      93.05
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -19.8,
+      -33.97,
+      115.5
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-3": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 8.4,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 37.1,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      106.66,
+      -1.45,
+      52.24
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 45.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.71,
+     "centrelineDistanceMm": 1.36,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      19.85,
+      0.14,
+      0.34
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -70.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      61.71,
+      22.0,
+      129.03
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -110.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -18.93,
+      -30.26,
+      114.0
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-5": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 11.1,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      83.59,
+      43.22,
+      47.49
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -60.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.69,
+     "centrelineDistanceMm": 1.34,
+     "inside": false,
+     "part": "shell_right",
+     "body": "trunk_base",
+     "at": [
+      20.26,
+      -0.77,
+      0.84
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -70.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      61.71,
+      19.5,
+      129.03
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": 110.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.24,
+     "centrelineDistanceMm": 5.89,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -19.36,
+      -27.8,
+      114.0
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-6": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 12.4,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.26,
+     "centrelineDistanceMm": 5.91,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      99.17,
+      26.65,
+      53.41
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -45.0,
+     "head_pitch": 90.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.69,
+     "centrelineDistanceMm": 1.34,
+     "inside": false,
+     "part": "shell_right",
+     "body": "trunk_base",
+     "at": [
+      20.26,
+      -0.77,
+      0.84
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -70.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.26,
+     "centrelineDistanceMm": 5.91,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      101.83,
+      22.5,
+      91.64
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -50.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.26,
+     "centrelineDistanceMm": 5.91,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -20.32,
+      -31.01,
+      114.0
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-8": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 13.0,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.25,
+     "centrelineDistanceMm": 6.9,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      78.9,
+      -4.02,
+      24.96
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": -24.6,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 45.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.86,
+     "centrelineDistanceMm": 1.51,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      18.18,
+      3.77,
+      -0.66
+     ],
+     "routeSegment": 4,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -70.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.25,
+     "centrelineDistanceMm": 6.9,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      61.84,
+      18.5,
+      130.14
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -50.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.25,
+     "centrelineDistanceMm": 6.9,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -20.03,
+      -26.9,
+      115.0
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-9": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 17.3,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.74,
+     "centrelineDistanceMm": 4.39,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      96.55,
+      19.7,
+      53.54
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 45.0,
+     "head_yaw": 0.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.86,
+     "centrelineDistanceMm": 1.51,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      18.18,
+      3.77,
+      -0.66
+     ],
+     "routeSegment": 6,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -70.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.74,
+     "centrelineDistanceMm": 4.39,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      119.85,
+      15.5,
+      30.03
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -60.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -140.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.74,
+     "centrelineDistanceMm": 4.39,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -19.56,
+      -23.77,
+      112.5
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "fan-10": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 21.7,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      90.34,
+      49.78,
+      103.15
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -60.0,
+     "head_pitch": 0.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 0.86,
+     "centrelineDistanceMm": 1.51,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      18.18,
+      3.77,
+      -0.66
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -30.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      102.34,
+      27.5,
+      93.05
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": 110.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.76,
+     "centrelineDistanceMm": 7.41,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -19.45,
+      -35.94,
+      115.5
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-amp_vin_pin04": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 48.9,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      74.9,
+      -0.56,
+      25.46
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": -24.6,
+      "head_roll": 9.9,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 90.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.74,
+     "centrelineDistanceMm": 4.39,
+     "inside": false,
+     "part": "shell_right",
+     "body": "trunk_base",
+     "at": [
+      21.19,
+      -1.35,
+      -2.33
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      67.49,
+      21.59,
+      124.41
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_pitch": -10.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -17.67,
+      -29.62,
+      116.57
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-amp_lrc_pin35": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 50.7,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 68.2,
+     "head_yaw": -24.6,
+     "head_roll": 9.9,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.29,
+     "centrelineDistanceMm": 5.94,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      16.17,
+      10.89,
+      127.83
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": 39.8,
+      "head_pitch": 5.9,
+      "head_yaw": 34.0,
+      "head_roll": 9.9,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -60.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 4.22,
+     "centrelineDistanceMm": 4.87,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      23.56,
+      12.39,
+      0.18
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -30.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.29,
+     "centrelineDistanceMm": 5.94,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      73.7,
+      -17.92,
+      122.26
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_roll": 25.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.29,
+     "centrelineDistanceMm": 5.94,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      1.7,
+      45.25,
+      114.06
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": 140.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-amp_din_pin40": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 54.6,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      72.91,
+      6.94,
+      51.86
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -60.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.8,
+     "centrelineDistanceMm": 4.45,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      20.72,
+      8.18,
+      -2.33
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      67.49,
+      -24.13,
+      124.41
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_pitch": -10.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      4.63,
+      49.43,
+      116.57
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": 140.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-alt_gnd_pin34": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 54.0,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 5.9,
+     "head_yaw": 4.7,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      81.67,
+      -34.68,
+      40.99
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": -24.6,
+      "head_roll": 9.9,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 45.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 6.99,
+     "centrelineDistanceMm": 7.64,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      24.98,
+      14.5,
+      -2.33
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      67.49,
+      -16.51,
+      124.41
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_pitch": -10.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": 40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 7.8,
+     "centrelineDistanceMm": 8.45,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -0.27,
+      43.6,
+      116.57
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "head_yaw": 140.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-amp_bclk_pin12": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 69.8,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 8.6,
+     "head_pitch": 68.2,
+     "head_yaw": -24.6,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.15,
+     "centrelineDistanceMm": 5.8,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      98.28,
+      15.64,
+      52.54
+     ],
+     "routeSegment": 8,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -5.7,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": -24.6,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 3.34,
+     "centrelineDistanceMm": 3.99,
+     "inside": false,
+     "part": "shell_right",
+     "body": "trunk_base",
+     "at": [
+      23.39,
+      -6.16,
+      0.94
+     ],
+     "routeSegment": 7,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_pitch": 30.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.15,
+     "centrelineDistanceMm": 5.8,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      62.59,
+      11.43,
+      129.24
+     ],
+     "routeSegment": 8,
+     "poseDeg": {
+      "head_pitch": -20.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": 40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 5.15,
+     "centrelineDistanceMm": 5.8,
+     "inside": false,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      -21.65,
+      -20.01,
+      113.9
+     ],
+     "routeSegment": 8,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-spk_plus": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 8.5,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": 39.8,
+     "head_pitch": 37.1,
+     "head_yaw": -24.6,
+     "head_roll": -5.7,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 9.95,
+     "centrelineDistanceMm": 10.6,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      38.46,
+      -8.38,
+      135.78
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 10.74,
+     "centrelineDistanceMm": 11.39,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      134.08,
+      -3.69,
+      40.57
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 8.51,
+     "centrelineDistanceMm": 9.16,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      17.18,
+      11.88,
+      137.53
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_roll": 25.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": -80.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 10.74,
+     "centrelineDistanceMm": 11.39,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      34.39,
+      3.11,
+      140.5
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": -150.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ },
+ "audio-spk_minus": {
+  "description": null,
+  "groupRadiusMm": 0.65,
+  "lengthAtQ0Mm": 8.5,
+  "sets": {
+   "policy": {
+    "poses": 162,
+    "posesWithPinchCheck": 162,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -22.6,
+     "head_pitch": 68.2,
+     "head_yaw": 4.7,
+     "head_roll": -21.4,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 8.9,
+     "centrelineDistanceMm": 9.55,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      38.14,
+      -11.16,
+      134.71
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 37.1,
+      "head_yaw": 4.7,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "pickup": {
+    "poses": 54,
+    "posesWithPinchCheck": 54,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -90.0,
+     "head_pitch": 0.0,
+     "head_yaw": 34.0,
+     "head_roll": 0.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 10.74,
+     "centrelineDistanceMm": 11.39,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      134.08,
+      -6.18,
+      38.89
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "mjcf": {
+    "poses": 164,
+    "posesWithPinchCheck": 164,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "neck_pitch": -20.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 8.1,
+     "centrelineDistanceMm": 8.75,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      17.18,
+      -11.88,
+      137.53
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_roll": -25.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   },
+   "yawSweep": {
+    "poses": 35,
+    "posesWithPinchCheck": 35,
+    "slackNeededMm": 0.0,
+    "worstPoseDeg": {
+     "head_yaw": 40.0,
+     "jaw": 0.0
+    },
+    "freeSpans": [],
+    "pinch": {
+     "clearanceMm": 10.74,
+     "centrelineDistanceMm": 11.39,
+     "inside": false,
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "at": [
+      32.89,
+      5.71,
+      140.5
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": -150.0,
+      "jaw": 0.0
+     }
+    },
+    "tautSpanThroughSolids": {
+     "poses": 0,
+     "examples": []
+    }
+   }
+  }
+ }
+}

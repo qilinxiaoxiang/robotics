@@ -1,0 +1,11 @@
+from pathlib import Path
+import json,numpy as np,hashlib
+F=Path('/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009');r=json.loads((F/'joint-known-pi-package.json').read_text());P0=np.array(r['piCurrentWorldDelta']);T0=np.array(r['boardNativeToWorld']);P=np.eye(4);P[:3,:3]=[[0,1,0],[-1,0,0],[0,0,1]];P[:3,3]=np.array([48,-10,130])-P[:3,:3]@np.array([59,-1,131.5]);a=np.radians(30);p=np.radians(5);c=np.array([np.cos(a),np.sin(a),0]);u=np.array([np.sin(a),-np.cos(a),0]);T=np.eye(4);T[:3,:3]=np.column_stack([u,c*np.cos(p)+[0,0,np.sin(p)],-c*np.sin(p)+[0,0,np.cos(p)]]);T[:3,3]=[22,0,138.5]
+for q in r['parts']:
+ if q['group'] in ['pi','pi_interface_conditional']:q['worldTransform']=(P@np.linalg.inv(P0)@q['worldTransform']).tolist()
+ elif q['group']=='controller':q['worldTransform']=(T@np.linalg.inv(T0)@q['worldTransform']).tolist()
+ elif q['group']=='amp':
+  f=F.parents[2]/'head-layout/audio-relocation/original-controller-side/amplifier-quarter-turn-inset05-world.stl'
+  # path resolved explicitly below
+  f=Path('/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/original-controller-side/amplifier-quarter-turn-inset05-world.stl');q['file']=str(f);q['sha256']=hashlib.sha256(f.read_bytes()).hexdigest();q['worldTransform']=np.eye(4).tolist()
+r['piCurrentWorldDelta']=P.tolist();r['boardNativeToWorld']=T.tolist();r['stage']='Horizontal staggered boards, current complete rigid interfaces retained. Dimensioned single family; no acceptance.';r['reason']='Pi long X occupies negative-Y half, header outer side. OpenRB C diagonal toward positive-Y front takes its 27mm tail away from Pi. Five-degree front lift follows curved roof rather than assuming flat stacked boards.';(F/'horizontal-staggered-package.json').write_text(json.dumps(r,indent=2)+'\n');s=(F/'check_package.py').read_text().replace("src=F/'joint-package.json'","src=F/'horizontal-staggered-package.json'").replace("'joint-check-'","'horizontal-staggered-check-'");(F/'check_horizontal_staggered.py').write_text(s)

@@ -1,0 +1,1368 @@
+{
+ "method": "Battery cap study (2026-10-14): where a 3S LiPo could ride on the released layout-F rear box, with numbers.\n\nRead-only with respect to every release file. World = guide frame (mm, x forward, y left, z up, trunk_base origin).\nWrites battery_cap_study.json and scene_home.pkl (render input, guide/content/render.py scene format) next to this file.\n\n    ~/.venvs/microduck-dyn/bin/python battery_cap_study.py      (under run_bounded_cad.py)\n\nMethod:\n- Packs are axis-aligned boxes at the manufacturer nominal size; the printed pocket of a \"battery cap\" adds a 1.2 mm wall\n  around the pack. Clearances are checked on the pocket outer envelope (what a leg would touch).\n- Leg clearance: hip_sweep.py's method (each hip pitch HOME +-30 deg in 5 deg steps x hip roll +-10 deg, other joints\n  at HOME; mujoco.mj_geomDistance = convex-hull lower bound; sampled true surfaces where the hull distance is under 5 mm).\n- Floor: feet-flat trunk pose at HOME and at the SIT keyframe (ctrl values of scene_backlash.xml's SIT key); the floor is\n  z = 0 under the lowest sole point.\n- COM: layout-F mass_estimate.json (as-built + layout F, 849.5 g) plus the pack and the extra printed pocket walls.\n",
+ "inputs": {
+  "packs": {
+   "tattu650": {
+    "label": "Tattu 3S1P 650 mAh 75C XT30",
+    "L": 58.0,
+    "W": 31.0,
+    "T": 16.0,
+    "g": 59.0,
+    "tolLWT": [
+     5.0,
+     2.0,
+     2.0
+    ],
+    "gTol": 20.0,
+    "source": "retail spec sheets (getfpv.com / readymaderc.com / grobotronics.com, read 2026-10-14): 58 x 31 x 16 mm, net weight 59 g (+-20 g); grobotronics lists +-5 / +-2 / +-2 mm"
+   },
+   "tattu850": {
+    "label": "Tattu 3S1P 850 mAh 75C XT30",
+    "L": 60.0,
+    "W": 30.0,
+    "T": 23.0,
+    "g": 80.0,
+    "tolLWT": null,
+    "gTol": 20.0,
+    "source": "readymaderc.com / adorama.com / racedayquads.com (read 2026-10-14): 60 x 30 x 23 mm, 80 g (+-20 g on adorama); getfpv.com lists 57 mm long"
+   }
+  },
+  "npf550Reference": {
+   "label": "NP-F550 type (Pollen MicroDuck stock battery, 2S 7.2 V)",
+   "L": 71.0,
+   "W": 38.0,
+   "T": 20.5,
+   "g": 90.0,
+   "source": "third-party listings (read 2026-10-14): about 70-71 x 38 x 20-23 mm, 88-110 g; reference only"
+  },
+  "wallMm": 1.2,
+  "capTodayX": [
+   -67.1,
+   -59.1
+  ],
+  "boxRule": {
+   "absYMax": 32.05,
+   "z": [
+    -36.02,
+    43.0
+   ]
+  },
+  "shellRearX": -46.4,
+  "dfrChannel": {
+   "x": [
+    -45.0,
+    -36.7
+   ],
+   "y": [
+    -13.6,
+    13.6
+   ],
+   "z": [
+    -42.8,
+    28.5
+   ]
+  },
+  "in2Window": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "y": -32.05,
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "connectorEnvelopeMm": [
+   25.0,
+   12.0,
+   8.0
+  ],
+  "massBaseline": {
+   "source": "layout-F/mass_estimate.json newTotalG/newComMm",
+   "totalG": 849.5,
+   "comMm": [
+    -3.28,
+    -0.2,
+    21.04
+   ],
+   "officialComMm": [
+    0.56,
+    -0.01,
+    21.75
+   ]
+  }
+ },
+ "sweepGrid": {
+  "hipPitchDeltaDeg": [
+   -30,
+   30,
+   5
+  ],
+  "hipRollDeltaDeg": [
+   -10,
+   10,
+   5
+  ]
+ },
+ "dfrChannelFit": {
+  "tattu650": {
+   "channelInnerMm": [
+    8.3,
+    27.2,
+    71.3
+   ],
+   "bestOrientationXYZ": [
+    16.0,
+    31.0,
+    58.0
+   ],
+   "clearanceXYZmm": [
+    -7.7,
+    -3.8,
+    13.3
+   ],
+   "fits": false
+  },
+  "tattu850": {
+   "channelInnerMm": [
+    8.3,
+    27.2,
+    71.3
+   ],
+   "bestOrientationXYZ": [
+    23.0,
+    30.0,
+    60.0
+   ],
+   "clearanceXYZmm": [
+    -14.7,
+    -2.8,
+    11.3
+   ],
+   "fits": false
+  },
+  "npf550": {
+   "channelInnerMm": [
+    8.3,
+    27.2,
+    71.3
+   ],
+   "bestOrientationXYZ": [
+    20.5,
+    38.0,
+    71.0
+   ],
+   "clearanceXYZmm": [
+    -12.2,
+    -10.8,
+    0.3
+   ],
+   "fits": false
+  }
+ },
+ "placements": {
+  "tattu650-flat-high": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -83.1,
+     -29.0,
+     10.8
+    ],
+    [
+     -67.1,
+     29.0,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -84.3,
+     -30.2,
+     9.6
+    ],
+    [
+     -65.9,
+     30.2,
+     43.0
+    ]
+   ],
+   "capDepthMm": 25.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -84.3,
+   "rearOverhangBehindShellsMm": 37.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 30.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": 32.7,
+   "legSweepMinMm": 30.36,
+   "legSweepWorst": {
+    "minMm": 30.36,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "legAtHomeMm": 47.03,
+   "lowestAboveFloorHomeMm": 126.9,
+   "lowestAboveFloorSitMm": 84.0,
+   "shellGapMm": 19.5,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 6.4,
+    "addedG": 65.4,
+    "newTotalG": 914.9,
+    "packCentreMm": [
+     -75.1,
+     0.0,
+     26.3
+    ],
+    "leverArmXmm": -71.8,
+    "comShiftMm": [
+     -5.13,
+     0.01,
+     0.38
+    ],
+    "newComMm": [
+     -8.41,
+     -0.19,
+     21.42
+    ],
+    "newComVsOfficialMm": [
+     -8.97,
+     -0.18,
+     -0.33
+    ],
+    "comShiftWithPackTolPlus20g": -6.56
+   }
+  },
+  "tattu650-flat-mid": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "mid",
+   "packBoxMm": [
+    [
+     -83.1,
+     -29.0,
+     -12.0
+    ],
+    [
+     -67.1,
+     29.0,
+     19.0
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -84.3,
+     -30.2,
+     -13.2
+    ],
+    [
+     -65.9,
+     30.2,
+     20.2
+    ]
+   ],
+   "capDepthMm": 25.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -84.3,
+   "rearOverhangBehindShellsMm": 37.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 30.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": 32.7,
+   "legSweepMinMm": 24.49,
+   "legSweepWorst": {
+    "minMm": 24.49,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "legAtHomeMm": 32.86,
+   "lowestAboveFloorHomeMm": 104.1,
+   "lowestAboveFloorSitMm": 61.2,
+   "shellGapMm": 19.57,
+   "frameGapMm": 6.83,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 6.4,
+    "addedG": 65.4,
+    "newTotalG": 914.9,
+    "packCentreMm": [
+     -75.1,
+     0.0,
+     3.5
+    ],
+    "leverArmXmm": -71.8,
+    "comShiftMm": [
+     -5.13,
+     0.01,
+     -1.25
+    ],
+    "newComMm": [
+     -8.41,
+     -0.19,
+     19.79
+    ],
+    "newComVsOfficialMm": [
+     -8.97,
+     -0.18,
+     -1.96
+    ],
+    "comShiftWithPackTolPlus20g": -6.56
+   }
+  },
+  "tattu650-flat-low": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "low",
+   "packBoxMm": [
+    [
+     -83.1,
+     -29.0,
+     -34.82
+    ],
+    [
+     -67.1,
+     29.0,
+     -3.82
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -84.3,
+     -30.2,
+     -36.02
+    ],
+    [
+     -65.9,
+     30.2,
+     -2.62
+    ]
+   ],
+   "capDepthMm": 25.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -84.3,
+   "rearOverhangBehindShellsMm": 37.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 30.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": 32.7,
+   "legSweepMinMm": 6.0,
+   "legSweepWorst": {
+    "minMm": 0.0,
+    "legGeom": "ankle_right#geom204",
+    "side": "right",
+    "hipPitchDeltaDeg": -25.0,
+    "hipRollDeltaDeg": 0.0,
+    "refinedTrueSurfaceMinMm": 6.0,
+    "refinedAt": "tattu650-flat-low | right pitch -25 roll +0"
+   },
+   "legAtHomeMm": 27.24,
+   "lowestAboveFloorHomeMm": 81.3,
+   "lowestAboveFloorSitMm": 38.4,
+   "shellGapMm": 23.91,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.9,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 6.4,
+    "addedG": 65.4,
+    "newTotalG": 914.9,
+    "packCentreMm": [
+     -75.1,
+     0.0,
+     -19.32
+    ],
+    "leverArmXmm": -71.8,
+    "comShiftMm": [
+     -5.13,
+     0.01,
+     -2.88
+    ],
+    "newComMm": [
+     -8.41,
+     -0.19,
+     18.16
+    ],
+    "newComVsOfficialMm": [
+     -8.97,
+     -0.18,
+     -3.59
+    ],
+    "comShiftWithPackTolPlus20g": -6.56
+   }
+  },
+  "tattu650-upright-high": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "upright",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -83.1,
+     -15.5,
+     -16.2
+    ],
+    [
+     -67.1,
+     15.5,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -84.3,
+     -16.7,
+     -17.4
+    ],
+    [
+     -65.9,
+     16.7,
+     43.0
+    ]
+   ],
+   "capDepthMm": 25.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -84.3,
+   "rearOverhangBehindShellsMm": 37.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 16.7,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 33.27,
+   "legSweepWorst": {
+    "minMm": 33.27,
+    "legGeom": "upper_leg_left#geom147",
+    "side": "left",
+    "hipPitchDeltaDeg": 30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 38.09,
+   "lowestAboveFloorHomeMm": 100.0,
+   "lowestAboveFloorSitMm": 57.0,
+   "shellGapMm": 19.77,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 4.97,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 6.4,
+    "addedG": 65.4,
+    "newTotalG": 914.9,
+    "packCentreMm": [
+     -75.1,
+     0.0,
+     12.8
+    ],
+    "leverArmXmm": -71.8,
+    "comShiftMm": [
+     -5.13,
+     0.01,
+     -0.59
+    ],
+    "newComMm": [
+     -8.41,
+     -0.19,
+     20.45
+    ],
+    "newComVsOfficialMm": [
+     -8.97,
+     -0.18,
+     -1.3
+    ],
+    "comShiftWithPackTolPlus20g": -6.56
+   }
+  },
+  "tattu650-edge-high": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "edge",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -98.1,
+     -29.0,
+     25.8
+    ],
+    [
+     -67.1,
+     29.0,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -99.3,
+     -30.2,
+     24.6
+    ],
+    [
+     -65.9,
+     30.2,
+     43.0
+    ]
+   ],
+   "capDepthMm": 40.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -99.3,
+   "rearOverhangBehindShellsMm": 52.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 30.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": 32.7,
+   "legSweepMinMm": 39.5,
+   "legSweepWorst": {
+    "minMm": 39.5,
+    "legGeom": "upper_leg_left#geom147",
+    "side": "left",
+    "hipPitchDeltaDeg": 30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 50.0,
+   "lowestAboveFloorHomeMm": 141.9,
+   "lowestAboveFloorSitMm": 99.0,
+   "shellGapMm": 19.51,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 7.6,
+    "addedG": 66.6,
+    "newTotalG": 916.1,
+    "packCentreMm": [
+     -82.6,
+     0.0,
+     33.8
+    ],
+    "leverArmXmm": -79.3,
+    "comShiftMm": [
+     -5.77,
+     0.01,
+     0.93
+    ],
+    "newComMm": [
+     -9.05,
+     -0.19,
+     21.97
+    ],
+    "newComVsOfficialMm": [
+     -9.61,
+     -0.18,
+     0.22
+    ],
+    "comShiftWithPackTolPlus20g": -7.34
+   }
+  },
+  "tattu650-edge-low": {
+   "pack": "Tattu 3S1P 650 mAh 75C XT30",
+   "orientation": "edge",
+   "zPosition": "low",
+   "packBoxMm": [
+    [
+     -98.1,
+     -29.0,
+     -34.82
+    ],
+    [
+     -67.1,
+     29.0,
+     -18.82
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -99.3,
+     -30.2,
+     -36.02
+    ],
+    [
+     -65.9,
+     30.2,
+     -17.62
+    ]
+   ],
+   "capDepthMm": 40.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -99.3,
+   "rearOverhangBehindShellsMm": 52.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 30.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": 32.7,
+   "legSweepMinMm": 22.54,
+   "legSweepWorst": {
+    "minMm": 22.54,
+    "legGeom": "upper_leg_right#geom197",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 27.24,
+   "lowestAboveFloorHomeMm": 81.3,
+   "lowestAboveFloorSitMm": 38.4,
+   "shellGapMm": 32.4,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 12.95,
+   "mass": {
+    "packG": 59.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 7.6,
+    "addedG": 66.6,
+    "newTotalG": 916.1,
+    "packCentreMm": [
+     -82.6,
+     0.0,
+     -26.82
+    ],
+    "leverArmXmm": -79.3,
+    "comShiftMm": [
+     -5.77,
+     0.01,
+     -3.48
+    ],
+    "newComMm": [
+     -9.05,
+     -0.19,
+     17.56
+    ],
+    "newComVsOfficialMm": [
+     -9.61,
+     -0.18,
+     -4.19
+    ],
+    "comShiftWithPackTolPlus20g": -7.34
+   }
+  },
+  "tattu850-flat-high": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -90.1,
+     -30.0,
+     11.8
+    ],
+    [
+     -67.1,
+     30.0,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -91.3,
+     -31.2,
+     10.6
+    ],
+    [
+     -65.9,
+     31.2,
+     43.0
+    ]
+   ],
+   "capDepthMm": 32.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -91.3,
+   "rearOverhangBehindShellsMm": 44.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 31.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 30.51,
+   "legSweepWorst": {
+    "minMm": 30.51,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "legAtHomeMm": 47.53,
+   "lowestAboveFloorHomeMm": 127.9,
+   "lowestAboveFloorSitMm": 85.0,
+   "shellGapMm": 19.5,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.1,
+    "addedG": 88.1,
+    "newTotalG": 937.6,
+    "packCentreMm": [
+     -78.6,
+     0.0,
+     26.8
+    ],
+    "leverArmXmm": -75.3,
+    "comShiftMm": [
+     -7.08,
+     0.02,
+     0.54
+    ],
+    "newComMm": [
+     -10.36,
+     -0.18,
+     21.58
+    ],
+    "newComVsOfficialMm": [
+     -10.92,
+     -0.17,
+     -0.17
+    ],
+    "comShiftWithPackTolPlus20g": -8.5
+   }
+  },
+  "tattu850-flat-mid": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "mid",
+   "packBoxMm": [
+    [
+     -90.1,
+     -30.0,
+     -11.5
+    ],
+    [
+     -67.1,
+     30.0,
+     18.5
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -91.3,
+     -31.2,
+     -12.7
+    ],
+    [
+     -65.9,
+     31.2,
+     19.7
+    ]
+   ],
+   "capDepthMm": 32.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -91.3,
+   "rearOverhangBehindShellsMm": 44.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 31.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 24.03,
+   "legSweepWorst": {
+    "minMm": 24.03,
+    "legGeom": "upper_leg_left#geom147",
+    "side": "left",
+    "hipPitchDeltaDeg": 30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 32.76,
+   "lowestAboveFloorHomeMm": 104.6,
+   "lowestAboveFloorSitMm": 61.7,
+   "shellGapMm": 19.59,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.1,
+    "addedG": 88.1,
+    "newTotalG": 937.6,
+    "packCentreMm": [
+     -78.6,
+     0.0,
+     3.5
+    ],
+    "leverArmXmm": -75.3,
+    "comShiftMm": [
+     -7.08,
+     0.02,
+     -1.65
+    ],
+    "newComMm": [
+     -10.36,
+     -0.18,
+     19.39
+    ],
+    "newComVsOfficialMm": [
+     -10.92,
+     -0.17,
+     -2.36
+    ],
+    "comShiftWithPackTolPlus20g": -8.5
+   }
+  },
+  "tattu850-flat-low": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "flat",
+   "zPosition": "low",
+   "packBoxMm": [
+    [
+     -90.1,
+     -30.0,
+     -34.82
+    ],
+    [
+     -67.1,
+     30.0,
+     -4.82
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -91.3,
+     -31.2,
+     -36.02
+    ],
+    [
+     -65.9,
+     31.2,
+     -3.62
+    ]
+   ],
+   "capDepthMm": 32.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -91.3,
+   "rearOverhangBehindShellsMm": 44.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 31.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 22.42,
+   "legSweepWorst": {
+    "minMm": 22.42,
+    "legGeom": "upper_leg_right#geom197",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 26.85,
+   "lowestAboveFloorHomeMm": 81.3,
+   "lowestAboveFloorSitMm": 38.4,
+   "shellGapMm": 24.35,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.43,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.1,
+    "addedG": 88.1,
+    "newTotalG": 937.6,
+    "packCentreMm": [
+     -78.6,
+     0.0,
+     -19.82
+    ],
+    "leverArmXmm": -75.3,
+    "comShiftMm": [
+     -7.08,
+     0.02,
+     -3.84
+    ],
+    "newComMm": [
+     -10.36,
+     -0.18,
+     17.2
+    ],
+    "newComVsOfficialMm": [
+     -10.92,
+     -0.17,
+     -4.55
+    ],
+    "comShiftWithPackTolPlus20g": -8.5
+   }
+  },
+  "tattu850-upright-high": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "upright",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -90.1,
+     -15.0,
+     -18.2
+    ],
+    [
+     -67.1,
+     15.0,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -91.3,
+     -16.2,
+     -19.4
+    ],
+    [
+     -65.9,
+     16.2,
+     43.0
+    ]
+   ],
+   "capDepthMm": 32.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -91.3,
+   "rearOverhangBehindShellsMm": 44.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 16.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 33.19,
+   "legSweepWorst": {
+    "minMm": 33.19,
+    "legGeom": "upper_leg_left#geom147",
+    "side": "left",
+    "hipPitchDeltaDeg": 30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "legAtHomeMm": 37.78,
+   "lowestAboveFloorHomeMm": 98.0,
+   "lowestAboveFloorSitMm": 55.0,
+   "shellGapMm": 19.77,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 5.46,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.1,
+    "addedG": 88.1,
+    "newTotalG": 937.6,
+    "packCentreMm": [
+     -78.6,
+     0.0,
+     11.8
+    ],
+    "leverArmXmm": -75.3,
+    "comShiftMm": [
+     -7.08,
+     0.02,
+     -0.87
+    ],
+    "newComMm": [
+     -10.36,
+     -0.18,
+     20.17
+    ],
+    "newComVsOfficialMm": [
+     -10.92,
+     -0.17,
+     -1.58
+    ],
+    "comShiftWithPackTolPlus20g": -8.5
+   }
+  },
+  "tattu850-edge-high": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "edge",
+   "zPosition": "high",
+   "packBoxMm": [
+    [
+     -97.1,
+     -30.0,
+     18.8
+    ],
+    [
+     -67.1,
+     30.0,
+     41.8
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -98.3,
+     -31.2,
+     17.6
+    ],
+    [
+     -65.9,
+     31.2,
+     43.0
+    ]
+   ],
+   "capDepthMm": 39.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -98.3,
+   "rearOverhangBehindShellsMm": 51.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 31.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 34.56,
+   "legSweepWorst": {
+    "minMm": 34.56,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "legAtHomeMm": 50.0,
+   "lowestAboveFloorHomeMm": 134.9,
+   "lowestAboveFloorSitMm": 92.0,
+   "shellGapMm": 19.5,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 0.4,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.7,
+    "addedG": 88.7,
+    "newTotalG": 938.2,
+    "packCentreMm": [
+     -82.1,
+     0.0,
+     30.3
+    ],
+    "leverArmXmm": -78.8,
+    "comShiftMm": [
+     -7.45,
+     0.02,
+     0.88
+    ],
+    "newComMm": [
+     -10.73,
+     -0.18,
+     21.92
+    ],
+    "newComVsOfficialMm": [
+     -11.29,
+     -0.17,
+     0.17
+    ],
+    "comShiftWithPackTolPlus20g": -8.94
+   }
+  },
+  "tattu850-edge-low": {
+   "pack": "Tattu 3S1P 850 mAh 75C XT30",
+   "orientation": "edge",
+   "zPosition": "low",
+   "packBoxMm": [
+    [
+     -97.1,
+     -30.0,
+     -34.82
+    ],
+    [
+     -67.1,
+     30.0,
+     -11.82
+    ]
+   ],
+   "pocketOuterMm": [
+    [
+     -98.3,
+     -31.2,
+     -36.02
+    ],
+    [
+     -65.9,
+     31.2,
+     -10.62
+    ]
+   ],
+   "capDepthMm": 39.2,
+   "capDepthTodayMm": 7.999999999999993,
+   "rearmostXmm": -98.3,
+   "rearOverhangBehindShellsMm": 51.9,
+   "rearOverhangTodayMm": 20.7,
+   "pocketHalfWidthY": 31.2,
+   "insideYRule": true,
+   "insideZRule": true,
+   "pocketHalfWidthYWithLengthTolerance": null,
+   "legSweepMinMm": 22.42,
+   "legSweepWorst": {
+    "minMm": 22.42,
+    "legGeom": "upper_leg_right#geom197",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": 10.0
+   },
+   "legAtHomeMm": 26.85,
+   "lowestAboveFloorHomeMm": 81.3,
+   "lowestAboveFloorSitMm": 38.4,
+   "shellGapMm": 27.96,
+   "frameGapMm": 6.8,
+   "capGapMm": -1.2,
+   "releasedWireLoopsGapMm": 5.95,
+   "mass": {
+    "packG": 80.0,
+    "packGTol": 20.0,
+    "capExtraPrintedG": 8.7,
+    "addedG": 88.7,
+    "newTotalG": 938.2,
+    "packCentreMm": [
+     -82.1,
+     0.0,
+     -23.32
+    ],
+    "leverArmXmm": -78.8,
+    "comShiftMm": [
+     -7.45,
+     0.02,
+     -4.19
+    ],
+    "newComMm": [
+     -10.73,
+     -0.18,
+     16.85
+    ],
+    "newComVsOfficialMm": [
+     -11.29,
+     -0.17,
+     -4.9
+    ],
+    "comShiftWithPackTolPlus20g": -8.94
+   }
+  }
+ },
+ "connectors": {
+  "K1-behind-cap-under-pack": {
+   "what": "lies across the cap back at window height, long axis y, mates by pulling toward -y; 8 mm deep in x",
+   "envelopeMm": [
+    [
+     -75.1,
+     -32.05,
+     -5.6
+    ],
+    [
+     -67.1,
+     -7.049999999999997,
+     6.4
+    ]
+   ],
+   "legSweepMinMm": 25.42,
+   "legSweepWorst": {
+    "minMm": 25.42,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "frameGapMm": 8.0,
+   "capGapMm": 0.0,
+   "shellGapMm": 22.19,
+   "releasedWireLoopsGapMm": 1.6,
+   "lowestAboveFloorSitMm": 68.8,
+   "gapToPackPocketMm": {
+    "tattu650-flat-high": 3.2,
+    "tattu650-flat-mid": -9.2,
+    "tattu650-flat-low": -2.98,
+    "tattu650-upright-high": -9.2,
+    "tattu650-edge-high": 18.2,
+    "tattu650-edge-low": 12.02,
+    "tattu850-flat-high": 4.2,
+    "tattu850-flat-mid": -9.2,
+    "tattu850-flat-low": -1.98,
+    "tattu850-upright-high": -9.15,
+    "tattu850-edge-high": 11.2,
+    "tattu850-edge-low": 5.02
+   },
+   "in2WindowOverlapX": [
+    -65.9,
+    -67.1
+   ]
+  },
+  "K2-beside-wall-along-x": {
+   "what": "outboard of the -y wall at the IN window, long axis x",
+   "envelopeMm": [
+    [
+     -66.0,
+     -44.05,
+     -4.4
+    ],
+    [
+     -41.0,
+     -32.05,
+     3.6
+    ]
+   ],
+   "legSweepMinMm": 0.08,
+   "legSweepWorst": {
+    "minMm": -0.24,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0,
+    "refinedTrueSurfaceMinMm": 0.08,
+    "refinedAt": "K2-beside-wall-along-x | right pitch -30 roll -10"
+   },
+   "frameGapMm": 0.0,
+   "capGapMm": 1.2,
+   "shellGapMm": 3.61,
+   "releasedWireLoopsGapMm": -3.99,
+   "lowestAboveFloorSitMm": 70.0,
+   "gapToPackPocketMm": {
+    "tattu650-flat-high": 6.28,
+    "tattu650-flat-mid": 1.85,
+    "tattu650-flat-low": 1.85,
+    "tattu650-upright-high": 15.35,
+    "tattu650-edge-high": 21.08,
+    "tattu650-edge-low": 13.35,
+    "tattu850-flat-high": 7.05,
+    "tattu850-flat-mid": 0.85,
+    "tattu850-flat-low": 0.85,
+    "tattu850-upright-high": 15.85,
+    "tattu850-edge-high": 14.03,
+    "tattu850-edge-low": 6.28
+   },
+   "in2WindowOverlapX": [
+    -65.9,
+    -53.2
+   ]
+  },
+  "K3-beside-wall-along-z": {
+   "what": "outboard of the -y wall at the IN window, long axis z",
+   "envelopeMm": [
+    [
+     -65.9,
+     -44.05,
+     -12.5
+    ],
+    [
+     -57.9,
+     -32.05,
+     12.5
+    ]
+   ],
+   "legSweepMinMm": 6.0,
+   "legSweepWorst": {
+    "minMm": 0.0,
+    "legGeom": "upper_leg_right#geom198",
+    "side": "right",
+    "hipPitchDeltaDeg": -25.0,
+    "hipRollDeltaDeg": -5.0,
+    "refinedTrueSurfaceMinMm": 6.0,
+    "refinedAt": "K3-beside-wall-along-z | right pitch -25 roll -5"
+   },
+   "frameGapMm": 0.0,
+   "capGapMm": 0.0,
+   "shellGapMm": 13.84,
+   "releasedWireLoopsGapMm": -3.99,
+   "lowestAboveFloorSitMm": 61.9,
+   "gapToPackPocketMm": {
+    "tattu650-flat-high": 1.85,
+    "tattu650-flat-mid": 1.85,
+    "tattu650-flat-low": 1.85,
+    "tattu650-upright-high": 15.35,
+    "tattu650-edge-high": 12.24,
+    "tattu650-edge-low": 5.44,
+    "tattu850-flat-high": 0.85,
+    "tattu850-flat-mid": 0.85,
+    "tattu850-flat-low": 0.85,
+    "tattu850-upright-high": 15.85,
+    "tattu850-edge-high": 5.17,
+    "tattu850-edge-low": 0.85
+   },
+   "in2WindowOverlapX": [
+    -65.9,
+    -57.9
+   ]
+  },
+  "K4-behind-cap-corner-along-x": {
+   "what": "behind the cap at the -y corner, long axis x (mates by pulling backward)",
+   "envelopeMm": [
+    [
+     -92.1,
+     -32.05,
+     -5.6
+    ],
+    [
+     -67.1,
+     -20.049999999999997,
+     2.4
+    ]
+   ],
+   "legSweepMinMm": 25.42,
+   "legSweepWorst": {
+    "minMm": 25.42,
+    "legGeom": "upper_leg_right#geom199",
+    "side": "right",
+    "hipPitchDeltaDeg": -30.0,
+    "hipRollDeltaDeg": -10.0
+   },
+   "frameGapMm": 8.0,
+   "capGapMm": 0.0,
+   "shellGapMm": 23.22,
+   "releasedWireLoopsGapMm": 1.6,
+   "lowestAboveFloorSitMm": 68.8,
+   "gapToPackPocketMm": {
+    "tattu650-flat-high": 7.2,
+    "tattu650-flat-mid": -10.15,
+    "tattu650-flat-low": -2.98,
+    "tattu650-upright-high": 3.35,
+    "tattu650-edge-high": 22.2,
+    "tattu650-edge-low": 12.02,
+    "tattu850-flat-high": 8.2,
+    "tattu850-flat-mid": -11.15,
+    "tattu850-flat-low": -1.98,
+    "tattu850-upright-high": 3.85,
+    "tattu850-edge-high": 15.2,
+    "tattu850-edge-low": 5.02
+   },
+   "in2WindowOverlapX": [
+    -65.9,
+    -67.1
+   ]
+  }
+ },
+ "floor": {
+  "HOME": {
+   "trunkOriginHeightMm": 117.3,
+   "trunkPitchDegNoseDown": 0.1,
+   "todayLowestPointAboveFloorMm": {
+    "frame": 73.3,
+    "lid": 81.3,
+    "pack": 73.3
+   }
+  },
+  "SIT": {
+   "trunkOriginHeightMm": 74.4,
+   "trunkPitchDegNoseDown": -0.0,
+   "todayLowestPointAboveFloorMm": {
+    "frame": 30.4,
+    "lid": 38.4,
+    "pack": 30.4
+   }
+  }
+ },
+ "todayBoxLegSweep": {
+  "source": "layout-F/hip_sweep.json",
+  "frameRefinedMm": 13.25,
+  "lidHullMm": 17.66,
+  "usbcPlugRefinedMm": 4.28
+ }
+}

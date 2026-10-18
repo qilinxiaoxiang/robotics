@@ -1,0 +1,152 @@
+{
+ "schema": "Per-part orientation verdicts authored from the screen (evidence/check-v16-screen.json), native slices (slices/<key>/<slug>/readback-*.json, seats-*.json) and functional review. 'keep' means the current V1.6 final pose stays. Numbers marked Bambu/Elegoo are native readbacks: ETA minutes / total grams / support grams / first-layer model area mm2.",
+ "studyDate": "2026-10-09",
+ "parts": {
+  "head_bottom": {
+   "recommendation": "keep",
+   "currentPose": "Upright, open top up (robot upright). Same as the 10/1 batch and the upstream community-2 pose.",
+   "function": "Yellow lower head shell. Four blind 2.2 mm pilots receive the jaw-support M2.5 screws from above; three 2.7 mm tabs at 13-14 mm take screws from below into the head-cap posts; curved visible outer skin.",
+   "loadPath": "Screw clamp loads at the pilots and tabs; light shell loads. No member is loaded across layers in a way that changes between candidate poses.",
+   "ranking": [
+    "1 current upright: 20.1 mm tall, first layer 1297 mm2, tip angle 70.9 deg, all 7 holes vertical. Bambu 115.8 / 37.39 / 8.71 / 1297; Elegoo 101.0 / 39.64 / 11.41 / 1298.",
+    "2 V1.4-V1.5 on-edge: 115.7 mm tall, centre of mass outside the first-layer hull (tip -9.5 deg), all 7 holes horizontal. Bambu 158.3 / 49.29 / 21.44 / 309 (+42.5 min, +11.9 g, support +12.7 g, 578 layers).",
+    "3 rim-down (stable p=0.43): first-layer section only 19.3 mm2, 10 hole ends and 9 boss faces face down above the bed. Not sliced: fails the flat-base rule before support is counted.",
+    "4+ standing on end (91 mm): no flat contact or not self-standing."
+   ],
+   "counterexampleCheck": "The upright pose prints the three cap-screw head seats (tab undersides, world-down) on support: 352 mm of support toolpath under them on Bambu, 353 mm on Elegoo. Probe of head_bottom and the world-frame head cap confirms the screws enter from below (tab material z 112.6-114.6 world, cap post with pilot from 114.6 up). Every pose that frees these seats loses the flat base (rim-down) or stands 116 mm tall (on-edge), so the seats are a known cost of the best pose.",
+   "residual": "Clean the support interface off the three tab undersides and check each screw head sits flat.",
+   "evidence": ["slices/head_bottom/current", "slices/head_bottom/v14-on-edge", "evidence/renders/head_bottom.png", "evidence/register-10-1.json"]
+  },
+  "face_panel": {
+   "recommendation": "keep",
+   "currentPose": "Outer face down on the plate (10/1 pose).",
+   "function": "White face panel; three-screw eye-camera clamp interface (1.6 mm pilots), 14.6 mm eye opening, small locating bosses.",
+   "loadPath": "Panel loads in plane; screw pilots vertical.",
+   "ranking": [
+    "1 current: 4.3 mm tall, contact 3075 mm2, all holes vertical. Bambu 18.8 / 6.18 / 0 / 3021.",
+    "2 flip (stable p=0.51): Bambu 37.9 / 10.04 / 4.13 / 133; 1053 mm of support under hole ends and 2679 mm under boss faces.",
+    "3 on edge (44.6 mm): tip 0.9 deg."
+   ],
+   "counterexampleCheck": "The outer face takes the plate texture (Bambu: Textured PEI adds texture to the bottom face; the Bambu White profile uses Cool Plate, the Elegoo profiles in this study use Textured PEI). That is a cosmetic choice, not a reason to flip: the flip puts the bosses and seats on support.",
+   "evidence": ["slices/face_panel/current", "slices/face_panel/flip", "evidence/renders/face_panel.png"]
+  },
+  "head_cap": {
+   "recommendation": "keep",
+   "currentPose": "Top down (dome on the plate), the V1.6 cap pose; same family as the 10/1 top-down cap, which registered as a different geometry.",
+   "function": "Orange head cap: Pi mounting pilots and rails, speaker holes, cable notch with zip-tie hood, visible dome.",
+   "loadPath": "Screw pilots and posts loaded along their axes; shell loads light.",
+   "ranking": [
+    "1 current top-down: 47.1 mm tall, true contact 104 mm2, first-layer section 464 mm2, tip 9.0 deg, 14 holes vertical and 4 horizontal, no hole end facing down. Bambu 135.1 / 42.65 / 4.59 / 451; Elegoo 148.1 / 44.33 / 6.81 / 451.",
+    "2 V1.4-V1.5 on-edge: 91 mm tall, tip -31 deg. Bambu 183.2 / 55.58 / 17.54 / 288 (+48 min).",
+    "3 rim-down (robot upright): 14 hole ends and 21 boss faces face down; 2869 mm support under them. Bambu 214.1 / 57.81 / 19.68 / 174 (+79 min, +15.2 g); Elegoo 258.6 / 64.0 / 26.04 / 174."
+   ],
+   "counterexampleCheck": "Rim-down would give the best visible dome (it faces up) but puts every mounting post and pilot end on support and costs 79 min. Top-down keeps all functional ends clean; its cost is cosmetic: 3743 mm2 of the outer dome near the bed rests on support interface (evidence/support-maps/head_cap-current-Bambu.png).",
+   "residual": "Lowest tipping margin of the set after the IMU clamp (9.0 deg) and only 104 mm2 of true flat contact. The release Orange plates contain no brim on either printer (auto brim chose none; zero Brim features in release-V1.6-final/run/native/Orange_*/plate_1.gcode). A 3-5 mm brim on this object is cheap insurance (inference from the Bambu and Prusa brim guidance).",
+   "evidence": ["slices/head_cap/current", "slices/head_cap/rim-down", "slices/head_cap/v14-on-edge", "evidence/support-maps/head_cap-current-Bambu.png"]
+  },
+  "speaker_cradle": {
+   "recommendation": "keep",
+   "currentPose": "Flat plate on the bed.",
+   "function": "1.2 mm cradle with two 2.8 mm mounting ears.",
+   "loadPath": "In-plane; holes vertical.",
+   "ranking": ["1 current = flip (symmetric 1.2 mm plate): Bambu 8.9 / 0.68 / 0 / 229 both ways.", "3 on edge: 21.7 mm tall, contact 12 mm2."],
+   "counterexampleCheck": "No candidate differs functionally; either face down is equivalent.",
+   "evidence": ["slices/speaker_cradle/current", "slices/speaker_cradle/flip"]
+  },
+  "speaker_keeper": {
+   "recommendation": "keep",
+   "currentPose": "Flat ring on the bed.",
+   "function": "1.0 mm retaining ring with two 2.8 mm holes.",
+   "loadPath": "In-plane; holes vertical.",
+   "ranking": ["1 current: Bambu 8.8 / 0.62 / 0 / 227.", "2 flip: Bambu 8.8 / 0.62 / 0 / 225.", "3 on edge: 21.7 mm tall, contact 10 mm2."],
+   "counterexampleCheck": "Equivalent faces; nothing to gain.",
+   "evidence": ["slices/speaker_keeper/current", "slices/speaker_keeper/flip"]
+  },
+  "eye_trim": {
+   "recommendation": "keep",
+   "currentPose": "Flange down (10/1 pose).",
+   "function": "Black eye trim; 14.5 and 18.4 mm bores around the camera eye.",
+   "loadPath": "Press fit in the face panel; bores vertical.",
+   "ranking": ["1 current: contact 394 mm2, bores vertical, no support. Bambu 21.4 / 4.13 / 0 / 392.", "2 flip: contact 6.4 mm2, 943 mm support under the down-facing bore end. Bambu 28.5 / 4.47 / 0.49 / 6.", "3+ on edge: 30 mm tall, bores horizontal."],
+   "counterexampleCheck": "No candidate improves any criterion.",
+   "evidence": ["slices/eye_trim/current", "slices/eye_trim/flip"]
+  },
+  "camera_retainer": {
+   "recommendation": "keep",
+   "currentPose": "Larger flat face (252 mm2) down.",
+   "function": "Three-screw removable camera frame (2.2 mm holes).",
+   "loadPath": "Clamp load along the screw axes; holes vertical.",
+   "ranking": ["1 current: contact 252 mm2. Bambu 11.8 / 0.99 / 0 / 226.", "2 flip: contact 196 mm2, 3 hole ends face down with 536 mm of support under them. Bambu 12.6 / 1.05 / 0.05 / 175."],
+   "counterexampleCheck": "Settles the earlier open question about the opposite face: in V1.6 the current pose already uses the larger face, and the flip would put the three screw ends on support.",
+   "evidence": ["slices/camera_retainer/current", "slices/camera_retainer/flip"]
+  },
+  "jaw_support_original": {
+   "recommendation": "keep",
+   "currentPose": "Upside down relative to the robot (world-up = print -Z). Same as the 10/1 batch and upstream community-24.",
+   "function": "Black jaw support. Mouth sliding ring (OD 16.4 mm) turns in its half-bore seat (D 16.8 mm, 0.2 mm radial clearance, D 14.9 mm retaining lip). Four M2.5 screws pass through 2.7 mm holes in a 1.7 mm flange into head_bottom pilots; their heads seat on the flange's world-top face.",
+   "loadPath": "Sliding contact on the half-bore; screw clamp through the flange.",
+   "ranking": [
+    "1 current: sliding seat faces up (0 of 240.5 mm2 on support); the four screw-head seats face down and 423 of 435 mm2 rest on support (1553 mm toolpath Bambu, 1017 mm Elegoo). Bambu 70.1 / 11.62 / 2.43 / 814; Elegoo 59.5 / 13.3 / 4.37 / 813.",
+    "2 flip (robot upright, screens best): screw seats clean, but 175.8 mm2 of the sliding seat faces down and 83.8 mm2 rests on support. Bambu 85.4 / 12.94 / 3.76 / 608 (+15.3 min); Elegoo 63.1 / 14.52 / 5.59 / 610.",
+    "3 on end, seat axis vertical: both seats clean, but 73.5 mm tall on 100 mm2 (tip 10.8 deg, first layer 88 mm2, 734 layers) and the four M2.5 holes print horizontal. Bambu 90.7 / 13.2 / 4.02 / 88 (+20.6 min). Repeats the V1.4 on-edge failure pattern."
+   ],
+   "counterexampleCheck": "This is the case where the screen is wrong. It ranks the flip first because it counts down-facing screw seats but does not know the curved half-bore is a sliding fit. Native support mapping shows the flip trades the static screw seats for the moving seat. A rough screw-head seat still clamps; a supported 0.2 mm-clearance sliding seat can bind or rattle (inference).",
+   "residual": "Clean the four seat areas on the flange (world-top face) and check the M2.5 heads sit flat; a thin washer is an option if a seat is uneven.",
+   "evidence": ["slices/jaw_support_original/current", "slices/jaw_support_original/flip", "slices/jaw_support_original/on-end", "evidence/jaw-bearing-seat.json", "evidence/support-maps/jaw_support_original-current-Bambu.png", "evidence/support-maps/jaw_support_original-flip-Bambu.png", "evidence/support-maps/jaw_support_original-on-end-Bambu.png"]
+  },
+  "mouth_sliding_ring": {
+   "recommendation": "keep",
+   "currentPose": "12.4 mm counterbore side on the bed.",
+   "function": "2.4 mm ring, OD 16.4 mm, bores 12.4 and 10.4 mm with a 0.3 mm step; turns in the jaw-support seat.",
+   "loadPath": "Sliding on its outer diameter (vertical wall in every flat pose).",
+   "ranking": ["1 current: the 0.3 mm step faces down only 0.3 mm above the bed and slices with zero support. Bambu 10.1 / 0.56 / 0 / 81.", "2 flip: 472 mm support under boss faces. Bambu 11.1 / 0.72 / 0.17 / 70."],
+   "counterexampleCheck": "The screen first flagged the 0.3 mm step as a down-facing seat; the native slice showed no support, so the checker now treats down-facing ends lower than 0.6 mm as bridged by the first layers.",
+   "evidence": ["slices/mouth_sliding_ring/current", "slices/mouth_sliding_ring/flip"]
+  },
+  "neck_pitch_integrated_1mm_seats": {
+   "recommendation": "keep",
+   "currentPose": "Horn boss on the bed, ears up (10/1 and upstream community-28 pose).",
+   "function": "Black neck pitch bracket. The 16.4 mm horn boss face mates the ID13 horn; four 2.4 mm holes with integral 1 mm M2x6 seats; 6 mm centre bore; four 2.2 mm ear holes; two ears 27.7 mm tall.",
+   "loadPath": "Horn screws along the vertical axis; ear bending at the ear roots crosses layers in this pose.",
+   "ranking": [
+    "1 current: horn face on the bed, horn holes and seats vertical, seats face up. Bambu 42.7 / 5.75 / 0.57 / 143; Elegoo 38.2 / 5.93 / 1.02 / 145.",
+    "2 side (stable p=0.31): all 10 holes horizontal, horn face becomes a vertical wall, ears lie in-plane. Bambu 34.6 / 5.39 / 0.16 / 247 (-8.1 min); Elegoo 31.6 / 5.51 / 0.52 / 247.",
+    "3 on-ear: 5 hole ends and boss faces down; 2029 mm support under seats and 2568 mm in hole cores. Bambu 52.2 / 6.37 / 1.32 / 301."
+   ],
+   "counterexampleCheck": "The side pose is faster and loads the ears in-plane, but makes the horn hole pattern and the 6 mm bore horizontal and moves the horn face off the bed. Ear-root stress estimate: about 1.5 MPa at 0.25 N m per ear across an 18 x 3 mm section, far below PLA interlayer strength (inference, not tested). Keep.",
+   "residual": "The 6 mm centre bore keeps a 0.25 mm membrane at 1.70-1.95 mm above the bed (the four 2.4 mm membranes were removed in V1.6). In the current pose the 1.7 mm recess under it fills with support (296 mm toolpath Bambu, 293 mm Elegoo). Clear the recess and confirm whether the membrane should be opened.",
+   "evidence": ["slices/neck_pitch_integrated_1mm_seats/current", "slices/neck_pitch_integrated_1mm_seats/side", "slices/neck_pitch_integrated_1mm_seats/on-ear", "evidence/support-maps/neck_pitch_integrated_1mm_seats-current-Bambu.png"]
+  },
+  "imu_cover": {
+   "recommendation": "keep",
+   "currentPose": "Flat back (689 mm2) on the bed.",
+   "function": "BNO085 rear cover with board-hole stops and lead tie land; 2.2 and 2.8 mm holes.",
+   "loadPath": "Screw clamp along vertical axes.",
+   "ranking": ["1 current: Bambu 17.9 / 1.69 / 0 / 654.", "2 flip: contact 36 mm2, 1330 mm support under hole ends. Bambu 33.5 / 3.61 / 1.9 / 36."],
+   "counterexampleCheck": "No candidate improves any criterion.",
+   "evidence": ["slices/imu_cover/current", "slices/imu_cover/flip"]
+  },
+  "imu_clamp": {
+   "recommendation": "keep",
+   "currentPose": "Standing on its 314 mm2 end, 32.9 mm tall (10/1 pose).",
+   "function": "Orange IMU holder. A 5 mm plate with four 1.6 mm pilots; four 4.4 mm PCB pads with 2.0 mm locating pins that hold the BNO085 board; two 1.6 mm pilots at the top; side connector aperture.",
+   "loadPath": "Board located by pins and clamped against the pads; screws along the pilot axes.",
+   "ranking": [
+    "1 current: PCB pads are vertical walls, pins horizontal; four plate pilots horizontal; two top pilot ends face down (264 mm support). Bambu 31.8 / 6.15 / 2.13 / 305; Elegoo 27.0 / 6.23 / 2.46 / 304.",
+    "2 lying (plate on the bed): four plate pilots vertical, but all four PCB pads and their pins face down and print on support (1147 mm Bambu, 1207 mm Elegoo). Bambu 29.1 / 5.94 / 1.8 / 171; Elegoo 23.4 / 5.77 / 1.9 / 171."
+   ],
+   "counterexampleCheck": "The lying pose looked better on holes, height and time until the checker learned to count down-facing boss faces; the native slice then confirmed the PCB seats print on support. The board seats outrank the small time saving.",
+   "residual": "Lowest tipping margin of all 13 (tip 6.9 deg, 32.9 mm tall). Release Orange plates have no brim. The 10/1 project also used no brim and printed this pose, so a 3-5 mm brim on this object is optional insurance (inference).",
+   "evidence": ["slices/imu_clamp/current", "slices/imu_clamp/lying", "evidence/support-maps/imu_clamp-current-Bambu.png", "evidence/support-maps/imu_clamp-lying-Bambu.png"]
+  },
+  "openrb_tray": {
+   "recommendation": "keep",
+   "currentPose": "Base (2284 mm2) on the bed.",
+   "function": "OpenRB-150 tray; 1.7 mm pilots and 6 mm holes; PCB slot under the front lip kept free of support by blockers.",
+   "loadPath": "Board load into the base; holes vertical.",
+   "ranking": ["1 current: Bambu 34.0 / 7.26 / 0 / 2240.", "2 flip: first layer 20 mm2, 3402 mm support under hole ends. Bambu 103.0 / 13.33 / 5.97 / 20.", "3 on end: 74.6 mm tall, tip 4.5 deg."],
+   "counterexampleCheck": "No candidate improves any criterion.",
+   "evidence": ["slices/openrb_tray/current", "slices/openrb_tray/flip"]
+  }
+ }
+}

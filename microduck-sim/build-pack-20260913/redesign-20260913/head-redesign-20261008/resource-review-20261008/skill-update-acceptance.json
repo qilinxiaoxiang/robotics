@@ -1,0 +1,68 @@
+{
+  "trigger": "User explicitly requested avoiding memory-heavy slow execution, after application-memory exhaustion. Exact-cable lookup requirement was also corrected.",
+  "consumer": "assembly-guide-review skill",
+  "installedPath": "/Users/xiangzheng/.codex/skills/assembly-guide-review/SKILL.md",
+  "canonicalPath": "/Users/xiangzheng/code/claude-config/skills/assembly-guide-review/SKILL.md",
+  "installedRouteVerified": true,
+  "loadedSurface": "Invoked skill body only, not total host context",
+  "beforeBodyBytes": 3587,
+  "afterBodyBytes": 4420,
+  "currentSkillSha256": "0ed98c572142cf8463540415642c0d8b37013688446185d1781b5d6ced627c65",
+  "structuralValidation": "quick_validate.py: Skill is valid!",
+  "independentReview": {
+    "agent": "assembly_audit",
+    "cases": [
+      "SC0727 nominal80mm without end-point drawing",
+      "229 cached full scenes causing memory exhaustion"
+    ],
+    "finding": "Require reconciliation against expected pose/obstacle inventory; now added. No indefinite source lookup or automatic larger memory budget."
+  },
+  "nextEligibleExecution": {
+    "resourceReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/service-opening-resource.json",
+    "resourceResult": {
+      "command": [
+        "/tmp/microduck-cad-venv/bin/python",
+        "microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/apply_usb_service_opening.py",
+        "--cap",
+        "microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/curved-head/curved-cap-final-candidate-world.stl"
+      ],
+      "pid": 10102,
+      "exitCode": 0,
+      "stoppedByGuard": null,
+      "elapsedSeconds": 1.426,
+      "peakSampledTreeRssMiB": 121.594,
+      "maxMiB": 512,
+      "maxSeconds": 120,
+      "samplingIntervalSeconds": 0.25,
+      "measurementScope": "RSS samples; excludes compressed/swapped footprint; not a hard allocation cap"
+    },
+    "localGeometryResult": {
+      "status": "LOCAL_APERTURE_AND_ENTRY_ONLY",
+      "sourceHashes": {
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/lowered-usb-service-opening-spec.json": "dc4128445dcf2eadc3a5847c2a5513fd77c35b5063bf776c03343d17044e4605",
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/lowered-pose-pair-checks.json": "4289ebd9727701c62e0f2c87448ff052c1ecd6ed06f4dcd02b43bec3536eaad5",
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/curved-head/curved-cap-final-candidate-world.stl": "fd812e02beb1b97c1f75905e801ece41732cf0fd4ae3c701018bc03c7ebedba8",
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/head-cap-usb-service-world.stl": "5e29d6996383cb76c1db2aad7fca81c6b23df53566ba89e6db37b7f2d212f0cd",
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/apply_usb_service_opening.py": "7ee4bac4ed8030055b97c055cfbcae8b96316b99d1b4326b58922dc113f11e09",
+        "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/head-cap-usb-service-world.entry.jsonl": "6f6e764bc2d6d3fb915f3a4ae7a864bef43837fe50870f0a9e312b9bd8dac97d"
+      },
+      "removedVolumeMm3": 150.06505372260477,
+      "addedVolumeMm3": 0.0,
+      "watertight": true,
+      "bodies": 1,
+      "entryStepMm": 0.25,
+      "entrySamples": 121,
+      "oldApertureNegativeReproduced": true,
+      "newEntryClear": true,
+      "wholeHeadAccepted": false,
+      "physicalFitVerified": false,
+      "remaining": [
+        "Recheck complete shell closure with current internal geometry",
+        "Validate cable restraint, plug seating and full joint motion",
+        "Integrate final head and print review; deploy through Mac mini and inspect Chrome"
+      ]
+    },
+    "interpretation": "Single cap, no full-scene import; old aperture failure reproduced, all121 specified insertion samples clear. Does not establish whole-head release."
+  },
+  "limitations": "SampledRSS is not application compressed/swapped footprint. Independent review and this one execution do not prove all future use."
+}

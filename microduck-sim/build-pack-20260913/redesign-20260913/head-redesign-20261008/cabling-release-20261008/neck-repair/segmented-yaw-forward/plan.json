@@ -1,0 +1,11814 @@
+{
+  "accepted": false,
+  "scope": "Only local yaw service loop, not full11-low-voltage-net path or motor/data branches. No cap, portal, fanout, guide retention or print acceptance.",
+  "joint": "head_yaw",
+  "parentBody": "neck_pitch",
+  "childBody": "yaw_roll_motion",
+  "centerNeutral": [
+    26.0,
+    0.0,
+    97.0
+  ],
+  "radiusMm": 31.0,
+  "radialAnchorPhaseDeg": -45,
+  "priorFailure": "At yaw-170 the semicircle bulge enters motor14 near childY12 atphase-30; phase-45 moves entire bulge towardpositiveY by~7mm atsame R andlength. Low planeZ83.5 becomesworldX27.08 atpitch90 and sweepsneckmotor/link; raise lowerplaneZ97 so X40.58, fixedradius/length. Rear anchors let rolling motor14 sweep into upper loop at head_roll -10deg; route moved to front/positiveY side without added length.",
+  "planeSeparationMm": 18.0,
+  "neutralHalfAngleDeg": 87,
+  "receivingODMm": 7,
+  "minimumCenterlineBendRadiusMm": 9,
+  "analyticLengthMm": 122.41739373488227,
+  "lengthFormula": "thetaJoin=C+q/2; R*(C+q/2)+R*(C-q/2)+pi*d/2=2RC+pi*d/2. Equal radii, parallel planes.",
+  "connectorTangents": "Parent +e_theta; child -rot(q)e_theta, fixed in respective rigid bodies. Bridge endpoints on each plane have no translation relative to their owner.",
+  "outerNeutralRadialReceivingBoundMm": 35.78002478313795,
+  "neutralZReceivingBoundMm": [
+    93.5,
+    118.5
+  ],
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/segmented_yaw_forward_worker.py": "0e850d1461d960b29a9bdc1258aab5d7f912d76f1bd282514027310320108868",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/rigid-domain.json": "5b30836d5101f5249557db7ad9ca4eeaa52ff3ede29035e3ca41c0ce8e934f0f",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/plan.json": "6caa1e8c6c9dea540bf5a9f6cbbf681c89a94c528a99b90d1f92a110c501e543",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/rolling_loop_math.py": "20a16b6f87307fabeed90d3389bb8f6082c9414150414d31eabcf7e0b6aeb3d4",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/prepare_single_candidate.py": "22e87c453901f27806f5cb51aee2ceb3450839b8dada9124b988df3287b0c67e",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short_path_worker.py": "71941b14fe1c59fa4ab03ca3588a983e81cb4c80adefcfad687f8fef337af8c2",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/segment_capsule_clearance.py": "975fa12b47b64c07c743daa55b8a7c3cb300f344d46478799779bbefa3e08843",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__power_support.json": "e3abce1154c08c65341f48006652fb9639ca35fb9d8bf48b8c151008b395e138",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/power_support.json": "4ed4e7ba0f73136600aa52e8cee31f398f68f24753b0921afd4c98e803738a9b",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_link_a.json": "bb86040c7f7537d0ec52cb9af54174fa8c73cbf2931d145ce0cc0e1df5ba9a84",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_link_a.json": "77759bca04f952de148013b4e6c2ab69a45d194fb37b7e392c7d2833b63ecac5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_link_b.json": "7030c7fc9bac18b9a3a50bc6397af84f4440e09f89d80d179e1a6e10251af02a",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_link_b.json": "8d9f7726b3ab3bcbdcdb08590b0a050350fcb802f95f3970808e419fe046eda3",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_pitch.json": "542d6ebdca630d58675ba8feff94fa063480612788393f79b22f4be016606a0d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_pitch.json": "7fa896f58b9c6c900f9954b0d9a60e71c7ae5a3bc5e3c39ee723106955442ce3",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_pitch_ring.json": "522b9b0eecc8c3f4e5bb404c9ac506c897fe39c863bba1edaf83aebc343f5446",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_pitch_ring.json": "65c3aa962abe405592b71f361396cafd16c8e4f80540e78266729f6867ada488",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__head_yaw_link.json": "72c336693ccd15dba112a551b4eb0b9ad41b13987cccd5943e83b87d1e1a2f29",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/head_yaw_link.json": "8fe923fbb89de49865358b706a43a9dfd66ee733842aeaa2e27cb573c30d5031",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor11.json": "169fdf98d4179b7e6daac50d9fc39d09b4fa48e570946b966162abd9203fd1e4",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor11.json": "2f051c5baaf25464c05dfa9a85bdcee8f19741521e8413b3de195dcd493d051c",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor12.json": "7a9a1cc31ab59c829e7d0362d7f63380d4a8a727feeb12750e0688c7f87214dd",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor12.json": "6c7b72160e8428cf049a4ca49862501de81c659edcae92fc5434b0731d391fbc",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor13.json": "30dc9d40726444bea5da4d68323b4adeb5b8a1ea11a9d68d86548501697c571d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor13.json": "86466b7c14777c6c79feb55e7d38afb4028958047f0967a21460d80de1a82d40",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor14.json": "5c4085284b70cba671abe65dab27ecef7effd08d51f677397e04af5e6770034e",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor14.json": "8c7fcc015e2af24049e4d8d1f947b82dfa7bc133c254d6664b8e8112ca2498be",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__shell_left.json": "be9a35bc47ebe3639636b23c6e5360bc1caa1bf8826e1677540c0dd8099537c8",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/shell_left.json": "0ff3c735ffdb4b00a72b65cd8926a7364ea9a605f8f93ee71fcc970cd3b587e5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__shell_right.json": "e3dbe3d822b0b4945babdfa1147935c2017b0281aa2ec8bfc8fa269f2f93f96b",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/shell_right.json": "c0d7ad398192d8354588f8d003c7b9dc4b376013fdad61f31ed6a56b336309fd",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__torso_base.json": "7e79955b0f455eedd5efb792efbf35da4a932dccd5e8ec25da9c3d334605682d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/torso_base.json": "3c01334a9160cac0d4b04dee58cfab4f5efcb5004c36965570ddbdaa6cc270e5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__imu_clamp.json": "3b99220f80041fd71a1937a098e41a74cc7836570e230fd6ee3ab49a0655540d",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/imu_clamp.json": "d73bb3a58c789661bd97fe43d58660a2993d2a922ce4f2b0dc78279c7c18493a",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__imu_board.json": "b79efc694ffd3d44947e0e59cfd0ce4de1261e5fecaf9d33fb89e024444ef364",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/imu_board.json": "ad9014d2d65716663012ccb72077722769a7b32c1a99e19684cd6dc1fccb4778"
+  },
+  "obstacles": [
+    {
+      "key": "power_support",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/power_support.json",
+      "sha256": "4ed4e7ba0f73136600aa52e8cee31f398f68f24753b0921afd4c98e803738a9b",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__power_support.json",
+      "intrinsicReceiptHash": "e3abce1154c08c65341f48006652fb9639ca35fb9d8bf48b8c151008b395e138"
+    },
+    {
+      "key": "neck_link_a",
+      "body": "neck",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_link_a.json",
+      "sha256": "77759bca04f952de148013b4e6c2ab69a45d194fb37b7e392c7d2833b63ecac5",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_link_a.json",
+      "intrinsicReceiptHash": "bb86040c7f7537d0ec52cb9af54174fa8c73cbf2931d145ce0cc0e1df5ba9a84"
+    },
+    {
+      "key": "neck_link_b",
+      "body": "neck",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_link_b.json",
+      "sha256": "8d9f7726b3ab3bcbdcdb08590b0a050350fcb802f95f3970808e419fe046eda3",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_link_b.json",
+      "intrinsicReceiptHash": "7030c7fc9bac18b9a3a50bc6397af84f4440e09f89d80d179e1a6e10251af02a"
+    },
+    {
+      "key": "neck_pitch",
+      "body": "neck_pitch",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_pitch.json",
+      "sha256": "7fa896f58b9c6c900f9954b0d9a60e71c7ae5a3bc5e3c39ee723106955442ce3",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_pitch.json",
+      "intrinsicReceiptHash": "542d6ebdca630d58675ba8feff94fa063480612788393f79b22f4be016606a0d"
+    },
+    {
+      "key": "neck_pitch_ring",
+      "body": "neck_pitch",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/neck_pitch_ring.json",
+      "sha256": "65c3aa962abe405592b71f361396cafd16c8e4f80540e78266729f6867ada488",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__neck_pitch_ring.json",
+      "intrinsicReceiptHash": "522b9b0eecc8c3f4e5bb404c9ac506c897fe39c863bba1edaf83aebc343f5446"
+    },
+    {
+      "key": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/head_yaw_link.json",
+      "sha256": "8fe923fbb89de49865358b706a43a9dfd66ee733842aeaa2e27cb573c30d5031",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__head_yaw_link.json",
+      "intrinsicReceiptHash": "72c336693ccd15dba112a551b4eb0b9ad41b13987cccd5943e83b87d1e1a2f29"
+    },
+    {
+      "key": "motor11",
+      "body": "neck",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor11.json",
+      "sha256": "2f051c5baaf25464c05dfa9a85bdcee8f19741521e8413b3de195dcd493d051c",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor11.json",
+      "intrinsicReceiptHash": "169fdf98d4179b7e6daac50d9fc39d09b4fa48e570946b966162abd9203fd1e4"
+    },
+    {
+      "key": "motor12",
+      "body": "neck",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor12.json",
+      "sha256": "6c7b72160e8428cf049a4ca49862501de81c659edcae92fc5434b0731d391fbc",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor12.json",
+      "intrinsicReceiptHash": "7a9a1cc31ab59c829e7d0362d7f63380d4a8a727feeb12750e0688c7f87214dd"
+    },
+    {
+      "key": "motor13",
+      "body": "yaw_roll_motion",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor13.json",
+      "sha256": "86466b7c14777c6c79feb55e7d38afb4028958047f0967a21460d80de1a82d40",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor13.json",
+      "intrinsicReceiptHash": "30dc9d40726444bea5da4d68323b4adeb5b8a1ea11a9d68d86548501697c571d"
+    },
+    {
+      "key": "motor14",
+      "body": "jaw_soft",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/motor14.json",
+      "sha256": "8c7fcc015e2af24049e4d8d1f947b82dfa7bc133c254d6664b8e8112ca2498be",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__motor14.json",
+      "intrinsicReceiptHash": "5c4085284b70cba671abe65dab27ecef7effd08d51f677397e04af5e6770034e"
+    },
+    {
+      "key": "shell_left",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/shell_left.json",
+      "sha256": "0ff3c735ffdb4b00a72b65cd8926a7364ea9a605f8f93ee71fcc970cd3b587e5",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__shell_left.json",
+      "intrinsicReceiptHash": "be9a35bc47ebe3639636b23c6e5360bc1caa1bf8826e1677540c0dd8099537c8"
+    },
+    {
+      "key": "shell_right",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/shell_right.json",
+      "sha256": "c0d7ad398192d8354588f8d003c7b9dc4b376013fdad61f31ed6a56b336309fd",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__shell_right.json",
+      "intrinsicReceiptHash": "e3dbe3d822b0b4945babdfa1147935c2017b0281aa2ec8bfc8fa269f2f93f96b"
+    },
+    {
+      "key": "torso_base",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/torso_base.json",
+      "sha256": "3c01334a9160cac0d4b04dee58cfab4f5efcb5004c36965570ddbdaa6cc270e5",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__torso_base.json",
+      "intrinsicReceiptHash": "7e79955b0f455eedd5efb792efbf35da4a932dccd5e8ec25da9c3d334605682d"
+    },
+    {
+      "key": "imu_clamp",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/imu_clamp.json",
+      "sha256": "d73bb3a58c789661bd97fe43d58660a2993d2a922ce4f2b0dc78279c7c18493a",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__imu_clamp.json",
+      "intrinsicReceiptHash": "3b99220f80041fd71a1937a098e41a74cc7836570e230fd6ee3ab49a0655540d"
+    },
+    {
+      "key": "imu_board",
+      "body": "trunk_base",
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/robot-source-cache/imu_board.json",
+      "sha256": "ad9014d2d65716663012ccb72077722769a7b32c1a99e19684cd6dc1fccb4778",
+      "intrinsicReceipt": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/short-isolated/pairs/-1__imu_board.json",
+      "intrinsicReceiptHash": "b79efc694ffd3d44947e0e59cfd0ce4de1261e5fecaf9d33fb89e024444ef364"
+    }
+  ],
+  "nativeClearIndices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    149,
+    151,
+    152,
+    153,
+    155,
+    158,
+    160,
+    161,
+    162,
+    164,
+    167,
+    169,
+    170,
+    171,
+    173,
+    176,
+    178,
+    179,
+    180,
+    182,
+    185,
+    187,
+    188,
+    189,
+    191,
+    194,
+    196,
+    197,
+    198,
+    200,
+    203,
+    205,
+    206,
+    207,
+    209,
+    212,
+    214,
+    215,
+    216,
+    218,
+    221,
+    223,
+    224,
+    225,
+    227
+  ],
+  "nativeBlockedIndices": [
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    148,
+    150,
+    154,
+    156,
+    157,
+    159,
+    163,
+    165,
+    166,
+    168,
+    172,
+    174,
+    175,
+    177,
+    181,
+    183,
+    184,
+    186,
+    190,
+    192,
+    193,
+    195,
+    199,
+    201,
+    202,
+    204,
+    208,
+    210,
+    211,
+    213,
+    217,
+    219,
+    220,
+    222,
+    226,
+    228
+  ],
+  "expectedSelfIndices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228
+  ],
+  "expectedPairs": [
+    {
+      "pose": 0,
+      "key": "power_support"
+    },
+    {
+      "pose": 0,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 0,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 0,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 0,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 0,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 0,
+      "key": "motor11"
+    },
+    {
+      "pose": 0,
+      "key": "motor12"
+    },
+    {
+      "pose": 0,
+      "key": "motor13"
+    },
+    {
+      "pose": 0,
+      "key": "motor14"
+    },
+    {
+      "pose": 0,
+      "key": "shell_left"
+    },
+    {
+      "pose": 0,
+      "key": "shell_right"
+    },
+    {
+      "pose": 0,
+      "key": "torso_base"
+    },
+    {
+      "pose": 0,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 0,
+      "key": "imu_board"
+    },
+    {
+      "pose": 1,
+      "key": "power_support"
+    },
+    {
+      "pose": 1,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 1,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 1,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 1,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 1,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 1,
+      "key": "motor11"
+    },
+    {
+      "pose": 1,
+      "key": "motor12"
+    },
+    {
+      "pose": 1,
+      "key": "motor13"
+    },
+    {
+      "pose": 1,
+      "key": "motor14"
+    },
+    {
+      "pose": 1,
+      "key": "shell_left"
+    },
+    {
+      "pose": 1,
+      "key": "shell_right"
+    },
+    {
+      "pose": 1,
+      "key": "torso_base"
+    },
+    {
+      "pose": 1,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 1,
+      "key": "imu_board"
+    },
+    {
+      "pose": 2,
+      "key": "power_support"
+    },
+    {
+      "pose": 2,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 2,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 2,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 2,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 2,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 2,
+      "key": "motor11"
+    },
+    {
+      "pose": 2,
+      "key": "motor12"
+    },
+    {
+      "pose": 2,
+      "key": "motor13"
+    },
+    {
+      "pose": 2,
+      "key": "motor14"
+    },
+    {
+      "pose": 2,
+      "key": "shell_left"
+    },
+    {
+      "pose": 2,
+      "key": "shell_right"
+    },
+    {
+      "pose": 2,
+      "key": "torso_base"
+    },
+    {
+      "pose": 2,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 2,
+      "key": "imu_board"
+    },
+    {
+      "pose": 3,
+      "key": "power_support"
+    },
+    {
+      "pose": 3,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 3,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 3,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 3,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 3,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 3,
+      "key": "motor11"
+    },
+    {
+      "pose": 3,
+      "key": "motor12"
+    },
+    {
+      "pose": 3,
+      "key": "motor13"
+    },
+    {
+      "pose": 3,
+      "key": "motor14"
+    },
+    {
+      "pose": 3,
+      "key": "shell_left"
+    },
+    {
+      "pose": 3,
+      "key": "shell_right"
+    },
+    {
+      "pose": 3,
+      "key": "torso_base"
+    },
+    {
+      "pose": 3,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 3,
+      "key": "imu_board"
+    },
+    {
+      "pose": 4,
+      "key": "power_support"
+    },
+    {
+      "pose": 4,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 4,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 4,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 4,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 4,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 4,
+      "key": "motor11"
+    },
+    {
+      "pose": 4,
+      "key": "motor12"
+    },
+    {
+      "pose": 4,
+      "key": "motor13"
+    },
+    {
+      "pose": 4,
+      "key": "motor14"
+    },
+    {
+      "pose": 4,
+      "key": "shell_left"
+    },
+    {
+      "pose": 4,
+      "key": "shell_right"
+    },
+    {
+      "pose": 4,
+      "key": "torso_base"
+    },
+    {
+      "pose": 4,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 4,
+      "key": "imu_board"
+    },
+    {
+      "pose": 5,
+      "key": "power_support"
+    },
+    {
+      "pose": 5,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 5,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 5,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 5,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 5,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 5,
+      "key": "motor11"
+    },
+    {
+      "pose": 5,
+      "key": "motor12"
+    },
+    {
+      "pose": 5,
+      "key": "motor13"
+    },
+    {
+      "pose": 5,
+      "key": "motor14"
+    },
+    {
+      "pose": 5,
+      "key": "shell_left"
+    },
+    {
+      "pose": 5,
+      "key": "shell_right"
+    },
+    {
+      "pose": 5,
+      "key": "torso_base"
+    },
+    {
+      "pose": 5,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 5,
+      "key": "imu_board"
+    },
+    {
+      "pose": 6,
+      "key": "power_support"
+    },
+    {
+      "pose": 6,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 6,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 6,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 6,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 6,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 6,
+      "key": "motor11"
+    },
+    {
+      "pose": 6,
+      "key": "motor12"
+    },
+    {
+      "pose": 6,
+      "key": "motor13"
+    },
+    {
+      "pose": 6,
+      "key": "motor14"
+    },
+    {
+      "pose": 6,
+      "key": "shell_left"
+    },
+    {
+      "pose": 6,
+      "key": "shell_right"
+    },
+    {
+      "pose": 6,
+      "key": "torso_base"
+    },
+    {
+      "pose": 6,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 6,
+      "key": "imu_board"
+    },
+    {
+      "pose": 7,
+      "key": "power_support"
+    },
+    {
+      "pose": 7,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 7,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 7,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 7,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 7,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 7,
+      "key": "motor11"
+    },
+    {
+      "pose": 7,
+      "key": "motor12"
+    },
+    {
+      "pose": 7,
+      "key": "motor13"
+    },
+    {
+      "pose": 7,
+      "key": "motor14"
+    },
+    {
+      "pose": 7,
+      "key": "shell_left"
+    },
+    {
+      "pose": 7,
+      "key": "shell_right"
+    },
+    {
+      "pose": 7,
+      "key": "torso_base"
+    },
+    {
+      "pose": 7,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 7,
+      "key": "imu_board"
+    },
+    {
+      "pose": 8,
+      "key": "power_support"
+    },
+    {
+      "pose": 8,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 8,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 8,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 8,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 8,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 8,
+      "key": "motor11"
+    },
+    {
+      "pose": 8,
+      "key": "motor12"
+    },
+    {
+      "pose": 8,
+      "key": "motor13"
+    },
+    {
+      "pose": 8,
+      "key": "motor14"
+    },
+    {
+      "pose": 8,
+      "key": "shell_left"
+    },
+    {
+      "pose": 8,
+      "key": "shell_right"
+    },
+    {
+      "pose": 8,
+      "key": "torso_base"
+    },
+    {
+      "pose": 8,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 8,
+      "key": "imu_board"
+    },
+    {
+      "pose": 9,
+      "key": "power_support"
+    },
+    {
+      "pose": 9,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 9,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 9,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 9,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 9,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 9,
+      "key": "motor11"
+    },
+    {
+      "pose": 9,
+      "key": "motor12"
+    },
+    {
+      "pose": 9,
+      "key": "motor13"
+    },
+    {
+      "pose": 9,
+      "key": "motor14"
+    },
+    {
+      "pose": 9,
+      "key": "shell_left"
+    },
+    {
+      "pose": 9,
+      "key": "shell_right"
+    },
+    {
+      "pose": 9,
+      "key": "torso_base"
+    },
+    {
+      "pose": 9,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 9,
+      "key": "imu_board"
+    },
+    {
+      "pose": 10,
+      "key": "power_support"
+    },
+    {
+      "pose": 10,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 10,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 10,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 10,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 10,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 10,
+      "key": "motor11"
+    },
+    {
+      "pose": 10,
+      "key": "motor12"
+    },
+    {
+      "pose": 10,
+      "key": "motor13"
+    },
+    {
+      "pose": 10,
+      "key": "motor14"
+    },
+    {
+      "pose": 10,
+      "key": "shell_left"
+    },
+    {
+      "pose": 10,
+      "key": "shell_right"
+    },
+    {
+      "pose": 10,
+      "key": "torso_base"
+    },
+    {
+      "pose": 10,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 10,
+      "key": "imu_board"
+    },
+    {
+      "pose": 11,
+      "key": "power_support"
+    },
+    {
+      "pose": 11,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 11,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 11,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 11,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 11,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 11,
+      "key": "motor11"
+    },
+    {
+      "pose": 11,
+      "key": "motor12"
+    },
+    {
+      "pose": 11,
+      "key": "motor13"
+    },
+    {
+      "pose": 11,
+      "key": "motor14"
+    },
+    {
+      "pose": 11,
+      "key": "shell_left"
+    },
+    {
+      "pose": 11,
+      "key": "shell_right"
+    },
+    {
+      "pose": 11,
+      "key": "torso_base"
+    },
+    {
+      "pose": 11,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 11,
+      "key": "imu_board"
+    },
+    {
+      "pose": 12,
+      "key": "power_support"
+    },
+    {
+      "pose": 12,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 12,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 12,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 12,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 12,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 12,
+      "key": "motor11"
+    },
+    {
+      "pose": 12,
+      "key": "motor12"
+    },
+    {
+      "pose": 12,
+      "key": "motor13"
+    },
+    {
+      "pose": 12,
+      "key": "motor14"
+    },
+    {
+      "pose": 12,
+      "key": "shell_left"
+    },
+    {
+      "pose": 12,
+      "key": "shell_right"
+    },
+    {
+      "pose": 12,
+      "key": "torso_base"
+    },
+    {
+      "pose": 12,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 12,
+      "key": "imu_board"
+    },
+    {
+      "pose": 13,
+      "key": "power_support"
+    },
+    {
+      "pose": 13,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 13,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 13,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 13,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 13,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 13,
+      "key": "motor11"
+    },
+    {
+      "pose": 13,
+      "key": "motor12"
+    },
+    {
+      "pose": 13,
+      "key": "motor13"
+    },
+    {
+      "pose": 13,
+      "key": "motor14"
+    },
+    {
+      "pose": 13,
+      "key": "shell_left"
+    },
+    {
+      "pose": 13,
+      "key": "shell_right"
+    },
+    {
+      "pose": 13,
+      "key": "torso_base"
+    },
+    {
+      "pose": 13,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 13,
+      "key": "imu_board"
+    },
+    {
+      "pose": 14,
+      "key": "power_support"
+    },
+    {
+      "pose": 14,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 14,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 14,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 14,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 14,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 14,
+      "key": "motor11"
+    },
+    {
+      "pose": 14,
+      "key": "motor12"
+    },
+    {
+      "pose": 14,
+      "key": "motor13"
+    },
+    {
+      "pose": 14,
+      "key": "motor14"
+    },
+    {
+      "pose": 14,
+      "key": "shell_left"
+    },
+    {
+      "pose": 14,
+      "key": "shell_right"
+    },
+    {
+      "pose": 14,
+      "key": "torso_base"
+    },
+    {
+      "pose": 14,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 14,
+      "key": "imu_board"
+    },
+    {
+      "pose": 15,
+      "key": "power_support"
+    },
+    {
+      "pose": 15,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 15,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 15,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 15,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 15,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 15,
+      "key": "motor11"
+    },
+    {
+      "pose": 15,
+      "key": "motor12"
+    },
+    {
+      "pose": 15,
+      "key": "motor13"
+    },
+    {
+      "pose": 15,
+      "key": "motor14"
+    },
+    {
+      "pose": 15,
+      "key": "shell_left"
+    },
+    {
+      "pose": 15,
+      "key": "shell_right"
+    },
+    {
+      "pose": 15,
+      "key": "torso_base"
+    },
+    {
+      "pose": 15,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 15,
+      "key": "imu_board"
+    },
+    {
+      "pose": 16,
+      "key": "power_support"
+    },
+    {
+      "pose": 16,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 16,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 16,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 16,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 16,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 16,
+      "key": "motor11"
+    },
+    {
+      "pose": 16,
+      "key": "motor12"
+    },
+    {
+      "pose": 16,
+      "key": "motor13"
+    },
+    {
+      "pose": 16,
+      "key": "motor14"
+    },
+    {
+      "pose": 16,
+      "key": "shell_left"
+    },
+    {
+      "pose": 16,
+      "key": "shell_right"
+    },
+    {
+      "pose": 16,
+      "key": "torso_base"
+    },
+    {
+      "pose": 16,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 16,
+      "key": "imu_board"
+    },
+    {
+      "pose": 17,
+      "key": "power_support"
+    },
+    {
+      "pose": 17,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 17,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 17,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 17,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 17,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 17,
+      "key": "motor11"
+    },
+    {
+      "pose": 17,
+      "key": "motor12"
+    },
+    {
+      "pose": 17,
+      "key": "motor13"
+    },
+    {
+      "pose": 17,
+      "key": "motor14"
+    },
+    {
+      "pose": 17,
+      "key": "shell_left"
+    },
+    {
+      "pose": 17,
+      "key": "shell_right"
+    },
+    {
+      "pose": 17,
+      "key": "torso_base"
+    },
+    {
+      "pose": 17,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 17,
+      "key": "imu_board"
+    },
+    {
+      "pose": 18,
+      "key": "power_support"
+    },
+    {
+      "pose": 18,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 18,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 18,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 18,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 18,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 18,
+      "key": "motor11"
+    },
+    {
+      "pose": 18,
+      "key": "motor12"
+    },
+    {
+      "pose": 18,
+      "key": "motor13"
+    },
+    {
+      "pose": 18,
+      "key": "motor14"
+    },
+    {
+      "pose": 18,
+      "key": "shell_left"
+    },
+    {
+      "pose": 18,
+      "key": "shell_right"
+    },
+    {
+      "pose": 18,
+      "key": "torso_base"
+    },
+    {
+      "pose": 18,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 18,
+      "key": "imu_board"
+    },
+    {
+      "pose": 19,
+      "key": "power_support"
+    },
+    {
+      "pose": 19,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 19,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 19,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 19,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 19,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 19,
+      "key": "motor11"
+    },
+    {
+      "pose": 19,
+      "key": "motor12"
+    },
+    {
+      "pose": 19,
+      "key": "motor13"
+    },
+    {
+      "pose": 19,
+      "key": "motor14"
+    },
+    {
+      "pose": 19,
+      "key": "shell_left"
+    },
+    {
+      "pose": 19,
+      "key": "shell_right"
+    },
+    {
+      "pose": 19,
+      "key": "torso_base"
+    },
+    {
+      "pose": 19,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 19,
+      "key": "imu_board"
+    },
+    {
+      "pose": 20,
+      "key": "power_support"
+    },
+    {
+      "pose": 20,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 20,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 20,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 20,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 20,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 20,
+      "key": "motor11"
+    },
+    {
+      "pose": 20,
+      "key": "motor12"
+    },
+    {
+      "pose": 20,
+      "key": "motor13"
+    },
+    {
+      "pose": 20,
+      "key": "motor14"
+    },
+    {
+      "pose": 20,
+      "key": "shell_left"
+    },
+    {
+      "pose": 20,
+      "key": "shell_right"
+    },
+    {
+      "pose": 20,
+      "key": "torso_base"
+    },
+    {
+      "pose": 20,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 20,
+      "key": "imu_board"
+    },
+    {
+      "pose": 21,
+      "key": "power_support"
+    },
+    {
+      "pose": 21,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 21,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 21,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 21,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 21,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 21,
+      "key": "motor11"
+    },
+    {
+      "pose": 21,
+      "key": "motor12"
+    },
+    {
+      "pose": 21,
+      "key": "motor13"
+    },
+    {
+      "pose": 21,
+      "key": "motor14"
+    },
+    {
+      "pose": 21,
+      "key": "shell_left"
+    },
+    {
+      "pose": 21,
+      "key": "shell_right"
+    },
+    {
+      "pose": 21,
+      "key": "torso_base"
+    },
+    {
+      "pose": 21,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 21,
+      "key": "imu_board"
+    },
+    {
+      "pose": 22,
+      "key": "power_support"
+    },
+    {
+      "pose": 22,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 22,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 22,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 22,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 22,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 22,
+      "key": "motor11"
+    },
+    {
+      "pose": 22,
+      "key": "motor12"
+    },
+    {
+      "pose": 22,
+      "key": "motor13"
+    },
+    {
+      "pose": 22,
+      "key": "motor14"
+    },
+    {
+      "pose": 22,
+      "key": "shell_left"
+    },
+    {
+      "pose": 22,
+      "key": "shell_right"
+    },
+    {
+      "pose": 22,
+      "key": "torso_base"
+    },
+    {
+      "pose": 22,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 22,
+      "key": "imu_board"
+    },
+    {
+      "pose": 23,
+      "key": "power_support"
+    },
+    {
+      "pose": 23,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 23,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 23,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 23,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 23,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 23,
+      "key": "motor11"
+    },
+    {
+      "pose": 23,
+      "key": "motor12"
+    },
+    {
+      "pose": 23,
+      "key": "motor13"
+    },
+    {
+      "pose": 23,
+      "key": "motor14"
+    },
+    {
+      "pose": 23,
+      "key": "shell_left"
+    },
+    {
+      "pose": 23,
+      "key": "shell_right"
+    },
+    {
+      "pose": 23,
+      "key": "torso_base"
+    },
+    {
+      "pose": 23,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 23,
+      "key": "imu_board"
+    },
+    {
+      "pose": 24,
+      "key": "power_support"
+    },
+    {
+      "pose": 24,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 24,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 24,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 24,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 24,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 24,
+      "key": "motor11"
+    },
+    {
+      "pose": 24,
+      "key": "motor12"
+    },
+    {
+      "pose": 24,
+      "key": "motor13"
+    },
+    {
+      "pose": 24,
+      "key": "motor14"
+    },
+    {
+      "pose": 24,
+      "key": "shell_left"
+    },
+    {
+      "pose": 24,
+      "key": "shell_right"
+    },
+    {
+      "pose": 24,
+      "key": "torso_base"
+    },
+    {
+      "pose": 24,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 24,
+      "key": "imu_board"
+    },
+    {
+      "pose": 25,
+      "key": "power_support"
+    },
+    {
+      "pose": 25,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 25,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 25,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 25,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 25,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 25,
+      "key": "motor11"
+    },
+    {
+      "pose": 25,
+      "key": "motor12"
+    },
+    {
+      "pose": 25,
+      "key": "motor13"
+    },
+    {
+      "pose": 25,
+      "key": "motor14"
+    },
+    {
+      "pose": 25,
+      "key": "shell_left"
+    },
+    {
+      "pose": 25,
+      "key": "shell_right"
+    },
+    {
+      "pose": 25,
+      "key": "torso_base"
+    },
+    {
+      "pose": 25,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 25,
+      "key": "imu_board"
+    },
+    {
+      "pose": 26,
+      "key": "power_support"
+    },
+    {
+      "pose": 26,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 26,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 26,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 26,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 26,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 26,
+      "key": "motor11"
+    },
+    {
+      "pose": 26,
+      "key": "motor12"
+    },
+    {
+      "pose": 26,
+      "key": "motor13"
+    },
+    {
+      "pose": 26,
+      "key": "motor14"
+    },
+    {
+      "pose": 26,
+      "key": "shell_left"
+    },
+    {
+      "pose": 26,
+      "key": "shell_right"
+    },
+    {
+      "pose": 26,
+      "key": "torso_base"
+    },
+    {
+      "pose": 26,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 26,
+      "key": "imu_board"
+    },
+    {
+      "pose": 27,
+      "key": "power_support"
+    },
+    {
+      "pose": 27,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 27,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 27,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 27,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 27,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 27,
+      "key": "motor11"
+    },
+    {
+      "pose": 27,
+      "key": "motor12"
+    },
+    {
+      "pose": 27,
+      "key": "motor13"
+    },
+    {
+      "pose": 27,
+      "key": "motor14"
+    },
+    {
+      "pose": 27,
+      "key": "shell_left"
+    },
+    {
+      "pose": 27,
+      "key": "shell_right"
+    },
+    {
+      "pose": 27,
+      "key": "torso_base"
+    },
+    {
+      "pose": 27,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 27,
+      "key": "imu_board"
+    },
+    {
+      "pose": 28,
+      "key": "power_support"
+    },
+    {
+      "pose": 28,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 28,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 28,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 28,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 28,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 28,
+      "key": "motor11"
+    },
+    {
+      "pose": 28,
+      "key": "motor12"
+    },
+    {
+      "pose": 28,
+      "key": "motor13"
+    },
+    {
+      "pose": 28,
+      "key": "motor14"
+    },
+    {
+      "pose": 28,
+      "key": "shell_left"
+    },
+    {
+      "pose": 28,
+      "key": "shell_right"
+    },
+    {
+      "pose": 28,
+      "key": "torso_base"
+    },
+    {
+      "pose": 28,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 28,
+      "key": "imu_board"
+    },
+    {
+      "pose": 36,
+      "key": "power_support"
+    },
+    {
+      "pose": 36,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 36,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 36,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 36,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 36,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 36,
+      "key": "motor11"
+    },
+    {
+      "pose": 36,
+      "key": "motor12"
+    },
+    {
+      "pose": 36,
+      "key": "motor13"
+    },
+    {
+      "pose": 36,
+      "key": "motor14"
+    },
+    {
+      "pose": 36,
+      "key": "shell_left"
+    },
+    {
+      "pose": 36,
+      "key": "shell_right"
+    },
+    {
+      "pose": 36,
+      "key": "torso_base"
+    },
+    {
+      "pose": 36,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 36,
+      "key": "imu_board"
+    },
+    {
+      "pose": 37,
+      "key": "power_support"
+    },
+    {
+      "pose": 37,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 37,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 37,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 37,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 37,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 37,
+      "key": "motor11"
+    },
+    {
+      "pose": 37,
+      "key": "motor12"
+    },
+    {
+      "pose": 37,
+      "key": "motor13"
+    },
+    {
+      "pose": 37,
+      "key": "motor14"
+    },
+    {
+      "pose": 37,
+      "key": "shell_left"
+    },
+    {
+      "pose": 37,
+      "key": "shell_right"
+    },
+    {
+      "pose": 37,
+      "key": "torso_base"
+    },
+    {
+      "pose": 37,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 37,
+      "key": "imu_board"
+    },
+    {
+      "pose": 38,
+      "key": "power_support"
+    },
+    {
+      "pose": 38,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 38,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 38,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 38,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 38,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 38,
+      "key": "motor11"
+    },
+    {
+      "pose": 38,
+      "key": "motor12"
+    },
+    {
+      "pose": 38,
+      "key": "motor13"
+    },
+    {
+      "pose": 38,
+      "key": "motor14"
+    },
+    {
+      "pose": 38,
+      "key": "shell_left"
+    },
+    {
+      "pose": 38,
+      "key": "shell_right"
+    },
+    {
+      "pose": 38,
+      "key": "torso_base"
+    },
+    {
+      "pose": 38,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 38,
+      "key": "imu_board"
+    },
+    {
+      "pose": 39,
+      "key": "power_support"
+    },
+    {
+      "pose": 39,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 39,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 39,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 39,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 39,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 39,
+      "key": "motor11"
+    },
+    {
+      "pose": 39,
+      "key": "motor12"
+    },
+    {
+      "pose": 39,
+      "key": "motor13"
+    },
+    {
+      "pose": 39,
+      "key": "motor14"
+    },
+    {
+      "pose": 39,
+      "key": "shell_left"
+    },
+    {
+      "pose": 39,
+      "key": "shell_right"
+    },
+    {
+      "pose": 39,
+      "key": "torso_base"
+    },
+    {
+      "pose": 39,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 39,
+      "key": "imu_board"
+    },
+    {
+      "pose": 40,
+      "key": "power_support"
+    },
+    {
+      "pose": 40,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 40,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 40,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 40,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 40,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 40,
+      "key": "motor11"
+    },
+    {
+      "pose": 40,
+      "key": "motor12"
+    },
+    {
+      "pose": 40,
+      "key": "motor13"
+    },
+    {
+      "pose": 40,
+      "key": "motor14"
+    },
+    {
+      "pose": 40,
+      "key": "shell_left"
+    },
+    {
+      "pose": 40,
+      "key": "shell_right"
+    },
+    {
+      "pose": 40,
+      "key": "torso_base"
+    },
+    {
+      "pose": 40,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 40,
+      "key": "imu_board"
+    },
+    {
+      "pose": 41,
+      "key": "power_support"
+    },
+    {
+      "pose": 41,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 41,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 41,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 41,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 41,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 41,
+      "key": "motor11"
+    },
+    {
+      "pose": 41,
+      "key": "motor12"
+    },
+    {
+      "pose": 41,
+      "key": "motor13"
+    },
+    {
+      "pose": 41,
+      "key": "motor14"
+    },
+    {
+      "pose": 41,
+      "key": "shell_left"
+    },
+    {
+      "pose": 41,
+      "key": "shell_right"
+    },
+    {
+      "pose": 41,
+      "key": "torso_base"
+    },
+    {
+      "pose": 41,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 41,
+      "key": "imu_board"
+    },
+    {
+      "pose": 42,
+      "key": "power_support"
+    },
+    {
+      "pose": 42,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 42,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 42,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 42,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 42,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 42,
+      "key": "motor11"
+    },
+    {
+      "pose": 42,
+      "key": "motor12"
+    },
+    {
+      "pose": 42,
+      "key": "motor13"
+    },
+    {
+      "pose": 42,
+      "key": "motor14"
+    },
+    {
+      "pose": 42,
+      "key": "shell_left"
+    },
+    {
+      "pose": 42,
+      "key": "shell_right"
+    },
+    {
+      "pose": 42,
+      "key": "torso_base"
+    },
+    {
+      "pose": 42,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 42,
+      "key": "imu_board"
+    },
+    {
+      "pose": 43,
+      "key": "power_support"
+    },
+    {
+      "pose": 43,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 43,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 43,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 43,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 43,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 43,
+      "key": "motor11"
+    },
+    {
+      "pose": 43,
+      "key": "motor12"
+    },
+    {
+      "pose": 43,
+      "key": "motor13"
+    },
+    {
+      "pose": 43,
+      "key": "motor14"
+    },
+    {
+      "pose": 43,
+      "key": "shell_left"
+    },
+    {
+      "pose": 43,
+      "key": "shell_right"
+    },
+    {
+      "pose": 43,
+      "key": "torso_base"
+    },
+    {
+      "pose": 43,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 43,
+      "key": "imu_board"
+    },
+    {
+      "pose": 44,
+      "key": "power_support"
+    },
+    {
+      "pose": 44,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 44,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 44,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 44,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 44,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 44,
+      "key": "motor11"
+    },
+    {
+      "pose": 44,
+      "key": "motor12"
+    },
+    {
+      "pose": 44,
+      "key": "motor13"
+    },
+    {
+      "pose": 44,
+      "key": "motor14"
+    },
+    {
+      "pose": 44,
+      "key": "shell_left"
+    },
+    {
+      "pose": 44,
+      "key": "shell_right"
+    },
+    {
+      "pose": 44,
+      "key": "torso_base"
+    },
+    {
+      "pose": 44,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 44,
+      "key": "imu_board"
+    },
+    {
+      "pose": 45,
+      "key": "power_support"
+    },
+    {
+      "pose": 45,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 45,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 45,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 45,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 45,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 45,
+      "key": "motor11"
+    },
+    {
+      "pose": 45,
+      "key": "motor12"
+    },
+    {
+      "pose": 45,
+      "key": "motor13"
+    },
+    {
+      "pose": 45,
+      "key": "motor14"
+    },
+    {
+      "pose": 45,
+      "key": "shell_left"
+    },
+    {
+      "pose": 45,
+      "key": "shell_right"
+    },
+    {
+      "pose": 45,
+      "key": "torso_base"
+    },
+    {
+      "pose": 45,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 45,
+      "key": "imu_board"
+    },
+    {
+      "pose": 46,
+      "key": "power_support"
+    },
+    {
+      "pose": 46,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 46,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 46,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 46,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 46,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 46,
+      "key": "motor11"
+    },
+    {
+      "pose": 46,
+      "key": "motor12"
+    },
+    {
+      "pose": 46,
+      "key": "motor13"
+    },
+    {
+      "pose": 46,
+      "key": "motor14"
+    },
+    {
+      "pose": 46,
+      "key": "shell_left"
+    },
+    {
+      "pose": 46,
+      "key": "shell_right"
+    },
+    {
+      "pose": 46,
+      "key": "torso_base"
+    },
+    {
+      "pose": 46,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 46,
+      "key": "imu_board"
+    },
+    {
+      "pose": 47,
+      "key": "power_support"
+    },
+    {
+      "pose": 47,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 47,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 47,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 47,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 47,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 47,
+      "key": "motor11"
+    },
+    {
+      "pose": 47,
+      "key": "motor12"
+    },
+    {
+      "pose": 47,
+      "key": "motor13"
+    },
+    {
+      "pose": 47,
+      "key": "motor14"
+    },
+    {
+      "pose": 47,
+      "key": "shell_left"
+    },
+    {
+      "pose": 47,
+      "key": "shell_right"
+    },
+    {
+      "pose": 47,
+      "key": "torso_base"
+    },
+    {
+      "pose": 47,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 47,
+      "key": "imu_board"
+    },
+    {
+      "pose": 48,
+      "key": "power_support"
+    },
+    {
+      "pose": 48,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 48,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 48,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 48,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 48,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 48,
+      "key": "motor11"
+    },
+    {
+      "pose": 48,
+      "key": "motor12"
+    },
+    {
+      "pose": 48,
+      "key": "motor13"
+    },
+    {
+      "pose": 48,
+      "key": "motor14"
+    },
+    {
+      "pose": 48,
+      "key": "shell_left"
+    },
+    {
+      "pose": 48,
+      "key": "shell_right"
+    },
+    {
+      "pose": 48,
+      "key": "torso_base"
+    },
+    {
+      "pose": 48,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 48,
+      "key": "imu_board"
+    },
+    {
+      "pose": 49,
+      "key": "power_support"
+    },
+    {
+      "pose": 49,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 49,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 49,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 49,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 49,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 49,
+      "key": "motor11"
+    },
+    {
+      "pose": 49,
+      "key": "motor12"
+    },
+    {
+      "pose": 49,
+      "key": "motor13"
+    },
+    {
+      "pose": 49,
+      "key": "motor14"
+    },
+    {
+      "pose": 49,
+      "key": "shell_left"
+    },
+    {
+      "pose": 49,
+      "key": "shell_right"
+    },
+    {
+      "pose": 49,
+      "key": "torso_base"
+    },
+    {
+      "pose": 49,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 49,
+      "key": "imu_board"
+    },
+    {
+      "pose": 50,
+      "key": "power_support"
+    },
+    {
+      "pose": 50,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 50,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 50,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 50,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 50,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 50,
+      "key": "motor11"
+    },
+    {
+      "pose": 50,
+      "key": "motor12"
+    },
+    {
+      "pose": 50,
+      "key": "motor13"
+    },
+    {
+      "pose": 50,
+      "key": "motor14"
+    },
+    {
+      "pose": 50,
+      "key": "shell_left"
+    },
+    {
+      "pose": 50,
+      "key": "shell_right"
+    },
+    {
+      "pose": 50,
+      "key": "torso_base"
+    },
+    {
+      "pose": 50,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 50,
+      "key": "imu_board"
+    },
+    {
+      "pose": 51,
+      "key": "power_support"
+    },
+    {
+      "pose": 51,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 51,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 51,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 51,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 51,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 51,
+      "key": "motor11"
+    },
+    {
+      "pose": 51,
+      "key": "motor12"
+    },
+    {
+      "pose": 51,
+      "key": "motor13"
+    },
+    {
+      "pose": 51,
+      "key": "motor14"
+    },
+    {
+      "pose": 51,
+      "key": "shell_left"
+    },
+    {
+      "pose": 51,
+      "key": "shell_right"
+    },
+    {
+      "pose": 51,
+      "key": "torso_base"
+    },
+    {
+      "pose": 51,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 51,
+      "key": "imu_board"
+    },
+    {
+      "pose": 52,
+      "key": "power_support"
+    },
+    {
+      "pose": 52,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 52,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 52,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 52,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 52,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 52,
+      "key": "motor11"
+    },
+    {
+      "pose": 52,
+      "key": "motor12"
+    },
+    {
+      "pose": 52,
+      "key": "motor13"
+    },
+    {
+      "pose": 52,
+      "key": "motor14"
+    },
+    {
+      "pose": 52,
+      "key": "shell_left"
+    },
+    {
+      "pose": 52,
+      "key": "shell_right"
+    },
+    {
+      "pose": 52,
+      "key": "torso_base"
+    },
+    {
+      "pose": 52,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 52,
+      "key": "imu_board"
+    },
+    {
+      "pose": 53,
+      "key": "power_support"
+    },
+    {
+      "pose": 53,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 53,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 53,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 53,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 53,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 53,
+      "key": "motor11"
+    },
+    {
+      "pose": 53,
+      "key": "motor12"
+    },
+    {
+      "pose": 53,
+      "key": "motor13"
+    },
+    {
+      "pose": 53,
+      "key": "motor14"
+    },
+    {
+      "pose": 53,
+      "key": "shell_left"
+    },
+    {
+      "pose": 53,
+      "key": "shell_right"
+    },
+    {
+      "pose": 53,
+      "key": "torso_base"
+    },
+    {
+      "pose": 53,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 53,
+      "key": "imu_board"
+    },
+    {
+      "pose": 54,
+      "key": "power_support"
+    },
+    {
+      "pose": 54,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 54,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 54,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 54,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 54,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 54,
+      "key": "motor11"
+    },
+    {
+      "pose": 54,
+      "key": "motor12"
+    },
+    {
+      "pose": 54,
+      "key": "motor13"
+    },
+    {
+      "pose": 54,
+      "key": "motor14"
+    },
+    {
+      "pose": 54,
+      "key": "shell_left"
+    },
+    {
+      "pose": 54,
+      "key": "shell_right"
+    },
+    {
+      "pose": 54,
+      "key": "torso_base"
+    },
+    {
+      "pose": 54,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 54,
+      "key": "imu_board"
+    },
+    {
+      "pose": 55,
+      "key": "power_support"
+    },
+    {
+      "pose": 55,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 55,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 55,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 55,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 55,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 55,
+      "key": "motor11"
+    },
+    {
+      "pose": 55,
+      "key": "motor12"
+    },
+    {
+      "pose": 55,
+      "key": "motor13"
+    },
+    {
+      "pose": 55,
+      "key": "motor14"
+    },
+    {
+      "pose": 55,
+      "key": "shell_left"
+    },
+    {
+      "pose": 55,
+      "key": "shell_right"
+    },
+    {
+      "pose": 55,
+      "key": "torso_base"
+    },
+    {
+      "pose": 55,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 55,
+      "key": "imu_board"
+    },
+    {
+      "pose": 56,
+      "key": "power_support"
+    },
+    {
+      "pose": 56,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 56,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 56,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 56,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 56,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 56,
+      "key": "motor11"
+    },
+    {
+      "pose": 56,
+      "key": "motor12"
+    },
+    {
+      "pose": 56,
+      "key": "motor13"
+    },
+    {
+      "pose": 56,
+      "key": "motor14"
+    },
+    {
+      "pose": 56,
+      "key": "shell_left"
+    },
+    {
+      "pose": 56,
+      "key": "shell_right"
+    },
+    {
+      "pose": 56,
+      "key": "torso_base"
+    },
+    {
+      "pose": 56,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 56,
+      "key": "imu_board"
+    },
+    {
+      "pose": 57,
+      "key": "power_support"
+    },
+    {
+      "pose": 57,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 57,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 57,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 57,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 57,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 57,
+      "key": "motor11"
+    },
+    {
+      "pose": 57,
+      "key": "motor12"
+    },
+    {
+      "pose": 57,
+      "key": "motor13"
+    },
+    {
+      "pose": 57,
+      "key": "motor14"
+    },
+    {
+      "pose": 57,
+      "key": "shell_left"
+    },
+    {
+      "pose": 57,
+      "key": "shell_right"
+    },
+    {
+      "pose": 57,
+      "key": "torso_base"
+    },
+    {
+      "pose": 57,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 57,
+      "key": "imu_board"
+    },
+    {
+      "pose": 58,
+      "key": "power_support"
+    },
+    {
+      "pose": 58,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 58,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 58,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 58,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 58,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 58,
+      "key": "motor11"
+    },
+    {
+      "pose": 58,
+      "key": "motor12"
+    },
+    {
+      "pose": 58,
+      "key": "motor13"
+    },
+    {
+      "pose": 58,
+      "key": "motor14"
+    },
+    {
+      "pose": 58,
+      "key": "shell_left"
+    },
+    {
+      "pose": 58,
+      "key": "shell_right"
+    },
+    {
+      "pose": 58,
+      "key": "torso_base"
+    },
+    {
+      "pose": 58,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 58,
+      "key": "imu_board"
+    },
+    {
+      "pose": 59,
+      "key": "power_support"
+    },
+    {
+      "pose": 59,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 59,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 59,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 59,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 59,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 59,
+      "key": "motor11"
+    },
+    {
+      "pose": 59,
+      "key": "motor12"
+    },
+    {
+      "pose": 59,
+      "key": "motor13"
+    },
+    {
+      "pose": 59,
+      "key": "motor14"
+    },
+    {
+      "pose": 59,
+      "key": "shell_left"
+    },
+    {
+      "pose": 59,
+      "key": "shell_right"
+    },
+    {
+      "pose": 59,
+      "key": "torso_base"
+    },
+    {
+      "pose": 59,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 59,
+      "key": "imu_board"
+    },
+    {
+      "pose": 60,
+      "key": "power_support"
+    },
+    {
+      "pose": 60,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 60,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 60,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 60,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 60,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 60,
+      "key": "motor11"
+    },
+    {
+      "pose": 60,
+      "key": "motor12"
+    },
+    {
+      "pose": 60,
+      "key": "motor13"
+    },
+    {
+      "pose": 60,
+      "key": "motor14"
+    },
+    {
+      "pose": 60,
+      "key": "shell_left"
+    },
+    {
+      "pose": 60,
+      "key": "shell_right"
+    },
+    {
+      "pose": 60,
+      "key": "torso_base"
+    },
+    {
+      "pose": 60,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 60,
+      "key": "imu_board"
+    },
+    {
+      "pose": 61,
+      "key": "power_support"
+    },
+    {
+      "pose": 61,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 61,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 61,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 61,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 61,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 61,
+      "key": "motor11"
+    },
+    {
+      "pose": 61,
+      "key": "motor12"
+    },
+    {
+      "pose": 61,
+      "key": "motor13"
+    },
+    {
+      "pose": 61,
+      "key": "motor14"
+    },
+    {
+      "pose": 61,
+      "key": "shell_left"
+    },
+    {
+      "pose": 61,
+      "key": "shell_right"
+    },
+    {
+      "pose": 61,
+      "key": "torso_base"
+    },
+    {
+      "pose": 61,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 61,
+      "key": "imu_board"
+    },
+    {
+      "pose": 62,
+      "key": "power_support"
+    },
+    {
+      "pose": 62,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 62,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 62,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 62,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 62,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 62,
+      "key": "motor11"
+    },
+    {
+      "pose": 62,
+      "key": "motor12"
+    },
+    {
+      "pose": 62,
+      "key": "motor13"
+    },
+    {
+      "pose": 62,
+      "key": "motor14"
+    },
+    {
+      "pose": 62,
+      "key": "shell_left"
+    },
+    {
+      "pose": 62,
+      "key": "shell_right"
+    },
+    {
+      "pose": 62,
+      "key": "torso_base"
+    },
+    {
+      "pose": 62,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 62,
+      "key": "imu_board"
+    },
+    {
+      "pose": 63,
+      "key": "power_support"
+    },
+    {
+      "pose": 63,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 63,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 63,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 63,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 63,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 63,
+      "key": "motor11"
+    },
+    {
+      "pose": 63,
+      "key": "motor12"
+    },
+    {
+      "pose": 63,
+      "key": "motor13"
+    },
+    {
+      "pose": 63,
+      "key": "motor14"
+    },
+    {
+      "pose": 63,
+      "key": "shell_left"
+    },
+    {
+      "pose": 63,
+      "key": "shell_right"
+    },
+    {
+      "pose": 63,
+      "key": "torso_base"
+    },
+    {
+      "pose": 63,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 63,
+      "key": "imu_board"
+    },
+    {
+      "pose": 64,
+      "key": "power_support"
+    },
+    {
+      "pose": 64,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 64,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 64,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 64,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 64,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 64,
+      "key": "motor11"
+    },
+    {
+      "pose": 64,
+      "key": "motor12"
+    },
+    {
+      "pose": 64,
+      "key": "motor13"
+    },
+    {
+      "pose": 64,
+      "key": "motor14"
+    },
+    {
+      "pose": 64,
+      "key": "shell_left"
+    },
+    {
+      "pose": 64,
+      "key": "shell_right"
+    },
+    {
+      "pose": 64,
+      "key": "torso_base"
+    },
+    {
+      "pose": 64,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 64,
+      "key": "imu_board"
+    },
+    {
+      "pose": 65,
+      "key": "power_support"
+    },
+    {
+      "pose": 65,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 65,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 65,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 65,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 65,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 65,
+      "key": "motor11"
+    },
+    {
+      "pose": 65,
+      "key": "motor12"
+    },
+    {
+      "pose": 65,
+      "key": "motor13"
+    },
+    {
+      "pose": 65,
+      "key": "motor14"
+    },
+    {
+      "pose": 65,
+      "key": "shell_left"
+    },
+    {
+      "pose": 65,
+      "key": "shell_right"
+    },
+    {
+      "pose": 65,
+      "key": "torso_base"
+    },
+    {
+      "pose": 65,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 65,
+      "key": "imu_board"
+    },
+    {
+      "pose": 66,
+      "key": "power_support"
+    },
+    {
+      "pose": 66,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 66,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 66,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 66,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 66,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 66,
+      "key": "motor11"
+    },
+    {
+      "pose": 66,
+      "key": "motor12"
+    },
+    {
+      "pose": 66,
+      "key": "motor13"
+    },
+    {
+      "pose": 66,
+      "key": "motor14"
+    },
+    {
+      "pose": 66,
+      "key": "shell_left"
+    },
+    {
+      "pose": 66,
+      "key": "shell_right"
+    },
+    {
+      "pose": 66,
+      "key": "torso_base"
+    },
+    {
+      "pose": 66,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 66,
+      "key": "imu_board"
+    },
+    {
+      "pose": 67,
+      "key": "power_support"
+    },
+    {
+      "pose": 67,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 67,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 67,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 67,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 67,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 67,
+      "key": "motor11"
+    },
+    {
+      "pose": 67,
+      "key": "motor12"
+    },
+    {
+      "pose": 67,
+      "key": "motor13"
+    },
+    {
+      "pose": 67,
+      "key": "motor14"
+    },
+    {
+      "pose": 67,
+      "key": "shell_left"
+    },
+    {
+      "pose": 67,
+      "key": "shell_right"
+    },
+    {
+      "pose": 67,
+      "key": "torso_base"
+    },
+    {
+      "pose": 67,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 67,
+      "key": "imu_board"
+    },
+    {
+      "pose": 68,
+      "key": "power_support"
+    },
+    {
+      "pose": 68,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 68,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 68,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 68,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 68,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 68,
+      "key": "motor11"
+    },
+    {
+      "pose": 68,
+      "key": "motor12"
+    },
+    {
+      "pose": 68,
+      "key": "motor13"
+    },
+    {
+      "pose": 68,
+      "key": "motor14"
+    },
+    {
+      "pose": 68,
+      "key": "shell_left"
+    },
+    {
+      "pose": 68,
+      "key": "shell_right"
+    },
+    {
+      "pose": 68,
+      "key": "torso_base"
+    },
+    {
+      "pose": 68,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 68,
+      "key": "imu_board"
+    },
+    {
+      "pose": 69,
+      "key": "power_support"
+    },
+    {
+      "pose": 69,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 69,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 69,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 69,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 69,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 69,
+      "key": "motor11"
+    },
+    {
+      "pose": 69,
+      "key": "motor12"
+    },
+    {
+      "pose": 69,
+      "key": "motor13"
+    },
+    {
+      "pose": 69,
+      "key": "motor14"
+    },
+    {
+      "pose": 69,
+      "key": "shell_left"
+    },
+    {
+      "pose": 69,
+      "key": "shell_right"
+    },
+    {
+      "pose": 69,
+      "key": "torso_base"
+    },
+    {
+      "pose": 69,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 69,
+      "key": "imu_board"
+    },
+    {
+      "pose": 70,
+      "key": "power_support"
+    },
+    {
+      "pose": 70,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 70,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 70,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 70,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 70,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 70,
+      "key": "motor11"
+    },
+    {
+      "pose": 70,
+      "key": "motor12"
+    },
+    {
+      "pose": 70,
+      "key": "motor13"
+    },
+    {
+      "pose": 70,
+      "key": "motor14"
+    },
+    {
+      "pose": 70,
+      "key": "shell_left"
+    },
+    {
+      "pose": 70,
+      "key": "shell_right"
+    },
+    {
+      "pose": 70,
+      "key": "torso_base"
+    },
+    {
+      "pose": 70,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 70,
+      "key": "imu_board"
+    },
+    {
+      "pose": 71,
+      "key": "power_support"
+    },
+    {
+      "pose": 71,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 71,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 71,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 71,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 71,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 71,
+      "key": "motor11"
+    },
+    {
+      "pose": 71,
+      "key": "motor12"
+    },
+    {
+      "pose": 71,
+      "key": "motor13"
+    },
+    {
+      "pose": 71,
+      "key": "motor14"
+    },
+    {
+      "pose": 71,
+      "key": "shell_left"
+    },
+    {
+      "pose": 71,
+      "key": "shell_right"
+    },
+    {
+      "pose": 71,
+      "key": "torso_base"
+    },
+    {
+      "pose": 71,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 71,
+      "key": "imu_board"
+    },
+    {
+      "pose": 72,
+      "key": "power_support"
+    },
+    {
+      "pose": 72,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 72,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 72,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 72,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 72,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 72,
+      "key": "motor11"
+    },
+    {
+      "pose": 72,
+      "key": "motor12"
+    },
+    {
+      "pose": 72,
+      "key": "motor13"
+    },
+    {
+      "pose": 72,
+      "key": "motor14"
+    },
+    {
+      "pose": 72,
+      "key": "shell_left"
+    },
+    {
+      "pose": 72,
+      "key": "shell_right"
+    },
+    {
+      "pose": 72,
+      "key": "torso_base"
+    },
+    {
+      "pose": 72,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 72,
+      "key": "imu_board"
+    },
+    {
+      "pose": 73,
+      "key": "power_support"
+    },
+    {
+      "pose": 73,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 73,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 73,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 73,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 73,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 73,
+      "key": "motor11"
+    },
+    {
+      "pose": 73,
+      "key": "motor12"
+    },
+    {
+      "pose": 73,
+      "key": "motor13"
+    },
+    {
+      "pose": 73,
+      "key": "motor14"
+    },
+    {
+      "pose": 73,
+      "key": "shell_left"
+    },
+    {
+      "pose": 73,
+      "key": "shell_right"
+    },
+    {
+      "pose": 73,
+      "key": "torso_base"
+    },
+    {
+      "pose": 73,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 73,
+      "key": "imu_board"
+    },
+    {
+      "pose": 74,
+      "key": "power_support"
+    },
+    {
+      "pose": 74,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 74,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 74,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 74,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 74,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 74,
+      "key": "motor11"
+    },
+    {
+      "pose": 74,
+      "key": "motor12"
+    },
+    {
+      "pose": 74,
+      "key": "motor13"
+    },
+    {
+      "pose": 74,
+      "key": "motor14"
+    },
+    {
+      "pose": 74,
+      "key": "shell_left"
+    },
+    {
+      "pose": 74,
+      "key": "shell_right"
+    },
+    {
+      "pose": 74,
+      "key": "torso_base"
+    },
+    {
+      "pose": 74,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 74,
+      "key": "imu_board"
+    },
+    {
+      "pose": 75,
+      "key": "power_support"
+    },
+    {
+      "pose": 75,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 75,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 75,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 75,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 75,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 75,
+      "key": "motor11"
+    },
+    {
+      "pose": 75,
+      "key": "motor12"
+    },
+    {
+      "pose": 75,
+      "key": "motor13"
+    },
+    {
+      "pose": 75,
+      "key": "motor14"
+    },
+    {
+      "pose": 75,
+      "key": "shell_left"
+    },
+    {
+      "pose": 75,
+      "key": "shell_right"
+    },
+    {
+      "pose": 75,
+      "key": "torso_base"
+    },
+    {
+      "pose": 75,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 75,
+      "key": "imu_board"
+    },
+    {
+      "pose": 76,
+      "key": "power_support"
+    },
+    {
+      "pose": 76,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 76,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 76,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 76,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 76,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 76,
+      "key": "motor11"
+    },
+    {
+      "pose": 76,
+      "key": "motor12"
+    },
+    {
+      "pose": 76,
+      "key": "motor13"
+    },
+    {
+      "pose": 76,
+      "key": "motor14"
+    },
+    {
+      "pose": 76,
+      "key": "shell_left"
+    },
+    {
+      "pose": 76,
+      "key": "shell_right"
+    },
+    {
+      "pose": 76,
+      "key": "torso_base"
+    },
+    {
+      "pose": 76,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 76,
+      "key": "imu_board"
+    },
+    {
+      "pose": 77,
+      "key": "power_support"
+    },
+    {
+      "pose": 77,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 77,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 77,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 77,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 77,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 77,
+      "key": "motor11"
+    },
+    {
+      "pose": 77,
+      "key": "motor12"
+    },
+    {
+      "pose": 77,
+      "key": "motor13"
+    },
+    {
+      "pose": 77,
+      "key": "motor14"
+    },
+    {
+      "pose": 77,
+      "key": "shell_left"
+    },
+    {
+      "pose": 77,
+      "key": "shell_right"
+    },
+    {
+      "pose": 77,
+      "key": "torso_base"
+    },
+    {
+      "pose": 77,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 77,
+      "key": "imu_board"
+    },
+    {
+      "pose": 78,
+      "key": "power_support"
+    },
+    {
+      "pose": 78,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 78,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 78,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 78,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 78,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 78,
+      "key": "motor11"
+    },
+    {
+      "pose": 78,
+      "key": "motor12"
+    },
+    {
+      "pose": 78,
+      "key": "motor13"
+    },
+    {
+      "pose": 78,
+      "key": "motor14"
+    },
+    {
+      "pose": 78,
+      "key": "shell_left"
+    },
+    {
+      "pose": 78,
+      "key": "shell_right"
+    },
+    {
+      "pose": 78,
+      "key": "torso_base"
+    },
+    {
+      "pose": 78,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 78,
+      "key": "imu_board"
+    },
+    {
+      "pose": 79,
+      "key": "power_support"
+    },
+    {
+      "pose": 79,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 79,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 79,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 79,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 79,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 79,
+      "key": "motor11"
+    },
+    {
+      "pose": 79,
+      "key": "motor12"
+    },
+    {
+      "pose": 79,
+      "key": "motor13"
+    },
+    {
+      "pose": 79,
+      "key": "motor14"
+    },
+    {
+      "pose": 79,
+      "key": "shell_left"
+    },
+    {
+      "pose": 79,
+      "key": "shell_right"
+    },
+    {
+      "pose": 79,
+      "key": "torso_base"
+    },
+    {
+      "pose": 79,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 79,
+      "key": "imu_board"
+    },
+    {
+      "pose": 80,
+      "key": "power_support"
+    },
+    {
+      "pose": 80,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 80,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 80,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 80,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 80,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 80,
+      "key": "motor11"
+    },
+    {
+      "pose": 80,
+      "key": "motor12"
+    },
+    {
+      "pose": 80,
+      "key": "motor13"
+    },
+    {
+      "pose": 80,
+      "key": "motor14"
+    },
+    {
+      "pose": 80,
+      "key": "shell_left"
+    },
+    {
+      "pose": 80,
+      "key": "shell_right"
+    },
+    {
+      "pose": 80,
+      "key": "torso_base"
+    },
+    {
+      "pose": 80,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 80,
+      "key": "imu_board"
+    },
+    {
+      "pose": 81,
+      "key": "power_support"
+    },
+    {
+      "pose": 81,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 81,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 81,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 81,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 81,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 81,
+      "key": "motor11"
+    },
+    {
+      "pose": 81,
+      "key": "motor12"
+    },
+    {
+      "pose": 81,
+      "key": "motor13"
+    },
+    {
+      "pose": 81,
+      "key": "motor14"
+    },
+    {
+      "pose": 81,
+      "key": "shell_left"
+    },
+    {
+      "pose": 81,
+      "key": "shell_right"
+    },
+    {
+      "pose": 81,
+      "key": "torso_base"
+    },
+    {
+      "pose": 81,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 81,
+      "key": "imu_board"
+    },
+    {
+      "pose": 82,
+      "key": "power_support"
+    },
+    {
+      "pose": 82,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 82,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 82,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 82,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 82,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 82,
+      "key": "motor11"
+    },
+    {
+      "pose": 82,
+      "key": "motor12"
+    },
+    {
+      "pose": 82,
+      "key": "motor13"
+    },
+    {
+      "pose": 82,
+      "key": "motor14"
+    },
+    {
+      "pose": 82,
+      "key": "shell_left"
+    },
+    {
+      "pose": 82,
+      "key": "shell_right"
+    },
+    {
+      "pose": 82,
+      "key": "torso_base"
+    },
+    {
+      "pose": 82,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 82,
+      "key": "imu_board"
+    },
+    {
+      "pose": 83,
+      "key": "power_support"
+    },
+    {
+      "pose": 83,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 83,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 83,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 83,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 83,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 83,
+      "key": "motor11"
+    },
+    {
+      "pose": 83,
+      "key": "motor12"
+    },
+    {
+      "pose": 83,
+      "key": "motor13"
+    },
+    {
+      "pose": 83,
+      "key": "motor14"
+    },
+    {
+      "pose": 83,
+      "key": "shell_left"
+    },
+    {
+      "pose": 83,
+      "key": "shell_right"
+    },
+    {
+      "pose": 83,
+      "key": "torso_base"
+    },
+    {
+      "pose": 83,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 83,
+      "key": "imu_board"
+    },
+    {
+      "pose": 84,
+      "key": "power_support"
+    },
+    {
+      "pose": 84,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 84,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 84,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 84,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 84,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 84,
+      "key": "motor11"
+    },
+    {
+      "pose": 84,
+      "key": "motor12"
+    },
+    {
+      "pose": 84,
+      "key": "motor13"
+    },
+    {
+      "pose": 84,
+      "key": "motor14"
+    },
+    {
+      "pose": 84,
+      "key": "shell_left"
+    },
+    {
+      "pose": 84,
+      "key": "shell_right"
+    },
+    {
+      "pose": 84,
+      "key": "torso_base"
+    },
+    {
+      "pose": 84,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 84,
+      "key": "imu_board"
+    },
+    {
+      "pose": 85,
+      "key": "power_support"
+    },
+    {
+      "pose": 85,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 85,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 85,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 85,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 85,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 85,
+      "key": "motor11"
+    },
+    {
+      "pose": 85,
+      "key": "motor12"
+    },
+    {
+      "pose": 85,
+      "key": "motor13"
+    },
+    {
+      "pose": 85,
+      "key": "motor14"
+    },
+    {
+      "pose": 85,
+      "key": "shell_left"
+    },
+    {
+      "pose": 85,
+      "key": "shell_right"
+    },
+    {
+      "pose": 85,
+      "key": "torso_base"
+    },
+    {
+      "pose": 85,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 85,
+      "key": "imu_board"
+    },
+    {
+      "pose": 86,
+      "key": "power_support"
+    },
+    {
+      "pose": 86,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 86,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 86,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 86,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 86,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 86,
+      "key": "motor11"
+    },
+    {
+      "pose": 86,
+      "key": "motor12"
+    },
+    {
+      "pose": 86,
+      "key": "motor13"
+    },
+    {
+      "pose": 86,
+      "key": "motor14"
+    },
+    {
+      "pose": 86,
+      "key": "shell_left"
+    },
+    {
+      "pose": 86,
+      "key": "shell_right"
+    },
+    {
+      "pose": 86,
+      "key": "torso_base"
+    },
+    {
+      "pose": 86,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 86,
+      "key": "imu_board"
+    },
+    {
+      "pose": 87,
+      "key": "power_support"
+    },
+    {
+      "pose": 87,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 87,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 87,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 87,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 87,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 87,
+      "key": "motor11"
+    },
+    {
+      "pose": 87,
+      "key": "motor12"
+    },
+    {
+      "pose": 87,
+      "key": "motor13"
+    },
+    {
+      "pose": 87,
+      "key": "motor14"
+    },
+    {
+      "pose": 87,
+      "key": "shell_left"
+    },
+    {
+      "pose": 87,
+      "key": "shell_right"
+    },
+    {
+      "pose": 87,
+      "key": "torso_base"
+    },
+    {
+      "pose": 87,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 87,
+      "key": "imu_board"
+    },
+    {
+      "pose": 88,
+      "key": "power_support"
+    },
+    {
+      "pose": 88,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 88,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 88,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 88,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 88,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 88,
+      "key": "motor11"
+    },
+    {
+      "pose": 88,
+      "key": "motor12"
+    },
+    {
+      "pose": 88,
+      "key": "motor13"
+    },
+    {
+      "pose": 88,
+      "key": "motor14"
+    },
+    {
+      "pose": 88,
+      "key": "shell_left"
+    },
+    {
+      "pose": 88,
+      "key": "shell_right"
+    },
+    {
+      "pose": 88,
+      "key": "torso_base"
+    },
+    {
+      "pose": 88,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 88,
+      "key": "imu_board"
+    },
+    {
+      "pose": 89,
+      "key": "power_support"
+    },
+    {
+      "pose": 89,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 89,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 89,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 89,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 89,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 89,
+      "key": "motor11"
+    },
+    {
+      "pose": 89,
+      "key": "motor12"
+    },
+    {
+      "pose": 89,
+      "key": "motor13"
+    },
+    {
+      "pose": 89,
+      "key": "motor14"
+    },
+    {
+      "pose": 89,
+      "key": "shell_left"
+    },
+    {
+      "pose": 89,
+      "key": "shell_right"
+    },
+    {
+      "pose": 89,
+      "key": "torso_base"
+    },
+    {
+      "pose": 89,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 89,
+      "key": "imu_board"
+    },
+    {
+      "pose": 90,
+      "key": "power_support"
+    },
+    {
+      "pose": 90,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 90,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 90,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 90,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 90,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 90,
+      "key": "motor11"
+    },
+    {
+      "pose": 90,
+      "key": "motor12"
+    },
+    {
+      "pose": 90,
+      "key": "motor13"
+    },
+    {
+      "pose": 90,
+      "key": "motor14"
+    },
+    {
+      "pose": 90,
+      "key": "shell_left"
+    },
+    {
+      "pose": 90,
+      "key": "shell_right"
+    },
+    {
+      "pose": 90,
+      "key": "torso_base"
+    },
+    {
+      "pose": 90,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 90,
+      "key": "imu_board"
+    },
+    {
+      "pose": 91,
+      "key": "power_support"
+    },
+    {
+      "pose": 91,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 91,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 91,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 91,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 91,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 91,
+      "key": "motor11"
+    },
+    {
+      "pose": 91,
+      "key": "motor12"
+    },
+    {
+      "pose": 91,
+      "key": "motor13"
+    },
+    {
+      "pose": 91,
+      "key": "motor14"
+    },
+    {
+      "pose": 91,
+      "key": "shell_left"
+    },
+    {
+      "pose": 91,
+      "key": "shell_right"
+    },
+    {
+      "pose": 91,
+      "key": "torso_base"
+    },
+    {
+      "pose": 91,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 91,
+      "key": "imu_board"
+    },
+    {
+      "pose": 92,
+      "key": "power_support"
+    },
+    {
+      "pose": 92,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 92,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 92,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 92,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 92,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 92,
+      "key": "motor11"
+    },
+    {
+      "pose": 92,
+      "key": "motor12"
+    },
+    {
+      "pose": 92,
+      "key": "motor13"
+    },
+    {
+      "pose": 92,
+      "key": "motor14"
+    },
+    {
+      "pose": 92,
+      "key": "shell_left"
+    },
+    {
+      "pose": 92,
+      "key": "shell_right"
+    },
+    {
+      "pose": 92,
+      "key": "torso_base"
+    },
+    {
+      "pose": 92,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 92,
+      "key": "imu_board"
+    },
+    {
+      "pose": 93,
+      "key": "power_support"
+    },
+    {
+      "pose": 93,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 93,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 93,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 93,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 93,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 93,
+      "key": "motor11"
+    },
+    {
+      "pose": 93,
+      "key": "motor12"
+    },
+    {
+      "pose": 93,
+      "key": "motor13"
+    },
+    {
+      "pose": 93,
+      "key": "motor14"
+    },
+    {
+      "pose": 93,
+      "key": "shell_left"
+    },
+    {
+      "pose": 93,
+      "key": "shell_right"
+    },
+    {
+      "pose": 93,
+      "key": "torso_base"
+    },
+    {
+      "pose": 93,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 93,
+      "key": "imu_board"
+    },
+    {
+      "pose": 94,
+      "key": "power_support"
+    },
+    {
+      "pose": 94,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 94,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 94,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 94,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 94,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 94,
+      "key": "motor11"
+    },
+    {
+      "pose": 94,
+      "key": "motor12"
+    },
+    {
+      "pose": 94,
+      "key": "motor13"
+    },
+    {
+      "pose": 94,
+      "key": "motor14"
+    },
+    {
+      "pose": 94,
+      "key": "shell_left"
+    },
+    {
+      "pose": 94,
+      "key": "shell_right"
+    },
+    {
+      "pose": 94,
+      "key": "torso_base"
+    },
+    {
+      "pose": 94,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 94,
+      "key": "imu_board"
+    },
+    {
+      "pose": 95,
+      "key": "power_support"
+    },
+    {
+      "pose": 95,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 95,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 95,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 95,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 95,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 95,
+      "key": "motor11"
+    },
+    {
+      "pose": 95,
+      "key": "motor12"
+    },
+    {
+      "pose": 95,
+      "key": "motor13"
+    },
+    {
+      "pose": 95,
+      "key": "motor14"
+    },
+    {
+      "pose": 95,
+      "key": "shell_left"
+    },
+    {
+      "pose": 95,
+      "key": "shell_right"
+    },
+    {
+      "pose": 95,
+      "key": "torso_base"
+    },
+    {
+      "pose": 95,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 95,
+      "key": "imu_board"
+    },
+    {
+      "pose": 96,
+      "key": "power_support"
+    },
+    {
+      "pose": 96,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 96,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 96,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 96,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 96,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 96,
+      "key": "motor11"
+    },
+    {
+      "pose": 96,
+      "key": "motor12"
+    },
+    {
+      "pose": 96,
+      "key": "motor13"
+    },
+    {
+      "pose": 96,
+      "key": "motor14"
+    },
+    {
+      "pose": 96,
+      "key": "shell_left"
+    },
+    {
+      "pose": 96,
+      "key": "shell_right"
+    },
+    {
+      "pose": 96,
+      "key": "torso_base"
+    },
+    {
+      "pose": 96,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 96,
+      "key": "imu_board"
+    },
+    {
+      "pose": 97,
+      "key": "power_support"
+    },
+    {
+      "pose": 97,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 97,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 97,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 97,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 97,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 97,
+      "key": "motor11"
+    },
+    {
+      "pose": 97,
+      "key": "motor12"
+    },
+    {
+      "pose": 97,
+      "key": "motor13"
+    },
+    {
+      "pose": 97,
+      "key": "motor14"
+    },
+    {
+      "pose": 97,
+      "key": "shell_left"
+    },
+    {
+      "pose": 97,
+      "key": "shell_right"
+    },
+    {
+      "pose": 97,
+      "key": "torso_base"
+    },
+    {
+      "pose": 97,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 97,
+      "key": "imu_board"
+    },
+    {
+      "pose": 98,
+      "key": "power_support"
+    },
+    {
+      "pose": 98,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 98,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 98,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 98,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 98,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 98,
+      "key": "motor11"
+    },
+    {
+      "pose": 98,
+      "key": "motor12"
+    },
+    {
+      "pose": 98,
+      "key": "motor13"
+    },
+    {
+      "pose": 98,
+      "key": "motor14"
+    },
+    {
+      "pose": 98,
+      "key": "shell_left"
+    },
+    {
+      "pose": 98,
+      "key": "shell_right"
+    },
+    {
+      "pose": 98,
+      "key": "torso_base"
+    },
+    {
+      "pose": 98,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 98,
+      "key": "imu_board"
+    },
+    {
+      "pose": 99,
+      "key": "power_support"
+    },
+    {
+      "pose": 99,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 99,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 99,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 99,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 99,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 99,
+      "key": "motor11"
+    },
+    {
+      "pose": 99,
+      "key": "motor12"
+    },
+    {
+      "pose": 99,
+      "key": "motor13"
+    },
+    {
+      "pose": 99,
+      "key": "motor14"
+    },
+    {
+      "pose": 99,
+      "key": "shell_left"
+    },
+    {
+      "pose": 99,
+      "key": "shell_right"
+    },
+    {
+      "pose": 99,
+      "key": "torso_base"
+    },
+    {
+      "pose": 99,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 99,
+      "key": "imu_board"
+    },
+    {
+      "pose": 100,
+      "key": "power_support"
+    },
+    {
+      "pose": 100,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 100,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 100,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 100,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 100,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 100,
+      "key": "motor11"
+    },
+    {
+      "pose": 100,
+      "key": "motor12"
+    },
+    {
+      "pose": 100,
+      "key": "motor13"
+    },
+    {
+      "pose": 100,
+      "key": "motor14"
+    },
+    {
+      "pose": 100,
+      "key": "shell_left"
+    },
+    {
+      "pose": 100,
+      "key": "shell_right"
+    },
+    {
+      "pose": 100,
+      "key": "torso_base"
+    },
+    {
+      "pose": 100,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 100,
+      "key": "imu_board"
+    },
+    {
+      "pose": 101,
+      "key": "power_support"
+    },
+    {
+      "pose": 101,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 101,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 101,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 101,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 101,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 101,
+      "key": "motor11"
+    },
+    {
+      "pose": 101,
+      "key": "motor12"
+    },
+    {
+      "pose": 101,
+      "key": "motor13"
+    },
+    {
+      "pose": 101,
+      "key": "motor14"
+    },
+    {
+      "pose": 101,
+      "key": "shell_left"
+    },
+    {
+      "pose": 101,
+      "key": "shell_right"
+    },
+    {
+      "pose": 101,
+      "key": "torso_base"
+    },
+    {
+      "pose": 101,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 101,
+      "key": "imu_board"
+    },
+    {
+      "pose": 102,
+      "key": "power_support"
+    },
+    {
+      "pose": 102,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 102,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 102,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 102,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 102,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 102,
+      "key": "motor11"
+    },
+    {
+      "pose": 102,
+      "key": "motor12"
+    },
+    {
+      "pose": 102,
+      "key": "motor13"
+    },
+    {
+      "pose": 102,
+      "key": "motor14"
+    },
+    {
+      "pose": 102,
+      "key": "shell_left"
+    },
+    {
+      "pose": 102,
+      "key": "shell_right"
+    },
+    {
+      "pose": 102,
+      "key": "torso_base"
+    },
+    {
+      "pose": 102,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 102,
+      "key": "imu_board"
+    },
+    {
+      "pose": 103,
+      "key": "power_support"
+    },
+    {
+      "pose": 103,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 103,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 103,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 103,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 103,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 103,
+      "key": "motor11"
+    },
+    {
+      "pose": 103,
+      "key": "motor12"
+    },
+    {
+      "pose": 103,
+      "key": "motor13"
+    },
+    {
+      "pose": 103,
+      "key": "motor14"
+    },
+    {
+      "pose": 103,
+      "key": "shell_left"
+    },
+    {
+      "pose": 103,
+      "key": "shell_right"
+    },
+    {
+      "pose": 103,
+      "key": "torso_base"
+    },
+    {
+      "pose": 103,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 103,
+      "key": "imu_board"
+    },
+    {
+      "pose": 104,
+      "key": "power_support"
+    },
+    {
+      "pose": 104,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 104,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 104,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 104,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 104,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 104,
+      "key": "motor11"
+    },
+    {
+      "pose": 104,
+      "key": "motor12"
+    },
+    {
+      "pose": 104,
+      "key": "motor13"
+    },
+    {
+      "pose": 104,
+      "key": "motor14"
+    },
+    {
+      "pose": 104,
+      "key": "shell_left"
+    },
+    {
+      "pose": 104,
+      "key": "shell_right"
+    },
+    {
+      "pose": 104,
+      "key": "torso_base"
+    },
+    {
+      "pose": 104,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 104,
+      "key": "imu_board"
+    },
+    {
+      "pose": 105,
+      "key": "power_support"
+    },
+    {
+      "pose": 105,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 105,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 105,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 105,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 105,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 105,
+      "key": "motor11"
+    },
+    {
+      "pose": 105,
+      "key": "motor12"
+    },
+    {
+      "pose": 105,
+      "key": "motor13"
+    },
+    {
+      "pose": 105,
+      "key": "motor14"
+    },
+    {
+      "pose": 105,
+      "key": "shell_left"
+    },
+    {
+      "pose": 105,
+      "key": "shell_right"
+    },
+    {
+      "pose": 105,
+      "key": "torso_base"
+    },
+    {
+      "pose": 105,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 105,
+      "key": "imu_board"
+    },
+    {
+      "pose": 106,
+      "key": "power_support"
+    },
+    {
+      "pose": 106,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 106,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 106,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 106,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 106,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 106,
+      "key": "motor11"
+    },
+    {
+      "pose": 106,
+      "key": "motor12"
+    },
+    {
+      "pose": 106,
+      "key": "motor13"
+    },
+    {
+      "pose": 106,
+      "key": "motor14"
+    },
+    {
+      "pose": 106,
+      "key": "shell_left"
+    },
+    {
+      "pose": 106,
+      "key": "shell_right"
+    },
+    {
+      "pose": 106,
+      "key": "torso_base"
+    },
+    {
+      "pose": 106,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 106,
+      "key": "imu_board"
+    },
+    {
+      "pose": 107,
+      "key": "power_support"
+    },
+    {
+      "pose": 107,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 107,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 107,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 107,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 107,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 107,
+      "key": "motor11"
+    },
+    {
+      "pose": 107,
+      "key": "motor12"
+    },
+    {
+      "pose": 107,
+      "key": "motor13"
+    },
+    {
+      "pose": 107,
+      "key": "motor14"
+    },
+    {
+      "pose": 107,
+      "key": "shell_left"
+    },
+    {
+      "pose": 107,
+      "key": "shell_right"
+    },
+    {
+      "pose": 107,
+      "key": "torso_base"
+    },
+    {
+      "pose": 107,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 107,
+      "key": "imu_board"
+    },
+    {
+      "pose": 108,
+      "key": "power_support"
+    },
+    {
+      "pose": 108,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 108,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 108,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 108,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 108,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 108,
+      "key": "motor11"
+    },
+    {
+      "pose": 108,
+      "key": "motor12"
+    },
+    {
+      "pose": 108,
+      "key": "motor13"
+    },
+    {
+      "pose": 108,
+      "key": "motor14"
+    },
+    {
+      "pose": 108,
+      "key": "shell_left"
+    },
+    {
+      "pose": 108,
+      "key": "shell_right"
+    },
+    {
+      "pose": 108,
+      "key": "torso_base"
+    },
+    {
+      "pose": 108,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 108,
+      "key": "imu_board"
+    },
+    {
+      "pose": 109,
+      "key": "power_support"
+    },
+    {
+      "pose": 109,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 109,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 109,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 109,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 109,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 109,
+      "key": "motor11"
+    },
+    {
+      "pose": 109,
+      "key": "motor12"
+    },
+    {
+      "pose": 109,
+      "key": "motor13"
+    },
+    {
+      "pose": 109,
+      "key": "motor14"
+    },
+    {
+      "pose": 109,
+      "key": "shell_left"
+    },
+    {
+      "pose": 109,
+      "key": "shell_right"
+    },
+    {
+      "pose": 109,
+      "key": "torso_base"
+    },
+    {
+      "pose": 109,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 109,
+      "key": "imu_board"
+    },
+    {
+      "pose": 110,
+      "key": "power_support"
+    },
+    {
+      "pose": 110,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 110,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 110,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 110,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 110,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 110,
+      "key": "motor11"
+    },
+    {
+      "pose": 110,
+      "key": "motor12"
+    },
+    {
+      "pose": 110,
+      "key": "motor13"
+    },
+    {
+      "pose": 110,
+      "key": "motor14"
+    },
+    {
+      "pose": 110,
+      "key": "shell_left"
+    },
+    {
+      "pose": 110,
+      "key": "shell_right"
+    },
+    {
+      "pose": 110,
+      "key": "torso_base"
+    },
+    {
+      "pose": 110,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 110,
+      "key": "imu_board"
+    },
+    {
+      "pose": 111,
+      "key": "power_support"
+    },
+    {
+      "pose": 111,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 111,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 111,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 111,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 111,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 111,
+      "key": "motor11"
+    },
+    {
+      "pose": 111,
+      "key": "motor12"
+    },
+    {
+      "pose": 111,
+      "key": "motor13"
+    },
+    {
+      "pose": 111,
+      "key": "motor14"
+    },
+    {
+      "pose": 111,
+      "key": "shell_left"
+    },
+    {
+      "pose": 111,
+      "key": "shell_right"
+    },
+    {
+      "pose": 111,
+      "key": "torso_base"
+    },
+    {
+      "pose": 111,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 111,
+      "key": "imu_board"
+    },
+    {
+      "pose": 112,
+      "key": "power_support"
+    },
+    {
+      "pose": 112,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 112,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 112,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 112,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 112,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 112,
+      "key": "motor11"
+    },
+    {
+      "pose": 112,
+      "key": "motor12"
+    },
+    {
+      "pose": 112,
+      "key": "motor13"
+    },
+    {
+      "pose": 112,
+      "key": "motor14"
+    },
+    {
+      "pose": 112,
+      "key": "shell_left"
+    },
+    {
+      "pose": 112,
+      "key": "shell_right"
+    },
+    {
+      "pose": 112,
+      "key": "torso_base"
+    },
+    {
+      "pose": 112,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 112,
+      "key": "imu_board"
+    },
+    {
+      "pose": 113,
+      "key": "power_support"
+    },
+    {
+      "pose": 113,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 113,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 113,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 113,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 113,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 113,
+      "key": "motor11"
+    },
+    {
+      "pose": 113,
+      "key": "motor12"
+    },
+    {
+      "pose": 113,
+      "key": "motor13"
+    },
+    {
+      "pose": 113,
+      "key": "motor14"
+    },
+    {
+      "pose": 113,
+      "key": "shell_left"
+    },
+    {
+      "pose": 113,
+      "key": "shell_right"
+    },
+    {
+      "pose": 113,
+      "key": "torso_base"
+    },
+    {
+      "pose": 113,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 113,
+      "key": "imu_board"
+    },
+    {
+      "pose": 114,
+      "key": "power_support"
+    },
+    {
+      "pose": 114,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 114,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 114,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 114,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 114,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 114,
+      "key": "motor11"
+    },
+    {
+      "pose": 114,
+      "key": "motor12"
+    },
+    {
+      "pose": 114,
+      "key": "motor13"
+    },
+    {
+      "pose": 114,
+      "key": "motor14"
+    },
+    {
+      "pose": 114,
+      "key": "shell_left"
+    },
+    {
+      "pose": 114,
+      "key": "shell_right"
+    },
+    {
+      "pose": 114,
+      "key": "torso_base"
+    },
+    {
+      "pose": 114,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 114,
+      "key": "imu_board"
+    },
+    {
+      "pose": 115,
+      "key": "power_support"
+    },
+    {
+      "pose": 115,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 115,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 115,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 115,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 115,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 115,
+      "key": "motor11"
+    },
+    {
+      "pose": 115,
+      "key": "motor12"
+    },
+    {
+      "pose": 115,
+      "key": "motor13"
+    },
+    {
+      "pose": 115,
+      "key": "motor14"
+    },
+    {
+      "pose": 115,
+      "key": "shell_left"
+    },
+    {
+      "pose": 115,
+      "key": "shell_right"
+    },
+    {
+      "pose": 115,
+      "key": "torso_base"
+    },
+    {
+      "pose": 115,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 115,
+      "key": "imu_board"
+    },
+    {
+      "pose": 116,
+      "key": "power_support"
+    },
+    {
+      "pose": 116,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 116,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 116,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 116,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 116,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 116,
+      "key": "motor11"
+    },
+    {
+      "pose": 116,
+      "key": "motor12"
+    },
+    {
+      "pose": 116,
+      "key": "motor13"
+    },
+    {
+      "pose": 116,
+      "key": "motor14"
+    },
+    {
+      "pose": 116,
+      "key": "shell_left"
+    },
+    {
+      "pose": 116,
+      "key": "shell_right"
+    },
+    {
+      "pose": 116,
+      "key": "torso_base"
+    },
+    {
+      "pose": 116,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 116,
+      "key": "imu_board"
+    },
+    {
+      "pose": 117,
+      "key": "power_support"
+    },
+    {
+      "pose": 117,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 117,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 117,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 117,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 117,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 117,
+      "key": "motor11"
+    },
+    {
+      "pose": 117,
+      "key": "motor12"
+    },
+    {
+      "pose": 117,
+      "key": "motor13"
+    },
+    {
+      "pose": 117,
+      "key": "motor14"
+    },
+    {
+      "pose": 117,
+      "key": "shell_left"
+    },
+    {
+      "pose": 117,
+      "key": "shell_right"
+    },
+    {
+      "pose": 117,
+      "key": "torso_base"
+    },
+    {
+      "pose": 117,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 117,
+      "key": "imu_board"
+    },
+    {
+      "pose": 118,
+      "key": "power_support"
+    },
+    {
+      "pose": 118,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 118,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 118,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 118,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 118,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 118,
+      "key": "motor11"
+    },
+    {
+      "pose": 118,
+      "key": "motor12"
+    },
+    {
+      "pose": 118,
+      "key": "motor13"
+    },
+    {
+      "pose": 118,
+      "key": "motor14"
+    },
+    {
+      "pose": 118,
+      "key": "shell_left"
+    },
+    {
+      "pose": 118,
+      "key": "shell_right"
+    },
+    {
+      "pose": 118,
+      "key": "torso_base"
+    },
+    {
+      "pose": 118,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 118,
+      "key": "imu_board"
+    },
+    {
+      "pose": 119,
+      "key": "power_support"
+    },
+    {
+      "pose": 119,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 119,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 119,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 119,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 119,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 119,
+      "key": "motor11"
+    },
+    {
+      "pose": 119,
+      "key": "motor12"
+    },
+    {
+      "pose": 119,
+      "key": "motor13"
+    },
+    {
+      "pose": 119,
+      "key": "motor14"
+    },
+    {
+      "pose": 119,
+      "key": "shell_left"
+    },
+    {
+      "pose": 119,
+      "key": "shell_right"
+    },
+    {
+      "pose": 119,
+      "key": "torso_base"
+    },
+    {
+      "pose": 119,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 119,
+      "key": "imu_board"
+    },
+    {
+      "pose": 120,
+      "key": "power_support"
+    },
+    {
+      "pose": 120,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 120,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 120,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 120,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 120,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 120,
+      "key": "motor11"
+    },
+    {
+      "pose": 120,
+      "key": "motor12"
+    },
+    {
+      "pose": 120,
+      "key": "motor13"
+    },
+    {
+      "pose": 120,
+      "key": "motor14"
+    },
+    {
+      "pose": 120,
+      "key": "shell_left"
+    },
+    {
+      "pose": 120,
+      "key": "shell_right"
+    },
+    {
+      "pose": 120,
+      "key": "torso_base"
+    },
+    {
+      "pose": 120,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 120,
+      "key": "imu_board"
+    },
+    {
+      "pose": 121,
+      "key": "power_support"
+    },
+    {
+      "pose": 121,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 121,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 121,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 121,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 121,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 121,
+      "key": "motor11"
+    },
+    {
+      "pose": 121,
+      "key": "motor12"
+    },
+    {
+      "pose": 121,
+      "key": "motor13"
+    },
+    {
+      "pose": 121,
+      "key": "motor14"
+    },
+    {
+      "pose": 121,
+      "key": "shell_left"
+    },
+    {
+      "pose": 121,
+      "key": "shell_right"
+    },
+    {
+      "pose": 121,
+      "key": "torso_base"
+    },
+    {
+      "pose": 121,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 121,
+      "key": "imu_board"
+    },
+    {
+      "pose": 122,
+      "key": "power_support"
+    },
+    {
+      "pose": 122,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 122,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 122,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 122,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 122,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 122,
+      "key": "motor11"
+    },
+    {
+      "pose": 122,
+      "key": "motor12"
+    },
+    {
+      "pose": 122,
+      "key": "motor13"
+    },
+    {
+      "pose": 122,
+      "key": "motor14"
+    },
+    {
+      "pose": 122,
+      "key": "shell_left"
+    },
+    {
+      "pose": 122,
+      "key": "shell_right"
+    },
+    {
+      "pose": 122,
+      "key": "torso_base"
+    },
+    {
+      "pose": 122,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 122,
+      "key": "imu_board"
+    },
+    {
+      "pose": 123,
+      "key": "power_support"
+    },
+    {
+      "pose": 123,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 123,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 123,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 123,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 123,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 123,
+      "key": "motor11"
+    },
+    {
+      "pose": 123,
+      "key": "motor12"
+    },
+    {
+      "pose": 123,
+      "key": "motor13"
+    },
+    {
+      "pose": 123,
+      "key": "motor14"
+    },
+    {
+      "pose": 123,
+      "key": "shell_left"
+    },
+    {
+      "pose": 123,
+      "key": "shell_right"
+    },
+    {
+      "pose": 123,
+      "key": "torso_base"
+    },
+    {
+      "pose": 123,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 123,
+      "key": "imu_board"
+    },
+    {
+      "pose": 124,
+      "key": "power_support"
+    },
+    {
+      "pose": 124,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 124,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 124,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 124,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 124,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 124,
+      "key": "motor11"
+    },
+    {
+      "pose": 124,
+      "key": "motor12"
+    },
+    {
+      "pose": 124,
+      "key": "motor13"
+    },
+    {
+      "pose": 124,
+      "key": "motor14"
+    },
+    {
+      "pose": 124,
+      "key": "shell_left"
+    },
+    {
+      "pose": 124,
+      "key": "shell_right"
+    },
+    {
+      "pose": 124,
+      "key": "torso_base"
+    },
+    {
+      "pose": 124,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 124,
+      "key": "imu_board"
+    },
+    {
+      "pose": 125,
+      "key": "power_support"
+    },
+    {
+      "pose": 125,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 125,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 125,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 125,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 125,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 125,
+      "key": "motor11"
+    },
+    {
+      "pose": 125,
+      "key": "motor12"
+    },
+    {
+      "pose": 125,
+      "key": "motor13"
+    },
+    {
+      "pose": 125,
+      "key": "motor14"
+    },
+    {
+      "pose": 125,
+      "key": "shell_left"
+    },
+    {
+      "pose": 125,
+      "key": "shell_right"
+    },
+    {
+      "pose": 125,
+      "key": "torso_base"
+    },
+    {
+      "pose": 125,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 125,
+      "key": "imu_board"
+    },
+    {
+      "pose": 126,
+      "key": "power_support"
+    },
+    {
+      "pose": 126,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 126,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 126,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 126,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 126,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 126,
+      "key": "motor11"
+    },
+    {
+      "pose": 126,
+      "key": "motor12"
+    },
+    {
+      "pose": 126,
+      "key": "motor13"
+    },
+    {
+      "pose": 126,
+      "key": "motor14"
+    },
+    {
+      "pose": 126,
+      "key": "shell_left"
+    },
+    {
+      "pose": 126,
+      "key": "shell_right"
+    },
+    {
+      "pose": 126,
+      "key": "torso_base"
+    },
+    {
+      "pose": 126,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 126,
+      "key": "imu_board"
+    },
+    {
+      "pose": 127,
+      "key": "power_support"
+    },
+    {
+      "pose": 127,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 127,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 127,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 127,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 127,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 127,
+      "key": "motor11"
+    },
+    {
+      "pose": 127,
+      "key": "motor12"
+    },
+    {
+      "pose": 127,
+      "key": "motor13"
+    },
+    {
+      "pose": 127,
+      "key": "motor14"
+    },
+    {
+      "pose": 127,
+      "key": "shell_left"
+    },
+    {
+      "pose": 127,
+      "key": "shell_right"
+    },
+    {
+      "pose": 127,
+      "key": "torso_base"
+    },
+    {
+      "pose": 127,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 127,
+      "key": "imu_board"
+    },
+    {
+      "pose": 128,
+      "key": "power_support"
+    },
+    {
+      "pose": 128,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 128,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 128,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 128,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 128,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 128,
+      "key": "motor11"
+    },
+    {
+      "pose": 128,
+      "key": "motor12"
+    },
+    {
+      "pose": 128,
+      "key": "motor13"
+    },
+    {
+      "pose": 128,
+      "key": "motor14"
+    },
+    {
+      "pose": 128,
+      "key": "shell_left"
+    },
+    {
+      "pose": 128,
+      "key": "shell_right"
+    },
+    {
+      "pose": 128,
+      "key": "torso_base"
+    },
+    {
+      "pose": 128,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 128,
+      "key": "imu_board"
+    },
+    {
+      "pose": 129,
+      "key": "power_support"
+    },
+    {
+      "pose": 129,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 129,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 129,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 129,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 129,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 129,
+      "key": "motor11"
+    },
+    {
+      "pose": 129,
+      "key": "motor12"
+    },
+    {
+      "pose": 129,
+      "key": "motor13"
+    },
+    {
+      "pose": 129,
+      "key": "motor14"
+    },
+    {
+      "pose": 129,
+      "key": "shell_left"
+    },
+    {
+      "pose": 129,
+      "key": "shell_right"
+    },
+    {
+      "pose": 129,
+      "key": "torso_base"
+    },
+    {
+      "pose": 129,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 129,
+      "key": "imu_board"
+    },
+    {
+      "pose": 130,
+      "key": "power_support"
+    },
+    {
+      "pose": 130,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 130,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 130,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 130,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 130,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 130,
+      "key": "motor11"
+    },
+    {
+      "pose": 130,
+      "key": "motor12"
+    },
+    {
+      "pose": 130,
+      "key": "motor13"
+    },
+    {
+      "pose": 130,
+      "key": "motor14"
+    },
+    {
+      "pose": 130,
+      "key": "shell_left"
+    },
+    {
+      "pose": 130,
+      "key": "shell_right"
+    },
+    {
+      "pose": 130,
+      "key": "torso_base"
+    },
+    {
+      "pose": 130,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 130,
+      "key": "imu_board"
+    },
+    {
+      "pose": 131,
+      "key": "power_support"
+    },
+    {
+      "pose": 131,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 131,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 131,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 131,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 131,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 131,
+      "key": "motor11"
+    },
+    {
+      "pose": 131,
+      "key": "motor12"
+    },
+    {
+      "pose": 131,
+      "key": "motor13"
+    },
+    {
+      "pose": 131,
+      "key": "motor14"
+    },
+    {
+      "pose": 131,
+      "key": "shell_left"
+    },
+    {
+      "pose": 131,
+      "key": "shell_right"
+    },
+    {
+      "pose": 131,
+      "key": "torso_base"
+    },
+    {
+      "pose": 131,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 131,
+      "key": "imu_board"
+    },
+    {
+      "pose": 132,
+      "key": "power_support"
+    },
+    {
+      "pose": 132,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 132,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 132,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 132,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 132,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 132,
+      "key": "motor11"
+    },
+    {
+      "pose": 132,
+      "key": "motor12"
+    },
+    {
+      "pose": 132,
+      "key": "motor13"
+    },
+    {
+      "pose": 132,
+      "key": "motor14"
+    },
+    {
+      "pose": 132,
+      "key": "shell_left"
+    },
+    {
+      "pose": 132,
+      "key": "shell_right"
+    },
+    {
+      "pose": 132,
+      "key": "torso_base"
+    },
+    {
+      "pose": 132,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 132,
+      "key": "imu_board"
+    },
+    {
+      "pose": 133,
+      "key": "power_support"
+    },
+    {
+      "pose": 133,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 133,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 133,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 133,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 133,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 133,
+      "key": "motor11"
+    },
+    {
+      "pose": 133,
+      "key": "motor12"
+    },
+    {
+      "pose": 133,
+      "key": "motor13"
+    },
+    {
+      "pose": 133,
+      "key": "motor14"
+    },
+    {
+      "pose": 133,
+      "key": "shell_left"
+    },
+    {
+      "pose": 133,
+      "key": "shell_right"
+    },
+    {
+      "pose": 133,
+      "key": "torso_base"
+    },
+    {
+      "pose": 133,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 133,
+      "key": "imu_board"
+    },
+    {
+      "pose": 134,
+      "key": "power_support"
+    },
+    {
+      "pose": 134,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 134,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 134,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 134,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 134,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 134,
+      "key": "motor11"
+    },
+    {
+      "pose": 134,
+      "key": "motor12"
+    },
+    {
+      "pose": 134,
+      "key": "motor13"
+    },
+    {
+      "pose": 134,
+      "key": "motor14"
+    },
+    {
+      "pose": 134,
+      "key": "shell_left"
+    },
+    {
+      "pose": 134,
+      "key": "shell_right"
+    },
+    {
+      "pose": 134,
+      "key": "torso_base"
+    },
+    {
+      "pose": 134,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 134,
+      "key": "imu_board"
+    },
+    {
+      "pose": 135,
+      "key": "power_support"
+    },
+    {
+      "pose": 135,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 135,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 135,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 135,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 135,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 135,
+      "key": "motor11"
+    },
+    {
+      "pose": 135,
+      "key": "motor12"
+    },
+    {
+      "pose": 135,
+      "key": "motor13"
+    },
+    {
+      "pose": 135,
+      "key": "motor14"
+    },
+    {
+      "pose": 135,
+      "key": "shell_left"
+    },
+    {
+      "pose": 135,
+      "key": "shell_right"
+    },
+    {
+      "pose": 135,
+      "key": "torso_base"
+    },
+    {
+      "pose": 135,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 135,
+      "key": "imu_board"
+    },
+    {
+      "pose": 136,
+      "key": "power_support"
+    },
+    {
+      "pose": 136,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 136,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 136,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 136,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 136,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 136,
+      "key": "motor11"
+    },
+    {
+      "pose": 136,
+      "key": "motor12"
+    },
+    {
+      "pose": 136,
+      "key": "motor13"
+    },
+    {
+      "pose": 136,
+      "key": "motor14"
+    },
+    {
+      "pose": 136,
+      "key": "shell_left"
+    },
+    {
+      "pose": 136,
+      "key": "shell_right"
+    },
+    {
+      "pose": 136,
+      "key": "torso_base"
+    },
+    {
+      "pose": 136,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 136,
+      "key": "imu_board"
+    },
+    {
+      "pose": 137,
+      "key": "power_support"
+    },
+    {
+      "pose": 137,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 137,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 137,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 137,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 137,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 137,
+      "key": "motor11"
+    },
+    {
+      "pose": 137,
+      "key": "motor12"
+    },
+    {
+      "pose": 137,
+      "key": "motor13"
+    },
+    {
+      "pose": 137,
+      "key": "motor14"
+    },
+    {
+      "pose": 137,
+      "key": "shell_left"
+    },
+    {
+      "pose": 137,
+      "key": "shell_right"
+    },
+    {
+      "pose": 137,
+      "key": "torso_base"
+    },
+    {
+      "pose": 137,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 137,
+      "key": "imu_board"
+    },
+    {
+      "pose": 138,
+      "key": "power_support"
+    },
+    {
+      "pose": 138,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 138,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 138,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 138,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 138,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 138,
+      "key": "motor11"
+    },
+    {
+      "pose": 138,
+      "key": "motor12"
+    },
+    {
+      "pose": 138,
+      "key": "motor13"
+    },
+    {
+      "pose": 138,
+      "key": "motor14"
+    },
+    {
+      "pose": 138,
+      "key": "shell_left"
+    },
+    {
+      "pose": 138,
+      "key": "shell_right"
+    },
+    {
+      "pose": 138,
+      "key": "torso_base"
+    },
+    {
+      "pose": 138,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 138,
+      "key": "imu_board"
+    },
+    {
+      "pose": 139,
+      "key": "power_support"
+    },
+    {
+      "pose": 139,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 139,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 139,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 139,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 139,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 139,
+      "key": "motor11"
+    },
+    {
+      "pose": 139,
+      "key": "motor12"
+    },
+    {
+      "pose": 139,
+      "key": "motor13"
+    },
+    {
+      "pose": 139,
+      "key": "motor14"
+    },
+    {
+      "pose": 139,
+      "key": "shell_left"
+    },
+    {
+      "pose": 139,
+      "key": "shell_right"
+    },
+    {
+      "pose": 139,
+      "key": "torso_base"
+    },
+    {
+      "pose": 139,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 139,
+      "key": "imu_board"
+    },
+    {
+      "pose": 140,
+      "key": "power_support"
+    },
+    {
+      "pose": 140,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 140,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 140,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 140,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 140,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 140,
+      "key": "motor11"
+    },
+    {
+      "pose": 140,
+      "key": "motor12"
+    },
+    {
+      "pose": 140,
+      "key": "motor13"
+    },
+    {
+      "pose": 140,
+      "key": "motor14"
+    },
+    {
+      "pose": 140,
+      "key": "shell_left"
+    },
+    {
+      "pose": 140,
+      "key": "shell_right"
+    },
+    {
+      "pose": 140,
+      "key": "torso_base"
+    },
+    {
+      "pose": 140,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 140,
+      "key": "imu_board"
+    },
+    {
+      "pose": 141,
+      "key": "power_support"
+    },
+    {
+      "pose": 141,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 141,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 141,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 141,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 141,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 141,
+      "key": "motor11"
+    },
+    {
+      "pose": 141,
+      "key": "motor12"
+    },
+    {
+      "pose": 141,
+      "key": "motor13"
+    },
+    {
+      "pose": 141,
+      "key": "motor14"
+    },
+    {
+      "pose": 141,
+      "key": "shell_left"
+    },
+    {
+      "pose": 141,
+      "key": "shell_right"
+    },
+    {
+      "pose": 141,
+      "key": "torso_base"
+    },
+    {
+      "pose": 141,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 141,
+      "key": "imu_board"
+    },
+    {
+      "pose": 142,
+      "key": "power_support"
+    },
+    {
+      "pose": 142,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 142,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 142,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 142,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 142,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 142,
+      "key": "motor11"
+    },
+    {
+      "pose": 142,
+      "key": "motor12"
+    },
+    {
+      "pose": 142,
+      "key": "motor13"
+    },
+    {
+      "pose": 142,
+      "key": "motor14"
+    },
+    {
+      "pose": 142,
+      "key": "shell_left"
+    },
+    {
+      "pose": 142,
+      "key": "shell_right"
+    },
+    {
+      "pose": 142,
+      "key": "torso_base"
+    },
+    {
+      "pose": 142,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 142,
+      "key": "imu_board"
+    },
+    {
+      "pose": 143,
+      "key": "power_support"
+    },
+    {
+      "pose": 143,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 143,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 143,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 143,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 143,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 143,
+      "key": "motor11"
+    },
+    {
+      "pose": 143,
+      "key": "motor12"
+    },
+    {
+      "pose": 143,
+      "key": "motor13"
+    },
+    {
+      "pose": 143,
+      "key": "motor14"
+    },
+    {
+      "pose": 143,
+      "key": "shell_left"
+    },
+    {
+      "pose": 143,
+      "key": "shell_right"
+    },
+    {
+      "pose": 143,
+      "key": "torso_base"
+    },
+    {
+      "pose": 143,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 143,
+      "key": "imu_board"
+    },
+    {
+      "pose": 144,
+      "key": "power_support"
+    },
+    {
+      "pose": 144,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 144,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 144,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 144,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 144,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 144,
+      "key": "motor11"
+    },
+    {
+      "pose": 144,
+      "key": "motor12"
+    },
+    {
+      "pose": 144,
+      "key": "motor13"
+    },
+    {
+      "pose": 144,
+      "key": "motor14"
+    },
+    {
+      "pose": 144,
+      "key": "shell_left"
+    },
+    {
+      "pose": 144,
+      "key": "shell_right"
+    },
+    {
+      "pose": 144,
+      "key": "torso_base"
+    },
+    {
+      "pose": 144,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 144,
+      "key": "imu_board"
+    },
+    {
+      "pose": 145,
+      "key": "power_support"
+    },
+    {
+      "pose": 145,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 145,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 145,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 145,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 145,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 145,
+      "key": "motor11"
+    },
+    {
+      "pose": 145,
+      "key": "motor12"
+    },
+    {
+      "pose": 145,
+      "key": "motor13"
+    },
+    {
+      "pose": 145,
+      "key": "motor14"
+    },
+    {
+      "pose": 145,
+      "key": "shell_left"
+    },
+    {
+      "pose": 145,
+      "key": "shell_right"
+    },
+    {
+      "pose": 145,
+      "key": "torso_base"
+    },
+    {
+      "pose": 145,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 145,
+      "key": "imu_board"
+    },
+    {
+      "pose": 146,
+      "key": "power_support"
+    },
+    {
+      "pose": 146,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 146,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 146,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 146,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 146,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 146,
+      "key": "motor11"
+    },
+    {
+      "pose": 146,
+      "key": "motor12"
+    },
+    {
+      "pose": 146,
+      "key": "motor13"
+    },
+    {
+      "pose": 146,
+      "key": "motor14"
+    },
+    {
+      "pose": 146,
+      "key": "shell_left"
+    },
+    {
+      "pose": 146,
+      "key": "shell_right"
+    },
+    {
+      "pose": 146,
+      "key": "torso_base"
+    },
+    {
+      "pose": 146,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 146,
+      "key": "imu_board"
+    },
+    {
+      "pose": 147,
+      "key": "power_support"
+    },
+    {
+      "pose": 147,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 147,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 147,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 147,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 147,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 147,
+      "key": "motor11"
+    },
+    {
+      "pose": 147,
+      "key": "motor12"
+    },
+    {
+      "pose": 147,
+      "key": "motor13"
+    },
+    {
+      "pose": 147,
+      "key": "motor14"
+    },
+    {
+      "pose": 147,
+      "key": "shell_left"
+    },
+    {
+      "pose": 147,
+      "key": "shell_right"
+    },
+    {
+      "pose": 147,
+      "key": "torso_base"
+    },
+    {
+      "pose": 147,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 147,
+      "key": "imu_board"
+    },
+    {
+      "pose": 149,
+      "key": "power_support"
+    },
+    {
+      "pose": 149,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 149,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 149,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 149,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 149,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 149,
+      "key": "motor11"
+    },
+    {
+      "pose": 149,
+      "key": "motor12"
+    },
+    {
+      "pose": 149,
+      "key": "motor13"
+    },
+    {
+      "pose": 149,
+      "key": "motor14"
+    },
+    {
+      "pose": 149,
+      "key": "shell_left"
+    },
+    {
+      "pose": 149,
+      "key": "shell_right"
+    },
+    {
+      "pose": 149,
+      "key": "torso_base"
+    },
+    {
+      "pose": 149,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 149,
+      "key": "imu_board"
+    },
+    {
+      "pose": 151,
+      "key": "power_support"
+    },
+    {
+      "pose": 151,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 151,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 151,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 151,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 151,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 151,
+      "key": "motor11"
+    },
+    {
+      "pose": 151,
+      "key": "motor12"
+    },
+    {
+      "pose": 151,
+      "key": "motor13"
+    },
+    {
+      "pose": 151,
+      "key": "motor14"
+    },
+    {
+      "pose": 151,
+      "key": "shell_left"
+    },
+    {
+      "pose": 151,
+      "key": "shell_right"
+    },
+    {
+      "pose": 151,
+      "key": "torso_base"
+    },
+    {
+      "pose": 151,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 151,
+      "key": "imu_board"
+    },
+    {
+      "pose": 152,
+      "key": "power_support"
+    },
+    {
+      "pose": 152,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 152,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 152,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 152,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 152,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 152,
+      "key": "motor11"
+    },
+    {
+      "pose": 152,
+      "key": "motor12"
+    },
+    {
+      "pose": 152,
+      "key": "motor13"
+    },
+    {
+      "pose": 152,
+      "key": "motor14"
+    },
+    {
+      "pose": 152,
+      "key": "shell_left"
+    },
+    {
+      "pose": 152,
+      "key": "shell_right"
+    },
+    {
+      "pose": 152,
+      "key": "torso_base"
+    },
+    {
+      "pose": 152,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 152,
+      "key": "imu_board"
+    },
+    {
+      "pose": 153,
+      "key": "power_support"
+    },
+    {
+      "pose": 153,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 153,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 153,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 153,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 153,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 153,
+      "key": "motor11"
+    },
+    {
+      "pose": 153,
+      "key": "motor12"
+    },
+    {
+      "pose": 153,
+      "key": "motor13"
+    },
+    {
+      "pose": 153,
+      "key": "motor14"
+    },
+    {
+      "pose": 153,
+      "key": "shell_left"
+    },
+    {
+      "pose": 153,
+      "key": "shell_right"
+    },
+    {
+      "pose": 153,
+      "key": "torso_base"
+    },
+    {
+      "pose": 153,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 153,
+      "key": "imu_board"
+    },
+    {
+      "pose": 155,
+      "key": "power_support"
+    },
+    {
+      "pose": 155,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 155,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 155,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 155,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 155,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 155,
+      "key": "motor11"
+    },
+    {
+      "pose": 155,
+      "key": "motor12"
+    },
+    {
+      "pose": 155,
+      "key": "motor13"
+    },
+    {
+      "pose": 155,
+      "key": "motor14"
+    },
+    {
+      "pose": 155,
+      "key": "shell_left"
+    },
+    {
+      "pose": 155,
+      "key": "shell_right"
+    },
+    {
+      "pose": 155,
+      "key": "torso_base"
+    },
+    {
+      "pose": 155,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 155,
+      "key": "imu_board"
+    },
+    {
+      "pose": 158,
+      "key": "power_support"
+    },
+    {
+      "pose": 158,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 158,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 158,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 158,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 158,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 158,
+      "key": "motor11"
+    },
+    {
+      "pose": 158,
+      "key": "motor12"
+    },
+    {
+      "pose": 158,
+      "key": "motor13"
+    },
+    {
+      "pose": 158,
+      "key": "motor14"
+    },
+    {
+      "pose": 158,
+      "key": "shell_left"
+    },
+    {
+      "pose": 158,
+      "key": "shell_right"
+    },
+    {
+      "pose": 158,
+      "key": "torso_base"
+    },
+    {
+      "pose": 158,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 158,
+      "key": "imu_board"
+    },
+    {
+      "pose": 160,
+      "key": "power_support"
+    },
+    {
+      "pose": 160,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 160,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 160,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 160,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 160,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 160,
+      "key": "motor11"
+    },
+    {
+      "pose": 160,
+      "key": "motor12"
+    },
+    {
+      "pose": 160,
+      "key": "motor13"
+    },
+    {
+      "pose": 160,
+      "key": "motor14"
+    },
+    {
+      "pose": 160,
+      "key": "shell_left"
+    },
+    {
+      "pose": 160,
+      "key": "shell_right"
+    },
+    {
+      "pose": 160,
+      "key": "torso_base"
+    },
+    {
+      "pose": 160,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 160,
+      "key": "imu_board"
+    },
+    {
+      "pose": 161,
+      "key": "power_support"
+    },
+    {
+      "pose": 161,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 161,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 161,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 161,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 161,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 161,
+      "key": "motor11"
+    },
+    {
+      "pose": 161,
+      "key": "motor12"
+    },
+    {
+      "pose": 161,
+      "key": "motor13"
+    },
+    {
+      "pose": 161,
+      "key": "motor14"
+    },
+    {
+      "pose": 161,
+      "key": "shell_left"
+    },
+    {
+      "pose": 161,
+      "key": "shell_right"
+    },
+    {
+      "pose": 161,
+      "key": "torso_base"
+    },
+    {
+      "pose": 161,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 161,
+      "key": "imu_board"
+    },
+    {
+      "pose": 162,
+      "key": "power_support"
+    },
+    {
+      "pose": 162,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 162,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 162,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 162,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 162,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 162,
+      "key": "motor11"
+    },
+    {
+      "pose": 162,
+      "key": "motor12"
+    },
+    {
+      "pose": 162,
+      "key": "motor13"
+    },
+    {
+      "pose": 162,
+      "key": "motor14"
+    },
+    {
+      "pose": 162,
+      "key": "shell_left"
+    },
+    {
+      "pose": 162,
+      "key": "shell_right"
+    },
+    {
+      "pose": 162,
+      "key": "torso_base"
+    },
+    {
+      "pose": 162,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 162,
+      "key": "imu_board"
+    },
+    {
+      "pose": 164,
+      "key": "power_support"
+    },
+    {
+      "pose": 164,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 164,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 164,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 164,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 164,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 164,
+      "key": "motor11"
+    },
+    {
+      "pose": 164,
+      "key": "motor12"
+    },
+    {
+      "pose": 164,
+      "key": "motor13"
+    },
+    {
+      "pose": 164,
+      "key": "motor14"
+    },
+    {
+      "pose": 164,
+      "key": "shell_left"
+    },
+    {
+      "pose": 164,
+      "key": "shell_right"
+    },
+    {
+      "pose": 164,
+      "key": "torso_base"
+    },
+    {
+      "pose": 164,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 164,
+      "key": "imu_board"
+    },
+    {
+      "pose": 167,
+      "key": "power_support"
+    },
+    {
+      "pose": 167,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 167,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 167,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 167,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 167,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 167,
+      "key": "motor11"
+    },
+    {
+      "pose": 167,
+      "key": "motor12"
+    },
+    {
+      "pose": 167,
+      "key": "motor13"
+    },
+    {
+      "pose": 167,
+      "key": "motor14"
+    },
+    {
+      "pose": 167,
+      "key": "shell_left"
+    },
+    {
+      "pose": 167,
+      "key": "shell_right"
+    },
+    {
+      "pose": 167,
+      "key": "torso_base"
+    },
+    {
+      "pose": 167,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 167,
+      "key": "imu_board"
+    },
+    {
+      "pose": 169,
+      "key": "power_support"
+    },
+    {
+      "pose": 169,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 169,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 169,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 169,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 169,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 169,
+      "key": "motor11"
+    },
+    {
+      "pose": 169,
+      "key": "motor12"
+    },
+    {
+      "pose": 169,
+      "key": "motor13"
+    },
+    {
+      "pose": 169,
+      "key": "motor14"
+    },
+    {
+      "pose": 169,
+      "key": "shell_left"
+    },
+    {
+      "pose": 169,
+      "key": "shell_right"
+    },
+    {
+      "pose": 169,
+      "key": "torso_base"
+    },
+    {
+      "pose": 169,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 169,
+      "key": "imu_board"
+    },
+    {
+      "pose": 170,
+      "key": "power_support"
+    },
+    {
+      "pose": 170,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 170,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 170,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 170,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 170,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 170,
+      "key": "motor11"
+    },
+    {
+      "pose": 170,
+      "key": "motor12"
+    },
+    {
+      "pose": 170,
+      "key": "motor13"
+    },
+    {
+      "pose": 170,
+      "key": "motor14"
+    },
+    {
+      "pose": 170,
+      "key": "shell_left"
+    },
+    {
+      "pose": 170,
+      "key": "shell_right"
+    },
+    {
+      "pose": 170,
+      "key": "torso_base"
+    },
+    {
+      "pose": 170,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 170,
+      "key": "imu_board"
+    },
+    {
+      "pose": 171,
+      "key": "power_support"
+    },
+    {
+      "pose": 171,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 171,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 171,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 171,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 171,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 171,
+      "key": "motor11"
+    },
+    {
+      "pose": 171,
+      "key": "motor12"
+    },
+    {
+      "pose": 171,
+      "key": "motor13"
+    },
+    {
+      "pose": 171,
+      "key": "motor14"
+    },
+    {
+      "pose": 171,
+      "key": "shell_left"
+    },
+    {
+      "pose": 171,
+      "key": "shell_right"
+    },
+    {
+      "pose": 171,
+      "key": "torso_base"
+    },
+    {
+      "pose": 171,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 171,
+      "key": "imu_board"
+    },
+    {
+      "pose": 173,
+      "key": "power_support"
+    },
+    {
+      "pose": 173,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 173,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 173,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 173,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 173,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 173,
+      "key": "motor11"
+    },
+    {
+      "pose": 173,
+      "key": "motor12"
+    },
+    {
+      "pose": 173,
+      "key": "motor13"
+    },
+    {
+      "pose": 173,
+      "key": "motor14"
+    },
+    {
+      "pose": 173,
+      "key": "shell_left"
+    },
+    {
+      "pose": 173,
+      "key": "shell_right"
+    },
+    {
+      "pose": 173,
+      "key": "torso_base"
+    },
+    {
+      "pose": 173,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 173,
+      "key": "imu_board"
+    },
+    {
+      "pose": 176,
+      "key": "power_support"
+    },
+    {
+      "pose": 176,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 176,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 176,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 176,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 176,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 176,
+      "key": "motor11"
+    },
+    {
+      "pose": 176,
+      "key": "motor12"
+    },
+    {
+      "pose": 176,
+      "key": "motor13"
+    },
+    {
+      "pose": 176,
+      "key": "motor14"
+    },
+    {
+      "pose": 176,
+      "key": "shell_left"
+    },
+    {
+      "pose": 176,
+      "key": "shell_right"
+    },
+    {
+      "pose": 176,
+      "key": "torso_base"
+    },
+    {
+      "pose": 176,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 176,
+      "key": "imu_board"
+    },
+    {
+      "pose": 178,
+      "key": "power_support"
+    },
+    {
+      "pose": 178,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 178,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 178,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 178,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 178,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 178,
+      "key": "motor11"
+    },
+    {
+      "pose": 178,
+      "key": "motor12"
+    },
+    {
+      "pose": 178,
+      "key": "motor13"
+    },
+    {
+      "pose": 178,
+      "key": "motor14"
+    },
+    {
+      "pose": 178,
+      "key": "shell_left"
+    },
+    {
+      "pose": 178,
+      "key": "shell_right"
+    },
+    {
+      "pose": 178,
+      "key": "torso_base"
+    },
+    {
+      "pose": 178,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 178,
+      "key": "imu_board"
+    },
+    {
+      "pose": 179,
+      "key": "power_support"
+    },
+    {
+      "pose": 179,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 179,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 179,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 179,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 179,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 179,
+      "key": "motor11"
+    },
+    {
+      "pose": 179,
+      "key": "motor12"
+    },
+    {
+      "pose": 179,
+      "key": "motor13"
+    },
+    {
+      "pose": 179,
+      "key": "motor14"
+    },
+    {
+      "pose": 179,
+      "key": "shell_left"
+    },
+    {
+      "pose": 179,
+      "key": "shell_right"
+    },
+    {
+      "pose": 179,
+      "key": "torso_base"
+    },
+    {
+      "pose": 179,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 179,
+      "key": "imu_board"
+    },
+    {
+      "pose": 180,
+      "key": "power_support"
+    },
+    {
+      "pose": 180,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 180,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 180,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 180,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 180,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 180,
+      "key": "motor11"
+    },
+    {
+      "pose": 180,
+      "key": "motor12"
+    },
+    {
+      "pose": 180,
+      "key": "motor13"
+    },
+    {
+      "pose": 180,
+      "key": "motor14"
+    },
+    {
+      "pose": 180,
+      "key": "shell_left"
+    },
+    {
+      "pose": 180,
+      "key": "shell_right"
+    },
+    {
+      "pose": 180,
+      "key": "torso_base"
+    },
+    {
+      "pose": 180,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 180,
+      "key": "imu_board"
+    },
+    {
+      "pose": 182,
+      "key": "power_support"
+    },
+    {
+      "pose": 182,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 182,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 182,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 182,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 182,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 182,
+      "key": "motor11"
+    },
+    {
+      "pose": 182,
+      "key": "motor12"
+    },
+    {
+      "pose": 182,
+      "key": "motor13"
+    },
+    {
+      "pose": 182,
+      "key": "motor14"
+    },
+    {
+      "pose": 182,
+      "key": "shell_left"
+    },
+    {
+      "pose": 182,
+      "key": "shell_right"
+    },
+    {
+      "pose": 182,
+      "key": "torso_base"
+    },
+    {
+      "pose": 182,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 182,
+      "key": "imu_board"
+    },
+    {
+      "pose": 185,
+      "key": "power_support"
+    },
+    {
+      "pose": 185,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 185,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 185,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 185,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 185,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 185,
+      "key": "motor11"
+    },
+    {
+      "pose": 185,
+      "key": "motor12"
+    },
+    {
+      "pose": 185,
+      "key": "motor13"
+    },
+    {
+      "pose": 185,
+      "key": "motor14"
+    },
+    {
+      "pose": 185,
+      "key": "shell_left"
+    },
+    {
+      "pose": 185,
+      "key": "shell_right"
+    },
+    {
+      "pose": 185,
+      "key": "torso_base"
+    },
+    {
+      "pose": 185,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 185,
+      "key": "imu_board"
+    },
+    {
+      "pose": 187,
+      "key": "power_support"
+    },
+    {
+      "pose": 187,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 187,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 187,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 187,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 187,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 187,
+      "key": "motor11"
+    },
+    {
+      "pose": 187,
+      "key": "motor12"
+    },
+    {
+      "pose": 187,
+      "key": "motor13"
+    },
+    {
+      "pose": 187,
+      "key": "motor14"
+    },
+    {
+      "pose": 187,
+      "key": "shell_left"
+    },
+    {
+      "pose": 187,
+      "key": "shell_right"
+    },
+    {
+      "pose": 187,
+      "key": "torso_base"
+    },
+    {
+      "pose": 187,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 187,
+      "key": "imu_board"
+    },
+    {
+      "pose": 188,
+      "key": "power_support"
+    },
+    {
+      "pose": 188,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 188,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 188,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 188,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 188,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 188,
+      "key": "motor11"
+    },
+    {
+      "pose": 188,
+      "key": "motor12"
+    },
+    {
+      "pose": 188,
+      "key": "motor13"
+    },
+    {
+      "pose": 188,
+      "key": "motor14"
+    },
+    {
+      "pose": 188,
+      "key": "shell_left"
+    },
+    {
+      "pose": 188,
+      "key": "shell_right"
+    },
+    {
+      "pose": 188,
+      "key": "torso_base"
+    },
+    {
+      "pose": 188,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 188,
+      "key": "imu_board"
+    },
+    {
+      "pose": 189,
+      "key": "power_support"
+    },
+    {
+      "pose": 189,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 189,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 189,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 189,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 189,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 189,
+      "key": "motor11"
+    },
+    {
+      "pose": 189,
+      "key": "motor12"
+    },
+    {
+      "pose": 189,
+      "key": "motor13"
+    },
+    {
+      "pose": 189,
+      "key": "motor14"
+    },
+    {
+      "pose": 189,
+      "key": "shell_left"
+    },
+    {
+      "pose": 189,
+      "key": "shell_right"
+    },
+    {
+      "pose": 189,
+      "key": "torso_base"
+    },
+    {
+      "pose": 189,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 189,
+      "key": "imu_board"
+    },
+    {
+      "pose": 191,
+      "key": "power_support"
+    },
+    {
+      "pose": 191,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 191,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 191,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 191,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 191,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 191,
+      "key": "motor11"
+    },
+    {
+      "pose": 191,
+      "key": "motor12"
+    },
+    {
+      "pose": 191,
+      "key": "motor13"
+    },
+    {
+      "pose": 191,
+      "key": "motor14"
+    },
+    {
+      "pose": 191,
+      "key": "shell_left"
+    },
+    {
+      "pose": 191,
+      "key": "shell_right"
+    },
+    {
+      "pose": 191,
+      "key": "torso_base"
+    },
+    {
+      "pose": 191,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 191,
+      "key": "imu_board"
+    },
+    {
+      "pose": 194,
+      "key": "power_support"
+    },
+    {
+      "pose": 194,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 194,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 194,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 194,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 194,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 194,
+      "key": "motor11"
+    },
+    {
+      "pose": 194,
+      "key": "motor12"
+    },
+    {
+      "pose": 194,
+      "key": "motor13"
+    },
+    {
+      "pose": 194,
+      "key": "motor14"
+    },
+    {
+      "pose": 194,
+      "key": "shell_left"
+    },
+    {
+      "pose": 194,
+      "key": "shell_right"
+    },
+    {
+      "pose": 194,
+      "key": "torso_base"
+    },
+    {
+      "pose": 194,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 194,
+      "key": "imu_board"
+    },
+    {
+      "pose": 196,
+      "key": "power_support"
+    },
+    {
+      "pose": 196,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 196,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 196,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 196,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 196,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 196,
+      "key": "motor11"
+    },
+    {
+      "pose": 196,
+      "key": "motor12"
+    },
+    {
+      "pose": 196,
+      "key": "motor13"
+    },
+    {
+      "pose": 196,
+      "key": "motor14"
+    },
+    {
+      "pose": 196,
+      "key": "shell_left"
+    },
+    {
+      "pose": 196,
+      "key": "shell_right"
+    },
+    {
+      "pose": 196,
+      "key": "torso_base"
+    },
+    {
+      "pose": 196,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 196,
+      "key": "imu_board"
+    },
+    {
+      "pose": 197,
+      "key": "power_support"
+    },
+    {
+      "pose": 197,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 197,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 197,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 197,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 197,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 197,
+      "key": "motor11"
+    },
+    {
+      "pose": 197,
+      "key": "motor12"
+    },
+    {
+      "pose": 197,
+      "key": "motor13"
+    },
+    {
+      "pose": 197,
+      "key": "motor14"
+    },
+    {
+      "pose": 197,
+      "key": "shell_left"
+    },
+    {
+      "pose": 197,
+      "key": "shell_right"
+    },
+    {
+      "pose": 197,
+      "key": "torso_base"
+    },
+    {
+      "pose": 197,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 197,
+      "key": "imu_board"
+    },
+    {
+      "pose": 198,
+      "key": "power_support"
+    },
+    {
+      "pose": 198,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 198,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 198,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 198,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 198,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 198,
+      "key": "motor11"
+    },
+    {
+      "pose": 198,
+      "key": "motor12"
+    },
+    {
+      "pose": 198,
+      "key": "motor13"
+    },
+    {
+      "pose": 198,
+      "key": "motor14"
+    },
+    {
+      "pose": 198,
+      "key": "shell_left"
+    },
+    {
+      "pose": 198,
+      "key": "shell_right"
+    },
+    {
+      "pose": 198,
+      "key": "torso_base"
+    },
+    {
+      "pose": 198,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 198,
+      "key": "imu_board"
+    },
+    {
+      "pose": 200,
+      "key": "power_support"
+    },
+    {
+      "pose": 200,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 200,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 200,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 200,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 200,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 200,
+      "key": "motor11"
+    },
+    {
+      "pose": 200,
+      "key": "motor12"
+    },
+    {
+      "pose": 200,
+      "key": "motor13"
+    },
+    {
+      "pose": 200,
+      "key": "motor14"
+    },
+    {
+      "pose": 200,
+      "key": "shell_left"
+    },
+    {
+      "pose": 200,
+      "key": "shell_right"
+    },
+    {
+      "pose": 200,
+      "key": "torso_base"
+    },
+    {
+      "pose": 200,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 200,
+      "key": "imu_board"
+    },
+    {
+      "pose": 203,
+      "key": "power_support"
+    },
+    {
+      "pose": 203,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 203,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 203,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 203,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 203,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 203,
+      "key": "motor11"
+    },
+    {
+      "pose": 203,
+      "key": "motor12"
+    },
+    {
+      "pose": 203,
+      "key": "motor13"
+    },
+    {
+      "pose": 203,
+      "key": "motor14"
+    },
+    {
+      "pose": 203,
+      "key": "shell_left"
+    },
+    {
+      "pose": 203,
+      "key": "shell_right"
+    },
+    {
+      "pose": 203,
+      "key": "torso_base"
+    },
+    {
+      "pose": 203,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 203,
+      "key": "imu_board"
+    },
+    {
+      "pose": 205,
+      "key": "power_support"
+    },
+    {
+      "pose": 205,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 205,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 205,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 205,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 205,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 205,
+      "key": "motor11"
+    },
+    {
+      "pose": 205,
+      "key": "motor12"
+    },
+    {
+      "pose": 205,
+      "key": "motor13"
+    },
+    {
+      "pose": 205,
+      "key": "motor14"
+    },
+    {
+      "pose": 205,
+      "key": "shell_left"
+    },
+    {
+      "pose": 205,
+      "key": "shell_right"
+    },
+    {
+      "pose": 205,
+      "key": "torso_base"
+    },
+    {
+      "pose": 205,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 205,
+      "key": "imu_board"
+    },
+    {
+      "pose": 206,
+      "key": "power_support"
+    },
+    {
+      "pose": 206,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 206,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 206,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 206,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 206,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 206,
+      "key": "motor11"
+    },
+    {
+      "pose": 206,
+      "key": "motor12"
+    },
+    {
+      "pose": 206,
+      "key": "motor13"
+    },
+    {
+      "pose": 206,
+      "key": "motor14"
+    },
+    {
+      "pose": 206,
+      "key": "shell_left"
+    },
+    {
+      "pose": 206,
+      "key": "shell_right"
+    },
+    {
+      "pose": 206,
+      "key": "torso_base"
+    },
+    {
+      "pose": 206,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 206,
+      "key": "imu_board"
+    },
+    {
+      "pose": 207,
+      "key": "power_support"
+    },
+    {
+      "pose": 207,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 207,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 207,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 207,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 207,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 207,
+      "key": "motor11"
+    },
+    {
+      "pose": 207,
+      "key": "motor12"
+    },
+    {
+      "pose": 207,
+      "key": "motor13"
+    },
+    {
+      "pose": 207,
+      "key": "motor14"
+    },
+    {
+      "pose": 207,
+      "key": "shell_left"
+    },
+    {
+      "pose": 207,
+      "key": "shell_right"
+    },
+    {
+      "pose": 207,
+      "key": "torso_base"
+    },
+    {
+      "pose": 207,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 207,
+      "key": "imu_board"
+    },
+    {
+      "pose": 209,
+      "key": "power_support"
+    },
+    {
+      "pose": 209,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 209,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 209,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 209,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 209,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 209,
+      "key": "motor11"
+    },
+    {
+      "pose": 209,
+      "key": "motor12"
+    },
+    {
+      "pose": 209,
+      "key": "motor13"
+    },
+    {
+      "pose": 209,
+      "key": "motor14"
+    },
+    {
+      "pose": 209,
+      "key": "shell_left"
+    },
+    {
+      "pose": 209,
+      "key": "shell_right"
+    },
+    {
+      "pose": 209,
+      "key": "torso_base"
+    },
+    {
+      "pose": 209,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 209,
+      "key": "imu_board"
+    },
+    {
+      "pose": 212,
+      "key": "power_support"
+    },
+    {
+      "pose": 212,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 212,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 212,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 212,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 212,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 212,
+      "key": "motor11"
+    },
+    {
+      "pose": 212,
+      "key": "motor12"
+    },
+    {
+      "pose": 212,
+      "key": "motor13"
+    },
+    {
+      "pose": 212,
+      "key": "motor14"
+    },
+    {
+      "pose": 212,
+      "key": "shell_left"
+    },
+    {
+      "pose": 212,
+      "key": "shell_right"
+    },
+    {
+      "pose": 212,
+      "key": "torso_base"
+    },
+    {
+      "pose": 212,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 212,
+      "key": "imu_board"
+    },
+    {
+      "pose": 214,
+      "key": "power_support"
+    },
+    {
+      "pose": 214,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 214,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 214,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 214,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 214,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 214,
+      "key": "motor11"
+    },
+    {
+      "pose": 214,
+      "key": "motor12"
+    },
+    {
+      "pose": 214,
+      "key": "motor13"
+    },
+    {
+      "pose": 214,
+      "key": "motor14"
+    },
+    {
+      "pose": 214,
+      "key": "shell_left"
+    },
+    {
+      "pose": 214,
+      "key": "shell_right"
+    },
+    {
+      "pose": 214,
+      "key": "torso_base"
+    },
+    {
+      "pose": 214,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 214,
+      "key": "imu_board"
+    },
+    {
+      "pose": 215,
+      "key": "power_support"
+    },
+    {
+      "pose": 215,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 215,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 215,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 215,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 215,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 215,
+      "key": "motor11"
+    },
+    {
+      "pose": 215,
+      "key": "motor12"
+    },
+    {
+      "pose": 215,
+      "key": "motor13"
+    },
+    {
+      "pose": 215,
+      "key": "motor14"
+    },
+    {
+      "pose": 215,
+      "key": "shell_left"
+    },
+    {
+      "pose": 215,
+      "key": "shell_right"
+    },
+    {
+      "pose": 215,
+      "key": "torso_base"
+    },
+    {
+      "pose": 215,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 215,
+      "key": "imu_board"
+    },
+    {
+      "pose": 216,
+      "key": "power_support"
+    },
+    {
+      "pose": 216,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 216,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 216,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 216,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 216,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 216,
+      "key": "motor11"
+    },
+    {
+      "pose": 216,
+      "key": "motor12"
+    },
+    {
+      "pose": 216,
+      "key": "motor13"
+    },
+    {
+      "pose": 216,
+      "key": "motor14"
+    },
+    {
+      "pose": 216,
+      "key": "shell_left"
+    },
+    {
+      "pose": 216,
+      "key": "shell_right"
+    },
+    {
+      "pose": 216,
+      "key": "torso_base"
+    },
+    {
+      "pose": 216,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 216,
+      "key": "imu_board"
+    },
+    {
+      "pose": 218,
+      "key": "power_support"
+    },
+    {
+      "pose": 218,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 218,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 218,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 218,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 218,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 218,
+      "key": "motor11"
+    },
+    {
+      "pose": 218,
+      "key": "motor12"
+    },
+    {
+      "pose": 218,
+      "key": "motor13"
+    },
+    {
+      "pose": 218,
+      "key": "motor14"
+    },
+    {
+      "pose": 218,
+      "key": "shell_left"
+    },
+    {
+      "pose": 218,
+      "key": "shell_right"
+    },
+    {
+      "pose": 218,
+      "key": "torso_base"
+    },
+    {
+      "pose": 218,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 218,
+      "key": "imu_board"
+    },
+    {
+      "pose": 221,
+      "key": "power_support"
+    },
+    {
+      "pose": 221,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 221,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 221,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 221,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 221,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 221,
+      "key": "motor11"
+    },
+    {
+      "pose": 221,
+      "key": "motor12"
+    },
+    {
+      "pose": 221,
+      "key": "motor13"
+    },
+    {
+      "pose": 221,
+      "key": "motor14"
+    },
+    {
+      "pose": 221,
+      "key": "shell_left"
+    },
+    {
+      "pose": 221,
+      "key": "shell_right"
+    },
+    {
+      "pose": 221,
+      "key": "torso_base"
+    },
+    {
+      "pose": 221,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 221,
+      "key": "imu_board"
+    },
+    {
+      "pose": 223,
+      "key": "power_support"
+    },
+    {
+      "pose": 223,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 223,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 223,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 223,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 223,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 223,
+      "key": "motor11"
+    },
+    {
+      "pose": 223,
+      "key": "motor12"
+    },
+    {
+      "pose": 223,
+      "key": "motor13"
+    },
+    {
+      "pose": 223,
+      "key": "motor14"
+    },
+    {
+      "pose": 223,
+      "key": "shell_left"
+    },
+    {
+      "pose": 223,
+      "key": "shell_right"
+    },
+    {
+      "pose": 223,
+      "key": "torso_base"
+    },
+    {
+      "pose": 223,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 223,
+      "key": "imu_board"
+    },
+    {
+      "pose": 224,
+      "key": "power_support"
+    },
+    {
+      "pose": 224,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 224,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 224,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 224,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 224,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 224,
+      "key": "motor11"
+    },
+    {
+      "pose": 224,
+      "key": "motor12"
+    },
+    {
+      "pose": 224,
+      "key": "motor13"
+    },
+    {
+      "pose": 224,
+      "key": "motor14"
+    },
+    {
+      "pose": 224,
+      "key": "shell_left"
+    },
+    {
+      "pose": 224,
+      "key": "shell_right"
+    },
+    {
+      "pose": 224,
+      "key": "torso_base"
+    },
+    {
+      "pose": 224,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 224,
+      "key": "imu_board"
+    },
+    {
+      "pose": 225,
+      "key": "power_support"
+    },
+    {
+      "pose": 225,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 225,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 225,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 225,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 225,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 225,
+      "key": "motor11"
+    },
+    {
+      "pose": 225,
+      "key": "motor12"
+    },
+    {
+      "pose": 225,
+      "key": "motor13"
+    },
+    {
+      "pose": 225,
+      "key": "motor14"
+    },
+    {
+      "pose": 225,
+      "key": "shell_left"
+    },
+    {
+      "pose": 225,
+      "key": "shell_right"
+    },
+    {
+      "pose": 225,
+      "key": "torso_base"
+    },
+    {
+      "pose": 225,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 225,
+      "key": "imu_board"
+    },
+    {
+      "pose": 227,
+      "key": "power_support"
+    },
+    {
+      "pose": 227,
+      "key": "neck_link_a"
+    },
+    {
+      "pose": 227,
+      "key": "neck_link_b"
+    },
+    {
+      "pose": 227,
+      "key": "neck_pitch"
+    },
+    {
+      "pose": 227,
+      "key": "neck_pitch_ring"
+    },
+    {
+      "pose": 227,
+      "key": "head_yaw_link"
+    },
+    {
+      "pose": 227,
+      "key": "motor11"
+    },
+    {
+      "pose": 227,
+      "key": "motor12"
+    },
+    {
+      "pose": 227,
+      "key": "motor13"
+    },
+    {
+      "pose": 227,
+      "key": "motor14"
+    },
+    {
+      "pose": 227,
+      "key": "shell_left"
+    },
+    {
+      "pose": 227,
+      "key": "shell_right"
+    },
+    {
+      "pose": 227,
+      "key": "torso_base"
+    },
+    {
+      "pose": 227,
+      "key": "imu_clamp"
+    },
+    {
+      "pose": 227,
+      "key": "imu_board"
+    }
+  ]
+}

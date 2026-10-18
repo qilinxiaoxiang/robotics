@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "marker": "GUIDE_SERVER_REGRESSION_PASS",
+  "host": "127.0.0.1",
+  "port": 8766,
+  "connection_timeout_s": 3.0,
+  "checks": [
+    {
+      "check": "normal_HEAD_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.0019495420274324715,
+      "received_bytes": 0
+    },
+    {
+      "check": "normal_GET_while_idle_incomplete_and_slow_reader_connections_open",
+      "passed": true,
+      "elapsed_s": 0.028861458005849272,
+      "received_bytes": 31898879
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/LEFT-LEG.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.html",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/ANKLE-REDESIGN.zip",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/print-colors.json",
+      "passed": true
+    },
+    {
+      "check": "exact_allowed_file",
+      "route": "/sources/motor-fasteners.json",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/viewer.js",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/../README.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%2e%2e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/sources/%2e%2e%2fREADME.md",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/%252e%252e/ASSEMBLY.html",
+      "passed": true
+    },
+    {
+      "check": "outside_allowlist_rejected",
+      "route": "/etc/passwd",
+      "passed": true
+    },
+    {
+      "check": "idle_times_out_and_closes",
+      "passed": true,
+      "wait_s": 2.7867803330300376
+    },
+    {
+      "check": "incomplete_headers_times_out_and_closes",
+      "passed": true,
+      "wait_s": 1.487502595409751e-05
+    }
+  ],
+  "script_sha256": "8ed41f34cfae704e60cd7132c66fd40e890f78d20fa27d1fac35ab8edde53245"
+}

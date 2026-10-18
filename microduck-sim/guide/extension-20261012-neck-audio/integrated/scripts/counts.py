@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Screws and printed parts the integrated design adds to V1.8 (and screws whose length changes).
+
+Each item names its source: the sibling study READMEs (audio/, pi-mount/, neck-route/) and route-A3.json. The E-pi-04
+length change is inference (clip tab 1.0 mm under the head, same tip position as the neck-route clips). Purchased boards
+and wires are listed separately; the board-connector proposals (board-connectors/README.md) are not counted because
+the DFR1202 option is an open owner decision. Writes ../counts.json.
+"""
+import json
+
+import int_lib as L
+
+NEW_PRINTED = [
+    ('speaker retainer frame (1.6 mm)', 'audio/README.md, "Every connection method" 1'),
+    ('torso clip under S12-horn-025', 'neck-route/README.md, route A2 step 2'),
+    ('neck clip under S11-case-094 (optional, at most 1.0 mm thick)', 'neck-route/README.md, route A2 step 3'),
+    ('bracket clip under S11-horn-040', 'neck-route/README.md, route A2 step 4'),
+    ('head clip under H-jaw_support-03', 'neck-route/README.md, route A2 step 6; route-A3.json clip_head'),
+    ('cap clip under E-pi-04 (new in A3)', 'route-A3.json clip_cap'),
+]
+MODIFIED_PRINTED = [
+    ('head_cap: notch and hood removed, speaker grille + collar + 2 retainer bosses, 2 amp posts, reinforced Pi rails '
+     '(option A) with the +y web trimmed', 'cap-build.json; audio/README.md; pi-mount/README.md; neck-route/README.md'),
+]
+NEW_SCREWS = [
+    ('M2 x 6 TAP', 2, 'speaker retainer into the collar bosses', 'audio/README.md'),
+    ('M2 x 6 TAP', 2, 'amplifier into the cap posts', 'audio/README.md'),
+]
+LONGER_SCREWS = [
+    ('S12-horn-025', 'M2 x 6', 'M2 x 7', 'neck-route/README.md (measured hole depth)'),
+    ('S11-horn-040', 'M2 x 6', 'M2 x 7', 'neck-route/README.md (measured hole depth)'),
+    ('H-jaw_support-03', 'M2.5 x 6', 'M2.5 x 8', 'neck-route/README.md (measured hole depth)'),
+    ('E-pi-04', 'M2 x 6 TAP', 'M2 x 7 TAP', 'inference: clip tab 1.0 mm under the head, same engagement'),
+    ('S11-case-094', 'M2 x 10', 'M2 x 10 (unchanged; clip at most 1.0 mm, engagement about 3.2 -> 2.2 mm)', 'neck-route/README.md'),
+]
+REMOVED = [('V1.8 cap-notch zip-tie hood (part of the cap) and its zip tie', 'neck-route/README.md, "Look"')]
+PURCHASED = ['speaker (audio study)', 'I2S amplifier board + 7-pin right-angle header (audio study)',
+             '1.0 mm closed-cell foam ring (audio study)', '5 female-female Dupont jumpers (audio)',
+             '8 bundle wires with crimped Dupont contacts; housings: 1 x 5 (odd row) + 1 x 1 (pin 2) + 1 x 3 (pins 6, 8, 10)']
+
+
+def main():
+    out = {'_method': __doc__.strip(), 'newPrintedParts': NEW_PRINTED, 'modifiedPrintedParts': MODIFIED_PRINTED,
+           'newScrews': NEW_SCREWS, 'longerScrews': LONGER_SCREWS, 'removed': REMOVED, 'purchased': PURCHASED,
+           'totals': {'newPrintedParts': len(NEW_PRINTED), 'newScrews': sum(n for _, n, _, _ in NEW_SCREWS),
+                      'screwsLengthened': sum(1 for x in LONGER_SCREWS if 'unchanged' not in x[2]),
+                      'newScrewTypes': 0}}
+    L.jdump(out, L.STUDY / 'counts.json')
+    print(json.dumps(out['totals']))
+
+
+if __name__ == '__main__':
+    main()

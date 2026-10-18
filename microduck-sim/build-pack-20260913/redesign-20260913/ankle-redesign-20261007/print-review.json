@@ -1,0 +1,3312 @@
+{
+  "schema_version": 1,
+  "problem_ids": [
+    "P5",
+    "P6"
+  ],
+  "review_state": "Compact v6 source/export geometry PASS; base/sleeve starting poses, cheek orientation trials only",
+  "scope": "Independent design geometry/printability and build usability; not a native print-file handoff or physical qualification",
+  "source_hashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/WORKFLOW.md": "f010005358be574e69ec3568079e94d71679a092dbc14c6fa6a54cb1625cfdb3",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/geometry/old-ankle-quality-rejection.json": "e4aefbae0b126c8cb786f87892a2fdbe758b0e498442f8f4d6909304f35b9041",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/slicing/ankle-native-comparison.json": "4a3a2c998fbfae3be4ddcac7f8298d3adeeaa6145eb69ed1252f2b0d8bf4724c",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/ring-investigation.json": "bbdedb9e029a8789ba64e58315e3f7885a949200fddd76630f2ca9bd57e5b7ef",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/assembly-path-investigation.json": "21dc8be9a147f2d2ee2eb77c5f63fdbb7d518f3ff24db49a28be1776e994fc64",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/assembly-fasteners.json": "ebfcaadb264cf33c58bae0aae40cbd7fb66a7f31b89f2ff42ec7125f059a8d0a"
+  },
+  "colors": {
+    "ankle": "orange #FF8000",
+    "sleeve": "black #202020"
+  },
+  "baseline": {
+    "community_66_downward_output_seats": 4,
+    "downward_seat_samples": 32,
+    "seat_samples": 32,
+    "source_ring_id_mm": [
+      9.643,
+      9.652
+    ],
+    "source_lower_boss_od_mm": [
+      9.985,
+      10.006
+    ],
+    "source_ring_od_mm": 14.6,
+    "source_pocket_id_mm": [
+      14.98,
+      15.006
+    ],
+    "inner_radial_interference_mm": [
+      0.168,
+      0.179
+    ],
+    "outer_radial_clearance_mm": [
+      0.19,
+      0.204
+    ],
+    "physical_source_job_identity_known": false
+  },
+  "retained_profile_starting_point": {
+    "printer": "Elegoo Centauri Carbon",
+    "nozzle_mm": 0.4,
+    "layer_height_mm": 0.2,
+    "wall_loops": 4,
+    "top_shell_layers": 5,
+    "bottom_shell_layers": 3,
+    "infill": "30%",
+    "filament": "ordinary PLA",
+    "temperature_c": 220,
+    "support_top_gap_mm": 0.2,
+    "support_interface_layers": 3,
+    "support_interface_spacing_mm": 0.15,
+    "bridge_speed_mm_s": 30,
+    "support_interface_speed_mm_s": 40,
+    "note": "Retained source profile, not verified settings for the revised mesh."
+  },
+  "acceptance_criteria": [
+    "Watertight positive-volume single solids; identify intentional separate parts.",
+    "Measure actual bed contact and functional seat orientation from revised STL, separately from noncritical overhang area.",
+    "Keep screw seats and sliding shoulders above supports wherever geometry permits; keep axial bores vertical where possible.",
+    "Measure hole walls/head seats, sleeve radial/axial wall dimensions and split edges; check native bead envelopes before any print-file acceptance.",
+    "Check assembly sequence and access with existing actual nominal screws; no screw-driven forced fit or nominal rigid overlap.",
+    "Retain orange ankle/black sleeve and existing supplier/machine/material context.",
+    "Final editable/native files, first layer, support access, physical footprint and real thumbnails are required only when a new plate is prepared."
+  ],
+  "official_sources": [
+    {
+      "url": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "verified": "2026-10-07",
+      "claim": "Orientation affects layer strength/finish; support-facing surfaces can be rough; mating tolerances vary by geometry, orientation, calibration and material."
+    },
+    {
+      "url": "https://help.prusa3d.com/article/pla_2062",
+      "verified": "2026-10-07",
+      "claim": "PLA has limited mechanical/temperature resistance; no load, torque or wear rating can be inferred for this robot from a static STL."
+    }
+  ],
+  "fit_coupon": {
+    "decision": "No separate generic coupon produced; actual small sleeve is the proposed future local fit sample",
+    "printed_sample_verified": false,
+    "orientation": "Actual selected sleeve axial orientation; guide/cheek need separate physical fit checks"
+  },
+  "native_slice_verified": false,
+  "printed_sample_verified": false,
+  "strength_verified": false,
+  "printing_performed": false,
+  "historical_candidate_reviews": [
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+      "sha256": "7f039269031df4f9530a3939441063c4bc710665e3917071910686a3a4a0544e",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 4973.831089107608,
+      "bounds": [
+        [
+          -16.5,
+          -16.29900360107422,
+          -35.854068756103516
+        ],
+        [
+          21.8367919921875,
+          9.198997497558594,
+          -1.600000023841858
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 574.6780792264024,
+          "down_45_above_0p4mm_area_mm2": 362.84550920468405,
+          "max_build_height_mm": 34.25406873226166,
+          "model_section_area_at_0.05_mm2": 14.223035399513297,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 57.79742137964729,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 140.21763642449304,
+          "down_45_total_area_mm2": 572.123292028861,
+          "down_45_above_0p4mm_area_mm2": 434.68480138865755,
+          "max_build_height_mm": 34.25406873226166,
+          "model_section_area_at_0.05_mm2": 134.65953349743768,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 134.65957256289386,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -33.0001,
+          "normal_z": -1,
+          "area_mm2": 122.74607432815537
+        },
+        {
+          "local_z_mm": -32.5001,
+          "normal_z": -1,
+          "area_mm2": 45.555768176440324
+        },
+        {
+          "local_z_mm": -31.9001,
+          "normal_z": -1,
+          "area_mm2": 15.289484274835559
+        },
+        {
+          "local_z_mm": -30.7001,
+          "normal_z": 1,
+          "area_mm2": 399.1736450325833
+        },
+        {
+          "local_z_mm": -30.4001,
+          "normal_z": 1,
+          "area_mm2": 3.74334764656669
+        },
+        {
+          "local_z_mm": -28.4001,
+          "normal_z": -1,
+          "area_mm2": 3.74334764656669
+        },
+        {
+          "local_z_mm": -26.9001,
+          "normal_z": 1,
+          "area_mm2": 15.289484274835559
+        },
+        {
+          "local_z_mm": -22.0,
+          "normal_z": 1,
+          "area_mm2": 3.634789065545192
+        },
+        {
+          "local_z_mm": -10.0,
+          "normal_z": -1,
+          "area_mm2": 3.634789065545192
+        },
+        {
+          "local_z_mm": -8.0,
+          "normal_z": -1,
+          "area_mm2": 29.11753368693371
+        },
+        {
+          "local_z_mm": -7.5,
+          "normal_z": 1,
+          "area_mm2": 4.0183672566272435
+        },
+        {
+          "local_z_mm": -5.1001,
+          "normal_z": -1,
+          "area_mm2": 9.998537805541218
+        },
+        {
+          "local_z_mm": -3.6001,
+          "normal_z": 1,
+          "area_mm2": 2.778970248610676
+        },
+        {
+          "local_z_mm": -1.6001,
+          "normal_z": -1,
+          "area_mm2": 2.778970248610676
+        },
+        {
+          "local_z_mm": -1.6,
+          "normal_z": 1,
+          "area_mm2": 137.4384906402035
+        }
+      ]
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+      "sha256": "0b8685fa52eee0c903672b60e57ac443f621cc4eb9adad8f1373220629720d13",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1473.111863473104,
+      "bounds": [
+        [
+          -16.5,
+          -16.29900360107422,
+          -1.600000023841858
+        ],
+        [
+          21.8367919921875,
+          9.198997497558594,
+          3.635929822921753
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 133.1532774337249,
+          "down_45_total_area_mm2": 401.7561252477381,
+          "down_45_above_0p4mm_area_mm2": 25.18395327007056,
+          "max_build_height_mm": 5.235929846763611,
+          "model_section_area_at_0.05_mm2": 133.1532644544853,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 133.1532251542509,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 417.14654881029156,
+          "down_45_above_0p4mm_area_mm2": 223.93362155909455,
+          "max_build_height_mm": 5.235929846763611,
+          "model_section_area_at_0.05_mm2": 16.118102551112344,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 64.35244925885317,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -1.6,
+          "normal_z": -1,
+          "area_mm2": 133.1532774337249
+        },
+        {
+          "local_z_mm": -1.3001,
+          "normal_z": -1,
+          "area_mm2": 232.89535766375815
+        },
+        {
+          "local_z_mm": -0.1001,
+          "normal_z": 1,
+          "area_mm2": 9.998537805541218
+        },
+        {
+          "local_z_mm": 0.9999,
+          "normal_z": 1,
+          "area_mm2": 115.81559627540537
+        },
+        {
+          "local_z_mm": 1.4999,
+          "normal_z": -1,
+          "area_mm2": 22.751510980699095
+        },
+        {
+          "local_z_mm": 3.0,
+          "normal_z": 1,
+          "area_mm2": 29.912334648741762
+        },
+        {
+          "local_z_mm": 3.1,
+          "normal_z": -1,
+          "area_mm2": 2.4324422893714654
+        }
+      ]
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857053,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857054,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -1.4,
+          "normal_z": -1,
+          "area_mm2": 66.757733754616
+        },
+        {
+          "local_z_mm": 1.4,
+          "normal_z": 1,
+          "area_mm2": 66.75773375461597
+        }
+      ]
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+      "sha256": "2b612109c4d84c336085fba7a534652de2375ebc9fa5bc1ab6d214a93ec23557",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 4974.149711557566,
+      "bounds": [
+        [
+          -21.8367919921875,
+          -16.29900360107422,
+          -35.85306930541992
+        ],
+        [
+          16.5,
+          9.198997497558594,
+          -1.600000023841858
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 571.8943274364693,
+          "down_45_above_0p4mm_area_mm2": 360.05904422843844,
+          "max_build_height_mm": 34.253069281578064,
+          "model_section_area_at_0.05_mm2": 14.576393626061604,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 58.14934392462801,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 134.65951791699993,
+          "down_45_total_area_mm2": 569.3464013455509,
+          "down_45_above_0p4mm_area_mm2": 434.6868834285511,
+          "max_build_height_mm": 34.253069281578064,
+          "model_section_area_at_0.05_mm2": 134.65953103016457,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 134.6595701176526,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -32.9991,
+          "normal_z": -1,
+          "area_mm2": 122.74607432815537
+        },
+        {
+          "local_z_mm": -32.4991,
+          "normal_z": -1,
+          "area_mm2": 45.555768176440324
+        },
+        {
+          "local_z_mm": -31.8991,
+          "normal_z": -1,
+          "area_mm2": 15.289484274835559
+        },
+        {
+          "local_z_mm": -30.6991,
+          "normal_z": 1,
+          "area_mm2": 399.1736450325835
+        },
+        {
+          "local_z_mm": -30.3991,
+          "normal_z": 1,
+          "area_mm2": 3.74334764656669
+        },
+        {
+          "local_z_mm": -28.3991,
+          "normal_z": -1,
+          "area_mm2": 3.74334764656669
+        },
+        {
+          "local_z_mm": -26.8991,
+          "normal_z": 1,
+          "area_mm2": 15.289484274835559
+        },
+        {
+          "local_z_mm": -21.9991,
+          "normal_z": 1,
+          "area_mm2": 3.634789065545192
+        },
+        {
+          "local_z_mm": -9.9991,
+          "normal_z": -1,
+          "area_mm2": 3.634789065545192
+        },
+        {
+          "local_z_mm": -8.0,
+          "normal_z": -1,
+          "area_mm2": 29.117534873098975
+        },
+        {
+          "local_z_mm": -7.5,
+          "normal_z": 1,
+          "area_mm2": 4.0183672566272435
+        },
+        {
+          "local_z_mm": -5.0991,
+          "normal_z": -1,
+          "area_mm2": 9.998537805541218
+        },
+        {
+          "local_z_mm": -3.5991,
+          "normal_z": 1,
+          "area_mm2": 2.778970248610676
+        },
+        {
+          "local_z_mm": -1.6,
+          "normal_z": 1,
+          "area_mm2": 134.65951791699993
+        }
+      ]
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+      "sha256": "9950f2120bac925c317b11b5bcbafecf889b07608237f38db22bd4ba5e525a88",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1472.8651384882287,
+      "bounds": [
+        [
+          -21.8367919921875,
+          -16.29900360107422,
+          -1.600000023841858
+        ],
+        [
+          16.5,
+          9.198997497558594,
+          3.634930372238159
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 130.3743047247863,
+          "down_45_total_area_mm2": 401.75612278741016,
+          "down_45_above_0p4mm_area_mm2": 25.18395327007056,
+          "max_build_height_mm": 5.234930396080017,
+          "model_section_area_at_0.05_mm2": 133.1532619555052,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 133.1532222634717,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 417.13205722142936,
+          "down_45_above_0p4mm_area_mm2": 223.9346690527188,
+          "max_build_height_mm": 5.234930396080017,
+          "model_section_area_at_0.05_mm2": 16.127900150567335,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 64.49758751589141,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -1.6,
+          "normal_z": -1,
+          "area_mm2": 130.3743047247863
+        },
+        {
+          "local_z_mm": -1.5991,
+          "normal_z": -1,
+          "area_mm2": 2.778970248610676
+        },
+        {
+          "local_z_mm": -1.2991,
+          "normal_z": -1,
+          "area_mm2": 232.89535766375823
+        },
+        {
+          "local_z_mm": -0.0991,
+          "normal_z": 1,
+          "area_mm2": 9.998537805541218
+        },
+        {
+          "local_z_mm": 1.0009,
+          "normal_z": 1,
+          "area_mm2": 115.81559627540534
+        },
+        {
+          "local_z_mm": 1.5009,
+          "normal_z": -1,
+          "area_mm2": 22.751510980699095
+        },
+        {
+          "local_z_mm": 3.0,
+          "normal_z": 1,
+          "area_mm2": 29.914138427601756
+        },
+        {
+          "local_z_mm": 3.1,
+          "normal_z": -1,
+          "area_mm2": 2.4324422893714654
+        }
+      ]
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857053,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857054,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "axial_planar_faces": [
+        {
+          "local_z_mm": -1.4,
+          "normal_z": -1,
+          "area_mm2": 66.757733754616
+        },
+        {
+          "local_z_mm": 1.4,
+          "normal_z": 1,
+          "area_mm2": 66.75773375461597
+        }
+      ]
+    },
+    {
+      "key": "left_base",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+      "sha256": "6e37faf297d6434b463c51a7c7850b5797a625496c335fdceceb7ed5f6f1bbc4",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-world.stl",
+      "world_sha256": "42bdef900cbb8a80eb72099c58d1bc0cf9a50bf9ecf166b6f99f3cd8059f712f",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 4863.266609867985,
+      "bounds": [
+        [
+          -14.661209106445312,
+          -16.29900360107422,
+          -35.854068756103516
+        ],
+        [
+          21.8367919921875,
+          9.198997497558594,
+          -1.600000023841858
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 565.8399933054179,
+          "down_45_above_0p4mm_area_mm2": 354.0074232836996,
+          "max_build_height_mm": 34.25406873226166,
+          "model_section_area_at_0.05_mm2": 14.223035399513297,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 57.797421379941305,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 124.12445563816452,
+          "down_45_total_area_mm2": 563.2859638994676,
+          "down_45_above_0p4mm_area_mm2": 442.0667660844407,
+          "max_build_height_mm": 34.25406873226166,
+          "model_section_area_at_0.05_mm2": 118.31408852831004,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 118.31409600025408,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "original_four_output_screw_seats",
+          "verified_stl_samples": 32,
+          "source_schedule_prefix": "S06-horn",
+          "local_normal_z": -1,
+          "selected_print_normal_z": 1,
+          "support_facing": false
+        },
+        {
+          "category": "motor_case_contact_face",
+          "local_z_mm": -30.70007,
+          "actual_planar_area_mm2": 399.1736450325834,
+          "local_normal_z": 1,
+          "selected_print_normal_z": -1,
+          "support_facing": true,
+          "acceptance": "Native model/support bead envelope and physical seat finish/access required; not accepted by geometric review."
+        }
+      ],
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "blind_receiver": {
+        "count": 2,
+        "centres_xy_mm": [
+          [
+            -12.0,
+            -9.0
+          ],
+          [
+            12.0,
+            -9.0
+          ]
+        ],
+        "diameter_mm": 2.15,
+        "depth_mm": 1.5,
+        "selected_pose": "Open on bed; roof facing downward. Native small bridge and empty bore envelope need verification."
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-base-PRINT.stl",
+        "sha256": "40f60ef71db5793c3b24527bc3b44655afc1b64c3fe6a14ea43582714a3ddf7b",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -3.5877914428710938
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            -1.600000023841858
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -18.249000549316406,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            18.249000549316406,
+            12.749000549316406,
+            34.25407028198242
+          ]
+        ],
+        "volume_mm3": 4863.26720366489,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "left_cheek",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+      "sha256": "fb7f962400e3b988a5b7e2d5678753dfeb28822b705f2e5494aecbb16d558c3d",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-world.stl",
+      "world_sha256": "029d2b10ca1ace204946bf7836a75b368859cec5e363f5b8f9e8be7be96f3ffc",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1385.6194174359368,
+      "bounds": [
+        [
+          -14.663056373596191,
+          -16.29900360107422,
+          -2.700000047683716
+        ],
+        [
+          21.8367919921875,
+          9.198997497558594,
+          3.0
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 4.0183672566272435,
+          "down_45_total_area_mm2": 435.73427447387485,
+          "down_45_above_0p4mm_area_mm2": 431.71590721724766,
+          "max_build_height_mm": 5.700000047683716,
+          "model_section_area_at_0.05_mm2": 4.5363599661577725,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 6.2786990987816065,
+          "model_section_islands_at_0.2": 2
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 220.15232228535973,
+          "down_45_total_area_mm2": 452.3720895858025,
+          "down_45_above_0p4mm_area_mm2": 182.10794472217123,
+          "max_build_height_mm": 5.700000047683716,
+          "model_section_area_at_0.05_mm2": 226.32354404429918,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 241.7225645684353,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "inside_axial_capture_lip",
+          "local_z_mm": 1.49993,
+          "actual_planar_area_mm2": 22.751510980699095,
+          "local_normal_z": -1,
+          "selected_print_normal_z": 1,
+          "support_facing": false
+        },
+        {
+          "category": "new_cap_screw_head_seats",
+          "verified_stl_samples": 16,
+          "local_normal_z": 1,
+          "selected_print_normal_z": -1,
+          "on_bed": true,
+          "support_facing": false,
+          "note": "Bed texture may transfer; native first-layer clearance-hole compensation must be checked."
+        }
+      ],
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "actual_inward_pegs": {
+        "centres_xy_mm": [
+          [
+            -12.0,
+            -9.0
+          ],
+          [
+            12.0,
+            -9.0
+          ]
+        ],
+        "min_z_mm": -2.700000047683716,
+        "sampled_peg_material_present": true,
+        "selected_print_pose": "Pegs point upward, away from bed"
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-cheek-PRINT.stl",
+        "sha256": "b342cb6c5221465a017dc84092542afe20d11234c453de4c1e8ad1a2582c5d56",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -3.5868678092956543
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            3.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -18.249923706054688,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            18.249923706054688,
+            12.749000549316406,
+            5.699999809265137
+          ]
+        ],
+        "volume_mm3": 1385.6193413242263,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "left_sleeve",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-world.stl",
+      "world_sha256": "451928b2a20caf1cedd48e47d0c1faac63ac07d19c866f611edde8443a427998",
+      "color": "#222222",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857053,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857054,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [],
+      "selected_geometry_orientation": "local_negative_Z_down",
+      "dimensions_measured": {
+        "bore_diameter_mm": [
+          10.399869918823242,
+          10.399999618530273
+        ],
+        "outer_diameter_mm": [
+          14.599817928463896,
+          14.600000381469727
+        ],
+        "radial_wall_at_midplane_mm": [
+          2.0999738497354965,
+          2.1000003814697266
+        ],
+        "width_mm": 2.799999952316284,
+        "end_flat_inner_radius_mm": 5.4,
+        "end_flat_outer_radius_mm": 7.1,
+        "axial_chamfer_mm": 0.2
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-sleeve-PRINT.stl",
+        "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -4.553794860839844e-05
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.399999976158142
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -7.299954414367676,
+            -7.2999773025512695,
+            0.0
+          ],
+          [
+            7.299954414367676,
+            7.2999773025512695,
+            2.799999952316284
+          ]
+        ],
+        "volume_mm3": 227.76151336565923,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_base",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+      "sha256": "4b212d200924ba1d4d5f66af56da3b7cfe5f45fd910ca8509bed93834741a5d9",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-world.stl",
+      "world_sha256": "28af76d7081528c1e0df52fbfaaee12e265cb3b776b88d8140885238d58b36f8",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 4863.581760790333,
+      "bounds": [
+        [
+          -21.8367919921875,
+          -16.29900360107422,
+          -35.85306930541992
+        ],
+        [
+          14.6632080078125,
+          9.198997497558594,
+          -1.600000023841858
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_total_area_mm2": 562.930098426475,
+          "down_45_above_0p4mm_area_mm2": 351.09481521844407,
+          "max_build_height_mm": 34.253069281578064,
+          "model_section_area_at_0.05_mm2": 14.576393626061604,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 58.149343924628006,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 118.31408367604357,
+          "down_45_total_area_mm2": 560.3829318003778,
+          "down_45_above_0p4mm_area_mm2": 442.0688481243342,
+          "max_build_height_mm": 34.253069281578064,
+          "model_section_area_at_0.05_mm2": 118.31408620540398,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 118.31409368553138,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "original_four_output_screw_seats",
+          "verified_stl_samples": 32,
+          "source_schedule_prefix": "S01-horn",
+          "local_normal_z": -1,
+          "selected_print_normal_z": 1,
+          "support_facing": false
+        },
+        {
+          "category": "motor_case_contact_face",
+          "local_z_mm": -30.69907,
+          "actual_planar_area_mm2": 399.1736450325834,
+          "local_normal_z": 1,
+          "selected_print_normal_z": -1,
+          "support_facing": true,
+          "acceptance": "Native model/support bead envelope and physical seat finish/access required; not accepted by geometric review."
+        }
+      ],
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "blind_receiver": {
+        "count": 2,
+        "centres_xy_mm": [
+          [
+            -12.0,
+            -9.0
+          ],
+          [
+            12.0,
+            -9.0
+          ]
+        ],
+        "diameter_mm": 2.15,
+        "depth_mm": 1.5,
+        "selected_pose": "Open on bed; roof facing downward. Native small bridge and empty bore envelope need verification."
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-base-PRINT.stl",
+        "sha256": "194d9eba95e76c77e2e40d29c71f348d7f4a54499d410cece9379b80c66e7848",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            3.5867919921875
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            -1.600000023841858
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -18.25,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            18.25,
+            12.749000549316406,
+            34.25307083129883
+          ]
+        ],
+        "volume_mm3": 4863.582357779341,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_cheek",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+      "sha256": "804e5957b2197e0c68ccf8b6db0c66112b49e331432870b93f6c4bf39a5c7355",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-world.stl",
+      "world_sha256": "689d1e42460bfb4bc7209073a34cadc62a5829b3cb51eadda7760b092153a88d",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1385.4509681806892,
+      "bounds": [
+        [
+          -21.8367919921875,
+          -16.29900360107422,
+          -2.700000047683716
+        ],
+        [
+          14.661209106445312,
+          9.198997497558594,
+          3.0
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 4.0183672566272435,
+          "down_45_total_area_mm2": 435.73427154040013,
+          "down_45_above_0p4mm_area_mm2": 431.71590428377283,
+          "max_build_height_mm": 5.700000047683716,
+          "model_section_area_at_0.05_mm2": 4.5363599661577725,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 6.278699098648035,
+          "model_section_islands_at_0.2": 2
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 220.1223680461884,
+          "down_45_total_area_mm2": 452.3589191623888,
+          "down_45_above_0p4mm_area_mm2": 182.1084212036223,
+          "max_build_height_mm": 5.700000047683716,
+          "model_section_area_at_0.05_mm2": 226.3109658544318,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 241.72495937225273,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "inside_axial_capture_lip",
+          "local_z_mm": 1.50093,
+          "actual_planar_area_mm2": 22.751510980699095,
+          "local_normal_z": -1,
+          "selected_print_normal_z": 1,
+          "support_facing": false
+        },
+        {
+          "category": "new_cap_screw_head_seats",
+          "verified_stl_samples": 16,
+          "local_normal_z": 1,
+          "selected_print_normal_z": -1,
+          "on_bed": true,
+          "support_facing": false,
+          "note": "Bed texture may transfer; native first-layer clearance-hole compensation must be checked."
+        }
+      ],
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "actual_inward_pegs": {
+        "centres_xy_mm": [
+          [
+            -12.0,
+            -9.0
+          ],
+          [
+            12.0,
+            -9.0
+          ]
+        ],
+        "min_z_mm": -2.700000047683716,
+        "sampled_peg_material_present": true,
+        "selected_print_pose": "Pegs point upward, away from bed"
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-cheek-PRINT.stl",
+        "sha256": "9e61913a5e245376d5a6eb14db89cbd4f4de248e9c4636b126939849d4d19976",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            3.5877914428710938
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            3.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -18.249000549316406,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            18.249000549316406,
+            12.749000549316406,
+            5.699999809265137
+          ]
+        ],
+        "volume_mm3": 1385.4508716028886,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_sleeve",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-world.stl",
+      "world_sha256": "a3637fa8a28e4f796d4bc827c339e45bb480a928796344fdbba9579b8b5a522e",
+      "color": "#222222",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "print_orientation_candidates": [
+        {
+          "orientation": "local_negative_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857053,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1
+        },
+        {
+          "orientation": "local_positive_Z_down",
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_total_area_mm2": 76.27468874857054,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1
+        }
+      ],
+      "functional_surfaces": [],
+      "selected_geometry_orientation": "local_negative_Z_down",
+      "dimensions_measured": {
+        "bore_diameter_mm": [
+          10.399869918823242,
+          10.399999618530273
+        ],
+        "outer_diameter_mm": [
+          14.599817928463896,
+          14.600000381469727
+        ],
+        "radial_wall_at_midplane_mm": [
+          2.0999738497354965,
+          2.1000003814697266
+        ],
+        "width_mm": 2.799999952316284,
+        "end_flat_inner_radius_mm": 5.4,
+        "end_flat_outer_radius_mm": 7.1,
+        "axial_chamfer_mm": 0.2
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-sleeve-PRINT.stl",
+        "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -4.553794860839844e-05
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.399999976158142
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -7.299954414367676,
+            -7.2999773025512695,
+            0.0
+          ],
+          [
+            7.299954414367676,
+            7.2999773025512695,
+            2.799999952316284
+          ]
+        ],
+        "volume_mm3": 227.76151336565923,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "native_slice_verified": false
+      }
+    }
+  ],
+  "candidate_reviews": [
+    {
+      "key": "left_base",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+      "sha256": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-world.stl",
+      "world_sha256": "169c2a1b1bb8f113efdbf485898002c877de4fcb590278aac160ccbcec1a4b42",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 5398.7968562920605,
+      "bounds": [
+        [
+          -14.663056373596191,
+          -16.29900360107422,
+          -35.854068756103516
+        ],
+        [
+          21.8367919921875,
+          9.198997497558594,
+          7.099999904632568
+        ]
+      ],
+      "overall_dimensions_mm": [
+        36.49984836578369,
+        25.498001098632812,
+        42.954068660736084
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 49.79999923706055,
+          "down_45_above_0p4mm_area_mm2": 582.186586906289,
+          "max_build_height_mm": 42.954068660736084,
+          "model_section_area_at_0.05_mm2": 49.79999923706055,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 49.799999237060554,
+          "model_section_islands_at_0.2": 2,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 422.6999627893626,
+          "max_build_height_mm": 42.954068660736084,
+          "model_section_area_at_0.05_mm2": 14.223035399513297,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 57.797421379941305,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 81.14023275375803,
+          "down_45_above_0p4mm_area_mm2": 481.4666571435444,
+          "max_build_height_mm": 36.49984836578369,
+          "model_section_area_at_0.05_mm2": 81.16002531762395,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 81.21939395100571,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 460.68907635627284,
+          "max_build_height_mm": 36.49984836578369,
+          "model_section_area_at_0.05_mm2": 81.92376271725804,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 84.33690520033386,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 5.376000732416287,
+          "down_45_above_0p4mm_area_mm2": 1236.6014519161886,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 7.315578541855457,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 11.897340202752789,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 1105.363438647985,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 75.63553028140028,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 156.32075210774332,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "original_four_output_screw_seats",
+          "verified_stl_samples": 32,
+          "local_normal": [
+            0,
+            0,
+            -1
+          ],
+          "selected_print_normal": [
+            -1,
+            0,
+            0
+          ],
+          "support_facing": false
+        },
+        {
+          "category": "motor_case_contact_face",
+          "actual_planar_area_mm2": 399.1736450325834,
+          "local_normal": [
+            0,
+            0,
+            1
+          ],
+          "selected_print_normal": [
+            1,
+            0,
+            0
+          ],
+          "support_facing": false,
+          "note": "Was downward in+Z pose; now vertical. This is a mesh-normal finding, not native print quality."
+        }
+      ],
+      "recommended_orientation": "local_positive_X_down",
+      "orientation_status": "Geometry-supported starting orientation; native horizontal-hole/support checks pending",
+      "orientation_reason": "Actual broad side facet lands as one first-layer model island. Original output seats and large motor-contact plane are vertical, rather than support-facing. The passive full ring pocket belongs to the separate cheek; remaining horizontal bores need native checks.",
+      "selected_geometry_orientation": "local_positive_X_down",
+      "active_plate_central_aperture_diameter_range_mm": [
+        4.9935707438143835,
+        5.001493209640962
+      ],
+      "native_bore_checks_required": [
+        "Original output/horn bores and measured central aperture now horizontal",
+        "NewØ1.6mm transverse blind TAP pilot ceiling",
+        "Open-slot guide: actual bead dimensions and access"
+      ],
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-base-PRINT.stl",
+        "sha256": "10c82586a3aca12a42b0ee43a47de3c4c9cde27f728af91d50d563ae972986f2",
+        "sourceLocalToPrint4x4": [
+          [
+            0.0,
+            0.0,
+            1.0,
+            14.377034425735474
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            3.5500030517578125
+          ],
+          [
+            -1.0,
+            0.0,
+            0.0,
+            21.8367919921875
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -21.477033615112305,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            21.477033615112305,
+            12.749000549316406,
+            36.499847412109375
+          ]
+        ],
+        "volume_mm3": 5398.796799946972,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "8d2ffd330c18c75b46a9904e1789883d158879b652cf0b75906a946e37344df9",
+        "orientation_trial_only": false,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "left_cheek",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+      "sha256": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-world.stl",
+      "world_sha256": "f97bff91ed5bb1ff58df6a21206ccd81ff10a8b8fd3823fe85b8aa950622a356",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1225.0961920321704,
+      "bounds": [
+        [
+          -15.0,
+          -16.29900360107422,
+          -1.600000023841858
+        ],
+        [
+          15.0,
+          9.198997497558594,
+          7.099999904632568
+        ]
+      ],
+      "overall_dimensions_mm": [
+        30.0,
+        25.498001098632812,
+        8.699999928474426
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 57.59999990463257,
+          "down_45_above_0p4mm_area_mm2": 317.8627118073997,
+          "max_build_height_mm": 8.699999928474426,
+          "model_section_area_at_0.05_mm2": 57.59999990463257,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 57.59999990463257,
+          "model_section_islands_at_0.2": 2,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 65.00794928557313,
+          "down_45_above_0p4mm_area_mm2": 92.69571814438964,
+          "max_build_height_mm": 8.699999928474426,
+          "model_section_area_at_0.05_mm2": 65.0079422764199,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 65.00792096894814,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 21.799999713897705,
+          "down_45_above_0p4mm_area_mm2": 152.2950874532308,
+          "max_build_height_mm": 30.0,
+          "model_section_area_at_0.05_mm2": 21.799999713897705,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 21.799999713897705,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 21.799999713897705,
+          "down_45_above_0p4mm_area_mm2": 153.76923779798483,
+          "max_build_height_mm": 30.0,
+          "model_section_area_at_0.05_mm2": 21.79999971389771,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 21.7999997138977,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 5.376000732416287,
+          "down_45_above_0p4mm_area_mm2": 151.57952704865116,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 7.3143422767145285,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 11.88203850882988,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 182.07441011189024,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 6.240900509528841,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 12.95359583339287,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "inside_axial_capture_lip",
+          "actual_planar_area_mm2": 22.751510980699095,
+          "local_normal": [
+            0,
+            0,
+            -1
+          ],
+          "selected_print_normal": [
+            0,
+            0,
+            1
+          ],
+          "support_facing": false
+        },
+        {
+          "category": "new_transverse_cap_screw_head_seats",
+          "verified_stl_samples": 16,
+          "local_y_mm": 6,
+          "local_normal": [
+            0,
+            1,
+            0
+          ],
+          "selected_print_normal": [
+            0,
+            -1,
+            0
+          ],
+          "support_facing": false,
+          "on_bed": false,
+          "note": "Vertical bearing face in trial+Z print; the horizontalØ2.3mm clearance bore has a separate downward ceiling."
+        }
+      ],
+      "recommended_orientation": null,
+      "orientation_status": "Orientation trial only; no settled recommended print orientation",
+      "orientation_reason": "Trial keeps the capture lip upward and full ring pocket vertical, but starts on two tab pads with the main exterior plane4.1mm or more above bed. Side-X alternatives have one small contact pad and horizontal14/15mm pocket ceilings. Native paths and physical finish must select the tradeoff.",
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "round_pegs_present": false,
+      "native_bore_checks_required": [
+        "Ø2.3mm transverse clearance-hole ceilings",
+        "Side-X trials: full14/15mm ring-pocket ceiling and bearing-wall finish",
+        "+Z trial: main exterior face above supports and two separated first-layer pads"
+      ],
+      "main_exterior_plane_height_above_bed_in_trial_mm": 4.099999904632568,
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-cheek-PRINT.stl",
+        "sha256": "1e8b2c99909e266f7af64581190a9d8936537c9138806946b88ca0948b30ce7d",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            7.099999904632568
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -15.0,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            15.0,
+            12.749000549316406,
+            8.699999809265137
+          ]
+        ],
+        "volume_mm3": 1225.0962380834867,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "25fc0604043caad06c605e206f8c2e310a121b97527d30fa118b46d68689af2f",
+        "orientation_trial_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "left_sleeve",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-world.stl",
+      "world_sha256": "451928b2a20caf1cedd48e47d0c1faac63ac07d19c866f611edde8443a427998",
+      "color": "#222222",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "overall_dimensions_mm": [
+        14.59990930557251,
+        14.599954605102539,
+        2.799999952316284
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.43730784502607,
+          "max_build_height_mm": 14.59990930557251,
+          "model_section_area_at_0.05_mm2": 4.204395607925842,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.045855821750866,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.17500946025091224,
+          "down_45_above_0p4mm_area_mm2": 35.50711751241658,
+          "max_build_height_mm": 14.59990930557251,
+          "model_section_area_at_0.05_mm2": 4.208792672458571,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.050042938672282,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.26220991425386,
+          "max_build_height_mm": 14.599954605102539,
+          "model_section_area_at_0.05_mm2": 4.206398238022044,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.046918088607756,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.262209914253866,
+          "max_build_height_mm": 14.599954605102539,
+          "model_section_area_at_0.05_mm2": 4.206398238022044,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.046918088607756,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [],
+      "recommended_orientation": "local_negative_Z_down",
+      "orientation_status": "Axial starting orientation supported by geometry; native and physical fit unverified",
+      "orientation_reason": "Broad annular bed face, vertical bore, no downward45-degree region above0.4mm.",
+      "selected_geometry_orientation": "local_negative_Z_down",
+      "dimensions_measured": {
+        "bore_diameter_mm": [
+          10.399869918823242,
+          10.399999618530273
+        ],
+        "outer_diameter_mm": [
+          14.599817928463896,
+          14.600000381469727
+        ],
+        "radial_wall_at_midplane_mm": [
+          2.0999738497354965,
+          2.1000003814697266
+        ],
+        "width_mm": 2.799999952316284,
+        "end_flat_inner_radius_mm": 5.4,
+        "end_flat_outer_radius_mm": 7.1,
+        "axial_chamfer_mm": 0.2
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-sleeve-PRINT.stl",
+        "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -4.553794860839844e-05
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.399999976158142
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -7.299954414367676,
+            -7.2999773025512695,
+            0.0
+          ],
+          [
+            7.299954414367676,
+            7.2999773025512695,
+            2.799999952316284
+          ]
+        ],
+        "volume_mm3": 227.76151336565923,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "a989db09ac76fac776874cea3cd770bc725bc0fff4a0e86d0e5b0962d4419728",
+        "orientation_trial_only": false,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_base",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+      "sha256": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-world.stl",
+      "world_sha256": "3ddbfbc73172459a6e9b32a4bb910e6f4ccdb71bc7c41c548cd6ad45fc9fdce6",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 5399.080207290194,
+      "bounds": [
+        [
+          -21.8367919921875,
+          -16.29900360107422,
+          -35.85306930541992
+        ],
+        [
+          14.6632080078125,
+          9.198997497558594,
+          7.099999904632568
+        ]
+      ],
+      "overall_dimensions_mm": [
+        36.5,
+        25.498001098632812,
+        42.95306921005249
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 49.79999923706055,
+          "down_45_above_0p4mm_area_mm2": 582.1822363467634,
+          "max_build_height_mm": 42.95306921005249,
+          "model_section_area_at_0.05_mm2": 49.79999923706054,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 49.799999237060554,
+          "model_section_islands_at_0.2": 2,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 422.6952031208691,
+          "max_build_height_mm": 42.95306921005249,
+          "model_section_area_at_0.05_mm2": 14.576393626061604,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 58.149343924628006,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 458.26639105686684,
+          "max_build_height_mm": 36.5,
+          "model_section_area_at_0.05_mm2": 81.91696822965635,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 84.33062128353204,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 81.14273138046701,
+          "down_45_above_0p4mm_area_mm2": 481.4899951832943,
+          "max_build_height_mm": 36.5,
+          "model_section_area_at_0.05_mm2": 81.16252438133247,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 81.22187372982914,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 5.376000732416287,
+          "down_45_above_0p4mm_area_mm2": 1236.6089857140573,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 7.315930070839289,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 11.899766155459286,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 1105.4092331408806,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 75.63317995560946,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 156.3158370695892,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "original_four_output_screw_seats",
+          "verified_stl_samples": 32,
+          "local_normal": [
+            0,
+            0,
+            -1
+          ],
+          "selected_print_normal": [
+            1,
+            0,
+            0
+          ],
+          "support_facing": false
+        },
+        {
+          "category": "motor_case_contact_face",
+          "actual_planar_area_mm2": 399.1736450325834,
+          "local_normal": [
+            0,
+            0,
+            1
+          ],
+          "selected_print_normal": [
+            -1,
+            0,
+            0
+          ],
+          "support_facing": false,
+          "note": "Was downward in+Z pose; now vertical. This is a mesh-normal finding, not native print quality."
+        }
+      ],
+      "recommended_orientation": "local_negative_X_down",
+      "orientation_status": "Geometry-supported starting orientation; native horizontal-hole/support checks pending",
+      "orientation_reason": "Actual broad side facet lands as one first-layer model island. Original output seats and large motor-contact plane are vertical, rather than support-facing. The passive full ring pocket belongs to the separate cheek; remaining horizontal bores need native checks.",
+      "selected_geometry_orientation": "local_negative_X_down",
+      "active_plate_central_aperture_diameter_range_mm": [
+        4.9935707438143835,
+        5.001493209640962
+      ],
+      "native_bore_checks_required": [
+        "Original output/horn bores and measured central aperture now horizontal",
+        "NewØ1.6mm transverse blind TAP pilot ceiling",
+        "Open-slot guide: actual bead dimensions and access"
+      ],
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-base-PRINT.stl",
+        "sha256": "6d30521e7ba3ad41dcd441de4b40587cb0194ce2952ba76304697226db95f275",
+        "sourceLocalToPrint4x4": [
+          [
+            0.0,
+            0.0,
+            -1.0,
+            -14.376534700393677
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            3.5500030517578125
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            21.8367919921875
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -21.476533889770508,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            21.476533889770508,
+            12.749000549316406,
+            36.5
+          ]
+        ],
+        "volume_mm3": 5399.080141421741,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "00e73e071f5ad248b5d8285b35dadd729a557337ce242a88e6030d6c1809f8de",
+        "orientation_trial_only": false,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_cheek",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+      "sha256": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-world.stl",
+      "world_sha256": "bbe82bb582ec032ee7e0eff049809bc8683c6aef70d89c5543cba703cfd308c5",
+      "color": "#ff8000",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 1224.9788423465368,
+      "bounds": [
+        [
+          -15.0,
+          -16.29900360107422,
+          -1.600000023841858
+        ],
+        [
+          15.0,
+          9.198997497558594,
+          7.099999904632568
+        ]
+      ],
+      "overall_dimensions_mm": [
+        30.0,
+        25.498001098632812,
+        8.699999928474426
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 57.59999990463257,
+          "down_45_above_0p4mm_area_mm2": 317.8625085554836,
+          "max_build_height_mm": 8.699999928474426,
+          "model_section_area_at_0.05_mm2": 57.59999990463257,
+          "model_section_islands_at_0.05": 2,
+          "model_section_area_at_0.2_mm2": 57.59999990463257,
+          "model_section_islands_at_0.2": 2,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 65.00794666861796,
+          "down_45_above_0p4mm_area_mm2": 92.69581184659424,
+          "max_build_height_mm": 8.699999928474426,
+          "model_section_area_at_0.05_mm2": 65.00793959748908,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 65.00791790999145,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 21.799999713897705,
+          "down_45_above_0p4mm_area_mm2": 153.98641457012477,
+          "max_build_height_mm": 30.0,
+          "model_section_area_at_0.05_mm2": 21.799999713897705,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 21.799999713897705,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 21.799999713897705,
+          "down_45_above_0p4mm_area_mm2": 152.51218501514154,
+          "max_build_height_mm": 30.0,
+          "model_section_area_at_0.05_mm2": 21.799999713897705,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 21.799999713897705,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 5.375993408204522,
+          "down_45_above_0p4mm_area_mm2": 151.14051260838218,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 7.314024298688185,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 11.87908152156975,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 181.6184247745074,
+          "max_build_height_mm": 25.498001098632812,
+          "model_section_area_at_0.05_mm2": 6.243307562320068,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 12.9585789421321,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [
+        {
+          "category": "inside_axial_capture_lip",
+          "actual_planar_area_mm2": 22.751510980699095,
+          "local_normal": [
+            0,
+            0,
+            -1
+          ],
+          "selected_print_normal": [
+            0,
+            0,
+            1
+          ],
+          "support_facing": false
+        },
+        {
+          "category": "new_transverse_cap_screw_head_seats",
+          "verified_stl_samples": 16,
+          "local_y_mm": 6,
+          "local_normal": [
+            0,
+            1,
+            0
+          ],
+          "selected_print_normal": [
+            0,
+            -1,
+            0
+          ],
+          "support_facing": false,
+          "on_bed": false,
+          "note": "Vertical bearing face in trial+Z print; the horizontalØ2.3mm clearance bore has a separate downward ceiling."
+        }
+      ],
+      "recommended_orientation": null,
+      "orientation_status": "Orientation trial only; no settled recommended print orientation",
+      "orientation_reason": "Trial keeps the capture lip upward and full ring pocket vertical, but starts on two tab pads with the main exterior plane4.1mm or more above bed. Side-X alternatives have one small contact pad and horizontal14/15mm pocket ceilings. Native paths and physical finish must select the tradeoff.",
+      "selected_geometry_orientation": "local_positive_Z_down",
+      "round_pegs_present": false,
+      "native_bore_checks_required": [
+        "Ø2.3mm transverse clearance-hole ceilings",
+        "Side-X trials: full14/15mm ring-pocket ceiling and bearing-wall finish",
+        "+Z trial: main exterior face above supports and two separated first-layer pads"
+      ],
+      "main_exterior_plane_height_above_bed_in_trial_mm": 4.099999904632568,
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-cheek-PRINT.stl",
+        "sha256": "751732e649bda0007d3df423bc3b1e77517dd949a86ed77fc72032df6381c78c",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            -3.5500030517578125
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            7.099999904632568
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -15.0,
+            -12.749000549316406,
+            0.0
+          ],
+          [
+            15.0,
+            12.749000549316406,
+            8.699999809265137
+          ]
+        ],
+        "volume_mm3": 1224.9788411478874,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "7683798a6ef41b48ca0716c345967b84b7488bd3495adf5e121b91c86da60c3d",
+        "orientation_trial_only": true,
+        "native_slice_verified": false
+      }
+    },
+    {
+      "key": "right_sleeve",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+      "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+      "world_file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-world.stl",
+      "world_sha256": "a3637fa8a28e4f796d4bc827c339e45bb480a928796344fdbba9579b8b5a522e",
+      "color": "#222222",
+      "watertight": true,
+      "components": 1,
+      "volume_mm3": 227.76151567880186,
+      "bounds": [
+        [
+          -7.2999091148376465,
+          -7.2999773025512695,
+          -1.399999976158142
+        ],
+        [
+          7.300000190734863,
+          7.2999773025512695,
+          1.399999976158142
+        ]
+      ],
+      "overall_dimensions_mm": [
+        14.59990930557251,
+        14.599954605102539,
+        2.799999952316284
+      ],
+      "print_orientation_candidates": [
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              -1,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245993,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604139744,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Z_down",
+          "output_or_lip_normal_z": 1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 66.75773375461596,
+          "down_45_above_0p4mm_area_mm2": 0.0,
+          "max_build_height_mm": 2.799999952316284,
+          "model_section_area_at_0.05_mm2": 70.68494459245994,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 82.46543604145364,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Z_down",
+          "output_or_lip_normal_z": -1.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.43730784502607,
+          "max_build_height_mm": 14.59990930557251,
+          "model_section_area_at_0.05_mm2": 4.204395607925842,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.045855821750866,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.17500946025091224,
+          "down_45_above_0p4mm_area_mm2": 35.50711751241658,
+          "max_build_height_mm": 14.59990930557251,
+          "model_section_area_at_0.05_mm2": 4.208792672458571,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.050042938672282,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_X_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 0.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              -1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.26220991425386,
+          "max_build_height_mm": 14.599954605102539,
+          "model_section_area_at_0.05_mm2": 4.206398238022044,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.046918088607756,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_positive_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": -1.0
+        },
+        {
+          "rotation3x3": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              -1
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "contact_flat_triangles_area_mm2": 0.0,
+          "down_45_above_0p4mm_area_mm2": 35.262209914253866,
+          "max_build_height_mm": 14.599954605102539,
+          "model_section_area_at_0.05_mm2": 4.206398238022044,
+          "model_section_islands_at_0.05": 1,
+          "model_section_area_at_0.2_mm2": 9.046918088607756,
+          "model_section_islands_at_0.2": 1,
+          "orientation": "local_negative_Y_down",
+          "output_or_lip_normal_z": 0.0,
+          "transverse_cap_head_normal_z": 1.0
+        }
+      ],
+      "functional_surfaces": [],
+      "recommended_orientation": "local_negative_Z_down",
+      "orientation_status": "Axial starting orientation supported by geometry; native and physical fit unverified",
+      "orientation_reason": "Broad annular bed face, vertical bore, no downward45-degree region above0.4mm.",
+      "selected_geometry_orientation": "local_negative_Z_down",
+      "dimensions_measured": {
+        "bore_diameter_mm": [
+          10.399869918823242,
+          10.399999618530273
+        ],
+        "outer_diameter_mm": [
+          14.599817928463896,
+          14.600000381469727
+        ],
+        "radial_wall_at_midplane_mm": [
+          2.0999738497354965,
+          2.1000003814697266
+        ],
+        "width_mm": 2.799999952316284,
+        "end_flat_inner_radius_mm": 5.4,
+        "end_flat_outer_radius_mm": 7.1,
+        "axial_chamfer_mm": 0.2
+      },
+      "print_export": {
+        "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-sleeve-PRINT.stl",
+        "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+        "sourceLocalToPrint4x4": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -4.553794860839844e-05
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.399999976158142
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          [
+            -7.299954414367676,
+            -7.2999773025512695,
+            0.0
+          ],
+          [
+            7.299954414367676,
+            7.2999773025512695,
+            2.799999952316284
+          ]
+        ],
+        "volume_mm3": 227.76151336565923,
+        "bed_min_z_mm": 0.0,
+        "xy_bbox_center_mm": [
+          0.0,
+          0.0
+        ],
+        "rigid_only": true,
+        "exact_float32_triangle_identity_sha256": "a989db09ac76fac776874cea3cd770bc725bc0fff4a0e86d0e5b0962d4419728",
+        "orientation_trial_only": false,
+        "native_slice_verified": false
+      }
+    }
+  ],
+  "print_ready": false,
+  "revision_findings": [
+    {
+      "revision": "v2",
+      "finding": "Flattened cap external+Z face can turn internal lip upward; motor-contact face in base remains support-facing."
+    },
+    {
+      "revision": "v3",
+      "finding": "Base pegs above split plane defeat broad bed contact in previously proposed orientation; not accepted without revised pose/design."
+    },
+    {
+      "revision": "v4",
+      "finding": "Cap added inward pegs are clipped off by subsequent intersection box_z(SPLIT,3). Both actual cap STL minima remain−1.6 and peg interior probes are empty. Reported for root-cause repair before final freeze."
+    },
+    {
+      "revision": "v5",
+      "finding": "Verified actual cap inward pegs minZ−2.7 and material probes present; PRINT-STL exports maintain designed broad base/cap bottom with pegs upward."
+    },
+    {
+      "revision": "v5",
+      "finding": "Independent mechanical reviewer found required original foot interference with new fastener/cap region. Current print exports are provisional pending targeted fix; no native slice/print claim."
+    }
+  ],
+  "physical_photo": {
+    "file": "/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/codex-clipboard-66c30441-ca9d-4c40-98e7-5440d66244c1.jpg",
+    "sha256": "ab405fc3266227cd529d3ee96f00bb815a376d33cea73b4e67a136591d3d395e",
+    "observed": "Orange face with four recessed screw seats shows loose/sparse underside strands and rough surface. No dimensional measurement or exact native job identity inferred."
+  },
+  "candidate_manifest_sha256_at_review": "059f518b01e00b4a1540cdcaa3f31567eae8bfef5d60c7a07a177b1901c2db16",
+  "candidate_generator_sha256": "c4355d8d98aaa7f34c73dc9eea716a2df09d6ebe0e02de9c3d90371de7f65a9d",
+  "source_stl_hashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-world.stl": "169c2a1b1bb8f113efdbf485898002c877de4fcb590278aac160ccbcec1a4b42",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-world.stl": "f97bff91ed5bb1ff58df6a21206ccd81ff10a8b8fd3823fe85b8aa950622a356",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-world.stl": "451928b2a20caf1cedd48e47d0c1faac63ac07d19c866f611edde8443a427998",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-world.stl": "3ddbfbc73172459a6e9b32a4bb910e6f4ccdb71bc7c41c548cd6ad45fc9fdce6",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-world.stl": "bbe82bb582ec032ee7e0eff049809bc8683c6aef70d89c5543cba703cfd308c5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-world.stl": "a3637fa8a28e4f796d4bc827c339e45bb480a928796344fdbba9579b8b5a522e"
+  },
+  "print_geometry_review_passed": false,
+  "source_parameter_snapshot": {
+    "SPLIT": -1.6,
+    "LUGS": [
+      [
+        -12.0,
+        2.0
+      ],
+      [
+        12.0,
+        2.0
+      ]
+    ],
+    "PEGS": []
+  },
+  "measurement_method": {
+    "rotation_candidates": 6,
+    "bed_contact_triangle_tolerance_mm": 0.0001,
+    "geometric_section_heights_above_bed_mm": [
+      0.05,
+      0.2
+    ],
+    "downward_proxy_normal_z_threshold": -0.7071067811865476,
+    "downward_proxy_exclude_bottom_height_mm": 0.4,
+    "output_headseat_probe_count_per_ankle": 32,
+    "cap_headseat_probe_count_per_ankle": 16,
+    "sleeve_radial_ray_directions": 64,
+    "section_is_native_extrusion": false,
+    "support_proxy_is_native_support": false
+  },
+  "prototype_limits": {
+    "mechanism": "Compact transverseY screws, open tongue/slot guides; no round pegs",
+    "guide_tongue_width_x_mm": 2.0,
+    "guide_slot_width_x_mm": 2.2,
+    "nominal_guide_side_clearance_x_mm": 0.1,
+    "guide_width_physical_fit_verified": false,
+    "pilot_post_width_x_mm": 4.0,
+    "nominal_pilot_diameter_mm": 1.6,
+    "nominal_X_wall_each_side_mm": 1.2,
+    "estimated_X_wall_after_nominal_M2_external_thread_mm": 1.0,
+    "thread_geometry_modeled": false,
+    "two_sliding_radial_clearances_can_sum_mm": 0.4,
+    "axial_lip_flat_ring_end_overlap_radial_mm": 0.1,
+    "no_load_or_torque_rating": true
+  },
+  "source_geometry_readback_passed": true,
+  "rigid_print_export_passed": true,
+  "recommended_orientations_settled": false,
+  "print_preparation_script_sha256": "4249331a1fe3750548db0da97ca67334d47d1c2ef142ab67488c7cd3ccda9ea6",
+  "full_build_data_sha256": "fa087e05d48e6c5cce5f13fd62573a319eb4c8cf74c263268990954c7e6d9f60",
+  "envelope_comparison": {
+    "left": {
+      "original_whole_ankle_dimensions_mm": [
+        36.5,
+        25.498001098632812,
+        39.48999786376953
+      ],
+      "candidate_base_cheek_dimensions_mm": [
+        36.8367919921875,
+        25.498001098632812,
+        42.954068660736084
+      ],
+      "dimension_change_mm": [
+        0.3367919921875,
+        0.0,
+        3.4640707969665527
+      ],
+      "local_axis_world_directions": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "motor_axis_edited_by_exporter": false
+    },
+    "right": {
+      "original_whole_ankle_dimensions_mm": [
+        36.5,
+        25.498001098632812,
+        39.487998962402344
+      ],
+      "candidate_base_cheek_dimensions_mm": [
+        36.8367919921875,
+        25.498001098632812,
+        42.95306921005249
+      ],
+      "dimension_change_mm": [
+        0.3367919921875,
+        0.0,
+        3.4650702476501465
+      ],
+      "local_axis_world_directions": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "motor_axis_edited_by_exporter": false
+    }
+  },
+  "required_native_checks": [
+    "Base side-X: horizontal output/screw/central aperture bores, transverse pilot ceilings, first layer and support access",
+    "Cheek+Z trial: two bed islands, main exterior plane4.1mm abovebed, real support/finish; all transverse clearance ceilings",
+    "Cheek side-X alternatives: bearing-pocket ceiling/support removal/finish; not accepted from lower global overhang area",
+    "Guide dimensions, actual bead envelopes, full footprint/spacing and native real thumbnails before any printer-file handoff"
+  ],
+  "coupon_decision": "Geometry frozen; no generic coupon CAD added. A future physical trial can use the actual sleeve, followed by the actual open guide/cheek; no printing performed."
+}

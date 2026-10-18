@@ -1,0 +1,11 @@
+# Compact USB component review — 9 October 2026
+
+P5/P6: preserve Pi Zero as USB host and OpenRB as the peripheral inside the original closed head. This is a component-selection review, not purchasing or fit approval. Procurement holds remain unchanged.
+
+The best-supported minimum change is **Adafruit 4432**, a passive USB-C male/female elbow. The US supplier lists $3.95 and stock, overall dimensions 23.71 × 19 × 6 mm, and end-to-end connection of all pins. It turns the existing 4472 cable sideways; it does **not** remove the large USB-A coupling. No dimensioned mating drawing was found, so the port-to-back-wall projection and combined elbow/4472 envelope remain unverified. Use the published size to shortlist it, not to announce that the original controller pose now fits. [Supplier](https://www.adafruit.com/product/4432)
+
+A second, incomplete option removes the A coupling: **Adafruit 3610 + 4299**. The 250–300 mm Micro-B cable explicitly supports Pi Zero host operation with grounded ID pins; the C adapter is 20 × 10.7 × 4.9 mm. Together they cost $3.20 before shipping/tax, with both listed in stock. The cable's linked mechanical diagram returned 404; mould dimensions and the assembled projection were not established. The combination's C configuration and OpenRB enumeration also need confirmation. This is a plausible compact assembly, not a verified direct replacement. [OTG cable](https://www.adafruit.com/product/3610), [adapter](https://www.adafruit.com/product/4299)
+
+No short **single** Micro-B-host → C-device cable with both explicit role evidence and mechanical dimensions was qualified in this bounded review. A product title containing “OTG” is insufficient: an inspected dual-angle cable explicitly works in the opposite direction, C host → USB3 Micro-B peripheral. [Rejected direction](https://www.usbfever.com/DUAL-Right-Angled-USB-3-Type-C-Male-to-Micro-B-OTG-Cable)
+
+The practical next step is a small connector-envelope check for 4432, using a real mating datum; it should precede another shell or board redesign. If removing the A coupling is required, resolve the second option's specific missing connector facts first. Neither result authorizes a purchase, proves assembled clearance, or changes USB topology.

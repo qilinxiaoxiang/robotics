@@ -1,0 +1,8126 @@
+{
+ "about": "Power-support origin study. Robot frame mm: x forward, y left, z up (MuJoCo trunk_base). Print frame = robot frame + 57.5 mm in z.",
+ "history": [
+  {
+   "claim": "The integrated support was made on 2026-09-12 to replace the original power support (community a.obj = upstream power_support). It kept the battery in the original bay, put the large regulator under the battery and the small regulator between the hip servos, and replaced an earlier 69 mm rear backpack.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/README.md",
+   "field": "line 5",
+   "quote": "电池留在原电池区；大稳压器在电池下方，小稳压器在两台髋关节舵机之间。此前 69 mm 外伸背包已被本方案取代。",
+   "inference": false
+  },
+  {
+   "claim": "The design note for that version is dated 2026-09-12.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/README.md",
+   "field": "line 3",
+   "quote": "2026-09-12。推进 P5",
+   "inference": false
+  },
+  {
+   "claim": "Both regulators were moved into the torso so heavy power parts would not sit in the head.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/README.md",
+   "field": "line 24",
+   "quote": "两块稳压器移到躯干：大板放电池下方，小板放髋部之间。避免把较重的供电部件集中到头上。",
+   "inference": false
+  },
+  {
+   "claim": "The large regulator was the Pololu D24V150F5 (servo 5 V); the small one the S13V30F5 (Pi, camera, amplifier 5 V).",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/README.md",
+   "field": "line 65",
+   "quote": "Pololu D24V150F5 提供舵机侧 5V，S13V30F5 提供 Pi、相机和功放侧 5V",
+   "inference": false
+  },
+  {
+   "claim": "The lower deck and its two hanger posts are the \"vented lower shelf for motor regulator\" with the D24V150F5 screw pitch.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/build_compact_battery.py",
+   "field": "lines 23-34",
+   "quote": "# Vented lower shelf for motor regulator, exact screw pitch 25.4 X x 38.862 Y.",
+   "inference": false
+  },
+  {
+   "claim": "The deck sits 13.43 mm below the original support and the rear end is 12.27 mm behind the original battery; width unchanged.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/README.md",
+   "field": "line 35",
+   "quote": "底端为 Z −57.5 mm，相对原支架低 13.43 mm。支架宽度仍为 54.50 mm。",
+   "inference": false
+  },
+  {
+   "claim": "The 43.2 x 31.8 x 11 mm regulator had no collision-free spot inside the torso search box, which is why it went under the bay.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/trunk-electronics-candidates.json",
+   "field": "reg1 (empty list)",
+   "quote": "\"reg1\": []",
+   "inference": true,
+   "note": "The empty candidate list is a fact; that it caused the under-bay shelf is inference from timing and the build-script comment."
+  },
+  {
+   "claim": "On 2026-10-09 the user rejected the central clamped battery and chose the original layout with the DFR1202 converter in the original battery location, powered from the wall charger over a tether.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/PROJECT-CONTEXT.json",
+   "field": "current_build.powerbank_trial_20261008.userDecision and .decision; current_build.source_location",
+   "quote": "follow original layout and replace battery location with regulator/buck board.",
+   "inference": false
+  },
+  {
+   "claim": "On 2026-10-09 the OpenRB-150 moved from the head onto the lower deck, held by a new printed tray.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.6/evidence/openrb_tray-change.json",
+   "field": "reason",
+   "quote": "OpenRB-150 moves from the head to the power-support lower deck",
+   "inference": false
+  },
+  {
+   "claim": "The current guide fits the support unchanged (10/1 print) and straps the tray to the deck with the four deck standoffs and two ties through the deck slots.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py",
+   "field": "step 'power-support' line 408; step 'tray' lines 476-477",
+   "quote": "drop it so the four round deck standoffs go into its four clearance holes",
+   "inference": false
+  },
+  {
+   "claim": "The phase-1 walking runs removed the upstream power_support and NP-F970 collision geoms and added the integrated support as a visual only, so the simulator had no shin-to-support contact.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/evaluate_phase1.py lines 52-62 with /Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/simulation/geometry-manifest.json",
+   "field": "remove_meshes includes np_f970 and power_support; parts[0] power-support-integrated-body.stl added with contype=0, conaffinity=0 and no collision_box",
+   "quote": "remove_meshes: ['np_f970', 'power_support', ...]",
+   "inference": false
+  },
+  {
+   "claim": "The phase-1 mass model kept the OpenRB (13 g) in the head, not on the deck.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/simulation/mass-manifest.json",
+   "field": "parts[id='openrb'] body jaw_soft, position (27.2, 0.0, -20.7) mm",
+   "quote": "openrb jaw_soft 0.013",
+   "inference": false
+  },
+  {
+   "claim": "The final phase-1 controller is kp 275, 20 ms action delay, prediction off; its 33 cases include one 40 ms sensor-delay case per mass.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/simulation/README.md",
+   "field": "lines 10-12, 27",
+   "quote": "BAM proportional gain is 275",
+   "inference": false
+  },
+  {
+   "claim": "The 2026-09-12 mesh check of the new torso parts against the legs sampled 250 of 1500 frames from kp 200 trajectories and found no overlap above 0.005 mm3. It did not cover the later kp 275 / kp 300 controllers.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/delay-repair-20260912/mesh-old0-sensor40/full-assembly-final-trajectory.json",
+   "field": "sampled_frames, source_frames, cross_body_collisions; config kp in repair-final-perturb-batteryremove0-sensor40.config.json",
+   "quote": "\"sampled_frames\": 250, \"source_frames\": 1500, \"cross_body_collisions\": []",
+   "inference": false
+  },
+  {
+   "claim": "Upstream training (velocity task) penalises contact between the shin collision mesh and the upstream power_support collision mesh (weight -1.0); the upstream author expects the joint limits to keep the legs off the body.",
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/microduck_rl/src/mjlab_microduck/tasks/microduck_velocity_env_cfg.py lines 319-327; /Users/xiangzheng/code/robotics/microduck-sim/microduck_rl/src/mjlab_microduck/robot/microduck/robot_walk.xml lines 99, 154, 309",
+   "field": "rewards['self_collisions'] weight -1.0; geoms of class self_collision_only on mesh power_support and mesh leg",
+   "quote": "discourages legs from crashing into the trunk battery holder",
+   "inference": false,
+   "note": "That the frozen walking policy was trained with this exact config is inference; the policy checkpoint does not record it."
+  }
+ ],
+ "regions": [
+  {
+   "region": "original frame (x -31..-14, z -44.07..39.42), kept 10090 mm3",
+   "job_now": "Mounts the torso to both hip-yaw motor cases and the torso base (M2 x 10 from below and above).",
+   "needed": true,
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py lines 405-420"
+  },
+  {
+   "region": "battery bay: floor z -37.5..-36, top slab z 28..29.5, front posts, side lips (x -49.4..-21.8)",
+   "job_now": "Holds the DFR1202 converter insert on four sides (foam-taped to the bay floor); J and the 10 A main fuse sit in the open rear bay; the XT30 pigtail is tied to the support; the IMU holder rail sits 0.1 mm from the top slab.",
+   "needed": true,
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py lines 444, 455, 462; geometry.json mounted_parts"
+  },
+  {
+   "region": "battery tie slots (z -30.82 and 5.88, |y| 18.365)",
+   "job_now": "Made for the two battery ties. No current guide step routes a tie through them (steps.py mentions ties only through the insert, the pigtail, the deck slots and the head hood).",
+   "needed": false,
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py (grep \"slot\", \"tie\")",
+   "inference": true
+  },
+  {
+   "region": "lower deck with four bosses and two vent/tie slots (x -59.1..-11.9, |y| <= 17.95, z -57.5..-53.5), 2878.5 mm3",
+   "job_now": "Carries the OpenRB tray (seated on the deck, 0.0 mm gap) via the four standoffs and two ties through the deck slots. The D24V150F5 it was made for is no longer in the build.",
+   "needed": true,
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py lines 469-477; geometry.json mounted_parts.openrb_tray"
+  },
+  {
+   "region": "two hanger posts and cross bar (x -37.5..-33.5, |y| 18.0..20.4, z -57.5..-35.5), 2 x (129.3 + 84.3) mm3",
+   "job_now": "The only link between the deck and the rest of the part (without them the part splits into 15516.3 + 2878.5 mm3). This is where the shins touch.",
+   "needed": true,
+   "source": "geometry.json connectivity"
+  },
+  {
+   "region": "small regulator holder between the hip servos (x -20..9, z 3..32), 2113.3 mm3",
+   "job_now": "Empty. The S13V30F5 and its cover are retired; no current guide part overlaps the holder box (solids-report.json bounds).",
+   "needed": false,
+   "source": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/steps.py line 194 (small-regulator cover no longer used); ../solids-report.json"
+  }
+ ],
+ "geometry": {
+  "files": {
+   "integrated_body": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/compact-battery/power-support-integrated-body.stl",
+    "tris": 20528,
+    "watertight": true,
+    "volume_mm3": 18822.05454161297,
+    "bounds": [
+     [
+      -59.1,
+      -27.249,
+      -57.5
+     ],
+     [
+      10.25,
+      27.249,
+      39.422
+     ]
+    ],
+    "components": 1
+   },
+   "original_body": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/compact-battery/original-power-support-body.stl",
+    "tris": 12846,
+    "watertight": true,
+    "volume_mm3": 10487.500938136218,
+    "bounds": [
+     [
+      -31.0,
+      -27.249,
+      -44.068
+     ],
+     [
+      -14.0,
+      27.249,
+      39.422
+     ]
+    ]
+   },
+   "printed_file": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/current/power-support-integrated-print.stl",
+    "tris": 20528,
+    "volume_mm3": 18822.0542676701,
+    "bounds": [
+     [
+      -59.1,
+      -27.249,
+      0.0
+     ],
+     [
+      10.25,
+      27.249,
+      96.922
+     ]
+    ],
+    "maxVertexDev_vs_body_shifted_z57p5": 3.814697265625e-06
+   },
+   "compact_battery_print_copy": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/hardware-design-20260912/whole-robot-20260912/assembly/compact-battery/power-support-integrated-print.stl",
+    "bounds": [
+     [
+      -36.6,
+      -55.177,
+      -27.249
+     ],
+     [
+      32.75,
+      41.745,
+      27.249
+     ]
+    ],
+    "maxVertexDev_vs_body_after_design_source_transform": 2.2399023791094263e-06
+   },
+   "guide_solid": {
+    "source": "full-build source mesh",
+    "tris": 20528,
+    "maxVertexDev_vs_body": 0.0,
+    "volume_mm3": 18822.05454161297
+   }
+  },
+  "upstream_trunk_meshes_qpos0": {
+   "seeed_bearing__configuration__22x16x4": {
+    "bounds": [
+     [
+      -5.0,
+      6.5,
+      -5.0
+     ],
+     [
+      17.0,
+      28.5,
+      -1.0
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "right_shell": {
+    "bounds": [
+     [
+      -46.4,
+      -32.26,
+      0.33
+     ],
+     [
+      34.5,
+      -0.5,
+      42.03
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "banana_pcb_locker": {
+    "bounds": [
+     [
+      -32.3,
+      -27.03,
+      31.45
+     ],
+     [
+      -28.5,
+      27.03,
+      38.1
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "trunk_base": {
+    "bounds": [
+     [
+      -19.0,
+      -28.5,
+      -1.0
+     ],
+     [
+      17.0,
+      28.5,
+      2.0
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "xl330": {
+    "bounds": [
+     [
+      -18.5,
+      7.5,
+      -3.0
+     ],
+     [
+      15.5,
+      27.5,
+      26.0
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "power_support": {
+    "bounds": [
+     [
+      -31.0,
+      -27.25,
+      -44.07
+     ],
+     [
+      -14.0,
+      27.25,
+      39.42
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ],
+    "maxVertexDev_vs_original_body_stl": 8.545414235456409
+   },
+   "np_f970": {
+    "bounds": [
+     [
+      -46.83,
+      -19.31,
+      -39.38
+     ],
+     [
+      -25.08,
+      19.3,
+      31.67
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   },
+   "left_shell": {
+    "bounds": [
+     [
+      -46.39,
+      -1.95,
+      0.26
+     ],
+     [
+      34.5,
+      31.76,
+      41.95
+     ]
+    ],
+    "geomClass_contype_conaffinity": [
+     0,
+     0
+    ]
+   }
+  },
+  "upstream_trunk_body_mass_g": 199.22400000000002,
+  "material": {
+   "integrated_mm3": 18822.054541612975,
+   "original_mm3": 10487.500955508229,
+   "kept_original_mm3": 10090.13004291604,
+   "added_mm3": 8731.92449702616,
+   "removed_from_original_mm3": 397.37090535271614,
+   "removed_bounds": [
+    [
+     -28.802000045776367,
+     -21.399002075195312,
+     -44.06774139404297
+    ],
+    [
+     -14.984000205993652,
+     21.398998260498047,
+     25.178258895874023
+    ]
+   ],
+   "below_original_bottom_z": -44.07,
+   "below_original_bottom_mm3": 3137.1943086875835,
+   "below_bounds": [
+    [
+     -59.099998474121094,
+     -20.399999618530273,
+     -57.5
+    ],
+    [
+     -11.899999618530273,
+     20.399999618530273,
+     -44.06999999999999
+    ]
+   ],
+   "added_outside_original_aabb_mm3": 6462.422218244254,
+   "PLA_g_per_mm3": 0.00124
+  },
+  "added_regions": {
+   "lower_post_left": {
+    "volume_mm3": 129.3279795074463,
+    "bounds": [
+     [
+      -37.5,
+      17.95,
+      -57.5
+     ],
+     [
+      -33.5,
+      20.4,
+      -44.07
+     ]
+    ]
+   },
+   "lower_post_right": {
+    "volume_mm3": 129.3279795074463,
+    "bounds": [
+     [
+      -37.5,
+      -20.4,
+      -57.5
+     ],
+     [
+      -33.5,
+      -17.95,
+      -44.07
+     ]
+    ]
+   },
+   "deck_and_bosses": {
+    "volume_mm3": 2878.538349672691,
+    "bounds": [
+     [
+      -59.1,
+      -17.95,
+      -57.5
+     ],
+     [
+      -11.9,
+      17.95,
+      -53.5
+     ]
+    ]
+   },
+   "upper_post_left": {
+    "volume_mm3": 84.29698787689212,
+    "bounds": [
+     [
+      -38.0,
+      17.95,
+      -44.07
+     ],
+     [
+      -33.0,
+      20.4,
+      -35.4
+     ]
+    ]
+   },
+   "upper_post_right": {
+    "volume_mm3": 84.29698787689208,
+    "bounds": [
+     [
+      -38.0,
+      -20.4,
+      -44.07
+     ],
+     [
+      -33.0,
+      -17.95,
+      -35.4
+     ]
+    ]
+   },
+   "small_regulator_holder": {
+    "volume_mm3": 2113.2855024315104,
+    "bounds": [
+     [
+      -20.0,
+      -7.0,
+      3.0
+     ],
+     [
+      9.0,
+      6.0,
+      32.15
+     ]
+    ]
+   },
+   "battery_bay_and_other_added": {
+    "volume_mm3": 3312.850708760396,
+    "bounds": [
+     [
+      -49.4,
+      -21.4,
+      -38.0
+     ],
+     [
+      10.25,
+      19.47,
+      32.15
+     ]
+    ]
+   }
+  },
+  "connectivity": {
+   "components_without_hanger_posts": 2,
+   "component_volumes_mm3": [
+    15516.3,
+    2878.5
+   ],
+   "component_bounds": [
+    [
+     [
+      -59.1,
+      -17.95,
+      -57.5
+     ],
+     [
+      -11.9,
+      17.95,
+      -53.5
+     ]
+    ],
+    [
+     [
+      -49.4,
+      -27.25,
+      -38.0
+     ],
+     [
+      10.25,
+      27.25,
+      39.42
+     ]
+    ]
+   ]
+  },
+  "left_post_section_area_mm2": {
+   "-54.0": 9.6,
+   "-50.0": 9.6,
+   "-46.0": 9.6,
+   "-42.0": 9.6,
+   "-38.0": 9.6
+  },
+  "reported_contact_point": {
+   "point": [
+    -33.9,
+    20.4,
+    -53.5
+   ],
+   "dist_to_integrated_surface": 3.8146972514141453e-07,
+   "nearest_integrated": [
+    -33.9,
+    20.4,
+    -53.5
+   ],
+   "dist_to_added_material": 3.8146972514141453e-07,
+   "dist_to_original_part": 17.38817831410619,
+   "region": "lower_post_left",
+   "inside_original_aabb": false
+  },
+  "mounted_parts": {
+   "openrb_tray": {
+    "gap_mm": 0.0,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "deck_and_bosses": 2103
+    },
+    "near_support_bounds": [
+     [
+      -59.1,
+      -17.2,
+      -55.5
+     ],
+     [
+      -11.9,
+      17.2,
+      -54.3
+     ]
+    ]
+   },
+   "openrb_board": {
+    "gap_mm": 1.673,
+    "overlap_mm3": 0.0
+   },
+   "regulator": {
+    "gap_mm": 5.248,
+    "overlap_mm3": 0.0
+   },
+   "regulator_insert": {
+    "gap_mm": 1.0,
+    "overlap_mm3": 0.0
+   },
+   "junction_j": {
+    "gap_mm": 10.0,
+    "overlap_mm3": 0.0
+   },
+   "fuse_main": {
+    "gap_mm": 10.0,
+    "overlap_mm3": 0.0
+   },
+   "xt30_robot": {
+    "gap_mm": 10.0,
+    "overlap_mm3": 0.0
+   },
+   "imu_clamp": {
+    "gap_mm": 0.1,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 1162
+    },
+    "near_support_bounds": [
+     [
+      -49.4,
+      -18.6,
+      24.5
+     ],
+     [
+      -46.9,
+      18.6,
+      29.5
+     ]
+    ]
+   },
+   "imu_cover": {
+    "gap_mm": 5.756,
+    "overlap_mm3": 0.0
+   },
+   "imu_board": {
+    "gap_mm": 3.927,
+    "overlap_mm3": 0.0
+   },
+   "torso_base": {
+    "gap_mm": 0.257,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 1540
+    },
+    "near_support_bounds": [
+     [
+      -19.03,
+      -12.46,
+      -1.81
+     ],
+     [
+      -14.0,
+      12.47,
+      -1.26
+     ]
+    ]
+   },
+   "motor10": {
+    "gap_mm": 0.224,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 124
+    },
+    "near_support_bounds": [
+     [
+      -18.51,
+      7.5,
+      23.22
+     ],
+     [
+      -14.0,
+      12.46,
+      23.3
+     ]
+    ]
+   },
+   "motor5": {
+    "gap_mm": 0.224,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 148
+    },
+    "near_support_bounds": [
+     [
+      -18.52,
+      -12.46,
+      23.22
+     ],
+     [
+      -14.0,
+      -7.5,
+      23.3
+     ]
+    ]
+   },
+   "shell_left": {
+    "gap_mm": 0.0,
+    "overlap_mm3": 0.03,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 883
+    },
+    "near_support_bounds": [
+     [
+      -31.0,
+      2.62,
+      0.51
+     ],
+     [
+      -21.0,
+      27.25,
+      39.42
+     ]
+    ]
+   },
+   "shell_right": {
+    "gap_mm": 0.064,
+    "overlap_mm3": 0.0,
+    "near_support_points_by_region": {
+     "original_frame_or_bay": 659
+    },
+    "near_support_bounds": [
+     [
+      -31.0,
+      -27.25,
+      22.78
+     ],
+     [
+      -21.0,
+      -10.71,
+      39.0
+     ]
+    ]
+   },
+   "ring10_torso": {
+    "gap_mm": 3.998,
+    "overlap_mm3": 0.0
+   },
+   "ring5_torso": {
+    "gap_mm": 3.86,
+    "overlap_mm3": 0.0
+   }
+  }
+ },
+ "walkFrames": {
+  "sources": [
+   {
+    "file": "phase1-blend-old0-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-blend-old0-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-blend-old120-delay0-kp250.json",
+    "frames": 1444,
+    "fell": true,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-blend-old120-delay2-kp250.json",
+    "frames": 1427,
+    "fell": true,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-blend-old60-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-blend-old60-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": true,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old0-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old120-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-candidate-old60-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-mid-old0-sensor40-kp275.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-mid-old120-sensor40-kp275.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-mid-old120-voltage400-kp275.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-mid-old60-sensor40-kp275.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old0-delay0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old0-delay1.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old0-delay2.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old120-delay0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old120-delay1.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old120-delay2.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old60-delay0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old60-delay1.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-no-predict-old60-delay2.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old0-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-baseline.json",
+    "frames": 1438,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-floor06.json",
+    "frames": 1450,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-joint-noise.json",
+    "frames": 1433,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-push.json",
+    "frames": 325,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-sensor40.json",
+    "frames": 91,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old120-voltage475.json",
+    "frames": 468,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-sensor40.json",
+    "frames": 1443,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-old60-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old0-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old0-delay0-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old0-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old0-delay2-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old120-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old120-delay0-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old120-delay2-kp250.json",
+    "frames": 1465,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old120-delay2-kp300.json",
+    "frames": 1435,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old60-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old60-delay0-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old60-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-high-old60-delay2-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay0-kp100-speed0.15.json",
+    "frames": 126,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay0-kp100-speed0.3.json",
+    "frames": 128,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay0-kp150-speed0.15.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay0-kp150-speed0.3.json",
+    "frames": 159,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay2-kp100-speed0.15.json",
+    "frames": 61,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay2-kp100-speed0.3.json",
+    "frames": 61,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay2-kp150-speed0.15.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old0-delay2-kp150-speed0.3.json",
+    "frames": 155,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay0-kp100-speed0.15.json",
+    "frames": 45,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay0-kp100-speed0.3.json",
+    "frames": 45,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay0-kp150-speed0.15.json",
+    "frames": 63,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay0-kp150-speed0.3.json",
+    "frames": 63,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay2-kp100-speed0.15.json",
+    "frames": 43,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay2-kp100-speed0.3.json",
+    "frames": 43,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay2-kp150-speed0.15.json",
+    "frames": 49,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old120-delay2-kp150-speed0.3.json",
+    "frames": 49,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay0-kp100-speed0.15.json",
+    "frames": 52,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay0-kp100-speed0.3.json",
+    "frames": 52,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay0-kp150-speed0.15.json",
+    "frames": 108,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay0-kp150-speed0.3.json",
+    "frames": 107,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay2-kp100-speed0.15.json",
+    "frames": 49,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay2-kp100-speed0.3.json",
+    "frames": 49,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay2-kp150-speed0.15.json",
+    "frames": 70,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.15,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-scan-old60-delay2-kp150-speed0.3.json",
+    "frames": 70,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old0-delay40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old0-voltage4.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old0-voltage5.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old120-voltage4.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old120-voltage5.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old60-voltage4.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-slow-old60-voltage5.0.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.2,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-stop-heading-old0-delay40-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-v4-old120-kp300.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-v4-old120-kp350.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-v4-old120-kp400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-v4.25-old120-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-v4.5-old120-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old0-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old0-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old120-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old120-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old60-delay0-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "phase1-zero-walk-old60-delay2-kp250.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old0-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-voltage400.json",
+    "frames": 687,
+    "fell": true,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old120-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-before-heading/phase1-candidate-old60-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old0-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old120-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-kp300/phase1-candidate-old60-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old0-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old120-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-action40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-baseline.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-extra-wire20.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-extra-wire40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-floor06.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-joint-noise.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-push.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-sensor40.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-voltage400.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-voltage475.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   },
+   {
+    "file": "candidate-with-prediction/phase1-candidate-old60-voltage525.json",
+    "frames": 1500,
+    "fell": false,
+    "blend": false,
+    "command": [
+     0.3,
+     0,
+     0
+    ]
+   }
+  ],
+  "totalFrames": 304253,
+  "adoptedTraces": 189,
+  "adoptedFrames": 283500,
+  "excluded": [
+   "phase1-blend-old0-delay0-kp250.json",
+   "phase1-blend-old0-delay2-kp250.json",
+   "phase1-blend-old120-delay0-kp250.json",
+   "phase1-blend-old120-delay2-kp250.json",
+   "phase1-blend-old60-delay0-kp250.json",
+   "phase1-blend-old60-delay2-kp250.json",
+   "phase1-old120-baseline.json",
+   "phase1-old120-floor06.json",
+   "phase1-old120-joint-noise.json",
+   "phase1-old120-push.json",
+   "phase1-old120-sensor40.json",
+   "phase1-old120-voltage475.json",
+   "phase1-old60-sensor40.json",
+   "phase1-scan-high-old120-delay2-kp250.json",
+   "phase1-scan-high-old120-delay2-kp300.json",
+   "phase1-scan-old0-delay0-kp100-speed0.15.json",
+   "phase1-scan-old0-delay0-kp100-speed0.3.json",
+   "phase1-scan-old0-delay0-kp150-speed0.3.json",
+   "phase1-scan-old0-delay2-kp100-speed0.15.json",
+   "phase1-scan-old0-delay2-kp100-speed0.3.json",
+   "phase1-scan-old0-delay2-kp150-speed0.3.json",
+   "phase1-scan-old120-delay0-kp100-speed0.15.json",
+   "phase1-scan-old120-delay0-kp100-speed0.3.json",
+   "phase1-scan-old120-delay0-kp150-speed0.15.json",
+   "phase1-scan-old120-delay0-kp150-speed0.3.json",
+   "phase1-scan-old120-delay2-kp100-speed0.15.json",
+   "phase1-scan-old120-delay2-kp100-speed0.3.json",
+   "phase1-scan-old120-delay2-kp150-speed0.15.json",
+   "phase1-scan-old120-delay2-kp150-speed0.3.json",
+   "phase1-scan-old60-delay0-kp100-speed0.15.json",
+   "phase1-scan-old60-delay0-kp100-speed0.3.json",
+   "phase1-scan-old60-delay0-kp150-speed0.15.json",
+   "phase1-scan-old60-delay0-kp150-speed0.3.json",
+   "phase1-scan-old60-delay2-kp100-speed0.15.json",
+   "phase1-scan-old60-delay2-kp100-speed0.3.json",
+   "phase1-scan-old60-delay2-kp150-speed0.15.json",
+   "phase1-scan-old60-delay2-kp150-speed0.3.json",
+   "candidate-before-heading/phase1-candidate-old120-voltage400.json"
+  ],
+  "qposWidth": 21,
+  "hingeOrder": [
+   "left_hip_yaw",
+   "left_hip_roll",
+   "left_hip_pitch",
+   "left_knee",
+   "left_ankle",
+   "neck_pitch",
+   "head_pitch",
+   "head_yaw",
+   "head_roll",
+   "right_hip_yaw",
+   "right_hip_roll",
+   "right_hip_pitch",
+   "right_knee",
+   "right_ankle"
+  ],
+  "stats_adopted": {
+   "left_hip_yaw": {
+    "min": -0.3355,
+    "p005": -0.1454,
+    "median": -0.0427,
+    "p995": 0.0526,
+    "max": 0.2161,
+    "range": [
+     -0.4363,
+     0.5236
+    ]
+   },
+   "left_hip_roll": {
+    "min": -0.2884,
+    "p005": -0.1909,
+    "median": -0.0855,
+    "p995": 0.0395,
+    "max": 0.1378,
+    "range": [
+     -0.384,
+     0.384
+    ]
+   },
+   "left_hip_pitch": {
+    "min": -0.8328,
+    "p005": -0.6755,
+    "median": -0.3885,
+    "p995": -0.0373,
+    "max": 0.2882,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "left_knee": {
+    "min": -0.4867,
+    "p005": -0.199,
+    "median": 0.0503,
+    "p995": 0.4552,
+    "max": 0.6539,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "left_ankle": {
+    "min": 0.0144,
+    "p005": 0.1766,
+    "median": 0.4226,
+    "p995": 0.6836,
+    "max": 0.8953,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "neck_pitch": {
+    "min": -0.3952,
+    "p005": -0.3234,
+    "median": 0.2233,
+    "p995": 0.5179,
+    "max": 0.7674,
+    "range": [
+     -1.5708,
+     1.0472
+    ]
+   },
+   "head_pitch": {
+    "min": -0.0151,
+    "p005": 0.24,
+    "median": 0.4307,
+    "p995": 0.6348,
+    "max": 1.1899,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "head_yaw": {
+    "min": -0.4683,
+    "p005": -0.1233,
+    "median": 0.0216,
+    "p995": 0.261,
+    "max": 0.5936,
+    "range": [
+     -2.9671,
+     2.9671
+    ]
+   },
+   "head_roll": {
+    "min": -0.3731,
+    "p005": -0.0885,
+    "median": -0.0271,
+    "p995": 0.0684,
+    "max": 0.1962,
+    "range": [
+     -0.4363,
+     0.4363
+    ]
+   },
+   "right_hip_yaw": {
+    "min": -0.2609,
+    "p005": -0.1229,
+    "median": 0.037,
+    "p995": 0.1516,
+    "max": 0.2312,
+    "range": [
+     -0.5236,
+     0.4363
+    ]
+   },
+   "right_hip_roll": {
+    "min": -0.1644,
+    "p005": -0.0594,
+    "median": 0.0878,
+    "p995": 0.1769,
+    "max": 0.299,
+    "range": [
+     -0.384,
+     0.384
+    ]
+   },
+   "right_hip_pitch": {
+    "min": -0.18,
+    "p005": 0.0328,
+    "median": 0.3855,
+    "p995": 0.6987,
+    "max": 1.1165,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "right_knee": {
+    "min": -0.5962,
+    "p005": -0.428,
+    "median": -0.0467,
+    "p995": 0.176,
+    "max": 0.2707,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   },
+   "right_ankle": {
+    "min": -1.1349,
+    "p005": -0.7244,
+    "median": -0.426,
+    "p995": -0.2247,
+    "max": 0.1096,
+    "range": [
+     -1.5708,
+     1.5708
+    ]
+   }
+  },
+  "qpos0Check": {
+   "left_hip_pitch": {
+    "ring": "ring8",
+    "ringCentre": [
+     4.0,
+     40.5,
+     -17.5
+    ],
+    "anchor": [
+     4.0,
+     42.5,
+     -17.5
+    ],
+    "axis": [
+     -0.0,
+     1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.0
+   },
+   "left_knee": {
+    "ring": "ring7",
+    "ringCentre": [
+     -31.777,
+     40.5,
+     -39.5
+    ],
+    "anchor": [
+     -31.777,
+     38.5,
+     -39.5
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.0
+   },
+   "left_ankle": {
+    "ring": "smallring",
+    "ringCentre": [
+     -31.778,
+     33.8,
+     -81.498
+    ],
+    "anchor": [
+     -31.777,
+     64.5,
+     -81.5
+    ],
+    "axis": [
+     -0.0,
+     1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.002
+   },
+   "left_hip_roll": {
+    "ring": "ring9",
+    "ringCentre": [
+     20.5,
+     17.5,
+     -17.5
+    ],
+    "anchor": [
+     22.5,
+     17.5,
+     -17.5
+    ],
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "ringThinAxis": 0,
+    "perpDistMm": 0.0
+   },
+   "right_hip_pitch": {
+    "ring": "ring3",
+    "ringCentre": [
+     4.0,
+     -40.5,
+     -17.5
+    ],
+    "anchor": [
+     4.0,
+     -42.5,
+     -17.5
+    ],
+    "axis": [
+     -0.0,
+     -1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.0
+   },
+   "right_knee": {
+    "ring": "ring2",
+    "ringCentre": [
+     -31.777,
+     -40.5,
+     -39.5
+    ],
+    "anchor": [
+     -31.777,
+     -38.5,
+     -39.5
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.0
+   },
+   "right_ankle": {
+    "ring": "right_smallring",
+    "ringCentre": [
+     -31.778,
+     -33.8,
+     -81.498
+    ],
+    "anchor": [
+     -31.777,
+     -64.5,
+     -81.5
+    ],
+    "axis": [
+     -0.0,
+     -1.0,
+     0.0
+    ],
+    "ringThinAxis": 1,
+    "perpDistMm": 0.002
+   },
+   "right_hip_roll": {
+    "ring": "ring4",
+    "ringCentre": [
+     20.5,
+     -17.5,
+     -17.5
+    ],
+    "anchor": [
+     22.5,
+     -17.5,
+     -17.5
+    ],
+    "axis": [
+     1.0,
+     -0.0,
+     0.0
+    ],
+    "ringThinAxis": 0,
+    "perpDistMm": 0.0
+   }
+  },
+  "shinMeshBounds": {
+   "leg": [
+    [
+     -41.78,
+     32.5,
+     -87.5
+    ],
+    [
+     -21.78,
+     40.45,
+     -29.5
+    ]
+   ],
+   "leg_2": [
+    [
+     -41.78,
+     -40.45,
+     -87.5
+    ],
+    [
+     -21.78,
+     -32.5,
+     -29.5
+    ]
+   ],
+   "guide_lower": [
+    [
+     -41.78,
+     32.5,
+     -87.5
+    ],
+    [
+     -21.78,
+     40.45,
+     -29.5
+    ]
+   ],
+   "guide_right_lower": [
+    [
+     -41.78,
+     -40.45,
+     -87.5
+    ],
+    [
+     -21.78,
+     -32.5,
+     -29.5
+    ]
+   ]
+  }
+ },
+ "reach": {
+  "groups": {
+   "adopted": {
+    "traces": 189,
+    "uniqueTrajectories": 148,
+    "frames": 283500
+   },
+   "priorSet": {
+    "traces": 98,
+    "uniqueTrajectories": 98,
+    "frames": 147000
+   },
+   "excluded": {
+    "traces": 38,
+    "uniqueTrajectories": 30,
+    "frames": 20753
+   },
+   "finalController": {
+    "traces": 33,
+    "uniqueTrajectories": 33,
+    "frames": 49500
+   },
+   "adoptedSensorDelay40ms": {
+    "traces": 29,
+    "uniqueTrajectories": 23,
+    "frames": 43500
+   },
+   "adoptedNoSensorDelay": {
+    "traces": 160,
+    "uniqueTrajectories": 125,
+    "frames": 240000
+   }
+  },
+  "groupDefinitions": {
+   "adopted": "non-falling, non-blend phase-1 walking runs",
+   "priorSet": "candidate-* folders + zero-walk runs (previous study)",
+   "excluded": "runs that fell or blended policies",
+   "finalController": "top-level phase1-candidate-* (33 cases, kp 275, README candidate)",
+   "adoptedSensorDelay40ms": "adopted runs with sensor_delay_ticks = 2 (40 ms)",
+   "adoptedNoSensorDelay": "other adopted runs"
+  },
+  "priorFrame54475": {
+   "myIndex": [
+    119494,
+    220728
+   ],
+   "files": [
+    "phase1-scan-high-old0-delay2-kp300.json",
+    "candidate-kp300/phase1-candidate-old0-sensor40.json"
+   ],
+   "frameInRun": [
+    475,
+    475
+   ],
+   "q": {
+    "left_hip_yaw": -0.2156,
+    "left_hip_roll": -0.1746,
+    "left_hip_pitch": -0.2066,
+    "left_knee": -0.0213,
+    "left_ankle": 0.2057
+   }
+  },
+  "left": {
+   "T1": 5.132956447485406,
+   "legCoverMaxMm": 1.050956447485406,
+   "flagged": 10718,
+   "adopted": {
+    "frames": 283500,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 160,
+    "uniqueFramesContact0": 28,
+    "uniqueFrames": 222000,
+    "runsUnder2": [
+     "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "candidate-with-prediction/phase1-candidate-old0-sensor40.json",
+     "phase1-candidate-old0-sensor40.json",
+     "phase1-mid-old0-sensor40-kp275.json",
+     "phase1-no-predict-old0-delay2.json",
+     "phase1-scan-high-old0-delay2-kp300.json"
+    ],
+    "under2": 181,
+    "under1": 66,
+    "under05": 44,
+    "contact0": 28,
+    "tracesUnder2": 6,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 26,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_left": 181,
+     "deck_and_bosses": 85,
+     "upper_post_left": 29
+    },
+    "regionMinGap": {
+     "lower_post_left": 0.0,
+     "deck_and_bosses": 0.0,
+     "upper_post_left": 0.0
+    },
+    "partHitsUnder2": {
+     "shin": 293,
+     "thigh/knee": 2
+    },
+    "closestFrame": {
+     "index": 119494,
+     "file": "phase1-scan-high-old0-delay2-kp300.json",
+     "frameInRun": 475,
+     "gap": 0.0,
+     "part": "lower",
+     "q": {
+      "left_hip_yaw": -0.2156,
+      "left_hip_roll": -0.1746,
+      "left_hip_pitch": -0.2066,
+      "left_knee": -0.0213,
+      "left_ankle": 0.2057
+     },
+     "overlap": [
+      1.4465,
+      "lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 87.2355
+   },
+   "priorSet": {
+    "frames": 147000,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 65,
+    "uniqueFramesContact0": 12,
+    "uniqueFrames": 96000,
+    "runsUnder2": [
+     "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "candidate-with-prediction/phase1-candidate-old0-sensor40.json"
+    ],
+    "under2": 84,
+    "under1": 30,
+    "under05": 19,
+    "contact0": 12,
+    "tracesUnder2": 2,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 12,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_left": 84,
+     "deck_and_bosses": 41,
+     "upper_post_left": 11
+    },
+    "regionMinGap": {
+     "lower_post_left": 0.0,
+     "deck_and_bosses": 0.0,
+     "upper_post_left": 0.0
+    },
+    "partHitsUnder2": {
+     "shin": 134,
+     "thigh/knee": 2
+    },
+    "closestFrame": {
+     "index": 220728,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 475,
+     "gap": 0.0,
+     "part": "lower",
+     "q": {
+      "left_hip_yaw": -0.2156,
+      "left_hip_roll": -0.1746,
+      "left_hip_pitch": -0.2066,
+      "left_knee": -0.0213,
+      "left_ankle": 0.2057
+     },
+     "overlap": [
+      1.4465,
+      "lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 70.0634
+   },
+   "excluded": {
+    "frames": 20753,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 66,
+    "uniqueFramesContact0": 52,
+    "uniqueFrames": 20321,
+    "runsUnder2": [
+     "phase1-blend-old0-delay2-kp250.json",
+     "phase1-blend-old120-delay0-kp250.json",
+     "phase1-old120-push.json",
+     "phase1-old120-voltage475.json",
+     "phase1-scan-old0-delay0-kp100-speed0.15.json",
+     "phase1-scan-old0-delay0-kp100-speed0.3.json",
+     "phase1-scan-old0-delay2-kp150-speed0.3.json"
+    ],
+    "under2": 66,
+    "under1": 59,
+    "under05": 55,
+    "contact0": 52,
+    "tracesUnder2": 7,
+    "minGapTray": 0.0,
+    "minGapBoard": 0.0,
+    "trayUnder2": 51,
+    "boardUnder2": 19,
+    "framesUnder2ByRegion": {
+     "lower_post_left": 51,
+     "deck_and_bosses": 49,
+     "upper_post_left": 46,
+     "original_frame_kept": 27,
+     "battery_bay_and_other_added": 25
+    },
+    "regionMinGap": {
+     "lower_post_left": 0.0,
+     "deck_and_bosses": 0.0,
+     "upper_post_left": 0.0,
+     "original_frame_kept": 0.0,
+     "battery_bay_and_other_added": 0.0
+    },
+    "partHitsUnder2": {
+     "shin": 95,
+     "thigh/knee": 103
+    },
+    "closestFrame": {
+     "index": 2906,
+     "file": "phase1-blend-old0-delay2-kp250.json",
+     "frameInRun": 1406,
+     "gap": 0.0,
+     "part": "lower",
+     "q": {
+      "left_hip_yaw": -0.0806,
+      "left_hip_roll": -0.306,
+      "left_hip_pitch": -0.1094,
+      "left_knee": 0.2385,
+      "left_ankle": 0.2964
+     },
+     "overlap": [
+      0.0006,
+      "lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 445.8386
+   },
+   "finalController": {
+    "frames": 49500,
+    "minGapSupport": 1.6811813350573315,
+    "minGapAddedOnly": 1.6811813350573315,
+    "uniqueFramesUnder2": 2,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 49500,
+    "runsUnder2": [
+     "phase1-candidate-old0-sensor40.json"
+    ],
+    "under2": 2,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 1,
+    "minGapTray": 2.9156530560866423,
+    "minGapBoard": 6.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_left": 2
+    },
+    "regionMinGap": {
+     "lower_post_left": 1.6812
+    },
+    "partHitsUnder2": {
+     "shin": 2
+    },
+    "closestFrame": {
+     "index": 20667,
+     "file": "phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1296,
+     "gap": 1.6811813350573315,
+     "part": "lower",
+     "q": {
+      "left_hip_yaw": -0.2082,
+      "left_hip_roll": -0.1684,
+      "left_hip_pitch": -0.3659,
+      "left_knee": -0.0637,
+      "left_ankle": 0.2243
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedSensorDelay40ms": {
+    "frames": 43500,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 160,
+    "uniqueFramesContact0": 28,
+    "uniqueFrames": 34500,
+    "runsUnder2": [
+     "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "candidate-with-prediction/phase1-candidate-old0-sensor40.json",
+     "phase1-candidate-old0-sensor40.json",
+     "phase1-mid-old0-sensor40-kp275.json",
+     "phase1-no-predict-old0-delay2.json",
+     "phase1-scan-high-old0-delay2-kp300.json"
+    ],
+    "under2": 181,
+    "under1": 66,
+    "under05": 44,
+    "contact0": 28,
+    "tracesUnder2": 6,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 26,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_left": 181,
+     "deck_and_bosses": 85,
+     "upper_post_left": 29
+    },
+    "regionMinGap": {
+     "lower_post_left": 0.0,
+     "deck_and_bosses": 0.0,
+     "upper_post_left": 0.0
+    },
+    "partHitsUnder2": {
+     "shin": 293,
+     "thigh/knee": 2
+    },
+    "closestFrame": {
+     "index": 119494,
+     "file": "phase1-scan-high-old0-delay2-kp300.json",
+     "frameInRun": 475,
+     "gap": 0.0,
+     "part": "lower",
+     "q": {
+      "left_hip_yaw": -0.2156,
+      "left_hip_roll": -0.1746,
+      "left_hip_pitch": -0.2066,
+      "left_knee": -0.0213,
+      "left_ankle": 0.2057
+     },
+     "overlap": [
+      1.4465,
+      "lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 87.2355
+   },
+   "adoptedNoSensorDelay": {
+    "frames": 240000,
+    "minGapSupport": 3.9855513212515064,
+    "minGapAddedOnly": 3.9855513212515064,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 187500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 99.0,
+    "minGapBoard": 99.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 239891,
+     "file": "candidate-kp300/phase1-candidate-old60-action40.json",
+     "frameInRun": 138,
+     "gap": 3.9855513212515064,
+     "part": null,
+     "q": {
+      "left_hip_yaw": -0.1209,
+      "left_hip_roll": -0.1366,
+      "left_hip_pitch": -0.1989,
+      "left_knee": 0.2271,
+      "left_ankle": 0.3439
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "nearestSupportPointsUnder2_adopted": {
+    "n": 181,
+    "supportMin": [
+     -37.5,
+     17.0,
+     -57.5
+    ],
+    "supportMax": [
+     -28.51,
+     20.4,
+     -45.83
+    ],
+    "legMin": [
+     -37.5,
+     17.0,
+     -58.11
+    ],
+    "legMax": [
+     -28.51,
+     22.39,
+     -45.83
+    ],
+    "regions": {
+     "lower_post_left": 173,
+     "deck_and_bosses": 8
+    }
+   },
+   "nearestSupportPointsUnder2_all": {
+    "n": 247,
+    "supportMin": [
+     -59.1,
+     -12.3,
+     -57.5
+    ],
+    "supportMax": [
+     -11.91,
+     21.22,
+     -17.31
+    ],
+    "legMin": [
+     -59.11,
+     -12.3,
+     -58.11
+    ],
+    "legMax": [
+     -11.91,
+     22.39,
+     -17.31
+    ],
+    "regions": {
+     "lower_post_left": 193,
+     "deck_and_bosses": 38,
+     "original_frame_or_bay": 16
+    }
+   },
+   "adoptedUnder2_runs": {
+    "phase1-scan-high-old0-delay2-kp300.json": 74,
+    "candidate-kp300/phase1-candidate-old0-sensor40.json": 65,
+    "phase1-mid-old0-sensor40-kp275.json": 19,
+    "candidate-with-prediction/phase1-candidate-old0-sensor40.json": 19,
+    "phase1-candidate-old0-sensor40.json": 2,
+    "phase1-no-predict-old0-delay2.json": 2
+   },
+   "adoptedUnder2_frameInRunRange": [
+    241,
+    1364
+   ]
+  },
+  "left_originalSupport": {
+   "T1": 5.132956447485406,
+   "legCoverMaxMm": 1.050956447485406,
+   "flagged": 144,
+   "adopted": {
+    "frames": 283500,
+    "minGapSupport": 3.911179265433854,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 222000,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 26,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 221613,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1360,
+     "gap": 3.911179265433854,
+     "part": null,
+     "q": {
+      "left_hip_yaw": -0.3219,
+      "left_hip_roll": -0.141,
+      "left_hip_pitch": -0.2881,
+      "left_knee": -0.1216,
+      "left_ankle": 0.1156
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "priorSet": {
+    "frames": 147000,
+    "minGapSupport": 3.911179265433854,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 96000,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 12,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 221613,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1360,
+     "gap": 3.911179265433854,
+     "part": null,
+     "q": {
+      "left_hip_yaw": -0.3219,
+      "left_hip_roll": -0.141,
+      "left_hip_pitch": -0.2881,
+      "left_knee": -0.1216,
+      "left_ankle": 0.1156
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "excluded": {
+    "frames": 20753,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 28,
+    "uniqueFramesContact0": 1,
+    "uniqueFrames": 20321,
+    "runsUnder2": [
+     "phase1-old120-push.json",
+     "phase1-old120-voltage475.json",
+     "phase1-scan-old0-delay0-kp100-speed0.15.json",
+     "phase1-scan-old0-delay0-kp100-speed0.3.json"
+    ],
+    "under2": 28,
+    "under1": 9,
+    "under05": 2,
+    "contact0": 1,
+    "tracesUnder2": 4,
+    "minGapTray": 0.0,
+    "minGapBoard": 0.0,
+    "trayUnder2": 51,
+    "boardUnder2": 19,
+    "framesUnder2ByRegion": {
+     "original_frame_kept": 28
+    },
+    "regionMinGap": {
+     "original_frame_kept": 0.0
+    },
+    "partHitsUnder2": {
+     "thigh/knee": 19,
+     "shin": 9
+    },
+    "closestFrame": {
+     "index": 101066,
+     "file": "phase1-old120-voltage475.json",
+     "frameInRun": 458,
+     "gap": 0.0,
+     "part": "ring7",
+     "q": {
+      "left_hip_yaw": -0.4429,
+      "left_hip_roll": -0.3891,
+      "left_hip_pitch": 0.376,
+      "left_knee": -1.5135,
+      "left_ankle": 0.7555
+     },
+     "overlap": [
+      0.0603,
+      "ring7"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 0.0603
+   },
+   "finalController": {
+    "frames": 49500,
+    "minGapSupport": 99.0,
+    "minGapAddedOnly": 99.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 49500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 2.9156530560866423,
+    "minGapBoard": 6.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 8871,
+     "file": "phase1-candidate-old0-action40.json",
+     "frameInRun": 0,
+     "gap": 99.0,
+     "part": null,
+     "q": {
+      "left_hip_yaw": 0.0,
+      "left_hip_roll": -0.0873,
+      "left_hip_pitch": -0.4579,
+      "left_knee": -0.0049,
+      "left_ankle": 0.453
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedSensorDelay40ms": {
+    "frames": 43500,
+    "minGapSupport": 3.911179265433854,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 34500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 0.0,
+    "minGapBoard": 4.332508614634818,
+    "trayUnder2": 26,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 221613,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1360,
+     "gap": 3.911179265433854,
+     "part": null,
+     "q": {
+      "left_hip_yaw": -0.3219,
+      "left_hip_roll": -0.141,
+      "left_hip_pitch": -0.2881,
+      "left_knee": -0.1216,
+      "left_ankle": 0.1156
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedNoSensorDelay": {
+    "frames": 240000,
+    "minGapSupport": 99.0,
+    "minGapAddedOnly": 99.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 187500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 99.0,
+    "minGapBoard": 99.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 8871,
+     "file": "phase1-candidate-old0-action40.json",
+     "frameInRun": 0,
+     "gap": 99.0,
+     "part": null,
+     "q": {
+      "left_hip_yaw": 0.0,
+      "left_hip_roll": -0.0873,
+      "left_hip_pitch": -0.4579,
+      "left_knee": -0.0049,
+      "left_ankle": 0.453
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "nearestSupportPointsUnder2_all": {
+    "n": 28,
+    "supportMin": [
+     -31.0,
+     19.52,
+     -39.84
+    ],
+    "supportMax": [
+     -23.0,
+     21.26,
+     -17.31
+    ],
+    "legMin": [
+     -32.75,
+     18.73,
+     -41.15
+    ],
+    "legMax": [
+     -24.4,
+     22.75,
+     -17.31
+    ],
+    "regions": {
+     "original_frame_or_bay": 28
+    }
+   },
+   "adoptedUnder2_runs": {},
+   "adoptedUnder2_frameInRunRange": null
+  },
+  "right": {
+   "T1": 5.112994523822046,
+   "legCoverMaxMm": 1.0309945238220464,
+   "flagged": 2832,
+   "adopted": {
+    "frames": 283500,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 66,
+    "uniqueFramesContact0": 13,
+    "uniqueFrames": 222000,
+    "runsUnder2": [
+     "candidate-before-heading/phase1-candidate-old0-sensor40.json",
+     "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "phase1-candidate-old0-sensor40.json",
+     "phase1-no-predict-old0-delay2.json",
+     "phase1-scan-high-old0-delay2-kp300.json"
+    ],
+    "under2": 74,
+    "under1": 30,
+    "under05": 23,
+    "contact0": 16,
+    "tracesUnder2": 5,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 16,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_right": 74,
+     "deck_and_bosses": 29,
+     "upper_post_right": 8
+    },
+    "regionMinGap": {
+     "lower_post_right": 0.0,
+     "deck_and_bosses": 0.1125,
+     "upper_post_right": 1.295
+    },
+    "partHitsUnder2": {
+     "shin": 111
+    },
+    "closestFrame": {
+     "index": 20652,
+     "file": "phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1281,
+     "gap": 0.0,
+     "part": "right_lower",
+     "q": {
+      "right_hip_yaw": 0.2021,
+      "right_hip_roll": 0.1922,
+      "right_hip_pitch": 0.2549,
+      "right_knee": 0.0319,
+      "right_ankle": -0.2378
+     },
+     "overlap": [
+      0.0502,
+      "right_lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 13.3008
+   },
+   "priorSet": {
+    "frames": 147000,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 35,
+    "uniqueFramesContact0": 5,
+    "uniqueFrames": 96000,
+    "runsUnder2": [
+     "candidate-before-heading/phase1-candidate-old0-sensor40.json",
+     "candidate-kp300/phase1-candidate-old0-sensor40.json"
+    ],
+    "under2": 35,
+    "under1": 13,
+    "under05": 8,
+    "contact0": 5,
+    "tracesUnder2": 2,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 5,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_right": 35,
+     "deck_and_bosses": 10,
+     "upper_post_right": 4
+    },
+    "regionMinGap": {
+     "lower_post_right": 0.0,
+     "deck_and_bosses": 0.1125,
+     "upper_post_right": 1.295
+    },
+    "partHitsUnder2": {
+     "shin": 49
+    },
+    "closestFrame": {
+     "index": 221272,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1019,
+     "gap": 0.0,
+     "part": "right_lower",
+     "q": {
+      "right_hip_yaw": 0.2049,
+      "right_hip_roll": 0.179,
+      "right_hip_pitch": 0.1942,
+      "right_knee": -0.0113,
+      "right_ankle": -0.151
+     },
+     "overlap": [
+      0.888,
+      "right_lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 13.3008
+   },
+   "excluded": {
+    "frames": 20753,
+    "minGapSupport": 1.8416485921720398,
+    "minGapAddedOnly": 1.8416485921720398,
+    "uniqueFramesUnder2": 2,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 20321,
+    "runsUnder2": [
+     "phase1-old120-joint-noise.json"
+    ],
+    "under2": 2,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 1,
+    "minGapTray": 3.526620935690541,
+    "minGapBoard": 6.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_right": 2
+    },
+    "regionMinGap": {
+     "lower_post_right": 1.8416
+    },
+    "partHitsUnder2": {
+     "shin": 2
+    },
+    "closestFrame": {
+     "index": 100189,
+     "file": "phase1-old120-joint-noise.json",
+     "frameInRun": 1430,
+     "gap": 1.8416485921720398,
+     "part": "right_lower",
+     "q": {
+      "right_hip_yaw": 0.1317,
+      "right_hip_roll": 0.1518,
+      "right_hip_pitch": 0.02,
+      "right_knee": -0.2749,
+      "right_ankle": -0.5131
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "finalController": {
+    "frames": 49500,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 8,
+    "uniqueFramesContact0": 3,
+    "uniqueFrames": 49500,
+    "runsUnder2": [
+     "phase1-candidate-old0-sensor40.json"
+    ],
+    "under2": 8,
+    "under1": 5,
+    "under05": 4,
+    "contact0": 3,
+    "tracesUnder2": 1,
+    "minGapTray": 1.4591612361182982,
+    "minGapBoard": 6.0,
+    "trayUnder2": 3,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_right": 8,
+     "deck_and_bosses": 6
+    },
+    "regionMinGap": {
+     "lower_post_right": 0.0,
+     "deck_and_bosses": 0.6864
+    },
+    "partHitsUnder2": {
+     "shin": 14
+    },
+    "closestFrame": {
+     "index": 20652,
+     "file": "phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1281,
+     "gap": 0.0,
+     "part": "right_lower",
+     "q": {
+      "right_hip_yaw": 0.2021,
+      "right_hip_roll": 0.1922,
+      "right_hip_pitch": 0.2549,
+      "right_knee": 0.0319,
+      "right_ankle": -0.2378
+     },
+     "overlap": [
+      0.0502,
+      "right_lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 0.6766
+   },
+   "adoptedSensorDelay40ms": {
+    "frames": 43500,
+    "minGapSupport": 0.0,
+    "minGapAddedOnly": 0.0,
+    "uniqueFramesUnder2": 66,
+    "uniqueFramesContact0": 13,
+    "uniqueFrames": 34500,
+    "runsUnder2": [
+     "candidate-before-heading/phase1-candidate-old0-sensor40.json",
+     "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "phase1-candidate-old0-sensor40.json",
+     "phase1-no-predict-old0-delay2.json",
+     "phase1-scan-high-old0-delay2-kp300.json"
+    ],
+    "under2": 74,
+    "under1": 30,
+    "under05": 23,
+    "contact0": 16,
+    "tracesUnder2": 5,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 16,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {
+     "lower_post_right": 74,
+     "deck_and_bosses": 29,
+     "upper_post_right": 8
+    },
+    "regionMinGap": {
+     "lower_post_right": 0.0,
+     "deck_and_bosses": 0.1125,
+     "upper_post_right": 1.295
+    },
+    "partHitsUnder2": {
+     "shin": 111
+    },
+    "closestFrame": {
+     "index": 20652,
+     "file": "phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1281,
+     "gap": 0.0,
+     "part": "right_lower",
+     "q": {
+      "right_hip_yaw": 0.2021,
+      "right_hip_roll": 0.1922,
+      "right_hip_pitch": 0.2549,
+      "right_knee": 0.0319,
+      "right_ankle": -0.2378
+     },
+     "overlap": [
+      0.0502,
+      "right_lower"
+     ]
+    },
+    "contactFramesOverlapMm3Max": 13.3008
+   },
+   "adoptedNoSensorDelay": {
+    "frames": 240000,
+    "minGapSupport": 3.453206716654156,
+    "minGapAddedOnly": 3.453206716654156,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 187500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 99.0,
+    "minGapBoard": 99.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 34635,
+     "file": "phase1-candidate-old120-push.json",
+     "frameInRun": 264,
+     "gap": 3.453206716654156,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.1075,
+      "right_hip_roll": 0.1191,
+      "right_hip_pitch": -0.1341,
+      "right_knee": 0.0881,
+      "right_ankle": -0.3631
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "nearestSupportPointsUnder2_adopted": {
+    "n": 74,
+    "supportMin": [
+     -35.47,
+     -20.4,
+     -57.5
+    ],
+    "supportMax": [
+     -33.5,
+     -19.04,
+     -48.1
+    ],
+    "legMin": [
+     -35.47,
+     -22.4,
+     -57.84
+    ],
+    "legMax": [
+     -32.13,
+     -19.04,
+     -48.1
+    ],
+    "regions": {
+     "lower_post_right": 74
+    }
+   },
+   "nearestSupportPointsUnder2_all": {
+    "n": 76,
+    "supportMin": [
+     -35.47,
+     -20.4,
+     -57.5
+    ],
+    "supportMax": [
+     -33.5,
+     -19.04,
+     -48.1
+    ],
+    "legMin": [
+     -35.47,
+     -22.42,
+     -57.84
+    ],
+    "legMax": [
+     -32.13,
+     -19.04,
+     -48.1
+    ],
+    "regions": {
+     "lower_post_right": 76
+    }
+   },
+   "adoptedUnder2_runs": {
+    "phase1-scan-high-old0-delay2-kp300.json": 23,
+    "candidate-kp300/phase1-candidate-old0-sensor40.json": 20,
+    "candidate-before-heading/phase1-candidate-old0-sensor40.json": 15,
+    "phase1-candidate-old0-sensor40.json": 8,
+    "phase1-no-predict-old0-delay2.json": 8
+   },
+   "adoptedUnder2_frameInRunRange": [
+    407,
+    1363
+   ]
+  },
+  "right_originalSupport": {
+   "T1": 5.112994523822046,
+   "legCoverMaxMm": 1.0309945238220464,
+   "flagged": 24,
+   "adopted": {
+    "frames": 283500,
+    "minGapSupport": 4.7878280243460445,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 222000,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 16,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 120040,
+     "file": "phase1-scan-high-old0-delay2-kp300.json",
+     "frameInRun": 1021,
+     "gap": 4.7878280243460445,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.2283,
+      "right_hip_roll": 0.1744,
+      "right_hip_pitch": 0.1943,
+      "right_knee": -0.0211,
+      "right_ankle": -0.1249
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "priorSet": {
+    "frames": 147000,
+    "minGapSupport": 4.7878280243460445,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 96000,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 5,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 221274,
+     "file": "candidate-kp300/phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1021,
+     "gap": 4.7878280243460445,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.2283,
+      "right_hip_roll": 0.1744,
+      "right_hip_pitch": 0.1943,
+      "right_knee": -0.0211,
+      "right_ankle": -0.1249
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "excluded": {
+    "frames": 20753,
+    "minGapSupport": 5.611128965526381,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 20321,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 3.526620935690541,
+    "minGapBoard": 6.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 100190,
+     "file": "phase1-old120-joint-noise.json",
+     "frameInRun": 1431,
+     "gap": 5.611128965526381,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.1619,
+      "right_hip_roll": 0.134,
+      "right_hip_pitch": 0.0471,
+      "right_knee": -0.3827,
+      "right_ankle": -0.4563
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "finalController": {
+    "frames": 49500,
+    "minGapSupport": 5.423259974634791,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 49500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 1.4591612361182982,
+    "minGapBoard": 6.0,
+    "trayUnder2": 3,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 20653,
+     "file": "phase1-candidate-old0-sensor40.json",
+     "frameInRun": 1282,
+     "gap": 5.423259974634791,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.21,
+      "right_hip_roll": 0.1961,
+      "right_hip_pitch": 0.2784,
+      "right_knee": 0.0284,
+      "right_ankle": -0.2323
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedSensorDelay40ms": {
+    "frames": 43500,
+    "minGapSupport": 4.7878280243460445,
+    "minGapAddedOnly": 6.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 34500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 1.0482723222480599,
+    "minGapBoard": 6.0,
+    "trayUnder2": 16,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 120040,
+     "file": "phase1-scan-high-old0-delay2-kp300.json",
+     "frameInRun": 1021,
+     "gap": 4.7878280243460445,
+     "part": null,
+     "q": {
+      "right_hip_yaw": 0.2283,
+      "right_hip_roll": 0.1744,
+      "right_hip_pitch": 0.1943,
+      "right_knee": -0.0211,
+      "right_ankle": -0.1249
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedNoSensorDelay": {
+    "frames": 240000,
+    "minGapSupport": 99.0,
+    "minGapAddedOnly": 99.0,
+    "uniqueFramesUnder2": 0,
+    "uniqueFramesContact0": 0,
+    "uniqueFrames": 187500,
+    "runsUnder2": [],
+    "under2": 0,
+    "under1": 0,
+    "under05": 0,
+    "contact0": 0,
+    "tracesUnder2": 0,
+    "minGapTray": 99.0,
+    "minGapBoard": 99.0,
+    "trayUnder2": 0,
+    "boardUnder2": 0,
+    "framesUnder2ByRegion": {},
+    "regionMinGap": {},
+    "partHitsUnder2": {},
+    "closestFrame": {
+     "index": 8871,
+     "file": "phase1-candidate-old0-action40.json",
+     "frameInRun": 0,
+     "gap": 99.0,
+     "part": null,
+     "q": {
+      "right_hip_yaw": -0.0,
+      "right_hip_roll": 0.0873,
+      "right_hip_pitch": 0.4579,
+      "right_knee": 0.0049,
+      "right_ankle": -0.453
+     },
+     "overlap": null
+    },
+    "contactFramesOverlapMm3Max": 0.0
+   },
+   "adoptedUnder2_runs": {},
+   "adoptedUnder2_frameInRunRange": null
+  },
+  "left_envelope": {
+   "poses": 15435,
+   "grid": {
+    "left_hip_yaw": [
+     -0.3355,
+     -0.2436,
+     -0.1516,
+     -0.0597,
+     0.0322,
+     0.1242,
+     0.2161
+    ],
+    "left_hip_roll": [
+     -0.2884,
+     -0.2174,
+     -0.1463,
+     -0.0753,
+     -0.0043,
+     0.0668,
+     0.1378
+    ],
+    "left_hip_pitch": [
+     -0.8328,
+     -0.6927,
+     -0.5525,
+     -0.4124,
+     -0.2723,
+     -0.1322,
+     0.008,
+     0.1481,
+     0.2882
+    ],
+    "left_knee": [
+     -0.4867,
+     -0.2966,
+     -0.1065,
+     0.0836,
+     0.2737,
+     0.4638,
+     0.6539
+    ],
+    "left_ankle": [
+     0.0144,
+     0.2346,
+     0.4549,
+     0.6751,
+     0.8953
+    ]
+   },
+   "minGapSupport": 0.0,
+   "minGapAdded": 0.0,
+   "under2": 3302,
+   "contact0": 2431,
+   "byRegionUnder2": {
+    "lower_post_left": 2770,
+    "deck_and_bosses": 2783,
+    "upper_post_left": 2160,
+    "battery_bay_and_other_added": 1300,
+    "original_frame_kept": 715
+   },
+   "minTray": 0.0,
+   "minBoard": 0.0,
+   "closest": {
+    "q": {
+     "left_hip_yaw": -0.3355,
+     "left_hip_roll": -0.2884,
+     "left_hip_pitch": -0.8328,
+     "left_knee": -0.4867,
+     "left_ankle": 0.0144
+    },
+    "part": "plate",
+    "gap": 0.0
+   }
+  },
+  "left_hipgrid": {
+   "poses": 9744,
+   "grid": {
+    "left_hip_yaw": [
+     -0.338,
+     -0.333,
+     -0.328,
+     -0.323,
+     -0.318,
+     -0.313,
+     -0.308,
+     -0.303,
+     -0.298,
+     -0.293,
+     -0.288,
+     -0.283,
+     -0.278,
+     -0.273,
+     -0.268,
+     -0.263,
+     -0.258,
+     -0.253,
+     -0.248,
+     -0.243,
+     -0.238,
+     -0.233,
+     -0.228,
+     -0.223,
+     -0.218,
+     -0.213,
+     -0.208,
+     -0.203,
+     -0.198,
+     -0.193,
+     -0.188,
+     -0.183,
+     -0.178,
+     -0.173,
+     -0.168,
+     -0.163,
+     -0.158,
+     -0.153,
+     -0.148,
+     -0.143,
+     -0.138,
+     -0.133,
+     -0.128,
+     -0.123,
+     -0.118,
+     -0.113,
+     -0.108,
+     -0.103,
+     -0.098,
+     -0.093,
+     -0.088,
+     -0.083,
+     -0.078,
+     -0.073,
+     -0.068,
+     -0.063,
+     -0.058,
+     -0.053,
+     -0.048,
+     -0.043,
+     -0.038,
+     -0.033,
+     -0.028,
+     -0.023,
+     -0.018,
+     -0.013,
+     -0.008,
+     -0.003,
+     0.002,
+     0.007,
+     0.012,
+     0.017,
+     0.022,
+     0.027,
+     0.032,
+     0.037,
+     0.042,
+     0.047,
+     0.052,
+     0.057,
+     0.062,
+     0.067,
+     0.072,
+     0.077,
+     0.082,
+     0.087,
+     0.092,
+     0.097,
+     0.102,
+     0.107,
+     0.112,
+     0.117,
+     0.122,
+     0.127,
+     0.132,
+     0.137,
+     0.142,
+     0.147,
+     0.152,
+     0.157,
+     0.162,
+     0.167,
+     0.172,
+     0.177,
+     0.182,
+     0.187,
+     0.192,
+     0.197,
+     0.202,
+     0.207,
+     0.212,
+     0.217
+    ],
+    "left_hip_roll": [
+     -0.2909,
+     -0.2859,
+     -0.2809,
+     -0.2759,
+     -0.2709,
+     -0.2659,
+     -0.2609,
+     -0.2559,
+     -0.2509,
+     -0.2459,
+     -0.2409,
+     -0.2359,
+     -0.2309,
+     -0.2259,
+     -0.2209,
+     -0.2159,
+     -0.2109,
+     -0.2059,
+     -0.2009,
+     -0.1959,
+     -0.1909,
+     -0.1859,
+     -0.1809,
+     -0.1759,
+     -0.1709,
+     -0.1659,
+     -0.1609,
+     -0.1559,
+     -0.1509,
+     -0.1459,
+     -0.1409,
+     -0.1359,
+     -0.1309,
+     -0.1259,
+     -0.1209,
+     -0.1159,
+     -0.1109,
+     -0.1059,
+     -0.1009,
+     -0.0959,
+     -0.0909,
+     -0.0859,
+     -0.0809,
+     -0.0759,
+     -0.0709,
+     -0.0659,
+     -0.0609,
+     -0.0559,
+     -0.0509,
+     -0.0459,
+     -0.0409,
+     -0.0359,
+     -0.0309,
+     -0.0259,
+     -0.0209,
+     -0.0159,
+     -0.0109,
+     -0.0059,
+     -0.0009,
+     0.0041,
+     0.0091,
+     0.0141,
+     0.0191,
+     0.0241,
+     0.0291,
+     0.0341,
+     0.0391,
+     0.0441,
+     0.0491,
+     0.0541,
+     0.0591,
+     0.0641,
+     0.0691,
+     0.0741,
+     0.0791,
+     0.0841,
+     0.0891,
+     0.0941,
+     0.0991,
+     0.1041,
+     0.1091,
+     0.1141,
+     0.1191,
+     0.1241,
+     0.1291,
+     0.1341,
+     0.1391
+    ],
+    "left_hip_pitch": [
+     0.0
+    ],
+    "left_knee": [
+     0.0
+    ],
+    "left_ankle": [
+     0.0
+    ]
+   },
+   "minGapSupport": 4.928751114452581,
+   "minGapAdded": 5.013239779084618,
+   "under2": 0,
+   "contact0": 0,
+   "byRegionUnder2": {},
+   "minTray": 99.0,
+   "minBoard": 99.0,
+   "closest": {
+    "q": {
+     "left_hip_yaw": 0.217,
+     "left_hip_roll": -0.2909,
+     "left_hip_pitch": 0.0,
+     "left_knee": 0.0,
+     "left_ankle": 0.0
+    },
+    "part": null,
+    "gap": 4.928751114452581
+   }
+  },
+  "right_envelope": {
+   "poses": 15435,
+   "grid": {
+    "right_hip_yaw": [
+     -0.2609,
+     -0.1789,
+     -0.0969,
+     -0.0149,
+     0.0672,
+     0.1492,
+     0.2312
+    ],
+    "right_hip_roll": [
+     -0.1644,
+     -0.0872,
+     -0.0099,
+     0.0673,
+     0.1445,
+     0.2218,
+     0.299
+    ],
+    "right_hip_pitch": [
+     -0.18,
+     -0.0179,
+     0.1441,
+     0.3062,
+     0.4682,
+     0.6303,
+     0.7924,
+     0.9544,
+     1.1165
+    ],
+    "right_knee": [
+     -0.5962,
+     -0.4517,
+     -0.3072,
+     -0.1627,
+     -0.0183,
+     0.1262,
+     0.2707
+    ],
+    "right_ankle": [
+     -1.1349,
+     -0.8238,
+     -0.5127,
+     -0.2015,
+     0.1096
+    ]
+   },
+   "minGapSupport": 0.0,
+   "minGapAdded": 0.0,
+   "under2": 1459,
+   "contact0": 828,
+   "byRegionUnder2": {
+    "lower_post_right": 1140,
+    "deck_and_bosses": 1155,
+    "upper_post_right": 630,
+    "battery_bay_and_other_added": 210,
+    "original_frame_kept": 90
+   },
+   "minTray": 0.0,
+   "minBoard": 0.0,
+   "closest": {
+    "q": {
+     "right_hip_yaw": 0.0672,
+     "right_hip_roll": 0.299,
+     "right_hip_pitch": -0.18,
+     "right_knee": -0.5962,
+     "right_ankle": -1.1349
+    },
+    "part": "right_lower",
+    "gap": 0.0
+   }
+  },
+  "right_hipgrid": {
+   "poses": 9500,
+   "grid": {
+    "right_hip_yaw": [
+     -0.2634,
+     -0.2584,
+     -0.2534,
+     -0.2484,
+     -0.2434,
+     -0.2384,
+     -0.2334,
+     -0.2284,
+     -0.2234,
+     -0.2184,
+     -0.2134,
+     -0.2084,
+     -0.2034,
+     -0.1984,
+     -0.1934,
+     -0.1884,
+     -0.1834,
+     -0.1784,
+     -0.1734,
+     -0.1684,
+     -0.1634,
+     -0.1584,
+     -0.1534,
+     -0.1484,
+     -0.1434,
+     -0.1384,
+     -0.1334,
+     -0.1284,
+     -0.1234,
+     -0.1184,
+     -0.1134,
+     -0.1084,
+     -0.1034,
+     -0.0984,
+     -0.0934,
+     -0.0884,
+     -0.0834,
+     -0.0784,
+     -0.0734,
+     -0.0684,
+     -0.0634,
+     -0.0584,
+     -0.0534,
+     -0.0484,
+     -0.0434,
+     -0.0384,
+     -0.0334,
+     -0.0284,
+     -0.0234,
+     -0.0184,
+     -0.0134,
+     -0.0084,
+     -0.0034,
+     0.0016,
+     0.0066,
+     0.0116,
+     0.0166,
+     0.0216,
+     0.0266,
+     0.0316,
+     0.0366,
+     0.0416,
+     0.0466,
+     0.0516,
+     0.0566,
+     0.0616,
+     0.0666,
+     0.0716,
+     0.0766,
+     0.0816,
+     0.0866,
+     0.0916,
+     0.0966,
+     0.1016,
+     0.1066,
+     0.1116,
+     0.1166,
+     0.1216,
+     0.1266,
+     0.1316,
+     0.1366,
+     0.1416,
+     0.1466,
+     0.1516,
+     0.1566,
+     0.1616,
+     0.1666,
+     0.1716,
+     0.1766,
+     0.1816,
+     0.1866,
+     0.1916,
+     0.1966,
+     0.2016,
+     0.2066,
+     0.2116,
+     0.2166,
+     0.2216,
+     0.2266,
+     0.2316
+    ],
+    "right_hip_roll": [
+     -0.1669,
+     -0.1619,
+     -0.1569,
+     -0.1519,
+     -0.1469,
+     -0.1419,
+     -0.1369,
+     -0.1319,
+     -0.1269,
+     -0.1219,
+     -0.1169,
+     -0.1119,
+     -0.1069,
+     -0.1019,
+     -0.0969,
+     -0.0919,
+     -0.0869,
+     -0.0819,
+     -0.0769,
+     -0.0719,
+     -0.0669,
+     -0.0619,
+     -0.0569,
+     -0.0519,
+     -0.0469,
+     -0.0419,
+     -0.0369,
+     -0.0319,
+     -0.0269,
+     -0.0219,
+     -0.0169,
+     -0.0119,
+     -0.0069,
+     -0.0019,
+     0.0031,
+     0.0081,
+     0.0131,
+     0.0181,
+     0.0231,
+     0.0281,
+     0.0331,
+     0.0381,
+     0.0431,
+     0.0481,
+     0.0531,
+     0.0581,
+     0.0631,
+     0.0681,
+     0.0731,
+     0.0781,
+     0.0831,
+     0.0881,
+     0.0931,
+     0.0981,
+     0.1031,
+     0.1081,
+     0.1131,
+     0.1181,
+     0.1231,
+     0.1281,
+     0.1331,
+     0.1381,
+     0.1431,
+     0.1481,
+     0.1531,
+     0.1581,
+     0.1631,
+     0.1681,
+     0.1731,
+     0.1781,
+     0.1831,
+     0.1881,
+     0.1931,
+     0.1981,
+     0.2031,
+     0.2081,
+     0.2131,
+     0.2181,
+     0.2231,
+     0.2281,
+     0.2331,
+     0.2381,
+     0.2431,
+     0.2481,
+     0.2531,
+     0.2581,
+     0.2631,
+     0.2681,
+     0.2731,
+     0.2781,
+     0.2831,
+     0.2881,
+     0.2931,
+     0.2981,
+     0.3031
+    ],
+    "right_hip_pitch": [
+     0.0
+    ],
+    "right_knee": [
+     0.0
+    ],
+    "right_ankle": [
+     0.0
+    ]
+   },
+   "minGapSupport": 4.652446780493759,
+   "minGapAdded": 4.877072417328656,
+   "under2": 0,
+   "contact0": 0,
+   "byRegionUnder2": {},
+   "minTray": 99.0,
+   "minBoard": 99.0,
+   "closest": {
+    "q": {
+     "right_hip_yaw": -0.2634,
+     "right_hip_roll": -0.1669,
+     "right_hip_pitch": 0.0,
+     "right_knee": 0.0,
+     "right_ankle": 0.0
+    },
+    "part": null,
+    "gap": 4.652446780493759
+   }
+  }
+ },
+ "sweep": {
+  "left": {
+   "currentPost_margin0.0": {
+    "adopted": [
+     137,
+     20
+    ],
+    "all": [
+     264,
+     47
+    ]
+   },
+   "currentPost_margin1.0": {
+    "adopted": [
+     332,
+     65
+    ],
+    "all": [
+     720,
+     87
+    ]
+   },
+   "currentPost_margin2.9": {
+    "adopted": [
+     1010,
+     524
+    ],
+    "all": [
+     2160,
+     567
+    ]
+   },
+   "postSlideAlongDeckEdge_margin2.9": [
+    {
+     "x0": -59.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1654
+    },
+    {
+     "x0": -58.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1617
+    },
+    {
+     "x0": -58.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1617
+    },
+    {
+     "x0": -57.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1598
+    },
+    {
+     "x0": -57.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1598
+    },
+    {
+     "x0": -56.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1611
+    },
+    {
+     "x0": -56.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1611
+    },
+    {
+     "x0": -55.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1648
+    },
+    {
+     "x0": -55.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 1648
+    },
+    {
+     "x0": -54.6,
+     "adoptedTouchedVoxels": 1,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1703
+    },
+    {
+     "x0": -54.1,
+     "adoptedTouchedVoxels": 1,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1703
+    },
+    {
+     "x0": -53.6,
+     "adoptedTouchedVoxels": 5,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1757
+    },
+    {
+     "x0": -53.1,
+     "adoptedTouchedVoxels": 5,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1757
+    },
+    {
+     "x0": -52.6,
+     "adoptedTouchedVoxels": 12,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1818
+    },
+    {
+     "x0": -52.1,
+     "adoptedTouchedVoxels": 12,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1818
+    },
+    {
+     "x0": -51.6,
+     "adoptedTouchedVoxels": 19,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1882
+    },
+    {
+     "x0": -51.1,
+     "adoptedTouchedVoxels": 19,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1882
+    },
+    {
+     "x0": -50.6,
+     "adoptedTouchedVoxels": 24,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1943
+    },
+    {
+     "x0": -50.1,
+     "adoptedTouchedVoxels": 24,
+     "adoptedMaxFrames": 1,
+     "allTouchedVoxels": 1943
+    },
+    {
+     "x0": -49.6,
+     "adoptedTouchedVoxels": 30,
+     "adoptedMaxFrames": 3,
+     "allTouchedVoxels": 2000
+    },
+    {
+     "x0": -49.1,
+     "adoptedTouchedVoxels": 30,
+     "adoptedMaxFrames": 3,
+     "allTouchedVoxels": 2000
+    },
+    {
+     "x0": -48.6,
+     "adoptedTouchedVoxels": 40,
+     "adoptedMaxFrames": 3,
+     "allTouchedVoxels": 2054
+    },
+    {
+     "x0": -48.1,
+     "adoptedTouchedVoxels": 40,
+     "adoptedMaxFrames": 3,
+     "allTouchedVoxels": 2054
+    },
+    {
+     "x0": -47.6,
+     "adoptedTouchedVoxels": 58,
+     "adoptedMaxFrames": 7,
+     "allTouchedVoxels": 2097
+    },
+    {
+     "x0": -47.1,
+     "adoptedTouchedVoxels": 58,
+     "adoptedMaxFrames": 7,
+     "allTouchedVoxels": 2097
+    },
+    {
+     "x0": -46.6,
+     "adoptedTouchedVoxels": 97,
+     "adoptedMaxFrames": 21,
+     "allTouchedVoxels": 2125
+    },
+    {
+     "x0": -46.1,
+     "adoptedTouchedVoxels": 97,
+     "adoptedMaxFrames": 21,
+     "allTouchedVoxels": 2125
+    },
+    {
+     "x0": -45.6,
+     "adoptedTouchedVoxels": 160,
+     "adoptedMaxFrames": 26,
+     "allTouchedVoxels": 2139
+    },
+    {
+     "x0": -45.1,
+     "adoptedTouchedVoxels": 160,
+     "adoptedMaxFrames": 26,
+     "allTouchedVoxels": 2139
+    },
+    {
+     "x0": -44.6,
+     "adoptedTouchedVoxels": 246,
+     "adoptedMaxFrames": 34,
+     "allTouchedVoxels": 2145
+    },
+    {
+     "x0": -44.1,
+     "adoptedTouchedVoxels": 246,
+     "adoptedMaxFrames": 34,
+     "allTouchedVoxels": 2145
+    },
+    {
+     "x0": -43.6,
+     "adoptedTouchedVoxels": 342,
+     "adoptedMaxFrames": 55,
+     "allTouchedVoxels": 2151
+    },
+    {
+     "x0": -43.1,
+     "adoptedTouchedVoxels": 342,
+     "adoptedMaxFrames": 55,
+     "allTouchedVoxels": 2151
+    },
+    {
+     "x0": -42.6,
+     "adoptedTouchedVoxels": 447,
+     "adoptedMaxFrames": 90,
+     "allTouchedVoxels": 2157
+    },
+    {
+     "x0": -42.1,
+     "adoptedTouchedVoxels": 447,
+     "adoptedMaxFrames": 90,
+     "allTouchedVoxels": 2157
+    },
+    {
+     "x0": -41.6,
+     "adoptedTouchedVoxels": 554,
+     "adoptedMaxFrames": 118,
+     "allTouchedVoxels": 2159
+    },
+    {
+     "x0": -41.1,
+     "adoptedTouchedVoxels": 554,
+     "adoptedMaxFrames": 118,
+     "allTouchedVoxels": 2159
+    },
+    {
+     "x0": -40.6,
+     "adoptedTouchedVoxels": 666,
+     "adoptedMaxFrames": 188,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -40.1,
+     "adoptedTouchedVoxels": 666,
+     "adoptedMaxFrames": 188,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -39.6,
+     "adoptedTouchedVoxels": 782,
+     "adoptedMaxFrames": 284,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -39.1,
+     "adoptedTouchedVoxels": 782,
+     "adoptedMaxFrames": 284,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -38.6,
+     "adoptedTouchedVoxels": 901,
+     "adoptedMaxFrames": 371,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -38.1,
+     "adoptedTouchedVoxels": 901,
+     "adoptedMaxFrames": 371,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -37.6,
+     "adoptedTouchedVoxels": 1010,
+     "adoptedMaxFrames": 524,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -37.1,
+     "adoptedTouchedVoxels": 1010,
+     "adoptedMaxFrames": 524,
+     "allTouchedVoxels": 2160
+    },
+    {
+     "x0": -36.6,
+     "adoptedTouchedVoxels": 1099,
+     "adoptedMaxFrames": 599,
+     "allTouchedVoxels": 2159
+    },
+    {
+     "x0": -36.1,
+     "adoptedTouchedVoxels": 1099,
+     "adoptedMaxFrames": 599,
+     "allTouchedVoxels": 2159
+    },
+    {
+     "x0": -35.6,
+     "adoptedTouchedVoxels": 1160,
+     "adoptedMaxFrames": 707,
+     "allTouchedVoxels": 2154
+    },
+    {
+     "x0": -35.1,
+     "adoptedTouchedVoxels": 1160,
+     "adoptedMaxFrames": 707,
+     "allTouchedVoxels": 2154
+    },
+    {
+     "x0": -34.6,
+     "adoptedTouchedVoxels": 1195,
+     "adoptedMaxFrames": 977,
+     "allTouchedVoxels": 2138
+    },
+    {
+     "x0": -34.1,
+     "adoptedTouchedVoxels": 1195,
+     "adoptedMaxFrames": 977,
+     "allTouchedVoxels": 2138
+    },
+    {
+     "x0": -33.6,
+     "adoptedTouchedVoxels": 1213,
+     "adoptedMaxFrames": 1355,
+     "allTouchedVoxels": 2115
+    },
+    {
+     "x0": -33.1,
+     "adoptedTouchedVoxels": 1213,
+     "adoptedMaxFrames": 1355,
+     "allTouchedVoxels": 2115
+    },
+    {
+     "x0": -32.6,
+     "adoptedTouchedVoxels": 1209,
+     "adoptedMaxFrames": 1537,
+     "allTouchedVoxels": 2081
+    },
+    {
+     "x0": -32.1,
+     "adoptedTouchedVoxels": 1209,
+     "adoptedMaxFrames": 1537,
+     "allTouchedVoxels": 2081
+    },
+    {
+     "x0": -31.6,
+     "adoptedTouchedVoxels": 1193,
+     "adoptedMaxFrames": 1537,
+     "allTouchedVoxels": 2036
+    },
+    {
+     "x0": -31.1,
+     "adoptedTouchedVoxels": 1193,
+     "adoptedMaxFrames": 1537,
+     "allTouchedVoxels": 2036
+    },
+    {
+     "x0": -30.6,
+     "adoptedTouchedVoxels": 1169,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1981
+    },
+    {
+     "x0": -30.1,
+     "adoptedTouchedVoxels": 1169,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1981
+    },
+    {
+     "x0": -29.6,
+     "adoptedTouchedVoxels": 1128,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1916
+    },
+    {
+     "x0": -29.1,
+     "adoptedTouchedVoxels": 1128,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1916
+    },
+    {
+     "x0": -28.6,
+     "adoptedTouchedVoxels": 1074,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1838
+    },
+    {
+     "x0": -28.1,
+     "adoptedTouchedVoxels": 1074,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1838
+    },
+    {
+     "x0": -27.6,
+     "adoptedTouchedVoxels": 1013,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1753
+    },
+    {
+     "x0": -27.1,
+     "adoptedTouchedVoxels": 1013,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1753
+    },
+    {
+     "x0": -26.6,
+     "adoptedTouchedVoxels": 944,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1662
+    },
+    {
+     "x0": -26.1,
+     "adoptedTouchedVoxels": 944,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1662
+    },
+    {
+     "x0": -25.6,
+     "adoptedTouchedVoxels": 862,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1567
+    },
+    {
+     "x0": -25.1,
+     "adoptedTouchedVoxels": 862,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1567
+    },
+    {
+     "x0": -24.6,
+     "adoptedTouchedVoxels": 771,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1475
+    },
+    {
+     "x0": -24.1,
+     "adoptedTouchedVoxels": 771,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1475
+    },
+    {
+     "x0": -23.6,
+     "adoptedTouchedVoxels": 679,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1385
+    },
+    {
+     "x0": -23.1,
+     "adoptedTouchedVoxels": 679,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1385
+    },
+    {
+     "x0": -22.6,
+     "adoptedTouchedVoxels": 592,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1299
+    },
+    {
+     "x0": -22.1,
+     "adoptedTouchedVoxels": 592,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1299
+    },
+    {
+     "x0": -21.6,
+     "adoptedTouchedVoxels": 510,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1219
+    },
+    {
+     "x0": -21.1,
+     "adoptedTouchedVoxels": 510,
+     "adoptedMaxFrames": 1708,
+     "allTouchedVoxels": 1219
+    },
+    {
+     "x0": -20.6,
+     "adoptedTouchedVoxels": 427,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1141
+    },
+    {
+     "x0": -20.1,
+     "adoptedTouchedVoxels": 427,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1141
+    },
+    {
+     "x0": -19.6,
+     "adoptedTouchedVoxels": 352,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1071
+    },
+    {
+     "x0": -19.1,
+     "adoptedTouchedVoxels": 352,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1071
+    },
+    {
+     "x0": -18.6,
+     "adoptedTouchedVoxels": 281,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1010
+    },
+    {
+     "x0": -18.1,
+     "adoptedTouchedVoxels": 281,
+     "adoptedMaxFrames": 1585,
+     "allTouchedVoxels": 1010
+    },
+    {
+     "x0": -17.6,
+     "adoptedTouchedVoxels": 217,
+     "adoptedMaxFrames": 1431,
+     "allTouchedVoxels": 951
+    },
+    {
+     "x0": -17.1,
+     "adoptedTouchedVoxels": 217,
+     "adoptedMaxFrames": 1431,
+     "allTouchedVoxels": 951
+    },
+    {
+     "x0": -16.6,
+     "adoptedTouchedVoxels": 159,
+     "adoptedMaxFrames": 1431,
+     "allTouchedVoxels": 895
+    },
+    {
+     "x0": -16.1,
+     "adoptedTouchedVoxels": 159,
+     "adoptedMaxFrames": 1431,
+     "allTouchedVoxels": 895
+    }
+   ],
+   "clearPostX0_adopted": [
+    -59.1,
+    -58.6,
+    -58.1,
+    -57.6,
+    -57.1,
+    -56.6,
+    -56.1,
+    -55.6,
+    -55.1
+   ],
+   "clearPostX0_all": [],
+   "innermostLegY_inPostBand_byX": [
+    {
+     "x": -62.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -61.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -60.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -59.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -58.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -57.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -56.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -55.0,
+     "innermostY_adopted": 33.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -54.0,
+     "innermostY_adopted": 32.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -53.0,
+     "innermostY_adopted": 32.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -52.0,
+     "innermostY_adopted": 32.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -51.0,
+     "innermostY_adopted": 31.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -50.0,
+     "innermostY_adopted": 30.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -49.0,
+     "innermostY_adopted": 28.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -48.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -47.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -46.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -45.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -44.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -43.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -42.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -41.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -40.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -39.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -38.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -37.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -36.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -35.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -34.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -33.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -32.0,
+     "innermostY_adopted": 16.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -31.0,
+     "innermostY_adopted": 16.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -30.0,
+     "innermostY_adopted": 16.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -29.0,
+     "innermostY_adopted": 16.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -28.0,
+     "innermostY_adopted": 16.0,
+     "innermostY_all": 1.0
+    },
+    {
+     "x": -27.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 2.0
+    },
+    {
+     "x": -26.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 2.0
+    },
+    {
+     "x": -25.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 3.0
+    },
+    {
+     "x": -24.0,
+     "innermostY_adopted": 17.0,
+     "innermostY_all": 3.0
+    },
+    {
+     "x": -23.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 3.0
+    },
+    {
+     "x": -22.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 4.0
+    },
+    {
+     "x": -21.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 5.0
+    },
+    {
+     "x": -20.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 5.0
+    },
+    {
+     "x": -19.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 5.0
+    },
+    {
+     "x": -18.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 5.0
+    },
+    {
+     "x": -17.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 6.0
+    },
+    {
+     "x": -16.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 7.0
+    },
+    {
+     "x": -15.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 7.0
+    },
+    {
+     "x": -14.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 8.0
+    },
+    {
+     "x": -13.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 8.0
+    },
+    {
+     "x": -12.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 8.0
+    },
+    {
+     "x": -11.0,
+     "innermostY_adopted": 24.0,
+     "innermostY_all": 9.0
+    },
+    {
+     "x": -10.0,
+     "innermostY_adopted": 24.0,
+     "innermostY_all": 9.0
+    },
+    {
+     "x": -9.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 10.0
+    },
+    {
+     "x": -8.0,
+     "innermostY_adopted": 26.0,
+     "innermostY_all": 10.0
+    }
+   ],
+   "legVoxelsUnderDeckFootprint_adopted": 90
+  },
+  "right": {
+   "currentPost_margin0.0": {
+    "adopted": [
+     43,
+     16
+    ],
+    "all": [
+     43,
+     16
+    ]
+   },
+   "currentPost_margin1.0": {
+    "adopted": [
+     153,
+     31
+    ],
+    "all": [
+     153,
+     31
+    ]
+   },
+   "currentPost_margin2.9": {
+    "adopted": [
+     626,
+     111
+    ],
+    "all": [
+     626,
+     113
+    ]
+   },
+   "postSlideAlongDeckEdge_margin2.9": [
+    {
+     "x0": -59.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -58.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -58.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -57.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -57.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -56.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -56.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -55.6,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -55.1,
+     "adoptedTouchedVoxels": 0,
+     "adoptedMaxFrames": 0,
+     "allTouchedVoxels": 0
+    },
+    {
+     "x0": -54.6,
+     "adoptedTouchedVoxels": 1,
+     "adoptedMaxFrames": 2,
+     "allTouchedVoxels": 1
+    },
+    {
+     "x0": -54.1,
+     "adoptedTouchedVoxels": 1,
+     "adoptedMaxFrames": 2,
+     "allTouchedVoxels": 1
+    },
+    {
+     "x0": -53.6,
+     "adoptedTouchedVoxels": 4,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 4
+    },
+    {
+     "x0": -53.1,
+     "adoptedTouchedVoxels": 4,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 4
+    },
+    {
+     "x0": -52.6,
+     "adoptedTouchedVoxels": 9,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 9
+    },
+    {
+     "x0": -52.1,
+     "adoptedTouchedVoxels": 9,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 9
+    },
+    {
+     "x0": -51.6,
+     "adoptedTouchedVoxels": 15,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 15
+    },
+    {
+     "x0": -51.1,
+     "adoptedTouchedVoxels": 15,
+     "adoptedMaxFrames": 4,
+     "allTouchedVoxels": 15
+    },
+    {
+     "x0": -50.6,
+     "adoptedTouchedVoxels": 21,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 21
+    },
+    {
+     "x0": -50.1,
+     "adoptedTouchedVoxels": 21,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 21
+    },
+    {
+     "x0": -49.6,
+     "adoptedTouchedVoxels": 26,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 26
+    },
+    {
+     "x0": -49.1,
+     "adoptedTouchedVoxels": 26,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 26
+    },
+    {
+     "x0": -48.6,
+     "adoptedTouchedVoxels": 29,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 29
+    },
+    {
+     "x0": -48.1,
+     "adoptedTouchedVoxels": 29,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 29
+    },
+    {
+     "x0": -47.6,
+     "adoptedTouchedVoxels": 32,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 32
+    },
+    {
+     "x0": -47.1,
+     "adoptedTouchedVoxels": 32,
+     "adoptedMaxFrames": 6,
+     "allTouchedVoxels": 32
+    },
+    {
+     "x0": -46.6,
+     "adoptedTouchedVoxels": 46,
+     "adoptedMaxFrames": 8,
+     "allTouchedVoxels": 46
+    },
+    {
+     "x0": -46.1,
+     "adoptedTouchedVoxels": 46,
+     "adoptedMaxFrames": 8,
+     "allTouchedVoxels": 46
+    },
+    {
+     "x0": -45.6,
+     "adoptedTouchedVoxels": 77,
+     "adoptedMaxFrames": 20,
+     "allTouchedVoxels": 77
+    },
+    {
+     "x0": -45.1,
+     "adoptedTouchedVoxels": 77,
+     "adoptedMaxFrames": 20,
+     "allTouchedVoxels": 77
+    },
+    {
+     "x0": -44.6,
+     "adoptedTouchedVoxels": 126,
+     "adoptedMaxFrames": 28,
+     "allTouchedVoxels": 126
+    },
+    {
+     "x0": -44.1,
+     "adoptedTouchedVoxels": 126,
+     "adoptedMaxFrames": 28,
+     "allTouchedVoxels": 126
+    },
+    {
+     "x0": -43.6,
+     "adoptedTouchedVoxels": 185,
+     "adoptedMaxFrames": 43,
+     "allTouchedVoxels": 185
+    },
+    {
+     "x0": -43.1,
+     "adoptedTouchedVoxels": 185,
+     "adoptedMaxFrames": 43,
+     "allTouchedVoxels": 185
+    },
+    {
+     "x0": -42.6,
+     "adoptedTouchedVoxels": 247,
+     "adoptedMaxFrames": 59,
+     "allTouchedVoxels": 247
+    },
+    {
+     "x0": -42.1,
+     "adoptedTouchedVoxels": 247,
+     "adoptedMaxFrames": 59,
+     "allTouchedVoxels": 247
+    },
+    {
+     "x0": -41.6,
+     "adoptedTouchedVoxels": 311,
+     "adoptedMaxFrames": 72,
+     "allTouchedVoxels": 311
+    },
+    {
+     "x0": -41.1,
+     "adoptedTouchedVoxels": 311,
+     "adoptedMaxFrames": 72,
+     "allTouchedVoxels": 311
+    },
+    {
+     "x0": -40.6,
+     "adoptedTouchedVoxels": 379,
+     "adoptedMaxFrames": 85,
+     "allTouchedVoxels": 379
+    },
+    {
+     "x0": -40.1,
+     "adoptedTouchedVoxels": 379,
+     "adoptedMaxFrames": 85,
+     "allTouchedVoxels": 379
+    },
+    {
+     "x0": -39.6,
+     "adoptedTouchedVoxels": 454,
+     "adoptedMaxFrames": 85,
+     "allTouchedVoxels": 454
+    },
+    {
+     "x0": -39.1,
+     "adoptedTouchedVoxels": 454,
+     "adoptedMaxFrames": 85,
+     "allTouchedVoxels": 454
+    },
+    {
+     "x0": -38.6,
+     "adoptedTouchedVoxels": 539,
+     "adoptedMaxFrames": 87,
+     "allTouchedVoxels": 539
+    },
+    {
+     "x0": -38.1,
+     "adoptedTouchedVoxels": 539,
+     "adoptedMaxFrames": 87,
+     "allTouchedVoxels": 539
+    },
+    {
+     "x0": -37.6,
+     "adoptedTouchedVoxels": 626,
+     "adoptedMaxFrames": 111,
+     "allTouchedVoxels": 626
+    },
+    {
+     "x0": -37.1,
+     "adoptedTouchedVoxels": 626,
+     "adoptedMaxFrames": 111,
+     "allTouchedVoxels": 626
+    },
+    {
+     "x0": -36.6,
+     "adoptedTouchedVoxels": 698,
+     "adoptedMaxFrames": 157,
+     "allTouchedVoxels": 698
+    },
+    {
+     "x0": -36.1,
+     "adoptedTouchedVoxels": 698,
+     "adoptedMaxFrames": 157,
+     "allTouchedVoxels": 698
+    },
+    {
+     "x0": -35.6,
+     "adoptedTouchedVoxels": 752,
+     "adoptedMaxFrames": 213,
+     "allTouchedVoxels": 752
+    },
+    {
+     "x0": -35.1,
+     "adoptedTouchedVoxels": 752,
+     "adoptedMaxFrames": 213,
+     "allTouchedVoxels": 752
+    },
+    {
+     "x0": -34.6,
+     "adoptedTouchedVoxels": 783,
+     "adoptedMaxFrames": 293,
+     "allTouchedVoxels": 783
+    },
+    {
+     "x0": -34.1,
+     "adoptedTouchedVoxels": 783,
+     "adoptedMaxFrames": 293,
+     "allTouchedVoxels": 783
+    },
+    {
+     "x0": -33.6,
+     "adoptedTouchedVoxels": 797,
+     "adoptedMaxFrames": 396,
+     "allTouchedVoxels": 797
+    },
+    {
+     "x0": -33.1,
+     "adoptedTouchedVoxels": 797,
+     "adoptedMaxFrames": 396,
+     "allTouchedVoxels": 797
+    },
+    {
+     "x0": -32.6,
+     "adoptedTouchedVoxels": 801,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 801
+    },
+    {
+     "x0": -32.1,
+     "adoptedTouchedVoxels": 801,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 801
+    },
+    {
+     "x0": -31.6,
+     "adoptedTouchedVoxels": 794,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 794
+    },
+    {
+     "x0": -31.1,
+     "adoptedTouchedVoxels": 794,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 794
+    },
+    {
+     "x0": -30.6,
+     "adoptedTouchedVoxels": 781,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 781
+    },
+    {
+     "x0": -30.1,
+     "adoptedTouchedVoxels": 781,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 781
+    },
+    {
+     "x0": -29.6,
+     "adoptedTouchedVoxels": 755,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 755
+    },
+    {
+     "x0": -29.1,
+     "adoptedTouchedVoxels": 755,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 755
+    },
+    {
+     "x0": -28.6,
+     "adoptedTouchedVoxels": 717,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 717
+    },
+    {
+     "x0": -28.1,
+     "adoptedTouchedVoxels": 717,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 717
+    },
+    {
+     "x0": -27.6,
+     "adoptedTouchedVoxels": 672,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 672
+    },
+    {
+     "x0": -27.1,
+     "adoptedTouchedVoxels": 672,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 672
+    },
+    {
+     "x0": -26.6,
+     "adoptedTouchedVoxels": 627,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 627
+    },
+    {
+     "x0": -26.1,
+     "adoptedTouchedVoxels": 627,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 627
+    },
+    {
+     "x0": -25.6,
+     "adoptedTouchedVoxels": 578,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 578
+    },
+    {
+     "x0": -25.1,
+     "adoptedTouchedVoxels": 578,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 578
+    },
+    {
+     "x0": -24.6,
+     "adoptedTouchedVoxels": 526,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 526
+    },
+    {
+     "x0": -24.1,
+     "adoptedTouchedVoxels": 526,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 526
+    },
+    {
+     "x0": -23.6,
+     "adoptedTouchedVoxels": 475,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 475
+    },
+    {
+     "x0": -23.1,
+     "adoptedTouchedVoxels": 475,
+     "adoptedMaxFrames": 563,
+     "allTouchedVoxels": 475
+    },
+    {
+     "x0": -22.6,
+     "adoptedTouchedVoxels": 422,
+     "adoptedMaxFrames": 507,
+     "allTouchedVoxels": 428
+    },
+    {
+     "x0": -22.1,
+     "adoptedTouchedVoxels": 422,
+     "adoptedMaxFrames": 507,
+     "allTouchedVoxels": 428
+    },
+    {
+     "x0": -21.6,
+     "adoptedTouchedVoxels": 376,
+     "adoptedMaxFrames": 487,
+     "allTouchedVoxels": 390
+    },
+    {
+     "x0": -21.1,
+     "adoptedTouchedVoxels": 376,
+     "adoptedMaxFrames": 487,
+     "allTouchedVoxels": 390
+    },
+    {
+     "x0": -20.6,
+     "adoptedTouchedVoxels": 333,
+     "adoptedMaxFrames": 473,
+     "allTouchedVoxels": 356
+    },
+    {
+     "x0": -20.1,
+     "adoptedTouchedVoxels": 333,
+     "adoptedMaxFrames": 473,
+     "allTouchedVoxels": 356
+    },
+    {
+     "x0": -19.6,
+     "adoptedTouchedVoxels": 294,
+     "adoptedMaxFrames": 394,
+     "allTouchedVoxels": 329
+    },
+    {
+     "x0": -19.1,
+     "adoptedTouchedVoxels": 294,
+     "adoptedMaxFrames": 394,
+     "allTouchedVoxels": 329
+    },
+    {
+     "x0": -18.6,
+     "adoptedTouchedVoxels": 255,
+     "adoptedMaxFrames": 355,
+     "allTouchedVoxels": 306
+    },
+    {
+     "x0": -18.1,
+     "adoptedTouchedVoxels": 255,
+     "adoptedMaxFrames": 355,
+     "allTouchedVoxels": 306
+    },
+    {
+     "x0": -17.6,
+     "adoptedTouchedVoxels": 223,
+     "adoptedMaxFrames": 339,
+     "allTouchedVoxels": 287
+    },
+    {
+     "x0": -17.1,
+     "adoptedTouchedVoxels": 223,
+     "adoptedMaxFrames": 339,
+     "allTouchedVoxels": 287
+    },
+    {
+     "x0": -16.6,
+     "adoptedTouchedVoxels": 193,
+     "adoptedMaxFrames": 304,
+     "allTouchedVoxels": 271
+    },
+    {
+     "x0": -16.1,
+     "adoptedTouchedVoxels": 193,
+     "adoptedMaxFrames": 304,
+     "allTouchedVoxels": 271
+    }
+   ],
+   "clearPostX0_adopted": [
+    -59.1,
+    -58.6,
+    -58.1,
+    -57.6,
+    -57.1,
+    -56.6,
+    -56.1,
+    -55.6,
+    -55.1
+   ],
+   "clearPostX0_all": [
+    -59.1,
+    -58.6,
+    -58.1,
+    -57.6,
+    -57.1,
+    -56.6,
+    -56.1,
+    -55.6,
+    -55.1
+   ],
+   "innermostLegY_inPostBand_byX": [
+    {
+     "x": -62.0,
+     "innermostY_adopted": null,
+     "innermostY_all": null
+    },
+    {
+     "x": -61.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 33.0
+    },
+    {
+     "x": -60.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -59.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -58.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -57.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -56.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -55.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 32.0
+    },
+    {
+     "x": -54.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 33.0
+    },
+    {
+     "x": -53.0,
+     "innermostY_adopted": null,
+     "innermostY_all": 31.0
+    },
+    {
+     "x": -52.0,
+     "innermostY_adopted": 28.0,
+     "innermostY_all": 28.0
+    },
+    {
+     "x": -51.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 25.0
+    },
+    {
+     "x": -50.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 25.0
+    },
+    {
+     "x": -49.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 25.0
+    },
+    {
+     "x": -48.0,
+     "innermostY_adopted": 25.0,
+     "innermostY_all": 25.0
+    },
+    {
+     "x": -47.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -46.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -45.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -44.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -43.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -42.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -41.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -40.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 23.0
+    },
+    {
+     "x": -39.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 21.0
+    },
+    {
+     "x": -38.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -37.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -36.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -35.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -34.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -33.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -32.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 18.0
+    },
+    {
+     "x": -31.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 18.0
+    },
+    {
+     "x": -30.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 18.0
+    },
+    {
+     "x": -29.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 18.0
+    },
+    {
+     "x": -28.0,
+     "innermostY_adopted": 18.0,
+     "innermostY_all": 18.0
+    },
+    {
+     "x": -27.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -26.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -25.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -24.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -23.0,
+     "innermostY_adopted": 19.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -22.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -21.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -20.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -19.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -18.0,
+     "innermostY_adopted": 20.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -17.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 21.0
+    },
+    {
+     "x": -16.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -15.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -14.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -13.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -12.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -11.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -10.0,
+     "innermostY_adopted": 21.0,
+     "innermostY_all": 20.0
+    },
+    {
+     "x": -9.0,
+     "innermostY_adopted": 22.0,
+     "innermostY_all": 19.0
+    },
+    {
+     "x": -8.0,
+     "innermostY_adopted": 23.0,
+     "innermostY_all": 19.0
+    }
+   ],
+   "legVoxelsUnderDeckFootprint_adopted": 0
+  }
+ },
+ "trimFeasibility": {
+  "threshold_mm": 2.202072594216369,
+  "sampleSpacing_mm": 0.35,
+  "postBox": "x -37.5..-33.5, |y| 18.0..20.4 (solid)",
+  "deckStrip": "x -44..-22, |y| 12..17.95, z -57.5..-53.5",
+  "legSamplesNearRegion": {
+   "left": 5983320,
+   "right": 477949
+  },
+  "left": {
+   "framesConsidered": 334,
+   "finalController": {
+    "frames": 4,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 9.28,
+    "postAtZ": -55.25,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.033,
+    "postMustRemoveBounds": [
+     [
+      -34.2,
+      19.9,
+      -57.25
+     ],
+     [
+      -33.6,
+      20.3,
+      -52.25
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 9.48,
+     "-55.25": 9.28,
+     "-53.25": 9.44,
+     "-51.25": 9.6,
+     "-49.25": 9.6,
+     "-47.25": 9.6,
+     "-45.25": 9.6,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 21,
+    "deckMustRemoveBounds": [
+     [
+      -27.7,
+      17.9,
+      -57.25
+     ],
+     [
+      -26.5,
+      17.9,
+      -55.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 17.9
+   },
+   "finalControllerNoSensorDelay": {
+    "frames": 0,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 9.6,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.0,
+    "postMustRemoveBounds": null,
+    "postRemainingSectionByZ": {
+     "-57.25": 9.6,
+     "-55.25": 9.6,
+     "-53.25": 9.6,
+     "-51.25": 9.6,
+     "-49.25": 9.6,
+     "-47.25": 9.6,
+     "-45.25": 9.6,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 0,
+    "deckMustRemoveBounds": null,
+    "deckMustRemoveInnermostAbsY": null
+   },
+   "adoptedExceptKp300": {
+    "frames": 78,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 6.96,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.275,
+    "postMustRemoveBounds": [
+     [
+      -36.6,
+      19.1,
+      -57.25
+     ],
+     [
+      -33.6,
+      20.3,
+      -49.75
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 6.96,
+     "-55.25": 7.24,
+     "-53.25": 7.92,
+     "-51.25": 9.0,
+     "-49.25": 9.6,
+     "-47.25": 9.6,
+     "-45.25": 9.6,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 318,
+    "deckMustRemoveBounds": [
+     [
+      -31.1,
+      17.1,
+      -57.25
+     ],
+     [
+      -22.5,
+      17.9,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 17.1
+   },
+   "adopted": {
+    "frames": 266,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 0.0,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [
+     -57.25,
+     -56.75,
+     -56.25,
+     -55.75,
+     -55.25,
+     -54.75,
+     -54.25,
+     -53.75,
+     -53.25,
+     -52.75,
+     -52.25,
+     -51.75,
+     -51.25,
+     -50.75,
+     -50.25,
+     -49.75,
+     -49.25,
+     -48.75,
+     -48.25,
+     -47.75,
+     -47.25,
+     -46.75,
+     -46.25,
+     -45.75,
+     -45.25,
+     -44.75
+    ],
+    "postRemovedFraction_max": 1.0,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      18.1,
+      -57.25
+     ],
+     [
+      -33.6,
+      20.3,
+      -38.25
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 0.0,
+     "-55.25": 0.0,
+     "-53.25": 0.0,
+     "-51.25": 0.0,
+     "-49.25": 0.0,
+     "-47.25": 0.0,
+     "-45.25": 0.0,
+     "-43.25": 1.32,
+     "-41.25": 5.56,
+     "-39.25": 9.04,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 9655,
+    "deckMustRemoveBounds": [
+     [
+      -39.7,
+      14.1,
+      -57.25
+     ],
+     [
+      -22.1,
+      17.9,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 14.1
+   },
+   "all": {
+    "frames": 334,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 0.0,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [
+     -57.25,
+     -56.75,
+     -56.25,
+     -55.75,
+     -55.25,
+     -54.75,
+     -54.25,
+     -53.75,
+     -53.25,
+     -52.75,
+     -52.25,
+     -51.75,
+     -51.25,
+     -50.75,
+     -50.25,
+     -49.75,
+     -49.25,
+     -48.75,
+     -48.25,
+     -47.75,
+     -47.25,
+     -46.75,
+     -46.25,
+     -45.75,
+     -45.25,
+     -44.75,
+     -44.25,
+     -43.75,
+     -43.25,
+     -42.75,
+     -42.25,
+     -41.75,
+     -41.25,
+     -40.75,
+     -40.25,
+     -39.75,
+     -39.25,
+     -38.75,
+     -38.25,
+     -37.75,
+     -37.25,
+     -36.75,
+     -36.25,
+     -35.75
+    ],
+    "postRemovedFraction_max": 1.0,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      18.1,
+      -57.25
+     ],
+     [
+      -33.6,
+      20.3,
+      -35.75
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 0.0,
+     "-55.25": 0.0,
+     "-53.25": 0.0,
+     "-51.25": 0.0,
+     "-49.25": 0.0,
+     "-47.25": 0.0,
+     "-45.25": 0.0,
+     "-43.25": 0.0,
+     "-41.25": 0.0,
+     "-39.25": 0.0,
+     "-37.25": 0.0
+    },
+    "deckMustRemovePoints": 26400,
+    "deckMustRemoveBounds": [
+     [
+      -43.9,
+      12.1,
+      -57.25
+     ],
+     [
+      -22.1,
+      17.9,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 12.1
+   }
+  },
+  "right": {
+   "framesConsidered": 94,
+   "finalController": {
+    "frames": 8,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 1.84,
+    "postAtZ": -55.75,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.808,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      -20.3,
+      -57.25
+     ],
+     [
+      -33.6,
+      -18.1,
+      -45.25
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 2.12,
+     "-55.25": 1.88,
+     "-53.25": 2.36,
+     "-51.25": 3.08,
+     "-49.25": 4.68,
+     "-47.25": 7.2,
+     "-45.25": 9.44,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 2078,
+    "deckMustRemoveBounds": [
+     [
+      -34.5,
+      -17.9,
+      -57.25
+     ],
+     [
+      -22.1,
+      -16.3,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 16.3
+   },
+   "finalControllerNoSensorDelay": {
+    "frames": 0,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 9.6,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.0,
+    "postMustRemoveBounds": null,
+    "postRemainingSectionByZ": {
+     "-57.25": 9.6,
+     "-55.25": 9.6,
+     "-53.25": 9.6,
+     "-51.25": 9.6,
+     "-49.25": 9.6,
+     "-47.25": 9.6,
+     "-45.25": 9.6,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 0,
+    "deckMustRemoveBounds": null,
+    "deckMustRemoveInnermostAbsY": null
+   },
+   "adoptedExceptKp300": {
+    "frames": 35,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 1.84,
+    "postAtZ": -55.75,
+    "postZLevelsCutThrough": [],
+    "postRemovedFraction_max": 0.808,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      -20.3,
+      -57.25
+     ],
+     [
+      -33.6,
+      -18.1,
+      -45.25
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 2.12,
+     "-55.25": 1.88,
+     "-53.25": 2.36,
+     "-51.25": 3.08,
+     "-49.25": 4.52,
+     "-47.25": 6.56,
+     "-45.25": 9.44,
+     "-43.25": 9.6,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 2078,
+    "deckMustRemoveBounds": [
+     [
+      -34.5,
+      -17.9,
+      -57.25
+     ],
+     [
+      -22.1,
+      -16.3,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 16.3
+   },
+   "adopted": {
+    "frames": 89,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 0.0,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [
+     -57.25,
+     -56.75,
+     -56.25,
+     -55.75,
+     -55.25,
+     -54.75,
+     -54.25,
+     -53.75,
+     -53.25
+    ],
+    "postRemovedFraction_max": 1.0,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      -20.3,
+      -57.25
+     ],
+     [
+      -33.6,
+      -18.1,
+      -41.75
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 0.0,
+     "-55.25": 0.0,
+     "-53.25": 0.0,
+     "-51.25": 0.32,
+     "-49.25": 0.68,
+     "-47.25": 1.32,
+     "-45.25": 4.0,
+     "-43.25": 7.44,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 3179,
+    "deckMustRemoveBounds": [
+     [
+      -37.7,
+      -17.9,
+      -57.25
+     ],
+     [
+      -22.1,
+      -15.9,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 15.9
+   },
+   "all": {
+    "frames": 94,
+    "postSectionFull_mm2": 9.6,
+    "postMinRemainingSection_mm2": 0.0,
+    "postAtZ": -57.25,
+    "postZLevelsCutThrough": [
+     -57.25,
+     -56.75,
+     -56.25,
+     -55.75,
+     -55.25,
+     -54.75,
+     -54.25,
+     -53.75,
+     -53.25
+    ],
+    "postRemovedFraction_max": 1.0,
+    "postMustRemoveBounds": [
+     [
+      -37.4,
+      -20.3,
+      -57.25
+     ],
+     [
+      -33.6,
+      -18.1,
+      -41.75
+     ]
+    ],
+    "postRemainingSectionByZ": {
+     "-57.25": 0.0,
+     "-55.25": 0.0,
+     "-53.25": 0.0,
+     "-51.25": 0.32,
+     "-49.25": 0.68,
+     "-47.25": 1.32,
+     "-45.25": 4.0,
+     "-43.25": 7.44,
+     "-41.25": 9.6,
+     "-39.25": 9.6,
+     "-37.25": 9.6
+    },
+    "deckMustRemovePoints": 3179,
+    "deckMustRemoveBounds": [
+     [
+      -37.7,
+      -17.9,
+      -57.25
+     ],
+     [
+      -22.1,
+      -15.9,
+      -53.75
+     ]
+    ],
+    "deckMustRemoveInnermostAbsY": 15.9
+   }
+  }
+ },
+ "candidates": {
+  "corner15-deck19": {
+   "build": {
+    "name": "corner15-deck19",
+    "edgeChamfer": 1.5,
+    "bottomChamfer": 0.0,
+    "zTop": -37.5,
+    "deckChamfer": 1.9,
+    "volume_mm3": 18744.564577547422,
+    "removed_mm3": 77.48996406555614,
+    "removed_g_PLA": 0.09608755544128961,
+    "solids": 1,
+    "watertight": true,
+    "removedBounds": [
+     [
+      -35.0,
+      -20.4,
+      -57.5
+     ],
+     [
+      -22.0,
+      20.4,
+      -37.5
+     ]
+    ],
+    "checks": {
+     "boss(-54.931,12.7)_mm3": [
+      31.6541,
+      31.6541
+     ],
+     "boss(-54.931,-12.7)_mm3": [
+      31.6541,
+      31.6541
+     ],
+     "boss(-16.069,12.7)_mm3": [
+      31.6541,
+      31.6541
+     ],
+     "boss(-16.069,-12.7)_mm3": [
+      31.6541,
+      31.6541
+     ],
+     "deckSlotZone_y-8.5..-2_mm3": [
+      136.0,
+      136.0
+     ],
+     "deckSlotZone_y2..8.5_mm3": [
+      136.0,
+      136.0
+     ],
+     "traySeatBand_mm3": [
+      138.2229,
+      138.2229
+     ],
+     "leftPostSection_z-57.0_mm2": [
+      9.8,
+      8.675
+     ],
+     "leftPostSection_z-54.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "leftPostSection_z-50.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "leftPostSection_z-46.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "leftPostSection_z-42.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "leftPostSection_z-38.5_mm2": [
+      9.6,
+      8.475
+     ],
+     "rightPostSection_z-57.0_mm2": [
+      9.8,
+      8.675
+     ],
+     "rightPostSection_z-54.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "rightPostSection_z-50.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "rightPostSection_z-46.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "rightPostSection_z-42.0_mm2": [
+      9.6,
+      8.475
+     ],
+     "rightPostSection_z-38.5_mm2": [
+      9.6,
+      8.475
+     ],
+     "trayGap_mm": [
+      0.0,
+      0.0
+     ],
+     "trayContactUnchanged": true
+    },
+    "removedOnlyInsidePostAndDeckEdgeZones": true
+   },
+   "check": {
+    "candidate": "candidates/corner15-deck19-robot-frame.stl",
+    "left_frames": {
+     "posesRechecked": 334,
+     "currentMinOutsideRecheck": 2.5008145914054936,
+     "adopted": {
+      "currentMin": 0.0,
+      "currentUnder2": 181,
+      "candidateMin": 0.0,
+      "candidateUnder2": 113,
+      "candidateContact0": 26,
+      "runsStillUnder2": {
+       "phase1-mid-old0-sensor40-kp275.json": 6,
+       "phase1-scan-high-old0-delay2-kp300.json": 55,
+       "candidate-kp300/phase1-candidate-old0-sensor40.json": 46,
+       "candidate-with-prediction/phase1-candidate-old0-sensor40.json": 6
+      },
+      "trayUnder2InThoseFrames": 26,
+      "trayMinInGroupRechecked": 0.0,
+      "stillUnder2_withTrayAlsoUnder2": 26,
+      "stillUnder2_parts": {
+       "lower": 111,
+       "ring7": 2
+      }
+     },
+     "finalController": {
+      "currentMin": 1.6811813350573315,
+      "currentUnder2": 2,
+      "candidateMin": 2.209138446293594,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 2.9156530560866423,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     },
+     "finalControllerNoSensorDelay": {
+      "currentMin": 4.554086465657264,
+      "currentUnder2": 0,
+      "candidateMin": 4.554086465657264,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 99.0,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     },
+     "adoptedNoSensorDelay": {
+      "currentMin": 3.9855513212515064,
+      "currentUnder2": 0,
+      "candidateMin": 3.9855513212515064,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 99.0,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     },
+     "excluded": {
+      "currentMin": 0.0,
+      "currentUnder2": 66,
+      "candidateMin": 0.0,
+      "candidateUnder2": 64,
+      "candidateContact0": 49,
+      "runsStillUnder2": {
+       "phase1-blend-old0-delay2-kp250.json": 23,
+       "phase1-blend-old120-delay0-kp250.json": 6,
+       "phase1-old120-push.json": 12,
+       "phase1-old120-voltage475.json": 19,
+       "phase1-scan-old0-delay0-kp100-speed0.15.json": 1,
+       "phase1-scan-old0-delay0-kp100-speed0.3.json": 2,
+       "phase1-scan-old0-delay2-kp150-speed0.3.json": 1
+      },
+      "trayUnder2InThoseFrames": 47,
+      "trayMinInGroupRechecked": 0.0,
+      "stillUnder2_withTrayAlsoUnder2": 47,
+      "stillUnder2_parts": {
+       "lower": 36,
+       "thigh": 16,
+       "plate": 8,
+       "ring7": 2,
+       "motor7": 2
+      }
+     }
+    },
+    "right_frames": {
+     "posesRechecked": 94,
+     "currentMinOutsideRecheck": 2.5110600518629074,
+     "adopted": {
+      "currentMin": 0.0,
+      "currentUnder2": 74,
+      "candidateMin": 0.0,
+      "candidateUnder2": 49,
+      "candidateContact0": 10,
+      "runsStillUnder2": {
+       "phase1-candidate-old0-sensor40.json": 7,
+       "phase1-no-predict-old0-delay2.json": 7,
+       "phase1-scan-high-old0-delay2-kp300.json": 14,
+       "candidate-before-heading/phase1-candidate-old0-sensor40.json": 9,
+       "candidate-kp300/phase1-candidate-old0-sensor40.json": 12
+      },
+      "trayUnder2InThoseFrames": 16,
+      "trayMinInGroupRechecked": 1.0482723222480599,
+      "stillUnder2_withTrayAlsoUnder2": 16,
+      "stillUnder2_parts": {
+       "right_lower": 49
+      }
+     },
+     "finalController": {
+      "currentMin": 0.0,
+      "currentUnder2": 8,
+      "candidateMin": 0.06225356993944907,
+      "candidateUnder2": 7,
+      "candidateContact0": 0,
+      "runsStillUnder2": {
+       "phase1-candidate-old0-sensor40.json": 7
+      },
+      "trayUnder2InThoseFrames": 3,
+      "trayMinInGroupRechecked": 1.4591612361182982,
+      "stillUnder2_withTrayAlsoUnder2": 3,
+      "stillUnder2_parts": {
+       "right_lower": 7
+      }
+     },
+     "finalControllerNoSensorDelay": {
+      "currentMin": 3.453206716654156,
+      "currentUnder2": 0,
+      "candidateMin": 3.453206716654156,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 99.0,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     },
+     "adoptedNoSensorDelay": {
+      "currentMin": 3.453206716654156,
+      "currentUnder2": 0,
+      "candidateMin": 3.453206716654156,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 99.0,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     },
+     "excluded": {
+      "currentMin": 1.8416485921720398,
+      "currentUnder2": 2,
+      "candidateMin": 2.115614161675572,
+      "candidateUnder2": 0,
+      "candidateContact0": 0,
+      "runsStillUnder2": {},
+      "trayUnder2InThoseFrames": 0,
+      "trayMinInGroupRechecked": 3.526620935690541,
+      "stillUnder2_withTrayAlsoUnder2": 0,
+      "stillUnder2_parts": {}
+     }
+    }
+   }
+  }
+ }
+}

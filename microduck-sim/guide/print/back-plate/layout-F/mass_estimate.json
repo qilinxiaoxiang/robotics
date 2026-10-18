@@ -1,0 +1,107 @@
+{
+ "method": "Static mass and whole-robot COM estimate for layout F (no simulation). Printed parts: solid volume x 1.24 g/cm3 x the slicer\nfill fraction recorded in hardware-design-20260912/whole-robot-20260912/dynamics/v19-20261014/v19-mass-items.json. Boards:\nXL4015 20 g each (estimate from similar modules), 5991 3.5 g (Adafruit datasheet). Screws: 12 x M2 in the box (6 x M2 x 6: 4 XL4015, 2 5991; 2 x M2 x 4 at the z 17.7 XL4015 holes; 4 x M2 x 10 through the cap back into the\n5991 upper bosses and the z 38.7 XL4015 bosses) at 0.17 g each and 0.25 g for each M2 x 10 (estimates, upper bound). The four reused V1.8 cover screws were already on the robot.\nThe V1.8 cover (slicer mass, v19-mass-items.json) is removed. Baseline: v19-walk-summary.json mass/asbuilt-batteryremove60\n(COM at HOME in the trunk frame). Wires are not included. Writes mass_estimate.json.",
+ "baseline": {
+  "case": "asbuilt-batteryremove60",
+  "totalMassG": 792.6,
+  "comMm": [
+   0.57,
+   -0.22,
+   21.86
+  ]
+ },
+ "items": [
+  {
+   "id": "rear_frame",
+   "g": 10.86,
+   "com": [
+    -48.26,
+    -0.2,
+    -0.61
+   ],
+   "label": "CAD volume 10.29 cm3 x 1.24 x 0.851"
+  },
+  {
+   "id": "rear_lid",
+   "g": 6.76,
+   "com": [
+    -64.83,
+    0.17,
+    7.05
+   ],
+   "label": "CAD volume 6.40 cm3 x 1.24 x 0.851"
+  },
+  {
+   "id": "xl4015_left",
+   "g": 20.0,
+   "com": [
+    -56.45,
+    0.0,
+    28.2
+   ],
+   "label": "estimate (similar modules); COM = mesh bounding-box centre"
+  },
+  {
+   "id": "xl4015_right",
+   "g": 20.0,
+   "com": [
+    -56.45,
+    0.0,
+    -0.4
+   ],
+   "label": "estimate (similar modules); COM = mesh bounding-box centre"
+  },
+  {
+   "id": "pd5991",
+   "g": 3.5,
+   "com": [
+    -55.05,
+    0.57,
+    -24.16
+   ],
+   "label": "datasheet 3.5 g"
+  },
+  {
+   "id": "screws_8xM2x6_M2x4",
+   "g": 1.36,
+   "com": [
+    -55.0,
+    0.0,
+    0.0
+   ],
+   "label": "estimate"
+  },
+  {
+   "id": "screws_cap_4xM2x10",
+   "g": 1.0,
+   "com": [
+    -50.6,
+    0.0,
+    11.0
+   ],
+   "label": "estimate"
+  },
+  {
+   "id": "rear_pack_cover_removed",
+   "g": -6.304,
+   "com": [
+    -45.8,
+    -0.0,
+    -5.3
+   ],
+   "label": "slicer (V1.8 cover)"
+  }
+ ],
+ "printedG": 17.6,
+ "netAddedG": 57.2,
+ "newTotalG": 849.8,
+ "comShiftMm": [
+  -3.86,
+  0.02,
+  -0.82
+ ],
+ "newComMm": [
+  -3.29,
+  -0.2,
+  21.04
+ ]
+}

@@ -1,0 +1,5 @@
+from pathlib import Path
+f=Path(__file__).parent/'check_spacer2_prefix_current.py';exec(compile(f.read_text().split("solid=load(O/")[0],str(f),'exec'))
+solid=load(O/'spacer2-tilted-complete-ribbon-outside-world.stl');ob=load(H/files['zero_w_components']).translate(delta);inter=solid^ob
+Tnew=np.array(json.loads(read(O/'pi-spacer2-pose.json'))['worldTransform']);B=np.array([[0,0,-1,8.1],[0,1,0,0],[1,0,0,115.6146],[0,0,0,1]],float);inv=np.linalg.inv(Tnew@B);local=inter.transform(inv[:3]);mesh=local.to_mesh64();verts=np.array(mesh.vert_properties[:,:3]);flat=np.c_[verts[:,1]+32.511,verts[:,0]-.435,verts[:,2]+59.21]
+r={'accepted':False,'volumeMm3':inter.volume(),'sourceReceiving':'28x63x3.8mm fullrectangular componentreceiving, not physicalchip','boardLocalIntersectionBounds':local.bounding_box(),'officialDrawingXYHeightBounds':[flat.min(axis=0).tolist(),flat.max(axis=0).tolist()],'verticesOfficialXYHeight':flat.tolist(),'sourceHashes':n['hashes']};(O/'pi-component-contact-classification.json').write_text(json.dumps(r,indent=2)+'\n');print(r['volumeMm3'],r['officialDrawingXYHeightBounds'])

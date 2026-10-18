@@ -1,0 +1,318 @@
+{
+  "integrationReady": true,
+  "replacementMeshes": {
+    "jaw_frame": "jaw-access/jaw_main-world.stl",
+    "lower_pad": "jaw-access/lower_pad_jaw_access-world.stl",
+    "head_bottom": "jaw-access/head_bottom_clearance-world.stl"
+  },
+  "additionalParts": [
+    {
+      "key": "jaw_passive_cheek",
+      "mesh": "jaw-access/jaw_passive_cheek-world.stl",
+      "name": "\u53ef\u62c6\u88ab\u52a8\u8f74\u4fa7\u988a",
+      "color": "#e5ba54"
+    },
+    {
+      "key": "jaw_cheek_screw_1",
+      "mesh": "jaw-access/jaw_cheek_screw_1-world.stl",
+      "name": "M2.5\u00d78 TAP \u4fa7\u988a\u87ba\u4e1d",
+      "color": "#7c8490"
+    },
+    {
+      "key": "jaw_cheek_screw_2",
+      "mesh": "jaw-access/jaw_cheek_screw_2-world.stl",
+      "name": "M2.5\u00d78 TAP \u4fa7\u988a\u87ba\u4e1d",
+      "color": "#7c8490"
+    }
+  ],
+  "removedParts": [],
+  "report": "jaw-access/report.json",
+  "assemblySteps": [
+    {
+      "id": "jaw-access-shell",
+      "movingKeys": [
+        "head_bottom"
+      ],
+      "points": [
+        [
+          0,
+          0,
+          -40
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "fixedKeys": [
+        "motor14",
+        "head_yaw_link",
+        "head_roll_ring_a",
+        "head_roll_ring_b"
+      ],
+      "instruction": "\u672a\u88c5\u4e0b\u988c\u65f6\uff0c\u4ece\u4e0b\u65b9\u653e\u5165\u66f2\u9762\u4e0b\u58f3\uff1b\u5185\u90e8\u7535\u673a\u5ea7\u548c\u73af\u5ea7\u5df2\u7559 0.15 mm \u7a7a\u95f4\u3002"
+    },
+    {
+      "id": "jaw-access-motor-bench",
+      "movingKeys": [
+        "motor15"
+      ],
+      "points": [
+        [
+          0,
+          0,
+          -32
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "fixedKeys": [
+        "jaw_support"
+      ],
+      "isolated": true,
+      "instruction": "\u5728\u53f0\u9762\u5c06 ID15 \u4ece\u4e0b\u65b9\u653e\u5165\u5b8c\u6574\u539f\u652f\u67b6\u3002"
+    },
+    {
+      "id": "jaw-access-support",
+      "movingKeys": [
+        "jaw_support",
+        "motor15"
+      ],
+      "points": [
+        [
+          0,
+          0,
+          40
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "fixedKeys": [
+        "motor14",
+        "head_yaw_link",
+        "head_roll_ring_a",
+        "head_roll_ring_b",
+        "head_bottom"
+      ],
+      "instruction": "\u628a\u652f\u67b6\u4e0e ID15 \u7ec4\u5408\u4ece\u4e0a\u65b9\u653e\u5165\u4e0b\u58f3\uff0c\u5148\u62e7\u539f\u6709\u56db\u9897 M2.5\u00d76 \u652f\u67b6\u87ba\u4e1d\u3002"
+    },
+    {
+      "id": "jaw-access-pad-bench",
+      "movingKeys": [
+        "lower_pad"
+      ],
+      "points": [
+        [
+          0,
+          0,
+          32
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "fixedKeys": [
+        "jaw_frame"
+      ],
+      "isolated": true,
+      "instruction": "\u628a\u5e26\u5185\u4fa7\u8ba9\u4f4d\u69fd\u7684\u4e0b\u5507\u57ab\u88c5\u5230\u4e0b\u988c\u4e3b\u4f53\u4e0a\uff1b\u88ab\u52a8\u4fa7\u988a\u6682\u4e0d\u5b89\u88c5\u3002"
+    },
+    {
+      "id": "jaw-access-main",
+      "movingKeys": [
+        "jaw_frame",
+        "lower_pad"
+      ],
+      "points": [
+        [
+          0,
+          32,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "pose": {
+        "keys": [
+          "jaw_frame",
+          "lower_pad"
+        ],
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pivot": [
+          26.1,
+          0.0,
+          118.6146
+        ],
+        "degrees": 30
+      },
+      "fixedKeys": [
+        "jaw_support",
+        "head_bottom",
+        "motor15",
+        "motor14",
+        "head_yaw_link",
+        "head_roll_ring_a",
+        "head_roll_ring_b"
+      ],
+      "instruction": "\u65ad\u7535\uff0c\u628a ID15 \u8f93\u51fa\u8f6c\u5230\u5bf9\u5e94\u7684\u5f20\u5634 30\u00b0 \u88c5\u914d\u59ff\u6001\uff1b\u4e0b\u988c\u4e3b\u4f53\u4e0e\u57ab\u4ece\u7535\u673a\u5916\u4fa7\u88c5\u5165\uff0c\u62e7\u539f\u6709\u56db\u9897\u8f93\u51fa\u87ba\u4e1d\u3002"
+    },
+    {
+      "id": "jaw-access-cheek",
+      "movingKeys": [
+        "jaw_passive_cheek"
+      ],
+      "points": [
+        [
+          0,
+          -32,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "pose": {
+        "keys": [
+          "jaw_frame",
+          "lower_pad",
+          "jaw_passive_cheek"
+        ],
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pivot": [
+          26.1,
+          0.0,
+          118.6146
+        ],
+        "degrees": 30
+      },
+      "fixedKeys": [
+        "jaw_support",
+        "head_bottom",
+        "motor15",
+        "motor14",
+        "head_yaw_link",
+        "head_roll_ring_a",
+        "head_roll_ring_b",
+        "jaw_frame",
+        "lower_pad"
+      ],
+      "instruction": "\u4ece\u53e6\u4e00\u4fa7\u63d2\u5165\u4fa7\u988a\uff1a\u539f\u51f8\u53f0\u8fdb\u5165\u5b8c\u6574\u540c\u8f74\u8f74\u5ea7\uff0c\u4e24\u53ea\u5b9a\u4f4d\u820c\u8fdb\u5165\u4e0b\u988c\u4e3b\u4f53\u3002"
+    },
+    {
+      "id": "jaw-access-lock",
+      "screwIds": [
+        "jaw-cheek-1",
+        "jaw-cheek-2"
+      ],
+      "instruction": "\u4ece\u5916\u4fa7\u5de5\u5177\u69fd\u62e7\u5165\u4e24\u9897\u65b0\u589e M2.5\u00d78 TAP\uff1b\u65e0\u9700\u87ba\u6bcd\u3002\u4e0d\u8981\u9760\u87ba\u4e1d\u628a\u672a\u5bf9\u9f50\u7684\u4fa7\u988a\u62c9\u5408\u3002"
+    },
+    {
+      "id": "jaw-access-rotate",
+      "movingKeys": [
+        "jaw_frame",
+        "lower_pad",
+        "jaw_passive_cheek",
+        "jaw_cheek_screw_1",
+        "jaw_cheek_screw_2"
+      ],
+      "rotation": {
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pivot": [
+          26.1,
+          0.0,
+          118.6146
+        ],
+        "fromDegrees": 30,
+        "toDegrees": 0
+      },
+      "instruction": "\u5b8c\u6574\u79fb\u52a8\u7ec4\u4e00\u8d77\u95ed\u5408\uff1b\u540e\u7eed\u5f20\u5634\u4e5f\u5305\u542b\u4fa7\u988a\u4e0e\u4e24\u9897\u65b0\u87ba\u4e1d\u3002"
+    }
+  ],
+  "movingJawKeys": [
+    "jaw_frame",
+    "lower_pad",
+    "jaw_passive_cheek",
+    "jaw_cheek_screw_1",
+    "jaw_cheek_screw_2"
+  ],
+  "newFasteners": [
+    {
+      "id": "jaw-cheek-1",
+      "spec": "M2.5 x 8 TAP; head <=4 mm diameter x1.5 mm high; no nut",
+      "seatWorldMm": [
+        60.0,
+        -34,
+        102.5
+      ],
+      "outwardAxis": [
+        0,
+        -1,
+        0
+      ],
+      "pilotDiameterMm": 2.1,
+      "pilotDepthMm": 4.4,
+      "engagementMm": 3.9,
+      "tipMarginMm": 0.5,
+      "headCounterboreDiameterMm": 4.4,
+      "clearanceHoleMm": 2.8,
+      "keyWidthMm": 6,
+      "keyProjectionMm": 2.5,
+      "keyClearanceMm": 0.15
+    },
+    {
+      "id": "jaw-cheek-2",
+      "spec": "M2.5 x 8 TAP; head <=4 mm diameter x1.5 mm high; no nut",
+      "seatWorldMm": [
+        76.0,
+        -34,
+        102.5
+      ],
+      "outwardAxis": [
+        0,
+        -1,
+        0
+      ],
+      "pilotDiameterMm": 2.1,
+      "pilotDepthMm": 4.4,
+      "engagementMm": 3.9,
+      "tipMarginMm": 0.5,
+      "headCounterboreDiameterMm": 4.4,
+      "clearanceHoleMm": 2.8,
+      "keyWidthMm": 6,
+      "keyProjectionMm": 2.5,
+      "keyClearanceMm": 0.15
+    }
+  ],
+  "acceptance": {
+    "digitalAssemblyPassed": true,
+    "physicalStrengthVerified": false,
+    "materialVerified": false,
+    "sourceGeometryContactsExplicitlyBounded": true
+  }
+}

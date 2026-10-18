@@ -1,0 +1,35 @@
+Actual Bambu WHITE native Gcode, source: /Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/PRINTING/04-FOUR-COLOR-20260929/06-CENTERED-20260929/Bambu/WHITE/MicroDuck_Bambu_WHITE_CENTERED.gcode.3mf
+SHA256: 36f2e5f994f278896dcdb19919596fa33b4be360eeb294208ea399c1e19cac42
+
+;===== nozzle load line ===============================
+M975 S1
+G90
+M83
+T1000
+G1 X18.0 Y1.0 Z0.8 F18000;Move to start position
+M109 S220
+G1 Z0.2
+G0 E2 F300
+G0 X240 E15 F6033.27
+G0 Y11 E0.700 F1508.32
+G0 X239.5
+G0 E0.2
+G0 Y1.5 E0.700
+G0 X231 E0.700 F6033.27
+M400
+
+;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==
+;curr_bed_type=Cool Plate
+...
+;===== draw extrinsic para cali paint =================
+M1002 judge_flag extrude_cali_flag
+M622 J1
+
+    M1002 gcode_claim_action : 8
+
+    T1000
+
+    G0 F1200.0 X231 Y12   Z0.2 E0.577
+    G0 F1200.0 X226 Y12   Z0.2 E0.275
+
+The nozzle-load line extrudes at Y1 near the front edge. Extra calibration moves execute conditionally under extrude_cali_flag; file presence does not prove the user enabled that flag on the machine. These startup paths are separate from object/support footprints and remain unchanged.

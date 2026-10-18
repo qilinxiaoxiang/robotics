@@ -1,0 +1,1270 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": 2,
+  "manifest": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.18/manifest-V1.18.json",
+    "sha256": "1a8d5bd03b0aac43f9fefe36158f6f23b605648f963a6a64b59887b97b0d4f41"
+  },
+  "pipeline": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/release_pipeline_v2.py",
+    "sha256": "b7667958fd76d0c409e253e8dd0347b278af61222581cbc96674ddb50ad1f3a7"
+  },
+  "baselineStock": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+    "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+  },
+  "baselinePrintedStockInstances": 89,
+  "reprintUnchangedStockQuantity": 2,
+  "partTypes": 11,
+  "printQuantity": 11,
+  "parts": [
+    {
+      "key": "rear_frame",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_frame-world.stl",
+        "sha256": "2f1f81bf63216c1a279c4f1f071c2f79d1a2c49de7382b9e945cb2a753032d92"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "V1.16 rear converter box frame, layout F regenerated from build_f.py (back-plate/layout-F/README.md): the V1.11 frame with the two cap-screw ear bosses and their webs removed, the front passage P1 filled (solid front plate) and no tooth slots or hook notch (Shawn 2026-10-15: the cap is held by screws only). Shawn 2026-10-14: every box wire runs outside the box through the side windows or over the box top (the slot made assembly hard and left a seam between the boards), and the +y ear tail was ugly. Everything else is the V1.11 frame: cover outline, four cover holes and lip, wide and narrow tiers, side windows, USB-C slot, eight XL4015 bosses, four 5991 bosses, driver lanes. The two XL4015 bosses at z 38.7 and the two upper 5991 bosses now take the cap screws. Wire notch A, the top-wall front edge cut back from x -47.0 to -49.8 over y 3.2..12.4 (rear corners r 1.0), and notch B, the cover-plate top edge lowered from z 29.5 to 28.5 over the same band (floor corners r 0.5, cover lip untouched); the 7 V and 5 V pairs climb the outside of the +y wall, cross the box top, drop through notch A into the box front cavity and pass under the shell lip through notch B onto the cover lip into the pack. Volume 10292.8 mm3, watertight, one body (layout-F/checks.json, post_build.json).",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+        "sha256": "28838f59365cb90b4a7a845bbc042ab216f468d436111ba6077d7c746942a5c2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          32.04999923706055
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          44.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          59.099998474121094
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 252.01217327442328,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          64.0999984741211,
+          87.0,
+          21.599998474121094
+        ]
+      ],
+      "vertexCount": 12567,
+      "triangleCount": 25194,
+      "tipAngleDeg": 71.21,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 71.2 deg >= 10 deg, no brim"
+    },
+    {
+      "key": "rear_lid",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/rear_lid-world.stl",
+        "sha256": "97097e613ee4184a737e55178ee5a4a3c017c83c7f9ff45fe9256bd048cf984d"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "V1.16 cap: the V1.11 rounded cap without its two screw ears, tongues or hook; it pushes straight on (Shawn 2026-10-15: \"if a screw fits, use a screw\"). Four hidden M2 x 10, each driven from a dia 4.4 hole in the cap back down a dia 5.6 column onto a 1.0 mm floor with a dia 2.3 clearance hole: two low columns (floor x -56.1..-55.1) on the 5991 upper hole axes (y +11.367, z -16.667) and (y -11.366, z -16.54) through the 5991 into its standoff bosses (3.9 mm of thread), and two top columns (floor x -55.6..-54.6, flattened to |y| <= 30.6, z <= 41.55 inside the frame) on the 7 V XL4015 top corner hole axes (y +-28.25, z 38.7) through the board into the frame bosses (4.6 mm of thread). Ray cast in layout-F/raycast_cap_screws.json. Nothing outside the box outline. Volume 6404.0 mm3, watertight, one body.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/layout-F/checks.json",
+        "sha256": "28838f59365cb90b4a7a845bbc042ab216f468d436111ba6077d7c746942a5c2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          32.04999923706055
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          36.0192985534668
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          67.1016845703125
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 2633.9739211053547,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          64.0999984741211,
+          79.0192985534668,
+          12.501686096191406
+        ]
+      ],
+      "vertexCount": 46701,
+      "triangleCount": 93414,
+      "tipAngleDeg": 85.1,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 85.1 deg >= 10 deg, no brim"
+    },
+    {
+      "key": "shell_left_v20",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/shell_left_v20-world.stl",
+        "sha256": "4e55338ec1eb24ad5d70daccd4a7f36bdc29251b32f478339fed7a8f3dc35410"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "16"
+      ],
+      "changeReason": "V2.0 side shell (print/v20-source/README.md, Shawn 2026-10-13): one M2 x 6 straight down through the roof (dia 2.2 hole, dia 4.4 counterbore, floor 1.0 mm below the rim) into the V1.9 pack shoulder bar at x -21.5, y +20, replacing the rear cross screw that had to be driven 27 mm down a hand-drilled tunnel; the cross tunnel at x -38, z 35 is filled flush (360.6 mm3); S12-horn-029..032 get dia 4.4 x 2.0 counterbores so they take M2 x 4. Outer shape unchanged. Volume 11640.74 mm3 against 11389.37 mm3 for the printed shell. White for colour scheme C.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/v20-source.json",
+        "sha256": "b3fd44110f6f68d8111865a137a7da8f3e444c6eaa3ebdd48b5d485b33140fae"
+      },
+      "sourceToPrint": [
+        [
+          -4.153803498940789e-07,
+          0.03480230861929409,
+          0.9993942161702736,
+          -21.102608161424907
+        ],
+        [
+          -0.999999999715636,
+          -2.3844419799563497e-05,
+          4.147117329389838e-07,
+          -5.9450327213675696
+        ],
+        [
+          2.384440816133202e-05,
+          -0.999394215885909,
+          0.03480230861930209,
+          31.764244642988896
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -1.1632314260637955,
+      "flatContactAreaMm2": 1228.2372550308314,
+      "bounds": [
+        [
+          -20.843415350894922,
+          -40.44435752150893,
+          0.0
+        ],
+        [
+          20.821347031171104,
+          40.44353482999753,
+          33.96824064333574
+        ]
+      ],
+      "vertexCount": 10935,
+      "triangleCount": 21890,
+      "tipAngleDeg": 46.67,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: lies on its flat outer side face (about 1230 mm2), tip angle above 10 deg; set explicitly because the White donors default to auto_brim on Bambu."
+    },
+    {
+      "key": "shell_right_v20",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/shell_right_v20-world.stl",
+        "sha256": "a718e9279c97254fe335d7064c90aa6a18d2e72065860ffad058334d1ced63a7"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "18"
+      ],
+      "changeReason": "V2.0 side shell (print/v20-source/README.md, Shawn 2026-10-13): one M2 x 6 straight down through the roof (dia 2.2 hole, dia 4.4 counterbore, floor 1.0 mm below the rim) into the V1.9 pack shoulder bar at x -21.5, y -20, replacing the rear cross screw that had to be driven 27 mm down a hand-drilled tunnel; the cross tunnel at x -38, z 35 is filled flush (276.6 mm3); S12-horn-026..028 get dia 4.4 x 2.0 counterbores so they take M2 x 4. Outer shape unchanged. Volume 11407.13 mm3 against 11216.91 mm3 for the printed shell. White for colour scheme C.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/v20-source.json",
+        "sha256": "b3fd44110f6f68d8111865a137a7da8f3e444c6eaa3ebdd48b5d485b33140fae"
+      },
+      "sourceToPrint": [
+        [
+          -0.037809017351465135,
+          0.034874702837432776,
+          -0.9986762404848315,
+          21.28390518542577
+        ],
+        [
+          -0.9992849831114191,
+          -0.001292409309081033,
+          0.037786931685287045,
+          -7.035665189568495
+        ],
+        [
+          2.7109543702105752e-05,
+          0.9993908568624083,
+          0.034898631561912107,
+          31.119015600420468
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.024440801880839302,
+      "flatContactAreaMm2": 1228.000637633435,
+      "bounds": [
+        [
+          -21.211328365563734,
+          -40.2655480169155,
+          0.0
+        ],
+        [
+          21.211448734162005,
+          40.28169258541749,
+          32.00974093438933
+        ]
+      ],
+      "vertexCount": 10773,
+      "triangleCount": 21566,
+      "tipAngleDeg": 48.02,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: lies on its flat outer side face (about 1230 mm2), tip angle above 10 deg; set explicitly because the White donors default to auto_brim on Bambu."
+    },
+    {
+      "key": "thigh_left",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-74.stl",
+        "sha256": "5b21f2cc1e90c4a48bf977814a20a4f20f41231424832b81ed947b4f4925b710"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "8"
+      ],
+      "changeReason": "Colour only: the stock 10/1 thigh geometry reprinted in white for colour scheme C; geometry unchanged.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/colour-study-20261014/reprint_cost.json",
+        "sha256": "adc983be42062a38f32a265d3493a4d8fc7506920956f5ee4a157ad5b1344265"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 1368.8159535599639,
+      "bounds": [
+        [
+          -30.499000549316406,
+          -23.82900047302246,
+          0.0
+        ],
+        [
+          30.499000549316406,
+          23.82900047302246,
+          27.998001098632812
+        ]
+      ],
+      "vertexCount": 6355,
+      "triangleCount": 12714,
+      "tipAngleDeg": 59.11,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: flat on 1368.8 mm2, tip angle 59.1 deg.",
+      "colourOnlyReprint": "Colour scheme C (Shawn, 2026-10-14): the same thigh in white; the community source colours it white (color-analysis-20260929 group \u767d\u8272\u7684\u5916\u58f3)."
+    },
+    {
+      "key": "thigh_right",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-72.stl",
+        "sha256": "2eda6338c20e99940f23b2d71f5103d8119ead44e4e32fb28228afaa00ed1a4d"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "6"
+      ],
+      "changeReason": "Colour only: the stock 10/1 thigh geometry reprinted in white for colour scheme C; geometry unchanged.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/colour-study-20261014/reprint_cost.json",
+        "sha256": "adc983be42062a38f32a265d3493a4d8fc7506920956f5ee4a157ad5b1344265"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 1368.8159535599639,
+      "bounds": [
+        [
+          -30.499000549316406,
+          -23.82900047302246,
+          0.0
+        ],
+        [
+          30.499000549316406,
+          23.82900047302246,
+          27.998001098632812
+        ]
+      ],
+      "vertexCount": 6389,
+      "triangleCount": 12782,
+      "tipAngleDeg": 59.1,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: flat on 1368.8 mm2, tip angle 59.1 deg.",
+      "colourOnlyReprint": "Colour scheme C (Shawn, 2026-10-14): the same thigh in white; the community source colours it white (color-analysis-20260929 group \u767d\u8272\u7684\u5916\u58f3)."
+    },
+    {
+      "key": "head_cap_a7z",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-head/head_cap_a7z-world.stl",
+        "sha256": "bbedb8044687c86906cdcf1adb82eae5c3c5f8bb84fc8bdd24f5824375b5e257"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "4"
+      ],
+      "changeReason": "A7Z head cap (a7z-head/build_a7z_head.py, checks.json): the V1.9 cap for the Radxa Cubie A7Z, which has the Pi Zero outline and hole pattern but carries the camera FPC connector and the microSD socket on its underside right where the V1.9 rails touch the board. Material removed inside only (327.7 mm3, nothing added beyond 0.57 mm3 of STL rounding slivers; watertight, one body): the two board rails relieved by 1.6 mm except a dia 6.0 pad round each of the four holes, a slot through the +Y rail end for the camera connector and ribbon (with room to fold the ribbon round the board end) and a slot through the -Y rail end for the microSD socket and card. Same closing pilots (ROBOTIS M2.6 x 6), speaker collar, amplifier posts and Pi pilots. White for colour scheme C.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-head/checks.json",
+        "sha256": "70f85e635aabf14c9ea5f1130be0fd22b4633c9a1a29c979f3ec0b82d14dcc77"
+      },
+      "sourceToPrint": [
+        [
+          -0.994831182,
+          0.065255263,
+          -0.077798904,
+          41.502281705
+        ],
+        [
+          0.066724243,
+          0.997636148,
+          -0.016431442,
+          -3.766984888
+        ],
+        [
+          0.07654276,
+          -0.021537584,
+          -0.996833656,
+          150.267217814
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -2.201448978667031e-08,
+      "flatContactAreaMm2": 104.38621622145072,
+      "bounds": [
+        [
+          -63.2657630048123,
+          -45.77491575932288,
+          0.0
+        ],
+        [
+          63.26576292409423,
+          45.77706841329947,
+          47.05630813154269
+        ]
+      ],
+      "vertexCount": 13475,
+      "triangleCount": 27158,
+      "tipAngleDeg": 7.55,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "4",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "manifest: R1: 7.5 deg tip angle (47 mm tall on a 104 mm2 strip); 4 mm outer brim on the cap only, as on the V1.9 cap and the V1.16 white cap."
+    },
+    {
+      "key": "face_panel_a7z",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-a7z/face_panel_a7z.stl",
+        "sha256": "ff0fa31c726fa0bd5b8d31602126bf4995d445b7d60c0e8e7c9e634314611ef1"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "46"
+      ],
+      "changeReason": "A7Z face (face-a7z/README.md, checks.json): the V1.8 face with the Camera Module 3 bearing lands and two locating pegs removed from its back (75.8 mm3) and four round bosses added (dia 4.8, 2.3 mm tall, blind dia 1.7 pilots that stop 1.2 mm behind the front) under the corner holes of the Radxa Camera 13M 214, which screws on with 4 x M2 x 4. The two dia 2.2 holes above and below the eye now take the 2 x M2 x 6 that hold the eye trim. The front is unchanged (0.000 mm on a 1 mm ray grid). Volume 4198.6 mm3 against 4130.0, watertight. The black eye trim is the V1.8 part byte for byte and is not reprinted.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-a7z/checks.json",
+        "sha256": "709a18805f66f52ee31ccdab4d245cebc30d653a6dac9f5f913b76533b357ef4"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          -0.0913772583008
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -132.627841949463
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          81.39900207519531
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 3124.7082463661573,
+      "bounds": [
+        [
+          -43.825000762939474,
+          -22.31299972534191,
+          0.0
+        ],
+        [
+          43.82500076293943,
+          22.312999725341683,
+          3.5989990234375
+        ]
+      ],
+      "vertexCount": 2455,
+      "triangleCount": 4934,
+      "tipAngleDeg": 87.96,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: flat on 3124.7 mm2, 3.6 mm tall, tip angle 88 deg; set explicitly because the White donors default to auto_brim on Bambu."
+    },
+    {
+      "key": "clip_cap_a7z",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-head/clip_cap_a7z-world.stl",
+        "sha256": "ab50937dac7f6bf43bca5eb083d28a1369cedc7a97082f6abc8ddaa85d562d21"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "A7Z cap clip (a7z-head/build_a7z_head.py, checks.json clip): the V1.9 cap clip with a notch cut into its underside over the A7Z micro HDMI socket, which overhangs the board edge by 1.6 mm where the clip arm crossed it (0.6 mm clearance all round). Volume 214.1 mm3 against 251.8, one body, watertight. Same screw (E-pi-04, M2 x 8) and bundle channel.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-head/checks.json",
+        "sha256": "70f85e635aabf14c9ea5f1130be0fd22b4633c9a1a29c979f3ec0b82d14dcc77"
+      },
+      "sourceToPrint": [
+        [
+          -0.173602778,
+          0.0,
+          -0.984815757,
+          153.053491272
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -23.099999905
+        ],
+        [
+          0.984815757,
+          0.0,
+          -0.173602778,
+          -35.943847213
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -1.5662422896411954e-06,
+      "flatContactAreaMm2": 25.061453867275006,
+      "bounds": [
+        [
+          -6.65004410778144,
+          -8.900000095734864,
+          0.0
+        ],
+        [
+          6.650044117244676,
+          8.900000095,
+          6.000532240966024
+        ]
+      ],
+      "vertexCount": 448,
+      "triangleCount": 896,
+      "tipAngleDeg": 54.69,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: tip angle 54.7 deg (PRINT-LESSONS.md 2026-10-14: clips print without a brim); set explicitly because the Orange Bambu donor defaults to auto_brim."
+    },
+    {
+      "key": "battery_backpack_frame",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/battery-backpack-20261015/battery_backpack_frame-world.stl",
+        "sha256": "5f2db4eaa3b2c24e7862ebe2f8868bd596b670c7c75444b1638b4e4b25ea8be9"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-010 battery backpack (back-plate/battery-backpack-20261015/README.md): the V1.8 cover outline and its four holes, a box 26.75 mm deep behind it (bench box 20.1) with the bench box width, top and step, a flush floor pocket and 3 mm panel for the REV-31-1387 switch (rocker down), the battery floor, two standoff ribs, four clip lips and a corner stop for the DFR1202, a backing plate above the cover top, a window under the DFR1202 into the pack channel and two upper cap-screw bosses; the lower cap screw goes into the floor block. Volume 14944.3 mm3, watertight, one body.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/battery-backpack-20261015/bp_checks.json",
+        "sha256": "fc38c9af2ec753e41ef59d41a3aefe6f0314cf019d50195d61acf8d738ebd120"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          32.05
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          44.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          66.35
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -1.5258789005656581e-06,
+      "flatContactAreaMm2": 713.1266650830597,
+      "bounds": [
+        [
+          7.629394502828291e-07,
+          0.0,
+          0.0
+        ],
+        [
+          64.09999923706054,
+          87.0,
+          21.349998474121094
+        ]
+      ],
+      "vertexCount": 12793,
+      "triangleCount": 25622,
+      "tipAngleDeg": 67.42,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 67.4 deg >= 10 deg, no brim"
+    },
+    {
+      "key": "battery_backpack_cap",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/battery-backpack-20261015/battery_backpack_cap-world.stl",
+        "sha256": "1fd8119dcf4c6daee139cc02760e9117494b38c49d79f97b104e7095cbed6a29"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-010 battery backpack cap (x -73.75..-66.35, 1.2 mm walls) with every rear-edge rounding (side 7.4, top 6.5, step 4.3, narrow side 3.5, narrow bottom 5.0), two battery fences, a shelf under the battery's rear half and three screw columns (M2 x 6 from driver holes in the back into the frame). Volume 7561.9 mm3, watertight, one body.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/battery-backpack-20261015/bp_checks.json",
+        "sha256": "fc38c9af2ec753e41ef59d41a3aefe6f0314cf019d50195d61acf8d738ebd120"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          32.05
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          34.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          73.75
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 0.000732421875,
+      "flatContactAreaMm2": 2301.9347764495587,
+      "bounds": [
+        [
+          0.0007637023925752828,
+          0.0,
+          0.0
+        ],
+        [
+          64.09924011230468,
+          77.0,
+          7.400733947753906
+        ]
+      ],
+      "vertexCount": 47988,
+      "triangleCount": 95984,
+      "tipAngleDeg": 85.19,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 85.2 deg >= 10 deg, no brim"
+    }
+  ],
+  "claimBoundary": "Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.",
+  "status": "PREPARED_NOT_SLICED",
+  "rows": [
+    {
+      "color": "White",
+      "machine": "Bambu",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.18/run/White_Bambu_editable.3mf",
+        "sha256": "4cf5faf33cfb2ffa11c2eb3b7adf383bbac0cec6daafecef74394523360c70fe"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+        "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+      },
+      "supportBlockers": [
+        {
+          "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.8/blockers/pi-positive-y-upper-hole-support-blocker-v18-world.stl",
+          "sha256": "a7cf2fbdd28c048aa1d5509f3e6223fe65e446dbdf1c1f5c44d5ef31b43929af"
+        }
+      ],
+      "placements": [
+        {
+          "key": "head_cap_a7z",
+          "copy": 1,
+          "translation": [
+            97.0658,
+            67.7749,
+            0.0
+          ]
+        },
+        {
+          "key": "shell_left_v20",
+          "copy": 1,
+          "translation": [
+            197.1434,
+            62.4444,
+            0.0
+          ]
+        },
+        {
+          "key": "shell_right_v20",
+          "copy": 1,
+          "translation": [
+            55.0113,
+            169.8655,
+            0.0
+          ]
+        },
+        {
+          "key": "thigh_left",
+          "copy": 1,
+          "translation": [
+            118.699,
+            153.429,
+            0.0
+          ]
+        },
+        {
+          "key": "thigh_right",
+          "copy": 1,
+          "translation": [
+            191.699,
+            153.429,
+            0.0
+          ]
+        },
+        {
+          "key": "face_panel_a7z",
+          "copy": 1,
+          "translation": [
+            132.025,
+            211.613,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            33.800036995187696,
+            21.999984240677122,
+            0.0
+          ],
+          [
+            160.33156292409421,
+            113.55196841329948,
+            47.05630813154269
+          ]
+        ],
+        [
+          [
+            176.29998464910508,
+            22.000042478491075,
+            0.0
+          ],
+          [
+            217.96474703117113,
+            102.88793482999753,
+            33.96824064333574
+          ]
+        ],
+        [
+          [
+            33.79997163443626,
+            129.5999519830845,
+            0.0
+          ],
+          [
+            76.222748734162,
+            210.14719258541749,
+            32.00974093438933
+          ]
+        ],
+        [
+          [
+            88.19999945068359,
+            129.59999952697754,
+            0.0
+          ],
+          [
+            149.19800054931642,
+            177.25800047302246,
+            27.998001098632812
+          ]
+        ],
+        [
+          [
+            161.1999994506836,
+            129.59999952697754,
+            0.0
+          ],
+          [
+            222.19800054931642,
+            177.25800047302246,
+            27.998001098632812
+          ]
+        ],
+        [
+          [
+            88.19999923706052,
+            189.3000002746581,
+            0.0
+          ],
+          [
+            175.85000076293943,
+            233.92599972534168,
+            3.5989990234375
+          ]
+        ]
+      ]
+    },
+    {
+      "color": "White",
+      "machine": "Elegoo",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.18/run/White_Elegoo_editable.3mf",
+        "sha256": "5ec7b9821d0b9b7d8967046a3365f3321b1dbac3f827c68e512cb9c4215ae9ff"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+        "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+      },
+      "supportBlockers": [],
+      "placements": [
+        {
+          "key": "head_cap_a7z",
+          "copy": 1,
+          "translation": [
+            97.0658,
+            67.7749,
+            0.0
+          ]
+        },
+        {
+          "key": "shell_left_v20",
+          "copy": 1,
+          "translation": [
+            197.1434,
+            62.4444,
+            0.0
+          ]
+        },
+        {
+          "key": "shell_right_v20",
+          "copy": 1,
+          "translation": [
+            55.0113,
+            169.8655,
+            0.0
+          ]
+        },
+        {
+          "key": "thigh_left",
+          "copy": 1,
+          "translation": [
+            118.699,
+            153.429,
+            0.0
+          ]
+        },
+        {
+          "key": "thigh_right",
+          "copy": 1,
+          "translation": [
+            191.699,
+            153.429,
+            0.0
+          ]
+        },
+        {
+          "key": "face_panel_a7z",
+          "copy": 1,
+          "translation": [
+            132.025,
+            211.613,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            33.800036995187696,
+            21.999984240677122,
+            0.0
+          ],
+          [
+            160.33156292409421,
+            113.55196841329948,
+            47.05630813154269
+          ]
+        ],
+        [
+          [
+            176.29998464910508,
+            22.000042478491075,
+            0.0
+          ],
+          [
+            217.96474703117113,
+            102.88793482999753,
+            33.96824064333574
+          ]
+        ],
+        [
+          [
+            33.79997163443626,
+            129.5999519830845,
+            0.0
+          ],
+          [
+            76.222748734162,
+            210.14719258541749,
+            32.00974093438933
+          ]
+        ],
+        [
+          [
+            88.19999945068359,
+            129.59999952697754,
+            0.0
+          ],
+          [
+            149.19800054931642,
+            177.25800047302246,
+            27.998001098632812
+          ]
+        ],
+        [
+          [
+            161.1999994506836,
+            129.59999952697754,
+            0.0
+          ],
+          [
+            222.19800054931642,
+            177.25800047302246,
+            27.998001098632812
+          ]
+        ],
+        [
+          [
+            88.19999923706052,
+            189.3000002746581,
+            0.0
+          ],
+          [
+            175.85000076293943,
+            233.92599972534168,
+            3.5989990234375
+          ]
+        ]
+      ]
+    },
+    {
+      "color": "Orange",
+      "machine": "Bambu",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.18/run/Orange_Bambu_editable.3mf",
+        "sha256": "ca961d981a1f48ea2d8e3978c3179c4a20944f4b4ced0a93433b935e667a7b4b"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+        "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+      },
+      "supportBlockers": [],
+      "placements": [
+        {
+          "key": "rear_frame",
+          "copy": 1,
+          "translation": [
+            20.0,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "rear_lid",
+          "copy": 1,
+          "translation": [
+            96.1,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "battery_backpack_frame",
+          "copy": 1,
+          "translation": [
+            172.2,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "battery_backpack_cap",
+          "copy": 1,
+          "translation": [
+            19.9992,
+            121.0,
+            0.0
+          ]
+        },
+        {
+          "key": "clip_cap_a7z",
+          "copy": 1,
+          "translation": [
+            102.75,
+            129.9,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            20.0,
+            22.0,
+            0.0
+          ],
+          [
+            84.0999984741211,
+            109.0,
+            21.599998474121094
+          ]
+        ],
+        [
+          [
+            96.1,
+            22.0,
+            0.0
+          ],
+          [
+            160.1999984741211,
+            101.0192985534668,
+            12.501686096191406
+          ]
+        ],
+        [
+          [
+            172.20000076293945,
+            22.0,
+            0.0
+          ],
+          [
+            236.29999923706055,
+            109.0,
+            21.349998474121094
+          ]
+        ],
+        [
+          [
+            19.999963702392574,
+            121.0,
+            0.0
+          ],
+          [
+            84.09844011230469,
+            198.0,
+            7.400733947753906
+          ]
+        ],
+        [
+          [
+            96.09995589221856,
+            120.99999990426514,
+            0.0
+          ],
+          [
+            109.40004411724468,
+            138.800000095,
+            6.000532240966024
+          ]
+        ]
+      ]
+    },
+    {
+      "color": "Orange",
+      "machine": "Elegoo",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.18/run/Orange_Elegoo_editable.3mf",
+        "sha256": "2c8f392d2bbcc4f652aa817f20dcf47a4822bdf7991b59aa74f02e3e6e4bfb48"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+        "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+      },
+      "supportBlockers": [],
+      "placements": [
+        {
+          "key": "rear_frame",
+          "copy": 1,
+          "translation": [
+            20.0,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "rear_lid",
+          "copy": 1,
+          "translation": [
+            96.1,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "battery_backpack_frame",
+          "copy": 1,
+          "translation": [
+            172.2,
+            22.0,
+            0.0
+          ]
+        },
+        {
+          "key": "battery_backpack_cap",
+          "copy": 1,
+          "translation": [
+            19.9992,
+            121.0,
+            0.0
+          ]
+        },
+        {
+          "key": "clip_cap_a7z",
+          "copy": 1,
+          "translation": [
+            102.75,
+            129.9,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            20.0,
+            22.0,
+            0.0
+          ],
+          [
+            84.0999984741211,
+            109.0,
+            21.599998474121094
+          ]
+        ],
+        [
+          [
+            96.1,
+            22.0,
+            0.0
+          ],
+          [
+            160.1999984741211,
+            101.0192985534668,
+            12.501686096191406
+          ]
+        ],
+        [
+          [
+            172.20000076293945,
+            22.0,
+            0.0
+          ],
+          [
+            236.29999923706055,
+            109.0,
+            21.349998474121094
+          ]
+        ],
+        [
+          [
+            19.999963702392574,
+            121.0,
+            0.0
+          ],
+          [
+            84.09844011230469,
+            198.0,
+            7.400733947753906
+          ]
+        ],
+        [
+          [
+            96.09995589221856,
+            120.99999990426514,
+            0.0
+          ],
+          [
+            109.40004411724468,
+            138.800000095,
+            6.000532240966024
+          ]
+        ]
+      ]
+    }
+  ]
+}

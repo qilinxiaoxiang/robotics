@@ -1,0 +1,697 @@
+{
+ "method": "Wire routes for the drop-in notch option (Shawn 2026-10-14: wires drop into the pack where the shell top meets the\nbox; no wire over the roof). World frame (guide), mm. 22 AWG, tube dia 1.8, centreline bend radius 3 (shellkit.fillet_path).\n- 15 V link and feed (-y side): unchanged from route_outside.py (window to window outside the -y wall).\n- 7 V and 5 V (+y side): out of the OUT windows, up the outside of the +y wall at y 34.0 in four x columns, over the\n  top edge, inward across the box top at centreline z 45.0 to their lane y, forward to x -50.8, down through notch A\n  (top-wall front edge, x -49.3..-47.0) into the box front cavity at x -47.8 (in front of the top board's pin face\n  x -49.65, behind the box front plane), down to z 33, forward under the shell lip through notch B (cover-plate top edge,\n  floor z 28.5) at centreline z 30.0, into the pack on the cover lip (top z 28.5).\n  Lanes (y): 7V_a 4.4, 7V_b 6.5, 5V_a 8.6, 5V_b 10.7 (pitch 2.1, 0.3 between tubes). The column nearest the box front\n  turns inward last (largest y) so no two wires cross on the box top.\n  7 V (inner lanes): along the cover lip to x -36.5, down to OpenRB J4 (-31.5, +-1.25, 25.4) as the guide's pw-7v (via (-33, y, 26.8)).\n  5 V (outer lanes): along the cover lip under the shell roof rib (bottom z 31.5..32, x -41.5..-34.5) to x -34.5 / -33, up in\n  front of the rib and over the (by then lower) 7 V to the head-notch slots (5V_a y 1.9 z 35.3, 5V_b y 1.5 z 37.6), out\n  through the pack plate's head notch and up to the neck bundle point\n  (-6, -14, 43.5) of the current pi-lead route (via its (-16, 3, 41) waypoint), which it follows to the Pi.\nWrites wires_F.json (format of layout-F/wires_F.json) and routes_notch.json (lengths, clearances, cut lengths).",
+ "boxParts": "frame_hidden_noP1_notch (this folder) + lid_hidden + screw_hidden (layout-F-ear-20261014/options)",
+ "lanesY": {
+  "7V_a": 4.4,
+  "7V_b": 6.5,
+  "5V_a": 8.6,
+  "5V_b": 10.7
+ },
+ "notchSlots": {
+  "5V_a": [
+   1.9,
+   35.3
+  ],
+  "5V_b": [
+   1.5,
+   37.6
+  ]
+ },
+ "perWire": {
+  "15V_link_p": {
+   "net": "p",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 42.5,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "frame_notch": {
+     "gapMm": 0.27,
+     "at": [
+      -54.2,
+      -32.6,
+      25.7
+     ],
+     "arcMm": 40.0
+    },
+    "xl4015_mid": {
+     "gapMm": 0.99,
+     "at": [
+      -54.6,
+      -31.9,
+      -1.9
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 1.12,
+     "at": [
+      -54.6,
+      -31.9,
+      25.7
+     ],
+     "arcMm": 40.8
+    },
+    "lid_hidden": {
+     "gapMm": 4.38,
+     "at": [
+      -54.6,
+      -31.9,
+      25.7
+     ],
+     "arcMm": 40.8
+    }
+   }
+  },
+  "15V_link_q": {
+   "net": "q",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 37.1,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "frame_notch": {
+     "gapMm": 0.6,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_mid": {
+     "gapMm": 0.87,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 0.92,
+     "at": [
+      -54.7,
+      -31.8,
+      30.7
+     ],
+     "arcMm": 35.5
+    },
+    "lid_hidden": {
+     "gapMm": 3.81,
+     "at": [
+      -54.7,
+      -31.9,
+      3.1
+     ],
+     "arcMm": 1.8
+    }
+   }
+  },
+  "15V_feed_q": {
+   "net": "q",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 46.9,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "pd5991": {
+     "gapMm": 0.21,
+     "at": [
+      -54.6,
+      -14.8,
+      -22.3
+     ],
+     "arcMm": 45.2
+    },
+    "frame_notch": {
+     "gapMm": 0.6,
+     "at": [
+      -54.7,
+      -31.9,
+      1.1
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_mid": {
+     "gapMm": 1.04,
+     "at": [
+      -54.7,
+      -31.9,
+      1.1
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.97,
+     "at": [
+      -54.6,
+      -16.0,
+      -21.8
+     ],
+     "arcMm": 44.0
+    }
+   }
+  },
+  "15V_feed_p": {
+   "net": "p",
+   "ends": [
+    "terminal",
+    "terminal"
+   ],
+   "lengthMm": 49.1,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "pd5991": {
+     "gapMm": 0.41,
+     "at": [
+      -54.6,
+      -15.0,
+      -25.8
+     ],
+     "arcMm": 47.2
+    },
+    "frame_notch": {
+     "gapMm": 0.6,
+     "at": [
+      -54.6,
+      -15.5,
+      -25.8
+     ],
+     "arcMm": 46.8
+    },
+    "xl4015_mid": {
+     "gapMm": 0.79,
+     "at": [
+      -54.8,
+      -31.9,
+      -3.9
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.09,
+     "at": [
+      -60.5,
+      -34.0,
+      -5.5
+     ],
+     "arcMm": 9.0
+    }
+   }
+  },
+  "7V_b": {
+   "net": "7V",
+   "ends": [
+    "terminal",
+    "J4"
+   ],
+   "lengthMm": 95.6,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "shell_left": {
+     "gapMm": 0.57,
+     "at": [
+      -46.8,
+      6.5,
+      30.8
+     ],
+     "arcMm": 73.0
+    },
+    "frame_notch": {
+     "gapMm": 0.6,
+     "at": [
+      -44.7,
+      6.5,
+      30.0
+     ],
+     "arcMm": 75.2
+    },
+    "xl4015_top": {
+     "gapMm": 0.97,
+     "at": [
+      -54.8,
+      31.9,
+      30.7
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.1,
+     "at": [
+      -59.3,
+      6.8,
+      45.0
+     ],
+     "arcMm": 48.2
+    },
+    "openrb_board": {
+     "gapMm": 1.78,
+     "at": [
+      -32.6,
+      -1.1,
+      27.2
+     ],
+     "arcMm": 93.5
+    },
+    "shell_right": {
+     "gapMm": 4.04,
+     "at": [
+      -33.5,
+      0.8,
+      28.8
+     ],
+     "arcMm": 90.8
+    }
+   }
+  },
+  "7V_a": {
+   "net": "7V",
+   "ends": [
+    "terminal",
+    "J4"
+   ],
+   "lengthMm": 103.0,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "frame_notch": {
+     "gapMm": 0.3,
+     "at": [
+      -47.9,
+      4.4,
+      42.9
+     ],
+     "arcMm": 72.5
+    },
+    "shell_left": {
+     "gapMm": 0.56,
+     "at": [
+      -47.1,
+      4.4,
+      31.1
+     ],
+     "arcMm": 84.5
+    },
+    "xl4015_top": {
+     "gapMm": 0.97,
+     "at": [
+      -54.8,
+      31.9,
+      25.7
+     ],
+     "arcMm": 1.8
+    },
+    "lid_hidden": {
+     "gapMm": 1.1,
+     "at": [
+      -59.2,
+      4.4,
+      45.0
+     ],
+     "arcMm": 60.2
+    },
+    "openrb_board": {
+     "gapMm": 1.76,
+     "at": [
+      -33.2,
+      1.2,
+      26.5
+     ],
+     "arcMm": 101.0
+    },
+    "shell_right": {
+     "gapMm": 4.2,
+     "at": [
+      -35.6,
+      2.4,
+      28.5
+     ],
+     "arcMm": 97.5
+    }
+   }
+  },
+  "5V_a": {
+   "net": "5V",
+   "ends": [
+    "terminal",
+    "bundle"
+   ],
+   "lengthMm": 143.3,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "frame_notch": {
+     "gapMm": 0.39,
+     "at": [
+      -54.4,
+      32.6,
+      2.4
+     ],
+     "arcMm": 2.5
+    },
+    "shell_left": {
+     "gapMm": 0.58,
+     "at": [
+      -46.6,
+      8.6,
+      30.6
+     ],
+     "arcMm": 85.8
+    },
+    "xl4015_mid": {
+     "gapMm": 1.07,
+     "at": [
+      -54.6,
+      31.9,
+      2.2
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 1.53,
+     "at": [
+      -47.8,
+      8.6,
+      40.3
+     ],
+     "arcMm": 75.8
+    },
+    "rear_pack": {
+     "gapMm": 1.75,
+     "at": [
+      -21.1,
+      2.0,
+      35.4
+     ],
+     "arcMm": 116.2
+    },
+    "shell_right": {
+     "gapMm": 1.78,
+     "at": [
+      -7.2,
+      -14.1,
+      42.8
+     ],
+     "arcMm": 142.8
+    },
+    "lid_hidden": {
+     "gapMm": 2.98,
+     "at": [
+      -51.4,
+      30.2,
+      45.0
+     ],
+     "arcMm": 49.2
+    }
+   }
+  },
+  "5V_b": {
+   "net": "5V",
+   "ends": [
+    "terminal",
+    "bundle"
+   ],
+   "lengthMm": 151.3,
+   "minBendRadius": 3.0,
+   "nearestParts": {
+    "frame_notch": {
+     "gapMm": 0.27,
+     "at": [
+      -54.3,
+      32.6,
+      -2.9
+     ],
+     "arcMm": 2.5
+    },
+    "shell_left": {
+     "gapMm": 0.57,
+     "at": [
+      -46.4,
+      10.7,
+      30.5
+     ],
+     "arcMm": 91.8
+    },
+    "xl4015_mid": {
+     "gapMm": 1.09,
+     "at": [
+      -54.6,
+      31.9,
+      -2.9
+     ],
+     "arcMm": 1.8
+    },
+    "xl4015_top": {
+     "gapMm": 1.53,
+     "at": [
+      -47.8,
+      10.7,
+      38.3
+     ],
+     "arcMm": 83.5
+    },
+    "rear_pack": {
+     "gapMm": 2.36,
+     "at": [
+      -44.8,
+      10.7,
+      30.0
+     ],
+     "arcMm": 93.5
+    },
+    "shell_right": {
+     "gapMm": 3.02,
+     "at": [
+      -25.1,
+      1.5,
+      37.6
+     ],
+     "arcMm": 120.5
+    },
+    "lid_hidden": {
+     "gapMm": 4.38,
+     "at": [
+      -54.6,
+      31.9,
+      -2.9
+     ],
+     "arcMm": 1.8
+    }
+   }
+  }
+ },
+ "wireWireGapMm": {
+  "7V_b|7V_a": 0.04,
+  "7V_b|5V_a": 0.22,
+  "5V_a|5V_b": 0.3,
+  "15V_link_p|15V_feed_q": 1.2,
+  "15V_link_p|15V_link_q": 1.21,
+  "15V_feed_q|15V_feed_p": 1.21,
+  "7V_a|5V_a": 2.19,
+  "7V_b|5V_b": 2.4,
+  "15V_link_q|15V_feed_q": 3.31,
+  "7V_a|5V_b": 4.5,
+  "15V_link_q|15V_feed_p": 5.2,
+  "15V_link_p|15V_feed_p": 5.87,
+  "15V_link_p|7V_b": 35.02,
+  "15V_link_q|7V_a": 35.07,
+  "15V_link_p|7V_a": 35.67,
+  "15V_link_q|7V_b": 36.19,
+  "15V_link_q|5V_a": 39.2,
+  "15V_link_p|5V_a": 39.76,
+  "15V_link_q|5V_b": 41.27,
+  "15V_link_p|5V_b": 41.81,
+  "15V_feed_q|7V_b": 44.26,
+  "15V_feed_q|7V_a": 45.09,
+  "15V_feed_p|7V_b": 47.32,
+  "15V_feed_p|7V_a": 48.06,
+  "15V_feed_q|5V_b": 48.75,
+  "15V_feed_q|5V_a": 48.84,
+  "15V_feed_p|5V_b": 50.39,
+  "15V_feed_p|5V_a": 51.88
+ },
+ "existingCableGapsMm": {
+  "15V_link_p": {},
+  "15V_link_q": {},
+  "15V_feed_q": {},
+  "15V_feed_p": {},
+  "7V_b": {
+   "dxl-l10": {
+    "gapMm": -1.58,
+    "at": [
+     -34.7,
+     5.7,
+     29.8
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-r5": {
+    "gapMm": -0.03,
+    "at": [
+     -33.8,
+     4.2,
+     29.5
+    ],
+    "cableRadius": 1.1
+   },
+   "uart": {
+    "gapMm": 4.52,
+    "at": [
+     -32.6,
+     -1.1,
+     27.2
+    ],
+    "cableRadius": 0.7
+   }
+  },
+  "7V_a": {
+   "dxl-l10": {
+    "gapMm": 1.05,
+    "at": [
+     -36.4,
+     3.7,
+     29.4
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-r5": {
+    "gapMm": 2.32,
+    "at": [
+     -35.8,
+     3.0,
+     28.9
+    ],
+    "cableRadius": 1.1
+   },
+   "uart": {
+    "gapMm": 4.56,
+    "at": [
+     -33.2,
+     1.2,
+     26.5
+    ],
+    "cableRadius": 0.7
+   }
+  },
+  "5V_a": {
+   "dxl-l10": {
+    "gapMm": -1.65,
+    "at": [
+     -33.1,
+     5.6,
+     32.3
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-r5": {
+    "gapMm": -0.86,
+    "at": [
+     -30.8,
+     2.2,
+     34.8
+    ],
+    "cableRadius": 1.1
+   },
+   "imu": {
+    "gapMm": -0.68,
+    "at": [
+     -7.6,
+     -12.9,
+     42.5
+    ],
+    "cableRadius": 0.8
+   },
+   "dxl-n12": {
+    "gapMm": -0.66,
+    "at": [
+     -25.1,
+     1.9,
+     35.2
+    ],
+    "cableRadius": 1.1
+   },
+   "uart": {
+    "gapMm": -0.57,
+    "at": [
+     -7.6,
+     -13.2,
+     42.5
+    ],
+    "cableRadius": 0.7
+   }
+  },
+  "5V_b": {
+   "dxl-l10": {
+    "gapMm": -1.69,
+    "at": [
+     -30.3,
+     4.6,
+     36.9
+    ],
+    "cableRadius": 1.1
+   },
+   "imu": {
+    "gapMm": -1.5,
+    "at": [
+     -15.8,
+     2.6,
+     41.4
+    ],
+    "cableRadius": 0.8
+   },
+   "uart": {
+    "gapMm": -0.57,
+    "at": [
+     -17.1,
+     2.5,
+     39.9
+    ],
+    "cableRadius": 0.7
+   },
+   "dxl-n12": {
+    "gapMm": 1.62,
+    "at": [
+     -24.8,
+     1.5,
+     37.6
+    ],
+    "cableRadius": 1.1
+   },
+   "dxl-r5": {
+    "gapMm": 2.26,
+    "at": [
+     -31.1,
+     6.0,
+     35.4
+    ],
+    "cableRadius": 1.1
+   }
+  }
+ },
+ "piLeadBeyondJoinMm": 291.5,
+ "joinPoint": [
+  -6.0,
+  -14.0,
+  43.5
+ ],
+ "cutMm": {
+  "pw-15v": 80,
+  "pw-15v-link": 75,
+  "pw-7v": 135,
+  "pi-lead": 505
+ },
+ "currentPiLeadVsCablesPackToBundleMm": {
+  "imu": -1.7,
+  "uart": -1.59,
+  "dxl-n12": 0.01,
+  "dxl-l10": 0.02,
+  "dxl-r5": 0.29,
+  "dxl-5-4": 13.02
+ },
+ "note": "gaps are tube surface to part surface, excluding 1.6 mm inside each terminal clamp (2.0 at J4); negative = overlap"
+}

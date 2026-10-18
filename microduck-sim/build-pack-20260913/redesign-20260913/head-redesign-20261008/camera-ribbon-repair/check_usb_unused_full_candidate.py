@@ -1,0 +1,30 @@
+from pathlib import Path
+D=Path(__file__).resolve().parent
+exec((D/'build_reverse_nut_camera.py').read_text().split('cam=load')[0]);read(Path(__file__))
+import sys
+name=sys.argv[1];idx=int(sys.argv[2]);screen=json.loads(read(D/'occupancy-layout/screen-usb-unused-0-2.json'));candidate=next(r for r in screen['results'] if r['orientation']==name)['best'][idx];T=np.array(candidate['worldTransform']);Told=np.array(json.loads(read(D/'positive-x225-pose.json'))['worldTransform']);delta=T@np.linalg.inv(Told);pieces=json.loads(read(O/'pi-geometry-manifest.json'))['parts'];moving={r['key']:load(H/r['mesh']).transform(delta[:3]) for r in pieces};O=D/'occupancy-layout'/(name+'-full-usb-unused-'+str(idx));O.mkdir(exist_ok=True);checks=[];rows=[]
+moving['CSI_free4']=mf.Manifold.cube([.6,4,16]).translate([65.5,32.4886208,123.0496]).transform(T[:3])
+netDiam={1:1.5,2:1.8,3:1.5,4:1.8,5:1.5,6:1.8,9:1.5,12:.8,14:1.8,20:.8,35:.8,40:.8}
+wireNative=[]
+for pin,diam in netDiam.items():
+ start=np.array([49.31,-24.141+2.54*((pin-1)//2),118.2796+(2.54 if pin%2==0 else 0)])
+ pts=np.array([start+np.array([-3*math.sin(a),0,3*(1-math.cos(a))]) for a in np.linspace(0,math.pi/2,17)]);wire=mf.Manifold()
+ for p,q in zip(pts,pts[1:]):
+  v=q-p;L=np.linalg.norm(v);v/=L;u=np.cross(v,[0,1.,0]);u/=np.linalg.norm(u);w=np.cross(v,u);wire+=mf.Manifold.cylinder(L,diam/2+.01,circular_segments=16).transform(np.column_stack([u,w,v,p]))
+ for p in pts:wire+=mf.Manifold.sphere(diam/2+.01,16).translate(p)
+ moving['gpio_'+str(pin)+'_firstbend']=wire.transform(T[:3])
+
+for k,s in moving.items():rows.append({'key':k,'mesh':export(s,k),'boundsMm':list(s.bounding_box())})
+obstacles=[('native_cap',H/'curved-head/community-curved-head-world.stl'),('camera',D/'positive-x225/camera_board_clamped-world.stl'),('camera_af',D/'positive-x225/camera_af_clamped-world.stl'),('amp',H/'gpio-audio-repair/amp16z2-closed-receiving-world.stl')]
+for key,file in [('face','face_three_screw_camera'),('eye','eye_three_screw_camera'),('clamp','camera_three_screw_clamp')]+[('camera_screw_'+str(i),'camera_clamp_screw_'+str(i)) for i in [1,2,3]]:obstacles.append((key,D/'positive-x225'/(file+'-world.stl')))
+for k in ['motor13','motor14','motor15','jaw_support','jaw_frame','head_yaw_link','head_roll_ring_a','head_roll_ring_b','speaker','head_bottom','upper_pad','lower_pad']:
+ if k in n['P'] or k in n['files']:obstacles.append((k,None))
+rb=json.loads(read(H/'usb-access/usb-repair/openrb-component-enclosures/manifest.json'));obstacles += [('OpenRB_'+str(r['index']),Path(r['mesh'])) for r in rb['components']]
+def save():
+ r={'integrationReady':False,'stage':'USB_UNUSED architecture exploratory; all body and twelve first bends, no full FFC/full harness/assembly acceptance','candidate':candidate,'parts':rows,'expectedPairs':len(obstacles)*len(moving),'completedPairs':len(checks),'checks':checks,'sourceHashes':n['hashes']};(O/'report.json').write_text(json.dumps(r,indent=2)+'\n')
+for key,p in obstacles:
+ fixed=load(p) if p else n['source'](key)
+ for k,s in moving.items():
+  v,bb=n['volume'](s,fixed);checks.append({'part':k,'obstacle':key,'overlapMm3':v,'boundsMm':bb,'gapCapped2':float(s.min_gap(fixed,2)),'futureServiceOpeningRequired': bool(key=='native_cap' and k.startswith('USB'))})
+ del fixed;save();gc.collect()
+print(json.dumps({'candidate':candidate,'hits':[r for r in checks if r['overlapMm3']>1e-5]},indent=2))

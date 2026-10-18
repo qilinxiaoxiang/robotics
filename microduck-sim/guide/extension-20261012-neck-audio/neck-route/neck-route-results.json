@@ -1,0 +1,6822 @@
+{
+ "studyDate": "2026-10-12",
+ "frame": "robot frame mm (x forward, y left, z up), MJCF trunk_base at q = 0",
+ "scripts": [
+  "nr_lib.py",
+  "make_nonotch_cap.py",
+  "occ.py",
+  "corridor_search.py",
+  "corridor.py",
+  "kin_check.py",
+  "sections.py",
+  "motion.py",
+  "yaw_slack.py",
+  "jaw_check.py",
+  "connector_fit.py",
+  "disconnect.py",
+  "loop_space.py",
+  "figures.py",
+  "results.py"
+ ],
+ "v18FilesUnchanged": true,
+ "v18Files": {
+  "face_panel.stl": {
+   "recorded": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+   "now": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+   "unchanged": true
+  },
+  "eye_trim.stl": {
+   "recorded": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa",
+   "now": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa",
+   "unchanged": true
+  },
+  "head_bottom.stl": {
+   "recorded": "1046c62e7abb292a39ca683651666e5ef775b970032c64ebde4355d8fe1dc3ff",
+   "now": "1046c62e7abb292a39ca683651666e5ef775b970032c64ebde4355d8fe1dc3ff",
+   "unchanged": true
+  },
+  "head_cap.stl": {
+   "recorded": "88ecc42d1cbfe7f1622967fb61964c0def2b6b3bb93312e165b802d77c16e95a",
+   "now": "88ecc42d1cbfe7f1622967fb61964c0def2b6b3bb93312e165b802d77c16e95a",
+   "unchanged": true
+  },
+  "camera_board.stl": {
+   "recorded": "b16909c03a00cc5f7f6a95eaeac9945331840b64f9614f0756c3540e1869603c",
+   "now": "b16909c03a00cc5f7f6a95eaeac9945331840b64f9614f0756c3540e1869603c",
+   "unchanged": true
+  },
+  "rear_pack.stl": {
+   "recorded": "7be6736bacb94f374f7cac36557736d0b40e45991df0e87183e8301cea6be37c",
+   "now": "7be6736bacb94f374f7cac36557736d0b40e45991df0e87183e8301cea6be37c",
+   "unchanged": true
+  },
+  "rear_pack_cover.stl": {
+   "recorded": "1486ae0f99ff45ad86706bf341a2cf4412742b3dc1de9af5605cc4fca04f862a",
+   "now": "1486ae0f99ff45ad86706bf341a2cf4412742b3dc1de9af5605cc4fca04f862a",
+   "unchanged": true
+  },
+  "openrb-board-upright.stl": {
+   "recorded": "5f183ae42c802f9c1ee305716cdadffea0880229971c7b1dc25b62e926e331bc",
+   "now": "5f183ae42c802f9c1ee305716cdadffea0880229971c7b1dc25b62e926e331bc",
+   "unchanged": true
+  },
+  "imu_board.stl": {
+   "recorded": "ac31a1c2892d36b0c9ed178cc7556855683cbaa9f3d551a65d291b5ecd5476b0",
+   "now": "ac31a1c2892d36b0c9ed178cc7556855683cbaa9f3d551a65d291b5ecd5476b0",
+   "unchanged": true
+  },
+  "imu_sh4_receiving.stl": {
+   "recorded": "8ad3098cdb391e96962890ada61b55b3c2f61ca2032977fb9f8c040c36c43a53",
+   "now": "8ad3098cdb391e96962890ada61b55b3c2f61ca2032977fb9f8c040c36c43a53",
+   "unchanged": true
+  },
+  "jaw_frame.stl": {
+   "recorded": "0afeeee701671616b368977826fb82d4431540c70a8358adeb11d593fca655a1",
+   "now": "0afeeee701671616b368977826fb82d4431540c70a8358adeb11d593fca655a1",
+   "unchanged": true
+  },
+  "neck_pitch_ring.stl": {
+   "recorded": "313b05ae6e8c07f214805e154a1de4937690ac758bc9a432dec24ea0fb878f3f",
+   "now": "313b05ae6e8c07f214805e154a1de4937690ac758bc9a432dec24ea0fb878f3f",
+   "unchanged": true
+  }
+ },
+ "notchlessCap": {
+  "xorOutsideEditBoxMm3": 0.0,
+  "notchMaterialRestoredMm3": 166.315,
+  "hoodMaterialRemovedMm3": 199.416,
+  "seamShellXorMm3_0p6mm": 0.0,
+  "volumes": {
+   "v18": 30676.291,
+   "v15": 32085.288,
+   "nonotch": 30643.19
+  },
+  "output": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/extension-20261012-neck-audio/neck-route/study-solids/head_cap-no-notch.stl",
+   "sha256": "7d19d39e293145448c34df215359e3280d318256589d74c6b5483fc04c89b074",
+   "watertight": true,
+   "windingConsistent": true,
+   "bodies": 1,
+   "boundsMm": [
+    [
+     -30.4,
+     -45.88,
+     111.113
+    ],
+    [
+     92.29,
+     45.88,
+     157.449
+    ]
+   ]
+  }
+ },
+ "corridors": {
+  "entry-1": {
+   "exactNarrowestRadiusMm": 3.152,
+   "narrowestAt": [
+    13.85,
+    12.65,
+    127.29
+   ],
+   "boundedBy": [
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 3.152
+    },
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 3.157
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 3.427
+    }
+   ]
+  },
+  "entry-2": {
+   "exactNarrowestRadiusMm": 3.152,
+   "narrowestAt": [
+    13.85,
+    12.65,
+    127.28
+   ],
+   "boundedBy": [
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 3.152
+    },
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 3.157
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 3.427
+    }
+   ]
+  },
+  "entry-3": {
+   "exactNarrowestRadiusMm": 2.239,
+   "narrowestAt": [
+    20.0,
+    11.76,
+    109.01
+   ],
+   "boundedBy": [
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 2.239
+    },
+    {
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.261
+    }
+   ]
+  },
+  "entry-4": {
+   "exactNarrowestRadiusMm": 2.239,
+   "narrowestAt": [
+    20.0,
+    11.76,
+    109.01
+   ],
+   "boundedBy": [
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 2.239
+    },
+    {
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.261
+    }
+   ]
+  },
+  "front-any": {
+   "exactNarrowestRadiusMm": 3.139,
+   "narrowestAt": [
+    13.86,
+    12.66,
+    127.64
+   ],
+   "boundedBy": [
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 3.139
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 3.162
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 3.42
+    }
+   ]
+  },
+  "front-over-top": {
+   "exactNarrowestRadiusMm": 3.152,
+   "narrowestAt": [
+    13.85,
+    12.65,
+    127.29
+   ],
+   "boundedBy": [
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 3.152
+    },
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 3.157
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 3.427
+    }
+   ]
+  },
+  "front-minus-y": {
+   "exactNarrowestRadiusMm": 3.152,
+   "narrowestAt": [
+    13.85,
+    12.65,
+    127.26
+   ],
+   "boundedBy": [
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 3.152
+    },
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 3.157
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 3.427
+    }
+   ]
+  },
+  "front-plus-y": {
+   "exactNarrowestRadiusMm": 2.239,
+   "narrowestAt": [
+    36.0,
+    11.76,
+    124.32
+   ],
+   "boundedBy": [
+    {
+     "part": "motor15",
+     "body": "jaw_soft",
+     "distanceMm": 2.239
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.261
+    },
+    {
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.472
+    }
+   ]
+  },
+  "front-under": {
+   "exactNarrowestRadiusMm": 2.301,
+   "narrowestAt": [
+    58.11,
+    -32.27,
+    113.67
+   ],
+   "boundedBy": [
+    {
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "distanceMm": 2.301
+    },
+    {
+     "part": "pi",
+     "body": "jaw_soft",
+     "distanceMm": 2.316
+    }
+   ]
+  },
+  "entry-1+cables": {
+   "exactNarrowestRadiusMm": 2.203,
+   "narrowestAt": [
+    16.94,
+    -26.73,
+    129.08
+   ],
+   "boundedBy": [
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 2.203
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.226
+    }
+   ]
+  },
+  "entry-2+cables": {
+   "exactNarrowestRadiusMm": 2.203,
+   "narrowestAt": [
+    16.94,
+    -26.73,
+    129.07
+   ],
+   "boundedBy": [
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 2.203
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.226
+    }
+   ]
+  },
+  "entry-3+cables": {
+   "exactNarrowestRadiusMm": 2.203,
+   "narrowestAt": [
+    16.94,
+    -26.73,
+    129.08
+   ],
+   "boundedBy": [
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 2.203
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.226
+    }
+   ]
+  },
+  "entry-4+cables": {
+   "exactNarrowestRadiusMm": 2.203,
+   "narrowestAt": [
+    16.94,
+    -26.73,
+    129.08
+   ],
+   "boundedBy": [
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 2.203
+    },
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.226
+    }
+   ]
+  },
+  "front-any+cables": {
+   "exactNarrowestRadiusMm": 2.301,
+   "narrowestAt": [
+    58.11,
+    -32.27,
+    113.67
+   ],
+   "boundedBy": [
+    {
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "distanceMm": 2.301
+    },
+    {
+     "part": "pi",
+     "body": "jaw_soft",
+     "distanceMm": 2.316
+    }
+   ]
+  },
+  "front-over-top+cables": {
+   "exactNarrowestRadiusMm": 2.222,
+   "narrowestAt": [
+    33.09,
+    -26.7,
+    129.41
+   ],
+   "boundedBy": [
+    {
+     "part": "head_yaw_link",
+     "body": "yaw_roll_motion",
+     "distanceMm": 2.222
+    },
+    {
+     "part": "jaw_support",
+     "body": "jaw_soft",
+     "distanceMm": 2.245
+    }
+   ]
+  }
+ },
+ "sections": {
+  "gap-plus-y-z115": {
+   "plane": "z = 115.0",
+   "label": "servo-cable gap behind the jaw servo, +y side (yaw link | jaw servo), mid height",
+   "q0DiameterWithCablesMm": 4.75,
+   "q0DiameterPartsOnlyMm": 6.95,
+   "q0BoundedBy": [
+    "motor13",
+    "motor15"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 4.65,
+   "minDiameterPartsOnlyPolicyRollMm": 6.66,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 16,
+    "26AWG_silicone_1p3": 31,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 17,
+    "26AWG_silicone_1p3": 32,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "gap-plus-y-z127": {
+   "plane": "z = 127.3",
+   "label": "servo-cable gap behind the jaw servo, +y side, narrowest height",
+   "q0DiameterWithCablesMm": 4.55,
+   "q0DiameterPartsOnlyMm": 6.45,
+   "q0BoundedBy": [
+    "head_yaw_link",
+    "motor15"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 4.25,
+   "minDiameterPartsOnlyPolicyRollMm": 5.55,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 17,
+    "26AWG_silicone_1p3": 33,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 14,
+    "26AWG_silicone_1p3": 26,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "slot-minus-y-z129": {
+   "plane": "z = 129.1",
+   "label": "slot between yaw link and jaw support, -y side, narrowest height",
+   "q0DiameterWithCablesMm": 4.55,
+   "q0DiameterPartsOnlyMm": 4.55,
+   "q0BoundedBy": [
+    "head_yaw_link",
+    "jaw_support"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 4.55,
+   "minDiameterPartsOnlyPolicyRollMm": 4.55,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 18,
+    "26AWG_silicone_1p3": 33,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 18,
+    "26AWG_silicone_1p3": 33,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "slot-minus-y-z115": {
+   "plane": "z = 115.0",
+   "label": "slot between yaw link and jaw support, -y side, mid height",
+   "q0DiameterWithCablesMm": 22.45,
+   "q0DiameterPartsOnlyMm": 22.45,
+   "q0BoundedBy": [
+    "jaw_support",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 18.25,
+   "minDiameterPartsOnlyPolicyRollMm": 18.25,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 42,
+    "26AWG_silicone_1p3": 68,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 48,
+    "26AWG_silicone_1p3": 76,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "pi-top-plus-y-x61": {
+   "plane": "x = 61.0",
+   "label": "over the Pi top edge, +y (where the current route crosses)",
+   "q0DiameterWithCablesMm": 8.19,
+   "q0DiameterPartsOnlyMm": 8.19,
+   "q0BoundedBy": [
+    "head_cap_nonotch",
+    "pi"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 8.19,
+   "minDiameterPartsOnlyPolicyRollMm": 8.19,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 32,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 32,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "pi-top-minus-y-x61": {
+   "plane": "x = 61.0",
+   "label": "over the Pi top edge, -y",
+   "q0DiameterWithCablesMm": 8.55,
+   "q0DiameterPartsOnlyMm": 8.55,
+   "q0BoundedBy": [
+    "head_cap_nonotch",
+    "pi"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 8.55,
+   "minDiameterPartsOnlyPolicyRollMm": 8.55,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 22,
+    "26AWG_silicone_1p3": 37,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 22,
+    "26AWG_silicone_1p3": 37,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z104": {
+   "plane": "z = 104.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 104",
+   "q0DiameterWithCablesMm": 22.85,
+   "q0DiameterPartsOnlyMm": 22.85,
+   "q0BoundedBy": [
+    "head_bottom"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 7.76,
+   "minDiameterPartsOnlyPolicyRollMm": 7.76,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 25,
+    "26AWG_silicone_1p3": 42,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 33,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z106": {
+   "plane": "z = 106.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 106",
+   "q0DiameterWithCablesMm": 7.25,
+   "q0DiameterPartsOnlyMm": 7.25,
+   "q0BoundedBy": [
+    "head_bottom",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 7.25,
+   "minDiameterPartsOnlyPolicyRollMm": 7.25,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 18,
+    "26AWG_silicone_1p3": 30,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 18,
+    "26AWG_silicone_1p3": 30,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z108": {
+   "plane": "z = 108.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 108",
+   "q0DiameterWithCablesMm": 7.35,
+   "q0DiameterPartsOnlyMm": 7.35,
+   "q0BoundedBy": [
+    "head_bottom",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 6.85,
+   "minDiameterPartsOnlyPolicyRollMm": 6.85,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 31,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 17,
+    "26AWG_silicone_1p3": 29,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z110": {
+   "plane": "z = 110.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 110",
+   "q0DiameterWithCablesMm": 7.39,
+   "q0DiameterPartsOnlyMm": 7.39,
+   "q0BoundedBy": [
+    "head_bottom",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 6.49,
+   "minDiameterPartsOnlyPolicyRollMm": 6.49,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 32,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 16,
+    "26AWG_silicone_1p3": 24,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z112": {
+   "plane": "z = 112.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 112",
+   "q0DiameterWithCablesMm": 11.85,
+   "q0DiameterPartsOnlyMm": 11.85,
+   "q0BoundedBy": [
+    "head_bottom",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 10.21,
+   "minDiameterPartsOnlyPolicyRollMm": 10.21,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 48,
+    "26AWG_silicone_1p3": 77,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 39,
+    "26AWG_silicone_1p3": 66,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z120": {
+   "plane": "z = 120.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 120",
+   "q0DiameterWithCablesMm": 22.55,
+   "q0DiameterPartsOnlyMm": 22.55,
+   "q0BoundedBy": [
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 20.35,
+   "minDiameterPartsOnlyPolicyRollMm": 20.35,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 26,
+    "26AWG_silicone_1p3": 42,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 26,
+    "26AWG_silicone_1p3": 42,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "chan-minus-y-z124": {
+   "plane": "z = 124.0",
+   "label": "-y channel (ID13 / yaw link | lower-shell collar, jaw support) at z 124",
+   "q0DiameterWithCablesMm": 20.68,
+   "q0DiameterPartsOnlyMm": 20.68,
+   "q0BoundedBy": [
+    "jaw_support",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 18.95,
+   "minDiameterPartsOnlyPolicyRollMm": 18.95,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 30,
+    "26AWG_silicone_1p3": 47,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 27,
+    "26AWG_silicone_1p3": 42,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "gap-plus-y-z104": {
+   "plane": "z = 104.0",
+   "label": "+y gap (yaw link, ID13 | jaw servo ID15, lower shell) at z 104",
+   "q0DiameterWithCablesMm": 23.35,
+   "q0DiameterPartsOnlyMm": 23.46,
+   "q0BoundedBy": [
+    "cable:dxl-11-13",
+    "neck_pitch_ring"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 19.74,
+   "minDiameterPartsOnlyPolicyRollMm": 19.74,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 30,
+    "26AWG_silicone_1p3": 48,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 37,
+    "26AWG_silicone_1p3": 61,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "gap-plus-y-z108": {
+   "plane": "z = 108.0",
+   "label": "+y gap (yaw link, ID13 | jaw servo ID15, lower shell) at z 108",
+   "q0DiameterWithCablesMm": 24.92,
+   "q0DiameterPartsOnlyMm": 24.95,
+   "q0BoundedBy": [
+    "cable:dxl-11-13",
+    "motor13"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 22.05,
+   "minDiameterPartsOnlyPolicyRollMm": 22.05,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 27,
+    "26AWG_silicone_1p3": 43,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 33,
+    "26AWG_silicone_1p3": 53,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  },
+  "gap-plus-y-z120": {
+   "plane": "z = 120.0",
+   "label": "+y gap (yaw link, ID13 | jaw servo ID15, lower shell) at z 120",
+   "q0DiameterWithCablesMm": 4.74,
+   "q0DiameterPartsOnlyMm": 6.79,
+   "q0BoundedBy": [
+    "motor13",
+    "motor15"
+   ],
+   "minDiameterWithCablesPolicyRollMm": 4.55,
+   "minDiameterPartsOnlyPolicyRollMm": 5.15,
+   "capacityQ0": {
+    "22AWG_silicone_1p7": 19,
+    "26AWG_silicone_1p3": 31,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   },
+   "capacityWorstPolicyRoll": {
+    "22AWG_silicone_1p7": 8,
+    "26AWG_silicone_1p3": 15,
+    "dupontHousingFits": true,
+    "windowHalfMm": 8.0
+   }
+  }
+ },
+ "motion": {
+  "current-external": {
+   "lengthAtQ0Mm": 78.7,
+   "slackNeededMm": {
+    "policy": 61.5,
+    "pickup": 79.3,
+    "mjcf": 57.3,
+    "yawSweep": 47.8
+   },
+   "perFreeSpanSlackMm": {
+    "policy": [
+     {
+      "span": "trunk_base -> jaw_soft",
+      "slackMm": 61.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "span": "trunk_base -> jaw_soft",
+      "slackMm": 79.3,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "span": "trunk_base -> jaw_soft",
+      "slackMm": 57.3,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "span": "trunk_base -> jaw_soft",
+      "slackMm": 47.8,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   },
+   "pinch": {
+    "policy": {
+     "clearanceMm": -2.85,
+     "centrelineDistanceMm": 0.5,
+     "inside": false,
+     "part": "motor11",
+     "body": "neck",
+     "at": [
+      38.76,
+      -8.16,
+      90.39
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "clearanceMm": -3.83,
+     "centrelineDistanceMm": 0.48,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      53.17,
+      -5.92,
+      47.82
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -60.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "clearanceMm": -3.46,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "idler11",
+     "body": "neck_pitch",
+     "at": [
+      29.41,
+      -11.71,
+      77.52
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "head_yaw": 170.0,
+      "jaw": 0.0
+     }
+    },
+    "yawSweep": {
+     "clearanceMm": -3.46,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "idler11",
+     "body": "neck_pitch",
+     "at": [
+      29.41,
+      -11.71,
+      77.52
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "head_yaw": 170.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "perSegment": {
+    "policy": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.5,
+      "part": "motor11",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.48,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "idler11",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "idler11",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": 170.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   }
+  },
+  "A-minus-y-channel": {
+   "lengthAtQ0Mm": 223.1,
+   "slackNeededMm": {
+    "policy": 27.0,
+    "pickup": 41.7,
+    "mjcf": 33.6,
+    "yawSweep": 33.6
+   },
+   "perFreeSpanSlackMm": {
+    "policy": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 6.3,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 13.2,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 23.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 10.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 23.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.6,
+      "worstPoseDeg": {
+       "head_pitch": 80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 33.6,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 33.6,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   },
+   "pinch": {
+    "policy": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "head_bottom",
+     "body": "jaw_soft",
+     "at": [
+      57.43,
+      -19.29,
+      84.78
+     ],
+     "routeSegment": 2,
+     "poseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 68.2,
+      "head_yaw": 34.0,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "clearanceMm": -0.27,
+     "centrelineDistanceMm": 0.27,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      26.43,
+      -9.75,
+      43.19
+     ],
+     "routeSegment": 0,
+     "poseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 90.0,
+      "head_yaw": 34.0,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      4.18,
+      11.87,
+      104.47
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -130.0,
+      "jaw": 0.0
+     }
+    },
+    "yawSweep": {
+     "clearanceMm": -0.16,
+     "centrelineDistanceMm": 0.16,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      4.18,
+      11.87,
+      104.47
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -130.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "perSegment": {
+    "policy": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 1.54,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 4.7,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.01,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.21,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.49,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.25,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.45,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.03,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.89,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.56,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.19,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.24,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -140.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.28,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.17,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.08,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 10.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 7.63,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.5,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.16,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   }
+  },
+  "B-plus-y-gap": {
+   "lengthAtQ0Mm": 203.4,
+   "slackNeededMm": {
+    "policy": 25.0,
+    "pickup": 40.7,
+    "mjcf": 29.9,
+    "yawSweep": 29.9
+   },
+   "perFreeSpanSlackMm": {
+    "policy": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 6.6,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 10.9,
+      "worstPoseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 24.5,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.5,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 8.7,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 24.5,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 7.6,
+      "worstPoseDeg": {
+       "head_pitch": 80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 29.9,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 29.9,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   },
+   "pinch": {
+    "policy": {
+     "clearanceMm": 0.02,
+     "centrelineDistanceMm": 0.02,
+     "inside": false,
+     "part": "shell_left",
+     "body": "trunk_base",
+     "at": [
+      6.41,
+      15.75,
+      39.42
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": 39.8,
+      "head_pitch": 68.2,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "clearanceMm": -0.11,
+     "centrelineDistanceMm": 0.11,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      28.18,
+      15.5,
+      50.86
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "clearanceMm": -0.26,
+     "centrelineDistanceMm": 0.26,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      15.54,
+      17.92,
+      75.31
+     ],
+     "routeSegment": 1,
+     "poseDeg": {
+      "head_yaw": 130.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "clearanceMm": -0.09,
+     "centrelineDistanceMm": 0.09,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      33.43,
+      0.05,
+      101.2
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "head_yaw": -160.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "perSegment": {
+    "policy": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 3.66,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.02,
+      "part": "shell_left",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.8,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 4.68,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.95,
+      "part": "neck_pitch",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.04,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.01,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.38,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.11,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.01,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 5.25,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.75,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.18,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.12,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.1,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.26,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": 130.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.27,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.83,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.06,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.55,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 28.16,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": -10.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 7.34,
+      "part": "shell_left",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.59,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": 130.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -160.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.75,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -110.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.18,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 3.12,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.37,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   }
+  },
+  "A2-minus-y-clips": {
+   "lengthAtQ0Mm": 251.3,
+   "slackNeededMm": {
+    "policy": 21.4,
+    "pickup": 24.0,
+    "mjcf": 34.7,
+    "yawSweep": 34.7
+   },
+   "perFreeSpanSlackMm": {
+    "policy": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 2.3,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 6.0,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 13.1,
+      "worstPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 6.8,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 6.9,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 10.2,
+      "worstPoseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 6.8,
+      "worstPoseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 6.9,
+      "worstPoseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 34.7,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "span": "trunk_base -> neck",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck -> neck_pitch",
+      "slackMm": 0.0,
+      "worstPoseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "span": "neck_pitch -> jaw_soft",
+      "slackMm": 34.7,
+      "worstPoseDeg": {
+       "head_yaw": 160.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   },
+   "pinch": {
+    "policy": {
+     "clearanceMm": -0.09,
+     "centrelineDistanceMm": 0.09,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      13.3,
+      -20.15,
+      82.41
+     ],
+     "routeSegment": 4,
+     "poseDeg": {
+      "neck_pitch": 8.6,
+      "head_pitch": 37.1,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     }
+    },
+    "pickup": {
+     "clearanceMm": -0.12,
+     "centrelineDistanceMm": 0.12,
+     "inside": true,
+     "part": "jaw_frame",
+     "body": "jaw",
+     "at": [
+      34.83,
+      -17.72,
+      51.26
+     ],
+     "routeSegment": 3,
+     "poseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 90.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "clearanceMm": -0.22,
+     "centrelineDistanceMm": 0.22,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      17.73,
+      22.53,
+      104.33
+     ],
+     "routeSegment": 6,
+     "poseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    },
+    "yawSweep": {
+     "clearanceMm": -0.22,
+     "centrelineDistanceMm": 0.22,
+     "inside": true,
+     "part": "motor13",
+     "body": "yaw_roll_motion",
+     "at": [
+      13.7,
+      20.77,
+      104.33
+     ],
+     "routeSegment": 6,
+     "poseDeg": {
+      "head_yaw": -160.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "perSegment": {
+    "policy": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.98,
+      "part": "neck_link_a",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.02,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -4.87,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.09,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.51,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.06,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 39.8,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.01,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 34.0,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.21,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 34.0,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.49,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.25,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": 8.6,
+       "head_pitch": 37.1,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 68.2,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "pickup": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.99,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.42,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.12,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -45.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.19,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 5.1,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.89,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -60.0,
+       "head_pitch": 90.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.31,
+      "part": "shell_right",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 90.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "mjcf": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "head_cap_nonotch",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.04,
+      "part": "motor14",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 0.88,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": 0.0,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_pitch": 90.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.4,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -110.0,
+       "jaw": 40.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.21,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.05,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.17,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": 20.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "neck_pitch": -10.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": -0.08,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 10.6,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_roll": -25.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "neck_pitch": 50.0,
+       "jaw": 0.0
+      }
+     }
+    ],
+    "yawSweep": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 12.29,
+      "part": "motor12",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 9.76,
+      "part": "motor12",
+      "body": "neck",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "neck_pitch",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 4.66,
+      "part": "head_bottom",
+      "body": "jaw_soft",
+      "poseDeg": {
+       "head_yaw": -80.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 6,
+      "from": "neck_pitch",
+      "to": "jaw_soft",
+      "kind": "free span",
+      "minOtherBodyDistanceMm": -0.22,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -160.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 7,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.2,
+      "part": "motor13",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 8,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 1.9,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 9,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 2.47,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": 30.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 10,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 7.19,
+      "part": "head_yaw_link",
+      "body": "yaw_roll_motion",
+      "poseDeg": {
+       "head_yaw": -150.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 11,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 12,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 13,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 14,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 15,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": Infinity,
+      "part": "",
+      "body": "trunk_base",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     },
+     {
+      "segment": 16,
+      "from": "jaw_soft",
+      "to": "jaw_soft",
+      "kind": "on one body",
+      "minOtherBodyDistanceMm": 11.86,
+      "part": "jaw_frame",
+      "body": "jaw",
+      "poseDeg": {
+       "head_yaw": -170.0,
+       "jaw": 0.0
+      }
+     }
+    ]
+   }
+  }
+ },
+ "connectorFit": {
+  "slot-minus-y-z129": {
+   "atQ0": {
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": 5.0,
+    "radiusMm": 11.325,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": 0.0,
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "chan-minus-y-z106": {
+   "atQ0": {
+    "radiusMm": 3.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.475,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": 0.0,
+    "radiusMm": 3.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "chan-minus-y-z108": {
+   "atQ0": {
+    "radiusMm": 3.675,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.575,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -5.0,
+    "radiusMm": 3.423,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "chan-minus-y-z110": {
+   "atQ0": {
+    "radiusMm": 3.695,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 11.625,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -10.0,
+    "radiusMm": 3.245,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "gap-plus-y-z127": {
+   "atQ0": {
+    "radiusMm": 2.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": 25.0,
+    "radiusMm": 4.475,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -5.0,
+    "radiusMm": 2.125,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "gap-plus-y-z115": {
+   "atQ0": {
+    "radiusMm": 2.375,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -5.0,
+    "radiusMm": 2.419,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 2.325,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": false,
+     "dupont-1x5 (12.7 x 2.54)": false,
+     "dupont-2x4 (10.16 x 5.08)": false,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": false,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": false,
+    "dupont-1x5 (12.7 x 2.54)": false,
+    "dupont-2x4 (10.16 x 5.08)": false,
+    "dupont-2x5 (12.7 x 5.08)": false,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": false
+   }
+  },
+  "pi-top-minus-y-x61": {
+   "atQ0": {
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 4.275,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": true,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": true,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  },
+  "pi-top-plus-y-x61": {
+   "atQ0": {
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    },
+    "rollDeg": 0.0,
+    "inPolicyRange": true
+   },
+   "threadingPose": {
+    "rollDeg": -25.0,
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "worstPolicyRoll": {
+    "rollDeg": -21.4,
+    "radiusMm": 4.094,
+    "housings": {
+     "dupont-1pin (2.54 x 2.54)": true,
+     "dupont-1x2 (5.08 x 2.54)": true,
+     "dupont-1x4 (10.16 x 2.54)": true,
+     "dupont-1x5 (12.7 x 2.54)": true,
+     "dupont-2x4 (10.16 x 5.08)": true,
+     "dupont-2x5 (12.7 x 5.08)": false,
+     "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+     "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+    },
+    "groups": {
+     "round bundle 6.7 mm (V1.8)": true,
+     "four 22-26 AWG wires twisted, about 4.1 mm": true,
+     "one 22 AWG silicone wire 1.7 mm": true
+    }
+   },
+   "housingFitsAtSomeRoll": {
+    "dupont-1pin (2.54 x 2.54)": true,
+    "dupont-1x2 (5.08 x 2.54)": true,
+    "dupont-1x4 (10.16 x 2.54)": true,
+    "dupont-1x5 (12.7 x 2.54)": true,
+    "dupont-2x4 (10.16 x 5.08)": true,
+    "dupont-2x5 (12.7 x 5.08)": false,
+    "jst-sh-4 housing (6.0 x 2.95, nominal, inference)": true,
+    "jst-ph-4 housing (9.9 x 4.5, nominal, inference)": true
+   }
+  }
+ },
+ "inlineDisconnect": {
+  "envelope": {
+   "name": "Dupont 2x5 mated pair (female crimp housing on the head pigtail, male crimp housing on the torso side)",
+   "crossSectionMm": [
+    12.7,
+    5.08
+   ],
+   "matedLengthMm": 28.0,
+   "wireExitMm": 3.0,
+   "clearanceMm": 0.5,
+   "basis": "nominal 2.54 mm pitch housing outline; mated length and wire exit are assumptions (inference), check against the housings actually bought"
+  },
+  "chosen": null,
+  "candidates": [
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     30.5,
+     -22.46,
+     82.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 99,
+      "minGapMm": 0.0,
+      "minGapPart": "head_bottom"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 66,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 7.92,
+      "minGapPart": "motor11"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     32.5,
+     -22.46,
+     86.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 108,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 66,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 4.64,
+      "minGapPart": "jaw_frame"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     34.5,
+     -22.46,
+     81.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 108,
+      "minGapMm": 0.0,
+      "minGapPart": "head_bottom"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 66,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 7.92,
+      "minGapPart": "motor11"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     36.5,
+     -22.46,
+     85.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 108,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 67,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 5.61,
+      "minGapPart": "jaw_frame"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     33.5,
+     -22.46,
+     90.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 135,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 68,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 0.63,
+      "minGapPart": "jaw_frame"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     37.5,
+     -22.46,
+     89.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 135,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 27,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 69,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 1.6,
+      "minGapPart": "jaw_frame"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     20.5,
+     -22.46,
+     64.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 26,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 0,
+      "minGapMm": 1.89,
+      "minGapPart": "jaw_frame"
+     },
+     "mjcf": {
+      "overlapPoses": 22,
+      "minGapMm": 0.0,
+      "minGapPart": "shell_right"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 5.92,
+      "minGapPart": "neck_link_a"
+     }
+    }
+   },
+   {
+    "orientation": "along-x",
+    "centreQ0": [
+     17.5,
+     -22.46,
+     61.85
+    ],
+    "sizeMm": [
+     35.0,
+     6.08,
+     13.7
+    ],
+    "clearAllSets": false,
+    "clearPolicyAndPickup": false,
+    "sets": {
+     "policy": {
+      "overlapPoses": 26,
+      "minGapMm": 0.0,
+      "minGapPart": "jaw_frame"
+     },
+     "pickup": {
+      "overlapPoses": 0,
+      "minGapMm": 5.92,
+      "minGapPart": "neck_link_a"
+     },
+     "mjcf": {
+      "overlapPoses": 16,
+      "minGapMm": 0.0,
+      "minGapPart": "shell_right"
+     },
+     "yawSweep": {
+      "overlapPoses": 0,
+      "minGapMm": 5.92,
+      "minGapPart": "neck_link_a"
+     }
+    }
+   }
+  ]
+ },
+ "jawVsNeckWires": {
+  "_method": "How close the open jaw comes to the neck-side wire spans, compared with how close it comes to the neck itself.\n\nFor every pose of the policy and pickup sets with the jaw open (40 deg) and closed (0 deg), exact smallest gaps\n(manifold3d min_gap, 10 mm search) between the jaw frame and\n  (a) each wire span of a route below the head (the conductor group as a tube of radius r = 1.7 mm, a flat group of\n      eight wires lying two deep; the tube follows the taut centreline between the clip points), and\n  (b) the parts the span lies on (torso shell, ID12/ID11 cases and links, head-pitch bracket).\nPoses where the jaw already touches a neck part (gap < 0.2 mm) cannot be reached by the robot itself and are reported\nseparately; in the remaining (reachable) poses the wire group must stay clear of the jaw. Routes from route-candidates.json; spans on bodies below the\nhead only. Writes jaw-check.json.\nUsage: jaw_check.py [route ...]",
+  "A2-minus-y-clips": {
+   "groupRadiusMm": 1.7,
+   "policy": {
+    "poses": 162,
+    "posesBlockedByJawOnNeckParts": 78,
+    "blockedExamples": [
+     {
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      },
+      "part": "motor11"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -5.7,
+       "jaw": 40.0
+      },
+      "part": "motor11"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": 9.9,
+       "jaw": 40.0
+      },
+      "part": "motor11"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": 4.7,
+       "head_roll": -21.4,
+       "jaw": 40.0
+      },
+      "part": "neck_pitch"
+     }
+    ],
+    "spans": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 5.9,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 7.09,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 6.11,
+      "atPoseDeg": {
+       "neck_pitch": -22.6,
+       "head_pitch": 37.1,
+       "head_yaw": -24.6,
+       "head_roll": -21.4,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     }
+    ]
+   },
+   "pickup": {
+    "poses": 54,
+    "posesBlockedByJawOnNeckParts": 29,
+    "blockedExamples": [
+     {
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      },
+      "part": "motor11"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": 34.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      },
+      "part": "motor11"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      },
+      "part": "motor12"
+     },
+     {
+      "poseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 45.0,
+       "head_yaw": 0.0,
+       "head_roll": 0.0,
+       "jaw": 40.0
+      },
+      "part": "motor12"
+     }
+    ],
+    "spans": [
+     {
+      "segment": 0,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 1,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 2,
+      "from": "trunk_base",
+      "to": "trunk_base",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 3,
+      "from": "trunk_base",
+      "to": "neck",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 4,
+      "from": "neck",
+      "to": "neck_pitch",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     },
+     {
+      "segment": 5,
+      "from": "neck_pitch",
+      "to": "neck_pitch",
+      "minJawToWireGroupSurfaceInReachablePosesMm": 10.0,
+      "atPoseDeg": {
+       "neck_pitch": -90.0,
+       "head_pitch": 0.0,
+       "head_yaw": -24.6,
+       "head_roll": 0.0,
+       "jaw": 0.0
+      },
+      "jawToNeckPartsAtThatPoseMm": 10.0,
+      "reachablePosesWhereJawTouchesWire": 0,
+      "examples": []
+     }
+    ]
+   }
+  }
+ },
+ "yawSlack": {
+  "_method": "Slack needed by each free span of a route as a function of head yaw alone (FK only, taut spans; seconds to run).\nAnswers how much loop the yaw crossing needs for a chosen hand-turning limit (the V1.8 guide allows about +-80 deg).\nWrites yaw-slack.json. Usage: yaw_slack.py [route ...]",
+  "current-external": [
+   {
+    "yawLimitDeg": 35.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 14.9
+    }
+   },
+   {
+    "yawLimitDeg": 60.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 24.3
+    }
+   },
+   {
+    "yawLimitDeg": 80.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 32.2
+    }
+   },
+   {
+    "yawLimitDeg": 90.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 36.0
+    }
+   },
+   {
+    "yawLimitDeg": 120.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 45.5
+    }
+   },
+   {
+    "yawLimitDeg": 170.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> jaw_soft": 52.0
+    }
+   }
+  ],
+  "A-minus-y-channel": [
+   {
+    "yawLimitDeg": 35.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 17.9
+    }
+   },
+   {
+    "yawLimitDeg": 60.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 24.6
+    }
+   },
+   {
+    "yawLimitDeg": 80.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 29.5
+    }
+   },
+   {
+    "yawLimitDeg": 90.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 31.7
+    }
+   },
+   {
+    "yawLimitDeg": 120.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 36.6
+    }
+   },
+   {
+    "yawLimitDeg": 170.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 38.9
+    }
+   }
+  ],
+  "B-plus-y-gap": [
+   {
+    "yawLimitDeg": 35.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 11.8
+    }
+   },
+   {
+    "yawLimitDeg": 60.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 18.3
+    }
+   },
+   {
+    "yawLimitDeg": 80.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 23.2
+    }
+   },
+   {
+    "yawLimitDeg": 90.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 25.4
+    }
+   },
+   {
+    "yawLimitDeg": 120.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 30.9
+    }
+   },
+   {
+    "yawLimitDeg": 170.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 34.7
+    }
+   }
+  ],
+  "A2-minus-y-clips": [
+   {
+    "yawLimitDeg": 35.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 18.3
+    }
+   },
+   {
+    "yawLimitDeg": 60.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 25.0
+    }
+   },
+   {
+    "yawLimitDeg": 80.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 30.0
+    }
+   },
+   {
+    "yawLimitDeg": 90.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 32.3
+    }
+   },
+   {
+    "yawLimitDeg": 120.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 37.6
+    }
+   },
+   {
+    "yawLimitDeg": 170.0,
+    "rollsDeg": [
+     -25,
+     -21.4,
+     0,
+     9.9,
+     25
+    ],
+    "slackPerSpanMm": {
+     "trunk_base -> neck": 0.0,
+     "neck -> neck_pitch": 0.0,
+     "neck_pitch -> jaw_soft": 40.4
+    }
+   }
+  ]
+ },
+ "loopSpaceBesideBracket": {
+  "_method": "Where the yaw/roll service loop can hang beside the head-pitch bracket without being reached by a moving part.\n\nGrid in the head-pitch bracket's own frame (MJCF body neck_pitch; equal to the robot frame at q = 0), 1 mm voxels,\nx 4..46, y -36..-14, z 60..104 (the -y side of the bracket under the head). At every pose of a pose set, every part on\nanother body (torso, neck, yaw link, head, jaw) is moved into the bracket frame and sliced exactly (manifold3d) at each\ngrid z; voxel centres inside a section are 'reached' at that pose. The bracket's own parts are occupied at every pose.\nA voxel is 'always free' when no pose reaches it. Reports the always-free volume, its largest inscribed sphere (EDT on\nthe 1 mm grid, so +-0.5 mm), and the always-free space within 6 mm outside the bracket's -y plate (where a loop held by\nthe bracket clip would lie), per z band. Pose sets: policy (jaw 0 only, and jaw 0 + 40) and pickup, from motion.py.\nWrites loop-space.json.",
+  "gridMm": [
+   [
+    4.0,
+    -36.0,
+    60.0
+   ],
+   [
+    46.0,
+    -14.0,
+    104.0
+   ],
+   1.0
+  ],
+  "sets": {
+   "policy-jaw-closed": {
+    "poses": 81,
+    "alwaysFreeVolumeMm3": 31433,
+    "largestSphereRadiusMm": 26.3,
+    "largestSphereCentreBracketFrame": [
+     42.0,
+     -36.0,
+     60.0
+    ],
+    "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+     {
+      "zMm": [
+       60,
+       64
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 17.2
+     },
+     {
+      "zMm": [
+       64,
+       68
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 14.1
+     },
+     {
+      "zMm": [
+       68,
+       72
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 11.4
+     },
+     {
+      "zMm": [
+       72,
+       76
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 9.4
+     },
+     {
+      "zMm": [
+       76,
+       80
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 8.3
+     },
+     {
+      "zMm": [
+       80,
+       84
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 8.1
+     },
+     {
+      "zMm": [
+       84,
+       88
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 5.1
+     },
+     {
+      "zMm": [
+       88,
+       92
+      ],
+      "alwaysFreeVoxelsBesidePlate": 293,
+      "largestSphereRadiusBesidePlateMm": 2.8
+     },
+     {
+      "zMm": [
+       92,
+       96
+      ],
+      "alwaysFreeVoxelsBesidePlate": 284,
+      "largestSphereRadiusBesidePlateMm": 3.0
+     },
+     {
+      "zMm": [
+       96,
+       100
+      ],
+      "alwaysFreeVoxelsBesidePlate": 347,
+      "largestSphereRadiusBesidePlateMm": 5.0
+     },
+     {
+      "zMm": [
+       100,
+       104
+      ],
+      "alwaysFreeVoxelsBesidePlate": 391,
+      "largestSphereRadiusBesidePlateMm": 5.7
+     }
+    ]
+   },
+   "policy": {
+    "poses": 162,
+    "alwaysFreeVolumeMm3": 20958,
+    "largestSphereRadiusMm": 14.7,
+    "largestSphereCentreBracketFrame": [
+     17.0,
+     -36.0,
+     60.0
+    ],
+    "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+     {
+      "zMm": [
+       60,
+       64
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 14.4
+     },
+     {
+      "zMm": [
+       64,
+       68
+      ],
+      "alwaysFreeVoxelsBesidePlate": 531,
+      "largestSphereRadiusBesidePlateMm": 12.1
+     },
+     {
+      "zMm": [
+       68,
+       72
+      ],
+      "alwaysFreeVoxelsBesidePlate": 477,
+      "largestSphereRadiusBesidePlateMm": 9.5
+     },
+     {
+      "zMm": [
+       72,
+       76
+      ],
+      "alwaysFreeVoxelsBesidePlate": 329,
+      "largestSphereRadiusBesidePlateMm": 6.6
+     },
+     {
+      "zMm": [
+       76,
+       80
+      ],
+      "alwaysFreeVoxelsBesidePlate": 183,
+      "largestSphereRadiusBesidePlateMm": 4.6
+     },
+     {
+      "zMm": [
+       80,
+       84
+      ],
+      "alwaysFreeVoxelsBesidePlate": 258,
+      "largestSphereRadiusBesidePlateMm": 3.2
+     },
+     {
+      "zMm": [
+       84,
+       88
+      ],
+      "alwaysFreeVoxelsBesidePlate": 357,
+      "largestSphereRadiusBesidePlateMm": 4.2
+     },
+     {
+      "zMm": [
+       88,
+       92
+      ],
+      "alwaysFreeVoxelsBesidePlate": 255,
+      "largestSphereRadiusBesidePlateMm": 2.8
+     },
+     {
+      "zMm": [
+       92,
+       96
+      ],
+      "alwaysFreeVoxelsBesidePlate": 282,
+      "largestSphereRadiusBesidePlateMm": 3.0
+     },
+     {
+      "zMm": [
+       96,
+       100
+      ],
+      "alwaysFreeVoxelsBesidePlate": 347,
+      "largestSphereRadiusBesidePlateMm": 5.0
+     },
+     {
+      "zMm": [
+       100,
+       104
+      ],
+      "alwaysFreeVoxelsBesidePlate": 391,
+      "largestSphereRadiusBesidePlateMm": 5.7
+     }
+    ]
+   },
+   "pickup": {
+    "poses": 54,
+    "alwaysFreeVolumeMm3": 33500,
+    "largestSphereRadiusMm": 29.5,
+    "largestSphereCentreBracketFrame": [
+     4.0,
+     -36.0,
+     60.0
+    ],
+    "besideBracketPlate_y_-25.5_to_-19_x_17_to_35": [
+     {
+      "zMm": [
+       60,
+       64
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 17.2
+     },
+     {
+      "zMm": [
+       64,
+       68
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 14.1
+     },
+     {
+      "zMm": [
+       68,
+       72
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 11.4
+     },
+     {
+      "zMm": [
+       72,
+       76
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 9.4
+     },
+     {
+      "zMm": [
+       76,
+       80
+      ],
+      "alwaysFreeVoxelsBesidePlate": 510,
+      "largestSphereRadiusBesidePlateMm": 8.3
+     },
+     {
+      "zMm": [
+       80,
+       84
+      ],
+      "alwaysFreeVoxelsBesidePlate": 382,
+      "largestSphereRadiusBesidePlateMm": 8.1
+     },
+     {
+      "zMm": [
+       84,
+       88
+      ],
+      "alwaysFreeVoxelsBesidePlate": 386,
+      "largestSphereRadiusBesidePlateMm": 7.1
+     },
+     {
+      "zMm": [
+       88,
+       92
+      ],
+      "alwaysFreeVoxelsBesidePlate": 496,
+      "largestSphereRadiusBesidePlateMm": 7.0
+     },
+     {
+      "zMm": [
+       92,
+       96
+      ],
+      "alwaysFreeVoxelsBesidePlate": 532,
+      "largestSphereRadiusBesidePlateMm": 7.1
+     },
+     {
+      "zMm": [
+       96,
+       100
+      ],
+      "alwaysFreeVoxelsBesidePlate": 503,
+      "largestSphereRadiusBesidePlateMm": 5.1
+     },
+     {
+      "zMm": [
+       100,
+       104
+      ],
+      "alwaysFreeVoxelsBesidePlate": 437,
+      "largestSphereRadiusBesidePlateMm": 6.4
+     }
+    ]
+   }
+  }
+ },
+ "kinematicsCheck": {
+  "jointsAtQ0": {
+   "neck_pitch": {
+    "anchorMm": [
+     26.0,
+     14.5,
+     32.42
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "mjcfRangeDeg": [
+     -90.0,
+     60.0
+    ],
+    "policyTraceQposRangeDeg": [
+     -22.6,
+     39.8
+    ]
+   },
+   "head_pitch": {
+    "anchorMm": [
+     26.0,
+     14.5,
+     82.42
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "mjcfRangeDeg": [
+     -90.0,
+     90.0
+    ],
+    "policyTraceQposRangeDeg": [
+     5.9,
+     68.2
+    ]
+   },
+   "head_yaw": {
+    "anchorMm": [
+     26.0,
+     0.0,
+     101.11
+    ],
+    "axis": [
+     0.0,
+     -0.0,
+     1.0
+    ],
+    "mjcfRangeDeg": [
+     -170.0,
+     170.0
+    ],
+    "policyTraceQposRangeDeg": [
+     -24.6,
+     34.0
+    ]
+   },
+   "head_roll": {
+    "anchorMm": [
+     8.1,
+     0.0,
+     115.61
+    ],
+    "axis": [
+     -1.0,
+     -0.0,
+     0.0
+    ],
+    "mjcfRangeDeg": [
+     -25.0,
+     25.0
+    ],
+    "policyTraceQposRangeDeg": [
+     -21.4,
+     9.9
+    ]
+   }
+  },
+  "bodies": {
+   "trunk_base": {
+    "parts": [
+     "torso_base",
+     "shell_left",
+     "shell_right",
+     "ring10_torso",
+     "ring5_torso",
+     "imu_board",
+     "idler12",
+     "idler_cap12",
+     "imu_sh4_receiving",
+     "openrb_board",
+     "rear_pack",
+     "rear_pack_cover"
+    ],
+    "guideBoundsMm": [
+     [
+      -47.0,
+      -32.3,
+      -44.0
+     ],
+     [
+      34.5,
+      31.8,
+      42.0
+     ]
+    ],
+    "mjcfVisualBoundsMm": [
+     [
+      -46.8,
+      -32.3,
+      -44.1
+     ],
+     [
+      34.5,
+      31.8,
+      42.0
+     ]
+    ]
+   },
+   "neck": {
+    "parts": [
+     "neck_link_a",
+     "neck_link_b",
+     "motor11",
+     "motor12"
+    ],
+    "guideBoundsMm": [
+     [
+      16.0,
+      -13.5,
+      22.9
+     ],
+     [
+      36.0,
+      14.5,
+      91.9
+     ]
+    ],
+    "mjcfVisualBoundsMm": [
+     [
+      16.0,
+      -14.5,
+      22.9
+     ],
+     [
+      36.0,
+      14.5,
+      91.9
+     ]
+    ]
+   },
+   "neck_pitch": {
+    "parts": [
+     "neck_pitch",
+     "neck_pitch_ring",
+     "idler11",
+     "idler_cap11"
+    ],
+    "guideBoundsMm": [
+     [
+      15.0,
+      -17.5,
+      73.4
+     ],
+     [
+      37.0,
+      17.5,
+      104.1
+     ]
+    ],
+    "mjcfVisualBoundsMm": [
+     [
+      15.0,
+      -17.5,
+      73.4
+     ],
+     [
+      37.0,
+      17.5,
+      103.2
+     ]
+    ]
+   },
+   "yaw_roll_motion": {
+    "parts": [
+     "head_yaw_link",
+     "head_roll_ring_a",
+     "head_roll_ring_b",
+     "motor13"
+    ],
+    "guideBoundsMm": [
+     [
+      6.0,
+      -24.5,
+      101.1
+     ],
+     [
+      44.0,
+      11.0,
+      129.1
+     ]
+    ],
+    "mjcfVisualBoundsMm": [
+     [
+      6.0,
+      -24.5,
+      101.1
+     ],
+     [
+      44.0,
+      11.0,
+      130.1
+     ]
+    ]
+   },
+   "jaw_soft": {
+    "parts": [
+     "motor14",
+     "motor15",
+     "jaw_support",
+     "camera_board",
+     "eye_trim",
+     "head_bottom",
+     "face_panel",
+     "mouth_sliding_ring",
+     "pi",
+     "head_pi_zero_w_gpio_solder_tails",
+     "head_pi_gpio_pin_01_receiving",
+     "head_pi_gpio_pin_02_receiving",
+     "head_pi_gpio_pin_03_receiving",
+     "head_pi_gpio_pin_05_receiving",
+     "head_pi_gpio_pin_06_receiving",
+     "head_pi_gpio_pin_09_receiving",
+     "head_pi_zero_w_header_base",
+     "head_pi_zero_w_header_pin_01",
+     "head_pi_zero_w_header_pin_02",
+     "head_pi_zero_w_header_pin_03",
+     "head_pi_zero_w_header_pin_04",
+     "head_pi_zero_w_header_pin_05",
+     "head_pi_zero_w_header_pin_06",
+     "head_pi_zero_w_header_pin_07",
+     "head_pi_zero_w_header_pin_08",
+     "head_pi_zero_w_header_pin_09",
+     "head_pi_zero_w_header_pin_10",
+     "head_pi_zero_w_header_pin_11",
+     "head_pi_zero_w_header_pin_12",
+     "head_pi_zero_w_header_pin_13",
+     "head_pi_zero_w_header_pin_14",
+     "head_pi_zero_w_header_pin_15",
+     "head_pi_zero_w_header_pin_16",
+     "head_pi_zero_w_header_pin_17",
+     "head_pi_zero_w_header_pin_18",
+     "head_pi_zero_w_header_pin_19",
+     "head_pi_zero_w_header_pin_20",
+     "head_pi_zero_w_header_pin_21",
+     "head_pi_zero_w_header_pin_22",
+     "head_pi_zero_w_header_pin_23",
+     "head_pi_zero_w_header_pin_24",
+     "head_pi_zero_w_header_pin_25",
+     "head_pi_zero_w_header_pin_26",
+     "head_pi_zero_w_header_pin_27",
+     "head_pi_zero_w_header_pin_28",
+     "head_pi_zero_w_header_pin_29",
+     "head_pi_zero_w_header_pin_30",
+     "head_pi_zero_w_header_pin_31",
+     "head_pi_zero_w_header_pin_32",
+     "head_pi_zero_w_header_pin_33",
+     "head_pi_zero_w_header_pin_34",
+     "head_pi_zero_w_header_pin_35",
+     "head_pi_zero_w_header_pin_36",
+     "head_pi_zero_w_header_pin_37",
+     "head_pi_zero_w_header_pin_38",
+     "head_pi_zero_w_header_pin_39",
+     "head_pi_zero_w_header_pin_40",
+     "head_pi_component_left-upper-rectangular-component",
+     "head_pi_component_left-square-component",
+     "head_pi_component_left-lower-rectangular-component",
+     "head_pi_component_octagonal-component",
+     "head_pi_component_middle-passive-a",
+     "head_pi_component_middle-passive-b",
+     "head_pi_component_lower-passive-a",
+     "head_pi_component_lower-passive-b",
+     "head_pi_component_lower-passive-c",
+     "head_pi_component_indicator-body-and-outline",
+     "head_pi_component_bottom-usb-edge-context",
+     "head_pi_component_csi-connector-body-conservative-hull",
+     "head_pi_component_csi-connector-pins-conservative-hull",
+     "head_pi_gpio_pin_08_receiving",
+     "head_pi_gpio_pin_10_receiving",
+     "head_cap_nonotch"
+    ],
+    "guideBoundsMm": [
+     [
+      -30.4,
+      -45.9,
+      98.7
+     ],
+     [
+      92.3,
+      45.9,
+      157.4
+     ]
+    ],
+    "mjcfVisualBoundsMm": [
+     [
+      -30.4,
+      -45.9,
+      98.2
+     ],
+     [
+      92.3,
+      45.9,
+      157.4
+     ]
+    ]
+   },
+   "jaw": {
+    "parts": [
+     "jaw_frame"
+    ],
+    "guideBoundsMm": [
+     [
+      17.1,
+      -45.7,
+      98.2
+     ],
+     [
+      85.8,
+      45.7,
+      127.6
+     ]
+    ],
+    "mjcfVisualBoundsMm": null
+   }
+  },
+  "sweeps": [
+   {
+    "joint": "neck_pitch",
+    "deg": -90.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": -45.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": -22.6,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": 0.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": 30.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": 39.8,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "neck_pitch",
+    "deg": 60.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_pitch",
+    "deg": -90.0,
+    "overlapProximalVsDistalMm3": 1306.1,
+    "largestPairs": [
+     [
+      "shell_right",
+      "motor14",
+      328.75
+     ],
+     [
+      "rear_pack",
+      "head_cap_nonotch",
+      231.84
+     ],
+     [
+      "shell_left",
+      "head_cap_nonotch",
+      201.39
+     ],
+     [
+      "shell_right",
+      "head_cap_nonotch",
+      191.28
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_pitch",
+    "deg": -45.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_pitch",
+    "deg": 0.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_pitch",
+    "deg": 5.9,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_pitch",
+    "deg": 45.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_pitch",
+    "deg": 68.2,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_pitch",
+    "deg": 90.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_yaw",
+    "deg": -170.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_yaw",
+    "deg": -85.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_yaw",
+    "deg": -24.6,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_yaw",
+    "deg": 0.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_yaw",
+    "deg": 34.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_yaw",
+    "deg": 85.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_yaw",
+    "deg": 170.0,
+    "overlapProximalVsDistalMm3": 0.06,
+    "largestPairs": [
+     [
+      "neck_pitch",
+      "motor13",
+      0.06
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_roll",
+    "deg": -25.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_roll",
+    "deg": -21.4,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_roll",
+    "deg": -12.5,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_roll",
+    "deg": 0.0,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_roll",
+    "deg": 9.9,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": true
+   },
+   {
+    "joint": "head_roll",
+    "deg": 12.5,
+    "overlapProximalVsDistalMm3": 0.0,
+    "largestPairs": [],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "head_roll",
+    "deg": 25.0,
+    "overlapProximalVsDistalMm3": 6.7,
+    "largestPairs": [
+     [
+      "neck_pitch_ring",
+      "motor15",
+      6.7
+     ]
+    ],
+    "inPolicyRange": false
+   },
+   {
+    "joint": "jaw",
+    "deg": 0,
+    "overlapProximalVsDistalMm3": 0.15,
+    "largestPairs": [
+     [
+      "motor15",
+      "jaw_frame",
+      0.15
+     ]
+    ]
+   },
+   {
+    "joint": "jaw",
+    "deg": 10,
+    "overlapProximalVsDistalMm3": 0.14,
+    "largestPairs": [
+     [
+      "motor15",
+      "jaw_frame",
+      0.14
+     ]
+    ]
+   },
+   {
+    "joint": "jaw",
+    "deg": 20,
+    "overlapProximalVsDistalMm3": 0.14,
+    "largestPairs": [
+     [
+      "motor15",
+      "jaw_frame",
+      0.14
+     ]
+    ]
+   },
+   {
+    "joint": "jaw",
+    "deg": 30,
+    "overlapProximalVsDistalMm3": 0.14,
+    "largestPairs": [
+     [
+      "motor15",
+      "jaw_frame",
+      0.14
+     ]
+    ]
+   },
+   {
+    "joint": "jaw",
+    "deg": 40,
+    "overlapProximalVsDistalMm3": 0.67,
+    "largestPairs": [
+     [
+      "head_bottom",
+      "jaw_frame",
+      0.53
+     ],
+     [
+      "motor15",
+      "jaw_frame",
+      0.14
+     ]
+    ]
+   }
+  ]
+ },
+ "labels": {
+  "measurement": "every number above is computed by the listed scripts from the closed audit solids, the MJCF and the guide cable paths",
+  "inference": "connector outlines other than the 2.54 mm Dupont pitch, wire diameters, clip and screw suggestions, and every judgement in the README marked (inference)"
+ }
+}

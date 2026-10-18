@@ -1,0 +1,2052 @@
+{
+ "_method": "Where an inline 8-way disconnect fits below the head floor, and whether it stays clear over the neck and head motion.\n\nThe disconnect rides on the head-pitch bracket (MJCF body neck_pitch), on its -y side next to route A, so the head can\ncome off with its own short pigtail while the torso-side half stays tied to the bracket.\nEnvelope (an assumption, stated in the JSON): a mated pair of 2 x 5 Dupont crimp housings (2.54 mm pitch), cross-section\n12.7 x 5.08 mm, mated body length 28 mm, plus 3 mm of straight wire at each end before the first bend (plug plus wire\nexit), plus 0.5 mm clearance all round.\nSteps:\n  1. q = 0 placement search on the 0.5 mm occupancy grid with the existing cables (occ.py 'cables'): every box position\n     (1 mm steps, 0.5 mm in y) and two orientations (long axis vertical, or long axis along x) lying flat against the\n     outside of the bracket's -y plate (inner face 1.5-2 mm outboard of the plate, clear of the screw heads); keep boxes\n     whose voxels are all free; take up to 8 distinct ones nearest the head-pitch axis.\n  2. Exact check of the best candidates: the box (a manifold cube) moves with neck_pitch; at every pose of the policy,\n     pickup, single-joint MJCF and yaw-sweep sets, exact manifold intersection volume with every part on another body\n     (bounding-box prefilter) and the exact smallest gap (Manifold.min_gap, 8 mm search) to those parts; at q = 0 also the\n     intersection with neck_pitch's own parts and the smallest distance to the existing cable centrelines.\nWrites disconnect.json and study-solids/disconnect-envelope.stl (the chosen box at q = 0; a study solid, not a print).",
+ "envelope": {
+  "name": "Dupont 2x5 mated pair (female crimp housing on the head pigtail, male crimp housing on the torso side)",
+  "crossSectionMm": [
+   12.7,
+   5.08
+  ],
+  "matedLengthMm": 28.0,
+  "wireExitMm": 3.0,
+  "clearanceMm": 0.5,
+  "basis": "nominal 2.54 mm pitch housing outline; mated length and wire exit are assumptions (inference), check against the housings actually bought"
+ },
+ "envelopeBoxMm": {
+  "vertical": [
+   13.7,
+   6.08,
+   35.0
+  ],
+  "along-x": [
+   35.0,
+   6.08,
+   13.7
+  ]
+ },
+ "searchBoxMm": [
+  [
+   0.0,
+   -34.0,
+   55.0
+  ],
+  [
+   55.0,
+   -14.0,
+   98.0
+  ]
+ ],
+ "freeQ0Boxes": 81,
+ "candidates": [
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    13.0,
+    -25.5,
+    76.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    30.5,
+    -22.46,
+    82.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 99,
+     "worstOverlapMm3": 1045.625,
+     "overlapExamples": [
+      {
+       "part": "head_bottom",
+       "volumeMm3": 68.237,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 694.924,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 68.237,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 954.429,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1045.625,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 18.202,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 4.7,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "head_bottom",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 1015.586,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1015.586,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 2.012,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1015.586,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 2.012,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 66,
+     "worstOverlapMm3": 2305.794,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 634.54,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 7.92,
+     "minGapPart": "motor11",
+     "minGapPoseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 34.68,
+    "dxl-12-11": 1.5,
+    "dxl-11-13": 0.27,
+    "dxl-13-14": 36.19,
+    "dxl-14-15": 34.78,
+    "csi": 41.58
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    15.0,
+    -25.5,
+    80.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    32.5,
+    -22.46,
+    86.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 108,
+     "worstOverlapMm3": 854.523,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.338,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 278.926,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 221.523,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 278.926,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 570.506,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 854.523,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 692.226,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 692.226,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 33.084,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 692.226,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 33.084,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 66,
+     "worstOverlapMm3": 1713.439,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 602.866,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 4.64,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "head_yaw": -50.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 38.6,
+    "dxl-12-11": 5.5,
+    "dxl-11-13": 0.1,
+    "dxl-13-14": 32.36,
+    "dxl-14-15": 34.64,
+    "csi": 37.27
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    17.0,
+    -25.5,
+    75.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    34.5,
+    -22.46,
+    81.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 108,
+     "worstOverlapMm3": 1171.531,
+     "overlapExamples": [
+      {
+       "part": "head_bottom",
+       "volumeMm3": 6.353,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 781.103,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 6.353,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1093.922,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1171.531,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 30.95,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": 4.7,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "head_bottom",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 1153.863,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1153.863,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 49.559,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1153.863,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 49.559,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 66,
+     "worstOverlapMm3": 2445.097,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 862.811,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 7.92,
+     "minGapPart": "motor11",
+     "minGapPoseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 33.7,
+    "dxl-12-11": 0.5,
+    "dxl-11-13": 0.5,
+    "dxl-13-14": 37.15,
+    "dxl-14-15": 37.28,
+    "csi": 41.54
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    19.0,
+    -25.5,
+    79.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    36.5,
+    -22.46,
+    85.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 108,
+     "worstOverlapMm3": 947.229,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 2.093,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 173.21,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 285.479,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 173.21,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 676.722,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 947.229,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": 9.9,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 793.233,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 793.233,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 147.003,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 793.233,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 147.003,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 67,
+     "worstOverlapMm3": 1971.256,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 758.578,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 5.61,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "head_yaw": -40.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 37.63,
+    "dxl-12-11": 4.5,
+    "dxl-11-13": 4.11,
+    "dxl-13-14": 33.33,
+    "dxl-14-15": 35.13,
+    "csi": 37.33
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    16.0,
+    -25.5,
+    84.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    33.5,
+    -22.46,
+    90.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 135,
+     "worstOverlapMm3": 808.118,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 25.941,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 362.695,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.123,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 362.695,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 1.7,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 27.057,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 0.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 325.555,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 292.714,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 50.853,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 292.714,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 50.853,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 68,
+     "worstOverlapMm3": 988.015,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 325.555,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 0.63,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "head_yaw": -50.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 42.54,
+    "dxl-12-11": 9.5,
+    "dxl-11-13": 1.1,
+    "dxl-13-14": 28.59,
+    "dxl-14-15": 32.92,
+    "csi": 33.27
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    20.0,
+    -25.5,
+    83.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    37.5,
+    -22.46,
+    89.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 135,
+     "worstOverlapMm3": 718.359,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 95.08,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 254.902,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 22.356,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 254.902,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "head_bottom",
+       "volumeMm3": 0.066,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 262.439,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -5.7,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 0.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 27,
+     "worstOverlapMm3": 415.923,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 389.402,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 197.27,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 0.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 389.402,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": -24.6,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 0.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 197.27,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "head_pitch": 45.0,
+        "head_yaw": 34.0,
+        "head_roll": 0.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 69,
+     "worstOverlapMm3": 1336.679,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -90.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -80.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -70.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -60.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 415.923,
+       "poseDeg": {
+        "neck_pitch": -40.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "jaw": 40.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 1.6,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "head_yaw": -40.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 41.6,
+    "dxl-12-11": 8.5,
+    "dxl-11-13": 5.1,
+    "dxl-13-14": 29.59,
+    "dxl-14-15": 33.31,
+    "csi": 33.33
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    3.0,
+    -25.5,
+    58.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    20.5,
+    -22.46,
+    64.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 26,
+     "worstOverlapMm3": 124.485,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 124.485,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 1.89,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -90.0,
+      "head_pitch": 45.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 40.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 22,
+     "worstOverlapMm3": 222.297,
+     "overlapExamples": [
+      {
+       "part": "shell_right",
+       "volumeMm3": 66.214,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 66.214,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 222.297,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 222.297,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 205.869,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "rear_pack",
+       "volumeMm3": 1.781,
+       "poseDeg": {
+        "neck_pitch": 60.0,
+        "jaw": 0.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "shell_right",
+     "minGapPoseDeg": {
+      "neck_pitch": 40.0,
+      "jaw": 0.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 5.92,
+     "minGapPart": "neck_link_a",
+     "minGapPoseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 17.45,
+    "dxl-12-11": 0.6,
+    "dxl-11-13": 0.6,
+    "dxl-13-14": 53.7,
+    "dxl-14-15": 40.97,
+    "csi": 61.61
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  },
+  {
+   "orientation": "along-x",
+   "minCornerQ0": [
+    0.0,
+    -25.5,
+    55.0
+   ],
+   "sizeMm": [
+    35.0,
+    6.08,
+    13.7
+   ],
+   "centreQ0": [
+    17.5,
+    -22.46,
+    61.85
+   ],
+   "sets": {
+    "policy": {
+     "poses": 162,
+     "overlapPoses": 26,
+     "worstOverlapMm3": 173.119,
+     "overlapExamples": [
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": -22.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 5.9,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 37.1,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "jaw_frame",
+       "volumeMm3": 3.806,
+       "poseDeg": {
+        "neck_pitch": 8.6,
+        "head_pitch": 68.2,
+        "head_yaw": -24.6,
+        "head_roll": -21.4,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "jaw_frame",
+     "minGapPoseDeg": {
+      "neck_pitch": -22.6,
+      "head_pitch": 5.9,
+      "head_yaw": -24.6,
+      "head_roll": -21.4,
+      "jaw": 40.0
+     }
+    },
+    "pickup": {
+     "poses": 54,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 5.92,
+     "minGapPart": "neck_link_a",
+     "minGapPoseDeg": {
+      "neck_pitch": -45.0,
+      "head_pitch": 0.0,
+      "head_yaw": -24.6,
+      "head_roll": 0.0,
+      "jaw": 0.0
+     }
+    },
+    "mjcf": {
+     "poses": 164,
+     "overlapPoses": 16,
+     "worstOverlapMm3": 227.618,
+     "overlapExamples": [
+      {
+       "part": "shell_right",
+       "volumeMm3": 22.554,
+       "poseDeg": {
+        "neck_pitch": 30.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 22.554,
+       "poseDeg": {
+        "neck_pitch": 30.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 174.881,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 174.881,
+       "poseDeg": {
+        "neck_pitch": 40.0,
+        "jaw": 40.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 227.618,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 0.0
+       }
+      },
+      {
+       "part": "shell_right",
+       "volumeMm3": 227.618,
+       "poseDeg": {
+        "neck_pitch": 50.0,
+        "jaw": 40.0
+       }
+      }
+     ],
+     "minGapMm": 0.0,
+     "minGapPart": "shell_right",
+     "minGapPoseDeg": {
+      "neck_pitch": 30.0,
+      "jaw": 0.0
+     }
+    },
+    "yawSweep": {
+     "poses": 35,
+     "overlapPoses": 0,
+     "worstOverlapMm3": 0.0,
+     "overlapExamples": [],
+     "minGapMm": 5.92,
+     "minGapPart": "neck_link_a",
+     "minGapPoseDeg": {
+      "head_yaw": -170.0,
+      "jaw": 0.0
+     }
+    }
+   },
+   "q0OwnBodyOverlapMm3": 0.0,
+   "q0CableSurfaceGapMm": {
+    "dxl-n12": 14.74,
+    "dxl-12-11": 3.6,
+    "dxl-11-13": 3.6,
+    "dxl-13-14": 56.65,
+    "dxl-14-15": 42.35,
+    "csi": 65.49
+   },
+   "clearAllSets": false,
+   "clearPolicyAndPickup": false
+  }
+ ],
+ "chosen": null
+}

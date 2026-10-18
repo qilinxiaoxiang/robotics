@@ -1,0 +1,268 @@
+{
+ "purpose": "Pipeline v2 per-object brim acceptance on a scratch copy of the V1.9 Orange plate (release-V1.9 untouched).",
+ "date": "2026-10-14",
+ "manifest": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/manifest.json",
+  "sha256": "88821b38bcd5be2f9de31d67df25e5b92bb822921181e0657b5114f984036756"
+ },
+ "sourceManifest": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/source-manifest-V1.9.json",
+  "sha256": "c328e0b8e332bcbe6c63f4ed93cf194749a067b68bcdc7df6602f39a0c52306c"
+ },
+ "preparation": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/run/preparation.json",
+  "sha256": "55e46c6ba91ff0eb09c669e8bf59c464b965c3158a8f3bf1b5d1dd00243156b1"
+ },
+ "verify": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/run/final-binding-check-v2.json",
+  "sha256": "0871ae2bf31887ec73db8a71f3cf291dee2093d14576557952fcb7b59c390af7"
+ },
+ "slicing": "release_pipeline_v2.py slice run directly, not through run_bounded_cad.py (the caller excluded the CAD runner); the runner lock was checked free before each slice. Bambu 11.6 s / 484 MiB max RSS, Elegoo 12.0 s / 802 MiB.",
+ "machines": {
+  "Bambu": {
+   "before": {
+    "review": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/brim-review-V1.9-run-r2-Orange-Bambu.json",
+     "sha256": "3035f5d0770113499183c2347377facc0bbe0b46e43a9b065f8b6813052761f7"
+    },
+    "archive": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.9/run-r2/native/Orange_Bambu/sliced.3mf",
+     "sha256": "74c468bfc79553f732e386f74521fc01afab962ef1c27c6a599b938011f53f31"
+    },
+    "plate": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1",
+     "skirt_loops": "0",
+     "raft_layers": "0"
+    },
+    "passed": false
+   },
+   "after": {
+    "review": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/brim-review-v2-Orange-Bambu.json",
+     "sha256": "59e780efc18079ecedd4118bb871a8cd363b510df9e94ebd75315515697bed53"
+    },
+    "archive": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/run/native/Orange_Bambu/sliced.3mf",
+     "sha256": "f6bf591694e223d580aeab61b17efebc1fccff07b5033fa44f64cc836c25fc7c"
+    },
+    "plate": {
+     "brim_type": "auto_brim",
+     "brim_width": "5",
+     "brim_object_gap": "0.1",
+     "skirt_loops": "0",
+     "raft_layers": "0"
+    },
+    "passed": true
+   },
+   "objects": {
+    "speaker_retainer_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 346.8,
+     "beforeBrimMm2": 687.1,
+     "beforeInsideOwnHullMm2": 286.0,
+     "beforeFailures": [
+      "unplanned brim 687.1 mm2, 286.0 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_torso_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 54.7,
+     "beforeBrimMm2": 167.0,
+     "beforeInsideOwnHullMm2": 4.3,
+     "beforeFailures": [
+      "unplanned brim 167.0 mm2, 4.3 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_bracket_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 63.1,
+     "beforeBrimMm2": 173.3,
+     "beforeInsideOwnHullMm2": 0.0,
+     "beforeFailures": [
+      "unplanned brim 173.3 mm2"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_head_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 111.5,
+     "beforeBrimMm2": 192.5,
+     "beforeInsideOwnHullMm2": 2.1,
+     "beforeFailures": [
+      "unplanned brim 192.5 mm2, 2.1 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_cap_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 52.8,
+     "beforeBrimMm2": 271.2,
+     "beforeInsideOwnHullMm2": 66.3,
+     "beforeFailures": [
+      "unplanned brim 271.2 mm2, 66.3 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "head_cap_v19_1": {
+     "plan": "outer_only",
+     "modelMm2": 450.6,
+     "beforeBrimMm2": 449.4,
+     "beforeInsideOwnHullMm2": 0.1,
+     "beforeFailures": [],
+     "afterBrimMm2": 449.4,
+     "afterReachMm": 4.29,
+     "afterPassed": true
+    },
+    "rear_pack_1": {
+     "plan": "no_brim",
+     "modelMm2": 641.5,
+     "beforeBrimMm2": 286.6,
+     "beforeInsideOwnHullMm2": 0.0,
+     "beforeFailures": [
+      "unplanned brim 286.6 mm2"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    }
+   }
+  },
+  "Elegoo": {
+   "before": {
+    "review": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/brim-review-V1.9-run-r2-Orange-Elegoo.json",
+     "sha256": "360058c313d6ecce1316a808d26423041f7f59f4ba049398385e0a3db5325aec"
+    },
+    "archive": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.9/run-r2/native/Orange_Elegoo/sliced.3mf",
+     "sha256": "a9f8e771377e453ca1c61354248ab029ff2b8de549e0f03956bb39f0636c92e5"
+    },
+    "plate": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1",
+     "skirt_loops": "0",
+     "raft_layers": "0"
+    },
+    "passed": false
+   },
+   "after": {
+    "review": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/brim-review-v2-Orange-Elegoo.json",
+     "sha256": "467b5c2f0b5d983d8573d4db95208fd8a062381bf9c99440a34dcd00711ff4a8"
+    },
+    "archive": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/tests/brim-per-object-V1.9-Orange/run/native/Orange_Elegoo/sliced.3mf",
+     "sha256": "87791764259f783d06139b3108ae4059c3fa13048acec6a4655e348d66bcd435"
+    },
+    "plate": {
+     "brim_type": "auto_brim",
+     "brim_width": "5",
+     "brim_object_gap": "0.1",
+     "skirt_loops": "0",
+     "raft_layers": "0"
+    },
+    "passed": true
+   },
+   "objects": {
+    "speaker_retainer_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 346.7,
+     "beforeBrimMm2": 687.1,
+     "beforeInsideOwnHullMm2": 286.0,
+     "beforeFailures": [
+      "unplanned brim 687.1 mm2, 286.0 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_torso_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 54.9,
+     "beforeBrimMm2": 133.8,
+     "beforeInsideOwnHullMm2": 0.0,
+     "beforeFailures": [
+      "unplanned brim 133.8 mm2"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_bracket_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 63.0,
+     "beforeBrimMm2": 173.3,
+     "beforeInsideOwnHullMm2": 0.0,
+     "beforeFailures": [
+      "unplanned brim 173.3 mm2"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_head_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 111.8,
+     "beforeBrimMm2": 154.8,
+     "beforeInsideOwnHullMm2": 2.1,
+     "beforeFailures": [
+      "unplanned brim 154.8 mm2, 2.1 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "clip_cap_v19_1": {
+     "plan": "no_brim",
+     "modelMm2": 52.8,
+     "beforeBrimMm2": 271.2,
+     "beforeInsideOwnHullMm2": 66.2,
+     "beforeFailures": [
+      "unplanned brim 271.2 mm2, 66.2 mm2 of it inside the part's own convex outline"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    },
+    "head_cap_v19_1": {
+     "plan": "outer_only",
+     "modelMm2": 451.4,
+     "beforeBrimMm2": 449.4,
+     "beforeInsideOwnHullMm2": 0.1,
+     "beforeFailures": [],
+     "afterBrimMm2": 449.4,
+     "afterReachMm": 4.29,
+     "afterPassed": true
+    },
+    "rear_pack_1": {
+     "plan": "no_brim",
+     "modelMm2": 637.0,
+     "beforeBrimMm2": 331.1,
+     "beforeInsideOwnHullMm2": 0.0,
+     "beforeFailures": [
+      "unplanned brim 331.1 mm2"
+     ],
+     "afterBrimMm2": 0.0,
+     "afterReachMm": 0.0,
+     "afterPassed": true
+    }
+   }
+  }
+ },
+ "rebound": "2026-10-14 late: fresh run (prepare, slice x2, package, verify) under run_bounded_cad.py (--max-mib 1200; Elegoo slice peaks near 800 MiB) after release_pipeline_v2.py gained bambu_self_index, --min-save and check_bambu_archive for the Bambu preview fix; earlier runs are run-stale-20261014-mixed and run-stale-20261014-preminsave; runner reports in rebind-20261014b/"
+}

@@ -1,0 +1,3559 @@
+{
+ "_method": "Jaw opening at first contact for the real pickup postures, and the joint-angle margin around them.\n\n(a) postures: median head joints per phase of the accepted simulated pickups (table = jaw-PPO training task,\n    ground = ground-ball transfer, household = household pick), plus each family's extreme release/lift rows;\n    jaw swept 0..40 deg (2 deg scan, 0.25 deg bisection), all parts below the head; nearest part at the training jaw\n    maximum (0.32 rad = 18.33 deg) and at 40 deg, with overlap location on the jaw.\n(b) neck-independent map (head-pitch bracket group + motor 11/12 and neck links): head_pitch -90..90 step 5 x\n    head_yaw {-25,-15,-5,0,5,15,25,35} at roll 0, and head_roll {-25,-10,10,25} at yaw 0.\n(c) torso map: neck_pitch {-90,-75,-60,-45,-30,-15,0,12,25,40,60} x head_pitch -90..90 step 5, yaw 0, roll 0.\n(d) release: the head-tip release posture (neck_pitch 12, the ground/household release), head_pitch 50..90 in 1 deg\n    steps x head_yaw {-4, 0, 4} x head_roll 0, all parts below the head: jaw first contact; plus the rest of the head\n    (jaw_neck_check HEAD_REST, jaw closed) against the same parts, to tell a jaw collision from a blocked head pose.\nUsage: margin.py postures|neck|torso|release; each section writes ../margin-<section>.json.",
+ "section": "neck",
+ "trainJawMaxDeg": 18.33,
+ "neckMap": [
+  {
+   "head_pitch": -90,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 29.0,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 26.25,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.25,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 20.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": -25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 29.5,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 26.75,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 20.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 10.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": -15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 27.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 19.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": -5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 27.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 19.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 0,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 39.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 38.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 37.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 27.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 19.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 5,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.75,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 36.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 35.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 34.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 29.5,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 26.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 19.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 10.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 15,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 33.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 32.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 31.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 28.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 26.25,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.25,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 19.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 15.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 25,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 30.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 29.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 28.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 26.25,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 23.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 20.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 16.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 11.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 35,
+   "head_roll": 0.0,
+   "firstContactJawDeg": 6.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 29.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 26.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 24.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 22.0,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 18.75,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 15.25,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 12.0,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 8.5,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 4.75,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 1.0,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 0.0,
+   "head_roll": -25,
+   "firstContactJawDeg": 0.0,
+   "part": "motor12",
+   "class": "interference"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 38.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 39.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 40.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 39.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 38.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 37.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 35.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 32.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 30.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 27.75,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 24.75,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 21.5,
+   "part": "neck_link_a",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 17.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 13.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 8.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 0.0,
+   "head_roll": -10,
+   "firstContactJawDeg": 3.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 38.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 39.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": null,
+   "part": null,
+   "class": null
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 39.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 38.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 37.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 36.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 35.5,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 34.0,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 32.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 30.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 27.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 24.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 21.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 17.25,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 13.0,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 8.5,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 0.0,
+   "head_roll": 10,
+   "firstContactJawDeg": 3.75,
+   "part": "motor12",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -90,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -85,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -80,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -75,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -70,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -65,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -60,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -55,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -50,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -45,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -40,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -35,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -30,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -25,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -20,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -15,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -10,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": -5,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 0,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 5,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 10,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 15,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 20,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 25,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 30,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 31.25,
+   "part": "neck_pitch",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 35,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 29.75,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 40,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 28.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 45,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 26.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 50,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 24.25,
+   "part": "motor11",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 55,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 22.0,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 60,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 18.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 65,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 15.25,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 70,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 12.0,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 75,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 8.5,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 80,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 4.75,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 85,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 1.0,
+   "part": "neck_link_b",
+   "class": "contact"
+  },
+  {
+   "head_pitch": 90,
+   "head_yaw": 0.0,
+   "head_roll": 25,
+   "firstContactJawDeg": 0.0,
+   "part": "motor12",
+   "class": "interference"
+  }
+ ]
+}

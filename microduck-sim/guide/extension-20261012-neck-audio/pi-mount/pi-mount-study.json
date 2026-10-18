@@ -1,0 +1,950 @@
+{
+ "date": "2026-10-12",
+ "scope": "study only; V1.8 files and git untouched",
+ "verdict": "Recommend option A (reinforced integral rails) folded into the audio-extension head cap reprint. Same four Pi screws, no new parts, no new supports on the rails, about 7 to 10 times lower bending stress per newton than V1.8 (beam statics on measured geometry). Running on three screws until then is acceptable with care.",
+ "failureMechanism": {
+  "measured": {
+   "freeColumnZ": [
+    115.99,
+    144.3
+   ],
+   "thinnestSection": {
+    "minus_y": "2.0 mm along the screw x 3.2 mm wide",
+    "plus_y": "1.23 x 3.2 mm at z 122.1"
+   },
+   "bendingPerNewtonAtLowerScrew": {
+    "pushAlongScrewMPaPerN": 9.26,
+    "sidewaysMPaPerN": 5.79,
+    "atZ": 138.4,
+    "armMm": 19.75
+   },
+   "bendingPerNewtonAtUpperScrew": {
+    "pushAlongScrewMPaPerN": 0.19,
+    "sidewaysMPaPerN": 0.26
+   },
+   "printOrientation": {
+    "printUpInRobotFrame": [
+     0.0765,
+     -0.0215,
+     -0.9968
+    ],
+    "angleRailAxisToLayerNormalDeg": 14.4,
+    "fractionOfRailBendingStressNormalToLayers": 0.938,
+    "meaning": "the cap prints roof-down, so each hanging rail is a column built upward from the roof; its layers stack along the rail, and bending stress along the rail pulls the layers apart (inter-layer bond)"
+   },
+   "supportNearRails": {
+    "Bambu": "no support on the rails (overhang walls only); support near the rail roots is under the roof grooves z 147..150",
+    "Elegoo": "tree support on each rail front face, from the lower boss ledge (z 121.5, 3.6 mm from E-pi-01/02) and the upper boss ledge up the column"
+   }
+  },
+  "inference": "PLA inter-layer strength of roughly 20..30 MPa puts the lower post failure near 2..3 N (0.2..0.3 kgf) of prying at the lower screw; prying off support that roots on the rail face levers the column across its layers. The snapped post was most likely a lower one (E-pi-01 or E-pi-02), since the upper bosses carry about 1/50 of that stress."
+ },
+ "optionA": {
+  "build": {
+   "addedMm3": 2138.8,
+   "removedMm3": 0.0,
+   "pieces": {
+    "web-y": 1853.0,
+    "lower_ramp-y": 68.3,
+    "upper_root-y": 103.2,
+    "web+y": 1302.4,
+    "lower_ramp+y": 57.1,
+    "upper_root+y": 103.2
+   },
+   "capBodies": 1,
+   "genus": 56
+  },
+  "parameters": {
+   "RAMP_DEG": 55.0,
+   "PILOT_D": 1.7,
+   "PILOT_U": [
+    1.0,
+    7.0
+   ],
+   "WEB_V_START": 28.0,
+   "U_BACK": {
+    "-1": [
+     [
+      -9,
+      8.0
+     ],
+     [
+      40,
+      8.0
+     ]
+    ],
+    "1": [
+     [
+      -9,
+      4.2
+     ],
+     [
+      0.0,
+      4.2
+     ],
+     [
+      15.0,
+      6.84
+     ],
+     [
+      15.3,
+      9.0
+     ],
+     [
+      40,
+      9.0
+     ]
+    ]
+   },
+   "WEB_OUTER_FRONT_U": 2.4,
+   "WEB_OUTER_V": 30.4,
+   "ROOT_FRONT_U": 1.57
+  },
+  "checksOk": true,
+  "failures": [],
+  "added": {
+   "static": [
+    [
+     "pi",
+     0.0,
+     0.004
+    ],
+    [
+     "jaw_support",
+     0.0,
+     0.5
+    ],
+    [
+     "head_pi_zero_w_gpio_solder_tails",
+     0.0,
+     1.186
+    ],
+    [
+     "head_pi_component_csi-connector-body-conservative-hull",
+     0.0,
+     1.639
+    ],
+    [
+     "head_pi_zero_w_header_base",
+     0.0,
+     1.704
+    ]
+   ],
+   "csiRibbonStripGapMm": 2.047,
+   "bundleHeadCentrelineMm": 3.28,
+   "jawSweepGapMm": 7.813,
+   "rollSweepGapMm": 8.0,
+   "descent": {
+    "head_bottom": 3.311,
+    "motor15": 2.153,
+    "jaw_support": 0.453
+   },
+   "closestAudio": [
+    {
+     "with": "audio_pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "gapMm": 4.307
+    }
+   ],
+   "corridorOverlapMm3": {
+    "behind_pi_middle": 0.0,
+    "below_z111.9": 0.0,
+    "below_header": 0.0
+   }
+  },
+  "piScrews": {
+   "static": [
+    [
+     "head_cap",
+     13.3104,
+     0.0
+    ],
+    [
+     "pi",
+     1.1285,
+     0.0
+    ],
+    [
+     "head_pi_zero_w_header_base",
+     0.0,
+     1.0
+    ],
+    [
+     "head_pi_component_indicator-body-and-outline",
+     0.0,
+     1.273
+    ],
+    [
+     "head_pi_component_csi-connector-body-conservative-hull",
+     0.0,
+     1.447
+    ]
+   ],
+   "csiRibbonStripGapMm": 4.097,
+   "bundleHeadCentrelineMm": 5.05,
+   "jawSweepGapMm": 7.761,
+   "rollSweepGapMm": 8.0,
+   "descent": {
+    "head_bottom": 4.654,
+    "motor15": 2.628,
+    "jaw_support": 0.928
+   },
+   "closestAudio": [
+    {
+     "with": "audio_pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "gapMm": 1.936
+    }
+   ],
+   "corridorOverlapMm3": {
+    "behind_pi_middle": 0.0,
+    "below_z111.9": 0.0,
+    "below_header": 0.0
+   }
+  },
+  "exterior": {
+   "addedOutsideV18HullMm3": 0.0,
+   "addedInExteriorGroovesMm3": 0.0,
+   "removedVsBaseMm3": 0.001
+  },
+  "overhangRailFeatures": {
+   "minus_y_rail": {
+    "below30degMm2": 0.08,
+    "below40degMm2": 0.1,
+    "pilotBridgeFacesBelow30degMm2": 7.92,
+    "locationsBelow40deg": [
+     [
+      56.4,
+      -28.9,
+      121.7
+     ],
+     [
+      56.4,
+      -29.1,
+      121.7
+     ],
+     [
+      56.4,
+      -28.9,
+      121.7
+     ],
+     [
+      56.4,
+      -29.1,
+      121.7
+     ],
+     [
+      56.4,
+      -28.8,
+      121.7
+     ],
+     [
+      56.4,
+      -29.2,
+      121.7
+     ]
+    ]
+   },
+   "plus_y_rail": {
+    "below30degMm2": 0.08,
+    "below40degMm2": 1.47,
+    "pilotBridgeFacesBelow30degMm2": 6.27,
+    "locationsBelow40deg": [
+     [
+      49.3,
+      32.2,
+      145.5
+     ],
+     [
+      54.1,
+      32.3,
+      146.0
+     ],
+     [
+      56.4,
+      29.1,
+      121.7
+     ],
+     [
+      56.4,
+      28.9,
+      121.7
+     ],
+     [
+      56.4,
+      29.1,
+      121.7
+     ],
+     [
+      56.4,
+      28.9,
+      121.7
+     ]
+    ]
+   }
+  },
+  "overhangV18": {
+   "minus_y_rail": {
+    "below30degMm2": 11.3,
+    "below40degMm2": 20.36,
+    "pilotBridgeFacesBelow30degMm2": 7.09
+   },
+   "plus_y_rail": {
+    "below30degMm2": 11.3,
+    "below40degMm2": 19.66,
+    "pilotBridgeFacesBelow30degMm2": 5.89
+   }
+  },
+  "strength": {
+   "V1.8 (bare rail, across layers)": {
+    "minus_y": {
+     "worstPush": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "worstSideways": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    },
+    "plus_y": {
+     "worstPush": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "worstSideways": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    }
+   },
+   "A along the rail (across layers, side wall excluded)": {
+    "minus_y": {
+     "worstPush": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 28.82,
+      "Zu": 20.468,
+      "Zv": 23.327,
+      "mpaPerN_u": 0.953,
+      "mpaPerN_v": 0.836
+     },
+     "worstSideways": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 28.82,
+      "Zu": 20.468,
+      "Zv": 23.327,
+      "mpaPerN_u": 0.953,
+      "mpaPerN_v": 0.836
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    },
+    "plus_y": {
+     "worstPush": {
+      "w": 10.5,
+      "z": 128.59,
+      "area": 17.55,
+      "Zu": 8.18,
+      "Zv": 14.642,
+      "mpaPerN_u": 1.284,
+      "mpaPerN_v": 0.717
+     },
+     "worstSideways": {
+      "w": 15.0,
+      "z": 133.02,
+      "area": 21.9,
+      "Zu": 12.328,
+      "Zv": 17.945,
+      "mpaPerN_u": 1.217,
+      "mpaPerN_v": 0.836
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    }
+   },
+   "A web to side wall (along layers)": {
+    "minus_y": {
+     "sectionAtY": -33.0,
+     "areaMm2": 54.32,
+     "Zmm3": 50.699,
+     "armMm": 4.0,
+     "mpaPerN": 0.079
+    },
+    "plus_y": {
+     "sectionAtY": 33.0,
+     "areaMm2": 21.9,
+     "Zmm3": 5.964,
+     "armMm": 4.0,
+     "mpaPerN": 0.671
+    }
+   }
+  },
+  "screws": "unchanged: E-pi-01/03/04 M2 x 6 TAP, E-pi-02 M2 x 4 TAP"
+ },
+ "optionB": {
+  "build": {
+   "parameters": {
+    "SEAT_U": 1.57,
+    "BODY_FRONT_U": 3.0,
+    "V_IN": {
+     "-1": 26.2,
+     "1": 27.4
+    },
+    "V_OUT": 33.0,
+    "U_BACK": {
+     "-1": [
+      [
+       -9,
+       8.0
+      ],
+      [
+       40,
+       8.0
+      ]
+     ],
+     "1": [
+      [
+       -9,
+       4.2
+      ],
+      [
+       0.0,
+       4.2
+      ],
+      [
+       15.0,
+       6.84
+      ],
+      [
+       15.3,
+       8.0
+      ],
+      [
+       40,
+       8.0
+      ]
+     ]
+    },
+    "BRACKET_W": [
+     -3.1,
+     26.1
+    ],
+    "LAP_W": 15.3,
+    "LAP_U": 6.0,
+    "STUB_U1": 9.5,
+    "PI_LEN": {
+     "E-pi-01": 6.0,
+     "E-pi-02": 4.0,
+     "E-pi-03": 6.0,
+     "E-pi-04": 6.0
+    },
+    "SCREW_W": 17.5,
+    "SCREW_V": [
+     28.9,
+     31.5
+    ],
+    "CUT": [
+     1.3,
+     7.2,
+     25.4,
+     32.6,
+     -4.0,
+     27.3
+    ]
+   },
+   "sides": {
+    "minus_y": {
+     "bracketVolumeMm3": 905.7,
+     "stubVolumeMm3": 329.1,
+     "upperScrewW": 22.999451312000005,
+     "bracketCapOverlapMm3": -0.0
+    },
+    "plus_y": {
+     "bracketVolumeMm3": 468.4,
+     "stubVolumeMm3": 262.4,
+     "upperScrewW": 22.999451312000005,
+     "bracketCapOverlapMm3": -0.0
+    }
+   },
+   "capRemovedMm3": 751.6,
+   "stubAddedMm3": 380.3
+  },
+  "checksOk": true,
+  "failures": [],
+  "parts": {
+   "cap_added_B_stubs": {
+    "static": [
+     [
+      "jaw_support",
+      0.0,
+      4.289
+     ],
+     [
+      "pi",
+      0.0,
+      4.451
+     ],
+     [
+      "head_pi_component_csi-connector-body-conservative-hull",
+      0.0,
+      6.051
+     ],
+     [
+      "head_pi_component_csi-connector-pins-conservative-hull",
+      0.0,
+      6.051
+     ],
+     [
+      "head_pi_component_indicator-body-and-outline",
+      0.0,
+      6.051
+     ]
+    ],
+    "csiRibbonStripGapMm": 5.745,
+    "bundleHeadCentrelineMm": 3.7,
+    "jawSweepGapMm": 8.0,
+    "rollSweepGapMm": 8.0,
+    "descent": {
+     "jaw_support": 4.289
+    },
+    "closestAudio": [
+     {
+      "with": "audio_amp_housings",
+      "overlapMm3": 0.0,
+      "gapMm": 8.0
+     }
+    ],
+    "corridorOverlapMm3": {
+     "behind_pi_middle": 0.0,
+     "below_z111.9": 0.0,
+     "below_header": 0.0
+    }
+   },
+   "bracket_minus_y": {
+    "static": [
+     [
+      "head_cap",
+      0.0,
+      0.0
+     ],
+     [
+      "pi",
+      0.0,
+      0.021
+     ],
+     [
+      "head_pi_zero_w_gpio_solder_tails",
+      0.0,
+      0.8
+     ],
+     [
+      "head_pi_component_indicator-body-and-outline",
+      0.0,
+      1.621
+     ],
+     [
+      "head_pi_zero_w_header_base",
+      0.0,
+      1.633
+     ]
+    ],
+    "csiRibbonStripGapMm": 2.117,
+    "bundleHeadCentrelineMm": null,
+    "jawSweepGapMm": 7.182,
+    "rollSweepGapMm": 8.0,
+    "descent": {
+     "head_bottom": 4.075,
+     "jaw_support": 4.189
+    },
+    "closestAudio": [
+     {
+      "with": "audio_pi_housing_pin40",
+      "overlapMm3": 0.0,
+      "gapMm": 4.237
+     }
+    ],
+    "corridorOverlapMm3": {
+     "behind_pi_middle": 0.0,
+     "below_z111.9": 0.0,
+     "below_header": 0.0
+    }
+   },
+   "bracket_plus_y": {
+    "static": [
+     [
+      "head_cap",
+      0.0,
+      0.0
+     ],
+     [
+      "pi",
+      0.0,
+      0.021
+     ],
+     [
+      "jaw_support",
+      0.0,
+      0.907
+     ],
+     [
+      "head_pi_zero_w_gpio_solder_tails",
+      0.0,
+      2.0
+     ],
+     [
+      "motor15",
+      0.0,
+      2.066
+     ]
+    ],
+    "csiRibbonStripGapMm": 10.0,
+    "bundleHeadCentrelineMm": 4.13,
+    "jawSweepGapMm": 7.182,
+    "rollSweepGapMm": 99.0,
+    "descent": {
+     "head_bottom": 4.077,
+     "motor15": 2.066,
+     "jaw_support": 0.366
+    },
+    "closestAudio": [
+     {
+      "with": "audio_pi_housing_pin04",
+      "overlapMm3": 0.0,
+      "gapMm": 6.158
+     }
+    ],
+    "corridorOverlapMm3": {
+     "behind_pi_middle": 0.0,
+     "below_z111.9": 0.0,
+     "below_header": 0.0
+    }
+   },
+   "pi_screws_V18_specs": {
+    "static": [
+     [
+      "pi",
+      1.1285,
+      0.0
+     ],
+     [
+      "head_cap",
+      0.0,
+      0.0
+     ],
+     [
+      "head_pi_zero_w_header_base",
+      0.0,
+      1.0
+     ],
+     [
+      "head_pi_component_indicator-body-and-outline",
+      0.0,
+      1.273
+     ],
+     [
+      "head_pi_component_csi-connector-body-conservative-hull",
+      0.0,
+      1.447
+     ]
+    ],
+    "csiRibbonStripGapMm": 4.097,
+    "bundleHeadCentrelineMm": 5.05,
+    "jawSweepGapMm": 7.761,
+    "rollSweepGapMm": 8.0,
+    "descent": {
+     "head_bottom": 4.654,
+     "motor15": 2.628,
+     "jaw_support": 0.928
+    },
+    "closestAudio": [
+     {
+      "with": "audio_pi_housing_pin40",
+      "overlapMm3": 0.0,
+      "gapMm": 1.936
+     }
+    ],
+    "corridorOverlapMm3": {
+     "behind_pi_middle": 0.0,
+     "below_z111.9": 0.0,
+     "below_header": 0.0
+    }
+   },
+   "bracket_screws_4xM2x6": {
+    "static": [
+     [
+      "head_cap",
+      0.0,
+      0.0
+     ],
+     [
+      "pi",
+      0.0,
+      1.951
+     ],
+     [
+      "head_pi_component_csi-connector-body-conservative-hull",
+      0.0,
+      3.551
+     ],
+     [
+      "head_pi_component_csi-connector-pins-conservative-hull",
+      0.0,
+      3.551
+     ],
+     [
+      "head_pi_component_lower-passive-c",
+      0.0,
+      3.56
+     ]
+    ],
+    "csiRibbonStripGapMm": 3.737,
+    "bundleHeadCentrelineMm": 5.26,
+    "jawSweepGapMm": 8.0,
+    "rollSweepGapMm": 8.0,
+    "descent": {
+     "jaw_support": 4.845
+    },
+    "closestAudio": [
+     {
+      "with": "audio_amplifier",
+      "overlapMm3": 0.0,
+      "gapMm": 8.0
+     }
+    ],
+    "corridorOverlapMm3": {
+     "behind_pi_middle": 0.0,
+     "below_z111.9": 0.0,
+     "below_header": 0.0
+    }
+   }
+  },
+  "exterior": {
+   "addedOutsideV18HullMm3": 0.0,
+   "addedInExteriorGroovesMm3": 0.0,
+   "removedVsBaseMm3": 751.649
+  },
+  "overhangCapRailRegion": {
+   "minus_y_rail": {
+    "below30degMm2": 8.77,
+    "below40degMm2": 10.96,
+    "pilotBridgeFacesBelow30degMm2": 0.0,
+    "locationsBelow40deg": [
+     [
+      52.0,
+      -32.3,
+      136.0
+     ],
+     [
+      53.2,
+      -32.2,
+      135.8
+     ],
+     [
+      53.1,
+      -28.7,
+      135.6
+     ],
+     [
+      52.0,
+      -31.7,
+      135.8
+     ],
+     [
+      52.0,
+      -31.4,
+      135.8
+     ],
+     [
+      53.1,
+      -29.0,
+      135.6
+     ]
+    ]
+   },
+   "plus_y_rail": {
+    "below30degMm2": 8.77,
+    "below40degMm2": 11.47,
+    "pilotBridgeFacesBelow30degMm2": 0.0,
+    "locationsBelow40deg": [
+     [
+      53.1,
+      31.7,
+      135.6
+     ],
+     [
+      52.0,
+      28.7,
+      135.8
+     ],
+     [
+      52.0,
+      29.0,
+      135.8
+     ],
+     [
+      53.1,
+      31.4,
+      135.6
+     ],
+     [
+      53.1,
+      29.1,
+      135.6
+     ],
+     [
+      52.0,
+      31.3,
+      135.8
+     ]
+    ]
+   }
+  },
+  "bracketPrintOnInnerFace": "support-free; only down faces below 30 deg are the tops of the horizontal 1.7 mm pilots (bridged): -y 14.2 mm2, +y 10.9 mm2",
+  "strength": {
+   "V1.8 (bare rail, across layers)": {
+    "minus_y": {
+     "worstPush": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "worstSideways": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    },
+    "plus_y": {
+     "worstPush": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "worstSideways": {
+      "w": 19.5,
+      "z": 137.45,
+      "area": 6.4,
+      "Zu": 2.133,
+      "Zv": 3.413,
+      "mpaPerN_u": 9.141,
+      "mpaPerN_v": 5.713
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    }
+   },
+   "B bracket (along layers)": {
+    "minus_y": {
+     "worstPush": {
+      "w": 17.5,
+      "z": 135.48,
+      "area": 9.79,
+      "Zu": 4.942,
+      "Zv": 7.427,
+      "mpaPerN_u": 3.541,
+      "mpaPerN_v": 2.356
+     },
+     "worstSideways": {
+      "w": 17.5,
+      "z": 135.48,
+      "area": 9.79,
+      "Zu": 4.942,
+      "Zv": 7.427,
+      "mpaPerN_u": 3.541,
+      "mpaPerN_v": 2.356
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    },
+    "plus_y": {
+     "worstPush": {
+      "w": 17.5,
+      "z": 135.48,
+      "area": 6.19,
+      "Zu": 3.032,
+      "Zv": 4.212,
+      "mpaPerN_u": 5.772,
+      "mpaPerN_v": 4.154
+     },
+     "worstSideways": {
+      "w": 17.5,
+      "z": 135.48,
+      "area": 6.19,
+      "Zu": 3.032,
+      "Zv": 4.212,
+      "mpaPerN_u": 5.772,
+      "mpaPerN_v": 4.154
+     },
+     "window": "|y| 25..33.5 (side wall excluded), u 0.3..12"
+    }
+   }
+  },
+  "stubAboveScrewRowMPaPerN": {
+   "minus_y": {
+    "push": [
+     1.37,
+     1.54
+    ],
+    "sideways": [
+     0.7,
+     0.84
+    ]
+   },
+   "plus_y": {
+    "push": [
+     1.66,
+     1.86
+    ],
+    "sideways": [
+     1.04,
+     1.24
+    ]
+   },
+   "note": "across layers, w 19..21.5; at the screw row (w 16.5..18.5) the two 2.4 mm holes leave only ligaments, a real design would need a deeper stub or staggered holes"
+  },
+  "driverAccess": "straight driver line behind the bracket-screw heads is clear for 17..25 mm before the cap back wall; needs a stubby or angled driver",
+  "screws": "Pi screws unchanged in spec (now thread into the brackets) + 4 x M2 x 6 TAP bracket-to-stub (about 2.5 mm thread engagement)"
+ },
+ "optionC": "text only, not recommended: heat-set inserts do not fix the column bending, need a 5.6..6.2 mm boss (the +y lower boss is about 2.9 mm deep) and machine-thread screws; M2.5 standoffs have no solid anchor behind the Pi and are a new purchase; glue conflicts with the standing no-glue rule and keeps the weak section.",
+ "currentBuild": "Three screws is acceptable as a temporary state (inference: the Pi is about 9 g). Back the board with a finger when pushing housings on, tighten only to snug, do not pry near the rails, check the board does not rock, and if the missing post is E-pi-02 (+y lower) keep an eye on the free corner near jaw_support (the Pi had about 1.09 mm).",
+ "openItems": [
+  "study STLs come from exact manifold booleans but are not watertight in trimesh (degenerate triangles); run a mesh repair before slicing",
+  "reslice option A in both Orange profiles and confirm no support is placed on the rails",
+  "print test: one cap, hang the Pi, push housings on, then a gentle pull test at the lower screws",
+  "confirm which printer (Bambu or Elegoo) printed the broken cap and which post snapped",
+  "+y web back face is 0.45 mm from jaw_support during cap descent (V1.8 rail 0.5 mm static); check for elephant foot on that face"
+ ]
+}

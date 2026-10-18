@@ -1,0 +1,98 @@
+{
+  "checked": "2026-10-08",
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "integrationReady": false,
+  "status": "SOURCE_AUDIT_NO_ADDITIONAL_CAD_OR_RELOCATION",
+  "sourceBaseline": {
+    "communityRepository": "https://github.com/AI-FanGe/Microduck-build-tutorial",
+    "communityCommit": "49678215d0b40529522772a40c06c216390449dd",
+    "localOriginal3mf": "microduck-sim/Microduck-build-tutorial/microduck3D打印.3mf",
+    "communityVerifiedFacts": [
+      "README BOM names Pi Zero2W, OpenRB150, IMU and14 motors; mouth15 optional.",
+      "Pi connects overUSB toOpenRB; I2C IMU connects toPi.",
+      "The inspected README and complete repository tree contain no CameraModule3/SC1892 assembly procedure or camera-ribbon route. This is a scope-limited absence, not proof no external video has a camera."
+    ],
+    "physicalBoardPlacementEvidence": "Current model uses own2026-09-12 head-layout STL; exact assembled upstream Pi/OpenRB positions are not established by the README wiring diagram. Existing community face has structural geometry, but its holes alone do not prove populated WH+female/USB+cable fit.",
+    "upstreamVideo": "https://www.youtube.com/watch?v=Vep8AjoCnEM",
+    "upstreamAnimation": "https://raw.githubusercontent.com/AI-FanGe/Microduck-build-tutorial/49678215d0b40529522772a40c06c216390449dd/docs/assets/cad-exploded.gif",
+    "pollenRepository": "https://github.com/pollen-robotics/microduck",
+    "pollenCommit": "dec725c67ffbbdde7f1de30f8c936b1bf9c1d70e",
+    "pollenDistinction": "Current official Pollen README describesRK3566 robot. It is not evidence that community PiZero/OpenRB head has already accepted Camera3+SC1892."
+  },
+  "actualHardwareDifferences": {
+    "Pi": "User owns first-generation ZeroW with soldered40pinmaleheader; source tutorial callsZero2W. Same65x30 PCB outline does not establish identical populated board/connectors.",
+    "camera": "OwnedCameraModule3Wide and eye placement are our added visual-pickup requirement; not in inspected communityBOM.",
+    "audio": "MAX98357A/speakerI2S and12GPIO receiving tails are our integration constraints; not in inspected communityBOM.",
+    "modelLineage": "Gdata pi=form-factor-reference, openrb=manufacturer-cad, camera_board=manufacturer-installation-mesh, all own2026-09-12head-layout. They have no community sourceId; face_panel has sourceId76."
+  },
+  "ffcInputAuthority": [
+    {
+      "input": "200mm15to22",
+      "authority": "Exact ownedSC1892Standard-Mini nominal product length/interfaces",
+      "use": "retain unless explicit replacement is chosen"
+    },
+    {
+      "input": "16mmbody vs11.5mmbody",
+      "authority": "OfficialPCN36 Rev1vsRev2 majority widths; standardend16,miniend11.5. Transition changedAugust2025. Actual received revision not visuallyidentified.",
+      "modelDecision": "Using16mm for wholefreebody coversboth as a receiving bound; it is not exactRev2geometry."
+    },
+    {
+      "input": "0.6mmfullthickness",
+      "authority": "Our receiving envelope+/-0.3mm. No exactSC1892 thickness drawing found.",
+      "correction": "Cannot callmanufacturerthickness or use its fitfailure toprove physicalcable cannotfit."
+    },
+    {
+      "input": "R3mmminimum",
+      "authority": "Our design radius; no manufacturerSC1892 minimumstaticbendradius found.",
+      "correction": "Cannot callproductminimum or usefailure as proof originalhead needsrebuild."
+    },
+    {
+      "input": "4mmfree straight each connector",
+      "authority": "Our stiffener/straightreceiving assumption; exact reinforcementlengthnotobtained.",
+      "correction": "Must not equate to physical mandatorystraightdistance."
+    },
+    {
+      "input": "4.4mmPi/5mmcamera insertion",
+      "authority": "Explicit receiving assumptions in existingroutegenerator, not exactSC1892 mechanicaldrawing",
+      "correction": "Do not treat as measured insertionstop."
+    },
+    {
+      "input": "full ribbon exactlyisometric cylinders plus .3mm flatgap",
+      "authority": "Our computationaltopology/acceptance assumptions; actualsafe folding wasnot measured.",
+      "correction": "Fivebendfamilyfailure is not allpossiblefolds failure."
+    },
+    {
+      "input": "same-sided contacts and boardward Pi contactface",
+      "authority": "Pimoroni originalZeroW photo/instructions p7 + Adafruit5818 exact-product photos +SC1128/SC1892 alias/unchanged electrical PCN; engineering inference, not userhardwareinspection",
+      "use": "Supported input; no need toblock geometry waiting for duplicate question."
+    }
+  ],
+  "decisions": [
+    "StopOpenRBrelocation and retainoriginalmajorassembly; diagnosticremovedboardfield is abandoned and neverpublished.",
+    "Do notrelease face/Pi/head reprints merelybecauseunmeasuredFFC thickness/radius/straightreceivingfailed.",
+    "The supported localmechanicaloption is arotatable internalCamera3holder withunchangedlenscenter/duckoutline. +90cameraopticalaxisrotation has sourceboundbody/AF/FOV checks and clearR3firstexit; oldfaceinternalpegs requirelocalreplacement, fullretainer/linepathnotaccepted.",
+    "Before morewholeheadgeometry, reconcile actualSC1892revision/shoulder/stiffener geometry withexistingpublicprimaryevidence and ordinaryunpoweredbenchlayup. No tightcrease/bendradius safetyclaim is made withoutdata.",
+    "Keepdigitalfailureartifacts asconditionaltests; they do not justify movingOpenRB, expandinghead, orclaimingprintrequired."
+  ],
+  "stoppedJobs": {
+    "lastCADPid": 77927,
+    "exitCode": 0,
+    "lastCADPurpose": "OpenRBremoved diagnostic occupancy only",
+    "newTopologyRun": false,
+    "newBoardPosePublished": false
+  },
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/upstream-check/fange-readme.md": "8af0fe91b4ad942801df4d511a26df852b9b841d77d66e2da0914524ae257937",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/upstream-check/fange-tree.json": "3c5388ea9fcfc3f5146f0e335e37ba6b81e25cba015f95ad0d1d24a498fd56b2",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/upstream-check/pollen-readme.md": "28b4c4c092b1a6cf09796290cdd0398210a14e17ea88a23ef262704c4e0d3678",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/upstream-check/pollen-tree.json": "92b5ef16bc01720fdce55700bbb2a620ae4d2464ff5bcbc98ba197a78b09e456",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-retainer/cabling/sc1892-official-spec.json": "d15a7d17706969a9a07e3eea6edb451ec959fd11325d64ea8010904788411a3b",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/csi-contact-orientation-audit.json": "5e5e6c63b316e5f15518689b5ad21726d25148d422dc7eed752194aa1ed75fd3",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/developable_ribbon_inner_entry.py": "203a8a53fcf9a7f350d6ab4671cd9760e7b3b38f98db5486004b8ba46b66a295",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/camera-quarter-rolls/90/report.json": "4240eb28770f54de082eab9c30623e96ecd9fa8dd76b8ad5d10441608df4d6b7",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/camera-quarter-rolls/90/exitR3_-1.json": "b2f7507ac1a5d5506349d5eccd0e348786b3bf74a570037ffe2f7d62312b2e22"
+  }
+}

@@ -1,0 +1,814 @@
+{
+ "_method": "Exact jaw-frame overlap at every simulated pickup row (postures-rows.npz from extract_postures.py).\n\nThe jaw's pose relative to each body depends only on jaw_neck_check DEPENDS joints, so rows are screened per body:\n  neck_pitch parts (head-pitch bracket, ring, idler 11): bins of head_yaw, head_roll at 1 deg\n  neck parts (motor 11, motor 12, neck links):          bins of head_pitch, head_yaw, head_roll at 1 deg\n  torso parts:                                           bins of all four head joints at 2 deg\nEach bin is first evaluated at the row with the largest jaw opening in it (the actual joint values and jaw of that row).\nEvery bin whose representative is within 3 mm (or touching) is then re-evaluated at each of its distinct rows\n(0.1 deg), so every reported contact is an exact evaluation of a real simulated row.\nWrites ../trace-check.json.",
+ "rows": 1153913,
+ "trainJawMaxDeg": 18.33,
+ "solids": [
+  {
+   "key": "jaw_frame",
+   "solidBounds": [
+    [
+     17.1,
+     -45.71,
+     98.17
+    ],
+    [
+     85.81,
+     45.71,
+     127.61
+    ]
+   ],
+   "solidVolumeMm3": 27963.7,
+   "source": "print/world/jaw_frame.stl",
+   "worldBoundsDevMm": 0.0,
+   "worldVolumeMm3": 27963.7,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "new-print"
+  },
+  {
+   "key": "neck_pitch",
+   "solidBounds": [
+    [
+     17.0,
+     -17.5,
+     73.42
+    ],
+    [
+     35.0,
+     17.5,
+     101.12
+    ]
+   ],
+   "solidVolumeMm3": 4147.1,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "new-print"
+  },
+  {
+   "key": "neck_pitch_ring",
+   "solidBounds": [
+    [
+     15.0,
+     -11.0,
+     99.21
+    ],
+    [
+     37.0,
+     11.0,
+     104.11
+    ]
+   ],
+   "solidVolumeMm3": 816.7,
+   "source": "print/world/neck_pitch_ring.stl",
+   "worldBoundsDevMm": 0.0,
+   "worldVolumeMm3": 816.7,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "new-print"
+  },
+  {
+   "key": "idler11",
+   "solidBounds": [
+    [
+     18.0,
+     -14.5,
+     74.42
+    ],
+    [
+     34.0,
+     -10.35,
+     90.42
+    ]
+   ],
+   "solidVolumeMm3": 464.5,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "idler_cap11",
+   "solidBounds": [
+    [
+     22.6,
+     -14.3,
+     79.02
+    ],
+    [
+     29.4,
+     -9.7,
+     85.82
+    ]
+   ],
+   "solidVolumeMm3": 65.4,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "motor11",
+   "solidBounds": [
+    [
+     16.0,
+     -11.5,
+     57.92
+    ],
+    [
+     36.0,
+     14.5,
+     91.92
+    ]
+   ],
+   "solidVolumeMm3": 15265.6,
+   "guideDisplayBoundsDevMm": 0.002,
+   "guideStatus": "owned"
+  },
+  {
+   "key": "motor12",
+   "solidBounds": [
+    [
+     16.0,
+     -11.5,
+     22.92
+    ],
+    [
+     36.0,
+     14.5,
+     56.92
+    ]
+   ],
+   "solidVolumeMm3": 15265.6,
+   "guideDisplayBoundsDevMm": 0.002,
+   "guideStatus": "owned"
+  },
+  {
+   "key": "neck_link_a",
+   "solidBounds": [
+    [
+     16.0,
+     -13.5,
+     51.92
+    ],
+    [
+     36.0,
+     -11.5,
+     62.92
+    ]
+   ],
+   "solidVolumeMm3": 399.9,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "neck_link_b",
+   "solidBounds": [
+    [
+     16.0,
+     11.5,
+     51.92
+    ],
+    [
+     36.0,
+     13.5,
+     62.92
+    ]
+   ],
+   "solidVolumeMm3": 399.9,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "shell_right",
+   "solidBounds": [
+    [
+     -46.4,
+     -32.27,
+     0.33
+    ],
+    [
+     34.5,
+     -0.5,
+     42.03
+    ]
+   ],
+   "solidVolumeMm3": 11216.9,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "shell_left",
+   "solidBounds": [
+    [
+     -46.39,
+     -1.95,
+     0.26
+    ],
+    [
+     34.5,
+     31.76,
+     41.95
+    ]
+   ],
+   "solidVolumeMm3": 11389.4,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "torso_base",
+   "solidBounds": [
+    [
+     -19.0,
+     -28.5,
+     -1.0
+    ],
+    [
+     17.0,
+     28.5,
+     2.0
+    ]
+   ],
+   "solidVolumeMm3": 1415.1,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "rear_pack",
+   "solidBounds": [
+    [
+     -45.0,
+     -27.2,
+     -44.0
+    ],
+    [
+     -13.5,
+     27.2,
+     38.8
+    ]
+   ],
+   "solidVolumeMm3": 17174.6,
+   "source": "print/world/rear_pack.stl",
+   "worldBoundsDevMm": 0.0,
+   "worldVolumeMm3": 17174.6,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "new-print"
+  },
+  {
+   "key": "rear_pack_cover",
+   "solidBounds": [
+    [
+     -47.0,
+     -18.6,
+     -44.0
+    ],
+    [
+     -37.5,
+     18.6,
+     29.5
+    ]
+   ],
+   "solidVolumeMm3": 5569.2,
+   "source": "print/world/rear_pack_cover.stl",
+   "worldBoundsDevMm": 0.0,
+   "worldVolumeMm3": 5569.2,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "new-print"
+  },
+  {
+   "key": "openrb_board",
+   "solidBounds": [
+    [
+     -34.99,
+     -13.0,
+     -42.0
+    ],
+    [
+     -22.4,
+     12.4,
+     24.89
+    ]
+   ],
+   "solidVolumeMm3": 4888.4,
+   "source": "print/world/openrb-board-upright.stl",
+   "worldBoundsDevMm": 0.0,
+   "worldVolumeMm3": 4888.4,
+   "guideDisplayBoundsDevMm": 0.011,
+   "guideStatus": "owned"
+  },
+  {
+   "key": "idler12",
+   "solidBounds": [
+    [
+     18.0,
+     -14.5,
+     24.42
+    ],
+    [
+     34.0,
+     -10.35,
+     40.42
+    ]
+   ],
+   "solidVolumeMm3": 464.5,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  },
+  {
+   "key": "idler_cap12",
+   "solidBounds": [
+    [
+     22.6,
+     -14.3,
+     29.02
+    ],
+    [
+     29.4,
+     -9.7,
+     35.82
+    ]
+   ],
+   "solidVolumeMm3": 65.4,
+   "guideDisplayBoundsDevMm": 0.0,
+   "guideStatus": "printed"
+  }
+ ],
+ "bodies": {
+  "neck_pitch": {
+   "parts": [
+    "neck_pitch",
+    "neck_pitch_ring",
+    "idler11",
+    "idler_cap11"
+   ],
+   "dependsOn": [
+    "head_yaw",
+    "head_roll"
+   ],
+   "binDeg": 1.0,
+   "bins": 1933,
+   "binsWithin3mm": 0,
+   "distinctRowsRechecked": 0,
+   "rowsInterference": 0,
+   "rowsContact": 0,
+   "minGapMmOverAllRows": ">= 3.0",
+   "minGapRow": null,
+   "hits": []
+  },
+  "neck": {
+   "parts": [
+    "motor11",
+    "motor12",
+    "neck_link_a",
+    "neck_link_b"
+   ],
+   "dependsOn": [
+    "head_pitch",
+    "head_yaw",
+    "head_roll"
+   ],
+   "binDeg": 1.0,
+   "bins": 16916,
+   "binsWithin3mm": 127,
+   "distinctRowsRechecked": 1261,
+   "rowsInterference": 8884,
+   "rowsContact": 42,
+   "minGapMmOverAllRows": 0.0,
+   "minGapRow": {
+    "poseDeg": {
+     "neck_pitch": 11.96,
+     "head_pitch": 77.63,
+     "head_yaw": -2.73,
+     "head_roll": -0.67,
+     "jaw": 18.34
+    },
+    "family": "ground",
+    "phase": "release",
+    "trace": "rl/runs/ground-browser-complete.json",
+    "nearest": {
+     "part": "motor12",
+     "body": "neck",
+     "overlapMm3": 24.684,
+     "gapMm": 0.0,
+     "onJawAtRestMm": [
+      81.3,
+      2.3,
+      98.5
+     ],
+     "overlapDepthMm": 0.66,
+     "class": "interference"
+    }
+   },
+   "hits": [
+    {
+     "class": "interference",
+     "rows": 8884,
+     "byFamily": {
+      "ground": 7616,
+      "household": 1268
+     },
+     "byPhase": {
+      "release": 8204,
+      "done": 84,
+      "failed": 14,
+      "reach": 582
+     },
+     "byPart": {
+      "motor12": 8300,
+      "neck_link_b": 537,
+      "neck_link_a": 47
+     },
+     "traces": [
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-complete.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-final.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-untrained-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/soft-28-coarse-cycle.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-finer-219-back-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/nominal-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/stiffer-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/nominal-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/half-step-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-learned.json",
+      "app/test-results/household-actuator-probes-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-braked-browser-and-sock-feedback-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-braked-reach-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-browser-predictive-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-case-20260904.zip::household-cloth-full-sweep/trial-02.json",
+      "app/test-results/household-case-20260904.zip::household-handoff-sweep/trial-00.json",
+      "app/test-results/household-closure-forecast-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-grip-location-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-prediction-and-deadline-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-waypoint-confounded-20260905.zip::browser/microduck-sock-trial.json"
+     ],
+     "tracesCount": 100,
+     "jawDegRange": [
+      15.8,
+      18.34
+     ],
+     "jointRangeDeg": {
+      "neck_pitch": [
+       7.7,
+       60.0
+      ],
+      "head_pitch": [
+       70.8,
+       84.8
+      ],
+      "head_yaw": [
+       -15.8,
+       28.6
+      ],
+      "head_roll": [
+       -19.6,
+       21.5
+      ]
+     },
+     "worst": {
+      "part": "motor12",
+      "body": "neck",
+      "overlapMm3": 2169.211,
+      "gapMm": 0.0,
+      "onJawAtRestMm": [
+       77.0,
+       5.7,
+       100.4
+      ],
+      "overlapDepthMm": 6.85,
+      "class": "interference"
+     },
+     "worstPoseDeg": {
+      "neck_pitch": 11.9,
+      "head_pitch": 84.7,
+      "head_yaw": -3.7,
+      "head_roll": -0.3,
+      "jaw": 18.3
+     }
+    },
+    {
+     "class": "contact",
+     "rows": 42,
+     "byFamily": {
+      "ground": 4,
+      "household": 38
+     },
+     "byPhase": {
+      "release": 4,
+      "reach": 38
+     },
+     "byPart": {
+      "motor12": 4,
+      "neck_link_b": 16,
+      "neck_link_a": 22
+     },
+     "traces": [
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-untrained.json",
+      "app/test-results/household-native-20260905.zip::household-cartesian-descent/trial-00.json",
+      "app/test-results/household-native-20260905.zip::household-cartesian-descent/trial-01.json",
+      "rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-untrained.json",
+      "rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-untrained.json"
+     ],
+     "tracesCount": 6,
+     "jawDegRange": [
+      16.47,
+      18.31
+     ],
+     "jointRangeDeg": {
+      "neck_pitch": [
+       12.0,
+       60.0
+      ],
+      "head_pitch": [
+       70.8,
+       78.8
+      ],
+      "head_yaw": [
+       -15.8,
+       30.7
+      ],
+      "head_roll": [
+       -19.4,
+       21.5
+      ]
+     },
+     "worst": {
+      "part": "neck_link_a",
+      "body": "neck",
+      "overlapMm3": 0.008,
+      "gapMm": 0.0,
+      "class": "contact"
+     },
+     "worstPoseDeg": {
+      "neck_pitch": 60.0,
+      "head_pitch": 70.8,
+      "head_yaw": -15.8,
+      "head_roll": -19.4,
+      "jaw": 18.3
+     }
+    }
+   ]
+  },
+  "trunk_base": {
+   "parts": [
+    "shell_right",
+    "shell_left",
+    "torso_base",
+    "rear_pack",
+    "rear_pack_cover",
+    "openrb_board",
+    "idler12",
+    "idler_cap12"
+   ],
+   "dependsOn": [
+    "neck_pitch",
+    "head_pitch",
+    "head_yaw",
+    "head_roll"
+   ],
+   "binDeg": 2.0,
+   "bins": 14898,
+   "binsWithin3mm": 64,
+   "distinctRowsRechecked": 855,
+   "rowsInterference": 8643,
+   "rowsContact": 59,
+   "minGapMmOverAllRows": 0.0,
+   "minGapRow": {
+    "poseDeg": {
+     "neck_pitch": 11.96,
+     "head_pitch": 81.02,
+     "head_yaw": -3.11,
+     "head_roll": -0.59,
+     "jaw": 18.34
+    },
+    "family": "ground",
+    "phase": "release",
+    "trace": "rl/runs/ground-browser-complete.json",
+    "nearest": {
+     "part": "shell_right",
+     "body": "trunk_base",
+     "overlapMm3": 6.446,
+     "gapMm": 0.0,
+     "onJawAtRestMm": [
+      82.8,
+      -14.4,
+      99.4
+     ],
+     "overlapDepthMm": 0.81,
+     "class": "interference"
+    }
+   },
+   "hits": [
+    {
+     "class": "interference",
+     "rows": 8643,
+     "byFamily": {
+      "ground": 7428,
+      "household": 1215
+     },
+     "byPhase": {
+      "release": 7916,
+      "done": 82,
+      "reach": 644,
+      "failed": 1
+     },
+     "byPart": {
+      "shell_right": 140,
+      "shell_left": 8503
+     },
+     "traces": [
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-complete.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-final.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-untrained-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-finer-219-back-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/nominal-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/stiffer-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/nominal-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/half-step-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-learned.json",
+      "app/test-results/household-actuator-probes-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-braked-browser-and-sock-feedback-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-braked-reach-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-browser-predictive-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-case-20260904.zip::household-cloth-full-sweep/trial-02.json",
+      "app/test-results/household-case-20260904.zip::household-handoff-sweep/trial-00.json",
+      "app/test-results/household-closure-forecast-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-grip-location-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-prediction-and-deadline-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-cloth-waypoint-confounded-20260905.zip::browser/microduck-sock-trial.json",
+      "app/test-results/household-deep-grasp-and-handoff-20260905.zip::browser/microduck-sock-trial.json"
+     ],
+     "tracesCount": 97,
+     "jawDegRange": [
+      15.8,
+      18.34
+     ],
+     "jointRangeDeg": {
+      "neck_pitch": [
+       9.3,
+       33.2
+      ],
+      "head_pitch": [
+       -54.8,
+       84.8
+      ],
+      "head_yaw": [
+       -4.1,
+       109.9
+      ],
+      "head_roll": [
+       -3.8,
+       9.8
+      ]
+     },
+     "worst": {
+      "part": "shell_left",
+      "body": "trunk_base",
+      "overlapMm3": 586.339,
+      "gapMm": 0.0,
+      "onJawAtRestMm": [
+       40.0,
+       40.8,
+       115.6
+      ],
+      "overlapDepthMm": 10.47,
+      "class": "interference"
+     },
+     "worstPoseDeg": {
+      "neck_pitch": 32.4,
+      "head_pitch": -53.2,
+      "head_yaw": 95.0,
+      "head_roll": 1.4,
+      "jaw": 18.1
+     }
+    },
+    {
+     "class": "contact",
+     "rows": 59,
+     "byFamily": {
+      "ground": 48,
+      "household": 11
+     },
+     "byPhase": {
+      "release": 57,
+      "reach": 2
+     },
+     "byPart": {
+      "shell_right": 57,
+      "shell_left": 2
+     },
+     "traces": [
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-complete.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-browser-final.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-baseline-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v1.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/ground-learned-v3.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-development/soft-28-coarse-cycle.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-finer-219-back-half-step.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/mass_plus_20pct-untrained.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/stiffer-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-perturbations-clockfixed-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/x_back_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-20260904/y_right_1p5mm-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/half-step-learned.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-baseline.json",
+      "app/test-results/ground-ball-case-20260904.zip::rl/runs/ground-validation-clockfixed-20260904/nominal-learned.json",
+      "app/test-results/household-case-20260904.zip::household-cloth-full-sweep/trial-02.json",
+      "app/test-results/household-native-20260905.zip::final-source/native-audited-sock.json",
+      "app/test-results/household-predictive-portability-20260905.zip::household-teacher-clone-native-00/trial-000.json",
+      "app/test-results/household-sock-predictive-20260905.zip::browser/microduck-sock-trial (1).json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-heldout-cloud-01/trial-002.json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-heldout-cloud-01/trial-004.json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-heldout-cloud-01/trial-006.json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-transport-handoff-cloud-01/trial-002.json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-transport-handoff-cloud-01/trial-004.json",
+      "app/test-results/household-sock-predictive-20260905.zip::household-sock-transport-handoff-cloud-01/trial-006.json",
+      "rl/runs/ground-browser-complete.json",
+      "rl/runs/ground-browser-final.json",
+      "rl/runs/ground-development/ground-baseline-v1.json",
+      "rl/runs/ground-development/ground-baseline-v3.json",
+      "rl/runs/ground-development/ground-learned-half-step.json",
+      "rl/runs/ground-development/ground-learned-v1.json"
+     ],
+     "tracesCount": 58,
+     "jawDegRange": [
+      16.82,
+      18.34
+     ],
+     "jointRangeDeg": {
+      "neck_pitch": [
+       10.1,
+       27.0
+      ],
+      "head_pitch": [
+       -54.3,
+       81.1
+      ],
+      "head_yaw": [
+       -3.2,
+       58.3
+      ],
+      "head_roll": [
+       -0.6,
+       1.6
+      ]
+     },
+     "worst": {
+      "part": "shell_left",
+      "body": "trunk_base",
+      "overlapMm3": 0.0,
+      "gapMm": 0.003,
+      "class": "contact"
+     },
+     "worstPoseDeg": {
+      "neck_pitch": 27.0,
+      "head_pitch": -54.3,
+      "head_yaw": 58.3,
+      "head_roll": 1.5,
+      "jaw": 18.3
+     }
+    }
+   ]
+  }
+ }
+}

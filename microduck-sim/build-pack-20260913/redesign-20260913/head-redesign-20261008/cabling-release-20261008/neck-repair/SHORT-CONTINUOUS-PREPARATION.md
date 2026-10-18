@@ -1,0 +1,17 @@
+# Short continuous neck harness: mathematical preparation only
+
+The 857 mm four-loop route remains a rejected diagnostic; no fixing seats will be made for it. This branch retains the 7 mm receiving diameter and every original joint limit.
+
+The selected finite candidate moves the body clamp to [0, -25, 47] mm, on the torso's upper rear region, and turns the head's R16 exit down to [-47, 23.2, 103] mm. Neither attachment nor the downward head outlet is a validated solid design. One continuous cable leaves the head, turns toward the rear/left diagonal and returns to the torso through one U. Exact circular arcs and straight legs preserve length and tangents; the U's plane follows the moving head endpoint. There are no invented electrical connectors between curve pieces.
+
+The flexible segment is **215 mm**. The fixed head outlet adds **31.133 mm**, giving **246.133 mm before electrical terminal fanouts**. This cannot be delivered with the received Adafruit 4397's 150±10 mm flexible span. No available extension/spool is established and no purchase or cut list is released.
+
+For all 229 supplied poses, the mathematical curve exists and has constant length to 6e-14 mm. The 186 poses without native rigid-body collisions have minimum exact centerline radius 15.595 mm. The 43 native-blocked poses are separately preserved, with minimum 11.757 mm; neither group is an operational joint-limit certification. The chosen endpoint directions impose a necessary length lower bound of 152.382 mm over the native-clear group, ignoring obstacles and fixed head/terminal sections. It is not a sufficient fit criterion.
+
+The neutral receiving envelope spans X[-94.636, 3.5], Y[-72.036, 26.7], Z[43.5, 106.5] mm. This meets the stated neutral targets (rear X≥−95, |Y|≤80, top Z≤140, flexible length≤240). Dynamic Y reaches −124.694 mm across the native-clear sample set, so compactness throughout motion is still an engineering issue. Six declared key poses passed an exact polyline nonlocal-distance screen; its 7.006946 mm threshold includes worst-case R9 chord sagitta. No all-pose self, solid obstacle, assembly or continuous angular-path acceptance follows.
+
+The bounded alternatives were retained: eight quintic parameter choices, a three-anchor by three-direction circular screen, and four endpoint-constrained 1–2-turn helical variants. The tapered helical variants retain endpoint derivatives, unlike a bare helix equation. The one-turn variants cannot store the requested length within their declared 35 mm amplitude; the two-turn variants fit length but fail the R9 curvature screen in many native-clear poses (best 38/186 pass). These are rejected finite families, not evidence that every helical route is impossible.
+
+Next test is the selected 215 mm family's complete self check, then one current obstacle per fresh process under the 512 MiB/120 s launcher after root grants the CAD token. Its actual downward head channel, fixed clamps, available wire/extension and pin fanouts remain to be designed/checked. The current method and amplifier manifests must be explicitly bound for obstacle work; their incomplete status cannot be promoted by this mathematical screen.
+
+Files: `short-selected-preparation.json`, `short-selected-neutral-centerline.json`, `prepare_short_selected.py`, `finite-anchor-screen.json`, and `short-helical-N*-M*.json`. All are isolated proposals; published meshes, guide pages and wiring topology are unchanged.

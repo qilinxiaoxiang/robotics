@@ -1,0 +1,138 @@
+{
+ "schemaVersion": 1,
+ "date": "2026-10-09",
+ "part": "head_cap",
+ "decision": "replacement",
+ "replacesStockIds": [
+  "4"
+ ],
+ "reason": "V1.5 head cap with a rear cable notch (9.0 mm wide at the top, 6.7 mm max bundle) and an external zip-tie hood, for the OpenRB-150 harness leaving the head. All geometry outside the edit box is identical to the V1.5 print source; same print orientation; same Bambu support blocker.",
+ "v15Source": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009/prototype-adoption/head-cap-prototype-print.stl",
+  "sha256": "3ca84ce24333fdfbf55016b7ce5142eaff2c6df21ef663fb885a1b9176711f07"
+ },
+ "files": {
+  "stl/head_cap.stl": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/stl/head_cap.stl",
+   "sha256": "f59be5c4fb60385dd654f6ea45aa26329f9f0c8e7f0cda480f10066140fe807f"
+  },
+  "world/head_cap.stl": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/head_cap.stl",
+   "sha256": "5c22fbf6186e089f9f1238baf9fc4e87493610710dba745e8b7d74eaec1a5428"
+  },
+  "capNotchReportSnapshot": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.6/evidence/cap-notch-report-snapshot.json",
+   "sha256": "7178a7b26e188b3ae93a5acb6057f43b57bb2f8213a36d51f9363c27e28e8b5d"
+  }
+ },
+ "keyNumbers": {
+  "notch": {
+   "centreTopOuterWorld": [
+    -26.809,
+    17.805,
+    119.824
+   ],
+   "centreTopMidWallWorld": [
+    -26.02,
+    17.515,
+    119.7
+   ],
+   "centreAtLipLevelMidWallWorld": [
+    -26.993,
+    17.873,
+    112.686
+   ],
+   "cutAxis": "along the local outward wall normal n (perpendicular to the wall, tilted 20 deg from -x toward +y)",
+   "widthAtTopMm": 9.0,
+   "profile": "-u side straight; +u side leans outward toward the rim at 38.0 deg from the wall-up axis (print self-supporting); top corners R2.0",
+   "ceilingZAtMidWall": 119.7,
+   "heightAboveOuterRimMm": 8.59,
+   "clearHeightAboveHeadBottomLipMm": 6.89,
+   "widthAtLipLevelMm": 14.54,
+   "widthAtOuterRimMm": 15.882,
+   "edgeBreak": "0.6 mm 45 deg chamfer on the inner top and side edges above the lip (grows to about 1.4 mm on the lower slanted side); outer side edges chamfered 0.6 mm; the outer top edge is replaced by the flush hood underside",
+   "removedMaterialWorldAabb": [
+    [
+     -29.282,
+     9.188,
+     111.115
+    ],
+    [
+     -19.821,
+     28.995,
+     122.229
+    ]
+   ],
+   "removedVolumeMm3": 180.91476250569684
+  },
+  "printability": {
+   "orientation": "unchanged released V1.5 orientation (same rigid transform); support blocker remains valid",
+   "supportBlocker": {
+    "boundsPrintMm": [
+     [
+      -28.823,
+      11.502,
+      69.364
+     ],
+     [
+      -23.252,
+      13.806,
+      71.909
+     ]
+    ],
+    "editBoxPrintAabb": [
+     [
+      48.167,
+      -32.109,
+      42.969
+     ],
+     [
+      67.771,
+      -13.811,
+      68.244
+     ]
+    ],
+    "overlapsEditBox": false
+   },
+   "newFacesOverhang": {
+    "count": 775,
+    "areaMm2": 476.71811896671664,
+    "areaByPrintNormalZ": {
+     "overhang>60deg_from_vertical(nz<-0.866)": 0.0,
+     "overhang45-60deg(-0.866<=nz<-0.707)": 0.0,
+     "downfacing30-45deg(-0.707<=nz<-0.5)": 73.4864,
+     "nz>=-0.5": 403.2317
+    },
+    "minNz": -0.6821630042810896,
+    "note": "nz = print-frame z component of the outward face normal; overhang angle measured from vertical",
+    "facesSteeperThan45": []
+   }
+  }
+ },
+ "measuredFromFinalStl": {
+  "printStl": {
+   "sha256": "f59be5c4fb60385dd654f6ea45aa26329f9f0c8e7f0cda480f10066140fe807f",
+   "volumeMm3": 32118.389,
+   "watertight": true,
+   "windingConsistent": true,
+   "bodies": 1,
+   "bounds": [
+    [
+     -59.718,
+     -31.907,
+     -0.0
+    ],
+    [
+     65.078,
+     31.511,
+     91.292
+    ]
+   ],
+   "bedContactMm2Within0p01": 149.92
+  },
+  "worldStl": {
+   "sha256": "5c22fbf6186e089f9f1238baf9fc4e87493610710dba745e8b7d74eaec1a5428"
+  }
+ },
+ "reportSnapshotNote": "cap-notch-report-snapshot.json was written before the rebuild that restored solid wall on the slanted +y notch side (thin 0.03-0.8 mm skin removed). Notch size, tie hood, local frame, print transform and bed contact are unchanged by that rebuild; its file hashes and volume refer to the earlier build. measuredFromFinalStl holds the final-file numbers."
+}

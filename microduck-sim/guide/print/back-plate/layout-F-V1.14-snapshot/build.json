@@ -1,0 +1,665 @@
+{
+ "variant": "F (V1.11 release source)",
+ "worldFrame": "real world (mm, x forward, y left, z up)",
+ "source": "build_f.py (python build_f.py F)",
+ "handedness": {
+  "result": "XL4015 IN terminal at board-local -Y; with R_XL (local Y -> +y) the IN ends face world -y, OUT ends +y.",
+  "evidence": [
+   "bringup/parts/photos/xl4015_robotis_kit_top.jpg: component side, trimmers at the bottom, OUT+ on the left, IN+ on the right; the TO-263 regulator sits right of centre toward IN, the coil left of centre.",
+   "board_facts.json bodiesLocal (ROBOTIS mesh): regulator_ic Y -10.94..-0.76, inductor Y 1.74..8.95, trimmers Z 7.99..12.82; viewed from +X, screen right = -Y and screen down = +Z, so IN (right) = local -Y."
+  ],
+  "fix": "the whole layout is the y-mirror of the first F render (IN windows -y, OUT +y, 5991 turned 180 deg about x: terminal -y, USB-C +y, P1 at +y); the 5 V pair moves outboard of the inductor and the top lid screw moves over the regulator IC."
+ },
+ "boards": {
+  "top_7V": {
+   "worldStl": "xl4015_top_7V-world.stl",
+   "worldKey": "xl4015_left",
+   "role": "XL4015 #1, 7 V rail (6.80 V) to OpenRB J4",
+   "pcbMidX": -51.03,
+   "seatX": -50.205,
+   "centreZ": 28.199999999999996,
+   "pcbZ": [
+    15.099999999999996,
+    41.3
+   ],
+   "rotationLocalToWorld": [
+    [
+     -1,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     -1
+    ]
+   ],
+   "inEnd": "-y",
+   "outEnd": "+y",
+   "screwHoles": [
+    [
+     -51.03,
+     28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     28.25,
+     38.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     38.7
+    ]
+   ]
+  },
+  "mid_5V": {
+   "worldStl": "xl4015_mid_5V-world.stl",
+   "worldKey": "xl4015_right",
+   "role": "XL4015 #2, 5.0 V Pi lead",
+   "pcbMidX": -51.03,
+   "seatX": -50.205,
+   "centreZ": -0.40000000000000346,
+   "pcbZ": [
+    -13.500000000000004,
+    12.699999999999996
+   ],
+   "rotationLocalToWorld": [
+    [
+     -1,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     -1
+    ]
+   ],
+   "inEnd": "-y",
+   "outEnd": "+y",
+   "screwHoles": [
+    [
+     -51.03,
+     28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     28.25,
+     10.1
+    ],
+    [
+     -51.03,
+     -28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     -28.25,
+     10.1
+    ]
+   ]
+  }
+ },
+ "pd5991": {
+  "worldStl": "pd5991_F-world.stl",
+  "worldKey": "pd5991",
+  "pcbBackX": -50.0,
+  "standoffMm": 3.0,
+  "pcbZ": [
+   -34.32,
+   -14.000000000000004
+  ],
+  "terminalSide": "-y",
+  "usbSide": "+y",
+  "terminalEntries": [
+   [
+    -54.6,
+    -13.2,
+    -25.81
+   ],
+   [
+    -54.6,
+    -13.2,
+    -22.31
+   ]
+  ],
+  "usbSocketCentre": [
+   -53.25,
+   15.05,
+   -24.16
+  ],
+  "screwHoles": [
+   [
+    -50.0,
+    11.37,
+    -31.91
+   ],
+   [
+    -50.0,
+    11.37,
+    -16.67
+   ],
+   [
+    -50.0,
+    -11.37,
+    -31.78
+   ],
+   [
+    -50.0,
+    -11.37,
+    -16.54
+   ]
+  ]
+ },
+ "holes": {
+  "coverScrews": [
+   [
+    -47.0,
+    16.1,
+    26.0
+   ],
+   [
+    -47.0,
+    16.1,
+    -36.5
+   ],
+   [
+    -47.0,
+    -16.1,
+    26.0
+   ],
+   [
+    -47.0,
+    -16.1,
+    -36.5
+   ]
+  ],
+  "lidScrews": [
+   [
+    -65.9,
+    -23.8,
+    -17.4
+   ],
+   [
+    -65.9,
+    23.8,
+    -33.6
+   ]
+  ],
+  "xl4015Bosses": {
+   "top_7V": [
+    [
+     -51.03,
+     28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     28.25,
+     38.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     17.7
+    ],
+    [
+     -51.03,
+     -28.25,
+     38.7
+    ]
+   ],
+   "mid_5V": [
+    [
+     -51.03,
+     28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     28.25,
+     10.1
+    ],
+    [
+     -51.03,
+     -28.25,
+     -10.9
+    ],
+    [
+     -51.03,
+     -28.25,
+     10.1
+    ]
+   ]
+  },
+  "pd5991Bosses": [
+   [
+    -50.0,
+    11.37,
+    -31.91
+   ],
+   [
+    -50.0,
+    11.37,
+    -16.67
+   ],
+   [
+    -50.0,
+    -11.37,
+    -31.78
+   ],
+   [
+    -50.0,
+    -11.37,
+    -16.54
+   ]
+  ]
+ },
+ "envelope": {
+  "box": {
+   "xExtent": [
+    -67.1,
+    -37.5
+   ],
+   "frameRimX": -59.1,
+   "capX": [
+    -67.10000000000001,
+    -59.1
+   ],
+   "capInnerRearFaceX": -65.9,
+   "frontPlateX": [
+    -47.0,
+    -45.0
+   ],
+   "outerDepthBehindFrontPlate": 20.1,
+   "absY": 32.05,
+   "zTop": 43.0,
+   "zBottom": -36.02000000000001,
+   "packFloorZ": -44.0,
+   "bottomAbovePackFloorMm": 7.98
+  },
+  "stack": {
+   "topWallInner": 41.8,
+   "top7V": {
+    "zc": 28.199999999999996,
+    "pcbZ": [
+     15.099999999999996,
+     41.3
+    ]
+   },
+   "tierGap": {
+    "pcbGapMm": 2.4,
+    "wirePlaneZ": 13.899999999999997
+   },
+   "mid5V": {
+    "zc": -0.40000000000000346,
+    "pcbZ": [
+     -13.500000000000004,
+     12.699999999999996
+    ]
+   },
+   "stepInnerZ": -14.000000000000004,
+   "stepOuterZ": -15.200000000000003,
+   "pd5991": {
+    "pcbZ": [
+     -34.32,
+     -14.000000000000004
+    ],
+    "pcbBackX": -50.0,
+    "narrowInnerAbsY": 14.406,
+    "narrowOuterAbsY": 15.606,
+    "narrowWidth": 31.21,
+    "floorInnerZ": -34.82,
+    "floorOuterZ": -36.02,
+    "terminalEntryZ": [
+     -25.81,
+     -22.31
+    ],
+    "usbSocketCentre": [
+     -53.25,
+     15.05,
+     -24.16
+    ],
+    "terminalSide": "-y",
+    "usbSide": "+y"
+   }
+  },
+  "rounding": {
+   "R": {
+    "side": 7.4,
+    "top": 7.8,
+    "step": 4.3,
+    "nside": 4.5,
+    "nbot": 8.0
+   },
+   "rcTop": 1.8,
+   "rcStep": 1.8,
+   "rcNbot": 2.1,
+   "rf": 3.0,
+   "frameRimX": -59.1
+  }
+ },
+ "windows": {
+  "top_7V_IN": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "top_7V_OUT": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    23.0,
+    33.4
+   ]
+  },
+  "mid_5V_IN": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": -1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "mid_5V_OUT": {
+   "x": [
+    -65.9,
+    -53.205
+   ],
+   "side": 1,
+   "yWall": [
+    30.849999999999998,
+    32.05
+   ],
+   "z": [
+    -5.6,
+    4.8
+   ]
+  },
+  "pd5991_term": {
+   "x": [
+    -65.9,
+    -53.1
+   ],
+   "side": -1,
+   "yWall": [
+    14.4065,
+    15.606499999999999
+   ],
+   "z": [
+    -28.06,
+    -20.06
+   ]
+  },
+  "pd5991_usbc": {
+   "x": [
+    -65.9,
+    -49.0
+   ],
+   "side": 1,
+   "yWall": [
+    14.4065,
+    15.606499999999999
+   ],
+   "z": [
+    -31.16,
+    -17.16
+   ]
+  }
+ },
+ "passages": {
+  "P1_out": {
+   "x": [
+    -47.0,
+    -45.0
+   ],
+   "y": [
+    2.9,
+    12.7
+   ],
+   "z": [
+    12.499999999999996,
+    15.299999999999997
+   ]
+  }
+ },
+ "screws": [
+  {
+   "where": "XL4015 bosses at z 38.7 and z -10.9 (y +-28.25), 5.0 long",
+   "count": 4,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 from the seat x -50.205 to x -45.3",
+   "engagementMm": 4.35
+  },
+  {
+   "where": "XL4015 bosses at z 10.1 (y +-28.25), 4.2 long (stub to x -46.0, shell limited)",
+   "count": 2,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 through the stub (tip 0.15 past the stub end)",
+   "engagementMm": 4.2
+  },
+  {
+   "where": "XL4015 bosses at z 17.7 (y +-28.25), 3.2 long (no stub: the torso shells are 1.29 / 1.17 mm ahead)",
+   "count": 2,
+   "screw": "M2 x 4",
+   "stack": "PCB 1.65 mm",
+   "pilotMm": "dia 1.6 through the boss",
+   "engagementMm": 2.35
+  },
+  {
+   "where": "Adafruit 5991 to the standoff bosses (5.0 long)",
+   "count": 4,
+   "screw": "M2 x 6",
+   "stack": "PCB 1.6 mm",
+   "pilotMm": "dia 1.6 from the seat x -50.0 (3.0 standoff) to x -45.3 (4.7 deep)",
+   "engagementMm": 4.4
+  },
+  {
+   "where": "cap ears to the frame bosses at (y -23.8, z -17.4) under the step and (y +23.8, z -33.6) beside the narrow tier under the USB-C plug",
+   "count": 2,
+   "screw": "M2 x 6",
+   "stack": "cap ear 1.2 mm (x -60.3..-59.1)",
+   "pilotMm": "dia 1.6 from x -59.1 to x -53.9 (5.2 deep)",
+   "engagementMm": 4.8
+  },
+  {
+   "where": "frame to the V1.8 pack cover posts (reused V1.8 screws); the lower two heads sit in dia 4.4 driver lanes",
+   "count": 4,
+   "screw": "M2 x 6",
+   "stack": "front plate 2.0 mm",
+   "pilotMm": "V1.8 pack posts (4.8 deep pilots)",
+   "engagementMm": 4.0
+  }
+ ],
+ "wires": {
+  "7V_a": {
+   "net": "7V",
+   "lengthMm": 61.6,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.56,
+   "gapLidMm": 0.4,
+   "gapBoardsMm": {
+    "top_7V": 0.3,
+    "mid_5V": 0.3,
+    "pd5991": 10.0
+   }
+  },
+  "7V_b": {
+   "net": "7V",
+   "lengthMm": 68.8,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.658,
+   "gapLidMm": 0.4,
+   "gapBoardsMm": {
+    "top_7V": 0.3,
+    "mid_5V": 0.3,
+    "pd5991": 10.0
+   }
+  },
+  "5V_a": {
+   "net": "5V",
+   "lengthMm": 68.2,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.658,
+   "gapLidMm": 0.4,
+   "gapBoardsMm": {
+    "top_7V": 0.3,
+    "mid_5V": 0.3,
+    "pd5991": 10.0
+   }
+  },
+  "5V_b": {
+   "net": "5V",
+   "lengthMm": 75.4,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.658,
+   "gapLidMm": 0.4,
+   "gapBoardsMm": {
+    "top_7V": 0.3,
+    "mid_5V": 0.3,
+    "pd5991": 10.0
+   }
+  },
+  "15V_link_p": {
+   "net": "p",
+   "lengthMm": 67.9,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.658,
+   "gapLidMm": 0.393,
+   "gapBoardsMm": {
+    "top_7V": 0.37,
+    "mid_5V": 1.779,
+    "pd5991": 10.0
+   }
+  },
+  "15V_link_q": {
+   "net": "q",
+   "lengthMm": 74.3,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.657,
+   "gapLidMm": 0.4,
+   "gapBoardsMm": {
+    "top_7V": 0.356,
+    "mid_5V": 0.356,
+    "pd5991": 10.0
+   }
+  },
+  "15V_feed_p": {
+   "net": "p",
+   "lengthMm": 68.9,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.658,
+   "gapLidMm": 0.368,
+   "gapBoardsMm": {
+    "top_7V": 10.0,
+    "mid_5V": 0.376,
+    "pd5991": 0.389
+   }
+  },
+  "15V_feed_q": {
+   "net": "q",
+   "lengthMm": 70.7,
+   "minBendRadiusMm": 3.0,
+   "gapFrameMm": 0.655,
+   "gapLidMm": 0.374,
+   "gapBoardsMm": {
+    "top_7V": 10.0,
+    "mid_5V": 0.35,
+    "pd5991": 0.389
+   }
+  }
+ },
+ "frame": {
+  "volume_mm3": 10502.4,
+  "grams": 11.08,
+  "genus": 19,
+  "bodies": 1,
+  "bounds": [
+   [
+    -59.1,
+    -32.05,
+    -44.0
+   ],
+   [
+    -37.5,
+    32.05,
+    43.0
+   ]
+  ]
+ },
+ "lid": {
+  "volume_mm3": 6276.0,
+  "grams": 6.62,
+  "genus": 2,
+  "bodies": 1,
+  "bounds": [
+   [
+    -67.1,
+    -32.05,
+    -36.02
+   ],
+   [
+    -53.6,
+    32.05,
+    43.0
+   ]
+  ]
+ },
+ "massTotalG": 17.7,
+ "printPoses": {
+  "frame": "rear_frame-print.stl: rim-down, the open back (x -65.9, lid seat) on the bed; x' = y, y' = z, z' = x",
+  "lid": "rear_lid-print.stl: inner face (x -65.9) on the bed; x' = y, y' = -z, z' = -x"
+ },
+ "sha256": {
+  "rear_frame-world.stl": "dc9fcdaccee61641e20766fbf8ee8398df21f62f29b5af82a100be61cdb59234",
+  "rear_lid-world.stl": "5773e28d642889283a434eee40beef91b98f93280528f999a55f5e584bf2e671",
+  "xl4015_top_7V-world.stl": "ec7632d204f56d8bf98b29e22897c6874b8f1b7667573c9b8b26d534039cd67a",
+  "xl4015_mid_5V-world.stl": "109b788755069a37fe0d9804357ac16578f6cd2f04faf04f49070e54006db9c8",
+  "pd5991_F-world.stl": "d4fdcbfb2459af6ea812181ab211487ba787b79a8a71e37379ee330ba8e08f56",
+  "wires_F.json": "8fa64a76e2e295f12b2dde92d5f658293d44c4618b0e5395c28593b1ed27bf74"
+ }
+}

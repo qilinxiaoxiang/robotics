@@ -1,0 +1,1013 @@
+{
+ "schema_version": 1,
+ "problem_ids": [
+  "P0",
+  "P5",
+  "P6"
+ ],
+ "goal": "Build a low-cost MicroDuck for camera-guided beak pickup and reinforcement-learning experiments: perceive the target, align, grasp, lift, and assess success. Continue from the completed jaw training. Use one power source and consolidate purchases.",
+ "current_robot_state": "microduck-sim/CURRENT-STATE.json holds the robot's current measured facts (IMU rate and delay, servo read drops, servo rail voltage, walking policy, power). Read current values only there, never from memory, DECISIONS history, logs or code comments; cite it in every brief. Check: guide/firmware/mac/robot_state_check.py (sim_suite.sh runs it first).",
+ "required_capabilities": [
+  "camera_observation",
+  "visual_alignment",
+  "learned_jaw_control",
+  "pickup_success_check",
+  "single_source_power"
+ ],
+ "scope_rule": "Manual positioning and scripted pickup are component bring-up tests. They do not replace the visual learning goal or complete its MVP. A phase split changes implementation order, not the user's goal.",
+ "phase1_compute_intent": {
+  "confirmed_by_user": "2026-09-29",
+  "macbook_pro": "Runs robot control and policy computation in phase one.",
+  "raspberry_pi": "Connects sensors, acquires their measurements and forwards data to the Mac; does not need to run robot-policy inference.",
+  "precedence": "This direct user clarification supersedes the previous Pi-local inference / Mac keyboard-client division in compute-review.md and phase1/runtime/README.md.",
+  "implementation_status": "Architecture clarification recorded; the existing combined Pi controller has not yet been migrated or physically validated for this split.",
+  "acceptance_needed": "Define the motor-bus owner and sensor transport; measure observation age, jitter and loop timing; verify stale-data and lost-command stopping on hardware. Recheck mounting, power and camera cable for the exact borrowed board.",
+  "borrowed_board_evidence": "User identified the available boards on 2026-10-08: IMG_6945 first-generation Raspberry Pi Zero W with soldered 40-pin male header (WH branding only if factory fitted; not established); IMG_6944 Raspberry Pi 3 Model B V1.2. Board identity is user-confirmed; operational condition and achieved camera-stream latency remain untested.",
+  "board_geometry_boundary": "Old head CAD has only a 65 x 30 x 1.6 mm Zero reference slab. Current curved-head work must include the identified Zero W soldered 40-pin header, components and plugs. A naked-board fit is not complete-board acceptance; Pi 3B has a separate larger connector envelope.",
+  "available_boards": [
+   {
+    "model": "Raspberry Pi Zero W (first generation)",
+    "header": "40-pin male, soldered",
+    "source": "User identification of IMG_6945",
+    "operationally_tested": false,
+    "header_orientation": "User-confirmed 2026-10-08: male pins extend above the component face; solder joints/tails are on the PCB underside. These are board-local faces, not robot world-up/down after mounting."
+   },
+   {
+    "model": "Raspberry Pi 3 Model B V1.2",
+    "source": "User transcription of board marking in IMG_6944",
+    "operationally_tested": false
+   }
+  ],
+  "board_selection": {
+   "engineering_preference": "Raspberry Pi Zero W (first generation, soldered 40-pin header)",
+   "status": "preferred for curved-head integration; runtime and populated-board fit gates pending",
+   "reason": "The MacBook runs control and policy. Prefer the compact board for sensor capture/forwarding while preserving original curved head geometry. Pi 3B remains a bench/debug alternative; CPU speed alone does not establish end-to-end observation latency.",
+   "user_selected_final_board": false,
+   "acceptance": [
+    "Populated-board, male header, female housing and connector clearance",
+    "Sustained camera capture/encoding/transport/decode with timestamps and stale-frame detection",
+    "Loaded 5 V supply and thermal checks"
+   ],
+   "a7z_review": {
+    "verified_date": "2026-10-08",
+    "decision": "No purchase needed on current evidence; evaluate only after a measured existing-board bottleneck",
+    "reason": "Mac remains the control/policy host. Cubie A7Z adds compute but official camera list does not establish support for the owned IMX708 Camera Module 3; its 31-pin 0.3 mm camera interface also requires a different cable/adapter and driver validation. Same PCB outline is not interchangeable fit or camera compatibility.",
+    "sources": [
+     "https://docs.radxa.com/en/cubie/a7z/hardware-use/mipi-csi",
+     "https://docs.radxa.com/en/cubie/a7z/accessories/camera-4k",
+     "https://docs.radxa.com/en/cubie/a7z/hardware-use/type-c"
+    ],
+    "change_evidence_required": [
+     "Measured Zero W capture/encode/transmit/decode latency or resource bottleneck",
+     "Verified IMX708 driver, autofocus, camera cable and streaming path on A7Z",
+     "Rechecked power, heat, antenna and connector fit"
+    ],
+    "purchase_authorized": false
+   },
+   "hardware_test_availability": {
+    "confirmed_by_user": "2026-10-08",
+    "state": "Zero W has not been connected yet; no available live SSH/camera test is established.",
+    "consequence": "Keep streaming latency and runtime qualification pending; continue mechanical and source-based work."
+   }
+  },
+  "motor_bus_design_choice": {
+   "date": "2026-10-09",
+   "status": "PRIOR_UNAPPROVED_MAC_REAR_WORKAROUND_REJECTED",
+   "choice": "Preserve internal Pi USB to OpenRB during the enclosed-head repair; do not change bus ownership to hide connector interference.",
+   "reason": "Mac control/policy and Pi sensor forwarding do not themselves authorize relocating USB outside the head or removing the existing Pi USB motor-bus connection.",
+   "software_migration_passed": false,
+   "physical_commissioning_passed": false,
+   "evidence": "build-pack-20260913/redesign-20260913/workflow-review-20261009/WORKFLOW.md",
+   "supersededBy": "current_build.pi_openrb_uart_20261013"
+  }
+ },
+ "user_evidence": [
+  {
+   "session_id": "01a081c4-af22-75d3-9534-60b8683b9f7c",
+   "line": 2397,
+   "meaning": "The user explicitly requires reinforcement learning for beak pickup and a camera to locate objects."
+  },
+  {
+   "session_id": "01a0972f-e2c8-7fe2-b386-d7c578583d74",
+   "line": 6747,
+   "meaning": "Phase 1 must run our pickup task as a prototype/MVP while retaining expandability. This does not authorize removing perception."
+  }
+ ],
+ "training": {
+  "status": "completed_simulation_experiment",
+  "results": "microduck-simulator/rl/results/validation.json",
+  "summary": "microduck-simulator/rl/results/training-summary.json",
+  "checkpoint": "microduck-simulator/rl/models/jaw-ppo.zip",
+  "exported_actor": "microduck-simulator/app/public/policies/jaw-ppo.json",
+  "scope_source": "microduck-simulator/rl/README.md",
+  "observation_source": "privileged simulation state: target position, contacts, support and lift",
+  "remaining_transfer_work": "Replace privileged state with real observations and validate perception, alignment, trained jaw integration, calibration, success assessment and power on hardware."
+ },
+ "current_build": {
+  "contract": "build-pack-20260913/redesign-20260913/design-contract.json",
+  "scope": "integrated_hardware_design",
+  "project_handoff_status": "physical_and_visual_trials_pending",
+  "camera_required": true,
+  "audio": {
+   "status": "Released in V1.9 (2026-10-13); not bench-tested",
+   "decided": "Extension requested by the owner 2026-10-12; placed in the V1.9 scope 2026-10-13",
+   "scope": "Audio is part of V1.9. The owned Adafruit 3006 MAX98357A amplifier and the CMS-30204-18SP 8 ohm 1 W speaker go inside the head, wired through the neck route of the extension.",
+   "gain": "No GAIN resistor. GAIN and SD stay unconnected, so the amplifier runs at its default 9 dB (MAX98357A datasheet Table 8). The 1 W speaker is protected by the ALSA softvol ceiling max_dB -3.0 (was -6.0 until 2026-10-15) in /etc/asound.conf (BRINGUP step 13): output level = input dBFS + 2.1 dB + gain, so 0 dBFS gives 8.1 dBV = 2.5 Vrms = 0.8 W into 8 ohm (speaker rated 1.0 W). Opening hw:MAX98357A directly bypasses the ceiling (about 1.6 W at full scale), so programs use the default device.",
+   "amp_wiring": {
+    "date": "2026-10-13",
+    "decided_by": "user",
+    "user_statement": "这样的话 直角排线也不找到 功放也做焊接吧",
+    "user_statement_en": "Then no need to find a right-angle header; solder the amplifier too.",
+    "link": "Five wires soldered straight into the MAX98357A holes LRC, BCLK, DIN, GND and Vin (pushed in from the component side, soldered on the underside), each a female-to-female jumper with one sleeve cut off; the sleeve ends go on Pi pins 35, 12, 40, 34 and 4. No header and no jumper housings at the amplifier. The GAIN and SD holes stay empty (resistor dropped 2026-10-14, see gain_decision_20261014).",
+    "cut_lengths": "guide step wire-list (guide/data/guide-data.json): sleeve included, route plus 15 mm.",
+    "geometry": "guide/print/amp-wired/ (amplifier solid without the header; routes start at the holes inside the removed header envelope). Print gate rerun 2026-10-13: passed, no mid-route cable penetration.",
+    "pages": "Guide steps wire-list and amplifier; BRINGUP step 13 rewritten (sections ab-3 to ab-8).",
+    "supersedes": "7-pin right-angle header plus five Dupont housings at the amplifier (V1.9 audio study)."
+   },
+   "geometry": "guide/print/ext-v19/ (release solids, README with screws and connection methods); study history in guide/extension-20261012-neck-audio/.",
+   "open_items": "Bench test: BRINGUP step 13 (solder the five amplifier wires and the two speaker leads, play at low volume, confirm the -6 dB ceiling). Owner chose to try the clips, retainer and amp posts as printed (2026-10-13).",
+   "v1_8_state": "The printed V1.8 head cap has no audio roof posts (guide/print/cap-no-audio/); audio parts are not installed in the V1.8 build.",
+   "gain_decision_20261014": {
+    "date": "2026-10-14",
+    "decided_by": "user",
+    "user_statement": "现在指南虽然写得很详细 但还是太复杂了 正过来反过去连接 还要电阻在焊接的腿上绕个圈什么 都是骚操作 … 有简单的操作吗 / 可以的",
+    "user_statement_en": "The guide is too complicated: flipping back and forth, a resistor leg wrapped round a wire tail. Is there a simpler way? / Yes, do it.",
+    "supersedes": "100 kOhm GAIN-to-Vin resistor (3 dB) soldered on the underside, decided 2026-10-13",
+    "evidence": "MAX98357A datasheet: Table 8 gain selection; output level = dBFS + 2.1 dB + gain; Adafruit 3006 page: 1.4 W at 1% THD into 8 ohm at 5 V",
+    "geometry": "No CAD rerun: the resistor envelope in guide/print/ext-v19 and the amp-wired gate solids stays as an unused conservative envelope."
+   },
+   "speaker_mount": "Two strips of 1 mm foam double-sided tape, each about 40 x 1.5 mm, butted into one closed loop on the outer 1.5 mm of the speaker's grille face, on the collar's continuous 0.6 mm lip ring; the retainer screws press it to 0.6 mm. The tape clamps the speaker against rattle and seals the edge so the back wave cannot leak round to the front; the factory metal grille protects the cone but does neither. The loop clears all seven grille holes by about 0.8 mm (datasheet CMS-30204-18X page 2). Replaces the 1 mm foam ring (user 2026-10-14 '泡面双面胶可以试试'); no glue. Modelled as guide part speaker_tape (guide/print/world/speaker_tape.stl); the speaker model guide/print/world/speaker.stl carries the datasheet grille holes as 0.4 mm recesses.",
+   "orientation": "Flat metal grille with seven holes (one 7.9 mm in the middle, six 3.5 mm) towards the cap roof inside the collar; the raised 12.7 mm magnet and the two solder pads towards the retainer, pads at the end nearest the amplifier posts. Leads forward to the amplifier terminal. Figure guide/content/figures/speaker-section-{en,zh}.png, cut from the world STLs by guide/content/figures/make_speaker_section.py, shown in the guide speaker step and BRINGUP step 13 part 5.",
+   "bringup_commands": "2026-10-14 (user): BRINGUP step 13 shows no Pi commands. Claude runs bringup/scripts/pi_audio_setup.sh and pi_audio_test.sh over ssh; expected readings and troubleshooting live in bringup/dev/audio-runbook.md.",
+   "speaker_leads": "Two 30 mm pieces cut from a Dupont jumper (stranded, about 26 AWG). Not 22 AWG solid (stiff, levers the small pads off) and not 16 AWG (thicker than the pads). The factory wire-lead version of this speaker uses UL1571 30 AWG.",
+   "ceiling_change_20261015": {
+    "date": "2026-10-15",
+    "decided_by": "user",
+    "user_statement": "我同意把音量上限从 −6 dB 放宽到 −3 dB，改完重启再放鸭叫。",
+    "user_statement_en": "I agree to raise the volume ceiling from -6 dB to -3 dB; reboot and play the quacks.",
+    "change": "/etc/asound.conf max_dB -6.0 -> -3.0 on the duck Pi (16 GB card); daily level stored at 100%.",
+    "evidence": "File-sink measurement through the same softvol on the Pi: 100% applies -3.00 dB (-6.00 dB before). Full-scale 1 kHz at the old -6 dB ceiling sounded clean in free air; quacks were too quiet. Amplifier: 1.4 W at 1% THD into 8 ohm at 5 V (Adafruit 3006), so 0.8 W is inside its clean range; Pi throttled=0x0.",
+    "limit": "Never above -3 dB: 0 dB is about 1.6 W into the 1 W speaker.",
+    "quack_sources": "Wikimedia Commons mallard XC62258 (Jonathon Jongsma, CC BY-SA 3.0) and Pollen microduck-simulator voices, high-passed at 500 Hz and limited to -1 dBFS."
+   }
+  },
+  "servo_order": "Order 2034348 (ROBOTIS US, merchant-confirmed 2026-09-18): three OMX-AI kits. Two kits supply 16 XL330-M288-T and 4 OpenRB-150 for the 15-servo/1-controller build; the third kit stays intact for leader/follower experiments. Received: the user photo IMG_6972 (2026-10-13) shows XL330 servos with ID 3 and ID 15 stickers assembled on the robot and an OpenRB-150 on the bench. No tracking record is needed. One SMPS 12V 5A + SMPS2DXL + 3-wire cable set from a kit allocated to the duck is the robot wall supply (wall_power_change_20261013). Original servo/controller order fully refunded at merchant.",
+  "source_location": "Bench power, adopted 2026-10-13 (replaces the 12 V SMPS chain the same day): USB-C PD charger -> Adafruit 5991 at 5 V -> 22 AWG solid pair -> OpenRB-150 J4; Pi on the same screws via two jumpers. No converter on the robot. Details: current_build.usb_c_5v_power_20261013.",
+  "handbook": "build-pack-20260913/redesign-20260913/START-HERE.html",
+  "workflow": "build-pack-20260913/redesign-20260913/WORKFLOW.md",
+  "verifier": "build-pack-20260913/redesign-20260913/verify_current_build.py",
+  "procurement": "DigiKey order 101587695: all 15 lines received, user-confirmed 2026-09-29 (procurement/order-101587695-received.json). OMX-AI order 2034348 received, evidenced by the user photo of assembled servos 2026-10-13 (procurement/sourcing-policy.json#replacement_bundle_receipt). The 7.0 V power chain (current_build.servo_rail_7v_20261014) uses the received Adafruit 5991 and two owned ROBOTIS OMX-AI kit XL4015 modules, so it needs no purchase. The received fuses are not used. Pi and club holds retained.",
+  "printing_status": {
+   "status": "v1_8_printed_and_mostly_assembled_user_confirmed",
+   "confirmed_by_user": "2026-10-13",
+   "user_statement": "白色和黄色V1.8都打了, 橙色和黑色1.8也打了, 已经拼了个大概",
+   "user_statement_en": "White and Yellow V1.8 are printed, Orange and Black V1.8 are printed too, and the robot is roughly assembled.",
+   "photo": "/Users/xiangzheng/Downloads/IMG_6972.HEIC",
+   "photo_sha256": "69ae143a1f35b9ede4c7ee866241a2b4fc2c0459f852bbac435b5fadce13040d",
+   "photo_shows": "Head with the camera in the eye, torso and both legs assembled; XL330 servos with ID 3 and ID 15 stickers on the robot; an OpenRB-150 on the bench beside it.",
+   "printed_sets": [
+    {
+     "set": "original stock",
+     "instances": 89,
+     "confirmed_by_user": "2026-10-01"
+    },
+    {
+     "set": "V1.6",
+     "confirmed_by_user": "2026-10-09",
+     "record": "guide/print/release-V1.6-final/final-V1.6.json"
+    },
+    {
+     "set": "V1.8 incremental",
+     "plates": [
+      "White",
+      "Yellow",
+      "Orange",
+      "Black"
+     ],
+     "parts": 10,
+     "confirmed_by_user": "2026-10-13",
+     "manifest": "guide/print/release-V1.8/manifest-V1.8.json",
+     "delivery": "guide/print/release-V1.8/run/delivery-index.json"
+    }
+   ],
+   "never_printed": "V1.7. Its head cap and OpenRB tray are superseded by the printed V1.8 head cap and rear pack.",
+   "release_pointer": "current_build.current_incremental_print_release is owned by the print-release step. 2026-10-13: V1.9 (one Orange plate) released; V1.8 remains the printed baseline until the V1.9 parts are printed and fitted.",
+   "includes_orange": true,
+   "assembly_state": "Mostly assembled per the user, 2026-10-13.",
+   "evidence_boundary": "User statement plus one photo. Cable dressing, closure details, electrical bring-up and commissioning are not done or not verified.",
+   "optional_replacement_pack": "build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/README.md",
+   "optional_replacement_scope": "User-requested surface-quality repair for possible reprints, 2026-10-06. Original printed stock preserved; no print job sent. Digital files require their package verifier; physical finish/fit remains unverified.",
+   "printing_now": {
+    "set": "V1.17 incremental",
+    "started_by_user": "2026-10-15",
+    "user_statement": "刚才1.17的一版我已经在打印了 1.18可以把1.17里面剔除掉",
+    "user_statement_en": "I am already printing V1.17; V1.18 can drop what is in V1.17.",
+    "manifest": "guide/print/release-V1.17/manifest-V1.17.json",
+    "next": "V1.19: the box cap and the battery backpack cap with 3.0 mm screw floors (one Orange plate, centred).",
+    "evidence_boundary": "User statement only; which plates finished and fit are not confirmed.",
+    "v1_17_cap_failure": {
+     "date": "2026-10-15",
+     "photo": "/Users/xiangzheng/Downloads/IMG_7004.HEIC",
+     "photo_sha256": "bb1bf81b53f5be1fd61159c2968b580bf714cf586ef877d8dd63cbd1f96317cd",
+     "user_statement": "以1.7的供电背包背盖为例 那两个螺丝孔明显太薄了 拆的时候成了两个大洞 起不到固定背包盖的作用了, 你可以看着调整一下 螺丝挡板换成更厚的 相应螺丝也可以换成更长的",
+     "user_statement_en": "Take the V1.17 power-backpack cap: its two screw holes are clearly too thin; when taken apart they became two big holes and no longer hold the cap. Make the screw stop plates thicker; the screws may be longer.",
+     "photo_shows": "The printed orange V1.17 layout F box cap from inside: the two low screw columns (5991 hole axes) torn open, the two top columns intact.",
+     "fix": "V1.19 (current_incremental_print_release)"
+    },
+    "v1_18_printed": {
+     "date": "2026-10-15",
+     "user_statement": "另外我刚才打了1.8, 我发现他们没居中啊",
+     "user_statement_en": "I just printed V1.18 and found the parts were not centred.",
+     "measured_offset_mm": [
+      -37.9,
+      -62.5
+     ],
+     "consequence": "V1.19 drops the V1.18 frame; the pipeline and design verifier now enforce plate centring (1 mm)."
+    }
+   }
+  },
+  "optional_ankle_prototype": {
+   "readme": "build-pack-20260913/redesign-20260913/ankle-redesign-20261007/README.md",
+   "status": "digital_prototype_physical_fit_and_strength_pending",
+   "scope": "User-requested removable passive cheek and revised sleeve; original source parts remain the accepted baseline. No print job sent.",
+   "verifier": "build-pack-20260913/redesign-20260913/ankle-redesign-20261007/verify_redesign.py"
+  },
+  "assembly_user_evidence": {
+   "confirmed_by_user": "2026-10-08",
+   "ankle_and_foot": "User reports ankle and foot were force-fitted and are already assembled; defer their redesign and preserve the assembled legs.",
+   "evidence_boundary": "Seating is user-confirmed; free motion, damage, backlash and loaded function were not measured by this report.",
+   "head_camera_direction": "User rejects the external black rooftop camera bracket and wants the camera inside the existing eye opening. Evaluate head fit and local redesign rather than assuming force-fitting is acceptable.",
+   "review_entry": "build-pack-20260913/redesign-20260913/head-redesign-20261008/README.md",
+   "head_outer_shape": "User rejected the prior rectangular-box conversion and authorized restoration of the original community curved head. Preserve the source curved exterior while repacking electronics; do not claim bounding-box equivalence preserves shape.",
+   "repair_scope_correction_20261008": {
+    "user_instruction": "Preserve the overall GitHub community design; user rejected relocating OpenRB or making broad architecture changes merely to satisfy new routing assumptions.",
+    "baseline": "AI-FanGe/Microduck-build-tutorial, local source commit49678215 (full revision in source audit).",
+    "implementation": "OpenRB rear relocation, new roof tether eyes, 11-wire hard-guided neck loops, split neck carrier, and four new cable guides are stopped diagnostics, not adopted or printable deliverables. Jaw split/pad relief are withdrawn pending restoration of original support plus separate ring.",
+    "required_method": "Distinguish original upstream geometry, prior assistant modifications, and genuinely new camera/audio requirements. Do not classify an algorithmic route failure under assumed envelopes as proof that the upstream design must be replaced."
+   },
+   "repair_print_version_20261008": {
+    "version": "V1.4",
+    "archive": "build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/zhengxia_MicroDuck_V1.4_8-files.zip",
+    "archiveSha256": "231f92c5c1e8d92305580f59dca1d264861d77f2538e6782ebdf7064c2e721c0",
+    "partKinds": 11,
+    "quantity": 13,
+    "printerExportScope": "Four color plates digitally inspected and exported in the matching native slicer, with actual thumbnails. Does not qualify full robot assembly or physical fit.",
+    "cameraCablePhotoConfirmed": "User-supplied photo confirms Standard–Mini200mm narrow-majority orange cable; do not request width/stiffener/free-span measurements again.",
+    "piSpacing": "Three separate2mm spacers andM2.5x8 screws; old fourth passive point has2mm gap. Actual discrete male pins clear the current shell; old solid receiving box caused a false collision.",
+    "remaining": [
+     "Printed fit, original jaw elastic insertion, support removal and free rotation need physical assembly checks.",
+     "Runtime, power, camera/control latency and visual pickup remain unvalidated."
+    ],
+    "status": "DIGITAL_PRINT_PACKAGE_RELEASED",
+    "userInstruction": "Keep full route/closure acceptance separate from physical commissioning; flexible route is an arrangement example, not an exact folding template.",
+    "flexibleCableMethod": "Manually arrange slack; a geometric example is not a required rigid cable shape. Do not redesign printed parts solely because a restricted route family fails. Verify actual obstacles, accessible connectors and pinch-free closure.",
+    "withdrawnPredecessor": {
+     "version": "V1.2",
+     "archive": "build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/MicroDuck-Repair-V1.2-4Colors.zip",
+     "archiveSha256": "f8297dc8d145996256552773487c6340b1618558907e614a8199ad7a6f262088",
+     "status": "PRINT_HANDOFF_WITHDRAWN_PENDING_FULL_RIBBON"
+    },
+    "localDelivery": "/Users/xiangzheng/Downloads/zhengxia_MicroDuck_V1.4_8-files.zip",
+    "complete200mmRibbonGeometryAccepted": true,
+    "currentPopulatedCapClosureAccepted": true,
+    "physicalFitVerified": false,
+    "incrementalOnly": true,
+    "incrementalBaselineDate": "2026-10-01",
+    "incrementalBaselineInstances": 89,
+    "unchangedStockReprints": 0,
+    "geometryChangedFromPriorV1_3": true,
+    "incrementalAudit": "build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/incremental-audit/incremental-audit-V1.4.json",
+    "replacements": 6,
+    "additions": 7,
+    "geometryChanges": [
+     "neck_pitch integral 1mm seats instead of four loose1mm neck washers"
+    ],
+    "printerFiles": 8,
+    "filenamePrefix": "zhengxia_",
+    "nativePrintIndex": "build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/delivery-index.json",
+    "flatBaseAcceptance": "build-pack-20260913/redesign-20260913/head-redesign-20261008/gpio-audio-repair/orientation-readonly-review/flat-base-final-acceptance.json",
+    "batteryTrayIncluded": false,
+    "priorReleasedVersion": {
+     "version": "V1.3",
+     "archive": "build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/MicroDuck-Repair-V1.3-Incremental.zip",
+     "sha256": "29280d3300085d4ed356f582fcec6340eb15f53914eeb186eb20385c4c398416"
+    },
+    "superseded_for_current_trip_by": "V1.5; historical V1.4 evidence does not accept the new populated head."
+   },
+   "replication_method_correction_20261009": {
+    "user_request": "Reassess the unsuccessful overnight design process against working open-source MicroDuck and normal engineering practice. Remove unnecessary complexity and unrealistic stiff cable shapes.",
+    "method": "Upstream assembly first; compare actual component differences; rigid package and access in CAD; flexible bundle corridors with adjustable slack; targeted subassembly checks; incremental adopted changes only.",
+    "withdrawn": "Six rectangular cable-tie receiving frames and their mandatory routing instruction. They are not printed parts.",
+    "head_candidates": "New SMT GPIO socket and custom USB adapter studies remain unadopted while the upstream package and actual necessary differences are reviewed.",
+    "work_status": "Complete V1.5 incremental print prototype released and current Mac-mini guide synchronized with live Chrome acceptance. Internal USB cable fit, populated closure and physical commissioning remain pending.",
+    "workflow": "build-pack-20260913/redesign-20260913/workflow-review-20261009/WORKFLOW.md"
+   },
+   "prototype_scope_correction_20261009": {
+    "source": "User explicitly accepted simple cable-channel/connector instructions and printing a prototype followed by physical fit adjustments on 2026-10-09.",
+    "delivery": "Incremental practical prototype, not a production-qualified robot. Retain original exterior and unchanged working parts.",
+    "required": [
+     "Complete rigid boards/plugs and reachable insertion",
+     "Existing openings and sufficient space for flexible leads/slack",
+     "Preconnect inaccessible sockets before covers",
+     "Hands-on joint and pinch-free closure checks during trial assembly"
+    ],
+    "not_required": [
+     "Detailed individual wire solids",
+     "Exact soft-wire shapes/material deformation",
+     "All-wire collision-free CAD certification before prototype release"
+    ],
+    "method": "Use matching upstream photos/video; distinguish observed construction from inferred component pose. Do not introduce new retention parts to enforce a drawn wire curve.",
+    "remaining": "The owned Adafruit4472 straight USB-C plug housing conflicts with closed-head placement. Suitable finished internal Pi-host Micro-B to OpenRB USB-C lead remains unselected. Printed fitting and populated closure remain physical prototype checks.",
+    "guide_change": "All eight leg links now use actual plug models, insertion animations and channel instructions; rigid wire loops and six artificial tie frames withdrawn.",
+    "currentPrintRelease": "build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/run/delivery-index.json"
+   }
+  },
+  "web_delivery": {
+   "confirmed_by_user": "2026-10-08",
+   "canonical_source": "MacBook Pro: /Users/xiangzheng/code/robotics/microduck-sim",
+   "runtime": "mac-mini:/Users/shawnxiang/code/microduck-guide",
+   "build_guide_url": "http://today.tailfc7c94.ts.net:8766/",
+   "build_guide_source": "guide/ (README.md; content/steps.py, content/routes.json, content/build_guide_data.py, build_guide.py)",
+   "build_guide_deployed": "2026-10-13: guide-20261013 with the V1.9 parts (10 chapters, 71 steps, 29 cables, 151 parts): V1.9 rear pack with the BNO085 pre-mounted on its rib, V1.9 head cap with speaker, amplifier and the five audio jumpers, four bundle clips on the -y neck route, shells kept with a hand-drilled rear cross screw. Print gate: build_solids 151/151 closed, pairs no new overlap beyond the intended cap seam and jumper ends, steps_audit 71 steps 0 path collisions, cables 29 cables 0 mid-route penetration. Served at / and /MICRODUCK-BUILD.html, byte-identical to guide/dist/MICRODUCK-BUILD.html (sha256 4171a1e4...). Also served: /HEAD-3D.html (V1.9 head exploded view), /PARTS-SHEET-V1.9.html, /zhengxia_MicroDuck_V1.9_2-files.zip, /BRINGUP.html step 13 (amp soldering with the GAIN resistor drawn in the bench). Previous: 2026-10-12: guide-20261012 with the leg servo cables (10 chapters, 64 steps, 22 cables; new chapter 4 opens the hips, checks each leg's four chain cables and plugs missing ones; hip cables 5-4/10-9 rerouted through the torso base centre slot because the V1.8 rear pack fills the old coil pocket). interference-audit: cables.py 22 cables, only terminal-end findings, 0 mid-route; steps_audit.py 64 steps, 0 premature, 0 path collisions. Served at / and /MICRODUCK-BUILD.html, byte-identical to guide/dist/MICRODUCK-BUILD.html (sha256 399e5f90...). Physical cable fit, hip-yaw slack and the leg-state check remain hands-on checks. /PARTS-SHEET-V1.7.html and /zhengxia_MicroDuck_V1.7_4-files.zip are served too.",
+   "assembly_url": "http://today.tailfc7c94.ts.net:8766/LEFT-LEG.html",
+   "head_review_url": "http://today.tailfc7c94.ts.net:8766/HEAD-EYE-REVIEW.html",
+   "handoff_rule": "Deploy guide and review pages through the existing Mac mini service; verify exact served bytes and actual Chrome UI. A local file or localhost preview is not delivery.",
+   "hosting_instructions": "build-pack-20260913/redesign-20260913/leg-guide-20261006/hosting/README.md",
+   "chatgpt_site": {
+    "url": "https://microduck-team-guide.halesnow1.chatgpt.site",
+    "printPlan": "https://microduck-team-guide.halesnow1.chatgpt.site/REPRINT-PLAN.html",
+    "powerReview": "https://microduck-team-guide.halesnow1.chatgpt.site/POWER-REVIEW.html",
+    "version": 5,
+    "status": "succeeded",
+    "sourceCommit": "e976ae533b90a35de9312bd753f95279b595110a",
+    "verifiedBy": "Native Sites deployment succeeded after English, links and asset-size checks. Current source geometry/operations preserved; USB and physical closure remain pending.",
+    "language": "English",
+    "assemblyRevision": "V1.5 print-and-fit",
+    "printPackageVersion": "V1.5",
+    "receipt": "build-pack-20260913/redesign-20260913/workflow-review-20261009/public-site-v15-receipt.json",
+    "printPackage": "https://microduck-team-guide.halesnow1.chatgpt.site/REPRINT-PARTS.zip",
+    "deploymentId": "appgdep_6ac906ebb5208191b4c009aae6777e44"
+   },
+   "currentAssemblyRevision": "V1.5 print-and-fit",
+   "currentAssemblyReceipt": "build-pack-20260913/redesign-20260913/leg-guide-20261006/head-prototype-live-acceptance.json",
+   "currentAssemblySha256": "99ac29a2a7690039b35c3e2a83a12bcd0be0f2a26eb05575d9ac04978131fb83"
+  },
+  "powerbank_trial_20261008": {
+   "userAuthorized": true,
+   "model": "PB1033MI",
+   "photo": "IMG_6952.HEIC",
+   "decision": "Central clamped battery rejected by user; use original body with DFR1202 in original battery location and existing external charger supply.",
+   "wireInGuideRequired": true,
+   "bothEndFacesMustRemainOpen": true,
+   "mechanicalReport": "build-pack-20260913/redesign-20260913/powerbank-trial-20261008/mechanical/mechanical-disposition.json",
+   "electricalTrial": "build-pack-20260913/redesign-20260913/powerbank-trial-20261008/power-trial.md",
+   "alternativeReview": "build-pack-20260913/redesign-20260913/powerbank-trial-20261008/smaller-battery-review.md",
+   "physicalCommissioningPassed": false,
+   "userDecision": "2026-10-09: central clamped battery rejected for appearance and interference with future beak pickup; follow original layout and replace battery location with regulator/buck board.",
+   "status": "WITHDRAWN_BY_USER_ORIGINAL_BODY_RESTORED",
+   "selectedPowerSource": "Superseded 2026-10-13 by current_build.wall_power_change_20261013. Value at the 2026-10-09 decision: existing Xiaomi MDY-14-ED wall charger via Adafruit 5991 and DFR1202.",
+   "batteryTrayIncluded": false,
+   "priorUserDecision": "2026-10-08: proceed with V1.4 using external wall charger; defer onboard battery and do not force fitting.",
+   "supersededBy": "current_build.wall_power_change_20261013"
+  },
+  "staged_review_20261009": {
+   "status": "COMPLETE_INCREMENTAL_PRINT_PROTOTYPE_RELEASED_INTEGRATION_PENDING",
+   "workflow": "build-pack-20260913/redesign-20260913/workflow-review-20261009/WORKFLOW.md",
+   "problem_ids": [
+    "P0",
+    "P5",
+    "P6"
+   ],
+   "user_preferences": [
+    "Use native CAD assemblies and named connector interfaces; HTML is the guide output.",
+    "Preserve original body and leg spacing; use original battery location for DFR1202. Central battery clamp and widened-body concepts withdrawn.",
+    "Remove the added eleven-position external fuse array from the preferred new architecture; verify protection and conductor ratings before an electrical handoff.",
+    "Review packaging and power, then a complete wired subassembly, then integration and local staged prints.",
+    "Public ChatGPT Site pages must be English."
+   ],
+   "released_print_package_unchanged": false,
+   "physical_commissioning_passed": false,
+   "review_url": "http://today.tailfc7c94.ts.net:8766/DESIGN-REVIEW.html",
+   "preferredConcept": "Restore original hip yaw spacing 35 mm and hip pitch spacing 85 mm. Use existing DFR1202 at original battery cavity. No onboard clamped PB1033MI, widened frame or +11 mm leg shifts.",
+   "selectedConcept": "Original body / converter in original battery location",
+   "rejectedConcepts": [
+    "A",
+    "B",
+    "C"
+   ],
+   "alternativeConcept": null,
+   "fusionStatus": "Previous archive contains 255 mesh bodies, not an accepted solid/harness assembly. Saved-file readback succeeded; 11 of 15 neutral motor routes failed and rear shell was not closed. Do not reuse it as design acceptance.",
+   "userDecision": "2026-10-09: central clamped battery rejected for appearance and interference with future beak pickup; follow original layout and replace battery location with regulator/buck board.",
+   "nativeAssembly": "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/fusion/MicroDuck-roof-and-wiring-stage.f3d",
+   "nativeReadback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/fusion/fusion-receipt.json",
+   "centralStaticCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/original-body-converter/converter-local-fit.json",
+   "legPortCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/leg-ports/registered-ports.json",
+   "readyForPrint": true,
+   "fullDesignAccepted": false,
+   "nextReview": "Fit the complete incremental prototype against the actual boards and leads. Do not introduce an alternate USB architecture or new external openings to hide a plug conflict.",
+   "withdrawnCReview": {
+    "selectedConcept": "C",
+    "nativeAssembly": "build-pack-20260913/redesign-20260913/workflow-review-20261009/fusion-review/MicroDuck-C-native-review.f3d",
+    "nativeReadback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/fusion-review/native-readback.json",
+    "centralStaticCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/central-bridge-static.json"
+   },
+   "roofAperture": {
+    "status": "CROWN_AND_REAR_COMPONENT_RESTORED_POPULATED_CLOSURE_PENDING",
+    "source": "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-hole-review/roof-hole-review.json",
+    "cause": "Assumed unverified SC0727 plug envelope and stacked old/new USB service cuts. Not original community cap; no proof the actual plug requires this opening.",
+    "motorBusContext": "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-hole-review/motor-bus-context.md",
+    "restoration": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/enclosure-shell/rear-restoration.json",
+    "staticPatchCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/roof/patch-static-check.json",
+    "connection": "Internal Pi to OpenRB USB retained for repair; prior rear Mac USB substitution rejected.",
+    "runtimeMigrated": false
+   },
+   "wiredCadReview": "build-pack-20260913/redesign-20260913/workflow-review-20261009/WORKFLOW.md",
+   "routingTrial": {
+    "motorRoutes": 15,
+    "neutralStaticClear": 4,
+    "failedMotorRoutes": 11,
+    "reports": [
+     "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/motor-wires/stage-summary.json",
+     "build-pack-20260913/redesign-20260913/workflow-review-20261009/roof-wiring-stage/head-wires/stage-summary.json"
+    ],
+    "headProgress": "All four I2S crossings with camera ribbon and the I2S20/jaw-support crossing removed. Residual pin40/cap contact, speaker/keeper contact, and power/IMU interference remain.",
+    "wholeHarnessAccepted": false
+   },
+   "activeRepair": {
+    "status": "PRINT_PROTOTYPE_RELEASED_HEAD_USB_AND_PHYSICAL_FIT_PENDING",
+    "root": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/",
+    "enclosure": {
+     "status": "CROWN_AND_REAR_COMPONENT_RESTORED_POPULATED_LAYOUT_PENDING",
+     "report": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/enclosure-shell/rear-restoration.json",
+     "scope": "Restores original shell material; does not accept moving boards, plugs or complete populated closure."
+    },
+    "legLocalNative": {
+     "file": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/Fusion-ttl-04-03-retained-local.f3d",
+     "creation": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/fusion-resume-readback.json",
+     "interference": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/fusion-native-interference.json",
+     "scope": "Three native 180 mm conductor sweeps retained; source-bound knee case strap/lock added. Neutral interference and rigid anchor sampled motion checked. Soft keeper is adjustable at assembly; complete leg insertion and other routes remain separate.",
+     "retentionManifest": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/retention-fusion-manifest.json",
+     "retentionMotion": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/retention-motion.json",
+     "retentionReadback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/fusion-retention-readback.json",
+     "status": "SUPERSEDED_KNEE_180MM_LOCAL_STUDY",
+     "current": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/slack-packaging/mixed-leg-manifest.json"
+    },
+    "motorTopologyDecision": {
+     "status": "DESIGN_CORRECTION_IN_PROGRESS",
+     "branches": [
+      [
+       15,
+       14,
+       13,
+       11,
+       12,
+       5,
+       4,
+       3,
+       2,
+       1
+      ],
+      [
+       10,
+       9,
+       8,
+       7,
+       6
+      ]
+     ],
+     "controller": "Two registered physical OpenRB TTL sockets on one common bus",
+     "removedEdge": [
+      1,
+      6
+     ],
+     "reason": "Eliminate cable directly linking independent ankles; preserve IDs and the existing data protocol.",
+     "source": "https://emanual.robotis.com/docs/en/parts/controller/openrb-150/#dynamixel-ports",
+     "circuitEvidence": "Official schematic page 3: J8/J9/J10/J11 share DXL_TTL, DXL_PWR and GND.",
+     "powerBoundary": "Two physical data branches do not establish more than the documented aggregate 3 A board-port rating or approve VDD continuity across independently fed branches.",
+     "sideMapping": "IDs 5–1 right; IDs 10–6 left, per canonical motorRoles.",
+     "record": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/active-topology.json",
+     "recordSha256": "9eaeaf5c5dd790f1de756c98b2dbd77ab174bfd29ff5bc69814e9b02b8625ddf"
+    },
+    "headInputRepair": {
+     "method": "Register actual socket mating axes before fitting moulded cable bodies; no arbitrary oversized connector boxes.",
+     "microBSource": "https://files.edac.net/edac/content/1/690-005-298-486.pdf",
+     "scope": "Source datum correction and official-product-photo envelope estimate remain distinct from measured cable dimensions.",
+     "nativeInterferenceFailure": {
+      "record": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/fusion-head-cross-board.json",
+      "status": "SIDE_LANE_POSE_REJECTED",
+      "reason": "Independent native bodies found OpenRB-to-cap interference; independent Pi parts also interfere with jaw. Aggregate-union clearances withdrawn."
+     },
+     "piLocalRigidFit": {
+      "record": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/pi-front-up05-piecewise.json",
+      "pose": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/pi-front-up05-pose.json",
+      "status": "PI_ALONE_LOCAL_RIGID_FIT_CLEAR",
+      "scope": "PCB, real male header, solder tails, modeled female connector hardware bound and MicroUSB envelope versus fixed head neighbors. Extra assembly air separated from hardware. Does not accept full head, wires, mounting or closure."
+     },
+     "bodyControllerStudy": {
+      "record": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/body-partition/report.json",
+      "status": "LOCAL_BODY_ASSEMBLY_CHECKED_NOT_ADOPTED",
+      "remaining": "Internal Pi-to-OpenRB USB, whole harness and user architecture choice remain separate. Cross-head/torso relocation is not adopted by this local result.",
+      "archive": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/carrier-concept/native-20261009-054739-b73600/MicroDuck-body-electronics-local.f3d",
+      "nativeSolidCount": 143
+     },
+     "currentCoupledDisposition": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/coupled-rigid-disposition.json",
+     "currentStatus": "HEAD_MOUNTING_TRIAL_FILES_DELIVERABLE_USB_CLOSURE_PENDING",
+     "remaining": "Three-piece Orange head mounting prototype is being delivered under user-authorized print-and-fit scope. The owned straight USB-C plug conflicts with the closed shell; a suitable internal Pi-host/OpenRB-device cable remains unresolved. GPIO lead exits require a hands-on no-pinch check. No complete-head or physical acceptance is claimed.",
+     "baselineProvenanceCorrection": {
+      "fanGe": "AI-FanGe commit 49678215 documents Zero 2 W / OpenRB USB; detailed board pose not established by README.",
+      "nativeCad": "fanhao375 XL330 v1.1 native head assembly contains Zero 2 W and RobotHAT. Its shell registration does not establish OpenRB packaging.",
+      "priorOpenrbPose": "Assistant-selected -3 degree Y rotation and [-1,0,-1.5] translation in head-redesign-20261008/curved-head/build_curved_layout.py lines 48-64; not an upstream installation constraint.",
+      "action": "Reconcile actual build media with component variants before continuing head geometry. Preserve user-fixed exterior and internal Pi/OpenRB connection; assistant board poses and adapters remain unadopted candidates."
+     },
+     "prototype": {
+      "manifest": "build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/head-trial.json",
+      "instructions": "build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/PRINT-AND-FIT.md",
+      "partTypes": 3,
+      "color": "Orange",
+      "completeHeadAccepted": false,
+      "download": "/Users/xiangzheng/Downloads/zhengxia_Head-Trial-20261009_SD-files.zip",
+      "verification": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/run/final-binding-check.json",
+      "status": "PRINT_AND_FIT_PROTOTYPE_RELEASED"
+     }
+    },
+    "completeSubassemblyAccepted": false,
+    "physicalFitVerified": false,
+    "imuLocalNative": {
+     "status": "COMPLETE_DIGITAL_LOCAL_ASSEMBLY",
+     "file": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/MicroDuck-IMU-local-assembly.f3d",
+     "manifest": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-local-manifest.json",
+     "manifestSha256": "b85d5e941b7b25a5e7a290b6a0aaa5daa470f048d074c504328399f8bc94fc0c",
+     "readback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/fusion-imu-readback.json",
+     "installationCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-assembly-check.json",
+     "externalCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-external-clearance.json",
+     "externalCheckSha256": "3237d3148692c6c5624a764bd429d336eede53c32caeb5c6c9e9b3201d674f2b",
+     "scope": "Actual BNO085 with rigid source registration, retained mounting frame and rear cover, SH plug, four conductors to neck-root free boundary. Placement/insertion/closure/driver access and external neighbors checked. 62 native Fusion solids.",
+     "remainingBoundary": "Wires end at the neck-root boundary; head continuation and physical commissioning are not accepted by this local result.",
+     "physicalFitVerified": false,
+     "printReleaseChanged": false
+    },
+    "legLocalHarness": {
+     "manifest": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/slack-packaging/mixed-leg-manifest.json",
+     "status": "CONNECTOR_AND_CHANNEL_PROTOTYPE_GUIDE_DEPLOYED",
+     "scope": "Eight in-leg electrical connections retain registered plugs, insertion direction and cable-before-cover sequence. Detailed flexible wire solids and six artificial rectangular tie frames intentionally withdrawn by explicit user prototype instruction. Existing source geometry remains diagnostic history, not a prescribed routing template.",
+     "manifestSha256": "be43bddd96907d5bf86c987de945aab71fcab47a3e8f6875f447a1fd0205264e",
+     "nativeArchive": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/slack-packaging/Fusion-mixed-retained-review-20261009-065835.f3d",
+     "nativeReadback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/slack-packaging/native-mixed-readback.json",
+     "benchInsertionCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/motor-wires/slack-packaging/bench-port-insertion.json",
+     "liveGuide": "http://today.tailfc7c94.ts.net:8766/LEFT-LEG.html",
+     "liveReceipt": "build-pack-20260913/redesign-20260913/leg-guide-20261006/hosting/connector-channel-deployment-20261009.json",
+     "physicalFitVerified": false,
+     "printReleaseChanged": false,
+     "retentionDesignStatus": "SIX_VIRTUAL_RECTANGULAR_TIE_FRAMES_WITHDRAWN",
+     "softRouteStatus": "DETAILED_SOFT_WIRE_SOLIDS_NOT_REQUIRED_FOR_PROTOTYPE"
+    },
+    "ankleLocalNative": {
+     "file": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/ankle-wires/native-20261009-045240-4f8255/MicroDuck-two-ankle-routes-native.f3d",
+     "readback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/ankle-wires/native-20261009-045240-4f8255/native-readback.json",
+     "status": "SIX_NATIVE_SWEEPS_CREATED",
+     "scope": "Local 2-to-1 and 7-to-6 source-bound native sweeps, four receiving housings and 48 motor solids; shared-port integration remains pending.",
+     "archiveSha256": "cb105c27fe447886ea2764f437b3eaaf83b233eafc2e17c8ba063e151a950146"
+    },
+    "piMountLocal": {
+     "status": "LOCAL_DIGITAL_BENCH_ASSEMBLY_PASSED",
+     "archive": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/pi-roof-mounts/MicroDuck-Pi-roof-mounts.f3d",
+     "nativeReadback": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/pi-roof-mounts/native-readback.json",
+     "assemblyCheck": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/pi-roof-mounts/pi-mount-assembly-check.json",
+     "scope": "Native integral roof posts; side-load M2 nuts, install prewired Pi from below and fasten four M2x6 while cap detached. Complete head flexible harness, audio mounts and robot closure remain separate.",
+     "physicalFitVerified": false,
+     "printReleaseChanged": false
+    },
+    "bodyUsbPassageLocal": {
+     "status": "LOCAL_NATIVE_NOTCH_AND_PLUG_CHECK_PASSED",
+     "archive": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/body-partition/native-usb-passage/body-usb-u-notch-with-board-references.f3d",
+     "record": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/body-partition/native-usb-passage/fusion-passage-receipt.json",
+     "scope": "Existing top opening extended rearward into rounded U-notch; source-bound original left/right shells with local internal rails. No body widening. Full electronic carrier installation still separate.",
+     "physicalFitVerified": false,
+     "printReleaseChanged": false
+    },
+    "headAudioLocal": {
+     "status": "LOCAL_90_PART_RECEIPT_RETAINED_COUPLED_HEAD_PLACEMENT_REJECTED",
+     "root": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation",
+     "currentRepair": "Amplifier +Y13 and its two native support/pilot interfaces passed 178 affected pairs against the exact 89-neighbor local inventory, including the separately registered MicroB receiving model. Native reference snapshot captured and 7,507 actual mesh nodes read back within 2.18e-6 mm of the checked amplifier pose. No geometry rerun after reference capture.",
+     "exteriorEvidence": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/native/closed-exterior-explanation.json",
+     "wholeHeadAccepted": false,
+     "printReleaseChanged": false,
+     "currentLocalAcceptance": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/positive-y13-native/local-acceptance.json",
+     "currentLocalAcceptanceSha256": "f055c9393f03e1046e00027ca91ca8e3fc52df58a4f49379358fe19b39ef7aba",
+     "currentRigidInventory": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/positive-y13-native/current-rigid-inventory.json",
+     "currentRigidInventorySha256": "3f737460686a7e3b909d2af685e5a130c8f85ed361bad66d4578e05000a39d4c",
+     "referenceCaptureLineage": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/positive-y13-native/reference-capture-lineage.json",
+     "referenceCaptureLineageSha256": "cb2e4ff676204f0b61826f8badbb22ac7018b25db7390705a7e9665460de562d",
+     "nativeArchive": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/positive-y13-native/MicroDuck-closed-head-Pi-audio-positive-y13.f3d",
+     "nativeArchiveSha256": "25ff566bd28f3f5eab74e4bad67051fb1e1a06aec2879d17a506c64e42fe5520",
+     "priorFailureRetained": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/positive-y0-check.json",
+     "wholeHeadPending": [
+      "OpenRB remains required in the head; its placement and full rigid plugs are not accepted by this local receipt.",
+      "Complete camera ribbon and other flexible wiring, populated closure, physical fit and commissioning remain pending."
+     ],
+     "physicalFitVerified": false,
+     "coupledFailure": "The local inventory excluded the required original head OpenRB. Its PCB intersects this amplifier and two new posts; actual lower header pins intersect the current Pi/MicroB. This placement must not be adopted from the local receipt. OpenRB has now been added as 136 native manufacturer solids to the Fusion head assembly; one coupled internal layout is being repaired.",
+     "coupledDiagnostic": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/diagnostic-native-20261009-062504-dd7b0/native-readback.json"
+    },
+    "mechanicalGuide": {
+     "status": "RIGID_MOTION_ORDER_AND_TOOL_ACCESS_CHECKED",
+     "overlay": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/assembly-motion-completion/assembly-motion-overlay.json",
+     "overlaySha256": "1a12098f3899cd1a774038a5d92f18f62dfa23c5142b061643849a4f6e0be1a5",
+     "verification": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/assembly-motion-completion/overlay-verification.json",
+     "liveReceipt": "build-pack-20260913/redesign-20260913/leg-guide-20261006/hosting/assembly-motion-deployment-20261009.json",
+     "scope": "Source-bound rigid assembly order, sampled motion, and declared driver access only. Does not accept the pending complete head harness, flexible joint motion or physical commissioning.",
+     "printReleaseChanged": false,
+     "currentPrototypeRevision": "V1.5"
+    },
+    "verifier": "build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/verify_release.py",
+    "verificationScope": "Read-only whole-release gate: complete populated head/harness, same-source guide, incremental printer exports and live deployment. Missing evidence remains incomplete; design never closes physical commissioning or visual pickup.",
+    "bodyGuideIntegration": {
+     "adapterFiles": [
+      "build_body_wiring_adapter.py",
+      "build_imu_wiring_adapter.py",
+      "build_body_data_adapter.py",
+      "build_input_wiring_adapter.py"
+     ],
+     "location": "build-pack-20260913/redesign-20260913/leg-guide-20261006",
+     "state": "Body input, distribution, two zone plugs and six IMU operations integrated; full head remains separate.",
+     "resourceEvidence": "build-pack-20260913/redesign-20260913/leg-guide-20261006/hosting/streamed-bundle-resource-20261009.json"
+    },
+    "supersededBy": "current_build.design_gate (2026-10-13)"
+   },
+   "printScope": "User-authorized complete incremental print-and-fit prototype, not whole-design acceptance.",
+   "currentPrintRelease": "build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/run/delivery-index.json"
+  },
+  "current_incremental_print_release": {
+   "version": "V1.19",
+   "status": "RELEASED",
+   "problem_ids": [
+    "P5",
+    "P6"
+   ],
+   "manifest": "guide/print/release-V1.19/manifest-V1.19.json",
+   "sourceBoundVerification": "guide/print/release-V1.19/run/final-binding-check.json",
+   "nativeReview": "guide/print/release-V1.19/run/native-review.json",
+   "archive": "guide/print/release-V1.19/run/zhengxia_V1.19_SD-files.zip",
+   "archiveSha256": "30b34f07b9852ef31e325c98f3575363a4ef8d7cac92871652c713b06887b397",
+   "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.19",
+   "partsSheet": "guide/print/release-V1.19/PARTS-SHEET-V1.19.html",
+   "baseline": "V1.19 is a delta on top of the printed V1.17 and V1.18 (Shawn printed V1.18, frame and cap, on 2026-10-15).",
+   "notes": "One Orange plate with the two caps only, one row centred on the bed (plate centre offset 0.0 / 0.0 mm): the rear converter box cap and the battery backpack cap with 3.0 mm screw-head floors. The backpack frame is not reprinted (printed in V1.18). Shawn 2026-10-15 (IMG_7004): the 1.0 mm floors under the two low hidden M2 x 10 of the printed V1.17 box cap tore into open holes when the cap was taken off; \"螺丝挡板换成更厚的 相应螺丝也可以换成更长的\". Box cap: floors grow 2.0 mm forward, same four stock M2 x 10, seats and engagement (3.9 / 4.6 mm) unchanged, +y low column flattened 0.5 mm above the USB-C socket; fits the printed V1.17 frame. Backpack cap: seats 2.0 mm back, 3 x M2 x 8 (was M2 x 6), same 5.0 mm engagement. Frames byte-identical. Shawn 2026-10-15: the printed V1.18 plate was off centre (\"没居中\"); explicit release placements had bypassed the pipeline auto-centring since V1.12 (V1.17 Orange +10.9 mm y, V1.18 -37.9 / -62.5 mm). The pipeline prepare step now refuses a plate whose footprint centre is more than 1 mm off the bed centre, verify_current_design.py checks it, and the plate preview draws the bed.",
+   "previous": {
+    "version": "V1.18",
+    "manifest": "guide/print/release-V1.18/manifest-V1.18.json",
+    "archive": "guide/print/release-V1.18/run/zhengxia_V1.18_SD-files.zip",
+    "status": "SUPERSEDED by V1.19 on 2026-10-15 (printed 2026-10-15; its cap is replaced by the V1.19 cap); Downloads folder moved to the Trash"
+   }
+  },
+  "servo_power_path": {
+   "date": "2026-10-12",
+   "decided_by": "user",
+   "choice": "Servo 5 V goes through the OpenRB-150 DXL ports, as on the original MicroDuck. Star junction J and the three link splices are removed. Two pairs leave the DFR1202 5V/GND pads: 22 AWG to the OpenRB terminal block, 22 AWG to Pi pins 2/6. Gauges unified 2026-10-13 (Shawn: 线的规格尽量统一): 22 AWG red/black for every power wire, Dupont jumper wire for every signal wire; heat shrink optional, tape instead.",
+   "reason": "ROBOTIS rates all OpenRB DXL ports together at 3 A; the only evidence above it was the simulated torque-to-current proxy (3.8-7.6 A peaks), while the original MicroDuck (OpenRB, 0-3 A pack) and Microban (Pollen RPI Robot HAT, two TTL ports on one +BATT net) both run every servo through the controller board.",
+   "acceptance": "guide step 'current': guide/firmware/pi/current_watch.py sums XL330 Present Current (addr 126) for IDs 1-15; sustained total above 3000 mA for 1 s or a hot terminal block reopens a bypass. Not yet measured on hardware.",
+   "geometry": "guide/print/rear-pack (J pocket removed, +Y window z -29..-16.5); V1.8 release re-sliced in guide/print/release-V1.8/run (previous run kept as superseded-run-20261012-with-junction)."
+  },
+  "wall_power_change_20261013": {
+   "date": "2026-10-13",
+   "decided_by": "user",
+   "user_statement": "我有3套 剪了没大事儿",
+   "user_statement_en": "I have three sets; cutting one is no big deal.",
+   "status": "Superseded 2026-10-13 (later the same day) by current_build.usb_c_5v_power_20261013. Never bench-tested.",
+   "chain": [
+    "ROBOTIS SMPS 12V 5A (PS-10) power supply",
+    "ROBOTIS SMPS2DXL (SMPS2Dynamixel) adapter board; every socket carries 12 V when powered",
+    "ROBOTIS 3-wire cable plugged into the SMPS2DXL, far servo plug cut off: the middle wire (ROBOTIS pin 2 VDD, +12 V) is spliced to the tether red wire, the outer GND wire (pin 1, found with a meter) to the tether black wire, and the DATA wire (pin 3) is cut short and insulated; cable ties take the pull before and after the splices and at the SMPS2DXL plug",
+    "1 m 22 AWG red/black tether",
+    "XT30 pair (DFRobot FIT0586): female on the tether, male on the robot",
+    "DFRobot DFR1202 onboard converter, 6-24 V in, 5 V out"
+   ],
+   "source_set": "One SMPS + SMPS2DXL + cable set from an OMX-AI kit allocated to the duck (order 2034348); not the arm set and not the reserved third kit.",
+   "voltage_rule": "12 V reaches only the DFR1202 input, never the OpenRB rail or a servo (XL330 input 3.7-6.0 V). The robot-side wiring is unchanged.",
+   "check_before_robot": "11.5-12.5 V at the XT30 female, red probe in the + cup (guide step pd-tether).",
+   "load_screen": "Calculation, not measured: simulated walking about 2.05 A mean and 5.4 A 20 ms peaks at 5 V, about 12 W or 1.1 A at 12 V, peaks about 2.7 A at 12 V on the 5 A supply, about 0.3 V drop at the 2.7 A peak on the 1 m 22 AWG tether, well inside the DFR1202 6-24 V input (guide/extension-20261012-neck-audio/page/power_section.py).",
+   "design_budget": "5 A continuous / 7.4 A short peak at 5 V (3 A sustained servo acceptance limit or 5.4 A simulated servo peaks, plus 2 A non-motor reserve). At the worst stored corner (11.5 V, 85 % efficiency, 0.4 ohm upstream) these draw 2.87 A / 4.54 A from the 5 A supply; the earlier 9 A / 9.5 A allocation would need 5.83 A / 6.28 A. Calculation, not measured: build-pack-20260913/redesign-20260913/design-verification.json (2026-10-13).",
+   "converter_evidence": "DFR1202 input 6-24 V, efficiency over 90 % at 12 V in (https://www.dfrobot.com/product-2907.html; bringup/parts/parts.json id dfr1202).",
+   "no_robot_role": {
+    "xiaomi_mdy14ed_charger": "Owned. No robot role. It may feed the 5991 in the optional day-1 5 V bench step.",
+    "xiaomi_original_cable": "Owned. No robot role.",
+    "adafruit_5991": "Owned (DigiKey order 101587695). Used only as the day-1 5 V bench supply (bringup/parts/parts.json id usb_pd_5991)."
+   },
+   "fuses": "Not used anywhere in the robot or the tether (owner decision 2026-10-11/12). The received fuses are marked not used in the live guide and in bringup/parts/parts.json.",
+   "guide_source": "guide/content/steps.py step pd-tether; guide/content/wiring/smps2dxl.py",
+   "live_pages": {
+    "build_guide": "http://today.tailfc7c94.ts.net:8766/MICRODUCK-BUILD.html",
+    "build_guide_sha256_prefix": "3a5074667861fc1e",
+    "bringup": "http://today.tailfc7c94.ts.net:8766/BRINGUP.html",
+    "bringup_sha256_prefix": "e650081ef2be5fae",
+    "readback": "2026-10-13: curl bytes match the local builds in build-pack-20260913/redesign-20260913/leg-guide-20261006/."
+   },
+   "review_page": "http://today.tailfc7c94.ts.net:8766/EXTENSION-REVIEW.html#power",
+   "procurement": "build-pack-20260913/procurement/sourcing-policy.json#active_power_phase_20261013",
+   "design_check": "build-pack-20260913/redesign-20260913/build_design.py (design-contract.json source and power), verify_design.py",
+   "bench_tested": false,
+   "supersedes": "current_build.powerbank_trial_20261008.selectedPowerSource (Xiaomi MDY-14-ED + Adafruit 5991 20 V USB-PD chain)"
+  },
+  "pi_openrb_uart_20261013": {
+   "date": "2026-10-13",
+   "decided_by": "user",
+   "user_statement": "背包上开个洞还是太丑了",
+   "user_statement_en": "A hole in the backpack is still too ugly (so no cover window; the wires are soldered into J12).",
+   "link": "Two Dupont jumper wires, 425 mm each, soldered into OpenRB-150 J12: pad 3 (Rx) <- Pi pin 8 (TXD, green); pad 4 (Tx) -> Pi pin 10 (RXD, white). The J12 V and G pads stay empty. The JST PH header previously fitted in J12 comes off first.",
+   "firmware": "guide/firmware/openrb_uart_bridge/openrb_uart_bridge.ino, Serial2 at 1 Mbps; builds to 12,632 bytes (guide/extension-20261012-neck-audio/HANDOFF-20261013.md).",
+   "ground": "A GND jumper to Pi pin 14 is needed only when the Pi and the OpenRB run from different supplies.",
+   "soldering_rule": "Wires are soldered onto two boards only: this pair into OpenRB J12 and the five amplifier wires (current_build.audio.amp_wiring, 2026-10-13).",
+   "live_pages": "Build guide steps uart-wires, flash, board and gpio; bring-up steps 10-12 (deployed 2026-10-13).",
+   "bench_tested": "Partly: Pi pin 8 TXD -> J12 RX direction verified 2026-10-13 (OpenRB LED blinks for each packet sent on /dev/serial0). Return direction needs a servo answering scan_bus.py.",
+   "acceptance_pending": "Flash the bridge and check 1 Mbps both ways from the Pi with guide/firmware/pi/scan_bus.py.",
+   "supersedes": "phase1_compute_intent.motor_bus_design_choice (internal Pi USB to OpenRB)",
+   "flashed_20261013": "Bridge flashed 2026-10-13 22:00 and verified (12,632 bytes). Route on this M1 Mac: compile in a colima Debian container (arduino-cli, OpenRB-150:samd@0.2.1, Dynamixel2Arduino 0.8.1, --output-dir under $HOME because colima mounts only $HOME), then native Homebrew bossa 1.9.1: double-tap RESET, `bossac --port=cu.usbmodemXXXX -U --offset=0x2000 -e -w -v -R openrb_uart_bridge.ino.bin`. USB power needs the JP1 cap on +5V (on VIN(DXL) the board is dark on USB alone); move it back to VIN(DXL) for robot power."
+  },
+  "design_gate": {
+   "verifier": "guide/verify_current_design.py",
+   "printGate": "guide/content/interference-audit/run_gate.py (writes gate-receipt.json; the whole gate ran in 80 s on 2026-10-13)",
+   "adopted": "2026-10-13. Replaces the 2026-10-09 enclosed-wiring-repair release verifier (staged_review_20261009.activeRepair), whose head layout, fuses and star junction are not the built robot.",
+   "baseUrl": "http://today.tailfc7c94.ts.net:8766",
+   "servedFiles": {
+    "/MICRODUCK-BUILD.html": "guide/dist/MICRODUCK-BUILD.html",
+    "/BRINGUP.html": "bringup/BRINGUP.html",
+    "/HEAD-3D.html": "build-pack-20260913/redesign-20260913/leg-guide-20261006/HEAD-3D.html",
+    "/PARTS-SHEET-V1.14.html": "guide/print/release-V1.14/PARTS-SHEET-V1.14.html",
+    "/zhengxia_MicroDuck_V1.14_4-files.zip": "guide/print/release-V1.14/run/zhengxia_V1.14_SD-files.zip",
+    "/PARTS-SHEET-V1.15.html": "guide/print/release-V1.15/PARTS-SHEET-V1.15.html",
+    "/zhengxia_MicroDuck_V1.15_4-files.zip": "guide/print/release-V1.15/run/zhengxia_V1.15_SD-files.zip",
+    "/PARTS-SHEET-V1.16.html": "guide/print/release-V1.16/PARTS-SHEET-V1.16.html",
+    "/zhengxia_MicroDuck_V1.16_4-files.zip": "guide/print/release-V1.16/run/zhengxia_V1.16_SD-files.zip",
+    "/PARTS-SHEET-V1.17.html": "guide/print/release-V1.17/PARTS-SHEET-V1.17.html",
+    "/zhengxia_MicroDuck_V1.17_4-files.zip": "guide/print/release-V1.17/run/zhengxia_V1.17_SD-files.zip",
+    "/A7Z-PINS.html": "bringup/A7Z-PINS.html",
+    "/A7Z-ANTENNA.html": "bringup/A7Z-ANTENNA.html",
+    "/PARTS-SHEET-V1.18.html": "guide/print/release-V1.18/PARTS-SHEET-V1.18.html",
+    "/zhengxia_MicroDuck_V1.18_2-files.zip": "guide/print/release-V1.18/run/zhengxia_V1.18_SD-files.zip",
+    "/PARTS-SHEET-V1.19.html": "guide/print/release-V1.19/PARTS-SHEET-V1.19.html",
+    "/zhengxia_MicroDuck_V1.19_2-files.zip": "guide/print/release-V1.19/run/zhengxia_V1.19_SD-files.zip"
+   },
+   "physicalAcceptance": [
+    {
+     "id": "v19_printed_and_fitted",
+     "what": "Orange V1.9 plate printed; pack, cap, retainer and four clips fitted on the robot; left shell drilled and cross screw driven.",
+     "accepted": false,
+     "evidence": null
+    },
+    {
+     "id": "v111_frame_fitted",
+     "what": "Orange layout F frame and cap printed (V1.16); frame on the pack with the four cover screws; 5991 (two M2 x 6, lower holes) and both XL4015 slid in from the rear and screwed (5 V board four M2 x 6, 7 V board two M2 x 4 at the z 17.7 holes); cap pushed straight on and held by four hidden M2 x 10 (guide steps box-frame .. box-lid).",
+     "accepted": false,
+     "evidence": null
+    },
+    {
+     "id": "power_7v_bench",
+     "what": "5991 at 15 V (switch 3 only, 14.5-15.5 V; never 9V, which browned out on walking 2026-10-15) read on the meter before anything is connected; XL4015 #1 set to 7.35-7.45 V (7.40 V nominal) and #2 to 4.95-5.10 V with no load, read again after replug; 7 V pair into J4 and A7Z lead connected only after the readback (BRINGUP step 12, guide steps bench-test / box-out / first-power); set_shutdown.py --check: Shutdown 52 on all 15; check_voltage_limit.py --rail battery passes on all 15 servos (2026-10-15, D-014; was 6.75-6.85 V and --rail 7v).",
+     "accepted": false,
+     "evidence": null,
+     "as_run_note": "As-run supply (not this design target) is CURRENT-STATE.json `power`: Shawn set the 5991 to 20 V on 2026-10-16 afternoon; the 15 V target here has not been re-decided."
+    },
+    {
+     "id": "uart_j12_bench",
+     "what": "Wires soldered into OpenRB J12; Serial2 bridge flashed; 1 Mbps both ways from the Pi (scan_bus.py).",
+     "accepted": false,
+     "evidence": null
+    },
+    {
+     "id": "audio_bench",
+     "what": "Five amplifier wires and the 100 kOhm GAIN resistor soldered; speaker plays at low volume with the -3 dB softvol ceiling (BRINGUP step 13).",
+     "accepted": false,
+     "evidence": null
+    },
+    {
+     "id": "commissioning",
+     "what": "All 15 servos answer on the bus with the robot powered from the wall end; IMU and camera read from the Pi.",
+     "accepted": false,
+     "evidence": null
+    },
+    {
+     "id": "visual_pickup_goal",
+     "what": "The visual-pickup goal in PROJECT-CONTEXT goal/training evidence, on the physical robot.",
+     "accepted": false,
+     "evidence": null
+    }
+   ]
+  },
+  "v2_0_source": {
+   "status": "Source only; not released, not printed. Print pose, slicing, guide rebuild and the print gate run at the V2.0 release.",
+   "requested_by_user": "2026-10-13: fix each side shell to the rear pack instead of the hard-to-drive rear cross screw (chosen over external screw ears), and remove the unused pivot hole in the passive jaw arm; both go into V2.0. The V1.9 rear pack is being printed and stays unchanged.",
+   "folder": "guide/print/v20-source/ (README with checks and guide handoff; build_v20_source.py; v20-source.json; png/)",
+   "parts": [
+    "shell_left_v20",
+    "shell_right_v20",
+    "jaw_frame_v20"
+   ],
+   "connection_confirmed": "One M2 x 6 per shell, straight down through the shell roof (dia 2.2 hole, dia 4.4 x 1.0 counterbore) into the V1.9 pack shoulder bar at x -21.5, y +-20; dia 1.6 pilot drilled through the shell hole; 4.0-4.1 mm thread. Cross tunnels filled flush. Horn counterbores from shells-v19-source carried (S12-horn-026..032 become M2 x 4).",
+   "v1_9_build": "The current guide still describes the V1.9 cross screw; it changes only at the V2.0 release."
+  },
+  "usb_c_5v_power_20261013": {
+   "date": "2026-10-13",
+   "decided_by": "user",
+   "user_statement": "能不能给个最简单方案 不要焊来焊去接来接去 … 你来统筹吧",
+   "user_statement_en": "Give me the simplest scheme, no soldering and splicing back and forth. You coordinate.",
+   "status": "Superseded 2026-10-14 by current_build.servo_rail_7v_20261014 (servo rail 7.0 V, Pi on its own 5.0 V converter). Never bench-tested as a robot supply.",
+   "contract": "bringup/build/power-diagram/README.md",
+   "chain": [
+    "Any USB-C PD charger (MacBook charger) -> USB-C cable -> Adafruit 5991 (HUSB238, DIP switch 6 = 5V only) on the bench",
+    "5991 screw terminal -> 22 AWG solid red/black pair, 50 cm, through the pack floor tether_opening (cable tie inside and outside) -> OpenRB-150 J4 (+ red, - black), JP1 on VIN(DXL); servos through the OpenRB ports as before",
+    "Pi 5 V: two Dupont jumpers share the J4 screws (male pin cut, 6 mm stripped, strands wrapped on the solid wire), 30 cm M-F + 30 cm F-F taped joint, female ends on Pi pins 2 and 6"
+   ],
+   "removed": "DFR1202 converter (pack channel left empty, reserved for a converter if walking-current measurements require one), XT30 pair, ROBOTIS SMPS 12V 5A + SMPS2DXL + 3-wire cable, 1 m tether, all power soldering. UART, IMU, camera and amplifier wiring unchanged. Rear pack geometry and OpenRB orientation unchanged (J4 sits at the top of the pack, the floor opening leads up the empty DFR channel to it).",
+   "why": "The 20 V and 12 V chains existed only to give headroom over simulated walking peaks (2.05 A mean, 5.4 A 20 ms at 5 V) against the 3 A cap of USB-C PD at 5 V. Bring-up (IDs, standing, sensors) draws well under 3 A, and every converter route forced soldering on the DFR1202 pads. Measure first, add a converter only on evidence.",
+   "limits": "USB-C PD 5 V delivers at most 3 A; the 5991 ISet jumper requests 1.25 A by default (cut = 3.25 A). The 5991 header 5V pin of the OpenRB cannot feed the Pi (150 mA max, docs 2024 regulator change); hence the Pi shares the J4 screws. 50 cm 22 AWG pair drop about 0.1 V at 2 A (calculation).",
+   "escalation": "If the charger browns out under load: 1) cut ISet (3.25 A request); 2) only then a converter in the reserved pack channel with the 5991 switched to 12 V. Evidence gate: guide step current (current_watch.py) before any walking trial.",
+   "affected_fields": "procurement.source_location, current_build.wall_power_change_20261013.status, bringup/parts/parts.json usb_pd_5991.purpose and dfr1202.purpose (update on next parts edit).",
+   "supersededBy": "current_build.servo_rail_7v_20261014"
+  },
+  "servo_rail_7v_20261014": {
+   "date": "2026-10-14",
+   "decided_by": "user",
+   "status": "Adopted, not bench-tested. Rear converter box layout F released as V1.11 (guide/print/back-plate/layout-F/, release-V1.11): both XL4015 horizontal in a stepped box behind the pack, the 5991 in its narrow bottom tier; guide and bring-up wiring follow layout F.",
+   "contract": "bringup/build/power-diagram/README.md",
+   "decision_record": "robotics DECISIONS.md D-007",
+   "chain": [
+    "USB-C PD charger (Xiaomi 67 W, 5/9/15/20 V) -> USB-C cable -> Adafruit 5991 (HUSB238), DIP switch 3 = 15V only, terminal 14.5-15.5 V (exactly one switch ON: with 5V also ON it negotiated 5 V, read 5.167 V, 2026-10-15; the switch is read only at plug-in, replug after a change; 9V not allowed, it browned out on walking 2026-10-15), ISet jumper closed",
+    "5991 screw terminal -> 22 AWG solid red/black feed pair -> XL4015 #2 IN (middle tier, 5 V board); 15 V link pair from XL4015 #2 IN screws (two wires per screw) -> XL4015 #1 IN (top tier, 7 V board), both at 15 V",
+    "XL4015 #1 set to 7.40 V (7.35-7.45; 6.80 V until 2026-10-15) -> 22 AWG pair down the rear lane and through the front passage P1 into the pack channel -> OpenRB-150 J4 (+ red, - black), JP1 on VIN(DXL); all servos on the 7 V rail through the DXL ports",
+    "XL4015 #2 set to 5.00 V (4.95-5.10) -> the Pi's two jumper leads (pin 2 red, pin 6 black); the Pi leads no longer share J4",
+    "5991 and both XL4015 in the layout F rear converter box (V1.11); two cables reach the floor: USB-C power and the OpenRB USB data cable through the floor slot"
+   ],
+   "replaces": "current_build.usb_c_5v_power_20261013 (5 V servo rail, Pi on the J4 screws). Removed: DFR1202, ROBOTIS 12 V SMPS, SMPS2DXL, the Xiaomi 20 V plan. No soldering anywhere. UART, IMU, camera and amplifier wiring unchanged.",
+   "why": "The walk/stand policies were trained with the servo supply randomised in 6.5-8.2 V, and Pollen's robot feeds the XL330s from a 7.2 V pack. 6.80 V is inside that range and 0.15 V under the XL330 factory Max Voltage Limit 7.0 V, so no servo register changes.",
+   "sources": [
+    "microduck_rl/src/mjlab_microduck/robot/microduck_constants.py:126 vin_range=(6.5, 8.2)",
+    "github.com/pollen-robotics/microduck issue 294: Pollen feeds the servos from a 7.2 V NP-F550; maintainer reports Max Voltage Limit left at 7.0 V and Shutdown = 52 (Input Voltage Error bit 0 cleared), which our build does not copy",
+    "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/ (checked 2026-10-14): 32 Max Voltage Limit initial 70 (7.0 V), range 31-70; 34 Min Voltage Limit initial 35; 63 Shutdown initial 53 (bit 0 Input Voltage Error); 70 Hardware Error Status; 144 Present Input Voltage; rated 3.7-6.0 V",
+    "https://learn.adafruit.com/adafruit-usb-type-c-power-delivery-switchable-breakout/pinouts: DIP silk 5V/9V/12V/15V/18V/20V = switches 6..1, so 15V = switch 3",
+    "https://cdn-learn.adafruit.com/assets/assets/000/125/150/original/husb238_datasheet_full.pdf pp. 9, 14: highest PDO with V <= VSET and I >= ISET; marking 003DD falls back to the next lower PDO; ISet closed 1.25 A, cut 3.25 A",
+    "https://www.radiolocman.com/datasheet/data.html?di=685191 (XL4015 datasheet excerpt): 8-36 V in, 1.25-32 V out, 5 A, 0.3 V dropout; protosupplies.com (https://protosupplies.com/product/xl4015-adjustable-dc-dc-step-down-module/) and probots.co.in (https://probots.co.in/xl4015-5a-constant-current-voltage-led-driver-lithium-battery-charger.html) XL4015 module pages: about 4 A continuous, CV and CC trimmers, clockwise raises, red LED = CC mode, no reverse-polarity protection",
+    "bringup/parts/photos/xl4015_trimmers_annotated.png (2026-10-15): right trimmer next to the XL4015 chip U1 = voltage (CV), left trimmer next to the LM358 = current limit (CC); inferred from the layout, to be confirmed with the bench turn-and-watch meter test (guide step bench-test, bring-up step 12)",
+    "hardware-design-20260912/whole-robot-20260912/dynamics/realgap-20261014/README.md section 7: the measured 7.87 deg forward gap used for the 6.8/7.4/8.0 V simulation comparison"
+   ],
+   "limits": "XL4015 #1 at 7.40 V (2026-10-15): every servo holds Shutdown 52, so a reading above the Max Voltage Limit 7.0 V sets Hardware Error Status bit 0 and the Alert bit in status packets without cutting torque; overload, electrical shock and overheating still cut torque. A servo still on factory 53 latches the error and cuts torque above 7.0 V, so a fresh build writes 52 (guide step first-power) before running. guide/firmware/mac/walk_wired.py --supply auto arms its battery guard at 7.2 V, which is also what lets Alert-flagged status packets through; at 7.35 V it arms, warns under 7.0 V and stops at 6.6 V. Keep 5991 ISet closed (a 3.25 A request fails a 15 V / 3 A PDO and the board falls back to a lower voltage). Charger 15 V PDO = 45 W; about 5.5 A at 7.4 V at an assumed 90 % efficiency for servos and the head computer together, so the OpenRB DXL ports' shared 3 A rating stays the tighter limit; the 9 V PDO (27 W) is not allowed (walking_power_20261015). XL4015 module about 4 A continuous and needs its output about 1.5 V under its input. Converters are trimmed with no load and read back before J4 and the A7Z are connected.",
+   "acceptance": [
+    "Bench readback after replug: 5991 OUT 15 V (14.5-15.5), XL4015 #1 7.35-7.45 V, XL4015 #2 4.95-5.10 V (guide step bench-test, bring-up page step 12 records)",
+    "guide/firmware/pi/set_shutdown.py --check PASS: 15/15 servos hold Shutdown 52 (written and read back 15/15 on Shawn's robot 2026-10-15)",
+    "guide/firmware/pi/check_voltage_limit.py --rail battery PASS on the robot: 15/15 servos, Max Voltage Limit 7.0 V on all, Shutdown 52 on all, Present Input Voltage 6.4-8.4 V (warning under 7.0 V); the default --rail 7v belongs to the 6.80 V set point and fails above 7.0 V",
+    "First stand on the 7 V rail (7.40 V) without a torque drop; walk_wired.py --supply auto prints 'battery guard armed'",
+    "guide step current: current_watch.py log under stand and walk, total below 3000 mA sustained, no XL4015 red CC LED, OpenRB terminal 7.0 V or more under load"
+   ],
+   "set_point": "XL4015 #1 at 7.40 V nominal (accept 7.35-7.45 V; Shawn's robot reads 7.35 V), Shawn 2026-10-15 (current_build.servo_shutdown_52_20261015, DECISIONS.md D-014): every servo holds Shutdown 52, so readings above the 7.0 V Max Voltage Limit raise the input-voltage flag without cutting torque; 7.4 V is the 2S LiPo nominal voltage the battery backpack delivers; simulation with the measured 7.87 deg forward gap: 6.8 V upright but drifted back 8 cm, 7.4 V upright, 8.0 V upright and 8.7 cm forward. XL4015 #2 stays 5.00 V. The rail keeps the name '7 V rail'. Until 2026-10-15: 6.80 V (6.75-6.85 V), coordinator decision 2026-10-14, chosen only to keep factory Shutdown 53.",
+   "wiring_rules": "The two spare kit XL4015 come with the ROBOTIS harness (JST EH plug at each end, ferrules in the terminals): unscrew it and keep it with its kit; 22 AWG goes straight into the terminals, no ferrules, no tinning (nothing is soldered). Solid 22 AWG for short fixed runs on the plate and into the pack, stranded for moving or trailing runs. Rear converter box (revision C2, guide/print/back-plate/build.json and features.json): frame on the pack with the four reused cover M2 x 6; each XL4015 on four M2 x 6 and the 5991 on four M2 x 6, all from the component side into dia 1.6 pilots on dia 4.5 bosses; lid with two M2 x 6. Seen from behind: XL4015 #1 (7 V) left, #2 (5 V) right, both upright with OUT at the top; 5991 across the bottom with USB-C through the -Y side-wall opening; OUT pairs down the centre lane and through the 7 x 4 mm wire passage into the pack channel. Guide steps box-frame, box-5991, box-xl4015, box-out, box-lid; routes pw-15v, pw-15v-link, pw-7v, pi-lead in guide/content/routes.json.",
+   "viewer_cable_kinds": "guide cable kinds power-15v (orange), power-7v (red, 7 V servo pair) and power-5v (magenta, Pi lead) in build_guide.py CABLE_KINDS and viewer/app.js.",
+   "update_20261015": "Set point, limits and acceptance below changed 2026-10-15 by Shawn (current_build.servo_shutdown_52_20261015, robotics DECISIONS.md D-014 and its amendment): every servo holds Shutdown 52, XL4015 #1 at 7.40 V nominal (7.35-7.45 V). The 5991 stays on its 15V switch (switch 3) only: it was moved to 9V earlier on 2026-10-15 and browned out on the first walk command (walking_power_20261015), so it went back to 15V. Guide (bench-test, first-power, current), bring-up step 12, guide/README.md and power-diagram/README.md follow. Earlier values: 6.80 V (6.75-6.85 V) with factory Shutdown 53.",
+   "walking_power_20261015": {
+    "observed": "2026-10-15 about 17:00, 5991 on its 9V switch only: the first walk command (stand61, then walk61) browned out the whole input within 0.5 s. All 15 servos came back with torque off, the OpenRB USB re-enumerated and the Pi went offline. Robot log /tmp/duck_wired_log_1015b.jsonl shows 7.1 V and 5 deg tilt just before the cut.",
+    "conclusion": "The 9 V / 3 A (27 W) PD offer cannot carry walking peaks; the 15 V / 3 A (45 W) offer is required. 9V is not allowed for walking.",
+    "after": "Shawn switched the 5991 back to 15V only; with XL4015 #1 untouched it still reads 7.35 V, the servos read 7.1-7.2 V and check_voltage_limit.py --rail battery passes.",
+    "decision_record": "robotics DECISIONS.md D-014 (amendment, 2026-10-15)"
+   },
+   "as_run_note": "As-run supply (not this design target) is CURRENT-STATE.json `power`: Shawn set the 5991 to 20 V on 2026-10-16 afternoon; the 15 V target here has not been re-decided."
+  },
+  "pi_card_state_20261011": {
+   "found": "2026-10-13, from the 17-720 course session that flashed it on 2026-10-11",
+   "source": "/Users/xiangzheng/Desktop/courses/17-720-Machine-Learning-and-Sensing-for-Healthcare/Assignments/Final-Project/Pi-System/README.md (section \"Pi Zero W differences\")",
+   "os": "Raspberry Pi OS Lite 32-bit (first-gen Zero W), configured by cloud-init from that kit",
+   "access": "USB gadget networking only: Mac USB cable into the inner micro-USB port labelled USB (not PWR IN); Pi at 10.12.194.1; `ssh healthpi` (Mac ~/.ssh/config, user pi, Mac SSH key, no password). First boot on a Zero W takes 5-10 min.",
+   "wifi": "Not configured. The kit was built for a Pi 4 tethered to the Mac by USB; no Wi-Fi credentials were written. The robot plan needs Wi-Fi to the MacBook later.",
+   "config_txt": "I2C on, full UART on GPIO14/15 with Bluetooth off (dtoverlay=disable-bt), dwc2 USB device mode. Matches what guide step pi-config asks for UART/I2C.",
+   "hostname": "healthpi (course name; rename is optional)",
+   "power_rule": "Do not feed 5 V on GPIO pin 2 and plug the Mac USB cable at the same time: the Zero W ties both to its 5 V rail. Unplug the pin-2 jumper while on Mac USB.",
+   "status": "This exact Pi Zero W (Rev 1.1) was booted and verified in the 17-720 session: ssh healthpi login over USB NCM, Mac default route stays on Wi-Fi, clock synced from the Mac, Camera Module 3 Wide (imx708_wide) detected and a 2304x1296 test photo taken (user screenshot 2026-10-13). Known harmless boot error: the stock USB gadget setup command exceeds its 15 s limit on the Zero, so cloud-init marks a stage failed; networking uses the kit service instead. On 2026-10-13 the board was powered from the OpenRB J4 jumpers and its LED lit.",
+   "checks_20261013": {
+    "camera": "rpicam-hello --list-cameras lists imx708_wide (Camera Module 3 Wide): OK",
+    "i2c": "raspi-config do_i2c 0 run (i2c-dev was not loaded, no /dev/i2c-1 before); i2c-tools installed. BNO085 not answering: i2cdetect -y 1 and -r empty, i2ctransfer r4@0x4a/0x4b I/O error. Shawn says the wires follow the guide pins; cause not yet found. Later: a jumper was on the wrong pin; after Shawn fixed it the IMU on-LED lights, but 0x4A/0x4B still do not answer (21:33). After a full power cycle on robot power and dtparam=i2c_arm_baudrate=400000 (Adafruit's BNO085 Pi setting), still no ACK at 0x4A/0x4B (22:00).",
+    "uart": "/dev/serial0 -> ttyAMA0 (PL011, BT disabled, no serial console). Scripts guide/firmware/pi copied to ~/duck, venv ~/duck-venv with dynamixel-sdk. scan_bus.py runs; 0/15 with no servos plugged, so the OpenRB bridge link is not yet tested.",
+    "wifi": "Joined CMU-DEVICE as microduck.wifi.local.cmu.edu (MAC b8:27:eb:d1:96:8d, 172.26.167.108), internet OK. MacBook on CMU-SECURE: ICMP works both ways, TCP (22, 8765, 8799) and UDP (8797, 8798) blocked both ways. Fix (Shawn chose Tailscale over a phone hotspot): Tailscale 1.104.1 on the Pi, node microduck 100.98.47.29, tailscaled enabled at boot. Mac ssh alias `duck` (HostKeyAlias healthpi, same ED25519 key SHA256:C8lzO6DU...). tailscale ping goes direct via 172.26.167.108:41641, 12 ms.",
+    "power": "Robot power (5991 USB-C -> J4, Pi via pin 2/6) boots the Pi with throttled=0x0.",
+    "servos": "2026-10-13 22:10: scan_bus.py over Pi UART -> OpenRB bridge -> DXL: 15/15 XL330 (model 1200) answered, 4.9-5.0 V, error 0x00, on USB-C 5 V robot power. Shawn later removed and refitted the neck; ID12 neck pitch needs recalibration.",
+    "imu": "2026-10-13 23:05: BNO085 reads over software I2C bus 3 (dtoverlay=i2c-gpio sda=GPIO4 pin 7, scl=GPIO27 pin 13, persisted in config.txt), address 0x4A, ~/duck/imu_read.py prints quaternion-derived roll/pitch/yaw and |acc| 9.81. Cause of the earlier silence: the IMU's first STEMMA QT socket never connected SCL (found by reading the wires with Pi pull-downs; the board's 10k pull-ups make a connected wire read high). The cable now sits in the board's other socket. Software I2C also avoids the Pi hardware I2C clock-stretching problem Adafruit documents for the BNO085."
+   }
+  },
+  "walk_start_fix_20261014": {
+   "what": "walk_brain.Brain no longer ramps open loop from STAND to the policy pose when walk mode is entered; stand61/walk61 start from the present pose at the first fresh upright sample (walk_ramp default 0.0).",
+   "why": "The 2026-10-14 fall happened inside the 1.5 s open-loop ramp before the policy ever acted (trunk 41 deg forward at the first policy tick); the as-built simulation reproduces it (falls at 0.58 s with the ramp, walks 1.39 m at 5 V without it).",
+   "evidence": "hardware-design-20260912/whole-robot-20260912/dynamics/realgap-20261014/README.md section 6; guide/firmware/mac/brain-sim-check.json (Brain class in the loop, 10 cases at 5 V and 6.8 V)",
+   "measurement_tool": "guide/firmware/mac/measure_gap.py (IMU pitch bias at feet-flat STAND/HOME against the model; self-test passes), pose_snapshot.py for joint zeros",
+   "status": "Code changed and simulated; not run on the robot (robot not connected on 2026-10-14 night). Hardware checklist in the README section above.",
+   "acceptance": [
+    "stand61 holds the standing robot 30 s after the walk command with no visible ramp motion",
+    "walk61 vx 0.2 covers 1 m on the floor",
+    "measure_gap.py result recorded with the session log"
+   ]
+  },
+  "battery_backpack_plan_20261015": {
+   "date": "2026-10-15",
+   "requested_by": "user",
+   "user_statement_en": "Replace the backpack's two buck boards and 5991 with a ~7 V battery, a regulator and a switch: one branch regulated for the A7Z (replacing the Pi), one straight to the OpenRB and servos; use the DFRobot board so the 5991 can stay in the bench backpack.",
+   "status": "Plan adopted (DECISIONS.md D-010); parts in the Amazon cart, not paid; nothing built or measured. Next: batteries arrive, Shutdown 52 script (session microduck-servo-battery), battery backpack CAD with the measured pack.",
+   "plan": "build-pack-20260913/power/battery-backpack-20261015/README.md",
+   "budget": "build-pack-20260913/power/battery-backpack-20261015/budget.json (walking about 1.3 A from the battery, 2S 650 about 24 min; pessimistic 2.2 A, 14 min; peak about 8.3 A)",
+   "servo_simulation": "hardware-design-20260912/whole-robot-20260912/dynamics/power-2s-20261015/README.md",
+   "chain": [
+    "Battery backpack: Tattu 2S 650 mAh 75C XT30 (female) -> REV-31-1387 switch -> feed lead (Amass XT30 male, 22 AWG) -> DFR1202 VIN/GND pads; servo lead from the same pads -> Amass XT30 female; 5 V lead from VOUT/GND -> Amass MR30 female",
+    "Robot: XT30 male servo inlet (FIT0586 half, 22 AWG) -> OpenRB-150 J4, JP1 on VIN(DXL); A7Z lead 22 AWG ~500 mm, Dupont on header pins 2 (5 V) and 6 (GND), MR30 male at the rear pack",
+    "Bench backpack: XL4015 #1 7.40 V (6.80 V until 2026-10-15, D-014) -> FIT0586 female -> servo inlet; XL4015 #2 5.00 V -> MR30 female -> A7Z lead (replaces the Pi jumper lead)",
+    "Swap = two plugs (XT30 + MR30); MR30 cannot mate with XT30"
+   ],
+   "servo_setting_required": "Shutdown (address 63) 53 -> 52 on IDs 1-15 before the first battery power; check_voltage_limit.py needs a battery mode; battery guard warns at 7.0 V and stops at 6.6 V",
+   "bench_backpack": "Layout F box (servo_rail_7v_20261014, V1.16) stays; its outputs end in the FIT0586 XT30 female and an MR30 female",
+   "procurement": "build-pack-20260913/procurement/battery-backpack-20261015/ (Amazon cart read 2026-10-15T05:04Z: 2 x Tattu 650, Tenergy LiPo bag, Amass XT30 10 pairs, Amass MR30 10 pairs selected, $46.29; charger B0H4LC2J37 unselected pending RoboClub; REV switch RoboClub first)",
+   "decision_record": "robotics DECISIONS.md D-010",
+   "placement": {
+    "date": "2026-10-15",
+    "decided_by": "user",
+    "user_reply": "DFR1202 goes inside the battery backpack. The bench backpack keeps XL4015 #2 for the A7Z 5 V."
+   }
+  },
+  "a7z_head_20261015": {
+   "date": "2026-10-15",
+   "requested_by": "user",
+   "decision": "DECISIONS.md D-011",
+   "user_statement_en": "The MicroDuck moves to the A7Z; board and camera are ordered. Give a new Dupont wiring guide (keep the Pi version), an antenna install guide, and new eye trim and face print files merged into the unprinted V1.16.",
+   "status": "Board (Radxa Cubie A7Z) and Radxa Camera 13M 214 ordered on Amazon, arriving 2026-10-16; nothing fitted or powered. Print gate passed on guide revision guide-20261015-a7z (gate-receipt.json). Prints: head cap and cap wire clip from guide/print/a7z-head/build_a7z_head.py, face panel from guide/print/face-a7z/build_face_a7z.py; the eye trim is unchanged. They join the unprinted V1.16 set as V1.17.",
+   "pin_map": {
+    "imu": "1 3.3 V, 3 TWI7 SDA, 5 TWI7 SCL, 9 GND (i2c bus 7)",
+    "power": "2 5 V, 6 GND (same VCC5V0_SYS net as USB-C, schematic v1.11 p13/p14)",
+    "uart": "7 UART2 TX, 11 UART2 RX (overlay Enable UART2; device /dev/ttyAS2 inferred, confirm with ls /dev/ttyAS*)",
+    "amplifier": "4 Vin, 12 BCLK (PB5, the only I2S0-BCLK on the header), 35 LRC, 39 GND, 40 DIN; all ordinary Dupont plugs (overlay Enable I2S0, untested)",
+    "empty": "8 and 10 are the A7Z debug console"
+   },
+   "why_pins_moved": "UART2 is on pins 7/11 and TWI7 on 3/5 by the A733 pin mux; 8/10 are the debug console. The camera board's lower edge sits about 2 mm in front of the plug ends of pins 7-34 (bare board; back components only in the upper corner, Radxa photo), so those wires bend down at the plug; Shawn confirmed 2026-10-15 that they fit. Figure: guide/print/face-a7z/pin-clearance/pin-clearance.png.",
+   "pages": {
+    "pins": "bringup/A7Z-PINS.html",
+    "antenna": "bringup/A7Z-ANTENNA.html",
+    "builder": "bringup/a7z/build_a7z_pages.py",
+    "pi_pages_kept": "bringup/BRINGUP.html"
+   },
+   "open": [
+    "Camera corner screws get 2.4 mm of thread (M2 x 4 into the 1.3 mm face plate bosses).",
+    "A733 camera pipeline (en-awisp) and the 90 degree image rotation are untested on this robot.",
+    "I2S0 overlay is a 2-channel demo card; MAX98357A playback untested."
+   ],
+   "sd_card_20261017": {
+    "image": "Radxa A733 unified Debian 11 CLI rsdk-r6 (radxa-a733_bullseye_cli_r6.output_512.img.xz, sha512 matches the release sha512sum; docs.radxa.com/cubie/a7z/download lists R6 as latest, read 2026-10-17)",
+    "card": "the 16 GB card that held the Pi Zero W system (PARTUUID 3c8712b7); written 2026-10-17, readback sha256 d0fd56d4...2c45 MATCH",
+    "pi_backup": "~/Backups/microduck-pi-16gb-20261017.img.gz, raw sha256 2c882b88...ca07, gunzip hash verified; write it back to a 16 GB card to return to the Pi",
+    "image_changes": [
+     "config/before.txt: enable_service ssh unconditionally (stock enables it only when no display is detected)",
+     "NetworkManager profile CMU-DEVICE (open, autoconnect, retries unlimited, cloned-mac-address permanent)",
+     "NetworkManager profile usb-gadget on usb0, IPv4/IPv6 link-local; duck-bootinfo.service starts radxa-ncm on every UDC (power USB-C is device mode by default)",
+     "duck-bootinfo writes interface MACs, addresses and NM state to /config/duck-boot.txt (FAT, readable on a Mac) 30 s after boot",
+     "sshd AuthorizedKeysFile adds /etc/ssh/authorized_keys.d/%u, holding the MacBook id_ed25519 key for user radxa (password radxa)"
+    ],
+    "status": "not booted yet; Wi-Fi MAC unknown until first boot, then registered for CMU-DEVICE"
+   }
+  },
+  "touch_extension_20261015": {
+   "decided_by": "user",
+   "date": "2026-10-15",
+   "user_statement": "可以，XIAO 的铜箔线和 UART 线直接焊在板边焊盘上，和功放一样算例外。把它加进 guide 并跑 print gate 检查。",
+   "user_statement_en": "OK, solder the XIAO's copper-pad wires and link wires straight to its edge pads, an exception like the amplifier. Add it to the guide and run the print gate.",
+   "purpose": "Human-pet interaction (touch, pat, stroke, hold); push from head servo current or position error. Beak grip force is a later optional extension.",
+   "design": "Five copper foil pads on the inner face of the cap (L1, R1 18 mm; L2, R2, M 12 mm), read through the 1.7 mm PLA wall by XIAO ESP32-S3 touch pins D0, D1, D2, D3, D8. The XIAO sits on 1 mm foam tape on the inner left wall of the cap; no printed geometry changes.",
+   "link": "I2C, XIAO as slave: D5 SCL to A7Z pin 29 (PB2), D4 SDA to pin 31 (PB3), 3V3 from pin 17, GND pin 25 (inner-row Dupont plugs). The user said 'UART'; no stock A7Z overlay serves any free inner-row pair (TWI0 overlay is CM-A7 only, corrected 2026-10-15 after the A7Z-PINS session checked compatible strings), so the four wires carry I2C under a custom overlay (TWI0 on PB2/PB3 or i2c-gpio) written and verified at the bench test, 100 kHz, internal pull-ups.",
+   "soldering_exception": "Nine wires soldered to the XIAO edge pads (approved 2026-10-15, like the amplifier). Pad leads are also soldered to the copper pads.",
+   "source": "guide/extension-20261015-touch/ (PLAN.md, build_touch_geometry.py, touch_routes.json); guide steps 'touch' and 'touch-pi'",
+   "print_gate": "Passed 2026-10-15 14:4x with the parts in the guide: 176 solids closed, no unclassified overlap, 80 steps with 0 path collisions, 37 cables with no mid-route penetration. The four A7Z leads go up through the 2.3 mm gap between the plug ends and the camera board, as the amplifier BCLK wire does.",
+   "deployed": "MICRODUCK-BUILD.html on the Mac mini, byte-identical; verify_current_design.py --scope design passed 2026-10-15 14:49.",
+   "open_items": "Bench acceptance in PLAN.md: custom I2C overlay on pins 29/31 loads and reads 50 Hz without failures, 3.3 V rail under load, through-wall signal at least 5x noise, no false touch from head roll or yaw. XIAO and copper tape are new purchases (USD 7.49 + 5.95). A7Z-PINS.html update handed to session local_2f0a8d6e."
+  },
+  "servo_shutdown_52_20261015": {
+   "date": "2026-10-15",
+   "decided_by": "user",
+   "user_statement": "你先把寄存器改了吧 因为后面我们肯定会超的",
+   "state": "Shutdown (63) written 53 -> 52 on IDs 1-15 with set_shutdown.py over the OpenRB USB link, 15/15 read back 52 (torque off, robot released on Shawn's word). Power-cycle pending; then check_voltage_limit.py --rail battery.",
+   "bench_rail_consequence": "The bench XL4015 #1 no longer has to stay under 7.0 V. Proposed set point 7.40 V (7.35-7.45), the 2S nominal voltage; simulation with the measured 7.87 deg gap (realgap-20261014 README section 7): 6.8 V upright but drifts back 8 cm, 7.4 V upright, 8.0 V upright and 8.7 cm forward. walk_wired --supply auto arms the battery guard at 7.2 V, which also lets Alert-flagged status packets through.",
+   "supersedes_in_part": "servo_rail_7v_20261014.set_point (6.80 V was chosen only to keep factory Shutdown 53)",
+   "adopted_20261015": "Shawn adopted the bench consequence: XL4015 #1 now 7.35 V (accept 7.35-7.45, 7.40 V nominal), 5991 on its 15V switch (switch 3) only; a 9V trial browned out on the first walk command (servo_rail_7v_20261014.walking_power_20261015). 15/15 servos hold 52; above 7.0 V they raise the input-voltage flag and keep torque. Check: check_voltage_limit.py --rail battery. servo_rail_7v_20261014 set_point, chain, limits and acceptance updated; DECISIONS.md D-014 and its amendment."
+  },
+  "a7z_led_window_pending_20261015": {
+   "date": "2026-10-15",
+   "decided_by": "user (request); proposal pending",
+   "status": "Pending. Note only: no CAD, no print file, no gate receipt, no guide page change. Added the next time the head cap or face panel geometry changes anyway; the release then goes through run_gate.py.",
+   "problem_id": "P5",
+   "request": "Shawn asked for a small window so the Radxa Cubie A7Z status light can be seen from outside the head.",
+   "led": "One green power LED (LED2) on the component side at the port edge, between the two USB-C sockets J16 (power) and J4 (OTG/DP); schematic V1.11 page 16: anode fed from DCDC1 through R212 5.1 kOhm and from LED_EN (SoC PM2) through R46 2.2 kOhm. Robot-frame position (62.25, -15.4, 142.4) mm, pointing forward and 10 deg down; the camera board blocks the straight-ahead view.",
+   "proposal": "Plain round 3.0 mm through-hole in the face panel, centre y -20.0, z 143.0 on the face front (x 81.4), square to the face; sight line 19.7 mm long, 17.9 deg off the LED axis; head cap unchanged. Margins: line to camera model 2.59 mm, to USB-C power shell 1.40 mm; hole edge to eye trim 6.7 mm, to nearest camera corner boss 2.4 mm.",
+   "open_questions": [
+    "Amp DIN wire (header pin 40) route passes 2.2 mm from the sight line at (66.7, -14.5, 141.3), and the pin-35 LRC route within 5.0 mm; the wiring step must keep the strip between the USB-C sockets (y -14 to -18) clear. cables.py checks penetration only, not line of sight.",
+    "Brightness is inferred (about 0.1 mA from DCDC1 alone), not measured: bench check by eye when the board arrives 2026-10-16 (3 mm hole in a card at 20 mm; 1.3 mm and 0.4 mm white printed scraps) decides plain hole versus closed thin window and hole size.",
+    "Software control: check /sys/class/leds and its trigger on the board; LED_EN on SoC PM2 may allow off/dim/bright or a heartbeat trigger.",
+    "Board revision: position from placement map V1.11, cross-checked on a V1.10 photo; confirm on the delivered board before the hole is cut.",
+    "If the face, camera, bosses or board move in the next revision, rerun led_sightline.py and move the hole along the clear line."
+   ],
+   "note": "guide/extension-20261015-a7z-led-window/NOTE.md",
+   "files": [
+    "guide/extension-20261015-a7z-led-window/led_sightline.py",
+    "guide/extension-20261015-a7z-led-window/led_sightline.json",
+    "guide/extension-20261015-a7z-led-window/led-window-front.png"
+   ]
+  }
+ }
+}

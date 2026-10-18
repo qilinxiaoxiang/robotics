@@ -1,0 +1,8 @@
+import os,sys,json,hashlib,types
+from pathlib import Path
+assert os.environ.get('MICRODUCK_BOUNDED_CAD')=='1'
+import numpy as np,trimesh as tm,manifold3d as mf
+D=Path(__file__).resolve().parent;H=D.parents[2]/'head-redesign-20261008';sys.path.insert(0,str(H/'gpio-audio-repair'));import precision_mesh as pm
+c=types.SimpleNamespace(np=np,tm=tm,mf=mf);source=D/'sources/top-head-native.stl';T=np.array(json.loads((H/'curved-head/curved-layout.json').read_text())['nativeShellToWorld']);m=tm.load(source,force='mesh');m.apply_transform(T);a=mf.Manifold(mf.Mesh64(np.asarray(m.vertices,np.float64),np.asarray(m.faces,np.uint64)));assert a.status()==mf.Error.NoError,a.status();p=H/'curved-head/community-curved-head-world.stl';b=pm.load(c,p)
+r={'nativeSourceStl':str(source),'nativeSourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'referenceStl':str(p),'referenceSha256':hashlib.sha256(p.read_bytes()).hexdigest(),'nativeSourceToWorld':T.tolist(),'nativeBoundsWorldMm':list(a.bounding_box()),'referenceBoundsWorldMm':list(b.bounding_box()),'nativeVolumeMm3':a.volume(),'referenceVolumeMm3':b.volume(),'nativeOutsideReferenceMm3':max(0,(a-b).volume()),'referenceOutsideNativeMm3':max(0,(b-a).volume()),'classification':'Fusion imported one solid BREP; parent API readback 13588 planar faces, no smooth analytic surfaces recovered. The source may preserve CAD bookkeeping but is faceted geometry. SolidWorks source filename does not imply a reconstructed feature tree.','sourceTriangleCount':len(m.faces),'scriptSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+pm.export(c,a,D/'native-cap-registered-world.stl');(D/'native-cap-comparison.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(r))

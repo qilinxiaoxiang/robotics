@@ -1,0 +1,35 @@
+from pathlib import Path
+import json,hashlib
+D=Path('/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/integrated-harness-20261009');W=D.parents[2];M=D.parents[1]/'motor-wires'
+sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+read=lambda p:json.loads(Path(p).read_text())
+faces=D/'socket13-keyed-faces.json'
+evidence={'status':'KEYED_SOURCE_GEOMETRY_REGISTERED','sources':{'officialPinout':'https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/#connector-information','officialHeaderImage':'https://emanual.robotis.com/assets/images/dxl/JST_B3B_EH-A.png'},'reasoning':['Official header view has the continuous high back wall above the pin row, with pin1 at image left.','Actual socket13 high continuous wall is localY=-6.1, outer tip X8.4; front cut wall is Y=-9.9 and tipX7.5.','Viewing along local-X with image up local+Y makes image right local-Z. Therefore leftmost pin1 has maximum localZ=-6.5, pin2=-9, pin3=-11.5.','Apply the source motor world rigid transform; do not assign polarity by world left/right without this keyed comparison.'],'sockets':[],'physicalContinuityVerified':False,'sourceHashes':{str(f):sha(f)for f in [faces,W/'leg-ports/header-13-motor-local.step',D/'sources/JST_B3B_EH-A.png',D/'sources/jst_b3beha_diagram.png',M/'active-topology.json']}}
+for num,cy in [(5,-9.5),(10,25.5)]:evidence['sockets'].append({'motorId':num,'socket':13,'outwardAxis':[0,0,1],'wireExitPins':[{'pin':pin,'net':net,'positionMm':[x,cy,22]}for pin,net,x in [(1,'GND',-.5),(2,'VDD',-3),(3,'DATA',-5.5)]]})
+(D/'socket13-pin-order.json').write_text(json.dumps(evidence,indent=2)+'\n')
+z=read(D/'zone-feeds.json');receipts=[D/('zone-feed-check-'+r['key']+'.json') for r in z['parts']]
+a=[read(f)for f in receipts]
+assert all(r['complete'] and r['passedStatic'] for r in a)
+assert all(r['sourceHashes'][str(D/'zone-feeds.json')]==sha(D/'zone-feeds.json')for r in a)
+out={'status':'FOUR_LEG_ZONE_FEEDS_NEUTRAL_STATIC_CLEAR','complete':True,'passedStatic':True,'expectedPairs':sum(r['expectedPairs']for r in a),'pairs':sum([r['rows']for r in a],[]),'motorComponentReceipt':str(D/'zone-feed-own-motors.json'),'motorComponentReceiptSha256':sha(D/'zone-feed-own-motors.json'),'sourceHashes':{str(f):sha(f)for f in receipts+[D/'zone-feeds.json',D/'socket13-pin-order.json']},'scope':'Four receiving motor contacts to body distribution joints; full frozen eight leg cable geometry included. Does not certify cap installation, joint motion, electrical load or full neck/head wiring.','physicalFitVerified':False}
+(D/'zone-feed-check.json').write_text(json.dumps(out,indent=2)+'\n')
+# Add stable exact-renderer bridge, leaving canonical source unchanged.
+man=read(D/'body-distribution-manifest.json');bodyfile=W/'original-body-converter/fusion-import-manifest.json';body=read(bodyfile)
+contextkeys=['regulator','regulator_insert','power_support','torso_base','shell_left','shell_right','motor5','motor10','motor11','motor12']
+man['contextParts']=[p for p in body['parts']if p['key']in contextkeys]
+man['contextPartsSource']={'file':str(bodyfile),'sha256':sha(bodyfile),'note':'Apply each importTranslationMm exactly. DFR is explicitly the manufacturer-envelope receiving model; pad land registration comes from official rear photograph, not a detailed board STL.'}
+man['focusPartKeys']=contextkeys
+man['rendererRule']='Render supplied exact STL meshes at world coordinates; never redraw the wire by interpolating endpoint markers. Context STLs use their explicit translations. Receiving solder-joint envelopes are not purchased or printed parts.'
+man['parts']=man['additionalParts']
+for r in z['parts']:man['additionalParts'].append(dict(r,color='#e84c37'if r['net']=='5V'else '#262b34',name=f"Zone feed — {r['to']}",geometryKind='receiving-wire-route',expectedFinalBoundsMm=r['boundsMm'],coordinates='world mm; identity'))
+man['connections']=[]
+for net,start,end in [('5v',[-31.5,-10.5,0],[-7,-7,35.5]),('gnd',[-31.5,.2,0],[-7,7,35.5])]:
+ man['connections'].append({'id':'power-dfr-'+net+'-distribution','tutorialStepIds':['power-02','power-03'],'partKeys':['distribution_'+net+'_pad','distribution_'+net+'_insulated','distribution_'+net],'focusPartKeys':['regulator','regulator_insert','power_support','shell_left','shell_right'],'fromEndpoint':{'partKey':'regulator','connectorType':'solder land','position':start,'outwardAxis':[1,0,0],'departureAxis':[0,0,1],'poseEvidence':str(D.parent/'dfr1202-back-pad-registration.json')},'toEndpoint':{'partKey':'distribution_'+net,'connectorType':'insulated solder splice','position':end,'outwardAxis':None,'illustrativeOnly':True},'geometryAcceptedScope':'Registered DFR land to insulated body splice; no outgoing neck or head continuation'})
+for side,num in [('left',5),('right',10)]:
+ rr=[r for r in z['parts']if side in r['key']];pins=next(s for s in evidence['sockets']if s['motorId']==num)
+ man['connections'].append({'id':f'power-zone-{num:02d}-feed','tutorialStepIds':['power-04'],'partKeys':[r['key']for r in rr],'focusPartKeys':[f'motor{num}','power_support','shell_left','shell_right'],'fromEndpoint':{'connectorType':'paired body solder splices','positionsMm':[[-7,-7,35.5],[-7,7,35.5]],'outwardAxis':None},'toEndpoint':{'partKey':f'motor{num}','connectorType':'JST EHR-3 in source socket13','position':[-3,-9.5 if num==5 else 25.5,22],'outwardAxis':[0,0,1],'contacts':pins['wireExitPins'],'poseEvidence':str(D/'socket13-pin-order.json'),'poseVerified':True},'geometryAcceptedScope':'Installed neutral route, including all eight frozen leg cables as obstacles; receiving-side power adapter and powered/moving verification separate','installedCenterlineLengthsMm':{r['net']:r['lengthMm']for r in rr},'illustrativeFlexibleShape':True,'assembly':['Prewire and continuity-check the receiving-side EHR housing off the robot: pin2 to dedicated5V, pin1 to dedicatedGND, pin3 to DATA.','With both torso covers open, seat housing at the registered socket. Carry the two flexible leads around the front edge of the original power support at X≈13, then rearward above it to the insulated distribution joints.','Keep the8existing leg cables untouched; adjust only this new flexible branch before tying its insulated section. Do not copy a rigid bend shape or stretch wire to an exact nominal route.']})
+man['zoneFeedReceipt']={'file':str(D/'zone-feed-check.json'),'sha256':sha(D/'zone-feed-check.json')};man['sourceHashes']={str(f):sha(f)for f in [D/'zone-feeds.json',D/'socket13-pin-order.json',bodyfile,M/'slack-packaging/mixed-leg-manifest.json']}
+man['integrationScope']='Checked DFR-to-splices and two paired leg-zone feeds in original-body neutral pose only; no new fuse assembly, no whole-harness acceptance.'
+man.pop('parts',None)
+(D/'body-distribution-manifest.json').write_text(json.dumps(man,indent=2)+'\n')
+print(json.dumps({'manifest':str(D/'body-distribution-manifest.json'),'sha256':sha(D/'body-distribution-manifest.json'),'pairs':out['expectedPairs'],'zoneMotorPairs':read(D/'zone-feed-own-motors.json')['expectedPairs']}))

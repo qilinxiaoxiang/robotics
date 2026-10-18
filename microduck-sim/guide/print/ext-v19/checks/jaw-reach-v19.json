@@ -1,0 +1,178 @@
+{
+ "_method": "Where can a clip or the wire group sit on the neck_pitch body (head-pitch bracket) without being reached by the jaw\nbefore the runtime jaw cap allows?\n\nReach field in the neck_pitch body frame (robot frame at q = 0): for every head pose node of the runtime pose-cap grid\nthat moves the jaw relative to this body (head_yaw -170..170 step 10, head_roll -25..25 step 5; the bracket group of\npose_cap_sweep.py) and every jaw opening 0..HI deg in STEP deg steps, the jaw surface samples (every jaw surface point\nwithin E_JAW of a sample) are moved into the body frame and binned into VOX mm voxels; each voxel keeps the smallest\njaw angle that reached it. A voxel counts as reached at level L when a sample with angle <= L lies within\nDELTA = contact gap 0.3 + E_JAW + half a step of jaw travel (r_jaw * STEP/2) + half a voxel diagonal of it\n(conservative: the true jaw surface passes at least that close).\nReported per level L: the free depth beyond the bracket's -y face (y = -17.5) at each (x, z): the distance from that\nface to the nearest reached voxel along -y; a part that protrudes less than the free depth at its (x, z) is not\nreached below L. Also the free depth at the bracket clip site and along the bundle path, and PNG maps.\nUsage: jaw_reach_v19.py   Writes ../checks/jaw-reach-v19.json and ../png/jaw-reach-v19-L<level>.png.",
+ "rJawMm": 61.3,
+ "samples": 588570,
+ "deltaMm": 1.75,
+ "box": [
+  [
+   0.0,
+   -40.0,
+   60.0
+  ],
+  [
+   50.0,
+   -8.0,
+   112.0
+  ]
+ ],
+ "voxMm": 0.5,
+ "levels": {
+  "27": {
+   "clipSite_x22-30_z79-86": 0.0,
+   "bundlePath_x24-28_z74-100": 0.0,
+   "rearHalf_x17-22_z74-100": 0.0,
+   "frontHalf_x30-35_z74-100": 0.0,
+   "freeDepthByZ_x17-35": {
+    "70": 12.0,
+    "72": 9.0,
+    "74": 6.0,
+    "76": 2.5,
+    "78": 0.0,
+    "80": 0.0,
+    "82": 0.0,
+    "84": 0.0,
+    "86": 0.0,
+    "88": 0.0,
+    "90": 0.0,
+    "92": 0.5,
+    "94": 2.0,
+    "96": 3.0,
+    "98": 4.5,
+    "100": 6.5,
+    "102": 7.5,
+    "104": 9.0
+   }
+  },
+  "25": {
+   "clipSite_x22-30_z79-86": 0.5,
+   "bundlePath_x24-28_z74-100": 1.0,
+   "rearHalf_x17-22_z74-100": 0.0,
+   "frontHalf_x30-35_z74-100": 0.0,
+   "freeDepthByZ_x17-35": {
+    "70": 14.5,
+    "72": 11.0,
+    "74": 8.0,
+    "76": 5.0,
+    "78": 1.5,
+    "80": 0.0,
+    "82": 0.0,
+    "84": 0.0,
+    "86": 0.0,
+    "88": 0.0,
+    "90": 0.5,
+    "92": 1.5,
+    "94": 2.5,
+    "96": 3.5,
+    "98": 4.5,
+    "100": 6.5,
+    "102": 7.5,
+    "104": 9.0
+   }
+  },
+  "22": {
+   "clipSite_x22-30_z79-86": 2.5,
+   "bundlePath_x24-28_z74-100": 2.5,
+   "rearHalf_x17-22_z74-100": 0.5,
+   "frontHalf_x30-35_z74-100": 0.5,
+   "freeDepthByZ_x17-35": {
+    "70": 18.5,
+    "72": 14.5,
+    "74": 11.5,
+    "76": 8.0,
+    "78": 4.5,
+    "80": 1.5,
+    "82": 1.0,
+    "84": 0.5,
+    "86": 1.0,
+    "88": 1.0,
+    "90": 1.5,
+    "92": 2.5,
+    "94": 3.0,
+    "96": 4.0,
+    "98": 5.0,
+    "100": 6.5,
+    "102": 7.5,
+    "104": 9.0
+   }
+  },
+  "20": {
+   "clipSite_x22-30_z79-86": 3.5,
+   "bundlePath_x24-28_z74-100": 3.5,
+   "rearHalf_x17-22_z74-100": 2.0,
+   "frontHalf_x30-35_z74-100": 2.0,
+   "freeDepthByZ_x17-35": {
+    "70": 21.5,
+    "72": 17.5,
+    "74": 13.5,
+    "76": 10.0,
+    "78": 6.5,
+    "80": 3.0,
+    "82": 2.0,
+    "84": 2.0,
+    "86": 2.0,
+    "88": 2.0,
+    "90": 2.5,
+    "92": 3.0,
+    "94": 4.0,
+    "96": 4.5,
+    "98": 5.5,
+    "100": 6.5,
+    "102": 7.5,
+    "104": 9.0
+   }
+  },
+  "18": {
+   "clipSite_x22-30_z79-86": 4.0,
+   "bundlePath_x24-28_z74-100": 4.5,
+   "rearHalf_x17-22_z74-100": 2.5,
+   "frontHalf_x30-35_z74-100": 2.5,
+   "freeDepthByZ_x17-35": {
+    "70": 22.5,
+    "72": 20.5,
+    "74": 16.0,
+    "76": 12.5,
+    "78": 8.5,
+    "80": 4.5,
+    "82": 2.5,
+    "84": 3.0,
+    "86": 3.0,
+    "88": 3.0,
+    "90": 3.0,
+    "92": 3.5,
+    "94": 4.5,
+    "96": 5.0,
+    "98": 6.0,
+    "100": 6.5,
+    "102": 8.0,
+    "104": 9.0
+   }
+  },
+  "15": {
+   "clipSite_x22-30_z79-86": 5.0,
+   "bundlePath_x24-28_z74-100": 5.0,
+   "rearHalf_x17-22_z74-100": 3.5,
+   "frontHalf_x30-35_z74-100": 3.5,
+   "freeDepthByZ_x17-35": {
+    "70": 22.5,
+    "72": 22.5,
+    "74": 21.0,
+    "76": 16.0,
+    "78": 11.0,
+    "80": 7.5,
+    "82": 4.0,
+    "84": 3.5,
+    "86": 4.5,
+    "88": 4.5,
+    "90": 4.5,
+    "92": 5.0,
+    "94": 5.5,
+    "96": 6.0,
+    "98": 6.5,
+    "100": 7.0,
+    "102": 8.0,
+    "104": 9.0
+   }
+  }
+ },
+ "elapsedSeconds": 414.1
+}

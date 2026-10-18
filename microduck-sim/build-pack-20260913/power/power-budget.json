@@ -1,0 +1,381 @@
+{
+  "evidence": "design calculation, no hardware measurements",
+  "battery_nameplate_wh": 6.29,
+  "scenarios": [
+    {
+      "name": "relaxed_idle",
+      "servo14_a": 0.238,
+      "mouth_a": 0.017,
+      "logic_total_a": 0.48,
+      "basis": "servo standby official; complete logic current assumed",
+      "continuous": true,
+      "description_en": "Powered but torque disabled; camera off and amplifier muted",
+      "servo_total_a": 0.255,
+      "servo_output_w": 1.275,
+      "logic_output_w": 2.4,
+      "battery_input_w_range": [
+        3.8741052631578947,
+        4.417279411764706
+      ],
+      "battery_current_a_range": [
+        0.46749999999999997,
+        0.6692847593582888
+      ],
+      "servo_regulator_heat_w_range": [
+        0.06710526315789478,
+        0.31874999999999987
+      ],
+      "logic_regulator_heat_w_range": [
+        0.13200000000000012,
+        0.42352941176470615
+      ],
+      "runtime_minutes_range_if_continuous": [
+        55.5341822721598,
+        77.93283338767526
+      ],
+      "within_7p5a_input_design_all_assessed_points": true,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "standing",
+      "servo14_a": 1.5,
+      "mouth_a": 0.017,
+      "logic_total_a": 0.9,
+      "basis": "engineering assumed load; holding current depends on posture",
+      "continuous": true,
+      "description_en": "Standing hold, camera enabled and amplifier muted",
+      "servo_total_a": 1.517,
+      "servo_output_w": 7.584999999999999,
+      "logic_output_w": 4.5,
+      "battery_input_w_range": [
+        12.721052631578948,
+        14.775367647058822
+      ],
+      "battery_current_a_range": [
+        1.5144110275689222,
+        2.2386920677361855
+      ],
+      "servo_regulator_heat_w_range": [
+        0.3992105263157901,
+        1.8962499999999984
+      ],
+      "logic_regulator_heat_w_range": [
+        0.2368421052631584,
+        0.7941176470588234
+      ],
+      "runtime_minutes_range_if_continuous": [
+        16.602632561148575,
+        23.73388498138188
+      ],
+      "within_7p5a_input_design_all_assessed_points": true,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "walking_light",
+      "servo14_a": 2.0,
+      "mouth_a": 0.1,
+      "logic_total_a": 1.0,
+      "basis": "engineering assumed rail currents, not torque proxy",
+      "continuous": true,
+      "description_en": "Light walking, compressed single-camera Wi-Fi streaming and intermittent audio",
+      "servo_total_a": 2.1,
+      "servo_output_w": 10.5,
+      "logic_output_w": 5.0,
+      "battery_input_w_range": [
+        16.315789473684212,
+        19.00735294117647
+      ],
+      "battery_current_a_range": [
+        1.942355889724311,
+        2.879901960784314
+      ],
+      "servo_regulator_heat_w_range": [
+        0.5526315789473681,
+        2.625
+      ],
+      "logic_regulator_heat_w_range": [
+        0.2631578947368425,
+        0.882352941176471
+      ],
+      "runtime_minutes_range_if_continuous": [
+        12.906058027079304,
+        18.504774193548386
+      ],
+      "within_7p5a_input_design_all_assessed_points": true,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "walking_design",
+      "servo14_a": 3.5,
+      "mouth_a": 0.3,
+      "logic_total_a": 1.4,
+      "basis": "engineering assumed rail currents, not measured",
+      "continuous": true,
+      "description_en": "Design walking load with jaw, camera/Wi-Fi and 1W audio allowance",
+      "servo_total_a": 3.8,
+      "servo_output_w": 19.0,
+      "logic_output_w": 7.0,
+      "battery_input_w_range": [
+        27.36842105263158,
+        31.985294117647058
+      ],
+      "battery_current_a_range": [
+        3.2581453634085213,
+        4.846256684491979
+      ],
+      "servo_regulator_heat_w_range": [
+        1.0,
+        4.75
+      ],
+      "logic_regulator_heat_w_range": [
+        0.36842105263157965,
+        1.2352941176470598
+      ],
+      "runtime_minutes_range_if_continuous": [
+        7.669462068965517,
+        11.031692307692309
+      ],
+      "within_7p5a_input_design_all_assessed_points": true,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "walking_heavy",
+      "servo14_a": 6.0,
+      "mouth_a": 0.6,
+      "logic_total_a": 2.5,
+      "basis": "stress boundary; not a guaranteed usable continuous mode",
+      "continuous": true,
+      "description_en": "Heavier walking and jaw motion, 2.5A logic-rail stress load",
+      "servo_total_a": 6.6,
+      "servo_output_w": 33.0,
+      "logic_output_w": 12.5,
+      "battery_input_w_range": [
+        47.89473684210526,
+        55.955882352941174
+      ],
+      "battery_current_a_range": [
+        5.701754385964912,
+        8.478163992869876
+      ],
+      "servo_regulator_heat_w_range": [
+        1.7368421052631575,
+        8.25
+      ],
+      "logic_regulator_heat_w_range": [
+        0.6578947368421062,
+        2.2058823529411775
+      ],
+      "runtime_minutes_range_if_continuous": [
+        4.383989487516426,
+        6.303824175824176
+      ],
+      "within_7p5a_input_design_all_assessed_points": false,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "startup_transient",
+      "servo14_a": 8.0,
+      "mouth_a": 0.5,
+      "logic_total_a": 2.5,
+      "basis": "assumed transient, no measured duration/inrush",
+      "continuous": false,
+      "description_en": "Short startup load point caused by position error",
+      "servo_total_a": 8.5,
+      "servo_output_w": 42.5,
+      "logic_output_w": 12.5,
+      "battery_input_w_range": [
+        57.89473684210526,
+        67.83088235294117
+      ],
+      "battery_current_a_range": [
+        6.8922305764411025,
+        10.2774064171123
+      ],
+      "servo_regulator_heat_w_range": [
+        2.2368421052631575,
+        10.625
+      ],
+      "logic_regulator_heat_w_range": [
+        0.6578947368421062,
+        2.2058823529411775
+      ],
+      "runtime_minutes_range_if_continuous": null,
+      "within_7p5a_input_design_all_assessed_points": false,
+      "within_regulator_graph_screen": true,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    },
+    {
+      "name": "all15_stalled",
+      "servo14_a": 20.58,
+      "mouth_a": 1.47,
+      "logic_total_a": 2.5,
+      "basis": "15 times manufacturer stall current at 5V; must stop, not sustain",
+      "continuous": false,
+      "description_en": "Specification arithmetic for all 15 blocked servos; stop condition",
+      "servo_total_a": 22.049999999999997,
+      "servo_output_w": 110.24999999999999,
+      "logic_output_w": 12.5,
+      "battery_input_w_range": [
+        129.21052631578945,
+        152.51838235294116
+      ],
+      "battery_current_a_range": [
+        15.382205513784458,
+        23.108845811051694
+      ],
+      "servo_regulator_heat_w_range": [
+        5.80263157894737,
+        27.562499999999986
+      ],
+      "logic_regulator_heat_w_range": [
+        0.6578947368421062,
+        2.2058823529411775
+      ],
+      "runtime_minutes_range_if_continuous": null,
+      "within_7p5a_input_design_all_assessed_points": false,
+      "within_regulator_graph_screen": false,
+      "not_included": "wire/connector/fuse losses, cell sag and imbalance, regenerative transients, ageing; measured budget must replace assumptions"
+    }
+  ],
+  "rejected_two_servo_daisy_power_voltage_sensitivity": [
+    {
+      "branch_a": 1.5,
+      "second_servo_a": 0.75,
+      "contact_r_ohm": 0.01,
+      "calculated_far_servo_drop_v": 0.169531,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.630469,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "branch_a": 1.5,
+      "second_servo_a": 0.75,
+      "contact_r_ohm": 0.02,
+      "calculated_far_servo_drop_v": 0.214531,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.585469,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "branch_a": 2.25,
+      "second_servo_a": 1.125,
+      "contact_r_ohm": 0.01,
+      "calculated_far_servo_drop_v": 0.244419,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.555581,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "branch_a": 2.25,
+      "second_servo_a": 1.125,
+      "contact_r_ohm": 0.02,
+      "calculated_far_servo_drop_v": 0.31191899999999995,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.488081,
+      "meets_project_4p5v_margin": false
+    },
+    {
+      "branch_a": 2.94,
+      "second_servo_a": 1.47,
+      "contact_r_ohm": 0.01,
+      "calculated_far_servo_drop_v": 0.31331596,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.48668404,
+      "meets_project_4p5v_margin": false
+    },
+    {
+      "branch_a": 2.94,
+      "second_servo_a": 1.47,
+      "contact_r_ohm": 0.02,
+      "calculated_far_servo_drop_v": 0.40151595999999995,
+      "far_servo_v_if_regulator_low_tolerance_4p8v": 4.39848404,
+      "meets_project_4p5v_margin": false
+    }
+  ],
+  "revised_individual_injection_voltage_sensitivity": [
+    {
+      "group_a": 1.5,
+      "motor_a": 0.75,
+      "contact_r_ohm": 0.01,
+      "calculated_drop_v": 0.13068849999999999,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.7193115,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "group_a": 1.5,
+      "motor_a": 0.75,
+      "contact_r_ohm": 0.02,
+      "calculated_drop_v": 0.1456885,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.704311499999999,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "group_a": 2.25,
+      "motor_a": 1.125,
+      "contact_r_ohm": 0.01,
+      "calculated_drop_v": 0.18615525,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.66384475,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "group_a": 2.25,
+      "motor_a": 1.125,
+      "contact_r_ohm": 0.02,
+      "calculated_drop_v": 0.20865525,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.64134475,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "group_a": 2.94,
+      "motor_a": 1.47,
+      "contact_r_ohm": 0.01,
+      "calculated_drop_v": 0.23718466,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.61281534,
+      "meets_project_4p5v_margin": true
+    },
+    {
+      "group_a": 2.94,
+      "motor_a": 1.47,
+      "contact_r_ohm": 0.02,
+      "calculated_drop_v": 0.26658466,
+      "regulator_tolerance_floor_v": 4.85,
+      "motor_v_at_regulator_tolerance_floor": 4.583415339999999,
+      "meets_project_4p5v_margin": true
+    }
+  ],
+  "pi_voltage_margin": {
+    "regulator_low_tolerance_v": 4.85,
+    "project_min_measured_v": 4.8,
+    "pi_leg_design_a": 2.25,
+    "available_total_path_resistance_ohm_at_low_tolerance": 0.022222222222222223,
+    "20awg_200mm_oneway_wire_loop_r_ohm": 0.013324,
+    "available_contact_and_joint_r_ohm": 0.008898222222222222,
+    "result": "fixed 5V +/-3% regulator plus unknown USB contacts cannot guarantee 4.8V by specifications; select/test actual board+cable or revise supply after measurement"
+  },
+  "capacitor_example": {
+    "extra_load_a": 5,
+    "duration_s": 0.02,
+    "allowed_drop_v": 0.25,
+    "required_ideal_capacitance_f": 0.4,
+    "meaning": "0.4F ideal; small electrolytic is not a replacement for current capability"
+  },
+  "regulator_screen": {
+    "model": "Pololu D42V110F5 #5671",
+    "current_a": 14,
+    "basis": "Conservative 14A reading allowance below approximately 15A manufacturer room-temperature still-air curve at 6.6-8.4V; not a guaranteed enclosure rating.",
+    "is_enclosure_or_transient_acceptance": false
+  },
+  "critical_failures": [
+    "all15 stall exceeds the selected regulator graph screening capacity",
+    "heavy load exceeds input fuse continuous design envelope under pessimistic efficiency",
+    "Pi 4.8V at low regulator tolerance not guaranteed",
+    "enclosure thermal resistance unknown",
+    "battery cell-level automatic cutoff not fitted"
+  ],
+  "design_fix": "Rejected power-through-first-servo chain; feed each motor separately after eight group fuses. This fixes the assessed 20C wire/contact voltage-drop cases, not thermal or motion acceptance."
+}

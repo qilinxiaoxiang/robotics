@@ -1,0 +1,5 @@
+from pathlib import Path
+import json,numpy as np,trimesh,hashlib
+F=Path('/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/head-controller-study/final-integration-20261009');r=json.loads((F/'joint-package.json').read_text());q=next(q for q in r['parts']if q['key']=='current_cap');m=trimesh.load_mesh(q['file']);pts=[[-10,0],[0,0],[10,0],[10,20],[13.0,20],[14,20],[20,0],[20,20],[30,0],[30,23],[40,0],[40,23],[60,0],[60,23],[75,0],[75,23]];hits,ids,_=m.ray.intersects_location(np.array([[x,y,200]for x,y in pts]),np.tile([0,0,-1],(len(pts),1)),multiple_hits=True);rows=[]
+for i,p in enumerate(pts):rows.append({'xyMm':p,'capSurfaceCrossingsZMm':sorted(set(round(float(q[2]),6)for q in hits[ids==i]),reverse=True)})
+out={'source':q['file'],'sha256':q['sha256'],'scope':'Vertical section witnesses, not a rectangular empty cavity or material-removal approval. Lowest crossing can be original internal rail. No whole-head fit inferred.','rows':rows};(F/'cap-roof-layer-witnesses.json').write_text(json.dumps(out,indent=2));print(json.dumps(rows))

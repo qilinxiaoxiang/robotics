@@ -1,0 +1,195 @@
+{
+  "verified_date": "2026-09-13 America/New_York",
+  "evidence_level": "manufacturer_specs_plus_engineering_calculation_not_hardware_measurement",
+  "battery": {
+    "model": "Gens ace GEA8502S60E2",
+    "capacity_ah": 0.85,
+    "nominal_v": 7.4,
+    "full_v": 8.4,
+    "assessment_low_v": 6.6,
+    "usable_energy_fraction": [
+      0.65,
+      0.8
+    ],
+    "continuous_input_design_a": 7.5,
+    "raw_pack_voltage_must_not_reach_loads": true
+  },
+  "servo": {
+    "model": "ROBOTIS XL330-M288-T",
+    "count": 15,
+    "rail_v": 5.0,
+    "stall_a_per_motor": 1.47,
+    "standby_a_per_motor": 0.017,
+    "regulator": "Pololu D42V110F5 #5671",
+    "regulator_typical_a": 14,
+    "regulator_iq_a": 0.01,
+    "efficiency_range": [
+      0.8,
+      0.95
+    ],
+    "output_accuracy_fraction": 0.03,
+    "motor_count_in_old_simulation": 14,
+    "regulator_screen_basis": "Conservative 14A reading allowance below approximately 15A manufacturer room-temperature still-air curve at 6.6-8.4V; not a guaranteed enclosure rating.",
+    "regulator_iq_basis": "Conservative 10mA budget allowance; vendor typical no-load current is below 0.3mA away from dropout. Efficiency floor retained at 80%."
+  },
+  "logic": {
+    "regulator": "Pololu S13V30F5 #4082",
+    "rail_v": 5.0,
+    "regulator_iq_a": 0.02,
+    "efficiency_range": [
+      0.85,
+      0.95
+    ],
+    "output_accuracy_fraction": 0.03,
+    "continuous_design_a": 2.5,
+    "pi_bare_active_typical_a": 0.35,
+    "camera_generic_manufacturer_budget_a": 0.25,
+    "camera_budget_is_specific_module3_peak": false,
+    "openrb_typical_current_a": null,
+    "openrb_usb_path_limit_a": 0.5,
+    "imu_breakout_current_a_at_3v3_allowance": 0.025,
+    "amp_iq_a": 0.0024,
+    "audio_1w_input_a_at_5v_92percent": 0.21739130434782608,
+    "speaker_output_w_max": 1.0
+  },
+  "wiring": {
+    "main_awg": 16,
+    "battery_stock_awg": 18,
+    "branch_awg": 22,
+    "pi_power_awg": 20,
+    "branch_oneway_m": 0.15,
+    "second_servo_oneway_m": 0.1,
+    "pi_oneway_m": 0.2,
+    "main_output_oneway_m": 0.1,
+    "copper_ohm_m_at20C": {
+      "16": 0.01317,
+      "18": 0.02095,
+      "20": 0.03331,
+      "22": 0.05296
+    },
+    "jst_contact_ohm_initial_max": 0.01,
+    "jst_contact_ohm_after_test_max": 0.02,
+    "main_fuse": "Littelfuse 0251010.MXL",
+    "main_fuse_hot_drop_at10a_v": 0.1,
+    "branch_fuse": "Littelfuse 0251003.MXL",
+    "branch_fuse_hot_drop_at3a_v": 0.131,
+    "branch_fuse_cold_ohm": 0.0295,
+    "main_fuse_cold_ohm": 0.0072,
+    "continuous_fuse_derating_at25C": 0.75,
+    "solder_joint_ohm_allowance": 0.005,
+    "main_fuse_location": "EC2_positive_before_split",
+    "logic_fuse_location": "before_4082_VIN_not_Pi_5V_output",
+    "fuse_count_10a": 1,
+    "fuse_count_3a": 9,
+    "power_groups": [
+      [
+        1,
+        2
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        15
+      ]
+    ],
+    "branch_feed_awg": 20,
+    "topology": "8 fused feeds, 15 individually powered servo tails, DATA-only daisychain",
+    "individual_servo_tail_oneway_m": 0.1,
+    "audio_fuse": "Littelfuse 0251.500MXL",
+    "fuse_count_0p5a": 1,
+    "audio_fuse_continuous_design_a": 0.375,
+    "audio_main_awg": 24,
+    "audio_ph_pair": "Adafruit #1131",
+    "audio_connector_tail_awg": 26,
+    "audio_connector_tail_max_oneway_m": 0.05,
+    "audio_connector_tail_insulation_c": 80
+  },
+  "scenarios": [
+    {
+      "name": "relaxed_idle",
+      "servo14_a": 0.238,
+      "mouth_a": 0.017,
+      "logic_total_a": 0.48,
+      "basis": "servo standby official; complete logic current assumed",
+      "continuous": true,
+      "description_en": "Powered but torque disabled; camera off and amplifier muted"
+    },
+    {
+      "name": "standing",
+      "servo14_a": 1.5,
+      "mouth_a": 0.017,
+      "logic_total_a": 0.9,
+      "basis": "engineering assumed load; holding current depends on posture",
+      "continuous": true,
+      "description_en": "Standing hold, camera enabled and amplifier muted"
+    },
+    {
+      "name": "walking_light",
+      "servo14_a": 2.0,
+      "mouth_a": 0.1,
+      "logic_total_a": 1.0,
+      "basis": "engineering assumed rail currents, not torque proxy",
+      "continuous": true,
+      "description_en": "Light walking, compressed single-camera Wi-Fi streaming and intermittent audio"
+    },
+    {
+      "name": "walking_design",
+      "servo14_a": 3.5,
+      "mouth_a": 0.3,
+      "logic_total_a": 1.4,
+      "basis": "engineering assumed rail currents, not measured",
+      "continuous": true,
+      "description_en": "Design walking load with jaw, camera/Wi-Fi and 1W audio allowance"
+    },
+    {
+      "name": "walking_heavy",
+      "servo14_a": 6.0,
+      "mouth_a": 0.6,
+      "logic_total_a": 2.5,
+      "basis": "stress boundary; not a guaranteed usable continuous mode",
+      "continuous": true,
+      "description_en": "Heavier walking and jaw motion, 2.5A logic-rail stress load"
+    },
+    {
+      "name": "startup_transient",
+      "servo14_a": 8.0,
+      "mouth_a": 0.5,
+      "logic_total_a": 2.5,
+      "basis": "assumed transient, no measured duration/inrush",
+      "continuous": false,
+      "description_en": "Short startup load point caused by position error"
+    },
+    {
+      "name": "all15_stalled",
+      "servo14_a": 20.58,
+      "mouth_a": 1.47,
+      "logic_total_a": 2.5,
+      "basis": "15 times manufacturer stall current at 5V; must stop, not sustain",
+      "continuous": false,
+      "description_en": "Specification arithmetic for all 15 blocked servos; stop condition"
+    }
+  ],
+  "decision_use": "Unmeasured sensitivity scenarios; do not treat walking_design or startup_peak as measured minimum requirements or as purchase authorization."
+}

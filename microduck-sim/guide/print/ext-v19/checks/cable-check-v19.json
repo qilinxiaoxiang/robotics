@@ -1,0 +1,1819 @@
+{
+ "_method": "Final-pose cable penetration of the V1.9 routes (route-v19.json): the neck bundle (r 1.7), the fan wires and the\naudio jumper wires (r 0.65) against every solid at q = 0, with the release cap, the V1.9 rear pack and the new parts\n(clips, retainer, speaker, amplifier and housings, resistor envelope, the assumed Pi mini-HDMI socket envelope).\nTwo centrelines per route, as the guide's interference-audit cables.py samples them: the raw polyline (every 0.5 mm)\nand the curve the guide viewer draws (centripetal Catmull-Rom through the points, cables.spline_samples, imported\nread-only). Clearance = exact distance to the part surface minus the wire radius (negative = the wire envelope\nenters the part; inside = the centreline is inside the part).\nExcluded (intended): the first 3.0 mm of each fan wire (from its Pi housing) and the first and last 3.0 mm of each\naudio wire (amp housing, Pi housing).\nAlso checks the bundle against amp housings lowered 2.75 mm (pins 1.27 mm above the amp board instead of 4.02 mm).\nProposed guide cables (route-v19.json guideCables: pi-trunk, imu, uart at their guide radii, default 0.9): checked from\ntheir V1.8 pack-notch point to 3 mm short of the Pi housing (the V1.8 part below the notch is unchanged; the V1.9 pack\ncheck already covers it).\nUnchanged guide cables against the changed solids (cables.py sampling, 0.25 mm, drawn spline and polyline, guide\nradius, finding = tube depth > 0.1 mm as in cables.py): every other guide cable against the new parts (clips, raised\nclip screw heads, retainer, audio parts, resistor envelope, mini-HDMI envelope) and against the release cap, with the\nV1.8 cap clearance of the same cable for comparison.\nWrites ../checks/cable-check-v19.json.",
+ "routes": {
+  "neck-bundle-v19": {
+   "kind": "bundle",
+   "mode": "polyline",
+   "radiusMm": 1.7,
+   "lengthMm": 305.663,
+   "samples": 626,
+   "minClearanceMm": 0.161,
+   "nearestPart": "clip_head_v19",
+   "at": [
+    48.524,
+    -22.721,
+    125.665
+   ],
+   "penetrations": {},
+   "ampHousingsLowVariantClearanceMm": 0.146,
+   "ampHousingsLowVariantAt": [
+    49.5,
+    10.219,
+    138.518
+   ],
+   "ampHousingsStudyClearanceMm": 1.855
+  },
+  "neck-bundle-v19 [drawn-spline]": {
+   "kind": "bundle",
+   "mode": "drawn-spline",
+   "radiusMm": 1.7,
+   "lengthMm": 309.438,
+   "samples": 3666,
+   "minClearanceMm": 0.173,
+   "nearestPart": "clip_bracket_v19",
+   "at": [
+    25.955,
+    -21.019,
+    82.748
+   ],
+   "penetrations": {},
+   "ampHousingsLowVariantClearanceMm": 0.163,
+   "ampHousingsLowVariantAt": [
+    49.494,
+    -3.372,
+    137.937
+   ],
+   "ampHousingsStudyClearanceMm": 2.43
+  },
+  "fan-1": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 5.932,
+   "samples": 7,
+   "minClearanceMm": 1.738,
+   "nearestPart": "head_pi_gpio_pin_01_receiving",
+   "at": [
+    76.25,
+    25.25,
+    114.75
+   ],
+   "penetrations": {}
+  },
+  "fan-1 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 6.025,
+   "samples": 105,
+   "minClearanceMm": 1.797,
+   "nearestPart": "head_pi_gpio_pin_01_receiving",
+   "at": [
+    76.287,
+    25.039,
+    114.619
+   ],
+   "penetrations": {}
+  },
+  "fan-2": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 5.624,
+   "samples": 6,
+   "minClearanceMm": 2.057,
+   "nearestPart": "head_pi_gpio_pin_02_receiving",
+   "at": [
+    76.75,
+    25.25,
+    115.75
+   ],
+   "penetrations": {}
+  },
+  "fan-2 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 5.704,
+   "samples": 93,
+   "minClearanceMm": 2.006,
+   "nearestPart": "head_pi_gpio_pin_02_receiving",
+   "at": [
+    76.718,
+    25.024,
+    115.859
+   ],
+   "penetrations": {}
+  },
+  "fan-3": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.436,
+   "samples": 12,
+   "minClearanceMm": 1.964,
+   "nearestPart": "head_pi_gpio_pin_01_receiving",
+   "at": [
+    76.4,
+    22.9,
+    114.3
+   ],
+   "penetrations": {}
+  },
+  "fan-3 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.533,
+   "samples": 125,
+   "minClearanceMm": 1.983,
+   "nearestPart": "head_pi_gpio_pin_03_receiving",
+   "at": [
+    76.396,
+    22.712,
+    114.165
+   ],
+   "penetrations": {}
+  },
+  "fan-5": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 11.095,
+   "samples": 18,
+   "minClearanceMm": 2.016,
+   "nearestPart": "head_pi_gpio_pin_03_receiving",
+   "at": [
+    76.4,
+    20.4,
+    114.0
+   ],
+   "penetrations": {}
+  },
+  "fan-5 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 11.218,
+   "samples": 139,
+   "minClearanceMm": 2.049,
+   "nearestPart": "head_pi_gpio_pin_05_receiving",
+   "at": [
+    76.432,
+    20.217,
+    113.995
+   ],
+   "penetrations": {}
+  },
+  "fan-6": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 12.387,
+   "samples": 21,
+   "minClearanceMm": 2.004,
+   "nearestPart": "head_pi_gpio_pin_06_receiving",
+   "at": [
+    76.6,
+    19.3,
+    115.2
+   ],
+   "penetrations": {}
+  },
+  "fan-6 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 12.581,
+   "samples": 152,
+   "minClearanceMm": 1.974,
+   "nearestPart": "head_bottom",
+   "at": [
+    77.029,
+    21.526,
+    113.822
+   ],
+   "penetrations": {}
+  },
+  "fan-8": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 13.044,
+   "samples": 22,
+   "minClearanceMm": 1.159,
+   "nearestPart": "head_pi_gpio_pin_06_receiving",
+   "at": [
+    75.75,
+    18.25,
+    115.25
+   ],
+   "penetrations": {}
+  },
+  "fan-8 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 13.164,
+   "samples": 95,
+   "minClearanceMm": 0.989,
+   "nearestPart": "head_pi_gpio_pin_06_receiving",
+   "at": [
+    75.587,
+    18.142,
+    115.306
+   ],
+   "penetrations": {}
+  },
+  "fan-9": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 17.295,
+   "samples": 31,
+   "minClearanceMm": 0.463,
+   "nearestPart": "head_pi_gpio_pin_05_receiving",
+   "at": [
+    74.5,
+    17.0,
+    114.0
+   ],
+   "penetrations": {}
+  },
+  "fan-9 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 17.523,
+   "samples": 123,
+   "minClearanceMm": 0.364,
+   "nearestPart": "head_pi_gpio_pin_05_receiving",
+   "at": [
+    74.643,
+    17.28,
+    114.301
+   ],
+   "penetrations": {}
+  },
+  "fan-10": {
+   "kind": "fan",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 21.698,
+   "samples": 41,
+   "minClearanceMm": 0.828,
+   "nearestPart": "head_pi_gpio_pin_02_receiving",
+   "at": [
+    75.389,
+    24.389,
+    118.889
+   ],
+   "penetrations": {}
+  },
+  "fan-10 [drawn-spline]": {
+   "kind": "fan",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 22.044,
+   "samples": 203,
+   "minClearanceMm": 0.942,
+   "nearestPart": "head_pi_gpio_pin_02_receiving",
+   "at": [
+    75.234,
+    24.399,
+    119.156
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_vin_pin04": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 48.86,
+   "samples": 88,
+   "minClearanceMm": 1.249,
+   "nearestPart": "pi_mini_hdmi_envelope_assumed",
+   "at": [
+    66.324,
+    13.792,
+    139.429
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_vin_pin04 [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 49.607,
+   "samples": 422,
+   "minClearanceMm": 1.317,
+   "nearestPart": "pi_mini_hdmi_envelope_assumed",
+   "at": [
+    66.458,
+    13.996,
+    139.221
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_lrc_pin35": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 50.712,
+   "samples": 93,
+   "minClearanceMm": 1.7,
+   "nearestPart": "pi",
+   "at": [
+    63.111,
+    -8.0,
+    146.4
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_lrc_pin35 [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 51.506,
+   "samples": 448,
+   "minClearanceMm": 1.44,
+   "nearestPart": "amp_housings",
+   "at": [
+    58.233,
+    -7.629,
+    146.302
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_din_pin40": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 54.607,
+   "samples": 100,
+   "minClearanceMm": 1.407,
+   "nearestPart": "pi_housing_pin40",
+   "at": [
+    76.4,
+    -24.13,
+    118.132
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_din_pin40 [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 55.574,
+   "samples": 474,
+   "minClearanceMm": 1.376,
+   "nearestPart": "amp_housings",
+   "at": [
+    58.177,
+    -2.593,
+    146.271
+   ],
+   "penetrations": {}
+  },
+  "audio-alt_gnd_pin34": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 53.974,
+   "samples": 99,
+   "minClearanceMm": 1.407,
+   "nearestPart": "pi_housing_pin34",
+   "at": [
+    76.4,
+    -16.51,
+    118.132
+   ],
+   "penetrations": {}
+  },
+  "audio-alt_gnd_pin34 [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 54.848,
+   "samples": 465,
+   "minClearanceMm": 1.438,
+   "nearestPart": "amp_housings",
+   "at": [
+    58.23,
+    5.054,
+    146.302
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_bclk_pin12": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 69.843,
+   "samples": 131,
+   "minClearanceMm": 0.768,
+   "nearestPart": "pi_mini_hdmi_envelope_assumed",
+   "at": [
+    65.911,
+    13.667,
+    141.1
+   ],
+   "penetrations": {}
+  },
+  "audio-amp_bclk_pin12 [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 71.266,
+   "samples": 643,
+   "minClearanceMm": 0.892,
+   "nearestPart": "pi_mini_hdmi_envelope_assumed",
+   "at": [
+    66.167,
+    13.756,
+    141.125
+   ],
+   "penetrations": {}
+  },
+  "audio-spk_plus": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.547,
+   "samples": 6,
+   "minClearanceMm": 0.788,
+   "nearestPart": "speaker",
+   "at": [
+    18.25,
+    1.75,
+    142.8
+   ],
+   "penetrations": {}
+  },
+  "audio-spk_plus [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.692,
+   "samples": 60,
+   "minClearanceMm": 0.754,
+   "nearestPart": "speaker",
+   "at": [
+    18.449,
+    1.761,
+    142.899
+   ],
+   "penetrations": {}
+  },
+  "audio-spk_minus": {
+   "kind": "audio",
+   "mode": "polyline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.547,
+   "samples": 6,
+   "minClearanceMm": 0.788,
+   "nearestPart": "speaker",
+   "at": [
+    18.25,
+    -1.75,
+    142.8
+   ],
+   "penetrations": {}
+  },
+  "audio-spk_minus [drawn-spline]": {
+   "kind": "audio",
+   "mode": "drawn-spline",
+   "radiusMm": 0.65,
+   "lengthMm": 8.692,
+   "samples": 60,
+   "minClearanceMm": 0.754,
+   "nearestPart": "speaker",
+   "at": [
+    18.449,
+    -1.761,
+    142.899
+   ],
+   "penetrations": {}
+  },
+  "guide-pi-trunk": {
+   "kind": "guide",
+   "mode": "polyline",
+   "radiusMm": 0.9,
+   "lengthMm": 409.186,
+   "samples": 631,
+   "minClearanceMm": 0.961,
+   "nearestPart": "clip_head_v19",
+   "at": [
+    48.524,
+    -22.721,
+    125.665
+   ],
+   "penetrations": {}
+  },
+  "guide-pi-trunk [drawn-spline]": {
+   "kind": "guide",
+   "mode": "drawn-spline",
+   "radiusMm": 0.9,
+   "lengthMm": 414.175,
+   "samples": 3152,
+   "minClearanceMm": 0.973,
+   "nearestPart": "clip_bracket_v19",
+   "at": [
+    25.955,
+    -21.019,
+    82.763
+   ],
+   "penetrations": {}
+  },
+  "guide-imu": {
+   "kind": "guide",
+   "mode": "polyline",
+   "radiusMm": 0.8,
+   "lengthMm": 333.585,
+   "samples": 640,
+   "minClearanceMm": 1.061,
+   "nearestPart": "clip_head_v19",
+   "at": [
+    48.524,
+    -22.721,
+    125.665
+   ],
+   "penetrations": {}
+  },
+  "guide-imu [drawn-spline]": {
+   "kind": "guide",
+   "mode": "drawn-spline",
+   "radiusMm": 0.8,
+   "lengthMm": 338.241,
+   "samples": 3539,
+   "minClearanceMm": 1.073,
+   "nearestPart": "clip_bracket_v19",
+   "at": [
+    25.955,
+    -21.019,
+    82.753
+   ],
+   "penetrations": {}
+  },
+  "guide-uart": {
+   "kind": "guide",
+   "mode": "polyline",
+   "radiusMm": 0.7,
+   "lengthMm": 362.789,
+   "samples": 645,
+   "minClearanceMm": 1.109,
+   "nearestPart": "head_pi_gpio_pin_06_receiving",
+   "at": [
+    75.75,
+    18.25,
+    115.25
+   ],
+   "penetrations": {}
+  },
+  "guide-uart [drawn-spline]": {
+   "kind": "guide",
+   "mode": "drawn-spline",
+   "radiusMm": 0.7,
+   "lengthMm": 367.481,
+   "samples": 3184,
+   "minClearanceMm": 0.92,
+   "nearestPart": "head_pi_gpio_pin_06_receiving",
+   "at": [
+    75.571,
+    18.129,
+    115.321
+   ],
+   "penetrations": {}
+  }
+ },
+ "unchangedGuideCables": {
+  "dxl-r5": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -25.2
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-l10": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -40.5,
+     -0.4,
+     -20.2
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-n12": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": 6.625,
+    "part": "clip_torso_v19",
+    "at": [
+     18.0,
+     -12.0,
+     41.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -28.6,
+     22.4,
+     -22.8
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -28.6,
+     22.4,
+     -22.8
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": 6.625,
+    "part": "clip_torso_v19",
+    "at": [
+     18.0,
+     -12.0,
+     41.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -28.6,
+     22.4,
+     -22.8
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -28.6,
+     22.4,
+     -22.8
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "vin20": {
+   "radius": 1.2,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     -4.0,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "tether": {
+   "radius": 1.2,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -42.0,
+     0.0,
+     -66.0
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "orb-pwr": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -41.0,
+     4.5,
+     -4.0
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-12-11": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": 4.682,
+    "part": "clip_torso_v19",
+    "at": [
+     33.091,
+     -20.114,
+     41.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     34.0,
+     -9.9,
+     73.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     34.0,
+     -9.9,
+     73.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": 5.548,
+    "part": "clip_torso_v19",
+    "at": [
+     34.0,
+     -23.0,
+     41.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     34.0,
+     -9.9,
+     73.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     34.0,
+     -9.9,
+     73.4
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-11-13": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": 0.177,
+    "part": "amplifier",
+    "at": [
+     28.311,
+     -5.118,
+     135.453
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": 3.279,
+    "part": "head_cap_v19",
+    "at": [
+     26.694,
+     -5.327,
+     135.424
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": 11.224,
+    "part": "head_cap_v18",
+    "at": [
+     13.552,
+     6.182,
+     135.163
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": 1.23,
+    "part": "amplifier",
+    "at": [
+     34.0,
+     -5.0,
+     134.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": 4.3,
+    "part": "head_cap_v19",
+    "at": [
+     26.02,
+     -5.0,
+     134.4
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": 11.613,
+    "part": "head_cap_v18",
+    "at": [
+     13.8,
+     8.0,
+     134.6
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-13-14": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": 3.072,
+    "part": "speaker_retainer_v19",
+    "at": [
+     -6.14,
+     -13.625,
+     133.208
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": 1.537,
+    "part": "head_cap_v19",
+    "at": [
+     -22.163,
+     -13.182,
+     123.831
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": 1.537,
+    "part": "head_cap_v18",
+    "at": [
+     -22.163,
+     -13.182,
+     123.831
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": 3.333,
+    "part": "speaker_retainer_v19",
+    "at": [
+     -6.021,
+     -13.0,
+     132.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": 1.544,
+    "part": "head_cap_v19",
+    "at": [
+     -22.3,
+     -13.0,
+     123.6
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": 1.544,
+    "part": "head_cap_v18",
+    "at": [
+     -22.3,
+     -13.0,
+     123.6
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-14-15": {
+   "radius": 1.1,
+   "drawn-spline:newParts": {
+    "minClearanceMm": 1.547,
+    "part": "speaker_screws_envelope",
+    "at": [
+     2.554,
+     14.31,
+     134.403
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": 0.468,
+    "part": "head_cap_v19",
+    "at": [
+     -19.07,
+     -18.702,
+     127.857
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": 0.468,
+    "part": "head_cap_v18",
+    "at": [
+     -19.07,
+     -18.702,
+     127.857
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": 1.34,
+    "part": "speaker_retainer_v19",
+    "at": [
+     -14.062,
+     -0.131,
+     132.7
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": 0.525,
+    "part": "head_cap_v19",
+    "at": [
+     -19.7,
+     -18.6,
+     126.7
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": 0.525,
+    "part": "head_cap_v18",
+    "at": [
+     -19.7,
+     -18.6,
+     126.7
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-5-4": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     -25.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-4-3": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     -25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-3-2": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     -65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-2-1": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     -65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-10-9": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -3.0,
+     9.5,
+     22.0
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-9-8": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -4.5,
+     25.5,
+     -26.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-8-7": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -5.0,
+     65.5,
+     -9.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "dxl-7-6": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     -23.8,
+     65.5,
+     -30.5
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  },
+  "csi": {
+   "radius": 0.9,
+   "drawn-spline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     76.5,
+     -9.6,
+     131.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV19": {
+    "minClearanceMm": 0.55,
+    "part": "head_cap_v19",
+    "at": [
+     62.774,
+     -37.994,
+     129.682
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "drawn-spline:capV18": {
+    "minClearanceMm": 0.55,
+    "part": "head_cap_v18",
+    "at": [
+     62.774,
+     -37.994,
+     129.682
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:newParts": {
+    "minClearanceMm": null,
+    "part": null,
+    "at": [
+     76.5,
+     -9.6,
+     131.0
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV19": {
+    "minClearanceMm": 0.705,
+    "part": "head_cap_v19",
+    "at": [
+     62.0,
+     -37.8,
+     129.6
+    ],
+    "findingsDepthOver0.1": 0
+   },
+   "polyline:capV18": {
+    "minClearanceMm": 0.705,
+    "part": "head_cap_v18",
+    "at": [
+     62.0,
+     -37.8,
+     129.6
+    ],
+    "findingsDepthOver0.1": 0
+   }
+  }
+ },
+ "summary": {
+  "routes": 19,
+  "routesWithPenetration": [],
+  "worst": [
+   [
+    0.16070156397727908,
+    "neck-bundle-v19",
+    "clip_head_v19"
+   ],
+   [
+    0.17325841464400749,
+    "neck-bundle-v19 [drawn-spline]",
+    "clip_bracket_v19"
+   ],
+   [
+    0.3642459237256358,
+    "fan-9 [drawn-spline]",
+    "head_pi_gpio_pin_05_receiving"
+   ],
+   [
+    0.46327874305869476,
+    "fan-9",
+    "head_pi_gpio_pin_05_receiving"
+   ],
+   [
+    0.7537082668213543,
+    "audio-spk_minus [drawn-spline]",
+    "speaker"
+   ]
+  ]
+ }
+}

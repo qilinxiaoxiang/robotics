@@ -1,0 +1,235 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "incremental",
+ "version": "V1.6",
+ "prototype": true,
+ "prototypeScope": "V1.5 complete incremental set with the notched head cap (rear cable exit) and the new OpenRB-150 lower-back tray; all four colours, both machines.",
+ "knownFitBoundary": "OpenRB-150 sits on the power-support lower deck; header pin tails must be trimmed to 1.5 mm below the PCB. Harness from the head exits through the cap rear notch; routing, tie placement and no-pinch checks are physical steps.",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  }
+ },
+ "parts": [
+  {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/stl/head_cap.stl",
+   "sha256": "f59be5c4fb60385dd654f6ea45aa26329f9f0c8e7f0cda480f10066140fe807f",
+   "key": "head_cap",
+   "color": "Orange",
+   "quantity": 1,
+   "sourceToPrint": [
+    [
+     0.9782594230769246,
+     -0.20738491064010095,
+     0.0,
+     0.0
+    ],
+    [
+     0.012930877448215444,
+     0.06099649522873068,
+     0.9980542169532829,
+     0.0
+    ],
+    [
+     -0.2069813845968325,
+     -0.9763559424762103,
+     0.06235206509626871,
+     16.82919313285194
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 100
+   },
+   "decision": "replacement",
+   "replacesStockIds": [
+    "4"
+   ],
+   "changeReason": "V1.5 head cap plus a rear cable notch and external zip-tie hood for the OpenRB-150 harness; geometry outside the edit box is identical to V1.5.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.6/evidence/head_cap-change.json",
+    "sha256": "7f3a70c1d35fda9a464eeb88a3558c69cd9b131dade52e5ce29a01629c4353dd"
+   },
+   "supportBlockers": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/functional-review/pi-positive-y-upper-hole-support-blocker-print.stl",
+     "sha256": "dd8b47d349494ec43e4095f1d21ca9ff1b92737931fb215aa81c30417c863473",
+     "machines": [
+      "Bambu"
+     ],
+     "reason": "Keep the single positive-Y upper Pi mounting pilot free of internal support; actual first Bambu slice had 15 support core segments. Non-printing slicer modifier only."
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.6-orange-pose/tie-slot-support-blocker-print.stl",
+     "sha256": "66570be6a3b8019381b3acabe8e0ae8370c01f74d4a6078401c72be1d6bc882f",
+     "machines": [
+      "Bambu",
+      "Elegoo"
+     ],
+     "reason": "Keep the two zip-tie slots of the rear cable notch free of support in the flat print pose; first pose-0 slice put 851 support samples in them."
+    }
+   ]
+  },
+  {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/speaker-mount-repair/speaker_cradle-print.stl",
+   "sha256": "3ece6793d14309e6c6f4c2dd043c4a099b339c3efb9e2960d25ace0d8ac3f8b7",
+   "key": "speaker_cradle",
+   "color": "Orange",
+   "quantity": 1,
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 10
+   },
+   "decision": "addition",
+   "replacesStockIds": [],
+   "changeReason": "Separate speaker cradle with relocated mounting ears; replaces prior V1.4 cradle if already printed.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/incremental-evidence.json",
+    "sha256": "cab746db23618b9cb8b110eee4e2d24d5056d2f5fd32f32c81979b83d30f3350"
+   }
+  },
+  {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/speaker-mount-repair/speaker_keeper-print.stl",
+   "sha256": "9f57289fc842b0532dee4aa48549911f3e58349de6cc054749b81640aed6957d",
+   "key": "speaker_keeper",
+   "color": "Orange",
+   "quantity": 1,
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 10
+   },
+   "decision": "addition",
+   "replacesStockIds": [],
+   "changeReason": "Companion speaker retaining ring with matching relocated holes; replaces prior V1.4 ring if already printed.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/14-HEAD-TRIAL-20261009/incremental-evidence.json",
+    "sha256": "cab746db23618b9cb8b110eee4e2d24d5056d2f5fd32f32c81979b83d30f3350"
+   }
+  },
+  {
+   "key": "imu_clamp",
+   "color": "Orange",
+   "quantity": 1,
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/imu-clamp-retained-world.stl",
+   "sha256": "f12de417a60da17c0262daa272257164955c7afd187f0580eb039cc4fa4d9dc6",
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     61.400001525878906
+    ],
+    [
+     0,
+     1,
+     0,
+     21
+    ],
+    [
+     0,
+     0,
+     1,
+     -0.800000011920929
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 298.2999963760376
+   },
+   "decision": "replacement",
+   "replacesStockIds": [
+    "10"
+   ],
+   "changeReason": "Registered side connector aperture and PCB seats; old stock object10 is replaced. Preserve original Orange allocation, not the material color inferred from a screenshot.",
+   "supportBlockers": [],
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-inventory.json",
+    "sha256": "2c151b6eec871a274d4f19ef259d4dfaa5686cd706e949b3aa8c48fdc83f3494"
+   }
+  }
+ ],
+ "deliveryContract": {
+  "colors": [
+   "Yellow",
+   "White",
+   "Orange",
+   "Black"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 8,
+  "baseline": "89 user-confirmed printed stock instances; V1.4 files exist but no physical print confirmation",
+  "supersedes": [
+   "V1.5 print package"
+  ],
+  "status": "COMPLETE_CURRENT_INCREMENTAL_INVENTORY"
+ }
+}

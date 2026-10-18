@@ -1,0 +1,809 @@
+{
+ "_doc": "Check that the V1.9 release solids and the audio study solids sit in the same frame as the V1.8 head parts the 3D page draws.",
+ "checks": {
+  "frame": {
+   "v18CapFrom": "guide-data.json head_cap",
+   "v19CapFrom": "guide/print/ext-v19/head_cap_v19-world.stl",
+   "addedMm3": 0.0,
+   "removedMm3": 0.0,
+   "recordedAddedMm3": 5054.9025,
+   "recordedRemovedMm3": 427.5806,
+   "matchesRecord": false
+  },
+  "insideCap": {
+   "amplifier": {
+    "a": "amplifier",
+    "b": "head_cap_v19",
+    "overlapMm3": -0.0,
+    "minGapMm": 0.0,
+    "allVerticesInsideCapHull": true
+   },
+   "speaker": {
+    "a": "speaker",
+    "b": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.2,
+    "allVerticesInsideCapHull": true
+   },
+   "speaker_retainer_v19": {
+    "a": "speaker_retainer_v19",
+    "b": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "allVerticesInsideCapHull": true
+   },
+   "amp_housings": {
+    "a": "amp_housings",
+    "b": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "minGapMm": 5.0,
+    "allVerticesInsideCapHull": true
+   },
+   "resistor_envelope_v19": {
+    "a": "resistor_envelope_v19",
+    "b": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "minGapMm": 5.0,
+    "allVerticesInsideCapHull": true
+   }
+  },
+  "grilleOverSpeaker": {
+   "raysFromSpeakerFace": 2109,
+   "escapeIntegratedCap": 530,
+   "escapeV18Cap": 530,
+   "note": "rays along the speaker front normal; escaping rays pass through grille holes (escapeIntegratedCap = V1.9 cap)"
+  },
+  "seats": {
+   "pi_on_rails": {
+    "a": "pi",
+    "b": "head_cap_v19",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.001
+   },
+   "amp_screws_in_posts": {
+    "a": "amp_screws_envelope",
+    "b": "head_cap_v19",
+    "overlapMm3": 7.6361,
+    "minGapMm": 0.0
+   },
+   "speaker_screws_in_bosses": {
+    "a": "speaker_screws_envelope",
+    "b": "head_cap_v19",
+    "overlapMm3": 7.5844,
+    "minGapMm": 0.0
+   },
+   "retainer_over_speaker": {
+    "a": "speaker_retainer_v19",
+    "b": "speaker",
+    "overlapMm3": 0.0002,
+    "minGapMm": 0.0
+   },
+   "resistor_under_amp": {
+    "a": "resistor_envelope_v19",
+    "b": "amplifier",
+    "overlapMm3": 89.187,
+    "minGapMm": 0.0
+   },
+   "cap_on_head_bottom": {
+    "a": "head_cap_v19",
+    "b": "head_bottom (print/world)",
+    "overlapMm3": 67.4984,
+    "minGapMm": 0.0
+   },
+   "housing_pin04_over_header_pin": {
+    "a": "pi_housing_pin04",
+    "b": "head_pi_zero_w_header_pin_04",
+    "overlapMm3": 2.4412,
+    "minGapMm": 0.0
+   },
+   "housing_pin12_over_header_pin": {
+    "a": "pi_housing_pin12",
+    "b": "head_pi_zero_w_header_pin_12",
+    "overlapMm3": 2.4412,
+    "minGapMm": 0.0
+   },
+   "housing_pin35_over_header_pin": {
+    "a": "pi_housing_pin35",
+    "b": "head_pi_zero_w_header_pin_35",
+    "overlapMm3": 2.4412,
+    "minGapMm": 0.0
+   },
+   "housing_pin40_over_header_pin": {
+    "a": "pi_housing_pin40",
+    "b": "head_pi_zero_w_header_pin_40",
+    "overlapMm3": 2.4412,
+    "minGapMm": 0.0
+   }
+  },
+  "resistorPart": {
+   "placement": "resistor-placement.json candidates.U4_detail",
+   "bodyCentre": [
+    35.76,
+    3.81,
+    135.78
+   ],
+   "body": {
+    "head_cap_v19": {
+     "a": "resistor_body",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 8.63
+    },
+    "pi": {
+     "a": "resistor_body",
+     "b": "pi",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "amplifier": {
+     "a": "resistor_body",
+     "b": "amplifier",
+     "overlapMm3": 1.5376,
+     "minGapMm": 0.0
+    },
+    "amp_housings": {
+     "a": "resistor_body",
+     "b": "amp_housings",
+     "overlapMm3": 0.0,
+     "minGapMm": 8.374
+    },
+    "pi_housing_pin04": {
+     "a": "resistor_body",
+     "b": "pi_housing_pin04",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin12": {
+     "a": "resistor_body",
+     "b": "pi_housing_pin12",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin14": {
+     "a": "resistor_body",
+     "b": "pi_housing_pin14",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin35": {
+     "a": "resistor_body",
+     "b": "pi_housing_pin35",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin40": {
+     "a": "resistor_body",
+     "b": "pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    }
+   },
+   "sleeve": {
+    "head_cap_v19": {
+     "a": "resistor_sleeve",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 8.43
+    },
+    "pi": {
+     "a": "resistor_sleeve",
+     "b": "pi",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "amplifier": {
+     "a": "resistor_sleeve",
+     "b": "amplifier",
+     "overlapMm3": 4.4095,
+     "minGapMm": 0.0
+    },
+    "amp_housings": {
+     "a": "resistor_sleeve",
+     "b": "amp_housings",
+     "overlapMm3": 0.0,
+     "minGapMm": 8.174
+    },
+    "pi_housing_pin04": {
+     "a": "resistor_sleeve",
+     "b": "pi_housing_pin04",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin12": {
+     "a": "resistor_sleeve",
+     "b": "pi_housing_pin12",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin14": {
+     "a": "resistor_sleeve",
+     "b": "pi_housing_pin14",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin35": {
+     "a": "resistor_sleeve",
+     "b": "pi_housing_pin35",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin40": {
+     "a": "resistor_sleeve",
+     "b": "pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    }
+   },
+   "legs": {
+    "head_cap_v19": {
+     "a": "resistor_legs",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 9.536
+    },
+    "pi": {
+     "a": "resistor_legs",
+     "b": "pi",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "amplifier": {
+     "a": "resistor_legs",
+     "b": "amplifier",
+     "overlapMm3": 2.1292,
+     "minGapMm": 0.0
+    },
+    "amp_housings": {
+     "a": "resistor_legs",
+     "b": "amp_housings",
+     "overlapMm3": 0.0,
+     "minGapMm": 5.772
+    },
+    "pi_housing_pin04": {
+     "a": "resistor_legs",
+     "b": "pi_housing_pin04",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin12": {
+     "a": "resistor_legs",
+     "b": "pi_housing_pin12",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin14": {
+     "a": "resistor_legs",
+     "b": "pi_housing_pin14",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin35": {
+     "a": "resistor_legs",
+     "b": "pi_housing_pin35",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin40": {
+     "a": "resistor_legs",
+     "b": "pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    }
+   },
+   "joints": {
+    "head_cap_v19": {
+     "a": "resistor_joints",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi": {
+     "a": "resistor_joints",
+     "b": "pi",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "amplifier": {
+     "a": "resistor_joints",
+     "b": "amplifier",
+     "overlapMm3": 7.4282,
+     "minGapMm": 0.0
+    },
+    "amp_housings": {
+     "a": "resistor_joints",
+     "b": "amp_housings",
+     "overlapMm3": 0.0,
+     "minGapMm": 5.181
+    },
+    "pi_housing_pin04": {
+     "a": "resistor_joints",
+     "b": "pi_housing_pin04",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin12": {
+     "a": "resistor_joints",
+     "b": "pi_housing_pin12",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin14": {
+     "a": "resistor_joints",
+     "b": "pi_housing_pin14",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin35": {
+     "a": "resistor_joints",
+     "b": "pi_housing_pin35",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    },
+    "pi_housing_pin40": {
+     "a": "resistor_joints",
+     "b": "pi_housing_pin40",
+     "overlapMm3": 0.0,
+     "minGapMm": 10.0
+    }
+   },
+   "boardUndersideZ": 138.23,
+   "amplifierOverlapNote": "the amplifier model has a 1.5 mm tail-allowance slab under the whole board (z 136.73 to 138.23); overlaps with it are expected, use the gaps to the board underside",
+   "bodyToBoardUndersideMm": 1.25,
+   "sleeveToBoardUndersideMm": 1.05,
+   "neighbourTails": {
+    "sleeve": {
+     "tail_LRC": {
+      "a": "resistor_sleeve",
+      "b": "tail_LRC",
+      "overlapMm3": 0.0,
+      "minGapMm": 7.746
+     },
+     "tail_BCLK": {
+      "a": "resistor_sleeve",
+      "b": "tail_BCLK",
+      "overlapMm3": 0.0,
+      "minGapMm": 5.272
+     },
+     "tail_DIN": {
+      "a": "resistor_sleeve",
+      "b": "tail_DIN",
+      "overlapMm3": 0.0,
+      "minGapMm": 2.915
+     },
+     "tail_SD": {
+      "a": "resistor_sleeve",
+      "b": "tail_SD",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.447
+     },
+     "tail_GND": {
+      "a": "resistor_sleeve",
+      "b": "tail_GND",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.447
+     }
+    },
+    "legs": {
+     "tail_LRC": {
+      "a": "resistor_legs",
+      "b": "tail_LRC",
+      "overlapMm3": 0.0,
+      "minGapMm": 6.33
+     },
+     "tail_BCLK": {
+      "a": "resistor_legs",
+      "b": "tail_BCLK",
+      "overlapMm3": 0.0,
+      "minGapMm": 3.79
+     },
+     "tail_DIN": {
+      "a": "resistor_legs",
+      "b": "tail_DIN",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.25
+     },
+     "tail_SD": {
+      "a": "resistor_legs",
+      "b": "tail_SD",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.25
+     },
+     "tail_GND": {
+      "a": "resistor_legs",
+      "b": "tail_GND",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.25
+     }
+    },
+    "joints": {
+     "tail_LRC": {
+      "a": "resistor_joints",
+      "b": "tail_LRC",
+      "overlapMm3": 0.0,
+      "minGapMm": 6.4
+     },
+     "tail_BCLK": {
+      "a": "resistor_joints",
+      "b": "tail_BCLK",
+      "overlapMm3": 0.0,
+      "minGapMm": 3.86
+     },
+     "tail_DIN": {
+      "a": "resistor_joints",
+      "b": "tail_DIN",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.32
+     },
+     "tail_SD": {
+      "a": "resistor_joints",
+      "b": "tail_SD",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.32
+     },
+     "tail_GND": {
+      "a": "resistor_joints",
+      "b": "tail_GND",
+      "overlapMm3": 0.0,
+      "minGapMm": 1.32
+     }
+    }
+   }
+  },
+  "clipSeats": {
+   "clip_torso_v19": {
+    "a": "clip_torso_v19",
+    "b": "shell_right",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "label": "躯干卡扣"
+   },
+   "clip_bracket_v19": {
+    "a": "clip_bracket_v19",
+    "b": "neck_pitch",
+    "overlapMm3": -0.0,
+    "minGapMm": 0.0,
+    "label": "支架卡扣"
+   },
+   "clip_head_v19": {
+    "a": "clip_head_v19",
+    "b": "jaw_support",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "label": "头部卡扣"
+   },
+   "clip_cap_v19": {
+    "a": "clip_cap_v19",
+    "b": "pi",
+    "overlapMm3": 0.0,
+    "minGapMm": 0.0,
+    "label": "头盖卡扣"
+   }
+  },
+  "wiresAtRest": {
+   "bundle_slot_to_head_clip (pts 9-16)": [
+    {
+     "a": "bundle_slot_to_head_clip (pts 9-16)",
+     "b": "clip_head_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.162
+    },
+    {
+     "a": "bundle_slot_to_head_clip (pts 9-16)",
+     "b": "head_yaw_link",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.19
+    },
+    {
+     "a": "bundle_slot_to_head_clip (pts 9-16)",
+     "b": "motor13",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.31
+    },
+    {
+     "a": "bundle_slot_to_head_clip (pts 9-16)",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.562
+    }
+   ],
+   "bundle_head_clip_to_cap_clip (pts 16-24)": [
+    {
+     "a": "bundle_head_clip_to_cap_clip (pts 16-24)",
+     "b": "clip_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.216
+    },
+    {
+     "a": "bundle_head_clip_to_cap_clip (pts 16-24)",
+     "b": "clip_head_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.376
+    },
+    {
+     "a": "bundle_head_clip_to_cap_clip (pts 16-24)",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 1.253
+    },
+    {
+     "a": "bundle_head_clip_to_cap_clip (pts 16-24)",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 1.447
+    }
+   ],
+   "bundle_cap_clip_to_gather (pts 24-32)": [
+    {
+     "a": "bundle_cap_clip_to_gather (pts 24-32)",
+     "b": "clip_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.216
+    },
+    {
+     "a": "bundle_cap_clip_to_gather (pts 24-32)",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 1.4
+    },
+    {
+     "a": "bundle_cap_clip_to_gather (pts 24-32)",
+     "b": "pi",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.017
+    },
+    {
+     "a": "bundle_cap_clip_to_gather (pts 24-32)",
+     "b": "head_cap_v19",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.475
+    }
+   ],
+   "fan_pin01": [
+    {
+     "a": "fan_pin01",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.138
+    },
+    {
+     "a": "fan_pin01",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin01",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin01",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin02": [
+    {
+     "a": "fan_pin02",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin02",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin02",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin02",
+     "b": "motor15",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin03": [
+    {
+     "a": "fan_pin03",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.138
+    },
+    {
+     "a": "fan_pin03",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin03",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin03",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin05": [
+    {
+     "a": "fan_pin05",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.138
+    },
+    {
+     "a": "fan_pin05",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin05",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin05",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin06": [
+    {
+     "a": "fan_pin06",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.152
+    },
+    {
+     "a": "fan_pin06",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin06",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin06",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin08": [
+    {
+     "a": "fan_pin08",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin08",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin08",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin08",
+     "b": "motor15",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin09": [
+    {
+     "a": "fan_pin09",
+     "b": "head_bottom (print/world)",
+     "overlapMm3": 0.0,
+     "minGapMm": 0.634
+    },
+    {
+     "a": "fan_pin09",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 2.45
+    },
+    {
+     "a": "fan_pin09",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin09",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "fan_pin10": [
+    {
+     "a": "fan_pin10",
+     "b": "camera_board",
+     "overlapMm3": 0.0,
+     "minGapMm": 1.235
+    },
+    {
+     "a": "fan_pin10",
+     "b": "face_panel",
+     "overlapMm3": 0.0,
+     "minGapMm": 1.986
+    },
+    {
+     "a": "fan_pin10",
+     "b": "jaw_support",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    },
+    {
+     "a": "fan_pin10",
+     "b": "jaw_frame",
+     "overlapMm3": 0.0,
+     "minGapMm": 3.0
+    }
+   ],
+   "_note": "tubes are spheres every 0.6 mm (fan 0.4 mm) along the polyline, so a clip channel that holds the bundle shows a small overlap where the tube touches the channel walls; the ext-v19 cable check is the authority"
+  }
+ },
+ "v19Sources": {
+  "head_cap_v19": {
+   "sha256": "da655c657979c9290a1aa12d813901062baea2c38c0da31db085c986277976c2",
+   "manifestSha256": "da655c657979c9290a1aa12d813901062baea2c38c0da31db085c986277976c2",
+   "matches": true
+  },
+  "speaker_retainer_v19": {
+   "sha256": "1d0a76b28bf7b35b48de616fd88545660be2eef404df2c1b3b947e92d920fb75",
+   "manifestSha256": "1d0a76b28bf7b35b48de616fd88545660be2eef404df2c1b3b947e92d920fb75",
+   "matches": true
+  },
+  "resistor_envelope_v19": {
+   "sha256": "b1926d692b18d094067c6bad328c45d32eab3164a93b8b9b826154c4adcd791e",
+   "manifestSha256": "b1926d692b18d094067c6bad328c45d32eab3164a93b8b9b826154c4adcd791e",
+   "matches": true
+  },
+  "clip_torso_v19": {
+   "sha256": "910908747a32f32cf468eae1cd0d52b3c1e1bc68a088c0b76965f071207fa389",
+   "manifestSha256": "910908747a32f32cf468eae1cd0d52b3c1e1bc68a088c0b76965f071207fa389",
+   "matches": true
+  },
+  "clip_bracket_v19": {
+   "sha256": "a2b796315cc039f49ff4c796624045aa23bfb8c6ac46c1fce4fb37a529a71015",
+   "manifestSha256": "a2b796315cc039f49ff4c796624045aa23bfb8c6ac46c1fce4fb37a529a71015",
+   "matches": true
+  },
+  "clip_head_v19": {
+   "sha256": "a800af0d807386fddeade3623b976af9743010db7d85e61a7ea25f7b579edbff",
+   "manifestSha256": "a800af0d807386fddeade3623b976af9743010db7d85e61a7ea25f7b579edbff",
+   "matches": true
+  },
+  "clip_cap_v19": {
+   "sha256": "dc1973a6e640e730fe272ec3c3bda9202eb1ac4771636de608fba8a18231723e",
+   "manifestSha256": "dc1973a6e640e730fe272ec3c3bda9202eb1ac4771636de608fba8a18231723e",
+   "matches": true
+  }
+ }
+}

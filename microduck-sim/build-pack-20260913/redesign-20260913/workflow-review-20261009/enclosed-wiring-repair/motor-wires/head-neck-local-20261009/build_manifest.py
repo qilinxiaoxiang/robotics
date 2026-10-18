@@ -1,0 +1,54 @@
+from pathlib import Path
+import json,hashlib,re
+D=Path(__file__).resolve().parent
+sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+r=json.loads((D/'routes.json').read_text());c=json.loads((D/'check-routes.json').read_text());p=json.loads((D/'plan.json').read_text())
+assert not c['invalidObstacles']
+assert r['sourceHashes'][str(D/'plan.json')]==sha(D/'plan.json')
+for q in r['parts']:
+ assert sha(q['file'])==q['sha256'];assert q['selfClearance']['passed']
+wirekeys={q['key']for q in r['parts']};wirefail=[q for q in c['exactPairs']if q['part']in wirekeys and q['volumeMm3']>1e-7]
+mutualfail=[q for q in c['mutualPairs']if q['a']in wirekeys and q['b']in wirekeys and q['volumeMm3']>1e-7]
+assert not wirefail and not mutualfail,(wirefail,mutualfail)
+parts=[]
+for q in c['parts']:
+ assert sha(q['file'])==q['sha256']
+ wire=q['key']in wirekeys
+ parts.append({'key':q['key'],'name':q['key']+(' neutral conductor route'if wire else ' EHR-3 maximum catalogue receiving body'),'file':q['file'],'sha256':q['sha256'],'color':'#688ec0'if wire else '#e6e2d8','group':'Head and neck motor cables','kind':'wire'if wire else 'connector-receiving-envelope','coordinates':'world millimetres, identity','expectedFinalBoundsMm':q['boundsMm'],'routeId':q.get('routeId'),'ownMotor':q.get('ownMotor'),'requiresLocalFitReview':q['key']=='motor-14-socket-13-housing'})
+external=[];mating=[]
+for q in c['exactPairs']:
+ if q['part']in wirekeys or q['volumeMm3']<=1e-7:continue
+ motor=int(re.search(r'motor-(\d+)-',q['part']).group(1))
+ (mating if re.search(rf'\bmotor{motor}/',q['obstacle'])else external).append(q)
+assert len(external)==1 and external[0]['part']=='motor-14-socket-13-housing',external
+routes=[]
+for row in p['routes']:
+ ws=[q for q in r['parts']if q['routeId']==row['id']];nom=ws[0]['nominalCableLengthMm'];assert all(q['nominalCableLengthMm']==nom for q in ws)
+ routes.append({**row,'stockNominalLengthMm':nom,'nominalCableLengthMm':nom,'partKeys':[q['key']for q in ws]+[row['fromPort']+'-housing',row['toPort']+'-housing'],'routeAcceptance':'All three neutral wires clear against the bound rigid inventory and all neighbouring conductors. Catalogue housing fit has a separate unresolved thin contact.','centerlineInput':str(D/'routes.json'),'pathFormat':'ordered native lines and circular arcs; each primitive start/end, arcs mid/radiusMm; world mm','individualIllustrativeFreeSpansMm':[q['lengthMm']for q in ws],'lengthMeaning':'Nominal stock choice, not an assertion that the vendor length excludes the two plugs. Dress available loose slack; do not reproduce the three drawn lengths exactly.','tutorial':{'prepare':[f"Prepare one {nom} mm nominal three-wire motor cable and identify {row['fromPort']} and {row['toPort']}.",'Keep both neighbouring motor sockets visible. Match the keyed housings; do not assign polarity from the conductor display colour.'],'assemble':['Seat the plugs on the loose motor subassembly before its surrounding supports and lower shell are closed.','Follow the shown edge corridor. Leave soft slack at each moving joint and secure only against the same moving member; do not pull the cable taut.'],'check':['Check both plugs are fully seated and the wire jackets clear the housing edges.','With power disconnected, move the joint gently by hand and adjust the loose loop. Stop if a wire is pinched or pulled; this neutral model does not certify the moving loop.']}})
+files=['plan.json','routes.json','check-routes.json','build_routes.py','check_local.py','build_manifest.py','ten-wire-corridor.json']
+receipt={'schemaVersion':1,'status':'NEUTRAL CONDUCTORS CLEAR; CATALOGUE HOUSING FIT BOUNDARY OPEN','integrationReady':False,'integrationReadyForNeutralReview':True,'passedWireStatic':True,'wholeHarnessAccepted':False,'physicalFitVerified':False,'parts':parts,'routes':routes,'ports':p['ports'],'sourceHashes':{str(D/n):sha(D/n)for n in files},'checkedRigidInventory':p['obstacles'],'acceptance':{'rigidObstacleCount':c['testedObstacleCount'],'partCount':len(parts),'exactPartObstaclePairs':len(c['exactPairs']),'aabbSeparatedPartObstaclePairs':c['aabbSeparatedPairCount'],'invalidObstacleCount':0,'wireExternalCollisionCount':0,'wireMutualCollisionCount':0,'selfChecksPassed':12},'catalogueMatingContacts':mating,'unresolvedExternalReceivingContact':external,'knownLimits':['Motor14 socket13 rectangular catalogue body intersects original head_bottom by 1.1969106 mm3 in a 0.100845 mm thick patch; not waived and no print cut requested.','The contact is in the middle of the public housing side profile, not the illustrated mating-tip chamfer. Public dimensions do not establish a local moulding tolerance; detailed female CAD is not available anonymously from the current manufacturer download form.','Wire OD1.5 mm and R2 are receiving assumptions, not manufacturer-jacket or minimum-bend specifications.','Connector/wire-tail overlaps are intentional endpoints: the first 0.6 mm lies within the maximum catalogue rear lip box. No external collision is excused by that interface convention.','No full joint-motion, cap-closing or preconnected-housing sweep is claimed here. The final head owner must add the complete current package, seven cross-neck wires and the OpenRB starting lead.','Soft slack and ordinary soft-tie retention are assembly adjustments; no new printed support is required or generated. Retention quantities and the actual club cable inventory are not confirmed.'],'nominalStockSelection':{'100mm':2,'180mm':2,'thirdOmxKitUsed':False,'basis':'Official OMX assembly uses four 100 mm cables per kit; two robot kits provide nominal allocation evidence, not a physical bin count.'},'assemblyDependencies':[{'before':'neck-01','ports':['motor-11-socket-13','motor-11-socket-14','motor-12-socket-13'],'action':'Pre-seat both ID11 plugs and the ID12 plug while the motors and their case/rear fasteners remain on the open bench.'},{'before':'neck-03','ports':['motor-13-socket-13','motor-13-socket-14'],'action':'Pre-seat both ID13 plugs; leave their leads free to pass through the existing fork openings.'},{'before':'neck-05','ports':['motor-14-socket-13','motor-14-socket-14'],'action':'Pre-seat both ID14 plugs before the roll motor is surrounded by the fork. Keep the socket13 lower-shell fit boundary visible for physical checking.'},{'before':'head-03','ports':['motor-15-socket-13'],'action':'Seat the ID15 local lead on the loose motor before fitting the jaw support.'},{'before':'head-07','action':'Dress both ID14 leads and the ID13-to-ID11 bundle through the existing lower-shell/neck corridor before the lower shell closes.'},{'before':'head-close-03','action':'Inspect the complete populated head and all free slack before lowering the cap. Local neutral conductor clearance alone does not accept cap closure.'}]}
+# Only subtractive head-bottom replacement changes the checked rigid inventory.
+reliefFile=D/'head-bottom-clearance-report.json';relief=json.loads(reliefFile.read_text())
+assert relief['passed'] and relief['output']['closedPositiveVolume']
+assert relief['newMaterialOutsideSourceMm3']<1e-7 and relief['repairedHousingIntersectionMm3']<1e-7
+assert relief['clearanceToolResidualIntersectionMm3']<1e-7
+assert relief['overallBoundsUnchanged'] and relief['minimumRemovedWorldZMm']>relief['unchangedBelowWorldZMm']
+for f,h in relief['sourceHashes'].items():assert sha(f)==h,f
+assert sha(relief['output']['file'])==relief['output']['sha256']
+assert relief['source']['sha256']==next(o['sha256']for o in p['obstacles']if o['key']==relief['source']['key'])
+fragment={'schemaVersion':1,'integrationReady':True,'scope':'Single internal rib clearance for the ID14 EHR-3 maximum receiving housing; all other original body geometry retained.',
+ 'replacementMeshes':{'head_bottom':{'file':relief['output']['file'],'sha256':relief['output']['sha256'],'coordinates':'world millimetres, identity','replacesKey':relief['source']['key'],'sourceFile':relief['source']['file'],'sourceSha256':relief['source']['sha256']}},
+ 'additionalParts':[],'removedParts':[],'sourceHashes':{str(reliefFile):sha(reliefFile),relief['output']['file']:relief['output']['sha256']},
+ 'existingPrintedPart':relief['existingPrintedPart']}
+fragmentFile=D/'head-bottom-clearance-fragment.json';fragmentFile.write_text(json.dumps(fragment,indent=2)+'\n')
+receipt.update({'status':'LOCAL NEUTRAL FOUR-CABLE ASSEMBLY CLEAR WITH INTERNAL RIB RELIEF','integrationReady':True,
+ 'acceptanceScope':'Four local neutral cable routes and their external receiving bodies against the exact bound rigid inventory plus the specified subtractive head-bottom replacement. Expected named own-socket catalogue-box mating contacts remain explicit. Not complete head, closure or physical-motion acceptance.',
+ 'unresolvedExternalReceivingContact':[], 'originalExternalReceivingContactNegative':external,
+ 'requiredGeometryOverlay':str(fragmentFile),'subtractiveClearanceInheritance':{'report':str(reliefFile),'reportSha256':sha(reliefFile),'reason':'The revised obstacle is strictly a subset of the original; all previous zero intersections remain zero. The sole original external housing collision is separately checked clear against the revised closed body.'}})
+receipt['sourceHashes'].update({str(reliefFile):sha(reliefFile),str(fragmentFile):sha(fragmentFile),relief['output']['file']:relief['output']['sha256']})
+for part in receipt['parts']:part['requiresLocalFitReview']=False
+for row in receipt['routes']:row['routeAcceptance']='All three neutral wires and external connector receiving bodies clear against the bound rigid inventory with the specified internal rib relief; named own-socket catalogue mating contacts are reported separately.'
+receipt['knownLimits']=receipt['knownLimits'][2:]
+receipt['knownLimits'].insert(0,'The original thin maximum-housing contact is retained as a negative. This candidate lowers only an internal rib top by up to 0.501 mm, with 0.4 mm clearance around the catalogue housing. Original exterior floor and overall bounds are unchanged; printed strength and tolerances remain untested.')
+receipt['assemblyDependencies'][2]['action']='Pre-seat both ID14 plugs before the roll motor is surrounded by the fork. Confirm the actual socket13 housing sits freely above the lower-shell internal rib; the revised receiving geometry includes 0.4 mm clearance.'
+(D/'manifest.json').write_text(json.dumps(receipt,indent=2)+'\n');print(sha(D/'manifest.json'))

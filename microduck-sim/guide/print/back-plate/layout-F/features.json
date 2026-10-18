@@ -1,0 +1,162 @@
+{
+ "frame": [
+  {
+   "id": "cover_plate",
+   "what": "rear_pack_cover plate x -47..-45 with the cover outline, top corners r1.5, back edges r1, from build_rear_pack.build_cover()",
+   "purpose": "seats on the V1.8 pack exactly as the printed cover did"
+  },
+  {
+   "id": "cover_holes",
+   "what": "four dia 2.2 holes at [[-47.0, 16.1, 26.0], [-47.0, 16.1, -36.5], [-47.0, -16.1, 26.0], [-47.0, -16.1, -36.5]]",
+   "purpose": "the four reused V1.8 M2 x 6 cover screws into the pack posts"
+  },
+  {
+   "id": "lip",
+   "what": "lip x -45..-37.5, |y| <= 13.2, z 27.3..28.5 (from the cover)",
+   "purpose": "locates the frame in the converter channel"
+  },
+  {
+   "id": "web",
+   "what": "front plate continued to the box outline below z -2 (x -47..-45)",
+   "purpose": "closes the box front below the cover outline"
+  },
+  {
+   "id": "front_plate_solid",
+   "what": "the front plate x -47..-45 has no wire passage (front passage P1 deleted 2026-10-14)",
+   "purpose": "no wire crosses the plate; the 7 V and 5 V pairs enter the pack over its top edge through notch B"
+  },
+  {
+   "id": "notch_A",
+   "what": "top-wall front edge cut back from x -47.0 to x -49.8 over real y 3.2..12.4 (9.2 wide), through the 1.2 wall, rear corners r 1.0",
+   "purpose": "the four +y wires (lanes y [4.4, 6.5, 8.6, 10.7]) bend down from the box top into the box front cavity at x -47.8 with the 3 mm bend radius; hidden in the crevice between the box front and the shell rear edge"
+  },
+  {
+   "id": "notch_B",
+   "what": "cover-plate top edge cut from z 29.5 down to z 28.5 over the same y band and the plate thickness x -47..-45, floor corners r 0.5; the cover lip (z 27.3..28.5) is untouched",
+   "purpose": "the wires pass under the shell lip (underside z 31.6..31.9) at centreline z 30 and ride on the cover lip into the pack"
+  },
+  {
+   "id": "wide_tier",
+   "what": "box |y| <= 32.05, z -15.2..43, wall 1.2, rim x -65.9",
+   "purpose": "houses the two XL4015s, horizontal, long axis y"
+  },
+  {
+   "id": "narrow_tier",
+   "what": "box |y| <= 15.61, z -36.02..-15.2, closed bottom (floor z -36.02..-34.82)",
+   "purpose": "houses the Adafruit 5991"
+  },
+  {
+   "id": "square_rim",
+   "what": "rim at x -59.1; constant inner cross-section from the rim to the front plate; all rear rounding is in the cap",
+   "purpose": "every board slides straight in from the rear with the cap off"
+  },
+  {
+   "id": "xl_bosses",
+   "what": "eight dia 4.5 bosses from the seat x -50.205, ribs to the side walls, pilots dia 1.6; length from the seat 5.0 at z 38.7 and -10.9 (stubs in front of the wall or the cover plate), 4.2 at z 10.1, 3.2 at z 17.7 (torso shells ahead)",
+   "purpose": "XL4015 mounting, M2 x 6 (M2 x 4 at z 17.7); the two z 38.7 bosses take the cap top screws (M2 x 10) through the 7 V board"
+  },
+  {
+   "id": "pd_bosses",
+   "what": "four dia 4.5 bosses, 3.0 standoff (seat x -50.0), 5.0 long, pilots to x -45.3",
+   "purpose": "5991 mounting: two M2 x 6 in the lower holes; the two upper bosses (y +11.37, z -16.67) and (y -11.37, z -16.54) take M2 x 10 cap screws through the PCB; the standoff clears the through-hole pins"
+  },
+  {
+   "id": "cover_screw_lanes",
+   "what": "dia 4.4 lanes along x at (|y| 16.1, z -36.5), from the plate face x -47 to the rim",
+   "purpose": "head clearance and driver access for the two lower cover screws at the narrow tier corners"
+  },
+  {
+   "id": "xl_windows",
+   "what": "side windows x -65.9..-53.205 at each XL4015 terminal: IN windows in the -y wall, OUT windows in the +y wall, z 23.0..33.4 (top) and -5.6..4.8 (middle)",
+   "purpose": "each wire leaves its terminal straight out and runs outside the wall (no U-loop since 2026-10-14); the window keeps the x range so each board slides in with its wires attached; U-loop text retired: wall and returns into the rear lane"
+  },
+  {
+   "id": "pd_term_window",
+   "what": "window x [-65.9, -53.1], -y wall of the narrow tier, z [-28.06, -20.06]",
+   "purpose": "15 V feed wires into the 5991 terminal"
+  },
+  {
+   "id": "usb_slot",
+   "what": "slot x [-65.9, -49.0] (open to the rim, closed by the cap), +y wall of the narrow tier, z [-31.16, -17.16]",
+   "purpose": "USB-C plug into the 5991 socket; the socket overhangs the PCB edge and slides in along the slot"
+  }
+ ],
+ "wiring": [
+  {
+   "id": "15V_link_p",
+   "net": "p",
+   "lengthMm": 43.5
+  },
+  {
+   "id": "15V_link_q",
+   "net": "q",
+   "lengthMm": 37.1
+  },
+  {
+   "id": "15V_feed_q",
+   "net": "q",
+   "lengthMm": 46.9
+  },
+  {
+   "id": "15V_feed_p",
+   "net": "p",
+   "lengthMm": 50.0
+  },
+  {
+   "id": "7V_a",
+   "net": "7V",
+   "lengthMm": 104.0
+  },
+  {
+   "id": "7V_b",
+   "net": "7V",
+   "lengthMm": 96.6
+  },
+  {
+   "id": "5V_a",
+   "net": "5V",
+   "lengthMm": 144.3
+  },
+  {
+   "id": "5V_b",
+   "net": "5V",
+   "lengthMm": 152.3
+  },
+  {
+   "id": "rule",
+   "what": "22 AWG, 1.8 mm tube, centreline bend radius 3; every wire >= 0.3 mm from the boards, frame and lid (checks.json 4_wires), wire to wire >= 0; every wire leaves its terminal straight out through its side window and stays outside the box: 15 V link and feed window to window outside the -y wall; 7 V and 5 V up the outside of the +y wall (columns x {\"7V_a\": -63.3, \"7V_b\": -60.9, \"5V_a\": -51.4, \"5V_b\": -47.8}), across the box top at z 45 in lanes y {\"7V_a\": 4.4, \"7V_b\": 6.5, \"5V_a\": 8.6, \"5V_b\": 10.7}, down through notch A, under the shell lip through notch B, 7 V to OpenRB J4 and 5 V through the head notch to the pi-lead bundle point (-6, -14, 43.5); the cap radii stay at the V1.11 values (no wire inside the box limits them)"
+  }
+ ],
+ "lid": [
+  {
+   "id": "cap",
+   "what": "rounded cap x -67.1..-59.1, 1.2 mm walls, rear radii {\"side\": 7.4, \"top\": 7.8, \"step\": 4.3, \"nside\": 4.5, \"nbot\": 8.0}",
+   "purpose": "closes the box and carries the approved rounded rear edges; its recess holds the rear lane wires"
+  },
+  {
+   "id": "cap_window_notches",
+   "what": "the XL4015 and 5991-terminal windows continue through the cap side walls; the cap closes the rim end of the USB-C slot",
+   "purpose": "kept from V1.11; the wires now cross the wall at x -54.7 and no longer use the cap part of the windows, so a later revision may close them"
+  },
+  {
+   "id": "cap_columns",
+   "what": "two dia 5.6 columns from the cap back (x -67.1) to x -53.1 on the 5991 upper hole axes (y 11.367, z -16.667) and (y -11.366, z -16.54); rear parts trimmed to the cap outline; 0.2 behind the USB-C socket, 1.5 in front of the 5991 PCB",
+   "purpose": "carry the two low cap screws from the cap back to the 5991; the gap keeps the cap seating on the rim first"
+  },
+  {
+   "id": "driver_hole",
+   "what": "dia 4.4 bore x -67.1..-56.1 through the cap back and the column",
+   "purpose": "screwdriver and M2 x 10 head pass in from the back of each low column; the head sits hidden inside the column"
+  },
+  {
+   "id": "column_floor",
+   "what": "floor x [-56.1, -53.1] with a dia 2.3 clearance hole",
+   "purpose": "each M2 x 10 head bears on its floor and pulls the cap forward onto the rim"
+  },
+  {
+   "id": "top_columns",
+   "what": "two dia 5.6 columns from the cap back to x -52.6 on the 7 V board top corner hole axes [[28.25, 38.699999999999996], [-28.25, 38.699999999999996]], flattened inside the frame to |y| <= 30.6 and z <= 41.55, dia 4.4 driver bores to the floor x [-55.6, -52.6], dia 2.3 clearance holes",
+   "purpose": "top retention (Shawn 2026-10-15: screws instead of tongues): M2 x 10 through the board corner holes into the frame bosses; the cap pushes straight on, no lift, no hook"
+  }
+ ]
+}

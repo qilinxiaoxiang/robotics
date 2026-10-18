@@ -1,0 +1,694 @@
+{
+  "schemaVersion": 1,
+  "problemIds": [
+    "P5",
+    "P6"
+  ],
+  "checked": "2026-10-09",
+  "status": "process-review-only",
+  "integrationReady": false,
+  "physicalInsertionVerified": false,
+  "electricalTopologyFrozen": false,
+  "sourceHashes": {
+    "leg-guide-20261006/full-build-data.json": "7c0c10dd22e44ae6d79bd7f24cf448f49c67b3b14e8e2c2d55f393d16ca5d95d",
+    "leg-guide-20261006/build_full_guide_data.py": "53575ee8f759a0b6471f0033c6f0f99cba80a3dc75f45110cafd1766c5ef4c3f",
+    "leg-guide-20261006/wiring-spatial-data.json": "99d70f47cb83dc4c7908f2780a14db85a3a9458ab9fef73233e8ad447d23d7ca",
+    "leg-guide-20261006/wiring-current-sources/x330-drawing.pdf": "948b707cb26a64501c03fc45b1a9557b69a554dd5d6934f02e8e6f86cf2b46c2"
+  },
+  "evidenceLevels": {
+    "source": "Direct source operation or manufacturer documentation.",
+    "process": "Proposed dependency preventing access from being deferred; not a collision certificate.",
+    "unresolved": "Installed socket frame, plug sweep or physical access is not established."
+  },
+  "sources": [
+    {
+      "url": "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/",
+      "verified": "2026-10-09",
+      "supports": "JST EHR-03 / B3B-EH-A, GND/VDD/DATA pin definition; not installed connector coordinates."
+    },
+    {
+      "path": "leg-guide-20261006/wiring-current-sources/x330-drawing.pdf",
+      "supports": "Manufacturer drawing shows two side ports; no registered port-centre coordinates for this guide."
+    }
+  ],
+  "modules": [
+    {
+      "id": "left-leg",
+      "currentOperationIds": [
+        "left-leg-01",
+        "left-leg-02",
+        "left-leg-03",
+        "left-leg-04",
+        "left-leg-05",
+        "left-leg-06",
+        "left-leg-07",
+        "left-leg-08",
+        "left-leg-09",
+        "left-leg-10",
+        "left-leg-11",
+        "left-leg-12",
+        "left-leg-13",
+        "left-leg-14",
+        "left-leg-15",
+        "left-leg-16",
+        "left-leg-17",
+        "left-leg-18",
+        "left-leg-19",
+        "left-leg-20"
+      ],
+      "currentCableGates": [],
+      "motorKeys": {
+        "ankle": "motor6",
+        "knee": "motor7",
+        "pitch": "motor8",
+        "roll": "motor9",
+        "yaw": "motor10"
+      },
+      "gates": [
+        {
+          "id": "left-leg-cable-thigh-prewire",
+          "beforeOperation": "left-leg-01",
+          "motorKeys": [
+            "motor7",
+            "motor8"
+          ],
+          "closureCandidatePartKeys": [
+            "thigh",
+            "plate"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "With both motors still loose, identify both keyed side ports and label the assigned local leads. Seat the required motor ends before the plate and thigh are fitted.",
+          "freeEnd": "Leave each neighbouring-motor end free; do not close a loop across an unassembled joint.",
+          "route": "Bring the free ends through the still-open side of the thigh station before the plate. No closed-hole passage or installed socket sweep has yet been validated.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-ankle-prewire",
+          "beforeOperation": "left-leg-05",
+          "motorKeys": [
+            "motor6"
+          ],
+          "closureCandidatePartKeys": [
+            "ankle"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Connect the assigned ankle-motor ends while the motor is outside the fork.",
+          "freeEnd": "Keep the knee-side end free until the lower/ankle group has been positioned at the knee.",
+          "route": "Use the open fork during preparation; keep the cable clear of the sleeve pocket and output boss. The wired motor insertion requires a new check.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-ankle-close-check",
+          "beforeOperation": "left-leg-07",
+          "motorKeys": [
+            "motor6"
+          ],
+          "closureCandidatePartKeys": [
+            "lower",
+            "smallring"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Check seated plugs and wire departure before the lower-link sleeve/boss fit closes.",
+          "freeEnd": "Keep the upper connection free while moving the complete lower/ankle group.",
+          "route": "Keep all cable material outside the sleeve, locating pegs, mating seam and output bearing. Do not pull wire through the interference-fit sleeve.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-foot-close-check",
+          "beforeOperation": "left-leg-11",
+          "motorKeys": [
+            "motor6"
+          ],
+          "closureCandidatePartKeys": [
+            "foot"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Inspect ankle wire departure and free slack before seating the foot.",
+          "freeEnd": "Keep any still-unconnected upper end visible.",
+          "route": "Do not route under the foot retaining boss. This is a checkpoint, not evidence that the foot itself blocks the connector.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-yaw-prewire",
+          "beforeOperation": "left-leg-13",
+          "motorKeys": [
+            "motor10"
+          ],
+          "closureCandidatePartKeys": [
+            "yaw"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "With the yaw motor loose, identify and pre-seat its assigned motor ends before the yaw link is fitted.",
+          "freeEnd": "Leave the roll-side and torso-side destinations free until their separate stations are ready.",
+          "route": "Keep leads out of the four inward-facing yaw screw tool corridors; finish those screws at step14 before adding the roll motor.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-roll-prewire",
+          "beforeOperation": "left-leg-15",
+          "motorKeys": [
+            "motor9",
+            "motor10"
+          ],
+          "closureCandidatePartKeys": [
+            "passive",
+            "yaw"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Pre-seat assigned roll-motor ends on the open bench; verify the yaw plugs before the roll motor and passive support are introduced.",
+          "freeEnd": "Do not connect the thigh-side free end until the entire yaw/roll group is at the hip.",
+          "route": "Pass free ends out of the open bench station before its supports close; avoid case screw seats and rear retainer.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-hip-bridge-check",
+          "beforeOperation": "left-leg-17",
+          "motorKeys": [
+            "motor8"
+          ],
+          "closureCandidatePartKeys": [
+            "hip"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Check hip-pitch plug seating and outgoing lead position while the yaw/roll group is still separate.",
+          "freeEnd": "Leave the roll-group end free until its single-axis join.",
+          "route": "Keep the lead away from both perpendicular shaft seats and support rings. Do not thread a plugged housing through a seated ring.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "left-leg-cable-hip-join-check",
+          "beforeOperation": "left-leg-19",
+          "motorKeys": [
+            "motor10",
+            "motor9",
+            "motor8"
+          ],
+          "closureCandidatePartKeys": [
+            "hip",
+            "passive"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Keep motor-end plugs seated and carry their cables with the complete yaw/roll group. Join the remaining local free ends only after the group is seated and all required housing passages are complete.",
+          "freeEnd": "Keep the torso interface free for the open-torso station.",
+          "route": "Preserve a visible service loop across the roll joint; no measured length, bend radius or joint sweep is accepted by this process gate.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        }
+      ],
+      "reviewSequence": [
+        "left-leg-cable-thigh-prewire",
+        "left-leg-01",
+        "left-leg-02",
+        "left-leg-03",
+        "left-leg-04",
+        "left-leg-cable-ankle-prewire",
+        "left-leg-05",
+        "left-leg-06",
+        "left-leg-cable-ankle-close-check",
+        "left-leg-07",
+        "left-leg-08",
+        "left-leg-09",
+        "left-leg-10",
+        "left-leg-cable-foot-close-check",
+        "left-leg-11",
+        "left-leg-12",
+        "left-leg-cable-yaw-prewire",
+        "left-leg-13",
+        "left-leg-14",
+        "left-leg-cable-roll-prewire",
+        "left-leg-15",
+        "left-leg-16",
+        "left-leg-cable-hip-bridge-check",
+        "left-leg-17",
+        "left-leg-18",
+        "left-leg-cable-hip-join-check",
+        "left-leg-19",
+        "left-leg-20"
+      ],
+      "recovery": {
+        "status": "exact-minimum-removal-unresolved",
+        "preserve": [
+          "foot",
+          "ankle",
+          "smallring",
+          "lower"
+        ],
+        "firstAction": "Inspect both physical side ports with power disconnected. If a plug seats directly, remove no part. Support the leg and use only a comfortable existing joint pose; no forced joint movement.",
+        "prohibitedInference": "Do not remove a structural plate solely because it overlaps the motor bounding box.",
+        "candidateLocalStations": [
+          {
+            "region": "thigh",
+            "parts": [
+              "thigh",
+              "plate"
+            ],
+            "sourceOperations": [
+              "left-leg-01",
+              "left-leg-02",
+              "left-leg-04"
+            ],
+            "note": "The plate is part of case/rear retention; it is not proven to be a detachable cosmetic cover."
+          },
+          {
+            "region": "hip",
+            "parts": [
+              "passive",
+              "hip"
+            ],
+            "sourceOperations": [
+              "left-leg-15",
+              "left-leg-16",
+              "left-leg-19",
+              "left-leg-20"
+            ],
+            "note": "These retain perpendicular shafts and the case. A verified local removal path and exact retained screw set are required before recommending removal."
+          },
+          {
+            "region": "ankle",
+            "parts": [
+              "lower",
+              "smallring",
+              "foot"
+            ],
+            "sourceOperations": [
+              "left-leg-05",
+              "left-leg-07",
+              "left-leg-08",
+              "left-leg-11",
+              "left-leg-12"
+            ],
+            "note": "Existing guide has unresolved sleeve/boss and foot fit. Do not reverse those fits merely to reach a cable."
+          }
+        ]
+      }
+    },
+    {
+      "id": "right-leg",
+      "currentOperationIds": [
+        "right-leg-01",
+        "right-leg-02",
+        "right-leg-03",
+        "right-leg-04",
+        "right-leg-05",
+        "right-leg-06",
+        "right-leg-07",
+        "right-leg-08",
+        "right-leg-09",
+        "right-leg-10",
+        "right-leg-11",
+        "right-leg-12",
+        "right-leg-13",
+        "right-leg-14",
+        "right-leg-15",
+        "right-leg-16",
+        "right-leg-17",
+        "right-leg-18",
+        "right-leg-19",
+        "right-leg-20"
+      ],
+      "currentCableGates": [],
+      "motorKeys": {
+        "ankle": "motor1",
+        "knee": "motor2",
+        "pitch": "motor3",
+        "roll": "motor4",
+        "yaw": "motor5"
+      },
+      "gates": [
+        {
+          "id": "right-leg-cable-thigh-prewire",
+          "beforeOperation": "right-leg-01",
+          "motorKeys": [
+            "motor2",
+            "motor3"
+          ],
+          "closureCandidatePartKeys": [
+            "right_thigh",
+            "right_plate"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "With both motors still loose, identify both keyed side ports and label the assigned local leads. Seat the required motor ends before the plate and thigh are fitted.",
+          "freeEnd": "Leave each neighbouring-motor end free; do not close a loop across an unassembled joint.",
+          "route": "Bring the free ends through the still-open side of the thigh station before the plate. No closed-hole passage or installed socket sweep has yet been validated.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-ankle-prewire",
+          "beforeOperation": "right-leg-05",
+          "motorKeys": [
+            "motor1"
+          ],
+          "closureCandidatePartKeys": [
+            "right_ankle"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Connect the assigned ankle-motor ends while the motor is outside the fork.",
+          "freeEnd": "Keep the knee-side end free until the lower/ankle group has been positioned at the knee.",
+          "route": "Use the open fork during preparation; keep the cable clear of the sleeve pocket and output boss. The wired motor insertion requires a new check.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-ankle-close-check",
+          "beforeOperation": "right-leg-07",
+          "motorKeys": [
+            "motor1"
+          ],
+          "closureCandidatePartKeys": [
+            "right_lower",
+            "right_smallring"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Check seated plugs and wire departure before the lower-link sleeve/boss fit closes.",
+          "freeEnd": "Keep the upper connection free while moving the complete lower/ankle group.",
+          "route": "Keep all cable material outside the sleeve, locating pegs, mating seam and output bearing. Do not pull wire through the interference-fit sleeve.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-foot-close-check",
+          "beforeOperation": "right-leg-11",
+          "motorKeys": [
+            "motor1"
+          ],
+          "closureCandidatePartKeys": [
+            "right_foot"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Inspect ankle wire departure and free slack before seating the foot.",
+          "freeEnd": "Keep any still-unconnected upper end visible.",
+          "route": "Do not route under the foot retaining boss. This is a checkpoint, not evidence that the foot itself blocks the connector.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-yaw-prewire",
+          "beforeOperation": "right-leg-13",
+          "motorKeys": [
+            "motor5"
+          ],
+          "closureCandidatePartKeys": [
+            "right_yaw"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "With the yaw motor loose, identify and pre-seat its assigned motor ends before the yaw link is fitted.",
+          "freeEnd": "Leave the roll-side and torso-side destinations free until their separate stations are ready.",
+          "route": "Keep leads out of the four inward-facing yaw screw tool corridors; finish those screws at step14 before adding the roll motor.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-roll-prewire",
+          "beforeOperation": "right-leg-15",
+          "motorKeys": [
+            "motor4",
+            "motor5"
+          ],
+          "closureCandidatePartKeys": [
+            "right_passive",
+            "right_yaw"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Pre-seat assigned roll-motor ends on the open bench; verify the yaw plugs before the roll motor and passive support are introduced.",
+          "freeEnd": "Do not connect the thigh-side free end until the entire yaw/roll group is at the hip.",
+          "route": "Pass free ends out of the open bench station before its supports close; avoid case screw seats and rear retainer.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-hip-bridge-check",
+          "beforeOperation": "right-leg-17",
+          "motorKeys": [
+            "motor3"
+          ],
+          "closureCandidatePartKeys": [
+            "right_hip"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Check hip-pitch plug seating and outgoing lead position while the yaw/roll group is still separate.",
+          "freeEnd": "Leave the roll-group end free until its single-axis join.",
+          "route": "Keep the lead away from both perpendicular shaft seats and support rings. Do not thread a plugged housing through a seated ring.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        },
+        {
+          "id": "right-leg-cable-hip-join-check",
+          "beforeOperation": "right-leg-19",
+          "motorKeys": [
+            "motor5",
+            "motor4",
+            "motor3"
+          ],
+          "closureCandidatePartKeys": [
+            "right_hip",
+            "right_passive"
+          ],
+          "evidenceLevel": "process",
+          "closureBlockingProven": false,
+          "prepare": "Keep motor-end plugs seated and carry their cables with the complete yaw/roll group. Join the remaining local free ends only after the group is seated and all required housing passages are complete.",
+          "freeEnd": "Keep the torso interface free for the open-torso station.",
+          "route": "Preserve a visible service loop across the roll joint; no measured length, bend radius or joint sweep is accepted by this process gate.",
+          "check": [
+            "Identify the actual housing and key; no bbox-centre target.",
+            "Confirm plug shoulders are seated with no wire caught in a seam.",
+            "Keep the neighbouring end free until housing passage is finished."
+          ],
+          "acceptanceRequired": [
+            "Register actual socket frame to the source motor CAD.",
+            "Check complete connector body and attached cable through the proposed station motion.",
+            "Confirm free-end threading and observable seating on the actual hardware."
+          ]
+        }
+      ],
+      "reviewSequence": [
+        "right-leg-cable-thigh-prewire",
+        "right-leg-01",
+        "right-leg-02",
+        "right-leg-03",
+        "right-leg-04",
+        "right-leg-cable-ankle-prewire",
+        "right-leg-05",
+        "right-leg-06",
+        "right-leg-cable-ankle-close-check",
+        "right-leg-07",
+        "right-leg-08",
+        "right-leg-09",
+        "right-leg-10",
+        "right-leg-cable-foot-close-check",
+        "right-leg-11",
+        "right-leg-12",
+        "right-leg-cable-yaw-prewire",
+        "right-leg-13",
+        "right-leg-14",
+        "right-leg-cable-roll-prewire",
+        "right-leg-15",
+        "right-leg-16",
+        "right-leg-cable-hip-bridge-check",
+        "right-leg-17",
+        "right-leg-18",
+        "right-leg-cable-hip-join-check",
+        "right-leg-19",
+        "right-leg-20"
+      ],
+      "recovery": {
+        "status": "exact-minimum-removal-unresolved",
+        "preserve": [
+          "right_foot",
+          "right_ankle",
+          "right_smallring",
+          "right_lower"
+        ],
+        "firstAction": "Inspect both physical side ports with power disconnected. If a plug seats directly, remove no part. Support the leg and use only a comfortable existing joint pose; no forced joint movement.",
+        "prohibitedInference": "Do not remove a structural plate solely because it overlaps the motor bounding box.",
+        "candidateLocalStations": [
+          {
+            "region": "thigh",
+            "parts": [
+              "right_thigh",
+              "right_plate"
+            ],
+            "sourceOperations": [
+              "right-leg-01",
+              "right-leg-02",
+              "right-leg-04"
+            ],
+            "note": "The plate is part of case/rear retention; it is not proven to be a detachable cosmetic cover."
+          },
+          {
+            "region": "hip",
+            "parts": [
+              "right_passive",
+              "right_hip"
+            ],
+            "sourceOperations": [
+              "right-leg-15",
+              "right-leg-16",
+              "right-leg-19",
+              "right-leg-20"
+            ],
+            "note": "These retain perpendicular shafts and the case. A verified local removal path and exact retained screw set are required before recommending removal."
+          },
+          {
+            "region": "ankle",
+            "parts": [
+              "right_lower",
+              "right_smallring",
+              "right_foot"
+            ],
+            "sourceOperations": [
+              "right-leg-05",
+              "right-leg-07",
+              "right-leg-08",
+              "right-leg-11",
+              "right-leg-12"
+            ],
+            "note": "Existing guide has unresolved sleeve/boss and foot fit. Do not reverse those fits merely to reach a cable."
+          }
+        ]
+      }
+    }
+  ]
+}

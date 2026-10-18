@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "status": "illustrative_route_has_unresolved_conservative_component_receiving_contact",
+  "integrationReady": false,
+  "wholeHarnessAccepted": false,
+  "physicalValidated": false,
+  "complete200mm": true,
+  "materialLengthMm": 200.0,
+  "endpointFrameConstraintResidual": 2.842170943040401e-14,
+  "mesh": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-ribbon-world.stl",
+    "sha256": "7ecca06a418119593bf0f665c426dd74f215670e86c3b9ea181fef0f9d2af069"
+  },
+  "outsideMesh": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-ribbon-outside-world.stl",
+    "sha256": "9c6457ed36f6da2c4ea0e5edaa0fafc33b3d68464b1448b284dd0bd08ad82dcb"
+  },
+  "selfClear": true,
+  "selfCoverage": {
+    "expectedNonadjacentPairs": 4851,
+    "completedNonadjacentPairs": 4851,
+    "nonzeroPairs": 0,
+    "scope": "2mm material pieces; adjacent seams excluded; local developable bends represented in full solid"
+  },
+  "staticClear": false,
+  "staticCoverage": {
+    "expectedHeadObstacles": 53,
+    "completedHeadObstacles": 53,
+    "openrbConservativeComponents": 142,
+    "componentFootprintsExpected": 13,
+    "componentFootprintsCompleted": 13,
+    "originalComponentBoxOverlapMm3": 14.052352492414693,
+    "refinedReceivingOverlapMm3": 1.5986352603249547,
+    "interpretation": "Remaining intersections are with unknown-height small-component receiving columns at3.8mm, not demonstrated collisions with physical components. CSI2.2mm receiving is clear; outside refinement window original box retained and clear. No geometric collision waiver applied."
+  },
+  "connectorStatus": {
+    "status": "standard_interface_handling_required_not_exact_seating_certified",
+    "cameraContactDirection": "toward camera PCB",
+    "piContactDirection": "toward Pi PCB; source-supported rather than inferred from connector top-contact label",
+    "modeledInsertionDepthMm": {
+      "camera": 5,
+      "pi": 4.4
+    },
+    "insertionDepthSource": "CAD assumptions, not manufacturer dimensions; do not treat these values as assembly instructions",
+    "fullWidthUnbentEndMaterialMm": {
+      "camera": 8.68,
+      "pi": 4.579
+    },
+    "modeledExternalFullWidthStraightMm": {
+      "camera": 3.68,
+      "pi": 0.179
+    },
+    "limitation": "The frozen numerical example does not establish adequate Pi stiffener straight length under its assumed4.4mm engagement. Preserve real reinforced ends flat and seat fully in the actual ZIF socket; nearby flexible return may be adjusted. This is not evidence that printed parts need changing.",
+    "exactManufacturerConnector": "Official Zero W reduced schematic names Molex54548-2271; compatible Amphenol2mm height used only for local receiving diagnosis, not insertion-depth certification."
+  },
+  "populatedCapClosureClear": true,
+  "piSpacerDeltaCapClosureClear": true,
+  "closureScope": "148 moving solids;146 continuously separated by bounds,2 checked at161 poses onZ40..0. Pi spacer change22parts checked against148 moving solids. See closure receipt for sampled versus continuous evidence.",
+  "clearanceMm": {
+    "face": 1.3969964462,
+    "cap": 0.6736269465,
+    "piPcb": 0.6094709456,
+    "amp": 0.222297203,
+    "cameraPortBoundary": 0
+  },
+  "handlingVariation": "Frozen example has0.222mm at amplifier and is not a robust mandatory routing template. Printed face/cap gaps are positive; arrange flexible slack clear of amplifier and lid edges before closing. Contact boundary at camera socket is intentional endpoint adjacency, not a separate slack corridor.",
+  "localAdjustmentEvidence": {
+    "normalToPcbLiftMm": 0.9,
+    "worldVector": [
+      -0.8968124102846353,
+      0.07457273502914817,
+      0.012899920532133152
+    ],
+    "minimumLocalReceivingGapMm": 0.7161422063515744,
+    "sourceFootprintsClear": true,
+    "otherRigidObstaclesClear": true,
+    "limitation": "ROI segment translated only to test adjacent handling space. Transition continuity, material length, self clearance and OpenRB not certified for this modified segment. Whole frozen route remains unchanged."
+  },
+  "printGeometryChangeRequired": false,
+  "printGeometryDecisionScope": "No additional printed geometry change is supported by the remaining conservative small-component contact or terminal straight-length assumptions. This is not a complete printing-release flag and does not supersede the parent withdrawal pending full harness acceptance.",
+  "assemblyOrder": [
+    "Keep cap open. Use the received orange Standard–Mini200mm cable; fully unlock both ZIF latches and keep the reinforced ends flat.",
+    "Connect camera end with metal contacts toward its PCB and close the latch. Support the camera/board while inserting; do not pull against the cable.",
+    "With Pi accessible on its three2mm-spaced supports, connect the22-pin end with contacts toward Pi PCB and close the latch. No modeled4.4mm insertion measurement is prescribed.",
+    "Arrange the middle slack in smooth loose returns around the negative edge of Pi and its component-side cavity, leaving reinforced ends straight. Lift the final return away from components into the locally checked adjacent space; do not force a crease or reproduce the mathematical curve exactly.",
+    "Before fastening cap, keep the cable away from amplifier, screw bosses and lid seam; lower the populated cap gently while watching the slack. Stop and rearrange any pinched or taut section rather than using screws to compress it."
+  ],
+  "bendEndurance": {
+    "validated": false,
+    "minimumModeledRadiusMm": 1,
+    "thicknessReceivingMm": 0.3,
+    "meaning": "Engineering receiving model; manufacturer static/fatigue bend limits not established. No recommendation to forceR1 creases or repeatedly bend at the stiffener."
+  },
+  "practicalDisposition": "Keep existing body, camera clamp, Pi and OpenRB architecture. The full200mm storage example fits the rigid cavity and closes, with remaining uncertainty confined to a small-component receiving/terminal handling region. A finite local end adjustment is being evaluated separately; no broad route search or new printed guide is authorized by this report.",
+  "receipts": [
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-fit.json",
+      "sha256": "cd571021dbe4c68b08d3e86e4720dbcf2ad74cdd72760f198c4f412523136851"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-static.json",
+      "sha256": "41f866aa06bb8a2dcc594e1f629f64ee7ed0b01ee909fc7fc2edfee6231c26dc"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-localization.json",
+      "sha256": "f3edd1d8ae23d13f48b77423c9ebcc5b565123619b14d1507e23da4f6de26ed4"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/spacer2-tilted-complete-components-localization.json",
+      "sha256": "5d55208b060dd033b38a71ea71e44ed78d87ca3613584f8a9be96eb9acf67934"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/frozen-ribbon-clearance.json",
+      "sha256": "807fea0089d9b8b0f9645bc4202e542e4077f8811a3cfd926c4792ce37480292"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/frozen-local-occupancy-check.json",
+      "sha256": "c52757c60a61112d295c49394bf01ac0b001bed830c38d0b84f9bf5f94993586"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/actual-cable-identification.json",
+      "sha256": "f70d9279b97dddf4a634ad1061d3bc1c073b8acd8404f395505ee19787925983"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/pi-spacer2-pose.json",
+      "sha256": "00085623447aa135b326dcf9d8389ea81545a55bc5653cabaf7e0f0808f855f5"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/fixed-pose-local-bend/pi-spacer2-parts.json",
+      "sha256": "70a8a27d144d12ce64010c300a5f0842300a358222bdbd6990d916bc74e9a897"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/pi-local-components/local-occupancy.json",
+      "sha256": "20354c4cba55b31de5b54c27b6c6ac136686db475de5bd1fb665017f6ce78003"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/gpio-audio-repair/ffc-cap-closure/diagnostic-combined-result.json",
+      "sha256": "9af8cee334dc633a03f4556dcf7780e329e61142eae97003dee3d084a4c44f27"
+    },
+    {
+      "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/write_frozen_ribbon_disposition.py",
+      "sha256": "cff4e626644251f028b3e0aecff0261846b608243a3d8dcc57362c3433a88bfd"
+    }
+  ]
+}

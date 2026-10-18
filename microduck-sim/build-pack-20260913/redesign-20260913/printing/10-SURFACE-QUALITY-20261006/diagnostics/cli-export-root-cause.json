@@ -1,0 +1,124 @@
+{
+  "verified_date": "2026-10-06",
+  "cause": "OrcaSlicer2.4.2 CLI export dereferences first string of existing-but-empty filament_ids vector. The failed3MF-only runs did not populate filament_ids; explicit matching --load-filaments populates it through documentedCLIcode.",
+  "source_url": "https://github.com/OrcaSlicer/OrcaSlicer/blob/v2.4.2/src/OrcaSlicer.cpp",
+  "source_local": "OrcaSlicer-v2.4.2.cpp",
+  "source_sha256": "777ec1f25d37f535af30fa9a4c549ad4334ae9efae377502fa19a2cb4794b162",
+  "native_binary": "/Volumes/OrcaSlicer/OrcaSlicer.app/Contents/MacOS/OrcaSlicer",
+  "native_address_evidence": {
+    "filament_ids_option_lookup": "0x10003f2a4",
+    "option_pointer_to_x20": "0x10003f2f0",
+    "vector_get_at_and_string_copy": "0x10003f638..0x10003f670",
+    "crash_return_address": "0x10003f674",
+    "cli_run_offset": 199796,
+    "runtime_crash_x1_null": true,
+    "disassembly_file": "export-crash-disassembly.txt"
+  },
+  "source_lines": {
+    "filament_id_population": [
+      3174,
+      3180
+    ],
+    "export_option_lookup": 6394,
+    "export_unchecked_vector_access": 6414
+  },
+  "input_paths": [
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/09-REPRINT-READY-20260930/Elegoo/old-orange-plate1/MicroDuck_Elegoo_old-orange-plate1_REPRINT_editable.3mf",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/slicing/baseline/ankle66-baseline.3mf",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/10-SURFACE-QUALITY-20261006/slicing/dense_interface_bridge30/ankle66-dense_interface_bridge30.3mf"
+  ],
+  "input_sha256": [
+    "86a28247fec6e2815b36789b9bed9c6906e46b1259c268c5e89c873696df83f8",
+    "4bd287e547022f2f93098c34d4714d4c316e5bbe881c5f8c9a4e5b83e9234131",
+    "d4338327806d009e992daba5a94c412d6d87806c9d47e438010c624690da7db1"
+  ],
+  "filament_ids_absent_from_all_inputs": true,
+  "present_filament_vectors": {
+    "filament_cost": 1,
+    "filament_density": 1,
+    "filament_deretraction_speed": 1,
+    "filament_diameter": 1,
+    "filament_flow_ratio": 1,
+    "filament_is_support": 1,
+    "filament_max_volumetric_speed": 1,
+    "filament_minimal_purge_on_wipe_tower": 1,
+    "filament_retract_before_wipe": 1,
+    "filament_retract_restart_extra": 1,
+    "filament_retract_when_changing_layer": 1,
+    "filament_retraction_length": 1,
+    "filament_retraction_minimum_travel": 1,
+    "filament_retraction_speed": 1,
+    "filament_settings_id": 1,
+    "filament_soluble": 1,
+    "filament_type": 1,
+    "filament_vendor": 1,
+    "filament_wipe": 1,
+    "filament_wipe_distance": 1,
+    "filament_z_hop": 1,
+    "filament_z_hop_types": 1,
+    "filament_start_gcode": 1,
+    "filament_end_gcode": 1,
+    "filament_colour": 1
+  },
+  "runtime_gcode_footer": [
+    "; filament_colour = #FF8000",
+    "; filament_ids = ",
+    "; filament_settings_id = \"MicroDuck Generic PLA @Elegoo CC\"",
+    "; filament_type = PLA"
+  ],
+  "runtime_tool_commands": [
+    "T0"
+  ],
+  "baseline_config_changes": {
+    "filename_format": [
+      "ECC_{nozzle_diameter[0]}_{input_filename_base}_{filament_name}_{layer_height}_{print_time}.gcode",
+      "baseline.gcode"
+    ],
+    "filament_colour": [
+      [
+        "#00AE42"
+      ],
+      [
+        "#FF8000"
+      ]
+    ]
+  },
+  "candidate_config_changes": {
+    "bridge_speed": [
+      "50",
+      "30"
+    ],
+    "filename_format": [
+      "baseline.gcode",
+      "dense_interface_bridge30.gcode"
+    ],
+    "support_interface_top_layers": [
+      "2",
+      "3"
+    ],
+    "support_interface_spacing": [
+      "0.5",
+      "0.15"
+    ],
+    "internal_bridge_speed": [
+      null,
+      "100%"
+    ]
+  },
+  "archive_changed_members_source_to_baseline": [
+    "3D/3dmodel.model",
+    "Metadata/project_settings.config",
+    "Metadata/model_settings.config"
+  ],
+  "mesh_member_changes_source_to_baseline": [],
+  "matching_explicit_filament_profile": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing-elegoo-20260929/filament.json",
+    "name": "MicroDuck Generic PLA @Elegoo CC",
+    "filament_id": "EPLAB00",
+    "shared_config_differences": {}
+  },
+  "proposed_repair": "Keep original app,inputproject,exportentrypoint andflags;add --load-filaments with exactexistingMicroDuckGenericPLA@ElegooCCprofile. Do not launch more tests until root authorizes one bounded acceptance.",
+  "repair_runtime_acceptance": "passed matchingexplicitfilamentprofile load; nativeexit0/no newcrashreports/archiveGcode/EPLAB00",
+  "orca_launches_by_reviewer": 0,
+  "repair_acceptance_evidence": "repaired-cli/repair-acceptance.json"
+}

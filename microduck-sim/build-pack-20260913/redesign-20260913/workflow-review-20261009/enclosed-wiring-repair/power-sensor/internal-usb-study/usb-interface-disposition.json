@@ -1,0 +1,3531 @@
+{
+  "status": "NOT_ACCEPTED_EXISTING_USB_STOCK_CANNOT_SUPPORT_THIS_HEAD_FIXED_COUPLER_OVER_TESTED_NATIVE_DOMAIN",
+  "architectureAdopted": false,
+  "wholeInterfaceAccepted": false,
+  "nativeGeometryExported": true,
+  "noPrintOrPublishedGeometryChanged": true,
+  "topology": "Pi Zero W -> SC0727 -> USB-A coupling -> Adafruit4472 -> torso OpenRB; no external Mac shortcut.",
+  "finiteFindings": [
+    {
+      "case": "Rear neck body-fixed coupler",
+      "nativeFlexibleLengthMm": {
+        "SC0727_requiredFlexibleRun": 72.83591466849963,
+        "Adafruit4472": 102.5
+      },
+      "staticClear": false,
+      "actualFailures": [
+        {
+          "moving": "sc0727_flexible_route",
+          "fixed": "head_bottom",
+          "volumeMm3": 16.38368551270481,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -24.249908447265625,
+            -10.370245791499302,
+            99.27812606002415,
+            -20.750091552734375,
+            -6.7997989976482955,
+            101.00460129536167
+          ]
+        },
+        {
+          "moving": "adafruit4472_flexible_route",
+          "fixed": "original_shell_right_conservative_uncut",
+          "volumeMm3": 3.462030547852935,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -22.398848714942943,
+            -10.413064963141213,
+            39.95752597700319,
+            -20.655359665024772,
+            -6.556345261369182,
+            41.71422657899525
+          ]
+        },
+        {
+          "moving": "usb_a_male_receiving",
+          "fixed": "USB_C_mould22",
+          "volumeMm3": 121.97503722381599,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -29.77,
+            -5.985,
+            50.099998474121094,
+            -22.77,
+            -2.5,
+            55.1
+          ]
+        },
+        {
+          "moving": "usb_a_male_receiving",
+          "fixed": "USB_C_strain5",
+          "volumeMm3": 10.368275471867156,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -28.334610872545248,
+            -3.2389194885287758,
+            55.1,
+            -24.20538912745475,
+            -2.5,
+            60.1
+          ]
+        }
+      ],
+      "bodyFixedMotion": {
+        "all229": {
+          "count": 229,
+          "maxLowerBoundMm": 160.73918298131292,
+          "exceedsEven80Flexible": 47
+        },
+        "nativeClear186": {
+          "count": 186,
+          "maxLowerBoundMm": 160.73918298131292,
+          "exceedsEven80Flexible": 37
+        }
+      },
+      "scope": "Named source solids plus current Pi/audio, IMU, carrier and plug receiving geometry. Original uncut body shells conservatively supersede cut-only U-notch; any shell hit remains a candidate failure requiring actual-notch localization."
+    },
+    {
+      "case": "Head-fixed coupling receiving zone",
+      "boundsMm": [
+        [
+          -11,
+          -24,
+          137
+        ],
+        [
+          9,
+          23.9,
+          149
+        ]
+      ],
+      "receivingLengthMm": 47.9,
+      "receivingCrossSectionMm": [
+        20,
+        12
+      ],
+      "dimensionsVerified": false,
+      "lengthAccounting": "Manufacturer4472 A mould+relief22.9mm plus assumed SC female25mm. Exposed male metal inserts inside the female; it is not included twice. Do not subtract insertion from plastic lengths.",
+      "staticClear": false,
+      "capIntersections": [
+        {
+          "moving": "head_coupled_receiving",
+          "fixed": "head_cap",
+          "volumeMm3": 1622.1490096643824,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -11.0,
+            -24.0,
+            137.0,
+            9.0,
+            23.9,
+            149.0
+          ]
+        },
+        {
+          "moving": "head_coupled_receiving",
+          "fixed": "community-original-cap",
+          "volumeMm3": 1622.1482563797013,
+          "method": "valid-solid-intersection",
+          "intersectionBoundsMm": [
+            -11.0,
+            -24.0,
+            137.0,
+            9.0,
+            23.9,
+            149.0
+          ]
+        }
+      ],
+      "limits": "This conservative receiving-box failure is not proof that the unmeasured actual female mould cannot fit. No smaller shape was invented."
+    }
+  ],
+  "stockLengthBoundary": {
+    "SC0727NominalMm": 80,
+    "SC0727FlexibleLengthConfirmed": false,
+    "microBMouldAssumedMm": 25,
+    "femaleMouldAssumedMm": 25,
+    "if80ExcludesBodiesMarginMm": 7.164085331500374,
+    "if80IncludesBothAssumedBodiesShortfallMm": 42.835914668499626,
+    "Adafruit4472NominalShoulderToShoulderMm": 152.4,
+    "Adafruit4472FlexibleRunMm": 102.5
+  },
+  "allHeadInternalCouplerNecessaryBound": {
+    "condition": "A flexible cable tail remains inside the existing head, no lower than the original head-bottom minimumZ. The coupler is fixed to the head.",
+    "headMinimumZMm": 98.67947387695312,
+    "headBottomSource": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/head_bottom.stl",
+    "headBottomSha256": "01516f85b8423ec92124c251355431899ce37c4d6de1a0d1cd8972c302420f01",
+    "neckAxisNeutralOriginMm": [
+      26,
+      14.5,
+      32.4215
+    ],
+    "neckAxis": [
+      0,
+      -1,
+      0
+    ],
+    "witnessJointDegrees": {
+      "neck_pitch": -90.0
+    },
+    "witnessNativeOriginalCollisionVolumes": {},
+    "rotationResult": "At q=-90deg, X_world=26+(Z_neutral-32.4215).",
+    "minimumPossibleHeadTailWorldXMm": 92.25797387695312,
+    "torsoCableTailMm": [
+      -26.27,
+      0.015,
+      60.1
+    ],
+    "straightXDistanceLowerBoundMm": 118.52797387695311,
+    "available4472NominalFlexibleMm": 102.5,
+    "minimumShortfallBeforeBendsMm": 16.027973876953112,
+    "result": "REJECTED under this tested pose and head-fixed-coupler condition. No route optimizer or bend assumption is needed.",
+    "doesNotClaim": "Does not certify physical availability of all XML poses, disprove every movable/intermediate coupling topology, or authorize shortening the joint range."
+  },
+  "headFixedExampleMotionRows": [
+    {
+      "index": 0,
+      "jointDegrees": {
+        "neck_pitch": -90.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        136.5785,
+        23.9,
+        59.42150000000001
+      ],
+      "straightLowerBoundMm": 164.5921855359482
+    },
+    {
+      "index": 1,
+      "jointDegrees": {
+        "neck_pitch": -85.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        133.80451036875132,
+        23.9,
+        68.95630814789905
+      ],
+      "straightLowerBoundMm": 162.08879137314221
+    },
+    {
+      "index": 2,
+      "jointDegrees": {
+        "neck_pitch": -80.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        130.2100633194533,
+        23.9,
+        78.21306434547228
+      ],
+      "straightLowerBoundMm": 159.3254108466171
+    },
+    {
+      "index": 3,
+      "jointDegrees": {
+        "neck_pitch": -75.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        125.82251476453767,
+        23.9,
+        87.12131908867394
+      ],
+      "straightLowerBoundMm": 156.3098779914214
+    },
+    {
+      "index": 4,
+      "jointDegrees": {
+        "neck_pitch": -70.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        120.6752565977815,
+        23.9,
+        95.61327517995699
+      ],
+      "straightLowerBoundMm": 153.05095352723288
+    },
+    {
+      "index": 5,
+      "jointDegrees": {
+        "neck_pitch": -65.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        114.8074625618333,
+        23.9,
+        103.62430370588348
+      ],
+      "straightLowerBoundMm": 149.5583788390589
+    },
+    {
+      "index": 6,
+      "jointDegrees": {
+        "neck_pitch": -60.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        108.26379011237754,
+        23.9,
+        111.09343590217986
+      ],
+      "straightLowerBoundMm": 145.84294433434542
+    },
+    {
+      "index": 7,
+      "jointDegrees": {
+        "neck_pitch": -55.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        101.09404054793204,
+        23.9,
+        117.96382716284691
+      ],
+      "straightLowerBoundMm": 141.91657600022307
+    },
+    {
+      "index": 8,
+      "jointDegrees": {
+        "neck_pitch": -50.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        93.35277999189535,
+        23.9,
+        124.18318966193539
+      ],
+      "straightLowerBoundMm": 137.79244505863514
+    },
+    {
+      "index": 9,
+      "jointDegrees": {
+        "neck_pitch": -45.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        85.09892411139985,
+        23.9,
+        129.70419029547344
+      ],
+      "straightLowerBoundMm": 133.48510699482253
+    },
+    {
+      "index": 10,
+      "jointDegrees": {
+        "neck_pitch": -40.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        76.39528973351057,
+        23.9,
+        134.48481091496848
+      ],
+      "straightLowerBoundMm": 129.01067799186734
+    },
+    {
+      "index": 11,
+      "jointDegrees": {
+        "neck_pitch": -35.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        67.30811677124136,
+        23.9,
+        138.4886681108885
+      ],
+      "straightLowerBoundMm": 124.38705902002472
+    },
+    {
+      "index": 12,
+      "jointDegrees": {
+        "neck_pitch": -30.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        57.906564097820144,
+        23.9,
+        141.68529011237754
+      ],
+      "straightLowerBoundMm": 119.6342205685114
+    },
+    {
+      "index": 13,
+      "jointDegrees": {
+        "neck_pitch": -25.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        48.26218320590438,
+        23.9,
+        144.05034869583108
+      ],
+      "straightLowerBoundMm": 114.77456427532243
+    },
+    {
+      "index": 14,
+      "jointDegrees": {
+        "neck_pitch": -20.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        38.44837365751793,
+        23.9,
+        145.56584433736762
+      ],
+      "straightLowerBoundMm": 109.83338136547223
+    },
+    {
+      "index": 15,
+      "jointDegrees": {
+        "neck_pitch": -15.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        28.539824469064243,
+        23.9,
+        146.22024320007378
+      ],
+      "straightLowerBoundMm": 104.83943138041855
+    },
+    {
+      "index": 16,
+      "jointDegrees": {
+        "neck_pitch": -10.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        18.61194568281304,
+        23.9,
+        146.00856491346755
+      ],
+      "straightLowerBoundMm": 99.82566703391693
+    },
+    {
+      "index": 17,
+      "jointDegrees": {
+        "neck_pitch": -5.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        8.740294450944788,
+        23.9,
+        144.93242047712485
+      ],
+      "straightLowerBoundMm": 94.83012974023376
+    },
+    {
+      "index": 18,
+      "jointDegrees": {
+        "neck_pitch": 0.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        23.9,
+        143.0
+      ],
+      "straightLowerBoundMm": 89.89703067955026
+    },
+    {
+      "index": 19,
+      "jointDegrees": {
+        "neck_pitch": 5.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -10.53480814789905,
+        23.9,
+        140.2260103687513
+      ],
+      "straightLowerBoundMm": 85.07800553160415
+    },
+    {
+      "index": 20,
+      "jointDegrees": {
+        "neck_pitch": 10.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -19.791564345472267,
+        23.9,
+        136.6315633194533
+      ],
+      "straightLowerBoundMm": 80.43347274393508
+    },
+    {
+      "index": 21,
+      "jointDegrees": {
+        "neck_pitch": 15.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -28.699819088673934,
+        23.9,
+        132.24401476453767
+      ],
+      "straightLowerBoundMm": 76.03391422351946
+    },
+    {
+      "index": 22,
+      "jointDegrees": {
+        "neck_pitch": 20.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -37.191775179956984,
+        23.9,
+        127.0967565977815
+      ],
+      "straightLowerBoundMm": 71.96071006253277
+    },
+    {
+      "index": 23,
+      "jointDegrees": {
+        "neck_pitch": 25.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -45.20280370588348,
+        23.9,
+        121.2289625618333
+      ],
+      "straightLowerBoundMm": 68.3058880701476
+    },
+    {
+      "index": 24,
+      "jointDegrees": {
+        "neck_pitch": 30.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -52.671935902179825,
+        23.9,
+        114.68529011237754
+      ],
+      "straightLowerBoundMm": 65.16984993871962
+    },
+    {
+      "index": 25,
+      "jointDegrees": {
+        "neck_pitch": 35.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -59.54232716284692,
+        23.9,
+        107.51554054793203
+      ],
+      "straightLowerBoundMm": 62.656001031697734
+    },
+    {
+      "index": 26,
+      "jointDegrees": {
+        "neck_pitch": 40.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -65.76168966193538,
+        23.9,
+        99.77427999189536
+      ],
+      "straightLowerBoundMm": 60.86160752255827
+    },
+    {
+      "index": 27,
+      "jointDegrees": {
+        "neck_pitch": 45.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -71.28269029547342,
+        23.9,
+        91.52042411139988
+      ],
+      "straightLowerBoundMm": 59.865503956589606
+    },
+    {
+      "index": 28,
+      "jointDegrees": {
+        "neck_pitch": 50.0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -76.06331091496847,
+        23.9,
+        82.81678973351057
+      ],
+      "straightLowerBoundMm": 59.71532108823706
+    },
+    {
+      "index": 29,
+      "jointDegrees": {
+        "neck_pitch": 55.0
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -80.06716811088852,
+        23.9,
+        73.72961677124135
+      ],
+      "straightLowerBoundMm": 60.41849861658351
+    },
+    {
+      "index": 30,
+      "jointDegrees": {
+        "neck_pitch": 59.99999999999999
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -83.26379011237754,
+        23.9,
+        64.32806409782017
+      ],
+      "straightLowerBoundMm": 61.94079320116121
+    },
+    {
+      "index": 31,
+      "jointDegrees": {
+        "head_pitch": -90.00000000000006
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -34.57849999999998,
+        23.9,
+        55.42149999999993
+      ],
+      "straightLowerBoundMm": 25.717946253540546
+    },
+    {
+      "index": 32,
+      "jointDegrees": {
+        "head_pitch": -85.00000000000006
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -36.70118557253756,
+        23.9,
+        60.80400731356181
+      ],
+      "straightLowerBoundMm": 26.072945436721646
+    },
+    {
+      "index": 33,
+      "jointDegrees": {
+        "head_pitch": -80.00000000000006
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -38.346677262857156,
+        23.9,
+        66.35103679946646
+      ],
+      "straightLowerBoundMm": 27.484810710272225
+    },
+    {
+      "index": 34,
+      "jointDegrees": {
+        "head_pitch": -75.00000000000006
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -39.50245188562039,
+        23.9,
+        72.02037221393815
+      ],
+      "straightLowerBoundMm": 29.794064536818187
+    },
+    {
+      "index": 35,
+      "jointDegrees": {
+        "head_pitch": -70.00000000000006
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -40.159713298072205,
+        23.9,
+        77.76886649123443
+      ],
+      "straightLowerBoundMm": 32.79643583665321
+    },
+    {
+      "index": 36,
+      "jointDegrees": {
+        "head_pitch": -65.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -40.31345934399859,
+        23.9,
+        83.55277011886935
+      ],
+      "straightLowerBoundMm": 36.30074932553145
+    },
+    {
+      "index": 37,
+      "jointDegrees": {
+        "head_pitch": -60.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -39.962519923155625,
+        23.9,
+        89.32806409782009
+      ],
+      "straightLowerBoundMm": 40.15293336422998
+    },
+    {
+      "index": 38,
+      "jointDegrees": {
+        "head_pitch": -55.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -39.10956589643895,
+        23.9,
+        95.050794953689
+      ],
+      "straightLowerBoundMm": 44.23692739447227
+    },
+    {
+      "index": 39,
+      "jointDegrees": {
+        "head_pitch": -50.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -37.7610887590196,
+        23.9,
+        100.67740924918357
+      ],
+      "straightLowerBoundMm": 48.46714853633742
+    },
+    {
+      "index": 40,
+      "jointDegrees": {
+        "head_pitch": -45.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -35.92735123614608,
+        23.9,
+        106.16508505207241
+      ],
+      "straightLowerBoundMm": 52.78020195824337
+    },
+    {
+      "index": 41,
+      "jointDegrees": {
+        "head_pitch": -40.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -33.62230917760846,
+        23.9,
+        111.4720578359464
+      ],
+      "straightLowerBoundMm": 57.12825922031029
+    },
+    {
+      "index": 42,
+      "jointDegrees": {
+        "head_pitch": -35.00000000000006
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -30.863505345294655,
+        23.9,
+        116.55793833348241
+      ],
+      "straightLowerBoundMm": 61.474322421841734
+    },
+    {
+      "index": 43,
+      "jointDegrees": {
+        "head_pitch": -30.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -27.671935902179882,
+        23.9,
+        121.38401992315556
+      ],
+      "straightLowerBoundMm": 65.78897891908301
+    },
+    {
+      "index": 44,
+      "jointDegrees": {
+        "head_pitch": -25.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -24.071890618848556,
+        23.9,
+        125.91357321000078
+      ],
+      "straightLowerBoundMm": 70.04820717562755
+    },
+    {
+      "index": 45,
+      "jointDegrees": {
+        "head_pitch": -20.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -20.090768013673596,
+        23.9,
+        130.11212555848607
+      ],
+      "straightLowerBoundMm": 74.23189245976461
+    },
+    {
+      "index": 46,
+      "jointDegrees": {
+        "head_pitch": -15.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -15.758866833547948,
+        23.9,
+        133.94772345008423
+      ],
+      "straightLowerBoundMm": 78.32281534906038
+    },
+    {
+      "index": 47,
+      "jointDegrees": {
+        "head_pitch": -10.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -11.109155462125813,
+        23.9,
+        137.3911756688429
+      ],
+      "straightLowerBoundMm": 82.30595524245814
+    },
+    {
+      "index": 48,
+      "jointDegrees": {
+        "head_pitch": -5.000000000000057
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -6.177021010516199,
+        23.9,
+        140.41627546416402
+      ],
+      "straightLowerBoundMm": 86.16800528100504
+    },
+    {
+      "index": 49,
+      "jointDegrees": {
+        "head_pitch": -5.684341886080802e-14
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0000000000000604,
+        23.9,
+        142.99999999999997
+      ],
+      "straightLowerBoundMm": 89.89703067955021
+    },
+    {
+      "index": 50,
+      "jointDegrees": {
+        "head_pitch": 4.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        4.382507313561817,
+        23.9,
+        145.12268557253756
+      ],
+      "straightLowerBoundMm": 93.48222553819816
+    },
+    {
+      "index": 51,
+      "jointDegrees": {
+        "head_pitch": 9.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        9.929536799466462,
+        23.9,
+        146.76817726285714
+      ],
+      "straightLowerBoundMm": 96.91373813635482
+    },
+    {
+      "index": 52,
+      "jointDegrees": {
+        "head_pitch": 14.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        15.598872213938147,
+        23.9,
+        147.92395188562037
+      ],
+      "straightLowerBoundMm": 100.18254443901314
+    },
+    {
+      "index": 53,
+      "jointDegrees": {
+        "head_pitch": 19.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        21.347366491234432,
+        23.9,
+        148.5812132980722
+      ],
+      "straightLowerBoundMm": 103.28035594080555
+    },
+    {
+      "index": 54,
+      "jointDegrees": {
+        "head_pitch": 24.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        27.131270118869345,
+        23.9,
+        148.73495934399858
+      ],
+      "straightLowerBoundMm": 106.19955222702556
+    },
+    {
+      "index": 55,
+      "jointDegrees": {
+        "head_pitch": 29.999999999999943
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        32.906564097820095,
+        23.9,
+        148.38401992315562
+      ],
+      "straightLowerBoundMm": 108.93313149458042
+    },
+    {
+      "index": 56,
+      "jointDegrees": {
+        "head_pitch": 34.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        38.629294953689005,
+        23.9,
+        147.53106589643895
+      ],
+      "straightLowerBoundMm": 111.4746742281554
+    },
+    {
+      "index": 57,
+      "jointDegrees": {
+        "head_pitch": 39.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        44.25590924918356,
+        23.9,
+        146.1825887590196
+      ],
+      "straightLowerBoundMm": 113.81831657461186
+    },
+    {
+      "index": 58,
+      "jointDegrees": {
+        "head_pitch": 44.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        49.743585052072426,
+        23.9,
+        144.34885123614606
+      ],
+      "straightLowerBoundMm": 115.95873090060498
+    },
+    {
+      "index": 59,
+      "jointDegrees": {
+        "head_pitch": 49.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        55.05055783594639,
+        23.9,
+        142.04380917760847
+      ],
+      "straightLowerBoundMm": 117.89111168483319
+    },
+    {
+      "index": 60,
+      "jointDegrees": {
+        "head_pitch": 54.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        60.136438333482396,
+        23.9,
+        139.28500534529465
+      ],
+      "straightLowerBoundMm": 119.61116537352288
+    },
+    {
+      "index": 61,
+      "jointDegrees": {
+        "head_pitch": 59.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        64.96251992315557,
+        23.9,
+        136.09343590217986
+      ],
+      "straightLowerBoundMm": 121.11510317358318
+    },
+    {
+      "index": 62,
+      "jointDegrees": {
+        "head_pitch": 64.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        69.49207321000077,
+        23.9,
+        132.49339061884857
+      ],
+      "straightLowerBoundMm": 122.39963601159417
+    },
+    {
+      "index": 63,
+      "jointDegrees": {
+        "head_pitch": 69.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        73.69062555848606,
+        23.9,
+        128.51226801367358
+      ],
+      "straightLowerBoundMm": 123.46197107538241
+    },
+    {
+      "index": 64,
+      "jointDegrees": {
+        "head_pitch": 74.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        77.52622345008422,
+        23.9,
+        124.18036683354796
+      ],
+      "straightLowerBoundMm": 124.29980949712629
+    },
+    {
+      "index": 65,
+      "jointDegrees": {
+        "head_pitch": 79.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        80.9696756688429,
+        23.9,
+        119.53065546212582
+      ],
+      "straightLowerBoundMm": 124.9113448459207
+    },
+    {
+      "index": 66,
+      "jointDegrees": {
+        "head_pitch": 84.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        83.99477546416401,
+        23.9,
+        114.59852101051621
+      ],
+      "straightLowerBoundMm": 125.29526218295798
+    },
+    {
+      "index": 67,
+      "jointDegrees": {
+        "head_pitch": 89.99999999999994
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        86.57849999999998,
+        23.9,
+        109.42150000000007
+      ],
+      "straightLowerBoundMm": 125.45073750082142
+    },
+    {
+      "index": 68,
+      "jointDegrees": {
+        "head_yaw": -170.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        56.740000777569016,
+        -18.848404499985037,
+        143.0
+      ],
+      "straightLowerBoundMm": 118.82297024743181
+    },
+    {
+      "index": 69,
+      "jointDegrees": {
+        "head_yaw": -165.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        58.265772487754894,
+        -16.097513030541062,
+        143.0
+      ],
+      "straightLowerBoundMm": 119.49192402108527
+    },
+    {
+      "index": 70,
+      "jointDegrees": {
+        "head_yaw": -160.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        59.545982186702844,
+        -13.224109766990562,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.05026791344918
+    },
+    {
+      "index": 71,
+      "jointDegrees": {
+        "head_yaw": -155.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        60.57088670559214,
+        -10.250063043177473,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.49531577241457
+    },
+    {
+      "index": 72,
+      "jointDegrees": {
+        "head_yaw": -150.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        61.332685902179755,
+        -7.198007150448525,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.82494795955174
+    },
+    {
+      "index": 73,
+      "jointDegrees": {
+        "head_yaw": -145.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        61.825582024592734,
+        -4.091170077029094,
+        143.0
+      ],
+      "straightLowerBoundMm": 121.03760657313592
+    },
+    {
+      "index": 74,
+      "jointDegrees": {
+        "head_yaw": -140.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        62.04582383572068,
+        -0.9531967290074519,
+        143.0
+      ],
+      "straightLowerBoundMm": 121.13229191544305
+    },
+    {
+      "index": 75,
+      "jointDegrees": {
+        "head_yaw": -135.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        61.991735162395294,
+        2.1920310216778525,
+        143.0
+      ],
+      "straightLowerBoundMm": 121.10856021746008
+    },
+    {
+      "index": 76,
+      "jointDegrees": {
+        "head_yaw": -130.0000000000007
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        61.6637276520802,
+        5.320576092703671,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.96652262698834
+    },
+    {
+      "index": 77,
+      "jointDegrees": {
+        "head_yaw": -125.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        61.06429763998525,
+        8.408628367012337,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.70684546219013
+    },
+    {
+      "index": 78,
+      "jointDegrees": {
+        "head_yaw": -120.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        60.19800715044822,
+        11.43268590217943,
+        143.0
+      ],
+      "straightLowerBoundMm": 120.33075173009928
+    },
+    {
+      "index": 79,
+      "jointDegrees": {
+        "head_yaw": -115.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        59.071449177175,
+        14.369733794386423,
+        143.0
+      ],
+      "straightLowerBoundMm": 119.84002390674011
+    },
+    {
+      "index": 80,
+      "jointDegrees": {
+        "head_yaw": -110.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        57.69319750657648,
+        17.197419335735653,
+        143.0
+      ],
+      "straightLowerBoundMm": 119.23700797050148
+    },
+    {
+      "index": 81,
+      "jointDegrees": {
+        "head_yaw": -105.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        56.07374146607704,
+        19.894222131854228,
+        143.0
+      ],
+      "straightLowerBoundMm": 118.5246186713956
+    },
+    {
+      "index": 82,
+      "jointDegrees": {
+        "head_yaw": -100.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        54.22540609399917,
+        22.439617885089632,
+        143.0
+      ],
+      "straightLowerBoundMm": 117.70634600364639
+    },
+    {
+      "index": 83,
+      "jointDegrees": {
+        "head_yaw": -95.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        52.16225833857979,
+        24.814234596807776,
+        143.0
+      ],
+      "straightLowerBoundMm": 116.78626282520229
+    },
+    {
+      "index": 84,
+      "jointDegrees": {
+        "head_yaw": -90.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        49.90000000000033,
+        26.999999999999705,
+        143.0
+      ],
+      "straightLowerBoundMm": 115.76903353228805
+    },
+    {
+      "index": 85,
+      "jointDegrees": {
+        "head_yaw": -85.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        47.45584823020631,
+        28.980279100145893,
+        143.0
+      ],
+      "straightLowerBoundMm": 114.65992364646317
+    },
+    {
+      "index": 86,
+      "jointDegrees": {
+        "head_yaw": -80.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        44.84840449998503,
+        30.74000077756902,
+        143.0
+      ],
+      "straightLowerBoundMm": 113.46481010165711
+    },
+    {
+      "index": 87,
+      "jointDegrees": {
+        "head_yaw": -75.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        42.09751303054107,
+        32.26577248775489,
+        143.0
+      ],
+      "straightLowerBoundMm": 112.19019192441972
+    },
+    {
+      "index": 88,
+      "jointDegrees": {
+        "head_yaw": -70.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        39.224109766990566,
+        33.545982186702844,
+        143.0
+      ],
+      "straightLowerBoundMm": 110.84320087662388
+    },
+    {
+      "index": 89,
+      "jointDegrees": {
+        "head_yaw": -65.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        36.25006304317748,
+        34.57088670559214,
+        143.0
+      ],
+      "straightLowerBoundMm": 109.43161147005287
+    },
+    {
+      "index": 90,
+      "jointDegrees": {
+        "head_yaw": -60.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        33.19800715044852,
+        35.332685902179755,
+        143.0
+      ],
+      "straightLowerBoundMm": 107.96384956053959
+    },
+    {
+      "index": 91,
+      "jointDegrees": {
+        "head_yaw": -55.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        30.091170077029105,
+        35.82558202459273,
+        143.0
+      ],
+      "straightLowerBoundMm": 106.44899847998516
+    },
+    {
+      "index": 92,
+      "jointDegrees": {
+        "head_yaw": -50.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        26.95319672900746,
+        36.04582383572068,
+        143.0
+      ],
+      "straightLowerBoundMm": 104.89680136369921
+    },
+    {
+      "index": 93,
+      "jointDegrees": {
+        "head_yaw": -45.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        23.80796897832215,
+        35.9917351623953,
+        143.0
+      ],
+      "straightLowerBoundMm": 103.31765797741897
+    },
+    {
+      "index": 94,
+      "jointDegrees": {
+        "head_yaw": -40.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        20.679423907296325,
+        35.6637276520802,
+        143.0
+      ],
+      "straightLowerBoundMm": 101.7226139481246
+    },
+    {
+      "index": 95,
+      "jointDegrees": {
+        "head_yaw": -35.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        17.59137163298766,
+        35.064297639985256,
+        143.0
+      ],
+      "straightLowerBoundMm": 100.12333986929985
+    },
+    {
+      "index": 96,
+      "jointDegrees": {
+        "head_yaw": -30.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        14.56731409782058,
+        34.19800715044823,
+        143.0
+      ],
+      "straightLowerBoundMm": 98.5320973113414
+    },
+    {
+      "index": 97,
+      "jointDegrees": {
+        "head_yaw": -25.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        11.630266205613578,
+        33.071449177175,
+        143.0
+      ],
+      "straightLowerBoundMm": 96.96168836535143
+    },
+    {
+      "index": 98,
+      "jointDegrees": {
+        "head_yaw": -20.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        8.802580664264351,
+        31.69319750657648,
+        143.0
+      ],
+      "straightLowerBoundMm": 95.42538504882754
+    },
+    {
+      "index": 99,
+      "jointDegrees": {
+        "head_yaw": -15.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        6.1057778681457755,
+        30.07374146607704,
+        143.0
+      ],
+      "straightLowerBoundMm": 93.93683479387613
+    },
+    {
+      "index": 100,
+      "jointDegrees": {
+        "head_yaw": -10.00000000000071
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        3.560382114910368,
+        28.22540609399917,
+        143.0
+      ],
+      "straightLowerBoundMm": 92.50993843425641
+    },
+    {
+      "index": 101,
+      "jointDegrees": {
+        "head_yaw": -5.0000000000007105
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        1.185765403192228,
+        26.162258338579793,
+        143.0
+      ],
+      "straightLowerBoundMm": 91.1586977336752
+    },
+    {
+      "index": 102,
+      "jointDegrees": {
+        "head_yaw": -7.105427357601002e-13
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -0.9999999999997051,
+        23.900000000000333,
+        143.0
+      ],
+      "straightLowerBoundMm": 89.89703067955043
+    },
+    {
+      "index": 103,
+      "jointDegrees": {
+        "head_yaw": 4.9999999999992895
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -2.980279100145893,
+        21.455848230206307,
+        143.0
+      ],
+      "straightLowerBoundMm": 88.73855459958678
+    },
+    {
+      "index": 104,
+      "jointDegrees": {
+        "head_yaw": 9.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -4.740000777569019,
+        18.848404499985033,
+        143.0
+      ],
+      "straightLowerBoundMm": 87.69633967035304
+    },
+    {
+      "index": 105,
+      "jointDegrees": {
+        "head_yaw": 14.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -6.265772487754887,
+        16.09751303054107,
+        143.0
+      ],
+      "straightLowerBoundMm": 86.78263849261089
+    },
+    {
+      "index": 106,
+      "jointDegrees": {
+        "head_yaw": 19.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -7.545982186702844,
+        13.22410976699057,
+        143.0
+      ],
+      "straightLowerBoundMm": 86.00860087170977
+    },
+    {
+      "index": 107,
+      "jointDegrees": {
+        "head_yaw": 24.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -8.570886705592137,
+        10.250063043177473,
+        143.0
+      ],
+      "straightLowerBoundMm": 85.38398636106248
+    },
+    {
+      "index": 108,
+      "jointDegrees": {
+        "head_yaw": 29.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -9.332685902179755,
+        7.19800715044852,
+        143.0
+      ],
+      "straightLowerBoundMm": 84.91688996054681
+    },
+    {
+      "index": 109,
+      "jointDegrees": {
+        "head_yaw": 34.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -9.825582024592727,
+        4.091170077029103,
+        143.0
+      ],
+      "straightLowerBoundMm": 84.61349800739103
+    },
+    {
+      "index": 110,
+      "jointDegrees": {
+        "head_yaw": 39.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -10.045823835720682,
+        0.953196729007459,
+        143.0
+      ],
+      "straightLowerBoundMm": 84.4778912219753
+    },
+    {
+      "index": 111,
+      "jointDegrees": {
+        "head_yaw": 44.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -9.991735162395301,
+        -2.192031021677849,
+        143.0
+      ],
+      "straightLowerBoundMm": 84.51190976456424
+    },
+    {
+      "index": 112,
+      "jointDegrees": {
+        "head_yaw": 49.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -9.663727652080198,
+        -5.320576092703671,
+        143.0
+      ],
+      "straightLowerBoundMm": 84.71509106135882
+    },
+    {
+      "index": 113,
+      "jointDegrees": {
+        "head_yaw": 54.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -9.064297639985249,
+        -8.40862836701234,
+        143.0
+      ],
+      "straightLowerBoundMm": 85.08468551135952
+    },
+    {
+      "index": 114,
+      "jointDegrees": {
+        "head_yaw": 59.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -8.19800715044822,
+        -11.432685902179422,
+        143.0
+      ],
+      "straightLowerBoundMm": 85.6157487736293
+    },
+    {
+      "index": 115,
+      "jointDegrees": {
+        "head_yaw": 64.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -7.071449177174998,
+        -14.36973379438642,
+        143.0
+      ],
+      "straightLowerBoundMm": 86.30130311896778
+    },
+    {
+      "index": 116,
+      "jointDegrees": {
+        "head_yaw": 69.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -5.693197506576482,
+        -17.19741933573565,
+        143.0
+      ],
+      "straightLowerBoundMm": 87.13255522617575
+    },
+    {
+      "index": 117,
+      "jointDegrees": {
+        "head_yaw": 74.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -4.073741466077038,
+        -19.89422213185422,
+        143.0
+      ],
+      "straightLowerBoundMm": 88.09915447267507
+    },
+    {
+      "index": 118,
+      "jointDegrees": {
+        "head_yaw": 79.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -2.2254060939991724,
+        -22.439617885089632,
+        143.0
+      ],
+      "straightLowerBoundMm": 89.18947449374214
+    },
+    {
+      "index": 119,
+      "jointDegrees": {
+        "head_yaw": 84.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -0.1622583385797931,
+        -24.814234596807772,
+        143.0
+      ],
+      "straightLowerBoundMm": 90.39090145209734
+    },
+    {
+      "index": 120,
+      "jointDegrees": {
+        "head_yaw": 89.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        2.099999999999664,
+        -26.9999999999997,
+        143.0
+      ],
+      "straightLowerBoundMm": 91.690114652562
+    },
+    {
+      "index": 121,
+      "jointDegrees": {
+        "head_yaw": 94.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        4.544151769793693,
+        -28.980279100145893,
+        143.0
+      ],
+      "straightLowerBoundMm": 93.07334827643861
+    },
+    {
+      "index": 122,
+      "jointDegrees": {
+        "head_yaw": 99.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        7.151595500014967,
+        -30.740000777569016,
+        143.0
+      ],
+      "straightLowerBoundMm": 94.52662650594748
+    },
+    {
+      "index": 123,
+      "jointDegrees": {
+        "head_yaw": 104.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        9.90248696945893,
+        -32.26577248775489,
+        143.0
+      ],
+      "straightLowerBoundMm": 96.0359676681704
+    },
+    {
+      "index": 124,
+      "jointDegrees": {
+        "head_yaw": 109.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        12.775890233009429,
+        -33.545982186702844,
+        143.0
+      ],
+      "straightLowerBoundMm": 97.58755591480099
+    },
+    {
+      "index": 125,
+      "jointDegrees": {
+        "head_yaw": 114.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        15.749936956822518,
+        -34.57088670559214,
+        143.0
+      ],
+      "straightLowerBoundMm": 99.16788119682398
+    },
+    {
+      "index": 126,
+      "jointDegrees": {
+        "head_yaw": 119.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        18.80199284955149,
+        -35.332685902179755,
+        143.0
+      ],
+      "straightLowerBoundMm": 100.76384985732324
+    },
+    {
+      "index": 127,
+      "jointDegrees": {
+        "head_yaw": 124.99999999999929
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        21.908829922970902,
+        -35.82558202459273,
+        143.0
+      ],
+      "straightLowerBoundMm": 102.36286911086518
+    },
+    {
+      "index": 128,
+      "jointDegrees": {
+        "head_yaw": 129.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        25.04680327099254,
+        -36.04582383572068,
+        143.0
+      ],
+      "straightLowerBoundMm": 103.95290911592919
+    },
+    {
+      "index": 129,
+      "jointDegrees": {
+        "head_yaw": 134.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        28.192031021677845,
+        -35.9917351623953,
+        143.0
+      ],
+      "straightLowerBoundMm": 105.52254640625895
+    },
+    {
+      "index": 130,
+      "jointDegrees": {
+        "head_yaw": 139.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        31.320576092703664,
+        -35.663727652080205,
+        143.0
+      ],
+      "straightLowerBoundMm": 107.06099225002916
+    },
+    {
+      "index": 131,
+      "jointDegrees": {
+        "head_yaw": 144.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        34.40862836701235,
+        -35.06429763998525,
+        143.0
+      ],
+      "straightLowerBoundMm": 108.5581091554964
+    },
+    {
+      "index": 132,
+      "jointDegrees": {
+        "head_yaw": 149.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        37.43268590217942,
+        -34.19800715044823,
+        143.0
+      ],
+      "straightLowerBoundMm": 110.00441831775828
+    },
+    {
+      "index": 133,
+      "jointDegrees": {
+        "head_yaw": 154.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        40.36973379438642,
+        -33.071449177175,
+        143.0
+      ],
+      "straightLowerBoundMm": 111.39110035968076
+    },
+    {
+      "index": 134,
+      "jointDegrees": {
+        "head_yaw": 159.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        43.197419335735646,
+        -31.69319750657648,
+        143.0
+      ],
+      "straightLowerBoundMm": 112.70999129750211
+    },
+    {
+      "index": 135,
+      "jointDegrees": {
+        "head_yaw": 164.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        45.89422213185423,
+        -30.07374146607704,
+        143.0
+      ],
+      "straightLowerBoundMm": 113.95357527918124
+    },
+    {
+      "index": 136,
+      "jointDegrees": {
+        "head_yaw": 169.9999999999993
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        48.43961788508963,
+        -28.22540609399917,
+        143.0
+      ],
+      "straightLowerBoundMm": 115.11497531116484
+    },
+    {
+      "index": 137,
+      "jointDegrees": {
+        "head_roll": -25.000000000000508
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        10.08718596510187,
+        150.53477772671627
+      ],
+      "straightLowerBoundMm": 94.43765590375575
+    },
+    {
+      "index": 138,
+      "jointDegrees": {
+        "head_roll": -20.000000000000508
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        13.092295203752139,
+        149.522739722754
+      ],
+      "straightLowerBoundMm": 93.84036940128426
+    },
+    {
+      "index": 139,
+      "jointDegrees": {
+        "head_roll": -15.000000000000508
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        15.997764170557868,
+        148.25264030120704
+      ],
+      "straightLowerBoundMm": 93.08549641381121
+    },
+    {
+      "index": 140,
+      "jointDegrees": {
+        "head_roll": -10.000000000000508
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        18.781480492311537,
+        146.73414568558033
+      ],
+      "straightLowerBoundMm": 92.17499058171184
+    },
+    {
+      "index": 141,
+      "jointDegrees": {
+        "head_roll": -5.000000000000508
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        21.42225840695074,
+        144.9788125367909
+      ],
+      "straightLowerBoundMm": 91.11123108682956
+    },
+    {
+      "index": 142,
+      "jointDegrees": {
+        "head_roll": -5.080380560684716e-13
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        23.899999999999757,
+        143.00000000000023
+      ],
+      "straightLowerBoundMm": 89.89703067955041
+    },
+    {
+      "index": 143,
+      "jointDegrees": {
+        "head_roll": 4.999999999999492
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        26.195848161834213,
+        140.8127680334529
+      ],
+      "straightLowerBoundMm": 88.53564612118102
+    },
+    {
+      "index": 144,
+      "jointDegrees": {
+        "head_roll": 9.999999999999492
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        28.292330101671524,
+        138.43376279310115
+      ],
+      "straightLowerBoundMm": 87.03079162575013
+    },
+    {
+      "index": 145,
+      "jointDegrees": {
+        "head_roll": 14.999999999999492
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        30.173490326059124,
+        135.88108994530666
+      ],
+      "straightLowerBoundMm": 85.38665605377494
+    },
+    {
+      "index": 146,
+      "jointDegrees": {
+        "head_roll": 19.999999999999492
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        31.825012069813823,
+        133.1741768717872
+      ],
+      "straightLowerBoundMm": 83.60792482397194
+    },
+    {
+      "index": 147,
+      "jointDegrees": {
+        "head_roll": 24.999999999999492
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        33.234326255249556,
+        130.33362481551106
+      ],
+      "straightLowerBoundMm": 81.69980778177317
+    },
+    {
+      "index": 148,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        44.34239299061534,
+        27.0,
+        147.7614053586033
+      ],
+      "straightLowerBoundMm": 115.75328184680755
+    },
+    {
+      "index": 149,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        56.11856633247906,
+        27.0,
+        143.21449895138508
+      ],
+      "straightLowerBoundMm": 120.100316499421
+    },
+    {
+      "index": 150,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        65.62941594183897,
+        27.000000000000004,
+        134.91411605890582
+      ],
+      "straightLowerBoundMm": 121.53536455339473
+    },
+    {
+      "index": 151,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        4.859189837905767,
+        13.092295203752442,
+        140.7994513579871
+      ],
+      "straightLowerBoundMm": 87.4782462060745
+    },
+    {
+      "index": 152,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        5.991851704157678,
+        23.9,
+        134.37580670813836
+      ],
+      "straightLowerBoundMm": 84.42876146507062
+    },
+    {
+      "index": 153,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        7.6980879844494545,
+        31.82501206981398,
+        124.69925991174745
+      ],
+      "straightLowerBoundMm": 79.61640691683161
+    },
+    {
+      "index": 154,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        18.555605347855426,
+        -27.0,
+        143.21449895138508
+      ],
+      "straightLowerBoundMm": 98.21998297567292
+    },
+    {
+      "index": 155,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        9.044755738495518,
+        -27.0,
+        134.91411605890585
+      ],
+      "straightLowerBoundMm": 87.02927185461819
+    },
+    {
+      "index": 156,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        2.9463786897191575,
+        -27.0,
+        123.86140535860332
+      ],
+      "straightLowerBoundMm": 75.15932292167888
+    },
+    {
+      "index": 157,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        78.35371598570669,
+        27.0,
+        137.98284217030414
+      ],
+      "straightLowerBoundMm": 133.19177630838294
+    },
+    {
+      "index": 158,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        86.27872805552067,
+        27.0,
+        128.1570190420911
+      ],
+      "straightLowerBoundMm": 134.26527567770862
+    },
+    {
+      "index": 159,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        90.36517398256001,
+        27.000000000000004,
+        116.21325179138631
+      ],
+      "straightLowerBoundMm": 132.2144132140878
+    },
+    {
+      "index": 160,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        40.679282032370246,
+        13.092295203752442,
+        151.69521472214657
+      ],
+      "straightLowerBoundMm": 114.20554003415104
+    },
+    {
+      "index": 161,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        38.44837365751793,
+        23.9,
+        145.56584433736762
+      ],
+      "straightLowerBoundMm": 109.83338136547223
+    },
+    {
+      "index": 162,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        35.08774422291382,
+        31.82501206981398,
+        136.3325908506383
+      ],
+      "straightLowerBoundMm": 102.89828740949505
+    },
+    {
+      "index": 163,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        53.748249601472864,
+        -27.0,
+        146.9384995344029
+      ],
+      "straightLowerBoundMm": 121.13486490548502
+    },
+    {
+      "index": 164,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        41.361420781954244,
+        -27.0,
+        144.50558189305806
+      ],
+      "straightLowerBoundMm": 111.4814852641078
+    },
+    {
+      "index": 165,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        30.55371598570668,
+        -27.0,
+        137.98284217030414
+      ],
+      "straightLowerBoundMm": 100.12233531010332
+    },
+    {
+      "index": 166,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        102.91910412162407,
+        27.0,
+        112.50869653918005
+      ],
+      "straightLowerBoundMm": 142.00241660508348
+    },
+    {
+      "index": 167,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        104.86945433527475,
+        27.0,
+        100.03677806214787
+      ],
+      "straightLowerBoundMm": 139.7164734393868
+    },
+    {
+      "index": 168,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        102.43653669392988,
+        27.000000000000004,
+        87.64994924262925
+      ],
+      "straightLowerBoundMm": 134.35982478411233
+    },
+    {
+      "index": 169,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        77.14827352075692,
+        13.092295203752442,
+        143.22117649190025
+      ],
+      "straightLowerBoundMm": 133.32473487413282
+    },
+    {
+      "index": 170,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        72.15156500222989,
+        23.9,
+        139.02844021690385
+      ],
+      "straightLowerBoundMm": 128.40169920044488
+    },
+    {
+      "index": 171,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        64.62454779579232,
+        31.82501206981398,
+        132.71252285511704
+      ],
+      "straightLowerBoundMm": 120.60793573504266
+    },
+    {
+      "index": 172,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        86.08797384296291,
+        -27.0,
+        132.56725651619567
+      ],
+      "straightLowerBoundMm": 136.40244784489772
+    },
+    {
+      "index": 173,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        74.14420659225814,
+        -27.0,
+        136.653702443235
+      ],
+      "straightLowerBoundMm": 129.12510394311428
+    },
+    {
+      "index": 174,
+      "jointDegrees": {
+        "neck_pitch": -20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        61.52308982072789,
+        -27.0,
+        136.40869653918006
+      ],
+      "straightLowerBoundMm": 119.41714287646923
+    },
+    {
+      "index": 175,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        3.7876403789178354,
+        27.0,
+        147.0790258272106
+      ],
+      "straightLowerBoundMm": 95.9010057507163
+    },
+    {
+      "index": 176,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        16.408757150448086,
+        27.0,
+        146.8340199231556
+      ],
+      "straightLowerBoundMm": 100.3616298638941
+    },
+    {
+      "index": 177,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        28.184930492311825,
+        27.000000000000004,
+        142.2871135159374
+      ],
+      "straightLowerBoundMm": 102.21668801132274
+    },
+    {
+      "index": 178,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -30.93330576355679,
+        13.092295203752442,
+        127.03287822533437
+      ],
+      "straightLowerBoundMm": 68.35767885188868
+    },
+    {
+      "index": 179,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -27.67193590217984,
+        23.9,
+        121.38401992315562
+      ],
+      "straightLowerBoundMm": 65.78897891908306
+    },
+    {
+      "index": 180,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -22.759024338073303,
+        31.82501206981398,
+        112.87460748103041
+      ],
+      "straightLowerBoundMm": 61.72003736840398
+    },
+    {
+      "index": 181,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -18.888880101671724,
+        -27.0,
+        133.98673062345813
+      ],
+      "straightLowerBoundMm": 79.01607506183133
+    },
+    {
+      "index": 182,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -24.987257150448087,
+        -27.0,
+        122.93401992315563
+      ],
+      "straightLowerBoundMm": 68.40738055152818
+    },
+    {
+      "index": 183,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -26.937607364098753,
+        -27.0,
+        110.46210144612343
+      ],
+      "straightLowerBoundMm": 57.15415283828661
+    },
+    {
+      "index": 184,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        39.09229520375244,
+        27.0,
+        149.5227397227539
+      ],
+      "straightLowerBoundMm": 114.00371151337954
+    },
+    {
+      "index": 185,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        49.9,
+        27.0,
+        143.0
+      ],
+      "straightLowerBoundMm": 115.7690335322879
+    },
+    {
+      "index": 186,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        57.82501206981398,
+        27.000000000000004,
+        133.17417687178693
+      ],
+      "straightLowerBoundMm": 114.62982424095118
+    },
+    {
+      "index": 187,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        13.092295203752442,
+        149.5227397227539
+      ],
+      "straightLowerBoundMm": 93.84036940128419
+    },
+    {
+      "index": 188,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        23.9,
+        143.0
+      ],
+      "straightLowerBoundMm": 89.89703067955026
+    },
+    {
+      "index": 189,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -1.0,
+        31.82501206981398,
+        133.17417687178693
+      ],
+      "straightLowerBoundMm": 83.60792482397174
+    },
+    {
+      "index": 190,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        12.907704796247556,
+        -27.0,
+        149.5227397227539
+      ],
+      "straightLowerBoundMm": 101.2972317372262
+    },
+    {
+      "index": 191,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        2.1000000000000014,
+        -27.0,
+        143.0
+      ],
+      "straightLowerBoundMm": 91.6901146525622
+    },
+    {
+      "index": 192,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -5.82501206981398,
+        -27.0,
+        133.17417687178693
+      ],
+      "straightLowerBoundMm": 80.54590667411134
+    },
+    {
+      "index": 193,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        70.88888010167173,
+        27.0,
+        133.98673062345813
+      ],
+      "straightLowerBoundMm": 125.00914834456913
+    },
+    {
+      "index": 194,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        76.98725715044809,
+        27.0,
+        122.93401992315563
+      ],
+      "straightLowerBoundMm": 123.84815476597655
+    },
+    {
+      "index": 195,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        78.93760736409875,
+        27.000000000000004,
+        110.46210144612343
+      ],
+      "straightLowerBoundMm": 119.7212267492611
+    },
+    {
+      "index": 196,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        36.1679339591971,
+        13.092295203752442,
+        154.03287822533434
+      ],
+      "straightLowerBoundMm": 113.5468927740193
+    },
+    {
+      "index": 197,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        32.90656409782015,
+        23.9,
+        148.38401992315562
+      ],
+      "straightLowerBoundMm": 108.93313149458045
+    },
+    {
+      "index": 198,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        27.993652533713618,
+        31.82501206981398,
+        139.8746074810304
+      ],
+      "straightLowerBoundMm": 101.58941309474028
+    },
+    {
+      "index": 199,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        48.212359621082165,
+        -27.0,
+        147.0790258272106
+      ],
+      "straightLowerBoundMm": 117.65535709679682
+    },
+    {
+      "index": 200,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        35.59124284955192,
+        -27.0,
+        146.8340199231556
+      ],
+      "straightLowerBoundMm": 109.90638654746863
+    },
+    {
+      "index": 201,
+      "jointDegrees": {
+        "neck_pitch": 0,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        23.815069507688175,
+        -27.0,
+        142.2871135159374
+      ],
+      "straightLowerBoundMm": 99.96522415656125
+    },
+    {
+      "index": 202,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -34.08797384296291,
+        27.0,
+        132.56725651619567
+      ],
+      "straightLowerBoundMm": 77.72267498608986
+    },
+    {
+      "index": 203,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -22.144206592258143,
+        27.0,
+        136.653702443235
+      ],
+      "straightLowerBoundMm": 81.2753453023162
+    },
+    {
+      "index": 204,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -9.52308982072789,
+        27.000000000000004,
+        136.40869653918006
+      ],
+      "straightLowerBoundMm": 82.65389520803771
+    },
+    {
+      "index": 205,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -59.85880444383005,
+        13.092295203752442,
+        101.85477656347547
+      ],
+      "straightLowerBoundMm": 55.16053661520802
+    },
+    {
+      "index": 206,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -54.86209592530301,
+        23.9,
+        97.66204028847903
+      ],
+      "straightLowerBoundMm": 52.904707210559735
+    },
+    {
+      "index": 207,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -47.33507871886545,
+        31.82501206981398,
+        91.34612292669223
+      ],
+      "straightLowerBoundMm": 49.31464901288126
+    },
+    {
+      "index": 208,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -50.91910412162406,
+        -27.0,
+        112.50869653918005
+      ],
+      "straightLowerBoundMm": 63.906650920968524
+    },
+    {
+      "index": 209,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -52.86945433527475,
+        -27.0,
+        100.03677806214787
+      ],
+      "straightLowerBoundMm": 55.066209583733134
+    },
+    {
+      "index": 210,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": -30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -50.43653669392988,
+        -27.0,
+        87.64994924262925
+      ],
+      "straightLowerBoundMm": 45.528358459871
+    },
+    {
+      "index": 211,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -1.748249601472864,
+        27.0,
+        146.9384995344029
+      ],
+      "straightLowerBoundMm": 94.18296804090514
+    },
+    {
+      "index": 212,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        10.638579218045756,
+        27.0,
+        144.50558189305806
+      ],
+      "straightLowerBoundMm": 95.99341487623248
+    },
+    {
+      "index": 213,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        21.44628401429332,
+        27.000000000000004,
+        137.98284217030414
+      ],
+      "straightLowerBoundMm": 95.24059580692054
+    },
+    {
+      "index": 214,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -39.42268355480931,
+        13.092295203752442,
+        133.22612698256046
+      ],
+      "straightLowerBoundMm": 75.44162764686745
+    },
+    {
+      "index": 215,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -37.191775179956984,
+        23.9,
+        127.0967565977815
+      ],
+      "straightLowerBoundMm": 71.96071006253277
+    },
+    {
+      "index": 216,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -33.83114574535288,
+        31.82501206981398,
+        117.86350311105218
+      ],
+      "straightLowerBoundMm": 66.37522191695267
+    },
+    {
+      "index": 217,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -26.353715985706685,
+        -27.0,
+        137.98284217030414
+      ],
+      "straightLowerBoundMm": 82.43515231920645
+    },
+    {
+      "index": 218,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -34.278728055520666,
+        -27.0,
+        128.1570190420911
+      ],
+      "straightLowerBoundMm": 73.65940395470787
+    },
+    {
+      "index": 219,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 0,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -38.36517398256001,
+        -27.0,
+        116.21325179138631
+      ],
+      "straightLowerBoundMm": 63.441315286427624
+    },
+    {
+      "index": 220,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        33.44439465214458,
+        27.0,
+        143.2144989513851
+      ],
+      "straightLowerBoundMm": 105.83959131445978
+    },
+    {
+      "index": 221,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        42.95524426150448,
+        27.0,
+        134.91411605890585
+      ],
+      "straightLowerBoundMm": 105.43944532166505
+    },
+    {
+      "index": 222,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": -90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        49.053621310280846,
+        27.000000000000004,
+        123.86140535860332
+      ],
+      "straightLowerBoundMm": 102.31009219817331
+    },
+    {
+      "index": 223,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -6.038808500564997,
+        13.092295203752442,
+        150.1764529520013
+      ],
+      "straightLowerBoundMm": 93.24207277697663
+    },
+    {
+      "index": 224,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -7.171470366816912,
+        23.9,
+        143.75280830215257
+      ],
+      "straightLowerBoundMm": 89.06761137465324
+    },
+    {
+      "index": 225,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 0,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -8.877706647108688,
+        31.82501206981398,
+        134.07626150576166
+      ],
+      "straightLowerBoundMm": 82.38237677029944
+    },
+    {
+      "index": 226,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": -20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        7.657607009384662,
+        -27.0,
+        147.7614053586033
+      ],
+      "straightLowerBoundMm": 97.80293825764444
+    },
+    {
+      "index": 227,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 0
+      },
+      "nativeBaselineBlocked": false,
+      "headFixedMaleTailMm": [
+        -4.118566332479055,
+        -27.0,
+        143.21449895138508
+      ],
+      "straightLowerBoundMm": 90.15828400355883
+    },
+    {
+      "index": 228,
+      "jointDegrees": {
+        "neck_pitch": 20,
+        "head_pitch": 30,
+        "head_yaw": 90,
+        "head_roll": 20
+      },
+      "nativeBaselineBlocked": true,
+      "headFixedMaleTailMm": [
+        -13.629415941838971,
+        -27.0,
+        134.91411605890582
+      ],
+      "straightLowerBoundMm": 80.54034114657614
+    }
+  ],
+  "headFixedExampleMotionSummary": {
+    "all229": {
+      "count": 229,
+      "over102p5Mm": 98,
+      "maximumMm": 164.5921855359482
+    },
+    "nativeClear186": {
+      "count": 186,
+      "over102p5Mm": 83,
+      "maximumMm": 164.5921855359482
+    }
+  },
+  "assemblySequenceIfLaterRevised": [
+    "Bench-seat Micro-B at Pi while the cap is open; do not force an A mould through the curved head floor.",
+    "Thread the unjoined USB-A cable end through a proved open neck route before mounting/closing surrounding structural parts.",
+    "Join USB-A male/female at an accessible location; provide a supported coupling whose moving-body ownership is explicit.",
+    "Seat USB-C at the torso OpenRB before closing the cut-only original-width body; keep the local carrier assembly sequence.",
+    "Check continuous motion with actual available soft lengths before fixing strain relief. These steps are a dependency plan, not an accepted insertion path."
+  ],
+  "decision": "Do not adopt the torso-board proposal based on the local carrier positive alone. With a head-fixed A coupling, this purchased4472 is too short for the stated native-clear witness. A changed cable or a demonstrably suitable intermediate moving coupling would be a separate architecture decision; no purchase or change is made here.",
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/candidate.json": "edd5d02940f18d1b10dbf19fddd65f3b521c690a37c3a475a6cd23de742b267f",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/static-check.json": "cd4a2ab949a954ac1af91596be21608b653185114ac52f27a70c5aba27e610f0",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/head-coupler-check.json": "336ef783f7b7658ca71b744928d484b13bd5cb910d0ed543eac41a0f1fbca2a2",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/original-body-converter/fusion-import-manifest.json": "58c90479d09087c75b2a53560ef776bbd0497ac97b5c936eeb516f86b98268e9",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/usb-access/usb-repair/rigid-domain.json": "5b30836d5101f5249557db7ad9ca4eeaa52ff3ede29035e3ca41c0ce8e934f0f",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/head-redesign-20261008/cabling-release-20261008/neck-repair/prepare_single_candidate.py": "22e87c453901f27806f5cb51aee2ceb3450839b8dada9124b988df3287b0c67e",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/fixed-coupler-motion-bound.json": "76a0c3578bdcae45c6541e072eb4d6e97771f1095267a492e6473788287f41b8",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/sc0727_flexible_route-export.json": "eda15c1c7af0d813bd1bdc7174add1eac2be0cc53792d53a9940e77b12a9214b",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/adafruit4472_flexible_route-export.json": "3b809ecb810e5fbabfed2ea451282a4f39f882228459c5386bca37dee3b46ec5",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_female_receiving-export.json": "42340ec7f52bbaaa193534837e66054ebed20e65f88837a1dc523cb133415e7a",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_male_receiving-export.json": "b377fb4d5eaf04a6b8d499affdb28dbd3a3a8f88b80cb6e60ae3349193ce8d5a",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/write_disposition.py": "53ac38761fd9737ec5de3969d449d2f7d861b1758e26ab35c23672429b1db76c"
+  },
+  "nativeParts": [
+    {
+      "key": "sc0727_flexible_route",
+      "validNative": true,
+      "volumeMm3": 700.763621722658,
+      "boundsMm": [
+        [
+          -24.25399069777329,
+          -11.664538739170386,
+          97.93015689815667
+        ],
+        [
+          19.000544031498602,
+          -6.751017340384343,
+          135.35408267066896
+        ]
+      ],
+      "sourceCandidateSha256": "edd5d02940f18d1b10dbf19fddd65f3b521c690a37c3a475a6cd23de742b267f",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/sc0727_flexible_route.stl",
+      "sha256": "bb6d91971e92f83012c52c798a013414830071105c8fc8e62531433152355679",
+      "step": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/sc0727_flexible_route.step",
+      "stepSha256": "9b53ca88a753b69b80034b9f89e6d1c33338244290ebe67ee42cadde4163d8a9"
+    },
+    {
+      "key": "adafruit4472_flexible_route",
+      "validNative": true,
+      "volumeMm3": 1630.1920629018282,
+      "boundsMm": [
+        [
+          -28.52378610600861,
+          -10.753086765510446,
+          37.8462138939914
+        ],
+        [
+          2.253786106008613,
+          2.2680867655104477,
+          78.54535957011068
+        ]
+      ],
+      "sourceCandidateSha256": "edd5d02940f18d1b10dbf19fddd65f3b521c690a37c3a475a6cd23de742b267f",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/adafruit4472_flexible_route.stl",
+      "sha256": "a8ebaf2b91a1715d89fa79a0fc9ea339609602596c896b0e0a4c9bd2676a3ac3",
+      "step": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/adafruit4472_flexible_route.step",
+      "stepSha256": "342291cd21416269f99ae08ce6cd7f0f3098f9d146513b5f43270889fd21a453"
+    },
+    {
+      "key": "usb_a_female_receiving",
+      "validNative": true,
+      "volumeMm3": 6000.0,
+      "boundsMm": [
+        [
+          -32.5000001,
+          -14.500000100000003,
+          72.99999989999999
+        ],
+        [
+          -12.499999899999997,
+          -2.4999998999999966,
+          98.00000010000001
+        ]
+      ],
+      "sourceCandidateSha256": "edd5d02940f18d1b10dbf19fddd65f3b521c690a37c3a475a6cd23de742b267f",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_female_receiving.stl",
+      "sha256": "f5a5c71dd523bc57286c3cec583f389e9bb154327e59242a61bd187cbb604a28",
+      "step": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_female_receiving.step",
+      "stepSha256": "afd2af9cf4ab124568320cb819cb6f78f2b0f6c664f43605e923818046f764d5"
+    },
+    {
+      "key": "usb_a_male_receiving",
+      "validNative": true,
+      "volumeMm3": 5496.000000000001,
+      "boundsMm": [
+        [
+          -32.5000001,
+          -14.500000100000003,
+          50.09999989999999
+        ],
+        [
+          -12.499999899999997,
+          -2.4999998999999966,
+          73.00000010000001
+        ]
+      ],
+      "sourceCandidateSha256": "edd5d02940f18d1b10dbf19fddd65f3b521c690a37c3a475a6cd23de742b267f",
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_male_receiving.stl",
+      "sha256": "557b87f3556fa8909eb30bdfc39a9b25821f1abdd9ea4de71ea011f390916474",
+      "step": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/power-sensor/internal-usb-study/usb_a_male_receiving.step",
+      "stepSha256": "fbd6523a4cf62e2f10a65e13faed279b02ec213f3b758e580d76bf92804aac1e"
+    }
+  ]
+}

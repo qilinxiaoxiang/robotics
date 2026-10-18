@@ -1,0 +1,50 @@
+{
+  "checked": "2026-10-08",
+  "scope": "Existing project/source evidence only, read-only architecture review. No hardware command, wiring edit or purchase.",
+  "directMacOpenRBCompatibleWithUserArchitecture": true,
+  "alreadyImplemented": false,
+  "currentMotorBusOwnerContract": "Unresolved in PROJECT-CONTEXT and sensor-only profile; obsolete combined Pi runtime still owns serial in implementation.",
+  "evidence": [
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/PROJECT-CONTEXT.json",
+      "lines": "19\u201323",
+      "fact": "Mac runs control/policy, Pi acquires/forwards sensors. Explicit acceptance task defines motor-bus owner and latency/stopping."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/software-board-review-20261008/sensor-profile.json",
+      "line": 54,
+      "fact": "motorBusOwner is UNRESOLVED; no actuator runtime in this sensor profile."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/bundle/community/src/robot_controller.py",
+      "lines": "13\u201335",
+      "fact": "Explicit serial_port passed directly to Xl330PyController; auto discovery is Linux-only; constructor also opens local ThreadedIMUReader."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/phase1.py",
+      "lines": "32\u201337,69\u201380",
+      "fact": "Installs local torso IMU and enforces single process bus lock, then creates RobotController on specified port."
+    },
+    {
+      "file": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/mac_control.py",
+      "lines": "26\u201330",
+      "fact": "Mac client launches Pi phase1 over SSH, so it is not a Mac policy/bus implementation."
+    }
+  ],
+  "engineeringInference": "Choose Mac as the sole OpenRB USB serial owner to match phase-one Mac control. Pi can remain camera/IMU acquisition and audio endpoint. Neither serial protocol wrapper nor project architecture requires Pi to be USB host. Direct Mac can eliminate Pi OTG/USB-A coupling as an architecture choice, but cannot be declared operational by moving the cable alone.",
+  "requiredSoftwareAdaptation": [
+    "Select exact Mac USB serial device and build/verify the pinned rustypot dependency for Mac.",
+    "Split RobotController local IMU creation; inject timestamped remote IMU observations from Pi.",
+    "Run policy/control on Mac while retaining single-writer bus ownership, servo watchdog and torque-off logic.",
+    "Validate transport age/jitter, disconnected IMU/USB, lost commands and stopping on physical hardware."
+  ],
+  "hardwareBoundary": "Keep existing OpenRB rear USB-C access and owned4472 lead candidate; actual Mac connection reach/strain relief/power interaction still requires concrete evidence. No additional cable stock or purchase assumed.",
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/PROJECT-CONTEXT.json": "c83002ddbbd2e2c11e36f0dfcc88dd4cb9c448b8062d5a4f09b0390fdea2ea25",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/software-board-review-20261008/sensor-profile.json": "53a0bc264a45e6219936b7f1761eb7fabd5854ce604db1835f37db3e1e34d579",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/bundle/community/src/robot_controller.py": "ff749e9db75b0923c6ebefdbdd6378c625e4e9da8cc0c4a3dcd1f44b646fbaca",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/phase1.py": "f40b24a50e57b6a690e2dbfb9d974b7c0dd8e5be5d6917c06d3eac11eb88d624",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/mac_control.py": "fba3b5da091226a4a44501fa39253f263188857ab6d81a21418884a6ffe13802",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/phase1/runtime/README.md": "986d71ffa278201b372132a877f35d85d575cbb1b0c1f13b006b4177d0e04700"
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "scope": "Read-only CLI dispatcher and actual pure-adapter operation dependency check; no bundle/CAD/deployment.",
+  "verifierSha256": "e6b80df133fb523709d5e6bb1afec22cd80417c80d15708495ca3c91d026a2fb",
+  "testSha256": "0386b5e032f4701a20571e66d06ef2deeddbb4b773cf444dae711593142dd083",
+  "mockedRegressionTests": 5,
+  "activeRepairArgumentCombinations": 8,
+  "generatorCallsUnderActiveRepair": 0,
+  "historicalModeWithoutRepairWrites": 0,
+  "sequenceIndicesZeroBased": {
+    "body-power-04": 71,
+    "imu-local-holder": 74,
+    "imu-local-board": 75,
+    "imu-local-plug": 76,
+    "imu-local-cover": 77,
+    "imu-local-fasten": 78,
+    "imu-local-retain": 79,
+    "neck-01": 80,
+    "neck-13": 92
+  },
+  "dependencies": {
+    "body-power-04": [
+      {
+        "id": "body-power-04-routes",
+        "text": "Inspect these local routes with both body covers open.",
+        "connectionIds": [
+          "power-zone-05-feed",
+          "power-zone-10-feed"
+        ],
+        "ports": [],
+        "motorIds": []
+      },
+      {
+        "id": "zone-plugs-with-distribution-feed",
+        "text": "Use these keyed plug views to connect the dedicated zone feeds. Preserve the eight existing three-conductor leg cables.",
+        "connectionIds": [
+          "ttl-12-05-data-only",
+          "ttl-openrb-10-data-body",
+          "zone-05-three-contact-termination",
+          "zone-10-three-contact-termination"
+        ],
+        "ports": [
+          "motor-5-socket-13",
+          "motor-10-socket-13"
+        ],
+        "motorIds": [
+          5,
+          10
+        ]
+      }
+    ],
+    "imu-local-cover": [
+      {
+        "id": "imu-local-cover-leads",
+        "text": "SH4 must be connected before the rear cover is seated; the neck ends remain free.",
+        "connectionIds": [
+          "imu-gnd",
+          "imu-vin",
+          "imu-sda",
+          "imu-scl"
+        ],
+        "ports": [
+          "CONN4"
+        ],
+        "motorIds": []
+      }
+    ],
+    "neck-01": [
+      {
+        "id": "motor12-data-preparation-on-open-neck-bench",
+        "text": "Prepare the motor12 DATA-only outgoing connection on the open neck bench. Keep its source VDD and GND contacts isolated; dress the free end toward motor5 before fitting body shells.",
+        "connectionIds": [
+          "ttl-12-05-data-only"
+        ],
+        "ports": [
+          "motor-12-socket-14"
+        ],
+        "motorIds": [
+          12,
+          5
+        ]
+      }
+    ],
+    "neck-13": [
+      {
+        "id": "zone-plugs-before-body-shells",
+        "text": "Seat both motor5 and motor10 incoming plugs and inspect their DATA and paired supply leads before closing either torso shell.",
+        "connectionIds": [
+          "ttl-12-05-data-only",
+          "ttl-openrb-10-data-body",
+          "zone-05-three-contact-termination",
+          "zone-10-three-contact-termination"
+        ],
+        "ports": [
+          "motor-5-socket-13",
+          "motor-10-socket-13"
+        ],
+        "motorIds": [
+          5,
+          10
+        ]
+      }
+    ]
+  },
+  "sourceHashes": {
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/build_body_wiring_adapter.py": "c88712235f1645ed99786cfc6da16e05955676fd3072ba4968ca2c67f79d559b",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/build_imu_wiring_adapter.py": "697856df96b2c209aadb0dc566174c6690638b1113245b3f75934888f2d04377",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/build_body_data_adapter.py": "c4e1b46f22bef8fba906466dead6031e027ae2a5a568248acea3a60758643489",
+    "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/leg-guide-20261006/assembly_motion_overlay.py": "1b3cc5811f29d7064698468708ac288f0c9dc8fba6cc57e5ef7b901b82fbfaab"
+  },
+  "physicalCommissioningPassed": false,
+  "wholeProjectAccepted": false
+}

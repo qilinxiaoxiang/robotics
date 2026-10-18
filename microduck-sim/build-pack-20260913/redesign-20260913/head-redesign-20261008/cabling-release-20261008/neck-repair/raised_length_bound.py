@@ -1,0 +1,8 @@
+"""Euclidean length lower bound for fixed selected anchors; no geometry acceptance."""
+import hashlib,json,math
+from pathlib import Path
+import raised_lateral_worker as w
+D=Path(__file__).resolve().parent;src=w.H/'usb-access/usb-repair/rigid-domain.json';b=json.loads(src.read_text());fixed=16*math.pi/2+6
+rows=[{'pose':i,'straightFreeSpanDistanceMm':math.dist(w.moved(w.A,r['jointDegrees']),w.B),'nativeBlocked':bool(r['nativeShellOriginalBottomIntersectionsMm3'])} for i,r in enumerate(b['samples'])];clear=[r for r in rows if not r['nativeBlocked']];mx=max(clear,key=lambda r:r['straightFreeSpanDistanceMm'])
+r={'wholeHarnessAccepted':False,'currentFixedAnchorLowerBoundOnly':True,'all229Rows':rows,'nativeClearMaximumFreeEuclideanDistance':mx,'fixedHeadOutletLengthMm':fixed,'nativeClearMinimumTotalLengthBeforeFanoutsLowerBoundMm':mx['straightFreeSpanDistanceMm']+fixed,'selectedCandidateTotalLengthMm':300+fixed,'stock4397FlexibleSpanNominalMm':150,'stock4397FlexibleSpanToleranceMm':10,'conclusion':'Even a taut zero-curvature path between these selected anchors requires189.982mm including the fixed head elbow before either electrical fanout, exceeding160mm upper nominal stock span. This is not a proof that every other anchor/topology needs that length. The tested300mm free curve is one candidate, not a minimum-length optimum. No extension wire is assumed purchased.','sourceHashes':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [src,D/'raised_lateral_worker.py',D.parent/'sources/adafruit-4397-drawing.pdf',Path(__file__)]}}
+(D/'raised-lateral-length-bound.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({k:v for k,v in r.items() if k!='all229Rows'},indent=2))

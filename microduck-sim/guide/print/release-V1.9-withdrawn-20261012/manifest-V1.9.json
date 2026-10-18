@@ -1,0 +1,306 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "incremental",
+ "version": "V1.9",
+ "prototype": true,
+ "prototypeScope": "V1.9 Black plate, printed instead of the V1.8 Black plate: the V1.8 eye trim and rear pack cover (unchanged), the 4.9 mm neck pitch ring that replaces the 4 mm ring, and optional 1 mm and 2 mm shims for it. V1.8 Yellow, White and Orange stay as released.",
+ "knownFitBoundary": "The ring must be pinched between the pitch bracket and the ID13 case without stopping ID13 from turning. Physical check: no up-down rattle after the four horn screws are in, and ID13 turns by hand.",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Yellow_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
+   "sha256": "061290b612bb407903c874c609e73bef25480985e6eae3703b08c298fc5bb060"
+  },
+  "Yellow_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
+   "sha256": "c737d7bca008862c870a734859bbfd9afed6b76e12309865b1dd3df80e8e31df"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+   "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+   "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+  },
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  },
+  "Black_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
+   "sha256": "ef9593097fb01bef35b9cb2e8e57f6f539362f8c341b01fdfa78ec74151243a4"
+  },
+  "Black_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",
+   "sha256": "c2954f042a62096191201a4a355c356247b084f8ae5b08398d1db4a612585163"
+  }
+ },
+ "processOverrides": {
+  "Orange_Bambu": {
+   "brim_type": "outer_only",
+   "brim_width": "4"
+  },
+  "Orange_Elegoo": {
+   "brim_type": "outer_only",
+   "brim_width": "4"
+  }
+ },
+ "processOverrideReason": "Head cap tip angle 9.0 degrees is below the 10 degree line in guide/print/orientation-study/PRINT-ORIENTATION-PRACTICE.md; 3 to 5 mm brim.",
+ "parts": [
+  {
+   "key": "eye_trim",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "66"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/eye_trim.stl",
+   "sha256": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     -0.0001347749785980401,
+     -0.9999424979371395,
+     0.010722996546634705,
+     13.518332268618476
+    ],
+    [
+     -5.078005077201203e-05,
+     0.010723003473684191,
+     0.9999425056561452,
+     -116.10119576275717
+    ],
+    [
+     -0.9999999896285459,
+     0.00013422271548984625,
+     -5.2222323378000636e-05,
+     89.40894754131322
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 374.38
+   },
+   "poseOrigin": "V1.6 eye-trim print pose expressed in the robot frame: inverse of the V1.6 registration transformReleaseToWorld (interference-audit register_v16), dropped to the bed",
+   "changeReason": "V1.8 eye trim: as V1.6 plus two 1.7 mm pilots (x 81.3..87.0 at z 120.6 and 141.6) for the M2 x 8 camera screws.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/interference-audit/v18-audit.json",
+    "sha256": "437bb20ebfa053ba2284e0ab622001cf0a924653f63fa00bea39abf8978f9650"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "rear_pack_cover",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/rear_pack_cover.stl",
+   "sha256": "1486ae0f99ff45ad86706bf341a2cf4412742b3dc1de9af5605cc4fca04f862a",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0,
+     47.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 2400
+   },
+   "poseOrigin": "print/rear-pack/print-poses.json: outer face on the bed (robot x -47 becomes print z 0); 2554.3 mm2 bed contact",
+   "changeReason": "V1.8 rear pack cover: 2 mm plate with a top lip that closes the back of the pack over the converter; four M2 x 6 into the pack posts. New part.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/content/interference-audit/rear-pack/pack-audit.json",
+    "sha256": "d312cf298b06be204f2d2b5baa5af1dfd0a39e6d49b52fdf6b9e03c0a6cb8a87"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "neck_pitch_ring",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "96"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/neck_pitch_ring.stl",
+   "sha256": "313b05ae6e8c07f214805e154a1de4937690ac758bc9a432dec24ea0fb878f3f",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     -26.0
+    ],
+    [
+     0,
+     1,
+     0,
+     0.0
+    ],
+    [
+     0,
+     0,
+     1,
+     -99.2146
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 100
+   },
+   "poseOrigin": "Flat, axis vertical, as the 10/1 4 mm ring (plate-05/17_community-102.stl). Bed face is the chamfered lower face, about 133 mm2.",
+   "changeReason": "Neck pitch ring lengthened from 4.0 to 4.9 mm. In the assembled model the 4 mm ring sat on the pitch bracket shoulder with its top face 0.91 mm below the ID13 case and nothing around its outside, so it floated and carried no load. At 4.9 mm it touches both faces, like the working hip-yaw rings. ID 16.4 and OD 22 unchanged (print/neck-ring/thicken_ring.py).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/ring-audit.json",
+    "sha256": "b8d96d00258e94f0f732e12ce9602810c81e5ec995fad402d8cc67293be2ec33"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "neck_ring_shim_1mm",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/shim_1mm.stl",
+   "sha256": "b2e6b4d13f548bc235ac61a087227db6322879993c817fff5be643da8eb123e0",
+   "sourceFrame": "print frame (mm, axis z, lower face on z 0)",
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 100
+   },
+   "poseOrigin": "Flat, axis vertical, like the ring.",
+   "changeReason": "Optional 1 mm shim with the ring bore (16.4 mm) and outside (22 mm). It stacks on the 18 mm shoulder under the 4.9 mm ring when the printed stack still leaves a gap under ID13 (print/neck-ring/make_shims.py).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/shims.json",
+    "sha256": "e53f08c6ba40d5de69335110ae93d97b7d02012dab1a25ec5b4db48355ff7ddd"
+   },
+   "supportBlockers": []
+  },
+  {
+   "key": "neck_ring_shim_2mm",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/shim_2mm.stl",
+   "sha256": "1038ce2f5cf27c03c00a16b0371e809d4b3cbd8f478db2cab1c12558aea6d69f",
+   "sourceFrame": "print frame (mm, axis z, lower face on z 0)",
+   "sourceToPrint": [
+    [
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 100
+   },
+   "poseOrigin": "Flat, axis vertical, like the ring.",
+   "changeReason": "Optional 2 mm shim with the ring bore (16.4 mm) and outside (22 mm). It stacks on the 18 mm shoulder under the 4.9 mm ring when the printed stack still leaves a gap under ID13 (print/neck-ring/make_shims.py).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/shims.json",
+    "sha256": "e53f08c6ba40d5de69335110ae93d97b7d02012dab1a25ec5b4db48355ff7ddd"
+   },
+   "supportBlockers": []
+  }
+ ],
+ "deliveryContract": {
+  "colors": [
+   "Black"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 2,
+  "baseline": "printed V1.6 set with the V1.7 and V1.8 reprints",
+  "supersedes": [
+   "V1.8 Black plate (eye trim, rear pack cover)",
+   "4 mm neck pitch ring (10/1 batch, stock object 96)"
+  ],
+  "status": "INCREMENTAL_REPRINT"
+ }
+}

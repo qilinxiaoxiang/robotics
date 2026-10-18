@@ -1,0 +1,293 @@
+[
+ {
+  "group": "torso",
+  "key": "rear_pack",
+  "color": "Orange",
+  "decision": "replacement",
+  "replacesStockIds": [
+   "2"
+  ],
+  "supersedes": "rear_pack (printed V1.8)",
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/rear_pack-world.stl",
+  "sourceToPrint": [
+   [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    44.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 600,
+  "poseOrigin": "V1.8 rear_pack pose (release-V1.8/scripts/rows.json): upright as in the robot, floor (robot z -44) on the bed; 660.6 mm2 bed contact, rank 1 of 11 in rear-pack-v19/orientation-check.json. Tree support for the ear and shoulder-bar undersides (rear-pack-v19/check_print.json).",
+  "changeReason": "V1.9 rear electronics pack: a BNO085 rib on the plate front face with two M2 x 4 pilots replaces the shelf and its zip-tie slots (the board is screwed on at the bench before pack-in); the T-head is grown 0.4 mm all round and two 3 mm shoulder bars behind the plate seat the printed V1.8 side shells (roof gap 0.15 mm left, 0.27 mm right instead of 0.55/0.71). The DFR1202 front lips and corner feet are removed, so the OpenRB-150 slides straight in and out from behind with both side shells on and only the cover off (0 collisions, 0.6 mm side clearance; rear-pack-v19/check_v19_board_rear.json). Notch, cable lanes, cover posts, the empty DFR channel, OpenRB pads and the four hip-yaw screw tabs are unchanged from V1.8; the V1.8 cover stays.",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/check_v19_seat.json",
+  "evidenceAlso": [
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/check_v19_imu.json",
+   "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/rear-pack-v19/check_v19_board_rear.json"
+  ],
+  "supportBlockers": []
+ },
+ {
+  "group": "head",
+  "key": "head_cap_v19",
+  "color": "Orange",
+  "decision": "replacement",
+  "replacesStockIds": [
+   "4"
+  ],
+  "supersedes": "head_cap (printed V1.8)",
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/head_cap_v19-world.stl",
+  "sourceToPrint": [
+   [
+    -0.994831182,
+    0.065255263,
+    -0.077798904,
+    41.502281705
+   ],
+   [
+    0.066724243,
+    0.997636148,
+    -0.016431442,
+    -3.766984888
+   ],
+   [
+    0.07654276,
+    -0.021537584,
+    -0.996833656,
+    150.267217814
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 93.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: V1.8 cap pose (roof on the bed), rotation from release-V1.8/manifest-V1.8.json; 104.39 mm2 contact, tip angle 7.7 deg so the Orange 4 mm outer brim override stays",
+  "changeReason": "V1.9 head cap for the neck-route and audio extension: the speaker collar and two retainer screw bosses in the roof, two amplifier posts, and the cap clip seat under E-pi-04; the rear cable notch and its zip tie are removed (closed into a seat band). Pi rails, the three closure screws and the outer skin stay as in V1.8 (ext-v19/README.md; volume 35303.6 mm3 against 30676.3 for the V1.8 cap).",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/cap-build-v19.json",
+  "supportBlockers": [
+   {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.8/blockers/pi-positive-y-upper-hole-support-blocker-v18-world.stl",
+    "machines": [
+     "Bambu"
+    ],
+    "reason": "Keep the +y upper Pi pilot (E-pi-04) free of internal support; the V1.6 Bambu slice put 15 support segments in it. Moved with the rails (+1 mm z over V1.7). Non-printing slicer modifier, robot frame."
+   }
+  ]
+ },
+ {
+  "group": "head",
+  "key": "speaker_retainer_v19",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/speaker_retainer_v19-world.stl",
+  "sourceToPrint": [
+   [
+    -0.969030725,
+    0.0,
+    -0.246940185,
+    37.813030653
+   ],
+   [
+    0.0,
+    1.0,
+    0.0,
+    1.7166e-05
+   ],
+   [
+    0.246940185,
+    0.0,
+    -0.969030725,
+    135.308943538
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 330.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: flat on its speaker-side face; 367.61 mm2 contact",
+  "changeReason": "New V1.9 part: 1.6 mm speaker retainer frame that holds the speaker and its 1 mm foam ring in the cap roof collar with two M2 x 6 screws (no glue).",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/retainer-build-v19.json",
+  "supportBlockers": []
+ },
+ {
+  "group": "neck",
+  "key": "clip_torso_v19",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_torso_v19-world.stl",
+  "sourceToPrint": [
+   [
+    1.0,
+    0.0,
+    0.0,
+    -22.2156744
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    -34.460999489
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0,
+    -18.401193619
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 54.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 60.26 mm2 contact",
+  "changeReason": "New V1.9 part: torso cable clip, a 2 mm tab under S12-horn-025 with a 4.8 x 4.8 mm channel (2.4 mm slot) for the 8-wire neck bundle. Mesh note (2026-10-13 rebuild, sha256 910908747a32...): watertight, one body, manifold3d NoError, 0 separation defects; meshcheck's only flag is one pair of near-coincident needle faces (2e-5 mm2 each), a check false positive rather than a fin, so the clip is treated as clean.",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+  "supportBlockers": []
+ },
+ {
+  "group": "neck",
+  "key": "clip_bracket_v19",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_bracket_v19-world.stl",
+  "sourceToPrint": [
+   [
+    1.0,
+    0.0,
+    0.0,
+    -23.199999809
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    -82.421001434
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0,
+    -17.5
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 61.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 67.91 mm2 contact",
+  "changeReason": "New V1.9 part: neck bracket cable clip, a 2 mm tab under S11-horn-040 on the head-pitch axis with a 4.8 x 4.8 mm channel (2.4 mm slot), rounded mouth corners and 1.5 mm end chamfers.",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+  "supportBlockers": []
+ },
+ {
+  "group": "head",
+  "key": "clip_head_v19",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_head_v19-world.stl",
+  "sourceToPrint": [
+   [
+    1.0,
+    0.0,
+    0.0,
+    -45.75
+   ],
+   [
+    0.0,
+    1.0,
+    0.0,
+    25.650000572
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    -113.214996338
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 107.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 119.97 mm2 contact",
+  "changeReason": "New V1.9 part: head cable clip, a 2 mm tab under H-jaw_support-03 with a channel that takes the bundle down and out through a side window.",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+  "supportBlockers": []
+ },
+ {
+  "group": "head",
+  "key": "clip_cap_v19",
+  "color": "Orange",
+  "decision": "addition",
+  "replacesStockIds": [],
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/clip_cap_v19-world.stl",
+  "sourceToPrint": [
+   [
+    -0.173602778,
+    0.0,
+    -0.984815757,
+    153.053491272
+   ],
+   [
+    0.0,
+    1.0,
+    0.0,
+    -23.099999905
+   ],
+   [
+    0.984815757,
+    0.0,
+    -0.173602778,
+    -35.943847213
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "flatContactMinimumMm2": 31.0,
+  "poseOrigin": "ext-v19/manifest-ext-v19.json: tab seat face on the bed, screw hole vertical; 35.39 mm2 contact",
+  "changeReason": "New V1.9 part: cap cable clip, a 2 mm tab under E-pi-04 over the Pi top edge with a 4.8 x 4.8 mm channel (2.4 mm slot).",
+  "incrementalEvidence": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ext-v19/checks/clips-build-v19.json",
+  "supportBlockers": []
+ }
+]

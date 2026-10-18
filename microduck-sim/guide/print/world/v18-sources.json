@@ -1,0 +1,499 @@
+{
+ "_doc": "V1.8 head geometry in the robot frame (mm, x forward, y left, z up), copied from the head-v18 build scratchpad on 2026-10-12. These files are what build_guide_data.py draws and what interference-audit/build_solids.py audits for the listed keys. Pi group shift for this cap: PI_SHIFT [-4.6, 0, 1.0]. The V1.7 cap (PI_SHIFT [-4.6, 0, 0]) remains under print/candidates/head-cap-pi-shift/. camera_retainer is retired (no file). head_bottom.stl and head_cap.stl were mesh-cleaned for the release pipeline on 2026-10-12 (same solids; see meshClean per file); the guide and the audit must be rebuilt from these files. 2026-10-12 torso: rear_pack.stl and rear_pack_cover.stl (V1.8 rear electronics pack, from the torso-pack scratchpad), openrb-board-upright.stl, imu_board.stl and imu_sh4_receiving.stl (re-posed purchased parts) were added; openrb_tray.stl and openrb-board.stl stay as the V1.7 record and are no longer drawn. 2026-10-13 V1.9: rear_pack.stl (V1.9 pack with the BNO085 rib) and head_cap.stl (V1.9 cap with speaker collar and amplifier posts, no rear notch) replaced; the V1.8 files are kept beside them as rear_pack-v18.stl and head_cap-v18.stl (not drawn, not audited). Added: speaker_retainer.stl, clip_torso.stl, clip_bracket.stl, clip_head.stl, clip_cap.stl (new prints, print/ext-v19/), speaker.stl and amplifier.stl (purchased parts at their audio-study positions). The five amplifier-header housings are box primitives in build_guide_data.py (amp_housings), not a file. 2026-10-14 rear converter box, layout F (print/back-plate/layout-F/, V1.11; superseded layout C revision 2 of V1.10): rear_frame.stl and rear_lid.stl (new prints, orange) replace rear_pack_cover.stl as a current part (the cover file stays for the record, not drawn); xl4015_left.stl, xl4015_right.stl and pd5991.stl are the two ROBOTIS XL4015 converters and the Adafruit 5991 at their box positions. 2026-10-14 release V1.12: head_cap.stl stays the V1.9 cap (print/ext-v19/head_cap_v19-world.stl) and is reprinted white with its V1.9 closing pilots for the ROBOTIS M2.6 x 6 screws; the whole head stays M2.6 (Shawn, 2026-10-14). The V2.0 cap, lower shell and jaw frame are deferred until the head is next opened, so head_bottom.stl and jaw_frame.stl stay V1.8. 2026-10-14 V1.12 shells: shell_left.stl and shell_right.stl (white, print/v20-source/) override the full-build export shells; Shawn confirmed the V1.9 rear pack is on the robot. 2026-10-14 evening, V1.15: rear_frame.stl and rear_lid.stl replaced by the regenerated layout F build (print/back-plate/layout-F/: hidden M2 x 10 cap screw and hook instead of the two ears, solid front plate without P1, wire notches A and B at the top-wall front edge and cover-plate top edge for the 7 V and 5 V pairs that now run outside the box and over its top). 2026-10-15 Radxa Cubie A7Z head (print/a7z-head/, print/face-a7z/): head_cap.stl, clip_cap.stl, face_panel.stl and camera_board.stl replaced by the A7Z versions; the previous files are kept as head_cap-v19.stl, clip_cap-v19.stl, face_panel-v18.stl and camera_board-cm3.stl (not drawn, not audited). a7z_*.stl (board and components, a7z_pcb.stl is the guide key pi), antenna.stl, antenna_coax.stl, antenna_ipex.stl and camera_ribbon.stl are purchased parts. eye_trim.stl is unchanged.",
+ "sourceDir": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/e281f88a-117d-47f8-a4cc-4faadc6be94a/scratchpad/head-v18",
+ "sourceResults": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/e281f88a-117d-47f8-a4cc-4faadc6be94a/scratchpad/head-v18/results.json",
+ "files": {
+  "face_panel.stl": {
+   "key": "face_panel",
+   "colour": "white",
+   "sourceFile": "guide/print/face-a7z/face_panel_a7z.stl",
+   "sha256": "ff0fa31c726fa0bd5b8d31602126bf4995d445b7d60c0e8e7c9e634314611ef1",
+   "bytes": 246784,
+   "description": "Face panel for the Radxa Camera 13M 214 (2026-10-15, print/face-a7z/build_face_a7z.py): the V1.8 face with its four lands and two pegs removed and four bosses (dia 4.8, x 77.8..80.1, blind 1.7 mm pilots) at y -14.09/13.91, z 117.11/145.11; the two 2.2 mm holes now take the eye-trim screws. Front unchanged.",
+   "previous": {
+    "file": "face_panel-v18.stl",
+    "sha256": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+    "record": {
+     "key": "face_panel",
+     "colour": "white",
+     "sourceFile": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-pits/fill_pits.py",
+     "sha256": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+     "bytes": 264084,
+     "description": "Face panel V1.8: flat plate x 80.1..81.4 only. Rear hex bosses, oval frame and the three clamp anchors are gone; four camera bearing lands r 2.4 (x 79.0..80.1) at (y, z) = (12.31, 120.6), (-0.18, 120.6), (12.31, 141.6), (-0.18, 141.6); two locating pegs r 1.0 (x 78.0..79.0) in the y 12.31 column, the lower one relieved to 1.6 mm along z; two 2.2 mm screw holes at (-0.18, 120.6) and (-0.18, 141.6); former oval slot and two 2.05 mm pockets filled. Feature list: face-v18-features.json in the build scratchpad. 2026-10-12: the three 0.58 mm pits left by the removed V1.6 clamp pilots at (y, z) = (-18.09, 119.0), (-18.09, 147.2), (17.91, 147.2) are filled flat (print/face-pits/fill_pits.json).",
+     "releasePipelineClosed": true,
+     "previous": {
+      "sha256": "d247e4c5f3c2971d507db4018a0885b1477c381052fbbf4b336e3d4fdd27b547",
+      "note": "three 0.58 mm clamp-pilot pits in the back face"
+     },
+     "pitFill": "print/face-pits/fill_pits.json"
+    }
+   }
+  },
+  "eye_trim.stl": {
+   "key": "eye_trim",
+   "colour": "black",
+   "sourceFile": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/e281f88a-117d-47f8-a4cc-4faadc6be94a/scratchpad/head-v18/eye_trim-v18-world.stl",
+   "sha256": "2e016f19f4f0118f0a355076bc6d9de1770cd4d775502d43c95947c8b7652efa",
+   "bytes": 92084,
+   "description": "Eye trim V1.8: as V1.6 plus two 1.7 mm screw pilots x 81.3..87.0 at (y -0.18, z 120.6) and (y -0.18, z 141.6) for the M2 x 8 camera screws.",
+   "releasePipelineClosed": true
+  },
+  "head_bottom.stl": {
+   "key": "head_bottom",
+   "colour": "yellow",
+   "sourceFile": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/head-bottom-pad/merge_pad.py",
+   "sha256": "1046c62e7abb292a39ca683651666e5ef775b970032c64ebde4355d8fe1dc3ff",
+   "bytes": 1986584,
+   "description": "Lower head shell V1.8: the V1.6 shell with the beak-roof window filled (no window). 2026-10-12: the 2.2 mm strip at x 71.4..73.6 that the first fill left open is closed with the shell's own adjacent roof slab (print/head-bottom-strip/close_strip.json). 2026-10-12 (later): the upper lip pad (source p.obj / ID40) is printed as part of the shell instead of being glued in, with a 5.2 mm driver hole under each front closure screw (print/head-bottom-pad/merge_pad.json).",
+   "releasePipelineClosed": true,
+   "stripClosure": "print/head-bottom-strip/close_strip.json",
+   "previous": {
+    "sha256": "a6668b5119161611e6288fe0568fb72a805177eb8413a02e4cfe68ae8453514b",
+    "preCleanSha256": "c6ee0d5813dcf42cc97ff7fb00ea570ee065154a165307fffb5aae9c0f60935e",
+    "meshClean": "Release-pipeline mesh clean of the same solid on 2026-10-12: vertices merged at 1e-4 mm, degenerate and duplicate triangles dropped; volume unchanged (23530.5 mm3). The scratchpad source file is the pre-clean export.",
+    "note": "first V1.8 shell, strip open"
+   },
+   "previousStripClosed": {
+    "sha256": "6ffe10dc847c705f74a12d285e12d2a6c60ac5de7b28af205e94fa1bb01c9c8c",
+    "note": "strip closed, separate glued upper pad"
+   },
+   "padMerge": "print/head-bottom-pad/merge_pad.json"
+  },
+  "head_cap.stl": {
+   "key": "head_cap",
+   "colour": "white",
+   "sourceFile": "guide/print/a7z-head/head_cap_a7z-world.stl",
+   "sha256": "bbedb8044687c86906cdcf1adb82eae5c3c5f8bb84fc8bdd24f5824375b5e257",
+   "bytes": 1357984,
+   "description": "Head cap for the Radxa Cubie A7Z (2026-10-15, print/a7z-head/build_a7z_head.py): the V1.9 cap with the board rails relieved 1.6 mm except r 3 mm pads at the four holes, a +Y end slot for the camera connector and ribbon and a -Y end slot for the microSD card (327.1 mm3 removed, closed volume). Same pilots, same seat, same V1.9 print pose.",
+   "previous": {
+    "file": "head_cap-v19.stl",
+    "sha256": "da655c657979c9290a1aa12d813901062baea2c38c0da31db085c986277976c2",
+    "record": {
+     "key": "head_cap",
+     "colour": "white",
+     "sourceFile": "guide/print/ext-v19/head_cap_v19-world.stl",
+     "sha256": "da655c657979c9290a1aa12d813901062baea2c38c0da31db085c986277976c2",
+     "bytes": 1621984,
+     "description": "Head cap V1.9 (print/ext-v19/, 2026-10-13): the V1.8 cap with the rear notch and its hood closed (the seat band against head_bottom grows from 63.0 to 67.5 mm3, intended), a speaker collar in the rear roof with two dia 1.7 retainer pilots (H-speaker_retainer-01/02), two amplifier posts on the flat top-centre strip (H-amplifier-01/02), and the Pi rails unchanged (E-pi-01..03 as V1.8; E-pi-04 becomes M2 x 8 because the cap wire clip tab sits under its head). Print pose: the V1.8 pose, roof on the bed, 4 mm outer brim (manifest-ext-v19.json). Keeps the V1.8 Bambu support blocker for the E-pi-04 pilot.",
+     "releasePipelineClosed": true,
+     "previous": {
+      "file": "head_cap-v18.stl (kept in this folder)",
+      "sha256": "88ecc42d1cbfe7f1622967fb61964c0def2b6b3bb93312e165b802d77c16e95a",
+      "note": "V1.8 cap: rear cable notch with hood and two zip-tie slots, no audio posts. Its replaces/audioPostsRemoved history is in git."
+     },
+     "v112Reprint": "Release V1.12 reprints this exact V1.9 cap (same STL, same pose, same closing pilots for ROBOTIS M2.6 x 6) in white; the orange V1.9 print becomes a spare."
+    }
+   }
+  },
+  "camera_board.stl": {
+   "key": "camera_board",
+   "colour": "purchased",
+   "sourceFile": "guide/print/face-a7z/camera_13m214.stl",
+   "sha256": "5a895bd887d39128c8808ade6be42bee1ff61e837224548255423852aa981857",
+   "bytes": 65584,
+   "description": "Radxa Camera 13M 214 as boxes (PCB 32 x 32 x 1.6 with holes, lens holder, back component layer, lens-side FPC connector on the +Y edge, ribbon stub folding back at y 33), lens on the eye axis (y -0.09, z 131.11), PCB x 76.2..77.8.",
+   "previous": {
+    "file": "camera_board-cm3.stl",
+    "sha256": "b16909c03a00cc5f7f6a95eaeac9945331840b64f9614f0756c3540e1869603c",
+    "record": {
+     "key": "camera_board",
+     "colour": null,
+     "sourceFile": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/e281f88a-117d-47f8-a4cc-4faadc6be94a/scratchpad/head-v18/camera_board-flip180-world.stl",
+     "sha256": "b16909c03a00cc5f7f6a95eaeac9945331840b64f9614f0756c3540e1869603c",
+     "bytes": 310884,
+     "description": "Camera Module 3 Wide turned 180 degrees about its lens axis (y -0.09, z 131.11): FFC connector on the -y side (y -9.55..-3.84, x 75.13..77.88); PCB back face x 79.0 on the face lands; board holes at the four land centres. The autofocus body (camera_af-flip180-world.stl, 31.7 mm3) is not part of the guide camera part, as before.",
+     "releasePipelineClosed": true
+    }
+   }
+  },
+  "rear_pack.stl": {
+   "key": "rear_pack",
+   "colour": "orange",
+   "sourceFile": "guide/print/rear-pack-v19/rear_pack-world.stl",
+   "sha256": "e2d58d22231e43690aa274925fc9c91146b4a7e7109247a269b6ffc72a9eba00",
+   "bytes": 352084,
+   "description": "Rear electronics pack V1.9 (body), 2026-10-13: as V1.8 (front plate with the power-support silhouette and the four hip-yaw case-screw tabs, upright OpenRB-150 bay on four pads, DFR1202 channel, +y wall window, USB-C and tether openings, two rear cover posts) with the BNO085 edge slot and tie shelf replaced by a rib on the plate front carrying two dia 1.6 pilots at (x -15.46, z 8.04) and (x -15.46, z 28.36): the board back lies flat on the rib face and two M2 x 4 (I-imu_rib-01/02) hold it through its rear corner holes; the board is fitted on the bench before pack-in. 2026-10-13 (later): the DFR1202 front lips and corner feet are removed so the OpenRB-150 slides straight in and out from behind along x with both shells on and only the cover off (check_v19_board_rear.json). Generator and checks: guide/print/rear-pack-v19/ (build_rear_pack_v19.py, check_*.json).",
+   "releasePipelineClosed": true,
+   "previous": {
+    "file": "rear_pack-v18.stl (kept in this folder)",
+    "sha256": "7be6736bacb94f374f7cac36557736d0b40e45991df0e87183e8301cea6be37c",
+    "note": "V1.8 pack: BNO085 edge slot and tie shelf on the plate front."
+   },
+   "previousV19": {
+    "sha256": "e03112366e4af88c2cafe7604880e0ba591ceda5df1aea962b5bf1cd4c9d5091",
+    "note": "V1.9 pack as first released (DFR1202 lips and feet still in the OpenRB rear insertion path; board dropped in from above with the shells off)."
+   }
+  },
+  "rear_pack_cover.stl": {
+   "key": "rear_pack_cover",
+   "colour": "black",
+   "sourceFile": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/e281f88a-117d-47f8-a4cc-4faadc6be94a/scratchpad/torso-pack/rear_pack_cover-world.stl",
+   "sha256": "1486ae0f99ff45ad86706bf341a2cf4412742b3dc1de9af5605cc4fca04f862a",
+   "bytes": 69684,
+   "description": "Rear pack cover V1.8: 2 mm plate x -47..-45 following the body outline, inward lip over the DFR1202, four dia 2.2 holes for M2 x 6 into the body corner blocks.",
+   "releasePipelineClosed": true,
+   "current": false,
+   "retired": "2026-10-14: replaced by rear_frame.stl and rear_lid.stl (the frame carries the same cover plate, holes and lip); kept for the record, not drawn and not audited."
+  },
+  "openrb-board-upright.stl": {
+   "key": "openrb_board",
+   "colour": "n/a (purchased)",
+   "sourceFile": "guide/print/world/openrb-board.stl (V1.7 tray pose)",
+   "sha256": "5f183ae42c802f9c1ee305716cdadffea0880229971c7b1dc25b62e926e331bc",
+   "bytes": 3679284,
+   "description": "OpenRB-150 with trimmed header tails, standing upright in the rear pack (Layout L A): local = v - (-78.95, -12.71, -52.9); R = [[0,0,-1],[0,1,0],[1,0,0]]; t = (-22.4, -13, -42). Components face -x (the converter), terminal block up, USB-C down. Not watertight (as the source); build_solids closes it."
+  },
+  "imu_board.stl": {
+   "key": "imu_board",
+   "colour": "n/a (purchased)",
+   "sourceFile": "data/sources/full-build-data-current.json imu_board",
+   "sha256": "ac31a1c2892d36b0c9ed178cc7556855683cbaa9f3d551a65d291b5ecd5476b0",
+   "bytes": 3190684,
+   "description": "BNO085 turned onto the rear pack front plate (Layout L I): local = v - (-57.53, -12.7, 3.57); R = [[0,0,1],[-1,0,0],[0,-1,0]]; t = (-18, 2.265, 30.9). Board plane x-z at y 0, components and STEMMA QT socket face +y, socket edge up."
+  },
+  "imu_sh4_receiving.stl": {
+   "key": "imu_sh4_receiving",
+   "colour": "n/a (purchased)",
+   "sourceFile": "data/sources/full-build-data-current.json imu_sh4_receiving",
+   "sha256": "8ad3098cdb391e96962890ada61b55b3c2f61ca2032977fb9f8c040c36c43a53",
+   "bytes": 684,
+   "description": "JST-SH plug of the 4397 cable in the BNO085 socket, same rigid transform as imu_board.stl (plug enters from above)."
+  },
+  "jaw_frame.stl": {
+   "key": "jaw_frame",
+   "colour": "yellow",
+   "sourceFile": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/jaw-pad/merge_jaw_pad.py",
+   "sha256": "0afeeee701671616b368977826fb82d4431540c70a8358adeb11d593fca655a1",
+   "bytes": 1838984,
+   "description": "Jaw frame V1.8 (2026-10-12): the 10/1 jaw frame (source 4.obj / ID4) with the lower lip pad (source q.obj / ID42) printed as part of it instead of glued into its pocket; a 0.9 mm bridge inset 1.5 mm inside the pad outline ties the pad bottom to the pocket floor. Geometry outside the pad box is identical to the 10/1 jaw (print/jaw-pad/merge_jaw_pad.json). Prints upright in the 10/1 jaw pose.",
+   "padMerge": "print/jaw-pad/merge_jaw_pad.json"
+  },
+  "neck_pitch_ring.stl": {
+   "key": "neck_pitch_ring",
+   "colour": "black",
+   "sourceFile": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-ring/thicken_ring.py",
+   "sha256": "313b05ae6e8c07f214805e154a1de4937690ac758bc9a432dec24ea0fb878f3f",
+   "bytes": 555084,
+   "description": "V1.9 neck pitch ring: the 22 x 16.4 mm community ring (plate-05/17_community-102.stl) lengthened from 4.0 to 4.9 mm so its top face meets the ID13 case (the 4 mm ring left 0.91 mm). Audit: print/neck-ring/ring-audit.json. Released on the V1.8 Black plate (print/release-V1.8/); the earlier standalone ring release is withdrawn, print/release-V1.9-withdrawn-20261012/.",
+   "releasePipelineClosed": true
+  },
+  "speaker_retainer.stl": {
+   "key": "speaker_retainer",
+   "colour": "orange",
+   "sourceFile": "guide/print/ext-v19/speaker_retainer_v19-world.stl",
+   "sha256": "1d0a76b28bf7b35b48de616fd88545660be2eef404df2c1b3b947e92d920fb75",
+   "bytes": 53484,
+   "description": "Speaker retainer frame V1.9: holds the 1 mm foam ring and the speaker in the cap roof collar with two M2 x 6 into the cap pilots (axis [-0.248, 0, 0.969]). Prints flat on its speaker-side face.",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "clip_torso.stl": {
+   "key": "clip_torso",
+   "colour": "orange",
+   "sourceFile": "guide/print/ext-v19/clip_torso_v19-world.stl",
+   "sha256": "910908747a32f32cf468eae1cd0d52b3c1e1bc68a088c0b76965f071207fa389",
+   "bytes": 48484,
+   "description": "Torso wire clip V1.9: 2 mm tab under the S12-horn-025 head (right shell to ID12 idler, now M2 x 8) plus a 4.8 x 4.8 mm channel with a 2.4 mm slot for the 8-wire neck group. Rebuilt 2026-10-13 with rounded and chamfered channel edges (mesh check clean).",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "clip_bracket.stl": {
+   "key": "clip_bracket",
+   "colour": "orange",
+   "sourceFile": "guide/print/ext-v19/clip_bracket_v19-world.stl",
+   "sha256": "a2b796315cc039f49ff4c796624045aa23bfb8c6ac46c1fce4fb37a529a71015",
+   "bytes": 45784,
+   "description": "Bracket wire clip V1.9: tab under the S11-horn-040 head (pitch bracket to ID11 idler, now M2 x 8), channel on the head-pitch axis; rounded mouth corners r 2.4, 1.5 mm end chamfers.",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "clip_head.stl": {
+   "key": "clip_head",
+   "colour": "orange",
+   "sourceFile": "guide/print/ext-v19/clip_head_v19-world.stl",
+   "sha256": "a800af0d807386fddeade3623b976af9743010db7d85e61a7ea25f7b579edbff",
+   "bytes": 35684,
+   "description": "Head wire clip V1.9: tab under the H-jaw_support-03 head (jaw support to lower shell boss, now M2.5 x 8); the group runs down its channel and out through its side window.",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "clip_cap.stl": {
+   "key": "clip_cap",
+   "colour": "orange",
+   "sourceFile": "guide/print/a7z-head/clip_cap_a7z-world.stl",
+   "sha256": "ab50937dac7f6bf43bca5eb083d28a1369cedc7a97082f6abc8ddaa85d562d21",
+   "bytes": 44884,
+   "description": "Cap wire clip for the A7Z (2026-10-15): the V1.9 clip with a notch over the A7Z micro HDMI (0.6 mm clearance), one body, 214.1 mm3.",
+   "previous": {
+    "file": "clip_cap-v19.stl",
+    "sha256": "dc1973a6e640e730fe272ec3c3bda9202eb1ac4771636de608fba8a18231723e",
+    "record": {
+     "key": "clip_cap",
+     "colour": "orange",
+     "sourceFile": "guide/print/ext-v19/clip_cap_v19-world.stl",
+     "sha256": "dc1973a6e640e730fe272ec3c3bda9202eb1ac4771636de608fba8a18231723e",
+     "bytes": 66684,
+     "description": "Cap wire clip V1.9: tab under the E-pi-04 head (Pi corner to cap rail, now M2 x 8); holds the group where it crosses the Pi top edge.",
+     "addedOn": "2026-10-13 (V1.9 integration)"
+    }
+   }
+  },
+  "speaker.stl": {
+   "key": "speaker",
+   "colour": "n/a (purchased)",
+   "sourceFile": "guide/extension-20261012-neck-audio/audio/study-solids/speaker-world.stl",
+   "sha256": "6375939df48a767c67dd7cc64337cc99aad466be40eede1e13f863ebfbc0e9f0",
+   "bytes": 25884,
+   "description": "Speaker (Adafruit 3351-type 4 ohm 3 W, 28 x 20 x 4 mm) tilted under the rear roof of the V1.9 cap in its collar, on a 1 mm foam ring; audio study position.",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "amplifier.stl": {
+   "key": "amplifier",
+   "colour": "n/a (purchased)",
+   "sourceFile": "guide/extension-20261012-neck-audio/audio/study-solids/amplifier-world.stl",
+   "sha256": "eeb811872ffa9cf99867dcdb8afd7db59fc54216c7c21dbcd7629e48e37470ec",
+   "bytes": 13684,
+   "description": "Adafruit MAX98357A I2S amplifier breakout with its right-angle 7-pin header (pins to +x, towards the Pi) and the 3.5 mm terminal block, hanging under the roof on the two cap posts, components up. The 100 kOhm GAIN-to-Vin resistor on its underside is not part of this solid (print/ext-v19/resistor_envelope_v19-world.stl).",
+   "addedOn": "2026-10-13 (V1.9 integration)"
+  },
+  "rear_frame.stl": {
+   "key": "rear_frame",
+   "colour": "orange",
+   "sourceFile": "guide/print/back-plate/layout-F/rear_frame-world.stl",
+   "description": "Rear converter box frame, layout F as released in V1.16 (2026-10-14; the V1.11 frame regenerated by print/back-plate/layout-F/build_f.py): the cover plate x -47..-45 with the cover outline, four dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5) and the lip; a stepped box behind it with a square rim at x -59.1 and a constant cross-section (boards slide in from the rear): wide tier |y| <= 32.05, z -15.2..43 (two XL4015s, horizontal, IN ends -y, OUT ends +y) and narrow tier |y| <= 15.61, z -36.02..-15.2 (Adafruit 5991, terminal -y, USB-C +y); closed bottom; side windows at each terminal; USB-C slot in the +y wall (x -59.1..-49, z -31.16..-17.16); solid front plate (the V1.11 passage P1 is gone); wire notch A at the top-wall front edge (x -47.0..-49.8, y 3.2..12.4, rear corners r 1.0) and notch B in the cover-plate top edge (z 29.5 down to 28.5 over the same band, floor corners r 0.5) for the 7 V and 5 V pairs; eight XL4015 bosses (5.0 long from the seat at z 38.7 and -10.9, 4.2 at z 10.1 and 3.2 at z 17.7) and four 5991 bosses (3.0 standoff, 5.0 long; both upper bosses take hidden M2 x 10 cap screws), the two top XL4015 bosses at z 38.7 also take hidden M2 x 10 cap screws through the 7 V board, no hook notch, no tooth slots, no cap-screw ear bosses, and dia 4.4 driver lanes at the two lower cover screws. Features: print/back-plate/layout-F/features.json.",
+   "sha256": "2f1f81bf63216c1a279c4f1f071c2f79d1a2c49de7382b9e945cb2a753032d92",
+   "bytes": 1259784,
+   "addedOn": "2026-10-14 (layout F, V1.11); replaced 2026-10-14 evening by the V1.15 build and 2026-10-15 by the V1.16 build (four hidden cap screws, no tongues or hook; print/back-plate/layout-F/README.md)",
+   "releasePipelineClosed": false,
+   "releaseNote": "V1.16 candidate: bound into release-V1.16/manifest-V1.16.json by scripts/make_manifest.py; print gate rerun on this file before release (interference-audit/gate-receipt.json)."
+  },
+  "rear_lid.stl": {
+   "key": "rear_lid",
+   "colour": "orange",
+   "sourceFile": "guide/print/back-plate/layout-F/rear_lid-world.stl",
+   "description": "Rear converter box cap, layout F as released in V1.16 (2026-10-15) with 3.0 mm screw-head floors (V1.19, 2026-10-15): rounded cap x -67.1..-59.1 with 1.2 mm walls carrying every rear-edge rounding (R 7.4 sides, 7.8 top, 4.3 step, 4.5 / 8.0 narrow tier), window notches at the side windows, and four hidden M2 x 10 screws, each driven from a dia 4.4 hole in the cap back down a dia 5.6 column to a 3.0 mm floor (the head seat and the M2 x 10 tip are those of V1.16; the floors grow forward, the +y low column is flattened 0.5 mm above the USB-C socket): two low columns on the 5991 upper hole axes (y +11.367, z -16.667) and (y -11.366, z -16.54) into the 5991 standoff bosses, and two top columns on the 7 V XL4015 top corner hole axes (y +-28.25, z 38.7), flattened inside the frame to |y| <= 30.6 and z <= 41.55, through the board into its frame bosses. The cap pushes straight on; no tongues, no hook, no screw ears; nothing outside the box outline.",
+   "sha256": "ee096c39ac2da0eef539a8aa47b4c28a6f6b3d7ba9e450a02896be59fcc22a17",
+   "bytes": 4667984,
+   "addedOn": "2026-10-14 (layout F, V1.11); replaced 2026-10-14 evening by the V1.15 build and 2026-10-15 by the V1.16 build (four hidden cap screws, no tongues or hook; print/back-plate/layout-F/README.md); 2026-10-15 V1.19: the four column floors thickened from 1.0 to 3.0 mm after the printed V1.17 cap's two low floors tore through on removal (Shawn, IMG_7004)",
+   "releasePipelineClosed": false,
+   "releaseNote": "V1.19 candidate: bound into release-V1.19/manifest-V1.19.json; print gate rerun on this file before release (interference-audit/gate-receipt.json)."
+  },
+  "xl4015_left.stl": {
+   "key": "xl4015_left",
+   "colour": "n/a (owned, ROBOTIS OMX-AI kit)",
+   "sourceFile": "guide/print/back-plate/layout-F/xl4015_top_7V-world.stl",
+   "description": "XL4015 #1 (7 V rail, set point 6.80 V), layout F top tier: ROBOTIS mesh, horizontal, long axis y, component side toward -x, PCB mid-plane x -51.03, centre z 28.2; IN terminal at -y (side window in the -y wall), OUT at +y; four M2 x 6 into the frame bosses at y +-28.25, z 17.7 / 38.7. Key name kept for the guide content (top board).",
+   "sha256": "ec7632d204f56d8bf98b29e22897c6874b8f1b7667573c9b8b26d534039cd67a",
+   "bytes": 3574684,
+   "addedOn": "2026-10-14 (rear converter box layout F, print/back-plate/layout-F/README.md)",
+   "releasePipelineClosed": false,
+   "releaseNote": "Print gate pending for layout F (V1.11); see interference-audit/gate-receipt.json."
+  },
+  "xl4015_right.stl": {
+   "key": "xl4015_right",
+   "colour": "n/a (owned, ROBOTIS OMX-AI kit)",
+   "sourceFile": "guide/print/back-plate/layout-F/xl4015_mid_5V-world.stl",
+   "description": "XL4015 #2 (5 V Pi lead), layout F middle tier: as xl4015_left at centre z -0.4; screws at y +-28.25, z -10.9 / 10.1. Key name kept for the guide content (middle board).",
+   "sha256": "109b788755069a37fe0d9804357ac16578f6cd2f04faf04f49070e54006db9c8",
+   "bytes": 3574684,
+   "addedOn": "2026-10-14 (rear converter box layout F, print/back-plate/layout-F/README.md)",
+   "releasePipelineClosed": false,
+   "releaseNote": "Print gate pending for layout F (V1.11); see interference-audit/gate-receipt.json."
+  },
+  "pd5991.stl": {
+   "key": "pd5991",
+   "colour": "n/a (purchased, Adafruit 5991)",
+   "sourceFile": "guide/print/back-plate/layout-F/pd5991_F-world.stl",
+   "description": "Adafruit 5991 USB-C PD board, layout F bottom tier: PCB back face x -50.0 on 3.0 mm standoffs, 27.8 mm edge along y centred on y 0, z -34.32..-14.0; screw terminal faces -y (entries (-54.6, -13.2, -22.31) and (-54.6, -13.2, -25.81)) through the -y window, USB-C points +y through the +y wall slot; four M2 x 6 into the frame bosses at y +-11.37, z -31.9 / -16.6.",
+   "sha256": "d4fdcbfb2459af6ea812181ab211487ba787b79a8a71e37379ee330ba8e08f56",
+   "bytes": 3084,
+   "addedOn": "2026-10-14 (rear converter box layout F, print/back-plate/layout-F/README.md)",
+   "releasePipelineClosed": false,
+   "releaseNote": "Print gate pending for layout F (V1.11); see interference-audit/gate-receipt.json."
+  },
+  "shell_left.stl": {
+   "key": "shell_left",
+   "colour": "white",
+   "sourceFile": "guide/print/v20-source/shell_left_v20-world.stl",
+   "builder": "guide/print/v20-source/build_v20_source.py",
+   "sha256": "4e55338ec1eb24ad5d70daccd4a7f36bdc29251b32f478339fed7a8f3dc35410",
+   "bytes": 1094584,
+   "description": "Side shells V2.0 (print/v20-source/, built 2026-10-13; guide 2026-10-14 for release V1.12, White plate, with the V1.9 rear pack on the robot): one M2 x 6 straight down through the shell roof (dia 2.2 hole, dia 4.4 counterbore) into the V1.9 pack shoulder bar at x -21.5, y +20; the cross tunnel at x -38, z 35 filled flush; S12-horn-029..032 get dia 4.4 x 2.0 counterbores and take M2 x 4. Before: the printed 10/1 shell (community-8.stl from the full-build export, orange).",
+   "previous": {
+    "file": "build-pack-20260913/assembly/print-parts/community-8.stl (the guide drew the full-build export mesh)",
+    "note": "printed 10/1 shell with the cross tunnel"
+   }
+  },
+  "shell_right.stl": {
+   "key": "shell_right",
+   "colour": "white",
+   "sourceFile": "guide/print/v20-source/shell_right_v20-world.stl",
+   "builder": "guide/print/v20-source/build_v20_source.py",
+   "sha256": "a718e9279c97254fe335d7064c90aa6a18d2e72065860ffad058334d1ced63a7",
+   "bytes": 1078384,
+   "description": "Side shells V2.0 (print/v20-source/, built 2026-10-13; guide 2026-10-14 for release V1.12, White plate, with the V1.9 rear pack on the robot): one M2 x 6 straight down through the shell roof (dia 2.2 hole, dia 4.4 counterbore) into the V1.9 pack shoulder bar at x -21.5, y -20; the cross tunnel at x -38, z 35 filled flush; S12-horn-026..028 get dia 4.4 x 2.0 counterbores and take M2 x 4. Before: the printed 10/1 shell (community-10.stl from the full-build export, orange).",
+   "previous": {
+    "file": "build-pack-20260913/assembly/print-parts/community-10.stl (the guide drew the full-build export mesh)",
+    "note": "printed 10/1 shell with the cross tunnel"
+   }
+  },
+  "a7z_csi_connector.stl": {
+   "key": "head_pi_a7z_csi_connector",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/csi_connector.stl",
+   "sha256": "be16cf93a7b20813b645d9f39526899b8f1117c326343265e7dc0be491c3d3cd",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_fan_connector.stl": {
+   "key": "head_pi_a7z_fan_connector",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/fan_connector.stl",
+   "sha256": "edc72ff5de0cca5e659cab8c5a3466bb698a8447d205f2f57fdfb49240ecb027",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_ipex_socket.stl": {
+   "key": "head_pi_a7z_ipex_socket",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/ipex_socket.stl",
+   "sha256": "f6c67027a4f15e12aedfcb81a3ef458d35fbce56f7e301dd6ec956da2786fde7",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_micro_hdmi.stl": {
+   "key": "head_pi_a7z_micro_hdmi",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/micro_hdmi.stl",
+   "sha256": "be4b02a9be5a6528e66f1135cb2fa6e55101c9639c335717d56df2d9d57a5771",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_microsd_card.stl": {
+   "key": "head_pi_a7z_microsd_card",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/microsd_card.stl",
+   "sha256": "0cbd2bec4e550220a12e26537a39d807aec779034395f90322b8e128885ecccb",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_microsd_socket.stl": {
+   "key": "head_pi_a7z_microsd_socket",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/microsd_socket.stl",
+   "sha256": "60c7694590a95f1fe92263a0e55b9806976f798d9f80ea9e8a99e6c44b00a0a8",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_pcb.stl": {
+   "key": "pi",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/a7z_pcb.stl",
+   "sha256": "8980902421d63319241edc52a9a0b5a4ada398c8a05f0e5a1dc4aa9baed5a78d",
+   "bytes": 79184,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_pcie_fpc.stl": {
+   "key": "head_pi_a7z_pcie_fpc",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/pcie_fpc.stl",
+   "sha256": "94bf1049851fba2a08a613bd6e4e9f73106126ef4f4cf72315997e2b5630870a",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_pmic_area.stl": {
+   "key": "head_pi_a7z_pmic_area",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/pmic_area.stl",
+   "sha256": "2440472602abc660039f9fbb644ee3c7e9f29aff53f68ed8c0d554b535ddbef4",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_ram.stl": {
+   "key": "head_pi_a7z_ram",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/ram.stl",
+   "sha256": "7bfd2153c850f81a060b39db35f977b679f54a2a29ed19f31308a7d799a82da6",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_soc_a733.stl": {
+   "key": "head_pi_a7z_soc_a733",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/soc_a733.stl",
+   "sha256": "40c438e4fc158579874729c6081c1793298b72df10b2f5eb5b437fd526a96c4d",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_uboot_button.stl": {
+   "key": "head_pi_a7z_uboot_button",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/uboot_button.stl",
+   "sha256": "176e305aa0334e874b9b4e11ef0dfdc8e9c85287843deff8b2ec02da7b7df97d",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_underside_smd.stl": {
+   "key": "head_pi_a7z_underside_smd",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/underside_smd.stl",
+   "sha256": "1880074d8c59178e1ebdc69111f2b62a30fa607b711f07087d40a5a0d3097823",
+   "bytes": 49484,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_usb_c_otg_dp.stl": {
+   "key": "head_pi_a7z_usb_c_otg_dp",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/usb_c_otg_dp.stl",
+   "sha256": "e5ed8b811b6bc26bf67419f5ca49aa8d234efae74c480637c24743bbc2c15f02",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_usb_c_power.stl": {
+   "key": "head_pi_a7z_usb_c_power",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/usb_c_power.stl",
+   "sha256": "0da597f0494b1bb10766bd043c8d6caf42920e53c517f21f0ab20eb30ceaac2e",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "a7z_wifi_module_fcu760k.stl": {
+   "key": "head_pi_a7z_wifi_module_fcu760k",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/wifi_module_fcu760k.stl",
+   "sha256": "6a9605353e2e7572eb4026664e584e7a9aa3d2e762c8d250e70abffa4fe47562",
+   "bytes": 684,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "antenna.stl": {
+   "key": "antenna",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/antenna_ac019.stl",
+   "sha256": "df60e398d786d9017655060caa0e6aeea793a7c4a3ea019c3de68bcce16a7661",
+   "bytes": 77284,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "antenna_coax.stl": {
+   "key": "antenna_coax",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/antenna_coax.stl",
+   "sha256": "41b1866dc36d714aec7c283326bf357c0a808058a724004a35b560f41f7ed4a3",
+   "bytes": 33284,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "antenna_ipex.stl": {
+   "key": "antenna_ipex",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/ipex_plug.stl",
+   "sha256": "47d0d6028d1ae1a5c1f5f62ecd355d14448f28c05c5041d426fcae45431826c5",
+   "bytes": 10284,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  },
+  "camera_ribbon.stl": {
+   "key": "camera_ribbon",
+   "colour": "purchased",
+   "sourceFile": "guide/print/a7z-head/a7z_parts/camera_ribbon_a7z_end.stl",
+   "sha256": "5b4fd50dce44bfcd34b6c184ab7d3da0f8b7f1972c731963a8f85e73a3346506",
+   "bytes": 1884,
+   "description": "Radxa Cubie A7Z head part in the robot frame on the shifted Pi seat (print/a7z-head/, 2026-10-15; frame from the header pins, pi-frame-raw.json)."
+  }
+ },
+ "note": "V1.9 state 2026-10-13: release geometry for the pack is in print/rear-pack-v19/, for the cap, retainer and clips in print/ext-v19/ (not sliced, not released)."
+}

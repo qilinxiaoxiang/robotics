@@ -1,0 +1,126 @@
+{
+ "schema": "current-state/1",
+ "purpose": "CURRENT-STATE.json is the single place for the MicroDuck robot's CURRENT measured facts. Sim judgements, briefs and child sessions read these values from here. History (memory files, DECISIONS.md, logs, transcripts, code comments) explains how a value was reached and is never a source for the current value. When a measurement changes a fact, update its entry here in the same turn and move the old value into its 'superseded' list.",
+ "check": "python3 ~/code/claude-config/scripts/state_check.py microduck-sim/CURRENT-STATE.json   (runs each probe on the newest walk_wired run; fails on a mismatch, on newer evidence it could not measure, and on any fact older than its max_age_days; sim_suite.sh runs it first and stops on failure)",
+ "max_age_days": 7,
+ "facts": {
+  "imu_rate_hz": {
+   "value": 50,
+   "meaning": "IMU samples reaching the 50 Hz policy loop per second while walking: full rate, every tick fresh.",
+   "verified_at": "2026-10-17",
+   "source": "Shawn 2026-10-17 ('真实条件也是50Hz满帧的… 修过IMU掉帧'); walk_wired status lines 10/16 ('imu 46-54/s', /tmp/duck_wired_1016y.out)",
+   "measure": "the probe reads the newest run's stdout (/tmp/duck_wired_<suffix>.out next to /tmp/duck_wired_log_<suffix>.jsonl): median of torque-on 'imu N/s' lines; at most max_low_share of lines may sit more than two tolerances below (the 10/16 brownout run 1016k had 46 %)",
+   "tolerance": 6,
+   "superseded": [
+    {
+     "value": "31-39 samples/s",
+     "until": "2026-10-16",
+     "why": "Pi Zero W CPU saturated by a stuck cloud-init; fixed by disabling cloud-init (session 鸭子步态测试准备, 10/16)"
+    }
+   ],
+   "max_low_share": 0.02,
+   "probe": "~/.venvs/microduck-dyn/bin/python guide/firmware/mac/robot_state_check.py --probe imu_rate_hz",
+   "consumers": [
+    "microduck_rl/modal/sim_suite.sh via robot_state_check.py --print-sim-args (--imu-hz)"
+   ]
+  },
+  "imu_added_delay_ms": {
+   "value": 0,
+   "meaning": "No delay beyond the normal pipeline (about 15 ms end to end plus half a 50 Hz period, same as the community duck); the 40-60 ms trunk lag is plant softness, not IMU.",
+   "verified_at": "2026-10-17",
+   "source": "stance analysis + raw-gyro test 10/15 (memory microduck-imu-latency-measured); Shawn 2026-10-15 and 2026-10-17 ('证实是没有延迟')",
+   "measure": "stance_switch.py analysis; not re-measured by the check (age-limited by max_age_days)",
+   "consumers": [
+    "sim_suite.sh via --print-sim-args (--sensor-delay)"
+   ]
+  },
+  "servo_read_drop_fraction": {
+   "value": 0.04,
+   "meaning": "Fraction of 20 ms walk-mode ticks without a fresh servo sync read while the legs step (the policy skips those ticks and the servos hold the last goals).",
+   "verified_at": "2026-10-17",
+   "source": "walk_wired logs /tmp/duck_wired_log_1016{m..zb}.jsonl and 1017a.jsonl: 3.3-5.2 % of stepping-window ticks have missing servos (1017a 4.6 %, 152 ticks); recounted 2026-10-17 after the probe fix",
+   "measure": "the probe reads the newest /tmp/duck_wired_log_*.jsonl: walk-mode ticks within 0.3 s of a tick whose leg joints move faster than 0.5 rad/s, counting fresh=False or missing servos",
+   "tolerance": 0.02,
+   "superseded": [
+    {
+     "value": 0.08,
+     "until": "2026-10-16",
+     "why": "10/15 sync-read misses on the Pi Zero W bus"
+    },
+    {
+     "value": 0.0,
+     "until": "2026-10-17",
+     "why": "the probe counted only ticks with an action; a tick with a dropped read runs no policy, so every dropped tick was excluded and the probe always read 0"
+    }
+   ],
+   "probe": "~/.venvs/microduck-dyn/bin/python guide/firmware/mac/robot_state_check.py --probe servo_read_drop_fraction",
+   "consumers": [
+    "sim_suite.sh via --print-sim-args (--drop)"
+   ]
+  },
+  "walking_policy": {
+   "value": "walk61.onnx (Pollen BEST_alpha_walking, runtime-overlay/models) at 0.25 m/s, 4 s walks; KP_RL 200, stand mode KP 400",
+   "verified_at": "2026-10-16",
+   "source": "memory microduck-walk-1016-state (10/16 evening)",
+   "candidates": [
+    "runtime-overlay/models-ft3-it999 (ft3 iteration 999, D-017): sim-better, not yet run on the robot"
+   ],
+   "max_age_days": 14,
+   "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
+  },
+  "power": {
+   "value": "5991 bench supply at 20 V -> XL4015 #1 servo rail (no-load 7.32 V, walking min about 7.0 V) and XL4015 #2 Pi 5.16 V; no battery on the robot",
+   "verified_at": "2026-10-16",
+   "source": "memory microduck-walk-1016-state (10/16 afternoon)",
+   "max_age_days": 14,
+   "measure": "multimeter at the XL4015 outputs, the 5991 display; walk_wired --supply auto logs the servo-reported supply"
+  },
+  "servo_rail_v": {
+   "value": 7.0,
+   "meaning": "Servo supply voltage while walking; sim_suite.sh passes it to brain_sim_check.py as --volt for the real cases (the sim holds the supply constant).",
+   "no_load_v": 7.32,
+   "verified_at": "2026-10-16",
+   "source": "memory microduck-walk-1016-state, 10/16 afternoon walk 4: XL4015 #1 current-limit trimmer at its end, no-load 7.32 V, rail min 7.0 V while walking (1 Hz servo voltage samples)",
+   "measure": "walk_wired --supply auto or battery logs the servo-reported supply (bench runs do not); not re-measured by the check (age-limited by max_age_days)",
+   "superseded": [
+    {
+     "value": 7.4,
+     "until": "2026-10-16",
+     "why": "D-014 bench rail target 7.40 V with Shutdown 52; the suite hardcoded it"
+    },
+    {
+     "value": 7.1,
+     "until": "2026-10-16 afternoon",
+     "why": "5991 at 15 V before the trimmer was turned to its end"
+    }
+   ],
+   "consumers": [
+    "sim_suite.sh via --print-sim-args (--volt)"
+   ]
+  },
+  "a7z_imu_bus": {
+   "value": "BNO085 at 0x4A on A7Z i2c-7 (TWI7, header pin 3 SDA blue, pin 5 SCL yellow), TWI7 in engine mode via /boot/dtbo/zz-duck-twi7-engine.dtbo, listed by u-boot-update after sun60iw2p1-twi7.dtbo; imu_read.py 7 reads it",
+   "meaning": "How the A7Z reaches the IMU. In drv mode (twi_drv_used = 1, set by Radxa's sun60iw2p1-twi7.dtbo) TWI7 wedges after boot, after zero-length writes and after reads that hit the IMU while it resets, until the driver is rebound. The engine overlay must load after Radxa's twi7 overlay; u-boot-update (run by rsetup on every overlay change) orders /boot/dtbo alphabetically, hence the zz- name.",
+   "verified_at": "2026-10-18",
+   "source": "2026-10-18 A7Z bring-up: engine mode passed first use 19 s after boot, a zero-length write, reads during an IMU soft reset, and the unmodified imu_read.py (roll -67.5, pitch -4.2, |acc| 9.80 m/s2, robot on its side); overlay source guide/firmware/pi/duck-twi7-engine.dts; 2026-10-18 20:22 renamed to zz-, extlinux regenerated by sudo u-boot-update, rebooted: twi_mode '0: engine', i2cdetect -r 7 shows 4a, then imu_read.py 3 7 reads (roll -74.1, pitch -7.5)",
+   "max_age_days": 30,
+   "measure": "on the A7Z: cat /sys/devices/platform/soc@3000000/2517000.twi/twi_mode must say '0: engine'; python3 imu_read.py 5 7 prints orientation",
+   "superseded": [
+    {
+     "value": "BNO085 at 0x4A on A7Z i2c-7 (TWI7, header pin 3 SDA blue, pin 5 SCL yellow), TWI7 in engine mode via /boot/dtbo/duck-twi7-engine.dtbo; imu_read.py 7 reads it",
+     "until": "2026-10-18",
+     "why": "Name duck- sorts before sun60iw2p1-twi7.dtbo, so the next u-boot-update (any rsetup overlay change) would have put Radxa's drv-mode overlay last"
+    }
+   ]
+  },
+  "a7z_network": {
+   "value": "Wi-Fi CMU-DEVICE, MAC 90:30:d6:03:5e:79 registered in CMU GetOnline as microducka7z.wifi.local.cmu.edu (fixed 172.26.167.157); Tailscale node microduck-a7z 100.75.239.56 (key expiry 2027-04-16); Mac ssh alias 'a7z'",
+   "meaning": "How to reach the A7Z without the USB cable. CMU-DEVICE blocks TCP for unregistered MACs; registrations are purged after 6 months unused.",
+   "verified_at": "2026-10-18",
+   "source": "2026-10-18: GetOnline registration success page; after Wi-Fi reconnect wlan0 got 172.26.167.157 and HTTPS worked; tailscale status Running; ssh a7z over Tailscale and tailscale ping direct via 172.26.167.157:41641 in 6 ms",
+   "max_age_days": 30,
+   "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
+  }
+ },
+ "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
+}
