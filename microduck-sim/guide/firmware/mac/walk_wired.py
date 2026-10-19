@@ -232,7 +232,7 @@ def fix_seam(link):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", default=None, help="default: the only /dev/cu.usbmodem*")
+    ap.add_argument("--port", default=None, help="default: the only /dev/cu.usbmodem* (Mac) or /dev/ttyACM* (A7Z)")
     ap.add_argument("--models", default=os.path.join(WHOLE, "runtime-overlay", "models"))
     # Off by default: wired sample ages are a few ms, where the V1.9 simulation passes 9/9 without it, and the
     # predict-to-apply variant hurt on the replayed Wi-Fi link (dynamics/v19-20261014).
@@ -266,7 +266,7 @@ def main():
     if args.kp_stand:
         import walk_brain as _wb
         _wb.KP_DEFAULT = args.kp_stand
-    port = args.port or (glob.glob("/dev/cu.usbmodem*") or [None])[0]
+    port = args.port or (glob.glob("/dev/cu.usbmodem*") + glob.glob("/dev/ttyACM*") or [None])[0]
     if port is None:
         sys.exit("no OpenRB USB port")
 

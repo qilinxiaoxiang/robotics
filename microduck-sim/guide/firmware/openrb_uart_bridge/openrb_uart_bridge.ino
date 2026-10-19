@@ -17,6 +17,8 @@ uint8_t buf[BUF_LEN];
 Dynamixel2Arduino dxl(DXL_BUS);
 unsigned long ledOffAt = 0;
 
+void blink();  // arduino-cli's prototype pass misses it on this toolchain
+
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   HOST.begin(BAUD);
