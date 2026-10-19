@@ -64,7 +64,7 @@ def mold_row(side, foot_stl):
                       'overlap, coat 1.00 mm (hotglue-mold-check.json). Process: feet-sole-20261018/README.md.'),
         supersedes='nothing (new tool)',
         incrementalEvidence=ref(SOLE / 'hotglue-mold-check.json'),
-        evidenceAlso=[ref(SOLE / 'hotglue_mold.py'), ref(SOLE / 'README.md')],
+        evidenceAlso=[ref(SOLE / 'hotglue_mold.py')],   # README (cast process) is not bound: it quotes release results
     )
 
 
