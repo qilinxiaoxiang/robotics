@@ -60,7 +60,7 @@ def mold_row(side, foot_stl):
                        note='V1.21: print pose = source frame (identity), dropped to the bed'),
         changeReason=(f'V1.21: new tool, the {side} foot hot-glue sole mold. Cavity = the {foot_stl} bottom offset 1.0 mm '
                       'along the normal up to 3.0 mm above the flat, sealed by the 3.0 mm top plane, three conical depth '
-                      'pins, eight vents to a moat, four locating tabs 0.4 mm outside the foot outline. Seated foot: no '
+                      'pins, eight vents to a moat, four locating tabs 0.4 mm outside the foot outline, a raised ' + side[0].upper() + ' (0.6 mm, 6.5 mm tall) on the heel strip, its top towards the toe. Seated foot: no '
                       'overlap, coat 1.00 mm (hotglue-mold-check.json). Process: feet-sole-20261018/README.md.'),
         supersedes='nothing (new tool)',
         incrementalEvidence=ref(SOLE / 'hotglue-mold-check.json'),

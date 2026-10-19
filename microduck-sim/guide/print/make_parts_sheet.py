@@ -346,8 +346,8 @@ INTRO_BY_VERSION['V1.21'] = ('V1.21 is one plate with two tools: the hot-glue mo
                              'press the sanded foot between the four tabs onto the three pins, let it cool fully, then lift straight up.')
 INCREMENTAL_NAMES_BY_VERSION['V1.21'] = dict(hotglue_mold_left='Left foot sole mold', hotglue_mold_right='Right foot sole mold')
 INCREMENTAL_NOTES_BY_VERSION['V1.21'] = dict(
-    hotglue_mold_left='For the left foot (community-44). The cavity leaves a 1.0 mm glue coat over the flat and up the rounded edge to 3 mm. Prints cavity up, 0.12 mm layers with ironing, no support, no brim.',
-    hotglue_mold_right='For the right foot (community-46), mirror of the left mold. Same coat and print settings.')
+    hotglue_mold_left='For the left foot (community-44). Raised L at the heel end; the top of the letter points to the toe. The cavity leaves a 1.0 mm glue coat over the flat and up the rounded edge to 3 mm. Prints cavity up, 0.12 mm layers with ironing, no support, no brim.',
+    hotglue_mold_right='For the right foot (community-46), mirror of the left mold, with a raised R at the heel end, top of the letter to the toe. Same coat and print settings.')
 
 def page_html(version: str, body: list[str]) -> str:
     css = CSS

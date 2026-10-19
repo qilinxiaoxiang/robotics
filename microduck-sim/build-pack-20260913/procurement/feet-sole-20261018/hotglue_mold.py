@@ -10,15 +10,21 @@ Geometry, all in the foot STL frame (flat bottom at z = 0, foot above):
             so the coat is exactly T deep; the cone draft lets the coat lift off them
   vents     grooves from the cavity edge out to a moat, so excess glue leaves instead of lifting the foot
   tabs      four locating tabs outside the foot outline (C_TAB clearance) up to z = H_TAB: the foot drops in centred
+  label     a raised L or R on a LABEL_X strip added at the heel end (-x); the letter's top points to the toe (+x),
+            so it reads upright from the heel end. The two molds are mirror images that differ by under 0.5 mm in the
+            cavity, and a foot seated in the wrong one rides 0.45 mm high on the seal edge.
 Coat edge height H_CAST = 3 mm covers the 1.6 mm reached by sim floor contacts (sole_contact_sim.py).
 
-  ~/.venvs/microduck-dyn/bin/python hotglue_mold.py      -> hotglue-mold-left.stl, hotglue-mold-right.stl, check JSON
+  /opt/homebrew/bin/python3 hotglue_mold.py              -> hotglue-mold-left.stl, hotglue-mold-right.stl, check JSON
 """
 import json
 import struct
 from pathlib import Path
 
 import numpy as np
+from matplotlib.font_manager import FontProperties
+from matplotlib.path import Path as MplPath
+from matplotlib.textpath import TextPath
 from scipy import ndimage
 
 HERE = Path(__file__).resolve().parent
@@ -39,6 +45,10 @@ PIN_BASE_R = 1.2  # mm pin radius at the cavity floor: a cone, about 30 deg draf
 BASE = 3.0       # mm of solid under the deepest cavity point
 MARGIN = 3.0     # mm wall outside the tabs/moat
 STEP = 0.2       # mm grid
+LABEL_X = 7.0    # mm extra block length at the heel end for the letter
+LETTER_H = 6.5   # mm letter height (along x)
+LETTER_RISE = 0.6  # mm the letter stands above the H_CAST top
+LABEL_CLEAR = 0.8  # mm letter clearance to the moat and the block edge
 
 
 def load_tris(path):
@@ -119,7 +129,7 @@ def build(side):
     tris = load_tris(FEET[side])
     lo, hi = tris.reshape(-1, 3).min(0), tris.reshape(-1, 3).max(0)
     pad = C_TAB + max(TAB_D, MOAT[1]) + MARGIN
-    xs = np.arange(lo[0] - pad, hi[0] + pad + 1e-9, STEP); ys = np.arange(lo[1] - pad, hi[1] + pad + 1e-9, STEP)
+    xs = np.arange(lo[0] - pad - LABEL_X, hi[0] + pad + 1e-9, STEP); ys = np.arange(lo[1] - pad, hi[1] + pad + 1e-9, STEP)
     low = height_map(tris, xs, ys)
     foot = ~np.isnan(low)
     # distance outside the foot outline (mm), 0 inside
@@ -170,6 +180,18 @@ def build(side):
         across = np.abs(-(X - cx) * diry + (Y - cy) * dirx)
         vent |= (across <= VENT_W / 2) & (along > 0) & ~cavity & (dist_out <= MOAT[0] + 0.5) & ~tabs
     S[vent] = np.minimum(S[vent], H_CAST - VENT_DEPTH)
+    # raised side letter on the heel strip, top towards the toe: text (u, v) -> mold (x, y) = (v, -u)
+    tp = TextPath((0, 0), side[0].upper(), size=1.0, prop=FontProperties(family="DejaVu Sans", weight="bold"))
+    v = tp.vertices; lo_t, hi_t = v.min(0), v.max(0); k = LETTER_H / (hi_t[1] - lo_t[1])
+    free_hi = lo[0] - MOAT[1] - LABEL_CLEAR
+    lx = (xs[0] + LABEL_CLEAR + free_hi) / 2
+    u = (v[:, 0] - (lo_t[0] + hi_t[0]) / 2) * k; w = (v[:, 1] - (lo_t[1] + hi_t[1]) / 2) * k
+    glyph = MplPath(np.stack([lx + w, cy - u], 1), tp.codes)
+    letter = glyph.contains_points(np.stack([X.ravel(), Y.ravel()], 1)).reshape(X.shape)
+    near = ndimage.binary_dilation(letter, iterations=int(np.ceil(LABEL_CLEAR / STEP)))
+    assert letter.any() and (S[near] == H_CAST).all() and not (near & foot).any(), (side, "letter off the free top")
+    assert not near[0, :].any() and not near[:, 0].any() and not near[:, -1].any(), (side, "letter at the block edge")
+    S[letter] = H_CAST + LETTER_RISE
     zbot = min(S.min(), -T) - BASE
 
     # check the seated foot against the mold: vertical gap foot - mold over the foot's projection
@@ -194,6 +216,8 @@ def build(side):
         coat_volume_cm3=float(np.sum(np.where(cavity & ~pinm, low - S, 0)) * STEP * STEP / 1000),
         flat_mm=[float(2 * hx), float(2 * hy)], flat_unevenness_mm=float(np.ptp(low[flat])), pins=[[round(p, 2) for p in q] for q in pins],
         tab_clearance_mm=float(dist_out[tabs].min()),
+        label=dict(letter=side[0].upper(), height_mm=LETTER_H, rise_mm=LETTER_RISE, area_mm2=float(letter.sum() * STEP * STEP),
+                   centre_mm=[round(float(lx), 2), round(float(cy), 2)], top_points_to="+x (toe)"),
         block_mm=[float(xs[-1] - xs[0]), float(ys[-1] - ys[0]), float(H_TAB - zbot)],
     )
     out = HERE / f"hotglue-mold-{side}.stl"

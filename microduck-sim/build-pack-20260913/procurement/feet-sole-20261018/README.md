@@ -30,6 +30,7 @@ RoboClub's suggestion: coat the foot bottom with hot glue. Free-hand coats grip 
 - Outside the cavity the mold top is the plane 3.0 mm up; the foot touches it along its 3 mm contour, which closes the cavity and gives the coat a clean edge.
 - Three conical pins (1.2 mm top, 2.4 mm base, about 30 deg draft) with their tops on the flat set the depth; the coat gets three small conical dimples and lifts off the cones.
 - Eight vents lead excess glue to a moat; four tabs 0.4 mm outside the foot outline, up to 12 mm, centre the foot.
+- A raised L or R (0.6 mm, 6.5 mm tall) sits on a 7 mm strip at the heel end; the top of the letter points to the toe. The two molds are mirror images that differ by under 0.5 mm in the cavity, so the eye cannot tell them apart, and a foot pressed into the wrong one rides 0.45 mm high on the seal edge (thicker, uneven coat, glue leaks at the gap). The single pin is at the toe end, the pin pair at the heel.
 - Check (`hotglue-mold-check.json`): no overlap between the seated foot and the mold, coat 1.00 mm along the normal (1st-99th pct), coat volume 1.95 cm3 per foot, cavity 1859 mm2.
 - Print: release V1.21 (`guide/print/release-V1.21/`, release pipeline v2), both molds on one plate, any PLA, cavity up, 0.12 mm layers, top ironing, seam at the back, 6 top layers, 40 % infill, no support, no brim. X1C 2 h 24 min / 37.7 g, Centauri Carbon 2 h 34 min / 36.8 g. Delivery: `~/Downloads/zhengxia_MicroDuck_V1.21/`.
 
