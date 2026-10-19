@@ -35,12 +35,13 @@ RoboClub's suggestion: coat the foot bottom with hot glue. Free-hand coats grip 
 - Print: release V1.21 (`guide/print/release-V1.21/`, release pipeline v2), both molds on one plate, any PLA, cavity up, 0.12 mm layers, top ironing, seam at the back, 6 top layers, 40 % infill, no support, no brim. Print times and grams are in the release files' names and reviews. Delivery: `~/Downloads/zhengxia_MicroDuck_V1.21/`.
 
 Process:
+0. Dry fit, once per foot, before any glue: set the clean foot into its mold. It rests on the three pins and nearly touches the mold top along its 3 mm contour, and it must not rock. With a sharp pencil, draw a short line on the foot's side at the top edge of each of the four tabs. These four lines are the depth gauge: seated foot = every line level with its tab top.
 1. Peel the old glue off. Sand the foot bottom with the sandpaper, wipe with alcohol. Nothing oily on the foot.
 2. Wipe a thin film of release on the mold cavity, pins and top (cooking oil or petroleum jelly; silicone spray if at hand), wipe off the excess so no pools stay. A paper or PTFE liner wrinkles in the curved cavity and prints the wrinkles into the sole.
 3. Fill the cavity from the centre outward with the glue gun, about 2.5 cm3 (6 cm of 11 mm stick), slightly domed.
 4. If the surface has skinned, warm the glue in the mold with the heat gun on low, nozzle moving 5 cm away, a few seconds, until it is glossy again. Heat the glue in the mold, never the foot: PLA softens at about 60 C.
-5. Press the foot straight down between the tabs until it stops on the pins; hold one minute. Glue should come out of the vents.
-6. Cool 5 minutes (2 minutes in a freezer helps release), lift the foot out, trim the vent flash and the edge with a knife.
+5. Press the foot straight down between the tabs until it stops on the pins; hold one minute. Check the four pencil lines: each must be level with its tab top. A line above its tab means the foot rides high on that side (glue too cold or too much); warm and press again. Glue should come out of the vents, not as a bead around the whole edge.
+6. Cool 5 minutes (2 minutes in a freezer helps release), lift the foot out, trim the vent flash and the edge with a knife. Check the three pin holes in the coat: on a seated foot each goes through to bare PLA. A hole closed by a glue skin means the foot was high at that pin; peel and recast.
 
 A PLA mold softens where hot air hits its bare surfaces; if it deforms after a few casts, print it again or print it in PETG.
 
