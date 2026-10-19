@@ -28,7 +28,7 @@ RoboClub's suggestion: coat the foot bottom with hot glue. Free-hand coats grip 
 
 - Cavity floor = the foot bottom offset outward by 1.0 mm along the normal, up to 3.0 mm above the flat (sim contacts reach 1.6 mm), so the coat is 1.0 mm on the flat and on the curve.
 - Outside the cavity the mold top is the plane 3.0 mm up; the foot touches it along its 3 mm contour, which closes the cavity and gives the coat a clean edge.
-- Three 1.6 mm pins with their tops on the flat set the depth (the coat gets three 1.6 mm dimples).
+- Three conical pins (1.2 mm top, 2.4 mm base, about 30 deg draft) with their tops on the flat set the depth; the coat gets three small conical dimples and lifts off the cones.
 - Eight vents lead excess glue to a moat; four tabs 0.4 mm outside the foot outline, up to 12 mm, centre the foot.
 - Check (`hotglue-mold-check.json`): no overlap between the seated foot and the mold, coat 1.00 mm along the normal (1st-99th pct), coat volume 1.95 cm3 per foot, cavity 1859 mm2.
 - Print: `mold-process.json` (X1C) and `mold-process-elegoo.json` (Centauri Carbon), PLA, 0.12 mm layers, top ironing, 4 walls, 40 % infill, no supports, cavity up. Both molds on one plate: X1C 2 h 17 min / 38.9 g, Centauri 2 h 29 min / 36.8 g. Delivery: `~/Downloads/zhengxia_MicroDuck_HotGlueMold/` (X1C, Elegoo, STL, preview).
@@ -42,3 +42,5 @@ Process:
 6. Cool 5 minutes (2 minutes in a freezer helps release), lift the foot out, trim the vent flash and the edge with a knife.
 
 A PLA mold softens where hot air hits its bare surfaces; if it deforms after a few casts, print it again or print it in PETG.
+
+Release, by construction and print: the cavity is a height field seen from above, so it has no undercut and the foot lifts straight up (the tabs keep it straight; a tilted pull makes the layer steps catch). The coat is on the convex foot, so as the glue cools and shrinks it pulls toward the foot and away from the mold; cooling fully (freezer) helps. Printed cavity up, 0.12 mm layers with top ironing, seam at the back. Hot glue bonds to PLA, and a 190 C high-temperature gun can soften the PLA skin (PLA melts about 150-160 C), so use the release agent every cast and a low-temperature gun if there is one; PETG (Tg about 80 C) is the safer mold material.

@@ -8,7 +8,7 @@ project=json.loads(entries['Metadata/project_settings.config'])
 # The GUI overlays only keys marked as changed from the inherited preset.
 # Without this list, CLI slicing can use 4 walls/supports while GUI silently
 # reloads the parent's 2 walls/no support. Keep the recipe values on reopen.
-recipe=['layer_height','ironing_type','wall_loops','sparse_infill_density','sparse_infill_pattern','top_shell_layers',
+recipe=['layer_height','ironing_type','seam_position','wall_loops','sparse_infill_density','sparse_infill_pattern','top_shell_layers',
         'bottom_shell_layers','enable_support','support_type','support_on_build_plate_only',
         'support_threshold_angle','support_style','brim_type','brim_width']
 project['different_settings_to_system']=[';'.join(k for k in recipe if k in project),'','']

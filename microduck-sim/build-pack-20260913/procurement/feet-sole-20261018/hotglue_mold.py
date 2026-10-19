@@ -6,7 +6,8 @@ Geometry, all in the foot STL frame (flat bottom at z = 0, foot above):
             spheres of radius T on the surface), so the coat is T thick along the normal, on the flat and on the curve
   seal      outside the cavity the mold top is the plane z = H_CAST; the foot touches it along its H_CAST contour,
             which closes the cavity and gives the coat a clean edge
-  pins      three 1.6 mm pins in the flat region, top at z = 0: the foot rests on them, so the coat is exactly T deep
+  pins      three conical pins in the flat region (1.2 mm top, 2.4 mm base), top at z = 0: the foot rests on them,
+            so the coat is exactly T deep; the cone draft lets the coat lift off them
   vents     grooves from the cavity edge out to a moat, so excess glue leaves instead of lifting the foot
   tabs      four locating tabs outside the foot outline (C_TAB clearance) up to z = H_TAB: the foot drops in centred
 Coat edge height H_CAST = 3 mm covers the 1.6 mm reached by sim floor contacts (sole_contact_sim.py).
@@ -33,7 +34,8 @@ TAB_D = 3.0      # mm tab thickness
 MOAT = (0.6, 3.4)  # mm moat band, distance outside the foot outline
 MOAT_DEPTH = 2.0
 VENT_W, VENT_DEPTH, N_VENTS = 1.6, 1.0, 8
-PIN_R = 0.8
+PIN_R = 0.6      # mm pin top radius
+PIN_BASE_R = 1.2  # mm pin radius at the cavity floor: a cone, about 30 deg draft, so the coat lifts off it
 BASE = 3.0       # mm of solid under the deepest cavity point
 MARGIN = 3.0     # mm wall outside the tabs/moat
 STEP = 0.2       # mm grid
@@ -135,16 +137,20 @@ def build(side):
     hx, hy = (fx.max() - fx.min()) / 2, (fy.max() - fy.min()) / 2
     # pins: triangle inside the flat, pulled in 35 % from the flat's edges
     # each pin snaps to the nearest grid point whose whole pin disc lies on the flat
-    ok = ndimage.binary_erosion(flat, iterations=int(np.ceil((PIN_R + 0.4) / STEP)))
+    ok = ndimage.binary_erosion(flat, iterations=int(np.ceil((PIN_BASE_R + 0.4) / STEP)))
     targets = [(cx - 0.6 * hx, cy - 0.5 * hy), (cx - 0.6 * hx, cy + 0.5 * hy), (cx + 0.65 * hx, cy)]
     pins = []
     for tx, ty in targets:
         d2 = np.where(ok, (X - tx) ** 2 + (Y - ty) ** 2, np.inf)
         i, j = np.unravel_index(np.argmin(d2), d2.shape)
         px, py = X[i, j], Y[i, j]
-        m = (X - px) ** 2 + (Y - py) ** 2 <= PIN_R ** 2
-        assert flat[m].all(), (side, px, py)
-        S[m] = low[m].min()  # pin top touches the lowest point of the flat under it
+        r = np.hypot(X - px, Y - py)
+        m = r <= PIN_R
+        assert flat[r <= PIN_BASE_R].all(), (side, px, py)
+        top = low[r <= PIN_BASE_R].min()  # pin top at the lowest point of the flat over the whole cone
+        cone = r <= PIN_BASE_R
+        prof = top - (r - PIN_R).clip(0) / (PIN_BASE_R - PIN_R) * (top + T)  # top at PIN_R, cavity floor (-T) at PIN_BASE_R
+        S[cone] = np.maximum(S[cone], prof[cone])
         pins.append((px, py))
     # moat outside the outline, interrupted at the tabs
     tabs = np.zeros_like(foot)
@@ -176,7 +182,7 @@ def build(side):
     tree = cKDTree(pts_f)
     pinm = np.zeros_like(foot)
     for px, py in pins:
-        pinm |= (X - px) ** 2 + (Y - py) ** 2 <= PIN_R ** 2
+        pinm |= (X - px) ** 2 + (Y - py) ** 2 <= PIN_BASE_R ** 2
     cav_pts = np.stack([X[cavity & ~pinm], Y[cavity & ~pinm], S[cavity & ~pinm]], 1)
     dn, _ = tree.query(cav_pts)
     check = dict(
