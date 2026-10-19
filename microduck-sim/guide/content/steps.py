@@ -1510,7 +1510,7 @@ def build(ctx):
     # ------------------------------------------------------------------ 11. Battery backpack (D-010)
     # print/back-plate/battery-backpack-20261015/ (README.md, build_bp.py, bp_checks.json): the swap alternative to the rear
     # converter box on the same four cover screws (guide-data 'alternates'). Frame x -67.05..-45 (cover plate x -47..-45),
-    # cap x -74.45..-67.05 (V1.20); Swann 39 switch (REV-31-1387 envelope) rocker down in the narrow-tier floor pocket (panel hole, snap wings); DFR1202 behind
+    # cap x -74.45..-67.05 (V1.20); Swann 39 switch (swann_switch.py solid) rocker down in the narrow-tier floor pocket (panel hole, snap wings); DFR1202 behind
     # the front plate (back 2.2 mm off it, pads at the bottom edge, z 10.5..40.5), on two ribs, four clip lips and a VIN stop;
     # Tattu 2S 650 upright behind the switch; plugs 1 and 2 at the battery sides, balance plug on top at -y; plugs 3 (XT30)
     # and 4 (MR30) out of the front plate window (|y| <= 12, z 4.6..9.4) into the pack channel. Cap: three M2 x 6 from the
@@ -1525,7 +1525,7 @@ def build(ctx):
              approach={'bp_switch': [0, 0, -30]}, camera=bp_cam,
              # the two snap wings (|y| up to 16.22) fold in to pass the 13.75 mm half-width panel hole and spring out above it
              flex={'parts': ['bp_switch'], 'riders': {}, 'ramp': [13.0, 13.75], 'spread': [-2.6, -2.6], 'window': [0.1, 0.97]},
-             prepare=[{'item': 'Battery backpack frame (V1.18 print, orange)', 'qty': 1, 'kind': 'printed'},
+             prepare=[{'item': 'Battery backpack frame (V1.20 print, orange)', 'qty': 1, 'kind': 'printed'},
                       {'item': 'Swann 39 rocker switch with its soldered switch lead (XT30 male to the battery, XT30 female to the feed lead; BATTERY-WIRING.html)', 'qty': 1, 'kind': 'electronic'}],
              instructions=[
                  'Done: the switch sits in the pocket under the narrow bottom part of the box, rocker down and flush with the floor, its body up through the hole in the 3 mm floor panel and held by its own snap wings. Its two leads lie inside the box.',
@@ -1590,7 +1590,7 @@ def build(ctx):
         step('bp-cap', 'backpack', 'Close the backpack with its cap',
              add=ctx.keys('battery_backpack_cap'), approach={'battery_backpack_cap': [-15, 0, 0]},
              camera=ctx.cam(ctx.keys('battery_backpack_frame', 'battery_backpack_cap'), direction=REAR, margin=1.3),
-             prepare=[{'item': 'Battery backpack cap (V1.19 print, orange)', 'qty': 1, 'kind': 'printed'},
+             prepare=[{'item': 'Battery backpack cap (V1.20 print, orange)', 'qty': 1, 'kind': 'printed'},
                       {'item': '1 mm foam pad for the inside of the cap, behind the battery', 'qty': 1, 'kind': 'other'},
                       tap(3, 'M2 × 8')],
              screwNotes={'M2 × 8 TAP': 'Forward through the three holes in the back of the cap: each head sits on the 3.0 mm floor of a column inside the cap and the screw takes 5.0 mm of thread in the frame boss. Use a driver no thicker than 4 mm.'},

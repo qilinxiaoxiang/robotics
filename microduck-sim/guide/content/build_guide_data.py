@@ -412,13 +412,13 @@ def build_parts() -> dict:
             parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': module,
                           'status': status, 'v': v, 'f': f, 'source': str(path)}
     # 2026-10-15 battery backpack (D-010, print/back-plate/battery-backpack-20261015/): the swap alternative to the rear converter
-    # box on the same four cover screws. Frame and cap print orange; the REV-31-1387 switch rocker-down in the floor pocket, the
+    # box on the same four cover screws. Frame and cap print orange; the Swann 39 switch rocker-down in the floor pocket, the
     # Tattu 2S 650 upright behind it, the DFR1202 clipped behind the front plate, the battery and feed XT30 joints (plugs 1, 2)
     # with the balance plug, and the two swap plugs (XT30 servo, MR30 A7Z) standing in the pack channel. guide-data
     # 'alternates' names the two sets: never on the robot together, so the gate skips pairs and cables across them.
     BACKPACK_PARTS = {'battery_backpack_frame': ('Battery backpack frame (new print)', 'torso', 'new-print', None),
                       'battery_backpack_cap': ('Battery backpack cap (new print)', 'torso', 'new-print', None),
-                      'bp_switch': ('REV-31-1387 XT30 switch, rocker down in the backpack floor', 'controller', 'purchased', '#26282b'),
+                      'bp_switch': ('Swann 39 rocker switch on its soldered switch lead, rocker down in the backpack floor', 'controller', 'purchased', '#26282b'),
                       'bp_battery': ('Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the backpack', 'controller', 'purchased', '#3a6b35'),
                       'bp_dfr1202': ('DFRobot DFR1202 5 V converter for the A7Z, clipped behind the backpack front plate', 'controller', 'owned', '#1f3f8f'),
                       'bp_plugs': ('Plug 1 (battery to switch, XT30), plug 2 (switch to feed, XT30) and the battery balance plug', 'controller', 'purchased', '#f2c14e'),

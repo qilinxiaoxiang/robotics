@@ -113,6 +113,10 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .check input:checked+span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--ok)}
 .progress{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
 
+.cta3d{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;justify-content:space-between;background:var(--paper);border:1.5px solid var(--ink);border-radius:12px;padding:16px 18px;margin:18px 0}
+.cta3d p{margin:0;max-width:52ch;font-size:15px}.cta3d b{font-family:var(--f-display);font-size:17px;display:block}
+.cta3d a.go{font-weight:600;text-decoration:none;background:var(--ink);color:var(--bg);border-radius:99px;padding:9px 18px;white-space:nowrap}
+.cta3d a.go:hover,.cta3d a.go:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .gallery figure{margin:0}
 .twocol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
@@ -265,6 +269,7 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
   </figure>
 
   <p>You will make <b>four short leads</b> (S, C, D, E), put them with the battery into the printed box, and check every plug with a multimeter. Nothing on the robot itself gets cut, soldered or rewired.</p>
+<div class="cta3d"><p><b>3D animated build steps</b>The five assembly steps from the MicroDuck build guide, on the real CAD: parts fly into place, and you can orbit, zoom and tap any part to identify it.</p><a class="go" href="backpack-3d.html" target="_blank" rel="noopener">Open the 3D steps</a></div>
   <div class="callout stop"><strong>Before you start</strong>A LiPo can catch fire if its leads touch or the pack is crushed. Keep the battery unplugged and away from the iron until section 7, and never solder anything that is connected to it.</div>
 </header>
 
@@ -559,6 +564,7 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 <section id="assemble">
   <h2><span class="sn">08</span>Assemble the backpack</h2>
   <p>Order matters: the switch goes in from below, the converter from behind, and the leads must already be soldered because the plugs pass through holes in the print.</p>
+  <div class="cta3d"><p><b>3D animated build steps</b>The five assembly steps from the MicroDuck build guide, on the real CAD: parts fly into place, and you can orbit, zoom and tap any part to identify it.</p><a class="go" href="backpack-3d.html" target="_blank" rel="noopener">Open the 3D steps</a></div>
   <ol class="steps">
     <li><div><b>Switch into the floor, rocker down.</b> Hold the frame upside down. Feed both XT30 plugs of S up through the 12.3 × 27.5 mm floor hole, then push the switch body after them until both snap wings click over the panel. Press on the body, not the rocker. The rocker ends flush in its pocket.</div></li>
     <li><div><b>Foam on the inductor.</b> Stick the 2 mm pad on the DFR1202's big grey inductor. It rests against the battery later and stops rattling.</div></li>

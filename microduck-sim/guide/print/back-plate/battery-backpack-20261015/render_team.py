@@ -26,19 +26,10 @@ def bx(lo, hi):
 
 
 def swann():
-    """rocker down: world x = body thickness, y = body length, z = depth (rocker at -z)."""
-    body_t, body_l, depth, lug = 11.5, 27.3, 18.4, 7.2
-    parts = [bx([XC - body_t / 2, -body_l / 2, ZPF], [XC + body_t / 2, body_l / 2, ZPF + depth]),            # body
-             bx([XC - 6.9, -15.0, ZPF - 2.0], [XC + 6.9, 15.0, ZPF])]                                          # flange
-    rk = bx([XC - 5.0, -12.5, TIP], [XC + 5.0, 12.5, ZPF - 2.0])                                               # rocker
-    rk.apply_transform(trimesh.transformations.rotation_matrix(np.radians(-8), [1, 0, 0], [XC, 0, ZPF - 2.0]))
-    parts.append(rk)
-    for s in (1, -1):                                                                                          # snap wings
-        w = bx([XC - 4.5, s * 13.65 - 0.4, ZPF + 3.2], [XC + 4.5, s * 13.65 + 0.4, ZPF + 12.0])
-        w.apply_transform(trimesh.transformations.rotation_matrix(s * np.radians(12), [1, 0, 0], [XC, s * 13.65, ZPF + 3.2]))
-        parts.append(w)
-    lugs = [bx([XC - 0.4, y - 2.5, ZPF + depth], [XC + 0.4, y + 2.5, ZPF + depth + lug]) for y in (-1.8, -9.0)]
-    return trimesh.util.concatenate(parts), trimesh.util.concatenate(lugs)
+    """the Swann 39 from swann_switch.py: body, flange, rocker and wings as one mesh, the two lugs as another."""
+    import swann_switch as SS
+    p = SS.parts()
+    return trimesh.util.concatenate([m for k, m in p.items() if not k.startswith('lug')]), trimesh.util.concatenate([m for k, m in p.items() if k.startswith('lug')])
 
 
 def scene():

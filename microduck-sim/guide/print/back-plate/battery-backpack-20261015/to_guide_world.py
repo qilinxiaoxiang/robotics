@@ -1,5 +1,5 @@
 """Copy the battery backpack (D-010) into guide/print/world for build_guide_data.py and the print gate.
-Run after build_bp.py and release_rows.py. The printed frame and cap are the release-named world STLs; the bought parts
+Run after build_bp.py, release_rows.py and swann_switch.py (the switch is the Swann 39 solid, not build_bp's REV envelope). The printed frame and cap are the release-named world STLs; the bought parts
 come from build/. The DFR1202 and its pads become one closed solid (manifold union).
     /tmp/microduck-cad-venv/bin/python to_guide_world.py"""
 import hashlib, json, shutil
@@ -9,7 +9,7 @@ HERE = Path(__file__).resolve().parent; B = HERE / 'build'
 WORLD = HERE.parents[1] / 'world'
 COPY = {'battery_backpack_frame.stl': HERE / 'battery_backpack_frame-world.stl',
         'battery_backpack_cap.stl': HERE / 'battery_backpack_cap-world.stl',
-        'bp_switch.stl': B / 'switch-world.stl', 'bp_battery.stl': B / 'battery-world.stl',
+        'bp_switch.stl': B / 'switch_swann-world.stl', 'bp_battery.stl': B / 'battery-world.stl',
         'bp_plugs.stl': B / 'plugs-world.stl', 'bp_swap_plugs.stl': B / 'swap_plugs-world.stl'}
 
 
