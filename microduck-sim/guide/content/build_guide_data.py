@@ -431,6 +431,37 @@ def build_parts() -> dict:
                 v, f = decimate(v, f, 25000, key)
             parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': module,
                           'status': status, 'v': v, 'f': f, 'source': str(path)}
+    # 2026-10-19 slip-fit feet (print/foot-slipfit-20261019/): the printed community feet (community-44/46, not the source
+    # export's foot) with the ankle-bracket socket opened 0.2 mm and the two snap hooks removed, seated on the bracket as
+    # fitted to the real socket (rolled about 4.8 deg about x against the bracket); held by the toe M2 x 6 TAP only.
+    for key, fname, name in (('foot', 'foot_left.stl', 'Left foot, slip fit on the ankle (new print)'),
+                             ('right_foot', 'foot_right.stl', 'Right foot, slip fit on the ankle (new print)')):
+        path = first_existing(world / fname)
+        if path and key in parts:
+            v, f = load_stl(path)
+            if len(f) > DECIMATE_OVER:
+                v, f = decimate(v, f, 25000, key)
+            parts[key].update(v=v, f=f, name=name, status='new-print', source=str(path))
+    # 2026-10-19 split ankle (print/ankle-split-20261019/, the 10/07 design in ankle-redesign-20261007/): the orange base on
+    # the motor horn replaces the one-piece bracket in place, the removable orange side is a new part of the leg module, and
+    # the black 10.4 mm sleeve replaces the 9.65 mm press-fit sleeve. World files are the 10/07 world STLs (guide frame).
+    for key, fname, name, new in (('ankle', 'ankle_base_left.stl', 'Left ankle base, on the motor horn (new print)', None),
+                                  ('right_ankle', 'ankle_base_right.stl', 'Right ankle base, on the motor horn (new print)', None),
+                                  ('smallring', 'ankle_sleeve_left.stl', 'Left ankle sleeve, 10.4 mm bore (new print)', None),
+                                  ('right_smallring', 'ankle_sleeve_right.stl', 'Right ankle sleeve, 10.4 mm bore (new print)', None),
+                                  ('ankle_cheek', 'ankle_cheek_left.stl', 'Left ankle side, two M2 x 8 TAP (new print)', 'ankle'),
+                                  ('right_ankle_cheek', 'ankle_cheek_right.stl', 'Right ankle side, two M2 x 8 TAP (new print)', 'right_ankle')):
+        path = first_existing(world / fname)
+        if not path:
+            continue
+        v, f = load_stl(path)
+        if len(f) > DECIMATE_OVER:
+            v, f = decimate(v, f, 25000, key)
+        if new is None and key in parts:
+            parts[key].update(v=v, f=f, name=name, status='new-print', source=str(path))
+        elif new is not None and new in parts:
+            parts[key] = {'key': key, 'name': name, 'color': parts[new]['color'], 'module': parts[new]['module'],
+                          'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
     if cap:
         v, f = load_stl(cap)
         parts['head_cap'].update(v=v, f=f, name='Head cap for the A7Z: V1.9 cap with relieved board rails and two end slots (white)', source=str(cap))

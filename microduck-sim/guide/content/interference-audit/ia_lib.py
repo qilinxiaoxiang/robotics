@@ -63,6 +63,15 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               'battery_backpack_frame': 'battery_backpack_frame.stl', 'battery_backpack_cap': 'battery_backpack_cap.stl',
               'bp_switch': 'bp_switch.stl', 'bp_battery': 'bp_battery.stl', 'bp_dfr1202': 'bp_dfr1202.stl',
               'bp_plugs': 'bp_plugs.stl', 'bp_swap_plugs': 'bp_swap_plugs.stl',
+              # 2026-10-19 slip-fit feet (print/foot-slipfit-20261019/foot_slipfit.py): the printed community feet with the
+              # ankle socket opened 0.2 mm and the snap hooks removed, seated as fitted to the real socket.
+              'foot': 'foot_left.stl', 'right_foot': 'foot_right.stl',
+              # 2026-10-19 split ankle (print/ankle-split-20261019/, the 10/07 design): the orange base on the motor horn
+              # replaces the one-piece bracket, the removable side ("cheek", two M2 x 8 TAP from above) is a new part, and the
+              # black sleeve (bore 10.4) replaces the 9.65 mm press-fit sleeve.
+              'ankle': 'ankle_base_left.stl', 'right_ankle': 'ankle_base_right.stl',
+              'ankle_cheek': 'ankle_cheek_left.stl', 'right_ankle_cheek': 'ankle_cheek_right.stl',
+              'smallring': 'ankle_sleeve_left.stl', 'right_smallring': 'ankle_sleeve_right.stl',
               **{f'head_pi_a7z_{p.stem[4:]}': p.name for p in sorted(WORLD.glob('a7z_*.stl')) if p.name != 'a7z_pcb.stl'}}
 
 

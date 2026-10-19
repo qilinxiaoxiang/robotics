@@ -30,8 +30,10 @@ THIGH_R = ['right_thigh', 'motor3', 'motor2', 'right_plate', 'ring2']
 THIGH_L = ['thigh', 'motor8', 'motor7', 'plate', 'ring7']
 BRIDGE_R = ['right_hip', 'ring3', 'ring4']
 BRIDGE_L = ['hip', 'ring8', 'ring9']
-ANKLE_R = ['right_lower', 'right_ankle', 'right_smallring', 'motor1', 'washer1', 'right_foot']
-ANKLE_L = ['lower', 'ankle', 'smallring', 'motor6', 'washer6', 'foot']
+ANKLE_R = ['right_lower', 'right_ankle', 'right_ankle_cheek', 'right_smallring', 'motor1', 'washer1', 'right_foot']
+ANKLE_L = ['lower', 'ankle', 'ankle_cheek', 'smallring', 'motor6', 'washer6', 'foot']
+FEET = ['foot', 'right_foot']
+ANKLE_SIDES = ['ankle_cheek', 'right_ankle_cheek']
 LEG_CABLES = ['dxl-5-4', 'dxl-4-3', 'dxl-3-2', 'dxl-2-1', 'dxl-10-9', 'dxl-9-8', 'dxl-8-7', 'dxl-7-6']
 THIGH_CABLES = ['dxl-4-3', 'dxl-3-2', 'dxl-2-1', 'dxl-9-8', 'dxl-8-7', 'dxl-7-6']
 HIP_CABLES = ['dxl-5-4', 'dxl-10-9']
@@ -157,7 +159,7 @@ def build(ctx):
 
     chapters = [
         {'id': 'start', 'title': '1. Before you begin', 'intro': False,
-         'summary': 'What the finished robot looks like, the parts and kit cables you already own, the 21 new prints and the tools.'},
+         'summary': 'What the finished robot looks like, the parts and kit cables you already own, the 29 new prints and the tools.'},
         {'id': 'openrb', 'title': '2. Prepare the OpenRB-150',
          'summary': 'Set servo IDs, flash the UART bridge, set the power jumper, trim the header tails and solder the two UART wires into J12.'},
         {'id': 'harness', 'title': '3. Set the 15 V, 7 V and 5 V supply boards on the bench',
@@ -292,11 +294,14 @@ def build(ctx):
 
     new_prints = ctx.keys('shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'battery_backpack_frame', 'battery_backpack_cap', 'head_cap', 'head_bottom', 'jaw_frame', 'face_panel', 'eye_trim',
                           'jaw_support', 'mouth_sliding_ring', 'neck_pitch', 'neck_pitch_ring',
-                          'speaker_retainer', 'clip_torso', 'clip_bracket', 'clip_head', 'clip_cap')
-    step('prints', 'start', 'Print the 21 new parts',
+                          'speaker_retainer', 'clip_torso', 'clip_bracket', 'clip_head', 'clip_cap',
+                          'ankle', 'right_ankle', 'ankle_cheek', 'right_ankle_cheek', 'smallring', 'right_smallring', 'foot', 'right_foot')
+    step('prints', 'start', f'Print the {len(new_prints)} new parts',
          show=[], add=new_prints, context=LEGS + TORSO, bench=True,
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
-         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+                  {'item': 'V1.22 package: zhengxia_MicroDuck_V1.22 folder (orange plate: left and right ankle base and ankle side; black plate: the two ankle sleeves; yellow plate: the two slip-fit feet)', 'qty': 1, 'kind': 'printed',
+                   'note': 'V1.22 replaces the one-piece orange ankle brackets, their black 9.65 mm sleeves and the yellow feet on both legs. The one-piece bracket is a closed fork that had to be spread over the lower link and its servo, and the old foot pressed onto the bracket so hard that it could not come off; each fitting loaded the ankle servo. The split ankle takes the link-and-servo package from above with its side off, the side closes along the shaft onto a 10.4 mm sleeve that turns freely on the link, two M2 × 8 from above hold it, and the foot slides on from below by hand and is held by its toe M2 × 6. Three plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.22.html shows the parts and the parts they replace. The hot-glue sole molds (V1.21) were printed in black on 2026-10-19 and are not in V1.22.'},
                   {'item': 'V1.19 package: zhengxia_MicroDuck_V1.19 folder (one orange plate: the new rear converter box cap and the new battery backpack cap)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.19 holds only the two caps. Each now seats its screw heads on a 3.0 mm printed floor: the 1.0 mm floors of the V1.17 box cap tore through when it came off. The new box cap takes the same four M2 × 10 and fits the V1.17 box frame; the new backpack cap takes three M2 × 8 and fits the V1.18 backpack frame. Replace both old caps; the frames stay. The frame is the cover plate with the bench box width, top and step and a box 26.75 mm deep behind it, printed on its open back rim like the box frame; the cap prints on its flat back face. One plate with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), tree support, no brim; PARTS-SHEET-V1.18.html shows both parts.'},
                   {'item': 'V1.17 package: zhengxia_MicroDuck_V1.17 folder (one orange plate: rear converter box frame and cap and the A7Z cap wire clip; one white plate: both torso shells, the A7Z head cap, the A7Z face panel and both thighs)', 'qty': 1, 'kind': 'printed',
@@ -307,7 +312,7 @@ def build(ctx):
                   {'item': 'V1.6 print package: zhengxia_MicroDuck_V1.6_8-files.zip', 'qty': 1, 'kind': 'printed', 'note': 'Three parts still come from it: jaw support, mouth sliding ring and neck pitch bracket. Its speaker cradle, speaker keeper, IMU holder, IMU rear cover and OpenRB tray are not used in this build. The V1.7 package is not needed at all: its cap is replaced by the V1.8 cap and its tray is retired.'}],
          instructions=[
              'Everything else comes from the 10/1 batch of 89 parts you already printed.',
-             'Print the 21 parts: lower head shell and jaw frame (yellow); face panel, head cap and both torso shells (white); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, speaker retainer and the four wire clips (orange); eye trim, jaw support, mouth sliding ring, neck pitch bracket and neck pitch ring (black).',
+             'Print the 29 parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap and both torso shells (white); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, speaker retainer, the four wire clips, and the two ankle bases and two ankle sides (orange); eye trim, jaw support, mouth sliding ring, neck pitch bracket, neck pitch ring and the two ankle sleeves (black).',
              'Print the V1.19 package (one orange plate: the two caps), the V1.18 package without its cap (the battery backpack frame), the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap and cap clip, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the other three parts from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the A7Z cap (the V1.9 cap in white with relieved rails and two end slots) carries the board 1 mm higher than the V1.7 cap, has a collar for the speaker and two posts for the amplifier in its roof, and has no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
              'The lower head shell and the head cap print lying flat, as in the 10/1 batch; do not reuse the older on-edge files. The rear pack prints standing on its floor, upright as it sits in the robot; the box frame stands on its open back rim and the box cap lies on its flat back face. Peel off any brim, including the 4 mm brim round the cap.',
              'Remove all support material, including thin strands in screw holes, before assembly. On the head cap, open the two small pilot holes beside the speaker collar and the pilot hole in the end of each amplifier post; the collar itself is a shallow ring in the roof and prints without support. On the outside of the cap, support is printed across some of the small sound holes above the speaker: after peeling the crown support, push a needle or a 1.5 mm drill through every sound hole. On the eye trim, make sure the two small pilot holes in its rear face are open. On the rear pack, open the four pilot holes in the round board pads, the four pilot holes in the ends of the two back posts, the USB-C slot in the floor, the window in the left (+Y) wall and the two pilot holes in the rib on the front of the plate. On the box frame, take out every support, open the eight pilot holes in the converter bosses, the four in the 5991 bosses, the two slots in the top wall, the small notch at the top edge of the 5991 terminal window and the wire notch at the front edge of the top wall and in the top edge of the front plate, and clear the four converter windows and the 5991 terminal window in the side walls, and the USB-C window low in the left-hand wall. On each wire clip, run a 2 mm drill or a needle through the screw hole in the tab and make sure the slot into the channel is open along its whole length. On each white torso shell, the small hole in the floor of the round counterbore on top prints on its side: check that an M2 screw drops through it, and if it does not, turn a 2 mm drill through it by hand; pick any support out of the seven horn-screw counterbores on the sides so each screw head seats flat.',
@@ -586,15 +591,52 @@ def build(ctx):
          cables=['dxl-2-1', 'dxl-7-6'], camera=ctx.cam(ANKLE_R, direction=(0.3, -1.2, 0.5), margin=1.4),
          prepare=[{'item': 'One more small cup per opened ankle, labelled A', 'qty': 1, 'kind': 'other'}],
          instructions=[
-             'Do this only if the ankle end of 2 → 1 (7 → 6) is missing. It undoes steps 5 to 8 of the leg guide on the ankle-and-foot module. The foot stays on.',
+             'Do this only if the ankle end of 2 → 1 (7 → 6) is missing. On the split ankle (next two steps) it is a few screws; on a leg that still has the one-piece bracket, do the split-ankle step first and plug the cable while the servo is out.',
              'If the module is still on the knee, take it off first: remove the four M2 × 6 knee-output screws into a cup labelled T2 and slide it off towards the centre line.',
-             'Cup A: remove the four M2 × 4 output screws, the two M2 × 10 case screws and the M2.6 × 8 rear centre with its 0.5 mm washer.',
-             'Pull the lower link straight off the ankle. It was pressed on hard; pull evenly, without twisting. If it does not come off with steady hand pressure, stop and do not lever against the sleeve.',
-             'Lift ID1 (ID6) about 30 mm up out of the fork and plug the ankle cable into ID1 socket 13 (ID6 socket 14). Lower the servo back into the fork with the cable leading out through the open side.',
-             'Press the lower link back on with the wires beside its end, not under it. Then the screws from cup A: the rear centre with its washer, the two case screws and the four output screws.',
+             'Take the foot off (one M2 × 6 at the toe, slide it down). Cup A: the two M2 × 8 of the ankle side, then the four M2 × 4 output screws.',
+             'Slide the side off the sleeve towards the robot\'s centre line (it sits on the inner face of the ankle) and lift the lower link with its servo straight up out of the base. Plug the ankle cable into ID1 socket 13 (ID6 socket 14).',
+             'Set the package back down into the base with the cable leading out beside the link end, not under it. Slide the side back on, drive the two M2 × 8, then the four output screws, then the foot and its toe screw.',
          ],
-         checks=['The lower link sits exactly as before and the ankle turns freely by hand.',
+         checks=['The ankle turns freely by hand, as before.',
                  'The cable leaves the ankle beside the link end without being pinched.'])
+
+    # 2026-10-19 split ankle (print/ankle-split-20261019/, V1.22; the 2026-10-07 design in ankle-redesign-20261007/). The
+    # one-piece orange bracket is a closed fork: the lower link with its servo and sleeve cannot come in from above, so it
+    # was spread and pressed on, loading the ankle servo each time. The base takes the package from above with the side
+    # off; the side closes along the shaft onto the new 10.4 mm sleeve (ankle-split-check.json: every path clear); the foot
+    # then slides on from below and holds the side in.
+    ankle_only = [k for k in leg_bench if k not in FEET + ANKLE_SIDES]
+    step('ankle-split', 'legs', 'Replace each ankle bracket with the split ankle', show=ankle_only, context=[], bench=True,
+         # the side sits on the inboard face of each ankle: it comes up from below the (absent) foot, 8 mm inboard of its
+         # seat, then slides outboard along the shaft onto the sleeve (a straight inboard lead-in would cross the other leg)
+         add=ANKLE_SIDES, approach={'ankle_cheek': [[0, -8, -30], [0, -8, 0]], 'right_ankle_cheek': [[0, 8, -30], [0, 8, 0]]},
+         camera=ctx.cam(ANKLE_R, direction=(0.3, -1.2, 0.5), margin=1.4),
+         prepare=[{'item': 'V1.22 orange plate: left and right ankle base and ankle side', 'qty': 4, 'kind': 'printed'},
+                  {'item': 'V1.22 black plate: left and right ankle sleeve (10.4 mm bore)', 'qty': 2, 'kind': 'printed'},
+                  tap(4, 'M2 × 8'), {'item': 'Small cup per leg, labelled A', 'qty': 1, 'kind': 'other'}],
+         instructions=[
+             'Do this on each leg with the ankle-and-foot module off the knee (cup T2, as in the step before). Each leg gets an orange base, an orange side and a black sleeve from V1.22; the yellow slip-fit foot goes on in the next step.',
+             'Take the old foot off: take out the M2 × 6 at the toe if one is there and keep it. Hold the orange bracket, not the leg or the servo, and rock the foot off. It may crack; it is being replaced.',
+             'Cup A: the four M2 × 4 output screws, the two M2 × 10 case screws and the M2.6 × 8 rear centre with its 0.5 mm washer. Pull the lower link off the old bracket, evenly and without twisting, and lift the servo out of the old fork. Set the old bracket and its black sleeve aside.',
+             'Put the new black sleeve on the 10 mm boss of the lower link. It slides on by hand and turns freely; it is not pressed. Refit the washer with the M2.6 × 8 rear centre and the two M2 × 10 case screws, so link and servo are one package again.',
+             'Set the new base on the servo output, horn side in, and start the four M2 × 4 loosely from the outside. With the side off, the package sits straight down into the base. Nothing is spread and nothing is pressed.',
+             'The side goes on the inner face of the ankle, the face towards the other leg. Bring it up from below, 8 mm inside its seat, then slide it along the shaft away from the centre line onto the sleeve until its two tongues sit in the slots of the base and the flat faces meet. Drive the two M2 × 8 from above, evenly and hand snug: they cut their own thread in a 1.6 mm pilot. Then tighten the four output screws.',
+         ],
+         checks=['The ankle turns through its range by hand with no tight spot. A little side play is normal: the new sleeve runs with about 0.4 mm of clearance.',
+                 'The side sits flat on the base with both screw heads seated, and the foot block under the base is clear.'],
+         warnings=['Never spread the base or press the link in. With the side off, the package drops in without force; if a tongue does not enter its slot, sand the tongue, not the slot.'])
+
+    step('ankle-feet', 'legs', 'Fit the slip-fit feet', show=leg_bench, context=[], bench=True,
+         add=FEET, approach={'foot': [0, 0, -12], 'right_foot': [0, 0, -12]},
+         camera=ctx.cam(ANKLE_R, direction=(0.3, -1.2, -0.3), margin=1.4),
+         prepare=[{'item': 'V1.22 yellow plate: left and right slip-fit foot', 'qty': 2, 'kind': 'printed'}, tap(2, 'M2 × 6')],
+         instructions=[
+             'Slide each new foot straight up onto the base and side by hand until it stops. Its socket is 0.2 mm wider than the block on every side, so it goes on without force; if it does not, sand the socket walls of the foot a little. Never press it on.',
+             'Drive the M2 × 6 from above through the hole at the toe of the base into the foot until its head is flush. The screws from the old feet fit.',
+             'The foot holds the side in: with the foot on, the side cannot slide off towards the centre line. To open an ankle later, take the foot off first (one screw, slide it down), then the two M2 × 8.',
+         ],
+         checks=['The foot sits down on the base with no gap and the toe screw head is flush.',
+                 'With the toe screw in, the foot cannot be pulled off by hand.'])
 
     step('leg-thigh-close', 'legs', 'Close each leg and tie the leg cables', show=leg_bench, context=[], bench=True,
          cables=THIGH_CABLES, camera=ctx.cam(THIGH_R + ANKLE_R + BRIDGE_R, direction=RIGHT_REAR, margin=1.2),

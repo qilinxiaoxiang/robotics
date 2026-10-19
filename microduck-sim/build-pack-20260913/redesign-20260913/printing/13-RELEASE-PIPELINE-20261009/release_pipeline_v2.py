@@ -78,6 +78,15 @@ def object_settings(row,tip):
 
 def planned_brim(settings):return settings.get('brim_type','no_brim')!='no_brim'
 
+def hull_allowance(row):
+ """A manifest row may raise the brim-inside-own-outline limit for a real recess in its bed face (V1.22 ankle bases: the
+ stock 12 x 1.1 mm notch in the gusset end face takes 13.3 mm2 of Bambu's outer brim). Needs a written reason; never for
+ an opening filled with brim."""
+ if 'brimInsideHullAllowanceMm2' not in row:return {}
+ a=float(row['brimInsideHullAllowanceMm2']);assert a>BRIM_INSIDE_HULL_MAX_MM2,f'{row["key"]}: brimInsideHullAllowanceMm2 must exceed {BRIM_INSIDE_HULL_MAX_MM2}'
+ assert str(row.get('brimInsideHullAllowanceReason','')).strip(),f'{row["key"]}: brimInsideHullAllowanceMm2 needs brimInsideHullAllowanceReason'
+ return dict(brimInsideHullAllowanceMm2=a,brimInsideHullAllowanceReason=row['brimInsideHullAllowanceReason'].strip())
+
 def sha(p):
  h=hashlib.sha256()
  with Path(p).open('rb') as f:
@@ -148,7 +157,7 @@ def source_receipt(manifest_path):
   assert bottom>0,f'{row["key"]}: no real planar contact within 0.01 mm'
   assert bottom>=float(row['flatContact']['minimumAreaMm2']),f'{row["key"]}: intended bottom missing'
   b=mesh.bounds.tolist();tip=tip_angle(mesh);settings,settings_source=object_settings(row,tip)
-  parts.append(dict(key=row['key'],source=ref(source),quantity=row['quantity'],color=row['color'],decision=row['decision'],replacesStockIds=ids,changeReason=row['changeReason'],incrementalEvidence=ref(evidence),sourceToPrint=T.tolist(),dropToBedMm=float(delta[2]),flatContactAreaMm2=bottom,bounds=b,vertexCount=len(mesh.vertices),triangleCount=len(mesh.faces),tipAngleDeg=round(tip,2),objectSettings=settings,objectSettingsSource=settings_source,**({'colourOnlyReprint':colour_only}if colour_only else {})))
+  parts.append(dict(key=row['key'],source=ref(source),quantity=row['quantity'],color=row['color'],decision=row['decision'],replacesStockIds=ids,changeReason=row['changeReason'],incrementalEvidence=ref(evidence),sourceToPrint=T.tolist(),dropToBedMm=float(delta[2]),flatContactAreaMm2=bottom,bounds=b,vertexCount=len(mesh.vertices),triangleCount=len(mesh.faces),tipAngleDeg=round(tip,2),objectSettings=settings,objectSettingsSource=settings_source,**({'colourOnlyReprint':colour_only}if colour_only else {}),**hull_allowance(row)))
  assert parts
  # The brim is a per-part decision in v2; a plate-wide brim would reach every object that lacks its own value.
  for k,v in m.get('processOverrides',{}).items():
@@ -418,15 +427,17 @@ def brim_review(rows,parts,machine=None):
   name=r['name'];assert name in plan,f'{name}: object not in the preparation parts';seen.add(name);s=plan[name].get('objectSettings')
   assert s is not None,f'{name}: no per-object brim plan (preparation from pipeline v1?)'
   planned=planned_brim(s);area=round(r['brim_area_mm2'],1);inside=round(r['brimInsideOwnHullMm2'],1);reach=round(r['brimReachMm'],2);fails=[]
+  inside_max=max(BRIM_INSIDE_HULL_MAX_MM2,float(plan[name].get('brimInsideHullAllowanceMm2',0)))   # a manifest row's hull_allowance
   if planned:
    want=float(s['brim_object_gap'])+float(s['brim_width'])
    if area<=0:fails.append('planned brim missing')
    else:
     if abs(reach-want)>BRIM_REACH_TOL_MM:fails.append(f'brim reach {reach} mm, planned {want:g} mm (gap + width)')
-    if inside>BRIM_INSIDE_HULL_MAX_MM2:fails.append(f'{inside} mm2 of brim inside the part\'s own convex outline')
-  elif area>0:fails.append(f'unplanned brim {area} mm2'+(f', {inside} mm2 of it inside the part\'s own convex outline'if inside>BRIM_INSIDE_HULL_MAX_MM2 else''))
-  out[name]=dict(brimType=s.get('brim_type'),planned=planned,brimAreaMm2=area,modelAreaMm2=round(r['model_area_mm2'],1),brimInsideOwnHullMm2=inside,brimReachMm=reach,
-                 plannedReachMm=float(s['brim_object_gap'])+float(s['brim_width'])if planned else None,failures=fails,passed=not fails)
+    if inside>inside_max:fails.append(f'{inside} mm2 of brim inside the part\'s own convex outline')
+  elif area>0:fails.append(f'unplanned brim {area} mm2'+(f', {inside} mm2 of it inside the part\'s own convex outline'if inside>inside_max else''))
+  out[name]=dict(brimType=s.get('brim_type'),planned=planned,brimAreaMm2=area,modelAreaMm2=round(r['model_area_mm2'],1),brimInsideOwnHullMm2=inside,insideOwnHullMaxMm2=inside_max,brimReachMm=reach,
+                 plannedReachMm=float(s['brim_object_gap'])+float(s['brim_width'])if planned else None,failures=fails,passed=not fails,
+                 **({'allowanceReason':plan[name]['brimInsideHullAllowanceReason']}if 'brimInsideHullAllowanceMm2'in plan[name]else{}))
   ok&=not fails
  missing=sorted(set(plan)-seen)
  if missing:ok=False

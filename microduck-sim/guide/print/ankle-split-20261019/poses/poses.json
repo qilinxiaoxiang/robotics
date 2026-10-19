@@ -1,0 +1,6325 @@
+{
+ "schemaVersion": 1,
+ "date": "2026-10-19",
+ "scope": "One print pose per part for the six split-ankle parts of ankle-redesign-20261007 (left/right base, cheek, sleeve). Poses are expressed as sourceToPrint 4x4 matrices on the LOCAL STL frame (STL/*-local.stl). This settles orientation, bed contact, brim and which faces carry support; it does not change geometry and does not release a plate.",
+ "method": "1) orientation_check.py screen of every stable pose plus the named local +-X/+-Y/+-Z poses (screen.json). 2) Functional-face rule (scripts/faces.py): faces that slide, bear or register MUST print without support under them; cosmetic faces may carry support. 3) The top poses per part (slice-plan.json, 11 rows) were prepared and sliced natively on both machines with the V1.22 profiles through release_pipeline_v2 under the bounded runner, then read back (slice_readback.py) and every face set was checked against the support toolpaths (scripts/face_support.py: a face rests on support when its centre is within 1.0 mm XY and 0..0.6 mm above a support toolpath midpoint; support inside cavities is support toolpath length mapped back into the local cavity volumes). 4) Chosen pose = the one where every MUST face is clean on both machines and the remaining support sits on cosmetic faces; ties broken by bed contact and brim review.",
+ "inputs": {
+  "screen": {
+   "path": "screen.json",
+   "sha256": "3521f75e3b44e27269b40282d20bd9807ca7c477b2f85e8c6e2ed5b69e0bc75c"
+  },
+  "manifest": {
+   "path": "manifest-screen.json",
+   "sha256": "b808dd98c09a61dba7dc005dd706397f1e8a8c0f7280ded5115b98eb90146c85"
+  },
+  "extraPoses": "extra-poses.json",
+  "slicePlan": "slice-plan.json",
+  "screenLog": "logs/screen.log",
+  "screenResource": "logs/screen-resource.json",
+  "sliceLog": "logs/slice-plan.log"
+ },
+ "parts": {
+  "left_base": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+    "sha256": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-base-PRINT.stl",
+    "sha256": "10c82586a3aca12a42b0ee43a47de3c4c9cde27f728af91d50d563ae972986f2",
+    "localToPrintStl": [
+     [
+      0.0,
+      0.0,
+      1.0,
+      14.377034425735474
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      -1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "x-pos-down",
+    "poseName": "local +X down (10/07 candidate: big gusset end on the bed)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      0.0,
+      0.0,
+      1.0,
+      14.377034425735474
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      -1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 81.14,
+    "heightMm": 36.5,
+    "footprintMm": [
+     42.95,
+     25.5
+    ],
+    "tipAngleDeg": 2.79,
+    "objectSettings": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1"
+    },
+    "objectSettingsSource": "R1 default: tip angle 2.8 deg < 10 deg, outer brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 28.8,
+      "totalGrams": 7.53,
+      "supportGrams": 0.76,
+      "layers": 182,
+      "supportExtrusionMm": 6909.4,
+      "supportInterfaceMm": 690.0,
+      "firstLayerModelAreaMm2": 72.6,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 264.9,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 314.6,
+       "reachMm": 4.05,
+       "failures": [
+        "13.3 mm2 of brim inside the part's own convex outline"
+       ]
+      },
+      "brimReviewPassed": false,
+      "supportInsideCavitiesMm": {
+       "pilot_bores": 0.0,
+       "slot_channels": 0.0,
+       "output_holes": 0.0,
+       "centre_aperture": 0.0,
+       "gusset_hole": 0.0,
+       "fork_opening": 1408.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Outer wall": 82.1,
+        "Custom": 480.5,
+        "Gap infill": 23.0,
+        "Brim": 678.9,
+        "Inner wall": 50.4
+       },
+       "z=0.4": {
+        "Outer wall": 83.3,
+        "Gap infill": 34.7,
+        "Inner wall": 100.8
+       },
+       "z=0.6": {
+        "Outer wall": 83.4,
+        "Gap infill": 34.8,
+        "Inner wall": 100.9
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/x-pos-down/run/native/Orange_Bambu/sliced.3mf",
+       "sha256": "42d6e1cef65efebda75883c87eb1377908696b118e6c36c28c8296b5d39b279a"
+      },
+      "gcodeSha256": "e052c15148c4552e64b4e0e2c0c60c28cf4984903f9281a3397c4f95505cf0da"
+     },
+     "Elegoo": {
+      "etaMinutes": 25.8,
+      "totalGrams": 7.78,
+      "supportGrams": 1.3,
+      "layers": 182,
+      "supportExtrusionMm": 12252.2,
+      "supportInterfaceMm": 2819.3,
+      "firstLayerModelAreaMm2": 72.6,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 453.0,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 198.5,
+       "reachMm": 4.05,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pilot_bores": 0.0,
+       "slot_channels": 0.0,
+       "output_holes": 0.0,
+       "centre_aperture": 0.0,
+       "gusset_hole": 22.3,
+       "fork_opening": 992.8
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Gap infill": 23.0,
+        "Inner wall": 50.4,
+        "Brim": 426.8,
+        "Outer wall": 82.2
+       },
+       "z=0.3": {
+        "Custom": 506.9
+       },
+       "z=0.4": {
+        "Gap infill": 34.7,
+        "Inner wall": 100.9,
+        "Outer wall": 83.3
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/x-pos-down/run/native/Orange_Elegoo/sliced.3mf",
+       "sha256": "476a36e8677c899d1d84043499a2260e3b58df8014fcdc49b97d0891da79683e"
+      },
+      "gcodeSha256": "b60a747875dfff2ecb79605b86b2a75132d6470565eaeeb4fd2f71bacd2fde8c"
+     }
+    },
+    "functionalFaces": {
+     "motor_face": {
+      "must": true,
+      "meaning": "inner motor mating face (399 mm2 plane at local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+      "areaMm2": 399.2,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 399.2,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       3.72,
+       34.55
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "output_seats": {
+      "must": true,
+      "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+      "areaMm2": 45.6,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 45.6,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       14.01,
+       29.67
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 2.1
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "plate_underside": {
+      "must": false,
+      "meaning": "plate underside inside r < 8 at z = -33 (between the seats, horn-side clearance)",
+      "areaMm2": 0.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": null,
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "foot_shoulder": {
+      "must": false,
+      "meaning": "plate underside at z = -33 outside the seats: the shoulder the yellow foot socket rim bears on",
+      "areaMm2": 122.7,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 122.7,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       11.53,
+       30.32
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "foot_block": {
+      "must": false,
+      "meaning": "lower block (z -35.85..-33) outer faces: the slip-fit foot socket (V1.22, 0.2 mm clearance) slides over them",
+      "areaMm2": 643.6,
+      "downMm2": 76.3,
+      "upMm2": 75.5,
+      "sideMm2": 491.9,
+      "onBedMm2": 6.1,
+      "printZMm": [
+       0.0,
+       36.5
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 8.2,
+       "Elegoo": 26.6
+      },
+      "nearSupportMm2": {
+       "Bambu": 11.8,
+       "Elegoo": 47.6
+      },
+      "supportInsideMm": {},
+      "clean": false
+     },
+     "slot_walls": {
+      "must": true,
+      "meaning": "open-top slot side walls (2.2 mm apart, x = +-12 +- 1.1, y 1.5..2.05): the register for the cheek tongues",
+      "areaMm2": 10.9,
+      "downMm2": 5.4,
+      "upMm2": 5.4,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.74,
+       34.94
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "slot_floor": {
+      "must": false,
+      "meaning": "slot floor at y = 1.5 (0.1 mm nominal gap to the tongue tip)",
+      "areaMm2": 20.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 20.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.84,
+       34.84
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "post_register": {
+      "must": true,
+      "meaning": "post faces at y = 2.0 beside each slot: the flat faces the cheek tab is pulled against",
+      "areaMm2": 19.6,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 19.6,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.14,
+       35.54
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 4.9,
+       "Elegoo": 4.9
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "pilot_bores": {
+      "must": true,
+      "meaning": "two d1.6 blind TAP pilots along Y (y -2.5..1.5 at x = +-12, z = 4.5)",
+      "areaMm2": 40.2,
+      "downMm2": 13.4,
+      "upMm2": 13.4,
+      "sideMm2": 13.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       9.04,
+       34.64
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "split_face": {
+      "must": false,
+      "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+      "areaMm2": 65.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 65.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       10.97,
+       32.71
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 4.2,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "wing_inner_walls": {
+      "must": false,
+      "meaning": "wing inner walls at x = +-11 (z -1.6..3): the cheek body nests between them",
+      "areaMm2": 81.6,
+      "downMm2": 44.6,
+      "upMm2": 37.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       10.84,
+       32.84
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 39.5
+      },
+      "nearSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 39.5
+      },
+      "supportInsideMm": {},
+      "clean": false
+     },
+     "arm_inner_face": {
+      "must": false,
+      "meaning": "arm inner face y = -7.12 (faces the motor package)",
+      "areaMm2": 340.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 340.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.39,
+       35.55
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 16.5
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "arm_outer_face": {
+      "must": false,
+      "meaning": "arm outer face y = -9.62 (exterior)",
+      "areaMm2": 470.3,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 470.3,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.54,
+       36.33
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "gusset_hole": {
+      "must": false,
+      "meaning": "original d2.2 / d4.4 counterbored hole through the gusset at x = 17.5, z = -16 (axis Y)",
+      "areaMm2": 24.2,
+      "downMm2": 8.1,
+      "upMm2": 8.1,
+      "sideMm2": 8.1,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       2.14,
+       6.54
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 2.2
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 4.1
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 22.3
+      },
+      "clean": false
+     },
+     "top_faces": {
+      "must": false,
+      "meaning": "wing tops z = 3 and post tops z = 7.1 (exterior)",
+      "areaMm2": 107.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 107.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.39,
+       35.28
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 7.3,
+       "Elegoo": 8.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     }
+    },
+    "runs": [
+     "slices/left_base/x-pos-down/manifest.json",
+     "slices/left_base/x-pos-down/run/preparation.json",
+     "slices/left_base/x-pos-down/prepare.log",
+     "slices/left_base/x-pos-down/prepare-resource.json",
+     "slices/left_base/x-pos-down/slice-Bambu.log",
+     "slices/left_base/x-pos-down/slice-Bambu-resource.json",
+     "slices/left_base/x-pos-down/readback-Bambu.log",
+     "slices/left_base/x-pos-down/readback-Bambu.json",
+     "slices/left_base/x-pos-down/faces-Bambu.log",
+     "slices/left_base/x-pos-down/faces-Bambu.json",
+     "slices/left_base/x-pos-down/slice-Elegoo.log",
+     "slices/left_base/x-pos-down/slice-Elegoo-resource.json",
+     "slices/left_base/x-pos-down/readback-Elegoo.log",
+     "slices/left_base/x-pos-down/readback-Elegoo.json",
+     "slices/left_base/x-pos-down/faces-Elegoo.log",
+     "slices/left_base/x-pos-down/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Local +X down: the big gusset end face (81.1 mm2, tip 2.8 deg, 36.5 mm tall) on the bed, exactly the 10/07 candidate pose (the 10/07 package was never printed: its README says no print has been started). It is the only family of poses where the motor mating face, the four output screw seats, the slot walls, the post register faces and the pilot bores all stand vertical or face up, so none of them touches support on either machine (0 mm2 resting on support, 0 mm of support inside pilots, slots and output holes). The mirror pose (-X down) is equivalent on the functional faces but puts more of the foot slip-fit block on support (22.7 / 53.3 mm2 against 8.2 / 26.6) and has the same Bambu brim notch. The screen favourite (-Z tilted onto the foot facets, 316 mm2 contact, no brim) is rejected because it turns the output seats down onto support (35.5 mm2 on Elegoo) and fills the slot channels and pilots with support on Bambu.",
+    "cleanFaces": [
+     "motor_face",
+     "output_seats",
+     "slot_walls",
+     "post_register",
+     "pilot_bores"
+    ],
+    "facesWithSupport": [
+     {
+      "face": "wing_inner_walls",
+      "restsOnSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 39.5
+      },
+      "where": "the inner wall of the lower wing (local x = -11, y -12.9..-2.2, z -1.1..2.5), the wall that faces down in this pose",
+      "whyAcceptable": "the cheek body nests between the wing inner walls with zero nominal clearance; the wall does not slide or bear, it only locates the cheek sideways. A support scar here can make the cheek a push fit. Scrape the scar flat with a blade before the first fit (open item: a 0.1 mm side clearance in the model would remove the hand step)."
+     },
+     {
+      "face": "foot_block",
+      "restsOnSupportMm2": {
+       "Bambu": 8.2,
+       "Elegoo": 26.6
+      },
+      "where": "the underside of the lower block facing down in this pose (local z -33.3..-34.5, near x 9..10 on Bambu; the whole lower strip on Elegoo)",
+      "whyAcceptable": "the V1.22 foot socket slides over this block with 0.2 mm clearance; the scar is on one side face only and is below the plate. Check the foot socket slides on; if it binds, file the one scarred face."
+     },
+     {
+      "face": "gusset_hole",
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 2.2
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 22.3
+      },
+      "where": "the original community d2.2 / d4.4 counterbored hole through the gusset, horizontal in this pose",
+      "whyAcceptable": "the hole has no function in the split design (nothing is screwed through it); Orca puts 22 mm of support in the counterbore, pick it out or leave it."
+     },
+     {
+      "face": "fork_opening",
+      "supportInsideMm": {
+       "Bambu": 1408.0,
+       "Elegoo": 992.8
+      },
+      "where": "the open fork between the wings above the motor face (the volume the cheek and the lower link occupy)",
+      "whyAcceptable": "this is where the support towers for the top wing and the posts stand; it is open space, not a face. It must be cleared completely before the cheek is fitted."
+     }
+    ],
+    "drillPass": [
+     "Two d1.6 blind TAP pilots (local Y axis, x = +-12, z = 4.5) are horizontal in this pose. The hole prints, but a small horizontal FDM hole comes out 0.2-0.4 mm under size because its ceiling sags; no print of this design exists, so the actual diameter is unmeasured. No-drill route (preferred): give the three horizontal hole families a teardrop (pointed-top) profile in generate_candidate.py so they print to size, or model them oversize after one measured print. Drilling (1.6 mm by hand, 1.2 mm wall to the slot) is the last resort only if a printed pilot refuses the M2 x 8 TAP screw.",
+     "The original output screw holes through the plate (d4.4 counterbores at local z = -32.5 around (+-6, 0) and (0, +-6)) are horizontal too and bridged by the slicer (0 mm support inside). Same route: teardrop profile or measured oversize; test with the M2 x 4 TAP screw first."
+    ],
+    "brimDecision": "R1 default kept: outer_only, 4 mm, gap 0.1 mm on both machines (tip 2.8 deg, 36.5 mm tall on a 2.3 mm wide strip). Elegoo brim review passes. Bambu brim review fails on 13.3 mm2 of brim inside the part's convex outline: Bambu's brim loops into the real 12 x 1.1 mm recess on the inner side of the gusset end face (the community-66 notch next to the gusset hole), Orca's does not because its support feet stand there. That brim piece is a 1.1 mm wide strip bonded on three sides; cut it out with a blade. The decision whether to accept the failed review as-is or to carry a per-object reason in objectSettingsSource belongs to the release, see openItems.",
+    "openItems": [
+     "Bambu brim review fails (13.3 mm2 inside the convex outline, gusset notch). The release pipeline's brim_review() will flag the plate; the part still needs the brim. Resolution options for the parent: accept with a written reason, or print the bases on the Elegoo only.",
+     "Stability: 36.5 mm tall on an 81 mm2 strip (tip 2.8 deg) with a 4 mm brim. No print of this design exists yet, so the stability is untested; keep the brim and print the two bases on the same plate so the toolhead time per layer stays short.",
+     "Wing inner wall scar against a zero-clearance nest: a 0.1 mm side clearance in generate_candidate.py would remove the scrape step; geometry change, not done here.",
+     "The horizontal pilots and output holes have not been drilled or test-screwed on a V1.22-profile print; no print of this design exists, so the hole diameters are unmeasured.",
+     "Horizontal small holes without drilling: add a teardrop (pointed-top) profile to the pilots, output holes and counterbores in generate_candidate.py, or model them oversize after one measured print. A pose with these holes vertical (local Y down) is not printable: 1.5 / 5.4 mm2 of contact, the base lies on an edge."
+    ]
+   },
+   "alternatives": [
+    {
+     "slug": "x-neg-down",
+     "poseName": "local -X down (small wing end on the bed)",
+     "screenCandidate": "local -X down",
+     "sourceToPrint": [
+      [
+       0.0,
+       -0.9922686102671394,
+       -0.12410884367570213,
+       -7.4754320716235405
+      ],
+      [
+       0.0,
+       0.12410884367570213,
+       -0.9922686102671394,
+       -13.389891573576936
+      ],
+      [
+       1.0,
+       0.0,
+       0.0,
+       14.663056373596191
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "bedContactMm2": 81.14,
+     "heightMm": 36.5,
+     "footprintMm": [
+      25.59,
+      41.99
+     ],
+     "tipAngleDeg": 3.28,
+     "objectSettings": {
+      "brim_type": "outer_only",
+      "brim_width": "4",
+      "brim_object_gap": "0.1"
+     },
+     "objectSettingsSource": "R1 default: tip angle 3.3 deg < 10 deg, outer brim",
+     "perMachine": {
+      "Bambu": {
+       "etaMinutes": 28.6,
+       "totalGrams": 7.28,
+       "supportGrams": 0.53,
+       "layers": 182,
+       "supportExtrusionMm": 5144.6,
+       "supportInterfaceMm": 855.7,
+       "firstLayerModelAreaMm2": 74.0,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 402.7,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 228.8,
+        "reachMm": 4.05,
+        "failures": [
+         "15.3 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 0.0,
+        "slot_channels": 0.0,
+        "output_holes": 0.0,
+        "centre_aperture": 0.0,
+        "gusset_hole": 0.0,
+        "fork_opening": 697.0
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 22.9,
+         "Inner wall": 51.0,
+         "Custom": 480.5,
+         "Brim": 489.4,
+         "Outer wall": 82.8
+        },
+        "z=0.4": {
+         "Gap infill": 34.8,
+         "Outer wall": 85.3,
+         "Inner wall": 104.9
+        },
+        "z=0.6": {
+         "Gap infill": 33.0,
+         "Outer wall": 86.7,
+         "Inner wall": 116.8
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/x-neg-down/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "d0981863b841f05945472199ef40778bfa1e0a78520ed7e8007404b7dc7b14f2"
+       },
+       "gcodeSha256": "153b0992dc89e79135b0f57d5034e05babb44edd777c4af444582dca58d501fe"
+      },
+      "Elegoo": {
+       "etaMinutes": 25.6,
+       "totalGrams": 7.46,
+       "supportGrams": 0.98,
+       "layers": 182,
+       "supportExtrusionMm": 9717.8,
+       "supportInterfaceMm": 2609.7,
+       "firstLayerModelAreaMm2": 74.0,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 474.6,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 206.3,
+        "reachMm": 4.05,
+        "failures": []
+       },
+       "brimReviewPassed": true,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 0.0,
+        "slot_channels": 0.0,
+        "output_holes": 0.0,
+        "centre_aperture": 12.0,
+        "gusset_hole": 0.0,
+        "fork_opening": 1685.8
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 22.9,
+         "Inner wall": 51.1,
+         "Brim": 439.7,
+         "Outer wall": 82.8
+        },
+        "z=0.3": {
+         "Custom": 506.9
+        },
+        "z=0.4": {
+         "Gap infill": 34.8,
+         "Inner wall": 104.9,
+         "Outer wall": 85.3
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/x-neg-down/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "d2709b09eb5ac1edc501f3d682239757f24ed6b89613b19d2ccd020aa5edc03c"
+       },
+       "gcodeSha256": "292faed4ee61e1ad183f1b905a0f2d352a5cee75cb9c19c1b0a2c07274caf2e5"
+      }
+     },
+     "functionalFaces": {
+      "motor_face": {
+       "must": true,
+       "meaning": "inner motor mating face (399 mm2 plane at local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+       "areaMm2": 399.2,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 399.2,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.95,
+        32.78
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "output_seats": {
+       "must": true,
+       "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+       "areaMm2": 45.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 45.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        6.83,
+        22.49
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 5.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "plate_underside": {
+       "must": false,
+       "meaning": "plate underside inside r < 8 at z = -33 (between the seats, horn-side clearance)",
+       "areaMm2": 0.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": null,
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "foot_shoulder": {
+       "must": false,
+       "meaning": "plate underside at z = -33 outside the seats: the shoulder the yellow foot socket rim bears on",
+       "areaMm2": 122.7,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 122.7,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        6.18,
+        24.97
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "foot_block": {
+       "must": false,
+       "meaning": "lower block (z -35.85..-33) outer faces: the slip-fit foot socket (V1.22, 0.2 mm clearance) slides over them",
+       "areaMm2": 643.6,
+       "downMm2": 75.5,
+       "upMm2": 76.3,
+       "sideMm2": 491.9,
+       "onBedMm2": 6.1,
+       "printZMm": [
+        0.0,
+        36.5
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 22.7,
+        "Elegoo": 53.3
+       },
+       "nearSupportMm2": {
+        "Bambu": 33.4,
+        "Elegoo": 69.9
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "slot_walls": {
+       "must": true,
+       "meaning": "open-top slot side walls (2.2 mm apart, x = +-12 +- 1.1, y 1.5..2.05): the register for the cheek tongues",
+       "areaMm2": 10.9,
+       "downMm2": 5.4,
+       "upMm2": 5.4,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.56,
+        27.76
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "slot_floor": {
+       "must": false,
+       "meaning": "slot floor at y = 1.5 (0.1 mm nominal gap to the tongue tip)",
+       "areaMm2": 20.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 20.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.66,
+        27.66
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "post_register": {
+       "must": true,
+       "meaning": "post faces at y = 2.0 beside each slot: the flat faces the cheek tab is pulled against",
+       "areaMm2": 19.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 19.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.96,
+        28.36
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 4.9,
+        "Elegoo": 4.9
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "pilot_bores": {
+       "must": true,
+       "meaning": "two d1.6 blind TAP pilots along Y (y -2.5..1.5 at x = +-12, z = 4.5)",
+       "areaMm2": 40.2,
+       "downMm2": 13.4,
+       "upMm2": 13.4,
+       "sideMm2": 13.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.86,
+        27.46
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "split_face": {
+       "must": false,
+       "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+       "areaMm2": 65.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 65.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.79,
+        25.53
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 3.5,
+        "Elegoo": 1.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "wing_inner_walls": {
+       "must": false,
+       "meaning": "wing inner walls at x = +-11 (z -1.6..3): the cheek body nests between them",
+       "areaMm2": 81.6,
+       "downMm2": 37.0,
+       "upMm2": 44.6,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.66,
+        25.66
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 37.0,
+        "Elegoo": 36.5
+       },
+       "nearSupportMm2": {
+        "Bambu": 37.0,
+        "Elegoo": 36.5
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "arm_inner_face": {
+       "must": false,
+       "meaning": "arm inner face y = -7.12 (faces the motor package)",
+       "areaMm2": 340.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 340.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.95,
+        36.11
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 4.3
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "arm_outer_face": {
+       "must": false,
+       "meaning": "arm outer face y = -9.62 (exterior)",
+       "areaMm2": 470.3,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 470.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.17,
+        35.96
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 4.8,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "gusset_hole": {
+       "must": false,
+       "meaning": "original d2.2 / d4.4 counterbored hole through the gusset at x = 17.5, z = -16 (axis Y)",
+       "areaMm2": 24.2,
+       "downMm2": 8.1,
+       "upMm2": 8.1,
+       "sideMm2": 8.1,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        29.96,
+        34.36
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "top_faces": {
+       "must": false,
+       "meaning": "wing tops z = 3 and post tops z = 7.1 (exterior)",
+       "areaMm2": 107.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 107.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.22,
+        36.11
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      }
+     },
+     "runs": [
+      "slices/left_base/x-neg-down/manifest.json",
+      "slices/left_base/x-neg-down/run/preparation.json",
+      "slices/left_base/x-neg-down/prepare.log",
+      "slices/left_base/x-neg-down/prepare-resource.json",
+      "slices/left_base/x-neg-down/slice-Bambu.log",
+      "slices/left_base/x-neg-down/slice-Bambu-resource.json",
+      "slices/left_base/x-neg-down/readback-Bambu.log",
+      "slices/left_base/x-neg-down/readback-Bambu.json",
+      "slices/left_base/x-neg-down/faces-Bambu.log",
+      "slices/left_base/x-neg-down/faces-Bambu.json",
+      "slices/left_base/x-neg-down/slice-Elegoo.log",
+      "slices/left_base/x-neg-down/slice-Elegoo-resource.json",
+      "slices/left_base/x-neg-down/readback-Elegoo.log",
+      "slices/left_base/x-neg-down/readback-Elegoo.json",
+      "slices/left_base/x-neg-down/faces-Elegoo.log",
+      "slices/left_base/x-neg-down/faces-Elegoo.json"
+     ],
+     "rejectedBecause": "Mirror of the chosen pose (small wing end on the bed). Functional faces equally clean; slightly less support (5145 / 9718 mm against 6909 / 12252 mm) but more of the foot slip-fit block rests on support (22.7 / 53.3 mm2) and the same Bambu brim notch (15.3 mm2). Chosen pose matches the 10/07 candidate; with no print on either side, the pose with less foot block on support wins."
+    },
+    {
+     "slug": "z-neg-tilted",
+     "poseName": "local -Z down tilted 7 deg onto the sloped foot bottom (screen favourite with 336 mm2 contact)",
+     "screenCandidate": "stable p=0.09",
+     "sourceToPrint": [
+      [
+       2.3858057044079777e-06,
+       -0.992275044624922,
+       -0.12405738917499814,
+       -7.473814940821089
+      ],
+      [
+       0.9999999998150754,
+       -7.766286531687829e-18,
+       1.9231467950718023e-05,
+       -3.5869255030362073
+      ],
+      [
+       -1.9082905719058907e-05,
+       -0.12405738919793943,
+       0.9922750444414259,
+       34.38383409274291
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "bedContactMm2": 335.77,
+     "heightMm": 41.99,
+     "footprintMm": [
+      25.59,
+      36.5
+     ],
+     "tipAngleDeg": 10.54,
+     "objectSettings": {
+      "brim_type": "no_brim"
+     },
+     "objectSettingsSource": "R1 default: tip angle 10.5 deg >= 10 deg, no brim",
+     "perMachine": {
+      "Bambu": {
+       "etaMinutes": 34.1,
+       "totalGrams": 7.83,
+       "supportGrams": 1.32,
+       "layers": 210,
+       "supportExtrusionMm": 11627.0,
+       "supportInterfaceMm": 1468.4,
+       "firstLayerModelAreaMm2": 315.2,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 511.9,
+       "brim": {
+        "brimType": "no_brim",
+        "brimAreaMm2": 0.0,
+        "reachMm": 0.0,
+        "failures": []
+       },
+       "brimReviewPassed": true,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 3.3,
+        "slot_channels": 7.2,
+        "output_holes": 0.0,
+        "centre_aperture": 0.0,
+        "gusset_hole": 0.0,
+        "fork_opening": 860.1
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Outer wall": 153.8,
+         "Bottom surface": 158.6,
+         "Custom": 480.5,
+         "Gap infill": 17.9,
+         "Inner wall": 330.1
+        },
+        "z=0.4": {
+         "Outer wall": 151.5,
+         "Gap infill": 9.6,
+         "Internal solid infill": 257.7,
+         "Inner wall": 369.0
+        },
+        "z=0.6": {
+         "Outer wall": 151.3,
+         "Gap infill": 9.6,
+         "Internal solid infill": 257.8,
+         "Inner wall": 370.4
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/z-neg-tilted/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "58ad178ebb9a263600134cfff85b87b904f8d5ce3529b431b5aaa20daaa6ad4e"
+       },
+       "gcodeSha256": "cbe9d42f7567802e722339ca481c8b08112634eaa53b138663b477bc0d3c0460"
+      },
+      "Elegoo": {
+       "etaMinutes": 30.6,
+       "totalGrams": 8.02,
+       "supportGrams": 1.79,
+       "layers": 210,
+       "supportExtrusionMm": 14796.0,
+       "supportInterfaceMm": 2832.3,
+       "firstLayerModelAreaMm2": 315.7,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 571.5,
+       "brim": {
+        "brimType": "no_brim",
+        "brimAreaMm2": 0.0,
+        "reachMm": 0.0,
+        "failures": []
+       },
+       "brimReviewPassed": true,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 0.0,
+        "slot_channels": 0.0,
+        "output_holes": 82.0,
+        "centre_aperture": 0.0,
+        "gusset_hole": 0.0,
+        "fork_opening": 1179.3
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Inner wall": 330.2,
+         "Bottom surface": 148.9,
+         "Gap infill": 26.5,
+         "Outer wall": 153.5
+        },
+        "z=0.3": {
+         "Custom": 506.9
+        },
+        "z=0.4": {
+         "Inner wall": 369.2,
+         "Internal solid infill": 263.7,
+         "Gap infill": 16.5,
+         "Outer wall": 151.2
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_base/z-neg-tilted/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "ef4da52b991de9f9b9817a1297534ee6e4c6071060ef80af79e46d314c0849b7"
+       },
+       "gcodeSha256": "9c39e443689f47226346f890b33c97fd5e5be486bfacf282a691ef606901a78f"
+      }
+     },
+     "functionalFaces": {
+      "motor_face": {
+       "must": true,
+       "meaning": "inner motor mating face (399 mm2 plane at local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+       "areaMm2": 399.2,
+       "downMm2": 0.0,
+       "upMm2": 399.2,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        2.87,
+        5.62
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "output_seats": {
+       "must": true,
+       "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+       "areaMm2": 45.6,
+       "downMm2": 45.6,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.16,
+        3.11
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 35.5
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 35.5
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "plate_underside": {
+       "must": false,
+       "meaning": "plate underside inside r < 8 at z = -33 (between the seats, horn-side clearance)",
+       "areaMm2": 0.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": null,
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "foot_shoulder": {
+       "must": false,
+       "meaning": "plate underside at z = -33 outside the seats: the shoulder the yellow foot socket rim bears on",
+       "areaMm2": 122.7,
+       "downMm2": 122.7,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        2.85,
+        3.48
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 122.7,
+        "Elegoo": 119.6
+       },
+       "nearSupportMm2": {
+        "Bambu": 122.7,
+        "Elegoo": 119.6
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "foot_block": {
+       "must": false,
+       "meaning": "lower block (z -35.85..-33) outer faces: the slip-fit foot socket (V1.22, 0.2 mm clearance) slides over them",
+       "areaMm2": 643.6,
+       "downMm2": 335.8,
+       "upMm2": 0.0,
+       "sideMm2": 307.8,
+       "onBedMm2": 335.8,
+       "printZMm": [
+        0.0,
+        2.25
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 75.7,
+        "Elegoo": 109.2
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "slot_walls": {
+       "must": true,
+       "meaning": "open-top slot side walls (2.2 mm apart, x = +-12 +- 1.1, y 1.5..2.05): the register for the cheek tongues",
+       "areaMm2": 10.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 10.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        37.6,
+        39.42
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 5.4,
+        "Elegoo": 2.7
+       },
+       "supportInsideMm": {
+        "Bambu": 7.2,
+        "Elegoo": 0.0
+       },
+       "clean": false
+      },
+      "slot_floor": {
+       "must": false,
+       "meaning": "slot floor at y = 1.5 (0.1 mm nominal gap to the tongue tip)",
+       "areaMm2": 20.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 20.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        36.51,
+        40.57
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 7.7,
+        "Elegoo": 3.4
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "post_register": {
+       "must": true,
+       "meaning": "post faces at y = 2.0 beside each slot: the flat faces the cheek tab is pulled against",
+       "areaMm2": 19.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 19.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        37.58,
+        39.38
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 7.4,
+        "Elegoo": 9.8
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "pilot_bores": {
+       "must": true,
+       "meaning": "two d1.6 blind TAP pilots along Y (y -2.5..1.5 at x = +-12, z = 4.5)",
+       "areaMm2": 40.2,
+       "downMm2": 13.4,
+       "upMm2": 13.4,
+       "sideMm2": 13.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        38.03,
+        39.79
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 1.5,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 1.5,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 3.3,
+        "Elegoo": 0.0
+       },
+       "clean": false
+      },
+      "split_face": {
+       "must": false,
+       "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+       "areaMm2": 65.0,
+       "downMm2": 0.0,
+       "upMm2": 65.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        34.0,
+        34.71
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "wing_inner_walls": {
+       "must": false,
+       "meaning": "wing inner walls at x = +-11 (z -1.6..3): the cheek body nests between them",
+       "areaMm2": 81.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 81.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        33.97,
+        37.68
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 16.6,
+        "Elegoo": 9.9
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "arm_inner_face": {
+       "must": false,
+       "meaning": "arm inner face y = -7.12 (faces the motor package)",
+       "areaMm2": 340.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 340.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.6,
+        36.82
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 3.9,
+        "Elegoo": 3.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "arm_outer_face": {
+       "must": false,
+       "meaning": "arm outer face y = -9.62 (exterior)",
+       "areaMm2": 470.3,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 470.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.94,
+        37.89
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 76.0,
+        "Elegoo": 58.8
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "gusset_hole": {
+       "must": false,
+       "meaning": "original d2.2 / d4.4 counterbored hole through the gusset at x = 17.5, z = -16 (axis Y)",
+       "areaMm2": 24.2,
+       "downMm2": 8.1,
+       "upMm2": 8.1,
+       "sideMm2": 8.1,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        17.25,
+        21.65
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "top_faces": {
+       "must": false,
+       "meaning": "wing tops z = 3 and post tops z = 7.1 (exterior)",
+       "areaMm2": 107.9,
+       "downMm2": 0.0,
+       "upMm2": 107.9,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        38.03,
+        41.72
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      }
+     },
+     "runs": [
+      "slices/left_base/z-neg-tilted/manifest.json",
+      "slices/left_base/z-neg-tilted/run/preparation.json",
+      "slices/left_base/z-neg-tilted/prepare.log",
+      "slices/left_base/z-neg-tilted/prepare-resource.json",
+      "slices/left_base/z-neg-tilted/slice-Bambu.log",
+      "slices/left_base/z-neg-tilted/slice-Bambu-resource.json",
+      "slices/left_base/z-neg-tilted/readback-Bambu.log",
+      "slices/left_base/z-neg-tilted/readback-Bambu.json",
+      "slices/left_base/z-neg-tilted/faces-Bambu.log",
+      "slices/left_base/z-neg-tilted/faces-Bambu.json",
+      "slices/left_base/z-neg-tilted/slice-Elegoo.log",
+      "slices/left_base/z-neg-tilted/slice-Elegoo-resource.json",
+      "slices/left_base/z-neg-tilted/readback-Elegoo.log",
+      "slices/left_base/z-neg-tilted/readback-Elegoo.json",
+      "slices/left_base/z-neg-tilted/faces-Elegoo.log",
+      "slices/left_base/z-neg-tilted/faces-Elegoo.json"
+     ],
+     "rejectedBecause": "Screen favourite (316 mm2 contact, tip 10.5 deg, no brim, 'stable p=0.09'). Rejected: the four output screw seats face down 2.9 mm above the bed and rest on support on Elegoo (35.5 mm2), the foot shoulder is fully on support, and Bambu puts 7.2 mm of support in the slot channels and 3.3 mm in the pilots. Also 34 / 31 min against 29 / 26 min."
+    }
+   ],
+   "screenSummary": [
+    {
+     "name": "stable p=0.20",
+     "rank": 1,
+     "penalty": 61.76,
+     "contactMm2": 45.2,
+     "tipAngleDeg": 12.6,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1037.8,
+     "sameAs": [
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.23",
+     "rank": 2,
+     "penalty": 74.04,
+     "contactMm2": 43.7,
+     "tipAngleDeg": 10.3,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1040.3,
+     "sameAs": [
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "flat facet 44 mm2",
+     "rank": 3,
+     "penalty": 75.82,
+     "contactMm2": 44.5,
+     "tipAngleDeg": 6.7,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1030.9,
+     "sameAs": []
+    },
+    {
+     "name": "local -X down",
+     "rank": 4,
+     "penalty": 93.16,
+     "contactMm2": 81.1,
+     "tipAngleDeg": 3.3,
+     "heightMm": 36.5,
+     "overhang60Mm2": 266.2,
+     "sameAs": [
+      "stable p=0.05",
+      "flat facet 81 mm2"
+     ]
+    },
+    {
+     "name": "current",
+     "rank": 5,
+     "penalty": 96.07,
+     "contactMm2": 81.1,
+     "tipAngleDeg": 2.8,
+     "heightMm": 36.5,
+     "overhang60Mm2": 241.2,
+     "sameAs": [
+      "local +X down",
+      "flat facet 81 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.09",
+     "rank": 6,
+     "penalty": 118.8,
+     "contactMm2": 335.8,
+     "tipAngleDeg": 10.5,
+     "heightMm": 41.99,
+     "overhang60Mm2": 293.4,
+     "sameAs": [
+      "flat facet 74 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.06",
+     "rank": 7,
+     "penalty": 357.81,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 13.7,
+     "heightMm": 36.75,
+     "overhang60Mm2": 272.5,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.04",
+     "rank": 8,
+     "penalty": 370.34,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 8.9,
+     "heightMm": 36.36,
+     "overhang60Mm2": 240.7,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.11",
+     "rank": 9,
+     "penalty": 433.12,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 14.2,
+     "heightMm": 25.48,
+     "overhang60Mm2": 917.4,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.15",
+     "rank": 10,
+     "penalty": 434.17,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 17.7,
+     "heightMm": 31.06,
+     "overhang60Mm2": 505.9,
+     "sameAs": []
+    },
+    {
+     "name": "local -Y down",
+     "rank": 11,
+     "penalty": 1084.68,
+     "contactMm2": 1.5,
+     "tipAngleDeg": -2.9,
+     "heightMm": 25.5,
+     "overhang60Mm2": 1015.0,
+     "sameAs": [
+      "flat facet 44 mm2",
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "local +Z down",
+     "rank": 12,
+     "penalty": 1111.26,
+     "contactMm2": 49.8,
+     "tipAngleDeg": -8.8,
+     "heightMm": 42.95,
+     "overhang60Mm2": 576.8,
+     "sameAs": []
+    },
+    {
+     "name": "local +Y down",
+     "rank": 13,
+     "penalty": 1161.54,
+     "contactMm2": 5.4,
+     "tipAngleDeg": -31.5,
+     "heightMm": 25.5,
+     "overhang60Mm2": 974.3,
+     "sameAs": []
+    },
+    {
+     "name": "local -Z down",
+     "rank": 14,
+     "penalty": 1421.0,
+     "contactMm2": 0.0,
+     "tipAngleDeg": -0.6,
+     "heightMm": 42.95,
+     "overhang60Mm2": 436.9,
+     "sameAs": []
+    }
+   ]
+  },
+  "right_base": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+    "sha256": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-base-PRINT.stl",
+    "sha256": "6d30521e7ba3ad41dcd441de4b40587cb0194ce2952ba76304697226db95f275",
+    "localToPrintStl": [
+     [
+      0.0,
+      0.0,
+      -1.0,
+      -14.376534700393677
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "x-neg-down",
+    "poseName": "local -X down (10/07 candidate: big gusset end on the bed)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      0.0,
+      0.0,
+      -1.0,
+      -14.376534700393677
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 81.14,
+    "heightMm": 36.5,
+    "footprintMm": [
+     42.95,
+     25.5
+    ],
+    "tipAngleDeg": 2.79,
+    "objectSettings": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1"
+    },
+    "objectSettingsSource": "R1 default: tip angle 2.8 deg < 10 deg, outer brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 28.7,
+      "totalGrams": 7.55,
+      "supportGrams": 0.77,
+      "layers": 182,
+      "supportExtrusionMm": 7149.8,
+      "supportInterfaceMm": 686.4,
+      "firstLayerModelAreaMm2": 72.6,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 252.3,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 324.8,
+       "reachMm": 4.05,
+       "failures": [
+        "13.3 mm2 of brim inside the part's own convex outline"
+       ]
+      },
+      "brimReviewPassed": false,
+      "supportInsideCavitiesMm": {
+       "pilot_bores": 0.0,
+       "slot_channels": 0.0,
+       "output_holes": 0.0,
+       "centre_aperture": 0.0,
+       "gusset_hole": 0.0,
+       "fork_opening": 931.9
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Brim": 700.7,
+        "Custom": 480.5,
+        "Outer wall": 82.2,
+        "Gap infill": 23.0,
+        "Inner wall": 50.4
+       },
+       "z=0.4": {
+        "Inner wall": 100.8,
+        "Gap infill": 34.8,
+        "Outer wall": 83.3
+       },
+       "z=0.6": {
+        "Inner wall": 100.9,
+        "Gap infill": 34.8,
+        "Outer wall": 83.3
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_base/x-neg-down/run/native/Orange_Bambu/sliced.3mf",
+       "sha256": "094c962919900e21df50b77e6be06520c19e008d02b36b2de19771645f0c7460"
+      },
+      "gcodeSha256": "d9b71685bb43a2794dfa5ed0ac949aeb5d1da71587c6978a2bba289ce9f4d84f"
+     },
+     "Elegoo": {
+      "etaMinutes": 25.3,
+      "totalGrams": 7.73,
+      "supportGrams": 1.24,
+      "layers": 182,
+      "supportExtrusionMm": 11797.2,
+      "supportInterfaceMm": 2832.2,
+      "firstLayerModelAreaMm2": 72.6,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 416.0,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 198.6,
+       "reachMm": 4.05,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pilot_bores": 0.0,
+       "slot_channels": 0.0,
+       "output_holes": 0.0,
+       "centre_aperture": 0.0,
+       "gusset_hole": 21.3,
+       "fork_opening": 1026.1
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Brim": 427.0,
+        "Inner wall": 50.4,
+        "Outer wall": 82.2,
+        "Gap infill": 23.0
+       },
+       "z=0.3": {
+        "Custom": 506.9
+       },
+       "z=0.4": {
+        "Outer wall": 83.3,
+        "Gap infill": 34.8,
+        "Inner wall": 100.9
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_base/x-neg-down/run/native/Orange_Elegoo/sliced.3mf",
+       "sha256": "eca113aaafd6cc7dc6acd202b2463b504696ec732de97207af0e1df71a0dcc87"
+      },
+      "gcodeSha256": "6205de753cd5e2b546b06c45c84ccfe7f5a712397e34df974b6db7953f5e2b7d"
+     }
+    },
+    "functionalFaces": {
+     "motor_face": {
+      "must": true,
+      "meaning": "inner motor mating face (399 mm2 plane at local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+      "areaMm2": 399.2,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 399.2,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       3.72,
+       34.55
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "output_seats": {
+      "must": true,
+      "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+      "areaMm2": 45.6,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 45.6,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       14.01,
+       29.67
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 8.8
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "plate_underside": {
+      "must": false,
+      "meaning": "plate underside inside r < 8 at z = -33 (between the seats, horn-side clearance)",
+      "areaMm2": 0.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": null,
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "foot_shoulder": {
+      "must": false,
+      "meaning": "plate underside at z = -33 outside the seats: the shoulder the yellow foot socket rim bears on",
+      "areaMm2": 122.7,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 122.7,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       11.53,
+       30.32
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "foot_block": {
+      "must": false,
+      "meaning": "lower block (z -35.85..-33) outer faces: the slip-fit foot socket (V1.22, 0.2 mm clearance) slides over them",
+      "areaMm2": 643.7,
+      "downMm2": 76.3,
+      "upMm2": 75.5,
+      "sideMm2": 491.9,
+      "onBedMm2": 6.1,
+      "printZMm": [
+       0.0,
+       36.5
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 8.2,
+       "Elegoo": 37.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 11.8,
+       "Elegoo": 64.0
+      },
+      "supportInsideMm": {},
+      "clean": false
+     },
+     "slot_walls": {
+      "must": true,
+      "meaning": "open-top slot side walls (2.2 mm apart, x = +-12 +- 1.1, y 1.5..2.05): the register for the cheek tongues",
+      "areaMm2": 10.9,
+      "downMm2": 5.4,
+      "upMm2": 5.4,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.74,
+       34.94
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "slot_floor": {
+      "must": false,
+      "meaning": "slot floor at y = 1.5 (0.1 mm nominal gap to the tongue tip)",
+      "areaMm2": 20.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 20.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.84,
+       34.83
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "post_register": {
+      "must": true,
+      "meaning": "post faces at y = 2.0 beside each slot: the flat faces the cheek tab is pulled against",
+      "areaMm2": 19.6,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 19.6,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.14,
+       35.54
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 4.9,
+       "Elegoo": 4.9
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "pilot_bores": {
+      "must": true,
+      "meaning": "two d1.6 blind TAP pilots along Y (y -2.5..1.5 at x = +-12, z = 4.5)",
+      "areaMm2": 40.2,
+      "downMm2": 13.4,
+      "upMm2": 13.4,
+      "sideMm2": 13.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       9.04,
+       34.64
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "split_face": {
+      "must": false,
+      "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+      "areaMm2": 65.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 65.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       10.97,
+       32.71
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 5.1,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "wing_inner_walls": {
+      "must": false,
+      "meaning": "wing inner walls at x = +-11 (z -1.6..3): the cheek body nests between them",
+      "areaMm2": 81.6,
+      "downMm2": 44.6,
+      "upMm2": 37.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       10.84,
+       32.84
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 37.3
+      },
+      "nearSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 37.3
+      },
+      "supportInsideMm": {},
+      "clean": false
+     },
+     "arm_inner_face": {
+      "must": false,
+      "meaning": "arm inner face y = -7.12 (faces the motor package)",
+      "areaMm2": 340.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 340.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.39,
+       36.03
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 16.5
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "arm_outer_face": {
+      "must": false,
+      "meaning": "arm outer face y = -9.62 (exterior)",
+      "areaMm2": 470.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 470.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.54,
+       36.33
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "gusset_hole": {
+      "must": false,
+      "meaning": "original d2.2 / d4.4 counterbored hole through the gusset at x = 17.5, z = -16 (axis Y)",
+      "areaMm2": 24.2,
+      "downMm2": 8.1,
+      "upMm2": 8.1,
+      "sideMm2": 8.1,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       2.14,
+       6.54
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 1.5
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 3.9
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 21.3
+      },
+      "clean": false
+     },
+     "top_faces": {
+      "must": false,
+      "meaning": "wing tops z = 3 and post tops z = 7.1 (exterior)",
+      "areaMm2": 107.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 107.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.39,
+       35.54
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 2.7
+      },
+      "supportInsideMm": {},
+      "clean": true
+     }
+    },
+    "runs": [
+     "slices/right_base/x-neg-down/manifest.json",
+     "slices/right_base/x-neg-down/run/preparation.json",
+     "slices/right_base/x-neg-down/prepare.log",
+     "slices/right_base/x-neg-down/prepare-resource.json",
+     "slices/right_base/x-neg-down/slice-Bambu.log",
+     "slices/right_base/x-neg-down/slice-Bambu-resource.json",
+     "slices/right_base/x-neg-down/readback-Bambu.log",
+     "slices/right_base/x-neg-down/readback-Bambu.json",
+     "slices/right_base/x-neg-down/faces-Bambu.log",
+     "slices/right_base/x-neg-down/faces-Bambu.json",
+     "slices/right_base/x-neg-down/slice-Elegoo.log",
+     "slices/right_base/x-neg-down/slice-Elegoo-resource.json",
+     "slices/right_base/x-neg-down/readback-Elegoo.log",
+     "slices/right_base/x-neg-down/readback-Elegoo.json",
+     "slices/right_base/x-neg-down/faces-Elegoo.log",
+     "slices/right_base/x-neg-down/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Mirror of the left base: local -X down, big gusset end face (81.1 mm2, tip 2.8 deg) on the bed, the 10/07 candidate pose (never printed). Every MUST face is vertical or faces up and rests on 0 mm2 of support on both machines; 0 mm of support inside pilots, slot channels and output holes.",
+    "cleanFaces": [
+     "motor_face",
+     "output_seats",
+     "slot_walls",
+     "post_register",
+     "pilot_bores"
+    ],
+    "facesWithSupport": [
+     {
+      "face": "wing_inner_walls",
+      "restsOnSupportMm2": {
+       "Bambu": 44.6,
+       "Elegoo": 37.3
+      },
+      "where": "inner wall of the lower wing (local x = +11, y -14.1..-1.9, z -1.1..2.5)",
+      "whyAcceptable": "same as the left base: nesting wall, zero nominal clearance, scrape the scar flat before the first fit."
+     },
+     {
+      "face": "foot_block",
+      "restsOnSupportMm2": {
+       "Bambu": 8.2,
+       "Elegoo": 37.0
+      },
+      "where": "underside of the lower block facing down (local z -33.1..-34.6)",
+      "whyAcceptable": "foot socket slides over it with 0.2 mm clearance; file the one scarred face if the socket binds."
+     },
+     {
+      "face": "gusset_hole",
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 1.5
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 21.3
+      },
+      "where": "the original counterbored gusset hole, horizontal",
+      "whyAcceptable": "no function in the split design."
+     },
+     {
+      "face": "fork_opening",
+      "supportInsideMm": {
+       "Bambu": 931.9,
+       "Elegoo": 1026.1
+      },
+      "where": "open fork between the wings",
+      "whyAcceptable": "support towers in open space; clear before fitting the cheek."
+     }
+    ],
+    "drillPass": [
+     "Same as the left base: pilots and output holes horizontal; teardrop profile or measured oversize first, drilling last resort."
+    ],
+    "brimDecision": "Same as the left base: R1 outer_only 4 mm kept; Elegoo brim review passes, Bambu fails on 13.3 mm2 of brim in the gusset end-face notch; cut that strip out with a blade.",
+    "openItems": [
+     "Bambu brim review failure (gusset notch), same decision as the left base.",
+     "Tall narrow pose, keep the brim; print both bases together.",
+     "Wing inner wall scar against the zero-clearance nest.",
+     "Horizontal small holes without drilling: add a teardrop (pointed-top) profile to the pilots, output holes and counterbores in generate_candidate.py, or model them oversize after one measured print. A pose with these holes vertical (local Y down) is not printable: 1.5 / 5.4 mm2 of contact, the base lies on an edge."
+    ]
+   },
+   "alternatives": [
+    {
+     "slug": "x-pos-down",
+     "poseName": "local +X down (small wing end on the bed)",
+     "screenCandidate": "local +X down",
+     "sourceToPrint": [
+      [
+       0.0,
+       0.9922710816821992,
+       0.12408908274799295,
+       7.474687437286324
+      ],
+      [
+       0.0,
+       0.12408908274799295,
+       -0.9922710816821992,
+       -13.390039881653234
+      ],
+      [
+       -1.0,
+       0.0,
+       0.0,
+       14.6632080078125
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "bedContactMm2": 81.14,
+     "heightMm": 36.5,
+     "footprintMm": [
+      25.59,
+      41.99
+     ],
+     "tipAngleDeg": 3.28,
+     "objectSettings": {
+      "brim_type": "outer_only",
+      "brim_width": "4",
+      "brim_object_gap": "0.1"
+     },
+     "objectSettingsSource": "R1 default: tip angle 3.3 deg < 10 deg, outer brim",
+     "perMachine": {
+      "Bambu": {
+       "etaMinutes": 29.2,
+       "totalGrams": 7.43,
+       "supportGrams": 0.66,
+       "layers": 183,
+       "supportExtrusionMm": 6186.3,
+       "supportInterfaceMm": 853.1,
+       "firstLayerModelAreaMm2": 74.0,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 491.0,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 226.5,
+        "reachMm": 4.06,
+        "failures": [
+         "15.3 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 0.0,
+        "slot_channels": 0.0,
+        "output_holes": 0.0,
+        "centre_aperture": 0.0,
+        "gusset_hole": 0.0,
+        "fork_opening": 814.5
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 23.3,
+         "Brim": 485.0,
+         "Outer wall": 82.8,
+         "Inner wall": 51.0,
+         "Custom": 480.5
+        },
+        "z=0.4": {
+         "Outer wall": 85.3,
+         "Inner wall": 104.8,
+         "Gap infill": 34.8
+        },
+        "z=0.6": {
+         "Outer wall": 86.7,
+         "Inner wall": 116.8,
+         "Gap infill": 33.0
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_base/x-pos-down/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "840bc11562f79a4e83b43cf89d5c68df13af0230d343463d280a589533338e7d"
+       },
+       "gcodeSha256": "f406b62be51759597b664696fdf99d042ca84b790b70c0dd3a4023655e8242c4"
+      },
+      "Elegoo": {
+       "etaMinutes": 25.6,
+       "totalGrams": 7.45,
+       "supportGrams": 0.94,
+       "layers": 183,
+       "supportExtrusionMm": 9516.1,
+       "supportInterfaceMm": 2594.5,
+       "firstLayerModelAreaMm2": 74.0,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 462.6,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 197.2,
+        "reachMm": 4.06,
+        "failures": []
+       },
+       "brimReviewPassed": true,
+       "supportInsideCavitiesMm": {
+        "pilot_bores": 0.0,
+        "slot_channels": 0.0,
+        "output_holes": 0.0,
+        "centre_aperture": 87.6,
+        "gusset_hole": 0.0,
+        "fork_opening": 1669.7
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Brim": 420.5,
+         "Outer wall": 82.8,
+         "Inner wall": 51.1,
+         "Gap infill": 23.3
+        },
+        "z=0.3": {
+         "Custom": 506.9
+        },
+        "z=0.4": {
+         "Outer wall": 85.3,
+         "Inner wall": 104.9,
+         "Gap infill": 34.8
+        }
+       },
+       "tongueModelToolpathMm": null,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_base/x-pos-down/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "4416f0bdbd0eacde87c0c1a4d96f22b914ffcf7f73c793bfc188b1de46543d17"
+       },
+       "gcodeSha256": "ac4390cdd00852f9b7cc468698325955e883cec0b5d6bea0ffa6f6c236276cdd"
+      }
+     },
+     "functionalFaces": {
+      "motor_face": {
+       "must": true,
+       "meaning": "inner motor mating face (399 mm2 plane at local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+       "areaMm2": 399.2,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 399.2,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.95,
+        32.78
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 7.6,
+        "Elegoo": 7.6
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "output_seats": {
+       "must": true,
+       "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+       "areaMm2": 45.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 45.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        6.83,
+        22.49
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 1.3
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "plate_underside": {
+       "must": false,
+       "meaning": "plate underside inside r < 8 at z = -33 (between the seats, horn-side clearance)",
+       "areaMm2": 0.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": null,
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "foot_shoulder": {
+       "must": false,
+       "meaning": "plate underside at z = -33 outside the seats: the shoulder the yellow foot socket rim bears on",
+       "areaMm2": 122.7,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 122.7,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        6.18,
+        24.97
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "foot_block": {
+       "must": false,
+       "meaning": "lower block (z -35.85..-33) outer faces: the slip-fit foot socket (V1.22, 0.2 mm clearance) slides over them",
+       "areaMm2": 643.7,
+       "downMm2": 75.5,
+       "upMm2": 76.3,
+       "sideMm2": 491.9,
+       "onBedMm2": 6.1,
+       "printZMm": [
+        0.0,
+        36.5
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 22.7,
+        "Elegoo": 42.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 33.4,
+        "Elegoo": 57.4
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "slot_walls": {
+       "must": true,
+       "meaning": "open-top slot side walls (2.2 mm apart, x = +-12 +- 1.1, y 1.5..2.05): the register for the cheek tongues",
+       "areaMm2": 10.9,
+       "downMm2": 5.4,
+       "upMm2": 5.4,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.56,
+        27.76
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "slot_floor": {
+       "must": false,
+       "meaning": "slot floor at y = 1.5 (0.1 mm nominal gap to the tongue tip)",
+       "areaMm2": 20.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 20.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.67,
+        27.66
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "post_register": {
+       "must": true,
+       "meaning": "post faces at y = 2.0 beside each slot: the flat faces the cheek tab is pulled against",
+       "areaMm2": 19.6,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 19.6,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.96,
+        28.36
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 4.9,
+        "Elegoo": 4.9
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "pilot_bores": {
+       "must": true,
+       "meaning": "two d1.6 blind TAP pilots along Y (y -2.5..1.5 at x = +-12, z = 4.5)",
+       "areaMm2": 40.2,
+       "downMm2": 13.4,
+       "upMm2": 13.4,
+       "sideMm2": 13.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.86,
+        27.46
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "split_face": {
+       "must": false,
+       "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+       "areaMm2": 65.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 65.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.79,
+        25.53
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 2.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "wing_inner_walls": {
+       "must": false,
+       "meaning": "wing inner walls at x = +-11 (z -1.6..3): the cheek body nests between them",
+       "areaMm2": 81.6,
+       "downMm2": 37.0,
+       "upMm2": 44.6,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.66,
+        25.66
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 37.0,
+        "Elegoo": 37.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 37.0,
+        "Elegoo": 37.0
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "arm_inner_face": {
+       "must": false,
+       "meaning": "arm inner face y = -7.12 (faces the motor package)",
+       "areaMm2": 340.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 340.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.47,
+        36.11
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 4.3
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "arm_outer_face": {
+       "must": false,
+       "meaning": "arm outer face y = -9.62 (exterior)",
+       "areaMm2": 470.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 470.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.17,
+        35.96
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 5.5,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "gusset_hole": {
+       "must": false,
+       "meaning": "original d2.2 / d4.4 counterbored hole through the gusset at x = 17.5, z = -16 (axis Y)",
+       "areaMm2": 24.2,
+       "downMm2": 8.1,
+       "upMm2": 8.1,
+       "sideMm2": 8.1,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        29.96,
+        34.36
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "top_faces": {
+       "must": false,
+       "meaning": "wing tops z = 3 and post tops z = 7.1 (exterior)",
+       "areaMm2": 107.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 107.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.96,
+        36.11
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 5.8,
+        "Elegoo": 5.8
+       },
+       "supportInsideMm": {},
+       "clean": true
+      }
+     },
+     "runs": [
+      "slices/right_base/x-pos-down/manifest.json",
+      "slices/right_base/x-pos-down/run/preparation.json",
+      "slices/right_base/x-pos-down/prepare.log",
+      "slices/right_base/x-pos-down/prepare-resource.json",
+      "slices/right_base/x-pos-down/slice-Bambu.log",
+      "slices/right_base/x-pos-down/slice-Bambu-resource.json",
+      "slices/right_base/x-pos-down/readback-Bambu.log",
+      "slices/right_base/x-pos-down/readback-Bambu.json",
+      "slices/right_base/x-pos-down/faces-Bambu.log",
+      "slices/right_base/x-pos-down/faces-Bambu.json",
+      "slices/right_base/x-pos-down/slice-Elegoo.log",
+      "slices/right_base/x-pos-down/slice-Elegoo-resource.json",
+      "slices/right_base/x-pos-down/readback-Elegoo.log",
+      "slices/right_base/x-pos-down/readback-Elegoo.json",
+      "slices/right_base/x-pos-down/faces-Elegoo.log",
+      "slices/right_base/x-pos-down/faces-Elegoo.json"
+     ],
+     "rejectedBecause": "Mirror pose (small wing end on the bed). Functional faces clean, less support (6186 / 9516 mm) but more foot block on support (22.7 / 53.3 mm2 class) and the 7.6 mm2 'near' count on the motor face is side proximity only. Same Bambu brim notch (15.3 mm2). The 10/07 candidate with less foot block on support wins."
+    }
+   ],
+   "screenSummary": [
+    {
+     "name": "stable p=0.20",
+     "rank": 1,
+     "penalty": 61.75,
+     "contactMm2": 45.2,
+     "tipAngleDeg": 12.6,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1037.4,
+     "sameAs": [
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.23",
+     "rank": 2,
+     "penalty": 73.99,
+     "contactMm2": 43.7,
+     "tipAngleDeg": 10.2,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1035.4,
+     "sameAs": [
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "flat facet 44 mm2",
+     "rank": 3,
+     "penalty": 75.89,
+     "contactMm2": 44.5,
+     "tipAngleDeg": 6.7,
+     "heightMm": 25.53,
+     "overhang60Mm2": 1036.0,
+     "sameAs": []
+    },
+    {
+     "name": "local +X down",
+     "rank": 4,
+     "penalty": 93.13,
+     "contactMm2": 81.1,
+     "tipAngleDeg": 3.3,
+     "heightMm": 36.5,
+     "overhang60Mm2": 263.7,
+     "sameAs": [
+      "stable p=0.05",
+      "flat facet 81 mm2"
+     ]
+    },
+    {
+     "name": "current",
+     "rank": 5,
+     "penalty": 96.05,
+     "contactMm2": 81.1,
+     "tipAngleDeg": 2.8,
+     "heightMm": 36.5,
+     "overhang60Mm2": 241.2,
+     "sameAs": [
+      "local -X down",
+      "flat facet 81 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.09",
+     "rank": 6,
+     "penalty": 118.82,
+     "contactMm2": 335.8,
+     "tipAngleDeg": 10.5,
+     "heightMm": 41.99,
+     "overhang60Mm2": 293.4,
+     "sameAs": [
+      "flat facet 74 mm2"
+     ]
+    },
+    {
+     "name": "stable p=0.06",
+     "rank": 7,
+     "penalty": 357.81,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 13.7,
+     "heightMm": 36.75,
+     "overhang60Mm2": 272.5,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.04",
+     "rank": 8,
+     "penalty": 370.13,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 8.9,
+     "heightMm": 36.36,
+     "overhang60Mm2": 227.5,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.11",
+     "rank": 9,
+     "penalty": 433.14,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 14.2,
+     "heightMm": 25.48,
+     "overhang60Mm2": 917.4,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.15",
+     "rank": 10,
+     "penalty": 434.17,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 17.7,
+     "heightMm": 31.06,
+     "overhang60Mm2": 505.9,
+     "sameAs": []
+    },
+    {
+     "name": "local -Y down",
+     "rank": 11,
+     "penalty": 1084.69,
+     "contactMm2": 1.5,
+     "tipAngleDeg": -2.9,
+     "heightMm": 25.5,
+     "overhang60Mm2": 1015.0,
+     "sameAs": [
+      "flat facet 44 mm2",
+      "flat facet 44 mm2"
+     ]
+    },
+    {
+     "name": "local +Z down",
+     "rank": 12,
+     "penalty": 1111.26,
+     "contactMm2": 49.8,
+     "tipAngleDeg": -8.8,
+     "heightMm": 42.95,
+     "overhang60Mm2": 576.8,
+     "sameAs": []
+    },
+    {
+     "name": "local +Y down",
+     "rank": 13,
+     "penalty": 1161.54,
+     "contactMm2": 5.4,
+     "tipAngleDeg": -31.5,
+     "heightMm": 25.5,
+     "overhang60Mm2": 974.3,
+     "sameAs": []
+    },
+    {
+     "name": "local -Z down",
+     "rank": 14,
+     "penalty": 1421.0,
+     "contactMm2": 0.0,
+     "tipAngleDeg": -0.6,
+     "heightMm": 42.95,
+     "overhang60Mm2": 436.9,
+     "sameAs": []
+    }
+   ]
+  },
+  "left_cheek": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+    "sha256": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-cheek-PRINT.stl",
+    "sha256": "1e8b2c99909e266f7af64581190a9d8936537c9138806946b88ca0948b30ce7d",
+    "localToPrintStl": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0,
+      -3.5500030517578125
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      7.099999904632568
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "z-pos-down",
+    "poseName": "local +Z down (10/07 candidate: tab tops on the bed, lip up)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0,
+      -3.5500030517578125
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      7.099999904632568
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 57.6,
+    "heightMm": 8.7,
+    "footprintMm": [
+     30.0,
+     25.5
+    ],
+    "tipAngleDeg": -44.32,
+    "objectSettings": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1"
+    },
+    "objectSettingsSource": "R1 default: tip angle -44.3 deg < 10 deg, outer brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 16.4,
+      "totalGrams": 2.54,
+      "supportGrams": 0.81,
+      "layers": 43,
+      "supportExtrusionMm": 7742.9,
+      "supportInterfaceMm": 1674.1,
+      "firstLayerModelAreaMm2": 52.9,
+      "firstLayerIslands": 2,
+      "firstLayerSupportAreaMm2": 726.1,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 128.6,
+       "reachMm": 4.02,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pocket": 0.0,
+       "lip_bore": 1.6,
+       "clearance_bores": 0.0,
+       "post_pockets": 144.7
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Custom": 480.5,
+        "Brim": 276.2,
+        "Gap infill": 6.2,
+        "Inner wall": 72.6,
+        "Outer wall": 39.9
+       },
+       "z=0.4": {
+        "Internal solid infill": 14.9,
+        "Outer wall": 42.1,
+        "Inner wall": 84.8
+       },
+       "z=0.6": {
+        "Internal solid infill": 14.9,
+        "Outer wall": 42.1,
+        "Inner wall": 84.8
+       }
+      },
+      "tongueModelToolpathMm": 49.5,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_cheek/z-pos-down/run/native/Orange_Bambu/sliced.3mf",
+       "sha256": "d47dd5849a992e2e256350322f95efc48e3446e3489b3420be4eee1eda55ddd9"
+      },
+      "gcodeSha256": "80100c2836602deec44b55376aebf4ba5f97a651a3cceafc7b8b7416ff5d5f07"
+     },
+     "Elegoo": {
+      "etaMinutes": 10.2,
+      "totalGrams": 2.44,
+      "supportGrams": 0.93,
+      "layers": 43,
+      "supportExtrusionMm": 9088.8,
+      "supportInterfaceMm": 2002.1,
+      "firstLayerModelAreaMm2": 52.9,
+      "firstLayerIslands": 2,
+      "firstLayerSupportAreaMm2": 744.9,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 121.7,
+       "reachMm": 4.02,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pocket": 0.0,
+       "lip_bore": 53.7,
+       "clearance_bores": 0.0,
+       "post_pockets": 398.4
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Outer wall": 39.9,
+        "Gap infill": 6.2,
+        "Brim": 261.5,
+        "Inner wall": 72.7
+       },
+       "z=0.3": {
+        "Custom": 506.9
+       },
+       "z=0.4": {
+        "Internal solid infill": 15.0,
+        "Outer wall": 42.2,
+        "Inner wall": 84.9
+       }
+      },
+      "tongueModelToolpathMm": 52.1,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_cheek/z-pos-down/run/native/Orange_Elegoo/sliced.3mf",
+       "sha256": "a8fa192481de4c73d1b840b10261fe6ec81a9f05e28e29a4b591d4e9b6bc9903"
+      },
+      "gcodeSha256": "bc512adbc7d45676f66855e1fc1629094bddfd77eaa2a7e7ac8a57331dd46146"
+     }
+    },
+    "functionalFaces": {
+     "pocket_wall": {
+      "must": true,
+      "meaning": "bearing pocket: d15 cylinder wall (local z -1.3..1.5) the black sleeve OD 14.6 runs in",
+      "areaMm2": 108.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 108.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       6.37,
+       7.13
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "lip_bore": {
+      "must": false,
+      "meaning": "d14 bore above the lip (z 1.5..3.0): the washer / rear screw window, nothing slides in it",
+      "areaMm2": 42.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 42.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       4.1,
+       5.52
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 10.5,
+       "Elegoo": 8.8
+      },
+      "supportInsideMm": {
+       "Bambu": 1.6,
+       "Elegoo": 53.7
+      },
+      "clean": false
+     },
+     "capture_lip": {
+      "must": true,
+      "meaning": "inside capture lip: annulus r 7..7.5 at z = 1.5 facing -Z, the sleeve end bears on it axially",
+      "areaMm2": 22.8,
+      "downMm2": 0.0,
+      "upMm2": 22.8,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       5.6,
+       5.6
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 3.3,
+       "Elegoo": 2.1
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tongue_sides": {
+      "must": true,
+      "meaning": "tongue side walls (2 mm wide at x = +-12 +- 1, y 1.6..2.0): the register in the base slots",
+      "areaMm2": 6.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 6.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.68,
+       4.69
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.8,
+       "Elegoo": 1.7
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tongue_tips": {
+      "must": true,
+      "meaning": "tongue tips at y = 1.6 (0.1 mm nominal gap to the slot floor)",
+      "areaMm2": 14.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 14.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.49,
+       4.88
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 3.0,
+       "Elegoo": 3.1
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_register": {
+      "must": true,
+      "meaning": "tab faces at y = 2.0 (x 8..11 and 13..15): pulled against the base posts",
+      "areaMm2": 52.3,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 52.3,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.68,
+       5.23
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 9.7,
+       "Elegoo": 3.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "head_seats": {
+      "must": false,
+      "meaning": "cap screw head seats at y = 6 (x 8..15): the M2 x 8 TAP heads bear on them",
+      "areaMm2": 68.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 68.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.5,
+       4.86
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "clearance_bores": {
+      "must": true,
+      "meaning": "two d2.3 clearance holes along Y (y 1.5..6.05 at x = +-12, z = 4.5) for the M2 x 8 TAP shanks",
+      "areaMm2": 61.7,
+      "downMm2": 21.2,
+      "upMm2": 21.2,
+      "sideMm2": 19.3,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.45,
+       3.75
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "split_face": {
+      "must": false,
+      "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+      "areaMm2": 65.0,
+      "downMm2": 0.0,
+      "upMm2": 65.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.7,
+       8.7
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "inner_face": {
+      "must": false,
+      "meaning": "inner face z = -1.3 (193 mm2) facing the lower link",
+      "areaMm2": 193.0,
+      "downMm2": 0.0,
+      "upMm2": 193.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.4,
+       8.4
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "side_walls": {
+      "must": false,
+      "meaning": "cheek side walls at x = +-11 (z -1.6..3): nest between the base wings",
+      "areaMm2": 61.5,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 61.5,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       4.77,
+       8.6
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 1.3,
+       "Elegoo": 1.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_undersides": {
+      "must": false,
+      "meaning": "tab undersides z = 1.65 outside the ring body (exterior)",
+      "areaMm2": 54.1,
+      "downMm2": 0.0,
+      "upMm2": 54.1,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       5.45,
+       5.45
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_tops": {
+      "must": false,
+      "meaning": "tab tops z = 7.1 (exterior)",
+      "areaMm2": 57.6,
+      "downMm2": 57.6,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 57.6,
+      "printZMm": [
+       0.0,
+       0.0
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "exterior_top": {
+      "must": false,
+      "meaning": "exterior top faces (z 1.0, 3.0 planes and the sloped ring top, facing +Z)",
+      "areaMm2": 314.5,
+      "downMm2": 314.5,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       3.43,
+       6.1
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 279.6,
+       "Elegoo": 272.5
+      },
+      "nearSupportMm2": {
+       "Bambu": 279.6,
+       "Elegoo": 272.5
+      },
+      "supportInsideMm": {},
+      "clean": false
+     }
+    },
+    "runs": [
+     "slices/left_cheek/z-pos-down/manifest.json",
+     "slices/left_cheek/z-pos-down/run/preparation.json",
+     "slices/left_cheek/z-pos-down/prepare.log",
+     "slices/left_cheek/z-pos-down/prepare-resource.json",
+     "slices/left_cheek/z-pos-down/slice-Bambu.log",
+     "slices/left_cheek/z-pos-down/slice-Bambu-resource.json",
+     "slices/left_cheek/z-pos-down/readback-Bambu.log",
+     "slices/left_cheek/z-pos-down/readback-Bambu.json",
+     "slices/left_cheek/z-pos-down/faces-Bambu.log",
+     "slices/left_cheek/z-pos-down/faces-Bambu.json",
+     "slices/left_cheek/z-pos-down/slice-Elegoo.log",
+     "slices/left_cheek/z-pos-down/slice-Elegoo-resource.json",
+     "slices/left_cheek/z-pos-down/readback-Elegoo.log",
+     "slices/left_cheek/z-pos-down/readback-Elegoo.json",
+     "slices/left_cheek/z-pos-down/faces-Elegoo.log",
+     "slices/left_cheek/z-pos-down/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Local +Z down: the two 7 x 4 mm tab tops (57.6 mm2, two islands) on the bed, lip up, the 10/07 candidate pose (never printed). The bearing pocket wall stands vertical and carries 0 mm of support inside it on both machines, the capture lip faces up at print z 5.6 mm and is a clean top surface, the tongues print as upright ribs (49-54 mm of toolpath, the 0.4 mm rib is printed), the tab register faces are vertical walls, and the d2.3 clearance bores are bridged with 0 mm of support inside. The price is that the part is not self-standing (tip -44.3 deg): the body floats 4.1 mm above the bed on support and the whole exterior top (272-280 mm2) rests on support. The only other viable pose (-Z down) turns the capture lip down onto support (22.6 mm2 on Bambu, 966-1052 mm of support inside the pocket) and fails the brim review on both machines, so the cosmetic exterior takes the scars instead of the lip.",
+    "cleanFaces": [
+     "pocket_wall",
+     "capture_lip",
+     "tongue_sides",
+     "tongue_tips",
+     "tab_register",
+     "clearance_bores"
+    ],
+    "facesWithSupport": [
+     {
+      "face": "exterior_top",
+      "restsOnSupportMm2": {
+       "Bambu": 279.6,
+       "Elegoo": 272.5
+      },
+      "where": "the exterior top planes (local z 1.0 and 3.0) and the sloped ring top, the outside of the cheek",
+      "whyAcceptable": "cosmetic exterior; nothing slides, bears or registers on it. Support interface scars are visible on the outside of the ankle only."
+     },
+     {
+      "face": "lip_bore",
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 1.6,
+       "Elegoo": 53.7
+      },
+      "where": "the d14 bore above the lip (local z 1.5..3.0), the washer / rear screw window",
+      "whyAcceptable": "nothing slides in this bore; the sleeve runs in the d15 pocket below the lip, which has 0 mm of support inside. Orca puts 54 mm of support in the window; pick it out, the window needs no finish."
+     },
+     {
+      "face": "post_pockets",
+      "supportInsideMm": {
+       "Bambu": 144.7,
+       "Elegoo": 398.4
+      },
+      "where": "the two open pockets between the tabs and the ring body (local x = +-12 +- 2.1, y -4.55..2.05) where the base posts sit",
+      "whyAcceptable": "the pockets are open to the bed in this pose, so the support for the body stands in them. The tab register faces beside them are vertical walls and rest on 0 mm2 of support (the 3-15 mm2 'near' counts are side proximity). Clear the pockets fully before fitting."
+     }
+    ],
+    "drillPass": [
+     "Two d2.3 clearance holes (local Y axis, x = +-12, z = 4.5, 4.5 mm long) are horizontal in this pose and bridged by the slicer. A clearance hole only has to pass the M2 shank, so a teardrop profile or 0.2 mm modelled oversize in generate_candidate.py removes any binding; drilling 2.3 mm is the last resort."
+    ],
+    "brimDecision": "R1 default kept: outer_only, 4 mm, gap 0.1 mm (tip -44.3 deg). Brim review passes on both machines (128.6 / 121.7 mm2 of brim, reach 4.02 mm). The brim plus the support under the body hold the two 7 x 4 mm tab pads; no print of this design exists yet, so this is untested.",
+    "openItems": [
+     "The pose deviates from R1 (not self-standing, tip -44.3 deg, body on support). Accepted because every bearing, sliding and register face is clean and the alternative puts the lip on support.",
+     "The tongue is a 0.4 mm rib; both slicers print it (49-54 mm of toolpath per cheek) but it is one extrusion wide. Check the tongue is present on the print before fitting; it is the sideways register in the base slot.",
+     "Horizontal clearance holes without drilling: teardrop profile or 0.2 mm oversize in generate_candidate.py. Local Y down is not self-standing for the cheek."
+    ]
+   },
+   "alternatives": [
+    {
+     "slug": "z-neg-down",
+     "poseName": "local -Z down (foot-side strip on the bed, lip down)",
+     "screenCandidate": "local -Z down",
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       1.0,
+       0.0,
+       3.5500030517578125
+      ],
+      [
+       -1.0,
+       6.123233995736766e-17,
+       0.0,
+       2.1737499371492703e-16
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       1.600000023841858
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "bedContactMm2": 65.01,
+     "heightMm": 8.7,
+     "footprintMm": [
+      25.5,
+      30.0
+     ],
+     "tipAngleDeg": -55.59,
+     "objectSettings": {
+      "brim_type": "outer_only",
+      "brim_width": "4",
+      "brim_object_gap": "0.1"
+     },
+     "objectSettingsSource": "R1 default: tip angle -55.6 deg < 10 deg, outer brim",
+     "perMachine": {
+      "Bambu": {
+       "etaMinutes": 15.0,
+       "totalGrams": 2.08,
+       "supportGrams": 0.27,
+       "layers": 43,
+       "supportExtrusionMm": 2510.0,
+       "supportInterfaceMm": 313.6,
+       "firstLayerModelAreaMm2": 59.1,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 415.8,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 265.6,
+        "reachMm": 4.29,
+        "failures": [
+         "67.9 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pocket": 965.6,
+        "lip_bore": 0.0,
+        "clearance_bores": 0.0,
+        "post_pockets": 165.7
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 22.1,
+         "Inner wall": 46.0,
+         "Custom": 480.5,
+         "Outer wall": 56.1,
+         "Brim": 573.8
+        },
+        "z=0.4": {
+         "Gap infill": 34.3,
+         "Inner wall": 79.4,
+         "Outer wall": 35.8,
+         "Overhang wall": 181.7,
+         "Bridge": 288.5
+        },
+        "z=0.6": {
+         "Outer wall": 102.8,
+         "Gap infill": 10.9,
+         "Internal solid infill": 285.9,
+         "Inner wall": 233.9
+        }
+       },
+       "tongueModelToolpathMm": 51.7,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_cheek/z-neg-down/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "84dff595acdf90d1f489dfece2d6ad42a7c134ca86825af9806df519b12d29bb"
+       },
+       "gcodeSha256": "2c6f721a8542aa7f54172eab74e176b5a753b9b67e21188b333912005e91ccaf"
+      },
+      "Elegoo": {
+       "etaMinutes": 7.5,
+       "totalGrams": 1.74,
+       "supportGrams": 0.15,
+       "layers": 43,
+       "supportExtrusionMm": 1383.6,
+       "supportInterfaceMm": 319.2,
+       "firstLayerModelAreaMm2": 59.1,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 216.5,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 265.6,
+        "reachMm": 4.29,
+        "failures": [
+         "67.9 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pocket": 0.0,
+        "lip_bore": 0.0,
+        "clearance_bores": 0.0,
+        "post_pockets": 116.0
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 22.1,
+         "Brim": 574.0,
+         "Outer wall": 56.1,
+         "Inner wall": 46.0
+        },
+        "z=0.3": {
+         "Custom": 506.9
+        },
+        "z=0.4": {
+         "Inner wall": 79.5,
+         "Outer wall": 35.8,
+         "Gap infill": 34.4,
+         "Overhang wall": 181.7,
+         "Bridge": 298.0
+        }
+       },
+       "tongueModelToolpathMm": 55.7,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_cheek/z-neg-down/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "1410873bba1d5db57db75a03da70184ab56261433defe17bbe2d795dc664a81c"
+       },
+       "gcodeSha256": "5928214446ef581dcaeb86a2fcbd6d3610c4bcf59d5d4caac95ea0c3620055dc"
+      }
+     },
+     "functionalFaces": {
+      "pocket_wall": {
+       "must": true,
+       "meaning": "bearing pocket: d15 cylinder wall (local z -1.3..1.5) the black sleeve OD 14.6 runs in",
+       "areaMm2": 108.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 108.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.57,
+        2.33
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 64.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 965.6,
+        "Elegoo": 0.0
+       },
+       "clean": false
+      },
+      "lip_bore": {
+       "must": false,
+       "meaning": "d14 bore above the lip (z 1.5..3.0): the washer / rear screw window, nothing slides in it",
+       "areaMm2": 42.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 42.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.18,
+        4.6
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 6.1,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "capture_lip": {
+       "must": true,
+       "meaning": "inside capture lip: annulus r 7..7.5 at z = 1.5 facing -Z, the sleeve end bears on it axially",
+       "areaMm2": 22.8,
+       "downMm2": 22.8,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.1,
+        3.1
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 22.6,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 22.6,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "tongue_sides": {
+       "must": true,
+       "meaning": "tongue side walls (2 mm wide at x = +-12 +- 1, y 1.6..2.0): the register in the base slots",
+       "areaMm2": 6.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 6.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        4.01,
+        8.02
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tongue_tips": {
+       "must": true,
+       "meaning": "tongue tips at y = 1.6 (0.1 mm nominal gap to the slot floor)",
+       "areaMm2": 14.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 14.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.82,
+        8.21
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tab_register": {
+       "must": true,
+       "meaning": "tab faces at y = 2.0 (x 8..11 and 13..15): pulled against the base posts",
+       "areaMm2": 52.3,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 52.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.47,
+        8.02
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.5,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "head_seats": {
+       "must": false,
+       "meaning": "cap screw head seats at y = 6 (x 8..15): the M2 x 8 TAP heads bear on them",
+       "areaMm2": 68.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 68.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.84,
+        8.2
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "clearance_bores": {
+       "must": true,
+       "meaning": "two d2.3 clearance holes along Y (y 1.5..6.05 at x = +-12, z = 4.5) for the M2 x 8 TAP shanks",
+       "areaMm2": 61.7,
+       "downMm2": 21.2,
+       "upMm2": 21.2,
+       "sideMm2": 19.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        4.95,
+        7.25
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "split_face": {
+       "must": false,
+       "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+       "areaMm2": 65.0,
+       "downMm2": 65.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 65.0,
+       "printZMm": [
+        0.0,
+        0.0
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "inner_face": {
+       "must": false,
+       "meaning": "inner face z = -1.3 (193 mm2) facing the lower link",
+       "areaMm2": 193.0,
+       "downMm2": 193.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.3,
+        0.3
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 50.4,
+        "Elegoo": 19.2
+       },
+       "nearSupportMm2": {
+        "Bambu": 50.4,
+        "Elegoo": 19.2
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "side_walls": {
+       "must": false,
+       "meaning": "cheek side walls at x = +-11 (z -1.6..3): nest between the base wings",
+       "areaMm2": 61.5,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 61.5,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.1,
+        3.93
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tab_undersides": {
+       "must": false,
+       "meaning": "tab undersides z = 1.65 outside the ring body (exterior)",
+       "areaMm2": 54.1,
+       "downMm2": 54.1,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.25,
+        3.25
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 54.1,
+        "Elegoo": 53.1
+       },
+       "nearSupportMm2": {
+        "Bambu": 54.1,
+        "Elegoo": 53.1
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "tab_tops": {
+       "must": false,
+       "meaning": "tab tops z = 7.1 (exterior)",
+       "areaMm2": 57.6,
+       "downMm2": 0.0,
+       "upMm2": 57.6,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        8.7,
+        8.7
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "exterior_top": {
+       "must": false,
+       "meaning": "exterior top faces (z 1.0, 3.0 planes and the sloped ring top, facing +Z)",
+       "areaMm2": 314.5,
+       "downMm2": 0.0,
+       "upMm2": 314.5,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        2.6,
+        5.27
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 5.5,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      }
+     },
+     "runs": [
+      "slices/left_cheek/z-neg-down/manifest.json",
+      "slices/left_cheek/z-neg-down/run/preparation.json",
+      "slices/left_cheek/z-neg-down/prepare.log",
+      "slices/left_cheek/z-neg-down/prepare-resource.json",
+      "slices/left_cheek/z-neg-down/slice-Bambu.log",
+      "slices/left_cheek/z-neg-down/slice-Bambu-resource.json",
+      "slices/left_cheek/z-neg-down/readback-Bambu.log",
+      "slices/left_cheek/z-neg-down/readback-Bambu.json",
+      "slices/left_cheek/z-neg-down/faces-Bambu.log",
+      "slices/left_cheek/z-neg-down/faces-Bambu.json",
+      "slices/left_cheek/z-neg-down/slice-Elegoo.log",
+      "slices/left_cheek/z-neg-down/slice-Elegoo-resource.json",
+      "slices/left_cheek/z-neg-down/readback-Elegoo.log",
+      "slices/left_cheek/z-neg-down/readback-Elegoo.json",
+      "slices/left_cheek/z-neg-down/faces-Elegoo.log",
+      "slices/left_cheek/z-neg-down/faces-Elegoo.json"
+     ],
+     "rejectedBecause": "Lip down, foot-side strip (59 mm2 first layer, tip -55.6 deg) on the bed. Less support (2510 / 1384 mm) and 15 / 7.5 min, but the capture lip faces down at print z 3.1 and rests on support on Bambu (22.6 mm2, 966 mm of support inside the pocket) and is an unsupported 0.5 mm overhang on Elegoo; the 193 mm2 inner face 0.3 mm above the bed prints as overhang wall plus 289 mm of bridge; the tab undersides (54 mm2) rest on support; brim review fails on both machines (67.9 mm2 of brim inside the convex outline, right Bambu reach 4.67 against 4.1). Rejected."
+    }
+   ],
+   "screenSummary": [
+    {
+     "name": "stable p=0.02",
+     "rank": 1,
+     "penalty": 74.99,
+     "contactMm2": 2.3,
+     "tipAngleDeg": 4.3,
+     "heightMm": 25.54,
+     "overhang60Mm2": 110.2,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.02",
+     "rank": 2,
+     "penalty": 76.0,
+     "contactMm2": 2.2,
+     "tipAngleDeg": 4.1,
+     "heightMm": 26.46,
+     "overhang60Mm2": 112.0,
+     "sameAs": []
+    },
+    {
+     "name": "local +Y down",
+     "rank": 3,
+     "penalty": 98.08,
+     "contactMm2": 5.4,
+     "tipAngleDeg": 0.7,
+     "heightMm": 25.5,
+     "overhang60Mm2": 129.1,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.42",
+     "rank": 4,
+     "penalty": 318.17,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 64.1,
+     "heightMm": 10.4,
+     "overhang60Mm2": 353.9,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.03",
+     "rank": 5,
+     "penalty": 346.15,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 6.3,
+     "heightMm": 30.12,
+     "overhang60Mm2": 105.7,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.03",
+     "rank": 6,
+     "penalty": 354.39,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 2.7,
+     "heightMm": 30.11,
+     "overhang60Mm2": 97.3,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.04",
+     "rank": 7,
+     "penalty": 374.66,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 0.4,
+     "heightMm": 23.68,
+     "overhang60Mm2": 36.7,
+     "sameAs": []
+    },
+    {
+     "name": "current",
+     "rank": 8,
+     "penalty": 1018.88,
+     "contactMm2": 57.6,
+     "tipAngleDeg": -44.3,
+     "heightMm": 8.7,
+     "overhang60Mm2": 312.6,
+     "sameAs": [
+      "local +Z down",
+      "flat facet 29 mm2",
+      "flat facet 29 mm2"
+     ]
+    },
+    {
+     "name": "local -Z down",
+     "rank": 9,
+     "penalty": 1036.69,
+     "contactMm2": 65.0,
+     "tipAngleDeg": -55.6,
+     "heightMm": 8.7,
+     "overhang60Mm2": 280.4,
+     "sameAs": [
+      "stable p=0.43",
+      "flat facet 65 mm2"
+     ]
+    },
+    {
+     "name": "local -Y down",
+     "rank": 10,
+     "penalty": 1045.24,
+     "contactMm2": 0.3,
+     "tipAngleDeg": -1.6,
+     "heightMm": 25.5,
+     "overhang60Mm2": 168.9,
+     "sameAs": []
+    },
+    {
+     "name": "local -X down",
+     "rank": 11,
+     "penalty": 1045.99,
+     "contactMm2": 21.8,
+     "tipAngleDeg": -22.0,
+     "heightMm": 30.0,
+     "overhang60Mm2": 127.5,
+     "sameAs": [
+      "flat facet 22 mm2"
+     ]
+    },
+    {
+     "name": "local +X down",
+     "rank": 12,
+     "penalty": 1046.0,
+     "contactMm2": 21.8,
+     "tipAngleDeg": -21.8,
+     "heightMm": 30.0,
+     "overhang60Mm2": 126.2,
+     "sameAs": [
+      "flat facet 22 mm2"
+     ]
+    }
+   ]
+  },
+  "right_cheek": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+    "sha256": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-cheek-PRINT.stl",
+    "sha256": "751732e649bda0007d3df423bc3b1e77517dd949a86ed77fc72032df6381c78c",
+    "localToPrintStl": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0,
+      -3.5500030517578125
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      7.099999904632568
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "z-pos-down",
+    "poseName": "local +Z down (10/07 candidate: tab tops on the bed, lip up)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0,
+      -3.5500030517578125
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      7.099999904632568
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 57.6,
+    "heightMm": 8.7,
+    "footprintMm": [
+     30.0,
+     25.5
+    ],
+    "tipAngleDeg": -44.32,
+    "objectSettings": {
+     "brim_type": "outer_only",
+     "brim_width": "4",
+     "brim_object_gap": "0.1"
+    },
+    "objectSettingsSource": "R1 default: tip angle -44.3 deg < 10 deg, outer brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 16.4,
+      "totalGrams": 2.55,
+      "supportGrams": 0.81,
+      "layers": 43,
+      "supportExtrusionMm": 7723.2,
+      "supportInterfaceMm": 1655.8,
+      "firstLayerModelAreaMm2": 52.9,
+      "firstLayerIslands": 2,
+      "firstLayerSupportAreaMm2": 724.0,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 133.5,
+       "reachMm": 4.02,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pocket": 0.0,
+       "lip_bore": 0.6,
+       "clearance_bores": 0.0,
+       "post_pockets": 146.4
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Inner wall": 72.6,
+        "Brim": 287.0,
+        "Outer wall": 39.9,
+        "Custom": 480.5,
+        "Gap infill": 6.2
+       },
+       "z=0.4": {
+        "Inner wall": 84.8,
+        "Internal solid infill": 14.9,
+        "Outer wall": 42.1
+       },
+       "z=0.6": {
+        "Inner wall": 84.8,
+        "Internal solid infill": 14.9,
+        "Outer wall": 42.1
+       }
+      },
+      "tongueModelToolpathMm": 49.1,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_cheek/z-pos-down/run/native/Orange_Bambu/sliced.3mf",
+       "sha256": "fed3d517e99500617345f31503d0f5d2c136f1d4f77310d07573bfd768cc84b6"
+      },
+      "gcodeSha256": "19143cfca721df754235459dd37d90d6aa36d14ca7f803abb96629da86dc2ded"
+     },
+     "Elegoo": {
+      "etaMinutes": 10.2,
+      "totalGrams": 2.46,
+      "supportGrams": 0.94,
+      "layers": 43,
+      "supportExtrusionMm": 9049.4,
+      "supportInterfaceMm": 1989.7,
+      "firstLayerModelAreaMm2": 52.9,
+      "firstLayerIslands": 2,
+      "firstLayerSupportAreaMm2": 753.8,
+      "brim": {
+       "brimType": "outer_only",
+       "brimAreaMm2": 122.0,
+       "reachMm": 4.02,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "pocket": 0.0,
+       "lip_bore": 47.4,
+       "clearance_bores": 0.0,
+       "post_pockets": 455.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Gap infill": 6.2,
+        "Inner wall": 72.7,
+        "Brim": 262.2,
+        "Outer wall": 39.9
+       },
+       "z=0.3": {
+        "Custom": 506.9
+       },
+       "z=0.4": {
+        "Internal solid infill": 15.0,
+        "Outer wall": 42.2,
+        "Inner wall": 84.9
+       }
+      },
+      "tongueModelToolpathMm": 54.2,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_cheek/z-pos-down/run/native/Orange_Elegoo/sliced.3mf",
+       "sha256": "5686f82564bdc65046f775ae2feea1714480f22da8c43ac908448547afa59de6"
+      },
+      "gcodeSha256": "e4bc3310f939f9f2ce7ff1ae2a13d5ffb75699161cc635ef63b75abc2963ae32"
+     }
+    },
+    "functionalFaces": {
+     "pocket_wall": {
+      "must": true,
+      "meaning": "bearing pocket: d15 cylinder wall (local z -1.3..1.5) the black sleeve OD 14.6 runs in",
+      "areaMm2": 108.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 108.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       6.37,
+       7.13
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "lip_bore": {
+      "must": false,
+      "meaning": "d14 bore above the lip (z 1.5..3.0): the washer / rear screw window, nothing slides in it",
+      "areaMm2": 42.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 42.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       4.1,
+       5.52
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 19.1,
+       "Elegoo": 17.1
+      },
+      "supportInsideMm": {
+       "Bambu": 0.6,
+       "Elegoo": 47.4
+      },
+      "clean": false
+     },
+     "capture_lip": {
+      "must": true,
+      "meaning": "inside capture lip: annulus r 7..7.5 at z = 1.5 facing -Z, the sleeve end bears on it axially",
+      "areaMm2": 22.8,
+      "downMm2": 0.0,
+      "upMm2": 22.8,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       5.6,
+       5.6
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 6.3,
+       "Elegoo": 4.9
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tongue_sides": {
+      "must": true,
+      "meaning": "tongue side walls (2 mm wide at x = +-12 +- 1, y 1.6..2.0): the register in the base slots",
+      "areaMm2": 6.9,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 6.9,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.68,
+       4.69
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.8,
+       "Elegoo": 2.5
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tongue_tips": {
+      "must": true,
+      "meaning": "tongue tips at y = 1.6 (0.1 mm nominal gap to the slot floor)",
+      "areaMm2": 14.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 14.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.49,
+       4.88
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 2.9,
+       "Elegoo": 3.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_register": {
+      "must": true,
+      "meaning": "tab faces at y = 2.0 (x 8..11 and 13..15): pulled against the base posts",
+      "areaMm2": 52.3,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 52.3,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.68,
+       5.23
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 9.9,
+       "Elegoo": 15.3
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "head_seats": {
+      "must": false,
+      "meaning": "cap screw head seats at y = 6 (x 8..15): the M2 x 8 TAP heads bear on them",
+      "areaMm2": 68.0,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 68.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.5,
+       4.86
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "clearance_bores": {
+      "must": true,
+      "meaning": "two d2.3 clearance holes along Y (y 1.5..6.05 at x = +-12, z = 4.5) for the M2 x 8 TAP shanks",
+      "areaMm2": 61.7,
+      "downMm2": 21.2,
+      "upMm2": 21.2,
+      "sideMm2": 19.3,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.45,
+       3.75
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "split_face": {
+      "must": false,
+      "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+      "areaMm2": 65.0,
+      "downMm2": 0.0,
+      "upMm2": 65.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.7,
+       8.7
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "inner_face": {
+      "must": false,
+      "meaning": "inner face z = -1.3 (193 mm2) facing the lower link",
+      "areaMm2": 193.0,
+      "downMm2": 0.0,
+      "upMm2": 193.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       8.4,
+       8.4
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "side_walls": {
+      "must": false,
+      "meaning": "cheek side walls at x = +-11 (z -1.6..3): nest between the base wings",
+      "areaMm2": 61.5,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 61.5,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       4.77,
+       8.51
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_undersides": {
+      "must": false,
+      "meaning": "tab undersides z = 1.65 outside the ring body (exterior)",
+      "areaMm2": 54.1,
+      "downMm2": 0.0,
+      "upMm2": 54.1,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       5.45,
+       5.45
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "tab_tops": {
+      "must": false,
+      "meaning": "tab tops z = 7.1 (exterior)",
+      "areaMm2": 57.6,
+      "downMm2": 57.6,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 57.6,
+      "printZMm": [
+       0.0,
+       0.0
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "exterior_top": {
+      "must": false,
+      "meaning": "exterior top faces (z 1.0, 3.0 planes and the sloped ring top, facing +Z)",
+      "areaMm2": 314.5,
+      "downMm2": 314.5,
+      "upMm2": 0.0,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       3.43,
+       6.1
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 261.6,
+       "Elegoo": 270.9
+      },
+      "nearSupportMm2": {
+       "Bambu": 261.6,
+       "Elegoo": 270.9
+      },
+      "supportInsideMm": {},
+      "clean": false
+     }
+    },
+    "runs": [
+     "slices/right_cheek/z-pos-down/manifest.json",
+     "slices/right_cheek/z-pos-down/run/preparation.json",
+     "slices/right_cheek/z-pos-down/prepare.log",
+     "slices/right_cheek/z-pos-down/prepare-resource.json",
+     "slices/right_cheek/z-pos-down/slice-Bambu.log",
+     "slices/right_cheek/z-pos-down/slice-Bambu-resource.json",
+     "slices/right_cheek/z-pos-down/readback-Bambu.log",
+     "slices/right_cheek/z-pos-down/readback-Bambu.json",
+     "slices/right_cheek/z-pos-down/faces-Bambu.log",
+     "slices/right_cheek/z-pos-down/faces-Bambu.json",
+     "slices/right_cheek/z-pos-down/slice-Elegoo.log",
+     "slices/right_cheek/z-pos-down/slice-Elegoo-resource.json",
+     "slices/right_cheek/z-pos-down/readback-Elegoo.log",
+     "slices/right_cheek/z-pos-down/readback-Elegoo.json",
+     "slices/right_cheek/z-pos-down/faces-Elegoo.log",
+     "slices/right_cheek/z-pos-down/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Mirror of the left cheek: local +Z down on the two tab tops (57.6 mm2), lip up, the 10/07 candidate pose (never printed). Pocket wall vertical with 0 mm of support inside, capture lip faces up, tongues upright, tab register faces vertical and resting on 0 mm2 of support, clearance bores bridged. Exterior top on support.",
+    "cleanFaces": [
+     "pocket_wall",
+     "capture_lip",
+     "tongue_sides",
+     "tongue_tips",
+     "tab_register",
+     "clearance_bores"
+    ],
+    "facesWithSupport": [
+     {
+      "face": "exterior_top",
+      "restsOnSupportMm2": {
+       "Bambu": 261.6,
+       "Elegoo": 270.9
+      },
+      "where": "exterior top planes and sloped ring top",
+      "whyAcceptable": "cosmetic exterior."
+     },
+     {
+      "face": "lip_bore",
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.6,
+       "Elegoo": 47.4
+      },
+      "where": "d14 window above the lip",
+      "whyAcceptable": "nothing slides in it; pick the support out."
+     },
+     {
+      "face": "post_pockets",
+      "supportInsideMm": {
+       "Bambu": 146.4,
+       "Elegoo": 455.0
+      },
+      "where": "open pockets beside the tabs where the base posts sit",
+      "whyAcceptable": "support for the body stands in the open pockets; register faces are vertical and clean; clear before fitting."
+     }
+    ],
+    "drillPass": [
+     "Same as the left cheek: clearance holes horizontal; teardrop or 0.2 mm oversize first, drilling last resort."
+    ],
+    "brimDecision": "R1 default kept: outer_only 4 mm, gap 0.1 mm; brim review passes on both machines (133.5 / 122.0 mm2).",
+    "openItems": [
+     "Not self-standing (tip -44.3 deg), accepted as for the left cheek.",
+     "0.4 mm tongue rib, one extrusion wide; check it is present on the print.",
+     "Horizontal clearance holes without drilling: teardrop profile or 0.2 mm oversize in generate_candidate.py. Local Y down is not self-standing for the cheek."
+    ]
+   },
+   "alternatives": [
+    {
+     "slug": "z-neg-down",
+     "poseName": "local -Z down (foot-side strip on the bed, lip down)",
+     "screenCandidate": "local -Z down",
+     "sourceToPrint": [
+      [
+       6.123233995736766e-17,
+       1.0,
+       0.0,
+       3.5500030517578125
+      ],
+      [
+       -1.0,
+       6.123233995736766e-17,
+       0.0,
+       2.1737499371492703e-16
+      ],
+      [
+       0.0,
+       0.0,
+       1.0,
+       1.600000023841858
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     ],
+     "bedContactMm2": 65.01,
+     "heightMm": 8.7,
+     "footprintMm": [
+      25.5,
+      30.0
+     ],
+     "tipAngleDeg": -53.55,
+     "objectSettings": {
+      "brim_type": "outer_only",
+      "brim_width": "4",
+      "brim_object_gap": "0.1"
+     },
+     "objectSettingsSource": "R1 default: tip angle -53.6 deg < 10 deg, outer brim",
+     "perMachine": {
+      "Bambu": {
+       "etaMinutes": 15.1,
+       "totalGrams": 2.04,
+       "supportGrams": 0.27,
+       "layers": 43,
+       "supportExtrusionMm": 2484.2,
+       "supportInterfaceMm": 313.9,
+       "firstLayerModelAreaMm2": 59.1,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 402.9,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 266.3,
+        "reachMm": 4.67,
+        "failures": [
+         "brim reach 4.67 mm, planned 4.1 mm (gap + width)",
+         "67.9 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pocket": 1052.0,
+        "lip_bore": 0.0,
+        "clearance_bores": 0.0,
+        "post_pockets": 132.9
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Custom": 480.5,
+         "Brim": 575.3,
+         "Outer wall": 56.2,
+         "Inner wall": 45.9,
+         "Gap infill": 22.1
+        },
+        "z=0.4": {
+         "Gap infill": 22.4,
+         "Outer wall": 56.1,
+         "Inner wall": 90.1
+        },
+        "z=0.6": {
+         "Outer wall": 35.8,
+         "Overhang wall": 224.4,
+         "Inner wall": 79.4,
+         "Gap infill": 10.9,
+         "Bridge": 299.8
+        }
+       },
+       "tongueModelToolpathMm": 51.3,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_cheek/z-neg-down/run/native/Orange_Bambu/sliced.3mf",
+        "sha256": "d8053e5a6831a8e989363575e1a5a0566e35238b9e32f7d4c561ad21f17149a2"
+       },
+       "gcodeSha256": "b84fa210b91f41f6be8ffbb655aaabc377ef7d3784e7fbe573c974fb30a6e65e"
+      },
+      "Elegoo": {
+       "etaMinutes": 7.4,
+       "totalGrams": 1.7,
+       "supportGrams": 0.15,
+       "layers": 43,
+       "supportExtrusionMm": 1353.5,
+       "supportInterfaceMm": 314.5,
+       "firstLayerModelAreaMm2": 59.1,
+       "firstLayerIslands": 1,
+       "firstLayerSupportAreaMm2": 210.3,
+       "brim": {
+        "brimType": "outer_only",
+        "brimAreaMm2": 266.5,
+        "reachMm": 4.42,
+        "failures": [
+         "67.9 mm2 of brim inside the part's own convex outline"
+        ]
+       },
+       "brimReviewPassed": false,
+       "supportInsideCavitiesMm": {
+        "pocket": 0.0,
+        "lip_bore": 0.0,
+        "clearance_bores": 0.0,
+        "post_pockets": 73.2
+       },
+       "firstThreeLayersByFeatureMm": {
+        "z=0.2": {
+         "Gap infill": 22.1,
+         "Brim": 575.9,
+         "Outer wall": 56.3,
+         "Inner wall": 45.9
+        },
+        "z=0.3": {
+         "Custom": 506.9
+        },
+        "z=0.4": {
+         "Gap infill": 22.4,
+         "Outer wall": 56.1,
+         "Inner wall": 90.5
+        }
+       },
+       "tongueModelToolpathMm": 53.2,
+       "nativeArchive": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_cheek/z-neg-down/run/native/Orange_Elegoo/sliced.3mf",
+        "sha256": "28e62fc3caf322356f6e28a4ec67b6f3b340ecaeee75ec5beebaa95b04896c4a"
+       },
+       "gcodeSha256": "0f1f9f806722714489dcacb059b2926531d16199aaed3ef67c7ae802997d3081"
+      }
+     },
+     "functionalFaces": {
+      "pocket_wall": {
+       "must": true,
+       "meaning": "bearing pocket: d15 cylinder wall (local z -1.3..1.5) the black sleeve OD 14.6 runs in",
+       "areaMm2": 108.4,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 108.4,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        1.57,
+        2.33
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 22.6,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 1052.0,
+        "Elegoo": 0.0
+       },
+       "clean": false
+      },
+      "lip_bore": {
+       "must": false,
+       "meaning": "d14 bore above the lip (z 1.5..3.0): the washer / rear screw window, nothing slides in it",
+       "areaMm2": 42.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 42.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.18,
+        4.6
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 14.6,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "capture_lip": {
+       "must": true,
+       "meaning": "inside capture lip: annulus r 7..7.5 at z = 1.5 facing -Z, the sleeve end bears on it axially",
+       "areaMm2": 22.8,
+       "downMm2": 22.8,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.1,
+        3.1
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 22.4,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 22.4,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "tongue_sides": {
+       "must": true,
+       "meaning": "tongue side walls (2 mm wide at x = +-12 +- 1, y 1.6..2.0): the register in the base slots",
+       "areaMm2": 6.9,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 6.9,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        4.01,
+        8.02
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tongue_tips": {
+       "must": true,
+       "meaning": "tongue tips at y = 1.6 (0.1 mm nominal gap to the slot floor)",
+       "areaMm2": 14.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 14.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.82,
+        8.21
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tab_register": {
+       "must": true,
+       "meaning": "tab faces at y = 2.0 (x 8..11 and 13..15): pulled against the base posts",
+       "areaMm2": 52.3,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 52.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.47,
+        8.02
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.6,
+        "Elegoo": 0.6
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "head_seats": {
+       "must": false,
+       "meaning": "cap screw head seats at y = 6 (x 8..15): the M2 x 8 TAP heads bear on them",
+       "areaMm2": 68.0,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 68.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.84,
+        8.2
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "clearance_bores": {
+       "must": true,
+       "meaning": "two d2.3 clearance holes along Y (y 1.5..6.05 at x = +-12, z = 4.5) for the M2 x 8 TAP shanks",
+       "areaMm2": 61.7,
+       "downMm2": 21.2,
+       "upMm2": 21.2,
+       "sideMm2": 19.3,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        4.95,
+        7.25
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "clean": true
+      },
+      "split_face": {
+       "must": false,
+       "meaning": "split plane z = -1.6 (base +Z face / cheek -Z face, 65 mm2 strip on the foot side)",
+       "areaMm2": 65.0,
+       "downMm2": 65.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 65.0,
+       "printZMm": [
+        0.0,
+        0.0
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "inner_face": {
+       "must": false,
+       "meaning": "inner face z = -1.3 (193 mm2) facing the lower link",
+       "areaMm2": 193.0,
+       "downMm2": 193.0,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.3,
+        0.3
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 36.3,
+        "Elegoo": 18.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 36.3,
+        "Elegoo": 18.0
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "side_walls": {
+       "must": false,
+       "meaning": "cheek side walls at x = +-11 (z -1.6..3): nest between the base wings",
+       "areaMm2": 61.5,
+       "downMm2": 0.0,
+       "upMm2": 0.0,
+       "sideMm2": 61.5,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        0.19,
+        3.93
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "tab_undersides": {
+       "must": false,
+       "meaning": "tab undersides z = 1.65 outside the ring body (exterior)",
+       "areaMm2": 54.1,
+       "downMm2": 54.1,
+       "upMm2": 0.0,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        3.25,
+        3.25
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 54.1,
+        "Elegoo": 54.1
+       },
+       "nearSupportMm2": {
+        "Bambu": 54.1,
+        "Elegoo": 54.1
+       },
+       "supportInsideMm": {},
+       "clean": false
+      },
+      "tab_tops": {
+       "must": false,
+       "meaning": "tab tops z = 7.1 (exterior)",
+       "areaMm2": 57.6,
+       "downMm2": 0.0,
+       "upMm2": 57.6,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        8.7,
+        8.7
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      },
+      "exterior_top": {
+       "must": false,
+       "meaning": "exterior top faces (z 1.0, 3.0 planes and the sloped ring top, facing +Z)",
+       "areaMm2": 314.5,
+       "downMm2": 0.0,
+       "upMm2": 314.5,
+       "sideMm2": 0.0,
+       "onBedMm2": 0.0,
+       "printZMm": [
+        2.6,
+        5.27
+       ],
+       "restsOnSupportMm2": {
+        "Bambu": 0.0,
+        "Elegoo": 0.0
+       },
+       "nearSupportMm2": {
+        "Bambu": 8.3,
+        "Elegoo": 0.0
+       },
+       "supportInsideMm": {},
+       "clean": true
+      }
+     },
+     "runs": [
+      "slices/right_cheek/z-neg-down/manifest.json",
+      "slices/right_cheek/z-neg-down/run/preparation.json",
+      "slices/right_cheek/z-neg-down/prepare.log",
+      "slices/right_cheek/z-neg-down/prepare-resource.json",
+      "slices/right_cheek/z-neg-down/slice-Bambu.log",
+      "slices/right_cheek/z-neg-down/slice-Bambu-resource.json",
+      "slices/right_cheek/z-neg-down/readback-Bambu.log",
+      "slices/right_cheek/z-neg-down/readback-Bambu.json",
+      "slices/right_cheek/z-neg-down/faces-Bambu.log",
+      "slices/right_cheek/z-neg-down/faces-Bambu.json",
+      "slices/right_cheek/z-neg-down/slice-Elegoo.log",
+      "slices/right_cheek/z-neg-down/slice-Elegoo-resource.json",
+      "slices/right_cheek/z-neg-down/readback-Elegoo.log",
+      "slices/right_cheek/z-neg-down/readback-Elegoo.json",
+      "slices/right_cheek/z-neg-down/faces-Elegoo.log",
+      "slices/right_cheek/z-neg-down/faces-Elegoo.json"
+     ],
+     "rejectedBecause": "Lip down. Capture lip rests on support on Bambu (22.4 mm2, 1052 mm of support inside the pocket), inner face printed as overhang and bridge, brim review fails on both machines (67.9 mm2 inside the outline; Bambu reach 4.67 mm against 4.1). Rejected."
+    }
+   ],
+   "screenSummary": [
+    {
+     "name": "stable p=0.02",
+     "rank": 1,
+     "penalty": 74.99,
+     "contactMm2": 2.3,
+     "tipAngleDeg": 4.3,
+     "heightMm": 25.54,
+     "overhang60Mm2": 109.7,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.02",
+     "rank": 2,
+     "penalty": 76.0,
+     "contactMm2": 2.2,
+     "tipAngleDeg": 4.1,
+     "heightMm": 26.46,
+     "overhang60Mm2": 112.0,
+     "sameAs": []
+    },
+    {
+     "name": "local +Y down",
+     "rank": 3,
+     "penalty": 98.08,
+     "contactMm2": 5.4,
+     "tipAngleDeg": 0.7,
+     "heightMm": 25.5,
+     "overhang60Mm2": 129.1,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.42",
+     "rank": 4,
+     "penalty": 318.17,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 64.1,
+     "heightMm": 10.4,
+     "overhang60Mm2": 353.9,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.03",
+     "rank": 5,
+     "penalty": 338.03,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 6.8,
+     "heightMm": 29.95,
+     "overhang60Mm2": 99.2,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.03",
+     "rank": 6,
+     "penalty": 346.16,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 6.3,
+     "heightMm": 30.12,
+     "overhang60Mm2": 105.8,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.04",
+     "rank": 7,
+     "penalty": 374.66,
+     "contactMm2": 0.0,
+     "tipAngleDeg": 0.4,
+     "heightMm": 23.68,
+     "overhang60Mm2": 36.7,
+     "sameAs": []
+    },
+    {
+     "name": "current",
+     "rank": 8,
+     "penalty": 1018.88,
+     "contactMm2": 57.6,
+     "tipAngleDeg": -44.3,
+     "heightMm": 8.7,
+     "overhang60Mm2": 312.6,
+     "sameAs": [
+      "local +Z down",
+      "flat facet 29 mm2",
+      "flat facet 29 mm2"
+     ]
+    },
+    {
+     "name": "local -Z down",
+     "rank": 9,
+     "penalty": 1036.69,
+     "contactMm2": 65.0,
+     "tipAngleDeg": -53.6,
+     "heightMm": 8.7,
+     "overhang60Mm2": 280.4,
+     "sameAs": [
+      "stable p=0.43",
+      "flat facet 65 mm2"
+     ]
+    },
+    {
+     "name": "local -Y down",
+     "rank": 10,
+     "penalty": 1045.24,
+     "contactMm2": 0.3,
+     "tipAngleDeg": -1.6,
+     "heightMm": 25.5,
+     "overhang60Mm2": 168.9,
+     "sameAs": []
+    },
+    {
+     "name": "local +X down",
+     "rank": 11,
+     "penalty": 1045.99,
+     "contactMm2": 21.8,
+     "tipAngleDeg": -22.0,
+     "heightMm": 30.0,
+     "overhang60Mm2": 127.5,
+     "sameAs": [
+      "flat facet 22 mm2"
+     ]
+    },
+    {
+     "name": "local -X down",
+     "rank": 12,
+     "penalty": 1046.0,
+     "contactMm2": 21.8,
+     "tipAngleDeg": -21.8,
+     "heightMm": 30.0,
+     "overhang60Mm2": 126.2,
+     "sameAs": [
+      "flat facet 22 mm2"
+     ]
+    }
+   ]
+  },
+  "left_sleeve": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+    "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/left-sleeve-PRINT.stl",
+    "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+    "localToPrintStl": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -4.553794860839844e-05
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      -0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      1.399999976158142
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "axial",
+    "poseName": "local -Z down (axial, 10/07 pose; +Z down is identical by symmetry)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -4.553794860839844e-05
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      1.399999976158142
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 66.76,
+    "heightMm": 2.8,
+    "footprintMm": [
+     14.6,
+     14.6
+    ],
+    "tipAngleDeg": 79.0,
+    "objectSettings": {
+     "brim_type": "no_brim"
+    },
+    "objectSettingsSource": "R1 default: tip angle 79.0 deg >= 10 deg, no brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 10.2,
+      "totalGrams": 0.6,
+      "supportGrams": 0,
+      "layers": 27,
+      "supportExtrusionMm": 0.0,
+      "supportInterfaceMm": 0.0,
+      "firstLayerModelAreaMm2": 66.7,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 0.0,
+      "brim": {
+       "brimType": "no_brim",
+       "brimAreaMm2": 0.0,
+       "reachMm": 0.0,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "bore": 0.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Outer wall": 5.5,
+        "Inner wall": 5.8,
+        "Custom": 480.5
+       },
+       "z=0.3": {
+        "Outer wall": 34.5,
+        "Inner wall": 5.7,
+        "Gap infill": 18.8
+       },
+       "z=0.4": {
+        "Outer wall": 5.3,
+        "Inner wall": 5.6,
+        "Gap infill": 18.8
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_sleeve/axial/run/native/Black_Bambu/sliced.3mf",
+       "sha256": "2f05db9c2c304416e79ecf1c60d40b770ba257d51acaef719b3f8d042e9f16df"
+      },
+      "gcodeSha256": "1497e25a5074a41c5b4ea3f6d8ace74f9857c4bb93260613c5088debabf70740"
+     },
+     "Elegoo": {
+      "etaMinutes": 2.9,
+      "totalGrams": 0.39,
+      "supportGrams": 0,
+      "layers": 27,
+      "supportExtrusionMm": 0.0,
+      "supportInterfaceMm": 0.0,
+      "firstLayerModelAreaMm2": 66.7,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 0.0,
+      "brim": {
+       "brimType": "no_brim",
+       "brimAreaMm2": 0.0,
+       "reachMm": 0.0,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "bore": 0.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Outer wall": 23.7,
+        "Inner wall": 25.6
+       },
+       "z=0.3": {
+        "Outer wall": 23.6,
+        "Gap infill": 27.2,
+        "Custom": 506.9,
+        "Inner wall": 24.6
+       },
+       "z=0.4": {
+        "Outer wall": 23.6,
+        "Inner wall": 24.6,
+        "Gap infill": 18.8
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/left_sleeve/axial/run/native/Black_Elegoo/sliced.3mf",
+       "sha256": "30cefe3d1cc36173936baa2610e3a3494c1084aa3b8717d52eb7b9d243b6169f"
+      },
+      "gcodeSha256": "a7385c337596e5c133956f4e8bd92dac39f71a4438eecb906c088af02516326b"
+     }
+    },
+    "functionalFaces": {
+     "bore": {
+      "must": true,
+      "meaning": "sleeve bore d10.4 (slides on the lower-link d10 boss)",
+      "areaMm2": 78.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 78.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.0,
+       1.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "outer_face": {
+      "must": true,
+      "meaning": "sleeve outer face d14.6 (slides in the cheek pocket)",
+      "areaMm2": 110.1,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 110.1,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.0,
+       1.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "end_faces": {
+      "must": true,
+      "meaning": "sleeve end faces z = +-1.4 (axial contact with the lip and the link flange)",
+      "areaMm2": 133.5,
+      "downMm2": 66.8,
+      "upMm2": 66.8,
+      "sideMm2": 0.0,
+      "onBedMm2": 66.8,
+      "printZMm": [
+       0.0,
+       2.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "chamfers": {
+      "must": false,
+      "meaning": "0.2 mm entry chamfers at both ends",
+      "areaMm2": 44.4,
+      "downMm2": 22.2,
+      "upMm2": 22.2,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.02,
+       2.78
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     }
+    },
+    "runs": [
+     "slices/left_sleeve/axial/manifest.json",
+     "slices/left_sleeve/axial/run/preparation.json",
+     "slices/left_sleeve/axial/prepare.log",
+     "slices/left_sleeve/axial/prepare-resource.json",
+     "slices/left_sleeve/axial/slice-Bambu.log",
+     "slices/left_sleeve/axial/slice-Bambu-resource.json",
+     "slices/left_sleeve/axial/readback-Bambu.log",
+     "slices/left_sleeve/axial/readback-Bambu.json",
+     "slices/left_sleeve/axial/faces-Bambu.log",
+     "slices/left_sleeve/axial/faces-Bambu.json",
+     "slices/left_sleeve/axial/slice-Elegoo.log",
+     "slices/left_sleeve/axial/slice-Elegoo-resource.json",
+     "slices/left_sleeve/axial/readback-Elegoo.log",
+     "slices/left_sleeve/axial/readback-Elegoo.json",
+     "slices/left_sleeve/axial/faces-Elegoo.log",
+     "slices/left_sleeve/axial/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Axial, local -Z down, the 10/07 candidate pose (the mesh is exactly symmetric in z, so +Z down is the same print). 66.8 mm2 annular contact, 2.8 mm tall, tip 79 deg, 0 mm of support, no brim. The d10.4 bore and the d14.6 outer face are vertical walls, both end faces are the first and the top layer. The only clean pose; any side pose would put the bore ceiling on support.",
+    "cleanFaces": [
+     "bore",
+     "outer_face",
+     "end_faces"
+    ],
+    "facesWithSupport": [],
+    "drillPass": [],
+    "brimDecision": "R1 default: no brim (tip 79 deg, contact 66.8 mm2). Nothing else needed.",
+    "openItems": [
+     "The sleeve is printed in Black on the V1.22 Black profiles; the bore is sized for an undersized printed hole (DESIGN-NOTES: 0.4 mm nominal diametral clearance on both diameters). Check the sleeve slides on the lower-link d10 boss and in the cheek pocket; a 10.4 mm reamer pass is the fallback, not a pose change."
+    ]
+   },
+   "alternatives": [],
+   "screenSummary": [
+    {
+     "name": "current",
+     "rank": 1,
+     "penalty": 0.42,
+     "contactMm2": 66.8,
+     "tipAngleDeg": 79.0,
+     "heightMm": 2.8,
+     "overhang60Mm2": 0.0,
+     "sameAs": [
+      "local -Z down",
+      "stable p=0.42",
+      "flat facet 67 mm2"
+     ]
+    },
+    {
+     "name": "local +Z down",
+     "rank": 2,
+     "penalty": 0.42,
+     "contactMm2": 66.8,
+     "tipAngleDeg": 79.0,
+     "heightMm": 2.8,
+     "overhang60Mm2": 0.0,
+     "sameAs": [
+      "stable p=0.42",
+      "flat facet 67 mm2"
+     ]
+    },
+    {
+     "name": "local +X down",
+     "rank": 3,
+     "penalty": 35.28,
+     "contactMm2": 1.8,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.1,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 4,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 5,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 6,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 7,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": []
+    }
+   ]
+  },
+  "right_sleeve": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+    "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e"
+   },
+   "printStl20261007": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/PRINT-STL/right-sleeve-PRINT.stl",
+    "sha256": "7627cff7e16929376141b7948d2a4466bc7997efb0573d8d06d4aa7ead7d1a1e",
+    "localToPrintStl": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -4.553794860839844e-05
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      -0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      1.399999976158142
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ]
+   },
+   "chosen": {
+    "slug": "axial",
+    "poseName": "local -Z down (axial, 10/07 pose; +Z down is identical by symmetry)",
+    "screenCandidate": "current",
+    "sourceToPrint": [
+     [
+      1.0,
+      0.0,
+      0.0,
+      -4.553794860839844e-05
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      1.0,
+      1.399999976158142
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 66.76,
+    "heightMm": 2.8,
+    "footprintMm": [
+     14.6,
+     14.6
+    ],
+    "tipAngleDeg": 79.0,
+    "objectSettings": {
+     "brim_type": "no_brim"
+    },
+    "objectSettingsSource": "R1 default: tip angle 79.0 deg >= 10 deg, no brim",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 10.2,
+      "totalGrams": 0.6,
+      "supportGrams": 0,
+      "layers": 27,
+      "supportExtrusionMm": 0.0,
+      "supportInterfaceMm": 0.0,
+      "firstLayerModelAreaMm2": 66.7,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 0.0,
+      "brim": {
+       "brimType": "no_brim",
+       "brimAreaMm2": 0.0,
+       "reachMm": 0.0,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "bore": 0.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Custom": 480.5,
+        "Inner wall": 5.8,
+        "Outer wall": 5.5
+       },
+       "z=0.3": {
+        "Gap infill": 18.8,
+        "Inner wall": 5.7,
+        "Outer wall": 34.5
+       },
+       "z=0.4": {
+        "Gap infill": 18.8,
+        "Inner wall": 5.6,
+        "Outer wall": 5.3
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_sleeve/axial/run/native/Black_Bambu/sliced.3mf",
+       "sha256": "e97d6994b6c18dfc036ad04fb668e19dbcc82e49461989fab5beb5c3331d19eb"
+      },
+      "gcodeSha256": "c19a161a44101e059c41f858be8eb9a0e36e558367388b0a10a2332e00ed96af"
+     },
+     "Elegoo": {
+      "etaMinutes": 2.9,
+      "totalGrams": 0.39,
+      "supportGrams": 0,
+      "layers": 27,
+      "supportExtrusionMm": 0.0,
+      "supportInterfaceMm": 0.0,
+      "firstLayerModelAreaMm2": 66.7,
+      "firstLayerIslands": 1,
+      "firstLayerSupportAreaMm2": 0.0,
+      "brim": {
+       "brimType": "no_brim",
+       "brimAreaMm2": 0.0,
+       "reachMm": 0.0,
+       "failures": []
+      },
+      "brimReviewPassed": true,
+      "supportInsideCavitiesMm": {
+       "bore": 0.0
+      },
+      "firstThreeLayersByFeatureMm": {
+       "z=0.2": {
+        "Outer wall": 23.7,
+        "Inner wall": 25.6
+       },
+       "z=0.3": {
+        "Custom": 506.9,
+        "Gap infill": 27.2,
+        "Outer wall": 23.6,
+        "Inner wall": 24.6
+       },
+       "z=0.4": {
+        "Outer wall": 23.6,
+        "Gap infill": 18.8,
+        "Inner wall": 24.6
+       }
+      },
+      "tongueModelToolpathMm": null,
+      "nativeArchive": {
+       "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/slices/right_sleeve/axial/run/native/Black_Elegoo/sliced.3mf",
+       "sha256": "9725ba2aee5709646221455b12a364cf2372a0701e1bc178976b1fa08f979c14"
+      },
+      "gcodeSha256": "5f26c84a77c43771a576593558cccf6c100d33218261b62593da6fa9c5d10ce5"
+     }
+    },
+    "functionalFaces": {
+     "bore": {
+      "must": true,
+      "meaning": "sleeve bore d10.4 (slides on the lower-link d10 boss)",
+      "areaMm2": 78.4,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 78.4,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.0,
+       1.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "clean": true
+     },
+     "outer_face": {
+      "must": true,
+      "meaning": "sleeve outer face d14.6 (slides in the cheek pocket)",
+      "areaMm2": 110.1,
+      "downMm2": 0.0,
+      "upMm2": 0.0,
+      "sideMm2": 110.1,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       1.0,
+       1.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "end_faces": {
+      "must": true,
+      "meaning": "sleeve end faces z = +-1.4 (axial contact with the lip and the link flange)",
+      "areaMm2": 133.5,
+      "downMm2": 66.8,
+      "upMm2": 66.8,
+      "sideMm2": 0.0,
+      "onBedMm2": 66.8,
+      "printZMm": [
+       0.0,
+       2.8
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     },
+     "chamfers": {
+      "must": false,
+      "meaning": "0.2 mm entry chamfers at both ends",
+      "areaMm2": 44.4,
+      "downMm2": 22.2,
+      "upMm2": 22.2,
+      "sideMm2": 0.0,
+      "onBedMm2": 0.0,
+      "printZMm": [
+       0.02,
+       2.78
+      ],
+      "restsOnSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "nearSupportMm2": {
+       "Bambu": 0.0,
+       "Elegoo": 0.0
+      },
+      "supportInsideMm": {},
+      "clean": true
+     }
+    },
+    "runs": [
+     "slices/right_sleeve/axial/manifest.json",
+     "slices/right_sleeve/axial/run/preparation.json",
+     "slices/right_sleeve/axial/prepare.log",
+     "slices/right_sleeve/axial/prepare-resource.json",
+     "slices/right_sleeve/axial/slice-Bambu.log",
+     "slices/right_sleeve/axial/slice-Bambu-resource.json",
+     "slices/right_sleeve/axial/readback-Bambu.log",
+     "slices/right_sleeve/axial/readback-Bambu.json",
+     "slices/right_sleeve/axial/faces-Bambu.log",
+     "slices/right_sleeve/axial/faces-Bambu.json",
+     "slices/right_sleeve/axial/slice-Elegoo.log",
+     "slices/right_sleeve/axial/slice-Elegoo-resource.json",
+     "slices/right_sleeve/axial/readback-Elegoo.log",
+     "slices/right_sleeve/axial/readback-Elegoo.json",
+     "slices/right_sleeve/axial/faces-Elegoo.log",
+     "slices/right_sleeve/axial/faces-Elegoo.json"
+    ],
+    "sameAs20261007Trial": true,
+    "reason": "Same file as the left sleeve (identical sha256), same axial pose: 66.8 mm2 contact, 2.8 mm tall, 0 mm of support, no brim, bore and outer face vertical.",
+    "cleanFaces": [
+     "bore",
+     "outer_face",
+     "end_faces"
+    ],
+    "facesWithSupport": [],
+    "drillPass": [],
+    "brimDecision": "R1 default: no brim.",
+    "openItems": [
+     "Same fit check as the left sleeve."
+    ]
+   },
+   "alternatives": [],
+   "screenSummary": [
+    {
+     "name": "current",
+     "rank": 1,
+     "penalty": 0.42,
+     "contactMm2": 66.8,
+     "tipAngleDeg": 79.0,
+     "heightMm": 2.8,
+     "overhang60Mm2": 0.0,
+     "sameAs": [
+      "local -Z down",
+      "stable p=0.42",
+      "flat facet 67 mm2"
+     ]
+    },
+    {
+     "name": "local +Z down",
+     "rank": 2,
+     "penalty": 0.42,
+     "contactMm2": 66.8,
+     "tipAngleDeg": 79.0,
+     "heightMm": 2.8,
+     "overhang60Mm2": 0.0,
+     "sameAs": [
+      "stable p=0.42",
+      "flat facet 67 mm2"
+     ]
+    },
+    {
+     "name": "local +X down",
+     "rank": 3,
+     "penalty": 35.28,
+     "contactMm2": 1.8,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.1,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 4,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 5,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": [
+      "stable p=0.00"
+     ]
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 6,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": []
+    },
+    {
+     "name": "stable p=0.00",
+     "rank": 7,
+     "penalty": 35.37,
+     "contactMm2": 1.6,
+     "tipAngleDeg": 9.4,
+     "heightMm": 14.6,
+     "overhang60Mm2": 27.0,
+     "sameAs": []
+    }
+   ]
+  }
+ }
+}

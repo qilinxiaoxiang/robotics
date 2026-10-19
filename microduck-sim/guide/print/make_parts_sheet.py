@@ -349,6 +349,50 @@ INCREMENTAL_NOTES_BY_VERSION['V1.21'] = dict(
     hotglue_mold_left='For the left foot (community-44). Raised L at the heel end; the top of the letter points to the toe. The cavity leaves a 1.0 mm glue coat over the flat and up the rounded edge to 3 mm. Prints cavity up, 0.12 mm layers with ironing, no support, no brim.',
     hotglue_mold_right='For the right foot (community-46), mirror of the left mold, with a raised R at the heel end, top of the letter to the toe. Same coat and print settings.')
 
+# V1.22: the ankle rework (Shawn 2026-10-19: the one-piece orange bracket has to be spread over the lower link and its
+# servo, and the yellow foot pressed onto it so hard that it could not come off; every fitting loaded the ankle servo).
+# Split ankle from print/ankle-split-20261019 (the 2026-10-07 design) and the slip-fit feet from print/foot-slipfit-20261019.
+# The V1.21 molds were printed in black on 2026-10-19 and are not in V1.22.
+_STOCK = HERE.parents[1] / 'build-pack-20260913' / 'assembly' / 'print-parts'
+RETIRED_INCREMENTAL['V1.22'] = [
+    ('Left ankle bracket (stock print)', 'Orange', _STOCK / 'community-66.stl',
+     'A closed fork: the lower link with its servo cannot come in from above, so it was spread and pressed on, loading the servo every time.', 'Left ankle base + left ankle side'),
+    ('Right ankle bracket (stock print)', 'Orange', _STOCK / 'community-64.stl',
+     'Same closed fork as the left bracket.', 'Right ankle base + right ankle side'),
+    ('Left ankle sleeve (stock print)', 'Black', _STOCK / 'community-62.stl',
+     '9.65 mm bore on the 10 mm link boss: a press fit that is part of why the fork had to be forced.', 'Left ankle sleeve'),
+    ('Right ankle sleeve (stock print)', 'Black', _STOCK / 'community-68.stl',
+     'Same press fit as the left sleeve.', 'Right ankle sleeve'),
+    ('Left foot (stock print)', 'Yellow', _STOCK / 'community-44.stl',
+     'Press fit on the ankle bracket, so tight that it cannot be taken off without loading the ankle servo.', 'Left foot, slip fit'),
+    ('Right foot (stock print)', 'Yellow', _STOCK / 'community-46.stl',
+     'Same press fit as the left foot.', 'Right foot, slip fit'),
+]
+INTRO_BY_VERSION['V1.22'] = ('V1.22 is three plates and reworks both ankles. Orange: an ankle base and a removable ankle side for each '
+                             'leg; the base sits on the servo horn and takes the lower link with its servo from above, the side slides '
+                             'on along the shaft and two M2 x 8 hold it. Black: a new sleeve for each leg, 10.4 mm bore, that turns '
+                             'freely on the link instead of being pressed. Yellow: two new feet that slide onto the base by hand and are '
+                             'held by the toe M2 x 6. Nothing in the ankle is spread or pressed any more. The feet keep the old sole, so '
+                             'the hot-glue molds (printed black on 2026-10-19) fit them.')
+RETIRED_LEAD_BY_VERSION['V1.22'] = ('Take each ankle apart once, with the ankle-and-foot module off the knee: toe screw out and the foot rocked off '
+                                    '(hold the orange bracket, not the leg or the servo; the foot may crack), then the four M2 x 4 output screws, '
+                                    'the two M2 x 10 case screws and the M2.6 x 8 rear centre with its washer. Pull the link off the bracket evenly '
+                                    'and lift the servo out. Keep every screw and the washer; only the printed parts below are replaced.')
+RETIRED_HEADING_BY_VERSION['V1.22'] = 'Replace these'
+INCREMENTAL_NAMES_BY_VERSION['V1.22'] = dict(
+    ankle_base_left='Left ankle base', ankle_base_right='Right ankle base', ankle_cheek_left='Left ankle side', ankle_cheek_right='Right ankle side',
+    ankle_sleeve_left='Left ankle sleeve', ankle_sleeve_right='Right ankle sleeve',
+    foot_left_slipfit='Left foot, slip fit', foot_right_slipfit='Right foot, slip fit')
+INCREMENTAL_NOTES_BY_VERSION['V1.22'] = dict(
+    ankle_base_left='With the left ankle side, replaces the left ankle bracket. Screws to the servo horn with the four M2 x 4 as before and carries the foot block. With the side off, the lower link with its servo and sleeve sits straight down into it; nothing is spread.',
+    ankle_base_right='With the right ankle side, replaces the right ankle bracket. Same as the left base, mirrored.',
+    ankle_cheek_left='The removable side of the left ankle, on the inner face (towards the other leg). Slide it along the shaft, away from the centre line, onto the sleeve until its two tongues sit in the slots of the base, then drive two M2 x 8 from above, hand snug (they cut their own thread). The foot, fitted afterwards, holds it in; take the foot off before opening it.',
+    ankle_cheek_right='The removable side of the right ankle. Same as the left side, mirrored.',
+    ankle_sleeve_left='Replaces the left ankle sleeve. Bore 10.4 mm: it slides onto the 10 mm boss of the lower link by hand and turns freely. Put it on the link before the link goes into the base.',
+    ankle_sleeve_right='Replaces the right ankle sleeve. Same as the left sleeve.',
+    foot_left_slipfit='Replaces the left foot. The socket for the ankle block is 0.2 mm wider on every side and the two snap hooks are gone, so the foot slides straight up onto the base and side by hand. Then drive the M2 x 6 from above through the toe of the base into the foot. If it is still tight, sand the socket walls of the foot; never press it on. Prints on its sole, as before.',
+    foot_right_slipfit='Replaces the right foot. Same slip fit and the same M2 x 6 at the toe. Prints on its sole, as before.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

@@ -8,7 +8,7 @@
    "title": "What you are building",
    "bench": false,
    "inventory": true,
-   "drawnParts": 158,
+   "drawnParts": 160,
    "add": [],
    "approach": {},
    "group": false,
@@ -50,7 +50,7 @@
    "title": "Gather the electronics and kit cables",
    "bench": true,
    "inventory": true,
-   "drawnParts": 42,
+   "drawnParts": 44,
    "add": [
     "imu_board",
     "camera_board",
@@ -65,10 +65,10 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 21 new parts",
+   "title": "Print the 29 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 62,
+   "drawnParts": 64,
    "add": [
     "shell_left",
     "shell_right",
@@ -90,7 +90,15 @@
     "clip_torso",
     "clip_bracket",
     "clip_head",
-    "clip_cap"
+    "clip_cap",
+    "ankle",
+    "right_ankle",
+    "ankle_cheek",
+    "right_ankle_cheek",
+    "smallring",
+    "right_smallring",
+    "foot",
+    "right_foot"
    ],
    "approach": {},
    "group": false,
@@ -103,7 +111,7 @@
    "title": "Tools and consumables",
    "bench": false,
    "inventory": true,
-   "drawnParts": 38,
+   "drawnParts": 40,
    "add": [],
    "approach": {},
    "group": false,
@@ -116,7 +124,7 @@
    "title": "Soldering and wire list",
    "bench": false,
    "inventory": false,
-   "drawnParts": 38,
+   "drawnParts": 40,
    "add": [],
    "approach": {},
    "group": false,
@@ -201,7 +209,7 @@
    "title": "Set the 5991 to 15 V and the two XL4015 to 7.40 V and 5.00 V",
    "bench": false,
    "inventory": false,
-   "drawnParts": 38,
+   "drawnParts": 40,
    "add": [],
    "approach": {},
    "group": false,
@@ -215,7 +223,7 @@
    "title": "Open both hips so the torso base can go in",
    "bench": false,
    "inventory": false,
-   "drawnParts": 38,
+   "drawnParts": 40,
    "add": [],
    "approach": {},
    "group": false,
@@ -229,7 +237,7 @@
    "title": "Check the cables already in each leg",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -252,7 +260,7 @@
    "title": "Open the thigh (only on a leg missing a thigh plug)",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -268,7 +276,7 @@
    "title": "Plug both thigh servos and slide them back",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -291,7 +299,7 @@
    "title": "Plug the ankle servo (only if its plug is missing)",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -305,12 +313,92 @@
    "pathCollisions": []
   },
   {
+   "step": "ankle-split",
+   "chapter": "legs",
+   "title": "Replace each ankle bracket with the split ankle",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 34,
+   "add": [
+    "ankle_cheek",
+    "right_ankle_cheek"
+   ],
+   "approach": {
+    "ankle_cheek": [
+     [
+      0,
+      -8,
+      -30
+     ],
+     [
+      0,
+      -8,
+      0
+     ]
+    ],
+    "right_ankle_cheek": [
+     [
+      0,
+      8,
+      -30
+     ],
+     [
+      0,
+      8,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "legs",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "ankle-feet",
+   "chapter": "legs",
+   "title": "Fit the slip-fit feet",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 36,
+   "add": [
+    "foot",
+    "right_foot"
+   ],
+   "approach": {
+    "foot": [
+     0,
+     0,
+     -12
+    ],
+    "right_foot": [
+     0,
+     0,
+     -12
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "legs",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
    "step": "leg-thigh-close",
    "chapter": "legs",
    "title": "Close each leg and tie the leg cables",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -333,7 +421,7 @@
    "title": "Plug the hip cable into the hip-roll motor",
    "bench": true,
    "inventory": false,
-   "drawnParts": 34,
+   "drawnParts": 36,
    "add": [],
    "approach": {},
    "group": false,
@@ -552,7 +640,7 @@
    "title": "Slide both legs back onto the hip-roll outputs",
    "bench": false,
    "inventory": false,
-   "drawnParts": 43,
+   "drawnParts": 45,
    "add": [
     "thigh",
     "plate",
@@ -568,6 +656,7 @@
     "motor7",
     "motor8",
     "washer6",
+    "ankle_cheek",
     "right_thigh",
     "right_plate",
     "right_lower",
@@ -581,7 +670,8 @@
     "motor1",
     "motor2",
     "motor3",
-    "washer1"
+    "washer1",
+    "right_ankle_cheek"
    ],
    "approach": {
     "thigh": [
@@ -650,6 +740,11 @@
      0
     ],
     "washer6": [
+     45,
+     0,
+     0
+    ],
+    "ankle_cheek": [
      45,
      0,
      0
@@ -723,6 +818,11 @@
      45,
      0,
      0
+    ],
+    "right_ankle_cheek": [
+     45,
+     0,
+     0
     ]
    },
    "group": true,
@@ -739,7 +839,7 @@
    "title": "Plug the hip cables into ID5 and ID10",
    "bench": false,
    "inventory": false,
-   "drawnParts": 43,
+   "drawnParts": 45,
    "add": [],
    "approach": {},
    "group": false,
@@ -756,7 +856,7 @@
    "title": "Mount the OpenRB-150 in the pack",
    "bench": false,
    "inventory": false,
-   "drawnParts": 44,
+   "drawnParts": 46,
    "add": [
     "openrb_board"
    ],
@@ -783,7 +883,7 @@
    "title": "Connect the 7 V pair and plug in the three links",
    "bench": false,
    "inventory": false,
-   "drawnParts": 44,
+   "drawnParts": 46,
    "add": [],
    "approach": {},
    "group": false,
@@ -802,7 +902,7 @@
    "title": "Plug the leg links into ID5 and ID10",
    "bench": false,
    "inventory": false,
-   "drawnParts": 44,
+   "drawnParts": 46,
    "add": [],
    "approach": {},
    "group": false,
@@ -819,7 +919,7 @@
    "title": "Plug the IMU cable",
    "bench": false,
    "inventory": false,
-   "drawnParts": 45,
+   "drawnParts": 47,
    "add": [
     "imu_sh4_receiving"
    ],
@@ -846,7 +946,7 @@
    "title": "Fit the rear box frame with the four cover screws",
    "bench": false,
    "inventory": false,
-   "drawnParts": 46,
+   "drawnParts": 48,
    "add": [
     "rear_frame"
    ],
@@ -874,7 +974,7 @@
    "title": "Screw the 5991 into the bottom tier and loop its 15 V wires",
    "bench": false,
    "inventory": false,
-   "drawnParts": 47,
+   "drawnParts": 49,
    "add": [
     "pd5991"
    ],
@@ -901,7 +1001,7 @@
    "title": "Screw in the 5 V converter, then the 7 V converter above it, IN on the right",
    "bench": false,
    "inventory": false,
-   "drawnParts": 49,
+   "drawnParts": 51,
    "add": [
     "xl4015_mid",
     "xl4015_top"
@@ -935,7 +1035,7 @@
    "title": "Lead the 7 V pair and the head 5 V lead to their converters' OUT blocks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 49,
+   "drawnParts": 51,
    "add": [],
    "approach": {},
    "group": false,
@@ -952,7 +1052,7 @@
    "title": "Close the box with its cap lid",
    "bench": false,
    "inventory": false,
-   "drawnParts": 50,
+   "drawnParts": 52,
    "add": [
     "rear_lid"
    ],
@@ -1162,7 +1262,7 @@
    "title": "Lower the neck into the open torso",
    "bench": false,
    "inventory": false,
-   "drawnParts": 61,
+   "drawnParts": 63,
    "add": [
     "motor12",
     "motor11",
@@ -1249,7 +1349,7 @@
    "title": "Close the two torso shells, fit the torso wire clip and screw each shell to the pack",
    "bench": false,
    "inventory": false,
-   "drawnParts": 64,
+   "drawnParts": 66,
    "add": [
     "shell_left",
     "shell_right",
@@ -1488,7 +1588,7 @@
    "title": "Set the head on ID13 and connect 13 \u2192 14",
    "bench": false,
    "inventory": false,
-   "drawnParts": 71,
+   "drawnParts": 73,
    "add": [
     "head_bottom",
     "mouth_sliding_ring",
@@ -1551,7 +1651,7 @@
    "title": "Lower the jaw support with ID15 and screw it down",
    "bench": false,
    "inventory": false,
-   "drawnParts": 73,
+   "drawnParts": 75,
    "add": [
     "jaw_support",
     "motor15"
@@ -1584,7 +1684,7 @@
    "title": "Fit the head wire clip under the fourth support screw",
    "bench": false,
    "inventory": false,
-   "drawnParts": 74,
+   "drawnParts": 76,
    "add": [
     "clip_head"
    ],
@@ -1609,7 +1709,7 @@
    "title": "Screw the jaw to the ID15 horn",
    "bench": false,
    "inventory": false,
-   "drawnParts": 74,
+   "drawnParts": 76,
    "add": [],
    "approach": {},
    "group": false,
@@ -1678,7 +1778,7 @@
    "title": "Set the face and camera on the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 77,
+   "drawnParts": 79,
    "add": [
     "face_panel",
     "eye_trim",
@@ -2467,7 +2567,7 @@
    "title": "Run the 8-wire bundle through the torso, bracket and head clips",
    "bench": false,
    "inventory": false,
-   "drawnParts": 77,
+   "drawnParts": 79,
    "add": [],
    "approach": {},
    "group": false,
@@ -2485,7 +2585,7 @@
    "title": "Plug the bundle onto the A7Z, press it into the cap clip and lower the cap",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [
     "head_cap",
     "speaker_tape",
@@ -3070,7 +3170,7 @@
    "title": "Unpowered checks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 169,
    "add": [],
    "approach": {},
    "group": false,
@@ -3084,7 +3184,7 @@
    "title": "Set up the A7Z software",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [],
    "approach": {},
    "group": false,
@@ -3098,7 +3198,7 @@
    "title": "First power: converter readback, bus scan, Shutdown 52 and voltage-limit check",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 169,
    "add": [],
    "approach": {},
    "group": false,
@@ -3117,7 +3217,7 @@
    "title": "Check the IMU, camera, Wi-Fi and speaker",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [],
    "approach": {},
    "group": false,
@@ -3138,7 +3238,7 @@
    "title": "Range-of-motion check with torque off",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [],
    "approach": {},
    "group": false,
@@ -3152,7 +3252,7 @@
    "title": "Measure the servo current through the OpenRB",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 169,
    "add": [],
    "approach": {},
    "group": false,
@@ -3168,7 +3268,7 @@
    "title": "Screw the head shut",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [],
    "approach": {},
    "group": false,
@@ -3183,7 +3283,7 @@
    "title": "Close the mouth and weigh the robot",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 170,
    "add": [],
    "approach": {},
    "group": false,
@@ -3290,7 +3390,7 @@
    "title": "Swap the rear converter box for the battery backpack",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 169,
    "add": [
     "battery_backpack_frame",
     "bp_switch",
@@ -3333,7 +3433,7 @@
    "title": "Slide the battery in upright and connect plug 1",
    "bench": false,
    "inventory": false,
-   "drawnParts": 169,
+   "drawnParts": 171,
    "add": [
     "bp_battery",
     "bp_plugs"
@@ -3364,7 +3464,7 @@
    "title": "Close the backpack with its cap",
    "bench": false,
    "inventory": false,
-   "drawnParts": 170,
+   "drawnParts": 172,
    "add": [
     "battery_backpack_cap"
    ],

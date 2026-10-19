@@ -97,6 +97,14 @@ class FirstLayerBrimTests(unittest.TestCase):
   out=r.brim_review(outer,[part('u',dict(brim,brim_width='5')),part('b',r.R1_NO_BRIM)])   # slicer used 4 mm, plan says 5
   self.assertEqual(len(out['objects']['u_1']['failures']),1);self.assertIn('reach',out['objects']['u_1']['failures'][0])
   with self.assertRaisesRegex(AssertionError,'pipeline v1'):r.brim_review(rows,[dict(key='u',quantity=1),dict(key='b',quantity=1)])
+  # a row's written hull allowance (V1.22 ankle bases: a real recess in the bed face) raises the inside-outline limit for that object only
+  inside=next(x for x in rows if x['name']=='u_1')['brimInsideOwnHullMm2'];lim=round(inside+1,1)
+  allowed=dict(part('u',brim),brimInsideHullAllowanceMm2=lim,brimInsideHullAllowanceReason='real 12 x 1.1 mm notch in the bed face')
+  out=r.brim_review(rows,[allowed,part('b',r.R1_NO_BRIM)]);u=out['objects']['u_1']   # the fixture's reach failure stays; only the inside-outline failure is lifted
+  self.assertFalse(any('inside'in f for f in u['failures']),u);self.assertEqual(u['insideOwnHullMaxMm2'],lim);self.assertEqual(u['allowanceReason'],'real 12 x 1.1 mm notch in the bed face')
+  self.assertEqual(r.hull_allowance(allowed)['brimInsideHullAllowanceMm2'],lim);self.assertEqual(r.hull_allowance(part('u',brim)),{})
+  with self.assertRaisesRegex(AssertionError,'Reason'):r.hull_allowance(dict(part('u',brim),brimInsideHullAllowanceMm2=lim))
+  with self.assertRaisesRegex(AssertionError,'exceed'):r.hull_allowance(dict(allowed,brimInsideHullAllowanceMm2=1.0))
 
 @unittest.skipUnless((ACCEPT/'run/preparation.json').exists() and V19.exists(),'acceptance slices absent')
 class RealSliceTests(unittest.TestCase):

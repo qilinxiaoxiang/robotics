@@ -1,0 +1,253 @@
+{
+ "scope": "One print pose per part for the six split-ankle parts of ankle-redesign-20261007 (left/right base, cheek, sleeve). Poses are expressed as sourceToPrint 4x4 matrices on the LOCAL STL frame (STL/*-local.stl). This settles orientation, bed contact, brim and which faces carry support; it does not change geometry and does not release a plate.",
+ "method": "1) orientation_check.py screen of every stable pose plus the named local +-X/+-Y/+-Z poses (screen.json). 2) Functional-face rule (scripts/faces.py): faces that slide, bear or register MUST print without support under them; cosmetic faces may carry support. 3) The top poses per part (slice-plan.json, 11 rows) were prepared and sliced natively on both machines with the V1.22 profiles through release_pipeline_v2 under the bounded runner, then read back (slice_readback.py) and every face set was checked against the support toolpaths (scripts/face_support.py: a face rests on support when its centre is within 1.0 mm XY and 0..0.6 mm above a support toolpath midpoint; support inside cavities is support toolpath length mapped back into the local cavity volumes). 4) Chosen pose = the one where every MUST face is clean on both machines and the remaining support sits on cosmetic faces; ties broken by bed contact and brim review.",
+ "parts": {
+  "left_base": {
+   "slug": "x-pos-down",
+   "sameAsTrial": true,
+   "reason": "Local +X down: the big gusset end face (81.1 mm2, tip 2.8 deg, 36.5 mm tall) on the bed, exactly the 10/07 candidate pose (the 10/07 package was never printed: its README says no print has been started). It is the only family of poses where the motor mating face, the four output screw seats, the slot walls, the post register faces and the pilot bores all stand vertical or face up, so none of them touches support on either machine (0 mm2 resting on support, 0 mm of support inside pilots, slots and output holes). The mirror pose (-X down) is equivalent on the functional faces but puts more of the foot slip-fit block on support (22.7 / 53.3 mm2 against 8.2 / 26.6) and has the same Bambu brim notch. The screen favourite (-Z tilted onto the foot facets, 316 mm2 contact, no brim) is rejected because it turns the output seats down onto support (35.5 mm2 on Elegoo) and fills the slot channels and pilots with support on Bambu.",
+   "facesWithSupport": [
+    {
+     "face": "wing_inner_walls",
+     "restsOnSupportMm2": {
+      "Bambu": 44.6,
+      "Elegoo": 39.5
+     },
+     "where": "the inner wall of the lower wing (local x = -11, y -12.9..-2.2, z -1.1..2.5), the wall that faces down in this pose",
+     "whyAcceptable": "the cheek body nests between the wing inner walls with zero nominal clearance; the wall does not slide or bear, it only locates the cheek sideways. A support scar here can make the cheek a push fit. Scrape the scar flat with a blade before the first fit (open item: a 0.1 mm side clearance in the model would remove the hand step)."
+    },
+    {
+     "face": "foot_block",
+     "restsOnSupportMm2": {
+      "Bambu": 8.2,
+      "Elegoo": 26.6
+     },
+     "where": "the underside of the lower block facing down in this pose (local z -33.3..-34.5, near x 9..10 on Bambu; the whole lower strip on Elegoo)",
+     "whyAcceptable": "the V1.22 foot socket slides over this block with 0.2 mm clearance; the scar is on one side face only and is below the plate. Check the foot socket slides on; if it binds, file the one scarred face."
+    },
+    {
+     "face": "gusset_hole",
+     "restsOnSupportMm2": {
+      "Bambu": 0.0,
+      "Elegoo": 2.2
+     },
+     "supportInsideMm": {
+      "Bambu": 0.0,
+      "Elegoo": 22.3
+     },
+     "where": "the original community d2.2 / d4.4 counterbored hole through the gusset, horizontal in this pose",
+     "whyAcceptable": "the hole has no function in the split design (nothing is screwed through it); Orca puts 22 mm of support in the counterbore, pick it out or leave it."
+    },
+    {
+     "face": "fork_opening",
+     "supportInsideMm": {
+      "Bambu": 1408.0,
+      "Elegoo": 992.8
+     },
+     "where": "the open fork between the wings above the motor face (the volume the cheek and the lower link occupy)",
+     "whyAcceptable": "this is where the support towers for the top wing and the posts stand; it is open space, not a face. It must be cleared completely before the cheek is fitted."
+    }
+   ],
+   "drillPass": [
+    "Two d1.6 blind TAP pilots (local Y axis, x = +-12, z = 4.5) are horizontal in this pose. The hole prints, but a small horizontal FDM hole comes out 0.2-0.4 mm under size because its ceiling sags; no print of this design exists, so the actual diameter is unmeasured. No-drill route (preferred): give the three horizontal hole families a teardrop (pointed-top) profile in generate_candidate.py so they print to size, or model them oversize after one measured print. Drilling (1.6 mm by hand, 1.2 mm wall to the slot) is the last resort only if a printed pilot refuses the M2 x 8 TAP screw.",
+    "The original output screw holes through the plate (d4.4 counterbores at local z = -32.5 around (+-6, 0) and (0, +-6)) are horizontal too and bridged by the slicer (0 mm support inside). Same route: teardrop profile or measured oversize; test with the M2 x 4 TAP screw first."
+   ],
+   "brim": "R1 default kept: outer_only, 4 mm, gap 0.1 mm on both machines (tip 2.8 deg, 36.5 mm tall on a 2.3 mm wide strip). Elegoo brim review passes. Bambu brim review fails on 13.3 mm2 of brim inside the part's convex outline: Bambu's brim loops into the real 12 x 1.1 mm recess on the inner side of the gusset end face (the community-66 notch next to the gusset hole), Orca's does not because its support feet stand there. That brim piece is a 1.1 mm wide strip bonded on three sides; cut it out with a blade. The decision whether to accept the failed review as-is or to carry a per-object reason in objectSettingsSource belongs to the release, see openItems.",
+   "openItems": [
+    "Bambu brim review fails (13.3 mm2 inside the convex outline, gusset notch). The release pipeline's brim_review() will flag the plate; the part still needs the brim. Resolution options for the parent: accept with a written reason, or print the bases on the Elegoo only.",
+    "Stability: 36.5 mm tall on an 81 mm2 strip (tip 2.8 deg) with a 4 mm brim. No print of this design exists yet, so the stability is untested; keep the brim and print the two bases on the same plate so the toolhead time per layer stays short.",
+    "Wing inner wall scar against a zero-clearance nest: a 0.1 mm side clearance in generate_candidate.py would remove the scrape step; geometry change, not done here.",
+    "The horizontal pilots and output holes have not been drilled or test-screwed on a V1.22-profile print; no print of this design exists, so the hole diameters are unmeasured.",
+    "Horizontal small holes without drilling: add a teardrop (pointed-top) profile to the pilots, output holes and counterbores in generate_candidate.py, or model them oversize after one measured print. A pose with these holes vertical (local Y down) is not printable: 1.5 / 5.4 mm2 of contact, the base lies on an edge."
+   ],
+   "alternatives": {
+    "x-neg-down": "Mirror of the chosen pose (small wing end on the bed). Functional faces equally clean; slightly less support (5145 / 9718 mm against 6909 / 12252 mm) but more of the foot slip-fit block rests on support (22.7 / 53.3 mm2) and the same Bambu brim notch (15.3 mm2). Chosen pose matches the 10/07 candidate; with no print on either side, the pose with less foot block on support wins.",
+    "z-neg-tilted": "Screen favourite (316 mm2 contact, tip 10.5 deg, no brim, 'stable p=0.09'). Rejected: the four output screw seats face down 2.9 mm above the bed and rest on support on Elegoo (35.5 mm2), the foot shoulder is fully on support, and Bambu puts 7.2 mm of support in the slot channels and 3.3 mm in the pilots. Also 34 / 31 min against 29 / 26 min."
+   }
+  },
+  "right_base": {
+   "slug": "x-neg-down",
+   "sameAsTrial": true,
+   "reason": "Mirror of the left base: local -X down, big gusset end face (81.1 mm2, tip 2.8 deg) on the bed, the 10/07 candidate pose (never printed). Every MUST face is vertical or faces up and rests on 0 mm2 of support on both machines; 0 mm of support inside pilots, slot channels and output holes.",
+   "facesWithSupport": [
+    {
+     "face": "wing_inner_walls",
+     "restsOnSupportMm2": {
+      "Bambu": 44.6,
+      "Elegoo": 37.3
+     },
+     "where": "inner wall of the lower wing (local x = +11, y -14.1..-1.9, z -1.1..2.5)",
+     "whyAcceptable": "same as the left base: nesting wall, zero nominal clearance, scrape the scar flat before the first fit."
+    },
+    {
+     "face": "foot_block",
+     "restsOnSupportMm2": {
+      "Bambu": 8.2,
+      "Elegoo": 37.0
+     },
+     "where": "underside of the lower block facing down (local z -33.1..-34.6)",
+     "whyAcceptable": "foot socket slides over it with 0.2 mm clearance; file the one scarred face if the socket binds."
+    },
+    {
+     "face": "gusset_hole",
+     "restsOnSupportMm2": {
+      "Bambu": 0.0,
+      "Elegoo": 1.5
+     },
+     "supportInsideMm": {
+      "Bambu": 0.0,
+      "Elegoo": 21.3
+     },
+     "where": "the original counterbored gusset hole, horizontal",
+     "whyAcceptable": "no function in the split design."
+    },
+    {
+     "face": "fork_opening",
+     "supportInsideMm": {
+      "Bambu": 931.9,
+      "Elegoo": 1026.1
+     },
+     "where": "open fork between the wings",
+     "whyAcceptable": "support towers in open space; clear before fitting the cheek."
+    }
+   ],
+   "drillPass": [
+    "Same as the left base: pilots and output holes horizontal; teardrop profile or measured oversize first, drilling last resort."
+   ],
+   "brim": "Same as the left base: R1 outer_only 4 mm kept; Elegoo brim review passes, Bambu fails on 13.3 mm2 of brim in the gusset end-face notch; cut that strip out with a blade.",
+   "openItems": [
+    "Bambu brim review failure (gusset notch), same decision as the left base.",
+    "Tall narrow pose, keep the brim; print both bases together.",
+    "Wing inner wall scar against the zero-clearance nest.",
+    "Horizontal small holes without drilling: add a teardrop (pointed-top) profile to the pilots, output holes and counterbores in generate_candidate.py, or model them oversize after one measured print. A pose with these holes vertical (local Y down) is not printable: 1.5 / 5.4 mm2 of contact, the base lies on an edge."
+   ],
+   "alternatives": {
+    "x-pos-down": "Mirror pose (small wing end on the bed). Functional faces clean, less support (6186 / 9516 mm) but more foot block on support (22.7 / 53.3 mm2 class) and the 7.6 mm2 'near' count on the motor face is side proximity only. Same Bambu brim notch (15.3 mm2). The 10/07 candidate with less foot block on support wins."
+   }
+  },
+  "left_cheek": {
+   "slug": "z-pos-down",
+   "sameAsTrial": true,
+   "reason": "Local +Z down: the two 7 x 4 mm tab tops (57.6 mm2, two islands) on the bed, lip up, the 10/07 candidate pose (never printed). The bearing pocket wall stands vertical and carries 0 mm of support inside it on both machines, the capture lip faces up at print z 5.6 mm and is a clean top surface, the tongues print as upright ribs (49-54 mm of toolpath, the 0.4 mm rib is printed), the tab register faces are vertical walls, and the d2.3 clearance bores are bridged with 0 mm of support inside. The price is that the part is not self-standing (tip -44.3 deg): the body floats 4.1 mm above the bed on support and the whole exterior top (272-280 mm2) rests on support. The only other viable pose (-Z down) turns the capture lip down onto support (22.6 mm2 on Bambu, 966-1052 mm of support inside the pocket) and fails the brim review on both machines, so the cosmetic exterior takes the scars instead of the lip.",
+   "facesWithSupport": [
+    {
+     "face": "exterior_top",
+     "restsOnSupportMm2": {
+      "Bambu": 279.6,
+      "Elegoo": 272.5
+     },
+     "where": "the exterior top planes (local z 1.0 and 3.0) and the sloped ring top, the outside of the cheek",
+     "whyAcceptable": "cosmetic exterior; nothing slides, bears or registers on it. Support interface scars are visible on the outside of the ankle only."
+    },
+    {
+     "face": "lip_bore",
+     "restsOnSupportMm2": {
+      "Bambu": 0.0,
+      "Elegoo": 0.0
+     },
+     "supportInsideMm": {
+      "Bambu": 1.6,
+      "Elegoo": 53.7
+     },
+     "where": "the d14 bore above the lip (local z 1.5..3.0), the washer / rear screw window",
+     "whyAcceptable": "nothing slides in this bore; the sleeve runs in the d15 pocket below the lip, which has 0 mm of support inside. Orca puts 54 mm of support in the window; pick it out, the window needs no finish."
+    },
+    {
+     "face": "post_pockets",
+     "supportInsideMm": {
+      "Bambu": 144.7,
+      "Elegoo": 398.4
+     },
+     "where": "the two open pockets between the tabs and the ring body (local x = +-12 +- 2.1, y -4.55..2.05) where the base posts sit",
+     "whyAcceptable": "the pockets are open to the bed in this pose, so the support for the body stands in them. The tab register faces beside them are vertical walls and rest on 0 mm2 of support (the 3-15 mm2 'near' counts are side proximity). Clear the pockets fully before fitting."
+    }
+   ],
+   "drillPass": [
+    "Two d2.3 clearance holes (local Y axis, x = +-12, z = 4.5, 4.5 mm long) are horizontal in this pose and bridged by the slicer. A clearance hole only has to pass the M2 shank, so a teardrop profile or 0.2 mm modelled oversize in generate_candidate.py removes any binding; drilling 2.3 mm is the last resort."
+   ],
+   "brim": "R1 default kept: outer_only, 4 mm, gap 0.1 mm (tip -44.3 deg). Brim review passes on both machines (128.6 / 121.7 mm2 of brim, reach 4.02 mm). The brim plus the support under the body hold the two 7 x 4 mm tab pads; no print of this design exists yet, so this is untested.",
+   "openItems": [
+    "The pose deviates from R1 (not self-standing, tip -44.3 deg, body on support). Accepted because every bearing, sliding and register face is clean and the alternative puts the lip on support.",
+    "The tongue is a 0.4 mm rib; both slicers print it (49-54 mm of toolpath per cheek) but it is one extrusion wide. Check the tongue is present on the print before fitting; it is the sideways register in the base slot.",
+    "Horizontal clearance holes without drilling: teardrop profile or 0.2 mm oversize in generate_candidate.py. Local Y down is not self-standing for the cheek."
+   ],
+   "alternatives": {
+    "z-neg-down": "Lip down, foot-side strip (59 mm2 first layer, tip -55.6 deg) on the bed. Less support (2510 / 1384 mm) and 15 / 7.5 min, but the capture lip faces down at print z 3.1 and rests on support on Bambu (22.6 mm2, 966 mm of support inside the pocket) and is an unsupported 0.5 mm overhang on Elegoo; the 193 mm2 inner face 0.3 mm above the bed prints as overhang wall plus 289 mm of bridge; the tab undersides (54 mm2) rest on support; brim review fails on both machines (67.9 mm2 of brim inside the convex outline, right Bambu reach 4.67 against 4.1). Rejected."
+   }
+  },
+  "right_cheek": {
+   "slug": "z-pos-down",
+   "sameAsTrial": true,
+   "reason": "Mirror of the left cheek: local +Z down on the two tab tops (57.6 mm2), lip up, the 10/07 candidate pose (never printed). Pocket wall vertical with 0 mm of support inside, capture lip faces up, tongues upright, tab register faces vertical and resting on 0 mm2 of support, clearance bores bridged. Exterior top on support.",
+   "facesWithSupport": [
+    {
+     "face": "exterior_top",
+     "restsOnSupportMm2": {
+      "Bambu": 261.6,
+      "Elegoo": 270.9
+     },
+     "where": "exterior top planes and sloped ring top",
+     "whyAcceptable": "cosmetic exterior."
+    },
+    {
+     "face": "lip_bore",
+     "restsOnSupportMm2": {
+      "Bambu": 0.0,
+      "Elegoo": 0.0
+     },
+     "supportInsideMm": {
+      "Bambu": 0.6,
+      "Elegoo": 47.4
+     },
+     "where": "d14 window above the lip",
+     "whyAcceptable": "nothing slides in it; pick the support out."
+    },
+    {
+     "face": "post_pockets",
+     "supportInsideMm": {
+      "Bambu": 146.4,
+      "Elegoo": 455.0
+     },
+     "where": "open pockets beside the tabs where the base posts sit",
+     "whyAcceptable": "support for the body stands in the open pockets; register faces are vertical and clean; clear before fitting."
+    }
+   ],
+   "drillPass": [
+    "Same as the left cheek: clearance holes horizontal; teardrop or 0.2 mm oversize first, drilling last resort."
+   ],
+   "brim": "R1 default kept: outer_only 4 mm, gap 0.1 mm; brim review passes on both machines (133.5 / 122.0 mm2).",
+   "openItems": [
+    "Not self-standing (tip -44.3 deg), accepted as for the left cheek.",
+    "0.4 mm tongue rib, one extrusion wide; check it is present on the print.",
+    "Horizontal clearance holes without drilling: teardrop profile or 0.2 mm oversize in generate_candidate.py. Local Y down is not self-standing for the cheek."
+   ],
+   "alternatives": {
+    "z-neg-down": "Lip down. Capture lip rests on support on Bambu (22.4 mm2, 1052 mm of support inside the pocket), inner face printed as overhang and bridge, brim review fails on both machines (67.9 mm2 inside the outline; Bambu reach 4.67 mm against 4.1). Rejected."
+   }
+  },
+  "left_sleeve": {
+   "slug": "axial",
+   "sameAsTrial": true,
+   "reason": "Axial, local -Z down, the 10/07 candidate pose (the mesh is exactly symmetric in z, so +Z down is the same print). 66.8 mm2 annular contact, 2.8 mm tall, tip 79 deg, 0 mm of support, no brim. The d10.4 bore and the d14.6 outer face are vertical walls, both end faces are the first and the top layer. The only clean pose; any side pose would put the bore ceiling on support.",
+   "facesWithSupport": [],
+   "drillPass": [],
+   "brim": "R1 default: no brim (tip 79 deg, contact 66.8 mm2). Nothing else needed.",
+   "openItems": [
+    "The sleeve is printed in Black on the V1.22 Black profiles; the bore is sized for an undersized printed hole (DESIGN-NOTES: 0.4 mm nominal diametral clearance on both diameters). Check the sleeve slides on the lower-link d10 boss and in the cheek pocket; a 10.4 mm reamer pass is the fallback, not a pose change."
+   ],
+   "alternatives": {}
+  },
+  "right_sleeve": {
+   "slug": "axial",
+   "sameAsTrial": true,
+   "reason": "Same file as the left sleeve (identical sha256), same axial pose: 66.8 mm2 contact, 2.8 mm tall, 0 mm of support, no brim, bore and outer face vertical.",
+   "facesWithSupport": [],
+   "drillPass": [],
+   "brim": "R1 default: no brim.",
+   "openItems": [
+    "Same fit check as the left sleeve."
+   ],
+   "alternatives": {}
+  }
+ }
+}

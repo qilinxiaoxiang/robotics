@@ -1,0 +1,791 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "incremental",
+ "version": "V1.22",
+ "prototype": true,
+ "prototypeScope": "V1.22 delta package, the ankle rework: Orange plate with the two ankle bases and two ankle sides, Black plate with the two 10.4 mm ankle sleeves, Yellow plate with the two slip-fit feet. V1.20 is printed and the V1.21 molds were printed in black on 2026-10-19 (Shawn).",
+ "knownFitBoundary": "Ankle: the side screws are self-tapping in 1.6 mm printed pilots, hand snug only; the sleeve has about 0.4 mm of diametral running clearance in CAD, so a little side play is by design; printed hole sizes are not measured yet. Feet: 0.2 mm CAD clearance per side to the base and side; if a printed pair is tight, sand the socket walls of the foot, never force it. Not fitted on the robot yet.",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Yellow_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
+   "sha256": "061290b612bb407903c874c609e73bef25480985e6eae3703b08c298fc5bb060"
+  },
+  "Yellow_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
+   "sha256": "c737d7bca008862c870a734859bbfd9afed6b76e12309865b1dd3df80e8e31df"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+   "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+   "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+  },
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  },
+  "Black_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
+   "sha256": "ef9593097fb01bef35b9cb2e8e57f6f539362f8c341b01fdfa78ec74151243a4"
+  },
+  "Black_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",
+   "sha256": "c2954f042a62096191201a4a355c356247b084f8ae5b08398d1db4a612585163"
+  }
+ },
+ "placements": {
+  "Orange": [
+   {
+    "key": "ankle_base_left",
+    "copy": 1,
+    "translation": [
+     58.527,
+     127.999,
+     0.0
+    ]
+   },
+   {
+    "key": "ankle_base_right",
+    "copy": 1,
+    "translation": [
+     113.4765,
+     127.999,
+     0.0
+    ]
+   },
+   {
+    "key": "ankle_cheek_left",
+    "copy": 1,
+    "translation": [
+     161.95,
+     127.999,
+     0.0
+    ]
+   },
+   {
+    "key": "ankle_cheek_right",
+    "copy": 1,
+    "translation": [
+     203.95,
+     127.999,
+     0.0
+    ]
+   }
+  ],
+  "Black": [
+   {
+    "key": "ankle_sleeve_left",
+    "copy": 1,
+    "translation": [
+     114.7,
+     128.0,
+     0.0
+    ]
+   },
+   {
+    "key": "ankle_sleeve_right",
+    "copy": 1,
+    "translation": [
+     141.3,
+     128.0,
+     0.0
+    ]
+   }
+  ],
+  "Yellow": [
+   {
+    "key": "foot_left_slipfit",
+    "copy": 1,
+    "translation": [
+     94.9849,
+     128.0015,
+     0.0
+    ]
+   },
+   {
+    "key": "foot_right_slipfit",
+    "copy": 1,
+    "translation": [
+     161.0028,
+     127.9993,
+     0.0
+    ]
+   }
+  ]
+ },
+ "processOverrides": {},
+ "processOverrideReason": "Stock profiles on every plate (brims per object by the pipeline R1 rule or the manifest objectSettings).",
+ "parts": [
+  {
+   "key": "ankle_base_left",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "20"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+   "sha256": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the left ankle base (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     0.0,
+     0.0,
+     1.0,
+     14.377034425735474
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     3.5500030517578125
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0,
+     21.8367919921875
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 77.1
+   },
+   "poseOrigin": "local +X down (10/07 candidate: big gusset end on the bed): Local +X down: the big gusset end face (81.1 mm2, tip 2.8 deg, 36.5 mm tall) on the bed, exactly the 10/07 candidate pose (the 10/07 package was never printed: its README says no print has been started). It is the only family of poses where the motor mating face, the four output screw seats, the slot walls, the post register faces and the pilot bores all stand vertical or face up, so none of them touches support on either machine (0 mm2 resting on support, 0 mm of support inside pilots, slots and output holes). The mirror pose (-X down) is equivalent on the functional faces but puts more of the foot slip-fit block on support (22.7 / 53.3 mm2 against 8.2 / 26.6) and has the same Bambu brim notch. The screen favourite (-Z tilted onto the foot facets, 316 mm2 contact, no brim) is rejected because it turns the output seats down onto support (35.5 mm2 on Elegoo) and fills the slot channels and pilots with support on Bambu.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
+     "sha256": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec"
+    },
+    "bedContactMm2": 81.14,
+    "printSizeMm": [
+     42.95,
+     25.5,
+     36.5
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local +X down (10/07 candidate: big gusset end on the bed)), dropped to the bed"
+   },
+   "changeReason": "Replaces the printed community-66.stl (stock object 20, the left one-piece ankle bracket) together with ankle_cheek_left. Shawn 2026-10-19: the one-piece bracket is a closed fork; the lower link with its servo and sleeve cannot come in from above (assembly-path-investigation.md), so it was spread and pressed on, loading the ankle servo at every fitting. The base keeps the motor-output holes and the foot block of the stock bracket; with the side off, the link-servo-sleeve package lifts straight out (ankle-split-check.json packageLiftSideOff 0 mm3 left, the 0.137 mm3 source mating-face slab right). The V1.22 slip-fit foot seats on it as on the stock bracket (footSeat).",
+   "supersedes": "printed community-66.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "outer_only",
+    "brim_width": "4",
+    "brim_object_gap": "0.1"
+   },
+   "objectSettingsReason": "R1 default: tip angle 2.8 deg < 10 deg, outer brim",
+   "brimInsideHullAllowanceMm2": 20.0,
+   "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim."
+  },
+  {
+   "key": "ankle_base_right",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "22"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+   "sha256": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the right ankle base (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     0.0,
+     0.0,
+     -1.0,
+     -14.376534700393677
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     3.5500030517578125
+    ],
+    [
+     1.0,
+     0.0,
+     0.0,
+     21.8367919921875
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 77.1
+   },
+   "poseOrigin": "local -X down (10/07 candidate: big gusset end on the bed): Mirror of the left base: local -X down, big gusset end face (81.1 mm2, tip 2.8 deg) on the bed, the 10/07 candidate pose (never printed). Every MUST face is vertical or faces up and rests on 0 mm2 of support on both machines; 0 mm of support inside pilots, slot channels and output holes.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
+     "sha256": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378"
+    },
+    "bedContactMm2": 81.14,
+    "printSizeMm": [
+     42.95,
+     25.5,
+     36.5
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local -X down (10/07 candidate: big gusset end on the bed)), dropped to the bed"
+   },
+   "changeReason": "Replaces the printed community-64.stl (stock object 22, the right one-piece ankle bracket) together with ankle_cheek_right. Shawn 2026-10-19: the one-piece bracket is a closed fork; the lower link with its servo and sleeve cannot come in from above (assembly-path-investigation.md), so it was spread and pressed on, loading the ankle servo at every fitting. The base keeps the motor-output holes and the foot block of the stock bracket; with the side off, the link-servo-sleeve package lifts straight out (ankle-split-check.json packageLiftSideOff 0 mm3 left, the 0.137 mm3 source mating-face slab right). The V1.22 slip-fit foot seats on it as on the stock bracket (footSeat).",
+   "supersedes": "printed community-64.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "outer_only",
+    "brim_width": "4",
+    "brim_object_gap": "0.1"
+   },
+   "objectSettingsReason": "R1 default: tip angle 2.8 deg < 10 deg, outer brim",
+   "brimInsideHullAllowanceMm2": 20.0,
+   "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim."
+  },
+  {
+   "key": "ankle_cheek_left",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+   "sha256": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the left ankle side (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     -3.5500030517578125
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0,
+     7.099999904632568
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 54.7
+   },
+   "poseOrigin": "local +Z down (10/07 candidate: tab tops on the bed, lip up): Local +Z down: the two 7 x 4 mm tab tops (57.6 mm2, two islands) on the bed, lip up, the 10/07 candidate pose (never printed). The bearing pocket wall stands vertical and carries 0 mm of support inside it on both machines, the capture lip faces up at print z 5.6 mm and is a clean top surface, the tongues print as upright ribs (49-54 mm of toolpath, the 0.4 mm rib is printed), the tab register faces are vertical walls, and the d2.3 clearance bores are bridged with 0 mm of support inside. The price is that the part is not self-standing (tip -44.3 deg): the body floats 4.1 mm above the bed on support and the whole exterior top (272-280 mm2) rests on support. The only other viable pose (-Z down) turns the capture lip down onto support (22.6 mm2 on Bambu, 966-1052 mm of support inside the pocket) and fails the brim review on both machines, so the cosmetic exterior takes the scars instead of the lip.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
+     "sha256": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62"
+    },
+    "bedContactMm2": 57.6,
+    "printSizeMm": [
+     30.0,
+     25.5,
+     8.7
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local +Z down (10/07 candidate: tab tops on the bed, lip up)), dropped to the bed"
+   },
+   "changeReason": "New part, with ankle_base_left replacing the printed community-66.stl (stock object 20). The removable side of the split ankle: it closes along the shaft onto the sleeve, two register tongues enter open slots in the base, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
+   "supersedes": "nothing (new part of the split ankle)",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "outer_only",
+    "brim_width": "4",
+    "brim_object_gap": "0.1"
+   },
+   "objectSettingsReason": "R1 default: tip angle -44.3 deg < 10 deg, outer brim"
+  },
+  {
+   "key": "ankle_cheek_right",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+   "sha256": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the right ankle side (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     -3.5500030517578125
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0,
+     7.099999904632568
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 54.7
+   },
+   "poseOrigin": "local +Z down (10/07 candidate: tab tops on the bed, lip up): Mirror of the left cheek: local +Z down on the two tab tops (57.6 mm2), lip up, the 10/07 candidate pose (never printed). Pocket wall vertical with 0 mm of support inside, capture lip faces up, tongues upright, tab register faces vertical and resting on 0 mm2 of support, clearance bores bridged. Exterior top on support.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
+     "sha256": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30"
+    },
+    "bedContactMm2": 57.6,
+    "printSizeMm": [
+     30.0,
+     25.5,
+     8.7
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local +Z down (10/07 candidate: tab tops on the bed, lip up)), dropped to the bed"
+   },
+   "changeReason": "New part, with ankle_base_right replacing the printed community-64.stl (stock object 22). The removable side of the split ankle: it closes along the shaft onto the sleeve, two register tongues enter open slots in the base, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
+   "supersedes": "nothing (new part of the split ankle)",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "outer_only",
+    "brim_width": "4",
+    "brim_object_gap": "0.1"
+   },
+   "objectSettingsReason": "R1 default: tip angle -44.3 deg < 10 deg, outer brim"
+  },
+  {
+   "key": "ankle_sleeve_left",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "148"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+   "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the left ankle sleeve (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -4.553794860839844e-05
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     1.399999976158142
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 63.4
+   },
+   "poseOrigin": "local -Z down (axial, 10/07 pose; +Z down is identical by symmetry): Axial, local -Z down, the 10/07 candidate pose (the mesh is exactly symmetric in z, so +Z down is the same print). 66.8 mm2 annular contact, 2.8 mm tall, tip 79 deg, 0 mm of support, no brim. The d10.4 bore and the d14.6 outer face are vertical walls, both end faces are the first and the top layer. The only clean pose; any side pose would put the bore ceiling on support.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-sleeve-local.stl",
+     "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e"
+    },
+    "bedContactMm2": 66.76,
+    "printSizeMm": [
+     14.6,
+     14.6,
+     2.8
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local -Z down (axial, 10/07 pose; +Z down is identical by symmetry)), dropped to the bed"
+   },
+   "changeReason": "Replaces the printed community-62.stl (stock object 148, the left 9.65 mm ankle sleeve): bore 10.4 mm instead of 9.65 mm on the 10 mm link boss (the stock sleeve is a 14.96 mm3 press fit, ankle-split-check.json sleeveOnLinkBoss), OD 14.6 mm, 2.8 mm wide with 0.2 mm entry chamfers, so it slides on by hand and runs free. Black like the stock sleeve.",
+   "supersedes": "printed community-62.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "no_brim"
+   },
+   "objectSettingsReason": "R1 default: tip angle 79.0 deg >= 10 deg, no brim"
+  },
+  {
+   "key": "ankle_sleeve_right",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "150"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+   "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e",
+   "sourceFrame": "ankle-redesign-20261007 local frame of the right ankle sleeve (mm; motor shaft = local z through the origin)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -4.553794860839844e-05
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     1.399999976158142
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 63.4
+   },
+   "poseOrigin": "local -Z down (axial, 10/07 pose; +Z down is identical by symmetry): Same file as the left sleeve (identical sha256), same axial pose: 66.8 mm2 contact, 2.8 mm tall, 0 mm of support, no brim, bore and outer face vertical.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-sleeve-local.stl",
+     "sha256": "cece343cad5617c33fdc7c4062b3fc02231729749cdcb2c75c4003e196067e0e"
+    },
+    "bedContactMm2": 66.76,
+    "printSizeMm": [
+     14.6,
+     14.6,
+     2.8
+    ],
+    "note": "print pose from ankle-split-20261019/poses/poses.json (local -Z down (axial, 10/07 pose; +Z down is identical by symmetry)), dropped to the bed"
+   },
+   "changeReason": "Replaces the printed community-68.stl (stock object 150, the right 9.65 mm ankle sleeve): bore 10.4 mm instead of 9.65 mm on the 10 mm link boss (the stock sleeve is a 14.96 mm3 press fit, ankle-split-check.json sleeveOnLinkBoss), OD 14.6 mm, 2.8 mm wide with 0.2 mm entry chamfers, so it slides on by hand and runs free. Black like the stock sleeve.",
+   "supersedes": "printed community-68.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
+    "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle_split_check.py",
+     "sha256": "badec9b5c67a015a8e0120d96a9fcd6398a078a4dbafa7a53fe2bd5879bad127"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/poses/poses.json",
+     "sha256": "41645d4c334d9fb5c24f344c7d1a309674e5e933975cebec1b5d00ee22fb7c76"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "no_brim"
+   },
+   "objectSettingsReason": "R1 default: tip angle 79.0 deg >= 10 deg, no brim"
+  },
+  {
+   "key": "foot_left_slipfit",
+   "color": "Yellow",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "32"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-left-slipfit.stl",
+   "sha256": "ede1c5189c51270611f17f0dd3f12d2c65693b142fe38c0f69579d976d268cdd",
+   "sourceFrame": "community-44.stl print frame (mm; flat sole at z = 0)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 35.8
+   },
+   "poseOrigin": "The stock community-44.stl pose: flat sole on the bed, as the printed feet were made.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-left-slipfit.stl",
+     "sha256": "ede1c5189c51270611f17f0dd3f12d2c65693b142fe38c0f69579d976d268cdd"
+    },
+    "bedContactMm2": 37.72,
+    "printSizeMm": [
+     54.01,
+     41.2,
+     18.36
+    ],
+    "note": "print pose = stock print frame (identity)"
+   },
+   "changeReason": "Replaces the printed community-44.stl (stock object 32, the left foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path and the two snap hooks (about 0.3 mm) are removed; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
+   "supersedes": "printed community-44.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/slipfit-check.json",
+    "sha256": "389b1f9da7942d7a83b1abbee99823527338ddf7cbfcc5a88678bbd7794936c3"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot_slipfit.py",
+     "sha256": "4e235cdef1b146589550a66404afde76498e46d6423127434c44b69c4e4e02bc"
+    }
+   ]
+  },
+  {
+   "key": "foot_right_slipfit",
+   "color": "Yellow",
+   "quantity": 1,
+   "decision": "replacement",
+   "replacesStockIds": [
+    "30"
+   ],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-right-slipfit.stl",
+   "sha256": "993568c169e9936f3e55fb6b83dfd06f0396a3ce7202cf995f0d7fde19e75746",
+   "sourceFrame": "community-46.stl print frame (mm; flat sole at z = 0)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 39.0
+   },
+   "poseOrigin": "The stock community-46.stl pose: flat sole on the bed, as the printed feet were made.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-right-slipfit.stl",
+     "sha256": "993568c169e9936f3e55fb6b83dfd06f0396a3ce7202cf995f0d7fde19e75746"
+    },
+    "bedContactMm2": 41.02,
+    "printSizeMm": [
+     54.03,
+     41.22,
+     18.38
+    ],
+    "note": "print pose = stock print frame (identity)"
+   },
+   "changeReason": "Replaces the printed community-46.stl (stock object 30, the right foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path and the two snap hooks (about 0.3 mm) are removed; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
+   "supersedes": "printed community-46.stl",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/slipfit-check.json",
+    "sha256": "389b1f9da7942d7a83b1abbee99823527338ddf7cbfcc5a88678bbd7794936c3"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot_slipfit.py",
+     "sha256": "4e235cdef1b146589550a66404afde76498e46d6423127434c44b69c4e4e02bc"
+    }
+   ]
+  }
+ ],
+ "retiredParts": [
+  {
+   "key": "foot_left_stock",
+   "stockId": "32",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-44.stl",
+   "reason": "press fit too tight to take apart; replaced by foot_left_slipfit"
+  },
+  {
+   "key": "foot_right_stock",
+   "stockId": "30",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-46.stl",
+   "reason": "press fit too tight to take apart; replaced by foot_right_slipfit"
+  },
+  {
+   "key": "ankle_left_stock",
+   "stockId": "20",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-66.stl",
+   "reason": "closed fork, spread over the link and servo at every fitting; replaced by ankle_base_left + ankle_cheek_left"
+  },
+  {
+   "key": "ankle_right_stock",
+   "stockId": "22",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-64.stl",
+   "reason": "closed fork, spread over the link and servo at every fitting; replaced by ankle_base_right + ankle_cheek_right"
+  },
+  {
+   "key": "sleeve_left_stock",
+   "stockId": "148",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-62.stl",
+   "reason": "9.65 mm bore press fit on the 10 mm link boss; replaced by ankle_sleeve_left (10.4 mm)"
+  },
+  {
+   "key": "sleeve_right_stock",
+   "stockId": "150",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/assembly/print-parts/community-68.stl",
+   "reason": "9.65 mm bore press fit on the 10 mm link boss; replaced by ankle_sleeve_right (10.4 mm)"
+  }
+ ],
+ "deferred": [
+  {
+   "part": "head_cap_v20",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/head_cap_v20-world.stl",
+   "reason": "Shawn 2026-10-14: the head stays on ROBOTIS M2.6 screws while the lower shell is not reprinted; print with the V2.0 lower shell when the head is next opened"
+  },
+  {
+   "part": "head_bottom_v20",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/head_bottom_v20-world.stl",
+   "reason": "Shawn 2026-10-14: no real change; print when the head is next opened"
+  },
+  {
+   "part": "jaw_frame_v20",
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/v20-source/jaw_frame_v20-world.stl",
+   "reason": "Shawn 2026-10-14: no real change; print when the head is next opened"
+  }
+ ],
+ "deliveryContract": {
+  "colors": [
+   "Orange",
+   "Black",
+   "Yellow"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 6,
+  "baseline": "printed V1.8 set, the V1.9 Orange plate, V1.17, V1.18, V1.20 (printed by 2026-10-19) and the V1.21 molds (printed black, 2026-10-19); V1.19 never printed",
+  "supersedes": [
+   "the printed stock ankle brackets community-66 and community-64, sleeves community-62 and community-68, feet community-44 and community-46"
+  ],
+  "status": "INCREMENTAL_REPRINT"
+ }
+}
