@@ -31,7 +31,7 @@ RoboClub's suggestion: coat the foot bottom with hot glue. Free-hand coats grip 
 - Three conical pins (1.2 mm top, 2.4 mm base, about 30 deg draft) with their tops on the flat set the depth; the coat gets three small conical dimples and lifts off the cones.
 - Eight vents lead excess glue to a moat; four tabs 0.4 mm outside the foot outline, up to 12 mm, centre the foot.
 - Check (`hotglue-mold-check.json`): no overlap between the seated foot and the mold, coat 1.00 mm along the normal (1st-99th pct), coat volume 1.95 cm3 per foot, cavity 1859 mm2.
-- Print: `mold-process.json` (X1C) and `mold-process-elegoo.json` (Centauri Carbon), PLA, 0.12 mm layers, top ironing, 4 walls, 40 % infill, no supports, cavity up. Both molds on one plate: X1C 2 h 17 min / 38.9 g, Centauri 2 h 29 min / 36.8 g. Delivery: `~/Downloads/zhengxia_MicroDuck_HotGlueMold/` (X1C, Elegoo, STL, preview).
+- Print: release V1.21 (`guide/print/release-V1.21/`, release pipeline v2), both molds on one plate, any PLA, cavity up, 0.12 mm layers, top ironing, seam at the back, 6 top layers, 40 % infill, no support, no brim. X1C 2 h 24 min / 37.7 g, Centauri Carbon 2 h 34 min / 36.8 g. Delivery: `~/Downloads/zhengxia_MicroDuck_V1.21/`.
 
 Process:
 1. Peel the old glue off. Sand the foot bottom with the sandpaper, wipe with alcohol. Nothing oily on the foot.

@@ -338,6 +338,17 @@ INCREMENTAL_NOTES_BY_VERSION['V1.20'] = dict(
     battery_backpack_frame='Replaces the V1.18 backpack frame. The floor hole is now 12.3 x 27.5 mm, the Swann 39 cutout, and the rocker pocket under it 14.4 mm wide for the 13.8 mm flange; the box is 0.7 mm deeper so the battery clears the thicker switch body. Wire the switch lead first, then push the switch up through the hole from the pocket until both wings click. Prints on its open back rim with tree support and no brim; take every support out from under the front plate and round the lips.',
     battery_backpack_cap='Replaces the V1.18 backpack cap. Same outside, 0.7 mm further back to meet the deeper frame; each of the three screw heads sits on a 3.0 mm floor, so the screws are 3 x M2 x 8 (were M2 x 6). Prints on its flat back face, no brim.')
 
+# V1.21: the two hot-glue sole molds (tools, build-pack-20260913/procurement/feet-sole-20261018). V1.20 is printed
+# ("电池包那个已经打了", Shawn 2026-10-19); nothing printed is replaced.
+RETIRED_INCREMENTAL['V1.21'] = []
+INTRO_BY_VERSION['V1.21'] = ('V1.21 is one plate with two tools: the hot-glue molds for the left and right foot soles. They are not '
+                             'robot parts, so any PLA spool works. Wipe a thin release film into the cavity, fill it with hot glue, '
+                             'press the sanded foot between the four tabs onto the three pins, let it cool fully, then lift straight up.')
+INCREMENTAL_NAMES_BY_VERSION['V1.21'] = dict(hotglue_mold_left='Left foot sole mold', hotglue_mold_right='Right foot sole mold')
+INCREMENTAL_NOTES_BY_VERSION['V1.21'] = dict(
+    hotglue_mold_left='For the left foot (community-44). The cavity leaves a 1.0 mm glue coat over the flat and up the rounded edge to 3 mm. Prints cavity up, 0.12 mm layers with ironing, no support, no brim.',
+    hotglue_mold_right='For the right foot (community-46), mirror of the left mold. Same coat and print settings.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -353,7 +364,9 @@ def incremental(args) -> None:
     m = json.loads(args.incremental.read_text())
     version = m['version']
     names = INCREMENTAL_NAMES_BY_VERSION.get(version, INCREMENTAL_NAMES); notes = INCREMENTAL_NOTES_BY_VERSION.get(version, INCREMENTAL_NOTES)
-    body = [f'<header><h1>MicroDuck prints {version}</h1><p>{len(m["parts"])} parts to print, and {len(RETIRED_INCREMENTAL[version])} printed part{"s" if len(RETIRED_INCREMENTAL[version]) != 1 else ""} they replace. '
+    nret = len(RETIRED_INCREMENTAL[version])
+    replaced = (f'and {nret} printed part{"s" if nret != 1 else ""} they replace' if nret else 'and they replace no printed part')
+    body = [f'<header><h1>MicroDuck prints {version}</h1><p>{len(m["parts"])} parts to print, {replaced}. '
             'Every other printed part stays.</p>' + (f'<p>{html.escape(INTRO_BY_VERSION[version])}</p>' if version in globals().get('INTRO_BY_VERSION', {}) else '') + '</header>',
             f'<section><h2>Print these {len(m["parts"])} parts</h2><p class="lead">One plate per colour. Each colour has a Bambu X1C file and an Elegoo Centauri Carbon file; use either printer.</p>']
     for c in COLOUR_ORDER:
@@ -367,6 +380,11 @@ def incremental(args) -> None:
         body.append('</div>')
     lead = RETIRED_LEAD_BY_VERSION.get(version, 'The new and old parts look almost the same. Mark the old ones before the new prints arrive.')
     heading = RETIRED_HEADING_BY_VERSION.get(version, 'Throw these away')
+    if not nret:
+        body.append('</section>')
+        args.out.write_text(page_html(version, body))
+        print(json.dumps({'out': str(args.out), 'bytes': args.out.stat().st_size, 'print': len(m['parts']), 'retired': 0}))
+        return
     body.append(f'</section><section><h2>{heading}</h2><p class="lead">{html.escape(lead)}</p><div class="grid">')
     for name, colour, path, why, repl in RETIRED_INCREMENTAL[version]:
         img, dims = picture(path, colour)
