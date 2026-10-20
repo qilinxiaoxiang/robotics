@@ -24,6 +24,8 @@ Official sole (read 2026-10-19): Open Duck Mini v2, the open design the MicroDuc
 
 ## Hot-glue sole cast in a printed mold (2026-10-19)
 
+**Dropped 2026-10-19, before any cast.** A V1.21 PLA mold warped under the heat gun (step 4 below was wrong: no printed plastic survives a heat gun), the glue has to be pressed within seconds without it, and casting a room-temperature sole is not available (Shawn). The soles go to bike inner tube on thin PET or transfer tape, cut with `sole_template.pdf`; see the Conclusion of the thickness sweep above. The V1.23 flat-floor molds (`guide/print/release-V1.23/`, withdrawn) and the notes below are kept as the record.
+
 RoboClub's suggestion: coat the foot bottom with hot glue. Free-hand coats grip well but the face is uneven. `hotglue_mold.py` builds a mold from each foot STL (left `community-44`, right `community-46`):
 
 - Cavity floor: one plane 1.0 mm below the foot's flat, and on the curve the foot bottom offset outward by 1.0 mm along the normal, lowered by 0.12 mm so the two meet without a step, up to 3.0 mm above the flat (sim contacts reach 1.6 mm). Coat 1.00-1.12 mm. The flat of the printed foot varies by 0.1 mm; the V1.21 floor copied that and printed as irregular one-layer islands (Shawn's photo IMG_7040, 2026-10-19), which a cast sole would carry.
