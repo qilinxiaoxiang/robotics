@@ -69,6 +69,7 @@ To request club parts, see the Discord `#i-want-this` channel.
 - RF and audio: UFL connectors, 3.5 mm audio jack
 - Headers: SOT-23 breakouts, 40-pin male?, male 0.1" 90°, round female 0.1", jumpers, square female 0.1", male 0.1" header, Pi header extenders, extra-long headers
 - Large drawers: Ethernet connectors, Ethernet connector shells, protoboard, breakouts, **HEATSINKS**, crimpable alligators, weird/special connectors
+- HEATSINKS drawer contents (opened 2026-10-20, IMG_7058): aluminium heatsink with 40 mm 4-wire fan (Jetson Nano size), Intel-style stock CPU cooler with copper core and push pins, long black extruded aluminium heatsink bar, large U-shaped aluminium heatsink with mounting nuts, two Cooler Master thermal paste syringes, one brown thermal grease tube, small clear box (contents not checked). No small adhesive heatsink (Pi/Zero size).
 
 ## Cabinet I: small blue 13-drawer (IMG_7057)
 - 1x battery (two drawers, battery clips/springs), 1x straight headers, 2x straight pins, 1x6 wire header, 1x2 wire header, 1x10 wire header, 1x6 female pin headers, angled headers?, line-sensor holders?, servo mounts, breadboard holders, servo arms
