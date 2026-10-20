@@ -245,7 +245,7 @@ def build(ctx):
              'The A7Z talks to the OpenRB over two UART wires. Eight thin wires leave the pack over the top of its plate, cross to the right (-Y) side of the torso, and run up the neck in four printed wire clips: one on the right torso shell, one on the neck pitch bracket, one inside the head on the jaw support and one on the A7Z. The bundle enters the head through the opening in the floor of the lower shell, beside the neck; the cap has no notch.',
              'Drawn cables are shown in colour. Use the cable list under each step for the exact ends and lengths.',
          ],
-         warnings=['No battery is used. Never connect a battery to this robot.',
+         warnings=['Chapters 1 to 10 run the robot from the USB-C desk supply. The only battery is the 2S LiPo in the chapter 11 backpack, and it reaches the robot only through the backpack\'s plugs 3 and 4. Never connect a battery any other way.',
                    'Keep the USB-C cable out of the 5991, except for the meter checks in chapter 3, until chapter 10 tells you to plug it in.',
                    'Never let 15 V or 7 V reach the A7Z: it takes 5 V only. Each converter is set and metered with nothing on its output before any load goes on it.'],
          cables=all_cables)
