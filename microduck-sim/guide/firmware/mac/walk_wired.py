@@ -279,6 +279,15 @@ def main():
     # like the armed guard, so a fault other than the input-voltage flag still freezes the policy.
     link.alert_ok = guard is None or guard.armed
     log = open(args.log, "a")
+
+    def _sync_log():  # a brownout loses only what is not on the card: fsync every 50 ms, off the control thread
+        while True:
+            time.sleep(0.05)
+            try:
+                os.fsync(log.fileno())
+            except (OSError, ValueError):
+                pass
+    threading.Thread(target=_sync_log, daemon=True).start()
     print(f"wired on {port}, compensation {brain.comp_cfg['delay_compensation']}", flush=True)
 
     pos, vel = [0] * 14, [0] * 14
@@ -295,7 +304,6 @@ def main():
     cmd_since = time.time()
     last_goal = None  # the goals most recently written to the servos
     goal_written = None  # tick goals of the newest goal write, every mode (log only)
-    last_sync = time.perf_counter()
     last_step_t = float("-inf")  # last loop with a nonzero walk command
     diverging = None  # set when the policy output or the body tilt leaves the trained range
     imu_lost = False
@@ -530,6 +538,10 @@ def main():
             print(f"IMU LOST: no IMU sample for {imu_age:.2f} s, the policy holds its last goals; hold the robot. "
                   "Check the Pi: ping, systemctl status duck-imu, ~/duck/pwrlog.txt" if imu_lost else "IMU back",
                   flush=True)
+        # 50 Hz servo-rail record for brownout diagnosis: one servo's Present Input Voltage per tick, round robin, after the goal write
+        vid = IDS[n % len(IDS)]
+        vr = link.sync_read(ADDR_PRESENT_VOLTAGE, 2, [vid], timeout=0.003, allow_alert=True)
+        servo_v = (vid, struct.unpack("<H", vr[vid])[0] / 10) if vid in vr else (vid, None)
         loop_ms = (time.perf_counter() - t0) * 1000
         log.write(json.dumps(dict(info, t=time.time(), mode=brain.mode, fresh=fresh, quat=quat, gyro=gyro,
                                   imu_valid=imu_valid, imu_age=imu_age, joint_age=joint_age, loop_ms=loop_ms,
@@ -540,14 +552,11 @@ def main():
                                   # raw record for later replay and system ID: accel (m/s2, IMU frame), IMU sample
                                   # seq, servo present ticks and the goal ticks last written, the command in force
                                   acc=acc, imu_seq=imu_seq, pos_tick=list(pos), vel_tick=list(vel),
-                                  goal_tick=goal_written, cmd=want,
+                                  goal_tick=goal_written, cmd=want, servo_v=servo_v,
                                   jaw_tick=jaw.last_tick, jaw_deg=None if jaw.opening_deg() is None else round(jaw.opening_deg(), 1),
                                   jaw_goal=jaw.goal_deg if jaw.on else None, jaw_clamps=jaw.clamps if jaw.on else [],
                                   jaw_holding=jaw.holding())) + "\n")
         log.flush()  # readers (pickup.py) see the newest tick; buffered writes lagged up to ~1 s
-        if now - last_sync > 1.0:  # a brownout loses only what is not on the card: at most this second
-            os.fsync(log.fileno())
-            last_sync = now
         n += 1
         if now - last_print > 1.0:
             with link.lock:
