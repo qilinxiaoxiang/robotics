@@ -295,6 +295,7 @@ def main():
     cmd_since = time.time()
     last_goal = None  # the goals most recently written to the servos
     goal_written = None  # tick goals of the newest goal write, every mode (log only)
+    last_sync = time.perf_counter()
     last_step_t = float("-inf")  # last loop with a nonzero walk command
     diverging = None  # set when the policy output or the body tilt leaves the trained range
     imu_lost = False
@@ -544,6 +545,9 @@ def main():
                                   jaw_goal=jaw.goal_deg if jaw.on else None, jaw_clamps=jaw.clamps if jaw.on else [],
                                   jaw_holding=jaw.holding())) + "\n")
         log.flush()  # readers (pickup.py) see the newest tick; buffered writes lagged up to ~1 s
+        if now - last_sync > 1.0:  # a brownout loses only what is not on the card: at most this second
+            os.fsync(log.fileno())
+            last_sync = now
         n += 1
         if now - last_print > 1.0:
             with link.lock:
