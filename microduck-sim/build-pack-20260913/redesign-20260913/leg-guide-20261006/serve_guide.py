@@ -63,6 +63,7 @@ ALLOWLIST = {
     "/PARTS-SHEET-V1.19.html": "PARTS-SHEET-V1.19.html",
     "/zhengxia_MicroDuck_V1.19_2-files.zip": "zhengxia_MicroDuck_V1.19_2-files.zip",
     "/PARTS-SHEET-V1.22.html": "PARTS-SHEET-V1.22.html",
+    "/PARTS-SHEET-V1.23.html": "PARTS-SHEET-V1.23.html",
     "/sources/print-colors.json": "sources/print-colors.json",
     "/sources/motor-fasteners.json": "sources/motor-fasteners.json",
 }

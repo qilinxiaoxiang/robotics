@@ -299,9 +299,9 @@ def build(ctx):
     step('prints', 'start', f'Print the {len(new_prints)} new parts',
          show=[], add=new_prints, context=LEGS + TORSO, bench=True,
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
-         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
-                  {'item': 'V1.22 package: zhengxia_MicroDuck_V1.22 folder (orange plate: left and right ankle base and ankle side; black plate: the two ankle sleeves; yellow plate: the two slip-fit feet)', 'qty': 1, 'kind': 'printed',
-                   'note': 'V1.22 replaces the one-piece orange ankle brackets, their black 9.65 mm sleeves and the yellow feet on both legs. The one-piece bracket is a closed fork that had to be spread over the lower link and its servo, and the old foot pressed onto the bracket so hard that it could not come off; each fitting loaded the ankle servo. The split ankle takes the link-and-servo package from above with its side off, the side closes along the shaft onto a 10.4 mm sleeve that turns freely on the link, two M2 × 8 from above hold it, and the foot slides on from below by hand and is held by its toe M2 × 6. Three plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.22.html shows the parts and the parts they replace. The hot-glue sole molds (V1.21) were printed in black on 2026-10-19 and are not in V1.22.'},
+         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.23.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+                  {'item': 'V1.23 package: zhengxia_MicroDuck_V1.23 folder (orange plate: left and right ankle base and ankle side; black plate: the two ankle sleeves and the two hot-glue sole molds; yellow plate: the two slip-fit feet)', 'qty': 1, 'kind': 'printed',
+                   'note': 'V1.23 replaces the one-piece orange ankle brackets, their black 9.65 mm sleeves and the yellow feet on both legs. The one-piece bracket is a closed fork that had to be spread over the lower link and its servo, and the old foot pressed onto the bracket so hard that it could not come off; each fitting loaded the ankle servo. The split ankle takes the link-and-servo package from above with its side off, the side closes along the shaft onto a 10.4 mm sleeve that turns freely on the link, two M2 × 8 from above hold it, and the foot slides on from below by hand and is held by its toe M2 × 6. Three plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.23.html shows the parts and the parts they replace. The black plate also carries the two reworked hot-glue sole molds (one flat cavity floor, no depth pins: the foot stops on the mold rim); throw the V1.21 molds away. V1.23 replaces V1.22, which was never printed.'},
                   {'item': 'V1.19 package: zhengxia_MicroDuck_V1.19 folder (one orange plate: the new rear converter box cap and the new battery backpack cap)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.19 holds only the two caps. Each now seats its screw heads on a 3.0 mm printed floor: the 1.0 mm floors of the V1.17 box cap tore through when it came off. The new box cap takes the same four M2 × 10 and fits the V1.17 box frame; the new backpack cap takes three M2 × 8 and fits the V1.18 backpack frame. Replace both old caps; the frames stay. The frame is the cover plate with the bench box width, top and step and a box 26.75 mm deep behind it, printed on its open back rim like the box frame; the cap prints on its flat back face. One plate with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), tree support, no brim; PARTS-SHEET-V1.18.html shows both parts.'},
                   {'item': 'V1.17 package: zhengxia_MicroDuck_V1.17 folder (one orange plate: rear converter box frame and cap and the A7Z cap wire clip; one white plate: both torso shells, the A7Z head cap, the A7Z face panel and both thighs)', 'qty': 1, 'kind': 'printed',
@@ -600,7 +600,7 @@ def build(ctx):
          checks=['The ankle turns freely by hand, as before.',
                  'The cable leaves the ankle beside the link end without being pinched.'])
 
-    # 2026-10-19 split ankle (print/ankle-split-20261019/, V1.22; the 2026-10-07 design in ankle-redesign-20261007/). The
+    # 2026-10-19 split ankle (print/ankle-split-20261019/, V1.22, shipped in V1.23; the 2026-10-07 design in ankle-redesign-20261007/). The
     # one-piece orange bracket is a closed fork: the lower link with its servo and sleeve cannot come in from above, so it
     # was spread and pressed on, loading the ankle servo each time. The base takes the package from above with the side
     # off; the side closes along the shaft onto the new 10.4 mm sleeve (ankle-split-check.json: every path clear); the foot
@@ -611,11 +611,11 @@ def build(ctx):
          # seat, then slides outboard along the shaft onto the sleeve (a straight inboard lead-in would cross the other leg)
          add=ANKLE_SIDES, approach={'ankle_cheek': [[0, -8, -30], [0, -8, 0]], 'right_ankle_cheek': [[0, 8, -30], [0, 8, 0]]},
          camera=ctx.cam(ANKLE_R, direction=(0.3, -1.2, 0.5), margin=1.4),
-         prepare=[{'item': 'V1.22 orange plate: left and right ankle base and ankle side', 'qty': 4, 'kind': 'printed'},
-                  {'item': 'V1.22 black plate: left and right ankle sleeve (10.4 mm bore)', 'qty': 2, 'kind': 'printed'},
+         prepare=[{'item': 'V1.23 orange plate: left and right ankle base and ankle side', 'qty': 4, 'kind': 'printed'},
+                  {'item': 'V1.23 black plate: left and right ankle sleeve (10.4 mm bore)', 'qty': 2, 'kind': 'printed'},
                   tap(4, 'M2 × 8'), {'item': 'Small cup per leg, labelled A', 'qty': 1, 'kind': 'other'}],
          instructions=[
-             'Do this on each leg with the ankle-and-foot module off the knee (cup T2, as in the step before). Each leg gets an orange base, an orange side and a black sleeve from V1.22; the yellow slip-fit foot goes on in the next step.',
+             'Do this on each leg with the ankle-and-foot module off the knee (cup T2, as in the step before). Each leg gets an orange base, an orange side and a black sleeve from V1.23; the yellow slip-fit foot goes on in the next step.',
              'Take the old foot off: take out the M2 × 6 at the toe if one is there and keep it. Hold the orange bracket, not the leg or the servo, and rock the foot off. It may crack; it is being replaced.',
              'Cup A: the four M2 × 4 output screws, the two M2 × 10 case screws and the M2.6 × 8 rear centre with its 0.5 mm washer. Pull the lower link off the old bracket, evenly and without twisting, and lift the servo out of the old fork. Set the old bracket and its black sleeve aside.',
              'Put the new black sleeve on the 10 mm boss of the lower link. It slides on by hand and turns freely; it is not pressed. Refit the washer with the M2.6 × 8 rear centre and the two M2 × 10 case screws, so link and servo are one package again.',
@@ -629,7 +629,7 @@ def build(ctx):
     step('ankle-feet', 'legs', 'Fit the slip-fit feet', show=leg_bench, context=[], bench=True,
          add=FEET, approach={'foot': [0, 0, -12], 'right_foot': [0, 0, -12]},
          camera=ctx.cam(ANKLE_R, direction=(0.3, -1.2, -0.3), margin=1.4),
-         prepare=[{'item': 'V1.22 yellow plate: left and right slip-fit foot', 'qty': 2, 'kind': 'printed'}, tap(2, 'M2 × 6')],
+         prepare=[{'item': 'V1.23 yellow plate: left and right slip-fit foot', 'qty': 2, 'kind': 'printed'}, tap(2, 'M2 × 6')],
          instructions=[
              'Slide each new foot straight up onto the base and side by hand until it stops. Its socket is 0.2 mm wider than the block on every side, so it goes on without force; if it does not, sand the socket walls of the foot a little. Never press it on.',
              'Drive the M2 × 6 from above through the hole at the toe of the base into the foot until its head is flush. The screws from the old feet fit.',

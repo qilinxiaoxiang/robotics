@@ -1,4 +1,4 @@
-# Split ankle (release 2026-10-19, V1.22)
+# Split ankle (2026-10-19; released in V1.22, shipped in V1.23)
 
 Shawn, 2026-10-19: the orange one-piece ankle bracket is hard to fit, and repeated fittings load the ankle servo. The bracket is a closed fork. The lower-leg link with its XL330 and black sleeve cannot come down into it (the sleeve catches the fork at 16.5 mm above the seated pose, `leg-guide-20261006/assembly-path-investigation.md`), and the stock sleeve is itself a 0.17 mm press fit on the 10 mm link boss. So each fitting spread the fork over the package by force.
 
@@ -26,7 +26,7 @@ It also writes the six guide/gate world files `guide/print/world/ankle_{base,che
 
 ## Print poses
 
-Chosen by native slicing on both machines: `poses/poses.json` and `poses/poses.md` (the bearing, sliding and register faces print clean; support is allowed on cosmetic faces only). The release manifest (`release-V1.22/scripts/make_manifest.py`) reads the poses from there.
+Chosen by native slicing on both machines: `poses/poses.json` and `poses/poses.md` (the bearing, sliding and register faces print clean; support is allowed on cosmetic faces only). The release manifests (`release-V1.22/scripts/make_manifest.py`, and `release-V1.23/` which carries the same eight parts with the reworked hot-glue molds, V1.22 was never printed) read the poses from there.
 
 ## Fitting
 

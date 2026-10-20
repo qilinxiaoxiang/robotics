@@ -6,8 +6,12 @@ Geometry, all in the foot STL frame (flat bottom at z = 0, foot above):
             spheres of radius T on the surface), so the coat is T thick along the normal, on the flat and on the curve
   seal      outside the cavity the mold top is the plane z = H_CAST; the foot touches it along its H_CAST contour,
             which closes the cavity and gives the coat a clean edge
-  pins      three conical pins in the flat region (1.2 mm top, 2.4 mm base), top at z = 0: the foot rests on them,
-            so the coat is exactly T deep; the cone draft lets the coat lift off them
+  floor     over the foot's flat region the floor is one plane at z = -T: the printed foot's 'flat' bottom varies by
+            0.1 mm, and copying it gave one-layer islands in the V1.21 print (Shawn, 2026-10-19 photo). Wherever the
+            offset floor lies within FLAT_BAND of that plane it is the plane; above that the offset surface is lowered
+            by FLAT_BAND, so the floor stays continuous and the coat is T to T + FLAT_BAND thick
+  stop      the foot stops on the mold top along its H_CAST contour (the seal), all round, so it cannot rock. The V1.21
+            conical depth pins (1.2 mm top) snapped off at a touch in PLA and are gone
   vents     grooves from the cavity edge out to a moat, so excess glue leaves instead of lifting the foot
   tabs      four locating tabs outside the foot outline (C_TAB clearance) up to z = H_TAB: the foot drops in centred
   label     a raised L or R on a LABEL_X strip added at the heel end (-x); the letter's top points to the toe (+x),
@@ -40,8 +44,7 @@ TAB_D = 3.0      # mm tab thickness
 MOAT = (0.6, 3.4)  # mm moat band, distance outside the foot outline
 MOAT_DEPTH = 2.0
 VENT_W, VENT_DEPTH, N_VENTS = 1.6, 1.0, 8
-PIN_R = 0.6      # mm pin top radius
-PIN_BASE_R = 1.2  # mm pin radius at the cavity floor: a cone, about 30 deg draft, so the coat lifts off it
+FLAT_BAND = 0.12  # mm: one 0.12 mm layer; offset floor within this of the -T plane is set to the plane
 BASE = 3.0       # mm of solid under the deepest cavity point
 MARGIN = 3.0     # mm wall outside the tabs/moat
 STEP = 0.2       # mm grid
@@ -139,29 +142,13 @@ def build(side):
     cavity = ndimage.binary_fill_holes(cavity)
     X, Y = np.meshgrid(xs, ys, indexing="ij")
     S = np.full(low.shape, H_CAST)
-    S[cavity] = zoff[cavity]
+    excess = zoff - (-T)  # height of the offset floor above the -T plane (0 to 0.1 on the flat, rising on the curve)
+    S[cavity] = (-T + np.maximum(0.0, excess - FLAT_BAND))[cavity]
     # flat region and its centre
     flat = foot & (low < 0.1)
     fx, fy = X[flat], Y[flat]
     cx, cy = (fx.min() + fx.max()) / 2, (fy.min() + fy.max()) / 2
     hx, hy = (fx.max() - fx.min()) / 2, (fy.max() - fy.min()) / 2
-    # pins: triangle inside the flat, pulled in 35 % from the flat's edges
-    # each pin snaps to the nearest grid point whose whole pin disc lies on the flat
-    ok = ndimage.binary_erosion(flat, iterations=int(np.ceil((PIN_BASE_R + 0.4) / STEP)))
-    targets = [(cx - 0.6 * hx, cy - 0.5 * hy), (cx - 0.6 * hx, cy + 0.5 * hy), (cx + 0.65 * hx, cy)]
-    pins = []
-    for tx, ty in targets:
-        d2 = np.where(ok, (X - tx) ** 2 + (Y - ty) ** 2, np.inf)
-        i, j = np.unravel_index(np.argmin(d2), d2.shape)
-        px, py = X[i, j], Y[i, j]
-        r = np.hypot(X - px, Y - py)
-        m = r <= PIN_R
-        assert flat[r <= PIN_BASE_R].all(), (side, px, py)
-        top = low[r <= PIN_BASE_R].min()  # pin top at the lowest point of the flat over the whole cone
-        cone = r <= PIN_BASE_R
-        prof = top - (r - PIN_R).clip(0) / (PIN_BASE_R - PIN_R) * (top + T)  # top at PIN_R, cavity floor (-T) at PIN_BASE_R
-        S[cone] = np.maximum(S[cone], prof[cone])
-        pins.append((px, py))
     # moat outside the outline, interrupted at the tabs
     tabs = np.zeros_like(foot)
     oc = (dist_out >= C_TAB) & (dist_out <= C_TAB + TAB_D)
@@ -202,11 +189,13 @@ def build(side):
     pts_f = np.stack([X[foot], Y[foot], low[foot]], 1)
     from scipy.spatial import cKDTree
     tree = cKDTree(pts_f)
-    pinm = np.zeros_like(foot)
-    for px, py in pins:
-        pinm |= (X - px) ** 2 + (Y - py) ** 2 <= PIN_BASE_R ** 2
+    pinm = np.zeros_like(foot)  # no pins since V1.23
     cav_pts = np.stack([X[cavity & ~pinm], Y[cavity & ~pinm], S[cavity & ~pinm]], 1)
     dn, _ = tree.query(cav_pts)
+    # the stop: cells where the seated foot touches the mold (gap < 0.05 mm), and how many of 36 sectors round the
+    # flat's centre hold one; a full ring means the foot cannot rock
+    touch = foot & (gap < 0.05)
+    sect = np.unique(((np.arctan2(Y[touch] - cy, X[touch] - cx) + np.pi) / (2 * np.pi) * 36).astype(int) % 36)
     check = dict(
         side=side, stl=str(FEET[side].name), coat_T_mm=T, coat_edge_mm=H_CAST,
         interference_cells=int(inter.sum()),
@@ -214,7 +203,11 @@ def build(side):
         coat_normal_thickness_mm=dict(p1=float(np.percentile(dn, 1)), p50=float(np.percentile(dn, 50)), p99=float(np.percentile(dn, 99))),
         cavity_area_mm2=float(cavity.sum() * STEP * STEP),
         coat_volume_cm3=float(np.sum(np.where(cavity & ~pinm, low - S, 0)) * STEP * STEP / 1000),
-        flat_mm=[float(2 * hx), float(2 * hy)], flat_unevenness_mm=float(np.ptp(low[flat])), pins=[[round(p, 2) for p in q] for q in pins],
+        flat_mm=[float(2 * hx), float(2 * hy)], flat_unevenness_mm=float(np.ptp(low[flat])), floor_flat_mm=float(-T), floor_band_mm=FLAT_BAND,
+        flat_floor_levels=int(np.unique(np.round(S[cavity & flat], 3)).size),
+        stop=dict(touch_cells=int(touch.sum()), sectors_of_36=int(sect.size),
+                  touch_height_mm=[round(float(low[touch].min()), 2), round(float(low[touch].max()), 2)],
+                  touch_inside_cavity=int((touch & cavity).sum())),
         tab_clearance_mm=float(dist_out[tabs].min()),
         label=dict(letter=side[0].upper(), height_mm=LETTER_H, rise_mm=LETTER_RISE, area_mm2=float(letter.sum() * STEP * STEP),
                    centre_mm=[round(float(lx), 2), round(float(cy), 2)], top_points_to="+x (toe)"),
