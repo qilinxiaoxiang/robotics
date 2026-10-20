@@ -1,0 +1,430 @@
+{
+ "schemaVersion": 1,
+ "parts": {
+  "left_outer": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-outer-local.stl",
+    "sha256": "642ba2d62c49be5207df55368de20adf23224ca8b6f3c793c16523b712cac8e8"
+   },
+   "chosen": {
+    "poseName": "local +x down (gusset end face on the bed)",
+    "slug": "px-down",
+    "why": "The gusset end face on the bed, as the V1.22 base and the 10/07 candidate: the motor mating face, the four output seats and the cut face stand vertical. Bambu: every MUST face clean.",
+    "sourceToPrint": [
+     [
+      0.0,
+      0.0,
+      1.0,
+      25.97703456878662
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      -1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 41.32,
+    "heightMm": 36.5,
+    "footprintMm": [
+     19.75,
+     25.5
+    ],
+    "objectSettingsReason": "pipeline R1 brim rule (objectSettingsSource in the slices)",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 23.2,
+      "grams": 4.42,
+      "supportGrams": 0.11,
+      "supportExtrusionMm": 831.0,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "mustOnSupport": {},
+      "reportOnSupport": {
+       "outer_plate_face": 3.6
+      },
+      "files": [
+       "slices/left_outer/px-down/readback-Bambu.json",
+       "slices/left_outer/px-down/faces-Bambu.json"
+      ]
+     },
+     "Elegoo": {
+      "etaMinutes": 18.5,
+      "grams": 4.67,
+      "supportGrams": 0.62,
+      "supportExtrusionMm": 5674.4,
+      "brimPassed": true,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "mustOnSupport": {
+       "motor_face": {
+        "touchedMm2": 0.3,
+        "supportInsideMm": 0
+       },
+       "output_seats": {
+        "touchedMm2": 1.1,
+        "supportInsideMm": 0
+       },
+       "cut_face": {
+        "touchedMm2": 1.3,
+        "supportInsideMm": 0
+       }
+      },
+      "reportOnSupport": {
+       "toe_seat": 2.5,
+       "outer_plate_face": 5.0
+      },
+      "files": [
+       "slices/left_outer/px-down/readback-Elegoo.json",
+       "slices/left_outer/px-down/faces-Elegoo.json"
+      ]
+     }
+    },
+    "mustExplanation": "Bambu: every MUST face clean. Elegoo only: Orca's tree support reaches into the d4.4 counterbores of the motor-output screws from the plate exterior and touches 1.1 (left) / 9.7 (right) mm2 of the seat floors, plus 0.3 mm2 of the motor face and 1.3 / 2.4 mm2 of the cut face. On an Elegoo print, pull the tips out of the four counterbores with tweezers so the M2 x 4 heads sit flat. A teardrop roof on these holes was rejected: on the hole beside the shaft the roof would point at the d5 centre aperture and leave 0.4 mm of wall (stock 1.3 mm).",
+    "brim": {
+     "brimInsideHullAllowanceMm2": 5.0,
+     "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim."
+    }
+   },
+   "rejected": {
+    "-x down (left)": "Bambu: 7.6 mm2 of support on the motor mating face; Elegoo: 7.8 mm2 on the output seats (slices/left_outer/mx-down).",
+    "+-z down": "the motor face or the four output seats face down onto support 2-3 mm above the bed; the plate exterior is 7 deg off the shaft.",
+    "-y down": "the foot-block underside has no flat face (prepare finds no planar contact)."
+   }
+  },
+  "right_outer": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-outer-local.stl",
+    "sha256": "a1e9f91fd25d766f41206ca1c2886f853e76f8bda0f2ac96b2bac64bd0842af4"
+   },
+   "chosen": {
+    "poseName": "local -x down (gusset end face on the bed; the right frame mirrors x)",
+    "slug": "mx-down",
+    "why": "The gusset end face on the bed, as the V1.22 base and the 10/07 candidate: the motor mating face, the four output seats and the cut face stand vertical. Bambu: every MUST face clean.",
+    "sourceToPrint": [
+     [
+      0.0,
+      0.0,
+      -1.0,
+      -25.976534843444824
+     ],
+     [
+      0.0,
+      1.0,
+      0.0,
+      3.5500030517578125
+     ],
+     [
+      1.0,
+      0.0,
+      0.0,
+      21.8367919921875
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 41.32,
+    "heightMm": 36.5,
+    "footprintMm": [
+     19.75,
+     25.5
+    ],
+    "objectSettingsReason": "pipeline R1 brim rule (objectSettingsSource in the slices)",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 23.2,
+      "grams": 4.42,
+      "supportGrams": 0.11,
+      "supportExtrusionMm": 793.7,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "mustOnSupport": {},
+      "reportOnSupport": {
+       "outer_plate_face": 3.6
+      },
+      "files": [
+       "slices/right_outer/mx-down/readback-Bambu.json",
+       "slices/right_outer/mx-down/faces-Bambu.json"
+      ]
+     },
+     "Elegoo": {
+      "etaMinutes": 18.8,
+      "grams": 4.73,
+      "supportGrams": 0.69,
+      "supportExtrusionMm": 6459.6,
+      "brimPassed": true,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "mustOnSupport": {
+       "motor_face": {
+        "touchedMm2": 0.3,
+        "supportInsideMm": 0
+       },
+       "output_seats": {
+        "touchedMm2": 9.7,
+        "supportInsideMm": 0
+       },
+       "cut_face": {
+        "touchedMm2": 2.4,
+        "supportInsideMm": 0
+       }
+      },
+      "reportOnSupport": {
+       "toe_seat": 2.3,
+       "outer_plate_face": 5.3
+      },
+      "files": [
+       "slices/right_outer/mx-down/readback-Elegoo.json",
+       "slices/right_outer/mx-down/faces-Elegoo.json"
+      ]
+     }
+    },
+    "mustExplanation": "Bambu: every MUST face clean. Elegoo only: Orca's tree support reaches into the d4.4 counterbores of the motor-output screws from the plate exterior and touches 1.1 (left) / 9.7 (right) mm2 of the seat floors, plus 0.3 mm2 of the motor face and 1.3 / 2.4 mm2 of the cut face. On an Elegoo print, pull the tips out of the four counterbores with tweezers so the M2 x 4 heads sit flat. A teardrop roof on these holes was rejected: on the hole beside the shaft the roof would point at the d5 centre aperture and leave 0.4 mm of wall (stock 1.3 mm).",
+    "brim": {
+     "brimInsideHullAllowanceMm2": 5.0,
+     "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim."
+    }
+   },
+   "rejected": {
+    "mirror of the left rows": "see left_outer"
+   }
+  },
+  "left_inner": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-inner-local.stl",
+    "sha256": "39a50f3ba5e355a55d023e99b3ecd461e86edc2f988af0be822d265472b5d55a"
+   },
+   "chosen": {
+    "poseName": "heel chamfer down (shaft flat, teardrop roof up)",
+    "slug": "heel-down",
+    "why": "The stock heel chamfer (55 mm2, at 150 deg round the shaft) on the bed: the shaft lies flat and the new 45 deg teardrop roof of the d15 pocket and the d14 lip bore points straight up into the 11.7 mm thick toe-and-foot corner, so the bearing pocket, the capture lip and the lip bore print with 0 mm of support inside on both machines. The support stands under the foot-block arm (cosmetic; the foot socket slides over the block's underside and sides, 109 mm2 of it touched on Bambu, file if it binds).",
+    "sourceToPrint": [
+     [
+      -0.4930125719808806,
+      -0.8700221858486121,
+      0.0,
+      -5.319882945302928
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      -6.13203489780426
+     ],
+     [
+      0.8700221858486121,
+      -0.4930125719808806,
+      0.0,
+      9.24889190138635
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 53.55,
+    "heightMm": 32.99,
+    "footprintMm": [
+     29.14,
+     19.54
+    ],
+    "objectSettingsReason": "pipeline R1 brim rule (objectSettingsSource in the slices)",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 23.3,
+      "grams": 4.15,
+      "supportGrams": 0.46,
+      "supportExtrusionMm": 4129.6,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "mustOnSupport": {
+       "cut_face": {
+        "touchedMm2": 0.8,
+        "supportInsideMm": 0
+       }
+      },
+      "reportOnSupport": {
+       "foot_block": 109.1
+      },
+      "files": [
+       "slices/left_inner/heel-down/readback-Bambu.json",
+       "slices/left_inner/heel-down/faces-Bambu.json"
+      ]
+     },
+     "Elegoo": {
+      "etaMinutes": 18.0,
+      "grams": 4.09,
+      "supportGrams": 0.6,
+      "supportExtrusionMm": 5639.2,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "mustOnSupport": {},
+      "reportOnSupport": {
+       "foot_block": 111.3
+      },
+      "files": [
+       "slices/left_inner/heel-down/readback-Elegoo.json",
+       "slices/left_inner/heel-down/faces-Elegoo.json"
+      ]
+     }
+    },
+    "mustExplanation": "Bambu only: 0.8 mm2 of the cut face touched by the support under the arm. The cut face meets the other half with 0.2 mm between them, so a support scar there cannot change the fit. Elegoo: every MUST face clean.",
+    "brim": {
+     "brimAlongSupportReason": "The support under the foot-block arm stands on the bed beside the heel chamfer (330 / 230 mm2 of first-layer support on Bambu / Elegoo). Both slicers brim that support too, so the brim reaches 9-12 mm from the part; the part's own brim (outline nearer the part than the support) reaches 2.7 mm on Bambu, trimmed by the nearby support, and 4.5 mm on Elegoo."
+    }
+   },
+   "rejected": {
+    "+x down": "before the teardrop roof: 11.3 / 14.3 mm2 of the d15 pocket wall on support and 197 / 766 mm of support inside the pocket (Bambu / Elegoo).",
+    "-x down": "before the teardrop roof: 12.8 / 21.1 mm2 of the pocket wall on support, 276 / 527 mm inside the pocket.",
+    "-z down (cut face on the bed)": "the plate inner face overhangs 15 mm and its support fills the pocket: 64.7 mm2 of the pocket wall and all 22.8 mm2 of the capture lip on support, 869 mm inside (Bambu).",
+    "+z / tilted exterior down": "the 1.2 mm sleeve lip ring stands proud of the 7 deg exterior, so no flat face is lowest."
+   }
+  },
+  "right_inner": {
+   "localStl": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-inner-local.stl",
+    "sha256": "64bee9a6ffc4d061067e4531aaef10d6d7297e6fa4b6b6e0efea65b49125cef8"
+   },
+   "chosen": {
+    "poseName": "heel chamfer down (shaft flat, teardrop roof up; mirrored)",
+    "slug": "heel-down",
+    "why": "The stock heel chamfer (55 mm2, at 150 deg round the shaft) on the bed: the shaft lies flat and the new 45 deg teardrop roof of the d15 pocket and the d14 lip bore points straight up into the 11.7 mm thick toe-and-foot corner, so the bearing pocket, the capture lip and the lip bore print with 0 mm of support inside on both machines. The support stands under the foot-block arm (cosmetic; the foot socket slides over the block's underside and sides, 109 mm2 of it touched on Bambu, file if it binds).",
+    "sourceToPrint": [
+     [
+      -0.49301257198088044,
+      0.8700221858486122,
+      0.0,
+      5.319882945302928
+     ],
+     [
+      0.0,
+      0.0,
+      -1.0,
+      -6.132534623146057
+     ],
+     [
+      -0.8700221858486122,
+      -0.49301257198088044,
+      0.0,
+      9.24889190138635
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    ],
+    "bedContactMm2": 53.54,
+    "heightMm": 32.99,
+    "footprintMm": [
+     29.14,
+     19.53
+    ],
+    "objectSettingsReason": "pipeline R1 brim rule (objectSettingsSource in the slices)",
+    "perMachine": {
+     "Bambu": {
+      "etaMinutes": 23.5,
+      "grams": 4.16,
+      "supportGrams": 0.47,
+      "supportExtrusionMm": 4215.0,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "mustOnSupport": {
+       "cut_face": {
+        "touchedMm2": 0.8,
+        "supportInsideMm": 0
+       }
+      },
+      "reportOnSupport": {
+       "foot_block": 98.9
+      },
+      "files": [
+       "slices/right_inner/heel-down/readback-Bambu.json",
+       "slices/right_inner/heel-down/faces-Bambu.json"
+      ]
+     },
+     "Elegoo": {
+      "etaMinutes": 18.1,
+      "grams": 4.08,
+      "supportGrams": 0.6,
+      "supportExtrusionMm": 5645.3,
+      "brimPassed": false,
+      "objectSettings": {
+       "brim_type": "outer_only",
+       "brim_width": "4",
+       "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "mustOnSupport": {},
+      "reportOnSupport": {
+       "foot_block": 113.7
+      },
+      "files": [
+       "slices/right_inner/heel-down/readback-Elegoo.json",
+       "slices/right_inner/heel-down/faces-Elegoo.json"
+      ]
+     }
+    },
+    "mustExplanation": "Bambu only: 0.8 mm2 of the cut face touched by the support under the arm. The cut face meets the other half with 0.2 mm between them, so a support scar there cannot change the fit. Elegoo: every MUST face clean.",
+    "brim": {
+     "brimAlongSupportReason": "The support under the foot-block arm stands on the bed beside the heel chamfer (330 / 230 mm2 of first-layer support on Bambu / Elegoo). Both slicers brim that support too, so the brim reaches 9-12 mm from the part; the part's own brim (outline nearer the part than the support) reaches 2.7 mm on Bambu, trimmed by the nearby support, and 4.5 mm on Elegoo."
+    }
+   },
+   "rejected": {
+    "mirror of the left rows": "see left_inner"
+   }
+  }
+ }
+}

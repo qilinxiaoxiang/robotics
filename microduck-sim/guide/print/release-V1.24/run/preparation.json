@@ -1,0 +1,562 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": 2,
+  "manifest": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.24/manifest-V1.24.json",
+    "sha256": "46e52a46681416ceaf6c7cef65b8ae9a1c56e2e9370c6604d86b434c5674a221"
+  },
+  "pipeline": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/release_pipeline_v2.py",
+    "sha256": "cc482af40a36015536cb75e3699a17aef570a373545c39a0b89b952992859a97"
+  },
+  "wallCheckModule": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/wall_check.py",
+    "sha256": "ce3acbc0798d546af59a33bed63a61bc3c33ee9e7a4ab2086fdee66cfe5d1b91"
+  },
+  "baselineStock": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+    "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+  },
+  "baselinePrintedStockInstances": 89,
+  "reprintUnchangedStockQuantity": 0,
+  "partTypes": 4,
+  "printQuantity": 4,
+  "parts": [
+    {
+      "key": "ankle_outer_left",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-outer-local.stl",
+        "sha256": "642ba2d62c49be5207df55368de20adf23224ca8b6f3c793c16523b712cac8e8"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "20"
+      ],
+      "changeReason": "Replaces the printed community-66.stl (stock object 20, the left one-piece ankle bracket) together with ankle_inner_left; it also replaces the V1.22 ankle base. Shawn 2026-10-20: the V1.22 base and side look fragile, need careful support removal, and their two pairs of screw posts catch the servo wire. This is the stock bracket for local z < -16.1 (the cut at the toe screw axis, set back 0.1 mm): the plate on the servo horn with the four M2 x 4 seats as before and half of the foot block. The link-servo-sleeve package sits straight down into it (halves-check.json packageLiftOutOfOuterClearMm 30). The V1.22 slip-fit foot seats on both halves exactly as on the stock bracket (footSeat play, drop contact) and holds them together.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "3afde4068e61820e3de349cc4175eaee4817f29dda13dadda05e497e35ce3f99"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          25.97703456878662
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 41.32015106220206,
+      "bounds": [
+        [
+          -9.877034187316895,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.877034187316895,
+          12.749000549316406,
+          36.49800109863281
+        ]
+      ],
+      "vertexCount": 2090,
+      "triangleCount": 4196,
+      "tipAngleDeg": 2.43,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "4",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.13,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0502,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.6,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_inner_left",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-inner-local.stl",
+        "sha256": "39a50f3ba5e355a55d023e99b3ecd461e86edc2f988af0be822d265472b5d55a"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "New part, with ankle_outer_left replacing the printed community-66.stl (stock object 20); it also replaces the V1.22 ankle side. The stock bracket for local z > -15.9: the plate whose pocket runs on the 10.4 mm V1.22 sleeve, with its sleeve lip raised from 0.25-0.5 mm to 1.2 mm and a 45 deg teardrop roof on the pocket and lip bore (the sleeve keeps 270 deg of round bore, the whole lower half included), and the other half of the foot block. It slides along the shaft onto the sleeve (innerOffAlongShaftClearMm 24.0); the foot socket captures it (1 mm apart overlaps the foot by 107.027 mm3) and the toe M2 x 6, on the cut, holds it down. No screw, post or tab of its own.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "3afde4068e61820e3de349cc4175eaee4817f29dda13dadda05e497e35ce3f99"
+      },
+      "sourceToPrint": [
+        [
+          -0.4930125719808806,
+          -0.8700221858486121,
+          0.0,
+          -5.319882945302928
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -6.13203489780426
+        ],
+        [
+          0.8700221858486121,
+          -0.4930125719808806,
+          0.0,
+          9.24889190138635
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 53.551082592267804,
+      "bounds": [
+        [
+          -14.570118671488405,
+          -9.767964720726013,
+          0.0
+        ],
+        [
+          14.570118671488405,
+          9.767964720726013,
+          32.98967495715425
+        ]
+      ],
+      "vertexCount": 1184,
+      "triangleCount": 2368,
+      "tipAngleDeg": 6.77,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "4",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "brimAlongSupportReason": "The support under the foot-block arm stands on the bed beside the heel chamfer (330 / 230 mm2 of first-layer support on Bambu / Elegoo). Both slicers brim that support too, so the brim reaches 9-12 mm from the part; the part's own brim (outline nearer the part than the support) reaches 2.7 mm on Bambu, trimmed by the nearby support, and 4.5 mm on Elegoo.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.937,
+        "samples": 54527,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.5,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_outer_right",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-outer-local.stl",
+        "sha256": "a1e9f91fd25d766f41206ca1c2886f853e76f8bda0f2ac96b2bac64bd0842af4"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "22"
+      ],
+      "changeReason": "Replaces the printed community-64.stl (stock object 22, the right one-piece ankle bracket) together with ankle_inner_right; it also replaces the V1.22 ankle base. Shawn 2026-10-20: the V1.22 base and side look fragile, need careful support removal, and their two pairs of screw posts catch the servo wire. This is the stock bracket for local z < -16.1 (the cut at the toe screw axis, set back 0.1 mm): the plate on the servo horn with the four M2 x 4 seats as before and half of the foot block. The link-servo-sleeve package sits straight down into it (halves-check.json packageLiftOutOfOuterClearMm 30). The V1.22 slip-fit foot seats on both halves exactly as on the stock bracket (footSeat play, drop contact) and holds them together.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "3afde4068e61820e3de349cc4175eaee4817f29dda13dadda05e497e35ce3f99"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -25.976534843444824
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 41.32387458388985,
+      "bounds": [
+        [
+          -9.876534461975098,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.876534461975098,
+          12.749000549316406,
+          36.5
+        ]
+      ],
+      "vertexCount": 2090,
+      "triangleCount": 4196,
+      "tipAngleDeg": 2.43,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "4",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 2.4 deg < 10 deg, outer brim",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.113,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0502,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.8,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_inner_right",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-inner-local.stl",
+        "sha256": "64bee9a6ffc4d061067e4531aaef10d6d7297e6fa4b6b6e0efea65b49125cef8"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "New part, with ankle_outer_right replacing the printed community-64.stl (stock object 22); it also replaces the V1.22 ankle side. The stock bracket for local z > -15.9: the plate whose pocket runs on the 10.4 mm V1.22 sleeve, with its sleeve lip raised from 0.25-0.5 mm to 1.2 mm and a 45 deg teardrop roof on the pocket and lip bore (the sleeve keeps 270 deg of round bore, the whole lower half included), and the other half of the foot block. It slides along the shaft onto the sleeve (innerOffAlongShaftClearMm 24.0); the foot socket captures it (1 mm apart overlaps the foot by 108.622 mm3) and the toe M2 x 6, on the cut, holds it down. No screw, post or tab of its own.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "3afde4068e61820e3de349cc4175eaee4817f29dda13dadda05e497e35ce3f99"
+      },
+      "sourceToPrint": [
+        [
+          -0.49301257198088044,
+          0.8700221858486122,
+          0.0,
+          5.319882945302928
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -6.132534623146057
+        ],
+        [
+          -0.8700221858486122,
+          -0.49301257198088044,
+          0.0,
+          9.24889190138635
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 53.5360019599934,
+      "bounds": [
+        [
+          -14.570118671488405,
+          -9.767464995384216,
+          0.0
+        ],
+        [
+          14.570118671488405,
+          9.767464995384216,
+          32.98967495715425
+        ]
+      ],
+      "vertexCount": 1341,
+      "triangleCount": 2682,
+      "tipAngleDeg": 6.77,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "4",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "R1 default: tip angle 6.8 deg < 10 deg, outer brim",
+      "brimAlongSupportReason": "The support under the foot-block arm stands on the bed beside the heel chamfer (330 / 230 mm2 of first-layer support on Bambu / Elegoo). Both slicers brim that support too, so the brim reaches 9-12 mm from the part; the part's own brim (outline nearer the part than the support) reaches 2.7 mm on Bambu, trimmed by the nearby support, and 4.5 mm on Elegoo.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.2,
+        "samples": 54523,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
+    }
+  ],
+  "claimBoundary": "Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.",
+  "status": "PREPARED_NOT_SLICED",
+  "rows": [
+    {
+      "color": "Orange",
+      "machine": "Bambu",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.24/run/Orange_Bambu_editable.3mf",
+        "sha256": "50543156cf078901d9e5f320361e24b83f63777904d7e9abcc1020808629a8e1"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+        "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+      },
+      "supportBlockers": [],
+      "placements": [
+        {
+          "key": "ankle_outer_left",
+          "copy": 1,
+          "translation": [
+            70.987,
+            127.999,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_inner_left",
+          "copy": 1,
+          "translation": [
+            107.4301,
+            127.998,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_outer_right",
+          "copy": 1,
+          "translation": [
+            143.8765,
+            127.999,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_inner_right",
+          "copy": 1,
+          "translation": [
+            180.3201,
+            128.0025,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            61.1099658126831,
+            115.24999945068359,
+            0.0
+          ],
+          [
+            80.86403418731689,
+            140.7480005493164,
+            36.49800109863281
+          ]
+        ],
+        [
+          [
+            92.8599813285116,
+            118.23003527927399,
+            0.0
+          ],
+          [
+            122.0002186714884,
+            137.765964720726,
+            32.98967495715425
+          ]
+        ],
+        [
+          [
+            133.9999655380249,
+            115.24999945068359,
+            0.0
+          ],
+          [
+            153.7530344619751,
+            140.7480005493164,
+            36.5
+          ]
+        ],
+        [
+          [
+            165.74998132851158,
+            118.23503500461578,
+            0.0
+          ],
+          [
+            194.8902186714884,
+            137.7699649953842,
+            32.98967495715425
+          ]
+        ]
+      ],
+      "plateCentreOffsetMm": [
+        0.0,
+        -0.001
+      ]
+    },
+    {
+      "color": "Orange",
+      "machine": "Elegoo",
+      "project": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.24/run/Orange_Elegoo_editable.3mf",
+        "sha256": "480fb223d9d33246a6919b2b48413fccf26938ab1319f32a822abbccfa2128d0"
+      },
+      "profile": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+        "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+      },
+      "supportBlockers": [],
+      "placements": [
+        {
+          "key": "ankle_outer_left",
+          "copy": 1,
+          "translation": [
+            70.987,
+            127.999,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_inner_left",
+          "copy": 1,
+          "translation": [
+            107.4301,
+            127.998,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_outer_right",
+          "copy": 1,
+          "translation": [
+            143.8765,
+            127.999,
+            0.0
+          ]
+        },
+        {
+          "key": "ankle_inner_right",
+          "copy": 1,
+          "translation": [
+            180.3201,
+            128.0025,
+            0.0
+          ]
+        }
+      ],
+      "modelBounds": [
+        [
+          [
+            61.1099658126831,
+            115.24999945068359,
+            0.0
+          ],
+          [
+            80.86403418731689,
+            140.7480005493164,
+            36.49800109863281
+          ]
+        ],
+        [
+          [
+            92.8599813285116,
+            118.23003527927399,
+            0.0
+          ],
+          [
+            122.0002186714884,
+            137.765964720726,
+            32.98967495715425
+          ]
+        ],
+        [
+          [
+            133.9999655380249,
+            115.24999945068359,
+            0.0
+          ],
+          [
+            153.7530344619751,
+            140.7480005493164,
+            36.5
+          ]
+        ],
+        [
+          [
+            165.74998132851158,
+            118.23503500461578,
+            0.0
+          ],
+          [
+            194.8902186714884,
+            137.7699649953842,
+            32.98967495715425
+          ]
+        ]
+      ],
+      "plateCentreOffsetMm": [
+        0.0,
+        -0.001
+      ]
+    }
+  ]
+}

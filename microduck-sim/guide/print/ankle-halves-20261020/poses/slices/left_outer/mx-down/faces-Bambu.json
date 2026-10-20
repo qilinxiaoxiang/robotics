@@ -1,0 +1,156 @@
+{
+ "run": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/poses/slices/left_outer/mx-down/run",
+ "key": "ankle_outer_left",
+ "machine": "Bambu",
+ "color": "Orange",
+ "poseName": null,
+ "supportExtrusionTotalMm": 1207.8,
+ "supportInterfaceMm": 146.9,
+ "supportInsideCavitiesMm": {
+  "output_holes": 0.0,
+  "centre_aperture": 0.0,
+  "toe_hole": 0.0
+ },
+ "faceSets": {
+  "foot_block": {
+   "must": false,
+   "meaning": "the half foot block below local y = -9.4: the slip-fit foot socket (0.15-0.19 mm play) slides over it",
+   "areaMm2": 1448.3,
+   "downMm2": 181.9,
+   "upMm2": 192.2,
+   "sideMm2": 1074.3,
+   "onBedMm2": 0.0,
+   "touchedMm2": 31.4,
+   "touchedDownMm2": 27.5,
+   "printZMm": [
+    0.33,
+    35.96
+   ]
+  },
+  "toe_seat": {
+   "must": false,
+   "meaning": "the half countersink of the toe M2 x 6 TAP at local x = +-17.5, z = -16",
+   "areaMm2": 5.5,
+   "downMm2": 0.0,
+   "upMm2": 0.0,
+   "sideMm2": 5.5,
+   "onBedMm2": 0.0,
+   "touchedMm2": 0.0,
+   "touchedDownMm2": 0.0,
+   "printZMm": [
+    30.33,
+    33.98
+   ],
+   "supportInsideMm": 0.0
+  },
+  "motor_face": {
+   "must": true,
+   "meaning": "inner motor mating face (plane local z = -30.7, faces +Z): the XL330 output horn/case face sits on it",
+   "areaMm2": 399.2,
+   "downMm2": 0.0,
+   "upMm2": 0.0,
+   "sideMm2": 399.2,
+   "onBedMm2": 0.0,
+   "touchedMm2": 7.6,
+   "touchedDownMm2": 0.0,
+   "printZMm": [
+    1.95,
+    32.77
+   ]
+  },
+  "output_seats": {
+   "must": true,
+   "meaning": "four motor-output screw seats: d4.4 counterbore floors at local z = -32.5 under the M2 x 4 TAP heads",
+   "areaMm2": 45.6,
+   "downMm2": 0.0,
+   "upMm2": 0.0,
+   "sideMm2": 45.6,
+   "onBedMm2": 0.0,
+   "touchedMm2": 0.0,
+   "touchedDownMm2": 0.0,
+   "printZMm": [
+    6.83,
+    22.49
+   ]
+  },
+  "cut_face": {
+   "must": true,
+   "meaning": "the cut face (local z = -16.1 on the outer half, -15.9 on the inner): the two halves meet here, 0.2 mm apart",
+   "areaMm2": 91.0,
+   "downMm2": 0.0,
+   "upMm2": 0.0,
+   "sideMm2": 91.0,
+   "onBedMm2": 0.0,
+   "touchedMm2": 0.0,
+   "touchedDownMm2": 0.0,
+   "printZMm": [
+    0.47,
+    35.42
+   ]
+  },
+  "outer_plate_face": {
+   "must": false,
+   "meaning": "the exterior face of the plate (outer: z < -33, inner: z > 3)",
+   "areaMm2": 458.5,
+   "downMm2": 0.0,
+   "upMm2": 0.0,
+   "sideMm2": 458.5,
+   "onBedMm2": 0.0,
+   "touchedMm2": 10.7,
+   "touchedDownMm2": 0.0,
+   "printZMm": [
+    2.33,
+    36.11
+   ]
+  }
+ },
+ "firstLayer": [
+  {
+   "name": "ankle_outer_left_1",
+   "modelAreaMm2": 37.7,
+   "islands": 1,
+   "supportAreaMm2": 189.1,
+   "brimAreaMm2": 153.2
+  }
+ ],
+ "brim": {
+  "passed": false,
+  "objects": {
+   "ankle_outer_left_1": {
+    "brimType": "outer_only",
+    "brimAreaMm2": 153.2,
+    "reachMm": 4.05,
+    "failures": [
+     "2.4 mm2 of brim inside the part's own convex outline"
+    ]
+   }
+  }
+ },
+ "tipAngleDeg": 3.44,
+ "objectSettings": {
+  "brim_type": "outer_only",
+  "brim_width": "4",
+  "brim_object_gap": "0.1"
+ },
+ "objectSettingsSource": "R1 default: tip angle 3.4 deg < 10 deg, outer brim",
+ "firstThreeLayersByFeatureMm": {
+  "z=0.2": {
+   "Inner wall": 26.2,
+   "Custom": 480.5,
+   "Brim": 328.7,
+   "Gap infill": 12.0,
+   "Outer wall": 41.7
+  },
+  "z=0.4": {
+   "Gap infill": 17.2,
+   "Inner wall": 53.8,
+   "Outer wall": 43.5
+  },
+  "z=0.6": {
+   "Gap infill": 16.3,
+   "Inner wall": 60.3,
+   "Outer wall": 44.1
+  }
+ },
+ "method": "support toolpath midpoints from the native G-code; a face rests on support when its centre is within 1.0 mm XY and 0..0.6 mm above a support midpoint; cavity figures are support midpoints inside the local-frame cavity volume"
+}

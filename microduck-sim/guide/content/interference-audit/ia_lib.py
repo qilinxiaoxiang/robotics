@@ -66,11 +66,11 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # 2026-10-19 slip-fit feet (print/foot-slipfit-20261019/foot_slipfit.py): the printed community feet with the
               # ankle socket opened 0.2 mm and the snap hooks removed, seated as fitted to the real socket.
               'foot': 'foot_left.stl', 'right_foot': 'foot_right.stl',
-              # 2026-10-19 split ankle (print/ankle-split-20261019/, the 10/07 design): the orange base on the motor horn
-              # replaces the one-piece bracket, the removable side ("cheek", two M2 x 8 TAP from above) is a new part, and the
-              # black sleeve (bore 10.4) replaces the 9.65 mm press-fit sleeve.
-              'ankle': 'ankle_base_left.stl', 'right_ankle': 'ankle_base_right.stl',
-              'ankle_cheek': 'ankle_cheek_left.stl', 'right_ankle_cheek': 'ankle_cheek_right.stl',
+              # 2026-10-20 two-half ankle (print/ankle-halves-20261020/make_halves.py): the stock bracket cut in half at mid
+              # shaft, held by the foot. The outer half (on the motor horn) takes the bracket's key; the inner half (on the
+              # sleeve) keeps the V1.22 side's key 'ankle_cheek'. The V1.22 black sleeve (bore 10.4) replaces the 9.65 mm one.
+              'ankle': 'ankle_outer_left.stl', 'right_ankle': 'ankle_outer_right.stl',
+              'ankle_cheek': 'ankle_inner_left.stl', 'right_ankle_cheek': 'ankle_inner_right.stl',
               'smallring': 'ankle_sleeve_left.stl', 'right_smallring': 'ankle_sleeve_right.stl',
               **{f'head_pi_a7z_{p.stem[4:]}': p.name for p in sorted(WORLD.glob('a7z_*.stl')) if p.name != 'a7z_pcb.stl'}}
 

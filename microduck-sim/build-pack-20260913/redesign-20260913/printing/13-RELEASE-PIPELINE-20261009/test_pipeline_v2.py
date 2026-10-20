@@ -106,6 +106,29 @@ class FirstLayerBrimTests(unittest.TestCase):
   self.assertEqual(r.hull_allowance(allowed)['brimInsideHullAllowanceMm2'],lim);self.assertEqual(r.hull_allowance(part('u',brim)),{})
   with self.assertRaisesRegex(AssertionError,'Reason'):r.hull_allowance(dict(part('u',brim),brimInsideHullAllowanceMm2=lim))
   with self.assertRaisesRegex(AssertionError,'exceed'):r.hull_allowance(dict(allowed,brimInsideHullAllowanceMm2=1.0))
+ def test_brim_along_first_layer_support(self):
+  # V1.24 ankle inner halves: support stands on the bed beside the part and the slicer runs the brim round it as well.
+  # Part edge y 99.8, its support line at y 90 (edge 89.8), brim beyond the support out to y 85.8 (14 mm from the part) and
+  # the part's own brim on its left side out to x 95.8 (4 mm).
+  g=(b'M83\nG1 X100 Y86 Z0.2\n;TYPE:Brim\n;WIDTH:0.4\nG1 X120 Y86 E1\nG1 X96 Y100\nG1 X96 Y120 E1\n'
+     b'EXCLUDE_OBJECT_START NAME=u_1_id_0_copy_0\n;TYPE:External perimeter\nG1 X100 Y120\nG1 X100 Y100 E1\nG1 X120 Y100 E1\nG1 X120 Y120 E1\n'
+     b';TYPE:Support\nG1 X100 Y90\nG1 X120 Y90 E1\nEXCLUDE_OBJECT_END NAME=u_1_id_0_copy_0\n'
+     b'EXCLUDE_OBJECT_START NAME=b_1_id_1_copy_0\n;TYPE:External perimeter\nG1 X160 Y100\nG1 X170 Y100 E1\nEXCLUDE_OBJECT_END NAME=b_1_id_1_copy_0\n')
+  rows,_=r.first_layer(g,self.p,'Elegoo');u=next(x for x in rows if x['name']=='u_1')
+  self.assertAlmostEqual(u['brimReachMm'],14.0,delta=.01);self.assertAlmostEqual(u['brimOwnReachMm'],4.0,delta=.01)
+  part=lambda k,s,**kw:dict(key=k,quantity=1,color='Orange',objectSettings=s,**kw)
+  brim={'brim_type':'outer_only','brim_width':'4','brim_object_gap':'0.1'};why='support under the foot-block arm stands beside the heel chamfer'
+  out=r.brim_review(rows,[part('u',brim),part('b',r.R1_NO_BRIM)])   # without the written reason the reach rule fails as before
+  self.assertEqual(out['objects']['u_1']['failures'],['brim reach 14.0 mm, planned 4.1 mm (gap + width)'])
+  out=r.brim_review(rows,[part('u',brim,**r.support_brim(dict(key='u',brimAlongSupportReason=why))),part('b',r.R1_NO_BRIM)])
+  self.assertTrue(out['passed'],out);self.assertEqual(out['objects']['u_1']['brimAlongSupportReason'],why)
+  out=r.brim_review(rows,[part('u',dict(brim,brim_width='2'),brimAlongSupportReason=why),part('b',r.R1_NO_BRIM)])   # slicer used 4 mm, plan says 2
+  self.assertEqual(len(out['objects']['u_1']['failures']),1);self.assertIn('own brim reach 4.0 mm',out['objects']['u_1']['failures'][0])
+  only_far,_=r.first_layer(g.replace(b'G1 X96 Y100\nG1 X96 Y120 E1\n',b''),self.p,'Elegoo')   # all brim beyond the support
+  out=r.brim_review(only_far,[part('u',brim,brimAlongSupportReason=why),part('b',r.R1_NO_BRIM)])
+  self.assertEqual(out['objects']['u_1']['failures'],['no brim outline nearer the part than its support'])
+  self.assertEqual(r.support_brim(dict(key='u')),{})
+  with self.assertRaisesRegex(AssertionError,'empty'):r.support_brim(dict(key='u',brimAlongSupportReason=' '))
 
 @unittest.skipUnless((ACCEPT/'run/preparation.json').exists() and V19.exists(),'acceptance slices absent')
 class RealSliceTests(unittest.TestCase):

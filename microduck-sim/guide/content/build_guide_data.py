@@ -442,15 +442,15 @@ def build_parts() -> dict:
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
             parts[key].update(v=v, f=f, name=name, status='new-print', source=str(path))
-    # 2026-10-19 split ankle (print/ankle-split-20261019/, the 10/07 design in ankle-redesign-20261007/): the orange base on
-    # the motor horn replaces the one-piece bracket in place, the removable orange side is a new part of the leg module, and
-    # the black 10.4 mm sleeve replaces the 9.65 mm press-fit sleeve. World files are the 10/07 world STLs (guide frame).
-    for key, fname, name, new in (('ankle', 'ankle_base_left.stl', 'Left ankle base, on the motor horn (new print)', None),
-                                  ('right_ankle', 'ankle_base_right.stl', 'Right ankle base, on the motor horn (new print)', None),
+    # 2026-10-20 two-half ankle (print/ankle-halves-20261020/): the stock bracket cut in half at mid shaft. The outer half on
+    # the motor horn replaces the one-piece bracket in place, the inner half on the sleeve is a new part of the leg module
+    # (key 'ankle_cheek', as the V1.22 side), and the black 10.4 mm V1.22 sleeve replaces the 9.65 mm press-fit sleeve.
+    for key, fname, name, new in (('ankle', 'ankle_outer_left.stl', 'Left ankle outer half, on the motor horn (new print)', None),
+                                  ('right_ankle', 'ankle_outer_right.stl', 'Right ankle outer half, on the motor horn (new print)', None),
                                   ('smallring', 'ankle_sleeve_left.stl', 'Left ankle sleeve, 10.4 mm bore (new print)', None),
                                   ('right_smallring', 'ankle_sleeve_right.stl', 'Right ankle sleeve, 10.4 mm bore (new print)', None),
-                                  ('ankle_cheek', 'ankle_cheek_left.stl', 'Left ankle side, two M2 x 8 TAP (new print)', 'ankle'),
-                                  ('right_ankle_cheek', 'ankle_cheek_right.stl', 'Right ankle side, two M2 x 8 TAP (new print)', 'right_ankle')):
+                                  ('ankle_cheek', 'ankle_inner_left.stl', 'Left ankle inner half, on the sleeve (new print)', 'ankle'),
+                                  ('right_ankle_cheek', 'ankle_inner_right.stl', 'Right ankle inner half, on the sleeve (new print)', 'right_ankle')):
         path = first_existing(world / fname)
         if not path:
             continue

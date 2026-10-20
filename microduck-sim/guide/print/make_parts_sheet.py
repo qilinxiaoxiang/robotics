@@ -424,6 +424,37 @@ INCREMENTAL_NOTES_BY_VERSION['V1.23'] = dict(
     hotglue_mold_left='Replaces the V1.21 left mold (the L on the heel strip). The floor under the flat of the foot is one plane 1.0 mm below it, so the sole comes out flat. No pins: press the foot down between the four tabs until its curved edge sits on the rim of the cavity; the four pencil lines at the tab tops show it is down. Glue that does not fit leaves through the eight vents. Prints cavity up, no support, no brim.',
     hotglue_mold_right='Replaces the V1.21 right mold (the R). Same as the left mold, mirrored.')
 
+# V1.24: the two-half ankle (Shawn 2026-10-20: the V1.22 base and side look fragile, need careful support removal, and the
+# two pairs of screw posts catch the servo wire; he never fitted the two M2 x 8 and the ankle worked). Each ankle is the stock
+# bracket cut in half at mid shaft (print/ankle-halves-20261020/make_halves.py), held by the foot. The V1.22 black sleeves
+# and yellow feet stay. release-V1.24/retired/ holds the V1.22 base and side meshes.
+RETIRED_INCREMENTAL['V1.24'] = [
+    ('Left ankle base (V1.22 print)', 'Orange', HERE / 'release-V1.24' / 'retired' / 'ankle_base_left-V1.22.stl',
+     'Its two screw posts are thin, catch the servo wire and need careful support removal.', 'Left ankle outer half'),
+    ('Right ankle base (V1.22 print)', 'Orange', HERE / 'release-V1.24' / 'retired' / 'ankle_base_right-V1.22.stl',
+     'Same posts as the left base.', 'Right ankle outer half'),
+    ('Left ankle side (V1.22 print)', 'Orange', HERE / 'release-V1.24' / 'retired' / 'ankle_cheek_left-V1.22.stl',
+     'Held by two M2 x 8 on the posts; small tabs that break easily.', 'Left ankle inner half'),
+    ('Right ankle side (V1.22 print)', 'Orange', HERE / 'release-V1.24' / 'retired' / 'ankle_cheek_right-V1.22.stl',
+     'Same as the left side.', 'Right ankle inner half'),
+]
+INTRO_BY_VERSION['V1.24'] = ('V1.24 is one orange plate: each ankle is the stock bracket cut in half in the middle. The outer half screws to '
+                             'the servo horn with the four M2 x 4; the inner half slides along the shaft onto the black sleeve. The foot '
+                             'holds both: its socket wraps the two halves, and the toe M2 x 6 sits on the line where they meet and holds '
+                             'both down. No posts and no M2 x 8. The V1.22 black sleeves and yellow slip-fit feet stay.')
+RETIRED_LEAD_BY_VERSION['V1.24'] = ('On each leg, with the ankle-and-foot module off the knee: toe screw out and the foot slid down, the two M2 x 8 '
+                                    'out of the side (they are not used again) and the side slid off towards the centre line, then the four '
+                                    'M2 x 4 output screws. Lift the link with its servo and sleeve out of the base. Keep the sleeve, the feet '
+                                    'and the other screws.')
+RETIRED_HEADING_BY_VERSION['V1.24'] = 'Replace these'
+INCREMENTAL_NAMES_BY_VERSION['V1.24'] = dict(ankle_outer_left='Left ankle outer half', ankle_outer_right='Right ankle outer half',
+                                             ankle_inner_left='Left ankle inner half', ankle_inner_right='Right ankle inner half')
+INCREMENTAL_NOTES_BY_VERSION['V1.24'] = dict(
+    ankle_outer_left='The outer half of the left ankle: the plate on the servo horn and half of the foot block. Screws to the horn with the four M2 x 4 as before; the lower link with its servo and sleeve sits straight down into it. After printing: cut the thin brim strip out of the small notch on the end face that stood on the bed; on an Elegoo print also pull any support tips out of the four screw counterbores so the screw heads sit flat.',
+    ankle_outer_right='The outer half of the right ankle. Same as the left, mirrored.',
+    ankle_inner_left='The inner half of the left ankle, on the face towards the other leg: the plate with the sleeve pocket and the other half of the foot block. Slide it along the shaft, away from the centre line, onto the sleeve until it meets the outer half; then slide the foot on and drive the toe M2 x 6. It prints on its heel corner with the round sleeve pocket free of support (the pocket has a pointed top for that); break the support off under the foot block.',
+    ankle_inner_right='The inner half of the right ankle. Same as the left, mirrored.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

@@ -1,5 +1,7 @@
 # Split ankle (release 2026-10-19, V1.22)
 
+Superseded on 2026-10-20 by the two-half ankle, `../ankle-halves-20261020/` (release V1.24): the printed base and side looked fragile and their screw posts caught the servo wire. The V1.22 black sleeves and slip-fit feet stay.
+
 Shawn, 2026-10-19: the orange one-piece ankle bracket is hard to fit, and repeated fittings load the ankle servo. The bracket is a closed fork. The lower-leg link with its XL330 and black sleeve cannot come down into it (the sleeve catches the fork at 16.5 mm above the seated pose, `leg-guide-20261006/assembly-path-investigation.md`), and the stock sleeve is itself a 0.17 mm press fit on the 10 mm link boss. So each fitting spread the fork over the package by force.
 
 The fix is the 2026-10-07 digital design in `build-pack-20260913/redesign-20260913/ankle-redesign-20261007/` (`DESIGN-NOTES.md`, `README.md`), which was never printed. Each ankle becomes three parts:
