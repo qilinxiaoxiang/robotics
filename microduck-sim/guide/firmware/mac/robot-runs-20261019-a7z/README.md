@@ -18,3 +18,14 @@ Timing onboard vs the Mac brain (10/18): servo sync read 8.5 vs 5.2 ms, loop 12.
 - `duck_wired_log_1019m` and `duck_wired_log_1020a` are tick logs with 50 Hz round-robin servo input voltage (`servo_v`), fsynced every 50 ms. `thermal.log` is the 10 Hz SoC temperature and CPU frequency log; each `# boot` header starts a new boot.
 - Reset 4 (1020a, 04:23:40 UTC) came 0.24 s into stand61 at zero command. The servo rail read 7.1-7.3 V up to the last tick, so the shared input did not sag. The SoC was at 84-86 °C (kernel critical trip 110 °C) and throttled between 416 MHz and 1.5 GHz, with loop time 24-33 ms.
 - Open question: an A7Z 5 V dip under CPU load steps versus a board-level thermal reset. A 20 s full-CPU test with the servos untouched separates them; it has not been run yet.
+
+### Reset timeline from the tick logs (UTC, all four resets)
+
+- 03:19-03:53 (runs 1019b-f): loop p50 12-13 ms the whole time, four walks, no reset.
+- Reset 1, 03:53:35 (end of 1019f): open-loop stand, upright, loop 13 ms. Nothing in the brain changed at that moment.
+- Reset 2, ~03:58: during a stand ramp (no tick log kept).
+- Reset 3, 04:18:24 (end of 1019m): 4.2 s into walk mode, right where the walk command starts. Loop p50 had been swinging 12 <-> 17.5 ms in 2-minute bins since 04:10 (CPU throttling on and off) and was 20-28 ms in walk.
+- Reset 4, 04:24:11 (end of 1020a): 0.21 s into walk mode (stand61 at zero command). Loop 16.5 ms already in monitor, 24 ms in walk; SoC 82-86 °C from boot (the board rebooted hot, 87 °C at the next boot). Servo rail 7.1-7.3 V on the reads that returned.
+- `servo_v` returned None on most ticks (3 ms timeout after the goal write); the round-robin voltage read needs a longer timeout or its own slot before it counts as 50 Hz coverage.
+
+Reading: no reset while the board was cool and the CPU clock steady; all four after 35 min inside the closed head, three of them at a CPU load step (policy start). Consistent with the A7Z 5 V branch (XL4015 #2, Dupont to pins 2/4 and 6) dipping on current steps that only appear once the clock starts throttling. Not yet separated from a board-level thermal reset: run the 20 s CPU stress test cold and hot, with a min-hold meter on pins 2/6.
