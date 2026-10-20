@@ -23,8 +23,8 @@ not been drilled or test-screwed on a V1.22-profile print.
   Output `screen.json`, log `logs/screen.log`, resource report `logs/screen-resource.json`.
 - **Functional-face rule.** `scripts/faces.py` selects face sets on the local-frame mesh and marks them MUST (slide, bear or
   register: must print without support under them) or REPORT (cosmetic, support allowed). Base MUST: motor mating face, four
-  output screw seats, slot walls, post register faces, the two d1.6 pilots. Cheek MUST: d15 bearing pocket wall, inside
-  capture lip, tongue sides and tips, tab register faces, the two d2.3 clearance bores. Sleeve MUST: bore, outer face, end faces.
+  output screw seats, post register faces, the two d1.6 pilots. Cheek MUST: d15 bearing pocket wall, inside
+  capture lip, tab register faces, the two d2.3 clearance bores. Sleeve MUST: bore, outer face, end faces.
 - **Native slicing.** The top poses per part (`slice-plan.json`, 11 rows) were prepared and sliced on both machines with the
   V1.22 profiles through `release_pipeline_v2.py` (`prepare` then `slice`), every job under the bounded runner
   (`run_bounded_cad.py --max-mib 3000 --seconds 600`, lock wait 60 s, retried while the parent's print gate held the lock).
@@ -135,7 +135,9 @@ not been drilled or test-screwed on a V1.22-profile print.
   `generate_candidate.py` (geometry change, not made here). No print of this design exists, so the diameters are unmeasured.
 - **Cheek pose deviates from R1.** Not self-standing (tip -44.3 deg), body on support. Accepted because every bearing,
   sliding and register face is clean and the alternative puts the lip on support.
-- **Tongue rib.** 0.4 mm wide, one extrusion; both slicers print it (49-54 mm per cheek). Check it is present before fitting.
+- **Tongues and slots removed (2026-10-19).** The 0.4 mm tongue ribs and the base slots no longer exist; the side is located by
+  its two screws and the sleeve. Mentions of slot channels and tongue ribs above describe the parts as screened before that
+  change; the poses are unchanged and the current support figures are in the V1.22 release review.
 
 ## Runs and files
 

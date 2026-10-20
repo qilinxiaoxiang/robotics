@@ -57,7 +57,8 @@ class ColourOnlyReprintTests(unittest.TestCase):
  def setUp(self):
   self.m=r.read(r.HERE/'fixture-manifest.json');self.tmp=tempfile.TemporaryDirectory();self.d=Path(self.tmp.name)
   row=self.m['parts'][0];row.update(key='thigh_fixture',path=self.STOCK,sha256=r.sha(self.STOCK),decision='replacement',replacesStockIds=['8'],
-   sourceToPrint=[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],flatContact={'minimumAreaMm2':1000})
+   sourceToPrint=[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],flatContact={'minimumAreaMm2':1000},
+   thinWallAllowances=[{'bbox':[[-31,-24.5,-.5],[31,24.5,28.5]],'minMm':.7,'reason':'stock thigh community-74 (1.0 mm shell, min 0.75 mm), accepted before the wall rule'}])
  def tearDown(self):self.tmp.cleanup()
  def receipt(self):p=self.d/'manifest.json';r.write(p,self.m);return r.source_receipt(p)[1]
  def test_unchanged_stock_still_rejected_without_reason(self):

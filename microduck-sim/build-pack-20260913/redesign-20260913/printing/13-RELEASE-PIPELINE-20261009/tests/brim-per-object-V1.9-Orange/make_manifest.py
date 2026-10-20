@@ -3,7 +3,8 @@
     /tmp/microduck-cad-venv/bin/python make_manifest.py
 
 Same parts, poses, sources (hash-bound at their original paths), profiles and baseline as release-V1.9/manifest-V1.9.json,
-with two changes: releaseKind 'fixture' (can never become RELEASED) and no brim keys in processOverrides. Each part's
+with three changes: releaseKind 'fixture' (can never become RELEASED), no brim keys in processOverrides, and wallCheckLegacy
+(the V1.9 parts carry 0.2-1.0 mm walls; the wall check is recorded per part but does not stop this brim fixture). Each part's
 objectSettings comes from its rows.json row when set there (with objectSettingsReason); otherwise release_pipeline_v2 applies
 the R1 default from the part's tip angle. This is the passthrough a release make_manifest.py needs.
 """
@@ -20,6 +21,7 @@ m = dict(src, version='V1.9-BRIM-PER-OBJECT-TEST', releaseKind='fixture',
 m['processOverrides'] = {k: o for k, o in ({k: {a: b for a, b in v.items() if a not in BRIM_KEYS}
                                              for k, v in src.get('processOverrides', {}).items()}).items() if o}
 m['processOverrideReason'] = 'No plate-wide brim: the brim is set per part (objectSettings, R1 default from the tip angle).'
+m['wallCheckLegacy'] = 'V1.9 Orange geometry, printed before the 1.2 mm wall rule; kept as the per-object brim fixture'
 parts = []
 for p in src['parts']:
     p = dict(p)

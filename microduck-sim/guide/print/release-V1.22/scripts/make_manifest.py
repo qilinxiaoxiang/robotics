@@ -8,7 +8,7 @@ and are not in it), on three plates:
           side closes along the shaft and two M2 x 8 TAP from above hold it,
   Black   left and right ankle sleeve, bore 10.4 mm (the stock 9.65 mm sleeve is a 0.17 mm press fit on the 10 mm link boss),
   Yellow  left and right slip-fit foot (print/foot-slipfit-20261019/foot_slipfit.py): the printed community feet with the
-          ankle socket opened 0.2 mm sideways and the two snap hooks removed, held by the toe M2 x 6 TAP.
+          ankle socket opened 0.2 mm sideways, the two snap tongues deleted and the heel well filled, held by the toe M2 x 6 TAP.
 All eight rows are replacements of printed stock objects (copy-manifest.json ids: brackets 20/22, sleeves 148/150, feet
 32/30). Ankle print poses come from print/ankle-split-20261019/poses/poses.json (per key: sourceToPrint from the
 STL/*-local.stl frame, chosen by native slicing on both machines); the feet print in the stock pose (identity).
@@ -38,6 +38,8 @@ GAP_MM = 12.0
 # the foot is the replaceable unit (slides off, one toe screw), so a ruined sole costs one foot, not a redesign.
 FOOT_PAIRS = 3
 IDENTITY = np.eye(4).tolist()
+# wall-check regions that are stock geometry, with evidence (thin_wall_allowances.py; it refuses any thin wall V1.22 made)
+ALLOWANCES = HERE / 'thin-wall-allowances.json'
 # stock object: (community file, copy-manifest object id, the stock part it is)
 STOCK = {'foot_left': ('community-44.stl', '32', 'left foot'), 'foot_right': ('community-46.stl', '30', 'right foot'),
          'ankle_left': ('community-66.stl', '20', 'left one-piece ankle bracket'), 'ankle_right': ('community-64.stl', '22', 'right one-piece ankle bracket'),
@@ -78,7 +80,8 @@ def foot_row(side):
         changeReason=(f'Replaces the printed {stock} (stock object {sid}, the {what}). Shawn 2026-10-19: the orange ankle bracket and the '
                       'yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle '
                       'servo. The socket that holds the bracket\'s lower block is opened 0.2 mm sideways along the straight '
-                      'insertion path and the two snap hooks (about 0.3 mm) are removed; the faces the bracket rests on stay, '
+                      'insertion path, the two snap tongues are deleted (the cut had left them 0.6-0.7 mm thin flakes with no hook) and the '
+                      'heel well they stood in is filled to the wall tops; the faces the bracket rests on stay, '
                       'so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP '
                       'holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). '
                       'Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.'),
@@ -109,8 +112,8 @@ def ankle_row(part, side, poses):
                  'sleeve package lifts straight out (ankle-split-check.json packageLiftSideOff 0 mm3 left, the 0.137 mm3 source '
                  'mating-face slab right). The V1.22 slip-fit foot seats on it as on the stock bracket (footSeat).'),
         'cheek': (f'New part, with ankle_base_{side} replacing the printed {stock} (stock object {sid}). The removable side of the '
-                  'split ankle: it closes along the shaft onto the sleeve, two register tongues enter open slots in the base, and '
-                  'two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold it. With the foot off '
+                  'split ankle: it closes along the shaft onto the sleeve until its two tabs meet the solid base posts, and two '
+                  'M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold and locate it. With the foot off '
                   'it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is '
                   'captured. DESIGN-NOTES.md in ankle-redesign-20261007/.'),
         'sleeve': (f'Replaces the printed {stock} (stock object {sid}, the {stock_what}): bore 10.4 mm instead of 9.65 mm on the 10 mm '
@@ -139,13 +142,23 @@ def ankle_row(part, side, poses):
     )
 
 
+def build_parts(allowances=None):
+    poses = json.loads((SPLIT / 'poses' / 'poses.json').read_text())
+    parts = [ankle_row('base', 'left', poses), ankle_row('base', 'right', poses), ankle_row('cheek', 'left', poses), ankle_row('cheek', 'right', poses),
+             ankle_row('sleeve', 'left', poses), ankle_row('sleeve', 'right', poses), foot_row('left'), foot_row('right')]
+    for p in parts:
+        allow = (allowances or {}).get(p['key'])
+        if allow:
+            p['thinWallAllowances'] = [{k: e[k] for k in ('bbox', 'minMm', 'reason')} for e in allow]
+            p['evidenceAlso'] = p['evidenceAlso'] + [ref(ALLOWANCES), ref(HERE / 'thin_wall_allowances.py')]
+    return parts
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--out', type=Path, default=REL / 'manifest-V1.22.json'); a = ap.parse_args()
     assert sha(V120_PATH) == V120_SHA, 'manifest-V1.20.json changed since V1.22 was set up'
     m = json.loads(V120_PATH.read_text())
-    poses = json.loads((SPLIT / 'poses' / 'poses.json').read_text())
-    parts = [ankle_row('base', 'left', poses), ankle_row('base', 'right', poses), ankle_row('cheek', 'left', poses), ankle_row('cheek', 'right', poses),
-             ankle_row('sleeve', 'left', poses), ankle_row('sleeve', 'right', poses), foot_row('left'), foot_row('right')]
+    parts = build_parts(json.loads(ALLOWANCES.read_text()))
     by = {p['key']: p for p in parts}
     placements = {}
     for colour, keys in PLATES.items():

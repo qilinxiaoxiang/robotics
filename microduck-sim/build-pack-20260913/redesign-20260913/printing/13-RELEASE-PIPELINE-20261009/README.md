@@ -16,6 +16,20 @@ v2 sets the brim per part. Each `parts` entry may carry `objectSettings` with `b
 
 `first_layer` measures brim per object: Bambu prints it inside the object label, OrcaSlicer just before `EXCLUDE_OBJECT_START`, so unlabelled brim is assigned to the nearest first-layer model. `brim_review` fails a part with an unplanned brim, a planned brim that is missing or whose outer reach differs from `brim_object_gap + brim_width` by more than 0.5 mm, or more than 2 mm² of brim inside the part's own convex first-layer outline (an open opening filled with brim, as on the C-shaped V1.9 speaker retainer). `package` stops on a failure and records the review in `native-delivery-checks.json`; `verify_release_v2.py` recomputes it from each native archive. A release review script calls `release_pipeline_v2.brim_review(rows, parts)` or runs `review_brim.py RUN Color Machine`. Both slicers honour per-object `brim_type` and `brim_width` (`tests/brim-per-object-V1.9-Orange/acceptance.json`). `test_pipeline_v2.py` holds the v2 tests.
 
+## Wall thickness
+
+Every wall must be at least 1.2 mm thick: three 0.4 mm extrusion lines. `source_receipt`, and so `prepare` and both verifiers, runs `wall_check.check` on each part in its print frame (the frame of `bounds` in `preparation.json`). It samples the surface about every 0.05 mm² (at most 60,000 points), casts a ray inward from each point and takes the distance to the first hit, then takes the median of those distances within 1.0 mm of each point. The median removes the short strips a concave corner can give; a real thin wall is thin across its whole neighbourhood. Points below 1.2 mm are grouped at 1.0 mm into regions. A region of 2 mm² or more stops `prepare` with the part key, region bbox, area and median thickness, unless the row carries a matching allowance:
+
+```json
+"thinWallAllowances": [{"bbox": [[xmin, ymin, zmin], [xmax, ymax, zmax]], "minMm": 0.8, "reason": "why this wall may stay thin"}]
+```
+
+The bbox is in the print frame in mm and must contain the whole region; the region's thinnest smoothed point must be at least `minMm` (below 1.2). Each part entry in `preparation.json` records `wallCheck`: the minimum smoothed thickness (capped at 4 mm), the regions of 2 mm² or more with their status, the count of smaller thin patches, and the allowances used. A fixture manifest (`releaseKind: "fixture"`) may set `wallCheckLegacy` to a reason; its wall results are then recorded without stopping it. Incremental manifests cannot use it.
+
+The check measures material thickness. A protrusion on a thick face, such as the register tongue that stands 0.4 mm proud of the solid block on the V1.22 ankle side, reads as thick. Stock shells are thinner than the rule: the stock thigh (`community-74`) is a 1.0 mm shell and the stock ankle bracket (`community-66`) has 11 mm² of 0.5 mm wall, so a colour-only reprint of such a part needs an allowance. `test_wall_check.py` holds the tests. To check STLs outside a release:
+
+    /tmp/microduck-cad-venv/bin/python wall_check.py PART.stl [PART.stl ...]
+
 ## Final input
 
 Supply a JSON manifest with `schemaVersion: 1`, `releaseKind: "incremental"`, a new `version`, `baselineStock: {path, sha256}` for `printing/copy-manifest.json`, and `profiles` containing the eight color/machine donor-project references. `profile-probe.json` enumerates the current donors. Use the actual final adopted geometry, never a head-layout candidate.
@@ -28,6 +42,7 @@ Each `parts` entry contains:
 - `flatContact.minimumAreaMm2`: the actual intended planar-contact lower bound for this part. Contact triangles must lie within 0.01 mm of the bed. There is no universal minimum area.
 - `decision`: `replacement` or `addition`; `replacesStockIds`: actual `copy-manifest.json` object IDs, not guessed community part numbers.
 - `changeReason` and `incrementalEvidence: {path, sha256}`: the specific source-bound change/stock comparison. Different file bytes alone are not evidence that an unchanged part needs reprinting.
+- Optional `thinWallAllowances`: see Wall thickness.
 - Optional `supportBlockers`: `{path, sha256, machines: ["Bambu", "Elegoo"]}` entries. These are in the **same source frame as the owner STL**, receive the same rigid transform, and are nonprinting modifiers.
 
 Optional `placements` maps each color to `{key, copy, translation: [x,y,0]}` for every instance. Otherwise a centered row layout uses 12 mm model gaps within the common central bed region. Explicit placements must also centre the plate: prepare refuses a plate whose combined model footprint centre is more than 1 mm (`PLATE_CENTRE_TOL_MM`) from the bed centre (128, 128) and records `plateCentreOffsetMm` per row; compute translations from the printed part sizes, never hand-typed corner coordinates (V1.17 and V1.18 printed 11 to 63 mm off centre). Optional `processOverrides` maps `Color_Machine` to deliberate slicer process settings; protected printer/material/nozzle/bed identities are checked afterwards. Explicit pose/placement/modifier changes are recorded in preparation and require a new native slice. Nozzle is 0.4 mm, material is PLA, Bambu plate is Cool Plate and Elegoo plate is Textured PEI.

@@ -3,11 +3,15 @@
   "pipelineVersion": 2,
   "manifest": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/manifest-V1.22.json",
-    "sha256": "34db7fc999abf51a0b5b25301127fb53a44e0e72f5614dc8ff0ea306089ad147"
+    "sha256": "fc9b6085f3294d3824a5bea3473f2d9d795f04f10c72b6631cff1d09f8c1810d"
   },
   "pipeline": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/release_pipeline_v2.py",
-    "sha256": "a2bd2ddb1790cc3eac0e080c587696ca0bc9704acfa50a3a68aada9fe3a063b3"
+    "sha256": "404a51696bb080058c3f04dfe544d58857d531703c9a9a2f8d96c8f93874f892"
+  },
+  "wallCheckModule": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/wall_check.py",
+    "sha256": "ce3acbc0798d546af59a33bed63a61bc3c33ee9e7a4ab2086fdee66cfe5d1b91"
   },
   "baselineStock": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
@@ -22,7 +26,7 @@
       "key": "ankle_base_left",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-base-local.stl",
-        "sha256": "9a3a9f3abf9be4a3c342733c177580002d5215215058e22464729d0b2ec3e2ec"
+        "sha256": "4306fbdc0ee0807fa37af2f2ba18cefc03ba7661f78a295fc979e5b1096a743a"
       },
       "quantity": 1,
       "color": "Orange",
@@ -33,7 +37,7 @@
       "changeReason": "Replaces the printed community-66.stl (stock object 20, the left one-piece ankle bracket) together with ankle_cheek_left. Shawn 2026-10-19: the one-piece bracket is a closed fork; the lower link with its servo and sleeve cannot come in from above (assembly-path-investigation.md), so it was spread and pressed on, loading the ankle servo at every fitting. The base keeps the motor-output holes and the foot block of the stock bracket; with the side off, the link-servo-sleeve package lifts straight out (ankle-split-check.json packageLiftSideOff 0 mm3 left, the 0.137 mm3 source mating-face slab right). The V1.22 slip-fit foot seats on it as on the stock bracket (footSeat).",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -75,9 +79,9 @@
           36.49984836578369
         ]
       ],
-      "vertexCount": 2892,
-      "triangleCount": 5804,
-      "tipAngleDeg": 2.79,
+      "vertexCount": 2697,
+      "triangleCount": 5414,
+      "tipAngleDeg": 2.83,
       "objectSettings": {
         "brim_type": "outer_only",
         "brim_width": "4",
@@ -85,13 +89,64 @@
       },
       "objectSettingsSource": "manifest: R1 default: tip angle 2.8 deg < 10 deg, outer brim",
       "brimInsideHullAllowanceMm2": 20.0,
-      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim."
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.9,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0838,
+        "regions": [
+          {
+            "bbox": [
+              [
+                -1.963,
+                -4.573,
+                1.398
+              ],
+              [
+                -0.929,
+                -3.569,
+                2.251
+              ]
+            ],
+            "areaMm2": 2.43,
+            "minMm": 0.9,
+            "medianMm": 1.019,
+            "status": "allowed",
+            "allowance": 0
+          }
+        ],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 1.51,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                -2.263,
+                -4.873,
+                1.098
+              ],
+              [
+                -0.629,
+                -3.269,
+                2.551
+              ]
+            ],
+            "minMm": 0.87,
+            "reason": "Stock geometry, unchanged: wall beside the gusset hole, below the split of the stock one-piece left ankle bracket (community-66.stl) (0.87-1.15 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 0
+          }
+        ]
+      }
     },
     {
       "key": "ankle_base_right",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-base-local.stl",
-        "sha256": "abfe08b765268816cae8aed649cc0c8935446c8f2df78991a2be94577079e378"
+        "sha256": "6e6a87ecb17be01d25ffb13d3d308162cb41f077dd2697f61803d4d3e02fd5e0"
       },
       "quantity": 1,
       "color": "Orange",
@@ -102,7 +157,7 @@
       "changeReason": "Replaces the printed community-64.stl (stock object 22, the right one-piece ankle bracket) together with ankle_cheek_right. Shawn 2026-10-19: the one-piece bracket is a closed fork; the lower link with its servo and sleeve cannot come in from above (assembly-path-investigation.md), so it was spread and pressed on, loading the ankle servo at every fitting. The base keeps the motor-output holes and the foot block of the stock bracket; with the side off, the link-servo-sleeve package lifts straight out (ankle-split-check.json packageLiftSideOff 0 mm3 left, the 0.137 mm3 source mating-face slab right). The V1.22 slip-fit foot seats on it as on the stock bracket (footSeat).",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -144,9 +199,9 @@
           36.5
         ]
       ],
-      "vertexCount": 2895,
-      "triangleCount": 5810,
-      "tipAngleDeg": 2.79,
+      "vertexCount": 2699,
+      "triangleCount": 5418,
+      "tipAngleDeg": 2.83,
       "objectSettings": {
         "brim_type": "outer_only",
         "brim_width": "4",
@@ -154,22 +209,73 @@
       },
       "objectSettingsSource": "manifest: R1 default: tip angle 2.8 deg < 10 deg, outer brim",
       "brimInsideHullAllowanceMm2": 20.0,
-      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim."
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole). Bambu Studio loops the 4 mm outer brim into it: 13.3 mm2 inside the convex outline on both bases (poses.md), a strip bonded on three sides that is cut out with a blade. Orca puts support feet there instead. Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.832,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0838,
+        "regions": [
+          {
+            "bbox": [
+              [
+                0.934,
+                -4.556,
+                1.398
+              ],
+              [
+                2.441,
+                -3.569,
+                2.173
+              ]
+            ],
+            "areaMm2": 2.6,
+            "minMm": 0.832,
+            "medianMm": 0.974,
+            "status": "allowed",
+            "allowance": 0
+          }
+        ],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.84,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                0.634,
+                -4.856,
+                1.098
+              ],
+              [
+                2.741,
+                -3.269,
+                2.473
+              ]
+            ],
+            "minMm": 0.8,
+            "reason": "Stock geometry, unchanged: wall beside the gusset hole, below the split of the stock one-piece right ankle bracket (community-64.stl) (0.86-1.02 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 0
+          }
+        ]
+      }
     },
     {
       "key": "ankle_cheek_left",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/left-cheek-local.stl",
-        "sha256": "7dcd2383f3790c8f2947d0f3845d8e435019869677cab0aeacd6ace0b45b8f62"
+        "sha256": "ae1bfcbcac319ddd2669edcb93443c9eaf9b142b94bc928b5dfd5fad89c8f0fa"
       },
       "quantity": 1,
       "color": "Orange",
       "decision": "addition",
       "replacesStockIds": [],
-      "changeReason": "New part, with ankle_base_left replacing the printed community-66.stl (stock object 20). The removable side of the split ankle: it closes along the shaft onto the sleeve, two register tongues enter open slots in the base, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
+      "changeReason": "New part, with ankle_base_left replacing the printed community-66.stl (stock object 20). The removable side of the split ankle: it closes along the shaft onto the sleeve until its two tabs meet the solid base posts, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold and locate it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -198,7 +304,7 @@
         ]
       ],
       "dropToBedMm": -0.0,
-      "flatContactAreaMm2": 57.59999990463257,
+      "flatContactAreaMm2": 56.0,
       "bounds": [
         [
           -15.0,
@@ -211,30 +317,43 @@
           8.699999928474426
         ]
       ],
-      "vertexCount": 1256,
-      "triangleCount": 2520,
-      "tipAngleDeg": -44.32,
+      "vertexCount": 1374,
+      "triangleCount": 2756,
+      "tipAngleDeg": -44.95,
       "objectSettings": {
         "brim_type": "outer_only",
         "brim_width": "4",
         "brim_object_gap": "0.1"
       },
-      "objectSettingsSource": "manifest: R1 default: tip angle -44.3 deg < 10 deg, outer brim"
+      "objectSettingsSource": "manifest: R1 default: tip angle -44.3 deg < 10 deg, outer brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.337,
+        "samples": 30050,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
     },
     {
       "key": "ankle_cheek_right",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/ankle-redesign-20261007/STL/right-cheek-local.stl",
-        "sha256": "4c9edea5ab863ff0afbfd5e9e8d2e7d6ac85445bc88216106aea2c4fd73f5b30"
+        "sha256": "3f8fdb21a2efb9a67ef5e9d8a006a44275701397e26c24605dc62081a3c23533"
       },
       "quantity": 1,
       "color": "Orange",
       "decision": "addition",
       "replacesStockIds": [],
-      "changeReason": "New part, with ankle_base_right replacing the printed community-64.stl (stock object 22). The removable side of the split ankle: it closes along the shaft onto the sleeve, two register tongues enter open slots in the base, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
+      "changeReason": "New part, with ankle_base_right replacing the printed community-64.stl (stock object 22). The removable side of the split ankle: it closes along the shaft onto the sleeve until its two tabs meet the solid base posts, and two M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance in the side) hold and locate it. With the foot off it slides outward clear of the base and the package (ankle-split-check.json sidePath); with the foot on it is captured. DESIGN-NOTES.md in ankle-redesign-20261007/.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -263,7 +382,7 @@
         ]
       ],
       "dropToBedMm": -0.0,
-      "flatContactAreaMm2": 57.59999990463257,
+      "flatContactAreaMm2": 56.0,
       "bounds": [
         [
           -15.0,
@@ -276,15 +395,28 @@
           8.699999928474426
         ]
       ],
-      "vertexCount": 1256,
-      "triangleCount": 2520,
-      "tipAngleDeg": -44.32,
+      "vertexCount": 1562,
+      "triangleCount": 3132,
+      "tipAngleDeg": -44.95,
       "objectSettings": {
         "brim_type": "outer_only",
         "brim_width": "4",
         "brim_object_gap": "0.1"
       },
-      "objectSettingsSource": "manifest: R1 default: tip angle -44.3 deg < 10 deg, outer brim"
+      "objectSettingsSource": "manifest: R1 default: tip angle -44.3 deg < 10 deg, outer brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.337,
+        "samples": 30034,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
     },
     {
       "key": "ankle_sleeve_left",
@@ -301,7 +433,7 @@
       "changeReason": "Replaces the printed community-62.stl (stock object 148, the left 9.65 mm ankle sleeve): bore 10.4 mm instead of 9.65 mm on the 10 mm link boss (the stock sleeve is a 14.96 mm3 press fit, ankle-split-check.json sleeveOnLinkBoss), OD 14.6 mm, 2.8 mm wide with 0.2 mm entry chamfers, so it slides on by hand and runs free. Black like the stock sleeve.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -349,7 +481,20 @@
       "objectSettings": {
         "brim_type": "no_brim"
       },
-      "objectSettingsSource": "manifest: R1 default: tip angle 79.0 deg >= 10 deg, no brim"
+      "objectSettingsSource": "manifest: R1 default: tip angle 79.0 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 2.1,
+        "samples": 7328,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
     },
     {
       "key": "ankle_sleeve_right",
@@ -366,7 +511,7 @@
       "changeReason": "Replaces the printed community-68.stl (stock object 150, the right 9.65 mm ankle sleeve): bore 10.4 mm instead of 9.65 mm on the 10 mm link boss (the stock sleeve is a 14.96 mm3 press fit, ankle-split-check.json sleeveOnLinkBoss), OD 14.6 mm, 2.8 mm wide with 0.2 mm entry chamfers, so it slides on by hand and runs free. Black like the stock sleeve.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-split-20261019/ankle-split-check.json",
-        "sha256": "0a0d53fb35368eba05a5deedc6c9b0aeaee8d5eb426adcce5ed6b5a05e29e934"
+        "sha256": "4bf2ded3f957e13a0f85e0348fdd200b3f221512846847463f00e85b957d68f3"
       },
       "sourceToPrint": [
         [
@@ -414,13 +559,26 @@
       "objectSettings": {
         "brim_type": "no_brim"
       },
-      "objectSettingsSource": "manifest: R1 default: tip angle 79.0 deg >= 10 deg, no brim"
+      "objectSettingsSource": "manifest: R1 default: tip angle 79.0 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 2.1,
+        "samples": 7328,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
     },
     {
       "key": "foot_left_slipfit",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-left-slipfit.stl",
-        "sha256": "ede1c5189c51270611f17f0dd3f12d2c65693b142fe38c0f69579d976d268cdd"
+        "sha256": "210c953abf325113dcaa47a7967a847f4ea5766c3cae2fcd571b7a7ca0773045"
       },
       "quantity": 3,
       "color": "Yellow",
@@ -428,10 +586,10 @@
       "replacesStockIds": [
         "32"
       ],
-      "changeReason": "Replaces the printed community-44.stl (stock object 32, the left foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path and the two snap hooks (about 0.3 mm) are removed; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
+      "changeReason": "Replaces the printed community-44.stl (stock object 32, the left foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path, the two snap tongues are deleted (the cut had left them 0.6-0.7 mm thin flakes with no hook) and the heel well they stood in is filled to the wall tops; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/slipfit-check.json",
-        "sha256": "389b1f9da7942d7a83b1abbee99823527338ddf7cbfcc5a88678bbd7794936c3"
+        "sha256": "4b82da29e04d8f9c4b2d65ceef3a7359d1c3e98de839a986361d56b30168cccc"
       },
       "sourceToPrint": [
         [
@@ -473,19 +631,322 @@
           18.36210823059082
         ]
       ],
-      "vertexCount": 24349,
-      "triangleCount": 49518,
-      "tipAngleDeg": 60.84,
+      "vertexCount": 24618,
+      "triangleCount": 50052,
+      "tipAngleDeg": 60.86,
       "objectSettings": {
         "brim_type": "no_brim"
       },
-      "objectSettingsSource": "R1 default: tip angle 60.8 deg >= 10 deg, no brim"
+      "objectSettingsSource": "R1 default: tip angle 60.9 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.357,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.2596,
+        "regions": [
+          {
+            "bbox": [
+              [
+                2.3,
+                -15.219,
+                8.878
+              ],
+              [
+                3.215,
+                15.485,
+                12.035
+              ]
+            ],
+            "areaMm2": 57.89,
+            "minMm": 0.426,
+            "medianMm": 0.835,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -16.04,
+                -8.318,
+                8.558
+              ],
+              [
+                -15.072,
+                8.467,
+                10.681
+              ]
+            ],
+            "areaMm2": 25.96,
+            "minMm": 0.479,
+            "medianMm": 0.929,
+            "status": "allowed",
+            "allowance": 1
+          },
+          {
+            "bbox": [
+              [
+                4.187,
+                -14.822,
+                12.347
+              ],
+              [
+                4.964,
+                -5.809,
+                13.412
+              ]
+            ],
+            "areaMm2": 9.86,
+            "minMm": 0.357,
+            "medianMm": 0.678,
+            "status": "allowed",
+            "allowance": 2
+          },
+          {
+            "bbox": [
+              [
+                -16.42,
+                -15.336,
+                10.357
+              ],
+              [
+                -15.611,
+                -11.091,
+                11.53
+              ]
+            ],
+            "areaMm2": 6.75,
+            "minMm": 0.63,
+            "medianMm": 0.971,
+            "status": "allowed",
+            "allowance": 3
+          },
+          {
+            "bbox": [
+              [
+                4.2,
+                -4.348,
+                11.76
+              ],
+              [
+                4.962,
+                1.048,
+                12.355
+              ]
+            ],
+            "areaMm2": 5.19,
+            "minMm": 0.416,
+            "medianMm": 0.587,
+            "status": "allowed",
+            "allowance": 4
+          },
+          {
+            "bbox": [
+              [
+                -16.41,
+                11.64,
+                8.525
+              ],
+              [
+                -15.606,
+                14.545,
+                9.215
+              ]
+            ],
+            "areaMm2": 4.67,
+            "minMm": 0.699,
+            "medianMm": 1.04,
+            "status": "allowed",
+            "allowance": 5
+          },
+          {
+            "bbox": [
+              [
+                4.216,
+                2.376,
+                11.04
+              ],
+              [
+                4.959,
+                6.672,
+                11.761
+              ]
+            ],
+            "areaMm2": 3.37,
+            "minMm": 0.458,
+            "medianMm": 0.698,
+            "status": "allowed",
+            "allowance": 6
+          },
+          {
+            "bbox": [
+              [
+                -0.522,
+                -4.645,
+                8.686
+              ],
+              [
+                -0.289,
+                -1.991,
+                9.161
+              ]
+            ],
+            "areaMm2": 2.34,
+            "minMm": 0.825,
+            "medianMm": 1.108,
+            "status": "allowed",
+            "allowance": 7
+          }
+        ],
+        "smallThinPatches": 12,
+        "smallThinPatchMaxMm2": 1.82,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                2.0,
+                -15.519,
+                8.578
+              ],
+              [
+                3.515,
+                15.785,
+                12.335
+              ]
+            ],
+            "minMm": 0.39,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.45-0.86 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 3.7 mm3 from it.",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                -16.34,
+                -8.618,
+                8.258
+              ],
+              [
+                -14.772,
+                8.767,
+                10.981
+              ]
+            ],
+            "minMm": 0.44,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.55-1.01 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 1.77 mm3 from it.",
+            "index": 1
+          },
+          {
+            "bbox": [
+              [
+                3.887,
+                -15.122,
+                12.047
+              ],
+              [
+                5.264,
+                -5.509,
+                13.712
+              ]
+            ],
+            "minMm": 0.32,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.35-0.67 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 5.52 mm3 from it.",
+            "index": 2
+          },
+          {
+            "bbox": [
+              [
+                -16.72,
+                -15.636,
+                10.057
+              ],
+              [
+                -15.311,
+                -10.791,
+                11.83
+              ]
+            ],
+            "minMm": 0.6,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.52-0.91 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 4.82 mm3 from it.",
+            "index": 3
+          },
+          {
+            "bbox": [
+              [
+                3.9,
+                -4.648,
+                11.46
+              ],
+              [
+                5.262,
+                1.348,
+                12.655
+              ]
+            ],
+            "minMm": 0.38,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.3-0.7 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 3.07 mm3 from it.",
+            "index": 4
+          },
+          {
+            "bbox": [
+              [
+                -16.71,
+                11.34,
+                8.225
+              ],
+              [
+                -15.306,
+                14.845,
+                9.515
+              ]
+            ],
+            "minMm": 0.66,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.56-1.15 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 3.69 mm3 from it.",
+            "index": 5
+          },
+          {
+            "bbox": [
+              [
+                3.916,
+                2.076,
+                10.74
+              ],
+              [
+                5.259,
+                6.972,
+                12.061
+              ]
+            ],
+            "minMm": 0.42,
+            "reason": "Stock geometry: internal rib of the foot of community-44.stl (stock left foot), already 0.35-0.71 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 2.5 mm3 from it.",
+            "index": 6
+          },
+          {
+            "bbox": [
+              [
+                -0.822,
+                -4.945,
+                8.386
+              ],
+              [
+                0.011,
+                -1.691,
+                9.461
+              ]
+            ],
+            "minMm": 0.79,
+            "reason": "Stock geometry, unchanged: internal rib of the foot of community-44.stl (stock left foot) (0.84-1.15 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 7
+          }
+        ]
+      }
     },
     {
       "key": "foot_right_slipfit",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/foot-right-slipfit.stl",
-        "sha256": "993568c169e9936f3e55fb6b83dfd06f0396a3ce7202cf995f0d7fde19e75746"
+        "sha256": "b2d9a099b2192c50ffe52a31e7cb7ddbabe7d2fa56a69cffb6c0a464823f012e"
       },
       "quantity": 3,
       "color": "Yellow",
@@ -493,10 +954,10 @@
       "replacesStockIds": [
         "30"
       ],
-      "changeReason": "Replaces the printed community-46.stl (stock object 30, the right foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path and the two snap hooks (about 0.3 mm) are removed; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
+      "changeReason": "Replaces the printed community-46.stl (stock object 30, the right foot). Shawn 2026-10-19: the orange ankle bracket and the yellow foot press together so tightly that they cannot be taken apart, and each fitting loads the ankle servo. The socket that holds the bracket's lower block is opened 0.2 mm sideways along the straight insertion path, the two snap tongues are deleted (the cut had left them 0.6-0.7 mm thin flakes with no hook) and the heel well they stood in is filled to the wall tops; the faces the bracket rests on stay, so it seats where it seats now, with 0.14-0.20 mm play each way and free lift-off. The toe M2 x 6 TAP holds the foot. The same socket fits the V1.22 ankle base and side (ankle-split-check.json footSeat). Sole unchanged below 4 mm (the hot-glue molds fit). foot-slipfit-20261019/slipfit-check.json.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/foot-slipfit-20261019/slipfit-check.json",
-        "sha256": "389b1f9da7942d7a83b1abbee99823527338ddf7cbfcc5a88678bbd7794936c3"
+        "sha256": "4b82da29e04d8f9c4b2d65ceef3a7359d1c3e98de839a986361d56b30168cccc"
       },
       "sourceToPrint": [
         [
@@ -538,13 +999,424 @@
           18.38228416442871
         ]
       ],
-      "vertexCount": 24105,
-      "triangleCount": 48936,
-      "tipAngleDeg": 60.68,
+      "vertexCount": 24246,
+      "triangleCount": 49214,
+      "tipAngleDeg": 60.71,
       "objectSettings": {
         "brim_type": "no_brim"
       },
-      "objectSettingsSource": "R1 default: tip angle 60.7 deg >= 10 deg, no brim"
+      "objectSettingsSource": "R1 default: tip angle 60.7 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.352,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.2598,
+        "regions": [
+          {
+            "bbox": [
+              [
+                2.39,
+                -15.795,
+                8.729
+              ],
+              [
+                3.224,
+                15.176,
+                12.124
+              ]
+            ],
+            "areaMm2": 55.86,
+            "minMm": 0.427,
+            "medianMm": 0.859,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -16.043,
+                -8.241,
+                8.588
+              ],
+              [
+                -15.317,
+                8.238,
+                10.635
+              ]
+            ],
+            "areaMm2": 27.54,
+            "minMm": 0.459,
+            "medianMm": 0.879,
+            "status": "allowed",
+            "allowance": 1
+          },
+          {
+            "bbox": [
+              [
+                -16.417,
+                -15.207,
+                8.421
+              ],
+              [
+                -15.535,
+                -11.322,
+                9.257
+              ]
+            ],
+            "areaMm2": 7.79,
+            "minMm": 0.735,
+            "medianMm": 0.929,
+            "status": "allowed",
+            "allowance": 2
+          },
+          {
+            "bbox": [
+              [
+                -16.405,
+                10.445,
+                10.592
+              ],
+              [
+                -15.584,
+                15.405,
+                11.508
+              ]
+            ],
+            "areaMm2": 7.53,
+            "minMm": 0.792,
+            "medianMm": 1.118,
+            "status": "allowed",
+            "allowance": 3
+          },
+          {
+            "bbox": [
+              [
+                4.181,
+                -15.3,
+                10.459
+              ],
+              [
+                4.95,
+                -10.806,
+                11.12
+              ]
+            ],
+            "areaMm2": 5.46,
+            "minMm": 0.368,
+            "medianMm": 0.568,
+            "status": "allowed",
+            "allowance": 4
+          },
+          {
+            "bbox": [
+              [
+                4.221,
+                -4.486,
+                11.371
+              ],
+              [
+                4.958,
+                -1.307,
+                11.943
+              ]
+            ],
+            "areaMm2": 3.64,
+            "minMm": 0.516,
+            "medianMm": 0.645,
+            "status": "allowed",
+            "allowance": 5
+          },
+          {
+            "bbox": [
+              [
+                4.183,
+                -9.701,
+                11.039
+              ],
+              [
+                4.573,
+                -5.629,
+                11.535
+              ]
+            ],
+            "areaMm2": 3.12,
+            "minMm": 0.501,
+            "medianMm": 0.61,
+            "status": "allowed",
+            "allowance": 6
+          },
+          {
+            "bbox": [
+              [
+                4.199,
+                11.557,
+                12.763
+              ],
+              [
+                4.752,
+                14.314,
+                13.334
+              ]
+            ],
+            "areaMm2": 2.6,
+            "minMm": 0.352,
+            "medianMm": 0.494,
+            "status": "allowed",
+            "allowance": 7
+          },
+          {
+            "bbox": [
+              [
+                -0.396,
+                -7.186,
+                7.849
+              ],
+              [
+                -0.291,
+                -4.551,
+                8.402
+              ]
+            ],
+            "areaMm2": 2.34,
+            "minMm": 0.941,
+            "medianMm": 1.054,
+            "status": "allowed",
+            "allowance": 8
+          },
+          {
+            "bbox": [
+              [
+                -12.539,
+                -2.345,
+                7.689
+              ],
+              [
+                -11.897,
+                0.35,
+                8.358
+              ]
+            ],
+            "areaMm2": 2.08,
+            "minMm": 1.05,
+            "medianMm": 1.114,
+            "status": "allowed",
+            "allowance": 9
+          },
+          {
+            "bbox": [
+              [
+                -0.72,
+                -12.706,
+                7.564
+              ],
+              [
+                -0.295,
+                -9.669,
+                7.898
+              ]
+            ],
+            "areaMm2": 2.08,
+            "minMm": 1.051,
+            "medianMm": 1.131,
+            "status": "allowed",
+            "allowance": 10
+          }
+        ],
+        "smallThinPatches": 14,
+        "smallThinPatchMaxMm2": 1.82,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                2.09,
+                -16.095,
+                8.429
+              ],
+              [
+                3.524,
+                15.476,
+                12.424
+              ]
+            ],
+            "minMm": 0.39,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.31-0.83 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 4.08 mm3 from it.",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                -16.343,
+                -8.541,
+                8.288
+              ],
+              [
+                -15.017,
+                8.538,
+                10.935
+              ]
+            ],
+            "minMm": 0.42,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.41-1.02 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 1.7 mm3 from it.",
+            "index": 1
+          },
+          {
+            "bbox": [
+              [
+                -16.717,
+                -15.507,
+                8.121
+              ],
+              [
+                -15.235,
+                -11.022,
+                9.557
+              ]
+            ],
+            "minMm": 0.7,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.58-1.26 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 4.49 mm3 from it.",
+            "index": 2
+          },
+          {
+            "bbox": [
+              [
+                -16.705,
+                10.145,
+                10.292
+              ],
+              [
+                -15.284,
+                15.705,
+                11.808
+              ]
+            ],
+            "minMm": 0.76,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.7-1.19 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 5.41 mm3 from it.",
+            "index": 3
+          },
+          {
+            "bbox": [
+              [
+                3.881,
+                -15.6,
+                10.159
+              ],
+              [
+                5.25,
+                -10.506,
+                11.42
+              ]
+            ],
+            "minMm": 0.33,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.37-1.4 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 2.79 mm3 from it.",
+            "index": 4
+          },
+          {
+            "bbox": [
+              [
+                3.921,
+                -4.786,
+                11.071
+              ],
+              [
+                5.258,
+                -1.007,
+                12.243
+              ]
+            ],
+            "minMm": 0.48,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.42-1.28 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 2.13 mm3 from it.",
+            "index": 5
+          },
+          {
+            "bbox": [
+              [
+                3.883,
+                -10.001,
+                10.739
+              ],
+              [
+                4.873,
+                -5.329,
+                11.835
+              ]
+            ],
+            "minMm": 0.47,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.41-0.57 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 2.48 mm3 from it.",
+            "index": 6
+          },
+          {
+            "bbox": [
+              [
+                3.899,
+                11.257,
+                12.463
+              ],
+              [
+                5.052,
+                14.614,
+                13.634
+              ]
+            ],
+            "minMm": 0.32,
+            "reason": "Stock geometry: internal rib of the foot of community-46.stl (stock right foot), already 0.43-0.87 mm thick at this place in the stock part. V1.22 adds nothing here; the 0.2 mm slip-fit socket clearance shaves 1.98 mm3 from it.",
+            "index": 7
+          },
+          {
+            "bbox": [
+              [
+                -0.696,
+                -7.486,
+                7.549
+              ],
+              [
+                0.009,
+                -4.251,
+                8.702
+              ]
+            ],
+            "minMm": 0.91,
+            "reason": "Stock geometry, unchanged: internal rib of the foot of community-46.stl (stock right foot) (0.94-1.38 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 8
+          },
+          {
+            "bbox": [
+              [
+                -12.839,
+                -2.645,
+                7.389
+              ],
+              [
+                -11.597,
+                0.65,
+                8.658
+              ]
+            ],
+            "minMm": 1.02,
+            "reason": "Stock geometry, unchanged: internal rib of the foot of community-46.stl (stock right foot) (1.0-1.62 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 9
+          },
+          {
+            "bbox": [
+              [
+                -1.02,
+                -13.006,
+                7.264
+              ],
+              [
+                0.005,
+                -9.369,
+                8.198
+              ]
+            ],
+            "minMm": 1.02,
+            "reason": "Stock geometry, unchanged: internal rib of the foot of community-46.stl (stock right foot) (0.92-1.48 mm there in the stock part; zero volume difference to it within 1 mm).",
+            "index": 10
+          }
+        ]
+      }
     }
   ],
   "claimBoundary": "Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.",
@@ -555,7 +1427,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Yellow_Bambu_editable.3mf",
-        "sha256": "4be022c6d3a93c0ae87f41cc4ff7ec9b1b4fce0c0468f4f9aed58912526ff30d"
+        "sha256": "89ef0eea92ed9ae703d12b426f88d0669997e3dfbad6f0542a59f7abd43ec7e0"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
@@ -702,7 +1574,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Yellow_Elegoo_editable.3mf",
-        "sha256": "0ec787dd631ceb87e2918c38912e0231515d5374181f80a2e842116c69c96223"
+        "sha256": "9d9457b782d702637c6b6175b3856018658b49ad8031385c60c73778cd11c300"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
@@ -849,7 +1721,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Orange_Bambu_editable.3mf",
-        "sha256": "81638c1316e73f7e543265c06ddfb87acd7390ead0fd2b7d2cb34bd11b81a77a"
+        "sha256": "9d1298e8abebc9b93a821eb17a225cd9b53012d4bd55382893d7785926f6bd3f"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
@@ -954,7 +1826,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Orange_Elegoo_editable.3mf",
-        "sha256": "2a954d2b8526de6af53409aa28c71d93178bc20199e17b90b850110bfd8e0afe"
+        "sha256": "6cd10f66d607d7aab46961374c7038eab8610dc6fe20d5045202d047ea4b2e89"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
@@ -1059,7 +1931,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Black_Bambu_editable.3mf",
-        "sha256": "c83dac24ca8bea534df71574dad6ba53e43636a7209dc965169c8ad56e4397dd"
+        "sha256": "ec70f68262ab2a61649a46b2b751353dd1b2db7096803e13770c3ef7fe8cc3b1"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
@@ -1122,7 +1994,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.22/run/Black_Elegoo_editable.3mf",
-        "sha256": "ebcc339bab391c1cf64dbeba94c80763098981517f1998b5bb7ab0835f93c00d"
+        "sha256": "cfc3174e971725bc2e7da33a034ebc05a041a69330edcd0a5c58d4416f128ef4"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",

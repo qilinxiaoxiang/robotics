@@ -2,7 +2,7 @@
 
 The 10/07 digital prototype (build-pack-20260913/redesign-20260913/ankle-redesign-20261007/, DESIGN-NOTES.md) splits each
 orange ankle into a base (on the motor horn, carrying the foot block) and a removable side ("cheek", two M2 x 8 TAP from
-above, two register tongues) and replaces the black sleeve (OD 14.6, bore 10.4, 2.8 wide). Its world STLs are in the guide
+above, located by those screws and the sleeve) and replaces the black sleeve (OD 14.6, bore 10.4, 2.8 wide). Its world STLs are in the guide
 world frame. This script checks them against the audit solids of the current robot (interference-audit cache: lower-leg
 link, XL330, washer, the 2026-10-19 slip-fit foot) and writes:
 
@@ -17,7 +17,9 @@ screws pass the side's clearance holes and engage only the base pilots; the slee
 
     /tmp/microduck-cad-venv/bin/python ankle_split_check.py      (about 10 s; run under the bounded runner)
 """
-import hashlib, json, sys
+import base64
+import hashlib
+import json, sys
 from pathlib import Path
 import numpy as np
 import trimesh
@@ -48,6 +50,19 @@ def world_mesh(name):
     man = L.to_manifold(np.asarray(m.vertices), np.asarray(m.faces))
     assert L.manifold_ok(man), name
     return man, m
+
+
+STOCK_DATA = AR.parent.parent / 'leg-guide-20261006/full-build-data.json'
+
+
+def stock_solid(key):
+    """Stock part in the robot frame from the source build data (positions and indices as base64 arrays)."""
+    rows = {p['key']: p for p in json.loads(STOCK_DATA.read_text())['parts']}
+    p = rows[key]
+    v = np.frombuffer(base64.b64decode(p['positionB64']), dtype='<f4').reshape(-1, 3).astype(float)
+    f = np.frombuffer(base64.b64decode(p['indexB64']), dtype='<u4').reshape(-1, 3).astype(np.int64)
+    m = trimesh.Trimesh(v, f, process=True)
+    return np.asarray(m.vertices), np.asarray(m.faces)
 
 
 def vol(man):
@@ -83,6 +98,10 @@ def main():
     for side, K in SIDES.items():
         S = {k: L.to_manifold(*L.load_solid(key)) for k, key in K.items()}
         V = {k: L.load_solid(key)[0] for k, key in K.items()}
+        # The guide world now carries the V1.22 base and sleeve under the stock keys, so the stock bracket and sleeve
+        # come from the source build data the 10/07 generator cut them from.
+        for k in ('ankle', 'ring'):
+            v, f = stock_solid(K[k]); S[k] = L.to_manifold(v, f); V[k] = v
         new = {}; meshes = {}
         for part in ('base', 'cheek', 'sleeve'):
             new[part], meshes[part] = world_mesh(f'{side}-{part}')

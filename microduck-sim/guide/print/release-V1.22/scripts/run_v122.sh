@@ -10,6 +10,7 @@ PY=/tmp/microduck-cad-venv/bin/python
 # 2.1-2.9 GiB, so each job gets a budget near its measured peak (V1.21 and V1.22 resource reports: slice 180-830 MiB,
 # prepare 755, review and brim review under 180, package 450, verify 480, parts sheet and delivery 650-740) with a
 # 1024 MiB reserve instead of the 3000 + 2048 default.
+# prepare, package and verify also run the wall check on every part (wall_check.py, about 350 MiB per foot), so they get 1600.
 export MICRODUCK_CAD_RESERVE_MIB=1024
 job() {  # name max-mib cwd command...
   local name=$1 mib=$2 dir=$3; shift 3
@@ -18,7 +19,7 @@ job() {  # name max-mib cwd command...
 }
 mkdir -p $REL/logs; rm -rf $REL/run $REL/review
 $PY $REL/scripts/make_manifest.py > $REL/logs/manifest.log 2>&1; echo "manifest exit $?"
-job step1 1000 $REL $PY $PIPE/release_pipeline_v2.py prepare $REL/manifest-V1.22.json $REL/run
+job step1 1600 $REL $PY $PIPE/release_pipeline_v2.py prepare $REL/manifest-V1.22.json $REL/run
 $PY - $REL/run/preparation.json <<'EOF'
 import json, sys
 p = json.load(open(sys.argv[1]))
@@ -31,8 +32,8 @@ for C in Orange Black Yellow; do for M in Bambu Elegoo; do
   job brim-$C-$M 400 $PIPE $PY review_brim.py $REL/run $C $M --output $REL/review/${C}_${M}-brim.json
 done; done
 job native-review 600 $REL $PY scripts/make_native_review.py
-job package 700 $REL $PY $PIPE/release_pipeline_v2.py package $REL/run/preparation.json --native-review $REL/run/native-review.json
-job verify 700 $PIPE $PY verify_release_v2.py $REL/run --output $REL/run/final-binding-check.json
+job package 1600 $REL $PY $PIPE/release_pipeline_v2.py package $REL/run/preparation.json --native-review $REL/run/native-review.json
+job verify 1600 $PIPE $PY verify_release_v2.py $REL/run --output $REL/run/final-binding-check.json
 job parts-sheet 900 $PRINT $PY make_parts_sheet.py --incremental $REL/manifest-V1.22.json --out $REL/PARTS-SHEET-V1.22.html
 job delivery-folder 900 $PRINT $PY make_delivery_folder.py $REL --out-root $REL/run/delivery-folder
 find $REL/run/delivery-folder -type f | sort

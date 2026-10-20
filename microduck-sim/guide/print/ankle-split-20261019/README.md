@@ -5,7 +5,7 @@ Shawn, 2026-10-19: the orange one-piece ankle bracket is hard to fit, and repeat
 The fix is the 2026-10-07 digital design in `build-pack-20260913/redesign-20260913/ankle-redesign-20261007/` (`DESIGN-NOTES.md`, `README.md`), which was never printed. Each ankle becomes three parts:
 
 - **Base** (orange): the stock bracket with the passive side cut away between the two outer pillars. It keeps the four motor-output holes, the servo mating face and the foot block, so the servo screws and the foot interface are unchanged.
-- **Side** (orange, "cheek" in the 10/07 files): the removable passive side, on the inner face of the ankle (towards the other leg). It closes along the shaft, away from the centre line, onto the sleeve, two tongues enter open slots in the base, and two black M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance holes in the side, 3.5 mm of thread) pull the flat faces together.
+- **Side** (orange, "cheek" in the 10/07 files): the removable passive side, on the inner face of the ankle (towards the other leg). It closes along the shaft, away from the centre line, onto the sleeve until its two tabs meet the solid base posts, and two black M2 x 8 TAP from above (1.6 mm pilots in the base, 2.3 mm clearance holes in the side, 4 mm of thread) pull the flat faces together. The screws in their holes set it sideways and the sleeve in its pocket sets it radially; there are no tongues or slots (removed 2026-10-19: the 0.4 mm tongues and the 0.9 mm slot walls were too thin to survive handling).
 - **Sleeve** (black): OD 14.6, bore 10.4, 2.8 mm wide, 0.2 mm entry chamfers. It slides onto the link boss by hand and runs free in the side's pocket (about 0.4 mm diametral clearance each side, by design; the stock sleeve was 9.65 bore, 3.0 wide).
 
 The 10/07 geometry is used as it is. What this directory adds is the check against the robot as it is now (with the V1.22 slip-fit feet), the guide and print-gate integration, the print poses, and the release.
@@ -35,7 +35,7 @@ On each leg, with the ankle-and-foot module off the knee (four M2 x 6 at the kne
 1. Old foot off: toe M2 x 6 out, hold the bracket and rock the foot off (it may crack; it is replaced). Cup A: four M2 x 4 output screws, two M2 x 10 case screws, the M2.6 x 8 rear centre with its 0.5 mm washer. Pull the link off the bracket evenly, lift the servo out, set the old bracket and sleeve aside.
 2. New sleeve onto the 10 mm boss of the link by hand. Washer, rear centre and case screws back on, so link and servo are one package.
 3. New base onto the servo output, horn side in; start the four M2 x 4 loosely from the outside. The package sits straight down into the base.
-4. Side onto the inner face of the ankle: up from below, 8 mm inside its seat, then along the shaft away from the centre line onto the sleeve until the tongues sit in the slots and the faces meet. Two M2 x 8 from above, evenly, hand snug. Tighten the four output screws.
+4. Side onto the inner face of the ankle: up from below, 8 mm inside its seat, then along the shaft away from the centre line onto the sleeve until its two tabs meet the base posts. Two M2 x 8 from above, evenly, hand snug. Tighten the four output screws.
 5. New foot straight up onto base and side by hand; M2 x 6 from above through the toe of the base into the foot.
 
 Never spread the base or press the link in; with the side off nothing needs force. To open an ankle later: foot off first (one screw), then the two M2 x 8, then slide the side off towards the centre line.

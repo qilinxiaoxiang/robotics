@@ -620,11 +620,11 @@ def build(ctx):
              'Cup A: the four M2 × 4 output screws, the two M2 × 10 case screws and the M2.6 × 8 rear centre with its 0.5 mm washer. Pull the lower link off the old bracket, evenly and without twisting, and lift the servo out of the old fork. Set the old bracket and its black sleeve aside.',
              'Put the new black sleeve on the 10 mm boss of the lower link. It slides on by hand and turns freely; it is not pressed. Refit the washer with the M2.6 × 8 rear centre and the two M2 × 10 case screws, so link and servo are one package again.',
              'Set the new base on the servo output, horn side in, and start the four M2 × 4 loosely from the outside. With the side off, the package sits straight down into the base. Nothing is spread and nothing is pressed.',
-             'The side goes on the inner face of the ankle, the face towards the other leg. Bring it up from below, 8 mm inside its seat, then slide it along the shaft away from the centre line onto the sleeve until its two tongues sit in the slots of the base and the flat faces meet. Drive the two M2 × 8 from above, evenly and hand snug: they cut their own thread in a 1.6 mm pilot. Then tighten the four output screws.',
+             'The side goes on the inner face of the ankle, the face towards the other leg. Bring it up from below, 8 mm inside its seat, then slide it along the shaft away from the centre line onto the sleeve until its two tabs meet the two posts of the base. Drive the two M2 × 8 from above, evenly and hand snug: they cut their own thread in a 1.6 mm pilot. Then tighten the four output screws.',
          ],
          checks=['The ankle turns through its range by hand with no tight spot. A little side play is normal: the new sleeve runs with about 0.4 mm of clearance.',
                  'The side sits flat on the base with both screw heads seated, and the foot block under the base is clear.'],
-         warnings=['Never spread the base or press the link in. With the side off, the package drops in without force; if a tongue does not enter its slot, sand the tongue, not the slot.'])
+         warnings=['Never spread the base or press the link in. With the side off, the package drops in without force; if the side does not close, look for a support strand on the posts or in the sleeve pocket, do not force it.'])
 
     step('ankle-feet', 'legs', 'Fit the slip-fit feet', show=leg_bench, context=[], bench=True,
          add=FEET, approach={'foot': [0, 0, -12], 'right_foot': [0, 0, -12]},

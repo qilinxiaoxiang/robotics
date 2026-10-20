@@ -15,6 +15,13 @@ Fix, done on the foot only (the bracket is screwed to the servo horn and stays):
            field in the bracket frame: everything above the bracket's lowest surface (so the hooks go).
   clear    that region grown sideways by CLEAR mm (a disk minimum filter on the height field); seats facing up keep
            zero vertical clearance, so the bracket rests exactly where it rests now.
+  tongues  the two old snap tongues (heel and toe ends of the socket) are deleted from their root up. The sweep took
+           their hooks and thinned them to 0.6-0.7 mm (stock 0.85 mm); with no hook they hold nothing and snap easily
+           (Shawn 2026-10-19). They are found as the free-standing islands in horizontal sections near the socket ends.
+  heel well the heel tongue stood in a well between the outer heel wall and the socket's end wall; with the tongue gone
+           the well holds nothing and leaves both walls 0.5-1.0 mm thick (wall check 2026-10-19). The well is filled from
+           the tongue root up to the tops of those two walls, so they become one solid block. The toe well's walls are
+           already 1.2 mm or more and it stays open.
   foot     the foot minus the region. Below Z_KEEP (the sole and the hot-glue cast zone) nothing changes, so the V1.21
            molds still fit.
 The M2 x 6 at the toe then holds the foot: drop the foot on, drive the screw, done; take the screw out to remove it.
@@ -47,6 +54,7 @@ import ia_lib  # noqa: E402
 
 SIDES = {'left': dict(foot='community-44.stl', bracket='community-66.stl', guide_foot='foot', guide_bracket='ankle', world='foot_left.stl'),
          'right': dict(foot='community-46.stl', bracket='community-64.stl', guide_foot='right_foot', guide_bracket='right_ankle', world='foot_right.stl')}
+SEAT_PIN = HERE / 'seat-pinned.json'   # seat and robot placement fitted against the stock bracket in the guide (V1.22, aa688d8)
 CLEAR = 0.20      # mm lateral clearance socket -> bracket (CAD), so the printed pair slides by hand
 STEP = 0.05       # mm height-field grid in the bracket frame
 Z_KEEP = 4.0      # mm: the foot below this height (sole, rounded edge, hot-glue cast zone up to 3.0) must not change
@@ -143,20 +151,111 @@ def cutter_mesh(xs, zs, bottom, ytop):
     return m
 
 
+TONGUE_X = ((12.0, 18.0), (-25.0, -20.0))   # foot print frame: toe and heel ends of the socket
+TONGUE_MAX_AREA = 40.0                        # mm2: a tongue island, not a wall of the foot
+
+
+def tongue_islands(t, z):
+    s = t.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
+    if s is None:
+        return []
+    polys = s.to_2D(to_2D=np.eye(4))[0].polygons_full
+    return [p for p in polys if p.area < TONGUE_MAX_AREA and abs(p.centroid.y) < 3.0
+            and any(a < p.centroid.x < b for a, b in TONGUE_X)]
+
+
+def remove_tongues(mf):
+    """Cut each free-standing tongue from its root (where its slots end) to the top of the foot."""
+    from shapely.geometry.polygon import orient
+    from shapely.ops import unary_union
+    t = tri(mf); top = float(t.bounds[1, 2])
+    zs = np.arange(5.0, top, 0.02)
+    found = [(z, tongue_islands(t, z)) for z in zs]
+    out = []
+    for a, b in TONGUE_X:
+        hits = [(z, p) for z, ps in found for p in ps if a < p.centroid.x < b]
+        assert hits, ('no tongue island between x', a, b)
+        z0 = min(z for z, _ in hits)
+        fp = unary_union([p for _, p in hits]).buffer(0.02)
+        assert fp.geom_type == 'Polygon', fp.geom_type
+        fp = orient(fp, 1.0)   # counter-clockwise outline, or manifold reads it as a hole
+        cs = m3.CrossSection([np.asarray(fp.exterior.coords[:-1], float)])
+        cutter = cs.extrude(top - z0 + 1.02).translate([0, 0, z0 - 0.02])   # flush with the slot bottom
+        assert abs(cutter.volume() - fp.area * (top - z0 + 1.02)) < 1.0, ('tongue cutter', cutter.volume(), fp.area)
+        before = mf.volume(); mf = mf - cutter
+        assert 0 < before - mf.volume() < fp.area * (top - z0), ('tongue cut removed', before - mf.volume())
+        out.append(dict(xRangeMm=[a, b], rootZMm=round(float(z0), 2), footprintBoundsMm=np.round(fp.bounds, 2).tolist(),
+                        removedMm3=round(before - mf.volume(), 2)))
+    t = tri(mf)
+    roots = [o['rootZMm'] for o in out]
+    left = [z for z in zs if z > max(roots) + 0.02 and tongue_islands(t, z)]
+    assert not left, ('tongue islands remain at z', left[:5])
+    return mf, out
+
+
+HEEL_X = (-25.0, -20.0)   # foot print frame: the heel well around the old heel tongue
+HEEL_SPLIT_X = -21.75     # old tongue's socket-side face: outboard of it the fill rises to the outer wall top
+
+
+def ray_top(t, x, y):
+    loc, _, _ = t.ray.intersects_location([[x, y, 40.0]], [[0, 0, -1.0]])
+    return float(loc[:, 2].max())
+
+
+def fill_heel_well(mf, root_z, clear):
+    """Fill the empty heel well (closed in horizontal sections at z 13) from the tongue root to the wall tops, minus
+    `clear` (the bracket's cleared insertion region), so the fill never narrows the socket."""
+    from shapely.geometry import Polygon, box
+    from shapely.geometry.polygon import orient
+    t = tri(mf)
+    s = t.section(plane_origin=[0, 0, 13.0], plane_normal=[0, 0, 1])
+    holes = [Polygon(r) for p in s.to_2D(to_2D=np.eye(4))[0].polygons_full for r in p.interiors]
+    holes = [h for h in holes if HEEL_X[0] < h.centroid.x < HEEL_X[1] and abs(h.centroid.y) < 3.0 and 20 < h.area < 80]
+    assert len(holes) == 1, ('heel well at z 13', [round(h.area, 1) for h in holes])
+    well = holes[0].buffer(0.02, join_style=2)
+    x0, y0, x1, y1 = well.bounds
+    ys = np.linspace(y0 + 0.5, y1 - 0.5, 7)
+    out = []
+    # the foot top is tilted across the foot (the 4.8 deg socket roll), so each wall top is a line z = a + b y
+    for name, piece, xprobe in (('outboard', box(x0 - 1, y0 - 1, HEEL_SPLIT_X, y1 + 1), x0 - 0.4),
+                                ('socket side', box(HEEL_SPLIT_X, y0 - 1, x1 + 1, y1 + 1), x1 + 0.45)):
+        poly = orient(well.intersection(piece), 1.0)
+        b, a = np.polyfit(ys, [ray_top(t, xprobe, y) for y in ys], 1)
+        a -= 0.03   # 30 um under the wall top: a face exactly on the fitted top leaves near-coplanar slivers in the STL
+        z_lo = root_z - 0.1   # inside the shelf, off the tongue cut's floor (root - 0.02), so no shared face
+        prism = m3.CrossSection([np.asarray(poly.exterior.coords[:-1], float)]).extrude(40.0).translate([0, 0, z_lo])
+        # half-space below the wall-top line, as a big box rotated about x
+        ang = np.degrees(np.arctan(b))
+        half = m3.Manifold.cube([200, 200, 100]).translate([-100, -100, -100]).rotate([ang, 0, 0]).translate([0, 0, a])
+        piece_fill = (prism ^ half) - clear
+        before = mf.volume(); mf = mf + piece_fill
+        added = mf.volume() - before
+        zt = a + b * np.array([y0, y1])
+        assert 0 < added <= poly.area * (zt.max() - z_lo) + 0.5, (name, added)
+        out.append(dict(piece=name, boundsMm=np.round(poly.bounds, 2).tolist(), fromZMm=round(z_lo, 2),
+                        topZAtYMm=[[round(y0, 2), round(zt[0], 2)], [round(y1, 2), round(zt[1], 2)]], addedMm3=round(added, 2)))
+    return mf, out
+
+
 def build(side):
     s = SIDES[side]
     foot = load(PARTS / s['foot']); bracket = load(PARTS / s['bracket'])
-    g = ia_lib.load_guide(); P = {p['key']: p for p in (g['parts'] if isinstance(g['parts'], list) else g['parts'].values())}
-    gb = trimesh.Trimesh(*ia_lib.decode_guide_part(P[s['guide_bracket']]), process=True)
-    gf = trimesh.Trimesh(*ia_lib.decode_guide_part(P[s['guide_foot']]), process=True)
-    tb, eb = icp_translation(bracket, gb, R_BRACKET); tf, ef = icp_translation(foot, gf, np.eye(3))
-    assert eb < 0.05, (side, 'bracket STL does not match the guide bracket', eb)
-    W_b = np.eye(4); W_b[:3, :3] = R_BRACKET; W_b[:3, 3] = tb            # bracket print -> robot
-    F0 = np.eye(4); F0[:3, 3] = -tf                                      # robot -> foot print (first guess)
-    T_fb0 = F0 @ W_b
-    C, fit = seat(foot, apply(T_fb0, bracket))
-    T_fb = C @ T_fb0                                                     # bracket print -> foot print, seated
-    W_f = W_b @ np.linalg.inv(T_fb)                                      # foot print -> robot
+    pin = json.loads(SEAT_PIN.read_text())[side] if SEAT_PIN.exists() else None
+    if pin:  # the guide now carries the split-ankle base, not the stock bracket, so the seat fitted on 2026-10-19 is reused
+        T_fb = np.array(pin['bracketPrintToFootPrint']); W_f = np.array(pin['footPrintToRobot'])
+        fit, eb, ef = pin['seat'], pin['bracketToGuideP95Mm'], pin['footToGuideFootP95Mm']
+    else:
+        g = ia_lib.load_guide(); P = {p['key']: p for p in (g['parts'] if isinstance(g['parts'], list) else g['parts'].values())}
+        gb = trimesh.Trimesh(*ia_lib.decode_guide_part(P[s['guide_bracket']]), process=True)
+        gf = trimesh.Trimesh(*ia_lib.decode_guide_part(P[s['guide_foot']]), process=True)
+        tb, eb = icp_translation(bracket, gb, R_BRACKET); tf, ef = icp_translation(foot, gf, np.eye(3))
+        assert eb < 0.05, (side, 'bracket STL does not match the guide bracket', eb)
+        W_b = np.eye(4); W_b[:3, :3] = R_BRACKET; W_b[:3, 3] = tb            # bracket print -> robot
+        F0 = np.eye(4); F0[:3, 3] = -tf                                      # robot -> foot print (first guess)
+        T_fb0 = F0 @ W_b
+        C, fit = seat(foot, apply(T_fb0, bracket))
+        T_fb = C @ T_fb0                                                     # bracket print -> foot print, seated
+        W_f = W_b @ np.linalg.inv(T_fb)                                      # foot print -> robot
 
     xs, zs, low = lower_envelope(bracket)
     r = int(round(CLEAR / STEP)); yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
@@ -167,6 +266,9 @@ def build(side):
     mf, mc = man(foot), man(cut).simplify(0.005)   # merge the cutter's height-field facets (within 5 um); the foot stays exact
     assert mc.status() == m3.Error.NoError, (side, mc.status())
     new = mf - mc
+    new, tongues = remove_tongues(new)
+    heel_root = [o['rootZMm'] for o in tongues if o['xRangeMm'][1] < 0][0]
+    new, heel_fill = fill_heel_well(new, heel_root, mc)
     newt = tri(new)
 
     # checks ---------------------------------------------------------------------------------------------------------
@@ -197,6 +299,8 @@ def build(side):
     boss = m3.Manifold.cylinder(sc[2] - 1.0, 2.6, 2.6, 48).translate([sc[0], sc[1], 1.0])
     boss_change = (mf ^ boss).volume() - (new ^ boss).volume()
     out_print = HERE / f'foot-{side}-slipfit.stl'; newt.export(out_print)
+    back = trimesh.load(out_print, force='mesh')   # the release pipeline loads the STL (float32) and needs it closed
+    assert back.is_watertight and back.is_winding_consistent and (back.area_faces > 1e-9).all(), (side, 'exported foot STL is not closed')
     WORLD.mkdir(exist_ok=True); apply(W_f, newt).export(WORLD / s['world'])
     return dict(
         side=side, foot=s['foot'], bracket=s['bracket'], clearanceMm=CLEAR,
@@ -207,6 +311,8 @@ def build(side):
         insertionPathInterferenceMm3=dict(stepMm=0.5, upToMm=15.0, max=max(path)),
         restsAtSeat=dict(dropMm=[0.05, 0.1, 0.2], interferenceMm3=drop),
         lateralPlayMm=lateral,
+        tonguesRemoved=tongues,
+        heelWellFilled=heel_fill,
         changeBelowZMm=dict(z=Z_KEEP, volumeMm3=round(below_change, 4)),
         cutMinZMm=round(float(cut.bounds[0, 2]), 3),
         toeScrewBoss=dict(axisInFootMm=np.round(sc[:3], 2).tolist(), radiusMm=2.6, volumeChangeMm3=round(boss_change, 4)),

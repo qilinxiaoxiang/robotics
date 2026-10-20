@@ -10,12 +10,15 @@ its exact bytes, so it stays frozen. Differences from v1:
   preparation.json counts those in reprintUnchangedStockQuantity. Every other row still needs changed geometry.
 - brim_review() fails a part with an unplanned brim, a planned brim that is missing or of another width than planned, or brim
   inside its own convex outline (an open opening filled with brim); package() requires it to pass on every plate.
+- source_receipt() runs wall_check.check() on every part in its print frame: a wall under 1.2 mm over 2 mm2 or more stops
+  prepare unless the row's thinWallAllowances covers it; preparation.json records the result per part under wallCheck.
 """
 from pathlib import Path
 import argparse,base64,copy,hashlib,io,json,math,re,shutil,struct,subprocess,sys,zipfile
 import xml.etree.ElementTree as ET
 import numpy as np
 import trimesh
+import wall_check
 
 HERE=Path(__file__).resolve().parent
 PRINT=HERE.parent
@@ -87,6 +90,14 @@ def hull_allowance(row):
  assert str(row.get('brimInsideHullAllowanceReason','')).strip(),f'{row["key"]}: brimInsideHullAllowanceMm2 needs brimInsideHullAllowanceReason'
  return dict(brimInsideHullAllowanceMm2=a,brimInsideHullAllowanceReason=row['brimInsideHullAllowanceReason'].strip())
 
+def wall_result(row,mesh,legacy):
+ """Wall check of a print-frame part. Fails the row unless the manifest carries wallCheckLegacy (fixture manifests only:
+ geometry printed before the wall rule, kept as a test of other checks); the result is recorded either way."""
+ w=wall_check.check(mesh,wall_check.allowances(row),row['key']);failures=w.pop('failures')
+ if legacy:w['legacy']=legacy
+ else:assert not failures,'; '.join(failures)
+ return w
+
 def sha(p):
  h=hashlib.sha256()
  with Path(p).open('rb') as f:
@@ -128,6 +139,8 @@ def source_receipt(manifest_path):
   assert sha(r['source'])==r['sha256'] and sha(PRINT/r['copy'])==r['sha256'],'89-stock source drift'
   stock_hashes.add(r['sha256'])
  keys=set();replaced=set();parts=[];unchanged=0
+ legacy=str(m.get('wallCheckLegacy','')).strip()
+ assert not legacy or m['releaseKind']=='fixture','wallCheckLegacy is honoured only in fixture manifests'
  for row in m['parts']:
   assert row['key'] not in keys;keys.add(row['key'])
   assert re.fullmatch('[A-Za-z0-9_-]+',row['key']) and row['color'] in COLORS
@@ -157,12 +170,12 @@ def source_receipt(manifest_path):
   assert bottom>0,f'{row["key"]}: no real planar contact within 0.01 mm'
   assert bottom>=float(row['flatContact']['minimumAreaMm2']),f'{row["key"]}: intended bottom missing'
   b=mesh.bounds.tolist();tip=tip_angle(mesh);settings,settings_source=object_settings(row,tip)
-  parts.append(dict(key=row['key'],source=ref(source),quantity=row['quantity'],color=row['color'],decision=row['decision'],replacesStockIds=ids,changeReason=row['changeReason'],incrementalEvidence=ref(evidence),sourceToPrint=T.tolist(),dropToBedMm=float(delta[2]),flatContactAreaMm2=bottom,bounds=b,vertexCount=len(mesh.vertices),triangleCount=len(mesh.faces),tipAngleDeg=round(tip,2),objectSettings=settings,objectSettingsSource=settings_source,**({'colourOnlyReprint':colour_only}if colour_only else {}),**hull_allowance(row)))
+  parts.append(dict(key=row['key'],source=ref(source),quantity=row['quantity'],color=row['color'],decision=row['decision'],replacesStockIds=ids,changeReason=row['changeReason'],incrementalEvidence=ref(evidence),sourceToPrint=T.tolist(),dropToBedMm=float(delta[2]),flatContactAreaMm2=bottom,bounds=b,vertexCount=len(mesh.vertices),triangleCount=len(mesh.faces),tipAngleDeg=round(tip,2),objectSettings=settings,objectSettingsSource=settings_source,**({'colourOnlyReprint':colour_only}if colour_only else {}),**hull_allowance(row),wallCheck=wall_result(row,mesh,legacy)))
  assert parts
  # The brim is a per-part decision in v2; a plate-wide brim would reach every object that lacks its own value.
  for k,v in m.get('processOverrides',{}).items():
   assert not set(v)&set(BRIM_KEYS),f'processOverrides[{k}] sets {sorted(set(v)&set(BRIM_KEYS))}: set the brim per part (objectSettings)'
- return m,dict(schemaVersion=1,pipelineVersion=2,manifest=ref(p),pipeline=ref(__file__),baselineStock=ref(baseline),baselinePrintedStockInstances=89,reprintUnchangedStockQuantity=unchanged,partTypes=len(parts),printQuantity=sum(r['quantity']for r in parts),parts=parts,claimBoundary='Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.')
+ return m,dict(schemaVersion=1,pipelineVersion=2,manifest=ref(p),pipeline=ref(__file__),wallCheckModule=ref(wall_check.__file__),baselineStock=ref(baseline),baselinePrintedStockInstances=89,reprintUnchangedStockQuantity=unchanged,partTypes=len(parts),printQuantity=sum(r['quantity']for r in parts),parts=parts,claimBoundary='Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.')
 
 def check_profile(config,machine):
  e=MACHINES[machine]
