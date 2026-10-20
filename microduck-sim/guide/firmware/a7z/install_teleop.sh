@@ -36,6 +36,7 @@ FILES=(
   guide/firmware/mac/walk_wired.py
   guide/firmware/mac/walk_brain.py
   guide/firmware/mac/jaw_ctl.py
+  guide/firmware/mac/duck_sense.py
   guide/firmware/mac/duck_sound.py
   guide/firmware/pi/battery.py
   guide/firmware/pi/dxl_fast.py
