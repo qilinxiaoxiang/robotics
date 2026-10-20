@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, 'shots');
-const PAGES = ['A7Z-PINS.html', 'A7Z-ANTENNA.html'].map((p) => path.join(HERE, '..', p));
+const PAGES = ['A7Z-PINS.html', 'A7Z-ANTENNA.html', 'A7Z-COOLING.html'].map((p) => path.join(HERE, '..', p));
 const views = [
   { name: 'desk', width: 1280, height: 900, deviceScaleFactor: 1, mobile: false },
   { name: 'mob', width: 390, height: 844, deviceScaleFactor: 1, mobile: true },

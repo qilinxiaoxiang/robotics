@@ -6,6 +6,7 @@ The Pi pages (`../BRINGUP.html`, built from `../build/`) are unchanged.
 - `../A7Z-PINS.html`: Dupont wires on the A7Z 40-pin header (anchors `#changes #count #flags #power #imu #uart #audio #touch #check #software #twi0`).
 - `../A7Z-WIRES.html`: one-picture summary, Pi Zero W pin -> A7Z pin for each wire, click a pin, wire or row to show only that wire (builder `build_a7z_wires.py`, probe `node probe_wires.mjs`).
 - `../A7Z-ANTENNA.html`: AC019 FPC antenna in the head cap (sections in assembly order: `#parts #stick #mount #clip #plug #check`; the IPEX plug goes on after the cap wire clip, as in guide/content/steps.py).
+- `../A7Z-COOLING.html` (builder `build_a7z_cooling.py`, 2026-10-20): open the head (three M2.6 × 6, the board, speaker, amplifier and antenna all ride on the cap), stick a 15 × 15 × 5 mm copper heatsink on the A733 (15.0 mm free to the camera board), solder a 470 µF electrolytic across the 5 V lead 2 cm from pins 2/6, optional min-hold meter reading during `guide/firmware/pi/a7z_load_test.sh`, close and check (`#parts #off #open #sink #cap #meter #close`). A733 and RAM centres read on a7z-top.png: `SOC`, `RAM` in the builder, check figure `shots/check_cooling.png`.
 
 ## Build
 
