@@ -6,7 +6,10 @@
 The output needs no server, CDN or network: three.js r164.1 and OrbitControls are inlined, the guide JSON is
 embedded gzip+base64, and part geometry is moved out of the JSON into one gzip+base64 binary block (parts[].geom
 holds byte offsets) so the meshes are not base64-encoded twice. A step with a `wiring` field (a wiring-kit bench)
-also inlines ~/code/wiring-kit/dist (wiring-kit.js and wiring-kit.css). Python standard library only.
+also inlines ~/code/wiring-kit/dist (wiring-kit.js and wiring-kit.css). With --geometry-script NAME.js the geometry
+block goes into scripts NAME-1.js, NAME-2.js, ... beside the HTML instead, each at most GEOMETRY_CHUNK characters
+(for hosts that cap a single file or upload below the bundle size).
+Python standard library only.
 """
 from __future__ import annotations
 
@@ -34,6 +37,7 @@ STATUSES = {'assembled', 'printed', 'reprint', 'new-print', 'purchased', 'owned'
 PREP_KINDS = {'fastener', 'printed', 'electronic', 'tool', 'cable', 'other'}
 CABLE_KINDS = {'dxl', 'power-20v', 'power-15v', 'power-7v', 'power-5v', 'ground', 'usb', 'uart', 'i2c', 'i2s', 'speaker', 'csi', 'touch'}
 BOUNDS_TOLERANCE_MM = 1.0
+GEOMETRY_CHUNK = 4_000_000
 
 
 class Report:
@@ -401,7 +405,7 @@ def gzip_b64(raw: bytes) -> str:
 
 
 def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool = False, manifest: Path | None = None,
-          wiring_kit: Path = DEFAULT_WIRING_KIT) -> dict:
+          wiring_kit: Path = DEFAULT_WIRING_KIT, geometry_script: str | None = None) -> dict:
     source_bytes = data_path.read_bytes()
     data = json.loads(source_bytes)
     rep = Report()
@@ -447,6 +451,16 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
     title = data.get('title') or 'Assembly guide'
     head, tail = template.replace('__GUIDE_TITLE__', html.escape(title)).replace('__GUIDE_BUILD__', html.escape(build_info)).split('<!--__SCRIPTS__-->')
     head = head.replace('/*__STYLE__*/', css)
+    if geometry_script:
+        if not re.fullmatch(r'[A-Za-z0-9._-]+\.js', geometry_script):
+            raise SystemExit('--geometry-script must be a plain file name ending in .js')
+        csp = "script-src 'unsafe-inline';"
+        if head.count(csp) != 1:
+            raise SystemExit('template.html: CSP script-src not found')
+        head = head.replace(csp, "script-src 'unsafe-inline' 'self';")
+        stem = geometry_script[:-3]
+        chunks = [geo_b64[i:i + GEOMETRY_CHUNK] for i in range(0, len(geo_b64), GEOMETRY_CHUNK)]
+        geo_paths = [out_path.parent / f'{stem}-{n}.js' for n in range(1, len(chunks) + 1)]
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = out_path.with_name(out_path.name + '.tmp')
@@ -457,10 +471,20 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
             f.write('<script>\n'); f.write(wk_js); f.write('\n</script>\n')
         f.write('<script type="application/octet-stream" id="guide-data" data-encoding="gzip+base64">')
         f.write(data_b64); f.write('</script>\n')
-        f.write('<script type="application/octet-stream" id="guide-geometry" data-encoding="gzip+base64">')
-        f.write(geo_b64); f.write('</script>\n')
+        if geometry_script:
+            for g in geo_paths:
+                f.write(f'<script src="{g.name}"></script>\n')
+        else:
+            f.write('<script type="application/octet-stream" id="guide-geometry" data-encoding="gzip+base64">')
+            f.write(geo_b64); f.write('</script>\n')
         f.write('<script>\n'); f.write(app_js); f.write('\n</script>\n')
         f.write(tail)
+    if geometry_script:
+        for g, chunk in zip(geo_paths, chunks):
+            gtmp = g.with_name(g.name + '.tmp')
+            gtmp.write_text('((window.__guidePayloads = window.__guidePayloads || {})["guide-geometry"] ||= []).push("' + chunk + '");\n',
+                            encoding='utf-8')
+            os.replace(gtmp, g)
     os.replace(tmp, out_path)
 
     summary = {
@@ -480,6 +504,8 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
         'jsonEmbeddedBytes': len(data_b64),
         'geometryBytes': len(blob),
         'geometryEmbeddedBytes': len(geo_b64),
+        'geometryScripts': [str(g) for g in geo_paths] if geometry_script else None,
+        'geometryScriptBytes': [g.stat().st_size for g in geo_paths] if geometry_script else None,
         'errors': rep.errors,
         'warnings': len(rep.warnings),
         'three': EXPECTED_THREE,
@@ -498,6 +524,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument('--three', type=Path, default=DEFAULT_THREE, help='three.js package directory (default: simulator node_modules)')
     ap.add_argument('--wiring-kit', type=Path, default=DEFAULT_WIRING_KIT, help='wiring-kit dist directory (default: ~/code/wiring-kit/dist)')
     ap.add_argument('--manifest', type=Path, help='also write the build summary JSON here')
+    ap.add_argument('--geometry-script', metavar='NAME.js', help='write the geometry into NAME-1.js, NAME-2.js, ... beside --out instead of inlining it')
     ap.add_argument('--check', action='store_true', help='validate the data only; write nothing')
     ap.add_argument('--allow-errors', action='store_true', help='build even when validation reports errors')
     args = ap.parse_args(argv)
@@ -514,7 +541,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1 if rep.errors else 0
     if not args.out:
         ap.error('--out is required unless --check is given')
-    summary = build(args.data, args.out, args.three, args.allow_errors, args.manifest, args.wiring_kit)
+    summary = build(args.data, args.out, args.three, args.allow_errors, args.manifest, args.wiring_kit, args.geometry_script)
     print(json.dumps(summary))
     return 0
 

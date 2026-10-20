@@ -3,7 +3,8 @@
  * Runs inside the single HTML file produced by guide/build_guide.py. Expects:
  *   - globals THREE and OrbitControls (three.js r164.1, inlined by the bundler);
  *   - a data block with id guide-data:     gzip+base64 guide JSON (schemaVersion 1);
- *   - a data block with id guide-geometry: gzip+base64 binary; parts[].geom = [posOffset, posBytes, idxOffset, idxBytes].
+ *   - a data block with id guide-geometry: gzip+base64 binary; parts[].geom = [posOffset, posBytes, idxOffset, idxBytes]
+ *     (--geometry-script builds fill the array window.__guidePayloads["guide-geometry"] from scripts beside the page).
  * Parts that still carry positionB64 / indexB64 are decoded directly (useful for hand-built test data).
  */
 (() => {
@@ -168,7 +169,12 @@ async function gunzip(bytes) {
 }
 async function readPayload(id) {
   const node = $(id);
-  if (!node) return null;
+  const ext = window.__guidePayloads;
+  if (!node) {
+    // --geometry-script builds load the block in chunks from scripts beside the page.
+    if (ext && Array.isArray(ext[id])) { const text = ext[id].join(''); delete ext[id]; return gunzip(b64ToBytes(text)); }
+    return null;
+  }
   const text = node.textContent;
   node.remove();
   return gunzip(b64ToBytes(text.trim()));

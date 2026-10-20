@@ -270,6 +270,7 @@ button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
   <p>You will make <b>four short leads</b> (S, C, D, E), put them with the battery into the printed box, and check every plug with a multimeter. Nothing on the robot itself gets cut, soldered or rewired.</p>
 <div class="cta3d"><p><b>3D animated build steps</b>The five assembly steps from the MicroDuck build guide, on the real CAD: parts fly into place, and you can orbit, zoom and tap any part to identify it.</p><a class="go" href="backpack-3d.html" target="_blank" rel="noopener">Open the 3D steps</a></div>
+<div class="cta3d"><p><b>The whole robot, step by step</b>The complete MicroDuck build guide: every chapter from preparing the OpenRB-150 through the legs, torso, neck, head, wiring and first power-up, ending with this backpack. Same 3D viewer; the chapter menu jumps anywhere.</p><a class="go" href="microduck-build.html" target="_blank" rel="noopener">Open the full guide</a></div>
   <div class="callout stop"><strong>Before you start</strong>A LiPo can catch fire if its leads touch or the pack is crushed. Keep the battery unplugged and away from the iron until section 7, and never solder anything that is connected to it.</div>
 </header>
 
