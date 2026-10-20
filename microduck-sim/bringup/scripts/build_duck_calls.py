@@ -2,7 +2,8 @@
 """MicroDuck: cut duck recordings into single calls for the random voice player (duck_voice.py).
 
 Usage: build_duck_calls.py MALLARD.ogg VOICES_DIR OUT_DIR
-  MALLARD.ogg  Wikimedia Commons "Anas platyrhynchos - Mallard - XC62258.ogg" (Jonathon Jongsma, CC BY-SA 3.0)
+  MALLARD.ogg  Wikimedia Commons "Anas platyrhynchos - Mallard - XC62258.ogg" (Jonathon Jongsma, CC BY-SA 3.0),
+               or - for the simulator voices only (guide/firmware/a7z/install_teleop.sh does this when the file is absent)
   VOICES_DIR   microduck-simulator/app/public/assets/voices (Pollen Robotics; duck1..duck4/chirp_*.wav)
   OUT_DIR      gets mallard_N.wav and duckK_chirp_X.wav, 44.1 kHz mono 16 bit
 Every call is high-passed twice at 500 Hz (the speaker's resonance is 560-840 Hz), raised 10 dB into a -1 dBFS
@@ -63,14 +64,16 @@ def main():
     mallard, voices, out = sys.argv[1:4]
     os.makedirs(out, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
-        raw = os.path.join(tmp, "m.wav")
-        ff(mallard, raw, "anull")
-        proc = os.path.join(tmp, "p.wav")
-        ff(mallard, proc, CHAIN)
-        cuts = segments(read(raw))
-        y = read(proc)
-        for k, (a, b) in enumerate(cuts, 1):
-            write(os.path.join(out, f"mallard_{k}.wav"), y[a:b])
+        cuts = []
+        if mallard != "-":
+            raw = os.path.join(tmp, "m.wav")
+            ff(mallard, raw, "anull")
+            proc = os.path.join(tmp, "p.wav")
+            ff(mallard, proc, CHAIN)
+            cuts = segments(read(raw))
+            y = read(proc)
+            for k, (a, b) in enumerate(cuts, 1):
+                write(os.path.join(out, f"mallard_{k}.wav"), y[a:b])
         count = len(cuts)
         for src in sorted(glob.glob(os.path.join(voices, "duck*", "chirp_*.wav"))):
             name = f"{os.path.basename(os.path.dirname(src))}_{os.path.basename(src)}"

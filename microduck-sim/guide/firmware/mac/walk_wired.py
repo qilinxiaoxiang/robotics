@@ -29,6 +29,22 @@ Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
                                           goals (monitor mode, torque on) instead of ramping to STAND from a crouch.
   "jaw": 20 | "open" | "grip", "jaw_torque": false, "jaw_mark": "closed" | "open"   the ID15 jaw (jaw_ctl.py)
 
+Remote-control additions (2026-10-20, walk_brain.py has the details):
+  {"mode": "kick", "foot": "left" | "right", "id": 7}   one kick per new id, from stand or walk mode: 25 ticks of
+                                          Pollen's kick policy at zero command, then this process rewrites the
+                                          control file to walk at zero command (stand61) if it still holds that kick.
+                                          The walk guards apply; a trip stops the kick and goes to stand.
+  {"mode": "sit"}                         Pollen's sitstand policy (flag 0 for 0.8 s, then 1); any stand or walk
+                                          command stands it up (flag 0 for 2 s) before running. --max-tilt-sit (30)
+                                          and the hard action limit guard it; a trip holds the last goals (monitor).
+  "quack": N                              any mode; a new value of the counter (start at 1) plays one random call
+                                          from --sounds through `aplay -q` on the ALSA default device (duck_sound.py,
+                                          off the control thread, a new call kills the old one) and, when the jaw is
+                                          calibrated and its torque is on (any jaw command enables it), opens it to
+                                          QUACK_JAW_DEG for QUACK_S, under the jaw limits. A gripping jaw stays shut.
+  Hold-to-walk: rewrite {"mode": "walk", "vx": 0.25, ..., "for_s": 0.6} every 0.3 s; every rewrite restarts for_s,
+  so the walk stops 0.6 s after the last one.
+
 Walk stops: {"mode": "walk", ..., "for_s": 7} sets zero velocity 7 s after the command arrived; walk61 brings its own
 stride to rest (torque on), the sequence brain_sim_check.py verifies on the as-built model. An action over 3.0 rad in 3
 of 10 ticks or body tilt over --max-tilt deg (30) switches to stand mode; a single tick over 3.0 rad is clipped to
@@ -55,6 +71,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, "..", "pi"))
 from walk_brain import IDS, NAMES, OBSERVATION_DOF_ORDER, STAND, WHOLE, Brain, Breakaway, read_cmd, to_model, to_tick  # noqa: E402
 import jaw_ctl  # noqa: E402
+from duck_sound import Voice  # noqa: E402
 from jaw_ctl import GOAL_CURRENT_MA, JAW_ID, POSE_JOINTS, JawCtl  # noqa: E402
 from dxl_fast import _packet  # noqa: E402
 from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, INPUT_VOLTAGE_BIT, STOP_MARKER,  # noqa: E402
@@ -208,6 +225,9 @@ def over_limit(amax, over, limit, ticks=OVER_LIMIT_TICKS, hard=HARD_MAX_ACTION):
 MAX_WALK_ACTION = 1.8  # Shawn 2026-10-15: the as-built simulation peaks at 1.64 rad in a normal 0.25 m/s gait
 MAX_TILT_DEG = 30.0
 MAX_TILT_GP_DEG = 55.0  # the ground-pick crouch pitches the trunk 35 deg in the as-built sim (2026-10-16)
+MAX_TILT_SIT_DEG = 30.0  # sit and stand-up peak at 10.3-11.4 deg in the plugged as-built sim at 7.0 V (2026-10-20)
+QUACK_JAW_DEG = 15.0  # jaw opening for a quack; jaw_limits still caps it by the head pose
+QUACK_S = 0.4
 GP_DONE_PHASE = 0.9  # inside the policy's standing rest segment: the rise is complete, hand back to stand61
 CMD_ALPHA = 0.2  # velocity command EMA per 20 ms tick, Pollen's robotd default
 # No IMU sample this long: the Brain holds its last goals (blind, so no policy step). 2026-10-15 the Pi Zero lost power
@@ -252,6 +272,10 @@ def main():
     ap.add_argument("--jaw-kp", type=int, default=jaw_ctl.KP_JAW, help="ID15 position P gain in mode 5")
     ap.add_argument("--max-tilt-gp", type=float, default=MAX_TILT_GP_DEG,
                     help="ground pick holds its last goals above this trunk tilt, deg (the crouch itself is 35 deg in the as-built sim)")
+    ap.add_argument("--max-tilt-sit", type=float, default=MAX_TILT_SIT_DEG,
+                    help="sit mode holds its last goals above this trunk tilt, deg")
+    ap.add_argument("--sounds", default=os.path.join(HERE, "sounds"),
+                    help="folder of 16-bit WAV duck calls for the quack key (played with aplay -q, ALSA default device)")
     ap.add_argument("--breakaway", action="store_true",
                     help="Mac-side stiction compensation on the leg joints in stand mode (walk_brain.Breakaway, validated standing 2026-10-16)")
     ap.add_argument("--breakaway-walk", action="store_true",
@@ -281,8 +305,9 @@ def main():
     log = open(args.log, "a")
 
     def _sync_log():  # a brownout loses only what is not on the card: fsync every 50 ms, off the control thread
+        pause = threading.Event()  # a wall-clock wait, never the loop's (simulated) clock
         while True:
-            time.sleep(0.05)
+            pause.wait(0.05)
             try:
                 os.fsync(log.fileno())
             except (OSError, ValueError):
@@ -297,6 +322,11 @@ def main():
                          if jaw.calibrated else "not calibrated (jaw_torque false, close by hand, jaw_mark closed, "
                          "open by hand, jaw_mark open)"), flush=True)
     jaw_warned = False
+    voice = Voice(args.sounds)
+    print(f"quack: {len(voice.files)} calls in {args.sounds}" if voice.files else
+          f"quack: no .wav calls in {args.sounds}, the quack key moves only the jaw", flush=True)
+    last_quack = 0  # "quack" counter value last acted on; a new value quacks once
+    quack_until, quack_prev, quack_hint = None, None, False
     torque_on, kp_now, last_cmd = False, None, None
     write_delay = 0.002  # measured below: read-midpoint to goal write
     last_print, n, misses, t_stat = 0.0, 0, 0, time.perf_counter()
@@ -336,6 +366,23 @@ def main():
             cmd_since = time.time()  # when this command arrived (the file's mtime is wall clock, not this loop's)
         last_cmd = new_cmd
         want = last_cmd[1]
+        if cmd_is_new and want.get("quack") is not None and want.get("quack") != last_quack:
+            last_quack = want.get("quack")
+            call = voice.quack()
+            if jaw.calibrated and jaw.on and jaw.goal_deg != "grip":
+                if quack_until is None:
+                    quack_prev = jaw.goal_deg
+                jaw.goal_deg, quack_until = QUACK_JAW_DEG, time.perf_counter() + QUACK_S
+            elif not quack_hint:
+                print("quack: jaw stays put (" + ("gripping" if jaw.goal_deg == "grip" else
+                      "not calibrated" if not jaw.calibrated else "torque off; any jaw command, e.g. \"jaw\": 2, "
+                      "enables it") + ")", flush=True)
+                quack_hint = True
+            print(f"quack {last_quack}: {os.path.basename(call) if call else 'no sound'}", flush=True)
+        if quack_until is not None and (time.perf_counter() >= quack_until or not jaw.on):
+            if jaw.on:
+                jaw.goal_deg = quack_prev if quack_prev is not None else 2.0  # back to the rest opening
+            quack_until = None
         if cmd_is_new:  # jaw keys act once per command; the jaw goal persists until the next jaw key
             if want.get("jaw_mark") in ("closed", "open"):
                 try:
@@ -348,6 +395,7 @@ def main():
                 jaw.release(link)
                 print("jaw torque off", flush=True)
             if "jaw" in want:
+                quack_until = None  # an explicit jaw command wins over a quack in progress
                 j = want["jaw"]
                 if j in ("grip", "open") or isinstance(j, (int, float)):
                     jaw.goal_deg = j
@@ -363,20 +411,23 @@ def main():
                 want["head"] = last_cmd[1]["head"]  # the head keeps looking where the walk command aimed it
             write_cmd(args.cmd, want, f"walk for_s {want_s(last_cmd)} elapsed")
             last_cmd, cmd_since = read_cmd(args.cmd, None), time.time()
-        if brain.mode == "walk" and diverging:
+        if brain.mode in ("walk", "kick") and diverging:
+            if brain.mode == "kick":
+                brain.end_kick(diverging)  # the stand ramp next tick starts from the last goals sent
             want = {"mode": "stand"}
             hard_hits.clear()  # a later walk starts with a clean window
             write_cmd(args.cmd, want, diverging)
             last_cmd, diverging, cmd_since = read_cmd(args.cmd, None), None, time.time()
-        elif brain.mode == "groundpick" and diverging:
-            # no open-loop ramp to STAND out of a crouch: hold the last goals (torque on) and wait for a command
+        elif brain.mode in ("groundpick", "sit") and diverging:
+            # no open-loop ramp to STAND out of a crouch or a seat: hold the last goals (torque on), wait for a command
             want = {"mode": "monitor"}
             hard_hits.clear()
-            write_cmd(args.cmd, want, "ground pick: " + diverging)
+            write_cmd(args.cmd, want, ("ground pick: " if brain.mode == "groundpick" else "sit: ") + diverging)
             last_cmd, diverging, cmd_since = read_cmd(args.cmd, None), None, time.time()
         now = time.perf_counter()
         if guard and guard.state == "stop":
-            want = stop_command(torque_on, brain.mode)
+            # a kick or a sit ends through the walk policy at zero command (the Brain stands a sit up first)
+            want = stop_command(torque_on, "walk" if brain.mode in ("kick", "sit") else brain.mode)
         if imu is None:
             quat, gyro, imu_valid, imu_age = (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0), False, 1.0
             acc, imu_seq = None, None
@@ -440,6 +491,12 @@ def main():
             if msg:
                 print(msg, flush=True)
         act = info.get("action")
+        # only while the file still holds that kick: a command written during the kick takes over instead
+        if info.get("kick_done") is not None and last_cmd[1].get("mode") == "kick" \
+                and last_cmd[1].get("id") == info["kick_done"]:
+            want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
+            write_cmd(args.cmd, want, f"kick {info['kick_done']!r} done, stand61 takes over")
+            last_cmd, cmd_since = read_cmd(args.cmd, None), time.time()
         if brain.mode == "groundpick" and info.get("gp_phase", 0.0) >= GP_DONE_PHASE \
                 and float(want.get("phase", 0.0)) >= GP_DONE_PHASE:
             want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
@@ -470,7 +527,7 @@ def main():
                     goal = {n: (brain.default[n] + max(-hard, min(hard, float(act[k])))
                                 if n in brain.default else goal[n]) for k, n in enumerate(OBSERVATION_DOF_ORDER)}
                     brain.goal = dict(goal)
-            max_tilt = args.max_tilt_gp if brain.mode == "groundpick" else args.max_tilt
+            max_tilt = {"groundpick": args.max_tilt_gp, "sit": args.max_tilt_sit}.get(brain.mode, args.max_tilt)
             if not diverging and info["gb"][2] > -math.cos(math.radians(max_tilt)):
                 diverging = f"body tilt over {max_tilt} deg"
             if diverging and last_goal is not None:
