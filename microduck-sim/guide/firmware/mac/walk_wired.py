@@ -76,8 +76,8 @@ PERIOD = 0.02
 class Link:
     """USB serial to openrb_dual_host: DYNAMIXEL status packets and Pi IMU frames arrive as whole units."""
 
-    def __init__(self, port):
-        self.ser = serial.Serial(port, 1_000_000, timeout=0.002)
+    def __init__(self, port, baud=1_000_000, imu_bus=None):
+        self.ser = serial.Serial(port, baud, timeout=0.002)
         self.status = collections.deque()
         self.imu = None  # (arrival perf_counter, payload tuple)
         self.imu_count = 0
@@ -86,6 +86,32 @@ class Link:
         self.alert_ok = False  # True once the battery guard is armed (battery.py); the bench stays strict
         self.lock = threading.Lock()
         threading.Thread(target=self._reader, daemon=True).start()
+        if imu_bus is not None:
+            threading.Thread(target=self._local_imu, args=(imu_bus,), daemon=True).start()
+
+    def _local_imu(self, bus):
+        """Onboard brain (A7Z): read the BNO085 on this host's I2C bus and fill self.imu with the same tuple a J12
+        frame carries (pi_imu_uart.py), so the control loop cannot tell the two paths apart."""
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "pi"))
+        from pi_imu_uart import frame_age_s
+        from imu_reader import ThreadedIMUReader
+        reader = ThreadedIMUReader(i2c_bus=bus, frequency_hz=100)
+        reader.start()
+        seq, last_ts = 0, None
+        while True:
+            snap = reader.get_latest()
+            if snap.timestamp_s != last_ts:
+                last_ts = snap.timestamp_s
+                now = time.perf_counter()
+                f = (seq, *snap.quat, *snap.gyro, *snap.acc, frame_age_s(snap, now), 1 if snap.valid else 0)
+                seq += 1
+                if imu_frame_ok(f):
+                    with self.lock:
+                        self.imu = (now, f)
+                        self.imu_count += 1
+                else:
+                    self.imu_bad += 1
+            time.sleep(0.002)
 
     def _reader(self):
         buf = b""
@@ -205,6 +231,9 @@ def write_cmd(path, want, why):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", default=None, help="default: the only /dev/cu.usbmodem* (Mac) or /dev/ttyACM* (A7Z)")
+    ap.add_argument("--baud", type=int, default=1_000_000, help="500000 for the A7Z J12 port /dev/ttyAS2")
+    ap.add_argument("--imu-bus", type=int, default=None,
+                    help="onboard brain: read the BNO085 on this I2C bus (A7Z: 7) instead of J12 frames from the OpenRB")
     ap.add_argument("--models", default=os.path.join(WHOLE, "runtime-overlay", "models"))
     # Off by default: wired sample ages are a few ms, where the V1.9 simulation passes 9/9 without it, and the
     # predict-to-apply variant hurt on the replayed Wi-Fi link (dynamics/v19-20261014).
@@ -244,7 +273,7 @@ def main():
 
     brain = Brain(args.models, compensation=args.compensation)
     guard = None if args.supply == "bench" else BatteryGuard(args.supply)
-    link = Link(port)
+    link = Link(port, args.baud, args.imu_bus)
     # The bench rail (7.1-7.3 V) is above the servos' 7.0 V Max Voltage Limit, and with Shutdown 52 (D-014) every status
     # packet carries the Alert bit. The bench accepts those packets and watches Hardware Error Status once a second
     # like the armed guard, so a fault other than the input-voltage flag still freezes the policy.
@@ -265,6 +294,7 @@ def main():
     miss_by_id = {}  # servo ID -> sync reads it did not answer (since start)
     cmd_since = time.time()
     last_goal = None  # the goals most recently written to the servos
+    goal_written = None  # tick goals of the newest goal write, every mode (log only)
     last_step_t = float("-inf")  # last loop with a nonzero walk command
     diverging = None  # set when the policy output or the body tilt leaves the trained range
     imu_lost = False
@@ -340,9 +370,11 @@ def main():
             want = stop_command(torque_on, brain.mode)
         if imu is None:
             quat, gyro, imu_valid, imu_age = (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0), False, 1.0
+            acc, imu_seq = None, None
         else:
             arrival, f = imu
             quat, gyro, imu_valid = f[1:5], f[5:8], bool(f[12])
+            acc, imu_seq = [round(a, 4) for a in f[8:11]], f[0]
             imu_age = f[11] + (now - arrival) + write_delay  # Pi-side age + time on the Mac + until the write
         joint_age = (now - t_mid) + write_delay
         block = guard.torque_block(args.battery_marker) if guard and not torque_on else None
@@ -370,7 +402,8 @@ def main():
                     print(f"torque refused: {faults} report a hardware error (address 70) or did not answer; "
                           "power-cycle the robot", flush=True)
                 continue
-            link.sync_write(ADDR_GOAL, 4, dict(zip(IDS, pos)))  # hold where they are, then enable
+            goal_written = dict(zip(IDS, pos))
+            link.sync_write(ADDR_GOAL, 4, goal_written)  # hold where they are, then enable
             link.sync_write(ADDR_TORQUE, 1, {i: 1 for i in IDS})
             torque_on = True
             print("torque on at present positions", flush=True)
@@ -448,7 +481,8 @@ def main():
             # No goal low-pass here: a 2026-10-16 trial (EMA alpha 0.5 on the goals sent to the servos, policy
             # unchanged) left the walking-phase action jumps at 57-70 per 4 s, the same as unfiltered, and fell
             # once at the stop in three walks (unfiltered: 6 of 6 stood). Pollen trains the policies unfiltered.
-            link.sync_write(ADDR_GOAL, 4, {i: to_tick(nm, goal_out[nm]) for i, nm in zip(IDS, NAMES)})
+            goal_written = {i: to_tick(nm, goal_out[nm]) for i, nm in zip(IDS, NAMES)}
+            link.sync_write(ADDR_GOAL, 4, goal_written)
             write_delay = 0.8 * write_delay + 0.2 * (time.perf_counter() - t_mid)
         # the jaw: its own servo, its own torque; the body may be off (calibration, grip tests) or on
         if jaw.goal_deg is not None and not jaw.on:
@@ -502,6 +536,10 @@ def main():
                                   battery=guard.state if guard else None,
                                   battery_signalled=guard.signalled if guard else None, hw_faults=hw_faults,
                                   missing=missing, read_ms=read_ms, late=link.late,
+                                  # raw record for later replay and system ID: accel (m/s2, IMU frame), IMU sample
+                                  # seq, servo present ticks and the goal ticks last written, the command in force
+                                  acc=acc, imu_seq=imu_seq, pos_tick=list(pos), vel_tick=list(vel),
+                                  goal_tick=goal_written, cmd=want,
                                   jaw_tick=jaw.last_tick, jaw_deg=None if jaw.opening_deg() is None else round(jaw.opening_deg(), 1),
                                   jaw_goal=jaw.goal_deg if jaw.on else None, jaw_clamps=jaw.clamps if jaw.on else [],
                                   jaw_holding=jaw.holding())) + "\n")
