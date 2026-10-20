@@ -368,12 +368,20 @@ RETIRED_INCREMENTAL['V1.22'] = [
     ('Right foot (stock print)', 'Yellow', _STOCK / 'community-46.stl',
      'Same press fit as the left foot.', 'Right foot, slip fit'),
 ]
-INTRO_BY_VERSION['V1.22'] = ('V1.22 is three plates and reworks both ankles. Orange: an ankle base and a removable ankle side for each '
+_V122_INTRO_TWO_FEET = ('V1.22 is three plates and reworks both ankles. Orange: an ankle base and a removable ankle side for each '
                              'leg; the base sits on the servo horn and takes the lower link with its servo from above, the side slides '
                              'on along the shaft and two M2 x 8 hold it. Black: a new sleeve for each leg, 10.4 mm bore, that turns '
                              'freely on the link instead of being pressed. Yellow: two new feet that slide onto the base by hand and are '
                              'held by the toe M2 x 6. Nothing in the ankle is spread or pressed any more. The feet keep the old sole, so '
                              'the hot-glue molds (printed black on 2026-10-19) fit them.')
+# Shawn 2026-10-19 night: the Yellow plate carries three pairs of feet, one to fit and two spare for sole experiments.
+# V1.23 (withdrawn) keeps the two-feet wording it was issued with.
+INTRO_BY_VERSION['V1.22'] = _V122_INTRO_TWO_FEET.replace(
+    'Yellow: two new feet that slide onto the base by hand and are held by the toe M2 x 6.',
+    'Yellow: three pairs of new feet that slide onto the base by hand and are held by the toe M2 x 6. One pair goes on '
+    'the robot; the other two are spares for sole experiments, since a foot comes off with its one toe screw.').replace(
+    ' The feet keep the old sole, so the hot-glue molds (printed black on 2026-10-19) fit them.', '')
+assert INTRO_BY_VERSION['V1.22'] != _V122_INTRO_TWO_FEET
 RETIRED_LEAD_BY_VERSION['V1.22'] = ('Take each ankle apart once, with the ankle-and-foot module off the knee: toe screw out and the foot rocked off '
                                     '(hold the orange bracket, not the leg or the servo; the foot may crack), then the four M2 x 4 output screws, '
                                     'the two M2 x 10 case screws and the M2.6 x 8 rear centre with its washer. Pull the link off the bracket evenly '
@@ -402,7 +410,7 @@ RETIRED_INCREMENTAL['V1.23'] = RETIRED_INCREMENTAL['V1.22'] + [
     ('Right hot-glue mold (V1.21 print)', 'Black', HERE / 'release-V1.23' / 'retired' / 'hotglue_mold_right-V1.21.stl',
      'Same islands and pins as the left mold.', 'Right hot-glue mold, flat floor'),
 ]
-INTRO_BY_VERSION['V1.23'] = (INTRO_BY_VERSION['V1.22'].replace('V1.22 is three plates and reworks', 'V1.23 is three plates. It reworks')
+INTRO_BY_VERSION['V1.23'] = (_V122_INTRO_TWO_FEET.replace('V1.22 is three plates and reworks', 'V1.23 is three plates. It reworks')
                              .replace('so the hot-glue molds (printed black on 2026-10-19) fit them.',
                                       'so the hot-glue molds fit them. The Black plate also carries two new hot-glue molds: the cavity '
                                       'floor is one flat plane and the depth pins are gone; the foot stops on the mold rim all round. '

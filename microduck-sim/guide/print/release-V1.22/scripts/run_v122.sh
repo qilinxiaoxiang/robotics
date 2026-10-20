@@ -25,7 +25,8 @@ p = json.load(open(sys.argv[1]))
 print('plate centre offsets', [(r['color'], r['machine'], r.get('plateCentreOffsetMm')) for r in p['rows']])
 EOF
 for C in Orange Black Yellow; do for M in Bambu Elegoo; do
-  job slice-$C-$M 1000 $REL $PY $PIPE/release_pipeline_v2.py slice $REL/run/preparation.json $C $M
+  SLICE_MIB=1000; [[ $C == Yellow ]] && SLICE_MIB=2000  # six feet: Elegoo peaked at 1105 MiB on 2026-10-19
+  job slice-$C-$M $SLICE_MIB $REL $PY $PIPE/release_pipeline_v2.py slice $REL/run/preparation.json $C $M
   job review-$C-$M 400 $REL $PY scripts/review_v122.py $REL/run $C $M
   job brim-$C-$M 400 $PIPE $PY review_brim.py $REL/run $C $M --output $REL/review/${C}_${M}-brim.json
 done; done

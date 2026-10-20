@@ -3,7 +3,7 @@ brim extrusion against the per-object brim plan, and support extrusion.
   Orange  the two ankle bases and two ankle sides, Black the two ankle sleeves: stock profiles in the poses chosen by
           print/ankle-split-20261019/poses/poses.json. Support is recorded here; which faces it lands on was settled by
           the pose study (poses.md), not by this review.
-  Yellow  the two slip-fit feet: stock profile and stock pose; support is whatever the stock profile makes inside the
+  Yellow  three pairs of slip-fit feet: stock profile and stock pose; support is whatever the stock profile makes inside the
           foot (recorded, not ruled), as for the printed stock feet.
 All parts are new, so each first-layer model area must be at least 0.8 x its manifest flat contact. Read-only on all
 inputs; writes review/<Color>_<Machine>-review.json.

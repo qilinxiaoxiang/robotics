@@ -34,6 +34,9 @@ PLATES = {'Orange': ['ankle_base_left', 'ankle_base_right', 'ankle_cheek_left', 
           'Black': ['ankle_sleeve_left', 'ankle_sleeve_right'],
           'Yellow': ['foot_left_slipfit', 'foot_right_slipfit']}
 GAP_MM = 12.0
+# Shawn 2026-10-19: three pairs of feet, one to fit and two spare for sole experiments (tape, hot-glue sheet, CA);
+# the foot is the replaceable unit (slides off, one toe screw), so a ruined sole costs one foot, not a redesign.
+FOOT_PAIRS = 3
 IDENTITY = np.eye(4).tolist()
 # stock object: (community file, copy-manifest object id, the stock part it is)
 STOCK = {'foot_left': ('community-44.stl', '32', 'left foot'), 'foot_right': ('community-46.stl', '30', 'right foot'),
@@ -66,7 +69,7 @@ def foot_row(side):
     area, size, _ = printed(stl)
     src = ref(stl)
     return dict(
-        key=f'foot_{side}_slipfit', color='Yellow', quantity=1, decision='replacement', replacesStockIds=[sid],
+        key=f'foot_{side}_slipfit', color='Yellow', quantity=FOOT_PAIRS, decision='replacement', replacesStockIds=[sid],
         path=src['path'], sha256=src['sha256'],
         sourceFrame=f'{stock} print frame (mm; flat sole at z = 0)',
         sourceToPrint=IDENTITY, flatContact={'minimumAreaMm2': round(0.95 * area, 1)},
@@ -147,6 +150,20 @@ def main():
     placements = {}
     for colour, keys in PLATES.items():
         sizes = {k: printed(by[k]['path'], by[k]['sourceToPrint']) for k in keys}
+        if colour == 'Yellow':  # FOOT_PAIRS rows of (left, right), the block centred on the bed
+            width = sum(sizes[k][1][0] for k in keys) + GAP_MM * (len(keys) - 1)
+            row_h = max(sizes[k][1][1] for k in keys)
+            height = FOOT_PAIRS * row_h + GAP_MM * (FOOT_PAIRS - 1)
+            pl = []
+            for r in range(FOOT_PAIRS):
+                x0 = 128.0 - width / 2; yrow = 128.0 - height / 2 + r * (row_h + GAP_MM)
+                for key in keys:
+                    _, size, lo = sizes[key]; y0 = yrow + (row_h - size[1]) / 2
+                    assert 18.0 <= x0 and x0 + size[0] <= 238.0 and 28.0 <= y0 and y0 + size[1] <= 238.0, (key, x0, y0, size)
+                    pl.append(dict(key=key, copy=r + 1, translation=[round(x0 - float(lo[0]), 4), round(y0 - float(lo[1]), 4), 0.0]))
+                    x0 += size[0] + GAP_MM
+            placements[colour] = pl
+            continue
         width = sum(sizes[k][1][0] for k in keys) + GAP_MM * (len(keys) - 1)
         x0 = 128.0 - width / 2; pl = []
         for key in keys:
@@ -169,7 +186,7 @@ def main():
                                                             '9.65 mm bore press fit on the 10 mm link boss; replaced by ankle_sleeve_right (10.4 mm)'])]
     m['version'] = 'V1.22'
     m['prototypeScope'] = ('V1.22 delta package, the ankle rework: Orange plate with the two ankle bases and two ankle sides, Black '
-                           'plate with the two 10.4 mm ankle sleeves, Yellow plate with the two slip-fit feet. V1.20 is printed and the '
+                           'plate with the two 10.4 mm ankle sleeves, Yellow plate with three pairs of slip-fit feet (one to fit, two spare for sole experiments). V1.20 is printed and the '
                            'V1.21 molds were printed in black on 2026-10-19 (Shawn).')
     m['knownFitBoundary'] = ('Ankle: the side screws are self-tapping in 1.6 mm printed pilots, hand snug only; the sleeve has about 0.4 mm '
                              'of diametral running clearance in CAD, so a little side play is by design; printed hole sizes are '

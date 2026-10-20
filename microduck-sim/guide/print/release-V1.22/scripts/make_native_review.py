@@ -1,5 +1,5 @@
 """Write run/native-review.json for the V1.22 delta (Orange: two ankle bases and two ankle sides; Black: two ankle
-sleeves; Yellow: two slip-fit feet). Read-only on the reviews; fails unless every review passed: scripts/review_v122.py
+sleeves; Yellow: three pairs of slip-fit feet). Read-only on the reviews; fails unless every review passed: scripts/review_v122.py
 and review_brim.py, all three colours on both machines.
 
     /tmp/microduck-cad-venv/bin/python scripts/make_native_review.py
