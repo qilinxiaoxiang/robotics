@@ -12,3 +12,9 @@ Feet: V1.22 slip-fit feet, no anti-slip sole yet. Ankle zeros +-90 deg after the
 Timing onboard vs the Mac brain (10/18): servo sync read 8.5 vs 5.2 ms, loop 12.2 vs 5.7 ms, joint age used 12 vs 6 ms, IMU age used 21 vs 12.5 ms; 50 Hz held, 1-8 stale ticks per walk.
 - **1019f** (walk_t0_1019h): same walk on the floor again. Tripped forward at 1.2 s (tilt 13 -> 37 deg in 0.1 s), like the first walk.
 - **1019f** (walk_t0_1019i): walk61 0.25 m/s for_s 2 on a silicone mat. Clean: actions max 1.16 rad (10/18: 1.37-1.57), tilt at most 6.8 deg while stepping, 11.5 deg while stopping; stood afterwards. With grip the onboard brain walks as well as the Mac brain did, so the floor trips were the bare V1.22 feet slipping, not the A7Z latency.
+
+## 2026-10-20 early morning: A7Z resets (logs in `a7z-logs-20261020/`)
+
+- `duck_wired_log_1019m` and `duck_wired_log_1020a` are tick logs with 50 Hz round-robin servo input voltage (`servo_v`), fsynced every 50 ms. `thermal.log` is the 10 Hz SoC temperature and CPU frequency log; each `# boot` header starts a new boot.
+- Reset 4 (1020a, 04:23:40 UTC) came 0.24 s into stand61 at zero command. The servo rail read 7.1-7.3 V up to the last tick, so the shared input did not sag. The SoC was at 84-86 °C (kernel critical trip 110 °C) and throttled between 416 MHz and 1.5 GHz, with loop time 24-33 ms.
+- Open question: an A7Z 5 V dip under CPU load steps versus a board-level thermal reset. A 20 s full-CPU test with the servos untouched separates them; it has not been run yet.
