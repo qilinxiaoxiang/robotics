@@ -10,3 +10,5 @@ Feet: V1.22 slip-fit feet, no anti-slip sole yet. Ankle zeros +-90 deg after the
 - **1019f** (walk_t0_1019g): same walk on the floor. Walked 3 s and stopped standing. First 1.2 s matches 10/18 (actions mean 0.71, max 1.37, tilt 8.5 deg); later tilt reached 14.8 deg (10/18: at most 7) and actions 2.3 rad.
 
 Timing onboard vs the Mac brain (10/18): servo sync read 8.5 vs 5.2 ms, loop 12.2 vs 5.7 ms, joint age used 12 vs 6 ms, IMU age used 21 vs 12.5 ms; 50 Hz held, 1-8 stale ticks per walk.
+- **1019f** (walk_t0_1019h): same walk on the floor again. Tripped forward at 1.2 s (tilt 13 -> 37 deg in 0.1 s), like the first walk.
+- **1019f** (walk_t0_1019i): walk61 0.25 m/s for_s 2 on a silicone mat. Clean: actions max 1.16 rad (10/18: 1.37-1.57), tilt at most 6.8 deg while stepping, 11.5 deg while stopping; stood afterwards. With grip the onboard brain walks as well as the Mac brain did, so the floor trips were the bare V1.22 feet slipping, not the A7Z latency.
