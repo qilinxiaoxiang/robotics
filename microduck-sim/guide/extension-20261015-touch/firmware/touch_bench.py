@@ -62,7 +62,9 @@ def main() -> None:
     args = ap.parse_args()
 
     p = port()
-    ser = serial.Serial(p, 115200, timeout=0.2)
+    ser = serial.Serial()   # open with DTR and RTS low: on the S3 USB serial they reset the chip
+    ser.port, ser.baudrate, ser.timeout, ser.dtr, ser.rts = p, 115200, 0.2, False, False
+    ser.open()
     time.sleep(1.0)
     used = [PADS.index(n) for n in args.pads]
     result = {'port': p, 'wall': args.wall, 'pads': {}, 'time': time.strftime('%Y-%m-%dT%H:%M:%S%z')}
