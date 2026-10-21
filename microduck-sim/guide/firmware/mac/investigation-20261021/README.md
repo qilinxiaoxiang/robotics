@@ -21,5 +21,6 @@ in a note means that folder, and the outputs it names are copied here.
   training.
 - `findings-touch.md`, `touch-gesture/`: stroke versus pat recognition from the five head pads plus servo load; draft
   recorder, features and trainer, not yet run on the robot.
+- `findings-cooling.md`, `cooling/`: A7Z heat and resets (resets at 86 °C against a 110 °C trip, so a 5 V dip is the lead), loop slowdown with heat, heatsink gap, vent zones, face notches, Zero 2 W comparison.
 - `findings-sim2real.md`: the gap list, one real failure at a time into the sim.
 - `findings-pickup.md`: the four-step pickup roadmap and what each step still needs.
