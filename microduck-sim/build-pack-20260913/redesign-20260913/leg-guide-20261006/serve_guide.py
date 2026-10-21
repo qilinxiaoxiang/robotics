@@ -67,6 +67,7 @@ ALLOWLIST = {
     "/PARTS-SHEET-V1.22.html": "PARTS-SHEET-V1.22.html",
     "/PARTS-SHEET-V1.23.html": "PARTS-SHEET-V1.23.html",
     "/PARTS-SHEET-V1.24.html": "PARTS-SHEET-V1.24.html",
+    "/PARTS-SHEET-V1.25.html": "PARTS-SHEET-V1.25.html",
     "/sources/print-colors.json": "sources/print-colors.json",
     "/sources/motor-fasteners.json": "sources/motor-fasteners.json",
 }
