@@ -24,6 +24,7 @@ To request club parts, see the Discord `#i-want-this` channel.
 - Row 3: Diodes; Battery; 3A Buck; 5V/5A Buck
 - Row 4: Bluetooth; (unlabelled, modules); Buck-Boosts; Line Sensors
 - Row 5: Crystals; Fuses; Fuses; Seeeduino XIAO
+- Seeeduino XIAO drawer contents (opened 2026-10-20, IMG_7059): 1 XIAO ESP32-S3 (loose, no bag), 2 XIAO nRF52840 Sense (sealed, 102010469), 3 XIAO SAMD21 (sealed, 102010328), 2 XIAO RP2040 (in round cans), 1 more round can (closed, not identified).
 - Row 6: ESP8266; ESP32; Arduino Nano / Arduino Pro; Raspberry Pi Pico (RP2040)
 
 ## Cabinet D: 60-drawer, LEDs, transistors, passives (IMG_7051)
@@ -74,6 +75,9 @@ To request club parts, see the Discord `#i-want-this` channel.
 ## Cabinet I: small blue 13-drawer (IMG_7057)
 - 1x battery (two drawers, battery clips/springs), 1x straight headers, 2x straight pins, 1x6 wire header, 1x2 wire header, 1x10 wire header, 1x6 female pin headers, angled headers?, line-sensor holders?, servo mounts, breadboard holders, servo arms
 - Beside: box labelled "1x angled headers"
+
+## Reported, location not photographed
+- Copper foil tape (Shawn, 2026-10-20).
 
 ## Not yet photographed
 Other club shelves (tools, motors, filament, bins under the benches) are not in this list.
