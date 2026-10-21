@@ -12,15 +12,18 @@ fails if a MUST face on support has no written explanation.
   bearing and mating face clean. Elegoo: Orca's tree support reaches into the four d4.4 output-screw counterbores from the
   plate exterior (1.1 mm2 of the seat floors on the left, 9.7 mm2 on the right); pull the tips out with tweezers so the
   M2 x 4 heads sit flat.
-- **Inner halves:** the stock heel chamfer (55 mm2) on the bed, the shaft flat. `make_halves.py` gives the d15 pocket and
-  the d14 lip bore a 45 deg teardrop roof that points straight up in this pose, into the 11.7 mm thick toe-and-foot
-  corner. Pocket wall, capture lip and lip bore: 0 mm2 on support and 0 mm of support inside them on both machines. The
-  support stands under the foot-block arm (cosmetic). Bambu touches 0.8 mm2 of the cut face, which meets the other half
-  across a 0.2 mm gap.
-- **Brim:** the R1 brim (outer_only, 4 mm, gap 0.1). Outer rows carry `brimInsideHullAllowanceMm2` 5.0: Bambu loops
-  2.4 mm2 of brim into the stock notch on the gusset end face (cut it out with a blade), the same notch as the V1.22
-  bases. Inner rows carry `brimAlongSupportReason`: the arm's support stands on the bed beside the part and both slicers
-  brim it too, so the pipeline judges only the part's own brim (2.7 mm on Bambu, trimmed by the support; 4.5 mm on Elegoo).
+- **Inner halves (V1.25):** the toe end on the bed (left local +x down, right -x down), the outer halves' pose, with the
+  d15 pocket and d14 lip bore round. Shawn 2026-10-20 rejected the V1.24 teardrop roof and accepted support in the bore.
+  In this pose the bore's top is its heel side on the robot, so the support touches that band (pocket wall Bambu 11-13 mm2,
+  Elegoo 14-21 mm2; capture lip 1-4 mm2) and the weight side prints as a vertical wall. Elegoo also puts support tips in
+  the toe screw countersink (2.5-2.7 mm2); pick them out. The heel-chamfer pose would put the support scar on the bore's
+  toe-down side, which carries the weight and push-off.
+- **Inner halves (V1.24, superseded):** the stock heel chamfer on the bed with a 45 deg teardrop roof on the pocket,
+  no support inside it (`slices/*_inner/heel-down`).
+- **Brim:** V1.24 used the R1 brim (outer_only, 4 mm, gap 0.1), and one outer half came off the bed mid-print. V1.25
+  sets an 8 mm outer brim on every half in the release manifest. The halves standing on the gusset end face carry
+  `brimInsideHullAllowanceMm2` 5.0: Bambu loops about 2.4 mm2 of brim into the stock notch on that face (cut it out with a
+  blade).
 
 ## Method
 
@@ -36,7 +39,8 @@ outer MUST = motor mating face, four output seats, cut face; inner MUST = d15 po
 
 - Outer, -x down (left): 7.6 mm2 of support on the motor face (Bambu), 7.8 mm2 on the output seats (Elegoo).
 - Outer, +-z down: the motor face or the four seats face down onto support; -y down: no flat face under the foot block.
-- Inner, +-x down (before the teardrop roof): 11-21 mm2 of the pocket wall on support and 197-766 mm of support inside the pocket.
+- Inner, -x down (left): more support in the bore than +x (Bambu 276 mm, Elegoo 527 mm plus 354 mm in the lip bore).
+- Inner, heel chamfer down with a round bore: the support scar would sit on the bore's weight side.
 - Inner, -z down (cut face on the bed): the plate's inner face overhangs 15 mm and its support fills the pocket (869 mm inside, the whole capture lip on support).
 - Inner, exterior down: the 1.2 mm lip ring stands proud of the 7 deg exterior, so no flat face is lowest.
 - Teardrop roofs on the outer half's output holes: on the hole beside the shaft the roof would point at the d5 centre

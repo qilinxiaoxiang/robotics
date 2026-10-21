@@ -455,6 +455,30 @@ INCREMENTAL_NOTES_BY_VERSION['V1.24'] = dict(
     ankle_inner_left='The inner half of the left ankle, on the face towards the other leg: the plate with the sleeve pocket and the other half of the foot block. Slide it along the shaft, away from the centre line, onto the sleeve until it meets the outer half; then slide the foot on and drive the toe M2 x 6. It prints on its heel corner with the round sleeve pocket free of support (the pocket has a pointed top for that); break the support off under the foot block.',
     ankle_inner_right='The inner half of the right ankle. Same as the left, mirrored.')
 
+# V1.25: the V1.24 plate again with round sleeve bores (Shawn 2026-10-20 on the printed V1.24: the pointed top of the inner
+# half's sleeve pocket is not wanted; keep the bore round and let support stand in it). The inner halves now stand on their
+# toe end like the outer halves, so the support touches the heel side of the bore, never the side that carries the weight.
+# Every half gets an 8 mm brim (one V1.24 outer half came off the bed with the 4 mm brim). release-V1.25/retired/ holds the
+# V1.24 inner-half meshes; the V1.24 outer halves are the same part as V1.25's.
+RETIRED_INCREMENTAL['V1.25'] = [
+    ('Left ankle inner half (V1.24 print)', 'Orange', HERE / 'release-V1.25' / 'retired' / 'ankle_inner_left-V1.24.stl',
+     'Its sleeve pocket has a pointed top instead of a round bore.', 'Left ankle inner half'),
+    ('Right ankle inner half (V1.24 print)', 'Orange', HERE / 'release-V1.25' / 'retired' / 'ankle_inner_right-V1.24.stl',
+     'Same pointed pocket as the left.', 'Right ankle inner half'),
+]
+INTRO_BY_VERSION['V1.25'] = ('V1.25 is the V1.24 orange plate again with a round sleeve bore in both inner halves. Support stands inside '
+                             'the bore while it prints; it sits on the heel side of the bore, away from the side that carries the '
+                             'robot. The outer halves are the same as in V1.24; a good printed V1.24 outer half can be used instead '
+                             'of a new one. Every half has a wider brim (8 mm) so the tall parts stay on the bed.')
+RETIRED_LEAD_BY_VERSION['V1.25'] = ('If a V1.24 inner half is already fitted: foot off (toe screw out, foot slid down), then slide the inner '
+                                    'half off along the shaft towards the centre line. Keep the sleeve, the foot and the screw.')
+RETIRED_HEADING_BY_VERSION['V1.25'] = 'Replace these'
+INCREMENTAL_NAMES_BY_VERSION['V1.25'] = dict(INCREMENTAL_NAMES_BY_VERSION['V1.24'])
+INCREMENTAL_NOTES_BY_VERSION['V1.25'] = dict(
+    INCREMENTAL_NOTES_BY_VERSION['V1.24'],
+    ankle_outer_left=INCREMENTAL_NOTES_BY_VERSION['V1.24']['ankle_outer_left'] + ' Peel the 8 mm brim off all round.',
+    ankle_inner_left='The inner half of the left ankle, on the face towards the other leg: the plate with the round sleeve bore and the other half of the foot block. Slide it along the shaft, away from the centre line, onto the sleeve until it meets the outer half; then slide the foot on and drive the toe M2 x 6. It prints standing on its toe end with support inside the bore: break the support out, then scrape the bore and the flat lip face inside it smooth until the black sleeve turns freely in it. Peel the 8 mm brim off and cut the thin brim strip out of the small notch on the end face that stood on the bed; on an Elegoo print also pick the support tips out of the toe screw countersink.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

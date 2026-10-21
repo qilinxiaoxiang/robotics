@@ -1,4 +1,4 @@
-# Two-half ankle (release 2026-10-20, V1.24)
+# Two-half ankle (release 2026-10-20, V1.24; round sleeve bore in V1.25)
 
 Shawn, 2026-10-20, on the printed V1.22 split ankle: the base and side look fragile, their supports must be removed with
 care, and the two pairs of screw posts catch the servo wire. He never fitted the two M2 x 8 side screws and the ankle
@@ -10,10 +10,9 @@ new screw, post, tab or slot.
 - **Inner half:** the stock bracket for local z > -15.9. It is the plate whose d15 pocket runs on the V1.22 black
   sleeve, and the other half of the foot block. It replaces the V1.22 side.
   - The sleeve lip is raised to 1.2 mm, as in V1.22.
-  - The pocket and lip bore have a 45 deg teardrop roof, so the half prints on its heel chamfer with no support in the
-    pocket. On the robot the roof points toward the toe, 30 deg below horizontal, and spans from 75 deg below to 15 deg
-    above horizontal on the toe side; straight down, under the robot's weight, the bore stays round. The two roof flats
-    are tangent to the d15 bore, so the 14.6 mm sleeve can move 0.28 mm toward the roof tip against 0.20 mm elsewhere.
+  - The d15 pocket and the d14 lip bore are round, as on the stock bracket. V1.24 gave them a 45 deg teardrop roof so the
+    half could print without support in the pocket; Shawn rejected it on the printed part (2026-10-20). The half now prints
+    standing on its toe end with support inside the bore, on the bore's heel side; the weight side prints as a clean wall.
 - **What holds them:**
   - The V1.22 slip-fit foot slides over both foot-block halves; its end walls keep the halves from moving apart.
   - The toe M2 x 6 TAP sits on the cut (the stock toe screw axis, local x 17.5, z -16), and its countersunk head bears
@@ -28,7 +27,7 @@ These checks run against the audit solids of the current guide world (lower link
 V1.22 sleeve.
 
 - **Seated:** no overlap. The right outer half keeps the stock bracket's 0.137 mm3, 0.001 mm source slab against the servo.
-- **Envelope:** the only new material outside the stock bracket is the lip ring (40 mm3). The teardrop removes 49 mm3.
+- **Envelope:** the only new material outside the stock bracket is the lip ring (40 mm3).
 - **Foot seat:** the same as on the stock bracket.
   - Play: left 0.15/0.18 mm along x, 0.15/0.19 mm along z.
   - Drop contact: 24.78 mm3, against 24.83 mm3 on the stock bracket.
@@ -47,5 +46,7 @@ checks its approach paths.
 
 ## Print poses and release
 
-The print poses are in `poses/poses.md` and `poses/poses.json`. `release-V1.24/scripts/make_manifest.py` reads them.
-The release is one Orange plate with the four halves (`guide/print/release-V1.24/`).
+The print poses are in `poses/poses.md` and `poses/poses.json`; the release scripts read them. All four halves stand on
+their toe end (the gusset end face), 36.5 mm tall. V1.24 (one Orange plate, `guide/print/release-V1.24/`) printed the
+teardrop inner halves on their heel chamfer, and one of its outer halves came off the bed with the 4 mm brim. V1.25
+(`guide/print/release-V1.25/`) is the same plate with round bores and an 8 mm brim on every half.

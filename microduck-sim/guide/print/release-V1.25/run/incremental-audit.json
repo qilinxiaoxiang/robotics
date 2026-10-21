@@ -1,0 +1,338 @@
+{
+  "version": "V1.25",
+  "status": "RELEASED",
+  "baselinePrintedStockInstances": 89,
+  "partTypes": 4,
+  "printQuantity": 4,
+  "reprintUnchangedStockQuantity": 0,
+  "manifest": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.25/manifest-V1.25.json",
+    "sha256": "3e6679efaef137977d468a6e04a1f7a5e2aaacfa21f05bc3065c4f663184e6a3"
+  },
+  "parts": [
+    {
+      "key": "ankle_outer_left",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-outer-local.stl",
+        "sha256": "642ba2d62c49be5207df55368de20adf23224ca8b6f3c793c16523b712cac8e8"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "20"
+      ],
+      "changeReason": "Replaces the printed community-66.stl (stock object 20, the left one-piece ankle bracket) together with ankle_inner_left; it also replaces the V1.22 ankle base. Shawn 2026-10-20: the V1.22 base and side look fragile, need careful support removal, and their two pairs of screw posts catch the servo wire. This is the stock bracket for local z < -16.1 (the cut at the toe screw axis, set back 0.1 mm): the plate on the servo horn with the four M2 x 4 seats as before and half of the foot block. The link-servo-sleeve package sits straight down into it (halves-check.json packageLiftOutOfOuterClearMm 30). The V1.22 slip-fit foot seats on both halves exactly as on the stock bracket (footSeat play, drop contact) and holds them together.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "a1a1dfde26722ba26081c7ce27ba4fc639767c4f62617d60439a88f8fa6595b2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          25.97703456878662
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 41.32015106220206,
+      "bounds": [
+        [
+          -9.877034187316895,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.877034187316895,
+          12.749000549316406,
+          36.49800109863281
+        ]
+      ],
+      "vertexCount": 2090,
+      "triangleCount": 4196,
+      "tipAngleDeg": 2.43,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "8",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "manifest: Every half stands 36.5 mm tall on a 41 mm2 end face; one V1.24 outer half in this pose came off the bed mid-print with the R1 4 mm brim (2026-10-20), and Bambu advises a wider brim for a taller part on a smaller footprint (orientation-study/PRINT-ORIENTATION-PRACTICE.md R1). 8 mm outer brim, 0.1 mm gap.",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.13,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0502,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.6,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_inner_left",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/left-inner-local.stl",
+        "sha256": "8e17b0fda506233ab198867a195efd224d7ded440491d6dcec00964365bf8451"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "New part, with ankle_outer_left replacing the printed community-66.stl (stock object 20); it also replaces the V1.22 ankle side. The stock bracket for local z > -15.9: the plate whose pocket runs on the 10.4 mm V1.22 sleeve, with its sleeve lip raised from 0.25-0.5 mm to 1.2 mm, the d15 pocket and d14 lip bore round as on the stock bracket (V1.24 had a 45 deg teardrop roof; Shawn 2026-10-20 wants the bore round with support in it), and the other half of the foot block. It prints on its toe end with support inside the bore on its heel side. It slides along the shaft onto the sleeve (innerOffAlongShaftClearMm 24.0); the foot socket captures it (1 mm apart overlaps the foot by 107.027 mm3) and the toe M2 x 6, on the cut, holds it down. No screw, post or tab of its own.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "a1a1dfde26722ba26081c7ce27ba4fc639767c4f62617d60439a88f8fa6595b2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          6.13203489780426
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 40.81490392189153,
+      "bounds": [
+        [
+          -9.767964720726013,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.767964720726013,
+          12.749000549316406,
+          36.5
+        ]
+      ],
+      "vertexCount": 1219,
+      "triangleCount": 2438,
+      "tipAngleDeg": 1.82,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "8",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "manifest: Every half stands 36.5 mm tall on a 41 mm2 end face; one V1.24 outer half in this pose came off the bed mid-print with the R1 4 mm brim (2026-10-20), and Bambu advises a wider brim for a taller part on a smaller footprint (orientation-study/PRINT-ORIENTATION-PRACTICE.md R1). 8 mm outer brim, 0.1 mm gap.",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the inner half keeps the other part of it on the same end face. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.081,
+        "samples": 54637,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.15,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_outer_right",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-outer-local.stl",
+        "sha256": "a1e9f91fd25d766f41206ca1c2886f853e76f8bda0f2ac96b2bac64bd0842af4"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "22"
+      ],
+      "changeReason": "Replaces the printed community-64.stl (stock object 22, the right one-piece ankle bracket) together with ankle_inner_right; it also replaces the V1.22 ankle base. Shawn 2026-10-20: the V1.22 base and side look fragile, need careful support removal, and their two pairs of screw posts catch the servo wire. This is the stock bracket for local z < -16.1 (the cut at the toe screw axis, set back 0.1 mm): the plate on the servo horn with the four M2 x 4 seats as before and half of the foot block. The link-servo-sleeve package sits straight down into it (halves-check.json packageLiftOutOfOuterClearMm 30). The V1.22 slip-fit foot seats on both halves exactly as on the stock bracket (footSeat play, drop contact) and holds them together.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "a1a1dfde26722ba26081c7ce27ba4fc639767c4f62617d60439a88f8fa6595b2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -25.976534843444824
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 41.32387458388985,
+      "bounds": [
+        [
+          -9.876534461975098,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.876534461975098,
+          12.749000549316406,
+          36.5
+        ]
+      ],
+      "vertexCount": 2090,
+      "triangleCount": 4196,
+      "tipAngleDeg": 2.43,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "8",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "manifest: Every half stands 36.5 mm tall on a 41 mm2 end face; one V1.24 outer half in this pose came off the bed mid-print with the R1 4 mm brim (2026-10-20), and Bambu advises a wider brim for a taller part on a smaller footprint (orientation-study/PRINT-ORIENTATION-PRACTICE.md R1). 8 mm outer brim, 0.1 mm gap.",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the outer half keeps part of it. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline on both outer halves, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.113,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.0502,
+        "regions": [],
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.8,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "ankle_inner_right",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/STL/right-inner-local.stl",
+        "sha256": "ce63dc5ca9f13bb6c746a7f9ff5aa7ca9a0d1914355d6db86b57f48bd98bf0b1"
+      },
+      "quantity": 1,
+      "color": "Orange",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "New part, with ankle_outer_right replacing the printed community-64.stl (stock object 22); it also replaces the V1.22 ankle side. The stock bracket for local z > -15.9: the plate whose pocket runs on the 10.4 mm V1.22 sleeve, with its sleeve lip raised from 0.25-0.5 mm to 1.2 mm, the d15 pocket and d14 lip bore round as on the stock bracket (V1.24 had a 45 deg teardrop roof; Shawn 2026-10-20 wants the bore round with support in it), and the other half of the foot block. It prints on its toe end with support inside the bore on its heel side. It slides along the shaft onto the sleeve (innerOffAlongShaftClearMm 24.0); the foot socket captures it (1 mm apart overlaps the foot by 108.622 mm3) and the toe M2 x 6, on the cut, holds it down. No screw, post or tab of its own.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/ankle-halves-20261020/halves-check.json",
+        "sha256": "a1a1dfde26722ba26081c7ce27ba4fc639767c4f62617d60439a88f8fa6595b2"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -6.132534623146057
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          3.5500030517578125
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          21.8367919921875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -0.0,
+      "flatContactAreaMm2": 40.813683795284305,
+      "bounds": [
+        [
+          -9.767464995384216,
+          -12.749000549316406,
+          0.0
+        ],
+        [
+          9.767464995384216,
+          12.749000549316406,
+          36.49800109863281
+        ]
+      ],
+      "vertexCount": 1415,
+      "triangleCount": 2830,
+      "tipAngleDeg": 1.82,
+      "objectSettings": {
+        "brim_type": "outer_only",
+        "brim_width": "8",
+        "brim_object_gap": "0.1"
+      },
+      "objectSettingsSource": "manifest: Every half stands 36.5 mm tall on a 41 mm2 end face; one V1.24 outer half in this pose came off the bed mid-print with the R1 4 mm brim (2026-10-20), and Bambu advises a wider brim for a taller part on a smaller footprint (orientation-study/PRINT-ORIENTATION-PRACTICE.md R1). 8 mm outer brim, 0.1 mm gap.",
+      "brimInsideHullAllowanceMm2": 5.0,
+      "brimInsideHullAllowanceReason": "The gusset end face on the bed carries the real 12 x 1.1 mm recess of the stock bracket (community-66/64 notch beside the gusset hole); the inner half keeps the other part of it on the same end face. Bambu Studio loops the 4 mm outer brim into it: 2.4 mm2 inside the convex outline, a strip bonded on three sides, cut it out with a blade. Orca puts support feet there instead. Same notch as the V1.22 bases (13.3 mm2 there). Not an opening filled with brim.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.2,
+        "samples": 54634,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
+    }
+  ]
+}

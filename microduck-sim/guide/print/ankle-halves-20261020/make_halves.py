@@ -4,9 +4,9 @@ careful support removal, and whose posts caught the servo wire; Shawn never fitt
 
   outer half  the stock bracket for local z < CUT: the plate on the servo horn (four M2 x 4 as before) and half the foot block
   inner half  the stock bracket for local z > CUT: the plate whose pocket runs on the 10.4 mm V1.22 sleeve, and the other
-              half of the foot block; its sleeve lip raised to 1.2 mm as in V1.22 (LIP_*); the pocket and the lip bore get a
-              45 deg teardrop roof (TEAR_*) toward the thick toe-and-foot corner, so the inner half prints on its heel chamfer
-              (the 54 mm2 stock face at 150 deg round the shaft) with the pocket roof self-supporting
+              half of the foot block; its sleeve lip raised to 1.2 mm as in V1.22 (LIP_*). The d15 pocket and the d14 lip bore
+              stay round (Shawn 2026-10-20 on the printed V1.24 teardrop: round bore, support in the hole); the print pose
+              stands the half on its toe or heel end so the support lands on the side of the bore, never on its weight side
 
 Local frame (the ankle-redesign-20261007 frame): local z is the motor shaft, local y is up, the foot is below. CUT = -16.0
 is the axis of the stock toe screw hole (x 17.5, z -16.0), so the toe M2 x 6 TAP sits on the cut and its countersunk head
@@ -48,14 +48,6 @@ CUT_GAP = 0.1        # each cut face set back this far (0.2 mm between the halve
 # V1.22 lip (ankle-redesign-20261007/generate_candidate.py): the stock sleeve lip is 0.25-0.5 mm thick; raised to z 2.7
 # over r 7.05-9.15 wherever the inner half exists; its lower face, the sleeve's axial stop at z 1.5, does not move.
 LIP_R_IN, LIP_R_OUT, LIP_Z0, LIP_TOP = 7.05, 9.15, 1.5, 2.7
-# Teardrop roof: the print pose puts the stock heel chamfer (unit normal HEEL_N in the left frame, mirrored in x on the
-# right) on the bed, so the shaft lies flat and -HEEL_N points up. The d15 pocket (z -1.3..1.5) and the d14 lip bore
-# (z 1.5..LIP_TOP and through the exterior) gain the 45 deg triangle between their circle and the point r * sqrt(2) along -HEEL_N.
-# Material there: 11.7 mm from the pocket at 330 deg, at least 2.2 mm left at the triangle's edges (0 and 285 deg); the
-# roof points toward the toe 30 deg below horizontal on the robot (span 75 deg below to 15 deg above); straight down stays round.
-HEEL_N = (-0.8700, 0.4930)
-TEAR_POCKET = (7.5, -2.0, LIP_Z0)          # radius, z0, z1 (z1 = the lip underside: the sleeve's axial stop stays flat)
-TEAR_BORE = (LIP_R_IN, LIP_Z0, 4.5)
 TOE = (17.5, CUT)    # toe screw axis (x, z) of the left ankle, vertical (local y); the right frame mirrors local x
 SIDES = dict(left=dict(sign=1, ankle='ankle', lower='lower', motor='motor6', washer='washer6', foot='foot'),
              right=dict(sign=-1, ankle='right_ankle', lower='right_lower', motor='motor1', washer='washer1', foot='right_foot'))
@@ -97,14 +89,6 @@ def cyl(r, z0, z1):
     return mf.Manifold.cylinder(z1 - z0, r, r, 96).translate([0, 0, z0])
 
 
-def tear(sign, r, z0, z1):
-    """The 45 deg roof triangle of a bore of radius r round the shaft, pointing along -HEEL_N (mirrored on the right)."""
-    u = -np.array([sign * HEEL_N[0], HEEL_N[1]]); u /= np.linalg.norm(u)
-    rot = lambda a: np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]]) @ u
-    pts = [(r - 0.02) * rot(-np.pi / 4), r * np.sqrt(2) * u, (r - 0.02) * rot(np.pi / 4), 0.5 * r * u]   # counter-clockwise
-    return mf.CrossSection([np.array(pts, float)]).extrude(z1 - z0).translate([0, 0, z0])
-
-
 def single(a, key):
     cs = [c for c in a.decompose() if c.volume() > 1e-5]; assert len(cs) == 1, (key, [c.volume() for c in a.decompose()]); return cs[0]
 
@@ -141,15 +125,13 @@ def toe_seat(m, x, z):
 
 def main():
     out = dict(cut=dict(localZ=CUT, gapPerFaceMm=CUT_GAP, toeScrewAxisLocalXZ=list(TOE)), lip=dict(rIn=LIP_R_IN, rOut=LIP_R_OUT, z0=LIP_Z0, top=LIP_TOP),
-               teardrop=dict(heelNormalLeft=list(HEEL_N), pocket=list(TEAR_POCKET), bore=list(TEAR_BORE)),
                sleeve=str(AR / 'STL' / '{side}-sleeve-local.stl'), toleranceMm3=TOL, sides={})
     for side, K in SIDES.items():
         T = frame(K['sign']); old = stock_local(K['ankle'], T)
         outer = single(old ^ box_z(-100, CUT - CUT_GAP), f'{side}-outer')
         inner = old ^ box_z(CUT + CUT_GAP, 100)
         lip = (cyl(LIP_R_OUT, LIP_Z0, LIP_TOP) - cyl(LIP_R_IN, LIP_Z0 - 1, LIP_TOP + 1)) ^ inner.project().extrude(LIP_TOP - LIP_Z0).translate([0, 0, LIP_Z0])
-        roof = tear(K['sign'], *TEAR_POCKET) + tear(K['sign'], *TEAR_BORE)
-        inner = single(((inner + lip) - roof).simplify(1e-4), f'{side}-inner')
+        inner = single((inner + lip).simplify(1e-4), f'{side}-inner')
         halves = dict(outer=outer, inner=inner); r = dict(files={})
         for name, a in halves.items():
             m = tm(a); assert m.is_watertight and m.is_winding_consistent and (m.area_faces > 1e-9).all(), (side, name)
@@ -163,11 +145,7 @@ def main():
         r['stockVolumeMm3'] = vol(old)
         r['seated'] = {f'{h}-{k}': vol(H ^ o) for h, H in halves.items() for k, o in S.items()}
         r['seatedNote'] = 'the right outer half keeps the 0.137 mm3, 0.001 mm thick source mating-face slab against the servo that the stock bracket has'
-        r['envelope'] = dict(newMaterialOutsideStockMm3=vol(both - old), lipRingMm3=vol(lip - old), stockRemovedMm3=vol(old - both),
-                             teardropRemovedMm3=vol((old + lip) ^ roof))
-        hm = tm(old); c = hm.facets_normal; sel = [i for i in range(len(c)) if c[i] @ [K['sign'] * HEEL_N[0], HEEL_N[1], 0] > 0.999]
-        r['heelChamfer'] = dict(areaMm2=round(float(max(hm.facets_area[i] for i in sel)), 1) if sel else 0.0)
-        assert r['heelChamfer']['areaMm2'] > 50, (side, r['heelChamfer'])
+        r['envelope'] = dict(newMaterialOutsideStockMm3=vol(both - old), lipRingMm3=vol(lip - old), stockRemovedMm3=vol(old - both))
         # foot seat against the stock bracket
         seat = {}
         for nm, b in (('halves', both), ('stock', old)):
