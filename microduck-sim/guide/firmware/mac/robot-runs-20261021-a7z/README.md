@@ -13,7 +13,7 @@
 - In the as-built sim, `brain_sim_check.py --bam-friction-scale 3.0` (a proxy for the measured weak servo response, not a measurement) gives the same signature: "seated" declared, trunk height unchanged. `--kp-rl 300/400` and `--breakaway` do not restore the sit there.
 - The first sit was ended 4.0 s after it began by an explicit zero walk command (the page's sit/stand toggle pressed again, or the closed-loop stand key).
 
-Analysis, patch (a `sit: STALLED` notice when the knees have not folded at the seated phase) and the acceptance procedure for the next powered session: `~/code/reports/20261021-microduck-sit-button.html`. The patch is not applied.
+Analysis, patch (a `sit: STALLED` notice when the knees have not folded at the seated phase) and the acceptance procedure for the next powered session: `~/code/reports/20261021-microduck-sit-button.html`. The notice is in `walk_brain.py` (`SIT_KNEE_MIN`, test `test_sit_stall.py`) and reaches the robot with the next install.
 
 ## Stands
 

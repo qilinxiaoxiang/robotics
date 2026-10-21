@@ -257,19 +257,26 @@ QUACK_S = 0.4
 # Random head move per quack on stand61, as deltas from the policy default, model rad:
 # one of the QUACK_HEAD styles, each joint's magnitude drawn from its range, with a random sign where the range is
 # unsigned (a pair) and the given sign where it is (lo, hi, sign); head_pitch negative looks up (pickup.py looks down
-# with +0.8). All well inside the trained +-1.10 / +-1.40 / +-0.31 (walk_brain.HEAD_RANGE). The move is
-# gentle so stand61 never gets a jolt: the target follows a raised cosine up over QUACK_HEAD_RAMP_S, holds, and comes
-# back the same way, and the Brain's own head EMA smooths it further. The as-built sim held stand61, walk61 at rest
-# and the seated sitstand61 through every style at its largest size at the real condition (brain_sim_check.py
-# --quack-at with --quack-roll/--quack-yaw/--quack-pitch).
+# with +0.8). All well inside the trained +-1.10 / +-1.40 / +-0.31 (walk_brain.HEAD_RANGE). The move spans the call:
+# the calls are 0.12-0.40 s long (48 simulator chirps, median 0.20 s), so the target follows a raised cosine up over
+# QUACK_HEAD_RAMP_S, holds, and is back QUACK_HEAD_S after the quack; the Brain's head EMA (0.2 per tick, Pollen's
+# runtime value) adds about 0.1 s. The policies were trained on head commands that step to a new value every 2-5 s
+# (microduck_velocity_env_cfg.py, UniformPoseCommand holds between resamples), so one move per quack is inside the
+# trained command distribution; the ramp stays for the seated case, where Pollen saw abrupt head moves tip the real
+# duck backward (microduck_sitstand_env_cfg.py). Plugged as-built sim at 7.0 V and 4 % dropped reads (2026-10-21,
+# ~/code/reports/20261021-microduck-quack-head-balance.html): this profile, the earlier 1.6 s / 0.5 s ramp and a
+# plain 0.5 s step all keep the trunk tilt within 0.12 deg of rest on stand61, walk61 at rest and seated, no fall;
+# the head passes half the commanded tilt 0.26-0.38 s after the quack (0.48-0.58 s with the 1.6 s profile). A quack
+# inside a running move restarts it: the head dips 0.04-0.06 rad toward the start and rises again, no fall.
 QUACK_HEAD = ({"head_roll": (0.08, 0.18), "head_yaw": (0.0, 0.25)},       # tilt
               {"head_pitch": (0.15, 0.30, -1), "head_roll": (0.0, 0.10)})  # look up
-QUACK_HEAD_S = 1.6
-QUACK_HEAD_RAMP_S = 0.5
+QUACK_HEAD_S = 0.6
+QUACK_HEAD_RAMP_S = 0.15
 QUACK_REST_S = 2.0  # walk61 after stepping: a zero command held this long has brought the stride to rest
 # Seated (sitstand61): share of the move. Pollen trained the seated head on small slow commands and saw fast head
-# jerks tip a seated duck backward; this move is slow. Plugged as-built sim at 7.0 V and 4 % dropped reads, 3 seeds,
-# all three styles at full size: head reaches 0.22-0.27 rad, seated tilt moves at most 1.7 deg, no fall (2026-10-21).
+# jerks tip a seated duck backward; this move is ramped. Plugged as-built sim at 7.0 V and 4 % dropped reads, 3 seeds,
+# all three styles at full size with the 1.6 s profile: head reaches 0.22-0.27 rad, seated tilt moves at most 1.7 deg,
+# no fall; the 0.6 s profile moves the seated tilt 0.06 deg (2026-10-21).
 QUACK_SIT_SCALE = 1.0
 
 

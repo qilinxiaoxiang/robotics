@@ -327,7 +327,8 @@ class Teleop(unittest.TestCase):
         self.assertEqual(share[0], 0.0)
         self.assertEqual(share[-1], 0.0)
         self.assertAlmostEqual(max(share), 1.0)
-        self.assertLess(max(abs(b - a) for a, b in zip(share, share[1:])), 0.07)  # no step larger than 7 % per tick
+        # raised cosine: the steepest tick moves pi/2 * 0.02 / QUACK_HEAD_RAMP_S of the move, never a step
+        self.assertLess(max(abs(b - a) for a, b in zip(share, share[1:])), math.pi / 2 * 0.02 / ww.QUACK_HEAD_RAMP_S + 0.01)
 
     def test_quack_head_moves_wherever_a_policy_rebalances(self):
         # 2026-10-21: quacks while seated and after a walk left the head still; only stand61 had the move
