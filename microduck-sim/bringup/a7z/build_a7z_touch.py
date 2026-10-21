@@ -12,6 +12,7 @@ from pathlib import Path
 
 import build_a7z_pages as B
 import photos as P
+import touch_bench as TB
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / 'A7Z-TOUCH.html'
@@ -59,7 +60,8 @@ LEGEND_XIAO = ([('land', n, f'{p} → 铜箔 {n}') for n, p, _, _ in PADS]
                + [('land', 'X', 'VBUS（5 V）：不焊。D6、D7、D9、D10 也空着。')])
 
 # ---------------------------------------------------------------- drawings
-SVG_HEAD = '<svg viewBox="0 0 {w} {h}" width="100%" role="img" aria-label="{a}"><style>text{{font:21px "PingFang SC","Hiragino Sans GB",system-ui,sans-serif;fill:#1b1b1b}}.s{{font-size:17px;fill:#4a5a63}}.b{{font-weight:700}}</style><rect width="{w}" height="{h}" fill="#fff"/>'
+# The <style> of an inline SVG applies to the whole page, so it is scoped to .fig (the wiring view has its own text).
+SVG_HEAD = '<svg class="fig" viewBox="0 0 {w} {h}" width="100%" role="img" aria-label="{a}"><style>.fig text{{font:21px "PingFang SC","Hiragino Sans GB",system-ui,sans-serif;fill:#1b1b1b}}.fig .s{{font-size:17px;fill:#4a5a63}}.fig .b{{font-weight:700}}</style><rect width="{w}" height="{h}" fill="#fff"/>'
 
 
 def svg_parts():
@@ -183,7 +185,8 @@ S_CAP = B.step('cap', '第 5 步', '贴进头盖', '5 块铜箔和 XIAO 贴好�
 <div class="warn">铜箔不碰铜箔、螺丝头、喇叭压圈、功放。</div>''')
 
 S_PLUG = B.step('plug', '第 6 步', '插 A7Z', '4 个插头插在 17、25、29、31 号针上。', f'''
-{B.figure(B.uri(P.Image.open(P.HERE / 'diagrams' / 'touch_wiring.png'), 1100), '接线图：XIAO 四根线到 A7Z', '红 3V3 → 17，黑 GND → 25，蓝 D5 → 29，绿 D4 → 31。示意图：焊盘的真实位置看第 3 步的照片。', cls='mid')}
+<div style="margin:10px 0">{TB.html()}</div>
+<p style="font-size:15px;color:var(--muted);margin:0 2px 10px">红 3V3 → 17，黑 GND → 25，蓝 D5 → 29，绿 D4 → 31。点“逐根接线”一根一根看；XIAO 在图里转了半圈；蓝线和绿线交叉一次，头里的线也是这样交叉的。</p>
 {B.figure(B.IMG_TOUCH, 'A7Z 正面：17、25、29、31 号针', 'A7Z 上的 4 根针，都在里排。详细做法：<a href="A7Z-PINS.html#touch">插线页第 7 步</a>。', cls='narrow')}
 <div class="warn">红线（3V3）绝不插 2 号或 4 号针（5 V）。</div>''')
 
