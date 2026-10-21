@@ -18,14 +18,18 @@ from `microduck-sim/CURRENT-STATE.json`; the logs are `../../robot-runs-20261019
   actions to 0.003 rad; smoothing any one observation block (gyro, gravity, joint position, joint velocity) leaves
   92-101 % of the fast action. The oscillation is the whole loop, policy plus body.
 - **The body rocks with every leg encoder frozen.** `stand_check.py`, open-loop stand, 1 s windows in which all ten leg
-  encoders stay within 3 ticks: trunk pitch range p90 0.06 deg over 422 windows on 10/19, p90 3.9 deg and up to 8.2 deg
-  on 10/21. Something between the servo outputs and the floor moves several degrees without any encoder seeing it.
-- **What changed between the two days at the ankle.** The 10/19 runs used the stock one-piece orange ankle brackets. On
-  10/20 the ankles became the V1.22 split ankle, whose inner side is pulled onto the base by two M2 x 8 that were never
-  fitted (`guide/print/ankle-halves-20261020/README.md`: "He never fitted the two M2 x 8 side screws"), or the V1.24/V1.25
-  two-half ankle, whose halves are held only by the slip-fit foot and the toe screw. Its new sleeve runs in its pocket
-  with about 0.4 mm diametral clearance by design (`guide/print/ankle-split-20261019/README.md`). Inner-tube soles were
-  also added. Which ankle version is on the robot now is not recorded in this repo.
+  encoders stay within 3 ticks and the trunk leans less than 8 deg (past that the foot rocks on its toe on both days):
+  trunk pitch range median 0.00, p90 0.06 deg over 421 windows on 10/19; median 1.0, p90 2.2, up to 3.3 deg over 20
+  windows on 10/21. Roll in the same windows: p90 0.06 deg on 10/19, median 0.2 and p90 0.8 deg on 10/21, so the motion
+  is mostly about the ankle (pitch) axis, which a uniformly soft sole would not single out. Something between the servo
+  outputs and the floor turns about the ankle axis without any encoder seeing it.
+- **What changed between the two days at the ankle.** Both days ran the V1.22 slip-fit feet with the toe M2 x 6
+  (`../../robot-runs-20261019-a7z/README.md`: "Feet: V1.22 slip-fit feet"). The 10/19 runs used the stock one-piece
+  orange ankle brackets. On the robot now (Shawn, 2026-10-21) is the V1.24/V1.25 two-half ankle: the stock bracket cut at
+  mid shaft, the outer half on the servo horn, the inner half on the V1.22 sleeve, and the two halves held together only
+  by the slip-fit foot (0.15-0.19 mm free travel by design) and the countersunk head of the toe screw (5.5 mm2 on each
+  half) (`guide/print/ankle-halves-20261020/README.md`). The cut bracket is the only ankle change between a quiet stand
+  and the failing one. Whether anti-slip soles were on during the 10/21 runs is not recorded.
 
 ## Sim reproduction (`brain_sim_check.py`, as-built model, CURRENT-STATE rail and read drops, seed 0)
 
@@ -52,11 +56,16 @@ The +-8 deg and x3 are fitted proxies, not measurements: the threshold for the o
 
 ## What to do, and the check
 
-1. Robot off: on each leg hold the lower leg (shin and ankle servo) in one hand and the foot in the other. With torque
-   off the ankle turns about its axis through the gearbox with resistance; the foot must not move against the orange
-   bracket, and the bracket must not move against the servo horn. Any free travel or click there is the play. Fit the
-   two M2 x 8 side screws of the V1.22 split ankle (or, on the two-half ankle, refit the stock one-piece bracket that held
-   on 10/19), tighten the four M2 x 4 output screws and the toe M2 x 6.
+1. Robot off: on each leg hold the lower leg (shin and ankle servo) in one hand and the yellow foot in the other and
+   rock the foot gently toe up and toe down. With torque off the ankle turns through the gearbox with even resistance;
+   free travel or a click before that resistance is the play. Watch three seams: the cut between the two orange halves,
+   the orange block inside the yellow foot (heel end and toe end), and the outer orange half on the servo horn.
+   - Outer half moving on the horn: tighten the four M2 x 4 output screws.
+   - Halves moving against each other or in the foot: the two-half ankle has nothing else holding it. The repair with
+     evidence behind it is the stock one-piece bracket (10/19: quiet stand, quiet stand61) with the V1.22 sleeve,
+     slip-fit foot and toe M2 x 6. Keeping the halves needs a new joint between them, which is a print change: its
+     connection method goes to Shawn as a picture before any CAD.
+   - Tighten the toe M2 x 6 in either case.
 2. Next powered session, same procedure as 10/21 (open-loop stand at least 30 s, then stand61 at zero command at least
    10 s), then on the Mac: `python3 investigation-20261021/policy-churn/stand_check.py <copied tick log>`. PASS on both
    lines means the stand is back to the 10/19 state (it passes 1019f and fails app1021-040436).

@@ -2,9 +2,11 @@
 
 Reads one walk_wired tick log (robot or brain_sim_check --tick-log) and prints two verdicts:
 
-1. Open-loop stand (mode stand, KP 400): 1 s windows in which all ten leg encoders stay within 3 ticks; the trunk pitch
-   range inside each. 2026-10-19 (stock one-piece ankle brackets): p90 0.06 deg over 422 windows. 2026-10-21 (split
-   ankle): p90 3.9 deg, max 8.2 deg. PASS: at least 20 windows and p90 <= 0.5 deg.
+1. Open-loop stand (mode stand, KP 400): 1 s windows in which all ten leg encoders stay within 3 ticks and the trunk
+   leans less than 8 deg; the trunk pitch range inside each. Past 8 deg the foot rocks on its toe on both days, so those
+   windows say nothing about play. 2026-10-19 (stock one-piece ankle brackets): p90 0.06 deg over 421 windows (roll
+   0.06). 2026-10-21 (V1.24/V1.25 two-half ankle): p90 2.2 deg, median 1.0 deg over 20 windows (roll median 0.2).
+   PASS: at least 20 windows and p90 <= 0.5 deg.
 2. stand61 at zero command: per run (first 0.5 s skipped) the leg actions' rms above ~2 Hz and the trunk yaw-rate rms.
    2026-10-19: 1.4-42 mrad and 5-89 mrad/s. 2026-10-21: 180-630 mrad and 1.2-3.1 rad/s at 3.5-4.5 Hz, every run fell.
    PASS: at least 10 s of stand61 in total, every run <= 60 mrad and <= 150 mrad/s.
@@ -20,6 +22,7 @@ exec(open(__file__).read().split("for path in sys.argv[1:]")[0])
 
 SWING_P90_MAX_DEG = 0.5
 SWING_MIN_WINDOWS = 20
+LEAN_MAX_DEG = 8.0
 FAST_ACTION_MAX_MRAD = 60.0
 YAW_RATE_MAX_MRAD_S = 150.0
 STAND61_MIN_S = 10.0
@@ -45,6 +48,8 @@ def frozen_leg_swing(path):
             continue
         p = [math.degrees(math.atan2(r["gb"][0], -r["gb"][2])) for r in w]
         if max(abs(x) for x in p) > 40:  # lying down, not standing
+            continue
+        if abs(sorted(p)[len(p) // 2]) >= LEAN_MAX_DEG:  # resting on the toes: the whole foot rocks
             continue
         swings.append(max(p) - min(p))
     return swings

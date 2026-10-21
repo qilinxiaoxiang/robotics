@@ -121,6 +121,25 @@
    "max_age_days": 30,
    "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
   },
+  "ankle_bracket": {
+   "value": "V1.24/V1.25 two-half ankle on both legs: the stock one-piece orange bracket cut at mid shaft, outer half on the servo horn (four M2 x 4), inner half on the V1.22 black sleeve, the halves held together only by the V1.22 slip-fit foot and the toe M2 x 6; sole material not recorded",
+   "meaning": "Which ankle bracket and foot interface is on the robot. Stand behaviour depends on it: on 2026-10-21 the trunk rocked about the ankle axis with every leg encoder still on this ankle (stand_check.py), not on the 10/19 one-piece bracket with the same feet.",
+   "verified_at": "2026-10-21",
+   "source": "Shawn 2026-10-21: \"现在装的是 V1.24/V1.25 两半踝，只靠滑配脚和脚尖螺丝夹住。\" Design: guide/print/ankle-halves-20261020/README.md",
+   "measure": "ask Shawn or look at the ankle: a seam across the orange bracket at mid shaft is the two-half ankle",
+   "max_age_days": 30,
+   "superseded": [
+    {
+     "value": "stock one-piece orange bracket with the V1.22 slip-fit foot and toe M2 x 6 (all 10/19 runs)",
+     "until": "2026-10-20",
+     "why": "replaced by the V1.22 split ankle and then the V1.24 two-half ankle (guide/print/ankle-split-20261019, ankle-halves-20261020)"
+    }
+   ],
+   "consumers": [
+    "guide/firmware/mac/investigation-20261021/policy-churn/stand_check.py acceptance",
+    "brain_sim_check.py --foot-play studies"
+   ]
+  },
   "a7z_touch_bus": {
    "value": "XIAO ESP32-S3 at I2C 0x2A on /dev/i2c-0 = TWI0 (2510000.twi, engine mode) on A7Z header pins 29 (PB2, SCL, blue) and 31 (PB3, SDA, green), 3V3 red pin 17, GND black pin 25, from /boot/dtbo/zz-duck-twi0-touch.dtbo (source guide/firmware/pi/duck-twi0-touch.dts); a plain 24-byte read returns the block aligned (no filler byte); all five head pads (L1, R1, L2, R2, M) rise when pressed; rest counts 22100-26300",
    "meaning": "How the A7Z reads the head touch pads and whether each pad responds. A pad whose lead touches metal reads 0x3FFFFF and, because the firmware leaves max_meas_time_us at 0, freezes the whole touch scan. duck-telemetry.py and touch_live_a7z.py use /dev/i2c-0 when TWI0 is up and fall back to bit-banging gpiochip0 lines 34/35 otherwise (then a read costs tens of ms of CPU and pauses while a brain runs).",
