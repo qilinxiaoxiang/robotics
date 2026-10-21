@@ -158,7 +158,7 @@ def svg_bench():
 
 
 # ---------------------------------------------------------------- steps
-BENCH_PY = '~/code/robotics/microduck-sim/guide/extension-20261015-touch/firmware/touch_bench.py'
+LIVE_PY = '~/code/robotics/microduck-sim/guide/extension-20261015-touch/firmware/touch_live.py'
 
 S_PARTS = B.step('parts', '第 1 步', '零件和线', '线按长度剪好，摆在桌上。', f'''
 <figure>{svg_parts()}</figure>''')
@@ -171,10 +171,10 @@ S_XIAO = B.step('xiao', '第 3 步', '焊 XIAO', '11 根线平焊在 XIAO 正面
 {B.figure(IMG_XIAO, 'XIAO 正面：每个焊盘焊哪根线', 'XIAO 正面，USB-C 朝上。棕色 = 铜箔引线，蓝色 = 去 A7Z 的线。', LEGEND_XIAO)}
 <figure>{svg_solder()}</figure>''')
 
-S_BENCH = B.step('bench', '第 4 步 · 先只做 L1', '桌上测试', 'Mac 上显示 PASS。', f'''
+S_BENCH = B.step('bench', '第 4 步 · 先只做 L1', '桌上测试', '指尖压上去，L1 的条明显变长；松开就回去。', f'''
 <figure>{svg_bench()}<figcaption>先只做 L1 一块：贴在一片约 1.7 mm 厚的 PLA 废件上，引线焊到 D0，XIAO 插 Mac。</figcaption></figure>
-{B.cmd('mac', f'~/.venvs/touch/bin/python {BENCH_PY} --pads L1', '[L1] rest 16609, noise 2.4, touch delta +..., ratio ... (need >= 5) ... -> PASS')}
-<div class="card">按提示：先手离开 10 秒，再把指尖按在 PLA <b>另一面</b>、正对铜箔 5 秒。</div>''')
+{B.cmd('mac', f'~/.venvs/touch/bin/python {LIVE_PY}', 'L1   19398      -2\nR1   16021      -1\n（每块一行：读数、比刚打开时变了多少、条。Ctrl-C 退出）')}
+<div class="card">指尖压在 PLA <b>另一面</b>、正对铜箔，看 L1 那一行的条。</div>''')
 
 S_CAP = B.step('cap', '第 5 步', '贴进头盖', '5 块铜箔和 XIAO 贴好，引线贴着壁走。', f'''
 {B.figure(B.uri(P.Image.open(B.IMG / 'touch_below.png'), 1100), '头盖翻过来往里看：五块铜箔和 XIAO 的位置', '头盖翻过来往里看。棕线 = 引线走法。')}
