@@ -106,6 +106,7 @@ SATURATED = 0x3FFFFF   # touchRead's ceiling: the pad cannot charge (lead shorte
 
 
 start_v, last_seq, ok, bad = None, None, 0, 0
+prev_v, same_since = None, time.time()
 print('\033[2J')
 try:
     while True:
@@ -120,6 +121,8 @@ try:
         last_seq, v = b[0], b[1:]
         ok += 1
         start_v = start_v or v
+        if v != prev_v:
+            prev_v, same_since = v, time.time()
         out = ['\033[H按铜箔看条的变化（Ctrl-C 退出）\033[K', '\033[K']
         for name, now, s in zip(PADS, v, start_v):
             d = now - s
@@ -128,7 +131,12 @@ try:
                 out.append(f'{name:>2}  {now:7d}  读数顶满：铜箔或引线碰到了金属或地线\033[K')
             else:
                 out.append(f'{name:>2}  {now:7d}  {d:+6d}  {"█" * n}\033[K')
-        out.append(f'\033[K\n读到 {ok} 次，丢 {bad} 次\033[J')
+        out.append('\033[K')
+        if SATURATED in v and time.time() - same_since > 2:
+            # touch_main.cpp leaves max_meas_time_us at 0, so a pad that never charges holds the scan on that pad forever
+            # and the other pads keep their last count (2026-10-20: M shorted, the four others frozen)
+            out.append('扫描卡住了：顶满的那块不放开，其他铜箔都不更新\033[K')
+        out.append(f'读到 {ok} 次，丢 {bad} 次\033[J')
         print('\n'.join(out), flush=True)
         time.sleep(0.02)
 except KeyboardInterrupt:
