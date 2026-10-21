@@ -2,14 +2,14 @@
 
     python3 touch_live_a7z.py        (on the A7Z, no root; Ctrl-C to quit)
 
-Pins 29 (PB2, SCL) and 31 (PB3, SDA) have no I2C overlay yet, so this reads the bus by bit-banging the two lines
-through the GPIO character device (gpiochip0 lines 34 and 35, open-drain), the same method as ~/bb_i2c.py used for the
-IMU on 2026-10-18. It is a bench check of the wiring and the XIAO, about 15 reads a second; the duck's runtime will
-read the bus through the kernel once the TWI0 overlay for PB2/PB3 is in place.
+With the TWI0 overlay for pins 29 (PB2, SCL) and 31 (PB3, SDA) loaded (guide/firmware/pi/duck-twi0-touch.dts) it reads
+/dev/i2c-N; without it, it bit-bangs the two lines through the GPIO character device (gpiochip0 lines 34 and 35,
+open-drain), the same method as ~/bb_i2c.py used for the IMU on 2026-10-18.
 Block from touch_main.cpp: 24 bytes, uint32 LE sequence number then the counts of L1, R1, L2, R2, M.
 """
 import ctypes
 import fcntl
+import glob
 import os
 import struct
 import time
@@ -54,8 +54,14 @@ class Line:
         d = HandleData(); fcntl.ioctl(self.fd, GET_VALUES, d); return d.values[0]
 
 
-chip = os.open(f"/dev/gpiochip{CHIP}", os.O_RDWR)
-sda, scl = Line(chip, SDA_LINE), Line(chip, SCL_LINE)
+KERNEL = next(("/dev/" + n.split("/")[-2] for n in glob.glob("/sys/bus/i2c/devices/i2c-*/of_node")
+               if os.path.realpath(n).endswith("/twi@2510000")), None)
+if KERNEL:
+    bus = os.open(KERNEL, os.O_RDWR)
+    fcntl.ioctl(bus, 0x0703, ADDR)  # I2C_SLAVE
+else:
+    chip = os.open(f"/dev/gpiochip{CHIP}", os.O_RDWR)
+    sda, scl = Line(chip, SDA_LINE), Line(chip, SCL_LINE)
 
 
 def scl_high():
@@ -89,20 +95,29 @@ def read_byte(ack):
     return v
 
 
+SATURATED = 0x3FFFFF   # touchRead's ceiling: the pad cannot charge (lead shorted to ground or touching metal)
+
+
+def decode(raw):
+    """Bit-banged reads get a filler byte (0x55) first and lose the block's last byte, the top byte of M (always 0);
+    a read without the filler is the block as sent. The wrong alignment shifts every count above 0x3FFFFF."""
+    for block in (raw[1:] + b'\0', raw):
+        b = struct.unpack('<6I', block)
+        if max(b[1:]) <= SATURATED:
+            return b
+    return None
+
+
 def read_block():
-    """One read of the block. The ESP32-S3 slave answers one byte late (seen 2026-10-20): a read returns a filler byte
-    (0x55) and then the block's first 23 bytes. The missing 24th byte is the top byte of M, which is always 0 (counts
-    stop at 0x3FFFFF). Read exactly 24 bytes: reading more than the XIAO queued leaves filler bytes behind that come
-    out in front of later blocks."""
+    """One read of exactly 24 bytes: reading more than the XIAO queued leaves filler bytes for later blocks."""
+    if KERNEL:
+        return decode(os.read(bus, 24))
     start()
     if not write_byte((ADDR << 1) | 1):
         stop(); return None
     raw = bytes(read_byte(i < 23) for i in range(24))
     stop()
-    return struct.unpack('<6I', raw[1:] + b'\0')
-
-
-SATURATED = 0x3FFFFF   # touchRead's ceiling: the pad cannot charge (lead shorted to ground or touching metal)
+    return decode(raw)
 
 
 start_v, last_seq, ok, bad = None, None, 0, 0
@@ -112,9 +127,9 @@ try:
     while True:
         try:
             b = read_block()
-        except RuntimeError:
+        except (RuntimeError, OSError):
             b = None
-        if b is None or max(b[1:]) > SATURATED or (last_seq is not None and not 0 < b[0] - last_seq < 500):
+        if b is None or (last_seq is not None and not 0 < b[0] - last_seq < 500):
             bad += 1
             last_seq = None if b is None else last_seq
             continue
@@ -136,7 +151,7 @@ try:
             # touch_main.cpp leaves max_meas_time_us at 0, so a pad that never charges holds the scan on that pad forever
             # and the other pads keep their last count (2026-10-20: M shorted, the four others frozen)
             out.append('扫描卡住了：顶满的那块不放开，其他铜箔都不更新\033[K')
-        out.append(f'读到 {ok} 次，丢 {bad} 次\033[J')
+        out.append(f'读到 {ok} 次，丢 {bad} 次（{KERNEL or "程序拨针脚读"}）\033[J')
         print('\n'.join(out), flush=True)
         time.sleep(0.02)
 except KeyboardInterrupt:

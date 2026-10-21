@@ -422,7 +422,7 @@ S_SOFT = step('software', '第 9 步 · 10 分钟', '打开 I2C、串口和 I2S'
 <li><b>Enable UART2</b>：OpenRB 串口，7、11 号针。</li>
 <li><b>Enable I2S0</b>：功放的声音，12、35、40 号针。</li>
 </ul>
-第四项是触摸板的 <b>Enable TWI0</b>（29、31 号针）：待定，列表里没有它，原因在下面黄框里。<br>
+触摸板的 TWI0（29、31 号针）不在这个列表里：它用我们自己写的配置，已经装在这块 A7Z 上，见下面的框。<br>
 Radxa 文档的原话：“进入 <code>rsetup</code> 的 <code>Overlay</code> -&gt; <code>Manage overlays</code> 勾选 <code>Enable TWI7</code> 选项，勾选后重启系统”。</li>
 <li>{tag('a7z')}重启，1 分钟后重新 ssh 登录：
 {cmd('a7z', 'sudo reboot')}</li>
@@ -442,10 +442,9 @@ UART2 应该叫 <code>/dev/ttyAS2</code>：Radxa 文档里 UART4 叫 <code>/dev/
 <div class="card">
 <p><b>脚本要改：</b>我们的脚本（scan_bus.py、imu_read.py 等）现在还按 Pi 写的：串口 <code>/dev/serial0</code>，I2C 3 号总线。脚本里的串口和总线号要改成这两个：串口 <code>/dev/ttyAS2</code>，I2C <b>7</b> 号总线。这个由协调这件事的那个会话来改，改好之前先别跑这些脚本。</p>
 </div>
-<div class="pend" id="twi0"><b>触摸板的 Enable TWI0：A7Z 上还没有能用的 overlay</b>
-<p>Radxa 现成的 Enable TWI0 overlay（sun60iw2p1-twi0.dtso）是给另一块板子 CM-A7（插在树莓派 CM5 底板上）写的：它只声明支持 <code>radxa,cm-a7-rpi-cm5-io</code>，用的是 PG8、PG9 两个引脚。rsetup 只列出声明支持这块板的 overlay，所以在 A7Z 的列表里看不到它；就算硬装上，它设置的也是 PG8、PG9，不是 A7Z 29、31 号针上的 PB2、PB3。</p>
-<p>A7Z 能做 I2C 的另一对 TWI2 在 27、28 号针，28 号在外排，被摄像头挡着。所以 29、31 号针上的 I2C 要用一个自己写的 overlay：首选让 TWI0 用 PB2、PB3；备选是在同样两根针上用软件模拟的 I2C（i2c-gpio）。速度 100 kHz，上拉用 A7Z 和 XIAO 两边芯片里自带的上拉电阻（板上没有上拉电阻）。</p>
-<p>这个 overlay 在台架验收时由我写好并在板子上验证，验证过才会加到这一页。现在不用找它，也不要自己装别处的 TWI0 overlay。触摸板的线照样插（第 7 步），只是在那之前 A7Z 读不到它。</p></div>
+<div class="card" id="twi0"><b>触摸板的 TWI0：已装好（2026-10-21）</b>
+<p>Radxa 现成的 Enable TWI0 是给另一块板子（CM-A7）写的，用 PG8、PG9，A7Z 上用不了。我们自己写了一个：<code>guide/firmware/pi/duck-twi0-touch.dts</code>，让 TWI0 用 29、31 号针上的 PB2、PB3，100 kHz，engine 模式（和 IMU 的 TWI7 一样，drv 模式会卡死）。装在 <code>/boot/dtbo/zz-duck-twi0-touch.dtbo</code>，重启后系统里多出 <code>/dev/i2c-0</code>，触摸板在 0x2A。</p>
+<p>别在 rsetup 里装 Radxa 的 TWI0。要撤掉：删掉这个文件，跑 <code>sudo u-boot-update</code>，重启。</p></div>
 <div class="pend"><b>声音：还没在这块板上试过</b>
 <p>Radxa 的 Enable I2S0 overlay 做的是一张两声道的“空壳”声卡（dummy sound card），它自己的说明写着 “This overlay is only for demonstration purpose. It does not support any specific hardware device.”。MAX98357A 上电就工作，系统不用给它写任何设置（不需要 codec 驱动），所以预计这张空壳声卡能带它，但还没验证。</p>
 <p>喇叭试音先不做：那道 −3 dB 的音量上限（D-012）在 A7Z 上还没设好，也等 12 号针的接法定下来。到时由我通过 ssh 来做。</p></div>
@@ -454,7 +453,7 @@ UART2 应该叫 <code>/dev/ttyAS2</code>：Radxa 文档里 UART4 叫 <code>/dev/
 <li>表里全是 <code>--</code>，绿灯亮：蓝、黄插反或插偏了一根。再数：蓝是里排第 2 根，黄是里排第 3 根。都对的话把 IMU 那头的白色小插头换一个插座。</li>
 <li>提示 <code>Could not open file /dev/i2c-7</code>：Enable TWI7 没勾上，或勾完没重启。</li>
 <li>没有 <code>/dev/ttyAS2</code>：Enable UART2 没勾上，或勾完没重启。</li>
-<li>Overlays 列表里找不到 Enable TWI0：正常，见上面黄框。</li>
+<li>Overlays 列表里找不到 Enable TWI0：正常，触摸板的 TWI0 是我们自己的配置，见上面的框。</li>
 </ul></details>
 ''')
 
