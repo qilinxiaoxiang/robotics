@@ -364,7 +364,8 @@ class Brain:
                 nxt = self.sit_next or dict(WALK_ZERO)
                 self.base_want = nxt
                 return nxt
-            return {"mode": "sit"}
+            # a head command while seated reaches the sitstand policy (it was trained with one in both postures)
+            return {"mode": "sit", "head": want["head"]} if mode == "sit" and want.get("head") else {"mode": "sit"}
         if mode == "sit" and self.mode != "sit":
             why = self.sit_blocked()
             if why:

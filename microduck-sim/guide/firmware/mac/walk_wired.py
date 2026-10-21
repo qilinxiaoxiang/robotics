@@ -6,7 +6,10 @@ control file as walk_brain.py (monitor / stand / walk), same policies and compen
 Torque: nothing is written in monitor mode. The first stand or walk command writes the present positions as goals
 and only then enables torque, so the servos start holding where they are. Stand mode then ramps to STAND; walk
 mode runs stand61 (before the first step) and walk61 from the present pose with no open-loop ramp (walk_brain.py).
-This process never disables torque. Stopping it leaves the servos holding their last goals.
+Torque goes off only on {"mode": "off"} (the remote's torque-off key): every servo, the jaw included, and any servo
+with a latched hardware error (overload, overheating) gets the Reboot instruction, which clears the latch without a
+power cycle; the control file then reads monitor, and the next stand or walk command enables torque as above.
+Stopping this process leaves the servos holding their last goals.
 
 Battery guard (pi/battery.py), --supply auto by default: once the servos read 7.2 V or more (only the 2S pack does),
 Present Input Voltage is read once a second; under 7.0 V it warns, at 6.6 V it replaces the control file: walking gets
@@ -40,8 +43,14 @@ Remote-control additions (2026-10-20, walk_brain.py has the details):
   "quack": N                              any mode; a new value of the counter (start at 1) plays one random call
                                           from --sounds through `aplay -q` on the ALSA default device (duck_sound.py,
                                           off the control thread, a new call kills the old one) and, when the jaw is
-                                          calibrated and its torque is on (any jaw command enables it), opens it to
-                                          QUACK_JAW_DEG for QUACK_S, under the jaw limits. A gripping jaw stays shut.
+                                          calibrated, opens it to QUACK_JAW_DEG for QUACK_S under the jaw limits,
+                                          enabling its torque first if needed. A gripping jaw stays shut. The head
+                                          also moves gently to a random QUACK_HEAD pose (a tilt or a look up) and back
+                                          over QUACK_HEAD_S whenever a policy can rebalance under it: walk mode at zero
+                                          command (stand61, or walk61 QUACK_REST_S after a stop) and seated. Never
+                                          while stepping, sitting down or standing up, and never in the open-loop stand
+                                          mode (it tipped over there on 2026-10-20). The quack line in stdout names the
+                                          head move or why the head stayed (quack_head_block).
   Hold-to-walk: rewrite {"mode": "walk", "vx": 0.25, ..., "for_s": 0.6} every 0.3 s; every rewrite restarts for_s,
   so the walk stops 0.6 s after the last one.
 
@@ -245,6 +254,60 @@ MAX_TILT_GP_DEG = 55.0  # the ground-pick crouch pitches the trunk 35 deg in the
 MAX_TILT_SIT_DEG = 30.0  # sit and stand-up peak at 10.3-11.4 deg in the plugged as-built sim at 7.0 V (2026-10-20)
 QUACK_JAW_DEG = 15.0  # jaw opening for a quack; jaw_limits still caps it by the head pose
 QUACK_S = 0.4
+# Random head move per quack on stand61, as deltas from the policy default, model rad:
+# one of the QUACK_HEAD styles, each joint's magnitude drawn from its range, with a random sign where the range is
+# unsigned (a pair) and the given sign where it is (lo, hi, sign); head_pitch negative looks up (pickup.py looks down
+# with +0.8). All well inside the trained +-1.10 / +-1.40 / +-0.31 (walk_brain.HEAD_RANGE). The move is
+# gentle so stand61 never gets a jolt: the target follows a raised cosine up over QUACK_HEAD_RAMP_S, holds, and comes
+# back the same way, and the Brain's own head EMA smooths it further. The as-built sim held stand61, walk61 at rest
+# and the seated sitstand61 through every style at its largest size at the real condition (brain_sim_check.py
+# --quack-at with --quack-roll/--quack-yaw/--quack-pitch).
+QUACK_HEAD = ({"head_roll": (0.08, 0.18), "head_yaw": (0.0, 0.25)},       # tilt
+              {"head_pitch": (0.15, 0.30, -1), "head_roll": (0.0, 0.10)})  # look up
+QUACK_HEAD_S = 1.6
+QUACK_HEAD_RAMP_S = 0.5
+QUACK_REST_S = 2.0  # walk61 after stepping: a zero command held this long has brought the stride to rest
+# Seated (sitstand61): share of the move. Pollen trained the seated head on small slow commands and saw fast head
+# jerks tip a seated duck backward; this move is slow. Plugged as-built sim at 7.0 V and 4 % dropped reads, 3 seeds,
+# all three styles at full size: head reaches 0.22-0.27 rad, seated tilt moves at most 1.7 deg, no fall (2026-10-21).
+QUACK_SIT_SCALE = 1.0
+
+
+def quack_head_share(t):
+    """0 -> 1 -> 0 over QUACK_HEAD_S: raised-cosine ramps of QUACK_HEAD_RAMP_S at each end, 1 in between."""
+    edge = min(t, QUACK_HEAD_S - t) / QUACK_HEAD_RAMP_S
+    return 0.0 if edge <= 0 else 1.0 if edge >= 1 else 0.5 - 0.5 * math.cos(math.pi * edge)
+
+
+def quack_head_block(want, brain, zero_s):
+    """Why a quack may not move the head on this tick, or None when it may. zero_s: s the velocity command (wanted and
+    smoothed) has been all zero, None while it is not.
+
+    Walk mode at zero command: stand61, and walk61 once its stride has come to rest (QUACK_REST_S after the stop).
+    Seated: the sitstand policy, at QUACK_SIT_SCALE of the move. Never while stepping, sitting down or standing up,
+    and never in the open-loop stand mode, which cannot rebalance (it tipped over there on 2026-10-20)."""
+    if "head" in want:
+        return "a head command is active"
+    if brain.mode == "walk" and want.get("mode") == "walk":
+        if zero_s is None:
+            return "walking"
+        if brain.stepped and zero_s < QUACK_REST_S:
+            return "the stride is still coming to rest"
+        return None
+    if brain.mode == "sit" and want.get("mode") == "sit":
+        return None if brain.sit is not None and brain.sit["phase"] == "seated" else "sitting down"
+    if brain.mode == "sit":
+        return "standing up"
+    if brain.mode == "stand":
+        return "open-loop stand mode cannot rebalance"
+    return f"{brain.mode} mode"
+
+
+def quack_head_pose(delta, t, brain):
+    """Absolute head targets (model rad) t s into a quack head move of `delta` (QUACK_HEAD deltas)."""
+    scale = QUACK_SIT_SCALE if brain.mode == "sit" else 1.0
+    share = quack_head_share(t)
+    return {n: brain.default[n] + share * scale * d for n, d in delta.items()}
 GP_DONE_PHASE = 0.9  # inside the policy's standing rest segment: the rise is complete, hand back to stand61
 CMD_ALPHA = 0.2  # velocity command EMA per 20 ms tick, Pollen's robotd default
 # No IMU sample this long: the Brain holds its last goals (blind, so no policy step). 2026-10-15 the Pi Zero lost power
@@ -345,6 +408,9 @@ def main():
           f"quack: no .wav calls in {args.sounds}, the quack key moves only the jaw", flush=True)
     last_quack = 0  # "quack" counter value last acted on; a new value quacks once
     quack_until, quack_prev, quack_hint = None, None, False
+    quack_head, quack_head_t0 = None, None
+    zero_t = None  # perf_counter time since which the walk velocity command has been all zero
+    rng = np.random.default_rng()
     torque_on, kp_now, last_cmd = False, None, None
     write_delay = 0.002  # measured below: read-midpoint to goal write
     last_print, n, misses, t_stat = 0.0, 0, 0, time.perf_counter()
@@ -384,20 +450,50 @@ def main():
             cmd_since = time.time()  # when this command arrived (the file's mtime is wall clock, not this loop's)
         last_cmd = new_cmd
         want = last_cmd[1]
+        if want.get("mode") == "off":
+            link.sync_write(ADDR_TORQUE, 1, {i: 0 for i in IDS})
+            if jaw.on:
+                jaw.release(link)
+            hw = link.sync_read(ADDR_HW_ERROR, 1, IDS, timeout=0.03, allow_alert=True)
+            latched = [i for i in IDS if i in hw and hw[i][0] & ~INPUT_VOLTAGE_BIT]
+            for i in latched:
+                link.ser.write(_packet(i, 0x08, b""))  # Reboot: clears Hardware Error Status, torque stays off
+                time.sleep(0.02)
+            if latched:
+                time.sleep(0.5)  # the servos boot (their RAM settings reset; the P gain is rewritten on torque on)
+            link.status.clear()
+            torque_on, kp_now, hw_faults = False, None, []
+            want = {"mode": "monitor"}
+            tmp = args.cmd + ".tmp"
+            with open(tmp, "w") as f:
+                json.dump(want, f)
+            os.replace(tmp, args.cmd)
+            print("torque off" + (f", rebooted {[NAMES[IDS.index(i)] for i in latched]} to clear their hardware errors"
+                                  if latched else ""), flush=True)
         if cmd_is_new and want.get("quack") is not None and want.get("quack") != last_quack:
             last_quack = want.get("quack")
             call = voice.quack()
-            if jaw.calibrated and jaw.on and jaw.goal_deg != "grip":
+            if jaw.calibrated and jaw.goal_deg != "grip":
                 if quack_until is None:
-                    quack_prev = jaw.goal_deg
-                jaw.goal_deg, quack_until = QUACK_JAW_DEG, time.perf_counter() + QUACK_S
+                    quack_prev = jaw.goal_deg if jaw.on else None  # None: back to the rest opening afterwards
+                jaw.goal_deg, quack_until = QUACK_JAW_DEG, time.perf_counter() + QUACK_S  # enables the torque if off
             elif not quack_hint:
-                print("quack: jaw stays put (" + ("gripping" if jaw.goal_deg == "grip" else
-                      "not calibrated" if not jaw.calibrated else "torque off; any jaw command, e.g. \"jaw\": 2, "
-                      "enables it") + ")", flush=True)
+                print("quack: jaw stays put (" + ("gripping" if jaw.goal_deg == "grip" else "not calibrated") + ")",
+                      flush=True)
                 quack_hint = True
-            print(f"quack {last_quack}: {os.path.basename(call) if call else 'no sound'}", flush=True)
-        if quack_until is not None and (time.perf_counter() >= quack_until or not jaw.on):
+            why = quack_head_block(want, brain, None if zero_t is None else time.perf_counter() - zero_t)
+            if why is None:
+                style = QUACK_HEAD[rng.integers(len(QUACK_HEAD))]
+                quack_head = {n: float((r[2] if len(r) == 3 else rng.choice((-1, 1))) * rng.uniform(r[0], r[1]))
+                              for n, r in style.items()}
+                quack_head_t0 = time.perf_counter()
+            else:
+                quack_head = quack_head_t0 = None  # starting it later would jump in mid-profile
+            print(f"quack {last_quack}: {os.path.basename(call) if call else 'no sound'}, "
+                  + (f"head {', '.join(f'{n} {d:+.2f}' for n, d in quack_head.items())}"
+                     + (f" x{QUACK_SIT_SCALE} seated" if brain.mode == "sit" else "") if why is None
+                     else f"head stays ({why})"), flush=True)
+        if quack_until is not None and (time.perf_counter() >= quack_until or (not jaw.on and jaw.goal_deg is None)):
             if jaw.on:
                 jaw.goal_deg = quack_prev if quack_prev is not None else 2.0  # back to the rest opening
             quack_until = None
@@ -494,9 +590,22 @@ def main():
                 if abs(cmd_s[k]) < 1e-4:
                     cmd_s[k] = 0.0
             want_b = dict(want, vx=cmd_s[0], vy=cmd_s[1], vtheta=cmd_s[2])
+            if any(cmd_s) or any(float(want.get(k, 0)) for k in ("vx", "vy", "vtheta")):
+                zero_t = None
+            elif zero_t is None:
+                zero_t = time.perf_counter()
         else:
             cmd_s = [0.0, 0.0, 0.0]
-            want_b = want
+            zero_t = None
+            want_b = dict(want)
+        if quack_head is not None:
+            tq = time.perf_counter() - quack_head_t0
+            # stops the move when it may no longer run (a step, a stand-up); the Brain's head EMA eases it back
+            if tq >= QUACK_HEAD_S or quack_head_block(want, brain, None if zero_t is None else
+                                                      time.perf_counter() - zero_t) is not None:
+                quack_head = quack_head_t0 = None
+            else:
+                want_b["head"] = quack_head_pose(quack_head, tq, brain)
         goal, kp, info = brain.tick(want_b, time.time(), pos, vel, quat, gyro, imu_valid and fresh,
                                     joint_age, imu_age)
         # after the tick, so the stop command has reached the Brain and any ramp to STAND has started
