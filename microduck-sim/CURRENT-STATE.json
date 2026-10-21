@@ -120,6 +120,18 @@
    "source": "2026-10-18: GetOnline registration success page; after Wi-Fi reconnect wlan0 got 172.26.167.157 and HTTPS worked; tailscale status Running; ssh a7z over Tailscale and tailscale ping direct via 172.26.167.157:41641 in 6 ms; 2026-10-18 23:3x UTC: forced switch to iphone-hotspot got 172.20.10.6 and ssh a7z worked over Tailscale (direct via cellular), then back to CMU-DEVICE",
    "max_age_days": 30,
    "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
+  },
+  "a7z_touch_bus": {
+   "value": "XIAO ESP32-S3 at I2C 0x2A on A7Z header pins 29 (PB2, SCL, blue) and 31 (PB3, SDA, green), 3V3 red pin 17, GND black pin 25; no kernel I2C overlay on these pins, read by bit-banging gpiochip0 lines 34/35 (duck-telemetry.py `touch`, touch_live_a7z.py) at about 8-10 reads/s; all five head pads (L1, R1, L2, R2, M) rise when pressed; rest counts 22100-26300",
+   "meaning": "How the A7Z reads the head touch pads and whether each pad responds. The slave answers one byte late (0x55 filler first); a pad whose lead touches metal reads 0x3FFFFF and, because the firmware leaves max_meas_time_us at 0, freezes the whole touch scan. One bit-banged read costs tens of ms of CPU, so duck-telemetry.py pauses it while a brain runs.",
+   "verified_at": "2026-10-20",
+   "source": "2026-10-20 head reassembled: duck-telemetry.py fast bus touch, 78 reads 0 lost in 7.5 s, counts [22109, 26321, 22776, 23495, 25166]; Shawn pressed each pad on the robot monitor (robot-live.html) and all five bars rose. Earlier the same evening M read 4194303 and froze the others until its lead was moved off the XIAO shield can.",
+   "measure": "curl -sN --max-time 5 http://127.0.0.1:<app port>/api/a7z/stream | grep -o '\"touch\":{[^}]*}' shows rising seq and five counts below 4194303; press a pad and its count rises",
+   "max_age_days": 30,
+   "consumers": [
+    "robot monitor touch card",
+    "any duck behaviour that reacts to head touches"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
