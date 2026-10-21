@@ -1,19 +1,30 @@
 #!/bin/bash
 # A7Z brownout/thermal separation test: full CPU load with the servos untouched.
 # Run on the A7Z:  ~/duck/a7z_load_test.sh [seconds]   (default 20)
-# Prints boot_id, SoC temperature and CPU clock before, every second during, and after.
+# Prints boot_id, SoC temperature and every CPU cluster's clock before, every second during, and after.
 # If the board resets, the boot_id after power-up differs and ~/duck-logs/load_test.log
 # (fsynced per line) ends mid-run; thermal.log (10 Hz service) covers the same window.
 set -u
+SYS=${A7Z_SYSFS:-/sys}   # a fake tree for test_thermal_log.py
 SECS=${1:-20}
 LOG=~/duck-logs/load_test.log
-mkdir -p ~/duck-logs
 say() { echo "$(date -u +%H:%M:%S.%N | cut -c1-12) $*" | tee -a "$LOG"; sync -d "$LOG" 2>/dev/null || sync; }
-temps() { for z in /sys/class/thermal/thermal_zone*/temp; do printf '%s ' "$(( $(cat "$z") / 1000 ))"; done; }
-clock() { cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null | awk '{printf "%d", $1/1000}'; }
-vin() {  # any PMIC input-voltage reading the kernel exposes (checked 2026-10-21); prints "-" when none
-  for p in /sys/class/power_supply/*/voltage_now; do [ -r "$p" ] && printf '%s=%s ' "$(basename "$(dirname "$p")")" "$(cat "$p")"; done; echo "-"
+temps() { for z in "$SYS"/class/thermal/thermal_zone*/temp; do printf '%s ' "$(( $(cat "$z") / 1000 ))"; done; }
+clock() {  # every cpufreq policy as pN cur/max MHz (N = its first CPU); "pN off" while all its CPUs are offline (EBUSY)
+  local p c m   # read builtins: no process per value
+  for p in "$SYS"/devices/system/cpu/cpufreq/policy*; do
+    if { read -r c < "$p/scaling_cur_freq" && read -r m < "$p/scaling_max_freq"; } 2>/dev/null; then
+      printf 'p%s %d/%d ' "${p##*policy}" $((c / 1000)) $((m / 1000))
+    else
+      printf 'p%s off ' "${p##*policy}"
+    fi
+  done
 }
+vin() {  # any PMIC input-voltage reading the kernel exposes (checked 2026-10-21); prints "-" when none
+  for p in "$SYS"/class/power_supply/*/voltage_now; do [ -r "$p" ] && printf '%s=%s ' "$(basename "$(dirname "$p")")" "$(cat "$p")"; done; echo "-"
+}
+[ "${BASH_SOURCE[0]}" = "$0" ] || return 0   # sourced (tests): functions only
+mkdir -p ~/duck-logs
 say "# load test ${SECS}s boot_id $(cat /proc/sys/kernel/random/boot_id) nproc $(nproc)"
 say "before: temps $(temps) MHz $(clock) vin $(vin)"
 N=$(nproc)

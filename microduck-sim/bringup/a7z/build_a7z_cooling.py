@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from PIL import Image, ImageDraw, ImageFont
+
 import build_a7z_pages as B
 import photos as P
 
@@ -18,12 +20,37 @@ OUT = HERE.parent / 'A7Z-COOLING.html'
 SOC = (1148, 323)
 RAM = (1332, 283)
 
-LAND_SOC = [('芯', SOC, 150, 620), ('M', RAM, 95, 930), ('A', P.IPEX_TOP, 22, 150)]
-IMG_SOC = B.top_fig([(2, '#e53935'), (6, '#1d1d1f')], LAND_SOC)
-P.top_figure([(2, '#e53935'), (6, '#1d1d1f')], LAND_SOC).save(HERE / 'shots' / 'check_cooling.png')
+LAND_SOC = [('芯', SOC, 0, 620), ('M', RAM, 95, 930), ('A', P.IPEX_TOP, 22, 150)]
+PX_MM = P.PITCH / 2.54 * P.SCALE   # portrait canvas pixels per mm (header pitch 2.54 mm)
+
+
+def sink_figure() -> Image.Image:
+    """The landmark photo with the 15 x 15 mm heatsink drawn on the A733. Its fins run perpendicular to the header row:
+    the board hangs header-down in the head (bringup/a7z CAD side view; checks.json frame `ed`, up from the header edge,
+    is (0.17, 0, 0.98)), so these fins stand vertical and the warm air rises along the slots (cooling study 2026-10-21)."""
+    im = P.top_figure([(2, '#e53935'), (6, '#1d1d1f')], LAND_SOC).convert('RGBA')
+    cx, cy = P.to_portrait(SOC)
+    h = 7.5 * PX_MM
+    lay = Image.new('RGBA', im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    d.rectangle([cx - h, cy - h, cx + h, cy + h], fill=(184, 115, 51, 150), outline=(255, 255, 255, 255), width=5)
+    for k in range(7):
+        y = cy - h + (k + 0.5) * 2 * h / 7
+        d.rectangle([cx - h + 8, y - 0.5 * PX_MM, cx + h - 8, y + 0.5 * PX_MM], fill=(150, 85, 30, 245))
+    ay = cy - h - 44   # "up in the closed head" = away from the header, toward the USB-C edge (left on this photo)
+    d.rounded_rectangle([cx - h - 10, ay - 32, cx + h + 10, ay + 32], radius=12, fill=(255, 255, 255, 240))
+    d.line([(cx - h + 40, ay), (cx - h + 84, ay)], fill='#0d47a1', width=9)
+    d.polygon([(cx - h + 4, ay), (cx - h + 44, ay - 20), (cx - h + 44, ay + 20)], fill='#0d47a1')
+    d.text((cx - h + 98, ay - 1), '合盖后朝上', font=ImageFont.truetype(P.FONT, 42), fill='#0d47a1', anchor='lm')
+    return Image.alpha_composite(im, lay).convert('RGB')
+
+
+FIG_SINK = sink_figure()
+FIG_SINK.save(HERE / 'shots' / 'check_cooling.png')
+IMG_SOC = B.uri(FIG_SINK, B.TOP_W)
 
 LEGEND_SOC = [
-    ('land', '芯', 'A733 主芯片：板上最大的黑方块，中间一块亮的。散热片贴在这整块黑方块上。'),
+    ('land', '芯', 'A733 主芯片：板上最大的黑方块（15 × 15 mm），中间一块亮的。图上的铜色方块就是散热片贴好的样子：盖满这块黑方块，<b>鳍片（深色横条）和右边那一排排针垂直</b>。'),
     ('land', 'M', 'SK hynix 内存（长方形黑块）：紧挨着主芯片。散热片<b>不要</b>压到它。'),
     ('pin', '2', '2 号针：5 V 线的红插头。'),
     ('pin', '6', '6 号针：5 V 线的黑插头（地）。电容焊在这两根线上。'),
@@ -102,15 +129,16 @@ S_OPEN = B.step('open', '第 3 步 · 5 分钟', '开头盖', '头盖掀起来�
 <div class="warn">别去撕天线、别拔天线那个金色的小插头（IPEX）：它们本来就在盖子上，这一步用不着动。拔了再插容易把插座弄坏。</div>
 ''')
 
-S_SINK = B.step('sink', '第 4 步 · 3 分钟', '贴散热片', '铜块稳稳贴在主芯片的黑方块上，没有压到内存，用手推不动。', f'''
-{B.figure(IMG_SOC, 'A7Z 正面：主芯片、内存和 2、6 号针的位置', 'A7Z 正面（Radxa 官方照片，竖放，天线插座那头在上）。黑方块“芯”是主芯片，整块都是贴散热片的地方；它旁边的长方形“M”是内存。', LEGEND_SOC)}
+S_SINK = B.step('sink', '第 4 步 · 3 分钟', '贴散热片', '铜块稳稳贴在主芯片的黑方块上，鳍片和排针那一排垂直，没有压到内存，用手推不动。', f'''
+{B.figure(IMG_SOC, 'A7Z 正面：散热片贴在主芯片上，鳍片和排针那一排垂直；内存和 2、6 号针的位置', 'A7Z 正面（Radxa 官方照片，竖放，天线插座那头在上），铜色方块是画上去的散热片。“芯”是主芯片，“M”是内存。合上盖子后板子是排针朝下挂着的，所以图上左边（USB-C 那条边）在头里朝上，横着的鳍片在头里就是竖的。', LEGEND_SOC)}
 <ol class="acts">
 <li>{B.tag('hand')}布蘸一点酒精，擦主芯片顶面（那块黑方块，中间有一小块亮的）。等 30 秒干透，不要再用手摸。</li>
 <li>{B.tag('hand')}撕掉铜块背面导热胶带的保护膜。胶带只有一面露出来，露出来的那面朝芯片。</li>
-<li>{B.tag('hand')}铜块对准黑方块放上去：铜块 15 × 15 mm，黑方块也差不多 15 × 15 mm，四边对齐。<b>不要</b>压到旁边的内存，也不要盖到右边那几个小元件（晶振）。鳍片朝哪个方向都可以。</li>
+<li>{B.tag('hand')}先看鳍片的方向：<b>鳍片要和排针那一排垂直</b>，也就是鳍片之间的槽从排针那条长边指向对面 USB-C 那条长边（上图的深色横条）。合盖后板子排针朝下挂着，这样槽就是上下方向的，热空气顺着槽往上走；鳍片横着的话，槽是水平的，热气会闷在鳍片中间。如果你的散热片是一根根小柱子（针状），方向就无所谓。</li>
+<li>{B.tag('hand')}铜块按这个方向对准黑方块放上去：铜块 15 × 15 mm，黑方块也是 15 × 15 mm，四边对齐。<b>不要</b>压到旁边的内存，也不要盖到右边那几个小元件（晶振）。</li>
 <li>{B.tag('hand')}用拇指压 10 秒。然后轻推一下：推不动就贴好了。</li>
 </ol>
-<div class="card"><p><b>高度够不够：</b>芯片顶面到前面摄像头板的空隙是 15.0 mm（头部 CAD 算出来的），铜块 5 mm 高，合盖后还剩 10 mm。合盖时（第 7 步）再从缝里看一眼它没碰到摄像头板。</p>
+<div class="card"><p><b>高度够不够：</b>芯片顶面到前面摄像头板（背面的小元件）的空隙是 12.8 mm（头部 CAD 算出来的），铜块 5 mm 高、再加一层导热胶带，合盖后还剩约 7.5 mm。所以换别的散热片时，高度不要超过 8 mm。合盖时（第 7 步）再从缝里看一眼它没碰到摄像头板。</p>
 <p><b>为什么只贴主芯片：</b>日志里发热的是 CPU 所在的这颗 A733；内存和电源芯片（AXP318，板子下方印着这个字）不热，不用贴。铜是导电的，所以铜块只能坐在黑方块上，不能搭到任何小元件。</p></div>
 ''')
 
@@ -137,7 +165,7 @@ S_METER = B.step('meter', '第 6 步 · 可选 · 3 分钟', '开着盖子量一
 <li>{B.tag('hand')}万用表拨到直流电压挡，按 MIN/MAX 键进最小值保持（min hold）。红表笔夹电容的长脚（＋），黑表笔夹短脚（−）。</li>
 <li>{B.tag('mac')}跑满载测试（脚本我开机后先放到 A7Z 上）：</li>
 </ol>
-{B.cmd('mac', "ssh a7z '~/duck/a7z_load_test.sh 20'", "00:12:01.123 # load test 20s boot_id 5de0e183-... nproc 8\\n00:12:01.140 before: temps 62 61 ... MHz 1404 vin ...\\n00:12:02.2 t=1s temps 64 ... MHz 1794 ... load 7.9\\n...\\n00:12:21.5 after: temps 78 ... boot_id 5de0e183-...\\n00:12:21.5 # done: same boot_id means no reset")}
+{B.cmd('mac', "ssh a7z '~/duck/a7z_load_test.sh 20'", "00:12:01.123 # load test 20s boot_id 5de0e183-... nproc 8\n00:12:01.140 before: temps 62 61 ... MHz p0 1404/1794 p6 1008/1404 vin ...\n00:12:02.2 t=1s temps 64 ... MHz p0 1794/1794 p6 1404/1404 ... load 7.9\n...\n00:12:21.5 after: temps 78 ... boot_id 5de0e183-...\n00:12:21.5 # done: same boot_id means no reset\n（数字是示例；p0、p6 是两组 CPU，斜线前后是当前/上限 MHz）")}
 <div class="card"><p><b>怎么读：</b>前后两个 boot_id 一样 = 没重启。万用表的最小值 ≥ 4.9 V = 这头的 5 V 顶得住；&lt; 4.75 V = 5 V 这一路还是不够，告诉我数值。</p>
 <p><b>万用表的局限：</b>普通万用表的最小值保持每秒只采样几次，几毫秒的瞬间凹陷它看不到。所以“没量到低电压”不等于没有；“量到了”才算数。真要看毫秒级的凹陷，用 RoboClub 的示波器，单次触发设在 4.75 V 以下。</p></div>
 ''')
@@ -154,20 +182,21 @@ S_CLOSE = B.step('close', '第 7 步 · 5 分钟', '合头盖，验证', '三颗
 <ol class="acts" start="6">
 <li>{B.tag('mac')}开机 5 分钟后看温度（10 Hz 的温度日志一直在后台写）：</li>
 </ol>
-{B.cmd('mac', "ssh a7z 'tail -1 ~/duck-logs/thermal.log'", '1792470520.72 80.5 79.9 79.9 80.5 79.8 78.0 79.8 40.1 cur 780 max 1508 load 0.46\\n（前 7 个数是芯片各区温度 °C，cur/max 是 CPU 当前/上限 MHz）', '格式')}
-<div class="card"><p><b>对照：</b>2026-10-20 凌晨没贴散热片时，热重启后 4 分钟空闲是 80 到 81 °C（上面那行就是）。贴了以后冷开机 5 分钟的数值发给我，我和跑步时的曲线一起对。</p></div>
+{B.cmd('mac', "ssh a7z 'tail -1 ~/duck-logs/thermal.log'", '1792470520.72 80.5 79.9 79.9 80.5 79.8 78.0 79.8 40.1 load 0.46 p0 780/1508 p6 1008/1404\n（温度是 2026-10-20 的真实读数，频率是示例。前 8 个数是芯片各区温度 °C；p0、p6 是两组 CPU，p 后面是这组的第一个 CPU 编号，斜线前后是当前/上限 MHz；某组 CPU 全关了显示 off）', '格式')}
+<div class="card"><p><b>对照：</b>2026-10-20 凌晨没贴散热片时，热重启后 4 分钟空闲是 80 到 81 °C（上面那行的温度就是那时的）。贴了以后冷开机 5 分钟的数值发给我，我和跑步时的曲线一起对。</p></div>
 ''')
 
 SOURCES = '''
 <section class="step" id="sources"><h2>依据</h2><ul class="src">
-<li>芯片位置和空隙：guide/print/a7z-head/build_a7z_head.py 的 soc_a733（离 1 号针那端 20.4 到 35.8 mm，离排针边 10.0 到 25.3 mm）；芯片顶面到 guide/print/world/camera_board.stl 的距离 15.0 mm，2026-10-20 用 trimesh 沿板子法线算出。照片上的圈按这些尺寸画在 Radxa 官方正面照 a7z-top.png 上，核对图 bringup/a7z/shots/check_cooling.png。</li>
+<li>芯片位置和空隙：guide/print/a7z-head/build_a7z_head.py 的 soc_a733（离 1 号针那端 20.4 到 35.8 mm，离排针边 10.0 到 25.3 mm）。PCB 顶面到摄像头模型 guide/print/face-a7z/camera_13m214.stl 沿板子法线最近 13.73 mm（2026-10-21 散热研究，0.5 mm 网格），减去 A733 封装高度 0.951 mm（Allwinner A733 数据手册 3.12 节：ED-FCCSP 570 球，15 × 15 mm，最高 0.951 mm），得 12.8 mm。照片上的散热片按 15 × 15 mm 画在 Radxa 官方正面照 a7z-top.png 上，核对图 bringup/a7z/shots/check_cooling.png。</li>
+<li>鳍片竖放：头里板子排针朝下、元件面朝脸（guide/print/a7z-head/checks.json 的板子坐标系，离开排针边的方向是 (0.17, 0, 0.98)，几乎竖直向上）；头壳里的空气从脖子口进、往上走，鳍片竖着槽才顺着气流（2026-10-21 散热研究，guide/firmware/mac/investigation-20261021/findings-cooling.md Q3 a）。</li>
 <li>头盖怎么固定：组装指南 guide/content/steps.py（V1.9 头盖“closes with the same three ROBOTIS M2.6 × 6”；下头壳的三个 cap-screw tabs）。板子、喇叭、功放、天线都在盖子上：同一文件的 V1.17 头盖说明和 A7Z-ANTENNA.html。</li>
 <li>5 V 线在 2、6 号针，功放 Vin 在 4 号：bringup/a7z/README.md 的最终针位表（2026-10-15）；Radxa 原理图 V1.11 第 14 页 J11 的 2、4 脚是 VCC5V0_SYS。</li>
 <li>发热和降频：Radxa Cubie A7Z 产品手册 Rev 1.1 第 6 节（内部调频让 CPU 不超过 85 °C；持续重载可能需要额外散热）；Radxa 论坛 “Extreme throttling introduced on A733”（60 °C 降到 416 MHz，官方说热量不可避免、建议散热片）；LinuxLinks 实测整板空闲 2.2 W、CPU 满载 5.4 W。</li>
 <li>掉电证据：guide/firmware/mac/robot-runs-20261019-a7z/README.md（四次复位的时间线：板子凉、不降频的 35 分钟没掉；之后 82 到 88 °C、频率来回跳，四次全掉，三次在策略启动瞬间；舵机那路 7.1 到 7.3 V 没塌）。</li>
 <li>电容型号：Panasonic EEU-FR1C471 规格（470 µF 16 V，8 × 11.5 mm，脚距 3.5 mm，105 °C）来自 Future Electronics 和 RS 的产品页，2026-10-20 查。</li>
-<li>满载测试脚本：guide/firmware/pi/a7z_load_test.sh（2026-10-20）。</li>
-<li>核对日期：2026-10-20。</li></ul></section>'''
+<li>满载测试脚本：guide/firmware/pi/a7z_load_test.sh（2026-10-20；2026-10-21 起每秒记录两组 CPU 的频率）。</li>
+<li>核对日期：2026-10-21。</li></ul></section>'''
 
 LEAD = ('<p class="lead">A7Z 装在头盖内面，喇叭、功放、天线也都在盖子上：拧下三颗螺丝掀起盖子，芯片那一面就朝着你，什么都不用撕。'
         '这一页的主线是给主芯片贴一块 15 × 15 mm 的铜散热片，然后合上盖子验证；焊电容那一步先不做，留着备用。全程断电操作，只有第 6 步（可选）要通电量一次。</p>')
