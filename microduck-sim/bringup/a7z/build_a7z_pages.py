@@ -365,10 +365,10 @@ S_AUDIO = step('audio', '第 6 步 · 5 分钟', '功放：Vin 4、BCLK 12、LRC
 S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25、SCL 29、SDA 31', '触摸板的四个插头插在里排的 17、25、29、31 号针上，每根线贴着插头往下折。', f'''
 <p>触摸板就是贴在头壳左内壁的 Seeed XIAO ESP32-S3（seeedstudio.com 买的那块小板，21 × 17.8 mm）。它读头壳里五块铜箔的电容，再通过 I2C（两根线的总线）报给 A7Z。九根线在组装指南的 “Stick the five copper touch pads and the XIAO inside the cap” 那一步已经焊好：五根去铜箔，四根带插头和小旗来这里。四根全在<b>里排</b>：</p>
 <ol class="acts">
-<li>{tag('hand')}小旗 17（3.3 V，XIAO 的 3V3 焊盘）插<b>里排第 9 根</b>，17 号针。</li>
-<li>{tag('hand')}小旗 25（GND，XIAO 的 GND 焊盘）插<b>里排第 13 根</b>，25 号针。</li>
-<li>{tag('hand')}小旗 29（SCL，时钟线，XIAO 的 D5）插<b>里排第 15 根</b>，29 号针。</li>
-<li>{tag('hand')}小旗 31（SDA，数据线，XIAO 的 D4）插<b>里排第 16 根</b>，31 号针，紧挨着 29 下面。</li>
+<li>{tag('hand')}小旗 17（红线，3.3 V，XIAO 的 3V3 焊盘）插<b>里排第 9 根</b>，17 号针。</li>
+<li>{tag('hand')}小旗 25（黑线，GND，XIAO 的 GND 焊盘）插<b>里排第 13 根</b>，25 号针。</li>
+<li>{tag('hand')}小旗 29（蓝线，SCL，时钟线，XIAO 的 D5）插<b>里排第 15 根</b>，29 号针。</li>
+<li>{tag('hand')}小旗 31（绿线，SDA，数据线，XIAO 的 D4）插<b>里排第 16 根</b>，31 号针，紧挨着 29 下面。</li>
 <li>{tag('hand')}每根线在插头根部往下折，和 39 号的功放地线一样；再顺着 A7Z 正面往上、翻过板子上边沿，沿左内壁回到 XIAO。</li>
 </ol>
 <div class="warn"><b>17 号针是 3.3 V，XIAO 的 3V3 只能接 3.3 V。</b>小旗 17 绝不能插到 2、4 号针（5 V）上。插完从天线插座那头再数一遍：里排第 9 根。</div>

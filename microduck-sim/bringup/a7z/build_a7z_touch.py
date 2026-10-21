@@ -22,7 +22,7 @@ CUT = {k: int(math.ceil((v + 15) / 5) * 5) for k, v in LEN.items()}   # same rul
 CU = '#c87533'
 PADS = [  # name, XIAO pad, size mm, strips
     ('L1', 'D0', 18, 4), ('R1', 'D1', 18, 4), ('L2', 'D2', 12, 3), ('R2', 'D3', 12, 3), ('M', 'D8', 12, 3)]
-A7Z = [('3V3', 17, '#d7263d'), ('GND', 25, '#1d1d1f'), ('D5', 29, '#c99a00'), ('D4', 31, '#1f6fd1')]
+A7Z = [('3V3', 17, '#d7263d'), ('GND', 25, '#1d1d1f'), ('D5', 29, '#1f6fd1'), ('D4', 31, '#1f9d55')]   # as soldered 2026-10-20
 
 # ---------------------------------------------------------------- XIAO photo with every pad marked
 # Pad centres on sources/xiao-esp32s3-front-pinout-crop.png (USB-C at the top): left column x 480, right column x 960,
@@ -48,9 +48,6 @@ def xiao_all():
     for pad, pin, col in A7Z:
         x, y = XY[pad]
         marks.append((str(pin), (x + MARGIN, y), (side(x), y), 26, col, '#1565c0'))
-    for pad, lab in (('D9', '左'), ('D10', '右')):
-        x, y = XY[pad]
-        marks.append((lab, (x + MARGIN, y), (side(x), y), 26, CU, '#6d4c41'))
     x, y = XY['VBUS']
     marks.append(('X', (x + MARGIN, y), (side(x), y), 26, '#d50000', '#d50000'))
     return P.draw_marks(im, marks)
@@ -59,15 +56,14 @@ def xiao_all():
 IMG_XIAO = B.uri(xiao_all(), 1100)
 LEGEND_XIAO = ([('land', n, f'{p} → 铜箔 {n}') for n, p, _, _ in PADS]
                + [('pin', str(pin), f'{pad} → A7Z {pin} 号针（带插头的线）') for pad, pin, _ in A7Z]
-               + [('land', '左', 'D9 → 左侧躯干铜箔'), ('land', '右', 'D10 → 右侧躯干铜箔'),
-                  ('land', 'X', 'VBUS（5 V）：不焊。D6、D7 也空着。')])
+               + [('land', 'X', 'VBUS（5 V）：不焊。D6、D7、D9、D10 也空着。')])
 
 # ---------------------------------------------------------------- drawings
 SVG_HEAD = '<svg viewBox="0 0 {w} {h}" width="100%" role="img" aria-label="{a}"><style>text{{font:21px "PingFang SC","Hiragino Sans GB",system-ui,sans-serif;fill:#1b1b1b}}.s{{font-size:17px;fill:#4a5a63}}.b{{font-weight:700}}</style><rect width="{w}" height="{h}" fill="#fff"/>'
 
 
 def svg_parts():
-    s = SVG_HEAD.format(w=680, h=430, a='零件：XIAO、铜箔、两种线')
+    s = SVG_HEAD.format(w=680, h=400, a='零件：XIAO、铜箔、两种线')
     # XIAO
     s += '<rect x="20" y="30" width="96" height="116" rx="10" fill="#1d1d1f"/><rect x="44" y="18" width="48" height="26" rx="5" fill="#b0bec5"/>'
     s += '<rect x="34" y="62" width="68" height="56" rx="4" fill="#eceff1"/><text x="68" y="96" text-anchor="middle" class="s">XIAO</text>'
@@ -77,21 +73,20 @@ def svg_parts():
     s += '<text x="250" y="176" text-anchor="middle">铜箔 5 mm 宽</text><text x="250" y="200" text-anchor="middle" class="s">约 30 cm</text>'
     # pad lead
     s += '<line x1="420" y1="60" x2="650" y2="60" stroke="#8d4a12" stroke-width="7" stroke-linecap="round"/>'
-    s += '<text x="535" y="40" text-anchor="middle" class="b">铜箔引线 × 7</text>'
+    s += '<text x="535" y="40" text-anchor="middle" class="b">铜箔引线 × 5</text>'
     s += '<text x="535" y="92" text-anchor="middle" class="s">杜邦线两头的插头都剪掉，多股软线</text>'
     # A7Z lead
     s += '<line x1="420" y1="140" x2="610" y2="140" stroke="#1f6fd1" stroke-width="7"/><rect x="610" y="128" width="36" height="24" rx="3" fill="#263238"/>'
     s += '<text x="535" y="120" text-anchor="middle" class="b">A7Z 线 × 4</text>'
     s += '<text x="535" y="176" text-anchor="middle" class="s">杜邦线，只剪一头，留一个母插头</text>'
-    s += '<text x="535" y="200" text-anchor="middle" class="s">红 3V3 · 黑 GND · 黄 D5 · 蓝 D4</text>'
+    s += '<text x="535" y="200" text-anchor="middle" class="s">红 3V3 · 黑 GND · 蓝 D5 · 绿 D4</text>'
     # lengths
     pads = '　'.join(f'{n} {CUT["touch_pad_" + n.lower()]}' for n, _, _, _ in PADS)
     pins = '　'.join(f'{pin} 号 {CUT[f"touch_a7z_pin{pin}"]}' for _, pin, _ in A7Z)
     s += '<line x1="20" y1="236" x2="660" y2="236" stroke="#cfd8dc"/>'
     s += f'<text x="20" y="272" class="b">剪线长度（mm）</text><text x="20" y="304">铜箔引线：{pads}</text>'
-    s += '<text x="20" y="334" class="s">左身、右身两根：等躯干那一步的长度</text>'
-    s += f'<text x="20" y="370">A7Z 线（含插头）：{pins}</text>'
-    s += '<text x="20" y="408" class="s">工具：烙铁、焊锡、助焊笔、剥线钳、万用表、瓷砖一块、酒精、泡棉双面胶</text>'
+    s += f'<text x="20" y="340">A7Z 线（含插头）：{pins}</text>'
+    s += '<text x="20" y="378" class="s">工具：烙铁、焊锡、助焊笔、剥线钳、万用表、瓷砖一块、酒精、双面胶或热熔胶</text>'
     return s + '</svg>'
 
 
@@ -167,7 +162,7 @@ S_PAD = B.step('pad', '第 2 步', '做铜箔', '5 块铜箔在瓷砖上做好�
 <figure>{svg_pad()}<figcaption>L1、R1：18 × 18 mm，4 条。L2、R2、M：12 × 12 mm，3 条。</figcaption></figure>
 <div class="card">面积：手指压上去的那块（约 1 cm²）决定信号大小；铜箔比指尖大，只是让手更容易碰到。所以不用更大。</div>''')
 
-S_XIAO = B.step('xiao', '第 3 步', '焊 XIAO', '11 根线平焊在 XIAO 正面的焊盘上，5 V 没焊。', f'''
+S_XIAO = B.step('xiao', '第 3 步', '焊 XIAO', '9 根线平焊在 XIAO 正面的焊盘上，5 V 没焊。', f'''
 {B.figure(IMG_XIAO, 'XIAO 正面：每个焊盘焊哪根线', 'XIAO 正面，USB-C 朝上。棕色 = 铜箔引线，蓝色 = 去 A7Z 的线。', LEGEND_XIAO)}
 <figure>{svg_solder()}</figure>''')
 
@@ -181,12 +176,14 @@ S_CAP = B.step('cap', '第 5 步', '贴进头盖', '5 块铜箔和 XIAO 贴好�
 {B.figure(B.uri(P.Image.open(B.IMG / 'touch_side.png'), 1100), '从机器人右边看，右半边切掉：XIAO 贴在左内壁', '从右边看（右半边切掉）：XIAO 贴在左内壁，金属罩朝里，USB-C 朝后。', cls='mid')}
 <ol class="acts">
 <li>{B.tag('hand')}酒精擦一遍贴的位置，干透。</li>
-<li>{B.tag('hand')}撕背纸，贴上，用指甲压平，没有气泡。</li>
+<li>{B.tag('hand')}铜箔：撕背纸，贴上，用指甲把整块压平，边角也压。翘边就盖一块比它大的透明胶带或 Kapton。</li>
+<li>{B.tag('hand')}XIAO：背面贴一块双面胶（薄的就行，最厚 2 mm），压在左内壁上。没有双面胶就在板子四角点热熔胶，别点在焊点上。</li>
 <li>{B.tag('hand')}引线贴着壁走，隔几厘米贴一小块胶带。</li>
 </ol>
 <div class="warn">铜箔不碰铜箔、螺丝头、喇叭压圈、功放。</div>''')
 
 S_PLUG = B.step('plug', '第 6 步', '插 A7Z', '4 个插头插在 17、25、29、31 号针上。', f'''
+{B.figure(B.uri(P.Image.open(P.HERE / 'diagrams' / 'touch_wiring.png'), 1100), '接线图：XIAO 四根线到 A7Z', '红 3V3 → 17，黑 GND → 25，蓝 D5 → 29，绿 D4 → 31。示意图：焊盘的真实位置看第 3 步的照片。', cls='mid')}
 {B.figure(B.IMG_TOUCH, 'A7Z 正面：17、25、29、31 号针', 'A7Z 上的 4 根针，都在里排。详细做法：<a href="A7Z-PINS.html#touch">插线页第 7 步</a>。', cls='narrow')}
 <div class="warn">红线（3V3）绝不插 2 号或 4 号针（5 V）。</div>''')
 
