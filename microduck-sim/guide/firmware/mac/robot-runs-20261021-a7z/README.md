@@ -18,3 +18,9 @@ Analysis, patch (a `sit: STALLED` notice when the knees have not folded at the s
 ## Stands
 
 Open-loop stand (KP 400) episodes rest 5.5-14.9 deg and fall forward within about 20 s; stand61 episodes hold 4-6 deg for 4-8 s and then tip within 0.5 s, each starting from an open-loop stand already leaning forward. Study: `stand-gap-20261021/README.md`; feet and stand page: `~/code/reports/20261021-microduck-stand-falls-and-feet.html`.
+
+## What these runs used, and what changed in code afterwards (not on the robot yet)
+
+- These runs used the runtime installed on the A7Z before commit 82d5f87: quack head move 1.6 s with 0.5 s ramps on stand61 only, open-loop stand KP 400 and KP_RL 200 on every logged tick.
+- Committed 2026-10-21 after the runs, not deployed: 82d5f87 (quack head move also seated and after a walk), 1652f88 (`sit: STALLED` notice; `QUACK_HEAD_S` 0.6 s, `QUACK_HEAD_RAMP_S` 0.15 s). They reach the robot with the next `install_teleop.sh` run; until then the robot behaves as in these logs.
+- Proposed, not applied: open-loop stand KP 600 (stand page and `stand-gap-20261021/README.md`). Stand mode stays at KP 400 until Shawn approves the trial; the trial's value and run go into `microduck-sim/CURRENT-STATE.json` `walking_policy` when it happens.
