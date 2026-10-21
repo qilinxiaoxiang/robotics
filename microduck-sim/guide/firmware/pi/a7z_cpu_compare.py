@@ -26,7 +26,6 @@ import argparse, glob, gzip, json, math, os, re, signal, subprocess, time
 P90_MAX_MS = 18.0
 TICKS_MIN = 49.0
 MIN_POLICY_ROWS = 500          # 10 s of 50 Hz policy ticks
-SEGMENT_GAP_S = 0.5            # policy rows further apart than this belong to different policy runs
 START_TEMP_SPREAD_C = 5.0      # compare flags runs that did not start equally cold
 
 
@@ -95,7 +94,8 @@ def write(path, value):
         with open(path, "w") as f:
             f.write(value)
     else:
-        subprocess.run(["sudo", "-n", "tee", path], input=value, text=True, stdout=subprocess.DEVNULL, check=True)
+        subprocess.run(["sudo", "-n", "tee", path], input=value, text=True, stdout=subprocess.DEVNULL, check=True,
+                       start_new_session=True)  # a Ctrl-C or hang-up meant for the run must not reach the write
 
 
 # ------------------------------------------------------------------ conditions
@@ -135,22 +135,28 @@ def restore(a, saved):
     """CPUs that were online come back first (an inactive policy refuses writes), then a capped policy's max goes back
     to its hardware max, the boot default. The saved scaling_max_freq is not reused because a hot board reads its
     thermal limit there, not the user setting. Policies this run did not cap are left alone."""
-    msgs = []
+    msgs, errors = [], []
     for c in saved["online"]:
         f = f"{a.sysfs}/devices/system/cpu/cpu{c}/online"
         if os.path.exists(f) and read(f) == "0":
-            write(f, 1)
-            msgs.append(f"cpu{c} online")
+            try:
+                write(f, 1)
+                msgs.append(f"cpu{c} online")
+            except (OSError, subprocess.CalledProcessError) as e:  # keep going: one failed write must not skip the rest
+                errors.append(f"cpu{c} online: {e}")
     for p in saved["policies"]:
         if p["n"] not in saved.get("capped", []):
             continue
         f = f"{a.sysfs}/devices/system/cpu/cpufreq/policy{p['n']}/scaling_max_freq"
         if p["cpuinfo_max"] and os.path.exists(f) and read(f) != str(p["cpuinfo_max"]):
-            write(f, p["cpuinfo_max"])
-            msgs.append(f"policy{p['n']} scaling_max_freq {p['cpuinfo_max']} (reads {read(f)})")
+            try:
+                write(f, p["cpuinfo_max"])
+                msgs.append(f"policy{p['n']} scaling_max_freq {p['cpuinfo_max']} (reads {read(f)})")
+            except (OSError, subprocess.CalledProcessError) as e:
+                errors.append(f"policy{p['n']} scaling_max_freq: {e}")
     missing = [c for c in saved["online"] if c not in online(a.sysfs)]
-    if missing:
-        raise RuntimeError(f"restore: CPUs {missing} still offline")
+    if missing or errors:
+        raise RuntimeError(f"restore incomplete (run `restore` again or reboot): CPUs {missing} offline; {errors}")
     saved["active"] = False
     saved["restored_at"] = time.time()
     with open(defaults_path(a), "w") as f:
@@ -165,8 +171,16 @@ def pick_cap(big, cap_mhz):
 
 
 # ------------------------------------------------------------------ logs
+def mtime(path):
+    """A log gzipped or removed during the run counts as old instead of ending the run."""
+    try:
+        return os.path.getmtime(path)
+    except OSError:
+        return 0.0
+
+
 def brain_logs(logs_dir):
-    return sorted(glob.glob(os.path.join(logs_dir, "duck_wired_log_*.jsonl")), key=os.path.getmtime)
+    return sorted(glob.glob(os.path.join(logs_dir, "duck_wired_log_*.jsonl")), key=mtime)
 
 
 def brain_pids():
@@ -188,14 +202,17 @@ def rows_from(path, offset, t0, t1):
         f.seek(offset)
         if offset:
             f.readline()  # may start mid-row
-        for line in f:
-            try:
-                r = json.loads(line)
-            except ValueError:
-                continue  # the row being written, or a torn row from a reset
-            t = r.get("t")
-            if t is not None and t0 <= t < t1 and r.get("loop_ms") is not None:
-                out.append((t, r["loop_ms"], r.get("mode"), r.get("action") is not None))
+        try:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue  # the row being written, or a torn row from a reset
+                t = r.get("t")
+                if t is not None and t0 <= t < t1 and r.get("loop_ms") is not None:
+                    out.append((t, r["loop_ms"], r.get("mode"), r.get("action") is not None))
+        except (EOFError, OSError):  # a truncated .gz copy: keep the rows before the cut
+            pass
     return out
 
 
@@ -206,33 +223,42 @@ def pct(v, p):
     return round(s[max(0, math.ceil(p / 100 * len(s)) - 1)], 2)
 
 
-def tick_rate(rows):
-    """Ticks per second over runs of consecutive rows (split at gaps > SEGMENT_GAP_S): sum(n-1) / sum(duration)."""
-    n = dur = 0.0
-    seg = []
-    for r in rows + [None]:
-        if seg and (r is None or r[0] - seg[-1][0] > SEGMENT_GAP_S):
-            if len(seg) > 1:
-                n += len(seg) - 1
-                dur += seg[-1][0] - seg[0][0]
-            seg = []
-        if r is not None:
-            seg.append(r)
-    return round(n / dur, 2) if dur > 0 else None
+def policy_runs(rows):
+    """Runs of policy rows with no other row between them. A stall inside a run stays in it: it costs ticks."""
+    runs, cur = [], []
+    for r in rows:
+        if r[3]:
+            cur.append(r)
+        elif cur:
+            runs.append(cur)
+            cur = []
+    return runs + ([cur] if cur else [])
+
+
+def tick_rate(runs):
+    """Ticks per second: sum(n - 1) / sum(last t - first t) over the runs, so a freeze lowers it."""
+    runs = [r for r in runs if len(r) > 1]
+    dur = sum(r[-1][0] - r[0][0] for r in runs)
+    return round(sum(len(r) - 1 for r in runs) / dur, 2) if dur > 0 else None
+
+
+def max_gap_ms(runs):
+    gaps = [b[0] - a[0] for r in runs for a, b in zip(r, r[1:])]
+    return round(max(gaps) * 1000, 1) if gaps else None
 
 
 def brain_stats(rows):
-    rows = sorted(rows)
-    pol = [r for r in rows if r[3]]
+    rows = sorted(set(rows))  # the same log read twice (analyze) adds nothing
+    runs = policy_runs(rows)
     modes = {}
     for r in rows:
         modes[r[2]] = modes.get(r[2], 0) + 1
 
-    def block(rs):
+    def block(rs, rr):
         ms = [r[1] for r in rs]
         return dict(rows=len(rs), loop_p50_ms=pct(ms, 50), loop_p90_ms=pct(ms, 90), loop_p99_ms=pct(ms, 99),
-                    ticks_per_s=tick_rate(rs))
-    return dict(policy=block(pol), all=block(rows), modes=modes)
+                    ticks_per_s=tick_rate(rr), max_gap_ms=max_gap_ms(rr))
+    return dict(policy=block([r for run in runs for r in run], runs), all=block(rows, [rows]), modes=modes)
 
 
 def verdict(stats):
@@ -324,7 +350,7 @@ def cmd_check(a):
         print(f"brain pid {pid}: Cpus_allowed_list {cpus_allowed(pid)}")
     logs = brain_logs(a.logs)
     if logs:
-        print(f"newest brain log {logs[-1]}, written {time.time() - os.path.getmtime(logs[-1]):.1f} s ago")
+        print(f"newest brain log {logs[-1]}, written {time.time() - mtime(logs[-1]):.1f} s ago")
     else:
         print(f"no brain log in {a.logs}")
     saved = json.loads(read(defaults_path(a)) or "{}")
@@ -374,6 +400,9 @@ def clocks(a):
 
 
 def cmd_run(a):
+    off = [c for c in cpu_list(read(a.sysfs + "/devices/system/cpu/present")) if c not in online(a.sysfs)]
+    if off:  # an offline cluster's policy reads EBUSY and would hide the big cluster; and it is not the default state
+        raise SystemExit(f"CPUs {off} are offline before the run: `restore` or reboot first")
     pols = policies(a.sysfs)
     big = big_policy(pols)
     if not os.path.isdir(a.logs):
@@ -385,7 +414,7 @@ def cmd_run(a):
             and subprocess.run(["sudo", "-n", "true"], capture_output=True).returncode:
         raise SystemExit("sudo -n needs a password: the CPU settings cannot be written")
     pids, logs = brain_pids(), brain_logs(a.logs)
-    if not a.no_brain_check and (not pids or not logs or time.time() - os.path.getmtime(logs[-1]) > 5):
+    if not a.no_brain_check and (not pids or not logs or time.time() - mtime(logs[-1]) > 5):
         raise SystemExit("the brain is not running or its tick log is not being written: start ~/duck-run.sh <suffix> first")
     cap_khz = pick_cap(big, a.cap_mhz) if a.condition == "cap" else None
     temps = zone_temps(a.sysfs)
@@ -394,8 +423,10 @@ def cmd_run(a):
     t_win, t_end = t_start + a.soak_min * 60, t_start + (a.soak_min + a.window_min) * 60
     saved = save_defaults(a, a.condition, cap_khz)
 
-    def stop(sig, frame):
-        raise SystemExit(f"signal {sig}")
+    stopped = []
+
+    def stop(sig, frame):  # no raise: an exception thrown from here could land inside apply() or the restore
+        stopped.append(sig)
     for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
         if signal.getsignal(s) is not signal.SIG_IGN:  # under nohup a dropped ssh session must not end the run
             signal.signal(s, stop)
@@ -413,7 +444,7 @@ def cmd_run(a):
         last_min = -1
         while True:
             now = time.time()
-            if now >= t_end:
+            if stopped or now >= t_end:
                 break
             if now >= t_win - 10 and not offsets:  # read positions just before the window; rows are filtered by t
                 th = os.path.join(a.logs, "thermal.log")
@@ -425,12 +456,12 @@ def cmd_run(a):
             if minute != last_min:
                 last_min = minute
                 logs = brain_logs(a.logs)
-                age = time.time() - os.path.getmtime(logs[-1]) if logs else None
+                age = time.time() - mtime(logs[-1]) if logs else None
                 hot = max(zone_temps(a.sysfs).values() or [float("nan")])
                 progress(a, f"min {minute}: hottest {hot:.1f} C, clocks {clocks(a)}, online {online(a.sysfs)}, "
                             + (tail_stats(logs[-1]) + (f", log age {age:.1f} s" + (" BRAIN LOG STALLED" if age > 5 else ""))
                                if logs else "no brain log"))
-            time.sleep(min(5.0, max(0.0, t_end - time.time())))
+            time.sleep(min(1.0, max(0.0, t_end - time.time())))
     finally:
         for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):  # a second Ctrl-C must not cut the restore short
             signal.signal(s, signal.SIG_IGN)
@@ -438,9 +469,15 @@ def cmd_run(a):
         print("restore:", "; ".join(result["restore"]), flush=True)
         signal.signal(signal.SIGINT, signal.default_int_handler)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    result["brain_cpus_allowed_after"] = after = {p: cpus_allowed(p) for p in pids}
+    if after != result["brain_cpus_allowed"]:
+        print(f"brain CPU affinity changed {result['brain_cpus_allowed']} -> {after} (offlining CPUs widens a pinned "
+              "task); restart the brain to get its launch affinity back", flush=True)
+    if stopped:
+        raise SystemExit(f"stopped by signal {stopped[0]}: defaults restored, no result written")
     rows = []
     for p in brain_logs(a.logs):
-        if os.path.getmtime(p) >= t_win:
+        if mtime(p) >= t_win:
             rows += rows_from(p, offsets.get(p, 0), t_win, t_end)
     th = os.path.join(a.logs, "thermal.log")
     result["brain"] = brain_stats(rows)
@@ -458,7 +495,7 @@ def summary(r):
     cond = r["condition"] + (f" {r['cap_khz'] // 1000} MHz" if r.get("cap_khz") else "")
     lines = [f"{cond} (head {r['head']}, start hottest {r['start_hottest_c']} C): {r['verdict']}",
              f"  policy rows {b['policy']['rows']}: loop p50/p90/p99 {b['policy']['loop_p50_ms']}/{b['policy']['loop_p90_ms']}/"
-             f"{b['policy']['loop_p99_ms']} ms, {b['policy']['ticks_per_s']} ticks/s",
+             f"{b['policy']['loop_p99_ms']} ms, {b['policy']['ticks_per_s']} ticks/s, longest gap {b['policy']['max_gap_ms']} ms",
              f"  all rows {b['all']['rows']}: loop p90 {b['all']['loop_p90_ms']} ms, {b['all']['ticks_per_s']} ticks/s, modes {b['modes']}"]
     if th.get("rows"):
         lines.append(f"  thermal: hottest zone p50 {th['hottest_zone_p50_c']} C (max {th['hottest_zone_max_c']}), "
@@ -468,8 +505,14 @@ def summary(r):
 
 
 def decide(results):
-    """The pick among runs: defaults when they pass (no setting needed), else the one setting that passes, the cap when
-    both pass (it keeps the A76 cores for the camera and detector), nothing when none passes."""
+    """The pick among the newest run of each condition: defaults when they pass (no setting needed), else the one
+    setting that passes, the cap when both pass (it keeps the A76 cores for the camera and detector), nothing when none
+    passes."""
+    latest = {}
+    for r in results:  # a repeated run replaces the earlier one of the same condition
+        if r["condition"] not in latest or r.get("t_start", 0) > latest[r["condition"]].get("t_start", 0):
+            latest[r["condition"]] = r
+    results = list(latest.values())
     flags = []
     starts = [r["start_hottest_c"] for r in results if r.get("start_hottest_c") is not None]
     if starts and max(starts) - min(starts) > START_TEMP_SPREAD_C:

@@ -13,16 +13,18 @@ measurement. Not run yet: the robot was off when it was written (2026-10-21).
 - `offline`: the big cluster's CPUs offline.
 
 The big cluster is the cpufreq policy with the highest `cpuinfo_max_freq` (Radxa's device tree: CPUs 6-7, Cortex-A76).
-The script never talks to the servos. It restores the defaults on every exit (end, Ctrl-C, ssh hang-up, SIGTERM); a reboot
-restores them too, and `restore` repeats it after a kill -9.
+The script never talks to the servos. It refuses to start while any CPU is offline, and restores the defaults on every
+exit (end, Ctrl-C, ssh hang-up, SIGTERM, also a second signal during the restore); a reboot restores them too, and
+`restore` repeats it after a kill -9. If offlining widened a pinned brain's CPU affinity, it says so: restart the brain.
 
 ## Acceptance
 
 Measured from the brain's own tick log in minutes 35-40 after the run starts, on ticks where a policy ran (`action` not
-null): at least 500 such ticks, loop p90 at most 18 ms and at least 49 ticks per second. The script prints PASS, FAIL or
-UNDECIDED (too few policy ticks) and writes `~/duck-logs/cpu_compare_<condition>_<time>.json`.
+null): at least 500 such ticks, loop p90 at most 18 ms and at least 49 ticks per second. A stall inside a policy run
+counts against the tick rate, and the summary prints the longest gap. The script prints PASS, FAIL or UNDECIDED (too
+few policy ticks) and writes `~/duck-logs/cpu_compare_<condition>_<time>.json`.
 
-The pick (`compare`): the defaults if the baseline passes (no setting needed); otherwise the one setting that passes; the
+The pick (`compare`, newest run of each condition): the defaults if the baseline passes (no setting needed); otherwise the one setting that passes; the
 cap if both pass (it keeps the A76 cores for the camera and detector); nothing if none passes (the next lever is the air
 path, study Q3 b). `compare` flags runs that started more than 5 °C apart or with different head states; repeat those.
 

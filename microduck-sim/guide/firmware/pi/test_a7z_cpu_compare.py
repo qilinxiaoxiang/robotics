@@ -13,6 +13,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest import mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -134,6 +135,26 @@ class Tree(unittest.TestCase):
         self.assertIn("restore: cpu6 online; cpu7 online\n", out)  # and nothing else: no policy was capped
         self.assertEqual(C.online(self.sys), list(range(8)))
 
+    def test_restore_keeps_going_after_a_failed_write(self):
+        saved = C.save_defaults(mock.Mock(sysfs=self.sys, logs=self.logs), "offline", None)
+        for c in (6, 7):
+            put(f"{self.cpu}/cpu{c}/online", 0)
+        real = C.write
+
+        def write(path, value):
+            if path.endswith("cpu6/online"):
+                raise OSError(16, "Device or resource busy")
+            real(path, value)
+        with mock.patch.object(C, "write", write), self.assertRaisesRegex(RuntimeError, r"CPUs \[6\] offline"):
+            C.restore(mock.Mock(sysfs=self.sys, logs=self.logs), saved)
+        self.assertEqual(C.read(f"{self.cpu}/cpu7/online"), "1")
+
+    def test_refuses_to_start_with_cpus_offline(self):
+        put(f"{self.cpu}/cpu7/online", 0)
+        out, _ = self.start("cap").communicate(timeout=30)
+        self.assertIn("CPUs [7] are offline before the run", out)
+        self.assertEqual(C.read(f"{self.cpu}/cpufreq/policy6/scaling_max_freq"), "2002000")
+
     def test_restore_by_hand_after_kill(self):
         p = self.start("cap", soak="1")
         self.assertTrue(self.wait_for(f"{self.cpu}/cpufreq/policy6/scaling_max_freq", "1008000"))
@@ -163,9 +184,24 @@ class Stats(unittest.TestCase):
         self.assertAlmostEqual(s["policy"]["ticks_per_s"], 45.0, places=1)
         self.assertTrue(C.verdict(s).startswith("FAIL"))
 
-    def test_policy_runs_split_at_gaps(self):
-        """Two 10 s policy runs a minute apart: the gap is not counted as missing ticks."""
-        self.assertEqual(C.brain_stats(rows(500) + rows(500, t0=1070.0))["policy"]["ticks_per_s"], 50.0)
+    def test_policy_runs_split_at_other_modes(self):
+        """Two 10 s policy runs with monitor ticks between them: the monitor time is not counted as missing policy ticks."""
+        r = rows(500) + rows(3000, policy=False, t0=1010.0) + rows(500, t0=1070.0)
+        self.assertEqual(C.brain_stats(r)["policy"]["ticks_per_s"], 50.0)
+
+    def test_freeze_inside_a_run_fails(self):
+        """1 s at 50 Hz then a 0.6 s freeze, twelve times: about 31 ticks/s, not 50 (review 2026-10-21)."""
+        r = []
+        for k in range(12):
+            r += rows(50, t0=1000.0 + k * 1.6)
+        s = C.brain_stats(r)
+        self.assertLess(s["policy"]["ticks_per_s"], 35)
+        self.assertGreater(s["policy"]["max_gap_ms"], 600)
+        self.assertTrue(C.verdict(s).startswith("FAIL"))
+
+    def test_same_log_twice_counts_once(self):
+        r = rows(600, period=1 / 45)
+        self.assertEqual(C.brain_stats(r + r), C.brain_stats(r))
 
     def test_too_few_policy_rows(self):
         self.assertTrue(C.verdict(C.brain_stats(rows(499))).startswith("UNDECIDED"))
@@ -198,6 +234,14 @@ class Pick(unittest.TestCase):
                       C.decide([self.res("cap", "PASS"), self.res("offline", "PASS")])[0])
         self.assertEqual(C.decide([self.res("cap", "FAIL"), self.res("offline", "PASS")])[0], "take the big cores offline")
         self.assertIn("no setting passes", C.decide([self.res("cap", "FAIL"), self.res("offline", "UNDECIDED")])[0])
+
+    def test_newest_run_per_condition(self):
+        """A warm cap PASS repeated cold as a FAIL: the repeat decides, and the old start temperature no longer flags."""
+        old = dict(self.res("cap", "PASS", start=58.0), t_start=100.0)
+        new = dict(self.res("cap", "FAIL", start=50.0), t_start=200.0)
+        pick, flags = C.decide([self.res("default", "FAIL", start=50.0), old, new])
+        self.assertIn("no setting passes", pick)
+        self.assertEqual(flags, [])
 
     def test_flags(self):
         flags = C.decide([self.res("cap", "PASS", start=50.0), self.res("offline", "PASS", start=58.0, head="open")])[1]

@@ -23,7 +23,7 @@ clock() {  # every cpufreq policy as pN cur/max MHz (N = its first CPU); "pN off
 vin() {  # any PMIC input-voltage reading the kernel exposes (checked 2026-10-21); prints "-" when none
   for p in "$SYS"/class/power_supply/*/voltage_now; do [ -r "$p" ] && printf '%s=%s ' "$(basename "$(dirname "$p")")" "$(cat "$p")"; done; echo "-"
 }
-[ "${BASH_SOURCE[0]}" = "$0" ] || return 0   # sourced (tests): functions only
+[ "${BASH_SOURCE[0]:-$0}" = "$0" ] || return 0   # sourced (tests): functions only; piped (bash -s): runs
 mkdir -p ~/duck-logs
 say "# load test ${SECS}s boot_id $(cat /proc/sys/kernel/random/boot_id) nproc $(nproc)"
 say "before: temps $(temps) MHz $(clock) vin $(vin)"
