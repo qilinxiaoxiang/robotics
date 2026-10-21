@@ -66,6 +66,9 @@ def rot_y(deg):
 def run(args):
     zero = {k: float(v) for k, v in args.zero}
     c0 = cfg(0.09, model=args.model, kp=200, voltage=args.volt)
+    # sliding friction of the floor and of every geom on both foot bodies: all geoms share priority 0, so MuJoCo takes
+    # the larger of the two and the foot-floor contact gets exactly this value (1.0 is the model's own)
+    c0["friction"] = args.floor_mu
     if args.manifest:  # another signed-part manifest on the same loader (the 90 g NP-F970 removal is still applied by the loader)
         c0["mass_manifest"] = os.path.abspath(args.manifest)
     if args.com_x:
@@ -100,7 +103,7 @@ def run(args):
     sub = round(0.02 / m.opt.timestep)
     aq = collections.deque([p0.copy()] * (args.action_delay + 1), maxlen=args.action_delay + 1)
     sq = collections.deque(maxlen=args.sensor_delay + 1)
-    fell, maxtilt, x0, rows, first_policy = None, 0.0, None, [], None
+    fell, fall_dir, maxtilt, x0, rows, first_policy = None, None, 0.0, None, [], None
     rng = np.random.default_rng(args.seed)
     imu_hold, imu_t = None, 0.0
     max_action, action_jumps, prev_action = 0.0, 0, None
@@ -273,7 +276,7 @@ def run(args):
             rows.append((round(t, 1), brain.mode, info["gb"][0], round(float(d.xpos[trunk, 0]), 3), round(tilt, 1)))
         low = brain.mode in ("groundpick", "sit")
         if (tilt > (80 if low else 45)) or d.xpos[trunk, 2] < (0.03 if brain.mode == "sit" else 0.04):
-            fell = round(t, 2)
+            fell, fall_dir = round(t, 2), _lean_dir(R)
             break
     if gp_at is not None:
         gp["end_tilt"] = round(tilt, 1)
@@ -323,7 +326,7 @@ def run(args):
                 head=None if not (args.head_yaw or args.head_pitch is not None) else dict(head_yaw=args.head_yaw, head_pitch=args.head_pitch,
                                                          final={n: round(float(d.qpos[qa[k]] - z0[k]), 3) for k, n in enumerate(names) if "head" in n or "neck" in n}),
                 compensation=args.compensation, first_policy_tick_s=first_policy, max_action=round(max_action, 2), action_jumps=action_jumps,
-                drop=args.drop, imu_hz=args.imu_hz, fell_at=fell,
+                drop=args.drop, imu_hz=args.imu_hz, floor_mu=args.floor_mu, fell_at=fell, fall_dir=fall_dir,
                 max_tilt=round(maxtilt, 1), battery_stop_at=stop_at, stop_ramp=args.stop_ramp, settled_s=settled_at, end_mode=brain.mode,
                 max_tilt_after_stop=round(tilt_after_stop, 1) if stop_at is not None else None,
                 dist_x=None if x0 is None else round(float(d.xpos[trunk, 0] - x0), 3),
@@ -338,6 +341,17 @@ def _yaw(q):
     """Heading (rad) of a MuJoCo wxyz quaternion."""
     w, x, y, z = (float(v) for v in q)
     return math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
+
+
+def _lean_dir(R):
+    """Way the trunk's up axis leans in its own heading frame (x forward): forward, backward, left or right."""
+    fwd = R[:, 0].copy()
+    fwd[2] = 0
+    fwd /= np.linalg.norm(fwd)
+    f, l = float(R[:, 2] @ fwd), float(R[:, 2] @ np.array([-fwd[1], fwd[0], 0.0]))
+    if abs(f) >= abs(l):
+        return "forward" if f > 0 else "backward"
+    return "left" if l > 0 else "right"
 
 
 def main():
@@ -391,6 +405,8 @@ def main():
     ap.add_argument("--unsit-at", type=float, default=None, help="s; walk at zero command from here (stands up first)")
     ap.add_argument("--trace", action="store_true")
     ap.add_argument("--bam-friction-scale", type=float, default=1.0, help="multiply BAM Coulomb/Stribeck/load friction (training DR range 0.9-1.1; measured real servos sit above it)")
+    ap.add_argument("--floor-mu", type=float, default=1.0,
+                    help="foot-floor sliding friction (tilt test: tan of the slide angle); 1.0 = the model's own, training randomised 0.7-1.3")
     ap.add_argument("--tick-log", default=None, help="write one JSON row per 20 ms tick (q, dq, gb, gyro_body, action) like /tmp/duck_wired_log_*.jsonl")
     args = ap.parse_args()
     global tick_log
