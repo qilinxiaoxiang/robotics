@@ -38,6 +38,7 @@ ALLOWLIST = {
     "/A7Z-ANTENNA.html": "A7Z-ANTENNA.html",
     "/A7Z-WIRES.html": "A7Z-WIRES.html",
     "/A7Z-COOLING.html": "A7Z-COOLING.html",
+    "/A7Z-TOUCH.html": "A7Z-TOUCH.html",
     "/POWER-12V.html": "POWER-12V.html",
     "/EXTENSION-REVIEW.html": "EXTENSION-REVIEW.html",
     "/HEAD-3D.html": "HEAD-3D.html",

@@ -7,6 +7,7 @@ The Pi pages (`../BRINGUP.html`, built from `../build/`) are unchanged.
 - `../A7Z-WIRES.html`: one-picture summary, Pi Zero W pin -> A7Z pin for each wire, click a pin, wire or row to show only that wire (builder `build_a7z_wires.py`, probe `node probe_wires.mjs`).
 - `../A7Z-ANTENNA.html`: AC019 FPC antenna in the head cap (sections in assembly order: `#parts #stick #mount #clip #plug #check`; the IPEX plug goes on after the cap wire clip, as in guide/content/steps.py).
 - `../A7Z-COOLING.html` (builder `build_a7z_cooling.py`, 2026-10-20): open the head (three M2.6 × 6, the board, speaker, amplifier and antenna all ride on the cap), stick a 15 × 15 × 5 mm copper heatsink on the A733 (15.0 mm free to the camera board), solder a 470 µF electrolytic across the 5 V lead 2 cm from pins 2/6, optional min-hold meter reading during `guide/firmware/pi/a7z_load_test.sh`, close and check (`#parts #off #open #sink #cap #meter #close`). A733 and RAM centres read on a7z-top.png: `SOC`, `RAM` in the builder, check figure `shots/check_cooling.png`.
+- `../A7Z-TOUCH.html` (builder `build_a7z_touch.py`, cap views `render_touch_views.py` with the CAD venv, 2026-10-20): picture-first touch build: wire list and cut lengths, pads from 5 mm copper strips with the lead soldered across them on a tile, XIAO pad map (D9/D10 reserved for the two torso pads), one-pad bench test (`guide/extension-20261015-touch/firmware/touch_bench.py`), cap placement, A7Z pins 17/25/29/31, continuity check (`#parts #pad #xiao #bench #cap #plug #check`).
 
 ## Build
 
