@@ -54,6 +54,11 @@ Remote-control additions (2026-10-20, walk_brain.py has the details):
   Hold-to-walk: rewrite {"mode": "walk", "vx": 0.25, ..., "for_s": 0.6} every 0.3 s; every rewrite restarts for_s,
   so the walk stops 0.6 s after the last one.
 
+Tick log additions (2026-10-21): cur_ma, the Present Current of the 14 body servos in mA (IDS order, like pos_tick;
+read in the same sync read as velocity and position), and jaw_cur_ma; touch, the raw counts of the head pads L1, R1, L2,
+R2, M, with touch_seq (the XIAO's scan number), touch_age (s since that scan arrived) and touch_bad (failed reads so far),
+read on their own thread when the A7Z's TWI0 bus exists (--touch-bus), null otherwise.
+
 Walk stops: {"mode": "walk", ..., "for_s": 7} sets zero velocity 7 s after the command arrived; walk61 brings its own
 stride to rest (torque on), the sequence brain_sim_check.py verifies on the as-built model. An action over 3.0 rad in 3
 of 10 ticks or body tilt over --max-tilt deg (30) switches to stand mode; a single tick over 3.0 rad is clipped to
@@ -88,6 +93,12 @@ from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, INPUT_V
                      BatteryGuard, status_ok, stop_command, stop_settled, voltage_alert_only)
 
 ADDR_TORQUE, ADDR_P_GAIN, ADDR_GOAL, ADDR_VEL = 64, 84, 116, 128
+# The per-tick state read: Present Current (126, 2 B signed, 1 mA; the XL330 measures it at its supply input), Present
+# Velocity (128, 4 B) and Present Position (132, 4 B) as one 10-byte block. The current adds 2 bytes to each of the 15
+# status packets: 0.3 ms on the 1 Mbaud servo bus, 0.6 ms on the A7Z's 500 kbaud J12 link, no extra transaction.
+ADDR_CUR = 126
+STATE_FMT = "<hii"
+STATE_SIZE = struct.calcsize(STATE_FMT)
 IMU_FMT = "<I11fB"
 
 
@@ -214,6 +225,88 @@ class Link:
             if pkt[7] == 0x55 and len(pkt) == 11 + size and (pkt[8] == 0 or (alert_ok and status_ok(pkt[8]))):
                 out[pkt[4]] = pkt[9:9 + size]
         return out
+
+
+# Head touch pads (D-013, guide/extension-20261015-touch): a XIAO ESP32-S3 scans the five pads every 20 ms
+# (firmware/touch_xiao/touch_main.cpp) and answers an I2C read at 0x2A with the newest scan, 24 bytes: uint32 LE
+# sequence number, then the raw counts of L1, R1, L2, R2, M (a touch raises them). On the A7Z it sits on the kernel bus
+# of TWI0, header pins 29/31 (CURRENT-STATE.json a7z_touch_bus). The Mac brain has no path to it.
+TOUCH_ADDR, TOUCH_BLOCK, TOUCH_PERIOD = 0x2A, 24, 0.02
+TOUCH_PADS = ("L1", "R1", "L2", "R2", "M")
+TOUCH_SATURATED = 0x3FFFFF  # touchRead's ceiling, a pad lead on metal; a count above it means a misaligned block
+I2C_SLAVE = 0x0703
+I2C_SYSFS = "/sys/bus/i2c/devices"
+_wall = time.monotonic  # the touch reader's pacing clock; the tests replace this module's `time` with the loop's
+
+
+def touch_bus_path(arg):
+    """--touch-bus: 'auto' is the kernel I2C bus of TWI0 (twi@2510000) or None, 'none' is None, N is /dev/i2c-N, anything
+    else a device path. No bit-banged fallback here: it costs tens of ms of CPU per read (touch_live_a7z.py)."""
+    if arg == "none":
+        return None
+    if arg == "auto":
+        return next(("/dev/" + n.split("/")[-2] for n in sorted(glob.glob(os.path.join(I2C_SYSFS, "i2c-*", "of_node")))
+                     if os.path.realpath(n).endswith("/twi@2510000")), None)
+    return f"/dev/i2c-{arg}" if arg.isdigit() else arg
+
+
+def open_touch_bus(path):
+    """A function that reads one block from the XIAO."""
+    fd = os.open(path, os.O_RDWR)
+    fcntl.ioctl(fd, I2C_SLAVE, TOUCH_ADDR)
+    return lambda: os.read(fd, TOUCH_BLOCK)
+
+
+class TouchPads:
+    """Reads the pads on its own thread every TOUCH_PERIOD; the control loop only takes the newest block (latest()),
+    which never waits on the bus. A failed read, or a block no pad can produce, keeps the previous block, whose age then
+    grows; so does a scan that has stopped (the sequence number no longer advances: a saturated pad holds the scan of
+    touch_main.cpp on that pad, touch_live_a7z.py)."""
+
+    def __init__(self, read, start=True):
+        self.read = read
+        self.newest = None  # (seq, counts, perf_counter time the seq arrived), replaced whole so a reader needs no lock
+        self.bad = 0  # reads that failed or were rejected
+        self.failing = False
+        if start:
+            threading.Thread(target=self._run, daemon=True).start()
+
+    def _run(self):
+        pause = threading.Event()  # a wall-clock wait, never the loop's (simulated) clock
+        due = _wall()
+        while True:
+            self.poll()
+            due = max(due + TOUCH_PERIOD, _wall())  # the read time comes out of the pause; a stuck read skips, no burst
+            pause.wait(due - _wall())
+
+    def poll(self):
+        """One read; True when it gave a valid block."""
+        try:
+            raw = self.read()
+            why = None if len(raw) == TOUCH_BLOCK else f"{len(raw)}-byte read"
+        except OSError as e:
+            why = f"{type(e).__name__}: {e}"
+        if why is None:
+            seq, *counts = struct.unpack("<6I", raw)
+            if max(counts) > TOUCH_SATURATED:
+                why = "a count above the pad ceiling, misaligned block"
+        if why:
+            self.bad += 1
+            if not self.failing:
+                print(f"touch: read failed ({why}); the pads keep their last block, retrying", flush=True)
+                self.failing = True
+            return False
+        if self.failing:
+            print("touch: reads back", flush=True)
+            self.failing = False
+        if self.newest is None or seq != self.newest[0]:
+            self.newest = (seq, counts, time.perf_counter())
+        return True
+
+    def latest(self, now):
+        """(counts L1 R1 L2 R2 M, seq, s since that block arrived) of the newest block; all None before the first."""
+        b = self.newest
+        return (None, None, None) if b is None else (b[1], b[0], now - b[2])
 
 
 # Stop guards for walk mode: either one switches to plain stand and writes that to the control file.
@@ -371,6 +464,9 @@ def main():
                     help="firmware P gain in walk mode (default walk_brain.KP_RL 200; E1 on 10/15: loaded joints ignore <0.05 rad below ~800)")
     ap.add_argument("--kp-stand", type=int, default=None,
                     help="firmware P gain in stand mode (default constants.KP_DEFAULT 400; Shawn 2026-10-16: 200, as walk mode)")
+    ap.add_argument("--touch-bus", default="auto",
+                    help="head touch pads (XIAO at I2C 0x2A): auto = the kernel bus of the A7Z's TWI0 when it exists, "
+                         "N = /dev/i2c-N, a device path, or none")
     args = ap.parse_args()
     if args.kp_rl:
         import walk_brain as _wb
@@ -402,8 +498,23 @@ def main():
                 pass
     threading.Thread(target=_sync_log, daemon=True).start()
     print(f"wired on {port}, compensation {brain.comp_cfg['delay_compensation']}", flush=True)
+    touch, touch_path = None, touch_bus_path(args.touch_bus)
+    if touch_path is None:
+        print("touch: off (--touch-bus none)" if args.touch_bus == "none" else
+              "touch: no TWI0 I2C bus (twi@2510000); the head pads are not read, the touch fields stay null", flush=True)
+    else:
+        try:
+            read_touch = open_touch_bus(touch_path)
+        except OSError as e:
+            print(f"touch: cannot open {touch_path} ({e}); the head pads are not read, the touch fields stay null",
+                  flush=True)
+        else:
+            print(f"touch: pads {'/'.join(TOUCH_PADS)} on {touch_path} (XIAO 0x{TOUCH_ADDR:02X}), read every "
+                  f"{TOUCH_PERIOD * 1000:.0f} ms off the control thread", flush=True)
+            touch = TouchPads(read_touch)
 
     pos, vel = [0] * 14, [0] * 14
+    cur, jaw_cur = [None] * 14, None  # mA; a servo that has not answered yet has none
     comp = Breakaway()
     jaw = JawCtl(kp=args.jaw_kp)
     print("jaw ID15: " + (f"calibrated, closed tick {jaw.cal['closed_tick']}, open tick {jaw.cal['open_tick']}"
@@ -435,15 +546,15 @@ def main():
     hw_faults, next_hw, last_block = [], time.perf_counter() + 0.5, float("-inf")
     while True:
         t0 = time.perf_counter()
-        got = link.sync_read(ADDR_VEL, 8, IDS + [JAW_ID], timeout=0.018)  # USB adds a few ms; median 6-11 ms measured
+        got = link.sync_read(ADDR_CUR, STATE_SIZE, IDS + [JAW_ID], timeout=0.018)  # USB adds a few ms; median 6-11 ms measured
         t_read = time.perf_counter()
         t_mid = (t0 + t_read) / 2
         read_ms = (t_read - t0) * 1000
         for k, i in enumerate(IDS):
             if i in got:
-                vel[k], pos[k] = struct.unpack("<ii", got[i])
+                cur[k], vel[k], pos[k] = struct.unpack(STATE_FMT, got[i])
         if JAW_ID in got:  # the jaw rides along; a missing jaw never stops the body
-            jaw.last_tick = struct.unpack("<ii", got[JAW_ID])[1]
+            jaw_cur, _, jaw.last_tick = struct.unpack(STATE_FMT, got[JAW_ID])
         fresh = all(i in got for i in IDS) and not hw_faults  # a faulted servo freezes the policy, as on the bench
         misses += not fresh
         missing = [i for i in IDS if i not in got]  # a daisy-chain break drops every ID past it together
@@ -451,6 +562,7 @@ def main():
             miss_by_id[i] = miss_by_id.get(i, 0) + 1
         with link.lock:
             imu = link.imu
+        touch_counts, touch_seq, touch_age = touch.latest(time.perf_counter()) if touch else (None, None, None)
         new_cmd = read_cmd(args.cmd, last_cmd)
         cmd_is_new = new_cmd is not last_cmd
         if cmd_is_new:
@@ -743,7 +855,9 @@ def main():
                                   # raw record for later replay and system ID: accel (m/s2, IMU frame), IMU sample
                                   # seq, servo present ticks and the goal ticks last written, the command in force
                                   acc=acc, imu_seq=imu_seq, pos_tick=list(pos), vel_tick=list(vel),
-                                  goal_tick=goal_written, cmd=want, servo_v=servo_v,
+                                  cur_ma=list(cur), goal_tick=goal_written, cmd=want, servo_v=servo_v,
+                                  touch=touch_counts, touch_seq=touch_seq, touch_age=touch_age,
+                                  touch_bad=touch.bad if touch else None, jaw_cur_ma=jaw_cur,
                                   jaw_tick=jaw.last_tick, jaw_deg=None if jaw.opening_deg() is None else round(jaw.opening_deg(), 1),
                                   jaw_goal=jaw.goal_deg if jaw.on else None, jaw_clamps=jaw.clamps if jaw.on else [],
                                   jaw_holding=jaw.holding())) + "\n")
