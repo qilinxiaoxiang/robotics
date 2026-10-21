@@ -11,7 +11,9 @@ new screw, post, tab or slot.
   sleeve, and the other half of the foot block. It replaces the V1.22 side.
   - The sleeve lip is raised to 1.2 mm, as in V1.22.
   - The pocket and lip bore have a 45 deg teardrop roof, so the half prints on its heel chamfer with no support in the
-    pocket. The sleeve keeps 270 deg of round bore, including the whole lower half that carries the robot's weight.
+    pocket. On the robot the roof points toward the toe, 30 deg below horizontal, and spans from 75 deg below to 15 deg
+    above horizontal on the toe side; straight down, under the robot's weight, the bore stays round. The two roof flats
+    are tangent to the d15 bore, so the 14.6 mm sleeve can move 0.28 mm toward the roof tip against 0.20 mm elsewhere.
 - **What holds them:**
   - The V1.22 slip-fit foot slides over both foot-block halves; its end walls keep the halves from moving apart.
   - The toe M2 x 6 TAP sits on the cut (the stock toe screw axis, local x 17.5, z -16), and its countersunk head bears

@@ -52,7 +52,7 @@ LIP_R_IN, LIP_R_OUT, LIP_Z0, LIP_TOP = 7.05, 9.15, 1.5, 2.7
 # right) on the bed, so the shaft lies flat and -HEEL_N points up. The d15 pocket (z -1.3..1.5) and the d14 lip bore
 # (z 1.5..LIP_TOP and through the exterior) gain the 45 deg triangle between their circle and the point r * sqrt(2) along -HEEL_N.
 # Material there: 11.7 mm from the pocket at 330 deg, at least 2.2 mm left at the triangle's edges (0 and 285 deg); the
-# sleeve keeps 270 deg of round bore, including the whole lower half that carries the robot's weight.
+# roof points toward the toe 30 deg below horizontal on the robot (span 75 deg below to 15 deg above); straight down stays round.
 HEEL_N = (-0.8700, 0.4930)
 TEAR_POCKET = (7.5, -2.0, LIP_Z0)          # radius, z0, z1 (z1 = the lip underside: the sleeve's axial stop stays flat)
 TEAR_BORE = (LIP_R_IN, LIP_Z0, 4.5)
