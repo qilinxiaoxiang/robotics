@@ -165,6 +165,26 @@
      "why": "TWI0 overlay zz-duck-twi0-touch.dtbo installed; the bus is now the kernel's /dev/i2c-0, bit-banging is only the fallback"
     }
    ]
+  },
+  "a7z_closed_head_thermal_and_resets": {
+   "value": "closed head, brain plus a 50 Hz policy load, bench supply: SoC 85 C after 5 min and 93 C after 9 min, both CPU clusters pinned at 416 MHz by the thermal governor (trips at 60 C), brain loop p50 23.6 ms / p90 24.6 ms (about 42 ticks/s); the board reset at about 90 C in stand61 and twice within 10 s of a walk start at 45 C and 77 C (3 resets in 25 min); no kernel thermal message (journal volatile, critical trip 110 C)",
+   "meaning": "Whether the A7Z can run the 50 Hz brain inside the closed V1.17 head, and how the board fails there. Acceptance for staying in the head: policy-row loop p90 <= 18 ms and >= 49 ticks/s after a one-hour soak (pi/A7Z-CPU-COMPARE.md).",
+   "verified_at": "2026-10-22",
+   "source": "guide/firmware/mac/robot-runs-20261022-a7z/README.md (cpu_compare_progress.log minutes 5-9 of soak run 2, thermal.log, brain tick logs around the three resets)",
+   "measure": "a7z_cpu_compare.py run default --head closed --soak-min 55 --burn policy_burn.py; read the minute lines and the verdict",
+   "max_age_days": 30,
+   "consumers": [
+    "D-021 decision on the board's place (head or torso)",
+    "cooling and power design sessions",
+    "any brief that quotes A7Z throttling or reset behaviour"
+   ],
+   "superseded": [
+    {
+     "value": "10/21 closed head, no extra load: loop p50 14.1 -> 21.8 ms and 49.9 -> 43.7 ticks/s in 12 min; 10/19 four resets after 35 min at 77-88 C",
+     "until": "2026-10-22",
+     "why": "re-measured 2026-10-22 with the policy load; resets now seen at 45-90 C, two at walk starts"
+    }
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
