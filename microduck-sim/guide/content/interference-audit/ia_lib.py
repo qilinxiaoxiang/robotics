@@ -74,7 +74,12 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # 2026-10-22 one-piece lower-leg link (print/link-sleeve-20261022/make_link.py): the V1.22 sleeve grown onto the
               # link boss; the separate sleeve ('smallring') is gone from the leg.
               'lower': 'lower_link_left.stl', 'right_lower': 'lower_link_right.stl',
-              **{f'head_pi_a7z_{p.stem[4:]}': p.name for p in sorted(WORLD.glob('a7z_*.stl')) if p.name != 'a7z_pcb.stl'}}
+              **{f'head_pi_a7z_{p.stem[4:]}': p.name for p in sorted(WORLD.glob('a7z_*.stl')) if p.name != 'a7z_pcb.stl'},
+              # 2026-10-22 D-022 roof saddle (print/a7z-saddle/to_guide_world.py): the saddle body and lid and the A7Z set in the
+              # saddle pose (sd_*.stl). The head-pose entries above ('pi', head_pi_a7z_*, antenna*, camera_ribbon, camera_board) are
+              # no longer guide parts; they stay here harmlessly for the record.
+              'saddle_body': 'saddle_body.stl', 'saddle_lid': 'saddle_lid.stl',
+              **{p.stem: p.name for p in sorted(WORLD.glob('sd_*.stl'))}}
 
 
 def decode_guide_part(p: dict) -> tuple[np.ndarray, np.ndarray]:

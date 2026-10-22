@@ -35,7 +35,7 @@ DEFAULT_WIRING_KIT = Path.home() / 'code' / 'wiring-kit' / 'dist'
 HEX = re.compile(r'^#[0-9a-fA-F]{6}$')
 STATUSES = {'assembled', 'printed', 'reprint', 'new-print', 'purchased', 'owned'}
 PREP_KINDS = {'fastener', 'printed', 'electronic', 'tool', 'cable', 'other'}
-CABLE_KINDS = {'dxl', 'power-20v', 'power-15v', 'power-7v', 'power-5v', 'ground', 'usb', 'uart', 'i2c', 'i2s', 'speaker', 'csi', 'touch'}
+CABLE_KINDS = {'dxl', 'power-20v', 'power-15v', 'power-7v', 'power-5v', 'ground', 'usb', 'uart', 'i2c', 'i2s', 'speaker', 'csi', 'touch', 'fan', 'antenna'}   # fan, antenna: D-022 saddle leads
 BOUNDS_TOLERANCE_MM = 1.0
 GEOMETRY_CHUNK = 1_500_000  # artifact uploads of one 2.0 MB base64 script dropped on 2026-10-20 while 1.86 MB passed
 

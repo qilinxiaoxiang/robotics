@@ -20,9 +20,13 @@ Needs numpy, trimesh and fast_simplification (mesh decimation). Inputs:
                                                    (fed 7.40 V, the 7 V rail, by a 22 AWG pair from XL4015 #1 (top board) in the rear converter box; 15 V from
                                                    an Adafruit 5991; PROJECT-CONTEXT.json current_build.servo_rail_7v_20261014)
 - guide/print/world/imu_board.stl, imu_sh4_receiving.stl  BNO085 and its plug turned onto the pack's front plate
-- guide/print/world/camera_board.stl                Radxa Camera 13M 214 on the A7Z face bosses (print/face-a7z/), connector edge +y
-- guide/print/world/a7z_*.stl, antenna*.stl, camera_ribbon.stl  Radxa Cubie A7Z board ('pi' key) and components, AC019
-                                                   antenna with coax and IPEX plug, A7Z end of the camera ribbon (print/a7z-head/)
+- guide/print/world/saddle_body.stl, saddle_lid.stl  D-022 (2026-10-22): the printed roof saddle for the Radxa Cubie A7Z on the
+                                                   torso roof over the V1.9 rear pack (print/a7z-saddle/build_saddle.py, build/build.json)
+- guide/print/world/sd_*.stl                        the A7Z and its components, the 15 x 15 x 5 copper heatsink and its pad, the 30 mm
+                                                   fan, the Dupont housings on the header, the AC019 antenna and the right-angle USB-C
+                                                   plug of the future camera cable, all in the saddle pose. The head-pose set
+                                                   (a7z_*.stl, antenna*.stl, camera_ribbon.stl, camera_board.stl) stays on disk as a record
+                                                   and is no longer registered: the head keeps no computer and no camera (D-022).
 - guide/content/routes.json                         cable centerlines
 - guide/content/steps.py                            chapters, steps and cable wording
 """
@@ -65,12 +69,13 @@ DROP = {'openrb', 'head_pi_gpio_pin_20_receiving', 'camera_clamp_screw_1', 'came
         # The jumper ends on pins 4, 12, 35 and 40 come from the source; pin 34 (amplifier ground) is made from pin 6;
         # pin 14 is not used.
         'speaker_cradle', 'speaker_keeper', 'head_pi_gpio_pin_14_receiving',
-        # 2026-10-15 Radxa Cubie A7Z head: the IMU is back on pins 3 and 5 (TWI7 hardware I2C), so their source jumper
-        # ends stay, and so does the pin 12 end (I2S0 BCLK, an ordinary Dupont plug; its wire bends down at the plug end
-        # in the 1.8 mm between the plug and the bare back of the camera board).
-        'head_pi_zero_w_gpio_solder_tails'}
-# Pi Zero W board components from the source export; the A7Z components (print/world/a7z_*.stl) replace them.
-DROP_PREFIX = ('head_pi_component_',)
+        'head_pi_zero_w_gpio_solder_tails',
+        # 2026-10-22 D-022: the head computer and the camera leave the head. The source Pi ('pi'), every head_pi_* part
+        # (header, pins, jumper ends, components) and the Camera Module 3 ('camera_board') are dropped; the A7Z is drawn
+        # from print/world/sd_*.stl in the roof saddle. The face keeps its four camera bosses; no camera part is drawn.
+        'pi', 'camera_board'}
+# Pi Zero W header, pins, jumper-wire ends and components from the source export: all gone with the head computer.
+DROP_PREFIX = ('head_pi_',)
 
 STATUS = {
     # assembled legs keep 'assembled'; everything else is assigned here
@@ -79,28 +84,44 @@ STATUS = {
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
                   'speaker_retainer', 'clip_torso', 'clip_bracket', 'clip_head', 'clip_cap',
-                  'battery_backpack_frame', 'battery_backpack_cap'],
-    'purchased': ['imu_board', 'imu_sh4_receiving', 'camera_board', 'speaker', 'amplifier', 'pi', 'camera_ribbon',
-                  'antenna', 'antenna_coax', 'antenna_ipex'],
+                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
+    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
 # Motors are 112k triangles each in the CAD export; 15 of them dominate the file size.
 DECIMATE_OVER = 30000
-# Pi seat on the V1.8 head cap, relative to the full-build source position (robot frame, mm): 4.6 mm back (V1.7,
-# interference-audit/verify-cap) and 1.0 mm up (V1.8: the rails are raised so the jumper-wire ends on the header clear
-# the windowless V1.8 lower shell by 1.59 mm; print/world/v18-sources.json).
-PI_SHIFT = [-4.6, 0.0, 1.0]
-# Header pin axis of the head computer (unit, robot frame): the board leans 10 deg forward (print/a7z-head/pi-frame-raw.json).
-PIN_AXIS = np.array([0.984808, 0.0, -0.173648])
-A7Z_NAMES = {'csi_connector': 'A7Z camera connector (31-pin, underside, pin-1 end)', 'microsd_card': 'microSD card in the A7Z',
-             'microsd_socket': 'A7Z microSD socket', 'ipex_socket': 'A7Z antenna socket (IPEX)', 'fan_connector': 'A7Z fan socket',
-             'micro_hdmi': 'A7Z micro HDMI', 'usb_c_power': 'A7Z USB-C power', 'usb_c_otg_dp': 'A7Z USB-C (OTG, DisplayPort)',
-             'soc_a733': 'A7Z processor (Allwinner A733)', 'ram': 'A7Z memory', 'pmic_area': 'A7Z power chip area',
-             'wifi_module_fcu760k': 'A7Z Wi-Fi module', 'pcie_fpc': 'A7Z PCIe connector', 'uboot_button': 'A7Z boot button',
-             'underside_smd': 'A7Z underside components'}
-A7Z_COLORS = {'microsd_card': '#2b4a8b', 'micro_hdmi': '#b0b0b0', 'usb_c_power': '#b0b0b0', 'usb_c_otg_dp': '#b0b0b0',
-              'ipex_socket': '#d4af37', 'csi_connector': '#e8e2d0', 'pcie_fpc': '#e8e2d0', 'fan_connector': '#f2f2f2'}
+# Roof saddle for the A7Z (D-022, 2026-10-22; print/a7z-saddle/build_saddle.py, build/build.json "parts" bounds, build/pins.json
+# pin tops). Guide world frame: the board lies component side up on four dia 5 posts (PCB underside z 47.0), header edge at
+# the rear (x -43.1), pin 1 at the -y end (even pins edge row x -40.87, odd pins inner row x -38.33, pin tops z 57.1); the
+# microSD card sticks out through the slot in the +y wall. Every sd_* part is a bought part in the saddle pose; the two
+# saddle prints are white like the shells.
+SADDLE_PRINTS = {'saddle_body': 'Roof saddle body for the A7Z: four board posts, floor passage over the torso roof opening, two seats for the pack screws (new print, white)',
+                 'saddle_lid': 'Roof saddle lid with the fan pocket and grille (new print, white)'}
+SD_PARTS = {
+    'sd_a7z_pcb': ('Radxa Cubie A7Z with soldered 40-pin header, in the roof saddle', '#1f5f3a'),
+    'sd_soc_a733': ('A7Z processor (Allwinner A733), under the copper heatsink', '#3b3b3b'),
+    'sd_ram': ('A7Z memory', '#3b3b3b'),
+    'sd_pmic_area': ('A7Z power chip area', '#3b3b3b'),
+    'sd_wifi_module_fcu760k': ('A7Z Wi-Fi module', '#3b3b3b'),
+    'sd_usb_c_otg_dp': ('A7Z USB-C (OTG, DisplayPort) on the front edge: takes the future camera cable', '#b0b0b0'),
+    'sd_usb_c_power': ('A7Z USB-C power (unused: the 5 V lead goes on header pins 2 and 6)', '#b0b0b0'),
+    'sd_micro_hdmi': ('A7Z micro HDMI', '#b0b0b0'),
+    'sd_fan_connector': ('A7Z fan socket J6 (3-pin, pin-1 end, front corner)', '#f2f2f2'),
+    'sd_ipex_socket': ('A7Z antenna socket (IPEX)', '#d4af37'),
+    'sd_microsd_socket': ('A7Z microSD socket (underside, +Y end)', '#3b3b3b'),
+    'sd_microsd_card': ('microSD card in the A7Z, out through the slot in the +Y saddle wall', '#2b4a8b'),
+    'sd_csi_connector': ('A7Z camera connector (31-pin, underside, pin-1 end; empty, no ribbon)', '#e8e2d0'),
+    'sd_pcie_fpc': ('A7Z PCIe connector (underside)', '#e8e2d0'),
+    'sd_uboot_button': ('A7Z boot button (underside)', '#3b3b3b'),
+    'sd_underside_smd': ('A7Z underside components', '#3b3b3b'),
+    'sd_heatsink': ('15 x 15 x 5 mm copper heatsink on the A733', '#b87333'),
+    'sd_thermal_pad': ('0.5 mm thermal pad between the A733 and the copper heatsink', '#9e9e9e'),
+    'sd_fan': ('Adafruit 3368 30 mm 5 V fan in the saddle lid (30 x 30 x 8 envelope), blowing down onto the copper', '#26282b'),
+    'sd_dupont_housings': ('Straight Dupont housings on the A7Z header (one envelope for every plugged wire)', '#1b1b1b'),
+    'sd_antenna': ('AC019 Wi-Fi antenna strip on the saddle rear wall (inner face), IPEX plug on the board', '#c9a227'),
+    'sd_usb_c_plug': ('Right-angle USB-C plug for the camera cable, through the front-wall notch into the OTG socket (camera not yet chosen)', '#4a4a4a'),
+}
 # Every XL330 is simplified straight to 36,000 triangles (0.02 mm from its source). A 9,000 start let ID12 and ID14
 # pass the surface test at about 23,000 triangles while moving the surface 2.6 mm into their neighbours.
 MOTOR_TARGET = 36000
@@ -312,70 +333,38 @@ def build_parts() -> dict:
             name = 'Jaw support (restored original)'
         parts[p['key']] = {'key': p['key'], 'name': name, 'color': p['color'], 'module': module, 'status': status, 'v': v, 'f': f}
 
-    # GPIO sockets on the Radxa Cubie A7Z (2026-10-15, same header place as the Pi). The 32 mm camera board covers the
-    # edge-row (even) Dupont ends of pins 10 to 34, so the UART uses UART2 on inner-row pins 7 (TX) and 11 (RX) and the
-    # amplifier ground uses inner-row pin 39; inner-row ends are made from pin 9 (2.54 mm pitch, higher pins are -y).
-    # The touch readout (XIAO ESP32-S3, extension-20261015-touch/) takes inner-row pins 17 (3.3 V), 25 (GND), 29 (I2C
-    # SCL, PB2) and 31 (I2C SDA, PB3); no stock A7Z overlay serves them (PLAN.md).
-    odd = parts['head_pi_gpio_pin_09_receiving']
-    for pin in (7, 11, 17, 25, 29, 31, 39):
-        key = f'head_pi_gpio_pin_{pin:02d}_receiving'
-        parts[key] = dict(odd, key=key, v=odd['v'] + [0, (9 - pin) * 1.27, 0])
-    # Each socket is one female jumper-wire end (about 2.5 x 2.5 x 14 mm) on its pin; the kit list counts them as one item.
-    for key, part in parts.items():
-        if key.startswith('head_pi_gpio_pin_') and key.endswith('_receiving'):
-            pin = int(key.split('_')[4])
-            part.update(name=f'Jumper-wire end on A7Z pin {pin}', kit='Female jumper-wire end (half of a female-to-female jumper)',
-                        status='purchased')
-
-    # The V1.8 head cap seats the Pi 4.6 mm further back (V1.7: the plugged jumper-wire ends clear the camera while the
-    # cap comes down, interference-audit/verify-cap) and 1.0 mm higher (V1.8: the lower shell's beak-roof window is
-    # filled, and the raised rails keep the jumper-wire ends 1.59 mm off that roof). The Pi, its header, its components
-    # and the jumper ends all move with it; the E-pi screws in fasteners.json carry the same shift.
-    for key, part in parts.items():
-        if key == 'pi' or key.startswith('head_pi'):
-            part['v'] = part['v'] + PI_SHIFT
-            part['shiftMm'] = PI_SHIFT
-
-    # Radxa Cubie A7Z (print/a7z-head/build_a7z_head.py, 2026-10-15): the board, its components and the antenna are
-    # already in the robot frame on the shifted Pi seat (frame from the shifted header pins), so they take no shift. The
-    # 'pi' key stays for the head computer so the screw records (E-pi-01..04) and the steps keep their part.
+    # 2026-10-22 D-022 roof saddle (print/a7z-saddle/): the two saddle prints (module 'torso', white like the shells) and the
+    # A7Z with its components, heatsink, fan, Dupont housings, antenna and the future camera plug (module 'saddle',
+    # purchased) from print/world/saddle_*.stl and sd_*.stl, all in the guide world frame. The head-pose A7Z set
+    # (a7z_*.stl, antenna*.stl, camera_ribbon.stl, camera_board.stl) is no longer registered; the files stay as a record.
     world = PRINT / 'world'
-    pcb = first_existing(world / 'a7z_pcb.stl')
-    if pcb:
-        v, f = load_stl(pcb)
-        parts['pi'].update(v=v, f=f, name='Radxa Cubie A7Z with soldered 40-pin header', color='#1f5f3a', status='purchased',
-                           source=str(pcb))
-        parts['pi'].pop('shiftMm', None)
-        for path in sorted(world.glob('a7z_*.stl')):
-            if path.name == 'a7z_pcb.stl':
-                continue
-            comp = path.stem[4:]
+    for key, name in SADDLE_PRINTS.items():
+        path = first_existing(world / f'{key}.stl')
+        if path:
             v, f = load_stl(path)
-            key = f'head_pi_a7z_{comp}'
-            parts[key] = {'key': key, 'name': A7Z_NAMES.get(comp, comp.replace('_', ' ')), 'color': A7Z_COLORS.get(comp, '#3b3b3b'),
-                          'module': parts['pi']['module'], 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
-        for key, name, color in (('camera_ribbon', 'Camera ribbon, A7Z end (150 mm, 31-pin, contacts towards the board)', '#ff8f00'),
-                                 ('antenna', 'AC019 Wi-Fi antenna (FPC sticker, 42 x 11.9 mm) inside the cap roof', '#c9a227'),
-                                 ('antenna_coax', 'AC019 antenna cable (50 mm coax)', '#6d6d6d'),
-                                 ('antenna_ipex', 'AC019 IPEX plug on the A7Z antenna socket', '#c9c9c9')):
-            path = first_existing(world / f'{key}.stl')
-            if path:
-                v, f = load_stl(path)
-                parts[key] = {'key': key, 'name': name, 'color': color, 'module': parts['pi']['module'], 'status': 'purchased',
-                              'v': v, 'f': f, 'source': str(path)}
+            if len(f) > DECIMATE_OVER:
+                v, f = decimate(v, f, 25000, key)
+            parts[key] = {'key': key, 'name': name, 'color': parts['head_cap']['color'], 'module': 'torso', 'status': 'new-print',
+                          'v': v, 'f': f, 'source': str(path)}
+    for key, (name, color) in SD_PARTS.items():
+        path = first_existing(world / f'{key}.stl')
+        if path:
+            v, f = load_stl(path)
+            if len(f) > DECIMATE_OVER:
+                v, f = decimate(v, f, 25000, key)
+            parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'saddle', 'status': 'purchased',
+                          'v': v, 'f': f, 'source': str(path)}
 
     # New printed and placed parts (print/world/v18-sources.json).
     board = first_existing(world / 'openrb-board-upright.stl')
     cap = first_existing(world / 'head_cap.stl')
-    # V1.8 head set: plate-only face with camera lands and pegs, eye trim with the two camera-screw pilots, lower shell
-    # without the beak-roof window, and the camera turned 180 deg (connector to -y).
+    # V1.8 head set: plate-only face (A7Z print: four camera bosses, no camera on them since D-022), eye trim with the two
+    # trim-screw pilots, lower shell without the beak-roof window.
     face = first_existing(world / 'face_panel.stl')
     trim = first_existing(world / 'eye_trim.stl')
     shell = first_existing(world / 'head_bottom.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
     jaw = first_existing(world / 'jaw_frame.stl')
-    camera = first_existing(world / 'camera_board.stl')
     # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm so it reaches the ID13 case (print/neck-ring/).
     neck_ring = first_existing(world / 'neck_pitch_ring.stl')
     # V1.8 torso: the rear electronics pack behind the hip-yaw motors (print/rear-pack/) and the BNO085 with its plug
@@ -468,7 +457,7 @@ def build_parts() -> dict:
                           'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
     if cap:
         v, f = load_stl(cap)
-        parts['head_cap'].update(v=v, f=f, name='Head cap for the A7Z: V1.9 cap with relieved board rails and two end slots (white)', source=str(cap))
+        parts['head_cap'].update(v=v, f=f, name='Head cap (V1.17 A7Z cap as printed, white; its board rails and end slots are unused since D-022)', source=str(cap))
     # V1.9 (print/ext-v19/): speaker retainer and the four neck-bundle wire clips (new prints, orange like the cap), and
     # the speaker and amplifier at their audio-study positions under the cap roof (purchased; the source export's old
     # positions are overridden).
@@ -482,7 +471,7 @@ def build_parts() -> dict:
             parts[key] = {'key': key, 'name': name, 'color': parts['head_cap']['color'], 'module': module, 'status': 'new-print',
                           'v': v, 'f': f, 'source': str(path)}
     if 'clip_cap' in parts:
-        parts['clip_cap']['name'] = 'Cap wire clip with the micro HDMI notch (A7Z print, orange)'
+        parts['clip_cap']['name'] = 'Cap wire clip with the micro HDMI notch (V1.17 print, orange; unused since D-022, kept as a part)'
     tape = first_existing(world / 'speaker_tape.stl')
     if tape:   # 2026-10-14: a closed loop of foam double-sided tape (two halves) on the collar's 0.6 mm lip ring at the speaker edge (compressed 1 mm tape)
         v, f = load_stl(tape)
@@ -506,18 +495,17 @@ def build_parts() -> dict:
             v, f = load_stl(path)
             parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'electronics', 'status': 'purchased',
                           'v': v, 'f': f, 'source': str(path)}
-    for key, path in (('face_panel', face), ('eye_trim', trim), ('head_bottom', shell), ('camera_board', camera),
+    for key, path in (('face_panel', face), ('eye_trim', trim), ('head_bottom', shell),
                       ('imu_board', imu), ('imu_sh4_receiving', imu_plug), ('jaw_frame', jaw), ('neck_pitch_ring', neck_ring)):
         if path:
             v, f = load_stl(path)
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
             parts[key].update(v=v, f=f, source=str(path))
-    # 2026-10-15 A7Z head (print/face-a7z/): the face with four camera bosses and the Radxa Camera 13M 214 with its ribbon stub.
+    # 2026-10-15 A7Z face (print/face-a7z/): four camera bosses. Since D-022 (2026-10-22) no camera is drawn on them: the
+    # Radxa Camera 13M 214 left the head with the A7Z, and the USB camera that will take the bosses is not chosen yet.
     if face:
-        parts['face_panel']['name'] = 'Face panel with four camera bosses (A7Z print, white)'
-    if camera:
-        parts['camera_board']['name'] = 'Radxa Camera 13M 214 (IMX214), connector edge to the left (+Y), with the first part of its ribbon'
+        parts['face_panel']['name'] = 'Face panel with four camera bosses (A7Z print, white; bosses empty until the USB camera is chosen)'
     if jaw:
         parts['jaw_frame'].update(name='Jaw frame with the lower lip (new print)', color=parts['head_bottom']['color'])
     # V1.14 white plate (colour scheme C): the V1.9 cap reprints white and the V2.0 side shells (print/v20-source/) print white (the face panel white). Set last,
@@ -607,23 +595,27 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     # V1.9 (print/ext-v19/route-v19.json): the three guide cables follow one centreline from the pack notch through the
     # four wire clips to the gather point in front of the Pi header, then their own fan wire to pin 2, 3 or 8. The
     # bundle no longer passes a cap notch: it enters the head through the -y side of the lower shell's floor opening.
+    # 2026-10-22 D-022: the A7Z sits in the roof saddle. The torso wires (5 V lead, IMU, UART) go straight up through the
+    # saddle floor passage onto the header; the head-side wires (amplifier, XIAO, future camera cable) come DOWN the neck
+    # bundle from the head clip through the bracket and torso clips to the passage. routes.json (other owner) ends them.
     neck = R.get('bundle_neck')
     head = R.get('bundle_head')
-    if not neck or not head:
-        raise SystemExit('routes.json lacks bundle_neck/bundle_head (neck exterior and head interior bundle routes)')
-    # Pi 5 V lead: two jumper chains (30 cm male-female into 30 cm female-female, joint taped) whose bare ends sit under the
-    # XL4015 #2 OUT screws (middle board, +y end) in the rear converter box (layout F, 2026-10-14); the female ends go on Pi
-    # pins 2 and 6. Route pi-lead: out through the middle +Y window, up the outside of the +y wall in front of the 7 V pair, across
-    # the box top and down the same notch (lanes y 8.6 and 10.7), under the shell lip onto the cover lip, along the lip under the
-    # shell roof rib, up in front of the rib and out through the head notch to the neck bundle point, then the bundle path.
-    add('pi-lead', 'Head 5 V lead (two jumper chains, red + black)', 'power-5v', '#ad1457', R['pi-lead'],
-        'XL4015 #2 OUT (+ / −), +Y end of the middle board in the rear box', 'A7Z header pins 2 (5 V) and 6 (GND)')['lengthMM'] = pw['pi-lead']
+    if not neck:
+        raise SystemExit('routes.json lacks bundle_neck (the neck bundle centreline through the clips)')
+    # A7Z 5 V lead: two jumper chains (30 cm male-female into 30 cm female-female, joint taped) whose bare ends sit under the
+    # XL4015 #2 OUT screws (middle board, +y end) in the rear converter box (layout F, 2026-10-14); the female ends go on A7Z
+    # pins 2 and 6 in the saddle. Route pi-lead: out through the middle +Y window, up the outside of the +y wall in front of the
+    # 7 V pair, across the box top and down the same notch (lanes y 8.6 and 10.7), under the shell lip onto the cover lip, then
+    # up through the saddle floor passage to the header.
+    add('pi-lead', 'A7Z 5 V lead (two jumper chains, red + black)', 'power-5v', '#ad1457', R['pi-lead'],
+        'XL4015 #2 OUT (+ / −), +Y end of the middle board in the rear box', 'A7Z header pins 2 (5 V) and 6 (GND) in the roof saddle')['lengthMM'] = pw['pi-lead']
     add('imu', 'IMU lead (4397 cable, extended)', 'i2c', '#1e88e5', R['imu'], 'BNO085 STEMMA QT socket (plug from above)',
-        'A7Z header pins 1, 3, 5, 9', slack=60, radius=0.8)
+        'A7Z header pins 1, 3, 5, 9 in the roof saddle', slack=60, radius=0.8)
     add('uart', 'UART link (two jumper wires)', 'uart', '#00897b', R['uart'], 'OpenRB J12 pad 3 (RX) and pad 4 (TX)',
-        'A7Z header pins 7 (UART2 TX) and 11 (UART2 RX)', slack=60, radius=0.7)
+        'A7Z header pins 7 (UART2 TX) and 11 (UART2 RX) in the roof saddle', slack=60, radius=0.7)
     L['bundle_neck'] = round(polyline_length(neck))
-    L['bundle_head'] = round(polyline_length(head))
+    if head:
+        L['bundle_head'] = round(polyline_length(head))
 
     # Neck chain (kit cables). Paths are the middle-conductor centerlines.
     for rid, cid, lab, frm, to in (
@@ -647,27 +639,39 @@ def build_cables(routes: dict) -> tuple[list, dict]:
         if rid in R:
             add(cid, lab, 'dxl', '#6a3df0', R[rid], frm, to, radius=0.9)
 
-    # Head wiring. The A7Z camera ribbon is drawn as parts (the camera_board stub and camera_ribbon), not as a cable.
-    # V1.9 audio: five wires soldered into the amplifier (2026-10-13, no header), each ending in a jumper sleeve on its Pi
-    # pin (ground on pin 34), and the two speaker leads into the amplifier terminal block (radius 0.65).
+    # Head wiring. V1.9 audio: five wires soldered into the amplifier (2026-10-13, no header), each ending in a jumper
+    # sleeve on its A7Z pin, and the two speaker leads into the amplifier terminal block (radius 0.65). Since D-022 the five
+    # amplifier wires leave the cap through the head clip and run down the neck bundle to the header in the roof saddle.
     for rid, cid, lab, frm, to in (
-            ('audio_amp_lrc_pin35', 'amp-lrc', 'Amplifier LRC to A7Z pin 35 (soldered wire)', 'Amplifier LRC hole (soldered)', 'A7Z header pin 35 (I2S0 LRCK)'),
-            ('audio_amp_bclk_pin12', 'amp-bclk', 'Amplifier BCLK to A7Z pin 12 (soldered wire)', 'Amplifier BCLK hole (soldered)', 'A7Z header pin 12 (I2S0 BCLK)'),
-            ('audio_amp_din_pin40', 'amp-din', 'Amplifier DIN to A7Z pin 40 (soldered wire)', 'Amplifier DIN hole (soldered)', 'A7Z header pin 40 (I2S0 DOUT0)'),
-            ('audio_amp_gnd_pin39', 'amp-gnd', 'Amplifier GND to A7Z pin 39 (soldered wire)', 'Amplifier GND hole (soldered)', 'A7Z header pin 39 (GND)'),
-            ('audio_amp_vin_pin04', 'amp-vin', 'Amplifier Vin to A7Z pin 4 (soldered wire)', 'Amplifier Vin hole (soldered)', 'A7Z header pin 4 (5 V)')):
+            ('audio_amp_lrc_pin35', 'amp-lrc', 'Amplifier LRC to A7Z pin 35 (soldered wire, down the neck)', 'Amplifier LRC hole (soldered)', 'A7Z header pin 35 (I2S0 LRCK) in the roof saddle'),
+            ('audio_amp_bclk_pin12', 'amp-bclk', 'Amplifier BCLK to A7Z pin 12 (soldered wire, down the neck)', 'Amplifier BCLK hole (soldered)', 'A7Z header pin 12 (I2S0 BCLK) in the roof saddle'),
+            ('audio_amp_din_pin40', 'amp-din', 'Amplifier DIN to A7Z pin 40 (soldered wire, down the neck)', 'Amplifier DIN hole (soldered)', 'A7Z header pin 40 (I2S0 DOUT0) in the roof saddle'),
+            ('audio_amp_gnd_pin39', 'amp-gnd', 'Amplifier GND to A7Z pin 39 (soldered wire, down the neck)', 'Amplifier GND hole (soldered)', 'A7Z header pin 39 (GND) in the roof saddle'),
+            ('audio_amp_vin_pin04', 'amp-vin', 'Amplifier Vin to A7Z pin 4 (soldered wire, down the neck)', 'Amplifier Vin hole (soldered)', 'A7Z header pin 4 (5 V) in the roof saddle')):
         add(cid, lab, 'i2s', '#8e24aa', R[rid], frm, to, radius=0.65)
     # Touch extension: five pad leads from the copper pads to XIAO touch pins and four leads from XIAO edge pads to the A7Z,
-    # all soldered at the XIAO; the pad leads are soldered to the copper, the A7Z leads end in a jumper plug.
+    # all soldered at the XIAO; the pad leads are soldered to the copper, the A7Z leads end in a jumper plug in the saddle.
     TOUCH_WIRES = [(f'touch_pad_{p}', f'touch-{p}', f'Touch pad {p.upper()} lead (soldered both ends)', f'Copper pad {p.upper()} (soldered)', f'XIAO {pin} edge pad (soldered)')
                    for p, pin in (('l1', 'D0'), ('r1', 'D1'), ('l2', 'D2'), ('r2', 'D3'), ('m', 'D8'))]
-    TOUCH_WIRES += [(f'touch_a7z_pin{n}', f'touch-pin{n}', f'XIAO {sig} to A7Z pin {n} (soldered at the XIAO)', f'XIAO {sig} edge pad (soldered)', f'A7Z header pin {n} ({what})')
+    TOUCH_WIRES += [(f'touch_a7z_pin{n}', f'touch-pin{n}', f'XIAO {sig} to A7Z pin {n} (soldered at the XIAO, down the neck)', f'XIAO {sig} edge pad (soldered)', f'A7Z header pin {n} ({what}) in the roof saddle')
                     for n, sig, what in ((17, '3V3', '3.3 V'), (25, 'GND', 'GND'), (29, 'D5 (SCL)', 'I2C SCL, PB2'), (31, 'D4 (SDA)', 'I2C SDA, PB3'))]
     for rid, cid, lab, frm, to in TOUCH_WIRES:
         if rid in R:
             add(cid, lab, 'touch', '#c87533', R[rid], frm, to, radius=0.65)
     add('spk-plus', 'Speaker + lead', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad', 'Amplifier terminal +', radius=0.65)
     add('spk-minus', 'Speaker - lead', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad', 'Amplifier terminal -', radius=0.65)
+    # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6, and the future
+    # USB camera cable from the face camera position down the neck bundle to the right-angle USB-C plug in the OTG socket.
+    if 'fan_lead' in R:
+        add('fan-lead', 'Fan lead (3-pin, from the lid fan)', 'fan', '#455a64', R['fan_lead'], 'Fan in the saddle lid',
+            'A7Z fan socket J6 (pin-1 end, front corner)', radius=0.7)
+    if 'cam_usb' in R:
+        add('cam-usb', 'USB camera cable (future UVC camera on the face bosses)', 'usb', '#00838f', R['cam_usb'],
+            'USB camera on the face bosses (not yet chosen)', 'Right-angle USB-C plug in the A7Z OTG socket, through the saddle front-wall notch',
+            slack=60, radius=1.5)
+    if 'antenna_coax' in R:
+        add('antenna-coax', 'Antenna pigtail (AC019 strip to the A7Z IPEX socket)', 'antenna', '#7e57c2', R['antenna_coax'],
+            'AC019 strip on the saddle rear wall inner face (its -y end)', 'A7Z IPEX socket (pin-1 end, rear corner)', radius=0.57)
     return cab, L
 
 
@@ -702,8 +706,8 @@ def main() -> None:
     data = {
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
-        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the Pi from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, Radxa Cubie A7Z with the Radxa Camera 13M 214, speaker and amplifier in the head, neck bundle in four wire clips; chapter 11 swaps in the 2S battery backpack',
-        'revision': 'guide-20261015-backpack',
+        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z in a printed roof saddle on the torso with a copper heatsink and a lid fan (D-022), speaker, amplifier and touch pads in the head (no camera until the USB camera is chosen), neck bundle in the wire clips; chapter 12 swaps in the 2S battery backpack',
+        'revision': 'guide-20261022-saddle',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

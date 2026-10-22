@@ -67,6 +67,24 @@ PAIR_TEXT = {
         'c', 'Antenna IPEX (U.FL) plug snapped onto the A7Z antenna socket: a mated connector.', 'No change.'),
     frozenset(['antenna_coax', 'antenna_ipex']): (
         'c', 'The 1.13 mm antenna coax enters its own IPEX plug: one purchased cable assembly (AC019) drawn as plug and cable.', 'No change.'),
+    # 2026-10-22 D-022 roof saddle (print/a7z-saddle/build/build.json checks): the A7Z and its bought parts in the saddle pose.
+    frozenset(['sd_microsd_card', 'sd_microsd_socket']): (
+        'c', 'microSD card pushed into its socket on the A7Z underside: a mated part (the card sticks out through the +Y saddle wall slot).', 'No change.'),
+    frozenset(['sd_usb_c_plug', 'sd_usb_c_otg_dp']): (
+        'c', 'Right-angle USB-C plug of the future camera cable seated in the A7Z OTG socket through the saddle front-wall notch: plug in socket.', 'No change.'),
+    frozenset(['sd_thermal_pad', 'sd_soc_a733']): (
+        'c', '0.5 mm thermal pad lying on the A733 top face (z 50.2): pad contact by design.', 'No change.'),
+    frozenset(['sd_heatsink', 'sd_thermal_pad']): (
+        'c', '15 x 15 x 5 copper heatsink on the thermal pad (z 50.7): pad contact by design.', 'No change.'),
+    frozenset(['sd_antenna', 'saddle_body']): (
+        'c', 'AC019 antenna strip stuck on the inner face of the saddle rear wall (x -43.4..-43.1): adhesive contact by design.', 'No change.'),
+    frozenset(['sd_fan', 'saddle_lid']): (
+        'c', '30 mm fan in the lid pocket: the four 0.6 mm snap lips under the fan corners and the rear stop hold it against the lid plate '
+             '(build.json lid_fan 0.405 mm3 at z 72.39-72.4): a designed snap fit.', 'No change.'),
+    frozenset(['sd_dupont_housings', 'sd_a7z_pcb']): (
+        'c', 'Dupont housings standing on the header plastic at z 48.6, the PCB top face: a mated terminal row by design.', 'No change.'),
+    frozenset(['sd_dupont_housings', 'sd_fan']): (
+        'c', 'Only if the envelopes meet: the housings end at z 63.1 and the fan starts at z 64.4 (1.3 mm gap, build.json gap_fan_to_dupont_mm).', 'No change.'),
 }
 
 

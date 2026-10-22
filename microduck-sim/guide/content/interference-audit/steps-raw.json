@@ -8,7 +8,7 @@
    "title": "What you are building",
    "bench": false,
    "inventory": true,
-   "drawnParts": 158,
+   "drawnParts": 113,
    "add": [],
    "approach": {},
    "group": false,
@@ -40,7 +40,18 @@
     "amp-gnd",
     "amp-vin",
     "spk-plus",
-    "spk-minus"
+    "spk-minus",
+    "touch-l1",
+    "touch-r1",
+    "touch-l2",
+    "touch-r2",
+    "touch-m",
+    "touch-pin17",
+    "touch-pin25",
+    "touch-pin29",
+    "touch-pin31",
+    "fan-lead",
+    "cam-usb"
    ],
    "pathCollisions": []
   },
@@ -50,11 +61,12 @@
    "title": "Gather the electronics and kit cables",
    "bench": true,
    "inventory": true,
-   "drawnParts": 42,
+   "drawnParts": 43,
    "add": [
     "imu_board",
-    "camera_board",
-    "pi",
+    "sd_a7z_pcb",
+    "sd_heatsink",
+    "sd_fan",
     "openrb_board"
    ],
    "approach": {},
@@ -65,10 +77,10 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 29 new parts",
+   "title": "Print the 31 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 62,
+   "drawnParts": 64,
    "add": [
     "shell_left",
     "shell_right",
@@ -98,7 +110,9 @@
     "lower",
     "right_lower",
     "foot",
-    "right_foot"
+    "right_foot",
+    "saddle_body",
+    "saddle_lid"
    ],
    "approach": {},
    "group": false,
@@ -1334,7 +1348,7 @@
   {
    "step": "shells",
    "chapter": "neck",
-   "title": "Close the two torso shells, fit the torso wire clip and screw each shell to the pack",
+   "title": "Close the two torso shells and fit the torso wire clip",
    "bench": false,
    "inventory": false,
    "drawnParts": 64,
@@ -1363,6 +1377,313 @@
    "group": false,
    "cables": [],
    "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-mount",
+   "chapter": "saddle",
+   "title": "Set the empty saddle on the torso roof and screw it into the pack",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 65,
+   "add": [
+    "saddle_body"
+   ],
+   "approach": {
+    "saddle_body": [
+     0,
+     0,
+     40
+    ]
+   },
+   "group": false,
+   "cables": [
+    "pi-lead",
+    "imu",
+    "uart"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-antenna",
+   "chapter": "saddle",
+   "title": "Stick the Wi-Fi antenna on the inside of the saddle rear wall",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 66,
+   "add": [
+    "sd_antenna"
+   ],
+   "approach": {
+    "sd_antenna": [
+     [
+      4,
+      0,
+      25
+     ],
+     [
+      4,
+      0,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-board",
+   "chapter": "saddle",
+   "title": "Lower the A7Z onto the four posts and plug the antenna",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 81,
+   "add": [
+    "sd_a7z_pcb",
+    "sd_soc_a733",
+    "sd_ram",
+    "sd_pmic_area",
+    "sd_wifi_module_fcu760k",
+    "sd_usb_c_otg_dp",
+    "sd_usb_c_power",
+    "sd_micro_hdmi",
+    "sd_fan_connector",
+    "sd_ipex_socket",
+    "sd_microsd_socket",
+    "sd_csi_connector",
+    "sd_pcie_fpc",
+    "sd_uboot_button",
+    "sd_underside_smd"
+   ],
+   "approach": {
+    "sd_a7z_pcb": [
+     0,
+     0,
+     30
+    ],
+    "sd_soc_a733": [
+     0,
+     0,
+     30
+    ],
+    "sd_ram": [
+     0,
+     0,
+     30
+    ],
+    "sd_pmic_area": [
+     0,
+     0,
+     30
+    ],
+    "sd_wifi_module_fcu760k": [
+     0,
+     0,
+     30
+    ],
+    "sd_usb_c_otg_dp": [
+     0,
+     0,
+     30
+    ],
+    "sd_usb_c_power": [
+     0,
+     0,
+     30
+    ],
+    "sd_micro_hdmi": [
+     0,
+     0,
+     30
+    ],
+    "sd_fan_connector": [
+     0,
+     0,
+     30
+    ],
+    "sd_ipex_socket": [
+     0,
+     0,
+     30
+    ],
+    "sd_microsd_socket": [
+     0,
+     0,
+     30
+    ],
+    "sd_csi_connector": [
+     0,
+     0,
+     30
+    ],
+    "sd_pcie_fpc": [
+     0,
+     0,
+     30
+    ],
+    "sd_uboot_button": [
+     0,
+     0,
+     30
+    ],
+    "sd_underside_smd": [
+     0,
+     0,
+     30
+    ]
+   },
+   "group": true,
+   "cables": [
+    "pi-lead",
+    "imu",
+    "uart",
+    "antenna-coax"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-card",
+   "chapter": "saddle",
+   "title": "Push the microSD card in through the side slot",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 82,
+   "add": [
+    "sd_microsd_card"
+   ],
+   "approach": {
+    "sd_microsd_card": [
+     0,
+     20,
+     0
+    ]
+   },
+   "group": false,
+   "cables": [
+    "pi-lead",
+    "imu",
+    "uart"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-copper",
+   "chapter": "saddle",
+   "title": "Put the thermal pad and the copper heatsink on the processor",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 84,
+   "add": [
+    "sd_thermal_pad",
+    "sd_heatsink"
+   ],
+   "approach": {
+    "sd_thermal_pad": [
+     0,
+     0,
+     15
+    ],
+    "sd_heatsink": [
+     0,
+     0,
+     15
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-plugs",
+   "chapter": "saddle",
+   "title": "Plug the torso wires onto the A7Z",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 86,
+   "add": [
+    "sd_dupont_housings",
+    "sd_usb_c_plug"
+   ],
+   "approach": {
+    "sd_dupont_housings": [
+     0,
+     0,
+     12
+    ],
+    "sd_usb_c_plug": [
+     [
+      9,
+      0,
+      25
+     ],
+     [
+      9,
+      0,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [
+    "pi-lead",
+    "imu",
+    "uart"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-fan",
+   "chapter": "saddle",
+   "title": "Snap the fan into the saddle lid on the bench",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 2,
+   "add": [
+    "saddle_lid",
+    "sd_fan"
+   ],
+   "approach": {
+    "sd_fan": [
+     0,
+     0,
+     -12
+    ]
+   },
+   "group": false,
+   "cables": [
+    "fan-lead"
+   ],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "saddle",
+   "robotContextDrawnWithBench": [],
    "pose": null,
    "flex": null,
    "alternatives": {},
@@ -1576,7 +1897,7 @@
    "title": "Set the head on ID13 and connect 13 \u2192 14",
    "bench": false,
    "inventory": false,
-   "drawnParts": 71,
+   "drawnParts": 93,
    "add": [
     "head_bottom",
     "mouth_sliding_ring",
@@ -1639,7 +1960,7 @@
    "title": "Lower the jaw support with ID15 and screw it down",
    "bench": false,
    "inventory": false,
-   "drawnParts": 73,
+   "drawnParts": 95,
    "add": [
     "jaw_support",
     "motor15"
@@ -1672,7 +1993,7 @@
    "title": "Fit the head wire clip under the fourth support screw",
    "bench": false,
    "inventory": false,
-   "drawnParts": 74,
+   "drawnParts": 96,
    "add": [
     "clip_head"
    ],
@@ -1697,7 +2018,7 @@
    "title": "Screw the jaw to the ID15 horn",
    "bench": false,
    "inventory": false,
-   "drawnParts": 74,
+   "drawnParts": 96,
    "add": [],
    "approach": {},
    "group": false,
@@ -1734,43 +2055,31 @@
    "pathCollisions": []
   },
   {
-   "step": "camera",
+   "step": "camera-note",
    "chapter": "head",
-   "title": "Screw the camera to the back of the face",
+   "title": "Camera: the four face bosses stay empty for now",
    "bench": true,
    "inventory": false,
-   "drawnParts": 3,
-   "add": [
-    "camera_board"
-   ],
-   "approach": {
-    "camera_board": [
-     -15,
-     0,
-     0
-    ]
-   },
+   "drawnParts": 2,
+   "add": [],
+   "approach": {},
    "group": false,
    "cables": [],
    "drawnButNotPresent": [],
    "benchSubassembly": "head",
    "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
    "pathCollisions": []
   },
   {
    "step": "face-on",
    "chapter": "head",
-   "title": "Set the face and camera on the head",
+   "title": "Set the face on the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 77,
+   "drawnParts": 98,
    "add": [
     "face_panel",
-    "eye_trim",
-    "camera_board"
+    "eye_trim"
    ],
    "approach": {
     "face_panel": [
@@ -1779,11 +2088,6 @@
      40
     ],
     "eye_trim": [
-     0,
-     0,
-     40
-    ],
-    "camera_board": [
      0,
      0,
      40
@@ -1893,39 +2197,12 @@
    "pathCollisions": []
   },
   {
-   "step": "antenna",
-   "chapter": "head-elec",
-   "title": "Stick the Wi-Fi antenna inside the cap roof",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 6,
-   "add": [
-    "antenna"
-   ],
-   "approach": {
-    "antenna": [
-     0,
-     0,
-     -15
-    ]
-   },
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
    "step": "touch",
    "chapter": "head-elec",
    "title": "Stick the five copper touch pads and the XIAO inside the cap",
    "bench": true,
    "inventory": false,
-   "drawnParts": 13,
+   "drawnParts": 12,
    "add": [
     "touch_pad_l1",
     "touch_pad_r1",
@@ -1989,580 +2266,51 @@
    "pathCollisions": []
   },
   {
-   "step": "pi",
-   "chapter": "head-elec",
-   "title": "Mount the Radxa Cubie A7Z on the cap rails",
-   "bench": true,
+   "step": "bundle-run",
+   "chapter": "bundle",
+   "title": "Run the 9 head wires down through the head, bracket and torso clips to the saddle",
+   "bench": false,
    "inventory": false,
-   "drawnParts": 71,
-   "add": [
-    "pi",
-    "head_pi_zero_w_header_base",
-    "head_pi_zero_w_header_pin_01",
-    "head_pi_zero_w_header_pin_02",
-    "head_pi_zero_w_header_pin_03",
-    "head_pi_zero_w_header_pin_04",
-    "head_pi_zero_w_header_pin_05",
-    "head_pi_zero_w_header_pin_06",
-    "head_pi_zero_w_header_pin_07",
-    "head_pi_zero_w_header_pin_08",
-    "head_pi_zero_w_header_pin_09",
-    "head_pi_zero_w_header_pin_10",
-    "head_pi_zero_w_header_pin_11",
-    "head_pi_zero_w_header_pin_12",
-    "head_pi_zero_w_header_pin_13",
-    "head_pi_zero_w_header_pin_14",
-    "head_pi_zero_w_header_pin_15",
-    "head_pi_zero_w_header_pin_16",
-    "head_pi_zero_w_header_pin_17",
-    "head_pi_zero_w_header_pin_18",
-    "head_pi_zero_w_header_pin_19",
-    "head_pi_zero_w_header_pin_20",
-    "head_pi_zero_w_header_pin_21",
-    "head_pi_zero_w_header_pin_22",
-    "head_pi_zero_w_header_pin_23",
-    "head_pi_zero_w_header_pin_24",
-    "head_pi_zero_w_header_pin_25",
-    "head_pi_zero_w_header_pin_26",
-    "head_pi_zero_w_header_pin_27",
-    "head_pi_zero_w_header_pin_28",
-    "head_pi_zero_w_header_pin_29",
-    "head_pi_zero_w_header_pin_30",
-    "head_pi_zero_w_header_pin_31",
-    "head_pi_zero_w_header_pin_32",
-    "head_pi_zero_w_header_pin_33",
-    "head_pi_zero_w_header_pin_34",
-    "head_pi_zero_w_header_pin_35",
-    "head_pi_zero_w_header_pin_36",
-    "head_pi_zero_w_header_pin_37",
-    "head_pi_zero_w_header_pin_38",
-    "head_pi_zero_w_header_pin_39",
-    "head_pi_zero_w_header_pin_40",
-    "head_pi_a7z_csi_connector",
-    "head_pi_a7z_fan_connector",
-    "head_pi_a7z_ipex_socket",
-    "head_pi_a7z_micro_hdmi",
-    "head_pi_a7z_microsd_card",
-    "head_pi_a7z_microsd_socket",
-    "head_pi_a7z_pcie_fpc",
-    "head_pi_a7z_pmic_area",
-    "head_pi_a7z_ram",
-    "head_pi_a7z_soc_a733",
-    "head_pi_a7z_uboot_button",
-    "head_pi_a7z_underside_smd",
-    "head_pi_a7z_usb_c_otg_dp",
-    "head_pi_a7z_usb_c_power",
-    "head_pi_a7z_wifi_module_fcu760k",
-    "camera_ribbon"
-   ],
-   "approach": {
-    "pi": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_base": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_01": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_02": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_03": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_04": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_05": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_06": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_07": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_08": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_09": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_10": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_11": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_12": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_13": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_14": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_15": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_16": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_17": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_18": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_19": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_20": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_21": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_22": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_23": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_24": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_25": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_26": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_27": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_28": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_29": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_30": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_31": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_32": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_33": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_34": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_35": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_36": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_37": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_38": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_39": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_zero_w_header_pin_40": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_csi_connector": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_fan_connector": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_ipex_socket": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_micro_hdmi": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_microsd_card": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_microsd_socket": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_pcie_fpc": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_pmic_area": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_ram": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_soc_a733": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_uboot_button": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_underside_smd": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_usb_c_otg_dp": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_usb_c_power": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "head_pi_a7z_wifi_module_fcu760k": [
-     24.6,
-     0,
-     -4.3
-    ],
-    "camera_ribbon": [
-     24.6,
-     0,
-     -4.3
-    ]
-   },
-   "group": true,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "pi-clip",
-   "chapter": "head-elec",
-   "title": "Fit the cap wire clip under the fourth A7Z screw",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 72,
-   "add": [
-    "clip_cap"
-   ],
-   "approach": {
-    "clip_cap": [
-     16,
-     0,
-     -3
-    ]
-   },
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "antenna-plug",
-   "chapter": "head-elec",
-   "title": "Plug the antenna cable onto the A7Z",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 74,
-   "add": [
-    "antenna_coax",
-    "antenna_ipex"
-   ],
-   "approach": {
-    "antenna_coax": [
-     6,
-     0,
-     -1
-    ],
-    "antenna_ipex": [
-     6,
-     0,
-     -1
-    ]
-   },
-   "group": true,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "audio-pi",
-   "chapter": "head-elec",
-   "title": "Plug the five amplifier wires onto the A7Z",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 79,
-   "add": [
-    "head_pi_gpio_pin_04_receiving",
-    "head_pi_gpio_pin_12_receiving",
-    "head_pi_gpio_pin_35_receiving",
-    "head_pi_gpio_pin_39_receiving",
-    "head_pi_gpio_pin_40_receiving"
-   ],
-   "approach": {
-    "head_pi_gpio_pin_04_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_12_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_35_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_39_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_40_receiving": [
-     20,
-     0,
-     0
-    ]
-   },
+   "drawnParts": 98,
+   "add": [],
+   "approach": {},
    "group": false,
    "cables": [
     "amp-lrc",
     "amp-bclk",
     "amp-din",
     "amp-gnd",
-    "amp-vin"
-   ],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "touch-pi",
-   "chapter": "head-elec",
-   "title": "Plug the four XIAO wires onto the A7Z",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 83,
-   "add": [
-    "head_pi_gpio_pin_17_receiving",
-    "head_pi_gpio_pin_25_receiving",
-    "head_pi_gpio_pin_29_receiving",
-    "head_pi_gpio_pin_31_receiving"
-   ],
-   "approach": {
-    "head_pi_gpio_pin_17_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_25_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_29_receiving": [
-     20,
-     0,
-     0
-    ],
-    "head_pi_gpio_pin_31_receiving": [
-     20,
-     0,
-     0
-    ]
-   },
-   "group": false,
-   "cables": [
+    "amp-vin",
     "touch-pin17",
     "touch-pin25",
     "touch-pin29",
-    "touch-pin31"
+    "touch-pin31",
+    "cam-usb"
    ],
    "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
    "pathCollisions": []
   },
   {
-   "step": "gpio",
-   "chapter": "head-elec",
-   "title": "Check the plug on every wire that goes to the A7Z and flag it",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 91,
-   "add": [
-    "head_pi_gpio_pin_01_receiving",
-    "head_pi_gpio_pin_02_receiving",
-    "head_pi_gpio_pin_03_receiving",
-    "head_pi_gpio_pin_05_receiving",
-    "head_pi_gpio_pin_06_receiving",
-    "head_pi_gpio_pin_07_receiving",
-    "head_pi_gpio_pin_09_receiving",
-    "head_pi_gpio_pin_11_receiving"
-   ],
-   "approach": {},
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pathCollisions": []
-  },
-  {
-   "step": "bundle-run",
+   "step": "saddle-head-plugs",
    "chapter": "bundle",
-   "title": "Run the 8-wire bundle through the torso, bracket and head clips",
+   "title": "Plug the 9 head wires onto the A7Z",
    "bench": false,
    "inventory": false,
-   "drawnParts": 77,
+   "drawnParts": 98,
    "add": [],
    "approach": {},
    "group": false,
    "cables": [
-    "pi-lead",
-    "imu",
-    "uart"
+    "amp-lrc",
+    "amp-bclk",
+    "amp-din",
+    "amp-gnd",
+    "amp-vin",
+    "touch-pin17",
+    "touch-pin25",
+    "touch-pin29",
+    "touch-pin31",
+    "cam-usb"
    ],
    "drawnButNotPresent": [],
    "pathCollisions": []
@@ -2570,102 +2318,23 @@
   {
    "step": "cap-on",
    "chapter": "bundle",
-   "title": "Plug the bundle onto the A7Z, press it into the cap clip and lower the cap",
+   "title": "Lower the cap onto the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 110,
    "add": [
     "head_cap",
     "speaker_tape",
     "speaker",
     "speaker_retainer",
     "amplifier",
-    "antenna",
     "touch_pad_l1",
     "touch_pad_r1",
     "touch_pad_l2",
     "touch_pad_r2",
     "touch_pad_m",
     "touch_xiao_tape",
-    "touch_xiao",
-    "antenna_coax",
-    "antenna_ipex",
-    "pi",
-    "head_pi_zero_w_header_base",
-    "head_pi_zero_w_header_pin_01",
-    "head_pi_zero_w_header_pin_02",
-    "head_pi_zero_w_header_pin_03",
-    "head_pi_zero_w_header_pin_04",
-    "head_pi_zero_w_header_pin_05",
-    "head_pi_zero_w_header_pin_06",
-    "head_pi_zero_w_header_pin_07",
-    "head_pi_zero_w_header_pin_08",
-    "head_pi_zero_w_header_pin_09",
-    "head_pi_zero_w_header_pin_10",
-    "head_pi_zero_w_header_pin_11",
-    "head_pi_zero_w_header_pin_12",
-    "head_pi_zero_w_header_pin_13",
-    "head_pi_zero_w_header_pin_14",
-    "head_pi_zero_w_header_pin_15",
-    "head_pi_zero_w_header_pin_16",
-    "head_pi_zero_w_header_pin_17",
-    "head_pi_zero_w_header_pin_18",
-    "head_pi_zero_w_header_pin_19",
-    "head_pi_zero_w_header_pin_20",
-    "head_pi_zero_w_header_pin_21",
-    "head_pi_zero_w_header_pin_22",
-    "head_pi_zero_w_header_pin_23",
-    "head_pi_zero_w_header_pin_24",
-    "head_pi_zero_w_header_pin_25",
-    "head_pi_zero_w_header_pin_26",
-    "head_pi_zero_w_header_pin_27",
-    "head_pi_zero_w_header_pin_28",
-    "head_pi_zero_w_header_pin_29",
-    "head_pi_zero_w_header_pin_30",
-    "head_pi_zero_w_header_pin_31",
-    "head_pi_zero_w_header_pin_32",
-    "head_pi_zero_w_header_pin_33",
-    "head_pi_zero_w_header_pin_34",
-    "head_pi_zero_w_header_pin_35",
-    "head_pi_zero_w_header_pin_36",
-    "head_pi_zero_w_header_pin_37",
-    "head_pi_zero_w_header_pin_38",
-    "head_pi_zero_w_header_pin_39",
-    "head_pi_zero_w_header_pin_40",
-    "head_pi_a7z_csi_connector",
-    "head_pi_a7z_fan_connector",
-    "head_pi_a7z_ipex_socket",
-    "head_pi_a7z_micro_hdmi",
-    "head_pi_a7z_microsd_card",
-    "head_pi_a7z_microsd_socket",
-    "head_pi_a7z_pcie_fpc",
-    "head_pi_a7z_pmic_area",
-    "head_pi_a7z_ram",
-    "head_pi_a7z_soc_a733",
-    "head_pi_a7z_uboot_button",
-    "head_pi_a7z_underside_smd",
-    "head_pi_a7z_usb_c_otg_dp",
-    "head_pi_a7z_usb_c_power",
-    "head_pi_a7z_wifi_module_fcu760k",
-    "camera_ribbon",
-    "clip_cap",
-    "head_pi_gpio_pin_04_receiving",
-    "head_pi_gpio_pin_12_receiving",
-    "head_pi_gpio_pin_35_receiving",
-    "head_pi_gpio_pin_39_receiving",
-    "head_pi_gpio_pin_40_receiving",
-    "head_pi_gpio_pin_17_receiving",
-    "head_pi_gpio_pin_25_receiving",
-    "head_pi_gpio_pin_29_receiving",
-    "head_pi_gpio_pin_31_receiving",
-    "head_pi_gpio_pin_01_receiving",
-    "head_pi_gpio_pin_02_receiving",
-    "head_pi_gpio_pin_03_receiving",
-    "head_pi_gpio_pin_05_receiving",
-    "head_pi_gpio_pin_06_receiving",
-    "head_pi_gpio_pin_07_receiving",
-    "head_pi_gpio_pin_09_receiving",
-    "head_pi_gpio_pin_11_receiving"
+    "touch_xiao"
    ],
    "approach": {
     "head_cap": [
@@ -2689,11 +2358,6 @@
      40
     ],
     "amplifier": [
-     0,
-     0,
-     40
-    ],
-    "antenna": [
      0,
      0,
      40
@@ -2732,403 +2396,10 @@
      0,
      0,
      40
-    ],
-    "antenna_coax": [
-     0,
-     0,
-     40
-    ],
-    "antenna_ipex": [
-     0,
-     0,
-     40
-    ],
-    "pi": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_base": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_01": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_02": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_03": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_04": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_05": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_06": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_07": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_08": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_09": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_10": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_11": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_12": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_13": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_14": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_15": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_16": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_17": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_18": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_19": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_20": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_21": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_22": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_23": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_24": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_25": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_26": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_27": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_28": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_29": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_30": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_31": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_32": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_33": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_34": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_35": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_36": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_37": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_38": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_39": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_zero_w_header_pin_40": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_csi_connector": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_fan_connector": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_ipex_socket": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_micro_hdmi": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_microsd_card": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_microsd_socket": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_pcie_fpc": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_pmic_area": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_ram": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_soc_a733": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_uboot_button": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_underside_smd": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_usb_c_otg_dp": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_usb_c_power": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_a7z_wifi_module_fcu760k": [
-     0,
-     0,
-     40
-    ],
-    "camera_ribbon": [
-     0,
-     0,
-     40
-    ],
-    "clip_cap": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_04_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_12_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_35_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_39_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_40_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_17_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_25_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_29_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_31_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_01_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_02_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_03_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_05_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_06_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_07_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_09_receiving": [
-     0,
-     0,
-     40
-    ],
-    "head_pi_gpio_pin_11_receiving": [
-     0,
-     0,
-     40
     ]
    },
    "group": true,
    "cables": [
-    "pi-lead",
-    "imu",
-    "uart",
     "amp-lrc",
     "amp-bclk",
     "amp-din",
@@ -3153,12 +2424,27 @@
    "pathCollisions": []
   },
   {
+   "step": "close",
+   "chapter": "bundle",
+   "title": "Screw the head shut",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 110,
+   "add": [],
+   "approach": {},
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "heldPoseOverlaps": [],
+   "pathCollisions": []
+  },
+  {
    "step": "unpowered",
    "chapter": "power-up",
    "title": "Unpowered checks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 109,
    "add": [],
    "approach": {},
    "group": false,
@@ -3172,7 +2458,7 @@
    "title": "Set up the A7Z software",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 110,
    "add": [],
    "approach": {},
    "group": false,
@@ -3186,7 +2472,7 @@
    "title": "First power: converter readback, bus scan, Shutdown 52 and voltage-limit check",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 109,
    "add": [],
    "approach": {},
    "group": false,
@@ -3202,10 +2488,10 @@
   {
    "step": "sensors",
    "chapter": "power-up",
-   "title": "Check the IMU, camera, Wi-Fi and speaker",
+   "title": "Check the IMU, Wi-Fi, speaker, touch pads and the fan",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 110,
    "add": [],
    "approach": {},
    "group": false,
@@ -3215,9 +2501,61 @@
     "amp-bclk",
     "amp-din",
     "amp-gnd",
-    "amp-vin"
+    "amp-vin",
+    "touch-pin17",
+    "touch-pin25",
+    "touch-pin29",
+    "touch-pin31",
+    "fan-lead"
    ],
    "drawnButNotPresent": [],
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-lid",
+   "chapter": "power-up",
+   "title": "Close the saddle with its lid and the running fan",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 112,
+   "add": [
+    "saddle_lid",
+    "sd_fan"
+   ],
+   "approach": {
+    "saddle_lid": [
+     [
+      -40,
+      0,
+      12
+     ],
+     [
+      0,
+      0,
+      12
+     ]
+    ],
+    "sd_fan": [
+     [
+      -40,
+      0,
+      12
+     ],
+     [
+      0,
+      0,
+      12
+     ]
+    ]
+   },
+   "group": true,
+   "cables": [
+    "fan-lead"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
    "pathCollisions": []
   },
   {
@@ -3226,7 +2564,7 @@
    "title": "Range-of-motion check with torque off",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 112,
    "add": [],
    "approach": {},
    "group": false,
@@ -3240,7 +2578,7 @@
    "title": "Measure the servo current through the OpenRB",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 111,
    "add": [],
    "approach": {},
    "group": false,
@@ -3251,27 +2589,12 @@
    "pathCollisions": []
   },
   {
-   "step": "close",
-   "chapter": "power-up",
-   "title": "Screw the head shut",
-   "bench": false,
-   "inventory": false,
-   "drawnParts": 168,
-   "add": [],
-   "approach": {},
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "heldPoseOverlaps": [],
-   "pathCollisions": []
-  },
-  {
    "step": "weigh",
    "chapter": "power-up",
    "title": "Close the mouth and weigh the robot",
    "bench": false,
    "inventory": false,
-   "drawnParts": 168,
+   "drawnParts": 112,
    "add": [],
    "approach": {},
    "group": false,
@@ -3378,7 +2701,7 @@
    "title": "Swap the rear converter box for the battery backpack",
    "bench": false,
    "inventory": false,
-   "drawnParts": 167,
+   "drawnParts": 111,
    "add": [
     "battery_backpack_frame",
     "bp_switch",
@@ -3421,7 +2744,7 @@
    "title": "Slide the battery in upright and connect plug 1",
    "bench": false,
    "inventory": false,
-   "drawnParts": 169,
+   "drawnParts": 113,
    "add": [
     "bp_battery",
     "bp_plugs"
@@ -3452,7 +2775,7 @@
    "title": "Close the backpack with its cap",
    "bench": false,
    "inventory": false,
-   "drawnParts": 170,
+   "drawnParts": 114,
    "add": [
     "battery_backpack_cap"
    ],

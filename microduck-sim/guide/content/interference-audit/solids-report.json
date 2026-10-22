@@ -1,6 +1,6 @@
 {
- "parts": 176,
- "closed": 176,
+ "parts": 121,
+ "closed": 121,
  "notClosed": [],
  "records": [
   {
@@ -2005,38 +2005,6 @@
    }
   },
   {
-   "key": "camera_board",
-   "name": "Radxa Camera 13M 214 (IMX214), connector edge to the left (+Y), with the first part of its ribbon",
-   "module": "camera",
-   "status": "purchased",
-   "displayTriangles": 1290,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/camera_board.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2546.9,
-   "bounds": [
-    [
-     70.0,
-     -16.09,
-     115.114
-    ],
-    [
-     84.18,
-     33.3,
-     147.114
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
    "key": "eye_trim",
    "name": "Eye Trim",
    "module": "camera",
@@ -2102,7 +2070,7 @@
   },
   {
    "key": "face_panel",
-   "name": "Face panel with four camera bosses (A7Z print, white)",
+   "name": "Face panel with four camera bosses (A7Z print, white; bosses empty until the USB camera is chosen)",
    "module": "camera",
    "status": "new-print",
    "displayTriangles": 4934,
@@ -2134,7 +2102,7 @@
   },
   {
    "key": "head_cap",
-   "name": "Head cap for the A7Z: V1.9 cap with relieved board rails and two end slots (white)",
+   "name": "Head cap (V1.17 A7Z cap as printed, white; its board rails and end slots are unused since D-022)",
    "module": "electronics",
    "status": "new-print",
    "displayTriangles": 27158,
@@ -2262,28 +2230,92 @@
    }
   },
   {
-   "key": "pi",
-   "name": "Radxa Cubie A7Z with soldered 40-pin header",
-   "module": "electronics",
+   "key": "saddle_body",
+   "name": "Roof saddle body for the A7Z: four board posts, floor passage over the torso roof opening, two seats for the pack screws (new print, white)",
+   "module": "torso",
+   "status": "new-print",
+   "displayTriangles": 25000,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_body.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 14818.1,
+   "bounds": [
+    [
+     -45.0,
+     -34.4,
+     26.189
+    ],
+    [
+     -5.0,
+     34.4,
+     72.4
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.001,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.376,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "saddle_lid",
+   "name": "Roof saddle lid with the fan pocket and grille (new print, white)",
+   "module": "torso",
+   "status": "new-print",
+   "displayTriangles": 1840,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_lid.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 4855.74,
+   "bounds": [
+    [
+     -45.0,
+     -34.4,
+     63.8
+    ],
+    [
+     -5.0,
+     34.4,
+     74.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_a7z_pcb",
+   "name": "Radxa Cubie A7Z with soldered 40-pin header, in the roof saddle",
+   "module": "saddle",
    "status": "purchased",
    "displayTriangles": 1582,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_pcb.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_a7z_pcb.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
    "volumeMm3": 3069.6,
    "bounds": [
     [
-     55.207,
+     -42.8,
      -32.5,
-     114.789
+     47.0
     ],
     [
-     61.993,
+     -12.8,
      32.5,
-     144.611
+     48.6
     ]
    ],
    "displayVsSolid": {
@@ -2294,2344 +2326,28 @@
    }
   },
   {
-   "key": "head_pi_gpio_pin_01_receiving",
-   "name": "Jumper-wire end on A7Z pin 1",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_01_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     22.86,
-     112.819
-    ],
-    [
-     73.926,
-     25.4,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_02_receiving",
-   "name": "Jumper-wire end on A7Z pin 2",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 16,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_02_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.892,
-     22.86,
-     115.32
-    ],
-    [
-     74.367,
-     25.4,
-     120.296
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_03_receiving",
-   "name": "Jumper-wire end on A7Z pin 3",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_03_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     20.32,
-     112.819
-    ],
-    [
-     73.926,
-     22.86,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_04_receiving",
-   "name": "Jumper-wire end on A7Z pin 4",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 16,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_04_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.892,
-     20.32,
-     115.32
-    ],
-    [
-     74.367,
-     22.86,
-     120.296
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_05_receiving",
-   "name": "Jumper-wire end on A7Z pin 5",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_05_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     17.78,
-     112.819
-    ],
-    [
-     73.926,
-     20.32,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_06_receiving",
-   "name": "Jumper-wire end on A7Z pin 6",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 18,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_06_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.892,
-     17.78,
-     115.32
-    ],
-    [
-     74.367,
-     20.32,
-     120.296
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_09_receiving",
-   "name": "Jumper-wire end on A7Z pin 9",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_09_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     12.7,
-     112.819
-    ],
-    [
-     73.926,
-     15.24,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_12_receiving",
-   "name": "Jumper-wire end on A7Z pin 12",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_12_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.892,
-     10.16,
-     115.32
-    ],
-    [
-     74.367,
-     12.7,
-     120.296
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_35_receiving",
-   "name": "Jumper-wire end on A7Z pin 35",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 18,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_35_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     -20.32,
-     112.819
-    ],
-    [
-     73.926,
-     -17.78,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_40_receiving",
-   "name": "Jumper-wire end on A7Z pin 40",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/enclosed-wiring-repair/head-layout/audio-relocation/reference-meshes/gpio_pin_40_receiving-16p79.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.892,
-     -25.4,
-     115.32
-    ],
-    [
-     74.367,
-     -22.86,
-     120.296
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_base",
-   "name": "Pi zero w header base",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_base.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 924.56,
-   "bounds": [
-    [
-     56.783,
-     -26.0,
-     114.348
-    ],
-    [
-     60.5,
-     26.0,
-     121.683
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_01",
-   "name": "Pi zero w header pin 01",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_01.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     23.81,
-     115.194
-    ],
-    [
-     65.597,
-     24.45,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_02",
-   "name": "Pi zero w header pin 02",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_02.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     23.81,
-     117.695
-    ],
-    [
-     66.038,
-     24.45,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_03",
-   "name": "Pi zero w header pin 03",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_03.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     21.27,
-     115.194
-    ],
-    [
-     65.597,
-     21.91,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_04",
-   "name": "Pi zero w header pin 04",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_04.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     21.27,
-     117.695
-    ],
-    [
-     66.038,
-     21.91,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_05",
-   "name": "Pi zero w header pin 05",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_05.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     18.73,
-     115.194
-    ],
-    [
-     65.597,
-     19.37,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_06",
-   "name": "Pi zero w header pin 06",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_06.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     18.73,
-     117.695
-    ],
-    [
-     66.038,
-     19.37,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_07",
-   "name": "Pi zero w header pin 07",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_07.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     16.19,
-     115.194
-    ],
-    [
-     65.597,
-     16.83,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_08",
-   "name": "Pi zero w header pin 08",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_08.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     16.19,
-     117.695
-    ],
-    [
-     66.038,
-     16.83,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_09",
-   "name": "Pi zero w header pin 09",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_09.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     13.65,
-     115.194
-    ],
-    [
-     65.597,
-     14.29,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_10",
-   "name": "Pi zero w header pin 10",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_10.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     13.65,
-     117.695
-    ],
-    [
-     66.038,
-     14.29,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_11",
-   "name": "Pi zero w header pin 11",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_11.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     11.11,
-     115.194
-    ],
-    [
-     65.597,
-     11.75,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_12",
-   "name": "Pi zero w header pin 12",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_12.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     11.11,
-     117.695
-    ],
-    [
-     66.038,
-     11.75,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_13",
-   "name": "Pi zero w header pin 13",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_13.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     8.57,
-     115.194
-    ],
-    [
-     65.597,
-     9.21,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_14",
-   "name": "Pi zero w header pin 14",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_14.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     8.57,
-     117.695
-    ],
-    [
-     66.038,
-     9.21,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_15",
-   "name": "Pi zero w header pin 15",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_15.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     6.03,
-     115.194
-    ],
-    [
-     65.597,
-     6.67,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_16",
-   "name": "Pi zero w header pin 16",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_16.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     6.03,
-     117.695
-    ],
-    [
-     66.038,
-     6.67,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_17",
-   "name": "Pi zero w header pin 17",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_17.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     3.49,
-     115.194
-    ],
-    [
-     65.597,
-     4.13,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_18",
-   "name": "Pi zero w header pin 18",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_18.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     3.49,
-     117.695
-    ],
-    [
-     66.038,
-     4.13,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_19",
-   "name": "Pi zero w header pin 19",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_19.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     0.95,
-     115.194
-    ],
-    [
-     65.597,
-     1.59,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_20",
-   "name": "Pi zero w header pin 20",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_20.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     0.95,
-     117.695
-    ],
-    [
-     66.038,
-     1.59,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_21",
-   "name": "Pi zero w header pin 21",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_21.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -1.59,
-     115.194
-    ],
-    [
-     65.597,
-     -0.95,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_22",
-   "name": "Pi zero w header pin 22",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_22.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -1.59,
-     117.695
-    ],
-    [
-     66.038,
-     -0.95,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_23",
-   "name": "Pi zero w header pin 23",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_23.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -4.13,
-     115.194
-    ],
-    [
-     65.597,
-     -3.49,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_24",
-   "name": "Pi zero w header pin 24",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_24.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -4.13,
-     117.695
-    ],
-    [
-     66.038,
-     -3.49,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_25",
-   "name": "Pi zero w header pin 25",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_25.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -6.67,
-     115.194
-    ],
-    [
-     65.597,
-     -6.03,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_26",
-   "name": "Pi zero w header pin 26",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_26.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -6.67,
-     117.695
-    ],
-    [
-     66.038,
-     -6.03,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_27",
-   "name": "Pi zero w header pin 27",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_27.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -9.21,
-     115.194
-    ],
-    [
-     65.597,
-     -8.57,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_28",
-   "name": "Pi zero w header pin 28",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_28.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -9.21,
-     117.695
-    ],
-    [
-     66.038,
-     -8.57,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_29",
-   "name": "Pi zero w header pin 29",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_29.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -11.75,
-     115.194
-    ],
-    [
-     65.597,
-     -11.11,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_30",
-   "name": "Pi zero w header pin 30",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_30.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -11.75,
-     117.695
-    ],
-    [
-     66.038,
-     -11.11,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_31",
-   "name": "Pi zero w header pin 31",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_31.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -14.29,
-     115.194
-    ],
-    [
-     65.597,
-     -13.65,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_32",
-   "name": "Pi zero w header pin 32",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_32.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -14.29,
-     117.695
-    ],
-    [
-     66.038,
-     -13.65,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_33",
-   "name": "Pi zero w header pin 33",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_33.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -16.83,
-     115.194
-    ],
-    [
-     65.597,
-     -16.19,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_34",
-   "name": "Pi zero w header pin 34",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_34.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -16.83,
-     117.695
-    ],
-    [
-     66.038,
-     -16.19,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_35",
-   "name": "Pi zero w header pin 35",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_35.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -19.37,
-     115.194
-    ],
-    [
-     65.597,
-     -18.73,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_36",
-   "name": "Pi zero w header pin 36",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_36.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -19.37,
-     117.695
-    ],
-    [
-     66.038,
-     -18.73,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_37",
-   "name": "Pi zero w header pin 37",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_37.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -21.91,
-     115.194
-    ],
-    [
-     65.597,
-     -21.27,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_38",
-   "name": "Pi zero w header pin 38",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_38.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -21.91,
-     117.695
-    ],
-    [
-     66.038,
-     -21.27,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_39",
-   "name": "Pi zero w header pin 39",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_39.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     59.616,
-     -24.45,
-     115.194
-    ],
-    [
-     65.597,
-     -23.81,
-     116.859
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_zero_w_header_pin_40",
-   "name": "Pi zero w header pin 40",
-   "module": "electronics",
-   "status": "owned",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "full-build source mesh moved [-4.6, 0.0, 1.0]",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/zero_w_header_pin_40.stl",
-    "geometryKind": "source-mesh-display"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2.44,
-   "bounds": [
-    [
-     60.057,
-     -24.45,
-     117.695
-    ],
-    [
-     66.038,
-     -23.81,
-     119.361
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_07_receiving",
-   "name": "Jumper-wire end on A7Z pin 7",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     15.24,
-     112.819
-    ],
-    [
-     73.926,
-     17.78,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_11_receiving",
-   "name": "Jumper-wire end on A7Z pin 11",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     10.16,
-     112.819
-    ],
-    [
-     73.926,
-     12.7,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_17_receiving",
-   "name": "Jumper-wire end on A7Z pin 17",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     2.54,
-     112.819
-    ],
-    [
-     73.926,
-     5.08,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_25_receiving",
-   "name": "Jumper-wire end on A7Z pin 25",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     -7.62,
-     112.819
-    ],
-    [
-     73.926,
-     -5.08,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_29_receiving",
-   "name": "Jumper-wire end on A7Z pin 29",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     -12.7,
-     112.819
-    ],
-    [
-     73.926,
-     -10.16,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_31_receiving",
-   "name": "Jumper-wire end on A7Z pin 31",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     -15.24,
-     112.819
-    ],
-    [
-     73.926,
-     -12.7,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_gpio_pin_39_receiving",
-   "name": "Jumper-wire end on A7Z pin 39",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 20,
-   "source": {
-    "kind": "guide primitive (build_guide_data.py box/cylinder envelope)"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 91.94,
-   "bounds": [
-    [
-     59.451,
-     -25.4,
-     112.819
-    ],
-    [
-     73.926,
-     -22.86,
-     117.795
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_csi_connector",
-   "name": "A7Z camera connector (31-pin, underside, pin-1 end)",
-   "module": "electronics",
+   "key": "sd_soc_a733",
+   "name": "A7Z processor (Allwinner A733), under the copper heatsink",
+   "module": "saddle",
    "status": "purchased",
    "displayTriangles": 12,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_csi_connector.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 87.74,
-   "bounds": [
-    [
-     54.94,
-     27.4,
-     124.718
-    ],
-    [
-     58.767,
-     31.5,
-     135.603
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_fan_connector",
-   "name": "A7Z fan socket",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_fan_connector.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 35.28,
-   "bounds": [
-    [
-     59.978,
-     29.2,
-     132.388
-    ],
-    [
-     63.784,
-     31.6,
-     137.735
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_ipex_socket",
-   "name": "A7Z antenna socket (IPEX)",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_ipex_socket.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 11.25,
-   "bounds": [
-    [
-     59.11,
-     29.0,
-     127.768
-    ],
-    [
-     60.862,
-     32.0,
-     130.94
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_micro_hdmi",
-   "name": "A7Z micro HDMI",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_micro_hdmi.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 168.48,
-   "bounds": [
-    [
-     60.916,
-     16.5,
-     137.706
-    ],
-    [
-     65.225,
-     23.7,
-     145.909
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_microsd_card",
-   "name": "microSD card in the A7Z",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_microsd_card.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 250.8,
-   "bounds": [
-    [
-     55.467,
-     -34.5,
-     124.915
-    ],
-    [
-     58.854,
-     -19.3,
-     136.008
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_microsd_socket",
-   "name": "A7Z microSD socket",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_microsd_socket.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 96.3,
-   "bounds": [
-    [
-     55.432,
-     -25.3,
-     124.718
-    ],
-    [
-     58.767,
-     -19.3,
-     135.516
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_pcie_fpc",
-   "name": "A7Z PCIe connector",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_pcie_fpc.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 84.6,
-   "bounds": [
-    [
-     58.332,
-     -0.0,
-     141.164
-    ],
-    [
-     60.625,
-     12.0,
-     146.053
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_pmic_area",
-   "name": "A7Z power chip area",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_pmic_area.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 140.4,
-   "bounds": [
-    [
-     58.172,
-     -27.5,
-     122.459
-    ],
-    [
-     61.612,
-     -18.5,
-     135.47
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_ram",
-   "name": "A7Z memory",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_ram.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 184.7,
-   "bounds": [
-    [
-     58.016,
-     -15.8,
-     121.573
-    ],
-    [
-     61.768,
-     -5.4,
-     136.356
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_soc_a733",
-   "name": "A7Z processor (Allwinner A733)",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_soc_a733.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_soc_a733.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
    "volumeMm3": 376.99,
    "bounds": [
     [
-     58.52,
-     -3.3,
-     124.359
+     -32.8,
+     -12.1,
+     48.6
     ],
     [
-     62.752,
-     12.1,
-     139.705
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_uboot_button",
-   "name": "A7Z boot button",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_uboot_button.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 10.03,
-   "bounds": [
-    [
-     58.147,
-     13.9,
-     140.672
-    ],
-    [
-     60.295,
-     15.8,
-     144.2
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_underside_smd",
-   "name": "A7Z underside components",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 1072,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_underside_smd.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 1598.69,
-   "bounds": [
-    [
-     54.223,
-     -32.5,
-     115.067
-    ],
-    [
-     60.417,
-     32.5,
-     144.785
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_usb_c_otg_dp",
-   "name": "A7Z USB-C (OTG, DisplayPort)",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_usb_c_otg_dp.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 249.25,
-   "bounds": [
-    [
-     60.829,
-     -13.7,
-     137.162
-    ],
-    [
-     65.52,
-     -4.6,
-     145.909
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "head_pi_a7z_usb_c_power",
-   "name": "A7Z USB-C power",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 12,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_usb_c_power.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 246.51,
-   "bounds": [
-    [
-     60.829,
-     -26.5,
-     137.162
-    ],
-    [
-     65.52,
      -17.5,
-     145.909
+     3.3,
+     50.2
     ]
    ],
    "displayVsSolid": {
@@ -4642,28 +2358,92 @@
    }
   },
   {
-   "key": "head_pi_a7z_wifi_module_fcu760k",
-   "name": "A7Z Wi-Fi module",
-   "module": "electronics",
+   "key": "sd_ram",
+   "name": "A7Z memory",
+   "module": "saddle",
    "status": "purchased",
    "displayTriangles": 12,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/a7z_wifi_module_fcu760k.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_ram.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 184.7,
+   "bounds": [
+    [
+     -35.7,
+     5.4,
+     48.6
+    ],
+    [
+     -20.9,
+     15.8,
+     49.8
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_pmic_area",
+   "name": "A7Z power chip area",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_pmic_area.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 140.4,
+   "bounds": [
+    [
+     -34.8,
+     18.5,
+     48.6
+    ],
+    [
+     -21.8,
+     27.5,
+     49.8
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_wifi_module_fcu760k",
+   "name": "A7Z Wi-Fi module",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_wifi_module_fcu760k.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
    "volumeMm3": 308.91,
    "bounds": [
     [
-     58.086,
-     14.9,
-     121.776
+     -35.3,
+     -26.0,
+     48.6
     ],
     [
-     62.452,
-     26.0,
-     134.091
+     -23.2,
+     -14.9,
+     50.9
     ]
    ],
    "displayVsSolid": {
@@ -4674,28 +2454,28 @@
    }
   },
   {
-   "key": "camera_ribbon",
-   "name": "Camera ribbon, A7Z end (150 mm, 31-pin, contacts towards the board)",
-   "module": "electronics",
+   "key": "sd_usb_c_otg_dp",
+   "name": "A7Z USB-C (OTG, DisplayPort) on the front edge: takes the future camera cable",
+   "module": "saddle",
    "status": "purchased",
-   "displayTriangles": 36,
+   "displayTriangles": 12,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/camera_ribbon.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_usb_c_otg_dp.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 154.47,
+   "volumeMm3": 249.25,
    "bounds": [
     [
-     55.319,
-     27.4,
-     123.713
+     -19.5,
+     4.6,
+     48.6
     ],
     [
-     70.5,
-     33.5,
-     136.156
+     -11.2,
+     13.7,
+     51.9
     ]
    ],
    "displayVsSolid": {
@@ -4706,28 +2486,476 @@
    }
   },
   {
-   "key": "antenna",
-   "name": "AC019 Wi-Fi antenna (FPC sticker, 42 x 11.9 mm) inside the cap roof",
-   "module": "electronics",
+   "key": "sd_usb_c_power",
+   "name": "A7Z USB-C power (unused: the 5 V lead goes on header pins 2 and 6)",
+   "module": "saddle",
    "status": "purchased",
-   "displayTriangles": 1544,
+   "displayTriangles": 12,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/antenna.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_usb_c_power.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 149.94,
+   "volumeMm3": 246.51,
    "bounds": [
     [
-     64.0,
+     -19.5,
+     17.5,
+     48.6
+    ],
+    [
+     -11.2,
+     26.5,
+     51.9
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_micro_hdmi",
+   "name": "A7Z micro HDMI",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_micro_hdmi.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 168.48,
+   "bounds": [
+    [
+     -19.0,
+     -23.7,
+     48.6
+    ],
+    [
+     -11.2,
+     -16.5,
+     51.6
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_fan_connector",
+   "name": "A7Z fan socket J6 (3-pin, pin-1 end, front corner)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_fan_connector.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 35.28,
+   "bounds": [
+    [
+     -24.4,
+     -31.6,
+     48.6
+    ],
+    [
+     -19.5,
+     -29.2,
+     51.6
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_ipex_socket",
+   "name": "A7Z antenna socket (IPEX)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_ipex_socket.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 11.25,
+   "bounds": [
+    [
+     -29.4,
+     -32.0,
+     48.6
+    ],
+    [
+     -26.4,
+     -29.0,
+     49.85
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_microsd_socket",
+   "name": "A7Z microSD socket (underside, +Y end)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_microsd_socket.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 96.3,
+   "bounds": [
+    [
+     -33.0,
+     19.3,
+     45.5
+    ],
+    [
+     -22.3,
+     25.3,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_microsd_card",
+   "name": "microSD card in the A7Z, out through the slot in the +Y saddle wall",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_microsd_card.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 250.8,
+   "bounds": [
+    [
+     -32.8,
+     19.3,
+     45.5
+    ],
+    [
+     -21.8,
+     34.5,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_csi_connector",
+   "name": "A7Z camera connector (31-pin, underside, pin-1 end; empty, no ribbon)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_csi_connector.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 87.74,
+   "bounds": [
+    [
+     -33.0,
+     -31.5,
+     45.0
+    ],
+    [
+     -22.3,
+     -27.4,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_pcie_fpc",
+   "name": "A7Z PCIe connector (underside)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_pcie_fpc.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 84.6,
+   "bounds": [
+    [
+     -16.3,
+     -12.0,
+     45.5
+    ],
+    [
+     -11.6,
+     0.0,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_uboot_button",
+   "name": "A7Z boot button (underside)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_uboot_button.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 10.03,
+   "bounds": [
+    [
+     -16.8,
+     -15.8,
+     45.4
+    ],
+    [
+     -13.5,
+     -13.9,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_underside_smd",
+   "name": "A7Z underside components",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 1072,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_underside_smd.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 1598.69,
+   "bounds": [
+    [
+     -42.8,
+     -32.5,
+     46.0
+    ],
+    [
+     -12.8,
+     32.5,
+     47.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_heatsink",
+   "name": "15 x 15 x 5 mm copper heatsink on the A733",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_heatsink.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 1125.0,
+   "bounds": [
+    [
+     -32.65,
+     -11.9,
+     50.7
+    ],
+    [
+     -17.65,
+     3.1,
+     55.7
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_thermal_pad",
+   "name": "0.5 mm thermal pad between the A733 and the copper heatsink",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_thermal_pad.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 112.5,
+   "bounds": [
+    [
+     -32.65,
+     -11.9,
+     50.2
+    ],
+    [
+     -17.65,
+     3.1,
+     50.7
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_fan",
+   "name": "Adafruit 3368 30 mm 5 V fan in the saddle lid (30 x 30 x 8 envelope), blowing down onto the copper",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_fan.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 7200.0,
+   "bounds": [
+    [
+     -36.8,
+     -16.4,
+     64.4
+    ],
+    [
+     -6.8,
+     13.6,
+     72.4
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_dupont_housings",
+   "name": "Straight Dupont housings on the A7Z header (one envelope for every plugged wire)",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_dupont_housings.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 3741.93,
+   "bounds": [
+    [
+     -41.84,
+     -25.4,
+     48.6
+    ],
+    [
+     -36.76,
+     25.4,
+     63.1
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "sd_antenna",
+   "name": "AC019 Wi-Fi antenna strip on the saddle rear wall (inner face), IPEX plug on the board",
+   "module": "saddle",
+   "status": "purchased",
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_antenna.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 151.2,
+   "bounds": [
+    [
+     -43.4,
      -21.0,
-     151.247
+     49.5
     ],
     [
-     75.9,
+     -43.1,
      21.0,
-     154.691
+     61.5
     ]
    ],
    "displayVsSolid": {
@@ -4738,60 +2966,28 @@
    }
   },
   {
-   "key": "antenna_coax",
-   "name": "AC019 antenna cable (50 mm coax)",
-   "module": "electronics",
+   "key": "sd_usb_c_plug",
+   "name": "Right-angle USB-C plug for the camera cable, through the front-wall notch into the OTG socket (camera not yet chosen)",
+   "module": "saddle",
    "status": "purchased",
-   "displayTriangles": 664,
+   "displayTriangles": 12,
    "source": {
     "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/antenna_coax.stl"
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/sd_usb_c_plug.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 39.1,
+   "volumeMm3": 609.25,
    "bounds": [
     [
-     60.74,
-     19.9,
-     128.515
+     -13.3,
+     4.6,
+     48.6
     ],
     [
-     71.6,
-     30.5,
-     151.5
-    ]
-   ],
-   "displayVsSolid": {
-    "displayToSolidMaxMm": 0.0,
-    "displayToSolidP99Mm": 0.0,
-    "solidToDisplayMaxMm": 0.0,
-    "solidToDisplayP99Mm": 0.0
-   }
-  },
-  {
-   "key": "antenna_ipex",
-   "name": "AC019 IPEX plug on the A7Z antenna socket",
-   "module": "electronics",
-   "status": "purchased",
-   "displayTriangles": 204,
-   "source": {
-    "kind": "print/world STL",
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/antenna_ipex.stl"
-   },
-   "closedVolume": true,
-   "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 10.57,
-   "bounds": [
-    [
-     59.197,
-     28.6,
-     128.044
-    ],
-    [
-     62.035,
-     31.5,
-     130.447
+     -3.0,
+     13.7,
+     55.1
     ]
    ],
    "displayVsSolid": {
@@ -5441,7 +3637,7 @@
   },
   {
    "key": "clip_cap",
-   "name": "Cap wire clip with the micro HDMI notch (A7Z print, orange)",
+   "name": "Cap wire clip with the micro HDMI notch (V1.17 print, orange; unused since D-022, kept as a part)",
    "module": "electronics",
    "status": "new-print",
    "displayTriangles": 896,

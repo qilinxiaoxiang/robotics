@@ -492,6 +492,23 @@ INCREMENTAL_NAMES_BY_VERSION['V1.27'] = dict(lower_right='Right lower-leg link')
 INCREMENTAL_NOTES_BY_VERSION['V1.27'] = dict(
     lower_right='The link between the right knee servo and the right ankle servo, the same part as the 10/1 print. It prints flat with support; break the support off before fitting.')
 
+# V1.29: the A7Z roof saddle (D-022, 2026-10-22): the board leaves the head after the closed-head soak and rides on the torso
+# roof behind the neck, fan in the lid. Nothing printed is replaced; the V1.17 A7Z head clip stays fitted but unused.
+RETIRED_INCREMENTAL['V1.29'] = []
+INTRO_BY_VERSION['V1.29'] = ('V1.29 is one white plate with two new parts: the saddle body and its lid for the Radxa Cubie A7Z, which moves out '
+                             'of the head onto the torso roof behind the neck (it overheated inside the closed head). The body screws down '
+                             'through the two roof screws of the shells (M2 x 10 instead of M2 x 6); the board sits on four posts (M2 x 4); '
+                             'the 30 mm fan sits in the lid pocket; the lid takes two M2 x 6 from the sides. Nothing printed is replaced.')
+RETIRED_HEADING_BY_VERSION['V1.29'] = 'Nothing to throw away'
+RETIRED_LEAD_BY_VERSION['V1.29'] = 'Every printed part stays; the A7Z head clip is left in the cap, unused.'
+INCREMENTAL_NAMES_BY_VERSION['V1.29'] = dict(saddle_body='A7Z saddle body', saddle_lid='A7Z saddle lid')
+INCREMENTAL_NOTES_BY_VERSION['V1.29'] = dict(
+    saddle_body=('The box on the torso roof behind the neck. It prints upright on tree support over its whole curved floor: break the '
+                 'support off the underside, then clear the two roof-screw holes in the floor and the slot at the foot of the front wall. '
+                 'The curved floor sits on the shell dome; the two roof screws (M2 x 10) go down through it into the rear pack.'),
+    saddle_lid=('The lid with the fan pocket and the exhaust grille. It prints upside down on its flat top; the fan clips into the bars, '
+                'the two side screws (M2 x 6) hold it on the body.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
