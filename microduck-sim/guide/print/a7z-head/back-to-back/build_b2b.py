@@ -5,9 +5,15 @@ header runs along the top edge; the underside (CSI socket, microSD) faces the ca
 edge at z = ZTOP, pin-1 end at y = +32.5 as today. Fit sweep and the choice of XC: ../../../firmware/mac/
 investigation-20261021/cooling/flip-6530b/README.md.
 
-6530B envelope (Radxa product page: 65 x 30 x 11.5 mm, four CM2x4x4 screws into the heatsink through the board holes;
-shape from Radxa's photos): body over the whole board except the header strip, corner legs over the header strip ends,
-blower fan at the pin-1 end with its inlet facing away from the board. Dimensions to be re-measured on the part.
+6530B (Radxa docs and product page: 65 x 30 x 11.5 mm aluminium, "3D fin structure", PWM blower, four CM2x4x4 screws
+through the board holes into the heatsink, two 16 x 16 x 1.5 mm pads; the rest read off Radxa's top-down package photo
+scaled to the 65 mm length, about +-0.5 mm): the body covers the board from d 7.3 (just past the 40-pin housings) to
+the far edge, with corner legs over the header strip ends (4.7 mm at the pin-1 end, 7.4 mm at the other) for the two
+header-side screws. The fins are plates along the 65 mm length, about 9 at a 3.5 mm pitch (2.1 thick, 1.4 channel),
+cut by 1.4 mm cross grooves every 9 mm; a 20 x 20 mm blower sits in a pocket at the pin-1 end (s 4.6..24.6, d 7.7..27.7)
+with its round inlet facing away from the board and its lead leaving at the header side. In the head the fins are
+horizontal, their channels open towards both cheeks and along the rear (fin tips); the blower's outlet direction is not
+shown in any photo (assumed along the fins, away from the pin-1 end). Radxa publishes no drawing; confirm on the part.
 
 Mounting: three ears printed with the head cap reach from the side walls into the gap in front of the board, at the two
 top holes and the bottom -Y hole. An M2 x 8 goes from the front through the ear and the board into the heatsink's own
@@ -54,7 +60,8 @@ RIB_X0 = 72.1                                                  # bottom ear rib 
 CLOSE_POST = ((75.5, 39.5), 4.5)                               # head_bottom post under each side boss (top z 114.3), keep-out
 SCREW_L, SCREW_HEAD = 8.0, (1.9, 1.6)                          # M2 x 8 cap head: radius, height
 CLEAR_HOLE = 1.2                                               # M2 clearance hole radius in the ear
-HS = dict(h=11.5, body_d=(6.0, 30.0), leg_s=((0.0, 7.0), (58.0, 65.0)), fan_s=(4.0, 27.0), fan_d=(7.0, 29.0), fan_gap=3.0)
+HS = dict(h=11.5, body_d=(7.3, 30.0), leg_s=((0.0, 4.7), (57.6, 65.0)), fan_s=(4.6, 24.6), fan_d=(7.7, 27.7), fan_gap=3.0,
+          base_h=5.5, fin_t=2.1, fin_pitch=3.5, fin_d0=29.0, groove_w=1.4, grooves_s=(29.0, 38.3, 47.0, 55.9), fan_top_h=10.5)
 JAW_PIVOT, JAW_AXIS, JAW_HI = np.array([26.1, 0.0, 118.6146]), np.array([0.0, 1.0, 0.0]), 27.0
 # Air ducts (duct_concept.py): the rear is the cool side, the heatsink's fin tips and the front are the hot side.
 # Shroud insert: a separate flat-printed plate behind the non-fan half of the fins, slid up into two rails on the right
@@ -102,7 +109,10 @@ def guide_parts():
     out = {}
     for p in d['parts']:
         k = p['key']
-        if k == 'pi' or k.startswith('head_pi_') or k in ('camera_ribbon', 'antenna_coax', 'antenna_ipex', 'clip_cap'):
+        # the head's wire clips (clip_head, clip_torso, clip_bracket, clip_cap) are not installed and not designed for
+        # (Shawn, 2026-10-22); the old ribbon and antenna routes belong to the old pose
+        if k == 'pi' or k.startswith('head_pi_') or k in ('camera_ribbon', 'antenna_coax', 'antenna_ipex', 'clip_cap',
+                                                           'clip_head', 'clip_torso', 'clip_bracket'):
             continue
         b = p['bounds']; lo, hi = b if isinstance(b[0], list) else (b[:3], b[3:])
         if not (hi[0] > -35 and lo[0] < 95 and hi[1] > -48 and lo[1] < 48 and hi[2] > 95 and lo[2] < 162):
@@ -141,6 +151,22 @@ def board_parts():
     p['heatsink_6530b'] = U(hs)
     p['_hs_body'], p['_hs_leg0'], p['_hs_leg1'] = hs
     p['fan_inlet_zone'] = obox(HS['fan_s'][0], HS['fan_s'][1], HS['fan_d'][0], HS['fan_d'][1], T + HS['h'], T + HS['h'] + HS['fan_gap'])
+    # Detailed 6530B for pictures only (the envelope above stays the keep-out): base plate, fins along the length cut by
+    # the cross grooves and the blower pocket, legs, and the blower as a block with its inlet face 1 mm below the fin tips.
+    hb, ht = T + HS['base_h'], T + HS['h']
+    det = [obox(0, 65, b0, b1, T, hb)] + [obox(s0, s1, 0, b0, T, hb) for s0, s1 in HS['leg_s']]
+    d = HS['fin_d0']
+    while d - HS['fin_t'] / 2 > 0:
+        fin = obox(0, 65, d - HS['fin_t'] / 2, d + HS['fin_t'] / 2, hb, ht)
+        for g in HS['grooves_s']:
+            fin = fin.difference(obox(g - HS['groove_w'] / 2, g + HS['groove_w'] / 2, -1, 31, hb, ht + 1), engine='manifold')
+        fin = fin.difference(obox(HS['fan_s'][0], HS['fan_s'][1], HS['fan_d'][0], HS['fan_d'][1], hb - 1, ht + 1), engine='manifold')
+        if d < b0 + HS['fin_t'] / 2:                      # fins in the header strip exist only on the legs
+            fin = U([fin.intersection(obox(s0, s1, -1, 31, hb - 1, ht + 1), engine='manifold') for s0, s1 in HS['leg_s']])
+        det.append(fin)
+        d -= HS['fin_pitch']
+    det.append(obox(HS['fan_s'][0] + 0.3, HS['fan_s'][1] - 0.3, HS['fan_d'][0] + 0.3, HS['fan_d'][1] - 0.3, hb - 1, T + HS['fan_top_h']))
+    p['heatsink_6530b_detail'] = trimesh.util.concatenate(det)
     return p
 
 
@@ -378,17 +404,11 @@ def fixed_duct_walls(cap):
 
 def shroud_insert(cap, unit_parts):
     """The separate shroud insert: plate INSERT_X from the right wall to y INSERT_Y1, roof to floor, 0.5 mm off the
-    cap, head floor, jaw_support and clip_head (a notch open at the bottom lets clip_head rise into it as the head
-    closes), plus the fan rib. Printed flat on its rear face."""
+    cap, head floor and jaw_support, plus the fan rib. Printed flat on its rear face."""
     plate = trimesh.creation.box(bounds=[[INSERT_X[0], -50.0, 100.0], [INSERT_X[1], INSERT_Y1, 165.0]])
     rib = trimesh.creation.box(bounds=[[INSERT_X[0], FAN_RIB_Y[0], 100.0], [FAN_RIB_X1, FAN_RIB_Y[1], FAN_RIB_TOP]])
     body = U([plate, rib])
     keep = [grow(cap, INSERT_GAP), grow(solid('head_bottom'), INSERT_GAP), grow(solid('jaw_support'), INSERT_GAP)]
-    # clip_head rises into place as the head closes: cut its shadow (grown, swept down), plus the wire channel between
-    # its post and tab (y -26..-17.6), so a bundle through the clip is not pinched. Elsewhere the insert stays whole.
-    clip = grow(solid('clip_head'), INSERT_GAP)
-    keep.append(U([clip.copy().apply_translation([0, 0, -dz]) for dz in np.arange(0.0, 20.01, 1.0)]))
-    keep.append(trimesh.creation.box(bounds=[[INSERT_X[0] - 1, -26.0, 90.0], [INSERT_X[1] + 1, -17.6, 124.9]]))
     keep += [grow(m, INSERT_GAP) for m in unit_parts]
     keep.append(pad_zone(cap))
     keep.append(trimesh.creation.box(bounds=[[40.0, -50.0, 90.0], [60.0, 10.0, 111.8]]))   # nothing below the head floor
@@ -453,9 +473,9 @@ def duct_checks(new_cap, insert, walls, wall_info, slot_info, bp, world):
         steps.append([float(dz), gap(m, new_cap), gap(m, unit)])
     tick('insert path')
     out['insertPath'] = {'minGapCap_mm': min(s_[1] for s_ in steps), 'minGapUnit_mm': min(s_[2] for s_ in steps), 'steps': steps}
-    # The head closes: head_bottom with jaw_support, clip_head and the jaw servo rise into the cap around the insert
-    # head_bottom itself is only below the insert (its floor gap is the final-pose pair); the parts that rise past it:
-    grp = {k: solid(k) for k in ('jaw_support', 'clip_head')}
+    # The head closes: head_bottom with jaw_support and the jaw servo rise into the cap around the insert
+    # head_bottom itself is only below the insert (its floor gap is the final-pose pair); the part that rises past it:
+    grp = {k: solid(k) for k in ('jaw_support',)}
     out['headCloseMinGapToInsert_mm'] = {k: min(gap(insert, m.copy().apply_translation([0, 0, -dz])) for dz in (0.0, 5.0, 10.0, 20.0, 30.0))
                                          for k, m in grp.items()}
     tick('close')

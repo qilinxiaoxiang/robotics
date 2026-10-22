@@ -59,15 +59,15 @@ code{font-size:14px;background:#f1ede4;padding:0 4px;border-radius:4px;overflow-
 <body>
 <main>
 <h1>头部风道：为什么要挡板，挡板怎么装</h1>
-<p class="status">A7Z 背对摄像头竖装 + Radxa 6530B 散热片。CAD 候选，没打印，没过发布门；散热片尺寸、风扇吹风方向等 10/26 到货后实测。图里的轮廓都是从真实 CAD 网格切出来的剖面。</p>
+<p class="status">A7Z 背对摄像头竖装 + Radxa 6530B 散热片。CAD 候选，没打印，没过发布门；散热片的外形按 Radxa 官方照片以 65 mm 标定量出（约 ±0.5 mm），风扇吹风方向照片看不出，按沿鳍片吹设定；到货后核对。图里的轮廓都是从真实 CAD 网格切出来的剖面。</p>
 
 <div class="lead">
-<p><b>一句话：</b>风扇的进风口和散热片的出风口挨在一起，中间只有 0 到 3 mm。头里不隔开的话，风扇吸进去的大部分是自己刚吹出来的热风，越转越热。</p>
+<p><b>一句话：</b>6530B 的鳍片顺着板子长边排，在头里是横着的；每条风道朝两边脸颊敞开，也朝后面敞开（鳍片尖端那一面没有盖）。风扇的进风口就在这个敞开的后面，离鳍片尖只有 0 到 3 mm。头里不隔开的话，风扇吸进去的大部分是自己刚吹出来、从后面漏出来的热风，越转越热。</p>
 <p>挡板把头里分成两个区。<span style="color:var(--cold)"><b>后面是冷区</b></span>，只接脖子开口和两侧后面的进风窗；<span style="color:var(--hot)"><b>前面和右侧风道是热区</b></span>，只通两侧前面的出风窗。风扇是两区之间唯一的通道，所以它只能吸冷风、往热区吹。</p>
 </div>
 
-<h2>1. 俯视动画：散热片尾部吹出的热风去哪</h2>
-<p>这是在 z 122（风扇高度）水平切开的头。左边是后脑勺和脖子，右边是脸。点按钮看装和不装挡板的区别。</p>
+<h2>1. 俯视动画：散热片吹出的热风去哪</h2>
+<p>这是在 z 121（风扇高度，正好切过一片鳍片）水平切开的头。散热片的深色部分是鳍片，缺口是横槽；鳍片之间的风道朝两边脸颊和后面开口。左边是后脑勺和脖子，右边是脸。点按钮看装和不装挡板的区别。</p>
 <div class="fig">
   <div class="controls" id="topCtl">
     <button data-all="1" class="on">全部装上</button>
@@ -82,15 +82,15 @@ code{font-size:14px;background:#f1ede4;padding:0 4px;border-radius:4px;overflow-
     <span style="--c:#e74c3c">导风插片</span><span style="--c:#9b59b6">头盖上的挡板</span>
     <span style="--c:#90caf9">风扇进风口</span><span style="--c:#4a4a4a">6530B 散热片</span><span style="--c:#2e7d32">A7Z 板</span>
   </div>
-  <p class="cap">动画里风的分配比例是示意（尾部出风约 60%、两端各 15%、顶上 10%），用来说明谁会被吸回去，不是流场计算。墙上的缺口就是脸颊开窗。下巴舵机座和 15 号舵机只到 z 128 到 130，冷风多半从它们上方过来，所以在这个剖面里看着像穿过零件。</p>
+  <p class="cap">动画里风的分配比例是示意（约 45% 顺着风道从右端直接出去、25% 从右半边敞开的后面漏出、15% 从左端出去、15% 从上下横槽出去），用来说明谁会被吸回去，不是流场计算。墙上的缺口就是脸颊开窗。下巴舵机座和 15 号舵机只到 z 128 到 130，冷风多半从它们上方过来，所以在这个剖面里看着像穿过零件。</p>
 </div>
 <div class="cards">
-  <div class="card"><h3>拿掉导风插片会怎样</h3><p>散热片右半边的尾部是一整排鳍片出风口（y −32 到 +4），正对着后面。热风出来先往后走，然后被旁边 3 mm 外的风扇口直接吸回去。插片在后面 7.5 mm 处挡住这排热风，让它顺着插片和散热片之间的夹道往右流，到右脸颊出风窗出去。插片上的挡条（y 2.3 到 3.5）把夹道和风扇口隔开。</p></div>
-  <div class="card"><h3>拿掉左挡板会怎样</h3><p>散热片左端（y +32.5）吹出的热风本该往前走、从左脸颊出风窗出去。没有左挡板，它会绕过散热片左后角（风扇线就在这里），回到风扇口。左挡板竖在 x 55.8 到 57.0，从 y 35 一直到左脸颊内壁。</p></div>
+  <div class="card"><h3>拿掉导风插片会怎样</h3><p>散热片右半边（y −32 到 +4）的风道朝后面是敞开的，风一边往右脸颊走，一边从鳍片尖之间往后漏。没有插片，漏出来的热风正对着 3 mm 外的风扇口，直接被吸回去。插片在后面 7.5 mm 处把这一面盖住，漏出来的风只能顺着插片和散热片之间的夹道往右流，到右脸颊出风窗出去。插片上的挡条（y 2.3 到 3.5）把夹道和风扇口隔开。</p></div>
+  <div class="card"><h3>拿掉左挡板会怎样</h3><p>散热片左端（y +32.5，风扇旁边那 4 mm 鳍片）吹出的热风本该往前走、从左脸颊出风窗出去。没有左挡板，它会绕过散热片左后角（风扇线就在这里），回到风扇口。左挡板竖在 x 55.8 到 57.0，从 y 35 一直到左脸颊内壁。</p></div>
 </div>
 
 <h2>2. 侧视动画：散热片顶上的热风会从插头上面翻回来</h2>
-<p>这是在 y 15（穿过风扇）竖着切开的头。散热片两端吹出的热风会绕到板子前上方，再沿着头顶往后流。头顶和插头之间如果不挡，它就翻过插头，掉进后面的风扇口。</p>
+<p>这是在 y 15（穿过风扇）竖着切开的头。散热片两端和顶边横槽吹出的热风会绕到板子前上方，再沿着头顶往后流。头顶和插头之间如果不挡，它就翻过插头，掉进后面的风扇口。</p>
 <div class="fig">
   <div class="controls">
     <label class="tog"><input type="checkbox" id="cUpper" checked>上挡板 + 插头墙</label>
@@ -140,12 +140,11 @@ code{font-size:14px;background:#f1ede4;padding:0 4px;border-radius:4px;overflow-
   <div class="card"><h3>接受的漏风</h3><ul>
     <li>散热片底下离头底 1.8 mm 的缝。</li>
     <li>插头顶上 1.5 mm 的走线缝（上挡板下面）。</li>
-    <li>插片上给 clip_head 和线让开的缺口（y −26 到 −17.6）。</li>
     <li>装配用的 0.5 到 0.85 mm 间隙。</li>
   </ul><p class="note">这些都比 7.5 mm 宽的夹道小得多，大部分热风仍然走夹道。</p></div>
   <div class="card"><h3>还没定</h3><ul>
-    <li>新姿态下排针的线怎么走：线在插头后面 2.5 mm 的空间里弯，从挡条左边（y &gt; 3.5）出去；clip_head 的线束从后面来，不能穿过插片。</li>
-    <li>10/26 实测 6530B 的鳍片方向和风扇方向，然后重跑 CAD 和检查。</li>
+    <li>新姿态下排针的线怎么走：线在插头后面 2.5 mm 的空间里弯，从挡条左边（y &gt; 3.5）出去。头里的束线件（clip_head 等）没有装，也不考虑。</li>
+    <li>散热片到货后核对照片量出的数：体边离排针边 7.3 mm、风扇口位置（s 4.6 到 24.6）、鳍片 3.5 mm 间距，以及风扇吹向；有出入就重跑 CAD 和检查。</li>
     <li>发布门、重建装配指南、切片、合盖测温，都还没做。</li>
   </ul></div>
 </div>
@@ -159,7 +158,7 @@ const COL = {cap:['#efebe3','#a39d92'], insert:['#e74c3c','#a93226'], walls:['#9
   heatsink_6530b:['#4a4a4a','#222'], a7z_pcb:['#2e7d32','#1b5e20'], fan_inlet_zone:['rgba(144,202,249,.8)','#64b5f6'],
   a7z_header:['#333','#111'], dupont_plugs:['#f5b041','#b9770e'], fan_lead_loop:['#ef9a9a','#c62828'],
   head_bottom:['#dcdcdc','#a0a0a0'], jaw_frame:['#ebdcd7','#b8a09a'], jaw_support:['#d0d0d0','#999'],
-  motor15:['#c4c4c4','#888'], clip_head:['#d7ccc8','#8d6e63'], camera_board:['#a5d6a7','#43a047'], face_panel:['#eeeeee','#aaa']};
+  motor15:['#c4c4c4','#888'], camera_board:['#a5d6a7','#43a047'], face_panel:['#eeeeee','#aaa']};
 const P2 = {};
 for (const [plane, parts] of Object.entries(D)) {
   if (plane === 'checks' || plane === 'slots') continue;
@@ -237,7 +236,7 @@ class Sim {
 const last = q => q.path.pts[q.path.pts.length - 1];
 const warm = q => { q.T = q.T + 0.5 * (1 - q.T) + 0.04; };
 
-// ---- top view, z 122
+// ---- top view, z 121
 const cfg = { insert: true, left: true, upper: true, fixed: false };
 const top = new View('top', [12, 96, -53, 53]);
 function topRoute(q, ev, sim) {
@@ -250,10 +249,11 @@ function topRoute(q, ev, sim) {
     q.next = 'fan';
   } else if (ev === 'fan') {
     sim.intake(q); warm(q); const [x, y] = last(q), r = Math.random();
-    if (r < 0.6) { const ye = R(-30, 3); q.path = mk([[x, y], [61, y], [61, ye], [56.6, ye]]); q.next = 'E1'; }
-    else if (r < 0.75) { q.path = mk([[x, y], [62, y], [R(59, 66), -32.6]]); q.next = 'E2'; }
-    else if (r < 0.9) { q.path = mk([[x, y], [62, y], [R(59, 66), 32.6]]); q.next = 'E3'; }
-    else { q.path = mk([[x, y], [R(58, 66), y + R(-3, 3)]], { fadeOut: 1 }); q.next = 'out'; }
+    const xc = R(57.5, 62);                                  // inside a fin channel
+    if (r < 0.45) { q.path = mk([[x, y], [xc, y], [xc, -32.6]]); q.next = 'E2'; }
+    else if (r < 0.7) { const ye = R(-30, 3); q.path = mk([[x, y], [xc, y], [xc, ye], [56.6, ye]]); q.next = 'E1'; }
+    else if (r < 0.85) { q.path = mk([[x, y], [xc, y], [xc, 32.6]]); q.next = 'E3'; }
+    else { q.path = mk([[x, y], [xc, y + R(-3, 3)]], { fadeOut: 1 }); q.next = 'out'; }
   } else if (ev === 'E1') {
     const [x, y] = last(q);
     if (cfg.insert || Math.random() < 0.25) { const xp = R(51, 54.5); q.path = mk([[x, y], [xp, y], [xp, -36], [R(58, 66), -39], [R(58, 66), -52]], { fadeOut: 1 }); q.next = 'out'; }
@@ -268,13 +268,13 @@ function topRoute(q, ev, sim) {
 const topSim = new Sim(top, 170, topRoute);
 function drawTop() {
   const v = top; v.clear();
-  for (const k of ['jaw_frame', 'jaw_support', 'motor15', 'clip_head', 'camera_board', 'face_panel', 'cap']) v.shape('top122', k);
+  for (const k of ['jaw_frame', 'jaw_support', 'motor15', 'camera_board', 'face_panel', 'cap']) v.shape('top122', k);
   if (cfg.left) v.shape('top122', 'walls'); else v.shape('top122', 'walls', 0, 0, 0.12);
   if (cfg.insert) v.shape('top122', 'insert'); else v.shape('top122', 'insert', 0, 0, 0.12);
   for (const k of ['fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'fan_lead_loop']) v.shape('top122', k);
   topSim.draw();
   v.text(54.6, 17, '风扇进风口', '#1565c0', { align: 'right', bold: 1 });
-  v.text(62.2, 0, '散热片', '#fff', { align: 'center' });
+  v.text(62.2, -8, '散热片：鳍片横着', '#fff', { align: 'center' });
   v.text(69, 35.5, 'A7Z', '#2e7d32', { align: 'center' }); v.text(78.5, 19, '摄像头', '#43a047', { align: 'center' });
   v.text(cfg.insert ? 47 : 47, -12, cfg.insert ? '导风插片' : '（插片拿掉）', '#c0392b', { align: 'right', bold: 1 });
   v.text(55.5, 44.5, cfg.left ? '左挡板' : '（左挡板拿掉）', '#6c3483', { align: 'right', bold: 1 });
@@ -339,7 +339,7 @@ const STEPS = [
   { t: '<b>第 2 步</b>　板子和散热片作为一个整体（Radxa 那颗螺丝已拧好，不带插头）放进头盖：先停在最终位置后面 2 mm，放到底，再往前推 2 mm 贴到三个耳朵上，从前面拧三颗 M2×8。' },
   { t: '<b>第 3 步</b>　从后面把杜邦插头往前推到朝后的排针上，推 8 mm，一路上离任何东西至少 ' + C.plugInsertMinGap_mm + ' mm。这一步必须在导风插片之前，因为插头推进来的路正好穿过插片的位置。', fixed: 1 },
   { t: '<b>第 4 步</b>　导风插片从下往上推进右脸颊的两道卡槽（右边小图），推到顶。插片边在卡槽里每边留 ' + C.insertPath[0] + ' mm，离板子和散热片至少 ' + C.insertPath[1] + ' mm。这时它还能往下滑出来，下一步由头底托住。' },
-  { t: '<b>第 5 步</b>　合上头底（下巴舵机座、clip_head、15 号舵机都装在头底上）。头底和下巴舵机座从下面托住插片，缝 ' + C.insertPairs.head_bottom + ' mm；合的过程中离插片至少 ' + C.headCloseMinGapToInsert_mm.jaw_support + ' mm。' },
+  { t: '<b>第 5 步</b>　合上头底（下巴舵机座和 15 号舵机都装在头底上）。头底和下巴舵机座从下面托住插片，缝 ' + C.insertPairs.head_bottom + ' mm；合的过程中离插片至少 ' + C.headCloseMinGapToInsert_mm.jaw_support + ' mm。' },
   { t: '<b>第 6 步</b>　最后装脸板和摄像头（拧 M2×8 的时候螺丝刀要从脸这边伸进去，所以脸板最后装）。下巴张开 0 到 27°，离插片和挡板至少 ' + C.jawSweepInsertWalls[0][1] + ' mm。' },
 ];
 let step = 0, stepT0 = performance.now();
@@ -393,8 +393,8 @@ setStep(0);
 // ---- part cards
 const W = C.wallPairs, I = C.insertPairs;
 const CARDS = [
-  ['导风插片', 'sep', '单独打印', '散热片右半边尾部吹出的热风（最大的一股）。', '热风被 3 mm 外的风扇口直接吸回去。',
-   '1.2 mm 板，x 47.8 到 49.0，y −40.9 到 3.5，从头底到头顶；背面贴床打印。', `最后一个装：插头插好后从下往上推进右脸颊卡槽，头底托住。离头底、下巴舵机座、clip_head ${I.head_bottom} mm，离散热片 ${I.heatsink_6530b} mm，离插头 ${I.dupont_plugs} mm，离触摸片至少 ${I.touch_pad_r1} mm。`],
+  ['导风插片', 'sep', '单独打印', '散热片右半边风道从敞开的后面漏出的热风。', '热风被 3 mm 外的风扇口直接吸回去。',
+   '1.2 mm 板，x 47.8 到 49.0，y −40.9 到 3.5，从头底到头顶；背面贴床打印。', `最后一个装：插头插好后从下往上推进右脸颊卡槽，头底托住。离头底、下巴舵机座 ${I.head_bottom} mm，离散热片 ${I.heatsink_6530b} mm，离插头 ${I.dupont_plugs} mm，离触摸片至少 ${I.touch_pad_r1} mm。`],
   ['插片上的挡条', 'sep', '插片的一部分', '夹道里的热风往左拐进风扇口。', '插片挡住的热风顺着插片往左流，从风扇口旁边又被吸回去。',
    'y 2.3 到 3.5，从插片往前伸到 x 56.0，离散热片 0.5 mm。', '跟插片一起装。不能长在头盖上：板子放进去时先错后 2 mm，散热片后面会到 x 54.5，撞挡条。'],
   ['左挡板', '', '跟头盖一起打印', '散热片左端吹出的热风往后绕。', '它绕过散热片左后角（风扇线那里）回到风扇口。',

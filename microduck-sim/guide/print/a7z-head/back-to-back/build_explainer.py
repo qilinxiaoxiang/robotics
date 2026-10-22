@@ -10,9 +10,9 @@ import trimesh
 import build_b2b as B
 
 PARTS = B.HERE / 'parts'
-# plane name -> (axis normal index, offset, the two drawn axes, part keys)
+# plane name -> (axis normal index, offset, the two drawn axes, part keys); the top cut runs through the fin at d 22
 PLANES = {
-    'top122': (2, 122.0, (0, 1), ['jaw_frame', 'jaw_support', 'motor15', 'clip_head', 'camera_board', 'face_panel', 'cap',
+    'top122': (2, 121.1, (0, 1), ['jaw_frame', 'jaw_support', 'motor15', 'camera_board', 'face_panel', 'cap',
                                   'walls', 'insert', 'fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'fan_lead_loop']),
     'side15': (1, 15.0, (0, 2), ['head_bottom', 'jaw_frame', 'jaw_support', 'motor15', 'camera_board', 'face_panel', 'cap',
                                  'walls', 'fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'a7z_header', 'dupont_plugs']),
@@ -28,8 +28,9 @@ def load_all():
     for f in PARTS.glob('*.stl'):
         m[f.stem] = trimesh.load(f)
     gp = B.guide_parts()
-    for k in ('head_bottom', 'jaw_frame', 'jaw_support', 'motor15', 'clip_head', 'face_panel', 'camera_board'):
+    for k in ('head_bottom', 'jaw_frame', 'jaw_support', 'motor15', 'face_panel', 'camera_board'):
         m[k] = gp[k]
+    m['heatsink_6530b'] = m['heatsink_6530b_detail']            # fins, grooves and the blower pocket, not the envelope
     return m
 
 

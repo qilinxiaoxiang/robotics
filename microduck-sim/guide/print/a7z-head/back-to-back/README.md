@@ -1,14 +1,21 @@
 # A7Z back to back with the camera, Radxa Heatsink 6530B behind it (candidate, not released)
 
 Status 2026-10-22: CAD candidate with its clearance, wall, jaw, assembly and air duct checks. Not in print/world, not through the
-print gate, not printed. The 6530B envelope comes from Radxa's photos and must be re-measured on the part (arrives
-2026-10-26) before release.
+print gate, not printed. The 6530B's published figures are 65 x 30 x 11.5 mm, four CM2x4x4 screws and two 16 x 16 x
+1.5 mm pads (Radxa docs and product page); its shape is read off Radxa's top-down package photo scaled to the 65 mm
+length (about +-0.5 mm) and is confirmed on the part when it arrives (2026-10-26). The head's wire clips (clip_head,
+clip_torso, clip_bracket, clip_cap) are not installed and are not designed for (Shawn, 2026-10-22).
 
 ## What changes
 
 - **A7Z pose**: vertical, component side (SoC, 40-pin header) facing the rear, header along the top edge, underside (CSI
   socket, microSD) facing the camera. Rear face x 68, top edge z 143.1, pin-1 end at y +32.5. The 6530B sits behind the
-  board (x 56.5 to 68), fan at the pin-1 end with its inlet facing the rear.
+  board (x 56.5 to 68): body from d 7.3 (just past the 40-pin housings) to the far edge, corner legs over the header
+  strip ends (4.7 mm at the pin-1 end, 7.4 mm at the other), about 9 fins along the 65 mm length at a 3.5 mm pitch (2.1
+  thick) cut by 1.4 mm cross grooves every 9 mm, and a 20 x 20 mm blower in a pocket at the pin-1 end (s 4.6 to 24.6, d
+  7.7 to 27.7) with its round inlet facing the rear and its lead leaving at the header side. In the head the fins are
+  horizontal; their channels open towards both cheeks and along the rear. The blower's outlet direction is not visible
+  in any photo (assumed along the fins, away from the pin-1 end).
 - **Head cap** (`head_cap_b2b-world.stl`, from `../head_cap_a7z-world.stl`):
   - The two old board rails (vertical webs at each board end with the old Pi pilots) are removed. Everything of the cap
     in that zone more than 2.5 mm inside the outer hull goes; the shell stays whole.
@@ -19,7 +26,7 @@ print gate, not printed. The 6530B envelope comes from Radxa's photos and must b
     roof; the bottom ear carries a 45 degree rib (x 72.1 to 73.6) up to the side boss column. The cap prints roof down,
     so none of the ears needs support. Ears are trimmed 0.6 mm inside the outer hull so nothing shows outside.
 - **Cap wire clip (clip_cap)**: dropped. The bundle leaves the rear-facing header directly and no longer crosses the
-  board's top edge. clip_head stays.
+  board's top edge. The other wire clips are not installed either.
 - **Fasteners**: three M2 x 8 from the front through ear and board into the 6530B's own threads (2.4 mm of thread, the
   same as Radxa's CM2x4x4 through a 1.6 mm board). The bottom +Y hole takes one Radxa CM2x4x4 from the board underside
   and has no ear: the camera socket and its ribbon sit right above it.
@@ -55,8 +62,8 @@ room above the head floor (z 111.3):
 
 ## Open before release
 
-1. Measure the real 6530B (outline, corner fin blocks, fan position, thread depth, the pocket over J6 and the IPEX) and
-   rerun `build_b2b.py`.
+1. Check the real 6530B against the photo-read model (outline, corner legs, blower pocket, thread depth, the pocket
+   over J6 and the IPEX) and rerun `build_b2b.py` on any difference.
 2. Try the camera ribbon fold and the fan lead tuck on the parts.
 3. Run the print gate (`guide/content/interference-audit/run_gate.py`), rebuild the guide with the new cap and slice.
 
@@ -80,20 +87,21 @@ Mounting confirmed by Shawn 2026-10-22 (D-020): separate insert in the right-che
 Animated explainer: `ducts-explainer.html` (why each baffle is needed, what leaks without it, how the insert goes in),
 built by `build_explainer.py` from real sections of these meshes.
 
-The 6530B's fins are plates across its 30 mm width (Radxa photo), so in this pose the fin channels run vertically:
-their top ends face the header row, their bottom ends sit 1.8 mm above the head floor (head_bottom lies on the jaw
-frame, so nothing can open downward). The fan presses air into the fins and it leaves mostly through the open fin tips
-on the rear face beside the fan, right next to the fan inlet. The ducts keep that hot air away from the inlet and send
-it out of the cheeks; the fan draws cool air from the neck opening and the rear cheek windows. The concept sketch
-(`duct_concept.py`, `renders/duct-concept.png`) is the picture Shawn approved on 2026-10-22.
+The 6530B's fins are plates along its 65 mm length (Radxa photos: the end faces show a comb of fin ends), so in this
+pose the channels are horizontal, open at both ends towards the cheeks and open along the rear between the fin tips;
+the cross grooves open at the top edge (towards the header and plugs) and at the bottom edge (1.8 mm above the head
+floor). The blower presses air along the channels; part of it leaves at the ends straight at the cheek windows, part
+leaks out of the open rear right next to the blower inlet, part through the grooves. The ducts keep the rear leak away
+from the inlet and send it out of the cheeks; the fan draws cool air from the neck opening and the rear cheek windows.
+The concept sketch (`duct_concept.py`, `renders/duct-concept.png`, drawn with the fins the other way) is the picture
+Shawn approved on 2026-10-22; the animated explainer below carries the real fin direction.
 
 Parts:
 
 - **Shroud insert** (`shroud_insert-world.stl`, printed separately, flat on its rear face): a 1.2 mm plate at x 47.8 to
   49.0 from the fan edge (y 3.5) to the right cheek (y -40.9), z 111.8 to 151.8, with a rib at y 2.3 to 3.5 forward to
-  x 56.0 that keeps the plenum air off the fan inlet. It is shaped 0.85 mm off the cap, head_bottom, jaw_support,
-  clip_head (and its path as the head closes) and the board unit, 1.5 mm off the touch pads. A notch lets clip_head and
-  the wire channel (y -26 to -17.6) through. It cannot be part of the cap: a fixed plate there blocks pushing the
+  x 56.0 that keeps the plenum air off the fan inlet. It is shaped 0.85 mm off the cap, head_bottom, jaw_support
+  and the board unit, 1.5 mm off the touch pads. It cannot be part of the cap: a fixed plate there blocks pushing the
   Dupont plugs onto the rear-facing header and the 2 mm lowering of the board unit.
 - **Rails** in the right cheek (two 1.2 mm webs at x 46.4 to 47.6 and 49.2 to 50.4, z 133.5 to 140.5, 3 mm deep, 45
   degree tops so they print roof down): the insert's edge slides up between them, 0.2 mm each side. head_bottom holds
@@ -111,17 +119,17 @@ Assembly order (cap roof down on the bench):
 1. Board unit (board, heatsink, kit screw) in without plugs: lowered 2 mm behind its place, slid forward, three M2 x 8.
 2. Dupont plugs onto the rear-facing header from behind (path checked: 1.5 mm free over 8 mm of push).
 3. Shroud insert up into the right-cheek rails.
-4. head_bottom with jaw_support, clip_head and motor15 closes the head and holds the insert.
+4. head_bottom with jaw_support and motor15 closes the head and holds the insert.
 
 Checks (all pass): cap still one closed solid; walls at least 0.49 mm to head_bottom, 1.0 to the fan lead, 1.5 to the
-heatsink and plugs, 1.69 to the M pad; insert 0.49 mm to jaw_support, head_bottom and clip_head (also while the head
+heatsink and plugs, 1.69 to the M pad; insert 0.49 mm to jaw_support and head_bottom (also while the head
 closes), 0.5 to the heatsink, 1.0 to the plugs, 1.3 / 1.57 to the R1 / M pads; insert slide-in at least 0.2 mm to the
 rails and 0.5 to the board unit; jaw 0 to 27 degrees at least 3.96 mm from insert and walls; neck and speaker cables at
-least 12.7 mm; overhangs 1.3 to 2.5 mm2 on the cap walls (chamfered), 8.5 mm2 on the insert; each slot removes 32 to 51
+least 12.7 mm; overhangs 1.3 to 2.5 mm2 on the cap walls (chamfered), 18.7 mm2 on the insert (it prints flat on its rear face, so these are not print overhangs); each slot removes 32 to 51
 mm3, the shell alone.
 
 Known leaks (accepted, small against the 7.5 mm plenum): the 1.8 mm floor gap under the heatsink, the 2.9 mm wire pass
-over the plug tops, the clip notch, and the 0.5 to 0.85 mm assembly clearances.
+over the plug tops, and the 0.5 to 0.85 mm assembly clearances.
 
 Estimate: air through the fan at 0.5 to 1 CFM carries 0.29 to 0.58 W/K out of the head, the shell 0.17 to 0.25 W/K, so
 the head air rises about 1.2 to 2.2 K per watt with the ducts against 4 to 6 without. The fan's flow and blowing
@@ -130,6 +138,7 @@ direction are not published (assumed into the fins); the same ducts work reverse
 Open for the ducts:
 
 1. Header wire routing in the new pose: the wires bend inside the 2.5 mm channel behind the plug housings and leave at
-   y > 3.5, over the insert rib; the clip_head bundle comes from the rear and must not cross the insert plane.
-2. Measure the 6530B fins and fan direction (2026-10-26) and rerun.
+   y > 3.5, over the insert rib.
+2. On the part (2026-10-26): check the photo-read figures (body edge d 7.3, blower pocket s 4.6 to 24.6, fin pitch
+   3.5) and the blower's outlet direction; rerun on any difference.
 3. Soak test with the head closed: SoC temperature under load, windows taped against open.

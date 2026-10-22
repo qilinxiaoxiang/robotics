@@ -75,7 +75,7 @@ def sections(cap, ears, P, gp, path):
               ('jaw_support', gp['jaw_support'], '#b03a2e'), ('motor15', gp['motor15'], '#7b241c'),
               ('face_panel', gp['face_panel'], '#d9d9d9'), ('camera', gp['camera_board'], COL['cam']),
               ('cap', cap, '#f4f2ec'), ('ears', ears, COL['ears']), ('pcb', P['a7z_pcb'], COL['pcb']),
-              ('hs', P['heatsink_6530b'], COL['hs']), ('plug', P['dupont_plugs'], COL['plug']),
+              ('hs', P['heatsink_6530b_detail'], COL['hs']), ('plug', P['dupont_plugs'], COL['plug']),
               ('sd', P['a7z_microsd_card'], COL['sd']), ('csi', P['a7z_csi_connector'], COL['csi']),
               ('ribbon', P['camera_ribbon_b2b'], COL['ribbon']), ('screw', P['ear_screws_m2x8'], COL['screw']),
               ('kit', P['kit_screw_head'], COL['screw']), ('coax', P['antenna_coax_b2b'], COL['coax'])]
@@ -113,7 +113,7 @@ def main():
     P = {f.stem: trimesh.load(f) for f in (HERE / 'parts').glob('*.stl')}
     gp = B.guide_parts()
     chk = json.loads((HERE / 'checks.json').read_text())
-    board = [(P['a7z_pcb'], COL['pcb'], 1, None), (P['heatsink_6530b'], COL['hs'], 1, None),
+    board = [(P['a7z_pcb'], COL['pcb'], 1, None), (P['heatsink_6530b_detail'], COL['hs'], 1, None),
              (P['dupont_plugs'], COL['plug'], 0.55, None), (P['antenna_coax_b2b'], COL['coax'], 1, None),
              (P['camera_ribbon_b2b'], COL['ribbon'], 1, None), (P['ear_screws_m2x8'], COL['screw'], 1, None),
              (P['kit_screw_head'], COL['screw'], 1, None), (P['a7z_microsd_card'], COL['sd'], 1, None),
@@ -128,7 +128,7 @@ def main():
               ((70.4, 29, zt - 26.5), '左下角：Radxa 自带 CM2×4×4，不用耳朵\n（正上方是摄像头插座）', (60, 110), COL['screw']),
               ((70.6, 30, zt - 15), '摄像头插座 + 排线', (-360, -40), '#d35400'),
               ((70.4, -27, zt - 16), 'microSD', (120, 0), COL['sd']),
-              ((60, -20, zt - 30), '6530B（风扇朝后）', (-330, 90), COL['hs'])]
+              ((60, -20, zt - 30), '6530B（鳍片横着，风扇朝后）', (-330, 90), COL['hs'])]
     render(items, (190, -120, 70), (62, 0, 128), (0, 0, 1), labels, OUT / 'b2b-1-inside.png',
            '头盖里面（从前下方看，面板/摄像头/下壳拿掉）：3 个耳朵 + 1 颗自带螺丝固定板子和 6530B')
     # 2. Filled sections through the screw holes at y = +29 (left) and y = -29 (right), seen from the robot's left.
@@ -148,7 +148,7 @@ def ducts(cap, P, gp, chk):
     """Air duct pictures: inside from behind, the right cheek outside, and a filled section through the fan."""
     ins, walls = trimesh.load(HERE / 'shroud_insert-world.stl'), trimesh.load(HERE / 'duct_walls_only.stl')
     du = chk['ducts']
-    board = [(P['a7z_pcb'], COL['pcb'], 1, None), (P['heatsink_6530b'], COL['hs'], 1, None),
+    board = [(P['a7z_pcb'], COL['pcb'], 1, None), (P['heatsink_6530b_detail'], COL['hs'], 1, None),
              (P['dupont_plugs'], COL['plug'], 0.6, None), (P['fan_lead_loop'], COL['coax'], 0.5, None)]
     # 4. inside from behind and below, the rear of the cap cut away at x 44
     items = [(cap, COL['cap'], 1, ((44.0, 0, 0), (1, 0, 0))), (walls, '#8e44ad', 1, None), (ins, '#e74c3c', 1, None),
@@ -171,9 +171,9 @@ def ducts(cap, P, gp, chk):
     # 6. filled section through the fan at z 122 with the air path
     fig, ax = plt.subplots(figsize=(12, 10))
     layers = [('jaw_support', gp['jaw_support'], '#cfcfcf'), ('motor15', gp['motor15'], '#bdbdbd'),
-              ('clip_head', gp['clip_head'], '#d7ccc8'), ('camera', gp['camera_board'], COL['cam']),
+              ('camera', gp['camera_board'], COL['cam']),
               ('cap', cap, '#f4f2ec'), ('walls', walls, '#8e44ad'), ('insert', ins, '#e74c3c'),
-              ('fan', P['fan_inlet_zone'], '#90caf9'), ('hs', P['heatsink_6530b'], COL['hs']), ('pcb', P['a7z_pcb'], COL['pcb'])]
+              ('fan', P['fan_inlet_zone'], '#90caf9'), ('hs', P['heatsink_6530b_detail'], COL['hs']), ('pcb', P['a7z_pcb'], COL['pcb'])]
     z0 = 122.0
     for name, m, c in layers:
         sec = m.section(plane_origin=[0, 0, z0], plane_normal=[0, 0, 1])
