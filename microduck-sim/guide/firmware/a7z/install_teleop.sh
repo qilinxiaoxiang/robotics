@@ -16,6 +16,8 @@
 #      ceiling of D-012 lives there), the duck-policy venv imports onnxruntime, the Brain loads all six policies
 #      with their metadata checks, walk_wired imports, and the sounds folder has calls
 #   5. prints the control-file path walk_wired reads (default --cmd /tmp/duck_cmd.json unless duck-run.sh passes one)
+#   6. installs ~/duck-run.sh and ~/duck-brain.sh and enables duck-brain.service, which starts the brain at every boot
+#      straight into the open-loop stand, so the app's buttons act without a start delay
 #
 # It never moves the robot: no servo traffic, no restart of a running walk_wired.py (the running process keeps the
 # old code until ~/duck-run.sh <suffix> starts it again, which comes up in monitor mode). Never copies
@@ -85,7 +87,10 @@ ssh "$HOST" "mkdir -p '$REMOTE_SIM/guide/firmware/mac/sounds'" 2> >(quiet >&2)
 rsync -a --checksum --relative --itemize-changes "${FILES[@]}" "$HOST:$REMOTE_SIM/" 2> >(quiet >&2)
 # no -t: the calls are rebuilt with fresh mtimes every run; content decides (--checksum), so unchanged calls stay quiet
 rsync -rlp --checksum --delete --itemize-changes "$STAGE/sounds/" "$HOST:$REMOTE_SIM/guide/firmware/mac/sounds/" 2> >(quiet >&2)
-rsync -p --checksum --itemize-changes "$HERE/duck-run.sh" "$HOST:duck-run.sh" 2> >(quiet >&2)  # the launcher the app runs
+rsync -p --checksum --itemize-changes "$HERE/duck-run.sh" "$HERE/duck-brain.sh" "$HOST:" 2> >(quiet >&2)  # launchers
+# boot start: duck-brain.service runs ~/duck-brain.sh at every boot (enabled only; a running brain is left alone)
+rsync --checksum "$HERE/duck-brain.service" "$HOST:/tmp/duck-brain.service" 2> >(quiet >&2)
+ssh "$HOST" 'cmp -s /tmp/duck-brain.service /etc/systemd/system/duck-brain.service || { sudo -n install -m 644 /tmp/duck-brain.service /etc/systemd/system/duck-brain.service && sudo -n systemctl daemon-reload; }; sudo -n systemctl enable duck-brain.service 2>&1 | grep -v "^Created" ; echo "duck-brain.service: $(systemctl is-enabled duck-brain.service)"' 2> >(quiet >&2)
 
 echo "== verifying sha256 on $HOST"
 MANIFEST="$STAGE/manifest.sha256"

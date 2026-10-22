@@ -1,0 +1,17 @@
+# MicroDuck brain at boot: walk_wired.py goes straight to the open-loop stand (Shawn, 2026-10-22), so the robot holds
+# its stand pose after every power-up or A7Z reset and the app's buttons act at once.
+# Installed to /etc/systemd/system by install_teleop.sh. Undo: sudo systemctl disable duck-brain
+# A brain the app restarts (~/duck-run.sh) runs outside this unit; stopping it here never touches that one.
+[Unit]
+Description=MicroDuck brain (walk_wired.py, open-loop stand at boot)
+After=local-fs.target
+
+[Service]
+User=radxa
+Environment=HOME=/home/radxa
+Environment=DUCK_START_MODE=stand
+ExecStart=/home/radxa/duck-brain.sh
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
