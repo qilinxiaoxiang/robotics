@@ -22,7 +22,7 @@ def ref(p): return {'path': str(Path(p).resolve()), 'sha256': sha(p)}
 
 m = json.loads(V120.read_text()); parts = []; pl = []
 check = json.loads((LS / 'link-check.json').read_text())
-for i, side in enumerate(('left', 'right')):
+for i, side in enumerate(('right',)):   # Shawn 2026-10-22: right link only
     stl = Path(check['sides'][side]['files']['print']); assert sha(stl) == check['sides'][side]['files']['printSha256']
     k = trimesh.load(stl, force='mesh', process=False); k.apply_translation([0, 0, -k.bounds[0, 2]])
     area = float(k.area_faces[np.max(np.abs(k.triangles[:, :, 2]), axis=1) <= .01].sum()); size = (k.bounds[1] - k.bounds[0]).round(2).tolist()
@@ -38,7 +38,7 @@ for i, side in enumerate(('left', 'right')):
                       '(Shawn 2026-10-22); same seated contacts and assembly paths as link + sleeve (link-check.json).'),
         supersedes=f'{key}: the 10/1 link and the V1.22 ankle sleeve on it', incrementalEvidence=ref(LS / 'link-check.json'),
         thinWallAllowances=allow))
-    pl.append(dict(key=key, copy=1, translation=[round(103.0 + 50 * i - (k.bounds[0, 0] + k.bounds[1, 0]) / 2, 4), round(128.0 - (k.bounds[0, 1] + k.bounds[1, 1]) / 2, 4), 0.0]))
+    pl.append(dict(key=key, copy=1, translation=[round(128.0 + 50 * i - (k.bounds[0, 0] + k.bounds[1, 0]) / 2, 4), round(128.0 - (k.bounds[0, 1] + k.bounds[1, 1]) / 2, 4), 0.0]))
 m.update(parts=parts, placements={'Black': pl}, processOverrides={}, retiredParts=[], version='V1.28',
          processOverrideReason='Stock profile (brims per object by the pipeline R1 rule or the manifest objectSettings).',
          prototypeScope='V1.28 delta package: one Black plate with the left and right one-piece lower-leg links (sleeve printed on). Supersedes the unprinted V1.27.',
