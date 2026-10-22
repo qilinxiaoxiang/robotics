@@ -479,6 +479,19 @@ INCREMENTAL_NOTES_BY_VERSION['V1.25'] = dict(
     ankle_outer_left=INCREMENTAL_NOTES_BY_VERSION['V1.24']['ankle_outer_left'] + ' Peel the 8 mm brim off all round.',
     ankle_inner_left='The inner half of the left ankle, on the face towards the other leg: the plate with the round sleeve bore and the other half of the foot block. Slide it along the shaft, away from the centre line, onto the sleeve until it meets the outer half; then slide the foot on and drive the toe M2 x 6. It prints standing on its toe end with support inside the bore: break the support out, then scrape the bore and the flat lip face inside it smooth until the black sleeve turns freely in it. Peel the 8 mm brim off and cut the thin brim strip out of the small notch on the end face that stood on the bed; on an Elegoo print also pick the support tips out of the toe screw countersink.')
 
+# V1.27: the right lower-leg link (stock community-32, black) reprinted unchanged; Shawn 2026-10-22 found the printed one bent.
+RETIRED_INCREMENTAL['V1.27'] = [
+    ('Right lower-leg link (10/1 print)', 'Black', HERE.parents[1] / 'build-pack-20260913' / 'assembly' / 'print-parts' / 'community-32.stl',
+     'It is bent.', 'Right lower-leg link'),
+]
+INTRO_BY_VERSION['V1.27'] = ('V1.27 is one black part: the right lower-leg link, the link between the right knee servo and the right '
+                             'ankle servo, printed again unchanged because the printed one is bent.')
+RETIRED_LEAD_BY_VERSION['V1.27'] = 'Swap it with the new link on the same servo horns and screws.'
+RETIRED_HEADING_BY_VERSION['V1.27'] = 'Replace this'
+INCREMENTAL_NAMES_BY_VERSION['V1.27'] = dict(lower_right='Right lower-leg link')
+INCREMENTAL_NOTES_BY_VERSION['V1.27'] = dict(
+    lower_right='The link between the right knee servo and the right ankle servo, the same part as the 10/1 print. It prints flat with support; break the support off before fitting.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

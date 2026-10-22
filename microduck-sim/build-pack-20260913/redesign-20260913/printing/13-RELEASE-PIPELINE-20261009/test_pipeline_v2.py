@@ -69,6 +69,12 @@ class ColourOnlyReprintTests(unittest.TestCase):
  def test_colour_only_needs_the_replaced_instance_stl(self):
   self.m['parts'][0].update(colourOnlyReprint='white',replacesStockIds=['6'])  # community-72 instance, other bytes
   with self.assertRaisesRegex(AssertionError,'exact stock STL'):self.receipt()
+ def test_damage_reprint_of_exact_stock_accepted_and_counted(self):
+  self.m['parts'][0]['damageReprint']='bent';rc=self.receipt()
+  self.assertEqual(rc['reprintUnchangedStockQuantity'],1);self.assertEqual(rc['parts'][0]['damageReprint'],'bent')
+ def test_damage_reprint_needs_the_replaced_instance_stl(self):
+  self.m['parts'][0].update(damageReprint='bent',replacesStockIds=['6'])
+  with self.assertRaisesRegex(AssertionError,'exact stock STL'):self.receipt()
 
 class FirstLayerBrimTests(unittest.TestCase):
  # Orca layout: each object's brim printed before EXCLUDE_OBJECT_START, outside the label.

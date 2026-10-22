@@ -121,15 +121,15 @@ def elegoo_thumbnail(gcode: Path) -> Image.Image:
 
 
 def file_objects(files: list[dict]) -> dict:
-    """Per machine, object name -> XY centre as written in the machine file itself: Bambu Metadata/plate_1.json
-    bbox_objects (brim included, so compared with a looser tolerance), Elegoo EXCLUDE_OBJECT_DEFINE CENTER."""
+    """Per machine, object name -> where the machine file itself puts it: Bambu Metadata/plate_1.json bbox_objects (the
+    first-layer box, brim included) as (xmin, ymin, xmax, ymax), Elegoo EXCLUDE_OBJECT_DEFINE CENTER as (x, y)."""
     out = {}
     for f in files:
         path = Path(f['path'])
         if f['machine'] == 'Bambu X1 Carbon':
             with zipfile.ZipFile(path) as z:
                 objs = json.loads(z.read('Metadata/plate_1.json'))['bbox_objects']
-            out['X1C'] = {o['name']: ((o['bbox'][0] + o['bbox'][2]) / 2, (o['bbox'][1] + o['bbox'][3]) / 2) for o in objs}
+            out['X1C'] = {o['name']: tuple(o['bbox']) for o in objs}
         else:
             c = {}
             for l in path.read_text(errors='replace').splitlines():
@@ -141,15 +141,26 @@ def file_objects(files: list[dict]) -> dict:
 
 
 def check_footprints(prep: dict, colour: str, files: list[dict]) -> None:
-    """Every part drawn on the bed map (Bambu row placement) sits where both machine files put it."""
+    """Every part drawn on the bed map (Bambu row placement) sits where both machine files put it. Elegoo gives the
+    object centre (within 1 mm). The X1C box covers only the first layer plus brim, which on a part that touches the bed
+    at one end is far from the part's centre (V1.27 lower-leg link: 14 mm), so it must lie inside the part's drawn
+    outline grown by its brim reach plus 1 mm."""
     row = next(r for r in prep['rows'] if r['color'] == colour and r['machine'] == 'Bambu')
-    drawn = {f'{pl["key"]}_{pl.get("copy", 1)}': ((np.array(b[0][:2]) + np.array(b[1][:2])) / 2)
-             for pl, b in zip(row['placements'], row['modelBounds'])}
+    parts = {p['key']: p for p in prep['parts']}
+    drawn, reach = {}, {}
+    for pl, b in zip(row['placements'], row['modelBounds']):
+        name = f'{pl["key"]}_{pl.get("copy", 1)}'; drawn[name] = np.array(b)[:, :2]
+        o = parts[pl['key']].get('objectSettings') or {}
+        reach[name] = (0.0 if o.get('brim_type', 'no_brim') == 'no_brim' else float(o.get('brim_width', 4)) + float(o.get('brim_object_gap', 0.1))) + 1.0
     for machine, objs in file_objects(files).items():
         assert set(objs) == set(drawn), (machine, sorted(objs), sorted(drawn))
-        tol = 1.0 if machine == 'Elegoo' else 3.0   # the X1C box includes the brim, whose loops are not symmetric
-        for name, c in objs.items():
-            assert np.hypot(*(np.array(c) - drawn[name])) <= tol, (machine, name, c, drawn[name].tolist())
+        for name, v in objs.items():
+            lo, hi = drawn[name]
+            if machine == 'Elegoo':
+                assert np.hypot(*(np.array(v) - (lo + hi) / 2)) <= 1.0, (machine, name, v, ((lo + hi) / 2).tolist())
+            else:
+                r = reach[name]
+                assert lo[0] - r <= v[0] and lo[1] - r <= v[1] and v[2] <= hi[0] + r and v[3] <= hi[1] + r, (machine, name, v, lo.tolist(), hi.tolist(), r)
 
 
 def plate_picture(version: str, colour: str, parts: list[dict], files: list[dict], thumbs: list, names: dict, prep: dict) -> Image.Image:
