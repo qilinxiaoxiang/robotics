@@ -75,6 +75,8 @@ this folder's cap, board, heatsink, plugs and cables. 84.7 cm3 is free. The 22 x
 
 ## Air ducts (in the cap CAD; `build_b2b.py`, `renders/b2b-4..6`, checks under `ducts` in `checks.json`)
 
+Mounting confirmed by Shawn 2026-10-22 (D-020): separate insert in the right-cheek rails, held by head_bottom.
+
 Animated explainer: `ducts-explainer.html` (why each baffle is needed, what leaks without it, how the insert goes in),
 built by `build_explainer.py` from real sections of these meshes.
 
