@@ -85,6 +85,7 @@ ssh "$HOST" "mkdir -p '$REMOTE_SIM/guide/firmware/mac/sounds'" 2> >(quiet >&2)
 rsync -a --checksum --relative --itemize-changes "${FILES[@]}" "$HOST:$REMOTE_SIM/" 2> >(quiet >&2)
 # no -t: the calls are rebuilt with fresh mtimes every run; content decides (--checksum), so unchanged calls stay quiet
 rsync -rlp --checksum --delete --itemize-changes "$STAGE/sounds/" "$HOST:$REMOTE_SIM/guide/firmware/mac/sounds/" 2> >(quiet >&2)
+rsync -p --checksum --itemize-changes "$HERE/duck-run.sh" "$HOST:duck-run.sh" 2> >(quiet >&2)  # the launcher the app runs
 
 echo "== verifying sha256 on $HOST"
 MANIFEST="$STAGE/manifest.sha256"
