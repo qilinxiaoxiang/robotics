@@ -62,7 +62,7 @@ code{font-size:14px;background:#f1ede4;padding:0 4px;border-radius:4px;overflow-
 <p class="status">A7Z 背对摄像头竖装 + Radxa 6530B 散热片。CAD 候选，没打印，没过发布门；散热片的外形按 Radxa 官方照片以 65 mm 标定量出（约 ±0.5 mm），风扇吹风方向照片看不出，按沿鳍片吹设定；到货后核对。图里的轮廓都是从真实 CAD 网格切出来的剖面。</p>
 
 <div class="lead">
-<p><b>一句话：</b>6530B 的鳍片顺着板子长边排，在头里是横着的；每条风道朝两边脸颊敞开，也朝后面敞开（鳍片尖端那一面没有盖）。风扇的进风口就在这个敞开的后面，离鳍片尖只有 0 到 3 mm。头里不隔开的话，风扇吸进去的大部分是自己刚吹出来、从后面漏出来的热风，越转越热。</p>
+<p><b>一句话：</b>6530B 的鳍片顺着板子长边排，在头里是横着的；每条风道朝两边脸颊敞开，也朝后面敞开（鳍片尖端那一面没有盖）。风扇的进风口就在这个敞开的后面，离鳍片尖只有 0 到 3 mm。头里不隔开的话，风扇吸进去的空气里有相当一部分（动画里约四分之一，加上头顶绕回来的更多）是自己刚吹出来、从后面漏出来的热风，越转越热。</p>
 <p>挡板把头里分成两个区。<span style="color:var(--cold)"><b>后面是冷区</b></span>，只接脖子开口和两侧后面的进风窗；<span style="color:var(--hot)"><b>前面和右侧风道是热区</b></span>，只通两侧前面的出风窗。风扇是两区之间唯一的通道，所以它只能吸冷风、往热区吹。</p>
 </div>
 
@@ -274,7 +274,7 @@ function drawTop() {
   for (const k of ['fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'fan_lead_loop']) v.shape('top122', k);
   topSim.draw();
   v.text(54.6, 17, '风扇进风口', '#1565c0', { align: 'right', bold: 1 });
-  v.text(62.2, -8, '散热片：鳍片横着', '#fff', { align: 'center' });
+  v.text(65.3, -20, '散热片', '#fff', { align: 'center' }); v.text(56, -34.5, '鳍片横着，风道朝两边和后面开口', '#4a4a4a', { align: 'right', size: 11 });
   v.text(69, 35.5, 'A7Z', '#2e7d32', { align: 'center' }); v.text(78.5, 19, '摄像头', '#43a047', { align: 'center' });
   v.text(cfg.insert ? 47 : 47, -12, cfg.insert ? '导风插片' : '（插片拿掉）', '#c0392b', { align: 'right', bold: 1 });
   v.text(55.5, 44.5, cfg.left ? '左挡板' : '（左挡板拿掉）', '#6c3483', { align: 'right', bold: 1 });
