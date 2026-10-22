@@ -1,6 +1,7 @@
 """Read one walk_wired JSONL log and report how the robot veers while walking forward, and how symmetric it stands.
 
-  python3 veer_check.py LOG.jsonl          (on the A7Z the logs are in ~/duck-logs; plain python3, no extra packages)
+  python3 veer_check.py LOG.jsonl [--last N]   (on the A7Z the logs are in ~/duck-logs; plain python3, no extra packages)
+  --last N reports only the newest N forward bursts (stance split over those bursts only).
 
 Forward bursts are walk-mode ticks with cmd vx > 0. Yaw is the gyro projected on gravity (body up = -gb), so it is the
 turn about the vertical whatever the IMU mount, + = counter-clockwise seen from above = left. The stance leg is the
@@ -97,6 +98,8 @@ def main():
     rows = [json.loads(line) for line in open(sys.argv[1]) if line.strip()]
     stand_report(rows)
     bs = bursts(rows)
+    if "--last" in sys.argv:
+        bs = bs[-int(sys.argv[sys.argv.index("--last") + 1]):]
     print(f"forward bursts: {len(bs)}")
     for b in bs:
         t, yaw = burst_report(b)

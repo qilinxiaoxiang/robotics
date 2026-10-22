@@ -1,45 +1,69 @@
-# MicroDuck veers left when walking forward: test plan for 2026-10-22
+# MicroDuck veers left when walking forward: test procedure for 2026-10-22
 
-Final-goal step advanced: **step 2, walk to the item** (`PROJECT-CONTEXT.json` `final_goal`, D-019). A robot that turns 30-40 deg per second cannot reach a point two body lengths away.
+Final-goal step advanced: **step 2, walk to the item** (`PROJECT-CONTEXT.json` `final_goal`, D-019).
+**Acceptance:** |yaw rate| under 5 deg/s averaged over three 2 s bursts at vx 0.25.
 
-## What the 2026-10-21 log shows
+## Why these tests
 
-Source: A7Z `~/duck-logs/duck_wired_log_fix1021ankle.jsonl` (right ankle offset 0, commit 65b01c9), read with `veer_check.py`.
+From the 2026-10-21 log (A7Z `~/duck-logs/duck_wired_log_fix1021ankle.jsonl`, right ankle offset 0, commit 65b01c9):
 
-- Five forward bursts at vx 0.25 for 1.4-2.3 s turned the trunk +18 to +95 deg, counter-clockwise seen from above: **+23 to +42 deg/s to the left**. Stepping in place at zero command drifted the other way, -2.5 to -8 deg/s.
-- The same Brain and policy in the as-built sim (`brain_sim_check.py --model asbuilt --volt 7.0 --drop 0.04 --vx 0.25 --walk-s 2`) turned -6 deg in 2 s. The policy itself walks straight; the cause is on the robot.
-- The turn happens mostly while the **left foot carries the load**: +36 deg/s in left stance, +13 deg/s in right stance (stance leg = the leg whose ankle, knee and hip pitch draw 1.5x the other's current).
-- Static zero errors do not reproduce it in sim: ID5 one spline tooth off (+-14.4 deg) gives +-2.5 deg per 2 s; a right ankle 8 deg off makes the sim fall in stand.
-- The stance hip yaw servos yield 4-6 deg (right -6.4, left +3.9), in the direction that turns the trunk right during left stance, so hip yaw compliance does not explain a left turn in left stance.
-- Trunk roll while stepping in place was under 1 deg. With about 7 cm between the hips that bounds a leg length difference to roughly 1 mm, but this is a moving reading; step 1 takes the static one.
+- Five forward bursts at vx 0.25 turned the trunk **+23 to +42 deg/s to the left** (counter-clockwise seen from above). Stepping in place drifted slightly right (-2.5 to -8 deg/s).
+- The same policy in the as-built sim turned -6 deg in 2 s. The policy walks straight; the cause is on the robot.
+- The turn happens mostly while the **left foot carries the load**: +36 deg/s in left stance, +13 deg/s in right stance.
+- A static zero error does not reproduce it in sim (ID5 one spline tooth off: +-2.5 deg per 2 s).
+- Trunk roll while stepping was under 1 deg, about 1 mm of leg length difference at 7 cm hip spacing. That reading was taken while moving; step 2 takes the static one.
 
-Leading hypothesis: the left foot rotates on the floor in left stance, from a slipperier sole or yaw play in the two-half ankle (held only by the slip-fit foot and the toe M2 x 6, `CURRENT-STATE.json` `ankle_bracket`). Leg length is the second suspect.
+Since that log both soles have a hot-glue coat (Shawn, 2026-10-21 evening), so the baseline in step 1 is new.
+Suspects in order: left foot yaw play in the two-half ankle, a leg length difference, foot slip on the floor.
 
-## Tests, cheapest and most discriminating first
+## Step 0: start (5 min)
 
-Run every walk on the same floor patch, robot started from the same mark facing the same way, three 2 s bursts at vx 0.25, each logged. After each run, on the A7Z:
+1. Charge or connect the supply. Put the robot on its side as usual and power it up.
+2. On the Mac, check the A7Z answers: `ssh a7z hostname`.
+3. Start the brain, or let the app start it: `ssh a7z '~/duck-run.sh veer1022a'`. It comes up in monitor mode with torque untouched.
+4. Put the robot on its feet in the app (stand), then walk at zero command (stand61). The robot steps in place.
+5. Mark a start point and a straight line 1 m long on the floor with tape. Use the same floor patch for every run in steps 1-3.
 
-    python3 ~/rt/microduck-sim/guide/firmware/mac/veer-20261022/veer_check.py ~/duck-logs/<newest>.jsonl
+## Step 1: baseline (5 min)
 
-(copy the script there with `guide/firmware/a7z/install_teleop.sh` or scp it first.)
+1. Put the robot on the start mark, facing along the tape line, stepping in place.
+2. On the Mac, in `microduck-sim/guide/firmware/mac/veer-20261022`: `bash burst.sh`. The robot walks forward at 0.25 m/s for 2 s and stops; the script prints the burst's yaw in deg and deg/s.
+3. Carry it back to the mark and repeat twice more. Then `bash burst.sh report 3` prints all three and the split by stance leg.
+4. Write down: the mean yaw rate, left-stance and right-stance yaw rates, and where the robot ended relative to the tape (photo).
 
-1. **Baseline.** Three bursts with nothing changed. Expect +20 to +40 deg/s. Gives today's number on today's battery and floor.
-2. **Static symmetry, no walking.** Stand mode on a flat table for 10 s; `veer_check.py` prints trunk roll and both legs' joint angles. Then measure hip axis to table height on each side with a ruler or calipers. Roll of 1 deg at 7 cm hip spacing is 1.2 mm. Under 1.5 mm counts as equal length.
-3. **Foot play, torque on.** Twist each foot about the vertical, then roll and pitch, by hand. Note which foot moves and by how much. A foot that turns several degrees under finger force is the leading cause.
-4. **Sole swap.** Swap the left and right soles (or cover both with the same tape). If the veer follows the sole to the right, the sole is the cause. If it stays left, the sole is cleared.
-5. **Floor swap.** Repeat the baseline on carpet or a rubber mat. A slip cause changes a lot with the floor; a geometry cause such as leg length does not.
-6. **Leg length sensitivity, only if step 2 shows a difference or steps 3-5 clear the foot.** Put a 2 mm shim under one sole, then under the other. The change in yaw rate per mm tells whether the measured difference can explain 30 deg/s.
+If the mean is already under 5 deg/s, the hot glue fixed it: skip to step 5.
 
-Decision: fix the part the tests point to (ankle play: bracket; sole: material; length: shim or reprint), then rerun step 1. **Acceptance: |yaw rate| under 5 deg/s averaged over three 2 s bursts.**
+## Step 2: leg length, no walking (10 min)
 
-## Software that keeps it straight once the hardware is close
+1. Command stand in the app and leave the robot standing still on a flat table for 15 s.
+2. `bash burst.sh report 1`. The first line gives the trunk roll. 1 deg of roll is about 1.2 mm of leg length difference.
+3. With a ruler or calipers, measure from the table to the centre of each hip pitch servo horn, left and right. Photo of each reading.
+4. Under 1.5 mm difference counts as the same length. Over that, note which leg is shorter.
 
-The policy accepts a yaw-rate command. `pickup.py` already turns it at most 1.0 rad/s, which the as-built sim measured as about 31 deg/s while walking (62 deg per 2 s burst). Today's drift of 30-40 deg/s would use all of it, so software alone cannot cancel the current drift. It becomes useful once the hardware drift is below about 10 deg/s.
+## Step 3: ankle play, torque on (5 min)
 
-1. **IMU heading hold inside each burst** (walk_brain). Record the BNO085 yaw at burst start and command `vtheta = clip(k * wrap(yaw_start - yaw), -1, 1)` on top of the requested vtheta. This is the heading-command scheme legged_gym trains with (k 0.5, clip +-1 rad/s; `legged_gym/envs/base/legged_robot.py`, recalled from the public repo, not re-read today). Add a slow integral term so a constant veer turns into a learned trim. Before the robot: add a yaw disturbance torque to `brain_sim_check.py` that reproduces +30 deg/s and confirm the loop holds heading without a fall.
-2. **Camera between bursts.** `pickup.py` already re-reads the target bearing between bursts and sets each burst's yaw rate from it. With the heading hold inside the burst, the camera corrects the remaining error at each stop. That combination gets the robot to the target even with a few deg/s of residual drift.
-3. **Training, last.** Randomise per-foot friction and leg length in training so the policy uses its gyro to stay straight. Only if 1 and 2 cannot meet the acceptance, and under the code-enforced dollar cap.
+1. Robot standing (stand mode, torque on), held by the body.
+2. Twist the left foot about the vertical axis, gently, both ways. Then the right foot. Then rock each foot in roll and pitch.
+3. Note for each foot whether it moves against the leg and roughly how many degrees. A short phone video of each foot helps.
+4. A foot that turns visibly under finger force is the leading cause, especially the left one.
 
-## Files
+## Step 4: decide and fix (time depends on the cause)
 
-- `veer_check.py`: per-burst yaw, yaw by stance leg, stance hip yaw error, stand symmetry. It also reads `brain_sim_check.py --tick-log` files.
+- **Left foot moves in step 3:** tighten that two-half ankle (toe M2 x 6, slip-fit) or shim the slip fit, then repeat step 1.
+- **Step 2 shows a difference over 1.5 mm:** shim the short leg's sole to equal length (tape layers, then measure again), then repeat step 1.
+- **Neither:** the floor test separates slip from geometry. Repeat step 1 on carpet or a rubber mat. A slip cause changes a lot with the floor; leg length does not. Then put a 2 mm shim under one sole and repeat step 1 to measure how much 1 mm of length difference turns the robot.
+
+Repeat until the acceptance holds on the tape floor.
+
+## Step 5: software heading hold (after the hardware is close)
+
+The policy accepts a yaw-rate command, at most 1.0 rad/s, about 31 deg/s while walking in the as-built sim. The 10/21 drift of 30-40 deg/s would use all of it, so this step comes after the hardware drift is under about 10 deg/s.
+
+1. **IMU heading hold in each burst** (walk_brain): keep the yaw at burst start and add `vtheta = clip(k * wrap(yaw_start - yaw), -1, 1)` to the requested yaw rate, plus a slow integral that learns a constant trim. This is the heading-command scheme legged_gym trains with (k 0.5, clip +-1 rad/s; `legged_gym/envs/base/legged_robot.py`, recalled from the public repo, not re-read). Check it in `brain_sim_check.py` with an added yaw disturbance that reproduces +30 deg/s before the robot.
+2. **Camera between bursts:** `pickup.py` already re-reads the target bearing between bursts and sets each burst's yaw rate from it. With the heading hold inside each burst, the camera removes what is left at each stop.
+3. **Training last:** randomise per-foot friction and leg length so the policy stays straight on its own, only if 1 and 2 miss the acceptance, under the code-enforced dollar cap.
+
+## Tools
+
+- `burst.sh`: one 2 s forward burst from the Mac and its yaw; `burst.sh report N` for the newest N bursts. Env `VX`, `SECS` change speed and length. It refuses when walk_wired.py is not running.
+- `veer_check.py LOG [--last N]`: per-burst yaw, yaw by stance leg, stance hip yaw error, stand roll and joint angles. Also reads `brain_sim_check.py --tick-log` files.
