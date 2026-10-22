@@ -28,3 +28,7 @@ Printed parts that change:
 Unchanged: face panel, eye trim, camera and its bosses, speaker, amplifier, touch pads and XIAO, jaw and neck parts.
 
 Other consequences: camera FPC becomes a short U-turn in a 5 mm gap (the owned cable length has to be checked on the part); the IPEX socket is on the rear face, so the coax goes over the top edge to the roof antenna (current 36 mm, limit 50 mm); the board's top edge sits under the antenna's rear half (Wi-Fi to recheck); J16 USB-C points down, so the unprinted roof USB service opening no longer applies; plugs face the rear, so the inner-row restriction from the camera covering the edge row goes away. Board mounting method is open: it must be confirmed with Shawn before it shapes printed geometry.
+
+## Vertical instead of 10° lean (estimate)
+
+The 10° lean is inherited from the Pi Zero W pose in the source cap (`guide/print/a7z-head/pi-frame-raw.json`, derived from the guide's header pins); no design reason for it is recorded. The camera sits on the vertical face, so the tilted board is 12.9 mm from the camera at its top edge and about 18 mm at its bottom. Standing the back-to-back board vertical (pivot at the top edge) moves its bottom about 30·sin 10° = 5.2 mm further forward. Estimate from the same depth map (rear + 8 + (30 - d)·sin 10°, ignoring the 1.5 % change in ray direction): the 6530B footprint then has 13 mm everywhere and 16 mm over 97 %; the front gap is at least 4.9 mm (top) and 6.5 mm (bottom 6 mm). Needs a real recast before any CAD.
