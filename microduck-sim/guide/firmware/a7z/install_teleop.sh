@@ -38,6 +38,7 @@ FILES=(
   guide/firmware/mac/jaw_ctl.py
   guide/firmware/mac/duck_sense.py
   guide/firmware/mac/duck_sound.py
+  guide/firmware/mac/hold.py
   guide/firmware/pi/battery.py
   guide/firmware/pi/dxl_fast.py
   guide/firmware/pi/jaw_limits.py

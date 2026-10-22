@@ -15,7 +15,7 @@ for f in sorted(glob.glob('/Users/xiangzheng/code/robotics/microduck-sim/guide/f
         if r.get('acc'):
             b['acc'].append(math.sqrt(sum(a*a for a in r['acc'])))
         b['gbz'].append(r['gb'][2]); b['gby'].append(r['gb'][1]); b['gbx'].append(r['gb'][0])
-        b['mode'].add(r['mode']); b['torque'].add(r.get('torque')); b['kp'].add(r.get('kp'))
+        b['mode'].add(r['mode']); b['torque'].add(r.get('torque')); b['kp'].add(json.dumps(r.get('kp'), sort_keys=True) if isinstance(r.get('kp'), dict) else r.get('kp'))  # per-joint hold gains log as a dict
         gt = r.get('goal_tick')
         if gt and r.get('pos_tick'):
             M2I = {'right_hip_yaw':5,'right_hip_roll':4,'right_hip_pitch':3,'right_knee':2,'right_ankle':1,'left_hip_yaw':10,'left_hip_roll':9,'left_hip_pitch':8,'left_knee':7,'left_ankle':6,'neck_pitch':12,'head_pitch':11,'head_yaw':13,'head_roll':14}

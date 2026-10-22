@@ -26,7 +26,7 @@ P = np.array([pitch(r["gb"]) for r in W]); R = np.array([roll(r["gb"]) for r in 
 G = np.array([r["gyro_body"] for r in W])  # rad/s, body frame
 A = np.array([[a if a is not None else np.nan for a in (r["action"] or [None] * 14)] for r in W])
 Q = np.array([[a if a is not None else np.nan for a in r["q"]] for r in W])
-kp = sorted(set(r["kp"] for r in W)); out["kp_in_window"] = kp
+kp = sorted(set(str(r["kp"]) for r in W)); out["kp_in_window"] = kp  # str: per-joint hold gains log as a dict
 import collections
 out["policy_field_counts"] = dict(collections.Counter(str(r.get("policy")) for r in W))
 pol = [(round(float(t), 2), r.get("policy")) for t, r in zip(tw, W)]
