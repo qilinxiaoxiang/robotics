@@ -140,7 +140,62 @@ def main():
               ((71.2, 29, zt - 26.5), 'CM2×4×4（先装）', (-300, 60), COL['screw'])]
     render(items, (260, 0, 130), (60, 0, 128), (0, 0, 1), labels, OUT / 'b2b-3-front.png',
            '从前面看（面板、摄像头拿掉）：三颗 M2×8 从前面拧，螺丝刀直线可达', parallel=42)
+    ducts(cap, P, gp, chk)
     print('renders', sorted(p.name for p in OUT.glob('*.png')), 'checks', chk['walls']['shellBehindCutMin_mm'])
+
+
+def ducts(cap, P, gp, chk):
+    """Air duct pictures: inside from behind, the right cheek outside, and a filled section through the fan."""
+    ins, walls = trimesh.load(HERE / 'shroud_insert-world.stl'), trimesh.load(HERE / 'duct_walls_only.stl')
+    du = chk['ducts']
+    board = [(P['a7z_pcb'], COL['pcb'], 1, None), (P['heatsink_6530b'], COL['hs'], 1, None),
+             (P['dupont_plugs'], COL['plug'], 0.6, None), (P['fan_lead_loop'], COL['coax'], 0.5, None)]
+    # 4. inside from behind and below, the rear of the cap cut away at x 44
+    items = [(cap, COL['cap'], 1, ((44.0, 0, 0), (1, 0, 0))), (walls, '#8e44ad', 1, None), (ins, '#e74c3c', 1, None),
+             (P['fan_inlet_zone'], '#90caf9', 0.55, None)] + board
+    labels = [((48.2, -18, 125), '导风插片（单独打印，红）\n接好线后从下往上推进卡槽', (-420, 40), '#e74c3c'),
+              ((48.2, -36, 137), '右脸颊两道卡槽', (-380, -60), '#8e44ad'),
+              ((55, 3.0, 125), '插片上的挡条：\n热风不回风扇口', (150, 170), '#e74c3c'),
+              ((55, 15, 125), '风扇进风口（蓝）', (-250, 150), '#1565c0'),
+              ((56.4, 39, 125), '左挡板', (160, -40), '#8e44ad'),
+              ((56.4, 18, 149), '插头上方挡板', (160, -110), '#8e44ad')]
+    render(items, (-45, -55, 95), (55, -5, 132), (0, 0, 1), labels, OUT / 'b2b-4-duct-inside.png',
+           '风道（从后下方看，头盖后半截切掉）：插片把散热片吹出的热风拦住，引到右脸颊出风窗')
+    # 5. right cheek from outside
+    dark = trimesh.creation.box(bounds=[[12.0, -25.0, 112.0], [75.0, 25.0, 140.0]])     # behind the slots, so they show
+    items = [(cap, COL['cap'], 1, None), (dark, '#263238', 1, None)]
+    labels = [((62.5, -42, 126), f"出风窗 4 条 × 1.6 mm（每侧 {du['slotOpen_mm2']['exhaust']:.0f} mm²）", (40, 150), '#e65100'),
+              ((42.0, -41, 125), f"进风窗 4 条（每侧 {du['slotOpen_mm2']['intake']:.0f} mm²）", (-330, 150), '#0277bd')]
+    render(items, (40, -260, 128), (40, 0, 132), (0, 0, 1), labels, OUT / 'b2b-5-cheek.png',
+           '右脸颊外面（左边对称）：前面一组出风，后面一组进风，铜箔区域都没开孔', parallel=48)
+    # 6. filled section through the fan at z 122 with the air path
+    fig, ax = plt.subplots(figsize=(12, 10))
+    layers = [('jaw_support', gp['jaw_support'], '#cfcfcf'), ('motor15', gp['motor15'], '#bdbdbd'),
+              ('clip_head', gp['clip_head'], '#d7ccc8'), ('camera', gp['camera_board'], COL['cam']),
+              ('cap', cap, '#f4f2ec'), ('walls', walls, '#8e44ad'), ('insert', ins, '#e74c3c'),
+              ('fan', P['fan_inlet_zone'], '#90caf9'), ('hs', P['heatsink_6530b'], COL['hs']), ('pcb', P['a7z_pcb'], COL['pcb'])]
+    z0 = 122.0
+    for name, m, c in layers:
+        sec = m.section(plane_origin=[0, 0, z0], plane_normal=[0, 0, 1])
+        if sec is None:
+            continue
+        p2, _ = sec.to_2D(to_2D=np.eye(4))
+        for poly in p2.polygons_full:
+            xs, ys = poly.exterior.xy
+            ax.fill(xs, ys, fc=c, ec='#333', lw=0.5, alpha=0.95)
+            for hole in poly.interiors:
+                hx, hy = hole.xy; ax.fill(hx, hy, fc='white', ec='#333', lw=0.4)
+    from matplotlib.patches import FancyArrowPatch
+    for p0, p1, c in [((41, 49), (41, 34), '#0277bd'), ((41, -49), (41, -34), '#0277bd'), ((42, 12), (52, 12), '#0277bd'),
+                      ((52.3, -2), (52.3, -30), '#c62828'), ((53, -33), (62, -36), '#c62828'), ((62, -36), (62, -50), '#e65100'),
+                      ((62, 36), (62, 50), '#e65100')]:
+        ax.add_patch(FancyArrowPatch(p0, p1, arrowstyle='-|>', mutation_scale=18, lw=2.2, color=c))
+    ax.text(30, 14, '冷风（脖子 + 进风窗）', color='#0277bd', fontsize=11)
+    ax.text(51, -16, '热风', color='#c62828', fontsize=11, ha='right')
+    ax.set_xlim(14, 96); ax.set_ylim(-55, 55); ax.set_aspect('equal'); ax.grid(alpha=0.2)
+    ax.set_xlabel('x（向前）mm'); ax.set_ylabel('y（向左）mm')
+    ax.set_title(f'剖面 z = {z0:.0f}（穿过风扇）：红 = 导风插片，紫 = 头盖上的挡板，蓝 = 风扇进风口', fontsize=13)
+    fig.tight_layout(); fig.savefig(OUT / 'b2b-6-duct-section.png', dpi=110); plt.close(fig)
 
 
 if __name__ == '__main__':
