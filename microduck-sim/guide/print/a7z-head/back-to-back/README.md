@@ -72,3 +72,25 @@ this folder's cap, board, heatsink, plugs and cables. 84.7 cm3 is free. The 22 x
 - On the roof above the A7Z top edge (63.8, 0.3, 148): under the WiFi antenna (x 64 to 76), rejected.
 - Low on the left wall under L1 (39.5, 24.5, 134.5): 3 to 7 centres, a tight fit.
 - Under the speaker: none.
+
+## Proposed air ducts (concept, `duct_concept.py`, `renders/duct-concept.png`; not in the cap yet)
+
+The 6530B's fins are plates across its 30 mm width with grooves along its length (Radxa photo). In this pose the
+fin channels run vertically: their top ends face the header row, their bottom ends sit 1.8 mm above the head floor
+(head_bottom lies on the jaw frame, so nothing can open downward). The fan presses air into the fins, and it leaves
+mostly through the open fin tips on the rear face beside the fan, right next to the fan inlet. Without a duct that
+air circulates inside the head.
+
+- Shroud plate in the cap (1.2 mm, x 48.5 to 49.7, y -41 to 4, roof to 0.5 mm above the floor) behind the non-fan
+  half of the fins: a 6.8 mm plenum that leads the fin exhaust to the right cheek. It clears clip_head (x 52.6) and
+  jaw_support (x 46.9). A short wall at y 4 (to x 54.0, 2.5 mm short of the fins for the 2 mm assembly slide)
+  separates the plenum from the fan inlet. The header wires pass through a window with a 45 degree pointed bottom.
+- Left baffle (x 55.5, y 35 to 41) behind the fan lead loop, so the left fin ends vent forward only.
+- Exhaust windows on both cheeks beside the heatsink ends: 4 vertical slots 1.6 mm wide, ribs 1.2 mm, x 57.5 to
+  67.5, z 117 to 135, 115 mm2 per side. Nothing is outside the wall there; the wall is 1.7 mm.
+- Intake windows on both cheeks behind the shroud: 4 slots, x 36 to 47, z 115 to 131, 102 mm2 per side, 5 to 7 mm
+  outside the jaw servo (ID 15), 10 mm below the L1/R1 pads. The neck opening feeds the same rear space.
+- Estimate: air through the fan at 0.5 to 1 CFM carries 0.29 to 0.58 W/K out of the head, the shell 0.17 to 0.25
+  W/K, so the head air rises about 1.2 to 2.2 K per watt with the ducts against 4 to 6 without. The fan's flow is not
+  published; measure on the part. The fan's blowing direction is also assumed (into the fins); the same duct works
+  reversed, with the windows swapping roles.
