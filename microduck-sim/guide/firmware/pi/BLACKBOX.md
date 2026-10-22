@@ -5,7 +5,7 @@ of a second before the stop, on the card and on the Mac, so the cause can be rea
 
 ## What records what
 
-- `pi/blackbox.py` (service `duck-blackbox`, root): every kernel message from `/dev/kmsg` and a 5 Hz system snapshot
+- `pi/blackbox.py` (service `duck-blackbox`, root): every kernel message from `/dev/kmsg` and a 10 Hz system snapshot
   (CPU busy/iowait/irq, load, free memory, pressure, the five busiest processes, processes stuck in D state with their
   kernel wait channel, IRQ counts, Wi-Fi link). Each line is fsynced to `~/duck-logs/blackbox/` as it is written,
   one `kmsg.log` + `sys.jsonl` pair per boot, newest 40 boots kept.
@@ -17,8 +17,12 @@ of a second before the stop, on the card and on the Mac, so the cause can be rea
 - `mac/a7z_blackbox_mirror.sh`: streams the current boot's two blackbox files to `~/duck-blackbox/live/` on the Mac
   and logs every link loss with Mac time, so the record survives even a card that loses its last writes.
 
-Not recorded: the A7Z 5 V input voltage (the board has no ADC for it). Measure it with a multimeter on header pins
-2 and 6 in MIN/MAX hold during the test.
+Blind spot: supply dips. The A7Z has no ADC on its 5 V input, and the servo-reported voltage in the brain log
+(0.1 V steps, one servo per 20 ms cycle, about half the samples empty) misses a dip of a few milliseconds. On
+2026-10-22 a 20 V 3 A charger behind the 5991 froze the A7Z four times while walking or standing up and none of these
+records showed a voltage change; a 20 V 5 A charger ended the stops. A record that stops everywhere in the same 0.1 s
+with no kernel warning (and a HOT-BOOT 16 s later, the sunxi watchdog timeout) is the signature of a supply event,
+not evidence against one. Seeing the dip itself needs a hardware probe on the 5 V lead.
 
 ## Use
 

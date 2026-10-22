@@ -1,4 +1,4 @@
-"""A7Z flight recorder: every kernel message and a 5 Hz system snapshot, written as they happen and fsynced to the SD
+"""A7Z flight recorder: every kernel message and a 10 Hz system snapshot, written as they happen and fsynced to the SD
 card within 0.1 s, so a hang, a watchdog reset or a power cut keeps the record up to the last fraction of a second.
 Runs as root from duck-blackbox.service (/home/radxa/duck/blackbox.py), one pair of files per boot in
 /home/radxa/duck-logs/blackbox/, named b<NNNN>-<boot8> (NNNN counts boots; the A7Z has no RTC, so its clock is no key):
@@ -297,7 +297,7 @@ def lock_memory():
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--out", default="/home/radxa/duck-logs/blackbox")
-    ap.add_argument("--period", type=float, default=0.2)
+    ap.add_argument("--period", type=float, default=0.1)
     ap.add_argument("--keep", type=int, default=40)
     ap.add_argument("--kmsg", default="/dev/kmsg")
     ap.add_argument("--proc", default="/proc")
