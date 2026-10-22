@@ -69,9 +69,9 @@
    "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
   },
   "power": {
-   "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: its own 12 V supply -> XL4015 #2 -> header pins 2/6, grounds joined to the servo side. No battery on the robot.",
+   "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: the same 20 V from the 5991 -> XL4015 #2 -> header pins 2/6 (one supply for both rails). No battery on the robot.",
    "verified_at": "2026-10-22",
-   "source": "Shawn's swap test 2026-10-22: 3 A charger -> A7Z froze 4 times within seconds of walking/standing (watchdog HOT-BOOT 16 s later, recorder rows all stop in one instant); 5 A charger -> no stop",
+   "source": "Shawn's swap test 2026-10-22: 3 A charger -> A7Z froze 4 times within seconds of walking/standing (watchdog HOT-BOOT 16 s later, recorder rows all stop in one instant); 5 A charger -> no stop. Mechanism: the 60 W charger cuts or folds back at the walking/stand-up current peaks, both XL4015 outputs dip together, the XL330s keep running at the lower voltage while the A7Z SoC freezes",
    "max_age_days": 14,
    "measure": "charger label and the 5991 display; walk/stand test with the A7Z flight recorder running (guide/firmware/pi/BLACKBOX.md). Servo-reported voltage (0.1 V steps, one servo per cycle) cannot see millisecond dips and is not evidence of a stable rail",
    "superseded": [
