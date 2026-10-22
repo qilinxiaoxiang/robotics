@@ -90,12 +90,12 @@ for _b, _keys in {
     'yaw2roll': ['yaw', 'passive', 'motor9', 'washer9', 'ring9'],
     'hip_l': ['hip', 'ring8'],
     'upper_leg_left': ['thigh', 'plate', 'motor8', 'motor7', 'ring7'],
-    'leg': ['lower', 'motor6', 'smallring', 'washer6'],
+    'leg': ['lower', 'motor6', 'washer6'],
     'ankle_left': ['ankle', 'foot'],
     'bearing_roll': ['right_yaw', 'right_passive', 'motor4', 'washer4', 'ring4'],
     'hip_l_2': ['right_hip', 'ring3'],
     'upper_leg_right': ['right_thigh', 'right_plate', 'motor3', 'motor2', 'ring2'],
-    'leg_2': ['right_lower', 'motor1', 'right_smallring', 'washer1'],
+    'leg_2': ['right_lower', 'motor1', 'washer1'],
     'ankle_right': ['right_ankle', 'right_foot'],
 }.items():
     for _k in _keys:

@@ -37,8 +37,9 @@ for j in order:
                     range=[round(float(x), 4) for x in fk.M.jnt_range[fk.M.joint(j).id]])
 
 # qpos0 check: ring centres vs joint anchors, ring thin axis vs joint axis
-ring = {'left_hip_pitch': 'ring8', 'left_knee': 'ring7', 'left_ankle': 'smallring', 'left_hip_roll': 'ring9',
-        'right_hip_pitch': 'ring3', 'right_knee': 'ring2', 'right_ankle': 'right_smallring', 'right_hip_roll': 'ring4'}
+# The ankle sleeves are printed on the lower links since 2026-10-22 (print/link-sleeve-20261022/), so no separate ankle ring.
+ring = {'left_hip_pitch': 'ring8', 'left_knee': 'ring7', 'left_hip_roll': 'ring9',
+        'right_hip_pitch': 'ring3', 'right_knee': 'ring2', 'right_hip_roll': 'ring4'}
 check = {}
 for j, k in ring.items():
     v, f = L.solid(k)

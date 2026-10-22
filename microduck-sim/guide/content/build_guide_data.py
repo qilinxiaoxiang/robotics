@@ -442,13 +442,17 @@ def build_parts() -> dict:
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
             parts[key].update(v=v, f=f, name=name, status='new-print', source=str(path))
+    # 2026-10-22 one-piece lower-leg link (print/link-sleeve-20261022/): the 14.6 mm sleeve is printed on the link boss, so
+    # the separate sleeve leaves the leg.
+    for key in ('smallring', 'right_smallring'):
+        parts.pop(key, None)
     # 2026-10-20 two-half ankle (print/ankle-halves-20261020/): the stock bracket cut in half at mid shaft. The outer half on
     # the motor horn replaces the one-piece bracket in place, the inner half on the sleeve is a new part of the leg module
     # (key 'ankle_cheek', as the V1.22 side), and the black 10.4 mm V1.22 sleeve replaces the 9.65 mm press-fit sleeve.
     for key, fname, name, new in (('ankle', 'ankle_outer_left.stl', 'Left ankle outer half, on the motor horn (new print)', None),
                                   ('right_ankle', 'ankle_outer_right.stl', 'Right ankle outer half, on the motor horn (new print)', None),
-                                  ('smallring', 'ankle_sleeve_left.stl', 'Left ankle sleeve, 10.4 mm bore (new print)', None),
-                                  ('right_smallring', 'ankle_sleeve_right.stl', 'Right ankle sleeve, 10.4 mm bore (new print)', None),
+                                  ('lower', 'lower_link_left.stl', 'Left lower-leg link, ankle sleeve printed on (new print)', None),
+                                  ('right_lower', 'lower_link_right.stl', 'Right lower-leg link, ankle sleeve printed on (new print)', None),
                                   ('ankle_cheek', 'ankle_inner_left.stl', 'Left ankle inner half, on the sleeve (new print)', 'ankle'),
                                   ('right_ankle_cheek', 'ankle_inner_right.stl', 'Right ankle inner half, on the sleeve (new print)', 'right_ankle')):
         path = first_existing(world / fname)

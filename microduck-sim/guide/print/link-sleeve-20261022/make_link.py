@@ -7,7 +7,7 @@ In the ankle local frame of make_halves.py (shaft = local z) the V1.22 sleeve is
   neck   r SCREW_R..NECK_R from the link plate up to the sleeve (fills the 0.3-0.8 mm gap under the sleeve),
 so the rotating face is the sleeve's 14.6 mm outer face in the inner half's 15 mm pocket, as now; nothing grows outside the
 old link + sleeve envelope. Writes STL/{side}-link-print.stl (the 10/1 print frame of the stock link) and
-STL/{side}-link-local.stl, and link-check.json: seated overlaps and the make_halves assembly paths for the new package
+STL/{side}-link-local.stl, the guide/gate world file guide/print/world/lower_link_{side}.stl, and link-check.json: seated overlaps and the make_halves assembly paths for the new package
 (link + servo + washer) next to the same numbers for the stock package (link + sleeve + servo + washer).
 
     /tmp/microduck-cad-venv/bin/python make_link.py
@@ -26,8 +26,11 @@ SCREW_R = 2.75                   # the stock 5.5 mm through bore of the boss
 
 
 def register(side):
-    """Print-frame STL -> world, by ICP of the stock print STL onto the guide's audit solid (fit < 0.01 mm)."""
-    key = H.SIDES[side]['lower']; v, f = H.L.load_solid(key); w = trimesh.Trimesh(v, f, process=True)
+    """Print-frame STL -> world, by ICP of the stock print STL onto the stock link of the full build (fit < 0.01 mm); not
+    the audit solid, which is this one-piece link once the guide uses it."""
+    key = H.SIDES[side]['lower']; q = {x['key']: x for x in json.loads(H.DATA.read_text())['parts']}[key]
+    w = trimesh.Trimesh(np.frombuffer(H.base64.b64decode(q['positionB64']), dtype='<f4').reshape(-1, 3),
+                        np.frombuffer(H.base64.b64decode(q['indexB64']), dtype='<u4').reshape(-1, 3), process=True)
     p = trimesh.load(SIM / f'build-pack-20260913/assembly/print-parts/{STOCK[side]}.stl', process=True)
     np.random.seed(0)                                              # mesh_other samples points at random
     M, _ = trimesh.registration.mesh_other(p, w, samples=3000, scale=False, icp_first=20, icp_final=100)
@@ -63,6 +66,7 @@ def main():
         lp = HERE / 'STL' / f'{side}-link-local.stl'; H.tm(new).export(lp)
         pm = H.tm(new).apply_transform(np.linalg.inv(P2L)); pp = HERE / 'STL' / f'{side}-link-print.stl'; pm.export(pp)
         r['printBoundsMm'] = pm.bounds.round(3).tolist(); r['files'] = dict(local=str(lp), localSha256=H.sha(lp), print=str(pp), printSha256=H.sha(pp))
+        wp = H.WORLD / f'lower_link_{side}.stl'; H.tm(new).apply_transform(T).export(wp); r['files'].update(world=str(wp), worldSha256=H.sha(wp))
         r['printToLocal'] = P2L.round(6).tolist()
         out['sides'][side] = r
     (HERE / 'link-check.json').write_text(json.dumps(out, indent=1)); print(json.dumps(out, indent=1))

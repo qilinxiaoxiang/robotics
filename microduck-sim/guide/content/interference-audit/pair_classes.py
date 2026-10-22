@@ -14,13 +14,7 @@ PAIR_TEXT = {
         'No change. If a flush seam is required, lower the cap rim seat 0.2 mm in the next head_cap revision (reprint head_cap).'),
     frozenset(['imu_board', 'imu_sh4_receiving']): (
         'c', 'The SH4 (STEMMA QT) plug envelope sits inside the IMU board socket envelope: a mated connector.', 'No change.'),
-    frozenset(['lower', 'smallring']): (
-        'c', 'Left knee small ring: 0.173 mm radial overlap between the sleeve bore (9.65 mm) and the 10 mm lower-link boss, the '
-        'documented press fit (leg-guide-20261006/ring-investigation.md); rotation happens at the ring outer diameter. Caveat '
-        '(inference): pressing can grow the sleeve outer diameter into its 0.2 mm radial running clearance; check free rotation by hand.',
-        'No change (legs are already built; leg redesign deferred).'),
-    frozenset(['right_lower', 'right_smallring']): (
-        'c', 'Right knee small ring: same 0.173 mm radial press fit as the left knee.', 'No change.'),
+    # 2026-10-22: the knee/ankle small-ring press-fit entries left with the separate sleeve (now printed on the lower link).
     # Rear converter box, layout F (2026-10-14, V1.11, print/back-plate/layout-F/). Zero-clearance seats by design; these
     # entries name the contacts should the world STLs model them as overlap.
     frozenset(['rear_frame', 'rear_pack']): (

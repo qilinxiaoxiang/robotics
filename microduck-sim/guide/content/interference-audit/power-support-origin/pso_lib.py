@@ -32,11 +32,11 @@ SIDE = {
     'left': dict(joints=['left_hip_yaw', 'left_hip_roll', 'left_hip_pitch', 'left_knee', 'left_ankle'],
                  parts={'yaw2roll': ['yaw', 'motor9', 'ring9', 'passive', 'washer9'], 'hip_l': ['hip', 'ring8'],
                         'upper_leg_left': ['thigh', 'plate', 'motor8', 'motor7', 'ring7'],
-                        'leg': ['lower', 'motor6', 'smallring', 'washer6'], 'ankle_left': ['ankle', 'foot']}),
+                        'leg': ['lower', 'motor6', 'washer6'], 'ankle_left': ['ankle', 'foot']}),
     'right': dict(joints=['right_hip_yaw', 'right_hip_roll', 'right_hip_pitch', 'right_knee', 'right_ankle'],
                   parts={'bearing_roll': ['right_yaw', 'motor4', 'ring4', 'right_passive', 'washer4'], 'hip_l_2': ['right_hip', 'ring3'],
                          'upper_leg_right': ['right_thigh', 'right_plate', 'motor3', 'motor2', 'ring2'],
-                         'leg_2': ['right_lower', 'motor1', 'right_smallring', 'washer1'], 'ankle_right': ['right_ankle', 'right_foot']}),
+                         'leg_2': ['right_lower', 'motor1', 'washer1'], 'ankle_right': ['right_ankle', 'right_foot']}),
 }
 LABEL = {}
 for s in ('left', 'right'):

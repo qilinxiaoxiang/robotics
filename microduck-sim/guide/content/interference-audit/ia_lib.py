@@ -71,7 +71,9 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # sleeve) keeps the V1.22 side's key 'ankle_cheek'. The V1.22 black sleeve (bore 10.4) replaces the 9.65 mm one.
               'ankle': 'ankle_outer_left.stl', 'right_ankle': 'ankle_outer_right.stl',
               'ankle_cheek': 'ankle_inner_left.stl', 'right_ankle_cheek': 'ankle_inner_right.stl',
-              'smallring': 'ankle_sleeve_left.stl', 'right_smallring': 'ankle_sleeve_right.stl',
+              # 2026-10-22 one-piece lower-leg link (print/link-sleeve-20261022/make_link.py): the V1.22 sleeve grown onto the
+              # link boss; the separate sleeve ('smallring') is gone from the leg.
+              'lower': 'lower_link_left.stl', 'right_lower': 'lower_link_right.stl',
               **{f'head_pi_a7z_{p.stem[4:]}': p.name for p in sorted(WORLD.glob('a7z_*.stl')) if p.name != 'a7z_pcb.stl'}}
 
 
