@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Head Air Ducts</title>
+<style>
+:root{--bg:#fbfaf7;--ink:#1f2328;--muted:#5f6368;--card:#fff;--line:#e3dfd6;--hot:#d84315;--cold:#1565c0;--wall:#8e44ad;--ins:#e74c3c}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"PingFang SC","Helvetica Neue",sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
+h1{font-size:25px;line-height:1.3;margin:6px 0 4px}
+h2{font-size:20px;line-height:1.35;margin:40px 0 8px}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:8px 0}
+.status{color:var(--muted);font-size:14px;margin:0 0 14px}
+.lead{font-size:17px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ins);border-radius:12px;padding:14px 16px}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}
+.fig canvas{width:100%;display:block;margin:0 auto}
+.fig canvas.tall{max-width:600px}
+.fig canvas.small{max-width:340px}
+.cap{font-size:14px;color:var(--muted);margin:6px 2px 0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+button,.tog,input{font:inherit;font-size:16px;min-height:42px;padding:6px 14px;border-radius:9px;border:1px solid #cfc9bd;background:#fff;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button.on{background:#1f2328;color:#fff;border-color:#1f2328}
+.tog input{width:18px;height:18px;margin:0}
+.meter{display:flex;align-items:center;gap:10px;font-size:15px;margin-top:10px;flex-wrap:wrap}
+.meter b{min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
+.bar{flex:1;min-width:150px;height:12px;border-radius:6px;background:linear-gradient(90deg,#1e88e5,#fdd835 55%,#e53935);position:relative}
+.bar i{position:absolute;top:-5px;width:5px;height:22px;background:#1f2328;border-radius:2px;left:0;transition:left .4s}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--muted);margin-top:8px}
+.legend span{white-space:nowrap}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card p{font-size:15px;margin:5px 0}
+.card .k{color:var(--muted)}
+.tag{display:inline-block;font-size:12px;line-height:1.6;padding:0 8px;border-radius:10px;background:#f1ede4;color:#5f6368;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.tag.sep{background:#fde2df;color:#a93226}
+.stepnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stepnav .n{font-size:15px;color:var(--muted);margin-left:4px}
+.steptext{min-height:5.4em;font-size:16px;margin:8px 2px}
+.steptext b{color:var(--ins)}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:12px;align-items:start}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+.note{font-size:14px;color:var(--muted)}
+input[type=range]{width:100%;height:32px}
+.calc{display:grid;gap:8px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .lab{width:6.5em}
+.hbar{height:18px;border-radius:5px;min-width:2px;transition:width .3s}
+.row .v{font-variant-numeric:tabular-nums;min-width:8em}
+ul{padding-left:1.2em;margin:6px 0}
+li{margin:4px 0}
+code{font-size:14px;background:#f1ede4;padding:0 4px;border-radius:4px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main>
+<h1>头部风道：为什么要挡板，挡板怎么装</h1>
+<p class="status">A7Z 背对摄像头竖装 + Radxa 6530B 散热片。CAD 候选，没打印，没过发布门；散热片尺寸、风扇吹风方向等 10/26 到货后实测。图里的轮廓都是从真实 CAD 网格切出来的剖面。</p>
+
+<div class="lead">
+<p><b>一句话：</b>风扇的进风口和散热片的出风口挨在一起，中间只有 0 到 3 mm。头里不隔开的话，风扇吸进去的大部分是自己刚吹出来的热风，越转越热。</p>
+<p>挡板把头里分成两个区。<span style="color:var(--cold)"><b>后面是冷区</b></span>，只接脖子开口和两侧后面的进风窗；<span style="color:var(--hot)"><b>前面和右侧风道是热区</b></span>，只通两侧前面的出风窗。风扇是两区之间唯一的通道，所以它只能吸冷风、往热区吹。</p>
+</div>
+
+<h2>1. 俯视动画：散热片尾部吹出的热风去哪</h2>
+<p>这是在 z 122（风扇高度）水平切开的头。左边是后脑勺和脖子，右边是脸。点按钮看装和不装挡板的区别。</p>
+<div class="fig">
+  <div class="controls" id="topCtl">
+    <button data-all="1" class="on">全部装上</button>
+    <button data-all="0">全部不装</button>
+    <label class="tog"><input type="checkbox" id="cInsert" checked>导风插片（含挡条）</label>
+    <label class="tog"><input type="checkbox" id="cLeft" checked>左挡板</label>
+  </div>
+  <canvas id="top" class="tall"></canvas>
+  <div class="meter"><span>风扇吸进去的空气里，刚吹出来又被吸回去的：</span><div class="bar"><i id="topNeedle"></i></div><b id="topVal">0%</b></div>
+  <div class="legend">
+    <span style="--c:#1e88e5">冷风</span><span style="--c:#e53935">热风（颜色越红，绕圈越多）</span>
+    <span style="--c:#e74c3c">导风插片</span><span style="--c:#9b59b6">头盖上的挡板</span>
+    <span style="--c:#90caf9">风扇进风口</span><span style="--c:#4a4a4a">6530B 散热片</span><span style="--c:#2e7d32">A7Z 板</span>
+  </div>
+  <p class="cap">动画里风的分配比例是示意（尾部出风约 60%、两端各 15%、顶上 10%），用来说明谁会被吸回去，不是流场计算。墙上的缺口就是脸颊开窗。下巴舵机座和 15 号舵机只到 z 128 到 130，冷风多半从它们上方过来，所以在这个剖面里看着像穿过零件。</p>
+</div>
+<div class="cards">
+  <div class="card"><h3>拿掉导风插片会怎样</h3><p>散热片右半边的尾部是一整排鳍片出风口（y −32 到 +4），正对着后面。热风出来先往后走，然后被旁边 3 mm 外的风扇口直接吸回去。插片在后面 7.5 mm 处挡住这排热风，让它顺着插片和散热片之间的夹道往右流，到右脸颊出风窗出去。插片上的挡条（y 2.3 到 3.5）把夹道和风扇口隔开。</p></div>
+  <div class="card"><h3>拿掉左挡板会怎样</h3><p>散热片左端（y +32.5）吹出的热风本该往前走、从左脸颊出风窗出去。没有左挡板，它会绕过散热片左后角（风扇线就在这里），回到风扇口。左挡板竖在 x 55.8 到 57.0，从 y 35 一直到左脸颊内壁。</p></div>
+</div>
+
+<h2>2. 侧视动画：散热片顶上的热风会从插头上面翻回来</h2>
+<p>这是在 y 15（穿过风扇）竖着切开的头。散热片两端吹出的热风会绕到板子前上方，再沿着头顶往后流。头顶和插头之间如果不挡，它就翻过插头，掉进后面的风扇口。</p>
+<div class="fig">
+  <div class="controls">
+    <label class="tog"><input type="checkbox" id="cUpper" checked>上挡板 + 插头墙</label>
+  </div>
+  <canvas id="side"></canvas>
+  <div class="meter"><span>风扇吸进去的空气里，翻回来的热风：</span><div class="bar"><i id="sideNeedle"></i></div><b id="sideVal">0%</b></div>
+  <div class="legend"><span style="--c:#9b59b6">上挡板（x 55.8 到 57.0，z 144.6 到头顶）</span><span style="--c:#f5b041">杜邦插头</span><span style="--c:#dcdcdc">头底、下巴</span></div>
+  <p class="cap">上挡板底边和插头顶面之间还留着约 1.5 mm 的走线缝（插头的线要从这里出去），所以装了挡板也有少量漏风，动画里保留了这一小股。半透明的粒子表示这股风暂时离开了这个剖面（去两侧或从两侧回来）。</p>
+</div>
+
+<h2>3. 为什么导风插片不能直接长在头盖上</h2>
+<div class="cards">
+  <div class="card"><h3>插头要从后面推</h3><p>A7Z 的排针朝后，杜邦插头得从后往前推 8 mm 才能插上。插头起点的后端在 x 43，导风板在 x 47.8 到 49.0，正好挡在推的路上。下面第 3 步可以打开“假如长在头盖上”看撞的位置。</p></div>
+  <div class="card"><h3>板子要先错后 2 mm 放进去</h3><p>板子和散热片是在最终位置后面 2 mm 处放进头盖、再往前推到位的。这时散热片后面在 x 54.5，而挡条要伸到 x 56.0 才能贴近散热片，两者会撞。所以挡条也只能等板子装好后再进来。</p></div>
+</div>
+
+<h2>4. 装配动画</h2>
+<p>实际装的时候头盖倒扣在桌上（头顶朝下），图里按装好后的方向画，所以“放进去”显示成从下往上。这是 y −10 处竖着切开的剖面，右下的小图是卡槽高度（z 137）的俯视剖面。</p>
+<div class="fig">
+  <div class="two">
+    <div><canvas id="asm"></canvas></div>
+    <div><canvas id="rail" class="small"></canvas><p class="cap">右脸颊卡槽，z 137 俯视。插片边夹在两道筋之间。</p></div>
+  </div>
+  <div class="steptext" id="stepText"></div>
+  <div class="stepnav">
+    <button id="prev">上一步</button><button id="next" class="on">下一步</button><button id="replay">重播这一步</button>
+    <label class="tog" id="fixedTog" style="display:none"><input type="checkbox" id="cFixed">假如导风板长在头盖上</label>
+    <span class="n" id="stepN"></span>
+  </div>
+</div>
+
+<h2>5. 每块挡板：挡什么、在哪、怎么装</h2>
+<div class="cards" id="partCards"></div>
+
+<h2>6. 有多大差别（估算）</h2>
+<p>A7Z 的发热还没实测，拖动滑块设一个功率。头里空气升温的估算：有挡板时风扇每秒把一部分热量直接排到头外，约 1.2 到 2.2 K/W；完全不隔开时热量只能透过外壳散出去，约 4 到 6 K/W。芯片温度 = 头里空气温度 + 散热片自身温升，后一项两种情况一样，所以这个差值会原样加到芯片上。</p>
+<div class="fig calc">
+  <div class="row"><span>芯片功率</span><b id="pw">3.0 W</b></div>
+  <input type="range" id="pwr" min="1" max="5" step="0.5" value="3" aria-label="芯片功率">
+  <div class="row"><span class="lab">有挡板</span><div class="hbar" id="hb1" style="background:#1e88e5"></div><span class="v" id="hv1"></span></div>
+  <div class="row"><span class="lab">不隔开</span><div class="hbar" id="hb2" style="background:#e53935"></div><span class="v" id="hv2"></span></div>
+  <p class="note">假设：风扇风量 0.5 到 1 CFM（cubic feet per minute，每分钟立方英尺，Radxa 没公布），外壳导热 0.17 到 0.25 W/K，风扇往散热片里吹。如果实测风扇是反过来往外抽，同一套挡板照样有效，只是进风窗和出风窗角色对调。</p>
+</div>
+
+<h2>7. 还漏风的地方和没定的事</h2>
+<div class="cards">
+  <div class="card"><h3>接受的漏风</h3><ul>
+    <li>散热片底下离头底 1.8 mm 的缝。</li>
+    <li>插头顶上 1.5 mm 的走线缝（上挡板下面）。</li>
+    <li>插片上给 clip_head 和线让开的缺口（y −26 到 −17.6）。</li>
+    <li>装配用的 0.5 到 0.85 mm 间隙。</li>
+  </ul><p class="note">这些都比 7.5 mm 宽的夹道小得多，大部分热风仍然走夹道。</p></div>
+  <div class="card"><h3>还没定</h3><ul>
+    <li>新姿态下排针的线怎么走：线在插头后面 2.5 mm 的空间里弯，从挡条左边（y &gt; 3.5）出去；clip_head 的线束从后面来，不能穿过插片。</li>
+    <li>10/26 实测 6530B 的鳍片方向和风扇方向，然后重跑 CAD 和检查。</li>
+    <li>发布门、重建装配指南、切片、合盖测温，都还没做。</li>
+  </ul></div>
+</div>
+<p class="note" style="margin-top:20px">来源：<code>microduck-sim/guide/print/a7z-head/back-to-back/</code> 的 <code>build_b2b.py</code>（几何和检查）、<code>checks.json</code>（数值）、<code>build_explainer.py</code>（本页的剖面）。</p>
+</main>
+
+<script>
+(() => {
+const D = /*DATA*/null;
+const COL = {cap:['#efebe3','#a39d92'], insert:['#e74c3c','#a93226'], walls:['#9b59b6','#6c3483'],
+  heatsink_6530b:['#4a4a4a','#222'], a7z_pcb:['#2e7d32','#1b5e20'], fan_inlet_zone:['rgba(144,202,249,.8)','#64b5f6'],
+  a7z_header:['#333','#111'], dupont_plugs:['#f5b041','#b9770e'], fan_lead_loop:['#ef9a9a','#c62828'],
+  head_bottom:['#dcdcdc','#a0a0a0'], jaw_frame:['#ebdcd7','#b8a09a'], jaw_support:['#d0d0d0','#999'],
+  motor15:['#c4c4c4','#888'], clip_head:['#d7ccc8','#8d6e63'], camera_board:['#a5d6a7','#43a047'], face_panel:['#eeeeee','#aaa']};
+const P2 = {};
+for (const [plane, parts] of Object.entries(D)) {
+  if (plane === 'checks' || plane === 'slots') continue;
+  P2[plane] = {};
+  for (const [k, d] of Object.entries(parts)) P2[plane][k] = new Path2D(d);
+}
+const R = (a, b) => a + Math.random() * (b - a);
+const FONT = '-apple-system,"PingFang SC","Helvetica Neue",sans-serif';
+
+class View {
+  constructor(id, box) { this.c = document.getElementById(id); this.ctx = this.c.getContext('2d'); this.b = box; this.resize(); }
+  resize() {
+    const b = this.b, w = this.c.clientWidth || 600; this.dpr = window.devicePixelRatio || 1;
+    this.css = w / (b[1] - b[0]); const h = w * (b[3] - b[2]) / (b[1] - b[0]);
+    this.c.style.height = h + 'px'; this.c.width = Math.round(w * this.dpr); this.c.height = Math.round(h * this.dpr);
+    this.s = this.css * this.dpr;
+  }
+  world() { const b = this.b, s = this.s; this.ctx.setTransform(s, 0, 0, -s, -b[0] * s, b[3] * s); }
+  px(x, y) { const b = this.b; return [(x - b[0]) * this.css, (b[3] - y) * this.css]; }
+  clear() { const c = this.ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#fff'; c.fillRect(0, 0, this.c.width, this.c.height); }
+  shape(plane, k, dx = 0, dy = 0, alpha = 1, col) {
+    const p = P2[plane][k]; if (!p) return; const c = this.ctx; this.world(); c.translate(dx, dy);
+    const cc = col || COL[k]; c.globalAlpha = alpha; c.fillStyle = cc[0]; c.fill(p, 'evenodd');
+    c.strokeStyle = cc[1]; c.lineWidth = 1 / this.css; c.stroke(p); c.globalAlpha = 1;
+  }
+  box(x0, y0, x1, y1, fill, stroke, alpha = 1) {
+    const c = this.ctx; this.world(); c.globalAlpha = alpha; c.fillStyle = fill; c.fillRect(x0, y0, x1 - x0, y1 - y0);
+    if (stroke) { c.strokeStyle = stroke; c.lineWidth = 1.5 / this.css; c.strokeRect(x0, y0, x1 - x0, y1 - y0); } c.globalAlpha = 1;
+  }
+  text(x, y, t, color, o = {}) {
+    const c = this.ctx; c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); const [X, Y] = this.px(x, y);
+    const size = o.size || Math.max(11, Math.min(14, this.c.clientWidth / 40));
+    c.font = `${o.bold ? 600 : 400} ${size}px ${FONT}`; c.textAlign = o.align || 'left'; c.textBaseline = 'middle';
+    c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = color === '#fff' ? 'rgba(0,0,0,.55)' : 'rgba(255,255,255,.92)'; c.strokeText(t, X, Y); c.fillStyle = color; c.fillText(t, X, Y);
+  }
+  dot(x, y, r, color, alpha) { const c = this.ctx; this.world(); c.globalAlpha = alpha; c.fillStyle = color; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); c.globalAlpha = 1; }
+  arrow(pts, color, w = 2) {
+    const c = this.ctx; c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); const q = pts.map(p => this.px(p[0], p[1]));
+    c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(...q[0]);
+    q.slice(1).forEach(p => c.lineTo(...p)); c.stroke(); c.setLineDash([]);
+    const [a, b] = q.slice(-2), ang = Math.atan2(b[1] - a[1], b[0] - a[0]); c.beginPath(); c.moveTo(...b);
+    c.lineTo(b[0] - 9 * Math.cos(ang - .45), b[1] - 9 * Math.sin(ang - .45)); c.lineTo(b[0] - 9 * Math.cos(ang + .45), b[1] - 9 * Math.sin(ang + .45)); c.fill();
+  }
+}
+
+function mk(pts, o = {}) { const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); return { pts, L, len: L[L.length - 1], ...o }; }
+function at(p, d) {
+  const L = p.L; let i = 1; while (i < L.length - 1 && L[i] < d) i++;
+  const t = Math.min(1, Math.max(0, (d - L[i - 1]) / ((L[i] - L[i - 1]) || 1))); const a = p.pts[i - 1], b = p.pts[i];
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+}
+function heat(T) { // blue -> yellow -> red
+  const s = [[30, 136, 229], [253, 216, 53], [229, 57, 53]]; const u = Math.min(1, T) * 2, i = Math.min(1, Math.floor(u)), f = u - i;
+  const c = s[i].map((v, j) => Math.round(v + (s[i + 1][j] - v) * f)); return `rgb(${c})`;
+}
+
+class Sim {
+  constructor(view, n, route) {
+    this.v = view; this.route = route; this.ps = []; this.rec = 0; this.events = 0;
+    for (let i = 0; i < n; i++) { const q = { T: 0 }; route(q, 'out', this); q.d = Math.random() * q.path.len; this.ps.push(q); }
+  }
+  intake(q) { this.rec = this.rec * 0.985 + (q.T > 0 ? 1 : 0) * 0.015; }
+  step(dt) {
+    for (const q of this.ps) { q.d += 22 * dt; let guard = 0; while (q.d >= q.path.len && guard++ < 3) { const over = q.d - q.path.len; const ev = q.next; this.route(q, ev, this); q.d = over; } }
+  }
+  draw() {
+    for (const q of this.ps) {
+      const [x, y] = at(q.path, q.d); let a = 1;
+      if (q.path.fadeIn) a = Math.min(a, q.d / 5); if (q.path.fadeOut) a = Math.min(a, (q.path.len - q.d) / 5);
+      if (q.ghost) a *= 0.35;
+      this.v.dot(x, y, 0.75, heat(q.T), Math.max(0, a) * 0.95);
+    }
+  }
+}
+const last = q => q.path.pts[q.path.pts.length - 1];
+const warm = q => { q.T = q.T + 0.5 * (1 - q.T) + 0.04; };
+
+// ---- top view, z 122
+const cfg = { insert: true, left: true, upper: true, fixed: false };
+const top = new View('top', [12, 96, -53, 53]);
+function topRoute(q, ev, sim) {
+  q.ghost = false;
+  if (ev === 'out') {
+    q.T = 0; const r = Math.random();
+    if (r < 0.5) q.path = mk([[14, R(-4, 14)], [34, R(12, 22)], [50, R(14, 26)], [55, R(7, 27)]], { fadeIn: 1 });
+    else if (r < 0.75) q.path = mk([[R(38, 46), 52], [R(40, 46), 38], [50, R(29, 33)], [55, R(20, 27)]], { fadeIn: 1 });
+    else q.path = mk([[R(38, 46), -52], [R(42, 46), -36], [R(44, 46.5), -4], [51, R(4.5, 8)], [55, R(6, 12)]], { fadeIn: 1 });
+    q.next = 'fan';
+  } else if (ev === 'fan') {
+    sim.intake(q); warm(q); const [x, y] = last(q), r = Math.random();
+    if (r < 0.6) { const ye = R(-30, 3); q.path = mk([[x, y], [61, y], [61, ye], [56.6, ye]]); q.next = 'E1'; }
+    else if (r < 0.75) { q.path = mk([[x, y], [62, y], [R(59, 66), -32.6]]); q.next = 'E2'; }
+    else if (r < 0.9) { q.path = mk([[x, y], [62, y], [R(59, 66), 32.6]]); q.next = 'E3'; }
+    else { q.path = mk([[x, y], [R(58, 66), y + R(-3, 3)]], { fadeOut: 1 }); q.next = 'out'; }
+  } else if (ev === 'E1') {
+    const [x, y] = last(q);
+    if (cfg.insert || Math.random() < 0.25) { const xp = R(51, 54.5); q.path = mk([[x, y], [xp, y], [xp, -36], [R(58, 66), -39], [R(58, 66), -52]], { fadeOut: 1 }); q.next = 'out'; }
+    else { const xb = R(49.5, 53); q.path = mk([[x, y], [xb, y], [xb + R(-.5, .5), R(5, 12)], [55, R(7, 20)]]); q.next = 'fan'; }
+  } else if (ev === 'E2') { const [x, y] = last(q); q.path = mk([[x, y], [x + R(-1, 1), -52]], { fadeOut: 1 }); q.next = 'out'; }
+  else if (ev === 'E3') {
+    const [x, y] = last(q);
+    if (cfg.left || Math.random() < 0.4) { q.path = mk([[x, y], [x + R(-1, 1), 52]], { fadeOut: 1 }); q.next = 'out'; }
+    else { q.path = mk([[x, y], [R(58, 61), 36.5], [R(53, 55), R(36, 38)], [R(51, 53), 31], [55, R(22, 28)]]); q.next = 'fan'; }
+  }
+}
+const topSim = new Sim(top, 170, topRoute);
+function drawTop() {
+  const v = top; v.clear();
+  for (const k of ['jaw_frame', 'jaw_support', 'motor15', 'clip_head', 'camera_board', 'face_panel', 'cap']) v.shape('top122', k);
+  if (cfg.left) v.shape('top122', 'walls'); else v.shape('top122', 'walls', 0, 0, 0.12);
+  if (cfg.insert) v.shape('top122', 'insert'); else v.shape('top122', 'insert', 0, 0, 0.12);
+  for (const k of ['fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'fan_lead_loop']) v.shape('top122', k);
+  topSim.draw();
+  v.text(54.6, 17, '风扇进风口', '#1565c0', { align: 'right', bold: 1 });
+  v.text(62.2, 0, '散热片', '#fff', { align: 'center' });
+  v.text(69, 35.5, 'A7Z', '#2e7d32', { align: 'center' }); v.text(78.5, 19, '摄像头', '#43a047', { align: 'center' });
+  v.text(cfg.insert ? 47 : 47, -12, cfg.insert ? '导风插片' : '（插片拿掉）', '#c0392b', { align: 'right', bold: 1 });
+  v.text(55.5, 44.5, cfg.left ? '左挡板' : '（左挡板拿掉）', '#6c3483', { align: 'right', bold: 1 });
+  v.text(62, -50, '右出风窗', '#d84315', { align: 'center' }); v.text(62, 50, '左出风窗', '#d84315', { align: 'center' });
+  v.text(42, -50, '右进风窗', '#1565c0', { align: 'center' }); v.text(42, 50, '左进风窗', '#1565c0', { align: 'center' });
+  v.text(14.5, 18, '脖子来的冷风', '#1565c0');
+  v.text(93, -46, '脸 →', '#5f6368', { align: 'right' }); v.text(14, -46, '← 后脑勺', '#5f6368');
+  setMeter('top', topSim.rec);
+}
+
+// ---- side view, y 15
+const side = new View('side', [10, 95, 104, 160]);
+function sideRoute(q, ev, sim) {
+  q.ghost = false;
+  if (ev === 'out') { q.T = 0; q.path = mk([[R(11, 16), R(109, 113)], [R(12, 17), R(132, 137)], [R(46, 51), R(132, 137)], [55, R(116, 134)]], { fadeIn: 1 }); q.next = 'fan'; }
+  else if (ev === 'fan') {
+    sim.intake(q); warm(q); const [x, z] = last(q);
+    q.path = mk([[x, z], [R(58, 66), z + R(-2, 2)]], { fadeOut: 1 }); q.next = Math.random() < 0.6 ? 'out' : 'front';
+  } else if (ev === 'front') { q.ghost = true; q.path = mk([[R(62, 67), R(118, 132)], [R(70, 74), R(138, 143)], [R(74, 79), R(146, 151)]], { fadeIn: 1 }); q.next = 'roof'; }
+  else if (ev === 'roof') { const [x, z] = last(q); q.path = mk([[x, z], [R(66, 70), R(147, 150)], [59, R(145.5, 149)]]); q.next = 'baffle'; }
+  else if (ev === 'baffle') {
+    const [x, z] = last(q);
+    if (cfg.upper && Math.random() > 0.1) { q.path = mk([[x, z], [R(64, 68), R(150, 152)], [R(76, 82), R(146, 150)]], { fadeOut: 1 }); q.next = 'out'; }
+    else if (cfg.upper) { q.path = mk([[x, z], [57.2, 143.9], [52, 143.9], [R(49, 50.5), 139], [52, R(134, 136)], [55, R(127, 135)]]); q.next = 'fan'; }
+    else { const zz = R(146, 149); q.path = mk([[x, z], [52, zz], [R(48.5, 50.5), 141], [52, R(134, 136)], [55, R(124, 135)]]); q.next = 'fan'; }
+  }
+}
+const sideSim = new Sim(side, 110, sideRoute);
+function drawSide() {
+  const v = side; v.clear();
+  for (const k of ['head_bottom', 'jaw_frame', 'jaw_support', 'motor15', 'camera_board', 'face_panel', 'cap']) v.shape('side15', k);
+  v.shape('side15', 'walls', 0, 0, cfg.upper ? 1 : 0.12);
+  for (const k of ['fan_inlet_zone', 'heatsink_6530b', 'a7z_pcb', 'a7z_header', 'dupont_plugs']) v.shape('side15', k);
+  sideSim.draw();
+  v.text(53, 120, '风扇进风口', '#1565c0', { align: 'right', bold: 1 });
+  v.text(62.3, 126, '散热片', '#fff', { align: 'center' });
+  v.text(55.5, 152, cfg.upper ? '上挡板' : '（上挡板拿掉）', '#6c3483', { align: 'right', bold: 1 });
+  v.text(50.5, 140.6, '插头', '#9a6a00', { align: 'right' });
+  v.text(80, 153.5, '前上方热区', '#d84315', { align: 'center' });
+  v.text(17, 108.5, '脖子来的冷风', '#1565c0');
+  v.text(93, 107, '脸 →', '#5f6368', { align: 'right' });
+  setMeter('side', sideSim.rec);
+}
+function setMeter(id, r) {
+  const pct = Math.round(r * 100); document.getElementById(id + 'Val').textContent = pct + '%';
+  document.getElementById(id + 'Needle').style.left = `calc(${Math.min(100, pct)}% - 2px)`;
+}
+
+// ---- controls
+const cIns = document.getElementById('cInsert'), cLeft = document.getElementById('cLeft'), cUp = document.getElementById('cUpper');
+function syncTop() { cfg.insert = cIns.checked; cfg.left = cLeft.checked; document.querySelectorAll('#topCtl [data-all]').forEach(b => b.classList.toggle('on', (b.dataset.all === '1') === (cfg.insert && cfg.left) && (cfg.insert === cfg.left))); }
+cIns.onchange = cLeft.onchange = syncTop;
+document.querySelectorAll('#topCtl [data-all]').forEach(b => b.onclick = () => { cIns.checked = cLeft.checked = b.dataset.all === '1'; syncTop(); });
+cUp.onchange = () => { cfg.upper = cUp.checked; };
+
+// ---- assembly stepper, y -10 section and z 137 rail section
+const asm = new View('asm', [26, 92, 92, 160]);
+const rail = new View('rail', [41, 57, -45, -28]);
+const C = D.checks;
+const STEPS = [
+  { t: '<b>第 1 步</b>　头盖倒扣在桌上。头盖上已经打印好了左挡板、上挡板、插头墙和右脸颊两道卡槽，它们都从头顶或侧壁长出来，倒扣打印不需要支撑。' },
+  { t: '<b>第 2 步</b>　板子和散热片作为一个整体（Radxa 那颗螺丝已拧好，不带插头）放进头盖：先停在最终位置后面 2 mm，放到底，再往前推 2 mm 贴到三个耳朵上，从前面拧三颗 M2×8。' },
+  { t: '<b>第 3 步</b>　从后面把杜邦插头往前推到朝后的排针上，推 8 mm，一路上离任何东西至少 ' + C.plugInsertMinGap_mm + ' mm。这一步必须在导风插片之前，因为插头推进来的路正好穿过插片的位置。', fixed: 1 },
+  { t: '<b>第 4 步</b>　导风插片从下往上推进右脸颊的两道卡槽（右边小图），推到顶。插片边在卡槽里每边留 ' + C.insertPath[0] + ' mm，离板子和散热片至少 ' + C.insertPath[1] + ' mm。这时它还能往下滑出来，下一步由头底托住。' },
+  { t: '<b>第 5 步</b>　合上头底（下巴舵机座、clip_head、15 号舵机都装在头底上）。头底和下巴舵机座从下面托住插片，缝 ' + C.insertPairs.head_bottom + ' mm；合的过程中离插片至少 ' + C.headCloseMinGapToInsert_mm.jaw_support + ' mm。' },
+  { t: '<b>第 6 步</b>　最后装脸板和摄像头（拧 M2×8 的时候螺丝刀要从脸这边伸进去，所以脸板最后装）。下巴张开 0 到 27°，离插片和挡板至少 ' + C.jawSweepInsertWalls[0][1] + ' mm。' },
+];
+let step = 0, stepT0 = performance.now();
+const ease = p => p < 0 ? 0 : p > 1 ? 1 : p * p * (3 - 2 * p);
+function unitOff(p) { return p < 0.7 ? [-2, -36 * (1 - ease(p / 0.7))] : [-2 * (1 - ease((p - 0.7) / 0.3)), 0]; }
+function drawAsm(now) {
+  const v = asm, p = Math.min(1, (now - stepT0) / 1800); v.clear();
+  const pk = i => step > i ? 1 : step === i ? p : 0;      // progress of step i
+  const showFrom = i => step >= i;
+  if (showFrom(4)) { const dz = -25 * (1 - ease(pk(4))); for (const k of ['head_bottom', 'jaw_frame', 'jaw_support']) v.shape('sideM10', k, 0, dz); }
+  if (showFrom(5)) { const dx = 20 * (1 - ease(pk(5))); for (const k of ['camera_board', 'face_panel']) v.shape('sideM10', k, dx, 0, ease(pk(5))); }
+  v.shape('sideM10', 'cap');
+  if (showFrom(1)) { const [dx, dz] = unitOff(pk(1)); for (const k of ['heatsink_6530b', 'a7z_pcb', 'a7z_header']) v.shape('sideM10', k, dx, dz); }
+  const ghost = cfg.fixed && step === 2;
+  if (ghost) v.box(47.8, 111.8, 49.0, 152.5, 'rgba(231,76,60,.85)', '#a93226');
+  if (showFrom(2)) {
+    if (ghost) { v.shape('sideM10', 'dupont_plugs', -8, 0, 0.9, ['rgba(229,57,53,.35)', '#c62828']); v.box(47.8, 138.1, 49.0, 143.1, '#b71c1c'); }
+    else v.shape('sideM10', 'dupont_plugs', -8 * (1 - ease(pk(2))), 0);
+  }
+  if (showFrom(3)) v.shape('sideM10', 'insert', 0, -44 * (1 - ease(pk(3))));
+  // labels
+  v.text(30, 155, '头顶', '#5f6368');
+  if (showFrom(1)) v.text(62.3, 125, '散热片', '#fff', { align: 'center' });
+  if (step === 2 && !ghost) v.arrow([[40, 145.5], [50, 145.5]], '#b9770e');
+  if (step === 2) v.text(ghost ? 46 : 39, ghost ? 147 : 147.6, ghost ? '插头从这里开始推，撞上板' : '插头往前推', ghost ? '#b71c1c' : '#9a6a00', { align: ghost ? 'right' : 'left', bold: 1 });
+  if (ghost) v.text(46.5, 128, '假如这里有固定板', '#b71c1c', { align: 'right', bold: 1 });
+  if (step === 3) { v.arrow([[44.5, 104], [44.5, 116]], '#c0392b'); v.text(47, 108, '插片往上推', '#c0392b', { bold: 1 }); }
+  if (step >= 3) v.text(47, 133, '插片', '#c0392b', { align: 'right' });
+  if (step === 4) v.text(30, 112, '头底合上来', '#5f6368', { bold: 1 });
+  v.text(90, 95.5, '脸 →', '#5f6368', { align: 'right' });
+  // rail detail
+  const r = rail; r.clear(); r.shape('rail137', 'cap'); r.shape('rail137', 'walls');
+  if (showFrom(3)) r.shape('rail137', 'insert', 0, 0, step === 3 ? ease((p - 0.6) / 0.4) : 1);
+  r.text(46, -33.5, '卡槽筋', '#6c3483', { align: 'right' }); r.text(50.8, -33.5, '卡槽筋', '#6c3483', { align: 'left' });
+  if (showFrom(3)) r.text(48.4, -29.2, '插片', '#c0392b', { align: 'center', bold: 1 });
+  r.text(55.5, -43.5, '右脸颊', '#5f6368', { align: 'right' });
+}
+function setStep(i) {
+  step = Math.max(0, Math.min(STEPS.length - 1, i)); stepT0 = performance.now();
+  document.getElementById('stepText').innerHTML = STEPS[step].t;
+  document.getElementById('stepN').textContent = `${step + 1} / ${STEPS.length}`;
+  document.getElementById('fixedTog').style.display = STEPS[step].fixed ? '' : 'none';
+  if (!STEPS[step].fixed) { cfg.fixed = false; document.getElementById('cFixed').checked = false; }
+}
+document.getElementById('prev').onclick = () => setStep(step - 1);
+document.getElementById('next').onclick = () => setStep(step + 1);
+document.getElementById('replay').onclick = () => setStep(step);
+document.getElementById('cFixed').onchange = e => { cfg.fixed = e.target.checked; };
+setStep(0);
+
+// ---- part cards
+const W = C.wallPairs, I = C.insertPairs;
+const CARDS = [
+  ['导风插片', 'sep', '单独打印', '散热片右半边尾部吹出的热风（最大的一股）。', '热风被 3 mm 外的风扇口直接吸回去。',
+   '1.2 mm 板，x 47.8 到 49.0，y −40.9 到 3.5，从头底到头顶；背面贴床打印。', `最后一个装：插头插好后从下往上推进右脸颊卡槽，头底托住。离头底、下巴舵机座、clip_head ${I.head_bottom} mm，离散热片 ${I.heatsink_6530b} mm，离插头 ${I.dupont_plugs} mm，离触摸片至少 ${I.touch_pad_r1} mm。`],
+  ['插片上的挡条', 'sep', '插片的一部分', '夹道里的热风往左拐进风扇口。', '插片挡住的热风顺着插片往左流，从风扇口旁边又被吸回去。',
+   'y 2.3 到 3.5，从插片往前伸到 x 56.0，离散热片 0.5 mm。', '跟插片一起装。不能长在头盖上：板子放进去时先错后 2 mm，散热片后面会到 x 54.5，撞挡条。'],
+  ['左挡板', '', '跟头盖一起打印', '散热片左端吹出的热风往后绕。', '它绕过散热片左后角（风扇线那里）回到风扇口。',
+   'x 55.8 到 57.0，y 35 到左脸颊内壁，z 112 到头顶。', `长在头盖上，不用装。离风扇线 ${W.fan_lead_loop} mm，离散热片 ${W.heatsink_6530b} mm。`],
+  ['上挡板', '', '跟头盖一起打印', '前上方的热风沿头顶往后翻过插头。', '热风翻过插头掉进后面的风扇口（第 2 节动画）。',
+   'x 55.8 到 57.0，y 3.5 到 33，z 144.6 到头顶；底边离插头顶约 1.5 mm，留给插头的线。', `长在头盖上，不用装。离 M 触摸片 ${W.touch_pad_m} mm。`],
+  ['插头墙', '', '跟头盖一起打印', '挡条顶端和上挡板之间的拐角缝。', '热风从插片顶上、挡条和上挡板之间的缺口绕过去。',
+   'x 52.5 到 57.0，y 2.3 到 3.5，z 146 到头顶；底面 45° 斜，打印不用支撑。', '长在头盖上，不用装。'],
+  ['右脸颊卡槽', '', '跟头盖一起打印', '（不挡风，用来定位插片。）', '插片没地方固定，会晃、会掉。',
+   '两道 1.2 mm 筋，x 46.4 到 47.6 和 49.2 到 50.4，z 133.5 到 140.5，伸进来 3 mm，顶部 45° 斜。', `插片边夹在中间，每边 ${C.insertPath[0]} mm。`],
+  ['脸颊开窗', '', '头盖上开的孔', '（不挡风，是冷热两区通外面的口。）', '热风没地方出去，冷风没地方进来，挡板就白挡了。',
+   `每侧前面 4 条出风（x 57.5 到 67.5，${C.slotOpen_mm2.exhaust.toFixed(0)} mm²），后面 4 条进风（x 37.5 到 47.5，${C.slotOpen_mm2.intake.toFixed(0)} mm²）；1.6 mm 宽，1.2 mm 筋。`, '开在头盖上。都避开了铜箔触摸区和天线。'],
+];
+document.getElementById('partCards').innerHTML = CARDS.map(([n, cls, tag, blocks, without, where, how]) =>
+  `<div class="card"><h3>${n}<span class="tag ${cls}">${tag}</span></h3><p><span class="k">挡什么：</span>${blocks}</p><p><span class="k">没有它：</span>${without}</p><p><span class="k">在哪：</span>${where}</p><p><span class="k">怎么装：</span>${how}</p></div>`).join('');
+
+// ---- calculator
+const pwr = document.getElementById('pwr');
+function calc() {
+  const P = +pwr.value; document.getElementById('pw').textContent = P.toFixed(1) + ' W';
+  const a = [1.2 * P, 2.2 * P], b = [4 * P, 6 * P], max = 30;
+  document.getElementById('hb1').style.width = `calc(${(a[1] / max) * 100}% * .55)`; document.getElementById('hv1').textContent = `+${a[0].toFixed(1)} 到 ${a[1].toFixed(1)} K`;
+  document.getElementById('hb2').style.width = `calc(${(b[1] / max) * 100}% * .55)`; document.getElementById('hv2').textContent = `+${b[0].toFixed(1)} 到 ${b[1].toFixed(1)} K`;
+}
+pwr.oninput = calc; calc();
+
+// ---- loop
+let tPrev = performance.now();
+const views = [top, side, asm, rail];
+addEventListener('resize', () => views.forEach(v => v.resize()));
+function frame(now) {
+  const dt = Math.min(0.05, (now - tPrev) / 1000); tPrev = now;
+  topSim.step(dt); sideSim.step(dt); drawTop(); drawSide(); drawAsm(now);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

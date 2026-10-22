@@ -75,6 +75,9 @@ this folder's cap, board, heatsink, plugs and cables. 84.7 cm3 is free. The 22 x
 
 ## Air ducts (in the cap CAD; `build_b2b.py`, `renders/b2b-4..6`, checks under `ducts` in `checks.json`)
 
+Animated explainer: `ducts-explainer.html` (why each baffle is needed, what leaks without it, how the insert goes in),
+built by `build_explainer.py` from real sections of these meshes.
+
 The 6530B's fins are plates across its 30 mm width (Radxa photo), so in this pose the fin channels run vertically:
 their top ends face the header row, their bottom ends sit 1.8 mm above the head floor (head_bottom lies on the jaw
 frame, so nothing can open downward). The fan presses air into the fins and it leaves mostly through the open fin tips
