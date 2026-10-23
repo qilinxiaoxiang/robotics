@@ -82,7 +82,7 @@ STATUS = {
     'printed': ['torso_base', 'ring10_torso', 'ring5_torso',
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
-    'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
+    'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
                   'speaker_retainer',
                   'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
     'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier'],
@@ -363,8 +363,10 @@ def build_parts() -> dict:
     face = first_existing(world / 'face_panel.stl')
     trim = first_existing(world / 'eye_trim.stl')
     shell = first_existing(world / 'head_bottom.stl')
-    # V1.30 (D-023, 2026-10-23): the jaw support with the dia 11 left-rear exit and the tie window (print/neck-exit-20261023/).
+    # V1.30 (D-023, 2026-10-23): the jaw support with the dia 11 left-rear exit and the fixed half of the exit clamp, and the
+    # clamp's loose half (print/neck-exit-20261023/; world/exit_clamp_loose.stl is size A).
     jaw_sup = first_existing(world / 'jaw_support.stl')
+    clamp = first_existing(world / 'exit_clamp_loose.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
     jaw = first_existing(world / 'jaw_frame.stl')
     # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm so it reaches the ID13 case (print/neck-ring/).
@@ -501,7 +503,7 @@ def build_parts() -> dict:
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
             parts[key].update(v=v, f=f, source=str(path))
-    # 2026-10-22 D-023 U20 face (print/face-u20/): the four camera bosses are 7.7 mm tall and the eye opening dia 16.2 for the
+    # 2026-10-22 D-023 U20 face (print/face-u20/): the four camera bosses are 13.1 mm tall (2026-10-23, ROBOTIS camera CAD) and the eye opening dia 16.2 for the
     # Innomaker U20CAM-720P USB camera; the camera and its own cable inside the head (whole, 2026-10-23: no head splice) are
     # drawn as parts (module 'head', purchased), from print/world/camera_*.stl copied out of print/face-u20/.
     if face:
@@ -511,7 +513,11 @@ def build_parts() -> dict:
     if shell:
         parts['head_bottom']['name'] = 'Lower head shell with the dia 11 left-rear exit (V1.30 print, yellow)'
     if jaw_sup:
-        parts['jaw_support']['name'] = 'Jaw support with the dia 11 left-rear exit and the cable-tie window (V1.30 print, black)'
+        parts['jaw_support']['name'] = 'Jaw support with the dia 11 left-rear exit and the fixed half of the wire clamp (V1.30 print, black)'
+    if clamp:
+        v, f = load_stl(clamp)
+        parts['exit_clamp_loose'] = {'key': 'exit_clamp_loose', 'name': 'Loose half of the head-exit wire clamp, size A (V1.30 print, black)',
+                                     'color': parts['jaw_support']['color'], 'module': 'head', 'status': 'new-print', 'v': v, 'f': f, 'source': str(clamp)}
     CAMERA = {'camera_u20cam': ('Innomaker U20CAM-720P USB camera on the four face bosses, connector edge to the left (+Y), D-023', '#1b5e20'),
               'camera_cable_stub': ("Camera's own cable inside the head, over the jaw support front wall and the jaw motor to the left-rear exit", '#37474f')}
     for key, (name, color) in CAMERA.items():

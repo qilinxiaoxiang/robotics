@@ -2,19 +2,19 @@
   "version": "V1.30",
   "status": "RELEASED",
   "baselinePrintedStockInstances": 89,
-  "partTypes": 4,
-  "printQuantity": 4,
+  "partTypes": 6,
+  "printQuantity": 6,
   "reprintUnchangedStockQuantity": 0,
   "manifest": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/manifest-V1.30.json",
-    "sha256": "60578dbe47c0a0e9380c2e666a5dfb3649b9dd9fd321bdb4f3828ed05dbd62a6"
+    "sha256": "990ea49c4e97e351bab38be01b6faa3e7ffe2e7ce9b7dbc59d667b46824adc28"
   },
   "parts": [
     {
       "key": "face_panel",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/face_panel.stl",
-        "sha256": "60213c4302f38594e4653f837a88970871cb14e500b21c23dc229c30db625747"
+        "sha256": "40a3e58ebcd6a32ba106de69c0ae2f8a8633d901366fb90eb2ef813ce4f59e66"
       },
       "quantity": 1,
       "color": "White",
@@ -22,10 +22,10 @@
       "replacesStockIds": [
         "46"
       ],
-      "changeReason": "D-023 (2026-10-22): the Innomaker U20CAM-720P USB camera takes the four face bosses. The bosses grow from 4.0 to 7.7 mm (dia 4.8, pilot dia 1.7, wall 1.55) so the camera PCB sits 2.2 mm behind the lens holder seat and the M12 lens front lands 1.6 mm behind the trim front; the eye opening grows to dia 16.2 for the dia 15.1 lens ring, with the same 45 deg flare outside. Front face otherwise unchanged (checks.json frontUnchangedOutsideBore). Four M2 x 6 into the bosses (C-camera-01..04), 4.4 mm of thread. The two side key pockets for the eye-trim tabs at (AY -/+ 7.7, AZ - 4.5) are filled through the 1.3 mm front skin: the bore cut into them, leaving 0.35 mm; the trim loses its two side tabs and the top key pair stays.",
+      "changeReason": "D-023 (2026-10-22, revised 2026-10-23): the Innomaker U20CAM-720P USB camera takes the four face bosses. Its dimensions come from the ROBOTIS OMX-F CAD (face-u20/robotis-cad/): lens front 22.0 mm in front of the board, ring dia 14.0. The bosses grow from 4.0 to 13.1 mm behind the face back (dia 4.8, pilot dia 1.7, wall 1.55) so the board sits at x 67.0 and the lens front at x 89.0, 0.4 mm behind the trim front (Shawn 2026-10-23: \"\u677f\u5b50\u540e\u79fb 6.6 mm\"); the eye opening grows to dia 16.2, with the same 45 deg flare outside. Front face otherwise unchanged (checks.json frontUnchangedOutsideBore). Four M2 x 6 into the bosses (C-camera-01..04), 4.4 mm of thread. The two side key pockets for the eye-trim tabs at (AY -/+ 7.7, AZ - 4.5) are filled through the 1.3 mm front skin: the bore cut into them, leaving 0.35 mm; the trim loses its two side tabs and the top key pair stays.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
-        "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+        "sha256": "590fc759c745e9943be4c1976934e93648dcefe8ce1a7c4fd2193253a60844df"
       },
       "sourceToPrint": [
         [
@@ -64,12 +64,12 @@
         [
           43.82500076293943,
           22.312999725341683,
-          9.0
+          14.3800048828125
         ]
       ],
       "vertexCount": 2618,
       "triangleCount": 5252,
-      "tipAngleDeg": 86.73,
+      "tipAngleDeg": 84.52,
       "objectSettings": {
         "brim_type": "no_brim"
       },
@@ -81,24 +81,24 @@
         "neighbourMm": 1.0,
         "minSmoothedMm": 1.05,
         "samples": 60000,
-        "areaPerSampleMm2": 0.1191,
+        "areaPerSampleMm2": 0.1245,
         "regions": [
           {
             "bbox": [
               [
-                -1.32,
-                6.525,
+                -1.273,
+                6.509,
                 0.001
               ],
               [
-                1.398,
-                8.102,
+                1.155,
+                7.944,
                 1.3
               ]
             ],
-            "areaMm2": 8.1,
+            "areaMm2": 4.48,
             "minMm": 1.05,
-            "medianMm": 1.05,
+            "medianMm": 1.112,
             "status": "allowed",
             "allowance": 0
           }
@@ -130,7 +130,7 @@
       "key": "eye_trim",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/eye_trim.stl",
-        "sha256": "900d11db917db0a2cb83797ed2e6a5205120fdcd69d27965607be662b06d836e"
+        "sha256": "2ee4e952e35bf4fce9dfcae0d19299aeca6b02e42bcb7e1787dbbb28ffbbd6e3"
       },
       "quantity": 1,
       "color": "Black",
@@ -138,10 +138,10 @@
       "replacesStockIds": [
         "66"
       ],
-      "changeReason": "D-023 (2026-10-22): the bore behind the flare grows from dia 14.4 to 16.2 so the U20CAM M12 lens ring (dia 15.1) passes with 0.55 mm radial clearance; the two 1.7 mm trim-screw pilots and the outer shape are unchanged (face-u20/checks.json trimSectionsRadii, optics: 2.71 mm normal clearance of the 120 deg cone, no clipping). The two 1.0 mm side tabs on the back of the ring are cut off (their face pockets are filled, see the face row); the top key pair stays.",
+      "changeReason": "D-023 (2026-10-22): the bore behind the flare grows from dia 14.4 to 16.2 so the U20CAM M12 lens ring (dia 14.0, ROBOTIS CAD) passes with 1.1 mm radial clearance; the two 1.7 mm trim-screw pilots and the outer shape are unchanged (face-u20/checks.json trimSectionsRadii, optics: 3.749 mm normal clearance of the 120 deg cone, no clipping). The two 1.0 mm side tabs on the back of the ring are cut off (their face pockets are filled, see the face row); the top key pair stays.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
-        "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+        "sha256": "590fc759c745e9943be4c1976934e93648dcefe8ce1a7c4fd2193253a60844df"
       },
       "sourceToPrint": [
         [
@@ -183,8 +183,8 @@
           9.40185027713514
         ]
       ],
-      "vertexCount": 1128,
-      "triangleCount": 2256,
+      "vertexCount": 1068,
+      "triangleCount": 2136,
       "tipAngleDeg": 74.52,
       "objectSettings": {
         "brim_type": "no_brim"
@@ -195,12 +195,12 @@
         "minWallMm": 1.2,
         "minRegionMm2": 2.0,
         "neighbourMm": 1.0,
-        "minSmoothedMm": 0.097,
+        "minSmoothedMm": 0.065,
         "samples": 43326,
         "areaPerSampleMm2": 0.05,
         "regions": [],
         "smallThinPatches": 2,
-        "smallThinPatchMaxMm2": 0.85,
+        "smallThinPatchMaxMm2": 0.8,
         "allowancesUsed": []
       }
     },
@@ -208,7 +208,7 @@
       "key": "jaw_support",
       "source": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/jaw_support.stl",
-        "sha256": "004e11c68940e44f22f7e7dcef8026035705d895d2b1933746658a37ebd34542"
+        "sha256": "e9795a399169cf4b939741f9a7b91b1f2bb2fa5b91d7d83a4bc17e024921ea6d"
       },
       "quantity": 1,
       "color": "Black",
@@ -216,10 +216,10 @@
       "replacesStockIds": [
         "28"
       ],
-      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Jaw support: the exit cut through its left-rear corner walls and plate, the pad moved with a dia 2.8 clearance hole, and a 1.6 x 3.2 mm window through the corner wall beside the exit (y 12.8..14.4, z 116..119.2) for the one cable tie that holds the bundle to the head.",
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 11.0 exit at (10, 18.5) through the jaw support and the floor of the lower shell (free bore dia 6.8 with the fixed clamp half in it); the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Jaw support: the exit cut through its left-rear corner walls and plate, the pad moved with a dia 2.8 clearance hole, and the fixed half of the two-piece wire clamp in the exit (Shawn 2026-10-23: \"\u5361\u6263\u6309\u6982\u5ff5\u56fe\"): an arc from 60 to 240 deg round the rear-left of the exit from the plate bottom to z 124.3, bore dia 7.8 with two 0.5 mm ribs, and at each end a lip over a pocket for a tongue of the loose half, with a recess for its barb. The pull from the neck goes into the jaw support.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
-        "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+        "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
       },
       "sourceToPrint": [
         [
@@ -258,16 +258,16 @@
         [
           54.200000592083335,
           73.50000380781549,
-          18.800005781420225
+          18.80330062969135
         ]
       ],
-      "vertexCount": 2085,
-      "triangleCount": 4190,
-      "tipAngleDeg": 67.03,
+      "vertexCount": 3686,
+      "triangleCount": 7396,
+      "tipAngleDeg": 65.26,
       "objectSettings": {
         "brim_type": "no_brim"
       },
-      "objectSettingsSource": "R1 default: tip angle 67.0 deg >= 10 deg, no brim",
+      "objectSettingsSource": "R1 default: tip angle 65.3 deg >= 10 deg, no brim",
       "wallCheck": {
         "passed": true,
         "minWallMm": 1.2,
@@ -275,82 +275,82 @@
         "neighbourMm": 1.0,
         "minSmoothedMm": 0.61,
         "samples": 60000,
-        "areaPerSampleMm2": 0.1531,
+        "areaPerSampleMm2": 0.1612,
         "regions": [
           {
             "bbox": [
               [
-                19.029,
-                69.36,
-                2.508
+                19.055,
+                69.308,
+                2.416
               ],
               [
-                36.97,
-                71.698,
+                36.869,
+                71.822,
                 9.698
               ]
             ],
-            "areaMm2": 81.43,
+            "areaMm2": 80.12,
             "minMm": 0.798,
-            "medianMm": 0.803,
+            "medianMm": 1.002,
             "status": "allowed",
             "allowance": 0
           },
           {
             "bbox": [
               [
-                7.0,
-                26.401,
-                2.974
+                6.853,
+                26.447,
+                2.952
               ],
               [
-                10.355,
-                42.021,
+                10.231,
+                41.712,
                 7.7
               ]
             ],
-            "areaMm2": 69.95,
+            "areaMm2": 69.8,
             "minMm": 0.61,
             "medianMm": 0.9,
             "status": "allowed",
             "allowance": 1
           }
         ],
-        "smallThinPatches": 2,
-        "smallThinPatchMaxMm2": 0.15,
+        "smallThinPatches": 1,
+        "smallThinPatchMaxMm2": 0.16,
         "allowancesUsed": [
           {
             "bbox": [
               [
-                18.979,
-                69.31,
-                2.458
+                19.005,
+                69.258,
+                2.366
               ],
               [
-                37.02,
-                71.748,
+                36.919,
+                71.872,
                 9.748
               ]
             ],
             "minMm": 0.793,
-            "reason": "unchanged V1.6 jaw support (release file, printed): 520 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.798 mm sampled there, 0.798 mm now, 81.43 mm2)",
+            "reason": "unchanged V1.6 jaw support (release file, printed): 485 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.798 mm sampled there, 0.798 mm now, 80.12 mm2)",
             "index": 0
           },
           {
             "bbox": [
               [
-                6.95,
-                26.351,
-                2.924
+                6.803,
+                26.397,
+                2.902
               ],
               [
-                10.405,
-                42.071,
+                10.281,
+                41.762,
                 7.75
               ]
             ],
             "minMm": 0.605,
-            "reason": "unchanged V1.6 jaw support (release file, printed): 355 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.61 mm sampled there, 0.61 mm now, 69.95 mm2)",
+            "reason": "unchanged V1.6 jaw support (release file, printed): 427 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.61 mm sampled there, 0.61 mm now, 69.8 mm2)",
             "index": 1
           }
         ]
@@ -368,10 +368,10 @@
       "replacesStockIds": [
         "12"
       ],
-      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Lower shell: the exit through the floor, the old boss and the ring-wall and rib ends beside it removed, a dia 6 boss with a dia 2.2 pilot at the new seat standing on the bed. Everything else is the V1.8 shell.",
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 11.0 exit at (10, 18.5) through the jaw support and the floor of the lower shell (free bore dia 6.8 with the fixed clamp half in it); the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Lower shell: the exit through the floor, the old boss and the ring-wall and rib ends beside it removed, a dia 6 boss with a dia 2.2 pilot at the new seat standing on the bed. Everything else is the V1.8 shell.",
       "incrementalEvidence": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
-        "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+        "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
       },
       "sourceToPrint": [
         [
@@ -1283,6 +1283,158 @@
             "index": 24
           }
         ]
+      }
+    },
+    {
+      "key": "exit_clamp_loose_a",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_A.stl",
+        "sha256": "adae435d4ea2e9b1efe5f84d8c6238a919f1bf7e79b841ff741e453f445941e6"
+      },
+      "quantity": 1,
+      "color": "Black",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u6253\u5370\u4e00\u4e2a? \u6bd4\u5982\u4e00\u4e2a\u4e24\u7247\u5f0f\u7684\u5361\u6263\", then \"\u5361\u6263\u6309\u6982\u5ff5\u56fe\"): loose half A of the head-exit wire clamp, bore dia 7.8 with the fixed half. It closes the front-right side of the exit round the camera cable and the nine head wires: it slides down from above, its two tongues drop into the pockets behind the lips of the fixed half at 60 and 240 deg, and a barb at the bottom of each tongue clicks into its lip (0.2 mm interference; the C closes about 0.35 mm at each tongue). 236.6 mm3. Print both and fit the one that grips the bundle.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+        "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -10.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          18.5
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          124.31
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -2.4414062522737368e-06,
+      "flatContactAreaMm2": 22.62065289976954,
+      "bounds": [
+        [
+          -3.956368923187256,
+          -5.336626052856445,
+          0.0
+        ],
+        [
+          5.199994087219238,
+          5.199976921081543,
+          10.909996032714844
+        ]
+      ],
+      "vertexCount": 687,
+      "triangleCount": 1370,
+      "tipAngleDeg": 26.85,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 26.9 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.2,
+        "samples": 8820,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "exit_clamp_loose_b",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_B.stl",
+        "sha256": "85ebfb07f69c188129fb965889c65f2b62634bc8064056845e11f7dd5d5c5b55"
+      },
+      "quantity": 1,
+      "color": "Black",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u6253\u5370\u4e00\u4e2a? \u6bd4\u5982\u4e00\u4e2a\u4e24\u7247\u5f0f\u7684\u5361\u6263\", then \"\u5361\u6263\u6309\u6982\u5ff5\u56fe\"): loose half B of the head-exit wire clamp, a 0.4 mm thicker wall, bore dia 7.0, for a thinner bundle. It closes the front-right side of the exit round the camera cable and the nine head wires: it slides down from above, its two tongues drop into the pockets behind the lips of the fixed half at 60 and 240 deg, and a barb at the bottom of each tongue clicks into its lip (0.2 mm interference; the C closes about 0.35 mm at each tongue). 294.5 mm3. Print both and fit the one that grips the bundle.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+        "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -10.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          18.5
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          124.31
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -2.4414062522737368e-06,
+      "flatContactAreaMm2": 28.19609693897678,
+      "bounds": [
+        [
+          -3.956368923187256,
+          -5.336626052856445,
+          0.0
+        ],
+        [
+          5.199994087219238,
+          5.199976921081543,
+          10.909996032714844
+        ]
+      ],
+      "vertexCount": 683,
+      "triangleCount": 1362,
+      "tipAngleDeg": 27.86,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 27.9 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.6,
+        "samples": 8901,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
       }
     }
   ]

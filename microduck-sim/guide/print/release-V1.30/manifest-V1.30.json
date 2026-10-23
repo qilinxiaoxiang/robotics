@@ -3,8 +3,8 @@
  "releaseKind": "incremental",
  "version": "V1.30",
  "prototype": true,
- "prototypeScope": "V1.30 delta package (D-023): one White plate with the U20 face panel, one Black plate with the U20 eye trim and the jaw support, one Yellow plate with the lower head shell. The face and trim take the Innomaker U20CAM-720P USB camera; the jaw support and the shell open the left-rear head exit to dia 11 so the camera cable leaves the head whole. All four replace printed parts. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted.",
- "knownFitBoundary": "Camera dimensions (lens seat 5.5, lens 15.4, ring dia 15.1, connector 10 x 4.5 x 3) are read off the product renders and the Innomaker manual, not measured: only a lens height of 12 mm or less would clip the field (checks.json sensitivityToLensHeight); confirm with calipers on the OMX arm camera before the camera goes on. Boss pilots dia 1.7 for M2 x 6 (4.4 mm of thread); the trim bore dia 16.2 is 0.55 mm clear of the lens ring. The exit parts: the moved M2.6 seat and the tie window are new, not yet printed; the camera cable diameter (4 mm) is assumed. Printed sizes not measured.",
+ "prototypeScope": "V1.30 delta package (D-023): one White plate with the U20 face panel, one Black plate with the U20 eye trim, the jaw support and the two loose halves (A, B) of the exit clamp, one Yellow plate with the lower head shell. The face and trim take the Innomaker U20CAM-720P USB camera 13.1 mm behind the face; the jaw support and the shell open the left-rear head exit to dia 11 so the camera cable leaves the head whole, and the jaw support carries the fixed half of the printed two-piece clamp that holds the wires there. Four parts replace printed parts, the two loose halves are new. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted.",
+ "knownFitBoundary": "Camera dimensions come from the ROBOTIS OMX-F CAD of the same camera, not from a measured unit: lens front 22.0 mm in front of the board, so it sits 0.4 mm behind the trim front. Boss pilots dia 1.7 for M2 x 6 (4.4 mm of thread); the trim bore dia 16.2 is 1.1 mm clear of the lens ring. The exit parts: the moved M2.6 seat and the clamp are new, not yet printed; the clamp barbs snap with 0.2 mm of interference, untested on a print; the camera cable diameter (4 mm) and the bundle size are assumed, hence the two loose halves. Printed sizes not measured.",
  "baselineStock": {
   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
   "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
@@ -60,7 +60,7 @@
     "key": "eye_trim",
     "copy": 1,
     "translation": [
-     80.8958,
+     61.7395,
      112.9994,
      0.0
     ]
@@ -69,8 +69,26 @@
     "key": "jaw_support",
     "copy": 1,
     "translation": [
-     120.8996,
+     101.7433,
      91.25,
+     0.0
+    ]
+   },
+   {
+    "key": "exit_clamp_loose_a",
+    "copy": 1,
+    "translation": [
+     169.8997,
+     128.0683,
+     0.0
+    ]
+   },
+   {
+    "key": "exit_clamp_loose_b",
+    "copy": 1,
+    "translation": [
+     189.056,
+     128.0683,
      0.0
     ]
    }
@@ -132,7 +150,7 @@
     "46"
    ],
    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/face_panel.stl",
-   "sha256": "60213c4302f38594e4653f837a88970871cb14e500b21c23dc229c30db625747",
+   "sha256": "40a3e58ebcd6a32ba106de69c0ae2f8a8633d901366fb90eb2ef813ce4f59e66",
    "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
    "sourceToPrint": [
     [
@@ -164,39 +182,39 @@
     "minimumAreaMm2": 3000.0
    },
    "poseName": "V1.8 pose, front on the bed, bosses up",
-   "poseOrigin": "V1.8/V1.17 face pose (release-V1.17 face_panel_a7z.sourceToPrint) applied to the robot-frame U20 face: front on the bed, the four 7.7 mm bosses up; 9.0 mm tall, 3086.4 mm2 bed contact (the dia 16.2 eye opening against dia 14.4), 3.3 mm2 of overhang steeper than 45 deg at the flare edge (face-u20/checks.json printPoses). The result equals face-u20/face_panel_u20-print.stl.",
+   "poseOrigin": "V1.8/V1.17 face pose (release-V1.17 face_panel_a7z.sourceToPrint) applied to the robot-frame U20 face: front on the bed, the four 13.1 mm bosses up; 14.38 mm tall, 3086.4 mm2 bed contact (the dia 16.2 eye opening against dia 14.4), 3.3 mm2 of overhang steeper than 45 deg at the flare edge (face-u20/checks.json printPoses). The result equals face-u20/face_panel_u20-print.stl.",
    "poseCheck": {
     "printStl": {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/face_panel_u20-print.stl",
-     "sha256": "e36d17295abdc3af35120c66159d3bb6aab4c5c7c6bc9db77fc0c2d29cef7064"
+     "sha256": "e48a54bdd9158249fb9996eb78ed4d638b7c8f6ca2a4673b9c90988fd48c81b9"
     },
     "bedContactMm2": 3093.58,
     "printSizeMm": [
      87.65,
      44.63,
-     9.0
+     14.38
     ],
     "registrationMaxDeviationMm": 0.00099945068359375,
     "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
    },
-   "changeReason": "D-023 (2026-10-22): the Innomaker U20CAM-720P USB camera takes the four face bosses. The bosses grow from 4.0 to 7.7 mm (dia 4.8, pilot dia 1.7, wall 1.55) so the camera PCB sits 2.2 mm behind the lens holder seat and the M12 lens front lands 1.6 mm behind the trim front; the eye opening grows to dia 16.2 for the dia 15.1 lens ring, with the same 45 deg flare outside. Front face otherwise unchanged (checks.json frontUnchangedOutsideBore). Four M2 x 6 into the bosses (C-camera-01..04), 4.4 mm of thread. The two side key pockets for the eye-trim tabs at (AY -/+ 7.7, AZ - 4.5) are filled through the 1.3 mm front skin: the bore cut into them, leaving 0.35 mm; the trim loses its two side tabs and the top key pair stays.",
+   "changeReason": "D-023 (2026-10-22, revised 2026-10-23): the Innomaker U20CAM-720P USB camera takes the four face bosses. Its dimensions come from the ROBOTIS OMX-F CAD (face-u20/robotis-cad/): lens front 22.0 mm in front of the board, ring dia 14.0. The bosses grow from 4.0 to 13.1 mm behind the face back (dia 4.8, pilot dia 1.7, wall 1.55) so the board sits at x 67.0 and the lens front at x 89.0, 0.4 mm behind the trim front (Shawn 2026-10-23: \"板子后移 6.6 mm\"); the eye opening grows to dia 16.2, with the same 45 deg flare outside. Front face otherwise unchanged (checks.json frontUnchangedOutsideBore). Four M2 x 6 into the bosses (C-camera-01..04), 4.4 mm of thread. The two side key pockets for the eye-trim tabs at (AY -/+ 7.7, AZ - 4.5) are filled through the 1.3 mm front skin: the bore cut into them, leaving 0.35 mm; the trim loses its two side tabs and the top key pair stays.",
    "supersedes": "face_panel_a7z (V1.17, white, printed): the A7Z face with 4.0 mm bosses for the Radxa Camera 13M 214 and a dia 14.4 eye opening",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
-    "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+    "sha256": "590fc759c745e9943be4c1976934e93648dcefe8ce1a7c4fd2193253a60844df"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/build_face_u20.py",
-     "sha256": "f6a144f7ac5080565e3e659c0cf787a1286e84b8214e02f1f48c12e6b112d2d2"
+     "sha256": "9c4711714423c875ed9252ebfc4cbd189f3c762b4cf8881cf1de933bb0e6c5d6"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/render-back.png",
-     "sha256": "1f922102fab0ca658353694eccccfac6f6172cbbd9a948e5f4db40a73da80428"
+     "sha256": "c5519108bf045bf19f239e05539f65b9d0849468a72f7d98d25f8051583dd2b5"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/render-section.png",
-     "sha256": "b8f53742625bebc20322589fd52c2ad86782addec944a4e64b626a55190d77f2"
+     "sha256": "99139f9b50dc1d455e9aa84261eaa1e76453104b53e244993ef5b2b8a8fe7234"
     }
    ],
    "thinWallAllowances": [
@@ -231,7 +249,7 @@
     "66"
    ],
    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/eye_trim.stl",
-   "sha256": "900d11db917db0a2cb83797ed2e6a5205120fdcd69d27965607be662b06d836e",
+   "sha256": "2ee4e952e35bf4fce9dfcae0d19299aeca6b02e42bcb7e1787dbbb28ffbbd6e3",
    "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
    "sourceToPrint": [
     [
@@ -267,7 +285,7 @@
    "poseCheck": {
     "printStl": {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/eye_trim_u20-print.stl",
-     "sha256": "338489b08166fcfbd4969a36e5f48ecafc218b71dbd64d2b85d060cf621a1d3e"
+     "sha256": "87ba48b2763dda08fd91990695293784819d084ac8e97b152238036110e45e1d"
     },
     "bedContactMm2": 394.09,
     "printSizeMm": [
@@ -278,24 +296,24 @@
     "registrationMaxDeviationMm": 9.527224058558659e-07,
     "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
    },
-   "changeReason": "D-023 (2026-10-22): the bore behind the flare grows from dia 14.4 to 16.2 so the U20CAM M12 lens ring (dia 15.1) passes with 0.55 mm radial clearance; the two 1.7 mm trim-screw pilots and the outer shape are unchanged (face-u20/checks.json trimSectionsRadii, optics: 2.71 mm normal clearance of the 120 deg cone, no clipping). The two 1.0 mm side tabs on the back of the ring are cut off (their face pockets are filled, see the face row); the top key pair stays.",
+   "changeReason": "D-023 (2026-10-22): the bore behind the flare grows from dia 14.4 to 16.2 so the U20CAM M12 lens ring (dia 14.0, ROBOTIS CAD) passes with 1.1 mm radial clearance; the two 1.7 mm trim-screw pilots and the outer shape are unchanged (face-u20/checks.json trimSectionsRadii, optics: 3.749 mm normal clearance of the 120 deg cone, no clipping). The two 1.0 mm side tabs on the back of the ring are cut off (their face pockets are filled, see the face row); the top key pair stays.",
    "supersedes": "eye_trim (V1.8, black, printed): bore dia 14.4, the Radxa and Pi camera lenses passed it",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
-    "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+    "sha256": "590fc759c745e9943be4c1976934e93648dcefe8ce1a7c4fd2193253a60844df"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/build_face_u20.py",
-     "sha256": "f6a144f7ac5080565e3e659c0cf787a1286e84b8214e02f1f48c12e6b112d2d2"
+     "sha256": "9c4711714423c875ed9252ebfc4cbd189f3c762b4cf8881cf1de933bb0e6c5d6"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/render-back.png",
-     "sha256": "1f922102fab0ca658353694eccccfac6f6172cbbd9a948e5f4db40a73da80428"
+     "sha256": "c5519108bf045bf19f239e05539f65b9d0849468a72f7d98d25f8051583dd2b5"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/render-section.png",
-     "sha256": "b8f53742625bebc20322589fd52c2ad86782addec944a4e64b626a55190d77f2"
+     "sha256": "99139f9b50dc1d455e9aa84261eaa1e76453104b53e244993ef5b2b8a8fe7234"
     }
    ],
    "thinWallAllowances": []
@@ -309,7 +327,7 @@
     "28"
    ],
    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/jaw_support.stl",
-   "sha256": "004e11c68940e44f22f7e7dcef8026035705d895d2b1933746658a37ebd34542",
+   "sha256": "e9795a399169cf4b939741f9a7b91b1f2bb2fa5b91d7d83a4bc17e024921ea6d",
    "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
    "sourceToPrint": [
     [
@@ -345,7 +363,7 @@
    "poseCheck": {
     "printStl": {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/jaw_support_exit-print.stl",
-     "sha256": "d93c6dc6baf0b14e6c56dcf76106cb1c8ee6eb1307d903a5da65d3f22e6f08e7"
+     "sha256": "ca38b36194f87dbf12749bd7d866378b4fabfb6e3b56c8221f1b7bfdd74fcc3b"
     },
     "bedContactMm2": 829.97,
     "printSizeMm": [
@@ -356,20 +374,20 @@
     "registrationMaxDeviationMm": 5.309346065018872e-06,
     "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
    },
-   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能把脖子那个洞搞大一点呢 别转杜邦线了\"; \"按这个做：重打颌支架和头底板放大左后出口\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Jaw support: the exit cut through its left-rear corner walls and plate, the pad moved with a dia 2.8 clearance hole, and a 1.6 x 3.2 mm window through the corner wall beside the exit (y 12.8..14.4, z 116..119.2) for the one cable tie that holds the bundle to the head.",
+   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能把脖子那个洞搞大一点呢 别转杜邦线了\"; \"按这个做：重打颌支架和头底板放大左后出口\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 11.0 exit at (10, 18.5) through the jaw support and the floor of the lower shell (free bore dia 6.8 with the fixed clamp half in it); the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Jaw support: the exit cut through its left-rear corner walls and plate, the pad moved with a dia 2.8 clearance hole, and the fixed half of the two-piece wire clamp in the exit (Shawn 2026-10-23: \"卡扣按概念图\"): an arc from 60 to 240 deg round the rear-left of the exit from the plate bottom to z 124.3, bore dia 7.8 with two 0.5 mm ribs, and at each end a lip over a pocket for a tongue of the loose half, with a recess for its barb. The pull from the neck goes into the jaw support.",
    "supersedes": "jaw_support_original (V1.6, black, printed): the left-rear screw pad at (6.6, 19) closed the corner beside ID15",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
-    "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+    "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/build_neck_exit.py",
-     "sha256": "7bf5489c94acca6d3cbd56c09cc8a4bd4596cbe3ef0c4a69d95f26a9f59996c7"
+     "sha256": "fae8ce3c5acde7af550165ea4799337b1036ba475a159ca062341184a92b1778"
     },
     {
-     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/tie_window_concept.png",
-     "sha256": "1f0053370b85a376f797183f99777b13415baed4fef651e7ea528f307c0df5c1"
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/clip_concept.png",
+     "sha256": "944a7c77a634d3242608a1993db1ef1cb6d2bf538042e489b085f3ce0a83b30a"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/seat-stack.json",
@@ -380,34 +398,34 @@
     {
      "bbox": [
       [
-       18.979,
-       69.31,
-       2.458
+       19.005,
+       69.258,
+       2.366
       ],
       [
-       37.02,
-       71.748,
+       36.919,
+       71.872,
        9.748
       ]
      ],
      "minMm": 0.793,
-     "reason": "unchanged V1.6 jaw support (release file, printed): 520 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.798 mm sampled there, 0.798 mm now, 81.43 mm2)"
+     "reason": "unchanged V1.6 jaw support (release file, printed): 485 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.798 mm sampled there, 0.798 mm now, 80.12 mm2)"
     },
     {
      "bbox": [
       [
-       6.95,
-       26.351,
-       2.924
+       6.803,
+       26.397,
+       2.902
       ],
       [
-       10.405,
-       42.071,
+       10.281,
+       41.762,
        7.75
       ]
      ],
      "minMm": 0.605,
-     "reason": "unchanged V1.6 jaw support (release file, printed): 355 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.61 mm sampled there, 0.61 mm now, 69.95 mm2)"
+     "reason": "unchanged V1.6 jaw support (release file, printed): 427 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.61 mm sampled there, 0.61 mm now, 69.8 mm2)"
     }
    ]
   },
@@ -467,16 +485,16 @@
     "registrationMaxDeviationMm": 6.548282215135259e-06,
     "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
    },
-   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能把脖子那个洞搞大一点呢 别转杜邦线了\"; \"按这个做：重打颌支架和头底板放大左后出口\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Lower shell: the exit through the floor, the old boss and the ring-wall and rib ends beside it removed, a dia 6 boss with a dia 2.2 pilot at the new seat standing on the bed. Everything else is the V1.8 shell.",
+   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能把脖子那个洞搞大一点呢 别转杜邦线了\"; \"按这个做：重打颌支架和头底板放大左后出口\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 11.0 exit at (10, 18.5) through the jaw support and the floor of the lower shell (free bore dia 6.8 with the fixed clamp half in it); the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Lower shell: the exit through the floor, the old boss and the ring-wall and rib ends beside it removed, a dia 6 boss with a dia 2.2 pilot at the new seat standing on the bed. Everything else is the V1.8 shell.",
    "supersedes": "head_bottom (V1.8, yellow, printed): the left-rear boss at (6.6, 19) and its ring wall closed the corner beside ID15",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
-    "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+    "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/build_neck_exit.py",
-     "sha256": "7bf5489c94acca6d3cbd56c09cc8a4bd4596cbe3ef0c4a69d95f26a9f59996c7"
+     "sha256": "fae8ce3c5acde7af550165ea4799337b1036ba475a159ca062341184a92b1778"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/support-blockers.json",
@@ -1003,6 +1021,150 @@
      "reason": "V1.8 support-pilot-1 branch-clearance exclusion moved with the left-rear seat to (11.6, 30.2), world coordinates."
     }
    ]
+  },
+  {
+   "key": "exit_clamp_loose_a",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_A.stl",
+   "sha256": "adae435d4ea2e9b1efe5f84d8c6238a919f1bf7e79b841ff741e453f445941e6",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -10.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     18.5
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0,
+     124.31
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 20.0
+   },
+   "poseName": "upside down, flat top on the bed",
+   "poseOrigin": "Upside down (build_neck_exit.py LOOSE_T): the flat top (z 124.31) on the bed, tongues and barbs growing up from it; 10.91 mm tall. The result equals neck-exit-20261023/exit_clamp_loose_A-print.stl.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_A-print.stl",
+     "sha256": "1bf0ebe0f745cf9c4e1d15b6fa96708f1984e2cde1af9f54a836179952ba259f"
+    },
+    "bedContactMm2": 22.62,
+    "printSizeMm": [
+     9.16,
+     10.54,
+     10.91
+    ],
+    "registrationMaxDeviationMm": 0.0,
+    "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
+   },
+   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能打印一个? 比如一个两片式的卡扣\", then \"卡扣按概念图\"): loose half A of the head-exit wire clamp, bore dia 7.8 with the fixed half. It closes the front-right side of the exit round the camera cable and the nine head wires: it slides down from above, its two tongues drop into the pockets behind the lips of the fixed half at 60 and 240 deg, and a barb at the bottom of each tongue clicks into its lip (0.2 mm interference; the C closes about 0.35 mm at each tongue). 236.6 mm3. Print both and fit the one that grips the bundle.",
+   "supersedes": "nothing (new part)",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+    "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/build_neck_exit.py",
+     "sha256": "fae8ce3c5acde7af550165ea4799337b1036ba475a159ca062341184a92b1778"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/clip_concept.png",
+     "sha256": "944a7c77a634d3242608a1993db1ef1cb6d2bf538042e489b085f3ce0a83b30a"
+    }
+   ],
+   "thinWallAllowances": []
+  },
+  {
+   "key": "exit_clamp_loose_b",
+   "color": "Black",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_B.stl",
+   "sha256": "85ebfb07f69c188129fb965889c65f2b62634bc8064056845e11f7dd5d5c5b55",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     -10.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     18.5
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0,
+     124.31
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 20.0
+   },
+   "poseName": "upside down, flat top on the bed",
+   "poseOrigin": "Upside down (build_neck_exit.py LOOSE_T): the flat top (z 124.31) on the bed, tongues and barbs growing up from it; 10.91 mm tall. The result equals neck-exit-20261023/exit_clamp_loose_B-print.stl.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/exit_clamp_loose_B-print.stl",
+     "sha256": "cf52f480356ed62984306c32965c7f4302be096c32476f4260c1fed7c1fbd843"
+    },
+    "bedContactMm2": 28.2,
+    "printSizeMm": [
+     9.16,
+     10.54,
+     10.91
+    ],
+    "registrationMaxDeviationMm": 0.0,
+    "note": "world STL in the row pose, dropped to the bed; equals the face-u20 print file"
+   },
+   "changeReason": "D-023 (Shawn 2026-10-23: \"能不能打印一个? 比如一个两片式的卡扣\", then \"卡扣按概念图\"): loose half B of the head-exit wire clamp, a 0.4 mm thicker wall, bore dia 7.0, for a thinner bundle. It closes the front-right side of the exit round the camera cable and the nine head wires: it slides down from above, its two tongues drop into the pockets behind the lips of the fixed half at 60 and 240 deg, and a barb at the bottom of each tongue clicks into its lip (0.2 mm interference; the C closes about 0.35 mm at each tongue). 294.5 mm3. Print both and fit the one that grips the bundle.",
+   "supersedes": "nothing (new part)",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+    "sha256": "49e60bc3633d2ab0487c0a9bc4b6e5a9109ca17b32d8541d65b4fe91f7539714"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/build_neck_exit.py",
+     "sha256": "fae8ce3c5acde7af550165ea4799337b1036ba475a159ca062341184a92b1778"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/clip_concept.png",
+     "sha256": "944a7c77a634d3242608a1993db1ef1cb6d2bf538042e489b085f3ce0a83b30a"
+    }
+   ],
+   "thinWallAllowances": []
   }
  ],
  "retiredParts": [

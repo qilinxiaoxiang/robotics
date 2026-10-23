@@ -85,7 +85,9 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               'camera_u20cam': 'camera_u20cam.stl', 'camera_cable_stub': 'camera_cable_stub.stl',
               # 2026-10-23 D-023: the V1.30 jaw support with the dia 11 left-rear exit (print/neck-exit-20261023/) replaces the V1.6
               # release geometry; the head splice (camera_splice_stub.stl) is retired, the camera cable runs whole.
-              'jaw_support': 'jaw_support.stl'}
+              'jaw_support': 'jaw_support.stl',
+              # the loose half of the two-piece wire clamp in that exit (size A); its fixed half is part of the jaw support
+              'exit_clamp_loose': 'exit_clamp_loose.stl'}
 
 
 def decode_guide_part(p: dict) -> tuple[np.ndarray, np.ndarray]:

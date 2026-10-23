@@ -678,7 +678,7 @@
   },
   "current_incremental_print_release": {
    "version": "V1.30",
-   "status": "RELEASED, ON HOLD",
+   "status": "RELEASED",
    "problem_ids": [
     "P5",
     "P6"
@@ -688,11 +688,11 @@
    "sourceBoundVerification": "guide/print/release-V1.30/run/final-binding-check.json",
    "nativeReview": "guide/print/release-V1.30/run/native-review.json",
    "archive": "guide/print/release-V1.30/run/zhengxia_V1.30_SD-files.zip",
-   "archiveSha256": "a875116da9989b223c4833ecb3d3c56f4c2351e49a5c9478db0da89044a7b331",
+   "archiveSha256": "b740f4877960c9f56b45586debfa981797eed0ce6f96d6da4990d861de2c9f86",
    "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.30",
    "partsSheet": "guide/print/release-V1.30/PARTS-SHEET-V1.30.html",
-   "baseline": "V1.30 is a delta on top of the printed set through V1.29: four reprints replace four printed parts (V1.17 face, V1.8 eye trim, V1.6 jaw support, V1.8 lower head shell), kept as spares.",
-   "notes": "White: U20 face panel (X1C 18 min 6.3 g, Elegoo 13 min). Black: U20 eye trim + exit jaw support side by side (X1C 1h21m 14.7 g, Elegoo 1h15m 15.8 g). Yellow: exit lower head shell, V1.8 pose and blockers, pilot-1 blocker moved with the seat, no support in any pilot (X1C 2h8m 41.6 g, Elegoo 1h51m 41.7 g). Print only after Shawn confirms the tie window (neck-exit-20261023/tie_window_concept.png). Mac mini deploy of the guide and PARTS-SHEET-V1.30 pending: this MacBook's Tailscale was logged out on 2026-10-23.",
+   "baseline": "V1.30 is a delta on top of the printed set through V1.29: four reprints replace four printed parts (V1.17 face, V1.8 eye trim, V1.6 jaw support, V1.8 lower head shell), kept as spares, and two new loose clamp halves (A, B) are added.",
+   "notes": "Rebuilt 2026-10-23 afternoon (Shawn: \"板子后移 6.6 mm、卡扣按概念图，重出 V1.30\"): camera from the ROBOTIS OMX-F CAD, board on 13.1 mm bosses at x 67.0, lens front x 89.0 (0.4 mm behind the eye trim front); the cable tie is replaced by a printed two-piece snap clamp in the dia 11 exit (fixed half in the jaw support, loose half A or B slides down, free bore dia 6.8 for A). White: U20 face panel (X1C 21 min 6.8 g, Elegoo 16 min 6.5 g). Black: U20 eye trim, exit jaw support with the fixed half, loose halves A and B (X1C 1h29m 15.8 g, Elegoo 1h25m 17.1 g). Yellow: exit lower head shell, unchanged since the morning build (X1C 2h8m 41.6 g, Elegoo 1h52m 41.7 g). OrcaSlicer tree support differs run to run on the Yellow shell: 24 or 38 support segments in the cap-through-1 keep-out from the same input; the delivered Elegoo file is a reviewed slice with 24 (V1.8: 24, limit 28). Mac mini deploy of the guide and PARTS-SHEET-V1.30 pending: this MacBook's Tailscale was logged out on 2026-10-23.",
    "previous": {
     "version": "V1.29",
     "status": "RELEASED",
@@ -734,7 +734,18 @@
      }
     }
    },
-   "hold": "2026-10-23: do not print V1.30. The ROBOTIS OMX-F CAD camera (guide/print/face-u20/robotis-cad/) puts the lens front 22.0 mm in front of the board, not 15.4: with the V1.30 face bosses the lens stands 6.2 mm proud of the eye trim. Fix proposed: board 6.6 mm back, bosses 14.3 mm. Shawn also asked for a printed two-piece clamp instead of the cable tie (neck-exit-20261023/clip_concept.png, awaiting his go)."
+   "sizeVariants": {
+    "exit_clamp_loose_b": {
+     "of": "exit_clamp_loose_a",
+     "evidence": "guide/print/neck-exit-20261023/checks.json",
+     "recordPath": [
+      "clamp",
+      "loose",
+      "B"
+     ],
+     "note": "Same outside as A, 0.4 mm thicker wall inside; printed as the spare for a thinner bundle, not drawn in the guide."
+    }
+   }
   },
   "servo_power_path": {
    "date": "2026-10-12",
@@ -1136,13 +1147,13 @@
   "head_camera_exit_20261023": {
    "date": "2026-10-23",
    "decision": "D-023",
-   "status": "U20CAM on the face; head wires and the whole camera cable leave the head through a dia 11 left-rear exit (V1.30 jaw support + lower shell); one tie inside the head, nothing on the neck. Print gate passed, release V1.30 built; not printed.",
-   "cad": "guide/print/neck-exit-20261023/build_neck_exit.py (checks.json, seat-stack.json, cable_sweep.json, support-blockers.json, tie_window_concept.png); guide/print/face-u20/build_face_u20.py (sources world/face_panel-v18.stl and world/eye_trim-v18.stl)",
+   "status": "U20CAM on the face (ROBOTIS OMX-F CAD, board at x 67.0 on 13.1 mm bosses); head wires and the whole camera cable leave the head through a dia 11 left-rear exit (V1.30 jaw support + lower shell), held by a printed two-piece snap clamp in the exit; nothing on the neck. Print gate passed, release V1.30 built; not printed.",
+   "cad": "guide/print/neck-exit-20261023/build_neck_exit.py (checks.json with the clamp checks, seat-stack.json, cable_sweep.json, support-blockers.json, clip_concept.png); guide/print/face-u20/build_face_u20.py (ROBOTIS camera in face-u20/robotis-cad/, sources world/face_panel-v18.stl and world/eye_trim-v18.stl)",
    "cable": "camera cable whole from the board, USB-A plug cut off first, cut 130 mm past the exit at the saddle and soldered to the CableCreation right-angle USB-C pigtail (B0194WSKOM); span HOME 57, trained 102, joint limits 129 mm",
    "screw": "H-jaw_support-01 M2.6 x 6 moved to (11.6, 30.2): 4.0 mm thread, 5.8 mm pilot past the tip",
    "open": [
-    "Shawn: go on the board-back fix (bosses 14.3 mm) and on the two-piece snap clamp, then rebuild face, jaw support, gate and V1.30",
-    "Shawn confirms the tie window before printing",
+    "Print V1.30, fit loose half A; if the bundle slides, fit B",
+    "Barb snap force and the grip on the real bundle are untested until the print",
     "Tailscale login on the MacBook, then deploy MICRODUCK-BUILD.html and PARTS-SHEET-V1.30.html to the Mac mini"
    ],
    "camera": "U20CAM-720P bought 2026-10-23 (Amazon order history, second unit); CableCreation B0194WSKOM in the cart 2026-10-23, not ordered"

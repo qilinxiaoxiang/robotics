@@ -7,11 +7,11 @@ whole over the jaw motor ID15 to the left-rear head exit, which the jaw support 
 (print/neck-exit-20261023/, Shawn 2026-10-23: "能不能把脖子那个洞搞大一点呢 别转杜邦线了"), leaves the head there with the nine head
 wires, and is cut to length and soldered at the saddle front to the right-angle USB-C OTG pigtail that plugs into the A7Z.
 
-Camera numbers (source and status, see checks.json 'cameraModel'): board 32 x 32, four dia 2.2 holes on a 28 mm square
-(user manual: size, hole count and diameter; pitch measured on the manual's board photo, 920 / 32.8 px per mm), M12
-lens on a two-ear holder with 18 mm ear-hole spacing (manual). HOLDER_H, LENS_H and RING_D are read off Innomaker's
-product renders (front elevation 720P-3.jpg, 43.8 px per mm) and are the numbers to confirm with calipers on the arm's
-U20CAM before printing: they set the boss length and the trim bore.
+Camera numbers come from the ROBOTIS OMX-F CAD (robotis-cad/README.md, part CAMERA_INNOMAKER_720P, read 2026-10-23): board
+32 x 32 x 1.6, four dia 2.09 holes on a 28 mm square, holder base 21.9 x 13.1 x 4.0, round body dia 13.4 to 12.0, lens
+front ring dia 14.0, lens front 22.0 above the PCB front, a 8.5 x 3.5 x 5.0 plug on the back at the +y edge. The board
+sits at x 67.0 so the lens front is at x 89.0, 0.4 behind the trim front (Shawn 2026-10-23: "板子后移 6.6 mm"); the four
+face bosses reach back 13.1 mm from the face to carry it. camera_u20cam.stl is that CAD model placed in the head.
 
 Regenerates every output in this folder from the current world STLs in ../world/:
   face_panel_u20.stl, eye_trim_u20.stl, camera_u20cam.stl    (robot frame, mm, x forward, y left, z up)
@@ -38,21 +38,21 @@ MANIFEST = HERE.parent / 'release-V1.8' / 'manifest-V1.8.json'
 CAP_NEW = HERE.parent / 'world' / 'head_cap.stl'      # the V1.17 cap as printed (D-022: its rails stay empty; no cap reprint)
 IA_CACHE = Path(os.environ.get('IA_CACHE', '/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache'))   # the print gate's solid cache (ia_lib.CACHE): head parts that have no file in print/world
 
-# ---------------------------------------------------------------- camera data
+# ---------------------------------------------------------------- camera data (ROBOTIS OMX-F CAD, robotis-cad/README.md)
+CAM_LOCAL = HERE / 'robotis-cad' / 'u20cam-local.stl'   # board in its u-v plane, lens towards -w; PCB front at w 7.38
+CAM_PCB_FRONT_W = 7.3786
 PCB = 32.0
 PCB_T = 1.6
 HOLE_PITCH = 28.0
-HOLE_D = 2.2
-HOLDER_W = 15.0        # square lens-holder block (manual photo, scaled by the 32 mm board)
-EAR_SPAN = 20.0        # the two ears along the holder's long axis (ear holes 18 mm apart, manual 'lens seat spacing')
-EAR_H = 5.0            # ear width across (modelled as a 20 x 5 box)
-HOLDER_H = 5.5         # holder block top above the PCB front         (render estimate; confirm with calipers)
-LENS_H = 15.4          # lens front above the PCB front               (render estimate; confirm with calipers)
-KNURL_D = 13.2         # knurled lens barrel                          (render estimate)
-RING_D = 15.1          # front ring of the lens, the widest part      (render estimate; confirm with calipers)
-RING_H = 4.5           # height of that ring below the lens front
-BACK_LAYER = 1.5       # components on the back of the PCB
-CONN_W, CONN_D, CONN_H = 10.0, 4.5, 3.0   # cable connector on the BACK at the bottom edge (install photo in the case manual)
+HOLE_D = 2.09
+HOLDER_Y, HOLDER_Z, HOLDER_H = 13.1, 21.9, 4.0   # holder base (its long side along robot z)
+BODY_D, BODY_H = 13.4, 12.0                    # round lens-holder body, top above the PCB front
+BARREL_D = 11.9                                # lens barrel, from the body top to the ring
+LENS_H = 22.0          # lens front above the PCB front
+RING_D = 14.0          # front ring of the lens, the widest part
+RING_H = 4.0           # height of that ring below the lens front
+BACK_LAYER = 1.0       # components on the back of the PCB
+PLUG_Y, PLUG_Z, PLUG_H = (10.9, 14.4), (-10.7, -2.2), 5.0   # cable plug on the back, offsets from the lens axis
 CABLE_D = 4.0          # the camera's own round cable (assumed; the manual gives only the length, 1 m)
 FOV_H, FOV_D = 102.0, 120.0               # manual
 FOV_V = math.degrees(2 * math.atan(math.tan(math.radians(FOV_H / 2)) * 9 / 16))   # 16:9 sensor, about 69.6
@@ -65,9 +65,9 @@ TRIM_FRONT = 89.4
 BOSS_R = 2.4
 PILOT_D = 1.7
 PILOT_DEPTH = 5.0      # blind pilot from the boss top
-FACE_GAP = 2.2         # holder block top to the face back (the ear tips then stay 0.6 mm behind the trim screw heads)
+LENS_FRONT = 89.0      # 0.4 mm behind the trim front
 SCREW_HEAD_H = 1.6
-BORE_D = 16.2          # new eye bore in the face and the trim (lens ring 15.1 + 0.55 radial; printed holes come out about 0.2 smaller)
+BORE_D = 16.2          # eye bore in the face and the trim (lens ring 14.0 + 1.1 radial; printed holes come out about 0.2 smaller)
 CORNER_LEN, TRIM_LEN = 6.0, 6.0
 WORLD_PARTS = ['head_bottom', 'jaw_frame', 'amplifier', 'speaker']
 CACHE_PARTS = ['jaw_support', 'head_yaw_link', 'motor15', 'motor13', 'motor14', 'touch_pad_l1', 'touch_pad_l2', 'touch_xiao']   # from the gate cache; the cable lies over ID15 under the left touch pads, the leads pass the XIAO
@@ -193,42 +193,36 @@ checks['axis'] = {'eyeOpeningCentre_face_x80.75': [round(AY, 3), round(AZ, 3)],
                   'eyeOpeningRadiusV18': round(float(np.ptp(eye_loop[:, 1]) / 2), 3), 'used': [round(AY, 3), round(AZ, 3)]}
 
 # ---------------------------------------------------------------- camera placement
-PCB_FRONT = FACE_BACK - FACE_GAP - HOLDER_H        # 73.6
-PCB_BACK = PCB_FRONT - PCB_T                       # 72.0
-LENS_FRONT = PCB_FRONT + LENS_H                    # 89.0
+PCB_FRONT = LENS_FRONT - LENS_H                    # 67.0
+PCB_BACK = PCB_FRONT - PCB_T                       # 65.4
 h = PCB / 2
 pcb_lo, pcb_hi = np.array([PCB_BACK, AY - h, AZ - h]), np.array([PCB_FRONT, AY + h, AZ + h])
 corners = [(AY + sy * HOLE_PITCH / 2, AZ + sz * HOLE_PITCH / 2) for sy in (-1, 1) for sz in (-1, 1)]
 comp = {
     'pcb': (pcb_lo, pcb_hi),
-    'holder': (np.array([PCB_FRONT, AY - HOLDER_W / 2, AZ - HOLDER_W / 2]),
-               np.array([PCB_FRONT + HOLDER_H, AY + HOLDER_W / 2, AZ + HOLDER_W / 2])),
-    'holder_ears': (np.array([PCB_FRONT, AY - EAR_H / 2, AZ - EAR_SPAN / 2]),
-                    np.array([PCB_FRONT + HOLDER_H, AY + EAR_H / 2, AZ + EAR_SPAN / 2])),
-    'lens_knurl': (np.array([PCB_FRONT + HOLDER_H, AY - KNURL_D / 2, AZ - KNURL_D / 2]),
-                   np.array([LENS_FRONT - RING_H, AY + KNURL_D / 2, AZ + KNURL_D / 2])),
+    'holder': (np.array([PCB_FRONT, AY - HOLDER_Y / 2, AZ - HOLDER_Z / 2]),
+               np.array([PCB_FRONT + HOLDER_H, AY + HOLDER_Y / 2, AZ + HOLDER_Z / 2])),
+    'body': (np.array([PCB_FRONT + HOLDER_H, AY - BODY_D / 2, AZ - BODY_D / 2]),
+             np.array([PCB_FRONT + BODY_H, AY + BODY_D / 2, AZ + BODY_D / 2])),
+    'lens_barrel': (np.array([PCB_FRONT + BODY_H, AY - BARREL_D / 2, AZ - BARREL_D / 2]),
+                    np.array([LENS_FRONT - RING_H, AY + BARREL_D / 2, AZ + BARREL_D / 2])),
     'lens_ring': (np.array([LENS_FRONT - RING_H, AY - RING_D / 2, AZ - RING_D / 2]),
                   np.array([LENS_FRONT, AY + RING_D / 2, AZ + RING_D / 2])),
-    'connector_back': (np.array([PCB_BACK - CONN_H, AY + h - CONN_D, AZ - CONN_W / 2]),
-                       np.array([PCB_BACK, AY + h, AZ + CONN_W / 2])),
+    'connector_back': (np.array([PCB_BACK - PLUG_H, AY + PLUG_Y[0], AZ + PLUG_Z[0]]),
+                       np.array([PCB_BACK, AY + PLUG_Y[1], AZ + PLUG_Z[1]])),
+    'back_layer': (np.array([PCB_BACK - BACK_LAYER, AY - h, AZ - h]), np.array([PCB_BACK, AY + h, AZ + h])),
 }
-bl_lo, bl_hi = np.array([PCB_BACK - BACK_LAYER, AY - h, AZ - h]), np.array([PCB_BACK, AY + h, AZ + h])
-comp['back_layer'] = (bl_lo, bl_hi)
-corner_cut = [box([bl_lo[0] - 1, y - 2, z - 2], [PCB_BACK + 0.01, y + 2, z + 2]) for y, z in corners]
-pcb_m = diff(box(pcb_lo, pcb_hi), [xcyl(HOLE_D / 2, PCB_BACK - 1, PCB_FRONT + 1, y, z) for y, z in corners])
-back_m = diff(box(bl_lo, bl_hi + np.array([0.01, 0, 0])), corner_cut)
-camera = union([pcb_m, back_m,
-                box(comp['holder'][0] - [0.01, 0, 0], comp['holder'][1]),
-                box(comp['holder_ears'][0] - [0.01, 0, 0], comp['holder_ears'][1]),
-                xcyl(KNURL_D / 2, PCB_FRONT + HOLDER_H - 0.01, LENS_FRONT - RING_H + 0.01, AY, AZ),
-                xcyl(RING_D / 2, LENS_FRONT - RING_H, LENS_FRONT, AY, AZ),
-                box(comp['connector_back'][0], comp['connector_back'][1] + [0.01, 0, 0])])
+# the CAD model: w -> -x (lens forward), v -> +y (plug edge to robot left), u -> +z
+camera = trimesh.load(CAM_LOCAL, force='mesh')
+camera.apply_transform(np.array([[0, 0, -1, PCB_FRONT + CAM_PCB_FRONT_W], [0, 1, 0, AY], [1, 0, 0, AZ], [0, 0, 0, 1.0]]))
+assert abs(camera.bounds[1, 0] - LENS_FRONT) < 0.002 and abs(camera.bounds[0, 0] - (PCB_BACK - PLUG_H)) < 0.01, camera.bounds
 camera.export(HERE / 'camera_u20cam.stl')
 # the camera's own cable inside the head: out of the connector to +y (robot left), up over the jaw support front wall and
 # along x over the left half of ID15 to x 26; from there content/routes.json cam_usb carries it to the dia 11 left-rear
 # exit, down the neck and to the pigtail splice at the saddle (this stub is for the pictures and the near-field clearance).
-CABLE_PTS = [np.array([PCB_BACK - CONN_H / 2, AY + h, AZ]), np.array([62.0, 18.0, 134.0]), np.array([54.0, 20.0, 137.0]),
-             np.array([48.0, 24.0, 137.0]), np.array([45.0, 26.0, 137.0]),   # out of the connector's +y edge, up over the jaw support front wall (free radius >= 4.7 there, scratchpad free_map 2026-10-22)
+PLUG_C = (AY + sum(PLUG_Y) / 2, AZ + sum(PLUG_Z) / 2)
+CABLE_PTS = [np.array([PCB_BACK - PLUG_H + 0.6, *PLUG_C]), np.array([57.0, 14.0, 128.0]), np.array([54.0, 20.0, 137.0]),
+             np.array([48.0, 24.0, 137.0]), np.array([45.0, 26.0, 137.0]),   # straight back out of the plug, up and left over the jaw support front wall (centreline 3.7 mm from it, scratchpad v130b/probe_cable.py 2026-10-23)
              np.array([26.0, 26.0, 137.0])]   # along x over the left half of the ID15 case (top 128.6), under the left touch pads (l1 bottom 141.5 at y 31; free radius 5.7..7.3 along this line); ends at x 26, where the two left touch-pad leads (18..22.5, 27.6..28.5, 139.5) turn to the XIAO
 
 
@@ -256,7 +250,7 @@ cut = box([70.0, AY - 20, AZ - 20], [FACE_BACK, AY + 20, AZ + 20])      # V1.8 c
 face = diff(face18, [cut])
 removed = float(face18.volume - face.volume)
 PILOT_END = PCB_FRONT + PILOT_DEPTH                                      # 78.6; boss floor to the face back 1.5
-bosses = [xcyl(BOSS_R, PCB_FRONT, FACE_BACK + 0.4, y, z) for y, z in corners]
+bosses = [xcyl(BOSS_R, PCB_FRONT + 0.02, FACE_BACK + 0.4, y, z) for y, z in corners]   # tops 0.02 mm off the PCB front: a seated contact, not an overlap
 face = union([face] + bosses)
 face = diff(face, [xcyl(PILOT_D / 2, PCB_FRONT - 1.0, PILOT_END, y, z, 32) for y, z in corners])
 # The V1.8 face has three key pockets through its 1.3 mm front skin for the eye trim's back tabs: two 2.5 x 3.3 wedges at
@@ -380,7 +374,7 @@ def cone_check(lens_front, fov_d=FOV_D):
 
 cone = cone_check(LENS_FRONT)
 sens = {}
-for lh in np.arange(9.0, 18.1, 1.0):
+for lh in np.arange(18.0, 24.1, 1.0):
     c = cone_check(PCB_FRONT + lh)
     sens[f'LENS_H {lh:.0f}'] = {'lensFrontX': round(PCB_FRONT + lh, 2), 'minNormalClearanceMm': round(min(v['minNormalClearanceMm'] for v in c.values()), 3),
                                'clipped': any(v['minNormalClearanceMm'] < 0 for v in c.values())}
@@ -410,7 +404,7 @@ for s, d in screws.items():
     lo = np.array([d['head_x'][0], d['y'] - 2.0, d['z'] - 2.0])
     hi = np.array([d['head_x'][1], d['y'] + 2.0, d['z'] + 2.0])
     row = {n: round(box_mesh_dist(lo, hi, m), 3) for n, m in head.items()}
-    for k in ('holder', 'holder_ears', 'connector_back', 'pcb'):
+    for k in ('holder', 'body', 'connector_back', 'pcb'):
         row[k] = round(box_box_dist((lo, hi), comp[k]), 3)
     if s.startswith('trim'):
         row['pcb_front_gap'] = round(d['head_x'][0] - PCB_FRONT, 3)
@@ -423,10 +417,10 @@ for n, m in head.items():
 for j, (y, z) in enumerate(corners):
     lo, hi = np.array([PCB_FRONT, y - BOSS_R, z - BOSS_R]), np.array([FACE_BACK, y + BOSS_R, z + BOSS_R])
     clear[f'boss_{j + 1}'] = {n: round(box_mesh_dist(lo, hi, m), 3) for n, m in head.items()}
-    clear[f'boss_{j + 1}']['holder_ears'] = round(box_box_dist((lo, hi), comp['holder_ears']), 3)
+    clear[f'boss_{j + 1}']['holder'] = round(box_box_dist((lo, hi), comp['holder']), 3)
 clear['cable_stub'] = {n: round(mesh_mesh_dist(cable, m, cable.bounds[0], cable.bounds[1]), 3) for n, m in others.items()}
 clear['lens_ring_vs_bore'] = {'radialMm': round((BORE_D - RING_D) / 2, 3), 'trimBoreD': BORE_D, 'ringD': RING_D}
-clear['holder_top_to_face_back'] = round(FACE_BACK - (PCB_FRONT + HOLDER_H), 3)
+clear['body_top_to_face_back'] = round(FACE_BACK - (PCB_FRONT + BODY_H), 3)
 mins = {}
 for k, row in clear.items():
     if k.startswith('_') or not isinstance(row, dict):
@@ -434,13 +428,14 @@ for k, row in clear.items():
     for n, v in row.items():
         if isinstance(v, (int, float)):
             mins[f'{k} vs {n}'] = v
-checks['clearances'] = {'note': 'Minimum distances in mm (0.25 mm sampling). Camera parts modelled as boxes and cylinders. '
+checks['clearances'] = {'note': 'Minimum distances in mm (0.25 mm sampling). Camera parts as bounding boxes of the CAD model features; '
+                                'the CAD model itself is in _intersectionVolumeCameraMm3. '
                                 'Expected designed contacts: PCB front on the four boss tops (distance 0).',
                         'table': clear, 'smallest12': dict(sorted(mins.items(), key=lambda kv: kv[1])[:12])}
 
 # face-on: vertical insertion from +40 mm (rigid camera parts, bosses and screw heads swept along z)
 sweep = {}
-rigid = {k: comp[k] for k in ('pcb', 'holder', 'holder_ears', 'lens_ring', 'connector_back', 'back_layer')}
+rigid = {k: comp[k] for k in ('pcb', 'holder', 'body', 'lens_ring', 'connector_back', 'back_layer')}
 for j, (y, z) in enumerate(corners):
     rigid[f'boss_{j + 1}'] = (np.array([PCB_FRONT, y - BOSS_R, z - BOSS_R]), np.array([FACE_BACK, y + BOSS_R, z + BOSS_R]))
 for s, d in screws.items():
@@ -483,20 +478,19 @@ checks['printability'] = {'bossWallMm': round(BOSS_R - PILOT_D / 2, 2), 'bossLen
                           'pass': BOSS_R - PILOT_D / 2 >= 1.2 and FACE_BACK - PILOT_END >= 1.2,
                           'poses': 'same sourceToPrint matrices as release-V1.8/manifest-V1.8.json (face: front on the bed, bosses up; trim: as V1.8)'}
 checks['placement'] = {'pcbFrontX': round(PCB_FRONT, 3), 'pcbBackX': round(PCB_BACK, 3), 'backComponentsToX': round(PCB_BACK - BACK_LAYER, 3),
-                       'holderTopX': round(PCB_FRONT + HOLDER_H, 3), 'lensFrontX': round(LENS_FRONT, 3),
-                       'connector': 'on the PCB back at the +y edge (robot left); the cable leaves its +y edge, rises over the jaw support front wall and lies along x over the left half of the jaw motor ID15 to x 26 (CABLE_PTS); guide/content/routes.json cam_usb carries it on through the dia 11 left-rear exit and down the neck with the nine head wires to the pigtail splice at the saddle (D-023)',
+                       'holderTopX': round(PCB_FRONT + HOLDER_H, 3), 'bodyTopX': round(PCB_FRONT + BODY_H, 3), 'lensFrontX': round(LENS_FRONT, 3),
+                       'connector': 'plug on the PCB back near the +y edge (robot left), below the lens axis; the cable leaves it straight back, rises over the jaw support front wall and lies along x over the left half of the jaw motor ID15 to x 26 (CABLE_PTS); guide/content/routes.json cam_usb carries it on through the dia 11 left-rear exit and down the neck with the nine head wires to the pigtail splice at the saddle (D-023)',
                        'connectorBox': [np.round(v, 2).tolist() for v in comp['connector_back']],
                        'cornerHoles_yz': [[round(y, 2), round(z, 2)] for y, z in corners], 'boreD': BORE_D}
 checks['cameraModel'] = {
-    'fromManual': {'board': '32 x 32 mm', 'holes': '4, dia 2.2', 'lens': 'M12, lens seat spacing 18 mm', 'fov': 'D 120, H 102', 'cable': '1 m', 'imageOrientation': 'portrait on the robot (connector edge to +y): 102 deg vertical, 69.6 deg horizontal',
-                   'source': 'INNO-MAKER/U20CAM-720P UserManual-v1.0.pdf (GitHub), page 3'},
-    'measuredOnPhotos': {'holePitchMm': HOLE_PITCH, 'how': 'manual page-1 board photo: hole centres 920 px apart, board 1050 px = 32 mm'},
-    'estimatedFromRenders': {'HOLDER_H': HOLDER_H, 'LENS_H': LENS_H, 'KNURL_D': KNURL_D, 'RING_D': RING_D, 'RING_H': RING_H,
-                             'how': 'inno-maker.com product render 720P-3.jpg (front elevation), 43.8 px per mm from the 32 mm board'},
-    'assumed': {'CONN': [CONN_W, CONN_D, CONN_H], 'CABLE_D': CABLE_D, 'BACK_LAYER': BACK_LAYER, 'EAR_SPAN': EAR_SPAN, 'EAR_H': EAR_H},
-    'toConfirmWithCalipers': ['LENS_H: PCB front face to the lens front (sets the boss length only through FACE_GAP; the optics table says how far back the lens may sit)',
-                              'HOLDER_H: PCB front face to the top of the square holder block (must stay behind the face back: boss length = FACE_GAP + HOLDER_H)',
-                              'RING_D: widest diameter of the lens (must pass the BORE_D bore)']}
+    'source': 'ROBOTIS OMX-F STEP (https://www.robotis.com/service/download.php?no=2224, OMX-AI-Follower.stp), part CAMERA_INNOMAKER_720P, '
+              'extracted with robotis-cad/extract_step_part.py on 2026-10-23',
+    'file': str(CAM_LOCAL.relative_to(HERE)), 'sha256': sha(CAM_LOCAL),
+    'numbers': {'PCB': PCB, 'PCB_T': PCB_T, 'HOLE_PITCH': HOLE_PITCH, 'HOLE_D': HOLE_D, 'HOLDER': [HOLDER_Y, HOLDER_Z, HOLDER_H],
+                'BODY': [BODY_D, BODY_H], 'BARREL_D': BARREL_D, 'LENS_H': LENS_H, 'RING_D': RING_D, 'RING_H': RING_H,
+                'PLUG_Y': PLUG_Y, 'PLUG_Z': PLUG_Z, 'PLUG_H': PLUG_H},
+    'fromManual': {'fov': 'D 120, H 102', 'cable': '1 m', 'source': 'INNO-MAKER/U20CAM-720P UserManual-v1.0.pdf (GitHub), page 3'},
+    'assumed': {'CABLE_D': CABLE_D, 'BACK_LAYER': BACK_LAYER}}
 
 
 def _fin(o):
@@ -536,7 +530,7 @@ def rect(lo, hi, **kw):
 
 rect(*comp['pcb'], fc='#2a6f3a', ec='k', alpha=0.55, lw=1)
 rect(*comp['holder'], fc='none', ec='#c9a400', lw=1.2, ls='--')
-rect(*comp['holder_ears'], fc='none', ec='#c9a400', lw=1.0, ls='--')
+ax.add_patch(Circle((-AY, AZ), BODY_D / 2, fc='none', ec='#c9a400', lw=1.0, ls='--'))
 ax.add_patch(Circle((-AY, AZ), RING_D / 2, fc='none', ec='#c9a400', lw=1.2))
 ax.add_patch(Circle((-AY, AZ), BORE_D / 2, fc='none', ec='k', lw=0.8, ls=':'))
 rect(*comp['connector_back'], fc='#f0f0f0', ec='k', lw=1)
@@ -544,7 +538,7 @@ for y, z in corners:
     ax.add_patch(Circle((-y, z), 2.0, fc='#444', ec='k'))
 for s in ('trim_lower', 'trim_upper'):
     ax.add_patch(Circle((-screws[s]['y'], screws[s]['z']), 2.0, fc='none', ec='#0055cc', lw=1.2, ls=':'))
-ax.annotate('cable out of the back-side\nconnector towards +y (robot left)', (-(AY + h) - 2, AZ), (-40, AZ - 22), fontsize=8, arrowprops=dict(arrowstyle='->'))
+ax.annotate('cable straight back out of the\nback-side plug, then to +y (robot left)', (-(AY + PLUG_Y[1]), PLUG_C[1]), (-40, AZ - 22), fontsize=8, arrowprops=dict(arrowstyle='->'))
 ax.text(-AY, AZ - 24, f'camera from behind: 4 x M2 x {CORNER_LEN:.0f} at the corners (grey) into {FACE_BACK - PCB_FRONT:.1f} mm bosses\n'
         f'dotted blue: 2 x M2 x 6 trim screws between the bosses; dotted black: eye bore dia {BORE_D}', ha='center', fontsize=8)
 ax.set_xlim(-45, 30)
@@ -552,7 +546,7 @@ ax.set_ylim(106, 157)
 ax.set_aspect('equal')
 ax.set_xlabel('-y (mm)  [viewer left = robot +Y]')
 ax.set_ylabel('z (mm)')
-ax.set_title('Face U20, back view with the U20CAM-720P (PCB transparent)')
+ax.set_title('Face U20, back view with the U20CAM-720P (ROBOTIS CAD; PCB transparent)')
 fig.tight_layout()
 fig.savefig(HERE / 'render-back.png', dpi=130)
 plt.close(fig)
@@ -583,7 +577,7 @@ for ax, (o, nrm, ix, title) in zip(axs, [([0, AY, 0], [0, 1, 0], (0, 2), f'secti
     ax.set_xlabel('x (mm)')
     ax.grid(alpha=0.25)
 o = cone['eye_trim_u20']
-axs[0].text(45, AZ - 28, f'PCB front x {PCB_FRONT:.1f}, holder top {PCB_FRONT + HOLDER_H:.1f} (face back {FACE_BACK}), lens front {LENS_FRONT:.1f} (trim front {TRIM_FRONT})\n'
+axs[0].text(45, AZ - 28, f'PCB front x {PCB_FRONT:.1f}, body top {PCB_FRONT + BODY_H:.1f} (face back {FACE_BACK}), lens front {LENS_FRONT:.1f} (trim front {TRIM_FRONT})\n'
             f'cone clearance to trim {o["minNormalClearanceMm"]:.2f} mm; bore dia {BORE_D} for the dia {RING_D} lens ring', fontsize=8)
 fig.tight_layout()
 fig.savefig(HERE / 'render-section.png', dpi=120)

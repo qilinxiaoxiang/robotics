@@ -74,12 +74,12 @@ PAIR_TEXT = {
         'c', 'Right-angle USB-C plug of the camera pigtail (D-023) seated in the A7Z OTG socket through the saddle front-wall notch: plug in socket.', 'No change.'),
     # 2026-10-22 D-023 U20 camera (print/face-u20/checks.json): the Innomaker U20CAM-720P on the face bosses, its cut cable and the splice.
     frozenset(['camera_u20cam', 'face_panel']): (
-        'c', 'Camera PCB front face on the tops of the four face bosses (x 72.4, checks.json clearances pcb/face_panel_u20 0.0), held by four M2 x 6; '
-             'the lens holder stands in the dia 16.2 eye opening with 0.55 mm radial clearance: a designed seat.', 'No change.'),
+        'c', 'Camera PCB front face on the tops of the four 13.1 mm face bosses (x 67.0, modelled 0.02 mm off; checks.json clearances pcb/face_panel_u20), '
+             'held by four M2 x 6; the lens (ROBOTIS OMX-F CAD) passes the dia 16.2 eye opening with 1.1 mm radial clearance: a designed seat.', 'No change.'),
     frozenset(['camera_u20cam', 'eye_trim']): (
-        'c', 'Only if the envelopes meet: the M12 lens ring (dia 15.1) passes the dia 16.2 trim bore with 0.55 mm radial clearance (checks.json intersection volume 0).', 'No change.'),
+        'c', 'Only if the envelopes meet: the M12 lens ring (dia 14.0) passes the dia 16.2 trim bore with 1.1 mm radial clearance (checks.json intersection volume 0).', 'No change.'),
     frozenset(['camera_u20cam', 'camera_cable_stub']): (
-        'c', "The camera's own cable leaves the connector on the PCB back (+Y edge): one purchased assembly drawn as board and cable stub.", 'No change.'),
+        'c', "The camera's own cable leaves the plug on the PCB back (near the +Y edge): one purchased assembly drawn as board and cable stub.", 'No change.'),
     frozenset(['sd_thermal_pad', 'sd_soc_a733']): (
         'c', '0.5 mm thermal pad lying on the A733 top face (z 50.2): pad contact by design.', 'No change.'),
     frozenset(['sd_heatsink', 'sd_thermal_pad']): (

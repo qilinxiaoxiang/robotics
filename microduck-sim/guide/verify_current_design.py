@@ -115,7 +115,20 @@ def main() -> int:
     for pt in colour_only:
         if not pt.get('replacesStockIds') or any(stock.get(str(i)) != pt['sha256'] for i in pt['replacesStockIds']):
             fail('release', 'colour_only_reprint_not_stock', pt['key'])
-    released = {sha(rel(pt['path'])) for pt in manifest['parts'] if rel(pt['path']).is_file() and pt not in colour_only}
+    # A size variant (V1.30 loose clamp half B beside A) is printed as a spare and never drawn: the guide draws the part it
+    # varies, and the variant's own fit record (no overlap with its neighbours, walls passed) stands in for the gate.
+    variants = rel_.get('sizeVariants', {})
+    keys = {pt['key']: pt for pt in manifest['parts']}
+    for key, v in variants.items():
+        rec = json.loads(rel(v['evidence']).read_text())
+        for step in v['recordPath']:
+            rec = rec[step]
+        fits = ([rec[k]['intersectionMm3'] for k in ('vsJawSupport', 'vsHeadBottom')] == [0.0, 0.0] and rec['wallCheck']['passed'] is True
+                and all(n['minMm'] != 0 for n in rec['vsNeighbours'].values()))
+        if key not in keys or v['of'] not in keys or sha(rel(keys[v['of']]['path'])) not in world.values() or not fits:
+            fail('release', 'size_variant_unchecked', key)
+    c['sizeVariants'] = sorted(variants)
+    released = {sha(rel(pt['path'])) for pt in manifest['parts'] if rel(pt['path']).is_file() and pt not in colour_only and pt['key'] not in variants}
     c['partsInGuideWorld'] = sum(1 for h in released if h in world.values())
     if c['partsInGuideWorld'] != len(released):
         fail('release', 'released_part_missing_from_guide_geometry', len(released) - c['partsInGuideWorld'])

@@ -520,21 +520,27 @@ RETIRED_INCREMENTAL['V1.30'] = [
     ('V1.8 lower head shell', 'Yellow', HERE / 'world' / 'head_bottom_v18.stl',
      'Its floor closes the head exit to a 6 mm gap; the camera cable does not pass.', 'Lower head shell with the 11 mm exit'),
 ]
-INTRO_BY_VERSION['V1.30'] = ('V1.30 is three plates with four parts for the U20 USB camera. The face panel and eye trim take the camera and its '
-                             'larger lens. The jaw support and the lower head shell open the wire exit at the left rear of the head to 11 mm, '
-                             'so the camera cable leaves the head in one piece with the other head wires. The left-rear jaw-support screw '
-                             'moves 12 mm back, behind the jaw servo. A small window in the jaw-support corner takes the one cable tie '
-                             'that holds the bundle inside the head.')
+INTRO_BY_VERSION['V1.30'] = ('V1.30 is three plates with six parts for the U20 USB camera. The face panel and eye trim take the camera and its '
+                             'larger lens; the tall bosses hold the board 13 mm behind the face so the lens ends just behind the trim. The jaw '
+                             'support and the lower head shell open the wire exit at the left rear of the head to 11 mm, so the camera cable '
+                             'leaves the head in one piece with the other head wires. The left-rear jaw-support screw moves 12 mm back, behind '
+                             'the jaw servo. A printed two-piece clamp holds the wires in the exit: one half is part of the jaw support, the '
+                             'other is a small separate part that snaps on, printed in two sizes.')
 RETIRED_HEADING_BY_VERSION['V1.30'] = 'Keep these as spares'
 RETIRED_LEAD_BY_VERSION['V1.30'] = ('The four parts these prints replace. Keep them in case a new part does not fit. The four wire clips from V1.9 and '
                                     'V1.17 were never fitted and are not needed.')
 INCREMENTAL_NAMES_BY_VERSION['V1.30'] = dict(face_panel='Face panel (U20 camera)', eye_trim='Eye trim (U20 camera)',
-                                             jaw_support='Jaw support (11 mm exit)', head_bottom='Lower head shell (11 mm exit)')
+                                             jaw_support='Jaw support, exit + clamp', head_bottom='Lower head shell (11 mm exit)',
+                                             exit_clamp_loose_a='Exit clamp, loose half A', exit_clamp_loose_b='Exit clamp, loose half B (tighter)')
 INCREMENTAL_NOTES_BY_VERSION['V1.30'] = dict(
-    face_panel=('Prints face down, no support. The camera board screws onto the four tall bosses behind the eye with four M2 x 6.'),
+    face_panel=('Prints face down, no support. The camera board screws onto the ends of the four 13 mm bosses behind the eye with four M2 x 6.'),
     eye_trim=('Prints as V1.8. Its bore now passes the U20 lens ring; the two side tabs are gone, the top key pair stays.'),
-    jaw_support=('Prints top face down, as V1.6. Check the 11 mm exit at the left-rear corner and the small tie window beside it are '
-                 'clear. The left-rear screw (M2.6 x 6) now goes in behind the jaw servo.'),
+    jaw_support=('Prints top face down, as V1.6. The curved wall inside the 11 mm exit at the left-rear corner is the fixed half of the '
+                 'wire clamp: clear any support from its two narrow slots, one at each end behind a thin lip. The left-rear screw '
+                 '(M2.6 x 6) now goes in behind the jaw servo.'),
+    exit_clamp_loose_a=('Prints upside down on its flat top, no support. A curved strip with a tongue at each end that slides down into the '
+                        'two slots of the fixed half and clicks in. Fit this one first.'),
+    exit_clamp_loose_b=('The same strip with a 0.4 mm thicker wall, for a bundle that slides through A. Keep it as the spare.'),
     head_bottom=('Prints floor down, as V1.8, on tree support. Clear the support from the 11 mm exit in the floor and from the new screw '
                  'boss behind the jaw servo.'))
 

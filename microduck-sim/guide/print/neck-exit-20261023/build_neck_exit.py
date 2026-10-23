@@ -5,13 +5,22 @@ the jaw support's left-rear corner walls and the head floor's ring wall on the o
 jaw support's left-rear pad (H-jaw_support-01, at x 6.6, y 19) in the middle. This script opens a vertical dia 11 exit
 there (PASSAGE) through both printed parts, removes the old screw seat (boss in the head floor, hole in the pad) and puts
 a new seat on the pad's strip along the back of ID15 (NEW_SEAT): a dia 6 boss with a dia 2.2 M2.6 pilot in the head floor,
-standing on the floor plane, and a dia 6.4 pad with a dia 2.8 clearance hole in the jaw support. Everything else of the
-two parts is unchanged.
+standing on the floor plane, and a dia 6.4 pad with a dia 2.8 clearance hole in the jaw support.
+
+The wires are held in the exit by a printed two-piece clamp (Shawn 2026-10-23: "卡扣按概念图", clip_concept.png), no tie and
+no screw. The fixed half is part of the jaw support: an arc round the rear-left of the exit (60 to 240 deg, 0 deg = +x,
+90 deg = +y) that fills the exit from the plate bottom up to the corner-wall top, leaving a dia 7.8 bore with soft ribs, so a
+pull from the neck goes into the jaw support. The loose half (exit_clamp_loose_A/B, a separate print) closes the
+front-right side. It slides down from above: at 60 and 240 deg its two tongues drop into pockets behind lips of the fixed
+half, which stop it moving outwards; a small barb at the bottom of each tongue clicks into a recess in its lip as it seats,
+so it cannot ride up. The two joints are opposite each other, so the loose half has no direction to escape but up. B has a
+0.4 mm thicker wall (bore 7.0) for a thinner bundle. Everything else of the two parts is unchanged.
 
 Inputs (robot frame, mm, guide world at HOME):
-  head_bottom: guide/print/world/head_bottom.stl (the V1.8 lower head shell, printed Yellow)
+  head_bottom: guide/print/world/head_bottom_v18.stl (the V1.8 lower head shell as printed, Yellow; world/head_bottom.stl is this script's output)
   jaw_support: the V1.6 black release print file, registered to the world by v16-registration.json (printed Black)
-Outputs here: head_bottom_exit.stl, jaw_support_exit.stl (world), *-print.stl (V1.8 / V1.6 print poses), checks.json.
+Outputs here: head_bottom_exit.stl, jaw_support_exit.stl, exit_clamp_loose_A.stl, exit_clamp_loose_B.stl (world),
+*-print.stl (V1.8 / V1.6 print poses; the loose halves upside down, top on the bed), checks.json.
     /tmp/microduck-cad-venv/bin/python build_neck_exit.py   (under run_bounded_cad.py)"""
 import hashlib, json, math, sys, resource
 from pathlib import Path
@@ -40,9 +49,13 @@ RIB_STUB = ((4.0, 13.2), (8.6, 17.0))
 WALL_STUB_Y15 = ((4.6, 14.0), (12.0, 16.2))
 WALL_STUB_DIAG = ((13.0, 18.0), (15.0, 21.8))
 PLATE_STEP = ((4.6, 13.5), (8.0, 17.5))           # plate strip between its y 14.45 edge and the exit circle
-# cable-tie window through the L-corner wall beside the exit (wall x 3.17..4.81, y 9.6..16.1, up to z 124.3): a 2.5 mm tie goes
-# round the bundle, through the window and round the wall's free end, so a pull from the neck stops at the head and not at the plugs
-TIE_WINDOW = ((2.8, 12.8), (5.2, 14.4)); TIE_Z = (116.0, 119.2)
+# exit clamp (polar about the exit centre, degrees, 0 = +x, 90 = +y). Free radius round the exit (scratchpad v130b/freerad.py,
+# 2026-10-23): >= 5.5 at every angle; at 240 deg the lower shell's ring wall comes to r 6.35 up to z 115.81, so the lips start
+# above it (Z_SHOULDER); ID15 at r 6.6 (0 deg), the x 15 wall end at r 5.77 (30 deg).
+CLAMP = dict(RI=3.9, RO=5.2, joints=(60.0, 240.0), lap=22.0, gap=2.5, tipGap=4.0, bridge=6.0,
+             RT=5.1, RL0=5.3, RL1=6.9, RLOW=6.0, zShoulder=116.3, zTop=124.31, zLooseBottom=113.4,
+             ribs=(105.0, 195.0), looseRib=330.0, ribH=0.5, ribW=1.4, barb=dict(h=0.4, z=(0.1, 1.5), catchZ=1.1, span=(2.0, 16.0)),
+             recess=dict(r=5.65, z=1.7, span=(1.0, 17.0)), looseRI={'A': 3.9, 'B': 3.5})
 RIGHT_WALL_END = ((14.0, 17.5), (17.0, 21.2))     # the x 15..16.3 wall and the plate under it end square at y 21.2, clear of the exit circle
 
 
@@ -74,7 +87,7 @@ def sec(m, z):
     return g
 
 
-hb = trimesh.load(WORLD / 'head_bottom.stl', force='mesh')
+hb = trimesh.load(WORLD / 'head_bottom_v18.stl', force='mesh')
 js = trimesh.load(REG['releaseFile'], force='mesh'); js.apply_transform(np.array(REG['transformReleaseToWorld']))
 assert hb.is_volume and js.is_volume
 
@@ -111,10 +124,64 @@ js_new = diff(js, [zcyl(PASSAGE['r'], cx, cy, plate_bot - 1.0, js.bounds[1, 2] +
                    box3(WALL_STUB_Y15, plate_top, js.bounds[1, 2] + 1.0),                     # end of the y 15 wall left by the exit
                    box3(WALL_STUB_DIAG, plate_top, js.bounds[1, 2] + 1.0),                    # end of the diagonal wall left by the exit
                    box3(RIGHT_WALL_END, plate_bot - 1.0, js.bounds[1, 2] + 1.0),
-                   box3(PLATE_STEP, plate_bot - 1.0, plate_top + 0.5),
-                   box3(TIE_WINDOW, *TIE_Z)])
+                   box3(PLATE_STEP, plate_bot - 1.0, plate_top + 0.5)])
 js_new = union([js_new, zcyl(PAD_R, nx, ny, plate_bot, plate_top)])
 js_new = diff(js_new, [zcyl(CLEAR_R, nx, ny, plate_bot - 1.0, plate_top + 1.0, 32)])
+
+
+# ---------------------------------------------------------------- exit clamp
+def sector(r0, r1, a0, a1, step=1.5):
+    a = np.radians(np.linspace(a0, a1, max(3, int(abs(a1 - a0) / step) + 1)))
+    out = np.c_[cx + r1 * np.cos(a), cy + r1 * np.sin(a)]
+    inn = np.c_[cx + r0 * np.cos(a[::-1]), cy + r0 * np.sin(a[::-1])]
+    return np.vstack([out, inn])
+
+
+def rib(ang, r0, r1, w):
+    t = math.radians(ang); er, et = np.array([math.cos(t), math.sin(t)]), np.array([-math.sin(t), math.cos(t)])
+    c0 = np.array([cx, cy])
+    return np.array([c0 + er * r0 - et * w / 2, c0 + er * r1 - et * w / 2, c0 + er * r1 + et * w / 2, c0 + er * r0 + et * w / 2])
+
+
+def barb(a0, a1, RT, b, zS):
+    pts = []
+    for a in np.radians(np.linspace(a0, a1, 6)):
+        for r, z in ((RT - 0.3, b['z'][0]), (RT - 0.3, b['z'][1]), (RT + b['h'], b['catchZ']), (RT + b['h'], b['z'][1])):
+            pts.append([cx + r * math.cos(a), cy + r * math.sin(a), zS + z])
+    return trimesh.convex.convex_hull(np.array(pts))
+
+
+K = CLAMP; RI, RO, (J1, J2), L, G, TG, BR = K['RI'], K['RO'], K['joints'], K['lap'], K['gap'], K['tipGap'], K['bridge']
+ZS, ZT, ZLB = K['zShoulder'], K['zTop'], K['zLooseBottom']
+# each joint: angle, direction towards the fixed half (+1: fixed half at larger angles)
+JOINTS = ((J1, +1.0), (J2, -1.0))
+def span(j, s, d0, d1):          # angular interval from j + s*d0 to j + s*d1, as (lo, hi)
+    a, b = j + s * d0, j + s * d1; return (min(a, b), max(a, b))
+
+
+fixed = [prism(sector(RI, K['RLOW'], J1 + G / 2, J2 - G / 2), plate_bot, ZS),                       # fills the exit up to the shoulder
+         prism(sector(RI, K['RL1'], *span(J1, +1, G / 2, L + BR)), plate_bot, ZS),                  # under the 60 deg lip (plate there)
+         prism(sector(RI, RO, J1 + L, J2 - L), ZS - 0.01, ZT)]                                       # the arc above the shoulder
+for j, sg in JOINTS:
+    fixed += [prism(sector(K['RL0'], K['RL1'], *span(j, sg, G / 2, L + BR)), ZS - 0.01, ZT),          # lip over the tongue pocket
+              prism(sector(RI, K['RL1'], *span(j, sg, L, L + BR)), ZS - 0.01, ZT)]                    # bridge from the lip to the arc
+fixed += [prism(rib(a, RI - K['ribH'], RI + 0.2, K['ribW']), plate_bot, ZT) for a in K['ribs']]
+FH = union(fixed)
+recesses = [prism(sector(K['RL0'] - 0.01, K['recess']['r'], *span(j, sg, *K['recess']['span'])), ZS - 0.01, ZS + K['recess']['z'])
+            for j, sg in JOINTS]
+js_new = diff(union([js_new, FH]), recesses)
+
+
+def loose(ri):
+    parts = [prism(sector(ri, RO, J2 + G / 2, J1 - G / 2 + 360.0), ZLB, ZT),
+             prism(rib(K['looseRib'], ri - K['ribH'], ri + 0.2, K['ribW']), ZLB, ZT)]
+    for j, sg in JOINTS:
+        parts.append(prism(sector(ri, K['RT'], *span(j, sg, -G / 2 - 1.0, L - TG)), ZS + 0.1, ZT))   # tongue into the pocket
+        parts.append(barb(*span(j, sg, *K['barb']['span']), K['RT'], K['barb'], ZS))
+    return union(parts)
+
+
+LOOSE = {v: loose(r) for v, r in K['looseRI'].items()}
 
 mem('jaw support done')
 # the boss stands on the bed: in the V1.8 print pose everything below the original bed plane is cut off, then mapped back
@@ -124,11 +191,15 @@ lo, hi = hb_p.bounds; below = trimesh.creation.box(extents=[hi[0] - lo[0] + 20, 
 below.apply_translation([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, BED - 5.0])
 hb_p = diff(hb_p, [below]); hb_new = hb_p.copy(); hb_new.apply_transform(np.linalg.inv(HB_T))
 hb_p.apply_translation([0, 0, -BED]); hb_p0.apply_translation([0, 0, -BED])
-for name, m in (('head_bottom_exit', hb_new), ('jaw_support_exit', js_new)):
+for name, m in (('head_bottom_exit', hb_new), ('jaw_support_exit', js_new), *((f'exit_clamp_loose_{v}', m) for v, m in LOOSE.items())):
     assert m.is_volume, name
     m.export(HERE / f'{name}.stl')
 hb_p.export(HERE / 'head_bottom_exit-print.stl')
 js_p = js_new.copy(); js_p.apply_transform(JS_T); js_p.apply_translation([0, 0, -js_p.bounds[0, 2]]); js_p.export(HERE / 'jaw_support_exit-print.stl')
+# loose halves print upside down: their flat top (z ZT) on the bed, the tongues and barbs then grow up from the bed
+LOOSE_T = np.array([[1.0, 0, 0, -cx], [0, -1.0, 0, cy], [0, 0, -1.0, ZT], [0, 0, 0, 1.0]])
+for v, m in LOOSE.items():
+    mp = m.copy(); mp.apply_transform(LOOSE_T); assert abs(mp.bounds[0, 2]) < 1e-4, mp.bounds; mp.apply_translation([0, 0, -mp.bounds[0, 2]]); mp.export(HERE / f'exit_clamp_loose_{v}-print.stl')
 
 mem('exported')
 # ---------------------------------------------------------------- checks
@@ -185,7 +256,47 @@ out = dict(
     intersectionWithNeighboursMm3=dict(new=inter_new, old=inter_old), headBottomJawSupportOverlapMm3=inter_pair,
     printPoses=dict(head_bottom=dict(file='head_bottom_exit-print.stl', heightMm=round(float(hb_p.bounds[1, 2]), 2), bedContactMm2=contact(hb_p), v18BedContactMm2=contact(hb_p0), minZ=round(float(hb_p.bounds[0, 2]), 4), pose='V1.8 head_bottom.sourceToPrint'),
                     jaw_support=dict(file='jaw_support_exit-print.stl', heightMm=round(float(js_p.bounds[1, 2]), 2), bedContactMm2=contact(js_p), pose='V1.6 release print pose (inverse of v16-registration transformReleaseToWorld)')),
-    sha256={n: sha(HERE / n) for n in ('head_bottom_exit.stl', 'jaw_support_exit.stl', 'head_bottom_exit-print.stl', 'jaw_support_exit-print.stl')})
+    sha256={n: sha(HERE / n) for n in ('head_bottom_exit.stl', 'jaw_support_exit.stl', 'head_bottom_exit-print.stl', 'jaw_support_exit-print.stl',
+                                        'exit_clamp_loose_A.stl', 'exit_clamp_loose_B.stl', 'exit_clamp_loose_A-print.stl', 'exit_clamp_loose_B-print.stl')})
+# ---------------------------------------------------------------- clamp checks
+def bore_dia(ms, z):
+    best = 1e9
+    for m in ms:
+        g = sec(m, z)
+        if not g.is_empty: best = min(best, g.distance(Point(cx, cy)))
+    return round(2 * best, 2)
+
+
+def near(a, b, pad=3.0, n=3000):
+    """min distance from a's surface to b, b cropped to a's box + pad, in small batches (full-mesh signed distance runs out of memory)"""
+    lo, hi = a.bounds[0] - pad, a.bounds[1] + pad
+    keep = np.all(b.triangles.max(1) >= lo, 1) & np.all(b.triangles.min(1) <= hi, 1)
+    if not keep.any(): return f'>{pad}'
+    c = trimesh.Trimesh(b.vertices, b.faces[keep], process=False)
+    P = np.vstack([a.vertices, trimesh.sample.sample_surface(a, n, seed=1)[0]])
+    return round(float(min(trimesh.proximity.closest_point(c, P[k:k + 250])[1].min() for k in range(0, len(P), 250))), 2)
+
+
+import gc; gc.collect()
+clamp = {'params': CLAMP, 'boreDiaMm': {}, 'loose': {}}
+for v, m in LOOSE.items():
+    rec = {'volumeMm3': round(float(m.volume), 1), 'bodies': len(m.split(only_watertight=False)), 'bounds': np.round(m.bounds, 2).tolist(),
+           'boreDiaWithFixedHalf': {f'z{z}': bore_dia([js_new, m], z) for z in (112.5, 114.5, 117.0, 120.0, 123.5)},
+           'vsJawSupport': {'intersectionMm3': inter(m, js_new), 'minMm': near(m, js_new)},
+           'vsHeadBottom': {'intersectionMm3': inter(m, hb_new), 'minMm': near(m, hb_new)},
+           'vsNeighbours': {k: {'intersectionMm3': inter(m, O[k]), 'minMm': near(m, O[k])} for k in OTHERS}}
+    # straight insertion from 14 mm above: overlap with the jaw support at each height (the barbs pass the lips: designed)
+    sweep = []
+    for dz in np.arange(14.0, -0.01, -0.5):
+        mm = m.copy(); mm.apply_translation([0, 0, dz])
+        oth = {k: inter(mm, O[k]) for k in ('motor15', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b', 'touch_xiao')}
+        oth['head_bottom'] = inter(mm, hb_new)
+        sweep.append([round(float(dz), 1), inter(mm, js_new), max(x for x in oth.values() if isinstance(x, float)),
+                      sorted(k for k, x in oth.items() if not isinstance(x, float))])
+    rec['insertionFromAbove'] = {'columns': ['liftMm', 'overlapJawSupportMm3', 'overlapOthersMaxMm3', 'notComputed'], 'rows': sweep}
+    clamp['loose'][v] = rec
+clamp['boreDiaFixedHalfOnly'] = {f'z{z}': bore_dia([js_new], z) for z in (112.5, 114.5, 117.0, 120.0, 123.5)}
+out['clamp'] = clamp
 sys.path.insert(0, str(GUIDE.parent / 'build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009'))
 import wall_check  # noqa: E402
 ZONE_W = [((cx - 9.5, cy - 9.5), (cx + 9.5, cy + 9.5)), ((nx - 5.0, ny - 5.0), (nx + 5.0, ny + 5.0))]   # world plan boxes around the changes
@@ -201,6 +312,10 @@ def zone_regions(mprint, T, key):
     return res
 Thb = HB_T.copy(); Thb[2, 3] -= BED
 js_p0 = js.copy(); js_p0.apply_transform(JS_T); Tjs = JS_T.copy(); Tjs[2, 3] -= float(js_p0.bounds[0, 2]); js_p0.apply_translation([0, 0, -js_p0.bounds[0, 2]])
+for v in LOOSE:
+    wc = wall_check.check(trimesh.load(HERE / f'exit_clamp_loose_{v}-print.stl', force='mesh'), (), f'exit_clamp_loose_{v}')
+    out['clamp']['loose'][v]['wallCheck'] = {k: wc[k] for k in ('passed', 'minSmoothedMm', 'regions', 'smallThinPatches', 'smallThinPatchMaxMm2')}
+    print('wall check loose', v, wc['passed'], wc['failures'])
 out['wallCheck'] = {'head_bottom': zone_regions(hb_p, Thb, 'head_bottom'), 'jaw_support': zone_regions(js_p, Tjs, 'jaw_support'),
                     'head_bottom_v18': zone_regions(hb_p0, Thb, 'head_bottom'), 'jaw_support_v16': zone_regions(js_p0, Tjs, 'jaw_support')}
 for k in ('head_bottom', 'jaw_support'):
@@ -209,3 +324,6 @@ for k in ('head_bottom', 'jaw_support'):
 (HERE / 'checks.json').write_text(json.dumps(out, indent=1) + '\n')
 print(json.dumps({k: out[k] for k in ('passageDiaMm', 'volumesMm3', 'bodies', 'screwHeadToJawSupportWallsMm', 'headBottomJawSupportOverlapMm3', 'printPoses')}, indent=1))
 print('clearances', json.dumps(clear))
+print('clamp', json.dumps({v: {k: r[k] for k in ('bodies', 'boreDiaWithFixedHalf', 'vsJawSupport', 'vsHeadBottom')} for v, r in clamp['loose'].items()}, indent=1))
+print('clamp neighbours A', json.dumps(clamp['loose']['A']['vsNeighbours']))
+print('insertion A', clamp['loose']['A']['insertionFromAbove']['rows'])
