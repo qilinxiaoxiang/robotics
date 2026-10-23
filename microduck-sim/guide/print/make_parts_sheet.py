@@ -492,6 +492,22 @@ INCREMENTAL_NAMES_BY_VERSION['V1.27'] = dict(lower_right='Right lower-leg link')
 INCREMENTAL_NOTES_BY_VERSION['V1.27'] = dict(
     lower_right='The link between the right knee servo and the right ankle servo, the same part as the 10/1 print. It prints flat with support; break the support off before fitting.')
 
+# V1.31: the battery backpack frame with a wider DFR1202 slot (2026-10-23): the board did not go into the V1.20 frame.
+RETIRED_INCREMENTAL['V1.31'] = [
+    ('V1.20 battery backpack frame', 'Orange', HERE / 'release-V1.31' / 'retired' / 'battery_backpack_frame-V1.20.stl',
+     'The 5 V board does not go between its clip arms.', 'Frame with the wider board slot'),
+]
+INTRO_BY_VERSION['V1.31'] = ('V1.31 is one orange part: the battery backpack frame again, with a wider slot for the DFR1202 5 V board. '
+                             'The clip arms stand 0.5 mm off each board edge and no longer touch the ribs behind the board, so they '
+                             'bend and the two lips click over the board edge. Everything else is the V1.20 frame; the cap stays.')
+RETIRED_LEAD_BY_VERSION['V1.31'] = 'Move the switch, battery and cap over to the new frame.'
+RETIRED_HEADING_BY_VERSION['V1.31'] = 'Replace this'
+INCREMENTAL_NAMES_BY_VERSION['V1.31'] = dict(battery_backpack_frame='Battery backpack frame (wider board slot)')
+INCREMENTAL_NOTES_BY_VERSION['V1.31'] = dict(
+    battery_backpack_frame=('Prints rim down on tree support, as V1.20. Clear the support from the two clip arms on each side of the board '
+                            'slot and check each arm springs out a little under a fingertip. Push the board in power-pad edge down, '
+                            'components towards you, until the lips click over its edges.'))
+
 # V1.29: the A7Z roof saddle (D-022, 2026-10-22): the board leaves the head after the closed-head soak and rides on the torso
 # roof behind the neck, fan in the lid. Nothing printed is replaced; the V1.17 A7Z head clip stays fitted but unused.
 RETIRED_INCREMENTAL['V1.29'] = []
