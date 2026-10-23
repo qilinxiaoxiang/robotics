@@ -23,3 +23,11 @@ Scripts: `walk_segments.py LOG` (per-walk heading, turn command and dead-reckone
 - The brain restarted at 21:01 UTC (TURN_MAX 2.0, trim -0.466). Walk came straight from monitor with the robot upright (gravity -1.00). Within 0.4 s the walk61 goals ran away; by 1.2 s head yaw and head pitch goals reached +145 and +150 deg, leg current 5.3 A, servo rail 6.2 V. The head swing pulled the A7Z power lead out (Shawn), so the log ends unflushed.
 - The turn command stayed within +-1.0 (peak -0.99), so the wider limit was never used.
 - Cause: the control loop ran at 35.7 Hz (tick 29 ms, loop 26.6 ms, brain process 81-103 % of one core) against 48.4 Hz on the walk at 20:41. thermal.log: SoC 85-86 C with both CPU clusters capped at 416 MHz from about 21:00 on; at the 20:41 walk the SoC was at 39 C with the 1794 / 2002 MHz maxima. walk61 runs at 50 Hz; at 36 Hz it diverged.
+
+## Runs app1023-223352 and app1023-225437: closed-loop arcs at 0.3 rad/s, wound-up integral
+
+- First robot arcs with the IMU-held arc rate (target 17 deg/s). `arc_chunks.py` gives the mean yaw rate per command chunk after its first 0.5 s.
+- Right arcs: +2.0, -5.1 and -14.6 deg/s, with the turn command pinned at -2.0 for most of each arc. Left arcs: +3.1, +4.8, +14.6 and +8.4 deg/s.
+- Cause of the slow left arcs: the heading integral kept growing while the right arc held the command at -2.0. The left arc after it kept the command at -1.7 to -2.0 for 1.5 s (225437, t 85.5-87) or the whole 3.7 s arc (223352), then overshot to +1.9.
+- Fix (walk_brain.py): the integral learns only on straight walks and stops growing while the command is at TURN_MAX. As-built sim, straight 2 s, right arc 4 s, left arc 4 s (`--vtheta-seq`), yaw torque 0.025 N m: left arc in its first, second and last two seconds -0.2 / +3.2 / +9.5 deg/s before, +12.6 / +15.0 / +22.0 after; 0.020 N m -1.6 / +25.2 / +23.7 before, +4.0 / +16.6 / +19.5 after; no torque unchanged; straight walk -2.1 deg/s, no fall.
+- Not fixed by this: at 0.025 N m the right arc reaches only +1.9 deg/s in the sim before and after, as on the robot. With the command already at -2.0, the drift of the moment is larger than the right turn walk61 can make.
