@@ -26,6 +26,10 @@ it the estimate is only logged (shadow, today's behaviour). The fall check (tilt
 the robot. --wired-guards adds walk_wired.py's walk-mode stops: an action over 3.0 rad in 3 of 10 ticks or tilt over
 30 deg holds the last goals and switches to stand mode for the rest of the run, a single tick over 3.0 is clipped; with
 --hold the tilt stop is skipped while the grip engagement e > 0.3, and the checks use the applied (scaled) action.
+--wired-hold (with --hold) gates the hold as walk_wired.py does (2026-10-23): the velocity command is smoothed with
+CMD_ALPHA, a walk meeting a head grip is stopped (GripStop), the hold acts only where hold_allowed says so (at once
+after a grip stop) and the authority ramps across every on/off edge; without it the estimate reaches the Brain in any
+walk-mode tick, as in the 2026-10-22 runs.
 
   ~/.venvs/microduck-dyn/bin/python brain_sim_check.py [--volt 5.0] [--walk-ramp 0] [--com-x 5] [--zero left_hip_pitch -8 ...]
 """
@@ -58,8 +62,9 @@ from walk_brain import STAND as BRAIN_STAND  # noqa: E402
 from battery import stop_command, stop_settled  # noqa: E402
 from walk_wired import HARD_MAX_ACTION, HARD_WINDOW, MAX_TILT_DEG, MAX_TILT_GP_DEG, MAX_TILT_SIT_DEG, OVER_LIMIT_TICKS  # noqa: E402
 from walk_wired import QUACK_HEAD_S, quack_head_block, quack_head_pose  # noqa: E402
+from walk_wired import CMD_ALPHA, GripStop, hold_allowed  # noqa: E402
 import walk_brain  # noqa: E402
-from hold import PAD_HI, PADS, HoldEstimator  # noqa: E402
+from hold import DOWN_RATE, PAD_HI, PADS, UP_RATE, HoldEstimator  # noqa: E402
 
 MODELS = os.path.join(WHOLE, "runtime-overlay", "models")
 
@@ -248,6 +253,8 @@ def run(args):
     guard = dict(stop=None, why=None, hard_hits=collections.deque(maxlen=HARD_WINDOW), last_goal=None, clipped=0,
                  tilt_skipped=0)
     load_now = 1.0
+    grip_stop, cmd_s, hold_s, wz_t, grip_stop_at = GripStop(), [0.0, 0.0, 0.0], 1.0, None, None  # --wired-hold
+    settled_at = None
     for tick in range(int(T / 0.02)):
         t = tick * 0.02
         # what the sensors report, in commanded (encoder) frame and the BNO's own frame
@@ -307,7 +314,28 @@ def run(args):
         est.update(0.02, counts=counts, age=0.0, load=None if args.hold_uncal else load_now)
         if guard["stop"] is not None:  # walk_wired wrote stand (monitor out of a sit or crouch) to the control file
             want = {"mode": guard["stop_to"]}
-        if args.hold and want.get("mode") == "walk":
+        if args.wired_hold:  # walk_wired.py's order: grip stop on the file command, then the smoothing, then the gate
+            if grip_stop.update(want, args.hold and not args.hold_uncal, est.e) == "stop" and grip_stop_at is None:
+                grip_stop_at = round(t, 2)
+            want = grip_stop.apply(want)
+            if want.get("mode") == "walk":
+                for k, key in enumerate(("vx", "vy", "vtheta")):
+                    cmd_s[k] += CMD_ALPHA * (float(want.get(key, 0)) - cmd_s[k])
+                    cmd_s[k] = 0.0 if abs(cmd_s[k]) < 1e-4 else cmd_s[k]
+                moving = any(cmd_s) or any(float(want.get(k, 0)) for k in ("vx", "vy", "vtheta"))
+                want = dict(want, vx=cmd_s[0], vy=cmd_s[1], vtheta=cmd_s[2])
+                wz_t = None if moving else (t if wz_t is None else wz_t)
+            else:
+                cmd_s, wz_t = [0.0, 0.0, 0.0], None
+            on = args.hold and not args.hold_uncal and hold_allowed(want, brain, None if wz_t is None else t - wz_t,
+                                                                     grip_stop.on)
+            target = est.s if on else 1.0
+            hold_s = max(target, hold_s - DOWN_RATE * 0.02) if target < hold_s else min(target, hold_s + UP_RATE * 0.02)
+            if on or hold_s < 1.0:
+                want["hold"] = {"s": hold_s, "kp": est.gains() if on else None}
+            if not args.no_settle and grip_stop.settle(brain, hold_s) and settled_at is None:
+                settled_at = round(t, 2)
+        elif args.hold and want.get("mode") == "walk":
             want["hold"] = {"s": est.s, "kp": est.gains()}
         age = args.sensor_delay * 0.02 + 0.004
         imu_age = age + (t - imu_t)
@@ -389,6 +417,8 @@ def run(args):
             Rh = d.xmat[trunk].reshape(3, 3)
             raw = info.get("action_raw", info.get("action"))
             hrows.append(dict(t=round(t, 2), load=load_now, est=est.record(), h_load=est.h_load,
+                              s_applied=want.get("hold", {}).get("s", 1.0) if want.get("mode") == "walk" else 1.0,
+                              grip_stop=grip_stop.on, vx=want.get("vx"),
                               raw=None if raw is None else list(raw),
                               act=None if info.get("action") is None else list(info["action"]),
                               tau={n: float(d.actuator_force[act_id[n]]) for n in ("neck_pitch", "head_pitch")},
@@ -505,6 +535,12 @@ def run(args):
                     peak_tilt=round(max(h[1] for h in seg), 1) if seg else None, stable_after_s=stable_s,
                     end_trunk_z=round(hist[-1][3], 4) if hist else None)
     holdr = hold_summary(args, hrows, hand, guard, stable_after, leg_names) if scen else None
+    if holdr is not None and args.wired_hold:
+        g0 = args.grip_at
+        half = next((r["t"] for r in hrows if g0 is not None and r["t"] >= g0 and r["s_applied"] < 0.5), None)
+        holdr.update(wired_hold=True, grip_stop_at=grip_stop_at, grip_stop_end=grip_stop.on, stand61_from=settled_at,
+                     applied_s_below_0p5_after_grip_s=None if half is None else round(half - g0, 2),
+                     min_applied_s=round(min(r["s_applied"] for r in hrows), 3))
     return dict(model=args.model, volt=args.volt, walk_ramp=args.walk_ramp, com_x_mm=args.com_x, zero=zero, imu_pitch=args.imu_pitch,
                 kick=kick, sit=sitr, hold=holdr, quack_head_ran={str(k): v for k, v in quack_ok.items()},
                 quack_head_reached={str(k): {n: round(v, 3) for n, v in r.items()} for k, r in quack_reach.items()},
@@ -694,6 +730,9 @@ def main():
     ap.add_argument("--hold-uncal", action="store_true", help="feed the estimator no load share (uncalibrated legs: the grip term alone)")
     ap.add_argument("--hold-set", nargs=2, action="append", default=[], metavar=("NAME", "VALUE"),
                     help="override a hold.py module constant for this run (sensitivity study), e.g. --hold-set UP_RATE 2")
+    ap.add_argument("--wired-hold", action="store_true",
+                    help="gate the hold as walk_wired.py does: command smoothing, grip stop, hold_allowed, authority ramp")
+    ap.add_argument("--no-settle", action="store_true", help="with --wired-hold: keep walk61 after a grip stop (GripStop.settle off)")
     ap.add_argument("--wired-guards", action="store_true", help="walk_wired.py's walk-mode stops (3.0 rad hard limit, 30 deg tilt)")
     ap.add_argument("--until", type=float, default=0.0, help="s; run at least this long")
     ap.add_argument("--tick-log", default=None, help="write one JSON row per 20 ms tick (q, dq, gb, gyro_body, action) like /tmp/duck_wired_log_*.jsonl")

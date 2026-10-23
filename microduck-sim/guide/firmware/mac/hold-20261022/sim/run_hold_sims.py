@@ -44,6 +44,21 @@ for tag, sets in (("atouch0", ["--hold-set", "A_TOUCH", "0"]), ("uprate2", ["--h
     for seed in ("0", "1"):
         CASES[f"b_hold_{tag}_seed{seed}"] = GRIP + LIFT + ["--hold", "--seed", seed] + sets
         CASES[f"b_hold_{tag}_rigidgrip_seed{seed}"] = GRIP + LIFT + RIGID + ["--hold", "--seed", seed] + sets
+# walking at 0.25 m/s (walk 4-14 s), gripped by the head at 6.0 s (2026-10-23, Shawn: a held head means stop):
+# --wired-hold applies walk_wired.py's grip stop and hold gate; without --hold the walk goes on (today's robot)
+WALK = ["--walk-at", "4", "--walk-s", "10", "--vx", "0.25", "--until", "16"]
+GRIP_W = ["--grip-at", "6.0", "--release-at", "10.2"]
+LIFT_W = ["--lift-at", "6.4", "--lower-at", "9.0", "--lift-height", "0.04"]
+for seed in ("0", "1", "2", "3"):
+    CASES[f"w_base_lift_seed{seed}"] = WALK + GRIP_W + LIFT_W + ["--seed", seed]
+    CASES[f"w_hold_lift_seed{seed}"] = WALK + GRIP_W + LIFT_W + ["--hold", "--wired-hold", "--seed", seed]
+    CASES[f"w_hold_lift_rigidgrip_seed{seed}"] = WALK + GRIP_W + LIFT_W + RIGID + ["--hold", "--wired-hold", "--seed", seed]
+    CASES[f"w_hold_grip_only_seed{seed}"] = WALK + ["--grip-at", "6.0", "--release-at", "8.0", "--hold", "--wired-hold",
+                                                    "--seed", seed]
+    CASES[f"w_hold_lift_nosettle_seed{seed}"] = WALK + GRIP_W + LIFT_W + ["--hold", "--wired-hold", "--no-settle",
+                                                                          "--seed", seed]
+# the standing lift with the gate on: must match b_hold (stand61 at zero command is always allowed)
+CASES["b_hold_wired_seed0"] = GRIP + LIFT + ["--hold", "--wired-hold", "--seed", "0"]
 
 
 def main():
@@ -64,7 +79,8 @@ def main():
         h = res["hold"]
         print(name, json.dumps({k: res[k] for k in ("fell_at", "max_tilt", "end_mode")} | {k: h.get(k) for k in (
             "guard_stop_at", "guard_why", "max_raw_action_lift", "max_applied_action_lift", "leg_range_air_rad",
-            "stable_after_release_s", "max_action_jump_0p3s_after_release", "min_s")}), flush=True)
+            "stable_after_release_s", "max_action_jump_0p3s_after_release", "min_s", "grip_stop_at",
+            "applied_s_below_0p5_after_grip_s", "min_applied_s")}), flush=True)
 
 
 if __name__ == "__main__":

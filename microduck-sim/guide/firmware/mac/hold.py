@@ -25,6 +25,7 @@ no hand; a shorter dropout keeps the last pad levels.
 Shadow by default: walk_wired always computes and logs the estimate; it changes the goals and gains only while the
 hold file (HOLD_FILE, {"on": true, "cal": {...}}) says on and the leg load is calibrated (without the load share the
 hand term alone acted in the sim and one of two pivot-hand set-downs fell, 2026-10-22). hold_session.py switches it and writes the calibration.
+The file lives in the A7Z home, so the switch and the calibration survive a reboot and a brain restart (Shawn 2026-10-23).
 """
 import json
 import math
@@ -35,7 +36,7 @@ PAD_AREA_MM2 = {"L1": 324.0, "R1": 324.0, "L2": 144.0, "R2": 144.0, "M": 144.0} 
 LEG_JOINTS = ("left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
               "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle")
 NECK_JOINTS = ("neck_pitch", "head_pitch")
-HOLD_FILE = "/tmp/duck_hold.json"
+HOLD_FILE = os.path.expanduser("~/.duck_hold.json")
 
 # Defaults until hold_session.py calibrates: a pad counts from PAD_LO counts over its rest baseline and is fully covered
 # at PAD_HI (the live page's bar is full at 2000; the per-pad rise through the 1.7 mm wall is not measured yet).

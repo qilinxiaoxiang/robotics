@@ -4,7 +4,7 @@
 #                              (args go to hold_session.py; paths are on the A7Z, relative to its home, e.g.
 #                              --log duck-logs/duck_wired_log_hold1022a.jsonl)
 #   bash hold.sh pull [SUFFIX] copy the newest tick log (gzipped) and its label file into data/ here
-# Sends no command to the robot. The session writes only its label file and the hold file /tmp/duck_hold.json.
+# Sends no command to the robot. The session writes only its label file and the hold file ~/.duck_hold.json.
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 if [ "${1:-}" = pull ]; then

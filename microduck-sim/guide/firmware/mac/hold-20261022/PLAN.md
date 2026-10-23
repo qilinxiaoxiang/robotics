@@ -45,7 +45,7 @@ the head without the policy fighting, rebalance at once when the hand leaves, an
 ## Step 1: data, hold OFF (about 25 min, the session program guides each step)
 
 The program shows one step at a time in Chinese. Enter starts a trial, Enter ends it, `n` next step, `b` back,
-`x` marks the last trial bad, `q` quits (labels are saved as you go; quitting also switches the hold off so the next
+`x` marks the last trial bad, `q` quits (labels are saved as you go; since 2026-10-23 quitting leaves the hold as it is, ~/.duck_hold.json, so the next
 brain start never inherits it).
 
 0. Stand quietly 30 s, nobody touching (resting noise, standing leg current).

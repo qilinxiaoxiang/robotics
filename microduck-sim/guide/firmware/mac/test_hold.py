@@ -213,7 +213,7 @@ class InTheLoop(WiredRun):
         patch.start()
         self.addCleanup(patch.stop)
 
-    def run_hold(self, on, hooks, end=5.0, cmd=WALK0, cal=None, link=None):
+    def run_hold(self, on, hooks, end=5.0, cmd=WALK0, cal=None, link=None, cmd_hooks=()):
         pads = FakePads()
         FakePads.PRESS = 3000
         self.world = legs_world()
@@ -223,7 +223,7 @@ class InTheLoop(WiredRun):
                 hold.write_hold_file(on, cal if cal is not None else {"legs_stand_ma": 800, "legs_air_ma": 100}, path)
             text = self.run_loop(self.world, cmd, end=end, touch_args=("--touch-bus", "0", "--hold-file", path),
                                  pads=pads, hooks=[(t, f(pads) if f in (grip, release) else f) for t, f in hooks],
-                                 link=link)
+                                 link=link, cmd_hooks=cmd_hooks)
         return text
 
     def policy_rows(self, t0, t1):
@@ -316,6 +316,37 @@ class InTheLoop(WiredRun):
         b.mode = "sit"
         self.assertFalse(ww.hold_allowed(WALK0, b, 5.0))        # a sit standing up under a walk command
         self.assertFalse(ww.hold_allowed({"mode": "stand"}, b, 5.0))
+        b.mode, b.stepped = "walk", True
+        self.assertTrue(ww.hold_allowed(WALK0, b, None, grip_stopped=True))  # stopped by a grip: at once
+        self.assertFalse(ww.hold_allowed({"mode": "stand"}, b, None, grip_stopped=True))
+
+    def test_grip_stop_latches_on_a_grip_and_clears_only_on_a_zero_command(self):
+        walk = {"mode": "walk", "vx": 0.2, "vy": 0.0, "vtheta": 0.1}
+        g = ww.GripStop()
+        self.assertIsNone(g.update(walk, True, ww.GRIP_STOP_E))       # a brush at the threshold: keeps walking
+        self.assertIsNone(g.update(walk, False, 1.0))                  # hold off or uncalibrated: keeps walking
+        self.assertEqual(g.apply(walk), walk)
+        self.assertEqual(g.update(walk, True, 0.5), "stop")
+        self.assertEqual(g.apply(walk), dict(walk, vx=0.0, vtheta=0.0))
+        self.assertIsNone(g.update(walk, True, 0.0))                   # the hand leaves: still stopped
+        self.assertTrue(g.on)
+        self.assertEqual(g.update(WALK0, True, 0.0), "clear")
+        self.assertIsNone(g.update(walk, True, 0.0))                   # pushed again without a hand: walks
+        self.assertFalse(g.on)
+        g.update(walk, True, 0.5)
+        self.assertEqual(g.update({"mode": "stand"}, True, 0.5), "clear")
+
+    def test_grip_stop_hands_the_set_down_to_stand61_only_once_fully_held(self):
+        class B:
+            mode, stepped = "walk", True
+        b, g = B(), ww.GripStop()
+        self.assertFalse(g.settle(b, 0.0))                             # no grip stop: walk61 stays
+        g.update({"mode": "walk", "vx": 0.2}, True, 0.5)
+        self.assertFalse(g.settle(b, 0.4))                             # the hand alone, feet loaded: walk61 stays
+        self.assertTrue(b.stepped)
+        self.assertTrue(g.settle(b, ww.GRIP_STOP_HELD_S))
+        self.assertFalse(b.stepped)
+        self.assertFalse(g.settle(b, 0.0))                             # once
 
     def test_a_malformed_hold_file_is_reported_and_ignored(self):
         with tempfile.TemporaryDirectory() as d:
@@ -327,11 +358,40 @@ class InTheLoop(WiredRun):
         self.assertIn("malformed hold file", text)
         self.assertTrue(all(not ln["hold_on"] for ln in self.log_lines))
 
-    def test_on_but_stepping_is_never_held(self):
-        self.run_hold(True, [(1.5, grip), (2.5, set_legs(self.world_ref(), 10))],
-                      cmd={"mode": "walk", "vx": 0.2, "vy": 0.0, "vtheta": 0.0})
+    def test_on_a_grip_while_walking_stops_and_holds_at_once(self):
+        walk = {"mode": "walk", "vx": 0.2, "vy": 0.0, "vtheta": 0.0}
+        text = self.run_hold(True, [(1.5, grip), (2.5, set_legs(self.world_ref(), 10)),
+                                    (3.5, set_legs(self.world_ref(), 80)), (4.0, release)], end=6.0, cmd=walk)
+        self.assertIn("hold: head gripped while walking, stopped", text)
+        before = self.policy_rows(1.0, 1.5)
+        self.assertTrue(before and all(not ln["grip_stop"] and ln["cmd"]["vx"] == 0.2 for ln in before))
+        stopped = self.policy_rows(2.2, 6.0)  # latched from the grip on, the hand gone or not
+        self.assertTrue(stopped and all(ln["grip_stop"] and ln["cmd"]["vx"] == 0.0 for ln in stopped))
+        held = self.policy_rows(3.2, 3.5)  # lifted: held without waiting for the stride to settle
+        self.assertTrue(held and all(ln["hold_on"] for ln in held))
+        self.assertLess(held[-1]["hold"]["s"], 0.05)
+        self.assertIn("hold: fully held after the grip stop, the set-down runs stand61", text)
+        self.assertEqual(self.policy_rows(4.25, 6.0)[-1]["policy"], "stand")
+        after = self.policy_rows(4.25, 6.0)
+        self.assertTrue(after and all(ln["hold"]["s"] == 1.0 for ln in after))
+        self.assertNotIn("STOP ->", text)
+
+    def test_a_grip_stop_clears_on_a_zero_command_and_walks_on_a_new_push(self):
+        walk = {"mode": "walk", "vx": 0.2, "vy": 0.0, "vtheta": 0.0}
+        text = self.run_hold(True, [(1.5, grip), (3.0, release)], end=6.0, cmd=walk,
+                             cmd_hooks=[(4.0, WALK0), (5.0, walk)])
+        self.assertIn("hold: grip stop cleared by a zero or non-walk command", text)
+        self.assertTrue(all(ln["grip_stop"] and ln["cmd"]["vx"] == 0.0 for ln in self.policy_rows(2.2, 4.0)))
+        again = self.policy_rows(5.2, 6.0)
+        self.assertTrue(again and all(not ln["grip_stop"] and ln["cmd"]["vx"] == 0.2 for ln in again))
+
+    def test_off_a_grip_while_walking_changes_nothing(self):
+        walk = {"mode": "walk", "vx": 0.2, "vy": 0.0, "vtheta": 0.0}
+        text = self.run_hold(False, [(1.5, grip), (2.5, set_legs(self.world_ref(), 10))], cmd=walk)
+        self.assertNotIn("head gripped while walking", text)
         rows = self.policy_rows(2.0, 5.0)
-        self.assertTrue(rows and all(not ln["hold_on"] for ln in rows))
+        self.assertTrue(rows and all(not ln["hold_on"] and not ln["grip_stop"] and ln["cmd"]["vx"] == 0.2
+                                     for ln in rows))
         self.assertEqual({ln["kp"] for ln in self.rows(1.0)}, {200})
 
     def test_the_hold_file_switches_it_at_run_time(self):

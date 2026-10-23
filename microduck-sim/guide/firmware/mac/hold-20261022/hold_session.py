@@ -1,6 +1,6 @@
 """Guided data collection for the head pads and the lifted-by-the-head hold (2026-10-22). Runs on the A7Z beside hold.py.
 
-    python3 ~/duck/hold_session.py [--log PATH] [--labels PATH] [--hold-file /tmp/duck_hold.json]
+    python3 ~/duck/hold_session.py [--log PATH] [--labels PATH] [--hold-file ~/.duck_hold.json]
 
 Tails the newest ~/duck-logs/duck_wired_log_*.jsonl that walk_wired.py writes (flushed every tick) and shows it as a
 plain live view at 10 Hz: the five pad bars, leg and neck current, tilt, |acc|, mode, actions and the hold estimate
@@ -390,11 +390,7 @@ class Session:
                 self.msg = (f"校准已写入：pad_lo {cal['pad_lo']} pad_hi {cal['pad_hi']} 抓满 {cal['grip_full_mm2']} mm2 "
                             f"腿 站 {cal['legs_stand_ma']} / 空 {cal['legs_air_ma']} mA")
         elif k == "q":
-            s = self.hold_state()
-            if s["on"]:  # never leave the hold on for the next brain start
-                hold.write_hold_file(False, s["cal"], self.hold_path)
-                self.msg = "退出：保持已关闭（校准保留）"
-            return False
+            return False  # the hold stays as it is: on survives quitting, a brain restart and a reboot
         return True
 
     # view

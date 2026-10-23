@@ -4,6 +4,27 @@ Problem: Shawn lifts the MicroDuck by its head while stand61 runs (walk mode, ze
 
 All numbers below are simulation measurements unless a sentence says "inference".
 
+## Gripped while walking (walk_wired.py GripStop, 2026-10-23)
+
+Shawn (2026-10-23): a held head means stop, and the hold must also act when the robot is lifted mid-walk. walk_wired.py
+now latches a walk command that meets a head grip (engagement e > 0.3, hold on and calibrated) to zero velocity, lets the
+hold act at once (no 2 s wait for the stride), keeps the robot stopped after the hand leaves until the control file's
+command goes to zero, and, once the applied authority is at or below 0.05, clears walk61's stepped latch so the set-down
+runs stand61. `brain_sim_check.py --wired-hold` runs the same code (command smoothing, GripStop, hold_allowed, the
+authority ramp). Cases `w_*` in `run_hold_sims.py`: walk 0.25 m/s from 4 s, grip at 6.0 s, lift 6.4 s, lower 9.0 s,
+release 10.2 s, seeds 0-3.
+
+- No hold (`w_base_lift`): 4 of 4 fall at 10.5 s; legs swing 2.5-3.1 rad in the air (walk61 keeps stepping).
+- Hold, rigid grip (`w_hold_lift_rigidgrip`): 4 of 4 stand; legs 0.09-0.13 rad in the air; stable 0-0.2 s after release.
+- Hold, pivot hand, without the stand61 hand-back (`w_hold_lift_nosettle`): 2 of 4 fall (seeds 1, 2) about 0.4-1 s
+  after release. The body swings to 20-35 deg in the hand, lands 14-22 deg tilted, and walk61 at zero command fails
+  to catch it.
+- Hold, pivot hand, with the hand-back (`w_hold_lift`): 4 of 4 stand; stable 0.04-0.94 s after release, largest
+  action jump in the 0.3 s after release 0.04-0.64 rad; legs 0.38-0.52 rad in the air (touchdown bounces, as in the
+  standing pivot case).
+- Grip without a lift (`w_hold_grip_only`, hand 6.0-8.0 s): 4 of 4 stop and stand, max tilt 7.0-9.8 deg.
+- Standing lift with the gate on (`b_hold_wired_seed0`): identical to `b_hold_seed0`.
+
 ## Update after these runs: the touchdown latch (hold.py, 2026-10-22)
 
 The pivot-hand set-down below was fixed in hold.py without dropping the hand term: once the feet have been off the
