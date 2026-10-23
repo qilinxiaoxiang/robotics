@@ -17,3 +17,9 @@ Final-goal step advanced: step 2, walk to the item (D-019). Policy walk61 at vx 
 Lead: the left knee gives under load, so the robot sinks onto and stays on the left leg, and the yaw of each long left stance wins. Not yet confirmed by a one-leg load test.
 
 Scripts: `walk_segments.py LOG` (per-walk heading, turn command and dead-reckoned path, path uses the commanded speed so its metres are too long: the sim covers 0.65 m in 6 s at vx 0.25), `stance_yaw_split.py LOG` (trunk yaw vs stance hip-yaw motion).
+
+## Run app1023-210115: the first walk with TURN_MAX 2.0 flailed within 0.4 s
+
+- The brain restarted at 21:01 UTC (TURN_MAX 2.0, trim -0.466). Walk came straight from monitor with the robot upright (gravity -1.00). Within 0.4 s the walk61 goals ran away; by 1.2 s head yaw and head pitch goals reached +145 and +150 deg, leg current 5.3 A, servo rail 6.2 V. The head swing pulled the A7Z power lead out (Shawn), so the log ends unflushed.
+- The turn command stayed within +-1.0 (peak -0.99), so the wider limit was never used.
+- Cause: the control loop ran at 35.7 Hz (tick 29 ms, loop 26.6 ms, brain process 81-103 % of one core) against 48.4 Hz on the walk at 20:41. thermal.log: SoC 85-86 C with both CPU clusters capped at 416 MHz from about 21:00 on; at the 20:41 walk the SoC was at 39 C with the 1794 / 2002 MHz maxima. walk61 runs at 50 Hz; at 36 Hz it diverged.
