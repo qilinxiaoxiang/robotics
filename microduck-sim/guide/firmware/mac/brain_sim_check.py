@@ -56,7 +56,7 @@ from static_gap import cfg, feet_flat_rot, setup, sole_points  # noqa: E402
 from walk_brain import IDS, IMU_MOUNT_QUAT, MOUNT_FIX, NAMES, VEL_UNIT, SIGN, Brain, apply_inverse, Breakaway, qmul, to_model, to_tick  # noqa: E402
 from walk_brain import STAND as BRAIN_STAND  # noqa: E402
 from battery import stop_command, stop_settled  # noqa: E402
-from walk_wired import HARD_MAX_ACTION, HARD_WINDOW, MAX_TILT_DEG, OVER_LIMIT_TICKS  # noqa: E402
+from walk_wired import HARD_MAX_ACTION, HARD_WINDOW, MAX_TILT_DEG, MAX_TILT_GP_DEG, MAX_TILT_SIT_DEG, OVER_LIMIT_TICKS  # noqa: E402
 from walk_wired import QUACK_HEAD_S, quack_head_block, quack_head_pose  # noqa: E402
 import walk_brain  # noqa: E402
 from hold import PAD_HI, PADS, HoldEstimator  # noqa: E402
@@ -305,8 +305,8 @@ def run(args):
         counts = [PAD_BASE + (level * PAD_HI if p in GRIP_PADS else 0.0) for p in PADS]
         # --hold-uncal: no load share, as walk_wired before hold_session.py calibrates the leg currents (grip only)
         est.update(0.02, counts=counts, age=0.0, load=None if args.hold_uncal else load_now)
-        if guard["stop"] is not None:  # walk_wired wrote stand to the control file: it holds until a new command
-            want = {"mode": "stand"}
+        if guard["stop"] is not None:  # walk_wired wrote stand (monitor out of a sit or crouch) to the control file
+            want = {"mode": guard["stop_to"]}
         if args.hold and want.get("mode") == "walk":
             want["hold"] = {"s": est.s, "kp": est.gains()}
         age = args.sensor_delay * 0.02 + 0.004
@@ -324,17 +324,22 @@ def run(args):
                     if sum(guard["hard_hits"]) >= OVER_LIMIT_TICKS:
                         why = f"action over {HARD_MAX_ACTION} rad in {sum(guard['hard_hits'])} of {len(guard['hard_hits'])} ticks"
                     elif amax > HARD_MAX_ACTION:
-                        goal = {n: (brain.default[n] + max(-HARD_MAX_ACTION, min(HARD_MAX_ACTION, float(act[k])))
-                                    if n in brain.default else goal[n]) for k, n in enumerate(walk_brain.OBSERVATION_DOF_ORDER)}
+                        goal = walk_brain.clamp_goal({n: (brain.default[n] + max(-HARD_MAX_ACTION, min(HARD_MAX_ACTION, float(act[k])))
+                                                          if n in brain.default else goal[n])
+                                                      for k, n in enumerate(walk_brain.OBSERVATION_DOF_ORDER)})
                         brain.goal = dict(goal)
                         guard["clipped"] += 1
-                if why is None and info["gb"][2] > -math.cos(math.radians(MAX_TILT_DEG)):
+                max_tilt = {"groundpick": MAX_TILT_GP_DEG, "sit": MAX_TILT_SIT_DEG}.get(brain.mode, MAX_TILT_DEG)
+                if why is None and info["gb"][2] > -math.cos(math.radians(max_tilt)):
                     if args.hold and est.e > 0.3:
                         guard["tilt_skipped"] += 1
                     else:
-                        why = f"body tilt over {MAX_TILT_DEG} deg"
+                        why = f"body tilt over {max_tilt} deg"
                 if why is not None:
                     guard["stop"], guard["why"] = round(t, 2), why
+                    guard["stop_to"] = "monitor" if brain.mode in ("groundpick", "sit") else "stand"
+                    if guard["stop_to"] == "monitor":
+                        brain.hold_head()  # walk_wired.py: the legs hold their goals, the head where it is
                     if guard["last_goal"] is not None:
                         goal = dict(guard["last_goal"])
                         brain.goal = dict(guard["last_goal"])

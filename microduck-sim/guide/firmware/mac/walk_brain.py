@@ -34,7 +34,8 @@ Modes, switched live by writing JSON to the control file (default /tmp/duck_cmd.
                                             posture flag in command slot vx is 0 for SIT_PREP_S, then 1 (sit). Any
                                             other command stands it back up first: flag 0 for UNSIT_S (requests during
                                             the SIT_SETTLE_S glide into the seat wait for it), then that command runs.
-                                            {"mode": "monitor"} holds the last goals at once.
+                                            {"mode": "monitor"} holds the last goals at once; after a guard trip
+                                            the head joints hold where they are (hold_head).
 
 walk61/stand61 come from hardware-design-20260912/whole-robot-20260912/runtime-overlay: the community walk.onnx was
 trained for 7.5 V servos and falls within 0.6 s at 5 V in the whole-robot simulation; the 61-input policies pass at
@@ -98,6 +99,21 @@ UNSIT_S = 2.0
 # not follow the policy's first small moves, so its closed-loop descent never started. A seat the timer declares is
 # therefore checked against the knees at the first policy tick after the glide; under this it is a stall, not a seat.
 SIT_KNEE_MIN = 0.6
+# Trained joint ranges (model rad): the hinge ranges of Pollen's MJCF (microduck-rl-contribution robot_groundcontact.xml),
+# which no policy saw exceeded. Every policy goal is clamped to them. 2026-10-23 a sitstand61 rise ran away on the robot
+# (body pitch past 10 deg, then the neck action -0.3 -> -3.75 rad in 0.3 s): the neck was driven to -2.5 rad, 0.93 rad
+# past its -1.57 stop, and the head hit the floor (robot-runs-20261023-a7z/sit-headbump/findings.md).
+JOINT_RANGE = {
+    "left_hip_yaw": (-0.4363, 0.5236), "left_hip_roll": (-0.384, 0.384), "left_hip_pitch": (-1.5708, 1.5708),
+    "left_knee": (-1.5708, 1.5708), "left_ankle": (-1.5708, 1.5708), "neck_pitch": (-1.5708, 1.0472),
+    "head_pitch": (-1.5708, 1.5708), "head_yaw": (-2.9671, 2.9671), "head_roll": (-0.4363, 0.4363),
+    "right_hip_yaw": (-0.5236, 0.4363), "right_hip_roll": (-0.384, 0.384), "right_hip_pitch": (-1.5708, 1.5708),
+    "right_knee": (-1.5708, 1.5708), "right_ankle": (-1.5708, 1.5708)}
+# After a sit or ground-pick guard trip (monitor, torque on) the legs hold their last goals and the head joints hold
+# the positions measured at the trip: on 2026-10-23 the held runaway goal kept pressing the head into the floor. Not a
+# glide to STAND: with the robot's logged runaway injected into the as-built sim the head lands on the floor, and
+# raising it levers the trunk forward (fell at 8.84-8.86 s, 2 seeds; holding the head stood until the stand command).
+HEAD_JOINTS = ("neck_pitch", "head_pitch", "head_yaw", "head_roll")
 WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
 # Straight walking whatever turns the robot (2026-10-21/22: +22 to +42 deg/s to the left at vx 0.25, mostly while the
 # left foot carries the load; cause not isolated). A walk holds the heading it started with: yaw-rate command
@@ -310,6 +326,8 @@ class Brain:
         self.kick_last_id = None  # the id of the newest kick request seen; a request with the same id starts nothing
         self.sit = None  # in sit mode: {"phase": "prep" | "down" | "seated" | "rise", "t": phase start}
         self.sit_next = None  # the command that takes over once a sit has stood back up
+        self.q = None  # the newest joint positions (model rad)
+        self.head_hold = None  # head joint goals to write once in monitor mode after a guard trip
         self._refused = None  # last refusal printed, so a refused command re-read every tick prints once
 
     def _refuse(self, what, why):
@@ -431,9 +449,16 @@ class Brain:
                 out[k] = float(np.clip(float(head[n]) - self.default[n], -HEAD_RANGE[k], HEAD_RANGE[k]))
         return out
 
+    def hold_head(self):
+        """Called on a sit or ground-pick guard trip: once the Brain is in monitor mode the head joints get their
+        present positions as goals instead of the runaway goal; the legs keep the last goals."""
+        if self.q is not None:
+            self.head_hold = {n: self.q[n] for n in HEAD_JOINTS}
+
     def tick(self, want, now, pos_t, vel_t, quat, gyro, imu_valid, joint_age, imu_age):
         """joint_age / imu_age: predicted sample ages (s) at the moment the returned goals reach the servos."""
         q = {n: to_model(n, t) for n, t in zip(NAMES, pos_t)}
+        self.q = q
         dq = {n: v * VEL_UNIT * SIGN[n] for n, v in zip(NAMES, vel_t)}
         q_body = body_quat(quat)
         grav_body = apply_inverse(q_body, [0.0, 0.0, -1.0])  # upright -> [0, 0, -1]; what the 61-input policy sees
@@ -501,8 +526,13 @@ class Brain:
                     self.ramp, self.goal = None, dict(start)
                 self.heading, self.walk_seg = None, None
                 self.stepped = False
+            if self.mode != "monitor":
+                self.head_hold = None
             print(f"mode -> {self.mode}", flush=True)
 
+        if self.mode == "monitor" and self.head_hold is not None and self.goal is not None:
+            self.goal, self.head_hold = dict(self.goal, **self.head_hold), None
+            return self.goal, 0, info  # written once; kp 0: the gains in force stay
         kp = 0
         if self.mode not in ("stand",) + self.POLICY_MODES:
             return None, kp, info
@@ -607,8 +637,8 @@ class Brain:
                 action = action * float(np.clip(hold.get("s", 1.0), 0.0, 1.0))
                 info["hold_s"] = round(float(hold.get("s", 1.0)), 3)
             self.last_action = action.astype(np.float32)
-            self.goal = {n: self.default[n] + float(action[k]) if n in self.default else self.goal[n]
-                         for k, n in enumerate(OBSERVATION_DOF_ORDER)}
+            self.goal = clamp_goal({n: self.default[n] + float(action[k]) if n in self.default else self.goal[n]
+                                    for k, n in enumerate(OBSERVATION_DOF_ORDER)})
             info["action"] = action.round(4).tolist()
             if self.mode == "kick":
                 self.kick["ticks"] += 1
@@ -617,6 +647,11 @@ class Brain:
                     info["kick_done"] = self.end_kick()["id"]
         # not upright, IMU invalid or state too old: keep the last goal, never release
         return self.goal, kp, info
+
+
+def clamp_goal(goal):
+    """Policy goals (model rad) within the trained joint ranges."""
+    return {n: min(JOINT_RANGE[n][1], max(JOINT_RANGE[n][0], v)) if n in JOINT_RANGE else v for n, v in goal.items()}
 
 
 def main():

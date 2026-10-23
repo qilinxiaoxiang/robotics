@@ -28,8 +28,9 @@ Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
                                           the lowest pose: as-built sim 2026-10-16, mouth tip 22 mm over the floor,
                                           69 mm ahead of the feet, trunk 35 deg); "phase": 1.0 rises; once the rise
                                           is complete this process writes walk mode at zero command (stand61). Only
-                                          the hard action limit and --max-tilt-gp guard it; a trip holds the last
-                                          goals (monitor mode, torque on) instead of ramping to STAND from a crouch.
+                                          the hard action limit and --max-tilt-gp guard it; a trip holds the legs'
+                                          last goals (monitor mode, torque on) instead of ramping to STAND from a
+                                          crouch; the head joints hold their positions at the trip.
   "jaw": 20 | "open" | "grip", "jaw_torque": false, "jaw_mark": "closed" | "open"   the ID15 jaw (jaw_ctl.py)
 
 Remote-control additions (2026-10-20, walk_brain.py has the details):
@@ -39,7 +40,9 @@ Remote-control additions (2026-10-20, walk_brain.py has the details):
                                           The walk guards apply; a trip stops the kick and goes to stand.
   {"mode": "sit"}                         Pollen's sitstand policy (flag 0 for 0.8 s, then 1); any stand or walk
                                           command stands it up (flag 0 for 2 s) before running. --max-tilt-sit (30)
-                                          and the hard action limit guard it; a trip holds the last goals (monitor).
+                                          and the hard action limit guard it; a trip holds the legs' last goals
+                                          (monitor) and the head holds where it is. Policy goals stay within the
+                                          trained joint ranges (walk_brain.JOINT_RANGE).
   "quack": N                              any mode; a new value of the counter (start at 1) plays one random call
                                           from --sounds through `aplay -q` on the ALSA default device (duck_sound.py,
                                           off the control thread, a new call kills the old one) and, when the jaw is
@@ -734,7 +737,9 @@ def main():
             write_cmd(args.cmd, want, diverging)
             last_cmd, diverging, cmd_since = read_cmd(args.cmd, None), None, time.time()
         elif brain.mode in ("groundpick", "sit") and diverging:
-            # no open-loop ramp to STAND out of a crouch or a seat: hold the last goals (torque on), wait for a command
+            # no open-loop ramp to STAND out of a crouch or a seat: the legs hold the last goals (torque on) and wait
+            # for a command; the head holds where it is instead of a runaway goal (2026-10-23 head pressed on the floor)
+            brain.hold_head()
             want = {"mode": "monitor"}
             hard_hits.clear()
             write_cmd(args.cmd, want, ("ground pick: " if brain.mode == "groundpick" else "sit: ") + diverging)
@@ -860,8 +865,9 @@ def main():
                 diverging = (f"policy action over {hard} rad in {over} of the last {len(hard_hits)} ticks "
                              f"(last {amax:.2f})" if over >= OVER_LIMIT_TICKS else None)
                 if amax > hard and not diverging:
-                    goal = {n: (brain.default[n] + max(-hard, min(hard, float(act[k])))
-                                if n in brain.default else goal[n]) for k, n in enumerate(OBSERVATION_DOF_ORDER)}
+                    goal = walk_brain.clamp_goal({n: (brain.default[n] + max(-hard, min(hard, float(act[k])))
+                                                      if n in brain.default else goal[n])
+                                                  for k, n in enumerate(OBSERVATION_DOF_ORDER)})
                     brain.goal = dict(goal)
             max_tilt = {"groundpick": args.max_tilt_gp, "sit": args.max_tilt_sit}.get(brain.mode, args.max_tilt)
             carried = hold_on and est.e > HOLD_TILT_E  # tilted in a hand, not falling
