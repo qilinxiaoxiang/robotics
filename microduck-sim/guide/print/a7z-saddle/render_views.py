@@ -44,8 +44,8 @@ def wire(name, pts, rgba, r):
                        size=[r * mm, 0, 0], rgba=rgba, contype=0, conaffinity=0, mass=0, group=2)
 
 
-# USB-C camera cable from the plug forward and down to the neck bundle; IMU/UART/5 V Dupont leads up through the floor cut
-wire('cam_cable', [(-6.0, 9.0, 51.0), (0.0, 7.0, 48.0), (-8.0, 4.0, 43.0), (-16.0, 3.0, 41.0)], (.55, .55, .58, 1), 1.8)
+# camera leads from the right-angle plug's +y end up the left side of the neck with the head bundle; IMU/UART/5 V Dupont leads up through the floor cut
+wire('cam_cable', [(1.0, 25.3, 52.0), (3.0, 28.0, 56.0), (6.0, 24.0, 66.0), (10.0, 16.0, 80.0), (13.0, 13.0, 98.0)], (.55, .55, .58, 1), 1.0)   # D-023: the four thin camera leads leave the pigtail's +y end and go up the left (+y) side of the neck with the head bundle (as built, no clips) into the floor opening
 for i, (y, col) in enumerate(((-9.0, (.9, .1, .1, 1)), (-6.0, (.1, .1, .1, 1)), (-3.0, (.95, .85, .1, 1)), (0.0, (.1, .6, .2, 1)))):
     wire(f'lead{i}', [(-14.0, y, 40.0), (-14.0, y, 50.0), (-30.0, y - 12.0, 64.0), (-40.4 if i % 2 else -37.9, y - 12.0, 63.5)], col, 0.6)
 m = spec.compile(); m.vis.global_.offwidth = 1800; m.vis.global_.offheight = 700

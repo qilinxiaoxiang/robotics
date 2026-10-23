@@ -3,7 +3,7 @@
   "pipelineVersion": 2,
   "manifest": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/manifest-V1.30.json",
-    "sha256": "990ea49c4e97e351bab38be01b6faa3e7ffe2e7ce9b7dbc59d667b46824adc28"
+    "sha256": "4fc120f1e0dd308d295feb5aa18cdfd0af16cbf864163bb9e25ceb774ad42b55"
   },
   "pipeline": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009/release_pipeline_v2.py",
@@ -19,8 +19,8 @@
   },
   "baselinePrintedStockInstances": 89,
   "reprintUnchangedStockQuantity": 0,
-  "partTypes": 6,
-  "printQuantity": 6,
+  "partTypes": 8,
+  "printQuantity": 8,
   "parts": [
     {
       "key": "face_panel",
@@ -1448,6 +1448,232 @@
         "smallThinPatchMaxMm2": 0.0,
         "allowancesUsed": []
       }
+    },
+    {
+      "key": "saddle_body",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_body.stl",
+        "sha256": "38689e46de3a9ac58205ed92ca59b0802259c0d0b6770493f1d3c02c90bfa535"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_body: 14.8 cm3, bounds [[-45.0, -34.4, 26.19], [-5.0, 34.4, 72.4]] (a7z-saddle/build/build.json). D-023 (2026-10-23): the front-wall plug notch widens to y 2.7..26.2, z up to 9.6 above the floor, for the CableCreation right-angle USB-C plug (body 21.8 mm along +y), and the +y pair of front slots inside it goes; first sliced in V1.30.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+        "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -26.188627243041992,
+      "flatContactAreaMm2": 2.296024123505049,
+      "bounds": [
+        [
+          -45.0,
+          -34.400001525878906,
+          0.0
+        ],
+        [
+          -5.0,
+          34.400001525878906,
+          46.211374282836914
+        ]
+      ],
+      "vertexCount": 18945,
+      "triangleCount": 37960,
+      "tipAngleDeg": -54.74,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: the part stands on tree support over its whole domed underside; its own first-layer contact is a 2.3 mm2 rear corner inside the support footprint, and Bambu trims a part brim wherever support stands within gap + width, so the R1 outer brim (tip angle -55 deg) came out empty on the first V1.29 slice (brim review: planned brim missing); the slicers brim the support themselves",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.092,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.3232,
+        "regions": [
+          {
+            "bbox": [
+              [
+                -45.0,
+                -30.635,
+                0.451
+              ],
+              [
+                -43.97,
+                32.631,
+                10.616
+              ]
+            ],
+            "areaMm2": 222.99,
+            "minMm": 0.092,
+            "medianMm": 0.638,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -42.693,
+                30.862,
+                1.408
+              ],
+              [
+                -41.327,
+                32.005,
+                3.132
+              ]
+            ],
+            "areaMm2": 3.88,
+            "minMm": 0.448,
+            "medianMm": 0.581,
+            "status": "allowed",
+            "allowance": 1
+          }
+        ],
+        "smallThinPatches": 2,
+        "smallThinPatchMaxMm2": 1.29,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                -45.05,
+                -30.685000000000002,
+                0.401
+              ],
+              [
+                -43.92,
+                32.681,
+                10.666
+              ]
+            ],
+            "minMm": 0.087,
+            "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                -42.742999999999995,
+                30.811999999999998,
+                1.3579999999999999
+              ],
+              [
+                -41.277,
+                32.055,
+                3.182
+              ]
+            ],
+            "minMm": 0.443,
+            "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "key": "saddle_lid",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_lid.stl",
+        "sha256": "573aa8bfa12fc5134b52b437a4c7ebe98de405e66509c74e5a80696e6d7505b7"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_lid: 4.9 cm3, bounds [[-45.0, -34.4, 63.8], [-5.0, 34.4, 74.0]] (a7z-saddle/build/build.json). Carried from the unprinted V1.29 (same file).",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+        "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 74.0,
+      "flatContactAreaMm2": 2380.2542583449167,
+      "bounds": [
+        [
+          -45.0,
+          -34.400001525878906,
+          0.0
+        ],
+        [
+          -5.0,
+          34.400001525878906,
+          10.200000762939453
+        ]
+      ],
+      "vertexCount": 904,
+      "triangleCount": 1840,
+      "tipAngleDeg": 85.35,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 85.4 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.6,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.1202,
+        "regions": [],
+        "smallThinPatches": 3,
+        "smallThinPatchMaxMm2": 0.36,
+        "allowancesUsed": []
+      }
     }
   ],
   "claimBoundary": "Exact source identity and source-bound incremental decisions; no physical stock recount or manufacturing qualification.",
@@ -1458,7 +1684,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/Yellow_Bambu_editable.3mf",
-        "sha256": "b25fde764e9af96a0d606d33926590a34e1c42d113c3d5ee8483dd08811bbcfe"
+        "sha256": "1be23f80efdbd87d774ec5f0047cfb7e81d5e260569cd58a7f40bd906e35a41f"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
@@ -1529,7 +1755,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/Yellow_Elegoo_editable.3mf",
-        "sha256": "330d07094da29d1f38a7b7b70a9ca57331cadc864b00ec49150b9a913d3a4262"
+        "sha256": "3e61fe9e602169b6b70029a3a91c451a18d33994f9a2a23f15587c410e7e3351"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
@@ -1600,7 +1826,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/White_Bambu_editable.3mf",
-        "sha256": "997572b8763d2fc4fca785f46fb7071ef4f88308c8485323cba2272817e2c9db"
+        "sha256": "2d9d2f7ca7d829ecd07e6f326beff183327ab904891b2aff2b071a466300e8da"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
@@ -1612,7 +1838,25 @@
           "key": "face_panel",
           "copy": 1,
           "translation": [
+            78.0,
             128.0,
+            0.0
+          ]
+        },
+        {
+          "key": "saddle_body",
+          "copy": 1,
+          "translation": [
+            176.825,
+            128.0,
+            0.0
+          ]
+        },
+        {
+          "key": "saddle_lid",
+          "copy": 1,
+          "translation": [
+            226.825,
             128.0,
             0.0
           ]
@@ -1621,20 +1865,44 @@
       "modelBounds": [
         [
           [
-            84.17499923706052,
+            34.174999237060526,
             105.68700027465809,
             0.0
           ],
           [
-            171.82500076293942,
+            121.82500076293942,
             150.31299972534168,
             14.3800048828125
+          ]
+        ],
+        [
+          [
+            131.825,
+            93.5999984741211,
+            0.0
+          ],
+          [
+            171.825,
+            162.4000015258789,
+            46.211374282836914
+          ]
+        ],
+        [
+          [
+            181.825,
+            93.5999984741211,
+            0.0
+          ],
+          [
+            221.825,
+            162.4000015258789,
+            10.200000762939453
           ]
         ]
       ],
       "plateCentreOffsetMm": [
         -0.0,
-        -0.0
+        0.0
       ]
     },
     {
@@ -1642,7 +1910,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/White_Elegoo_editable.3mf",
-        "sha256": "6ebd744aa84b11141d21cae213a1b8d78a42d285eb4792e141fb3d240755ee92"
+        "sha256": "21c7575ffdde035005669828502b200113d3709e89e714354243c6df29913a5b"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
@@ -1654,7 +1922,25 @@
           "key": "face_panel",
           "copy": 1,
           "translation": [
+            78.0,
             128.0,
+            0.0
+          ]
+        },
+        {
+          "key": "saddle_body",
+          "copy": 1,
+          "translation": [
+            176.825,
+            128.0,
+            0.0
+          ]
+        },
+        {
+          "key": "saddle_lid",
+          "copy": 1,
+          "translation": [
+            226.825,
             128.0,
             0.0
           ]
@@ -1663,20 +1949,44 @@
       "modelBounds": [
         [
           [
-            84.17499923706052,
+            34.174999237060526,
             105.68700027465809,
             0.0
           ],
           [
-            171.82500076293942,
+            121.82500076293942,
             150.31299972534168,
             14.3800048828125
+          ]
+        ],
+        [
+          [
+            131.825,
+            93.5999984741211,
+            0.0
+          ],
+          [
+            171.825,
+            162.4000015258789,
+            46.211374282836914
+          ]
+        ],
+        [
+          [
+            181.825,
+            93.5999984741211,
+            0.0
+          ],
+          [
+            221.825,
+            162.4000015258789,
+            10.200000762939453
           ]
         ]
       ],
       "plateCentreOffsetMm": [
         -0.0,
-        -0.0
+        0.0
       ]
     },
     {
@@ -1684,7 +1994,7 @@
       "machine": "Bambu",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/Black_Bambu_editable.3mf",
-        "sha256": "256727b6694c004cb91d35075d106bbac62ecae7aa27ac5032833acee6d1a911"
+        "sha256": "b899c0afc91729c995a2ae14f9073d73cb128a1eb0f3968ee1352ccc742f9d15"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
@@ -1789,7 +2099,7 @@
       "machine": "Elegoo",
       "project": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/run/Black_Elegoo_editable.3mf",
-        "sha256": "b9c8f63cb5e960d276530b41f16a51bdbbc4b3826eee7135ca583acfa284a68d"
+        "sha256": "e9e0aa0eba69c5f74bb4f5ffeb32a18e3e7f630a36f67230c566e2c85fd878fa"
       },
       "profile": {
         "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",

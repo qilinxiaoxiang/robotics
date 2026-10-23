@@ -1,5 +1,5 @@
 #!/bin/zsh
-# V1.30 release run (D-023: the U20 face panel, White; the U20 eye trim, the exit jaw support and the two loose clamp halves, Black; the exit lower head shell, Yellow), every job under the bounded runner (10 minute cap), logs in logs/.
+# V1.30 release run (D-023: the U20 face panel and the carried V1.29 saddle body and lid, White; the U20 eye trim, the exit jaw support and the two loose clamp halves, Black; the exit lower head shell, Yellow), every job under the bounded runner (10 minute cap), logs in logs/.
 #   zsh scripts/run_v130.sh            from guide/print/release-V1.30
 set -e
 REL=${0:A:h:h}; PRINT=$REL:h; SIM=$PRINT:h:h

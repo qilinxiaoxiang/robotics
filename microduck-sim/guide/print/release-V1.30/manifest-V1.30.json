@@ -3,7 +3,7 @@
  "releaseKind": "incremental",
  "version": "V1.30",
  "prototype": true,
- "prototypeScope": "V1.30 delta package (D-023): one White plate with the U20 face panel, one Black plate with the U20 eye trim, the jaw support and the two loose halves (A, B) of the exit clamp, one Yellow plate with the lower head shell. The face and trim take the Innomaker U20CAM-720P USB camera 13.1 mm behind the face; the jaw support and the shell open the left-rear head exit to dia 11 so the camera cable leaves the head whole, and the jaw support carries the fixed half of the printed two-piece clamp that holds the wires there. Four parts replace printed parts, the two loose halves are new. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted.",
+ "prototypeScope": "V1.30 delta package (D-023): one White plate with the U20 face panel, one Black plate with the U20 eye trim, the jaw support and the two loose halves (A, B) of the exit clamp, one Yellow plate with the lower head shell. The face and trim take the Innomaker U20CAM-720P USB camera 13.1 mm behind the face; the jaw support and the shell open the left-rear head exit to dia 11 so the camera cable leaves the head whole, and the jaw support carries the fixed half of the printed two-piece clamp that holds the wires there. Four parts replace printed parts, the two loose halves are new. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted. It also carries everything still unprinted (Shawn 2026-10-23): the V1.29 A7Z roof saddle body and lid (White; the body with the D-023 USB-C plug notch). The V1.29 folder is superseded.",
  "knownFitBoundary": "Camera dimensions come from the ROBOTIS OMX-F CAD of the same camera, not from a measured unit: lens front 22.0 mm in front of the board, so it sits 0.4 mm behind the trim front. Boss pilots dia 1.7 for M2 x 6 (4.4 mm of thread); the trim bore dia 16.2 is 1.1 mm clear of the lens ring. The exit parts: the moved M2.6 seat and the clamp are new, not yet printed; the clamp barbs snap with 0.2 mm of interference, untested on a print; the camera cable diameter (4 mm) and the bundle size are assumed, hence the two loose halves. Printed sizes not measured.",
  "baselineStock": {
   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
@@ -49,7 +49,25 @@
     "key": "face_panel",
     "copy": 1,
     "translation": [
+     78.0,
      128.0,
+     0.0
+    ]
+   },
+   {
+    "key": "saddle_body",
+    "copy": 1,
+    "translation": [
+     176.825,
+     128.0,
+     0.0
+    ]
+   },
+   {
+    "key": "saddle_lid",
+    "copy": 1,
+    "translation": [
+     226.825,
      128.0,
      0.0
     ]
@@ -139,7 +157,7 @@
    "initial_layer_print_height": "0.2"
   }
  },
- "processOverrideReason": "V1.17 White overrides kept for the face (3 support interface layers at 0.15 spacing, 0.2 top z, interface 40 mm/s, bridge 30 mm/s, support ironing, 0.2 first layer); the face prints flat and needs no support. Black and Yellow: donor profiles as is (as V1.8 and V1.28).",
+ "processOverrideReason": "V1.17 White overrides kept for the face (3 support interface layers at 0.15 spacing, 0.2 top z, interface 40 mm/s, bridge 30 mm/s, support ironing, 0.2 first layer); the face prints flat and needs no support; the saddle body stands on tree support over its whole underside (as V1.29). Black and Yellow: donor profiles as is (as V1.8 and V1.28).",
  "parts": [
   {
    "key": "face_panel",
@@ -1165,6 +1183,199 @@
     }
    ],
    "thinWallAllowances": []
+  },
+  {
+   "key": "saddle_body",
+   "color": "White",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_body.stl",
+   "sha256": "38689e46de3a9ac58205ed92ca59b0802259c0d0b6770493f1d3c02c90bfa535",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 2.0
+   },
+   "poseName": "upright, dome down",
+   "poseOrigin": "a7z-saddle/build_saddle.py world frame as printed: open side up, the domed floor underside (it follows the shell roof, 1.6 mm normal offset) on the bed. One rear corner touches (2.3 mm2, tip angle -55 deg); the whole underside stands on tree support (shells pattern of PRINT-ORIENTATION-PRACTICE.md: dome on the bed, support under the dome keeps every post and pilot end clean). Board posts and pilots, roof-screw seats and holes, lid-screw bosses and side slots print vertical. Flank-down rejected: the far flank becomes a 40 x 36 mm ceiling on 65 mm of tree support inside the box with every pilot horizontal; open side down rejected: support trapped under the floor.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/saddle_body-print.stl",
+     "sha256": "ca2ba2c9bb81f96cfd78c6d545ac0e5cda23539ca4990f8b1c3f2f0595993268"
+    },
+    "bedContactMm2": 2.3,
+    "printSizeMm": [
+     40.0,
+     68.8,
+     46.21
+    ],
+    "note": "world STL in the row pose, dropped to the bed"
+   },
+   "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_body: 14.8 cm3, bounds [[-45.0, -34.4, 26.19], [-5.0, 34.4, 72.4]] (a7z-saddle/build/build.json). D-023 (2026-10-23): the front-wall plug notch widens to y 2.7..26.2, z up to 9.6 above the floor, for the CableCreation right-angle USB-C plug (body 21.8 mm along +y), and the +y pair of front slots inside it goes; first sliced in V1.30.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+    "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/guide-world.json",
+     "sha256": "2eaced8ed6c62c559a27b67236e82bcf0ed98949ae4b9eaae37b76bc8cfb0a87"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/wall_check.out",
+     "sha256": "f35d0294d7f766c5d9f44197d7939d0d52000221cc388ca278670841f092dbeb"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/head_sweep_final.out",
+     "sha256": "372d65b828231daea69cd0e80d721b53e5486d8a9916868f35f85774b0dc3e3e"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/balance/run.log",
+     "sha256": "4f6a0a0d1a16040f6db7cb32d0961937db21a6ea872bcad36e133cde3412fad2"
+    }
+   ],
+   "thinWallAllowances": [
+    {
+     "bbox": [
+      [
+       -45.05,
+       -30.685000000000002,
+       0.401
+      ],
+      [
+       -43.92,
+       32.681,
+       10.666
+      ]
+     ],
+     "minMm": 0.087,
+     "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
+    },
+    {
+     "bbox": [
+      [
+       -42.742999999999995,
+       30.811999999999998,
+       1.3579999999999999
+      ],
+      [
+       -41.277,
+       32.055,
+       3.182
+      ]
+     ],
+     "minMm": 0.443,
+     "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
+    }
+   ],
+   "objectSettings": {
+    "brim_type": "no_brim"
+   },
+   "objectSettingsReason": "the part stands on tree support over its whole domed underside; its own first-layer contact is a 2.3 mm2 rear corner inside the support footprint, and Bambu trims a part brim wherever support stands within gap + width, so the R1 outer brim (tip angle -55 deg) came out empty on the first V1.29 slice (brim review: planned brim missing); the slicers brim the support themselves"
+  },
+  {
+   "key": "saddle_lid",
+   "color": "White",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_lid.stl",
+   "sha256": "573aa8bfa12fc5134b52b437a4c7ebe98de405e66509c74e5a80696e6d7505b7",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
+   "sourceToPrint": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 2000.0
+   },
+   "poseName": "upside down, plate on the bed",
+   "poseOrigin": "a7z-saddle/build_saddle.py world frame turned 180 deg about x: the lid plate top on the bed (2380 mm2), 10.2 mm tall; lip ring, fan-pocket bars, rear stop and the two lid-screw bosses stand up from the plate; the 0.6 mm snap lips under the front corners are the only overhangs.",
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/saddle_lid-print.stl",
+     "sha256": "7de9bffd6bf0d3608cf95baa677b4d1274bb97f2f86a15d0593c11e6c58c1b25"
+    },
+    "bedContactMm2": 2380.25,
+    "printSizeMm": [
+     40.0,
+     68.8,
+     10.2
+    ],
+    "note": "world STL in the row pose, dropped to the bed"
+   },
+   "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_lid: 4.9 cm3, bounds [[-45.0, -34.4, 63.8], [-5.0, 34.4, 74.0]] (a7z-saddle/build/build.json). Carried from the unprinted V1.29 (same file).",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+    "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/guide-world.json",
+     "sha256": "2eaced8ed6c62c559a27b67236e82bcf0ed98949ae4b9eaae37b76bc8cfb0a87"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/wall_check.out",
+     "sha256": "f35d0294d7f766c5d9f44197d7939d0d52000221cc388ca278670841f092dbeb"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/head_sweep_final.out",
+     "sha256": "372d65b828231daea69cd0e80d721b53e5486d8a9916868f35f85774b0dc3e3e"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/balance/run.log",
+     "sha256": "4f6a0a0d1a16040f6db7cb32d0961937db21a6ea872bcad36e133cde3412fad2"
+    }
+   ],
+   "thinWallAllowances": []
   }
  ],
  "retiredParts": [
@@ -1202,8 +1413,9 @@
   ],
   "filesPerColor": 2,
   "fileCount": 6,
-  "baseline": "printed releases through V1.29",
+  "baseline": "printed releases through V1.28 (V1.29 was not printed and is carried here)",
   "supersedes": [
+   "the unprinted V1.29 package",
    "the V1.17 A7Z face panel",
    "the V1.8 eye trim",
    "the V1.6 jaw support",

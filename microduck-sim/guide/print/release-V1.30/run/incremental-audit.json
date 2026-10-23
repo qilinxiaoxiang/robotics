@@ -2,12 +2,12 @@
   "version": "V1.30",
   "status": "RELEASED",
   "baselinePrintedStockInstances": 89,
-  "partTypes": 6,
-  "printQuantity": 6,
+  "partTypes": 8,
+  "printQuantity": 8,
   "reprintUnchangedStockQuantity": 0,
   "manifest": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/manifest-V1.30.json",
-    "sha256": "990ea49c4e97e351bab38be01b6faa3e7ffe2e7ce9b7dbc59d667b46824adc28"
+    "sha256": "4fc120f1e0dd308d295feb5aa18cdfd0af16cbf864163bb9e25ceb774ad42b55"
   },
   "parts": [
     {
@@ -1434,6 +1434,232 @@
         "regions": [],
         "smallThinPatches": 0,
         "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "saddle_body",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_body.stl",
+        "sha256": "38689e46de3a9ac58205ed92ca59b0802259c0d0b6770493f1d3c02c90bfa535"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_body: 14.8 cm3, bounds [[-45.0, -34.4, 26.19], [-5.0, 34.4, 72.4]] (a7z-saddle/build/build.json). D-023 (2026-10-23): the front-wall plug notch widens to y 2.7..26.2, z up to 9.6 above the floor, for the CableCreation right-angle USB-C plug (body 21.8 mm along +y), and the +y pair of front slots inside it goes; first sliced in V1.30.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+        "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -26.188627243041992,
+      "flatContactAreaMm2": 2.296024123505049,
+      "bounds": [
+        [
+          -45.0,
+          -34.400001525878906,
+          0.0
+        ],
+        [
+          -5.0,
+          34.400001525878906,
+          46.211374282836914
+        ]
+      ],
+      "vertexCount": 18945,
+      "triangleCount": 37960,
+      "tipAngleDeg": -54.74,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: the part stands on tree support over its whole domed underside; its own first-layer contact is a 2.3 mm2 rear corner inside the support footprint, and Bambu trims a part brim wherever support stands within gap + width, so the R1 outer brim (tip angle -55 deg) came out empty on the first V1.29 slice (brim review: planned brim missing); the slicers brim the support themselves",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.092,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.3232,
+        "regions": [
+          {
+            "bbox": [
+              [
+                -45.0,
+                -30.635,
+                0.451
+              ],
+              [
+                -43.97,
+                32.631,
+                10.616
+              ]
+            ],
+            "areaMm2": 222.99,
+            "minMm": 0.092,
+            "medianMm": 0.638,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -42.693,
+                30.862,
+                1.408
+              ],
+              [
+                -41.327,
+                32.005,
+                3.132
+              ]
+            ],
+            "areaMm2": 3.88,
+            "minMm": 0.448,
+            "medianMm": 0.581,
+            "status": "allowed",
+            "allowance": 1
+          }
+        ],
+        "smallThinPatches": 2,
+        "smallThinPatchMaxMm2": 1.29,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                -45.05,
+                -30.685000000000002,
+                0.401
+              ],
+              [
+                -43.92,
+                32.681,
+                10.666
+              ]
+            ],
+            "minMm": 0.087,
+            "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                -42.742999999999995,
+                30.811999999999998,
+                1.3579999999999999
+              ],
+              [
+                -41.277,
+                32.055,
+                3.182
+              ]
+            ],
+            "minMm": 0.443,
+            "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (a7z-saddle/build/wall_check.out; build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "key": "saddle_lid",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_lid.stl",
+        "sha256": "573aa8bfa12fc5134b52b437a4c7ebe98de405e66509c74e5a80696e6d7505b7"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "addition",
+      "replacesStockIds": [],
+      "changeReason": "D-022 (2026-10-22): the A7Z leaves the head after the closed-head soak (D-021) and rides in a roof saddle on the shell dome behind the neck, fan on the lid, Dupont leads straight into the header, antenna strip on the rear wall. saddle_lid: 4.9 cm3, bounds [[-45.0, -34.4, 63.8], [-5.0, 34.4, 74.0]] (a7z-saddle/build/build.json). Carried from the unprinted V1.29 (same file).",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
+        "sha256": "b5878b4c088452833f6ff4bc0fba2cd9e175580fe89636d63a12e0421a7773e8"
+      },
+      "sourceToPrint": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 74.0,
+      "flatContactAreaMm2": 2380.2542583449167,
+      "bounds": [
+        [
+          -45.0,
+          -34.400001525878906,
+          0.0
+        ],
+        [
+          -5.0,
+          34.400001525878906,
+          10.200000762939453
+        ]
+      ],
+      "vertexCount": 904,
+      "triangleCount": 1840,
+      "tipAngleDeg": 85.35,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 85.4 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.6,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.1202,
+        "regions": [],
+        "smallThinPatches": 3,
+        "smallThinPatchMaxMm2": 0.36,
         "allowancesUsed": []
       }
     }

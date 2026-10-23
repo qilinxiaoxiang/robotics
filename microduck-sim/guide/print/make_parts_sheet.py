@@ -520,18 +520,21 @@ RETIRED_INCREMENTAL['V1.30'] = [
     ('V1.8 lower head shell', 'Yellow', HERE / 'world' / 'head_bottom_v18.stl',
      'Its floor closes the head exit to a 6 mm gap; the camera cable does not pass.', 'Lower head shell with the 11 mm exit'),
 ]
-INTRO_BY_VERSION['V1.30'] = ('V1.30 is three plates with six parts for the U20 USB camera. The face panel and eye trim take the camera and its '
+INTRO_BY_VERSION['V1.30'] = ('V1.30 is three plates with eight parts. Six are for the U20 USB camera. The face panel and eye trim take the camera and its '
                              'larger lens; the tall bosses hold the board 13 mm behind the face so the lens ends just behind the trim. The jaw '
                              'support and the lower head shell open the wire exit at the left rear of the head to 11 mm, so the camera cable '
                              'leaves the head in one piece with the other head wires. The left-rear jaw-support screw moves 12 mm back, behind '
                              'the jaw servo. A printed two-piece clamp holds the wires in the exit: one half is part of the jaw support, the '
-                             'other is a small separate part that snaps on, printed in two sizes.')
+                             'other is a small separate part that snaps on, printed in two sizes. It also carries the package that was not '
+                             'printed yet: the A7Z saddle body and lid (V1.29, white; the body now has the wider front notch for the '
+                             'right-angle USB-C plug).')
 RETIRED_HEADING_BY_VERSION['V1.30'] = 'Keep these as spares'
 RETIRED_LEAD_BY_VERSION['V1.30'] = ('The four parts these prints replace. Keep them in case a new part does not fit. The four wire clips from V1.9 and '
                                     'V1.17 were never fitted and are not needed.')
 INCREMENTAL_NAMES_BY_VERSION['V1.30'] = dict(face_panel='Face panel (U20 camera)', eye_trim='Eye trim (U20 camera)',
                                              jaw_support='Jaw support, exit + clamp', head_bottom='Lower head shell (11 mm exit)',
-                                             exit_clamp_loose_a='Exit clamp, loose half A', exit_clamp_loose_b='Exit clamp, loose half B (tighter)')
+                                             exit_clamp_loose_a='Exit clamp, loose half A', exit_clamp_loose_b='Exit clamp half B (tighter)',
+                                             saddle_body='A7Z saddle body', saddle_lid='A7Z saddle lid')
 INCREMENTAL_NOTES_BY_VERSION['V1.30'] = dict(
     face_panel=('Prints face down, no support. The camera board screws onto the ends of the four 13 mm bosses behind the eye with four M2 x 6.'),
     eye_trim=('Prints as V1.8. Its bore now passes the U20 lens ring; the two side tabs are gone, the top key pair stays.'),
@@ -542,7 +545,9 @@ INCREMENTAL_NOTES_BY_VERSION['V1.30'] = dict(
                         'two slots of the fixed half and clicks in. Fit this one first.'),
     exit_clamp_loose_b=('The same strip with a 0.4 mm thicker wall, for a bundle that slides through A. Keep it as the spare.'),
     head_bottom=('Prints floor down, as V1.8, on tree support. Clear the support from the 11 mm exit in the floor and from the new screw '
-                 'boss behind the jaw servo.'))
+                 'boss behind the jaw servo.'),
+    saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.29']['saddle_body'][:-1] + '. From V1.29; the front notch is now wider for the right-angle USB-C plug.',
+    saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.29']['saddle_lid'] + ' From V1.29, unchanged.')
 
 
 def page_html(version: str, body: list[str]) -> str:

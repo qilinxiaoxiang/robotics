@@ -20,7 +20,8 @@ Geometry (all numbers here, build.json repeats them):
   flat seats; their heads (top about 45.1) clear the microSD socket (45.5) and the underside parts (46.0).
 - Antenna AC019 (42 x 12) on the rear wall inner face, z 49.5..61.5, behind the Dupont housings; coax to the IPEX at the pin-1 end.
 - microSD card slot through the +y wall at the card's end (x -33.6..-21.6, z 45..47.5). USB-C right-angle plug passage
-  in the front wall (y 3..15, z 46..56), camera cable forward to the neck bundle.
+  in the front wall (D-023: y 2.7..26.2, z 46..56.6, for the CableCreation 90-degree OTG plug whose 21.8 mm body lies along +y
+  and sticks 10.5 mm out of the wall), camera cable from its +y end forward to the neck bundle.
     /tmp/microduck-cad-venv/bin/python build_saddle.py   (bounded runner)   writes build/*-world.stl and build/build.json"""
 import sys, json, math
 from pathlib import Path
@@ -46,9 +47,9 @@ HS = dict(size=15.0, pad=0.5, h=5.0)
 FAN = dict(size=30.0, t=8.0, hub_r=13.0, cx=-21.8, cy=-1.4, z0=ZU + 17.4, hole_pitch=24.0)   # x -36.8..-6.8: clear of the housings (x <= -37.1), so the Dupont wires leave upward behind it; copper fully under it
 DUPONT = dict(h=14.5, rows_d=(2.23, 4.77), s=(8.37, 56.63), half=1.27)
 SIDE_SLOTS = dict(xs=[-40.0, -34.0, -28.0, -22.0, -16.0], w=3.0, z=(ZU + 3.0, ZU + 13.0))
-FRONT_SLOTS = dict(ys=[-26.0, -20.0, 17.0, 23.0], w=3.0, z=(ZU + 3.0, ZU + 13.0))
+FRONT_SLOTS = dict(ys=[-26.0, -20.0], w=3.0, z=(ZU + 3.0, ZU + 13.0))   # D-023: the V1.29 +y pair (17, 23) lies inside the plug notch and is gone
 CARD_SLOT = dict(x=(-33.6, -21.6), z=(ZU - 2.0, ZU + 0.5))
-PLUG_NOTCH = dict(y=(3.0, 15.0), z=(ZU - 1.0, ZU + 9.0))      # merges with the floor cut below the board
+PLUG_NOTCH = dict(y=(2.7, 26.2), z=(ZU - 1.0, ZU + 9.6))      # D-023: CableCreation 90-degree USB-C body (21.8 along the port's wide axis = y, about 8 thick) +0.8 / +0.75 clearance, leg towards +y: the head bundle comes down the left (+y) side of the neck as built; merges with the floor cut below the board
 LID_SCREWS = dict(x=-27.0, z=Z_LID0 - 3.2, boss=dict(x=(-29.5, -24.5), y_in=28.8, z=(Z_LID0 - 6.9, Z_LID0)), pilot_r=0.8, clear_r=1.1)
 GRILLE = dict(xs=[-35.0, -31.0, -27.0, -23.0, -19.0, -15.0, -11.0], w=2.0, y=(-14.5, 11.5))
 ANT = dict(y=(-21.0, 21.0), z=(ZU + 2.5, ZU + 14.5), t=0.3)   # rear wall inner face, behind the Dupont housings: wall to housing 1.56 mm, 1.26 over the strip, the 1.13 mm IPEX pigtail runs in it from the strip's -y end past the housings (|y| > 25.4) to the IPEX socket
@@ -240,7 +241,7 @@ def build():
            'dupont_housings': P.box((BOARD['x0'] + DUPONT['rows_d'][0] - DUPONT['half'], BOARD['y0'] + DUPONT['s'][0] - DUPONT['half'], BOARD['z_under'] + 1.6),
                                     (BOARD['x0'] + DUPONT['rows_d'][1] + DUPONT['half'], BOARD['y0'] + DUPONT['s'][1] + DUPONT['half'], BOARD['z_under'] + 1.6 + DUPONT['h'])),
            'antenna': P.box((X0 + T, ANT['y'][0], ANT['z'][0]), (X0 + T + ANT['t'], ANT['y'][1], ANT['z'][1])),
-           'usb_c_plug': P.box((BOARD['x0'] + 30.0 - 0.5, BOARD['y0'] + 37.1, BOARD['z_under'] + 1.6), (X1 + 2.0, BOARD['y0'] + 46.2, BOARD['z_under'] + 1.6 + 6.5))}   # right-angle plug body through the front-wall notch
+           'usb_c_plug': P.box((BOARD['x0'] + 30.0 + 1.6, BOARD['y0'] + 36.0, BOARD['z_under'] + 0.85), (X1 + 11.6, BOARD['y0'] + 57.8, BOARD['z_under'] + 8.85))}   # D-023: CableCreation B0194WSKOM 90-degree plug body, 17.8 along x from the socket face (the socket shells end 1.6 beyond the board edge, x -11.2; the tongue inside the socket is not modelled, the mated socket pair is classed in pair_classes.py), so 11.6 beyond the wall, 21.8 along +y from 1.1 below the tongue's -y edge (y 3.5 to 25.3), about 8 thick; the pigtail leaves at the +y end, where the head bundle comes down the left side of the neck
     fan_hub = cyl_z(FAN['cx'], FAN['cy'], FAN['z0'] - 0.01, FAN['z0'] + FAN['t'] + 0.01, FAN['hub_r'])
     out = {}
     for name, man in (('saddle_body', body), ('saddle_lid', lid)):

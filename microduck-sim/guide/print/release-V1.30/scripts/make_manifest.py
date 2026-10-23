@@ -192,6 +192,33 @@ for key, row in ROWS.items():
     parts.append(r)
     pl.setdefault(row['color'], []).append((key, k.bounds.copy()))
     print(key, 'contact', round(area, 1), 'size', size, 'pose deviation', round(dev, 6), 'allowances', len(row['allow']))
+# Still unprinted on 2026-10-23 (the V1.29 saddle, Shawn: "不用了吗"): one package for everything unprinted, so V1.30 carries the
+# V1.29 saddle body and lid in their V1.29 poses. The V1.28 right link was already printed (Shawn, 10/23 evening), so it is not carried. The body is
+# the D-023 build (USB-C plug notch y 2.7..26.2 for the CableCreation right-angle plug), never sliced before.
+SAD = PRINT / 'a7z-saddle'
+v129 = {p['key']: p for p in json.loads(V129.read_text())['parts']}
+SAD_BUILD = json.loads((SAD / 'build/build.json').read_text())
+for key in ('saddle_body', 'saddle_lid'):
+    row = dict(v129[key]); stl = WORLD / f'{key}.stl'; T = np.array(row['sourceToPrint'])
+    k = pose(stl, T); pstl = SAD / f'build/{key}-print.stl'; k.export(pstl)
+    area = float(k.area_faces[np.max(np.abs(k.triangles[:, :, 2]), axis=1) <= .01].sum()); size = (k.bounds[1] - k.bounds[0]).round(2).tolist()
+    assert area >= row['flatContact']['minimumAreaMm2'], (key, area)
+    # thin regions re-derived on the rebuilt mesh, accepted only where V1.29 accepted one (bbox within 1 mm): the rear wall-foot wedges
+    old = row['thinWallAllowances']; allow = []
+    for g in [g for g in wall_check.check(k.copy(), (), key)['regions'] if g['status'] == 'FAIL']:
+        lo, hi = np.array(g['bbox'])
+        hit = [a for a in old if (lo > np.array(a['bbox'][0]) - 1.0).all() and (hi < np.array(a['bbox'][1]) + 1.0).all()]
+        assert hit, (key, 'new thin region', g['areaMm2'], g['minMm'], g['bbox'])
+        allow.append(dict(bbox=[[c - .05 for c in g['bbox'][0]], [c + .05 for c in g['bbox'][1]]], minMm=round(max(g['minMm'] - .005, 0.01), 3), reason=hit[0]['reason']))
+    row['thinWallAllowances'] = allow
+    changed = sha(stl) != row['sha256']
+    row.update(path=str(stl), sha256=sha(stl), poseCheck=dict(row['poseCheck'], printStl=ref(pstl), bedContactMm2=round(area, 2), printSizeMm=size),
+               incrementalEvidence=ref(SAD / 'build/build.json'),
+               changeReason=row['changeReason'] + (' D-023 (2026-10-23): the front-wall plug notch widens to y 2.7..26.2, z up to 9.6 above the floor, '
+                                                   'for the CableCreation right-angle USB-C plug (body 21.8 mm along +y), and the +y pair of front slots '
+                                                   'inside it goes; first sliced in V1.30.' if changed else ' Carried from the unprinted V1.29 (same file).'))
+    parts.append(row); pl.setdefault('White', []).append((key, k.bounds.copy()))
+    print(key, 'carried', 'changed' if changed else 'same', 'contact', round(area, 1), 'size', size)
 GAP = 10.0   # parts of one colour side by side along x, the row centred on the 256 mm plate
 for color, items in pl.items():
     width = sum(b[1, 0] - b[0, 0] for _, b in items) + GAP * (len(items) - 1); x = 128.0 - width / 2; out = []
@@ -206,18 +233,20 @@ m.update(parts=parts, placements=pl, processOverrides={k: v for k, v in white.it
     {'part': 'clip_torso, clip_bracket, clip_head (V1.9) and clip_cap_a7z (V1.17)', 'printed': 'V1.9 and V1.17 (Orange)', 'reason': 'never fitted (D-023): the head wires run free down the left side of the neck; the three screws go back to M2 x 6 / M2.6 x 6'}],
          version='V1.30',
          processOverrideReason=('V1.17 White overrides kept for the face (3 support interface layers at 0.15 spacing, 0.2 top z, interface 40 mm/s, bridge 30 mm/s, '
-                                'support ironing, 0.2 first layer); the face prints flat and needs no support. Black and Yellow: donor profiles as is (as V1.8 and V1.28).'),
+                                'support ironing, 0.2 first layer); the face prints flat and needs no support; the saddle body stands on tree support over its whole underside (as V1.29). Black and Yellow: donor profiles as is (as V1.8 and V1.28).'),
          prototypeScope=('V1.30 delta package (D-023): one White plate with the U20 face panel, one Black plate with the U20 eye trim, the jaw support '
                          'and the two loose halves (A, B) of the exit clamp, one Yellow plate with the lower head shell. The face and trim take the Innomaker '
                          'U20CAM-720P USB camera 13.1 mm behind the face; the jaw support and the shell open the left-rear head exit to dia 11 so the camera '
                          'cable leaves the head whole, and the jaw support carries the fixed half of the printed two-piece clamp that holds the wires there. '
-                         'Four parts replace printed parts, the two loose halves are new. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted.'),
+                         'Four parts replace printed parts, the two loose halves are new. The head cap is not reprinted; the four V1.9 wire clips are retired unfitted. '
+                         'It also carries everything still unprinted (Shawn 2026-10-23): the V1.29 A7Z roof saddle body and lid (White; the body with the D-023 '
+                         'USB-C plug notch). The V1.29 folder is superseded.'),
          knownFitBoundary=('Camera dimensions come from the ROBOTIS OMX-F CAD of the same camera, not from a measured unit: lens front 22.0 mm in front of '
                            'the board, so it sits 0.4 mm behind the trim front. Boss pilots dia 1.7 for M2 x 6 (4.4 mm of thread); the trim bore dia 16.2 is '
                            '1.1 mm clear of the lens ring. The exit parts: the moved M2.6 seat and the clamp are new, not yet printed; the clamp barbs snap with '
                            '0.2 mm of interference, untested on a print; the camera cable diameter (4 mm) and the bundle size are assumed, hence the two loose '
                            'halves. Printed sizes not measured.'))
 m.pop('deferred', None)
-m['deliveryContract'].update(colors=['White', 'Black', 'Yellow'], filesPerColor=2, fileCount=6, baseline='printed releases through V1.29', status='INCREMENTAL_REPRINT',
-                             supersedes=['the V1.17 A7Z face panel', 'the V1.8 eye trim', 'the V1.6 jaw support', 'the V1.8 lower head shell', 'the four V1.9/V1.17 wire clips (never fitted)'])
+m['deliveryContract'].update(colors=['White', 'Black', 'Yellow'], filesPerColor=2, fileCount=6, baseline='printed releases through V1.28 (V1.29 was not printed and is carried here)', status='INCREMENTAL_REPRINT',
+                             supersedes=['the unprinted V1.29 package', 'the V1.17 A7Z face panel', 'the V1.8 eye trim', 'the V1.6 jaw support', 'the V1.8 lower head shell', 'the four V1.9/V1.17 wire clips (never fitted)'])
 (REL / 'manifest-V1.30.json').write_text(json.dumps(m, indent=1, ensure_ascii=False)); print('ok', [p['key'] for p in parts], pl)
