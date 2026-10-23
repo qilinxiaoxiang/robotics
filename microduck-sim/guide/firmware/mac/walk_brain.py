@@ -101,11 +101,14 @@ SIT_KNEE_MIN = 0.6
 WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
 # Straight walking whatever turns the robot (2026-10-21/22: +22 to +42 deg/s to the left at vx 0.25, mostly while the
 # left foot carries the load; cause not isolated). A walk holds the heading it started with: yaw-rate command
-# turn = trim + HEADING_KP * error + HEADING_KI * integral, within walk61's trained range (Pollen velocity env ang_vel_z
-# (-1.0, 1.0)). The trim is the robot's own feed-forward: after every walk of TRIM_MIN_S or more without a manual turn
+# turn = trim + HEADING_KP * error + HEADING_KI * integral, within +-TURN_MAX. walk61 was trained on (-1.0, 1.0) (Pollen
+# velocity env ang_vel_z), but on 2026-10-23 the robot drifted left with the command pinned at -1.0 (+30 deg in 11 s). In
+# the as-built sim with a yaw torque that reproduces that pinned drift (0.020 N m: limit 1.0 turns +99 deg in 8 s), limit
+# 2.0 holds +7 to +11 deg over three seeds and 0.024 N m +18 deg, no fall, max tilt 7 deg as without it; with no torque the
+# command never leaves (-1, 1), so ordinary walking is unchanged. The trim is the robot's own feed-forward: after every walk of TRIM_MIN_S or more without a manual turn
 # it moves TRIM_RATE of the way to that walk's mean turn command and is kept in the yaw trim file, so the next walk
 # starts already turning against the drift. A manual turn adds the trim too, so left and right arcs stay symmetric.
-TURN_MAX = 1.0
+TURN_MAX = 2.0
 HEADING_KP = 2.0
 HEADING_KI = 1.0
 HEADING_I_MAX = 0.5  # rad s
