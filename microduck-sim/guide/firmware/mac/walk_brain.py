@@ -125,9 +125,13 @@ WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
 # it moves TRIM_RATE of the way to that walk's mean turn command and is kept in the yaw trim file, so the next walk
 # starts already turning against the drift. A manual turn adds the trim too, so left and right arcs stay symmetric.
 TURN_MAX = 2.0
-HEADING_KP = 2.0
-HEADING_KI = 1.0
-HEADING_I_MAX = 0.5  # rad s
+# Gains 2026-10-23: with KP 2, KI 1 and the integral capped at 0.5 rad s the integral could not cover a steady drift, so
+# the heading settled left of the start (robot: +40 deg in 3 s, then +10 deg in 8 s). As-built sim, yaw torque 0.020 N m,
+# 8 s walks, mean heading over seconds 3-7: KP 2 / KI 1 / cap 0.5 +16.9 and +6.1 deg (trim -0.47 / -0.96); KP 3 / KI 2 /
+# cap 1.5 +2.2 and +2.7 deg; with no torque -0.3 deg; no fall, tilt unchanged.
+HEADING_KP = 3.0
+HEADING_KI = 2.0
+HEADING_I_MAX = 1.5  # rad s
 TRIM_MIN_S = 1.0
 TRIM_RATE = 0.5
 WAIT_FOR_FRESH = True  # torque modes wait for a fresh sample before entry (tests flip it to show the 10-16 slam)
