@@ -47,8 +47,10 @@ Remote-control additions (2026-10-20, walk_brain.py has the details):
                                           from --sounds through `aplay -q` on the ALSA default device (duck_sound.py,
                                           off the control thread, a new call kills the old one) and, when the jaw is
                                           calibrated, opens it to QUACK_JAW_DEG for QUACK_S under the jaw limits,
-                                          enabling its torque first if needed. A gripping jaw stays shut. The head
-                                          also moves gently to a random QUACK_HEAD pose (a tilt or a look up) and back
+                                          enabling its torque first if needed; a jaw that was released before is
+                                          pressed shut for QUACK_CLOSE_S and released again. A gripping jaw stays
+                                          shut. The head also moves gently to a random QUACK_HEAD pose (a tilt or a
+                                          look up) and back
                                           over QUACK_HEAD_S whenever a policy can rebalance under it: walk mode at zero
                                           command (stand61, or walk61 QUACK_REST_S after a stop) and seated. Never
                                           while stepping, sitting down or standing up, and never in the open-loop stand
@@ -359,6 +361,10 @@ MAX_TILT_GP_DEG = 55.0  # the ground-pick crouch pitches the trunk 35 deg in the
 MAX_TILT_SIT_DEG = 30.0  # sit and stand-up peak at 10.3-11.4 deg in the plugged as-built sim at 7.0 V (2026-10-20)
 QUACK_JAW_DEG = 15.0  # jaw opening for a quack; jaw_limits still caps it by the head pose
 QUACK_S = 0.4
+# A jaw released before the quack is pressed shut (jaw_ctl.SQUEEZE_DEG under the 100 mA current limit) this long after
+# it, then released: at KP 200 a 2 deg rest goal settled at 2.8 deg and even a 0 deg goal at 1.6 deg, beak visibly open
+# (2026-10-23; closed by hand it read the calibrated closed tick 2042).
+QUACK_CLOSE_S = 0.3
 # Random head move per quack on stand61, as deltas from the policy default, model rad:
 # one of the QUACK_HEAD styles, each joint's magnitude drawn from its range, with a random sign where the range is
 # unsigned (a pair) and the given sign where it is (lo, hi, sign); head_pitch negative looks up (pickup.py looks down
@@ -638,7 +644,7 @@ def main():
     print(f"quack: {len(voice.files)} calls in {args.sounds}" if voice.files else
           f"quack: no .wav calls in {args.sounds}, the quack key moves only the jaw", flush=True)
     last_quack = 0  # "quack" counter value last acted on; a new value quacks once
-    quack_until, quack_prev, quack_hint = None, None, False
+    quack_until, quack_prev, quack_hint, quack_close_until = None, None, False, None
     quack_head, quack_head_t0 = None, None
     zero_t = None  # perf_counter time since which the walk velocity command has been all zero
     grip_stop = GripStop()
@@ -734,7 +740,8 @@ def main():
             call = voice.quack()
             if jaw.calibrated and jaw.goal_deg != "grip":
                 if quack_until is None:
-                    quack_prev = jaw.goal_deg if jaw.on else None  # None: back to the rest opening afterwards
+                    # None: the jaw was released (or still being pressed shut after a quack) and is shut again after
+                    quack_prev = jaw.goal_deg if jaw.on and quack_close_until is None else None
                 jaw.goal_deg, quack_until = QUACK_JAW_DEG, time.perf_counter() + QUACK_S  # enables the torque if off
             elif not quack_hint:
                 print("quack: jaw stays put (" + ("gripping" if jaw.goal_deg == "grip" else "not calibrated") + ")",
@@ -753,9 +760,16 @@ def main():
                      + (f" x{QUACK_SIT_SCALE} seated" if brain.mode == "sit" else "") if why is None
                      else f"head stays ({why})"), flush=True)
         if quack_until is not None and (time.perf_counter() >= quack_until or (not jaw.on and jaw.goal_deg is None)):
-            if jaw.on:
-                jaw.goal_deg = quack_prev if quack_prev is not None else 2.0  # back to the rest opening
+            if jaw.on and quack_prev is not None:
+                jaw.goal_deg = quack_prev  # the jaw was held before the quack: back to that opening
+            elif jaw.on:  # it was released: press shut, then release again (a 2 deg goal stopped at 2.8, beak open)
+                jaw.goal_deg, quack_close_until = jaw_ctl.SQUEEZE_DEG, time.perf_counter() + QUACK_CLOSE_S
             quack_until = None
+        if quack_close_until is not None and (time.perf_counter() >= quack_close_until or quack_until is not None
+                                              or not jaw.on or jaw.goal_deg != jaw_ctl.SQUEEZE_DEG):
+            if quack_until is None and jaw.on and jaw.goal_deg == jaw_ctl.SQUEEZE_DEG:
+                jaw.release(link)  # shut and unpowered, as before the quack; friction keeps the beak closed
+            quack_close_until = None
         if cmd_is_new:  # jaw keys act once per command; the jaw goal persists until the next jaw key
             if want.get("jaw_mark") in ("closed", "open"):
                 try:
