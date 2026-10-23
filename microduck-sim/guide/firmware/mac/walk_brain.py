@@ -123,8 +123,14 @@ WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
 # 2.0 holds +7 to +11 deg over three seeds and 0.024 N m +18 deg, no fall, max tilt 7 deg as without it; with no torque the
 # command never leaves (-1, 1), so ordinary walking is unchanged. The trim is the robot's own feed-forward: after every walk of TRIM_MIN_S or more without a manual turn
 # it moves TRIM_RATE of the way to that walk's mean turn command and is kept in the yaw trim file, so the next walk
-# starts already turning against the drift. A manual turn adds the trim too, so left and right arcs stay symmetric.
+# starts already turning against the drift.
+# A manual turn (vtheta) is a wanted yaw rate held by the IMU too: the held heading advances at vtheta and the same
+# trim + PI loop follows it, with vtheta as feed-forward. With the trim alone the arcs depended on how far the trim
+# matched the drift of the moment: robot 2026-10-23 right arcs -15 and about -3 deg/s, a left arc +8 deg/s, for +-0.8;
+# as-built sim with the 0.020 N m drift +50 and -7 deg/s. The heading may lead the robot by at most ARC_LEAD rad, so a
+# turn the robot cannot follow does not wind up; releasing the turn holds the direction reached.
 TURN_MAX = 2.0
+ARC_LEAD = 0.35
 # Gains 2026-10-23: with KP 2, KI 1 and the integral capped at 0.5 rad s the integral could not cover a steady drift, so
 # the heading settled left of the start (robot: +40 deg in 3 s, then +10 deg in 8 s). As-built sim, yaw torque 0.020 N m,
 # 8 s walks, mean heading over seconds 3-7: KP 2 / KI 1 / cap 0.5 +16.9 and +6.1 deg (trim -0.47 / -0.96); KP 3 / KI 2 /
@@ -318,6 +324,7 @@ class Brain:
         self.walk_ramp = walk_ramp
         self.mode, self.goal, self.ramp, self.heading = "monitor", None, None, None
         self.heading_i, self.turn_t, self.walk_seg = 0.0, None, None  # heading integral, last turn tick, current walk
+        self.turning = False  # the last walk tick had a manual turn
         self.yaw_trim_file = yaw_trim_file
         self.yaw_trim = load_yaw_trim(yaw_trim_file)
         self.waiting = False  # a torque mode was asked for before any fresh sample
@@ -601,18 +608,21 @@ class Brain:
                 dt = 0.02 if self.turn_t is None else min(0.1, max(0.0, now - self.turn_t))
                 self.turn_t = now
                 moving = math.hypot(vx, vy) > 1e-3
-                if abs(vth) > 1e-3:  # manual turn wins; releasing it keeps the reached direction
-                    self.heading, self.heading_i = yaw, 0.0
-                    turn = float(np.clip(vth + self.yaw_trim, -TURN_MAX, TURN_MAX))
-                elif moving:
+                if moving or abs(vth) > 1e-3:
                     if self.heading is None:  # the walk starts: hold the heading it starts with
                         self.heading, self.heading_i = yaw, 0.0
+                    if abs(vth) > 1e-3:  # the held heading turns at the wanted rate, at most ARC_LEAD ahead
+                        lead = math.atan2(math.sin(self.heading + vth * dt - yaw), math.cos(self.heading + vth * dt - yaw))
+                        self.heading = yaw + float(np.clip(lead, -ARC_LEAD, ARC_LEAD))
+                    elif self.turning:  # a turn was released: hold the direction reached
+                        self.heading = yaw
+                    self.turning = abs(vth) > 1e-3
                     err = math.atan2(math.sin(self.heading - yaw), math.cos(self.heading - yaw))
                     self.heading_i = float(np.clip(self.heading_i + err * dt, -HEADING_I_MAX, HEADING_I_MAX))
-                    turn = float(np.clip(self.yaw_trim + HEADING_KP * err + HEADING_KI * self.heading_i,
+                    turn = float(np.clip(self.yaw_trim + vth + HEADING_KP * err + HEADING_KI * self.heading_i,
                                          -TURN_MAX, TURN_MAX))
                 else:
-                    turn, self.heading = 0.0, None
+                    turn, self.heading, self.turning = 0.0, None, False
                 if moving or abs(vth) > 1e-3:
                     seg = self.walk_seg = self.walk_seg or {"t0": now, "sum": 0.0, "n": 0, "manual": False}
                     seg["sum"], seg["n"], seg["manual"] = seg["sum"] + turn, seg["n"] + 1, seg["manual"] or abs(vth) > 1e-3
