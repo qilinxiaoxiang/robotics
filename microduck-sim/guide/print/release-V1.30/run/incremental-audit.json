@@ -1,0 +1,1289 @@
+{
+  "version": "V1.30",
+  "status": "RELEASED",
+  "baselinePrintedStockInstances": 89,
+  "partTypes": 4,
+  "printQuantity": 4,
+  "reprintUnchangedStockQuantity": 0,
+  "manifest": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/release-V1.30/manifest-V1.30.json",
+    "sha256": "60578dbe47c0a0e9380c2e666a5dfb3649b9dd9fd321bdb4f3828ed05dbd62a6"
+  },
+  "parts": [
+    {
+      "key": "face_panel",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/face_panel.stl",
+        "sha256": "60213c4302f38594e4653f837a88970871cb14e500b21c23dc229c30db625747"
+      },
+      "quantity": 1,
+      "color": "White",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "46"
+      ],
+      "changeReason": "D-023 (2026-10-22): the Innomaker U20CAM-720P USB camera takes the four face bosses. The bosses grow from 4.0 to 7.7 mm (dia 4.8, pilot dia 1.7, wall 1.55) so the camera PCB sits 2.2 mm behind the lens holder seat and the M12 lens front lands 1.6 mm behind the trim front; the eye opening grows to dia 16.2 for the dia 15.1 lens ring, with the same 45 deg flare outside. Front face otherwise unchanged (checks.json frontUnchangedOutsideBore). Four M2 x 6 into the bosses (C-camera-01..04), 4.4 mm of thread. The two side key pockets for the eye-trim tabs at (AY -/+ 7.7, AZ - 4.5) are filled through the 1.3 mm front skin: the bore cut into them, leaving 0.35 mm; the trim loses its two side tabs and the top key pair stays.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
+        "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          -1.0,
+          0.0,
+          -0.0913772583008
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -132.627841949463
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0,
+          81.39900207519531
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 0.00099945068359375,
+      "flatContactAreaMm2": 3093.582072148061,
+      "bounds": [
+        [
+          -43.825000762939474,
+          -22.31299972534191,
+          0.0
+        ],
+        [
+          43.82500076293943,
+          22.312999725341683,
+          9.0
+        ]
+      ],
+      "vertexCount": 2618,
+      "triangleCount": 5252,
+      "tipAngleDeg": 86.73,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "manifest: R1: flat on 3086 mm2, 9 mm tall, tip angle 88 deg; set explicitly because the White donors default to auto_brim on Bambu.",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 1.05,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.1191,
+        "regions": [
+          {
+            "bbox": [
+              [
+                -1.32,
+                6.525,
+                0.001
+              ],
+              [
+                1.398,
+                8.102,
+                1.3
+              ]
+            ],
+            "areaMm2": 8.1,
+            "minMm": 1.05,
+            "medianMm": 1.05,
+            "status": "allowed",
+            "allowance": 0
+          }
+        ],
+        "smallThinPatches": 0,
+        "smallThinPatchMaxMm2": 0.0,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                -1.5,
+                6.2,
+                -0.01
+              ],
+              [
+                2.0,
+                8.2,
+                1.31
+              ]
+            ],
+            "minMm": 1.0,
+            "reason": "the top key pits of the V1.8 face/trim pair, between the dia 16.2 bore and the upper trim-screw hole: the V1.17 face measures the same 1.05 mm there (2.5 mm2; release-V1.17 face printed 2026-10-15); the larger bore widens the patch to 8.1 mm2 at 1.05 mm without thinning it; a skin patch behind the trim ring, no load",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "eye_trim",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/eye_trim.stl",
+        "sha256": "900d11db917db0a2cb83797ed2e6a5205120fdcd69d27965607be662b06d836e"
+      },
+      "quantity": 1,
+      "color": "Black",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "66"
+      ],
+      "changeReason": "D-023 (2026-10-22): the bore behind the flare grows from dia 14.4 to 16.2 so the U20CAM M12 lens ring (dia 15.1) passes with 0.55 mm radial clearance; the two 1.7 mm trim-screw pilots and the outer shape are unchanged (face-u20/checks.json trimSectionsRadii, optics: 2.71 mm normal clearance of the 120 deg cone, no clipping). The two 1.0 mm side tabs on the back of the ring are cut off (their face pockets are filled, see the face row); the top key pair stays.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/face-u20/checks.json",
+        "sha256": "524e67c1af776a96946c67fb076a1947fcc02eca286fb6bc1a67e36f7ee471e4"
+      },
+      "sourceToPrint": [
+        [
+          -0.0001347749785980401,
+          -0.9999424979371395,
+          0.010722996546634705,
+          13.518332268618476
+        ],
+        [
+          -5.078005077201203e-05,
+          0.010723003473684191,
+          0.9999425056561452,
+          -116.10119576275717
+        ],
+        [
+          -0.9999999896285459,
+          0.00013422271548984625,
+          -5.2222323378000636e-05,
+          89.40894754131322
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": -9.947598300641403e-14,
+      "flatContactAreaMm2": 394.0862957749924,
+      "bounds": [
+        [
+          0.004527594674518909,
+          0.0012352383847940018,
+          9.947598300641403e-14
+        ],
+        [
+          30.003813614530078,
+          29.999883730998377,
+          9.40185027713514
+        ]
+      ],
+      "vertexCount": 1128,
+      "triangleCount": 2256,
+      "tipAngleDeg": 74.52,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 74.5 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.097,
+        "samples": 43326,
+        "areaPerSampleMm2": 0.05,
+        "regions": [],
+        "smallThinPatches": 2,
+        "smallThinPatchMaxMm2": 0.85,
+        "allowancesUsed": []
+      }
+    },
+    {
+      "key": "jaw_support",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/jaw_support.stl",
+        "sha256": "004e11c68940e44f22f7e7dcef8026035705d895d2b1933746658a37ebd34542"
+      },
+      "quantity": 1,
+      "color": "Black",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "28"
+      ],
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Jaw support: the exit cut through its left-rear corner walls and plate, the pad moved with a dia 2.8 clearance hole, and a 1.6 x 3.2 mm window through the corner wall beside the exit (y 12.8..14.4, z 116..119.2) for the one cable tie that holds the bundle to the head.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+        "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+      },
+      "sourceToPrint": [
+        [
+          0.9999999836190009,
+          -0.00018100011910402185,
+          -9.768319526950166e-07,
+          1.8941510406265452
+        ],
+        [
+          -0.0001809998631040405,
+          -0.9999999508515038,
+          0.0002560000779179075,
+          33.97638451096622
+        ],
+        [
+          -1.0231679491651516e-06,
+          -0.000255999896917483,
+          -0.9999999672315023,
+          130.31503006028376
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 1.2856503730063196e-05,
+      "flatContactAreaMm2": 829.968294815965,
+      "bounds": [
+        [
+          -3.0129191330718896e-06,
+          -3.076252241385191e-06,
+          0.0
+        ],
+        [
+          54.200000592083335,
+          73.50000380781549,
+          18.800005781420225
+        ]
+      ],
+      "vertexCount": 2085,
+      "triangleCount": 4190,
+      "tipAngleDeg": 67.03,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 67.0 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.61,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.1531,
+        "regions": [
+          {
+            "bbox": [
+              [
+                19.029,
+                69.36,
+                2.508
+              ],
+              [
+                36.97,
+                71.698,
+                9.698
+              ]
+            ],
+            "areaMm2": 81.43,
+            "minMm": 0.798,
+            "medianMm": 0.803,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                7.0,
+                26.401,
+                2.974
+              ],
+              [
+                10.355,
+                42.021,
+                7.7
+              ]
+            ],
+            "areaMm2": 69.95,
+            "minMm": 0.61,
+            "medianMm": 0.9,
+            "status": "allowed",
+            "allowance": 1
+          }
+        ],
+        "smallThinPatches": 2,
+        "smallThinPatchMaxMm2": 0.15,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                18.979,
+                69.31,
+                2.458
+              ],
+              [
+                37.02,
+                71.748,
+                9.748
+              ]
+            ],
+            "minMm": 0.793,
+            "reason": "unchanged V1.6 jaw support (release file, printed): 520 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.798 mm sampled there, 0.798 mm now, 81.43 mm2)",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                6.95,
+                26.351,
+                2.924
+              ],
+              [
+                10.405,
+                42.071,
+                7.75
+              ]
+            ],
+            "minMm": 0.605,
+            "reason": "unchanged V1.6 jaw support (release file, printed): 355 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.61 mm sampled there, 0.61 mm now, 69.95 mm2)",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "key": "head_bottom",
+      "source": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/head_bottom.stl",
+        "sha256": "604bbdde80f16e0daf0e6d883cba7bd5187d4d11d76e8ae5dcdb93129c3c071d"
+      },
+      "quantity": 1,
+      "color": "Yellow",
+      "decision": "replacement",
+      "replacesStockIds": [
+        "12"
+      ],
+      "changeReason": "D-023 (Shawn 2026-10-23: \"\u80fd\u4e0d\u80fd\u628a\u8116\u5b50\u90a3\u4e2a\u6d1e\u641e\u5927\u4e00\u70b9\u5462 \u522b\u8f6c\u675c\u90a6\u7ebf\u4e86\"; \"\u6309\u8fd9\u4e2a\u505a\uff1a\u91cd\u6253\u988c\u652f\u67b6\u548c\u5934\u5e95\u677f\u653e\u5927\u5de6\u540e\u51fa\u53e3\"): the head wires and the U20CAM cable leave the head at its left rear. The 6.4 mm gap there (between ID15, the jaw support corner walls and the screw H-jaw_support-01) becomes a vertical dia 10.99 exit at (10, 18.5) through the jaw support and the floor of the lower shell; the left-rear screw seat moves to (11.6, 30.2) on the pad strip behind ID15 (4.0 mm of M2.6 thread, 5.8 mm of pilot past the tip); the wall ends beside the exit are squared off so no new wall is under 1.2 mm. Lower shell: the exit through the floor, the old boss and the ring-wall and rib ends beside it removed, a dia 6 boss with a dia 2.2 pilot at the new seat standing on the bed. Everything else is the V1.8 shell.",
+      "incrementalEvidence": {
+        "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/neck-exit-20261023/checks.json",
+        "sha256": "3afb549a86dc7b52181909a8e8f23d4c036ec89f4d8767d01c50dc5606eed739"
+      },
+      "sourceToPrint": [
+        [
+          0.0,
+          1.0000000000000002,
+          6.591949208711867e-17,
+          0.0
+        ],
+        [
+          -0.9999636988970905,
+          -1.1101424199846176e-16,
+          0.008520615473600324,
+          0.0
+        ],
+        [
+          0.008520615473600324,
+          1.0771008873113893e-16,
+          0.9999636988970906,
+          -99.06181710375041
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dropToBedMm": 2.8604253969888305e-06,
+      "flatContactAreaMm2": 221.84159272245196,
+      "bounds": [
+        [
+          -45.88096237182617,
+          -85.39554394906632,
+          0.0
+        ],
+        [
+          45.8810386657715,
+          31.34621642500048,
+          20.050667856834252
+        ]
+      ],
+      "vertexCount": 20079,
+      "triangleCount": 40182,
+      "tipAngleDeg": 60.22,
+      "objectSettings": {
+        "brim_type": "no_brim"
+      },
+      "objectSettingsSource": "R1 default: tip angle 60.2 deg >= 10 deg, no brim",
+      "wallCheck": {
+        "passed": true,
+        "minWallMm": 1.2,
+        "minRegionMm2": 2.0,
+        "neighbourMm": 1.0,
+        "minSmoothedMm": 0.052,
+        "samples": 60000,
+        "areaPerSampleMm2": 0.4916,
+        "regions": [
+          {
+            "bbox": [
+              [
+                -39.993,
+                -15.324,
+                1.512
+              ],
+              [
+                15.651,
+                30.643,
+                13.879
+              ]
+            ],
+            "areaMm2": 963.03,
+            "minMm": 0.679,
+            "medianMm": 0.716,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -37.485,
+                -32.7,
+                4.231
+              ],
+              [
+                -35.466,
+                -17.624,
+                15.534
+              ]
+            ],
+            "areaMm2": 297.9,
+            "minMm": 1.02,
+            "medianMm": 1.02,
+            "status": "allowed",
+            "allowance": 1
+          },
+          {
+            "bbox": [
+              [
+                16.319,
+                -18.149,
+                10.598
+              ],
+              [
+                40.091,
+                27.988,
+                13.898
+              ]
+            ],
+            "areaMm2": 211.38,
+            "minMm": 0.673,
+            "medianMm": 0.729,
+            "status": "allowed",
+            "allowance": 2
+          },
+          {
+            "bbox": [
+              [
+                -30.606,
+                -38.043,
+                9.764
+              ],
+              [
+                -29.402,
+                -5.863,
+                12.754
+              ]
+            ],
+            "areaMm2": 139.61,
+            "minMm": 1.053,
+            "medianMm": 1.12,
+            "status": "allowed",
+            "allowance": 3
+          },
+          {
+            "bbox": [
+              [
+                -11.034,
+                -5.624,
+                5.585
+              ],
+              [
+                11.09,
+                -4.312,
+                16.795
+              ]
+            ],
+            "areaMm2": 138.63,
+            "minMm": 0.551,
+            "medianMm": 0.551,
+            "status": "allowed",
+            "allowance": 4
+          },
+          {
+            "bbox": [
+              [
+                -10.998,
+                -45.196,
+                5.885
+              ],
+              [
+                10.865,
+                -43.068,
+                17.13
+              ]
+            ],
+            "areaMm2": 129.29,
+            "minMm": 0.698,
+            "medianMm": 0.698,
+            "status": "allowed",
+            "allowance": 5
+          },
+          {
+            "bbox": [
+              [
+                -44.247,
+                -73.792,
+                12.629
+              ],
+              [
+                -41.305,
+                -42.305,
+                14.38
+              ]
+            ],
+            "areaMm2": 113.07,
+            "minMm": 0.693,
+            "medianMm": 0.728,
+            "status": "allowed",
+            "allowance": 6
+          },
+          {
+            "bbox": [
+              [
+                38.194,
+                -73.772,
+                12.472
+              ],
+              [
+                44.179,
+                -41.924,
+                14.375
+              ]
+            ],
+            "areaMm2": 109.63,
+            "minMm": 0.701,
+            "medianMm": 0.728,
+            "status": "allowed",
+            "allowance": 7
+          },
+          {
+            "bbox": [
+              [
+                -40.317,
+                -41.513,
+                10.192
+              ],
+              [
+                -33.376,
+                -40.093,
+                12.806
+              ]
+            ],
+            "areaMm2": 33.92,
+            "minMm": 1.047,
+            "medianMm": 1.106,
+            "status": "allowed",
+            "allowance": 8
+          },
+          {
+            "bbox": [
+              [
+                -45.558,
+                -79.144,
+                12.416
+              ],
+              [
+                -37.728,
+                -74.59,
+                14.424
+              ]
+            ],
+            "areaMm2": 32.94,
+            "minMm": 0.713,
+            "medianMm": 0.739,
+            "status": "allowed",
+            "allowance": 9
+          },
+          {
+            "bbox": [
+              [
+                -39.115,
+                -76.639,
+                12.653
+              ],
+              [
+                -35.526,
+                -71.046,
+                13.929
+              ]
+            ],
+            "areaMm2": 18.68,
+            "minMm": 0.723,
+            "medianMm": 0.747,
+            "status": "allowed",
+            "allowance": 10
+          },
+          {
+            "bbox": [
+              [
+                42.524,
+                -78.454,
+                12.87
+              ],
+              [
+                44.594,
+                -74.653,
+                14.419
+              ]
+            ],
+            "areaMm2": 17.7,
+            "minMm": 0.717,
+            "medianMm": 0.731,
+            "status": "allowed",
+            "allowance": 11
+          },
+          {
+            "bbox": [
+              [
+                -30.601,
+                -47.603,
+                10.232
+              ],
+              [
+                -29.411,
+                -44.746,
+                12.861
+              ]
+            ],
+            "areaMm2": 16.71,
+            "minMm": 1.045,
+            "medianMm": 1.084,
+            "status": "allowed",
+            "allowance": 12
+          },
+          {
+            "bbox": [
+              [
+                8.384,
+                -50.19,
+                6.162
+              ],
+              [
+                10.044,
+                -48.846,
+                10.52
+              ]
+            ],
+            "areaMm2": 15.73,
+            "minMm": 0.366,
+            "medianMm": 0.952,
+            "status": "allowed",
+            "allowance": 13
+          },
+          {
+            "bbox": [
+              [
+                36.349,
+                -78.121,
+                12.729
+              ],
+              [
+                42.277,
+                -75.843,
+                13.902
+              ]
+            ],
+            "areaMm2": 15.73,
+            "minMm": 0.731,
+            "medianMm": 0.744,
+            "status": "allowed",
+            "allowance": 14
+          },
+          {
+            "bbox": [
+              [
+                21.385,
+                -50.177,
+                9.596
+              ],
+              [
+                25.81,
+                -49.313,
+                11.153
+              ]
+            ],
+            "areaMm2": 11.8,
+            "minMm": 0.648,
+            "medianMm": 1.029,
+            "status": "allowed",
+            "allowance": 15
+          },
+          {
+            "bbox": [
+              [
+                -30.583,
+                -9.977,
+                10.416
+              ],
+              [
+                -30.14,
+                -5.415,
+                12.492
+              ]
+            ],
+            "areaMm2": 11.31,
+            "minMm": 1.073,
+            "medianMm": 1.105,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                -27.021,
+                -2.76,
+                10.175
+              ],
+              [
+                -24.65,
+                -1.529,
+                12.233
+              ]
+            ],
+            "areaMm2": 10.82,
+            "minMm": 1.09,
+            "medianMm": 1.12,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                35.534,
+                -75.319,
+                12.989
+              ],
+              [
+                37.142,
+                -71.781,
+                13.906
+              ]
+            ],
+            "areaMm2": 10.32,
+            "minMm": 0.729,
+            "medianMm": 0.742,
+            "status": "allowed",
+            "allowance": 18
+          },
+          {
+            "bbox": [
+              [
+                14.959,
+                -50.749,
+                10.192
+              ],
+              [
+                20.461,
+                -49.187,
+                11.202
+              ]
+            ],
+            "areaMm2": 9.83,
+            "minMm": 0.736,
+            "medianMm": 0.908,
+            "status": "allowed",
+            "allowance": 19
+          },
+          {
+            "bbox": [
+              [
+                37.244,
+                -33.746,
+                10.718
+              ],
+              [
+                39.585,
+                -32.589,
+                12.742
+              ]
+            ],
+            "areaMm2": 8.85,
+            "minMm": 1.05,
+            "medianMm": 1.123,
+            "status": "allowed",
+            "allowance": 20
+          },
+          {
+            "bbox": [
+              [
+                30.507,
+                -50.175,
+                9.868
+              ],
+              [
+                34.287,
+                -49.227,
+                10.997
+              ]
+            ],
+            "areaMm2": 5.9,
+            "minMm": 0.922,
+            "medianMm": 1.065,
+            "status": "allowed",
+            "allowance": 21
+          },
+          {
+            "bbox": [
+              [
+                30.008,
+                -15.35,
+                10.535
+              ],
+              [
+                30.532,
+                -14.067,
+                12.564
+              ]
+            ],
+            "areaMm2": 3.44,
+            "minMm": 1.031,
+            "medianMm": 1.131,
+            "status": "allowed",
+            "allowance": 22
+          },
+          {
+            "bbox": [
+              [
+                12.998,
+                -4.215,
+                10.665
+              ],
+              [
+                13.056,
+                -3.152,
+                12.344
+              ]
+            ],
+            "areaMm2": 2.95,
+            "minMm": 1.079,
+            "medianMm": 1.105,
+            "status": "allowed",
+            "allowance": 0
+          },
+          {
+            "bbox": [
+              [
+                29.258,
+                -15.323,
+                10.439
+              ],
+              [
+                29.418,
+                -13.939,
+                11.369
+              ]
+            ],
+            "areaMm2": 2.95,
+            "minMm": 1.135,
+            "medianMm": 1.167,
+            "status": "allowed",
+            "allowance": 24
+          }
+        ],
+        "smallThinPatches": 20,
+        "smallThinPatchMaxMm2": 1.97,
+        "allowancesUsed": [
+          {
+            "bbox": [
+              [
+                -40.043,
+                -15.374,
+                1.462
+              ],
+              [
+                15.701,
+                30.693,
+                13.929
+              ]
+            ],
+            "minMm": 0.674,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 2305 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.551 mm sampled there, 0.679 mm now, 963.03 mm2)",
+            "index": 0
+          },
+          {
+            "bbox": [
+              [
+                -37.535,
+                -32.75,
+                4.181
+              ],
+              [
+                -35.416,
+                -17.574,
+                15.584
+              ]
+            ],
+            "minMm": 1.015,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 603 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.669 mm sampled there, 1.02 mm now, 297.9 mm2)",
+            "index": 1
+          },
+          {
+            "bbox": [
+              [
+                16.269,
+                -18.199,
+                10.548
+              ],
+              [
+                40.141,
+                28.038,
+                13.948
+              ]
+            ],
+            "minMm": 0.668,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 438 thin samples, 0.49 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.669 mm sampled there, 0.673 mm now, 211.38 mm2)",
+            "index": 2
+          },
+          {
+            "bbox": [
+              [
+                -30.656,
+                -38.093,
+                9.714
+              ],
+              [
+                -29.352,
+                -5.813,
+                12.804
+              ]
+            ],
+            "minMm": 1.048,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 302 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.669 mm sampled there, 1.053 mm now, 139.61 mm2)",
+            "index": 3
+          },
+          {
+            "bbox": [
+              [
+                -11.084,
+                -5.674,
+                5.535
+              ],
+              [
+                11.14,
+                -4.262,
+                16.845
+              ]
+            ],
+            "minMm": 0.546,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 279 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.551 mm sampled there, 0.551 mm now, 138.63 mm2)",
+            "index": 4
+          },
+          {
+            "bbox": [
+              [
+                -11.048,
+                -45.246,
+                5.835
+              ],
+              [
+                10.915,
+                -43.018,
+                17.18
+              ]
+            ],
+            "minMm": 0.693,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 262 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.698 mm sampled there, 0.698 mm now, 129.29 mm2)",
+            "index": 5
+          },
+          {
+            "bbox": [
+              [
+                -44.297,
+                -73.842,
+                12.579
+              ],
+              [
+                -41.255,
+                -42.255,
+                14.43
+              ]
+            ],
+            "minMm": 0.688,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 230 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.702 mm sampled there, 0.693 mm now, 113.07 mm2)",
+            "index": 6
+          },
+          {
+            "bbox": [
+              [
+                38.144,
+                -73.822,
+                12.422
+              ],
+              [
+                44.229,
+                -41.874,
+                14.425
+              ]
+            ],
+            "minMm": 0.696,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 219 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.694 mm sampled there, 0.701 mm now, 109.63 mm2)",
+            "index": 7
+          },
+          {
+            "bbox": [
+              [
+                -40.367,
+                -41.563,
+                10.142
+              ],
+              [
+                -33.326,
+                -40.043,
+                12.856
+              ]
+            ],
+            "minMm": 1.042,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 66 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (1.056 mm sampled there, 1.047 mm now, 33.92 mm2)",
+            "index": 8
+          },
+          {
+            "bbox": [
+              [
+                -45.608,
+                -79.194,
+                12.366
+              ],
+              [
+                -37.678,
+                -74.54,
+                14.474
+              ]
+            ],
+            "minMm": 0.708,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 63 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.714 mm sampled there, 0.713 mm now, 32.94 mm2)",
+            "index": 9
+          },
+          {
+            "bbox": [
+              [
+                -39.165,
+                -76.689,
+                12.603
+              ],
+              [
+                -35.476,
+                -70.996,
+                13.979
+              ]
+            ],
+            "minMm": 0.718,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 34 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.714 mm sampled there, 0.723 mm now, 18.68 mm2)",
+            "index": 10
+          },
+          {
+            "bbox": [
+              [
+                42.474,
+                -78.504,
+                12.82
+              ],
+              [
+                44.644,
+                -74.603,
+                14.469
+              ]
+            ],
+            "minMm": 0.712,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 32 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.711 mm sampled there, 0.717 mm now, 17.7 mm2)",
+            "index": 11
+          },
+          {
+            "bbox": [
+              [
+                -30.651,
+                -47.653,
+                10.182
+              ],
+              [
+                -29.361,
+                -44.696,
+                12.911
+              ]
+            ],
+            "minMm": 1.04,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 29 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (1.072 mm sampled there, 1.045 mm now, 16.71 mm2)",
+            "index": 12
+          },
+          {
+            "bbox": [
+              [
+                8.334,
+                -50.24,
+                6.112
+              ],
+              [
+                10.094,
+                -48.796,
+                10.57
+              ]
+            ],
+            "minMm": 0.361,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 30 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.5 mm sampled there, 0.366 mm now, 15.73 mm2)",
+            "index": 13
+          },
+          {
+            "bbox": [
+              [
+                36.299,
+                -78.171,
+                12.679
+              ],
+              [
+                42.327,
+                -75.793,
+                13.952
+              ]
+            ],
+            "minMm": 0.726,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 29 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.711 mm sampled there, 0.731 mm now, 15.73 mm2)",
+            "index": 14
+          },
+          {
+            "bbox": [
+              [
+                21.335,
+                -50.227,
+                9.546
+              ],
+              [
+                25.86,
+                -49.263,
+                11.203
+              ]
+            ],
+            "minMm": 0.643,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 21 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.725 mm sampled there, 0.648 mm now, 11.8 mm2)",
+            "index": 15
+          },
+          {
+            "bbox": [
+              [
+                35.484,
+                -75.369,
+                12.939
+              ],
+              [
+                37.192,
+                -71.731,
+                13.956
+              ]
+            ],
+            "minMm": 0.724,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 18 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.711 mm sampled there, 0.729 mm now, 10.32 mm2)",
+            "index": 18
+          },
+          {
+            "bbox": [
+              [
+                14.909,
+                -50.799,
+                10.142
+              ],
+              [
+                20.511,
+                -49.137,
+                11.252
+              ]
+            ],
+            "minMm": 0.731,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 18 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.725 mm sampled there, 0.736 mm now, 9.83 mm2)",
+            "index": 19
+          },
+          {
+            "bbox": [
+              [
+                37.194,
+                -33.796,
+                10.668
+              ],
+              [
+                39.635,
+                -32.539,
+                12.792
+              ]
+            ],
+            "minMm": 1.045,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 15 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (1.086 mm sampled there, 1.05 mm now, 8.85 mm2)",
+            "index": 20
+          },
+          {
+            "bbox": [
+              [
+                30.457,
+                -50.225,
+                9.818
+              ],
+              [
+                34.337,
+                -49.177,
+                11.047
+              ]
+            ],
+            "minMm": 0.917,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 9 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.586 mm sampled there, 0.922 mm now, 5.9 mm2)",
+            "index": 21
+          },
+          {
+            "bbox": [
+              [
+                29.958,
+                -15.4,
+                10.485
+              ],
+              [
+                30.582,
+                -14.017,
+                12.614
+              ]
+            ],
+            "minMm": 1.026,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 4 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.669 mm sampled there, 1.031 mm now, 3.44 mm2)",
+            "index": 22
+          },
+          {
+            "bbox": [
+              [
+                29.208,
+                -15.373,
+                10.389
+              ],
+              [
+                29.468,
+                -13.889,
+                11.419
+              ]
+            ],
+            "minMm": 1.13,
+            "reason": "unchanged V1.8 lower head shell (printed 2026-10-12): 4 thin samples, 0.0 mm2 of them off the old surface (>0.001 mm); the old part fails at the same place (0.669 mm sampled there, 1.135 mm now, 2.95 mm2)",
+            "index": 24
+          }
+        ]
+      }
+    }
+  ]
+}

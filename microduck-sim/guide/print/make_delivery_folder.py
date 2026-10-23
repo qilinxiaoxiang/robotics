@@ -170,7 +170,7 @@ def plate_picture(version: str, colour: str, parts: list[dict], files: list[dict
     top = 600
     H = top + rows * (ch + pad) + pad
     img = Image.new('RGB', (W, H), (247, 246, 242)); d = ImageDraw.Draw(img)
-    d.text((pad, pad), f'MicroDuck {version} · {colour} plate · {sum(p["quantity"] for p in parts)} parts', fill=(29, 29, 31), font=font(40))
+    d.text((pad, pad), f'MicroDuck {version} · {colour} plate · {(n := sum(p["quantity"] for p in parts))} part{"s" if n != 1 else ""}', fill=(29, 29, 31), font=font(40))
     y = pad + 58
     for f in files:
         d.text((pad, y), f'{FOLDERS[f["machine"]]}/  {f["filename"]}', fill=(93, 93, 99), font=font(22)); y += 32

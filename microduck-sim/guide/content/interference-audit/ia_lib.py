@@ -79,7 +79,13 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # saddle pose (sd_*.stl). The head-pose entries above ('pi', head_pi_a7z_*, antenna*, camera_ribbon, camera_board) are
               # no longer guide parts; they stay here harmlessly for the record.
               'saddle_body': 'saddle_body.stl', 'saddle_lid': 'saddle_lid.stl',
-              **{p.stem: p.name for p in sorted(WORLD.glob('sd_*.stl'))}}
+              **{p.stem: p.name for p in sorted(WORLD.glob('sd_*.stl'))},
+              # 2026-10-22 D-023 U20 camera (print/face-u20/build_face_u20.py): face_panel.stl and eye_trim.stl above are the
+              # V1.30 U20 versions; the camera board, its cut cable stub and the splice sleeve are new purchased parts.
+              'camera_u20cam': 'camera_u20cam.stl', 'camera_cable_stub': 'camera_cable_stub.stl',
+              # 2026-10-23 D-023: the V1.30 jaw support with the dia 11 left-rear exit (print/neck-exit-20261023/) replaces the V1.6
+              # release geometry; the head splice (camera_splice_stub.stl) is retired, the camera cable runs whole.
+              'jaw_support': 'jaw_support.stl'}
 
 
 def decode_guide_part(p: dict) -> tuple[np.ndarray, np.ndarray]:

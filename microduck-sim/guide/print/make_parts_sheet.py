@@ -508,6 +508,36 @@ INCREMENTAL_NOTES_BY_VERSION['V1.29'] = dict(
                  'The curved floor sits on the shell dome; the two roof screws (M2 x 10) go down through it into the rear pack.'),
     saddle_lid=('The lid with the fan pocket and the exhaust grille. It prints upside down on its flat top; the fan clips into the bars, '
                 'the two side screws (M2 x 6) hold it on the body.'))
+# V1.30: the U20CAM USB camera on the face and the dia 11 left-rear head exit (D-023, 2026-10-22/23). Four reprints replace
+# four printed parts, kept as spares; the V1.9/V1.17 wire clips were never fitted.
+RETIRED_INCREMENTAL['V1.30'] = [
+    ('V1.17 face panel (A7Z)', 'White', HERE / 'face-a7z' / 'face_panel_a7z.stl',
+     'Its camera bosses and eye opening fit the Radxa CSI camera, which left with the A7Z.', 'Face panel for the U20 USB camera'),
+    ('V1.8 eye trim', 'Black', HERE / 'world' / 'eye_trim-v18.stl',
+     'Its dia 14.4 bore is too small for the U20 lens ring.', 'Eye trim with the dia 16.2 bore'),
+    ('V1.6 jaw support', 'Black', Path('/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/black-source-print/jaw_support_original-print.stl'),
+     'Its left-rear corner closes the head exit to a 6 mm gap.', 'Jaw support with the 11 mm exit'),
+    ('V1.8 lower head shell', 'Yellow', HERE / 'world' / 'head_bottom_v18.stl',
+     'Its floor closes the head exit to a 6 mm gap; the camera cable does not pass.', 'Lower head shell with the 11 mm exit'),
+]
+INTRO_BY_VERSION['V1.30'] = ('V1.30 is three plates with four parts for the U20 USB camera. The face panel and eye trim take the camera and its '
+                             'larger lens. The jaw support and the lower head shell open the wire exit at the left rear of the head to 11 mm, '
+                             'so the camera cable leaves the head in one piece with the other head wires. The left-rear jaw-support screw '
+                             'moves 12 mm back, behind the jaw servo. A small window in the jaw-support corner takes the one cable tie '
+                             'that holds the bundle inside the head.')
+RETIRED_HEADING_BY_VERSION['V1.30'] = 'Keep these as spares'
+RETIRED_LEAD_BY_VERSION['V1.30'] = ('The four parts these prints replace. Keep them in case a new part does not fit. The four wire clips from V1.9 and '
+                                    'V1.17 were never fitted and are not needed.')
+INCREMENTAL_NAMES_BY_VERSION['V1.30'] = dict(face_panel='Face panel (U20 camera)', eye_trim='Eye trim (U20 camera)',
+                                             jaw_support='Jaw support (11 mm exit)', head_bottom='Lower head shell (11 mm exit)')
+INCREMENTAL_NOTES_BY_VERSION['V1.30'] = dict(
+    face_panel=('Prints face down, no support. The camera board screws onto the four tall bosses behind the eye with four M2 x 6.'),
+    eye_trim=('Prints as V1.8. Its bore now passes the U20 lens ring; the two side tabs are gone, the top key pair stays.'),
+    jaw_support=('Prints top face down, as V1.6. Check the 11 mm exit at the left-rear corner and the small tie window beside it are '
+                 'clear. The left-rear screw (M2.6 x 6) now goes in behind the jaw servo.'),
+    head_bottom=('Prints floor down, as V1.8, on tree support. Clear the support from the 11 mm exit in the floor and from the new screw '
+                 'boss behind the jaw servo.'))
+
 
 def page_html(version: str, body: list[str]) -> str:
     css = CSS

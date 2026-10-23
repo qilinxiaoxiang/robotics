@@ -83,7 +83,7 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'speaker_retainer', 'clip_torso', 'clip_bracket', 'clip_head', 'clip_cap',
+                  'speaker_retainer',
                   'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
     'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier'],
 }
@@ -363,6 +363,8 @@ def build_parts() -> dict:
     face = first_existing(world / 'face_panel.stl')
     trim = first_existing(world / 'eye_trim.stl')
     shell = first_existing(world / 'head_bottom.stl')
+    # V1.30 (D-023, 2026-10-23): the jaw support with the dia 11 left-rear exit and the tie window (print/neck-exit-20261023/).
+    jaw_sup = first_existing(world / 'jaw_support.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
     jaw = first_existing(world / 'jaw_frame.stl')
     # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm so it reaches the ID13 case (print/neck-ring/).
@@ -458,20 +460,17 @@ def build_parts() -> dict:
     if cap:
         v, f = load_stl(cap)
         parts['head_cap'].update(v=v, f=f, name='Head cap (V1.17 A7Z cap as printed, white; its board rails and end slots are unused since D-022)', source=str(cap))
-    # V1.9 (print/ext-v19/): speaker retainer and the four neck-bundle wire clips (new prints, orange like the cap), and
-    # the speaker and amplifier at their audio-study positions under the cap roof (purchased; the source export's old
-    # positions are overridden).
-    V19_PRINTS = {'speaker_retainer': ('Speaker retainer frame (new print)', 'electronics'),
-                  'clip_torso': ('Torso wire clip (new print)', 'neck'), 'clip_bracket': ('Bracket wire clip (new print)', 'neck'),
-                  'clip_head': ('Head wire clip (new print)', 'head'), 'clip_cap': ('Cap wire clip (new print)', 'electronics')}
+    # V1.9 (print/ext-v19/): speaker retainer (new print, orange like the cap), and the speaker and amplifier at their
+    # audio-study positions under the cap roof (purchased; the source export's old positions are overridden). The four V1.9
+    # neck-bundle wire clips (clip_torso/bracket/head/cap) were printed but never fitted and are retired from the guide
+    # (D-023, 2026-10-22): the nine head wires run free down the left side of the neck. Their world files stay as a record.
+    V19_PRINTS = {'speaker_retainer': ('Speaker retainer frame (new print)', 'electronics')}
     for key, (name, module) in V19_PRINTS.items():
         path = first_existing(world / f'{key}.stl')
         if path:
             v, f = load_stl(path)
             parts[key] = {'key': key, 'name': name, 'color': parts['head_cap']['color'], 'module': module, 'status': 'new-print',
                           'v': v, 'f': f, 'source': str(path)}
-    if 'clip_cap' in parts:
-        parts['clip_cap']['name'] = 'Cap wire clip with the micro HDMI notch (V1.17 print, orange; unused since D-022, kept as a part)'
     tape = first_existing(world / 'speaker_tape.stl')
     if tape:   # 2026-10-14: a closed loop of foam double-sided tape (two halves) on the collar's 0.6 mm lip ring at the speaker edge (compressed 1 mm tape)
         v, f = load_stl(tape)
@@ -496,16 +495,32 @@ def build_parts() -> dict:
             parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'electronics', 'status': 'purchased',
                           'v': v, 'f': f, 'source': str(path)}
     for key, path in (('face_panel', face), ('eye_trim', trim), ('head_bottom', shell),
-                      ('imu_board', imu), ('imu_sh4_receiving', imu_plug), ('jaw_frame', jaw), ('neck_pitch_ring', neck_ring)):
+                      ('imu_board', imu), ('imu_sh4_receiving', imu_plug), ('jaw_frame', jaw), ('neck_pitch_ring', neck_ring), ('jaw_support', jaw_sup)):
         if path:
             v, f = load_stl(path)
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
             parts[key].update(v=v, f=f, source=str(path))
-    # 2026-10-15 A7Z face (print/face-a7z/): four camera bosses. Since D-022 (2026-10-22) no camera is drawn on them: the
-    # Radxa Camera 13M 214 left the head with the A7Z, and the USB camera that will take the bosses is not chosen yet.
+    # 2026-10-22 D-023 U20 face (print/face-u20/): the four camera bosses are 7.7 mm tall and the eye opening dia 16.2 for the
+    # Innomaker U20CAM-720P USB camera; the camera and its own cable inside the head (whole, 2026-10-23: no head splice) are
+    # drawn as parts (module 'head', purchased), from print/world/camera_*.stl copied out of print/face-u20/.
     if face:
-        parts['face_panel']['name'] = 'Face panel with four camera bosses (A7Z print, white; bosses empty until the USB camera is chosen)'
+        parts['face_panel']['name'] = 'Face panel with four camera bosses for the U20CAM (V1.30 print, white)'
+    if trim:
+        parts['eye_trim']['name'] = 'Eye trim, bore dia 16.2 for the U20CAM lens ring (V1.30 print, black)'
+    if shell:
+        parts['head_bottom']['name'] = 'Lower head shell with the dia 11 left-rear exit (V1.30 print, yellow)'
+    if jaw_sup:
+        parts['jaw_support']['name'] = 'Jaw support with the dia 11 left-rear exit and the cable-tie window (V1.30 print, black)'
+    CAMERA = {'camera_u20cam': ('Innomaker U20CAM-720P USB camera on the four face bosses, connector edge to the left (+Y), D-023', '#1b5e20'),
+              'camera_cable_stub': ("Camera's own cable inside the head, over the jaw support front wall and the jaw motor to the left-rear exit", '#37474f')}
+    for key, (name, color) in CAMERA.items():
+        path = first_existing(world / f'{key}.stl')
+        if path:
+            v, f = load_stl(path)
+            if len(f) > DECIMATE_OVER:
+                v, f = decimate(v, f, 25000, key)
+            parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'head', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
     if jaw:
         parts['jaw_frame'].update(name='Jaw frame with the lower lip (new print)', color=parts['head_bottom']['color'])
     # V1.14 white plate (colour scheme C): the V1.9 cap reprints white and the V2.0 side shells (print/v20-source/) print white (the face panel white). Set last,
@@ -660,15 +675,17 @@ def build_cables(routes: dict) -> tuple[list, dict]:
             add(cid, lab, 'touch', '#c87533', R[rid], frm, to, radius=0.65)
     add('spk-plus', 'Speaker + lead', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad', 'Amplifier terminal +', radius=0.65)
     add('spk-minus', 'Speaker - lead', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad', 'Amplifier terminal -', radius=0.65)
-    # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6, and the future
-    # USB camera cable from the face camera position down the neck bundle to the right-angle USB-C plug in the OTG socket.
+    # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6. D-023 (revised
+    # 2026-10-23): the camera's own dia 4 cable from the end of camera_cable_stub over the jaw motor, through the dia 11
+    # left-rear exit and down the neck with the head wires to the splice with the right-angle USB-C pigtail at the saddle
+    # front (r 2.0). Its free span from the head floor to the splice is sized by print/neck-exit-20261023/cable_sweep.py.
     if 'fan_lead' in R:
         add('fan-lead', 'Fan lead (3-pin, from the lid fan)', 'fan', '#455a64', R['fan_lead'], 'Fan in the saddle lid',
             'A7Z fan socket J6 (pin-1 end, front corner)', radius=0.7)
     if 'cam_usb' in R:
-        add('cam-usb', 'USB camera cable (future UVC camera on the face bosses)', 'usb', '#00838f', R['cam_usb'],
-            'USB camera on the face bosses (not yet chosen)', 'Right-angle USB-C plug in the A7Z OTG socket, through the saddle front-wall notch',
-            slack=60, radius=1.5)
+        add('cam-usb', "Camera cable (the camera's own, whole from the board, cut to length and soldered at the saddle)", 'usb', '#00838f', R['cam_usb'],
+            'Over the jaw motor (the camera cable inside the head)', 'Splice to the right-angle USB-C pigtail at the saddle front; the plug is in the A7Z OTG socket through the front-wall notch',
+            slack=75, radius=2.0)
     if 'antenna_coax' in R:
         add('antenna-coax', 'Antenna pigtail (AC019 strip to the A7Z IPEX socket)', 'antenna', '#7e57c2', R['antenna_coax'],
             'AC019 strip on the saddle rear wall inner face (its -y end)', 'A7Z IPEX socket (pin-1 end, rear corner)', radius=0.57)

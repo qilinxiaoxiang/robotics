@@ -14,9 +14,17 @@ come from routes.json powerWiresF (layout F wire paths + 15 mm per screw-termina
 """
 from __future__ import annotations
 
+import json
 import math
+from pathlib import Path
 
 from wiring.openrb import openrb_wiring
+
+# D-023 (2026-10-23): free span of the camera cable from the head floor exit to the pigtail splice at the saddle, from the head
+# sweep over the neck and head joint ranges (print/neck-exit-20261023/cable_sweep.py); the span is the full-range need rounded up.
+_SWEEP = json.loads((Path(__file__).resolve().parents[1] / 'print/neck-exit-20261023/cable_sweep.json').read_text())
+CAM_SWEEP = {'full': round(_SWEEP['full']['maxRoutedMm']), 'trained': round(_SWEEP['trained']['maxRoutedMm']), 'home': round(_SWEEP['home']['routedMm'])}
+CAM_SPAN = 10 * math.ceil(CAM_SWEEP['full'] / 10)
 
 LEGS = ['left-leg', 'right-leg']
 TORSO = ['torso_base', 'rear_pack', 'ring10_torso', 'ring5_torso']
@@ -51,9 +59,10 @@ ROLL_GROUP = ['head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b', 'motor14'
 SHELLS = ['shell_left', 'shell_right']
 JAW = ['jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'motor15']
 FACE = ['face_panel', 'eye_trim']
-# D-022 (2026-10-22): the Radxa Camera 13M 214 left the head with the A7Z. The face keeps its four camera bosses for a USB UVC
-# camera that is not chosen yet, so no camera part is drawn and the camera step is a note.
-CAMERA: list[str] = []
+# D-023 (2026-10-22, revised 2026-10-23): the Innomaker U20CAM-720P USB camera on the four face bosses (print/face-u20/). Its
+# own cable runs whole through the dia 11 left-rear head exit (print/neck-exit-20261023/) with the nine head wires and is
+# cut to length and soldered to the right-angle USB-C pigtail at the saddle.
+CAMERA = ['camera_u20cam', 'camera_cable_stub']
 
 # Radxa Cubie A7Z header, now in the roof saddle (D-022). The pin assignments are unchanged from the head: IMU on 1, 3, 5 (TWI7),
 # 9; UART2 on 7 (TX) and 11 (RX); the 5 V lead on 2 and 6. Pins 8 and 10 are the A7Z debug console and stay empty.
@@ -85,8 +94,10 @@ AUDIO = ['speaker_tape', 'speaker', 'speaker_retainer', 'amplifier']   # 2026-10
 # on foam tape on the inner left wall; its nine wires are soldered to its edge pads (approved exception, like the amplifier).
 TOUCH_PADS = ['touch_pad_l1', 'touch_pad_r1', 'touch_pad_l2', 'touch_pad_r2', 'touch_pad_m']
 TOUCH = TOUCH_PADS + ['touch_xiao_tape', 'touch_xiao']
-# V1.9 neck-bundle wire clips, each a 2 mm tab under an existing screw head (print/ext-v19/README.md).
-CLIPS = ['clip_torso', 'clip_bracket', 'clip_head', 'clip_cap']
+# The four V1.9 neck-bundle wire clips (print/ext-v19/) were printed but never fitted: the nine head wires leave the head at its
+# left rear and run free down the left (+Y) side of the neck (as built, Shawn 2026-10-22, D-023). Their screws are back to the
+# V1.8 lengths and the clips are retired from the guide (the world files stay on disk as a record).
+CLIPS: list[str] = []
 
 REAR = (-1.0, -0.85, 0.55)
 REAR_LOW = (-1.0, -0.55, -0.25)
@@ -137,7 +148,7 @@ def plate_cut(L: dict, rid: str) -> str:
 def build(ctx):
     L = ctx.L
     # D-022: the A7Z and everything on it live in the roof saddle; nothing electronic but the speaker, amplifier and touch
-    # parts stays in the head. The cap wire clip (clip_cap) stays registered and printed but is fitted nowhere.
+    # parts stays in the head.
     saddle_body = ctx.keys(*SADDLE_BODY)
     saddle_lid = ctx.keys(*SADDLE_LID)
     sd_board = ctx.keys(*SD_BOARD)
@@ -148,7 +159,7 @@ def build(ctx):
     sd_cam_plug = ctx.keys(*SD_CAM_PLUG)
     saddle_all = saddle_body + sd_antenna + sd_board + sd_copper + sd_housings + sd_cam_plug + sd_fan + saddle_lid
     audio = ctx.keys(*AUDIO)
-    clips = ctx.keys('clip_torso', 'clip_bracket', 'clip_head')   # the cap clip is unused since D-022
+    clips: list[str] = []   # D-023: no wire clips (never fitted; the bundle runs free down the left side of the neck)
     AUDIO_CABLES = ['amp-lrc', 'amp-bclk', 'amp-din', 'amp-gnd', 'amp-vin']
     touch = ctx.keys(*TOUCH)
     TOUCH_PAD_CABLES = [c for c in ('touch-l1', 'touch-r1', 'touch-l2', 'touch-r2', 'touch-m') if c in L]
@@ -167,7 +178,7 @@ def build(ctx):
     cut = {
         # Power wires in the rear converter box (15 V feed and link, 7 V pair, Pi lead): text, see plate_cut().
         **{rid: plate_cut(L, rid) for rid in PLATE_ROUTES},
-        # +60 = 39 mm worst-pose slack of the V1.9 clip route + about 20 mm for the ends and dressing (matches build_cables
+        # +60 = 39 mm worst-pose slack of the neck route + about 20 mm for the ends and dressing (matches build_cables
         # slack; route-v19-motion.json).
         'imu': r5(L['imu'] + 60),
         'uart': r5(L['uart'] + 60),
@@ -189,15 +200,15 @@ def build(ctx):
         {'id': 'torso', 'title': '5. Torso and the rear electronics pack',
          'summary': 'Build the torso on the yaw links with the hip cables through the centre of the base, screw the BNO085 onto the rear pack on the bench, slide the pack in in place of the power support, close the hips and plug the hip cables into the hip-yaw motors; then the OpenRB-150 in the pack, the 7 V pair into its terminal block, the leg links, the IMU plug, and the rear converter box: the frame in place of the pack cover, the 5991 in its bottom tier, the 5 V converter in the middle tier and the 7 V converter on top, every power wire outside the box (the 15 V wires window to window outside the right wall, the 7 V pair and the head 5 V lead up the outside of the left wall, over the box top and down through the notch at its front edge into the pack), and the lid.'},
         {'id': 'neck', 'title': '6. Neck',
-         'summary': 'Build the five-motor neck on the bench with its chain cables and the bracket wire clip, then lower it into the open torso and close the shells with the torso wire clip. The two roof holes of the shells stay empty: the saddle screws go through them in the next chapter.'},
+         'summary': 'Build the five-motor neck on the bench with its chain cables, then lower it into the open torso and close the shells. The two roof holes of the shells stay empty: the saddle screws go through them in the next chapter.'},
         {'id': 'saddle', 'title': '7. Roof saddle for the A7Z',
          'summary': 'Set the printed saddle on the torso roof over the rear pack and screw it down through the shell roofs into the pack bar, stick the Wi-Fi antenna on its rear wall, lower the Radxa Cubie A7Z onto its four posts, put the copper heatsink on the processor, plug the torso wires (IMU, UART, 5 V) onto the header through the floor passage, and snap the fan into the lid. The lid goes on in chapter 11, once the fan has been seen running.'},
         {'id': 'head', 'title': '8. Head mechanics',
-         'summary': 'Seat the jaw in the lower head shell on the bench, fit the shell, the jaw support with ID15, the head wire clip and the jaw screws, then the face with the eye trim. The camera bosses on the face stay empty until the USB camera is chosen (D-022).'},
+         'summary': 'Seat the jaw in the lower head shell on the bench, fit the shell, the jaw support with ID15 and the jaw screws, then the face with the eye trim and the U20CAM USB camera on its four bosses, its own cable laid over the jaw motor to the 11 mm exit at the left rear (D-023).'},
         {'id': 'head-elec', 'title': '9. Head electronics',
-         'summary': 'Speaker and the amplifier with its five soldered wires in the cap, five copper touch pads and the XIAO touch board inside the cap. The cap carries no computer any more: its board rails, end slots and the cap wire clip are unused, and the nine head wires leave the cap for the saddle.'},
+         'summary': 'Speaker and the amplifier with its five soldered wires in the cap, five copper touch pads and the XIAO touch board inside the cap. The cap carries no computer any more: its board rails and end slots are unused, and the nine head wires leave the cap for the saddle.'},
         {'id': 'bundle', 'title': '10. Neck bundle, cap and cable dressing',
-         'summary': 'Run the nine head wires (five amplifier, four XIAO) from the head clip down through the bracket and torso clips to the saddle and plug them onto the A7Z, close the cap, screw the head shut and check every joint for snags.'},
+         'summary': 'Run the nine head wires (five amplifier, four XIAO) and the camera cable through the 11 mm exit at the left rear of the head, tie them once inside the head, run them down the left side of the neck to the saddle, plug the nine onto the A7Z, cut the camera cable to length and solder it to the right-angle USB-C pigtail, close the cap, screw the head shut and check every joint for snags.'},
         {'id': 'power-up', 'title': '11. First power-up and saddle lid',
          'summary': 'Unpowered checks, A7Z configuration, a readback of both converter voltages before the OpenRB and the A7Z are connected to them, 15/15 servo scan and the servo voltage-limit check, sensors and the fan, then the saddle lid, current, and weigh the robot.'},
         {'id': 'backpack', 'title': '12. Battery backpack',
@@ -266,7 +277,7 @@ def build(ctx):
              'Inside, a printed rear pack hangs on the four hip-yaw case screws behind the hip motors, where the battery and the power support used to be. It holds the OpenRB-150 standing upright; the 7 V pair and the head 5 V lead come into the pack from the rear converter box through the notch at the front edge of the box top and the top edge of its front plate, where the shell top meets the box, and lie on the frame\'s lip; no wire passes through the front plate, which closes the back of the pack. Nothing hangs under the crotch.',
              'The OpenRB-150 passes the 7 V to the three servo chains through its own ports, as on the original MicroDuck. Two jumper wires from converter #2 carry 5 V to the A7Z. There are no fuses. The BNO085 IMU is screwed to a rib on the front of the pack plate, between the hip motors.',
              'The head computer, a Radxa Cubie A7Z, sits in a printed saddle on the torso roof, over the rear pack, behind the neck (D-022, 2026-10-22: inside the closed head it reached 85 °C in five minutes). A 15 × 15 × 5 mm copper heatsink sits on its processor and a 30 mm fan in the saddle lid blows down onto the copper. The Wi-Fi antenna is stuck to the inside of the saddle\'s rear wall. The head keeps the jaw, the face with its eye trim, a small speaker with its MAX98357A amplifier under the cap roof, and five copper touch pads read by a XIAO board. There is no camera for now: the Radxa camera left with the A7Z, the face keeps its four camera bosses for a USB camera that is not chosen yet, and the saddle has a notch for that camera\'s USB-C plug.',
-             'The A7Z talks to the OpenRB over two UART wires. The eight torso wires (5 V lead, four IMU wires, UART pair) leave the pack over the top of its plate and go straight up through the passage in the saddle floor onto the header. Nine head wires (five from the amplifier, four from the XIAO) leave the head through the opening in the floor of the lower shell, beside the neck, and run DOWN the neck in three printed wire clips, one inside the head on the jaw support, one on the neck pitch bracket and one on the right torso shell, to the same passage and up onto the header. The cap has no notch and nothing is plugged inside the head.',
+             'The A7Z talks to the OpenRB over two UART wires. The eight torso wires (5 V lead, four IMU wires, UART pair) leave the pack over the top of its plate and go straight up through the passage in the saddle floor onto the header. Nine head wires (five from the amplifier, four from the XIAO) and the four thin camera leads leave the head at its left rear through the opening in the floor of the lower shell, beside the neck, and run free DOWN the left (+Y) side of the neck, beside the ID11 to ID13 servo cable, to the same passage and up onto the header; the camera leads stop at the saddle front, soldered to the right-angle USB-C pigtail in the OTG socket. No wire clips: the four V1.9 clips were never fitted (D-023). The cap has no notch and nothing is plugged inside the head.',
              'Drawn cables are shown in colour. Use the cable list under each step for the exact ends and lengths.',
          ],
          warnings=['Chapters 1 to 11 run the robot from the USB-C desk supply. The only battery is the 2S LiPo in the chapter 12 backpack, and it reaches the robot only through the backpack\'s plugs 3 and 4. Never connect a battery any other way.',
@@ -285,6 +296,11 @@ def build(ctx):
              {'item': 'X3P servo cables for the legs: 180 mm and 100 mm (OMX-AI kit)', 'qty': 'up to 6 + 2', 'kind': 'cable',
               'note': 'Each leg uses three 180 mm cables (hip yaw to hip roll, inside the thigh, knee to ankle) and one 100 mm cable (hip roll to hip pitch). You need only the ones chapter 4 finds missing.'},
              {'item': 'USB-A to USB-C cable (OMX-AI kit)', 'qty': 1, 'kind': 'cable', 'note': 'Laptop to OpenRB: flashing, and the wired control link from the Mac.'},
+             {'item': 'Innomaker U20CAM-720P USB camera (UVC, 32 × 32 mm board, M12 lens, 120 deg diagonal, 720p30, 1 m cable), Amazon B0CLRJZG8D', 'qty': 1, 'kind': 'electronic',
+              'note': 'D-023 (2026-10-22). Screws to the four face bosses with M2 × 6, connector edge to the left (+Y). Its own 1 m cable runs whole from the board through the head exit and is cut to length at the saddle. A second one is on the OMX arm; the dimensions in print/face-u20/checks.json (lens seat 5.5, lens 15.4, ring dia 15.1) are read off the product renders and are to be confirmed with calipers on that one.'},
+             {'item': 'CableCreation right-angle USB-C male to USB-A female OTG pigtail, 15 cm, Amazon B0194WSKOM', 'qty': 1, 'kind': 'cable',
+              'note': 'D-023. Only its USB-C plug end is used: the USB-A socket is cut off about 60 mm from the plug and the camera cable is soldered to its four wires. The plug goes into the A7Z OTG socket through the saddle front-wall notch, its body lying along the wall towards +Y (the plug is reversible).'},
+             {'item': 'Heat-shrink tubing, dia 1.5 and dia 6 (or electrical tape)', 'qty': '4 + 1 pieces', 'kind': 'other', 'note': 'D-023: one small sleeve per conductor and one large sleeve over the camera splice at the saddle front.'},
              {'item': 'Adafruit 5991 USB-C PD board (HUSB238, six DIP switches and a 2-pin screw terminal)', 'qty': 1, 'kind': 'electronic',
               'note': 'DigiKey 1528-5991-ND. Set to 15 V; it sits in the narrow bottom tier of the rear converter box on two M2 × 6 in its lower holes; two lid screws go through its upper holes.'},
              {'item': 'ROBOTIS XL4015 DC converter (the OMX-AI kit "DC converter" module, 61.7 × 26.2 mm, two blue trimmers, IN and OUT screw terminals)', 'qty': 2, 'kind': 'electronic',
@@ -319,13 +335,15 @@ def build(ctx):
 
     new_prints = ctx.keys('shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'battery_backpack_frame', 'battery_backpack_cap', 'head_cap', 'head_bottom', 'jaw_frame', 'face_panel', 'eye_trim',
                           'jaw_support', 'mouth_sliding_ring', 'neck_pitch', 'neck_pitch_ring',
-                          'speaker_retainer', 'clip_torso', 'clip_bracket', 'clip_head', 'clip_cap',
+                          'speaker_retainer',
                           'ankle', 'right_ankle', 'ankle_cheek', 'right_ankle_cheek', 'lower', 'right_lower', 'foot', 'right_foot',
                           'saddle_body', 'saddle_lid')
     step('prints', 'start', f'Print the {len(new_prints)} new parts',
          show=[], add=new_prints, context=LEGS + TORSO, bench=True,
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
-         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.30.html, PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+                  {'item': 'V1.30 package: zhengxia_MicroDuck_V1.30 folder (one white plate: the U20 face panel; one black plate: the U20 eye trim and the jaw support; one yellow plate: the lower head shell)', 'qty': 1, 'kind': 'printed',
+                   'note': 'V1.30 (D-023, 2026-10-22) replaces the A7Z face panel and the V1.8 eye trim for the Innomaker U20CAM-720P USB camera: the face keeps its two trim screw holes and carries four 7.7 mm bosses on a 28 mm square (dia 1.7 pilots for M2 × 6) that hold the 32 × 32 mm camera board with its lens seat 2.2 mm behind the face; the eye opening in the face and the bore of the eye trim grow to dia 16.2 for the M12 lens ring, with the same 45 deg flare outside (print/face-u20/checks.json). The jaw support and the lower head shell reprint with the left-rear head exit opened to dia 11, so the camera cable passes whole: the old left-rear jaw-support screw seat is moved behind ID15 to (11.6, 30.2), and a 1.6 × 3.2 mm window in the jaw support corner wall beside the exit takes the cable tie that holds the head wires (print/neck-exit-20261023/checks.json). Plate release pending.'},
                   {'item': 'Roof saddle for the A7Z (D-022, 2026-10-22): saddle body and saddle lid, white like the shells (print/a7z-saddle/build/, world files saddle_body.stl and saddle_lid.stl; plate release pending)', 'qty': 2, 'kind': 'printed',
                    'note': 'The body is a 40 × 69 mm open box with 1.6 mm walls that follows the shell roof: four dia 5 posts with dia 1.6 pilots for the A7Z, a passage in its floor over the torso roof opening, two flat seats for the M2 × 10 pack screws, a slot in the left (+Y) wall for the microSD card, a notch in the front wall for the camera USB-C plug. The lid is a 1.6 mm plate with a lip inside the walls, a 30 mm fan pocket with snap lips on its underside, a grille over the fan and two bosses for the side screws.'},
                   {'item': 'V1.28 package: zhengxia_MicroDuck_V1.28 folder (one black plate: the left and right one-piece lower-leg links)', 'qty': 1, 'kind': 'printed',
@@ -339,13 +357,13 @@ def build(ctx):
                   {'item': 'V1.17 package: zhengxia_MicroDuck_V1.17 folder (one orange plate: rear converter box frame and cap and the A7Z cap wire clip; one white plate: both torso shells, the A7Z head cap, the A7Z face panel and both thighs)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.17 is all of V1.16 plus the three head parts for the Radxa Cubie A7Z and its camera: the A7Z head cap (the V1.9 cap with the board rails cut back to a round pad at each screw hole and a slot at each end, for the camera connector and the microSD card), the A7Z face panel (four bosses for the Radxa Camera 13M 214) and the A7Z cap wire clip (a notch over the micro HDMI socket). The eye trim is unchanged. Two plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.17.html shows the parts and the parts they replace. Orange plate: the box frame is one piece, the old cover plate at the front (solid, no wire slot; a 9 mm notch in its top edge and in the front edge of the box top wall lets the four wires drop in from the box top) and behind it a box with two wide tiers for the converters and a narrow bottom tier for the 5991; the cap with rounded edges and nothing sticking out pushes straight onto the back of the box and is held by four hidden M2 × 10, each through a column inside the cap: two at the top corners through the 7 V converter\'s upper holes, two low through the 5991\'s upper holes. No tongues, no hook. The frame prints on its open back rim and the cap on its flat back face, with tree support and no brim. White plate (about 4 h): the V2.0 shells screw down into the V1.9 pack and have no cross tunnel; the cap is the V1.9 cap printed white, unchanged, so it closes with the same three ROBOTIS M2.6 × 6. The thighs are the 10/1 thighs in white, a colour change only: fit them only when a leg is apart anyway. Print the cap roof down with its 4 mm outer brim. Either printer works; the X1C prints the strip on top of the head on the smooth Cool Plate, the Centauri on textured PEI. Both iron the support under the crown, but expect a matte band where the crown printed on support: sand it lightly.'},
                   {'item': 'V1.9 package: zhengxia_MicroDuck_V1.9_2-files.zip (one orange plate: rear electronics pack, head cap, speaker retainer and the four wire clips)', 'qty': 1, 'kind': 'printed',
-                   'note': 'A Bambu X1C file and an Elegoo Centauri Carbon file; PARTS-SHEET-V1.9.html shows the seven parts and the two V1.8 parts they retire. The V1.9 pack replaces the V1.8 pack (the BNO085 now screws to a rib instead of standing in a slot) and the V1.9 cap replaces the V1.8 cap (speaker collar and amplifier posts, no rear notch). Print the pack upright on its floor, the retainer flat on its speaker-side face and each clip on the flat face of its tab with the screw hole pointing up. Skip the cap and the cap wire clip on this plate: the V1.17 A7Z cap and clip replace them.'},
+                   'note': 'The four wire clips of this plate are not fitted (D-023: the head wires run free down the left side of the neck). A Bambu X1C file and an Elegoo Centauri Carbon file; PARTS-SHEET-V1.9.html shows the seven parts and the two V1.8 parts they retire. The V1.9 pack replaces the V1.8 pack (the BNO085 now screws to a rib instead of standing in a slot) and the V1.9 cap replaces the V1.8 cap (speaker collar and amplifier posts, no rear notch). Print the pack upright on its floor, the retainer flat on its speaker-side face and each clip on the flat face of its tab with the screw hole pointing up. Skip the cap and the cap wire clip on this plate: the V1.17 A7Z cap and clip replace them.'},
                   {'item': 'V1.8 package: zhengxia_MicroDuck_V1.8_8-files.zip', 'qty': 1, 'kind': 'printed', 'note': 'Print the White and Yellow plates and, from the Black plate, the eye trim, the 4.9 mm neck pitch ring that replaces the 4 mm ring from the 10/1 batch under the head-yaw servo, and a 1 mm and a 2 mm shim of the same size that you add under it only if it still rattles. The Orange plate (V1.8 cap and pack) is superseded by the V1.9 set. The pack cover on that plate is retired: the rear converter box frame replaces it. A Bambu X1C and an Elegoo Centauri Carbon file per colour; PARTS-SHEET-V1.8.html shows every part and what it replaces.'},
                   {'item': 'V1.6 print package: zhengxia_MicroDuck_V1.6_8-files.zip', 'qty': 1, 'kind': 'printed', 'note': 'Three parts still come from it: jaw support, mouth sliding ring and neck pitch bracket. Its speaker cradle, speaker keeper, IMU holder, IMU rear cover and OpenRB tray are not used in this build. The V1.7 package is not needed at all: its cap is replaced by the V1.8 cap and its tray is retired.'}],
          instructions=[
              'Everything else comes from the 10/1 batch of 89 parts you already printed.',
-             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap, both torso shells and the A7Z roof saddle body and lid (white); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, speaker retainer, the four wire clips, and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, mouth sliding ring, neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
-             'Print the V1.19 package (one orange plate: the two caps), the V1.18 package without its cap (the battery backpack frame), the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap and cap clip, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the other three parts from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the A7Z cap (the V1.9 cap in white with relieved rails and two end slots) carries the board 1 mm higher than the V1.7 cap, has a collar for the speaker and two posts for the amplifier in its roof, and has no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
+             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap, both torso shells and the A7Z roof saddle body and lid (white); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, speaker retainer, and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, mouth sliding ring, neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
+             'Print the V1.19 package (one orange plate: the two caps), the V1.18 package without its cap (the battery backpack frame), the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap and its four wire clips, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the other three parts from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the A7Z cap (the V1.9 cap in white with relieved rails and two end slots) carries the board 1 mm higher than the V1.7 cap, has a collar for the speaker and two posts for the amplifier in its roof, and has no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
              'The lower head shell and the head cap print lying flat, as in the 10/1 batch; do not reuse the older on-edge files. The rear pack prints standing on its floor, upright as it sits in the robot; the box frame stands on its open back rim and the box cap lies on its flat back face. Peel off any brim, including the 4 mm brim round the cap.',
              'Remove all support material, including thin strands in screw holes, before assembly. On the head cap, open the two small pilot holes beside the speaker collar and the pilot hole in the end of each amplifier post; the collar itself is a shallow ring in the roof and prints without support. On the outside of the cap, support is printed across some of the small sound holes above the speaker: after peeling the crown support, push a needle or a 1.5 mm drill through every sound hole. On the eye trim, make sure the two small pilot holes in its rear face are open. On the rear pack, open the four pilot holes in the round board pads, the four pilot holes in the ends of the two back posts, the USB-C slot in the floor, the window in the left (+Y) wall and the two pilot holes in the rib on the front of the plate. On the box frame, take out every support, open the eight pilot holes in the converter bosses, the four in the 5991 bosses, the two slots in the top wall, the small notch at the top edge of the 5991 terminal window and the wire notch at the front edge of the top wall and in the top edge of the front plate, and clear the four converter windows and the 5991 terminal window in the side walls, and the USB-C window low in the left-hand wall. On each wire clip, run a 2 mm drill or a needle through the screw hole in the tab and make sure the slot into the channel is open along its whole length. On each white torso shell, the small hole in the floor of the round counterbore on top prints on its side: check that an M2 screw drops through it, and if it does not, turn a 2 mm drill through it by hand; pick any support out of the seven horn-screw counterbores on the sides so each screw head seats flat.',
              'These screw seats print over support, so clean them to a flat seat: the three cap-screw tabs on the lower head shell and the four screw seats on the jaw support. On the neck pitch bracket, pick the support out of the shallow round recess in the centre of the horn face so the bracket sits flat on the horn; the thin skin above that recess matches the original part and can stay.',
@@ -354,10 +372,9 @@ def build(ctx):
                  'The saddle body: four posts with open dia 1.6 pilots, the floor passage open, the two round screw seats flat, the microSD slot in the left (+Y) wall and the plug notch in the front wall clear; the lid: fan pocket lips intact, grille holes open, the two side-screw pilots in the lip bosses open.',
                  'The new neck pitch ring is 4.9 mm thick. The four 4 mm rings from the 10/1 batch stay in use at the two hips and on both sides of the head roll; the fifth is now a spare.',
                  'It is the A7Z cap, printed white: its rear rim is closed all round with no notch and no hood. Inside the roof stand the two board rails, cut back so that only a round pad stands round each of their four pilot holes, with a slot through each end of the board space, a shallow ring (the speaker collar) at the back with a small pilot hole on each side of it, and two short round posts in the middle of the roof with a pilot hole in the end of each. Earlier caps have a rear notch, or round posts in other places; the V1.9 cap has exactly these.',
-                 'They are the white V2.0 shells: a round counterbore in the top of each shell near the back with a small hole in its floor, a counterbore round each of the seven horn-screw holes on the sides (not round the rear hole of the right shell, where the clip tab sits), and no tunnel at the back of the left shell.',
-                 'Each wire clip is a flat 2 mm tab with one screw hole and a square channel beside it with a slot along one side. The four are different: the torso and bracket clips have the channel beside the tab, the head clip has a taller channel with a window in its side, and the cap clip is the smallest.',
-                 'It is the A7Z face: its back is a flat plate with four round bosses round the eye, each with a pilot hole in its top, and two plain holes above and below the eye.',
-                 'It is the V1.8 eye trim: two small holes open in its rear face, one above and one below the eye bore.',
+                 'They are the white V2.0 shells: a round counterbore in the top of each shell near the back with a small hole in its floor, a counterbore round each of the seven horn-screw holes on the sides (not round the rear hole of the right shell, left plain for a wire-clip tab that is not fitted), and no tunnel at the back of the left shell.',
+                 'It is the U20 face (V1.30): its back is a flat plate with four round 7.7 mm bosses on a 28 mm square round the eye, each with a pilot hole in its top, two plain holes above and below the eye between the bosses, and a dia 16.2 eye opening (the A7Z face has shorter bosses and a smaller opening).',
+                 'It is the V1.30 eye trim: two small holes open in its rear face, one above and one below the eye bore, and the bore behind the flare is dia 16.2 (the V1.8 trim is dia 14.4 and the lens ring does not pass).',
                  'It is the V1.8 lower shell: its roof just behind the face is closed on the right-hand side (the earlier shell has a window there).',
                  'The rear pack is one piece: a flat plate with a wide T-shaped top and a notch in its top edge, two screw tabs on each side, a vertical rib with two pilot holes on its front face, four round pads with pilot holes on its back, and behind them an open box with a floor, two side walls, a window in the left (+Y) wall and two tall posts at the back corners.',
                  'The box frame, seen from behind: a front plate with four holes near its corners and a thin lip along its top edge; behind it a box 64 mm wide and 79 mm tall that is open at the back. Its upper part is full width and holds the two converters, one above the other; its bottom part is a narrower tier, 31 mm wide, for the 5991. Each side wall of the upper part has two rectangular windows, one at the height of each converter, cut in from the open back edge; the bottom tier has one window in its right wall (the 5991 terminal) and a taller one in its left wall (the USB-C plug). The front plate has no slot. Inside: eight round bosses for the converters and four standoff bosses for the 5991. At the front edge of the top wall, left of the centre, a 9 mm wide notch continues down into the top edge of the front plate: the four power wires drop through it into the pack. The lid is a cap with rounded edges and nothing sticking out, with four round holes in its back: two at the top corners and two low in its narrow bottom part. Each leads into a column inside the cap for one lid screw. The windows for the converter and 5991 terminals are cut in the side walls of the cap.',
@@ -419,8 +436,8 @@ def build(ctx):
               'note': 'Soldered to the speaker + and −; the other end is screwed into the green terminal on the amplifier.'},
              *([{'item': f'Fan lead: the fan\'s own 3-pin lead, about {L["fan-lead"]} mm from the fan to the A7Z fan socket J6', 'qty': 1, 'kind': 'cable',
                 'note': 'Comes with the fan; no soldering. Shorten only if it will not lie flat under the lid.'}] if FAN_CABLES else []),
-             *([{'item': f'USB camera cable, future: about {L["cam-usb"] + 60} mm from the face camera down the neck bundle to the right-angle USB-C plug at the saddle front wall', 'qty': 1, 'kind': 'cable',
-                'note': 'Not yet: the USB camera is not chosen (D-022). The route is drawn so the bundle and the saddle notch are sized for it.'}] if CAM_CABLES else []),
+             *([{'item': f'Camera cable: the U20CAM\'s own cable, USB-A plug cut off, cut to length at the saddle; from the head floor exit to the pigtail splice leave {CAM_SPAN} mm', 'qty': 1, 'kind': 'cable',
+                'note': f'D-023 (revised 2026-10-23). It runs whole from the camera board over the jaw motor, through the 11 mm left-rear exit (tied once inside the head) and down the left side of the neck with the nine head wires, and is cut and soldered to the right-angle USB-C pigtail at the saddle front (the pigtail cut 60 mm from its plug). {CAM_SPAN} mm from the head floor to the splice keeps it slack over every joint pose: the head sweep (print/neck-exit-20261023/cable_sweep.json) needs {CAM_SWEEP["full"]} mm at the far ends of the joint ranges and {CAM_SWEEP["trained"]} mm over the trained head range; at rest it bows about {CAM_SPAN - CAM_SWEEP["home"]} mm. USB colour code: red VBUS, white D−, green D+, black GND; keep the white and green pair twisted up to the joint.'}] if CAM_CABLES else []),
          ],
          instructions=[
              'Cut each wire to the length on this page before you strip it.',
@@ -1047,26 +1064,14 @@ def build(ctx):
     neck_bench('neck-upper-join', 'Join the upper neck to ID11 and connect 11 → 13', PITCH_GROUP, show=NECK_LOWER,
                group={'label': 'Upper neck: pitch bracket and ID13', 'approach': [0, 0, 40]}, cables=['dxl-11-13'],
                camera=ctx.cam(NECK_LOWER + PITCH_GROUP, direction=(0.8, -1.2, 0.4), margin=1.2),
-               prepare=[tap(7, 'M2 × 6'), {'item': 'X3P 180 mm kit cable', 'qty': 1, 'kind': 'cable'}],
-               screwNotes={'M2 × 6 TAP': 'Through the pitch bracket: four into the ID11 output horn (+Y side), three into the printed rear idler (−Y side). Stop at snug: the horn holes are only 3 mm deep. The fourth idler-side hole, the rear one level with the pitch axis, takes an M2 × 8 through the bracket wire clip in the next step.'},
+               prepare=[tap(8, 'M2 × 6'), {'item': 'X3P 180 mm kit cable', 'qty': 1, 'kind': 'cable'}],
+               screwNotes={'M2 × 6 TAP': 'Through the pitch bracket: four into the ID11 output horn (+Y side), four into the printed rear idler (−Y side). Stop at snug: the horn holes are only 3 mm deep.'},
                instructions=['Plug one end of the 180 mm cable into ID13 socket 14 first, while it is easy to reach.',
                              'Align both ID11 output and idler seats with the pitch bracket. Drive four M2 × 6 through the bracket into the ID11 output horn on the +Y side. Stop at snug: the screw tip just reaches the bottom of the 3 mm horn hole.',
-                             'On the −Y side, drive three M2 × 6 into the printed rear idler: the front one and the upper and lower ones. Leave the rear hole, level with the pitch axis, empty: the bracket wire clip goes under that screw in the next step.',
+                             'On the −Y side, drive four M2 × 6 into the printed rear idler: the front one, the upper and lower ones and the rear one level with the pitch axis.',
                              'Plug the other end into ID11 socket 13. Lead the cable down the −Y side of the bracket with a loop at the pitch axis.'],
                checks=['Head pitch through its range: no tight cable, no plug lever.',
                        'The rear bracket hole on the −Y side, level with the pitch axis, is still empty.'])
-    neck_bench('neck-bracket-clip', 'Fit the bracket wire clip under its screw', ctx.keys('clip_bracket'),
-               approach={'clip_bracket': [0, -14, 0]},
-               camera=ctx.cam(['clip_bracket', 'neck_pitch', 'motor11'], direction=(0.8, -1.2, 0.3), margin=1.4),
-               prepare=[{'item': 'Bracket wire clip (V1.9 print, orange)', 'qty': 1, 'kind': 'printed'}, tap(1, 'M2 × 8')],
-               screwNotes={'M2 × 8 TAP': 'Through the clip tab and the pitch bracket into the printed rear idler, on the head-pitch axis. 2 mm longer than the other idler screws because of the 2 mm tab; the thread bite in the idler (2.7 mm) and the tip position are the same.'},
-               instructions=['Hold the clip against the −Y face of the pitch bracket with its tab over the empty rear hole and its square channel standing up and down beside the bracket, the slot facing away from the bracket.',
-                             'Drive one M2 × 8 through the tab and the bracket into the idler. Stop at snug, as for the other idler screws.',
-                             'The clip turns with the bracket, so the bundle that later lies in its channel pitches with the head. Nothing else holds the clip.'],
-               checks=['The tab lies flat under the screw head and the clip does not turn by hand.',
-                       'The channel slot is open from end to end; a 2.5 mm drill shank drops into it.'],
-               warnings=['The clip stands in front of the ID11 rear-centre screw (the M2.6 × 6 through the idler cap). To re-drive that screw later, take the bundle out of the clip first: the clip channel blocks a straight driver.'])
-
     step('neck-lower-in', 'neck', 'Lower the neck into the open torso',
          add=NECK_LOWER + PITCH_GROUP, group={'label': 'Neck built on the bench in this chapter', 'approach': [0, 0, 60]},
          cables=['dxl-n12'],
@@ -1076,18 +1081,16 @@ def build(ctx):
                        'Feed the neck motor leads through their exits. No plug may sit behind a shaft seat.'],
          checks=['Both ID12 shaft centres line up with their seats.', 'Link N is latched and has a small loop.'])
 
-    step('shells', 'neck', 'Close the two torso shells and fit the torso wire clip',
-         add=SHELLS + ctx.keys('clip_torso'), approach={'shell_left': [0, 40, 0], 'shell_right': [0, -40, 0], 'clip_torso': [0, -14, 0]},
+    step('shells', 'neck', 'Close the two torso shells',
+         add=SHELLS, approach={'shell_left': [0, 40, 0], 'shell_right': [0, -40, 0]},
          camera=ctx.cam(TORSO + SHELLS + ['motor12'], direction=(1.0, -1.1, 0.75), margin=1.2),
          prepare=[{'item': 'Left and right torso shells (V2.0 print, white, from the V1.17 White plate)', 'qty': 2, 'kind': 'printed'},
-                  {'item': 'Torso wire clip (V1.9 print, orange)', 'qty': 1, 'kind': 'printed'},
-                  tap(7, 'M2 × 4'), tap(1, 'M2 × 8'), tap(2, 'M2 × 10')],
+                  tap(7, 'M2 × 4'), tap(1, 'M2 × 6'), tap(2, 'M2 × 10')],
          screwNotes={'M2 × 4 TAP': 'Three through the right shell into the ID12 rear idler (the front, upper and lower holes) and four through the left shell into the ID12 output horn. Each sits in a 4.4 mm counterbore, so its head ends 0.5 mm below the shell surface; the thread bite is 1.8 mm in the idler and 2.3 mm in the horn.',
-                     'M2 × 8 TAP': 'The rear hole of the right shell, level with the ID12 axis: through the torso wire clip tab and the shell into the ID12 rear idler. This hole has no counterbore because the clip tab sits under the head; the thread bite (1.8 mm) is the same.',
+                     'M2 × 6 TAP': 'The rear hole of the right shell, level with the ID12 axis, into the ID12 rear idler. This hole has no counterbore (the V2.0 shell left it plain for a wire-clip tab that is not fitted, D-023), so its head stands on the shell surface; the thread bite (1.8 mm) is the same as the counterbored ones.',
                      'M2 × 10 TAP': 'One per side, down through the shell into the hip-yaw motor case (ID10 left, ID5 right).'},
          instructions=['Bring each shell in from its side over the ID12 output or idler seat and the yaw-case seat. Never force the neck between two fixed shells.',
-                       'Right shell first: drive three M2 × 4 into the ID12 rear idler, the front hole, the upper hole and the lower hole. Leave the rear hole, level with the ID12 axis, empty for now. The upper screw must go in before the clip: the clip covers its head.',
-                       'Hold the torso wire clip against the outer face of the right shell with its tab over the empty rear hole and its square channel running front to back just above the tab, slot facing outwards. Drive one M2 × 8 through the tab and the shell into the idler. Stop when the head touches the tab.',
+                       'Right shell first: drive three M2 × 4 into the ID12 rear idler, the front hole, the upper hole and the lower hole, then one M2 × 6 into the rear hole, level with the ID12 axis (the plain hole without a counterbore). Stop when its head touches the shell.',
                        'Left shell: drive its four M2 × 4 into the ID12 output horn.',
                        'Then one M2 × 10 per side, down through the shell into the hip-yaw motor case. On the right side the idler screws pull the shell in so its hole lines up.',
                        'Link N runs up the outside of the pack\'s +Y wall and the left shell closes over it above the pack. Make sure it lies flat in the gap and is not pinched under the shell\'s lower edge.',
@@ -1096,11 +1099,9 @@ def build(ctx):
                        'Where the shell top meets the box, the four power wires (7 V pair and A7Z 5 V lead) lie in the notch of the box front plate, side by side, under the rear lip of the shell roof. As each shell comes down, make sure its lip passes over the wires and does not pinch them against the plate: each wire still slides a little when pulled from the box top.'],
          checks=['Neck pitch moves freely by hand.', 'No wire is trapped in a shell seam.', 'The four power wires in the box notch slide a little under the shell lip: none is pinched.',
                  'Both roof counterbores are empty and an M2 screw drops through each roof hole.',
-                 'The horn screw heads sit below the shell surface in their counterbores.',
-                 'The torso clip tab lies flat under its screw head and the clip channel is open from end to end.'],
-         warnings=['The clip covers the head of the upper idler screw and stands in front of the ID12 rear-centre screw (the M2.6 × 6 through the idler cap). To re-drive either one later, take the bundle out of the clip and the clip off first.',
-                   'The shells spring apart a little at the back until the saddle is screwed down in the next chapter: do not lift the robot by the shells before then.',
-                   'A pack swap on the built robot needs the saddle and both shells off: the saddle (its lid, the A7Z and the two M2 × 10), the right shell (the clip and its M2 × 8, three M2 × 4 and the M2 × 10), the left shell (four M2 × 4 and the M2 × 10), then the pack comes out backwards. The OpenRB-150 alone does not need this: with only the rear box frame off it slides out backwards past the shells (step \'Mount the OpenRB-150 in the pack\', note).'])
+                 'The horn screw heads sit below the shell surface in their counterbores; the rear one on the right shell stands on the surface.'],
+         warnings=['The shells spring apart a little at the back until the saddle is screwed down in the next chapter: do not lift the robot by the shells before then.',
+                   'A pack swap on the built robot needs the saddle and both shells off: the saddle (its lid, the A7Z and the two M2 × 10), the right shell (four M2 × 4 or M2 × 6 and the M2 × 10), the left shell (four M2 × 4 and the M2 × 10), then the pack comes out backwards. The OpenRB-150 alone does not need this: with only the rear box frame off it slides out backwards past the shells (step \'Mount the OpenRB-150 in the pack\', note).'])
 
     # ------------------------------------------------------------------ 7. Roof saddle for the A7Z (D-022, 2026-10-22)
     # print/a7z-saddle/build_saddle.py, build/build.json (parts, checks, screws) and build/pins.json (pin tops). Guide world:
@@ -1205,7 +1206,7 @@ def build(ctx):
              'Inner row: flag 1 (IMU red) on the 1st pin, flag 3 (IMU blue) on the 2nd, flag 5 (IMU yellow) on the 3rd, flag 7 (UART green) on the 4th, flag 9 (IMU black) on the 5th, flag 11 (UART white) on the 6th.',
              'Push each plug straight down onto its pin. The plugs stand upright on the header (about 14.5 mm tall, to z 63.1) and the lid clears them by 1.3 mm. Lead each wire down the front of the housings into the passage; nothing lies over the copper.',
              'Pins 8 and 10 stay empty (the A7Z debug console). Pins 4, 12, 35, 39, 40 (amplifier) and 17, 25, 29, 31 (XIAO) are plugged in chapter 10, when the head wires come down the neck.',
-             'The notch in the saddle front wall, over the USB-C OTG socket on the front edge of the board, is for the right-angle USB-C plug of the camera cable (drawn in place). The camera is not chosen yet (D-022): leave the notch empty; when the camera comes, lower its plug into the 10 mm gap between the saddle front wall and the neck, then push it straight back through the notch into the OTG socket.',
+             'The notch in the saddle front wall, over the USB-C OTG socket on the front edge of the board, takes the right-angle USB-C plug of the camera pigtail (drawn in place, its body lying along the wall towards the left, +Y). It is plugged in chapter 10, after the four camera leads are soldered to it: leave the notch empty now.',
          ],
          checks=['Eight plugs, eight flags: 1, 2, 3, 5, 6, 7, 9, 11. Count again from the antenna-socket end: none is one pin off or in the wrong row.',
                  'Tug each IMU joint and each PI chain joint: it holds, and no copper shows.',
@@ -1255,7 +1256,7 @@ def build(ctx):
     step('jaw-support-bench', 'head', 'Seat ID15 in the jaw support and plug its cable', add=SUPPORT, show=[], context=[], bench=True,
          approach={'motor15': [0, 30, 0]},
          camera=ctx.cam(SUPPORT, direction=(0.6, 1.2, 0.8), margin=1.5),
-         prepare=[{'item': 'Jaw support (new print)', 'qty': 1, 'kind': 'printed'},
+         prepare=[{'item': 'Jaw support (V1.30 print, black: the 11 mm exit at its left rear corner)', 'qty': 1, 'kind': 'printed'},
                   {'item': 'Servo ID15', 'qty': 1, 'kind': 'electronic'},
                   {'item': 'X3P 180 mm kit cable', 'qty': 1, 'kind': 'cable'}],
          instructions=['Slide ID15 into the jaw support from the +Y side, output horn outwards. ID15 has no screws of its own: the support and the lower shell clamp it once the support is screwed down.',
@@ -1264,8 +1265,8 @@ def build(ctx):
 
     step('head-shell', 'head', 'Check the lower head shell', add=['head_bottom'], show=[], context=[], bench=True,
          camera=ctx.cam(['head_bottom'], direction=(0.8, -0.8, 1.0), margin=1.3),
-         prepare=[{'item': 'Lower head shell with the upper lip (new print, yellow)', 'qty': 1, 'kind': 'printed'}],
-         instructions=['Clean any stringing out of the four screw bosses for the jaw support and the three closure tabs (two at the front corners, one at the rear).',
+         prepare=[{'item': 'Lower head shell with the upper lip (V1.30 print, yellow: the 11 mm exit in the floor at the left rear)', 'qty': 1, 'kind': 'printed'}],
+         instructions=['Clean any stringing out of the four screw bosses for the jaw support and the three closure tabs (two at the front corners, one at the rear). The left-rear boss stands behind the ID15 pocket, beside the round 11 mm exit in the floor; the head wires pass through that exit in chapter 10.',
                        'Find the local cut-out for the ID14 plug. ID14 drops into the shell from above with the fork, so nothing may catch there.',
                        'Break the support away from under the upper lip at the front, and push a 5 mm drill bit by hand through the two holes in the lip under the front closure tabs: the driver passes through them when the head is screwed shut.'])
 
@@ -1319,23 +1320,14 @@ def build(ctx):
     step('head-bottom', 'head', 'Lower the jaw support with ID15 and screw it down', add=SUPPORT,
          group={'label': 'Jaw support with ID15', 'approach': [0, 0, 30]}, cables=['dxl-14-15'],
          camera=ctx.cam(SUPPORT + ['head_bottom'], direction=(0.6, 1.0, 1.2), margin=1.3),
-         prepare=[tap(3, 'M2.6 × 6')],
-         screwNotes={'M2.6 × 6 TAP': 'Down through the jaw support base plate into a lower-shell boss: the two +Y bosses and the front −Y boss. The rear −Y boss takes an M2.6 × 8 through the head wire clip in the next step. 3.3 mm of thread in the boss. The plate holes are only 0.05 mm wider than the screw, so press the plate down while you drive.'},
+         prepare=[tap(4, 'M2.6 × 6')],
+         screwNotes={'M2.6 × 6 TAP': 'Down through the jaw support base plate into a lower-shell boss, all four corners: 3.3 mm of thread in the boss (4 mm at the left-rear one, which sits on the pad strip behind ID15, beside the 11 mm exit). The plate holes are only 0.05 to 0.2 mm wider than the screw, so press the plate down while you drive.'},
          instructions=['Plug the free end of the 180 mm cable into ID14 socket 13 while the top of the head is still open.',
                        'Lower the jaw support with ID15 straight down into the shell. The ID15 horn drops in behind the +Y jaw arm and the support seat drops over the sliding ring on the −Y side.',
-                       'Drive three M2.6 × 6 down through the support base plate into the shell bosses: both on the +Y side and the front one on the −Y side. Leave the rear −Y hole empty: the head wire clip goes under that screw in the next step. These screws also clamp ID14 and ID15, which have no screws of their own.',
+                       'Drive four M2.6 × 6 down through the support base plate into the shell bosses. These screws also clamp ID14 and ID15, which have no screws of their own.',
                        'Tuck the cable slack beside ID15, clear of the jaw arms and the screw bosses.'],
-         checks=['ID14 and ID15 no longer move in the shell.', 'The jaw still swings by hand.', 'The rear −Y hole in the support base plate is still empty.'])
-
-    step('head-clip', 'head', 'Fit the head wire clip under the fourth support screw', add=ctx.keys('clip_head'),
-         approach={'clip_head': [0, 0, 18]},
-         camera=ctx.cam(['clip_head', 'jaw_support', 'head_bottom'], direction=(0.4, -1.3, 1.0), margin=1.3),
-         prepare=[{'item': 'Head wire clip (V1.9 print, orange)', 'qty': 1, 'kind': 'printed'}, tap(1, 'M2.6 × 8')],
-         screwNotes={'M2.6 × 8 TAP': 'Down through the clip tab and the jaw support base plate into the rear −Y lower-shell boss. 2 mm longer than the other three because of the 2 mm tab; the thread bite (3.3 mm) and the tip position are the same.'},
-         instructions=['Hold the clip over the rear −Y corner of the support base plate with its tab over the empty hole. Its square channel stands upright in front of the tab, towards the middle of the head, with the slot facing the −Y wall and the small window near the bottom of the channel facing +Y.',
-                       'Lower it straight down onto the base plate and drive one M2.6 × 8 through the tab and the plate into the shell boss. Stop when the head touches the tab.',
-                       'Later the bundle comes up through the floor opening beside the neck, crosses the top of the support wall, drops down this channel and leaves it through the window towards the A7Z.'],
-         checks=['The tab lies flat under the screw head and the clip does not turn by hand.', 'The jaw still swings by hand and does not touch the clip.'])
+         checks=['ID14 and ID15 no longer move in the shell.', 'The jaw still swings by hand.',
+                 'Look down the left rear corner: the 11 mm exit is open from the top of the jaw support to the floor, and the small window in the corner wall beside it is clear.'])
 
     step('jaw', 'head', 'Screw the jaw to the ID15 horn',
          camera=ctx.cam(['jaw_frame', 'motor15'], direction=(0.3, 1.4, 0.4), margin=1.6),
@@ -1350,35 +1342,44 @@ def build(ctx):
     step('face', 'head', 'Fit the eye trim into the face panel and screw it from behind', add=FACE, show=[], context=[], bench=True,
          approach={'eye_trim': [50, 0, 0]},
          camera=ctx.cam(FACE, direction=(-1.4, 0.6, 0.4), margin=1.3),
-         prepare=[{'item': 'Face panel (A7Z print, white) and eye trim (V1.8 print, black; the trim you already have fits)', 'qty': 1, 'kind': 'printed'}, tap(2, 'M2 × 6')],
-         screwNotes={'M2 × 6 TAP': 'From the back of the face through the plain hole above or below the eye into the pilot in the eye trim; 4.7 mm of thread. Both heads stay exposed on the face back until a camera board covers them.'},
-         instructions=['Look at the back of the white face first. It is a flat plate with four round bosses at the corners of a 28 mm square round the eye opening, each with a small pilot hole in its top: a camera board screws onto them. Directly above and below the eye are two plain screw holes through the plate. If the back has four low pads and two short pins instead, it is the V1.8 face for the old camera.',
+         prepare=[{'item': 'Face panel (V1.30 print, white) and eye trim (V1.30 print, black, bored to dia 16.2)', 'qty': 1, 'kind': 'printed'}, tap(2, 'M2 × 6')],
+         screwNotes={'M2 × 6 TAP': 'From the back of the face through the plain hole above or below the eye into the pilot in the eye trim; 4.7 mm of thread. Both heads end 1.0 mm behind the camera lens holder once the camera is on.'},
+         instructions=['Look at the back of the white face first. It is a flat plate with four round 7.7 mm bosses at the corners of a 28 mm square round the dia 16.2 eye opening, each with a small pilot hole in its top: the camera board screws onto them. Directly above and below the eye are two plain screw holes through the plate. If the back has four low pads and two short pins instead, it is the V1.8 face for the old camera.',
                        'Press the black eye trim into the eye opening from the front until it is flush. Its two rear pegs and the small key at the top enter their holes in the face. It is a tight push fit. Do not glue it.',
                        'Turn the face over. Drive one M2 × 6 from the back through the hole above the eye into the trim, and one through the hole below it. Stop when each head touches the face: the thread is cut in the black trim, and a stripped pilot means a new trim.'],
          checks=['The trim is flush with the front of the face and does not move when you push it from the front.',
-                 'Both screw heads sit flat on the back of the face, inside the square of the four bosses.'])
+                 'Both screw heads sit flat on the back of the face, inside the square of the four bosses.',
+                 'The lens ring of the camera (dia 15.1) passes the eye opening and the trim bore with room all round.'])
 
-    # D-022 (2026-10-22): no camera step. The Radxa Camera 13M 214 (four M2 x 4 into the face bosses, C-camera-01..04) left the
-    # head with the A7Z; a USB UVC camera on the same bosses comes later and is not chosen yet.
-    step('camera-note', 'head', 'Camera: the four face bosses stay empty for now', show=FACE, context=[], bench=True,
-         camera=ctx.cam(FACE, direction=(-1.0, 0.5, 0.3), margin=1.6),
-         instructions=['Since D-022 (2026-10-22) the head has no camera. The Radxa Camera 13M 214 needed the A7Z\'s ribbon connector, and the A7Z now sits in the roof saddle, where a ribbon cannot reach; the camera and its ribbon stay in the box.',
-                       'The face keeps its four camera bosses (28 mm square, dia 1.6 pilots) for a USB UVC camera that is not chosen yet. When it is, it screws onto the same bosses with M2 × 4 and its USB cable runs down the neck bundle to the right-angle USB-C plug at the saddle front wall.',
-                       'Nothing to do in this step: leave the bosses empty and the two trim screw heads exposed.'],
-         checks=['The four boss pilots are open and the bosses are not damaged, so the camera can go on later without reprinting the face.'])
+    # D-023 (2026-10-22, revised 2026-10-23): the Innomaker U20CAM-720P on the four face bosses (print/face-u20/checks.json). Its
+    # 1 m cable stays whole and leaves the head through the dia 11 left-rear exit; it is cut only at the saddle (chapter 10).
+    step('camera', 'head', 'Screw the camera onto the face', add=CAMERA, show=FACE, context=[], bench=True,
+         approach={'camera_u20cam': [-30, 0, 0], 'camera_cable_stub': [-30, 0, 0]},
+         camera=ctx.cam(FACE + CAMERA, direction=(-1.2, 0.9, 0.5), margin=1.3),
+         prepare=[{'item': 'Innomaker U20CAM-720P USB camera', 'qty': 1, 'kind': 'electronic'},
+                  tap(4, 'M2 × 6')],
+         screwNotes={'M2 × 6 TAP': 'Through the dia 2.2 corner holes of the camera board into the dia 1.7 pilots of the four face bosses: 4.4 mm of thread with 1.5 mm of boss floor in front of the tip. Stop the moment each head touches the board.'},
+         instructions=['Cut the USB-A plug off the far end of the camera\'s own cable, close to the plug. The plug would not pass the 11 mm exit, and the cable is cut to length at the saddle in chapter 10 anyway; everything from the board to that cut stays one piece. If the cable plugs into the board, check the plug is pushed fully home.',
+                       'Hold the camera behind the face with the lens in the eye opening and the cable connector (on the back of the board) towards the LEFT (+Y) side of the head. The image is then upright on its long axis (portrait, 102 deg vertical by 70 deg horizontal); the software turns it.',
+                       'Push the board onto the four bosses so the lens holder ears sit between the two trim screw heads, and drive one M2 × 6 into each corner. Stop when the heads touch the board.',
+                       'Coil the rest of the cable loosely beside the face; it goes into the head with the face and leaves through the 11 mm exit.'],
+         checks=['The lens ring stands free in the eye trim bore: turn the lens a quarter turn by its knurl and it does not touch the trim.',
+                 'Each M2 × 6 head sits on the board; none bottoms in a boss (the board does not rock).',
+                 'The cable leaves the connector straight towards the left (+Y) without a sharp bend at the plug.'],
+         warnings=['The lens focus is set at the factory; do not unscrew the lens past a quarter turn.'])
 
-    step('face-on', 'head', 'Set the face on the head', add=FACE,
-         group={'label': 'Face with eye trim', 'approach': [0, 0, 40]},
+    step('face-on', 'head', 'Set the face with the camera on the head', add=FACE + CAMERA,
+         group={'label': 'Face with eye trim and camera', 'approach': [0, 0, 40]},
          camera=ctx.cam(FACE + ['head_bottom', 'jaw_support'], direction=(1.4, 0.6, 0.6), margin=1.2),
-         instructions=['Lower the face unit straight down into the front of the lower shell, the bosses inwards.',
+         instructions=['Lower the face unit straight down into the front of the lower shell, the camera inwards. Lay the camera cable up over the jaw support front wall and back along the top of the jaw motor ID15 on its left half, then down the 11 mm exit at the left rear of the jaw support: feed the cut end down the exit and pull the cable out under the head until it lies without tension over ID15.',
                        'The face has no screws: the cap clamps it when the head is closed. Keep the head upright until then.'],
-         checks=['The face sits evenly on the shell all round.'])
+         checks=['The face sits evenly on the shell all round.', 'The camera cable lies on top of ID15 and drops straight into the exit; the jaw opens 30 deg by hand without touching it.'])
 
     # ------------------------------------------------------------------ 9. Head electronics
     cap = ctx.keys('head_cap')
     step('cap', 'head-elec', 'Prepare the head cap', show=[], add=cap, context=[], bench=True,
          camera=ctx.cam(cap, direction=(-0.6, 0.8, -0.9), margin=1.1),
-         instructions=['Work on the cap upside down on the bench. It is the V1.17 A7Z cap as printed: two board rails cut back to a round pad at each screw hole, and a slot through each end of the board space. Since D-022 the A7Z sits in the roof saddle on the torso, so the rails, their four pilot holes, the two end slots and the cap wire clip are unused. Leave them as printed; do not fill or cut anything. The cap wire clip (orange, with the micro HDMI notch) stays in the parts box: nothing is fitted under its screw any more.',
+         instructions=['Work on the cap upside down on the bench. It is the V1.17 A7Z cap as printed: two board rails cut back to a round pad at each screw hole, and a slot through each end of the board space. Since D-022 the A7Z sits in the roof saddle on the torso, so the rails, their four pilot holes and the two end slots are unused. Leave them as printed; do not fill or cut anything. The four printed wire clips stay in the parts box (D-023): nothing is fitted under any screw.',
                        'Find the three features inside the roof that are still used: at the back, the shallow ring of the speaker collar with one small pilot hole on each side of it; in the middle, the two short amplifier posts with a pilot hole in the end of each. The cap has no rear notch.',
                        'Run a 1.5 mm drill or a needle through the four audio pilots so no stringing is left in them.'])
 
@@ -1451,22 +1452,31 @@ def build(ctx):
     # the head clip down through the bracket and torso clips to the saddle floor passage and up onto the header. The torso
     # wires (pi-lead, imu, uart) go straight up through the passage (chapter 7).
     head_wires = len(AUDIO_CABLES) + len(TOUCH_PIN_CABLES)
-    step('bundle-run', 'bundle', f'Run the {head_wires} head wires down through the head, bracket and torso clips to the saddle',
+    step('bundle-run', 'bundle', f'Run the {head_wires} head wires and the camera cable through the left-rear exit, tie them in the head and run them down the left side of the neck to the saddle',
          cables=HEAD_DOWN_CABLES,   # the cap is still beside the head: drawn only once 'cap-on' installs it
-         camera=ctx.cam(SHELLS + NECK_LOWER + ['motor13', 'motor14', 'clip_head'] + saddle_body, direction=(0.9, -1.2, 0.45), margin=1.15),
-         prepare=[{'item': 'Narrow cable ties', 'qty': 2, 'kind': 'other'}, {'item': 'Spiral wrap, 5 mm or smaller outside diameter', 'qty': '300 mm', 'kind': 'other', 'note': 'Each clip channel is 4.8 mm square with a 2.4 mm slot; the nine thin wires lie two deep, about 3.4 mm across.'}],
+         camera=ctx.cam(SHELLS + NECK_LOWER + ['motor13', 'motor14', 'motor15'] + saddle_body, direction=(0.9, 1.2, 0.45), margin=1.15),
+         prepare=[{'item': 'Narrow cable ties, 2.5 mm wide or less', 'qty': 2, 'kind': 'other', 'note': 'One through the window in the jaw support corner wall, one at the saddle passage.'}, {'item': 'Spiral wrap, 8 mm or smaller outside diameter', 'qty': '250 mm', 'kind': 'other', 'note': 'The camera cable (about 4 mm) and the nine thin wires make a bundle about 7 mm across; the head exit is 11 mm.'},
+                  {'item': 'CableCreation right-angle USB-C pigtail (Amazon B0194WSKOM), USB-A end cut off 60 mm from the plug', 'qty': 1, 'kind': 'cable'},
+                  {'item': 'Heat-shrink dia 1.5 (four pieces, 15 mm) and dia 6 (one piece, 25 mm)', 'qty': '4 + 1', 'kind': 'other'}],
          instructions=[
-             'Done: the five amplifier wires and the four XIAO wires leave the cap, which rests beside the head, pass through the head clip, down the neck in the bracket and torso clips, into the saddle through its floor passage, and their nine flagged plugs lie in the saddle in front of the header. Nothing is plugged yet.',
-             'Hold the populated cap beside the head, upside down, with its nine wires (flags 4, 12, 35, 39, 40 from the amplifier; 17, 25, 29, 31 from the XIAO) hanging out. Gather them and wrap them in spiral wrap from where they will leave the cap down to the saddle.',
-             'Lead the group into the head clip channel on the jaw support from above (press it in through the slot), out of the window at the bottom of the channel, over the top of the jaw-support wall and down through the right (−Y) side of the opening in the floor of the lower head shell, beside the neck.',
-             'Run the group down the right side of the neck to the bracket clip on the pitch bracket and press it into that channel. Leave it slightly slack between the head opening and the bracket clip, about 5 mm of bow: the bracket pitches with the head.',
-             'Continue down past ID11 to the torso clip on the right shell and press it into that channel. From the torso clip lead the group across the top of the torso over ID12, back to the saddle, and up through the saddle floor passage in front of the board edge, where the three torso wires already come up.',
-             f'From the head clip to the saddle passage the group is about {L["bundle_neck"] + 40} mm. Leave the nine plugs lying in the saddle for now.',
+             'Done: the five amplifier wires, the four XIAO wires and the camera cable leave the head together through the 11 mm exit at its left rear, tied once to the jaw support inside the head, run down the left (+Y) side of the neck without clips, and end in the saddle: the nine flagged plugs lie in front of the header, the camera cable is soldered to the USB-C pigtail whose plug lies in the notch gap. Nothing is plugged yet.',
+             'Hold the populated cap beside the head, upside down, with its nine wires (flags 4, 12, 35, 39, 40 from the amplifier; 17, 25, 29, 31 from the XIAO) hanging out. The camera cable already leaves the head through the exit (chapter 8).',
+             'Inside the head the wires gather over the left rear corner of the jaw support, where the 11 mm exit goes straight down through the jaw support and the floor of the lower head shell, between the jaw motor ID15 and the corner wall. The amplifier wires come there over the left side of the amplifier; the XIAO wires climb the channel between the XIAO and the jaw support wall and cross the wall top; the camera cable comes back over the jaw motor.',
+             'Drop the nine wires down the exit beside the camera cable, beside the neck.',
+             'Tie the bundle in the head: pass one narrow cable tie round the bundle about 5 mm above the jaw support plate, through the small window in the corner wall beside the exit and round the free end of that wall, and pull it snug, not tight: the bundle must not slide in the tie, the wires must not be squeezed. Cut the tail. A pull on the bundle from the neck now stops at this tie and never reaches the amplifier, the XIAO or the camera plug.',
+             'Wrap the bundle in spiral wrap from the head floor down to the saddle.',
+             'Run the group down the left side of the neck, beside the ID11 to ID13 servo cable, past ID11 and ID12 to the torso roof. Leave it slightly slack between the head opening and the neck, about 5 mm of bow: the bracket pitches with the head.',
+             f'At the top of the torso the camera cable parts from the group: lead it to the front of the saddle, where the right-angle plug will lie. Measure {CAM_SPAN} mm of cable from the head floor to where it meets the pigtail and cut it there. That length keeps it slack over every head pose ({CAM_SWEEP["full"]} mm needed at the far ends of the joint ranges, {CAM_SWEEP["trained"]} mm over the trained head range); at rest the extra bows beside the neck.',
+             'Lead the nine head wires over the torso roof behind ID12 into the roof opening, under the saddle front wall and up through the saddle floor passage in front of the board edge, where the three torso wires already come up. Leave the nine plugs lying in the saddle for now.',
+             'Solder the camera cable to the pigtail: slide the dia 6 sleeve over the camera cable, strip its jacket back 15 mm and the four conductors and the four pigtail wires 3 mm, a dia 1.5 sleeve on each, red to red (VBUS), white to white (D−), green to green (D+), black to black (GND), shrink, then the dia 6 sleeve over the joint. Lower the plug into the gap between the saddle front wall and the neck and push it straight back through the notch into the OTG socket; its body lies along the wall towards the left.',
+             f'From the head floor opening to the saddle passage the group is about {L["bundle_neck"] + 40} mm.',
              'Tie the group once at the saddle passage so a pull from outside loads the saddle, not the plugs. Do not tie it to any neck link.',
-             'When the USB camera comes (D-022), its cable joins this group from the face down to the saddle front-wall notch; the clip channels have room for it.',
          ],
-         checks=['Pitch, yaw and roll the head by hand through the trained range (yaw about ±80°), with the cap held in place: the group slides in the head opening, bows between the clips and never goes tight or rubs a horn.',
-                 'The jaw opens 30° by hand without touching the group or the head clip.'])
+         checks=['Pitch, yaw and roll the head by hand through the trained range (yaw about ±80°), with the cap held in place: the group slides in the head opening, bows beside the neck and never goes tight, rubs a horn or lifts the servo cable out of its path.',
+                 'The jaw opens 30° by hand without touching the group or the camera cable.',
+                 'Pull the bundle gently from below the head: it does not slide in the tie, and nothing moves inside the head.',
+                 'The USB-C plug is home in the OTG socket (it clicks) and the pigtail joint lies in the gap in front of the saddle, not against ID12.'],
+         warnings=['Solder colour to colour and keep the white and green pair twisted up to the joint: a swapped data pair means no camera, and a swapped power pair can kill it.'])
 
     step('saddle-head-plugs', 'bundle', f'Plug the {head_wires} head wires onto the A7Z', cables=HEAD_DOWN_CABLES,
          camera=ctx.cam(sd_housings + ctx.keys('sd_a7z_pcb'), direction=(-1.0, -0.8, 0.8), margin=1.3) if sd_housings else saddle_cam,
@@ -1479,6 +1489,7 @@ def build(ctx):
              'Push each plug straight down. The plugs stand upright; lead each wire down the front of the housings into the passage. Pins 8 and 10 stay empty (the A7Z debug console).',
          ],
          checks=['Wires on 4, 12, 35, 39, 40, 17, 25, 29 and 31 only, and the torso plugs still on 1, 2, 3, 5, 6, 7, 9 and 11: seventeen plugs. Count again from the antenna-socket end.',
+                 'The camera plug sits in the OTG socket on the board front edge; its pigtail leaves the notch towards the left and climbs to the group.',
                  'Pin 17 is 3.3 V: one pin off puts 3.3 V on the wrong line.'],
          warnings=['Pins 2 and 4 are 5 V: the Vin plug on the wrong pin can kill the A7Z, and the XIAO 3V3 wire on pin 2 or 4 kills the XIAO.'],
          links=[a7z('audio', 'A7Z wiring page: the five amplifier wires'),
@@ -1490,13 +1501,13 @@ def build(ctx):
          cables=AUDIO_CABLES + SPK_CABLES + TOUCH_PAD_CABLES + TOUCH_PIN_CABLES,
          camera=ctx.cam(cap + ['motor14'], direction=(-1.0, 0.7, 0.5), margin=1.2),
          instructions=[
-             'Done: the cap rests on the head with nothing to plug inside it; its nine wires run out through the floor opening and down the neck.',
-             'Hold the cap above the head and lower it slowly, keeping the nine wires together on the right (−Y) side where they drop to the head clip. There is no board, antenna or ribbon in the head any more: the wires are the only thing that can be caught.',
-             'Watch the wires between the cap and the head clip as the seam closes: they bow, they do not fold, and none lies on the cap rim.',
+             'Done: the cap rests on the head with nothing to plug inside it; its nine wires and the camera cable run out through the 11 mm left-rear exit and down the neck.',
+             'Hold the cap above the head and lower it slowly, keeping the nine wires together on the left (+Y) side above the jaw support, where they drop into the exit beside ID15. There is no board, antenna or ribbon in the head any more: the wires and the camera cable are the only things that can be caught.',
+             'Watch the wires between the cap and the jaw support as the seam closes: they bow, they do not fold, none lies on the cap rim, and the camera cable stays on top of the jaw motor, clear of the left touch pads.',
          ],
-         checks=['Over the last 15 mm the cap goes down without any wire catching on the jaw support or the clip.',
-                 'Lift the cap 20 mm and let it down again: the wires slide in the head clip and nothing pulls at the saddle.'],
-         warnings=['To take the cap off later, lift it straight up; the wires follow it out of the head clip. No plug needs to come off first.'])
+         checks=['Over the last 15 mm the cap goes down without any wire catching on the jaw support or the camera cable.',
+                 'Lift the cap 20 mm and let it down again: the wires above the tie bow and nothing pulls at the tie or the saddle.'],
+         warnings=['To take the cap off later, lift it straight up; the nine wires come up with it from above the tie. No plug needs to come off first.'])
 
     step('close', 'bundle', 'Screw the head shut', pose=jaw_pose(30),
          camera=ctx.cam(['head_bottom', 'jaw_frame', 'face_panel'], direction=(1.0, -0.7, -0.9), margin=1.2),
@@ -1505,7 +1516,7 @@ def build(ctx):
          instructions=['Since D-022 the head can be closed before power-up: nothing in it needs the cap loose for the checks, and the A7Z is reached in the open saddle.',
                        'The white cap is held to the yellow lower shell by three M2.6 × 6, all driven upwards from under the head: two at the front corners and one at the back, centred behind ID14. Each goes through a tab on the lower shell into a boss inside the cap.',
                        'Front pair: hold the jaw 30–35° open by hand. The upper lip is part of the yellow shell; under each front screw it has a 5.2 mm hole, and the driver goes up through that hole. At rest the lower lip covers the holes; opened this far it clears a straight driver path. The jaw meets the shell at about 40°, so do not force it further.',
-                       'Rear screw: there are about 70 mm of clear space straight below the rear tab before the torso shells, too short for a full-length screwdriver. Use the compact right-angle driver, or a stubby one. The bundle runs down the right (−Y) side of the neck in its clips and stays clear of the driver path.',
+                       'Rear screw: there are about 70 mm of clear space straight below the rear tab before the torso shells, too short for a full-length screwdriver. Use the compact right-angle driver, or a stubby one. The bundle runs down the left (+Y) side of the neck and stays clear of the driver path on the right.',
                        'Drive two M2.6 × 6 up through the front tabs and one up through the rear tab into the cap bosses. Stop when each head touches its tab. They also clamp the face, which has no screws of its own.'],
          checks=['The cap seam is closed all round and no wire is caught in it.',
                  'Lift the head gently by the cap: the cap and the lower shell move as one.'])

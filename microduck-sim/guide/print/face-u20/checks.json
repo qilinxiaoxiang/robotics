@@ -1,0 +1,965 @@
+{
+ "_doc": "face-u20 checks; robot frame mm (x forward, y left, z up). Regenerate with build_face_u20.py.",
+ "sources": {
+  "world/face_panel-v18.stl": "be5c9d86c7100ab7eb77fd7b566d086a0ee6ab1539bb8849002e4b8ab246f776",
+  "world/eye_trim.stl": "900d11db917db0a2cb83797ed2e6a5205120fdcd69d27965607be662b06d836e",
+  "world/head_bottom.stl": "1046c62e7abb292a39ca683651666e5ef775b970032c64ebde4355d8fe1dc3ff",
+  "world/jaw_frame.stl": "0afeeee701671616b368977826fb82d4431540c70a8358adeb11d593fca655a1",
+  "world/amplifier.stl": "d57c9f1edbb6c8b0a3ac4fb71177855adc4d9d2c9b647125b7b1c73138154842",
+  "world/speaker.stl": "02eba9066f6b49b6d094f1699e09bc7812d5bb66e8b902a60a371635fbe5a856",
+  "print/world/head_cap.stl": "bbedb8044687c86906cdcf1adb82eae5c3c5f8bb84fc8bdd24f5824375b5e257"
+ },
+ "cacheSolids": {
+  "jaw_support": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-jaw_support.npz",
+  "head_yaw_link": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-head_yaw_link.npz",
+  "motor15": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-motor15.npz",
+  "motor13": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-motor13.npz",
+  "motor14": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-motor14.npz",
+  "touch_pad_l1": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-touch_pad_l1.npz",
+  "touch_pad_l2": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-touch_pad_l2.npz",
+  "touch_xiao": "/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache/solid-touch_xiao.npz"
+ },
+ "axis": {
+  "eyeOpeningCentre_face_x80.75": [
+   -0.09,
+   131.114
+  ],
+  "eyeOpeningRadiusV18": 7.25,
+  "used": [
+   -0.09,
+   131.114
+  ]
+ },
+ "trimSectionsRadii": {
+  "x82.0": [
+   [
+    8.1,
+    8.1
+   ],
+   [
+    9.64,
+    11.34
+   ],
+   [
+    9.66,
+    11.36
+   ],
+   [
+    14.99,
+    15.0
+   ]
+  ],
+  "x85.0": [
+   [
+    8.1,
+    8.1
+   ],
+   [
+    9.64,
+    11.34
+   ],
+   [
+    9.66,
+    11.36
+   ],
+   [
+    14.99,
+    15.0
+   ]
+  ],
+  "x87.0": [
+   [
+    8.1,
+    8.1
+   ],
+   [
+    14.99,
+    15.0
+   ]
+  ],
+  "x88.0": [
+   [
+    8.1,
+    8.1
+   ],
+   [
+    14.99,
+    15.0
+   ]
+  ],
+  "x88.8": [
+   [
+    8.59,
+    8.6
+   ],
+   [
+    15.0,
+    15.0
+   ]
+  ]
+ },
+ "meshes": {
+  "face_panel_u20": {
+   "file": "face_panel_u20.stl",
+   "watertight": true,
+   "volumeMm3": 4525.14,
+   "bounds": [
+    [
+     72.4,
+     -43.916,
+     110.315
+    ],
+    [
+     81.4,
+     43.734,
+     154.941
+    ]
+   ],
+   "sha256": "60213c4302f38594e4653f837a88970871cb14e500b21c23dc229c30db625747"
+  },
+  "eye_trim_u20": {
+   "file": "eye_trim_u20.stl",
+   "watertight": true,
+   "volumeMm3": 3932.73,
+   "bounds": [
+    [
+     80.0,
+     -15.091,
+     116.115
+    ],
+    [
+     89.4,
+     14.909,
+     146.115
+    ]
+   ],
+   "sha256": "900d11db917db0a2cb83797ed2e6a5205120fdcd69d27965607be662b06d836e",
+   "note": "the gated world copy (world/eye_trim.stl, 900d11db); the 2026-10-23 rebuild re-meshed the same solid (max 1.2e-5 mm apart, same volume), kept out of the release so the print and the gate use one file"
+  },
+  "camera_u20cam": {
+   "file": "camera_u20cam.stl",
+   "watertight": true,
+   "volumeMm3": 6038.96,
+   "bounds": [
+    [
+     67.8,
+     -16.09,
+     115.114
+    ],
+    [
+     87.8,
+     15.91,
+     147.114
+    ]
+   ],
+   "sha256": "e219b25aa560b8832ae018e7a965073bc8ce36df3ddbea7f1c17e80132be6bae"
+  },
+  "face_panel_v18_volumeMm3": 4130.02,
+  "eye_trim_v18_volumeMm3": 3932.73,
+  "face_removed_v18_lands_pegs_mm3": 75.79,
+  "face_boredMm3": 53.22,
+  "trim_boredMm3": 0.0
+ },
+ "printPoses": {
+  "face_panel": {
+   "file": "face_panel_u20-print.stl",
+   "minZ": -0.001,
+   "bedContactMm2": 3093.6,
+   "v18BedContactMm2": 3124.7,
+   "overhangOver45degMm2": 3.28,
+   "v18OverhangOver45degMm2": 7.86,
+   "heightMm": 9.0
+  },
+  "eye_trim": {
+   "file": "eye_trim_u20-print.stl",
+   "minZ": 0.0,
+   "bedContactMm2": 394.1,
+   "v18BedContactMm2": 394.1,
+   "overhangOver45degMm2": 23.66,
+   "v18OverhangOver45degMm2": 23.66,
+   "heightMm": 9.4
+  }
+ },
+ "frontUnchangedOutsideBore": {
+  "face_raysOnGrid1mm": 3038,
+  "face_maxFrontDeviationMm": 0.00099945068359375,
+  "face_hitMaskSameOutsideBore": false,
+  "trim_raysOnGrid1mm": 464,
+  "trim_maxFrontDeviationMm": 2.6481867365646394e-06,
+  "trim_hitMaskSameOutsideBore": true
+ },
+ "optics": {
+  "lensAxis_yz": [
+   -0.09,
+   131.114
+  ],
+  "lensFrontX": 87.8,
+  "trimFrontX": 89.4,
+  "lensFrontBehindTrimFrontMm": 1.6,
+  "fov": {
+   "horizontal": 102.0,
+   "vertical": 69.6,
+   "diagonal": 120.0,
+   "imageLongAxis": "robot z: the connector edge faces +y (robot left), so the 1280 px axis is vertical; rotate the frame 90 deg in software"
+  },
+  "coneHalfAngleDeg": 60.0,
+  "pupilRadiusMm": 1.0,
+  "method": "circular cone of the 120 deg diagonal from a 1.0 mm pupil disc at the lens front; clearance of every vertex and 200k surface samples of each part in front of the lens. Negative = clipped. The 102 x 69.6 field lies inside it.",
+  "perPart": {
+   "eye_trim_u20": {
+    "minNormalClearanceMm": 2.71,
+    "minRadialClearanceMm": 5.42,
+    "minAngularMarginDeg": 18.95,
+    "closestPoint": [
+     89.4,
+     -6.34,
+     137.85
+    ],
+    "pointsInsideRectangularField": 0
+   },
+   "head_cap_new": {
+    "minNormalClearanceMm": 7.547,
+    "minRadialClearanceMm": 15.093,
+    "minAngularMarginDeg": 18.98,
+    "closestPoint": [
+     92.23,
+     0.0,
+     154.89
+    ],
+    "pointsInsideRectangularField": 0
+   }
+  },
+  "clipped": false,
+  "sensitivityToLensHeight": {
+   "LENS_H 9": {
+    "lensFrontX": 81.4,
+    "minNormalClearanceMm": -2.832,
+    "clipped": true
+   },
+   "LENS_H 10": {
+    "lensFrontX": 82.4,
+    "minNormalClearanceMm": -1.966,
+    "clipped": true
+   },
+   "LENS_H 11": {
+    "lensFrontX": 83.4,
+    "minNormalClearanceMm": -1.1,
+    "clipped": true
+   },
+   "LENS_H 12": {
+    "lensFrontX": 84.4,
+    "minNormalClearanceMm": -0.234,
+    "clipped": true
+   },
+   "LENS_H 13": {
+    "lensFrontX": 85.4,
+    "minNormalClearanceMm": 0.632,
+    "clipped": false
+   },
+   "LENS_H 14": {
+    "lensFrontX": 86.4,
+    "minNormalClearanceMm": 1.498,
+    "clipped": false
+   },
+   "LENS_H 15": {
+    "lensFrontX": 87.4,
+    "minNormalClearanceMm": 2.364,
+    "clipped": false
+   },
+   "LENS_H 16": {
+    "lensFrontX": 88.4,
+    "minNormalClearanceMm": 3.229,
+    "clipped": false
+   },
+   "LENS_H 17": {
+    "lensFrontX": 89.4,
+    "minNormalClearanceMm": 4.096,
+    "clipped": false
+   },
+   "LENS_H 18": {
+    "lensFrontX": 90.4,
+    "minNormalClearanceMm": 9.798,
+    "clipped": false
+   }
+  }
+ },
+ "clearances": {
+  "note": "Minimum distances in mm (0.25 mm sampling). Camera parts modelled as boxes and cylinders. Expected designed contacts: PCB front on the four boss tops (distance 0).",
+  "table": {
+   "pcb": {
+    "head_bottom": 3.845,
+    "jaw_frame": 6.967,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.998,
+    "face_panel_u20": 0.0,
+    "eye_trim_u20": 7.6
+   },
+   "holder": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "face_panel_u20": 2.2,
+    "eye_trim_u20": 2.273
+   },
+   "holder_ears": {
+    "head_bottom": 9.875,
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 13.31,
+    "face_panel_u20": 2.2,
+    "eye_trim_u20": 2.1
+   },
+   "lens_knurl": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "face_panel_u20": 0.0,
+    "eye_trim_u20": 0.0
+   },
+   "lens_ring": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "face_panel_u20": 1.9,
+    "eye_trim_u20": 0.0
+   },
+   "connector_back": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 13.721,
+    "face_panel_u20": 6.791,
+    "eye_trim_u20": 10.598
+   },
+   "back_layer": {
+    "head_bottom": 3.847,
+    "jaw_frame": 6.954,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.892,
+    "face_panel_u20": 1.6,
+    "eye_trim_u20": 9.2
+   },
+   "_intersectionVolumeCameraMm3": {
+    "head_bottom": 0.0,
+    "jaw_frame": 0.0,
+    "amplifier": 0.0,
+    "speaker": null,
+    "jaw_support": 0.0,
+    "head_yaw_link": 0.0,
+    "motor15": null,
+    "motor13": null,
+    "motor14": null,
+    "touch_pad_l1": 0.0,
+    "touch_pad_l2": 0.0,
+    "touch_xiao": null,
+    "head_cap_new": 0.0,
+    "face_panel_u20": 0.0,
+    "eye_trim_u20": 0.0
+   },
+   "head_of_camera_corner_1": {
+    "head_bottom": 3.848,
+    "jaw_frame": 6.953,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "holder": 6.562,
+    "holder_ears": 9.839,
+    "connector_back": 24.52,
+    "pcb": 0.0
+   },
+   "head_of_camera_corner_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.885,
+    "holder": 6.562,
+    "holder_ears": 9.839,
+    "connector_back": 24.52,
+    "pcb": 0.0
+   },
+   "head_of_camera_corner_3": {
+    "head_bottom": 3.846,
+    "jaw_frame": 6.954,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "holder": 6.562,
+    "holder_ears": 9.839,
+    "connector_back": 7.0,
+    "pcb": 0.0
+   },
+   "head_of_camera_corner_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.931,
+    "holder": 6.562,
+    "holder_ears": 9.839,
+    "connector_back": 7.0,
+    "pcb": 0.0
+   },
+   "head_of_trim_lower": {
+    "head_bottom": 7.414,
+    "jaw_frame": 10.521,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "holder": 1.178,
+    "holder_ears": 0.6,
+    "connector_back": 12.791,
+    "pcb": 6.1,
+    "pcb_front_gap": 6.1
+   },
+   "head_of_trim_upper": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 10.464,
+    "holder": 1.154,
+    "holder_ears": 0.6,
+    "connector_back": 12.783,
+    "pcb": 6.1,
+    "pcb_front_gap": 6.1
+   },
+   "_intersectionVolumeFaceU20Mm3": {
+    "head_bottom": 0.1537,
+    "jaw_frame": 0.0,
+    "amplifier": 0.0,
+    "speaker": null,
+    "jaw_support": 0.0,
+    "head_yaw_link": 0.0,
+    "motor15": null,
+    "motor13": null,
+    "motor14": null,
+    "touch_pad_l1": 0.0,
+    "touch_pad_l2": 0.0,
+    "touch_xiao": null,
+    "head_cap_new": 0.0
+   },
+   "_intersectionVolumeFaceV18Mm3": {
+    "head_bottom": 0.1537,
+    "jaw_frame": 0.0,
+    "amplifier": 0.0,
+    "speaker": null,
+    "jaw_support": 0.0,
+    "head_yaw_link": 0.0,
+    "motor15": null,
+    "motor13": null,
+    "motor14": null,
+    "touch_pad_l1": 0.0,
+    "touch_pad_l2": 0.0,
+    "touch_xiao": null,
+    "head_cap_new": 0.0
+   },
+   "boss_1": {
+    "head_bottom": 3.454,
+    "jaw_frame": 6.581,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "holder_ears": 9.24
+   },
+   "boss_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.314,
+    "holder_ears": 9.24
+   },
+   "boss_3": {
+    "head_bottom": 3.475,
+    "jaw_frame": 6.582,
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": ">12 (nothing within 12 mm)",
+    "holder_ears": 9.24
+   },
+   "boss_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "amplifier": ">12 (nothing within 12 mm)",
+    "speaker": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)",
+    "head_yaw_link": ">12 (nothing within 12 mm)",
+    "motor15": ">12 (nothing within 12 mm)",
+    "motor13": ">12 (nothing within 12 mm)",
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": ">12 (nothing within 12 mm)",
+    "touch_pad_l2": ">12 (nothing within 12 mm)",
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 5.346,
+    "holder_ears": 9.24
+   },
+   "cable_stub": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": 15.434,
+    "amplifier": 14.338,
+    "speaker": 20.36,
+    "jaw_support": 4.685,
+    "head_yaw_link": 16.739,
+    "motor15": 6.385,
+    "motor13": 17.34,
+    "motor14": ">12 (nothing within 12 mm)",
+    "touch_pad_l1": 4.684,
+    "touch_pad_l2": 4.036,
+    "touch_xiao": ">12 (nothing within 12 mm)",
+    "head_cap_new": 3.251,
+    "face_panel_u20": 8.802,
+    "eye_trim_u20": 10.14
+   },
+   "lens_ring_vs_bore": {
+    "radialMm": 0.55,
+    "trimBoreD": 16.2,
+    "ringD": 15.1
+   },
+   "holder_top_to_face_back": 2.2
+  },
+  "smallest12": {
+   "pcb vs face_panel_u20": 0.0,
+   "lens_knurl vs face_panel_u20": 0.0,
+   "lens_knurl vs eye_trim_u20": 0.0,
+   "lens_ring vs eye_trim_u20": 0.0,
+   "head_of_camera_corner_1 vs pcb": 0.0,
+   "head_of_camera_corner_2 vs pcb": 0.0,
+   "head_of_camera_corner_3 vs pcb": 0.0,
+   "head_of_camera_corner_4 vs pcb": 0.0,
+   "lens_ring_vs_bore vs radialMm": 0.55,
+   "head_of_trim_lower vs holder_ears": 0.6,
+   "head_of_trim_upper vs holder_ears": 0.6,
+   "head_of_trim_upper vs holder": 1.154
+  }
+ },
+ "faceOnInsertion": {
+  "note": "Each rigid box swept straight down from +40 mm to the installed pose; min distance to the parts already in the head.",
+  "sweptMinDistance": {
+   "pcb": {
+    "head_bottom": 3.845,
+    "jaw_frame": 6.967,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "holder": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "holder_ears": {
+    "head_bottom": 9.875,
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "lens_ring": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "connector_back": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "back_layer": {
+    "head_bottom": 3.847,
+    "jaw_frame": 6.954,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "boss_1": {
+    "head_bottom": 3.454,
+    "jaw_frame": 6.581,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "boss_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "boss_3": {
+    "head_bottom": 3.475,
+    "jaw_frame": 6.582,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "boss_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_1": {
+    "head_bottom": 3.848,
+    "jaw_frame": 6.953,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_2": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_3": {
+    "head_bottom": 3.846,
+    "jaw_frame": 6.954,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_camera_corner_4": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_trim_lower": {
+    "head_bottom": 7.414,
+    "jaw_frame": 10.521,
+    "jaw_support": ">12 (nothing within 12 mm)"
+   },
+   "head_trim_upper": {
+    "head_bottom": ">12 (nothing within 12 mm)",
+    "jaw_frame": ">12 (nothing within 12 mm)",
+    "jaw_support": ">12 (nothing within 12 mm)"
+   }
+  }
+ },
+ "screws": {
+  "rows": [
+   {
+    "screw": "camera_corner_1",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -14.09,
+     117.11
+    ],
+    "from": "behind the camera (head on the PCB back)",
+    "passes": "camera PCB plated corner hole x 70.8..72.4",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 72.4..77.4",
+    "threadEngagementMm": 4.4,
+    "tipX": 76.8,
+    "pilotFloorToFaceBackMm": 2.7,
+    "materialInFrontOfTipMm": 4.6,
+    "headX": [
+     69.2,
+     70.8
+    ]
+   },
+   {
+    "screw": "camera_corner_2",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -14.09,
+     145.11
+    ],
+    "from": "behind the camera (head on the PCB back)",
+    "passes": "camera PCB plated corner hole x 70.8..72.4",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 72.4..77.4",
+    "threadEngagementMm": 4.4,
+    "tipX": 76.8,
+    "pilotFloorToFaceBackMm": 2.7,
+    "materialInFrontOfTipMm": 4.6,
+    "headX": [
+     69.2,
+     70.8
+    ]
+   },
+   {
+    "screw": "camera_corner_3",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     13.91,
+     117.11
+    ],
+    "from": "behind the camera (head on the PCB back)",
+    "passes": "camera PCB plated corner hole x 70.8..72.4",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 72.4..77.4",
+    "threadEngagementMm": 4.4,
+    "tipX": 76.8,
+    "pilotFloorToFaceBackMm": 2.7,
+    "materialInFrontOfTipMm": 4.6,
+    "headX": [
+     69.2,
+     70.8
+    ]
+   },
+   {
+    "screw": "camera_corner_4",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     13.91,
+     145.11
+    ],
+    "from": "behind the camera (head on the PCB back)",
+    "passes": "camera PCB plated corner hole x 70.8..72.4",
+    "threadsInto": "face corner boss, 1.7 mm blind pilot x 72.4..77.4",
+    "threadEngagementMm": 4.4,
+    "tipX": 76.8,
+    "pilotFloorToFaceBackMm": 2.7,
+    "materialInFrontOfTipMm": 4.6,
+    "headX": [
+     69.2,
+     70.8
+    ]
+   },
+   {
+    "screw": "trim_lower",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -0.18,
+     120.6
+    ],
+    "from": "the back of the face, before the camera goes on",
+    "passes": "face plate 2.2 mm hole x 80.1..81.4",
+    "threadsInto": "V1.8 eye-trim 1.7 mm pilot x 81.3..87.0",
+    "threadEngagementMm": 4.7,
+    "tipX": 86.1,
+    "materialInFrontOfTipMm": 3.3,
+    "headX": [
+     78.5,
+     80.1
+    ],
+    "headToPcbFrontGapMm": 6.1,
+    "headToHolderBlockMm": 1.18
+   },
+   {
+    "screw": "trim_upper",
+    "type": "M2 x 6 self-tapping",
+    "at_yz": [
+     -0.18,
+     141.6
+    ],
+    "from": "the back of the face, before the camera goes on",
+    "passes": "face plate 2.2 mm hole x 80.1..81.4",
+    "threadsInto": "V1.8 eye-trim 1.7 mm pilot x 81.3..87.0",
+    "threadEngagementMm": 4.7,
+    "tipX": 86.1,
+    "materialInFrontOfTipMm": 3.3,
+    "headX": [
+     78.5,
+     80.1
+    ],
+    "headToPcbFrontGapMm": 6.1,
+    "headToHolderBlockMm": 1.15
+   }
+  ]
+ },
+ "printability": {
+  "bossWallMm": 1.55,
+  "bossLengthMm": 7.7,
+  "pilotFloorMm": 2.7,
+  "minimumWallRule": 1.2,
+  "pass": true,
+  "poses": "same sourceToPrint matrices as release-V1.8/manifest-V1.8.json (face: front on the bed, bosses up; trim: as V1.8)"
+ },
+ "placement": {
+  "pcbFrontX": 72.4,
+  "pcbBackX": 70.8,
+  "backComponentsToX": 69.3,
+  "holderTopX": 77.9,
+  "lensFrontX": 87.8,
+  "connector": "on the PCB back at the +y edge (robot left); the cable leaves its +y edge, rises over the jaw support front wall and lies along x over the left half of the jaw motor ID15 to x 26 (CABLE_PTS); guide/content/routes.json cam_usb carries it on through the dia 11 left-rear exit and down the neck with the nine head wires to the pigtail splice at the saddle (D-023)",
+  "connectorBox": [
+   [
+    67.8,
+    11.41,
+    126.11
+   ],
+   [
+    70.8,
+    15.91,
+    136.11
+   ]
+  ],
+  "cornerHoles_yz": [
+   [
+    -14.09,
+    117.11
+   ],
+   [
+    -14.09,
+    145.11
+   ],
+   [
+    13.91,
+    117.11
+   ],
+   [
+    13.91,
+    145.11
+   ]
+  ],
+  "boreD": 16.2
+ },
+ "cameraModel": {
+  "fromManual": {
+   "board": "32 x 32 mm",
+   "holes": "4, dia 2.2",
+   "lens": "M12, lens seat spacing 18 mm",
+   "fov": "D 120, H 102",
+   "cable": "1 m",
+   "imageOrientation": "portrait on the robot (connector edge to +y): 102 deg vertical, 69.6 deg horizontal",
+   "source": "INNO-MAKER/U20CAM-720P UserManual-v1.0.pdf (GitHub), page 3"
+  },
+  "measuredOnPhotos": {
+   "holePitchMm": 28.0,
+   "how": "manual page-1 board photo: hole centres 920 px apart, board 1050 px = 32 mm"
+  },
+  "estimatedFromRenders": {
+   "HOLDER_H": 5.5,
+   "LENS_H": 15.4,
+   "KNURL_D": 13.2,
+   "RING_D": 15.1,
+   "RING_H": 4.5,
+   "how": "inno-maker.com product render 720P-3.jpg (front elevation), 43.8 px per mm from the 32 mm board"
+  },
+  "assumed": {
+   "CONN": [
+    10.0,
+    4.5,
+    3.0
+   ],
+   "CABLE_D": 4.0,
+   "BACK_LAYER": 1.5,
+   "EAR_SPAN": 20.0,
+   "EAR_H": 5.0
+  },
+  "toConfirmWithCalipers": [
+   "LENS_H: PCB front face to the lens front (sets the boss length only through FACE_GAP; the optics table says how far back the lens may sit)",
+   "HOLDER_H: PCB front face to the top of the square holder block (must stay behind the face back: boss length = FACE_GAP + HOLDER_H)",
+   "RING_D: widest diameter of the lens (must pass the BORE_D bore)"
+  ]
+ }
+}
