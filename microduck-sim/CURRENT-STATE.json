@@ -185,6 +185,19 @@
      "why": "re-measured 2026-10-22 with the policy load; resets now seen at 45-90 C, two at walk starts"
     }
    ]
+  },
+  "graded_hold": {
+   "value": "graded hold ON on the A7Z: /tmp/duck_hold.json {\"on\": true} with the calibration made 2026-10-23T17:16 from walk_wired run app1023-210738 (pad_lo [624.5, 698.0, 320.5, 352.0, 474.8], pad_hi [1998.4, 2233.6, 1025.6, 1126.4, 1519.2], grip_full_mm2 1010.6, legs_stand_ma 294 in stand61, legs_air_ma 138); copy kept at ~/duck-logs/hold_cal_app1023-210738.json; legs_air_ma comes from the one lift that did not struggle (struggling lifts raise the leg current to 2-2.9 A, so they cannot calibrate the unloaded level)",
+   "meaning": "Whether walk_wired.py scales stand61/walk61's actions and softens the legs while a hand grips the head and the feet are unloaded (hold.py), and with which pad and leg-current thresholds. /tmp is cleared at every A7Z boot: after a reboot the hold is off until the copy is put back (cp ~/duck-logs/hold_cal_app1023-210738.json /tmp/duck_hold.json); the brain reads the file live, no restart.",
+   "verified_at": "2026-10-23",
+   "source": "2026-10-23 run app1023-210738, labels ~/duck-logs/hold_labels_app1023-210738.jsonl (25 trials, segmented from the log in chat). Hold off: 4 of 5 head lifts struggled (|action| 2.1-2.3 rad, leg current peaks 2.0-2.9 A). Hold on: 6 of 6 head lifts held (s 0.00, kp_leg 80, kp_neck 500, |action| <= 0.62, leg current median 83-97 mA in the air), s back above 0.95 within 0.02-0.09 s of release, no hardware fault, mode stayed walk.",
+   "measure": "on the A7Z: python3 -c 'import sys; sys.path.insert(0, \"/home/radxa/duck\"); import hold; print(hold.read_hold_file())' shows on True and the cal above; the newest duck_wired_log row has hold_on true and hold.load near 1 while standing",
+   "max_age_days": 7,
+   "consumers": [
+    "walk_wired.py graded hold",
+    "hold_session.py / hold_analyze.py",
+    "anyone lifting the duck by the head"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
