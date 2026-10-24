@@ -12,7 +12,8 @@
 #   3. builds the quack calls (bringup/scripts/build_duck_calls.py: Pollen simulator voices, plus the Commons mallard
 #      when MALLARD=path/to/XC62258.ogg is given; 44.1 kHz mono 16-bit WAV, high-passed at 500 Hz, -1 dBFS) and
 #      copies them to ~/rt/microduck-sim/guide/firmware/mac/sounds/ (walk_wired.py --sounds default)
-#   4. checks on the A7Z: sha256 of every copied file, `aplay -L` has the ALSA default device (the -3 dB softvol
+#   4. checks on the A7Z: sha256 of every copied file, OpenCV in the venv for approach.py (installs
+#      opencv-python-headless when missing) and gst-launch-1.0 for its camera, `aplay -L` has the ALSA default device (the -3 dB softvol
 #      ceiling of D-012 lives there), the duck-policy venv imports onnxruntime, the Brain loads all six policies
 #      with their metadata checks, walk_wired imports, and the sounds folder has calls
 #   5. prints the control-file path walk_wired reads (default --cmd /tmp/duck_cmd.json unless duck-run.sh passes one)
@@ -39,6 +40,11 @@ FILES=(
   guide/firmware/mac/duck_sense.py
   guide/firmware/mac/duck_sound.py
   guide/firmware/mac/hold.py
+  guide/firmware/mac/approach.py
+  guide/firmware/mac/duck_kin.py
+  guide/firmware/mac/duck_kin.json
+  guide/firmware/mac/orange_target.py
+  guide/firmware/mac/turn_test.py
   guide/firmware/pi/battery.py
   guide/firmware/pi/dxl_fast.py
   guide/firmware/pi/jaw_limits.py
@@ -120,6 +126,17 @@ assert not missing, f"missing policies {missing}"
 print("sounds:", len(glob.glob("sounds/*.wav")), "calls in", os.path.abspath("sounds"))
 print("jaw calibration:", "present" if os.path.exists("../pi/jaw_calibration.json") else "MISSING (quack moves no jaw until marked)")
 PY
+# approach.py (walk to the orange object) needs OpenCV in the brain venv and gst-launch for the camera
+if ! "$VENV/bin/python" -c "import cv2" 2>/dev/null; then
+  echo "opencv: not in $VENV, installing opencv-python-headless"
+  "$VENV/bin/pip" install -q opencv-python-headless || fail=1
+fi
+"$VENV/bin/python" - <<'PY' || fail=1
+import cv2, approach, duck_kin
+k = duck_kin.DuckKin()
+print("approach: cv2", cv2.__version__, "| duck_kin", len(k.bodies), "bodies, intrinsics fx %.0f fy %.0f" % (k.K.fx, k.K.fy))
+PY
+command -v gst-launch-1.0 >/dev/null && echo "camera: gst-launch-1.0 present" || { echo "camera: gst-launch-1.0 MISSING"; fail=1; }
 cmdarg=$(grep -o -- '--cmd [^ ]*' "$HOME/duck-run.sh" 2>/dev/null || true)
 if [ -n "$cmdarg" ]; then
   echo "control file: ${cmdarg#--cmd } (passed by ~/duck-run.sh)"
