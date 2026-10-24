@@ -8,8 +8,8 @@ shown, with dates. Decision record: `DECISIONS.md` D-024.
 
 ## The robot as built
 
-A 15-servo bipedal duck after Pollen Robotics' open-source MicroDuck, built from AI-FanGe's community build
-tutorial (MIT) with our own changes, assembled at the CMU Robotics Club between 2026-09-30 and 2026-10-13 and
+A 15-DoF bipedal duck after Pollen Robotics' open-source MicroDuck, built from AI-FanGe's community build
+tutorial (MIT) with our own changes, assembled at the CMU RoboClub between 2026-09-30 and 2026-10-13 and
 modified since. Four hardware blocks:
 
 1. **Printed body** (looks and structure): the community part set (89 parts) plus our incremental releases
@@ -104,5 +104,5 @@ modified since. Four hardware blocks:
 ## Acknowledgements
 
 Pollen Robotics for the MicroDuck design, the training environment and the policies; AI-FanGe for the community
-build tutorial and the Raspberry Pi runtime this build started from; the CMU Robotics Club for the printers,
+build tutorial and the Raspberry Pi runtime this build started from; the CMU RoboClub for the printers,
 tools and parts drawers.
