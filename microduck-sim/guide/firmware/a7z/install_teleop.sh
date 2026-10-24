@@ -41,6 +41,7 @@ FILES=(
   guide/firmware/mac/duck_sound.py
   guide/firmware/mac/hold.py
   guide/firmware/mac/approach.py
+  guide/firmware/mac/a7z_cam.py
   guide/firmware/mac/duck_kin.py
   guide/firmware/mac/duck_kin.json
   guide/firmware/mac/orange_target.py
