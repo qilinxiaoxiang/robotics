@@ -15,7 +15,7 @@ process dies) and reads the rows walk_wired.py logged meanwhile. Mac side: guide
 
 Every take starts with the preflight: brain running and its log fresh, control loop at or over --min-hz over the last
 2 s (walk61 diverged at 36 Hz on 2026-10-23 when the SoC throttled), hottest thermal zone under --max-c, IMU valid,
-tilt under 8 deg and the policy at rest (max |action| < 0.3) when the robot stands on stand61. A failed preflight
+tilt under 8 deg and the policy at rest (walk mode at zero command on stand61 or walk61, no stepping, max |action| < 0.3). A failed preflight
 prints why and exits 2 without moving the robot. Ctrl-C in any take writes the zero command (a crouch rises first).
 
 Replay check without a robot:  python shoot.py --seg walk --replay LOG.jsonl.gz   (writes a fake log and cmd file)
@@ -164,8 +164,16 @@ def preflight(args, log, need_stand):
     if not last.get("imu_valid", True):
         why.append("IMU not valid")
     if need_stand:
-        if last["mode"] != "walk" or last.get("policy") != "stand":
-            why.append(f"robot is in {last['mode']}/{last.get('policy')}, not stand61: run --seg ready first")
+        # at rest = walk mode at zero command: stand61 before the first step, walk61 after it (walk_brain keeps walk61
+        # at a zero command once the robot has stepped, as Pollen's simulator does)
+        cmd_now = last.get("cmd") or {}
+        moving = any(abs(float(cmd_now.get(k, 0) or 0)) > 1e-3 for k in ("vx", "vy", "vtheta"))
+        if last["mode"] != "walk" or last.get("policy") not in ("stand", "walk") or moving:
+            why.append(f"robot is in {last['mode']}/{last.get('policy')} with command {cmd_now}, not at rest: run --seg ready first")
+        swing = max(max(r["q"][i] for r in rows) - min(r["q"][i] for r in rows)
+                    for i in (NAMES.index("left_hip_pitch"), NAMES.index("right_hip_pitch")))
+        if swing > 0.05:
+            why.append(f"still stepping (hip pitch swing {swing:.2f} rad in the last 2 s): wait for the stride to stop")
         tl = max(tilt_deg(r) for r in rows)
         if tl > 8.0:
             why.append(f"tilt {tl:.1f} deg in the last 2 s: the robot is not standing level")
