@@ -22,7 +22,7 @@
     "id": 2,
     "name": "walk_to_it",
     "goal": "Walk from 0.5 m to a pose with the object inside the pickup window in front of the beak.",
-    "status": "2026-10-21: walk61 steps 3-4 s at 0.25 m/s and then wobbles or falls more often than not; it does not turn in place, walk backwards or step below 0.25 m/s; the closed-loop sim reaches the window in 3 of 3 placements, the robot has not (D-015 amendment, microduck_rl/cmu/SIM2REAL.md).",
+    "status": "2026-10-24 (Shawn): walking on the A7Z brain is stable over many walks, left and right arcs work; the 2026-10-21 'wobbles or falls more often than not' no longer holds. Turning in place was never tried on the robot: the app and pickup.py use arcs only because of a 2026-10-16 misreading (it measured translation, not yaw); the as-built sim with the current brain turns in place at vx 0 (vtheta 0.5 -> 172 deg in 6 s, 0.7 cm drift; 1.0 -> about 55 deg/s; no fall). pickup.py itself is unchanged since 2026-10-16: it still reads the old Pi camera stream and a Mac-local control file and log, so the see-and-walk loop has not run on the A7Z robot.",
     "acceptance": "From 0.3-0.6 m away, pickup.py (0.25 m/s bursts, head at the default pose) stops the robot with the object inside the crouch policy's capture window in at most three approaches and without a guard trip in 8 of 10 robot trials with Shawn guarding, after the as-built sim suite at the real condition shows no fall."
    },
    {
