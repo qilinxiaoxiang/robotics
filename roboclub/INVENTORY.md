@@ -82,8 +82,15 @@ To request club parts, see the Discord `#i-want-this` channel.
 - Bambu Lab H2S (new, reported by Shawn 2026-10-24): single nozzle, 340 x 320 x 340 mm, toolhead up to 1000 mm/s and 20,000 mm/s2, 350 C nozzle, active chamber heating to 65 C (values from the Bambu Studio 02.08 H2S machine profile and retailer spec pages, 2026-10-24). Needs its own slice: an X1C `.gcode.3mf` is bound to the X1C and does not run on it; reslice the project with the H2S printer profile. AMS and module configuration of the club unit not yet checked.
 
 ## Adhesives
-- Contact cement (brand not recorded): spoiled as of 2026-10-24. Shawn found it separated into a cloudy clear liquid over a rubbery hard lump; it has gelled and does not bond. Replace before relying on contact cement.
-- E6000 (industrial-strength flexible adhesive): works, used by Shawn after the contact cement failed (2026-10-24). Cures flexible; needs about 24 h to set, 72 h for full strength (manufacturer guidance).
+Photographed by Shawn 2026-10-23 (IMG_7090-7097): clear plastic bins on the paint/finish shelf and the yellow cart below it.
+- Weldwood Contact Cement (DAP, metal can, yellow cart, IMG_7095): spoiled as of 2026-10-24. Shawn found it separated into a cloudy clear liquid over a rubbery hard lump; it has gelled and does not bond. Replace before relying on contact cement.
+- E6000 clear flexible adhesive, 2 fl oz tube (bin with the PVA bottle, IMG_7093): works, used by Shawn for the inner-tube soles after the contact cement failed (2026-10-24). Cures flexible; about 24 h to set, 72 h for full strength (manufacturer guidance). The right glue for rubber on PLA.
+- 3M Scotch-Weld DP420 black epoxy, 1.69 fl oz cartridge (IMG_7093, IMG_7094): rigid structural epoxy; needs a 3M duo-cartridge applicator gun and mixing nozzle (one nozzle is on it).
+- Bob Smith Industries 5-minute epoxy (IMG_7094): rigid.
+- Super Glue Gel, about 25 x 3 g tubes, plus a few small cyanoacrylate tubes (yellow cart, IMG_7096-7097): rigid and brittle; not for flexing rubber.
+- Amar black RTV silicone (IMG_7093): sealant; poor adhesion to PLA.
+- Lineco pH-neutral PVA, Aleene's Clear Gel Tacky Glue, Gorilla wood glue (gallon): paper, craft and wood only.
+- Other on the same shelves: Flex Seal Liquid (black rubber coating), Oatey PVC primer/cement cans, Smooth-On mold rubber kits (Part A/B), Rust-Oleum lacquer spray, Varathane/Minwax stains.
 
 ## Reported, location not photographed
 - Copper foil tape (Shawn, 2026-10-20).
