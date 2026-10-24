@@ -46,6 +46,7 @@ FILES=(
   guide/firmware/mac/duck_kin.json
   guide/firmware/mac/orange_target.py
   guide/firmware/mac/turn_test.py
+  guide/firmware/mac/shoot.py
   guide/firmware/pi/battery.py
   guide/firmware/pi/dxl_fast.py
   guide/firmware/pi/jaw_limits.py
