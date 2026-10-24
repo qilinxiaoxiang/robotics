@@ -76,6 +76,11 @@ To request club parts, see the Discord `#i-want-this` channel.
 - 1x battery (two drawers, battery clips/springs), 1x straight headers, 2x straight pins, 1x6 wire header, 1x2 wire header, 1x10 wire header, 1x6 female pin headers, angled headers?, line-sensor holders?, servo mounts, breadboard holders, servo arms
 - Beside: box labelled "1x angled headers"
 
+## 3D printers
+- Bambu Lab X1 Carbon (with AMS): 256 x 256 x 250 mm, PLA files are `.gcode.3mf` sliced for the X1C.
+- Elegoo Centauri Carbon: 256 x 256 x 256 mm, files are `.gcode` from OrcaSlicer/ElegooSlicer.
+- Bambu Lab H2S (new, reported by Shawn 2026-10-24): single nozzle, 340 x 320 x 340 mm, toolhead up to 1000 mm/s and 20,000 mm/s2, 350 C nozzle, active chamber heating to 65 C (values from the Bambu Studio 02.08 H2S machine profile and retailer spec pages, 2026-10-24). Needs its own slice: an X1C `.gcode.3mf` is bound to the X1C and does not run on it; reslice the project with the H2S printer profile. AMS and module configuration of the club unit not yet checked.
+
 ## Reported, location not photographed
 - Copper foil tape (Shawn, 2026-10-20).
 
