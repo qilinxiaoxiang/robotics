@@ -81,6 +81,10 @@ To request club parts, see the Discord `#i-want-this` channel.
 - Elegoo Centauri Carbon: 256 x 256 x 256 mm, files are `.gcode` from OrcaSlicer/ElegooSlicer.
 - Bambu Lab H2S (new, reported by Shawn 2026-10-24): single nozzle, 340 x 320 x 340 mm, toolhead up to 1000 mm/s and 20,000 mm/s2, 350 C nozzle, active chamber heating to 65 C (values from the Bambu Studio 02.08 H2S machine profile and retailer spec pages, 2026-10-24). Needs its own slice: an X1C `.gcode.3mf` is bound to the X1C and does not run on it; reslice the project with the H2S printer profile. AMS and module configuration of the club unit not yet checked.
 
+## Adhesives
+- Contact cement (brand not recorded): spoiled as of 2026-10-24. Shawn found it separated into a cloudy clear liquid over a rubbery hard lump; it has gelled and does not bond. Replace before relying on contact cement.
+- E6000 (industrial-strength flexible adhesive): works, used by Shawn after the contact cement failed (2026-10-24). Cures flexible; needs about 24 h to set, 72 h for full strength (manufacturer guidance).
+
 ## Reported, location not photographed
 - Copper foil tape (Shawn, 2026-10-20).
 
