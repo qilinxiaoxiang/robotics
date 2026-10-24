@@ -8,7 +8,7 @@
    "title": "What you are building",
    "bench": false,
    "inventory": true,
-   "drawnParts": 117,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -54,6 +54,8 @@
     "mic-l",
     "mic-sd",
     "mic-gnd",
+    "mic-b",
+    "mic-sd3",
     "fan-lead",
     "cam-usb"
    ],
@@ -81,10 +83,10 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 28 new parts",
+   "title": "Print the 27 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 61,
+   "drawnParts": 60,
    "add": [
     "shell_left",
     "shell_right",
@@ -103,7 +105,6 @@
     "mouth_sliding_ring",
     "neck_pitch",
     "neck_pitch_ring",
-    "speaker_box",
     "ankle",
     "right_ankle",
     "ankle_cheek",
@@ -1686,9 +1687,9 @@
    "pathCollisions": []
   },
   {
-   "step": "shell-ports",
+   "step": "shell-mouth",
    "chapter": "head",
-   "title": "Check or drill the six speaker ports in the lower head shell",
+   "title": "Check the speaker pocket, the twelve sound holes and the amplifier rails in the lower head shell",
    "bench": true,
    "inventory": false,
    "drawnParts": 1,
@@ -1990,74 +1991,67 @@
   {
    "step": "speaker-bench",
    "chapter": "head",
-   "title": "Tape the speaker into the mouth speaker box",
+   "title": "Wire the speaker to the amplifier on the bench",
    "bench": true,
    "inventory": false,
-   "drawnParts": 3,
+   "drawnParts": 4,
    "add": [
-    "speaker_box",
     "speaker_tape",
-    "speaker"
+    "speaker",
+    "amp_tape",
+    "amplifier"
    ],
-   "approach": {
-    "speaker": [
-     0,
-     0,
-     35
-    ],
-    "speaker_tape": [
-     0,
-     0,
-     35
-    ]
-   },
+   "approach": {},
    "group": false,
-   "cables": [],
+   "cables": [
+    "spk-plus",
+    "spk-minus"
+   ],
    "drawnButNotPresent": [],
    "benchSubassembly": "head",
    "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
    "pathCollisions": []
   },
   {
-   "step": "speaker-box",
+   "step": "speaker-amp",
    "chapter": "head",
-   "title": "Tape the speaker box onto the floor of the head, duct over the six ports",
+   "title": "Tape the speaker face down into its pocket and the amplifier between its rails",
    "bench": false,
    "inventory": false,
    "drawnParts": 98,
    "add": [
-    "speaker_box_tape",
-    "speaker_box",
     "speaker_tape",
-    "speaker"
+    "speaker",
+    "amp_tape",
+    "amplifier"
    ],
    "approach": {
-    "speaker_box_tape": [
-     0,
-     0,
-     40
-    ],
-    "speaker_box": [
-     0,
-     0,
-     40
-    ],
     "speaker_tape": [
      0,
      0,
-     40
+     30
     ],
     "speaker": [
      0,
      0,
-     40
+     30
+    ],
+    "amp_tape": [
+     0,
+     0,
+     30
+    ],
+    "amplifier": [
+     0,
+     0,
+     30
     ]
    },
    "group": true,
-   "cables": [],
+   "cables": [
+    "spk-plus",
+    "spk-minus"
+   ],
    "drawnButNotPresent": [],
    "pose": null,
    "flex": null,
@@ -2187,45 +2181,12 @@
    "pathCollisions": []
   },
   {
-   "step": "amplifier",
-   "chapter": "head-elec",
-   "title": "Mount the amplifier on its two posts",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 2,
-   "add": [
-    "amplifier"
-   ],
-   "approach": {
-    "amplifier": [
-     0,
-     0,
-     -20
-    ]
-   },
-   "group": false,
-   "cables": [
-    "amp-lrc",
-    "amp-bclk",
-    "amp-din",
-    "amp-gnd",
-    "amp-vin"
-   ],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "head-elec",
-   "robotContextDrawnWithBench": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
    "step": "touch",
    "chapter": "head-elec",
    "title": "Stick the five copper touch pads and the XIAO inside the cap",
    "bench": true,
    "inventory": false,
-   "drawnParts": 9,
+   "drawnParts": 8,
    "add": [
     "touch_pad_l1",
     "touch_pad_r1",
@@ -2262,14 +2223,14 @@
      -12
     ],
     "touch_xiao_tape": [
-     3.7,
-     -10.5,
-     -4.4
+     0,
+     0,
+     -12
     ],
     "touch_xiao": [
-     3.7,
-     -10.5,
-     -4.4
+     0,
+     0,
+     -12
     ]
    },
    "group": false,
@@ -2294,7 +2255,7 @@
    "title": "Fit the two microphones in the ears of the cap",
    "bench": true,
    "inventory": false,
-   "drawnParts": 13,
+   "drawnParts": 12,
    "add": [
     "mic_foam_left",
     "mic_left",
@@ -2342,7 +2303,7 @@
    "title": "Join the microphone wires into the amplifier and XIAO wires",
    "bench": true,
    "inventory": false,
-   "drawnParts": 13,
+   "drawnParts": 12,
    "add": [],
    "approach": {},
    "group": false,
@@ -2361,9 +2322,45 @@
    "pathCollisions": []
   },
   {
+   "step": "mic-back",
+   "chapter": "head-elec",
+   "title": "Optional: fit a third microphone at the back of the cap",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 14,
+   "add": [
+    "mic_foam_back",
+    "mic_back"
+   ],
+   "approach": {
+    "mic_foam_back": [
+     11.3,
+     3.5,
+     -7.5
+    ],
+    "mic_back": [
+     11.3,
+     3.5,
+     -7.5
+    ]
+   },
+   "group": false,
+   "cables": [
+    "mic-b",
+    "mic-sd3"
+   ],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "head-elec",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
    "step": "bundle-run",
    "chapter": "bundle",
-   "title": "Run the 11 head wires and the camera cable through the left-rear exit, clamp them in the exit and run them down the left side of the neck to the saddle",
+   "title": "Run the 11 (or 12 with the optional back microphone) head wires and the camera cable through the left-rear exit, clamp them in the exit and run them down the left side of the neck to the saddle",
    "bench": false,
    "inventory": false,
    "drawnParts": 103,
@@ -2446,13 +2443,12 @@
   {
    "step": "cap-on",
    "chapter": "bundle",
-   "title": "Plug the two speaker leads together and lower the cap onto the head",
+   "title": "Lower the cap onto the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 116,
+   "drawnParts": 115,
    "add": [
     "head_cap",
-    "amplifier",
     "touch_pad_l1",
     "touch_pad_r1",
     "touch_pad_l2",
@@ -2467,11 +2463,6 @@
    ],
    "approach": {
     "head_cap": [
-     0,
-     0,
-     40
-    ],
-    "amplifier": [
      0,
      0,
      40
@@ -2539,8 +2530,6 @@
     "amp-din",
     "amp-gnd",
     "amp-vin",
-    "spk-plus",
-    "spk-minus",
     "touch-l1",
     "touch-r1",
     "touch-l2",
@@ -2567,7 +2556,7 @@
    "title": "Screw the head shut",
    "bench": false,
    "inventory": false,
-   "drawnParts": 116,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2582,7 +2571,7 @@
    "title": "Unpowered checks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 114,
    "add": [],
    "approach": {},
    "group": false,
@@ -2596,7 +2585,7 @@
    "title": "Set up the A7Z software",
    "bench": false,
    "inventory": false,
-   "drawnParts": 116,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2610,7 +2599,7 @@
    "title": "First power: converter readback, bus scan, Shutdown 52 and voltage-limit check",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 114,
    "add": [],
    "approach": {},
    "group": false,
@@ -2629,7 +2618,7 @@
    "title": "Check the IMU, Wi-Fi, speaker, microphones, touch pads and the fan",
    "bench": false,
    "inventory": false,
-   "drawnParts": 116,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2657,7 +2646,7 @@
    "title": "Close the saddle with its lid and the running fan",
    "bench": false,
    "inventory": false,
-   "drawnParts": 118,
+   "drawnParts": 117,
    "add": [
     "saddle_lid",
     "sd_fan"
@@ -2704,7 +2693,7 @@
    "title": "Range-of-motion check with torque off",
    "bench": false,
    "inventory": false,
-   "drawnParts": 118,
+   "drawnParts": 117,
    "add": [],
    "approach": {},
    "group": false,
@@ -2718,7 +2707,7 @@
    "title": "Measure the servo current through the OpenRB",
    "bench": false,
    "inventory": false,
-   "drawnParts": 117,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2734,7 +2723,7 @@
    "title": "Close the mouth and weigh the robot",
    "bench": false,
    "inventory": false,
-   "drawnParts": 118,
+   "drawnParts": 117,
    "add": [],
    "approach": {},
    "group": false,
@@ -2841,7 +2830,7 @@
    "title": "Swap the rear converter box for the battery backpack",
    "bench": false,
    "inventory": false,
-   "drawnParts": 117,
+   "drawnParts": 116,
    "add": [
     "battery_backpack_frame",
     "bp_switch",
@@ -2884,7 +2873,7 @@
    "title": "Slide the battery in upright and connect plug 1",
    "bench": false,
    "inventory": false,
-   "drawnParts": 119,
+   "drawnParts": 118,
    "add": [
     "bp_battery",
     "bp_plugs"
@@ -2915,7 +2904,7 @@
    "title": "Close the backpack with its cap",
    "bench": false,
    "inventory": false,
-   "drawnParts": 120,
+   "drawnParts": 119,
    "add": [
     "battery_backpack_cap"
    ],

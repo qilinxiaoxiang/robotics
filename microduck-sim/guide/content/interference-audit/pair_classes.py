@@ -31,25 +31,23 @@ PAIR_TEXT = {
     frozenset(['rear_frame', 'pd5991']): (
         'c', 'Adafruit 5991 PCB back face on its four 3.0 mm standoff bosses (seat x -50.0), held by four M2 x 6; the USB-C '
              'socket mouth sits in the +y wall window (plug in socket): a designed seat.', 'No change.'),
-    # D-025 mouth speaker box and ears (2026-10-23, print/ears-mouth-20261023/): 1 mm foam tape modelled uncompressed, touching
-    # its two faces at 0 mm; the speaker stands on the box base slab.
+    # Mouth floor (2026-10-24, print/mouth-floor-20261024/): tapes modelled uncompressed, touching their two faces at 0 mm.
     frozenset(['speaker_tape', 'speaker']): (
-        'c', 'Tape loop on the rim of the speaker grille face: adhesive contact by design.', 'No change.'),
-    frozenset(['speaker_tape', 'speaker_box']): (
-        'c', 'Tape loop on the back of the speaker-box plate round the window: adhesive contact by design.', 'No change.'),
-    frozenset(['speaker', 'speaker_box']): (
-        'c', 'Speaker short edge standing on the box base slab between the two side rails: a designed seat.', 'No change.'),
-    frozenset(['speaker_box_tape', 'speaker_box']): (
-        'c', 'Foam tape under the wall bottoms of the speaker box: adhesive contact by design.', 'No change.'),
-    frozenset(['speaker_box_tape', 'head_bottom']): (
-        'c', 'Foam tape of the speaker box on the yellow floor, sealing the duct round the six ports: adhesive contact by design.', 'No change.'),
+        'c', 'Thin tape loop on the rim of the speaker grille face: adhesive contact by design.', 'No change.'),
+    frozenset(['speaker_tape', 'head_bottom']): (
+        'c', 'Thin tape loop on the floor of the speaker pocket, round the twelve sound holes: adhesive contact by design.', 'No change.'),
+    frozenset(['amp_tape', 'amplifier']): (
+        'c', 'Foam tape under the amplifier board: adhesive contact by design.', 'No change.'),
+    frozenset(['amp_tape', 'head_bottom']): (
+        'c', 'Foam tape of the amplifier on the yellow floor between the two rails: adhesive contact by design.', 'No change.'),
+    # D-025 ears (2026-10-23, print/ears-mouth-20261023/): 1 mm foam rings.
     **{frozenset([f'mic_foam_{s}', 'head_cap']): (
-        'c', f'Foam ring round the {s} sound hole on the inner face of the cap wall: adhesive contact by design.', 'No change.') for s in ('left', 'right')},
+        'c', f'Foam ring round the {s} sound hole on the inner face of the cap wall: adhesive contact by design.', 'No change.') for s in ('left', 'right', 'back')},
     **{frozenset([f'mic_foam_{s}', f'mic_{s}']): (
-        'c', f'Foam ring on the {s} microphone face round its port: adhesive contact by design.', 'No change.') for s in ('left', 'right')},
+        'c', f'Foam ring on the {s} microphone face round its port: adhesive contact by design.', 'No change.') for s in ('left', 'right', 'back')},
     # Touch extension (extension-20261015-touch/): foam tape and copper foil stuck to the cap wall.
     frozenset(['touch_xiao_tape', 'head_cap']): (
-        'c', 'Foam tape under the XIAO pressed onto the inner left wall of the cap (1 mm tape at 0.8 mm, up to 0.2 mm more into the curve): adhesive contact by design.', 'No change.'),
+        'c', 'Foam tape on the XIAO pressed onto the middle of the cap roof (modelled 0.05 mm under the roof; the tape presses up against it): adhesive contact by design.', 'No change.'),
     frozenset(['touch_xiao_tape', 'touch_xiao']): (
         'c', 'Foam tape on the flat back of the XIAO: adhesive contact by design.', 'No change.'),
     **{frozenset([f'touch_pad_{p}', 'head_cap']): (

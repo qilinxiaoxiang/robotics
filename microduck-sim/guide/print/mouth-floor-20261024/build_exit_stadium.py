@@ -1,0 +1,351 @@
+"""Stadium left-rear head exit (Shawn 2026-10-24: "按第三版做：... 长圆出线口，颌支架和卡扣改长圆").
+
+The D-023 dia 11 exit (neck-exit-20261023/build_neck_exit.py) carries 11 Dupont wires and the dia 4 USB camera cable; its clamp
+bore is 7.8 mm and 6.8 mm between the ribs, while the tightest packing of that bundle is 7.7 mm (1.4 mm wires) to 9.1 mm (1.8 mm).
+With the XIAO moved from the left rear wall to the cap centre the exit grows by STADIUM['ext'] along STADIUM['axisDeg'] (towards
+-x/+y, where the XIAO and the ring-wall end were): an 11 x 17 stadium through the lower head shell and the jaw support, still
+1.1 mm off ID15, the yaw link and the neck parts (scratchpad search 2026-10-24, the least material removed of the directions tried).
+
+The clamp's fixed half (part of the jaw support) becomes a stadium: its plain wall pieces (the fill under the shoulder and the wall
+above it) are the D-023 polar sectors redrawn as rings between stadium offsets of the same radii, the joint pieces at 60 and 240 deg
+(lips, tongue pockets, bridges, recesses: at right angles to the axis, round the old centre) stay as they were, and the bore (a
+7.8 x 13.8 stadium) is cut through all of it. The D-023 ribs at 105 and 195 deg move to the far end cap with a third on its tip.
+The loose halves A and B close the near end round the old centre, so they are the V1.30 parts unchanged (printed 2026-10-23). Everything else (new screw seat, wall-end cuts, print poses, checks) is the D-023 script.
+
+Inputs (robot frame, mm, guide world at HOME):
+  head_bottom: guide/print/world/head_bottom_v18.stl (the V1.8 lower head shell as printed, Yellow)
+  jaw_support: the V1.6 black release print file, registered to the world by v16-registration.json (printed Black)
+Outputs here: head_bottom_exit.stl, jaw_support_exit.stl (world), *-print.stl (V1.8 / V1.6 print poses), loose halves (checks
+only; identical to neck-exit-20261023), checks.json. The yellow floor edits (mouth-floor) start from head_bottom_exit.stl.
+    /tmp/microduck-cad-venv/bin/python build_exit_stadium.py   (under run_bounded_cad.py)"""
+import hashlib, json, math, sys, resource
+from pathlib import Path
+import numpy as np, trimesh
+from shapely.geometry import LineString, Point, Polygon
+HERE = Path(__file__).resolve().parent; GUIDE = HERE.parents[1]; WORLD = GUIDE / 'print/world'
+CACHE = Path('/private/tmp/claude-501/-Users-xiangzheng-code-robotics/92b86901-7748-4ca5-958b-34f6db4ff94e/scratchpad/ia-cache')
+REG = [r for r in json.loads((GUIDE / 'content/interference-audit/v16-registration.json').read_text()) if r['key'] == 'jaw_support'][0]
+V18 = json.loads((GUIDE / 'print/release-V1.8/manifest-V1.8.json').read_text())
+HB_T = np.array(next(r for r in V18['parts'] if r['key'] == 'head_bottom')['sourceToPrint'])
+JS_T = np.linalg.inv(np.array(REG['transformReleaseToWorld']))
+
+PASSAGE = dict(c=(10.0, 18.5), r=5.5)          # dia 11, vertical; ID15 (x >= 16.6 for y >= 14) 1.1 mm off its +x edge
+STADIUM = dict(axisDeg=150.0, ext=6.0)           # far end centre 6 mm from c towards 150 deg
+U_AX = np.array([math.cos(math.radians(STADIUM['axisDeg'])), math.sin(math.radians(STADIUM['axisDeg']))])
+C1 = np.array(PASSAGE['c']) + STADIUM['ext'] * U_AX
+SEGMENT = LineString([PASSAGE['c'], tuple(C1)])
+OLD_SEAT = (6.6, 19.0)                          # H-jaw_support-01, removed (inside the passage)
+NEW_SEAT = (11.6, 30.2)                         # on the pad strip behind ID15, on the head floor's ring wall
+BOSS_R, PILOT_R, MOUTH_R = 3.0, 1.1, 1.4        # as the old seat: outer r 3.05..3.35, pilot r 1.1, mouth r 1.4 over the top 0.3
+PAD_R, CLEAR_R = 3.2, 1.4                       # jaw support pad around the new hole; clearance hole as the old one (r 1.35..1.4)
+
+
+def mem(t): print(t, round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2**20), 'MiB', flush=True)
+
+
+# plan shapes (x, y) cut so no wall end thinner than 1.2 mm remains at the exit; the ring-wall cut ends square to the wall (x + y = 36.5)
+RING_STUB = ((3.0, 21.0), (12.0, 21.0), (12.0, 24.5), (6.5, 30.0), (3.0, 30.0))
+RIB_STUB = ((4.0, 13.2), (8.6, 17.0))
+WALL_STUB_Y15 = ((4.6, 14.0), (12.0, 16.2))
+WALL_STUB_DIAG = ((13.0, 18.0), (15.0, 21.8))
+PLATE_STEP = ((4.6, 13.5), (8.0, 17.5))           # plate strip between its y 14.45 edge and the exit circle
+# exit clamp (polar about the exit centre, degrees, 0 = +x, 90 = +y). Free radius round the exit (scratchpad v130b/freerad.py,
+# 2026-10-23): >= 5.5 at every angle; at 240 deg the lower shell's ring wall comes to r 6.35 up to z 115.81, so the lips start
+# above it (Z_SHOULDER); ID15 at r 6.6 (0 deg), the x 15 wall end at r 5.77 (30 deg).
+CLAMP = dict(RI=3.9, RO=5.2, joints=(60.0, 240.0), lap=22.0, gap=2.5, tipGap=4.0, bridge=6.0,
+             RT=5.1, RL0=5.3, RL1=6.9, RLOW=6.0, zShoulder=116.3, zTop=124.31, zLooseBottom=113.4,
+             ribs=(105.0, 195.0), looseRib=330.0, ribH=0.5, ribW=1.4, barb=dict(h=0.4, z=(0.1, 1.5), catchZ=1.1, span=(2.0, 16.0)),
+             recess=dict(r=5.65, z=1.7, span=(1.0, 17.0)), looseRI={'A': 3.9, 'B': 3.5})
+RIGHT_WALL_END = ((14.0, 17.5), (17.0, 21.2))     # the x 15..16.3 wall and the plate under it end square at y 21.2, clear of the exit circle
+
+
+def prism(pts, z0, z1):
+    m = trimesh.creation.extrude_polygon(Polygon(pts), z1 - z0); m.apply_translation([0, 0, z0]); return m
+
+
+def box3(xy, z0, z1):
+    (x0, y0), (x1, y1) = xy
+    b = trimesh.creation.box(extents=[x1 - x0, y1 - y0, z1 - z0]); b.apply_translation([(x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2]); return b
+
+
+def zcyl(r, x, y, z0, z1, n=72):
+    c = trimesh.creation.cylinder(radius=r, height=z1 - z0, sections=n); c.apply_translation([x, y, (z0 + z1) / 2]); return c
+
+
+def stadium(r, z0, z1):
+    return prism(np.array(SEGMENT.buffer(r, quad_segs=24).exterior.coords)[:-1], z0, z1)
+
+
+def union(ms): return trimesh.boolean.union(ms, engine='manifold')
+def diff(a, bs): return trimesh.boolean.difference([a] + list(bs), engine='manifold')
+def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def sec(m, z):
+    s = m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1]); g = Polygon()
+    if s is None: return g
+    for e in s.discrete:
+        if len(e) >= 4:
+            p = Polygon(e[:, :2]).buffer(0)
+            if not p.is_empty: g = g.symmetric_difference(p)
+    return g
+
+
+hb = trimesh.load(WORLD / 'head_bottom_v18.stl', force='mesh')
+js = trimesh.load(REG['releaseFile'], force='mesh'); js.apply_transform(np.array(REG['transformReleaseToWorld']))
+assert hb.is_volume and js.is_volume
+
+mem('loaded')
+# levels read off the parts
+floor_bottom = float(hb.bounds[0, 2])
+def ray_hits(m, x, y):
+    loc, _, _ = m.ray.intersects_location([[x, y, 200.0]], [[0, 0, -1.0]])
+    return sorted(loc[:, 2].tolist(), reverse=True)
+
+
+old_boss_top = ray_hits(hb, OLD_SEAT[0] + 2.0, OLD_SEAT[1])[0]                    # top face of the old boss ring
+hits_js = ray_hits(js, OLD_SEAT[0] - 2.0, OLD_SEAT[1] - 2.5)
+plate_bot, plate_top = float(js.bounds[0, 2]), max(z for z in hits_js if z < 116.0)
+floor_top = ray_hits(hb, 0.0, 20.0)[0]
+print('floor bottom', round(floor_bottom, 2), 'floor top', round(floor_top, 2), 'old boss top', round(old_boss_top, 2), 'plate', round(plate_bot, 2), round(plate_top, 2))
+
+mem('levels')
+# ---------------------------------------------------------------- head floor
+cx, cy = PASSAGE['c']
+hb_cut = [stadium(PASSAGE['r'], floor_bottom - 1.0, old_boss_top + 1.0),
+          zcyl(BOSS_R + 0.45, *OLD_SEAT, floor_top - 0.02, old_boss_top + 1.0),          # the whole old boss above the floor plate
+          prism(RING_STUB, floor_top - 0.02, old_boss_top + 1.0),                           # ring-wall end between the exit and the old boss
+          box3(RIB_STUB, floor_top - 0.02, old_boss_top + 1.0)]                          # the short wall from the old boss to the y 12.5 rib
+hb_new = diff(hb, hb_cut)
+nx, ny = NEW_SEAT
+boss = zcyl(BOSS_R, nx, ny, floor_bottom - 1.5, old_boss_top)                            # cut back to the bed plane below
+hb_new = union([hb_new, boss])
+hb_new = diff(hb_new, [zcyl(PILOT_R, nx, ny, floor_top + 0.5, old_boss_top + 1.0, 32), zcyl(MOUTH_R, nx, ny, old_boss_top - 0.3, old_boss_top + 1.0, 32)])
+
+mem('head floor done')
+# ---------------------------------------------------------------- jaw support
+js_new = diff(js, [stadium(PASSAGE['r'], plate_bot - 1.0, js.bounds[1, 2] + 1.0),
+                   box3(WALL_STUB_Y15, plate_top, js.bounds[1, 2] + 1.0),                     # end of the y 15 wall left by the exit
+                   box3(WALL_STUB_DIAG, plate_top, js.bounds[1, 2] + 1.0),                    # end of the diagonal wall left by the exit
+                   box3(RIGHT_WALL_END, plate_bot - 1.0, js.bounds[1, 2] + 1.0),
+                   box3(PLATE_STEP, plate_bot - 1.0, plate_top + 0.5)])
+js_new = union([js_new, zcyl(PAD_R, nx, ny, plate_bot, plate_top)])
+js_new = diff(js_new, [zcyl(CLEAR_R, nx, ny, plate_bot - 1.0, plate_top + 1.0, 32)])
+
+
+# ---------------------------------------------------------------- exit clamp
+def sector(r0, r1, a0, a1, step=1.5):
+    a = np.radians(np.linspace(a0, a1, max(3, int(abs(a1 - a0) / step) + 1)))
+    out = np.c_[cx + r1 * np.cos(a), cy + r1 * np.sin(a)]
+    inn = np.c_[cx + r0 * np.cos(a[::-1]), cy + r0 * np.sin(a[::-1])]
+    return np.vstack([out, inn])
+
+
+def rib(ang, r0, r1, w):
+    t = math.radians(ang); er, et = np.array([math.cos(t), math.sin(t)]), np.array([-math.sin(t), math.cos(t)])
+    c0 = np.array([cx, cy])
+    return np.array([c0 + er * r0 - et * w / 2, c0 + er * r1 - et * w / 2, c0 + er * r1 + et * w / 2, c0 + er * r0 + et * w / 2])
+
+
+def barb(a0, a1, RT, b, zS):
+    pts = []
+    for a in np.radians(np.linspace(a0, a1, 6)):
+        for r, z in ((RT - 0.3, b['z'][0]), (RT - 0.3, b['z'][1]), (RT + b['h'], b['catchZ']), (RT + b['h'], b['z'][1])):
+            pts.append([cx + r * math.cos(a), cy + r * math.sin(a), zS + z])
+    return trimesh.convex.convex_hull(np.array(pts))
+
+
+K = CLAMP; RI, RO, (J1, J2), L, G, TG, BR = K['RI'], K['RO'], K['joints'], K['lap'], K['gap'], K['tipGap'], K['bridge']
+ZS, ZT, ZLB = K['zShoulder'], K['zTop'], K['zLooseBottom']
+# each joint: angle, direction towards the fixed half (+1: fixed half at larger angles)
+JOINTS = ((J1, +1.0), (J2, -1.0))
+def span(j, s, d0, d1):          # angular interval from j + s*d0 to j + s*d1, as (lo, hi)
+    a, b = j + s * d0, j + s * d1; return (min(a, b), max(a, b))
+
+
+def wedge(a0, a1, R=40.0):
+    """the far side of the exit between the rays from the old centre at a0 and a1 (deg), extended along the axis"""
+    c0, d0, d1 = np.array([cx, cy]), np.array([math.cos(math.radians(a0)), math.sin(math.radians(a0))]), np.array([math.cos(math.radians(a1)), math.sin(math.radians(a1))])
+    return Polygon([c0, c0 + R * d0, c0 + R * d0 + R * U_AX, c0 + R * d1 + R * U_AX, c0 + R * d1])
+
+
+def st_sector(r0, r1, a0, a1):
+    """D-023 polar sector (r0..r1 about the old centre, a0..a1) made into the stadium: the ring between the stadium offsets r0 and r1"""
+    g = SEGMENT.buffer(r1, quad_segs=24).difference(SEGMENT.buffer(r0, quad_segs=24)).intersection(wedge(a0, a1))
+    g = max(getattr(g, 'geoms', [g]), key=lambda q: q.area)
+    return np.array(g.exterior.coords)[:-1]
+
+
+fixed = [prism(st_sector(RI, K['RLOW'], J1 + G / 2, J2 - G / 2), plate_bot, ZS),                    # fills the exit up to the shoulder
+         prism(sector(RI, K['RL1'], *span(J1, +1, G / 2, L + BR)), plate_bot, ZS),                  # under the 60 deg lip (plate there)
+         prism(st_sector(RI, RO, J1 + L, J2 - L), ZS - 0.01, ZT)]                                    # the wall above the shoulder
+for j, sg in JOINTS:
+    fixed += [prism(sector(K['RL0'], K['RL1'], *span(j, sg, G / 2, L + BR)), ZS - 0.01, ZT),          # lip over the tongue pocket
+              prism(sector(RI, K['RL1'], *span(j, sg, L, L + BR)), ZS - 0.01, ZT)]                    # bridge from the lip to the arc
+FH = diff(union(fixed), [stadium(RI, plate_bot - 1.0, ZT + 1.0)])        # the polar joint pieces stop at the stadium bore wall
+# ribs: the D-023 pair at 105 and 195 deg now stand on the far end cap (about the far centre), plus one on its tip (150 deg)
+def rib_c1(ang, r0, r1, w):
+    return rib(ang, r0, r1, w) + (C1 - np.array([cx, cy]))
+FH = union([FH] + [prism(rib_c1(a, RI - K['ribH'], RI + 0.2, K['ribW']), plate_bot, ZT) for a in (*K['ribs'], STADIUM['axisDeg'])])
+# stretch: cut at the plane STADIUM['cut'] along the axis, move the far piece STADIUM['ext'] along it, extrude the cut section into the gap
+assert FH.is_volume
+recesses = [prism(sector(K['RL0'] - 0.01, K['recess']['r'], *span(j, sg, *K['recess']['span'])), ZS - 0.01, ZS + K['recess']['z'])
+            for j, sg in JOINTS]
+js_new = diff(union([js_new, FH]), recesses)
+
+
+def loose(ri):
+    parts = [prism(sector(ri, RO, J2 + G / 2, J1 - G / 2 + 360.0), ZLB, ZT),
+             prism(rib(K['looseRib'], ri - K['ribH'], ri + 0.2, K['ribW']), ZLB, ZT)]
+    for j, sg in JOINTS:
+        parts.append(prism(sector(ri, K['RT'], *span(j, sg, -G / 2 - 1.0, L - TG)), ZS + 0.1, ZT))   # tongue into the pocket
+        parts.append(barb(*span(j, sg, *K['barb']['span']), K['RT'], K['barb'], ZS))
+    return union(parts)
+
+
+LOOSE = {v: loose(r) for v, r in K['looseRI'].items()}
+
+mem('jaw support done')
+# the boss stands on the bed: in the V1.8 print pose everything below the original bed plane is cut off, then mapped back
+hb_p0 = hb.copy(); hb_p0.apply_transform(HB_T); BED = float(hb_p0.bounds[0, 2])
+hb_p = hb_new.copy(); hb_p.apply_transform(HB_T)
+lo, hi = hb_p.bounds; below = trimesh.creation.box(extents=[hi[0] - lo[0] + 20, hi[1] - lo[1] + 20, 10.0])
+below.apply_translation([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, BED - 5.0])
+hb_p = diff(hb_p, [below]); hb_new = hb_p.copy(); hb_new.apply_transform(np.linalg.inv(HB_T))
+hb_p.apply_translation([0, 0, -BED]); hb_p0.apply_translation([0, 0, -BED])
+for name, m in (('head_bottom_exit', hb_new), ('jaw_support_exit', js_new), *((f'exit_clamp_loose_{v}', m) for v, m in LOOSE.items())):
+    assert m.is_volume, name
+    m.export(HERE / f'{name}.stl')
+hb_p.export(HERE / 'head_bottom_exit-print.stl')
+js_p = js_new.copy(); js_p.apply_transform(JS_T); js_p.apply_translation([0, 0, -js_p.bounds[0, 2]]); js_p.export(HERE / 'jaw_support_exit-print.stl')
+# loose halves print upside down: their flat top (z ZT) on the bed, the tongues and barbs then grow up from the bed
+LOOSE_T = np.array([[1.0, 0, 0, -cx], [0, -1.0, 0, cy], [0, 0, -1.0, ZT], [0, 0, 0, 1.0]])
+for v, m in LOOSE.items():
+    mp = m.copy(); mp.apply_transform(LOOSE_T); assert abs(mp.bounds[0, 2]) < 1e-4, mp.bounds; mp.apply_translation([0, 0, -mp.bounds[0, 2]]); mp.export(HERE / f'exit_clamp_loose_{v}-print.stl')
+
+mem('exported')
+# ---------------------------------------------------------------- checks
+def cache(k):
+    z = np.load(CACHE / f'solid-{k}.npz'); return trimesh.Trimesh(z['v'], z['f'], process=False)
+
+
+OTHERS = ['motor15', 'motor14', 'motor13', 'head_yaw_link', 'neck_pitch', 'head_roll_ring_a', 'head_roll_ring_b', 'neck_pitch_ring', 'jaw_frame', 'speaker', 'amplifier']
+O = {k: cache(k) for k in OTHERS}
+def inter(a, b):
+    try:
+        r = trimesh.boolean.intersection([a, b], engine='manifold'); return round(float(r.volume), 3) if len(r.faces) else 0.0
+    except Exception as e:
+        return str(e)
+
+
+def mind(a, b, n=1500):
+    pts, _ = trimesh.sample.sample_surface(a, n, seed=1)
+    return round(float(np.abs(trimesh.proximity.ProximityQuery(b).signed_distance(pts)).min()), 2)
+
+
+mem('caches loaded')
+feat = {'new_boss': boss, 'new_pad': zcyl(PAD_R, nx, ny, plate_bot, plate_top), 'screw_head': zcyl(2.5, nx, ny, plate_top + 0.15, plate_top + 2.0)}
+clear = {f: {k: mind(m, O[k]) for k in OTHERS} for f, m in feat.items()}
+inter_new = {k: {'head_bottom_exit': inter(hb_new, O[k]), 'jaw_support_exit': inter(js_new, O[k])} for k in OTHERS}
+inter_old = {k: {'head_bottom': inter(hb, O[k]), 'jaw_support': inter(js, O[k])} for k in OTHERS}
+inter_pair = {'new': inter(hb_new, js_new), 'old': inter(hb, js)}
+screw_head_vs_js = mind(feat['screw_head'], js_new)
+# vertical passage free diameter through both parts and their neighbours (z floor .. top of the jaw support)
+def column(m_list, c, z0, z1):
+    best = 1e9
+    for z in np.arange(z0, z1, 1.0):
+        for m in m_list:
+            g = sec(m, z)
+            if g.is_empty: continue
+            best = min(best, 0.0 if g.intersects(SEGMENT) else g.distance(SEGMENT))
+    return round(2 * best, 2)
+
+
+mem('clearances done')
+col_new = column([hb_new, js_new] + [O[k] for k in ('motor15', 'motor14', 'motor13', 'head_yaw_link')], PASSAGE['c'], floor_bottom + 0.2, float(js.bounds[1, 2]))
+col_old = None   # the D-023 circle: neck-exit-20261023/checks.json
+mem('columns done')
+bodies = {'head_bottom_exit': len(hb_new.split(only_watertight=False)), 'jaw_support_exit': len(js_new.split(only_watertight=False)),
+          'head_bottom': len(hb.split(only_watertight=False)), 'jaw_support': len(js.split(only_watertight=False))}
+# bed contact in the print poses
+def contact(m): return round(float(m.area_faces[np.max(np.abs(m.triangles[:, :, 2]), axis=1) <= 0.01].sum()), 1)
+out = dict(
+    params=dict(PASSAGE=PASSAGE, OLD_SEAT=OLD_SEAT, NEW_SEAT=NEW_SEAT, BOSS_R=BOSS_R, PILOT_R=PILOT_R, MOUTH_R=MOUTH_R, PAD_R=PAD_R, CLEAR_R=CLEAR_R,
+                floorBottom=round(floor_bottom, 3), floorTop=round(floor_top, 3), oldBossTop=round(old_boss_top, 3), plate=[round(plate_bot, 3), round(plate_top, 3)]),
+    passageWidthMm=dict(new=col_new, note='twice the distance from the stadium centre segment to the nearest solid'), stadium=dict(STADIUM, c0=list(PASSAGE['c']), c1=C1.round(3).tolist()),
+    volumesMm3=dict(head_bottom=round(hb.volume, 1), head_bottom_exit=round(hb_new.volume, 1), jaw_support=round(js.volume, 1), jaw_support_exit=round(js_new.volume, 1)),
+    bodies=bodies, newFeatureClearanceMm=clear, screwHeadToJawSupportWallsMm=screw_head_vs_js,
+    intersectionWithNeighboursMm3=dict(new=inter_new, old=inter_old), headBottomJawSupportOverlapMm3=inter_pair,
+    printPoses=dict(head_bottom=dict(file='head_bottom_exit-print.stl', heightMm=round(float(hb_p.bounds[1, 2]), 2), bedContactMm2=contact(hb_p), v18BedContactMm2=contact(hb_p0), minZ=round(float(hb_p.bounds[0, 2]), 4), pose='V1.8 head_bottom.sourceToPrint'),
+                    jaw_support=dict(file='jaw_support_exit-print.stl', heightMm=round(float(js_p.bounds[1, 2]), 2), bedContactMm2=contact(js_p), pose='V1.6 release print pose (inverse of v16-registration transformReleaseToWorld)')),
+    sha256={n: sha(HERE / n) for n in ('head_bottom_exit.stl', 'jaw_support_exit.stl', 'head_bottom_exit-print.stl', 'jaw_support_exit-print.stl',
+                                        'exit_clamp_loose_A.stl', 'exit_clamp_loose_B.stl', 'exit_clamp_loose_A-print.stl', 'exit_clamp_loose_B-print.stl')})
+# ---------------------------------------------------------------- clamp checks
+def bore_dia(ms, z):
+    best = 1e9
+    for m in ms:
+        g = sec(m, z)
+        if not g.is_empty: best = min(best, g.distance(SEGMENT))
+    return round(2 * best, 2)
+
+
+def near(a, b, pad=3.0, n=3000):
+    """min distance from a's surface to b, b cropped to a's box + pad, in small batches (full-mesh signed distance runs out of memory)"""
+    lo, hi = a.bounds[0] - pad, a.bounds[1] + pad
+    keep = np.all(b.triangles.max(1) >= lo, 1) & np.all(b.triangles.min(1) <= hi, 1)
+    if not keep.any(): return f'>{pad}'
+    c = trimesh.Trimesh(b.vertices, b.faces[keep], process=False)
+    P = np.vstack([a.vertices, trimesh.sample.sample_surface(a, n, seed=1)[0]])
+    return round(float(min(trimesh.proximity.closest_point(c, P[k:k + 250])[1].min() for k in range(0, len(P), 250))), 2)
+
+
+import gc; gc.collect()
+clamp = {'params': CLAMP, 'boreDiaMm': {}, 'loose': {}}
+for v, m in LOOSE.items():
+    rec = {'volumeMm3': round(float(m.volume), 1), 'bodies': len(m.split(only_watertight=False)), 'bounds': np.round(m.bounds, 2).tolist(),
+           'boreDiaWithFixedHalf': {f'z{z}': bore_dia([js_new, m], z) for z in (112.5, 114.5, 117.0, 120.0, 123.5)},
+           'vsJawSupport': {'intersectionMm3': inter(m, js_new), 'minMm': near(m, js_new)},
+           'vsHeadBottom': {'intersectionMm3': inter(m, hb_new), 'minMm': near(m, hb_new)},
+           'vsNeighbours': {k: {'intersectionMm3': inter(m, O[k]), 'minMm': near(m, O[k])} for k in OTHERS}}
+    # straight insertion from 14 mm above: overlap with the jaw support at each height (the barbs pass the lips: designed)
+    sweep = []
+    for dz in np.arange(14.0, -0.01, -0.5):
+        mm = m.copy(); mm.apply_translation([0, 0, dz])
+        oth = {k: inter(mm, O[k]) for k in ('motor15', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b')}
+        oth['head_bottom'] = inter(mm, hb_new)
+        sweep.append([round(float(dz), 1), inter(mm, js_new), max(x for x in oth.values() if isinstance(x, float)),
+                      sorted(k for k, x in oth.items() if not isinstance(x, float))])
+    rec['insertionFromAbove'] = {'columns': ['liftMm', 'overlapJawSupportMm3', 'overlapOthersMaxMm3', 'notComputed'], 'rows': sweep}
+    clamp['loose'][v] = rec
+clamp['boreDiaFixedHalfOnly'] = {f'z{z}': bore_dia([js_new], z) for z in (112.5, 114.5, 117.0, 120.0, 123.5)}
+out['clamp'] = clamp
+sys.path.insert(0, str(GUIDE.parent / 'build-pack-20260913/redesign-20260913/printing/13-RELEASE-PIPELINE-20261009'))
+import wall_check  # noqa: E402
+ZONE_W = [((min(cx, C1[0]) - 9.5, min(cy, C1[1]) - 9.5), (max(cx, C1[0]) + 9.5, max(cy, C1[1]) + 9.5)), ((nx - 5.0, ny - 5.0), (nx + 5.0, ny + 5.0))]   # world plan boxes around the changes
+def zone_regions(mprint, T, key):
+    Ti = np.linalg.inv(T); res = []
+    for g in wall_check.check(mprint.copy(), (), key)['regions']:
+        if g['status'] != 'FAIL': continue
+        lo, hi = np.array(g['bbox'])
+        corners = np.array([[x, y, z, 1] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])]) @ Ti.T
+        wlo, whi = corners[:, :3].min(0), corners[:, :3].max(0)
+        inz = any(wlo[0] < b[1][0] and whi[0] > b[0][0] and wlo[1] < b[1][1] and whi[1] > b[0][1] for b in ZONE_W)
+        res.append(dict(g, worldBbox=[wlo.round(2).tolist(), whi.round(2).tolist()], inChangeZone=bool(inz)))
+    return res
+Thb = HB_T.copy(); Thb[2, 3] -= BED
+js_p0 = js.copy(); js_p0.apply_transform(JS_T); Tjs = JS_T.copy(); Tjs[2, 3] -= float(js_p0.bounds[0, 2]); js_p0.apply_translation([0, 0, -js_p0.bounds[0, 2]])
+for v in LOOSE:
+    wc = wall_check.check(trimesh.load(HERE / f'exit_clamp_loose_{v}-print.stl', force='mesh'), (), f'exit_clamp_loose_{v}')
+    out['clamp']['loose'][v]['wallCheck'] = {k: wc[k] for k in ('passed', 'minSmoothedMm', 'regions', 'smallThinPatches', 'smallThinPatchMaxMm2')}
+    print('wall check loose', v, wc['passed'], wc['failures'])
+out['wallCheck'] = {'head_bottom': zone_regions(hb_p, Thb, 'head_bottom'), 'jaw_support': zone_regions(js_p, Tjs, 'jaw_support'),
+                    'head_bottom_v18': zone_regions(hb_p0, Thb, 'head_bottom'), 'jaw_support_v16': zone_regions(js_p0, Tjs, 'jaw_support')}
+for k in ('head_bottom', 'jaw_support'):
+    bad = [g for g in out['wallCheck'][k] if g['inChangeZone']]
+    print('wall check', k, 'FAIL regions in the change zone:', [(g['minMm'], g['areaMm2'], g['worldBbox']) for g in bad])
+(HERE / 'checks.json').write_text(json.dumps(out, indent=1) + '\n')
+print(json.dumps({k: out[k] for k in ('passageWidthMm', 'stadium', 'volumesMm3', 'bodies', 'screwHeadToJawSupportWallsMm', 'headBottomJawSupportOverlapMm3', 'printPoses')}, indent=1))
+print('clearances', json.dumps(clear))
+print('clamp', json.dumps({v: {k: r[k] for k in ('bodies', 'boreDiaWithFixedHalf', 'vsJawSupport', 'vsHeadBottom')} for v, r in clamp['loose'].items()}, indent=1))
+print('clamp neighbours A', json.dumps(clamp['loose']['A']['vsNeighbours']))
+print('insertion A', clamp['loose']['A']['insertionFromAbove']['rows'])

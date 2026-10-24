@@ -598,6 +598,38 @@ INCREMENTAL_NOTES_BY_VERSION['V1.32'] = dict(
     saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.30']['saddle_body'],
     saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.30']['saddle_lid'])
 
+# V1.33: mouth floor (D-026, 2026-10-24): the speaker in a pocket in the yellow floor, the amplifier on rails beside it, the XIAO at
+# the roof centre, a long-round head exit, an optional third microphone seat in the cap back wall. Supersedes the unprinted V1.32.
+RETIRED_INCREMENTAL['V1.33'] = [
+    ('V1.17 head cap (A7Z)', 'White', HERE / 'a7z-head' / 'head_cap_a7z-world.stl',
+     'It has the roof speaker collar and no ears.', 'Head cap with ears, no amplifier posts'),
+    ('V1.30 lower head shell', 'Yellow', HERE / 'neck-exit-20261023' / 'head_bottom_exit.stl',
+     'It has a round 11 mm exit and no speaker pocket.', 'Lower head shell with speaker pocket'),
+    ('V1.30 jaw support', 'Black', HERE / 'world' / 'jaw_support-v132.stl',
+     'Its exit is round; the new lower shell needs the long-round one.', 'Jaw support with long-round exit'),
+]
+INTRO_BY_VERSION['V1.33'] = ('V1.33 is three plates and replaces V1.32, which was never printed (its speaker box is dropped). The speaker '
+                             'lies face down in a shallow pocket in the floor of the yellow lower head shell, over twelve small holes above '
+                             'the lower jaw; the amplifier stands beside it between two low rails. The head exit at the left rear becomes a '
+                             'long-round slot 11 x 17 mm in both the yellow shell and the black jaw support, so the wires pass easily. The '
+                             'white cap has two ears, no amplifier posts, the XIAO touch board in the middle of its roof and a third, optional '
+                             'microphone seat on its back wall. The white plate also carries the V1.30 white parts not printed yet: the U20 '
+                             'face panel and the A7Z saddle body and lid. The yellow shell can be printed on the club H2S (its own file).')
+RETIRED_HEADING_BY_VERSION['V1.33'] = 'Keep these as spares'
+RETIRED_LEAD_BY_VERSION['V1.33'] = 'The parts these prints replace. Keep them in case a new part does not fit.'
+INCREMENTAL_NAMES_BY_VERSION['V1.33'] = dict(head_cap='Head cap with ears, no amplifier posts', head_bottom='Lower head shell with speaker pocket',
+                                             jaw_support='Jaw support with long-round exit', face_panel='Face panel (U20 camera)',
+                                             saddle_body='A7Z saddle body', saddle_lid='A7Z saddle lid')
+INCREMENTAL_NOTES_BY_VERSION['V1.33'] = dict(
+    head_cap=('Prints roof down on tree support with a 4 mm brim, as the V1.17 cap. Clear the support from the two ear rings and push a '
+              'needle through the three small sound holes (two sides and the back) from outside so they are open.'),
+    head_bottom=('Prints floor down on tree support. Push a 2.5 mm drill through each of the twelve floor holes by hand to clear them, and '
+                 'clear the long-round exit and the two amplifier rails.'),
+    jaw_support=('Prints as the V1.30 jaw support. Clear the long-round exit; the two loose clamp halves from V1.30 still fit it.'),
+    face_panel=INCREMENTAL_NOTES_BY_VERSION['V1.32']['face_panel'],
+    saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.32']['saddle_body'],
+    saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.32']['saddle_lid'])
+
 
 
 def page_html(version: str, body: list[str]) -> str:

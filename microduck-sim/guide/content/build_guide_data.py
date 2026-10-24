@@ -83,9 +83,8 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'speaker_box',
                   'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
-    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right'],
+    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
@@ -363,8 +362,9 @@ def build_parts() -> dict:
     face = first_existing(world / 'face_panel.stl')
     trim = first_existing(world / 'eye_trim.stl')
     shell = first_existing(world / 'head_bottom.stl')
-    # V1.30 (D-023, 2026-10-23): the jaw support with the dia 11 left-rear exit and the fixed half of the exit clamp, and the
-    # clamp's loose half (print/neck-exit-20261023/; world/exit_clamp_loose.stl is size A).
+    # V1.33 (2026-10-24): the jaw support with the long-round left-rear exit (dia 11 widened 6 mm towards the rear) and the
+    # fixed half of the exit clamp (print/mouth-floor-20261024/build_exit_stadium.py), and the clamp's loose half, unchanged
+    # from V1.30 (print/neck-exit-20261023/; world/exit_clamp_loose.stl is size A).
     jaw_sup = first_existing(world / 'jaw_support.stl')
     clamp = first_existing(world / 'exit_clamp_loose.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
@@ -461,41 +461,39 @@ def build_parts() -> dict:
                           'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
     if cap:
         v, f = load_stl(cap)
-        parts['head_cap'].update(v=v, f=f, name='Head cap with two ears and no speaker collar (V1.32 print, white; D-025)', source=str(cap))
-    # D-025 (2026-10-23, print/ears-mouth-20261023/): the speaker leaves the cap roof for a printed speaker box on the yellow
-    # floor behind the camera (new print, white like the cap); the V1.9 speaker retainer is retired. The two INMP441
-    # microphones sit on 1 mm foam rings in the two cap ears. The four V1.9 neck-bundle wire clips stay retired (D-023).
-    path = first_existing(world / 'speaker_box.stl')
-    if path:
-        v, f = load_stl(path)
-        parts['speaker_box'] = {'key': 'speaker_box', 'name': 'Mouth speaker box with the duct to the six floor ports (V1.32 print, white)', 'color': parts['head_cap']['color'],
-                                'module': 'electronics', 'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
-    FOAM = {'speaker_tape': 'Foam double-sided tape, 1 mm, one loop on the speaker face rim against the box plate',
-            'speaker_box_tape': 'Foam double-sided tape, 1 mm, under every wall bottom of the speaker box',
+        parts['head_cap'].update(v=v, f=f, name='Head cap with two ears, no speaker collar and no amplifier posts, the XIAO at the roof centre (V1.33 print, white)', source=str(cap))
+    # D-025 (2026-10-23, print/ears-mouth-20261023/): the two INMP441 microphones sit on 1 mm foam rings in the two cap ears;
+    # the V1.9 speaker retainer is retired. Mouth floor (2026-10-24, print/mouth-floor-20261024/): the speaker lies face down
+    # in a pocket in the yellow floor over twelve sound holes and the amplifier stands on foam tape between two floor rails
+    # beside it on the left (+y); the V1.32 speaker box is retired. The four V1.9 neck-bundle wire clips stay retired (D-023).
+    FOAM = {'speaker_tape': 'Thin double-sided tape, about 0.3 mm, one loop on the speaker grille rim, face down in the floor pocket',
+            'amp_tape': 'Foam double-sided tape, 1 mm, under the amplifier board between the two floor rails',
             'mic_foam_left': 'Foam double-sided tape ring, 1 mm, round the left sound hole',
-            'mic_foam_right': 'Foam double-sided tape ring, 1 mm, round the right sound hole'}
+            'mic_foam_right': 'Foam double-sided tape ring, 1 mm, round the right sound hole',
+            'mic_foam_back': 'Foam double-sided tape ring, 1 mm, round the back sound hole (optional third microphone)'}
     for key, name in FOAM.items():
         path = first_existing(world / f'{key}.stl')
         if path:
             v, f = load_stl(path)
             parts[key] = {'key': key, 'name': name, 'color': '#f2c14e', 'module': 'electronics', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
-    for side in ('left', 'right'):
+    for side in ('left', 'right', 'back'):
         path = first_existing(world / f'mic_{side}.stl')
         if path:
             v, f = load_stl(path)
-            parts[f'mic_{side}'] = {'key': f'mic_{side}', 'name': f'INMP441 I2S microphone, {side} ear, six soldered wires', 'color': '#2e7d32',
+            where = 'back wall, optional third microphone' if side == 'back' else f'{side} ear'
+            parts[f'mic_{side}'] = {'key': f'mic_{side}', 'name': f'INMP441 I2S microphone, {where}, six soldered wires', 'color': '#2e7d32',
                                     'module': 'electronics', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
-    for key, name in (('speaker', 'Speaker CMS-30204-18SP, 30 x 20 x 4 mm, in the mouth speaker box: grille face forward on the box plate, magnet and the two solder pads on the back, pads at the top'),
-                      ('amplifier', 'MAX98357A I2S amplifier with five soldered wires and the terminal block')):
+    for key, name in (('speaker', 'Speaker CMS-30204-18SP, 30 x 20 x 4 mm, grille face down in the floor pocket over the twelve sound holes, solder pads towards the amplifier'),
+                      ('amplifier', 'MAX98357A I2S amplifier with five soldered wires, on the floor between two rails, terminal towards the speaker')):
         path = first_existing(world / f'{key}.stl')
         if path and key in parts:
             v, f = load_stl(path)
             parts[key].update(v=v, f=f, name=name, source=str(path))
-    # 2026-10-15 touch extension (extension-20261015-touch/build_touch_geometry.py): a Seeed XIAO ESP32-S3 on foam tape on
-    # the inner left wall of the cap reads five copper-tape pads stuck to the cap's inner face. Its nine wires are soldered
+    # 2026-10-15 touch extension (extension-20261015-touch/build_touch_geometry.py): a Seeed XIAO ESP32-S3 on foam tape reads
+    # five copper-tape pads stuck to the cap's inner face; since 2026-10-24 it sits at the middle of the roof (mouth floor). Its nine wires are soldered
     # to its edge pads (an approved soldering exception, like the amplifier).
     TOUCH = {'touch_xiao_tape': ('Foam double-sided tape under the XIAO, 21 x 17.8 mm, 1 mm pressed to 0.8 mm', '#f2c14e'),
-             'touch_xiao': ('Seeed XIAO ESP32-S3 touch readout with nine soldered wires', '#2e5d8a'),
+             'touch_xiao': ('Seeed XIAO ESP32-S3 touch readout with nine soldered wires, at the middle of the cap roof', '#2e5d8a'),
              **{f'touch_pad_{p}': (f'Copper foil tape pad {p.upper()} inside the cap', '#c87533') for p in ('l1', 'r1', 'l2', 'r2', 'm')}}
     for key, (name, color) in TOUCH.items():
         path = first_existing(world / f'{key}.stl')
@@ -518,9 +516,9 @@ def build_parts() -> dict:
     if trim:
         parts['eye_trim']['name'] = 'Eye trim, bore dia 16.2 for the U20CAM lens ring (V1.30 print, black)'
     if shell:
-        parts['head_bottom']['name'] = 'Lower head shell with the dia 11 left-rear exit and six floor ports (V1.32 print, yellow, or the V1.30 shell drilled)'
+        parts['head_bottom']['name'] = 'Lower head shell with the speaker pocket, twelve sound holes, the amplifier rails and the long-round left-rear exit (V1.33 print, yellow)'
     if jaw_sup:
-        parts['jaw_support']['name'] = 'Jaw support with the dia 11 left-rear exit and the fixed half of the wire clamp (V1.30 print, black)'
+        parts['jaw_support']['name'] = 'Jaw support with the long-round left-rear exit and the fixed half of the wire clamp (V1.33 print, black)'
     if clamp:
         v, f = load_stl(clamp)
         parts['exit_clamp_loose'] = {'key': 'exit_clamp_loose', 'name': 'Loose half of the head-exit wire clamp, size A (V1.30 print, black)',
@@ -686,8 +684,8 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     for rid, cid, lab, frm, to in TOUCH_WIRES:
         if rid in R:
             add(cid, lab, 'touch', '#c87533', R[rid], frm, to, radius=0.65)
-    add('spk-plus', 'Speaker + lead (Dupont junction)', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad (in the mouth box)', 'Amplifier terminal +', radius=0.65)
-    add('spk-minus', 'Speaker - lead (Dupont junction)', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad (in the mouth box)', 'Amplifier terminal -', radius=0.65)
+    add('spk-plus', 'Speaker + lead (soldered to the pad, screwed into the terminal)', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad (in the floor pocket)', 'Amplifier terminal +', radius=0.65)
+    add('spk-minus', 'Speaker - lead (soldered to the pad, screwed into the terminal)', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad (in the floor pocket)', 'Amplifier terminal -', radius=0.65)
     # D-025 microphones: the right INMP441's five wires run across the cap to the left board's pads (daisy chain); five wires
     # from the left board to the gather point over the exit, where SCK, WS and VDD are spliced into the amplifier BCLK, LRC
     # and the XIAO 3V3 wires; SD and GND go on down the neck to A7Z pins 38 and 34. Drawn as bundles of the five wires.
@@ -698,6 +696,13 @@ def build_cables(routes: dict) -> tuple[list, dict]:
             'Left INMP441 SCK, WS, SD, VDD, GND (soldered)', 'Gather point: SCK to amp BCLK, WS to amp LRC, VDD to XIAO 3V3 (spliced); SD and GND on down', radius=1.1)
         add('mic-sd', 'Microphone SD to A7Z pin 38 (down the neck)', 'i2s', '#2e7d32', R['mic_sd_pin38'], 'Gather point over the exit', 'A7Z header pin 38 (I2S0 DIN0) in the roof saddle', radius=0.65)
         add('mic-gnd', 'Microphone GND to A7Z pin 34 (down the neck)', 'i2s', '#2e7d32', R['mic_gnd_pin34'], 'Gather point over the exit', 'A7Z header pin 34 (GND) in the roof saddle', radius=0.65)
+    # Optional third microphone (2026-10-24): the back INMP441's five wires to the gather point (SCK, WS, VDD, GND joined into
+    # the microphone joints there), its SD on alone down the neck to beside pin 10 (left unplugged until I2S0 DIN3 is tested).
+    if 'mic_b_harness' in R:
+        add('mic-b', 'Optional back microphone, five wires to the gather point over the exit', 'i2s', '#2e7d32', R['mic_b_harness'],
+            'Back INMP441 SCK, WS, SD, VDD, GND (soldered)', 'Gather point: SCK, WS, VDD, GND joined into the microphone joints; SD on down', radius=1.0)
+        add('mic-sd3', 'Optional back microphone SD, down the neck, plug taped beside A7Z pin 10 (not on it)', 'i2s', '#2e7d32', R['mic_sd3_pin10'],
+            'Gather point over the exit', 'Beside A7Z header pin 10 (I2S0 DIN3 once tested; UART0 RX now), unplugged', radius=0.65)
     # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6. D-023 (revised
     # 2026-10-23): the camera's own dia 4 cable from the end of camera_cable_stub over the jaw motor, through the dia 11
     # left-rear exit and down the neck with the head wires to the splice with the right-angle USB-C pigtail at the saddle

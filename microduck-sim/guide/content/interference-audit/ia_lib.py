@@ -89,10 +89,13 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # the loose half of the two-piece wire clamp in that exit (size A); its fixed half is part of the jaw support
               'exit_clamp_loose': 'exit_clamp_loose.stl',
               # 2026-10-23 D-025 ears and mouth speaker (print/ears-mouth-20261023/): head_cap.stl and head_bottom.stl above are the
-              # V1.32 cap (two ears, no speaker collar) and shell (six port holes); the speaker and its tape loop moved to the mouth
-              # speaker box; the retainer is retired.
-              'speaker_box': 'speaker_box.stl', 'speaker_box_tape': 'speaker_box_tape.stl',
-              'mic_left': 'mic_left.stl', 'mic_right': 'mic_right.stl', 'mic_foam_left': 'mic_foam_left.stl', 'mic_foam_right': 'mic_foam_right.stl'}
+              # V1.32 cap (two ears, no speaker collar) and shell (six port holes), the retainer retired.
+              # 2026-10-24 mouth floor (print/mouth-floor-20261024/): head_bottom, head_cap, jaw_support, speaker, speaker_tape,
+              # amplifier and touch_xiao(_tape) above are the V1.33 versions (speaker face down in the floor pocket, amplifier on
+              # its tape between the floor rails, XIAO at the roof centre, long-round exit); the V1.32 speaker box is retired.
+              'amp_tape': 'amp_tape.stl',
+              'mic_left': 'mic_left.stl', 'mic_right': 'mic_right.stl', 'mic_foam_left': 'mic_foam_left.stl', 'mic_foam_right': 'mic_foam_right.stl',
+              'mic_back': 'mic_back.stl', 'mic_foam_back': 'mic_foam_back.stl'}   # optional third microphone (2026-10-24)
 
 
 def decode_guide_part(p: dict) -> tuple[np.ndarray, np.ndarray]:
