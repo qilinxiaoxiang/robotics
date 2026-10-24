@@ -565,6 +565,40 @@ INCREMENTAL_NOTES_BY_VERSION['V1.30'] = dict(
     saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.29']['saddle_body'][:-1] + '. From V1.29; the front notch is now wider for the right-angle USB-C plug.',
     saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.29']['saddle_lid'] + ' From V1.29, unchanged.')
 
+# V1.32: ears and mouth speaker (D-025, 2026-10-23): two INMP441 microphones in the cap side walls, the speaker in a printed box
+# behind the camera that sounds through six floor ports; the still unprinted V1.30 White parts ride along.
+RETIRED_INCREMENTAL['V1.32'] = [
+    ('V1.17 head cap (A7Z)', 'White', HERE / 'a7z-head' / 'head_cap_a7z-world.stl',
+     'It has the roof speaker collar and no ears.', 'Head cap with two ears'),
+    ('V1.30 lower head shell', 'Yellow', HERE / 'neck-exit-20261023' / 'head_bottom_exit.stl',
+     'It has no speaker ports in the floor. Instead of reprinting, it can be drilled with the paper template.', 'Lower head shell with six ports'),
+    ('V1.9 speaker retainer', 'Orange', HERE / 'ext-v19' / 'speaker_retainer_v19-world.stl',
+     'The speaker leaves the cap roof for the mouth speaker box.', 'Mouth speaker box'),
+]
+INTRO_BY_VERSION['V1.32'] = ('V1.32 is two plates. The new head cap has two ears: a small sound hole on each side wall just behind the face, '
+                             'with a ring inside that holds a round INMP441 microphone. The speaker moves out of the cap roof into a small '
+                             'white box that stands on the head floor behind the camera; its flat duct runs under the camera to six holes '
+                             'in the floor over the lower jaw, so the duck sounds through its open beak. The yellow lower head shell has those '
+                             'six holes; the printed V1.30 shell can be drilled instead with the paper template '
+                             '(ears-mouth-20261023/drill-template/drill-template.pdf), and then the yellow plate is not needed. The white plate '
+                             'also carries the V1.30 white parts that were not printed yet: the U20 face panel and the A7Z saddle body and lid.')
+RETIRED_HEADING_BY_VERSION['V1.32'] = 'Keep these as spares'
+RETIRED_LEAD_BY_VERSION['V1.32'] = ('The parts these prints replace. Keep the cap and the shell in case a new part does not fit; the speaker '
+                                    'retainer and its two screws are no longer used.')
+INCREMENTAL_NAMES_BY_VERSION['V1.32'] = dict(head_cap='Head cap with two ears', speaker_box='Mouth speaker box',
+                                             head_bottom='Lower head shell (six ports)', face_panel='Face panel (U20 camera)',
+                                             saddle_body='A7Z saddle body', saddle_lid='A7Z saddle lid')
+INCREMENTAL_NOTES_BY_VERSION['V1.32'] = dict(
+    head_cap=('Prints roof down on tree support with a 4 mm brim, as the V1.17 cap. Clear the support from the two ear rings on the side '
+              'walls and push a needle through each small sound hole from outside so it is open.'),
+    speaker_box=('Prints standing on its bottom, no support, no brim. The flat duct and the chamber top print as bridges: do not poke into '
+                 'the duct. The speaker slides down between the two rails behind the window.'),
+    head_bottom=('Prints floor down, as V1.30, on tree support. Push a 2.5 mm drill through each of the six floor holes by hand to clear them.'),
+    face_panel=INCREMENTAL_NOTES_BY_VERSION['V1.30']['face_panel'] + ' From V1.30, unchanged.',
+    saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.30']['saddle_body'],
+    saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.30']['saddle_lid'])
+
+
 
 def page_html(version: str, body: list[str]) -> str:
     css = CSS

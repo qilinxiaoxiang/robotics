@@ -87,7 +87,12 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               # release geometry; the head splice (camera_splice_stub.stl) is retired, the camera cable runs whole.
               'jaw_support': 'jaw_support.stl',
               # the loose half of the two-piece wire clamp in that exit (size A); its fixed half is part of the jaw support
-              'exit_clamp_loose': 'exit_clamp_loose.stl'}
+              'exit_clamp_loose': 'exit_clamp_loose.stl',
+              # 2026-10-23 D-025 ears and mouth speaker (print/ears-mouth-20261023/): head_cap.stl and head_bottom.stl above are the
+              # V1.32 cap (two ears, no speaker collar) and shell (six port holes); the speaker and its tape loop moved to the mouth
+              # speaker box; the retainer is retired.
+              'speaker_box': 'speaker_box.stl', 'speaker_box_tape': 'speaker_box_tape.stl',
+              'mic_left': 'mic_left.stl', 'mic_right': 'mic_right.stl', 'mic_foam_left': 'mic_foam_left.stl', 'mic_foam_right': 'mic_foam_right.stl'}
 
 
 def decode_guide_part(p: dict) -> tuple[np.ndarray, np.ndarray]:

@@ -1,0 +1,27 @@
+{
+  "_doc": "Fixed interface for the 2026-10-23 ears (two INMP441 I2S mics) and mouth speaker change. Robot/guide world frame, mm, x forward, y left, z up, head at HOME. Source: free-space and ray checks in the session scratchpad (mic/), against print/world/*.stl (D-022 saddle layout: A7Z out of the head, U20 camera).",
+  "port_holes": {
+    "part": "head_bottom (lower head shell, Yellow, V1.30 geometry = print/world/head_bottom.stl)",
+    "diameter_mm": 2.5,
+    "axis": [0, 0, 1],
+    "centres_xy": [[64, -7], [68, -7], [72, -7], [64, 1], [68, 1], [72, 1]],
+    "floor_top_z": 111.3,
+    "floor_bottom_z": 108.5,
+    "purpose": "the speaker's sound leaves the head into the mouth: the lower jaw top (z 108.1-108.2) sits 0.3 mm under every hole with the beak closed, so the sound comes out when the beak opens",
+    "verified": "rays at each centre and +-1.25 mm: floor 111.2-111.3 to 108.5 (plain 2.8 mm plate), jaw top 108.1-108.2 directly below"
+  },
+  "speaker_box": {
+    "part": "new print (White), holds the speaker (28-30 x 20 x 4 mm) standing on its short edge, face +x",
+    "envelope": {"x": [47.0, 58.5], "y": [-14.0, 8.0], "z_top_max": 145.0},
+    "rests_on": "jaw_support plate top (z 113.2) for x < 52.3, yellow floor (z 111.3) for x 52.3..58.5",
+    "duct": {"x": [52.5, 75.0], "y": [-11.0, 5.0], "z": [111.3, 114.6], "note": "open-bottom channel on the yellow floor, ends over the six port holes; camera bottom z 115.1"},
+    "fixing": "1 mm foam double-sided tape (box base to floor and plate; speaker face to the box front window), as D-008"
+  },
+  "ears": {
+    "part": "head_cap (White), option A: mid height just behind the face",
+    "left":  {"point": [60.5, 38.5, 133.0], "note": "inner wall point and normal found by ray in build"},
+    "right": {"point": [60.5, -38.5, 133.0]},
+    "sound_hole_dia_mm": 1.6,
+    "board": "INMP441 round module dia 13.4 (vendor photo, AITRIP B0972XP1YS), port on the label side at the centre, wires soldered directly (no header)"
+  }
+}

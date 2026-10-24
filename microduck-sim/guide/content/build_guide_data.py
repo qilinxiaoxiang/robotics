@@ -83,9 +83,9 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'speaker_retainer',
+                  'speaker_box',
                   'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
-    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier'],
+    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
@@ -461,24 +461,31 @@ def build_parts() -> dict:
                           'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
     if cap:
         v, f = load_stl(cap)
-        parts['head_cap'].update(v=v, f=f, name='Head cap (V1.17 A7Z cap as printed, white; its board rails and end slots are unused since D-022)', source=str(cap))
-    # V1.9 (print/ext-v19/): speaker retainer (new print, orange like the cap), and the speaker and amplifier at their
-    # audio-study positions under the cap roof (purchased; the source export's old positions are overridden). The four V1.9
-    # neck-bundle wire clips (clip_torso/bracket/head/cap) were printed but never fitted and are retired from the guide
-    # (D-023, 2026-10-22): the nine head wires run free down the left side of the neck. Their world files stay as a record.
-    V19_PRINTS = {'speaker_retainer': ('Speaker retainer frame (new print)', 'electronics')}
-    for key, (name, module) in V19_PRINTS.items():
+        parts['head_cap'].update(v=v, f=f, name='Head cap with two ears and no speaker collar (V1.32 print, white; D-025)', source=str(cap))
+    # D-025 (2026-10-23, print/ears-mouth-20261023/): the speaker leaves the cap roof for a printed speaker box on the yellow
+    # floor behind the camera (new print, white like the cap); the V1.9 speaker retainer is retired. The two INMP441
+    # microphones sit on 1 mm foam rings in the two cap ears. The four V1.9 neck-bundle wire clips stay retired (D-023).
+    path = first_existing(world / 'speaker_box.stl')
+    if path:
+        v, f = load_stl(path)
+        parts['speaker_box'] = {'key': 'speaker_box', 'name': 'Mouth speaker box with the duct to the six floor ports (V1.32 print, white)', 'color': parts['head_cap']['color'],
+                                'module': 'electronics', 'status': 'new-print', 'v': v, 'f': f, 'source': str(path)}
+    FOAM = {'speaker_tape': 'Foam double-sided tape, 1 mm, one loop on the speaker face rim against the box plate',
+            'speaker_box_tape': 'Foam double-sided tape, 1 mm, under every wall bottom of the speaker box',
+            'mic_foam_left': 'Foam double-sided tape ring, 1 mm, round the left sound hole',
+            'mic_foam_right': 'Foam double-sided tape ring, 1 mm, round the right sound hole'}
+    for key, name in FOAM.items():
         path = first_existing(world / f'{key}.stl')
         if path:
             v, f = load_stl(path)
-            parts[key] = {'key': key, 'name': name, 'color': parts['head_cap']['color'], 'module': module, 'status': 'new-print',
-                          'v': v, 'f': f, 'source': str(path)}
-    tape = first_existing(world / 'speaker_tape.stl')
-    if tape:   # 2026-10-14: a closed loop of foam double-sided tape (two halves) on the collar's 0.6 mm lip ring at the speaker edge (compressed 1 mm tape)
-        v, f = load_stl(tape)
-        parts['speaker_tape'] = {'key': 'speaker_tape', 'name': 'Foam double-sided tape, two strips making one loop on the collar lip ring (pressed to 0.6 mm)', 'color': '#f2c14e',
-                                 'module': 'electronics', 'status': 'purchased', 'v': v, 'f': f, 'source': str(tape)}
-    for key, name in (('speaker', 'Speaker CMS-30204-18SP, 30 x 20 x 4 mm: metal grille with seven holes towards the roof, magnet and two solder pads on the back, pads at the amplifier end'),
+            parts[key] = {'key': key, 'name': name, 'color': '#f2c14e', 'module': 'electronics', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
+    for side in ('left', 'right'):
+        path = first_existing(world / f'mic_{side}.stl')
+        if path:
+            v, f = load_stl(path)
+            parts[f'mic_{side}'] = {'key': f'mic_{side}', 'name': f'INMP441 I2S microphone, {side} ear, six soldered wires', 'color': '#2e7d32',
+                                    'module': 'electronics', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
+    for key, name in (('speaker', 'Speaker CMS-30204-18SP, 30 x 20 x 4 mm, in the mouth speaker box: grille face forward on the box plate, magnet and the two solder pads on the back, pads at the top'),
                       ('amplifier', 'MAX98357A I2S amplifier with five soldered wires and the terminal block')):
         path = first_existing(world / f'{key}.stl')
         if path and key in parts:
@@ -511,7 +518,7 @@ def build_parts() -> dict:
     if trim:
         parts['eye_trim']['name'] = 'Eye trim, bore dia 16.2 for the U20CAM lens ring (V1.30 print, black)'
     if shell:
-        parts['head_bottom']['name'] = 'Lower head shell with the dia 11 left-rear exit (V1.30 print, yellow)'
+        parts['head_bottom']['name'] = 'Lower head shell with the dia 11 left-rear exit and six floor ports (V1.32 print, yellow, or the V1.30 shell drilled)'
     if jaw_sup:
         parts['jaw_support']['name'] = 'Jaw support with the dia 11 left-rear exit and the fixed half of the wire clamp (V1.30 print, black)'
     if clamp:
@@ -679,8 +686,18 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     for rid, cid, lab, frm, to in TOUCH_WIRES:
         if rid in R:
             add(cid, lab, 'touch', '#c87533', R[rid], frm, to, radius=0.65)
-    add('spk-plus', 'Speaker + lead', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad', 'Amplifier terminal +', radius=0.65)
-    add('spk-minus', 'Speaker - lead', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad', 'Amplifier terminal -', radius=0.65)
+    add('spk-plus', 'Speaker + lead (Dupont junction)', 'speaker', '#5d4037', R['audio_spk_plus'], 'Speaker + pad (in the mouth box)', 'Amplifier terminal +', radius=0.65)
+    add('spk-minus', 'Speaker - lead (Dupont junction)', 'speaker', '#5d4037', R['audio_spk_minus'], 'Speaker - pad (in the mouth box)', 'Amplifier terminal -', radius=0.65)
+    # D-025 microphones: the right INMP441's five wires run across the cap to the left board's pads (daisy chain); five wires
+    # from the left board to the gather point over the exit, where SCK, WS and VDD are spliced into the amplifier BCLK, LRC
+    # and the XIAO 3V3 wires; SD and GND go on down the neck to A7Z pins 38 and 34. Drawn as bundles of the five wires.
+    if 'mic_r_harness' in R:
+        add('mic-r', 'Right microphone, five wires to the left microphone pads (soldered both ends)', 'i2s', '#2e7d32', R['mic_r_harness'],
+            'Right INMP441 SCK, WS, SD, VDD, GND (soldered)', 'Left INMP441 same pads (soldered)', radius=1.0)
+        add('mic-l', 'Left microphone, five wires to the gather point over the exit', 'i2s', '#2e7d32', R['mic_l_harness'],
+            'Left INMP441 SCK, WS, SD, VDD, GND (soldered)', 'Gather point: SCK to amp BCLK, WS to amp LRC, VDD to XIAO 3V3 (spliced); SD and GND on down', radius=1.1)
+        add('mic-sd', 'Microphone SD to A7Z pin 38 (down the neck)', 'i2s', '#2e7d32', R['mic_sd_pin38'], 'Gather point over the exit', 'A7Z header pin 38 (I2S0 DIN0) in the roof saddle', radius=0.65)
+        add('mic-gnd', 'Microphone GND to A7Z pin 34 (down the neck)', 'i2s', '#2e7d32', R['mic_gnd_pin34'], 'Gather point over the exit', 'A7Z header pin 34 (GND) in the roof saddle', radius=0.65)
     # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6. D-023 (revised
     # 2026-10-23): the camera's own dia 4 cable from the end of camera_cable_stub over the jaw motor, through the dia 11
     # left-rear exit and down the neck with the head wires to the splice with the right-angle USB-C pigtail at the saddle
