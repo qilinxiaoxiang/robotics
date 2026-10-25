@@ -1,25 +1,24 @@
-# A7Z roof saddle (D-022, 2026-10-22; layout superseded by D-028, 2026-10-25)
-
-**V1.29 as described below is superseded.** D-028: the board turns 180 deg (USB-C ①② and micro HDMI through the rear wall,
-40-pin header at the front edge) and the cooling part is the Radxa Heatsink 6530B that is in hand (`CURRENT-STATE.json`
-`parts_a7z_extensions`), not the copper block and 30 mm fan below, which were never bought. The approved V2 design is
-`DESIGN-CONTRACT.json` in this directory; `../design_contract.py` checks every build against it (the bounded runner runs it
-after each job), and `build_saddle.py` V1.29 fails that check by design until it is rewritten. `flip-concept-20261025/`
-holds the orientation concept (its fan and lid are the old part).
+# A7Z roof saddle V2 (D-028, 2026-10-25; V1.29 layout of D-022 superseded)
 
 The Radxa Cubie A7Z leaves the head (closed-head soak: 85 C in 5 min, both clusters at 416 MHz, resets) and sits in a
-printed saddle on the torso roof over the V1.9 rear pack, with a 15 x 15 x 5 mm copper heatsink on the A733 and a
-30 x 30 x 8 mm 5 V fan in the lid. Concept comparison, balance sweep and the first head sweep: `../a7z-slice-20261022/`.
+printed saddle on the torso roof over the V1.9 rear pack with the Radxa Heatsink 6530B on it. V2 turns the board 180 deg
+from the printed V1.29: USB-C ①② and micro HDMI through one window in the rear wall (plugged from behind), 40-pin header at
+the front edge in an open strip (no lid over the Dupont housings), board + 6530B screwed from below to a printed tray on
+the bench, lid over the heatsink only, AC019 antenna on the front wall inner face, +y wall bulge for the IPEX pigtail.
+The approved design is `DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner
+runs it after each job). Every number is in the `build_saddle.py` docstring; `renders/saddle.png` shows the result.
+Concept and history: `flip-concept-20261025/`, `../a7z-slice-20261022/`. Interim print colour orange (white PETG out).
+Not yet done for V2: `to_guide_world.py` copy, routes/`route_check_saddle.py`, print gate, release slicing, guide chapters.
 
 ## Files
-- `build_saddle.py`: the geometry (every number in its docstring); run under the bounded runner:
+- `build_saddle.py`: the V2 geometry (every number in its docstring); run under the bounded runner:
   `python3 build-pack-20260913/redesign-20260913/head-redesign-20261008/run_bounded_cad.py --seconds 500 --max-mib 2048 --report guide/print/a7z-saddle/build/bounded-report.json -- /tmp/microduck-cad-venv/bin/python guide/print/a7z-saddle/build_saddle.py`
-  (about 2 s). Writes `build/saddle_body-world.stl`, `build/saddle_lid-world.stl`, the bought parts in the saddle pose
+  (about 8 s). Writes `build/saddle_body-world.stl`, `build/saddle_lid-world.stl`, `build/saddle_tray-world.stl`, the bought parts in the saddle pose
   (`build/<name>-world.stl`, remapped from `../a7z-head/a7z_parts/` through the board frame), `build/build.json`
   (parameters, part bounds, fit checks, screws, wall allowances) and `build/pins.json` (header pin tops for the routes).
 - `to_guide_world.py`: copies the parts into `guide/print/world/` (`saddle_body.stl`, `saddle_lid.stl`, `sd_*.stl`) and
   records their sha256 in `guide-world.json`.
-- `render_views.py` (`~/.venvs/microduck-dyn/bin/python`): `renders/saddle.png`, four views on the as-built model at HOME.
+- `render_views.py` (`~/.venvs/microduck-dyn/bin/python`): `renders/saddle.png`, five views on the as-built model at HOME.
 - `head_sweep.py` (microduck-dyn): neck/head joint sweep of the head meshes against the saddle outline; `head_sweep_final.out`
   is the run on the released outline (`-45 -34.4 42 -5 34.4 74`): HOME clearance 25.1 mm, 105 of the 633 trained-range poses
   that clear the existing parts hit the saddle (neck forward, head pitched up) — a software keep-out in walk_brain when fitted.
@@ -35,14 +34,14 @@ printed saddle on the torso roof over the V1.9 rear pack, with a 15 x 15 x 5 mm 
   wedges where the vertical outer face meets the shell's sloping roof seat; they are listed as `thinWallAllowances` in
   `build.json` for the release rows.
 
-## Board position
+## Board position (V1.29, history; V2 numbers are in build_saddle.py)
 Header edge x -42.8 (0.6 off the rear wall inner face), pin-1 end at -y, USB-C/HDMI edge x -12.8. Moved 0.3 mm forward
 on 2026-10-22 after the route check: the AC019 strip on the rear wall ends at |y| 21 inside the Dupont housing span, so
 its 1.13 mm pigtail runs between the wall and the housings (1.56 mm, 1.26 over the strip) to |y| 25.4 and on to the IPEX
 socket. The floor passage (x -21..-5, |y| <= 16) runs out under the front wall as a 32 x 4.5 mm slot: the neck bundle
 leaves the roof opening forward to the neck through it (the wall above is a bridge printed on support).
 
-## Release and gate
+## Release and gate (V1.29; V2 release pending)
 `../release-V1.29/` (scripts/run_v129.sh: manifest, prepare, both slices, reviews, native review, package, verify, parts
 sheet, delivery folder). Body upright with the domed floor on tree support (2.3 mm2 own contact, no_brim), lid upside
 down on its plate; X1C 1h34m 29.9 g, Elegoo 1h41m 30.4 g. Print gate 2026-10-22 passed with chapter 7 of the guide
@@ -50,7 +49,7 @@ down on its plate; X1C 1h34m 29.9 g, Elegoo 1h41m 30.4 g. Print gate 2026-10-22 
 USB-C plug drops into the 10 mm gap before the neck and goes back through the notch, the lid comes in from behind
 under the head.
 
-## Fit checks (build.json `checks`)
+## Fit checks (V1.29; V2 checks are in build/build.json `checks`)
 Zero overlap between the body and the shells, rear pack, rear box frame and lid, IMU board, OpenRB, torso clip, neck ring
 and the head parts at HOME; zero between the body/lid and the board, its components, the copper, fan, housings, antenna
 and the USB-C plug. Fan to copper 8.7 mm, fan to Dupont housings 1.3 mm (the fan is in front of the housings, so the

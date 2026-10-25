@@ -366,6 +366,23 @@
     "guide/print/design_contract.py",
     "DECISIONS.md D-028"
    ]
+  },
+  "print_filament_stock": {
+   "value": {
+    "white_petg": "out (Shawn 2026-10-25: 白色filament用完了, RoboClub restock about a week)",
+    "orange_petg": "available; interim colour for saddle V2 parts",
+    "black_petg": "available (V1.33/V1.34 printed 10/24)",
+    "yellow_petg": "available (V1.33 printed 10/24)"
+   },
+   "meaning": "Which RoboClub PETG colours can be printed now. A release plate in a colour that is out is not deliverable; scheme C (white shells, thighs, cap) resumes when white is restocked.",
+   "verified_at": "2026-10-25",
+   "source": "Shawn 2026-10-25: 目前有个问题就是白色filament用完了 roboclub补货可能要一周 先用其他颜色打吧 比如橙色",
+   "measure": "ask Shawn or look at the RoboClub filament shelf before slicing a plate; update when a spool runs out or arrives",
+   "max_age_days": 14,
+   "consumers": [
+    "guide/print/release-* colour choice",
+    "print-delivery-format memory"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
