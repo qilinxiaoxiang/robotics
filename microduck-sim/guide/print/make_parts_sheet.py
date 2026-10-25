@@ -630,6 +630,24 @@ INCREMENTAL_NOTES_BY_VERSION['V1.33'] = dict(
     saddle_body=INCREMENTAL_NOTES_BY_VERSION['V1.32']['saddle_body'],
     saddle_lid=INCREMENTAL_NOTES_BY_VERSION['V1.32']['saddle_lid'])
 
+# V1.34: sole press molds (2026-10-24): tools for gluing the bike inner tube sole onto the slip-fit feet with E6000; each foot
+# sits in its mold on the glued tube and a lid screws down on four posts until the glue cures. Nothing printed is replaced.
+RETIRED_INCREMENTAL['V1.34'] = []
+INTRO_BY_VERSION['V1.34'] = ('V1.34 is one plate of tools: a press mold and a lid for each foot, to glue the inner tube sole on. Take the foot '
+                             'off the robot, glue the tube to its bottom, set it in its mold (raised L or R at the heel end) and screw the '
+                             'lid down with four M2 x 10 until it sits on the posts. Leave it two days, then trim the tube at the glue line. '
+                             'Nothing printed is replaced.')
+RETIRED_HEADING_BY_VERSION['V1.34'] = 'Nothing to throw away'
+RETIRED_LEAD_BY_VERSION['V1.34'] = 'These are tools; every printed part stays.'
+INCREMENTAL_NAMES_BY_VERSION['V1.34'] = dict(press_mold_left='Left sole press mold', press_mold_right='Right sole press mold',
+                                             press_lid_left='Left press lid', press_lid_right='Right press lid')
+_mold_note = ('Prints cavity up without support, 0.12 mm layers with ironed tops. The four posts take M2 x 10 self-tapping screws '
+              'in 1.6 mm pilots; run each screw in once before the first use.')
+_lid_note = ('Prints flat top down without support. Its underside fits only the foot of the same side; the screws go through the four '
+             'corner holes into the mold posts.')
+INCREMENTAL_NOTES_BY_VERSION['V1.34'] = dict(press_mold_left=_mold_note, press_mold_right=_mold_note,
+                                             press_lid_left=_lid_note, press_lid_right=_lid_note)
+
 
 
 def page_html(version: str, body: list[str]) -> str:
