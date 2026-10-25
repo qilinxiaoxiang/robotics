@@ -46,7 +46,8 @@ HERE = Path(__file__).resolve().parent
 STEP = hg.STEP
 
 T = 0.70          # mm rubber stack along the normal (tube between ribs)
-GLUE_EDGE = 3.0   # mm above the flat: glue and sole edge on the foot (sim floor contacts reach 1.6 mm)
+GLUE_EDGE = 4.5   # mm above the flat: glue and sole edge, on a ~75 deg side wall (3.0 left the edge on a 55 deg slope; 6.0
+                  # needs 6.7 mm of dart per corner). Sim floor contacts reach 1.6 mm.
 H_TOP = GLUE_EDGE - T
 FLAT_BAND = 0.12  # mm, one layer
 C_TAB = 1.5       # mm foot outline -> tab: the 0.8 mm flap plus play
@@ -59,6 +60,8 @@ H_BEAR = 12.0      # mm: the lid presses only on foot top above this (rim 14-16,
 LID_OVER = 5.0     # mm lid over the highest point of the foot
 LID_AT_POST = 4.0  # mm lid thickness on the posts
 FIN_MIN = 2.4      # mm narrowest downward lid feature kept
+KEY_SHIFT = 8.0    # mm the keyed heel post sits in from its corner
+LID_LETTER_H, LID_LETTER_DEPTH = 10.0, 0.6   # mm side letter engraved in the lid top
 SLIP = HERE / ".." / ".." / ".." / "guide" / "print" / "foot-slipfit-20261019"
 SLIP_FEET = {"left": SLIP / "foot-left-slipfit.stl", "right": SLIP / "foot-right-slipfit.stl"}
 LABEL_X, LETTER_H, LETTER_RISE, LABEL_CLEAR = 7.0, 6.5, 0.6, 0.8
@@ -112,6 +115,10 @@ def build(side):
     # posts at the block corners
     # centres half a grid cell off the nodes: a hole vertex on a 0.2 mm grid line leaves zero-area faces in the STL
     pc = [(x, y) for x in (xs[0] + POST / 2 + STEP / 2, xs[-1] - POST / 2 - STEP / 2) for y in (ys[0] + POST / 2 + STEP / 2, ys[-1] - POST / 2 - STEP / 2)]
+    # key: the heel post on the +y side (left) or -y side (right) moves KEY_SHIFT towards the middle, so a lid fits only its
+    # own mold and only one way round (a rotated or mirrored lid finds no hole over that post)
+    k = 1 if side == "left" else 0
+    pc[k] = (pc[k][0], pc[k][1] - np.sign(pc[k][1]) * KEY_SHIFT)
     post = np.zeros_like(foot)
     for px, py in pc:
         post |= (np.abs(X - px) <= POST / 2) & (np.abs(Y - py) <= POST / 2)
@@ -157,7 +164,7 @@ def build(side):
     )
     assert check["lid"]["interference_cells"] == 0 and 10 - LID_AT_POST <= PILOT_DEPTH - 1.0
 
-    def cut_holes(path, centres, z0, z1, d, boxes=(), trim_z=None):
+    def cut_holes(path, centres, z0, z1, d, boxes=(), trim_z=None, engrave=None):
         m = trimesh.load(path, force="mesh")
         solid = manifold3d.Manifold(manifold3d.Mesh(vert_properties=np.asarray(m.vertices, np.float32), tri_verts=np.asarray(m.faces, np.uint32)))
         for (x, y), (b0, b1) in boxes:   # solid posts: one flat top face, so the pilot does not slice height-field cells
@@ -170,6 +177,8 @@ def build(side):
                 base = base - manifold3d.Manifold.cylinder(z1 - z0, d / 2, d / 2, seg).translate((x, y, z0))
             if trim_z is not None:   # through holes: cut the fan-triangulated bottom away, manifold re-triangulates the face
                 base = base.trim_by_plane((0.0, 0.0, 1.0), trim_z)
+            if engrave is not None:
+                base = base - engrave
             o = base.to_mesh()
             trimesh.Trimesh(np.asarray(o.vert_properties)[:, :3], np.asarray(o.tri_verts), process=True).export(path)
             r = trimesh.load(path, force="mesh", process=False)
@@ -186,8 +195,20 @@ def build(side):
     # lid in its print pose, top face down: rotated 180 deg about x, (x, y, z) -> (x, -y, Z_TOP - z)
     lid = HERE / f"press-lid-{side}.stl"
     hg.write_heightfield_stl(lid, xs, -ys[::-1], (Z_TOP - U)[:, ::-1], -1.0)
+    # L or R engraved in the lid top, reading like the mold letter seen from above (top of the letter to the toe), so the
+    # assembly-frame glyph (x, y) maps to the print frame (x, -y) on the bed face
+    tp = TextPath((0, 0), side[0].upper(), size=1.0, prop=FontProperties(family="DejaVu Sans", weight="bold"))
+    kk = LID_LETTER_H / (tp.vertices[:, 1].max() - tp.vertices[:, 1].min())
+    c0 = (tp.vertices.min(0) + tp.vertices.max(0)) / 2
+    polys = []
+    for poly in tp.to_polygons():
+        u, w = (poly[:, 0] - c0[0]) * kk, (poly[:, 1] - c0[1]) * kk
+        polys.append(np.stack([lx + w, -(cy - u)], 1))
+    glyph = manifold3d.CrossSection(polys, manifold3d.FillRule.EvenOdd).extrude(LID_LETTER_DEPTH + 0.1).translate((0, 0, -0.1))
     check["lid"]["triangles"], check["lid"]["genus"], check["lid"]["hole_segments"] = cut_holes(
-        lid, [(x, -y) for x, y in pc], -2, Z_TOP - U.min() + 1, CLEAR_D, trim_z=0.0)
+        lid, [(x, -y) for x, y in pc], -2, Z_TOP - U.min() + 1, CLEAR_D, trim_z=0.0, engrave=glyph)
+    check["lid"]["key"] = dict(shifted_post_xy_mm=[round(pc[k][0], 2), round(pc[k][1], 2)], shift_mm=KEY_SHIFT,
+                               letter=side[0].upper(), letter_h_mm=LID_LETTER_H, depth_mm=LID_LETTER_DEPTH)
     check["lid"]["print_pose"] = "top face on the bed: assembly (x, y, z) -> print (x, -y, %.3f - z)" % Z_TOP
     np.savez_compressed(HERE / f"press-mold-{side}-maps.npz", xs=xs, ys=ys, S=S, low=low, U=U, top=top)
     return check

@@ -3,8 +3,9 @@ Black plate, nothing else
 (V1.33 is printed, Shawn 2026-10-24). The molds are tools for gluing the bike inner tube sole onto the printed feet with
 E6000 (build-pack-20260913/procurement/feet-sole-20261018/press_mold.py, README "Inner tube sole in a press mold").
 Profiles, baseline stock and the delivery contract come from manifest-V1.33.json (pinned by sha256). The molds print
-cavity up in their source frame (identity, dropped to the bed) with the V1.21/V1.23 mold process on the plate:
-0.12 mm layers, ironed tops, seam at the back, 6 top layers, 40 % infill.
+cavity up in their source frame (identity, dropped to the bed) with a fast tool process (FAST): Shawn (2026-10-24) rejected 5-6 h
+for a tool. The stock Black profile is 0.1 mm layers, 4 walls, 30 % infill (6 h, mostly internal solid infill under the
+height-field terraces); the rubber takes up 0.28 mm steps.
 
     /tmp/microduck-cad-venv/bin/python scripts/make_manifest.py
 """
@@ -17,8 +18,8 @@ HERE = Path(__file__).resolve().parent; REL = HERE.parent; PRINT = REL.parent
 V133 = PRINT / 'release-V1.33/manifest-V1.33.json'
 SOLE = PRINT.parents[1] / 'build-pack-20260913/procurement/feet-sole-20261018'
 GAP_MM = 12.0
-MOLD_OVERRIDES = {'layer_height': '0.12', 'ironing_type': 'top', 'seam_position': 'back',
-                  'top_shell_layers': '6', 'sparse_infill_density': '40%'}
+FAST = {'layer_height': '0.28', 'wall_loops': '3', 'sparse_infill_density': '10%', 'top_shell_layers': '3',
+        'bottom_shell_layers': '3', 'enable_support': '0'}
 FOOT = {'left': 'community-44.stl', 'right': 'community-46.stl'}
 
 
@@ -51,7 +52,7 @@ def mold_row(side, check):
                       f'one plane over the flat; it ends at the plane {c["top_plane_mm"]} mm, where the rim stays '
                       f'{c["seated"]["rim_normal_gap_mm"]["min"]} mm from the foot so the rubber is not pinched and the excess leaves over '
                       f'the top. Dry, the foot lands on the flat floor and a pencil on the mold top marks the {c["glue_edge_mm"]} mm glue '
-                      f'line. Tabs {c["tab_clearance_mm"]} mm outside the foot, raised {side[0].upper()}. press-mold-check.json.'),
+                      f'line. Tabs {c["tab_clearance_mm"]} mm outside the foot, raised {side[0].upper()}; one heel post is keyed so only the {side} lid fits, one way round. press-mold-check.json.'),
         supersedes='nothing (new tool; the V1.21 hot-glue molds are a different tool)',
         incrementalEvidence=ref(SOLE / 'press-mold-check.json'),
         evidenceAlso=[ref(SOLE / 'press_mold.py'), ref(SOLE / 'hotglue_mold.py')],
@@ -74,7 +75,7 @@ def lid_row(side, check):
                       f'down). Underside = the top of the slip-fit foot lowered {c["squeeze_mm"]} mm where it is above {c["bear_above_mm"]} mm '
                       f'(bears on {c["bearing_area_mm2"]} mm2: the rim and the toe block, right over the curved edge). Four M2 x 10 TAP '
                       f'through {c["screw"]["lid_hole_d_mm"]} mm holes into the {c["screw"]["pilot_d_mm"]} mm post pilots; seated on the posts '
-                      f'the foot sits {c["squeeze_mm"]} mm below the nominal seat, so the rubber is pressed. press-mold-check.json.'),
+                      f'the foot sits {c["squeeze_mm"]} mm below the nominal seat, so the rubber is pressed. One heel hole is keyed to the {side} mold; {c["key"]["letter"]} engraved in the top. press-mold-check.json.'),
         supersedes='nothing (new tool)',
         incrementalEvidence=ref(SOLE / 'press-mold-check.json'),
         evidenceAlso=[ref(SOLE / 'press_mold.py')],
@@ -97,9 +98,10 @@ def main():
             assert 18.0 <= x0 and x0 + size[0] <= 238.0 and 18.0 <= y0 and y0 + size[1] <= 238.0, (key, x0, y0, size)
             pl.append(dict(key=key, copy=1, translation=[round(x0 - float(lo[0]), 4), round(y0 - float(lo[1]), 4), 0.0]))
     m.update(version='V1.34', parts=parts, placements={'Black': pl}, retiredParts=[],
-             processOverrides={'Black_Bambu': dict(MOLD_OVERRIDES), 'Black_Elegoo': dict(MOLD_OVERRIDES)},
-             processOverrideReason=('Black plate: the cavity faces press the rubber, so 0.12 mm layers and ironed tops keep the terraces '
-                                    'on the curved wall small; 6 top layers and 40 % infill keep the floor stiff under the clamp (as V1.21/V1.23).'),
+             processOverrides={'Black_Bambu': dict(FAST), 'Black_Elegoo': dict(FAST)},
+             processOverrideReason=('Tools, speed over finish (Shawn 2026-10-24): 0.28 mm layers, 3 walls (material round the M2 pilots), '
+                                    '10 % infill, 3 top and bottom layers, no support (every surface faces up or is vertical; the 0.6 mm '
+                                    'letter recess in the lid bed face is a short bridge).'),
              prototypeScope='V1.34: the left and right sole press molds with their screw-down lids (tools, four M2 x 10 each), one Black plate. V1.33 is printed.',
              knownFitBoundary=('Tools. Cavity 0.70 mm on the 0.7 mm tube plus glue film, so the rubber is pressed a little; printed '
                                'cavity size not measured. If the dry foot rocks or sits high, the print is off; the sole is not glued yet.'))
