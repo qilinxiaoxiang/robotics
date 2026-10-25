@@ -70,8 +70,8 @@ modified since. Four hardware blocks:
   reward audit, and a training guard on velocity-tracking error that excludes bad checkpoints and stops the run
   (D-016). ft3 with a filtered velocity reward did not drift and is sim-better than walk61 (D-017); on the robot
   it fell at 0.20 m/s, so walk61 stays deployed.
-- Learned jaw control in simulation (PPO on the M1 Pro CPU, 0/12 to 12/12), and the aiming-crouch environment
-  for the pickup (groundpick61's crouch with an object the beak must reach), audited but not yet trained.
+- Learned jaw control in simulation (PPO on the M1 Pro CPU, 0/12 to 12/12), and the aiming-bend environment
+  for the pickup (groundpick61's bend with an object the beak must reach), audited but not yet trained.
 - The team training repository: `qilinxiaoxiang/microduck_rl` (Pollen's `develop` plus our `cmu/` layer:
   as-built model variants, the sim check, the robot runtime, the simulator and app, the fine-tune pipeline).
 
@@ -79,7 +79,7 @@ modified since. Four hardware blocks:
 
 1. Find the item (orange printed part) with the head camera: detector works, camera recalibration pending.
 2. Walk to it: walks straight with the heading hold; stops and arcs on command; falls still happen.
-3. Crouch with the beak open and keep balance: Pollen's ground-pick policy shown with the beak closed (a forward bend at the hips, trunk tilted 37-38 deg, not a squat); the open-beak crouch policy is
+3. Bend with the beak open and keep balance: Pollen's ground-pick policy shown with the beak closed (a forward bend at the hips, trunk tilted 37-38 deg, not a squat); the open-beak bend policy is
    the next training target.
 4. Pick it up with the beak: current-mode grip holds a finger; no object picked up by the robot yet.
 

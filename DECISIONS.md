@@ -191,3 +191,11 @@
 - **Revisit when:** the real speaker does not drop into the pocket with its tape (datasheet size used); the camera board touches the speaker or the amplifier when the face goes on (0.54 and 0.76 mm in the model); the sound through the twelve holes is too quiet with the beak closed.
 - **Addendum (same day):** Shawn approved a seat for a third INMP441 in the V1.33 cap so the cap need not be reprinted later ("如果成本不高 而且没啥副作用 我感觉可以直接和它说加上得了 省得以后重新打印", relayed by the three-microphone session): the ear seat on the inner back wall at y -11, z 135 (2 mm above the ears: at z 133 its ring met the drawn servo cables), beside the central rib (`build_cap_xiao.py`, `checks-cap.json` backMic), wired as an optional guide step: L/R to GND, SCK, WS, VDD and GND joined at the gather point, SD alone down the neck to beside A7Z pin 10 and left unplugged until the I2S0 DIN3 overlay is tested (pin 10 is UART0 RX). The exit then carries 12 wires and the camera cable: 31 to 43 mm2 of copper and insulation in a 77 mm2 clamped passage.
 - **Open (Shawn):** the back microphone's I2S0 DIN3 overlay on pin 10 is untested; the localisation software is not written.
+
+## D-027 — MicroDuck step 3 is an open-beak bend, not a squat
+
+- **Date:** 2026-10-24
+- **Decision:** Step 3 of the final goal (D-019, `microduck-sim/PROJECT-CONTEXT.json` `final_goal`, id 3, now named `bend_and_keep_balance`) reads "bend with the beak open and keep balance": the robot bends forward at the hips to bring the mouth to the object, as Pollen's groundpick61 does, with the beak open. A knee-bent squat with an upright trunk is not required.
+- **Why:** Shawn, watching take 4 of the homepage shoot: groundpick61 is a bend, not a squat ("那不叫蹲 … 那叫弯腰"); then "弯腰就行，第三步目标写成张嘴弯腰并保持平衡". On the robot the trunk tilted 37-38 deg forward at the lowest pose. The aiming environment already built on groundpick61's motion stays the training route.
+- **Consequence:** Docs and the project page call the motion a bend. The step's acceptance numbers are unchanged.
+- **Revisit when:** a bend cannot bring the open beak to the object's grasp point within the 55 deg tilt guard.
