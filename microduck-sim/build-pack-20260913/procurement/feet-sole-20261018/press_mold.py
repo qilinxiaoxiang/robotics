@@ -21,8 +21,9 @@ Geometry, foot STL frame (flat bottom at z = 0), foot seated on a rubber stack o
             below the nominal seat, so the 0.7-0.8 mm tube plus glue in the 0.70 mm cavity is pressed by at least SQUEEZE.
             LID_AT_POST mm thick at the posts: an M2 x 10 goes 10 - LID_AT_POST mm into the post. Printed top down.
 
-Tube (Shawn, 2026-10-24, calipers): 0.7 mm between the moulded ribs, 0.8 mm on a rib. T = 0.70: ribs face the foot
-and sink into the glue film; the smooth face is the floor face. A rigid cavity slightly thinner than the stack
+Tube (Shawn, 2026-10-24, calipers): 0.7 mm between the moulded ribs, 0.8 mm on a rib. T = 0.70: the smooth inner
+face goes to the foot (the tube's curl then wraps the long sides) and the ribbed outer face to the floor, where the
+ribs meet the cavity wall and take the extra squeeze. A rigid cavity slightly thinner than the stack
 squeezes the slopes harder than the flat (a vertical lift d opens a slope of tilt a by only d cos a), which is where
 the rubber must be held.
 
