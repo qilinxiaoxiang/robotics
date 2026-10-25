@@ -4,8 +4,9 @@ The speaker and the amplifier both sit on the yellow floor, on one centre line (
 (Shawn: "应该对其或者至少供电线的应该对其 也就是两个中心线"):
 - speaker CMS-30204-18SP (30 x 20 x 4) face down in a pocket POCKET_DEPTH deep in the 2.7-2.9 mm floor over the lower jaw, on a
   0.3 mm foam-tape loop round its rim (the air gap in front of the grille), solder-pad end towards +y (the amplifier). The pocket
-  bottom follows the floor plate (tilted 0.49 deg about y in the world), so the floor left under it is the same everywhere. Its top
-  is 0.8 mm under the camera board edge (z 115.1).
+  and the tape loop follow the speaker's racetrack outline (two R 10 ends, Same Sky drawing; Shawn 2026-10-25: the printed V1.33
+  pocket was a 30 x 20 rectangle and left four open corners). The pocket bottom follows the floor plate (tilted 0.49 deg about y
+  in the world), so the floor left under it is the same everywhere. Its top is 0.8 mm under the camera board edge (z 115.1).
 - twelve dia 2.5 sound holes through the pocket bottom on a 4 x 3 grid inside the speaker rim, all over the lower jaw (the
   D-025 six ports and the drill template are retired).
 - amplifier MAX98357A (Adafruit 3006, 17.78 x 19.05 board, speaker terminal at the middle of one 17.78 edge, PCB from the Adafruit
@@ -13,14 +14,16 @@ The speaker and the amplifier both sit on the yellow floor, on one centre line (
   locate the board edges (0.3 mm each side) and leave both ends open for the wires. No screws: the hole positions and the soldered
   wire lengths no longer have to match anything.
 
-Input: head_bottom_exit.stl (this folder, the shell with the stadium exit, build_exit_stadium.py).
+Input: head_bottom_exit.stl (this folder, the shell with the stadium exit, build_exit_stadium.py); the speaker and amplifier
+models in their V1.32 poses, world/speaker-v132.stl and world/amplifier-v132.stl (world/speaker.stl and amplifier.stl are copies
+of this script's outputs).
 Outputs here (world frame, robot mm): head_bottom_mouth-world.stl and its V1.8 print pose head_bottom_mouth-print.stl,
 speaker_floor-world.stl, amplifier_floor-world.stl, speaker_tape_floor-world.stl, amp_tape-world.stl, checks.json.
     /tmp/microduck-cad-venv/bin/python build_mouth_floor.py   (under run_bounded_cad.py)"""
 import hashlib, json, math, sys
 from pathlib import Path
 import numpy as np, trimesh
-from shapely.geometry import Point, Polygon, box as sbox
+from shapely.geometry import LineString, Point, Polygon, box as sbox
 
 HERE = Path(__file__).resolve().parent; PRINT = HERE.parent; GUIDE = PRINT.parent; WORLD = PRINT / 'world'
 sys.path.insert(0, str(GUIDE / 'content/interference-audit'))
@@ -31,7 +34,6 @@ SPK = (30.0, 20.0, 4.0)                    # speaker long (along y), short (alon
 SPK_YC = -2.0                              # speaker centre y
 CLR = 0.2                                  # pocket clearance each side
 POCKET_DEPTH = 1.5                         # into the floor; 1.2 mm left
-POCKET_R = 1.0                             # pocket corner radius
 TAPE_SPK = 0.3                             # foam loop under the speaker rim (air gap in front of the grille)
 RIM_W = 1.6                                # width of that loop
 HOLE_R, HOLE_SEG = 1.25, 32
@@ -78,7 +80,9 @@ def on_floor(m):
 
 
 # ---------------------------------------------------------------- pocket, holes, rails
-pocket_poly = sbox(px0, py0, px1, py1).buffer(-POCKET_R).buffer(POCKET_R, quad_segs=12)
+half = (SPK[0] - SPK[1]) / 2                                       # straight part of the racetrack, each side of the centre
+rim = LineString([(CL, SPK_YC - half), (CL, SPK_YC + half)]).buffer(SPK[1] / 2, quad_segs=24)   # speaker outline
+pocket_poly = rim.buffer(CLR, quad_segs=24)
 pocket = on_floor(prism(pocket_poly, -POCKET_DEPTH, 6.0))
 holes = []
 for x, y in HOLES:
@@ -90,16 +94,17 @@ new = diff(union([hb] + rails), [pocket] + holes)
 assert new.is_volume
 
 # ---------------------------------------------------------------- speaker, amplifier, foam tapes (world models)
-spk = trimesh.load(WORLD / 'speaker.stl', force='mesh')            # D-025 box pose: long axis z (pads at +z), grille face +x
+spk = trimesh.load(WORLD / 'speaker-v132.stl', force='mesh')       # D-025 box pose: long axis z (pads at +z), grille face +x
 assert np.allclose(spk.extents, (4.5, 20.0, 30.0), atol=0.6), spk.extents
 R = np.array([[0, -1.0, 0], [0, 0, 1.0], [-1.0, 0, 0]])           # z (pad end) -> +y, face +x -> -z, y -> -x
 spk_n = spk.copy(); spk_n.apply_transform(np.vstack([np.c_[R, np.zeros(3)], [0, 0, 0, 1]]))
 floor_at = lambda x, y: coef[0] + coef[1] * x + coef[2] * y
 z_face = floor_at(CL, SPK_YC) - POCKET_DEPTH + TAPE_SPK
 c = spk_n.bounds.mean(0); spk_n.apply_translation([CL - c[0], SPK_YC - c[1], z_face - spk_n.bounds[0, 2]])
-rim = sbox(CL - SPK[1] / 2, SPK_YC - SPK[0] / 2, CL + SPK[1] / 2, SPK_YC + SPK[0] / 2)
+spk_mid = spk_n.section(plane_origin=[0, 0, spk_n.bounds[0, 2] + 1.0], plane_normal=[0, 0, 1]).to_2D()[0].polygons_full
+assert len(spk_mid) == 1 and abs(spk_mid[0].area - rim.area) < 0.01 * rim.area, (spk_mid[0].area, rim.area)   # model is the racetrack
 tape_spk = on_floor(prism(rim.difference(rim.buffer(-RIM_W)), -POCKET_DEPTH, -POCKET_DEPTH + TAPE_SPK))
-amp = trimesh.load(WORLD / 'amplifier.stl', force='mesh')           # D-012 roof pose: board along x, terminal block at the -x end, up
+amp = trimesh.load(WORLD / 'amplifier-v132.stl', force='mesh')      # D-012 roof pose: board along x, terminal block at the -x end, up
 Ra = np.array([[0, -1.0, 0], [1.0, 0, 0], [0, 0, 1.0]])           # +90 deg about z: the terminal end (-x) -> -y
 amp_n = amp.copy(); amp_n.apply_transform(np.vstack([np.c_[Ra, np.zeros(3)], [0, 0, 0, 1]]))
 pcb_lo = amp_n.bounds[0]
@@ -120,15 +125,17 @@ for name, m in (('head_bottom_mouth-world', new), ('head_bottom_mouth-print', ne
     m.export(HERE / f'{name}.stl')
 
 # ---------------------------------------------------------------- checks
-under = ray_down(new, np.array([(x, y) for x in np.linspace(px0 + 0.3, px1 - 0.3, 14) for y in np.linspace(py0 + 0.3, py1 - 0.3, 20)]), 116.0)
+under = ray_down(new, np.array([(x, y) for x in np.linspace(px0 + 0.3, px1 - 0.3, 14) for y in np.linspace(py0 + 0.3, py1 - 0.3, 20)
+                                if pocket_poly.buffer(-0.3).contains(Point(x, y))]), 116.0)
 left = [h[0] - h[1] for h in under if len(h) >= 2]
 webs = []
 for i, (x, y) in enumerate(HOLES):
     for j, (u, v) in enumerate(HOLES[i + 1:]):
         webs.append(math.hypot(x - u, y - v) - 2 * HOLE_R)
 hole_to_pocket_wall = min(pocket_poly.exterior.distance(Point(x, y)) - HOLE_R for x, y in HOLES)
-spk_face = sbox(CL - SPK[1] / 2 + RIM_W, SPK_YC - SPK[0] / 2 + RIM_W, CL + SPK[1] / 2 - RIM_W, SPK_YC + SPK[0] / 2 - RIM_W)
+spk_face = rim.buffer(-RIM_W)                                      # inside the tape loop
 holes_inside_rim = all(spk_face.buffer(-HOLE_R).contains(Point(x, y)) for x, y in HOLES)
+hole_to_tape = min(spk_face.exterior.distance(Point(x, y)) - HOLE_R for x, y in HOLES)
 jaw = trimesh.Trimesh(*ia_lib.load_solid('jaw_frame'), process=False)
 jaw_under = [bool(len(h)) and h[0] > 105 for h in ray_down(jaw, np.array(HOLES), 108.4)]
 
@@ -159,11 +166,11 @@ spk_vs_shell = inter(spk_n, new); amp_vs_shell = inter(amp_n, new)
 amp_gap = dict(railInnerToBoardMm=AMP_CLR, boardX=[round(CL - AMP[0] / 2, 2), round(CL + AMP[0] / 2, 2)], railsX=[[round(ax0 - RAIL_W, 2), round(ax0, 2)], [round(ax1, 2), round(ax1 + RAIL_W, 2)]],
                modelBounds=np.round(amp_n.bounds, 2).tolist())
 lead = dict(speakerPadEndY=round(float(spk_n.bounds[1, 1]), 2), ampBoardEdgeY=AMP_Y0, straightGapMm=round(AMP_Y0 - float(spk_n.bounds[1, 1]), 2), centreLineX=CL)
-out = dict(params=dict(CL=CL, SPK=SPK, SPK_YC=SPK_YC, CLR=CLR, POCKET_DEPTH=POCKET_DEPTH, POCKET_R=POCKET_R, TAPE_SPK=TAPE_SPK, RIM_W=RIM_W, HOLE_D=2 * HOLE_R,
+out = dict(params=dict(CL=CL, SPK=SPK, SPK_YC=SPK_YC, CLR=CLR, POCKET_DEPTH=POCKET_DEPTH, POCKET='speaker racetrack + CLR', TAPE_SPK=TAPE_SPK, RIM_W=RIM_W, HOLE_D=2 * HOLE_R,
                        HOLES=HOLES, AMP=AMP, AMP_Y0=AMP_Y0, AMP_CLR=AMP_CLR, RAIL_W=RAIL_W, RAIL_H=RAIL_H, RAIL_Y=RAIL_Y, TAPE_AMP=TAPE_AMP),
            floorPlane=dict(z='a + b x + c y', abc=np.round(coef, 6).tolist(), maxResidualMm=round(fit_res, 4), samples=len(pts)),
            floorLeftUnderPocketMm=dict(min=round(min(left), 3), max=round(max(left), 3), samples=len(left), required=MIN_FLOOR),
-           holes=dict(count=len(HOLES), minWebMm=round(min(webs), 2), minToPocketWallMm=round(hole_to_pocket_wall, 2), insideSpeakerRimTape=holes_inside_rim,
+           holes=dict(count=len(HOLES), minWebMm=round(min(webs), 2), minToPocketWallMm=round(hole_to_pocket_wall, 2), insideSpeakerRimTape=holes_inside_rim, minToTapeLoopMm=round(hole_to_tape, 2),
                       jawUnderEvery=all(jaw_under), openAreaMm2=round(len(HOLES) * math.pi * HOLE_R ** 2, 1)),
            speaker=dict(bounds=np.round(spk_n.bounds, 2).tolist(), topZ=round(float(spk_n.bounds[1, 2]), 2), intersectShellMm3=spk_vs_shell),
            amplifier=dict(amp_gap, intersectShellMm3=amp_vs_shell), speakerLead=lead,

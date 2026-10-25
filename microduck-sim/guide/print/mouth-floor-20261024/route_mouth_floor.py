@@ -5,7 +5,8 @@ The speaker and the amplifier moved to the yellow floor and the XIAO touch board
 - audio_amp_*: the five soldered amplifier wires from the input row (JP1) up and back to the head gather point over the
   left-rear exit (11.5, 19.5, 132), then down the neck on their D-025 tails (unchanged from the gather point on).
 - audio_spk_plus, audio_spk_minus: from the two speaker pads straight up and across the 4 mm gap into the amplifier's
-  green terminal, which opens towards -y on the same centre line (x 64).
+  green terminal, which opens towards -y on the same centre line (x 64). Their + and - pads were swapped against the datasheet;
+  route_spk_polarity.py (2026-10-25) replaces both with the crossing pair.
 - touch_pad_*: from the five copper pads (unchanged) to the XIAO pad holes at the roof centre.
 - touch_a7z_*: from the XIAO (3V3, GND, SCL, SDA) to the gather point, then their D-025 tails down the neck.
 The old start and end points on the moved boards are carried by the same rigid transforms that moved the boards (fitted
