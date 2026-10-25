@@ -27,3 +27,7 @@ The same allowlisted URLs now negotiate gzip and use content-based ETags with re
 ## Stage A design review — 9 October 2026
 
 `/DESIGN-REVIEW.html` is the English central-battery and workflow review, built from `../../workflow-review-20261009/build_review.py`. It contains dimensioned native-CAD envelope projections and explicit unfinished integration boundaries. Only this HTML and the one new literal allowlist route were deployed; native STEP concepts and print files remain local. Current live assembly/head entries remain available. See `../../workflow-review-20261009/deployment-receipt.json` for byte identity and Chrome observation. The legacy cabling tutorial remains under architecture review; the module-navigation fix is saved but not yet integrated/published.
+
+## RIG build guide — 25 October 2026
+
+`/RIG-BUILD.html` is the 17-720 OMX-F sensing and cooling rig build guide (42 animated steps). Its canonical source is `~/Desktop/courses/17-720-Machine-Learning-and-Sensing-for-Healthcare/Assignments/Final-Project/Assembly-Guide/` (`build_rig_guide_data.py`, then `guide/build_guide.py`); copy the built `RIG-BUILD.html` into this folder and to the Mini with `serve_guide.py`. The live regression receipt is `rig-build-live-regression-20261025.json` (76 checks, including the exact RIG-BUILD bytes).
