@@ -9,6 +9,4 @@ echo "{\"mode\": \"monitor\"}" > /tmp/duck_cmd.json
 cd ~/rt/microduck-sim/guide/firmware/mac
 setsid nohup /home/radxa/.venvs/duck-policy/bin/python walk_wired.py --port /dev/ttyAS2 --baud 500000 --imu-bus 7 --supply bench \
   --log ~/duck-logs/duck_wired_log_$suf.jsonl > ~/duck-logs/duck_wired_$suf.out 2>&1 < /dev/null &
-# the head camera stays open in a7z_cam.py (shared memory for approach.py and the app's camera window); a running
-# daemon is left alone, so the camera survives brain restarts
-setsid nohup /home/radxa/.venvs/duck-policy/bin/python a7z_cam.py --ensure > /dev/null 2>&1 < /dev/null &
+# the head camera is not started here: approach.py starts a7z_cam.py for its run and stops it after (heat, a7z_cam.py)
