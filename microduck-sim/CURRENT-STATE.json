@@ -58,6 +58,54 @@
     "sim_suite.sh via --print-sim-args (--drop)"
    ]
   },
+  "a7z_brain_start": {
+   "value": "No boot start: walk_wired.py is no longer started at A7Z boot (Shawn removed the boot-to-stand start); the brain runs only when the app's duck-run.sh starts it, in monitor mode, so nothing drives the servos until a command",
+   "verified_at": "2026-10-23",
+   "source": "Shawn 2026-10-23 evening; seen on the A7Z the same evening (21:2x UTC): systemctl is-active duck-brain -> inactive, ~/duck-brain.sh absent, the running walk_wired.py was started by the app with --log duck_wired_log_app1023-210738.jsonl",
+   "max_age_days": 30,
+   "measure": "ssh a7z 'systemctl is-enabled duck-brain; ls ~/duck-brain.sh'; after a boot no new ~/duck-logs/duck_wired_boot*.out appears",
+   "superseded": [
+    {
+     "value": "duck-brain.service (enabled) starts walk_wired.py at every A7Z boot through ~/duck-brain.sh with DUCK_START_MODE=stand: the robot goes straight to the open-loop stand; the app's duck-run.sh restart starts it in monitor mode",
+     "until": "2026-10-23",
+     "why": "Shawn removed the boot-to-stand start; duck-brain inactive and ~/duck-brain.sh absent on 2026-10-23"
+    }
+   ]
+  },
+  "walk_heading_hold": {
+   "value": "walk_brain.py heading hold, turn = trim + vtheta + 3.0 x heading error + 2.0 x its integral (capped at 1.5 rad s), within +-2.0 rad/s; the integral learns only on straight walks and does not grow while the command sits at +-2.0. Arcs: with vtheta set the held heading advances at vtheta, at most ARC_LEAD 0.35 rad ahead, reset to the reached heading on release; walks with a manual turn do not update the trim. App arc rate 0.3 rad/s. Trim -0.716 rad/s in ~/.duck_yaw_trim.json at the 23:01 start. On the A7Z: walk_brain.py md5 a5d3129d..., previous copy ~/rt/walk_brain.py.bak-20261023-arcwindup, running since the brain restart 2026-10-23 23:01 UTC (run app1023-230123); not yet walked with it. Robot arcs before this fix (runs app1023-223352, -225437, target 17 deg/s): right -14.6, -5.1 and +2.0 deg/s with the command pinned at -2.0; left +14.6, +8.4, +4.8 and +3.1 deg/s, the slow ones held at -1.7 to -2.0 by the integral wound up in the right arc before",
+   "verified_at": "2026-10-23",
+   "source": "as-built sim brain_sim_check.py --model asbuilt --volt 7.0 --drop 0.04 --vx 0.25 --walk-s 10 --vtheta-seq 2 -0.3 --vtheta-seq 6 0.3 --yaw-torque 0.025: left arc seconds 1 / 2 / 3-4 +12.6 / +15.0 / +22.0 deg/s (was -0.2 / +3.2 / +9.5), right arc +1.9 before and after; 0.020: left +4.0 / +16.6 / +19.5 (was -1.6 / +25.2 / +23.7); straight walk at 0.020 -2.1 deg/s, no fall; robot-runs-20261023-a7z/README.md",
+   "max_age_days": 14,
+   "measure": "the yaw trim line in the newest duck_wired_*.out header and ~/.duck_yaw_trim.json on the A7Z; per-walk yaw rate from veer-20261022/veer_check.py on the newest log",
+   "superseded": [
+    {
+     "value": "walk_brain.py heading hold with a learned yaw trim: turn = trim + 2.0 x heading error + 1.0 x its integral, within +-1.0 rad/s; trim updated after each forward walk of 1 s or more, kept in ~/.duck_yaw_trim.json on the A7Z (starts at 0). Code written and sim-checked 2026-10-22, not yet installed or run on the robot (A7Z offline after overheating)",
+     "until": "2026-10-23",
+     "why": "installed and run on the robot 2026-10-23 (A7Z copy md5 equals commit 0ce6061)"
+    },
+    {
+     "value": "walk_brain.py heading hold installed on the A7Z (~/rt/microduck-sim, md5 equals commit 0ce6061): turn = trim + 2.0 x heading error + 1.0 x its integral, within +-1.0 rad/s; trim in ~/.duck_yaw_trim.json is -0.648 rad/s after the 2026-10-23 walks. On the robot the command sits at the -1.0 limit within about 3 s of a forward walk at vx 0.25 and the heading still creeps left (+30 deg over an 11 s walk): the left drift is larger than walk61's trained right-turn range, so the hold cannot keep the robot straight on its own",
+     "until": "2026-10-23 evening",
+     "why": "turn limit raised from 1.0 to 2.0 after the pinned-at--1.0 drift"
+    },
+    {
+     "value": "walk_brain.py heading hold, turn = trim + 2.0 x heading error + 1.0 x its integral, within +-2.0 rad/s (TURN_MAX 2.0, beyond walk61's trained +-1.0); trim -0.466 rad/s in ~/.duck_yaw_trim.json (six more short walks after 20:43 UTC moved it -0.648 -> -0.817 -> -0.466). File copied to the A7Z ~/rt/microduck-sim on 2026-10-23 (md5 136cd3ab..., old copy ~/rt/walk_brain.py.bak-20261023-turnmax1); running since the brain restart 2026-10-23 21:01 UTC (run app1023-210115, walk_brain.TURN_MAX reads 2.0 on the A7Z); not yet walked with the 2.0 limit. With the 1.0 limit (run app1023-204119) the command sat at -1.0 and the heading crept +30 deg in 11 s",
+     "until": "2026-10-23 22:15 UTC",
+     "why": "heading gains raised to KP 3, KI 2, integral cap 1.5 after the heading settled left of the start"
+    },
+    {
+     "value": "walk_brain.py heading hold, turn = trim + 3.0 x heading error + 2.0 x its integral (capped at 1.5 rad s), within +-2.0 rad/s; trim -0.955 rad/s in ~/.duck_yaw_trim.json. Copied to the A7Z 2026-10-23 22:15 UTC (md5 16604af1..., previous copy ~/rt/walk_brain.py.bak-20261023-kp2); running since the brain restart 2026-10-23 22:14 UTC (run app1023-221448; on the A7Z walk_brain reads KP 3.0, KI 2.0, cap 1.5, TURN_MAX 2.0); not yet walked with these gains. With the 2.0 limit and the old gains (KP 2, KI 1, cap 0.5, run app1023-180320, 47 Hz, SoC about 70 C) straight walks went +40 deg in 3.1 s (trim -0.47) and +10 deg in 8.4 s (trim -0.78)",
+     "until": "2026-10-23 night",
+     "why": "closed-loop arcs (commit b279de4) and app arc rate 0.3 rad/s (simulator fd1c15b)"
+    },
+    {
+     "value": "walk_brain.py heading hold, turn = trim + vtheta + 3.0 x heading error + 2.0 x its integral (capped at 1.5 rad s), within +-2.0 rad/s; trim -0.955 rad/s in ~/.duck_yaw_trim.json. Arcs are held by the IMU too: with vtheta set the held heading advances at vtheta, at most ARC_LEAD 0.35 rad ahead of the robot, and is reset to the reached heading when the turn is released; walks with a manual turn do not update the trim. App arc rate (robot-remote.js ARC_VTHETA) 0.3 rad/s. Code committed (robotics b279de4, simulator fd1c15b) and copied to the A7Z 2026-10-23 about 22:28 UTC (md5 10d59415..., previous copy ~/rt/walk_brain.py.bak-20261023-openarc), running since the brain restart 2026-10-23 22:33 UTC (run app1023-223352; on the A7Z walk_brain reads ARC_LEAD 0.35, KP 3.0, KI 2.0, TURN_MAX 2.0; trim -0.955 loaded); not yet walked or turned with the closed-loop arcs",
+     "until": "2026-10-23 23:01 UTC",
+     "why": "heading integral anti-windup (commit 564a725) after the first closed-loop arcs on the robot"
+    }
+   ]
+  },
   "walking_policy": {
    "value": "walk61.onnx (Pollen BEST_alpha_walking, runtime-overlay/models) at 0.25 m/s, 4 s walks; KP_RL 200, stand mode KP 400",
    "verified_at": "2026-10-18",
@@ -70,8 +118,8 @@
   },
   "power": {
    "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: the same 20 V from the 5991 -> XL4015 #2 -> header pins 2/6 (one supply for both rails). No battery on the robot.",
-   "verified_at": "2026-10-22",
-   "source": "Shawn's swap test 2026-10-22: 3 A charger -> A7Z froze 4 times within seconds of walking/standing (watchdog HOT-BOOT 16 s later, recorder rows all stop in one instant); 5 A charger -> no stop. Mechanism: the 60 W charger cuts or folds back at the walking/stand-up current peaks, both XL4015 outputs dip together, the XL330s keep running at the lower voltage while the A7Z SoC freezes",
+   "verified_at": "2026-10-23",
+   "source": "Shawn's swap test 2026-10-22: 3 A charger -> A7Z froze 4 times within seconds of walking/standing (watchdog HOT-BOOT 16 s later, recorder rows all stop in one instant); 5 A charger -> no stop. Mechanism: the 60 W charger cuts or folds back at the walking/stand-up current peaks, both XL4015 outputs dip together, the XL330s keep running at the lower voltage while the A7Z SoC freezes | 2026-10-23 Shawn: ran today from the Xiaomi 212W power bank; battery bought and backpack in the making, not installed",
    "max_age_days": 14,
    "measure": "charger label and the 5991 display; walk/stand test with the A7Z flight recorder running (guide/firmware/pi/BLACKBOX.md). Servo-reported voltage (0.1 V steps, one servo per cycle) cannot see millisecond dips and is not evidence of a stable rail",
    "superseded": [
@@ -80,7 +128,8 @@
      "until": "2026-10-22",
      "why": "the charger behind the 5991 decides whether the A7Z survives walking: a 20 V 3 A charger froze the A7Z four times on 10/21-10/22, a 20 V 5 A charger did not (Shawn's swap test); the 10/16 entry did not name the charger rating"
     }
-   ]
+   ],
+   "sources_in_use": "20 V 5 A USB-C PD wall charger, or the Xiaomi 212W HyperCharge Power Bank 25000 over USB-C PD (Shawn ran the robot from it on 2026-10-23; its PD offer to the 5991 and the voltage under walking load are not measured). Battery backpack (D-010): parts bought, frame being made, not installed."
   },
   "servo_rail_v": {
    "value": 7.0,
@@ -128,18 +177,58 @@
    "max_age_days": 30,
    "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
   },
+  "servo_bus_hosts": {
+   "value": "Mac over OpenRB USB (walk_wired.py) or A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud (dynamixel-sdk installed on the A7Z 2026-10-19); 15/15 servos answer on the A7Z path, 7.2 V idle",
+   "meaning": "Which hosts can drive the DYNAMIXEL bus through the openrb_dual_host bridge and the last full bus scan.",
+   "verified_at": "2026-10-19",
+   "source": "ssh a7z 'cd ~/duck && python3 scan_bus.py --port /dev/ttyAS2 --baud 500000' after Shawn replugged the servo cables: IDs 1-15 model 1200, 7.2-7.3 V, error 0x80 (the known >7.0 V max-voltage alert bit)",
+   "measure": "run that scan; exit 0 only when IDs 1-15 all answer",
+   "max_age_days": 30,
+   "consumers": [
+    "any session that needs the bus without the Mac USB cable"
+   ]
+  },
+  "leg_joint_friction_unloaded": {
+   "value": "no binding joint: unloaded 0.05 rad steps at P 400 reach 85-115 % on every leg joint, breakaway at most 16 ticks / 21 PWM; both ankles 100 % with breakaway 2-3 ticks at PWM 0 (measured with the FEET DETACHED); right ankle WITH its foot not re-measured since the 10/16 bind (20-37 ticks, PWM 25-49, 27-67 %)",
+   "meaning": "Mechanical friction state of the ten leg joints, unloaded, as the policy's servo response depends on it; the walking-gain (P 200) figures are only known for the ankles (97-100 %).",
+   "verified_at": "2026-10-19",
+   "source": "guide/firmware/mac/robot-runs-20261018/ankle-probe-20261019/{ankle,leg}_probe_a7z_1019.out (feet off). 2026-10-19 evening foot-on left ankle sweeps (A7Z ~/duck-logs/ankle_sweep_id6_*.json: +-200 and +-400 tick goals moved only -40..+25 ticks at up to 66 % PWM, 1.07 A, while the right ankle swept freely) were taken with the robot lying on its RIGHT side (body gravity y -0.91), left foot possibly resting on the right foot: not an unloaded measurement, so the foot-on case stays open.",
+   "measure": "rerun ankle_probe_a7z.py --ids 1 6 (feet on, side-lying) and --ids 2 3 4 5 7 8 9 10 --kps 400 (duck held up); a joint counts as binding when breakaway needs more than 20 ticks or a 0.05 rad step reaches under 70 % in both directions",
+   "max_age_days": 30,
+   "superseded": [
+    {
+     "value": "right ankle binds with the foot on (10/16: breakaway 20-37 ticks, PWM 25-49, steps 27-67 % at P 400, 6 % at P 200, old and new XL330 alike; servo free-running 85-103 %)",
+     "until": "2026-10-19",
+     "why": "10/19 servo+bracket re-measured clean with the foot off; the foot-on case is pending, so the bind is not confirmed gone"
+    }
+   ],
+   "consumers": [
+    "actuator-model and jitter studies (jitter_sim.py --deadband/--stiction-scale)",
+    "the ankle refit acceptance after V1.22"
+   ]
+  },
   "ankle_bracket": {
-   "value": "V1.24/V1.25 two-half ankle on both legs: the stock one-piece orange bracket cut at mid shaft, outer half on the servo horn (four M2 x 4), inner half on the V1.22 black sleeve, the halves held together only by the V1.22 slip-fit foot and the toe M2 x 6; sole material not recorded",
+   "value": "V1.24/V1.25 two-half ankle on both legs, the halves now screwed together: Shawn drilled the toe end and both halves are screwed tight at the toe (three holes at the toe now), with the V1.22 slip-fit foot; the halves are no longer held by the foot alone",
    "meaning": "Which ankle bracket and foot interface is on the robot. Stand behaviour depends on it: on 2026-10-21 the trunk rocked about the ankle axis with every leg encoder still on this ankle (stand_check.py), not on the 10/19 one-piece bracket with the same feet.",
-   "verified_at": "2026-10-21",
-   "source": "Shawn 2026-10-21: \"现在装的是 V1.24/V1.25 两半踝，只靠滑配脚和脚尖螺丝夹住。\" Design: guide/print/ankle-halves-20261020/README.md",
+   "verified_at": "2026-10-23",
+   "source": "Shawn, 2026-10-23 evening (chat): drilled holes, both halves screwed tight at the toe, three holes at the toe",
    "measure": "ask Shawn or look at the ankle: a seam across the orange bracket at mid shaft is the two-half ankle",
    "max_age_days": 30,
    "superseded": [
     {
+     "value": "V1.24/V1.25 two-half ankle on both legs: the stock one-piece orange bracket cut at mid shaft, outer half on the servo horn (four M2 x 4), inner half on the V1.22 black sleeve, the halves held together only by the V1.22 slip-fit foot and the toe M2 x 6; sole material not recorded",
+     "until": "2026-10-21",
+     "why": "both soles coated with hot glue on the evening of 2026-10-21"
+    },
+    {
      "value": "stock one-piece orange bracket with the V1.22 slip-fit foot and toe M2 x 6 (all 10/19 runs)",
      "until": "2026-10-20",
      "why": "replaced by the V1.22 split ankle and then the V1.24 two-half ankle (guide/print/ankle-split-20261019, ankle-halves-20261020)"
+    },
+    {
+     "value": "V1.24/V1.25 two-half ankle on both legs: the stock one-piece orange bracket cut at mid shaft, outer half on the servo horn (four M2 x 4), inner half on the V1.22 black sleeve, the halves held together only by the V1.22 slip-fit foot and the toe M2 x 6; both soles coated with hot glue (2026-10-21 evening)",
+     "until": "2026-10-23",
+     "why": "Shawn drilled the toe end and screwed both halves together at the toe (three toe holes)"
     }
    ],
    "consumers": [
@@ -186,6 +275,20 @@
     }
    ]
   },
+  "policy_goal_guards": {
+   "value": "walk_brain.py clamps every policy goal to the trained MJCF joint ranges (walk_brain.JOINT_RANGE; neck_pitch -1.571..+1.047 rad, hip roll +-0.384), and a sit or ground-pick guard trip holds the head joints at their measured positions (Brain.hold_head) while the legs keep their last goals. Running on the A7Z: walk_brain.py md5 f7defa12752e5c5b0750c6e2cc323cbd and walk_wired.py md5 7bc055896fca423f58305d0d37a58a91, loaded by the brain started 2026-10-23 22:00 (run app1023-220020); old files kept as *.bak-20261023-preclamp",
+   "verified_at": "2026-10-23",
+   "source": "A7Z run app1023-204119 rise 4: sitstand61 neck action -0.3 -> -3.75 rad in 0.3 s, the trip held goal tick 3776 and the neck reached -2.50 rad with the head on the floor (guide/firmware/mac/robot-runs-20261023-a7z/sit-headbump/findings.md); test_sit_runaway.py fails on the old code at -2.65 rad and passes now; as-built sim sit/stand 4 seeds, walk 2 seeds, ground pick 2 seeds unchanged (no fall)",
+   "max_age_days": 14,
+   "measure": "md5 of ~/rt/microduck-sim/walk_brain.py and walk_wired.py on the A7Z against the repo; on the robot, goal ticks of ID12 in a sit log stay within the neck range",
+   "superseded": [
+    {
+     "value": "walk_brain.py clamps every policy goal to the trained MJCF joint ranges (walk_brain.JOINT_RANGE; neck_pitch -1.571..+1.047 rad, hip roll +-0.384), and a sit or ground-pick guard trip holds the head joints at their measured positions (Brain.hold_head) while the legs keep their last goals. In the repo since 2026-10-23; NOT yet on the A7Z (offline when committed): the A7Z copy still lets a runaway neck goal reach -2.65 rad and holds it",
+     "until": "2026-10-23",
+     "why": "brain restarted at 22:00 on the new files (seen on the A7Z: pgrep + md5sum)"
+    }
+   ]
+  },
   "graded_hold": {
    "value": "graded hold ON on the A7Z: ~/.duck_hold.json (/home/radxa/.duck_hold.json, survives reboots and brain restarts) {\"on\": true} with the calibration made 2026-10-23T17:16 from walk_wired run app1023-210738 (pad_lo [624.5, 698.0, 320.5, 352.0, 474.8], pad_hi [1998.4, 2233.6, 1025.6, 1126.4, 1519.2], grip_full_mm2 1010.6, legs_stand_ma 294 in stand61, legs_air_ma 138; legs_air_ma from the one lift that did not struggle); the brain on the A7Z runs b807e74: a head grip (e > 0.3) while walking latches the command to zero velocity, the hold acts at once, the set-down runs stand61 once fully held, and walking again needs the stick released and pushed again",
    "meaning": "Whether walk_wired.py scales stand61/walk61's actions and softens the legs while a hand grips the head and the feet are unloaded (hold.py), whether a head grip stops a walk (GripStop), and with which pad and leg-current thresholds. The brain reads the file live; hold_session.py's h key switches it.",
@@ -206,19 +309,61 @@
     }
    ]
   },
-  "policy_goal_guards": {
-   "value": "walk_brain.py clamps every policy goal to the trained MJCF joint ranges (walk_brain.JOINT_RANGE; neck_pitch -1.571..+1.047 rad, hip roll +-0.384), and a sit or ground-pick guard trip holds the head joints at their measured positions (Brain.hold_head) while the legs keep their last goals. In the repo since 2026-10-23; NOT yet on the A7Z (offline when committed): the A7Z copy still lets a runaway neck goal reach -2.65 rad and holds it",
-   "verified_at": "2026-10-23",
-   "source": "A7Z run app1023-204119 rise 4: sitstand61 neck action -0.3 -> -3.75 rad in 0.3 s, the trip held goal tick 3776 and the neck reached -2.50 rad with the head on the floor (guide/firmware/mac/robot-runs-20261023-a7z/sit-headbump/findings.md); test_sit_runaway.py fails on the old code at -2.65 rad and passes now; as-built sim sit/stand 4 seeds, walk 2 seeds, ground pick 2 seeds unchanged (no fall)",
-   "max_age_days": 14,
-   "measure": "md5 of ~/rt/microduck-sim/walk_brain.py and walk_wired.py on the A7Z against the repo; on the robot, goal ticks of ID12 in a sit log stay within the neck range"
-  },
   "walk_speed_vx025": {
    "value": "about 0.15 m/s ground speed at vx 0.25 once stepping (0.14-0.19 from the object's pixel area 0.43 -> 0.20 m over 1.7 s and 1.0 -> 0.20 m over 4.3 s); the as-built sim walks 0.10-0.12 m/s. approach.py V_REAL uses 0.15, approach_sim.py the sim's 0.11",
    "verified_at": "2026-10-24",
    "source": "robot approach run approach_1024-224735 (A7Z ~/duck-logs, brain run cc1024-v3): non-cut detections, area-scaled from the 0.43 m projection at 5.5 s; the projection itself jumps 1.0 -> 0.43 m beyond 0.5 m while walking, the area is continuous",
    "max_age_days": 14,
    "measure": "a timed straight walk at vx 0.25 over a tape-measured distance (start to stop marks, 4 s hold), or the area/near-projection rate in an approach trace"
+  },
+  "parts_a7z_extensions": {
+   "value": {
+    "radxa_heatsink_6530b": {
+     "part": "Radxa Heatsink 6530B (65 x 30 x 11.5 mm aluminium, blower fan, 3-pin lead to the A7Z fan header; box: 2 thermal pads 16 x 16 x 1.5 mm, 4 CM2 x 4 screws)",
+     "status": "in hand, not fitted",
+     "ordered": "2026-10-22 ~04:00 Amazon B0GX643GDN $16.99 (Shawn: 已经下单了)",
+     "arrived": "2026-10-25",
+     "note": "dry-fitted without the pad the base sits 1-2 mm above the A733: that gap is the 1.5 mm pad's place (Radxa docs: pad on the SoC, then the heatsink, diagonal screws)"
+    },
+    "geeekpi_copper_15x15x5": {
+     "part": "GeeekPi 15 x 15 x 5 mm copper heatsinks, 8 pack, self-adhesive",
+     "status": "never bought (in the Amazon cart from 2026-10-20; no order found in any session; the 10/22 23:05 note still listed 'buy copper' as open)"
+    },
+    "fan_30x30x8_5v": {
+     "part": "30 x 30 x 8 mm 5 V axial fan (D-022 saddle V1.29)",
+     "status": "never carted, never bought"
+    },
+    "hoaoh_thermal_tape": {
+     "part": "HOAOH thermal adhesive tape 10 mm x 0.2 mm x 25 m",
+     "status": "carted 2026-10-22 02:59; order not verified"
+    },
+    "innomaker_u20cam": {
+     "part": "Innomaker U20CAM-720P USB camera (D-023)",
+     "status": "bought 2026-10-23 (D-023); arrival not recorded"
+    },
+    "cablecreation_usbc_pigtail": {
+     "part": "CableCreation right-angle USB-C OTG pigtail B0194WSKOM",
+     "status": "in the cart 2026-10-23, order not verified (D-023 open item)"
+    },
+    "inmp441_mics": {
+     "part": "AITRIP INMP441 I2S microphones (D-025), shipped with header pins",
+     "status": "arrived 2026-10-25 (Shawn: 麦克风到了 我发现送了排针)"
+    },
+    "ac019_antenna": {
+     "part": "Radxa AC019 dual-band FPC antenna with IPEX pigtail",
+     "status": "in hand (in the 2026-10-25 heatsink photos, plugged into the A7Z)"
+    }
+   },
+   "meaning": "Which bought parts the A7Z extensions (saddle, camera, microphones, cooling) are built around and whether each is carted, ordered, arrived or fitted. A design (CAD, guide, decision) is built only around a part whose status here is 'in hand'; a part that is only in a cart is not a design input. DESIGN-CONTRACT.json files name the entry they depend on and design_contract.py checks it.",
+   "verified_at": "2026-10-25",
+   "source": "Session transcripts 2026-10-20..25 (cart adds in Chrome, Shawn's 已经下单了 at 2026-10-22 04:01), D-023/D-025 open items, Shawn's 2026-10-25 photos and messages. The 6530B was ordered while D-021 (same day) still said it was not bought and D-022 designed around a copper block and fan that were never bought.",
+   "measure": "Amazon order history in Shawn's Chrome, the parts on the bench; update the same turn a part is carted, ordered, arrives or is fitted (Stop hook purchase-record-guard.py blocks a turn that reports a purchase or arrival without a write here)",
+   "max_age_days": null,
+   "consumers": [
+    "guide/print/a7z-saddle/DESIGN-CONTRACT.json",
+    "guide/print/design_contract.py",
+    "DECISIONS.md D-028"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

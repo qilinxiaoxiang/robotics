@@ -1,0 +1,28 @@
+{
+  "schema": "design-contract/1",
+  "design": "A7Z roof saddle V2: Radxa 6530B heatsink on the board, USB-C/HDMI through the rear wall, 40-pin header at the front edge",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-10-25",
+    "quotes": [
+      "评估 USB 朝后、排针朝前的背包座：摄像头线怎么走、线够不够长、风扇和天线放哪、要重印哪些件",
+      "我们需要有一个新的背包设计 那些插口肯定应该朝外 怎么可能超这脖子呢",
+      "这是我的风扇的图片 已经到货了 是正好盖在a7z上面的"
+    ],
+    "history": "2026-10-22 concept B (a7z-slice-20261022/render_concept_b.py) was approved with the header at the front and USB-C at the rear; build_saddle.py V1.29 turned the board round without a recorded reason and D-022 copied the CAD. The copper block + 30 mm fan in V1.29 were never bought; the 6530B was ordered 2026-10-22 04:01 and arrived 2026-10-25."
+  },
+  "concept_render": "flip-concept-20261025/flip-A.png (orientation and camera route approved; its fan and lid are the old wrong part and are superseded by the 6530B)",
+  "state_file": "../../../CURRENT-STATE.json",
+  "parts": {
+    "parts_a7z_extensions.radxa_heatsink_6530b": "in hand"
+  },
+  "geometry": [
+    {"part": "usb_c_otg_dp", "says": "USB-C ② opening in the rear wall, plug reaches it from behind the robot", "bounds": {"x_max": {"lt": -38}}},
+    {"part": "usb_c_power", "says": "USB-C ① opening in the rear wall, not covered by the camera plug", "bounds": {"x_max": {"lt": -38}}},
+    {"part": "micro_hdmi", "says": "micro HDMI opening in the rear wall", "bounds": {"x_max": {"lt": -38}}},
+    {"part": "dupont_housings", "says": "40-pin header at the front edge; head and torso wires drop straight to the floor opening", "bounds": {"x_min": {"gt": -24}}},
+    {"part": "heatsink_6530b", "says": "Radxa 6530B 65 x 30 x 11.5 on the board, fan intake upward", "size": {"x": [29.0, 31.0], "y": [64.0, 66.0], "z": [11.0, 12.5]}},
+    {"part": "usb_c_plug", "says": "camera right-angle plug body behind the rear wall, leg to +y, port ① free", "bounds": {"x_max": {"lt": -40}, "y_max": {"lt": 10}}}
+  ],
+  "forbidden_parts": ["fan", "heatsink", "thermal_pad"]
+}

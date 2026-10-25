@@ -101,6 +101,8 @@ def main():
                         help='Permit at most four isolated light workers; each must fit within512MiB. Larger/unknown jobs stay exclusive.')
     parser.add_argument('--report', type=Path)
     parser.add_argument('--status', action='store_true', help='Print who holds the lock and the recent ledger, then exit')
+    parser.add_argument('--contract-dir', type=Path, help='CAD directory whose DESIGN-CONTRACT.json is checked after the job '
+                        '(default: the directory of the first existing .py path in the command)')
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if args.status:
@@ -232,7 +234,27 @@ def main():
     ledger_write({'event': 'end', 'pid': process.pid, 'exitCode': process.returncode, 'stoppedByGuard': reason,
                   'elapsedSeconds': result['elapsedSeconds'], 'peakMiB': result['peakSampledTreeRssMiB']})
     print(json.dumps(result), flush=True)
-    return 124 if reason else process.returncode
+    if reason:
+        return 124
+    if process.returncode == 0:
+        # Design contract (guide/print/design_contract.py): a CAD directory that implements an approved concept carries
+        # DESIGN-CONTRACT.json; the built geometry and the bought parts are checked against it and a mismatch fails the job.
+        cdir = args.contract_dir
+        if cdir is None:
+            for a in command:
+                q = Path(a)
+                if q.suffix == '.py' and q.exists():
+                    cdir = q.resolve().parent
+                    break
+        if cdir is not None and (cdir / 'DESIGN-CONTRACT.json').exists():
+            checker = Path(__file__).resolve().parents[3] / 'guide/print/design_contract.py'
+            rc = subprocess.run([sys.executable, str(checker), str(cdir)]).returncode
+            ledger_write({'event': 'contract', 'pid': process.pid, 'dir': str(cdir), 'exitCode': rc})
+            if rc:
+                print(f'design contract check failed ({cdir / "DESIGN-CONTRACT.json"}): the build does not match what Shawn approved; '
+                      'fix the CAD or get the contract changed by Shawn', file=sys.stderr)
+                return 3
+    return process.returncode
 
 
 if __name__ == '__main__':

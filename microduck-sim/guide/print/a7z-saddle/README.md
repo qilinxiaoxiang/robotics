@@ -1,4 +1,11 @@
-# A7Z roof saddle (D-022, 2026-10-22)
+# A7Z roof saddle (D-022, 2026-10-22; layout superseded by D-028, 2026-10-25)
+
+**V1.29 as described below is superseded.** D-028: the board turns 180 deg (USB-C ①② and micro HDMI through the rear wall,
+40-pin header at the front edge) and the cooling part is the Radxa Heatsink 6530B that is in hand (`CURRENT-STATE.json`
+`parts_a7z_extensions`), not the copper block and 30 mm fan below, which were never bought. The approved V2 design is
+`DESIGN-CONTRACT.json` in this directory; `../design_contract.py` checks every build against it (the bounded runner runs it
+after each job), and `build_saddle.py` V1.29 fails that check by design until it is rewritten. `flip-concept-20261025/`
+holds the orientation concept (its fan and lid are the old part).
 
 The Radxa Cubie A7Z leaves the head (closed-head soak: 85 C in 5 min, both clusters at 416 MHz, resets) and sits in a
 printed saddle on the torso roof over the V1.9 rear pack, with a 15 x 15 x 5 mm copper heatsink on the A733 and a
