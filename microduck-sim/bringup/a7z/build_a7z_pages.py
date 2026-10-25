@@ -57,6 +57,15 @@ def mic_wires() -> dict:
 
 
 MW = mic_wires()
+HW = json.loads((HERE / 'head-wire-lengths.json').read_text())   # V2 saddle cut lengths, head_wire_lengths.py
+HWW = HW['wires']
+HEAD_WIRE_NAMES = [('amp-vin', '功放 Vin'), ('amp-bclk', '功放 BCLK（并着麦克风 SCK）'), ('amp-lrc', '功放 LRC（并着麦克风 WS）'),
+                   ('amp-gnd', '功放 GND'), ('amp-din', '功放 DIN'), ('touch-pin17', '触摸板 3V3（并着麦克风 VDD）'),
+                   ('touch-pin25', '触摸板 GND'), ('touch-pin29', '触摸板 SCL'), ('touch-pin31', '触摸板 SDA'),
+                   ('mic-gnd', '麦克风 GND（从左耳焊盘起）'), ('mic-sd', '耳朵麦克风 SD（从左耳焊盘起）'),
+                   ('mic-sd3', '后脑麦克风 SD（从后脑焊盘起，可选）')]
+HEAD_WIRE_LIST = ''.join(f"<li>小旗 {HWW[c]['pin']}，{n}：<b>{HWW[c]['cutMm']['full']} mm</b>（最少 {HWW[c]['cutMm']['trained']}）</li>"
+                         for c, n in HEAD_WIRE_NAMES)
 
 
 def uri(im: Image.Image, width: int | None = None, quality: int = 84) -> str:
@@ -309,7 +318,7 @@ PIN_LEGEND_COUNT = [
     ('land', 'SD', 'microSD 卡槽在背面的这一头（见右图）。'),
 ]
 
-S_CHANGES = '''
+S_CHANGES = f'''
 <section class="step" id="changes"><div class="stepno">先看一眼</div><h2>现在的装法：A7Z 在躯干顶上的背包座里</h2>
 <p>Radxa Cubie A7Z（瑞莎的小电脑板）不在头里了，装在躯干顶上、后面转换盒上方的白色背包座里（D-022）。所有线都从下面来，插在它的 40 针排针上：</p>
 <ul class="acts">
@@ -327,6 +336,11 @@ S_CHANGES = '''
 <li>新加两个耳朵麦克风（D-025），只多两根线下脖子：SD 插 38、GND 插 34。另外三根（SCK、WS、VDD）在头里并进功放和触摸板的线，不占新针。可选的第三个麦克风在后脑（D-026 附录），再多一根 SD 下脖子，先不插（第 8 步）。</li>
 <li>针号和以前一样：IMU 1、3、5、9，串口 7、11，5 V 2、6，功放 4、12、35、39、40，触摸板 17、25、29、31。</li>
 </ul></div>
+<div class="card">
+<p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>每根线从它在头里的焊点量到 A7Z 排针，含插头。粗体是推荐长度，按脖子和头的关节全范围留了转头余量；括号里是只按训练用的转头范围留余量的最短长度。</p>
+<ul class="acts">{HEAD_WIRE_LIST}</ul>
+<p>出了头的那一段：头朝前站好时约 {min(w['outsideMm']['home'] for w in HWW.values())} 到 {max(w['outsideMm']['home'] for w in HWW.values())} mm，留全范围余量后约 {min(w['outsideMm']['full'] for w in HWW.values())} 到 {max(w['outsideMm']['full'] for w in HWW.values())} mm。多出来的约 {round(HW['spanMm']['full'] - HW['spanMm']['home'])} mm 是头转到最远时出线口离躯干顶多出的距离；平时它在脖子旁边松松地弯着。</p>
+</div>
 <p>更早的 Pi 版本还在：<a href="BRINGUP.html">BRINGUP.html</a>。组装指南里对应的两步：Plug the torso wires onto the A7Z、Plug the 11 head wires onto the A7Z。</p>
 </section>'''
 
@@ -334,7 +348,7 @@ S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知�
 <p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 下边，1 号针在右端。左边是头里的板子（三个麦克风、功放、触摸板；后脑那个是可选的），右边是躯干里的（IMU、OpenRB、5 V 降压板）。</p>
 <div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的板子和线变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。上面的按钮按组筛选；“逐根接线”一根一根走，手机上会把两头放大。</div>
 <div style="margin:10px 0">{AB.html()}</div>
-<p>线的颜色：5 V 线、串口、IMU 线和触摸板四根是实际的颜色；功放和麦克风的杜邦线颜色随意，按小旗认。麦克风的 SCK、WS、VDD 画成直接到 12、35、17 号针：它们在头里已经并进功放 BCLK、功放 LRC 和触摸板 3V3 的线，和那根线共用一个插头。后脑麦克风的 GND 并进麦克风 GND 线（34 号）；它的 SD 画到 10 号针，实际插头贴在旁边，先不插。</p>
+<p>线的颜色：5 V 线、串口、IMU 线和触摸板四根是实际的颜色；功放和麦克风的杜邦线颜色随意，按小旗认。灰色的“集线点”就是头盖左后角那四个焊接接头：功放 BCLK、功放 LRC、触摸板 3V3 三根线在这里剪开，左耳和后脑麦克风的 SCK、WS、VDD 焊进去，再各自接着往下到 12、35、17 号针；左耳的 GND 杜邦线也路过这里，后脑的 GND 焊进去，往下到 34 号针。所以点“左耳”或“后脑”，会看到四根线到集线点、一根 SD 线下去；右耳的五根线只到左耳的焊盘。后脑的 SD 画到 10 号针，实际插头贴在旁边，先不插。</p>
 ''')
 
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
@@ -485,17 +499,14 @@ S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后�
 <p><b>焊的时候：</b>线焊在另一面（有金属小方块那面），那面没有字。板子绕竖直的轴翻过去，左右对调：缺口朝上看金属面，上排从左到右是 L/R、WS、SCK，下排是 GND、VDD、SD。焊之前对着印字面认一遍。</p>
 </div>
 <div class="card">
-<p><b>线剪多长（组装指南的剪线表，带插头的含插头）：</b></p>
+<p><b>麦克风的线剪多长（新背包座 V2，带插头的含插头）：</b></p>
 <ul class="acts">
 <li>右耳到左耳：5 根细线，各 {MW['r']} mm。</li>
 <li>左耳到集线点：SCK、WS、VDD 3 根细线，各 {MW['l']} mm。多留了约 25 mm，头盖还能像盖子一样往后翻开。</li>
-<li>左耳的 SD、GND：带一个插头的杜邦线，SD {MW['sd']} mm、GND {MW['gnd']} mm，从左耳焊盘一直到 A7Z 排针。</li>
-<li>后脑：SCK、WS、VDD、GND 4 根细线各 {MW['b']} mm；SD 带一个插头，{MW['bsd']} mm。</li>
-<li>其中出了头的那一段：从左后出线口顺着脖子到背包座里的排针，约 {MW['out']} mm。</li>
+<li>左耳的 SD 和 GND：带一个插头的杜邦线，从左耳焊盘一直到 A7Z 排针。SD 推荐 {HWW['mic-sd']['cutMm']['full']} mm（最少 {HWW['mic-sd']['cutMm']['trained']}），GND 推荐 {HWW['mic-gnd']['cutMm']['full']} mm（最少 {HWW['mic-gnd']['cutMm']['trained']}）。</li>
+<li>后脑：SCK、WS、VDD、GND 4 根细线各 {MW['b']} mm；SD 带一个插头，推荐 {HWW['mic-sd3']['cutMm']['full']} mm（最少 {HWW['mic-sd3']['cutMm']['trained']}）。</li>
 </ul>
-</div>
-<div class="pend"><b>转头的余量还没算进去</b>
-<p>上面这些长度是机器人头朝前站好时的路线，加两头各一点弯。头一转，出线口到背包座前沿的距离会变长：同一束里的摄像头线算过，头朝前时约 {MW['home']} mm，训练用的头部转动范围里最多多出 {MW['tr']} mm，关节全范围最多多出 {MW['full']} mm。头里下来的线（功放、触摸板、麦克风）还没按这个加长。下脖子的这几根，等这个余量定下来再剪。</p>
+<p>SD、GND 这三根里，在头里的一段约 {HWW['mic-sd']['inHeadMm']} mm（后脑 {HWW['mic-sd3']['inHeadMm']} mm）；出了头，头朝前时只要约 {HWW['mic-sd3']['outsideMm']['home']} 到 {HWW['mic-sd']['outsideMm']['home']} mm，可是头转到最远时出线口离躯干顶多出约 {round(HW['spanMm']['full'] - HW['spanMm']['home'])} mm，所以按 {HWW['mic-sd3']['outsideMm']['full']} 到 {HWW['mic-sd']['outsideMm']['full']} mm 留。其他头里下来的线见开头“现在的装法”。</p>
 </div>
 ''')
 
@@ -587,7 +598,7 @@ SOURCES_PINS = '''
 <li>调试串口 Pin8/Pin10、115200：Radxa 文档 “串口调试”（radxa-a7z-uart-debug.md）。电源灯：“硬件接口”（a7z-hardware-info.md）。</li>
 <li>5 V 和 USB-C：Radxa Cubie A7Z 原理图 V1.11 第 13 页（J16 VBUS → FB2 60R 3A → VCC5V0_SYS）、第 14 页（J11 的 2、4 号是 VCC5V0_SYS，1 号 DCDC1，8/10 号 CPUX-TX/RX）、第 12 页（USB 3.1 口 VBUS 经 U4）。</li>
 <li>摄像头板和插头的距离：组装指南 CAD（guide/print/world/camera_board.stl 和排针插头的位置），背面元件范围按 Radxa 背面照片，2026-10-15 核对（guide/print/face-a7z/pin-clearance/pin-clearance.png）。接线颜色和小旗沿用 BRINGUP.html 第 4、11、12、13 步。背包电源：DECISIONS.md D-010。</li>
-<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
+<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。线长：bringup/a7z/head_wire_lengths.py（head-wire-lengths.json）：头里一段取组装指南的线路，出线口到躯干顶的距离由 head_sweep_v2.py 在全部关节姿态上扫出（neck-exit-20261023/cable_sweep.py 的 V2 版），背包座里一段按 a7z-saddle/build/pins.json 的针位从底板开口上来、跨过插头落到针上，再加两头各 15 mm 弯头，进到 5 mm。组装指南的线路还停在 V1.29 的后沿排针，重做以后以它为准。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
 <li>总接线图：bringup/a7z/a7z_bench.py，用 ~/code/wiring-kit 画（点板子只亮它的线）。</li>
 <li>核对日期：2026-10-15，背包座和麦克风部分 2026-10-25。</li></ul></section>'''
 
