@@ -8,6 +8,7 @@ process dies) and reads the rows walk_wired.py logged meanwhile. Mac side: guide
   python shoot.py --seg grip     straight walk up to --grip-s; stops when a hand on the head latches the grip stop
                                  (graded hold must be on and calibrated: ~/.duck_hold.json), reports the set-down
   python shoot.py --seg quack    stand61, two quacks 3 s apart (jaw opens and closes, head tilts)
+  python shoot.py --seg sing     dance.json: quacks on a beat, head sway, nods, look-ups, an in-place wiggle (11 s)
   python shoot.py --seg crouch   Pollen's ground-pick crouch to phase 0.33 (mouth tip 22 mm over the floor, 69 mm
                                  ahead of the feet, as-built sim 2026-10-16), held 4 s, then the rise; stand61 after
   python shoot.py --seg back     stand61 with a slow head turn left, right, centre over 8 s (the rear-pack close-up)
@@ -309,6 +310,67 @@ def seg_quack(args, log, cmd):
     return 0 if (lines or args.replay) else 1
 
 
+def policy_default():
+    """The policies' default joint pose (model rad), read from walk61.onnx metadata as walk_brain.Brain does."""
+    import onnxruntime as ort
+    import walk_brain
+    models = os.path.join(walk_brain.WHOLE if hasattr(walk_brain, "WHOLE") else "", "runtime-overlay", "models")
+    if not os.path.exists(os.path.join(models, "walk61.onnx")):
+        models = os.path.join(HERE, "..", "..", "..", "hardware-design-20260912", "whole-robot-20260912", "runtime-overlay", "models")
+    meta = ort.InferenceSession(os.path.join(models, "walk61.onnx")).get_modelmeta().custom_metadata_map
+    return dict(zip(walk_brain.OBSERVATION_DOF_ORDER, [float(v) for v in meta["default_joint_pos"].split(",")]))
+
+
+def seg_sing(args, log, cmd):
+    """Quacks on a beat with head sway, nods and look-ups and an in-place wiggle, from dance.json (sim-checked with
+    brain_sim_check.py --dance). Head steps are deltas from the policy default; in-place turns are held with for_s so a
+    dead script stops the robot."""
+    with open(args.dance) as f:
+        dance = json.load(f)
+    default = policy_default()
+    tail = Tail(log)
+    out_path = log.replace("duck_wired_log_", "duck_wired_").replace(".jsonl", ".out")
+    out_pos = os.path.getsize(out_path) if os.path.exists(out_path) else 0
+    steps = sorted(dance["steps"], key=lambda st: st["t"])
+    t0, qn, vth, head, i = time.time(), int(time.time()) * 100, 0.0, {}, 0
+    quack = None
+    try:
+        while time.time() - t0 < dance["end_s"]:
+            el = time.time() - t0
+            while i < len(steps) and steps[i]["t"] <= el:
+                st = steps[i]
+                head = {n: default[n] + d for n, d in st.get("head", {}).items()}
+                vth = float(st.get("vtheta", vth))
+                if st.get("quack"):
+                    qn += 1
+                    quack = qn
+                i += 1
+            c = dict(WALK_ZERO, vtheta=vth, head=head)
+            if abs(vth) > 1e-3:
+                c["for_s"] = FOR_S
+            if quack is not None:
+                c["quack"] = quack
+            write_cmd(cmd, c)
+            time.sleep(0.05)
+    finally:
+        write_cmd(cmd, dict(WALK_ZERO))
+    time.sleep(SETTLE_S + 1.0)
+    rows = tail.poll()
+    lines = []
+    if os.path.exists(out_path):
+        with open(out_path, "rb") as f:
+            f.seek(out_pos)
+            lines = [ln for ln in f.read().decode(errors="replace").splitlines() if ln.startswith("quack")]
+    hy, hr, hp = (NAMES.index(n) for n in ("head_yaw", "head_roll", "head_pitch"))
+    rng_ = lambda k: round(max(r["q"][k] for r in rows) - min(r["q"][k] for r in rows), 2) if rows else None
+    jaw = [r["jaw_deg"] for r in rows if r.get("jaw_deg") is not None]
+    print(json.dumps(dict(seg="sing", quacks_sent=sum(1 for st in steps if st.get("quack")), quacks_played=len(lines),
+                          head_range_rad=dict(yaw=rng_(hy), roll=rng_(hr), pitch=rng_(hp)),
+                          jaw_max_deg=round(max(jaw), 1) if jaw else None, jaw_rest_deg=round(jaw[-1], 1) if jaw else None,
+                          **{k: v for k, v in summarize(rows, t0, time.time()).items() if k != "rows"})))
+    return 0
+
+
 def seg_crouch(args, log, cmd):
     tail = Tail(log)
     t0 = time.time()
@@ -360,7 +422,7 @@ def seg_stop(args, log, cmd):
     return 0
 
 
-SEGS = {"ready": (seg_ready, False), "walk": (seg_walk, True), "grip": (seg_grip, True), "quack": (seg_quack, True),
+SEGS = {"ready": (seg_ready, False), "walk": (seg_walk, True), "grip": (seg_grip, True), "quack": (seg_quack, True), "sing": (seg_sing, True),
         "crouch": (seg_crouch, True), "back": (seg_back, True), "stop": (seg_stop, False)}
 
 
@@ -405,6 +467,7 @@ def main():
     ap.add_argument("--hold-s", type=float, default=4.0)
     ap.add_argument("--rise-s", type=float, default=3.0)
     ap.add_argument("--back-s", type=float, default=8.0)
+    ap.add_argument("--dance", default=os.path.join(HERE, "dance.json"))
     ap.add_argument("--replay", default=None, help="recorded log to replay instead of a live brain (dry run)")
     args = ap.parse_args()
     if args.replay:

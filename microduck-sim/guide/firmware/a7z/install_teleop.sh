@@ -47,6 +47,7 @@ FILES=(
   guide/firmware/mac/orange_target.py
   guide/firmware/mac/turn_test.py
   guide/firmware/mac/shoot.py
+  guide/firmware/mac/dance.json
   guide/firmware/pi/battery.py
   guide/firmware/pi/dxl_fast.py
   guide/firmware/pi/jaw_limits.py
