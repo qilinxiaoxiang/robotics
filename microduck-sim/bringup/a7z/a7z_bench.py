@@ -1,8 +1,10 @@
 """wiring-kit bench for A7Z-PINS.html: every board that connects to the A7Z 40-pin header, as wired in the roof saddle.
 
-The A7Z is drawn as seen from above in the saddle (D-022) with the robot's nose pointing up the page: component side up,
-the header along the rear edge (bottom of the drawing), pin 1 at the right-hand (-Y) end with the antenna and fan
-sockets. That is the portrait photo of photos.py turned a quarter turn clockwise (wiring-kit rotation 90).
+The A7Z is drawn as seen from above in the V2 saddle (D-028) with the robot's nose pointing up the page: component side
+up, the header along the FRONT edge (top of the drawing), pin 1 at the left-hand (+Y, robot left) end with the antenna
+and fan sockets, the USB-C and micro HDMI sockets along the rear edge (bottom). That is the portrait photo of photos.py
+turned a quarter turn anticlockwise (wiring-kit rotation 270). The boards sit in a row above the header, in front of it
+like the neck and the floor cut they come from: torso boards on the pin-1 (left) half, head boards on the pin-40 half.
 
 Wires and pins: the assembly guide (guide/data/guide-data.json steps saddle-plugs and saddle-head-plugs; mics and
 mic-splice for the microphones, mic-back for the optional back microphone). The joints at the left rear corner of the cap
@@ -120,7 +122,7 @@ def part_pins(part_id: str, keep: dict) -> list:
 
 def a7z() -> dict:
     m = TB.a7z()
-    m['subtitle'] = '背包座里，从上往下看，机器人的头朝上：排针在后边（图的下边），1 号针在右端'
+    m['subtitle'] = '背包座里，从上往下看，机器人的头朝上：排针在前沿（图的上边），1 号针在左端（机器人左边）'
     for p in m['pins']:
         n = int(p['label'])
         if n in A7Z_ROLE:
@@ -218,24 +220,21 @@ def bench() -> dict:
     for m in mods:
         if m['id'] == 'xiao':
             m['subtitle'] = '触摸板，头盖内顶中间'
-    # A7Z turned a quarter clockwise: its 65 mm length runs across, the header along the bottom edge, pin 1 at the right.
+    # A7Z turned a quarter anticlockwise (V2 saddle): its 65 mm length runs across, the header along the top edge, pin 1 at the
+    # left. The boards are laid out as a half turn of the bottom row used for the V1.29 drawing (header at the bottom, pin 1 at
+    # the right), so each board still faces the pins it uses, now from above; the two ears swap places so the left ear is the
+    # left one of the pair.
     aw, ah = a['height'], a['width']
+    size = {m['id']: (m['width'], m['height']) for m in mods}
     row = ah + 42
-    place = [
-        {'module': 'a7z', 'x': 0, 'y': 0, 'rotation': 90},
-        # One row under the header, left to right in the order of the pins each board uses (pin 40 is at the left end);
-        # the robot's left is the left of the drawing, so the left ear sits at the far left:
-        # the head boards come down the neck to the left half, the torso boards come up through the saddle floor.
-        {'module': 'micl', 'x': -50, 'y': row},
-        {'module': 'micr', 'x': -26, 'y': row + 14},
-        {'module': 'micb', 'x': -38, 'y': row + 34},
-        {'module': 'gp', 'x': -52, 'y': row - 26},
-        {'module': 'amp', 'x': -2, 'y': row},
-        {'module': 'xiao', 'x': 24, 'y': row},
-        {'module': 'imu', 'x': 50, 'y': row},
-        {'module': 'xl2', 'x': aw + 20, 'y': -4},
-        {'module': 'orb', 'x': 40, 'y': row + 34},
+    below = [  # V1.29 layout under a header at the bottom edge (pin 40 at the left end)
+        ('micl', -26, row + 16), ('micr', -50, row + 30), ('micb', -38, row + 50), ('gp', -33, row - 2),
+        ('amp', -2, row), ('xiao', 24, row), ('imu', 50, row), ('xl2', aw + 20, -4), ('orb', 40, row + 34),
     ]
+    place = [{'module': 'a7z', 'x': 0, 'y': 0, 'rotation': 270}]
+    for mid, x, y in below:
+        w, h = size[mid]
+        place.append({'module': mid, 'x': round(aw - x - w, 2), 'y': round(ah - y - h, 2)})
     return {'modules': mods, 'placements': place, 'groups': GROUPS,
             'wires': [{'id': i, 'from': f, 'to': t, 'color': c, 'group': g, 'label': lab, 'note': note}
                       for i, f, t, c, g, lab, note in WIRES]}
