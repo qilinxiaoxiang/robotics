@@ -5,8 +5,11 @@ the header along the rear edge (bottom of the drawing), pin 1 at the right-hand 
 sockets. That is the portrait photo of photos.py turned a quarter turn clockwise (wiring-kit rotation 90).
 
 Wires and pins: the assembly guide (guide/data/guide-data.json steps saddle-plugs and saddle-head-plugs; mics and
-mic-splice for the microphones). The microphone SCK, WS and VDD wires are spliced into the amplifier BCLK and LRC wires
-and the XIAO 3V3 wire in the head, so electrically they end on A7Z pins 12, 35 and 17; they are drawn to those pins.
+mic-splice for the microphones, mic-back for the optional back microphone). The microphone SCK, WS and VDD wires are
+spliced into the amplifier BCLK and LRC wires and the XIAO 3V3 wire in the head, so electrically they end on A7Z pins 12,
+35 and 17; they are drawn to those pins. The back microphone's GND joins the microphone GND wire (pin 34); its SD ends on
+a flag-10 plug taped beside pin 10, drawn to pin 10 in a group of its own (D-026 addendum: pin 10 stays UART0 RX until
+the I2S0 DIN3 overlay is tested).
 Clicking a board in the view highlights its wires and fades the rest (wiring-kit module selection).
 
 Pictures:
@@ -69,18 +72,30 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('rsd', 'micr.SD', 'micl.SD', PINK, 'mic', '右耳 SD → 左耳 SD', '两头都焊。两个麦克风共用一根数据线，左右声道由 L/R 焊盘分开。'),
     ('rvdd', 'micr.VDD', 'micl.VDD', RED, 'mic', '右耳 VDD → 左耳 VDD', '两头都焊。'),
     ('rgnd', 'micr.GND', 'micl.GND', BLK, 'mic', '右耳 GND → 左耳 GND', '两头都焊。'),
+    ('bsck', 'micb.SCK', 'a7z.p12', ORG, 'micb', '后脑麦克风 SCK → 并进左耳 SCK 的接头 → A7Z 12 号针',
+     '可选。细线，在头盖左后角集线点焊进左耳 SCK 和功放 BCLK 的接头。'),
+    ('bws', 'micb.WS', 'a7z.p35', PUR, 'micb', '后脑麦克风 WS → 并进左耳 WS 的接头 → A7Z 35 号针',
+     '可选。细线，焊进左耳 WS 和功放 LRC 的接头。'),
+    ('bvdd', 'micb.VDD', 'a7z.p17', RED, 'micb', '后脑麦克风 VDD → 并进左耳 VDD 的接头 → A7Z 17 号针',
+     '可选。细线，焊进左耳 VDD 和触摸板 3V3 的接头（3.3 V）。'),
+    ('bgnd', 'micb.GND', 'a7z.p34', BLK, 'micb', '后脑麦克风 GND → 并进麦克风 GND 线 → A7Z 34 号针',
+     '可选。细线，在集线点剪开麦克风 GND 线（小旗 34）焊进去。'),
+    ('bsd', 'micb.SD', 'a7z.p10', PINK, 'micb', '后脑麦克风 SD（小旗 10）→ 贴在 10 号针旁，先不插',
+     '可选。它自己的数据线（I2S0 DIN3），带插头。10 号针现在是调试串口的接收脚，DIN3 的设置试过以前插头用胶带贴在排针旁边，不插上去。'),
 ]
 GROUPS = [{'id': 'power', 'label': '5 V 电源', 'color': RED}, {'id': 'uart', 'label': '舵机串口', 'color': GRN},
           {'id': 'imu', 'label': 'IMU', 'color': BLU}, {'id': 'audio', 'label': '功放', 'color': ORG},
-          {'id': 'touch', 'label': '触摸板', 'color': BRN}, {'id': 'mic', 'label': '麦克风', 'color': PINK}]
+          {'id': 'touch', 'label': '触摸板', 'color': BRN}, {'id': 'mic', 'label': '麦克风', 'color': PINK},
+          {'id': 'micb', 'label': '后脑麦克风（可选）', 'color': PINK}]
 
 A7Z_ROLE = {  # what each used pin carries in this robot, shown when the pin is tapped
     1: 'IMU 3.3 V', 2: '5 V 进（5 V 线红）', 3: 'IMU SDA（TWI7）', 4: '功放 Vin（5 V 出）', 5: 'IMU SCL（TWI7）',
     6: 'GND（5 V 线黑）', 7: 'UART2 TX → OpenRB', 9: 'IMU GND', 11: 'UART2 RX ← OpenRB',
     12: 'I2S0 BCLK：功放 BCLK + 麦克风 SCK', 17: '3.3 V：触摸板 3V3 + 麦克风 VDD', 25: '触摸板 GND',
-    29: 'PB2 · 触摸板 SCL（TWI0）', 31: 'PB3 · 触摸板 SDA（TWI0）', 34: '麦克风 GND',
+    29: 'PB2 · 触摸板 SCL（TWI0）', 31: 'PB3 · 触摸板 SDA（TWI0）',
     35: 'I2S0 LRCK：功放 LRC + 麦克风 WS', 38: 'I2S0 DIN0：麦克风 SD', 39: '功放 GND', 40: 'I2S0 DOUT0：功放 DIN',
-    8: '调试串口 TX：空着', 10: '调试串口 RX：空着（可选的第三个麦克风 SD 先不插这里）',
+    34: '麦克风 GND（两只耳朵和后脑共用）',
+    8: '调试串口 TX：空着', 10: '调试串口 RX：空着；后脑麦克风 SD（小旗 10）贴在旁边，先不插',
 }
 
 
@@ -134,7 +149,7 @@ def amp() -> dict:
 MIC_PADS = [('SCK', 134, 97), ('WS', 208, 97), ('L/R', 282, 97), ('SD', 134, 324), ('VDD', 208, 324), ('GND', 282, 324)]
 
 
-def mic(mid: str, side: str, lr: str) -> dict:
+def mic(mid: str, title: str, short: str, lr: str) -> dict:
     im = TB.rounded(Image.open(P.HERE / 'sources' / 'inmp441-label-face-aitrip.png').convert('RGB'), 200)
     names = {'SCK': 'SCK，I2S 位时钟', 'WS': 'WS，I2S 左右时钟', 'SD': 'SD，声音数据出', 'VDD': 'VDD，3.3 V',
              'GND': 'GND', 'L/R': f'L/R：{lr}'}
@@ -142,7 +157,7 @@ def mic(mid: str, side: str, lr: str) -> dict:
     for pad, x, y in MIC_PADS:
         role = 'ground' if pad == 'GND' else 'power' if pad == 'VDD' else 'signal'
         pins.append((pad, pad, names[pad], role, None if role == 'ground' else 3.3, x / im.width, y / im.height))
-    m = photo_module(mid, f'INMP441 {side}耳麦克风', f'印字那面（贴着头盖内壁）；{lr}', f'{side}耳', im, 13.4, pins)
+    m = photo_module(mid, f'INMP441 {title}', f'印字那面（贴着头盖内壁）；{lr}', short, im, 13.4, pins)
     for p in m['pins']:
         p['multi'] = mid == 'micl'   # the left board carries its own wire and the right board's on each pad
         if p['id'] == 'L/R':
@@ -179,8 +194,9 @@ def xl2() -> dict:
 
 def bench() -> dict:
     a = a7z()
-    mods = [a, imu(), openrb(), xl2(), amp(), TB.xiao(), mic('micl', '左', '焊一根短线到 GND：左声道'),
-            mic('micr', '右', '焊一根短线到 VDD：右声道')]
+    mods = [a, imu(), openrb(), xl2(), amp(), TB.xiao(), mic('micl', '左耳麦克风', '左耳', '焊一根短线到 GND：左声道'),
+            mic('micr', '右耳麦克风', '右耳', '焊一根短线到 VDD：右声道'),
+            mic('micb', '后脑麦克风（可选）', '后脑', '焊一根短线到 GND：DIN3 线上的左声道')]
     for m in mods:
         if m['id'] == 'xiao':
             m['subtitle'] = '触摸板，头盖内顶中间'
@@ -194,6 +210,7 @@ def bench() -> dict:
         # the head boards come down the neck to the left half, the torso boards come up through the saddle floor.
         {'module': 'micl', 'x': -50, 'y': row},
         {'module': 'micr', 'x': -26, 'y': row + 14},
+        {'module': 'micb', 'x': -38, 'y': row + 34},
         {'module': 'amp', 'x': -2, 'y': row},
         {'module': 'xiao', 'x': 24, 'y': row},
         {'module': 'imu', 'x': 50, 'y': row},
@@ -209,7 +226,7 @@ TEXT = TB.TEXT.replace("hint:'点一下针脚或导线看详情。'", "hint:'点
 
 
 # One button per board under the view: on a phone the boards are too small to tap reliably (a tap lands on a pin).
-PICKS = [('micl', '左耳麦克风'), ('micr', '右耳麦克风'), ('amp', '功放'), ('xiao', '触摸板'), ('imu', 'IMU'),
+PICKS = [('micl', '左耳麦克风'), ('micr', '右耳麦克风'), ('micb', '后脑麦克风'), ('amp', '功放'), ('xiao', '触摸板'), ('imu', 'IMU'),
          ('orb', 'OpenRB 串口'), ('xl2', '5 V 电源')]
 PICK_CSS = ('.a7zpick{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}'
             '.a7zpick button{font-size:16px;padding:6px 12px;border-radius:18px;border:1px solid #90a4ae;background:#fff;cursor:pointer}'
