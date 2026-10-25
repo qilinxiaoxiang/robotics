@@ -7,7 +7,9 @@
     "quotes": [
       "评估 USB 朝后、排针朝前的背包座：摄像头线怎么走、线够不够长、风扇和天线放哪、要重印哪些件",
       "我们需要有一个新的背包设计 那些插口肯定应该朝外 怎么可能超这脖子呢",
-      "这是我的风扇的图片 已经到货了 是正好盖在a7z上面的"
+      "这是我的风扇的图片 已经到货了 是正好盖在a7z上面的",
+      "设计时还要关注板子天线出来的地方 边上太窄 天线就不好走了 另外天线贴着散热片会不会有问题 你都兼顾一下 还有就是走线了 IMU和openrb从下往上的 以及XIAO，扬声器和麦克风从上往下的 都应该可以方便地走线 然后a7z的3个插口都可以从框外面方便的插",
+      "散热片占了a7z的螺丝孔 那么原来的固定方案就不行了 需要螺丝从框下面往上打了"
     ],
     "history": "2026-10-22 concept B (a7z-slice-20261022/render_concept_b.py) was approved with the header at the front and USB-C at the rear; build_saddle.py V1.29 turned the board round without a recorded reason and D-022 copied the CAD. The copper block + 30 mm fan in V1.29 were never bought; the 6530B was ordered 2026-10-22 04:01 and arrived 2026-10-25."
   },
@@ -17,12 +19,93 @@
     "parts_a7z_extensions.radxa_heatsink_6530b": "in hand"
   },
   "geometry": [
-    {"part": "usb_c_otg_dp", "says": "USB-C ② opening in the rear wall, plug reaches it from behind the robot", "bounds": {"x_max": {"lt": -38}}},
-    {"part": "usb_c_power", "says": "USB-C ① opening in the rear wall, not covered by the camera plug", "bounds": {"x_max": {"lt": -38}}},
-    {"part": "micro_hdmi", "says": "micro HDMI opening in the rear wall", "bounds": {"x_max": {"lt": -38}}},
-    {"part": "dupont_housings", "says": "40-pin header at the front edge; head and torso wires drop straight to the floor opening", "bounds": {"x_min": {"gt": -24}}},
-    {"part": "heatsink_6530b", "says": "Radxa 6530B 65 x 30 x 11.5 on the board, fan intake upward", "size": {"x": [29.0, 31.0], "y": [64.0, 66.0], "z": [11.0, 12.5]}},
-    {"part": "usb_c_plug", "says": "camera right-angle plug body behind the rear wall, leg to +y, port ① free", "bounds": {"x_max": {"lt": -40}, "y_max": {"lt": 10}}}
+    {
+      "part": "usb_c_otg_dp",
+      "says": "USB-C ② opening in the rear wall, plug reaches it from behind the robot",
+      "bounds": {
+        "x_max": {
+          "lt": -38
+        }
+      }
+    },
+    {
+      "part": "usb_c_power",
+      "says": "USB-C ① opening in the rear wall, not covered by the camera plug",
+      "bounds": {
+        "x_max": {
+          "lt": -38
+        }
+      }
+    },
+    {
+      "part": "micro_hdmi",
+      "says": "micro HDMI opening in the rear wall",
+      "bounds": {
+        "x_max": {
+          "lt": -38
+        }
+      }
+    },
+    {
+      "part": "dupont_housings",
+      "says": "40-pin header at the front edge; head and torso wires drop straight to the floor opening",
+      "bounds": {
+        "x_min": {
+          "gt": -24
+        }
+      }
+    },
+    {
+      "part": "heatsink_6530b",
+      "says": "Radxa 6530B 65 x 30 x 11.5 on the board, fan intake upward",
+      "size": {
+        "x": [
+          29.0,
+          31.0
+        ],
+        "y": [
+          64.0,
+          66.0
+        ],
+        "z": [
+          11.0,
+          12.5
+        ]
+      }
+    },
+    {
+      "part": "usb_c_plug",
+      "says": "camera right-angle plug body behind the rear wall, leg to +y, port ① free",
+      "bounds": {
+        "x_max": {
+          "lt": -40
+        },
+        "y_max": {
+          "lt": 10
+        }
+      }
+    },
+    {
+      "part": "antenna",
+      "says": "AC019 on the front wall inner face, at least 10 mm from the 6530B aluminium, never on a wall the heatsink touches",
+      "bounds": {
+        "x_min": {
+          "gt": -9.0
+        }
+      }
+    }
   ],
-  "forbidden_parts": ["fan", "heatsink", "thermal_pad"]
+  "forbidden_parts": [
+    "fan",
+    "heatsink",
+    "thermal_pad"
+  ],
+  "requirements": [
+    "IPEX pigtail: a channel at least 2 mm wide beside the board's +y end (x -34..-22, z 47..58) so the 1.13 mm coax can turn from under the heatsink and run along the wall to the antenna; the wall bulges outward there, never grows upward",
+    "Torso wires (IMU 4, UART 2, 5 V 2) rise through the floor cut straight into the front-edge housings; head wires (amp 5, XIAO 4, mic 2, camera cable) enter under the front wall foot into the same floor cut; housings are plugged from above with the lid off",
+    "USB-C ①, USB-C ② and micro HDMI each have their own window in the rear wall with at least 1 mm around the plug overmould; all three are plugged from behind the robot without removing anything",
+    "Board + 6530B is one unit screwed from below: four M2 x 6 up through a 2 mm printed tray (heads in counterbores under the tray, tray cut out around the underside parts), through the board holes into the 6530B's threaded bosses, on the bench. The tray drops into the saddle after the two roof screws (-21.5, +-20, M2 x 10 from above) are in, so those stay reachable; the tray is located by the walls and held by the lid (lid pads on the heatsink corners). No screw from the top into the heatsink (its holes are threaded from below), no clamp-only mount.",
+    "Lid no higher than needed over the Dupont housings (top about z 65.5); intake grille over the blower (+y end), exhaust slots at the -y end and along the fin sides",
+    "The old board-on-posts mount (M2 x 4 from above into floor posts) is gone: the 6530B's own screws occupy the four board holes."
+  ]
 }
