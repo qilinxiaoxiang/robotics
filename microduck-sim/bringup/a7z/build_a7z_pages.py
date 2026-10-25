@@ -15,6 +15,7 @@ from pathlib import Path
 
 from PIL import Image
 
+import a7z_bench as AB
 import photos as P
 
 HERE = Path(__file__).resolve().parent
@@ -142,6 +143,7 @@ def page(title: str, h1: str, lead: str, nav, body: str) -> str:
 YEL, RED, BLK, BLU, GRN, WHT = '#c99a00', '#d7263d', '#1d1d1f', '#1f6fd1', '#1f9d55', '#ffffff'
 AMP = '#7b5ea7'
 TOUCH = '#c87533'   # copper, as in the assembly guide's touch wires
+MIC = '#d81b60'
 USED = {
     1: (RED, 'IMU 红 3.3 V'),
     3: (BLU, 'IMU 蓝 SDA'),
@@ -153,30 +155,28 @@ USED = {
     25: (TOUCH, '触摸板 GND'),
     29: (TOUCH, '触摸板 SCL'),
     31: (TOUCH, '触摸板 SDA'),
-    35: (AMP, '功放 LRC'),
+    35: (AMP, '功放 LRC + 麦克风 WS'),
     39: (AMP, '功放 GND'),
     2: (RED, '5 V 线 红'),
     4: (AMP, '功放 Vin 5 V'),
     6: (BLK, '5 V 线 黑 GND'),
-    12: (AMP, '功放 BCLK'),
+    12: (AMP, '功放 BCLK + 麦克风 SCK'),
+    34: (MIC, '麦克风 GND'),
+    38: (MIC, '麦克风 SD'),
     40: (AMP, '功放 DIN'),
 }
+USED[17] = (TOUCH, '触摸板 3.3 V + 麦克风 VDD')
 NOTE = {8: '调试串口 空着', 10: '调试串口 空着'}
 
 
 def pin_map_svg() -> str:
-    W, top, dy = 420, 74, 31
-    xin, xed = 190, 230
+    W, top, dy = 440, 74, 31
+    xin, xed = 200, 240
     rows = []
     rows.append(f'<rect x="0" y="0" width="{W}" height="{top + 20 * dy + 20}" fill="#ffffff"/>')
     rows.append(f'<text x="{xin + 13}" y="26" class="hd" text-anchor="end">里排（单号）</text>')
     rows.append(f'<text x="{xed + 13}" y="26" class="hd" text-anchor="start">外排（双号，靠板边）</text>')
     rows.append(f'<text x="{(xin + xed) / 2 + 13}" y="52" class="sub" text-anchor="middle">天线插座这一头</text>')
-    # camera band on the edge row, pins 10 to 34
-    y10, y34 = top + 4 * dy, top + 16 * dy
-    rows.append(f'<rect x="{xed - 4}" y="{y10 - 4}" width="34" height="{y34 - y10 + 34}" rx="6" fill="#eceff1" stroke="#90a4ae" stroke-dasharray="5 4"/>')
-    rows.append(f'<text x="{W - 10}" y="{(y10 + y34) / 2 + 60}" class="cam" text-anchor="middle" '
-                f'transform="rotate(-90 {W - 10} {(y10 + y34) / 2 + 60})">摄像头下沿在这段插头前约 2 mm</text>')
     for k in range(20):
         y = top + k * dy
         for n, x, anchor, lx in ((2 * k + 1, xin, 'end', xin - 10), (2 * k + 2, xed, 'start', xed + 36)):
@@ -224,6 +224,38 @@ IMG_IMU = top_fig([(1, '#d7263d'), (3, '#1f6fd1'), (5, '#c99a00'), (9, '#1d1d1f'
 IMG_UART = top_fig([(7, '#1f9d55'), (11, '#ffffff'), (8, '#9e9e9e'), (10, '#9e9e9e')])
 IMG_AUDIO = top_fig([(4, '#7b5ea7'), (12, '#f9a825'), (35, '#7b5ea7'), (39, '#7b5ea7'), (40, '#7b5ea7')])
 IMG_TOUCH = top_fig([(17, TOUCH), (25, TOUCH), (29, TOUCH), (31, TOUCH)])
+def mic_pads_figure() -> Image.Image:
+    """The INMP441 label face, enlarged, with a tag beside each pad naming where its wire ends up."""
+    from PIL import ImageDraw, ImageFont
+    im = Image.open(P.HERE / 'sources' / 'inmp441-label-face-aitrip.png').convert('RGB').resize((832, 832), Image.LANCZOS)
+    W = 1500
+    canvas = Image.new('RGB', (W, 1040), 'white')
+    ox, oy = (W - 832) // 2, 104
+    canvas.paste(im, (ox, oy))
+    d = ImageDraw.Draw(canvas)
+    f = ImageFont.truetype(P.FONT, 38)
+    tags = {'SCK': ('并进 BCLK → 12', '#ef6c00'), 'WS': ('并进 LRC → 35', '#7b5ea7'), 'L/R': ('左 GND / 右 VDD', '#546e7a'),
+            'SD': ('38 号针', MIC), 'VDD': ('并进 3V3 → 17', '#d7263d'), 'GND': ('34 号针', '#1d1d1f')}
+    for pad, x, y in AB.MIC_PADS:
+        cx, cy = ox + x * 2, oy + y * 2
+        text, col = tags[pad]
+        tw = d.textlength(text, font=f)
+        if x == 208:   # middle pads: tag straight above (WS) or below (VDD) the board
+            tx, ty = cx - tw / 2, (16 if y < 200 else canvas.height - 70)
+            end = (cx, ty + 52) if y < 200 else (cx, ty - 8)
+        else:
+            tx = 20 if x < 208 else W - 20 - tw
+            ty = cy - 24
+            end = (tx + tw + 12, ty + 22) if x < 208 else (tx - 12, ty + 22)
+        d.line((end, (cx, cy)), fill=col, width=4)
+        d.ellipse((cx - 30, cy - 30, cx + 30, cy + 30), outline=col, width=7)
+        d.rounded_rectangle((tx - 12, ty - 8, tx + tw + 12, ty + 52), 12, fill='white', outline=col, width=4)
+        d.text((tx, ty), text, font=f, fill=col)
+    return canvas
+
+
+IMG_MIC_PADS = uri(mic_pads_figure(), 1100)
+IMG_MIC = top_fig([(12, '#f9a825'), (17, TOUCH), (34, MIC), (35, AMP), (38, MIC)])
 IMG_XIAO = uri(P.xiao_figure([('3V3', '17', TOUCH), ('GND', '25', TOUCH), ('D5', '29', TOUCH), ('D4', '31', TOUCH)]), 1100)
 IMG_ANT_PHOTO = top_fig([(1, '#ffd600')], [('A', P.IPEX_TOP, 22, 150), ('F', P.FAN_TOP, 22, 40)])
 
@@ -243,26 +275,32 @@ PIN_LEGEND_COUNT = [
 ]
 
 S_CHANGES = '''
-<section class="step" id="changes"><div class="stepno">先看一眼</div><h2>和 Pi 的版本比，变了什么</h2>
-<p>Radxa Cubie A7Z（瑞莎的小电脑板，换掉 Pi Zero W）装在头壳里原来 Pi 的位置：同样的四个螺丝孔（58 × 23 mm），排针在同一个地方。所以每根线都还够得着，只是有几根换了针。</p>
-<div class="card">
-<p><b>为什么要换针：</b></p>
+<section class="step" id="changes"><div class="stepno">先看一眼</div><h2>现在的装法：A7Z 在躯干顶上的背包座里</h2>
+<p>Radxa Cubie A7Z（瑞莎的小电脑板）不在头里了，装在躯干顶上、后面转换盒上方的白色背包座里（D-022）。所有线都从下面来，插在它的 40 针排针上：</p>
 <ul class="acts">
-<li>A7Z 和 Pi 的 1 号针在<b>不同的一头</b>。Pi 的指南从 microSD 卡那头数；在 A7Z 上要从天线插座那头数（第 1 步）。</li>
-<li>A7Z 的 8、10 号针是<b>调试串口</b>（debug console，开机信息和登录用，115200 波特率）。它们空着，出问题时可以夹一根 USB 转串口线救急。</li>
-<li>新的摄像头板（32 mm 宽）比原来的大，下沿正好在排针中段（7 到 34 号）插头末端前面约 2 mm。这一段的线要贴着插头末端往下折（第 6、7 步、合头壳那步），插头照常插。</li>
-<li>串口用里排的 7、11 号针：Radxa 的 UART2 就在这两根针上（8、10 号是调试串口）。功放地线用 39 号，离摄像头最远，插拔方便。</li>
-<li>IMU 四根线针号不变（红 1、蓝 3、黄 5、黑 9）：Pi 上 IMU 已经在 3、5 号针的硬件 I2C 上（2026-10-14 从 7、13 号挪回），A7Z 的硬件 I2C（TWI7）也在这两根针上。</li>
-<li><b>新加的触摸板</b>（XIAO ESP32-S3，读头壳里的五块铜箔）有四根线，全插里排：17（3.3 V）、25（GND）、29（SCL）、31（SDA）。外排 10 到 34 号的插头末端被摄像头挡着，所以只用里排（第 7 步，D-013）。</li>
-</ul></div>
+<li><b>躯干的 8 根</b>（从背包座底板的过线口上来）：5 V 线红 2、黑 6；IMU 红 1、蓝 3、黄 5、黑 9；串口绿 7、白 11。</li>
+<li><b>头里的 11 根</b>（从头的左后出线口顺着脖子下来）：功放 4、12、35、39、40；触摸板 17、25、29、31；麦克风 34、38。</li>
+</ul>
 <div class="card">
-<p><b>换针的线（小旗要改，第 2 步）：</b>串口绿 8 → 7，串口白 10 → 11，功放 GND 34 → 39。</p>
-<p><b>不变的线：</b>IMU 红 1、蓝 3、黄 5、黑 9，5 V 线红 2、黑 6，功放 Vin 4、LRC 35、DIN 40。</p>
-<p><b>新的线（焊在触摸板上时就贴好了小旗）：</b>触摸板 3.3 V 17，GND 25，SCL 29，SDA 31。</p>
-<p><b>功放 BCLK：</b>A7Z 上只有 12 号针能出 I2S0 的 BCLK，用普通杜邦插头，线贴着插头末端往下折（第 6 步）。</p>
+<p><b>板子在背包座里的方向：</b>元件面朝上，排针沿着后边（靠后面转换盒那边），<b>1 号针在机器人右端</b>，天线插座、风扇插座都在这一头；USB-C 口朝前。</p>
+<p>站在机器人后面往下看，就是下面总接线图里 A7Z 的样子：排针在下边，1 号针在右。下面各步的照片是板子竖着拿在手里的样子（1 号针在上），把照片顺时针转 90° 就是背包座里的方向。</p>
 </div>
-<p>Pi 的版本还在：<a href="BRINGUP.html">BRINGUP.html</a>。</p>
+<div class="card">
+<p><b>和以前装在头里的版本比：</b></p>
+<ul class="acts">
+<li>摄像头不再挡在排针前面（它换成了 USB 摄像头，D-023），插头都竖直插，线顺着插头前面往下进底板的过线口。</li>
+<li>新加两个麦克风（D-025），只多两根线下脖子：SD 插 38、GND 插 34。另外三根（SCK、WS、VDD）在头里并进功放和触摸板的线，不占新针（第 8 步）。</li>
+<li>针号和以前一样：IMU 1、3、5、9，串口 7、11，5 V 2、6，功放 4、12、35、39、40，触摸板 17、25、29、31。</li>
+</ul></div>
+<p>更早的 Pi 版本还在：<a href="BRINGUP.html">BRINGUP.html</a>。组装指南里对应的两步：Plug the torso wires onto the A7Z、Plug the 11 head wires onto the A7Z。</p>
 </section>'''
+
+S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知道每块板子的每根线插 A7Z 的哪根针。', f'''
+<p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 下边，1 号针在右端。左边是头里的板子（两个麦克风、功放、触摸板），右边是躯干里的（IMU、OpenRB、5 V 降压板）。</p>
+<div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的板子和线变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。上面的按钮按组筛选；“逐根接线”一根一根走，手机上会把两头放大。</div>
+<div style="margin:10px 0">{AB.html()}</div>
+<p>线的颜色：5 V 线、串口、IMU 线和触摸板四根是实际的颜色；功放和麦克风的杜邦线颜色随意，按小旗认。麦克风的 SCK、WS、VDD 画成直接到 12、35、17 号针：它们在头里已经并进功放 BCLK、功放 LRC 和触摸板 3V3 的线，和那根线共用一个插头。</p>
+''')
 
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
 <div class="warn"><b>A7Z 的 1 号针在天线插座那一头，不在 microSD 卡那一头。</b>照 Pi 的习惯从 microSD 卡那头数，整排都会插反，5 V 会插到信号针上。</div>
@@ -276,21 +314,19 @@ S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线�
 {figure(IMG_COUNT, 'A7Z 正面竖放：1、2 号针在天线插座那头，39、40 号在 microSD 那头', 'A7Z 正面（Radxa 官方照片）。针上的颜色是 Radxa 标的功能，不是线的颜色。', PIN_LEGEND_COUNT)}
 {figure(IMG_BOTTOM, 'A7Z 背面竖放：microSD 卡槽在下面，1 号针的孔在左上', 'A7Z 背面（Radxa 官方照片），绕竖着的长边翻过来：排针的孔到了左边。', [('pin', '1', '1 号针的孔：在天线插座那头，靠板子中间那一列。'), ('land', 'SD', 'microSD 卡槽：这一头是 39、40 号针。')])}
 </div>
-<h3>全部 17 根线插在哪里</h3>
+<h3>全部 19 根线插在哪里</h3>
 <p>和上面照片同一个方向：1 号针在上，里排在左，外排在右。灰色的针空着。</p>
-<figure class="narrow">{pin_map_svg()}<figcaption>紫色是功放的线，铜色是触摸板的线（颜色随意，按小旗认）。外排的灰色虚线框：摄像头下沿在这一段插头前面约 2 mm，线要贴着插头折。</figcaption></figure>
-<div class="card"><b>装进头壳以后：</b>板子竖着，排针在下边，1 号针和天线插座那头在机器人<b>左边</b>。组装指南的顺序是先把板子装上导轨，再插线：功放的五根和触摸板的四根在线夹和天线装好以后插，从躯干上来的八根在合头壳的时候插。</div>
+<figure class="narrow">{pin_map_svg()}<figcaption>紫色是功放的线，铜色是触摸板的线，粉色是麦克风的线（杜邦线颜色随意，按小旗认）。12、17、35 号针上的插头各带一根并进来的麦克风线。</figcaption></figure>
+<div class="card"><b>装进背包座以后：</b>元件面朝上，排针在后边，1 号针和天线插座那头在机器人<b>右边</b>。组装指南的顺序：先把板子放到四根柱子上、插好天线，再插躯干上来的八根（第 3 到 5 步），最后插头里下来的十一根（第 6 到 8 步）。</div>
 ''')
 
-S_FLAGS = step('flags', '第 2 步 · 2 分钟', '改三个小旗', '每个插头后面的小旗都写着 A7Z 上的针号。', f'''
-<p>小旗就是插头后面贴的那条纸胶带，上面写着针号。先改旗，再插线，插的时候只看旗。</p>
+S_FLAGS = step('flags', '第 2 步 · 5 分钟', '每根线贴小旗', '19 个插头后面都有一面小旗，写着它在 A7Z 上的针号。', f'''
+<p>小旗就是插头后面绕一圈的纸胶带，上面写着针号。先贴旗，再插线，插的时候只看旗。已经贴了的看一眼字还清楚就行。</p>
 <ol class="acts">
-<li>{tag('hand')}串口 <span class="wire" style="background:{GRN}"></span>绿线：8 改成 <b>7</b>。</li>
-<li>{tag('hand')}串口 <span class="wire" style="background:{WHT}"></span>白线：10 改成 <b>11</b>。</li>
-<li>{tag('hand')}功放 GND：34 改成 <b>39</b>。</li>
+<li>{tag('hand')}躯干上来的 8 根：5 V 线 <span class="wire" style="background:{RED}"></span>红 2、<span class="wire" style="background:{BLK}"></span>黑 6；IMU 红 1、蓝 3、黄 5、黑 9；串口 <span class="wire" style="background:{GRN}"></span>绿 7、<span class="wire" style="background:{WHT}"></span>白 11。</li>
+<li>{tag('hand')}头里下来的 11 根：功放 Vin 4、BCLK 12、LRC 35、GND 39、DIN 40；触摸板 3.3 V 17、GND 25、SCL 29、SDA 31；麦克风 GND 34、SD 38。</li>
 </ol>
-<p>IMU 四根线的小旗不变：红 1、蓝 3、黄 5、黑 9（没贴旗的现在贴上）。其余小旗也不变：5 V 线红 2、黑 6，功放 Vin 4、BCLK 12、LRC 35、DIN 40。</p>
-<p>触摸板的四根线是新的，焊线时已经贴好旗：17、25、29、31。看一眼四个旗都在，字看得清。</p>
+<p>以前写过 8、10（串口）或 34（功放地线）的旗是 Pi 时代的，现在串口是 7、11，功放地线是 39，34 归麦克风。</p>
 ''')
 
 S_POWER = step('power', '第 3 步 · 5 分钟', '5 V 电源线：红插 2 号针，黑插 6 号针', '5 V 线的红插头在 2 号针，黑插头在 6 号针，MR30 接头还断开着。', f'''
@@ -346,30 +382,30 @@ S_UART = step('uart', '第 5 步 · 5 分钟', 'OpenRB 串口：绿 7、白 11�
 </div></div>
 ''')
 
-S_AUDIO = step('audio', '第 6 步 · 5 分钟', '功放：Vin 4、BCLK 12、LRC 35、GND 39、DIN 40', '功放的五个插头都插好，BCLK 的线贴着插头折下来。', f'''
-<p>功放（MAX98357A）五根线在第 13 步已经焊好，插头后面有小旗。这一步只插线，不试声音。</p>
+S_AUDIO = step('audio', '第 6 步 · 5 分钟', '功放：Vin 4、BCLK 12、LRC 35、GND 39、DIN 40', '功放的五个插头都插好。', f'''
+<p>功放（MAX98357A）现在在头里黄色下壳的地板上，喇叭左边（D-026）。五根线顺着脖子下来，插头后面有小旗。BCLK 和 LRC 两根线里已经并进了麦克风的 SCK 和 WS（第 8 步），照常插。这一步只插线，不试声音。</p>
 <ol class="acts">
 <li>{tag('hand')}小旗 4（Vin，5 V）插<b>外排第 2 根</b>，4 号针。</li>
 <li>{tag('hand')}小旗 35（LRC）插<b>里排第 18 根</b>，倒数第 3 根，35 号针。</li>
 <li>{tag('hand')}小旗 39（GND，原来写 34）插<b>里排最后一根</b>，39 号针。</li>
 <li>{tag('hand')}小旗 40（DIN）插<b>外排最后一根</b>，40 号针。</li>
-<li>{tag('hand')}小旗 12（BCLK）插<b>外排第 6 根</b>，12 号针。插好后把线贴着插头末端往下折：头壳合上后摄像头板就在插头前面约 2 mm。</li>
+<li>{tag('hand')}小旗 12（BCLK）插<b>外排第 6 根</b>，12 号针。</li>
 </ol>
 <div class="warn"><b>4 号针是 5 V：</b>Vin 插错针会烧板子，插完再数一遍。</div>
 <div class="pair">
 {figure(IMG_AUDIO, '功放用的 4、12、35、39、40 号针', 'A7Z 正面，竖放。', [('pin', '4', 'Vin（5 V）'), ('pin', '12', 'BCLK'), ('pin', '35', 'LRC'), ('pin', '39', 'GND（原来 34）'), ('pin', '40', 'DIN')])}
 </div>
-<p>36、38 号针也空着（Radxa 的 I2S0 overlay 把它们设成 MCLK 和 DIN0，功放用不到）。</p>
+<p>36 号针空着（I2S0 的 MCLK，功放和麦克风都用不到）。38 号针是 I2S0 的 DIN0，给麦克风（第 8 步）。每个插头竖直插下去，线顺着插头前面往下进底板的过线口。</p>
 ''')
 
-S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25、SCL 29、SDA 31', '触摸板的四个插头插在里排的 17、25、29、31 号针上，每根线贴着插头往下折。', f'''
-<p>触摸板就是贴在头壳左内壁的 Seeed XIAO ESP32-S3（seeedstudio.com 买的那块小板，21 × 17.8 mm）。它读头壳里五块铜箔的电容，再通过 I2C（两根线的总线）报给 A7Z。九根线在组装指南的 “Stick the five copper touch pads and the XIAO inside the cap” 那一步已经焊好：五根去铜箔，四根带插头和小旗来这里。四根全在<b>里排</b>：</p>
+S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25、SCL 29、SDA 31', '触摸板的四个插头插在里排的 17、25、29、31 号针上。', f'''
+<p>触摸板就是贴在头盖内顶中间的 Seeed XIAO ESP32-S3（seeedstudio.com 买的那块小板，21 × 17.8 mm，D-026）。它读头盖里五块铜箔的电容，再通过 I2C（两根线的总线）报给 A7Z。五根线去铜箔，四根带插头和小旗顺着脖子下来。3V3 那根里已经并进了麦克风的 VDD（第 8 步）。四根全在<b>里排</b>：</p>
 <ol class="acts">
 <li>{tag('hand')}小旗 17（红线，3.3 V，XIAO 的 3V3 焊盘）插<b>里排第 9 根</b>，17 号针。</li>
 <li>{tag('hand')}小旗 25（黑线，GND，XIAO 的 GND 焊盘）插<b>里排第 13 根</b>，25 号针。</li>
 <li>{tag('hand')}小旗 29（蓝线，SCL，时钟线，XIAO 的 D5）插<b>里排第 15 根</b>，29 号针。</li>
 <li>{tag('hand')}小旗 31（绿线，SDA，数据线，XIAO 的 D4）插<b>里排第 16 根</b>，31 号针，紧挨着 29 下面。</li>
-<li>{tag('hand')}每根线在插头根部往下折，和 39 号的功放地线一样；再顺着 A7Z 正面往上、翻过板子上边沿，沿左内壁回到 XIAO。</li>
+<li>{tag('hand')}插头竖直，线顺着插头前面往下进底板的过线口，和其他头里下来的线走在一起。</li>
 </ol>
 <div class="warn"><b>17 号针是 3.3 V，XIAO 的 3V3 只能接 3.3 V。</b>小旗 17 绝不能插到 2、4 号针（5 V）上。插完从天线插座那头再数一遍：里排第 9 根。</div>
 <div class="pair">
@@ -377,12 +413,31 @@ S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25�
 {figure(IMG_XIAO, 'XIAO ESP32-S3 正面：3V3、GND、D4、D5 四个焊盘', 'XIAO ESP32-S3 正面（Seeed 官方引脚图，裁了中间一段）。USB-C 口在上。圈里的数字是这根线插的 A7Z 针号。', [('pin', '17', '3.3V-OUT 焊盘（右边第 3 个）→ A7Z 17 号针'), ('pin', '25', 'GND 焊盘（右边第 2 个）→ A7Z 25 号针'), ('pin', '29', 'D5 焊盘（左边第 6 个，I2C 的 SCL）→ A7Z 29 号针'), ('pin', '31', 'D4 焊盘（左边第 5 个，I2C 的 SDA）→ A7Z 31 号针')])}
 </div>
 <div class="card">
-<p><b>为什么是这四根：</b>原理图第 14 页，17 号针和 1 号针接在同一路 3.3 V（DCDC1）上，25 号针是地；29、31 号针是 PB2、PB3，Radxa 的引脚表上这两根的功能里有 TWI0-SCK 和 TWI0-SDA（A7Z 的 0 号 I2C）。外排被摄像头挡着，所以 I2C 放在里排的这一对空针上（D-013）。</p>
+<p><b>为什么是这四根：</b>原理图第 14 页，17 号针和 1 号针接在同一路 3.3 V（DCDC1）上，25 号针是地；29、31 号针是 PB2、PB3，Radxa 的引脚表上这两根的功能里有 TWI0-SCK 和 TWI0-SDA（A7Z 的 0 号 I2C）。当初头里的摄像头挡着外排，所以 I2C 放在里排的这一对空针上（D-013），现在照旧。</p>
 <p><b>电平：</b>XIAO 的引脚是 3.3 V，A7Z 这两根针也是 3.3 V（和 7、11 号同一组 PB 引脚），直接对接。</p>
 </div>
 ''')
 
-S_CHECK = step('check', '第 8 步 · 10 分钟', '通电前检查，再接 MR30', '万用表确认 5 V 没有跑到信号线上，照片对过一遍，然后才接 MR30 通电。', f'''
+S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38', '两个麦克风的 GND 插在 34 号针，SD 插在 38 号针；SCK、WS、VDD 已经在头里并进 12、35、17 号针的线。', f'''
+<p>两个 INMP441 麦克风装在头盖两侧的耳朵里（D-025）。焊接和并线在组装指南第 9 章（mics、mic-splice 两步）。走到这里时，每个麦克风焊盘接哪里是这样的：</p>
+<ol class="acts">
+<li>{tag('hand')}小旗 34（麦克风 GND）插<b>外排第 17 根</b>，34 号针。</li>
+<li>{tag('hand')}小旗 38（麦克风 SD，I2S0 DIN0）插<b>外排第 19 根</b>，38 号针，紧挨着最后一根 40 号（功放 DIN）。</li>
+<li>{tag('hand')}SCK、WS、VDD 没有自己的插头：它们在头盖左后角已经焊进功放 BCLK（12）、功放 LRC（35）和触摸板 3V3（17）的线，第 6、7 步插那三根线时就一起接上了。</li>
+</ol>
+<div class="warn"><b>34 和 38 只隔一根针（36 号空着）。</b>插完从 40 号往回数：外排最后一根是 40，倒数第二根是 38，倒数第三根空，倒数第四根是 34。</div>
+<div class="pair">
+{figure(IMG_MIC, 'A7Z 正面竖放：麦克风用到的 12、17、34、35、38 号针', 'A7Z 正面，竖放。34、38 是麦克风自己的两根；12、17、35 是并线共用的。', [('pin', '34', '麦克风 GND（自己的插头）'), ('pin', '38', '麦克风 SD（自己的插头）'), ('pin', '12', '功放 BCLK + 麦克风 SCK'), ('pin', '35', '功放 LRC + 麦克风 WS'), ('pin', '17', '触摸板 3V3 + 麦克风 VDD')])}
+{figure(IMG_MIC_PADS, 'INMP441 印字那面：上排 SCK、WS、L/R，下排 SD、VDD、GND', 'INMP441 印字那面（卖家 AITRIP 的照片，直径 13.4 mm）。中间的孔是声孔，这一面贴头盖内壁。框里写的是每个焊盘最后接到哪。', [('pin', 'SD', '→ A7Z 38 号针（两个麦克风共用）'), ('pin', 'GND', '→ A7Z 34 号针'), ('pin', 'SCK', '→ 并进功放 BCLK → 12 号针'), ('pin', 'WS', '→ 并进功放 LRC → 35 号针'), ('pin', 'VDD', '→ 并进触摸板 3V3 → 17 号针（3.3 V）'), ('pin', 'L/R', '左耳短线到 GND，右耳短线到 VDD')])}
+</div>
+<div class="card">
+<p><b>焊的时候：</b>线焊在另一面（有金属小方块那面），那面没有字。板子绕竖直的轴翻过去，左右对调：缺口朝上看金属面，上排从左到右是 L/R、WS、SCK，下排是 GND、VDD、SD。焊之前对着印字面认一遍。</p>
+<p><b>为什么两个麦克风共用一根 SD：</b>I2S 一根数据线能带左右两个声道。L/R 焊盘接 GND 的那个在左声道说话，接 VDD 的在右声道说话，A7Z 录下来就是一个立体声文件。</p>
+<p><b>可选的第三个麦克风</b>（头盖后壁）：它的 SD 线贴小旗 10，<b>先别插</b>。10 号针现在是调试串口的接收脚，要等 I2S0 DIN3 的设置试过以后才用（D-026 附录）。</p>
+</div>
+''')
+
+S_CHECK = step('check', '第 9 步 · 10 分钟', '通电前检查，再接 MR30', '万用表确认 5 V 没有跑到信号线上，照片对过一遍，然后才接 MR30 通电。', f'''
 <h3>万用表蜂鸣档（MR30 断开，不通电）</h3>
 <p>排针上插满了插头，表笔碰不到针，所以都在线的另一头量。MR30 指 A7Z 这边的 MR30 插头。</p>
 <ol class="acts">
@@ -392,24 +447,26 @@ S_CHECK = step('check', '第 8 步 · 10 分钟', '通电前检查，再接 MR30
 <li>{tag('hand')}IMU 板上的 SDA、SCL 两个孔，分别和 MR30 红线针：<b>不响</b>。</li>
 <li>{tag('hand')}XIAO 的 3V3 焊盘和 MR30 红线针：<b>不响</b>（不响才说明 17 号线没插到 5 V 上）。XIAO 的 3V3 焊盘和 IMU 板的 VIN 孔：<b>响</b>（17 号和 1 号是同一路 3.3 V）。</li>
 <li>{tag('hand')}XIAO 的 GND 焊盘和 MR30 黑线针：<b>响</b>。XIAO 的 D4、D5 焊盘，分别和 MR30 红线针：<b>不响</b>。</li>
+<li>{tag('hand')}左耳麦克风的 VDD 焊盘和 XIAO 的 3V3 焊盘：<b>响</b>。左耳麦克风的 GND 焊盘和 MR30 黑线针：<b>响</b>。</li>
+<li>{tag('hand')}左耳麦克风的 SD、SCK、WS 焊盘，分别和 MR30 红线针：<b>不响</b>。VDD 焊盘和 MR30 红线针：<b>不响</b>（麦克风只能吃 3.3 V）。</li>
 </ol>
 <p>有一条不对，就是插偏了一根针：回第 1 步再数一遍。</p>
 <h3>照着数一遍，拍张照片发给我</h3>
 <div class="card">
-<p><b>里排，从天线插座那头往下：</b>红、蓝、黄、绿、黑、白（第 1 到 6 根），第 7、8 根空，第 9 根触摸板 3.3 V（17），第 10 到 12 根空，第 13 根触摸板 GND（25），第 14 根空，第 15 根触摸板 SCL（29），第 16 根触摸板 SDA（31），第 17 根空，第 18 根 LRC，第 19 根空，第 20 根 GND。里排一共 12 根线。</p>
-<p><b>外排，从天线插座那头往下：</b>红（5 V）、Vin、黑（5 V 地），第 4、5 根空（调试串口），第 6 根 BCLK，第 7 到 19 根空，第 20 根 DIN。外排一共 5 根线。</p>
-<p><b>合计 17 根：</b>里排 12 根加外排 5 根。数出来不是 17，先别通电。</p>
+<p><b>里排，从天线插座那头数：</b>红、蓝、黄、绿、黑、白（第 1 到 6 根），第 7、8 根空，第 9 根触摸板 3.3 V（17），第 10 到 12 根空，第 13 根触摸板 GND（25），第 14 根空，第 15 根触摸板 SCL（29），第 16 根触摸板 SDA（31），第 17 根空，第 18 根 LRC，第 19 根空，第 20 根功放 GND。里排一共 12 根线。</p>
+<p><b>外排，从天线插座那头数：</b>红（5 V）、Vin、黑（5 V 地），第 4、5 根空（调试串口），第 6 根 BCLK，第 7 到 16 根空，第 17 根麦克风 GND（34），第 18 根空，第 19 根麦克风 SD（38），第 20 根 DIN。外排一共 7 根线。</p>
+<p><b>合计 19 根：</b>里排 12 根加外排 7 根。数出来不是 19，先别通电。</p>
 </div>
 <h3>通电</h3>
 <ol class="acts">
 <li>{tag('hand')}两个 USB-C 口都没插线，再接上 MR30。</li>
 <li>{tag('hand')}A7Z 的电源灯亮绿色（Radxa 文档：“若 Cubie A7Z 供电正常，电源指示灯将显示为绿色”）。IMU 上的小绿灯也亮。</li>
 <li>{tag('hand')}万用表直流电压档，量功放的 Vin 和 GND 两个孔：4.9 到 5.1 V。超过 5.25 V 马上断开 MR30。</li>
-<li>{tag('hand')}再量 XIAO 的 3V3 和 GND 两个焊盘：3.2 到 3.4 V。低于 3.2 V 就断开 MR30，告诉我（触摸板吃电太多，把 3.3 V 拉低了）。</li>
+<li>{tag('hand')}再量 XIAO 的 3V3 和 GND 两个焊盘：3.2 到 3.4 V。低于 3.2 V 就断开 MR30，告诉我（触摸板和麦克风吃电太多，把 3.3 V 拉低了）。</li>
 </ol>
 ''')
 
-S_SOFT = step('software', '第 9 步 · 10 分钟', '打开 I2C、串口和 I2S', 'A7Z 上有 7 号 I2C 总线和 UART2 的串口，IMU 在 7 号总线上答 4a。', f'''
+S_SOFT = step('software', '第 10 步 · 10 分钟', '打开 I2C、串口和 I2S', 'A7Z 上有 7 号 I2C 总线和 UART2 的串口，IMU 在 7 号总线上答 4a。', f'''
 <p>这三个接口默认是关着的，要在 Radxa 的设置工具 rsetup 里打开（overlay，设备树叠加，告诉系统这几根针接了什么）。</p>
 <ol class="acts">
 <li>{tag('mac')}ssh 登录 A7Z。Radxa 系统的默认用户是 radxa（文档里的命令提示符是 <code>radxa@cubie-a7z</code>）；装系统时改过名字就换成你的。
@@ -420,7 +477,7 @@ S_SOFT = step('software', '第 9 步 · 10 分钟', '打开 I2C、串口和 I2S'
 <ul>
 <li><b>Enable TWI7</b>：IMU 的 I2C，3、5 号针。</li>
 <li><b>Enable UART2</b>：OpenRB 串口，7、11 号针。</li>
-<li><b>Enable I2S0</b>：功放的声音，12、35、40 号针。</li>
+<li><b>Enable I2S0</b>：功放和麦克风的声音，12、35、40 号针出声，38 号针收声。</li>
 </ul>
 触摸板的 TWI0（29、31 号针）不在这个列表里：它用我们自己写的配置，已经装在这块 A7Z 上，见下面的框。<br>
 Radxa 文档的原话：“进入 <code>rsetup</code> 的 <code>Overlay</code> -&gt; <code>Manage overlays</code> 勾选 <code>Enable TWI7</code> 选项，勾选后重启系统”。</li>
@@ -447,7 +504,9 @@ UART2 应该叫 <code>/dev/ttyAS2</code>：Radxa 文档里 UART4 叫 <code>/dev/
 <p>别在 rsetup 里装 Radxa 的 TWI0。要撤掉：删掉这个文件，跑 <code>sudo u-boot-update</code>，重启。</p></div>
 <div class="pend"><b>声音：还没在这块板上试过</b>
 <p>Radxa 的 Enable I2S0 overlay 做的是一张两声道的“空壳”声卡（dummy sound card），它自己的说明写着 “This overlay is only for demonstration purpose. It does not support any specific hardware device.”。MAX98357A 上电就工作，系统不用给它写任何设置（不需要 codec 驱动），所以预计这张空壳声卡能带它，但还没验证。</p>
-<p>喇叭试音先不做：那道 −3 dB 的音量上限（D-012）在 A7Z 上还没设好，也等 12 号针的接法定下来。到时由我通过 ssh 来做。</p></div>
+<p>喇叭试音先不做：那道 −3 dB 的音量上限（D-012）在 A7Z 上还没设好。到时由我通过 ssh 来做。</p></div>
+<div class="pend"><b>麦克风：还没录过音</b>
+<p>重启以后在 A7Z 上跑 <code>arecord -l</code>，列表里要有一个 I2S0 的录音设备（capture）。如果没有，说明 Radxa 的 I2S0 overlay 只开了放音，录音要另写一份设备树配置；这一步由我通过 ssh 来做，插线不受影响。</p></div>
 <details><summary>不成功时</summary><ul>
 <li>表里全是 <code>--</code>，IMU 绿灯不亮：红线或黑线插错了针，回第 4 步。</li>
 <li>表里全是 <code>--</code>，绿灯亮：蓝、黄插反或插偏了一根。再数：蓝是里排第 2 根，黄是里排第 3 根。都对的话把 IMU 那头的白色小插头换一个插座。</li>
@@ -465,13 +524,16 @@ SOURCES_PINS = '''
 <li>调试串口 Pin8/Pin10、115200：Radxa 文档 “串口调试”（radxa-a7z-uart-debug.md）。电源灯：“硬件接口”（a7z-hardware-info.md）。</li>
 <li>5 V 和 USB-C：Radxa Cubie A7Z 原理图 V1.11 第 13 页（J16 VBUS → FB2 60R 3A → VCC5V0_SYS）、第 14 页（J11 的 2、4 号是 VCC5V0_SYS，1 号 DCDC1，8/10 号 CPUX-TX/RX）、第 12 页（USB 3.1 口 VBUS 经 U4）。</li>
 <li>摄像头板和插头的距离：组装指南 CAD（guide/print/world/camera_board.stl 和排针插头的位置），背面元件范围按 Radxa 背面照片，2026-10-15 核对（guide/print/face-a7z/pin-clearance/pin-clearance.png）。接线颜色和小旗沿用 BRINGUP.html 第 4、11、12、13 步。背包电源：DECISIONS.md D-010。</li>
-<li>核对日期：2026-10-15。</li></ul></section>'''
+<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice 两步。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
+<li>总接线图：bringup/a7z/a7z_bench.py，用 ~/code/wiring-kit 画（点板子只亮它的线）。</li>
+<li>核对日期：2026-10-15，背包座和麦克风部分 2026-10-25。</li></ul></section>'''
 
-PINS_BODY = S_CHANGES + S_COUNT + S_FLAGS + S_POWER + S_IMU + S_UART + S_AUDIO + S_TOUCH + S_CHECK + S_SOFT + SOURCES_PINS
-PINS_LEAD = ('<p class="lead">头里的电脑从 Pi Zero W 换成 Radxa Cubie A7Z。这一页一步一步讲 40 针排针上每根杜邦线插哪里，和插好以后要打开的接口。'
+PINS_BODY = S_CHANGES + S_MAP + S_COUNT + S_FLAGS + S_POWER + S_IMU + S_UART + S_AUDIO + S_TOUCH + S_MIC + S_CHECK + S_SOFT + SOURCES_PINS
+PINS_LEAD = ('<p class="lead">MicroDuck 的电脑 Radxa Cubie A7Z 装在躯干顶上的背包座里。这一页先用一张总接线图讲每个元器件怎么连到它，再一步一步讲 40 针排针上 19 根杜邦线各插哪里，和插好以后要打开的接口。'
              '全程断电插线，最后检查完才通电。</p>')
-PINS_NAV = [('changes', '变了什么'), ('count', '1 认针'), ('flags', '2 改小旗'), ('power', '3 5 V'), ('imu', '4 IMU'),
-            ('uart', '5 串口'), ('audio', '6 功放'), ('touch', '7 触摸板'), ('check', '8 检查'), ('software', '9 打开接口')]
+PINS_NAV = [('changes', '现在的装法'), ('map', '总接线图'), ('count', '1 认针'), ('flags', '2 小旗'), ('power', '3 5 V'), ('imu', '4 IMU'),
+            ('uart', '5 串口'), ('audio', '6 功放'), ('touch', '7 触摸板'), ('mic', '8 麦克风'), ('check', '9 检查'),
+            ('software', '10 打开接口')]
 
 # ================================================================ PAGE 2: A7Z-ANTENNA.html
 ANT_LEGEND = [
