@@ -79,7 +79,7 @@ modified since. Four hardware blocks:
 
 1. Find the item (orange printed part) with the head camera: detector works, camera recalibration pending.
 2. Walk to it: walks straight with the heading hold; stops and arcs on command; falls still happen.
-3. Crouch with the beak open and keep balance: Pollen's closed-beak crouch shown; the open-beak crouch policy is
+3. Crouch with the beak open and keep balance: Pollen's ground-pick policy shown with the beak closed (a forward bend at the hips, trunk tilted 37-38 deg, not a squat); the open-beak crouch policy is
    the next training target.
 4. Pick it up with the beak: current-mode grip holds a finger; no object picked up by the robot yet.
 
