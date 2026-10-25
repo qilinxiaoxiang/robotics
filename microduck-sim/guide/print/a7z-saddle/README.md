@@ -8,7 +8,8 @@ the bench, lid over the heatsink only, AC019 antenna on the front wall inner fac
 The approved design is `DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner
 runs it after each job). Every number is in the `build_saddle.py` docstring; `renders/saddle.png` shows the result.
 Concept and history: `flip-concept-20261025/`, `../a7z-slice-20261022/`. Interim print colour orange (white PETG out).
-Not yet done for V2: `to_guide_world.py` copy, routes/`route_check_saddle.py`, print gate, release slicing, guide chapters.
+V2 release: `../release-V1.35/` (Orange plate, body + lid + tray; `scripts/run_v135.sh`). Routes: `route_check_saddle.py --write`
+(0 mid-route penetrations). Head sweep on the final outline: `head_sweep_v2.out` (HOME 31.7 mm, 63 of 637 trained poses hit).
 
 ## Files
 - `build_saddle.py`: the V2 geometry (every number in its docstring); run under the bounded runner:
@@ -34,14 +35,14 @@ Not yet done for V2: `to_guide_world.py` copy, routes/`route_check_saddle.py`, p
   wedges where the vertical outer face meets the shell's sloping roof seat; they are listed as `thinWallAllowances` in
   `build.json` for the release rows.
 
-## Board position (V1.29, history; V2 numbers are in build_saddle.py)
+## Board position (V1.29, history; V2 numbers are in build_saddle.py: board rear edge x -41.7, header housings x -17.74..-12.66, pin 1 at +y)
 Header edge x -42.8 (0.6 off the rear wall inner face), pin-1 end at -y, USB-C/HDMI edge x -12.8. Moved 0.3 mm forward
 on 2026-10-22 after the route check: the AC019 strip on the rear wall ends at |y| 21 inside the Dupont housing span, so
 its 1.13 mm pigtail runs between the wall and the housings (1.56 mm, 1.26 over the strip) to |y| 25.4 and on to the IPEX
 socket. The floor passage (x -21..-5, |y| <= 16) runs out under the front wall as a 32 x 4.5 mm slot: the neck bundle
 leaves the roof opening forward to the neck through it (the wall above is a bridge printed on support).
 
-## Release and gate (V1.29; V2 release pending)
+## Release and gate (V2: `../release-V1.35/`, Orange body + lid + tray, X1C 1h38m 27.6 g, Elegoo 1h43m 28.1 g, verify passed; print gate passed 2026-10-25 on guide revision guide-20261025-saddle-v2, `guide/content/interference-audit/gate-receipt.json`; the V1.29 text below is history)
 `../release-V1.29/` (scripts/run_v129.sh: manifest, prepare, both slices, reviews, native review, package, verify, parts
 sheet, delivery folder). Body upright with the domed floor on tree support (2.3 mm2 own contact, no_brim), lid upside
 down on its plate; X1C 1h34m 29.9 g, Elegoo 1h41m 30.4 g. Print gate 2026-10-22 passed with chapter 7 of the guide

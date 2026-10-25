@@ -67,12 +67,11 @@
    "title": "Gather the electronics and kit cables",
    "bench": true,
    "inventory": true,
-   "drawnParts": 43,
+   "drawnParts": 42,
    "add": [
     "imu_board",
     "sd_a7z_pcb",
-    "sd_heatsink",
-    "sd_fan",
+    "sd_heatsink_6530b",
     "openrb_board"
    ],
    "approach": {},
@@ -83,10 +82,10 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 27 new parts",
+   "title": "Print the 28 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 60,
+   "drawnParts": 61,
    "add": [
     "shell_left",
     "shell_right",
@@ -114,7 +113,8 @@
     "foot",
     "right_foot",
     "saddle_body",
-    "saddle_lid"
+    "saddle_lid",
+    "saddle_tray"
    ],
    "approach": {},
    "group": false,
@@ -1381,44 +1381,12 @@
    "pathCollisions": []
   },
   {
-   "step": "saddle-antenna",
-   "chapter": "saddle",
-   "title": "Stick the Wi-Fi antenna on the inside of the saddle rear wall",
-   "bench": false,
-   "inventory": false,
-   "drawnParts": 65,
-   "add": [
-    "sd_antenna"
-   ],
-   "approach": {
-    "sd_antenna": [
-     [
-      4,
-      0,
-      25
-     ],
-     [
-      4,
-      0,
-      0
-     ]
-    ]
-   },
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
    "step": "saddle-board",
    "chapter": "saddle",
-   "title": "Lower the A7Z onto the four posts and plug the antenna",
-   "bench": false,
+   "title": "On the bench: thermal pad and the 6530B heatsink on the A7Z, the tray under it, four screws from below",
+   "bench": true,
    "inventory": false,
-   "drawnParts": 80,
+   "drawnParts": 18,
    "add": [
     "sd_a7z_pcb",
     "sd_soc_a733",
@@ -1434,7 +1402,99 @@
     "sd_csi_connector",
     "sd_pcie_fpc",
     "sd_uboot_button",
-    "sd_underside_smd"
+    "sd_underside_smd",
+    "sd_thermal_pad_6530b",
+    "sd_heatsink_6530b",
+    "saddle_tray"
+   ],
+   "approach": {
+    "sd_thermal_pad_6530b": [
+     0,
+     0,
+     15
+    ],
+    "sd_heatsink_6530b": [
+     0,
+     0,
+     25
+    ],
+    "saddle_tray": [
+     0,
+     0,
+     -15
+    ]
+   },
+   "group": false,
+   "cables": [
+    "fan-lead",
+    "antenna-coax"
+   ],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "saddle",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-antenna",
+   "chapter": "saddle",
+   "title": "Stick the Wi-Fi antenna on the inside of the saddle front wall",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 65,
+   "add": [
+    "sd_antenna"
+   ],
+   "approach": {
+    "sd_antenna": [
+     [
+      -4,
+      0,
+      25
+     ],
+     [
+      -4,
+      0,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "saddle-drop",
+   "chapter": "saddle",
+   "title": "Lower the tray with the A7Z into the saddle and lead the pigtail to the antenna",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 83,
+   "add": [
+    "sd_a7z_pcb",
+    "sd_soc_a733",
+    "sd_ram",
+    "sd_pmic_area",
+    "sd_wifi_module_fcu760k",
+    "sd_usb_c_otg_dp",
+    "sd_usb_c_power",
+    "sd_micro_hdmi",
+    "sd_fan_connector",
+    "sd_ipex_socket",
+    "sd_microsd_socket",
+    "sd_csi_connector",
+    "sd_pcie_fpc",
+    "sd_uboot_button",
+    "sd_underside_smd",
+    "sd_thermal_pad_6530b",
+    "sd_heatsink_6530b",
+    "saddle_tray"
    ],
    "approach": {
     "sd_a7z_pcb": [
@@ -1511,6 +1571,21 @@
      0,
      0,
      30
+    ],
+    "sd_thermal_pad_6530b": [
+     0,
+     0,
+     30
+    ],
+    "sd_heatsink_6530b": [
+     0,
+     0,
+     30
+    ],
+    "saddle_tray": [
+     0,
+     0,
+     30
     ]
    },
    "group": true,
@@ -1529,17 +1604,17 @@
   {
    "step": "saddle-card",
    "chapter": "saddle",
-   "title": "Push the microSD card in through the side slot",
+   "title": "Push the microSD card in through the right-hand side slot",
    "bench": false,
    "inventory": false,
-   "drawnParts": 81,
+   "drawnParts": 84,
    "add": [
     "sd_microsd_card"
    ],
    "approach": {
     "sd_microsd_card": [
      0,
-     20,
+     -20,
      0
     ]
    },
@@ -1556,43 +1631,12 @@
    "pathCollisions": []
   },
   {
-   "step": "saddle-copper",
-   "chapter": "saddle",
-   "title": "Put the thermal pad and the copper heatsink on the processor",
-   "bench": false,
-   "inventory": false,
-   "drawnParts": 83,
-   "add": [
-    "sd_thermal_pad",
-    "sd_heatsink"
-   ],
-   "approach": {
-    "sd_thermal_pad": [
-     0,
-     0,
-     15
-    ],
-    "sd_heatsink": [
-     0,
-     0,
-     15
-    ]
-   },
-   "group": false,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
    "step": "saddle-plugs",
    "chapter": "saddle",
    "title": "Plug the torso wires onto the A7Z",
    "bench": false,
    "inventory": false,
-   "drawnParts": 85,
+   "drawnParts": 86,
    "add": [
     "sd_dupont_housings",
     "sd_usb_c_plug"
@@ -1605,12 +1649,12 @@
     ],
     "sd_usb_c_plug": [
      [
-      9,
+      -9,
       0,
-      25
+      0
      ],
      [
-      9,
+      0,
       0,
       0
      ]
@@ -1623,36 +1667,6 @@
     "uart"
    ],
    "drawnButNotPresent": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "saddle-fan",
-   "chapter": "saddle",
-   "title": "Snap the fan into the saddle lid on the bench",
-   "bench": true,
-   "inventory": false,
-   "drawnParts": 2,
-   "add": [
-    "saddle_lid",
-    "sd_fan"
-   ],
-   "approach": {
-    "sd_fan": [
-     0,
-     0,
-     -12
-    ]
-   },
-   "group": false,
-   "cables": [
-    "fan-lead"
-   ],
-   "drawnButNotPresent": [],
-   "benchSubassembly": "saddle",
-   "robotContextDrawnWithBench": [],
    "pose": null,
    "flex": null,
    "alternatives": {},
@@ -1884,7 +1898,7 @@
    "title": "Set the head on ID13 and connect 13 \u2192 14",
    "bench": false,
    "inventory": false,
-   "drawnParts": 92,
+   "drawnParts": 93,
    "add": [
     "head_bottom",
     "mouth_sliding_ring",
@@ -1947,7 +1961,7 @@
    "title": "Lower the jaw support with ID15 and screw it down",
    "bench": false,
    "inventory": false,
-   "drawnParts": 94,
+   "drawnParts": 95,
    "add": [
     "jaw_support",
     "motor15"
@@ -1980,7 +1994,7 @@
    "title": "Screw the jaw to the ID15 horn",
    "bench": false,
    "inventory": false,
-   "drawnParts": 94,
+   "drawnParts": 95,
    "add": [],
    "approach": {},
    "group": false,
@@ -2018,7 +2032,7 @@
    "title": "Tape the speaker face down into its pocket and the amplifier between its rails",
    "bench": false,
    "inventory": false,
-   "drawnParts": 98,
+   "drawnParts": 99,
    "add": [
     "speaker_tape",
     "speaker",
@@ -2125,7 +2139,7 @@
    "title": "Set the face with the camera on the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 102,
+   "drawnParts": 103,
    "add": [
     "face_panel",
     "eye_trim",
@@ -2363,7 +2377,7 @@
    "title": "Run the 11 (or 12 with the optional back microphone) head wires and the camera cable through the left-rear exit, clamp them in the exit and run them down the left side of the neck to the saddle",
    "bench": false,
    "inventory": false,
-   "drawnParts": 103,
+   "drawnParts": 104,
    "add": [
     "exit_clamp_loose"
    ],
@@ -2419,7 +2433,7 @@
    "title": "Plug the 11 head wires onto the A7Z",
    "bench": false,
    "inventory": false,
-   "drawnParts": 103,
+   "drawnParts": 104,
    "add": [],
    "approach": {},
    "group": false,
@@ -2446,7 +2460,7 @@
    "title": "Lower the cap onto the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 116,
    "add": [
     "head_cap",
     "touch_pad_l1",
@@ -2556,7 +2570,7 @@
    "title": "Screw the head shut",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2571,7 +2585,7 @@
    "title": "Unpowered checks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2585,7 +2599,7 @@
    "title": "Set up the A7Z software",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2599,7 +2613,7 @@
    "title": "First power: converter readback, bus scan, Shutdown 52 and voltage-limit check",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2615,10 +2629,10 @@
   {
    "step": "sensors",
    "chapter": "power-up",
-   "title": "Check the IMU, Wi-Fi, speaker, microphones, touch pads and the fan",
+   "title": "Check the IMU, Wi-Fi, speaker, microphones, touch pads and the heatsink blower",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2643,28 +2657,15 @@
   {
    "step": "saddle-lid",
    "chapter": "power-up",
-   "title": "Close the saddle with its lid and the running fan",
+   "title": "Close the heatsink end of the saddle with its lid",
    "bench": false,
    "inventory": false,
    "drawnParts": 117,
    "add": [
-    "saddle_lid",
-    "sd_fan"
+    "saddle_lid"
    ],
    "approach": {
     "saddle_lid": [
-     [
-      -40,
-      0,
-      12
-     ],
-     [
-      0,
-      0,
-      12
-     ]
-    ],
-    "sd_fan": [
      [
       -40,
       0,

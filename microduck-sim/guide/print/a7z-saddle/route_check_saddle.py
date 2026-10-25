@@ -25,6 +25,7 @@ import argparse
 import base64
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -38,9 +39,8 @@ GUIDE_DATA = MS / 'guide/data/guide-data.json'
 WORLD = MS / 'guide/print/world'
 PINS = json.loads((HERE / 'build/pins.json').read_text())['pinTop']
 
-Z_PIN, Z_HOUSING, Z_SIDE = 57.1, 63.1, 67.0
-X_SIDE = -40.0         # sideways run behind the fan: 3 mm behind the lid bar ends (x -37), 2 mm in front of the lid lip (x -42)
-X_DROP = -9.8          # between the board front edge (-13.1) and the front wall inner face (-6.6)
+Z_PIN, Z_HOUSING, Z_OVER = 58.1, 64.1, 66.5   # V2 (D-028): pin tops, housing tops, and the height at which a wire swings over the open header strip
+X_DROP = -9.8          # between the board front edge (-12.0) and the front wall inner face (-6.6); the tray ends at x -11.7 and is notched |y| < 16
 
 # Torso-side / head-side anchors: the last kept point of each existing route (exact match required), the rest is rebuilt.
 ANCHOR = {
@@ -60,7 +60,7 @@ ANCHOR = {
 PIN = {'imu': 3, 'uart': 7, 'pi-lead': 2, 'audio_amp_vin_pin04': 4, 'audio_amp_bclk_pin12': 12, 'audio_amp_lrc_pin35': 35,
        'audio_amp_gnd_pin39': 39, 'audio_amp_din_pin40': 40, 'touch_a7z_pin17': 17, 'touch_a7z_pin25': 25,
        'touch_a7z_pin29': 29, 'touch_a7z_pin31': 31}
-RADIUS = {'imu': 0.8, 'uart': 0.7, 'pi-lead': 0.9, 'fan_lead': 0.7, 'cam_usb': 1.5}
+RADIUS = {'imu': 0.8, 'uart': 0.7, 'pi-lead': 0.9, 'fan_lead': 0.7, 'cam_usb': 1.5, 'antenna_coax': 0.57}
 RADIUS.update({k: 0.65 for k in PIN if k.startswith(('audio_', 'touch_'))})
 VIA_NECK = [k for k in PIN if k.startswith(('audio_', 'touch_'))]      # head -> neck bundle -> saddle
 
@@ -78,17 +78,12 @@ HEAD_JOIN = {   # from the anchor into HEAD_DOWN[0]
 def lane_tail(pin: int) -> list:
     """Saddle tail in route order: from the bottom of the drop column (z 46) to the pin top."""
     px, py, _ = PINS[str(pin)]
-    if pin <= 12:
-        ly = -21.0
-        pts = [[X_DROP, -9.0, 46.0], [X_DROP, -9.5, 50.0], [X_DROP, -14.0, 54.0], [-11.0, -19.0, 57.5], [-15.0, ly, 59.0]]
-    else:
-        ly = 21.0
-        pts = [[X_DROP, -1.0, 46.0], [X_DROP, -1.0, 50.0], [X_DROP, 0.0, 54.5], [X_DROP, 6.0, 58.0], [-11.0, 15.0, 58.5], [-15.0, ly, 59.0]]
-    pts += [[-22.0, ly, 59.0], [-30.0, ly, 61.0], [-35.5, ly, 64.5]]
-    if abs(py - ly) >= 2.0:
-        pts.append([X_SIDE, ly, Z_SIDE])
-    # out of the housing top the wire leans straight back (odd pins sit 1.3 mm behind the lid bar ends at x -37)
-    pts += [[X_SIDE, py, Z_SIDE], [(px + X_SIDE) / 2, py, 65.0], [px, py, Z_HOUSING], [px, py, Z_PIN]]
+    # V2: the header is at the front edge under the open strip. The wire rises in the drop column (torso wires at y -9, head wires
+    # at y -1, both inside the floor cut |y| <= 16), swings sideways at z 66.5 over the housing tops (64.1) to its pin column and
+    # goes straight down into the housing. Pins 1-12 (torso wires) are at y 24.1..11.4, pins 17-40 (head wires) at y 4.1..-24.1.
+    y0 = -9.0 if pin <= 12 else -1.0
+    yc = max(-14.0, min(14.0, py))
+    pts = [[X_DROP, y0, 46.0], [X_DROP, y0, 52.0], [X_DROP, yc, 60.0], [X_DROP, py, Z_OVER], [px, py, Z_OVER], [px, py, Z_HOUSING], [px, py, Z_PIN]]
     return pts
 
 
@@ -103,84 +98,71 @@ def torso_join(rid: str) -> list:
     return [[-8.5, -8.0, 45.0]] if PIN[rid] > 12 else []
 
 
+PIN_RE = re.compile(r'pin(\d+)$')
+
+
+def pin_of(rid: str) -> int | None:
+    if rid in PIN:
+        return PIN[rid]
+    m = PIN_RE.search(rid)
+    return int(m.group(1)) if m else None
+
+
 def build(routes: dict) -> dict:
+    """V2 (D-028, 2026-10-25): every route that ends on a header pin keeps its drawn path down to the bottom of the drop column
+    (X_DROP, -9 or -1, 46), where the V1.29 saddle tail began, and gets the V2 tail from there (lane_tail). cam_usb, fan_lead
+    and antenna_coax are rebuilt for the rear-window plug, the 6530B blower and the front-wall antenna."""
     R = routes['routes']
-    neck = R['bundle_neck']
-    assert neck[0] == [-16.0, 3.0, 41.0] and neck[1] == [-6.0, -14.0, 43.5], neck[:2]
-    neck_down = list(reversed(neck[1:]))        # (30, -27, 105) ... (10, -21, 42.5), (-6, -14, 43.5)
-    # one point just in front of the saddle wall keeps the drawn spline off the wall's inner bottom corner (x -5, y -16, z 46.5
-    # over the passage, down to the roof outside |y| 16) as the wire turns from the torso top to the passage.
-    neck_down.insert(-1, [-2.0, -14.5, 43.4])
     new = {}
-    for rid, anchor in ANCHOR.items():
-        path = R[rid]
-        idx = [i for i, p in enumerate(path) if np.allclose(p, anchor, atol=1e-6)]
+    for rid, path in R.items():
+        pin = pin_of(rid)
+        if pin is None or not path or abs(path[-1][2] - PINS[str(pin)][2]) > 1.0 and abs(path[-1][2] - 57.1) > 0.05:
+            continue
+        idx = [i for i, p in enumerate(path) if abs(p[0] - X_DROP) < 0.01 and abs(p[2] - 46.0) < 0.01]
         if not idx:
-            raise SystemExit(f'{rid}: anchor {anchor} not in the current route')
-        head = [list(p) for p in path[:idx[0] + 1]]
-        if rid in VIA_NECK:
-            if rid.startswith('audio'):
-                join = HEAD_JOIN['audio'](anchor[1])
-            elif rid in ('touch_a7z_pin17', 'touch_a7z_pin25'):
-                join = HEAD_JOIN['touch_hi']
-            else:
-                join = HEAD_JOIN['touch_mid']
-            head = head + join + HEAD_DOWN + neck_down
-        new[rid] = head + torso_join(rid) + lane_tail(PIN[rid])
-    # future USB camera: camera back face centre (retired camera_board.stl body x 76..80, lens centre y 0, z 131.1) to the
-    # bundle under the old amplifier point, down the neck, over the torso roof opening in front of the saddle and into the
-    # right-angle plug from its outer end (envelope x -13.6..-3 through the front-wall notch).
-    new['cam_usb'] = [[76.0, 0.0, 131.1], [73.0, -1.0, 131.5], [62.0, -4.0, 134.5], [54.0, -6.5, 136.5]] + HEAD_DOWN + neck_down[:-2] + \
-                     [[3.0, -13.0, 43.0], [1.0, -4.0, 44.5], [0.0, 4.0, 46.5], [-1.0, 8.5, 49.5], [-3.0, 9.1, 51.8], [-8.0, 9.1, 51.8]]
-    # fan lead: out of the fan's rear face at its -y end into the pocket behind the fan, round the pin-1 end of the housings
-    # and down the -y side of the board to J6 (pin-1 end, front corner).
-    new['fan_lead'] = [[-36.0, -14.5, 66.0], [-38.8, -16.0, 65.5], [-39.5, -21.0, 65.0], [-38.5, -27.0, 64.5], [-36.0, -29.5, 60.0],
-                       [-28.0, -29.5, 54.5], [-22.2, -30.4, 52.5], [-22.2, -30.4, 51.6]]
-    # antenna_coax: first withdrawn (strip-to-housing gap 0.96 mm < the 1.13 mm pigtail), then drawn by hand in routes.json
-    # after the board moved 0.3 mm forward (wall-to-housing gap 1.56 mm; the pigtail runs beyond the strip end at y -21).
+            raise SystemExit(f'{rid}: no drop-column point ({X_DROP}, y, 46) in the current route')
+        new[rid] = [list(p) for p in path[:idx[0]]] + lane_tail(pin)
+    # Camera cable (D-023 head part kept as drawn by hand down the left side of the neck to (10.8, 16.5, 60)); V2 tail: down the
+    # robot's left outside the saddle (the saddle +y wall is at y 34.4, its bulge 36.4; the shell ends at y 31.8), back along
+    # y 40 at z 50 (the guide draws it r 2.0; the bulge outer face is y 36.4) to behind the rear wall, into the right-angle plug from its +y end (plug body x -61.4..-43.6, y -14.8..7,
+    # z 48.85..56.85, leg to +y, in USB-C ② through the rear window).
+    cam = R['cam_usb']
+    k = [i for i, p in enumerate(cam) if np.allclose(p, [10.8, 16.5, 60.0], atol=1e-6)]
+    if not k:
+        raise SystemExit('cam_usb: the neck point (10.8, 16.5, 60) is not in the current route')
+    new['cam_usb'] = [list(p) for p in cam[:k[0] + 1]] + [[7.0, 26.0, 56.0], [2.0, 36.5, 52.0], [-10.0, 40.0, 50.0], [-30.0, 40.0, 50.0],
+                                                           [-46.0, 39.5, 50.5], [-52.5, 30.0, 52.0], [-52.5, 14.0, 52.85], [-52.5, 8.0, 52.85]]
+    # 6530B fan lead: out of the blower at the +y end of the heatsink, down the +y channel to J6 (pin-1 end, x -35.3..-30.4,
+    # y 29.2..31.6, top z 52.6). The lead is about 10 mm; whether the 6530B base is relieved over J6 is checked on the part.
+    new['fan_lead'] = [[-31.0, 31.0, 59.5], [-31.0, 33.6, 58.0], [-32.8, 33.6, 54.5], [-32.8, 30.4, 53.3], [-32.8, 30.4, 52.6]]
+    # IPEX pigtail (AC019, 40-50 mm): from the IPEX socket (x -28.4..-25.4, y 29..32, top z 50.85) sideways into the +y bulge
+    # channel (board edge y 32.5, wall inner face 34.8, x -35..-6, z 46..59), forward to the front wall and onto the antenna
+    # feed end at the strip's +y end (strip x -6.9..-6.6, y -11..31, z 50..62).
+    new['antenna_coax'] = [[-26.9, 30.5, 51.2], [-26.9, 33.6, 52.5], [-20.0, 33.6, 53.0], [-12.0, 33.6, 54.0], [-8.6, 32.6, 55.0], [-7.4, 30.6, 56.0]]
     return new
 
 
-RETIRE = ['bundle_head', 'head_csi'] + [f'fan_pin_{n:02d}' for n in (1, 2, 3, 5, 6, 8, 9, 10)]
-DOC = (" 2026-10-22 saddle (D-022, print/a7z-saddle/build_saddle.py, route_check_saddle.py): the A7Z leaves the head and sits in the"
-       " printed saddle on the torso roof over the rear pack, header along the rear edge (pin tops z 57.1, Dupont housing tops 63.1,"
-       " fan above them at x -36.8..-6.8). Every wire that ended on a head pin now ends on the same pin in the saddle: it leaves its"
-       " housing straight up behind the fan, bends sideways at x -40, z 67 to |y| 21, runs forward beside the fan and its lid bars and down"
-       " over the board to z 59,"
-       " drops in the gap between the board front edge and the saddle front wall at x -9.8 (the -y lane, pins 1-12, at y -9; the +y lane,"
-       " pins 17-40, over the USB-C plug at y -1) and goes down through the saddle floor passage (x -21..-5, |y| <= 16) into the torso"
-       " roof opening (uart and pi-lead stay under z 44.5 until they pass the PCIe FPC socket on the board underside). imu, uart and pi-lead"
-       " keep their torso points to the roof opening and lose the neck and head tail. The five"
-       " amplifier wires and the four XIAO wires now run from the head down the neck bundle: amplifier face / cap-top lane -> the old"
-       " bundle_head points in reverse (under the old amplifier point, through the head clip, to the bracket clip) -> bundle_neck in"
-       " reverse -> under the saddle front wall (bottom z 46.5 over the passage) -> the saddle tail; (-16, 3, 41) is not on these wires"
-       " (it lies under the board behind the drop gap), bundle_neck itself is unchanged as the shared neck centreline. New: fan_lead"
-       " (out of the fan's rear face at its -y end into the pocket behind the fan, round the pin-1 end of the housings and down the -y side"
-       " of the board to J6, r 0.7), cam_usb (future USB camera: camera back face centre"
-       " (76, 0, 131.1), head and neck bundle, over the roof opening in front of the saddle into the right-angle plug from its outer end,"
-       " r 1.5); the antenna coax is not drawn (the AC019 strip ends at |y| 21 inside the housing span, 0.96 mm behind the housings, too"
-       " narrow for the 1.1 mm pigtail). bundle_head, head_csi (the CSI camera is"
-       " gone) and the fan_pin_* records move to retired. touch_a7z_pin* are hand-edited here from the cap-top anchor on; regenerating"
-       " them in extension-20261015-touch/build_touch_geometry.py would restore the head pins. Checked by route_check_saddle.py.")
+DOC = (" 2026-10-25 saddle V2 (D-028, print/a7z-saddle/build_saddle.py, route_check_saddle.py): the board is turned 180 deg, the 40-pin header"
+       " is at the saddle's front edge under an open strip (pin tops z 58.1, Dupont housing tops 64.1, pin 1 at +y), USB-C and HDMI face the"
+       " rear wall window. Every wire that ends on a header pin keeps its path to the bottom of the drop column between the board front edge"
+       " and the front wall (x -9.8; torso wires at y -9, head wires at y -1, inside the floor passage x -21..-5, |y| <= 16), rises there to"
+       " z 60, swings at z 66.5 over the open housing tops to its pin column and goes straight down into the housing. cam_usb: the head and"
+       " neck part stays (left side of the neck); from (10.8, 16.5, 60) it runs down the robot's left outside the saddle wall, back along"
+       " y 39 at z 50 and into the right-angle plug from its +y end, the plug in USB-C 2 through the rear window (body along the rear wall"
+       " towards +y, USB-C 1 free). fan_lead: the 6530B blower lead down the +y channel to J6 (about 10 mm). antenna_coax: IPEX socket,"
+       " sideways into the +y bulge channel outside the board edge, forward to the front wall, onto the AC019 feed end at the strip's +y end"
+       " (strip on the front wall inner face, y -11..31, z 50..62). Checked by route_check_saddle.py.")
 
 
 def write(routes: dict) -> None:
     new = build(routes)
     R = routes['routes']
-    ret = routes.setdefault('retired', {})
-    note = (" 2026-10-22: bundle_head (neck top to the head header), head_csi and fan_pin_* retired with the A7Z move to the torso"
-            " saddle (D-022); the head bundle points live on in the audio, touch and cam_usb routes.")
-    ret['_doc'] = ret.get('_doc', '') + note
-    for rid in RETIRE:
-        if rid in R:
-            ret[rid] = R.pop(rid)
-    # antenna_coax (hand-written in routes.json after the board moved 0.3 mm forward on 2026-10-22, wall-housing gap 1.56 mm) is kept
     for rid, path in new.items():
         R[rid] = [[round(float(c), 2) for c in p] for p in path]
     if DOC.strip()[:30] not in routes['_doc']:
         routes['_doc'] = routes['_doc'] + DOC
     ROUTES.write_text(json.dumps(routes, indent=1))
-    print('wrote', ROUTES, 'routes', sorted(new), 'retired', [r for r in RETIRE if r in ret])
+    print('wrote', ROUTES, 'routes', sorted(new))
 
 
 # ---- check -----------------------------------------------------------------------------------------------------------
@@ -264,7 +246,7 @@ def solids() -> dict:
         v = np.frombuffer(base64.b64decode(p['positionB64']), '<f4').reshape(-1, 3).astype(np.float64)
         f = np.frombuffer(base64.b64decode(p['indexB64']), '<u4').reshape(-1, 3).astype(np.int64)
         out[k] = trimesh.Trimesh(v, f, process=False)
-    for f in sorted(WORLD.glob('sd_*.stl')) + [WORLD / 'saddle_body.stl', WORLD / 'saddle_lid.stl']:
+    for f in sorted(WORLD.glob('sd_*.stl')) + [WORLD / 'saddle_body.stl', WORLD / 'saddle_lid.stl', WORLD / 'saddle_tray.stl']:
         out[f.stem] = trimesh.load(str(f), force='mesh')
     return out
 
@@ -327,7 +309,7 @@ def main():
     if a.write:
         write(routes)
         routes = json.loads(ROUTES.read_text())
-    ids = a.ids or (list(ANCHOR) + ['cam_usb', 'fan_lead'])
+    ids = a.ids or sorted(build(json.loads(ROUTES.read_text())))
     bad = check(routes, ids, a.v)
     print('mid-route penetrations:', bad)
     sys.exit(1 if bad else 0)

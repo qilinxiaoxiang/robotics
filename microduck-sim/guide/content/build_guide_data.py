@@ -20,13 +20,17 @@ Needs numpy, trimesh and fast_simplification (mesh decimation). Inputs:
                                                    (fed 7.40 V, the 7 V rail, by a 22 AWG pair from XL4015 #1 (top board) in the rear converter box; 15 V from
                                                    an Adafruit 5991; PROJECT-CONTEXT.json current_build.servo_rail_7v_20261014)
 - guide/print/world/imu_board.stl, imu_sh4_receiving.stl  BNO085 and its plug turned onto the pack's front plate
-- guide/print/world/saddle_body.stl, saddle_lid.stl  D-022 (2026-10-22): the printed roof saddle for the Radxa Cubie A7Z on the
-                                                   torso roof over the V1.9 rear pack (print/a7z-saddle/build_saddle.py, build/build.json)
-- guide/print/world/sd_*.stl                        the A7Z and its components, the 15 x 15 x 5 copper heatsink and its pad, the 30 mm
-                                                   fan, the Dupont housings on the header, the AC019 antenna and the right-angle USB-C
-                                                   plug of the future camera cable, all in the saddle pose. The head-pose set
-                                                   (a7z_*.stl, antenna*.stl, camera_ribbon.stl, camera_board.stl) stays on disk as a record
-                                                   and is no longer registered: the head keeps no computer and no camera (D-022).
+- guide/print/world/saddle_body.stl, saddle_lid.stl, saddle_tray.stl  D-028 (2026-10-25, saddle V2; the D-022 V1.29 saddle is
+                                                   superseded): the printed roof saddle for the Radxa Cubie A7Z on the torso roof over
+                                                   the V1.9 rear pack (print/a7z-saddle/build_saddle.py, build/build.json): body, lid over
+                                                   the heatsink only, and the tray the board + 6530B unit is screwed to from below
+- guide/print/world/sd_*.stl                        the A7Z and its components, the Radxa Heatsink 6530B (sd_heatsink_6530b) and its
+                                                   16 x 16 x 1.5 thermal pad (sd_thermal_pad_6530b), the Dupont housings on the header,
+                                                   the AC019 antenna on the front wall and the right-angle USB-C plug of the camera cable
+                                                   behind the rear wall, all in the saddle pose. The V1.29 files sd_heatsink, sd_thermal_pad
+                                                   and sd_fan no longer exist. The head-pose set (a7z_*.stl, antenna*.stl,
+                                                   camera_ribbon.stl, camera_board.stl) stays on disk as a record and is no longer
+                                                   registered: the head keeps no computer (D-022); the U20CAM camera is on the face (D-023).
 - guide/content/routes.json                         cable centerlines
 - guide/content/steps.py                            chapters, steps and cable wording
 """
@@ -83,43 +87,46 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
+                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid', 'saddle_tray'],
     'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
 # Motors are 112k triangles each in the CAD export; 15 of them dominate the file size.
 DECIMATE_OVER = 30000
-# Roof saddle for the A7Z (D-022, 2026-10-22; print/a7z-saddle/build_saddle.py, build/build.json "parts" bounds, build/pins.json
-# pin tops). Guide world frame: the board lies component side up on four dia 5 posts (PCB underside z 47.0), header edge at
-# the rear (x -43.1), pin 1 at the -y end (even pins edge row x -40.87, odd pins inner row x -38.33, pin tops z 57.1); the
-# microSD card sticks out through the slot in the +y wall. Every sd_* part is a bought part in the saddle pose; the two
-# saddle prints are white like the shells.
-SADDLE_PRINTS = {'saddle_body': 'Roof saddle body for the A7Z: four board posts, floor passage over the torso roof opening, two seats for the pack screws (new print, white)',
-                 'saddle_lid': 'Roof saddle lid with the fan pocket and grille (new print, white)'}
+# Roof saddle V2 for the A7Z (D-028, 2026-10-25; print/a7z-saddle/build_saddle.py, build/build.json "parts" bounds, build/pins.json
+# pin tops). Guide world frame: the board lies component side up on the printed tray (tray plate z 45.5..46.9, four dia 6 bosses
+# up to the PCB underside z 48.0), turned 180 deg from V1.29: USB-C ①, USB-C ② and micro HDMI at the REAR edge (x -41.7),
+# reached through one window in the rear wall (y -29..26.5, z 47.8..58); the 40-pin header at the FRONT edge, pin 1 at +y
+# (robot left): even pins in the edge row x -14.23, odd pins in the inner row x -16.77, pin tops z 58.1. The Radxa Heatsink 6530B
+# sits on the board (top z 61.2), fastened from below through the tray and the board holes; the microSD card sticks out through
+# the slot in the -y wall. Every sd_* part is a bought part in the saddle pose. The three saddle prints are orange for now
+# (CURRENT-STATE.json print_filament_stock: white PETG is out; white when restocked).
+SADDLE_PRINTS = {'saddle_body': 'Roof saddle body for the A7Z (V2, D-028): one rear window for the three sockets, open header strip at the front, +Y wall bulge for the antenna pigtail, floor cut over the torso roof opening, two seats for the pack screws, exhaust slots, microSD slot in the -Y wall (new print, orange; white when restocked)',
+                 'saddle_lid': 'Roof saddle lid over the heatsink only: intake grille over the blower, two pressing bars and a corner pad on the heatsink, two side-screw bosses (new print, orange; white when restocked)',
+                 'saddle_tray': 'Roof saddle tray: 1.4 mm plate with four dia 6 bosses under the A7Z; the board + 6530B unit is screwed to it from below (new print, orange; white when restocked)'}
 SD_PARTS = {
-    'sd_a7z_pcb': ('Radxa Cubie A7Z with soldered 40-pin header, in the roof saddle', '#1f5f3a'),
-    'sd_soc_a733': ('A7Z processor (Allwinner A733), under the copper heatsink', '#3b3b3b'),
+    'sd_a7z_pcb': ('Radxa Cubie A7Z with soldered 40-pin header, on the tray in the roof saddle', '#1f5f3a'),
+    'sd_soc_a733': ('A7Z processor (Allwinner A733), under the 6530B heatsink and its thermal pad', '#3b3b3b'),
     'sd_ram': ('A7Z memory', '#3b3b3b'),
     'sd_pmic_area': ('A7Z power chip area', '#3b3b3b'),
     'sd_wifi_module_fcu760k': ('A7Z Wi-Fi module', '#3b3b3b'),
-    'sd_usb_c_otg_dp': ('A7Z USB-C (OTG, DisplayPort) on the front edge: takes the future camera cable', '#b0b0b0'),
-    'sd_usb_c_power': ('A7Z USB-C power (unused: the 5 V lead goes on header pins 2 and 6)', '#b0b0b0'),
-    'sd_micro_hdmi': ('A7Z micro HDMI', '#b0b0b0'),
-    'sd_fan_connector': ('A7Z fan socket J6 (3-pin, pin-1 end, front corner)', '#f2f2f2'),
-    'sd_ipex_socket': ('A7Z antenna socket (IPEX)', '#d4af37'),
-    'sd_microsd_socket': ('A7Z microSD socket (underside, +Y end)', '#3b3b3b'),
-    'sd_microsd_card': ('microSD card in the A7Z, out through the slot in the +Y saddle wall', '#2b4a8b'),
+    'sd_usb_c_otg_dp': ('A7Z USB-C ② (OTG, DisplayPort) on the rear edge, behind the rear window: takes the camera plug from behind the robot', '#b0b0b0'),
+    'sd_usb_c_power': ('A7Z USB-C ① (power) on the rear edge, behind the rear window, left free (the 5 V lead goes on header pins 2 and 6)', '#b0b0b0'),
+    'sd_micro_hdmi': ('A7Z micro HDMI on the rear edge, behind the rear window', '#b0b0b0'),
+    'sd_fan_connector': ('A7Z fan socket J6 (3-pin, pin-1 (+Y) end, towards the rear corner): takes the 6530B blower lead', '#f2f2f2'),
+    'sd_ipex_socket': ('A7Z antenna socket (IPEX, on the +Y edge about the middle of the board length)', '#d4af37'),
+    'sd_microsd_socket': ('A7Z microSD socket (underside, -Y end)', '#3b3b3b'),
+    'sd_microsd_card': ('microSD card in the A7Z, out through the slot in the -Y saddle wall', '#2b4a8b'),
     'sd_csi_connector': ('A7Z camera connector (31-pin, underside, pin-1 end; empty, no ribbon)', '#e8e2d0'),
-    'sd_pcie_fpc': ('A7Z PCIe connector (underside)', '#e8e2d0'),
+    'sd_pcie_fpc': ('A7Z PCIe connector (underside, overhangs the rear edge by 1.2 mm)', '#e8e2d0'),
     'sd_uboot_button': ('A7Z boot button (underside)', '#3b3b3b'),
     'sd_underside_smd': ('A7Z underside components', '#3b3b3b'),
-    'sd_heatsink': ('15 x 15 x 5 mm copper heatsink on the A733', '#b87333'),
-    'sd_thermal_pad': ('0.5 mm thermal pad between the A733 and the copper heatsink', '#9e9e9e'),
-    'sd_fan': ('Adafruit 3368 30 mm 5 V fan in the saddle lid (30 x 30 x 8 envelope), blowing down onto the copper', '#26282b'),
-    'sd_dupont_housings': ('Straight Dupont housings on the A7Z header (one envelope for every plugged wire)', '#1b1b1b'),
-    'sd_antenna': ('AC019 Wi-Fi antenna strip on the saddle rear wall (inner face), IPEX plug on the board', '#c9a227'),
-    'sd_usb_c_plug': ('Right-angle USB-C plug for the camera cable, through the front-wall notch into the OTG socket (camera not yet chosen)', '#4a4a4a'),
+    'sd_heatsink_6530b': ('Radxa Heatsink 6530B (65 x 30 x 11.5 mm aluminium block with a blower fan at the pin-1 (+Y) end, intake upward) on the A7Z, screwed from below through the board', '#8a8f94'),
+    'sd_thermal_pad_6530b': ('16 x 16 x 1.5 mm thermal pad from the 6530B kit between the A733 and the heatsink', '#9e9e9e'),
+    'sd_dupont_housings': ('Straight Dupont housings on the A7Z header (one envelope for every plugged wire), standing in the open header strip', '#1b1b1b'),
+    'sd_antenna': ('AC019 Wi-Fi antenna strip on the saddle front wall (inner face), feed end at the left (+Y), IPEX plug on the board', '#c9a227'),
+    'sd_usb_c_plug': ('Right-angle USB-C plug of the camera pigtail, in USB-C ② from behind the robot through the rear window, body lying along the rear wall towards +Y', '#4a4a4a'),
 }
 # Every XL330 is simplified straight to 36,000 triangles (0.02 mm from its source). A 9,000 start let ID12 and ID14
 # pass the surface test at about 23,000 triangles while moving the surface 2.6 mm into their neighbours.
@@ -332,10 +339,10 @@ def build_parts() -> dict:
             name = 'Jaw support (restored original)'
         parts[p['key']] = {'key': p['key'], 'name': name, 'color': p['color'], 'module': module, 'status': status, 'v': v, 'f': f}
 
-    # 2026-10-22 D-022 roof saddle (print/a7z-saddle/): the two saddle prints (module 'torso', white like the shells) and the
-    # A7Z with its components, heatsink, fan, Dupont housings, antenna and the future camera plug (module 'saddle',
-    # purchased) from print/world/saddle_*.stl and sd_*.stl, all in the guide world frame. The head-pose A7Z set
-    # (a7z_*.stl, antenna*.stl, camera_ribbon.stl, camera_board.stl) is no longer registered; the files stay as a record.
+    # 2026-10-25 D-028 roof saddle V2 (print/a7z-saddle/): the three saddle prints (module 'torso') and the A7Z with its
+    # components, the 6530B heatsink and its pad, Dupont housings, antenna and the camera plug (module 'saddle', purchased)
+    # from print/world/saddle_*.stl and sd_*.stl, all in the guide world frame. The head-pose A7Z set (a7z_*.stl,
+    # antenna*.stl, camera_ribbon.stl, camera_board.stl) is no longer registered; the files stay as a record.
     world = PRINT / 'world'
     for key, name in SADDLE_PRINTS.items():
         path = first_existing(world / f'{key}.stl')
@@ -343,6 +350,8 @@ def build_parts() -> dict:
             v, f = load_stl(path)
             if len(f) > DECIMATE_OVER:
                 v, f = decimate(v, f, 25000, key)
+            # Interim colour, white when restocked: the source cap colour here is the orange of the rear pack and the box (the
+            # cap is set to WHITE only after these loops), which is what the V2 saddle prints in while white PETG is out.
             parts[key] = {'key': key, 'name': name, 'color': parts['head_cap']['color'], 'module': 'torso', 'status': 'new-print',
                           'v': v, 'f': f, 'source': str(path)}
     for key, (name, color) in SD_PARTS.items():
@@ -621,9 +630,10 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     # V1.9 (print/ext-v19/route-v19.json): the three guide cables follow one centreline from the pack notch through the
     # four wire clips to the gather point in front of the Pi header, then their own fan wire to pin 2, 3 or 8. The
     # bundle no longer passes a cap notch: it enters the head through the -y side of the lower shell's floor opening.
-    # 2026-10-22 D-022: the A7Z sits in the roof saddle. The torso wires (5 V lead, IMU, UART) go straight up through the
-    # saddle floor passage onto the header; the head-side wires (amplifier, XIAO, future camera cable) come DOWN the neck
-    # bundle from the head clip through the bracket and torso clips to the passage. routes.json (other owner) ends them.
+    # 2026-10-22 D-022: the A7Z sits in the roof saddle. 2026-10-25 D-028 (saddle V2): the header is at the FRONT edge, pin 1
+    # at +y, so the torso wires (5 V lead, IMU, UART) rise through the floor cut (x -21..-5, |y| <= 16) straight into the
+    # front-edge housings from the open top; the head-side wires (amplifier, XIAO, microphones) come DOWN the neck, enter
+    # under the front wall foot into the same floor cut and up to the housings. routes.json (other owner) ends them.
     neck = R.get('bundle_neck')
     head = R.get('bundle_head')
     if not neck:
@@ -703,20 +713,22 @@ def build_cables(routes: dict) -> tuple[list, dict]:
             'Back INMP441 SCK, WS, SD, VDD, GND (soldered)', 'Gather point: SCK, WS, VDD, GND joined into the microphone joints; SD on down', radius=1.0)
         add('mic-sd3', 'Optional back microphone SD, down the neck, plug taped beside A7Z pin 10 (not on it)', 'i2s', '#2e7d32', R['mic_sd3_pin10'],
             'Gather point over the exit', 'Beside A7Z header pin 10 (I2S0 DIN3 once tested; UART0 RX now), unplugged', radius=0.65)
-    # D-022 saddle leads (routes.json, other owner): the fan lead from the lid fan to the A7Z fan socket J6. D-023 (revised
-    # 2026-10-23): the camera's own dia 4 cable from the end of camera_cable_stub over the jaw motor, through the dia 11
-    # left-rear exit and down the neck with the head wires to the splice with the right-angle USB-C pigtail at the saddle
-    # front (r 2.0). Its free span from the head floor to the splice is sized by print/neck-exit-20261023/cable_sweep.py.
+    # Saddle leads (routes.json, other owner). D-028 (saddle V2): the fan lead is the 6530B blower's own 3-pin lead to the A7Z
+    # fan socket J6 at the pin-1 (+y) end. D-023 (revised 2026-10-23) and D-028: the camera's own dia 4 cable from the end of
+    # camera_cable_stub over the jaw motor, through the left-rear exit and down the neck with the head wires, then down the
+    # robot's left (+y) side outside the saddle to the rear, to the splice with the right-angle USB-C pigtail whose plug goes
+    # into USB-C ② from behind through the rear window (r 2.0). Its free span from the head floor to the splice is sized by
+    # print/neck-exit-20261023/cable_sweep.py (sized for the V1.29 splice point at the saddle front; see steps.py).
     if 'fan_lead' in R:
-        add('fan-lead', 'Fan lead (3-pin, from the lid fan)', 'fan', '#455a64', R['fan_lead'], 'Fan in the saddle lid',
-            'A7Z fan socket J6 (pin-1 end, front corner)', radius=0.7)
+        add('fan-lead', 'Fan lead (3-pin, from the 6530B blower)', 'fan', '#455a64', R['fan_lead'], 'Blower fan on the 6530B heatsink (pin-1, +Y end)',
+            'A7Z fan socket J6 (pin-1 (+Y) end, towards the rear corner)', radius=0.7)
     if 'cam_usb' in R:
-        add('cam-usb', "Camera cable (the camera's own, whole from the board, cut to length and soldered at the saddle)", 'usb', '#00838f', R['cam_usb'],
-            'Over the jaw motor (the camera cable inside the head)', 'Splice to the right-angle USB-C pigtail at the saddle front; the plug is in the A7Z OTG socket through the front-wall notch',
+        add('cam-usb', "Camera cable (the camera's own, whole from the board, cut to length and soldered behind the saddle)", 'usb', '#00838f', R['cam_usb'],
+            'Over the jaw motor (the camera cable inside the head)', 'Splice to the right-angle USB-C pigtail behind the saddle rear wall; the plug is in A7Z USB-C ② through the rear window, plugged from behind the robot',
             slack=75, radius=2.0)
     if 'antenna_coax' in R:
-        add('antenna-coax', 'Antenna pigtail (AC019 strip to the A7Z IPEX socket)', 'antenna', '#7e57c2', R['antenna_coax'],
-            'AC019 strip on the saddle rear wall inner face (its -y end)', 'A7Z IPEX socket (pin-1 end, rear corner)', radius=0.57)
+        add('antenna-coax', 'Antenna pigtail (AC019 strip to the A7Z IPEX socket, 40-50 mm)', 'antenna', '#7e57c2', R['antenna_coax'],
+            'AC019 strip on the saddle front wall inner face (its feed end at the left, +Y)', 'A7Z IPEX socket (+Y edge, through the +Y wall channel)', radius=0.57)
     return cab, L
 
 
@@ -751,8 +763,8 @@ def main() -> None:
     data = {
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
-        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z in a printed roof saddle on the torso with a copper heatsink and a lid fan (D-022), speaker, amplifier and touch pads in the head (no camera until the USB camera is chosen), neck bundle in the wire clips; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261022-saddle',
+        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on a tray in a printed roof saddle on the torso, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
+        'revision': 'guide-20261025-saddle-v2',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

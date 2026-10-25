@@ -20,8 +20,10 @@ from pathlib import Path
 
 from wiring.openrb import openrb_wiring
 
-# D-023 (2026-10-23): free span of the camera cable from the head floor exit to the pigtail splice at the saddle, from the head
+# D-023 (2026-10-23): free span of the camera cable from the head floor exit to the top of the torso beside the saddle, from the head
 # sweep over the neck and head joint ranges (print/neck-exit-20261023/cable_sweep.py); the span is the full-range need rounded up.
+# The sweep was run for the V1.29 splice point at the saddle front; since D-028 the cable goes on down the robot's left side
+# outside the saddle to the rear window, so the run from the torso roof to the plug is measured on the robot.
 _SWEEP = json.loads((Path(__file__).resolve().parents[1] / 'print/neck-exit-20261023/cable_sweep.json').read_text())
 CAM_SWEEP = {'full': round(_SWEEP['full']['maxRoutedMm']), 'trained': round(_SWEEP['trained']['maxRoutedMm']), 'home': round(_SWEEP['home']['routedMm'])}
 CAM_SPAN = 10 * math.ceil(CAM_SWEEP['full'] / 10)
@@ -61,27 +63,31 @@ JAW = ['jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'motor15']
 FACE = ['face_panel', 'eye_trim']
 # D-023 (2026-10-22, revised 2026-10-23): the Innomaker U20CAM-720P USB camera on the four face bosses (print/face-u20/). Its
 # own cable runs whole through the left-rear head exit slot (print/neck-exit-20261023/) with the eleven head wires and is
-# cut to length and soldered to the right-angle USB-C pigtail at the saddle.
+# cut to length and soldered to the right-angle USB-C pigtail behind the saddle (D-028: the plug goes into USB-C ② through the
+# rear window from behind the robot).
 CAMERA = ['camera_u20cam', 'camera_cable_stub']
 
-# Radxa Cubie A7Z header, now in the roof saddle (D-022). The pin assignments are unchanged from the head: IMU on 1, 3, 5 (TWI7),
-# 9; UART2 on 7 (TX) and 11 (RX); the 5 V lead on 2 and 6. Pins 8 and 10 are the A7Z debug console and stay empty.
-GPIO_PINS = (1, 2, 3, 5, 6, 7, 9, 11)   # the eight torso wires, straight up through the saddle floor passage
+# Radxa Cubie A7Z header, now in the roof saddle (D-022; D-028: header at the FRONT edge, pin 1 at the robot's left, +y). The pin
+# assignments are unchanged from the head: IMU on 1, 3, 5 (TWI7), 9; UART2 on 7 (TX) and 11 (RX); the 5 V lead on 2 and 6.
+# Pins 8 and 10 are the A7Z debug console and stay empty.
+GPIO_PINS = (1, 2, 3, 5, 6, 7, 9, 11)   # the eight torso wires, straight up through the saddle floor cut into the front-edge housings
 AUDIO_PINS = (4, 12, 35, 39, 40)        # amplifier Vin, BCLK, LRC, GND, DIN, down the neck bundle from the head
 TOUCH_PINS = (17, 25, 29, 31)           # touch readout (XIAO ESP32-S3): 3.3 V, GND, I2C SCL (PB2), I2C SDA (PB3); custom overlay
 MIC_PINS = (34, 38)                     # D-025 microphones: GND and I2S0 DIN0; their SCK, WS and VDD are spliced into pins 12, 35 and 17
 
-# Roof saddle for the A7Z (D-022, print/a7z-saddle/build_saddle.py, build/build.json): the printed body on the torso roof over
-# the V1.9 rear pack, held by the two shell-to-pack screws (now M2 x 10), the A7Z on four posts inside it (PCB underside
-# z 47.0, header at the rear, pin 1 to the right, -y), the 15 x 15 x 5 copper on the A733, the AC019 antenna on the rear wall,
-# the Dupont housings on the header, and the lid with a 30 mm fan over the copper. Keys from build_guide_data.SD_PARTS.
+# Roof saddle V2 for the A7Z (D-028, 2026-10-25; print/a7z-saddle/build_saddle.py, build/build.json): the printed body on the torso
+# roof over the V1.9 rear pack, held by the two shell-to-pack screws (M2 x 10); the A7Z on a printed tray inside it (tray plate
+# z 45.5..46.9, PCB underside z 48.0), turned 180 deg from V1.29: USB-C ①, ② and micro HDMI at the rear edge behind one window in
+# the rear wall, header at the front edge with pin 1 at the robot's left (+y); the Radxa Heatsink 6530B on the A733 on a 16 x 16 x
+# 1.5 pad, the board + 6530B unit screwed to the tray from below; the AC019 antenna on the front wall inner face; the Dupont
+# housings standing in the open header strip; the lid over the heatsink only. Keys from build_guide_data.SD_PARTS.
 SADDLE_BODY = ['saddle_body']
 SADDLE_LID = ['saddle_lid']
+SADDLE_TRAY = ['saddle_tray']
 SD_BOARD = ['sd_a7z_pcb', 'sd_soc_a733', 'sd_ram', 'sd_pmic_area', 'sd_wifi_module_fcu760k', 'sd_usb_c_otg_dp', 'sd_usb_c_power',
             'sd_micro_hdmi', 'sd_fan_connector', 'sd_ipex_socket', 'sd_microsd_socket', 'sd_microsd_card', 'sd_csi_connector',
             'sd_pcie_fpc', 'sd_uboot_button', 'sd_underside_smd']
-SD_COPPER = ['sd_thermal_pad', 'sd_heatsink']
-SD_FAN = ['sd_fan']
+SD_HEATSINK = ['sd_thermal_pad_6530b', 'sd_heatsink_6530b']   # the 6530B kit: pad on the SoC, then the heatsink with its blower
 SD_HOUSINGS = ['sd_dupont_housings']
 SD_ANTENNA = ['sd_antenna']
 SD_CAM_PLUG = ['sd_usb_c_plug']
@@ -161,13 +167,13 @@ def build(ctx):
     # and touch parts stays in the head.
     saddle_body = ctx.keys(*SADDLE_BODY)
     saddle_lid = ctx.keys(*SADDLE_LID)
+    saddle_tray = ctx.keys(*SADDLE_TRAY)
     sd_board = ctx.keys(*SD_BOARD)
-    sd_copper = ctx.keys(*SD_COPPER)
-    sd_fan = ctx.keys(*SD_FAN)
+    sd_heatsink = ctx.keys(*SD_HEATSINK)
     sd_housings = ctx.keys(*SD_HOUSINGS)
     sd_antenna = ctx.keys(*SD_ANTENNA)
     sd_cam_plug = ctx.keys(*SD_CAM_PLUG)
-    saddle_all = saddle_body + sd_antenna + sd_board + sd_copper + sd_housings + sd_cam_plug + sd_fan + saddle_lid
+    saddle_all = saddle_body + sd_antenna + saddle_tray + sd_board + sd_heatsink + sd_housings + sd_cam_plug + saddle_lid
     audio = ctx.keys(*AUDIO)
     speaker = ctx.keys(*SPEAKER)
     mics = ctx.keys(*MICS)
@@ -224,7 +230,7 @@ def build(ctx):
     new_prints = ctx.keys('shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'battery_backpack_frame', 'battery_backpack_cap', 'head_cap', 'head_bottom', 'jaw_frame', 'face_panel', 'eye_trim',
                           'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'neck_pitch', 'neck_pitch_ring',
                           'ankle', 'right_ankle', 'ankle_cheek', 'right_ankle_cheek', 'lower', 'right_lower', 'foot', 'right_foot',
-                          'saddle_body', 'saddle_lid')
+                          'saddle_body', 'saddle_lid', 'saddle_tray')
     head_wires = len(AUDIO_CABLES) + len(TOUCH_PIN_CABLES) + len(MIC_DOWN_CABLES)   # 5 amplifier + 4 XIAO + 2 microphone = 11
     hw = f'{head_wires} (or {head_wires + 1} with the optional back microphone)' if MIC_BACK_CABLES else str(head_wires)
 
@@ -242,7 +248,7 @@ def build(ctx):
         {'id': 'neck', 'title': '6. Neck',
          'summary': 'Build the five-motor neck on the bench with its chain cables, then lower it into the open torso and close the shells. The two roof holes of the shells stay empty: the saddle screws go through them in the next chapter.'},
         {'id': 'saddle', 'title': '7. Roof saddle for the A7Z',
-         'summary': 'Set the printed saddle on the torso roof over the rear pack and screw it down through the shell roofs into the pack bar, stick the Wi-Fi antenna on its rear wall, lower the Radxa Cubie A7Z onto its four posts, put the copper heatsink on the processor, plug the torso wires (IMU, UART, 5 V) onto the header through the floor passage, and snap the fan into the lid. The lid goes on in chapter 11, once the fan has been seen running.'},
+         'summary': 'Set the empty printed saddle on the torso roof over the rear pack and screw it down through the shell roofs into the pack bar; on the bench put the thermal pad and the Radxa Heatsink 6530B on the A7Z and screw the board, with the printed tray under it, to the heatsink from below; stick the Wi-Fi antenna on the front wall; lower the tray with the board into the saddle (sockets to the rear window, header to the front), lead the antenna pigtail through the channel in the left wall, push the microSD card in through the right wall, and plug the torso wires (IMU, UART, 5 V) onto the header from the open top. The lid goes on in chapter 11, once the blower has been seen running.'},
         {'id': 'head', 'title': '8. Head mechanics',
          'summary': 'Check the speaker pocket, the twelve sound holes and the amplifier rails in the floor of the lower head shell, seat the jaw in the shell on the bench, fit the shell, the jaw support with ID15 and the jaw screws, wire the speaker to the amplifier on the bench and tape both onto the shell floor, the speaker face down in its pocket and the amplifier between its rails, then the face with the eye trim and the U20CAM USB camera on its four bosses, its own cable laid over the jaw motor to the exit slot at the left rear (D-023).'},
         {'id': 'head-elec', 'title': '9. Head electronics',
@@ -250,7 +256,7 @@ def build(ctx):
         {'id': 'bundle', 'title': '10. Neck bundle, cap and cable dressing',
          'summary': f'Run the {hw} head wires (five amplifier, four XIAO, two microphone, plus the back microphone SD if fitted) and the camera cable through the exit slot at the left rear of the head, hold them in the two-piece clamp in the exit, run them down the left side of the neck to the saddle, plug the {head_wires} onto the A7Z, cut the camera cable to length and solder it to the right-angle USB-C pigtail, close the cap, screw the head shut and check every joint for snags.'},
         {'id': 'power-up', 'title': '11. First power-up and saddle lid',
-         'summary': 'Unpowered checks, A7Z configuration, a readback of both converter voltages before the OpenRB and the A7Z are connected to them, 15/15 servo scan and the servo voltage-limit check, sensors and the fan, then the saddle lid, current, and weigh the robot.'},
+         'summary': 'Unpowered checks, A7Z configuration, a readback of both converter voltages before the OpenRB and the A7Z are connected to them, 15/15 servo scan and the servo voltage-limit check, sensors and the heatsink blower, then the saddle lid over the heatsink (the header strip stays open), current, and weigh the robot.'},
         {'id': 'backpack', 'title': '12. Battery backpack',
          'summary': 'Build the 2S battery backpack (switch, DFR1202, battery, cap) and swap it for the rear converter box on the same four cover screws.'},
     ]
@@ -316,8 +322,8 @@ def build(ctx):
              'Why 7 V: the walking policies used here (Pollen\'s walk and stand policies) were trained with the servo supply between 6.5 and 8.2 V, and Pollen\'s own MicroDuck runs its servos straight from a 7.2 V battery. The set point is 7.40 V, the nominal voltage of the 2S battery the backpack in chapter 11 carries, inside that range. It is above the XL330\'s factory Max Voltage Limit of 7.0 V, so every servo has its Shutdown register (address 63) set to 52 in chapter 10, as on Pollen\'s robot: above 7.0 V the servos raise their input-voltage flag but keep torque; overload, overheating and electrical shock still switch torque off. In simulation with the 7.87° forward lean measured on this robot, the walk stays upright at 6.8, 7.4 and 8.0 V; it drifts back about 8 cm at 6.8 V and forward about 9 cm at 8.0 V. ROBOTIS rates the XL330-M288 at 3.7 to 6.0 V; running it at 7.4 V follows the trained policies and Pollen\'s robot, not the datasheet.',
              'Inside, a printed rear pack hangs on the four hip-yaw case screws behind the hip motors, where the battery and the power support used to be. It holds the OpenRB-150 standing upright; the 7 V pair and the head 5 V lead come into the pack from the rear converter box through the notch at the front edge of the box top and the top edge of its front plate, where the shell top meets the box, and lie on the frame\'s lip; no wire passes through the front plate, which closes the back of the pack. Nothing hangs under the crotch.',
              'The OpenRB-150 passes the 7 V to the three servo chains through its own ports, as on the original MicroDuck. Two jumper wires from converter #2 carry 5 V to the A7Z. There are no fuses. The BNO085 IMU is screwed to a rib on the front of the pack plate, between the hip motors.',
-             'The head computer, a Radxa Cubie A7Z, sits in a printed saddle on the torso roof, over the rear pack, behind the neck (D-022, 2026-10-22: inside the closed head it reached 85 °C in five minutes). A 15 × 15 × 5 mm copper heatsink sits on its processor and a 30 mm fan in the saddle lid blows down onto the copper. The Wi-Fi antenna is stuck to the inside of the saddle\'s rear wall. The head keeps the jaw, the face with its eye trim, a small speaker in a printed box on the floor of the head behind the camera (it sounds out through six small holes in the floor above the lower jaw, so the duck speaks when its beak opens), the speaker\'s MAX98357A amplifier under the cap roof, two INMP441 microphones as ears in the cap side walls just behind the face (D-025), and five copper touch pads read by a XIAO board. There is no camera for now: the Radxa camera left with the A7Z, the face keeps its four camera bosses for a USB camera that is not chosen yet, and the saddle has a notch for that camera\'s USB-C plug.',
-             'The A7Z talks to the OpenRB over two UART wires. The eight torso wires (5 V lead, four IMU wires, UART pair) leave the pack over the top of its plate and go straight up through the passage in the saddle floor onto the header. Eleven head wires (five from the amplifier, four from the XIAO, two from the microphones) and the camera cable leave the head at its left rear through the opening in the floor of the lower shell, beside the neck, and run free DOWN the left (+Y) side of the neck, beside the ID11 to ID13 servo cable, to the same passage and up onto the header; the camera leads stop at the saddle front, soldered to the right-angle USB-C pigtail in the OTG socket. No wire clips: the four V1.9 clips were never fitted (D-023). The cap has no notch. The only plugs inside the head are the two speaker-lead junctions (a male-female Dupont pair on each lead), which let the cap come off while the speaker stays in the lower head.',
+             'The head computer, a Radxa Cubie A7Z, sits in a printed saddle on the torso roof, over the rear pack, behind the neck (D-022, 2026-10-22: inside the closed head it reached 85 °C in five minutes). Since D-028 (2026-10-25) the board lies on a printed tray with its three sockets (USB-C ①, USB-C ② and micro HDMI) at the rear, reached through one window in the saddle\'s rear wall from behind the robot, and its 40-pin header at the front edge, pin 1 at the robot\'s left. The Radxa Heatsink 6530B, a 65 × 30 × 11.5 mm aluminium block with its own blower fan, sits on the processor on a 16 × 16 × 1.5 mm thermal pad and is screwed from below through the board; the board and heatsink are one unit screwed to the tray. The saddle lid covers only the heatsink, with an intake grille over the blower; the header strip at the front stays open, so every plug is reachable from above. The Wi-Fi antenna is stuck to the inside of the saddle\'s front wall. The head keeps the jaw, the face with its eye trim and the U20CAM USB camera on four bosses (D-023), a small speaker lying in a pocket in the floor of the head (it sounds out through twelve small holes in the floor above the lower jaw, so the duck speaks when its beak opens), the speaker\'s MAX98357A amplifier beside it on the floor, two INMP441 microphones as ears in the cap side walls just behind the face (D-025), and five copper touch pads read by a XIAO board.',
+             'The A7Z talks to the OpenRB over two UART wires. The eight torso wires (5 V lead, four IMU wires, UART pair) leave the pack over the top of its plate and go straight up through the cut in the saddle floor into the housings on the header\'s front edge. Eleven head wires (five from the amplifier, four from the XIAO, two from the microphones) and the camera cable leave the head at its left rear through the opening in the floor of the lower shell, beside the neck, and run free DOWN the left (+Y) side of the neck, beside the ID11 to ID13 servo cable; the head wires pass under the saddle front wall into the same floor cut and up onto the header, and the camera cable goes on down the robot\'s left side outside the saddle to the rear, where it is soldered to the right-angle USB-C pigtail whose plug sits in USB-C ② through the rear window. No wire clips: the four V1.9 clips were never fitted (D-023). The cap has no notch. The only plugs inside the head are the two speaker-lead junctions (a male-female Dupont pair on each lead), which let the cap come off while the speaker stays in the lower head.',
              'Drawn cables are shown in colour. Use the cable list under each step for the exact ends and lengths.',
          ],
          warnings=['Chapters 1 to 11 run the robot from the USB-C desk supply. The only battery is the 2S LiPo in the chapter 12 backpack, and it reaches the robot only through the backpack\'s plugs 3 and 4. Never connect a battery any other way.',
@@ -326,7 +332,7 @@ def build(ctx):
          cables=all_cables)
 
     step('parts', 'start', 'Gather the electronics and kit cables',
-         show=LEGS, add=['imu_board'] + ctx.keys('sd_a7z_pcb', 'sd_heatsink', 'sd_fan') + board, bench=True,
+         show=LEGS, add=['imu_board'] + ctx.keys('sd_a7z_pcb', 'sd_heatsink_6530b') + board, bench=True,
          camera=ctx.cam(['imu_board'] + ctx.keys('sd_a7z_pcb') + board, direction=FRONT, margin=1.2),
          prepare=[
              {'item': 'XL330-M288-T servos, IDs 11–15 (from the two OMX-AI kits)', 'qty': 5, 'kind': 'electronic', 'note': 'IDs 1–10 are already in the legs.'},
@@ -337,10 +343,10 @@ def build(ctx):
               'note': 'Each leg uses three 180 mm cables (hip yaw to hip roll, inside the thigh, knee to ankle) and one 100 mm cable (hip roll to hip pitch). You need only the ones chapter 4 finds missing.'},
              {'item': 'USB-A to USB-C cable (OMX-AI kit)', 'qty': 1, 'kind': 'cable', 'note': 'Laptop to OpenRB: flashing, and the wired control link from the Mac.'},
              {'item': 'Innomaker U20CAM-720P USB camera (UVC, 32 × 32 mm board, M12 lens, 120 deg diagonal, 720p30, 1 m cable), Amazon B0CLRJZG8D', 'qty': 1, 'kind': 'electronic',
-              'note': 'D-023 (2026-10-22). Screws to the four face bosses with M2 × 6, connector edge to the left (+Y). Its own 1 m cable runs whole from the board through the head exit and is cut to length at the saddle. Its dimensions come from the ROBOTIS OMX-F CAD, which carries the same camera (print/face-u20/robotis-cad/): the lens front stands 22.0 mm in front of the board and its ring is dia 14.0.'},
+              'note': 'D-023 (2026-10-22). Screws to the four face bosses with M2 × 6, connector edge to the left (+Y). Its own 1 m cable runs whole from the board through the head exit, down the neck and down the robot\'s left side outside the saddle, and is cut to length behind the saddle. Its dimensions come from the ROBOTIS OMX-F CAD, which carries the same camera (print/face-u20/robotis-cad/): the lens front stands 22.0 mm in front of the board and its ring is dia 14.0.'},
              {'item': 'CableCreation right-angle USB-C male to USB-A female OTG pigtail, 15 cm, Amazon B0194WSKOM', 'qty': 1, 'kind': 'cable',
-              'note': 'D-023. Only its USB-C plug end is used: the USB-A socket is cut off about 60 mm from the plug and the camera cable is soldered to its four wires. The plug goes into the A7Z OTG socket through the saddle front-wall notch, its body lying along the wall towards +Y (the plug is reversible).'},
-             {'item': 'Heat-shrink tubing, dia 1.5, dia 2 and dia 6 (or electrical tape)', 'qty': '4 + 3 + 1 pieces', 'kind': 'other', 'note': 'D-023: one dia 1.5 sleeve per camera conductor and one dia 6 sleeve over the camera splice at the saddle front. D-025: one dia 2 sleeve over each of the three microphone splices in the head.'},
+              'note': 'D-023, D-028. Only its USB-C plug end is used: the USB-A socket is cut off about 60 mm from the plug and the camera cable is soldered to its four wires. The plug goes into A7Z USB-C ② from behind the robot through the window in the saddle rear wall, its body lying along the rear wall towards +Y so that USB-C ① stays free (the plug is reversible).'},
+             {'item': 'Heat-shrink tubing, dia 1.5, dia 2 and dia 6 (or electrical tape)', 'qty': '4 + 3 + 1 pieces', 'kind': 'other', 'note': 'D-023: one dia 1.5 sleeve per camera conductor and one dia 6 sleeve over the camera splice behind the saddle. D-025: one dia 2 sleeve over each of the three microphone splices in the head.'},
              {'item': 'Adafruit 5991 USB-C PD board (HUSB238, six DIP switches and a 2-pin screw terminal)', 'qty': 1, 'kind': 'electronic',
               'note': 'DigiKey 1528-5991-ND. Set to 15 V; it sits in the narrow bottom tier of the rear converter box on two M2 × 6 in its lower holes; two lid screws go through its upper holes.'},
              {'item': 'ROBOTIS XL4015 DC converter (the OMX-AI kit "DC converter" module, 61.7 × 26.2 mm, two blue trimmers, IN and OUT screw terminals)', 'qty': 2, 'kind': 'electronic',
@@ -352,9 +358,9 @@ def build(ctx):
               'note': 'Each colour is one chain (male-female into female-female, joint taped) from XL4015 #2 OUT through the neck to the A7Z.'},
              {'item': 'Adafruit BNO085 IMU + 4397 STEMMA QT cable', 'qty': 1, 'kind': 'electronic', 'note': 'Received.'},
              {'item': 'Radxa Cubie A7Z with soldered 40-pin header, microSD card, and the AC019 Wi-Fi antenna from its box', 'qty': 1, 'kind': 'electronic',
-              'note': 'Same size and hole pattern as a Pi Zero; since D-022 it sits on the four posts of the roof saddle, not in the head. The Pi Zero W, the Camera Module 3 Wide and the Radxa Camera 13M 214 are no longer used; the Radxa camera and its ribbon stay in the box until a USB camera is chosen.'},
-             {'item': '15 × 15 × 5 mm copper heatsink with a 0.5 mm thermal pad', 'qty': 1, 'kind': 'electronic', 'note': 'Sits on the A733 processor of the A7Z, under the lid fan (D-022; pi/A7Z-CPU-COMPARE.md soak).'},
-             {'item': 'Adafruit 3368 30 mm 5 V fan (30 × 30 × 8 mm, 3-pin lead) or an equal 30 × 30 × 8 5 V fan', 'qty': 1, 'kind': 'electronic', 'note': 'Snaps into the pocket under the saddle lid; its lead goes to the A7Z fan socket J6.'},
+              'note': 'Same size and hole pattern as a Pi Zero; since D-022 it sits in the roof saddle, not in the head, and since D-028 on the printed saddle tray, screwed from below to the 6530B heatsink on top of it. The Pi Zero W, the Camera Module 3 Wide and the Radxa Camera 13M 214 are no longer used; the Radxa camera and its ribbon stay in the box.'},
+             {'item': 'Radxa Heatsink 6530B for Cubie A7Z (aluminium 65 x 30 x 11.5 with blower fan, four CM2 x 4 screws and two 16 x 16 x 1.5 thermal pads in the kit), ordered 2026-10-22, in hand', 'qty': 1, 'kind': 'electronic',
+              'note': 'D-028. Its four threaded corner bosses sit on the A7Z board holes; it is fastened from below through the board. In this build the kit\'s CM2 x 4 are not used: four M2 × 6 go up through the printed tray bosses and the board holes into the same threaded bosses, so the tray, the board and the heatsink are one unit. One pad goes on the A733 processor; the second pad is a spare. Its 3-pin blower lead goes to the A7Z fan socket J6 at the pin-1 (+Y) end. The copper block and the 30 mm lid fan of the V1.29 saddle were never bought and are not used.'},
              {'item': 'Adafruit MAX98357A I2S amplifier breakout (Adafruit 3006) with five wires soldered straight into LRC, BCLK, DIN, GND and Vin; GAIN and SD left empty, no resistor (BRINGUP step 13)', 'qty': 1, 'kind': 'electronic',
               'note': 'The terminal block comes soldered on. No header goes on this board: the five wires are soldered into its holes, so no right-angle header is needed.'},
              {'item': 'Speaker CMS-30204-18SP (Same Sky, 30 x 20 mm oval, 8 ohm, 1 W)', 'qty': 1, 'kind': 'electronic',
@@ -385,12 +391,12 @@ def build(ctx):
          show=[], add=new_prints, context=LEGS + TORSO, bench=True,
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
          prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see PARTS-SHEET-V1.33.html, PARTS-SHEET-V1.30.html, PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
-                  {'item': 'V1.33 package: zhengxia_MicroDuck_V1.33 folder (one white plate: the head cap with two ears and no amplifier posts, and the still unprinted V1.30 white parts, the U20 face panel and the roof saddle body and lid; one yellow plate: the lower head shell with the speaker pocket, twelve sound holes, the amplifier rails and the exit slot; one black plate: the jaw support with the exit slot)', 'qty': 1, 'kind': 'printed',
+                  {'item': 'V1.33 package: zhengxia_MicroDuck_V1.33 folder (one white plate: the head cap with two ears and no amplifier posts, and the still unprinted V1.30 white parts, the U20 face panel and the V1.29 roof saddle body and lid, which D-028 supersedes: set those two aside and print the V2 saddle below instead; one yellow plate: the lower head shell with the speaker pocket, twelve sound holes, the amplifier rails and the exit slot; one black plate: the jaw support with the exit slot)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.33 (2026-10-24, mouth floor) replaces the V1.32 package, which is not printed: its speaker box is retired. The speaker now lies grille face down in a 1.5 mm pocket in the floor of the lower head shell, over twelve dia 2.5 holes in four rows of three above the lower jaw, and the amplifier stands on foam tape between two low rails on the floor beside it (no screws), its terminal 4 mm from the speaker pads. The head cap is the V1.32 ear cap without the two amplifier posts (the roof is the V1.8 roof there); the XIAO touch board moves from the left wall to that place at the middle of the roof. The left-rear head exit in the shell and in the jaw support grows from a dia 11 hole to an 11 x 17 mm long-round slot, 6 mm longer towards the rear, for the eleven wires and the camera cable; the fixed half of the exit clamp on the jaw support follows it, and the loose clamp halves from V1.30 still fit. The V1.30 white plate is not printed: this white plate carries its three parts. The V1.30 yellow shell and black jaw support are replaced.'},
                   {'item': 'V1.30 package: zhengxia_MicroDuck_V1.30 folder (one white plate: the U20 face panel and the roof saddle, now carried by the V1.32 white plate; one black plate: the U20 eye trim, the jaw support and the two loose halves of the exit clamp; one yellow plate: the lower head shell; the white plate is carried by V1.33, and the yellow shell and the jaw support are replaced by V1.33: print only the eye trim and the two loose clamp halves from the black plate)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.30 (D-023, 2026-10-22, revised 2026-10-23) replaces the A7Z face panel and the V1.8 eye trim for the Innomaker U20CAM-720P USB camera: the face keeps its two trim screw holes and carries four 13.1 mm bosses on a 28 mm square (dia 1.7 pilots for M2 × 6) that hold the 32 × 32 mm camera board 13.1 mm behind the face, so the lens front (22.0 mm in front of the board, ROBOTIS OMX-F CAD) sits 0.4 mm behind the trim front; the eye opening in the face and the bore of the eye trim grow to dia 16.2 for the dia 14.0 lens ring, with the same 45 deg flare outside (print/face-u20/checks.json). The jaw support and the lower head shell reprint with the left-rear head exit opened to dia 11, so the camera cable passes whole: the old left-rear jaw-support screw seat is moved behind ID15 to (11.6, 30.2). The jaw support carries the fixed half of a two-piece wire clamp in the exit; the loose half is a small separate print in two sizes, A and B (print/neck-exit-20261023/checks.json).'},
-                  {'item': 'Roof saddle for the A7Z (D-022, 2026-10-22): saddle body and saddle lid, white like the shells (print/a7z-saddle/build/, world files saddle_body.stl and saddle_lid.stl; plate release pending)', 'qty': 2, 'kind': 'printed',
-                   'note': 'The body is a 40 × 69 mm open box with 1.6 mm walls that follows the shell roof: four dia 5 posts with dia 1.6 pilots for the A7Z, a passage in its floor over the torso roof opening, two flat seats for the M2 × 10 pack screws, a slot in the left (+Y) wall for the microSD card, a notch in the front wall for the camera USB-C plug. The lid is a 1.6 mm plate with a lip inside the walls, a 30 mm fan pocket with snap lips on its underside, a grille over the fan and two bosses for the side screws.'},
+                  {'item': 'Roof saddle V2 for the A7Z (D-028, 2026-10-25): saddle body, saddle lid and saddle tray, orange for now (white when the white PETG is restocked; print/a7z-saddle/build/, world files saddle_body.stl, saddle_lid.stl and saddle_tray.stl; plate release pending)', 'qty': 3, 'kind': 'printed',
+                   'note': 'The body is a 40 × 69 mm open box with 1.6 mm walls that follows the shell roof: one window in the rear wall (y −29 to 26.5, z 47.8 to 58) for the two USB-C sockets and the micro HDMI; the header strip at the front (x −19.6 to −5) is open at the top; the left (+Y) wall bulges 2 mm outward between x −35 and −6 (z 46 to 59) to make a 2.3 mm channel for the antenna pigtail; a cut in its floor (x −21 to −5, |y| up to 16) over the torso roof opening runs out under the front wall foot; two flat seats for the M2 × 10 pack screws; four short dia 5 posts for the tray; five exhaust slots 3 × 10 in the right (−Y) wall, two in the rear wall above the sockets, two in the front wall right of the antenna; the microSD slot through the right (−Y) wall; two dia 2.2 holes for the lid screws in the side walls at x −31, z 62.8. The lid covers only the heatsink (x −45 to −19.6): a 1.6 mm plate at z 64.6 to 66.2 with a 2.2 mm lip inside the three closed walls, six grille slots over the blower, two pressing bars and a corner pad that bear on the heatsink, and two bosses for the side screws. The tray is a 1.4 mm plate (z 45.5 to 46.9) with four dia 6 bosses up to the board, a 1.0 mm counterbore under each boss for the screw heads, cut-outs around the parts on the underside of the board and open over the floor cut.'},
                   {'item': 'V1.28 package: zhengxia_MicroDuck_V1.28 folder (one black plate: the left and right one-piece lower-leg links)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.28 replaces both lower-leg links and the two black V1.22 sleeves. Each new link carries the sleeve printed on its 10 mm boss: the same 14.6 mm ring that turns in the inner half of the ankle, so nothing slides onto the boss any more. The right link of the 10/1 batch had bent. Bambu X1C file only (folder X1C), plus a picture; PARTS-SHEET-V1.28.html shows the parts.'},
                   {'item': 'V1.24 package: zhengxia_MicroDuck_V1.24 folder (one orange plate: the outer and inner halves of both ankles)', 'qty': 1, 'kind': 'printed',
@@ -407,14 +413,14 @@ def build(ctx):
                   {'item': 'V1.6 print package: zhengxia_MicroDuck_V1.6_8-files.zip', 'qty': 1, 'kind': 'printed', 'note': 'Three parts still come from it: jaw support, mouth sliding ring and neck pitch bracket. Its speaker cradle, speaker keeper, IMU holder, IMU rear cover and OpenRB tray are not used in this build. The V1.7 package is not needed at all: its cap is replaced by the V1.8 cap and its tray is retired.'}],
          instructions=[
              'Everything else comes from the 10/1 batch of 89 parts you already printed.',
-             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap, both torso shells and the A7Z roof saddle body and lid (white); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, mouth sliding ring, neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
+             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap and both torso shells (white); the A7Z roof saddle body, lid and tray (V2, D-028; orange for now, white when restocked); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap, and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, mouth sliding ring, neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
              'Print the V1.33 package (one white, one yellow and one black plate), the eye trim and the two loose exit-clamp halves from the black V1.30 plate, the V1.19 package (one orange plate: the two caps), the V1.18 package without its cap (the battery backpack frame), the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap, its speaker retainer and its four wire clips, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the other three parts from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the V1.33 cap (the A7Z cap in white with relieved rails and two end slots) has a plain roof with no amplifier posts and no speaker collar, an ear with a sound hole and a microphone locator in each side wall, the same sound hole and locator for an optional third microphone in the back wall, and no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
              'The lower head shell and the head cap print lying flat, as in the 10/1 batch; do not reuse the older on-edge files. The rear pack prints standing on its floor, upright as it sits in the robot; the box frame stands on its open back rim and the box cap lies on its flat back face. Peel off any brim, including the 4 mm brim round the cap.',
              'Remove all support material, including thin strands in screw holes, before assembly. On the head cap, push a needle through the dia 1.6 sound hole of each ear from the outside, and pick any stringing out of the two horseshoe locators round them inside. On the lower head shell, push a 2.5 mm drill by hand through the twelve sound holes in the floor of the speaker pocket. On the eye trim, make sure the two small pilot holes in its rear face are open. On the rear pack, open the four pilot holes in the round board pads, the four pilot holes in the ends of the two back posts, the USB-C slot in the floor, the window in the left (+Y) wall and the two pilot holes in the rib on the front of the plate. On the box frame, take out every support, open the eight pilot holes in the converter bosses, the four in the 5991 bosses, the two slots in the top wall, the small notch at the top edge of the 5991 terminal window and the wire notch at the front edge of the top wall and in the top edge of the front plate, and clear the four converter windows and the 5991 terminal window in the side walls, and the USB-C window low in the left-hand wall. On each wire clip, run a 2 mm drill or a needle through the screw hole in the tab and make sure the slot into the channel is open along its whole length. On each white torso shell, the small hole in the floor of the round counterbore on top prints on its side: check that an M2 screw drops through it, and if it does not, turn a 2 mm drill through it by hand; pick any support out of the seven horn-screw counterbores on the sides so each screw head seats flat.',
              'These screw seats print over support, so clean them to a flat seat: the three cap-screw tabs on the lower head shell and the four screw seats on the jaw support. On the neck pitch bracket, pick the support out of the shallow round recess in the centre of the horn face so the bracket sits flat on the horn; the thin skin above that recess matches the original part and can stay.',
          ],
          checks=[f'All {len(new_prints)} parts are printed and cleaned.',
-                 'The saddle body: four posts with open dia 1.6 pilots, the floor passage open, the two round screw seats flat, the microSD slot in the left (+Y) wall and the plug notch in the front wall clear; the lid: fan pocket lips intact, grille holes open, the two side-screw pilots in the lip bosses open.',
+                 'The saddle body (V2): the rear window clear, the pigtail channel inside the left (+Y) wall bulge open along its whole length, all nine exhaust slots and the microSD slot in the right (−Y) wall open, the floor cut open and running out under the front wall, the two round screw seats flat with their holes open, the two side lid-screw holes open, the four short tray posts clean. The tray: flat, not warped (it is 1.4 mm thick), the four counterbores under the bosses clean, the four boss holes open from the counterbore through to the top. The lid: the six grille slots open, the two pressing bars and the corner pad on its underside intact, the two screw pilots in its bosses open.',
                  'The new neck pitch ring is 4.9 mm thick. The four 4 mm rings from the 10/1 batch stay in use at the two hips and on both sides of the head roll; the fifth is now a spare.',
                  'It is the V1.33 cap, printed white: its rear rim is closed all round with no notch and no hood. The roof is plain inside, with no speaker collar, no grille holes and no posts. On each side wall, just behind the face and half way up, is a small dia 1.6 sound hole, and round it inside a horseshoe ring about 16 mm across, open at the top. The board rails stay as on the A7Z cap (a round pad round each pilot hole, a slot through each end of the board space), except near the ears, where they are cut back to the wall. The V1.32 cap has two short amplifier posts in the middle of the roof; the V1.17 A7Z cap has a collar and grille at the back of the roof and no ears.',
                  'The lower head shell (V1.33) has a shallow pocket about 30 x 20 mm with round ends (a rectangle with small rounded corners on the first V1.33 print) in the flat floor just behind the face, with twelve round dia 2.5 holes through its floor in four rows of three; beside it on the left two low rails 4 mm tall and 15 mm long stand 18.4 mm apart; at the left rear the exit in the floor is a long-round slot, 11 mm wide and 17 mm long.',
@@ -1158,135 +1164,142 @@ def build(ctx):
                  'Both roof counterbores are empty and an M2 screw drops through each roof hole.',
                  'The horn screw heads sit below the shell surface in their counterbores; the rear one on the right shell stands on the surface.'],
          warnings=['The shells spring apart a little at the back until the saddle is screwed down in the next chapter: do not lift the robot by the shells before then.',
-                   'A pack swap on the built robot needs the saddle and both shells off: the saddle (its lid, the A7Z and the two M2 × 10), the right shell (four M2 × 4 or M2 × 6 and the M2 × 10), the left shell (four M2 × 4 and the M2 × 10), then the pack comes out backwards. The OpenRB-150 alone does not need this: with only the rear box frame off it slides out backwards past the shells (step \'Mount the OpenRB-150 in the pack\', note).'])
+                   'A pack swap on the built robot needs the saddle and both shells off: the saddle (its lid, the tray with the A7Z lifted out, and the two M2 × 10), the right shell (four M2 × 4 or M2 × 6 and the M2 × 10), the left shell (four M2 × 4 and the M2 × 10), then the pack comes out backwards. The OpenRB-150 alone does not need this: with only the rear box frame off it slides out backwards past the shells (step \'Mount the OpenRB-150 in the pack\', note).'])
 
-    # ------------------------------------------------------------------ 7. Roof saddle for the A7Z (D-022, 2026-10-22)
+    # ------------------------------------------------------------------ 7. Roof saddle for the A7Z (D-028, 2026-10-25; saddle V2)
     # print/a7z-saddle/build_saddle.py, build/build.json (parts, checks, screws) and build/pins.json (pin tops). Guide world:
-    # body x -45..-5, |y| <= 34.4, walls 1.6, top rim z 72.4, floor 0.3 above the shell roof with an open passage x -21..-5,
-    # |y| <= 16 over the torso roof opening (the neck bundle leaves the torso at (-16, 3, 41) inside it); four dia 5 posts
-    # (PCB underside z 47.0, dia 1.6 pilots 2.6 deep); two flat seats at (-21.5, +-20), top z 43.25, for the pack screws.
-    # Board: component side up, header edge at the rear (x -43.1), pin 1 at -y; even pins x -40.87, odd pins x -38.33,
-    # pin tops z 57.1; microSD out through the +y wall slot; USB-C OTG on the front edge (x -19.8..-11.5, y 4.6..13.7); fan
-    # socket J6 at the pin-1 front corner (x -24.7..-19.8, y -31.6..-29.2). Screws: fasteners.json SD-board-01..04 (M2 x 4,
-    # 2.1 mm in the posts), S-shell_pack-01/02 (M2 x 10 through the saddle floor and the shell roof into the pack bar, 4.9 mm,
-    # pilot deepened 0.3 mm to z 33.2: flag 10.3 mm from the drill tip), SD-lid-01/02 (M2 x 6 sideways into the lid bosses,
-    # 3.55 mm). Lid and fan go on in chapter 11 after the fan has been seen running.
+    # body x -45..-5, |y| <= 34.4 (+y wall bulge to 36.4 at x -35..-6, z 46..59), walls 1.6, wall top z 65.8, floor 0.3 above the
+    # shell roof with the floor cut x -21..-5, |y| <= 16 over the torso roof opening, running out under the front wall foot; four
+    # dia 5 tray posts; two flat seats at (-21.5, +-20), top z 43.25, for the pack screws (heads top 44.85, tray bottom 45.5).
+    # Tray: plate z 45.5..46.9, four dia 6 bosses to z 48.0 at the board holes (-15.5, +-29) and (-38.5, +-29), dia 2.2 holes,
+    # dia 4.2 x 1.0 counterbores underneath. Board: component side up, rear edge x -41.7, sockets at the rear behind one window
+    # (y -29..26.5, z 47.8..58), header at the front edge, pin 1 at +y (even pins edge row x -14.23, odd pins inner row x -16.77,
+    # pin tops z 58.1, housings to z 64.1); 6530B top z 61.2, blower at the +y end; IPEX socket x -28.4..-25.4 on the +y edge;
+    # fan socket J6 x -35.3..-30.4, y 29.2..31.6; microSD card out through the -y wall slot. Antenna on the front wall inner face
+    # (x -6.6), y -11..31, z 50..62, 11.5 mm from the fin block. Screws: build.json SD-board-01..04 (M2 x 6 from below through
+    # the tray bosses and the board holes into the 6530B threaded bosses), S-shell_pack-01/02 (M2 x 10 through the saddle floor
+    # and the shell roof into the pack bar, driven before the tray goes in; pilot deepened 0.3 mm to z 33.2: flag 10.3 mm from
+    # the drill tip), SD-lid-01/02 (M2 x 6 sideways at x -31, z 63.5 into the lid bosses). The lid goes on in chapter 11 after
+    # the blower has been seen running.
     saddle_cam = ctx.cam(saddle_body + SHELLS, direction=(-1.0, -0.8, 0.9), margin=1.15) if saddle_body else ctx.cam(SHELLS, direction=REAR, margin=1.3)
     step('saddle-mount', 'saddle', 'Set the empty saddle on the torso roof and screw it into the pack', add=saddle_body,
          approach={'saddle_body': [0, 0, 40]}, cables=['pi-lead', 'imu', 'uart'],
          camera=saddle_cam,
-         prepare=[{'item': 'Roof saddle body (new print, white)', 'qty': 1, 'kind': 'printed'}, tap(2, 'M2 × 10'),
+         prepare=[{'item': 'Roof saddle body (V2 print, orange for now; white when restocked)', 'qty': 1, 'kind': 'printed'}, tap(2, 'M2 × 10'),
                   {'item': '1.6 mm twist drill in a pin vise, and a strip of tape', 'qty': 1, 'kind': 'tool', 'note': 'To deepen the two pilots in the pack shoulder bars by 0.3 mm; flag 10.3 mm from the drill tip.'},
                   {'item': 'Phillips #0 driver, straight, at least 30 mm long', 'qty': 1, 'kind': 'tool'}],
-         screwNotes={'M2 × 10 TAP': 'One per side, straight down: head on the flat seat on the saddle floor at z 43.25 (saddle floor about 2 mm thick there), through the dia 2.2 hole in the shell roof (1.2 to 1.3 mm thick, top about z 40.0) and into the V1.9 pack shoulder bar (top z 38.45, bottom z 31.6): 5.2 mm of shank in the bar, 4.9 mm of thread after the lead-in, tip at z 33.25 with 1.65 mm of bar below it. The earlier M2 × 6 pilot reached z 33.5: drill it 0.3 mm deeper through the saddle seat and the shell hole. The head top (z 44.85) clears the A7Z microSD socket by 0.65 mm and the board\'s underside parts by 1.15 mm, so the screws must be in before the board.'},
+         screwNotes={'M2 × 10 TAP': 'One per side, straight down: head on the flat seat on the saddle floor at z 43.25 (saddle floor about 2 mm thick there), through the dia 2.2 hole in the shell roof (1.2 to 1.3 mm thick, top about z 40.0) and into the V1.9 pack shoulder bar (top z 38.45, bottom z 31.6): 5.2 mm of shank in the bar, 4.9 mm of thread after the lead-in, tip at z 33.25 with 1.65 mm of bar below it. The earlier M2 × 6 pilot reached z 33.5: drill it 0.3 mm deeper through the saddle seat and the shell hole. The head tops out at z 44.85 and the underside of the tray is at z 45.5, 0.65 mm above it, so the screws must be in before the tray with the board drops in.'},
          instructions=[
-             'Done: the empty saddle sits on the two shell roofs over the rear pack, behind the neck, held by two M2 × 10 down through its floor seats and the shell roof holes into the pack bars. The torso wires come up through the passage in its floor.',
-             'Hold the saddle with its four posts up and its slot (for the microSD card) on the robot\'s left (+Y). Gather the PI lead, the IMU lead and the UART pair at the top-rear corner of the torso and lead them up through the open passage in the saddle floor, the rectangle at the front of the floor over the torso roof opening.',
-             'Lower the saddle straight down onto the shell roofs. Its floor follows the roof 0.3 mm above it; its rear wall stands just in front of the rear converter box, and the two round seats in its floor land over the two empty roof counterbores of the shells. Nothing may be pinched under the floor: the torso wires rise only through the passage.',
+             'Done: the empty saddle sits on the two shell roofs over the rear pack, behind the neck, held by two M2 × 10 down through its floor seats and the shell roof holes into the pack bars. The torso wires come up through the cut in its floor.',
+             'Hold the saddle with its rear window (the wide opening low in one end wall) towards the rear converter box and the wall with the small outward bulge on the robot\'s left (+Y). Gather the PI lead, the IMU lead and the UART pair at the top-rear corner of the torso and lead them up through the open cut in the saddle floor, the rectangle at the front of the floor over the torso roof opening.',
+             'Lower the saddle straight down onto the shell roofs. Its floor follows the roof 0.3 mm above it; its rear wall stands just in front of the rear converter box, and the two round seats in its floor land over the two empty roof counterbores of the shells. Nothing may be pinched under the floor: the torso wires rise only through the cut.',
              'Pilots: wrap a tape flag round the 1.6 mm drill 10.3 mm from its tip. Put the drill straight down through each floor seat hole and the shell hole under it into the pack bar and turn it until the flag touches the seat. This deepens the pilot drilled for the earlier M2 × 6 by 0.3 mm (full diameter to about z 33.2); on shells that never had the M2 × 6, it drills the pilot in one go. Blow the chips out of the saddle.',
-             'Drive one M2 × 10 straight down through each seat until its head touches the seat, then stop. The driver comes straight down into the open saddle: the board is not in yet, and the head sits only 0.65 mm under the microSD socket once it is.',
-             'Lay the torso wires forward in the passage, towards the front wall, so they do not stand where the board comes down.',
+             'Drive one M2 × 10 straight down through each seat until its head touches the seat, then stop. The driver comes straight down into the open saddle: the tray is not in yet, and once it is, its underside sits only 0.65 mm above the screw heads.',
+             'Lay the torso wires forward in the floor cut, towards the front wall, so they do not stand where the tray comes down.',
          ],
          checks=['The saddle sits on both shell roofs without rocking and its rear wall clears the rear converter box.',
                  'Both screw heads sit flat on their seats; the saddle does not lift at either side when pulled up.',
-                 'The PI lead, the IMU lead and the UART pair rise through the floor passage and move freely in it.',
+                 'The PI lead, the IMU lead and the UART pair rise through the floor cut and move freely in it.',
                  'The two shells no longer spring apart at the back when you squeeze them: the saddle screws tie them to the pack.'],
-         warnings=['These two screws are the shell-to-pack screws of the earlier build, 4 mm longer. Do not drive them with the board in: the driver has 0.65 mm under the microSD socket.',
-                   'To re-drive a saddle screw on the finished robot, take the lid and the A7Z out first; the lower head shell is 54 mm above each head, so a straight driver fits once the board is out.'])
-
-    step('saddle-antenna', 'saddle', 'Stick the Wi-Fi antenna on the inside of the saddle rear wall', add=sd_antenna,
-         approach={'sd_antenna': [[4, 0, 25], [4, 0, 0]]},
-         camera=ctx.cam(sd_antenna + saddle_body, direction=(1.0, -0.4, 0.8), margin=1.1) if sd_antenna else saddle_cam,
-         prepare=[{'item': 'AC019 Wi-Fi antenna from the A7Z box: a flat sticker 42 × 12 mm with a 50 mm cable and a small round IPEX plug', 'qty': 1, 'kind': 'electronic'},
-                  {'item': 'Isopropyl alcohol and a tissue', 'qty': 1, 'kind': 'other'}],
-         instructions=['Done: the antenna strip lies flat on the inner face of the saddle rear wall, centred, from z 49.5 to 61.5, its cable free.',
-                       'Wipe the inner face of the rear wall (the wall nearest the rear converter box) with alcohol and let it dry.',
-                       'Peel the backing and stick the strip across the wall, centred left to right, its lower edge about 2.5 mm above the floor so it sits just above the board edge once the board is in, cable end towards the right (−Y), the pin-1 end of the header. Press it down along its whole length.',
-                       'Let the cable and its plug hang into the saddle; the plug goes onto the A7Z antenna socket in the board step.'],
-         checks=['The strip lies flat with no lifted corner and does not reach down onto the floor or over a post.'],
-         warnings=['Never pull on the thin cable or bend it sharply at the plug.'],
-         links=[a7z('stick', 'Antenna page: photos and the Wi-Fi check (the cap pictures are the old head; the strip now sits in the saddle)', page='A7Z-ANTENNA.html')])
+         warnings=['These two screws are the shell-to-pack screws of the earlier build, 4 mm longer. Do not drive them with the tray in: the tray covers them with 0.65 mm to spare.',
+                   'To re-drive a saddle screw on the finished robot, take the lid off, unplug the header and lift the tray with the board out first; the lower head shell is 54 mm above each head, so a straight driver fits once the tray is out.'])
 
     sd_card = ctx.keys('sd_microsd_card'); sd_board_nocard = [k for k in sd_board if k not in sd_card]
-    step('saddle-board', 'saddle', 'Lower the A7Z onto the four posts and plug the antenna', add=sd_board_nocard,
-         group={'label': 'Radxa Cubie A7Z (card not in yet)', 'approach': [0, 0, 30]}, cables=['pi-lead', 'imu', 'uart'] + ANT_CABLES,
-         camera=ctx.cam(sd_board + saddle_body, direction=(-0.6, -1.0, 1.0), margin=1.1) if sd_board else saddle_cam,
-         prepare=[{'item': 'Radxa Cubie A7Z with 40-pin header and flashed microSD card', 'qty': 1, 'kind': 'electronic'}, tap(4, 'M2 × 4')],
-         screwNotes={'M2 × 4 TAP': 'Down through a board corner hole (Pi Zero pattern, dia 2.75) into the dia 1.6 pilot in a saddle post: 1.6 mm of board, then 2.4 mm of shank in the post, 2.1 mm of thread after the lead-in, tip 0.2 mm above the pilot bottom. Stop the moment the head touches the board.'},
-         instructions=['Leave the microSD card out: it goes in through the slot in the left (+Y) saddle wall after the board is down (next step). With the card in, its 2 mm overhang would hit that wall above the slot as the board comes down.',
-                       'Hold the board component side up with the header along its rear edge (towards the rear converter box) and pin 1 at the right-hand (−Y) end: the antenna socket, the fan socket and the camera connector are all at that end. The USB-C sockets and the micro HDMI face the front wall.',
-                       'Hold the three torso wires forward against the front wall and the antenna cable up out of the way, and lower the board straight down onto the four posts. Do not slide it: the parts under the board would catch on the posts and the screw heads. The card end enters the wall slot; the four corner holes land on the four posts.',
-                       'Drive the four M2 × 4 down through the corner holes into the posts. Stop the moment each head touches the board: the pilots are only 2.6 mm deep.',
-                       'Plug the antenna: find the small round IPEX socket on the top of the board at the pin-1 end, hold the plug square over it with its cable pointing back towards the strip, and press straight down with a fingertip until it clicks. Do not rock it on. Lay the cable along the rear wall under the strip.'],
-         checks=['The board sits flat on all four posts, header at the rear, pin 1 (the end with the antenna socket) to the right (−Y); the card slot on the underside lines up with the slot in the +Y wall.',
-                 'The three torso wires come up in front of the board edge through the passage; none is under the board.',
-                 'The antenna plug sits flat and does not turn when you touch the cable.'],
-         warnings=['The pilots are 1.6 mm: M2.5 or M2.6 screws split the posts.',
+    board_unit = sd_board_nocard + sd_heatsink + saddle_tray
+    step('saddle-board', 'saddle', 'On the bench: thermal pad and the 6530B heatsink on the A7Z, the tray under it, four screws from below', add=board_unit,
+         show=[], context=[], bench=True,
+         approach={'sd_thermal_pad_6530b': [0, 0, 15], 'sd_heatsink_6530b': [0, 0, 25], 'saddle_tray': [0, 0, -15]}, cables=FAN_CABLES + ANT_CABLES,
+         camera=ctx.cam(board_unit, direction=(-0.6, -1.0, 1.0), margin=1.15) if board_unit else saddle_cam,
+         prepare=[{'item': 'Radxa Cubie A7Z with 40-pin header (card out)', 'qty': 1, 'kind': 'electronic'},
+                  {'item': 'Radxa Heatsink 6530B with its blower lead and one 16 × 16 × 1.5 mm thermal pad from its kit', 'qty': 1, 'kind': 'electronic', 'note': 'A pad, not paste: paste and Kapton failed mid-install on 2026-10-21. The kit\'s own CM2 × 4 screws stay in the box.'},
+                  {'item': 'Roof saddle tray (V2 print, orange for now; white when restocked)', 'qty': 1, 'kind': 'printed'},
+                  tap(4, 'M2 × 6'),
+                  {'item': 'Isopropyl alcohol and a tissue', 'qty': 1, 'kind': 'other'},
+                  {'item': 'Phillips #0 driver', 'qty': 1, 'kind': 'tool'}],
+         screwNotes={'M2 × 6 TAP': 'Four, from BELOW, with the unit upside down on the bench: head in the dia 4.2 × 1.0 counterbore under a tray boss, up through the dia 2.2 hole in the boss (1.5 mm above the counterbore floor), through the board corner hole (Pi Zero pattern, 1.6 mm of board) and into the threaded boss of the 6530B that stands on that hole: about 2.9 mm of the screw in the aluminium (the boss is about 3.1 mm tall; estimated from photos, check on the part). The thread is already cut in the aluminium for the kit\'s CM2 × 4: turn each screw in by hand until it is snug and stop; do not strip the aluminium. Drive the four in two diagonal pairs, a little at a time, so the pad is pressed evenly.'},
+         instructions=['Done: the thermal pad lies on the A733, the 6530B sits on the board with its four bosses on the four corner holes, the tray lies under the board with its bosses up against the underside, and four M2 × 6 from below hold tray, board and heatsink together as one unit. The blower lead is on J6 and the antenna pigtail is on the IPEX socket.',
+                       'Leave the microSD card out: it goes in through the slot in the right (−Y) saddle wall after the unit is in the saddle. With the card in, its 2 mm overhang past the board edge would hit that wall above the slot as the tray comes down.',
+                       'Wipe the top of the A733, the biggest chip near the middle of the board, with alcohol. Peel one liner off the 16 × 16 pad, set the pad on the chip square with its edges, press it down, then peel the other liner.',
+                       'Hold the heatsink with its blower (the round fan at one end, intake upward) over the pin-1 end of the header, the end with the antenna socket and the fan socket J6: in the saddle this is the robot\'s left (+Y). Its four threaded bosses go down onto the four board holes; the fin block then covers the pad. Lower it straight down and check all four bosses sit on the holes. Without the pad the base would float 1 to 2 mm above the chip; the pad fills that gap (CURRENT-STATE.json parts_a7z_extensions). Check on the part that nothing on the heatsink underside bears on the IPEX socket or the fan socket.',
+                       'Turn the board and heatsink over together, holding them as one, and lay them heatsink down on the bench. Set the tray on the underside of the board: its four bosses stand on the four corner holes and its cut-outs clear the microSD socket, the camera connector, the PCIe connector and the boot button; the wide notch in the tray is at the header end (the front). The tray is right way up when the counterbores under the bosses face you.',
+                       'Drive the four M2 × 6 from below as the screw note says: into each counterbore, up through the boss and the board, into the heatsink boss, by hand until snug. Turn the unit back over.',
+                       'Plug the blower lead into J6, the small 3-pin socket at the pin-1 end of the board near the rear corner (x −35.3 to −30.4, y 29.2 to 31.6). Lay the lead short and flat; it must not lie across the header.',
+                       'Plug the antenna pigtail: find the small round IPEX socket on the top of the board at the +Y edge, about the middle of the board\'s length (x −28.4 to −25.4), hold the plug square over it with its 40 to 50 mm cable pointing along the board edge towards the header end, and press straight down with a fingertip until it clicks. Do not rock it on. The AC019 strip at its other end stays loose for now.'],
+         checks=['The heatsink sits flat on the board on all four bosses; it does not rock, and the pad shows no gap at its edges.',
+                 'All four screw heads sit down in their counterbores under the tray; nothing stands below the tray plate, so it will lie flat on the saddle posts.',
+                 'The blower lead is on J6 and the antenna plug sits flat and does not turn when you touch the cable.',
+                 'The blower, the antenna socket and J6 are all at the same end of the board, the pin-1 end of the header.'],
+         warnings=['The 6530B bosses are aluminium: hand-tight only. A screw that will not start is cross-threaded; back it out and start again.',
                    'Never pull the antenna plug off by its cable; lever it straight up under the plug body.'],
          links=[a7z('plug', 'Antenna page: plugging the IPEX plug', page='A7Z-ANTENNA.html')])
 
-    step('saddle-card', 'saddle', 'Push the microSD card in through the side slot', add=sd_card,
-         approach={'sd_microsd_card': [0, 20, 0]}, cables=['pi-lead', 'imu', 'uart'],
-         camera=ctx.cam(sd_card + saddle_body, direction=(-0.3, 1.0, 0.6), margin=1.4) if sd_card else saddle_cam,
+    step('saddle-antenna', 'saddle', 'Stick the Wi-Fi antenna on the inside of the saddle front wall', add=sd_antenna,
+         approach={'sd_antenna': [[-4, 0, 25], [-4, 0, 0]]},
+         camera=ctx.cam(sd_antenna + saddle_body, direction=(-1.0, -0.4, 0.8), margin=1.1) if sd_antenna else saddle_cam,
+         prepare=[{'item': 'AC019 Wi-Fi antenna from the A7Z box: a flat sticker 42 × 12 mm whose 40 to 50 mm pigtail ends in a small round IPEX plug (already on the board)', 'qty': 1, 'kind': 'electronic'},
+                  {'item': 'Isopropyl alcohol and a tissue', 'qty': 1, 'kind': 'other'}],
+         instructions=['Done: the antenna strip lies flat on the inner face of the saddle front wall (the wall nearest the neck), from the robot\'s left towards the right (y 31 to −11), between z 50 and 62, its feed end at the left (+Y) end next to the pigtail channel.',
+                       'The pigtail is already on the board, so bring the unit to the saddle and hold it beside the front wall while you stick the strip; do not pull on the pigtail.',
+                       'Wipe the inner face of the front wall with alcohol and let it dry.',
+                       'Peel the backing and stick the strip across the wall with its feed end (where the pigtail leaves the strip) at the left (+Y) end, 1.8 mm from the inner face of the left wall, its lower edge at z 50, just above the board top (z 49.6) once the board is in, so the strip sits 11.5 mm in front of the heatsink fin block. Press it down along its whole length.',
+                       'Let the pigtail lie loose for now; it goes into the channel inside the left wall in the next step.'],
+         checks=['The strip lies flat with no lifted corner, clear of the two exhaust slots to its right and not down onto the floor cut.',
+                 'The feed end is at the left (+Y) end, beside the wall bulge.'],
+         warnings=['Never pull on the thin pigtail or bend it sharply at the plug.',
+                   'Do not stick the strip on a side wall or the rear wall: the heatsink stands against those, and the Wi-Fi check in chapter 11 decides whether this front-wall position holds (D-028).'],
+         links=[a7z('stick', 'Antenna page: photos and the Wi-Fi check (the cap pictures are the old head; the strip now sits in the saddle)', page='A7Z-ANTENNA.html')])
+
+    step('saddle-drop', 'saddle', 'Lower the tray with the A7Z into the saddle and lead the pigtail to the antenna', add=board_unit,
+         group={'label': 'Tray with the A7Z and the 6530B (card not in yet)', 'approach': [0, 0, 30]}, cables=['pi-lead', 'imu', 'uart'] + ANT_CABLES,
+         camera=ctx.cam(board_unit + saddle_body, direction=(-0.6, -1.0, 1.0), margin=1.1) if board_unit else saddle_cam,
+         instructions=['Done: the tray lies on the four short posts in the saddle floor, located by the walls, with the three sockets behind the rear window and the header along the front edge; the antenna pigtail runs from the IPEX socket into the channel inside the left (+Y) wall and forward to the antenna feed end; the torso wires stand in the floor cut in front of the board edge.',
+                       'Hold the unit with the sockets (two USB-C and the micro HDMI) towards the rear converter box and the header towards the neck. Pin 1, the antenna socket, J6 and the blower are then on the robot\'s left (+Y).',
+                       'Hold the three torso wires forward against the front wall and the pigtail up out of the way, and lower the unit straight down between the walls until the tray rests on the four posts. Do not slide it: the parts under the board would catch on the posts. The tray fits between the side walls with 0.15 mm a side, so it may need a gentle rock to settle; front to back, slide it back until the three sockets sit just inside the rear window (their faces 1.4 mm inside the rear wall\'s outer face) and the tray\'s rear edge is near the rear wall.',
+                       'Lead the pigtail from the IPEX socket sideways into the 2.3 mm channel that the bulge in the left (+Y) wall makes outside the board edge (x −35 to −6, z 46 to 59), then forward along the channel to the front wall and to the antenna\'s feed end. Nothing holds it but the channel; it must not pass over the heatsink or the header.',
+                       'Nothing is screwed here: the tray is held by the walls and, from chapter 11, by the lid pressing on the heatsink.'],
+         checks=['The tray lies flat on all four posts and does not rock; the sockets line up with the rear window and the card socket on the underside lines up with the slot in the right (−Y) wall.',
+                 'The three torso wires come up in front of the board edge through the floor cut; none is under the tray.',
+                 'The pigtail lies in the wall channel along its whole length and is slack at both ends.',
+                 'Look from behind: USB-C ①, USB-C ② and the micro HDMI are all visible through the rear window, each with free space round it.'],
+         warnings=['Do not lift the unit by the heatsink lead or the pigtail.'])
+
+    step('saddle-card', 'saddle', 'Push the microSD card in through the right-hand side slot', add=sd_card,
+         approach={'sd_microsd_card': [0, -20, 0]}, cables=['pi-lead', 'imu', 'uart'],
+         camera=ctx.cam(sd_card + saddle_body, direction=(-0.3, -1.0, 0.6), margin=1.4) if sd_card else saddle_cam,
          prepare=[{'item': 'microSD card with the A7Z OS (chapter 11)', 'qty': 1, 'kind': 'electronic'}],
-         instructions=['Done: the flashed microSD card sits in the socket on the underside of the board, pushed in through the slot in the left (+Y) saddle wall.',
-                       'Hold the card contacts down, label up, and push it through the slot in the +Y wall (x −33.6 to −21.6, just under the board) into the socket on the underside of the board until it clicks. About 2 mm stays in the slot.',
+         instructions=['Done: the flashed microSD card sits in the socket on the underside of the board, pushed in through the slot in the right (−Y) saddle wall.',
+                       'Hold the card contacts up, label down (the socket is on the underside of the board), and push it through the slot in the −Y wall (x −33.6 to −21.4, z 46 to 48.5, just under the board) into the socket until it clicks. About 2 mm stays in the slot.',
                        'To take it out later, press it in once more through the slot and let it spring out; a fingernail or tweezers reach it through the slot.'],
          checks=['The card clicked in and does not spring out; it sits in the wall slot without touching the slot edges.'],
          warnings=['Do not force the card: if it stops early it is upside down or above the socket.'])
 
-    step('saddle-copper', 'saddle', 'Put the thermal pad and the copper heatsink on the processor', add=sd_copper,
-         approach={'sd_thermal_pad': [0, 0, 15], 'sd_heatsink': [0, 0, 15]},
-         camera=ctx.cam(sd_copper + ctx.keys('sd_soc_a733'), direction=(-0.5, -1.0, 1.0), margin=1.6) if sd_copper else saddle_cam,
-         prepare=[{'item': '15 × 15 × 5 mm copper heatsink', 'qty': 1, 'kind': 'electronic'},
-                  {'item': '0.5 mm thermal pad, 15 × 15 mm', 'qty': 1, 'kind': 'other', 'note': 'A pad, not paste: paste and Kapton failed mid-install on 2026-10-21.'},
-                  {'item': 'Isopropyl alcohol and a tissue', 'qty': 1, 'kind': 'other'}],
-         instructions=['Done: the copper sits square on the A733, the biggest chip in the middle of the board, on a 0.5 mm thermal pad; nothing holds it but the pad, and the fan blows down onto it.',
-                       'Wipe the top of the A733 with alcohol. Peel one liner off the pad, set the pad on the chip square with its edges, press it down, then peel the other liner.',
-                       'Set the copper on the pad, square with the chip, and press it down evenly for a few seconds. Its top ends at z 55.7, 8.7 mm under the fan.',
-                       'Do not slide the copper about on the pad: lift and reset it if it is off.'],
-         checks=['The copper is square on the chip and does not slide when pushed gently sideways.',
-                 'It touches no other component, and its top is below the tops of the Dupont housings to come (z 63.1).'])
-
     step('saddle-plugs', 'saddle', 'Plug the torso wires onto the A7Z', add=sd_housings + sd_cam_plug,
-         approach={'sd_dupont_housings': [0, 0, 12], 'sd_usb_c_plug': [[9, 0, 25], [9, 0, 0]]}, cables=['pi-lead', 'imu', 'uart'],
-         camera=ctx.cam(sd_housings + ctx.keys('sd_a7z_pcb'), direction=(-1.0, -0.8, 0.8), margin=1.3) if sd_housings else saddle_cam,
+         approach={'sd_dupont_housings': [0, 0, 12], 'sd_usb_c_plug': [[-9, 0, 0], [0, 0, 0]]}, cables=['pi-lead', 'imu', 'uart'],
+         camera=ctx.cam(sd_housings + ctx.keys('sd_a7z_pcb'), direction=(1.0, 0.8, 0.8), margin=1.3) if sd_housings else saddle_cam,
          prepare=[{'item': 'Masking tape and a fine marker', 'qty': 1, 'kind': 'other', 'note': 'For a pin-number flag on each wire.'},
                   {'item': 'Electrical tape', 'qty': 1, 'kind': 'other', 'note': 'For the joint of each 5 V lead jumper chain, if it is not taped yet.'}],
          instructions=[
              'Done: the eight torso wires sit on the header: PI red 2, PI black 6, UART green 7, UART white 11, IMU red 1, IMU blue 3, IMU yellow 5, IMU black 9. Nothing is soldered in this step.',
-             'The eight wires: the PI lead (the A7Z 5 V lead, two jumper chains from XL4015 #2 in the rear converter box), the four IMU wires and the UART pair. They come up through the floor passage in front of the board edge. The PI lead and the UART pair end in female plugs, the IMU wires in the 4397 cable\'s own sockets.',
+             'The eight wires: the PI lead (the A7Z 5 V lead, two jumper chains from XL4015 #2 in the rear converter box), the four IMU wires and the UART pair. They come up through the floor cut right in front of the header. The PI lead and the UART pair end in female plugs, the IMU wires in the 4397 cable\'s own sockets.',
              'PI lead: check that the joint of each chain (male plug inside the female plug) is taped so it cannot pull apart.',
              'Wrap a tape flag round each wire right behind its plug and write the pin: PI red 2, PI black 6, UART green 7, UART white 11, IMU red 1, IMU blue 3, IMU yellow 5, IMU black 9.',
-             'Count pins from the pin-1 end of the header: the right-hand (−Y) end, where the antenna and fan sockets are. The row along the board edge (the rear row, nearest the rear wall) is the even pins; the inner row is the odd pins. Pin 1 is the inner-row pin at the right-hand end, pin 2 the edge-row pin beside it.',
+             'Count pins from the pin-1 end of the header: the left-hand (+Y) end, where the antenna socket, J6 and the blower are. The row along the board edge (the front row, nearest the front wall and the antenna) is the even pins; the inner row, nearer the heatsink, is the odd pins. Pin 1 is the inner-row pin at the left-hand end, pin 2 the edge-row pin beside it.',
              'Edge row: flag 2 (PI red) on the 1st pin, flag 6 (PI black) on the 3rd.',
              'Inner row: flag 1 (IMU red) on the 1st pin, flag 3 (IMU blue) on the 2nd, flag 5 (IMU yellow) on the 3rd, flag 7 (UART green) on the 4th, flag 9 (IMU black) on the 5th, flag 11 (UART white) on the 6th.',
-             'Push each plug straight down onto its pin. The plugs stand upright on the header (about 14.5 mm tall, to z 63.1) and the lid clears them by 1.3 mm. Lead each wire down the front of the housings into the passage; nothing lies over the copper.',
+             'Push each plug straight down onto its pin from above: the header strip has no lid, so you work from the open top. The plugs stand upright on the header (about 14.5 mm tall, to z 64.1); the heatsink beside them ends at z 61.2. Lead each wire down the front of the housings into the floor cut; nothing lies over the heatsink grille area.',
              'Pins 8 and 10 stay empty (the A7Z debug console). Pins 4, 12, 35, 39, 40 (amplifier), 17, 25, 29, 31 (XIAO) and 34, 38 (microphones) are plugged in chapter 10, when the head wires come down the neck.',
-             'The notch in the saddle front wall, over the USB-C OTG socket on the front edge of the board, takes the right-angle USB-C plug of the camera pigtail (drawn in place, its body lying along the wall towards the left, +Y). It is plugged in chapter 10, after the four camera leads are soldered to it: leave the notch empty now.',
+             'The window in the saddle rear wall, over USB-C ②, takes the right-angle USB-C plug of the camera pigtail (drawn in place, its body lying along the outside of the rear wall towards the left, +Y, leaving USB-C ① free). It is plugged from behind the robot in chapter 10, after the four camera leads are soldered to it: leave the window empty now.',
          ],
-         checks=['Eight plugs, eight flags: 1, 2, 3, 5, 6, 7, 9, 11. Count again from the antenna-socket end: none is one pin off or in the wrong row.',
+         checks=['Eight plugs, eight flags: 1, 2, 3, 5, 6, 7, 9, 11. Count again from the antenna-socket (left, +Y) end: none is one pin off or in the wrong row.',
                  'Tug each IMU joint and each PI chain joint: it holds, and no copper shows.',
-                 'The three wires slide a little in the floor passage when pulled from below; none is pinched under the board.'],
-         warnings=['Pins 2 and 4 are 5 V: a plug one pin off can kill the A7Z.'],
+                 'The three wires slide a little in the floor cut when pulled from below; none is pinched under the tray.'],
+         warnings=['Pins 2 and 4 are 5 V: a plug one pin off can kill the A7Z.',
+                   'Pin 1 is now at the robot\'s LEFT (+Y): the V1.29 saddle had it at the right. Count from the end with the antenna socket and the blower, never from memory.'],
          links=[a7z('pins', 'A7Z wiring page: every pin, with photos (taken in the old head; the pin numbers are the same)'),
                 a7z('imu', 'Wiring picture: IMU to A7Z pins 1, 3, 5 and 9'),
                 a7z('uart', 'A7Z wiring page: the UART pair on pins 7 and 11'),
                 bringup('s12', 'Detailed page: the 5 V lead', 'BRINGUP step 12 (pins 2 and 6 are the same on the A7Z)'),
                 here('wire-list', 'Soldering and wire list')])
-
-    step('saddle-fan', 'saddle', 'Snap the fan into the saddle lid on the bench', add=saddle_lid + sd_fan, show=[], context=[], bench=True,
-         approach={'sd_fan': [0, 0, -12]}, cables=FAN_CABLES,
-         camera=ctx.cam(saddle_lid + sd_fan, direction=(-0.5, -0.8, -1.0), margin=1.2) if saddle_lid else saddle_cam,
-         prepare=[{'item': 'Roof saddle lid (new print, white)', 'qty': 1, 'kind': 'printed'},
-                  {'item': 'Adafruit 3368 30 mm 5 V fan (30 × 30 × 8 mm) with its 3-pin lead', 'qty': 1, 'kind': 'electronic'}],
-         instructions=['Done: the fan sits in the pocket under the lid, held by the four snap lips at its corners and the rear stop, label up, so it blows down onto the copper when the lid is on. Its lead hangs free.',
-                       'Work with the lid upside down. Find the fan pocket on its underside: a 30 mm square between side bars, with a 0.6 mm snap lip at each corner and a stop at the rear, under the grille.',
-                       'Which way round: a fan blows out of the side with the frame struts (the side with the label on the hub, on this fan). The label must face the lid plate, so that with the lid the right way up the air goes down onto the copper. Lead the fan lead out of the pocket at the pin-1 end (the right-hand, −Y side as the lid will sit).',
-                       'Press the fan into the pocket, lead first, until the four corner lips click over it. It sits 8.7 mm above the copper once the lid is on.',
-                       'The lid stays off the saddle until chapter 11: the fan is plugged in and seen running before the lid closes.'],
-         checks=['All four lips hold the fan; it does not drop out when the lid is turned over.',
-                 'The label faces the lid plate; the lead comes out at the right-hand (−Y) end.'])
 
     # ------------------------------------------------------------------ 8. Head mechanics
     # Order: the shell cannot pass a jaw already on the head (interference-audit/whatif.py), so the jaw goes into the
@@ -1613,7 +1626,7 @@ def build(ctx):
                   {'item': 'CableCreation right-angle USB-C pigtail (Amazon B0194WSKOM), USB-A end cut off 60 mm from the plug', 'qty': 1, 'kind': 'cable'},
                   {'item': 'Heat-shrink dia 1.5 (four pieces, 15 mm) and dia 6 (one piece, 25 mm)', 'qty': '4 + 1', 'kind': 'other'}],
          instructions=[
-             f'Done: the five amplifier wires, the four XIAO wires, the two microphone wires and the camera cable leave the head together through the exit slot at its left rear, held there by the two-piece clamp, run down the left (+Y) side of the neck without clips, and end in the saddle: the {head_wires} flagged plugs lie in front of the header, the camera cable is soldered to the USB-C pigtail whose plug lies in the notch gap. Nothing is plugged yet.',
+             f'Done: the five amplifier wires, the four XIAO wires, the two microphone wires and the camera cable leave the head together through the exit slot at its left rear, held there by the two-piece clamp, run down the left (+Y) side of the neck without clips, and end at the saddle: the {head_wires} flagged plugs lie in the floor cut in front of the header, and the camera cable goes on down the robot\'s left side outside the saddle to the rear, where it is soldered to the USB-C pigtail whose plug lies behind the rear window. Nothing is plugged yet.',
              f'Hold the populated cap beside the head, upside down, with its {hw} wires (flags 4, 12, 35, 39, 40 from the amplifier; 17, 25, 29, 31 from the XIAO; 38 and 34 from the microphones) hanging out. The camera cable already leaves the head through the exit (chapter 8), and the five amplifier wires come up from the amplifier on the head floor.',
              'Inside the head the wires gather over the left rear corner of the jaw support, where the exit slot goes straight down through the jaw support and the floor of the lower head shell, between the jaw motor ID15 and the corner wall. The amplifier wires come up from the head floor and back over the jaw support; the XIAO wires come back along the roof from the middle of the cap; the two microphone wires come back along the left side of the cap, and the three microphone joints lie at this point, above the exit; the camera cable comes back over the jaw motor.',
              f'Drop the {hw} wires down the exit beside the camera cable, beside the neck. The three microphone joints stay above the exit.',
@@ -1621,33 +1634,34 @@ def build(ctx):
              'Pull the bundle gently down from under the head. If it slides through the clamp, take the loose half off and fit size B, which has a 0.4 mm thicker wall. If A will not go down over the wires, flatten the bundle against the fixed half and try again; do not force it. To take the loose half off: press its middle towards the bundle so its two ends close slightly and free the barbs, and pull it straight up.',
              'Wrap the bundle in spiral wrap from the head floor down to the saddle.',
              'Run the group down the left side of the neck, beside the ID11 to ID13 servo cable, past ID11 and ID12 to the torso roof. Leave it slightly slack between the head opening and the neck, about 5 mm of bow: the bracket pitches with the head.',
-             f'At the top of the torso the camera cable parts from the group: lead it to the front of the saddle, where the right-angle plug will lie. Measure {CAM_SPAN} mm of cable from the head floor to where it meets the pigtail and cut it there. That length keeps it slack over every head pose ({CAM_SWEEP["full"]} mm needed at the far ends of the joint ranges, {CAM_SWEEP["trained"]} mm over the trained head range); at rest the extra bows beside the neck.',
-             f'Lead the {hw} head wires over the torso roof behind ID12 into the roof opening, under the saddle front wall and up through the saddle floor passage in front of the board edge, where the three torso wires already come up. Leave the plugs lying in the saddle for now.',
-             'Solder the camera cable to the pigtail: slide the dia 6 sleeve over the camera cable, strip its jacket back 15 mm and the four conductors and the four pigtail wires 3 mm, a dia 1.5 sleeve on each, red to red (VBUS), white to white (D−), green to green (D+), black to black (GND), shrink, then the dia 6 sleeve over the joint. Lower the plug into the gap between the saddle front wall and the neck and push it straight back through the notch into the OTG socket; its body lies along the wall towards the left.',
-             f'From the head floor opening to the saddle passage the group is about {L["bundle_neck"] + 40} mm.',
-             'Tie the group once at the saddle passage so a pull from outside loads the saddle, not the plugs. Do not tie it to any neck link.',
+             f'At the top of the torso the camera cable parts from the group: it does not enter the saddle. Lead it down the robot\'s left (+Y) side along the outside of the saddle\'s left wall to the rear, round the rear corner to the window in the rear wall, where the right-angle plug will lie with its body along the outside of the rear wall. Keep {CAM_SPAN} mm of free cable from the head floor to the torso roof beside the saddle: that is what every head pose needs ({CAM_SWEEP["full"]} mm at the far ends of the joint ranges, {CAM_SWEEP["trained"]} mm over the trained head range; at rest the extra bows beside the neck). Then lay the rest along the route to the plug position with the head at rest and cut it where it meets the pigtail wires, which end 60 mm from the plug.',
+             f'Lead the {hw} head wires over the torso roof behind ID12 into the roof opening, under the saddle front wall foot and up through the floor cut in front of the board edge, where the three torso wires already come up. Leave the plugs lying in the open header strip for now.',
+             'Solder the camera cable to the pigtail: slide the dia 6 sleeve over the camera cable, strip its jacket back 15 mm and the four conductors and the four pigtail wires 3 mm, a dia 1.5 sleeve on each, red to red (VBUS), white to white (D−), green to green (D+), black to black (GND), shrink, then the dia 6 sleeve over the joint. From behind the robot, push the plug forward through the rear window into USB-C ②, the middle socket of the three (USB-C ① is to its right as you look from behind, the micro HDMI to its left); its body lies along the outside of the rear wall towards the robot\'s left (+Y), over the micro HDMI, and leaves USB-C ① free. The plug body sits 5.85 mm above the top of the rear converter box.',
+             f'From the head floor opening to the saddle floor cut the group is about {L["bundle_neck"] + 40} mm.',
+             'Tie the group once at the saddle floor cut so a pull from outside loads the saddle, not the plugs. Do not tie it to any neck link.',
          ],
          checks=['Pitch, yaw and roll the head by hand through the trained range (yaw about ±80°), with the cap held in place: the group slides in the head opening, bows beside the neck and never goes tight, rubs a horn or lifts the servo cable out of its path.',
                  'The jaw opens 30° by hand without touching the group or the camera cable.',
                  'Pull the bundle gently from below the head: it does not slide in the clamp, and nothing moves inside the head.',
                  'Push the loose half up with a fingernail: it stays down.',
-                 'The USB-C plug is home in the OTG socket (it clicks) and the pigtail joint lies in the gap in front of the saddle, not against ID12.'],
+                 'The USB-C plug is home in USB-C ② (it clicks), its body lies along the outside of the rear wall towards the left and USB-C ① beside it is still free; the pigtail joint lies behind the saddle, clear of the rear converter box lid and the battery backpack position.',
+                 'The camera cable runs outside the saddle\'s left wall and does not cross the floor cut, the header or the neck servo cable.'],
          warnings=['Solder colour to colour and keep the white and green pair twisted up to the joint: a swapped data pair means no camera, and a swapped power pair can kill it.'])
 
     step('saddle-head-plugs', 'bundle', f'Plug the {head_wires} head wires onto the A7Z', cables=HEAD_DOWN_CABLES,
          camera=ctx.cam(sd_housings + ctx.keys('sd_a7z_pcb'), direction=(-1.0, -0.8, 0.8), margin=1.3) if sd_housings else saddle_cam,
          instructions=[
              'Done: the amplifier wires sit on A7Z pins 4, 12, 35, 39 and 40, the XIAO wires on 17, 25, 29 and 31 and the microphone wires on 34 and 38, beside the eight torso plugs already on the header.',
-             'Count pins from the pin-1 end of the header: the right-hand (−Y) end, with the antenna and fan sockets. The row along the board edge (nearest the rear wall) is the even pins; the inner row is the odd pins.',
+             'Count pins from the pin-1 end of the header: the left-hand (+Y) end, with the antenna socket, J6 and the blower. The row along the board edge (the front row, nearest the front wall) is the even pins; the inner row, nearer the heatsink, is the odd pins. Work from above through the open header strip.',
              'Flag 4 (amplifier Vin): edge row, 2nd pin. Flag 12 (BCLK): edge row, 6th pin. Flag 40 (DIN): edge row, last pin.',
              'Flag 35 (LRC): inner row, 18th pin (3rd from the far end). Flag 39 (GND): inner row, last pin.',
              'Flag 17 (XIAO 3.3 V): inner row, 9th pin. Flag 25 (GND): inner row, 13th pin. Flag 29 (SCL): inner row, 15th pin. Flag 31 (SDA): inner row, 16th pin.',
              'Flag 34 (microphone GND): edge row, 17th pin. Flag 38 (microphone SD, I2S0 DIN0): edge row, 19th pin, beside flag 40 at the far end.',
-             'Push each plug straight down. The plugs stand upright; lead each wire down the front of the housings into the passage. Pins 8 and 10 stay empty (the A7Z debug console).',
+             'Push each plug straight down. The plugs stand upright; lead each wire down the front of the housings into the floor cut. Pins 8 and 10 stay empty (the A7Z debug console).',
              *(['Optional back microphone: its SD plug (flag 10) stays OFF the header. Tape it beside the header, not on pin 10. Pin 10 is the A7Z UART0 receive pin until the I2S0 DIN3 overlay has been tested; with the two-microphone recording running, the back microphone would send its data into the serial console.'] if MIC_BACK_CABLES else []),
          ],
          checks=['Wires on 4, 12, 34, 35, 38, 39, 40, 17, 25, 29 and 31 only, and the torso plugs still on 1, 2, 3, 5, 6, 7, 9 and 11: nineteen plugs. Pins 8 and 10 are empty. Count again from the antenna-socket end.',
-                 'The camera plug sits in the OTG socket on the board front edge; its pigtail leaves the notch towards the left and climbs to the group.',
+                 'The camera plug sits in USB-C ② through the rear window; its pigtail runs forward along the outside of the saddle\'s left wall to the group at the torso roof.',
                  'Pin 17 is 3.3 V: one pin off puts 3.3 V on the wrong line.'],
          warnings=['Pins 2 and 4 are 5 V: the Vin plug on the wrong pin can kill the A7Z, and the XIAO 3V3 wire on pin 2 or 4 kills the XIAO.'],
          links=[a7z('audio', 'A7Z wiring page: the five amplifier wires'),
@@ -1685,7 +1699,7 @@ def build(ctx):
     step('unpowered', 'power-up', 'Unpowered checks', show=[k for k in full if k not in BOX_LID],
          camera=ctx.cam(LEGS + ['head_cap'], direction=REAR, margin=1.0),
          prepare=[{'item': 'Multimeter', 'qty': 1, 'kind': 'tool'}],
-         instructions=['Take the lid off the rear converter box (the four M2 × 10 in the holes in its back, then pull it straight back) and keep it aside with its screws: it stays off until the current check. The saddle lid is not on yet, so the A7Z header is open to the meter. With the USB-C cable out of the 5991, measure resistance on each of the three supplies. The 7 V pair and the A7Z 5 V lead are not on their converters yet (they go on in "First power"), so each is checked on its own.',
+         instructions=['Take the lid off the rear converter box (the four M2 × 10 in the holes in its back, then pull it straight back) and keep it aside with its screws: it stays off until the current check. The A7Z header stands in the open strip of the saddle, so the meter reaches it from above at any time. With the USB-C cable out of the 5991, measure resistance on each of the three supplies. The 7 V pair and the A7Z 5 V lead are not on their converters yet (they go on in "First power"), so each is checked on its own.',
                        '15 V side: 5991 terminal + to −: not a short. It is the same circuit as both converter inputs.',
                        '7 V side: OpenRB terminal block + to −: not a short (the OpenRB input capacitors charge from the meter, then it reads high). Read the same between the two taped converter ends of the 7 V pair; if they read open while J4 does not, a wire is loose under a J4 screw.',
                        '5 V side: A7Z header pin 2 to pin 6 (in the saddle): not a short. Pins 7 and 11 are not connected to pin 2 or 4.',
@@ -1699,7 +1713,7 @@ def build(ctx):
     step('pi-config', 'power-up', 'Set up the A7Z software', show=full,
          camera=ctx.cam(ctx.keys('sd_a7z_pcb') + saddle_body, direction=(-1.0, -0.6, 0.9), margin=1.3) if saddle_body else ctx.cam(SHELLS, direction=REAR, margin=1.3),
          instructions=[
-             'Flash Radxa\'s official Debian image for the Cubie A7Z to the microSD card (docs.radxa.com, Cubie A7Z, quick start). The card is reached through the slot in the left (+Y) saddle wall; the board stays on its posts.',
+             'Flash Radxa\'s official Debian image for the Cubie A7Z to the microSD card (docs.radxa.com, Cubie A7Z, quick start). The card is reached through the slot in the right (−Y) saddle wall; the board stays on its tray.',
              'On the A7Z run sudo rsetup, go to Overlays, Manage overlays, and switch on three: Enable UART2 (TX pin 7, RX pin 11, the OpenRB link), Enable TWI7 (pins 3 and 5, the IMU) and Enable I2S0 (pins 12, 35 and 40 for the amplifier). The microphones need pin 38 as I2S0 DIN0 as well: after the reboot, arecord -l must list an I2S0 capture device; if it lists none, the I2S0 overlay is playback only and capture needs its own device-tree change before the microphone check. The Radxa Camera 13M 214 overlay stays off: that camera left the head with the A7Z (D-022); the USB camera to come needs no overlay. Reboot.',
              'Then switch TWI7 to engine mode with the MicroDuck overlay guide/firmware/pi/duck-twi7-engine.dts. In the default drv mode, which Radxa\'s Enable TWI7 overlay sets, the A7Z\'s TWI7 driver locks up right after boot, after the probe i2cdetect sends and whenever the IMU resets, and stays locked until the driver is restarted, so the IMU looks missing although its wires are fine. Copy the file to the A7Z and run: dtc -@ -I dts -O dtb -o /tmp/zz-duck-twi7-engine.dtbo duck-twi7-engine.dts, then sudo install -m 644 /tmp/zz-duck-twi7-engine.dtbo /boot/dtbo/, then sudo u-boot-update. Keep the zz- in the name: overlays load in alphabetical order, and this one must come after Radxa\'s twi7 overlay or that one sets drv mode back. grep fdtoverlays /boot/extlinux/extlinux.conf ends with zz-duck-twi7-engine.dtbo. Reboot. cat /sys/devices/platform/soc@3000000/2517000.twi/twi_mode must say "Current mode is 0: engine". rsetup now lists it as "MicroDuck: TWI7 in engine mode"; leave it on. To undo, delete the file from /boot/dtbo, run sudo u-boot-update and reboot.',
              'The touch board on pins 29 and 31 has no ready-made overlay on the A7Z (Radxa\'s Enable TWI0 is for the CM-A7 only). Its I2C overlay is written and checked during the touch bench test (extension-20261015-touch/PLAN.md); until then the touch wires stay plugged in and unused.',
@@ -1725,7 +1739,7 @@ def build(ctx):
              'Readback before any load: meter on XL4015 #1 OUT+ and OUT−: 7.35 to 7.45 V. Meter on XL4015 #2 OUT+ and OUT−: 4.95 to 5.10 V. If either is off, set it again with its marked voltage trimmer (chapter 3) before you go on.',
              'Unplug the USB-C cable. Untape the ends of the 7 V pair at the OUT block of XL4015 #1 (top converter, left-hand end) and screw red under #1 OUT+ and black under #1 OUT−. Untape the two head 5 V lead ends at the OUT block of XL4015 #2 (middle converter, left-hand end; male pin already cut off, 10 mm stripped, strands twisted and folded back) and screw red under #2 OUT+ and black under #2 OUT−. Tug every wire. The U-loops outside the left-hand windows keep their shape.',
              'Plug the USB-C cable in again. The green PWR light on the OpenRB and the green power light on the A7Z come on.',
-             'Meter on DC volts: the OpenRB terminal block (red probe on +) reads 7.2 to 7.45 V; A7Z pin 2 to pin 6 in the open saddle (edge row, 1st and 3rd pin from the antenna-socket end) reads 4.9 to 5.1 V.',
+             'Meter on DC volts: the OpenRB terminal block (red probe on +) reads 7.2 to 7.45 V; A7Z pin 2 to pin 6 in the open header strip of the saddle (front edge row, 1st and 3rd pin from the antenna-socket end, the robot\'s left) reads 4.9 to 5.1 V.',
              'The servo ports switch on about half a second after the OpenRB starts.',
              'On the A7Z run: python3 scan_bus.py --port /dev/ttyAS2. It pings IDs 1 to 15 at 1 Mbps over the UART link, prints each role and input voltage, and exits 0 only when all 15 answer. On this first power-up a servo still on the factory Shutdown 53 reads 7.3 to 7.4 V, above its 7.0 V Max Voltage Limit, so it has latched its input-voltage error and answers with error 0x80. That is expected here, and nothing moves: torque is off after power-up.',
              'Write Shutdown 52 on every servo: python3 set_shutdown.py --port /dev/ttyAS2. Shutdown (address 63) is stored in the servo and can only be written with torque off. The script reads Torque Enable and Shutdown on all 15 first and writes nothing unless every servo answers with torque off; it then writes 52 to each servo that differs, reads all 15 back and ends with "PASS: 15/15 servos read back 52". Shutdown 52 keeps the overload, overheating and electrical-shock cut-outs and drops only the input-voltage one.',
@@ -1746,31 +1760,33 @@ def build(ctx):
          links=[bringup('s12', 'Detailed page: power-up, readback and voltage-limit check', 'BRINGUP step 12'),
                 here('bench-test', 'Guide: Set the 5991 to 15 V and the two XL4015 to 7.40 V and 5.00 V')])
 
-    step('sensors', 'power-up', 'Check the IMU, Wi-Fi, speaker, microphones, touch pads and the fan', show=full, cables=['imu'] + AUDIO_CABLES + MIC_DOWN_CABLES + TOUCH_PIN_CABLES + FAN_CABLES,
+    step('sensors', 'power-up', 'Check the IMU, Wi-Fi, speaker, microphones, touch pads and the heatsink blower', show=full, cables=['imu'] + AUDIO_CABLES + MIC_DOWN_CABLES + TOUCH_PIN_CABLES + FAN_CABLES,
          camera=ctx.cam(['head_cap'] + saddle_body, direction=(-1.0, 0.8, 0.6), margin=1.1),
          instructions=['IMU: first check that twi_mode says "Current mode is 0: engine" (step Set up the A7Z software); only then run sudo i2cdetect -y -r 7, which shows 4a. python3 imu_read.py 10 7 prints roll, pitch and yaw twice a second for 10 seconds. If 4a is missing or imu_read.py stops with an I2C error, check twi_mode first: in drv mode the bus locks up although the wires are fine. Run the upstream bno08x_calibrate_ui.py; with the robot upright, projected gravity must be near [0, 0, −1]. If not, fix IMU_MOUNT_QUAT before training.',
                        'Camera: none for now (D-022). When the USB camera is fitted, ls /dev/video* lists it and a UVC frame through the eye is the check.',
-                       'Wi-Fi: iw dev wlan0 link shows the signal level; write it down with the saddle lid off and, after the next step, on (the antenna page explains the check; the strip is now on the saddle rear wall).',
+                       'Wi-Fi: iw dev wlan0 link shows the signal level; write it down with the saddle lid off and, after the next step, on (the antenna page explains the check; the strip is now on the saddle front wall, 11.5 mm from the heatsink: D-028 keeps this position only if the signal is good, so note the number).',
                        'Speaker: with Enable I2S0 on, aplay -l lists the I2S0 card; play a short voice sample to it, at the -3 dB output limit, never higher. The sound comes out of the mouth: it is clearly louder with the beak open. The five amplifier wires now run down the neck to the saddle; a missing card or no sound means a plug one pin off at the header, or the two speaker junctions in the head not pushed home.',
                        'Microphones (needs the I2S0 capture device from the software setup step; without it, skip this check and leave the microphones unchecked): record a five-second two-channel clip from it and tap the cap next to the left ear, then next to the right ear (or speak close to each). Play it back or look at the levels: the left tap shows on the left channel and the right tap on the right channel. Silence on both means plug 38 or 34 one pin off or a joint at the gather point; one dead channel means that board\'s L/R link or its own wires; both taps on one channel means an L/R link on the wrong pad.',
                        'Touch pads: with the touch overlay in place (extension-20261015-touch/PLAN.md), a finger on each pad from outside the cap is read by the XIAO and reported over I2C on pins 29 and 31.',
-                       'Fan: hold the lid with the fan beside the saddle and plug the fan lead into J6, the small 3-pin socket at the pin-1 front corner of the board (x −24.7..−19.8, y −31.6..−29.2, next to the antenna socket). The fan spins as soon as the A7Z is powered; hold the lid over the saddle, label side up, and feel the air come down onto the copper. A fan that blows up is in the pocket the wrong way round: unsnap and turn it.'],
-         checks=['IMU, Wi-Fi and the fan work with the saddle lid still off. Note the result of the speaker, microphone and touch tests, pass or fail.',
-                 'The fan runs and blows down onto the copper; its lead lies flat and does not cross the Dupont housings.'],
+                       'Blower: the 6530B\'s fan lead has been on J6 since chapter 7 (the small 3-pin socket at the pin-1 end of the board, x −35.3 to −30.4, y 29.2 to 31.6). With the lid still off, look down at the round blower at the left (+Y) end of the heatsink: it spins as soon as the A7Z is powered (intake from above; the five exhaust slots for it are in the right (−Y) wall, the fin end). If it does not spin, the lead is off J6 or one pin over. Run the A7Z thermal log (pi/thermal_log.py) once with the lid off for a baseline.'],
+         checks=['IMU, Wi-Fi and the blower work with the saddle lid still off. Note the result of the speaker, microphone and touch tests, pass or fail.',
+                 'The blower runs; its lead lies flat and does not cross the Dupont housings or the pigtail channel.'],
          links=[a7z('check', 'Antenna page: Wi-Fi signal check', page='A7Z-ANTENNA.html')])
 
-    step('saddle-lid', 'power-up', 'Close the saddle with its lid and the running fan', add=saddle_lid + sd_fan,
-         group={'label': 'Saddle lid with the fan snapped in', 'approach': [[-40, 0, 12], [0, 0, 12]]}, cables=FAN_CABLES,
+    step('saddle-lid', 'power-up', 'Close the heatsink end of the saddle with its lid', add=saddle_lid,
+         group={'label': 'Saddle lid (V2 print, orange for now)', 'approach': [[-40, 0, 12], [0, 0, 12]]}, cables=FAN_CABLES,
          camera=ctx.cam(saddle_lid + saddle_body, direction=(-1.0, -0.8, 0.9), margin=1.15) if saddle_lid else saddle_cam,
-         prepare=[tap(2, 'M2 × 6'), {'item': 'Phillips #0 driver', 'qty': 1, 'kind': 'tool'}],
-         screwNotes={'M2 × 6 TAP': 'One per side, horizontal, at x −27 and z 69.2: through the dia 2.2 clearance hole in the saddle side wall (1.6 mm) into the dia 1.6 pilot in the lid lip boss (3.85 mm, |y| 28.8 to 32.65): 3.55 mm of thread after the lead-in, tip 0.4 mm inside the cavity past the boss, 20 mm above the board edge and 15 mm from the fan.'},
-         instructions=['Done: the lid closes the saddle, its lip inside the walls, the fan over the copper blowing down, the grille open above it, held by two M2 × 6 from the sides.',
-                       'Unplug the USB-C cable from the 5991 first. Lay the fan lead inside the pocket towards the pin-1 end so it reaches J6 without crossing the Dupont housings, and bring the lid in from behind, under the head (it hangs 25 mm above the saddle), level and grille up; over the saddle, lower it straight down. Its lip drops inside the four walls; the fan clears the copper by 8.7 mm and the housings by 1.3 mm.',
-                       'Drive one M2 × 6 horizontally through each side wall, at the hole near the rear, into the boss on the lid lip behind it. Stop when the head touches the wall.',
-                       'Power up once more and look through the grille: the fan runs. Read the Wi-Fi signal again with the lid on and note both values.',
-                       'To open the saddle later (the card, a plug, the copper), take the two side screws out and lift the lid straight up; the fan lead unplugs at J6.'],
+         prepare=[{'item': 'Roof saddle lid (V2 print, orange for now; white when restocked)', 'qty': 1, 'kind': 'printed'}, tap(2, 'M2 × 6'), {'item': 'Phillips #0 driver', 'qty': 1, 'kind': 'tool'}],
+         screwNotes={'M2 × 6 TAP': 'One per side, horizontal, at x −31 and z 63.5 (2.3 mm above the heatsink top, 2.3 mm below the wall top): through the dia 2.2 clearance hole in the saddle side wall (1.6 mm) into the dia 1.6 pilot in the boss under the lid plate (|y| 29 to 32.65, 3.65 mm of boss): the tip ends 0.6 mm inside the cavity past the boss, above the heatsink. Stop when the head touches the wall.'},
+         instructions=['Done: the lid covers the heatsink end of the saddle (x −45 to −19.6) with its lip inside the three closed walls, its grille over the blower, its two bars and corner pad pressing the heatsink and board down onto the tray, held by two M2 × 6 from the sides. The header strip in front of it stays open: nothing covers the Dupont housings.',
+                       'Unplug the USB-C cable from the 5991 first. Check that the blower lead lies flat between the heatsink and the +Y wall and that the antenna pigtail is down in its wall channel: the lid lip comes down inside the walls to z 63.6 and must not pinch either.',
+                       'Bring the lid in from behind, under the head (the head\'s lower shell is above the saddle), level and grille up, with its open edge towards the header; over the heatsink end, lower it straight down. Its lip drops inside the rear and side walls; its plate (z 65.8 to 67.4) rests on the wall tops and its two bars and the corner pad land on the heatsink top (z 61.2). The housings in the open strip stand to z 64.1, 1.7 mm below the lid plate, so the lid\'s front edge passes about 1.6 mm in front of them.',
+                       'Drive one M2 × 6 horizontally through each side wall at the hole at x −31 into the boss under the lid plate behind it. Stop when the head touches the wall.',
+                       'Power up once more and look through the grille: the blower runs. Read the Wi-Fi signal again with the lid on and note both values; run the thermal log once more with the lid on (D-028: a board that throttles with the lid on reopens the cooling decision).',
+                       'To open the saddle later (the heatsink, the pigtail), take the two side screws out and lift the lid straight up. The card, the header plugs and the three rear sockets need no lid removal: the card slot is in the right wall, the housings stand in the open strip and the sockets face the rear window.'],
          checks=['The lid sits down on the walls all round and does not lift when pulled; both heads touch the walls.',
-                 'The fan runs under the grille; no wire is pinched under the lid rim or in the passage.'])
+                 'The blower runs under the grille; no wire is pinched under the lid lip, in the pigtail channel or in the floor cut.',
+                 'Every Dupont housing is still reachable from above in the open strip in front of the lid.'])
 
     full = list(installed)
     step('range', 'power-up', 'Range-of-motion check with torque off', show=full,
@@ -1917,7 +1933,7 @@ def build(ctx):
         {'kind': 'i2s', 'color': '#8e24aa', 'label': 'Amplifier wires (I²S and 5 V) and microphone wires (green: I²S, 3.3 V and GND)'},
         {'kind': 'speaker', 'color': '#5d4037', 'label': 'Speaker leads'},
         {'kind': 'touch', 'color': '#c87533', 'label': 'Touch wires (copper pads → XIAO → A7Z I²C and 3.3 V)'},
-        {'kind': 'fan', 'color': '#455a64', 'label': 'Fan lead (saddle lid fan → A7Z J6)'},
-        {'kind': 'usb', 'color': '#00838f', 'label': 'USB camera cable (future, face → saddle USB-C plug)'},
+        {'kind': 'fan', 'color': '#455a64', 'label': 'Fan lead (6530B heatsink blower → A7Z J6)'},
+        {'kind': 'usb', 'color': '#00838f', 'label': 'USB camera cable (face → down the left side → USB-C ② through the saddle rear window)'},
     ]
     return chapters, steps, legend

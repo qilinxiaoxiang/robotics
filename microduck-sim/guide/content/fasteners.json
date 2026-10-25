@@ -7006,35 +7006,36 @@
   {
    "id": "SD-board-01",
    "step": "saddle-board",
-   "spec": "M2 × 4 TAP",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 4.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
    "washer": null,
    "center": [
-    -39.3,
-    -29.0,
-    48.6
+    -15.5,
+    29.0,
+    45.5
    ],
    "axis": [
-    0.0,
-    0.0,
-    -1.0
+    0,
+    0,
+    1
    ],
    "throughPart": "sd_a7z_pcb",
    "throughParts": [
+    "saddle_tray",
     "sd_a7z_pcb"
    ],
-   "intoPart": "saddle_body",
-   "engagementMm": 2.1,
-   "verified": true,
-   "role": "A7Z corner hole to saddle post (D-022)",
+   "intoPart": "sd_heatsink_6530b",
+   "engagementMm": 2.9,
+   "verified": false,
+   "role": "A7Z board and heatsink to the saddle tray",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the PCB top at z 48.6; stack sd_a7z_pcb 48.6..47.0 (hole dia 2.74-2.75, Pi Zero pattern), saddle_body post from z 47.0 (dia 1.6 pilot to z 44.4, 2.6 mm deep); tip at z 44.6: 2.4 mm of shank in the post, 2.1 mm of thread after the 0.3 mm lead-in, 0.2 mm of pilot below the tip. Straight above the head: the saddle lid at 22.2 mm, not on at this step; the fan and housings do not cover the holes. Board moved 0.3 mm forward on 2026-10-22 (build_saddle.py BOARD x0 -42.8, antenna pigtail clearance): hole centres x -39.3 / -16.3, same posts, same stack.",
-   "note": "Pi Zero corner pattern (58 x 23) on four dia 5 posts. M2 self-tapping into a dia 1.6 pilot; stop when the head touches the board.",
+   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
+   "note": "Board + 6530B to the tray, from below on the bench.",
    "stack": [
     {
      "part": "sd_a7z_pcb",
@@ -7059,55 +7060,56 @@
     1.6,
     1.6
    ],
-   "tipMarginMm": 0.2,
-   "driverClearAtStepMm": ">22 (lid off)",
+   "tipMarginMm": null,
+   "driverClearAtStepMm": "bench (tray upside down)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
-   "guideCurrentlySays": "M2 × 4 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES, build/build.json screws SD-board-01..04"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
   },
   {
    "id": "SD-board-02",
    "step": "saddle-board",
-   "spec": "M2 × 4 TAP",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 4.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
    "washer": null,
    "center": [
-    -16.3,
-    -29.0,
-    48.6
+    -38.5,
+    29.0,
+    45.5
    ],
    "axis": [
-    0.0,
-    0.0,
-    -1.0
+    0,
+    0,
+    1
    ],
    "throughPart": "sd_a7z_pcb",
    "throughParts": [
+    "saddle_tray",
     "sd_a7z_pcb"
    ],
-   "intoPart": "saddle_body",
-   "engagementMm": 2.1,
-   "verified": true,
-   "role": "A7Z corner hole to saddle post (D-022)",
+   "intoPart": "sd_heatsink_6530b",
+   "engagementMm": 2.9,
+   "verified": false,
+   "role": "A7Z board and heatsink to the saddle tray",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the PCB top at z 48.6; stack sd_a7z_pcb 48.6..47.0 (hole dia 2.74-2.75, Pi Zero pattern), saddle_body post from z 47.0 (dia 1.6 pilot to z 44.4, 2.6 mm deep); tip at z 44.6: 2.4 mm of shank in the post, 2.1 mm of thread after the 0.3 mm lead-in, 0.2 mm of pilot below the tip. Straight above the head: the saddle lid at 22.2 mm, not on at this step; the fan and housings do not cover the holes. Board moved 0.3 mm forward on 2026-10-22 (build_saddle.py BOARD x0 -42.8, antenna pigtail clearance): hole centres x -39.3 / -16.3, same posts, same stack.",
-   "note": "Pi Zero corner pattern (58 x 23) on four dia 5 posts. M2 self-tapping into a dia 1.6 pilot; stop when the head touches the board.",
+   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
+   "note": "Board + 6530B to the tray, from below on the bench.",
    "stack": [
     {
      "part": "sd_a7z_pcb",
@@ -7132,55 +7134,56 @@
     1.6,
     1.6
    ],
-   "tipMarginMm": 0.2,
-   "driverClearAtStepMm": ">22 (lid off)",
+   "tipMarginMm": null,
+   "driverClearAtStepMm": "bench (tray upside down)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
-   "guideCurrentlySays": "M2 × 4 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES, build/build.json screws SD-board-01..04"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
   },
   {
    "id": "SD-board-03",
    "step": "saddle-board",
-   "spec": "M2 × 4 TAP",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 4.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
    "washer": null,
    "center": [
-    -39.3,
-    29.0,
-    48.6
+    -15.5,
+    -29.0,
+    45.5
    ],
    "axis": [
-    0.0,
-    0.0,
-    -1.0
+    0,
+    0,
+    1
    ],
    "throughPart": "sd_a7z_pcb",
    "throughParts": [
+    "saddle_tray",
     "sd_a7z_pcb"
    ],
-   "intoPart": "saddle_body",
-   "engagementMm": 2.1,
-   "verified": true,
-   "role": "A7Z corner hole to saddle post (D-022)",
+   "intoPart": "sd_heatsink_6530b",
+   "engagementMm": 2.9,
+   "verified": false,
+   "role": "A7Z board and heatsink to the saddle tray",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the PCB top at z 48.6; stack sd_a7z_pcb 48.6..47.0 (hole dia 2.74-2.75, Pi Zero pattern), saddle_body post from z 47.0 (dia 1.6 pilot to z 44.4, 2.6 mm deep); tip at z 44.6: 2.4 mm of shank in the post, 2.1 mm of thread after the 0.3 mm lead-in, 0.2 mm of pilot below the tip. Straight above the head: the saddle lid at 22.2 mm, not on at this step; the fan and housings do not cover the holes. Board moved 0.3 mm forward on 2026-10-22 (build_saddle.py BOARD x0 -42.8, antenna pigtail clearance): hole centres x -39.3 / -16.3, same posts, same stack.",
-   "note": "Pi Zero corner pattern (58 x 23) on four dia 5 posts. M2 self-tapping into a dia 1.6 pilot; stop when the head touches the board.",
+   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
+   "note": "Board + 6530B to the tray, from below on the bench.",
    "stack": [
     {
      "part": "sd_a7z_pcb",
@@ -7205,55 +7208,56 @@
     1.6,
     1.6
    ],
-   "tipMarginMm": 0.2,
-   "driverClearAtStepMm": ">22 (lid off)",
+   "tipMarginMm": null,
+   "driverClearAtStepMm": "bench (tray upside down)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
-   "guideCurrentlySays": "M2 × 4 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES, build/build.json screws SD-board-01..04"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
   },
   {
    "id": "SD-board-04",
    "step": "saddle-board",
-   "spec": "M2 × 4 TAP",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 4.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
    "washer": null,
    "center": [
-    -16.3,
-    29.0,
-    48.6
+    -38.5,
+    -29.0,
+    45.5
    ],
    "axis": [
-    0.0,
-    0.0,
-    -1.0
+    0,
+    0,
+    1
    ],
    "throughPart": "sd_a7z_pcb",
    "throughParts": [
+    "saddle_tray",
     "sd_a7z_pcb"
    ],
-   "intoPart": "saddle_body",
-   "engagementMm": 2.1,
-   "verified": true,
-   "role": "A7Z corner hole to saddle post (D-022)",
+   "intoPart": "sd_heatsink_6530b",
+   "engagementMm": 2.9,
+   "verified": false,
+   "role": "A7Z board and heatsink to the saddle tray",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the PCB top at z 48.6; stack sd_a7z_pcb 48.6..47.0 (hole dia 2.74-2.75, Pi Zero pattern), saddle_body post from z 47.0 (dia 1.6 pilot to z 44.4, 2.6 mm deep); tip at z 44.6: 2.4 mm of shank in the post, 2.1 mm of thread after the 0.3 mm lead-in, 0.2 mm of pilot below the tip. Straight above the head: the saddle lid at 22.2 mm, not on at this step; the fan and housings do not cover the holes. Board moved 0.3 mm forward on 2026-10-22 (build_saddle.py BOARD x0 -42.8, antenna pigtail clearance): hole centres x -39.3 / -16.3, same posts, same stack.",
-   "note": "Pi Zero corner pattern (58 x 23) on four dia 5 posts. M2 self-tapping into a dia 1.6 pilot; stop when the head touches the board.",
+   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
+   "note": "Board + 6530B to the tray, from below on the bench.",
    "stack": [
     {
      "part": "sd_a7z_pcb",
@@ -7278,22 +7282,22 @@
     1.6,
     1.6
    ],
-   "tipMarginMm": 0.2,
-   "driverClearAtStepMm": ">22 (lid off)",
+   "tipMarginMm": null,
+   "driverClearAtStepMm": "bench (tray upside down)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
-   "guideCurrentlySays": "M2 × 4 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES, build/build.json screws SD-board-01..04"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
   },
   {
    "id": "SD-lid-01",
@@ -7307,26 +7311,26 @@
    "nut": null,
    "washer": null,
    "center": [
-    -27.0,
+    -31.0,
     34.4,
-    69.2
+    63.5
    ],
    "axis": [
-    0.0,
-    -1.0,
-    0.0
+    0,
+    -1,
+    0
    ],
    "throughPart": "saddle_body",
    "throughParts": [
     "saddle_body"
    ],
    "intoPart": "saddle_lid",
-   "engagementMm": 3.55,
-   "verified": true,
-   "role": "saddle side wall to lid lip boss (D-022)",
+   "engagementMm": 3.65,
+   "verified": false,
+   "role": "Saddle lid to body",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the outer face of the +Y saddle wall at |y| 34.4; stack saddle_body wall |y| 34.4..32.8 (dia 2.19-2.2 clearance), gap 0.15 mm, saddle_lid lip boss |y| 32.65..28.8 (dia 1.59-1.6 pilot through the boss); tip at |y| 28.4: 3.85 mm of shank in the boss, 3.55 mm of thread after the 0.3 mm lead-in, tip 0.4 mm inside the cavity past the boss face, 20.6 mm above the board edge (z 48.6) and 14.8 mm from the fan envelope. Driver lane: open sideways on the finished robot.",
-   "note": "Horizontal, at x -27 and z 69.2, near the rear of each side wall. Drive after the fan has been seen running (chapter 11).",
+   "evidence": "D-028 saddle V2 (2026-10-25): horizontal at x -31, z 63.5 through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the lid boss (|y| 29..32.65, 3.65 mm); tip 0.6 mm past the boss above the heatsink top 61.2. Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
+   "note": "Saddle lid to the side walls.",
    "stack": [
     {
      "part": "saddle_body",
@@ -7351,22 +7355,22 @@
     1.59,
     1.6
    ],
-   "tipMarginMm": null,
-   "driverClearAtStepMm": "open",
+   "tipMarginMm": 0.6,
+   "driverClearAtStepMm": ">30 (from the side)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02"
+   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V2)"
   },
   {
    "id": "SD-lid-02",
@@ -7380,26 +7384,26 @@
    "nut": null,
    "washer": null,
    "center": [
-    -27.0,
+    -31.0,
     -34.4,
-    69.2
+    63.5
    ],
    "axis": [
-    0.0,
-    1.0,
-    0.0
+    0,
+    1,
+    0
    ],
    "throughPart": "saddle_body",
    "throughParts": [
     "saddle_body"
    ],
    "intoPart": "saddle_lid",
-   "engagementMm": 3.55,
-   "verified": true,
-   "role": "saddle side wall to lid lip boss (D-022)",
+   "engagementMm": 3.65,
+   "verified": false,
+   "role": "Saddle lid to body",
    "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the outer face of the -Y saddle wall at |y| 34.4; stack saddle_body wall |y| 34.4..32.8 (dia 2.19-2.2 clearance), gap 0.15 mm, saddle_lid lip boss |y| 32.65..28.8 (dia 1.59-1.6 pilot through the boss); tip at |y| 28.4: 3.85 mm of shank in the boss, 3.55 mm of thread after the 0.3 mm lead-in, tip 0.4 mm inside the cavity past the boss face, 20.6 mm above the board edge (z 48.6) and 14.8 mm from the fan envelope. Driver lane: open sideways on the finished robot.",
-   "note": "Horizontal, at x -27 and z 69.2, near the rear of each side wall. Drive after the fan has been seen running (chapter 11).",
+   "evidence": "D-028 saddle V2 (2026-10-25): horizontal at x -31, z 63.5 through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the lid boss (|y| 29..32.65, 3.65 mm); tip 0.6 mm past the boss above the heatsink top 61.2. Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
+   "note": "Saddle lid to the side walls.",
    "stack": [
     {
      "part": "saddle_body",
@@ -7424,22 +7428,22 @@
     1.59,
     1.6
    ],
-   "tipMarginMm": null,
-   "driverClearAtStepMm": "open",
+   "tipMarginMm": 0.6,
+   "driverClearAtStepMm": ">30 (from the side)",
    "checks": {
-    "fullMeshHit": true,
-    "guideMeshHit": true,
-    "seatWithin0_3mm": true,
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true,
-    "noIntrusion": true,
-    "noHeadClash": true
+    "fullMeshHit": null,
+    "guideMeshHit": null,
+    "seatWithin0_3mm": null,
+    "throughClearanceOk": null,
+    "pilotInTapRange": null,
+    "engagementOk": null,
+    "noBottoming": null,
+    "noIntrusion": null,
+    "noHeadClash": null
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02"
+   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V2)"
   },
   {
    "id": "C-camera-01",
@@ -8680,15 +8684,15 @@
   {
    "step": "saddle-board",
    "guidePrepare": {
-    "M2 × 4": 4
+    "M2 × 6": 4
    },
    "records": {
-    "M2 × 4": 4
+    "M2 × 6": 4
    },
    "status": "match",
    "guideTextMentions": [],
-   "explanation": "SD-board-01..04, A7Z corners into the saddle posts.",
-   "checkedOn": "2026-10-22 D-022 (build_guide_data.py attach_screws must report screwProblems [])"
+   "explanation": "SD-board-01..04, M2 x 6 from below through the tray and the board into the 6530B bosses (D-028).",
+   "checkedOn": "2026-10-25 D-028 (build_guide_data.py attach_screws must report screwProblems [])"
   },
   {
    "step": "saddle-lid",
@@ -8700,8 +8704,8 @@
    },
    "status": "match",
    "guideTextMentions": [],
-   "explanation": "SD-lid-01/02, side walls into the lid lip bosses.",
-   "checkedOn": "2026-10-22 D-022 (build_guide_data.py attach_screws must report screwProblems [])"
+   "explanation": "SD-lid-01/02, side walls into the lid bosses at x -31, z 63.5 (D-028).",
+   "checkedOn": "2026-10-25 D-028"
   }
  ]
 }

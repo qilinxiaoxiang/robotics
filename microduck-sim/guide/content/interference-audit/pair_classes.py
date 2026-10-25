@@ -75,11 +75,12 @@ PAIR_TEXT = {
         'c', 'Antenna IPEX (U.FL) plug snapped onto the A7Z antenna socket: a mated connector.', 'No change.'),
     frozenset(['antenna_coax', 'antenna_ipex']): (
         'c', 'The 1.13 mm antenna coax enters its own IPEX plug: one purchased cable assembly (AC019) drawn as plug and cable.', 'No change.'),
-    # 2026-10-22 D-022 roof saddle (print/a7z-saddle/build/build.json checks): the A7Z and its bought parts in the saddle pose.
+    # 2026-10-25 D-028 saddle V2 (print/a7z-saddle/build/build.json checks): the A7Z, the Radxa 6530B heatsink and the bought parts
+    # in the saddle pose; board + heatsink on the printed tray, lid over the heatsink only.
     frozenset(['sd_microsd_card', 'sd_microsd_socket']): (
-        'c', 'microSD card pushed into its socket on the A7Z underside: a mated part (the card sticks out through the +Y saddle wall slot).', 'No change.'),
+        'c', 'microSD card pushed into its socket on the A7Z underside: a mated part (the card sticks out through the -Y saddle wall slot).', 'No change.'),
     frozenset(['sd_usb_c_plug', 'sd_usb_c_otg_dp']): (
-        'c', 'Right-angle USB-C plug of the camera pigtail (D-023) seated in the A7Z OTG socket through the saddle front-wall notch: plug in socket.', 'No change.'),
+        'c', 'Right-angle USB-C plug of the camera pigtail (D-023) seated in the A7Z OTG socket from behind through the rear-wall window: plug in socket.', 'No change.'),
     # 2026-10-22 D-023 U20 camera (print/face-u20/checks.json): the Innomaker U20CAM-720P on the face bosses, its cut cable and the splice.
     frozenset(['camera_u20cam', 'face_panel']): (
         'c', 'Camera PCB front face on the tops of the four 13.1 mm face bosses (x 67.0, modelled 0.02 mm off; checks.json clearances pcb/face_panel_u20), '
@@ -88,19 +89,31 @@ PAIR_TEXT = {
         'c', 'Only if the envelopes meet: the M12 lens ring (dia 14.0) passes the dia 16.2 trim bore with 1.1 mm radial clearance (checks.json intersection volume 0).', 'No change.'),
     frozenset(['camera_u20cam', 'camera_cable_stub']): (
         'c', "The camera's own cable leaves the plug on the PCB back (near the +Y edge): one purchased assembly drawn as board and cable stub.", 'No change.'),
-    frozenset(['sd_thermal_pad', 'sd_soc_a733']): (
-        'c', '0.5 mm thermal pad lying on the A733 top face (z 50.2): pad contact by design.', 'No change.'),
-    frozenset(['sd_heatsink', 'sd_thermal_pad']): (
-        'c', '15 x 15 x 5 copper heatsink on the thermal pad (z 50.7): pad contact by design.', 'No change.'),
+    frozenset(['sd_thermal_pad_6530b', 'sd_soc_a733']): (
+        'c', '1.5 mm thermal pad from the 6530B kit lying on the A733 top face (z 51.2): pad contact by design.', 'No change.'),
+    frozenset(['sd_heatsink_6530b', 'sd_thermal_pad_6530b']): (
+        'c', 'Radxa 6530B base on the thermal pad (z 52.7): pad contact by design.', 'No change.'),
+    frozenset(['sd_heatsink_6530b', 'sd_a7z_pcb']): (
+        'c', 'The four threaded bosses of the 6530B stand on the PCB top face round the board holes (z 49.6), held by the four M2 x 6 from below: a designed seat.', 'No change.'),
+    frozenset(['saddle_tray', 'sd_a7z_pcb']): (
+        'c', 'The four tray bosses under the PCB at the board holes (z 48.0): the board sits on them, screwed from below: a designed seat.', 'No change.'),
+    frozenset(['saddle_tray', 'saddle_body']): (
+        'c', 'The tray plate rests on the four short body posts (z 45.5) and is located by the walls (0.15 mm a side): a designed seat.', 'No change.'),
+    frozenset(['saddle_lid', 'sd_heatsink_6530b']): (
+        'c', 'The lid pressing bars and corner pad stand on the heatsink top (z 61.2) and clamp it: a designed contact.', 'No change.'),
+    frozenset(['saddle_lid', 'saddle_body']): (
+        'c', 'Lid plate on the wall tops (z 65.8), lip inside the three closed walls: a designed seat.', 'No change.'),
     frozenset(['sd_antenna', 'saddle_body']): (
-        'c', 'AC019 antenna strip stuck on the inner face of the saddle rear wall (x -43.4..-43.1): adhesive contact by design.', 'No change.'),
-    frozenset(['sd_fan', 'saddle_lid']): (
-        'c', '30 mm fan in the lid pocket: the four 0.6 mm snap lips under the fan corners and the rear stop hold it against the lid plate '
-             '(build.json lid_fan 0.405 mm3 at z 72.39-72.4): a designed snap fit.', 'No change.'),
+        'c', 'AC019 antenna strip stuck on the inner face of the saddle front wall (x -6.9..-6.6): adhesive contact by design.', 'No change.'),
     frozenset(['sd_dupont_housings', 'sd_a7z_pcb']): (
-        'c', 'Dupont housings standing on the header plastic at z 48.6, the PCB top face: a mated terminal row by design.', 'No change.'),
-    frozenset(['sd_dupont_housings', 'sd_fan']): (
-        'c', 'Only if the envelopes meet: the housings end at z 63.1 and the fan starts at z 64.4 (1.3 mm gap, build.json gap_fan_to_dupont_mm).', 'No change.'),
+        'c', 'Dupont housings standing on the header plastic at z 49.6, the PCB top face: a mated terminal row by design.', 'No change.'),
+    frozenset(['sd_usb_c_otg_dp', 'sd_heatsink_6530b']): (
+        'c', 'Only if the envelopes meet: the 6530B base envelope (bottom z 52.7, 3.1 above the PCB, estimated from photos) and the USB-C socket top (52.9); '
+             'the kit is made for this board, so the base clears or is relieved over the sockets: measured on the part before fitting.', 'No change.'),
+    frozenset(['sd_usb_c_power', 'sd_heatsink_6530b']): (
+        'c', 'Only if the envelopes meet: as sd_usb_c_otg_dp / sd_heatsink_6530b (socket top 52.9 vs base envelope 52.7, estimated).', 'No change.'),
+    frozenset(['sd_heatsink_6530b', 'sd_dupont_housings']): (
+        'c', 'Only if the envelopes meet: the fin block starts 0.36 mm behind the housings (HS d 6.4, estimated from photos; measured on the part).', 'No change.'),
 }
 
 

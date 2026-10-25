@@ -3,11 +3,11 @@ on it sits in a printed saddle on the torso roof over the V1.9 rear pack. World 
 The approved design is DESIGN-CONTRACT.json in this directory; ../design_contract.py checks every build against it.
 
 Geometry (all numbers here, build.json repeats them):
-- Saddle body: plan outline x -45..-5 (board rear edge x -42.0, 1.4 inside the rear wall inner face: the PCIe FPC connector and an SMD part overhang the edge by 1.2), |y| <= 34.4 (board 65 + 0.3 a side + 1.6 walls), corner r 3; walls 1.6; floor 1.6 (normal
+- Saddle body: plan outline x -45..-5 (board rear edge x -41.7: the USB-C sockets overhang it by 1.6 and must clear the rear wall inner face x -43.4 on the straight drop, 0.1 mm), |y| <= 34.4 (board 65 + 0.3 a side + 1.6 walls), corner r 3; walls 1.6; floor 1.6 (normal
   offset) following the shell roof and pack 0.3 above them (ray-cast height map, dilated one cell). Floor cut x -21..-5, |y| <= 16
   over the torso roof opening (IMU, J12 UART and 5 V leads come up here; the head bundle enters under the front wall foot).
-- Board turned 180 deg from V1.29: component side up, USB-C ①, USB-C ② and micro HDMI edge at the REAR (socket faces 1.4 inside
-  the rear wall's outer face, one window y -29..26.5 z 47.8..58 over all three so the plug overmoulds enter it, plugged from behind), 40-pin header at the FRONT edge
+- Board turned 180 deg from V1.29: component side up, USB-C ①, USB-C ② and micro HDMI edge at the REAR (socket faces 1.7 inside
+  the rear wall's outer face, one window y -29..26.5 z 47.8..58 over all three (exhaust slots 2 mm above it) so the plug overmoulds enter it, plugged from behind), 40-pin header at the FRONT edge
   (x -19.2..-14.2 housings), pin 1 at +y (robot left). PCB underside z 48.0.
 - Tray: a 1.4 mm printed plate (z 45.5..46.9) under the board with four dia 6 bosses up to the PCB at the board holes; the board +
   6530B unit is screwed to it from BELOW on the bench (M2 x 6 up through a 1.0 deep counterbore, the board, into the heatsink's
@@ -16,11 +16,13 @@ Geometry (all numbers here, build.json repeats them):
   drop gap. It rests on four short posts and is located by the walls; the lid clamps the heatsink.
 - 6530B (65 x 30 x 11.5, estimated internals from photos, measure on the part): base block d 6..30 from PCB top + 3.1 (SoC 1.6 +
   pad 1.5) to + 11.5, four dia 5 bosses on the board holes, blower dia 24 at the pin-1 (+y) end; intake upward.
-- Lid over the heatsink only: plate z 64.6..66.2 (walls end at 64.6) for x -45..-19.6, lip 2.2 deep inside the three closed walls, two pressing bars on
+- Lid over the heatsink only: plate z 65.8..67.4 (walls end at 65.8: the side lid screws at z 63.5 need 1.2 mm of wall above
+  their clearance holes and 1.2 mm of boss under their pilots over the heatsink top 61.2) for x -45..-19.6, lip 2.2 deep inside the three closed walls, two pressing bars on
   the fin block (rear and front edges, right half) plus a pad at the left rear corner; grille over the blower; two M2 x 6 side
   screws into bosses under the plate. The header strip (x -19.6..-5) is OPEN: no lid over the Dupont housings.
 - Antenna AC019 (42 x 12) on the front wall inner face, feed end at the left (y 31 -> -11), 13 mm from the heatsink aluminium.
-  The +y wall bulges 2 mm outward beside the IPEX socket (x -35..-21, z 46..59) so the 1.13 mm pigtail can turn and run forward.
+  The +y wall bulges 2 mm outward from beside the IPEX socket to the front wall (x -35..-6, z 46..59): the board edge is 0.3 from the
+  wall elsewhere, so the 1.13 mm pigtail runs forward in this 2.3 mm channel outside the board edge to the antenna feed end.
 - Exhaust: five 3 x 10 slots in the -y wall (fin end), two in the rear wall above the ports, two in the front wall right of the
   antenna. microSD card slot through the -y wall at the card's end.
 - Fixing: the two V2.0 shell-to-pack roof screws (-21.5, +-20) M2 x 10 through the saddle floor on flat seats (driven before the
@@ -40,7 +42,7 @@ T = 1.6; CLR = 0.3
 X0, X1, HW, R_PLAN = -45.0, -5.0, 34.4, 3.0
 ZU = 48.0                                          # PCB underside (tray bosses top); roof-screw heads top about 44.85 under the tray (45.5)
 TRAY = dict(z0=45.5, z1=46.9, boss_r=3.0, cbore_r=2.1, cbore_d=1.0, hole_r=1.1, notch_x=-22.0, notch_hy=16.0)
-BOARD = dict(xr=-42.0, yl=32.5, z_under=ZU)      # (s, d, h) -> (xr + 30 - d, yl - s, z_under + h): header edge d 0 at the front, pin 1 (s 0) at +y
+BOARD = dict(xr=-41.7, yl=32.5, z_under=ZU)      # (s, d, h) -> (xr + 30 - d, yl - s, z_under + h): header edge d 0 at the front, pin 1 (s 0) at +y
 HOLES = [(3.5, 3.5), (3.5, 26.5), (61.5, 3.5), (61.5, 26.5)]
 ROOF_SCREWS = [(-21.5, 20.0), (-21.5, -20.0)]      # V2.0 shells S-shell_pack-01/02, M2 x 10 (seat z 43.25)
 TRAY_POSTS = [(-30.0, 29.5), (-30.0, -29.5), (-40.0, 0.0), (-24.5, 0.0)]   # dia 5, floor to the tray bottom; clear of the roof screws and the board-hole screw heads
@@ -50,13 +52,13 @@ HS = dict(d=(6.4, 30.0), base_h=3.1, top_h=11.5, boss_r=2.5, fan_r=12.0, fan_s=1
 DUPONT = dict(h=14.5, rows_d=(2.23, 4.77), s=(8.37, 56.63), half=1.27)
 PORT_WIN = dict(ports=dict(y=(-29.0, 26.5), z=(ZU - 0.2, ZU + 10.0)))   # one rear window over USB-C ①, ② and micro HDMI: the socket faces sit 1.4 inside the wall, so every plug's overmould enters the window (1 mm round the camera plug body)
 SIDE_SLOTS = dict(xs=[-41.0, -35.0, -29.0, -23.0, -17.0], w=3.0, z=(ZU + 2.0, ZU + 12.0))    # -y wall (fin end)
-REAR_SLOTS = dict(ys=[-1.0, 6.0], w=3.0, z=(ZU + 10.5, ZU + 13.5))                          # rear wall above the ports
+REAR_SLOTS = dict(ys=[-1.0, 6.0], w=3.0, z=(ZU + 12.0, ZU + 15.0))                          # rear wall, 2 mm above the port window top
 FRONT_SLOTS = dict(ys=[-30.0, -22.0], w=3.0, z=(ZU + 2.0, ZU + 12.0))                       # front wall, right of the antenna
-BULGE = dict(x=(-35.0, -21.0), z=(46.0, 59.0), out=2.0)                                      # +y wall outward bulge: pigtail channel beside the IPEX socket
+BULGE = dict(x=(-35.0, -6.0), z=(46.0, 59.0), out=2.0)                                       # +y wall outward bulge: pigtail channel from beside the IPEX socket to the front wall (board edge to wall is 0.3 elsewhere)
 ANT = dict(y=(-11.0, 31.0), z=(50.0, 62.0), t=0.3)                                            # front wall inner face, feed end at +y
-LID = dict(x1=-19.6, z0=64.6, z1=66.2, lip=2.2, bar_w=2.0, pad=dict(x=(-43.0, -40.5), y=(28.0, 32.0)))
-LID_SCREWS = dict(x=-31.0, z=62.8, boss=dict(x=(-33.5, -28.5), y_in=29.0), pilot_r=0.8, clear_r=1.1)
-GRILLE = dict(xs=[-42.0, -38.0, -34.0, -30.0, -26.0, -22.0], w=2.0, y=(5.0, 30.0))
+LID = dict(x1=-19.6, z0=65.8, z1=67.4, lip=2.2, bar_w=2.0, pad=dict(x=(-43.0, -40.5), y=(28.0, 32.0)))
+LID_SCREWS = dict(x=-31.0, z=63.5, boss=dict(x=(-33.5, -28.5), y_in=29.0), pilot_r=0.8, clear_r=1.1)
+GRILLE = dict(xs=[-42.0, -38.0, -34.0, -30.0, -26.0], w=2.0, y=(5.0, 30.0))   # the last slot would leave 0.4 mm to the lid front edge
 PLUG = dict(len_x=17.8, len_y=21.8, h=8.0)         # D-023 CableCreation B0194WSKOM right-angle body; leg to +y so port ① stays free
 STEP = 0.5
 
@@ -216,11 +218,15 @@ def build():
     hx = hole_xy()
     tray_plan = sbox(BOARD['xr'] - 0.3, -HW + T + 0.15, BOARD['xr'] + 30.0 + 0.3, HW - T - 0.15)
     notch = sbox(TRAY['notch_x'], -TRAY['notch_hy'], X1, TRAY['notch_hy'])
-    tray = prism(tray_plan.difference(notch), TRAY['z0'], TRAY['z1'])
+    from shapely.ops import unary_union
+    # plate plan: minus the notch and the underside-part cut-outs (0.8 clear), then a 1.2 mm morphological opening so no strip
+    # of plate thinner than 1.2 mm is left between two cut-outs or between a cut-out and the plate edge (wall check)
+    part_cuts = [sbox(parts[n].bounds[0, 0] - 0.8, parts[n].bounds[0, 1] - 0.8, parts[n].bounds[1, 0] + 0.8, parts[n].bounds[1, 1] + 0.8)
+                 for n in ('microsd_socket', 'microsd_card', 'csi_connector', 'pcie_fpc', 'uboot_button')]
+    plate = tray_plan.difference(notch).difference(unary_union(part_cuts)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
+    tray = prism(plate, TRAY['z0'], TRAY['z1'])
     tray = tray + P.union([cyl_z(x, y, TRAY['z0'], ZU, TRAY['boss_r']) for x, y in hx])
     tcuts = [cyl_z(x, y, TRAY['z0'] - 1, ZU + 1, TRAY['hole_r']) for x, y in hx] + [cyl_z(x, y, TRAY['z0'] - 1, TRAY['z0'] + TRAY['cbore_d'], TRAY['cbore_r']) for x, y in hx]
-    for n in ('microsd_socket', 'microsd_card', 'csi_connector', 'pcie_fpc', 'uboot_button'):
-        b = parts[n].bounds; tcuts.append(P.box((b[0, 0] - 0.8, b[0, 1] - 0.8, TRAY['z0'] - 1), (b[1, 0] + 0.8, b[1, 1] + 0.8, ZU + 1)))
     tray = tray - P.union(tcuts)
     # lid: plate over the heatsink, lip inside the three closed walls, pressing bars, left-rear pad, screw bosses; minus grille and pilots
     lid_plan = rr_poly(X0, LID['x1'], -HW, HW, R_PLAN).intersection(sbox(X0 - 1, -HW - 1, LID['x1'], HW + 1))
