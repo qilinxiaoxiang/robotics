@@ -60,4 +60,13 @@ for name, f in (('full', lambda r: True), ('trained', trained)):
     ms, mr = max(sel, key=lambda r: r[4]), max(sel, key=lambda r: r[5])
     out[name] = dict(poses=len(sel), maxStraightMm=ms[4], maxStraightPose=ms[:4], maxRoutedMm=mr[5], maxRoutedPose=mr[:4])
     print(name, out[name])
+def exit_at(pose):                          # exit point in the guide trunk frame (mm) at a joint pose
+    d.qpos[:] = q0
+    for n, v in zip(jid, pose): d.qpos[jid[n]] = np.radians(v)
+    mujoco.mj_kinematics(m, d)
+    return (d.xmat[tb].reshape(3, 3).T @ (pts()[0] - d.xpos[tb]) * 1e3).round(1).tolist()
+out['home']['jointsDeg'] = [round(float(np.degrees(q0[jid[n]])), 1) for n in jid]
+out['home']['exitPt'] = exit_at(out['home']['jointsDeg'])
+for name in ('full', 'trained'):
+    out[name]['maxStraightExitPt'] = exit_at(out[name]['maxStraightPose'])
 (HERE / 'head-sweep-v2.json').write_text(json.dumps(out, indent=1) + '\n')
