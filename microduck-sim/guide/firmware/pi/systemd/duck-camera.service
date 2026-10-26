@@ -1,0 +1,12 @@
+[Unit]
+Description=MicroDuck head camera daemon (a7z_cam.py: U20CAM -> /dev/shm/a7z_cam.bgr), on from boot
+After=multi-user.target
+[Service]
+User=radxa
+ExecStart=/home/radxa/.venvs/duck-policy/bin/python /home/radxa/rt/microduck-sim/guide/firmware/mac/a7z_cam.py
+# the app's switch stops it with SIGTERM (a clean exit): stay off until switched on again or the next boot
+Restart=on-failure
+RestartSec=5
+Nice=10
+[Install]
+WantedBy=multi-user.target

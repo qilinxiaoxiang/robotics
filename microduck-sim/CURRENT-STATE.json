@@ -339,8 +339,13 @@
     },
     "innomaker_u20cam": {
      "part": "Innomaker U20CAM-720P USB camera (D-023)",
-     "status": "in hand, fitted on the face with the plug edge UP; the A7Z's head camera (2026-10-26, A7Z out of the head, wired as A7Z-PINS-ORIGINAL): USB 0c45:6367 on port 2, capture node found by name (/dev/video0 this boot). a7z_cam.py reads it through OpenCV V4L2 (Radxa's gst v4l2src fails on UVC with VIDIOC_SET_DMA_MERGE), 1280x720 MJPEG decoded every third frame and published as upright 640x360 BGR at about 8.5 fps, 0.2 s frame age, about 24 % of one core; the app's camera window shows it (Mac mini :5180, 68 frames in 8 s). approach.py refuses to run with it until duck_kin has U20CAM intrinsics and mount",
+     "status": "in hand, fitted on the face with the plug edge UP; the A7Z's head camera: USB 0c45:6367 on port 2, capture node found by name. a7z_cam.py reads it through OpenCV V4L2, 1280x720 MJPEG decoded every third frame, turned 180 deg (the picture came out upside down, Shawn 2026-10-26) and published as upright 640x360 BGR at about 10 fps (snapshot 2026-10-26: floor at the bottom). Runs from boot: duck-camera.service (a7z/install_camera.sh, enabled 2026-10-26, Shawn: temperature under control); the app's switch stops it and starts it again for as long as a page watches. approach.py refuses to run with it until duck_kin has U20CAM intrinsics and mount",
      "superseded": [
+      {
+       "value": "in hand, fitted on the face with the plug edge UP; the A7Z's head camera (2026-10-26, A7Z out of the head, wired as A7Z-PINS-ORIGINAL): USB 0c45:6367 on port 2, capture node found by name (/dev/video0 this boot). a7z_cam.py reads it through OpenCV V4L2 (Radxa's gst v4l2src fails on UVC with VIDIOC_SET_DMA_MERGE), 1280x720 MJPEG decoded every third frame and published as upright 640x360 BGR at about 8.5 fps, 0.2 s frame age, about 24 % of one core; the app's camera window shows it (Mac mini :5180, 68 frames in 8 s). approach.py refuses to run with it until duck_kin has U20CAM intrinsics and mount",
+       "until": "2026-10-26",
+       "why": "picture turned 180 deg and the daemon started at boot"
+      },
       {
        "value": "in hand, fitted on the face with the plug edge UP; works on the A7Z (2026-10-26 20:42 board time, A7Z out of the head, wired as A7Z-PINS-ORIGINAL): USB 0c45:6367 on the port-2 controller (usbc2 xhci), /dev/video0 capture + /dev/video1 metadata, MJPG/YUYV 1280x720..320x240, v4l2-ctl 1280x720 MJPG 21.5 fps, frame captured with normal exposure. a7z_cam.py still opens the CSI camera's /dev/video1 and does not drive it",
        "until": "2026-10-26",
