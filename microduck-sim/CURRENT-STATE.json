@@ -341,12 +341,26 @@
      "part": "Innomaker U20CAM-720P USB camera (D-023)",
      "status": "in hand and fitted on the face, plug edge UP (Shawn 2026-10-26: 我现在让摄像头插线在上边而不是左边); the guide model and the camera step follow it",
      "superseded": [
-      {"value": "bought 2026-10-23 (D-023); arrival not recorded", "until": "2026-10-26", "why": "Shawn reported the camera mounted with its plug at the top"}
+      {
+       "value": "bought 2026-10-23 (D-023); arrival not recorded",
+       "until": "2026-10-26",
+       "why": "Shawn reported the camera mounted with its plug at the top"
+      }
      ]
     },
     "cablecreation_usbc_pigtail": {
      "part": "CableCreation right-angle USB-C OTG pigtail B0194WSKOM",
      "status": "in the cart 2026-10-23, order not verified (D-023 open item)"
+    },
+    "usb_a_to_c_adapter": {
+     "part": "USB-A female to USB-C male adapter (Shawn's own; shape, straight or right-angle, not recorded)",
+     "status": "in hand (Shawn 2026-10-26: 我有A转C的转接头)",
+     "note": "Shawn's plan 2026-10-26: keep the camera cable's factory plugs at both ends and cut out a middle section, one splice, USB-A plug into this adapter into the A7Z. Not yet a design decision: D-023/D-028 route the cable with the USB-A plug cut off and a right-angle pigtail along the saddle rear wall"
+    },
+    "raspberry_pi_zero_2w": {
+     "part": "Raspberry Pi Zero 2 W (seller and price not recorded)",
+     "status": "ordered (Shawn 2026-10-26: 我其实也下单了一块raspberry pi zero 2 w); arrival not recorded",
+     "note": "Shawn's idea 2026-10-26: Zero 2 W alone in the head running a CSI camera and sending images or results to the A7Z. Not a design decision"
     },
     "inmp441_mics": {
      "part": "AITRIP INMP441 I2S microphones (D-025), shipped with header pins",
@@ -393,6 +407,30 @@
      "until": "2026-10-25 evening",
      "why": "agent assumption, never verified; every printed MicroDuck part is PLA"
     }
+   ]
+  },
+  "walking_stability": {
+   "value": "stable: walks without falls (Shawn 2026-10-26: 走路现在挺稳的 没有任何问题了已经). The 10/16-10/18 falls (ft3 candidates, walk61 approach run drifting left) are history, not the current condition",
+   "meaning": "Whether walking is a current blocker. It is not; do not cite old fall records as a present gap",
+   "verified_at": "2026-10-26",
+   "source": "Shawn's report 2026-10-26 in chat; he says he stated this earlier too. No logged run on file since the 10/24 approach runs",
+   "max_age_days": 30,
+   "measure": "the newest walk_wired / approach.py logs under guide/firmware/mac: a walk that ends in a fall would supersede this",
+   "consumers": [
+    "pet-robot planning",
+    "any session listing MicroDuck gaps"
+   ]
+  },
+  "getup": {
+   "value": "sim only: walk_brain.py recover mode (DUCK_GETUP=recover: predicted fall -> LIMP kp 50 -> POSE 1 s kp 160 -> RISE stand61 at zero command -> give up after 5 s) gets stand61 up 50/50 from face-down, face-up, side, seated and pushed starts (10 seeds each) on the as-built model with the saddle mass, 7.0 V and 4 % read drops; median time up 2.2-2.5 s; longest joint saturation 0.50 s (left hip pitch). velstand v8: 44/50 under the same sequence, failures stuck on the back; not a walk61 replacement. Never run on the robot",
+   "meaning": "Whether the duck can get up by itself after a fall and what has been shown",
+   "verified_at": "2026-10-26",
+   "source": "guide/firmware/mac/getup-20261026/summary.json and results.jsonl (every row carries its command line); commits b135faf (brain) and the walk_wired guard commit of 2026-10-26",
+   "max_age_days": 60,
+   "measure": "rerun getup-20261026/run_batch.py; after a robot trial record rise time, largest action and servo hardware-error status from the walk_wired log",
+   "consumers": [
+    "pet robot body competence",
+    "robot trial of the get-up"
    ]
   }
  },
