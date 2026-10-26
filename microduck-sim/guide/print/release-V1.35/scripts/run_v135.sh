@@ -38,3 +38,6 @@ job verify 1600 $PIPE $PY verify_release_v2.py $REL/run --output $REL/run/final-
 job parts-sheet 900 $PRINT $PY make_parts_sheet.py --incremental $REL/manifest-V1.35.json --out $REL/PARTS-SHEET-V1.35.html
 job delivery-folder 1600 $PRINT $PY make_delivery_folder.py $REL --out-root $REL/run/delivery-folder
 find $REL/run/delivery-folder -type f | sort
+# the handoff Shawn uses is ~/Downloads/zhengxia_MicroDuck_V1.35 (print-delivery rule); the run/ copy is only the record
+job delivery-downloads 1600 $PRINT $PY make_delivery_folder.py $REL
+find ~/Downloads/zhengxia_MicroDuck_V1.35 -type f | sort
