@@ -170,6 +170,7 @@
 - **Revisit when:** the camera that arrives differs from the ROBOTIS model (lens front more than 0.4 mm past x 89.0 would stand proud of the trim); the camera cable is thicker than the modelled 4 mm; neither loose clamp half grips the real bundle; the cut cable's cores are not four plain USB wires; or the bundle rubs at the exit rim through head yaw.
 - **Open (Shawn):** the CableCreation pigtail is in his Amazon cart, not ordered (the camera itself was already bought on 2026-10-23); the snap force of the clamp barbs (0.2 mm interference) is untested on a print.
 - **Superseded in part (2026-10-25, D-029):** the printed two-piece clamp is retired after both loose halves failed to snap on the print; a narrow cable tie inside the head holds the bundle at the exit. The fixed half stays on the jaw support as the passage liner.
+- **Superseded in part (2026-10-26, as built):** the camera is mounted a quarter turn round, plug edge UP instead of to the left (Shawn: "我现在让摄像头插线在上边而不是左边"). The four corner holes are on a square, so the face and its bosses are unchanged. The cable now leaves straight back from the top of the board, under the XIAO and the left roof pad, and joins the old route over ID15 (print/face-u20/build_face_u20.py). The image is landscape (102 deg horizontal); `a7z_cam.py` still rotates the frame clockwise for the old portrait mount and has to be corrected from a real frame.
 
 ## D-024 — MicroDuck foundation declared: the 2026-10-23 robot is the base for training and the public build; saddle, USB camera and microphones are extensions
 

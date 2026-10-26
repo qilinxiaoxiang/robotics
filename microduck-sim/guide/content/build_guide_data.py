@@ -530,8 +530,8 @@ def build_parts() -> dict:
         parts['head_bottom']['name'] = 'Lower head shell with the speaker pocket, twelve sound holes and the long-round left-rear exit (V1.36 print, yellow)'
     if jaw_sup:
         parts['jaw_support']['name'] = 'Jaw support with the long-round left-rear exit and the curved wall of the retired wire clamp (V1.33 print, black)'
-    CAMERA = {'camera_u20cam': ('Innomaker U20CAM-720P USB camera on the four face bosses, connector edge to the left (+Y), D-023', '#1b5e20'),
-              'camera_cable_stub': ("Camera's own cable inside the head, over the jaw support front wall and the jaw motor to the left-rear exit", '#37474f')}
+    CAMERA = {'camera_u20cam': ('Innomaker U20CAM-720P USB camera on the four face bosses, connector edge up (2026-10-26; D-023 had it to the left)', '#1b5e20'),
+              'camera_cable_stub': ("Camera's own cable inside the head, straight back from the plug at the top of the board, over the jaw motor to the left-rear exit", '#37474f')}
     for key, (name, color) in CAMERA.items():
         path = first_existing(world / f'{key}.stl')
         if path:
@@ -762,7 +762,7 @@ def main() -> None:
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
         'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261025-exit-tie',
+        'revision': 'guide-20261026-camera-up',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

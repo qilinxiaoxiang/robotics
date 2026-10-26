@@ -2,14 +2,15 @@
 
 The 32 x 32 mm UVC board screws to four bosses on the back of the white face; its M12 lens passes through the eye
 opening and the black eye trim, bored out to BORE_D for the lens front ring. The camera's own 4-core cable leaves the
-board-edge connector on the BACK of the PCB (that edge faces +y, robot left, so the cable leaves sideways: under the board there are only 3.8 mm to the lower shell). It runs
+board-edge connector on the BACK of the PCB. Since 2026-10-26 the plug edge faces UP (+z; Shawn: "我现在让摄像头插线在上边而不是左边"),
+so the cable leaves straight back above the jaw support (D-023 had it at +y, robot left). It runs
 whole over the jaw motor ID15 to the left-rear head exit, which the jaw support and the lower shell reprint opens to dia 11
 (print/neck-exit-20261023/, Shawn 2026-10-23: "能不能把脖子那个洞搞大一点呢 别转杜邦线了"), leaves the head there with the nine head
 wires, and is cut to length and soldered at the saddle front to the right-angle USB-C OTG pigtail that plugs into the A7Z.
 
 Camera numbers come from the ROBOTIS OMX-F CAD (robotis-cad/README.md, part CAMERA_INNOMAKER_720P, read 2026-10-23): board
 32 x 32 x 1.6, four dia 2.09 holes on a 28 mm square, holder base 21.9 x 13.1 x 4.0, round body dia 13.4 to 12.0, lens
-front ring dia 14.0, lens front 22.0 above the PCB front, a 8.5 x 3.5 x 5.0 plug on the back at the +y edge. The board
+front ring dia 14.0, lens front 22.0 above the PCB front, a 8.5 x 3.5 x 5.0 plug on the back at the plug edge (up, +z). The board
 sits at x 67.0 so the lens front is at x 89.0, 0.4 behind the trim front (Shawn 2026-10-23: "板子后移 6.6 mm"); the four
 face bosses reach back 13.1 mm from the face to carry it. camera_u20cam.stl is that CAD model placed in the head.
 
@@ -52,7 +53,9 @@ LENS_H = 22.0          # lens front above the PCB front
 RING_D = 14.0          # front ring of the lens, the widest part
 RING_H = 4.0           # height of that ring below the lens front
 BACK_LAYER = 1.0       # components on the back of the PCB
-PLUG_Y, PLUG_Z, PLUG_H = (10.9, 14.4), (-10.7, -2.2), 5.0   # cable plug on the back, offsets from the lens axis
+PLUG_Y, PLUG_Z, PLUG_H = (10.9, 14.4), (-10.7, -2.2), 5.0   # cable plug on the back, offsets from the lens axis with the plug edge at +y (D-023)
+# plug edge up since 2026-10-26: the board turned a quarter turn about the lens axis (+y -> +z), so in the robot frame
+PLUG_YR, PLUG_ZR = (-PLUG_Z[1], -PLUG_Z[0]), PLUG_Y
 CABLE_D = 4.0          # the camera's own round cable (assumed; the manual gives only the length, 1 m)
 FOV_H, FOV_D = 102.0, 120.0               # manual
 FOV_V = math.degrees(2 * math.atan(math.tan(math.radians(FOV_H / 2)) * 9 / 16))   # 16:9 sensor, about 69.6
@@ -208,21 +211,21 @@ comp = {
                     np.array([LENS_FRONT - RING_H, AY + BARREL_D / 2, AZ + BARREL_D / 2])),
     'lens_ring': (np.array([LENS_FRONT - RING_H, AY - RING_D / 2, AZ - RING_D / 2]),
                   np.array([LENS_FRONT, AY + RING_D / 2, AZ + RING_D / 2])),
-    'connector_back': (np.array([PCB_BACK - PLUG_H, AY + PLUG_Y[0], AZ + PLUG_Z[0]]),
-                       np.array([PCB_BACK, AY + PLUG_Y[1], AZ + PLUG_Z[1]])),
+    'connector_back': (np.array([PCB_BACK - PLUG_H, AY + PLUG_YR[0], AZ + PLUG_ZR[0]]),
+                       np.array([PCB_BACK, AY + PLUG_YR[1], AZ + PLUG_ZR[1]])),
     'back_layer': (np.array([PCB_BACK - BACK_LAYER, AY - h, AZ - h]), np.array([PCB_BACK, AY + h, AZ + h])),
 }
-# the CAD model: w -> -x (lens forward), v -> +y (plug edge to robot left), u -> +z
+# the CAD model: w -> -x (lens forward), v -> +z (plug edge up), u -> -y
 camera = trimesh.load(CAM_LOCAL, force='mesh')
-camera.apply_transform(np.array([[0, 0, -1, PCB_FRONT + CAM_PCB_FRONT_W], [0, 1, 0, AY], [1, 0, 0, AZ], [0, 0, 0, 1.0]]))
+camera.apply_transform(np.array([[0, 0, -1, PCB_FRONT + CAM_PCB_FRONT_W], [-1, 0, 0, AY], [0, 1, 0, AZ], [0, 0, 0, 1.0]]))
 assert abs(camera.bounds[1, 0] - LENS_FRONT) < 0.002 and abs(camera.bounds[0, 0] - (PCB_BACK - PLUG_H)) < 0.01, camera.bounds
 camera.export(HERE / 'camera_u20cam.stl')
-# the camera's own cable inside the head: out of the connector to +y (robot left), up over the jaw support front wall and
-# along x over the left half of ID15 to x 26; from there content/routes.json cam_usb carries it to the dia 11 left-rear
+# the camera's own cable inside the head: straight back out of the plug at the top of the board, down a little under the
+# XIAO and the left roof pad and along x over the left half of ID15 to x 26; from there content/routes.json cam_usb carries it to the dia 11 left-rear
 # exit, down the neck and to the pigtail splice at the saddle (this stub is for the pictures and the near-field clearance).
-PLUG_C = (AY + sum(PLUG_Y) / 2, AZ + sum(PLUG_Z) / 2)
-CABLE_PTS = [np.array([PCB_BACK - PLUG_H + 0.6, *PLUG_C]), np.array([57.0, 14.0, 128.0]), np.array([54.0, 20.0, 137.0]),
-             np.array([48.0, 24.0, 137.0]), np.array([45.0, 26.0, 137.0]),   # straight back out of the plug, up and left over the jaw support front wall (centreline 3.7 mm from it, scratchpad v130b/probe_cable.py 2026-10-23)
+PLUG_C = (AY + sum(PLUG_YR) / 2, AZ + sum(PLUG_ZR) / 2)
+CABLE_PTS = [np.array([PCB_BACK - PLUG_H + 0.6, *PLUG_C]), np.array([55.0, PLUG_C[0], PLUG_C[1] - 0.7]),   # straight back out of the plug
+             np.array([50.0, 10.0, 139.0]), np.array([40.0, 18.0, 138.0]),   # down under the XIAO (bottom 145.9) and the left roof pad l1 (bottom 141.5), over the jaw support (top 130.3)
              np.array([26.0, 26.0, 137.0])]   # along x over the left half of the ID15 case (top 128.6), under the left touch pads (l1 bottom 141.5 at y 31; free radius 5.7..7.3 along this line); ends at x 26, where the two left touch-pad leads (18..22.5, 27.6..28.5, 139.5) turn to the XIAO
 
 
@@ -364,7 +367,7 @@ def cone_check(lens_front, fov_d=FOV_D):
         normal = radial * math.cos(math.radians(fov_d / 2))
         ang = np.degrees(np.arctan2(r - PUPIL_R, a)) - fov_d / 2
         i = int(np.argmin(normal))
-        ty, tz = math.tan(math.radians(FOV_V / 2)), math.tan(math.radians(FOV_H / 2))
+        ty, tz = math.tan(math.radians(FOV_H / 2)), math.tan(math.radians(FOV_V / 2))   # plug edge up: the long (1280 px) axis is robot y
         inside_rect = (np.abs(P[:, 1] - AY) - PUPIL_R <= a * ty) & (np.abs(P[:, 2] - AZ) - PUPIL_R <= a * tz)
         out[name] = {'minNormalClearanceMm': round(float(normal.min()), 3), 'minRadialClearanceMm': round(float(radial.min()), 3),
                      'minAngularMarginDeg': round(float(ang.min()), 2), 'closestPoint': np.round(P[i], 2).tolist(),
@@ -381,7 +384,7 @@ for lh in np.arange(18.0, 24.1, 1.0):
 checks['optics'] = {
     'lensAxis_yz': [round(AY, 3), round(AZ, 3)], 'lensFrontX': round(LENS_FRONT, 3), 'trimFrontX': TRIM_FRONT,
     'lensFrontBehindTrimFrontMm': round(TRIM_FRONT - LENS_FRONT, 3),
-    'fov': {'horizontal': FOV_H, 'vertical': round(FOV_V, 1), 'diagonal': FOV_D, 'imageLongAxis': 'robot z: the connector edge faces +y (robot left), so the 1280 px axis is vertical; rotate the frame 90 deg in software'},
+    'fov': {'horizontal': FOV_H, 'vertical': round(FOV_V, 1), 'diagonal': FOV_D, 'imageLongAxis': 'robot y: the connector edge faces up (+z) since 2026-10-26, so the 1280 px axis is horizontal (D-023 had it vertical)'},
     'coneHalfAngleDeg': FOV_D / 2, 'pupilRadiusMm': PUPIL_R,
     'method': 'circular cone of the 120 deg diagonal from a 1.0 mm pupil disc at the lens front; clearance of every vertex and '
               '200k surface samples of each part in front of the lens. Negative = clipped. The 102 x 69.6 field lies inside it.',
@@ -479,7 +482,7 @@ checks['printability'] = {'bossWallMm': round(BOSS_R - PILOT_D / 2, 2), 'bossLen
                           'poses': 'same sourceToPrint matrices as release-V1.8/manifest-V1.8.json (face: front on the bed, bosses up; trim: as V1.8)'}
 checks['placement'] = {'pcbFrontX': round(PCB_FRONT, 3), 'pcbBackX': round(PCB_BACK, 3), 'backComponentsToX': round(PCB_BACK - BACK_LAYER, 3),
                        'holderTopX': round(PCB_FRONT + HOLDER_H, 3), 'bodyTopX': round(PCB_FRONT + BODY_H, 3), 'lensFrontX': round(LENS_FRONT, 3),
-                       'connector': 'plug on the PCB back near the +y edge (robot left), below the lens axis; the cable leaves it straight back, rises over the jaw support front wall and lies along x over the left half of the jaw motor ID15 to x 26 (CABLE_PTS); guide/content/routes.json cam_usb carries it on through the dia 11 left-rear exit and down the neck with the nine head wires to the pigtail splice at the saddle (D-023)',
+                       'connector': 'plug on the PCB back near the top edge (+z), left of the lens axis (plug edge up since 2026-10-26); the cable leaves it straight back above the jaw support, dips under the XIAO and lies along x over the left half of the jaw motor ID15 to x 26 (CABLE_PTS); guide/content/routes.json cam_usb carries it on through the dia 11 left-rear exit and down the neck with the nine head wires to the pigtail splice at the saddle (D-023)',
                        'connectorBox': [np.round(v, 2).tolist() for v in comp['connector_back']],
                        'cornerHoles_yz': [[round(y, 2), round(z, 2)] for y, z in corners], 'boreD': BORE_D}
 checks['cameraModel'] = {
@@ -538,7 +541,7 @@ for y, z in corners:
     ax.add_patch(Circle((-y, z), 2.0, fc='#444', ec='k'))
 for s in ('trim_lower', 'trim_upper'):
     ax.add_patch(Circle((-screws[s]['y'], screws[s]['z']), 2.0, fc='none', ec='#0055cc', lw=1.2, ls=':'))
-ax.annotate('cable straight back out of the\nback-side plug, then to +y (robot left)', (-(AY + PLUG_Y[1]), PLUG_C[1]), (-40, AZ - 22), fontsize=8, arrowprops=dict(arrowstyle='->'))
+ax.annotate('cable straight back out of the\nback-side plug at the top edge', (-(AY + PLUG_YR[1]), PLUG_C[1]), (-40, AZ - 22), fontsize=8, arrowprops=dict(arrowstyle='->'))
 ax.text(-AY, AZ - 24, f'camera from behind: 4 x M2 x {CORNER_LEN:.0f} at the corners (grey) into {FACE_BACK - PCB_FRONT:.1f} mm bosses\n'
         f'dotted blue: 2 x M2 x 6 trim screws between the bosses; dotted black: eye bore dia {BORE_D}', ha='center', fontsize=8)
 ax.set_xlim(-45, 30)
