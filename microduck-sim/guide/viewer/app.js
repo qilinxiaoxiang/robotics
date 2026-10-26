@@ -28,6 +28,60 @@ const MUTED_MIX = 0.6;          // parts from earlier chapters: print colour mix
 const MUTED_TO = 0xdfe3e8;
 const SMALL_PART_MM = 15;       // added parts smaller than this (bounding radius) also get a locator box
 const MAX_LOCATOR_BOXES = 6;    // more small parts than this in one step: outline only, no boxes
+const SLIVER_ASPECT = 1000;     // longest edge squared over twice the area: a hairline triangle
+const SLIVER_LIMIT = 100;       // parts with more hairline triangles than this get a crease-normal highlight hull
+
+/* --------------------------------------------------------------- shading */
+function sliverCount(pos, idx) {
+  let count = 0;
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
+    const ux = pos[b] - pos[a], uy = pos[b + 1] - pos[a + 1], uz = pos[b + 2] - pos[a + 2];
+    const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
+    const wx = pos[c] - pos[b], wy = pos[c + 1] - pos[b + 1], wz = pos[c + 2] - pos[b + 2];
+    const cx = uy * vz - uz * vy, cy = uz * vx - ux * vz, cz = ux * vy - uy * vx;
+    const area2 = Math.sqrt(cx * cx + cy * cy + cz * cz);
+    const longest = Math.max(ux * ux + uy * uy + uz * uz, vx * vx + vy * vy + vz * vz, wx * wx + wy * wy + wz * wz);
+    if (longest > SLIVER_ASPECT * area2) count++;
+  }
+  return count;
+}
+
+// Unindexed positions and per-corner normals: each corner averages the area-weighted normals of the faces round its
+// vertex that lie within creaseDeg of its own face, so hairline triangles take their plane's normal and edges stay sharp.
+function creaseNormals(pos, idx, creaseDeg) {
+  const nTri = idx.length / 3, nVert = pos.length / 3;
+  const fn = new Float32Array(nTri * 3), fu = new Float32Array(nTri * 3);
+  for (let t = 0; t < nTri; t++) {
+    const a = idx[3 * t] * 3, b = idx[3 * t + 1] * 3, c = idx[3 * t + 2] * 3;
+    const ux = pos[b] - pos[a], uy = pos[b + 1] - pos[a + 1], uz = pos[b + 2] - pos[a + 2];
+    const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
+    const x = uy * vz - uz * vy, y = uz * vx - ux * vz, z = ux * vy - uy * vx, l = Math.hypot(x, y, z) || 1;
+    fn[3 * t] = x; fn[3 * t + 1] = y; fn[3 * t + 2] = z;
+    fu[3 * t] = x / l; fu[3 * t + 1] = y / l; fu[3 * t + 2] = z / l;
+  }
+  const start = new Uint32Array(nVert + 1);
+  for (let k = 0; k < idx.length; k++) start[idx[k] + 1]++;
+  for (let v = 0; v < nVert; v++) start[v + 1] += start[v];
+  const fill = start.slice(0, nVert), faces = new Uint32Array(idx.length);
+  for (let k = 0; k < idx.length; k++) faces[fill[idx[k]]++] = (k / 3) | 0;
+  const cosCrease = Math.cos(creaseDeg * Math.PI / 180);
+  const position = new Float32Array(idx.length * 3), normal = new Float32Array(idx.length * 3);
+  for (let k = 0; k < idx.length; k++) {
+    const v = idx[k], t = (k / 3) | 0;
+    position[3 * k] = pos[3 * v]; position[3 * k + 1] = pos[3 * v + 1]; position[3 * k + 2] = pos[3 * v + 2];
+    let x = 0, y = 0, z = 0;
+    for (let j = start[v]; j < start[v + 1]; j++) {
+      const f = faces[j];
+      if (fu[3 * f] * fu[3 * t] + fu[3 * f + 1] * fu[3 * t + 1] + fu[3 * f + 2] * fu[3 * t + 2] < cosCrease) continue;
+      x += fn[3 * f]; y += fn[3 * f + 1]; z += fn[3 * f + 2];
+    }
+    const l = Math.hypot(x, y, z);
+    if (l > 0) { normal[3 * k] = x / l; normal[3 * k + 1] = y / l; normal[3 * k + 2] = z / l; }
+    else { normal[3 * k] = fu[3 * t]; normal[3 * k + 1] = fu[3 * t + 1]; normal[3 * k + 2] = fu[3 * t + 2]; }
+  }
+  return { position, normal };
+}
 const MAX_PART_LABELS = 14;     // name tags drawn for the parts added in a step
 // Screw colours by specification; assigned in order of first appearance so a spec keeps its colour on every step.
 const SCREW_COLORS = ['#e8590c', '#2f9e44', '#7048e8', '#0c8599', '#c2255c', '#f08c00', '#1c7ed6', '#5c940d', '#862e9c', '#495057'];
@@ -419,6 +473,11 @@ async function createViewer(container, guide, geoBuf, progress) {
       const mesh = new THREE.Mesh(geo, mats[i].solid);
       mesh.visible = false;
       mesh.userData.part = i;
+      // The highlight hull is the mesh pushed out along its normals. On boolean-cut prints, fans of hairline triangles
+      // run from a corner vertex (normal tilted by the wall) across a whole floor: pushed out, their far ends lift and
+      // the blue hull shows through the floor as streaks. Those parts get a hull that pushes each corner along its own
+      // face's crease normal, so a floor moves straight up; it is built the first time the part is highlighted.
+      if (sliverCount(pos, idx) > SLIVER_LIMIT) mesh.userData.hullSrc = { pos, idx };
       meshes[i] = mesh;
       modelGroup.add(mesh);
       centers[i] = geo.boundingBox.getCenter(new THREE.Vector3());
@@ -654,6 +713,18 @@ async function createViewer(container, guide, geoBuf, progress) {
   scene.add(arrows);
   const boxes = new Map();
   const outlines = new Map();
+  function hullGeometry(mesh) {
+    const src = mesh.userData.hullSrc;
+    if (!src) return mesh.geometry;
+    if (!mesh.userData.hullGeo) {
+      const creased = creaseNormals(src.pos, src.idx, 30);
+      const hull = new THREE.BufferGeometry();
+      hull.setAttribute('position', new THREE.BufferAttribute(creased.position, 3));
+      hull.setAttribute('normal', new THREE.BufferAttribute(creased.normal, 3));
+      mesh.userData.hullGeo = hull;
+    }
+    return mesh.userData.hullGeo;
+  }
   // Added parts get a screen-constant blue silhouette: an inverted hull pushed out along the computed vertex normals.
   const outlineWidth = { value: 1 };
   const outlineMat = new THREE.MeshBasicMaterial({ color: HIGHLIGHT, side: THREE.BackSide });
@@ -690,7 +761,7 @@ async function createViewer(container, guide, geoBuf, progress) {
       }
       if (b) b.visible = fewSmall;
       let o = outlines.get(i);
-      if (!o) { o = new THREE.Mesh(mesh.geometry, outlineMat); o.raycast = () => {}; mesh.add(o); outlines.set(i, o); }
+      if (!o) { o = new THREE.Mesh(hullGeometry(mesh), outlineMat); o.raycast = () => {}; mesh.add(o); outlines.set(i, o); }
       o.visible = true;
     } else if (r === 'ctx' && ctxMode === 'ghost') {
       mesh.material = material(i, 'ghost');
@@ -705,7 +776,7 @@ async function createViewer(container, guide, geoBuf, progress) {
     const mesh = meshes[i];
     if (!mesh) return;
     let o = outlines.get(i);
-    if (!o && on) { o = new THREE.Mesh(mesh.geometry, outlineMat); o.raycast = () => {}; mesh.add(o); outlines.set(i, o); }
+    if (!o && on) { o = new THREE.Mesh(hullGeometry(mesh), outlineMat); o.raycast = () => {}; mesh.add(o); outlines.set(i, o); }
     if (o) o.visible = on;
   }
 
