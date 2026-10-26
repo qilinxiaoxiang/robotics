@@ -108,6 +108,18 @@ Learning content to present: RL policies for bend-and-grasp (sim, domain randomi
 - **Walking with a failed non-critical joint (neck servo gone or frozen).** `can` / `train`. Add joint failure (frozen / weak / missing, head and neck first) to the training randomisation so the policy sees the stuck joint in its observation; alternatives: RMA-style online adaptation (Kumar et al. 2021) and the repertoire + Bayesian-optimisation recovery of Cully et al. 2015 (Nature, "Robots that can adapt like animals", minutes to a working gait after damage). Leg joints are a different robot, not a damaged one.
 - **One learned motor policy across morphologies (duck policy driving an arm).** `frontier`. Shared Modular Policies (Huang 2020), MetaMorph (Gupta 2022) work across hundreds of simulated bodies; no plug-and-play real-robot result. Do not build on it.
 
+## 12. Aliveness and personality on any body (Shawn 2026-10-26, after a talk with a character-robot startup)
+
+Aliveness comes mostly from how the body moves, not from what it chooses. Sources: the twelve principles of animation (Thomas and Johnston, *The Illusion of Life*, 1981); Heider and Simmel 1944 (moving triangles read as agents when they self-start, react contingently and change course toward goals); Pixar's *Luxo Jr.* (a faceless lamp reads as alive through gaze and timing); Sung et al., "My Roomba is Rambo" (UbiComp 2007: owners name and gender their vacuum robots); Disney Research's bipedal character (Grandia et al., RSS 2024) and BDX droids: RL policies that track animator-authored motion with style.
+
+- **Expressive motion layer.** `can` / `build`. Every primitive takes style parameters (speed profile, amplitude, reaction latency, head lead, settle) driven by mood and traits: anticipation (a small counter-move before acting), gaze leads the body by 150-300 ms, follow-through and settle after a stop, slow-in/slow-out, reaction latency of a few hundred ms rather than instant. Same primitive, different mood, visibly different motion.
+- **Attention system.** `can` / `build`. There is always something it is looking at (owner, sound source, moving thing, idle scan); looking before doing makes the thought visible.
+- **Living stillness.** `can` / `build`. Idle breathing and micro-motions (head drift, weight shift) so it is never frozen; drowsy when tired.
+- **Fallibility.** `can` / `build`. Hesitation, double-takes, a startle and recovery; matches "dumb but not rigid".
+- **Personality = stable mapping from state to style and choice.** Drive rates and thresholds (section 4) plus style gains per robot; consistent across days, nudged slowly by the reflection layer.
+- **Body-agnostic form.** A vacuum robot's "head" is its heading: gaze = turning toward, anticipation = a short back-up before going, mood = speed profile, sound and light. The body card (section 11) lists which expressive channels exist.
+- **Learned style.** `train`, course-relevant: style-conditioned imitation of a few animator keyframe clips on the duck (Disney's approach), so a mood changes the gait itself.
+
 ## 8. Purchases and open decisions
 
 - VL53L5CX ToF for stair edges: wanted, not bought.
