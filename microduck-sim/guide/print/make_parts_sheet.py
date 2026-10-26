@@ -677,6 +677,24 @@ INCREMENTAL_NOTES_BY_VERSION['V1.35'] = dict(
                  'board holes line up with the four boss holes.'))
 
 
+# V1.36: the lower head shell of D-026 addendum 2 (2026-10-25): speaker pocket (racetrack) and its twelve holes 4.5 mm forward so
+# the lower jaw covers every hole, no amplifier rails. Replaces the printed V1.33 shell.
+RETIRED_INCREMENTAL['V1.36'] = [
+    ('V1.33 lower head shell', 'Yellow', HERE / 'release-V1.36' / 'run-inputs' / 'head_bottom-v133-world.stl',
+     'Its front row of sound holes is partly off the lower jaw and it has two amplifier rails; it still works.', 'Lower head shell, pocket forward, no rails'),
+]
+INTRO_BY_VERSION['V1.36'] = ('V1.36 is one yellow plate: the lower head shell again. The speaker pocket now has round ends like the speaker '
+                             'and sits 4.5 mm further forward, right behind the slot for the face, so the lower jaw covers all twelve sound '
+                             'holes. The two amplifier rails are gone: tape the amplifier on the flat floor where it fits. Everything else, '
+                             'the exit slot included, is the V1.33 shell.')
+RETIRED_HEADING_BY_VERSION['V1.36'] = 'Keep this as a spare'
+RETIRED_LEAD_BY_VERSION['V1.36'] = 'The V1.33 lower head shell. It still works if the new one does not fit.'
+INCREMENTAL_NAMES_BY_VERSION['V1.36'] = dict(head_bottom='Lower head shell, pocket forward, no rails')
+INCREMENTAL_NOTES_BY_VERSION['V1.36'] = dict(
+    head_bottom=('Prints floor down on tree support, as the V1.33 shell. Push a 2.5 mm drill through each of the twelve floor holes by hand, '
+                 'scrape the pocket floor clean and clear the long-round exit. The thin wall of floor between the pocket and the face slot '
+                 'is about 1.4 mm: do not pry against it.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

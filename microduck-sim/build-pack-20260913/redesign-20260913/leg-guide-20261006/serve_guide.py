@@ -74,6 +74,7 @@ ALLOWLIST = {
     "/PARTS-SHEET-V1.32.html": "PARTS-SHEET-V1.32.html",
     "/PARTS-SHEET-V1.33.html": "PARTS-SHEET-V1.33.html",
     "/PARTS-SHEET-V1.35.html": "PARTS-SHEET-V1.35.html",
+    "/PARTS-SHEET-V1.36.html": "PARTS-SHEET-V1.36.html",
     "/RIG-BUILD.html": "RIG-BUILD.html",   # 17-720 OMX-F sensing and cooling rig build guide
     "/sources/print-colors.json": "sources/print-colors.json",
     "/sources/motor-fasteners.json": "sources/motor-fasteners.json",
