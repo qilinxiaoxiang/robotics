@@ -67,7 +67,8 @@ for cid, (pin, src, spliced) in WIRES.items():
     if spliced:
         w['cut'] = {'toGather': r5(a + ENDS), 'gatherToPin': {k: r5(v + ENDS) for k, v in b.items()}}
     else:
-        w['cut'] = {'whole': {k: r5(a + v + ENDS) for k, v in b.items()}}
+        w['cut'] = {}
+    w['cut']['whole'] = {k: r5(a + v + ENDS) for k, v in b.items()}   # one plugged wire when nothing joins it at the gather point
     out['wires'][cid] = w
 for mid in ('mic-l', 'mic-b'):
     out['micPieces'][mid] = r5(to_gather(mid) + CAP_OPEN + ENDS)

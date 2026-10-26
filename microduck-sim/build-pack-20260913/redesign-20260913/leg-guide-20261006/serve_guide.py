@@ -39,6 +39,7 @@ ALLOWLIST = {
     "/A7Z-WIRES.html": "A7Z-WIRES.html",
     "/A7Z-COOLING.html": "A7Z-COOLING.html",
     "/A7Z-SOLDER.html": "A7Z-SOLDER.html",
+    "/A7Z-SOLDER-2MIC.html": "A7Z-SOLDER-2MIC.html",
     "/A7Z-TOUCH.html": "A7Z-TOUCH.html",
     "/POWER-12V.html": "POWER-12V.html",
     "/EXTENSION-REVIEW.html": "EXTENSION-REVIEW.html",
