@@ -5,7 +5,10 @@ The approved design is DESIGN-CONTRACT.json in this directory; ../design_contrac
 Geometry (all numbers here, build.json repeats them):
 - Saddle body: plan outline x -45..-5 (board rear edge x -41.7: the USB-C sockets overhang it by 1.6 and must clear the rear wall inner face x -43.4 on the straight drop, 0.1 mm), |y| <= 34.4 (board 65 + 0.3 a side + 1.6 walls), corner r 3; walls 1.6; floor 1.6 (normal
   offset) following the shell roof and pack 0.3 above them (ray-cast height map, dilated one cell). Floor cut x -21..-5, |y| <= 16
-  over the torso roof opening (IMU, J12 UART and 5 V leads come up here; the head bundle enters under the front wall foot).
+  over the torso roof opening (IMU, J12 UART and 5 V leads come up here); it still runs out under the front wall foot (slot 32 wide,
+  z roof..46.5) because the ID12 neck servo cable and the IMU plug pass there; the head wires come from the neck straight OVER the front wall, whose top is lowered to z 63.0 over |y| <= 28
+  (1 mm above the antenna strip top 62, 1.1 below the Dupont housing tops 64.1), into the open header strip (Shawn 2026-10-25:
+  "上面下来的杜邦线 不需要从鞍座的下面绕上去吧").
 - Board turned 180 deg from V1.29: component side up, USB-C ①, USB-C ② and micro HDMI edge at the REAR (socket faces 1.7 inside
   the rear wall's outer face, one window y -29..26.5 z 47.8..58 over all three (exhaust slots 2 mm above it) so the plug overmoulds enter it, plugged from behind), 40-pin header at the FRONT edge
   (x -19.2..-14.2 housings), pin 1 at +y (robot left). PCB underside z 48.0.
@@ -24,7 +27,10 @@ Geometry (all numbers here, build.json repeats them):
   The +y wall bulges 2 mm outward from beside the IPEX socket to the front wall (x -35..-6, z 46..59): the board edge is 0.3 from the
   wall elsewhere, so the 1.13 mm pigtail runs forward in this 2.3 mm channel outside the board edge to the antenna feed end.
 - Exhaust: five 3 x 10 slots in the -y wall (fin end), two in the rear wall above the ports, two in the front wall right of the
-  antenna. microSD card slot through the -y wall at the card's end.
+  antenna. microSD card notch through the -y wall at the card's end: card width + 3 each side in x, z 44.5..50.5 (it joins the two
+  exhaust slots above it). The A7Z card socket is a friction (push-pull) socket, not push-push (Shawn 2026-10-25: "这个插槽不是弹簧
+  插槽"): the inserted card ends 2 mm past the board edge, flush with the wall's outer face, and is pinched out with tweezers
+  through the notch (2.5 mm free above the card, 2 mm below).
 - Fixing: the two V2.0 shell-to-pack roof screws (-21.5, +-20) M2 x 10 through the saddle floor on flat seats (driven before the
   tray goes in; heads top about 44.85, tray bottom 45.5).
     /tmp/microduck-cad-venv/bin/python build_saddle.py   (bounded runner)   writes build/*-world.stl and build/build.json"""
@@ -46,7 +52,9 @@ BOARD = dict(xr=-41.7, yl=32.5, z_under=ZU)      # (s, d, h) -> (xr + 30 - d, yl
 HOLES = [(3.5, 3.5), (3.5, 26.5), (61.5, 3.5), (61.5, 26.5)]
 ROOF_SCREWS = [(-21.5, 20.0), (-21.5, -20.0)]      # V2.0 shells S-shell_pack-01/02, M2 x 10 (seat z 43.25)
 TRAY_POSTS = [(-30.0, 29.5), (-30.0, -29.5), (-40.0, 0.0), (-24.5, 0.0)]   # dia 5, floor to the tray bottom; clear of the roof screws and the board-hole screw heads
-FLOOR_CUT = dict(x0=-21.0, x1=X1, hy=16.0)         # shell roof opening x >= -20, |y| <= 15; runs out through the front wall foot (slot 32 wide, z roof..46.5)
+FLOOR_CUT = dict(x0=-21.0, x1=X1, hy=16.0)         # shell roof opening x >= -20, |y| <= 15; runs out through the front wall foot (slot 32 wide, z roof..46.5): the ID12 neck servo cable and the IMU plug pass under the wall there (gate 2026-10-25); the head wires do NOT use it any more
+FRONT_TOP = dict(z=63.0, hy=28.0)                  # front wall top lowered over the header strip: head wires come over it into the housings (tops 64.1)
+CARD_NOTCH = dict(dx=3.0, z=(44.5, 50.5))          # -y wall notch round the microSD card end (friction socket: the card is pinched out with tweezers)
 SOC = dict(s=(20.4, 35.8), d=(10.0, 25.3), top_h=3.2)
 HS = dict(d=(6.4, 30.0), base_h=3.1, top_h=11.5, boss_r=2.5, fan_r=12.0, fan_s=13.5, fan_d=18.0, pad=1.5)   # Radxa 6530B envelope (photos; measure)
 DUPONT = dict(h=14.5, rows_d=(2.23, 4.77), s=(8.37, 56.63), half=1.27)
@@ -198,7 +206,7 @@ def build():
     cuts = []
     for x, y in ROOF_SCREWS:
         cuts.append(cyl_z(x, y, 20.0, 50.0, 1.1))
-    fc = FLOOR_CUT; cuts.append(P.box((fc['x0'], -fc['hy'], 20.0), (fc['x1'] + 1.0, fc['hy'], 46.5)))          # floor cut, running out under the front wall (bridge above)
+    fc = FLOOR_CUT; cuts.append(P.box((fc['x0'], -fc['hy'], 20.0), (fc['x1'] + 1.0, fc['hy'], 46.5)))          # floor cut, running out under the front wall foot (bridge above): ID12 servo cable + IMU plug
     for x in SIDE_SLOTS['xs']:
         cuts.append(P.box((x, -HW - 1, SIDE_SLOTS['z'][0]), (x + SIDE_SLOTS['w'], -HW + T + 1, SIDE_SLOTS['z'][1])))
     for y in REAR_SLOTS['ys']:
@@ -209,10 +217,10 @@ def build():
         cuts.append(P.box((X0 - 1, w['y'][0], w['z'][0]), (X0 + T + 1, w['y'][1], w['z'][1])))
     parts = board_parts()
     cb = parts['microsd_card'].bounds
-    cuts.append(P.box((cb[0, 0] - 0.6, -HW - 1, cb[0, 2] - 0.5), (cb[1, 0] + 0.6, -HW + T + 1, cb[1, 2] + 0.5)))      # card slot, -y wall
+    cn = CARD_NOTCH; cuts.append(P.box((cb[0, 0] - cn['dx'], -HW - 1, cn['z'][0]), (cb[1, 0] + cn['dx'], -HW + T + 1, cn['z'][1])))   # card notch, -y wall (tweezers reach the card end)
     for sgn in (1, -1):
         cuts.append(cyl_y(LID_SCREWS['x'], min(sgn * (HW + 1), sgn * (HW - T - 0.5)), max(sgn * (HW + 1), sgn * (HW - T - 0.5)), LID_SCREWS['z'], LID_SCREWS['clear_r']))
-    # the front wall top edge is rounded where the wires pass (header strip open): a 1.5 mm chamfer-like cut along the inner top edge
+    ft = FRONT_TOP; cuts.append(P.box((X1 - T - 1, -ft['hy'], ft['z']), (X1 + 1, ft['hy'], 80.0)))              # front wall top lowered over the header strip (head wires come over it)
     body = body - P.union(cuts)
     # tray
     hx = hole_xy()
@@ -315,7 +323,7 @@ def build():
     screws = [dict(id=f'SD-board-{i + 1:02d}', spec='M2 x 6 TAP, from below', center=[round(x, 2), round(y, 2), round(TRAY['z0'], 2)], axis=[0, 0, 1], through=['saddle_tray boss', 'A7Z board hole'], into='6530B threaded boss') for i, (x, y) in enumerate(hx)]
     screws += [dict(id=f'S-shell_pack-{i + 1:02d}', spec='M2 x 10 TAP', center=[x, y, 44.0], axis=[0, 0, -1], through=['saddle_body', 'shell'], into='rear_pack shoulder bar', note='driven before the tray goes in') for i, (x, y) in enumerate(ROOF_SCREWS)]
     screws += [dict(id=f'SD-lid-{i + 1:02d}', spec='M2 x 6 TAP', center=[LID_SCREWS['x'], round(sgn * HW, 2), LID_SCREWS['z']], axis=[0, -sgn, 0], through=['saddle_body wall'], into='saddle_lid boss') for i, sgn in enumerate((1, -1))]
-    R = dict(params=dict(T=T, CLR=CLR, ZU=ZU, X0=X0, X1=X1, HW=HW, R_PLAN=R_PLAN, TRAY=TRAY, BOARD=BOARD, HOLES=HOLES, HOLES_XY=hx, ROOF_SCREWS=ROOF_SCREWS, TRAY_POSTS=TRAY_POSTS, FLOOR_CUT=FLOOR_CUT,
+    R = dict(params=dict(T=T, CLR=CLR, ZU=ZU, X0=X0, X1=X1, HW=HW, R_PLAN=R_PLAN, TRAY=TRAY, FRONT_TOP=FRONT_TOP, CARD_NOTCH=CARD_NOTCH, BOARD=BOARD, HOLES=HOLES, HOLES_XY=hx, ROOF_SCREWS=ROOF_SCREWS, TRAY_POSTS=TRAY_POSTS, FLOOR_CUT=FLOOR_CUT,
                          SOC=SOC, HS=HS, DUPONT=DUPONT, PORT_WIN=PORT_WIN, SIDE_SLOTS=SIDE_SLOTS, REAR_SLOTS=REAR_SLOTS, FRONT_SLOTS=FRONT_SLOTS, BULGE=BULGE, ANT=ANT, LID=LID, LID_SCREWS=LID_SCREWS, GRILLE=GRILLE, PLUG=PLUG),
              parts=out, checks=chk, screws=screws,
              estimatedFromPhotos=['HS (6530B base height, fin block depth d 6..30, blower position and diameter): measure on the part before release', 'LID pad at the left-rear corner assumes fin material beside the blower'],

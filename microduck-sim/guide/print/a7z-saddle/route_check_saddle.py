@@ -87,6 +87,18 @@ def lane_tail(pin: int) -> list:
     return pts
 
 
+NECK = [10.8, 16.5, 60.0]     # where every head wire (and the camera cable) leaves the neck above the torso roof
+Z_WALL_TOP = 63.0             # front wall top over the header strip (build_saddle.py FRONT_TOP)
+
+
+def head_tail(pin: int) -> list:
+    """Head-wire tail from the neck point: over the lowered front wall top (z 63, |y| <= 28; wire centre 1.6 above it) straight into
+    the open header strip and down into the housing. Nothing goes under the saddle (Shawn 2026-10-25)."""
+    px, py, _ = PINS[str(pin)]
+    yw = max(-26.0, min(26.0, py))
+    return [[9.0, 15.0, 63.5], [-5.0, yw, Z_WALL_TOP + 1.6], [px, py, 65.5], [px, py, Z_HOUSING], [px, py, Z_PIN]]
+
+
 def torso_join(rid: str) -> list:
     """From the anchor (or from the bundle exit under the front wall) to the drop column bottom."""
     if rid == 'imu':
@@ -109,14 +121,19 @@ def pin_of(rid: str) -> int | None:
 
 
 def build(routes: dict) -> dict:
-    """V2 (D-028, 2026-10-25): every route that ends on a header pin keeps its drawn path down to the bottom of the drop column
-    (X_DROP, -9 or -1, 46), where the V1.29 saddle tail began, and gets the V2 tail from there (lane_tail). cam_usb, fan_lead
+    """V2 (D-028, 2026-10-25): every torso route that ends on a header pin keeps its drawn path down to the bottom of the drop column
+    (X_DROP, -9, 46), where the V1.29 saddle tail began, and gets the V2 tail from there (lane_tail); every head route (it passes the
+    neck point NECK) keeps its head and neck part and comes over the lowered front wall (head_tail). cam_usb, fan_lead
     and antenna_coax are rebuilt for the rear-window plug, the 6530B blower and the front-wall antenna."""
     R = routes['routes']
     new = {}
     for rid, path in R.items():
         pin = pin_of(rid)
         if pin is None or not path or abs(path[-1][2] - PINS[str(pin)][2]) > 1.0 and abs(path[-1][2] - 57.1) > 0.05:
+            continue
+        neck = [i for i, p in enumerate(path) if np.allclose(p, NECK, atol=1e-6)]
+        if neck:   # head wire: keep the head and neck part, then over the front wall into the strip
+            new[rid] = [list(p) for p in path[:neck[0] + 1]] + head_tail(pin)
             continue
         idx = [i for i, p in enumerate(path) if abs(p[0] - X_DROP) < 0.01 and abs(p[2] - 46.0) < 0.01]
         if not idx:
@@ -145,8 +162,10 @@ def build(routes: dict) -> dict:
 DOC = (" 2026-10-25 saddle V2 (D-028, print/a7z-saddle/build_saddle.py, route_check_saddle.py): the board is turned 180 deg, the 40-pin header"
        " is at the saddle's front edge under an open strip (pin tops z 58.1, Dupont housing tops 64.1, pin 1 at +y), USB-C and HDMI face the"
        " rear wall window. Every wire that ends on a header pin keeps its path to the bottom of the drop column between the board front edge"
-       " and the front wall (x -9.8; torso wires at y -9, head wires at y -1, inside the floor passage x -21..-5, |y| <= 16), rises there to"
-       " z 60, swings at z 66.5 over the open housing tops to its pin column and goes straight down into the housing. cam_usb: the head and"
+       " and the front wall (x -9.8, y -9, inside the floor cut x -21..-5, |y| <= 16), rises there to z 60, swings at z 66.5 over the open"
+       " housing tops to its pin column and goes straight down into the housing. Every head wire comes from the neck point (10.8, 16.5, 60)"
+       " straight over the lowered front wall top (z 63 over |y| <= 28; wire centre z 64.6) into the open strip and down into its housing;"
+       " nothing goes under the saddle. cam_usb: the head and"
        " neck part stays (left side of the neck); from (10.8, 16.5, 60) it runs down the robot's left outside the saddle wall, back along"
        " y 39 at z 50 and into the right-angle plug from its +y end, the plug in USB-C 2 through the rear window (body along the rear wall"
        " towards +y, USB-C 1 free). fan_lead: the 6530B blower lead down the +y channel to J6 (about 10 mm). antenna_coax: IPEX socket,"

@@ -1169,7 +1169,7 @@ def build(ctx):
     # ------------------------------------------------------------------ 7. Roof saddle for the A7Z (D-028, 2026-10-25; saddle V2)
     # print/a7z-saddle/build_saddle.py, build/build.json (parts, checks, screws) and build/pins.json (pin tops). Guide world:
     # body x -45..-5, |y| <= 34.4 (+y wall bulge to 36.4 at x -35..-6, z 46..59), walls 1.6, wall top z 65.8, floor 0.3 above the
-    # shell roof with the floor cut x -21..-5, |y| <= 16 over the torso roof opening, running out under the front wall foot; four
+    # shell roof with the floor cut x -21..-5, |y| <= 16 over the torso roof opening, running out under the front wall foot (ID12 servo cable, IMU plug; head wires come over the front wall); four
     # dia 5 tray posts; two flat seats at (-21.5, +-20), top z 43.25, for the pack screws (heads top 44.85, tray bottom 45.5).
     # Tray: plate z 45.5..46.9, four dia 6 bosses to z 48.0 at the board holes (-15.5, +-29) and (-38.5, +-29), dia 2.2 holes,
     # dia 4.2 x 1.0 counterbores underneath. Board: component side up, rear edge x -41.7, sockets at the rear behind one window
@@ -1263,14 +1263,14 @@ def build(ctx):
                  'Look from behind: USB-C ①, USB-C ② and the micro HDMI are all visible through the rear window, each with free space round it.'],
          warnings=['Do not lift the unit by the heatsink lead or the pigtail.'])
 
-    step('saddle-card', 'saddle', 'Push the microSD card in through the right-hand side slot', add=sd_card,
+    step('saddle-card', 'saddle', 'Push the microSD card in through the notch in the right-hand wall', add=sd_card,
          approach={'sd_microsd_card': [0, -20, 0]}, cables=['pi-lead', 'imu', 'uart'],
          camera=ctx.cam(sd_card + saddle_body, direction=(-0.3, -1.0, 0.6), margin=1.4) if sd_card else saddle_cam,
          prepare=[{'item': 'microSD card with the A7Z OS (chapter 11)', 'qty': 1, 'kind': 'electronic'}],
-         instructions=['Done: the flashed microSD card sits in the socket on the underside of the board, pushed in through the slot in the right (−Y) saddle wall.',
-                       'Hold the card contacts up, label down (the socket is on the underside of the board), and push it through the slot in the −Y wall (x −33.6 to −21.4, z 46 to 48.5, just under the board) into the socket until it clicks. About 2 mm stays in the slot.',
-                       'To take it out later, press it in once more through the slot and let it spring out; a fingernail or tweezers reach it through the slot.'],
-         checks=['The card clicked in and does not spring out; it sits in the wall slot without touching the slot edges.'],
+         instructions=['Done: the flashed microSD card sits in the socket on the underside of the board, pushed in through the notch in the right (−Y) saddle wall; its end is flush with the wall\'s outer face.',
+                       'Hold the card contacts up, label down (the socket is on the underside of the board), and push it through the notch in the −Y wall (x −35.7 to −18.7, z 44.5 to 50.5, the card just under the board at z 46.5 to 48) into the socket until it stops. The socket is a friction socket, not a push-push one: there is no click and the card does not spring back; about 2 mm of card stands out past the board edge, flush with the wall\'s outer face.',
+                       'To take it out later, reach into the notch with fine tweezers, pinch the card\'s end from above and below (2.5 mm free above it, 2 mm below) and pull it straight out. The notch is wider than the card by 3 mm each side so the tweezer tips get past its corners.'],
+         checks=['The card is home (it stops with its end flush with the outer wall face); it moves freely in the notch without touching the notch edges; the tweezers reach its end.'],
          warnings=['Do not force the card: if it stops early it is upside down or above the socket.'])
 
     step('saddle-plugs', 'saddle', 'Plug the torso wires onto the A7Z', add=sd_housings + sd_cam_plug,
@@ -1287,7 +1287,8 @@ def build(ctx):
              'Edge row: flag 2 (PI red) on the 1st pin, flag 6 (PI black) on the 3rd.',
              'Inner row: flag 1 (IMU red) on the 1st pin, flag 3 (IMU blue) on the 2nd, flag 5 (IMU yellow) on the 3rd, flag 7 (UART green) on the 4th, flag 9 (IMU black) on the 5th, flag 11 (UART white) on the 6th.',
              'Push each plug straight down onto its pin from above: the header strip has no lid, so you work from the open top. The plugs stand upright on the header (about 14.5 mm tall, to z 64.1); the heatsink beside them ends at z 61.2. Lead each wire down the front of the housings into the floor cut; nothing lies over the heatsink grille area.',
-             'Pins 8 and 10 stay empty (the A7Z debug console). Pins 4, 12, 35, 39, 40 (amplifier), 17, 25, 29, 31 (XIAO) and 34, 38 (microphones) are plugged in chapter 10, when the head wires come down the neck.',
+             'Pins 8 and 10 stay empty (the A7Z debug console). Pins 4, 12, 35, 39, 40 (amplifier), 17, 25, 29, 31 (XIAO) and 34, 38 (microphones) are plugged in chapter 10, when the head wires come down the neck and over the front wall.',
+             'The saddle lid is not fitted in this chapter. It goes on in chapter 11 (step "Close the heatsink end of the saddle with its lid"), after the head wires are plugged in chapter 10 and the blower has been seen running: the lid comes in from behind under the head, so the head must be on first, and it covers only the heatsink end, never the header strip.',
              'The window in the saddle rear wall, over USB-C ②, takes the right-angle USB-C plug of the camera pigtail (drawn in place, its body lying along the outside of the rear wall towards the left, +Y, leaving USB-C ① free). It is plugged from behind the robot in chapter 10, after the four camera leads are soldered to it: leave the window empty now.',
          ],
          checks=['Eight plugs, eight flags: 1, 2, 3, 5, 6, 7, 9, 11. Count again from the antenna-socket (left, +Y) end: none is one pin off or in the wrong row.',
@@ -1622,11 +1623,11 @@ def build(ctx):
          # the loose half closes about 0.35 mm at each tongue while its barbs pass the lips (the C springs shut), then seats
          flex={'parts': ['exit_clamp_loose'], 'riders': {}, 'ramp': [18.0, 21.5], 'spread': [0.0, -0.7], 'shift': 0.35, 'window': [0.4, 0.99]},
          prepare=[{'item': 'Loose half of the head-exit wire clamp (V1.30 print, black), size A; size B as the spare', 'qty': 1, 'kind': 'printed'},
-                  {'item': 'Narrow cable tie, 2.5 mm wide or less', 'qty': 1, 'kind': 'other', 'note': 'At the saddle passage.'}, {'item': 'Spiral wrap, 8 mm or smaller outside diameter', 'qty': '250 mm', 'kind': 'other', 'note': f'The camera cable (about 4 mm) and the {head_wires} thin wires make a bundle about 7 mm across; the head exit slot is 11 mm wide and 17 mm long.'},
+                  {'item': 'Narrow cable tie, 2.5 mm wide or less', 'qty': 1, 'kind': 'other', 'note': 'Through the front-wall exhaust slot at the saddle.'}, {'item': 'Spiral wrap, 8 mm or smaller outside diameter', 'qty': '250 mm', 'kind': 'other', 'note': f'The camera cable (about 4 mm) and the {head_wires} thin wires make a bundle about 7 mm across; the head exit slot is 11 mm wide and 17 mm long.'},
                   {'item': 'CableCreation right-angle USB-C pigtail (Amazon B0194WSKOM), USB-A end cut off 60 mm from the plug', 'qty': 1, 'kind': 'cable'},
                   {'item': 'Heat-shrink dia 1.5 (four pieces, 15 mm) and dia 6 (one piece, 25 mm)', 'qty': '4 + 1', 'kind': 'other'}],
          instructions=[
-             f'Done: the five amplifier wires, the four XIAO wires, the two microphone wires and the camera cable leave the head together through the exit slot at its left rear, held there by the two-piece clamp, run down the left (+Y) side of the neck without clips, and end at the saddle: the {head_wires} flagged plugs lie in the floor cut in front of the header, and the camera cable goes on down the robot\'s left side outside the saddle to the rear, where it is soldered to the USB-C pigtail whose plug lies behind the rear window. Nothing is plugged yet.',
+             f'Done: the five amplifier wires, the four XIAO wires, the two microphone wires and the camera cable leave the head together through the exit slot at its left rear, held there by the two-piece clamp, run down the left (+Y) side of the neck without clips, and end at the saddle: the {head_wires} flagged plugs hang over the saddle front wall into the open header strip, and the camera cable goes on down the robot\'s left side outside the saddle to the rear, where it is soldered to the USB-C pigtail whose plug lies behind the rear window. Nothing is plugged yet.',
              f'Hold the populated cap beside the head, upside down, with its {hw} wires (flags 4, 12, 35, 39, 40 from the amplifier; 17, 25, 29, 31 from the XIAO; 38 and 34 from the microphones) hanging out. The camera cable already leaves the head through the exit (chapter 8), and the five amplifier wires come up from the amplifier on the head floor.',
              'Inside the head the wires gather over the left rear corner of the jaw support, where the exit slot goes straight down through the jaw support and the floor of the lower head shell, between the jaw motor ID15 and the corner wall. The amplifier wires come up from the head floor and back over the jaw support; the XIAO wires come back along the roof from the middle of the cap; the two microphone wires come back along the left side of the cap, and the three microphone joints lie at this point, above the exit; the camera cable comes back over the jaw motor.',
              f'Drop the {hw} wires down the exit beside the camera cable, beside the neck. The three microphone joints stay above the exit.',
@@ -1635,17 +1636,18 @@ def build(ctx):
              'Wrap the bundle in spiral wrap from the head floor down to the saddle.',
              'Run the group down the left side of the neck, beside the ID11 to ID13 servo cable, past ID11 and ID12 to the torso roof. Leave it slightly slack between the head opening and the neck, about 5 mm of bow: the bracket pitches with the head.',
              f'At the top of the torso the camera cable parts from the group: it does not enter the saddle. Lead it down the robot\'s left (+Y) side along the outside of the saddle\'s left wall to the rear, round the rear corner to the window in the rear wall, where the right-angle plug will lie with its body along the outside of the rear wall. Keep {CAM_SPAN} mm of free cable from the head floor to the torso roof beside the saddle: that is what every head pose needs ({CAM_SWEEP["full"]} mm at the far ends of the joint ranges, {CAM_SWEEP["trained"]} mm over the trained head range; at rest the extra bows beside the neck). Then lay the rest along the route to the plug position with the head at rest and cut it where it meets the pigtail wires, which end 60 mm from the plug.',
-             f'Lead the {hw} head wires over the torso roof behind ID12 into the roof opening, under the saddle front wall foot and up through the floor cut in front of the board edge, where the three torso wires already come up. Leave the plugs lying in the open header strip for now.',
+             f'Lead the {hw} head wires from the neck straight forward over the top of the saddle front wall into the open header strip: the wall top is lowered to z 63 over the middle 56 mm, 1 mm below the Dupont housing tops, so the wires lie over it and drop straight onto the header. Nothing goes under the saddle or through the floor cut (that is for the three torso wires only). Leave the plugs lying in the open header strip for now.',
              'Solder the camera cable to the pigtail: slide the dia 6 sleeve over the camera cable, strip its jacket back 15 mm and the four conductors and the four pigtail wires 3 mm, a dia 1.5 sleeve on each, red to red (VBUS), white to white (D−), green to green (D+), black to black (GND), shrink, then the dia 6 sleeve over the joint. From behind the robot, push the plug forward through the rear window into USB-C ②, the middle socket of the three (USB-C ① is to its right as you look from behind, the micro HDMI to its left); its body lies along the outside of the rear wall towards the robot\'s left (+Y), over the micro HDMI, and leaves USB-C ① free. The plug body sits 5.85 mm above the top of the rear converter box.',
-             f'From the head floor opening to the saddle floor cut the group is about {L["bundle_neck"] + 40} mm.',
-             'Tie the group once at the saddle floor cut so a pull from outside loads the saddle, not the plugs. Do not tie it to any neck link.',
+             f'From the head floor opening to the saddle front wall top the group is about {L["bundle_neck"] + 15} mm; each wire then runs on to its pin inside the strip.',
+             'Tie the group once with the narrow cable tie through the front-wall exhaust slot nearest the middle (y −22 to −19, z 50 to 60) so a pull from outside loads the saddle, not the plugs. Do not tie it to any neck link.',
          ],
          checks=['Pitch, yaw and roll the head by hand through the trained range (yaw about ±80°), with the cap held in place: the group slides in the head opening, bows beside the neck and never goes tight, rubs a horn or lifts the servo cable out of its path.',
                  'The jaw opens 30° by hand without touching the group or the camera cable.',
                  'Pull the bundle gently from below the head: it does not slide in the clamp, and nothing moves inside the head.',
                  'Push the loose half up with a fingernail: it stays down.',
                  'The USB-C plug is home in USB-C ② (it clicks), its body lies along the outside of the rear wall towards the left and USB-C ① beside it is still free; the pigtail joint lies behind the saddle, clear of the rear converter box lid and the battery backpack position.',
-                 'The camera cable runs outside the saddle\'s left wall and does not cross the floor cut, the header or the neck servo cable.'],
+                 'The camera cable runs outside the saddle\'s left wall and does not cross the header or the neck servo cable.',
+                 'No head wire goes under the saddle: all eleven come over the lowered front wall top into the strip.'],
          warnings=['Solder colour to colour and keep the white and green pair twisted up to the joint: a swapped data pair means no camera, and a swapped power pair can kill it.'])
 
     step('saddle-head-plugs', 'bundle', f'Plug the {head_wires} head wires onto the A7Z', cables=HEAD_DOWN_CABLES,
@@ -1657,7 +1659,7 @@ def build(ctx):
              'Flag 35 (LRC): inner row, 18th pin (3rd from the far end). Flag 39 (GND): inner row, last pin.',
              'Flag 17 (XIAO 3.3 V): inner row, 9th pin. Flag 25 (GND): inner row, 13th pin. Flag 29 (SCL): inner row, 15th pin. Flag 31 (SDA): inner row, 16th pin.',
              'Flag 34 (microphone GND): edge row, 17th pin. Flag 38 (microphone SD, I2S0 DIN0): edge row, 19th pin, beside flag 40 at the far end.',
-             'Push each plug straight down. The plugs stand upright; lead each wire down the front of the housings into the floor cut. Pins 8 and 10 stay empty (the A7Z debug console).',
+             'Push each plug straight down. The plugs stand upright; each wire leaves its housing upward and lies forward over the lowered front wall top towards the neck. Nothing goes into the floor cut. Pins 8 and 10 stay empty (the A7Z debug console).',
              *(['Optional back microphone: its SD plug (flag 10) stays OFF the header. Tape it beside the header, not on pin 10. Pin 10 is the A7Z UART0 receive pin until the I2S0 DIN3 overlay has been tested; with the two-microphone recording running, the back microphone would send its data into the serial console.'] if MIC_BACK_CABLES else []),
          ],
          checks=['Wires on 4, 12, 34, 35, 38, 39, 40, 17, 25, 29 and 31 only, and the torso plugs still on 1, 2, 3, 5, 6, 7, 9 and 11: nineteen plugs. Pins 8 and 10 are empty. Count again from the antenna-socket end.',

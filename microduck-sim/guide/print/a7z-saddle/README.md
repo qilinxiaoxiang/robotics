@@ -5,7 +5,8 @@ printed saddle on the torso roof over the V1.9 rear pack with the Radxa Heatsink
 from the printed V1.29: USB-C ①② and micro HDMI through one window in the rear wall (plugged from behind), 40-pin header at
 the front edge in an open strip (no lid over the Dupont housings), board + 6530B screwed from below to a printed tray on
 the bench, lid over the heatsink only, AC019 antenna on the front wall inner face, +y wall bulge for the IPEX pigtail.
-The approved design is `DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner
+Evening revision (Shawn's review): microSD tweezer notch in the -y wall (friction socket), front wall top lowered to z 63 over the header strip so the head wires come
+over it from the neck (never under the saddle), floor-cut run-out kept for the ID12 servo cable and the IMU plug. The approved design is `DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner
 runs it after each job). Every number is in the `build_saddle.py` docstring; `renders/saddle.png` shows the result.
 Concept and history: `flip-concept-20261025/`, `../a7z-slice-20261022/`. Interim print colour orange (white PETG out).
 V2 release: `../release-V1.35/` (Orange plate, body + lid + tray; `scripts/run_v135.sh`). Routes: `route_check_saddle.py --write`

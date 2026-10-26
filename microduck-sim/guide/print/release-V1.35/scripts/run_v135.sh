@@ -10,8 +10,12 @@ PY=/tmp/microduck-cad-venv/bin/python
 export MICRODUCK_CAD_RESERVE_MIB=1024
 job() {  # name max-mib cwd command...
   local name=$1 mib=$2 dir=$3; shift 3
-  (cd $dir && /opt/homebrew/bin/python3 $RUNNER --max-mib $mib --seconds 600 --wait-lock-seconds 60 --report $REL/logs/$name-resource.json -- "$@") > $REL/logs/$name.log 2>&1
-  echo "$name exit $?"; grep -v 'lock holder' $REL/logs/$name.log | tail -3 | cut -c1-300
+  local rc=75 tries=0   # exit 75 = another bounded job holds the lock (a gate run): wait and retry, up to 20 minutes
+  while [ $rc -eq 75 ] && [ $tries -lt 20 ]; do
+    (cd $dir && /opt/homebrew/bin/python3 $RUNNER --max-mib $mib --seconds 600 --wait-lock-seconds 60 --report $REL/logs/$name-resource.json -- "$@") > $REL/logs/$name.log 2>&1; rc=$?; tries=$((tries+1))
+  done
+  echo "$name exit $rc"; grep -v 'lock holder' $REL/logs/$name.log | tail -3 | cut -c1-300
+  [ $rc -eq 0 ]
 }
 mkdir -p $REL/logs; rm -rf $REL/run $REL/review
 $PY $REL/scripts/make_manifest.py > $REL/logs/manifest.log 2>&1; echo "manifest exit $?"; tail -3 $REL/logs/manifest.log
