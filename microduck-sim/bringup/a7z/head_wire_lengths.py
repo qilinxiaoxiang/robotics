@@ -9,7 +9,11 @@ gather point -> pin: gather point down to the head exit (34 mm) + exit to the fr
 The exit-to-wall span is the straight distance from head-sweep-v2.json: 37 mm at HOME; the recommended cut takes the larger of its maximum
 over the trained head command range (walk_brain HEAD_RANGE) and over the pickup bend (groundpick-head-traj.json, D-027). Every piece gets 10 mm for the two ends and is rounded up to 5 mm;
 the left microphone piece also gets the guide's 25 mm so the cap still opens like a lid. Spliced wires (12, 35, 17) are cut as
-two pieces; the others are one wire of the summed length (one 10 mm allowance). Writes head-wire-lengths.json.
+two pieces; the others are one wire of the summed length (one 10 mm allowance).
+Breadboard (2026-10-26): the 12/35/17 (and three-microphone 34) joins are strips of a 25-hole mini breadboard taped to the
+camera back, landscape, plugs entering from behind. 'breadboard' gives each piece into it (male Dupont end, measured to the
+pin tip) as wall-following right-angle runs to the plug tail, and each board-to-pin wire (uncut male-to-female) as the
+plug tail to the gather point plus the gather point to the pin. Writes head-wire-lengths.json.
 python3 head_wire_lengths.py"""
 import json, math
 from pathlib import Path
@@ -70,6 +74,24 @@ for cid, (pin, src, spliced) in WIRES.items():
         w['cut'] = {}
     w['cut']['whole'] = {k: r5(a + v + ENDS) for k, v in b.items()}   # one plugged wire when nothing joins it at the gather point
     out['wires'][cid] = w
+# breadboard on the camera back: box x 51.1-63.4, y -22.0 to -2.0, z 131.0-146.0 (scratchpad fit 2026-10-26, >= 1.8 mm
+# from the jaw support, XIAO and cap); male housings 14 mm + 2 mm bend behind it, so the wires leave at the plug tail BT.
+BT = [35.0, -12.0, 138.5]
+HOUSING = 16
+
+
+def l1(a, b):
+    return sum(abs(u - v) for u, v in zip(a, b))
+
+
+PAD = {'amp-bclk': CAB['amp-bclk']['path'][0], 'amp-lrc': CAB['amp-lrc']['path'][0], 'touch-pin17': CAB['touch-pin17']['path'][0],
+       'mic-r': CAB['mic-r']['path'][0], 'mic-b': CAB['mic-b']['path'][0]}
+bb = {'plugTail': BT, 'toBoard': {}, 'boardToPin': {}}
+for k, xyz in PAD.items():
+    bb['toBoard'][k] = r5(l1(xyz, BT) + HOUSING + ENDS + (CAP_OPEN if k.startswith('mic') else 0))
+for pin in (12, 35, 17, 34):
+    bb['boardToPin'][str(pin)] = round(HOUSING + l1(BT, GP) + gather_to_pin(pin, span['pickup']))
+out['breadboard'] = bb
 for mid in ('mic-l', 'mic-b'):
     out['micPieces'][mid] = r5(to_gather(mid) + CAP_OPEN + ENDS)
 out['micPieces']['mic-r'] = r5(length(CAB['mic-r']['path']) + ENDS)
@@ -77,3 +99,4 @@ out['micPieces']['mic-r'] = r5(length(CAB['mic-r']['path']) + ENDS)
 for cid, w in out['wires'].items():
     print(f"{cid:12s} pin {w['pin']:>2}  to gather {w['toGatherMm']:>3}  gather->pin {w['gatherToPinMm']}  cut {w['cut']}")
 print('mic pieces', out['micPieces'])
+print('breadboard', out['breadboard'])
