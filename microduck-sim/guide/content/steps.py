@@ -98,7 +98,8 @@ def a7z(anchor: str, label: str, note: str = '', page: str = 'A7Z-PINS.html') ->
     return {'label': label, 'href': f'{page}#{anchor}', 'note': note, 'external': True}
 # Mouth floor (2026-10-24, print/mouth-floor-20261024/): the speaker lies grille face down in a pocket in the yellow floor over
 # twelve dia 2.5 sound holes above the lower jaw, on a thin tape loop; the amplifier (five wires soldered in, no header) stands
-# on 1 mm foam tape between two low rails on the floor to its left, terminal towards the speaker pads, on the same line x 64.
+# on 1 mm foam tape on the floor to its left, terminal towards the speaker pads, centred on x 64 (no rails since 2026-10-25;
+# it may slide up to 4 mm back). The speaker sits 4.5 mm further forward (x 68.5) so the jaw covers every hole.
 # The V1.32 speaker box and the two amplifier posts in the cap are retired. Two INMP441 microphones sit in the two cap ears on
 # 1 mm foam rings (D-025).
 AUDIO = ['amp_tape', 'amplifier']
@@ -250,7 +251,7 @@ def build(ctx):
         {'id': 'saddle', 'title': '7. Roof saddle for the A7Z',
          'summary': 'Set the empty printed saddle on the torso roof over the rear pack and screw it down through the shell roofs into the pack bar; on the bench put the thermal pad and the Radxa Heatsink 6530B on the A7Z and screw the board, with the printed tray under it, to the heatsink from below; stick the Wi-Fi antenna on the front wall; lower the tray with the board into the saddle (sockets to the rear window, header to the front), lead the antenna pigtail through the channel in the left wall, push the microSD card in through the right wall, and plug the torso wires (IMU, UART, 5 V) onto the header from the open top. The lid goes on in chapter 11, once the blower has been seen running.'},
         {'id': 'head', 'title': '8. Head mechanics',
-         'summary': 'Check the speaker pocket, the twelve sound holes and the amplifier rails in the floor of the lower head shell, seat the jaw in the shell on the bench, fit the shell, the jaw support with ID15 and the jaw screws, wire the speaker to the amplifier on the bench and tape both onto the shell floor, the speaker face down in its pocket and the amplifier between its rails, then the face with the eye trim and the U20CAM USB camera on its four bosses, its own cable laid over the jaw motor to the exit slot at the left rear (D-023).'},
+         'summary': 'Check the speaker pocket and the twelve sound holes in the floor of the lower head shell, seat the jaw in the shell on the bench, fit the shell, the jaw support with ID15 and the jaw screws, wire the speaker to the amplifier on the bench and tape both onto the shell floor, the speaker face down in its pocket and the amplifier on the floor beside it, then the face with the eye trim and the U20CAM USB camera on its four bosses, its own cable laid over the jaw motor to the exit slot at the left rear (D-023).'},
         {'id': 'head-elec', 'title': '9. Head electronics',
          'summary': 'Five copper touch pads and the XIAO touch board at the middle of the roof, and the two INMP441 microphones in the ears of the cap, their wires joined into the amplifier and XIAO wires at the left rear corner. The cap carries no computer, no speaker and no amplifier any more.'},
         {'id': 'bundle', 'title': '10. Neck bundle, cap and cable dressing',
@@ -423,7 +424,7 @@ def build(ctx):
                  'The saddle body (V2): the rear window clear, the pigtail channel inside the left (+Y) wall bulge open along its whole length, all nine exhaust slots and the microSD slot in the right (−Y) wall open, the floor cut open and running out under the front wall, the two round screw seats flat with their holes open, the two side lid-screw holes open, the four short tray posts clean. The tray: flat, not warped (it is 1.4 mm thick), the four counterbores under the bosses clean, the four boss holes open from the counterbore through to the top. The lid: the six grille slots open, the two pressing bars and the corner pad on its underside intact, the two screw pilots in its bosses open.',
                  'The new neck pitch ring is 4.9 mm thick. The four 4 mm rings from the 10/1 batch stay in use at the two hips and on both sides of the head roll; the fifth is now a spare.',
                  'It is the V1.33 cap, printed white: its rear rim is closed all round with no notch and no hood. The roof is plain inside, with no speaker collar, no grille holes and no posts. On each side wall, just behind the face and half way up, is a small dia 1.6 sound hole, and round it inside a horseshoe ring about 16 mm across, open at the top. The board rails stay as on the A7Z cap (a round pad round each pilot hole, a slot through each end of the board space), except near the ears, where they are cut back to the wall. The V1.32 cap has two short amplifier posts in the middle of the roof; the V1.17 A7Z cap has a collar and grille at the back of the roof and no ears.',
-                 'The lower head shell (V1.33) has a shallow pocket about 30 x 20 mm with round ends (a rectangle with small rounded corners on the first V1.33 print) in the flat floor just behind the face, with twelve round dia 2.5 holes through its floor in four rows of three; beside it on the left two low rails 4 mm tall and 15 mm long stand 18.4 mm apart; at the left rear the exit in the floor is a long-round slot, 11 mm wide and 17 mm long.',
+                 'The lower head shell (V1.33) has a shallow pocket about 30 x 20 mm with round ends in the flat floor right behind the slot for the face, with twelve round dia 2.5 holes through its floor in four rows of three; beside it on the left the floor is flat; at the left rear the exit in the floor is a long-round slot, 11 mm wide and 17 mm long. The first V1.33 print differs in three ways: its pocket is a rectangle with small rounded corners, it sits 4.5 mm further back from the face slot, so the front row of holes is only partly over the lower jaw, and two low rails 4 mm tall stand on the floor to its left. That print still works; the next yellow reprint has the pocket and holes moved forward and no rails.',
                  'They are the white V2.0 shells: a round counterbore in the top of each shell near the back with a small hole in its floor, a counterbore round each of the seven horn-screw holes on the sides (not round the rear hole of the right shell, left plain for a wire-clip tab that is not fitted), and no tunnel at the back of the left shell.',
                  'It is the U20 face (V1.30): its back is a flat plate with four round 13.1 mm bosses on a 28 mm square round the eye, each with a pilot hole in its top, two plain holes above and below the eye between the bosses, and a dia 16.2 eye opening (the A7Z face has shorter bosses and a smaller opening).',
                  'It is the V1.30 eye trim: two small holes open in its rear face, one above and one below the eye bore, and the bore behind the flare is dia 16.2 (the V1.8 trim is dia 14.4 and the lens ring does not pass).',
@@ -1336,23 +1337,26 @@ def build(ctx):
 
     # Mouth floor (2026-10-24, print/mouth-floor-20261024/build_mouth_floor.py, checks-floor.json): a 30.4 x 20.4 pocket 1.5 mm
     # deep in the speaker's racetrack outline (since 2026-10-25; the first V1.33 print has a rectangle with R 1 corners), floor left
-    # under it 1.24 to 1.39 mm, centred at (64, -2) with twelve dia 2.5 holes at x 58.5..70.5, y -8/-2/+4, all
-    # over the lower jaw; two rails 1.2 x 4.0 mm at x 53.6..54.8 and 73.2..74.4, y 18..33, 0.3 mm clear of the amplifier board.
-    step('shell-mouth', 'head', 'Check the speaker pocket, the twelve sound holes and the amplifier rails in the lower head shell', add=['head_bottom'], show=[], context=[], bench=True,
+    # under it 1.20 to 1.35 mm, centred at (68.5, -2) (since 2026-10-25; (64, -2) on the first V1.33 print), 1.42 mm of floor
+    # between its front edge and the face slot, twelve dia 2.5 holes at x 63..75, y -8/-2/+4, the whole rim of every hole over the
+    # lower jaw (on the first print the x 58.5 row was partly off it). No amplifier rails since 2026-10-25 (the first V1.33 print
+    # has two at x 53.6..54.8 and 73.2..74.4).
+    step('shell-mouth', 'head', 'Check the speaker pocket and the twelve sound holes in the lower head shell', add=['head_bottom'], show=[], context=[], bench=True,
          camera=ctx.cam(['head_bottom'], direction=(0.7, -0.5, 1.0), margin=1.3),
          prepare=[{'item': 'Lower head shell (V1.33 print, yellow)', 'qty': 1, 'kind': 'printed'},
                   {'item': '2.5 mm drill, turned by hand', 'qty': 1, 'kind': 'tool'}],
-         instructions=['Done: the floor of the shell just behind the face has a clean shallow pocket for the speaker with twelve open holes through its floor, and beside it on the left two low rails for the amplifier. The speaker lies face down in the pocket in a later step, and its sound comes out through the holes when the beak opens.',
-                       'Look into the shell from above. Behind the face, the flat floor has a pocket about 30 x 20 mm and 1.5 mm deep in the outline of the speaker, with round ends, its long side running left to right. On the first V1.33 print the pocket is a rectangle with small rounded corners; the speaker sits in it the same way and the corners stay empty. In its floor are twelve round holes in four rows of three. To the left of the pocket (+Y) stand two low rails, 4 mm tall and 15 mm long, running left to right, 18.4 mm apart.',
+         instructions=['Done: the floor of the shell just behind the face has a clean shallow pocket for the speaker with twelve open holes through its floor, and beside it on the left a clean flat floor for the amplifier. The speaker lies face down in the pocket in a later step, and its sound comes out through the holes when the beak opens.',
+                       'Look into the shell from above. Right behind the slot for the face, the flat floor has a pocket about 30 x 20 mm and 1.5 mm deep in the outline of the speaker, with round ends, its long side running left to right, and a thin wall of floor about 1.4 mm wide between the pocket and the slot. In its floor are twelve round holes in four rows of three. To the left of the pocket (+Y) the floor is flat: the amplifier is taped there with nothing to locate it.',
+                       'The first V1.33 print is different: its pocket is a rectangle with small rounded corners, 4.5 mm further back from the face slot, and two low rails stand to its left. It still works: the speaker sits in it the same way, the corners stay empty, and you may cut the rails off flush or leave them; the amplifier does not need them.',
                        'Push a 2.5 mm drill through each hole by hand to clear any stringing, and scrape any blob or string out of the pocket floor and its corners: the speaker tape seals on that floor.',
                        'At the left rear of the floor the exit is a long-round slot, 11 mm wide and 17 mm long, the long way pointing back and to the left. Clear any stringing from its edge.'],
          checks=['Twelve holes, each round and open; a 2.5 mm drill passes each by hand.',
                  'The pocket floor is flat: a straight edge across it does not rock, and no hole has a raised lip.',
-                 'The two rails stand straight and the gap between them is clear down to the floor.'])
+                 'The floor to the left of the pocket is flat and free of blobs where the amplifier goes.'])
 
     step('head-shell', 'head', 'Check the lower head shell', add=['head_bottom'], show=[], context=[], bench=True,
          camera=ctx.cam(['head_bottom'], direction=(0.8, -0.8, 1.0), margin=1.3),
-         prepare=[{'item': 'Lower head shell with the upper lip (V1.33 print, yellow: the exit slot in the floor at the left rear, the speaker pocket and the amplifier rails behind the face)', 'qty': 1, 'kind': 'printed'}],
+         prepare=[{'item': 'Lower head shell with the upper lip (V1.33 print, yellow: the exit slot in the floor at the left rear, the speaker pocket behind the face)', 'qty': 1, 'kind': 'printed'}],
          instructions=['Clean any stringing out of the four screw bosses for the jaw support and the three closure tabs (two at the front corners, one at the rear). The left-rear boss stands behind the ID15 pocket, beside the exit slot in the floor; the head wires pass through that slot in chapter 10.',
                        'Find the local cut-out for the ID14 plug. ID14 drops into the shell from above with the fork, so nothing may catch there.',
                        'Break the support away from under the upper lip at the front, and push a 5 mm drill bit by hand through the two holes in the lip under the front closure tabs: the driver passes through them when the head is screwed shut.'])
@@ -1427,9 +1431,11 @@ def build(ctx):
                  'Hold the jaw arm and rock it against the horn: no play and no click.'])
 
     # Mouth floor (print/mouth-floor-20261024/checks-floor.json): the speaker (30 x 20 x 4, model 4.5) grille face down in the
-    # pocket on a 0.3 mm tape loop, x 54..74, y -17..13, top z 114.6 (camera board bottom z 115.1 over it, 0.54 mm); pads at its
-    # +y end. The amplifier board x 55.1..72.9 between the rails, terminal edge at y 17 (4 mm from the pad end), on 1 mm foam
-    # tape; 0.31 mm from the face panel and 0.76 mm under the camera, so both go in before the face.
+    # pocket on a 0.3 mm tape loop, x 58.5..78.5, y -17..13, top z 114.6 (camera board 0.58 mm over it); pads at its +y end.
+    # The amplifier board x 55.1..72.9 on the floor, terminal edge at y 17 (4 mm from the pad end), on 1 mm foam tape; 0.35 mm
+    # from the face panel and 0.76 mm under the camera, so both go in before the face. Without rails it may slide up to 4 mm
+    # back (-x): 0.51 mm to ID15 at 4 mm, contact at 6 mm; forward, to +y or to -y it meets the cap, the shell or the camera
+    # within 1 mm (2026-10-25 probe).
     pair = ctx.keys(*SPEAKER, *AUDIO)
     step('speaker-bench', 'head', 'Wire the speaker to the amplifier on the bench', add=pair, show=[], context=[], bench=True,
          cables=SPK_CABLES,
@@ -1443,7 +1449,7 @@ def build(ctx):
          instructions=['Done: the speaker and the amplifier are one pair joined by two short leads, the speaker pads to the amplifier terminal; the speaker carries a tape loop on its grille face and the amplifier a foam pad under its board.',
                        'Which way round: one face of the speaker is a flat metal grille with seven round holes; the other face has the raised round magnet and the two solder pads at one end. The grille goes down into the pocket; the pad end points towards the amplifier.',
                        'Solder the red lead to the + pad and the black lead to the − pad, flat along the back of the speaker and pointing off the pad end. If your speaker already has leads soldered on from the earlier build, keep them and cut them to about this length.',
-                       'Strip 5 mm of the free end of each lead, twist the strands and screw them into the green terminal of the amplifier: red under +, black under −. Pull each one: it holds. Lay the speaker and the board flat side by side, the pad end of the speaker facing the terminal edge of the board, 4 mm apart, the leads folded into the gap.',
+                       'Strip 5 mm of the free end of each lead, twist the strands and screw them into the green terminal of the amplifier: red under +, black under −. Pull each one: it holds. Lay the speaker and the board flat side by side, the pad end of the speaker facing the terminal edge of the board, 4 mm apart, with the speaker shifted about 4.5 mm towards what will be the face, the leads folded into the gap.',
                        'The two leads cross once in the gap: looking down from above with the amplifier beyond the speaker (speaker grille down, amplifier parts up), the + pad of the speaker is on the right and the + screw of the amplifier on the left (Same Sky drawing, Adafruit silkscreen). That is expected. A speaker wired the other way round, + to −, sounds the same on its own, so a swapped pair is not a fault; keep + to + so the guide and the robot match.',
                        'Cut two strips of the thin tape and stick them on the grille face right along its edge, each round one half, ends butting, so they make one closed loop outside all seven holes. Press them down along the curves and trim any overlap. Leave the liners on for now.',
                        'Stick the 1 mm foam piece on the underside of the amplifier board, clear of the solder joints of the five wires. Leave its liner on.'],
@@ -1452,18 +1458,18 @@ def build(ctx):
          links=[bringup('ab-7', 'Detailed page: soldering the two speaker leads', 'BRINGUP step 13, part 5 (the speaker was in the roof then; the pads and the soldering are the same)'),
                 bringup('s13', 'Detailed page: amplifier, five wires', 'BRINGUP step 13: which hole is which, soldering the five wires, meter checks')])
 
-    step('speaker-amp', 'head', 'Tape the speaker face down into its pocket and the amplifier between its rails', add=pair,
+    step('speaker-amp', 'head', 'Tape the speaker face down into its pocket and the amplifier onto the floor beside it', add=pair,
          group={'label': 'Speaker and amplifier joined by their two leads', 'approach': [0, 0, 30]},
          cables=SPK_CABLES,
          camera=ctx.cam(pair + ['head_bottom', 'jaw_support'], direction=(0.9, -0.7, 1.1), margin=1.3),
-         instructions=['Done: the speaker lies grille face down in the pocket in the floor, over the twelve holes, its pads towards the amplifier; the amplifier stands on its foam pad between the two rails on its left, terminal edge towards the speaker; the five amplifier wires point up and back.',
+         instructions=['Done: the speaker lies grille face down in the pocket in the floor, over the twelve holes, its pads towards the amplifier; the amplifier stands on its foam pad on the flat floor to its left, terminal edge towards the speaker; the five amplifier wires point up and back.',
                        'Why now: the camera board passes 0.5 mm over the speaker and 0.8 mm over the amplifier once the face is on, and the amplifier is 0.3 mm from the back of the face. Both go in now, straight down.',
-                       'Dry fit first. Hold the pair over the open shell and lower the speaker grille down into the pocket and the amplifier board down between the rails, the five wires up. The speaker drops in with 0.2 mm of play all round; the board slides down between the rails with 0.3 mm on each side. Lift both out.',
-                       'Peel both liners. Lower the speaker straight down into the pocket and press it down all round its rim for a few seconds; then lower the amplifier between the rails and press it onto the floor. Press only on the board edge, never on the five solder joints.',
+                       'Dry fit first. Hold the pair over the open shell and lower the speaker grille down into the pocket and the amplifier board down onto the floor to its left, the five wires up. The speaker drops in with 0.2 mm of play all round. Nothing locates the board: set it square, its terminal edge 4 mm from the speaker, its front edge just short of the face and its left edge just short of the wall, as in the picture. It may sit up to 4 mm further towards the back of the head if the wires suit that better; closer to the face, the wall or the speaker it hits the head cap, the shell or the camera board. Lift both out.',
+                       'Peel both liners. Lower the speaker straight down into the pocket and press it down all round its rim for a few seconds; then lower the amplifier onto its spot and press it onto the floor. Press only on the board edge, never on the five solder joints.',
                        'Lay the five amplifier wires up and back towards the left rear corner of the head. They go up to the gather point over the exit slot and down the neck in chapter 10.'],
          checks=['From under the head, with the jaw open, the twelve holes show the speaker grille, not tape and not daylight.',
                  'The speaker does not rock in the pocket and sits flush with or just below the top of the floor round it.',
-                 'The amplifier stands square between the rails and does not slide when pushed gently; the two leads lie in the gap and touch neither board edge with bare copper.'],
+                 'The amplifier stands square on the floor, clear of the face and the wall, and does not slide when pushed gently; the two leads lie in the gap and touch neither board edge with bare copper.'],
          warnings=['A loop dragged across the pocket floor leaves a gap and the sound leaks round the speaker: if it grabs crooked, lift the speaker and stick on a fresh loop.'])
 
     step('face', 'head', 'Fit the eye trim into the face panel and screw it from behind', add=FACE, show=[], context=[], bench=True,

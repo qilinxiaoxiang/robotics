@@ -1,6 +1,8 @@
 {
  "params": {
   "CL": 64.0,
+  "SPK_FWD": 4.5,
+  "SPK_X": 68.5,
   "SPK": [
    30.0,
    20.0,
@@ -15,51 +17,51 @@
   "HOLE_D": 2.5,
   "HOLES": [
    [
-    58.5,
+    63.0,
     -8.0
    ],
    [
-    58.5,
+    63.0,
     -2.0
    ],
    [
-    58.5,
+    63.0,
     4.0
    ],
    [
-    62.5,
+    67.0,
     -8.0
    ],
    [
-    62.5,
+    67.0,
     -2.0
    ],
    [
-    62.5,
+    67.0,
     4.0
    ],
    [
-    66.5,
+    71.0,
     -8.0
    ],
    [
-    66.5,
+    71.0,
     -2.0
    ],
    [
-    66.5,
+    71.0,
     4.0
    ],
    [
-    70.5,
+    75.0,
     -8.0
    ],
    [
-    70.5,
+    75.0,
     -2.0
    ],
    [
-    70.5,
+    75.0,
     4.0
    ]
   ],
@@ -68,30 +70,36 @@
    19.05
   ],
   "AMP_Y0": 17.0,
-  "AMP_CLR": 0.3,
-  "RAIL_W": 1.2,
-  "RAIL_H": 4.0,
-  "RAIL_Y": [
-   18.0,
-   33.0
-  ],
-  "TAPE_AMP": 1.0
+  "TAPE_AMP": 1.0,
+  "POCKET_FRONT_X": 78.7
  },
  "floorPlane": {
   "z": "a + b x + c y",
   "abc": [
-   111.863075,
-   -0.008603,
-   -8.4e-05
+   111.864379,
+   -0.00862,
+   -0.000163
   ],
-  "maxResidualMm": 0.019,
+  "maxResidualMm": 0.0191,
   "samples": 192
  },
  "floorLeftUnderPocketMm": {
-  "min": 1.24,
-  "max": 1.386,
+  "min": 1.2003,
+  "max": 1.348,
   "samples": 178,
   "required": 1.2
+ },
+ "pocketToFaceSlotWallMm": {
+  "min": 1.42,
+  "samples": [
+   2.27,
+   1.47,
+   1.42,
+   1.42,
+   1.42,
+   1.47,
+   2.27
+  ]
  },
  "holes": {
   "count": 12,
@@ -105,34 +113,24 @@
  "speaker": {
   "bounds": [
    [
-    54.0,
+    58.5,
     -17.0,
-    110.11
+    110.07
    ],
    [
-    74.0,
+    78.5,
     13.0,
-    114.61
+    114.57
    ]
   ],
-  "topZ": 114.61,
+  "topZ": 114.57,
   "intersectShellMm3": "Not all meshes are volumes!"
  },
  "amplifier": {
-  "railInnerToBoardMm": 0.3,
+  "rails": null,
   "boardX": [
    55.11,
    72.89
-  ],
-  "railsX": [
-   [
-    53.61,
-    54.81
-   ],
-   [
-    73.19,
-    74.39
-   ]
   ],
   "modelBounds": [
    [
@@ -151,18 +149,20 @@
  "speakerLead": {
   "speakerPadEndY": 13.0,
   "ampBoardEdgeY": 17.0,
-  "straightGapMm": 4.0,
-  "centreLineX": 64.0
+  "gapYMm": 4.0,
+  "speakerCentreX": 68.5,
+  "ampCentreX": 64.0,
+  "offsetXMm": 4.5
  },
  "clearanceMm": {
   "speaker": {
-   "camera_u20cam": 0.54,
+   "camera_u20cam": 0.58,
    "camera_cable_stub": ">4.0",
-   "face_panel": 1.08,
-   "eye_trim": ">4.0",
-   "jaw_frame": 1.85,
-   "jaw_support": 2.57,
-   "motor15": 7.47,
+   "face_panel": 1.1,
+   "eye_trim": 4.63,
+   "jaw_frame": 1.82,
+   "jaw_support": ">4.0",
+   "motor15": ">4.0",
    "mic_left": ">4.0",
    "mic_right": ">4.0",
    "head_cap": ">4.0"
@@ -178,30 +178,6 @@
    "mic_left": 11.03,
    "mic_right": ">4.0",
    "head_cap": 0.65
-  },
-  "rail_left": {
-   "camera_u20cam": ">4.0",
-   "camera_cable_stub": ">4.0",
-   "face_panel": ">4.0",
-   "eye_trim": ">4.0",
-   "jaw_frame": 2.8,
-   "jaw_support": 4.54,
-   "motor15": 3.01,
-   "mic_left": ">4.0",
-   "mic_right": ">4.0",
-   "head_cap": ">4.0"
-  },
-  "rail_right": {
-   "camera_u20cam": ">4.0",
-   "camera_cable_stub": ">4.0",
-   "face_panel": 2.11,
-   "eye_trim": ">4.0",
-   "jaw_frame": 2.8,
-   "jaw_support": ">4.0",
-   "motor15": ">4.0",
-   "mic_left": ">4.0",
-   "mic_right": ">4.0",
-   "head_cap": 2.84
   }
  },
  "intersectionMm3": {
@@ -234,7 +210,7 @@
   "isVolume": true,
   "bodies": 1,
   "volumeBefore": 26588.2,
-  "volumeAfter": 25859.6
+  "volumeAfter": 25718.2
  },
  "printPose": {
   "file": "head_bottom_mouth-print.stl",
@@ -246,12 +222,12 @@
   ]
  },
  "sha256": {
-  "head_bottom_mouth-world": "601080b75b9b4055fc33875a01cf49e0399dc3bdc1a93998a9bca7968205ff2d",
-  "head_bottom_mouth-print": "2a1fd0440bfabfac2d71226939d938db2b24e7ae8c61f782af9f25f4a1b4d67e",
-  "speaker_floor-world": "e008b21bd14b8900f12a1b14794d5cafdecbcef31126f7894777d1b432d7255a",
-  "amplifier_floor-world": "6f9f170ca30380804b931dea6dc556d3d71369fa79b099bf14065acf990aeed0",
-  "speaker_tape_floor-world": "d792003af8d5e7864b63f8f71d675c744612742d1bccbbb1ddf9a3527565410d",
-  "amp_tape-world": "3710565a517c042d2b79970e8e895bcfa310bc24b6c3e5e75440db38a2bbf623"
+  "head_bottom_mouth-world": "9cbb0e34c4d40bd9ffb61da4db637d603d5bf2d05a27d14e8b6ea09662858be4",
+  "head_bottom_mouth-print": "a92addbf57f1c1012e9c13250c20cd270d49e2cecbcd2ffd5d7eed5c9ca3d381",
+  "speaker_floor-world": "a6f5171e27fbeeecb7ee518681595a97e6f57c7bb9ac254eeecad1236ade6e28",
+  "amplifier_floor-world": "9a57cf63d11722925ef2f7ca6744c95fcd04a227bc91ba486d8679dc73384850",
+  "speaker_tape_floor-world": "390363583f163973761dcbbacc136ed0096bb0de309c7fad0e7c12ecb8f32ab3",
+  "amp_tape-world": "05de717adf9a0c37a38b69b3920407be7b1b4787d0f0db5def90a120eac8df9f"
  },
  "input": {
   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/mouth-floor-20261024/head_bottom_exit.stl",

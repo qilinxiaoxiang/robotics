@@ -525,7 +525,7 @@ def build_parts() -> dict:
     if trim:
         parts['eye_trim']['name'] = 'Eye trim, bore dia 16.2 for the U20CAM lens ring (V1.30 print, black)'
     if shell:
-        parts['head_bottom']['name'] = 'Lower head shell with the speaker pocket, twelve sound holes, the amplifier rails and the long-round left-rear exit (V1.33 print, yellow)'
+        parts['head_bottom']['name'] = 'Lower head shell with the speaker pocket, twelve sound holes and the long-round left-rear exit (V1.33 print, yellow)'
     if jaw_sup:
         parts['jaw_support']['name'] = 'Jaw support with the long-round left-rear exit and the fixed half of the wire clamp (V1.33 print, black)'
     if clamp:
