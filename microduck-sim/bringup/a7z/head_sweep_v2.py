@@ -60,6 +60,18 @@ for name, f in (('full', lambda r: True), ('trained', trained)):
     ms, mr = max(sel, key=lambda r: r[4]), max(sel, key=lambda r: r[5])
     out[name] = dict(poses=len(sel), maxStraightMm=ms[4], maxStraightPose=ms[:4], maxRoutedMm=mr[5], maxRoutedPose=mr[:4])
     print(name, out[name])
+GP = json.loads((HERE / 'groundpick-head-traj.json').read_text())   # pickup bend (D-027), groundpick_head_traj.py
+gpr = []
+for t, *pose in GP['traj']:
+    d.qpos[:] = q0
+    for n, v in zip(jid, pose): d.qpos[jid[n]] = np.radians(v)
+    mujoco.mj_kinematics(m, d)
+    s, r = lengths(); gpr.append((*pose, round(s, 1), round(r, 1), t))
+ms = max(gpr, key=lambda r: r[4])
+out['pickup'] = dict(ticks=len(gpr), maxStraightMm=ms[4], maxStraightPose=ms[:4], atS=ms[6], lowest=GP['lowest'])
+print('pickup', out['pickup'])
+
+
 def exit_at(pose):                          # exit point in the guide trunk frame (mm) at a joint pose
     d.qpos[:] = q0
     for n, v in zip(jid, pose): d.qpos[jid[n]] = np.radians(v)
@@ -67,6 +79,6 @@ def exit_at(pose):                          # exit point in the guide trunk fram
     return (d.xmat[tb].reshape(3, 3).T @ (pts()[0] - d.xpos[tb]) * 1e3).round(1).tolist()
 out['home']['jointsDeg'] = [round(float(np.degrees(q0[jid[n]])), 1) for n in jid]
 out['home']['exitPt'] = exit_at(out['home']['jointsDeg'])
-for name in ('full', 'trained'):
+for name in ('full', 'trained', 'pickup'):
     out[name]['maxStraightExitPt'] = exit_at(out[name]['maxStraightPose'])
 (HERE / 'head-sweep-v2.json').write_text(json.dumps(out, indent=1) + '\n')

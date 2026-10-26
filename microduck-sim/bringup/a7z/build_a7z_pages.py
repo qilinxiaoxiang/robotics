@@ -69,10 +69,10 @@ JOINED = {'amp-bclk': '左耳和后脑的 SCK', 'amp-lrc': '左耳和后脑的 W
 def head_wire_li(c, n, src):
     w = HWW[c]; k = w['cut']
     if w['spliced']:
-        return (f"<li>小旗 {w['pin']}，{n}：两段。{src}到集线点 <b>{k['toGather']} mm</b>；集线点到 {w['pin']} 号针 <b>{k['gatherToPin']['trained']} mm</b>"
+        return (f"<li>小旗 {w['pin']}，{n}：两段。{src}到集线点 <b>{k['toGather']} mm</b>；集线点到 {w['pin']} 号针 <b>{k['gatherToPin']['pickup']} mm</b>"
                 f"（头只朝前不动：{k['gatherToPin']['home']}）。{JOINED[c]}在集线点并进来。</li>")
-    return (f"<li>小旗 {w['pin']}，{n}：一整根 <b>{k['whole']['trained']} mm</b>（头只朝前不动：{k['whole']['home']}），"
-            f"其中{src}到集线点约 {w['toGatherMm']} mm，集线点到针约 {w['gatherToPinMm']['trained']} mm。</li>")
+    return (f"<li>小旗 {w['pin']}，{n}：一整根 <b>{k['whole']['pickup']} mm</b>（头只朝前不动：{k['whole']['home']}），"
+            f"其中{src}到集线点约 {w['toGatherMm']} mm，集线点到针约 {w['gatherToPinMm']['pickup']} mm。</li>")
 
 
 HEAD_WIRE_LIST = ''.join(head_wire_li(c, n, src) for c, n, src in HEAD_WIRE_NAMES)
@@ -310,8 +310,12 @@ def mic_pads_figure() -> Image.Image:
 
 IMG_MIC_PADS = uri(mic_pads_figure(), 1100)
 IMG_HEAD_WIRES = uri(Image.open(IMG / 'head_wires.png'), 1400)
+PF = json.loads((HERE / 'head-pose-frames.json').read_text())['poses']
 IMG_HEAD_POSES = uri(Image.open(IMG / 'head_poses.png'), 1400)
-HEAD_WIRES_CAP = f'按组装指南的 CAD 画的，比例尺 50 mm。橙线功放 BCLK、粉线左耳、红线触摸板 3V3 都先到集线点；黑线集线点到出线口；蓝实线头朝前时出线口到前墙顶 {round(HW["spanMm"]["home"])} mm；蓝虚线是训练范围里出线口离前墙顶最远的姿态（脖子往前低 60°、头转 80°、歪 18°），{round(HW["spanMm"]["trained"])} mm。'
+HEAD_POSES_CAP = ('同一根线（12 号针）在四种姿态下的“集线点到排针”，按躯干摆正画。黑线在头里不变，34 mm；红线是出线口直线到背包座前墙顶：头朝前 37 mm，头转 80° 49 mm，'
+                  f'低头叼东西最低时 {PF["gp_low"]["straightMm"]:.0f} mm，起身时脖子到 -90° 限位 {PF["gp_max"]["straightMm"]:.0f} mm；蓝线前墙顶到针 20 mm。剪线长度按最远那种留，再加两头各 5 mm。'
+                  '35、39、40 号在排针另一头，蓝线沿墙顶多走 30 多 mm。低头的动作取 Pollen 的 groundpick61 在仿真里的关节轨迹（D-027）。')
+HEAD_WIRES_CAP = f'按组装指南的 CAD 画的，比例尺 50 mm。橙线功放 BCLK、粉线左耳、红线触摸板 3V3 都先到集线点；黑线集线点到出线口；蓝实线头朝前时出线口到前墙顶 {round(HW["spanMm"]["home"])} mm；蓝虚线是低头叼东西时出线口离前墙顶最远的姿态（起身时脖子到 -90° 限位），{round(HW["spanMm"]["pickup"])} mm。'
 IMG_MIC = top_fig([(12, '#f9a825'), (17, TOUCH), (34, MIC), (35, AMP), (38, MIC), (10, '#9e9e9e')])
 IMG_XIAO = uri(P.xiao_figure([('3V3', '17', TOUCH), ('GND', '25', TOUCH), ('D5', '29', TOUCH), ('D4', '31', TOUCH)]), 1100)
 IMG_ANT_PHOTO = top_fig([(1, '#ffd600')], [('A', P.IPEX_TOP, 22, 150), ('F', P.FAN_TOP, 22, 40)])
@@ -351,11 +355,11 @@ S_CHANGES = f'''
 <li>针号和以前一样：IMU 1、3、5、9，串口 7、11，5 V 2、6，功放 4、12、35、39、40，触摸板 17、25、29、31。</li>
 </ul></div>
 <div class="card">
-<p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>每根线分两段量：元器件到集线点（头盖左后角、出线口正上方），集线点到 A7Z 排针，含插头。集线点到排针这一段 = 集线点往下到出线口 34 mm + 出线口直线到背包座前墙顶 + 沿墙顶走到自己那一列、落到针上。粗体按训练用的转头范围留了余量，括号里是头只朝前不动的长度。每段两头各加 5 mm，进到 5 mm。</p>
+<p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>每根线分两段量：元器件到集线点（头盖左后角、出线口正上方），集线点到 A7Z 排针，含插头。集线点到排针这一段 = 集线点往下到出线口 34 mm + 出线口直线到背包座前墙顶 + 沿墙顶走到自己那一列、落到针上。粗体留够低头叼东西（和走路时转头）的余量，括号里是头只朝前不动的长度。每段两头各加 5 mm，进到 5 mm。</p>
 {figure(IMG_HEAD_WIRES, '头里下来的线：侧视和俯视，按比例', HEAD_WIRES_CAP)}
-{figure(IMG_HEAD_POSES, '四种头的姿态下，12 号针那根线集线点到排针的长度', '同一根线（12 号针）在四种姿态下的“集线点到排针”：黑线在头里不变，34 mm；红线是出线口直线到背包座前墙顶，头朝前 37 mm，头转 80° 49 mm，脖子往前低 63° 84 mm，训练范围里最远 98 mm；蓝线前墙顶到针 20 mm。剪线长度按最远那种留，再加两头各 5 mm。35、39、40 号在排针另一头，蓝线沿墙顶多走 30 多 mm。')}
+{figure(IMG_HEAD_POSES, '四种头的姿态下，12 号针那根线集线点到排针的长度', HEAD_POSES_CAP)}
 <ul class="acts">{HEAD_WIRE_LIST}</ul>
-<p>为什么头里那段就有 6 到 9 cm：功放和两只耳朵都在头的前半部，出线口在左后角，线要从前往后走一趟，再往下 34 mm 到出线口。出了头那段，头朝前时出线口离前墙顶只有 {round(HW["spanMm"]["home"])} mm；多留的 {round(HW["spanMm"]["trained"] - HW["spanMm"]["home"])} mm 是给低头、转头的，平时在脖子旁边松松地弯着。线翻过前墙顶直接落到排针上，不绕背包座下面。</p>
+<p>为什么头里那段就有 6 到 9 cm：功放和两只耳朵都在头的前半部，出线口在左后角，线要从前往后走一趟，再往下 34 mm 到出线口。出了头那段，头朝前时出线口离前墙顶只有 {round(HW["spanMm"]["home"])} mm；多留的 {round(HW["spanMm"]["pickup"] - HW["spanMm"]["home"])} mm 是给低头叼东西的，平时在脖子旁边松松地弯着。线翻过前墙顶直接落到排针上，不绕背包座下面。</p>
 </div>
 <p>更早的 Pi 版本还在：<a href="BRINGUP.html">BRINGUP.html</a>。组装指南里对应的两步：Plug the torso wires onto the A7Z、Plug the 11 head wires onto the A7Z。</p>
 </section>'''
@@ -519,8 +523,8 @@ S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后�
 <ul class="acts">
 <li>右耳到左耳：5 根细线，各 {HW['micPieces']['mic-r']} mm。</li>
 <li>左耳到集线点：SCK、WS、VDD 3 根细线，各 {HW['micPieces']['mic-l']} mm（含 25 mm，头盖还能像盖子一样往后翻开）。</li>
-<li>左耳的 SD 和 GND：带一个插头的杜邦线，从左耳焊盘经过集线点一直到 A7Z 排针，不剪断。SD <b>{HWW['mic-sd']['cut']['whole']['trained']} mm</b>（头只朝前不动：{HWW['mic-sd']['cut']['whole']['home']}），GND <b>{HWW['mic-gnd']['cut']['whole']['trained']} mm</b>（{HWW['mic-gnd']['cut']['whole']['home']}）。</li>
-<li>后脑：SCK、WS、VDD、GND 4 根细线到集线点，各 {HW['micPieces']['mic-b']} mm；SD 带一个插头，一整根 <b>{HWW['mic-sd3']['cut']['whole']['trained']} mm</b>（{HWW['mic-sd3']['cut']['whole']['home']}）。</li>
+<li>左耳的 SD 和 GND：带一个插头的杜邦线，从左耳焊盘经过集线点一直到 A7Z 排针，不剪断。SD <b>{HWW['mic-sd']['cut']['whole']['pickup']} mm</b>（头只朝前不动：{HWW['mic-sd']['cut']['whole']['home']}），GND <b>{HWW['mic-gnd']['cut']['whole']['pickup']} mm</b>（{HWW['mic-gnd']['cut']['whole']['home']}）。</li>
+<li>后脑：SCK、WS、VDD、GND 4 根细线到集线点，各 {HW['micPieces']['mic-b']} mm；SD 带一个插头，一整根 <b>{HWW['mic-sd3']['cut']['whole']['pickup']} mm</b>（{HWW['mic-sd3']['cut']['whole']['home']}）。</li>
 </ul>
 <p>每根线怎么量、为什么这么长，见开头“现在的装法”里的按比例图。</p>
 </div>
@@ -614,7 +618,7 @@ SOURCES_PINS = '''
 <li>调试串口 Pin8/Pin10、115200：Radxa 文档 “串口调试”（radxa-a7z-uart-debug.md）。电源灯：“硬件接口”（a7z-hardware-info.md）。</li>
 <li>5 V 和 USB-C：Radxa Cubie A7Z 原理图 V1.11 第 13 页（J16 VBUS → FB2 60R 3A → VCC5V0_SYS）、第 14 页（J11 的 2、4 号是 VCC5V0_SYS，1 号 DCDC1，8/10 号 CPUX-TX/RX）、第 12 页（USB 3.1 口 VBUS 经 U4）。</li>
 <li>摄像头板和插头的距离：组装指南 CAD（guide/print/world/camera_board.stl 和排针插头的位置），背面元件范围按 Radxa 背面照片，2026-10-15 核对（guide/print/face-a7z/pin-clearance/pin-clearance.png）。接线颜色和小旗沿用 BRINGUP.html 第 4、11、12、13 步。背包电源：DECISIONS.md D-010。</li>
-<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。线长：bringup/a7z/head_wire_lengths.py（head-wire-lengths.json），图：render_head_wires.py（img/head_wires.png）：元器件到集线点取组装指南的线路，集线点往下到出线口 34 mm，出线口到背包座前墙顶（线束翻墙的地方，z 64.6）的直线距离由 head_sweep_v2.py 在训练用的转头范围里扫出最大值（neck-exit-20261023/cable_sweep.py 的 V2 版），背包座里一段按 a7z-saddle/build/pins.json 的针位沿墙顶到自己那一列、跨过插头落到针上，每段两头各加 5 mm，进到 5 mm。头里的线不走背包座下面：a7z-saddle/DESIGN-CONTRACT.json 第 2 条要求。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
+<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。线长：bringup/a7z/head_wire_lengths.py（head-wire-lengths.json），图：render_head_wires.py（img/head_wires.png）：元器件到集线点取组装指南的线路，集线点往下到出线口 34 mm，出线口到背包座前墙顶（线束翻墙的地方，z 64.6）的直线距离由 head_sweep_v2.py 扫出最大值：走路时的转头范围，和低头叼东西的关节轨迹（groundpick_head_traj.py，groundpick61 在 as-built 仿真里）取大的（neck-exit-20261023/cable_sweep.py 的 V2 版），背包座里一段按 a7z-saddle/build/pins.json 的针位沿墙顶到自己那一列、跨过插头落到针上，每段两头各加 5 mm，进到 5 mm。头里的线不走背包座下面：a7z-saddle/DESIGN-CONTRACT.json 第 2 条要求。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
 <li>总接线图：bringup/a7z/a7z_bench.py，用 ~/code/wiring-kit 画（点板子只亮它的线）。</li>
 <li>核对日期：2026-10-15，背包座和麦克风部分 2026-10-25。</li></ul></section>'''
 

@@ -12,8 +12,10 @@ SW = json.loads((HERE / 'head-sweep-v2.json').read_text())
 EXIT, WALL = np.array(SW['exit']), np.array(SW['splice'])
 BODIES = ('neck', 'neck_pitch', 'yaw_roll_motion', 'jaw_soft')
 POSES = {  # (neck_pitch, head_pitch, head_yaw, head_roll) deg; HOME is 20, 20, 0, 0; trained range is HOME +-63, +-63, +-80, +-18
-    'home': (20, 20, 0, 0), 'neck_fwd': (-43, 20, 0, 0), 'yaw80': (20, 20, -80, 0), 'pitch_dn': (20, -43, 0, 0),
+    'home': (20, 20, 0, 0), 'yaw80': (20, 20, -80, 0), 'pitch_dn': (20, -43, 0, 0),
     'worst': tuple(SW['trained']['maxStraightPose']),
+    'gp_low': tuple(SW['pickup']['lowest'][n] for n in ('neck_pitch', 'head_pitch', 'head_yaw', 'head_roll')),
+    'gp_max': tuple(SW['pickup']['maxStraightPose']),
 }
 m = mujoco.MjModel.from_xml_path(str(ev.MODEL_DIR / 'scene.xml')); d = mujoco.MjData(m)
 Rt = feet_flat_rot(m, d, NAMES, HOME); q = np.zeros(4); mujoco.mju_mat2Quat(q, Rt.ravel()); setup(m, d, NAMES, HOME, q); mujoco.mj_forward(m, d)

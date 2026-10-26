@@ -6,8 +6,8 @@ component -> gather point: the guide-data.json cable path from the solder pad to
 gather point -> pin: gather point down to the head exit (34 mm) + exit to the front wall top in a straight line (D-028
   contract: head wires drop over the front wall, never under the saddle) + along the wall top to the wire's own pin column,
   over the open strip and down into the housing to the pin top (a7z-saddle/build/pins.json).
-The exit-to-wall span is the straight distance from head-sweep-v2.json: 37 mm at HOME, its maximum over the trained head
-command range (walk_brain HEAD_RANGE) for the recommended cut. Every piece gets 10 mm for the two ends and is rounded up to 5 mm;
+The exit-to-wall span is the straight distance from head-sweep-v2.json: 37 mm at HOME; the recommended cut takes the larger of its maximum
+over the trained head command range (walk_brain HEAD_RANGE) and over the pickup bend (groundpick-head-traj.json, D-027). Every piece gets 10 mm for the two ends and is rounded up to 5 mm;
 the left microphone piece also gets the guide's 25 mm so the cap still opens like a lid. Spliced wires (12, 35, 17) are cut as
 two pieces; the others are one wire of the summed length (one 10 mm allowance). Writes head-wire-lengths.json.
 python3 head_wire_lengths.py"""
@@ -55,7 +55,8 @@ def r5(v):
     return 5 * math.ceil(v / 5)
 
 
-span = {'home': SW['home']['straightMm'], 'trained': SW['trained']['maxStraightMm'], 'full': SW['full']['maxStraightMm']}
+span = {'home': SW['home']['straightMm'], 'trained': SW['trained']['maxStraightMm'], 'full': SW['full']['maxStraightMm'],
+        'pickup': max(SW['trained']['maxStraightMm'], SW['pickup']['maxStraightMm'])}   # recommended: walking head range and the pickup bend
 out = {'source': 'bringup/a7z/head_wire_lengths.py', 'gatherPoint': GP, 'exit': EXIT, 'frontWallTop': WALL, 'spanMm': span,
        'endsMm': ENDS, 'capOpenMm': CAP_OPEN, 'wires': {}, 'micPieces': {}}
 for cid, (pin, src, spliced) in WIRES.items():

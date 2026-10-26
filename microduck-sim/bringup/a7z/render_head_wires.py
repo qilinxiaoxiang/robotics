@@ -1,7 +1,7 @@
 """To-scale picture of the head wire run for A7Z-PINS.html: robot's left side view and top view of the head, neck and V2 saddle
 at HOME (guide-data.json part meshes), with the wire segments drawn and measured: component -> gather point (guide-data
 cable paths), gather point -> head exit, exit -> front wall top (straight, HOME and the trained-range worst pose from
-head-sweep-v2.json), wall top -> pin 12. Writes img/head_wires.png.   ~/.venvs/microduck-cad/bin/python render_head_wires.py"""
+head-sweep-v2.json, the pickup bend's farthest pose), wall top -> pin 12. Writes img/head_wires.png.   ~/.venvs/microduck-cad/bin/python render_head_wires.py"""
 import base64, json, math
 from pathlib import Path
 import numpy as np
@@ -17,7 +17,7 @@ PINS = json.loads((HERE.parents[1] / 'guide' / 'print' / 'a7z-saddle' / 'build' 
 PARTS = {p['key']: p for p in G['parts']}
 CAB = {c['id']: c for c in G['cables']}
 GP, EXIT, WALL = [11.5, 19.5, 132.0], SW['exit'], SW['splice']
-WORST = SW['trained']['maxStraightExitPt']
+WORST = SW['pickup']['maxStraightExitPt']
 PLRC = {'font.family': ['PingFang SC', 'Heiti SC', 'Arial Unicode MS'], 'font.size': 9}
 plt.rcParams.update(PLRC)
 
@@ -84,7 +84,7 @@ def draw(ax, axes, depth, sign, title, xlim, ylim):
         ax.plot(a[:, axes[0]], a[:, axes[1]], st, color=col, lw=2.2, zorder=5, solid_capstyle='round')
     w = np.array([WORST, WALL])
     ax.plot(w[:, axes[0]], w[:, axes[1]], '--', color='#1565c0', lw=1.6, zorder=5)
-    for pt, lab in ((GP, '集线点'), (EXIT, '出线口'), (WALL, '前墙顶'), (WORST, '低头到最远时\n的出线口')):
+    for pt, lab in ((GP, '集线点'), (EXIT, '出线口'), (WALL, '前墙顶'), (WORST, '低头叼东西最远时\n的出线口')):
         ax.plot(pt[axes[0]], pt[axes[1]], 'o', color='white', mec='black', ms=6, zorder=6)
         ax.annotate(lab, (pt[axes[0]], pt[axes[1]]), xytext=(6, 4), textcoords='offset points', fontsize=8, zorder=7,
                     bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.85))
@@ -97,7 +97,7 @@ def draw(ax, axes, depth, sign, title, xlim, ylim):
 fig, axs = plt.subplots(1, 2, figsize=(13, 6.2), gridspec_kw=dict(width_ratios=[1.25, 1]))
 draw(axs[0], (0, 2), 1, 1, '从机器人左边看（头朝右）', (-50, 120), (20, 165))
 draw(axs[1], (0, 1), 2, 1, '从上往下看（头朝右，机器人左边在上）', (-50, 120), (-50, 50))
-lines = [f'{lab}：{length(p):.0f} mm' for lab, p, *_ in SEG] + [f'出线口 → 前墙顶（训练范围里低头最远）：{SW["trained"]["maxStraightMm"]:.0f} mm']
+lines = [f'{lab}：{length(p):.0f} mm' for lab, p, *_ in SEG] + [f'出线口 → 前墙顶（低头叼东西最远）：{SW["pickup"]["maxStraightMm"]:.0f} mm']
 fig.text(0.01, 0.01, '   '.join(lines[:3]) + '\n' + '   '.join(lines[3:]), fontsize=8.5, va='bottom')
 fig.tight_layout(rect=(0, 0.07, 1, 0.96))
 out = HERE / 'img' / 'head_wires.png'

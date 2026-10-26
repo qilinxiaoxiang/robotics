@@ -1,5 +1,5 @@
 """Why the gather-point-to-pin piece is as long as it is: the robot's left side view of the head, neck and V2 saddle at four
-head poses (head-pose-frames.json), with the pin 12 wire drawn as gather point -> exit (inside the head) -> straight to the
+head poses (head-pose-frames.json: HOME, head yaw 80, the pickup bend's lowest pose and its farthest pose), with the pin 12 wire drawn as gather point -> exit (inside the head) -> straight to the
 front wall top -> pin, and its length. Writes img/head_poses.png.   ~/.venvs/microduck-cad/bin/python render_head_poses.py"""
 import json, math
 from pathlib import Path
@@ -20,10 +20,10 @@ LAYERS = [('saddle_body', '#e8c9b8', 0.6), ('torso_base', '#cccccc', 0.5), ('mot
           ('neck_pitch', '#b0b0b0', 0.85), ('motor13', '#9a9a9a', 0.85), ('head_yaw_link', '#b0b0b0', 0.7), ('motor14', '#9a9a9a', 0.7),
           ('head_bottom', '#eadfc0', 0.45), ('head_cap', '#f2f2f2', 0.45), ('motor15', '#9a9a9a', 0.6),
           ('sd_a7z_pcb', '#2e7d32', 0.9), ('sd_dupont_housings', '#222222', 0.9), ('amplifier', '#1565c0', 0.9), ('mic_left', '#333333', 0.9)]
-PX, XL, ZL = 3.0, (-55, 165), (15, 175)
+PX, XL, ZL = 3.0, (-55, 185), (-30, 175)
 PIN = 12
-TITLES = {'home': '头朝前站着（平时）', 'yaw80': '头转 80°（训练范围的头）', 'neck_fwd': '脖子往前低 63°（训练范围的头）',
-          'worst': '脖子低 60° + 头转 80° + 歪 18°（训练范围里最远）'}
+TITLES = {'home': '头朝前站着（平时）', 'yaw80': '头转 80°（走路时头能转到的）',
+          'gp_low': '低头叼东西：最低的时候（脖子 -79°，头 -17°）', 'gp_max': '低头叼东西：起身时脖子到 -90° 限位（最远）'}
 
 
 def carry(T, pts):
@@ -68,9 +68,9 @@ def panel(ax, key):
     for s in ax.spines.values(): s.set_visible(False)
 
 
-fig, axs = plt.subplots(2, 2, figsize=(12, 10.5))
-for ax, key in zip(axs.ravel(), ('home', 'yaw80', 'neck_fwd', 'worst')):
+fig, axs = plt.subplots(2, 2, figsize=(12, 11.5))
+for ax, key in zip(axs.ravel(), ('home', 'yaw80', 'gp_low', 'gp_max')):
     panel(ax, key)
-fig.suptitle('从机器人左边看（头朝右），12 号针那根线：集线点到排针', fontsize=11)
+fig.suptitle('从机器人左边看（头朝右，按躯干摆正画），12 号针那根线：集线点到排针', fontsize=11)
 fig.tight_layout(rect=(0, 0, 1, 0.97))
 out = HERE / 'img' / 'head_poses.png'; fig.savefig(out, dpi=140); print(out)
