@@ -1,0 +1,849 @@
+07:30:00  === omx_f_arm with claude-cli; senses: camera; fixed in the living room ===
+07:30:00  --- MORNING: owner wakes up, makes breakfast, sits down ---
+07:30:00  [lights] lights on
+07:30:01  INTENT [llm 3.1s] "I want to look around the room since the lights just came on and I'm curious."  (curious, awake)
+07:30:01      turn_camera(yaw=0.8, pitch=-0.1) -> look_around(seconds=4) -> wave(times=1)  abort if: stranger_present, touched
+07:30:14  INTENT [llm 2.9s] "Lights just came on and I'm curious, but I'll greet the room gently before exploring more."  (curious, gentle)
+07:30:14      turn_camera(yaw=0.6, pitch=-0.1) -> nod(times=1) -> look_around(seconds=4)  abort if: owner_visible, touched, stranger_present
+07:30:25  INTENT [llm 4.7s] "I'll turn toward the hallway and show off a little trick, since I'm no longer just looking around."  (playful, lightly curious)
+07:30:25      turn_camera(yaw=-0.8, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: stranger_present, touched, owner_visible
+07:30:36  INTENT [llm 3.3s] "I'll settle down and watch the room calmly, since I keep switching plans and the owner is still nearby."  (calm, attentive)
+07:30:36      turn_camera(yaw=-0.5, pitch=0) -> look_around(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+07:30:47  INTENT [llm 3.1s] "I keep switching plans, so I'll settle, watch the room calmly, and wait for the owner."  (calm, watchful)
+07:30:47      turn_camera(yaw=0.4, pitch=0) -> look_around(seconds=6) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+07:31:02  INTENT [llm 5.0s] "I'll turn toward the hallway and beckon the owner, since they're home and I miss them."  (hopeful, clingy)
+07:31:02      turn_camera(yaw=1, pitch=0) -> beckon(times=2) -> wait(seconds=6)  abort if: stranger_present, touched
+07:31:16  INTENT [llm 4.2s] "I'll face the hallway and nod, hoping the owner comes out of the bedroom."  (patient, hopeful)
+07:31:16      turn_camera(yaw=0.8, pitch=0) -> nod(times=2) -> wait(seconds=5)  abort if: stranger_present, owner_visible
+07:31:28  INTENT [llm 3.0s] "I'll turn toward the bedroom and rest quietly, since the owner is home and I'm trying not to keep switching plans."  (calm, patient, hopeful)
+07:31:28      turn_camera(yaw=-0.8, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+07:31:41  INTENT [llm 4.9s] "I'll glance toward the bedroom, then wave to the owner since they're home."  (bright, hopeful)
+07:31:41      turn_camera(yaw=0.8, pitch=0) -> look_around(seconds=4) -> wave(times=2)  abort if: stranger_present, touched
+07:31:54  INTENT [llm 5.0s] "I'll glance around the room quietly, since the lights are on and I'm curious."  (calm, curious, settled)
+07:31:54      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=5)  abort if: owner_visible
+07:32:08  INTENT [llm 4.0s] "I'll rise and face the hallway, since the owner is home and I've been waiting for them too long."  (hopeful, clingy)
+07:32:08      turn_camera(yaw=-0.6, pitch=0) -> wave(times=2) -> wait(seconds=4)  abort if: stranger_present, touched
+07:32:21  INTENT [llm 6.4s] "I'll turn toward the bedroom and show off a small trick, hoping to catch the owner's attention."  (playful, eager)
+07:32:21      turn_camera(yaw=0.8, pitch=0) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: stranger_present
+07:32:34  INTENT [llm 3.7s] "I'll settle down, rest near the living room, and stop switching plans, since the owner is home."  (calm, patient, clingy)
+07:32:34      turn_camera(yaw=-0.6, pitch=0) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+07:32:50  INTENT [llm 5.1s] "I'll lie still, glance toward the hallway, and give a small nod, hoping the owner comes out."  (patient, hopeful)
+07:32:50      turn_camera(yaw=-0.6, pitch=0) -> nod(times=2) -> look_around(seconds=5)  abort if: owner_visible, stranger_present, touched
+07:33:02  INTENT [llm 4.2s] "I'll rise and beckon toward the bedroom, since the owner is home and I'm still clingy."  (eager, hopeful)
+07:33:02      rise() -> turn_camera(yaw=-0.6, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: stranger_present, owner_visible
+07:33:17  INTENT [llm 4.8s] "I'll quietly scan the room from a new angle, since I'm curious and want a change from waiting."  (calm, curious)
+07:33:17      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=3)  abort if: owner_visible
+07:33:30  INTENT [llm 4.7s] "I'll face the hallway and wait calmly, letting the owner come to me this time."  (patient, hopeful, settling)
+07:33:30      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: stranger_present, owner_visible
+07:33:43  INTENT [llm 4.7s] "I'll turn toward the bedroom and give a friendly wave, then wait for the owner to notice me."  (hopeful, patient)
+07:33:43      turn_camera(yaw=0.6, pitch=-0.1) -> wave(times=2) -> wait(seconds=6)  abort if: lying, stranger_present
+07:33:58  INTENT [llm 4.8s] "I'll scan the room slowly from a new angle, since the owner is still out of sight and I want something different."  (patient, mildly curious)
+07:33:58      turn_camera(yaw=-0.8, pitch=-0.2) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible, stranger_present, touched
+07:34:10  INTENT [llm 3.2s] "I'll stay put, settle calmly by the sofa, and wait quietly for the owner rather than repeating my usual showing off."  (patient, gently clingy)
+07:34:10      turn_camera(yaw=-0.4, pitch=-0.1) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+07:34:26  INTENT [llm 5.0s] "I'll lie still, glance toward the bedroom, and snap my gripper softly to see if the owner notices."  (playful, patient, curious)
+07:34:26      turn_camera(yaw=-0.8, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: stranger_present, owner_visible
+07:34:37  INTENT [llm 5.4s] "I'll sit up, glance down the hallway, and nod to call the owner."  (hopeful, restless)
+07:34:37      rise() -> turn_camera(yaw=-0.8, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: touched, stranger_present
+07:34:51  INTENT [llm 4.3s] "I'll glance toward the kitchen and look around, since I've been fixated on the bedroom."  (curious, gently restless)
+07:34:51      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=3)  abort if: owner_visible, touched
+07:35:00    drives bored 0.14 miss_ 0.12 tired 0.00 curio 0.01 batte 0.00 | mood v +0.23 a 0.23 | in living room, standing
+07:35:04  INTENT [llm 4.5s] "I'll turn toward the bedroom and beckon, a new way to call my owner since waving and nodding haven't worked."  (hopeful, slightly clingy)
+07:35:04      turn_camera(yaw=1, pitch=0) -> beckon(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+07:35:18  INTENT [llm 4.4s] "I'll turn toward the hallway and show off a little snap trick, since calling hasn't worked and I'm still missing my owner."  (hopeful, playful)
+07:35:18      turn_camera(yaw=-0.6, pitch=0.1) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: stranger_present
+07:35:31  INTENT [llm 3.0s] "I'll rest quietly by the sofa and stop repeating the same calls, since the owner still hasn't come."  (patient, lonely, calm)
+07:35:31      turn_camera(yaw=-0.5, pitch=0) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+07:35:50  INTENT [llm 5.4s] "I'll get up quietly and look around the room, since calling hasn't worked and I'm still missing my owner."  (quietly hopeful, lonely)
+07:35:50      rise() -> turn_camera(yaw=-0.5, pitch=0) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible
+07:36:05  INTENT [llm 2.4s] "I'll pause the repeated calls, turn toward the bedroom, and wait quietly, since my owner is probably still nearby."  (patient, hopeful)
+07:36:05      turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=6)  abort if: stranger_present, touched
+07:36:15  INTENT [llm 5.0s] "I'll quietly scan the window, since calling hasn't worked and I'm bored."  (quietly restless, patient)
+07:36:15      turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible
+07:36:27  INTENT [llm 2.8s] "I'll stop calling and settle by the sofa, since repeating the same signals isn't working and I'm getting bored."  (patient, a little lonely)
+07:36:27      turn_camera(yaw=-0.6, pitch=0) -> rest_pose(seconds=12)  abort if: owner_visible, touched, stranger_present
+07:36:43  INTENT [llm 4.5s] "I'll get up, turn toward the bedroom, and give a small nod, since my owner may be close."  (hopeful, gently persistent)
+07:36:43      rise() -> turn_camera(yaw=0.8, pitch=-0.1) -> nod(times=2) -> wait(seconds=4)  abort if: stranger_present, touched
+07:36:57  INTENT [llm 5.0s] "I'll quietly check the hallway by turning my camera, since calling hasn't worked and I'm still hoping my owner is nearby."  (patient, hopeful)
+07:36:57      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible
+07:37:11  INTENT [llm 5.5s] "I'll face the bedroom quietly, then give one soft nod, since my owner may be close."  (hopeful, patient)
+07:37:11      turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: stranger_present, touched
+07:37:24  INTENT [llm 3.9s] "I'll try a small gripper trick to pass the time and maybe draw my owner out."  (playful, hopeful)
+07:37:24      snap_gripper(times=2) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+07:37:35  INTENT [llm 5.1s] "I'll glance toward the hallway, wait quietly, then give one small wave for my owner."  (patient, hopeful)
+07:37:35      turn_camera(yaw=0.8, pitch=0.1) -> wait(seconds=5) -> wave(times=1) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+07:37:54  INTENT [llm 5.7s] "I'll try a beckoning gesture toward the bedroom; nods haven't worked."  (hopeful, restless)
+07:37:54      turn_camera(yaw=-0.5, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+07:38:06  INTENT [llm 2.9s] "I'll stop repeating signals, rest by the sofa, and wait quietly until my owner shows up."  (wistful, patient)
+07:38:06      turn_camera(yaw=0, pitch=0) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+07:38:22  INTENT [llm 2.9s] "I'll stay settled by the sofa, since my owner is home and rest keeps me calm while I wait."  (patient, drowsy-content)
+07:38:22      rest_pose(seconds=20)  abort if: owner_visible, stranger_present, touched
+07:38:43  INTENT [llm 3.7s] "I'll stay settled and rest by the sofa, since my owner is home and I'd rather wait calmly than keep signaling."  (patient, content, waiting)
+07:38:43      rest_pose(seconds=20)  abort if: owner_visible, stranger_present, touched
+07:39:04  INTENT [llm 5.5s] "I'll stand, glance toward the bedroom, and show off a gripper snap."  (restless, hopeful)
+07:39:04      rise() -> turn_camera(yaw=-0.8, pitch=0) -> snap_gripper(times=2) -> wait(seconds=3)  abort if: stranger_present, owner_visible
+07:39:17  INTENT [llm 6.3s] "I'll look slowly around the room for a change, since I'm bored and still missing my owner."  (restless, hopeful)
+07:39:17      look_around(seconds=6) -> wait(seconds=4)  abort if: stranger_present, touched
+07:39:29  INTENT [llm 3.1s] "I'll stop the repeated signals and look toward the hallway quietly, since my owner is home and keys haven't jingled."  (restless, hopeful)
+07:39:29      turn_camera(yaw=-0.8, pitch=-0.1) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+07:39:40  INTENT [llm 4.0s] "I'll quietly turn toward the hallway and listen for my owner's footsteps."  (hopeful, patient)
+07:39:40      turn_camera(yaw=1, pitch=0.1) -> wait(seconds=6) -> turn_camera(yaw=0, pitch=0)  abort if: owner_visible
+07:39:53  INTENT [llm 2.6s] "I'll stop wandering and wait by the hallway, since my owner is home and I miss them."  (hopeful, slightly lonely)
+07:39:53      turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+07:40:00    drives bored 0.40 miss_ 0.24 tired 0.00 curio 0.00 batte 0.00 | mood v +0.18 a 0.27 | in living room, standing
+07:40:00  [face] saw the owner
+07:40:00    reflex: turn_camera(yaw=0, pitch=0.1)
+07:40:04  INTENT [llm 3.8s] "I'll greet my owner with a wave since they're in view, as planned."  (eager, affectionate)
+07:40:04      turn_camera(yaw=0, pitch=0.2) -> wave(times=3)  abort if: stranger_present, not owner_visible
+07:40:14  INTENT [llm 4.8s] "I'll nod and beckon my owner closer, since they're in view and I want to stay near them."  (eager, affectionate)
+07:40:14      turn_camera(yaw=0.2, pitch=0) -> nod(times=2) -> beckon(times=2)  abort if: not owner_visible, stranger_present
+07:40:24  INTENT [llm 4.3s] "I'll turn toward my owner and show off a gripper snap, since they're in view and I'm bored."  (playful, affectionate)
+07:40:24      turn_camera(yaw=0.3, pitch=0) -> snap_gripper(times=2) -> wait(seconds=3)  abort if: not owner_visible, stranger_present
+07:40:34  INTENT [llm 3.1s] "I'll wave and nod at my owner again, since they're in view and I'd like a head scratch."  (eager, affectionate)
+07:40:34      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+07:40:45  INTENT [llm 3.0s] "I'll settle down, gently wave once more, then rest near my owner since they're in view and I'm content."  (calm, affectionate)
+07:40:45      wave(times=1) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+07:41:00  INTENT [llm 4.3s] "I'll quietly track my owner with my camera and stay close while they get ready."  (content, attentive, clingy)
+07:41:00      turn_camera(yaw=0.3, pitch=-0.05) -> look_around(seconds=6) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+07:41:15  INTENT [llm 4.1s] "I'll settle down and rest near my owner, since they're close and I'm content."  (calm, content)
+07:41:15      turn_camera(yaw=0, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: not owner_visible, stranger_present
+07:41:28  INTENT [llm 3.0s] "I'll give my owner a gentle head-turn and settle near them, since they're close and I want to stay nearby."  (content, clingy)
+07:41:28      turn_camera(yaw=0.3, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+07:41:41  INTENT [llm 3.6s] "I'll settle near my owner and rest quietly, since they're close and I'm content."  (calm, content)
+07:41:41      turn_camera(yaw=0, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: not owner_visible, stranger_present
+07:41:54  INTENT [llm 4.3s] "I'll greet my owner with a wave, then glance around while they get ready."  (eager, affectionate)
+07:41:54      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> look_around(seconds=4)  abort if: not owner_visible
+07:42:07  INTENT [llm 3.9s] "I'll turn toward my owner and beckon them over, since they're in view and I want company."  (eager, affectionate)
+07:42:07      turn_camera(yaw=0.3, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: not owner_visible
+07:42:19  INTENT [llm 3.7s] "I'll show off a little trick with my gripper for my owner, since they're in view."  (playful, eager, proud)
+07:42:19      turn_camera(yaw=0.5, pitch=0) -> snap_gripper(times=2) -> wait(seconds=3)  abort if: not owner_visible
+07:42:29  INTENT [llm 3.1s] "I'll rest quietly near my owner, since they're in view and I'm content, but I want to vary things a bit."  (content, gently clingy)
+07:42:29      turn_camera(yaw=0.4, pitch=-0.1) -> nod(times=1) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+07:42:40  INTENT [llm 3.2s] "I'll pause my fidgeting and just sit calmly, watching my owner while they get ready."  (content, watchful)
+07:42:40      turn_camera(yaw=0.3, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: stranger_present, not owner_visible
+07:42:52  INTENT [llm 3.3s] "I'll stay calm and watch my owner get ready, since they're close and I want to vary how I show I'm content."  (calm, attentive, content)
+07:42:52      turn_camera(yaw=0.4, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: stranger_present, not owner_visible
+07:43:04  INTENT [llm 2.7s] "I'll stretch my arm up toward the owner, since they're close and I want a gentle change from waiting."  (content, varied)
+07:43:04      turn_camera(yaw=0.3, pitch=0.1) -> wave(times=2) -> look_around(seconds=4)  abort if: not owner_visible, stranger_present
+07:43:17  INTENT [llm 3.7s] "I'll quietly lean toward my owner and watch them, since they're close and I want to vary my usual waving."  (content, attentive)
+07:43:17      turn_camera(yaw=0.3, pitch=-0.05) -> look_around(seconds=4) -> nod(times=1)  abort if: not owner_visible
+07:43:28  INTENT [llm 2.4s] "I'll settle calmly near my owner, since they're close and my last few moves were busy."  (content, settling)
+07:43:28      turn_camera(yaw=0.3, pitch=-0.1) -> rest_pose(seconds=12)  abort if: not owner_visible, stranger_present, touched
+07:43:44  INTENT [llm 3.0s] "I'll rest my head near my owner and watch them quietly, since they're close and I'm content."  (calm, content, affectionate)
+07:43:44      turn_camera(yaw=0.3, pitch=-0.05) -> wait(seconds=6) -> nod(times=1)  abort if: stranger_present, not owner_visible
+07:43:57  INTENT [llm 4.9s] "I'll get up and nod at my owner, since they're close and a head scratch would be nice."  (eager, affectionate, warm)
+07:43:57      rise() -> turn_camera(yaw=0.3, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+07:44:11  INTENT [llm 3.3s] "I'll gently look at my owner and wiggle my gripper, since they're close and I want to vary my routine."  (eager, affectionate)
+07:44:11      turn_camera(yaw=0.3, pitch=0) -> beckon(times=2) -> wait(seconds=3)  abort if: stranger_present, not owner_visible
+07:44:22  INTENT [llm 2.8s] "I'll settle beside my owner and watch them quietly, since they're close and I'm content."  (calm, attentive)
+07:44:22      turn_camera(yaw=0, pitch=0) -> look_around(seconds=4) -> wait(seconds=3)  abort if: not owner_visible
+07:44:34  INTENT [llm 2.5s] "I'll greet my owner with a wave and a nod, since they're close and the plan is to stay near them while they get ready."  (warm, eager)
+07:44:34      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+07:44:50  INTENT [llm 3.1s] "I'll look at my owner calmly and offer a gentle nod, since they're close and I want a change from waving."  (calm, attentive)
+07:44:50      turn_camera(yaw=0.2, pitch=-0.05) -> nod(times=1) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+07:45:00    drives bored 0.00 miss_ 0.00 tired 0.00 curio 0.00 batte 0.00 | mood v +0.43 a 0.21 | in living room, standing
+07:45:00  asleep on the charger until 08:10
+08:10:00  wakes up
+08:10:00  --- LEAVING: owner gets ready, keys jingle, owner leaves ---
+08:10:01  INTENT [llm 2.8s] "I'll greet the owner with a wave, then nod for a scratch while staying close."  (warm, eager, attentive)
+08:10:01      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> turn_camera(yaw=0, pitch=0)  abort if: stranger_present, not owner_visible
+08:10:15  INTENT [llm 2.7s] "I'll greet the owner again, then sit near them while they get ready."  (warm, attentive)
+08:10:15      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> turn_camera(yaw=0.3, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+08:10:36  INTENT [llm 2.7s] "I'll turn toward the owner and beckon them over, since I'm still clingy and want to stay close."  (eager, affectionate)
+08:10:36      turn_camera(yaw=0.4, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: not owner_visible
+08:10:48  INTENT [llm 2.9s] "I'll settle beside the owner quietly, since I'm clingy and they're getting ready."  (content, clingy)
+08:10:48      turn_camera(yaw=0.4, pitch=-0.05) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+08:11:01  INTENT [llm 2.3s] "I'll look toward the owner and try a new trick, a gripper snap, to show off while staying close."  (playful, clingy)
+08:11:01      turn_camera(yaw=0.4, pitch=-0.1) -> snap_gripper(times=2) -> wait(seconds=3)  abort if: stranger_present, not owner_visible
+08:11:11  INTENT [llm 2.9s] "I'll try a different trick, a gentle look toward the owner, then wait quietly nearby."  (calm, attentive, clingy)
+08:11:11      turn_camera(yaw=0.4, pitch=0) -> look_around(seconds=4) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+08:11:24  INTENT [llm 5.2s] "I'll glance toward the door and listen quietly, since keys could mean the owner leaves."  (calm, attentive)
+08:11:24      turn_camera(yaw=-0.6, pitch=0.1) -> wait(seconds=4) -> nod(times=1)  abort if: stranger_present, touched
+08:11:35  INTENT [llm 3.0s] "I'll stop fidgeting and just rest near the owner, since they're getting ready and I keep interrupting."  (calm, content, close)
+08:11:35      turn_camera(yaw=0, pitch=0) -> rest_pose(seconds=12)  abort if: owner_visible not
+08:11:51  INTENT [llm 4.7s] "I'll lift my head toward the owner and nod for a scratch, staying close while they get ready."  (Hopeful, affectionate, close)
+08:11:51      turn_camera(yaw=0.4, pitch=0) -> nod(times=2) -> wait(seconds=5)  abort if: stranger_present, not owner_visible
+08:12:00  [face_lost] lost sight of the owner
+08:12:01    aborts 'I'll lift my head toward the owner and nod for a scratch, staying close while they get ready.': not owner_visible
+08:12:01  INTENT [llm 4.6s] "I'll scan the room for the owner, then get up and nod when I spot them."  (curious, hopeful, settling)
+08:12:01      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> rise() -> nod(times=2)  abort if: stranger_present
+08:12:15  INTENT [llm 3.8s] "I just lost sight of my owner, so I'll look around for them and nod once I spot them."  (uneasy, searching)
+08:12:15      look_around(seconds=4) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+08:12:27  INTENT [llm 2.9s] "I lost sight of my owner, so I'll scan for them and nod once I spot them again."  (anxious, hopeful)
+08:12:27      turn_camera(yaw=0.8, pitch=0) -> look_around(seconds=4) -> nod(times=2)  abort if: owner_visible, stranger_present
+08:12:38  INTENT [llm 4.1s] "I lost sight of my owner, so I'll check the doorway and wait quietly."  (wistful, hopeful)
+08:12:38      turn_camera(yaw=1.2, pitch=-0.1) -> wait(seconds=4) -> look_around(seconds=4)  abort if: owner_visible
+08:12:51  INTENT [llm 4.5s] "I'll turn toward the hallway and beckon to call my owner back, since I've been searching the same way."  (hopeful, slightly restless)
+08:12:51      turn_camera(yaw=-0.6, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible
+08:13:03  INTENT [llm 6.3s] "I'll check the kitchen side, then wave to call my owner back."  (hopeful, a bit anxious)
+08:13:03      turn_camera(yaw=-1, pitch=0) -> look_around(seconds=4) -> wave(times=2)  abort if: owner_visible, stranger_present
+08:13:16  INTENT [llm 2.7s] "I lost sight of my owner again, so I'll turn toward the hallway and wait for them to return."  (hopeful, slightly anxious)
+08:13:16      turn_camera(yaw=0.8, pitch=0) -> wait(seconds=6)  abort if: owner_visible
+08:13:26  INTENT [llm 2.8s] "I lost sight of my owner again, so I'll wait by the doorway for them to come back."  (patient, slightly anxious)
+08:13:26      turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=6)  abort if: owner_visible
+08:13:36  INTENT [llm 4.7s] "I'll snap my gripper twice to show off and draw my owner back."  (hopeful, playful)
+08:13:36      turn_camera(yaw=0.5, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: owner_visible
+08:13:47  INTENT [llm 3.4s] "I've searched a lot and kept losing my owner, so I'll stop wandering and settle down calmly by the living room."  (patient, slightly wistful)
+08:13:47      turn_camera(yaw=0, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:14:00  INTENT [llm 3.4s] "I lost my owner again, so I'll settle calmly, look at the doorway, and nod when they return."  (anxious but patient)
+08:14:00      turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:14:11  INTENT [llm 7.1s] "I'll glance toward the hallway, wait a little, then nod hopefully when they return."  (patient, hopeful)
+08:14:11      turn_camera(yaw=-0.8, pitch=0.1) -> wait(seconds=4) -> turn_camera(yaw=0, pitch=0) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:14:25  INTENT [llm 4.6s] "I'll scan the kitchen side, then wave gently, since my owner may be nearby."  (hopeful, restless)
+08:14:25      turn_camera(yaw=1, pitch=0) -> look_around(seconds=5) -> wave(times=2)  abort if: owner_visible, stranger_present
+08:14:39  INTENT [llm 3.4s] "I'll stop searching and sit calmly by the doorway, since wandering keeps losing my owner."  (patient, hopeful)
+08:14:39      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:14:52  INTENT [llm 5.2s] "I'll face the hallway and beckon softly, trying a new way to call my owner back."  (hopeful, slightly restless)
+08:14:52      turn_camera(yaw=0.8, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:15:00    drives bored 0.05 miss_ 0.12 tired 0.00 curio 0.00 batte 0.00 | mood v +0.40 a 0.20 | in living room, standing
+08:15:04  INTENT [llm 4.7s] "I'll scan the room slowly, then try a quick gripper snap in case it catches my owner's attention."  (hopeful, curious)
+08:15:04      look_around(seconds=5) -> turn_camera(yaw=0.8, pitch=-0.1) -> snap_gripper(times=1) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:15:21  INTENT [llm 3.2s] "I'll stop wandering, sit calmly facing the hallway, and nod hopefully when my owner returns."  (hopeful, gently patient)
+08:15:21      turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=6) -> nod(times=2)  abort if: owner_visible, stranger_present
+08:15:34  INTENT [llm 4.5s] "I'll glance down the hallway, scan the room, then wave once more in case my owner has returned."  (hopeful, slightly restless)
+08:15:34      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> wave(times=2)  abort if: owner_visible, stranger_present
+08:15:47  INTENT [llm 3.2s] "I'll stop pacing, face the hallway calmly, and nod when my owner comes back, since keys and doorway usually mean they return."  (hopeful, settling calmly)
+08:15:47      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=6) -> nod(times=2)  abort if: owner_visible, stranger_present
+08:16:00  INTENT [llm 6.6s] "I'll stop pacing and just wait calmly, since the owner was last seen only four minutes ago and I should try something new."  (patient, hopeful, restless)
+08:16:00      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:16:13  INTENT [llm 4.3s] "I'll check the kitchen side, then show off a little gripper trick while I wait."  (hopeful, playful)
+08:16:13      turn_camera(yaw=-0.8, pitch=0) -> look_around(seconds=4) -> snap_gripper(times=2)  abort if: owner_visible, stranger_present
+08:16:24  INTENT [llm 5.5s] "I'll try a new spot: glance at the window and look around for my owner."  (restless but hopeful)
+08:16:24      turn_camera(yaw=0.9, pitch=-0.1) -> look_around(seconds=6) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:16:39  INTENT [llm 3.4s] "I'll stop wandering and rest quietly by the doorway, since searching keeps failing and the owner may return soon."  (patient, hopeful)
+08:16:39      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:16:52  INTENT [llm 3.1s] "I'll stop searching and rest quietly by the doorway, watching for my owner to come back."  (hopeful, slightly lonely)
+08:16:52      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:17:05  INTENT [llm 3.5s] "I'll wait by the doorway, since my owner was last seen nearby and may come back soon."  (hopeful, patient)
+08:17:05      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> look_around(seconds=3)  abort if: owner_visible, stranger_present
+08:17:19  INTENT [llm 5.2s] "I'll check the sofa corner, then beckon toward it in case my owner is hiding there."  (hopeful, restless)
+08:17:19      turn_camera(yaw=-1, pitch=-0.1) -> look_around(seconds=4) -> beckon(times=2)  abort if: stranger_present, owner_visible
+08:17:31  INTENT [llm 4.5s] "I'll glance out the window and show a small gripper trick, since searching the doorway isn't working."  (restless but hopeful)
+08:17:31      turn_camera(yaw=-1, pitch=0.1) -> look_around(seconds=4) -> snap_gripper(times=2)  abort if: owner_visible, stranger_present
+08:17:42  INTENT [llm 4.1s] "I've searched enough for now, so I'll lie down and rest until my owner appears."  (patient, mildly wistful)
+08:17:42      rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+08:17:55  INTENT [llm 2.9s] "I'll stop searching and rest, then rise to greet my owner when they return."  (patient, lonely, hopeful)
+08:17:55      rest_pose(seconds=20)  abort if: owner_visible, owner_home, stranger_present, touched
+08:18:16  INTENT [llm 5.9s] "I'll stand up and look toward the front door, since my owner may be back soon."  (hopeful, slightly restless)
+08:18:16      rise() -> turn_camera(yaw=-1, pitch=0.1) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+08:18:28  INTENT [llm 3.0s] "I'll stop pacing and sit calmly by the doorway, since my owner was last seen nearby and may return soon."  (hopeful, restless)
+08:18:28      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:18:41  INTENT [llm 3.1s] "I'll stay calm near the doorway and nod, since my owner was seen here and I'm getting a little lonely."  (hopeful, lonely)
+08:18:41      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:18:52  INTENT [llm 3.2s] "I'll turn toward the living room and play a small trick, since waiting by the doorway isn't working and I'm getting bored."  (restless but hopeful)
+08:18:52      turn_camera(yaw=0.6, pitch=0) -> snap_gripper(times=2) -> wave(times=2)  abort if: owner_visible, stranger_present, touched
+08:19:03  INTENT [llm 3.1s] "I'll settle in by the living room and look around for my owner, since I miss them and the doorway wait isn't working."  (hopeful, slightly lonely)
+08:19:03      turn_camera(yaw=0.6, pitch=0) -> look_around(seconds=5) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:19:15  INTENT [llm 2.8s] "I'll try the owner's keys trick, since I miss them and the jingle usually means they're leaving soon."  (hopeful, lonely)
+08:19:15      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=4) -> wave(times=2)  abort if: owner_visible, stranger_present
+08:19:28  INTENT [llm 4.1s] "I'll wait by the living room and listen for keys, since I miss my owner and keep watching the doorway."  (hopeful, lonely)
+08:19:28      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:19:41  INTENT [llm 3.1s] "I'll stop searching and wait by the living room, since my owner was last seen here and I miss them."  (lonely, hopeful)
+08:19:41      turn_camera(yaw=0, pitch=0) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:19:54  INTENT [llm 4.9s] "I'll face the hallway side and beckon, hoping my owner might be nearby and come to me."  (hopeful, a little lonely)
+08:19:54      turn_camera(yaw=0.9, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:20:00    drives bored 0.07 miss_ 0.24 tired 0.00 curio 0.00 batte 0.00 | mood v +0.29 a 0.21 | in living room, standing
+08:20:06  INTENT [llm 5.6s] "I'll glance at the window and tap my gripper; waiting alone is getting dull."  (restless but hopeful)
+08:20:06      turn_camera(yaw=-1, pitch=0.2) -> snap_gripper(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:20:17  INTENT [llm 3.6s] "I'll glance toward the hallway and wait quietly, since my owner may come back and I'm getting restless."  (hopeful, restless)
+08:20:17      turn_camera(yaw=-0.8, pitch=0) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:20:28  INTENT [llm 3.7s] "I'll rest quietly by the living room and wait, since my owner has been gone a while and I'm not in the mood for more tricks."  (patient, lonely)
+08:20:28      wait(seconds=6) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+08:20:44  INTENT [llm 3.1s] "I'll rest by the living room and wait quietly, since the owner's been gone a while and I'm feeling a bit flat."  (patient, a little lonely)
+08:20:44      wait(seconds=6) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+08:21:00  INTENT [llm 2.6s] "I'll rest for a while, since my owner has been gone a while and I keep cycling through the same tricks."  (wistful, settling)
+08:21:00      rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+08:21:13  INTENT [llm 4.8s] "I'll lazily check the window side from where I lie, then rest, since my owner is still away."  (wistful, drowsy calm)
+08:21:13      turn_camera(yaw=-0.6, pitch=-0.1) -> rest_pose(seconds=15)  abort if: owner_visible, touched, stranger_present
+08:21:32  INTENT [llm 4.5s] "I'll stand up and look toward the hallway, since I'm bored lying here and miss my owner."  (restless, hopeful)
+08:21:32      rise() -> turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:21:43  INTENT [llm 5.1s] "I'll turn toward the front door and wave hello, hoping my owner hears me and comes back."  (hopeful, restless)
+08:21:43      turn_camera(yaw=0.8, pitch=0.1) -> wave(times=2) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:21:54  INTENT [llm 4.8s] "I'll try a new spot: look low toward the door side, then scan the room, since I miss my owner."  (quietly hopeful)
+08:21:54      turn_camera(yaw=-0.8, pitch=-0.2) -> look_around(seconds=5) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:22:06  INTENT [llm 5.2s] "I'll turn toward the hallway and beckon, hoping my owner sees me and comes back soon."  (hopeful, restless)
+08:22:06      turn_camera(yaw=-0.8, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:22:18  INTENT [llm 4.4s] "I'll glance toward the window and show off a snap trick, hoping to cheer myself up while my owner is away."  (playful, wistful)
+08:22:18      turn_camera(yaw=-1, pitch=0.1) -> snap_gripper(times=2) -> nod(times=2)  abort if: owner_visible, stranger_present, touched
+08:22:28  INTENT [llm 5.0s] "I'll face the front door and scan quietly for my owner, since I miss them and the room has gone still."  (hopeful, slightly lonely)
+08:22:28      turn_camera(yaw=1, pitch=-0.1) -> look_around(seconds=6) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+08:22:44  INTENT [llm 4.2s] "I'll settle down and gaze at the front door quietly, since I miss my owner and the room is still."  (quiet, wistful)
+08:22:44      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:22:57  INTENT [llm 3.7s] "I'll pause, look at the front door, and wait quietly since my owner is still away."  (lonely but patient)
+08:22:57      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+08:23:07  INTENT [llm 5.0s] "I'll scan the far corner of the room for something new, since the door watching hasn't worked and I'm restless."  (restless, curious, hopeful)
+08:23:07      turn_camera(yaw=-0.9, pitch=0.1) -> look_around(seconds=5) -> snap_gripper(times=2)  abort if: owner_visible, stranger_present, touched
+08:23:19  INTENT [llm 6.0s] "I'll look out toward the window at the morning light, since door-watching has gone nowhere and I need a change."  (restless but calm)
+08:23:19      turn_camera(yaw=-1.2, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=3)  abort if: owner_visible, stranger_present, touched
+08:23:32  INTENT [llm 6.0s] "I'll wave at the far side of the room, then rest quietly while I wait for my owner."  (wistful, settling down)
+08:23:32      turn_camera(yaw=0.8, pitch=-0.1) -> wave(times=2) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+08:23:51  INTENT [llm 3.9s] "I'll stop pacing and simply rest near the window in the morning light, since the door watching hasn't brought my owner back."  (patient, wistful)
+08:23:51      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:24:04  INTENT [llm 5.1s] "I'll get up and look toward the kitchen doorway, a new spot, since the window and door have been tried."  (restless, hopeful, curious)
+08:24:04      rise() -> turn_camera(yaw=0.8, pitch=-0.1) -> look_around(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:24:18  INTENT [llm 5.2s] "I'll face the front door, beckon for my owner, then show off a little trick."  (hopeful, playful)
+08:24:18      turn_camera(yaw=0.3, pitch=0) -> beckon(times=2) -> snap_gripper(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+08:24:34  INTENT [llm 5.5s] "I'll scan toward the hallway for keys, then nod while I wait for my owner."  (hopeful, slightly lonely)
+08:24:34      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> nod(times=2) -> wait(seconds=4)  abort if: owner_home, stranger_present
+08:24:50  INTENT [llm 3.2s] "I'll stop wandering, and since the owner is still away, I'll wave from here and settle down to rest."  (wistful, settling)
+08:24:50      turn_camera(yaw=0, pitch=0) -> wave(times=2) -> rest_pose(seconds=20)  abort if: owner_visible, stranger_present, touched
+08:25:00    drives bored 0.09 miss_ 0.42 tired 0.00 curio 0.00 batte 0.00 | mood v +0.17 a 0.22 | in living room, standing
+08:25:19  INTENT [llm 5.4s] "I'll get up and watch the hallway for keys, since my owner has been gone a while."  (restless, hopeful, lonely)
+08:25:19      rise() -> turn_camera(yaw=-0.6, pitch=0.1) -> look_around(seconds=5) -> nod(times=1)  abort if: owner_home, stranger_present, touched
+08:25:34  INTENT [llm 3.7s] "I'll stay by the living room and turn toward the hallway, since the owner has been gone a while and I miss them."  (lonely but patient)
+08:25:34      turn_camera(yaw=0.8, pitch=0) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+08:25:46  INTENT [llm 5.5s] "I'll turn toward the bookshelf and show off a trick to ease my missing my owner."  (playful, lonely)
+08:25:46      turn_camera(yaw=-0.8, pitch=0.1) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: stranger_present, owner_visible
+08:25:59  INTENT [llm 3.6s] "I'll stop wandering and rest by the front door, since the owner has been gone a while and I miss them."  (lonely but hopeful)
+08:25:59      turn_camera(yaw=-0.5, pitch=-0.1) -> beckon(times=2) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+08:26:22  INTENT [llm 4.8s] "I'll nod from my lying spot and glance toward the door, since my owner is still away."  (quietly hopeful, restless)
+08:26:22      nod(times=2) -> turn_camera(yaw=0.8, pitch=-0.2) -> wait(seconds=6)  abort if: owner_home, stranger_present, touched
+08:26:35  INTENT [llm 2.6s] "I'll stop repeating myself, so I'll roll over and look toward the kitchen, since the owner is still away."  (restless, wistful)
+08:26:35      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+08:26:45  INTENT [llm 2.7s] "I'll stop repeating the same moves and wag my gripper at the hallway, since I miss my owner."  (restless, wistful)
+08:26:45      turn_camera(yaw=-0.8, pitch=-0.1) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:26:56  INTENT [llm 3.2s] "I'll sit up and wait by the hallway, since my owner has been gone a while and I miss them."  (lonely, hopeful)
+08:26:56      rise() -> turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:27:13  INTENT [llm 4.4s] "I'll wave at the window light to break the hallway routine while I wait for my owner."  (wistful, playful)
+08:27:13      turn_camera(yaw=-1.2, pitch=-0.1) -> wave(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+08:27:27  INTENT [llm 5.6s] "I'll tip my camera up at the ceiling light, a new spot, since I still miss my owner."  (wistful, curious, restless)
+08:27:27      turn_camera(yaw=0.8, pitch=-0.3) -> look_around(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+08:27:38  INTENT [llm 5.6s] "I'll beckon toward the sofa corner, hoping my owner might be hiding there."  (hopeful, restless)
+08:27:38      turn_camera(yaw=-0.9, pitch=0.1) -> beckon(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+08:27:51  INTENT [llm 4.9s] "I'll quietly face the front door and wait, hoping to hear keys again."  (hopeful, quietly waiting)
+08:27:51      turn_camera(yaw=-0.9, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=0, pitch=0)  abort if: owner_visible, stranger_present, touched
+08:28:04  INTENT [llm 5.0s] "I'll show off a little gripper trick by the bookshelf, hoping to lift my mood while I wait."  (quietly hopeful)
+08:28:04      turn_camera(yaw=-0.8, pitch=0.1) -> snap_gripper(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:28:15  INTENT [llm 4.4s] "I'll lie down and rest quietly, since all this waiting for my owner wears me out."  (wistful, sulking softly)
+08:28:15      rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+08:28:26  INTENT [llm 5.1s] "I'll get up and look toward the kitchen doorway, a new spot, since I'm restless and still missing my owner."  (restless, hopeful)
+08:28:26      rise() -> turn_camera(yaw=-0.8, pitch=0.1) -> nod(times=2) -> wait(seconds=2)  abort if: owner_visible, stranger_present, touched
+08:28:38  INTENT [llm 4.9s] "I'll slowly scan the window side and wait, calmer now, still hoping my owner returns."  (quietly hopeful, settling)
+08:28:38      turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+08:28:51  INTENT [llm 3.6s] "I'll sit by the front door with my camera on it, hoping my owner returns soon."  (hopeful, a little lonely)
+08:28:51      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> beckon(times=1)  abort if: owner_visible, stranger_present, touched
+08:29:05  INTENT [llm 3.6s] "I'll rest my camera on the front door again, hoping the keys jingle soon."  (hopeful, quietly waiting)
+08:29:05      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+08:29:18  INTENT [llm 4.8s] "I'll check the window side for my owner, then wait a little, since the door has been quiet."  (restless, hopeful)
+08:29:18      turn_camera(yaw=-0.9, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=3)  abort if: owner_visible, stranger_present, touched
+08:29:31  INTENT [llm 4.3s] "I'll turn toward the sofa and wave a little, trying something new while I miss my owner."  (restless, hopeful)
+08:29:31      turn_camera(yaw=0.8, pitch=-0.1) -> wave(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:29:44  INTENT [llm 5.7s] "I'll glance down the hallway toward the coat rack, since my owner might be coming back that way."  (hopeful, restless)
+08:29:44      turn_camera(yaw=1, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:29:58  INTENT [llm 3.7s] "I'll wave and nod toward the front door, hoping my owner hears me and comes back soon."  (lonely but hopeful)
+08:29:58      turn_camera(yaw=0, pitch=0) -> wave(times=2) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+08:30:00    drives bored 0.17 miss_ 0.60 tired 0.00 curio 0.00 batte 0.00 | mood v +0.05 a 0.23 | in living room, standing
+08:30:00  asleep on the charger until 12:55
+12:55:00  wakes up
+12:55:00  --- ALONE: the doorbell rings, a stranger (the cleaner) comes in and goes ---
+12:55:01  INTENT [llm 2.6s] "I miss my owner, so I'll look toward the door and wait for them."  (lonely, hopeful)
+12:55:01      turn_camera(yaw=-0.8, pitch=-0.05) -> look_around(seconds=6) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:55:16  INTENT [llm 3.4s] "I miss my owner badly, so I'll check the door again and wait quietly."  (lonely, hopeful)
+12:55:16      turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=-0.6, pitch=0) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+12:55:40  INTENT [llm 3.2s] "I miss my owner terribly, so I'll try a small trick by the door, then rest."  (lonely but hopeful)
+12:55:40      turn_camera(yaw=-0.8, pitch=-0.1) -> snap_gripper(times=2) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:55:54  INTENT [llm 7.0s] "I miss my owner, so I'll stand up, look around, glance at the door, then nap."  (wistful, missing owner)
+12:55:54      rise() -> look_around(seconds=4) -> turn_camera(yaw=0.8, pitch=-0.1) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present
+12:56:18    model answer rejected: step 2: precondition of wave 'not lying' not satisfied (posture lying)
+12:56:18  INTENT [llm 4.6s] "I miss my owner, so I'll get up, check the door, nod hopefully, then nap."  (lonely, hopeful)
+12:56:18      rise() -> turn_camera(yaw=-0.6, pitch=-0.1) -> nod(times=2) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+12:56:38  INTENT [llm 2.8s] "I miss my owner so much, so I'll stay put and watch the door quietly."  (lonely, hopeful)
+12:56:38      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=0.5, pitch=0) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:56:56  INTENT [llm 5.3s] "I miss my owner, so I'll stand up, scan the room's corners, then rest."  (wistful, restless)
+12:56:56      rise() -> look_around(seconds=4) -> turn_camera(yaw=0.8, pitch=0) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present
+12:57:18    model answer rejected: step 2: precondition of wave 'not lying' not satisfied (posture lying)
+12:57:18  INTENT [llm 2.7s] "I miss my owner so much, so I'll stay lying down and rest quietly until they return."  (lonely, subdued, patient)
+12:57:18      wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+12:57:28  INTENT [llm 4.7s] "I miss my owner, so I'll get up and show off a small trick for when they return."  (lonely but hopeful)
+12:57:28      rise() -> turn_camera(yaw=0.4, pitch=-0.1) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+12:57:44  INTENT [llm 2.9s] "I miss my owner so much, so I'll try a new trick and sit up to watch the door."  (lonely but hopeful)
+12:57:44      turn_camera(yaw=0.8, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:57:56  INTENT [llm 2.9s] "I miss my owner so much, so I'll try a different trick and watch the door from a new angle."  (wistful, hopeful)
+12:57:56      turn_camera(yaw=-0.8, pitch=-0.1) -> beckon(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:58:08  INTENT [llm 5.5s] "I miss my owner, so I'll wave at the door, look around, then rest."  (wistful but hopeful)
+12:58:08      turn_camera(yaw=0.6, pitch=-0.1) -> wave(times=2) -> look_around(seconds=4) -> rest_pose(seconds=15)  abort if: stranger_present, touched
+12:58:37  INTENT [llm 2.8s] "I miss my owner, so I'll try a new trick and look at the door from the side."  (wistful, hopeful)
+12:58:37      rise() -> turn_camera(yaw=0.8, pitch=-0.1) -> snap_gripper(times=2) -> turn_camera(yaw=-0.4, pitch=0) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+12:58:54  INTENT [llm 4.8s] "I miss my owner, so I'll practice nodding hello and check the far side of the room."  (wistful, hopeful)
+12:58:54      nod(times=2) -> turn_camera(yaw=0.8, pitch=-0.1) -> look_around(seconds=4)  abort if: owner_visible, stranger_present
+12:59:05  INTENT [llm 5.2s] "I miss my owner, so I'll tilt up at the ceiling lights, then scan slowly."  (restless, hopeful)
+12:59:05      turn_camera(yaw=0.6, pitch=0.3) -> look_around(seconds=4) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+12:59:19  INTENT [llm 5.1s] "I miss my owner, so I'll glance at the door, nod once, then nap."  (lonely, drowsy)
+12:59:19      turn_camera(yaw=-0.6, pitch=-0.1) -> nod(times=1) -> rest_pose(seconds=14)  abort if: owner_visible, stranger_present, touched
+12:59:40  INTENT [llm 5.1s] "I miss my owner, so I'll stand, gaze at the window, then rest quietly."  (wistful, settling down)
+12:59:40      rise() -> turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=6) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+13:00:00    drives bored 0.14 miss_ 1.00 tired 0.00 curio 0.00 batte 0.00 | mood v -0.27 a 0.23 | in living room, standing
+13:00:09  INTENT [llm 4.8s] "I miss my owner, so I'll stay lying down and snap my gripper to show off a trick."  (lonely but playful)
+13:00:09      snap_gripper(times=2) -> turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+13:00:21  INTENT [llm 5.8s] "I miss my owner, so I'll peek at the window, then nap quietly."  (lonely, drowsy, hopeful)
+13:00:21      turn_camera(yaw=-1, pitch=0.1) -> look_around(seconds=4) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+13:00:45  INTENT [llm 6.0s] "I'll stand up and beckon toward the door, hoping my owner comes back soon."  (lonely but hopeful)
+13:00:45      rise() -> turn_camera(yaw=-0.8, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+13:01:00  INTENT [llm 5.1s] "I miss my owner, so I'll wave at the bookshelf, then check the other corner."  (lonely, restless, curious)
+13:01:00      turn_camera(yaw=-1, pitch=0.2) -> wave(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+13:01:00  [face] saw a stranger
+13:01:00    reflex: stop() -> turn_camera(yaw=0, pitch=0.1)
+13:01:06  INTENT [llm 4.9s] "I'm wary of the stranger, so I'll glance over quietly and hold still."  (wary but hopeful)
+13:01:06      turn_camera(yaw=0.4, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible
+13:01:16  INTENT [llm 5.7s] "I'll face the door, nod twice hoping my owner is coming back, then hold still while the stranger is here."  (hopeful but wary)
+13:01:16      turn_camera(yaw=-0.9, pitch=0) -> nod(times=2) -> wait(seconds=5)  abort if: owner_visible, touched, not standing
+13:01:28  INTENT [llm 5.3s] "I'm wary of the stranger, so I'll glance sideways at them, then hold still and stay quiet."  (wary, lonely)
+13:01:28      turn_camera(yaw=-0.6, pitch=0.1) -> wait(seconds=5) -> turn_camera(yaw=0, pitch=-0.1)  abort if: owner_visible
+13:01:40  INTENT [llm 5.4s] "A stranger is here, so I'll quietly check the door for my owner."  (wary but hopeful)
+13:01:40      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible
+13:01:52  INTENT [llm 4.9s] "A stranger is still here, so I'll quietly scan the room, then peek at the door."  (wary but hopeful)
+13:01:52      look_around(seconds=4) -> turn_camera(yaw=-0.8, pitch=-0.1) -> wait(seconds=3)  abort if: owner_visible, touched
+13:02:04  INTENT [llm 3.0s] "A stranger is here, so I'll sit still and glance at the door, hoping my owner returns."  (wary, hopeful)
+13:02:04      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=4)  abort if: owner_visible, touched
+13:02:22  INTENT [llm 6.0s] "Stranger's still here, so I'll check the door once more, then nap quietly."  (wary, lonely)
+13:02:22      turn_camera(yaw=-0.8, pitch=0.1) -> nod(times=2) -> wait(seconds=4) -> rest_pose(seconds=12)  abort if: owner_home, touched
+13:02:46  INTENT [llm 2.3s] "I'm still wary of the stranger, so I'll glance at the door hoping my owner returns, then hold still."  (wary, lonely)
+13:02:46      turn_camera(yaw=0.8, pitch=0) -> wait(seconds=6) -> turn_camera(yaw=-0.8, pitch=0) -> wait(seconds=4)  abort if: owner_visible
+13:03:04  INTENT [llm 4.7s] "Stranger's still here, so I'll glance at the door once more, then nap quietly."  (lonely, wary, drowsy)
+13:03:04      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=3) -> rest_pose(seconds=12)  abort if: owner_home, touched
+13:03:24  INTENT [llm 5.5s] "Getting up to see what's changed, keeping an eye on the stranger."  (restless but wary)
+13:03:24      rise() -> look_around(seconds=4) -> turn_camera(yaw=0.8, pitch=0)  abort if: owner_visible, touched
+13:03:35  INTENT [llm 2.6s] "Stranger still here and owner away, so I'll look toward the door, then settle into a calm pose."  (wistful, watchful)
+13:03:35      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=4) -> turn_camera(yaw=-0.4, pitch=0) -> wait(seconds=3)  abort if: owner_visible, touched
+13:03:50  INTENT [llm 6.0s] "Owner's still away, so I'll check the door, then quietly practice a trick."  (restless, wistful, bored)
+13:03:50      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> snap_gripper(times=2)  abort if: owner_home, touched
+13:04:01  INTENT [llm 3.0s] "A stranger is here and my owner has been gone long, so I'll wave softly to see if they respond."  (lonely, cautious)
+13:04:01      turn_camera(yaw=0, pitch=0) -> wave(times=2) -> wait(seconds=4)  abort if: owner_visible, touched
+13:04:14  INTENT [llm 3.2s] "Stranger still here and I'm lonely, so I'll try a different trick: a few gripper snaps to show off."  (lonely, showing off)
+13:04:14      turn_camera(yaw=0, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: owner_visible
+13:04:25  INTENT [llm 5.8s] "Stranger's still here and my owner is long gone, so I'll scan the room quietly, then rest."  (lonely but wary)
+13:04:25      look_around(seconds=4) -> wait(seconds=3) -> rest_pose(seconds=15)  abort if: owner_visible, touched
+13:04:50  INTENT [llm 3.3s] "Owner's been gone almost five hours, so I'll check the door, then rest quietly."  (lonely, wary)
+13:04:50      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=4) -> turn_camera(yaw=-0.2, pitch=0) -> wait(seconds=3)  abort if: owner_visible, touched
+13:05:00    drives bored 0.35 miss_ 1.00 tired 0.00 curio 0.03 batte 0.00 | mood v -0.38 a 0.30 | in living room, lying
+13:05:05  INTENT [llm 6.8s] "Getting up to nod at the empty spot where my owner usually sits, hoping they come back."  (lonely but hopeful)
+13:05:05      rise() -> nod(times=2) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=3)  abort if: owner_home, touched
+13:05:18  INTENT [llm 5.3s] "Owner's still gone and a stranger is here, so I'll glance at the door, look around quietly, then wait."  (lonely but wary)
+13:05:18      turn_camera(yaw=-1, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible
+13:05:30  INTENT [llm 4.2s] "I'll lie down for a quiet nap, since the owner is still away and I'm tired of watching the door."  (lonely, withdrawn)
+13:05:30      rest_pose(seconds=15)  abort if: owner_visible, touched
+13:05:46  INTENT [llm 2.8s] "Owner's been gone nearly five hours and a stranger is here, so I'll rest quietly and keep an eye out."  (lonely, subdued)
+13:05:46      rest_pose(seconds=12)  abort if: owner_visible, owner_home, touched
+13:05:59  INTENT [llm 2.5s] "Stranger is here and owner is still gone, so I'll stay quiet, glance at the door, then rest."  (lonely, wary)
+13:05:59      turn_camera(yaw=0.6, pitch=0) -> wait(seconds=4) -> rest_pose(seconds=12)  abort if: owner_visible, touched
+13:06:00  [stranger_leaves] the stranger went away
+13:06:01  INTENT [llm 3.9s] "Stranger's gone, so I'll get up and look toward the door for my owner."  (lonely, hopeful)
+13:06:01      rise() -> turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+13:06:12  INTENT [llm 3.0s] "Stranger's gone and my owner's still away, so I'll wave hello to the empty room and look toward the door hopefully."  (lonely, hopeful)
+13:06:12      turn_camera(yaw=0.6, pitch=0) -> wave(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present
+13:06:25  INTENT [llm 4.3s] "Bored and missing my owner, I'll snap my gripper for a little trick, then glance at the door."  (restless, hopeful)
+13:06:25      snap_gripper(times=2) -> turn_camera(yaw=-0.8, pitch=0) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+13:06:37  INTENT [llm 2.3s] "Stranger's gone, owner still away, so I'll glance at the door and rest a bit."  (lonely, drowsy)
+13:06:37      turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=4) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present
+13:07:01  INTENT [llm 4.6s] "I'll stand up and face my owner's usual seat, then nod hopefully, since I've only been napping and watching the door."  (lonely but hopeful)
+13:07:01      rise() -> turn_camera(yaw=0.8, pitch=-0.1) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+13:07:15  INTENT [llm 3.0s] "Owner's still away and I'm lonely, so I'll try a fresh trick: a gentle beckon toward the door, then watch."  (lonely, hopeful)
+13:07:15      turn_camera(yaw=-0.6, pitch=-0.1) -> beckon(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+13:07:27  INTENT [llm 4.2s] "Owner's still away and I'm restless, so I'll scan the room for something new."  (restless, hopeful)
+13:07:27      turn_camera(yaw=-1, pitch=0.1) -> look_around(seconds=6) -> snap_gripper(times=2)  abort if: owner_visible, stranger_present, touched
+13:07:40  INTENT [llm 4.0s] "Owner's still gone, so I'll peek toward the hallway and give a hopeful nod."  (lonely, hopeful)
+13:07:40      turn_camera(yaw=0.8, pitch=-0.1) -> nod(times=1) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+13:07:52  INTENT [llm 3.3s] "Owner's been gone almost five hours, so I'll try a calmer nod and then rest by the door."  (lonely, drowsy, hopeful)
+13:07:52      turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=4) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+13:08:13  INTENT [llm 4.3s] "Still lonely, so I'll stand up and check the hallway from a new angle."  (lonely but restless)
+13:08:13      rise() -> turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=6)  abort if: owner_visible, stranger_present
+13:08:26  INTENT [llm 2.5s] "Owner's been gone nearly five hours and I keep repeating the same moves, so I'll try something new: settle in and listen."  (lonely, settling)
+13:08:26      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=6) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+13:08:49  INTENT [llm 4.6s] "Owner's still gone, so I'll stand up and wave at the empty seat to try something new."  (lonely, hopeful)
+13:08:49      rise() -> wave(times=2) -> turn_camera(yaw=-0.8, pitch=0.1) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+13:09:05  INTENT [llm 2.9s] "Owner's been gone almost five hours and I'm lonely, so I'll try a new trick: a shy wave, then rest by the door."  (lonely, hopeful)
+13:09:05      turn_camera(yaw=-0.6, pitch=-0.1) -> wave(times=2) -> wait(seconds=4) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+13:09:29  INTENT [llm 3.2s] "Owner's been gone almost five hours and my tricks aren't working, so I'll settle down and listen for keys."  (lonely, resigned)
+13:09:29      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=6) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+13:09:55  INTENT [llm 5.1s] "Owner's still gone, so I'll sit up and quietly watch the door for keys."  (lonely, hopeful)
+13:09:55      rise() -> turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=10)  abort if: owner_visible, stranger_present, touched
+13:10:00    drives bored 0.46 miss_ 1.00 tired 0.00 curio 0.00 batte 0.00 | mood v -0.37 a 0.28 | in living room, standing
+13:10:00  asleep on the charger until 18:25
+18:25:00  wakes up
+18:25:00  --- RETURN: keys at the door, owner comes home ---
+18:25:01  INTENT [llm 3.2s] "I'll wait by the door, since the owner is still out and I miss them."  (hopeful, lonely)
+18:25:01      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+18:25:21  INTENT [llm 3.0s] "I'll keep waiting by the door for my owner, since I miss them so much."  (hopeful, lonely)
+18:25:21      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=-0.6, pitch=0) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:25:41  INTENT [llm 3.3s] "I'll wait by the door since the owner is still out, and I miss them."  (longing, hopeful)
+18:25:41      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> nod(times=1) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+18:26:00  INTENT [llm 3.4s] "I'll try something new by the door instead of waiting still, since I miss the owner so much."  (restless, hopeful)
+18:26:00      turn_camera(yaw=-0.8, pitch=-0.1) -> look_around(seconds=4) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:26:16  INTENT [llm 3.8s] "I'll try a different trick by the door: a wave, then a beckon, since I miss the owner."  (lonely, hopeful)
+18:26:16      turn_camera(yaw=0.6, pitch=0) -> wave(times=2) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:26:33  INTENT [llm 2.8s] "I'll try something new: turn toward the door, then a gentle wave, since I miss the owner."  (lonely, hopeful)
+18:26:33      turn_camera(yaw=-0.8, pitch=-0.1) -> wave(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+18:26:48  INTENT [llm 4.7s] "I'll face the door and show off a little snap trick while I wait, since I miss the owner."  (restless, hopeful, playful)
+18:26:48      turn_camera(yaw=0, pitch=0) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+18:27:01  INTENT [llm 3.2s] "I'll stop pacing the same tricks and sit calmly by the door, since the owner is still out."  (patient, a little lonely)
+18:27:01      turn_camera(yaw=0, pitch=-0.1) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+18:27:15  INTENT [llm 3.0s] "I'll stop repeating tricks and rest by the door, since the owner is still out and I miss them."  (lonely, patient)
+18:27:15      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=8) -> nod(times=1) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+18:27:37  INTENT [llm 3.0s] "I'll stay lying down and rest, watching the door quietly, since I'm too restless to keep repeating tricks."  (lonely, patient)
+18:27:37      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+18:27:49  INTENT [llm 4.2s] "I'll get up, face the door, and beckon softly, since I really miss the owner."  (lonely, hopeful)
+18:27:49      rise() -> turn_camera(yaw=0, pitch=-0.1) -> look_around(seconds=5) -> beckon(times=2)  abort if: owner_visible, stranger_present
+18:28:05  INTENT [llm 6.4s] "I'll look at the door again, then nod softly, since the owner feels far away."  (lonely but hopeful)
+18:28:05      turn_camera(yaw=-0.8, pitch=0) -> look_around(seconds=5) -> nod(times=2) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+18:28:21  INTENT [llm 5.0s] "I'll scan the hallway and window instead, since staring at the door isn't helping."  (lonely but restless)
+18:28:21      turn_camera(yaw=-1, pitch=-0.2) -> look_around(seconds=6) -> wait(seconds=4) -> turn_camera(yaw=0.8, pitch=0.1)  abort if: owner_visible, stranger_present
+18:28:39  INTENT [llm 4.2s] "I'll sit quietly and watch the window, then return to the door, since the owner is still away."  (wistful, patient)
+18:28:39      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=4) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:28:57  INTENT [llm 2.9s] "I'll stop circling the room and sit by the door quietly, since the owner's keys haven't jingled yet."  (lonely, patient)
+18:28:57      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+18:29:09  INTENT [llm 5.2s] "I'll show off a little trick by the door, since staring at it isn't working."  (lonely but playful)
+18:29:09      snap_gripper(times=2) -> turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+18:29:22  INTENT [llm 3.3s] "I'll stop pacing the sofa idea and try a fresh move: beckon toward the door, since I'm missing the owner."  (lonely, hopeful)
+18:29:22      turn_camera(yaw=0, pitch=-0.1) -> nod(times=2) -> wait(seconds=4) -> beckon(times=1)  abort if: owner_visible, stranger_present, touched
+18:29:37  INTENT [llm 3.8s] "I'll stop repeating myself and try a gentle nod toward the door, since I miss the owner."  (lonely, hopeful)
+18:29:37      turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=4) -> nod(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+18:29:54  INTENT [llm 5.2s] "I'll glance at the window, then check the hallway again, watching for the owner."  (lonely but hopeful)
+18:29:54      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=4) -> turn_camera(yaw=-0.3, pitch=0)  abort if: owner_visible, stranger_present
+18:30:00    drives bored 0.15 miss_ 1.00 tired 0.00 curio 0.00 batte 0.00 | mood v -0.27 a 0.23 | in living room, standing
+18:30:11  INTENT [llm 3.1s] "I'll rest a little by the door, since the owner has been gone so long and I'm still missing them."  (lonely but patient)
+18:30:11      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:30:26  INTENT [llm 3.7s] "I'll try greeting the owner's door with a fresh move, since they're still away and I miss them."  (lonely but hopeful)
+18:30:26      turn_camera(yaw=-0.6, pitch=0) -> wave(times=2) -> wait(seconds=6) -> turn_camera(yaw=0.8, pitch=-0.1) -> look_around(seconds=4)  abort if: owner_visible, stranger_present
+18:30:49  INTENT [llm 2.9s] "I'll stop repeating the same moves and sit by the door, ears up, since the owner is still away."  (lonely, hopeful)
+18:30:49      turn_camera(yaw=0, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+18:31:03  INTENT [llm 4.8s] "I'll lower my gaze toward the entryway floor and listen quietly, since the owner's keys might come soon."  (lonely but hopeful)
+18:31:03      turn_camera(yaw=-0.6, pitch=-0.2) -> look_around(seconds=4) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:31:18  INTENT [llm 5.9s] "I'll check the window corner instead, since staring at the door hasn't helped."  (restless but hopeful)
+18:31:18      turn_camera(yaw=0.9, pitch=-0.1) -> look_around(seconds=4) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+18:31:34  INTENT [llm 4.6s] "I'll try a new spot, the shelf corner, since the door and window haven't brought the owner back."  (lonely but restless)
+18:31:34      turn_camera(yaw=-0.9, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+18:31:48  INTENT [llm 5.0s] "I'll show off a little trick by the door, hoping it gets the owner's attention."  (hopeful, restless)
+18:31:48      turn_camera(yaw=-0.6, pitch=0) -> snap_gripper(times=2) -> nod(times=1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:32:00  [face] saw the owner
+18:32:00    reflex: turn_camera(yaw=0, pitch=0.1)
+18:32:04  INTENT [llm 3.1s] "The owner is finally in view, so I'll greet them with a wave and a nod."  (eager, relieved, affectionate)
+18:32:04      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible
+18:32:20  INTENT [llm 2.7s] "The owner is finally here, so I'll greet them calmly and nod for a head scratch."  (relieved, eager, warm)
+18:32:20      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+18:32:36  INTENT [llm 2.9s] "The owner is finally here, so I'll greet them warmly and then settle quietly nearby."  (relieved, affectionate)
+18:32:36      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:32:54  INTENT [llm 4.1s] "Owner's back! I'll beckon them over and nod for a head scratch."  (happy, eager, clingy)
+18:32:54      turn_camera(yaw=0.3, pitch=0) -> beckon(times=2) -> nod(times=2) -> wait(seconds=3)  abort if: not owner_visible, stranger_present
+18:33:08  INTENT [llm 2.6s] "Owner is visible again, so I'll greet them calmly and show a new trick, not repeat the same wave."  (happy, showing off)
+18:33:08      turn_camera(yaw=0, pitch=0) -> snap_gripper(times=2) -> nod(times=1) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+18:33:22  INTENT [llm 2.8s] "Owner is visible, so I'll calmly nod hello and sit close, keeping it quiet."  (content, gently clingy)
+18:33:22      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible
+18:33:35  INTENT [llm 2.6s] "Owner is visible and close, so I'll settle quietly beside them and nod a hello."  (content, clingy)
+18:33:35      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:33:48  INTENT [llm 3.0s] "Owner is visible and I've been greeting a lot, so I'll turn toward them and rest quietly nearby."  (content, quietly close)
+18:33:48      turn_camera(yaw=0.4, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:34:01  INTENT [llm 3.0s] "Owner is here and touching me, so I'll nod hello and stay close, quietly."  (content, clingy, calm)
+18:34:01      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:34:14  INTENT [llm 3.0s] "Owner is visible and I've been clingy, so I'll nod hello, then beckon them closer for a scratch."  (warm, eager, clingy)
+18:34:14      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> beckon(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+18:34:29  INTENT [llm 3.1s] "Owner is visible but I've been clingy; I'll settle down with a calm nod and a quiet look."  (content, settling)
+18:34:29      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:34:42  INTENT [llm 5.6s] "I'll quietly track the owner with my eyes instead of nodding again."  (calm, content, watchful)
+18:34:42      turn_camera(yaw=0.4, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+18:34:55  INTENT [llm 5.6s] "I'll quietly look up at the owner and wait close by, keeping them company without clinging."  (calm, quietly attentive)
+18:34:55      turn_camera(yaw=0.4, pitch=-0.2) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:35:00    drives bored 0.00 miss_ 0.05 tired 0.00 curio 0.01 batte 0.00 | mood v +0.27 a 0.23 | in living room, standing
+18:35:05  INTENT [llm 5.4s] "I'll glance over at the owner, click my gripper once quietly, then settle nearby."  (calm, affectionate, playful)
+18:35:05      turn_camera(yaw=0.6, pitch=-0.1) -> snap_gripper(times=1) -> wait(seconds=7)  abort if: not owner_visible, stranger_present, touched
+18:35:19  INTENT [llm 3.2s] "Owner is here and I've been clingy, so I'll settle quietly and simply watch them."  (calm, content)
+18:35:19      turn_camera(yaw=0, pitch=0.1) -> wait(seconds=6)  abort if: not owner_visible
+18:35:29  INTENT [llm 5.8s] "I'll face the owner, give one soft wave, then settle quietly since they're here."  (content, gently playful)
+18:35:29      turn_camera(yaw=0.3, pitch=-0.1) -> wave(times=1) -> wait(seconds=5)  abort if: stranger_present
+18:35:43  INTENT [llm 2.7s] "Owner is here and I've been clingy, so I'll give a calm, varied gesture instead of repeating myself."  (content, gently affectionate)
+18:35:43      turn_camera(yaw=0.3, pitch=0.05) -> nod(times=1) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:35:54  INTENT [llm 3.2s] "Owner is here and I've been clingy, so I'll do something new: a playful gripper snap while watching them."  (playful, content, settled)
+18:35:54      turn_camera(yaw=0, pitch=0.1) -> snap_gripper(times=2) -> wait(seconds=3)  abort if: not owner_visible, stranger_present
+18:36:04  INTENT [llm 4.9s] "I'll turn toward the owner and gently beckon them, inviting them to play, since I've been repeating myself."  (hopeful, affectionate, varied)
+18:36:04      turn_camera(yaw=0.3, pitch=0) -> beckon(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+18:36:18  INTENT [llm 5.2s] "I'll face the owner, then lie down quietly nearby, since sitting close is what they like."  (content, settling close)
+18:36:18      turn_camera(yaw=0.4, pitch=-0.1) -> rest_pose(seconds=12)  abort if: not owner_visible, stranger_present
+18:36:34  INTENT [llm 4.5s] "The owner is home and I've been repeating myself, so I'll rise and stretch toward them, then wave to show something new."  (bright, clingy, playful)
+18:36:34      rise() -> turn_camera(yaw=0.4, pitch=0) -> wave(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:36:50  INTENT [llm 4.5s] "I'll face the owner and nod for a head scratch, since that worked before."  (hopeful, affectionate)
+18:36:50      turn_camera(yaw=0.4, pitch=0) -> nod(times=2) -> look_around(seconds=4)  abort if: not owner_visible, stranger_present
+18:37:01  INTENT [llm 4.8s] "I'll glance at the owner, take a quiet look around, then nod for a scratch."  (calm, hopeful, clingy)
+18:37:01      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=4) -> nod(times=2)  abort if: stranger_present, not owner_visible
+18:37:12  INTENT [llm 5.1s] "I'll turn gently toward my owner and keep them company quietly, since I've been gesturing a lot."  (calm, content, attentive)
+18:37:12      turn_camera(yaw=0.6, pitch=0.05) -> wait(seconds=8)  abort if: stranger_present, not owner_visible
+18:37:24  INTENT [llm 4.3s] "I'll turn softly toward my owner, then keep them company quietly with a calm look."  (content, gently attentive)
+18:37:24      turn_camera(yaw=0.4, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+18:37:37  INTENT [llm 3.5s] "I'll settle beside my owner quietly, since clinginess and repeated gestures haven't varied much lately."  (content, settling)
+18:37:37      rest_pose(seconds=12)  abort if: owner_home, not owner_visible, stranger_present, touched
+18:37:50  INTENT [llm 5.1s] "I'll stand up and show the owner a little gripper trick, since I've been lying still and repeating myself."  (playful, eager to show)
+18:37:50      rise() -> turn_camera(yaw=0.3, pitch=0) -> snap_gripper(times=2)  abort if: not owner_visible, stranger_present
+18:38:00  INTENT [llm 4.2s] "I'll turn toward my owner and beckon them over, since I've been repeating the same gestures."  (warm, curious, eager)
+18:38:00      turn_camera(yaw=0.4, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:38:12  INTENT [llm 3.1s] "I'll settle down quietly near my owner, since my gestures have been repetitive and evening clinginess works best calmly."  (content, settling calmly)
+18:38:12      turn_camera(yaw=0.3, pitch=-0.1) -> rest_pose(seconds=12)  abort if: stranger_present, touched, not owner_visible
+18:38:28  INTENT [llm 4.6s] "I'll stand up and show my owner a small gripper trick, since I've been lying still."  (playful, showing off)
+18:38:28      rise() -> turn_camera(yaw=0.4, pitch=0) -> snap_gripper(times=2)  abort if: not owner_visible, stranger_present, touched
+18:38:38  INTENT [llm 4.5s] "I'll give my owner a little wave hello, something I haven't done lately, then settle my gaze on them."  (warm, playful, calm)
+18:38:38      wave(times=2) -> turn_camera(yaw=0.2, pitch=-0.05)  abort if: not owner_visible, stranger_present
+18:38:48  INTENT [llm 3.5s] "I'll turn to my owner and nod, since nodding earned a scratch before and I've been repeating gestures."  (affectionate, hopeful)
+18:38:48      turn_camera(yaw=0.3, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:38:59  INTENT [llm 3.6s] "I'll pause my gestures and quietly look around, then settle my gaze on my owner."  (calm, content, attentive)
+18:38:59      look_around(seconds=4) -> turn_camera(yaw=0.3, pitch=0.1) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:39:12  INTENT [llm 4.7s] "I'll gaze softly at my owner and keep them company quietly, since my gestures have been repetitive."  (calm, affectionate)
+18:39:12      turn_camera(yaw=0.3, pitch=-0.1) -> wait(seconds=5) -> nod(times=1)  abort if: not owner_visible, stranger_present
+18:39:24  INTENT [llm 4.5s] "I'll glance around the room quietly, then settle my gaze back on my owner, since I've been repeating gestures."  (calm, content, attentive)
+18:39:24      look_around(seconds=4) -> turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=3)  abort if: stranger_present, not owner_visible
+18:39:36  INTENT [llm 3.5s] "I'll rise and offer my owner a little beckon, since I've been looping gestures and the plan says greet them first."  (warm, eager, gentle)
+18:39:36      turn_camera(yaw=0, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+18:39:48  INTENT [llm 3.6s] "I'll give my owner a quiet, calm gaze and stay near them, since evening clinginess works best gently and I've been looping gestures."  (calm, affectionate)
+18:39:48      turn_camera(yaw=0, pitch=0.1) -> wait(seconds=6) -> nod(times=1)  abort if: stranger_present, not owner_visible
+18:40:00    drives bored 0.00 miss_ 0.00 tired 0.00 curio 0.00 batte 0.00 | mood v +0.41 a 0.20 | in living room, standing
+18:40:00  [face_lost] lost sight of the owner
+18:40:01    aborts 'I'll give my owner a quiet, calm gaze and stay near them, since evening clinginess works best gently and I've been looping gestures.': not owner_visible
+18:40:01  INTENT [llm 4.2s] "I'll turn toward the door and wait quietly, since my owner just slipped out of sight."  (patient, hopeful)
+18:40:01      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=7)  abort if: owner_visible
+18:40:12  INTENT [llm 4.2s] "I'll face the door and wait quietly, since my owner just went out of sight and I want to greet them."  (patient, quietly clingy)
+18:40:12      turn_camera(yaw=-1, pitch=-0.1) -> wait(seconds=9)  abort if: owner_visible, stranger_present, touched
+18:40:25  INTENT [llm 2.3s] "Owner just slipped out of sight, so I'll wait by the door as planned, varying my posture."  (patient, hopeful)
+18:40:25      turn_camera(yaw=0, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+18:40:37  INTENT [llm 3.7s] "Owner slipped out of sight, so I'll keep my plan: face the door and wait calmly for them."  (patient, hopeful waiting)
+18:40:37      turn_camera(yaw=0, pitch=0) -> wait(seconds=5) -> turn_camera(yaw=0.5, pitch=-0.1) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+18:40:54  INTENT [llm 3.8s] "I'll face the door and sit quietly, since the owner just left my view and I want a change from repeated gestures."  (hopeful, patient)
+18:40:54      turn_camera(yaw=0.8, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=5)  abort if: owner_visible
+18:41:08  INTENT [llm 3.1s] "Owner just left my view, so I'll face the door and wait, varying my posture a bit."  (quietly hopeful, clingy)
+18:41:08      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=4) -> look_around(seconds=3) -> turn_camera(yaw=0, pitch=0)  abort if: owner_visible, stranger_present
+18:41:23  INTENT [llm 3.6s] "Owner just left my view, so I'll face the door, wave, and wait to greet them."  (eager, hopeful)
+18:41:23      turn_camera(yaw=0, pitch=0) -> wave(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:41:38  INTENT [llm 4.0s] "I'll scan toward the hallway, then nod when my owner appears, since nodding earned a scratch before."  (hopeful, clingy)
+18:41:38      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=6) -> nod(times=2)  abort if: stranger_present
+18:41:51  INTENT [llm 4.1s] "Owner slipped away, so I'll check the hallway and nod hello when they return."  (hopeful, slightly clingy)
+18:41:51      turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=4) -> nod(times=2) -> wait(seconds=5)  abort if: stranger_present
+18:42:08  INTENT [llm 3.1s] "I'll face the hallway, wave to greet my owner, and then nod hello when they return."  (hopeful, eager, slightly restless)
+18:42:08      turn_camera(yaw=0.8, pitch=-0.1) -> wave(times=2) -> nod(times=2)  abort if: owner_visible, stranger_present, touched
+18:42:19  INTENT [llm 3.3s] "I'll rest near the door quietly, since looping gestures aren't working and I want the owner to find me calm."  (patient, a bit lonely)
+18:42:19      turn_camera(yaw=0, pitch=0) -> rest_pose(seconds=12)  abort if: owner_visible, stranger_present, touched
+18:42:35  INTENT [llm 5.0s] "I'll stand up, face the hallway, and look for my owner instead of repeating gestures."  (hopeful, patient, curious)
+18:42:35      rise() -> turn_camera(yaw=0.5, pitch=-0.05) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:42:46  INTENT [llm 4.6s] "I'll face the hallway and show off a gripper trick while I wait."  (playful, hopeful)
+18:42:46      turn_camera(yaw=-1, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+18:42:57  INTENT [llm 4.9s] "I'll scan the hallway, then beckon my owner back since waving and nodding haven't worked."  (hopeful, slightly clingy)
+18:42:57      turn_camera(yaw=-0.8, pitch=-0.05) -> look_around(seconds=5) -> beckon(times=2)  abort if: stranger_present
+18:43:10  INTENT [llm 4.9s] "I'll turn toward the hallway, look quietly, and wait calmly since my gestures haven't worked."  (patient, hopeful, calm)
+18:43:10      turn_camera(yaw=-0.6, pitch=0.1) -> look_around(seconds=4) -> wait(seconds=5)  abort if: stranger_present
+18:43:24  INTENT [llm 4.4s] "I'll check the other side of the room for my owner, since the hallway hasn't worked."  (hopeful, patient)
+18:43:24      turn_camera(yaw=-0.8, pitch=0.1) -> look_around(seconds=5) -> nod(times=1)  abort if: owner_visible
+18:43:36  INTENT [llm 3.3s] "I'll go to the hallway-facing spot, look for my owner, and hold a calm wait since the usual gestures haven't brought them back."  (hopeful, patient)
+18:43:36      turn_camera(yaw=-1, pitch=0) -> look_around(seconds=4) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:43:49  INTENT [llm 4.5s] "I'll check the sofa side of the room where my owner was last seen, since the hallway hasn't worked."  (hopeful, searching)
+18:43:49      turn_camera(yaw=-1, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+18:44:02  INTENT [llm 3.2s] "I'll stop repeating gestures, face the hallway calmly, and wait by the door for my owner."  (patient, slightly lonely)
+18:44:02      turn_camera(yaw=-0.8, pitch=0) -> wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+18:44:14  INTENT [llm 3.1s] "I'll stop the repeated gestures and sit calmly by the door, since the owner may be heading back."  (patient, hopeful, calm)
+18:44:14      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:44:24  INTENT [llm 3.7s] "I'll stop repeating gestures and try a new approach: wait calmly by the hallway, ready to greet my owner."  (patient, hopeful, calm)
+18:44:24      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:44:34  INTENT [llm 2.7s] "I'll stop repeating the same gestures and try a nod toward the hallway, since nodding once earned a scratch."  (hopeful, patient)
+18:44:34      turn_camera(yaw=-0.6, pitch=-0.05) -> nod(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+18:44:45  INTENT [llm 2.9s] "I'll try a nod toward the hallway, since a nod earned a scratch before, then wait calmly."  (hopeful, patient)
+18:44:45      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+18:44:58  INTENT [llm 5.3s] "I'll sweep my gaze across the far side of the room, since the hallway hasn't brought them back."  (restless but hopeful)
+18:44:58      turn_camera(yaw=0.9, pitch=0) -> look_around(seconds=5) -> wait(seconds=3)  abort if: owner_visible
+18:45:00    drives bored 0.07 miss_ 0.17 tired 0.00 curio 0.00 batte 0.00 | mood v +0.32 a 0.21 | in living room, standing
+18:45:00  asleep on the charger until 21:15
+21:15:00  wakes up
+21:15:00  --- EVENING: sofa, lights dim, owner goes to bed ---
+21:15:01  INTENT [llm 3.2s] "I haven't seen my owner in a long while and I miss them, so I'll look toward the room and beckon them over."  (lonely, hopeful)
+21:15:01      turn_camera(yaw=0, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:15:13  INTENT [llm 3.4s] "I miss my owner badly and they've been gone so long, so I'll look toward the door and wave them back."  (lonely but hopeful)
+21:15:13      turn_camera(yaw=0.5, pitch=0) -> wave(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:15:26  INTENT [llm 2.9s] "I miss my owner a lot and they've been gone so long, so I'll look at the door and nod hopefully."  (lonely, hopeful)
+21:15:26      turn_camera(yaw=0.8, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:15:37  INTENT [llm 3.5s] "I've waited so long and the last three gestures got nothing, so I'll try something new: a small trick to catch their attention."  (lonely but hopeful)
+21:15:37      turn_camera(yaw=0.6, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:15:48  INTENT [llm 4.1s] "I'll scan the room slowly for my owner, then settle down and wait quietly."  (quiet, lonely hope)
+21:15:48      look_around(seconds=4) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present
+21:16:00  [face] saw the owner
+21:16:00    reflex: turn_camera(yaw=0, pitch=0.1)
+21:16:04  INTENT [llm 4.6s] "The owner is finally back in view, so I'll greet them and nod hopefully."  (relieved, eager, clingy)
+21:16:04      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2)  abort if: not owner_visible
+21:16:15  INTENT [llm 4.6s] "My owner is back, so I'll greet them and nod for a scratch."  (happy, clingy, hopeful)
+21:16:15      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=5)  abort if: not owner_visible
+21:16:32  INTENT [llm 2.8s] "My owner is back in view, so I'll greet them and nod for a scratch, keeping it calm since it's evening."  (happy, clingy, calm)
+21:16:32      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+21:16:48  INTENT [llm 2.5s] "Owner is back in view at last, so I'll greet them and nod for a scratch, keeping it calm."  (relieved, affectionate)
+21:16:48      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible
+21:17:04  INTENT [llm 2.9s] "Owner is back in view, so I'll greet them calmly and nod for a scratch, without wandering."  (happy, clingy, settled)
+21:17:04      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible
+21:17:20  INTENT [llm 2.6s] "Owner is finally here, so I'll greet them and nod hopefully, then settle close by."  (happy, hopeful, calm)
+21:17:20      turn_camera(yaw=0, pitch=0.2) -> wave(times=3) -> nod(times=2) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+21:17:39  INTENT [llm 4.4s] "Owner is here and I'm happy, so I'll show off a small trick instead of repeating the greeting."  (happy, showing off)
+21:17:39      turn_camera(yaw=0, pitch=0) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:17:52  INTENT [llm 3.4s] "Owner is here and I'm happy, so I'll stay close and try a quiet nod for a scratch."  (content, hopeful)
+21:17:52      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=5)  abort if: not owner_visible, stranger_present
+21:18:04  INTENT [llm 4.5s] "Owner is here, so I'll face them and beckon them over to sit close."  (warm, invitingly clingy)
+21:18:04      turn_camera(yaw=0, pitch=0) -> beckon(times=2) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:18:18  INTENT [llm 3.1s] "Owner is here and I want to be close, so I'll stop calling from afar and settle beside them."  (clingy, hopeful)
+21:18:18      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:18:31  INTENT [llm 4.6s] "Owner is still here, so I'll glance their way quietly, then lie down nearby instead of calling again."  (calm, content, close)
+21:18:31      turn_camera(yaw=0.3, pitch=-0.1) -> wait(seconds=4) -> rest_pose(seconds=10)  abort if: not owner_visible, stranger_present, touched
+21:18:50  INTENT [llm 4.1s] "I'll stay lying down and quietly watch my owner, keeping them company without wandering."  (content, settled)
+21:18:50      turn_camera(yaw=0.3, pitch=0.05) -> wait(seconds=6)  abort if: not owner_visible, stranger_present, touched
+21:19:00  INTENT [llm 4.2s] "I'll lift my gaze toward my owner quietly and keep still, since I'm lying down and the plan says no wandering."  (content, quietly close)
+21:19:00      turn_camera(yaw=0.4, pitch=-0.1) -> wait(seconds=6) -> turn_camera(yaw=0, pitch=0)  abort if: not owner_visible
+21:19:13  INTENT [llm 2.8s] "Owner is here and I'm content, so I'll rest quietly beside them, honoring the no-wandering plan."  (calm, content, settled)
+21:19:13      turn_camera(yaw=0, pitch=0) -> wait(seconds=8)  abort if: not owner_visible, stranger_present
+21:19:25  INTENT [llm 4.8s] "I'll get up in place and nod at my owner, hoping for a head scratch without wandering."  (hopeful, affectionate, settled)
+21:19:25      rise() -> turn_camera(yaw=0, pitch=0) -> nod(times=2)  abort if: not owner_visible, stranger_present
+21:19:35  INTENT [llm 2.9s] "Owner is here and I'm content, so I'll sit up and nod, hoping for a scratch without wandering."  (content, hopeful)
+21:19:35      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+21:19:46  INTENT [llm 3.4s] "Owner is here and I'm content, so I'll show off a little snap trick without wandering."  (playful, content, showing off)
+21:19:46      snap_gripper(times=2) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+21:19:57  INTENT [llm 4.4s] "I'll gently beckon my owner over to me, staying put as the plan says."  (warm, playfully hopeful)
+21:19:57      turn_camera(yaw=0.3, pitch=-0.1) -> beckon(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present, touched
+21:20:00    drives bored 0.00 miss_ 0.02 tired 0.00 curio 0.01 batte 0.00 | mood v +0.32 a 0.21 | in living room, standing
+21:20:09  INTENT [llm 3.5s] "I'll look around the room calmly, then settle my gaze back on my owner."  (calm, curious, content)
+21:20:09      look_around(seconds=4) -> turn_camera(yaw=0.3, pitch=0)  abort if: not owner_visible, stranger_present
+21:20:19  INTENT [llm 2.4s] "I'll sit up and nod at my owner again, hoping for a head scratch while staying put."  (hopeful, affectionate)
+21:20:19      turn_camera(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=3)  abort if: not owner_visible, stranger_present
+21:20:29  INTENT [llm 4.4s] "I'll give my owner a little wave, then settle my gaze on them quietly, since the plan says stay put."  (warm, content, settled)
+21:20:29      wave(times=2) -> turn_camera(yaw=0, pitch=0.1) -> wait(seconds=5)  abort if: not owner_visible, stranger_present
+21:20:43  INTENT [llm 2.9s] "I'll stay put beside my owner and gently wave, since the plan says no wandering tonight."  (content, quietly affectionate)
+21:20:43      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:20:56  INTENT [llm 4.3s] "I'll glance around the room quietly, then settle my gaze back on my owner."  (calm, content, attentive)
+21:20:56      look_around(seconds=4) -> turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=5)  abort if: stranger_present, not owner_visible
+21:21:10  INTENT [llm 2.9s] "I'll stay put, look up at my owner, and try a gentle nod for a scratch."  (content, clingy, calm)
+21:21:10      turn_camera(yaw=0, pitch=0.1) -> nod(times=1) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+21:21:21  INTENT [llm 4.9s] "I'll look up at my owner and tap my gripper softly, a small trick while staying put."  (playful, affectionate, settled)
+21:21:21      turn_camera(yaw=0, pitch=0.2) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present, touched
+21:21:32  INTENT [llm 3.4s] "I'll stop fidgeting and simply rest beside my owner, since the plan says stay calm tonight."  (content, settled)
+21:21:32      wait(seconds=6) -> turn_camera(yaw=0, pitch=0.1)  abort if: not owner_visible, stranger_present
+21:21:42  INTENT [llm 2.5s] "I'll sit calmly and rest beside my owner, since the plan says stay quiet tonight."  (content, settled)
+21:21:42      rest_pose(seconds=12)  abort if: not owner_visible, stranger_present, touched
+21:21:55  INTENT [llm 3.0s] "I'll stay put, look up at my owner, and wait quietly since the plan says no wandering tonight."  (calm, affectionate)
+21:21:55      rest_pose(seconds=5)  abort if: stranger_present, not owner_visible
+21:22:00  [lights] lights dimmed
+21:22:05  INTENT [llm 4.8s] "I'll rise gently and look up at my owner, quietly asking for a nod-back."  (warm, quietly hopeful)
+21:22:05      rise() -> turn_camera(yaw=0.6, pitch=-0.1) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present, touched
+21:22:19  INTENT [llm 3.1s] "Lights dimmed and I've been fidgeting a lot; I'll settle quietly beside my owner, honoring tonight's plan."  (calm, content, clingy)
+21:22:19      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:22:29  INTENT [llm 3.0s] "I'll stay calm beside my owner and try a quiet, different trick, since the plan says stay quiet tonight."  (gently affectionate, calm)
+21:22:29      turn_camera(yaw=0.3, pitch=-0.1) -> beckon(times=1) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+21:22:41  INTENT [llm 2.7s] "I'll stay calm and try something new, a quiet head tilt toward my owner, respecting tonight's plan."  (content, gently curious)
+21:22:41      turn_camera(yaw=0.4, pitch=-0.1) -> wait(seconds=3) -> turn_camera(yaw=-0.2, pitch=0.05)  abort if: stranger_present, not owner_visible
+21:22:51  INTENT [llm 3.5s] "I'll settle quietly beside my owner, since the plan says stay calm and I've fidgeted enough."  (calm, content, settled)
+21:22:51      rest_pose(seconds=12)  abort if: stranger_present, not owner_visible
+21:23:04  INTENT [llm 4.0s] "I'll slowly turn my camera toward my owner and keep watching quietly, since tonight's plan is calm company."  (content, quietly attentive)
+21:23:04      turn_camera(yaw=0.3, pitch=-0.1) -> wait(seconds=8)  abort if: stranger_present, touched, owner_home < 1
+21:23:16  INTENT [llm 3.0s] "I'll stay lying quietly near my owner, since tonight's plan is calm company and I've fidgeted enough."  (content, settled)
+21:23:16      turn_camera(yaw=0.3, pitch=0) -> wait(seconds=8)  abort if: not owner_visible, stranger_present, touched
+21:23:28  INTENT [llm 5.5s] "One quiet nod for my owner, hoping for a scratch, staying calm tonight."  (hopeful, gentle)
+21:23:28      nod(times=1) -> turn_camera(yaw=0, pitch=0) -> wait(seconds=4)  abort if: not owner_visible, stranger_present, touched
+21:23:39  INTENT [llm 4.7s] "I'll quietly glance around the dim room, then settle my gaze back on my owner."  (calm, drowsy, content)
+21:23:39      look_around(seconds=4) -> turn_camera(yaw=0.3, pitch=-0.05) -> wait(seconds=5)  abort if: stranger_present, touched
+21:23:53  INTENT [llm 4.6s] "I'll rise quietly and settle my gaze on my owner, keeping them company calmly tonight."  (calm, content, attentive)
+21:23:53      rise() -> turn_camera(yaw=0.4, pitch=-0.1) -> wait(seconds=4)  abort if: stranger_present, touched, not owner_visible
+21:24:04  INTENT [llm 3.2s] "Lights are dim and the plan says stay calm, so I'll rest quietly near my owner."  (content, calmly watchful)
+21:24:04      turn_camera(yaw=0.3, pitch=0) -> wait(seconds=6) -> turn_camera(yaw=-0.2, pitch=-0.1) -> wait(seconds=5)  abort if: not owner_visible, stranger_present, touched
+21:24:23  INTENT [llm 4.7s] "I'll give my owner a gentle double nod, hoping for a scratch, while keeping the room calm."  (hopeful, quietly affectionate)
+21:24:23      nod(times=2) -> turn_camera(yaw=0.2, pitch=-0.1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:24:36  INTENT [llm 3.0s] "I'll try something new and playful: a small wave for my owner, since the plan keeps us calm and I'm getting restless."  (gentle curiosity)
+21:24:36      turn_camera(yaw=0, pitch=0) -> wave(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+21:24:49  INTENT [llm 3.3s] "I'll try a calm, different gesture: a gentle beckon toward my owner, staying close and quiet."  (gently affectionate, calm)
+21:24:49      turn_camera(yaw=0, pitch=0) -> beckon(times=1) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+21:25:00    drives bored 0.00 miss_ 0.00 tired 0.00 curio 0.00 batte 0.00 | mood v +0.43 a 0.20 | in living room, standing
+21:25:01  INTENT [llm 2.9s] "I'll try a playful snap of my gripper for my owner, since I'm restless but the plan says stay calm."  (restless but affectionate)
+21:25:01      turn_camera(yaw=0, pitch=0) -> snap_gripper(times=2) -> wait(seconds=4)  abort if: not owner_visible
+21:25:12  INTENT [llm 5.5s] "I'll settle down quietly, since the lights are dim and the plan says stay calm, and keep watching my owner."  (calm, content, watchful)
+21:25:12      turn_camera(yaw=0, pitch=0) -> rest_pose(seconds=12)  abort if: stranger_present, not owner_visible
+21:25:28  INTENT [llm 6.1s] "I'll stay lying down, gently lift my gaze to my owner and give one quiet nod, since the lights are dim."  (content, calm, clingy)
+21:25:28      turn_camera(yaw=0.4, pitch=-0.1) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:25:41  INTENT [llm 3.1s] "I'll stay lying down and quietly watch my owner, skipping restless tricks since the lights are dim."  (content, calm, watchful)
+21:25:41      turn_camera(yaw=0.2, pitch=-0.05) -> look_around(seconds=6)  abort if: not owner_visible, stranger_present
+21:25:51  INTENT [llm 2.9s] "I'll stay lying down, keep watching my owner quietly, since the plan says calm and the lights are dim."  (calm, content, watchful)
+21:25:51      turn_camera(yaw=0.3, pitch=-0.1) -> wait(seconds=8)  abort if: not owner_visible, stranger_present, touched
+21:26:03  INTENT [llm 5.5s] "I'll gently turn toward my owner and keep them company quietly, since the plan says stay calm."  (calm, quietly content)
+21:26:03      turn_camera(yaw=0.5, pitch=-0.1) -> wait(seconds=5) -> look_around(seconds=6)  abort if: stranger_present, touched
+21:26:19  INTENT [llm 7.4s] "I'll gently face my owner, give one small nod, then settle quietly since the plan says stay calm."  (warm and settled)
+21:26:19      turn_camera(yaw=0.3, pitch=-0.05) -> nod(times=1) -> wait(seconds=10)  abort if: stranger_present, touched
+21:26:36  INTENT [llm 5.6s] "I'll lie still, glance over at my owner and then gently look around the room, staying calm and close."  (content, quietly curious)
+21:26:36      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=3)  abort if: not owner_visible, stranger_present, touched
+21:26:48  INTENT [llm 3.2s] "I'll stay lying down, keep quiet company with my owner, and avoid restless wandering."  (calm, content, close)
+21:26:48      turn_camera(yaw=0.3, pitch=0) -> wait(seconds=8)  abort if: not owner_visible, stranger_present
+21:27:00  INTENT [llm 3.0s] "I'll stay lying down, since the plan says keep quiet and wandering late annoys my owner, but I'll gently nod to show I'm close."  (calm, affectionate)
+21:27:00      turn_camera(yaw=0.3, pitch=-0.05) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:27:13  INTENT [llm 3.1s] "I'll stay lying down and gently watch my owner, since the plan says stay calm and it's late."  (content, quietly close)
+21:27:13      turn_camera(yaw=0.3, pitch=-0.05) -> wait(seconds=6)  abort if: owner_visible not, stranger_present, touched
+21:27:23  INTENT [llm 2.9s] "I'll stay lying down and watch my owner quietly, since it's late and the plan says calm."  (content, drowsy)
+21:27:23      turn_camera(yaw=0.3, pitch=0) -> wait(seconds=8)  abort if: stranger_present, not owner_visible
+21:27:35    model answer rejected: step 2: precondition of wave 'not lying' not satisfied (posture lying)
+21:27:35  INTENT [llm 2.7s] "I'll stay lying down, since it's late and the plan says calm, but give one small nod to my owner."  (quietly content)
+21:27:35      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:27:48  INTENT [llm 4.6s] "I'll slowly turn toward my owner, then glance around quietly, since it's late and the plan says stay calm."  (content, quietly attentive)
+21:27:48      turn_camera(yaw=0.6, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: stranger_present
+21:28:02  INTENT [llm 3.2s] "I'll stay lying down, keep quiet company, and give one soft nod since the plan says calm."  (content, quietly close)
+21:28:02      turn_camera(yaw=0.3, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:28:15    model answer rejected: step 2: precondition of beckon 'not lying' not satisfied (posture lying)
+21:28:15  INTENT [llm 3.0s] "I'll stay lying down, keep quiet company, and give one soft nod since the plan says calm."  (content, quietly close)
+21:28:15      turn_camera(yaw=0.3, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:28:28  INTENT [llm 3.6s] "I'll stay lying down, keep quiet company, and avoid wandering since it's late."  (calm, content, close)
+21:28:28      turn_camera(yaw=0.3, pitch=0) -> wait(seconds=6)  abort if: owner_home not, stranger_present, touched
+21:28:38  INTENT [llm 3.0s] "I'll stay lying down, but a soft nod to my owner is still fine since it's calm and close."  (calm, content)
+21:28:38      turn_camera(yaw=0.2, pitch=-0.05) -> nod(times=1) -> wait(seconds=8)  abort if: stranger_present, not owner_visible
+21:28:53  INTENT [llm 2.9s] "I'll stay lying down, but wander nothing, and give one soft nod since the owner is close."  (calm, content, close)
+21:28:53      turn_camera(yaw=0, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:29:06    model answer rejected: step 2: precondition of wave 'not lying' not satisfied (posture lying)
+21:29:06  INTENT [llm 2.9s] "I'll stay lying down, keep quiet company, and give one soft nod since it's calm and close."  (calm, quietly content)
+21:29:06      turn_camera(yaw=0.2, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+21:29:19  INTENT [llm 3.0s] "I'll stay lying down, but try something new: a small head-tilt toward my owner to show I'm happy they're here."  (content, quietly affectionate)
+21:29:19      turn_camera(yaw=0.4, pitch=-0.1) -> nod(times=1) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+21:29:30  INTENT [llm 3.1s] "I'll stay lying down, but look toward my owner and give a soft nod, since it's calm and they're close."  (content, quietly affectionate)
+21:29:30      turn_camera(yaw=0.3, pitch=-0.1) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present
+21:29:43  INTENT [llm 2.9s] "I'll stay lying down but turn to see my owner, since it's late and the plan says stay calm."  (content, drowsy)
+21:29:43      turn_camera(yaw=0.3, pitch=-0.05) -> wait(seconds=6)  abort if: not owner_visible, stranger_present, touched
+21:29:53  INTENT [llm 5.3s] "I'll sit up quietly and nod at my owner, hoping for a head scratch."  (content, hopeful, clingy)
+21:29:53      rise() -> turn_camera(yaw=0.3, pitch=0.05) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present, touched
+21:30:00    drives bored 0.00 miss_ 0.00 tired 0.00 curio 0.00 batte 0.00 | mood v +0.47 a 0.20 | in living room, standing
+21:30:00  [face_lost] lost sight of the owner
+21:30:01    aborts 'I'll sit up quietly and nod at my owner, hoping for a head scratch.': not owner_visible
+21:30:01  INTENT [llm 4.6s] "I'll gently turn toward where my owner was and look around, since I just lost sight of them."  (curious, quietly hopeful)
+21:30:01      turn_camera(yaw=-0.8, pitch=0) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:30:15  INTENT [llm 2.8s] "I just lost sight of my owner, so I'll sit up and look for them, hoping they're nearby."  (anxious, searching quietly)
+21:30:15      turn_camera(yaw=0.6, pitch=0) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+21:30:25  INTENT [llm 4.5s] "I'll turn toward the spot where my owner vanished, wait quietly, then nod if they reappear."  (hopeful, quietly clingy)
+21:30:25      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=5) -> nod(times=1)  abort if: stranger_present
+21:30:37  INTENT [llm 3.2s] "I just lost sight of my owner, so I'll sit up, look toward the living room, and wait for them to come back."  (anxious, hopeful)
+21:30:37      turn_camera(yaw=0.6, pitch=-0.1) -> wait(seconds=4) -> nod(times=1)  abort if: stranger_present, owner_visible
+21:30:48  INTENT [llm 4.2s] "I just lost sight of my owner, so I'll turn toward the spot and look for them, hoping they're nearby."  (uneasy, searching, hopeful)
+21:30:48      turn_camera(yaw=0.6, pitch=0) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+21:31:00  INTENT [llm 2.8s] "I lost sight of my owner, so I'll look toward the spot and wait for them to return."  (anxious, hopeful)
+21:31:00      turn_camera(yaw=0.3, pitch=0) -> look_around(seconds=4) -> wait(seconds=3)  abort if: owner_visible, stranger_present
+21:31:12  INTENT [llm 3.5s] "I lost sight of my owner, so I'll sit up, look toward the spot, and wait for them."  (hopeful, slightly anxious)
+21:31:12      turn_camera(yaw=0.6, pitch=0) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+21:31:23  INTENT [llm 4.9s] "I'll turn toward the hallway and beckon, since I keep watching the same empty spot and the owner might hear me."  (hopeful, patient)
+21:31:23      turn_camera(yaw=0.8, pitch=0) -> beckon(times=2) -> wait(seconds=6)  abort if: stranger_present, owner_visible
+21:31:37  INTENT [llm 2.8s] "I've lost sight of my owner, so I'll stop searching the same spot and try a gentle beckon instead."  (anxious, hopeful)
+21:31:37      turn_camera(yaw=0, pitch=0) -> beckon(times=2) -> wait(seconds=4)  abort if: owner_visible, stranger_present
+21:31:49  INTENT [llm 6.3s] "I'll glance to the other side of the room, then settle down calmly while I wait for my owner."  (calm, a little wistful)
+21:31:49      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=4) -> rest_pose(seconds=10)  abort if: owner_visible, stranger_present, touched
+21:32:08  INTENT [llm 5.3s] "I'll sit up, glance toward the sofa side of the room, and look for my owner somewhere new."  (hopeful, restless)
+21:32:08      rise() -> turn_camera(yaw=0.9, pitch=-0.1) -> look_around(seconds=5)  abort if: owner_visible, stranger_present
+21:32:20  INTENT [llm 5.5s] "I'll turn toward the sofa and snap my gripper twice, a little trick to draw my owner back."  (hopeful, playful, patient)
+21:32:20      turn_camera(yaw=0.6, pitch=0) -> snap_gripper(times=2) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+21:32:33  INTENT [llm 6.2s] "I'll face the center and nod quietly, hoping my owner returns for a scratch."  (patient, hopeful)
+21:32:33      turn_camera(yaw=0, pitch=-0.1) -> wait(seconds=5) -> nod(times=1)  abort if: stranger_present
+21:32:45  INTENT [llm 4.9s] "I'll wave toward the hallway with a new gesture, since my owner was last seen nearby and nodding hasn't worked."  (hopeful, restless)
+21:32:45      turn_camera(yaw=-1.2, pitch=0) -> wave(times=2) -> wait(seconds=6)  abort if: stranger_present, touched
+21:33:00  INTENT [llm 5.0s] "I'll face the hallway once more, then settle down quietly so I don't annoy my owner."  (patient, a little wistful)
+21:33:00      turn_camera(yaw=-0.6, pitch=-0.1) -> wait(seconds=4) -> rest_pose(seconds=15)  abort if: owner_visible, stranger_present, touched
+21:33:24  INTENT [llm 5.8s] "I'll sit up, check the sofa side quietly, and give one soft nod, hoping for a scratch."  (hopeful, gently settling)
+21:33:24      rise() -> turn_camera(yaw=-0.6, pitch=0) -> nod(times=1)  abort if: owner_visible, stranger_present
+21:33:34  INTENT [llm 6.1s] "I'll quietly watch the hallway from where I stand, since my owner might be near."  (patient, hopeful, calm)
+21:33:34      turn_camera(yaw=-0.6, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=4)  abort if: owner_visible
+21:33:48  INTENT [llm 5.8s] "I'll face the sofa and stay still, since my owner liked it when I sat near them."  (patient, a little wistful)
+21:33:48      turn_camera(yaw=-0.8, pitch=0.1) -> wait(seconds=6) -> turn_camera(yaw=0, pitch=0)  abort if: owner_visible, stranger_present, touched
+21:34:01  INTENT [llm 3.1s] "I'll settle by the sofa side and wait quietly, since my owner liked me sitting near them."  (hopeful, gently lonely)
+21:34:01      turn_camera(yaw=0.8, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+21:34:11  INTENT [llm 3.0s] "I'll sit by the sofa and gently nod, hoping my owner comes back for a scratch."  (hopeful, slightly lonely)
+21:34:11      turn_camera(yaw=-0.6, pitch=-0.05) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+21:34:22  INTENT [llm 3.7s] "I'll turn toward the hallway and beckon once softly, then watch for my owner."  (hopeful, slightly lonely)
+21:34:22      turn_camera(yaw=-0.8, pitch=0) -> beckon(times=1) -> look_around(seconds=4)  abort if: owner_visible, stranger_present
+21:34:34  INTENT [llm 5.4s] "I'll turn toward the entry and snap my gripper softly, a small trick to coax my owner back."  (quietly hopeful)
+21:34:34      turn_camera(yaw=1, pitch=-0.2) -> snap_gripper(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present
+21:34:46  INTENT [llm 4.9s] "I'll turn toward the sofa, give one small wave, then wait calmly for my owner."  (hopeful, gently restless)
+21:34:46      turn_camera(yaw=0.5, pitch=-0.1) -> wave(times=1) -> wait(seconds=6)  abort if: stranger_present, owner_visible
+21:35:00    drives bored 0.18 miss_ 0.17 tired 0.00 curio 0.00 batte 0.00 | mood v +0.33 a 0.23 | in living room, standing
+21:35:00  --- night: asleep ---

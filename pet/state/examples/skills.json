@@ -1,0 +1,67 @@
+[
+ {
+  "name": "greet_owner",
+  "steps": [
+   {
+    "primitive": "turn_head",
+    "params": {
+     "yaw": 0.0,
+     "pitch": 0.3
+    }
+   },
+   {
+    "primitive": "nod",
+    "params": {
+     "times": 2
+    }
+   }
+  ],
+  "guards": [
+   "owner_visible"
+  ],
+  "source": "example"
+ },
+ {
+  "name": "greet_owner_wave",
+  "steps": [
+   {
+    "primitive": "turn_camera",
+    "params": {
+     "yaw": 0.0,
+     "pitch": 0.2
+    }
+   },
+   {
+    "primitive": "wave",
+    "params": {
+     "times": 3
+    }
+   }
+  ],
+  "guards": [
+   "owner_visible"
+  ],
+  "source": "example"
+ },
+ {
+  "name": "door_check",
+  "steps": [
+   {
+    "primitive": "wander",
+    "params": {
+     "seconds": 8
+    }
+   },
+   {
+    "primitive": "look_around",
+    "params": {
+     "seconds": 4
+    }
+   }
+  ],
+  "guards": [
+   "standing"
+  ],
+  "source": "example"
+ }
+]
