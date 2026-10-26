@@ -28,7 +28,7 @@ WIRES = {  # cable id: (pin, path from the component to the gather point, splice
     'amp-gnd': (39, 'amp-gnd', False), 'amp-din': (40, 'amp-din', False),
     'touch-pin17': (17, 'touch-pin17', True), 'touch-pin25': (25, 'touch-pin25', False),
     'touch-pin29': (29, 'touch-pin29', False), 'touch-pin31': (31, 'touch-pin31', False),
-    'mic-gnd': (34, 'mic-l', False), 'mic-sd': (38, 'mic-l', False), 'mic-sd3': (10, 'mic-b', False),
+    'mic-gnd': (34, 'mic-l', True), 'mic-sd': (38, 'mic-l', False), 'mic-sd3': (10, 'mic-b', False),
 }
 SPLICE_IN = {'mic-l': 'mic-l', 'mic-b': 'mic-b'}   # microphone SCK/WS/VDD pieces into the 12/35/17 joints
 

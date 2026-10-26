@@ -63,7 +63,7 @@ HEAD_WIRE_NAMES = [('amp-vin', '功放 Vin', '功放'), ('amp-bclk', '功放 BCL
                    ('amp-gnd', '功放 GND', '功放'), ('amp-din', '功放 DIN', '功放'), ('touch-pin17', '触摸板 3V3', '触摸板'),
                    ('touch-pin25', '触摸板 GND', '触摸板'), ('touch-pin29', '触摸板 SCL', '触摸板'), ('touch-pin31', '触摸板 SDA', '触摸板'),
                    ('mic-gnd', '麦克风 GND', '左耳焊盘'), ('mic-sd', '耳朵麦克风 SD', '左耳焊盘'), ('mic-sd3', '后脑麦克风 SD（可选）', '后脑焊盘')]
-JOINED = {'amp-bclk': '左耳和后脑的 SCK', 'amp-lrc': '左耳和后脑的 WS', 'touch-pin17': '左耳和后脑的 VDD'}
+JOINED = {'amp-bclk': '左耳和后脑的 SCK', 'amp-lrc': '左耳和后脑的 WS', 'touch-pin17': '左耳和后脑的 VDD', 'mic-gnd': '后脑的 GND'}
 
 
 def head_wire_li(c, n, src):
@@ -355,6 +355,7 @@ S_CHANGES = f'''
 <li>针号和以前一样：IMU 1、3、5、9，串口 7、11，5 V 2、6，功放 4、12、35、39、40，触摸板 17、25、29、31。</li>
 </ul></div>
 <div class="card">
+<p><b>按步骤焊：</b><a href="A7Z-SOLDER.html">A7Z-SOLDER</a> 把下面这些线排成一步一步，每个焊盘焊哪几根、多长、细线还是带母头，一次说清。</p>
 <p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>每根线分两段量：元器件到集线点（头盖左后角、出线口正上方），集线点到 A7Z 排针，含插头。集线点到排针这一段 = 集线点往下到出线口 34 mm + 出线口直线到背包座前墙顶 + 沿墙顶走到自己那一列、落到针上。粗体留够低头叼东西（和走路时转头）的余量，括号里是头只朝前不动的长度。每段两头各加 5 mm，进到 5 mm。</p>
 {figure(IMG_HEAD_WIRES, '头里下来的线：侧视和俯视，按比例', HEAD_WIRES_CAP)}
 {figure(IMG_HEAD_POSES, '四种头的姿态下，12 号针那根线集线点到排针的长度', HEAD_POSES_CAP)}
@@ -489,7 +490,7 @@ S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25�
 ''')
 
 S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后脑 SD 先不插', '两只耳朵的 GND 插在 34 号针，SD 插在 38 号针；SCK、WS、VDD 已经在头里并进 12、35、17 号针的线；装了后脑麦克风的话，它的小旗 10 插头贴在 10 号针旁边。', f'''
-<p>一共三个 INMP441 麦克风：两只耳朵在头盖两侧（D-025），第三个在头盖后壁内侧，可选（D-026 附录，可行性见 2026-10-24 的三麦克风调研报告）。焊接和并线在组装指南第 9 章 mics、mic-splice、mic-back 三步。到排针这里只有两个新插头要插：</p>
+<p>一共三个 INMP441 麦克风：两只耳朵在头盖两侧（D-025），第三个在头盖后壁内侧，可选（D-026 附录，可行性见 2026-10-24 的三麦克风调研报告）。一步一步怎么焊（每个焊盘焊哪几根、多长）见 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>；组装指南第 9 章 mics、mic-splice、mic-back 三步。到排针这里只有两个新插头要插：</p>
 <ol class="acts">
 <li>{tag('hand')}小旗 34（麦克风 GND）插<b>外排第 17 根</b>，34 号针。</li>
 <li>{tag('hand')}小旗 38（耳朵麦克风 SD，I2S0 DIN0）插<b>外排第 19 根</b>，38 号针，紧挨着最后一根 40 号（功放 DIN）。</li>
@@ -505,8 +506,8 @@ S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后�
 <p><b>三个麦克风怎么连到一起：</b>每个麦克风有五根要接的线：SCK（位时钟）、WS（左右声道时钟）、SD（声音数据）、VDD（3.3 V）、GND。三个麦克风的 SCK、WS、VDD、GND 各自连成一条线，SD 分两条。</p>
 <ul class="acts">
 <li><b>右耳到左耳：</b>右耳的五根线跨过头盖内顶，焊到左耳的同名焊盘上（SCK 到 SCK，WS 到 WS……）。</li>
-<li><b>左耳到集线点：</b>左耳的五根线顺着头盖左边走到左后角，就是出线口上方所有头里的线汇合的地方。SCK、WS、VDD 在这里和功放 BCLK、功放 LRC、触摸板 3V3 的线拧在一起焊，套热缩管或缠电工胶布（热缩管要用热风枪吹，别用烙铁烫，杜邦线外皮会软）；SD、GND 是带插头的杜邦线，接着下脖子到 38、34 号针。</li>
-<li><b>后脑到集线点：</b>后脑的五根线也走到这个左后角。SCK、WS、VDD 焊进上面那三个接头；GND 剪开麦克风 GND 线焊进去；SD 单独下脖子，贴小旗 10。</li>
+<li><b>左耳到集线点：</b>左耳的五根线顺着头盖左边走到左后角，就是出线口上方所有头里的线汇合的地方。SCK、WS、VDD 在这里和功放 BCLK、功放 LRC、触摸板 3V3 的线拧在一起焊，套热缩管或缠电工胶布（热缩管要用热风枪吹，别用烙铁烫，杜邦线外皮会软）；GND 在这里焊成第四个接头（后脑 GND 也焊进来），下来一根带插头的线到 34 号针；SD 是带插头的杜邦线，不停，接着下脖子到 38 号针。</li>
+<li><b>后脑到集线点：</b>后脑的五根线也走到这个左后角。SCK、WS、VDD 焊进上面那三个接头；GND 和左耳 GND 焊成第四个接头（下来一根小旗 34）；SD 单独下脖子，贴小旗 10。</li>
 </ul>
 <p><b>为什么有的焊盘上是两根线：</b>左耳的焊盘就是右耳那五根线的接线点。每个焊盘上有左耳自己往下走的一根和右耳过来的一根；GND 焊盘再加 L/R 的短线，一共三根。右耳的 VDD 焊盘上是 VDD 线加 L/R 短线。同名焊盘本来就是同一条线，所以这样焊没有问题；焊的时候先把两根线头拧在一起再上锡，焊点更牢。</p>
 </div>
@@ -523,7 +524,7 @@ S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后�
 <ul class="acts">
 <li>右耳到左耳：5 根细线，各 {HW['micPieces']['mic-r']} mm。</li>
 <li>左耳到集线点：SCK、WS、VDD 3 根细线，各 {HW['micPieces']['mic-l']} mm（含 25 mm，头盖还能像盖子一样往后翻开）。</li>
-<li>左耳的 SD 和 GND：带一个插头的杜邦线，从左耳焊盘经过集线点一直到 A7Z 排针，不剪断。SD <b>{HWW['mic-sd']['cut']['whole']['pickup']} mm</b>（头只朝前不动：{HWW['mic-sd']['cut']['whole']['home']}），GND <b>{HWW['mic-gnd']['cut']['whole']['pickup']} mm</b>（{HWW['mic-gnd']['cut']['whole']['home']}）。</li>
+<li>左耳的 SD：带一个插头的杜邦线，从左耳焊盘经过集线点一直到 A7Z 排针，不剪断，<b>{HWW['mic-sd']['cut']['whole']['pickup']} mm</b>（头只朝前不动：{HWW['mic-sd']['cut']['whole']['home']}）。</li><li>左耳的 GND：细线 {HWW['mic-gnd']['cut']['toGather']} mm 到集线点，在接头 4 和后脑 GND 并起来，下来一根带插头的 <b>{HWW['mic-gnd']['cut']['gatherToPin']['pickup']} mm</b>（{HWW['mic-gnd']['cut']['gatherToPin']['home']}），小旗 34。</li>
 <li>后脑：SCK、WS、VDD、GND 4 根细线到集线点，各 {HW['micPieces']['mic-b']} mm；SD 带一个插头，一整根 <b>{HWW['mic-sd3']['cut']['whole']['pickup']} mm</b>（{HWW['mic-sd3']['cut']['whole']['home']}）。</li>
 </ul>
 <p>每根线怎么量、为什么这么长，见开头“现在的装法”里的按比例图。</p>

@@ -66,8 +66,8 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('tscl', 'xiao.D5', 'a7z.p29', BLU, 'touch', '蓝：触摸板 D5（SCL）→ A7Z 29 号针', '小旗 29。'),
     ('tsda', 'xiao.D4', 'a7z.p31', GRN, 'touch', '绿：触摸板 D4（SDA）→ A7Z 31 号针', '小旗 31。'),
     ('msd', 'micl.SD', 'a7z.p38', PINK, 'mic', '左耳麦克风 SD → A7Z 38 号针', '小旗 38，两个麦克风的数据线（I2S0 DIN0）。带插头的杜邦线。'),
-    ('mgnd', 'micl.GND', 'gp.GND', BLK, 'mic', '左耳麦克风 GND → 集线点', '带插头的杜邦线，路过集线点（后脑的 GND 在这里焊进来）。'),
-    ('ggnd', 'gp.GND', 'a7z.p34', BLK, 'mic', '集线点 GND → A7Z 34 号针', '小旗 34。还是左耳那根 GND 杜邦线。'),
+    ('mgnd', 'micl.GND', 'gp.GND', BLK, 'mic', '左耳麦克风 GND → 集线点', '细线，不带插头：和后脑 GND、往下的小旗 34 焊在一起（接头 4）。'),
+    ('ggnd', 'gp.GND', 'a7z.p34', BLK, 'mic', '集线点 GND → A7Z 34 号针', '小旗 34。接头 4 往下的一根带插头的线。'),
     ('msck', 'micl.SCK', 'gp.SCK', ORG, 'mic', '左耳麦克风 SCK → 集线点（并进功放 BCLK）',
      '细线，不带插头：在头盖左后角和功放 BCLK 线拧在一起焊，套热缩管或缠电工胶布。'),
     ('mws', 'micl.WS', 'gp.WS', PUR, 'mic', '左耳麦克风 WS → 集线点（并进功放 LRC）', '细线，不带插头：和功放 LRC 线焊在一起。'),
@@ -80,7 +80,7 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('bsck', 'micb.SCK', 'gp.SCK', ORG, 'micb', '后脑麦克风 SCK → 集线点', '可选。细线，焊进 SCK/BCLK 那个接头。'),
     ('bws', 'micb.WS', 'gp.WS', PUR, 'micb', '后脑麦克风 WS → 集线点', '可选。细线，焊进 WS/LRC 那个接头。'),
     ('bvdd', 'micb.VDD', 'gp.VDD', RED, 'micb', '后脑麦克风 VDD → 集线点', '可选。细线，焊进 VDD/3V3 那个接头（3.3 V）。'),
-    ('bgnd', 'micb.GND', 'gp.GND', BLK, 'micb', '后脑麦克风 GND → 集线点', '可选。细线，在集线点剪开左耳那根 GND 杜邦线焊进去。'),
+    ('bgnd', 'micb.GND', 'gp.GND', BLK, 'micb', '后脑麦克风 GND → 集线点', '可选。细线，在集线点焊进接头 4。'),
     ('bsd', 'micb.SD', 'a7z.p10', PINK, 'micb', '后脑麦克风 SD（小旗 10）→ 贴在 10 号针旁，先不插',
      '可选。它自己的数据线（I2S0 DIN3），带插头。10 号针现在是调试串口的接收脚，DIN3 的设置试过以前插头用胶带贴在排针旁边，不插上去。'),
 ]
@@ -170,7 +170,7 @@ def gather() -> dict:
     names = {'SCK': ('功放 BCLK + 麦克风 SCK', '接头：功放 BCLK 线剪开，左耳和后脑的 SCK 焊进去，往下是小旗 12。'),
              'WS': ('功放 LRC + 麦克风 WS', '接头：功放 LRC 线剪开，左耳和后脑的 WS 焊进去，往下是小旗 35。'),
              'VDD': ('触摸板 3V3 + 麦克风 VDD', '接头：触摸板 3V3 线剪开，左耳和后脑的 VDD 焊进去，往下是小旗 17。'),
-             'GND': ('麦克风 GND', '接头：左耳的 GND 杜邦线剪开，后脑的 GND 焊进去，往下是小旗 34。')}
+             'GND': ('麦克风 GND', '接头 4：左耳 GND、后脑 GND 和往下的小旗 34 焊在一起。')}
     pins = []
     for i, (pid, (name, note)) in enumerate(names.items()):
         pins.append({'id': pid, 'label': pid, 'name': name, 'note': note, 'multi': True,

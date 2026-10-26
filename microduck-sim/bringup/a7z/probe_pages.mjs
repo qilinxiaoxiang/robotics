@@ -1,4 +1,4 @@
-// Probe A7Z-PINS.html and A7Z-ANTENNA.html at 1280 px and 390 px: horizontal overflow, small inputs/buttons,
+// Probe A7Z-PINS, A7Z-ANTENNA, A7Z-COOLING and A7Z-SOLDER at 1280 px and 390 px: horizontal overflow, small inputs/buttons,
 // broken images, <table> elements, console problems. Saves full-page screenshots in shots/.
 // Run: node probe_pages.mjs   (uses ../build/probe/cdp.mjs and the installed Google Chrome, headless)
 import { launch } from '../build/probe/cdp.mjs';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, 'shots');
-const PAGES = ['A7Z-PINS.html', 'A7Z-ANTENNA.html', 'A7Z-COOLING.html'].map((p) => path.join(HERE, '..', p));
+const PAGES = ['A7Z-PINS.html', 'A7Z-ANTENNA.html', 'A7Z-COOLING.html', 'A7Z-SOLDER.html'].map((p) => path.join(HERE, '..', p));
 const views = [
   { name: 'desk', width: 1280, height: 900, deviceScaleFactor: 1, mobile: false },
   { name: 'mob', width: 390, height: 844, deviceScaleFactor: 1, mobile: true },
