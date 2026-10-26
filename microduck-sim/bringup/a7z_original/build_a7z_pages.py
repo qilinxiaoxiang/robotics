@@ -16,6 +16,7 @@ from pathlib import Path
 from PIL import Image
 
 import photos as P
+import direct_bench as DB
 
 HERE = Path(__file__).resolve().parent
 OUT_PINS = HERE.parent / 'A7Z-PINS-ORIGINAL.html'
@@ -150,10 +151,10 @@ USED = {
     7: (GRN, '串口绿 A7Z 发'),
     9: (BLK, 'IMU 黑 GND'),
     11: (WHT, '串口白 A7Z 收'),
-    17: (TOUCH, '触摸板 3.3 V'),
-    25: (TOUCH, '触摸板 GND'),
-    29: (TOUCH, '触摸板 SCL'),
-    31: (TOUCH, '触摸板 SDA'),
+    17: (RED, '触摸板红 3.3 V'),
+    25: (BLK, '触摸板黑 GND'),
+    29: (BLU, '触摸板蓝 SCL'),
+    31: (GRN, '触摸板绿 SDA'),
     35: (AMP, '功放紫 LRC'),
     39: (BLK, '功放黑 GND'),
     2: (RED, '5 V 线 红'),
@@ -224,8 +225,8 @@ IMG_POWER = top_fig([(2, '#e53935'), (4, '#1f6fd1'), (6, '#1d1d1f')],
 IMG_IMU = top_fig([(1, '#d7263d'), (3, '#1f6fd1'), (5, '#c99a00'), (9, '#1d1d1f')])
 IMG_UART = top_fig([(7, '#1f9d55'), (11, '#ffffff'), (8, '#9e9e9e'), (10, '#9e9e9e')])
 IMG_AUDIO = top_fig([(4, '#1f6fd1'), (12, '#ffffff'), (35, '#7b5ea7'), (39, '#1d1d1f'), (40, '#ef6c00')])
-IMG_TOUCH = top_fig([(17, TOUCH), (25, TOUCH), (29, TOUCH), (31, TOUCH)])
-IMG_XIAO = uri(P.xiao_figure([('3V3', '17', TOUCH), ('GND', '25', TOUCH), ('D5', '29', TOUCH), ('D4', '31', TOUCH)]), 1100)
+IMG_TOUCH = top_fig([(17, '#d7263d'), (25, '#1d1d1f'), (29, '#1f6fd1'), (31, '#1f9d55')])
+IMG_XIAO = uri(P.xiao_figure([('3V3', '17', '#d7263d'), ('GND', '25', '#1d1d1f'), ('D5', '29', '#1f6fd1'), ('D4', '31', '#1f9d55')]), 1100)
 IMG_ANT_PHOTO = top_fig([(1, '#ffd600')], [('A', P.IPEX_TOP, 22, 150), ('F', P.FAN_TOP, 22, 40)])
 
 
@@ -265,6 +266,13 @@ S_CHANGES = '''
 <p>Pi 的版本还在：<a href="BRINGUP.html">BRINGUP.html</a>。</p>
 </section>'''
 
+S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知道每块板子的每根线插 A7Z 的哪根针。', f'''
+<p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 上边（前沿），1 号针在左端，USB-C 口在下边（后沿）。左半边是躯干里的板子（IMU、OpenRB、5 V 降压板），右半边是头里的功放和触摸板。每根线从板子直接插到 A7Z，没有集线点，也没有面包板。</p>
+<div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。</div>
+<div style="margin:10px 0">{DB.html()}</div>
+<p>线的颜色都是实际的：5 V 线红 2、黑 6；串口绿 7、白 11；IMU 红 1、蓝 3、黄 5、黑 9；功放蓝 Vin 4、白 BCLK 12、紫 LRC 35、黑 GND 39、橙 DIN 40；触摸板红 3.3 V 17、黑 GND 25、蓝 SCL 29、绿 SDA 31。</p>
+''')
+
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
 <div class="warn"><b>A7Z 的 1 号针在天线插座那一头，不在 microSD 卡那一头。</b>照 Pi 的习惯从 microSD 卡那头数，整排都会插反，5 V 会插到信号针上。</div>
 <ol class="acts">
@@ -279,7 +287,7 @@ S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线�
 </div>
 <h3>全部 17 根线插在哪里</h3>
 <p>和上面照片同一个方向：1 号针在上，里排在左，外排在右。灰色的针空着。</p>
-<figure class="narrow">{pin_map_svg()}<figcaption>功放五根是实际的线色：蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN；铜色是触摸板的线。外排的灰色虚线框：摄像头下沿在这一段插头前面约 2 mm，线要贴着插头折。</figcaption></figure>
+<figure class="narrow">{pin_map_svg()}<figcaption>功放和触摸板的针都按实际线色画：功放蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN；触摸板红 3.3 V、黑 GND、蓝 SCL、绿 SDA。外排的灰色虚线框：摄像头下沿在这一段插头前面约 2 mm，线要贴着插头折。</figcaption></figure>
 <div class="card"><b>装进头壳以后：</b>板子竖着，排针在下边，1 号针和天线插座那头在机器人<b>左边</b>。组装指南的顺序是先把板子装上导轨，再插线：功放的五根和触摸板的四根在线夹和天线装好以后插，从躯干上来的八根在合头壳的时候插。</div>
 ''')
 
@@ -468,10 +476,10 @@ SOURCES_PINS = '''
 <li>摄像头板和插头的距离：组装指南 CAD（guide/print/world/camera_board.stl 和排针插头的位置），背面元件范围按 Radxa 背面照片，2026-10-15 核对（guide/print/face-a7z/pin-clearance/pin-clearance.png）。接线颜色和小旗沿用 BRINGUP.html 第 4、11、12、13 步。背包电源：DECISIONS.md D-010。</li>
 <li>核对日期：2026-10-15。</li></ul></section>'''
 
-PINS_BODY = S_CHANGES + S_COUNT + S_FLAGS + S_POWER + S_IMU + S_UART + S_AUDIO + S_TOUCH + S_CHECK + S_SOFT + SOURCES_PINS
+PINS_BODY = S_CHANGES + S_MAP + S_COUNT + S_FLAGS + S_POWER + S_IMU + S_UART + S_AUDIO + S_TOUCH + S_CHECK + S_SOFT + SOURCES_PINS
 PINS_LEAD = ('<p class="lead">头里的电脑从 Pi Zero W 换成 Radxa Cubie A7Z。这一页一步一步讲 40 针排针上每根杜邦线插哪里，和插好以后要打开的接口。'
              '全程断电插线，最后检查完才通电。</p>')
-PINS_NAV = [('changes', '变了什么'), ('count', '1 认针'), ('flags', '2 改小旗'), ('power', '3 5 V'), ('imu', '4 IMU'),
+PINS_NAV = [('changes', '变了什么'), ('map', '总接线图'), ('count', '1 认针'), ('flags', '2 改小旗'), ('power', '3 5 V'), ('imu', '4 IMU'),
             ('uart', '5 串口'), ('audio', '6 功放'), ('touch', '7 触摸板'), ('check', '8 检查'), ('software', '9 打开接口')]
 
 # ================================================================ PAGE 2: A7Z-ANTENNA.html

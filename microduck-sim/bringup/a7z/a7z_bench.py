@@ -40,8 +40,8 @@ PARTS = json.loads((P.HERE.parent / 'parts' / 'parts.json').read_text())
 PHOTOS = P.HERE.parent / 'parts' / 'photos'
 GUIDE = P.HERE.parent.parent / 'guide' / 'data' / 'guide-data.json'
 
-# Wire colours: the real ones where the build fixed them (5 V lead, UART pair, IMU cable, touch leads); the amplifier and
-# microphone jumpers are any colour, identified by their flags, so they get one colour per signal here.
+# Wire colours: the real ones where the build fixed them (5 V lead, UART pair, IMU cable, touch leads, amplifier leads);
+# the microphone and breadboard jumpers are any colour, identified by their flags, so they get one colour per signal here.
 RED, BLK, BLU, YEL, GRN, WHT = '#d7263d', '#1d1d1f', '#1f6fd1', '#c99a00', '#1f9d55', '#ffffff'
 PUR, ORG, TEAL, PINK, BRN = '#7b5ea7', '#ef6c00', '#00897b', '#d81b60', '#8d6e63'
 
@@ -55,13 +55,13 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('isda', 'imu.SDA', 'a7z.p3', BLU, 'imu', '蓝：IMU SDA → A7Z 3 号针', '4397 线的蓝插孔，TWI7 的数据线。'),
     ('iscl', 'imu.SCL', 'a7z.p5', YEL, 'imu', '黄：IMU SCL → A7Z 5 号针', '4397 线的黄插孔，TWI7 的时钟线。'),
     ('ignd', 'imu.GND', 'a7z.p9', BLK, 'imu', '黑：IMU GND → A7Z 9 号针', '4397 线的黑插孔。'),
-    ('avin', 'amp.Vin', 'a7z.p4', RED, 'audio', '功放 Vin → A7Z 4 号针（5 V）', '小旗 4。4 号针是 5 V，插错会烧板子。'),
-    ('abclk', 'amp.BCLK', 'bb.SCK', ORG, 'audio', '功放 BCLK → 面包板黄条', '带公头的线，插面包板黄条，和麦克风的 SCK 连通。'),
-    ('gsck', 'bb.SCK', 'a7z.p12', ORG, 'audio', '面包板黄条 → A7Z 12 号针', '小旗 12。30 cm 公对母杜邦线，不剪：公头插黄条，母头插 12 号针。'),
-    ('alrc', 'amp.LRC', 'bb.WS', PUR, 'audio', '功放 LRC → 面包板绿条', '带公头的线，插面包板绿条，和麦克风的 WS 连通。'),
+    ('avin', 'amp.Vin', 'a7z.p4', BLU, 'audio', '蓝：功放 Vin → A7Z 4 号针（5 V）', '小旗 4。4 号针是 5 V，插错会烧板子。'),
+    ('abclk', 'amp.BCLK', 'bb.SCK', WHT, 'audio', '白：功放 BCLK → 面包板黄条', '带公头的线，插面包板黄条，和麦克风的 SCK 连通。'),
+    ('gsck', 'bb.SCK', 'a7z.p12', TEAL, 'audio', '面包板黄条 → A7Z 12 号针', '小旗 12。30 cm 公对母杜邦线，不剪：公头插黄条，母头插 12 号针。'),
+    ('alrc', 'amp.LRC', 'bb.WS', PUR, 'audio', '紫：功放 LRC → 面包板绿条', '带公头的线，插面包板绿条，和麦克风的 WS 连通。'),
     ('gws', 'bb.WS', 'a7z.p35', PUR, 'audio', '面包板绿条 → A7Z 35 号针', '小旗 35。30 cm 公对母杜邦线，不剪。'),
-    ('agnd', 'amp.GND', 'a7z.p39', BLK, 'audio', '功放 GND → A7Z 39 号针', '小旗 39。'),
-    ('adin', 'amp.DIN', 'a7z.p40', TEAL, 'audio', '功放 DIN → A7Z 40 号针', '小旗 40，A7Z 送给功放的声音数据。'),
+    ('agnd', 'amp.GND', 'a7z.p39', BLK, 'audio', '黑：功放 GND → A7Z 39 号针', '小旗 39。'),
+    ('adin', 'amp.DIN', 'a7z.p40', ORG, 'audio', '橙：功放 DIN → A7Z 40 号针', '小旗 40，A7Z 送给功放的声音数据。'),
     ('t3v3', 'xiao.3V3', 'bb.VDD', RED, 'touch', '红：触摸板 3V3 → 面包板红条', '带公头的线，插面包板红条，和麦克风的 VDD 连通。'),
     ('gvdd', 'bb.VDD', 'a7z.p17', RED, 'touch', '红：面包板红条 → A7Z 17 号针（3.3 V）', '小旗 17。30 cm 公对母杜邦线，不剪。'),
     ('tgnd', 'xiao.GND', 'a7z.p25', BLK, 'touch', '黑：触摸板 GND → A7Z 25 号针', '小旗 25。'),
@@ -70,15 +70,15 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('msd', 'micl.SD', 'a7z.p38', PINK, 'mic', '左耳麦克风 SD → A7Z 38 号针', '小旗 38，两个麦克风的数据线（I2S0 DIN0）。带插头的杜邦线。'),
     ('mgnd', 'micl.GND', 'a7z.p34', BLK, 'mic', '左耳麦克风 GND → A7Z 34 号针（双麦克风）',
      '小旗 34，一整根带插头的杜邦线。装了后脑麦克风就不要这根，34 号针改由面包板黑条下来。'),
-    ('msck', 'micr.SCK', 'bb.SCK', ORG, 'mic', '右耳 SCK → 面包板黄条', '带公头的线。右耳离面包板最近，共用的线从右耳去面包板。'),
+    ('msck', 'micr.SCK', 'bb.SCK', TEAL, 'mic', '右耳 SCK → 面包板黄条', '带公头的线。右耳离面包板最近，共用的线从右耳去面包板。'),
     ('mws', 'micr.WS', 'bb.WS', PUR, 'mic', '右耳 WS → 面包板绿条', '带公头的线。'),
     ('mvdd', 'micr.VDD', 'bb.VDD', RED, 'mic', '右耳 VDD → 面包板红条', '带公头的线（3.3 V）。'),
-    ('rsck', 'micr.SCK', 'micl.SCK', ORG, 'mic', '右耳 SCK → 左耳 SCK', '两头都焊，跨过头盖内顶。'),
+    ('rsck', 'micr.SCK', 'micl.SCK', TEAL, 'mic', '右耳 SCK → 左耳 SCK', '两头都焊，跨过头盖内顶。'),
     ('rws', 'micr.WS', 'micl.WS', PUR, 'mic', '右耳 WS → 左耳 WS', '两头都焊。'),
     ('rsd', 'micr.SD', 'micl.SD', PINK, 'mic', '右耳 SD → 左耳 SD', '两头都焊。两个麦克风共用一根数据线，左右声道由 L/R 焊盘分开。'),
     ('rvdd', 'micr.VDD', 'micl.VDD', RED, 'mic', '右耳 VDD → 左耳 VDD', '两头都焊。'),
     ('rgnd', 'micr.GND', 'micl.GND', BLK, 'mic', '右耳 GND → 左耳 GND', '两头都焊。'),
-    ('bsck', 'micb.SCK', 'bb.SCK', ORG, 'micb', '后脑麦克风 SCK → 面包板黄条', '可选。带公头的线。'),
+    ('bsck', 'micb.SCK', 'bb.SCK', TEAL, 'micb', '后脑麦克风 SCK → 面包板黄条', '可选。带公头的线。'),
     ('bws', 'micb.WS', 'bb.WS', PUR, 'micb', '后脑麦克风 WS → 面包板绿条', '可选。带公头的线。'),
     ('bvdd', 'micb.VDD', 'bb.VDD', RED, 'micb', '后脑麦克风 VDD → 面包板红条', '可选。带公头的线（3.3 V）。'),
     ('bgnd', 'micb.GND', 'bb.GND', BLK, 'micb', '后脑麦克风 GND → 面包板黑条', '可选。带公头的线。'),

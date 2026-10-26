@@ -201,6 +201,7 @@ def page(title: str, h1: str, lead: str, nav, body: str) -> str:
 # ---------------------------------------------------------------- pin map (vertical, like the photo)
 YEL, RED, BLK, BLU, GRN, WHT = '#c99a00', '#d7263d', '#1d1d1f', '#1f6fd1', '#1f9d55', '#ffffff'
 AMP = '#7b5ea7'
+ORG = '#ef6c00'
 TOUCH = '#c87533'   # copper, as in the assembly guide's touch wires
 MIC = '#d81b60'
 USED = {
@@ -210,21 +211,21 @@ USED = {
     7: (GRN, '串口绿 A7Z 发'),
     9: (BLK, 'IMU 黑 GND'),
     11: (WHT, '串口白 A7Z 收'),
-    17: (TOUCH, '触摸板 3.3 V'),
-    25: (TOUCH, '触摸板 GND'),
-    29: (TOUCH, '触摸板 SCL'),
-    31: (TOUCH, '触摸板 SDA'),
+    17: (RED, '触摸板红 3.3 V'),
+    25: (BLK, '触摸板黑 GND'),
+    29: (BLU, '触摸板蓝 SCL'),
+    31: (GRN, '触摸板绿 SDA'),
     35: (AMP, '功放 LRC + 麦克风 WS'),
-    39: (AMP, '功放 GND'),
+    39: (BLK, '功放黑 GND'),
     2: (RED, '5 V 线 红'),
-    4: (AMP, '功放 Vin 5 V'),
+    4: (BLU, '功放蓝 Vin 5 V'),
     6: (BLK, '5 V 线 黑 GND'),
     12: (AMP, '功放 BCLK + 麦克风 SCK'),
     34: (MIC, '麦克风 GND'),
     38: (MIC, '麦克风 SD'),
-    40: (AMP, '功放 DIN'),
+    40: (ORG, '功放橙 DIN'),
 }
-USED[17] = (TOUCH, '触摸板 3.3 V + 麦克风 VDD')
+USED[17] = (RED, '触摸板红 3.3 V + 麦克风 VDD')
 NOTE = {8: '调试串口 空着', 10: '调试串口；后脑 SD 贴旁边'}
 
 
@@ -277,12 +278,12 @@ def top_fig(pins, landmarks=()):
 
 IMG_COUNT = top_fig([(1, '#ffd600'), (2, '#e53935'), (39, '#ffd600'), (40, '#e53935')], LAND_TOP)
 IMG_BOTTOM = uri(P.bottom_figure(), TOP_W)
-IMG_POWER = top_fig([(2, '#e53935'), (4, '#7b5ea7'), (6, '#1d1d1f')],
+IMG_POWER = top_fig([(2, '#e53935'), (4, '#1f6fd1'), (6, '#1d1d1f')],
                     [('U1', P.USBC1_TOP, 30, 1130), ('U2', P.USBC2_TOP, 30, 880)])
 IMG_IMU = top_fig([(1, '#d7263d'), (3, '#1f6fd1'), (5, '#c99a00'), (9, '#1d1d1f')])
 IMG_UART = top_fig([(7, '#1f9d55'), (11, '#ffffff'), (8, '#9e9e9e'), (10, '#9e9e9e')])
-IMG_AUDIO = top_fig([(4, '#7b5ea7'), (12, '#f9a825'), (35, '#7b5ea7'), (39, '#7b5ea7'), (40, '#7b5ea7')])
-IMG_TOUCH = top_fig([(17, TOUCH), (25, TOUCH), (29, TOUCH), (31, TOUCH)])
+IMG_AUDIO = top_fig([(4, '#1f6fd1'), (12, '#f9a825'), (35, '#7b5ea7'), (39, '#1d1d1f'), (40, '#ef6c00')])
+IMG_TOUCH = top_fig([(17, '#d7263d'), (25, '#1d1d1f'), (29, '#1f6fd1'), (31, '#1f9d55')])
 def mic_pads_figure() -> Image.Image:
     """The INMP441 label face, enlarged, with a tag beside each pad naming where its wire ends up."""
     from PIL import ImageDraw, ImageFont
@@ -321,8 +322,8 @@ HEAD_POSES_CAP = ('同一根线（12 号针）在四种姿态下的“集线点�
                   f'低头叼东西最低时 {PF["gp_low"]["straightMm"]:.0f} mm，起身时脖子到 -90° 限位 {PF["gp_max"]["straightMm"]:.0f} mm；蓝线前墙顶到针 20 mm。剪线长度按最远那种留，再加两头各 5 mm。'
                   '35、39、40 号在排针另一头，蓝线沿墙顶多走 30 多 mm。低头的动作取 Pollen 的 groundpick61 在仿真里的关节轨迹（D-027）。')
 HEAD_WIRES_CAP = f'按组装指南的 CAD 画的，比例尺 50 mm。黄框是摄像头背面的面包板。橙线功放 BCLK、粉线右耳、红线触摸板 3V3 按直角路线到面包板的插头尾；棕线面包板到集线点；黑线集线点到出线口；蓝实线头朝前时出线口到前墙顶 {round(HW["spanMm"]["home"])} mm；蓝虚线是低头叼东西时出线口离前墙顶最远的姿态（起身时脖子到 -90° 限位），{round(HW["spanMm"]["pickup"])} mm。'
-IMG_MIC = top_fig([(12, '#f9a825'), (17, TOUCH), (34, MIC), (35, AMP), (38, MIC), (10, '#9e9e9e')])
-IMG_XIAO = uri(P.xiao_figure([('3V3', '17', TOUCH), ('GND', '25', TOUCH), ('D5', '29', TOUCH), ('D4', '31', TOUCH)]), 1100)
+IMG_MIC = top_fig([(12, '#f9a825'), (17, '#d7263d'), (34, MIC), (35, AMP), (38, MIC), (10, '#9e9e9e')])
+IMG_XIAO = uri(P.xiao_figure([('3V3', '17', '#d7263d'), ('GND', '25', '#1d1d1f'), ('D5', '29', '#1f6fd1'), ('D4', '31', '#1f9d55')]), 1100)
 IMG_ANT_PHOTO = top_fig([(1, '#ffd600')], [('A', P.IPEX_TOP, 22, 150), ('F', P.FAN_TOP, 22, 40)])
 
 
@@ -375,7 +376,7 @@ S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知�
 <p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 上边（前沿），1 号针在左端，USB-C 口在下边（后沿）。插到它上面的板子画在排针前面：左半边是躯干里的（IMU、OpenRB、5 V 降压板），右半边是头里的（两只耳朵的麦克风、面包板、功放、触摸板；后脑麦克风是可选的）。</p>
 <div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的板子和线变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。上面的按钮按组筛选；“逐根接线”一根一根走，手机上会把两头放大。</div>
 <div style="margin:10px 0">{AB.html()}</div>
-<p>线的颜色：5 V 线、串口、IMU 线和触摸板四根是实际的颜色；功放和麦克风的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面：功放 BCLK、功放 LRC、触摸板 3V3 和右耳的 SCK、WS、VDD 各插一个孔，分在黄、绿、红三条上，每条一根公对母线下到 12、35、17 号针。右耳的五根线还焊到左耳的同名焊盘；左耳的 SD 下到 38 号针，GND 一整根下到 34 号针（双麦克风）。装后脑麦克风时，它的 SCK、WS、VDD 也插这三条，右耳和后脑的 GND 插第四条黑条，黑条下到 34 号针，左耳那根 GND 就不要了。后脑的 SD 画到 10 号针，实际插头贴在旁边，先不插。</p>
+<p>线的颜色：5 V 线、串口、IMU 线、触摸板四根和功放五根（蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN）是实际的颜色；麦克风和面包板下来的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面：功放 BCLK、功放 LRC、触摸板 3V3 和右耳的 SCK、WS、VDD 各插一个孔，分在黄、绿、红三条上，每条一根公对母线下到 12、35、17 号针。右耳的五根线还焊到左耳的同名焊盘；左耳的 SD 下到 38 号针，GND 一整根下到 34 号针（双麦克风）。装后脑麦克风时，它的 SCK、WS、VDD 也插这三条，右耳和后脑的 GND 插第四条黑条，黑条下到 34 号针，左耳那根 GND 就不要了。后脑的 SD 画到 10 号针，实际插头贴在旁边，先不插。</p>
 ''')
 
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
@@ -392,7 +393,7 @@ S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线�
 </div>
 <h3>全部 19 根线插在哪里</h3>
 <p>和上面照片同一个方向：1 号针在上，里排在左，外排在右。灰色的针空着。在背包座里，这张图的上边是机器人左边，右边（外排）朝前、朝脖子。</p>
-<figure class="narrow">{pin_map_svg()}<figcaption>紫色是功放的线，铜色是触摸板的线，粉色是麦克风的线（杜邦线颜色随意，按小旗认）。12、17、35 号针的线从面包板下来，麦克风的线插在面包板同一条上。</figcaption></figure>
+<figure class="narrow">{pin_map_svg()}<figcaption>功放和触摸板的针按实际线色画：功放蓝 Vin、黑 GND、橙 DIN，触摸板红 3.3 V、黑 GND、蓝 SCL、绿 SDA；12、35 号针是面包板下来的线（黄条、绿条），粉色是麦克风的线（这几根杜邦线颜色随意，按小旗认）。12、17、35 号针的线从面包板下来，麦克风的线插在面包板同一条上。</figcaption></figure>
 <div class="card"><b>装进背包座以后：</b>元件面朝上，排针在前沿，外排挨着板边、朝脖子，1 号针和天线插座那头在机器人<b>左边</b>。板子和 6530B 散热片先在桌上从下面拧到打印的托板上，托板再放进背包座；之后先插躯干上来的八根（第 3 到 5 步），最后插头里下来的十一根（第 6 到 8 步）。</div>
 ''')
 
@@ -462,15 +463,15 @@ S_UART = step('uart', '第 5 步 · 5 分钟', 'OpenRB 串口：绿 7、白 11�
 S_AUDIO = step('audio', '第 6 步 · 5 分钟', '功放：Vin 4、BCLK 12、LRC 35、GND 39、DIN 40', '功放的五个插头都插好。', f'''
 <p>功放（MAX98357A）现在在头里黄色下壳的地板上，喇叭左边（D-026）。五根线顺着脖子下来，插头后面有小旗。BCLK 和 LRC 先插到摄像头背面的面包板上，再由面包板各下来一根小旗 12、35 的公对母线，和麦克风的 SCK、WS 共用（第 8 步），照常插。这一步只插线，不试声音。</p>
 <ol class="acts">
-<li>{tag('hand')}小旗 4（Vin，5 V）插<b>外排第 2 根</b>，4 号针。</li>
+<li>{tag('hand')}小旗 4（蓝线，Vin，5 V）插<b>外排第 2 根</b>，4 号针。</li>
 <li>{tag('hand')}小旗 35（LRC）插<b>里排第 18 根</b>，倒数第 3 根，35 号针。</li>
-<li>{tag('hand')}小旗 39（GND，原来写 34）插<b>里排最后一根</b>，39 号针。</li>
-<li>{tag('hand')}小旗 40（DIN）插<b>外排最后一根</b>，40 号针。</li>
+<li>{tag('hand')}小旗 39（黑线，GND，原来写 34）插<b>里排最后一根</b>，39 号针。</li>
+<li>{tag('hand')}小旗 40（橙线，DIN）插<b>外排最后一根</b>，40 号针。</li>
 <li>{tag('hand')}小旗 12（BCLK）插<b>外排第 6 根</b>，12 号针。</li>
 </ol>
 <div class="warn"><b>4 号针是 5 V：</b>Vin 插错针会烧板子，插完再数一遍。</div>
 <div class="pair">
-{figure(IMG_AUDIO, '功放用的 4、12、35、39、40 号针', 'A7Z 正面，竖放。', [('pin', '4', 'Vin（5 V）'), ('pin', '12', 'BCLK'), ('pin', '35', 'LRC'), ('pin', '39', 'GND（原来 34）'), ('pin', '40', 'DIN')])}
+{figure(IMG_AUDIO, '功放用的 4、12、35、39、40 号针', 'A7Z 正面，竖放。', [('pin', '4', '蓝 Vin（5 V）'), ('pin', '12', 'BCLK'), ('pin', '35', 'LRC'), ('pin', '39', '黑 GND（原来 34）'), ('pin', '40', '橙 DIN')])}
 </div>
 <p>36 号针空着（I2S0 的 MCLK，功放和麦克风都用不到）。38 号针是 I2S0 的 DIN0，给麦克风（第 8 步）。每个插头竖直插下去，线从插头顶上出来，往前翻过背包座前墙的顶（排针这一段前墙降到 63 mm 高），直接上到脖子左边，不从背包座下面绕。</p>
 ''')
