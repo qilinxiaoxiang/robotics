@@ -310,6 +310,7 @@ def mic_pads_figure() -> Image.Image:
 
 IMG_MIC_PADS = uri(mic_pads_figure(), 1100)
 IMG_HEAD_WIRES = uri(Image.open(IMG / 'head_wires.png'), 1400)
+IMG_HEAD_POSES = uri(Image.open(IMG / 'head_poses.png'), 1400)
 HEAD_WIRES_CAP = f'按组装指南的 CAD 画的，比例尺 50 mm。橙线功放 BCLK、粉线左耳、红线触摸板 3V3 都先到集线点；黑线集线点到出线口；蓝实线头朝前时出线口到前墙顶 {round(HW["spanMm"]["home"])} mm；蓝虚线是训练范围里出线口离前墙顶最远的姿态（脖子往前低 60°、头转 80°、歪 18°），{round(HW["spanMm"]["trained"])} mm。'
 IMG_MIC = top_fig([(12, '#f9a825'), (17, TOUCH), (34, MIC), (35, AMP), (38, MIC), (10, '#9e9e9e')])
 IMG_XIAO = uri(P.xiao_figure([('3V3', '17', TOUCH), ('GND', '25', TOUCH), ('D5', '29', TOUCH), ('D4', '31', TOUCH)]), 1100)
@@ -352,6 +353,7 @@ S_CHANGES = f'''
 <div class="card">
 <p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>每根线分两段量：元器件到集线点（头盖左后角、出线口正上方），集线点到 A7Z 排针，含插头。集线点到排针这一段 = 集线点往下到出线口 34 mm + 出线口直线到背包座前墙顶 + 沿墙顶走到自己那一列、落到针上。粗体按训练用的转头范围留了余量，括号里是头只朝前不动的长度。每段两头各加 5 mm，进到 5 mm。</p>
 {figure(IMG_HEAD_WIRES, '头里下来的线：侧视和俯视，按比例', HEAD_WIRES_CAP)}
+{figure(IMG_HEAD_POSES, '四种头的姿态下，12 号针那根线集线点到排针的长度', '同一根线（12 号针）在四种姿态下的“集线点到排针”：黑线在头里不变，34 mm；红线是出线口直线到背包座前墙顶，头朝前 37 mm，头转 80° 49 mm，脖子往前低 63° 84 mm，训练范围里最远 98 mm；蓝线前墙顶到针 20 mm。剪线长度按最远那种留，再加两头各 5 mm。35、39、40 号在排针另一头，蓝线沿墙顶多走 30 多 mm。')}
 <ul class="acts">{HEAD_WIRE_LIST}</ul>
 <p>为什么头里那段就有 6 到 9 cm：功放和两只耳朵都在头的前半部，出线口在左后角，线要从前往后走一趟，再往下 34 mm 到出线口。出了头那段，头朝前时出线口离前墙顶只有 {round(HW["spanMm"]["home"])} mm；多留的 {round(HW["spanMm"]["trained"] - HW["spanMm"]["home"])} mm 是给低头、转头的，平时在脖子旁边松松地弯着。线翻过前墙顶直接落到排针上，不绕背包座下面。</p>
 </div>
