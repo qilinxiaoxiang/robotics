@@ -1,6 +1,7 @@
 """V2 saddle variant of guide/print/neck-exit-20261023/cable_sweep.py for the head wires (amplifier, XIAO, microphones): the
-same sweep with the trunk end moved to the torso-roof entry of the V2 saddle (D-028, header at the front edge). Writes
-head-sweep-v2.json; head_wire_lengths.py turns it into cut lengths.
+same sweep with the trunk end at the top of the saddle front wall (D-028: head wires come from the neck straight over the front
+wall, lowered to z 63, into the open header strip; none goes under the saddle). Writes head-sweep-v2.json; head_wire_lengths.py
+turns it into cut lengths.
 
 Original docstring: Length the head-to-saddle camera cable span needs (D-023 enlarged exit, no neck bundler): the cable is tied inside the head
 at the exit and spliced to the right-angle USB-C pigtail at the saddle plug, and is free between. Same as-built MJCF and HOME
@@ -18,10 +19,10 @@ sys.path.insert(0, str(REAL))
 from static_gap import NAMES, HOME, feet_flat_rot, setup
 import evaluate_delay as ev
 EXIT = np.array([10.0, 18.5, 98.7])           # bottom of the head floor at the exit centre (guide world, HOME, mm)
-SPLICE = np.array([-1.0, 14.0, 44.0])          # V2 saddle (D-028): where the head bundle reaches the torso roof behind the neck (routes.json mic_sd_pin38 point), before it turns up through the saddle floor cut
+SPLICE = np.array([-5.0, 15.0, 64.6])          # V2 saddle (D-028): where the head bundle crosses the front wall top (guide-data head wire paths), on the trunk
 # MJCF chain trunk_base -> neck (neck_pitch joint, guide z 32.4) -> neck_pitch (head_pitch joint, z 79.4) -> yaw_roll_motion (head_yaw,
 # z 98.1) -> jaw_soft (head_roll, z 112.6); each route point rides the link it sits beside
-VIA = [((12.0, 15.5, 85.0), 'neck_pitch'), ((10.8, 16.0, 71.2), 'neck'), ((10.8, 16.5, 60.0), 'neck')]
+VIA = [((12.0, 15.5, 85.0), 'neck_pitch'), ((10.8, 16.0, 71.2), 'neck'), ((10.8, 16.5, 60.0), 'neck'), ((9.0, 15.0, 63.5), 'neck')]
 m = mujoco.MjModel.from_xml_path(str(ev.MODEL_DIR / 'scene.xml')); d = mujoco.MjData(m)
 Rt = feet_flat_rot(m, d, NAMES, HOME); q = np.zeros(4); mujoco.mju_mat2Quat(q, Rt.ravel()); setup(m, d, NAMES, HOME, q); mujoco.mj_forward(m, d)
 tb = m.body('trunk_base').id; jb = m.body('jaw_soft').id
