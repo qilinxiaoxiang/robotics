@@ -447,6 +447,14 @@
     "pet robot body competence",
     "robot trial of the get-up"
    ]
+  },
+  "open_loop_stand_pose": {
+   "value": "pi/stand_pose.py STAND_POSE = NEUTRAL with neck_pitch 0.25 rad (D-030), stand KP 400; in the repository, not yet on the A7Z (robot off) and not yet stood on the robot",
+   "meaning": "The pose walk_brain's stand mode and the boot stand hold; legs equal the policies' trained start",
+   "verified_at": "2026-10-26",
+   "source": "sim, guide/firmware/mac/stand-saddle-20261026 (cmu plugged manifest, COM calibrated 3 mm back to the robot's 10/26 backward lean)",
+   "max_age_days": 14,
+   "measure": "sha256 of ~/rt/microduck-sim/guide/firmware/pi/stand_pose.py on the A7Z against the repository, and the IMU pitch of the next open-loop stand (within 5 deg)"
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
