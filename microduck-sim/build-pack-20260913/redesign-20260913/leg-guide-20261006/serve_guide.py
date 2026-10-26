@@ -35,6 +35,7 @@ ALLOWLIST = {
     "/ANKLE-REDESIGN.zip": "ANKLE-REDESIGN.zip",
     "/BRINGUP.html": "BRINGUP.html",
     "/A7Z-PINS.html": "A7Z-PINS.html",
+    "/A7Z-PINS-ORIGINAL.html": "A7Z-PINS-ORIGINAL.html",
     "/A7Z-ANTENNA.html": "A7Z-ANTENNA.html",
     "/A7Z-WIRES.html": "A7Z-WIRES.html",
     "/A7Z-COOLING.html": "A7Z-COOLING.html",
