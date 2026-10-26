@@ -87,7 +87,7 @@ STATUS = {
     'printed': ['torso_base', 'ring10_torso', 'ring5_torso',
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
-    'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'exit_clamp_loose', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
+    'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
                   'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
     'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
@@ -374,10 +374,10 @@ def build_parts() -> dict:
     trim = first_existing(world / 'eye_trim.stl')
     shell = first_existing(world / 'head_bottom.stl')
     # V1.33 (2026-10-24): the jaw support with the long-round left-rear exit (dia 11 widened 6 mm towards the rear) and the
-    # fixed half of the exit clamp (print/mouth-floor-20261024/build_exit_stadium.py), and the clamp's loose half, unchanged
-    # from V1.30 (print/neck-exit-20261023/; world/exit_clamp_loose.stl is size A).
+    # fixed half of the exit clamp (print/mouth-floor-20261024/build_exit_stadium.py), kept as the passage liner. The loose half
+    # (V1.30, world/exit_clamp_loose.stl) is retired since D-029 (2026-10-25: neither size snapped in; a cable tie holds the
+    # bundle) and is no longer loaded.
     jaw_sup = first_existing(world / 'jaw_support.stl')
-    clamp = first_existing(world / 'exit_clamp_loose.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
     jaw = first_existing(world / 'jaw_frame.stl')
     # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm so it reaches the ID13 case (print/neck-ring/).
@@ -529,11 +529,7 @@ def build_parts() -> dict:
     if shell:
         parts['head_bottom']['name'] = 'Lower head shell with the speaker pocket, twelve sound holes and the long-round left-rear exit (V1.36 print, yellow)'
     if jaw_sup:
-        parts['jaw_support']['name'] = 'Jaw support with the long-round left-rear exit and the fixed half of the wire clamp (V1.33 print, black)'
-    if clamp:
-        v, f = load_stl(clamp)
-        parts['exit_clamp_loose'] = {'key': 'exit_clamp_loose', 'name': 'Loose half of the head-exit wire clamp, size A (V1.30 print, black)',
-                                     'color': parts['jaw_support']['color'], 'module': 'head', 'status': 'new-print', 'v': v, 'f': f, 'source': str(clamp)}
+        parts['jaw_support']['name'] = 'Jaw support with the long-round left-rear exit and the curved wall of the retired wire clamp (V1.33 print, black)'
     CAMERA = {'camera_u20cam': ('Innomaker U20CAM-720P USB camera on the four face bosses, connector edge to the left (+Y), D-023', '#1b5e20'),
               'camera_cable_stub': ("Camera's own cable inside the head, over the jaw support front wall and the jaw motor to the left-rear exit", '#37474f')}
     for key, (name, color) in CAMERA.items():
@@ -766,7 +762,7 @@ def main() -> None:
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
         'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261025-saddle-v3',
+        'revision': 'guide-20261025-exit-tie',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,
