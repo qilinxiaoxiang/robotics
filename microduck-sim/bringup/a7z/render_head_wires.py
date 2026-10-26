@@ -1,6 +1,6 @@
 """To-scale picture of the head wire run for A7Z-PINS.html: robot's left side view and top view of the head, neck and V2 saddle
-at HOME (guide-data.json part meshes), with the wire segments drawn and measured: component -> gather point (guide-data
-cable paths), gather point -> head exit, exit -> front wall top (straight, HOME and the trained-range worst pose from
+at HOME (guide-data.json part meshes), with the wire segments drawn and measured: component -> breadboard on the camera
+back and breadboard -> gather point (right-angle runs, as head_wire_lengths.py measures them), gather point -> head exit, exit -> front wall top (straight, HOME and the trained-range worst pose from
 head-sweep-v2.json, the pickup bend's farthest pose), wall top -> pin 12. Writes img/head_wires.png.   ~/.venvs/microduck-cad/bin/python render_head_wires.py"""
 import base64, json, math
 from pathlib import Path
@@ -26,7 +26,7 @@ LAYERS = [  # key, fill, alpha (drawn in this order)
     ('motor12', '#9a9a9a', 0.8), ('motor11', '#9a9a9a', 0.8), ('neck_pitch', '#b0b0b0', 0.8), ('motor13', '#9a9a9a', 0.8),
     ('motor14', '#9a9a9a', 0.6), ('motor15', '#9a9a9a', 0.6), ('head_yaw_link', '#b0b0b0', 0.6),
     ('head_bottom', '#eadfc0', 0.35), ('head_cap', '#f2f2f2', 0.35),
-    ('sd_a7z_pcb', '#2e7d32', 0.9), ('sd_heatsink_6530b', '#888888', 0.7), ('sd_dupont_housings', '#222222', 0.9),
+    ('sd_a7z_pcb', '#2e7d32', 0.9), ('sd_heatsink_6530b', '#888888', 0.7), ('sd_dupont_housings', '#222222', 0.9), ('camera_u20cam', '#2e7d32', 0.9),
     ('amplifier', '#1565c0', 0.9), ('mic_left', '#333333', 0.9), ('touch_xiao', '#333333', 0.9),
 ]
 PX = 4.0  # raster px per mm
@@ -54,10 +54,21 @@ def tail(pin):
     return [WALL, [WALL[0], y, WALL[2]], [x, y, 65.5], [x, y, z]]
 
 
+HW = json.loads((HERE / 'head-wire-lengths.json').read_text())
+BT = HW['breadboard']['plugTail']   # where the wires leave the plugs behind the breadboard on the camera back
+BOX = HW['breadboard']['box']      # the breadboard itself, [[x, y, z] min, max]
+
+
+def square(a, b):
+    """Wall-following right-angle run a -> b (x, then y, then z), the way head_wire_lengths.py measures it."""
+    return [a, [b[0], a[1], a[2]], [b[0], b[1], a[2]], b]
+
+
 SEG = [  # label, points, colour, style
-    ('功放 BCLK → 集线点', upto('amp-bclk', GP), '#ef6c00', '-'),
-    ('左耳 → 集线点', CAB['mic-l']['path'], '#c2185b', '-'),
-    ('触摸板 3V3 → 集线点', upto('touch-pin17', GP), '#d32f2f', '-'),
+    ('功放 BCLK → 面包板', square(CAB['amp-bclk']['path'][0], BT), '#ef6c00', '-'),
+    ('右耳 → 面包板', square(CAB['mic-r']['path'][0], BT), '#c2185b', '-'),
+    ('触摸板 3V3 → 面包板', square(CAB['touch-pin17']['path'][0], BT), '#d32f2f', '-'),
+    ('面包板 → 集线点', square(BT, GP), '#6d4c41', '-'),
     ('集线点 → 出线口', [GP, [10.0, 18.5, 124.0], [10.0, 18.5, 110.0], EXIT], '#000000', '-'),
     ('出线口 → 前墙顶（头朝前）', [EXIT, WALL], '#1565c0', '-'),
     ('前墙顶 → 12 号针', tail(12), '#1565c0', '-'),
@@ -82,9 +93,12 @@ def draw(ax, axes, depth, sign, title, xlim, ylim):
     for lab, pts, col, st in SEG:
         a = np.array(pts)
         ax.plot(a[:, axes[0]], a[:, axes[1]], st, color=col, lw=2.2, zorder=5, solid_capstyle='round')
+    lo, hi = BOX
+    ax.add_patch(matplotlib.patches.Rectangle((lo[axes[0]], lo[axes[1]]), hi[axes[0]] - lo[axes[0]], hi[axes[1]] - lo[axes[1]],
+                                              fc='#ffb300', ec='black', lw=1, zorder=4))
     w = np.array([WORST, WALL])
     ax.plot(w[:, axes[0]], w[:, axes[1]], '--', color='#1565c0', lw=1.6, zorder=5)
-    for pt, lab in ((GP, '集线点'), (EXIT, '出线口'), (WALL, '前墙顶'), (WORST, '低头叼东西最远时\n的出线口')):
+    for pt, lab in ((BT, '面包板插头尾'), (GP, '集线点'), (EXIT, '出线口'), (WALL, '前墙顶'), (WORST, '低头叼东西最远时\n的出线口')):
         ax.plot(pt[axes[0]], pt[axes[1]], 'o', color='white', mec='black', ms=6, zorder=6)
         ax.annotate(lab, (pt[axes[0]], pt[axes[1]]), xytext=(6, 4), textcoords='offset points', fontsize=8, zorder=7,
                     bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.85))
@@ -98,7 +112,7 @@ fig, axs = plt.subplots(1, 2, figsize=(13, 6.2), gridspec_kw=dict(width_ratios=[
 draw(axs[0], (0, 2), 1, 1, '从机器人左边看（头朝右）', (-50, 120), (20, 165))
 draw(axs[1], (0, 1), 2, 1, '从上往下看（头朝右，机器人左边在上）', (-50, 120), (-50, 50))
 lines = [f'{lab}：{length(p):.0f} mm' for lab, p, *_ in SEG] + [f'出线口 → 前墙顶（低头叼东西最远）：{SW["pickup"]["maxStraightMm"]:.0f} mm']
-fig.text(0.01, 0.01, '   '.join(lines[:3]) + '\n' + '   '.join(lines[3:]), fontsize=8.5, va='bottom')
+fig.text(0.01, 0.01, '   '.join(lines[:4]) + '\n' + '   '.join(lines[4:]), fontsize=8.5, va='bottom')
 fig.tight_layout(rect=(0, 0.07, 1, 0.96))
 out = HERE / 'img' / 'head_wires.png'
 fig.savefig(out, dpi=150); print(out); print('\n'.join(lines))

@@ -7,11 +7,13 @@ turned a quarter turn anticlockwise (wiring-kit rotation 270). The boards sit in
 like the neck and the floor cut they come from: torso boards on the pin-1 (left) half, head boards on the pin-40 half.
 
 Wires and pins: the assembly guide (guide/data/guide-data.json steps saddle-plugs and saddle-head-plugs; mics and
-mic-splice for the microphones, mic-back for the optional back microphone). The joints at the left rear corner of the cap
-are drawn as one module, the gather point: the amplifier BCLK and LRC wires and the XIAO 3V3 wire run into it and on to A7Z
-pins 12, 35 and 17; the left and back microphones' SCK, WS and VDD join them there; the left microphone's GND jumper runs
-through it to pin 34 and the back microphone's GND joins it there. The right microphone's five wires end on the left
-microphone's pads. The left SD goes straight to pin 38; the back SD ends on a flag-10 plug taped beside pin 10, drawn to
+mic-splice for the microphones, mic-back for the optional back microphone), with the shared lines on the mini breadboard
+taped to the camera back (A7Z-SOLDER, 2026-10-26). The breadboard is one module with one pin per strip: the amplifier BCLK
+and LRC, the XIAO 3V3 and the right microphone's SCK, WS and VDD plug into the yellow, green and red strips, and each strip
+goes down to pin 12, 35 or 17 on one male-to-female wire. The right microphone's five wires also end on the left
+microphone's pads. The left SD goes straight to pin 38 and, with two microphones, the left GND straight to pin 34; with the
+back microphone, its SCK, WS and VDD join the same strips, its GND and the right GND the black strip, and the black strip
+goes to pin 34 instead; the back SD ends on a flag-10 plug taped beside pin 10, drawn to
 pin 10 in a group of its own (D-026 addendum: pin 10 stays UART0 RX until the I2S0 DIN3 overlay is tested).
 Clicking a board in the view highlights its wires and fades the rest (wiring-kit module selection).
 
@@ -54,33 +56,34 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('iscl', 'imu.SCL', 'a7z.p5', YEL, 'imu', '黄：IMU SCL → A7Z 5 号针', '4397 线的黄插孔，TWI7 的时钟线。'),
     ('ignd', 'imu.GND', 'a7z.p9', BLK, 'imu', '黑：IMU GND → A7Z 9 号针', '4397 线的黑插孔。'),
     ('avin', 'amp.Vin', 'a7z.p4', RED, 'audio', '功放 Vin → A7Z 4 号针（5 V）', '小旗 4。4 号针是 5 V，插错会烧板子。'),
-    ('abclk', 'amp.BCLK', 'gp.SCK', ORG, 'audio', '功放 BCLK → 集线点', '在头盖左后角剪开，和麦克风的 SCK 焊在一起，再接着往下到 12 号针。'),
-    ('gsck', 'gp.SCK', 'a7z.p12', ORG, 'audio', '集线点 BCLK/SCK → A7Z 12 号针', '小旗 12。还是功放那根 BCLK 线，里面并着两个麦克风的 SCK。'),
-    ('alrc', 'amp.LRC', 'gp.WS', PUR, 'audio', '功放 LRC → 集线点', '在头盖左后角剪开，和麦克风的 WS 焊在一起，再接着往下到 35 号针。'),
-    ('gws', 'gp.WS', 'a7z.p35', PUR, 'audio', '集线点 LRC/WS → A7Z 35 号针', '小旗 35。还是功放那根 LRC 线，里面并着两个麦克风的 WS。'),
+    ('abclk', 'amp.BCLK', 'bb.SCK', ORG, 'audio', '功放 BCLK → 面包板黄条', '带公头的线，插面包板黄条，和麦克风的 SCK 连通。'),
+    ('gsck', 'bb.SCK', 'a7z.p12', ORG, 'audio', '面包板黄条 → A7Z 12 号针', '小旗 12。30 cm 公对母杜邦线，不剪：公头插黄条，母头插 12 号针。'),
+    ('alrc', 'amp.LRC', 'bb.WS', PUR, 'audio', '功放 LRC → 面包板绿条', '带公头的线，插面包板绿条，和麦克风的 WS 连通。'),
+    ('gws', 'bb.WS', 'a7z.p35', PUR, 'audio', '面包板绿条 → A7Z 35 号针', '小旗 35。30 cm 公对母杜邦线，不剪。'),
     ('agnd', 'amp.GND', 'a7z.p39', BLK, 'audio', '功放 GND → A7Z 39 号针', '小旗 39。'),
     ('adin', 'amp.DIN', 'a7z.p40', TEAL, 'audio', '功放 DIN → A7Z 40 号针', '小旗 40，A7Z 送给功放的声音数据。'),
-    ('t3v3', 'xiao.3V3', 'gp.VDD', RED, 'touch', '红：触摸板 3V3 → 集线点', '在头盖左后角剪开，和麦克风的 VDD 焊在一起，再接着往下到 17 号针。'),
-    ('gvdd', 'gp.VDD', 'a7z.p17', RED, 'touch', '红：集线点 3V3/VDD → A7Z 17 号针（3.3 V）', '小旗 17。还是触摸板那根 3V3 线，里面并着两个麦克风的 VDD。'),
+    ('t3v3', 'xiao.3V3', 'bb.VDD', RED, 'touch', '红：触摸板 3V3 → 面包板红条', '带公头的线，插面包板红条，和麦克风的 VDD 连通。'),
+    ('gvdd', 'bb.VDD', 'a7z.p17', RED, 'touch', '红：面包板红条 → A7Z 17 号针（3.3 V）', '小旗 17。30 cm 公对母杜邦线，不剪。'),
     ('tgnd', 'xiao.GND', 'a7z.p25', BLK, 'touch', '黑：触摸板 GND → A7Z 25 号针', '小旗 25。'),
     ('tscl', 'xiao.D5', 'a7z.p29', BLU, 'touch', '蓝：触摸板 D5（SCL）→ A7Z 29 号针', '小旗 29。'),
     ('tsda', 'xiao.D4', 'a7z.p31', GRN, 'touch', '绿：触摸板 D4（SDA）→ A7Z 31 号针', '小旗 31。'),
     ('msd', 'micl.SD', 'a7z.p38', PINK, 'mic', '左耳麦克风 SD → A7Z 38 号针', '小旗 38，两个麦克风的数据线（I2S0 DIN0）。带插头的杜邦线。'),
-    ('mgnd', 'micl.GND', 'gp.GND', BLK, 'mic', '左耳麦克风 GND → 集线点', '细线，不带插头：和后脑 GND、往下的小旗 34 焊在一起（接头 4）。'),
-    ('ggnd', 'gp.GND', 'a7z.p34', BLK, 'mic', '集线点 GND → A7Z 34 号针', '小旗 34。接头 4 往下的一根带插头的线。'),
-    ('msck', 'micl.SCK', 'gp.SCK', ORG, 'mic', '左耳麦克风 SCK → 集线点（并进功放 BCLK）',
-     '细线，不带插头：在头盖左后角和功放 BCLK 线拧在一起焊，套热缩管或缠电工胶布。'),
-    ('mws', 'micl.WS', 'gp.WS', PUR, 'mic', '左耳麦克风 WS → 集线点（并进功放 LRC）', '细线，不带插头：和功放 LRC 线焊在一起。'),
-    ('mvdd', 'micl.VDD', 'gp.VDD', RED, 'mic', '左耳麦克风 VDD → 集线点（并进触摸板 3V3）', '细线，不带插头：和触摸板 3V3 线焊在一起（3.3 V）。'),
+    ('mgnd', 'micl.GND', 'a7z.p34', BLK, 'mic', '左耳麦克风 GND → A7Z 34 号针（双麦克风）',
+     '小旗 34，一整根带插头的杜邦线。装了后脑麦克风就不要这根，34 号针改由面包板黑条下来。'),
+    ('msck', 'micr.SCK', 'bb.SCK', ORG, 'mic', '右耳 SCK → 面包板黄条', '带公头的线。右耳离面包板最近，共用的线从右耳去面包板。'),
+    ('mws', 'micr.WS', 'bb.WS', PUR, 'mic', '右耳 WS → 面包板绿条', '带公头的线。'),
+    ('mvdd', 'micr.VDD', 'bb.VDD', RED, 'mic', '右耳 VDD → 面包板红条', '带公头的线（3.3 V）。'),
     ('rsck', 'micr.SCK', 'micl.SCK', ORG, 'mic', '右耳 SCK → 左耳 SCK', '两头都焊，跨过头盖内顶。'),
     ('rws', 'micr.WS', 'micl.WS', PUR, 'mic', '右耳 WS → 左耳 WS', '两头都焊。'),
     ('rsd', 'micr.SD', 'micl.SD', PINK, 'mic', '右耳 SD → 左耳 SD', '两头都焊。两个麦克风共用一根数据线，左右声道由 L/R 焊盘分开。'),
     ('rvdd', 'micr.VDD', 'micl.VDD', RED, 'mic', '右耳 VDD → 左耳 VDD', '两头都焊。'),
     ('rgnd', 'micr.GND', 'micl.GND', BLK, 'mic', '右耳 GND → 左耳 GND', '两头都焊。'),
-    ('bsck', 'micb.SCK', 'gp.SCK', ORG, 'micb', '后脑麦克风 SCK → 集线点', '可选。细线，焊进 SCK/BCLK 那个接头。'),
-    ('bws', 'micb.WS', 'gp.WS', PUR, 'micb', '后脑麦克风 WS → 集线点', '可选。细线，焊进 WS/LRC 那个接头。'),
-    ('bvdd', 'micb.VDD', 'gp.VDD', RED, 'micb', '后脑麦克风 VDD → 集线点', '可选。细线，焊进 VDD/3V3 那个接头（3.3 V）。'),
-    ('bgnd', 'micb.GND', 'gp.GND', BLK, 'micb', '后脑麦克风 GND → 集线点', '可选。细线，在集线点焊进接头 4。'),
+    ('bsck', 'micb.SCK', 'bb.SCK', ORG, 'micb', '后脑麦克风 SCK → 面包板黄条', '可选。带公头的线。'),
+    ('bws', 'micb.WS', 'bb.WS', PUR, 'micb', '后脑麦克风 WS → 面包板绿条', '可选。带公头的线。'),
+    ('bvdd', 'micb.VDD', 'bb.VDD', RED, 'micb', '后脑麦克风 VDD → 面包板红条', '可选。带公头的线（3.3 V）。'),
+    ('bgnd', 'micb.GND', 'bb.GND', BLK, 'micb', '后脑麦克风 GND → 面包板黑条', '可选。带公头的线。'),
+    ('rgndb', 'micr.GND', 'bb.GND', BLK, 'micb', '右耳 GND → 面包板黑条（三个麦克风）', '可选。装后脑麦克风时右耳 GND 焊盘再焊一根带公头的线插黑条。'),
+    ('ggnd', 'bb.GND', 'a7z.p34', BLK, 'micb', '面包板黑条 → A7Z 34 号针（三个麦克风）', '可选。小旗 34，30 cm 公对母杜邦线；这时左耳那根整根 GND 不要。'),
     ('bsd', 'micb.SD', 'a7z.p10', PINK, 'micb', '后脑麦克风 SD（小旗 10）→ 贴在 10 号针旁，先不插',
      '可选。它自己的数据线（I2S0 DIN3），带插头。10 号针现在是调试串口的接收脚，DIN3 的设置试过以前插头用胶带贴在排针旁边，不插上去。'),
 ]
@@ -92,10 +95,10 @@ GROUPS = [{'id': 'power', 'label': '5 V 电源', 'color': RED}, {'id': 'uart', '
 A7Z_ROLE = {  # what each used pin carries in this robot, shown when the pin is tapped
     1: 'IMU 3.3 V', 2: '5 V 进（5 V 线红）', 3: 'IMU SDA（TWI7）', 4: '功放 Vin（5 V 出）', 5: 'IMU SCL（TWI7）',
     6: 'GND（5 V 线黑）', 7: 'UART2 TX → OpenRB', 9: 'IMU GND', 11: 'UART2 RX ← OpenRB',
-    12: 'I2S0 BCLK：功放 BCLK + 麦克风 SCK', 17: '3.3 V：触摸板 3V3 + 麦克风 VDD', 25: '触摸板 GND',
+    12: 'I2S0 BCLK：面包板黄条（功放 BCLK + 麦克风 SCK）', 17: '3.3 V：面包板红条（触摸板 3V3 + 麦克风 VDD）', 25: '触摸板 GND',
     29: 'PB2 · 触摸板 SCL（TWI0）', 31: 'PB3 · 触摸板 SDA（TWI0）',
-    35: 'I2S0 LRCK：功放 LRC + 麦克风 WS', 38: 'I2S0 DIN0：麦克风 SD', 39: '功放 GND', 40: 'I2S0 DOUT0：功放 DIN',
-    34: '麦克风 GND（两只耳朵和后脑共用）',
+    35: 'I2S0 LRCK：面包板绿条（功放 LRC + 麦克风 WS）', 38: 'I2S0 DIN0：麦克风 SD', 39: '功放 GND', 40: 'I2S0 DOUT0：功放 DIN',
+    34: '麦克风 GND（双麦克风：左耳一整根；三个：面包板黑条）',
     8: '调试串口 TX：空着', 10: '调试串口 RX：空着；后脑麦克风 SD（小旗 10）贴在旁边，先不插',
 }
 
@@ -158,30 +161,30 @@ def mic(mid: str, title: str, short: str, lr: str) -> dict:
         pins.append((pad, pad, names[pad], role, None if role == 'ground' else 3.3, x / im.width, y / im.height))
     m = photo_module(mid, f'INMP441 {title}', f'印字那面（贴着头盖内壁）；{lr}', short, im, 13.4, pins)
     for p in m['pins']:
-        p['multi'] = mid == 'micl'   # the left board carries its own wire and the right board's on each pad
+        p['multi'] = mid in ('micl', 'micr')   # chain wire plus its own wire (or the breadboard wire) on one pad
         if p['id'] == 'L/R':
             p['note'] = lr
     return m
 
 
-def gather() -> dict:
-    """The joints at the left rear corner of the cap, over the head exit: four heat-shrunk splices in a row."""
-    W, H = 30.0, 9.0
-    names = {'SCK': ('功放 BCLK + 麦克风 SCK', '接头：功放 BCLK 线剪开，左耳和后脑的 SCK 焊进去，往下是小旗 12。'),
-             'WS': ('功放 LRC + 麦克风 WS', '接头：功放 LRC 线剪开，左耳和后脑的 WS 焊进去，往下是小旗 35。'),
-             'VDD': ('触摸板 3V3 + 麦克风 VDD', '接头：触摸板 3V3 线剪开，左耳和后脑的 VDD 焊进去，往下是小旗 17。'),
-             'GND': ('麦克风 GND', '接头 4：左耳 GND、后脑 GND 和往下的小旗 34 焊在一起。')}
+def breadboard() -> dict:
+    """The 25-hole mini breadboard on the camera back, landscape, seen from behind: one pin per strip in use."""
+    W, H = 20.0, 15.0
+    names = {'SCK': ('黄条：功放 BCLK + 麦克风 SCK', '面包板黄条，往下一根公对母线到 12 号针。'),
+             'WS': ('绿条：功放 LRC + 麦克风 WS', '面包板绿条，往下一根公对母线到 35 号针。'),
+             'VDD': ('红条：触摸板 3V3 + 麦克风 VDD', '面包板红条，往下一根公对母线到 17 号针。'),
+             'GND': ('黑条：麦克风 GND（只在三个麦克风时用）', '右耳和后脑的 GND 插这里，往下一根公对母线到 34 号针。')}
     pins = []
     for i, (pid, (name, note)) in enumerate(names.items()):
         pins.append({'id': pid, 'label': pid, 'name': name, 'note': note, 'multi': True,
                      'role': 'ground' if pid == 'GND' else 'power' if pid == 'VDD' else 'signal',
-                     'voltage': None if pid == 'GND' else 3.3, 'x': 4.5 + i * 7.0, 'y': H / 2})
-    for p in pins:
-        if p['voltage'] is None:
-            del p['voltage']
-    return {'id': 'gp', 'title': '集线点（头盖左后角）', 'subtitle': '四个焊接接头（不装后脑麦克风就是三个），套热缩管或缠电工胶布；在出线口正上方', 'short': '集线点',
-            'drawing': {'kind': 'outline', 'color': '#eceff1', 'radius': 2,
-                        'blocks': [{'x': 1.5 + i * 7.0, 'y': 1.5, 'w': 6.0, 'h': 6.0, 'color': '#cfd8dc'} for i in range(4)]},
+                     'x': 3.5, 'y': 2.5 + i * 2.54 * 1.25})
+        if pid != 'GND':
+            pins[-1]['voltage'] = 3.3
+    blocks = [{'x': 2.0 + j * 3.4, 'y': 1.3 + i * 3.17, 'w': 2.2, 'h': 2.2, 'color': '#5d4037' if j < 4 and i < 4 else '#bdbdbd'}
+              for i in range(5) for j in range(5)]
+    return {'id': 'bb', 'title': '迷你面包板（摄像头背面）', 'subtitle': '横贴在摄像头板背面、插头右边；从后面插杜邦公头，同一条的孔连通', 'short': '面包板',
+            'drawing': {'kind': 'outline', 'color': '#ffe082', 'radius': 1.5, 'blocks': blocks},
             'width': W, 'height': H, 'pins': pins}
 
 
@@ -216,7 +219,7 @@ def bench() -> dict:
     a = a7z()
     mods = [a, imu(), openrb(), xl2(), amp(), TB.xiao(), mic('micl', '左耳麦克风', '左耳', '焊一根短线到 GND：左声道'),
             mic('micr', '右耳麦克风', '右耳', '焊一根短线到 VDD：右声道'),
-            mic('micb', '后脑麦克风（可选）', '后脑', '焊一根短线到 GND：DIN3 线上的左声道'), gather()]
+            mic('micb', '后脑麦克风（可选）', '后脑', '焊一根短线到 GND：DIN3 线上的左声道'), breadboard()]
     for m in mods:
         if m['id'] == 'xiao':
             m['subtitle'] = '触摸板，头盖内顶中间'
@@ -228,7 +231,7 @@ def bench() -> dict:
     size = {m['id']: (m['width'], m['height']) for m in mods}
     row = ah + 42
     below = [  # V1.29 layout under a header at the bottom edge (pin 40 at the left end)
-        ('micl', -26, row + 16), ('micr', -50, row + 30), ('micb', -38, row + 50), ('gp', -33, row - 2),
+        ('micl', -26, row + 16), ('micr', -50, row + 30), ('micb', -38, row + 50), ('bb', -27, row - 4),
         ('amp', -2, row), ('xiao', 24, row), ('imu', 50, row), ('xl2', aw + 20, -4), ('orb', 40, row + 34),
     ]
     place = [{'module': 'a7z', 'x': 0, 'y': 0, 'rotation': 270}]
@@ -244,7 +247,7 @@ TEXT = TB.TEXT.replace("hint:'点一下针脚或导线看详情。'", "hint:'点
 
 
 # One button per board under the view: on a phone the boards are too small to tap reliably (a tap lands on a pin).
-PICKS = [('micl', '左耳麦克风'), ('micr', '右耳麦克风'), ('micb', '后脑麦克风'), ('gp', '集线点'), ('amp', '功放'), ('xiao', '触摸板'), ('imu', 'IMU'),
+PICKS = [('micl', '左耳麦克风'), ('micr', '右耳麦克风'), ('micb', '后脑麦克风'), ('bb', '面包板'), ('amp', '功放'), ('xiao', '触摸板'), ('imu', 'IMU'),
          ('orb', 'OpenRB 串口'), ('xl2', '5 V 电源')]
 PICK_CSS = ('.a7zpick{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}'
             '.a7zpick button{font-size:16px;padding:6px 12px;border-radius:18px;border:1px solid #90a4ae;background:#fff;cursor:pointer}'

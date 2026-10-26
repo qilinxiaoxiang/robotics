@@ -86,7 +86,7 @@ def l1(a, b):
 
 PAD = {'amp-bclk': CAB['amp-bclk']['path'][0], 'amp-lrc': CAB['amp-lrc']['path'][0], 'touch-pin17': CAB['touch-pin17']['path'][0],
        'mic-r': CAB['mic-r']['path'][0], 'mic-b': CAB['mic-b']['path'][0]}
-bb = {'plugTail': BT, 'toBoard': {}, 'boardToPin': {}}
+bb = {'box': [[51.1, -22.0, 131.0], [63.4, -2.0, 146.0]], 'plugTail': BT, 'toBoard': {}, 'boardToPin': {}}
 for k, xyz in PAD.items():
     bb['toBoard'][k] = r5(l1(xyz, BT) + HOUSING + ENDS + (CAP_OPEN if k.startswith('mic') else 0))
 for pin in (12, 35, 17, 34):
