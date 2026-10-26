@@ -1,0 +1,722 @@
+{
+  "date": "2026-11-02",
+  "fallback_rules": [
+    {
+      "kind": "operant",
+      "trigger": "self:entered(bedroom)",
+      "outcome_or_effect": "owner:said_no",
+      "window_s": 10.0,
+      "context": "owner_home",
+      "text": "self:entered(bedroom) is often followed by owner:said_no within 10 s",
+      "support": "4/7 times, lift 811.5"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:footsteps",
+      "outcome_or_effect": "sound:door",
+      "window_s": 10.0,
+      "context": "none",
+      "text": "sound:footsteps is often followed by sound:door within 10 s",
+      "support": "2/2 times, lift 1420.1"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:door",
+      "outcome_or_effect": "see:owner",
+      "window_s": 10.0,
+      "context": "none",
+      "text": "sound:door is often followed by see:owner within 10 s",
+      "support": "2/4 times, lift 1419.9"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:tv",
+      "outcome_or_effect": "sound:doorbell",
+      "window_s": 30.0,
+      "context": "none",
+      "text": "sound:tv is often followed by sound:doorbell within 30 s",
+      "support": "2/2 times, lift 946.9"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "owner:sat",
+      "outcome_or_effect": "sound:doorbell",
+      "window_s": 30.0,
+      "context": "none",
+      "text": "owner:sat is often followed by sound:doorbell within 30 s",
+      "support": "2/2 times, lift 946.9"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "owner:returned",
+      "outcome_or_effect": "owner:said",
+      "window_s": 30.0,
+      "context": "owner_home",
+      "text": "owner:returned is often followed by owner:said within 30 s",
+      "support": "2/2 times, lift 473.7"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "see:owner",
+      "outcome_or_effect": "owner:said",
+      "window_s": 30.0,
+      "context": "owner_home",
+      "text": "see:owner is often followed by owner:said within 30 s",
+      "support": "2/2 times, lift 473.7"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:keys",
+      "outcome_or_effect": "sound:footsteps",
+      "window_s": 120.0,
+      "context": "none",
+      "text": "sound:keys is often followed by sound:footsteps within 120 s",
+      "support": "2/2 times, lift 237.1"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:keys",
+      "outcome_or_effect": "owner:left",
+      "window_s": 120.0,
+      "context": "none",
+      "text": "sound:keys is often followed by owner:left within 120 s",
+      "support": "2/2 times, lift 237.1"
+    },
+    {
+      "kind": "pavlovian",
+      "trigger": "sound:keys",
+      "outcome_or_effect": "sound:door",
+      "window_s": 120.0,
+      "context": "none",
+      "text": "sound:keys is often followed by sound:door within 120 s",
+      "support": "2/2 times, lift 118.8"
+    }
+  ],
+  "usage": {
+    "model": "claude-opus-5-5",
+    "backend": "cli",
+    "purpose": "nightly_reflection",
+    "input_tokens": 2,
+    "output_tokens": 3896,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 6876,
+    "cost_usd": 0.13294,
+    "cost_basis": "list-price equivalent reported by the CLI; billed to the subscription",
+    "seconds": 36.0
+  },
+  "problems": [],
+  "source": "model:claude-opus-5-5",
+  "raw": {
+    "rules": [
+      {
+        "kind": "operant",
+        "trigger": "self:entered(bedroom)",
+        "outcome_or_effect": "owner:said_no",
+        "window_s": 10,
+        "context": "owner_home",
+        "text": "When I walk into the bedroom while my person is home, they say 'no' or 'out' within a few seconds. Go there less when they're home.",
+        "support": "4 of 7 bedroom entries were tagged owner:said_no, with up to 8.6 s lag. Two more ('不行，出去。' at 08:31 and 'Out of the bedroom, buddy.' at 20:28) were tagged owner:said but also asked me to leave, so 6 of 7 in total. 20:08 was the only entry with no reaction."
+      },
+      {
+        "kind": "pavlovian",
+        "trigger": "sound:keys",
+        "outcome_or_effect": "owner:left",
+        "window_s": 120,
+        "context": "none",
+        "text": "Jingling keys mean my person is about to go out, about a minute and a half later.",
+        "support": "2 of 2 today: keys at 08:54 led to leaving at 08:55, and keys at 18:43 led to leaving at 18:44. Max lag was 83.6 s."
+      },
+      {
+        "kind": "pavlovian",
+        "trigger": "sound:footsteps",
+        "outcome_or_effect": "sound:door",
+        "window_s": 10,
+        "context": "none",
+        "text": "Footsteps in the hall right after the keys mean the door is about to close.",
+        "support": "2 of 2, max lag 7 s. Both times this was part of the keys, footsteps, door leaving sequence."
+      },
+      {
+        "kind": "pavlovian",
+        "trigger": "sound:door",
+        "outcome_or_effect": "see:owner",
+        "window_s": 10,
+        "context": "none",
+        "text": "Sometimes the door sound means my person is coming in and I'll see them within seconds.",
+        "support": "2 of 4 door sounds (18:18 and 19:22) were followed by seeing my person within 5 s. The other two were departures."
+      },
+      {
+        "kind": "pavlovian",
+        "trigger": "owner:returned",
+        "outcome_or_effect": "owner:said",
+        "window_s": 30,
+        "context": "owner_home",
+        "text": "When my person comes home, they talk within half a minute.",
+        "support": "2 of 2: 'I'm making coffee.' at 18:18 and 'Let's see what's on TV.' at 19:23. Max lag 20 s."
+      },
+      {
+        "kind": "pavlovian",
+        "trigger": "sound:tv",
+        "outcome_or_effect": "sound:doorbell",
+        "window_s": 30,
+        "context": "none",
+        "text": "Possibly a coincidence: twice the TV came on and the doorbell rang soon after.",
+        "support": "2 of 2 (20:31 and 22:05), max lag 14.5 s. owner:sat happened at the same moment both times. Needs to repeat tomorrow."
+      }
+    ],
+    "diary": [
+      {
+        "time": "07:04",
+        "text": "My person woke up and so did I, half a minute later. Their voice in the morning is my favourite sound. Later there were kitchen noises and breakfast, and two pats on my head.",
+        "tags": [
+          "morning",
+          "owner",
+          "touch"
+        ]
+      },
+      {
+        "time": "08:31",
+        "text": "I went into the bedroom and my person said '不行，出去。' I waddled back out to the hallway. The bedroom is theirs.",
+        "tags": [
+          "bedroom",
+          "owner:said_no",
+          "learning"
+        ]
+      },
+      {
+        "time": "08:55",
+        "text": "First I heard keys, then footsteps, then the door. My person was gone. I walked through every room again and again: bedroom, bathroom, kitchen, living room. Nine hours is a long time for a small duck.",
+        "tags": [
+          "owner:left",
+          "alone",
+          "wandering"
+        ]
+      },
+      {
+        "time": "14:00",
+        "text": "Rain started. I listened to it from the rooms while I waited.",
+        "tags": [
+          "weather:rain",
+          "alone"
+        ]
+      },
+      {
+        "time": "18:18",
+        "text": "The door opened and it was my person! They said they were making coffee, then patted my head and said '乖。' I felt very warm all over.",
+        "tags": [
+          "owner:returned",
+          "owner:praised",
+          "happy"
+        ]
+      },
+      {
+        "time": "18:44",
+        "text": "Keys again, and my person went out. This time they were back before 19:23, and they wanted to watch TV.",
+        "tags": [
+          "owner:left",
+          "owner:returned",
+          "keys"
+        ]
+      },
+      {
+        "time": "21:55",
+        "text": "I kept drifting into the bedroom tonight, and each time I heard 'No no no' or 'Out of the bedroom, buddy.' Each time I went back to the hallway. I want to remember this and stay near my person in the other rooms instead.",
+        "tags": [
+          "bedroom",
+          "owner:said_no",
+          "learning"
+        ]
+      },
+      {
+        "time": "22:50",
+        "text": "Twice tonight the TV came on and the doorbell rang. My person went to bed and I settled down to sleep too.",
+        "tags": [
+          "evening",
+          "sleep",
+          "doorbell"
+        ]
+      }
+    ],
+    "personality_nudges": [
+      {
+        "group": "drive_rates",
+        "name": "social",
+        "delta": 0.05,
+        "reason": "My person was away for 9.4 hours, and seeing them again with a head pat and '乖。' felt so good. I want to seek them out a little more."
+      },
+      {
+        "group": "thresholds",
+        "name": "explore",
+        "delta": 0.05,
+        "reason": "While I was alone I wandered between rooms dozens of times, and in the evening that wandering kept taking me into the bedroom. I should need a little more reason before I roam."
+      }
+    ],
+    "plan": [
+      {
+        "when": "07:00",
+        "condition": "my person is waking up",
+        "goal": "Wake with them, give a soft quack and stay near them through breakfast",
+        "priority": 0.6
+      },
+      {
+        "when": "on sound:keys",
+        "condition": "owner home, morning or evening",
+        "goal": "Go to the hallway to see them off with a soft quack, without getting underfoot",
+        "priority": 0.6
+      },
+      {
+        "when": "18:05",
+        "condition": "owner away since morning",
+        "goal": "Go to the door and wait there before the usual return around 18:18",
+        "priority": 0.8
+      },
+      {
+        "when": "on sound:door",
+        "condition": "owner away",
+        "goal": "Turn to the door and greet with a happy trill and a wiggle when I see my person",
+        "priority": 0.8
+      },
+      {
+        "when": "on self:entered(bedroom)",
+        "condition": "owner home",
+        "goal": "Turn around right away and go back to the hallway or living room before they need to say anything",
+        "priority": 0.9
+      },
+      {
+        "when": "on sound:tv",
+        "condition": "owner home and sitting",
+        "goal": "Go to my person and sit near them in the living room, and turn toward the door if the doorbell rings",
+        "priority": 0.5
+      }
+    ],
+    "skills": [
+      {
+        "name": "greet_at_door",
+        "steps": [
+          {
+            "primitive": "go_to",
+            "params_json": "{\"place\": \"door\"}"
+          },
+          {
+            "primitive": "turn_to",
+            "params_json": "{\"target\": \"door\"}"
+          },
+          {
+            "primitive": "wait",
+            "params_json": "{\"duration_s\": 300}"
+          },
+          {
+            "primitive": "turn_to",
+            "params_json": "{\"target\": \"owner\"}"
+          },
+          {
+            "primitive": "vocalise",
+            "params_json": "{\"kind\": \"happy_trill\"}"
+          },
+          {
+            "primitive": "wiggle",
+            "params_json": "{}"
+          },
+          {
+            "primitive": "follow",
+            "params_json": "{\"target\": \"owner\", \"duration_s\": 60}"
+          }
+        ],
+        "guards": [
+          "Abort if the battery is low",
+          "Abort if a stranger is seen instead of my person",
+          "Stop following if my person says no"
+        ]
+      },
+      {
+        "name": "leave_bedroom_quietly",
+        "steps": [
+          {
+            "primitive": "walk",
+            "params_json": "{\"vx\": -0.1, \"vtheta\": 0.0, \"duration_s\": 1.5}"
+          },
+          {
+            "primitive": "go_to",
+            "params_json": "{\"place\": \"hallway\"}"
+          },
+          {
+            "primitive": "sit",
+            "params_json": "{}"
+          },
+          {
+            "primitive": "vocalise",
+            "params_json": "{\"kind\": \"soft_quack\"}"
+          }
+        ],
+        "guards": [
+          "Abort if my person calls my name or invites me in",
+          "Abort if I fall"
+        ]
+      }
+    ]
+  },
+  "applied": {
+    "rules_added": [
+      {
+        "id": "r20261102_01",
+        "kind": "operant",
+        "trigger": "self:entered(bedroom)",
+        "outcome_or_effect": "owner:said_no",
+        "weight": 0.3,
+        "text": "When I walk into the bedroom while my person is home, they say 'no' or 'out' within a few seconds. Go there less when they're home.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 10.0,
+        "context": "owner_home",
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      },
+      {
+        "id": "r20261102_02",
+        "kind": "pavlovian",
+        "trigger": "sound:keys",
+        "outcome_or_effect": "owner:left",
+        "weight": 0.3,
+        "text": "Jingling keys mean my person is about to go out, about a minute and a half later.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 120.0,
+        "context": null,
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      },
+      {
+        "id": "r20261102_03",
+        "kind": "pavlovian",
+        "trigger": "sound:footsteps",
+        "outcome_or_effect": "sound:door",
+        "weight": 0.3,
+        "text": "Footsteps in the hall right after the keys mean the door is about to close.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 10.0,
+        "context": null,
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      },
+      {
+        "id": "r20261102_04",
+        "kind": "pavlovian",
+        "trigger": "sound:door",
+        "outcome_or_effect": "see:owner",
+        "weight": 0.3,
+        "text": "Sometimes the door sound means my person is coming in and I'll see them within seconds.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 10.0,
+        "context": null,
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      },
+      {
+        "id": "r20261102_05",
+        "kind": "pavlovian",
+        "trigger": "owner:returned",
+        "outcome_or_effect": "owner:said",
+        "weight": 0.3,
+        "text": "When my person comes home, they talk within half a minute.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 30.0,
+        "context": "owner_home",
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      },
+      {
+        "id": "r20261102_06",
+        "kind": "pavlovian",
+        "trigger": "sound:tv",
+        "outcome_or_effect": "sound:doorbell",
+        "weight": 0.3,
+        "text": "Possibly a coincidence: twice the TV came on and the doorbell rang soon after.",
+        "evidence": {
+          "confirm": 0,
+          "omit": 0
+        },
+        "window_s": 30.0,
+        "context": null,
+        "source": "model:claude-opus-5-5",
+        "created": "2026-11-02"
+      }
+    ],
+    "nudges_applied": [
+      {
+        "group": "drive_rates",
+        "name": "social",
+        "from": 1.0,
+        "to": 1.05,
+        "reason": "My person was away for 9.4 hours, and seeing them again with a head pat and '乖。' felt so good. I want to seek them out a little more."
+      },
+      {
+        "group": "thresholds",
+        "name": "explore",
+        "from": 0.6,
+        "to": 0.63,
+        "reason": "While I was alone I wandered between rooms dozens of times, and in the evening that wandering kept taking me into the bedroom. I should need a little more reason before I roam."
+      }
+    ],
+    "diary": [
+      {
+        "t": "2026-11-02T07:04",
+        "text": "My person woke up and so did I, half a minute later. Their voice in the morning is my favourite sound. Later there were kitchen noises and breakfast, and two pats on my head.",
+        "tags": [
+          "morning",
+          "owner",
+          "touch"
+        ]
+      },
+      {
+        "t": "2026-11-02T08:31",
+        "text": "I went into the bedroom and my person said '不行，出去。' I waddled back out to the hallway. The bedroom is theirs.",
+        "tags": [
+          "bedroom",
+          "owner:said_no",
+          "learning"
+        ]
+      },
+      {
+        "t": "2026-11-02T08:55",
+        "text": "First I heard keys, then footsteps, then the door. My person was gone. I walked through every room again and again: bedroom, bathroom, kitchen, living room. Nine hours is a long time for a small duck.",
+        "tags": [
+          "owner:left",
+          "alone",
+          "wandering"
+        ]
+      },
+      {
+        "t": "2026-11-02T14:00",
+        "text": "Rain started. I listened to it from the rooms while I waited.",
+        "tags": [
+          "weather:rain",
+          "alone"
+        ]
+      },
+      {
+        "t": "2026-11-02T18:18",
+        "text": "The door opened and it was my person! They said they were making coffee, then patted my head and said '乖。' I felt very warm all over.",
+        "tags": [
+          "owner:returned",
+          "owner:praised",
+          "happy"
+        ]
+      },
+      {
+        "t": "2026-11-02T18:44",
+        "text": "Keys again, and my person went out. This time they were back before 19:23, and they wanted to watch TV.",
+        "tags": [
+          "owner:left",
+          "owner:returned",
+          "keys"
+        ]
+      },
+      {
+        "t": "2026-11-02T21:55",
+        "text": "I kept drifting into the bedroom tonight, and each time I heard 'No no no' or 'Out of the bedroom, buddy.' Each time I went back to the hallway. I want to remember this and stay near my person in the other rooms instead.",
+        "tags": [
+          "bedroom",
+          "owner:said_no",
+          "learning"
+        ]
+      },
+      {
+        "t": "2026-11-02T22:50",
+        "text": "Twice tonight the TV came on and the doorbell rang. My person went to bed and I settled down to sleep too.",
+        "tags": [
+          "evening",
+          "sleep",
+          "doorbell"
+        ]
+      }
+    ],
+    "plan": {
+      "date": "2026-11-03",
+      "intentions": [
+        {
+          "when": "07:00",
+          "condition": "my person is waking up",
+          "goal": "Wake with them, give a soft quack and stay near them through breakfast",
+          "priority": 0.6
+        },
+        {
+          "when": "on sound:keys",
+          "condition": "owner home, morning or evening",
+          "goal": "Go to the hallway to see them off with a soft quack, without getting underfoot",
+          "priority": 0.6
+        },
+        {
+          "when": "18:05",
+          "condition": "owner away since morning",
+          "goal": "Go to the door and wait there before the usual return around 18:18",
+          "priority": 0.8
+        },
+        {
+          "when": "on sound:door",
+          "condition": "owner away",
+          "goal": "Turn to the door and greet with a happy trill and a wiggle when I see my person",
+          "priority": 0.8
+        },
+        {
+          "when": "on self:entered(bedroom)",
+          "condition": "owner home",
+          "goal": "Turn around right away and go back to the hallway or living room before they need to say anything",
+          "priority": 0.9
+        },
+        {
+          "when": "on sound:tv",
+          "condition": "owner home and sitting",
+          "goal": "Go to my person and sit near them in the living room, and turn toward the door if the doorbell rings",
+          "priority": 0.5
+        }
+      ]
+    },
+    "skills": [
+      {
+        "name": "greet_at_door",
+        "steps": [
+          {
+            "primitive": "go_to",
+            "params": {
+              "place": "door"
+            }
+          },
+          {
+            "primitive": "turn_to",
+            "params": {
+              "target": "door"
+            }
+          },
+          {
+            "primitive": "wait",
+            "params": {
+              "duration_s": 300
+            }
+          },
+          {
+            "primitive": "turn_to",
+            "params": {
+              "target": "owner"
+            }
+          },
+          {
+            "primitive": "vocalise",
+            "params": {
+              "kind": "happy_trill"
+            }
+          },
+          {
+            "primitive": "wiggle",
+            "params": {}
+          },
+          {
+            "primitive": "follow",
+            "params": {
+              "target": "owner",
+              "duration_s": 60
+            }
+          }
+        ],
+        "guards": [
+          "Abort if the battery is low",
+          "Abort if a stranger is seen instead of my person",
+          "Stop following if my person says no"
+        ],
+        "source": "reflection 2026-11-02"
+      },
+      {
+        "name": "leave_bedroom_quietly",
+        "steps": [
+          {
+            "primitive": "walk",
+            "params": {
+              "vx": -0.1,
+              "vtheta": 0.0,
+              "duration_s": 1.5
+            }
+          },
+          {
+            "primitive": "go_to",
+            "params": {
+              "place": "hallway"
+            }
+          },
+          {
+            "primitive": "sit",
+            "params": {}
+          },
+          {
+            "primitive": "vocalise",
+            "params": {
+              "kind": "soft_quack"
+            }
+          }
+        ],
+        "guards": [
+          "Abort if my person calls my name or invites me in",
+          "Abort if I fall"
+        ],
+        "source": "reflection 2026-11-02"
+      }
+    ]
+  },
+  "comparison": {
+    "both": [
+      [
+        "owner:returned",
+        "owner:said"
+      ],
+      [
+        "self:entered(bedroom)",
+        "owner:said_no"
+      ],
+      [
+        "sound:door",
+        "see:owner"
+      ],
+      [
+        "sound:footsteps",
+        "sound:door"
+      ],
+      [
+        "sound:keys",
+        "owner:left"
+      ],
+      [
+        "sound:tv",
+        "sound:doorbell"
+      ]
+    ],
+    "model_only": [],
+    "fallback_only": [
+      [
+        "owner:sat",
+        "sound:doorbell"
+      ],
+      [
+        "see:owner",
+        "owner:said"
+      ],
+      [
+        "sound:keys",
+        "sound:door"
+      ],
+      [
+        "sound:keys",
+        "sound:footsteps"
+      ]
+    ]
+  }
+}
