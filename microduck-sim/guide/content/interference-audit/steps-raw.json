@@ -1351,22 +1351,14 @@
    "pathCollisions": []
   },
   {
-   "step": "saddle-mount",
+   "step": "roof-screws",
    "chapter": "saddle",
-   "title": "Set the empty saddle on the torso roof and screw it into the pack",
+   "title": "Drive the two roof screws into the pack bar, with nothing on the shell roofs yet",
    "bench": false,
    "inventory": false,
-   "drawnParts": 64,
-   "add": [
-    "saddle_body"
-   ],
-   "approach": {
-    "saddle_body": [
-     0,
-     0,
-     40
-    ]
-   },
+   "drawnParts": 63,
+   "add": [],
+   "approach": {},
    "group": false,
    "cables": [
     "pi-lead",
@@ -1374,19 +1366,17 @@
     "uart"
    ],
    "drawnButNotPresent": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
    "pathCollisions": []
   },
   {
    "step": "saddle-board",
    "chapter": "saddle",
-   "title": "On the bench: thermal pad and the 6530B heatsink on the A7Z, the tray under it, four screws from below",
+   "title": "On the bench: thermal pad and the 6530B heatsink on the A7Z, the board onto the saddle floor bosses, four screws from below",
    "bench": true,
    "inventory": false,
-   "drawnParts": 17,
+   "drawnParts": 18,
    "add": [
+    "saddle_body",
     "sd_a7z_pcb",
     "sd_soc_a733",
     "sd_ram",
@@ -1415,6 +1405,11 @@
      0,
      0,
      25
+    ],
+    "saddle_body": [
+     0,
+     0,
+     -20
     ]
    },
    "group": false,
@@ -1433,10 +1428,10 @@
   {
    "step": "saddle-antenna",
    "chapter": "saddle",
-   "title": "Stick the Wi-Fi antenna on the inside of the saddle front wall",
-   "bench": false,
+   "title": "On the bench: stick the Wi-Fi antenna on the inside of the saddle front wall",
+   "bench": true,
    "inventory": false,
-   "drawnParts": 65,
+   "drawnParts": 19,
    "add": [
     "sd_antenna"
    ],
@@ -1457,19 +1452,22 @@
    "group": false,
    "cables": [],
    "drawnButNotPresent": [],
+   "benchSubassembly": "saddle",
+   "robotContextDrawnWithBench": [],
    "pose": null,
    "flex": null,
    "alternatives": {},
    "pathCollisions": []
   },
   {
-   "step": "saddle-drop",
+   "step": "saddle-tape",
    "chapter": "saddle",
-   "title": "Lower the tray with the A7Z into the saddle and lead the pigtail to the antenna",
+   "title": "Tape the saddle unit onto the torso roof",
    "bench": false,
    "inventory": false,
    "drawnParts": 82,
    "add": [
+    "saddle_body",
     "sd_a7z_pcb",
     "sd_soc_a733",
     "sd_ram",
@@ -1486,93 +1484,104 @@
     "sd_uboot_button",
     "sd_underside_smd",
     "sd_thermal_pad_6530b",
-    "sd_heatsink_6530b"
+    "sd_heatsink_6530b",
+    "sd_antenna"
    ],
    "approach": {
+    "saddle_body": [
+     0,
+     0,
+     40
+    ],
     "sd_a7z_pcb": [
      0,
      0,
-     30
+     40
     ],
     "sd_soc_a733": [
      0,
      0,
-     30
+     40
     ],
     "sd_ram": [
      0,
      0,
-     30
+     40
     ],
     "sd_pmic_area": [
      0,
      0,
-     30
+     40
     ],
     "sd_wifi_module_fcu760k": [
      0,
      0,
-     30
+     40
     ],
     "sd_usb_c_otg_dp": [
      0,
      0,
-     30
+     40
     ],
     "sd_usb_c_power": [
      0,
      0,
-     30
+     40
     ],
     "sd_micro_hdmi": [
      0,
      0,
-     30
+     40
     ],
     "sd_fan_connector": [
      0,
      0,
-     30
+     40
     ],
     "sd_ipex_socket": [
      0,
      0,
-     30
+     40
     ],
     "sd_microsd_socket": [
      0,
      0,
-     30
+     40
     ],
     "sd_csi_connector": [
      0,
      0,
-     30
+     40
     ],
     "sd_pcie_fpc": [
      0,
      0,
-     30
+     40
     ],
     "sd_uboot_button": [
      0,
      0,
-     30
+     40
     ],
     "sd_underside_smd": [
      0,
      0,
-     30
+     40
     ],
     "sd_thermal_pad_6530b": [
      0,
      0,
-     30
+     40
     ],
     "sd_heatsink_6530b": [
      0,
      0,
-     30
+     40
+    ],
+    "sd_antenna": [
+     0,
+     0,
+     40
     ]
    },
    "group": true,

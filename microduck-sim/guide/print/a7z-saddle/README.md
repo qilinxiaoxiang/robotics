@@ -1,25 +1,29 @@
-# A7Z roof saddle V2 (D-028, 2026-10-25; V1.29 layout of D-022 superseded)
+# A7Z roof saddle V3 (D-028, 2026-10-25; V2 of the same day and V1.29 of D-022 superseded)
 
 The Radxa Cubie A7Z leaves the head (closed-head soak: 85 C in 5 min, both clusters at 416 MHz, resets) and sits in a
-printed saddle on the torso roof over the V1.9 rear pack with the Radxa Heatsink 6530B on it. V2 turns the board 180 deg
-from the printed V1.29: USB-C ①② and micro HDMI through one window in the rear wall (plugged from behind), 40-pin header at
-the front edge in an open strip (no lid over the Dupont housings), board + 6530B screwed from below to a printed tray on
-the bench, lid over the heatsink only, AC019 antenna on the front wall inner face, +y wall bulge for the IPEX pigtail.
-Evening revision (Shawn's review): microSD tweezer notch in the -y wall (friction socket), front wall top lowered to z 63 over the header strip so the head wires come
-over it from the neck (never under the saddle), floor-cut run-out kept for the ID12 servo cable and the IMU plug. The approved design is `DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner
-runs it after each job). Every number is in the `build_saddle.py` docstring; `renders/saddle.png` shows the result.
-Concept and history: `flip-concept-20261025/`, `../a7z-slice-20261022/`. Interim print colour orange (white PETG out).
-V2 release: `../release-V1.35/` (Orange plate, body + lid + tray; `scripts/run_v135.sh`). Routes: `route_check_saddle.py --write`
-(0 mid-route penetrations). Head sweep on the final outline: `head_sweep_v2.out` (HOME 31.7 mm, 63 of 637 trained poses hit).
+printed saddle on the torso roof over the V1.9 rear pack with the Radxa Heatsink 6530B on it. Board turned 180 deg from the
+printed V1.29: USB-C ①② and micro HDMI through one window in the rear wall (plugged from behind), 40-pin header at the front
+edge in an open strip (no lid over the Dupont housings; the front wall top is lowered to z 63 there so the head wires come over
+it from the neck), AC019 antenna on the front wall inner face, +y wall bulge for the IPEX pigtail, microSD tweezer notch in
+the -y wall (friction socket).
+V3 (Shawn's review of the V2 files, same evening): the saddle floor itself carries the board: four floor bosses, four M2 x 6 up
+from below on the bench into the 6530B's threaded bosses, so saddle + board + heatsink are one unit; the unit is fixed to the
+shell roof with 3M 0.5 mm foam double-sided tape (the floor's 0.5 mm gap); the lid is a cover that touches nothing (no bars,
+no pads; screw bosses 1 mm above the heatsink). The V2 tray and the lid-pressure clamp are gone. The approved design is
+`DESIGN-CONTRACT.json`; `../design_contract.py` checks every build against it (the bounded runner runs it after each job).
+Every number is in the `build_saddle.py` docstring; `renders/saddle.png` shows the result. Print material PLA (every MicroDuck
+plate; interim colour orange while white is out). Concept and history: `flip-concept-20261025/`, `concept-v3-20261025/` (the section sketch Shawn saw), `../a7z-slice-20261022/`.
+Release: `../release-V1.35/` (Orange plate, body + lid; `scripts/run_v135.sh`). Routes: `route_check_saddle.py --write`
+(0 mid-route penetrations). Head sweep on the V3 outline: `head_sweep_v3.out` (box -45..-5, -36.4..36.4, 42..68.1).
 
 ## Files
 - `build_saddle.py`: the V2 geometry (every number in its docstring); run under the bounded runner:
   `python3 build-pack-20260913/redesign-20260913/head-redesign-20261008/run_bounded_cad.py --seconds 500 --max-mib 2048 --report guide/print/a7z-saddle/build/bounded-report.json -- /tmp/microduck-cad-venv/bin/python guide/print/a7z-saddle/build_saddle.py`
-  (about 8 s). Writes `build/saddle_body-world.stl`, `build/saddle_lid-world.stl`, `build/saddle_tray-world.stl`, the bought parts in the saddle pose
+  (about 8 s). Writes `build/saddle_body-world.stl`, `build/saddle_lid-world.stl`, the bought parts in the saddle pose
   (`build/<name>-world.stl`, remapped from `../a7z-head/a7z_parts/` through the board frame), `build/build.json`
   (parameters, part bounds, fit checks, screws, wall allowances) and `build/pins.json` (header pin tops for the routes).
-- `to_guide_world.py`: copies the parts into `guide/print/world/` (`saddle_body.stl`, `saddle_lid.stl`, `sd_*.stl`) and
-  records their sha256 in `guide-world.json`.
+- `to_guide_world.py`: copies the parts into `guide/print/world/` (`saddle_body.stl`, `saddle_lid.stl`, `sd_*.stl`), moves retired
+  world files (V1.29 copper/fan, the V2 tray) into `build/retired-v129/` and records the sha256 in `guide-world.json`.
 - `render_views.py` (`~/.venvs/microduck-dyn/bin/python`): `renders/saddle.png`, five views on the as-built model at HOME.
 - `head_sweep.py` (microduck-dyn): neck/head joint sweep of the head meshes against the saddle outline; `head_sweep_final.out`
   is the run on the released outline (`-45 -34.4 42 -5 34.4 74`): HOME clearance 25.1 mm, 105 of the 633 trained-range poses
@@ -43,7 +47,7 @@ its 1.13 mm pigtail runs between the wall and the housings (1.56 mm, 1.26 over t
 socket. The floor passage (x -21..-5, |y| <= 16) runs out under the front wall as a 32 x 4.5 mm slot: the neck bundle
 leaves the roof opening forward to the neck through it (the wall above is a bridge printed on support).
 
-## Release and gate (V2: `../release-V1.35/`, Orange body + lid + tray, X1C 1h38m 27.6 g, Elegoo 1h43m 28.1 g, verify passed; print gate passed 2026-10-25 on guide revision guide-20261025-saddle-v2, `guide/content/interference-audit/gate-receipt.json`; the V1.29 text below is history)
+## Release and gate (V3: `../release-V1.35/`, Orange body + lid, re-sliced 2026-10-25 night; gate on guide revision guide-20261025-saddle-v3; see `../release-V1.35/logs-run.out` for the times; the V1.29 text below is history)
 `../release-V1.29/` (scripts/run_v129.sh: manifest, prepare, both slices, reviews, native review, package, verify, parts
 sheet, delivery folder). Body upright with the domed floor on tree support (2.3 mm2 own contact, no_brim), lid upside
 down on its plate; X1C 1h34m 29.9 g, Elegoo 1h41m 30.4 g. Print gate 2026-10-22 passed with chapter 7 of the guide

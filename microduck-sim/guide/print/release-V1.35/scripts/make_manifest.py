@@ -1,16 +1,18 @@
-"""Write the V1.35 incremental release manifest: the A7Z saddle V2 of D-028 (print/a7z-saddle/build_saddle.py), body, lid and
-tray, one Orange plate (interim colour: white PETG is out at RoboClub, CURRENT-STATE.json print_filament_stock; scheme C
-white when restocked). Replaces the printed V1.29 saddle body and lid (V1.33 White plate), which are superseded by D-028.
+"""Write the V1.35 incremental release manifest: the A7Z saddle V3 of D-028 (print/a7z-saddle/build_saddle.py), body and lid,
+one Orange plate (interim colour: white PLA is out at RoboClub, CURRENT-STATE.json print_filament_stock; scheme C white when
+restocked). Replaces the printed V1.29 saddle body and lid (V1.33 White plate), which are superseded by D-028. V3: the saddle
+floor itself carries the board on four bosses (board + 6530B screwed to it from below), the unit is taped to the shell roofs
+with 3M 0.5 mm foam tape, and the lid is a cover that touches nothing; the V2 tray of the afternoon release was never printed
+and is gone.
 
 Poses (guide/print/orientation-study/PRINT-ORIENTATION-PRACTICE.md):
 - saddle_body upright, open side up, the domed floor (it follows the shell roof) on the bed, as V1.29: one rear corner
-  touches the bed, the whole floor underside stands on tree support; the walls, the rear port window, the +y bulge channel,
-  the exhaust slots, the roof-screw seats and the two side lid-screw holes print vertical and clean. no_brim on the part
-  (its own contact is inside the support footprint; Bambu trims the brim there, V1.29 brim review).
-- saddle_lid upside down, plate top on the bed: the lip, the two pressing bars, the corner pad and the two screw bosses
-  stand up from the plate; the grille is through the plate.
-- saddle_tray flat as built, plate underside on the bed: the four bosses stand up; the counterbores are 1.0 mm recesses in
-  the bed face, the boss holes and the part cut-outs are vertical.
+  touches the bed, the whole floor underside stands on tree support; the walls, the four floor bosses, the rear port window,
+  the +y bulge channel, the exhaust slots and the two side lid-screw holes print vertical and clean; the four head pockets
+  open downward into the support. no_brim on the part (its own contact is inside the support footprint; Bambu trims the brim
+  there, V1.29 brim review).
+- saddle_lid upside down, plate top on the bed: the lip and the two screw bosses stand up from the plate; the grille is
+  through the plate.
 
     /tmp/microduck-cad-venv/bin/python scripts/make_manifest.py
 """
@@ -28,22 +30,18 @@ WALL_REASON = ('wall-foot wedges where the 1.6 mm walls run down past the shell 
 POSES = {'saddle_body': dict(T=np.eye(4), name='upright, dome down',
                              origin=('a7z-saddle/build_saddle.py world frame as printed: open side up, the domed floor underside (it follows the '
                                      'shell roof, 1.6 mm normal offset) on the bed; one rear corner touches, the whole underside stands on tree support '
-                                     '(shells pattern of PRINT-ORIENTATION-PRACTICE.md, as the printed V1.29 body). Walls, rear port window, +y '
-                                     'bulge channel, exhaust slots, roof-screw seats and side lid-screw holes print vertical.'),
+                                     '(shells pattern of PRINT-ORIENTATION-PRACTICE.md, as the printed V1.29 body). Walls, the four floor bosses, rear '
+                                     'port window, +y bulge channel, exhaust slots and side lid-screw holes print vertical; the four head pockets in '
+                                     'the floor underside open into the support.'),
                              minimum=2.0, brim_support=None,
                              objectSettings={'brim_type': 'no_brim'},
                              objectSettingsReason=('the part stands on tree support over its whole domed underside; its own first-layer contact is a '
                                                    'small rear corner inside the support footprint, and Bambu trims a part brim wherever support '
                                                    'stands within gap + width (V1.29 brim review: planned brim missing); the slicers brim the support themselves')),
          'saddle_lid': dict(T=np.diag([1.0, -1.0, -1.0, 1.0]), name='upside down, plate on the bed',
-                            origin=('a7z-saddle/build_saddle.py world frame turned 180 deg about x: the lid plate top on the bed; the lip, the two '
-                                    'pressing bars, the corner pad and the two lid-screw bosses stand up from the plate; the grille is through the plate.'),
-                            minimum=1000.0, brim_support=None),
-         'saddle_tray': dict(T=np.eye(4), name='flat, bosses up',
-                             origin=('a7z-saddle/build_saddle.py world frame as built, dropped to the bed: the 1.4 mm plate underside on the bed with '
-                                     'its four 1.0 mm counterbores as recesses in the bed face; the four bosses stand up, the boss holes and the '
-                                     'cut-outs under the microSD, CSI, PCIe and button are vertical.'),
-                             minimum=600.0, brim_support=None)}
+                            origin=('a7z-saddle/build_saddle.py world frame turned 180 deg about x: the lid plate top on the bed; the lip and the two '
+                                    'lid-screw bosses stand up from the plate; the grille is through the plate. A cover only: no bars, no pads.'),
+                            minimum=1000.0, brim_support=None)}
 
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -70,9 +68,11 @@ for key, pose in POSES.items():
                path=str(stl), sha256=sha(stl), sourceFrame='robot frame (mm, x forward, y left, z up; guide world at HOME)', sourceToPrint=pose['T'].tolist(),
                flatContact={'minimumAreaMm2': pose['minimum']}, poseName=pose['name'], poseOrigin=pose['origin'],
                poseCheck=dict(printStl=ref(pstl), bedContactMm2=round(area, 2), printSizeMm=size, note='world STL in the row pose, dropped to the bed'),
-               changeReason=('D-028 (2026-10-25): saddle V2, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front '
-                             'in an open strip), Radxa 6530B heatsink on the board, board + heatsink screwed from below to a tray, lid over the '
-                             'heatsink only, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) '
+               changeReason=('D-028 (2026-10-25): saddle V3, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front '
+                             'in an open strip, front wall top lowered for the head wires), Radxa 6530B heatsink on the board, board + heatsink '
+                             'screwed from below to four bosses of the saddle floor (one unit), the unit taped to the shell roofs with 3M 0.5 mm '
+                             'foam tape (no screw), lid a cover over the heatsink end that touches nothing, antenna on the front wall, +y bulge for '
+                             'the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) '
                              'are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the '
                              f'interim colour (white out). {key}: {build["parts"][key]["volume_mm3"] / 1000:.1f} cm3, bounds '
                              f'{build["parts"][key]["bounds"]} (a7z-saddle/build/build.json).'),
@@ -93,12 +93,15 @@ m.update(parts=parts, placements={'Orange': pl}, processOverrides=orange, versio
          processOverrideReason=('The V1.17 White support-interface overrides (3 interface layers at 0.15 spacing, 0.2 top z, interface 40 mm/s, bridge '
                                 '30 mm/s, support ironing, 0.2 first layer) applied to the Orange plate: the saddle body stands on tree support over its '
                                 'whole underside, as the printed V1.29 body did on White.'),
-         prototypeScope=('V1.35 delta package: one Orange plate with the A7Z saddle V2 body, lid and tray (D-028). The V1.29 saddle body and lid of '
-                         'the V1.33 White plate are superseded; orange is the interim colour until white PETG is restocked.'),
-         knownFitBoundary=('Board + Radxa 6530B screwed from below with four M2 x 6 through the tray bosses and the board holes into the heatsink\'s '
-                           'threaded bosses; the tray drops in after the two roof screws S-shell_pack-01/02 (M2 x 10, heads 0.65 mm under the tray); '
-                           'lid clamps the heatsink with two M2 x 6 side screws. 6530B base height (3.1) and fin-block start (d 6.4) are photo '
-                           'estimates, measured on the part before fitting. Printed sizes not measured.'))
+         prototypeScope=('V1.35 delta package: one Orange plate with the two parts of the A7Z saddle V3, body and lid (D-028). The V1.29 saddle body '
+                         'and lid of the V1.33 White plate are superseded; orange is the interim colour until white PLA is restocked.'),
+         knownFitBoundary=('Board + Radxa 6530B screwed from below with four M2 x 6 through the saddle floor bosses (head pockets dia 4.2 from below '
+                           'to z 46.5) and the board holes into the heatsink\'s threaded bosses, making saddle, board and heatsink one unit; the two '
+                           'roof screws S-shell_pack-01/02 are driven into the pack bar before the unit is taped on (floor underside passes about '
+                           '0.1 mm over their heads, ray cast 2026-10-25); the unit is held by 3M 0.5 mm foam tape under the floor edges, no screw; '
+                           'the lid is a cover held by two M2 x 6 side screws at z 64.2 whose bosses end 1.0 mm above the heatsink. 6530B base '
+                           'height (3.1) and fin-block start (d 6.4) are photo estimates, measured on the part before fitting. Printed sizes not '
+                           'measured.'))
 m.pop('deferred', None)
 m['deliveryContract'].update(colors=['Orange'], filesPerColor=2, fileCount=2, baseline='printed releases through V1.34', status='INCREMENTAL_REPLACEMENT',
                              supersedes=['saddle_body and saddle_lid of V1.29 (printed on the V1.33 White plate)'])

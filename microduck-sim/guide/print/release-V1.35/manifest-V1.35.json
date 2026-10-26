@@ -3,8 +3,8 @@
  "releaseKind": "incremental",
  "version": "V1.35",
  "prototype": true,
- "prototypeScope": "V1.35 delta package: one Orange plate with the A7Z saddle V2 body, lid and tray (D-028). The V1.29 saddle body and lid of the V1.33 White plate are superseded; orange is the interim colour until white PETG is restocked.",
- "knownFitBoundary": "Board + Radxa 6530B screwed from below with four M2 x 6 through the tray bosses and the board holes into the heatsink's threaded bosses; the tray drops in after the two roof screws S-shell_pack-01/02 (M2 x 10, heads 0.65 mm under the tray); lid clamps the heatsink with two M2 x 6 side screws. 6530B base height (3.1) and fin-block start (d 6.4) are photo estimates, measured on the part before fitting. Printed sizes not measured.",
+ "prototypeScope": "V1.35 delta package: one Orange plate with the two parts of the A7Z saddle V3, body and lid (D-028). The V1.29 saddle body and lid of the V1.33 White plate are superseded; orange is the interim colour until white PLA is restocked.",
+ "knownFitBoundary": "Board + Radxa 6530B screwed from below with four M2 x 6 through the saddle floor bosses (head pockets dia 4.2 from below to z 46.5) and the board holes into the heatsink's threaded bosses, making saddle, board and heatsink one unit; the two roof screws S-shell_pack-01/02 are driven into the pack bar before the unit is taped on (floor underside passes about 0.1 mm over their heads, ray cast 2026-10-25); the unit is held by 3M 0.5 mm foam tape under the floor edges, no screw; the lid is a cover held by two M2 x 6 side screws at z 64.2 whose bosses end 1.0 mm above the heatsink. 6530B base height (3.1) and fin-block start (d 6.4) are photo estimates, measured on the part before fitting. Printed sizes not measured.",
  "baselineStock": {
   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
   "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
@@ -49,7 +49,7 @@
     "key": "saddle_body",
     "copy": 1,
     "translation": [
-     115.0,
+     135.3,
      127.0,
      0.0
     ]
@@ -58,16 +58,7 @@
     "key": "saddle_lid",
     "copy": 1,
     "translation": [
-     165.0,
-     128.0,
-     0.0
-    ]
-   },
-   {
-    "key": "saddle_tray",
-    "copy": 1,
-    "translation": [
-     197.4,
+     185.3,
      128.0,
      0.0
     ]
@@ -117,7 +108,7 @@
    "decision": "addition",
    "replacesStockIds": [],
    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_body.stl",
-   "sha256": "8108c895980e40953026287b2aa657cd88742371e0e440698cfd511bbeac0332",
+   "sha256": "05855f6604e911004c25d4b4670c47c285ac035bdd30a552149c58158466c2d5",
    "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
    "sourceToPrint": [
     [
@@ -149,33 +140,33 @@
     "minimumAreaMm2": 2.0
    },
    "poseName": "upright, dome down",
-   "poseOrigin": "a7z-saddle/build_saddle.py world frame as printed: open side up, the domed floor underside (it follows the shell roof, 1.6 mm normal offset) on the bed; one rear corner touches, the whole underside stands on tree support (shells pattern of PRINT-ORIENTATION-PRACTICE.md, as the printed V1.29 body). Walls, rear port window, +y bulge channel, exhaust slots, roof-screw seats and side lid-screw holes print vertical.",
+   "poseOrigin": "a7z-saddle/build_saddle.py world frame as printed: open side up, the domed floor underside (it follows the shell roof, 1.6 mm normal offset) on the bed; one rear corner touches, the whole underside stands on tree support (shells pattern of PRINT-ORIENTATION-PRACTICE.md, as the printed V1.29 body). Walls, the four floor bosses, rear port window, +y bulge channel, exhaust slots and side lid-screw holes print vertical; the four head pockets in the floor underside open into the support.",
    "poseCheck": {
     "printStl": {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/saddle_body-print.stl",
-     "sha256": "9cdb711e3641e5add9064ee8eec478013e1370ea8e42f5f01b4c69ace3732dbf"
+     "sha256": "c9c78837ce4ef352465518449f150e0e486568ea675642bf66b43608db21f70a"
     },
     "bedContactMm2": 2.3,
     "printSizeMm": [
      40.0,
      70.8,
-     39.61
+     40.11
     ],
     "note": "world STL in the row pose, dropped to the bed"
    },
-   "changeReason": "D-028 (2026-10-25): saddle V2, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front in an open strip), Radxa 6530B heatsink on the board, board + heatsink screwed from below to a tray, lid over the heatsink only, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the interim colour (white out). saddle_body: 12.8 cm3, bounds [[-45.0, -34.4, 26.19], [-5.0, 36.4, 65.8]] (a7z-saddle/build/build.json).",
+   "changeReason": "D-028 (2026-10-25): saddle V3, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front in an open strip, front wall top lowered for the head wires), Radxa 6530B heatsink on the board, board + heatsink screwed from below to four bosses of the saddle floor (one unit), the unit taped to the shell roofs with 3M 0.5 mm foam tape (no screw), lid a cover over the heatsink end that touches nothing, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the interim colour (white out). saddle_body: 13.1 cm3, bounds [[-45.0, -34.4, 26.39], [-5.0, 36.4, 66.5]] (a7z-saddle/build/build.json).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
-    "sha256": "594dd5c6adba5bb52df27c55b6f50c06060d9d428862c3d4cbee70ab331c0a07"
+    "sha256": "f673457392e8e498449b3c0962d5b489b0521f62d519c98e3179548cdfa447a3"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/guide-world.json",
-     "sha256": "39130139fc633a714841c757fa5d7cbcd4b172403a06efcc64f1e6fbefb7549f"
+     "sha256": "eeacc40e7f3a06a0cb7207ee094c1ec0ee788f215f6b0c7e71433c1c763bedfb"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/DESIGN-CONTRACT.json",
-     "sha256": "1d41e1dc3cab44128a6b99539177239448d0755aa6c16e03f185836c9bc15dab"
+     "sha256": "0025d8d9e704a5da3061942bcfba0c7492815de6c51bbb91d9a2ad6592fd2c4e"
     }
    ],
    "thinWallAllowances": [
@@ -183,64 +174,32 @@
      "bbox": [
       [
        -45.05,
-       -30.215,
-       0.374
+       -30.309,
+       0.367
       ],
       [
-       -43.754000000000005,
-       32.778,
-       10.632000000000001
+       -43.834,
+       32.946,
+       10.926
       ]
      ],
-     "minMm": 0.095,
+     "minMm": 0.037,
      "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
     },
     {
      "bbox": [
       [
-       -31.682000000000002,
-       35.276,
-       36.305
+       -39.788999999999994,
+       31.913,
+       3.228
       ],
       [
-       -30.831,
-       35.449999999999996,
-       38.436
+       -38.676,
+       32.602999999999994,
+       4.917
       ]
      ],
-     "minMm": 0.995,
-     "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
-    },
-    {
-     "bbox": [
-      [
-       -31.887,
-       36.35,
-       36.935
-      ],
-      [
-       -30.573999999999998,
-       36.449999999999996,
-       38.015
-      ]
-     ],
-     "minMm": 0.995,
-     "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
-    },
-    {
-     "bbox": [
-      [
-       -39.605999999999995,
-       32.019000000000005,
-       3.156
-      ],
-      [
-       -38.722,
-       32.778999999999996,
-       4.17
-      ]
-     ],
-     "minMm": 0.666,
+     "minMm": 0.561,
      "reason": "wall-foot wedges where the 1.6 mm walls run down past the shell roof edge to meet the shell flank: the wall thins to a wedge over its last millimetres above the shell (build_saddle.py thinWallAllowances); the wedge sits on the shell and carries no load"
     }
    ],
@@ -256,7 +215,7 @@
    "decision": "addition",
    "replacesStockIds": [],
    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_lid.stl",
-   "sha256": "29db1b0127eebf48c8832636748d905b4adeee010e5d2ae2f50f779261209d44",
+   "sha256": "50208f01bedb3e067d152597c6baa511c5f330aa1d3c98eca5861fb019c73fc9",
    "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
    "sourceToPrint": [
     [
@@ -288,103 +247,33 @@
     "minimumAreaMm2": 1000.0
    },
    "poseName": "upside down, plate on the bed",
-   "poseOrigin": "a7z-saddle/build_saddle.py world frame turned 180 deg about x: the lid plate top on the bed; the lip, the two pressing bars, the corner pad and the two lid-screw bosses stand up from the plate; the grille is through the plate.",
+   "poseOrigin": "a7z-saddle/build_saddle.py world frame turned 180 deg about x: the lid plate top on the bed; the lip and the two lid-screw bosses stand up from the plate; the grille is through the plate. A cover only: no bars, no pads.",
    "poseCheck": {
     "printStl": {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/saddle_lid-print.stl",
-     "sha256": "7dbf562a14acb749538f4087a5c8422f6ce4c3ee2851c3586453d9194e608a84"
+     "sha256": "278b08f287574420d78efc4e2004020aca4cb3da615ea3ac261af06c3f681430"
     },
     "bedContactMm2": 1489.77,
     "printSizeMm": [
      25.4,
      68.8,
-     6.3
+     6.0
     ],
     "note": "world STL in the row pose, dropped to the bed"
    },
-   "changeReason": "D-028 (2026-10-25): saddle V2, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front in an open strip), Radxa 6530B heatsink on the board, board + heatsink screwed from below to a tray, lid over the heatsink only, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the interim colour (white out). saddle_lid: 3.6 cm3, bounds [[-45.0, -34.4, 61.1], [-19.6, 34.4, 67.4]] (a7z-saddle/build/build.json).",
+   "changeReason": "D-028 (2026-10-25): saddle V3, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front in an open strip, front wall top lowered for the head wires), Radxa 6530B heatsink on the board, board + heatsink screwed from below to four bosses of the saddle floor (one unit), the unit taped to the shell roofs with 3M 0.5 mm foam tape (no screw), lid a cover over the heatsink end that touches nothing, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the interim colour (white out). saddle_lid: 2.8 cm3, bounds [[-45.0, -34.4, 62.1], [-19.6, 34.4, 68.1]] (a7z-saddle/build/build.json).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
-    "sha256": "594dd5c6adba5bb52df27c55b6f50c06060d9d428862c3d4cbee70ab331c0a07"
+    "sha256": "f673457392e8e498449b3c0962d5b489b0521f62d519c98e3179548cdfa447a3"
    },
    "evidenceAlso": [
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/guide-world.json",
-     "sha256": "39130139fc633a714841c757fa5d7cbcd4b172403a06efcc64f1e6fbefb7549f"
+     "sha256": "eeacc40e7f3a06a0cb7207ee094c1ec0ee788f215f6b0c7e71433c1c763bedfb"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/DESIGN-CONTRACT.json",
-     "sha256": "1d41e1dc3cab44128a6b99539177239448d0755aa6c16e03f185836c9bc15dab"
-    }
-   ],
-   "thinWallAllowances": []
-  },
-  {
-   "key": "saddle_tray",
-   "color": "Orange",
-   "quantity": 1,
-   "decision": "addition",
-   "replacesStockIds": [],
-   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/saddle_tray.stl",
-   "sha256": "a60959e87c95fc270ba0123adf74a421336b5abde2f17138d3fb107a63545bd3",
-   "sourceFrame": "robot frame (mm, x forward, y left, z up; guide world at HOME)",
-   "sourceToPrint": [
-    [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     0.0,
-     1.0
-    ]
-   ],
-   "flatContact": {
-    "minimumAreaMm2": 600.0
-   },
-   "poseName": "flat, bosses up",
-   "poseOrigin": "a7z-saddle/build_saddle.py world frame as built, dropped to the bed: the 1.4 mm plate underside on the bed with its four 1.0 mm counterbores as recesses in the bed face; the four bosses stand up, the boss holes and the cut-outs under the microSD, CSI, PCIe and button are vertical.",
-   "poseCheck": {
-    "printStl": {
-     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/saddle_tray-print.stl",
-     "sha256": "44c3e4ebd65d3cf97b7677108d16cefb75c912bc1cedf85add20910a4221628a"
-    },
-    "bedContactMm2": 1267.71,
-    "printSizeMm": [
-     30.6,
-     65.3,
-     2.5
-    ],
-    "note": "world STL in the row pose, dropped to the bed"
-   },
-   "changeReason": "D-028 (2026-10-25): saddle V2, board turned 180 deg (USB-C and HDMI through one rear-wall window, header at the front in an open strip), Radxa 6530B heatsink on the board, board + heatsink screwed from below to a tray, lid over the heatsink only, antenna on the front wall, +y bulge for the IPEX pigtail. The V1.29 body and lid (V1.33 White plate) are superseded: their board faced the neck and modelled a copper block and fan that were never bought. Orange is the interim colour (white out). saddle_tray: 1.9 cm3, bounds [[-42.0, -32.65, 45.5], [-11.4, 32.65, 48.0]] (a7z-saddle/build/build.json).",
-   "incrementalEvidence": {
-    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/build/build.json",
-    "sha256": "594dd5c6adba5bb52df27c55b6f50c06060d9d428862c3d4cbee70ab331c0a07"
-   },
-   "evidenceAlso": [
-    {
-     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/guide-world.json",
-     "sha256": "39130139fc633a714841c757fa5d7cbcd4b172403a06efcc64f1e6fbefb7549f"
-    },
-    {
-     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/a7z-saddle/DESIGN-CONTRACT.json",
-     "sha256": "1d41e1dc3cab44128a6b99539177239448d0755aa6c16e03f185836c9bc15dab"
+     "sha256": "0025d8d9e704a5da3061942bcfba0c7492815de6c51bbb91d9a2ad6592fd2c4e"
     }
    ],
    "thinWallAllowances": []

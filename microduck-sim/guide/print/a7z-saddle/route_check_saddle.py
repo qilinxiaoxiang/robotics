@@ -265,7 +265,7 @@ def solids() -> dict:
         v = np.frombuffer(base64.b64decode(p['positionB64']), '<f4').reshape(-1, 3).astype(np.float64)
         f = np.frombuffer(base64.b64decode(p['indexB64']), '<u4').reshape(-1, 3).astype(np.int64)
         out[k] = trimesh.Trimesh(v, f, process=False)
-    for f in sorted(WORLD.glob('sd_*.stl')) + [WORLD / 'saddle_body.stl', WORLD / 'saddle_lid.stl', WORLD / 'saddle_tray.stl']:
+    for f in sorted(WORLD.glob('sd_*.stl')) + [WORLD / 'saddle_body.stl', WORLD / 'saddle_lid.stl']:
         out[f.stem] = trimesh.load(str(f), force='mesh')
     return out
 

@@ -10,8 +10,8 @@ WORLD = HERE.parents[0] / 'world'
 BOUGHT = ['a7z_pcb', 'soc_a733', 'ram', 'pmic_area', 'wifi_module_fcu760k', 'usb_c_otg_dp', 'usb_c_power', 'micro_hdmi', 'fan_connector',
           'ipex_socket', 'microsd_socket', 'microsd_card', 'csi_connector', 'pcie_fpc', 'uboot_button', 'underside_smd',
           'heatsink_6530b', 'thermal_pad_6530b', 'dupont_housings', 'antenna', 'usb_c_plug']
-COPY = {'saddle_body.stl': B / 'saddle_body-world.stl', 'saddle_lid.stl': B / 'saddle_lid-world.stl', 'saddle_tray.stl': B / 'saddle_tray-world.stl'}
-STALE = ['sd_heatsink.stl', 'sd_thermal_pad.stl', 'sd_fan.stl']     # V1.29 copper + 30 mm fan, never bought (D-028): moved to build/retired-v129/
+COPY = {'saddle_body.stl': B / 'saddle_body-world.stl', 'saddle_lid.stl': B / 'saddle_lid-world.stl'}
+STALE = ['sd_heatsink.stl', 'sd_thermal_pad.stl', 'sd_fan.stl', 'saddle_tray.stl']     # V1.29 copper + 30 mm fan (never bought) and the V2 tray (V3: the floor carries the board): moved to build/retired-v129/
 COPY.update({f'sd_{n}.stl': B / f'{n}-world.stl' for n in BOUGHT})
 out = {}
 for n in STALE:

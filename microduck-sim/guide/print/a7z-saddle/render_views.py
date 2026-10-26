@@ -1,6 +1,6 @@
 """Saddle V2 renders on the as-built model at HOME (feet flat): rear 3/4 with the lid on (port window, camera plug), +y side
 (pigtail bulge, lid screw), rear-top view with the lid hidden (6530B heatsink, blower, Dupont housings in the open strip,
-antenna on the front wall), front 3/4 lid off (open header strip, floor cut). Colours: saddle body, lid and tray orange
+antenna on the front wall), front 3/4 lid off (open header strip, floor cut). Colours: saddle body and lid orange
 (interim filament, white is out), PCB dark green, 6530B light grey, Dupont housings black, antenna light blue, plug grey.
 Run with ~/.venvs/microduck-dyn/bin/python render_views.py (writes renders/saddle-*.png and renders/saddle.png)."""
 import sys, json
@@ -29,7 +29,7 @@ def add(f, rgba, tag):
 
 add(WORLD / 'rear_pack.stl', (.93, .5, .1, 1), 'pack'); add(WORLD / 'openrb-board-upright.stl', (.15, .35, .2, 1), 'orb')
 add(BP / 'rear_frame-world.stl', (.12, .12, .13, 1), 'frame'); add(BP / 'rear_lid-world.stl', (.2, .2, .22, 1), 'rlid')
-add(BUILD / 'saddle_body-world.stl', (.95, .5, .1, 1), 'saddle'); add(BUILD / 'saddle_lid-world.stl', (.98, .55, .12, 1), 'lid'); add(BUILD / 'saddle_tray-world.stl', (.9, .45, .08, 1), 'tray')
+add(BUILD / 'saddle_body-world.stl', (.95, .5, .1, 1), 'saddle'); add(BUILD / 'saddle_lid-world.stl', (.98, .55, .12, 1), 'lid')
 COL = dict(a7z_pcb=(.05, .3, .12, 1), soc_a733=(.05, .05, .05, 1), ram=(.1, .1, .1, 1), pmic_area=(.1, .1, .1, 1), wifi_module_fcu760k=(.6, .6, .62, 1),
            usb_c_otg_dp=(.7, .7, .72, 1), usb_c_power=(.7, .7, .72, 1), micro_hdmi=(.7, .7, .72, 1), fan_connector=(.9, .9, .9, 1), ipex_socket=(.8, .7, .2, 1),
            microsd_card=(.1, .1, .5, 1), heatsink_6530b=(.78, .8, .82, 1), thermal_pad_6530b=(.5, .5, .55, 1), dupont_housings=(.08, .08, .08, 1),
@@ -86,8 +86,8 @@ for key, label, az, el, dist, look, hide, ha in views:
     dr = ImageDraw.Draw(img); dr.rectangle((0, 0, 600, 30), fill=(0, 0, 0)); dr.text((8, 5), label, fill=(255, 255, 255), font=font); tiles.append(np.array(img))
 img = Image.fromarray(np.hstack(tiles)); W, H = img.size
 c = B['checks']
-leg = [f"A7Z saddle V2 (D-028): body {B['parts']['saddle_body']['volume_mm3'] / 1000:.1f} cm3, lid {B['parts']['saddle_lid']['volume_mm3'] / 1000:.1f} cm3, tray {B['parts']['saddle_tray']['volume_mm3'] / 1000:.1f} cm3; board underside z {PR['ZU']}, 6530B on the board, lid over the heatsink only",
-       f"antenna to fin block {c['antenna_to_heatsink_fin_block_mm']} mm (to the nearest boss {c['antenna_to_heatsink_boss_mm']}), roof-screw head to tray {c['gap_roof_screw_head_to_tray_mm']} mm, port faces {c['port_face_inside_rear_outer_face_mm']} mm inside the rear wall; zero overlap with shells, pack, rear box, head at HOME",
+leg = [f"A7Z saddle V3 (D-028, floor carrier + 3M tape, cover lid): body {B['parts']['saddle_body']['volume_mm3'] / 1000:.1f} cm3, lid {B['parts']['saddle_lid']['volume_mm3'] / 1000:.1f} cm3; board underside z {PR['ZU']}, 6530B on the board, lid a cover over the heatsink only, no contact",
+       f"antenna to fin block {c['antenna_to_heatsink_fin_block_mm']} mm (to the nearest boss {c['antenna_to_heatsink_boss_mm']}), roof-screw head to board {c['gap_roof_screw_head_to_board_mm']} mm, port faces {c['port_face_inside_rear_outer_face_mm']} mm inside the rear wall; zero overlap with shells, pack, rear box, head at HOME",
        'orange saddle (interim colour) | green PCB | light-grey 6530B heatsink | black Dupont housings (open strip) | light-blue antenna on the front wall | grey USB-C camera plug behind the rear wall']
 canvas = Image.new('RGB', (W, H + 24 * len(leg) + 12), (0, 0, 0)); canvas.paste(img, (0, 0)); dr = ImageDraw.Draw(canvas)
 for i, t in enumerate(leg):

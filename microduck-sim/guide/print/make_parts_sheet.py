@@ -649,32 +649,35 @@ INCREMENTAL_NOTES_BY_VERSION['V1.34'] = dict(press_mold_left=_mold_note, press_m
                                              press_lid_left=_lid_note, press_lid_right=_lid_note)
 
 
-# V1.35: A7Z saddle V2 (D-028, 2026-10-25): the board turned round so its USB-C and HDMI sockets face the rear wall, the header at the
-# front under an open strip, the Radxa 6530B heatsink on the board, board + heatsink screwed from below to a tray. Orange is the interim
-# colour (white PETG out). Replaces the V1.29 saddle body and lid printed on the V1.33 white plate.
+# V1.35: A7Z saddle V3 (D-028, 2026-10-25): the board turned round so its USB-C and HDMI sockets face the rear wall, the header at the
+# front under an open strip, the Radxa 6530B heatsink on the board, board + heatsink screwed from below to four bosses of the saddle
+# floor, the unit taped to the shell roofs, the lid a cover that touches nothing. Two parts (body, lid); the V2 tray of the afternoon
+# release was never printed and is gone. Orange is the interim colour (white PLA out). Replaces the V1.29 saddle body and lid printed on
+# the V1.33 white plate.
 RETIRED_INCREMENTAL['V1.35'] = [
     ('V1.29 A7Z saddle body', 'White', HERE / 'a7z-saddle' / 'build' / 'retired-v129' / 'saddle_body-v129.stl',
-     'Its board faced the neck (USB-C sockets at the front) and it has four board posts; the new one has the sockets at the rear and a tray.', 'A7Z saddle V2 body'),
+     'Its board faced the neck (USB-C sockets at the front) and it screwed to the shell roof; the new one has the sockets at the rear, carries the board on four floor bosses and is taped on.', 'A7Z saddle V3 body'),
     ('V1.29 A7Z saddle lid', 'White', HERE / 'a7z-saddle' / 'build' / 'retired-v129' / 'saddle_lid-v129.stl',
-     'It has a pocket for a 30 mm fan that was never bought; the new lid sits on the Radxa 6530B heatsink.', 'A7Z saddle V2 lid'),
+     'It has a pocket for a 30 mm fan that was never bought; the new lid is a cover over the Radxa 6530B heatsink that touches nothing.', 'A7Z saddle V3 lid'),
 ]
-INTRO_BY_VERSION['V1.35'] = ('V1.35 is one orange plate: the A7Z saddle V2 body, lid and tray. The board is turned round so its two USB-C '
+INTRO_BY_VERSION['V1.35'] = ('V1.35 is one orange plate with two parts: the A7Z saddle V3 body and lid. The board is turned round so its two USB-C '
                              'sockets and the micro HDMI face the back of the robot through one window in the rear wall, and the 40-pin header '
                              'sits at the front under an open strip with no lid over the wires. The Radxa 6530B heatsink (65 x 30 mm with its '
-                             'own blower fan) sits on the board; board and heatsink are screwed from below to the printed tray on the bench, '
-                             'then the tray drops into the saddle after the two roof screws. The Wi-Fi antenna goes on the inside of the front '
-                             'wall. Orange is the interim colour while the club is out of white; print it white later if you like.')
+                             'own blower fan) sits on the board; on the bench the board lies on four bosses that rise from the saddle floor and '
+                             'four M2 x 6 from under the floor screw board and heatsink to the saddle, so the three are one unit. That unit is '
+                             'taped onto the torso roof with 3M 0.5 mm foam tape after the two roof screws are in; no screw holds the saddle. '
+                             'The lid is a cover over the heatsink end only and touches nothing hot. The Wi-Fi antenna goes on the inside of the '
+                             'front wall. Orange is the interim colour while the club is out of white; print it white later if you like.')
 RETIRED_HEADING_BY_VERSION['V1.35'] = 'Keep these as spares'
 RETIRED_LEAD_BY_VERSION['V1.35'] = 'The V1.29 saddle body and lid from the V1.33 white plate; their board orientation is wrong, so they are not fitted.'
-INCREMENTAL_NAMES_BY_VERSION['V1.35'] = dict(saddle_body='A7Z saddle V2 body', saddle_lid='A7Z saddle V2 lid', saddle_tray='A7Z saddle V2 tray')
+INCREMENTAL_NAMES_BY_VERSION['V1.35'] = dict(saddle_body='A7Z saddle V3 body', saddle_lid='A7Z saddle V3 lid')
 INCREMENTAL_NOTES_BY_VERSION['V1.35'] = dict(
     saddle_body=('Prints open side up on tree support under its domed floor, as the V1.29 body. Clear the support from the floor underside, the '
-                 'rear port window, the channel bulge on the left wall, the exhaust slots and the floor opening; the two round roof-screw seats '
-                 'must be flat and the two side holes for the lid screws open.'),
-    saddle_lid=('Prints upside down, plate on the bed, without support. The grille slots over the fan must be open; the two pressing bars, the '
-                'corner pad and the two screw bosses stand up from the plate.'),
-    saddle_tray=('Prints flat, bosses up, without support. Turn it over: the four counterbores under the bosses take the M2 x 6 heads; the '
-                 'board holes line up with the four boss holes.'))
+                 'rear port window, the channel bulge on the left wall, the exhaust slots and the floor opening; the four board-screw pockets '
+                 'in the floor underside and the holes through the four floor bosses must be open, the floor underside smooth along its left, '
+                 'right and rear edges where the foam tape goes, and the two side holes for the lid screws open.'),
+    saddle_lid=('Prints upside down, plate on the bed, without support. The grille slots over the fan must be open; only the lip and the two '
+                'screw bosses stand up from the plate, nothing else on its underside.'))
 
 
 # V1.36: the lower head shell of D-026 addendum 2 (2026-10-25): speaker pocket (racetrack) and its twelve holes 4.5 mm forward so

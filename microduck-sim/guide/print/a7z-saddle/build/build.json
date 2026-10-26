@@ -1,21 +1,28 @@
 {
  "params": {
   "T": 1.6,
-  "CLR": 0.3,
+  "CLR": 0.5,
   "ZU": 48.0,
   "X0": -45.0,
   "X1": -5.0,
   "HW": 34.4,
   "R_PLAN": 3.0,
-  "TRAY": {
-   "z0": 45.5,
-   "z1": 46.9,
-   "boss_r": 3.0,
-   "cbore_r": 2.1,
-   "cbore_d": 1.0,
+  "BOSS": {
+   "r": 3.3,
+   "top_z": 47.0,
+   "r_top": 3.0,
    "hole_r": 1.1,
-   "notch_x": -22.0,
-   "notch_hy": 16.0
+   "pocket_r": 2.1,
+   "pocket_top": 46.5
+  },
+  "TAPE": {
+   "t": 0.5,
+   "w": 8.0,
+   "edges": [
+    "left",
+    "right",
+    "rear"
+   ]
   },
   "FRONT_TOP": {
    "z": 63.0,
@@ -77,24 +84,6 @@
    [
     -21.5,
     -20.0
-   ]
-  ],
-  "TRAY_POSTS": [
-   [
-    -30.0,
-    29.5
-   ],
-   [
-    -30.0,
-    -29.5
-   ],
-   [
-    -40.0,
-    0.0
-   ],
-   [
-    -24.5,
-    0.0
    ]
   ],
   "FLOOR_CUT": {
@@ -210,30 +199,20 @@
   },
   "LID": {
    "x1": -19.6,
-   "z0": 65.8,
-   "z1": 67.4,
-   "lip": 2.2,
-   "bar_w": 2.0,
-   "pad": {
-    "x": [
-     -43.0,
-     -40.5
-    ],
-    "y": [
-     28.0,
-     32.0
-    ]
-   }
+   "z0": 66.5,
+   "z1": 68.1,
+   "lip": 2.2
   },
   "LID_SCREWS": {
    "x": -31.0,
-   "z": 63.5,
+   "z": 64.2,
    "boss": {
     "x": [
      -33.5,
      -28.5
     ],
-    "y_in": 29.0
+    "y_in": 29.0,
+    "above_hs": 1.0
    },
    "pilot_r": 0.8,
    "clear_r": 1.1
@@ -262,51 +241,34 @@
   "saddle_body": {
    "watertight": true,
    "bodies": 1,
-   "volume_mm3": 12770.3,
+   "volume_mm3": 13080.2,
    "bounds": [
     [
      -45.0,
      -34.4,
-     26.19
+     26.39
     ],
     [
      -5.0,
      36.4,
-     65.8
+     66.5
     ]
    ]
   },
   "saddle_lid": {
    "watertight": true,
    "bodies": 1,
-   "volume_mm3": 3552.5,
+   "volume_mm3": 2826.8,
    "bounds": [
     [
      -45.0,
      -34.4,
-     61.1
+     62.1
     ],
     [
      -19.6,
      34.4,
-     67.4
-    ]
-   ]
-  },
-  "saddle_tray": {
-   "watertight": true,
-   "bodies": 1,
-   "volume_mm3": 1898.2,
-   "bounds": [
-    [
-     -42.0,
-     -32.65,
-     45.5
-    ],
-    [
-     -11.4,
-     32.65,
-     48.0
+     68.1
     ]
    ]
   },
@@ -628,49 +590,26 @@
     [
      -45.0,
      -34.4,
-     65.8
+     66.5
     ],
     [
      -20.07,
      34.4,
-     65.8
+     66.5
     ]
    ]
   },
-  "body_tray": -0.0,
-  "lid_tray": 0.0,
   "body_heatsink_6530b": 0.0,
-  "lid_heatsink_6530b": {
-   "mm3": 0.0,
-   "bounds": [
-    [
-     -21.6,
-     -31.0,
-     61.1
-    ],
-    [
-     -19.6,
-     6.0,
-     61.1
-    ]
-   ]
-  },
-  "tray_heatsink_6530b": 0.0,
+  "lid_heatsink_6530b": 0.0,
   "body_thermal_pad_6530b": 0.0,
   "lid_thermal_pad_6530b": 0.0,
-  "tray_thermal_pad_6530b": 0.0,
   "body_dupont_housings": 0.0,
   "lid_dupont_housings": 0.0,
-  "tray_dupont_housings": 0.0,
   "body_antenna": 0.0,
   "lid_antenna": 0.0,
-  "tray_antenna": 0.0,
   "body_usb_c_plug": 0.0,
   "lid_usb_c_plug": 0.0,
-  "tray_usb_c_plug": 0.0,
-  "body_pcb": 0.0,
-  "lid_pcb": 0.0,
-  "tray_pcb": {
+  "body_pcb": {
    "mm3": 0.0,
    "bounds": [
     [
@@ -685,34 +624,50 @@
     ]
    ]
   },
+  "lid_pcb": 0.0,
   "body_soc_a733": 0.0,
-  "tray_soc_a733": 0.0,
   "body_ram": 0.0,
-  "tray_ram": 0.0,
   "body_wifi_module_fcu760k": 0.0,
-  "tray_wifi_module_fcu760k": 0.0,
   "body_usb_c_otg_dp": 0.0,
-  "tray_usb_c_otg_dp": 0.0,
   "body_usb_c_power": 0.0,
-  "tray_usb_c_power": 0.0,
   "body_micro_hdmi": 0.0,
-  "tray_micro_hdmi": 0.0,
   "body_microsd_card": 0.0,
-  "tray_microsd_card": 0.0,
   "body_microsd_socket": 0.0,
-  "tray_microsd_socket": 0.0,
   "body_csi_connector": 0.0,
-  "tray_csi_connector": 0.0,
   "body_pcie_fpc": 0.0,
-  "tray_pcie_fpc": 0.0,
   "body_uboot_button": 0.0,
-  "tray_uboot_button": 0.0,
   "body_fan_connector": 0.0,
-  "tray_fan_connector": 0.0,
   "body_ipex_socket": 0.0,
-  "tray_ipex_socket": 0.0,
-  "tray_underside_smd_outside_hole_keepouts": 0.0,
-  "body_underside_smd": 0.0,
+  "body_underside_smd_outside_hole_keepouts": {
+   "mm3": 0.0,
+   "bounds": [
+    [
+     -41.5,
+     -32.27,
+     47.0
+    ],
+    [
+     -11.9,
+     32.3,
+     47.0
+    ]
+   ]
+  },
+  "body_underside_smd": {
+   "mm3": 0.0,
+   "bounds": [
+    [
+     -41.5,
+     -32.27,
+     47.0
+    ],
+    [
+     -11.9,
+     32.3,
+     48.0
+    ]
+   ]
+  },
   "heatsink_dupont": {
    "mm3": 0.003,
    "bounds": [
@@ -728,12 +683,18 @@
     ]
    ]
   },
-  "roof_screw_seat_top_z": 43.25,
-  "roof_screw_head_top_z": 44.85,
-  "gap_roof_screw_head_to_tray_mm": 0.65,
-  "floor_top_max_under_tray_z": 43.9,
-  "gap_floor_top_to_tray_mm": 1.6,
-  "dupont_top_above_lid_plate_mm": -1.7,
+  "roof_screw_counterbore_floor_z": [
+   40.76,
+   40.84
+  ],
+  "roof_screw_head_top_z": 42.44,
+  "floor_underside_over_roof_screws_z": 41.23,
+  "gap_roof_screw_head_to_board_mm": 5.56,
+  "floor_top_max_under_board_z": 44.1,
+  "gap_floor_top_to_board_mm": 3.9,
+  "lid_screw_boss_above_heatsink_mm": 1.0,
+  "lid_plate_above_heatsink_mm": 5.4,
+  "dupont_top_above_lid_plate_mm": -2.4,
   "lid_front_edge_to_housings_mm": 1.86,
   "antenna_to_heatsink_boss_mm": 5.8,
   "antenna_to_heatsink_fin_block_mm": 11.2,
@@ -763,7 +724,7 @@
    "center": [
     -15.2,
     29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
@@ -771,7 +732,7 @@
     1
    ],
    "through": [
-    "saddle_tray boss",
+    "saddle_body floor boss",
     "A7Z board hole"
    ],
    "into": "6530B threaded boss"
@@ -782,7 +743,7 @@
    "center": [
     -38.2,
     29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
@@ -790,7 +751,7 @@
     1
    ],
    "through": [
-    "saddle_tray boss",
+    "saddle_body floor boss",
     "A7Z board hole"
    ],
    "into": "6530B threaded boss"
@@ -801,7 +762,7 @@
    "center": [
     -15.2,
     -29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
@@ -809,7 +770,7 @@
     1
    ],
    "through": [
-    "saddle_tray boss",
+    "saddle_body floor boss",
     "A7Z board hole"
    ],
    "into": "6530B threaded boss"
@@ -820,7 +781,7 @@
    "center": [
     -38.2,
     -29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
@@ -828,18 +789,18 @@
     1
    ],
    "through": [
-    "saddle_tray boss",
+    "saddle_body floor boss",
     "A7Z board hole"
    ],
    "into": "6530B threaded boss"
   },
   {
    "id": "S-shell_pack-01",
-   "spec": "M2 x 10 TAP",
+   "spec": "M2 x 6 TAP (the V2.0 shells' own)",
    "center": [
     -21.5,
     20.0,
-    44.0
+    42.44
    ],
    "axis": [
     0,
@@ -847,19 +808,18 @@
     -1
    ],
    "through": [
-    "saddle_body",
     "shell"
    ],
    "into": "rear_pack shoulder bar",
-   "note": "driven before the tray goes in"
+   "note": "driven before the saddle (with the board on it) is taped onto the roof"
   },
   {
    "id": "S-shell_pack-02",
-   "spec": "M2 x 10 TAP",
+   "spec": "M2 x 6 TAP (the V2.0 shells' own)",
    "center": [
     -21.5,
     -20.0,
-    44.0
+    42.44
    ],
    "axis": [
     0,
@@ -867,11 +827,10 @@
     -1
    ],
    "through": [
-    "saddle_body",
     "shell"
    ],
    "into": "rear_pack shoulder bar",
-   "note": "driven before the tray goes in"
+   "note": "driven before the saddle (with the board on it) is taped onto the roof"
   },
   {
    "id": "SD-lid-01",
@@ -879,7 +838,7 @@
    "center": [
     -31.0,
     34.4,
-    63.5
+    64.2
    ],
    "axis": [
     0,
@@ -897,7 +856,7 @@
    "center": [
     -31.0,
     -34.4,
-    63.5
+    64.2
    ],
    "axis": [
     0,
@@ -912,7 +871,7 @@
  ],
  "estimatedFromPhotos": [
   "HS (6530B base height, fin block depth d 6..30, blower position and diameter): measure on the part before release",
-  "LID pad at the left-rear corner assumes fin material beside the blower"
+  "lid screw bosses sit 1.0 above the estimated heatsink top 61.1"
  ],
  "thinWallAllowances": {
   "saddle_body": [
@@ -969,7 +928,10 @@
  "roof": {
   "z_at_centre": 41.9992606528128,
   "z_min_under_floor": -1.8097279656386576,
-  "z_under_roof_screws": 41.15,
+  "counterbore_floor": [
+   40.76,
+   40.84
+  ],
   "grid_step": 0.5
  }
 }

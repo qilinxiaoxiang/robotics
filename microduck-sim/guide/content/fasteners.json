@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "generated": "2026-10-09",
- "updated": "2026-10-24 mouth floor: H-amplifier-01/02 removed with the two amplifier posts in the cap roof (the amplifier stands on foam tape between two rails on the yellow floor, no screws). Before: 2026-10-23 D-025: H-speaker_retainer-01/02 removed with the V1.9 speaker retainer (the speaker moved to the mouth speaker box). Before: 2026-10-23 V1.30 rebuild: C-camera-01..04 move with the camera board to x 65.4 (ROBOTIS OMX-F CAD, 13.1 mm bosses); C-camera-05 and -06 removed (they were copies of the eye-trim screws C-trim-01/02). Before: 2026-10-23 D-023: H-jaw_support-01 moved to (11.6, 30.2) with the V1.30 jaw support and lower head shell (dia 11 left-rear exit). Before: 2026-10-22 D-023: U20 camera screws C-camera-01..04 added; S12-horn-025, S11-horn-040 and H-jaw_support-03 back to the V1.8 lengths (wire clips never fitted)",
+ "updated": "2026-10-25 D-028 saddle V3: SD-board-01..04 through the saddle floor bosses (head pocket from below, seat z 46.5, x -15.2/-38.2) into the 6530B; SD-lid-01/02 at z 64.2 (cover lid); S-shell_pack-01/02 back to M2 x 6 in the bare shell roof, step roof-screws, driven before the saddle unit is taped on (no saddle in the stack). Before: 2026-10-24 mouth floor: H-amplifier-01/02 removed with the two amplifier posts in the cap roof (the amplifier stands on foam tape between two rails on the yellow floor, no screws). Before: 2026-10-23 D-025: H-speaker_retainer-01/02 removed with the V1.9 speaker retainer (the speaker moved to the mouth speaker box). Before: 2026-10-23 V1.30 rebuild: C-camera-01..04 move with the camera board to x 65.4 (ROBOTIS OMX-F CAD, 13.1 mm bosses); C-camera-05 and -06 removed (they were copies of the eye-trim screws C-trim-01/02). Before: 2026-10-23 D-023: H-jaw_support-01 moved to (11.6, 30.2) with the V1.30 jaw support and lower head shell (dia 11 left-rear exit). Before: 2026-10-22 D-023: U20 camera screws C-camera-01..04 added; S12-horn-025, S11-horn-040 and H-jaw_support-03 back to the V1.8 lengths (wire clips never fitted)",
  "frame": "robot frame, mm; x forward, y left, z up",
  "conventions": {
   "center": "head seat point (underside of the head) measured on the full-resolution V1.6 meshes",
@@ -13,11 +13,11 @@
   "meshes": "fastener-audit/evidence/mesh-manifest.json (sha256 of every source)",
   "guideData": {
    "path": "guide/data/guide-data.json",
-   "sha256": "f0e40c820112e98f12fea2a1e64a95f0f912be8ceece3e59950ca0ed6fc245ea"
+   "sha256": "6ace987752a2be07e4129cc8be8fbbfbb8b3f07c86d090f2ae22de675b0ee5ed"
   },
   "stepsPy": {
    "path": "guide/content/steps.py",
-   "sha256": "add5c00aa87398d1769d585a09f703b9e51ceeb6a98b5c1e266ecb7e8549c61a"
+   "sha256": "7f5b1afba1d8f7d66cbb800d8dcfabe136cea4e2637406e062842a5b0a9d50c3"
   }
  },
  "counts": {
@@ -40,7 +40,7 @@
    "box-lid": 4,
    "hip-roll-refit": 4,
    "imu-board": 2,
-   "saddle-mount": 2,
+   "roof-screws": 2,
    "face": 2,
    "bp-mount": 4,
    "bp-cap": 3,
@@ -49,15 +49,15 @@
    "camera": 4
   },
   "bySpec": {
-   "M2 × 10 TAP": 20,
+   "M2 × 10 TAP": 18,
    "M2 × 8 TAP": 9,
    "M2.6 × 6 TAP": 9,
-   "M2 × 6 TAP": 51,
-   "M2 × 4 TAP": 15
+   "M2 × 6 TAP": 57,
+   "M2 × 4 TAP": 11
   },
-  "verified": 103,
-  "fullMeshHit": 89,
-  "guideMeshHit": 89,
+  "verified": 97,
+  "fullMeshHit": 83,
+  "guideMeshHit": 83,
   "guideSpecMatches": 85
  },
  "screws": [
@@ -6204,11 +6204,11 @@
   },
   {
    "id": "S-shell_pack-01",
-   "step": "saddle-mount",
-   "spec": "M2 × 10 TAP",
+   "step": "roof-screws",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 10.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
@@ -6216,39 +6216,28 @@
    "center": [
     -21.5,
     20.0,
-    43.248
+    40.009
    ],
    "axis": [
     0.0,
     0.0,
     -1.0
    ],
-   "throughPart": "saddle_body",
+   "throughPart": "shell_left",
    "throughParts": [
-    "saddle_body",
     "shell_left"
    ],
    "intoPart": "rear_pack",
-   "engagementMm": 4.9,
+   "engagementMm": 4.14,
    "verified": true,
-   "role": "roof saddle and side shell to the rear pack shoulder bar (D-022)",
-   "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the flat saddle floor seat at z 43.248 (build.json roof_screw_seat_top_z 43.25; head top z 44.85, 0.65 mm under the A7Z microSD socket at z 45.5 and 1.15 mm under the underside components at z 46.0, so the screw is driven before the board); stack saddle_body 43.248..41.173 (dia 2.2 hole), gap 1.16 mm, shell_left roof 40.009..38.713 (dia 2.2 hole), gap 0.26 mm, rear_pack shoulder bar 38.451..31.6; tip at z 33.248: 5.203 mm of shank in the bar, 4.9 mm of thread after the 0.3 mm lead-in, 1.65 mm of bar below the tip. The pilot drilled in place for the M2 × 6 reached z 33.51: drilled 0.3 mm deeper (flag 10.3 mm from the drill tip, full diameter to about z 33.21). Straight above the head at the saddle-mount step: nothing before head_bottom at 54.5 mm (the board, 2.15 mm, and the lid, 27.55 mm, are not on yet).",
-   "note": "Was M2 × 6 at step shells (through the shell_left roof only, 4.14 mm). D-022 (2026-10-22): the roof saddle sits on the shell roofs over the pack and the same two holes take an M2 × 10 down through the saddle floor seat, the shell roof and into the bar. The old M2 × 6 come out when the saddle goes on. Drive with the board out: the head sits 0.65 mm under the microSD socket.",
+   "evidence": "print/v20-source/v20-source.json packScrews.shell_left (2026-10-13): head in the dia 4.4 counterbore, floor z 40.009; 1.195 mm of roof under the head; roof 0.363 mm above the V1.9 pack shoulder bar (top z 38.451, bottom z 31.6); shank 4.442 mm in the bar, engagement 4.142 mm, tip 2.409 mm above the bar bottom; pilot wall 1.68 mm front and rear. No other part within 3 mm; nearest cable dxl-n12 6.42 mm. Straight above the head the first part is head_bottom, 57.8 mm away in the final pose; open at the shells step. Re-checked 2026-10-25 for V3 by ray cast on print/world (trimesh): counterbore floor z 40.009, shell roof top next to the counterbore z 40.9, bar 38.451..31.6, nothing else in the screw column down to the pack floor; the V3 saddle floor underside over the screw is at z 41.37 (build.json roof z_under_roof_screws 41.15 + 0.5 tape), 0.14 mm below the head top: the head stands into the tape gap, not modelled in build_saddle.py (its roof_screw_* checks still seat the head on the floor top 43.45).",
+   "note": "shell_left roof to the V1.9 rear pack shoulder bar (V1.12, V2.0 shell). D-028 V3 (2026-10-25): the saddle is taped to the shell roofs and no longer sits on these screws, so they are the V2.0 shells' own M2 x 6 again, in the same holes, driven BEFORE the saddle unit goes on (its floor covers both heads; the board sits 2.95 mm above the floor). The bar has no printed pilot: drill dia 1.6 through the shell's dia 2.2 roof hole, tape flag 7.0 mm from the drill tip, until the flag touches the counterbore floor. Drive until the head touches the counterbore floor and no further: the roof stands 0.36 mm above the bar and would bend down onto it. An M2 x 10 (the V2 spec, which had 2.07 mm of saddle floor in the stack) would end 1.6 mm below the bar bottom (z 31.6).",
+   "role": "side shell to the rear pack shoulder bar; driven before the saddle unit is taped on (D-028 V3)",
    "stack": [
     {
-     "part": "saddle_body",
-     "fromMm": 0.0,
-     "toMm": 2.07,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
      "part": "shell_left",
-     "fromMm": 3.24,
-     "toMm": 4.53,
+     "fromMm": 0.0,
+     "toMm": 1.2,
      "holeDiameterRangeMm": [
       2.2,
       2.2
@@ -6256,8 +6245,8 @@
     },
     {
      "part": "rear_pack",
-     "fromMm": 4.8,
-     "toMm": 10.0,
+     "fromMm": 1.56,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -6270,11 +6259,11 @@
    ],
    "pilotDrilledInPlace": {
     "drillDiaMm": 1.6,
-    "flagFromTipMm": 10.3,
-    "bottomZ": 33.21
+    "flagFromTipMm": 7.0,
+    "bottomZ": 33.51
    },
-   "tipMarginMm": 1.65,
-   "driverClearAtStepMm": ">54 (board and lid off)",
+   "tipMarginMm": 2.41,
+   "driverClearAtStepMm": ">57 (shell roof bare; saddle unit not yet on)",
    "checks": {
     "fullMeshHit": true,
     "guideMeshHit": true,
@@ -6286,18 +6275,19 @@
     "noIntrusion": true,
     "noHeadClash": true
    },
-   "guideCurrentlySays": "M2 × 10 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py ROOF_SCREWS, build/build.json screws and checks (roof_screw_seat_top_z, gap_roof_screw_head_to_microsd_socket_mm)",
+   "source": "print/v20-source/v20-source.json packScrews (stack); print/a7z-saddle/build_saddle.py docstring and DESIGN-CONTRACT (driven before the saddle unit is taped on, D-028 V3)",
+   "saddle": false,
    "replaces": {
     "id": "S-shell_pack-01",
     "record": {
      "id": "S-shell_pack-01",
-     "step": "shells",
-     "spec": "M2 × 6 TAP",
+     "step": "saddle-mount",
+     "spec": "M2 × 10 TAP",
      "kind": "TAP",
      "diameterMm": 2.0,
-     "lengthMm": 6.0,
+     "lengthMm": 10.0,
      "headDiameterMm": 4.0,
      "headHeightMm": 1.5,
      "nut": null,
@@ -6305,28 +6295,39 @@
      "center": [
       -21.5,
       20.0,
-      40.009
+      43.248
      ],
      "axis": [
       0.0,
       0.0,
       -1.0
      ],
-     "throughPart": "shell_left",
+     "throughPart": "saddle_body",
      "throughParts": [
+      "saddle_body",
       "shell_left"
      ],
      "intoPart": "rear_pack",
-     "engagementMm": 4.14,
+     "engagementMm": 4.9,
      "verified": true,
-     "evidence": "print/v20-source/v20-source.json packScrews.shell_left (2026-10-13): head in the dia 4.4 counterbore, floor z 40.009; 1.195 mm of roof under the head; roof 0.363 mm above the V1.9 pack shoulder bar (top z 38.451, bottom z 31.6); shank 4.442 mm in the bar, engagement 4.142 mm, tip 2.409 mm above the bar bottom; pilot wall 1.68 mm front and rear. No other part within 3 mm; nearest cable dxl-n12 6.42 mm. Straight above the head the first part is head_bottom, 57.8 mm away in the final pose; open at the shells step.",
-     "note": "left shell roof to the V1.9 rear pack shoulder bar (V1.12, V2.0 shell). The bar has no printed pilot: drill dia 1.6 through the shell's dia 2.2 roof hole, tape flag 7.0 mm from the drill tip, until the flag touches the counterbore floor (full diameter to about z 33.51). Drive until the head touches the counterbore floor and no further: the roof stands 0.363 mm above the bar and would bend down onto it.",
-     "role": "side shell to rear pack",
+     "role": "roof saddle and side shell to the rear pack shoulder bar (D-022)",
+     "saddle": true,
+     "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the flat saddle floor seat at z 43.248 (build.json roof_screw_seat_top_z 43.25; head top z 44.85, 0.65 mm under the A7Z microSD socket at z 45.5 and 1.15 mm under the underside components at z 46.0, so the screw is driven before the board); stack saddle_body 43.248..41.173 (dia 2.2 hole), gap 1.16 mm, shell_left roof 40.009..38.713 (dia 2.2 hole), gap 0.26 mm, rear_pack shoulder bar 38.451..31.6; tip at z 33.248: 5.203 mm of shank in the bar, 4.9 mm of thread after the 0.3 mm lead-in, 1.65 mm of bar below the tip. The pilot drilled in place for the M2 × 6 reached z 33.51: drilled 0.3 mm deeper (flag 10.3 mm from the drill tip, full diameter to about z 33.21). Straight above the head at the saddle-mount step: nothing before head_bottom at 54.5 mm (the board, 2.15 mm, and the lid, 27.55 mm, are not on yet).",
+     "note": "Was M2 × 6 at step shells (through the shell_left roof only, 4.14 mm). D-022 (2026-10-22): the roof saddle sits on the shell roofs over the pack and the same two holes take an M2 × 10 down through the saddle floor seat, the shell roof and into the bar. The old M2 × 6 come out when the saddle goes on. Drive with the board out: the head sits 0.65 mm under the microSD socket.",
      "stack": [
       {
-       "part": "shell_left",
+       "part": "saddle_body",
        "fromMm": 0.0,
-       "toMm": 1.2,
+       "toMm": 2.07,
+       "holeDiameterRangeMm": [
+        2.2,
+        2.2
+       ]
+      },
+      {
+       "part": "shell_left",
+       "fromMm": 3.24,
+       "toMm": 4.53,
        "holeDiameterRangeMm": [
         2.2,
         2.2
@@ -6334,8 +6335,8 @@
       },
       {
        "part": "rear_pack",
-       "fromMm": 1.56,
-       "toMm": 6.0,
+       "fromMm": 4.8,
+       "toMm": 10.0,
        "holeDiameterRangeMm": [
         1.6,
         1.6
@@ -6348,11 +6349,11 @@
      ],
      "pilotDrilledInPlace": {
       "drillDiaMm": 1.6,
-      "flagFromTipMm": 7.0,
-      "bottomZ": 33.51
+      "flagFromTipMm": 10.3,
+      "bottomZ": 33.21
      },
-     "tipMarginMm": 2.41,
-     "driverClearAtStepMm": ">57",
+     "tipMarginMm": 1.65,
+     "driverClearAtStepMm": ">54 (board and lid off)",
      "checks": {
       "fullMeshHit": true,
       "guideMeshHit": true,
@@ -6364,19 +6365,19 @@
       "noIntrusion": true,
       "noHeadClash": true
      },
-     "guideCurrentlySays": "M2 × 6 TAP",
+     "guideCurrentlySays": "M2 × 10 TAP",
      "guideSpecMatches": true,
-     "source": "print/v20-source/README.md guide integration handoff (Shawn 2026-10-13: screw each shell to the pack instead of the cross screw)"
+     "source": "print/a7z-saddle/build_saddle.py ROOF_SCREWS, build/build.json screws and checks (roof_screw_seat_top_z, gap_roof_screw_head_to_microsd_socket_mm)"
     }
    }
   },
   {
    "id": "S-shell_pack-02",
-   "step": "saddle-mount",
-   "spec": "M2 × 10 TAP",
+   "step": "roof-screws",
+   "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
-   "lengthMm": 10.0,
+   "lengthMm": 6.0,
    "headDiameterMm": 4.0,
    "headHeightMm": 1.5,
    "nut": null,
@@ -6384,39 +6385,28 @@
    "center": [
     -21.5,
     -20.0,
-    43.248
+    40.102
    ],
    "axis": [
     0.0,
     0.0,
     -1.0
    ],
-   "throughPart": "saddle_body",
+   "throughPart": "shell_right",
    "throughParts": [
-    "saddle_body",
     "shell_right"
    ],
    "intoPart": "rear_pack",
-   "engagementMm": 4.88,
+   "engagementMm": 4.03,
    "verified": true,
-   "role": "roof saddle and side shell to the rear pack shoulder bar (D-022)",
-   "saddle": true,
-   "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the flat saddle floor seat at z 43.248 (build.json roof_screw_seat_top_z 43.25; head top z 44.85, 0.65 mm under the A7Z microSD socket at z 45.5 and 1.15 mm under the underside components at z 46.0, so the screw is driven before the board); stack saddle_body 43.248..41.294 (dia 2.2 hole), gap 1.19 mm, shell_right roof 40.102..38.818 (dia 2.2 hole), gap 0.39 mm, rear_pack shoulder bar 38.431..31.602; tip at z 33.248: 5.183 mm of shank in the bar, 4.88 mm of thread after the 0.3 mm lead-in, 1.65 mm of bar below the tip. The pilot drilled in place for the M2 × 6 reached z 33.6: drilled 0.3 mm deeper (flag 10.3 mm from the drill tip, full diameter to about z 33.3). Straight above the head at the saddle-mount step: nothing before head_bottom at 54.5 mm (the board, 2.15 mm, and the lid, 27.55 mm, are not on yet).",
-   "note": "Was M2 × 6 at step shells (through the shell_right roof only, 4.03 mm). D-022 (2026-10-22): the roof saddle sits on the shell roofs over the pack and the same two holes take an M2 × 10 down through the saddle floor seat, the shell roof and into the bar. The old M2 × 6 come out when the saddle goes on. Drive with the board out: the head sits 0.65 mm under the microSD socket.",
+   "evidence": "print/v20-source/v20-source.json packScrews.shell_right (2026-10-13): head in the dia 4.4 counterbore, floor z 40.102; 1.184 mm of roof under the head; roof 0.486 mm above the V1.9 pack shoulder bar (top z 38.431, bottom z 31.602); shank 4.329 mm in the bar, engagement 4.029 mm, tip 2.5 mm above the bar bottom; pilot wall 1.68 mm front and rear. No other part within 3 mm; nearest cable dxl-5-4 10.88 mm. Straight above the head the first part is head_bottom, 57.7 mm away in the final pose; open at the shells step. Re-checked 2026-10-25 for V3 by ray cast on print/world (trimesh): counterbore floor z 40.102, shell roof top next to the counterbore z 41.04, bar 38.431..31.6, nothing else in the screw column down to the pack floor; the V3 saddle floor underside over the screw is at z 41.49 (build.json roof z_under_roof_screws 41.15 + 0.5 tape), 0.11 mm below the head top: the head stands into the tape gap, not modelled in build_saddle.py (its roof_screw_* checks still seat the head on the floor top 43.45).",
+   "note": "shell_right roof to the V1.9 rear pack shoulder bar (V1.12, V2.0 shell). D-028 V3 (2026-10-25): the saddle is taped to the shell roofs and no longer sits on these screws, so they are the V2.0 shells' own M2 x 6 again, in the same holes, driven BEFORE the saddle unit goes on (its floor covers both heads; the board sits 2.95 mm above the floor). The bar has no printed pilot: drill dia 1.6 through the shell's dia 2.2 roof hole, tape flag 7.0 mm from the drill tip, until the flag touches the counterbore floor. Drive until the head touches the counterbore floor and no further: the roof stands 0.49 mm above the bar and would bend down onto it. An M2 x 10 (the V2 spec, which had 2.07 mm of saddle floor in the stack) would end 1.6 mm below the bar bottom (z 31.6).",
+   "role": "side shell to the rear pack shoulder bar; driven before the saddle unit is taped on (D-028 V3)",
    "stack": [
     {
-     "part": "saddle_body",
-     "fromMm": 0.0,
-     "toMm": 1.95,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
      "part": "shell_right",
-     "fromMm": 3.15,
-     "toMm": 4.43,
+     "fromMm": 0.0,
+     "toMm": 1.18,
      "holeDiameterRangeMm": [
       2.2,
       2.2
@@ -6424,8 +6414,8 @@
     },
     {
      "part": "rear_pack",
-     "fromMm": 4.82,
-     "toMm": 10.0,
+     "fromMm": 1.67,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -6438,11 +6428,11 @@
    ],
    "pilotDrilledInPlace": {
     "drillDiaMm": 1.6,
-    "flagFromTipMm": 10.3,
-    "bottomZ": 33.3
+    "flagFromTipMm": 7.0,
+    "bottomZ": 33.6
    },
-   "tipMarginMm": 1.65,
-   "driverClearAtStepMm": ">54 (board and lid off)",
+   "tipMarginMm": 2.5,
+   "driverClearAtStepMm": ">57 (shell roof bare; saddle unit not yet on)",
    "checks": {
     "fullMeshHit": true,
     "guideMeshHit": true,
@@ -6454,18 +6444,19 @@
     "noIntrusion": true,
     "noHeadClash": true
    },
-   "guideCurrentlySays": "M2 × 10 TAP",
+   "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py ROOF_SCREWS, build/build.json screws and checks (roof_screw_seat_top_z, gap_roof_screw_head_to_microsd_socket_mm)",
+   "source": "print/v20-source/v20-source.json packScrews (stack); print/a7z-saddle/build_saddle.py docstring and DESIGN-CONTRACT (driven before the saddle unit is taped on, D-028 V3)",
+   "saddle": false,
    "replaces": {
     "id": "S-shell_pack-02",
     "record": {
      "id": "S-shell_pack-02",
-     "step": "shells",
-     "spec": "M2 × 6 TAP",
+     "step": "saddle-mount",
+     "spec": "M2 × 10 TAP",
      "kind": "TAP",
      "diameterMm": 2.0,
-     "lengthMm": 6.0,
+     "lengthMm": 10.0,
      "headDiameterMm": 4.0,
      "headHeightMm": 1.5,
      "nut": null,
@@ -6473,28 +6464,39 @@
      "center": [
       -21.5,
       -20.0,
-      40.102
+      43.248
      ],
      "axis": [
       0.0,
       0.0,
       -1.0
      ],
-     "throughPart": "shell_right",
+     "throughPart": "saddle_body",
      "throughParts": [
+      "saddle_body",
       "shell_right"
      ],
      "intoPart": "rear_pack",
-     "engagementMm": 4.03,
+     "engagementMm": 4.88,
      "verified": true,
-     "evidence": "print/v20-source/v20-source.json packScrews.shell_right (2026-10-13): head in the dia 4.4 counterbore, floor z 40.102; 1.184 mm of roof under the head; roof 0.486 mm above the V1.9 pack shoulder bar (top z 38.431, bottom z 31.602); shank 4.329 mm in the bar, engagement 4.029 mm, tip 2.5 mm above the bar bottom; pilot wall 1.68 mm front and rear. No other part within 3 mm; nearest cable dxl-5-4 10.88 mm. Straight above the head the first part is head_bottom, 57.7 mm away in the final pose; open at the shells step.",
-     "note": "right shell roof to the V1.9 rear pack shoulder bar (V1.12, V2.0 shell). The bar has no printed pilot: drill dia 1.6 through the shell's dia 2.2 roof hole, tape flag 7.0 mm from the drill tip, until the flag touches the counterbore floor (full diameter to about z 33.6). Drive until the head touches the counterbore floor and no further: the roof stands 0.486 mm above the bar and would bend down onto it.",
-     "role": "side shell to rear pack",
+     "role": "roof saddle and side shell to the rear pack shoulder bar (D-022)",
+     "saddle": true,
+     "evidence": "Ray cast on the guide world STLs (print/world/saddle_body.stl, saddle_lid.stl, shell_left.stl, shell_right.stl, rear_pack.stl, sd_a7z_pcb.stl; trimesh, 2026-10-22) and print/a7z-saddle/build/build.json: head seat on the flat saddle floor seat at z 43.248 (build.json roof_screw_seat_top_z 43.25; head top z 44.85, 0.65 mm under the A7Z microSD socket at z 45.5 and 1.15 mm under the underside components at z 46.0, so the screw is driven before the board); stack saddle_body 43.248..41.294 (dia 2.2 hole), gap 1.19 mm, shell_right roof 40.102..38.818 (dia 2.2 hole), gap 0.39 mm, rear_pack shoulder bar 38.431..31.602; tip at z 33.248: 5.183 mm of shank in the bar, 4.88 mm of thread after the 0.3 mm lead-in, 1.65 mm of bar below the tip. The pilot drilled in place for the M2 × 6 reached z 33.6: drilled 0.3 mm deeper (flag 10.3 mm from the drill tip, full diameter to about z 33.3). Straight above the head at the saddle-mount step: nothing before head_bottom at 54.5 mm (the board, 2.15 mm, and the lid, 27.55 mm, are not on yet).",
+     "note": "Was M2 × 6 at step shells (through the shell_right roof only, 4.03 mm). D-022 (2026-10-22): the roof saddle sits on the shell roofs over the pack and the same two holes take an M2 × 10 down through the saddle floor seat, the shell roof and into the bar. The old M2 × 6 come out when the saddle goes on. Drive with the board out: the head sits 0.65 mm under the microSD socket.",
      "stack": [
       {
-       "part": "shell_right",
+       "part": "saddle_body",
        "fromMm": 0.0,
-       "toMm": 1.18,
+       "toMm": 1.95,
+       "holeDiameterRangeMm": [
+        2.2,
+        2.2
+       ]
+      },
+      {
+       "part": "shell_right",
+       "fromMm": 3.15,
+       "toMm": 4.43,
        "holeDiameterRangeMm": [
         2.2,
         2.2
@@ -6502,8 +6504,8 @@
       },
       {
        "part": "rear_pack",
-       "fromMm": 1.67,
-       "toMm": 6.0,
+       "fromMm": 4.82,
+       "toMm": 10.0,
        "holeDiameterRangeMm": [
         1.6,
         1.6
@@ -6516,11 +6518,11 @@
      ],
      "pilotDrilledInPlace": {
       "drillDiaMm": 1.6,
-      "flagFromTipMm": 7.0,
-      "bottomZ": 33.6
+      "flagFromTipMm": 10.3,
+      "bottomZ": 33.3
      },
-     "tipMarginMm": 2.5,
-     "driverClearAtStepMm": ">57",
+     "tipMarginMm": 1.65,
+     "driverClearAtStepMm": ">54 (board and lid off)",
      "checks": {
       "fullMeshHit": true,
       "guideMeshHit": true,
@@ -6532,9 +6534,9 @@
       "noIntrusion": true,
       "noHeadClash": true
      },
-     "guideCurrentlySays": "M2 × 6 TAP",
+     "guideCurrentlySays": "M2 × 10 TAP",
      "guideSpecMatches": true,
-     "source": "print/v20-source/README.md guide integration handoff (Shawn 2026-10-13: screw each shell to the pack instead of the cross screw)"
+     "source": "print/a7z-saddle/build_saddle.py ROOF_SCREWS, build/build.json screws and checks (roof_screw_seat_top_z, gap_roof_screw_head_to_microsd_socket_mm)"
     }
    }
   },
@@ -7015,41 +7017,50 @@
    "nut": null,
    "washer": null,
    "center": [
-    -15.5,
+    -15.2,
     29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
     0,
     1
    ],
-   "throughPart": "sd_a7z_pcb",
+   "throughPart": "saddle_body",
    "throughParts": [
-    "saddle_tray",
+    "saddle_body",
     "sd_a7z_pcb"
    ],
    "intoPart": "sd_heatsink_6530b",
    "engagementMm": 2.9,
    "verified": false,
-   "role": "A7Z board and heatsink to the saddle tray",
+   "role": "A7Z board and 6530B heatsink to the saddle body floor boss (one unit, from below on the bench)",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
-   "note": "Board + 6530B to the tray, from below on the bench.",
+   "evidence": "D-028 saddle V3 (2026-10-25, build_saddle.py BOSS, build.json params BOSS / HOLES_XY): head seated at z 46.5 at the top of the dia 4.2 pocket that opens in the underside of the saddle floor under the boss (pocket_top 46.5), shank up through the dia 2.2 hole in the boss (46.5..48.0, 1.5 mm) and the 1.6 mm PCB (48.0..49.6) into the 6530B threaded boss standing on the hole (49.6..52.7 if the base is 3.1 tall): 2.9 mm in the aluminium is an estimate from photos, measured on the part before fitting. Not ray-cast: the heatsink is an envelope and the thread is the kit's own.",
+   "note": "Saddle floor boss (pocket from below) + A7Z board hole, into the 6530B threaded boss; the four make saddle, board and heatsink one unit on the bench.",
    "stack": [
     {
-     "part": "sd_a7z_pcb",
+     "part": "saddle_body",
      "fromMm": 0.0,
-     "toMm": 1.6,
+     "toMm": 1.5,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "sd_a7z_pcb",
+     "fromMm": 1.5,
+     "toMm": 3.1,
      "holeDiameterRangeMm": [
       2.74,
       2.75
      ]
     },
     {
-     "part": "saddle_body",
-     "fromMm": 1.6,
-     "toMm": 4.0,
+     "part": "sd_heatsink_6530b",
+     "fromMm": 3.1,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -7061,7 +7072,7 @@
     1.6
    ],
    "tipMarginMm": null,
-   "driverClearAtStepMm": "bench (tray upside down)",
+   "driverClearAtStepMm": "bench (saddle upside down, pocket open from below)",
    "checks": {
     "fullMeshHit": null,
     "guideMeshHit": null,
@@ -7075,7 +7086,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/BOSS, build/build.json screws SD-board-01..04 (V3)"
   },
   {
    "id": "SD-board-02",
@@ -7089,41 +7100,50 @@
    "nut": null,
    "washer": null,
    "center": [
-    -38.5,
+    -38.2,
     29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
     0,
     1
    ],
-   "throughPart": "sd_a7z_pcb",
+   "throughPart": "saddle_body",
    "throughParts": [
-    "saddle_tray",
+    "saddle_body",
     "sd_a7z_pcb"
    ],
    "intoPart": "sd_heatsink_6530b",
    "engagementMm": 2.9,
    "verified": false,
-   "role": "A7Z board and heatsink to the saddle tray",
+   "role": "A7Z board and 6530B heatsink to the saddle body floor boss (one unit, from below on the bench)",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
-   "note": "Board + 6530B to the tray, from below on the bench.",
+   "evidence": "D-028 saddle V3 (2026-10-25, build_saddle.py BOSS, build.json params BOSS / HOLES_XY): head seated at z 46.5 at the top of the dia 4.2 pocket that opens in the underside of the saddle floor under the boss (pocket_top 46.5), shank up through the dia 2.2 hole in the boss (46.5..48.0, 1.5 mm) and the 1.6 mm PCB (48.0..49.6) into the 6530B threaded boss standing on the hole (49.6..52.7 if the base is 3.1 tall): 2.9 mm in the aluminium is an estimate from photos, measured on the part before fitting. Not ray-cast: the heatsink is an envelope and the thread is the kit's own.",
+   "note": "Saddle floor boss (pocket from below) + A7Z board hole, into the 6530B threaded boss; the four make saddle, board and heatsink one unit on the bench.",
    "stack": [
     {
-     "part": "sd_a7z_pcb",
+     "part": "saddle_body",
      "fromMm": 0.0,
-     "toMm": 1.6,
+     "toMm": 1.5,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "sd_a7z_pcb",
+     "fromMm": 1.5,
+     "toMm": 3.1,
      "holeDiameterRangeMm": [
       2.74,
       2.75
      ]
     },
     {
-     "part": "saddle_body",
-     "fromMm": 1.6,
-     "toMm": 4.0,
+     "part": "sd_heatsink_6530b",
+     "fromMm": 3.1,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -7135,7 +7155,7 @@
     1.6
    ],
    "tipMarginMm": null,
-   "driverClearAtStepMm": "bench (tray upside down)",
+   "driverClearAtStepMm": "bench (saddle upside down, pocket open from below)",
    "checks": {
     "fullMeshHit": null,
     "guideMeshHit": null,
@@ -7149,7 +7169,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/BOSS, build/build.json screws SD-board-01..04 (V3)"
   },
   {
    "id": "SD-board-03",
@@ -7163,41 +7183,50 @@
    "nut": null,
    "washer": null,
    "center": [
-    -15.5,
+    -15.2,
     -29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
     0,
     1
    ],
-   "throughPart": "sd_a7z_pcb",
+   "throughPart": "saddle_body",
    "throughParts": [
-    "saddle_tray",
+    "saddle_body",
     "sd_a7z_pcb"
    ],
    "intoPart": "sd_heatsink_6530b",
    "engagementMm": 2.9,
    "verified": false,
-   "role": "A7Z board and heatsink to the saddle tray",
+   "role": "A7Z board and 6530B heatsink to the saddle body floor boss (one unit, from below on the bench)",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
-   "note": "Board + 6530B to the tray, from below on the bench.",
+   "evidence": "D-028 saddle V3 (2026-10-25, build_saddle.py BOSS, build.json params BOSS / HOLES_XY): head seated at z 46.5 at the top of the dia 4.2 pocket that opens in the underside of the saddle floor under the boss (pocket_top 46.5), shank up through the dia 2.2 hole in the boss (46.5..48.0, 1.5 mm) and the 1.6 mm PCB (48.0..49.6) into the 6530B threaded boss standing on the hole (49.6..52.7 if the base is 3.1 tall): 2.9 mm in the aluminium is an estimate from photos, measured on the part before fitting. Not ray-cast: the heatsink is an envelope and the thread is the kit's own.",
+   "note": "Saddle floor boss (pocket from below) + A7Z board hole, into the 6530B threaded boss; the four make saddle, board and heatsink one unit on the bench.",
    "stack": [
     {
-     "part": "sd_a7z_pcb",
+     "part": "saddle_body",
      "fromMm": 0.0,
-     "toMm": 1.6,
+     "toMm": 1.5,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "sd_a7z_pcb",
+     "fromMm": 1.5,
+     "toMm": 3.1,
      "holeDiameterRangeMm": [
       2.74,
       2.75
      ]
     },
     {
-     "part": "saddle_body",
-     "fromMm": 1.6,
-     "toMm": 4.0,
+     "part": "sd_heatsink_6530b",
+     "fromMm": 3.1,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -7209,7 +7238,7 @@
     1.6
    ],
    "tipMarginMm": null,
-   "driverClearAtStepMm": "bench (tray upside down)",
+   "driverClearAtStepMm": "bench (saddle upside down, pocket open from below)",
    "checks": {
     "fullMeshHit": null,
     "guideMeshHit": null,
@@ -7223,7 +7252,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/BOSS, build/build.json screws SD-board-01..04 (V3)"
   },
   {
    "id": "SD-board-04",
@@ -7237,41 +7266,50 @@
    "nut": null,
    "washer": null,
    "center": [
-    -38.5,
+    -38.2,
     -29.0,
-    45.5
+    46.5
    ],
    "axis": [
     0,
     0,
     1
    ],
-   "throughPart": "sd_a7z_pcb",
+   "throughPart": "saddle_body",
    "throughParts": [
-    "saddle_tray",
+    "saddle_body",
     "sd_a7z_pcb"
    ],
    "intoPart": "sd_heatsink_6530b",
    "engagementMm": 2.9,
    "verified": false,
-   "role": "A7Z board and heatsink to the saddle tray",
+   "role": "A7Z board and 6530B heatsink to the saddle body floor boss (one unit, from below on the bench)",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): head in the 1.0 mm counterbore under the tray (z 45.5..46.5), shank up through the tray boss (46.5..48.0) and the 1.6 mm PCB into the 6530B threaded boss; 2.9 mm in the aluminium if the boss is 3.1 tall (estimated from photos, measure on the part). Not ray-cast: the heatsink is an envelope.",
-   "note": "Board + 6530B to the tray, from below on the bench.",
+   "evidence": "D-028 saddle V3 (2026-10-25, build_saddle.py BOSS, build.json params BOSS / HOLES_XY): head seated at z 46.5 at the top of the dia 4.2 pocket that opens in the underside of the saddle floor under the boss (pocket_top 46.5), shank up through the dia 2.2 hole in the boss (46.5..48.0, 1.5 mm) and the 1.6 mm PCB (48.0..49.6) into the 6530B threaded boss standing on the hole (49.6..52.7 if the base is 3.1 tall): 2.9 mm in the aluminium is an estimate from photos, measured on the part before fitting. Not ray-cast: the heatsink is an envelope and the thread is the kit's own.",
+   "note": "Saddle floor boss (pocket from below) + A7Z board hole, into the 6530B threaded boss; the four make saddle, board and heatsink one unit on the bench.",
    "stack": [
     {
-     "part": "sd_a7z_pcb",
+     "part": "saddle_body",
      "fromMm": 0.0,
-     "toMm": 1.6,
+     "toMm": 1.5,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "sd_a7z_pcb",
+     "fromMm": 1.5,
+     "toMm": 3.1,
      "holeDiameterRangeMm": [
       2.74,
       2.75
      ]
     },
     {
-     "part": "saddle_body",
-     "fromMm": 1.6,
-     "toMm": 4.0,
+     "part": "sd_heatsink_6530b",
+     "fromMm": 3.1,
+     "toMm": 6.0,
      "holeDiameterRangeMm": [
       1.6,
       1.6
@@ -7283,7 +7321,7 @@
     1.6
    ],
    "tipMarginMm": null,
-   "driverClearAtStepMm": "bench (tray upside down)",
+   "driverClearAtStepMm": "bench (saddle upside down, pocket open from below)",
    "checks": {
     "fullMeshHit": null,
     "guideMeshHit": null,
@@ -7297,7 +7335,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py HOLES/TRAY, build/build.json screws SD-board-01..04 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py HOLES/BOSS, build/build.json screws SD-board-01..04 (V3)"
   },
   {
    "id": "SD-lid-01",
@@ -7313,7 +7351,7 @@
    "center": [
     -31.0,
     34.4,
-    63.5
+    64.2
    ],
    "axis": [
     0,
@@ -7325,12 +7363,12 @@
     "saddle_body"
    ],
    "intoPart": "saddle_lid",
-   "engagementMm": 3.65,
+   "engagementMm": 3.5,
    "verified": false,
    "role": "Saddle lid to body",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): horizontal at x -31, z 63.5 through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the lid boss (|y| 29..32.65, 3.65 mm); tip 0.6 mm past the boss above the heatsink top 61.2. Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
-   "note": "Saddle lid to the side walls.",
+   "evidence": "D-028 saddle V3 (2026-10-25): horizontal at x -31, z 64.2 (LID_SCREWS; 2.3 below the wall top 66.5, 3.1 above the estimated heatsink top 61.1) through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the boss under the lid plate (|y| 29..32.8, 3.8 mm; 3.5 mm of thread after the lead-in); tip 0.6 mm past the boss in free air above the heatsink (the boss bottom is 1.0 above the heatsink top, build.json lid_screw_boss_above_heatsink_mm). Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
+   "note": "Saddle lid (a cover: it touches nothing) to the side walls.",
    "stack": [
     {
      "part": "saddle_body",
@@ -7343,8 +7381,8 @@
     },
     {
      "part": "saddle_lid",
-     "fromMm": 1.75,
-     "toMm": 5.6,
+     "fromMm": 1.6,
+     "toMm": 5.4,
      "holeDiameterRangeMm": [
       1.59,
       1.6
@@ -7370,7 +7408,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V3)"
   },
   {
    "id": "SD-lid-02",
@@ -7386,7 +7424,7 @@
    "center": [
     -31.0,
     -34.4,
-    63.5
+    64.2
    ],
    "axis": [
     0,
@@ -7398,12 +7436,12 @@
     "saddle_body"
    ],
    "intoPart": "saddle_lid",
-   "engagementMm": 3.65,
+   "engagementMm": 3.5,
    "verified": false,
    "role": "Saddle lid to body",
    "saddle": true,
-   "evidence": "D-028 saddle V2 (2026-10-25): horizontal at x -31, z 63.5 through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the lid boss (|y| 29..32.65, 3.65 mm); tip 0.6 mm past the boss above the heatsink top 61.2. Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
-   "note": "Saddle lid to the side walls.",
+   "evidence": "D-028 saddle V3 (2026-10-25): horizontal at x -31, z 64.2 (LID_SCREWS; 2.3 below the wall top 66.5, 3.1 above the estimated heatsink top 61.1) through the dia 2.2 hole in the 1.6 mm side wall into the dia 1.6 pilot of the boss under the lid plate (|y| 29..32.8, 3.8 mm; 3.5 mm of thread after the lead-in); tip 0.6 mm past the boss in free air above the heatsink (the boss bottom is 1.0 above the heatsink top, build.json lid_screw_boss_above_heatsink_mm). Geometry from build_saddle.py LID_SCREWS; not ray-cast.",
+   "note": "Saddle lid (a cover: it touches nothing) to the side walls.",
    "stack": [
     {
      "part": "saddle_body",
@@ -7416,8 +7454,8 @@
     },
     {
      "part": "saddle_lid",
-     "fromMm": 1.75,
-     "toMm": 5.6,
+     "fromMm": 1.6,
+     "toMm": 5.4,
      "holeDiameterRangeMm": [
       1.59,
       1.6
@@ -7443,7 +7481,7 @@
    },
    "guideCurrentlySays": "M2 × 6 TAP",
    "guideSpecMatches": true,
-   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V2)"
+   "source": "print/a7z-saddle/build_saddle.py LID_SCREWS, build/build.json screws SD-lid-01/02 (V3)"
   },
   {
    "id": "C-camera-01",
@@ -8669,19 +8707,6 @@
    "checkedOn": "2026-10-13 (build_guide_data.py attach_screws: prepare rows equal the drawn screws for every step, screwProblems [])"
   },
   {
-   "step": "saddle-mount",
-   "guidePrepare": {
-    "M2 × 10": 2
-   },
-   "records": {
-    "M2 × 10": 2
-   },
-   "status": "match",
-   "guideTextMentions": [],
-   "explanation": "S-shell_pack-01/02 as M2 x 10 through the saddle floor and shell roof into the pack bar.",
-   "checkedOn": "2026-10-22 D-022 (build_guide_data.py attach_screws must report screwProblems [])"
-  },
-  {
    "step": "saddle-board",
    "guidePrepare": {
     "M2 × 6": 4
@@ -8691,8 +8716,8 @@
    },
    "status": "match",
    "guideTextMentions": [],
-   "explanation": "SD-board-01..04, M2 x 6 from below through the tray and the board into the 6530B bosses (D-028).",
-   "checkedOn": "2026-10-25 D-028 (build_guide_data.py attach_screws must report screwProblems [])"
+   "explanation": "SD-board-01..04, M2 x 6 from below through the saddle floor bosses (head pockets from below) and the board into the 6530B bosses (D-028 V3).",
+   "checkedOn": "2026-10-25 D-028 V3 (build_guide_data.py attach_screws must report screwProblems [])"
   },
   {
    "step": "saddle-lid",
@@ -8704,8 +8729,21 @@
    },
    "status": "match",
    "guideTextMentions": [],
-   "explanation": "SD-lid-01/02, side walls into the lid bosses at x -31, z 63.5 (D-028).",
-   "checkedOn": "2026-10-25 D-028"
+   "explanation": "SD-lid-01/02, side walls into the lid bosses at x -31, z 64.2 (D-028 V3; cover lid).",
+   "checkedOn": "2026-10-25 D-028 V3"
+  },
+  {
+   "step": "roof-screws",
+   "guidePrepare": {
+    "M2 × 6": 2
+   },
+   "records": {
+    "M2 × 6": 2
+   },
+   "status": "match",
+   "guideTextMentions": [],
+   "explanation": "S-shell_pack-01/02 as M2 x 6 through the bare shell roof into the pack bar, driven before the saddle unit is taped on (D-028 V3; the saddle is no longer in the stack).",
+   "checkedOn": "2026-10-25 D-028 V3 (build_guide_data.py attach_screws must report screwProblems [])"
   }
  ]
 }

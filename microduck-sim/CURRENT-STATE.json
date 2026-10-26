@@ -369,19 +369,27 @@
   },
   "print_filament_stock": {
    "value": {
-    "white_petg": "out (Shawn 2026-10-25: 白色filament用完了, RoboClub restock about a week)",
-    "orange_petg": "available; interim colour for saddle V2 parts",
-    "black_petg": "available (V1.33/V1.34 printed 10/24)",
-    "yellow_petg": "available (V1.33 printed 10/24)"
+    "white_pla": "out (Shawn 2026-10-25: 白色filament用完了, RoboClub restock about a week)",
+    "orange_pla": "available; interim colour for saddle V2 parts",
+    "black_pla": "available (V1.33/V1.34 printed 10/24)",
+    "yellow_pla": "available (V1.33 printed 10/24)"
    },
-   "meaning": "Which RoboClub PETG colours can be printed now. A release plate in a colour that is out is not deliverable; scheme C (white shells, thighs, cap) resumes when white is restocked.",
+   "meaning": "Which RoboClub PLA colours can be printed now. A release plate in a colour that is out is not deliverable; scheme C (white shells, thighs, cap) resumes when white is restocked.",
    "verified_at": "2026-10-25",
-   "source": "Shawn 2026-10-25: 目前有个问题就是白色filament用完了 roboclub补货可能要一周 先用其他颜色打吧 比如橙色",
+   "source": "Shawn 2026-10-25: 目前有个问题就是白色filament用完了 roboclub补货可能要一周 先用其他颜色打吧 比如橙色 | material: Shawn 2026-10-25: \"什么PETG 我们用的PLA\"; the 18:38 entry said PETG without any source (agent assumption), corrected the same evening",
    "measure": "ask Shawn or look at the RoboClub filament shelf before slicing a plate; update when a spool runs out or arrives",
    "max_age_days": 14,
    "consumers": [
     "guide/print/release-* colour choice",
     "print-delivery-format memory"
+   ],
+   "material": "PLA (RoboClub stock; the release pipeline slices every plate with the PLA profiles and asserts filament_type == PLA, release_pipeline_v2.py check_profile)",
+   "superseded": [
+    {
+     "value": "colours recorded as *_petg",
+     "until": "2026-10-25 evening",
+     "why": "agent assumption, never verified; every printed MicroDuck part is PLA"
+    }
    ]
   }
  },

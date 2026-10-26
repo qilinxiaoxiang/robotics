@@ -75,8 +75,9 @@ PAIR_TEXT = {
         'c', 'Antenna IPEX (U.FL) plug snapped onto the A7Z antenna socket: a mated connector.', 'No change.'),
     frozenset(['antenna_coax', 'antenna_ipex']): (
         'c', 'The 1.13 mm antenna coax enters its own IPEX plug: one purchased cable assembly (AC019) drawn as plug and cable.', 'No change.'),
-    # 2026-10-25 D-028 saddle V2 (print/a7z-saddle/build/build.json checks): the A7Z, the Radxa 6530B heatsink and the bought parts
-    # in the saddle pose; board + heatsink on the printed tray, lid over the heatsink only.
+    # 2026-10-25 D-028 saddle V3 (print/a7z-saddle/build/build.json checks): the A7Z, the Radxa 6530B heatsink and the bought parts
+    # in the saddle pose; the board on the four saddle floor bosses, screwed from below into the heatsink; the lid a cover that
+    # touches nothing (checks lid_heatsink_6530b 0.0, lid_screw_boss_above_heatsink_mm 1.0).
     frozenset(['sd_microsd_card', 'sd_microsd_socket']): (
         'c', 'microSD card pushed into its socket on the A7Z underside: a mated part (the card sticks out through the -Y saddle wall slot).', 'No change.'),
     frozenset(['sd_usb_c_plug', 'sd_usb_c_otg_dp']): (
@@ -95,14 +96,11 @@ PAIR_TEXT = {
         'c', 'Radxa 6530B base on the thermal pad (z 52.7): pad contact by design.', 'No change.'),
     frozenset(['sd_heatsink_6530b', 'sd_a7z_pcb']): (
         'c', 'The four threaded bosses of the 6530B stand on the PCB top face round the board holes (z 49.6), held by the four M2 x 6 from below: a designed seat.', 'No change.'),
-    frozenset(['saddle_tray', 'sd_a7z_pcb']): (
-        'c', 'The four tray bosses under the PCB at the board holes (z 48.0): the board sits on them, screwed from below: a designed seat.', 'No change.'),
-    frozenset(['saddle_tray', 'saddle_body']): (
-        'c', 'The tray plate rests on the four short body posts (z 45.5) and is located by the walls (0.15 mm a side): a designed seat.', 'No change.'),
-    frozenset(['saddle_lid', 'sd_heatsink_6530b']): (
-        'c', 'The lid pressing bars and corner pad stand on the heatsink top (z 61.2) and clamp it: a designed contact.', 'No change.'),
+    frozenset(['saddle_body', 'sd_a7z_pcb']): (
+        'c', 'The four floor bosses of the saddle body (dia 6.0 at the top) under the PCB at the board holes (z 48.0; build.json checks body_pcb '
+             'bounds at z 48.0 only): the board sits on them, held by the four M2 x 6 from below into the 6530B bosses: a designed seat.', 'No change.'),
     frozenset(['saddle_lid', 'saddle_body']): (
-        'c', 'Lid plate on the wall tops (z 65.8), lip inside the three closed walls: a designed seat.', 'No change.'),
+        'c', 'Lid plate on the wall tops (z 66.5), lip inside the three closed walls: a designed seat.', 'No change.'),
     frozenset(['sd_antenna', 'saddle_body']): (
         'c', 'AC019 antenna strip stuck on the inner face of the saddle front wall (x -6.9..-6.6): adhesive contact by design.', 'No change.'),
     frozenset(['sd_dupont_housings', 'sd_a7z_pcb']): (
