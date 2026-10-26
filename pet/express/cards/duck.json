@@ -1,0 +1,582 @@
+{
+ "name": "microduck",
+ "sensors": [
+  {
+   "kind": "imu",
+   "id": "bno085@i2c-7:0x4A",
+   "notes": "trunk IMU (microduck-sim/CURRENT-STATE.json a7z_imu_bus)"
+  },
+  {
+   "kind": "touch",
+   "id": "xiao_touch@i2c-0:0x2A",
+   "notes": "five head pads L1 R1 L2 R2 M (microduck-sim/CURRENT-STATE.json a7z_touch_bus)"
+  },
+  {
+   "kind": "camera",
+   "id": "u20cam",
+   "notes": "Innomaker U20CAM-720P on the face, USB to the A7Z (microduck-sim/CURRENT-STATE.json parts_a7z_extensions)"
+  }
+ ],
+ "actuators": [
+  {
+   "id": 1,
+   "name": "right_ankle",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 2,
+   "name": "right_knee",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 3,
+   "name": "right_hip_pitch",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 4,
+   "name": "right_hip_roll",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -0.384,
+    0.384
+   ],
+   "ok": true
+  },
+  {
+   "id": 5,
+   "name": "right_hip_yaw",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -0.5236,
+    0.4363
+   ],
+   "ok": true
+  },
+  {
+   "id": 6,
+   "name": "left_ankle",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 7,
+   "name": "left_knee",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 8,
+   "name": "left_hip_pitch",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 9,
+   "name": "left_hip_roll",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -0.384,
+    0.384
+   ],
+   "ok": true
+  },
+  {
+   "id": 10,
+   "name": "left_hip_yaw",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -0.4363,
+    0.5236
+   ],
+   "ok": true
+  },
+  {
+   "id": 11,
+   "name": "head_pitch",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.5708
+   ],
+   "ok": true
+  },
+  {
+   "id": 12,
+   "name": "neck_pitch",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -1.5708,
+    1.0472
+   ],
+   "ok": true
+  },
+  {
+   "id": 13,
+   "name": "head_yaw",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -2.9671,
+    2.9671
+   ],
+   "ok": true
+  },
+  {
+   "id": 14,
+   "name": "head_roll",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    -0.4363,
+    0.4363
+   ],
+   "ok": true
+  },
+  {
+   "id": 15,
+   "name": "jaw",
+   "model": "XL330-M288",
+   "torque_nm": 0.6,
+   "range_rad": [
+    0.0,
+    0.4363
+   ],
+   "ok": true
+  }
+ ],
+ "primitives": [
+  {
+   "name": "walk",
+   "params": {
+    "vx": [
+     0.0,
+     0.25
+    ],
+    "vtheta": [
+     -0.3,
+     0.3
+    ],
+    "seconds": [
+     1,
+     4
+    ]
+   },
+   "preconditions": [
+    "standing"
+   ],
+   "duration_s_max": 4,
+   "tags": [
+    "locomotion",
+    "explore"
+   ],
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "stand",
+   "params": {
+    "seconds": [
+     1,
+     60
+    ]
+   },
+   "preconditions": [
+    "standing"
+   ],
+   "duration_s_max": 60,
+   "tags": [
+    "rest"
+   ],
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "sit",
+   "params": {
+    "seconds": [
+     2,
+     30
+    ]
+   },
+   "preconditions": [
+    "standing"
+   ],
+   "duration_s_max": 30,
+   "tags": [
+    "rest"
+   ],
+   "effects": {
+    "posture": "sitting"
+   }
+  },
+  {
+   "name": "groundpick",
+   "params": {
+    "phase": [
+     0.0,
+     1.0
+    ],
+    "seconds": [
+     2,
+     10
+    ]
+   },
+   "preconditions": [
+    "standing",
+    "the beak stays closed while bowing"
+   ],
+   "duration_s_max": 10,
+   "tags": [
+    "explore",
+    "play"
+   ],
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "getup",
+   "params": {},
+   "preconditions": [
+    "lying"
+   ],
+   "duration_s_max": 8,
+   "tags": [
+    "rest"
+   ],
+   "duration_s_typical": 4,
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "wait",
+   "params": {
+    "seconds": [
+     1,
+     60
+    ]
+   },
+   "preconditions": [
+    "standing"
+   ],
+   "duration_s_max": 60,
+   "tags": [
+    "rest"
+   ],
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "stop",
+   "params": {},
+   "preconditions": [],
+   "duration_s_max": 2,
+   "tags": [
+    "rest"
+   ],
+   "duration_s_typical": 1,
+   "effects": {
+    "posture": "standing"
+   }
+  },
+  {
+   "name": "look_around",
+   "params": {
+    "seconds": [
+     2,
+     8
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 8,
+   "tags": [
+    "explore",
+    "orient"
+   ]
+  },
+  {
+   "name": "turn_head",
+   "params": {
+    "yaw": [
+     -2.9671,
+     2.9671
+    ],
+    "pitch": [
+     -1.5708,
+     1.5708
+    ],
+    "seconds": [
+     0.5,
+     5
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 5,
+   "tags": [
+    "orient",
+    "social"
+   ]
+  },
+  {
+   "name": "nod",
+   "params": {
+    "times": [
+     1,
+     3
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 4,
+   "tags": [
+    "social",
+    "express"
+   ],
+   "duration_s_typical": 2
+  },
+  {
+   "name": "shake_head",
+   "params": {
+    "times": [
+     1,
+     3
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 4,
+   "tags": [
+    "social",
+    "express"
+   ],
+   "duration_s_typical": 2
+  },
+  {
+   "name": "beak",
+   "params": {
+    "open": [
+     0.0,
+     0.4363
+    ],
+    "seconds": [
+     0.3,
+     5
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 5,
+   "tags": [
+    "express",
+    "play"
+   ]
+  }
+ ],
+ "notes": [
+  "inspected 2026-10-26T04:01:39 in sim mode",
+  "recognised as microduck from the servo ids and model numbers; joint ranges from walk_brain.JOINT_RANGE (policy goal clamp) and pi/jaw_limits.json jaw_max_open_deg",
+  "bus scan answered: microduck-sim/guide/firmware/mac/robot-runs-20261023-a7z/duck_wired_log_app1023-225437.jsonl.gz first row with all 14 policy servos read (t 1792796078.09127); servo_v [1, 7.2]",
+  "bus scan jaw: microduck-sim/guide/firmware/mac/robot-runs-20261023-a7z/duck_wired_app1023-225437.out: jaw ID15: calibrated, closed tick 2042, open tick 2442",
+  "bus scan model: not logged; 1200 = XL330-M288-T per microduck-sim/PROJECT-CONTEXT.json servo_order",
+  "bus scan limits: EEPROM position limits never dumped: null",
+  "XL330-M288: bus at 7.2 V is above the highest published stall-torque point; torque_nm is that point's value (ROBOTIS e-manual), not extrapolated",
+  "no microphones on the body yet: INMP441 arrived 2026-10-25 (Shawn: \u9ea6\u514b\u98ce\u5230\u4e86 \u6211\u53d1\u73b0\u9001\u4e86\u6392\u9488) (microduck-sim/CURRENT-STATE.json parts_a7z_extensions); no sound events until they are fitted",
+  "speaker in the head (output only; quack calls through walk_wired.py)",
+  "babbling in MuJoCo (as-built duck, saddle mass, 7.0 V): 14 joints, amplitude grown through [0.02, 0.04, 0.08] rad at KP 200 while the trunk tilted under 3.0 deg, the rest at KP 400; jaw not in the sim model",
+  "body schema: moving left_hip_yaw by 0.05 rad does nothing visible; source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving left_hip_roll by 0.04 rad moves the camera (image change 0.127); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving left_hip_pitch by 0.04 rad tilts the body and moves the camera (trunk tilt 2.0 deg, 51.3 deg/rad) (image change 0.253); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving left_knee by 0.07 rad tilts the body and moves the camera (trunk tilt 4.5 deg, 65.6 deg/rad) (image change 0.314); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving left_ankle by 0.02 rad tilts the body and moves the camera (trunk tilt 1.8 deg, 77.8 deg/rad) (image change 0.220); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving neck_pitch by 0.08 rad tilts the body and moves the camera (trunk tilt 1.2 deg, 15.0 deg/rad) (image change 0.427); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving head_pitch by 0.10 rad moves the camera (image change 0.335); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving head_yaw by 0.05 rad moves the camera (image change 0.118); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving head_roll by 0.06 rad moves the camera (image change 0.122); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving right_hip_yaw by 0.06 rad does nothing visible; source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving right_hip_roll by 0.04 rad tilts the body and moves the camera (trunk tilt 1.1 deg, 29.0 deg/rad) (image change 0.143); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving right_hip_pitch by 0.04 rad tilts the body and moves the camera (trunk tilt 2.3 deg, 55.7 deg/rad) (image change 0.272); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving right_knee by 0.06 rad tilts the body and moves the camera (trunk tilt 2.7 deg, 46.5 deg/rad) (image change 0.246); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "body schema: moving right_ankle by 0.02 rad tilts the body and moves the camera (trunk tilt 1.5 deg, 65.7 deg/rad) (image change 0.199); source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
+  "walk: walk61.onnx at KP_RL 200, 4 s walks at 0.25 m/s (microduck-sim/CURRENT-STATE.json walking_policy); vtheta 0 and +-0.3 rad/s are the robot-tested turns",
+  "stand: stand61.onnx at zero command (walk mode, vx 0)",
+  "sit: sit mode; policy goals clamped to the trained ranges (CURRENT-STATE policy_goal_guards)",
+  "groundpick: Pollen groundpick61; a beak-open bend is not trained (D-027)",
+  "getup: walk_brain recover mode (DUCK_GETUP=recover); sim only, never run on the robot (CURRENT-STATE getup)",
+  "wait: stand61 at zero command",
+  "stop: zero velocity command; walk61 brings its stride to rest",
+  "look_around: head yaw sweep within its trained range; rules-table bounds",
+  "turn_head: joint ranges; while walking only head pitch is robot-tested (2026-10-24)",
+  "nod: rules-table bounds",
+  "shake_head: rules-table bounds",
+  "beak: jaw limits in software (pi/jaw_limits.py): head pitch <= 65 deg while open",
+  "channels block added by pet/express/cards/make_cards.py to a copy of pet/state/examples/duck.json"
+ ],
+ "devices": [
+  {
+   "name": "speaker",
+   "kind": "speaker",
+   "notes": "head speaker, ALSA default, -3 dB softvol ceiling"
+  },
+  {
+   "name": "body_heading",
+   "kind": "heading_goal",
+   "notes": "walk_brain heading controller goal"
+  }
+ ],
+ "channels": {
+  "space": "delta",
+  "space_note": "head outputs are walk_brain head-command deltas from the policy default pose (HEAD_JOINTS order neck_pitch, head_pitch, head_yaw, head_roll); the stand/walk policy tracks them",
+  "orient_threshold": 1.2,
+  "head_lead_s": 0.22,
+  "motion_lag_s": 0.14,
+  "motion_lag_note": "head_yaw joint 0.12-0.16 s behind the head command under stand61 (as-built sim, pet/express/out/duck_tilt.json track_lag_s); calls are delayed by it to land with the head",
+  "ATTEND": {
+   "map": [
+    {
+     "axis": "yaw",
+     "to": "head_yaw",
+     "gain": 1.0
+    },
+    {
+     "axis": "pitch",
+     "to": "head_pitch",
+     "gain": 0.75
+    },
+    {
+     "axis": "pitch",
+     "to": "neck_pitch",
+     "gain": -0.25
+    }
+   ],
+   "note": "sim signs (as-built MuJoCo head camera): head_yaw + turns left, head_pitch + looks up, neck_pitch + lowers the head"
+  },
+  "ORIENT": {
+   "map": [
+    {
+     "axis": "yaw",
+     "to": "head_yaw",
+     "gain": -1.0
+    },
+    {
+     "axis": "yaw",
+     "to": "body_heading",
+     "gain": 1.0
+    }
+   ],
+   "note": "the head counter-rotates while the body turns; body_heading is a heading goal for walk_brain's heading controller (walk61, robot-tested turns +-0.3 rad/s); not exercised under the stand policy"
+  },
+  "POSTURE": {
+   "map": [
+    {
+     "axis": "height",
+     "to": "neck_pitch",
+     "gain": -0.22
+    },
+    {
+     "axis": "height",
+     "to": "head_pitch",
+     "gain": -0.18
+    }
+   ],
+   "note": "alert = neck back and head up, gaze kept near level; slumped = neck forward"
+  },
+  "GESTURE": {
+   "map": [
+    {
+     "axis": "tilt",
+     "to": "head_roll",
+     "gain": 1.0
+    },
+    {
+     "axis": "bob",
+     "to": "head_pitch",
+     "gain": -1.0
+    }
+   ]
+  },
+  "VOCALISE": {
+   "render": "call",
+   "device": "speaker",
+   "note": "duck_sound.Voice recordings, resampled for pitch and stretched for length (pet/express/voice.py)"
+  },
+  "outputs": {
+   "neck_pitch": {
+    "limit": [
+     -0.45,
+     0.45
+    ],
+    "max_rate": 4.0,
+    "note": "inside HEAD_RANGE 1.10; neck moves tilt the trunk (pet/state/examples/duck.json body schema 15 deg/rad)"
+   },
+   "head_pitch": {
+    "limit": [
+     -0.6,
+     0.6
+    ],
+    "max_rate": 6.0
+   },
+   "head_yaw": {
+    "limit": [
+     -1.4,
+     1.4
+    ],
+    "max_rate": 7.0
+   },
+   "head_roll": {
+    "limit": [
+     -0.31,
+     0.31
+    ],
+    "max_rate": 4.0
+   },
+   "body_heading": {
+    "limit": [
+     -3.141592653589793,
+     3.141592653589793
+    ],
+    "max_rate": 0.3
+   }
+  }
+ }
+}

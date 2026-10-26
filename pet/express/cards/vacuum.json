@@ -1,0 +1,182 @@
+{
+ "name": "vacuum_bot",
+ "hypothetical": true,
+ "sensors": [
+  {
+   "kind": "range",
+   "id": "bumper_ir",
+   "notes": "front bumper and cliff IR"
+  },
+  {
+   "kind": "mic",
+   "id": "mic",
+   "notes": "assumed, to hear its name"
+  }
+ ],
+ "actuators": [
+  {
+   "id": 1,
+   "name": "heading",
+   "model": "differential drive heading loop",
+   "torque_nm": 0.0,
+   "range_rad": [
+    -3.141592653589793,
+    3.141592653589793
+   ],
+   "ok": true
+  },
+  {
+   "id": 2,
+   "name": "drive",
+   "model": "differential drive speed loop, m/s",
+   "torque_nm": 0.0,
+   "range_rad": [
+    -0.3,
+    0.3
+   ],
+   "ok": true
+  }
+ ],
+ "devices": [
+  {
+   "name": "beeper",
+   "kind": "buzzer"
+  },
+  {
+   "name": "ring_led",
+   "kind": "light",
+   "notes": "brightness 0-1"
+  }
+ ],
+ "primitives": [
+  {
+   "name": "turn_to",
+   "params": {
+    "yaw": [
+     -3.141592653589793,
+     3.141592653589793
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 4,
+   "tags": [
+    "orient",
+    "social"
+   ]
+  },
+  {
+   "name": "drive",
+   "params": {
+    "vx": [
+     -0.3,
+     0.3
+    ],
+    "seconds": [
+     1,
+     10
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 10,
+   "tags": [
+    "locomotion"
+   ]
+  },
+  {
+   "name": "beep",
+   "params": {
+    "hz": [
+     400,
+     4000
+    ]
+   },
+   "preconditions": [],
+   "duration_s_max": 1,
+   "tags": [
+    "express"
+   ]
+  }
+ ],
+ "notes": [
+  "no such robot in hand: a third body that proves the channel abstraction (register section 12, 'a vacuum robot's head is its heading')"
+ ],
+ "channels": {
+  "space": "delta",
+  "space_note": "heading delta from the heading at the call; drive is a speed in m/s",
+  "orient_threshold": 0.0,
+  "head_lead_s": 0.2,
+  "ATTEND": {
+   "map": [
+    {
+     "axis": "yaw",
+     "to": "heading",
+     "gain": 0.35
+    }
+   ],
+   "note": "gaze = heading; no pitch (ATTEND.pitch absent)"
+  },
+  "ORIENT": {
+   "map": [
+    {
+     "axis": "yaw",
+     "to": "heading",
+     "gain": 0.65
+    }
+   ]
+  },
+  "POSTURE": {
+   "map": [
+    {
+     "axis": "height",
+     "to": "drive",
+     "gain": 0.12
+    }
+   ],
+   "note": "the anticipation dip becomes a short back-up, alertness a forward creep"
+  },
+  "GESTURE": {
+   "map": [
+    {
+     "axis": "tilt",
+     "to": "heading",
+     "gain": 0.5
+    },
+    {
+     "axis": "bob",
+     "to": "drive",
+     "gain": 0.6
+    }
+   ],
+   "note": "tilt = a small heading wiggle, bob = a forward-back jiggle"
+  },
+  "VOCALISE": {
+   "render": "beep",
+   "device": "beeper",
+   "base_hz": 1400,
+   "ms": 120,
+   "light": "ring_led"
+  },
+  "outputs": {
+   "heading": {
+    "limit": [
+     -3.141592653589793,
+     3.141592653589793
+    ],
+    "max_rate": 3.0
+   },
+   "drive": {
+    "limit": [
+     -0.15,
+     0.15
+    ],
+    "max_rate": 1.5
+   },
+   "ring_led": {
+    "limit": [
+     0.0,
+     1.0
+    ]
+   }
+  }
+ }
+}
