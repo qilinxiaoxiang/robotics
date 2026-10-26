@@ -69,7 +69,7 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('mgnd', 'micl.GND', 'gp.GND', BLK, 'mic', '左耳麦克风 GND → 集线点', '带插头的杜邦线，路过集线点（后脑的 GND 在这里焊进来）。'),
     ('ggnd', 'gp.GND', 'a7z.p34', BLK, 'mic', '集线点 GND → A7Z 34 号针', '小旗 34。还是左耳那根 GND 杜邦线。'),
     ('msck', 'micl.SCK', 'gp.SCK', ORG, 'mic', '左耳麦克风 SCK → 集线点（并进功放 BCLK）',
-     '细线，不带插头：在头盖左后角和功放 BCLK 线拧在一起焊，套热缩管。'),
+     '细线，不带插头：在头盖左后角和功放 BCLK 线拧在一起焊，套热缩管或缠电工胶布。'),
     ('mws', 'micl.WS', 'gp.WS', PUR, 'mic', '左耳麦克风 WS → 集线点（并进功放 LRC）', '细线，不带插头：和功放 LRC 线焊在一起。'),
     ('mvdd', 'micl.VDD', 'gp.VDD', RED, 'mic', '左耳麦克风 VDD → 集线点（并进触摸板 3V3）', '细线，不带插头：和触摸板 3V3 线焊在一起（3.3 V）。'),
     ('rsck', 'micr.SCK', 'micl.SCK', ORG, 'mic', '右耳 SCK → 左耳 SCK', '两头都焊，跨过头盖内顶。'),
@@ -179,7 +179,7 @@ def gather() -> dict:
     for p in pins:
         if p['voltage'] is None:
             del p['voltage']
-    return {'id': 'gp', 'title': '集线点（头盖左后角）', 'subtitle': '四个焊接接头，套热缩管；在出线口正上方', 'short': '集线点',
+    return {'id': 'gp', 'title': '集线点（头盖左后角）', 'subtitle': '四个焊接接头（不装后脑麦克风就是三个），套热缩管或缠电工胶布；在出线口正上方', 'short': '集线点',
             'drawing': {'kind': 'outline', 'color': '#eceff1', 'radius': 2,
                         'blocks': [{'x': 1.5 + i * 7.0, 'y': 1.5, 'w': 6.0, 'h': 6.0, 'color': '#cfd8dc'} for i in range(4)]},
             'width': W, 'height': H, 'pins': pins}
