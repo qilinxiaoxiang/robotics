@@ -32,6 +32,11 @@ Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
                                           last goals (monitor mode, torque on) instead of ramping to STAND from a
                                           crouch; the head joints hold their positions at the trip.
   "jaw": 20 | "open" | "grip", "jaw_torque": false, "jaw_mark": "closed" | "open"   the ID15 jaw (jaw_ctl.py)
+  {"mode": "seepick", "object": {...}}   the seeing pick (walk_brain.py): this process drives the jaw on the trained
+                                          timeline (walk_brain.seepick_jaw, "grip" once closed), hands the policy the
+                                          jaw's holding bit (jaw_ctl.holding) and, once the rise is complete, writes
+                                          walk mode at zero command (stand61) with the jaw still gripping. Guarded as
+                                          groundpick (--max-tilt-gp, a trip holds the last goals in monitor mode).
 
 Remote-control additions (2026-10-20, walk_brain.py has the details):
   {"mode": "kick", "foot": "left" | "right", "id": 7}   one kick per new id, from stand or walk mode: 25 ticks of
@@ -432,6 +437,7 @@ def quack_head_pose(delta, t, brain):
     share = quack_head_share(t)
     return {n: brain.default[n] + share * scale * d for n, d in delta.items()}
 GP_DONE_PHASE = 0.9  # inside the policy's standing rest segment: the rise is complete, hand back to stand61
+SP_DONE_PHASE = 0.9  # seeing pick: trained stand-up ends at 0.66 (TIMELINE return_end), then standing still
 CMD_ALPHA = 0.2  # velocity command EMA per 20 ms tick, Pollen's robotd default
 # No IMU sample this long: the Brain holds its last goals (blind, so no policy step). 2026-10-15 the Pi Zero lost power
 # 0.85 s into a walk, the stream stopped, the robot froze mid-stride and fell with nothing on the console.
@@ -822,13 +828,14 @@ def main():
             hard_hits.clear()  # a later walk starts with a clean window
             write_cmd(args.cmd, want, diverging)
             last_cmd, diverging, cmd_since = read_cmd(args.cmd, None), None, time.time()
-        elif brain.mode in ("groundpick", "sit") and diverging:
+        elif brain.mode in ("groundpick", "seepick", "sit") and diverging:
             # no open-loop ramp to STAND out of a crouch or a seat: the legs hold the last goals (torque on) and wait
             # for a command; the head holds where it is instead of a runaway goal (2026-10-23 head pressed on the floor)
             brain.hold_head()
             want = {"mode": "monitor"}
             hard_hits.clear()
-            write_cmd(args.cmd, want, ("ground pick: " if brain.mode == "groundpick" else "sit: ") + diverging)
+            write_cmd(args.cmd, want, {"groundpick": "ground pick: ", "seepick": "seeing pick: "}.get(brain.mode, "sit: ")
+                      + diverging)
             last_cmd, diverging, cmd_since = read_cmd(args.cmd, None), None, time.time()
         now = time.perf_counter()
         if guard and guard.state == "stop":
@@ -908,8 +915,12 @@ def main():
             want_b["hold"] = {"s": hold_s, "kp": est.gains() if hold_on else None}
         if grip_stop.settle(brain, hold_s):
             print("hold: fully held after the grip stop, the set-down runs stand61", flush=True)
+        if want_b.get("mode") == "seepick":
+            want_b["_holding"] = jaw.holding()
         goal, kp, info = brain.tick(want_b, time.time(), pos, vel, quat, gyro, imu_valid and fresh,
                                     joint_age, imu_age)
+        if brain.mode == "seepick" and "sp_jaw" in info and jaw.calibrated:
+            jaw.goal_deg = info["sp_jaw"]  # torque comes on below if it was off
         # after the tick, so the stop command has reached the Brain and any ramp to STAND has started
         holding_stand = brain.ramp is None and brain.goal is not None and \
             all(abs(brain.goal[nm] - STAND[nm]) < 1e-6 for nm in NAMES)
@@ -930,6 +941,11 @@ def main():
                 and float(want.get("phase", 0.0)) >= GP_DONE_PHASE:
             want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
             write_cmd(args.cmd, want, "ground pick complete, stand61 takes over")
+            last_cmd, cmd_since = read_cmd(args.cmd, None), time.time()
+        if brain.mode == "seepick" and info.get("sp_phase", 0.0) >= SP_DONE_PHASE:
+            want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
+            write_cmd(args.cmd, want, f"seeing pick complete ({'holding' if jaw.holding() else 'not holding'}), "
+                      "stand61 takes over")
             last_cmd, cmd_since = read_cmd(args.cmd, None), time.time()
         if brain.mode not in Brain.POLICY_MODES:
             hard_hits.clear()
@@ -959,7 +975,8 @@ def main():
                                                       if n in brain.default else goal[n])
                                                   for k, n in enumerate(OBSERVATION_DOF_ORDER)})
                     brain.goal = dict(goal)
-            max_tilt = {"groundpick": args.max_tilt_gp, "sit": args.max_tilt_sit}.get(brain.mode, args.max_tilt)
+            max_tilt = {"groundpick": args.max_tilt_gp, "seepick": args.max_tilt_gp,
+                        "sit": args.max_tilt_sit}.get(brain.mode, args.max_tilt)
             carried = hold_on and est.e > HOLD_TILT_E  # tilted in a hand, not falling
             rising = brain.getup is not None  # the recover sequence passes through every tilt on its way up
             if not diverging and not carried and not rising and info["gb"][2] > -math.cos(math.radians(max_tilt)):
