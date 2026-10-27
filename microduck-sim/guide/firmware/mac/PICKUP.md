@@ -135,3 +135,29 @@ at the frame bottom (the real camera, 9 deg lower, sees nearer).
   sim with the current brain at vx 0: vtheta 0.5 -> 172 deg in 6 s with 0.7 cm drift, 1.0 -> about 55 deg/s, no fall
   (`brain_sim_check.py --model asbuilt --volt 7.0 --vx 0 --vtheta 0.5 --walk-s 6`). Not yet tried on the robot. This file
   and pickup.py still describe the Mac-hosted brain and the Pi camera; the robot now runs the brain on the A7Z.
+
+## Seeing pick on the A7Z (2026-10-27)
+
+The learned seeing pick (`seepick61.onnx`, walk_brain mode `seepick`) with `seepick.py` as the coordinator: find the
+object by colour, walk to it, aim, align to the trained spot (0.087, 0) m +-4 cm, pick with the policy, check the jaw,
+retry on a miss or a slip (at most `--tries`).
+
+Status: **do not run the pick on the robot yet.** The runtime rehearsal (`seepick-rehearsal-20261027/`, 96 runs on the
+as-built model) held the object 0 times, against about 80 % in the training env at +-3 cm. No run fell or tripped a
+guard; the beak presses into the floor and closes about 2 cm beside the object. The cause is being traced in
+`seepick-rehearsal-20261027/gap/`. The camera calibration and the dry run do not depend on it.
+
+Order on the robot:
+1. Install: `microduck-sim/guide/firmware/a7z/install_teleop.sh` (copies `seepick.py`, and `seepick61.onnx` when
+   `seepick_model.py` has installed it; the check prints "seeing pick: loaded").
+2. Camera: both calibrations in `CAMERA.md` ("U20CAM calibration"): lens with the chessboard (`cam_calib.py
+   --intrinsics`), then the mount with the robot standing (`cam_calib.py --mount`). Copy both JSON files back to the
+   Mac and commit them the same day. `approach.py` and `seepick.py` refuse to walk until both are fitted.
+3. Jaw marks (`pi/jaw_calibration.json`, step 2 above). walk_wired refuses `seepick` without them, and without an
+   `"object"` in the command.
+4. `seepick.py --color orange --observe 10`: detections only, no motion.
+5. `seepick.py --color orange --dry`: approach, aim and align, no pick.
+6. `seepick.py --color orange`: only after the rehearsal grasps in sim.
+
+Untested on the robot: the colour table beyond orange, the in-place align turn at 0.5 rad/s, and the "too close"
+case (walk61 cannot step back, so the try is given up and the approach restarts).
