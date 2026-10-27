@@ -50,6 +50,7 @@ FILES=(
   guide/firmware/mac/orange_target.py
   guide/firmware/mac/turn_test.py
   guide/firmware/mac/shoot.py
+  guide/firmware/mac/seepick.py
   guide/firmware/mac/dance.json
   guide/firmware/mac/sitlook.json
   guide/firmware/pi/battery.py
@@ -66,6 +67,9 @@ FILES=(
   "$W/runtime-overlay/source-lock.json"
 )
 for m in walk stand groundpick sitstand kick_left kick_right; do FILES+=("$W/runtime-overlay/models/${m}61.onnx"); done
+# the seeing pick is not in source-lock.json: seepick_model.py installs it (git-ignored, its metadata carries the
+# source candidate and sha256); copied when present, and the Brain loads it only when the file exists
+[ -f "$SIM/$W/runtime-overlay/models/seepick61.onnx" ] && FILES+=("$W/runtime-overlay/models/seepick61.onnx")
 
 echo "== local checks"
 cd "$SIM"
@@ -130,6 +134,7 @@ b = walk_brain.Brain(os.path.join(walk_wired.WHOLE, "runtime-overlay", "models")
 print("brain: policies loaded:", ", ".join(sorted(b.sessions)))
 missing = {"walk", "stand", "groundpick", "sitstand", "kick_left", "kick_right"} - set(b.sessions)
 assert not missing, f"missing policies {missing}"
+print("seeing pick:", "loaded" if "seepick" in b.sessions else "no seepick61.onnx (seepick.py cannot pick)")
 print("sounds:", len(glob.glob("sounds/*.wav")), "calls in", os.path.abspath("sounds"))
 print("jaw calibration:", "present" if os.path.exists("../pi/jaw_calibration.json") else "MISSING (quack moves no jaw until marked)")
 PY
