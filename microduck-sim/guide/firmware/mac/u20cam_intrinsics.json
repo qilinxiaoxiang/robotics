@@ -1,0 +1,22 @@
+{
+ "camera": "Innomaker U20CAM-720P (D-023), as a7z_cam.py publishes it: 1280 x 720 MJPEG shrunk to 640 x 360 and turned 180 deg to upright",
+ "source": "datasheet",
+ "model": "fisheye",
+ "width": 640,
+ "height": 360,
+ "fx": 359.503,
+ "fy": 359.503,
+ "cx": 320.0,
+ "cy": 180.0,
+ "dist": [
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "rms_px": null,
+ "frames": 0,
+ "date": "2026-10-27",
+ "pixel_convention": "continuous: the centre of pixel column j, row i is (j + 0.5, i + 0.5); OpenCV's cx, cy plus 0.5",
+ "why": "No calibration yet. Equidistant fisheye (r = f theta) from the manual's 102 deg horizontal FOV over 640 px: f = 320 / rad(51) = 359.5 px, centre at the image centre. It gives 117 deg on the diagonal against the manual's 120 (a pinhole with 102 deg horizontal gives 110). Manual: INNO-MAKER/U20CAM-720P UserManual-v1.0.pdf page 3 (guide/print/face-u20/checks.json fromManual). Replace with cam_calib.py --intrinsics; approach.py refuses to run while source is datasheet."
+}

@@ -44,6 +44,9 @@ FILES=(
   guide/firmware/mac/a7z_cam.py
   guide/firmware/mac/duck_kin.py
   guide/firmware/mac/duck_kin.json
+  guide/firmware/mac/cam_calib.py
+  guide/firmware/mac/u20cam_intrinsics.json
+  guide/firmware/mac/u20cam_mount.json
   guide/firmware/mac/orange_target.py
   guide/firmware/mac/turn_test.py
   guide/firmware/mac/shoot.py
