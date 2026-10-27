@@ -438,6 +438,17 @@ def quack_head_pose(delta, t, brain):
     return {n: brain.default[n] + share * scale * d for n, d in delta.items()}
 GP_DONE_PHASE = 0.9  # inside the policy's standing rest segment: the rise is complete, hand back to stand61
 SP_DONE_PHASE = 0.9  # seeing pick: trained stand-up ends at 0.66 (TIMELINE return_end), then standing still
+
+
+def seepick_block(want, jaw_calibrated):
+    """Why a switch to the seeing pick must not start, or None. Without an object the policy reads (0, 0, 0) at age 2,
+    an object at its feet; without the jaw marks the mouth stays limp (seepick rehearsal 2026-10-27)."""
+    if not jaw_calibrated:
+        return "the jaw is not calibrated (mark closed and open first)"
+    obj = want.get("object")
+    if not isinstance(obj, dict) or any(k not in obj for k in ("x", "y", "size", "t")):
+        return 'no "object" with x, y, size and t in the command'
+    return None
 CMD_ALPHA = 0.2  # velocity command EMA per 20 ms tick, Pollen's robotd default
 # No IMU sample this long: the Brain holds its last goals (blind, so no policy step). 2026-10-15 the Pi Zero lost power
 # 0.85 s into a walk, the stream stopped, the robot froze mid-stride and fell with nothing on the console.
@@ -883,6 +894,12 @@ def main():
         # Pollen's runtime smooths the velocity command every tick, cmd += cmd_alpha * (target - cmd), cmd_alpha 0.2
         # (pollen-robotics/microduck deploy/robotd.toml [control], read 2026-10-16): "a stick snap becomes a ramp the
         # gait can follow". A for_s stop is then a ramp to zero, not a step.
+        if want.get("mode") == "seepick" and brain.mode != "seepick":
+            block = seepick_block(want, jaw.calibrated)
+            if block:
+                want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0} if brain.mode == "walk" else {"mode": brain.mode}
+                write_cmd(args.cmd, want, f"seeing pick refused: {block}")
+                last_cmd, cmd_since = read_cmd(args.cmd, None), time.time()
         if want.get("mode") == "walk":
             for k, key in enumerate(("vx", "vy", "vtheta")):
                 cmd_s[k] += CMD_ALPHA * (float(want.get(key, 0)) - cmd_s[k])

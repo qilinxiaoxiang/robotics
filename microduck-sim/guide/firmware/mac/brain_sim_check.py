@@ -1385,8 +1385,8 @@ def main():
     sp.add_argument("--sp-no-stalls", action="store_true", help="no camera stalls (training: 2 %% of frames start a 0.5-1.5 s stall)")
     sp.add_argument("--sp-jaw-kp", type=int, default=jaw_ctl.KP_JAW, help="ID15 position P gain (walk_wired --jaw-kp)")
     sp.add_argument("--sp-jaw-current", type=float, default=float(jaw_ctl.GOAL_CURRENT_MA), help="mA; ID15 Goal Current in mode 5")
-    sp.add_argument("--sp-holding", choices=("runtime", "stopped"), default="runtime",
-                    help="holding bit: jaw_ctl.holding as it is (runtime), or also requiring the jaw to have stopped")
+    sp.add_argument("--sp-holding", choices=("runtime", "stopped"), default="stopped",
+                    help="holding bit: jaw_ctl.holding (stopped: open >= GRIP_MIN_DEG and still), or the rule before 2026-10-27 without the still check (runtime)")
     sp.add_argument("--sp-no-cap", action="store_true", help="do not apply jaw_limits to the jaw goal (it is still evaluated)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
