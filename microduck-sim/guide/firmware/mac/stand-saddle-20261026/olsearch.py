@@ -66,6 +66,25 @@ def specs(stage):
         out += [(f"neck+0.225 push{dv:+.1f}", p, dx, dict(T=40, push=(20.0, dv))) for dv in (0.1, -0.1) for dx in (-3.0, -4.5)]
         out.append(("neck+0.225 mu0.4", p, -3.0, dict(T=60, friction=0.4)))
         return out
+    if stage == "v135":    # the manifest with the V1.35 saddle, 6530B and camera lead: recalibrate NEUTRAL's fall, recheck neck 0.25
+        import comsim
+        N = comsim.S.NEUTRAL
+        out = [("A_neutral", dict(N), dx, dict(T=60)) for dx in (0.0, -1.0, -1.5, -2.0, -2.5, -3.0)]
+        out += [("neck+0.25", dict(N, neck_pitch=0.25), dx, dict(T=60)) for dx in (0.0, -1.0, -2.0, -3.0, -4.0, -5.0)]
+        return out
+    if stage == "v135b":   # finer: the calibrated band -2..-2.5 mm sits on neck 0.25's toe-rest/flat edge; 0.275 and 0.30 beside it
+        import comsim
+        N = comsim.S.NEUTRAL
+        out = [("A_neutral", dict(N), dx, dict(T=60)) for dx in (-1.25, -1.75, -2.25)]
+        out += [(f"neck{n:+.3f}", dict(N, neck_pitch=n), dx, dict(T=60)) for n in (0.25, 0.275, 0.30)
+                for dx in (-1.5, -2.0, -2.25, -2.5, -2.75, -3.0, -3.5)]
+        return out
+    if stage == "v135push":  # neck 0.25 at the recalibrated COM: both 0.1 m/s pushes and friction 0.4
+        import comsim
+        p = dict(comsim.S.NEUTRAL, neck_pitch=0.25)
+        out = [(f"neck+0.25 push{dv:+.1f}", p, dx, dict(T=40, push=(20.0, dv))) for dv in (0.1, -0.1) for dx in (-2.25, -2.5)]
+        out += [("neck+0.25 mu0.4", p, dx, dict(T=40, friction=0.4)) for dx in (-2.25, -2.5)]
+        return out
     if stage == "takeover":  # walk mode at zero command (stand61) takes over after 8 s of open-loop stand, 12 s of walk mode
         import comsim
         N = comsim.S.NEUTRAL

@@ -320,10 +320,17 @@
    "value": {
     "radxa_heatsink_6530b": {
      "part": "Radxa Heatsink 6530B (65 x 30 x 11.5 mm aluminium, blower fan, 3-pin lead to the A7Z fan header; box: 2 thermal pads 16 x 16 x 1.5 mm, 4 CM2 x 4 screws)",
-     "status": "in hand, not fitted",
+     "status": "fitted (inferred): Shawn 2026-10-26 '鞍座是1.35, 盖没有盖'; the V1.35 saddle holds the A7Z only by four M2 x 6 into the 6530B's bosses (D-028 V3); the saddle lid is not fitted. Not weighed (sim uses 25 g estimate)",
      "ordered": "2026-10-22 ~04:00 Amazon B0GX643GDN $16.99 (Shawn: 已经下单了)",
      "arrived": "2026-10-25",
-     "note": "dry-fitted without the pad the base sits 1-2 mm above the A733: that gap is the 1.5 mm pad's place (Radxa docs: pad on the SoC, then the heatsink, diagonal screws)"
+     "note": "dry-fitted without the pad the base sits 1-2 mm above the A733: that gap is the 1.5 mm pad's place (Radxa docs: pad on the SoC, then the heatsink, diagonal screws)",
+     "superseded": [
+      {
+       "value": "in hand, not fitted",
+       "until": "2026-10-26",
+       "why": "V1.35 saddle reported fitted"
+      }
+     ]
     },
     "geeekpi_copper_15x15x5": {
      "part": "GeeekPi 15 x 15 x 5 mm copper heatsinks, 8 pack, self-adhesive",
@@ -459,12 +466,20 @@
    ]
   },
   "open_loop_stand_pose": {
-   "value": "pi/stand_pose.py STAND_POSE = NEUTRAL with neck_pitch 0.25 rad (D-030), stand KP 400; in the repository, not yet on the A7Z (robot off) and not yet stood on the robot",
+   "value": "pi/stand_pose.py STAND_POSE = NEUTRAL with neck_pitch 0.25 rad (D-030), stand KP 400; on the A7Z since 2026-10-26 20:25 (sha256 matches the repository); not yet stood on the robot",
    "meaning": "The pose walk_brain's stand mode and the boot stand hold; legs equal the policies' trained start",
    "verified_at": "2026-10-26",
-   "source": "sim, guide/firmware/mac/stand-saddle-20261026 (cmu plugged manifest, COM calibrated 3 mm back to the robot's 10/26 backward lean)",
+   "source": "sim, guide/firmware/mac/stand-saddle-20261026 stages v135/v135b/v135push on the cmu plugged manifest with the as-built V1.35 saddle, 6530B and camera lead (901.6 g): COM calibrated 2.25-2.5 mm behind the model to the robot's 10/26 backward lean; neck 0.25 rests flat (1.4 to 0.2 deg) over -2.25..-3.0 mm, on its toes at -2.0, falls back at -3.5 and under a 0.1 m/s backward push at -2.5",
    "max_age_days": 14,
-   "measure": "sha256 of ~/rt/microduck-sim/guide/firmware/pi/stand_pose.py on the A7Z against the repository, and the IMU pitch of the next open-loop stand (within 5 deg)"
+   "measure": "sha256 of ~/rt/microduck-sim/guide/firmware/pi/stand_pose.py on the A7Z against the repository, and the IMU pitch of the next open-loop stand (within 5 deg)",
+   "superseded": [
+    {
+     "value": "pi/stand_pose.py STAND_POSE = NEUTRAL with neck_pitch 0.25 rad (D-030), stand KP 400; in the repository, not yet on the A7Z (robot off) and not yet stood on the robot",
+     "source": "sim, guide/firmware/mac/stand-saddle-20261026 (cmu plugged manifest, COM calibrated 3 mm back to the robot's 10/26 backward lean)",
+     "until": "2026-10-26",
+     "why": "deployed to the A7Z; model updated to the V1.35 saddle and recalibrated"
+    }
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

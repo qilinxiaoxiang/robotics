@@ -14,3 +14,10 @@ Model: microduck_rl cmu `plugged` manifest at 1f2ab62c (saddle D-022, rear lid; 
 Unmodelled: saddle lid (5.9 g), board screws, the U20CAM and its 1 m cable (Shawn's plan was two turns on the saddle). The calibration to the robot's fall absorbs what was fitted on 10/26; anything added since moves the COM back.
 
     ~/.venvs/microduck-dyn/bin/python olsearch.py <base|neck|robust|mid|takeover> [--workers N]
+
+## As-built update (2026-10-26 evening)
+
+Shawn: the fitted saddle is V1.35 (D-028 V3, A7Z screwed to the 6530B), its lid is not fitted, the camera lead rides stiff above the neck and the saddle. The `plugged` variant now carries the V1.35 body (15.36 g, slicer), the 6530B (25 g estimate), the board, header and antenna at their V3 places and the camera lead (20 g estimate): 901.6 g, model COM x -5.31 mm (was -4.61).
+
+- `v135`, `v135b`: NEUTRAL now falls back at 2.6 s at -2.25 mm and 2.4 s at -2.5 mm: the robot's COM sits 2.25-2.5 mm behind the updated model (the same robot point as before, 0.7 mm of it now modelled). Neck 0.25 rests flat at -2.25 to -3.0 mm (1.4 to -0.6 deg), on its toes (+12 deg) at -2.0, falls back at -3.5. 0.275 falls back from -2.75, 0.30 from -2.25. Neck 0.25 stays.
+- `v135push`: at -2.25 both 0.1 m/s pushes and friction 0.4 hold; at -2.5 the backward push falls at 20.8 s. The backward margin is about 1 mm of COM.
