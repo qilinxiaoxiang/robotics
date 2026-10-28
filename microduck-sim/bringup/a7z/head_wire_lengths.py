@@ -10,8 +10,9 @@ The exit-to-wall span is the straight distance from head-sweep-v2.json: 37 mm at
 over the trained head command range (walk_brain HEAD_RANGE) and over the pickup bend (groundpick-head-traj.json, D-027). Every piece gets 10 mm for the two ends and is rounded up to 5 mm;
 the left microphone piece also gets the guide's 25 mm so the cap still opens like a lid. Spliced wires (12, 35, 17) are cut as
 two pieces; the others are one wire of the summed length (one 10 mm allowance).
-Breadboard (2026-10-26): the 12/35/17 (and three-microphone 34) joins are strips of a 25-hole mini breadboard taped to the
-camera back, landscape, plugs entering from behind. 'breadboard' gives each piece into it (male Dupont end, measured to the
+Breadboard (2026-10-26; every microphone line on it 2026-10-28): the 12/35/17/34/38 joins are strips of a 25-hole mini
+breadboard taped to the camera back, landscape, plugs entering from behind; each microphone sends its own piece per line,
+so no pad carries a wire on to another microphone. 'breadboard' gives each piece into it (male Dupont end, measured to the
 pin tip) as wall-following right-angle runs to the plug tail, and each board-to-pin wire (uncut male-to-female) as the
 plug tail to the gather point plus the gather point to the pin. Writes head-wire-lengths.json.
 python3 head_wire_lengths.py"""
@@ -85,11 +86,11 @@ def l1(a, b):
 
 
 PAD = {'amp-bclk': CAB['amp-bclk']['path'][0], 'amp-lrc': CAB['amp-lrc']['path'][0], 'touch-pin17': CAB['touch-pin17']['path'][0],
-       'mic-r': CAB['mic-r']['path'][0], 'mic-b': CAB['mic-b']['path'][0]}
+       'mic-r': CAB['mic-r']['path'][0], 'mic-l': CAB['mic-l']['path'][0], 'mic-b': CAB['mic-b']['path'][0]}
 bb = {'box': [[51.1, -22.0, 131.0], [63.4, -2.0, 146.0]], 'plugTail': BT, 'toBoard': {}, 'boardToPin': {}}
 for k, xyz in PAD.items():
     bb['toBoard'][k] = r5(l1(xyz, BT) + HOUSING + ENDS + (CAP_OPEN if k.startswith('mic') else 0))
-for pin in (12, 35, 17, 34):
+for pin in (12, 35, 17, 34, 38):
     bb['boardToPin'][str(pin)] = round(HOUSING + l1(BT, GP) + gather_to_pin(pin, span['pickup']))
 out['breadboard'] = bb
 for mid in ('mic-l', 'mic-b'):

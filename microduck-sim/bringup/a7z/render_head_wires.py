@@ -67,6 +67,7 @@ def square(a, b):
 SEG = [  # label, points, colour, style
     ('功放 BCLK → 面包板', square(CAB['amp-bclk']['path'][0], BT), '#ef6c00', '-'),
     ('右耳 → 面包板', square(CAB['mic-r']['path'][0], BT), '#c2185b', '-'),
+    ('左耳 → 面包板', square(CAB['mic-l']['path'][0], BT), '#8e24aa', '-'),
     ('触摸板 3V3 → 面包板', square(CAB['touch-pin17']['path'][0], BT), '#d32f2f', '-'),
     ('面包板 → 集线点', square(BT, GP), '#6d4c41', '-'),
     ('集线点 → 出线口', [GP, [10.0, 18.5, 124.0], [10.0, 18.5, 110.0], EXIT], '#000000', '-'),

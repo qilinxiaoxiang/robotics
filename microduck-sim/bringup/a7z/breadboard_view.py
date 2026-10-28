@@ -31,23 +31,23 @@ for ax, (a, b), title in ((axs[0], (0, 2), '从机器人左边看（头朝右）
             i = i[keep]
         ax.tripcolor(X, Y, i, np.zeros(len(i)), cmap=matplotlib.colors.ListedColormap([c]), alpha=al, edgecolors='none')
     ax.set_title(title); ax.set_aspect('equal')
-# side view: board (landscape) and plug housings of the top 4 rows
+# side view: board (landscape) and plug housings of all 5 rows
 s = axs[0]
 s.add_patch(Rectangle((bx0, 131), 12.3, 15, fc='#ffb300', ec='k', lw=1.2, alpha=.95))
-s.add_patch(Rectangle((bx0 - 16, 134.7), 16, 10.2, fc='#111111', ec='k', lw=1, alpha=.8))
+s.add_patch(Rectangle((bx0 - 16, 132.15), 16, 12.7, fc='#111111', ec='k', lw=1, alpha=.8))
 s.annotate('迷你面包板横着贴\n20 宽 × 15 高 × 12 厚', (bx0 + 6, 131), (70, 98), arrowprops=dict(arrowstyle='->'), fontsize=9)
-s.annotate('杜邦公头往后插（上面 4 排）\n离下巴支架、XIAO 至少 1.8 mm', (bx0 - 8, 144.9), (5, 160), arrowprops=dict(arrowstyle='->'), fontsize=9)
+s.annotate('杜邦公头往后插（5 排都能插）\n离下巴支架、XIAO 至少 1.8 mm', (bx0 - 8, 144.9), (5, 160), arrowprops=dict(arrowstyle='->'), fontsize=9)
 s.set_xlim(-5, 100); s.set_ylim(95, 172); s.plot([10, 30], [100, 100], 'k', lw=2); s.text(20, 101.5, '20 mm', ha='center', fontsize=8)
 r = axs[1]
 r.add_patch(Rectangle((2.0, 131), 20, 15, fc='#ffb300', ec='k', lw=1.2, alpha=.9))
 for i in range(5):
     for j in range(5):
         zz, yy = 138.5 + (2 - i) * 2.54, 12.0 + (j - 2) * 2.54
-        r.add_patch(Circle((yy, zz), .55, fc='k' if (i < 4 and j < 4) else '#9e9e9e'))
+        r.add_patch(Circle((yy, zz), .55, fc='k'))
 r.add_patch(Rectangle((-10.61, 142.0), 8.5, 3.5, fc='#eeeeee', ec='k', lw=1))
 r.text(-6.4, 148.5, '摄像头插头', ha='center', fontsize=9)
 r.text(12, 127.5, '面包板（插头右边，横放）', ha='center', fontsize=9)
-r.text(12, 125, '黑孔用，灰孔空着', ha='center', fontsize=8)
+r.text(12, 125, '25 个孔都能插', ha='center', fontsize=8)
 r.set_xlim(-24, 28); r.set_ylim(110, 152)
 for ax in axs: ax.set_xticks([]); ax.set_yticks([])
 plt.tight_layout()

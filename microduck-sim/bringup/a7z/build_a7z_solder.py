@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Build ../A7Z-SOLDER.html (three microphones: both ears and the optional back one) and ../A7Z-SOLDER-2MIC.html (the two
 ears only): the head wiring as a soldering sequence, one board per step, and for every pad all the wires that go into it
-at once, each with its cut length and kind (bare, female plug kept, male plug kept). The shared lines (SCK, WS, 3.3 V and
-the three-microphone GND) join on strips of a mini breadboard on the camera back instead of soldered joints.
+at once, each with its cut length and kind (bare, female plug kept, male plug kept). The shared lines (SCK, WS, 3.3 V, the
+microphone GND and the ears' SD) join on strips of a mini breadboard on the camera back instead of soldered joints; every
+microphone sends its own piece per line, so a pad holds at most two wires (its piece and the L/R link).
 
 Lengths come from head-wire-lengths.json (head_wire_lengths.py, pickup-bend slack) and the guide's wire list (speaker and
 touch pad leads). Run:  python3 build_a7z_solder.py
@@ -30,10 +31,9 @@ BB = HW['breadboard']
 TOB = lambda k: BB['toBoard'][k]                                        # piece into the breadboard, male pin kept
 NEED = lambda pin: BB['boardToPin'][str(pin)]                           # breadboard to pin, one uncut male-to-female wire
 MF = 300                                                                # that wire: a stock 30 cm male-to-female Dupont
-MR = HW['micPieces']['mic-r']                                           # right ear to left ear, bare
 LINK = 15                                                               # bare L/R link
-GND_WHOLE = PICK('mic-gnd')                                             # left ear GND straight to pin 34 (two microphones)
-assert all(NEED(p) <= MF - 20 for p in (12, 35, 17, 34)), 'a 30 cm male-to-female wire no longer reaches'
+DOWNS = [12, 35, 17, 34, 38]                                            # one strip each, wire down to these A7Z pins
+assert all(NEED(p) <= MF - 20 for p in DOWNS), 'a 30 cm male-to-female wire no longer reaches'
 
 
 def guide_items() -> list[str]:
@@ -211,7 +211,7 @@ def bb_figure(strips) -> Image.Image:
     strips can run. strips: [(colour, name, [hole letter, ...])], top strip first; the first letter of each is the wire
     down to the A7Z."""
     P, R = 110, 32
-    W, H = 1500, 940
+    W, H = 1500, 1010
     im = Image.new('RGB', (W, H), 'white')
     d = ImageDraw.Draw(im)
     for k, (ox, title) in enumerate(((40, '量出来是“横着通”（一排 5 个孔连在一起）'), (780, '量出来是“竖着通”（一列 5 个孔连在一起）'))):
@@ -238,8 +238,8 @@ def bb_figure(strips) -> Image.Image:
     y = 740
     for col, name, holes in strips:
         d.ellipse((60, y - 18, 96, y + 18), fill=col)
-        d.text((120, y), name, font=font(30), fill='#1b1b1b', anchor='lm')
-        y += 48
+        d.text((120, y), name, font=font(26), fill='#1b1b1b', anchor='lm')
+        y += 50
     return im
 
 
@@ -257,12 +257,13 @@ def no(key: str) -> str:
 
 
 def note_top() -> str:
-    other = ('<p><b>只装两只耳朵：</b>用 <a href="A7Z-SOLDER-2MIC.html">双麦克风版</a>，没有后脑那一步，面包板只用 3 条。</p>' if BACK else
+    other = ('<p><b>只装两只耳朵：</b>用 <a href="A7Z-SOLDER-2MIC.html">双麦克风版</a>，没有后脑那一步，面包板每条少插一个孔。</p>' if BACK else
              '<p><b>这是双麦克风版：</b>只有左右两只耳朵，像动物一样两只耳朵听声音。头盖后壁的第三个麦克风座空着。三个麦克风的版本在 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>。</p>')
     return f"""
 <div class="card">
 <p><b>怎么用这一页：</b>一步一块板子。每个焊盘后面写着<b>这个焊盘一共要焊几根线、各是哪根</b>，同一个焊盘的线一次焊上，不会再回来加。每根线写清楚多长、是哪种线、另一头去哪。</p>
-<p><b>不焊接头，用面包板合线：</b>功放、触摸板和麦克风共用的线（时钟 SCK、左右时钟 WS、3.3 V{"、麦克风 GND" if BACK else ""}）以前在头盖左后角焊成接头，头盖和下面的板子就焊死在一起了。现在每根线末端留一个杜邦公头，插进摄像头背面的迷你面包板；同一条上的孔是连通的，就等于接在一起。要拆头盖，拔插头就行。</p>
+<p><b>不焊接头，用面包板合线：</b>功放、触摸板和麦克风共用的线（时钟 SCK、左右时钟 WS、3.3 V、麦克风 GND、两只耳朵的 SD）以前在头盖左后角焊成接头，头盖和下面的板子就焊死在一起了。现在每根线末端留一个杜邦公头，插进摄像头背面的迷你面包板；同一条上的孔是连通的，就等于接在一起。要拆头盖，拔插头就行。</p>
+<p><b>每个麦克风的线都直接插面包板，不从一只耳朵串到另一只：</b>所以一个焊盘最多焊两根线（自己那根，加 L/R 短线），不会出现三根挤一个孔。</p>
 <p><b>四种线（{no('s0')}有图）：</b><b>细线</b> = 两头插头都剪掉；<b>带母头的线</b> = 剪掉一头，留母头，最后插 A7Z；<b>带公头的线</b> = 剪掉一头，留公头，插面包板；<b>公对母整根</b> = {MF // 10} cm 公对母杜邦线不剪，从面包板到 A7Z。长度含插头，都按低头叼东西留够了余量。</p>
 <p><b>功放五根是实际的线色</b>：Vin 蓝，BCLK 白，LRC 紫，GND 黑，DIN 橙。<b>麦克风的颜色建议</b>（跟组装指南一样，方便以后认）：SCK 黄，WS 绿，SD 蓝，VDD 红，GND 黑。带母头的线剪完马上贴小旗，写 A7Z 针号。</p>
 <p><b>已经焊过线的板子</b>（功放、XIAO 可能已经焊好了）：每根量一下，比这里写的长或一样长就留着；短了就拆下来换一根。功放的 BCLK、LRC 和 XIAO 的 3V3 现在要换成带公头的线，见{no('s5')}、{no('s6')}。</p>
@@ -273,35 +274,36 @@ def note_top() -> str:
 
 def strips():
     """Breadboard strips, top first: (colour, legend, hole letters); the first hole is the wire down to the A7Z."""
-    y, g, r, k = COL['SCK'][0], COL['WS'][0], COL['VDD'][0], COL['GND'][0]
+    y, g, r, k, u = COL['SCK'][0], COL['WS'][0], COL['VDD'][0], COL['GND'][0], COL['SD'][0]
     b = lambda: ['后'] if BACK else []
-    out = [(y, '黄条 SCK：针 = 往下 12 号针，功 = 功放 BCLK，右 = 右耳 SCK' + ('，后 = 后脑 SCK' if BACK else ''), ['针', '功', '右', *b()]),
-           (g, '绿条 WS：针 = 往下 35 号针，功 = 功放 LRC，右 = 右耳 WS' + ('，后 = 后脑 WS' if BACK else ''), ['针', '功', '右', *b()]),
-           (r, '红条 3.3 V：针 = 往下 17 号针，X = XIAO 3V3，右 = 右耳 VDD' + ('，后 = 后脑 VDD' if BACK else ''), ['针', 'X', '右', *b()])]
-    if BACK:
-        out.append((k, '黑条 GND：针 = 往下 34 号针，右 = 右耳 GND，后 = 后脑 GND', ['针', '右', '后']))
-    return out
+    ears = lambda pad: f'右 = 右耳 {pad}，左 = 左耳 {pad}' + (f'，后 = 后脑 {pad}' if BACK and pad != 'SD' else '')
+    return [(y, '黄条 SCK：针 = 往下 12 号针，功 = 功放 BCLK，' + ears('SCK'), ['针', '功', '右', '左', *b()]),
+            (g, '绿条 WS：针 = 往下 35 号针，功 = 功放 LRC，' + ears('WS'), ['针', '功', '右', '左', *b()]),
+            (r, '红条 3.3 V：针 = 往下 17 号针，X = XIAO 3V3，' + ears('VDD'), ['针', 'X', '右', '左', *b()]),
+            (k, '黑条 GND：针 = 往下 34 号针，' + ears('GND'), ['针', '右', '左', *b()]),
+            (u, '蓝条 SD：针 = 往下 38 号针，' + ears('SD') + '（后脑的 SD 不进面包板）', ['针', '右', '左'])]
 
 
 def s0():
-    bares = [(MR, 5, '右耳到左耳'), (LINK, 3 if BACK else 2, 'L/R 短线，每个麦克风一根'), (SPK, 2, '喇叭（红、黑）')]
+    bares = [(LINK, 3 if BACK else 2, 'L/R 短线，每个麦克风一根'), (SPK, 2, '喇叭（红、黑）')]
     lis = ''.join(f'<li>{mm} mm 细线 × {n}：{what}</li>' for mm, n, what in bares)
     lis += f'<li>铜箔引线（XIAO 到 5 块铜箔）：{"、".join(f"{k} {v}" for k, v in TOUCH.items())} mm，各一根细线</li>'
-    ml = [(TOB('mic-r'), 4 if BACK else 3, '右耳 SCK、WS、VDD' + ('、GND' if BACK else ''))] + (
+    ml = [(TOB('mic-r'), 5, '右耳 SCK、WS、SD、VDD、GND'), (TOB('mic-l'), 5, '左耳 SCK、WS、SD、VDD、GND')] + (
         [(TOB('mic-b'), 4, '后脑 SCK、WS、VDD、GND')] if BACK else []) + [
         (TOB('amp-bclk'), 1, '功放 BCLK'), (TOB('amp-lrc'), 1, '功放 LRC'), (TOB('touch-pin17'), 1, 'XIAO 3V3')]
     lism = ''.join(f'<li>{mm} mm × {n}：{what}</li>' for mm, n, what in ml)
-    pl = [(PICK('mic-sd'), 38, '左耳 SD')] + ([(PICK('mic-sd3'), 10, '后脑 SD')] if BACK else [(GND_WHOLE, 34, '左耳 GND')]) + [
+    pl = ([(PICK('mic-sd3'), 10, '后脑 SD')] if BACK else []) + [
           (PICK('amp-vin'), 4, '功放 Vin'), (PICK('amp-gnd'), 39, '功放 GND'), (PICK('amp-din'), 40, '功放 DIN'),
           (PICK('touch-pin25'), 25, 'XIAO GND'), (PICK('touch-pin29'), 29, 'XIAO D5 / SCL'), (PICK('touch-pin31'), 31, 'XIAO D4 / SDA')]
     lis2 = ''.join(f'<li>{mm} mm，小旗 {flag}：{what}</li>' for mm, flag, what in pl)
-    downs = [12, 35, 17] + ([34] if BACK else [])
+    downs = DOWNS
     lisd = ''.join(f'<li>小旗 {p}：面包板到 {p} 号针要 {NEED(p)} mm，多 {MF - NEED(p)} mm</li>' for p in downs)
     return AP.step('s0', no('s0'), '认四种线，剥皮', '你知道四种线各是什么，长度怎么量。', f"""
 {fig(wire_types(), '四种线', '细线两头剥皮；带母头、带公头的线只剥剪口那头，长度含插头；公对母整根不剪。')}
 <ul class="acts">
 <li>剥皮：焊到焊盘上的线头剥 2 到 3 mm。</li>
 <li>先上锡：剥好的铜丝拧紧，沾一点锡再焊，好焊很多。</li>
+<li>一个焊盘两根线的（VDD 或 GND 加 L/R 短线）：两根线头并在一起拧紧，一起上锡，再一起插进孔里焊。</li>
 <li>线可以每一步现剪，也可以按下面的清单一次剪好。</li>
 </ul>
 <details><summary>一次剪好的清单（可选）</summary>
@@ -312,35 +314,31 @@ def s0():
 </details>""")
 
 
+def ear_rows(mid: str, side: str, link_to: str) -> list:
+    """One ear: every pad sends its own male-pin piece into the breadboard; the L/R link joins VDD (right) or GND (left)."""
+    m = lambda col, strip: male(TOB(mid), col, strip)
+    first = f'新取一根 <b>{LINK} mm 细线</b>（短线）的一头'
+    return [('1', 'SCK', [m('黄', '黄条')], ''), ('2', 'WS', [m('绿', '绿条')], ''), ('3', 'SD', [m('蓝', '蓝条')], ''),
+            ('4', 'VDD', [m('红', '红条')] + ([first] if link_to == 'VDD' else []), ''),
+            ('5', 'GND', [m('黑', '黑条')] + ([first] if link_to == 'GND' else []), ''),
+            ('6', 'L/R', [link_end('另一头')], f'{side}的 L/R 接 {link_to}：它是{"右" if link_to == "VDD" else "左"}声道。')]
+
+
+def ear_step(key: str, mid: str, side: str, link_to: str, note: str) -> str:
+    rows = ear_rows(mid, side, link_to)
+    im = mic_face(f'{side} INMP441，没字那面（焊线这面）', {p: n for n, p, *_ in rows}, link_to)
+    return AP.step(key, no(key), f'{side}麦克风：5 根 {TOB(mid)} mm 带公头 + 1 根短线',
+                   f'{side} 6 个焊盘焊好；5 根带公头的线去面包板，另一头先空着。', f"""
+<div class="pair"><div>{fig(im, f'{side} INMP441 焊线面', '没字那面（有金属壳那面）朝你，左右和印字那面是反的：上排 L/R、WS、SCK，下排 GND、VDD、SD。焊之前翻过去对着字认一遍。')}</div>
+<div>{pad_list(rows)}<p>{note}带公头的线里含 25 mm 余量，头盖装好以后还能像盖子一样往后翻开。</p></div></div>""")
+
+
 def s1():
-    gnd = [bare(MR, '黑') + '，另一头去左耳 GND'] + ([male(TOB('mic-r'), '黑', '黑条')] if BACK else [])
-    rows = [('1', 'SCK', [bare(MR, '黄') + '，另一头去左耳 SCK', male(TOB('mic-r'), '黄', '黄条')], ''),
-            ('2', 'WS', [bare(MR, '绿') + '，另一头去左耳 WS', male(TOB('mic-r'), '绿', '绿条')], ''),
-            ('3', 'SD', [bare(MR, '蓝') + '，另一头去左耳 SD'], ''),
-            ('4', 'VDD', [bare(MR, '红') + '，另一头去左耳 VDD', male(TOB('mic-r'), '红', '红条'), f'新取一根 <b>{LINK} mm 细线</b>（短线）的一头'],
-             '三根挤一个孔太紧的话：先焊前两根，短线这头搭在焊点上补一点锡。'),
-            ('5', 'GND', gnd, ''), ('6', 'L/R', [link_end('另一头')], '右耳的 L/R 接 VDD：它是右声道。')]
-    im = mic_face('右耳 INMP441，没字那面（焊线这面）', {p: n for n, p, *_ in rows}, 'VDD')
-    nm = 4 if BACK else 3
-    return AP.step('s1', no('s1'), f'右耳麦克风：5 根 {MR} mm 细线 + {nm} 根带公头 + 1 根短线',
-                   f'右耳 6 个焊盘焊好；5 根细线去左耳，{nm} 根带公头的线去面包板，另一头都先空着。', f"""
-<div class="pair"><div>{fig(im, '右耳 INMP441 焊线面', '没字那面（有金属壳那面）朝你，左右和印字那面是反的：上排 L/R、WS、SCK，下排 GND、VDD、SD。焊之前翻过去对着字认一遍。')}</div>
-<div>{pad_list(rows)}<p>右耳离摄像头背面的面包板最近，所以共用的线从右耳去面包板；左耳只接右耳过来的线和自己去 A7Z 的线。带公头的线里含 25 mm 余量，头盖装好以后还能像盖子一样往后翻开。</p></div></div>""")
+    return ear_step('s1', 'mic-r', '右耳', 'VDD', '五根线各插面包板同名的一条；左耳也各插一根，同一条上连通，两只耳朵就接在一起了，不用再焊一根线过去。')
 
 
 def s2():
-    gnd = ['右耳 GND 线的另一头'] + ([] if BACK else [plug(GND_WHOLE, 34, '黑') + '，插头最后插 A7Z 34 号针']) + [
-        f'新取一根 <b>{LINK} mm 细线</b>（短线）的一头']
-    rows = [('1', 'SCK', ['右耳 SCK 线的另一头'], ''), ('2', 'WS', ['右耳 WS 线的另一头'], ''),
-            ('3', 'SD', ['右耳 SD 线的另一头', plug(PICK('mic-sd'), 38, '蓝') + '，插头最后插 A7Z 38 号针'], ''),
-            ('4', 'VDD', ['右耳 VDD 线的另一头'], ''),
-            ('5', 'GND', gnd, '三根挤一个孔太紧的话：先焊前两根，短线这头搭在焊点上补一点锡。' if not BACK else ''),
-            ('6', 'L/R', [link_end('另一头')], '左耳的 L/R 接 GND：它是左声道。')]
-    im = mic_face('左耳 INMP441，没字那面（焊线这面）', {p: n for n, p, *_ in rows}, 'GND')
-    out = '伸出去 1 根小旗 38 的带母头线' if BACK else '伸出去 2 根带母头线（小旗 38、34）'
-    return AP.step('s2', no('s2'), '左耳麦克风：接右耳的 5 根 + 带母头线 + 1 根短线', f'左耳 6 个焊盘焊好；{out}。', f"""
-<div class="pair"><div>{fig(im, '左耳 INMP441 焊线面', '同样是没字那面朝你。右耳过来的线焊到名字相同的焊盘上。')}</div>
-<div>{pad_list(rows)}</div></div>""")
+    return ear_step('s2', 'mic-l', '左耳', 'GND', '和右耳一样，五根线各插面包板同名的一条。左耳离面包板远一些，线横过头盖内顶到摄像头背面。')
 
 
 def s3():
@@ -399,19 +397,19 @@ def s7():
     n = len(strips())
     mics = '三个麦克风' if BACK else '两只耳朵的麦克风'
     return AP.step('s7', no('s7'), '量面包板，贴到摄像头背面', f'面包板横着贴在摄像头板背面、插头右边；你知道它是横着通还是竖着通。{mics}、功放、喇叭、XIAO 按组装指南装好。', f"""
-{AP.figure(AP.uri(Image.open(HERE / 'img' / 'breadboard_camera_back.png').convert('RGB'), 1100), '面包板在摄像头背面', '按组装指南的 CAD 画的。左：从机器人左边看；右：从后往前看摄像头背面。面包板横放，20 mm 那边水平，孔朝后；上面 4 排都能插，插头离下巴支架和 XIAO 至少 1.8 mm，板子离头盖 2 mm。')}
+{AP.figure(AP.uri(Image.open(HERE / 'img' / 'breadboard_camera_back.png').convert('RGB'), 1100), '面包板在摄像头背面', '按组装指南的 CAD 画的。左：从机器人左边看；右：从后往前看摄像头背面。面包板横放，20 mm 那边水平，孔朝后；25 个孔都能插，插头离下巴支架和 XIAO 至少 1.8 mm，板子离头盖 2 mm。')}
 <ol class="acts">
 <li><b>先量连通方向：</b>万用表打到蜂鸣档，两根表笔各插一个杜邦公头，插进同一排相邻两个孔，响了就是“横着通”；不响再试同一列上下两个孔，响了就是“竖着通”。记下来，{no('bb')}按它插。</li>
-<li>面包板横着拿（20 mm 那边水平），孔朝后。底面撕掉背胶（或贴一层 3M 泡棉胶），贴在摄像头板背面、摄像头插头的右边（从机器人后面看）。上边和摄像头板上边齐平，别凸出去碰头盖。</li>
+<li>面包板横着拿（20 mm 那边水平），孔朝后。底面撕掉背胶（或贴一层 3M 泡棉胶），贴在摄像头板背面、摄像头插头的右边（从机器人后面看）。上边和摄像头板上边齐平，不要往上挪：头盖开着时上面看着有空，盖上以后，往上挪一排（2.5 mm）面包板右上角就顶到头盖内壁，左上角那排插头的尾巴顶到 XIAO。</li>
 <li>面包板右边大约 10 mm 伸出摄像头板外面，粘住的只有左边 10 × 15 mm：贴之前用酒精擦干净摄像头板背面，按住 30 秒；插线时用手指在板子前面顶住。</li>
 <li>板子按组装指南第 9 章装进头里。这一步不焊东西。</li>
 <li>带母头的线经过面包板不停，直接走头盖左后角，从出线口出去，顺脖子左边下来。</li>
 </ol>
-<p>{n} 条要用，每条最多 {max(len(h) for *_, h in strips())} 个孔，所以只用左上角一块，最下面一排和最右边一列空着。</p>""")
+<p>{n} 条要用，每条最多 {max(len(h) for *_, h in strips())} 个孔{'，5 × 5 正好插满一块' if BACK else '，最右边一列（竖着通时最下面一排）空着'}。</p>""")
 
 
 def s_bb():
-    downs = [12, 35, 17] + ([34] if BACK else [])
+    downs = DOWNS
     im = bb_figure(strips())
     return AP.step('bb', no('bb'), '插面包板，贴 Kapton', f'所有带公头的线和 {len(downs)} 根公对母整根插好，一道 Kapton 压住，线束贴在头里。', f"""
 {fig(im, '面包板插孔分配', '从机器人后面看面包板。按第 ' + str(N['s7']) + ' 步量出来的方向用左图或右图。每个彩色孔插一根线：“针”是往下到 A7Z 的公对母整根，其他字是哪块板子过来的。', cls='mid')}
@@ -430,11 +428,11 @@ def s12():
             (35, '#1f9d55'), (38, '#1f6fd1'), (39, '#1d1d1f'), (40, '#1f6fd1')] + ([(10, '#9e9e9e')] if BACK else [])
     goal = '11 个插头插在 A7Z 上；小旗 10 贴在 10 号针旁边，不插。' if BACK else '11 个插头插在 A7Z 上，10 号针空着。'
     cap = 'A7Z 正面竖放（1 号针在上）。灰色的 10 号针先不插。' if BACK else 'A7Z 正面竖放（1 号针在上）。'
-    mic = '麦克风：34、38；后脑的 10 先不插' if BACK else '麦克风：34、38'
+    mic = '后脑麦克风：10 先不插' if BACK else ''
     return AP.step('s12', no('s12'), '插到 A7Z：小旗几号就插几号针', goal, f"""
 <div class="pair"><div>{AP.figure(AP.top_fig(pins), f'A7Z 上要插的 {len(pins)} 个针', cap)}</div>
 <div><p>插法、怎么数针号、插完怎么检查，见 <a href="A7Z-PINS.html#audio">A7Z-PINS 第 6 到 8 步</a>。</p>
-<ul class="acts"><li>面包板下来的：12、35、17{'、34' if BACK else ''}</li><li>功放：4、39、40</li><li>触摸板：25、29、31</li><li>{mic}</li></ul></div></div>""")
+<ul class="acts"><li>面包板下来的：12、35、17、34、38</li><li>功放：4、39、40</li><li>触摸板：25、29、31</li>{f'<li>{mic}</li>' if mic else ''}</ul></div></div>""")
 
 
 ORDER = [('s0', '四种线'), ('s1', '右耳'), ('s2', '左耳'), ('s3', '后脑'), ('s4', '喇叭'), ('s5', '功放'), ('s6', 'XIAO'),
