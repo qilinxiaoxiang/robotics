@@ -29,7 +29,9 @@ rsync -a --checksum --relative --itemize-changes \
   microduck-sim/guide/firmware/mac/test_namecall_detector.py \
   microduck-sim/guide/firmware/mac/test_namecall_direction.py \
   microduck-sim/guide/firmware/mac/test_namecall_chain.py \
+  microduck-sim/guide/firmware/mac/test_namecall_kws.py \
   microduck-sim/guide/firmware/mac/namecall-20261029/NAMECALL.md \
+  microduck-sim/guide/firmware/mac/namecall-20261029/keywords_mochi.txt \
   pet/__init__.py pet/express/*.py pet/express/cards/duck.json \
   --exclude='__pycache__' \
   "$HOST:$REMOTE/" 2>&1 | quiet
@@ -39,6 +41,9 @@ ssh "$HOST" "cd ~/$REMOTE/microduck-sim/guide/firmware/mac && \
   for f in namecall.py duck_sound.py ../../../../pet/express/express.py; do sha256sum \"\$f\"; done && \
   $VENV/bin/python -c 'import namecall, numpy; print(\"namecall imports ok, numpy\", numpy.__version__); \
     print(\"policy default head\", namecall.policy_default_head())' && \
+  ( $VENV/bin/python -c 'import sherpa_onnx, namecall; m = namecall.find_kws_model(); \
+    print(\"name mode: sherpa-onnx\", sherpa_onnx.__version__, \"model\", m or \"MISSING (~/rt/models/kws/)\")' \
+    2>/dev/null || echo 'name mode: NO sherpa-onnx (pip install sherpa-onnx==2.0.0 in the venv); --any-voice still works' ) && \
   ( [ -e /proc/asound/sndi2s0 ] && echo \"sndi2s0 card: \$(readlink /proc/asound/sndi2s0)\" || echo 'NO sndi2s0 card (I2S0 overlay not loaded)' ) && \
   echo \"sounds: \$(ls sounds/*.wav 2>/dev/null | wc -l) calls\" && \
   ( which arecord aplay >/dev/null && echo 'arecord/aplay present' || echo 'NO arecord/aplay (apt install alsa-utils)' )" 2>&1 | quiet

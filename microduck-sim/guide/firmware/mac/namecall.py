@@ -1,12 +1,20 @@
 """Name call on the MicroDuck: the duck hears a call, turns its head to the sound with a pet/express take, and quacks
 when the head arrives. First pet behaviour meant for the robot (register section 12, docs/PET_ROBOT_FEATURES.md).
 
-    ~/.venvs/duck-policy/bin/python namecall.py [--mute] [--no-head] [--once N] [--threshold-db 12]
+    ~/.venvs/duck-policy/bin/python namecall.py [--name mochi | --any-voice] [--mute] [--no-head] [--once N]
 
 Chain, all in this process, numpy only (no scipy on the A7Z):
   ears + back mic  ->  OnsetDetector  ->  Localiser (GCC-PHAT, SRP over 1 deg)  ->  HeadPath (pet.express take,
   EMA pre-inverse of walk_brain's HEAD_ALPHA)  ->  /tmp/duck_cmd.json {"mode": "walk", vx 0, "head": {...}} at 50 Hz
   -> stand61 balances while the head turns  ->  QuackBank plays a pitched duck call through duck_sound.Voice on arrival.
+
+Two trigger modes. --any-voice (the default until the robot test of the name passes): every voice-band onset is a
+call. --name mochi: a keyword spotter (KeywordGate: sherpa-onnx KeywordSpotter, the public zipformer
+gigaspeech-3.3M int8 model in ~/rt/models/kws/, one thread) runs all the time on the two ears downmixed to 16 kHz with
+the keywords file namecall-20261029/keywords_mochi.txt; only a spotted "Mochi" is a call. The onset detector keeps
+running as a source of word starts: the direction is taken from the 4-channel ring buffer (3 s) at the detector onset
+nearest the word's estimated start (KW_BACK_S before the spot), or at that estimate when the detector saw none. While
+the duck's own quack plays the spotter is fed silence.
 
 Sound in: the I2S0 card found by name (sndi2s0, its number changes between boots: duck_selfcheck.py), hw:CARD=sndi2s0,
 4 channels S32_LE 48 kHz through `arecord -t raw` (CURRENT-STATE a7z_audio_capture): ch0 left ear, ch1 right ear, ch2
@@ -86,6 +94,16 @@ LOOK_PITCH = 0.2                 # rad up: a standing caller is above the duck
 DEFAULT_HEAD = {"neck_pitch": 0.349, "head_pitch": 0.349, "head_yaw": 0.0, "head_roll": 0.0}
 BRAIN_FRESH_S = 1.5
 QUACK_DEAF_S = 0.6               # the detector stays deaf this long after the player ends
+
+# name mode (--name): keyword spotter
+KWS_FS = 16000
+KWS_MODEL_NAME = "sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01"
+KWS_MODEL_DIRS = (os.environ.get("NAMECALL_KWS_MODEL", ""), os.path.expanduser(os.path.join("~/rt/models/kws", KWS_MODEL_NAME)))
+KEYWORDS = {"mochi": os.path.join(HERE, "namecall-20261029", "keywords_mochi.txt")}
+RING_NAME_S = 3.0                # ring buffer in name mode: the spot comes up to about a second after the word starts
+KW_BACK_S = 0.75                 # aim point for the onset pick; 1.0 (the median spot delay) chose earlier sounds more often (NAMECALL.md 9.4)
+KW_ONSET_WIN = (0.25, 1.6)       # detector onsets between these many seconds before the spot are candidates
+ONSET_GAP_S = 0.25               # detector refractory in name mode (its onsets are only candidates)
 
 
 # ----------------------------------------------------------------------------------------------- sound sources
@@ -369,6 +387,105 @@ def render_scene(signal, az_rad, fs=FS, mics_mm=MICS_MM, channels=CHANNELS, n_ch
     if floor is not None:
         x[: len(floor)] += floor[:n]
     return x, pre_s
+
+
+# ----------------------------------------------------------------------------------------------- keyword spotter
+
+def lowpass_fir(n_taps=97, cutoff_hz=7000.0, fs=FS):
+    """Windowed-sinc low-pass (Blackman), unit DC gain."""
+    n = np.arange(n_taps) - (n_taps - 1) / 2.0
+    h = np.sinc(2.0 * cutoff_hz / fs * n) * np.blackman(n_taps)
+    return (h / h.sum()).astype(np.float32)
+
+
+class Decimate3:
+    """48 kHz -> 16 kHz in 20 ms blocks: FIR low-pass with its history carried across blocks, every third sample
+    (block lengths are multiples of 3, so the phase never slips). Delay (taps - 1) / 2 = 1 ms."""
+
+    def __init__(self, h=None):
+        self.h = lowpass_fir() if h is None else np.asarray(h, np.float32)
+        self.tail = np.zeros(len(self.h) - 1, np.float32)
+
+    def __call__(self, x):
+        z = np.concatenate([self.tail, np.asarray(x, np.float32)])
+        self.tail = z[len(z) - (len(self.h) - 1):]
+        return np.convolve(z, self.h, mode="valid")[::3]
+
+
+def model_file(model_dir, stem):
+    """encoder/decoder/joiner file of a sherpa KWS model folder: int8 when there is one, the 16-frame chunk first."""
+    for pat in (f"{stem}-*.int8.onnx", f"{stem}-*.onnx"):
+        found = sorted(glob.glob(os.path.join(model_dir, pat)), key=lambda p: ("chunk-16" not in p, p))
+        if found:
+            return found[0]
+    return None
+
+
+def find_kws_model(dirs=KWS_MODEL_DIRS):
+    for d in dirs:
+        if d and os.path.isfile(os.path.join(d, "tokens.txt")):
+            return d
+    return None
+
+
+class KeywordGate:
+    """Keyword spotter on the two ears downmixed to 16 kHz (sherpa-onnx KeywordSpotter, one thread).
+
+    feed(t, block, silent) -> None or dict(t_hit: end of the block that completed the keyword, keyword, span_s: first
+    to last token time, tokens). silent=True feeds zeros instead of the block (the duck's own quack) while the
+    decimator keeps its history. Per-keyword boost (:x) and threshold (#x) live in the keywords file; score and
+    threshold here apply to lines without them."""
+
+    def __init__(self, model_dir, keywords_file, score=1.0, threshold=0.25, threads=1, trailing_blanks=1, gain_db=0.0,
+                 ears=(0, 1), max_active_paths=4):
+        try:
+            import sherpa_onnx
+        except ImportError:
+            raise SystemExit("namecall: --name needs sherpa-onnx in this Python (pip install sherpa-onnx==2.0.0)")
+        if not model_dir or not os.path.isdir(model_dir):
+            raise SystemExit(f"namecall: keyword model folder not found ({model_dir}); see NAMECALL.md section 9")
+
+        def one(stem):
+            found = model_file(model_dir, stem)
+            if not found:
+                raise SystemExit(f"namecall: no {stem}-*.onnx in {model_dir}")
+            return found
+
+        self.kws = sherpa_onnx.KeywordSpotter(
+            tokens=os.path.join(model_dir, "tokens.txt"), encoder=one("encoder"), decoder=one("decoder"),
+            joiner=one("joiner"), keywords_file=keywords_file, num_threads=threads, keywords_score=score,
+            keywords_threshold=threshold, num_trailing_blanks=trailing_blanks, max_active_paths=max_active_paths)
+        self.stream = self.kws.create_stream()
+        self.dec = Decimate3()
+        self.ears = list(ears)
+        self.gain = 10 ** (gain_db / 20.0)
+        self.model_dir, self.keywords_file = model_dir, keywords_file
+        self.hits = 0
+
+    def reset(self):
+        """A fresh stream (after a pause): nothing heard before it can complete a keyword."""
+        self.stream = self.kws.create_stream()
+        self.dec = Decimate3()
+
+    def feed(self, t, block, silent=False):
+        x = block[:, self.ears].mean(axis=1) if block.ndim == 2 else block
+        y = self.dec(x) * self.gain
+        if silent:
+            y = np.zeros_like(y)
+        self.stream.accept_waveform(KWS_FS, y)
+        hit = None
+        while self.kws.is_ready(self.stream):
+            self.kws.decode_stream(self.stream)
+            r = self.kws.keyword_spotter.get_result(self.stream)
+            word = r.keyword.strip()
+            if word:
+                ts = list(r.timestamps)
+                if hit is None:
+                    hit = dict(t_hit=round(t + len(x) / FS, 3), keyword=word, tokens=list(r.tokens),
+                               span_s=round(ts[-1] - ts[0], 2) if len(ts) > 1 else None)
+                    self.hits += 1
+                self.kws.reset_stream(self.stream)
+        return hit
 
 
 # ----------------------------------------------------------------------------------------------- head path
@@ -677,15 +794,28 @@ class NameCall:
     """Glue: blocks in, detector, localiser, head path, quack, control file. run_blocks drives it for tests and
     --wav; run_live for the robot."""
 
-    def __init__(self, args, log, now=time.time):
+    def __init__(self, args, log, now=time.time, kws=None):
         self.a, self.log, self.now = args, log, now
-        self.det = OnsetDetector(thresh_db=args.threshold_db, rise_db=args.rise_db, refractory_s=args.refractory,
+        name = getattr(args, "name", None)
+        self.det = OnsetDetector(thresh_db=args.threshold_db, rise_db=args.rise_db,
+                                 refractory_s=getattr(args, "onset_gap", ONSET_GAP_S) if name else args.refractory,
                                  floor_tau_s=args.floor_tau)
         ch = dict(CHANNELS)
         if args.swap_ears:
             ch["left"], ch["right"] = ch["right"], ch["left"]
         self.loc = Localiser(channels=ch)
-        self.ring = collections.deque(maxlen=12)     # (t, block): 240 ms
+        # name mode: a spotter (or the one a test passes in); the detector's onsets are only candidate word starts
+        self.kws = kws
+        if self.kws is None and name:
+            self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
+                                   score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
+                                   gain_db=args.kws_gain_db, ears=(ch["left"], ch["right"]))
+        self.ring = collections.deque(maxlen=int(round(RING_NAME_S * FS / BLOCK)) if self.kws is not None else 12)
+        self.onsets = collections.deque(maxlen=64)   # name mode: recent detector onsets
+        self.last_kw_t = -1e9                        # name mode: spot time of the last accepted call
+        self.kw_hits = 0
+        self.kws_paused = False                      # name mode: the spotter rests while a take runs
+        self.block_ms = []                         # offline drivers: processing time per block
         self.pending = None                          # onset waiting for its window to fill
         self.head = None if args.no_head else HeadPath(default=policy_default_head() if not args.default_head_file else
                                                        json.load(open(args.default_head_file)), seed=args.seed,
@@ -715,22 +845,73 @@ class NameCall:
         if self.head is not None and self.head.busy:
             self.det.deaf_until = max(self.det.deaf_until, t + 0.1)   # own servos; the refractory covers the rest
         ev = self.det.update(t, block)
+        if self.kws is not None:
+            return self._hear_name(t, block, ev)
         if ev is not None:
             self.pending = ev
         if self.pending is not None:
-            t0 = self.pending["t"] - 0.5 * BLOCK / FS            # 10 ms before the onset block
-            need_end = t0 + self.loc.window / FS
-            have = [b for b in self.ring if b[0] + BLOCK / FS > t0 - 1e-9]
-            if have and have[-1][0] + BLOCK / FS >= need_end - 1e-9:
-                x = np.concatenate([b[1] for b in have])
-                off = int(round((t0 - have[0][0]) * FS))
-                x = x[max(0, off): max(0, off) + self.loc.window]
-                est = self.loc.estimate(x) if len(x) >= self.loc.window - 1 else None
+            ready, x = self._window(self.pending["t"])
+            if ready:
+                est = self.loc.estimate(x) if x is not None else None
                 det = dict(self.pending, decided_t=t + BLOCK / FS, **(est or {}))
                 self.pending = None
                 if est is not None:
                     return det
         return None
+
+    def _window(self, t_onset):
+        """(ready, x): the localiser's window from 10 ms before the onset block, out of the ring. ready is False while
+        the window has not been heard yet; x is None when the ring no longer holds enough of it."""
+        t0 = t_onset - 0.5 * BLOCK / FS
+        need_end = t0 + self.loc.window / FS
+        have = [b for b in self.ring if b[0] + BLOCK / FS > t0 - 1e-9]
+        if not have or have[-1][0] + BLOCK / FS < need_end - 1e-9:
+            return False, None
+        x = np.concatenate([b[1] for b in have])
+        off = int(round((t0 - have[0][0]) * FS))
+        x = x[max(0, off): max(0, off) + self.loc.window]
+        return True, (x if len(x) >= self.loc.window - 1 else None)
+
+    def pick_onset(self, t_hit):
+        """The detector onset nearest the word's estimated start (t_hit - KW_BACK_S), among those KW_ONSET_WIN before
+        the spot; None when the detector heard none there."""
+        lo, hi = t_hit - KW_ONSET_WIN[1], t_hit - KW_ONSET_WIN[0]
+        cands = [o for o in self.onsets if lo <= o["t"] <= hi]
+        if not cands:
+            return None
+        est = t_hit - KW_BACK_S
+        return min(cands, key=lambda o: abs(o["t"] - est))
+
+    def _hear_name(self, t, block, ev):
+        if ev is not None:
+            self.onsets.append(ev)
+        if self.head is not None and self.head.busy:
+            # a take is running: a name now would be skipped anyway, and the spotter's decode bursts (up to 30 ms on
+            # the A7Z's A76, 60 ms on an A55) would delay the 50 Hz head writes; it starts afresh after the take
+            self.kws_paused = True
+            return None
+        if self.kws_paused:
+            self.kws.reset()
+            self.kws_paused = False
+        hit = self.kws.feed(t, block, silent=self.deaf_from_quack)
+        if hit is None:
+            return None
+        self.kw_hits += 1
+        if hit["t_hit"] - self.last_kw_t < self.a.refractory:
+            self.log.write("skip", why="name heard again within the refractory period", keyword=hit["keyword"],
+                           t_hit=hit["t_hit"])
+            return None
+        onset = self.pick_onset(hit["t_hit"])
+        t_on = onset["t"] if onset is not None else round(hit["t_hit"] - KW_BACK_S, 3)
+        ready, x = self._window(t_on)
+        est = self.loc.estimate(x) if (ready and x is not None) else None
+        if est is None:
+            self.log.write("skip", why="name heard but the ring no longer holds its start", t_hit=hit["t_hit"])
+            return None
+        self.last_kw_t = hit["t_hit"]
+        base = dict(onset) if onset is not None else dict(t=t_on)
+        return dict(base, onset_from="detector" if onset is not None else "keyword", keyword=hit["keyword"],
+                    t_hit=hit["t_hit"], span_s=hit["span_s"], decided_t=round(t + BLOCK / FS, 3), **est)
 
     def respond(self, det, now):
         """Turn a detection into a take (azimuth in the head frame -> resting frame)."""
@@ -768,6 +949,12 @@ class NameCall:
                 return False
         return True
 
+    def mode_info(self):
+        if self.kws is None:
+            return dict(trigger="any-voice")
+        return dict(trigger="name", name=getattr(self.a, "name", None),
+                    keywords=getattr(self.kws, "keywords_file", None), kws_model=getattr(self.kws, "model_dir", None))
+
     def gate_ok(self):
         if self.gate is None:
             return True, None
@@ -780,13 +967,16 @@ class NameCall:
         writing the control file unless --dry). Returns detections."""
         dets = []
         self.rows = head_rows
+        clock = time.perf_counter
         for t, b in blocks:
+            c0 = clock()
             det = self.hear(t, b)
             if det is not None:
                 dets.append(self.respond(det, t + BLOCK / FS))
                 if self.a.once and self.responses >= self.a.once:
                     break
             self.motion_tick(t)
+            self.block_ms.append((clock() - c0) * 1000.0)
         return dets
 
     def run_live(self, cap):
@@ -809,7 +999,7 @@ class NameCall:
             time.sleep(1.5)   # stand61 settles before the first take
         log.write("start", brain=st, lock_free=lock_free(), procs=procs_named(), mute=a.mute, no_head=a.no_head,
                   threshold_db=a.threshold_db, refractory_s=a.refractory, bank=0 if self.bank is None else len(self.bank.files),
-                  default_head=None if self.head is None else self.head.default)
+                  default_head=None if self.head is None else self.head.default, **self.mode_info())
         period = BLOCK / FS
         next_tick = time.perf_counter()
         next_gate = self.now() + 0.5
@@ -854,6 +1044,7 @@ class NameCall:
                     self.cpu0, self.wall0 = time.process_time(), time.perf_counter()
                     log.write("heartbeat", floor_db=None if self.det.floor is None else round(self.det.floor, 1),
                               blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
+                              kw_hits=self.kw_hits,
                               writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"))
                 if a.once and self.responses >= a.once and (self.head is None or not self.head.active):
                     # the drift home has finished too: the last command is the policy default
@@ -893,7 +1084,35 @@ def parse_args(argv=None):
     ap.add_argument("--dry", action="store_true", help="do not write the control file (prints the writes count)")
     ap.add_argument("--default-head-file", default=None, help="json {joint: rad} instead of the stand61 metadata")
     ap.add_argument("--quiet", action="store_true")
+    trig = ap.add_mutually_exclusive_group()
+    trig.add_argument("--any-voice", action="store_true", help="every voice-band onset is a call (the default)")
+    trig.add_argument("--name", choices=sorted(KEYWORDS), default=None,
+                      help="respond only to this name (keyword spotter; needs sherpa-onnx and the model)")
+    ap.add_argument("--kws-model", default=None, help=f"model folder (default ~/rt/models/kws/{KWS_MODEL_NAME})")
+    ap.add_argument("--kws-keywords", default=None, help="keywords file (default namecall-20261029/keywords_<name>.txt)")
+    ap.add_argument("--kws-score", type=float, default=1.0, help="boost for keyword lines without their own :x")
+    ap.add_argument("--kws-threshold", type=float, default=0.25, help="threshold for lines without their own #x")
+    ap.add_argument("--kws-threads", type=int, default=1)
+    ap.add_argument("--kws-gain-db", type=float, default=0.0, help="gain before the spotter")
+    ap.add_argument("--onset-gap", type=float, default=ONSET_GAP_S, help="s, detector refractory in name mode")
     return ap.parse_args(argv)
+
+
+def replay(nc, src, log):
+    """--wav: run the recording through the chain as fast as it goes; returns (detections, cost stats)."""
+    if src.fs != FS:
+        raise SystemExit(f"namecall: the wav is {src.fs} Hz, needs {FS}")
+    c0, w0 = time.process_time(), time.perf_counter()
+    dets = nc.run_blocks(src.blocks())
+    cpu, wall = time.process_time() - c0, time.perf_counter() - w0
+    audio_s = len(src.x) / float(src.fs)
+    ms = np.asarray(nc.block_ms) if nc.block_ms else np.zeros(1)
+    stats = dict(audio_s=round(audio_s, 2), cpu_s=round(cpu, 3), wall_s=round(wall, 3),
+                 cpu_share=round(cpu / max(audio_s, 1e-9), 4), block_ms_p50=round(float(np.percentile(ms, 50)), 2),
+                 block_ms_p99=round(float(np.percentile(ms, 99)), 2), block_ms_max=round(float(ms.max()), 2),
+                 kw_hits=nc.kw_hits, responses=nc.responses, **nc.mode_info())
+    log.write("replay", **stats)
+    return dets, stats
 
 
 def main(argv=None):
@@ -903,8 +1122,11 @@ def main(argv=None):
     if a.wav:
         a.no_gate = True
         nc = NameCall(a, log)
-        dets = nc.run_blocks(WavSource(a.wav).blocks())
-        print(f"{len(dets)} call(s) in {a.wav}: " + ", ".join(f"{d['t']:.2f} s az {d['az_deg']:+.0f} deg" for d in dets))
+        dets, stats = replay(nc, WavSource(a.wav), log)
+        print(f"{len(dets)} call(s) in {a.wav}: " + ", ".join(
+            f"{d['t']:.2f} s az {d['az_deg']:+.0f} deg" + (f" ({d['keyword']} at {d['t_hit']:.2f} s)" if "keyword" in d else "")
+            for d in dets))
+        print("cost: " + json.dumps(stats))
         return 0
     if not a.no_gate and lock_free():
         sys.exit("namecall: refused, nobody holds the robot I/O lock (no walk_wired.py brain running)")

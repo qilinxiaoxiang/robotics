@@ -20,7 +20,10 @@ A7Z yet; the robot test plan is section 5 and Shawn runs it.
 - Stress bracket (6.6 V, 8 % drops, `results/sim_stress.json`): identical detections, 0 falls, tilt max 0.89 deg.
 - `--smooth` (no EMA pre-inverse, `results/sim_smooth.json`, 36 calls): 0 falls, overshoot max 0.25 rad, tilt max
   0.80 deg; the fallback flag for the robot if the pre-inverted targets look jerky there.
-- Keyword spotting measured and left out for now (section 3).
+- Name mode for "Mochi" (`--name mochi`, opt-in; `--any-voice` stays the default): built and measured off the robot,
+  section 9. The gate works (direction taken at the word, the duck's own calls never wake it), but the public
+  keyword model catches only about 30 % of synthetic "Mochi" calls at 20 dB SNR, with about 20 false wakes per hour of
+  speech. It is not ready to replace `--any-voice`.
 
 ## 2. Sound in and direction
 
@@ -58,7 +61,9 @@ No recorded A7Z 4-channel wav exists in the repository (the 2026-10-29 bench cap
 only synthetic scenes were replayed; `namecall.py --wav FILE --no-head --mute` replays a real one when Shawn records it
 (`arecord -D hw:CARD=sndi2s0,DEV=0 -c 4 -r 48000 -f S32_LE -d 20 ~/duck-logs/calls.wav` on the A7Z).
 
-## 3. Keyword spotting: measured, not added
+## 3. Keyword spotting: first cost estimate (superseded by section 9)
+
+Section 9 has the built name mode and its measured A7Z cost; the estimate below was made before the duck had a name.
 
 sherpa-onnx 2.0.0 `KeywordSpotter` with the public zipformer `gigaspeech-3.3M-2024-01-01` int8 model, one thread, 20 ms
 chunks, 43 s of audio on this MacBook (M1 Pro): real-time factor 0.017 CPU (`results/kws_bench.json`; it spotted
@@ -205,6 +210,10 @@ brain's own tick log carries the head commands it received (`cmd.head`) and the 
 - `namecall-20261029/namecall_sim.py`: the chain against the duck sim; `install_namecall.sh`: deploy; `kws_bench.py`:
   the keyword-spotter cost; `results/`: `sim_real.json`, `sim_stress.json`, `sim_smooth.json`, `direction_synthetic.json`,
   `kws_bench.json`, `detector_cost.json` and the batch logs.
+- Name mode (section 9): `test_namecall_kws.py` (10 tests), `namecall-20261029/keywords_mochi.txt` (the spotter's
+  keywords), `mochi_set.py` (the `say` clip set), `kws_mochi_heard.py` (what the model writes for each clip),
+  `kws_mochi_eval.py` (keyword grid and the whole-chain evaluation), `kws_a7z_cost.py` (A7Z replay cost per core);
+  `results/kws_mochi_heard.txt`, `kws_mochi_grid.json`, `kws_mochi.json`.
 - Reused unchanged: `pet/express` (takes, springs, habituation, voice rendering, duck adapter, `duck_sim.simulate` and
   `call_metrics`), `duck_sound.Voice`, the brain's control file and tick log.
 
@@ -217,3 +226,122 @@ brain's own tick log carries the head commands it received (`cmd.head`) and the 
   the head by at most one tick of the wanted motion).
 - The look-up pitch is a constant; elevation is not estimated.
 - The sim's calls are synthetic voices and claps in a free field at 20 dB SNR with a hum floor.
+
+## 9. Name mode: respond only to "Mochi" (2026-10-29)
+
+The duck is called Mochi (Shawn, 2026-10-29). `namecall.py --name mochi` answers only when a keyword spotter hears the
+name; `--any-voice` (the default, sections 1-5) is unchanged. Result: the gate works, the model's hearing does not
+yet. On synthetic calls the public model catches "Mochi" about 30 % of the time at 20 dB and 19 % at 10 dB, and wakes
+about 20 times per hour of other speech. The next step is to fine-tune the spotter on recordings of Shawn saying the
+name (9.6).
+
+### 9.1 How it works
+
+- The two ear channels are averaged and decimated 48 -> 16 kHz (`Decimate3`, 97-tap FIR, over 50 dB rejection of
+  what would alias). sherpa-onnx 2.0.0 `KeywordSpotter` with the public zipformer
+  `gigaspeech-3.3M-2024-01-01` int8 model, one thread, runs on every 20 ms block.
+- The voice-band onset detector keeps running with a 0.25 s refractory; its onsets are only candidates. When the
+  spotter fires, the program picks the onset nearest 0.75 s before the spot (from 0.25 to 1.6 s back) and takes the
+  direction from the 4-channel ring buffer (3 s) at that onset. With no onset in that window it places the window at
+  the spot minus 0.75 s. A clap 0.7 s before the name does not steer the head (tested).
+- While its own quack plays and for the deaf time after, the spotter is fed silence; during a take it is not fed
+  and starts a fresh stream afterwards. Responses keep the 2.5 s refractory.
+- Model: `~/rt/models/kws/sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01/` on the Mac and the A7Z (same
+  sha256), or `$NAMECALL_KWS_MODEL`; `pip install sherpa-onnx==2.0.0` in `~/.venvs/duck-policy` (done on the A7Z).
+  `install_namecall.sh` prints a `name mode:` line with the sherpa-onnx version and the model path.
+
+### 9.2 The keywords and where they came from
+
+The model spells words in English BPE pieces, and it does not know "Mochi". Run as a recogniser on the clips
+(`kws_mochi_heard.py`, `results/kws_mochi_heard.txt`), it writes macOS voices' "Mochi" mostly as MARCHY, then MALCHY,
+MALCHI, MACHI, MORGY, MARGIE, MONKEY and MULTIPLE; Chinese voices come out as MOTION. The first keywords file, the
+plain spelling `▁MO CH I`, caught about 5 %. `keywords_mochi.txt` lists the plain spelling plus the eight spellings
+the model actually produces (MONKEY, MULTIPLE and MOTION left out: they are real words). A grid over spelling sets,
+boost 1/2/3 and threshold 0.05/0.1/0.2 (`kws_mochi_eval.py grid`, `results/kws_mochi_grid.json`) picked boost 2,
+threshold 0.05: among the six best recall settings it had the fewest false wakes (21 per hour on the tuning half).
+Adding MOTION raised recall from 21 % to 22 % and doubled false wakes to 55 per hour.
+
+### 9.3 Test set
+
+- `mochi_set.py`: macOS `say` clips. Positives: 18 English and 10 Chinese voices saying "Mochi", "Mochi!",
+  "Mochi?", "Hey Mochi", "Come here, Mochi", "Mochi, look at me", "嘿，Mochi" and others (232 clips), split into tuning
+  and held-out voices; Chinese spellings 莫奇 / 摩奇 (30 clips). Negatives: 415 clips of near words (年糕, motion,
+  Mickey, much, 我去, 没事, moshi moshi, mojito ...), 28.3 minutes of continuous English and Chinese speech, the duck's
+  own calls (48 raw plus the QuackBank pitch/stretch variants), and claps.
+- Each clip is rendered on the head's microphone geometry from a random direction and mixed into either synthetic
+  4-channel noise (pink plus hum, detector floor -35 dB) or the robot's own noise from Shawn's recording
+  `calls_201411.wav` (fans, servos; 180 s), at 20 and 10 dB SNR measured in the 300-4000 Hz voice band. The whole
+  `NameCall` chain runs on each scene (`kws_mochi_eval.py final`, `results/kws_mochi.json`).
+- Shawn's robot recording `calls_201411.wav` contains no speech (its loud events are touches on the head): the
+  spotter fired 0 times on it, `--any-voice` fired 10 times.
+
+### 9.4 Numbers (`results/kws_mochi.json`)
+
+- Detection, synthetic noise: 20 dB 70/232 = 30.2 % (tuning voices 28.4 %, held-out 31.9 %; English voices 37.7 %,
+  Chinese voices 12.9 %); 10 dB 18.5 % (held-out 21.6 %). Robot noise: 20 dB 30.6 %, 10 dB 19.8 %. Spelled 莫奇 /
+  摩奇: 0 of 30 at either level.
+- By voice at 20 dB: 0 % for Fred, Kathy and eight of the ten Chinese voices, up to 78 % for Grandma, Reed and
+  Shelley (English US). By phrase: bare "Mochi" 20 %, "Hey Mochi" 56 %, "Come here, Mochi" 67 %.
+- False wakes on continuous speech: 19.1 per hour at 20 dB, 25.5 per hour at 10 dB, 23.3 per hour on the robot bed
+  at 10 dB. Near words that woke it at 20 dB: 16 of 415 (Mickey, Moji, monkey, more cheese, moshi moshi, my cheese,
+  模式, 没事).
+- The duck's own calls: 0 wakes of 96 at 30, 20 and 10 dB and on the robot bed (and 0 in the unit test at 30 dB).
+  Claps: 0 of 24.
+- Direction at the word: 20 dB mean error 2.6 deg (p90 5.1, one error over 20 deg); robot bed 20 dB 2.3 deg (p90
+  6.2); robot bed 10 dB 8.6 deg (p90 12.8, two over 20 deg). The onset came from the detector in 223 of 230 detected
+  calls. A 1.0 s look-back (the median spot delay after the clip's first word) made every condition worse (robot bed
+  10 dB mean 15.3 deg, five over 20 deg), so 0.75 s stays.
+- Latency, end of "Mochi" to the decision (audio time): p10 0.32 s, median 0.44 s, p90 0.60 s, max 0.74 s. The
+  spot comes a median 1.02 s after the clip's first word. Add the take's head motion (section 1) on top.
+
+### 9.5 A7Z cost (`--wav` replay of `calls_201411.wav`, `--no-head --mute`, `kws_a7z_cost.py`)
+
+Each replay was pinned to one core with `taskset` at `nice 19` while the brain (walk_wired) ran: brain ticks stayed at
+47-49 per second with p99 27-33 ms before, during and after. Share of one core, cool clock:
+
+- Cortex-A55 (cpu2, 1.78 GHz): `--any-voice` 2.5 %; `--name mochi` 25.2 %, block p99 61 ms, max 69 ms. At the
+  416 MHz throttle clock this scales to 1.09 cores: not real time.
+- Cortex-A76 (cpu6, 2.0 GHz): `--any-voice` 0.8 %; `--name mochi` 9.2 %, block p99 29 ms, max 69 ms; throttled
+  estimate 0.44 of a core.
+- SoC temperature peaked at 58 deg C (trip 60). The brain is not pinned (seen on cpu7 and cpu2), so name mode runs
+  under `taskset -c 6`. Raw results: `a7z:~/duck-logs/kws_cost_first.json` (A55) and `kws_cost_first_a76.json`;
+  the A7Z went offline before the final rerun and its copy to `results/kws_a7z_cost.json`.
+
+### 9.6 Rejected alternatives and next step
+
+- The sherpa-onnx zh-en 3M phone model: 10 of 88 clean clips, 3 of 88 at 20 dB. Worse.
+- SenseVoice (offline ASR, already in `pet/voice/models`): writes "Mochi" as Moji, Mochi, Marchi or Margie, at
+  about six times the spotter's CPU on the Mac, and it needs a segmenter in front. Not built.
+- Next: fine-tune the gigaspeech spotter on the keyword (the icefall `kws` recipe; its RESULTS.md reports recall on
+  common commands rising from 86 % to 98.7 % at 0.6 false alarms per hour after fine-tuning). Data: Shawn and others
+  saying "Mochi" to the robot through its own microphones (`record_calls.sh`), plus the negatives above.
+
+### 9.7 Robot test (Shawn runs it; brain started as in 5.2)
+
+Listen only first (no head, no sound, no control-file writes), call "Mochi" and other words from about 1 m:
+
+```
+cd ~/rt/microduck-sim/guide/firmware/mac
+taskset -c 6 ~/.venvs/duck-policy/bin/python namecall.py --name mochi --no-head --mute --no-sound
+```
+
+Each spotted name prints `call: {... "keyword": "MOCHI", "az_deg": ...}`; the 10 s heartbeat shows `kw_hits`. Then
+the head test, as Test A in 5.3 but with the name:
+
+```
+taskset -c 6 ~/.venvs/duck-policy/bin/python namecall.py --name mochi --mute --once 3
+```
+
+Expect several tries per response at today's recall; "Hey Mochi" and "Come here, Mochi" were caught most often.
+Sensitivity is set per line in `keywords_mochi.txt` (`:2.0` boost, `#0.05` threshold); `--kws-score` and
+`--kws-threshold` apply only to lines without their own values.
+
+### 9.8 Not verified
+
+- No human "Mochi" has been recorded yet: every positive is a macOS `say` voice in a free field. Real voices, the
+  room's echo and head shadow are untested.
+- The two ear microphones did not hear through their wall holes in Shawn's 2026-10-29 cover tests
+  (`docs/PET_ROBOT_LOG.md`), which the spotter's ear downmix and the direction both depend on.
+- The A7Z numbers come from the first cost runs; the final keywords and the 0.75 s look-back were not rerun there
+  (the cost does not depend on either), and nothing ran live on `hw:CARD=sndi2s0`. Throttled shares are clock-scaled
+  estimates.
