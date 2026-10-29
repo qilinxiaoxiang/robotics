@@ -23,11 +23,16 @@ come from the head CAD (guide/print/ears-mouth-20261023/interface.json, the 2026
 x 60.5, y +-38.5; back mic at x -19.9, y -11 (head frame, mm, x forward, y left). --swap-ears when a tap on the left
 ear raises ch1 instead of ch0.
 
-Detector: voice-band (300-4000 Hz) energy per 20 ms block over a slowly tracked room floor, a sudden rise (the first
-20-50 ms of a call, before the room's echoes), two blocks to confirm, then a refractory period; the detector is deaf
-while its own quack plays and for a moment after (the mics are 10 cm from the speaker). Direction: GCC-PHAT between
-the three pairs on a 64 ms window around the onset, summed on a 1 deg azimuth grid (SRP-PHAT), parabolic refinement;
-the back mic settles front/back. Far field, no elevation: the caller's height is a fixed look-up pitch (--pitch).
+Detector (--detector bins, the default since the 2 m recordings of 2026-10-29): per 20 ms block, how many 300-4000 Hz
+bins of the three-microphone mix stand --snr-db over a tracked noise spectrum; an onset is --min-bins such bins after
+a quiet block, confirmed by --confirm-blocks of the next three blocks and by the harmonicity of its first 60-80 ms
+(--voicing: footsteps and touches are not periodic), then a refractory period. --detector energy is the earlier
+band-energy detector (12 dB over a floor, OnsetDetector). Both are deaf while the own quack plays and for a moment
+after (the mics are 10 cm from the speaker). Direction (--localiser call, the default): SRP-PHAT over the whole call
+(--call-window 0.8 s after the onset) on the time-frequency bins that stand over the noise spectrum on all three
+microphones, in --loc-band (1500-8000 Hz: under 1.5 kHz this head hears through its cavity, NAMECALL.md 10), steered
+over azimuth x elevation (--elev, prior 35 deg for a standing owner; several values search); the back mic settles
+front/back. --localiser short is the earlier 64 ms GCC-PHAT at the onset. The look-up pitch is fixed (--pitch).
 
 Robot safety: this program never touches the servo bus or the IMU, so it never takes the robot I/O lock
 (walk_wired.HW_LOCK); it probes it and refuses to run when nobody holds it (no brain). It refuses to run unless the
@@ -269,6 +274,143 @@ class OnsetDetector:
         return out
 
 
+# bins detector defaults: the 2 m trade-off of NAMECALL.md section 10.3 (6 of 8 calls at 2 m, 0.8 false triggers per
+# minute on the robot's own noise without a loudspeaker in the room, 3.1 with one)
+DET_SNR_DB = 9.0
+DET_MIN_BINS = 8
+DET_CONFIRM = 3
+DET_VOICING = 0.4
+
+
+class CallDetector:
+    """Per-bin SNR detector: how many voice-band bins of a 20 ms block stand snr_db over a tracked noise spectrum.
+
+    update(t, block) -> None or {"t": onset time, "bins", "e_db", "floor_db", "over_db", "rise_db"}. The noise
+    spectrum (one value per FFT bin of the three-microphone mix) follows the room with time constant floor_tau_s but
+    only while the block is quiet, so a call does not raise it. A block is loud when at least min_bins bins in band
+    exceed the noise by snr_db; an onset is a loud block after a quiet one, confirmed when at least confirm_blocks of
+    the next three blocks still hold min_bins / 2 such bins (a click or a single footstep does not), then refractory.
+    A call 3 dB over the floor in band power still lifts its harmonics 10-20 dB over the noise in their own bins,
+    which is why this catches the 2 m calls the band-energy detector (OnsetDetector) misses. deaf_until(t) silences
+    it; reset_floor() restarts the noise estimate (after an own playback). last_loud_t tells when the call ended.
+    """
+
+    VOICE_BAND = (300.0, 1500.0)     # harmonicity is judged here (the voiced "Mo"; footsteps and touches are not periodic)
+    PITCH_HZ = (80.0, 400.0)
+    LONG_LOUD_S = 1.5                # loud for longer than this = the room changed, not a call
+
+    def __init__(self, fs=FS, block=BLOCK, band=BAND, snr_db=DET_SNR_DB, min_bins=DET_MIN_BINS, confirm_blocks=DET_CONFIRM,
+                 refractory_s=2.5, floor_tau_s=3.0, max_bins=None, voicing=DET_VOICING):
+        self.fs, self.block, self.band = fs, block, band
+        self.snr, self.min_bins, self.confirm_blocks, self.refractory = 10 ** (snr_db / 10.0), min_bins, confirm_blocks, refractory_s
+        self.max_bins, self.voicing = max_bins, voicing
+        self.recent = collections.deque(maxlen=6)     # mono blocks for the voicing check (120 ms)
+        self.rejected = 0                             # candidates the voicing check turned down
+        self.alpha = block / fs / floor_tau_s
+        self.window = np.hanning(block).astype(np.float32)
+        f = np.fft.rfftfreq(block, 1 / fs)
+        self.sel = np.nonzero((f >= band[0]) & (f <= band[1]))[0]
+        self.npsd = None
+        self.settle = []
+        self.settle_n = int(round(0.5 * fs / block))
+        self.pending = None
+        self.last_onset = -1e9
+        self.last_loud_t = -1e9
+        self.deaf_until = -1e9
+        self.prev_loud = False
+        self.loud_since = -1e9
+        self.bins = 0
+
+    @property
+    def floor(self):
+        """Noise level in band, dB (for the heartbeat), or None while settling."""
+        if self.npsd is None:
+            return None
+        return 10 * math.log10(max(float(self.npsd.sum()), 1e-14))
+
+    def reset_floor(self):
+        self.npsd, self.settle, self.pending = None, [], None
+
+    def spectrum(self, mono):
+        X = np.fft.rfft(mono * self.window)
+        return (X.real ** 2 + X.imag ** 2)[self.sel] / len(mono)
+
+    def harmonicity(self, n_blocks=4, win_s=0.06):
+        """Largest normalised autocorrelation peak in the pitch range over the last n_blocks (300-1500 Hz band),
+        60 ms windows at 20 ms steps: about 0.6-0.9 for a voiced call, under 0.4 for footsteps and touches."""
+        if not self.recent:
+            return 0.0
+        y = np.concatenate(list(self.recent)[-n_blocks:]).astype(np.float64)
+        Y = np.fft.rfft(y)
+        f = np.fft.rfftfreq(len(y), 1 / self.fs)
+        Y[(f < self.VOICE_BAND[0]) | (f > self.VOICE_BAND[1])] = 0
+        y = np.fft.irfft(Y, len(y))
+        n = int(win_s * self.fs)
+        lo, hi = int(self.fs / self.PITCH_HZ[1]), int(self.fs / self.PITCH_HZ[0])
+        best = 0.0
+        for i in range(0, max(1, len(y) - n + 1), self.block):
+            w = y[i:i + n]
+            w = w - w.mean()
+            e = float(w @ w)
+            if e <= 1e-18:
+                continue
+            nfft = 1 << (2 * len(w) - 1).bit_length()
+            W = np.fft.rfft(w, nfft)
+            r = np.fft.irfft(W.real ** 2 + W.imag ** 2, nfft)[:hi + 1] / e
+            best = max(best, float(r[lo:hi].max()))
+        return best
+
+    def update(self, t, block):
+        mono = block[:, :3].mean(axis=1) if block.ndim == 2 else block
+        self.recent.append(mono)
+        p = self.spectrum(mono)
+        if self.npsd is None or len(self.settle) < self.settle_n:
+            self.settle.append(p)
+            self.npsd = np.mean(np.stack(self.settle), axis=0) + 1e-14   # the mean: bin powers are exponential, a median sits 1.6 dB low
+            return None
+        snr = p / self.npsd
+        over = snr > self.snr
+        nb = int(over.sum())
+        self.bins = nb
+        loud = nb >= self.min_bins
+        if loud and not self.prev_loud:
+            self.loud_since = t
+        if not loud or t - self.loud_since > self.LONG_LOUD_S:
+            # follow the room while nothing is loud (an asymmetric update would settle under the mean of the
+            # exponentially distributed bin powers and fire on the noise itself); a "call" longer than any call is
+            # the room getting louder (a fan, a door), so the spectrum follows it too
+            self.npsd = self.npsd + self.alpha * (p - self.npsd)
+        if loud or nb >= self.min_bins // 2:
+            self.last_loud_t = t
+        out = None
+        e_db = 10 * math.log10(max(float(p.sum()), 1e-14))
+        floor_db = 10 * math.log10(max(float(self.npsd.sum()), 1e-14))
+        if t < self.deaf_until or t - self.last_onset < self.refractory:
+            self.pending = None
+        elif self.pending is not None:
+            self.pending["seen"] += 1
+            if nb >= max(1, self.min_bins // 2):
+                self.pending["confirmed"] += 1
+            if self.pending["confirmed"] >= self.confirm_blocks:
+                h = self.harmonicity(n_blocks=self.pending["seen"] + 1) if self.voicing > 0 else None
+                if h is None or h >= self.voicing:
+                    out = {k: v for k, v in self.pending.items() if k not in ("seen", "confirmed")}
+                    out["voicing"] = None if h is None else round(h, 2)
+                    self.last_onset = out["t"]
+                else:
+                    self.rejected += 1
+                self.pending = None
+            elif self.pending["seen"] >= 3:
+                self.pending = None
+        elif loud and not self.prev_loud and (self.max_bins is None or nb <= self.max_bins):
+            self.pending = dict(t=t, bins=nb, e_db=round(e_db, 1), floor_db=round(floor_db, 1),
+                                over_db=round(e_db - floor_db, 1),
+                                rise_db=round(10 * math.log10(max(float(np.median(snr[over])), 1e-9)), 1) if nb else 0.0,
+                                seen=0, confirmed=0)
+        self.prev_loud = loud
+        return out
+
+
 # ----------------------------------------------------------------------------------------------- direction
 
 def gcc_phat(a, b, fs, band=BAND, nfft=None, max_lag=None):
@@ -342,6 +484,114 @@ class Localiser:
         return math.degrees(self.c * lag_err_samples / self.fs / d)
 
 
+LOC_BAND = (1500.0, 8000.0)       # the call localiser's band: under 1.5 kHz this head hears through its cavity (NAMECALL.md 10)
+LOC_ELEV = (35.0,)                # elevation prior: a standing owner 2 m from a robot on the floor
+CALL_WINDOW_S = 0.8               # accumulate this long after the onset
+LOC_PRE_S = 2.0                   # noise spectrum from this much audio before the onset ...
+LOC_GAP_S = 0.3                   # ... leaving this gap before it (the onset detector fires a block or two late)
+LOC_LEAD_S = 0.05                 # the call window starts this much before the onset block
+
+
+class CallLocaliser:
+    """SRP-PHAT over the whole call on a time-frequency mask, with an elevation prior and the back microphone.
+
+    estimate(x, i_onset): x (n, channels) holds pre_s + gap_s of audio before the onset sample i_onset and window_s
+    after it. STFT (nfft, hop, Hann) of the three microphones; the noise spectrum per microphone and bin is the mean
+    power of the frames that end before the gap; a call bin is one whose power on all three microphones is snr_db over
+    its noise (weight "hard"), or weighted by how far over (weight "soft", 0 at snr_db, 1 at snr_db + 15). The PHAT
+    cross-spectra of the three pairs are summed over the masked bins and frames, then steered to every point of an
+    azimuth x elevation grid (the microphones are coplanar, so an elevation e shrinks every lag by cos e); the peak
+    gives the azimuth, its elevation, and the margin against the best point in the mirrored half-plane (front/back,
+    settled by the back microphone). Band 1500-8000 Hz by default: on this head the cues under 1.5 kHz come through
+    the cavity and do not depend on where the caller stands (NAMECALL.md section 10).
+    """
+
+    PAIRS = Localiser.PAIRS
+
+    def __init__(self, fs=FS, mics_mm=MICS_MM, channels=CHANNELS, band=LOC_BAND, nfft=1024, hop=256, elev_deg=LOC_ELEV,
+                 grid_deg=1.0, snr_db=3.0, weight="soft", pre_s=LOC_PRE_S, gap_s=LOC_GAP_S, window_s=CALL_WINDOW_S,
+                 lead_s=LOC_LEAD_S, c=C_SOUND):
+        self.fs, self.band, self.nfft, self.hop, self.c = fs, band, nfft, hop, c
+        self.pos = {k: np.asarray(v, float) / 1000.0 for k, v in mics_mm.items()}
+        self.ch = dict(channels)
+        self.snr, self.weight = 10 ** (snr_db / 10.0), weight
+        self.snr_db = snr_db
+        self.pre_s, self.gap_s, self.window_s, self.lead_s = pre_s, gap_s, window_s, lead_s
+        self.before = int(round((pre_s + gap_s + lead_s) * fs))    # samples needed before the onset
+        self.after = int(round(window_s * fs))                      # and after it
+        self.win = np.hanning(nfft).astype(np.float32)
+        f = np.fft.rfftfreq(nfft, 1 / fs)
+        self.sel = np.nonzero((f >= band[0]) & (f < band[1]))[0]
+        fb = f[self.sel]
+        self.az = np.deg2rad(np.arange(0.0, 360.0, grid_deg))
+        self.el = np.deg2rad(np.asarray(elev_deg, float))
+        AZ, EL = np.meshgrid(self.az, self.el, indexing="ij")
+        u = np.stack([np.cos(AZ) * np.cos(EL), np.sin(AZ) * np.cos(EL)], axis=-1).reshape(-1, 2)
+        # steering: predicted lag (s) of mic i behind mic j for each direction, as a phase per bin
+        self.steer = {}
+        for i, j in self.PAIRS:
+            tau = -(u @ (self.pos[i] - self.pos[j])) / c
+            self.steer[(i, j)] = np.exp(2j * math.pi * np.outer(tau, fb)).astype(np.complex64)
+        self.lags = np.arange(-16.0, 16.01, 0.25)
+        self.lag_mat = np.exp(2j * math.pi * np.outer(self.lags / fs, fb)).astype(np.complex64)
+
+    def stft(self, x):
+        n = (len(x) - self.nfft) // self.hop + 1
+        if n < 1:
+            return np.zeros((0, x.shape[1], len(self.sel)), np.complex64)
+        idx = np.arange(self.nfft)[None, :] + self.hop * np.arange(n)[:, None]
+        fr = x[idx] * self.win[None, :, None]                         # (frames, nfft, ch)
+        return np.fft.rfft(fr, axis=1)[:, self.sel, :].transpose(0, 2, 1)   # (frames, ch, bins)
+
+    def estimate(self, x, i_onset):
+        x = np.asarray(x, np.float32)
+        x = x - x.mean(axis=0)
+        F = self.stft(x)
+        n = len(F)
+        starts = self.hop * np.arange(n)
+        ends = starts + self.nfft
+        noise = F[ends <= i_onset - int(self.gap_s * self.fs)]
+        i0 = i_onset - int(self.lead_s * self.fs)
+        call = F[(starts >= i0) & (ends <= i_onset + self.after)]
+        if len(noise) < 4 or len(call) < 2:
+            return None
+        npsd = (np.abs(noise[:, :3]) ** 2).mean(axis=0) + 1e-14           # (3, bins)
+        snr = (np.abs(call[:, :3]) ** 2) / npsd[None]
+        chans = [self.ch[k] for k in ("left", "right", "back")]
+        smin = snr[:, chans].min(axis=1)                                # (frames, bins)
+        if self.weight == "soft":
+            w = np.clip(10 * np.log10(smin + 1e-12) - self.snr_db, 0.0, 15.0) / 15.0
+        else:
+            w = (smin > self.snr).astype(np.float32)
+        n_bins = int((w > 0).sum())
+        total = float(w.sum())
+        if n_bins == 0:
+            return None
+        srp = np.zeros(self.steer[self.PAIRS[0]].shape[0])
+        pairs = {}
+        for i, j in self.PAIRS:
+            g = call[:, self.ch[i]] * np.conj(call[:, self.ch[j]])
+            g = g / (np.abs(g) + 1e-30)
+            acc = (g * w).sum(axis=0).astype(np.complex64) / total
+            srp += (self.steer[(i, j)] @ acc).real
+            r = (self.lag_mat @ acc).real
+            k = int(np.argmax(r))
+            pairs[f"{i}-{j}"] = dict(lag=round(float(self.lags[k]), 2), peak=round(float(r[k]), 3))
+        srp = srp.reshape(len(self.az), len(self.el))
+        ka, ke = np.unravel_index(int(np.argmax(srp)), srp.shape)
+        col = srp[:, ke]
+        kk = parabolic_peak(np.concatenate([col[-1:], col, col[:1]]), ka + 1) - 1
+        az = float(kk * (2 * math.pi / len(self.az)))
+        az = (az + math.pi) % (2 * math.pi) - math.pi
+        mirror = (math.pi - az + math.pi) % (2 * math.pi) - math.pi
+        mi = int(round((mirror % (2 * math.pi)) / (2 * math.pi) * len(self.az))) % len(self.az)
+        near = np.abs(((self.az - self.az[mi]) + math.pi) % (2 * math.pi) - math.pi) < math.radians(25)
+        margin = float(col[ka] - col[near].max()) if near.any() else float("nan")
+        return dict(az_rad=round(az, 4), az_deg=round(math.degrees(az), 1), el_deg=round(float(np.degrees(self.el[ke])), 1),
+                    srp=round(float(col[ka]), 3), margin=round(margin, 3), pairs=pairs, bins=n_bins,
+                    frames=int(len(call)), window_s=round(len(call) * self.hop / self.fs, 2))
+
+
 def synth_call(fs=FS, dur=0.45, f0=210.0, seed=0, kind="voice"):
     """A voice-like call (harmonics under formant bumps with a vibrato, 0.45 s) or a clap (short noise burst)."""
     rng = np.random.default_rng(seed)
@@ -363,11 +613,12 @@ def synth_call(fs=FS, dur=0.45, f0=210.0, seed=0, kind="voice"):
 
 
 def render_scene(signal, az_rad, fs=FS, mics_mm=MICS_MM, channels=CHANNELS, n_channels=4, pre_s=0.6, post_s=0.6,
-                 snr_db=20.0, seed=0, c=C_SOUND, floor=None):
-    """Far-field 4-channel rendering of `signal` from azimuth az (head frame, + left) with white noise at snr_db
-    (and an optional extra floor signal (n, ch)); fractional delays by FFT phase shift. Returns (x (n, 4), onset_s)."""
+                 snr_db=20.0, seed=0, c=C_SOUND, floor=None, el_rad=0.0):
+    """Far-field 4-channel rendering of `signal` from azimuth az (head frame, + left) and elevation el (coplanar
+    microphones: every lag shrinks by cos el) with white noise at snr_db (and an optional extra floor signal (n, ch));
+    fractional delays by FFT phase shift. Returns (x (n, 4), onset_s)."""
     rng = np.random.default_rng(seed)
-    u = np.array([math.cos(az_rad), math.sin(az_rad)])
+    u = np.array([math.cos(az_rad), math.sin(az_rad)]) * math.cos(el_rad)
     n = int(pre_s * fs) + len(signal) + int(post_s * fs)
     x = np.zeros((n, n_channels), np.float32)
     s = np.zeros(n, np.float32)
@@ -797,20 +1048,34 @@ class NameCall:
     def __init__(self, args, log, now=time.time, kws=None):
         self.a, self.log, self.now = args, log, now
         name = getattr(args, "name", None)
-        self.det = OnsetDetector(thresh_db=args.threshold_db, rise_db=args.rise_db,
-                                 refractory_s=getattr(args, "onset_gap", ONSET_GAP_S) if name else args.refractory,
-                                 floor_tau_s=args.floor_tau)
+        refractory = getattr(args, "onset_gap", ONSET_GAP_S) if name else args.refractory
+        if getattr(args, "detector", "bins") == "bins":
+            self.det = CallDetector(snr_db=getattr(args, "snr_db", DET_SNR_DB), min_bins=getattr(args, "min_bins", DET_MIN_BINS),
+                                    confirm_blocks=getattr(args, "confirm_blocks", DET_CONFIRM), refractory_s=refractory,
+                                    floor_tau_s=args.floor_tau, voicing=getattr(args, "voicing", DET_VOICING))
+        else:
+            self.det = OnsetDetector(thresh_db=args.threshold_db, rise_db=args.rise_db, refractory_s=refractory,
+                                     floor_tau_s=args.floor_tau)
         ch = dict(CHANNELS)
         if args.swap_ears:
             ch["left"], ch["right"] = ch["right"], ch["left"]
-        self.loc = Localiser(channels=ch)
+        if getattr(args, "localiser", "call") == "call":
+            band = tuple(float(v) for v in str(getattr(args, "loc_band", "%g,%g" % LOC_BAND)).split(","))
+            elev = tuple(float(v) for v in str(getattr(args, "elev", ",".join("%g" % e for e in LOC_ELEV))).split(","))
+            self.loc = CallLocaliser(channels=ch, band=band, elev_deg=elev, window_s=getattr(args, "call_window", CALL_WINDOW_S),
+                                     snr_db=getattr(args, "loc_snr_db", 3.0), weight=getattr(args, "loc_weight", "soft"))
+            self.before, self.after = self.loc.before, self.loc.after
+        else:
+            self.loc = Localiser(channels=ch)
+            self.before, self.after = BLOCK // 2, self.loc.window - BLOCK // 2
         # name mode: a spotter (or the one a test passes in); the detector's onsets are only candidate word starts
         self.kws = kws
         if self.kws is None and name:
             self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
                                    score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
                                    gain_db=args.kws_gain_db, ears=(ch["left"], ch["right"]))
-        self.ring = collections.deque(maxlen=int(round(RING_NAME_S * FS / BLOCK)) if self.kws is not None else 12)
+        ring_s = max(RING_NAME_S if self.kws is not None else 0.0, (self.before + self.after) / FS + 0.1)
+        self.ring = collections.deque(maxlen=int(math.ceil(ring_s * FS / BLOCK)) + 1)
         self.onsets = collections.deque(maxlen=64)   # name mode: recent detector onsets
         self.last_kw_t = -1e9                        # name mode: spot time of the last accepted call
         self.kw_hits = 0
@@ -846,31 +1111,45 @@ class NameCall:
             self.det.deaf_until = max(self.det.deaf_until, t + 0.1)   # own servos; the refractory covers the rest
         ev = self.det.update(t, block)
         if self.kws is not None:
-            return self._hear_name(t, block, ev)
-        if ev is not None:
+            cand = self._hear_name(t, block, ev)
+            if cand is not None:
+                self.pending = cand
+        elif ev is not None:
             self.pending = ev
         if self.pending is not None:
-            ready, x = self._window(self.pending["t"])
+            ready, x, i_on = self._window(self.pending["t"])
             if ready:
-                est = self.loc.estimate(x) if x is not None else None
-                det = dict(self.pending, decided_t=t + BLOCK / FS, **(est or {}))
+                est = self._estimate(x, i_on) if x is not None else None
+                det = dict(self.pending, decided_t=round(t + BLOCK / FS, 3), **(est or {}))
                 self.pending = None
                 if est is not None:
                     return det
+                self.log.write("skip", why="call heard but the ring no longer holds its start or it had no voice bins",
+                               t=det["t"])
         return None
 
+    def _estimate(self, x, i_on):
+        if isinstance(self.loc, CallLocaliser):
+            return self.loc.estimate(x, i_on)
+        return self.loc.estimate(x[max(0, i_on - BLOCK // 2):])
+
     def _window(self, t_onset):
-        """(ready, x): the localiser's window from 10 ms before the onset block, out of the ring. ready is False while
-        the window has not been heard yet; x is None when the ring no longer holds enough of it."""
-        t0 = t_onset - 0.5 * BLOCK / FS
-        need_end = t0 + self.loc.window / FS
+        """(ready, x, i_onset): the localiser's audio around the onset out of the ring: self.before samples before the
+        onset block's centre and self.after after it. ready is False while that audio has not been heard yet; x is
+        None when the ring no longer holds its start."""
+        t_on = t_onset + 0.5 * BLOCK / FS
+        t0 = t_on - self.before / FS
+        need_end = t_on + self.after / FS
         have = [b for b in self.ring if b[0] + BLOCK / FS > t0 - 1e-9]
         if not have or have[-1][0] + BLOCK / FS < need_end - 1e-9:
-            return False, None
+            return False, None, None
         x = np.concatenate([b[1] for b in have])
         off = int(round((t0 - have[0][0]) * FS))
-        x = x[max(0, off): max(0, off) + self.loc.window]
-        return True, (x if len(x) >= self.loc.window - 1 else None)
+        if off < 0:
+            x = x[: self.before + self.after + off]           # the ring starts late: fewer samples before the onset
+            return True, (x if len(x) >= self.after + BLOCK else None), self.before + off
+        x = x[off: off + self.before + self.after]
+        return True, (x if len(x) >= self.before + self.after - 1 else None), self.before
 
     def pick_onset(self, t_hit):
         """The detector onset nearest the word's estimated start (t_hit - KW_BACK_S), among those KW_ONSET_WIN before
@@ -903,15 +1182,11 @@ class NameCall:
             return None
         onset = self.pick_onset(hit["t_hit"])
         t_on = onset["t"] if onset is not None else round(hit["t_hit"] - KW_BACK_S, 3)
-        ready, x = self._window(t_on)
-        est = self.loc.estimate(x) if (ready and x is not None) else None
-        if est is None:
-            self.log.write("skip", why="name heard but the ring no longer holds its start", t_hit=hit["t_hit"])
-            return None
         self.last_kw_t = hit["t_hit"]
         base = dict(onset) if onset is not None else dict(t=t_on)
+        # the direction is decided by hear() once the ring holds the localiser's window around t_on
         return dict(base, onset_from="detector" if onset is not None else "keyword", keyword=hit["keyword"],
-                    t_hit=hit["t_hit"], span_s=hit["span_s"], decided_t=round(t + BLOCK / FS, 3), **est)
+                    t_hit=hit["t_hit"], span_s=hit["span_s"])
 
     def respond(self, det, now):
         """Turn a detection into a take (azimuth in the head frame -> resting frame)."""
@@ -950,10 +1225,17 @@ class NameCall:
         return True
 
     def mode_info(self):
+        info = dict(detector=type(self.det).__name__, localiser=type(self.loc).__name__)
+        if isinstance(self.loc, CallLocaliser):
+            info.update(loc_band=list(self.loc.band), elev_deg=[round(float(np.degrees(e)), 1) for e in self.loc.el],
+                        call_window_s=self.loc.window_s, loc_weight=self.loc.weight, loc_snr_db=self.loc.snr_db)
+        if isinstance(self.det, CallDetector):
+            info.update(snr_db=round(10 * math.log10(self.det.snr), 1), min_bins=self.det.min_bins,
+                        confirm_blocks=self.det.confirm_blocks, voicing=self.det.voicing)
         if self.kws is None:
-            return dict(trigger="any-voice")
+            return dict(trigger="any-voice", **info)
         return dict(trigger="name", name=getattr(self.a, "name", None),
-                    keywords=getattr(self.kws, "keywords_file", None), kws_model=getattr(self.kws, "model_dir", None))
+                    keywords=getattr(self.kws, "keywords_file", None), kws_model=getattr(self.kws, "model_dir", None), **info)
 
     def gate_ok(self):
         if self.gate is None:
@@ -1042,7 +1324,8 @@ class NameCall:
                     self.heartbeat_at = now + 10
                     cpu = (time.process_time() - self.cpu0) / max(1e-6, time.perf_counter() - self.wall0)
                     self.cpu0, self.wall0 = time.process_time(), time.perf_counter()
-                    log.write("heartbeat", floor_db=None if self.det.floor is None else round(self.det.floor, 1),
+                    floor = self.det.floor
+                    log.write("heartbeat", floor_db=None if floor is None else round(floor, 1),
                               blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
                               kw_hits=self.kw_hits,
                               writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"))
@@ -1067,8 +1350,23 @@ def parse_args(argv=None):
     ap.add_argument("--log", default=None, help="default ~/duck-logs/namecall_<start>.jsonl")
     ap.add_argument("--sounds", default=None, help="recordings for the quacks (default: walk_wired's sounds folder)")
     ap.add_argument("--bank-dir", default="/tmp/namecall_calls")
-    ap.add_argument("--threshold-db", type=float, default=12.0, help="onset over the room floor")
-    ap.add_argument("--rise-db", type=float, default=6.0, help="onset over the quietest of the last 100 ms")
+    ap.add_argument("--detector", choices=("bins", "energy"), default="bins",
+                    help="bins: per-bin SNR over a tracked noise spectrum (catches 2 m calls); energy: band energy over a floor")
+    ap.add_argument("--snr-db", type=float, default=DET_SNR_DB, help="bins detector: a bin counts this far over its noise")
+    ap.add_argument("--min-bins", type=int, default=DET_MIN_BINS, help="bins detector: voice bins in a 20 ms block for an onset")
+    ap.add_argument("--confirm-blocks", type=int, default=DET_CONFIRM, help="bins detector: of the next 3 blocks, this many must hold half the bins")
+    ap.add_argument("--voicing", type=float, default=DET_VOICING,
+                    help="bins detector: least harmonicity (0-1) of the onset's first 60-80 ms in 300-1500 Hz; 0 = off")
+    ap.add_argument("--threshold-db", type=float, default=12.0, help="energy detector: onset over the room floor")
+    ap.add_argument("--rise-db", type=float, default=6.0, help="energy detector: onset over the quietest of the last 100 ms")
+    ap.add_argument("--localiser", choices=("call", "short"), default="call",
+                    help="call: masked SRP-PHAT over the whole call with an elevation prior; short: 64 ms GCC at the onset")
+    ap.add_argument("--loc-band", default="%g,%g" % LOC_BAND, help="Hz, call localiser band (low,high)")
+    ap.add_argument("--elev", default=",".join("%g" % e for e in LOC_ELEV),
+                    help="deg, caller elevation prior; several values (comma) search over them")
+    ap.add_argument("--call-window", type=float, default=CALL_WINDOW_S, help="s after the onset the call localiser accumulates")
+    ap.add_argument("--loc-snr-db", type=float, default=3.0, help="call localiser: a time-frequency bin counts this far over its noise on all mics")
+    ap.add_argument("--loc-weight", choices=("soft", "hard"), default="soft", help="call localiser: weight bins by SNR or mask them")
     ap.add_argument("--refractory", type=float, default=2.5, help="s between accepted calls")
     ap.add_argument("--floor-tau", type=float, default=3.0, help="s, room floor tracking")
     ap.add_argument("--pitch", type=float, default=LOOK_PITCH, help="rad up to look at the caller")

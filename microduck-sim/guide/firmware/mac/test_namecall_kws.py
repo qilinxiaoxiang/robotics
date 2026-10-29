@@ -25,7 +25,8 @@ def args(**kw):
     base = dict(threshold_db=12.0, rise_db=6.0, refractory=2.5, floor_tau=3.0, swap_ears=False, no_head=True, seed=3,
                 smooth=False, idle=False, no_sound=True, bank_dir="/tmp/namecall_test_bank", sounds=None, mute=True,
                 cmd="/tmp/namecall_test_kws_cmd.json", dry=True, no_gate=True, brain_logs="/nonexistent/*.jsonl",
-                pitch=0.2, once=0, default_head_file=None, name="mochi", onset_gap=nc.ONSET_GAP_S)
+                pitch=0.2, once=0, default_head_file=None, name="mochi", onset_gap=nc.ONSET_GAP_S,
+                detector="energy", localiser="short")   # the name-mode mechanics as built; the 2 m components: test_namecall_call.py
     base.update(kw)
     return type("A", (), base)()
 

@@ -169,7 +169,9 @@ def test_lock_probe_sees_a_holder_and_never_keeps_the_lock(tmp_path):
 
 # --- the chain on a synthetic scene
 
-def scene(calls, dur, seed=0):
+def scene(calls, dur, seed=0, el=35.0):
+    """White noise at 20 dB SNR with calls from the given azimuths, the caller standing (elevation el, the call
+    localiser's default prior)."""
     rng = np.random.default_rng(seed)
     n = int(dur * FS)
     sig = nc.synth_call(seed=seed)
@@ -177,7 +179,7 @@ def scene(calls, dur, seed=0):
     x = rng.standard_normal((n, 4)).astype(np.float32) * rms * 10 ** (-20 / 20)
     x[:, 3] = 0
     for t, az in calls:
-        y, _ = nc.render_scene(sig, math.radians(az), pre_s=0.0, post_s=0.0, snr_db=200, seed=seed)
+        y, _ = nc.render_scene(sig, math.radians(az), pre_s=0.0, post_s=0.0, snr_db=200, seed=seed, el_rad=math.radians(el))
         i = int(t * FS)
         x[i:i + len(y)] += y[: n - i]
     return x
@@ -198,7 +200,8 @@ def test_chain_sound_to_commands(tmp_path):
     dets = n.run_blocks(blocks(scene([(1.5, 60), (6.0, -45)], 10.0)), head_rows=rows)
     assert [round(d["t"], 1) for d in dets] == [1.5, 6.0]
     assert abs(dets[0]["az_deg"] - 60) < 4 and abs(dets[1]["az_deg"] + 45) < 4
-    assert dets[0]["decided_t"] - dets[0]["t"] < 0.1           # direction known within 100 ms of the onset
+    assert dets[0]["decided_t"] - dets[0]["t"] < nc.CALL_WINDOW_S + 0.1    # the call localiser hears the whole call first
+    assert dets[0]["el_deg"] == 35.0 and dets[0]["bins"] > 50
     assert dets[0]["take"] != dets[1]["take"]
     assert all(abs(h["head_yaw"]) <= 1.4 + 1e-6 for _, h, _ in rows)
     first = [(t, h) for t, h, _ in rows if 1.5 <= t < 6.0]
@@ -217,6 +220,16 @@ def test_chain_no_head_mode_writes_nothing(tmp_path):
     dets = n.run_blocks(blocks(scene([(1.0, -90)], 4.0)))
     assert len(dets) == 1 and abs(dets[0]["az_deg"] + 90) < 4
     assert not os.path.exists(cmd)
+
+
+def test_short_localiser_and_energy_detector_decide_at_the_onset(tmp_path):
+    """--localiser short --detector energy: the 64 ms GCC at the onset (the sim evidence of NAMECALL.md 1-5)."""
+    cmd = str(tmp_path / "cmd.json")
+    n = nc.NameCall(args(cmd=cmd, no_head=True, localiser="short", detector="energy"), nc.Log(None, echo=False), now=lambda: 0.0)
+    assert isinstance(n.loc, nc.Localiser) and isinstance(n.det, nc.OnsetDetector)
+    dets = n.run_blocks(blocks(scene([(1.0, 40)], 4.0, el=0.0)))
+    assert len(dets) == 1 and abs(dets[0]["az_deg"] - 40) < 4
+    assert dets[0]["decided_t"] - dets[0]["t"] < 0.1
 
 
 def test_wav_replay_through_main(tmp_path):

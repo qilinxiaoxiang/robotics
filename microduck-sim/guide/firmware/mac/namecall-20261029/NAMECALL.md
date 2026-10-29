@@ -210,6 +210,9 @@ brain's own tick log carries the head commands it received (`cmd.head`) and the 
 - `namecall-20261029/namecall_sim.py`: the chain against the duck sim; `install_namecall.sh`: deploy; `kws_bench.py`:
   the keyword-spotter cost; `results/`: `sim_real.json`, `sim_stress.json`, `sim_smooth.json`, `direction_synthetic.json`,
   `kws_bench.json`, `detector_cost.json` and the batch logs.
+- 2 m components (section 10): `test_namecall_call.py` (12 tests), `namecall-20261029/replay_calls.py` (replay a
+  recording through the real chain and score it), `results/replay_221619.json`, `replay_201411.json`, `replay_sweep.json`,
+  `call_cost.json`.
 - Name mode (section 9): `test_namecall_kws.py` (10 tests), `namecall-20261029/keywords_mochi.txt` (the spotter's
   keywords), `mochi_set.py` (the `say` clip set), `kws_mochi_heard.py` (what the model writes for each clip),
   `kws_mochi_eval.py` (keyword grid and the whole-chain evaluation), `kws_a7z_cost.py` (A7Z replay cost per core);
@@ -345,3 +348,117 @@ Sensitivity is set per line in `keywords_mochi.txt` (`:2.0` boost, `#0.05` thres
 - The A7Z numbers come from the first cost runs; the final keywords and the 0.75 s look-back were not rerun there
   (the cost does not depend on either), and nothing ran live on `hw:CARD=sndi2s0`. Throttled shares are clock-scaled
   estimates.
+
+## 10. Calls at 2 m: the bins detector, the call localiser, and what the head really hears (2026-10-29 evening)
+
+Replay of the two robot recordings (`recordings/`, git-ignored) through the real chain with `replay_calls.py`;
+records in `results/replay_221619.json`, `replay_201411.json`, `replay_sweep.json`, `call_cost.json`; tests in
+`test_namecall_call.py` (12, all 52 namecall tests pass). Nothing ran on the robot.
+
+### 10.1 Result against the acceptance (8 calls at 2 m, `calls_221619.wav`)
+
+Acceptance was 8 of 8 detected, 6 within 30 deg, the side right on all 6 side calls, front/back right on 5 of 6, at
+most 2 false triggers per minute. Reached with the defaults: 6 of 8 detected; of the detected real calls (+135, 180,
+-135, -90, -45; the trigger in the +90 window is the loudspeaker 1 s before the call) 1 within 30 deg (+135 -> +138),
+side right on 2 of 4 side calls (+135, -135; -90 -> +138 and -45 -> +10 wrong), front/back right on 4 of 4; the
+missed calls are 0 and +45 (and +90). False triggers 3.1 per minute on the quiet stretches of this recording (7 in
+134 s, all of them the loudspeaker speech in the corridor) and 0.8 per minute on the earlier recording without the
+loudspeaker (`calls_201411.wav`: 2 in 144 s, 2 of its 9 head touches). The acceptance is not met; the causes are
+measured in 10.4, not guessed.
+
+### 10.2 What changed in `namecall.py`
+
+- `--detector bins` (default; `energy` is the earlier OnsetDetector): `CallDetector` counts, per 20 ms block, the
+  300-4000 Hz bins of the three-microphone mix that stand `--snr-db` over a noise spectrum tracked per bin (EMA, time
+  constant `--floor-tau` 3 s, frozen while a block is loud, followed again after 1.5 s of loudness so a fan or a door
+  does not deafen it). An onset is `--min-bins` such bins after a quiet block; it is confirmed when
+  `--confirm-blocks` of the next three blocks hold half that many and when the harmonicity of the first 60-80 ms in
+  300-1500 Hz (largest normalised autocorrelation peak in the 80-400 Hz pitch range) reaches `--voicing`. Defaults
+  `--snr-db 9 --min-bins 8 --confirm-blocks 3 --voicing 0.4`. A call 3 dB over the floor in band power lifts its
+  three or four "Mo" harmonics 10-20 dB over their bins, which is how it is seen at all.
+- `--localiser call` (default; `short` is the earlier 64 ms GCC-PHAT): `CallLocaliser` waits `--call-window` 0.8 s
+  after the onset, takes an STFT (1024/256) of the 2 s before the onset for the noise spectrum per microphone and bin
+  and of the call window, keeps the time-frequency bins that stand `--loc-snr-db` 3 dB over the noise on all three
+  microphones (`--loc-weight soft` scales each by how far over, 0 at 3 dB to 1 at 18 dB), sums the PHAT cross-spectra
+  of the three pairs over them and steers the sum over a 1 deg azimuth grid at the elevations in `--elev` (prior 35
+  deg: a standing owner's mouth about 1.4 m above the head at 2 m; several values search). Band `--loc-band`
+  1500-8000 Hz (10.4). Reports azimuth, elevation, the front/back margin against the mirrored half-plane, the bin
+  count and the per-pair lags. The ring buffer grew to 3.2 s; the decision comes 0.82 s after the onset (the head then
+  starts its take), the keyword mode places the same window at the word's onset.
+- `render_scene(..., el_rad)` renders synthetic scenes at an elevation; the chain tests now render at 35 deg; the
+  name-mode tests keep `--detector energy --localiser short` (their mechanics are unchanged).
+
+### 10.3 Detector trade-off (`results/replay_sweep.json`, false triggers per minute of quiet stretch)
+
+- snr 6 dB, 8 bins, 2 confirming blocks, no voicing: 5 of 8 calls; 18.4 per minute with the loudspeaker, 7.1 without.
+- snr 6, 12 bins, 2 blocks, no voicing: 7 of 8; 13.9 and 5.4 (the most calls any setting found; one trigger every
+  few seconds between them, and the refractory after a false trigger eats calls).
+- snr 6, 12 bins, 2 blocks, voicing 0.4: 5 of 8; 8.5 and 1.7.
+- snr 9, 8 bins, 3 blocks, voicing 0.4 (the default): 6 of 8; 3.1 and 0.8; 2 of 9 head touches.
+- snr 9, 8 bins, 3 blocks, voicing 0.5: 5 of 8; 2.2 and 0.4.
+- snr 9, 12 bins, 3 blocks, voicing 0.5: 1 of 8; 0.9 and 0.0.
+
+The voicing check removes the footsteps and touches (the harmonicity of the real calls at the onset is 0.61-0.86,
+of the 41 triggers without it 33 are under 0.6 and 21 under 0.4; on the no-loudspeaker recording it removes 15 of
+17). What remains at 3 per minute is the corridor loudspeaker: voiced Chinese speech, as loud at the microphones as
+Shawn at 2 m. An any-voice detector cannot separate it; that is the keyword spotter's job (section 9), and the
+next 2 m recording should be made with the loudspeaker off.
+
+### 10.4 Why the direction is wrong: the head hears the low band through its cavity
+
+Per-pair masked GCC-PHAT lags on the hand-marked call windows (samples at 48 kHz, positive = first microphone
+later; the prediction is the free-field lag at 35 deg elevation):
+
+- 300-1200 Hz (the voiced "Mo", 170-600 bins per call, PHAT peaks 0.65-0.92, the strongest cue in the recording):
+  left-right 0.0, -4.0, -3.2, +0.5, -0.5, +0.8, +2.5, +1.0 for the calls at 0, +45, +90, +135, 180, -135, -90, -45
+  deg (predicted 0, -6.2, -8.8, -6.2, 0, +6.2, +8.8, +6.2); left-back -3.8, -8.8, -6.8, -4.8, -3.5, -4.2, -3.2, -3.5
+  (predicted -9.2, -10.5, -5.7, +2.5, +9.2, +10.5, +5.7, -2.5); right-back -3.8, -5.8, -3.2, -4.5, -4.0, -4.5, -7.2,
+  -5.0 (predicted -9.2, -4.3, +3.2, +8.7, +9.2, +4.3, -3.2, -8.7). The ear pair keeps the sign on 5 of 6 side calls
+  at a third of the predicted size; the back microphone hears every call 3-9 samples after both ears, including
+  the calls from behind, where it should lead by 9. In the same band the back microphone is 1.5-4.2 dB louder than
+  the ears in every direction, and in 4-8 kHz the ears are 1-4.5 dB louder than it in every direction, 180 deg
+  included. The quiet-stretch noise shows the same pattern (coherent under 700 Hz with the same few-sample delays).
+  A sound that enters the head through an opening at the front (the beak and the speaker pocket in the mouth floor
+  are the large openings; the ear holes are 1.6 mm) and fills the cap cavity reaches the ears first and the back
+  seat about 60 mm later, whoever is calling and from wherever: that is what these lags say. Under about 1.5 kHz
+  the cavity path dominates the 1.6 mm hole path, so the low band carries almost no direction.
+- 1.5-8 kHz (the "chi" burst, 0.1-0.15 s): the ear pair is spatially aliased above 2.2 kHz (77 mm spacing), the
+  back pairs above 1.8 kHz, and the burst at 2 m is mostly reverberant: PHAT peaks 0.1-0.3 with mirror lobes of the
+  same height (for example +90: left-right -9.0 and +11.8, both 0.18). Masking the bins by coherence (direct-path
+  dominance) leaves 10-90 bins per call and does not settle the peaks. The free-field model is right where it can
+  be checked (ear spacing: a snap at the right ear leads the left by 10.2-10.9 samples against 10.8 predicted), but
+  the back microphone's timing is off even for a near-field snap (snaps 15 cm off the right ear: right-back -2.4 to
+  -3.4 against +6.3 predicted), which is the same cavity path.
+- Synthetic calls rendered on the free-field geometry at the real level into the real noise localise with 0 deg
+  error because they have neither the cavity path nor the room; they test the arithmetic, not the head.
+
+Consequence: software cannot recover a cue the microphones do not receive. The call localiser's defaults are the
+physically defensible ones (high band, elevation prior) and reach 1 of 5 within 30 deg on the real calls; the low
+band (`--loc-band 300,2200`) gives the side on 4 of 4 side calls among the five detected at the permissive setting
+but folds everything to the front and a third of the angle. The hardware check that settles it: with the beak and
+the mouth-floor pocket covered (a hand or tape), snap 15 cm off each ear; if the 300-1200 Hz left-right lag of a
+side snap grows from about 3 to about 9-11 samples and the back microphone starts to lead for a snap behind, the
+cavity path is confirmed and the fix is sealing the cap cavity from the mouth (foam between the mouth floor and the
+head cavity, or the microphones' own sealed chambers behind their holes). The 1 m, loudspeaker-off recording still
+helps the detector numbers but not the direction, unless the cavity is sealed first.
+
+### 10.5 Cost (`results/call_cost.json`, MacBook M1 Pro, one core)
+
+Detector 0.064 ms per 20 ms block (0.3 % of a core; estimated 1.3 % of a Cortex-A76 at 2 GHz, 6 % at the 416 MHz
+throttle). Localiser 24 ms once per detected call on a 3.1 s buffer (estimated 95 ms on the A76, 460 ms throttled;
+it runs after the 0.8 s window and before the take, never during one). Whole chain on the 150 s recording: 0.3 % of
+a core (0.0031 cpu share), 1.2 % / 6 % on the A7Z; inside the quarter-core budget beside the brain.
+
+### 10.6 Next robot test (Shawn runs it; nothing here has run on the A7Z)
+
+1. From the Mac: `microduck-sim/guide/firmware/mac/namecall-20261029/install_namecall.sh` (copies namecall.py, the
+   tests and pet/express; no robot motion).
+2. Listen only, loudspeaker off, 2 m, eight directions as before, with the duck untouched:
+   `ssh a7z '~/rt/microduck-sim/guide/firmware/mac/namecall-20261029/listen_only.sh 600'` (that is
+   `namecall.py --no-head --mute --no-sound --no-gate --log ~/duck-logs/namecall_listen_<HHMMSS>.jsonl` with the new
+   defaults). Each call prints `call: {... "az_deg", "el_deg", "bins", "margin" ...}` 0.8 s after its onset; the
+   heartbeat shows `floor_db`. Record the same session with `record_calls.sh 120` in a second terminal only if a
+   replay is wanted (two readers cannot share the card: run it instead of, not beside, the listener).
+3. Head turn, quack muted, brain in walk at zero command (NAMECALL.md 5.2):
+   `cd ~/rt/microduck-sim/guide/firmware/mac && ~/.venvs/duck-policy/bin/python namecall.py --mute --once 3`.
+   The head turns 0.8 s after the call; `--localiser short --detector energy` restores the earlier behaviour.
