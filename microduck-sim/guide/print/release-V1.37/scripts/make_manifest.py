@@ -61,8 +61,13 @@ def main():
     for i in range(2):
         x0 = 128.0 - (2 * w + GAP_MM) / 2 + i * (w + GAP_MM); y0 = 128.0 - size[1] / 2
         pl.append(dict(key='jaw_ring_capped', copy=i + 1, translation=[round(x0 - float(lo[0]), 4), round(y0 - float(lo[1]), 4), 0.0]))
-    m.update(version='V1.37', parts=[row], placements={'Black': pl}, processOverrides={},
-             processOverrideReason='Black: the donor profiles as is (a 14 x 14 x 2.1 mm part).',
+    m.update(version='V1.37', parts=[row], placements={'Black': pl},
+             processOverrides={'Black_Bambu': dict(slow_down_layer_time=['12'], slow_down_min_speed=['5', '5']),
+                               'Black_Elegoo': dict(outer_wall_speed='35', inner_wall_speed='35', internal_solid_infill_speed='35',
+                                                   top_surface_speed='35', sparse_infill_speed='35', gap_infill_speed='35')},
+             processOverrideReason=('Black: each 0.1 mm layer of the two 14 mm rings took about 4 s at the donor speeds (their 4 s minimum), so the '
+                                    'top of the first plate melted into a lump (Shawn 2026-10-29). Minimum layer time 12 s (slow down to 5 mm/s) '
+                                    'on the X1C; Orca loads the Elegoo filament profile over the project, so there the wall and infill speeds drop to 35 mm/s instead (fan already at full below 80 s layers). Each layer then has time to set.'),
              retiredParts=[{'part': 'mouth_sliding_ring', 'printed': 'V1.6 (Black)',
                             'reason': 'replaced by the V1.37 capped jaw ring held by one M2 x 8 (D-033); the old ring fell off the right jaw boss'}],
              prototypeScope='V1.37: two capped jaw rings (one spare) on one Black plate.',

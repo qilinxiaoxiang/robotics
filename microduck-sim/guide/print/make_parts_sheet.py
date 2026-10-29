@@ -710,7 +710,7 @@ RETIRED_HEADING_BY_VERSION['V1.37'] = 'No longer used'
 RETIRED_LEAD_BY_VERSION['V1.37'] = 'The V1.6 mouth sliding ring with its thin flange.'
 INCREMENTAL_NAMES_BY_VERSION['V1.37'] = dict(jaw_ring_capped='Capped jaw ring')
 INCREMENTAL_NOTES_BY_VERSION['V1.37'] = dict(
-    jaw_ring_capped=('Prints closed end down with a 5 mm brim, no support; peel the brim off. Clean the plate first: the rings are small, and the first plate without a brim came off. The centre hole is the M2 pilot: do not drill it. '
+    jaw_ring_capped=('Prints closed end down with a 5 mm brim, no support; peel the brim off. Clean the plate first: the rings are small, and the first plate without a brim came off. The file prints slowly on purpose (about 12 s per layer on the X1C, 35 mm/s on the Elegoo) so each thin layer sets before the next. The centre hole is the M2 pilot: do not drill it. '
                      'Bore 10.5 slides over the boss; outer dia 14 turns in the seat.'))
 
 # V1.38: the box cap of D-034 (2026-10-29): its four screw columns reach the boards. Replaces the printed V1.20 box cap.
