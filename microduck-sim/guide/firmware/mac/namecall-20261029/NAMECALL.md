@@ -1,0 +1,219 @@
+# Name call on the robot: hear a call, turn the head to it with a take, quack on arrival (2026-10-29)
+
+Pet register section 12 (`docs/PET_ROBOT_FEATURES.md`, "Responding to its name, technique"). First pet behaviour meant
+to run on the robot. Program: `microduck-sim/guide/firmware/mac/namecall.py`. Nothing here has run on the robot or the
+A7Z yet; the robot test plan is section 5 and Shawn runs it.
+
+## 1. Result
+
+- The chain works off the robot: three-mic capture format -> voice-band onset detector -> GCC-PHAT / SRP-PHAT direction
+  on the head's real microphone geometry -> a `pet/express` take (`acknowledge`) -> walk_brain's head command path at
+  50 Hz -> a pitched duck call on the head's arrival. 29 tests pass (`test_namecall_*.py`); `pet/express` tests still
+  pass (28).
+- Duck sim under stand61 (the `pet/express` plant, as-built model with the saddle manifest, 7.0 V, 4 % read drops,
+  `results/sim_real.json`, Mac mini): 72 calls over 12 seeds, 71 detected (the miss is one clap), 0 false alarms,
+  0 falls. Azimuth error mean 1.4 deg, p90 3.1, max 7.0, no front/back mistake (12 of the calls came from behind).
+  Head latency from the sound's onset: median 0.40 s (p10 0.16, p90 0.72, max 0.80); direction decided 60 ms after
+  the onset. Overshoot past the wanted command median 0.12 rad (p90 0.30, max 0.52, double_take). Trunk tilt median
+  0.45 deg, p95 0.81, max 0.99 deg; drift at most 2.3 mm. Takes: curious_turn 22, double_take 22, quick_snap 14,
+  glance 13; 49 quacks (glances are mostly silent, habituation mutes some).
+- Stress bracket (6.6 V, 8 % drops, `results/sim_stress.json`): identical detections, 0 falls, tilt max 0.89 deg.
+- `--smooth` (no EMA pre-inverse, `results/sim_smooth.json`, 36 calls): 0 falls, overshoot max 0.25 rad, tilt max
+  0.80 deg; the fallback flag for the robot if the pre-inverted targets look jerky there.
+- Keyword spotting measured and left out for now (section 3).
+
+## 2. Sound in and direction
+
+Capture (CURRENT-STATE `a7z_audio_capture`): card `sndi2s0` found by name, `hw:CARD=sndi2s0,DEV=0`, 4 channels
+S32_LE 48 kHz through `arecord -t raw`; ch0 left ear, ch1 right ear, ch2 back mic, ch3 nothing; samples are 24-bit
+left-justified (`>> 8`, as `duck_selfcheck.py` reads them). The program reads 20 ms blocks and keeps 240 ms.
+
+Microphone positions (head frame, x forward, y left, mm): ears (60.5, +-38.5) from
+`guide/print/ears-mouth-20261023/interface.json`, back mic (-19.9, -11.0) from the V1.33 seat (three-mic report
+`~/code/reports/src/20261024-microduck-three-mic-localization.md`, section 4; `build_cap_xiao.py`). Ear spacing 77 mm
+(the brief's "about 6 cm" was approximate), back mic 95 mm from the left ear.
+
+Detector (`OnsetDetector`): per block the energy in 300-4000 Hz over a room floor that follows the noise with a 3 s
+time constant but only while nothing is loud. A call is 12 dB over the floor, at least 6 dB over the quietest of the
+previous five blocks (a swell is not a call), at least 35 % of the 100-8000 Hz energy inside the voice band (hum and
+servo whine fall outside), confirmed by the next block still 6 dB over the floor (a click is not a call, a clap's tail
+is), then 2.5 s refractory. It is deaf while its own quack plays and 0.6 s after, and during its own take (servos
+10 cm from the mics); the floor is re-estimated after a playback because a playback stream can reconfigure the shared
+I2S0 (`duck_selfcheck.py` plays its sweep in S32_LE for that reason; `aplay` of a 16-bit call may shift the capture;
+this is the first thing the robot test watches).
+
+Direction (`Localiser`): GCC-PHAT (band 300-4000 Hz, 64 ms window starting 10 ms before the onset block) for the
+three pairs, summed on a 1 deg azimuth grid at each pair's predicted lag (SRP-PHAT), parabolic refinement; the back
+mic settles front/back and the margin against the mirrored half-plane is logged. Far field, planar: the caller's
+height is not estimated, the look-up pitch is fixed (`--pitch 0.2` rad).
+
+Expected resolution from the geometry (`results/direction_synthetic.json`, free field, no head shadow or echo): on the
+ear pair ahead 1.33 deg per 0.25 sample of lag error, 5.3 deg per sample. Synthetic 4-channel scenes all round the
+circle (72 directions per SNR): at 30 and 20 dB SNR mean error 0.8-0.9 deg, max 2.6-3.3; at 10 dB mean 1.6, max 5.6;
+at 5 dB mean 3.4, max 12.6; no mirror error at any SNR. With ch2 silent (back mic not fitted) the estimate is one of
+the two images and the margin reads 0. The 2026-10-24 report's expectation for the real room is about 10 deg (echo,
+head shadow): the robot test measures it (section 5.4).
+
+No recorded A7Z 4-channel wav exists in the repository (the 2026-10-29 bench capture stayed on the A7Z in /tmp), so
+only synthetic scenes were replayed; `namecall.py --wav FILE --no-head --mute` replays a real one when Shawn records it
+(`arecord -D hw:CARD=sndi2s0,DEV=0 -c 4 -r 48000 -f S32_LE -d 20 ~/duck-logs/calls.wav` on the A7Z).
+
+## 3. Keyword spotting: measured, not added
+
+sherpa-onnx 2.0.0 `KeywordSpotter` with the public zipformer `gigaspeech-3.3M-2024-01-01` int8 model, one thread, 20 ms
+chunks, 43 s of audio on this MacBook (M1 Pro): real-time factor 0.017 CPU (`results/kws_bench.json`; it spotted
+"LIGHT UP", "LOVELY CHILD", "FOR EVER" in the model's own test clips). A7Z estimate (Cortex-A76 at about a quarter of
+an M1 Pro core, CURRENT-STATE `a7z_closed_head_thermal_and_resets` for the 416 MHz throttle): 0.07 of one core cool,
+0.32 of one core throttled. The detector chain itself costs 0.012 on the Mac (`results/detector_cost.json`), 0.05 /
+0.22 on the A7Z by the same scaling. Together with the brain (one core at 50 Hz, p90 24.6 ms when throttled) the
+spotter would take the throttled board past a quarter of a core, so this delivery detects any voice-band onset and
+leaves a `--kws` hook for later (a model directory plus keywords file; the duck has no name yet in the register).
+
+## 4. Motion and quack
+
+`HeadPath` owns one `pet.express.Expressor` on the duck card (`pet/express/cards/duck.json`). A detection becomes
+`acknowledge(Target(yaw, pitch))` with warmth 0.8 and energy 0.7; the take (quick_snap, curious_turn, double_take,
+groggy, glance), its jitter, habituation and the call events are `pet/express`'s, unchanged. The azimuth is in the
+head frame, so the current commanded head yaw is added to put the caller in the resting frame. The look target is
+capped at +-1.2 rad (`YAW_CAP`): a call from behind turns the head as far as it goes on that side and the log says
+`behind`. Outputs stay inside the card's limits, which sit inside walk_brain's trained `HEAD_RANGE` (1.10, 1.10, 1.40,
+0.31); the last command of every response is the policy default head pose.
+
+The brain smooths head targets with `head_cmd += 0.2 * (target - head_cmd)` (`HEAD_ALPHA`), which cannot overshoot or
+anticipate, so the path sends `r = c + (y - c) / 0.2` clipped to HEAD_RANGE (`pet/express/duck.py`'s pre-inverse; the
+sim evidence above and `pet/express`'s 360 calls used it). `--smooth` sends the plain targets instead. After the take a
+`content_idle` drifts the head home for 2.5 s; then the program stops writing until the next call (`--idle` streams the
+Perlin idle all the time instead).
+
+Control file: `{"mode": "walk", "vx": 0, "vy": 0, "vtheta": 0, "head": {neck_pitch, head_pitch, head_yaw, head_roll}}`
+(absolute model rad) written atomically at 50 Hz during a response, only while the file still holds the program's own
+last command or a plain zero-command walk (keys within mode/vx/vy/vtheta/head/for_s). Anything else (the app's walk,
+quack, jaw or sit, Shawn's own command) wins at once: the take stops where it is and the log says `yield`. walk_wired's
+own `quack` counter is not used (it would move the head on its own, `QUACK_HEAD`).
+
+Quack: `QuackBank` renders each recording in walk_wired's sounds folder at 4 pitches x 3 lengths once
+(`pet/express/voice.py`, into `/tmp/namecall_calls`) and plays the variant nearest the take's call event through
+`duck_sound.Voice` (`aplay -q` on the ALSA default device, the -3 dB softvol ceiling of D-012). The event time is the
+measured gaze arrival plus the take's offset plus the card's `motion_lag_s` 0.14 s, so it lands with the real head. The
+jaw does not open (walk_wired's quack opens it; a later version can send `"jaw"` with the call once the first test is
+clean).
+
+Safety on the robot (section 2 of `namecall.py`'s docstring): no servo bus, no IMU, the robot I/O lock is probed and
+never taken (refuses when nobody holds it, i.e. no brain); refuses while `duck_selfcheck.py` runs (it owns the sound
+card then); refuses unless the brain's newest tick log (`~/duck-logs/duck_wired_log_*.jsonl`, younger than 1.5 s) shows
+walk mode at zero command or stand mode; from stand mode it writes the zero-command walk (stand61) and waits for the log
+to show walk; it stops itself when the brain leaves walk (guard trip, stop command) or the log goes stale; Ctrl-C
+writes one last zero-command walk with the head at the default. Head moves only run under stand61/walk61, never under
+the open-loop stand (the 2026-10-20 tip).
+
+## 5. Robot test plan (Shawn runs every command)
+
+### 5.1 Install (Mac)
+
+```
+~/code/robotics/microduck-sim/guide/firmware/mac/namecall-20261029/install_namecall.sh
+```
+
+Copies `namecall.py`, the tests and `pet/express` to `a7z:~/rt/...` (rsync --checksum, no robot motion) and prints:
+`namecall imports ok`, the policy default head pose, `sndi2s0 card: cardN`, the number of calls in `sounds/`, and
+`arecord/aplay present`. If it prints `NO sndi2s0 card`, the I2S0 overlay is not loaded (CURRENT-STATE
+`a7z_audio_capture`); stop here.
+
+### 5.2 Start order
+
+1. Robot standing on the floor as for a walk, on the bench supply or the pack, with room around the head.
+2. Brain from the app (`~/duck-run.sh app<suffix>`, monitor mode), then the usual way up: `{"mode": "stand"}`, then
+   `{"mode": "walk", "vx": 0, "vy": 0, "vtheta": 0}` (stand61 balancing). The program also accepts starting from stand
+   mode and writes that walk command itself.
+3. In a second terminal on the A7Z (`ssh a7z`), the first test:
+
+```
+cd ~/rt/microduck-sim/guide/firmware/mac
+~/.venvs/duck-policy/bin/python namecall.py --mute --once 3
+```
+
+### 5.3 Test A: head only, quack muted (`--mute --once 3`)
+
+Clap or call once from the duck's left front, about 1 m away, between its calls (the program ignores sounds for 2.5 s
+after a response). Expected, in order: the terminal prints `call: {... "az_deg": +40 ...}` with `take` named within
+0.1 s; the head turns toward the sound in the style of that take (quick_snap: a small counter-move then a snap with
+a little overshoot and a tilt; curious_turn: slower, tilt grows after arrival; double_take: a half look, back, then the
+full turn; groggy: late and slow; glance: a short partial look), the trunk stays level (the sim says under 1 deg),
+the head drifts home over the next 2.5 s. Then from the right front, then from behind on one side (the head goes to
+its cap on that side, the log says `"behind": true`). After three responses the program prints `done` and exits with
+the head at the default pose; the brain keeps standing.
+
+Stop at any time with Ctrl-C in that terminal (one last zero-command walk, head home). The brain is stopped the usual
+way (`{"mode": "monitor"}` or the app); the program notices and exits.
+
+What to check in Test A before Test B:
+
+- The azimuth sign: a sound from the left gives a positive `az_deg` and the head turns left. If it turns the wrong
+  way, run with `--swap-ears` (and tell me: the ear wires are crossed against D-025, and CURRENT-STATE
+  `a7z_audio_capture` gets the correction).
+- Front/back: a call from behind should give |az| > 90 and `behind: true`; if it reads a front direction instead,
+  check `front_back_margin` in the log (near 0 means the back mic did not help: is ch2 live? `arecord -c 4` and tap it).
+- False triggers: the heartbeat line every 10 s shows `floor_db`; if the program fires on the room or on the servos
+  (`call` lines with nobody calling), raise `--threshold-db 16` or `--rise-db 9`.
+- Head motion looks jerky or the trunk sways visibly: try `--smooth` (plain targets through the brain's 0.2 EMA,
+  less anticipation and overshoot; sim tilt max 0.80 deg).
+
+### 5.4 Test B: with sound (`--once 5`, no `--mute`)
+
+Same calls. Expected: each response ends with one duck call from the mouth speaker as the head arrives (pitch and
+length vary per response; a glance is usually silent). Watch the terminal for `quack` lines and, right after each,
+whether the next `heartbeat` `floor_db` jumped by more than about 10 dB or `call` lines appear with nobody calling:
+that is the shared-I2S0 shift the self-check warned about (the capture format changing under a 16-bit playback). If
+so, say so; the fix is on my side (render the bank in S32_LE and play it to the hw device the way the self-check
+does), not a knob.
+
+Direction accuracy on the robot: stand at known places (ahead, 45 deg, 90 deg, behind-left) and note `az_deg` per
+call; the expectation from the report is about 10 deg. Five calls per place are enough; I read them from the log.
+
+### 5.5 Run on (optional)
+
+`namecall.py` without `--once` runs until Ctrl-C; `--idle` adds the living-stillness drift between calls (50 Hz writes
+all the time). Not for the first session.
+
+### 5.6 What the log records
+
+`~/duck-logs/namecall_<start>.jsonl`, one JSON line each: `start` (brain mode, lock state, options, bank size, default
+head), `call` (onset time, energy and floor dB, rise, azimuth in the head and resting frames, per-pair lags and peaks,
+front/back margin, take, its parameters and call events, target yaw, `behind`), `quack` (file, pitch, stretch, muted),
+`skip` (a call while a take ran or the brain was not ready), `yield` (another writer took the control file),
+`heartbeat` every 10 s (floor, blocks, capture gaps, CPU share, responses, writes, brain mode), `stop` / `done`. The
+brain's own tick log carries the head commands it received (`cmd.head`) and the policy's `head_cmd`.
+
+## 6. Proposed changes outside this delivery (not made; other owners)
+
+- `walk_brain.py` (owner: brain): a `head_raw` want key that sets `head_cmd` directly, as `pet/express/README.md`
+  section "Duck integration plan" item 2 proposes; it removes the pre-inverse and its HEAD_RANGE saturation near the
+  edge of the yaw range. Diff as in that README.
+- `walk_wired.py` (owner: brain): a `"quack_file": path` key next to `"quack"` so the brain's own `Voice` plays a
+  chosen variant and opens the jaw with it; then `namecall.py` would not need its own `Voice`. Until then the jaw
+  stays shut on these quacks.
+- `duck_sound.py`: no change needed; `QuackBank` queues a chosen file on its worker (`voice.q.put`).
+- CURRENT-STATE `a7z_audio_capture`: after Test A, add which ear is ch0 as observed (D-025 says left = L/R to GND =
+  ch0; the test confirms or corrects it).
+
+## 7. Files
+
+- `microduck-sim/guide/firmware/mac/namecall.py`: the program (A7Z and Mac).
+- `microduck-sim/guide/firmware/mac/test_namecall_detector.py`, `test_namecall_direction.py`, `test_namecall_chain.py`:
+  29 tests; `pet/.venv/bin/python -m pytest microduck-sim/guide/firmware/mac/test_namecall_*.py -q` (the direction
+  test writes `results/direction_synthetic.json` when run with `-s`).
+- `namecall-20261029/namecall_sim.py`: the chain against the duck sim; `install_namecall.sh`: deploy; `kws_bench.py`:
+  the keyword-spotter cost; `results/`: `sim_real.json`, `sim_stress.json`, `sim_smooth.json`, `direction_synthetic.json`,
+  `kws_bench.json`, `detector_cost.json` and the batch logs.
+- Reused unchanged: `pet/express` (takes, springs, habituation, voice rendering, duck adapter, `duck_sim.simulate` and
+  `call_metrics`), `duck_sound.Voice`, the brain's control file and tick log.
+
+## 8. Not verified
+
+- Nothing on the robot or the A7Z: capture through `arecord -t raw` on the A7Z (the self-check records to a file),
+  the ear channel order, the real room's echo and head shadow, servo noise under the mics, the quack's effect on the
+  capture stream, the A7Z CPU share (estimated 5-22 % of one core), and the timing of 50 Hz control-file writes
+  against the brain's reads (the pre-inverse assumes the brain reads every target once; a missed or doubled read moves
+  the head by at most one tick of the wanted motion).
+- The look-up pitch is a constant; elevation is not estimated.
+- The sim's calls are synthetic voices and claps in a free field at 20 dB SNR with a hum floor.

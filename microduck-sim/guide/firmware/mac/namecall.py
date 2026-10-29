@@ -1,0 +1,928 @@
+"""Name call on the MicroDuck: the duck hears a call, turns its head to the sound with a pet/express take, and quacks
+when the head arrives. First pet behaviour meant for the robot (register section 12, docs/PET_ROBOT_FEATURES.md).
+
+    ~/.venvs/duck-policy/bin/python namecall.py [--mute] [--no-head] [--once N] [--threshold-db 12]
+
+Chain, all in this process, numpy only (no scipy on the A7Z):
+  ears + back mic  ->  OnsetDetector  ->  Localiser (GCC-PHAT, SRP over 1 deg)  ->  HeadPath (pet.express take,
+  EMA pre-inverse of walk_brain's HEAD_ALPHA)  ->  /tmp/duck_cmd.json {"mode": "walk", vx 0, "head": {...}} at 50 Hz
+  -> stand61 balances while the head turns  ->  QuackBank plays a pitched duck call through duck_sound.Voice on arrival.
+
+Sound in: the I2S0 card found by name (sndi2s0, its number changes between boots: duck_selfcheck.py), hw:CARD=sndi2s0,
+4 channels S32_LE 48 kHz through `arecord -t raw` (CURRENT-STATE a7z_audio_capture): ch0 left ear, ch1 right ear, ch2
+back mic, ch3 nothing. INMP441 samples are 24-bit left-justified (>> 8 as the self-check does). Microphone positions
+come from the head CAD (guide/print/ears-mouth-20261023/interface.json, the 2026-10-24 three-mic report): ears at
+x 60.5, y +-38.5; back mic at x -19.9, y -11 (head frame, mm, x forward, y left). --swap-ears when a tap on the left
+ear raises ch1 instead of ch0.
+
+Detector: voice-band (300-4000 Hz) energy per 20 ms block over a slowly tracked room floor, a sudden rise (the first
+20-50 ms of a call, before the room's echoes), two blocks to confirm, then a refractory period; the detector is deaf
+while its own quack plays and for a moment after (the mics are 10 cm from the speaker). Direction: GCC-PHAT between
+the three pairs on a 64 ms window around the onset, summed on a 1 deg azimuth grid (SRP-PHAT), parabolic refinement;
+the back mic settles front/back. Far field, no elevation: the caller's height is a fixed look-up pitch (--pitch).
+
+Robot safety: this program never touches the servo bus or the IMU, so it never takes the robot I/O lock
+(walk_wired.HW_LOCK); it probes it and refuses to run when nobody holds it (no brain). It refuses to run unless the
+brain's newest tick log (~/duck-logs/duck_wired_log_*.jsonl, a line younger than 1.5 s) shows walk or stand mode at zero
+velocity; from stand mode it writes the zero-command walk first (stand61) and waits for the log to show walk. While a
+take runs it rewrites the control file at 50 Hz only when the file still holds its own last command or a plain
+zero-command walk; any other writer (the app, Shawn) wins at once and the take stops where it is. A brain that leaves
+walk mode (a guard trip, a stop) or a stale log ends the program. Head targets are the take's own outputs, which
+pet/express/cards/duck.json limits inside walk_brain.HEAD_RANGE; the look target itself is capped at +-YAW_CAP rad,
+so a call from behind turns the head as far as it goes on that side. Ctrl-C writes one last zero-command walk with the
+head at the policy default and exits; the brain keeps balancing.
+
+Log: one JSON line per event in --log (default ~/duck-logs/namecall_<start>.jsonl): detections (energy, floor, azimuth,
+per-pair delays, front/back margin), takes (name, parameters, call events), control-file writes per take, refusals,
+and a heartbeat every 10 s (floor, blocks, capture gaps, CPU share).
+
+Off the robot: --wav FILE replays a 4-channel recording through the same detector and localiser (--no-head --mute
+prints what it hears); namecall-20261029/namecall_sim.py runs the whole chain against the duck sim.
+"""
+import argparse
+import collections
+import fcntl
+import glob
+import json
+import math
+import os
+import queue
+import subprocess
+import sys
+import threading
+import time
+import wave
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))   # .../robotics (or ~/rt on the A7Z)
+sys.path.insert(0, HERE)
+sys.path.insert(0, ROOT)
+from duck_sound import Voice  # noqa: E402
+from pet.express import Affect, Expressor, Target, acknowledge, content_idle  # noqa: E402
+from pet.express.channels import load_card  # noqa: E402
+from pet.express.duck import HEAD_ALPHA, HEAD_JOINTS, HEAD_RANGE, want_head  # noqa: E402
+from pet.express.voice import CallPicker, find_calls, read_wav, render_call, write_wav  # noqa: E402
+
+FS = 48000
+BLOCK = 960                      # 20 ms, the brain's tick
+C_SOUND = 343.0
+CARD_NAME = "sndi2s0"            # the I2S0 card, found by name (duck_selfcheck.py)
+HW_LOCK = "/tmp/duck-hw.lock"    # walk_wired.HW_LOCK; probed, never taken
+CMD_FILE = "/tmp/duck_cmd.json"
+BRAIN_LOGS = os.path.expanduser("~/duck-logs/duck_wired_log_*.jsonl")
+CARD = os.path.join(ROOT, "pet", "express", "cards", "duck.json")
+MODELS = os.path.join(ROOT, "microduck-sim", "hardware-design-20260912", "whole-robot-20260912", "runtime-overlay", "models")
+WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
+ZERO_KEYS = {"mode", "vx", "vy", "vtheta", "head", "for_s"}
+# head frame (x forward, y left, mm): interface.json ears, V1.33 back seat (three-mic report section 4)
+MICS_MM = {"left": (60.5, 38.5), "right": (60.5, -38.5), "back": (-19.9, -11.0)}
+CHANNELS = {"left": 0, "right": 1, "back": 2}
+BAND = (300.0, 4000.0)
+YAW_CAP = 1.2                    # rad; the card's head_yaw limit is 1.4 = HEAD_RANGE, this leaves the pre-inverse room
+LOOK_PITCH = 0.2                 # rad up: a standing caller is above the duck
+# policy default head pose (stand61.onnx metadata default_joint_pos; read from the model when it is there)
+DEFAULT_HEAD = {"neck_pitch": 0.349, "head_pitch": 0.349, "head_yaw": 0.0, "head_roll": 0.0}
+BRAIN_FRESH_S = 1.5
+QUACK_DEAF_S = 0.6               # the detector stays deaf this long after the player ends
+
+
+# ----------------------------------------------------------------------------------------------- sound sources
+
+def i2s_to_float(raw, channels=4):
+    """S32_LE INMP441 frames -> float32 (n, channels) in -1..1 (24-bit left-justified, as duck_selfcheck.py reads them)."""
+    x = np.frombuffer(raw, "<i4")
+    x = x[: len(x) - len(x) % channels].reshape(-1, channels) >> 8
+    return x.astype(np.float32) / float(2 ** 23)
+
+
+def find_card(name=CARD_NAME):
+    """ALSA card number of the I2S0 card, or None."""
+    p = os.path.realpath(f"/proc/asound/{name}")
+    base = os.path.basename(p)
+    return int(base[4:]) if base.startswith("card") and base[4:].isdigit() else None
+
+
+class Capture:
+    """arecord -> 20 ms float blocks on a queue, with the wall-clock time of each block's first sample."""
+
+    def __init__(self, device, fs=FS, block=BLOCK, channels=4, cmd=None):
+        self.fs, self.block, self.channels = fs, block, channels
+        self.cmd = cmd or ["arecord", "-q", "-D", device, "-c", str(channels), "-r", str(fs), "-f", "S32_LE", "-t", "raw", "-"]
+        self.q = queue.Queue(maxsize=200)
+        self.proc = None
+        self.gaps = 0        # blocks dropped because the consumer fell behind
+        self.n = 0
+        self.err = None
+
+    def start(self):
+        self.proc = subprocess.Popen(self.cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
+        threading.Thread(target=self._pump, daemon=True).start()
+        return self
+
+    def _pump(self):
+        need = self.block * self.channels * 4
+        t0, per = None, self.block / self.fs
+        while True:
+            buf = b""
+            while len(buf) < need:
+                chunk = self.proc.stdout.read(need - len(buf))
+                if not chunk:
+                    self.err = (self.proc.stderr.read() or b"").decode(errors="replace").strip() or "arecord ended"
+                    self.q.put(None)
+                    return
+                buf += chunk
+            now = time.time()
+            if t0 is None or abs(now - (t0 + self.n * per)) > 0.25:
+                t0 = now - self.n * per   # resync the sample clock to the wall clock after a stall
+            t_block = t0 + self.n * per
+            self.n += 1
+            try:
+                self.q.put_nowait((t_block, i2s_to_float(buf, self.channels)))
+            except queue.Full:
+                self.gaps += 1
+
+    def stop(self):
+        if self.proc is not None and self.proc.poll() is None:
+            self.proc.kill()
+
+
+class WavSource:
+    """A recorded multichannel wav as 20 ms blocks (tests, --wav replay); block times start at 0."""
+
+    def __init__(self, path, block=BLOCK, channels=None):
+        with wave.open(path) as w:
+            self.fs, ch, sw = w.getframerate(), w.getnchannels(), w.getsampwidth()
+            raw = w.readframes(w.getnframes())
+        if sw == 4:
+            x = (np.frombuffer(raw, "<i4").reshape(-1, ch) >> 8).astype(np.float32) / 2 ** 23
+        elif sw == 2:
+            x = np.frombuffer(raw, "<i2").reshape(-1, ch).astype(np.float32) / 2 ** 15
+        else:
+            raise ValueError(f"{path}: {sw * 8}-bit samples")
+        self.x = x if channels is None else x[:, :channels]
+        self.block = block
+
+    def blocks(self):
+        for i in range(0, len(self.x) - self.block + 1, self.block):
+            yield i / self.fs, self.x[i:i + self.block]
+
+
+# ----------------------------------------------------------------------------------------------- detector
+
+SPAN = (100.0, 8000.0)           # the span the voice-band fraction is judged against (servo whine and hum outside BAND)
+
+
+def band_energy_db(block, fs, band=BAND, window=None, span=SPAN):
+    """(energy in band, energy in span) of a mono block in dB (re 1.0 full scale, per sample)."""
+    n = len(block)
+    w = np.hanning(n) if window is None else window
+    X = np.fft.rfft(block * w)
+    p = (X.real ** 2 + X.imag ** 2) / n
+    f = np.fft.rfftfreq(n, 1 / fs)
+    m = (f >= band[0]) & (f <= band[1])
+    ms = (f >= span[0]) & (f <= span[1])
+    eb, et = float(p[m].sum()), float(p[ms].sum())
+    return 10 * math.log10(max(eb, 1e-14)), 10 * math.log10(max(et, 1e-14))
+
+
+class OnsetDetector:
+    """Voice-band energy onset over a tracked floor, confirmed by the next block, with a refractory period.
+
+    update(t, block) -> None or {"t": onset time (s, the first loud block), "e_db", "floor_db", "rise_db"}.
+    The floor follows the room noise with time constant floor_tau_s but only while nothing is loud, so a long call does
+    not raise it. A sound counts when it is thresh_db over the floor, at least rise_db over the quietest of the previous
+    five blocks (a swell is not a call), mostly in the voice band (band_frac of the 100-8000 Hz span: hum and servo
+    whine fall outside), and the next block is still thresh_db - confirm_db over the floor (a click is not a call; a
+    clap's tail is). deaf_until(t) silences it (own quack, own servos).
+    """
+
+    def __init__(self, fs=FS, block=BLOCK, band=BAND, thresh_db=12.0, rise_db=6.0, refractory_s=2.0,
+                 floor_tau_s=3.0, band_frac=0.35, confirm_db=6.0, max_db=None):
+        self.fs, self.block, self.band = fs, block, band
+        self.thresh, self.rise, self.refractory = thresh_db, rise_db, refractory_s
+        self.band_frac, self.confirm_db, self.max_db = band_frac, confirm_db, max_db
+        self.alpha = block / fs / floor_tau_s
+        self.window = np.hanning(block)
+        self.floor = None
+        self.hist = collections.deque(maxlen=5)
+        self.pending = None
+        self.last_onset = -1e9
+        self.deaf_until = -1e9
+        self.n = 0
+        self.floor_settle = int(round(0.5 * fs / block))   # first 0.5 s: the floor is the median of what it hears
+
+    def reset_floor(self):
+        self.floor, self.n = None, 0
+        self.hist.clear()
+        self.pending = None
+
+    def level(self, block):
+        mono = block[:, :3].mean(axis=1) if block.ndim == 2 else block
+        return band_energy_db(mono, self.fs, self.band, self.window)
+
+    def update(self, t, block):
+        e_db, tot_db = self.level(block)
+        self.n += 1
+        if self.floor is None or self.n <= self.floor_settle:
+            self.hist.append(e_db)
+            self.floor = float(np.median(self.hist))
+            return None
+        over = e_db - self.floor
+        loud = over >= self.thresh
+        if not loud:
+            self.floor += self.alpha * (e_db - self.floor) if e_db > self.floor else 3 * self.alpha * (e_db - self.floor)
+        out = None
+        if t < self.deaf_until or t - self.last_onset < self.refractory:
+            self.pending = None
+        elif self.pending is not None:
+            if over >= self.thresh - self.confirm_db:
+                out = dict(self.pending)
+                self.last_onset = out["t"]
+            self.pending = None
+        elif loud and self.hist:
+            quiet = min(self.hist)
+            voiced = (e_db - tot_db) >= 10 * math.log10(self.band_frac)
+            if e_db - quiet >= self.rise and voiced and (self.max_db is None or e_db <= self.max_db):
+                self.pending = dict(t=t, e_db=round(e_db, 1), floor_db=round(self.floor, 1), rise_db=round(e_db - quiet, 1),
+                                    over_db=round(over, 1))
+        self.hist.append(e_db)
+        return out
+
+
+# ----------------------------------------------------------------------------------------------- direction
+
+def gcc_phat(a, b, fs, band=BAND, nfft=None, max_lag=None):
+    """GCC-PHAT of two equal-length signals, band-limited. Returns (lags in samples, correlation), where a positive lag
+    means `a` arrives later than `b` (a is a delayed copy of b)."""
+    n = len(a)
+    nfft = nfft or (1 << (2 * n - 1).bit_length())
+    A, B = np.fft.rfft(a, nfft), np.fft.rfft(b, nfft)
+    f = np.fft.rfftfreq(nfft, 1 / fs)
+    R = A * np.conj(B)
+    R /= np.maximum(np.abs(R), 1e-12)
+    R[(f < band[0]) | (f > band[1])] = 0
+    r = np.fft.irfft(R, nfft)
+    max_lag = int(max_lag or nfft // 2)
+    lags = np.arange(-max_lag, max_lag + 1)
+    return lags, np.concatenate([r[-max_lag:], r[:max_lag + 1]])
+
+
+def parabolic_peak(y, i):
+    """Sub-sample peak position around index i of y (parabola through three points)."""
+    if 0 < i < len(y) - 1:
+        a, b, c = y[i - 1], y[i], y[i + 1]
+        d = a - 2 * b + c
+        if d < 0:
+            return i + 0.5 * (a - c) / d
+    return float(i)
+
+
+class Localiser:
+    """SRP-PHAT over a 1 deg azimuth grid with the three pairs; azimuth 0 ahead, + left (head frame, rad)."""
+
+    PAIRS = (("left", "right"), ("left", "back"), ("right", "back"))
+
+    def __init__(self, fs=FS, mics_mm=MICS_MM, channels=CHANNELS, band=BAND, window=3072, grid_deg=1.0, c=C_SOUND):
+        self.fs, self.band, self.window, self.c = fs, band, window, c
+        self.pos = {k: np.asarray(v, float) / 1000.0 for k, v in mics_mm.items()}
+        self.ch = dict(channels)
+        self.az = np.deg2rad(np.arange(0.0, 360.0, grid_deg))
+        u = np.stack([np.cos(self.az), np.sin(self.az)], axis=1)         # unit vector toward the source
+        # predicted lag (samples) of mic i behind mic j: a mic farther along -u hears it later
+        self.pred = {(i, j): -(u @ (self.pos[i] - self.pos[j])) / c * fs for i, j in self.PAIRS}
+        self.max_lag = {(i, j): int(math.ceil(np.linalg.norm(self.pos[i] - self.pos[j]) / c * fs)) + 2 for i, j in self.PAIRS}
+
+    def estimate(self, x):
+        """x: (n, channels) window around the onset -> dict(az_rad, az_deg, srp, margin_db, pairs)."""
+        x = np.asarray(x, np.float32)[: self.window]
+        x = x - x.mean(axis=0)
+        srp = np.zeros_like(self.az)
+        pairs = {}
+        nfft = 1 << (2 * len(x) - 1).bit_length()
+        for i, j in self.PAIRS:
+            lags, r = gcc_phat(x[:, self.ch[i]], x[:, self.ch[j]], self.fs, self.band, nfft, self.max_lag[(i, j)])
+            k = int(np.argmax(r))
+            pairs[f"{i}-{j}"] = dict(lag=round(float(lags[0] + parabolic_peak(r, k)), 2), peak=round(float(r[k]), 3))
+            srp += np.interp(self.pred[(i, j)], lags, r)
+        k = int(np.argmax(srp))
+        kk = parabolic_peak(np.concatenate([srp[-1:], srp, srp[:1]]), k + 1) - 1   # wrap-aware refinement
+        az = float(np.deg2rad(kk * (360.0 / len(self.az))))
+        az = (az + math.pi) % (2 * math.pi) - math.pi
+        # front/back margin: this peak against the best point in the mirrored half-plane (az -> pi - az)
+        mirror = (math.pi - az + math.pi) % (2 * math.pi) - math.pi
+        mi = int(round((mirror % (2 * math.pi)) / (2 * math.pi) * len(self.az))) % len(self.az)
+        near = (np.abs(((self.az - self.az[mi]) + math.pi) % (2 * math.pi) - math.pi) < math.radians(25))
+        margin = float(srp[k] - srp[near].max()) if near.any() else float("nan")
+        return dict(az_rad=round(az, 4), az_deg=round(math.degrees(az), 1), srp=round(float(srp[k]), 3),
+                    margin=round(margin, 3), pairs=pairs)
+
+    def expected_resolution_deg(self, lag_err_samples=0.25):
+        """Azimuth error from a lag error on the ear pair alone (far field): d(az) = c * dtau / (d cos az)."""
+        d = float(np.linalg.norm(self.pos["left"] - self.pos["right"]))
+        return math.degrees(self.c * lag_err_samples / self.fs / d)
+
+
+def synth_call(fs=FS, dur=0.45, f0=210.0, seed=0, kind="voice"):
+    """A voice-like call (harmonics under formant bumps with a vibrato, 0.45 s) or a clap (short noise burst)."""
+    rng = np.random.default_rng(seed)
+    t = np.arange(int(dur * fs)) / fs
+    if kind == "clap":
+        env = np.exp(-t / 0.03)
+        return rng.standard_normal(len(t)).astype(np.float32) * env
+    f = f0 * (1 + 0.02 * np.sin(2 * math.pi * 5.5 * t)) * (1 + 0.08 * (t / dur))
+    ph = 2 * math.pi * np.cumsum(f) / fs
+    y = np.zeros_like(t)
+    for h in range(1, 18):
+        fh = h * f0
+        formant = math.exp(-((fh - 600) / 250) ** 2) + 0.6 * math.exp(-((fh - 1700) / 350) ** 2) + 0.3 * math.exp(-((fh - 2800) / 400) ** 2)
+        y += (formant + 0.02) / h ** 0.5 * np.sin(h * ph + rng.uniform(0, 2 * math.pi))
+    y += 0.03 * rng.standard_normal(len(t))
+    env = np.minimum(1.0, t / 0.03) * np.minimum(1.0, (dur - t) / 0.08)
+    y = y * env
+    return (y / np.abs(y).max()).astype(np.float32)
+
+
+def render_scene(signal, az_rad, fs=FS, mics_mm=MICS_MM, channels=CHANNELS, n_channels=4, pre_s=0.6, post_s=0.6,
+                 snr_db=20.0, seed=0, c=C_SOUND, floor=None):
+    """Far-field 4-channel rendering of `signal` from azimuth az (head frame, + left) with white noise at snr_db
+    (and an optional extra floor signal (n, ch)); fractional delays by FFT phase shift. Returns (x (n, 4), onset_s)."""
+    rng = np.random.default_rng(seed)
+    u = np.array([math.cos(az_rad), math.sin(az_rad)])
+    n = int(pre_s * fs) + len(signal) + int(post_s * fs)
+    x = np.zeros((n, n_channels), np.float32)
+    s = np.zeros(n, np.float32)
+    s[int(pre_s * fs):int(pre_s * fs) + len(signal)] = signal
+    S = np.fft.rfft(s)
+    f = np.fft.rfftfreq(n, 1 / fs)
+    for name, ch in channels.items():
+        p = np.asarray(mics_mm[name], float) / 1000.0
+        delay = -(u @ p) / c           # seconds: a mic farther along -u hears it later
+        x[:, ch] = np.fft.irfft(S * np.exp(-2j * math.pi * f * delay), n).astype(np.float32)
+    rms = float(np.sqrt(np.mean(signal ** 2)))
+    noise = rng.standard_normal(x.shape).astype(np.float32) * rms * 10 ** (-snr_db / 20)
+    for ch in range(n_channels):
+        if ch not in channels.values():
+            noise[:, ch] = 0
+    x = x + noise
+    if floor is not None:
+        x[: len(floor)] += floor[:n]
+    return x, pre_s
+
+
+# ----------------------------------------------------------------------------------------------- head path
+
+def policy_default_head(models=MODELS):
+    """Head joints of the policy default pose from stand61.onnx's metadata, else DEFAULT_HEAD."""
+    try:
+        import onnxruntime as ort
+        s = ort.InferenceSession(os.path.join(models, "stand61.onnx"), providers=["CPUExecutionProvider"])
+        m = s.get_modelmeta().custom_metadata_map
+        names, vals = m["joint_names"].split(","), [float(v) for v in m["default_joint_pos"].split(",")]
+        d = dict(zip(names, vals))
+        return {n: d[n] for n in HEAD_JOINTS}
+    except Exception:
+        return dict(DEFAULT_HEAD)
+
+
+class HeadPath:
+    """One pet/express take at a time, ticked at 50 Hz, with walk_brain's head EMA pre-inverted.
+
+    start(now, az_rad, pitch) submits an acknowledge toward the caller (az in the resting head frame); tick(now) returns
+    (head dict for want["head"] in absolute model rad, call events due now, active). After the take a content_idle
+    drifts the head home, then the path goes quiet (tick returns head None) and the last command holds.
+    """
+
+    def __init__(self, card=CARD, default=None, seed=None, preinverse=True, yaw_cap=YAW_CAP, warmth=0.8, energy=0.7,
+                 affect=(0.6, 0.6), idle=False):
+        self.ex = Expressor(load_card(card), seed=int(time.time() * 1000) % 2 ** 31 if seed is None else seed)
+        self.default = default or dict(DEFAULT_HEAD)
+        self.preinverse, self.yaw_cap, self.idle = preinverse, yaw_cap, idle
+        self.warmth, self.energy, self.affect = warmth, energy, Affect(*affect)
+        self.lim = np.asarray(HEAD_RANGE, float)
+        self.c = np.zeros(4)            # walk_brain's head_cmd as this path believes it (deltas)
+        self.active_until = None
+        self.settle_at = None
+        self.last = None
+        self.home_at = None
+
+    def start(self, now, az_rad, pitch=LOOK_PITCH):
+        """Returns the Performance (take name in .take, params, events)."""
+        behind = abs(az_rad) > self.yaw_cap
+        yaw = float(np.clip(az_rad, -self.yaw_cap, self.yaw_cap))
+        perf = self.ex.submit(acknowledge(Target(yaw, pitch, "caller"), warmth=self.warmth, energy=self.energy,
+                                          affect=self.affect), now)
+        self.settle_at = now + perf.duration
+        self.active_until = self.settle_at + 2.5
+        self.home_at = None
+        self.last = dict(take=perf.take, yaw=yaw, pitch=pitch, behind=behind, t=now,
+                         arrival=None if perf.arrival is None else now + perf.arrival, events=list(perf.events))
+        return perf
+
+    @property
+    def active(self):
+        """Still writing head commands (take or the drift home)."""
+        return self.active_until is not None
+
+    @property
+    def busy(self):
+        """The take itself is running (the drift home afterwards may be interrupted by a new call)."""
+        return self.settle_at is not None
+
+    def tick(self, now):
+        if self.active_until is None and not self.idle:
+            return None, [], False
+        if self.settle_at is not None and now >= self.settle_at:
+            self.ex.submit(content_idle(affect=Affect(self.affect.valence, max(0.2, self.affect.arousal - 0.2))), now)
+            self.settle_at = None
+        frame = self.ex.step(now)
+        y = np.array([frame["outputs"][j] for j in HEAD_JOINTS])
+        if self.preinverse:
+            r = np.clip(self.c + (y - self.c) / HEAD_ALPHA, -self.lim, self.lim)
+        else:
+            r = np.clip(y, -self.lim, self.lim)
+        self.c = self.c + HEAD_ALPHA * (r - self.c)
+        active = True
+        if self.active_until is not None and now >= self.active_until:
+            self.active_until = None
+            active = self.idle
+            if not self.idle:
+                r = np.zeros(4)      # one last command at the policy default; the brain's EMA eases into it
+                self.c[:] = 0
+        return want_head(r, self.default), frame["events"], active
+
+
+# ----------------------------------------------------------------------------------------------- quacks
+
+class QuackBank:
+    """Duck calls at a few pitches and lengths, rendered once from the existing recordings (pet.express.voice), played
+    with duck_sound.Voice (aplay on the ALSA default device, the -3 dB softvol ceiling of D-012). play(event) picks the
+    variant nearest the take's pitch and stretch. playing() tells the detector when to listen again."""
+
+    PITCHES = (0.85, 1.0, 1.15, 1.3)
+    STRETCHES = (0.85, 1.0, 1.25)
+
+    def __init__(self, out_dir, sounds_dir=None, muted=False, rng=None, max_sources=4):
+        self.muted = muted
+        self.rng = rng or np.random.default_rng()
+        self.files = {}
+        self.voice = None
+        self.last_end = None
+        self.sources = find_calls() if sounds_dir is None else sorted(glob.glob(os.path.join(sounds_dir, "*.wav")))
+        self.sources = self.sources[:max_sources]
+        if not self.sources:
+            return
+        os.makedirs(out_dir, exist_ok=True)
+        for si, src in enumerate(self.sources):
+            x, rate = read_wav(src)
+            for p in self.PITCHES:
+                for s in self.STRETCHES:
+                    path = os.path.join(out_dir, f"call{si}_p{p:.2f}_s{s:.2f}.wav")
+                    if not os.path.exists(path):
+                        write_wav(path, render_call(x, p, s, 0.0) * 0.9, rate)
+                    self.files[(si, p, s)] = path
+        self.picker = CallPicker(list(range(len(self.sources))), self.rng)
+        self.voice = Voice(out_dir)   # its own random quack() is not used; play() queues the chosen file
+
+    @property
+    def available(self):
+        return bool(self.files)
+
+    def play(self, event):
+        """Queue the nearest variant for a pet/express call event; returns the file (None when muted/unavailable)."""
+        if self.muted or not self.files:
+            return None
+        si = self.picker.pick()
+        p = min(self.PITCHES, key=lambda v: abs(v - event.get("pitch", 1.0)))
+        s = min(self.STRETCHES, key=lambda v: abs(v - event.get("stretch", 1.0)))
+        f = self.files[(si, p, s)]
+        self.voice.q.put(f)
+        return f
+
+    def playing(self):
+        """True while a player process runs (or is about to)."""
+        v = self.voice
+        if v is None:
+            return False
+        if not v.q.empty():
+            return True
+        return v.proc is not None and v.proc.poll() is None
+
+
+# ----------------------------------------------------------------------------------------------- brain gate
+
+def tail_json(path, max_bytes=16384):
+    """Last complete JSON line of a jsonl file, or None."""
+    try:
+        with open(path, "rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            f.seek(max(0, size - max_bytes))
+            lines = f.read().split(b"\n")
+        for line in reversed(lines):
+            line = line.strip()
+            if line:
+                try:
+                    return json.loads(line)
+                except ValueError:
+                    continue
+    except OSError:
+        return None
+    return None
+
+
+def newest(pattern):
+    files = glob.glob(pattern)
+    return max(files, key=os.path.getmtime) if files else None
+
+
+def procs_named(names=("walk_wired.py", "duck_selfcheck.py")):
+    """Python processes running one of these scripts (the duck_sense.py scan), by script name; [] where /proc is absent."""
+    found = []
+    if not os.path.isdir("/proc"):
+        return found
+    for pid in os.listdir("/proc"):
+        if not pid.isdigit():
+            continue
+        try:
+            with open(f"/proc/{pid}/cmdline", "rb") as f:
+                argv = f.read().split(b"\0")
+        except OSError:
+            continue
+        if argv and b"python" in os.path.basename(argv[0]):
+            for a in argv[1:3]:
+                b = os.path.basename(a).decode(errors="replace")
+                if b in names:
+                    found.append(b)
+    return found
+
+
+def lock_free(path=HW_LOCK):
+    """True when nobody holds the robot I/O lock (no brain, no reader): the lock is probed and released at once."""
+    try:
+        f = open(path, "a")
+    except OSError:
+        return True
+    try:
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        f.close()
+        return False
+    fcntl.flock(f, fcntl.LOCK_UN)
+    f.close()
+    return True
+
+
+def zero_walk(cmd):
+    return isinstance(cmd, dict) and cmd.get("mode") == "walk" and \
+        all(abs(float(cmd.get(k, 0) or 0)) < 1e-6 for k in ("vx", "vy", "vtheta"))
+
+
+def read_cmd_file(path=CMD_FILE):
+    try:
+        return json.load(open(path))
+    except (OSError, ValueError):
+        return None
+
+
+class BrainGate:
+    """What the brain is doing, from its newest tick log and the control file; refuses anything but walk/stand at rest."""
+
+    def __init__(self, log_pattern=BRAIN_LOGS, cmd_file=CMD_FILE, fresh_s=BRAIN_FRESH_S, now=time.time):
+        self.pattern, self.cmd_file, self.fresh_s, self.now = log_pattern, cmd_file, fresh_s, now
+        self.log = None
+
+    def state(self):
+        """dict(ok, why, mode, cmd, fresh_s, log)."""
+        self.log = newest(self.pattern) if (self.log is None or not os.path.exists(self.log)) else self.log
+        n = newest(self.pattern)
+        if n and n != self.log:
+            self.log = n
+        if not self.log:
+            return dict(ok=False, why="no brain tick log (~/duck-logs/duck_wired_log_*.jsonl): is walk_wired.py running?",
+                        mode=None, cmd=None, fresh_s=None, log=None)
+        row = tail_json(self.log)
+        if not row or "mode" not in row:
+            return dict(ok=False, why=f"no readable tick in {self.log}", mode=None, cmd=None, fresh_s=None, log=self.log)
+        age = self.now() - float(row.get("t", 0))
+        mode, cmd = row.get("mode"), row.get("cmd") or {}
+        st = dict(ok=False, why=None, mode=mode, cmd=cmd, fresh_s=round(age, 2), log=self.log, torque=row.get("torque"))
+        if age > self.fresh_s:
+            st["why"] = f"brain log stale ({age:.1f} s): the brain stopped or hangs"
+        elif mode not in ("walk", "stand"):
+            st["why"] = f"brain in {mode} mode (needs walk at zero command, or stand)"
+        elif mode == "walk" and not zero_walk(cmd):
+            st["why"] = f"brain walking with command {cmd}: waits for a zero command"
+        else:
+            st["ok"] = True
+        return st
+
+
+class CmdWriter:
+    """Writes the zero-command walk with a head pose to the control file, only while nobody else has written it."""
+
+    def __init__(self, path=CMD_FILE, dry=False):
+        self.path, self.dry = path, dry
+        self.mine = None
+        self.writes = 0
+        self.taken = None
+
+    def claimable(self):
+        cur = read_cmd_file(self.path)
+        if cur is None:
+            return True
+        if self.mine is not None and cur == self.mine:
+            return True
+        return zero_walk(cur) and set(cur) <= ZERO_KEYS
+
+    def write(self, head=None):
+        want = dict(WALK_ZERO)
+        if head is not None:
+            want["head"] = {k: round(float(v), 4) for k, v in head.items()}
+        if not self.claimable():
+            self.taken = read_cmd_file(self.path)
+            return False
+        if not self.dry:
+            tmp = self.path + ".namecall.tmp"
+            with open(tmp, "w") as f:
+                json.dump(want, f)
+            os.replace(tmp, self.path)
+        self.mine = want
+        self.writes += 1
+        return True
+
+
+# ----------------------------------------------------------------------------------------------- the program
+
+class Log:
+    def __init__(self, path, echo=True):
+        self.path, self.echo = path, echo
+        self.f = None
+        if path:
+            os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+            self.f = open(path, "a")
+
+    def write(self, kind, **rec):
+        rec = dict(ts=round(time.time(), 3), kind=kind, **rec)   # ts wall clock; a call's own "t" is its onset time
+        if self.f:
+            self.f.write(json.dumps(rec) + "\n")
+            self.f.flush()
+        if self.echo:
+            short = {k: v for k, v in rec.items() if k not in ("ts", "kind", "pairs", "params", "events")}
+            print(f"{time.strftime('%H:%M:%S')} {kind}: {json.dumps(short)}", flush=True)
+
+
+class NameCall:
+    """Glue: blocks in, detector, localiser, head path, quack, control file. run_blocks drives it for tests and
+    --wav; run_live for the robot."""
+
+    def __init__(self, args, log, now=time.time):
+        self.a, self.log, self.now = args, log, now
+        self.det = OnsetDetector(thresh_db=args.threshold_db, rise_db=args.rise_db, refractory_s=args.refractory,
+                                 floor_tau_s=args.floor_tau)
+        ch = dict(CHANNELS)
+        if args.swap_ears:
+            ch["left"], ch["right"] = ch["right"], ch["left"]
+        self.loc = Localiser(channels=ch)
+        self.ring = collections.deque(maxlen=12)     # (t, block): 240 ms
+        self.pending = None                          # onset waiting for its window to fill
+        self.head = None if args.no_head else HeadPath(default=policy_default_head() if not args.default_head_file else
+                                                       json.load(open(args.default_head_file)), seed=args.seed,
+                                                       preinverse=not args.smooth, idle=args.idle)
+        self.bank = QuackBank(args.bank_dir, args.sounds, muted=args.mute) if not args.no_sound else None
+        self.writer = CmdWriter(args.cmd, dry=args.dry) if not args.no_head else None
+        self.gate = BrainGate(args.brain_logs, args.cmd) if not args.no_gate else None
+        self.responses = 0
+        self.head_yaw_now = 0.0          # the head's commanded yaw in the resting frame: mics turn with the head
+        self.quack_due = []              # (t_abs, event)
+        self.deaf_from_quack = False
+        self.calls = []                  # per response records (tests / sim)
+        self.rows = None                 # offline drivers collect (t, head, events) here
+        self.heartbeat_at = now() + 10
+        self.cpu0, self.wall0 = time.process_time(), time.perf_counter()
+
+    # --- sound side
+    def hear(self, t, block):
+        """One 20 ms block. Returns a detection dict when a call was localised."""
+        self.ring.append((t, block))
+        if self.bank is not None and self.bank.playing():
+            self.det.deaf_until = max(self.det.deaf_until, t + QUACK_DEAF_S)
+            self.deaf_from_quack = True
+        elif self.deaf_from_quack and t >= self.det.deaf_until:
+            self.deaf_from_quack = False
+            self.det.reset_floor()       # a playback stream may have reconfigured the shared I2S0 (duck_selfcheck.py)
+        if self.head is not None and self.head.busy:
+            self.det.deaf_until = max(self.det.deaf_until, t + 0.1)   # own servos; the refractory covers the rest
+        ev = self.det.update(t, block)
+        if ev is not None:
+            self.pending = ev
+        if self.pending is not None:
+            t0 = self.pending["t"] - 0.5 * BLOCK / FS            # 10 ms before the onset block
+            need_end = t0 + self.loc.window / FS
+            have = [b for b in self.ring if b[0] + BLOCK / FS > t0 - 1e-9]
+            if have and have[-1][0] + BLOCK / FS >= need_end - 1e-9:
+                x = np.concatenate([b[1] for b in have])
+                off = int(round((t0 - have[0][0]) * FS))
+                x = x[max(0, off): max(0, off) + self.loc.window]
+                est = self.loc.estimate(x) if len(x) >= self.loc.window - 1 else None
+                det = dict(self.pending, decided_t=t + BLOCK / FS, **(est or {}))
+                self.pending = None
+                if est is not None:
+                    return det
+        return None
+
+    def respond(self, det, now):
+        """Turn a detection into a take (azimuth in the head frame -> resting frame)."""
+        az = det["az_rad"] + self.head_yaw_now
+        az = (az + math.pi) % (2 * math.pi) - math.pi
+        rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3))
+        if self.head is not None:
+            perf = self.head.start(now, az, self.a.pitch)
+            rec.update(take=perf.take, behind=self.head.last["behind"], arrival_s=perf.arrival,
+                       params={k: (round(v, 4) if isinstance(v, float) else v) for k, v in perf.params.items()},
+                       events=perf.events, target_yaw=self.head.last["yaw"])
+        self.responses += 1
+        self.calls.append(rec)
+        self.log.write("call", **rec)
+        return rec
+
+    # --- motion side
+    def motion_tick(self, now):
+        """50 Hz: write the head command, play due calls. Returns False when the control file was taken."""
+        if self.head is None:
+            return True
+        head, events, active = self.head.tick(now)
+        for e in events:
+            if e.get("kind") == "call":
+                f = self.bank.play(e) if self.bank is not None else None
+                self.log.write("quack", file=None if f is None else os.path.basename(f), pitch=e.get("pitch"),
+                               stretch=e.get("stretch"), muted=self.a.mute or self.bank is None)
+        if self.rows is not None and head is not None:
+            self.rows.append((now, head, events))
+        if head is not None:
+            self.head_yaw_now = float(head["head_yaw"] - self.head.default["head_yaw"])
+            if self.writer is not None and not self.writer.write(head):
+                self.log.write("yield", why="control file written by another program; take stopped", found=self.writer.taken)
+                self.head.active_until, self.head.settle_at = None, None
+                return False
+        return True
+
+    def gate_ok(self):
+        if self.gate is None:
+            return True, None
+        st = self.gate.state()
+        return st["ok"], st
+
+    # --- drivers
+    def run_blocks(self, blocks, head_rows=None):
+        """Offline: iterate (t, block) pairs; motion ticks follow the block clock (the same motion_tick as the robot,
+        writing the control file unless --dry). Returns detections."""
+        dets = []
+        self.rows = head_rows
+        for t, b in blocks:
+            det = self.hear(t, b)
+            if det is not None:
+                dets.append(self.respond(det, t + BLOCK / FS))
+                if self.a.once and self.responses >= self.a.once:
+                    break
+            self.motion_tick(t)
+        return dets
+
+    def run_live(self, cap):
+        a, log = self.a, self.log
+        ok, st = self.gate_ok()
+        if not ok:
+            sys.exit(f"namecall: refused, {st['why'] if st else 'gate'}")
+        if st and st["mode"] == "stand":
+            if self.writer is None or not self.writer.write(None):
+                sys.exit("namecall: refused, the brain stands but the control file belongs to another program")
+            log.write("start", note="brain in stand mode: wrote the zero-command walk (stand61), waiting for walk mode")
+            t_end = self.now() + 6.0
+            while self.now() < t_end:
+                time.sleep(0.2)
+                ok, st = self.gate_ok()
+                if ok and st["mode"] == "walk":
+                    break
+            else:
+                sys.exit(f"namecall: refused, the brain did not enter walk mode ({st['why'] if st else '?'})")
+            time.sleep(1.5)   # stand61 settles before the first take
+        log.write("start", brain=st, lock_free=lock_free(), procs=procs_named(), mute=a.mute, no_head=a.no_head,
+                  threshold_db=a.threshold_db, refractory_s=a.refractory, bank=0 if self.bank is None else len(self.bank.files),
+                  default_head=None if self.head is None else self.head.default)
+        period = BLOCK / FS
+        next_tick = time.perf_counter()
+        next_gate = self.now() + 0.5
+        try:
+            while True:
+                try:
+                    item = cap.q.get(timeout=1.0)
+                except queue.Empty:
+                    log.write("capture", why="no audio block for 1 s", err=cap.err)
+                    if cap.proc is not None and cap.proc.poll() is not None:
+                        sys.exit(f"namecall: capture ended: {cap.err}")
+                    continue
+                if item is None:
+                    sys.exit(f"namecall: capture ended: {cap.err}")
+                t, block = item
+                det = self.hear(t, block)
+                now = self.now()
+                if det is not None:
+                    if self.head is not None and self.head.busy:
+                        log.write("skip", why="a take is running", az_deg=det["az_deg"])
+                    else:
+                        ok, st = self.gate_ok()
+                        if not ok:
+                            log.write("skip", why=st["why"], az_deg=det["az_deg"])
+                        else:
+                            self.respond(det, now)
+                if not self.motion_tick(now):
+                    pass
+                if now >= next_gate:
+                    next_gate = now + 0.5
+                    ok, st = self.gate_ok()
+                    if not ok and (self.head is None or not self.head.active or st["mode"] not in ("walk",)):
+                        if st and st["mode"] not in ("walk", "stand"):
+                            log.write("stop", why=st["why"])
+                            sys.exit(f"namecall: stopped, {st['why']}")
+                        if st and st["why"] and "stale" in st["why"]:
+                            log.write("stop", why=st["why"])
+                            sys.exit(f"namecall: stopped, {st['why']}")
+                if now >= self.heartbeat_at:
+                    self.heartbeat_at = now + 10
+                    cpu = (time.process_time() - self.cpu0) / max(1e-6, time.perf_counter() - self.wall0)
+                    self.cpu0, self.wall0 = time.process_time(), time.perf_counter()
+                    log.write("heartbeat", floor_db=None if self.det.floor is None else round(self.det.floor, 1),
+                              blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
+                              writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"))
+                if a.once and self.responses >= a.once and (self.head is None or not self.head.active):
+                    # the drift home has finished too: the last command is the policy default
+                    log.write("done", responses=self.responses)
+                    break
+        except KeyboardInterrupt:
+            log.write("stop", why="Ctrl-C")
+        finally:
+            cap.stop()
+            if self.writer is not None and self.head is not None:
+                self.writer.write(want_head(np.zeros(4), self.head.default))   # head home; the brain keeps balancing
+
+
+def parse_args(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--device", default=None, help="ALSA capture device (default: hw:CARD=sndi2s0,DEV=0 found by name)")
+    ap.add_argument("--wav", default=None, help="replay a 4-channel wav instead of the microphones")
+    ap.add_argument("--cmd", default=CMD_FILE)
+    ap.add_argument("--brain-logs", default=BRAIN_LOGS)
+    ap.add_argument("--log", default=None, help="default ~/duck-logs/namecall_<start>.jsonl")
+    ap.add_argument("--sounds", default=None, help="recordings for the quacks (default: walk_wired's sounds folder)")
+    ap.add_argument("--bank-dir", default="/tmp/namecall_calls")
+    ap.add_argument("--threshold-db", type=float, default=12.0, help="onset over the room floor")
+    ap.add_argument("--rise-db", type=float, default=6.0, help="onset over the quietest of the last 100 ms")
+    ap.add_argument("--refractory", type=float, default=2.5, help="s between accepted calls")
+    ap.add_argument("--floor-tau", type=float, default=3.0, help="s, room floor tracking")
+    ap.add_argument("--pitch", type=float, default=LOOK_PITCH, help="rad up to look at the caller")
+    ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--once", type=int, default=0, help="stop after N responses (0 = run on)")
+    ap.add_argument("--mute", action="store_true", help="no quack (first robot test)")
+    ap.add_argument("--no-sound", action="store_true", help="do not even render the call bank")
+    ap.add_argument("--no-head", action="store_true", help="detect and localise only, no control-file writes")
+    ap.add_argument("--smooth", action="store_true", help="send the take's targets as they are (no EMA pre-inverse)")
+    ap.add_argument("--idle", action="store_true", help="stream the Perlin idle between calls (50 Hz writes all the time)")
+    ap.add_argument("--swap-ears", action="store_true", help="ch0 is the right ear")
+    ap.add_argument("--no-gate", action="store_true", help="skip the brain checks (off-robot only)")
+    ap.add_argument("--dry", action="store_true", help="do not write the control file (prints the writes count)")
+    ap.add_argument("--default-head-file", default=None, help="json {joint: rad} instead of the stand61 metadata")
+    ap.add_argument("--quiet", action="store_true")
+    return ap.parse_args(argv)
+
+
+def main(argv=None):
+    a = parse_args(argv)
+    log_path = a.log or os.path.expanduser(time.strftime("~/duck-logs/namecall_%Y%m%d-%H%M%S.jsonl"))
+    log = Log(log_path, echo=not a.quiet)
+    if a.wav:
+        a.no_gate = True
+        nc = NameCall(a, log)
+        dets = nc.run_blocks(WavSource(a.wav).blocks())
+        print(f"{len(dets)} call(s) in {a.wav}: " + ", ".join(f"{d['t']:.2f} s az {d['az_deg']:+.0f} deg" for d in dets))
+        return 0
+    if not a.no_gate and lock_free():
+        sys.exit("namecall: refused, nobody holds the robot I/O lock (no walk_wired.py brain running)")
+    if "duck_selfcheck.py" in procs_named():
+        sys.exit("namecall: refused, duck_selfcheck.py is using the sound card; try again when it is done")
+    dev = a.device
+    if dev is None:
+        n = find_card()
+        if n is None:
+            sys.exit(f"namecall: no {CARD_NAME} sound card (I2S0 overlay not loaded?)")
+        dev = f"hw:CARD={CARD_NAME},DEV=0"
+    nc = NameCall(a, log)
+    if nc.bank is not None and not nc.bank.available and not a.mute:
+        log.write("warn", why="no duck recordings found; quacks are silent")
+    cap = Capture(dev).start()
+    nc.run_live(cap)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
