@@ -3,33 +3,152 @@
   "outerDiameterMm": 14.0,
   "boreMm": 10.5,
   "pilotMm": 1.6,
-  "lengthMm": 2.1,
+  "lengthMm": 6.1,
   "printSizeMm": [
    14.0,
    14.0,
-   2.1
+   6.1
   ],
-  "volumeMm3": 268.1,
+  "volumeMm3": 689.4,
   "bedContactMm2": 151.8
  },
  "walls": {
   "sleeveWallMm": 1.75,
-  "plateMm": 1.5,
-  "pilotToBoreMm": 4.45
+  "bottomMm": 3.3,
+  "pilotToBoreMm": 4.45,
+  "sleeveHeightMm": 2.8
  },
  "wallsOk": true,
- "envelope": {
-  "pointsOutsideOldRingBossAndGap": 0,
-  "samples": 9661,
-  "ok": true,
-  "ringYmax": -37.5,
+ "seat": {
+  "ringY": [
+   -39.6,
+   -33.5
+  ],
   "oldRingYmax": -37.5,
-  "oldBossEndY": -37.0
+  "bossEndY": -37.0,
+  "bossCut": false,
+  "lowerShellBoreRadiusMm": {
+   "-39.5..-37.5": 7.3,
+   "-36.0..-35.5": 7.3,
+   "between and beyond": 8.4
+  },
+  "playWithoutRingPerSideMm": 2.3,
+  "radialPlayWithRingPerSideMm": {
+   "bossInBore": 0.25,
+   "ringInSeat": 0.3
+  }
+ },
+ "fitPath": {
+  "ok": true,
+  "slideMm": 2.8,
+  "stages": [
+   {
+    "stage": "drop",
+    "dyMm": 2.8000000000000043,
+    "dzMm": 12.0,
+    "shellInside": 0,
+    "jawInside": 0
+   },
+   {
+    "stage": "drop",
+    "dyMm": 2.8000000000000043,
+    "dzMm": 8.0,
+    "shellInside": 0,
+    "jawInside": 0
+   },
+   {
+    "stage": "drop",
+    "dyMm": 2.8000000000000043,
+    "dzMm": 4.0,
+    "shellInside": 0,
+    "jawInside": 0
+   },
+   {
+    "stage": "drop",
+    "dyMm": 2.8000000000000043,
+    "dzMm": 2.0,
+    "shellInside": 0,
+    "jawInside": 0
+   },
+   {
+    "stage": "drop",
+    "dyMm": 2.8000000000000043,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0
+   },
+   {
+    "stage": "slide",
+    "dyMm": 2.8,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.36
+   },
+   {
+    "stage": "slide",
+    "dyMm": 2.4,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.41
+   },
+   {
+    "stage": "slide",
+    "dyMm": 2.0,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.33
+   },
+   {
+    "stage": "slide",
+    "dyMm": 1.6,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.31
+   },
+   {
+    "stage": "slide",
+    "dyMm": 1.2,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.31
+   },
+   {
+    "stage": "slide",
+    "dyMm": 0.8,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.3
+   },
+   {
+    "stage": "slide",
+    "dyMm": 0.4,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.3
+   },
+   {
+    "stage": "slide",
+    "dyMm": 0.0,
+    "dzMm": 0.0,
+    "shellInside": 0,
+    "jawInside": 0,
+    "shellMinMm": 0.3
+   }
+  ],
+  "note": "cup dropped into the open lower half-seat beside the boss end (jaw support off), then slid outboard onto the boss"
  },
  "clearances": {
-  "jaw_frame_boss_cut": {
+  "jaw_frame_drilled": {
    "ringSamplesInsideJaw": 0,
-   "contact": "plate face on the cut boss end at y -39.0",
+   "bossEndY": -37.0,
+   "bossEndToBoreFloorMm": 0.2,
    "sleeveToShoulderMm": 0.1
   },
   "head_bottom": {
@@ -42,31 +161,27 @@
   },
   "motor13": {
    "insideCount": null,
-   "minDistanceMm": 13.0
+   "minDistanceMm": 9.0
   }
  },
  "screw": {
-  "spec": "M2 × 8 TAP",
+  "spec": "M2 × 10 TAP",
   "headSeatY": -43.81,
-  "tipY": -35.81,
-  "threadInPlateMm": 1.5,
-  "tipPastPlateMm": 1.69,
+  "tipY": -33.81,
+  "threadInBottomMm": 2.69,
+  "tipToCupEndMm": 0.31,
   "drilledHoleRadiusMm": [
+   1.25,
    1.25,
    1.25,
    1.25
   ],
   "originalHoleDiameterMm": 2.0,
   "rollClearanceToID13Mm": {
-   "-0.31": 10.22,
-   "+0.00": 11.31,
-   "+0.31": 9.03
+   "-0.31": 6.73,
+   "+0.00": 9.0,
+   "+0.31": 6.72
   }
- },
- "bossCut": {
-  "fromY": -37.0,
-  "toY": -39.0,
-  "removedMm": 2.0
  },
  "sources": {
   "oldRing": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/mouth_sliding_ring.stl",

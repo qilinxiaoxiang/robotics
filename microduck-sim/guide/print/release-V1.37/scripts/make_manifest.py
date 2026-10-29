@@ -1,7 +1,8 @@
 """Write the V1.37 incremental release manifest (D-033, Shawn 2026-10-29: "出文件"): two capped jaw rings on one Black plate,
 one to fit and one spare. The ring replaces the V1.6 mouth sliding ring, which fell off the right jaw boss: a dia 14 cup
-2.1 mm tall, 1.5 mm bottom with a dia 1.6 pilot, no flange, held on the boss (cut back 2 mm by hand) by one M2 x 8 from
-outside the jaw arm (print/jaw-ring-screw-20261029/build_jaw_ring.py, checks.json, DESIGN-CONTRACT.json).
+6.1 mm tall, 3.3 mm solid bottom with a dia 1.6 pilot, no flange, held on the uncut boss by one M2 x 10 from outside the
+jaw arm (print/jaw-ring-screw-20261029/build_jaw_ring.py, checks.json, DESIGN-CONTRACT.json). Reissued 2026-10-29 evening:
+the first 2.1 mm cup (1.5 mm plate, 0.6 mm lip) failed to print three times; Shawn: "为什么这么薄", "不可能的 我看空间很大", "你出吧".
 Profiles, baseline stock and the delivery contract come from manifest-V1.36.json. Pose: closed end on the bed, sleeve up,
 written as the print STL (identity); every surface faces up or is vertical, nothing needs support. Stock Black process.
 
@@ -25,7 +26,7 @@ def ref(p): return {'path': str(Path(p).resolve()), 'sha256': sha(p)}
 def main():
     m = json.loads(V136.read_text())
     checks = json.loads((CAD / 'checks.json').read_text())
-    assert checks['wallsOk'] and checks['envelope']['ok'] and checks['clearances']['jaw_frame_boss_cut']['ringSamplesInsideJaw'] == 0, checks
+    assert checks['wallsOk'] and checks['fitPath']['ok'] and checks['clearances']['jaw_frame_drilled']['ringSamplesInsideJaw'] == 0 and checks['seat']['bossCut'] is False, checks
     stl = CAD / 'build/jaw_ring_capped-print.stl'
     k = trimesh.load(stl, force='mesh', process=False)
     assert abs(k.bounds[0, 2]) < 1e-6
@@ -34,25 +35,27 @@ def main():
     row = dict(
         key='jaw_ring_capped', color='Black', quantity=2, decision='addition', replacesStockIds=[],
         path=src['path'], sha256=src['sha256'],
-        sourceFrame='print frame: closed end on the bed, sleeve up (robot frame: x - 26.1, z - 118.62, -y - 37.5)',
+        sourceFrame='print frame: closed end on the bed, sleeve up (robot frame: x - 26.1, z - 118.62, -y - 33.5)',
         sourceToPrint=np.eye(4).tolist(), flatContact={'minimumAreaMm2': round(0.95 * area, 1)},
         poseName='closed end on the bed',
-        poseOrigin=('Closed end on the bed, open sleeve up: the bottom is a flat disc on the bed and the sleeve wall is vertical, so '
+        poseOrigin=('Closed end on the bed, open sleeve up: the 3.3 mm solid bottom is a flat disc on the bed and the sleeve wall is vertical, so '
                     'nothing needs support; the M2 pilot is vertical.'),
         poseCheck=dict(printStl=src, bedContactMm2=round(area, 2), printSizeMm=size, note='STL written in its print pose (identity)'),
         changeReason=(f'D-033 (Shawn 2026-10-29: "右下颚连接处的圈掉了 … 设计一个圆圈 通过螺丝固定在右下颚上", "能不能直接一个件搞定", '
-                      f'"有螺丝固定就不用那个特别薄的挡板了吧"): one-piece capped ring, OD {c["part"]["outerDiameterMm"]}, bore '
-                      f'{c["part"]["boreMm"]}, {c["part"]["lengthMm"]} mm tall, {c["walls"]["plateMm"]} mm bottom with a dia '
-                      f'{c["part"]["pilotMm"]} pilot, no flange. On the boss cut back {c["bossCut"]["removedMm"]} mm it ends where the old '
-                      f'ring ended (y {c["envelope"]["ringYmax"]}), so the jaw springs in with the usual bend; one M2 x 8 from outside the '
-                      f'arm (hole drilled to 2.5) gives {c["screw"]["threadInPlateMm"]} mm of thread in the bottom. Clear of the lower '
-                      f'shell {c["clearances"]["head_bottom"]["minDistanceMm"]} mm and the jaw support '
-                      f'{c["clearances"]["jaw_support"]["minDistanceMm"]} mm, as the old sleeve. Two copies: one spare.'),
+                      f'"有螺丝固定就不用那个特别薄的挡板了吧"; reissue: "为什么这么薄 以前也是这样的吗", "不可能的 我看空间很大", "你出吧"): '
+                      f'one-piece cup ring, OD {c["part"]["outerDiameterMm"]}, bore {c["part"]["boreMm"]}, {c["part"]["lengthMm"]} mm tall: '
+                      f'a {c["walls"]["sleeveHeightMm"]} mm sleeve over the whole uncut boss, then a {c["walls"]["bottomMm"]} mm solid bottom with a '
+                      f'dia {c["part"]["pilotMm"]} pilot, no flange. It fills the 10 mm seat between the lower shell and the jaw support (bore r 7.3 '
+                      f'and 8.4 along it) to y {c["seat"]["ringY"][1]}, so it is fitted after the jaw is sprung in (dropped into the open half-seat '
+                      f'and slid {c["fitPath"]["slideMm"]} mm onto the boss; path checked clear). One M2 x 10 from outside the arm (hole drilled to '
+                      f'2.5) gives {c["screw"]["threadInBottomMm"]} mm of thread in the bottom. Clear of the lower shell '
+                      f'{c["clearances"]["head_bottom"]["minDistanceMm"]} mm and the jaw support {c["clearances"]["jaw_support"]["minDistanceMm"]} mm, '
+                      f'as the old sleeve. The first 2.1 mm cup (1.5 mm plate under a 0.6 mm lip) failed to print three times. Two copies: one spare.'),
         supersedes='mouth_sliding_ring (V1.6 package, Black)',
         objectSettings={'brim_type': 'outer_only', 'brim_width': '5', 'brim_object_gap': '0.1'},
         objectSettingsReason=('the first V1.37 plate failed (Shawn 2026-10-29, IMG_7204): both 14 mm rings came off the textured plate after '
-                              'the first layers without a brim (R1 default: tip angle over 10 deg, no brim); a 0.64 g part with 146 mm2 '
-                              'of contact needs the 5 mm outer brim to stay down'),
+                              'the first layers without a brim (R1 default: tip angle over 10 deg, no brim); a small part with 146 mm2 '
+                              'of contact keeps the 5 mm outer brim to stay down'),
         incrementalEvidence=ref(CAD / 'checks.json'),
         evidenceAlso=[ref(CAD / 'build_jaw_ring.py'), ref(CAD / 'DESIGN-CONTRACT.json')],
     )
@@ -70,10 +73,10 @@ def main():
                                     'top of the first plate melted into a lump (Shawn 2026-10-29). Minimum layer time 12 s (slow down to 5 mm/s) '
                                     'on the X1C; Orca loads the Elegoo filament profile over the project, so there the wall and infill speeds drop to 35 mm/s instead (fan already at full below 80 s layers). Each layer then has time to set. The Elegoo plate with brim (IMG_7205) kept the brim and the first layer on the bed and lost both rings above layer 1: the nozzle knocked the 0.1 mm layers loose, so the Elegoo prints 0.2 mm layers and lifts on every travel.'),
              retiredParts=[{'part': 'mouth_sliding_ring', 'printed': 'V1.6 (Black)',
-                            'reason': 'replaced by the V1.37 capped jaw ring held by one M2 x 8 (D-033); the old ring fell off the right jaw boss'}],
-             prototypeScope='V1.37: two capped jaw rings (one spare) on one Black plate.',
+                            'reason': 'replaced by the V1.37 cup jaw ring held by one M2 x 10 (D-033); the old ring fell off the right jaw boss'}],
+             prototypeScope='V1.37 (reissue): two cup jaw rings (one spare) on one Black plate.',
              knownFitBoundary=(f'Bore {c["part"]["boreMm"]} on the dia 10.0 boss and OD {c["part"]["outerDiameterMm"]} in the seat, as the old '
-                               'ring; the pilot 1.6 for M2 TAP. The boss cut and the 2.5 drill are done by hand; printed sizes not measured.'))
+                               'ring; the pilot 1.6 for M2 TAP. The 2.5 drill is done by hand; the boss is not cut; printed sizes not measured.'))
     m.pop('deferred', None)
     m['deliveryContract'] = dict(m['deliveryContract'], colors=['Black'], filesPerColor=2, fileCount=2, baseline='printed releases through V1.36',
                                  status='INCREMENTAL_REPLACEMENT', supersedes=['mouth_sliding_ring of V1.6 (Black)'])

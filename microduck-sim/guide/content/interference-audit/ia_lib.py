@@ -38,8 +38,8 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               'imu_board': 'imu_board.stl', 'imu_sh4_receiving': 'imu_sh4_receiving.stl',
               # V1.8 jaw: the 10/1 jaw frame with the lower lip pad printed as part of it (print/jaw-pad/).
               'jaw_frame': 'jaw_frame.stl',
-              # 2026-10-29 (print/jaw-ring-screw-20261029/): jaw_frame.stl is the as-built jaw with the right boss cut
-              # back 2 mm and its hole drilled to 2.5; the capped ring replaces the mouth sliding ring, one M2 x 8 holds it.
+              # 2026-10-29 (print/jaw-ring-screw-20261029/): jaw_frame.stl is the as-built jaw with the right boss hole
+              # drilled to 2.5 (boss not cut); the cup ring replaces the mouth sliding ring, one M2 x 10 holds it.
               'mouth_sliding_ring': 'mouth_sliding_ring.stl',
               # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm (print/neck-ring/).
               'neck_pitch_ring': 'neck_pitch_ring.stl',

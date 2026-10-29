@@ -1,6 +1,6 @@
 {
   "schema": "design-contract/1",
-  "design": "Right jaw pivot ring held by a screw: a one-piece capped ring (plain sleeve, no thin flange, closed inner end with an M2 pilot) on the right (-Y) jaw arm boss, whose end is cut back 2 mm by hand, held by one M2 x 8 driven from outside through the existing boss hole drilled to 2.5",
+  "design": "Right jaw pivot ring held by a screw: a one-piece cup (OD 14 sleeve over the whole uncut dia 10 boss, then a solid 3.3 mm bottom with an M2 pilot) 6.1 mm long on the right (-Y) jaw arm, fitted after the jaw is sprung into the lower shell, held by one M2 x 10 driven from outside through the existing boss hole drilled to 2.5",
   "approved": {
     "by": "Shawn",
     "date": "2026-10-29",
@@ -8,22 +8,30 @@
       "现在microduck的右下颚连接处的圈掉了 同时感觉原来那个圈容易掉 正好我们下颚的圆孔也没去去掉 是不是可以设计一个圆圈 通过螺丝固定在右下颚上",
       "要两部分吗 能不能直接一个件搞定",
       "有螺丝固定就不用那个特别薄的挡板了吧 也不好打印",
-      "出文件"
+      "为什么这么薄 以前也是这样的吗",
+      "不可能的 我看空间很大",
+      "现在黄色下颚套在这个圈里很松动 空间有多大 我们需要一个圈套住防止旷动吧",
+      "现在就是这个圈没了 你出吧"
     ],
-    "history": "2026-10-29: the two-piece option (old ring plus a separate dia 12 retaining disc and M2 x 10) was shown first; Shawn asked for one piece. A one-piece capped ring on the uncut boss would reach 3.5 mm further inboard and the right arm would have to bend about 8 mm to spring the jaw in, so the boss end is cut back 2 mm (concept picture jaw_ring_onepiece.png, rule: nothing inboard of today's envelope). Shawn then dropped the 0.3 mm flange: with the screw the ring cannot slide off, and the jaw is held axially by the four ID15 horn screws on the +Y side."
+    "history": "2026-10-29 morning: the two-piece option (old ring plus a separate dia 12 retaining disc and M2 x 10) was shown first; Shawn asked for one piece. To keep the jaw spring-in bend unchanged the first cup kept everything inboard of the old ring end (y -37.5) by cutting the boss back 2 mm; that left a 1.5 mm plate with a 0.6 mm lip, which failed to print three times on the Elegoo (IMG_7204, IMG_7205). Shawn questioned the thinness and the space: the seat between the yellow lower shell and the black jaw support is about 10 mm long along the axis (bore r 7.3 at y -39.5..-37.5 and -36.0..-35.5, r 8.4 between and beyond), and without a ring the dia 10 boss rattles 2.3 mm per side in it. The cup now fills the seat: sleeve over the uncut boss to its end at y -37.0, 3.3 mm solid bottom to y -33.5, 6.1 mm overall, M2 x 10 from outside. It is fitted after the jaw is sprung in (dropped into the open lower half-seat and slid onto the boss before the jaw support goes on), so the spring-in bend stays as before; the boss is not cut."
   },
   "concept_render": "concept/jaw_ring_onepiece.png",
   "geometry": [
     {
       "part": "jaw_ring_capped",
-      "says": "nothing inboard of the old ring end (y -37.5): springing the jaw in needs no extra bend",
-      "bounds": {"y_max": {"lt": -37.45}}
+      "says": "the cup ends at y -33.5: 6.1 mm long, inside the 10 mm seat, 3 mm short of the lower shell feature at y -30.5",
+      "bounds": {"y_max": {"lt": -33.45}, "y_min": {"gt": -39.65}}
     },
     {
       "part": "jaw_ring_capped",
       "says": "outer diameter 14 like the old sleeve, no flange (the old flange was dia 16.4)",
-      "size": {"x": [13.9, 14.1], "z": [13.9, 14.1]}
+      "size": {"x": [13.9, 14.1], "z": [13.9, 14.1], "y": [6.05, 6.15]}
+    },
+    {
+      "part": "jaw_frame_drilled",
+      "says": "the boss is not cut: the as-built jaw keeps its printed boss end at y -37.0 and only the hole is drilled to 2.5",
+      "bounds": {"y_min": {"lt": -43.5}}
     }
   ],
-  "forbidden_parts": ["retaining_disc"]
+  "forbidden_parts": ["retaining_disc", "jaw_frame_boss_cut"]
 }

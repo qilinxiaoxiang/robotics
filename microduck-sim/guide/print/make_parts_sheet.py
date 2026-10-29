@@ -703,15 +703,17 @@ RETIRED_INCREMENTAL['V1.37'] = [
     ('V1.6 mouth sliding ring', 'Black', HERE.parents[1] / 'build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/mouth_sliding_ring.stl',
      'Nothing held it on the boss and it fell off.', 'Capped jaw ring'),
 ]
-INTRO_BY_VERSION['V1.37'] = ('V1.37 is one black plate with two capped jaw rings, one to fit and one spare. The ring is a small cup that '
-                             'goes on the boss inside the right jaw arm, open side towards the arm, and one M2 × 8 from outside the arm '
-                             'holds it there. Before fitting it, cut the boss back 2 mm and drill its centre hole to 2.5 (guide chapter 8, jaw step).')
+INTRO_BY_VERSION['V1.37'] = ('V1.37 (reissued 2026-10-29 evening) is one black plate with two cup jaw rings, one to fit and one spare. The ring is a '
+                             'dia 14 cup, 6.1 mm long with a 3.3 mm solid bottom, that goes on the boss inside the right jaw arm, open side towards '
+                             'the arm, and one M2 × 10 from outside the arm holds it there. Do not cut the boss; drill its centre hole to 2.5 and fit '
+                             'the ring after the jaw is sprung into the shell (guide chapter 8, jaw step). The first 2.1 mm version was too thin to print.')
 RETIRED_HEADING_BY_VERSION['V1.37'] = 'No longer used'
 RETIRED_LEAD_BY_VERSION['V1.37'] = 'The V1.6 mouth sliding ring with its thin flange.'
-INCREMENTAL_NAMES_BY_VERSION['V1.37'] = dict(jaw_ring_capped='Capped jaw ring')
+INCREMENTAL_NAMES_BY_VERSION['V1.37'] = dict(jaw_ring_capped='Cup jaw ring')
 INCREMENTAL_NOTES_BY_VERSION['V1.37'] = dict(
-    jaw_ring_capped=('Prints closed end down with a 5 mm brim, no support; peel the brim off. Clean the plate first: the rings are small, and the first plate without a brim came off. The file prints slowly on purpose (about 12 s per layer on the X1C, 35 mm/s on the Elegoo) so each thin layer sets before the next. The centre hole is the M2 pilot: do not drill it. '
-                     'Bore 10.5 slides over the boss; outer dia 14 turns in the seat.'))
+    jaw_ring_capped=('Prints closed end down, 6.1 mm tall, with a 5 mm brim and no support; peel the brim off. Clean the plate first. The file '
+                     'prints slowly on purpose (about 12 s per layer on the X1C, 35 mm/s and 0.2 mm layers on the Elegoo). The centre hole is the M2 '
+                     'pilot: do not drill it. Bore 10.5 slides over the boss; outer dia 14 turns in the seat.'))
 
 # V1.38: the box cap of D-034 (2026-10-29): its four screw columns reach the boards. Replaces the printed V1.20 box cap.
 RETIRED_INCREMENTAL['V1.38'] = [

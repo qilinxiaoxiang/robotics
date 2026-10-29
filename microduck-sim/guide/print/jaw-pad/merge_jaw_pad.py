@@ -8,7 +8,7 @@ sits on the pocket floor with a 0-0.08 mm fit gap (95th percentile) and up to 1.
 Side gaps to the pocket walls stay as modelled (median 0.02 mm); the slicer closes the sub-0.1 mm ones.
 Acceptance: one closed body, the bridge entirely above jaw material, and nothing changed outside the pad pocket box.
 Writes ../world/jaw_frame-v18.stl (the jaw as printed) and merge_jaw_pad.json. Since 2026-10-29 world/jaw_frame.stl is
-the as-built jaw with the right boss cut back 2 mm and its hole drilled to 2.5 (jaw-ring-screw-20261029/build_jaw_ring.py).
+the as-built jaw with the right boss hole drilled to 2.5, boss not cut (jaw-ring-screw-20261029/build_jaw_ring.py).
 
     /tmp/microduck-cad-venv/bin/python merge_jaw_pad.py
 """
