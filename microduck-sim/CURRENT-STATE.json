@@ -506,8 +506,19 @@
       ]
     },
     "a7z_audio_capture": {
-      "value": "I2S0 4-channel capture on card 0 (sndi2s0, hw:0,0, S32_LE 48 kHz): Radxa sun60iw2p1-i2s0-2ch.dtbo plus /boot/dtbo/zz-duck-i2s0-din3.dtbo (source guide/firmware/pi/duck-i2s0-din3.dts) adds DIN3 on header pin 10 (PB10) with rxfifo-pinmap <0 0 3 3>, rxfifo-chmap <0 1 0 1>: ch0 = DIN0 left slot (pin 38), ch1 = DIN0 right slot (pin 38), ch2 = DIN3 left slot (pin 10, back INMP441 with L/R to GND), ch3 = DIN3 right slot (reads 0). All three microphones fitted on the robot (Shawn 2026-10-29: 我把东西都装上了); the boot self-check after that assembly heard the speaker sweep 53 / 45 / 41 dB over the floor on ch0 / ch1 / ch2. Boot with the back SD on pin 10: 3 boots, all reached Linux (no u-boot stall); the 10-cold-boot run was skipped by Shawn's choice",
-      "superseded": [{"value": "Tested on the bench, back microphone not yet fitted in the cap", "until": "2026-10-29", "why": "Shawn assembled the robot; boot self-check green on all three microphones"}],
+      "value": "I2S0 4-channel capture on card 0 (sndi2s0, hw:0,0, S32_LE 48 kHz): Radxa sun60iw2p1-i2s0-2ch.dtbo plus /boot/dtbo/zz-duck-i2s0-din3.dtbo (source guide/firmware/pi/duck-i2s0-din3.dts) adds DIN3 on header pin 10 (PB10) with rxfifo-pinmap <0 0 3 3>, rxfifo-chmap <0 1 0 1>: ch0 = DIN0 left slot (pin 38), ch1 = DIN0 right slot (pin 38), ch2 = DIN3 left slot (pin 10, back INMP441 with L/R to GND), ch3 = DIN3 right slot (reads 0). All three microphones fitted on the robot (Shawn 2026-10-29: 我把东西都装上了); the boot self-check after that assembly heard the speaker sweep 53 / 45 / 41 dB over the floor on ch0 / ch1 / ch2. Boot with the back SD on pin 10: 3 boots, all reached Linux (no u-boot stall); the 10-cold-boot run was skipped by Shawn's choice. 2026-10-29 evening: Shawn cleared both ear holes and re-seated the ear boards; snap-and-cover test: right ear leads the left by 10.2-10.9 samples (77 mm = 10.8) with the source at the right ear, covering a hole removes that ear's lead and level, a finger on a hole lifts only that microphone by 25-37 dB (live_221322.raw)",
+      "superseded": [
+        {
+          "value": "I2S0 4-channel capture on card 0 (sndi2s0, hw:0,0, S32_LE 48 kHz): Radxa sun60iw2p1-i2s0-2ch.dtbo plus /boot/dtbo/zz-duck-i2s0-din3.dtbo (source guide/firmware/pi/duck-i2s0-din3.dts) adds DIN3 on header pin 10 (PB10) with rxfifo-pinmap <0 0 3 3>, rxfifo-chmap <0 1 0 1>: ch0 = DIN0 left slot (pin 38), ch1 = DIN0 right slot (pin 38), ch2 = DIN3 left slot (pin 10, back INMP441 with L/R to GND), ch3 = DIN3 right slot (reads 0). All three microphones fitted on the robot (Shawn 2026-10-29: 我把东西都装上了); the boot self-check after that assembly heard the speaker sweep 53 / 45 / 41 dB over the floor on ch0 / ch1 / ch2. Boot with the back SD on pin 10: 3 boots, all reached Linux (no u-boot stall); the 10-cold-boot run was skipped by Shawn's choice",
+          "until": "2026-10-29",
+          "why": "the two ear holes were closed (prints never cleared); covering a hole changed nothing and the ears shared one sound path"
+        },
+        {
+          "value": "Tested on the bench, back microphone not yet fitted in the cap",
+          "until": "2026-10-29",
+          "why": "Shawn assembled the robot; boot self-check green on all three microphones"
+        }
+      ],
       "meaning": "Which header pins and ALSA channels carry the microphones. Pin 10 is UART0 RX in u-boot; Linux leaves PB9/PB10 unclaimed until the I2S0 stream claims PB10. Previous extlinux.conf kept as /boot/extlinux/extlinux.conf.before-din3-20261029; undo = remove the dtbo and run u-boot-update.",
       "verified_at": "2026-10-29",
       "source": "2026-10-29 A7Z bench: overlay installed, rebooted, live /proc/device-tree i2s0_plat@2532000 shows rxfifo-pinmap 0 0 3 3 and rxfifo-chmap 0 1 0 1; arecord -c 4 40 s while Shawn tapped the back microphone: ch2 rose 10-45x over its floor (~3.4k) at 0.5-3.7 s and 13.3 s while ch0/ch1 stayed at floor; a shared sound at 6.8 s rose on ch0, ch1 and ch2 alike; ch3 exactly 0",
