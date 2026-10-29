@@ -9,6 +9,8 @@ setpoints gives the motion. Axes:
   GESTURE.bob               nod / bounce impulse, unitless
 VOCALISE is a list of events {"t", "kind": "call", "pitch", "stretch", "gain_db"} with t relative to the take start.
 """
+from __future__ import annotations  # the A7Z runs Python 3.9: `float | None` annotations must stay unevaluated
+
 import math
 from dataclasses import dataclass, field
 
