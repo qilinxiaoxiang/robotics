@@ -1,5 +1,12 @@
 # Seeing-pick deployment rehearsal (2026-10-27)
 
+**2026-10-29:** the 0 of 96 below was the harness, not the policy: the loader's post-compile inertia edits left the
+head's collision bounding volume in the old axes (the beak sank into the floor without contact) and the as-built MJCF
+runs the pyramidal cone at impratio 1 where the training env runs elliptic / 10. Corrected (`brain_sim_check.py
+--bvh-refit --sp-cone elliptic --sp-impratio 10`) the same 54 draws hold 24/54 at the deployed 100 mA jaw current and
+49/54 at 150 mA. Study, numbers and the proposed fixes: `../seepick-gap-20261029/README.md`. The rows and text below are
+kept as the record of the run as it was.
+
 Final-goal step 4 (pick up with the beak). Sim only: nothing here talks to the robot.
 
 **Result: 0 of 96 runs grasped or held the object.** No run fell and no wired guard tripped. The failure does not move with any single change tried: training-time masses, no COM calibration, a training-strength jaw, training beak friction, zero I/O delay, no jaw cap, a "stopped" holding bit. The policy ends every run with the beak beside the object, not around it.

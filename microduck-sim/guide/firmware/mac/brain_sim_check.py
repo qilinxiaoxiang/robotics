@@ -189,8 +189,10 @@ def _uf(u, f):
     return np.array([u, 0.0, -f])
 
 
-def sp_add_mouth(spec, beak_mu):
-    """ground_grasp.add_mouth on the as-built spec: jaw body on passive_mouth, beak boxes, lip and pad sites."""
+def sp_add_mouth(spec, beak_mu, beak_priority=False):
+    """ground_grasp.add_mouth on the as-built spec: jaw body on passive_mouth, beak boxes, lip and pad sites.
+    beak_priority: the beak boxes get MuJoCo priority 1, so their friction is the beak-object friction whatever the
+    object's own (a lined lip; without it MuJoCo takes the larger of the pair)."""
     head = spec.body("jaw_soft")
     jaw = head.add_body(name="jaw", pos=SP_MOUTH_PIVOT)
     jaw.mass = SP_JAW_MASS
@@ -211,6 +213,8 @@ def sp_add_mouth(spec, beak_mu):
             spec.delete(g)
     kw = dict(type=mujoco.mjtGeom.mjGEOM_BOX, group=3, contype=1, conaffinity=1)
     beak = dict(condim=4, friction=[beak_mu, 0.02, 0.0001])
+    if beak_priority:
+        beak["priority"] = 1
     head.add_geom(name="head_rear_collision", pos=_uf(-0.00685, 0.00175), size=[0.01005, 0.0459, 0.04025], **kw)
     head.add_geom(name="upper_beak_collision", pos=_uf(-0.00525, 0.060), size=[0.00395, 0.0459, 0.018], **kw, **beak)
     jaw.add_geom(name="jaw_plate_collision", pos=_uf(-0.0134, 0.05985) - SP_MOUTH_PIVOT,
@@ -351,7 +355,7 @@ def sp_install_model_hook(args, obj):
 
     def hooked(spec, *a, **kw):
         n = orig(spec, *a, **kw)
-        report["removed_hulls"] = sp_add_mouth(spec, args.sp_beak_mu)
+        report["removed_hulls"] = sp_add_mouth(spec, args.sp_beak_mu, args.sp_beak_priority)
         sp_add_object(spec, obj)
         sp_add_jaw_actuator(spec, limit)
         for k in list(spec.keys):  # the MJCF keyframes do not list the new joints; nothing here uses them
@@ -416,7 +420,11 @@ class SeePick:
                         clamp_names={}, max_head_pitch_open_deg=None)
         self.ev = dict(first_pinched_t=None, first_holding_bit_t=None, close_at=None, lip_min_m=None,
                        lip_min_phase=None, beak_floor_force_max_n=0.0, beak_floor_ticks=0, max_tilt=0.0,
-                       min_trunk_z=None, max_action=0.0, first_lost_view_t=None)
+                       min_trunk_z=None, max_action=0.0, first_lost_view_t=None,
+                       # the object's travel in the foot frame: first beak touch -> pinch, and over the trained close
+                       # window (phase 0.34 -> 0.40); the jaw command when --sp-close-on-contact started the close
+                       first_contact=None, push_contact_to_pinch_mm=None, close_window=None, contact_close=None)
+        self.close_shift = 0.0  # --sp-close-on-contact: phase advance of the jaw timeline after the first touch
         self.holding_now = False
         self.state = {}
 
@@ -508,6 +516,17 @@ class SeePick:
         phase = info.get("sp_phase")
         if brain.mode == "seepick" and "sp_jaw" in info:
             self.goal_deg = info["sp_jaw"]
+            if self.a.sp_close_on_contact and phase is not None:
+                # start the trained close (0.34 -> 0.40, then grip) at the first beak-object touch when that comes
+                # before phase 0.34; the policy's inputs are untouched (only the holding bit may come earlier)
+                sj = walk_brain.SP_JAW
+                if self.close_shift == 0.0 and sj["open_end"] <= phase < sj["close_start"] and self.ev["first_contact"]:
+                    self.close_shift = sj["close_start"] - phase
+                    self.ev["contact_close"] = dict(t_from_switch=round(t - self.switched, 2), phase=phase,
+                                                    advance_phase=round(self.close_shift, 4),
+                                                    advance_s=round(self.close_shift * walk_brain.SP_PERIOD, 2))
+                if self.close_shift:
+                    self.goal_deg = walk_brain.seepick_jaw(phase + self.close_shift)
         if brain.mode == "seepick" and info.get("action") is not None:  # walk_brain.clamp_goal at work
             for k, n in enumerate(walk_brain.OBSERVATION_DOF_ORDER):
                 lo, hi = walk_brain.JOINT_RANGE.get(n, (-9, 9))
@@ -622,8 +641,34 @@ class SeePick:
             e["beak_floor_ticks"] += 1
             e["beak_floor_force_max_n"] = round(max(e["beak_floor_force_max_n"], ff), 3)
         f = sp_contacts(self.m, d, self.ogeom, self.named)
+        # the object's travel is reported three ways: in the foot frame (forward/left, moves with the robot), in the
+        # world (the roll on the floor) and relative to the pad centre (out of the beak); mm
+        pad_c = 0.5 * (d.site_xpos[self.site["pad_up"]] + d.site_xpos[self.site["pad_low"]])
+        where = dict(object_foot_xy=[round(float(v), 4) for v in self.foot_xy(d.xpos[self.body])],
+                     object_world_xy=[round(float(v), 4) for v in d.xpos[self.body][:2]],
+                     object_rel_pad_xy=[round(float(v), 4) for v in self.foot_xy(d.xpos[self.body]) - self.foot_xy(pad_c)])
+
+        def travel(since):
+            out = {}
+            for k, name in (("object_foot_xy", "foot"), ("object_world_xy", "world"), ("object_rel_pad_xy", "rel_pad")):
+                dxy = np.asarray(where[k]) - np.asarray(since[k])
+                out[name + "_mm"] = dict(x=round(float(dxy[0]) * 1000, 1), y=round(float(dxy[1]) * 1000, 1),
+                                         norm=round(float(np.linalg.norm(dxy)) * 1000, 1))
+            return out
+
+        if (f["jaw"] > 0 or f["upper"] > 0) and e["first_contact"] is None:
+            e["first_contact"] = dict(t_from_switch=round(t - self.switched, 2), phase=phase,
+                                      which="both" if f["jaw"] > 0 and f["upper"] > 0 else ("jaw" if f["jaw"] > 0 else "upper"),
+                                      jaw_measured_deg=round(self.opening_deg()[0], 2), **where)
         if f["jaw"] > 0 and f["upper"] > 0 and e["first_pinched_t"] is None:
             e["first_pinched_t"] = round(t - self.switched, 2)
+            if e["first_contact"] is not None:
+                e["push_contact_to_pinch_mm"] = dict(s=round(t - self.switched - e["first_contact"]["t_from_switch"], 2),
+                                                     **travel(e["first_contact"]))
+        if phase is not None and e["close_at"] is not None and e["close_window"] is None and \
+                phase >= walk_brain.SP_JAW["close_end"]:
+            e["close_window"] = dict(phase=phase, pinched=f["jaw"] > 0 and f["upper"] > 0,
+                                     jaw_measured_deg=round(self.opening_deg()[0], 2), **where, **travel(e["close_at"]))
         if self.holding_now and e["first_holding_bit_t"] is None:
             e["first_holding_bit_t"] = round(t - self.switched, 2)
         pinched = f["jaw"] > 0 and f["upper"] > 0
@@ -637,15 +682,14 @@ class SeePick:
         if pinched and not self.holding_now:
             e["pinch_without_holding_bit_ticks"] = e.get("pinch_without_holding_bit_ticks", 0) + 1
         if phase is not None and phase >= walk_brain.SP_JAW["close_start"] and e["close_at"] is None:
-            pad = 0.5 * (d.site_xpos[self.site["pad_up"]] + d.site_xpos[self.site["pad_low"]])
+            pad = pad_c
             e["close_at"] = dict(t_from_switch=round(t - self.switched, 2), phase=phase,
                                  pad_xy_err_m=round(float(np.linalg.norm(pad[:2] - d.xpos[self.body][:2])), 4),
                                  pad_z_m=round(float(pad[2]), 4),
                                  pad_foot_xy=[round(float(v), 4) for v in self.foot_xy(pad)],
-                                 object_foot_xy=[round(float(v), 4) for v in self.foot_xy(d.xpos[self.body])],
                                  pad_root0_xy=self.root0_xy(pad), object_root0_xy=self.root0_xy(d.xpos[self.body]),
                                  jaw_measured_deg=round(self.opening_deg()[0], 2), tilt=round(tilt, 1),
-                                 body_slots=info.get("sp_body"))
+                                 body_slots=info.get("sp_body"), **where)
 
     def summary(self, brain):
         out = dict(object=dict(self.obj, yaw_deg=getattr(self, "obj_yaw_deg", None)), offset_m=list(self.a.sp_offset),
@@ -655,6 +699,7 @@ class SeePick:
                                last_visible_from_switch_s=None if self.cam.last_visible_t is None
                                else round(self.cam.last_visible_t - self.switched, 2)),
                    jaw=dict(kp=self.a.sp_jaw_kp, goal_current_ma=self.a.sp_jaw_current, cap_applied=not self.a.sp_no_cap,
+                            beak_priority=bool(self.a.sp_beak_priority), close_on_contact=bool(self.a.sp_close_on_contact),
                             beak_mu=self.a.sp_beak_mu, **self.model_report),
                    switched_at=self.switched, handback_at=self.done_t,
                    handback_from_switch_s=None if self.done_t is None or self.switched is None else round(self.done_t - self.switched, 2),
@@ -809,6 +854,15 @@ def run(args):
     bvh_refit = refit_body_bvh(m) if args.bvh_refit else None
     if bvh_refit is not None:
         print("bvh refit:", json.dumps(bvh_refit), flush=True)
+    if sp_model is not None:  # the training env's contact solver settings on request (gap study 2026-10-29)
+        if args.sp_cone == "elliptic":
+            m.opt.cone = mujoco.mjtCone.mjCONE_ELLIPTIC
+        if args.sp_impratio is not None:
+            m.opt.impratio = args.sp_impratio
+        sp_model["contact"] = dict(cone=args.sp_cone, impratio=float(m.opt.impratio), bvh_refit=bvh_refit is not None)
+        if bvh_refit is None or args.sp_cone != "elliptic" or (args.sp_impratio or 1.0) < 10:
+            print("seepick: WITHOUT --bvh-refit --sp-cone elliptic --sp-impratio 10 the sim is not the one the policy was trained in "
+                  "(stale collision volumes, and a pinched object creeps out of the beak): seepick-gap-20261029/README.md", flush=True)
     if args.bam_friction_scale != 1.0:  # sim-ID knob (2026-10-17): scale BAM's stiction/load-friction budget, as the training env's friction DR does
         for pname in ("friction_base", "friction_stribeck", "load_friction_base", "load_friction_stribeck", "load_friction_motor",
                       "load_friction_external", "load_friction_motor_stribeck", "load_friction_external_stribeck"):
@@ -1518,7 +1572,18 @@ def main():
     sp.add_argument("--sp-holding", choices=("runtime", "stopped"), default="stopped",
                     help="holding bit: jaw_ctl.holding (stopped: open >= GRIP_MIN_DEG and still), or the rule before 2026-10-27 without the still check (runtime)")
     sp.add_argument("--sp-no-cap", action="store_true", help="do not apply jaw_limits to the jaw goal (it is still evaluated)")
+    sp.add_argument("--sp-beak-priority", action="store_true",
+                    help="beak boxes at MuJoCo priority 1: --sp-beak-mu is the beak-object friction whatever the object's "
+                         "(a lined lip: inner tube about 1.1, bare PLA 0.35-0.5)")
+    sp.add_argument("--sp-close-on-contact", action="store_true",
+                    help="start the trained close (0.34->0.40) at the first beak-object touch when it comes earlier "
+                         "(study of the close timing; the deployed timeline is walk_brain.SP_JAW)")
     sp.add_argument("--sp-trace", default=None, help="write SpTrace rows (61 obs, 14 actions, goals, joints, beak) per seepick tick")
+    sp.add_argument("--sp-cone", choices=("pyramidal", "elliptic"), default="pyramidal",
+                    help="MuJoCo friction cone of the whole model (the as-built MJCF compiles pyramidal; the training env runs elliptic)")
+    sp.add_argument("--sp-impratio", type=float, default=None,
+                    help="MuJoCo impratio (the as-built MJCF compiles 1; the training env runs 10, its sticky friction: "
+                         "microduck_ground_grasp_env_cfg, a pinched block creeps out of the wedge at pyramidal / 1)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
     args = ap.parse_args()

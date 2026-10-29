@@ -143,9 +143,13 @@ object by colour, walk to it, aim, align to the trained spot (0.087, 0) m +-4 cm
 retry on a miss or a slip (at most `--tries`).
 
 Status: **do not run the pick on the robot yet.** The runtime rehearsal (`seepick-rehearsal-20261027/`, 96 runs on the
-as-built model) held the object 0 times, against about 80 % in the training env at +-3 cm. No run fell or tripped a
-guard; the beak presses into the floor and closes about 2 cm beside the object. The cause is being traced in
-`seepick-rehearsal-20261027/gap/`. The camera calibration and the dry run do not depend on it.
+as-built model) held the object 0 times, against about 80 % in the training env at +-3 cm. The gap study
+(`seepick-gap-20261029/README.md`, 2026-10-29) traced the 0/96 to two defects of the rehearsal harness (stale collision
+volumes after the loader's inertia edits; the pyramidal/impratio-1 contact solver against the training env's elliptic/10),
+not to the policy or the runtime. With both corrected the policy holds 24/54 at the deployed jaw current (100 mA) and
+49/54 at the 150 mA EEPROM ceiling (ball 23/27, box 26/27), all in simulation; the one runtime change proposed is
+`jaw_ctl.GOAL_CURRENT_MA` 100 -> 150 (not applied), and the ball needs a lined lip (friction about 1.1) more than a box
+does. The camera calibration and the dry run do not depend on it.
 
 Order on the robot:
 1. Install: `microduck-sim/guide/firmware/a7z/install_teleop.sh` (copies `seepick.py`, and `seepick61.onnx` when
