@@ -40,8 +40,12 @@ Modes, switched live by writing JSON to the control file (default /tmp/duck_cmd.
   {"mode": "sit"}                           Pollen's sitstand policy (sitstand61.onnx) from stand or walk mode (or
                                             from monitor mode on a robot already seated: straight to the seat): the
                                             posture flag in command slot vx is 0 for SIT_PREP_S, then 1 (sit). Any
-                                            other command stands it back up first: flag 0 for UNSIT_S (requests during
-                                            the SIT_SETTLE_S glide into the seat wait for it), then that command runs.
+                                            other command stands it back up first (requests during the SIT_SETTLE_S
+                                            glide into the seat wait for it): flag 0 until the robot is up (both knees
+                                            under SIT_KNEE_MIN, pitch rate under RISE_QUIET_RATE and the trunk within
+                                            RISE_UPRIGHT_DEG, all for RISE_UP_S), then that command runs. A rise
+                                            not up after RISE_GIVEUP_S sits back down (flag 1, "sit: RISE FAILED")
+                                            and stays seated until {"mode": "sit"} re-arms it.
                                             {"mode": "monitor"} holds the last goals at once; after a guard trip
                                             the head joints hold where they are (hold_head).
 
@@ -126,7 +130,18 @@ KICK_FEET = ("left", "right")
 # a stand-up during the ~2 s glide into the seat (sitstand_ramp_s 2.0); here such a request waits for it.
 SIT_PREP_S = 0.8
 SIT_SETTLE_S = 2.0
-UNSIT_S = 2.0
+# The rise ends on evidence, not on the simulator's 2 s timer (sit-rise-20261029/README.md). On the current as-built
+# mass model (microduck_rl 87979d52 plugged manifest, 7.0 V) sitstand61's rise is marginal: in-process it tilts the
+# trunk 17-33 deg and finishes 0.8-1.8 s after the flag flips, and through fake_pi + this brain over UDP its knees cycle
+# 1.4 -> 0.6 -> 1.4 rad twice a second and never finish, so a fixed timer handed stand61 a random point of that cycle
+# (8 of 8 seats fell). The robot is up when both knees are under SIT_KNEE_MIN, the pitch rate is under RISE_QUIET_RATE
+# and the trunk is within RISE_UPRIGHT_DEG of upright, all held for RISE_UP_S (the upright test keeps a robot lying on
+# its back, knees straight, from counting as up). A rise not up after RISE_GIVEUP_S sits back down (flag 1): the seat
+# is the trained, stable state, and the robot stays there until {"mode": "sit"} re-arms the stand-up.
+RISE_UP_S = 0.3
+RISE_QUIET_RATE = 1.0  # rad/s, body pitch rate
+RISE_UPRIGHT_DEG = 12.0  # body tilt as the brain reads it (the IMU pitch trim included); standing reads 0-5 deg
+RISE_GIVEUP_S = 4.0  # in-process rises are up 0.8-1.8 s after the flag (2.4 s with robotd's low-pass)
 # A seat folds both knees to about 1.3 rad (plugged as-built sim at 7.0 V: 1.33 / -1.36, trunk 58 mm lower). On the
 # robot on 2026-10-21 the legs never moved through 53 s of "seated" (knees 0.02 / -0.03 rad): the loaded leg servos did
 # not follow the policy's first small moves, so its closed-loop descent never started. A seat the timer declares is
@@ -520,16 +535,27 @@ class Brain:
             leaving = mode != "sit"
             if leaving:
                 self.sit_next = want
+            elif s.get("failed"):
+                s["failed"] = False  # {"mode": "sit"} after a failed rise: the next stand or walk command tries again
+                print("sit: stand-up re-armed", flush=True)
             if mode == "monitor" or (leaving and s["phase"] == "prep"):
                 self.base_want = want
                 return want  # still standing (flag 0) or a hold: switch now
-            if leaving and s["phase"] == "seated":
-                s.update(phase="rise", t=now)
-                print(f"sit: standing up (posture flag 0) for {UNSIT_S} s", flush=True)
-            if s["phase"] == "rise" and now - s["t"] >= UNSIT_S:
-                nxt = self.sit_next or dict(WALK_ZERO)
-                self.base_want = nxt
-                return nxt
+            if leaving and s["phase"] == "seated" and not s.get("failed"):
+                s.update(phase="rise", t=now, up_since=None)
+                print(f"sit: standing up (posture flag 0) until up, at most {RISE_GIVEUP_S} s", flush=True)
+            if s["phase"] == "rise":
+                if s.get("up_since") is not None and now - s["up_since"] >= RISE_UP_S:
+                    print(f"sit: up after {now - s['t']:.2f} s, handing over", flush=True)
+                    nxt = self.sit_next or dict(WALK_ZERO)
+                    self.base_want = nxt
+                    return nxt
+                if now - s["t"] >= RISE_GIVEUP_S:
+                    print(f"sit: RISE FAILED, not up {RISE_GIVEUP_S} s after the stand-up command (knees, pitch rate or "
+                          f"tilt out of range: {s.get('why', 'no reading')}); sitting back down (posture flag 1). "
+                          "Write {\"mode\": \"sit\"} and then a stand or walk command to try again.", flush=True)
+                    s.update(phase="down", t=now, failed=True, up_since=None)
+                    self.sit_next = None
             # a head command while seated reaches the sitstand policy (it was trained with one in both postures)
             return {"mode": "sit", "head": want["head"]} if mode == "sit" and want.get("head") else {"mode": "sit"}
         if mode == "sit" and self.mode != "sit":
@@ -807,6 +833,17 @@ class Brain:
                               "or walk command stands it up as usual.", flush=True)
                 if "stalled" in self.sit:
                     info["sit_stalled"] = self.sit["stalled"]
+                if self.sit["phase"] == "rise":  # the evidence route() ends the rise on (RISE_UP_S of it)
+                    knees = max(abs(q["left_knee"]), abs(q["right_knee"]))
+                    tilt = math.degrees(math.acos(max(-1.0, min(1.0, -float(grav_body[2])))))
+                    rate = abs(float(gyro_body[1]))
+                    up = knees < SIT_KNEE_MIN and rate < RISE_QUIET_RATE and tilt < RISE_UPRIGHT_DEG
+                    self.sit["why"] = f"knees {knees:.2f} rad, pitch rate {rate:.2f} rad/s, tilt {tilt:.1f} deg"
+                    if not up:
+                        self.sit["up_since"] = None
+                    elif self.sit.get("up_since") is None:
+                        self.sit["up_since"] = now
+                    info["sit_up"] = up
             else:
                 vx, vy, vth = float(want.get("vx", 0)), float(want.get("vy", 0)), float(want.get("vtheta", 0))
                 dt = 0.02 if self.turn_t is None else min(0.1, max(0.0, now - self.turn_t))
