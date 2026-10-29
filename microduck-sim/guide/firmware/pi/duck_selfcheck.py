@@ -12,9 +12,12 @@ Items (ok true = green, false = red, null = skipped or not fitted, each with a C
   audio    a 0.5 s 1.5-3 kHz sweep from the speaker (MAX98357A, DOUT0) while I2S0 records 4 channels
            (a7z_audio_capture): speaker ok when any microphone hears the sweep 15 dB over its own floor; each
            microphone ok when it hears it; the back microphone (ch2) reads all zero when it is not fitted (null)
-A device another process holds (a brain on the servo bus, a reader on i2c-7 or i2c-0, a sound stream) is skipped and
-named, never read twice at once. Pings and reads change no servo register, so torque and goals stay as they are.
-The sweep plays at -10.5 dBFS straight to hw:0,0 in S32_LE: below the -3 dB softvol ceiling (D-012), and in the
+The IMU and servo checks hold the robot I/O lock (/tmp/duck-hw.lock, shared with walk_wired.py and duck_sense.py).
+duck_sense.py, the phone app's standby reader, quits within 0.5 s when it sees this script running, so the check waits up
+to 4 s for the lock; a brain (walk_wired.py) keeps it and both checks are skipped and named. The touch board is read even
+while the app's touch thread has the bus open: each 24-byte read is one kernel I2C transaction. A sound stream another
+process holds skips the audio check. Pings and reads change no servo register, so torque and goals stay as they are.
+The sweep plays at -10.5 dBFS straight to the sndi2s0 hardware device in S32_LE: below the -3 dB softvol ceiling (D-012), and in the
 capture's own sample format, since a 16-bit stream reconfigures the shared I2S0 and shifts the capture samples.
 
   python3 duck_selfcheck.py [--out DIR] [--skip imu,touch,camera,servos,audio]
@@ -22,6 +25,8 @@ capture's own sample format, since a 16-bit stream reconfigures the shared I2S0 
 import argparse, fcntl, glob, json, os, struct, subprocess, sys, time, wave
 
 OUT = "/home/radxa/duck-logs/selfcheck"
+HW_LOCK = "/tmp/duck-hw.lock"
+CARD = "sndi2s0"   # the I2S0 card's number changes between boots (HDMI is sometimes card 0): always by name
 SHM = "/dev/shm/a7z_cam.bgr"
 SERVO_PORT, SERVO_BAUD = "/dev/ttyAS2", 500_000
 MIC_NAMES = ["耳朵 A（L/R 接地，第 0 路）", "耳朵 B（L/R 接 VDD，第 1 路）", "后脑（10 号针，第 2 路）"]
@@ -44,17 +49,24 @@ def holders(dev):
     return sorted(names)
 
 
-def busy(dev):
-    h = holders(dev)
-    return {"ok": None, "detail": f"跳过：{dev} 正被 {', '.join(h)} 使用"} if h else None
+def take_hw_lock(wait_s=4.0):
+    """The robot I/O lock, or None and the holders' names after wait_s."""
+    f = open(HW_LOCK, "a")
+    end = time.time() + wait_s
+    while True:
+        try:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return f, None
+        except BlockingIOError:
+            if time.time() > end:
+                f.close()
+                return None, holders(HW_LOCK) or ["另一个程序"]
+            time.sleep(0.2)
 
 
 def check_imu():
     if not os.path.exists("/dev/i2c-7"):
         return {"ok": False, "detail": "没有 i2c-7（TWI7 补丁没加载）"}
-    skip = busy("/dev/i2c-7")
-    if skip:
-        return skip
     try:
         from adafruit_bno08x import BNO_REPORT_ACCELEROMETER
         from adafruit_bno08x.i2c import BNO08X_I2C
@@ -98,25 +110,35 @@ def touch_bus():
     return None
 
 
+def touch_decode(raw):
+    """The block from 24 read bytes, as duck-telemetry.py decodes it: the XIAO sometimes sends a filler byte first
+    (then the block's last byte, the always-zero top byte of M, is lost); the wrong alignment puts every count above
+    0x3FFFFF, so the right one is the one whose five counts all fit. None when neither does."""
+    for block in (raw, raw[1:] + b"\0"):
+        b = struct.unpack("<6I", block)
+        if max(b[1:]) <= 0x3FFFFF:
+            return b
+    return None
+
+
 def check_touch():
     dev = touch_bus()
     if dev is None:
         return {"ok": False, "detail": "没有 TWI0 总线（触摸板补丁没加载）"}
-    skip = busy(dev)
-    if skip:
-        return skip
     blocks = []
     try:
         fd = os.open(dev, os.O_RDWR)
         try:
             fcntl.ioctl(fd, 0x0703, 0x2A)  # I2C_SLAVE
             for _ in range(2):
-                blocks.append(struct.unpack("<6I", os.read(fd, 24)))
+                blocks.append(touch_decode(os.read(fd, 24)))
                 time.sleep(0.15)
         finally:
             os.close(fd)
     except OSError as e:
         return {"ok": False, "detail": f"触摸板（0x2A）没回应：{e.strerror}"}
+    if None in blocks:
+        return {"ok": False, "detail": "触摸板回应了，但数据对不上（读数都超出范围）"}
     counts = blocks[-1][1:]
     bad = [p for p, c in zip(["L1", "R1", "L2", "R2", "M"], counts) if c == 0 or c >= 4194303]
     if blocks[0][0] == blocks[1][0]:
@@ -153,9 +175,6 @@ def check_camera():
 
 
 def check_servos():
-    skip = busy(SERVO_PORT)
-    if skip:
-        return skip
     try:
         from dynamixel_sdk import COMM_SUCCESS, PacketHandler, PortHandler
     except ImportError:
@@ -197,16 +216,19 @@ def sweep_wav(path, sr=48000):
 
 def check_audio():
     import numpy as np
-    pcm = glob.glob("/dev/snd/pcmC0D0*")
+    card = os.path.basename(os.path.realpath(f"/proc/asound/{CARD}"))   # e.g. card1
+    if not card.startswith("card"):
+        return {"ok": False, "detail": f"没有 {CARD} 声卡（I2S0 补丁没加载）"}, []
+    pcm = glob.glob(f"/dev/snd/pcmC{card[4:]}D0*")
     held = sorted({n for p in pcm for n in holders(p)})
     if held:
         return {"ok": None, "detail": f"跳过：声卡正被 {', '.join(held)} 使用"}, []
     sweep, rec = "/tmp/duck_selfcheck_sweep.wav", "/tmp/duck_selfcheck_rec.wav"
     sweep_wav(sweep)
-    r = subprocess.Popen(["arecord", "-q", "-D", "hw:0,0", "-c", "4", "-r", "48000", "-f", "S32_LE", "-d", "3", rec],
+    r = subprocess.Popen(["arecord", "-q", "-D", f"hw:CARD={CARD},DEV=0", "-c", "4", "-r", "48000", "-f", "S32_LE", "-d", "3", rec],
                          stderr=subprocess.PIPE)
     time.sleep(0.8)
-    p = subprocess.run(["aplay", "-q", "-D", "hw:0,0", sweep], capture_output=True, text=True)
+    p = subprocess.run(["aplay", "-q", "-D", f"hw:CARD={CARD},DEV=0", sweep], capture_output=True, text=True)
     err = r.communicate(timeout=10)[1].decode().strip()
     if r.returncode or p.returncode:
         return {"ok": False, "detail": f"录音或放音失败：{(err or p.stderr).strip()[:120]}"}, []
@@ -256,10 +278,16 @@ def main():
             res = {"ok": False, "detail": f"体检程序出错：{type(e).__name__} {e}"[:160]}
         items.append({"id": key, "label": label, **res, "s": round(time.time() - t0, 1)})
 
-    add("imu", "IMU", check_imu)
-    add("touch", "触摸板", check_touch)
-    add("camera", "摄像头", check_camera)
-    add("servos", "舵机", check_servos)
+    lock, held_by = take_hw_lock() if {"imu", "servos"} - skip else (None, None)
+    for key, label, fn in [("imu", "IMU", check_imu), ("touch", "触摸板", check_touch),
+                           ("camera", "摄像头", check_camera), ("servos", "舵机", check_servos)]:
+        if key in ("imu", "servos") and key not in skip and lock is None:
+            items.append({"id": key, "label": label, "ok": None,
+                          "detail": f"跳过：大脑正在用舵机总线和 IMU（{', '.join(held_by)}）"})
+            continue
+        add(key, label, fn)
+    if lock is not None:
+        lock.close()
     if "audio" in skip:
         items += [{"id": k, "label": l, "ok": None, "detail": "这次没测"}
                   for k, l in [("speaker", "功放和喇叭")] + [(f"mic{i}", n) for i, n in enumerate(MIC_NAMES)]]
