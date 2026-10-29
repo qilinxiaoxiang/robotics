@@ -180,6 +180,8 @@ SP_CAM_HALF_FOV = (math.radians(51.0), math.radians(35.0))
 SP_CAM_MIN_DEPTH = 0.015
 SP_INIT_AGE_S = (0.1, 0.4)
 SP_HELD_LIFT = 0.01
+SP_HELD_FROM = 0.44  # microduck_static_grasp_env_cfg.TIMELINE held_from: grasp_held pays from here
+SP_SUCCESS_TICKS = 20  # seeing_audit.SUCCESS_STEPS: held on at least this many ticks = a training-env success
 SP_STOPPED_DEG_PER_TICK = 0.3  # --sp-holding stopped: 15 deg/s  # mdp.grasp_state "held": pinched, off the floor, lifted > 1 cm
 
 
@@ -258,6 +260,8 @@ def sp_object_draw(args, rng):
     else:
         r = u(SP_CYL_RADIUS)
         half = [r, r, u(SP_CYL_HALF_H)]
+    if args.sp_half is not None:  # exact half extents (m): x, y, z (ball: three radii; cylinder: r, r, half height)
+        half = list(args.sp_half)
     if args.sp_size is not None:  # largest horizontal width (m): scale all three half extents
         half = [h * args.sp_size / (2 * max(half[:2])) for h in half]
     mass = args.sp_mass / 1000 if args.sp_mass is not None else u(SP_MASS)
@@ -623,6 +627,11 @@ class SeePick:
         if self.holding_now and e["first_holding_bit_t"] is None:
             e["first_holding_bit_t"] = round(t - self.switched, 2)
         pinched = f["jaw"] > 0 and f["upper"] > 0
+        # the training success measure (seeing_audit.SUCCESS_STEPS): grasp_held pays (pinched, off the floor, lifted
+        # more than 1 cm, phase >= TIMELINE held_from 0.44) on at least 20 ticks before the hand-back
+        if phase is not None and phase >= SP_HELD_FROM and pinched and f["floor"] <= 0 and \
+                float(d.xpos[self.body][2] - self.spawn[2]) > SP_HELD_LIFT:
+            e["held_ticks"] = e.get("held_ticks", 0) + 1
         if self.holding_now and not pinched:
             e["holding_bit_without_pinch_ticks"] = e.get("holding_bit_without_pinch_ticks", 0) + 1
         if pinched and not self.holding_now:
@@ -655,6 +664,119 @@ class SeePick:
         return out
 
 
+class SpTrace:
+    """--sp-trace FILE: per seepick tick the 61 obs and 14 actions the policy saw and gave (captured at the ONNX call),
+    the goals written, the true joint positions after the tick's physics (Brain order), trunk height and tilt, lip and
+    pad heights, pad and object in the foot frame, beak-floor force and object contacts. Same fields as
+    microduck_rl-grasp cmu/grasp/gap_trace.py writes from the training env (gap study, 2026-10-27)."""
+
+    def __init__(self, brain, path):
+        self.f = open(path, "w")
+        self.last = None
+        sess = brain.sessions["seepick"]
+        tracer = self
+
+        class Wrapped:
+            def get_inputs(self):
+                return sess.get_inputs()
+
+            def get_modelmeta(self):
+                return sess.get_modelmeta()
+
+            def run(self, out, feed):
+                res = sess.run(out, feed)
+                tracer.last = (np.asarray(list(feed.values())[0])[0].tolist(), np.asarray(res[0])[0].tolist())
+                return res
+
+        brain.sessions["seepick"] = Wrapped()
+
+    @staticmethod
+    def box_min_z(m, d, name):
+        """Lowest corner of a box geom (m, world z)."""
+        g = m.geom(name).id
+        R, c, h = d.geom_xmat[g].reshape(3, 3), d.geom_xpos[g], m.geom_size[g]
+        return round(min(float((c + R @ (np.array([sx, sy, sz]) * h))[2]) for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)), 4)
+
+    @staticmethod
+    def head_contacts(m, d, sp):
+        """Every active contact of a head or jaw geom: [geom, other geom, distance mm, normal force N]."""
+        out, f6 = [], np.zeros(6)
+        for i in range(d.ncon):
+            g1, g2 = d.contact[i].geom1, d.contact[i].geom2
+            if g1 in sp.head_geoms or g2 in sp.head_geoms:
+                g, o = (g1, g2) if g1 in sp.head_geoms else (g2, g1)
+                mujoco.mj_contactForce(m, d, i, f6)
+                out.append([m.geom(g).name or f"g{g}", m.geom(o).name or f"g{o}", round(float(d.contact[i].dist) * 1000, 2),
+                            round(float(f6[0]), 3)])
+        return out
+
+    def row(self, t, brain, info, goal, m, d, sp, qa, z0, names, tilt, tz):
+        if brain.mode != "seepick" or info.get("sp_phase") is None or self.last is None or info.get("action") is None:
+            return
+        obs, act = self.last
+        self.last = None
+        order = walk_brain.OBSERVATION_DOF_ORDER
+        qd = {n: float(d.qpos[qa[k]] - z0[k]) for k, n in enumerate(names)}
+        s = sp.site
+        pad = 0.5 * (d.site_xpos[s["pad_up"]] + d.site_xpos[s["pad_low"]])
+        f = sp_contacts(m, d, sp.ogeom, sp.named)
+        self.f.write(json.dumps(dict(
+            t=round(t, 3), phase=info["sp_phase"], obs=[round(v, 4) for v in obs], action=[round(v, 4) for v in act],
+            target=None if goal is None else [round(float(goal[n]), 4) for n in order],
+            q=[round(qd[n], 4) for n in order], jaw_rad=round(float(d.qpos[sp.jq]), 4),
+            trunk_z=round(tz, 4), tilt_deg=round(tilt, 2),
+            lip_up_z=round(float(d.site_xpos[s["lip_up"], 2]), 4),
+            lip_low_z=round(float(d.site_xpos[m.site("lip_low").id, 2]), 4),
+            jaw_tip_bottom_z=round(float(d.site_xpos[s["jaw_tip_bottom"], 2]), 4), pad_z=round(float(pad[2]), 4),
+            pad_foot_xy=[round(float(v), 4) for v in sp.foot_xy(pad)],
+            obj_foot_xy=[round(float(v), 4) for v in sp.foot_xy(d.xpos[sp.body])],
+            obj_z=round(float(d.xpos[sp.body][2]), 4),
+            beak_floor_n=round(floor_force(m, d, sp.floor, sp.head_geoms), 3),
+            jaw_contact=f["jaw"] > 0, upper_contact=f["upper"] > 0, pinched=f["jaw"] > 0 and f["upper"] > 0,
+            head_contacts=self.head_contacts(m, d, sp),
+            box_min_z={g: self.box_min_z(m, d, g) for g in ("upper_beak_collision", "jaw_plate_collision", "head_rear_collision")},
+            floor_dist_mm={g: round(1000 * mujoco.mj_geomDistance(m, d, m.geom(g).id, sp.floor, 0.05, None), 2)
+                           for g in ("upper_beak_collision", "jaw_plate_collision")})) + "\n")
+        self.f.flush()
+
+
+def refit_body_bvh(m):
+    """--bvh-refit: make every body's collision bounding volumes cover its colliding geoms in the body's CURRENT
+    inertial frame. MuJoCo stores a body's BVH (bvh_aabb) in its inertial frame at compile time; evaluate_delay.load edits
+    body_ipos/body_iquat after compile (add_signed_inertias, the mass manifest), so bodies whose principal axes turned
+    keep a box in the old axes and the midphase drops contacts outside it (2026-10-27: the head's upper beak sank 16 mm
+    into the floor with no contact). Each node of a body's tree is set to the whole-body box, a conservative bound:
+    every geom pair of the body is then tested. Returns {body: [old root, new root]} for the bodies that changed."""
+    d = mujoco.MjData(m)
+    mujoco.mj_forward(m, d)
+    changed = {}
+    for b in range(1, m.nbody):
+        adr, num = m.body_bvhadr[b], m.body_bvhnum[b]
+        if adr < 0 or num <= 0:
+            continue
+        R, p = d.ximat[b].reshape(3, 3), d.xipos[b]
+        pts = []
+        for g in range(m.ngeom):
+            if m.geom_bodyid[g] != b or not (m.geom_contype[g] or m.geom_conaffinity[g]):
+                continue
+            Rg, cg, a = d.geom_xmat[g].reshape(3, 3), d.geom_xpos[g], m.geom_aabb[g]
+            for sx in (-1, 1):
+                for sy in (-1, 1):
+                    for sz in (-1, 1):
+                        pts.append(R.T @ (cg + Rg @ (a[:3] + np.array([sx, sy, sz]) * a[3:]) - p))
+        if not pts:
+            continue
+        pts = np.array(pts)
+        lo, hi = pts.min(0), pts.max(0)
+        box = np.r_[(lo + hi) / 2, (hi - lo) / 2 + 1e-4]
+        old = m.bvh_aabb[adr].copy()
+        if np.any(np.abs(old[:3] - box[:3]) > old[3:] + 1e-6) or np.any(np.abs(old[:3] - box[:3]) + box[3:] > old[3:] + 1e-4):
+            changed[m.body(b).name] = [old.round(4).tolist(), box.round(4).tolist()]
+        for k in range(adr, adr + num):
+            m.bvh_aabb[k] = box
+    return changed
+
+
 def foot_load(m, d, floor, foot_geoms):
     """Summed normal force (N) of the foot-floor contacts."""
     f6, tot = np.zeros(6), 0.0
@@ -684,6 +806,9 @@ def run(args):
     sp_obj = sp_object_draw(args, sp_rng) if args.sp_at is not None else None
     sp_model = sp_install_model_hook(args, sp_obj) if args.sp_at is not None else None
     m, d, c, names, bam = ev.load(c0)
+    bvh_refit = refit_body_bvh(m) if args.bvh_refit else None
+    if bvh_refit is not None:
+        print("bvh refit:", json.dumps(bvh_refit), flush=True)
     if args.bam_friction_scale != 1.0:  # sim-ID knob (2026-10-17): scale BAM's stiction/load-friction budget, as the training env's friction DR does
         for pname in ("friction_base", "friction_stribeck", "load_friction_base", "load_friction_stribeck", "load_friction_motor",
                       "load_friction_external", "load_friction_motor_stribeck", "load_friction_external_stribeck"):
@@ -750,6 +875,7 @@ def run(args):
         sp = SeePick(m, d, args, sp_obj, sp_rng, sp_model)
         args.vx = 0.0
         T = max(T, args.sp_at + walk_brain.SP_PERIOD * SP_DONE_PHASE / (1.0 - args.drop) + 0.3 + args.sp_after)
+    sp_trace = SpTrace(brain, args.sp_trace) if args.sp_trace and sp is not None else None
     mouth = m.site("mouth_tip").id
     feet = [m.geom(g).id for g in ("left_foot_collision", "right_foot_collision")]
     gp = dict(mouth_min_z=None, mouth_at_min=None, pose_at_min=None, tilt_at_min=None, max_tilt=0.0, phase_at_min=None)
@@ -1017,6 +1143,8 @@ def run(args):
         hist.append((round(t, 2), tilt, float(np.linalg.norm(d.sensordata[gyro_adr:gyro_adr + 3])), tz))
         if sp is not None:
             sp.observe(t, brain, info, tilt, tz)
+        if sp_trace is not None:
+            sp_trace.row(t, brain, info, goal, m, d, sp, qa, z0, names, tilt, tz)
         if args.kick_at is not None:
             fz = float(d.geom_xpos[kick_geom, 2])
             if kick_start_t is None:
@@ -1365,12 +1493,14 @@ def main():
     ap.add_argument("--no-settle", action="store_true", help="with --wired-hold: keep walk61 after a grip stop (GripStop.settle off)")
     ap.add_argument("--wired-guards", action="store_true", help="walk_wired.py's walk-mode stops (3.0 rad hard limit, 30 deg tilt)")
     ap.add_argument("--until", type=float, default=0.0, help="s; run at least this long")
+    ap.add_argument("--bvh-refit", action="store_true", help="refit the collision bounding volumes after evaluate_delay's post-compile inertia edits (refit_body_bvh)")
     ap.add_argument("--tick-log", default=None, help="write one JSON row per 20 ms tick (q, dq, gb, gyro_body, action) like /tmp/duck_wired_log_*.jsonl")
     sp = ap.add_argument_group("seeing pick (walk_brain mode seepick, seepick61.onnx)")
     sp.add_argument("--sp-at", type=float, default=None, help="s; switch stand61 to seepick here (forces vx 0)")
     sp.add_argument("--sp-offset", type=float, nargs=2, default=[0.0, 0.0], metavar=("DX", "DY"),
                     help="m; object offset from the trained landing spot SP_LANDING_XY in the foot frame")
     sp.add_argument("--sp-shape", choices=("ball", "box", "cylinder"), default="ball")
+    sp.add_argument("--sp-half", type=float, nargs=3, default=None, metavar=("HX", "HY", "HZ"), help="m; exact half extents (overrides the draw)")
     sp.add_argument("--sp-size", type=float, default=None, help="m; largest horizontal width (default: drawn from the training range)")
     sp.add_argument("--sp-mass", type=float, default=None, help="g (default: drawn from 0.5-10 g)")
     sp.add_argument("--sp-friction", type=float, default=None, help="object sliding friction (default: drawn from 0.35-1.1)")
@@ -1388,6 +1518,7 @@ def main():
     sp.add_argument("--sp-holding", choices=("runtime", "stopped"), default="stopped",
                     help="holding bit: jaw_ctl.holding (stopped: open >= GRIP_MIN_DEG and still), or the rule before 2026-10-27 without the still check (runtime)")
     sp.add_argument("--sp-no-cap", action="store_true", help="do not apply jaw_limits to the jaw goal (it is still evaluated)")
+    sp.add_argument("--sp-trace", default=None, help="write SpTrace rows (61 obs, 14 actions, goals, joints, beak) per seepick tick")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
     args = ap.parse_args()
