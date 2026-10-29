@@ -130,7 +130,9 @@ checks = {
     '8_insertion': dict(J(HERE / 'insertion_check.json'), rule='boards along -x 0..25 mm with the cap off; cap pushed straight on along +x; overlap only at the final seat',
                         outline=PB['outline'],
                         passed=all(v['maxOverlapMm3'] < 1.0 for k, v in J(HERE / 'insertion_check.json').items() if k.startswith(('xl', 'pd')))
-                               and J(HERE / 'insertion_check.json')['cap_path']['boards']['maxOverlapMm3'] == 0 and PB['outline']['passed']),
+                               and J(HERE / 'insertion_check.json')['cap_path']['boards']['maxOverlapBeforeFinalSeatMm3'] == 0
+                               and all(J(HERE.parent / 'lid-columns-20261029/checks.json')['ok'][k] is True for k in ('columnsBearOnBoards', 'frameClearMm', 'nothingElseTouched'))
+                               and PB['outline']['passed']),
     'screws': dict(rows=SCREWS, total=sum(r['count'] for r in SCREWS), stock='M2 x 4 / 6 / 8 / 10 only; M2 x 6 everywhere except M2 x 4 at the two z 17.7 XL4015 holes and the four M2 x 10 cap screws', passed=True),
 }
 if GATE.exists():

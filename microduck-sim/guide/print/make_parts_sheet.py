@@ -713,6 +713,23 @@ INCREMENTAL_NOTES_BY_VERSION['V1.37'] = dict(
     jaw_ring_capped=('Prints closed end down, no support, about 5 to 11 minutes for both. The centre hole is the M2 pilot: do not drill it. '
                      'Bore 10.5 slides over the boss; outer dia 14 turns in the seat.'))
 
+# V1.38: the box cap of D-034 (2026-10-29): its four screw columns reach the boards. Replaces the printed V1.20 box cap.
+RETIRED_INCREMENTAL['V1.38'] = [
+    ('Box cap (V1.20 print)', 'Orange', HERE / 'release-V1.38' / 'retired' / 'rear_lid-V1.20.stl',
+     'Its screw floors stopped short of the boards, so tightening pulled them off. Keep its four M2 x 10.', 'Box cap, columns on the boards'),
+]
+INTRO_BY_VERSION['V1.38'] = ('V1.38 is one orange plate with the rear converter box cap. Its four screw columns now run forward until they '
+                             'sit on the boards, so the screws press each column onto a board instead of pulling its floor across a gap. '
+                             'The cap edge stops about 0.3 mm short of the frame rim on purpose. Same four M2 × 10; the frame stays.')
+RETIRED_HEADING_BY_VERSION['V1.38'] = 'No longer used'
+RETIRED_LEAD_BY_VERSION['V1.38'] = 'The V1.20 box cap, whose screw floors broke off.'
+INCREMENTAL_NAMES_BY_VERSION['V1.38'] = dict(rear_lid='Box cap, columns on the boards')
+INCREMENTAL_NOTES_BY_VERSION['V1.38'] = dict(
+    rear_lid=('Replaces the V1.20 box cap. Same outside and the same four M2 × 10 through the round holes in its back. Each column '
+              'is longer and ends on a board: the low two on the 5991, the top two on the 7 V converter. Tighten until each column '
+              'sits firmly and stop; a hairline gap stays at the cap edge. Prints on its flat back face with tree support under the '
+              'rounded edges, as before.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

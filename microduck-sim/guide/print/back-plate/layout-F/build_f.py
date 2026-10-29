@@ -402,10 +402,17 @@ USBC_REAR_X = PD_BACK_X - PD_PCB[2] - PD_PARTS['usbc'][2]   # -54.9, the socket'
 # through on removal; "螺丝挡板换成更厚的"). The floors grow forward, so the seats, the stock M2 x 10, the tips and the thread
 # engagements stay those of V1.17; the column fronts move 2.0 mm closer to the boards (low pair 1.5 mm from the 5991 PCB, top
 # pair about 0.75 mm from the 7 V board's nearest part), which still lets the cap seat on the rim before the screws pull.
-CAP_COL = dict(r=2.8, seat=round(USBC_REAR_X - 1.2, 3), bore_r=2.2, floor=3.0, clear_r=1.15, screw_len=10.0)
-CAP_COL['front'] = round(CAP_COL['seat'] + CAP_COL['floor'], 3)   # -53.1; head seat -56.1, M2 x 10 tip at -46.1, pilot ends -45.3
-TOP_COL = dict(r=2.8, seat=-55.6, floor=3.0, bore_r=2.2, clear_r=1.15, screw_len=10.0, wall_clr=0.25)   # tip -45.6, pilot ends -45.3
-TOP_COL['front'] = round(TOP_COL['seat'] + TOP_COL['floor'], 3)
+# V1.38 (D-034, Shawn 2026-10-29: the floor tore off while screwing; "为什么不贴着板子"): the 3 mm floors still hung 1.5 / 1.25 mm
+# short of the boards, so the screw pulled the floor across that gap until it broke off the column. The columns now run to the
+# board faces (low pair onto the 5991 PCB, top pair onto the 7 V board) and the cap rim stops RIM_GAP short of the frame rim,
+# so the four columns locate the cap and carry the screw load, and each floor is pressed onto a board instead of pulled.
+RIM_GAP = 0.3
+CAP_COL = dict(r=2.8, seat=round(USBC_REAR_X - 1.2, 3), bore_r=2.2, clear_r=1.15, screw_len=10.0)
+CAP_COL['front'] = round(PD_BACK_X - PD_PCB[2], 3)                # -51.6, the 5991 PCB rear face; head seat -56.1, M2 x 10 tip at -46.1
+CAP_COL['floor'] = round(CAP_COL['front'] - CAP_COL['seat'], 3)
+TOP_COL = dict(r=2.8, seat=-55.6, bore_r=2.2, clear_r=1.15, screw_len=10.0, wall_clr=0.25)   # tip -45.6, pilot ends -45.3
+TOP_COL['front'] = -51.86                                        # on the 7 V XL4015 hole pad (PCB rear face -51.805, pad -51.855; nothing else within r 3)
+TOP_COL['floor'] = round(TOP_COL['front'] - TOP_COL['seat'], 3)
 HOOK = dict(window='pd5991_term', tooth_dx=(0.9, 1.7), notch_dx=(0.7, 1.8), tab_h=1.2, tooth_h=1.0, notch_h=1.2, root_dx=1.2, root_up=0.4)
 TONGUE_Y = (24.0, 30.2)                                  # |y| range of each tongue (top corners: bodies there stay below z 33.4)
 TONGUE_Z = (ZI1 - 1.2, ZI1)                              # under the top wall inner face z 41.8
@@ -461,7 +468,7 @@ def cap_features(outer=None):
         for y, z in top_screw_axes():
             col = P.cyl_x(t['r'], X_LID + 0.5, t['front'], y, z)
             col = col ^ outer if outer is not None else col           # one piece, rear end trimmed to the rounded back
-            parts.append(col ^ (keep + P.box((X_LID - 2, -60, -60), (X_SPLIT, 60, 60))))   # flattened only in front of the rim, where the frame walls are
+            parts.append(col ^ (keep + P.box((X_LID - 2, -60, -60), (X_SPLIT - RIM_GAP, 60, 60))))   # flattened in front of the cap rim, where the frame walls are
             holes += [P.cyl_x(t['bore_r'], X_LID - 1.5, t['seat'], y, z), P.cyl_x(t['clear_r'], t['seat'] - 0.1, t['front'] + 0.1, y, z)]
     for (y, z), ((y0, z0), (y1, z1)), rb in zip(LID_SCREWS, LID_EARS, LID_BOSS_R):
         parts += [P.cyl_x(rb, X_SPLIT - 1.2, X_SPLIT, y, z), P.box((X_SPLIT - 1.2, y0, z0), (X_SPLIT, y1, z1 + (0.4 if z > -20 else 0.0)))]
@@ -511,7 +518,7 @@ def build(ol, outer, inner):
     # plate face to the rim (M2 head dia 3.8 + 0.3 radial)
     cuts += [P.cyl_x(COVER_LANE_R, X_LID - 1, X_IN, y, z) for (y, z) in BRP.POST['holes'] if z < 0]
     frame = frame - P.union(cuts)
-    cap = (outer - inner) ^ P.box((X_LID - 1, -60, -60), (X_SPLIT, 60, 60))
+    cap = (outer - inner) ^ P.box((X_LID - 1, -60, -60), (X_SPLIT - RIM_GAP, 60, 60))   # the columns, not the rim, bear (D-034)
     wcut = [c for c, k in zip(window_cuts(), windows()) if k != 'pd5991_usbc']   # the cap closes the rim end of the USB-C slot
     lid = (P.union([cap] + cf) - P.union(wcut + ch))
     # F (2026-10-15): no window hook; the three screws hold the cap
@@ -692,7 +699,7 @@ if __name__ == '__main__':
                                tipX=round(CAP_COL['seat'] + CAP_COL['screw_len'], 3), throughPcbX=[round(PD_BACK_X - PD_PCB[2], 3), PD_BACK_X],
                                bossPilotX=[PD_BACK_X, round(X_OUT - 0.3, 3)], engagementMm=round(CAP_COL['seat'] + CAP_COL['screw_len'] - PD_BACK_X, 2),
                                gapColumnToPcbMm=round(PD_BACK_X - PD_PCB[2] - CAP_COL['front'], 2), usbcRearX=round(USBC_REAR_X, 3),
-                               note='the 5991 hole at real (+11.37, -16.67) takes this screw instead of its own M2 x 6; the column ends 1.5 behind the PCB and its underside is flattened 0.5 above the USB-C socket')
+                               note='the 5991 hole at real (+11.37, -16.67) takes this screw instead of its own M2 x 6; the column bears on the PCB (V1.38, D-034) and its underside is flattened 0.5 above the USB-C socket')
         sy2, sz2 = cap_screw_axis(CAP_SCREW_HOLE_2)
         out['capScrew2'] = dict(out['capScrew'], axisYZ=[round(-sy2, 3), round(sz2, 3)],
                                 note='the 5991 hole at real (-11.37, -16.54), terminal side, takes this screw instead of its own M2 x 6 (Shawn 2026-10-15); same column, seat and engagement as capScrew')
@@ -702,6 +709,7 @@ if __name__ == '__main__':
                                    clearHoleDia=2 * t['clear_r'], tipX=round(t['seat'] + t['screw_len'], 3), boardSeatX=xl_seat,
                                    bossPilotX=[xl_seat, round(X_OUT - 0.3, 3)], engagementMm=round(t['seat'] + t['screw_len'] - xl_seat, 2),
                                    columnFlattenedTo=dict(absY=round(YI - t['wall_clr'], 3), zMax=round(ZI1 - t['wall_clr'], 3)),
+                                   gapColumnToPadMm=round(-51.855 - t['front'], 3), capRimGapToFrameMm=RIM_GAP,
                                    note='the 7 V board top corner holes take these screws instead of its own two M2 x 6; with the cap off the board hangs on its two lower M2 x 4')
     tong = dict(absY=TONGUE_Y, z=list(TONGUE_Z), x=[round(X_SPLIT - 2.0, 2), round(X_SPLIT + TONGUE_L, 2)],
                 toothX=[round(X_SPLIT + TOOTH[0], 2), round(X_SPLIT + TOOTH[1], 2)], toothZ=[TONGUE_Z[1], TONGUE_Z[1] + TOOTH_H],

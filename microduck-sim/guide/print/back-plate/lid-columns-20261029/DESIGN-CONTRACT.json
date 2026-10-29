@@ -1,0 +1,28 @@
+{
+  "schema": "design-contract/1",
+  "design": "Rear converter box cap (orange, layout F): the four hidden M2 x 10 screw columns run all the way to the boards (low pair onto the 5991 PCB, top pair onto the 7 V XL4015 hole pads) and the cap rim stops 0.3 mm short of the frame rim, so the columns locate the cap and carry the screw load; same screws, frame unchanged, only the cap is reprinted",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-10-29",
+    "quotes": [
+      "再有就是我们现在的降压板背包盖子 打螺丝的时候直接把螺丝挡板打下来了 课件螺丝挡板还是不稳固 看下怎么调整吧？",
+      "哦哦哦 就是没压倒板子上 有空隙 所以才被螺丝拽断了 为什么不贴着板子",
+      "出文件"
+    ],
+    "history": "2026-10-29: cause shown first: the 3 mm head floors ended 1.5 mm (low pair) and 0.75 mm (top pair, to the pad) short of the boards, so tightening pulled each floor across the gap until it tore off the column. Proposal: extend the columns to the board faces and leave a deliberate 0.3 mm gap at the cap rim (Shawn asked whether 0.3 is normal; it is the usual FDM fit clearance). Thickening the columns was dropped."
+  },
+  "concept_render": "concept/lid-column-fix.png",
+  "geometry": [
+    {
+      "part": "rear_lid",
+      "says": "the column fronts reach the boards (5991 PCB rear face x -51.6, XL4015 pad x -51.855) and no further",
+      "bounds": {"x_max": {"gt": -51.65, "lt": -51.55}}
+    },
+    {
+      "part": "rear_lid",
+      "says": "the cap keeps its V1.20 outer size: rear face x -67.1, |y| 32.05, z -36.02..43",
+      "bounds": {"x_min": {"gt": -67.2, "lt": -67.0}},
+      "size": {"y": [64.0, 64.2], "z": [78.9, 79.1]}
+    }
+  ]
+}

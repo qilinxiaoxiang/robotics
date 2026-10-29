@@ -56,7 +56,7 @@ for k, b in boards.items():                                  # each board along 
     ins[k] = dict(maxOverlapMm3=round(worst[0], 3), atOffsetMm=worst[1])
 stage('insertion'); allb = P.union(list(boards.values()))
 path = [np.array([-15.0, 0, -B.CAP_DROP]), np.array([0, 0, -B.CAP_DROP]), np.array([0, 0, 0.0])]
-worst = {'frame': (0.0, None), 'boards': (0.0, None)}; before_final = (0.0, None)
+worst = {'frame': (0.0, None), 'boards': (0.0, None)}; before_final = (0.0, None); boards_before_final = (0.0, None)
 for a, b_ in zip(path[:-1], path[1:]):
     for t in np.linspace(0, 1, 31):
         o = a + t * (b_ - a); c = cap.translate(o.tolist())
@@ -66,8 +66,13 @@ for a, b_ in zip(path[:-1], path[1:]):
                 worst[nm] = (v, np.round(o, 2).tolist())
             if nm == 'frame' and np.linalg.norm(o) > 1e-9 and v > before_final[0]:
                 before_final = (v, np.round(o, 3).tolist())
+            if nm == 'boards' and np.linalg.norm(o) > 1e-9 and v > boards_before_final[0]:
+                boards_before_final = (v, np.round(o, 3).tolist())
 ins['cap_path'] = {k: dict(maxOverlapMm3=round(v[0], 3), atOffset=v[1]) for k, v in worst.items()}
 ins['cap_path']['frame']['maxOverlapBeforeFinalSeatMm3'] = round(before_final[0], 3); ins['cap_path']['frame']['beforeFinalAt'] = before_final[1]
+# V1.38 (D-034): the four columns bear on the boards at the final seat, so the board hulls (whose PCB hull takes in the 0.05 mm
+# proud XL4015 pads) overlap there by design; the real-mesh contact is checked in ../lid-columns-20261029/checks.json
+ins['cap_path']['boards']['maxOverlapBeforeFinalSeatMm3'] = round(boards_before_final[0], 3); ins['cap_path']['boards']['beforeFinalAt'] = boards_before_final[1]
 ins['cap_final_gap'] = dict(frame=round(float(fr.min_gap(cap, 2.0)), 3), boards=round(float(allb.min_gap(cap, 2.0)), 3))
 (HERE / 'insertion_check.json').write_text(json.dumps(ins, indent=1) + '\n')
 

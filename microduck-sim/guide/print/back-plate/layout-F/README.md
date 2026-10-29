@@ -38,7 +38,7 @@ every output in the world frame. Polarity: + is the lower screw on the XL4015 IN
   solid (no wire passage). No hook notch and no tooth slots. Wire notches (real y 3.2..12.4, 9.2 wide): A cuts the top-wall front edge back from x -47.0
   to x -49.8 through the 1.2 wall (rear corners r 1); B cuts the cover-plate top edge from z 29.5 down to z 28.5 over
   x -47..-45 (floor corners r 0.5), flush with the cover lip, which is untouched. Volume 10292.8 mm3, one watertight body.
-- **Cap** `rear_lid-world.stl`: x -67.1..-59.1, 1.2 mm walls; it carries every rear-edge rounding (radii pinned to
+- **Cap** `rear_lid-world.stl`: x -67.1..-59.4 (the rim stops 0.3 mm short of the frame rim, V1.38), 1.2 mm walls; it carries every rear-edge rounding (radii pinned to
   the V1.11 values: no wire inside the box limits them any more, a cap change is Shawn's decision) and the four screw
   columns with their driver holes (Cap retention). Volume 6404.0 mm3, one watertight body.
 - **Radii** (outer; inner = outer - 1.2) and what limits each:
@@ -69,22 +69,24 @@ every output in the world frame. Polarity: + is the lower screw on the XL4015 IN
 
 Four hidden M2 x 10 (Shawn chose screws on 2026-10-14 and replaced the tongues and hook with screws on 2026-10-15).
 Each runs in a dia 5.6 column from the cap back, is driven through a dia 4.4 hole in the cap back and seats its head
-on a 3.0 mm column floor with a dia 2.3 clearance hole, so nothing shows from outside. The floors were 1.0 mm in V1.16/V1.17; the two low
-ones tore through on the printed V1.17 cap when it was taken off (Shawn, 2026-10-15, IMG_7004). V1.19 grows each floor 2.0 mm
-forward, so the seats, the M2 x 10 and the thread engagement are unchanged.
+on a column floor with a dia 2.3 clearance hole, so nothing shows from outside. Each column runs forward onto a board
+(V1.38, D-034): on the printed V1.20 cap the 3.0 mm floors ended short of the boards and the screws pulled them off across
+the gap (Shawn, 2026-10-29). The cap rim stops `RIM_GAP` 0.3 mm short of the frame rim, so the four columns locate the cap
+and carry the screw load. Seats, the M2 x 10 and the thread engagement are those of V1.17.
 
-- Low pair, on the 5991 upper hole axes (y +11.367, z -16.667) and (y -11.366, z -16.54): columns to x -53.1, 1.5 mm
-  behind the 5991 PCB; the +y column passes beside the USB-C socket and its underside is flattened to 0.5 mm above the
-  socket top (z -19.19); seat x -56.1; the screw crosses a 1.5 mm gap and the 5991 PCB (1.6 mm) and engages 3.9 mm
-  in the standoff boss pilot (tip x -46.1, pilot to x -45.3). Tightening also clamps those 5991 corners.
-- Top pair, on the 7 V XL4015 top corner hole axes (y +-28.25, z 38.7): columns to x -52.6 (1.25 mm gap to the board), flattened in front of the
-  rim to |y| <= 30.6 and z <= 41.55 so they slide inside the frame; seat x -55.6; the screw crosses the gap, passes the
-  board's 2.5 mm hole (the board is not clamped by it) and engages 4.6 mm in the dia 5.0 frame boss (tip x -45.6).
-- The gaps mean the cap always seats on the rim before the screws pull.
+- Low pair, on the 5991 upper hole axes (y +11.367, z -16.667) and (y -11.366, z -16.54): columns to x -51.6, on the
+  5991 PCB (floor 4.5 mm); the +y column passes beside the USB-C socket and its underside is flattened to 0.5 mm above the
+  socket top (z -19.19); seat x -56.1; the screw passes the floor and the 5991 PCB (1.6 mm) and engages 3.9 mm
+  in the standoff boss pilot (tip x -46.1, pilot to x -45.3). Tightening clamps those 5991 corners between column and boss.
+- Top pair, on the 7 V XL4015 top corner hole axes (y +-28.25, z 38.7): columns to x -51.86, on the board's hole pads (floor 3.74 mm), flattened in front of the
+  rim to |y| <= 30.6 and z <= 41.55 so they slide inside the frame; seat x -55.6; the screw passes the floor and the
+  board's 2.5 mm hole (the board top corners are now clamped between column and boss) and engages 4.6 mm in the dia 5.0 frame boss (tip x -45.6).
+- The columns bear on the boards and the rim never touches the frame (cap to frame 0.249 mm at the closest, the flattened
+  top columns): `../lid-columns-20261029/check_lid_columns.py`, `checks.json`, `DESIGN-CONTRACT.json`.
 - Ray cast (`raycast_cap_screws.py`, `raycast_cap_screws.json`): thread ring material 3.9 / 3.9 / 4.6 / 4.6 mm in the
   frame, head envelope and driver lane clear of every part.
 - Nothing sits outside the box outline (`post_build.json` outline check: 0 vertices).
-- Fitting: push the cap straight forward until it meets the rim, then drive the four M2 x 10. Removal: unscrew, pull it
+- Fitting: push the cap straight forward until the columns meet the boards (a 0.3 mm gap stays at the rim), then drive the four M2 x 10. Removal: unscrew, pull it
   straight back. Guide approach path [[-15.0, 0.0, 0.0], [0.0, 0.0, 0.0]].
 
 ## Wiring (22 AWG, `wires_F.json`, routes in `build_f.wires_real_F()`)
