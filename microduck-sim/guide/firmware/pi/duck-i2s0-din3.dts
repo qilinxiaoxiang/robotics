@@ -1,0 +1,91 @@
+// Radxa Cubie A7Z: I2S0 DIN3 on header pin 10 (PB10) for the back microphone, 4-channel capture.
+//
+// Radxa's sun60iw2p1-i2s0-2ch.dtbo gives I2S0 MCLK 36, BCLK 12, LRCK 35, DIN0 38, DOUT0 40. The two ears share
+// DIN0 (left/right slots), so the optional back INMP441 (D-026 addendum) gets the second data input DIN3 on pin 10.
+// The A733 pinctrl lists i2s0_din3 as function 35 of PB10 (debugfs pinmux-functions, 2026-10-29), and Linux leaves
+// PB9/PB10 unclaimed (UART0's Linux pin group is empty; u-boot uses them for its console before Linux starts).
+// The BSP driver (radxa/allwinner-bsp cubie-aiot-v1.4.6, drivers/sound/platform/snd_sunxi_i2s.c) writes
+// rxfifo-pinmap (data line per capture channel) and rxfifo-chmap (slot on that line) into RXCHMAP0..3:
+//   ch0 = DIN0 left (ear with L/R to GND), ch1 = DIN0 right (ear with L/R to VDD),
+//   ch2 = DIN3 left (back mic, L/R to GND), ch3 = DIN3 right (unused).
+// This overlay sorts after the Radxa one and replaces the I2S0 pin lists with its own groups (it does not rely on
+// the Radxa overlay's labels), so both overlays must stay enabled.
+//
+// Install on the A7Z:
+//   dtc -@ -I dts -O dtb -o /tmp/zz-duck-i2s0-din3.dtbo duck-i2s0-din3.dts
+//   sudo install -m 644 /tmp/zz-duck-i2s0-din3.dtbo /boot/dtbo/
+//   sudo u-boot-update      (fdtoverlays now also lists .../zz-duck-i2s0-din3.dtbo)
+//   sudo reboot
+// Check: arecord -D hw:0,0 -c 4 -r 48000 -f S32_LE -d 5 /tmp/din3.wav, then per-channel level (back mic on ch2).
+// If it does not boot: boot the "rescue target" entry or take the card to a Mac and remove the dtbo from
+// extlinux/extlinux.conf. Undo: sudo rm /boot/dtbo/zz-duck-i2s0-din3.dtbo, sudo u-boot-update, reboot.
+/dts-v1/;
+/plugin/;
+/ {
+	metadata {
+		title = "MicroDuck: I2S0 DIN3 on pin 10 (back microphone)";
+		compatible = "radxa,cubie-a7z";
+		category = "misc";
+		exclusive = "PB10";
+		description = "Add I2S0 DIN3 on PB10 (pin 10) and map capture channels 2/3 to it, for the back INMP441. Needs sun60iw2p1-i2s0-2ch. Added 2026-10-29.";
+	};
+
+	fragment@0 {
+		target = <&pio>;
+		__overlay__ {
+			duck_i2s0_mclk: duck-i2s0@0 {
+				pins = "PB4";
+				function = "i2s0_mclk";
+				allwinner,drive = <1>;
+				bias-disable;
+			};
+			duck_i2s0_bclk: duck-i2s0@1 {
+				pins = "PB5";
+				function = "i2s0_bclk";
+				allwinner,drive = <1>;
+				bias-disable;
+			};
+			duck_i2s0_lrck: duck-i2s0@2 {
+				pins = "PB6";
+				function = "i2s0_lrck";
+				allwinner,drive = <1>;
+				bias-disable;
+			};
+			duck_i2s0_din0: duck-i2s0@3 {
+				pins = "PB8";
+				function = "i2s0_din0";
+				allwinner,drive = <1>;
+				bias-pull-down;
+			};
+			duck_i2s0_dout0: duck-i2s0@4 {
+				pins = "PB7";
+				function = "i2s0_dout0";
+				allwinner,drive = <1>;
+				bias-pull-down;
+			};
+			duck_i2s0_din3: duck-i2s0@5 {
+				pins = "PB10";
+				function = "i2s0_din3";
+				allwinner,drive = <1>;
+				bias-pull-down;
+			};
+			duck_i2s0_off: duck-i2s0@6 {
+				pins = "PB4", "PB5", "PB6", "PB8", "PB7", "PB10";
+				function = "io_disabled";
+				allwinner,drive = <1>;
+				bias-disable;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s0_plat>;
+		__overlay__ {
+			pinctrl-0 = <&duck_i2s0_mclk &duck_i2s0_bclk &duck_i2s0_lrck &duck_i2s0_din0 &duck_i2s0_dout0
+				     &duck_i2s0_din3>;
+			pinctrl-1 = <&duck_i2s0_off>;
+			rxfifo-pinmap = <0 0 3 3>;
+			rxfifo-chmap = <0 1 0 1>;
+		};
+	};
+};

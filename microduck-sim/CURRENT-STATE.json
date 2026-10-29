@@ -486,6 +486,18 @@
      "why": "deployed to the A7Z; model updated to the V1.35 saddle and recalibrated"
     }
    ]
+  },
+  "a7z_audio_capture": {
+   "value": "I2S0 4-channel capture on card 0 (sndi2s0, hw:0,0, S32_LE 48 kHz): Radxa sun60iw2p1-i2s0-2ch.dtbo plus /boot/dtbo/zz-duck-i2s0-din3.dtbo (source guide/firmware/pi/duck-i2s0-din3.dts) adds DIN3 on header pin 10 (PB10) with rxfifo-pinmap <0 0 3 3>, rxfifo-chmap <0 1 0 1>: ch0 = DIN0 left slot (pin 38), ch1 = DIN0 right slot (pin 38), ch2 = DIN3 left slot (pin 10, back INMP441 with L/R to GND), ch3 = DIN3 right slot (reads 0). Tested on the bench, back microphone not yet fitted in the cap. Boot with the back SD on pin 10: 2 boots, both reached Linux (no u-boot stall); the 10-cold-boot run was skipped by Shawn's choice",
+   "meaning": "Which header pins and ALSA channels carry the microphones. Pin 10 is UART0 RX in u-boot; Linux leaves PB9/PB10 unclaimed until the I2S0 stream claims PB10. Previous extlinux.conf kept as /boot/extlinux/extlinux.conf.before-din3-20261029; undo = remove the dtbo and run u-boot-update.",
+   "verified_at": "2026-10-29",
+   "source": "2026-10-29 A7Z bench: overlay installed, rebooted, live /proc/device-tree i2s0_plat@2532000 shows rxfifo-pinmap 0 0 3 3 and rxfifo-chmap 0 1 0 1; arecord -c 4 40 s while Shawn tapped the back microphone: ch2 rose 10-45x over its floor (~3.4k) at 0.5-3.7 s and 13.3 s while ch0/ch1 stayed at floor; a shared sound at 6.8 s rose on ch0, ch1 and ch2 alike; ch3 exactly 0",
+   "measure": "on the A7Z: arecord -D hw:0,0 -c 4 -r 48000 -f S32_LE -d 5 /tmp/m.wav; tapping the back microphone raises ch2 only, each ear raises its own channel",
+   "max_age_days": 30,
+   "consumers": [
+    "A7Z-SOLDER / A7Z-PINS back-microphone step",
+    "sound localisation (three-mic report 20261024)"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
