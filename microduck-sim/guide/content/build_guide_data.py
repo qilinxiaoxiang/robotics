@@ -380,6 +380,9 @@ def build_parts() -> dict:
     jaw_sup = first_existing(world / 'jaw_support.stl')
     # V1.8 jaw: the lower lip pad prints as part of the jaw frame (print/jaw-pad/), so nothing in the beak is glued.
     jaw = first_existing(world / 'jaw_frame.stl')
+    # 2026-10-29 (print/jaw-ring-screw-20261029/): jaw_frame.stl is the as-built jaw, right boss cut back 2 mm and its hole
+    # drilled to 2.5; the capped ring replaces the mouth sliding ring and one M2 x 8 from outside holds it on the arm.
+    jaw_ring = first_existing(world / 'mouth_sliding_ring.stl')
     # V1.9 neck: the head-pitch sliding ring lengthened to 4.9 mm so it reaches the ID13 case (print/neck-ring/).
     neck_ring = first_existing(world / 'neck_pitch_ring.stl')
     # V1.8 torso: the rear electronics pack behind the hip-yaw motors (print/rear-pack/) and the BNO085 with its plug
@@ -513,7 +516,8 @@ def build_parts() -> dict:
             parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'electronics', 'status': 'purchased',
                           'v': v, 'f': f, 'source': str(path)}
     for key, path in (('face_panel', face), ('eye_trim', trim), ('head_bottom', shell),
-                      ('imu_board', imu), ('imu_sh4_receiving', imu_plug), ('jaw_frame', jaw), ('neck_pitch_ring', neck_ring), ('jaw_support', jaw_sup)):
+                      ('imu_board', imu), ('imu_sh4_receiving', imu_plug), ('jaw_frame', jaw), ('neck_pitch_ring', neck_ring), ('jaw_support', jaw_sup),
+                      ('mouth_sliding_ring', jaw_ring)):
         if path:
             v, f = load_stl(path)
             if len(f) > DECIMATE_OVER:
@@ -540,7 +544,9 @@ def build_parts() -> dict:
                 v, f = decimate(v, f, 25000, key)
             parts[key] = {'key': key, 'name': name, 'color': color, 'module': 'head', 'status': 'purchased', 'v': v, 'f': f, 'source': str(path)}
     if jaw:
-        parts['jaw_frame'].update(name='Jaw frame with the lower lip (new print)', color=parts['head_bottom']['color'])
+        parts['jaw_frame'].update(name='Jaw frame with the lower lip (right boss cut back 2 mm, its hole drilled to 2.5)', color=parts['head_bottom']['color'])
+    if jaw_ring:
+        parts['mouth_sliding_ring']['name'] = 'Capped jaw ring on the right jaw boss, held by one M2 x 8 (V1.37 print, black)'
     # V1.14 white plate (colour scheme C): the V1.9 cap reprints white and the V2.0 side shells (print/v20-source/) print white (the face panel white). Set last,
     # because the orange prints above take their colour from the source cap.
     WHITE = parts['face_panel']['color']

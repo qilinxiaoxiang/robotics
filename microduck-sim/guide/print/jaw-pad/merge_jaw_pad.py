@@ -7,7 +7,8 @@ sits on the pocket floor with a 0-0.08 mm fit gap (95th percentile) and up to 1.
 0.9 mm bridge under the pad, its outline inset 1.5 mm so it stays over jaw material, ties the pad bottom to the floor.
 Side gaps to the pocket walls stay as modelled (median 0.02 mm); the slicer closes the sub-0.1 mm ones.
 Acceptance: one closed body, the bridge entirely above jaw material, and nothing changed outside the pad pocket box.
-Writes ../world/jaw_frame.stl and merge_jaw_pad.json.
+Writes ../world/jaw_frame-v18.stl (the jaw as printed) and merge_jaw_pad.json. Since 2026-10-29 world/jaw_frame.stl is
+the as-built jaw with the right boss cut back 2 mm and its hole drilled to 2.5 (jaw-ring-screw-20261029/build_jaw_ring.py).
 
     /tmp/microduck-cad-venv/bin/python merge_jaw_pad.py
 """
@@ -20,7 +21,7 @@ import trimesh
 HERE = Path(__file__).resolve().parent
 SIM = HERE.parents[2]
 CACHE = SIM / 'build-pack-20260913/redesign-20260913/head-redesign-20261008/camera-ribbon-repair/head-source-cache'
-OUT = HERE.parent / 'world/jaw_frame.stl'
+OUT = HERE.parent / 'world/jaw_frame-v18.stl'
 BRIDGE_INSET, BRIDGE_Z = 1.5, (99.4, 100.3)
 
 

@@ -698,6 +698,21 @@ INCREMENTAL_NOTES_BY_VERSION['V1.36'] = dict(
                  'scrape the pocket floor clean and clear the long-round exit. The thin wall of floor between the pocket and the face slot '
                  'is about 1.4 mm: do not pry against it.'))
 
+# V1.37: the capped jaw ring of D-033 (2026-10-29), held on the right jaw boss by one M2 x 8. Replaces the V1.6 mouth sliding ring.
+RETIRED_INCREMENTAL['V1.37'] = [
+    ('V1.6 mouth sliding ring', 'Black', HERE.parents[1] / 'build-pack-20260913/redesign-20260913/workflow-review-20261009/central-cad/fusion-C-meshes/mouth_sliding_ring.stl',
+     'Nothing held it on the boss and it fell off.', 'Capped jaw ring'),
+]
+INTRO_BY_VERSION['V1.37'] = ('V1.37 is one black plate with two capped jaw rings, one to fit and one spare. The ring is a small cup that '
+                             'goes on the boss inside the right jaw arm, open side towards the arm, and one M2 × 8 from outside the arm '
+                             'holds it there. Before fitting it, cut the boss back 2 mm and drill its centre hole to 2.5 (guide chapter 8, jaw step).')
+RETIRED_HEADING_BY_VERSION['V1.37'] = 'No longer used'
+RETIRED_LEAD_BY_VERSION['V1.37'] = 'The V1.6 mouth sliding ring with its thin flange.'
+INCREMENTAL_NAMES_BY_VERSION['V1.37'] = dict(jaw_ring_capped='Capped jaw ring')
+INCREMENTAL_NOTES_BY_VERSION['V1.37'] = dict(
+    jaw_ring_capped=('Prints closed end down, no support, about 5 to 11 minutes for both. The centre hole is the M2 pilot: do not drill it. '
+                     'Bore 10.5 slides over the boss; outer dia 14 turns in the seat.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

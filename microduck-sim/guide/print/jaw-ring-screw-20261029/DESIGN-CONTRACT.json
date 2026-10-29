@@ -1,0 +1,29 @@
+{
+  "schema": "design-contract/1",
+  "design": "Right jaw pivot ring held by a screw: a one-piece capped ring (plain sleeve, no thin flange, closed inner end with an M2 pilot) on the right (-Y) jaw arm boss, whose end is cut back 2 mm by hand, held by one M2 x 8 driven from outside through the existing boss hole drilled to 2.5",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-10-29",
+    "quotes": [
+      "现在microduck的右下颚连接处的圈掉了 同时感觉原来那个圈容易掉 正好我们下颚的圆孔也没去去掉 是不是可以设计一个圆圈 通过螺丝固定在右下颚上",
+      "要两部分吗 能不能直接一个件搞定",
+      "有螺丝固定就不用那个特别薄的挡板了吧 也不好打印",
+      "出文件"
+    ],
+    "history": "2026-10-29: the two-piece option (old ring plus a separate dia 12 retaining disc and M2 x 10) was shown first; Shawn asked for one piece. A one-piece capped ring on the uncut boss would reach 3.5 mm further inboard and the right arm would have to bend about 8 mm to spring the jaw in, so the boss end is cut back 2 mm (concept picture jaw_ring_onepiece.png, rule: nothing inboard of today's envelope). Shawn then dropped the 0.3 mm flange: with the screw the ring cannot slide off, and the jaw is held axially by the four ID15 horn screws on the +Y side."
+  },
+  "concept_render": "concept/jaw_ring_onepiece.png",
+  "geometry": [
+    {
+      "part": "jaw_ring_capped",
+      "says": "nothing inboard of the old ring end (y -37.5): springing the jaw in needs no extra bend",
+      "bounds": {"y_max": {"lt": -37.45}}
+    },
+    {
+      "part": "jaw_ring_capped",
+      "says": "outer diameter 14 like the old sleeve, no flange (the old flange was dia 16.4)",
+      "size": {"x": [13.9, 14.1], "z": [13.9, 14.1]}
+    }
+  ],
+  "forbidden_parts": ["retaining_disc"]
+}
