@@ -785,41 +785,10 @@ class SpTrace:
         self.f.flush()
 
 
-def refit_body_bvh(m):
-    """--bvh-refit: make every body's collision bounding volumes cover its colliding geoms in the body's CURRENT
-    inertial frame. MuJoCo stores a body's BVH (bvh_aabb) in its inertial frame at compile time; evaluate_delay.load edits
-    body_ipos/body_iquat after compile (add_signed_inertias, the mass manifest), so bodies whose principal axes turned
-    keep a box in the old axes and the midphase drops contacts outside it (2026-10-27: the head's upper beak sank 16 mm
-    into the floor with no contact). Each node of a body's tree is set to the whole-body box, a conservative bound:
-    every geom pair of the body is then tested. Returns {body: [old root, new root]} for the bodies that changed."""
-    d = mujoco.MjData(m)
-    mujoco.mj_forward(m, d)
-    changed = {}
-    for b in range(1, m.nbody):
-        adr, num = m.body_bvhadr[b], m.body_bvhnum[b]
-        if adr < 0 or num <= 0:
-            continue
-        R, p = d.ximat[b].reshape(3, 3), d.xipos[b]
-        pts = []
-        for g in range(m.ngeom):
-            if m.geom_bodyid[g] != b or not (m.geom_contype[g] or m.geom_conaffinity[g]):
-                continue
-            Rg, cg, a = d.geom_xmat[g].reshape(3, 3), d.geom_xpos[g], m.geom_aabb[g]
-            for sx in (-1, 1):
-                for sy in (-1, 1):
-                    for sz in (-1, 1):
-                        pts.append(R.T @ (cg + Rg @ (a[:3] + np.array([sx, sy, sz]) * a[3:]) - p))
-        if not pts:
-            continue
-        pts = np.array(pts)
-        lo, hi = pts.min(0), pts.max(0)
-        box = np.r_[(lo + hi) / 2, (hi - lo) / 2 + 1e-4]
-        old = m.bvh_aabb[adr].copy()
-        if np.any(np.abs(old[:3] - box[:3]) > old[3:] + 1e-6) or np.any(np.abs(old[:3] - box[:3]) + box[3:] > old[3:] + 1e-4):
-            changed[m.body(b).name] = [old.round(4).tolist(), box.round(4).tolist()]
-        for k in range(adr, adr + num):
-            m.bvh_aabb[k] = box
-    return changed
+# The body-BVH refit now runs inside evaluate_delay.load for every caller (2026-10-29,
+# bvh-refit-baselines-20261029/README.md). --bvh-refit stays an accepted flag so older command lines run; it repeats
+# the refit, which finds nothing to change ("bvh refit: {}").
+refit_body_bvh = ev.refit_body_bvh
 
 
 def foot_load(m, d, floor, foot_geoms):
@@ -851,18 +820,17 @@ def run(args):
     sp_obj = sp_object_draw(args, sp_rng) if args.sp_at is not None else None
     sp_model = sp_install_model_hook(args, sp_obj) if args.sp_at is not None else None
     m, d, c, names, bam = ev.load(c0)
-    bvh_refit = refit_body_bvh(m) if args.bvh_refit else None
-    if bvh_refit is not None:
-        print("bvh refit:", json.dumps(bvh_refit), flush=True)
+    if args.bvh_refit:  # no-op since ev.load refits (2026-10-29); a second refit must find nothing to change
+        print("bvh refit:", json.dumps(refit_body_bvh(m)), flush=True)
     if sp_model is not None:  # the training env's contact solver settings on request (gap study 2026-10-29)
         if args.sp_cone == "elliptic":
             m.opt.cone = mujoco.mjtCone.mjCONE_ELLIPTIC
         if args.sp_impratio is not None:
             m.opt.impratio = args.sp_impratio
-        sp_model["contact"] = dict(cone=args.sp_cone, impratio=float(m.opt.impratio), bvh_refit=bvh_refit is not None)
-        if bvh_refit is None or args.sp_cone != "elliptic" or (args.sp_impratio or 1.0) < 10:
-            print("seepick: WITHOUT --bvh-refit --sp-cone elliptic --sp-impratio 10 the sim is not the one the policy was trained in "
-                  "(stale collision volumes, and a pinched object creeps out of the beak): seepick-gap-20261029/README.md", flush=True)
+        sp_model["contact"] = dict(cone=args.sp_cone, impratio=float(m.opt.impratio), bvh_refit=True)  # ev.load refits
+        if args.sp_cone != "elliptic" or (args.sp_impratio or 1.0) < 10:
+            print("seepick: WITHOUT --sp-cone elliptic --sp-impratio 10 the sim is not the one the policy was trained in "
+                  "(a pinched object creeps out of the beak): seepick-gap-20261029/README.md", flush=True)
     if args.bam_friction_scale != 1.0:  # sim-ID knob (2026-10-17): scale BAM's stiction/load-friction budget, as the training env's friction DR does
         for pname in ("friction_base", "friction_stribeck", "load_friction_base", "load_friction_stribeck", "load_friction_motor",
                       "load_friction_external", "load_friction_motor_stribeck", "load_friction_external_stribeck"):
@@ -1547,7 +1515,7 @@ def main():
     ap.add_argument("--no-settle", action="store_true", help="with --wired-hold: keep walk61 after a grip stop (GripStop.settle off)")
     ap.add_argument("--wired-guards", action="store_true", help="walk_wired.py's walk-mode stops (3.0 rad hard limit, 30 deg tilt)")
     ap.add_argument("--until", type=float, default=0.0, help="s; run at least this long")
-    ap.add_argument("--bvh-refit", action="store_true", help="refit the collision bounding volumes after evaluate_delay's post-compile inertia edits (refit_body_bvh)")
+    ap.add_argument("--bvh-refit", action="store_true", help="accepted for older command lines, no effect: evaluate_delay.load refits the collision bounding volumes itself since 2026-10-29 (prints the empty change set)")
     ap.add_argument("--tick-log", default=None, help="write one JSON row per 20 ms tick (q, dq, gb, gyro_body, action) like /tmp/duck_wired_log_*.jsonl")
     sp = ap.add_argument_group("seeing pick (walk_brain mode seepick, seepick61.onnx)")
     sp.add_argument("--sp-at", type=float, default=None, help="s; switch stand61 to seepick here (forces vx 0)")

@@ -466,10 +466,17 @@
       ]
     },
     "getup": {
-      "value": "sim only: walk_brain.py recover mode (DUCK_GETUP=recover: predicted fall -> LIMP kp 50 -> POSE 1 s kp 160 -> RISE stand61 at zero command -> give up after 5 s) gets stand61 up 50/50 from face-down, face-up, side, seated and pushed starts (10 seeds each) on the as-built model with the saddle mass, 7.0 V and 4 % read drops; median time up 2.2-2.5 s; longest joint saturation 0.50 s (left hip pitch). velstand v8: 44/50 under the same sequence, failures stuck on the back; not a walk61 replacement. Never run on the robot",
+      "value": "sim only: walk_brain.py recover mode (DUCK_GETUP=recover: predicted fall -> LIMP kp 50 -> POSE 1 s kp 160 -> RISE stand61 at zero command -> give up after 5 s) gets stand61 up 50/50 from face-down, face-up, side, seated and pushed starts (10 seeds each) on the as-built model with the saddle mass, 7.0 V and 4 % read drops, with none going back down after standing; median time up 2.2-2.5 s; longest joint saturation 0.38 s (right knee, seated start). velstand v8: 44/50 under the same sequence, failures stuck on the back; not a walk61 replacement. Never run on the robot",
       "meaning": "Whether the duck can get up by itself after a fall and what has been shown",
-      "verified_at": "2026-10-26",
-      "source": "guide/firmware/mac/getup-20261026/summary.json and results.jsonl (every row carries its command line); commits b135faf (brain) and the walk_wired guard commit of 2026-10-26",
+      "verified_at": "2026-10-29",
+      "source": "guide/firmware/mac/getup-20261026/summary.json and results.jsonl (rerun 2026-10-29 on the Mac mini with evaluate_delay.load refitting the body collision volumes; every row carries its command line); commits b135faf (brain) and the walk_wired guard commit of 2026-10-26; guide/firmware/mac/bvh-refit-baselines-20261029/README.md",
+      "superseded": [
+        {
+          "value": "50/50 from the same five starts; median time up 2.2-2.5 s; longest joint saturation 0.50 s (left hip pitch); 2 side starts went back down after first standing; velstand v8 44/50",
+          "until": "2026-10-29",
+          "why": "measured with stale body collision volumes (evaluate_delay.load moved the inertial frames after compile, so the head and trunk could pass into the floor); rerun with the loader refit, bvh-refit-baselines-20261029"
+        }
+      ],
       "max_age_days": 60,
       "measure": "rerun getup-20261026/run_batch.py; after a robot trial record rise time, largest action and servo hardware-error status from the walk_wired log",
       "consumers": [

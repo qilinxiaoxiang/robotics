@@ -1,5 +1,15 @@
 # Get-up after a fall: simulation, walk_brain recover mode, velstand check (2026-10-26)
 
+> **Correction, 2026-10-29.** The numbers below were measured with stale body collision volumes: `evaluate_delay.load` moved the inertial frames after compile, so MuJoCo's bounding boxes no longer covered the head and trunk and some contacts were missed (`../bvh-refit-baselines-20261029/README.md`). The loader now refits them, and `run_batch.py` was rerun on the Mac mini; `summary.json` and `results.jsonl` hold the rerun. The text below is the 10-26 record, left as written. What changed:
+>
+> - stand61-recover: still 50/50. No run went back down after standing (the "2 seeds went down again" on side starts are gone). Per start: face_down up 2.48 / 2.88 s, action 3.78; face_up 2.20 / 2.60 s, 3.55; side 2.30 / 2.56 s, 3.38; sitting 0.28 / 3.26 s, 3.85; push 2.26 / 3.80 s, 5.09.
+> - Longest saturation over the 50 runs: right knee 0.38 s (seated start), then right hip pitch 0.32, left hip pitch 0.28, neck pitch 0.26, head pitch 0.24, left knee 0.22, head yaw 0.18. The 10-26 worst was left hip pitch 0.50 s.
+> - 4 deg IMU pitch: 46/50 (was 48/50). face_up 8/10 (one still rising at the end, one fell after standing and was rising again), side 9/10, push 9/10 (still in POSE at the end).
+> - Guard 3.0 kept: face_down 0/10, face_up 7/10, side 5/10, sitting 9/10, push 5/10, 26/50 (was 0, 8, 9, 9, 7).
+> - stand61-nogate with guard 3.0: face_down 0/10, face_up 4/10, side 7/10, sitting 9/10, push 7/10 (was 0, 5, 10, 9, 6). nogate without the guard: still 50/50, worst joint right knee 0.60 s, action up to 6.08 rad.
+> - velstand v8 recover: 44/50 as before, now face_up 8/10, side 7/10, push 9/10 (was 8, 6, 10); all 6 failures GAVE_UP. nogate: face_down 10, face_up 8, side 9, sitting 10, push 9 (was side 7, push 8). nogate with guard 3.0: still 0/50.
+> - POSE_S 0.6 and A7Z in the head: still 50/50.
+
 Pet-robot Tier 1, first item (`docs/PET_ROBOT_FEATURES.md`). Final-goal link: a duck that falls during the walk to an item (step 2) must get up again by itself.
 
 ## Result
