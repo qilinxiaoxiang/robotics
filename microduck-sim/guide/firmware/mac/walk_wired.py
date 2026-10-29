@@ -367,8 +367,8 @@ MAX_TILT_GP_DEG = 55.0  # the ground-pick crouch pitches the trunk 35 deg in the
 MAX_TILT_SIT_DEG = 30.0  # sit and stand-up peak at 10.3-11.4 deg in the plugged as-built sim at 7.0 V (2026-10-20)
 QUACK_JAW_DEG = 15.0  # jaw opening for a quack; jaw_limits still caps it by the head pose
 QUACK_S = 0.4
-# After a quack a jaw that was released or resting shut is pressed to QUACK_SHUT_DEG (the 100 mA current limit sets the
-# force) for QUACK_CLOSE_S, then eased to QUACK_HOLD_DEG and held with torque on. On 2026-10-23 (closed by hand it read
+# After a quack a jaw that was released or resting shut is pressed to QUACK_SHUT_DEG (the GOAL_CURRENT_MA current limit
+# sets the force; 100 mA when measured below, 150 mA since 2026-10-29) for QUACK_CLOSE_S, then eased to QUACK_HOLD_DEG and held with torque on. On 2026-10-23 (closed by hand it read
 # the calibrated closed tick 2042): at KP 200 a 2 deg rest goal settled at 2.8 deg, a 0 deg goal at 1.6 deg, both
 # visibly open; pressing and releasing sprang back to 3.3 deg (the bills flex); a 0 deg hold after the press sat at
 # -0.5 deg, still open at the tip; -10 then -4 held at -1.7 deg on 22 mA, closed.

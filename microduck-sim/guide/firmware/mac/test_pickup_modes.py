@@ -108,7 +108,7 @@ class PickupModes(WiredBattery):
                     (2.0, write_cmd(cmd_path, {"mode": "monitor", "jaw": 40})),
                     (3.0, write_cmd(cmd_path, {"mode": "monitor", "jaw_torque": False}))]
         text, last_log, w, saved = self.run_jaw({"mode": "monitor", "jaw": "open"}, hooks, end=4.0, cal=cal)
-        self.assertIn("jaw torque on at tick 1500 (0.0 deg open), mode 5, goal current 100 mA", text)
+        self.assertIn(f"jaw torque on at tick 1500 (0.0 deg open), mode 5, goal current {jaw_ctl.GOAL_CURRENT_MA} mA", text)
         self.assertEqual(w.read(JAW, jaw_ctl.ADDR_OPERATING_MODE, 1), 5)
         self.assertEqual(w.read(JAW, jaw_ctl.ADDR_GOAL_CURRENT, 2), jaw_ctl.GOAL_CURRENT_MA)
         self.assertEqual(w.read(JAW, jaw_ctl.ADDR_CURRENT_LIMIT, 2), jaw_ctl.CURRENT_LIMIT_MA)

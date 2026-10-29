@@ -33,7 +33,9 @@ CAL_PATH = os.path.join(PI_DIR, "jaw_calibration.json")
 ADDR_OPERATING_MODE, ADDR_CURRENT_LIMIT, ADDR_TORQUE, ADDR_P_GAIN = 11, 38, 64, 84
 ADDR_GOAL_CURRENT, ADDR_GOAL, ADDR_PRESENT_CURRENT, ADDR_PRESENT_POS = 102, 116, 126, 132
 MODE_CURRENT_POSITION = 5
-GOAL_CURRENT_MA = 100     # grip force limit; the phase 1 runtime accepted 20..150 mA (XL330 1 mA per LSB)
+GOAL_CURRENT_MA = 150     # grip force limit at the EEPROM ceiling (Shawn 2026-10-29, D-031): in the corrected seeing-pick
+                          # rehearsal 100 mA held 24/54 and 150 mA 49/54, ball 5 -> 23 of 27 (seepick-gap-20261029/README.md);
+                          # the phase 1 runtime accepted 20..150 mA (XL330 1 mA per LSB); 100 mA held a finger 2026-10-21
 CURRENT_LIMIT_MA = 150    # EEPROM Current Limit, the ceiling Goal Current may use
 KP_JAW = 200              # position P gain in mode 5; 400 buzzed audibly on the unloaded jaw (2026-10-16)
 SQUEEZE_DEG = -3.0        # "grip" aims this far past closed; the servo stops on the object or at the closed stop

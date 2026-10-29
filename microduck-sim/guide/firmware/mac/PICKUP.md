@@ -30,7 +30,7 @@ grips it and stands up. This is the scripted bring-up of the four pieces; the le
   floor and 69 mm ahead of the mid-foot point, rise to standing (end tilt 0.3 deg), hand-back to stand61. Actions reach
   1.69 rad, so only the 3.0 rad hard limit and `--max-tilt-gp` (55 deg) guard this mode; a trip holds the last goals.
   `brain_sim_check.py --model asbuilt --volt 7.4 --walk-at 3 --walk-s 0 --gp-at 4 --gp-phase 0.33 --gp-hold-s 4`.
-- Jaw, `jaw_ctl.py` in walk_wired: ID15 read with the body, mode 5 with Goal Current 100 mA, goals through
+- Jaw, `jaw_ctl.py` in walk_wired: ID15 read with the body, mode 5 with Goal Current 150 mA (100 until 2026-10-29, D-031), goals through
   `pi/jaw_limits.py` (25 deg cap, pose cap, 65 deg head-pitch interlock). "grip" aims 3 deg past closed; stopping 3 deg
   or more from closed = holding. Needs the one-time calibration below. Fake-link tests only (`test_pickup_modes.py`).
 - Controller, `pickup.py`: look -> search (head yaw scan right first, then forward arcs to the right) -> approach
