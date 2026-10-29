@@ -333,6 +333,17 @@ class TouchPadsUnit(unittest.TestCase):
         self.assertIn("misaligned", text)
         self.assertEqual(text.count("touch: reads back"), 1)
 
+    def test_a_filler_byte_first_is_the_block_shifted_by_one(self):
+        # read on the robot 2026-10-29 20:2x UTC after the XIAO started sending its 0x55 filler first: every read was
+        # rejected for 7 min, the hold never saw the hand and walk61 fought a head lift (app1029-195814c, t 920-1400 s)
+        raw = bytes.fromhex("553a570100595c0000f4640000a9590000855e0000f86500")
+        clock, out = self.Clock(), io.StringIO()
+        with mock.patch.object(ww, "time", clock), contextlib.redirect_stdout(out):
+            pads = ww.TouchPads(self.scripted(raw), start=False)
+            self.assertTrue(pads.poll())
+        self.assertEqual(pads.latest(clock.t)[:2], ([23641, 25844, 22953, 24197, 26104], 0x1573A))
+        self.assertEqual((pads.bad, out.getvalue()), (0, ""))
+
     def test_bus_path(self):
         with tempfile.TemporaryDirectory() as d:
             tree, sysfs = os.path.join(d, "soc@3000000"), os.path.join(d, "devices")

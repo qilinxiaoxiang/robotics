@@ -269,6 +269,18 @@ def touch_bus_path(arg):
     return f"/dev/i2c-{arg}" if arg.isdigit() else arg
 
 
+def touch_decode(raw):
+    """(seq, L1, R1, L2, R2, M) from 24 read bytes, or None. The XIAO sometimes sends a 0x55 filler byte first and then
+    keeps doing so (2026-10-29: 7 min of reads, the hold blind); the block's last byte, the always-zero top byte of M, is
+    then lost. The wrong alignment puts every count above TOUCH_SATURATED, so the right one is the one whose counts all
+    fit (the same decode as duck_selfcheck.py and duck-telemetry)."""
+    for block in (raw, raw[1:] + b"\0"):
+        b = struct.unpack("<6I", block)
+        if max(b[1:]) <= TOUCH_SATURATED:
+            return b
+    return None
+
+
 def open_touch_bus(path):
     """A function that reads one block from the XIAO."""
     fd = os.open(path, os.O_RDWR)
@@ -306,9 +318,11 @@ class TouchPads:
         except OSError as e:
             why = f"{type(e).__name__}: {e}"
         if why is None:
-            seq, *counts = struct.unpack("<6I", raw)
-            if max(counts) > TOUCH_SATURATED:
+            block = touch_decode(raw)
+            if block is None:
                 why = "a count above the pad ceiling, misaligned block"
+            else:
+                seq, *counts = block
         if why:
             self.bad += 1
             if not self.failing:
