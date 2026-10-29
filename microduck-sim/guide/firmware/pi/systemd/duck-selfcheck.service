@@ -1,0 +1,17 @@
+[Unit]
+Description=MicroDuck boot self-check (IMU, touch, camera, servos, speaker, microphones; ~/duck-logs/selfcheck, shown in the phone app)
+After=multi-user.target duck-camera.service sound.target
+
+[Service]
+Type=oneshot
+User=radxa
+Environment=DUCK_SELFCHECK_TRIGGER=boot
+# the camera daemon skips its first frames while the sensor settles; give it and the I2C devices time to come up
+ExecStartPre=/bin/sleep 20
+ExecStart=/usr/bin/python3 /home/radxa/rt/microduck-sim/guide/firmware/pi/duck_selfcheck.py
+# a failed item is a result for the app, not a unit failure
+SuccessExitStatus=1
+Nice=5
+
+[Install]
+WantedBy=multi-user.target
