@@ -113,3 +113,53 @@ Compositions of primitives the reflection layer has written. The model may call 
 Events the world (or the robot's perception) reports to the mind, as `{"kind": ..., ...}`:
 `sound` (`direction` rad, `label` such as `keys_jingle`, `doorbell`, `door_slam`), `face` (`who`: `owner | known:<name> | stranger`), `face_lost`, `touch` (`where`), `owner_leaves`, `owner_returns`, `owner_moves` (`room`), `stranger_leaves`, `lights` (`level`), `charge_start`, `charge_end`, `bedtime`, `wake`.
 A pavlovian rule's `trigger` matches an event's `kind` or its `label`.
+
+## Inbox from the voice layer (`inbox/`)
+
+`pet/voice/` is the only writer under `inbox/`. It turns a spoken sentence (A7Z microphones, or a Mac microphone or WAV for testing) into text and then, through the intention model, into something the other layers can act on. Files are written whole and renamed into place; a consumer that has handled a file renames it with a `.done` suffix (never deletes it), so a restart neither loses nor repeats a sentence.
+
+### inbox/owner_said.jsonl
+
+One line per spoken sentence, appended by the voice loop, also when nothing came of it.
+
+```json
+{"t": "2026-10-29T18:05:12", "kind": "owner_said", "text": "把橙色方块叼来", "lang": "zh",
+ "stt": {"backend": "local:sense-voice", "latency_s": 0.18, "wav": "utt-20261029-180512-3.44.wav", "seconds": 2.7, "source": "robot:a7z"},
+ "result": "task", "reaction": "none", "file": "tasks/20261029-180515-001.json",
+ "intent_latency_s": 4.9, "intent_attempts": 1, "reason": null, "errors": null}
+```
+
+- `result`: `task` (a file under `tasks/`), `rule` (a file under `rules/`) or `ignore` (chatter, a question, or nothing the body can do; `reason` says which).
+- `reaction`: `praised` | `said_no` | `none`. This is the learn layer's `owner:praised` / `owner:said_no` event (`pet/learn/events.py`): "good duck" is `result: ignore, reaction: praised`. `pet/learn` turns each line into an `owner:said(text)` event plus the reaction event for its matcher; `pet/mind` treats a new line as a salient `owner_said` percept (`{"kind": "owner_said", "text", "lang", "result"}`).
+- `stt.backend` is `local:<model>`, `elevenlabs` or `typed` (a sentence typed into the dry run).
+
+### inbox/tasks/<stamp>.json
+
+A validated intention in exactly the shape `pet/mind/validator.validate` returns (every parameter filled, `seconds` per step), plus provenance. The consumer is `pet/mind` (the runner): it runs the intention as if the model had composed it, with `abort_if` honoured, and renames the file `.done`.
+
+```json
+{"t": "2026-10-29T18:05:12", "source": "voice", "said": "把橙色方块叼来", "lang": "zh", "model": "claude-haiku-5-5",
+ "intention": {"intention_text": "I'll find the orange block and bring it back.",
+               "steps": [{"primitive": "look_around", "params": {"seconds": 4}, "seconds": 4.0, "skill": null},
+                         {"primitive": "walk", "params": {"vx": 0.15, "vtheta": 0, "seconds": 3}, "seconds": 3.0, "skill": null},
+                         {"primitive": "groundpick", "params": {"phase": 1.0, "seconds": 5}, "seconds": 5.0, "skill": null}],
+               "duration_s": 12.0, "abort_if": ["not standing", "touched"], "mood_note": "", "say_back": null}}
+```
+
+- Steps use only primitives of the current `body_card.json` or skills from `skills.json` that validate on it; the voice layer validated them against posture `standing` and the owner present. The runner re-validates against the real posture before the first step (a `walk` task while the pet is sitting becomes `stand` then `walk`, or is dropped with a log line).
+- `say_back` is always `null`: the pet never speaks.
+
+### inbox/rules/<stamp>.json
+
+An owner instruction as an operant rule in the `rules.json` shape (with the `pet/learn` extras `window_s`, `context`, `source: "instruct"`, `created`, `said`, `direction`), validated by `pet/learn/instruct.parse_answer`. The consumer is `pet/learn`: it merges the rule into `rules.json` (replacing a rule with the same trigger and outcome) and renames the file `.done`. Instruction rules start at weight 0.6 and never decay.
+
+```json
+{"t": "2026-10-29T18:06:40", "source": "voice", "said": "Stop going in the bedroom.", "lang": "en", "model": "claude-haiku-5-5",
+ "rule": {"id": "i20261029_3f9a1c", "kind": "operant", "trigger": "self:entered(bedroom)", "outcome_or_effect": "owner:said_no",
+          "weight": 0.6, "text": "I will not go into the bedroom.", "evidence": {"confirm": 0, "omit": 0}, "window_s": 10.0,
+          "context": "owner_home", "source": "instruct", "created": "2026-10-29", "said": "Stop going in the bedroom.", "direction": "less"}}
+```
+
+### Event kind added
+
+`owner_said` (`text`, `lang`, `result`, `reaction`): the owner spoke to the pet. Salient: the mind re-plans when one arrives, and a `task` file is what it should do next.

@@ -81,8 +81,8 @@ Scenario: "find the owner": it knows it is in the kitchen, the owner was last se
 
 Scenario: "go fetch the orange block"; "don't go in there"; "good duck".
 
-- **Speech to text.** `can` / `build`, cloud service.
-- **Sentence to rule or to task graph.** `can` / `build`. Frontier model turns an instruction into either an operant rule (section 3) or a task graph over learned skills (section 7).
+- **Speech to text.** `built` off the robot (`pet/voice/`, 2026-10-29). Default is local, not cloud: SenseVoice small (int8, sherpa-onnx, CPU) reads the two ear channels of the A7Z 4-channel stream after `listen.py` cuts one utterance per sentence (namecall's onset detector, trailing silence, 1-8 s). On 20 synthetic `say` clips (10 en, 10 zh): 8.3 % error (WER en 10.7 %, CER zh 6.2 %), 0.15 s median per clip on the MacBook's CPU; Whisper base (same runtime) was 41.7 % because it writes traditional characters and hallucinates on short Mandarin. ElevenLabs Scribe v2 is the second backend behind the same call; its key is expired (401), so it is off until renewed. Nothing has heard the robot's microphones yet; `--robot` streams them over ssh to the Mac mini.
+- **Sentence to rule or to task graph.** `built` off the robot: `intent.py` asks Claude Haiku 5.5 (through `claude -p`, Sonnet by flag) for one JSON of kind `task` (steps over the body card's primitives and `pet/mind` skills, validated by `pet/mind`'s validator), `rule` (an owner instruction parsed by `pet/learn`'s instruct parser, weight 0.6) or `ignore`, with a `reaction` (praised / said_no) for the learn layer. 20/20 on the test sentences in both languages (fetch, come, sit, stop, bedroom rule, night-quack rule, praise, chatter); median 4.9 s per sentence, $0.0004 each at list price. The result lands in `pet/state/inbox/` (contract in `pet/state/README.md`); the runner's pickup of task files is not written yet. Not a frontier model and not a task graph over learned skills: a step list over today's primitives.
 - **Open-ended dialogue, theory of mind.** `cannot` by design (no speech).
 
 ## 7. Course project: fetch a named object (Introduction to Robot Learning)
