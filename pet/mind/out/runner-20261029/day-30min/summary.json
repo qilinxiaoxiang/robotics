@@ -1,0 +1,135 @@
+{
+ "mode": "sim",
+ "backend": "claude-cli",
+ "started": "2026-10-29T04:33:52",
+ "session_minutes": 30.0,
+ "primitives_allowed": [
+  "approach_owner",
+  "bow",
+  "look_around",
+  "nod",
+  "stop",
+  "turn_head",
+  "wait",
+  "walk",
+  "wander"
+ ],
+ "intentions": 100,
+ "sources": {
+  "llm": 100
+ },
+ "primitives_issued": {
+  "turn_head": 90,
+  "look_around": 37,
+  "approach_owner": 17,
+  "nod": 34,
+  "bow": 11,
+  "wait": 72,
+  "stop": 5,
+  "walk": 28,
+  "wander": 1
+ },
+ "steps_issued": 295,
+ "commands_written": 575,
+ "model_calls": 103,
+ "validator_rejections": 3,
+ "validator_rejection_errors": [
+  [
+   "step 1: precondition of approach_owner 'owner_home' not satisfied (posture standing)"
+  ],
+  [
+   "step 1: precondition of approach_owner 'owner_home' not satisfied (posture standing)"
+  ],
+  [
+   "step 1: skill greet_owner guard 'owner_visible' not satisfied (posture standing)"
+  ]
+ ],
+ "brain_refusals": 0,
+ "brain_refusal_lines": [],
+ "falls": 0,
+ "guard_trips": 0,
+ "yields": 0,
+ "handbacks": 0,
+ "reflexes": 10,
+ "percepts": {
+  "face": 3,
+  "touch": 3,
+  "sound": 2,
+  "face_lost": 1,
+  "owner_leaves": 1,
+  "stranger_leaves": 1,
+  "owner_returns": 1,
+  "lights": 1
+ },
+ "brain": {
+  "rows_seen": 90106,
+  "max_tilt_deg": 30.7,
+  "last_mode": "walk",
+  "posture": "standing"
+ },
+ "end_state": "done",
+ "end_why": "",
+ "rigidity": {
+  "intentions": 100,
+  "distinct_intention_texts": 100,
+  "distinct_action_sequences": 41,
+  "distinct_with_params": 95,
+  "repeat_of_previous": 2,
+  "repeat_of_previous_rate": 0.02,
+  "longest_identical_run": 2,
+  "sequence_entropy_bits": 4.81,
+  "primitives_used": [
+   "approach_owner",
+   "bow",
+   "look_around",
+   "nod",
+   "stop",
+   "turn_head",
+   "wait",
+   "walk",
+   "wander"
+  ],
+  "intentions_owner_in_view": 3,
+  "intentions_owner_not_in_view": 97,
+  "gesture_share_owner_in_view": 1.0,
+  "gesture_share_owner_not_in_view": 0.35,
+  "locomotion_share_owner_in_view": 0.67,
+  "locomotion_share_owner_not_in_view": 0.44,
+  "posture_changes": 0,
+  "rest_share": 0.76,
+  "most_common": [
+   [
+    "walk -> turn_head -> wait",
+    12
+   ],
+   [
+    "turn_head -> wait -> nod",
+    9
+   ],
+   [
+    "turn_head -> look_around -> wait",
+    7
+   ]
+  ],
+  "sources": {
+   "llm": 100
+  }
+ },
+ "reference_20261026": null,
+ "calls": {
+  "calls": 103,
+  "ok": 100,
+  "input_tokens": 243349,
+  "output_tokens": 50480,
+  "api_cost_usd": 0.04957,
+  "provider_cost_usd": 0.05682,
+  "latency_p50_s": 6.566,
+  "latency_p90_s": 8.268
+ },
+ "sim": {
+  "volt": 7.0,
+  "model": "asbuilt-20261015 (static_gap.cfg asbuilt, 90 g old battery removed)",
+  "peak_tilt_deg": 34.7,
+  "ticks_over_60deg": 0
+ }
+}

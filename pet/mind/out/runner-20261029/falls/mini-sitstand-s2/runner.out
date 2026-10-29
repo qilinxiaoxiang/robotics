@@ -1,0 +1,94 @@
+04:04:32    brain: walk
+04:04:34  === runner sim: microduck, approach_owner, bow, look_around, nod, rest, sit, stand, stop, turn_head, wait, walk, wander; model none (fallback); brain upright in walk mode; face recognition on ===
+04:04:34  INTENT [fallback] "[idle] look_around, sit, rest, wait"
+04:04:34      look_around(seconds=6.8) -> sit() -> rest(seconds=14.2) -> wait(seconds=1)  abort if: stranger_present
+04:04:34    step look_around(seconds=6.8) for 6.8 s: 4 commands
+04:04:39  [face] saw the owner
+04:04:39    reflex: turn_head(yaw=0, pitch=0.1)
+04:04:39    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+04:04:40    idle: zero-command walk (stand61) (idle)
+04:04:40  INTENT [fallback] "[miss_owner] walk, turn_head, approach_owner"
+04:04:40      walk(vx=0.24, vtheta=0.03, seconds=5) -> turn_head(yaw=-0.65, pitch=-0.46) -> approach_owner(seconds=3.3)  abort if: stranger_present
+04:04:41    step walk(vx=0.24, vtheta=0.03, seconds=5) for 5 s: 2 commands
+04:04:46    step turn_head(yaw=-0.65, pitch=-0.46) for 1 s: 1 command
+04:04:47    step approach_owner(seconds=3.3) for 3.3 s: 2 commands
+04:04:50  INTENT [fallback] "[curious] wander, look_around, walk"
+04:04:50      wander(seconds=6) -> look_around(seconds=3.4) -> walk(vx=0.04, vtheta=-0.2, seconds=5.6)
+04:04:51    step wander(seconds=6) for 6 s: 3 commands
+04:04:57    step look_around(seconds=3.4) for 3.4 s: 4 commands
+04:05:00    step walk(vx=0.04, vtheta=-0.2, seconds=5.6) for 5.6 s: 2 commands
+04:05:06  INTENT [fallback] "[idle] wait, turn_head"
+04:05:06      wait(seconds=7.6) -> turn_head(yaw=1.14, pitch=0.26)  abort if: stranger_present
+04:05:06    step wait(seconds=7.6) for 7.6 s: 0 commands
+04:05:14    step turn_head(yaw=1.14, pitch=0.26) for 1 s: 1 command
+04:05:15    idle: zero-command walk (stand61) (idle)
+04:05:16  INTENT [fallback] "[idle] sit, rest, look_around"
+04:05:16      sit() -> rest(seconds=21) -> look_around(seconds=2)  abort if: stranger_present
+04:05:16    step sit() for 4 s: 1 command
+04:05:16    brain: sit
+04:05:19    body: seated
+04:05:20    step rest(seconds=21) for 21 s: 1 command
+04:05:34  [touch] touched on the head
+04:05:34    reflex: stop() -> nod(times=1)
+04:05:34    step stop() for 0.5 s: 1 command
+04:05:35    step nod(times=1) for 2 s: 3 commands
+04:05:37    idle: sit (idle)
+04:05:37  INTENT [fallback] "[idle] turn_head, wait"
+04:05:37      turn_head(yaw=0.45, pitch=-0.05) -> wait(seconds=9.1)  abort if: stranger_present
+04:05:37    step turn_head(yaw=0.45, pitch=-0.05) for 1 s: 1 command
+04:05:38    step wait(seconds=9.1) for 9.1 s: 0 commands
+04:05:48  INTENT [fallback] "[idle] rest, look_around"
+04:05:48      rest(seconds=25) -> look_around(seconds=2)  abort if: stranger_present
+04:05:48    step rest(seconds=25) for 25 s: 1 command
+04:06:13    step look_around(seconds=2) for 2 s: 4 commands
+04:06:15  INTENT [fallback] "[idle] wait, turn_head, rest"
+04:06:15      wait(seconds=8.5) -> turn_head(yaw=0.17, pitch=0.01) -> rest(seconds=15.5)  abort if: stranger_present
+04:06:15    step wait(seconds=8.5) for 8.5 s: 0 commands
+04:06:24    step turn_head(yaw=0.17, pitch=0.01) for 1 s: 1 command
+04:06:25    step rest(seconds=15.5) for 15.5 s: 1 command
+04:06:40  INTENT [fallback] "[idle] look_around"
+04:06:40      look_around(seconds=6.7)  abort if: stranger_present
+04:06:40    step look_around(seconds=6.7) for 6.7 s: 4 commands
+04:06:47    idle: sit (idle)
+04:06:50  INTENT [fallback] "[idle] turn_head, wait, rest"
+04:06:50      turn_head(yaw=0.43, pitch=-0.23) -> wait(seconds=3) -> rest(seconds=21)  abort if: stranger_present
+04:06:51    step turn_head(yaw=0.43, pitch=-0.23) for 1 s: 1 command
+04:06:52    step wait(seconds=3) for 3 s: 0 commands
+04:06:55    step rest(seconds=21) for 21 s: 1 command
+04:07:16  INTENT [fallback] "[idle] look_around"
+04:07:16      look_around(seconds=4.5)  abort if: stranger_present
+04:07:16    step look_around(seconds=4.5) for 4.5 s: 4 commands
+04:07:20    idle: sit (idle)
+04:07:26  INTENT [fallback] "[idle] turn_head"
+04:07:26      turn_head(yaw=-1.08, pitch=-0.43)  abort if: stranger_present
+04:07:26    step turn_head(yaw=-1.08, pitch=-0.43) for 1 s: 1 command
+04:07:27    idle: sit (idle)
+04:07:34  [sound] heard keys_jingle from the left
+04:07:34    [rule keys-leave] expect: owner_leaves (w=0.80)
+04:07:34    reflex: turn_head(yaw=1.2, pitch=0.1)
+04:07:34    step turn_head(yaw=1.2, pitch=0.1) for 1 s: 1 command
+04:07:35    idle: sit (idle)
+04:07:35  INTENT [fallback] "[miss_owner] stand, wander"
+04:07:35      stand() -> wander(seconds=8.2)  abort if: stranger_present
+04:07:36    step stand() for 3 s: 1 command
+04:07:38    brain: walk
+04:07:38    body: standing (after sit)
+04:07:38    STOP '[miss_owner] stand, wander' at step 1/2: fell (gravity z -0.05, tilt 87.0 deg)
+04:07:38  FELL: the runner writes nothing until a person has righted the duck and put the brain back in walk mode at zero command (RUNNER.md)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/shawnxiang/code/robotics/pet/mind/runner.py", line 934, in <module>
+    main()
+  File "/Users/shawnxiang/code/robotics/pet/mind/runner.py", line 919, in main
+    s = runner.save()
+        ^^^^^^^^^^^^^
+  File "/Users/shawnxiang/code/robotics/pet/mind/runner.py", line 625, in save
+    (d / "behaviour.log").write_text("\n".join(self.mind.lines) + "\n")
+  File "/opt/homebrew/Cellar/python@3.12/3.12.15/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.15/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/Users/shawnxiang/code/robotics/pet/mind/out/runner-20261029-mini-s2/behaviour.log'

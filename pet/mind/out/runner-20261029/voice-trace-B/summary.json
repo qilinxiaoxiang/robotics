@@ -1,0 +1,227 @@
+{
+ "mode": "sim",
+ "backend": "claude-cli",
+ "started": "2026-10-29T05:19:08",
+ "session_minutes": 3.2,
+ "primitives_allowed": [
+  "approach_owner",
+  "bow",
+  "look_around",
+  "nod",
+  "stop",
+  "turn_head",
+  "wait",
+  "walk",
+  "wander"
+ ],
+ "intentions": 12,
+ "sources": {
+  "llm": 9,
+  "owner": 3
+ },
+ "primitives_issued": {
+  "look_around": 5,
+  "walk": 6,
+  "nod": 4,
+  "turn_head": 9,
+  "wait": 5,
+  "bow": 1,
+  "approach_owner": 2,
+  "stop": 1
+ },
+ "steps_issued": 33,
+ "commands_written": 73,
+ "model_calls": 10,
+ "validator_rejections": 1,
+ "validator_rejection_errors": [
+  [
+   "step 1: skill greet_owner guard 'owner_visible' not satisfied (posture standing)"
+  ]
+ ],
+ "brain_refusals": 0,
+ "brain_refusal_lines": [],
+ "falls": 0,
+ "guard_trips": 0,
+ "yields": 0,
+ "handbacks": 0,
+ "reflexes": 0,
+ "percepts": {},
+ "brain": {
+  "rows_seen": 9705,
+  "max_tilt_deg": 30.1,
+  "last_mode": "walk",
+  "posture": "standing"
+ },
+ "end_state": "done",
+ "end_why": "",
+ "owner": {
+  "inbox": "/Users/shawnxiang/sims/pet-runner-20261029/voice-trace-B/inbox",
+  "log": [
+   {
+    "session_s": 30.6,
+    "said": "\u628a\u6a59\u8272\u65b9\u5757\u96d5\u6765\u3002",
+    "result": "task",
+    "reaction": "none"
+   },
+   {
+    "session_s": 49.3,
+    "task": "20261029-051938-001.json.done",
+    "said": "\u628a\u6a59\u8272\u65b9\u5757\u96d5\u6765\u3002",
+    "outcome": "done"
+   },
+   {
+    "session_s": 75.3,
+    "said": "Stop going in the bedroom",
+    "result": "rule",
+    "reaction": "said_no"
+   },
+   {
+    "session_s": 95.7,
+    "said": "\u597d\u9e2d\u5b50\uff0c\u771f\u4e56",
+    "result": "ignore",
+    "reaction": "praised"
+   },
+   {
+    "session_s": 115.5,
+    "said": "\u8fc7\u6765",
+    "result": "task",
+    "reaction": "none"
+   },
+   {
+    "session_s": 119.7,
+    "said": "\u505c\u4e0b",
+    "result": "task",
+    "reaction": "none"
+   },
+   {
+    "session_s": 119.7,
+    "task": "20261029-052103-001.json.done",
+    "said": "\u8fc7\u6765",
+    "outcome": "replaced by a newer request"
+   },
+   {
+    "session_s": 120.3,
+    "task": "20261029-052107-001.json.done",
+    "said": "\u505c\u4e0b",
+    "outcome": "done"
+   },
+   {
+    "session_s": 140.5,
+    "said": "\u5750\u4e0b",
+    "result": "task",
+    "reaction": "none"
+   },
+   {
+    "session_s": 140.5,
+    "task": "20261029-052128-001.json.done",
+    "said": "\u5750\u4e0b",
+    "outcome": "refused: no step left"
+   }
+  ],
+  "tasks": {
+   "done": 2,
+   "replaced by a newer request": 1,
+   "refused": 1
+  },
+  "sentences": 6
+ },
+ "learn": {
+  "events": 41,
+  "matcher": [],
+  "rules": [
+   {
+    "id": "keys-leave",
+    "trigger": "keys_jingle",
+    "outcome": "owner_leaves",
+    "weight": 0.8
+   },
+   {
+    "id": "doorbell-stranger",
+    "trigger": "doorbell",
+    "outcome": "stranger at the door",
+    "weight": 0.6
+   },
+   {
+    "id": "nod-scratch",
+    "trigger": "nod",
+    "outcome": "owner scratches my head",
+    "weight": 0.55
+   },
+   {
+    "id": "no-walk-sofa",
+    "trigger": "wander",
+    "outcome": "owner says no near the sofa at night",
+    "weight": 0.35
+   },
+   {
+    "id": "i20261029_deda17",
+    "trigger": "self:entered(bedroom)",
+    "outcome": "owner:said_no",
+    "weight": 0.6
+   }
+  ]
+ },
+ "rigidity": {
+  "intentions": 12,
+  "distinct_intention_texts": 12,
+  "distinct_action_sequences": 10,
+  "distinct_with_params": 11,
+  "repeat_of_previous": 0,
+  "repeat_of_previous_rate": 0.0,
+  "longest_identical_run": 1,
+  "sequence_entropy_bits": 3.25,
+  "primitives_used": [
+   "approach_owner",
+   "bow",
+   "look_around",
+   "nod",
+   "stop",
+   "turn_head",
+   "wait",
+   "walk"
+  ],
+  "intentions_owner_in_view": 0,
+  "intentions_owner_not_in_view": 12,
+  "gesture_share_owner_in_view": null,
+  "gesture_share_owner_not_in_view": 0.42,
+  "locomotion_share_owner_in_view": null,
+  "locomotion_share_owner_not_in_view": 0.5,
+  "posture_changes": 0,
+  "rest_share": 0.5,
+  "most_common": [
+   [
+    "turn_head -> nod -> wait",
+    2
+   ],
+   [
+    "turn_head -> look_around -> wait",
+    2
+   ],
+   [
+    "look_around -> walk -> nod",
+    1
+   ]
+  ],
+  "sources": {
+   "llm": 9,
+   "owner": 3
+  }
+ },
+ "reference_20261026": null,
+ "calls": {
+  "calls": 10,
+  "ok": 9,
+  "input_tokens": 22720,
+  "output_tokens": 5168,
+  "api_cost_usd": 0.00486,
+  "provider_cost_usd": 0.00547,
+  "latency_p50_s": 6.068,
+  "latency_p90_s": 6.909
+ },
+ "sim": {
+  "volt": 7.0,
+  "model": "asbuilt-20261015 (static_gap.cfg asbuilt, 90 g old battery removed)",
+  "peak_tilt_deg": 34.2,
+  "ticks_over_60deg": 0
+ }
+}

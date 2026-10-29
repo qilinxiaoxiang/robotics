@@ -1,0 +1,62 @@
+04:04:10    brain: walk
+04:04:14  === runner sim: microduck, approach_owner, bow, look_around, nod, rest, sit, stand, stop, turn_head, wait, walk, wander; model claude-cli; brain upright in walk mode; face recognition on ===
+04:04:19  [face] saw the owner
+04:04:19    reflex: turn_head(yaw=0, pitch=0.1)
+04:04:19    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+04:04:21    idle: zero-command walk (stand61) (idle)
+04:04:23  INTENT [llm 8.3s] "Quietly looking around at night, curious but not wanting to disturb the owner."  (drowsy, quietly curious)
+04:04:23      look_around(seconds=5) -> turn_head(yaw=0.6, pitch=0) -> sit()  abort if: touched, stranger_present
+04:04:23    step look_around(seconds=5) for 5 s: 4 commands
+04:04:29    step turn_head(yaw=0.6, pitch=0) for 1 s: 1 command
+04:04:30    step sit() for 4 s: 1 command
+04:04:30    brain: sit
+04:04:35    body: seated
+04:04:43  INTENT [llm 9.3s] "Gently nodding toward the owner at night, hoping for a head scratch without being loud."  (Quietly affectionate, hopeful)
+04:04:43      turn_head(yaw=0.3, pitch=0) -> nod(times=2) -> wait(seconds=3)  abort if: not owner_visible, stranger_present
+04:04:44    step turn_head(yaw=0.3, pitch=0) for 1 s: 1 command
+04:04:45    step nod(times=2) for 2 s: 5 commands
+04:04:47    step wait(seconds=3) for 3 s: 0 commands
+04:04:50    idle: sit (idle)
+04:05:03  INTENT [llm 9.2s] "Turning quietly toward my owner, then settling down close by at night."  (quiet, content)
+04:05:03      turn_head(yaw=0.5, pitch=0.1) -> wait(seconds=6) -> rest(seconds=8)  abort if: stranger_present, touched
+04:05:03    step turn_head(yaw=0.5, pitch=0.1) for 1 s: 1 command
+04:05:04    step wait(seconds=6) for 6 s: 0 commands
+04:05:11    step rest(seconds=8) for 8 s: 1 command
+04:05:14  [touch] touched on the head
+04:05:14    reflex: stop() -> nod(times=1)
+04:05:14    step stop() for 0.5 s: 1 command
+04:05:15    step nod(times=1) for 2 s: 3 commands
+04:05:17    idle: sit (idle)
+04:05:24  INTENT [llm 6.9s] "Gently nodding once more, then settling close while being scratched, since that's calm and what the owner likes."  (content, quietly affectionate)
+04:05:24      nod(times=2) -> rest(seconds=8)  abort if: stranger_present, not touched
+04:05:25    step nod(times=2) for 2 s: 5 commands
+04:05:27    step rest(seconds=8) for 8 s: 1 command
+04:05:35    idle: sit (idle)
+04:05:48  INTENT [llm 12.5s] "Staying seated and resting close to my owner, since it's late and they seem calm."  (content, drowsy, close)
+04:05:48      turn_head(yaw=0.4, pitch=0.1) -> rest(seconds=15)  abort if: stranger_present, not owner_home
+04:05:48    step turn_head(yaw=0.4, pitch=0.1) for 1 s: 1 command
+04:05:50    step rest(seconds=15) for 15 s: 1 command
+04:06:05    idle: sit (idle)
+04:06:12  INTENT [llm 7.2s] "Owner just touched me at night; I'll settle down calmly beside them without wandering."  (content, calm)
+04:06:12      turn_head(yaw=0.3, pitch=0) -> rest(seconds=12)  abort if: stranger_present, not owner_visible
+04:06:12    step turn_head(yaw=0.3, pitch=0) for 1 s: 1 command
+04:06:13    step rest(seconds=12) for 12 s: 1 command
+04:06:25    idle: sit (idle)
+04:06:32  INTENT [llm 6.7s] "Owner's near and I'm calm at night, so I'll stay seated and quietly nod for another scratch."  (quiet, affectionate)
+04:06:32      turn_head(yaw=0.3, pitch=0) -> nod(times=1) -> wait(seconds=6)  abort if: not owner_visible, stranger_present, touched
+04:06:32    step turn_head(yaw=0.3, pitch=0) for 1 s: 1 command
+04:06:33    step nod(times=1) for 2 s: 3 commands
+04:06:36    step wait(seconds=6) for 6 s: 0 commands
+04:06:42    idle: sit (idle)
+04:06:51  INTENT [llm 8.6s] "I'll stand and quietly bow to show off, since I'm bored and the owner is near."  (playful, quietly proud)
+04:06:51      stand() -> bow() -> turn_head(yaw=0, pitch=0)  abort if: stranger_present
+04:06:51    step stand() for 3 s: 1 command
+04:06:53    brain: walk
+04:06:53    body: standing (after sit)
+04:06:54    step bow() for 7 s: 2 commands
+04:06:54    brain: groundpick
+04:07:01    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+04:07:01    brain: walk
+04:07:02    idle: zero-command walk (stand61) (idle)
+04:07:03    (the model's pending answer is dropped)
+04:07:03  FELL: the runner writes nothing until a person has righted the duck and put the brain back in walk mode at zero command (RUNNER.md)

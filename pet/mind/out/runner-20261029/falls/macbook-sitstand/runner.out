@@ -1,0 +1,64 @@
+04:13:08    brain: walk
+04:13:12  === runner sim: microduck, approach_owner, bow, look_around, nod, rest, sit, stand, stop, turn_head, wait, walk, wander; model claude-cli; brain upright in walk mode; face recognition on ===
+04:13:17  [face] saw the owner
+04:13:17    reflex: turn_head(yaw=0, pitch=0.1)
+04:13:17    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+04:13:18    idle: zero-command walk (stand61) (idle)
+04:13:19  INTENT [llm 5.7s] "Glancing around quietly for the owner, since it's late and I'm mildly bored."  (drowsy, curious, quiet)
+04:13:19      turn_head(yaw=0.6, pitch=-0.1) -> look_around(seconds=5) -> sit()  abort if: stranger_present, touched
+04:13:19    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:13:20    step look_around(seconds=5) for 5 s: 4 commands
+04:13:25    step sit() for 4 s: 1 command
+04:13:25    brain: sit
+04:13:30    body: seated
+04:13:34  INTENT [llm 4.6s] "Owner is in view and it's late, so I'll nod hello and stay sitting close, hoping for a scratch."  (affectionate, sleepy-curious)
+04:13:34      turn_head(yaw=0, pitch=0.3) -> nod(times=2) -> wait(seconds=4) -> nod(times=1)  abort if: not owner_visible, stranger_present
+04:13:34    step turn_head(yaw=0, pitch=0.3) for 1 s: 1 command
+04:13:35    step nod(times=2) for 2 s: 5 commands
+04:13:37    step wait(seconds=4) for 4 s: 0 commands
+04:13:37    aborts 'Owner is in view and it's late, so I'll nod hello and stay sitting close, hoping for a scratch.': not owner_visible
+04:13:37    idle: sit (idle)
+04:13:41  INTENT [llm 3.9s] "Turning toward the owner, then resting close by since it's late and they're nearby."  (content, drowsy, close)
+04:13:41      turn_head(yaw=0.4, pitch=-0.1) -> rest(seconds=12)  abort if: not owner_visible, stranger_present, touched
+04:13:42    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+04:13:43    step rest(seconds=12) for 12 s: 1 command
+04:13:55    idle: sit (idle)
+04:14:02  INTENT [llm 7.0s] "Owner is nearby and it's late, so I'll settle close and wait for a scratch."  (content, clingy)
+04:14:02      turn_head(yaw=0.4, pitch=-0.1) -> nod(times=1) -> rest(seconds=15)  abort if: not owner_visible, stranger_present, touched
+04:14:02    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+04:14:03    step nod(times=1) for 2 s: 3 commands
+04:14:05    step rest(seconds=15) for 15 s: 1 command
+04:14:12  [touch] touched on the head
+04:14:12    reflex: stop() -> nod(times=1)
+04:14:12    step stop() for 0.5 s: 1 command
+04:14:13    step nod(times=1) for 2 s: 3 commands
+04:14:15    idle: sit (idle)
+04:14:22  INTENT [llm 6.4s] "Being touched and the owner's close, so I'll nod again and wait for more head scratches."  (content, affectionate)
+04:14:22      turn_head(yaw=0.4, pitch=0) -> nod(times=2) -> wait(seconds=5)  abort if: stranger_present, not sitting
+04:14:22    step turn_head(yaw=0.4, pitch=0) for 1 s: 1 command
+04:14:23    step nod(times=2) for 2 s: 5 commands
+04:14:25    step wait(seconds=5) for 5 s: 0 commands
+04:14:30    idle: sit (idle)
+04:14:36  INTENT [llm 3.2s] "Owner is nearby and the head was touched, so I'll nod for another scratch."  (affectionate, hopeful, calm)
+04:14:36      turn_head(yaw=0, pitch=0) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+04:14:36    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+04:14:37    step nod(times=2) for 2 s: 5 commands
+04:14:39    step wait(seconds=4) for 4 s: 0 commands
+04:14:43    idle: sit (idle)
+04:14:52  INTENT [llm 6.3s] "Glancing toward my owner, then looking around quietly, since it's late and I'm still a little bored."  (content, drowsy-curious)
+04:14:52      turn_head(yaw=0.6, pitch=-0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: stranger_present, not owner_visible
+04:14:52    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:14:54    step look_around(seconds=4) for 4 s: 4 commands
+04:14:58    step wait(seconds=4) for 4 s: 0 commands
+04:15:02    idle: sit (idle)
+04:15:08  INTENT [llm 5.2s] "Standing to show the owner a quiet bow, since they're close and I'm a bit bored."  (playful, quietly proud)
+04:15:08      stand() -> bow() -> sit()  abort if: stranger_present
+04:15:08    step stand() for 3 s: 1 command
+04:15:10    brain: walk
+04:15:11    step bow() for 7 s: 2 commands
+04:15:11    brain: groundpick
+04:15:11    body: standing (after sit)
+04:15:11    STOP 'Standing to show the owner a quiet bow, since they're close and I'm a bit bored.' at step 2/3: fell (gravity z +0.05, tilt 92.8 deg)
+04:15:11  FELL: the runner writes nothing until a person has righted the duck and put the brain back in walk mode at zero command (RUNNER.md)
+sim: 8 intentions ({'llm': 8}), 25 steps, 50 commands; validator rejections 0, brain refusals 0, falls 1, guard trips 0, yields 0; entropy 2.75 bits, repeat 0.143; end state done fell (gravity z +0.05, tilt 92.8 deg)
+written to /Users/xiangzheng/code/robotics/pet/mind/out/runner-20261029

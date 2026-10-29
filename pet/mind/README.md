@@ -1,6 +1,6 @@
 # pet/mind: drives, intentions, reflexes
 
-Problem: `docs/PET_ROBOT_FEATURES.md` section 4 (initiative and liveliness) and section 11 (one mind, several bodies). A dumb pet is fine, a rigid pet is not. This package is the daytime mind: arithmetic drives and mood, an intention every 10-30 s chosen by a small language model from the body's primitives, a validator between the model and the body, reflexes for interrupts, and a fallback that works with no model at all. It reads a body card, so the same mind runs the MicroDuck and the OMX-F arm. It runs entirely in simulation; nothing here has driven the robot.
+Problem: `docs/PET_ROBOT_FEATURES.md` section 4 (initiative and liveliness) and section 11 (one mind, several bodies). A dumb pet is fine, a rigid pet is not. This package is the daytime mind: arithmetic drives and mood, an intention every 10-30 s chosen by a small language model from the body's primitives, a validator between the model and the body, reflexes for interrupts, and a fallback that works with no model at all. It reads a body card, so the same mind runs the MicroDuck and the OMX-F arm. Nothing here has driven the robot yet; `runner.py` (see `RUNNER.md`) is the live runner, proven against the simulated duck on 2026-10-29.
 
 ## Run
 
@@ -10,7 +10,8 @@ pet/.venv/bin/pip install anthropic matplotlib pytest      # anthropic only for 
 pet/.venv/bin/python -m pet.mind.run_scenario --body duck   # the scripted day; model if reachable, else fallback
 pet/.venv/bin/python -m pet.mind.run_scenario --body arm --backend fallback   # seconds, no model
 pet/.venv/bin/python -m pet.mind.compare                     # rigidity and cost across the runs in out/
-pet/.venv/bin/python -m pytest pet/mind/tests -q             # 31 tests, no model calls
+pet/.venv/bin/python -m pytest pet/mind/tests -q             # 60 tests, no model calls, no sim
+pet/.venv/bin/python -m pet.mind.runner --dry --minutes 3     # the live runner against a fake brain (RUNNER.md)
 ```
 
 `--backend` is `auto` (API key if one is configured, else the `claude` CLI, else fallback), `anthropic`, `claude-cli`, `ollama` or `fallback`. `--body` is `duck`, `arm`, `live` (`pet/state/body_card.json`, written by `pet/body/`) or a path. `--state-dir` points at the rules, plan, diary, personality and skills (default `pet/state/examples/`). Each run writes `out/<body>-<backend>/`: `behaviour.log`, `intentions.jsonl`, `calls.jsonl` (every model call: tokens, latency, cost, the raw answer, validation errors), `drives.png`, `summary.json`.
@@ -37,7 +38,7 @@ The only door from the model to the body. A step is a primitive name plus its de
 ### Primitive backends (`executors.py`)
 
 - `SimExecutor` lets simulated time pass and applies posture effects and room changes.
-- `duck_commands()` documents and produces the mapping onto the control file of `microduck-sim/guide/firmware/mac/walk_brain.py` (`/tmp/duck_cmd.json`, modes `walk`, `sit`, `groundpick`, head targets in walk or sit mode): `stand` is walk at zero command (stand61 balances), `walk` is `{"mode": "walk", "vx", "vy": 0, "vtheta"}` then zero, `turn_head`/`look_around`/`nod` are head targets on a zero-command walk (or sit), `bow` is ground-pick phase 0.4 then 1.0, `rest` is sit with the head down, `wait` writes nothing. `DuckCommandStub` writes those commands atomically only when given a path. A live runner that times the commands, reads the robot's posture back and feeds perception into `Mind.perceive()` is not written.
+- `duck_commands()` documents and produces the mapping onto the control file of `microduck-sim/guide/firmware/mac/walk_brain.py` (`/tmp/duck_cmd.json`, modes `walk`, `sit`, `groundpick`, head targets in walk or sit mode): `stand` is walk at zero command (stand61 balances), `walk` is `{"mode": "walk", "vx", "vy": 0, "vtheta"}` then zero, `turn_head`/`look_around`/`nod` are head targets on a zero-command walk (or sit), `bow` is ground-pick phase 0.4 then 0.9 (the policy's standing rest; 1.0 wraps to a new descent), `rest` is sit with the head down, `wait` writes nothing. `DuckCommandStub` writes those commands atomically only when given a path. The live runner that times the commands on the real brain, reads posture and refusals back and feeds perception into `Mind.perceive()` is `runner.py` (`RUNNER.md`: how it is started against the simulated duck and the robot, what the first robot session looks like, how to stop it). With `--inbox` it also reads the voice layer's inbox (`inbox.py`): an owner task pre-empts the current intention and runs once, a rule goes into `rules.json` and pet/learn's matcher, and praise reaches the drives.
 
 ## Measured (2026-10-26)
 
@@ -96,7 +97,7 @@ The model runs predate one validator refinement: a parameterless posture step wh
 
 ## Limits
 
-- Simulation only. The world, perception and room changes are scripted; touch, face and sound percepts are generated, not detected. The executor never checks that a primitive succeeded.
+- `run_scenario.py` is simulation only: the world, perception and room changes are scripted. `runner.py` replaces the scripted world with perception (`perception.py`: pads and gyro from the brain's rows, sound levels and camera frames from the A7Z agent) and checks every primitive against the brain's readback (`brain_link.Readback`); its own limits are in `RUNNER.md`.
 - Simulated time stops while the model answers. On the robot the current intention keeps running while the next one is composed; the measured latency (above) is well inside the 10 s minimum interval.
 - The API backend (`AnthropicBackend`, official SDK, `claude-haiku-5-5`, effort `low`) is written and exercised only by mocked tests: this machine has no API key and no `ant` profile. The measured runs used the same model through `claude -p` on the Claude subscription (`ClaudeCliBackend`, tools, settings and MCP off, our system prompt), which reports real token counts; the CLI adds about 0.7k tokens of its own framing per call, included in the input counts above.
 - Ollama: not installed on the Mac mini, and its data volume had 4.7 GB free of 228 GB on 2026-10-26, about the size of a 4-bit Qwen 7B, so nothing was installed. `OllamaBackend` (`PET_OLLAMA_URL`, default `http://mac-mini:11434`, model `qwen2.5:7b-instruct`) is tested against a closed port (falls back); never run against a real Ollama.

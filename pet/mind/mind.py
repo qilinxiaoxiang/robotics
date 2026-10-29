@@ -51,6 +51,9 @@ def percept_text(p: dict) -> str:
         return f"expect: {p['outcome']} (w={p['weight']:.2f})"
     if k == "lights":
         return "lights dimmed" if p.get("level", 1) < 0.5 else "lights on"
+    if k == "owner_said":
+        how = {"praised": " (praise)", "said_no": " (telling me no)"}.get(p.get("reaction"), "")
+        return f"the owner said \"{p.get('text', '')}\"{how}"
     return k
 
 
@@ -176,7 +179,7 @@ class Mind:
         step = self.reflex[0]
         if self.reflex_end is None:
             self.reflex_end = w.t + self.executor.start(step)
-        if w.t < self.reflex_end:
+        if w.t < self.reflex_end - 1e-3:
             return
         self._finish_step(step)
         self.reflex.pop(0)
@@ -202,7 +205,7 @@ class Mind:
         step = cur["steps"][cur["idx"]]
         if cur["step_end"] is None:
             cur["step_end"] = w.t + self.executor.start(step)
-        if w.t < cur["step_end"]:
+        if w.t < cur["step_end"] - 1e-3:
             return
         self._finish_step(step)
         cur["idx"] += 1
@@ -285,12 +288,23 @@ class Mind:
             intent, retries = self._ask_model(facts)
             source = "llm" if intent else "fallback"
         if intent is None:
-            fb = self.fallback.compose(self.drives.snapshot(), self.drives.thresholds, facts)
-            intent, errs, _ = validate(fb, self.body, self.skills, facts)
-            if intent is None:  # the card offers nothing valid here: send nothing (the body holds) and retry
-                self.log(f"  fallback rejected ({'; '.join(errs)}); holding without a command for 5 s")
-                self.next_round_t = w.t + 5
+            intent = self.compose_fallback(facts)
+            if intent is None:
                 return
+        self._install(intent, source, retries, facts)
+
+    def compose_fallback(self, facts: dict):
+        """A drive-picked intention, or None (logged) when the card offers nothing valid here: the body holds 5 s."""
+        fb = self.fallback.compose(self.drives.snapshot(), self.drives.thresholds, facts)
+        intent, errs, _ = validate(fb, self.body, self.skills, facts)
+        if intent is None:
+            self.log(f"  fallback rejected ({'; '.join(errs)}); holding without a command for 5 s")
+            self.next_round_t = self.world.t + 5
+        return intent
+
+    def _install(self, intent: dict, source: str, retries: int, facts: dict):
+        """Make a validated intention the current one and record it."""
+        w = self.world
         intent.update(idx=0, step_end=None, started=w.t, source=source,
                       abort_init={c: bool(check_condition(c, facts)) for c in intent["abort_if"]})
         self.current = intent

@@ -1,0 +1,41 @@
+03:59:50    brain: walk
+03:59:52  === runner dry: microduck, approach_owner, bow, look_around, nod, rest, sit, stand, stop, turn_head, wait, walk, wander; model claude-cli; brain upright in walk mode; face recognition on ===
+03:59:57  [face] saw the owner
+03:59:57    reflex: turn_head(yaw=0, pitch=0.1)
+03:59:57    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+03:59:58    idle: zero-command walk (stand61) (idle)
+04:00:06  INTENT [llm 12.8s] "It's late and quiet; I'll stretch my legs and wander a little, though I'll keep away from the living room."  (sleepy curious)
+04:00:06      stand() -> wander(seconds=6) -> look_around(seconds=3)  abort if: touched, stranger_present
+04:00:06    step stand() for 3 s: 1 command
+04:00:09    step wander(seconds=6) for 6 s: 3 commands
+04:00:15    step look_around(seconds=3) for 3 s: 4 commands
+04:00:18    idle: zero-command walk (stand61) (idle)
+04:00:31  INTENT [llm 12.8s] "It's late, so I'll quietly approach my owner and settle nearby instead of wandering."  (sleepy, devoted)
+04:00:31      approach_owner(seconds=5) -> sit() -> wait(seconds=6)  abort if: stranger_present, not owner_home
+04:00:31    step approach_owner(seconds=5) for 5 s: 2 commands
+04:00:36    step sit() for 4 s: 1 command
+04:00:36    brain: sit
+04:00:39    body: seated
+04:00:40    step wait(seconds=6) for 6 s: 0 commands
+04:00:52  [touch] touched on the head
+04:00:52    reflex: stop() -> nod(times=1)
+04:00:52    step stop() for 0.5 s: 1 command
+04:00:53    step nod(times=1) for 2 s: 3 commands
+04:00:55    idle: sit (idle)
+04:00:56    model answer rejected: step 1: precondition of approach_owner 'standing' not satisfied (posture sitting)
+04:01:03  INTENT [llm 7.4s] "I'll stand up quietly and nod at my owner, since they're touching me and it's late."  (soft, affectionate, sleepy)
+04:01:03      stand() -> turn_head(yaw=0.4, pitch=0) -> nod(times=1)  abort if: stranger_present
+04:01:03    step stand() for 3 s: 1 command
+04:01:05    brain: walk
+04:01:05    body: standing (after sit)
+04:01:06    step turn_head(yaw=0.4, pitch=0) for 1 s: 1 command
+04:01:08    step nod(times=1) for 2 s: 3 commands
+04:01:10    idle: zero-command walk (stand61) (idle)
+04:01:21  INTENT [llm 7.7s] "I'll quietly approach my owner and settle beside them, since it's late."  (affectionate, sleepy, content)
+04:01:21      approach_owner(seconds=5) -> sit() -> rest(seconds=10)  abort if: stranger_present
+04:01:21    step approach_owner(seconds=5) for 5 s: 2 commands
+04:01:27    step sit() for 4 s: 1 command
+04:01:27    brain: sit
+04:01:29    body: seated
+04:01:31    step rest(seconds=10) for 10 s: 1 command
+04:01:41    idle: sit (idle)

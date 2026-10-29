@@ -96,6 +96,19 @@ class Drives:
             v["bored"] -= 0.15
             if label == "door_slam":
                 self.valence -= 0.1
+        elif kind == "owner_said":  # the voice layer (pet/state/README.md); "good duck" is reaction praised
+            reaction = percept.get("reaction")
+            if reaction == "praised":
+                self.valence += 0.4
+                self.arousal += 0.1
+                v["miss_owner"] *= 0.4
+                v["bored"] *= 0.7
+            elif reaction == "said_no":
+                self.valence -= 0.15
+                self.arousal += 0.1
+            else:  # spoken to: attention, the owner is there
+                self.arousal += 0.1
+                v["miss_owner"] *= 0.7
         elif kind == "face_lost":
             v["miss_owner"] += 0.05
         elif kind == "expect" and "owner_leaves" in percept.get("outcome", ""):

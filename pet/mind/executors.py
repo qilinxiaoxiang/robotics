@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 WALK_ZERO = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0}
+GP_DONE_PHASE = 0.9  # walk_wired.py: inside the ground-pick policy's standing rest [0.80, 1); 1.0 wraps to a new descent
 
 
 class SimExecutor:
@@ -39,7 +40,11 @@ def duck_commands(step: dict, posture: str = "standing") -> list[tuple[float, di
                    random arc; here vtheta 0 / +-0.2 as placeholders, zero command at the end
     turn_head    -> zero-command walk (or sit) with a head pose: {"head": {"head_yaw", "head_pitch"}}
     look_around, nod -> the same head command at a few yaw / pitch points
-    bow          -> {"mode": "groundpick", "phase": 0.4}, then phase 1.0 (rises and returns to stand61)
+    bow          -> {"mode": "groundpick", "phase": 0.4} (descends over 1.6 s, holds the low pose), then phase 0.9
+                   (rises, rests standing inside the policy's rest segment [0.80, 1); walk_wired's GP_DONE_PHASE).
+                   Never 1.0: the phase command is [cos 2*pi*phi, sin 2*pi*phi], so 1.0 is phase 0 again and the
+                   policy starts the next descent, from which the switch to stand61 toppled the simulated duck
+                   (2026-10-29). The runner writes the zero-command walk when the step ends.
     rest         -> {"mode": "sit", "head": {"head_pitch": -0.3}}
     wait         -> nothing (walk_brain keeps the last command)
     stop         -> zero-command walk, or sit when already seated
@@ -76,7 +81,7 @@ def duck_commands(step: dict, posture: str = "standing") -> list[tuple[float, di
             out += [(i * 0.8, head(0, 0.3)), (i * 0.8 + 0.4, head(0, -0.1))]
         return out + [(int(p["times"]) * 0.8, head(0, 0))]
     if name == "bow":
-        return [(0, {"mode": "groundpick", "phase": 0.4}), (3.5, {"mode": "groundpick", "phase": 1.0})]
+        return [(0, {"mode": "groundpick", "phase": 0.4}), (3.5, {"mode": "groundpick", "phase": GP_DONE_PHASE})]
     if name == "rest":
         return [(0, {"mode": "sit", "head": {"head_pitch": -0.3}})]
     if name == "wait":

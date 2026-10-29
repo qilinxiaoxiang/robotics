@@ -1,0 +1,125 @@
+{
+ "mode": "sim",
+ "backend": "claude-cli",
+ "started": "2026-10-29T04:26:13",
+ "session_minutes": 2.05,
+ "primitives_allowed": [
+  "approach_owner",
+  "bow",
+  "look_around",
+  "nod",
+  "stop",
+  "turn_head",
+  "wait",
+  "walk",
+  "wander"
+ ],
+ "intentions": 6,
+ "sources": {
+  "llm": 6
+ },
+ "primitives_issued": {
+  "turn_head": 6,
+  "look_around": 1,
+  "wait": 6,
+  "approach_owner": 1,
+  "nod": 4,
+  "stop": 1,
+  "bow": 1
+ },
+ "steps_issued": 20,
+ "commands_written": 38,
+ "model_calls": 7,
+ "validator_rejections": 1,
+ "validator_rejection_errors": [
+  [
+   "step 1: skill greet_owner guard 'owner_visible' not satisfied (posture standing)"
+  ]
+ ],
+ "brain_refusals": 0,
+ "brain_refusal_lines": [],
+ "falls": 1,
+ "guard_trips": 0,
+ "yields": 0,
+ "handbacks": 0,
+ "reflexes": 2,
+ "percepts": {
+  "face": 1,
+  "touch": 1,
+  "bump": 1
+ },
+ "brain": {
+  "rows_seen": 6345,
+  "max_tilt_deg": 113.4,
+  "last_mode": "walk",
+  "posture": "fallen"
+ },
+ "end_state": "done",
+ "end_why": "fell (gravity z +0.37, tilt 111.7 deg)",
+ "rigidity": {
+  "intentions": 6,
+  "distinct_intention_texts": 6,
+  "distinct_action_sequences": 6,
+  "distinct_with_params": 6,
+  "repeat_of_previous": 0,
+  "repeat_of_previous_rate": 0.0,
+  "longest_identical_run": 1,
+  "sequence_entropy_bits": 2.58,
+  "primitives_used": [
+   "approach_owner",
+   "bow",
+   "look_around",
+   "nod",
+   "turn_head",
+   "wait"
+  ],
+  "intentions_owner_in_view": 1,
+  "intentions_owner_not_in_view": 5,
+  "gesture_share_owner_in_view": 0.0,
+  "gesture_share_owner_not_in_view": 0.6,
+  "locomotion_share_owner_in_view": 0.0,
+  "locomotion_share_owner_not_in_view": 0.2,
+  "posture_changes": 0,
+  "rest_share": 1.0,
+  "most_common": [
+   [
+    "look_around -> turn_head -> wait",
+    1
+   ],
+   [
+    "turn_head -> wait",
+    1
+   ],
+   [
+    "approach_owner -> nod -> wait",
+    1
+   ]
+  ],
+  "sources": {
+   "llm": 6
+  }
+ },
+ "reference_20261026": {
+  "run": "microduck-claude-cli 2026-10-26 (scripted day, 90 awake minutes)",
+  "intentions": 349,
+  "distinct_action_sequences": 162,
+  "repeat_of_previous_rate": 0.046,
+  "sequence_entropy_bits": 6.76
+ },
+ "calls": {
+  "calls": 7,
+  "ok": 6,
+  "input_tokens": 14634,
+  "output_tokens": 2603,
+  "api_cost_usd": 0.00276,
+  "provider_cost_usd": 0.00323,
+  "latency_p50_s": 6.403,
+  "latency_p90_s": 7.89
+ },
+ "sim": {
+  "volt": 7.0,
+  "model": "asbuilt-20261015 (static_gap.cfg asbuilt, 90 g old battery removed)",
+  "peak_tilt_deg": 111.9,
+  "ticks_over_60deg": 1013
+ }
+}

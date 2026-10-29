@@ -1,0 +1,87 @@
+05:19:06    brain: walk
+05:19:08  === runner sim: microduck, approach_owner, bow, look_around, nod, stop, turn_head, wait, walk, wander; model claude-cli; brain upright in walk mode; face recognition on ===
+05:19:15  INTENT [llm 6.6s] "Looking around quietly, then tottering forward, since the owner is home and it's early."  (sleepy curious)
+05:19:15      look_around(seconds=4) -> walk(vx=0.1, vtheta=0, seconds=4) -> nod(times=1)  abort if: stranger_present, touched
+05:19:15    step look_around(seconds=4) for 4 s: 4 commands
+05:19:19    step walk(vx=0.1, vtheta=0, seconds=4) for 4 s: 2 commands
+05:19:23    step nod(times=1) for 2 s: 3 commands
+05:19:25    idle: zero-command walk (stand61) (idle)
+05:19:30  INTENT [llm 4.3s] "Waiting by the owner for a head scratch, since they are home and nearby is nice."  (hopeful, clingy)
+05:19:30      turn_head(yaw=0.4, pitch=0.1) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible
+05:19:30    step turn_head(yaw=0.4, pitch=0.1) for 1 s: 1 command
+05:19:31    step nod(times=2) for 2 s: 5 commands
+05:19:34    step wait(seconds=4) for 4 s: 0 commands
+05:19:38    idle: zero-command walk (stand61) (idle)
+05:19:38  [owner_said] the owner said "把橙色方块雕来。"
+05:19:38    owner task 20261029-051938-001.json.done: groundpick -> bow
+05:19:38    owner task 20261029-051938-001.json.done: bow: parameters phase, seconds not taken
+05:19:38    owner task 20261029-051938-001.json.done: turn_head: parameter seconds not taken
+05:19:38  INTENT [owner] "I'll find the orange block and carry it back to you."
+05:19:38      look_around(seconds=4) -> walk(vx=0.15, vtheta=0, seconds=3) -> bow() -> turn_head(yaw=0, pitch=0) -> walk(vx=0.15, vtheta=0, seconds=3)  abort if: not standing, touched
+05:19:39    step look_around(seconds=4) for 4 s: 4 commands
+05:19:43    step walk(vx=0.15, vtheta=0, seconds=3) for 3 s: 2 commands
+05:19:46    step bow() for 7 s: 2 commands
+05:19:46    brain: groundpick
+05:19:53    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+05:19:53    brain: walk
+05:19:54    step walk(vx=0.15, vtheta=0, seconds=3) for 3 s: 2 commands
+05:19:57  OWNER TASK "把橙色方块雕来。" (20261029-051938-001.json.done): done
+05:20:04  INTENT [llm 6.0s] "Scanning for the orange block, then carrying it over to my owner."  (eager, focused)
+05:20:04      look_around(seconds=3) -> walk(vx=0.15, vtheta=0.1, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> walk(vx=0.1, vtheta=0, seconds=3)  abort if: not standing, stranger_present, touched
+05:20:04    step look_around(seconds=3) for 3 s: 4 commands
+05:20:07    step walk(vx=0.15, vtheta=0.1, seconds=4) for 4 s: 2 commands
+05:20:11    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+05:20:12    step walk(vx=0.1, vtheta=0, seconds=3) for 3 s: 2 commands
+05:20:21  INTENT [llm 5.7s] "Bringing the orange block to my owner and showing off a bow."  (eager, proud)
+05:20:21      approach_owner(seconds=6) -> bow()  abort if: not owner_home, stranger_present
+05:20:21    step approach_owner(seconds=6) for 6 s: 2 commands
+05:20:23  [owner_said] the owner said "Stop going in the bedroom" (telling me no)
+05:20:23  OWNER RULE "Stop going in the bedroom": self:entered(bedroom) -> owner:said_no (w 0.60, added; rules.json and the matcher)
+05:20:29  INTENT [llm 5.9s] "I'll turn toward my owner and nod quietly, hoping for a head scratch."  (calm, seeking closeness)
+05:20:29      turn_head(yaw=0.4, pitch=0.1) -> nod(times=2) -> wait(seconds=4)  abort if: stranger_present
+05:20:29    step turn_head(yaw=0.4, pitch=0.1) for 1 s: 1 command
+05:20:30    step nod(times=2) for 2 s: 5 commands
+05:20:33    step wait(seconds=4) for 4 s: 0 commands
+05:20:37    idle: zero-command walk (stand61) (idle)
+05:20:44  [owner_said] the owner said "好鸭子，真乖" (praise)
+05:20:46  INTENT [llm 6.1s] "I'll settle near my owner quietly, since it's early and I'm tired."  (drowsy, content)
+05:20:46      turn_head(yaw=0.3, pitch=0.1) -> look_around(seconds=4) -> wait(seconds=5)  abort if: stranger_present, touched
+05:20:46    step turn_head(yaw=0.3, pitch=0.1) for 1 s: 1 command
+05:20:47    step look_around(seconds=4) for 4 s: 4 commands
+05:20:51    step wait(seconds=5) for 5 s: 0 commands
+05:20:56    idle: zero-command walk (stand61) (idle)
+05:21:03  [owner_said] the owner said "过来"
+05:21:03    owner task 20261029-052103-001.json.done: turn_head: parameter seconds not taken
+05:21:03    (the model's pending answer is dropped)
+05:21:03  INTENT [owner] "The owner called me over, so I'll turn toward the voice and go to them."
+05:21:03      turn_head(yaw=0, pitch=0) -> walk(vx=0.2, vtheta=0, seconds=3)  abort if: not standing
+05:21:03    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+05:21:05    step walk(vx=0.2, vtheta=0, seconds=3) for 3 s: 2 commands
+05:21:08  [owner_said] the owner said "停下"
+05:21:08  OWNER TASK "过来" (20261029-052103-001.json.done): replaced by a newer request
+05:21:08    STOP 'The owner called me over, so I'll turn toward the voice and go to them.' at step 2/2: the owner asked: 停下
+05:21:08  INTENT [owner] "Owner said stop, so I'll halt where I am."
+05:21:08      stop()
+05:21:08    step stop() for 0.5 s: 1 command
+05:21:08  OWNER TASK "停下" (20261029-052107-001.json.done): done
+05:21:24  INTENT [llm 6.6s] "Owner said stop, so I'll hold still and quietly watch them."  (calm, attentive)
+05:21:24      turn_head(yaw=0.3, pitch=0.1) -> wait(seconds=6)  abort if: touched, stranger_present
+05:21:25    step turn_head(yaw=0.3, pitch=0.1) for 1 s: 1 command
+05:21:26    step wait(seconds=6) for 6 s: 0 commands
+05:21:28  [owner_said] the owner said "坐下"
+05:21:28    owner task 20261029-052128-001.json.done: sit left out (not on this body card or not allowed)
+05:21:28  OWNER TASK "坐下" (20261029-052128-001.json.done): refused: no step left
+05:21:32    idle: zero-command walk (stand61) (idle)
+05:21:42    model answer rejected: step 1: skill greet_owner guard 'owner_visible' not satisfied (posture standing)
+05:21:47  INTENT [llm 5.4s] "I'll glance toward the sounds and wait quietly for my owner's next command."  (alert, quietly eager)
+05:21:47      turn_head(yaw=0.6, pitch=0.1) -> look_around(seconds=4) -> wait(seconds=4)  abort if: stranger_present, touched
+05:21:48    step turn_head(yaw=0.6, pitch=0.1) for 1 s: 1 command
+05:21:49    step look_around(seconds=4) for 4 s: 4 commands
+05:21:53    step wait(seconds=4) for 4 s: 0 commands
+05:21:57    idle: zero-command walk (stand61) (idle)
+05:22:05  INTENT [llm 6.8s] "I'll go find my owner and nod, since nodding earned head scratches before."  (hopeful, clingy)
+05:22:05      turn_head(yaw=0, pitch=0) -> approach_owner(seconds=6) -> nod(times=2)  abort if: stranger_present, not owner_home, touched
+05:22:05    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+05:22:06    step approach_owner(seconds=6) for 6 s: 2 commands
+05:22:12    step nod(times=2) for 2 s: 5 commands
+05:22:14    idle: zero-command walk (stand61) (idle)

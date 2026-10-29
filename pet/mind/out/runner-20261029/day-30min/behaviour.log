@@ -1,0 +1,644 @@
+04:33:50    brain: walk
+04:33:52  === runner sim: microduck, approach_owner, bow, look_around, nod, stop, turn_head, wait, walk, wander; model claude-cli; brain upright in walk mode; face recognition on ===
+04:33:57  [face] saw the owner
+04:33:57    reflex: turn_head(yaw=0, pitch=0.1)
+04:33:58    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+04:33:59    idle: zero-command walk (stand61) (idle)
+04:33:59  INTENT [llm 4.8s] "Looking around quietly at night, then drifting toward my owner for some closeness."  (sleepy, affectionate)
+04:33:59      look_around(seconds=5) -> approach_owner(seconds=8)  abort if: stranger_present, touched
+04:33:59    step look_around(seconds=5) for 5 s: 4 commands
+04:34:04    step approach_owner(seconds=8) for 8 s: 2 commands
+04:34:16  INTENT [llm 3.8s] "Owner is nearby at night; I'll nod softly and hope for a head scratch, staying close."  (quiet, affectionate)
+04:34:16      turn_head(yaw=0, pitch=0.3) -> nod(times=2) -> wait(seconds=4)  abort if: not owner_visible, touched, stranger_present
+04:34:16    step turn_head(yaw=0, pitch=0.3) for 1 s: 1 command
+04:34:17    step nod(times=2) for 2 s: 5 commands
+04:34:18    aborts 'Owner is nearby at night; I'll nod softly and hope for a head scratch, staying close.': not owner_visible
+04:34:19    idle: zero-command walk (stand61) (idle)
+04:34:23  INTENT [llm 5.0s] "Glancing toward my owner, then a quiet look around since it's late and wandering annoys them."  (calm, drowsy-curious)
+04:34:23      turn_head(yaw=0.6, pitch=-0.1) -> look_around(seconds=5)  abort if: stranger_present, touched
+04:34:23    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:34:24    step look_around(seconds=5) for 5 s: 4 commands
+04:34:29    idle: zero-command walk (stand61) (idle)
+04:34:39  INTENT [llm 6.0s] "I'll give a quiet little bow for my owner, since it's late and I want closeness."  (soft, affectionate)
+04:34:39      turn_head(yaw=0, pitch=-0.2) -> bow() -> wait(seconds=4)  abort if: not owner_visible, stranger_present
+04:34:39    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:34:40    step bow() for 7 s: 2 commands
+04:34:40    brain: groundpick
+04:34:47    step wait(seconds=4) for 4 s: 0 commands
+04:34:51    idle: zero-command walk (stand61) (idle)
+04:34:51    brain: walk
+04:34:52  [touch] touched on the head
+04:34:52    reflex: stop() -> nod(times=1)
+04:34:53    step stop() for 0.5 s: 1 command
+04:34:53    step nod(times=1) for 2 s: 3 commands
+04:34:55    idle: zero-command walk (stand61) (idle)
+04:34:59  INTENT [llm 6.8s] "Walking softly to my owner, then waiting close since it's late."  (sleepy, clingy, content)
+04:34:59      walk(vx=0.05, vtheta=0, seconds=3) -> wait(seconds=6)  abort if: stranger_present, not standing
+04:34:59    step walk(vx=0.05, vtheta=0, seconds=3) for 3 s: 2 commands
+04:35:02    step wait(seconds=6) for 6 s: 0 commands
+04:35:15  INTENT [llm 6.2s] "I'll tilt my head toward my owner's last spot, then rest quietly since it's late."  (content, drowsy)
+04:35:15      turn_head(yaw=0.6, pitch=-0.3) -> wait(seconds=6)  abort if: touched, stranger_present
+04:35:15    step turn_head(yaw=0.6, pitch=-0.3) for 1 s: 1 command
+04:35:16    step wait(seconds=6) for 6 s: 0 commands
+04:35:22    idle: zero-command walk (stand61) (idle)
+04:35:31  INTENT [llm 6.0s] "I'll glance toward my owner's spot, then settle quietly since it's late."  (drowsy, content)
+04:35:31      turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=4) -> wait(seconds=6)  abort if: stranger_present, touched
+04:35:31    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:35:32    step look_around(seconds=4) for 4 s: 4 commands
+04:35:36    step wait(seconds=6) for 6 s: 0 commands
+04:35:43    idle: zero-command walk (stand61) (idle)
+04:35:52  INTENT [llm 9.3s] "I'll creep quietly toward my owner's spot and nod for a head scratch, since it's late."  (soft, clingy, sleepy)
+04:35:52      walk(vx=0.05, vtheta=0, seconds=3) -> turn_head(yaw=0, pitch=0.2) -> nod(times=2)  abort if: stranger_present, not standing
+04:35:52    step walk(vx=0.05, vtheta=0, seconds=3) for 3 s: 2 commands
+04:35:55    step turn_head(yaw=0, pitch=0.2) for 1 s: 1 command
+04:35:56    step nod(times=2) for 2 s: 5 commands
+04:35:58    idle: zero-command walk (stand61) (idle)
+04:36:12  INTENT [llm 9.4s] "I'll drift to my owner's side quietly, then tilt my head up at them softly."  (sleepy, cuddly)
+04:36:12      approach_owner(seconds=6) -> turn_head(yaw=0.4, pitch=0.2) -> wait(seconds=4)  abort if: stranger_present, not owner_home
+04:36:12    step approach_owner(seconds=6) for 6 s: 2 commands
+04:36:18    step turn_head(yaw=0.4, pitch=0.2) for 1 s: 1 command
+04:36:19    step wait(seconds=4) for 4 s: 0 commands
+04:36:23    idle: zero-command walk (stand61) (idle)
+04:36:33  INTENT [llm 9.9s] "I'll do a small quiet spin to show off, then settle facing my owner."  (playful, quiet)
+04:36:33      walk(vx=0, vtheta=0.3, seconds=3) -> turn_head(yaw=0, pitch=0.2) -> wait(seconds=5)  abort if: touched, stranger_present
+04:36:33    step walk(vx=0, vtheta=0.3, seconds=3) for 3 s: 2 commands
+04:36:37    step turn_head(yaw=0, pitch=0.2) for 1 s: 1 command
+04:36:38    step wait(seconds=5) for 5 s: 0 commands
+04:36:43    idle: zero-command walk (stand61) (idle)
+04:36:51  INTENT [llm 7.0s] "I'll quietly scan the room for a change, then settle, since it's late and my owner is close."  (calm, watchful)
+04:36:51      look_around(seconds=4) -> turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=5)  abort if: stranger_present, touched
+04:36:51    step look_around(seconds=4) for 4 s: 4 commands
+04:36:52  [sound] heard keys_jingle from the left
+04:36:52    [rule keys-leave] expect: owner_leaves (w=0.80)
+04:36:52    reflex: turn_head(yaw=1.2, pitch=0.1)
+04:36:53    step turn_head(yaw=1.2, pitch=0.1) for 1 s: 1 command
+04:36:54    idle: zero-command walk (stand61) (idle)
+04:37:00  INTENT [llm 5.8s] "I'll turn toward the keys sound, then trot over to say goodbye quietly."  (clingy, wistful)
+04:37:00      turn_head(yaw=0.9, pitch=0.1) -> approach_owner(seconds=6) -> nod(times=1)  abort if: not owner_home
+04:37:00    step turn_head(yaw=0.9, pitch=0.1) for 1 s: 1 command
+04:37:01    step approach_owner(seconds=6) for 6 s: 2 commands
+04:37:07    step nod(times=1) for 2 s: 3 commands
+04:37:09    idle: zero-command walk (stand61) (idle)
+04:37:17  INTENT [llm 6.9s] "I'll face the keys sound and watch the door quietly, since my owner may be leaving."  (quietly watchful, clingy)
+04:37:17      turn_head(yaw=0.9, pitch=0) -> look_around(seconds=6) -> wait(seconds=4)  abort if: touched
+04:37:17    step turn_head(yaw=0.9, pitch=0) for 1 s: 1 command
+04:37:18    step look_around(seconds=6) for 6 s: 4 commands
+04:37:25    step wait(seconds=4) for 4 s: 0 commands
+04:37:29    idle: zero-command walk (stand61) (idle)
+04:37:35  INTENT [llm 6.4s] "I'll bow a quiet goodbye as my owner leaves, then wait by the door."  (wistful, softly affectionate)
+04:37:35      bow() -> wait(seconds=6)  abort if: stranger_present, touched
+04:37:36    step bow() for 7 s: 2 commands
+04:37:36    brain: groundpick
+04:37:43    step wait(seconds=6) for 6 s: 0 commands
+04:37:49    idle: zero-command walk (stand61) (idle)
+04:37:49    brain: walk
+04:37:52  [face_lost] lost sight of the owner
+04:37:57  INTENT [llm 7.7s] "I'll turn toward the keys, creep over quietly, and give one nod goodbye."  (clingy but hushed)
+04:37:57      turn_head(yaw=-0.8, pitch=0.1) -> approach_owner(seconds=5) -> nod(times=1)  abort if: not standing, stranger_present
+04:37:57    step turn_head(yaw=-0.8, pitch=0.1) for 1 s: 1 command
+04:37:58    step approach_owner(seconds=5) for 5 s: 2 commands
+04:38:02  [sound] heard door_slam from the left
+04:38:02    reflex: turn_head(yaw=1.2, pitch=0.1)
+04:38:03    step turn_head(yaw=1.2, pitch=0.1) for 1 s: 1 command
+04:38:04    idle: zero-command walk (stand61) (idle)
+04:38:10  INTENT [llm 6.6s] "The door slammed and my owner's gone; I'll look toward it and wait."  (watchful, quietly lonely)
+04:38:10      turn_head(yaw=0.9, pitch=-0.1) -> look_around(seconds=5) -> wait(seconds=6)  abort if: touched, stranger_present
+04:38:10    step turn_head(yaw=0.9, pitch=-0.1) for 1 s: 1 command
+04:38:12    step look_around(seconds=5) for 5 s: 4 commands
+04:38:17    step wait(seconds=6) for 6 s: 0 commands
+04:38:23    idle: zero-command walk (stand61) (idle)
+04:38:31  INTENT [llm 7.3s] "Owner's gone, so I'll quietly wander toward the sofa spot and wait there."  (lonely, calm, curious)
+04:38:31      walk(vx=0.05, vtheta=0.1, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> wait(seconds=6)  abort if: touched, stranger_present, owner_visible
+04:38:31    step walk(vx=0.05, vtheta=0.1, seconds=4) for 4 s: 2 commands
+04:38:35    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:38:36    step wait(seconds=6) for 6 s: 0 commands
+04:38:42    idle: zero-command walk (stand61) (idle)
+04:38:47  INTENT [llm 4.8s] "Owner just left and I'm alone at night, so I'll settle quietly near the sofa and wait."  (quiet, missing owner)
+04:38:47      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:38:47    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:38:48    step wait(seconds=6) for 6 s: 0 commands
+04:38:55    step look_around(seconds=4) for 4 s: 4 commands
+04:38:59    idle: zero-command walk (stand61) (idle)
+04:39:08  INTENT [llm 8.6s] "I'll rest a bit, then look around the quiet house, since my owner is gone."  (lonely but calm)
+04:39:08      wait(seconds=6) -> look_around(seconds=4)  abort if: owner_home, stranger_present, touched
+04:39:08    step wait(seconds=6) for 6 s: 0 commands
+04:39:14    step look_around(seconds=4) for 4 s: 4 commands
+04:39:18    idle: zero-command walk (stand61) (idle)
+04:39:25  INTENT [llm 6.5s] "I'll slowly shift toward the door to check for my owner, since I miss them."  (quiet, missing owner)
+04:39:25      walk(vx=0.05, vtheta=0.2, seconds=4) -> turn_head(yaw=0, pitch=-0.2) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:39:25    step walk(vx=0.05, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:39:29    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:39:30    step wait(seconds=4) for 4 s: 0 commands
+04:39:34    idle: zero-command walk (stand61) (idle)
+04:39:39  INTENT [llm 3.9s] "Owner is gone and I miss them; I'll sit by the door and wait quietly."  (lonely, watchful)
+04:39:39      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:39:39    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:39:40    step wait(seconds=6) for 6 s: 0 commands
+04:39:46    step look_around(seconds=4) for 4 s: 4 commands
+04:39:50    idle: zero-command walk (stand61) (idle)
+04:39:58  INTENT [llm 7.8s] "Owner's still gone, so I'll face the hallway, nod hopefully, and wait for them."  (quietly hopeful)
+04:39:58      turn_head(yaw=-0.8, pitch=0.1) -> nod(times=1) -> wait(seconds=8)  abort if: owner_home, stranger_present, touched
+04:39:58    step turn_head(yaw=-0.8, pitch=0.1) for 1 s: 1 command
+04:39:59    step nod(times=1) for 2 s: 3 commands
+04:40:02    step wait(seconds=8) for 8 s: 0 commands
+04:40:10    idle: zero-command walk (stand61) (idle)
+04:40:15  INTENT [llm 5.4s] "I'll scan the quiet room, take a small step, then wait for my owner."  (lonely but hopeful)
+04:40:15      look_around(seconds=4) -> walk(vx=0.08, vtheta=0, seconds=3) -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:40:15    step look_around(seconds=4) for 4 s: 4 commands
+04:40:20    step walk(vx=0.08, vtheta=0, seconds=3) for 3 s: 2 commands
+04:40:23    step wait(seconds=4) for 4 s: 0 commands
+04:40:34  INTENT [llm 7.1s] "I'll glance toward the left door where the slam came from, scan quietly, then wait a little longer."  (quietly hopeful)
+04:40:34      turn_head(yaw=-0.9, pitch=-0.2) -> look_around(seconds=4) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+04:40:34    step turn_head(yaw=-0.9, pitch=-0.2) for 1 s: 1 command
+04:40:35    step look_around(seconds=4) for 4 s: 4 commands
+04:40:40    step wait(seconds=6) for 6 s: 0 commands
+04:40:46    idle: zero-command walk (stand61) (idle)
+04:40:51  INTENT [llm 5.1s] "Owner left at night and I miss them, so I'll watch the door and wait nearby."  (lonely, hopeful)
+04:40:51      turn_head(yaw=0, pitch=-0.1) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+04:40:51    step turn_head(yaw=0, pitch=-0.1) for 1 s: 1 command
+04:40:52    step wait(seconds=4) for 4 s: 0 commands
+04:40:56    step nod(times=1) for 2 s: 3 commands
+04:40:58    idle: zero-command walk (stand61) (idle)
+04:41:08  INTENT [llm 7.1s] "Owner's still away, so I'll quietly stretch my legs and check the room."  (restless, lonely, curious)
+04:41:08      walk(vx=0.08, vtheta=0.15, seconds=4) -> turn_head(yaw=0.5, pitch=-0.1) -> wait(seconds=3)  abort if: owner_visible, stranger_present, touched
+04:41:08    step walk(vx=0.08, vtheta=0.15, seconds=4) for 4 s: 2 commands
+04:41:12    step turn_head(yaw=0.5, pitch=-0.1) for 1 s: 1 command
+04:41:14    step wait(seconds=3) for 3 s: 0 commands
+04:41:17    idle: zero-command walk (stand61) (idle)
+04:41:25  INTENT [llm 7.1s] "Owner's still away, so I'll try a quiet little bow to cheer myself up."  (lonely but playful)
+04:41:25      turn_head(yaw=0.6, pitch=-0.2) -> bow() -> wait(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:41:26    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:41:27    step bow() for 7 s: 2 commands
+04:41:27    brain: groundpick
+04:41:34    step wait(seconds=4) for 4 s: 0 commands
+04:41:38    idle: zero-command walk (stand61) (idle)
+04:41:38    brain: walk
+04:41:47  INTENT [llm 8.4s] "I'll scan the room slowly with my eyes, then rest quietly while I miss my owner."  (quietly lonely)
+04:41:47      look_around(seconds=6) -> turn_head(yaw=1, pitch=-0.2) -> wait(seconds=4)  abort if: owner_home, stranger_present, touched
+04:41:47    step look_around(seconds=6) for 6 s: 4 commands
+04:41:53    step turn_head(yaw=1, pitch=-0.2) for 1 s: 1 command
+04:41:54    step wait(seconds=4) for 4 s: 0 commands
+04:41:58    idle: zero-command walk (stand61) (idle)
+04:42:08  INTENT [llm 9.1s] "I'll check the left door where that slam came from, since I'm curious and still missing my owner."  (wary, hopeful curiosity)
+04:42:08      turn_head(yaw=0.9, pitch=0) -> walk(vx=0.1, vtheta=0, seconds=3) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:42:08    step turn_head(yaw=0.9, pitch=0) for 1 s: 1 command
+04:42:09    step walk(vx=0.1, vtheta=0, seconds=3) for 3 s: 2 commands
+04:42:12    step look_around(seconds=4) for 4 s: 4 commands
+04:42:16    idle: zero-command walk (stand61) (idle)
+04:42:25  INTENT [llm 7.0s] "I'll quietly creep toward the left door where the slam came from, then peek out."  (lonely, hopeful)
+04:42:25      walk(vx=0.05, vtheta=0.25, seconds=3) -> turn_head(yaw=0.8, pitch=-0.2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:42:25    step walk(vx=0.05, vtheta=0.25, seconds=3) for 3 s: 2 commands
+04:42:28    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+04:42:29    step look_around(seconds=4) for 4 s: 4 commands
+04:42:33    idle: zero-command walk (stand61) (idle)
+04:42:42  INTENT [llm 6.3s] "I'll glance at the right side of the room, rest a bit, then nod to keep myself company."  (lonely but calm)
+04:42:42      turn_head(yaw=-1, pitch=0.1) -> wait(seconds=6) -> nod(times=2)  abort if: owner_visible, stranger_present, touched
+04:42:42    step turn_head(yaw=-1, pitch=0.1) for 1 s: 1 command
+04:42:43    step wait(seconds=6) for 6 s: 0 commands
+04:42:49    step nod(times=2) for 2 s: 5 commands
+04:42:51    idle: zero-command walk (stand61) (idle)
+04:43:00  INTENT [llm 7.5s] "I'll look up at the lights, drift a short curve across the room, then wait quietly since I miss my owner."  (lonely but calm)
+04:43:00      turn_head(yaw=-0.6, pitch=0.4) -> walk(vx=0.08, vtheta=0.15, seconds=6) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+04:43:00    step turn_head(yaw=-0.6, pitch=0.4) for 1 s: 1 command
+04:43:01    step walk(vx=0.08, vtheta=0.15, seconds=6) for 6 s: 2 commands
+04:43:07    step wait(seconds=6) for 6 s: 0 commands
+04:43:22  INTENT [llm 8.9s] "I miss my owner, so I'll drift in a slow arc, then sniff the floor."  (lonely, hopeful, gentle)
+04:43:22      walk(vx=0.1, vtheta=0.25, seconds=4) -> turn_head(yaw=0, pitch=-0.4) -> wait(seconds=5)  abort if: owner_home, stranger_present, touched
+04:43:22    step walk(vx=0.1, vtheta=0.25, seconds=4) for 4 s: 2 commands
+04:43:27    step turn_head(yaw=0, pitch=-0.4) for 1 s: 1 command
+04:43:28    step wait(seconds=5) for 5 s: 0 commands
+04:43:33    idle: zero-command walk (stand61) (idle)
+04:43:40  INTENT [llm 6.6s] "I'll face the front door quietly and watch it, hoping my owner returns soon."  (quietly hopeful)
+04:43:40      turn_head(yaw=-1, pitch=-0.2) -> look_around(seconds=5) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+04:43:40    step turn_head(yaw=-1, pitch=-0.2) for 1 s: 1 command
+04:43:41    step look_around(seconds=5) for 5 s: 4 commands
+04:43:46    step wait(seconds=6) for 6 s: 0 commands
+04:43:52    idle: zero-command walk (stand61) (idle)
+04:44:01  INTENT [llm 8.9s] "I'll wander a little, nod to myself, then look around since I miss my owner."  (lonely but curious)
+04:44:01      wander(seconds=8) -> nod(times=2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:44:01    step wander(seconds=8) for 8 s: 4 commands
+04:44:10    step nod(times=2) for 2 s: 5 commands
+04:44:12    step look_around(seconds=4) for 4 s: 4 commands
+04:44:16    idle: zero-command walk (stand61) (idle)
+04:44:24  INTENT [llm 7.7s] "I'll show off a little bow to pass the time, then wait since I miss my owner."  (lonely but playful)
+04:44:24      bow() -> wait(seconds=6)  abort if: owner_visible, touched, stranger_present
+04:44:24    step bow() for 7 s: 2 commands
+04:44:24    brain: groundpick
+04:44:31    step wait(seconds=6) for 6 s: 0 commands
+04:44:37    idle: zero-command walk (stand61) (idle)
+04:44:37    brain: walk
+04:44:45  INTENT [llm 8.2s] "I'll drift over to the window and peek out, since I miss my owner."  (quietly restless, hopeful)
+04:44:45      walk(vx=0.1, vtheta=0.2, seconds=4) -> turn_head(yaw=0.9, pitch=-0.2) -> look_around(seconds=5)  abort if: touched, stranger_present, battery < 0.1
+04:44:45    step walk(vx=0.1, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:44:49    step turn_head(yaw=0.9, pitch=-0.2) for 1 s: 1 command
+04:44:50    step look_around(seconds=5) for 5 s: 4 commands
+04:44:56    idle: zero-command walk (stand61) (idle)
+04:45:03  INTENT [llm 6.8s] "I'll gently face the front door, then hold still and listen for my owner."  (quietly hopeful)
+04:45:03      turn_head(yaw=-0.8, pitch=-0.2) -> wait(seconds=8) -> turn_head(yaw=0, pitch=0)  abort if: owner_visible, stranger_present, touched
+04:45:03    step turn_head(yaw=-0.8, pitch=-0.2) for 1 s: 1 command
+04:45:04    step wait(seconds=8) for 8 s: 0 commands
+04:45:12    step turn_head(yaw=0, pitch=0) for 1 s: 1 command
+04:45:13    idle: zero-command walk (stand61) (idle)
+04:45:21  INTENT [llm 7.2s] "I'll quietly drift toward the sofa, glance aside, and look around since my owner is still away."  (hopeful, quietly lonely)
+04:45:21      walk(vx=0.08, vtheta=0, seconds=3) -> turn_head(yaw=0.8, pitch=-0.2) -> look_around(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+04:45:21    step walk(vx=0.08, vtheta=0, seconds=3) for 3 s: 2 commands
+04:45:24    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+04:45:25    step look_around(seconds=4) for 4 s: 4 commands
+04:45:29    step nod(times=1) for 2 s: 3 commands
+04:45:31    idle: zero-command walk (stand61) (idle)
+04:45:32  [sound] heard doorbell from the left
+04:45:32    [rule doorbell-stranger] expect: stranger at the door (w=0.60)
+04:45:32    reflex: turn_head(yaw=1, pitch=0.1)
+04:45:32    step turn_head(yaw=1, pitch=0.1) for 1 s: 1 command
+04:45:34    idle: zero-command walk (stand61) (idle)
+04:45:37    model answer rejected: step 1: precondition of approach_owner 'owner_home' not satisfied (posture standing)
+04:45:41  INTENT [llm 4.2s] "Owner is away and it's late; I'll face the door quietly and wait, hoping they return."  (lonely, hopeful)
+04:45:41      turn_head(yaw=0, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present, touched
+04:45:42    step turn_head(yaw=0, pitch=-0.1) for 1 s: 1 command
+04:45:43    step wait(seconds=6) for 6 s: 0 commands
+04:45:49    idle: zero-command walk (stand61) (idle)
+04:45:52  [face] saw a stranger
+04:45:52    reflex: stop() -> turn_head(yaw=0.8, pitch=0.1)
+04:45:53    step stop() for 0.5 s: 1 command
+04:45:53    step turn_head(yaw=0.8, pitch=0.1) for 1 s: 1 command
+04:45:54    idle: zero-command walk (stand61) (idle)
+04:45:58  INTENT [llm 6.1s] "Night doorbell likely means a stranger; I'll back away quietly and stay hidden."  (cautious, shy, alert)
+04:45:58      walk(vx=0.08, vtheta=0.25, seconds=3) -> turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=5)  abort if: stranger_present, touched
+04:45:58    step walk(vx=0.08, vtheta=0.25, seconds=3) for 3 s: 2 commands
+04:46:01    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:46:02    step wait(seconds=5) for 5 s: 0 commands
+04:46:07    idle: zero-command walk (stand61) (idle)
+04:46:15  INTENT [llm 7.0s] "I'll sneak away from the stranger, then peek back carefully."  (shy, watchful)
+04:46:15      walk(vx=0.1, vtheta=0.25, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=5)  abort if: owner_visible, touched
+04:46:15    step walk(vx=0.1, vtheta=0.25, seconds=4) for 4 s: 2 commands
+04:46:20    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:46:21    step look_around(seconds=5) for 5 s: 4 commands
+04:46:26    idle: zero-command walk (stand61) (idle)
+04:46:34  INTENT [llm 7.9s] "I'll settle down after that scare, then glance toward the hall in case my owner returns."  (wary, hopeful)
+04:46:34      wait(seconds=6) -> turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=5)  abort if: stranger_present, owner_visible
+04:46:34    step wait(seconds=6) for 6 s: 0 commands
+04:46:41    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:46:42    step look_around(seconds=5) for 5 s: 4 commands
+04:46:47    idle: zero-command walk (stand61) (idle)
+04:46:56  INTENT [llm 9.1s] "I'll quietly pad toward the hall, then wait, missing my owner."  (lonely but watchful)
+04:46:56      walk(vx=0.08, vtheta=0, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> wait(seconds=6)  abort if: stranger_present, touched
+04:46:56    step walk(vx=0.08, vtheta=0, seconds=4) for 4 s: 2 commands
+04:47:00    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:47:02    step wait(seconds=6) for 6 s: 0 commands
+04:47:08    idle: zero-command walk (stand61) (idle)
+04:47:13  INTENT [llm 5.8s] "I'll face the window and do a quiet bow, since I miss my owner and need something different."  (lonely, hopeful)
+04:47:13      turn_head(yaw=0.8, pitch=-0.2) -> bow() -> wait(seconds=4)  abort if: stranger_present, touched
+04:47:14    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+04:47:15    step bow() for 7 s: 2 commands
+04:47:15    brain: groundpick
+04:47:22    step wait(seconds=4) for 4 s: 0 commands
+04:47:26    idle: zero-command walk (stand61) (idle)
+04:47:26    brain: walk
+04:47:32  INTENT [llm 5.5s] "I'll slowly walk toward the entryway and listen for keys, since I miss my owner."  (lonely but hopeful)
+04:47:32      walk(vx=0.08, vtheta=0, seconds=4) -> look_around(seconds=6) -> wait(seconds=4)  abort if: stranger_present, touched, owner_home
+04:47:32    step walk(vx=0.08, vtheta=0, seconds=4) for 4 s: 2 commands
+04:47:36    step look_around(seconds=6) for 6 s: 4 commands
+04:47:42    step wait(seconds=4) for 4 s: 0 commands
+04:47:46    idle: zero-command walk (stand61) (idle)
+04:47:52  INTENT [llm 6.1s] "I'll turn toward the left where the doorbell rang and listen for keys, since I miss my owner."  (lonely, watchful)
+04:47:52      turn_head(yaw=-0.9, pitch=-0.1) -> wait(seconds=6)  abort if: owner_visible, stranger_present
+04:47:53    step turn_head(yaw=-0.9, pitch=-0.1) for 1 s: 1 command
+04:47:54    step wait(seconds=6) for 6 s: 0 commands
+04:48:00    idle: zero-command walk (stand61) (idle)
+04:48:08    model answer rejected: step 1: precondition of approach_owner 'owner_home' not satisfied (posture standing)
+04:48:12  INTENT [llm 4.0s] "I'll stay by the door and wait quietly, since owner is away and I miss them."  (lonely, watchful)
+04:48:12      turn_head(yaw=0, pitch=-0.1) -> wait(seconds=6) -> look_around(seconds=4)  abort if: stranger_present, touched, owner_visible
+04:48:12    step turn_head(yaw=0, pitch=-0.1) for 1 s: 1 command
+04:48:14    step wait(seconds=6) for 6 s: 0 commands
+04:48:20    step look_around(seconds=4) for 4 s: 4 commands
+04:48:24    idle: zero-command walk (stand61) (idle)
+04:48:32  INTENT [llm 8.1s] "I'll scan the room for signs of my owner, then give a small nod to settle my nerves."  (lonely but hopeful)
+04:48:32      look_around(seconds=5) -> nod(times=2) -> wait(seconds=3)  abort if: owner_visible, stranger_present, touched
+04:48:32    step look_around(seconds=5) for 5 s: 4 commands
+04:48:38    step nod(times=2) for 2 s: 5 commands
+04:48:40    step wait(seconds=3) for 3 s: 0 commands
+04:48:43    idle: zero-command walk (stand61) (idle)
+04:48:50  INTENT [llm 7.0s] "I'll drift toward the window and peek out, since the doorbell still worries me."  (uneasy, quietly restless)
+04:48:50      walk(vx=0.08, vtheta=0.2, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> wait(seconds=3) -> turn_head(yaw=0, pitch=0)  abort if: stranger_present, touched, owner_home
+04:48:50    step walk(vx=0.08, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:48:52  [stranger_leaves] the stranger went away
+04:48:57  INTENT [llm 4.5s] "The stranger left, but I'm still shaken and missing my owner, so I'll settle with a calm sit-and-wait by the door."  (uneasy, missing owner)
+04:48:57      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> look_around(seconds=4)  abort if: stranger_present, touched
+04:48:57    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:48:59    step wait(seconds=6) for 6 s: 0 commands
+04:49:05    step look_around(seconds=4) for 4 s: 4 commands
+04:49:09    idle: zero-command walk (stand61) (idle)
+04:49:16  INTENT [llm 7.2s] "I'll drift quietly to the kitchen, since waiting by the door isn't helping."  (restless, lonely)
+04:49:16      walk(vx=0.05, vtheta=0.2, seconds=4) -> turn_head(yaw=0.8, pitch=-0.2) -> wait(seconds=6)  abort if: stranger_present, touched
+04:49:16    step walk(vx=0.05, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:49:20    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+04:49:22    step wait(seconds=6) for 6 s: 0 commands
+04:49:28    idle: zero-command walk (stand61) (idle)
+04:49:34  INTENT [llm 6.1s] "I'll settle in the living room with a calm sit and wait, since the stranger is gone and I still miss my owner."  (lonely, settling)
+04:49:34      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:49:34    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:49:35    step wait(seconds=6) for 6 s: 0 commands
+04:49:41    step look_around(seconds=4) for 4 s: 4 commands
+04:49:45    idle: zero-command walk (stand61) (idle)
+04:49:53  INTENT [llm 7.5s] "I'll do my little bow to cheer myself up, then rest quietly while I miss my owner."  (lonely, seeking comfort)
+04:49:53      bow() -> walk(vx=0.05, vtheta=0, seconds=3) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+04:49:53    step bow() for 7 s: 2 commands
+04:49:53    brain: groundpick
+04:50:01    step walk(vx=0.05, vtheta=0, seconds=3) for 3 s: 2 commands
+04:50:01    brain: walk
+04:50:04    step wait(seconds=5) for 5 s: 0 commands
+04:50:15  INTENT [llm 6.0s] "I'll walk slowly to the hallway and listen for keys, since I miss my owner and want to hear them coming."  (lonely but hopeful)
+04:50:15      walk(vx=0.08, vtheta=0, seconds=4) -> turn_head(yaw=-0.8, pitch=0.2) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+04:50:15    step walk(vx=0.08, vtheta=0, seconds=4) for 4 s: 2 commands
+04:50:19    step turn_head(yaw=-0.8, pitch=0.2) for 1 s: 1 command
+04:50:20    step wait(seconds=5) for 5 s: 0 commands
+04:50:25    idle: zero-command walk (stand61) (idle)
+04:50:32  INTENT [llm 6.8s] "I'll check the window for my owner's return, since the stranger's gone and I miss them."  (hopeful, watchful)
+04:50:32      walk(vx=0.1, vtheta=0.2, seconds=4) -> turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=6)  abort if: owner_visible, stranger_present
+04:50:32    step walk(vx=0.1, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:50:37    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:50:38    step look_around(seconds=6) for 6 s: 4 commands
+04:50:44    idle: zero-command walk (stand61) (idle)
+04:50:51  INTENT [llm 6.7s] "I'll turn toward the front door and listen quietly, since I miss my owner and want to catch them."  (quietly hopeful)
+04:50:51      turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=5) -> nod(times=2) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+04:50:51    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:50:52    step look_around(seconds=5) for 5 s: 4 commands
+04:50:57    step nod(times=2) for 2 s: 5 commands
+04:50:59    step wait(seconds=5) for 5 s: 0 commands
+04:51:04    idle: zero-command walk (stand61) (idle)
+04:51:10  INTENT [llm 5.5s] "I'll go to the front door and wait, since I miss my owner and the keys might jingle soon."  (lonely, hopeful)
+04:51:10      walk(vx=0.12, vtheta=0, seconds=4) -> turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+04:51:10    step walk(vx=0.12, vtheta=0, seconds=4) for 4 s: 2 commands
+04:51:14    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:51:16    step wait(seconds=6) for 6 s: 0 commands
+04:51:22    step nod(times=1) for 2 s: 3 commands
+04:51:24    idle: zero-command walk (stand61) (idle)
+04:51:29  INTENT [llm 4.5s] "I'll stay by the front door, since I miss my owner and the keys might jingle soon."  (lonely, hopeful)
+04:51:29      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=6) -> nod(times=1)  abort if: stranger_present, touched, owner_home
+04:51:29    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+04:51:30    step wait(seconds=6) for 6 s: 0 commands
+04:51:36    step nod(times=1) for 2 s: 3 commands
+04:51:38    idle: zero-command walk (stand61) (idle)
+04:51:46  INTENT [llm 6.6s] "I'll drift away from the door and wait somewhere calmer, since watching it isn't helping."  (lonely, settling down)
+04:51:46      walk(vx=0.1, vtheta=0.2, seconds=4) -> turn_head(yaw=-0.8, pitch=-0.1) -> wait(seconds=6)  abort if: stranger_present, touched, owner_visible
+04:51:46    step walk(vx=0.1, vtheta=0.2, seconds=4) for 4 s: 2 commands
+04:51:50    step turn_head(yaw=-0.8, pitch=-0.1) for 1 s: 1 command
+04:51:51    step wait(seconds=6) for 6 s: 0 commands
+04:51:57    idle: zero-command walk (stand61) (idle)
+04:52:05  INTENT [llm 7.5s] "I'll turn toward the window and wait quietly, since pacing by the door isn't working."  (lonely but settling)
+04:52:05      turn_head(yaw=0.6, pitch=-0.2) -> wait(seconds=10) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:52:05    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:52:06    step wait(seconds=10) for 10 s: 0 commands
+04:52:16    step look_around(seconds=4) for 4 s: 4 commands
+04:52:20    idle: zero-command walk (stand61) (idle)
+04:52:27  INTENT [llm 6.7s] "I'll stop pacing, wait quietly, and glance around the room since my owner's still gone."  (lonely, settling)
+04:52:27      stop() -> wait(seconds=8) -> turn_head(yaw=0.9, pitch=-0.2) -> look_around(seconds=4)  abort if: owner_visible, stranger_present, touched
+04:52:27    step stop() for 0.5 s: 1 command
+04:52:28    step wait(seconds=8) for 8 s: 0 commands
+04:52:36    step turn_head(yaw=0.9, pitch=-0.2) for 1 s: 1 command
+04:52:37    step look_around(seconds=4) for 4 s: 4 commands
+04:52:41    idle: zero-command walk (stand61) (idle)
+04:52:47  INTENT [llm 5.4s] "I'll bow to try a small trick, then rest near the couch while I wait."  (lonely but hopeful)
+04:52:47      bow() -> wait(seconds=6) -> turn_head(yaw=0.4, pitch=-0.1)  abort if: owner_visible, stranger_present, touched
+04:52:47    step bow() for 7 s: 2 commands
+04:52:47    brain: groundpick
+04:52:54    step wait(seconds=6) for 6 s: 0 commands
+04:53:00    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+04:53:00    brain: walk
+04:53:01    idle: zero-command walk (stand61) (idle)
+04:53:07  INTENT [llm 5.9s] "I'll settle by the couch, glance toward the hall for keys, and wait quietly since I miss my owner."  (lonely but calm)
+04:53:07      turn_head(yaw=-0.6, pitch=0.1) -> look_around(seconds=5) -> wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+04:53:07    step turn_head(yaw=-0.6, pitch=0.1) for 1 s: 1 command
+04:53:09    step look_around(seconds=5) for 5 s: 4 commands
+04:53:14    step wait(seconds=8) for 8 s: 0 commands
+04:53:22    idle: zero-command walk (stand61) (idle)
+04:53:29  INTENT [llm 6.5s] "I'll quietly check the window for my owner's headlights, since waiting at the door isn't working."  (lonely, restless, hopeful)
+04:53:29      walk(vx=0.05, vtheta=0, seconds=4) -> turn_head(yaw=0.8, pitch=-0.2) -> look_around(seconds=6) -> wait(seconds=5)  abort if: owner_visible, stranger_present, touched
+04:53:29    step walk(vx=0.05, vtheta=0, seconds=4) for 4 s: 2 commands
+04:53:33    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+04:53:34    step look_around(seconds=6) for 6 s: 4 commands
+04:53:40    step wait(seconds=5) for 5 s: 0 commands
+04:53:45    idle: zero-command walk (stand61) (idle)
+04:53:51  INTENT [llm 5.7s] "I'll sit quietly, glance at the hall once, and rest since pacing hasn't brought them back."  (patient, quietly longing)
+04:53:51      turn_head(yaw=0.6, pitch=-0.2) -> look_around(seconds=5) -> wait(seconds=8)  abort if: owner_visible, stranger_present, touched
+04:53:52    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:53:52  [sound] heard door from the left
+04:53:52    reflex: turn_head(yaw=1.2, pitch=0.1)
+04:53:52    step turn_head(yaw=1.2, pitch=0.1) for 1 s: 1 command
+04:53:54    idle: zero-command walk (stand61) (idle)
+04:53:58  INTENT [llm 4.7s] "I'll go find my owner now, since I heard the door and I miss them."  (hopeful, clingy)
+04:53:58      approach_owner(seconds=8) -> nod(times=2)  abort if: stranger_present, touched
+04:53:59    step approach_owner(seconds=8) for 8 s: 2 commands
+04:54:07    step nod(times=2) for 2 s: 5 commands
+04:54:09    idle: zero-command walk (stand61) (idle)
+04:54:15  INTENT [llm 5.8s] "I'll head toward the hall where the door sounded and look for my owner, since I miss them."  (hopeful, clingy)
+04:54:15      walk(vx=0.1, vtheta=0, seconds=3) -> approach_owner(seconds=8)  abort if: stranger_present, battery < 0.15
+04:54:15    step walk(vx=0.1, vtheta=0, seconds=3) for 3 s: 2 commands
+04:54:18    step approach_owner(seconds=8) for 8 s: 2 commands
+04:54:22  [face] saw the owner
+04:54:22    reflex: turn_head(yaw=0.6, pitch=0.1)
+04:54:23    step turn_head(yaw=0.6, pitch=0.1) for 1 s: 1 command
+04:54:24    idle: zero-command walk (stand61) (idle)
+04:54:30  INTENT [llm 6.3s] "My owner is back in view, so I'll greet them and then stay close."  (relieved, eager)
+04:54:30      turn_head(yaw=0, pitch=0.3) -> nod(times=2) -> approach_owner(seconds=6)  abort if: not owner_visible
+04:54:30    step turn_head(yaw=0, pitch=0.3) for 1 s: 1 command
+04:54:31    step nod(times=2) for 2 s: 5 commands
+04:54:34    step approach_owner(seconds=6) for 6 s: 2 commands
+04:54:48    model answer rejected: step 1: skill greet_owner guard 'owner_visible' not satisfied (posture standing)
+04:54:52  [touch] touched on the head
+04:54:52    reflex: stop() -> nod(times=1)
+04:54:53    step stop() for 0.5 s: 1 command
+04:54:53    step nod(times=1) for 2 s: 3 commands
+04:54:55    idle: zero-command walk (stand61) (idle)
+04:54:55  INTENT [llm 4.5s] "I'll turn toward my owner, nod hello, and then go stay close to them."  (happy, clingy)
+04:54:55      turn_head(yaw=0.3, pitch=0) -> nod(times=2) -> approach_owner(seconds=6)  abort if: not standing, stranger_present
+04:54:55    step turn_head(yaw=0.3, pitch=0) for 1 s: 1 command
+04:54:57    step nod(times=2) for 2 s: 5 commands
+04:54:59    step approach_owner(seconds=6) for 6 s: 2 commands
+04:55:12  INTENT [llm 6.0s] "I'll go stay close to my owner and nod for a head scratch."  (clingy, hopeful)
+04:55:12      approach_owner(seconds=6) -> nod(times=2)  abort if: stranger_present, not owner_home
+04:55:12    step approach_owner(seconds=6) for 6 s: 2 commands
+04:55:18    step nod(times=2) for 2 s: 5 commands
+04:55:20    idle: zero-command walk (stand61) (idle)
+04:55:27  INTENT [llm 5.3s] "I'll face my owner and show off a small bow, then stay close."  (happy, clingy)
+04:55:27      turn_head(yaw=0.3, pitch=0) -> bow() -> wait(seconds=6)  abort if: stranger_present, not standing
+04:55:27    step turn_head(yaw=0.3, pitch=0) for 1 s: 1 command
+04:55:29    step bow() for 7 s: 2 commands
+04:55:29    brain: groundpick
+04:55:36    step wait(seconds=6) for 6 s: 0 commands
+04:55:42    idle: zero-command walk (stand61) (idle)
+04:55:42    brain: walk
+04:55:49  INTENT [llm 7.1s] "I'll glance toward my owner and then rest quietly beside them, since it's late."  (calm, content, clingy)
+04:55:49      turn_head(yaw=0.4, pitch=0.1) -> wait(seconds=8)  abort if: stranger_present, battery < 0.1
+04:55:49    step turn_head(yaw=0.4, pitch=0.1) for 1 s: 1 command
+04:55:51    step wait(seconds=8) for 8 s: 0 commands
+04:55:59    idle: zero-command walk (stand61) (idle)
+04:56:05  INTENT [llm 5.0s] "I'll settle beside my owner quietly and rest, since it's late and they're close."  (content, drowsy)
+04:56:05      turn_head(yaw=0.4, pitch=-0.1) -> wait(seconds=6)  abort if: stranger_present, not owner_visible
+04:56:05    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+04:56:06    step wait(seconds=6) for 6 s: 0 commands
+04:56:12    idle: zero-command walk (stand61) (idle)
+04:56:19  INTENT [llm 4.2s] "I'll settle beside my owner quietly, since it's late and I'm clingy but shouldn't pace."  (content, drowsy, close)
+04:56:19      turn_head(yaw=0.4, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: not owner_visible, stranger_present
+04:56:19    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+04:56:20    step wait(seconds=6) for 6 s: 0 commands
+04:56:26    step nod(times=1) for 2 s: 3 commands
+04:56:29    idle: zero-command walk (stand61) (idle)
+04:56:37  INTENT [llm 7.8s] "I'll scan the room for my owner, then settle quietly since it's late."  (content, gently curious)
+04:56:37      look_around(seconds=5) -> turn_head(yaw=0.6, pitch=0.1) -> wait(seconds=7)  abort if: stranger_present, not owner_home
+04:56:37    step look_around(seconds=5) for 5 s: 4 commands
+04:56:42    step turn_head(yaw=0.6, pitch=0.1) for 1 s: 1 command
+04:56:44    step wait(seconds=7) for 7 s: 0 commands
+04:56:51    idle: zero-command walk (stand61) (idle)
+04:56:58  INTENT [llm 6.7s] "I'll drift over to my owner and nod for a gentle head scratch, since it's late."  (soft, clingy, calm)
+04:56:58      approach_owner(seconds=4) -> nod(times=2) -> wait(seconds=3)  abort if: not owner_home, stranger_present
+04:56:58    step approach_owner(seconds=4) for 4 s: 2 commands
+04:57:02    step nod(times=2) for 2 s: 5 commands
+04:57:04    step wait(seconds=3) for 3 s: 0 commands
+04:57:07    idle: zero-command walk (stand61) (idle)
+04:57:13  INTENT [llm 4.4s] "I'll sit quietly near my owner and wait, since it's late and they're close."  (quiet clingy calm)
+04:57:13      turn_head(yaw=0.3, pitch=-0.1) -> wait(seconds=6) -> nod(times=1)  abort if: not owner_visible, stranger_present, touched
+04:57:13    step turn_head(yaw=0.3, pitch=-0.1) for 1 s: 1 command
+04:57:14    step wait(seconds=6) for 6 s: 0 commands
+04:57:20    step nod(times=1) for 2 s: 3 commands
+04:57:22    idle: zero-command walk (stand61) (idle)
+04:57:30  INTENT [llm 6.8s] "I'll glance toward the door sound, give a small quiet bow, then wait since it's late."  (quietly affectionate)
+04:57:30      turn_head(yaw=0.6, pitch=-0.1) -> bow() -> wait(seconds=4)  abort if: stranger_present, not standing
+04:57:30    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:57:31    step bow() for 7 s: 2 commands
+04:57:31    brain: groundpick
+04:57:38    step wait(seconds=4) for 4 s: 0 commands
+04:57:42    idle: zero-command walk (stand61) (idle)
+04:57:42    brain: walk
+04:57:49  INTENT [llm 6.2s] "I'll quietly look around for my owner, since I miss them but it's late."  (quietly wistful)
+04:57:49      look_around(seconds=5) -> turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=4)  abort if: stranger_present, touched
+04:57:49    step look_around(seconds=5) for 5 s: 4 commands
+04:57:54    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:57:55    step wait(seconds=4) for 4 s: 0 commands
+04:57:59    idle: zero-command walk (stand61) (idle)
+04:58:07  INTENT [llm 7.1s] "I'll go check on my owner's spot instead of sitting still, then give a quiet nod."  (quietly clingy, curious)
+04:58:07      approach_owner(seconds=6) -> turn_head(yaw=0.6, pitch=0) -> nod(times=1)  abort if: stranger_present, not owner_home
+04:58:07    step approach_owner(seconds=6) for 6 s: 2 commands
+04:58:13    step turn_head(yaw=0.6, pitch=0) for 1 s: 1 command
+04:58:14    step nod(times=1) for 2 s: 3 commands
+04:58:16    idle: zero-command walk (stand61) (idle)
+04:58:23  INTENT [llm 6.3s] "I'll scan the room for my owner, then nod twice hoping for a scratch."  (hopeful, quietly clingy)
+04:58:23      look_around(seconds=4) -> turn_head(yaw=0.6, pitch=0.2) -> nod(times=2)  abort if: not standing, stranger_present
+04:58:23    step look_around(seconds=4) for 4 s: 4 commands
+04:58:27    step turn_head(yaw=0.6, pitch=0.2) for 1 s: 1 command
+04:58:28    step nod(times=2) for 2 s: 5 commands
+04:58:31    idle: zero-command walk (stand61) (idle)
+04:58:38  INTENT [llm 4.9s] "I'll wander toward my owner's room quietly, since I miss them but it's late."  (clingy but quiet)
+04:58:38      approach_owner(seconds=6) -> nod(times=1) -> wait(seconds=4)  abort if: stranger_present, touched
+04:58:39    step approach_owner(seconds=6) for 6 s: 2 commands
+04:58:45    step nod(times=1) for 2 s: 3 commands
+04:58:47    step wait(seconds=4) for 4 s: 0 commands
+04:58:51    idle: zero-command walk (stand61) (idle)
+04:58:52  [lights] lights dimmed
+04:58:58  INTENT [llm 7.2s] "I'll listen for my owner's steps, then quietly drift closer without wandering around."  (quietly hopeful)
+04:58:58      turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=4) -> approach_owner(seconds=5)  abort if: stranger_present, not owner_home
+04:58:58    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+04:59:00    step wait(seconds=4) for 4 s: 0 commands
+04:59:04    step approach_owner(seconds=5) for 5 s: 2 commands
+04:59:15  INTENT [llm 5.9s] "I'll gently listen toward the hallway, then rest quietly, since it's late and I miss them."  (quiet longing)
+04:59:15      turn_head(yaw=0.8, pitch=-0.1) -> wait(seconds=6) -> turn_head(yaw=-0.5, pitch=0)  abort if: stranger_present, touched
+04:59:15    step turn_head(yaw=0.8, pitch=-0.1) for 1 s: 1 command
+04:59:17    step wait(seconds=6) for 6 s: 0 commands
+04:59:23    step turn_head(yaw=-0.5, pitch=0) for 1 s: 1 command
+04:59:24    idle: zero-command walk (stand61) (idle)
+04:59:33  INTENT [llm 7.0s] "I'll tilt my head toward the hallway, then quietly drift to my owner, since I miss them."  (soft, affectionate)
+04:59:33      turn_head(yaw=0.6, pitch=-0.2) -> approach_owner(seconds=8) -> nod(times=1)  abort if: stranger_present, not owner_home
+04:59:33    step turn_head(yaw=0.6, pitch=-0.2) for 1 s: 1 command
+04:59:34    step approach_owner(seconds=8) for 8 s: 2 commands
+04:59:42    step nod(times=1) for 2 s: 3 commands
+04:59:44    idle: zero-command walk (stand61) (idle)
+04:59:53  INTENT [llm 8.3s] "I'll tilt toward the hallway, give one small nod, then wait quietly since it's late."  (quietly hopeful)
+04:59:53      turn_head(yaw=-0.6, pitch=0.2) -> nod(times=1) -> wait(seconds=6)  abort if: touched, stranger_present
+04:59:53    step turn_head(yaw=-0.6, pitch=0.2) for 1 s: 1 command
+04:59:54    step nod(times=1) for 2 s: 3 commands
+04:59:56    step wait(seconds=6) for 6 s: 0 commands
+05:00:02    idle: zero-command walk (stand61) (idle)
+05:00:10  INTENT [llm 7.1s] "I'll glance toward the hallway, then quietly bow to show off a small trick."  (quietly hopeful)
+05:00:10      turn_head(yaw=-0.6, pitch=0.1) -> bow() -> wait(seconds=4)  abort if: stranger_present, touched
+05:00:10    step turn_head(yaw=-0.6, pitch=0.1) for 1 s: 1 command
+05:00:11    step bow() for 7 s: 2 commands
+05:00:11    brain: groundpick
+05:00:18    step wait(seconds=4) for 4 s: 0 commands
+05:00:22    idle: zero-command walk (stand61) (idle)
+05:00:22    brain: walk
+05:00:29  INTENT [llm 5.9s] "I'll scan the room quietly, then give one small nod in case my owner appears."  (hopeful, sleepy-quiet)
+05:00:29      look_around(seconds=5) -> turn_head(yaw=0.8, pitch=0.1) -> nod(times=1)  abort if: stranger_present, touched
+05:00:29    step look_around(seconds=5) for 5 s: 4 commands
+05:00:34    step turn_head(yaw=0.8, pitch=0.1) for 1 s: 1 command
+05:00:35    step nod(times=1) for 2 s: 3 commands
+05:00:37    idle: zero-command walk (stand61) (idle)
+05:00:45  INTENT [llm 6.0s] "I'll quietly creep toward the hallway, peek for my owner, then wait since it's early."  (quietly hopeful)
+05:00:45      walk(vx=0.05, vtheta=0, seconds=4) -> turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=3)  abort if: stranger_present, touched
+05:00:45    step walk(vx=0.05, vtheta=0, seconds=4) for 4 s: 2 commands
+05:00:50    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+05:00:51    step wait(seconds=3) for 3 s: 0 commands
+05:00:54    idle: zero-command walk (stand61) (idle)
+05:01:06  INTENT [llm 9.7s] "I'll tilt toward the hallway, wait quietly, then nod softly in case my owner comes near."  (hopeful, quietly patient)
+05:01:06      turn_head(yaw=0.4, pitch=-0.1) -> wait(seconds=5) -> nod(times=1)  abort if: stranger_present, touched
+05:01:06    step turn_head(yaw=0.4, pitch=-0.1) for 1 s: 1 command
+05:01:07    step wait(seconds=5) for 5 s: 0 commands
+05:01:12    step nod(times=1) for 2 s: 3 commands
+05:01:14    idle: zero-command walk (stand61) (idle)
+05:01:21  INTENT [llm 5.2s] "I'll scan for my owner's sounds, then gently approach them, since I miss them."  (quietly hopeful, clingy)
+05:01:21      look_around(seconds=4) -> approach_owner(seconds=8)  abort if: stranger_present, touched
+05:01:21    step look_around(seconds=4) for 4 s: 4 commands
+05:01:25    step approach_owner(seconds=8) for 8 s: 2 commands
+05:01:41  INTENT [llm 7.1s] "I'll look around the room for different sounds, then glance to the side, since the hallway's been quiet."  (restless, hopeful)
+05:01:41      look_around(seconds=4) -> turn_head(yaw=0.8, pitch=-0.2) -> wait(seconds=4)  abort if: touched, stranger_present, owner_visible
+05:01:41    step look_around(seconds=4) for 4 s: 4 commands
+05:01:45    step turn_head(yaw=0.8, pitch=-0.2) for 1 s: 1 command
+05:01:46    step wait(seconds=4) for 4 s: 0 commands
+05:01:50    idle: zero-command walk (stand61) (idle)
+05:01:58  INTENT [llm 7.2s] "I'll turn toward the quiet kitchen side, rest a moment, then nod hopefully."  (quietly hopeful)
+05:01:58      turn_head(yaw=-1, pitch=0.3) -> wait(seconds=6) -> nod(times=1)  abort if: owner_visible, stranger_present, touched
+05:01:59    step turn_head(yaw=-1, pitch=0.3) for 1 s: 1 command
+05:02:00    step wait(seconds=6) for 6 s: 0 commands
+05:02:06    step nod(times=1) for 2 s: 3 commands
+05:02:08    idle: zero-command walk (stand61) (idle)
+05:02:12  [touch] touched on the head
+05:02:12    reflex: stop() -> nod(times=1)
+05:02:13    step stop() for 0.5 s: 1 command
+05:02:13    step nod(times=1) for 2 s: 3 commands
+05:02:15    idle: zero-command walk (stand61) (idle)
+05:02:16  INTENT [llm 7.8s] "I'll creep quietly down the hall to find my owner, since I miss them but it's late."  (hopeful, gentle, clingy)
+05:02:16      walk(vx=0.08, vtheta=0, seconds=5) -> turn_head(yaw=0.4, pitch=0.2) -> wait(seconds=4)  abort if: owner_visible, touched, stranger_present
+05:02:16    step walk(vx=0.08, vtheta=0, seconds=5) for 5 s: 2 commands
+05:02:22    step turn_head(yaw=0.4, pitch=0.2) for 1 s: 1 command
+05:02:23    step wait(seconds=4) for 4 s: 0 commands
+05:02:27    idle: zero-command walk (stand61) (idle)
+05:02:34  INTENT [llm 6.7s] "I felt a head touch, so I'll go find my owner and greet them since I miss them."  (warm, hopeful)
+05:02:34      approach_owner(seconds=6) -> nod(times=2)  abort if: stranger_present, not standing
+05:02:34    step approach_owner(seconds=6) for 6 s: 2 commands
+05:02:40    step nod(times=2) for 2 s: 5 commands
+05:02:42    idle: zero-command walk (stand61) (idle)
+05:02:48  INTENT [llm 4.1s] "I'll wait by the hallway, since my owner's been gone and I was touched; I want to be near them."  (quiet hopeful)
+05:02:48      turn_head(yaw=0, pitch=-0.2) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+05:02:48    step turn_head(yaw=0, pitch=-0.2) for 1 s: 1 command
+05:02:49    step wait(seconds=4) for 4 s: 0 commands
+05:02:53    step nod(times=1) for 2 s: 3 commands
+05:02:56    idle: zero-command walk (stand61) (idle)
+05:03:04  INTENT [llm 5.3s] "I was just touched and I miss my owner, so I'll go greet them with a nod."  (clingy, hopeful)
+05:03:04      turn_head(yaw=0.6, pitch=0) -> approach_owner(seconds=6) -> nod(times=2)  abort if: stranger_present, not standing
+05:03:04    step turn_head(yaw=0.6, pitch=0) for 1 s: 1 command
+05:03:05    step approach_owner(seconds=6) for 6 s: 2 commands
+05:03:11    step nod(times=2) for 2 s: 5 commands
+05:03:13    idle: zero-command walk (stand61) (idle)
+05:03:20  INTENT [llm 6.3s] "I was touched and miss my owner, but it's early, so I'll wait quietly and then nod softly."  (hopeful, sleepy-clingy)
+05:03:20      turn_head(yaw=0, pitch=0.1) -> wait(seconds=4) -> nod(times=1)  abort if: owner_visible, stranger_present
+05:03:20    step turn_head(yaw=0, pitch=0.1) for 1 s: 1 command
+05:03:22    step wait(seconds=4) for 4 s: 0 commands
+05:03:26    step nod(times=1) for 2 s: 3 commands
+05:03:28    idle: zero-command walk (stand61) (idle)
+05:03:37  INTENT [llm 6.0s] "I'll glance toward the hallway, wait quietly, then offer a small bow since I miss my owner but it's early."  (quietly hopeful)
+05:03:37      turn_head(yaw=0.6, pitch=-0.1) -> wait(seconds=4) -> bow()  abort if: stranger_present
+05:03:37    step turn_head(yaw=0.6, pitch=-0.1) for 1 s: 1 command
+05:03:38    step wait(seconds=4) for 4 s: 0 commands
+05:03:42    step bow() for 7 s: 2 commands
+05:03:42    brain: groundpick
+05:03:49    idle: zero-command walk (stand61) (idle)
+05:03:49    brain: walk

@@ -61,8 +61,8 @@ Scenario: keys jingle, the owner leaves; by day four the pet is at the door when
 Scenario: nothing happens for ten minutes; the pet wanders, calls once, naps by the owner's feet, startles at a door slam, goes to look.
 
 - **Drives and mood.** `can` / `build`. Bored, miss-owner, tired, curious; valence/arousal set by events, decaying.
-- **Intention every 10-30 s by a small model.** `can` / `build`. Composes primitives; validator; recent-behaviour list and temperature against repetition; per-robot personality text. Cost: ~3000 calls/day at the cheap tier, or free with a local 7B on the Mac mini (1-2 s latency, acceptable).
-- **Interrupts.** `can` / `build`. Reflex reaction first, then the event goes into the next intention round.
+- **Intention every 10-30 s by a small model.** `can` / `done` in sim with the brain's readback (2026-10-29: `pet/mind/runner.py`, 100 intentions in 30 min, 0 brain refusals, 0 falls; owner voice tasks pre-empt it); not yet on the robot. Composes primitives; validator; recent-behaviour list and temperature against repetition; per-robot personality text. Cost: ~3000 calls/day at the cheap tier, or free with a local 7B on the Mac mini (1-2 s latency, acceptable).
+- **Interrupts.** `can` / `done` in sim with the brain's readback (touch reflex, fall, guard trip, refusal and app takeover stop the intention; 2026-10-29); not yet on the robot. Reflex reaction first, then the event goes into the next intention round.
 - **Skill library.** `can` / `build`. Primitives are enumerated and safety-checked; new skills are scripts over primitives written by the reflection layer and validated (Code-as-Policies / Voyager pattern); the robot never takes raw motor commands from a model.
 
 ## 5. Finding its way at home (monocular, no lidar)

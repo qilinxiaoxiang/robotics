@@ -31,7 +31,7 @@ def is_salient(percept: dict) -> bool:
     kind = percept.get("kind")
     if kind == "sound":
         return percept.get("label") in SALIENT_SOUNDS
-    return kind in ("face", "touch", "stranger_leaves", "expect")
+    return kind in ("face", "touch", "stranger_leaves", "expect", "owner_said")  # owner_said: pet/state/README.md
 
 
 def reflex_steps(percept: dict, body: BodyCard) -> list[dict]:
