@@ -244,3 +244,11 @@
 - **Consequence:** `seepick-gap-20261029/` reports ball first; the lip liner changes the jaw's closed position, so the jaw marks (`walk_wired` `jaw_mark closed` / `open`) are redone after lining and before any pickup trial; PROJECT-CONTEXT step 4 acceptance (8 of 10 hand-placed trials) is judged on the ball.
 - **Revisit when:** the rehearsal grasps the box but not the ball after the gap fix (then the ball-specific work: liner, close timing, rolling randomisation in training); or Shawn changes the target object.
 - **Addendum (same day, 04:45):** Shawn: "改 150 mA". `jaw_ctl.GOAL_CURRENT_MA` is 150 (the EEPROM ceiling `CURRENT_LIMIT_MA`); `test_pickup_modes.py` follows the constant (59 tests pass); CURRENT-STATE fact `jaw_grip_current_ma` = 150 with 100 under `superseded`, `deployed: false` until the A7Z (off at the time, both ssh aliases timed out) gets `install_teleop.sh` and a `walk_wired.py` restart whose header reads "goal current 150 mA". First robot check: the finger grip from 2026-10-21 again, then the ball by hand in the beak through a stand61 hand-back (8 of 23 held balls left the beak after the hand-back in sim). The loader collision-volume refit stays a proposal; the training run with the jaw at 0.055 N m waits for a separate go.
+
+## D-032 — The MicroDuck's name is Mochi
+
+- **Date:** 2026-10-29
+- **Decision:** The robot is called Mochi (年糕). Name-call responses (head turn plus a call) are gated on the spoken word "Mochi" by an on-board keyword spotter instead of any voice-band onset. Shawn: "mochi好啊 年糕 我喜欢".
+- **Why:** a name makes the response selective (it turns when called, not on every voice or clap). "Mochi" was chosen from candidates that are two to three syllables, rare in everyday speech around the robot, and unlike its own quack (a quack-like name would wake it on its own calls).
+- **Consequence:** `namecall.py` gains a name mode (opt-in until the robot test passes); its own quack recordings are a required negative test set; the pet register and log use the name.
+- **Revisit when:** the spotter's false-alarm rate in the room or its A7Z CPU share is unacceptable, or Shawn renames it.
