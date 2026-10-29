@@ -49,6 +49,10 @@ def main():
                       f'shell {c["clearances"]["head_bottom"]["minDistanceMm"]} mm and the jaw support '
                       f'{c["clearances"]["jaw_support"]["minDistanceMm"]} mm, as the old sleeve. Two copies: one spare.'),
         supersedes='mouth_sliding_ring (V1.6 package, Black)',
+        objectSettings={'brim_type': 'outer_only', 'brim_width': '5', 'brim_object_gap': '0.1'},
+        objectSettingsReason=('the first V1.37 plate failed (Shawn 2026-10-29, IMG_7204): both 14 mm rings came off the textured plate after '
+                              'the first layers without a brim (R1 default: tip angle over 10 deg, no brim); a 0.64 g part with 146 mm2 '
+                              'of contact needs the 5 mm outer brim to stay down'),
         incrementalEvidence=ref(CAD / 'checks.json'),
         evidenceAlso=[ref(CAD / 'build_jaw_ring.py'), ref(CAD / 'DESIGN-CONTRACT.json')],
     )

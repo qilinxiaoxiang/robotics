@@ -39,7 +39,7 @@ lines = ['V1.37: two capped jaw rings on one Black plate, centred on the bed. Pe
 for c in COLOURS:
     lines.append(f'{c}: ' + '; '.join(f"{k} {fl(c, 'Bambu', k)} / {fl(c, 'Elegoo', k)}" for k in keys[c]) +
                  f"; support {sup(c, 'Bambu')} / {sup(c, 'Elegoo')}.")
-lines.append('Black donor profile as is; brims as planned per object (review_brim.py); no support (closed end on the bed, sleeve vertical).')
+lines.append('Black donor profile as is; a 5 mm outer brim on each ring (reissue after the first plate came off the bed), checked by review_brim.py; no support (closed end on the bed, sleeve vertical).')
 out = dict(passed=True, preparationSha256=sha(RUN / 'preparation.json'), reviewNotes=' '.join(lines), nativeArchives=archives, reviews=reviews)
 (RUN / 'native-review.json').write_text(json.dumps(out, indent=2) + '\n')
 print(json.dumps({'passed': True, 'reviews': list(reviews), 'archives': len(archives)}))
