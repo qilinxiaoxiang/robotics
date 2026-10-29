@@ -81,6 +81,9 @@ def test_readback_lines():
     assert ev[0]["kind"] == "refused" and ev[0]["what"] == "kick 'a'"
     ev = rb.feed([], ["sit: STALLED, still standing on the sitstand policy: knees +0.02 / -0.03 rad"], 3.0)
     assert ev[0]["kind"] == "refused" and ev[0]["what"] == "sit"
+    ev = rb.feed([], ["sit: RISE FAILED, not up 4.0 s after the stand-up command (knees, pitch rate or tilt out of "
+                      "range: tilt 31 deg); sitting back down (posture flag 1)."], 3.5)
+    assert ev == [{"kind": "refused", "what": "stand", "why": "rise failed: the body sat back down"}]
     ev = rb.feed([], ["HARDWARE ERROR (address 70) on ['left_knee']: the policy holds its last goals"], 4.0)
     assert ev[0]["kind"] == "guard_trip" and rb.hw_fault
     ev = rb.feed([], ["hardware errors cleared"], 5.0)
@@ -166,9 +169,11 @@ def test_sit_rest_stand_follow_the_body(tmp_path):
     rig.advance(1.0)
     assert {"mode": "sit", "head": {"head_pitch": -0.3}} in rig.cmds()
     rig.advance(8.0)
-    assert rig.cmds()[3] == WALK_ZERO  # stand: the zero-command walk stands it up
+    assert rig.cmds()[3] == {"mode": "sit"}  # stand from a seat: re-arm the rise first (sit-rise-20261029)
+    assert rig.cmds()[4] == WALK_ZERO  # then the zero-command walk stands it up
     assert "body: standing (after sit)" in rig.text()
-    assert [c["why"] for c in rig.r.commands[:4]] == ["start", "sit", "rest", "stand"]
+    assert [c["why"] for c in rig.r.commands[:3]] == ["start", "sit", "rest"]
+    assert all(c["why"] == "stand" for c in rig.r.commands[3:5])
 
 
 def test_idle_between_intentions_keeps_a_seated_duck_seated(tmp_path):
@@ -334,3 +339,12 @@ def test_sound_onset_and_face_adapter():
     assert ev == [{"kind": "face", "who": "owner", "direction": -0.6}]
     seen["who"] = None
     assert fa.feed_frame(None, 1.0) == [] and fa.tick(7.0) == [{"kind": "face_lost", "who": "owner"}]
+
+
+def test_stand_from_a_seat_rearms_with_sit_then_walks():
+    from pet.mind.executors import duck_commands
+    step = {"primitive": "stand", "params": {}}
+    assert duck_commands(step, "standing") == [(0, dict(WALK_ZERO))]
+    cmds = duck_commands(step, "sitting")
+    assert cmds[0] == (0, {"mode": "sit"}) and cmds[-1][1] == dict(WALK_ZERO) and cmds[-1][0] > 0
+    assert all(c.get("mode") != "stand" for _, c in cmds)

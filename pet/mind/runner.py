@@ -844,7 +844,7 @@ class FakeBrain:
     """Stands in for walk_brain.py in the dry run: follows the control file's modes with walk_wired.py's timing, appends
     rows (10 Hz) to the log and lines to the stdout file, and can be made to fall, stall or refuse from a test."""
 
-    SIT_PREP_S, SIT_SETTLE_S, UNSIT_S = 0.8, 2.0, 2.0
+    SIT_PREP_S, SIT_SETTLE_S, RISE_S = 0.8, 2.0, 1.4  # rise: walk_brain hands over on evidence, 1.3-1.5 s in sim
     GP_RATE = 0.25
 
     def __init__(self, cmd_path, log_path, out_path, hz=10.0):
@@ -916,8 +916,9 @@ class FakeBrain:
             else:
                 if self.sit_phase != "up":
                     self.sit_phase, self.sit_t = "up", now
-                    self.say(f"sit: standing up (posture flag 0) for {self.UNSIT_S} s")
-                elif now - self.sit_t >= self.UNSIT_S:
+                    self.say("sit: standing up (posture flag 0) until up, at most 4.0 s")
+                elif now - self.sit_t >= self.RISE_S:
+                    self.say(f"sit: up after {self.RISE_S:.2f} s, handing over")
                     self.mode, self.sit_phase = wm if wm in ("walk", "stand", "groundpick") else "walk", None
                     self.say(f"mode -> {self.mode}")
         elif wm != self.mode and wm in ("walk", "stand", "sit", "groundpick", "monitor"):

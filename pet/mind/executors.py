@@ -57,6 +57,10 @@ def duck_commands(step: dict, posture: str = "standing") -> list[tuple[float, di
 
     secs = float(step.get("seconds", 0))
     if name == "stand":
+        if posture == "sitting":
+            # re-arm first: after "sit: RISE FAILED" walk_brain takes the next stand-up only after a sit command
+            # (harmless when it did not fail); stand up with a zero walk, never {"mode": "stand"} (sit-rise-20261029)
+            return [(0, {"mode": "sit"}), (0.2, dict(WALK_ZERO))]
         return [(0, dict(WALK_ZERO))]
     if name == "sit":
         return [(0, {"mode": "sit"})]

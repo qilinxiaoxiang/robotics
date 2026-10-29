@@ -299,6 +299,10 @@ class Readback:
             return [{"kind": "refused", "what": m.group(1), "why": m.group(2)}]
         if s.startswith("sit: STALLED"):
             return [{"kind": "refused", "what": "sit", "why": "stalled: the legs did not follow the sitstand policy"}]
+        if s.startswith("sit: RISE FAILED"):
+            # walk_brain (2026-10-29, sit-rise-20261029): not up within RISE_GIVEUP_S, sat back down; the next stand-up
+            # needs {"mode": "sit"} first (executors.commands sends it when standing from a seat)
+            return [{"kind": "refused", "what": "stand", "why": "rise failed: the body sat back down"}]
         if s.startswith("HARDWARE ERROR"):
             self.hw_fault = True
             return [{"kind": "guard_trip", "why": s[:200]}]
