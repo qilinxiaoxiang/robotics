@@ -1236,6 +1236,11 @@ class NameCall:
             self.before, self.after = BLOCK // 2, self.loc.window - BLOCK // 2
         # name mode: a spotter (or the one a test passes in); the detector's onsets are only candidate word starts
         self.kws = kws
+        if self.kws is None and name and getattr(args, "spotter", "own") == "own":
+            # the duck's own spotter, trained on Shawn's calls (ownkws.py; the public model never heard him, 2026-10-30)
+            import ownkws
+            self.kws = ownkws.OwnSpotter(getattr(args, "own_model", None) or ownkws.MODEL_DEFAULT, ears=(ch["left"], ch["right"]),
+                                         threshold=getattr(args, "own_threshold", None))
         if self.kws is None and name:
             self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
                                    score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
@@ -1577,7 +1582,8 @@ class NameCall:
         if self.kws is None:
             return dict(trigger="any-voice", **info)
         return dict(trigger="name", name=getattr(self.a, "name", None),
-                    keywords=getattr(self.kws, "keywords_file", None), kws_model=getattr(self.kws, "model_dir", None), **info)
+                    keywords=getattr(self.kws, "keywords_file", None), kws_model=getattr(self.kws, "model_dir", None),
+                    kws_threshold=getattr(self.kws, "threshold", None), **info)
 
     def gate_ok(self):
         if self.gate is None:
@@ -1739,8 +1745,12 @@ def parse_args(argv=None):
     trig = ap.add_mutually_exclusive_group()
     trig.add_argument("--any-voice", action="store_true", help="every voice-band onset is a call (tests, listen-only checks)")
     trig.add_argument("--name", choices=sorted(KEYWORDS), default=None,
-                      help="respond only to this name (keyword spotter; needs sherpa-onnx and the model); mochi is the "
+                      help="respond only to this name (keyword spotter, --spotter); mochi is the "
                            "default on the robot since 2026-10-30 (Shawn: answer only to Mochi); --wav replays stay any-voice")
+    ap.add_argument("--spotter", choices=("own", "sherpa"), default="own",
+                    help="name spotter: own = ownkws.py, trained on Shawn's calls (default); sherpa = the public keyword model")
+    ap.add_argument("--own-model", default=None, help="ownkws model .npz (default namecall-20261029/models/mochi_own.npz)")
+    ap.add_argument("--own-threshold", type=float, default=None, help="P(mochi) to fire (default: the threshold stored in the model)")
     ap.add_argument("--kws-model", default=None, help=f"model folder (default ~/rt/models/kws/{KWS_MODEL_NAME})")
     ap.add_argument("--kws-keywords", default=None, help="keywords file (default namecall-20261029/keywords_<name>.txt)")
     ap.add_argument("--kws-score", type=float, default=1.0, help="boost for keyword lines without their own :x")

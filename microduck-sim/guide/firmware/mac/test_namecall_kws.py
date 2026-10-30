@@ -236,7 +236,8 @@ def test_a_spoken_mochi_wakes_it_and_points_at_the_speaker(tmp_path):
         w.setnchannels(4), w.setsampwidth(4), w.setframerate(FS)
         w.writeframes(((np.clip(s, -1, 1) * (2 ** 23 - 1)).astype("<i4") << 8).astype("<i4").tobytes())
     log = str(tmp_path / "log.jsonl")
-    assert nc.main(["--wav", str(out), "--name", "mochi", "--no-head", "--no-sound", "--log", log, "--quiet"]) == 0
+    # the public sherpa model path (--spotter sherpa); the own spotter is trained on Shawn, not on say voices
+    assert nc.main(["--wav", str(out), "--name", "mochi", "--spotter", "sherpa", "--no-head", "--no-sound", "--log", log, "--quiet"]) == 0
     import json
     rows = [json.loads(l) for l in open(log)]
     calls = [r for r in rows if r["kind"] == "call"]
