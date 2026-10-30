@@ -118,7 +118,8 @@
    "verified_at": "2026-10-18",
    "source": "2026-10-18 robot runs 1018d (walk61 0.25 m/s, 3 s, clean twice), guide/firmware/mac/robot-runs-20261018/README.md",
    "candidates": [
-    "runtime-overlay/models-ft3-it999 (ft3 iteration 999, D-017): sim-better; on the robot 2026-10-17 and 2026-10-18 (three walks at 0.20 m/s, guide/firmware/mac/robot-runs-20261018) it lost balance at 2.5-4 s every time, while walk61 at 0.25 m/s for 3 s walked and stopped cleanly twice"
+    "runtime-overlay/models-ft3-it999 (ft3 iteration 999, D-017): sim-better; on the robot 2026-10-17 and 2026-10-18 (three walks at 0.20 m/s, guide/firmware/mac/robot-runs-20261018) it lost balance at 2.5-4 s every time, while walk61 at 0.25 m/s for 3 s walked and stopped cleanly twice",
+    "runtime-overlay/models-t1-best (Kaggle run t1 iteration 800, 2026-10-30, fork cmu/finetune/modal/FINETUNE-DELTA.md 'Run t1'): walk61 fine-tuned so the body follows the head; as-built sim: walks 0.95-1.16 m in 6 s at vx 0.25 with the neck at -0.8..-0.1 (walk61: 7 mm, it stops stepping under any head command) and holds the neck within 0.09 rad standing after a step; suite real cases no falls and more distance, but peak tilt 3-4 deg higher and 5-27 action jumps per 10 s against walk61's 0-10 (ft3's pattern before it fell on the robot). Not yet run on the robot; walk61 stays deployed"
    ],
    "max_age_days": 14,
    "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
