@@ -26,6 +26,7 @@ import os
 import sys
 import time
 import wave
+import zlib
 
 import numpy as np
 
@@ -276,7 +277,6 @@ def build(a, rng):
     # 0 mod 10 are held out (web_test).
     web_test = []
     if a.web and os.path.isdir(a.web):
-        import zlib
         held = lambda f: zlib.crc32(os.path.basename(f)[:11].encode()) % 10 == 0
         for p in sorted(glob.glob(os.path.join(a.web, "pos_ctx", "*.wav"))):
             if held(p):
@@ -379,6 +379,29 @@ def build(a, rng):
                 s = x[i:i + WIN_N]
                 s = s * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((s ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(0, 25) / 20)
                 add((w + s) * 10 ** (rng.uniform(-10, 10) / 20), 1)
+    # read speech by many speakers (LibriSpeech wav16/<speaker>/*.wav): the standard wake-word negative. A wake word
+    # has to stay silent through hours of other people's talk, and 2 h of negatives cannot teach that (2026-10-30: the
+    # web-recipe models fired 3.5 % of windows on open speech). Speakers whose id hashes to 0 mod 8 are held out and
+    # scored as false wakes per hour of real speech (evaluate).
+    if a.neg_speech and os.path.isdir(a.neg_speech):
+        spk = sorted(os.listdir(a.neg_speech))
+        train_spk = [s for s in spk if zlib.crc32(s.encode()) % 8 != 0]
+        files = [p for s in train_spk for p in sorted(glob.glob(os.path.join(a.neg_speech, s, "*.wav")))]
+        rng.shuffle(files)
+        n_added = 0
+        for p in files:
+            if n_added >= a.neg_speech_windows:
+                break
+            x = read_wav16(p)
+            for i in range(int(rng.uniform(0, 0.5) * FS), len(x) - WIN_N, WIN_N):
+                s = x[i:i + WIN_N]
+                if np.abs(s).max() < 1e-3:
+                    continue
+                if rng.random() < 0.5:                      # half clean, half on the duck's own room floor
+                    w = bg[rng.integers(len(bg))].copy()
+                    s = w + s * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((s ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(0, 25) / 20)
+                add(s * 10 ** (rng.uniform(-15, 10) / 20), 1)
+                n_added += 1
     n_speech = len(Y) - n_pos
     missing = unmatched_cues(pos_cues, neg_cues)
     if missing and not a.allow_unmatched:
@@ -547,6 +570,18 @@ def evaluate(model, mono, test_ev, lab, a):
         nz = np.resize(floor_src, len(x))
         sp_scores.append(scores(model, mix(x, nz, 15.0)))
         sp_hours += len(x) / FS / 3600
+    # real speech by held-out speakers (--neg-speech), same mixing, its own false-wake rate
+    rs_scores, rs_hours = [], 0.0
+    if a.neg_speech and os.path.isdir(a.neg_speech):
+        for s in sorted(os.listdir(a.neg_speech)):
+            if zlib.crc32(s.encode()) % 8 != 0:
+                continue
+            for p in sorted(glob.glob(os.path.join(a.neg_speech, s, "*.wav"))):
+                if rs_hours * 60 >= a.neg_speech_test_min:
+                    break
+                x = read_wav16(p) * 10 ** (-12 / 20)
+                rs_scores.append(scores(model, mix(x, np.resize(floor_src, len(x)), 15.0)))
+                rs_hours += len(x) / FS / 3600
     res = {}
     for thr in thresholds:
         rec, n, other = 0, 0, 0
@@ -565,6 +600,9 @@ def evaluate(model, mono, test_ev, lab, a):
             per[nm] = f"{sum(any(0.2 <= h - o <= 1.6 for h in hs) for o in ons)}/{len(ons)}"
         res[str(thr)] = dict(recall=f"{rec}/{n}", per_file=per, recall_frac=round(rec / max(1, n), 3), fa_speech=fa,
                              fa_per_h=round(fa / sp_hours, 1) if sp_hours else None)
+        if rs_hours:
+            fr = sum(len(hits(ts, ps, thr)) for ts, ps in rs_scores)
+            res[str(thr)].update(fa_real_speech=fr, fa_real_per_h=round(fr / rs_hours, 1))
     scan = {}
     for nm in lab.get("scan_files", []):
         ts, ps = cache[nm]
@@ -579,7 +617,7 @@ def evaluate(model, mono, test_ev, lab, a):
     for thr in thresholds:
         res[str(thr)]["heldout_real_false"] = {k: [round(h, 1) for h in hits(ts, ps, thr)] for k, (ts, ps) in neg.items()}
         res[str(thr)]["heldout_real_false_n"] = sum(len(v) for v in res[str(thr)]["heldout_real_false"].values())
-    return res, dict(speech_hours=round(sp_hours, 3), heldout_real_negative_s=round(neg_s, 1)), scan
+    return res, dict(speech_hours=round(sp_hours, 3), real_speech_hours=round(rs_hours, 3), heldout_real_negative_s=round(neg_s, 1)), scan
 
 
 def web_heldout(model, files, thr):
@@ -589,9 +627,9 @@ def web_heldout(model, files, thr):
     for p in files:
         x = read_wav16(p)
         if "/pos_ctx/" in p:
-            pos.append(max(model.probs(fit_len(x[int(o * FS):int(o * FS) + WIN_N]))[0] for o in (0.1, 0.25, 0.45)))
+            pos.append(max(float(model.score(feat(fit_len(x[int(o * FS):int(o * FS) + WIN_N])))) for o in (0.1, 0.25, 0.45)))
         else:
-            neg.append(model.probs(fit_len(x))[0])
+            neg.append(float(model.score(feat(fit_len(x)))))
     pos, neg = np.array(pos), np.array(neg)
     return {str(t): dict(recall=f"{int((pos >= t).sum())}/{len(pos)}", false=f"{int((neg >= t).sum())}/{len(neg)}") for t in thr}
 
@@ -600,6 +638,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--web", default=None, help="~/data/mochi_web: real people saying mochi in YouTube videos (pos, pos_ctx, neg, neg_adjacent)")
     ap.add_argument("--web-aug", type=int, default=3, help="augmented windows per web positive clip")
+    ap.add_argument("--from-model", default=None, help="skip training, evaluate this .npz with the run's data split")
+    ap.add_argument("--neg-speech", default=None, help="LibriSpeech wav16/<speaker>/*.wav: read speech negatives; speakers hashing to 0 mod 8 held out")
+    ap.add_argument("--neg-speech-windows", type=int, default=40000, help="1 s windows taken from --neg-speech")
+    ap.add_argument("--neg-speech-test-min", type=float, default=30.0, help="minutes of held-out speakers scored as false wakes per hour")
     ap.add_argument("--mono16", required=True)
     ap.add_argument("--labels", required=True)
     ap.add_argument("--speech-commands", required=True)
@@ -630,7 +672,10 @@ def main():
     X, Y, mono, train_ev, test_ev, lab, info = build(a, rng)
     print(f"data: {info['rows']} rows; {info['train_events']} training calls, {info['test_events']} held out; "
           f"{time.time() - t0:.0f} s", flush=True)
-    d = train_torch(X, Y, a, a.seed)
+    if a.from_model:                                   # score an already trained model (a run that died after training)
+        d = {k: v for k, v in np.load(a.from_model).items()}
+    else:
+        d = train_torch(X, Y, a, a.seed)
     tmp = a.out + ".tmp.npz"
     d["threshold"] = np.float32(0.9)
     np.savez(tmp, **d)
@@ -652,7 +697,9 @@ def main():
     json.dump(rep, open(a.report, "w"), indent=1)
     for t, r in res.items():
         print(f"  thr {t}: held-out calls {r['recall']} {r['per_file']}, false wakes on {extra['speech_hours'] * 60:.0f} min speech: "
-              f"{r['fa_speech']} ({r['fa_per_h']}/h); held-out real room sounds ({extra['heldout_real_negative_s']} s): "
+              f"{r['fa_speech']} ({r['fa_per_h']}/h); "
+              + (f"real speech ({extra['real_speech_hours'] * 60:.0f} min, held-out speakers): {r['fa_real_speech']} ({r['fa_real_per_h']}/h); " if "fa_real_speech" in r else "")
+              + f"held-out real room sounds ({extra['heldout_real_negative_s']} s): "
               f"{r['heldout_real_false_n']} {r['heldout_real_false']}")
     print(f"threshold {chosen}; model {a.out} ({rep['model_bytes']} B); {rep['wall_s']} s")
     for nm, s in scan.items():

@@ -228,3 +228,7 @@ yaw torque stalls them (0.010 N m halves a right turn, 0.020 N m reverses it), s
 0.01-0.015 N m in place. The duck is tethered to its USB-C charger lead; a dragged or wound lead gives that torque in
 either direction. Check: the same turn with the lead held up. Record and scripts:
 `microduck-sim/guide/firmware/mac/turn-inplace-20261030/`.
+Live, home, listen-only, v2 ensemble at 0.7, 15:56-16:21 EDT: 6 wakes in 25 min with nobody calling (the life log's
+auto-labelling finds no call and no doubtful event in any of the 33 segments; the hits sit at the room's own level).
+E2 at 0.9 installed 16:21 (A7Z copy sha256 36fb5f51...), listener restarted. The A7Z clock ran on UTC until 16:08 EDT
+(listener times before that are UTC); now America/New_York.
