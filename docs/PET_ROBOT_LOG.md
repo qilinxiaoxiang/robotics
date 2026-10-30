@@ -125,6 +125,23 @@ walk61's, verified exact in the smoke export. G1 is now a script, `guide/firmwar
 `microduck-t2a` is training on the free T4s. Details in fork `cmu/finetune/modal/FINETUNE-DELTA.md`, "Run t2".
 - **False answers to walking and standing up; spotter retraining with all our recordings as negatives** (Shawn: the five false answers at 14:55 came while he said nothing, only stood up and walked). A voicing gate does not separate them (Shawn's recognised training calls measure 0 voiced ms as often as the walking windows), nor does loudness. Data now (`namecall-20261029/mochi_labels.json`): negatives = every call-free stretch of every robot recording (10/29 lab conversation, the RoboClub no-speech recording with head touches, the snap and cover tests, the RoboClub 2 m session outside its calls with the corridor loudspeaker, the 48 own quacks, the table test away from its calls, the 14:38 run outside 176-212 s, the 14:55 run's quiet parts and 125-140 s of walking, Shawn's 15:01 ordinary-speech recording 0-100 s) plus ESC-50 (2000 environmental clips, 50 classes, `~/data/esc50`) and Speech Commands; held-out real negatives never trained on: 14:55 run 140-185 s and 15:01 speech 100-144 s (89 s). Findings by run (held-out real false hits at P 0.9 / held-out call recall / false wakes per hour on 28 min synthetic speech): v1 original 5 / 17 of 20 / 0; whole-window positives with the new negatives 8 / 17 of 20 / 0, and the scan showed the cause: it fired every second through the whole call session, gaps included, so it had learned that session's background (all positives came from it); words cut tight and laid onto other recordings' backgrounds 3 / 15 of 20 / 6; plus the 10/29 RoboClub calls (by-ear times 39.3-95.1 s, word = loudest 0.3 s of voice band 0.2-1.6 s after each) half on their own background 3 / 18 of 22 / 36, all on other backgrounds 3 / 17 of 22 / 140. The RoboClub cuts stand only 3-15 dB over the lab noise and carry the corridor loudspeaker's speech, which teaches "babble = Mochi"; they become a noisy-room recall test, and noise robustness comes from home calls laid onto the lab's noise. Training moved to the Mac mini (`~/mochi-train`, venv duck-see + scipy): the MacBook was swapping (7.1 GB swap, load 44-89) and a 7 min run took over 45 min. Two variants run there in parallel: A = home calls on all backgrounds, B = A plus the 262 synthetic-voice Mochi clips of `mochi_set.py` (openWakeWord-style: many voices so the shared cue is the word).
 
+## 2026-10-30 night: the sim now ranks jitter like the robot, with one known false alarm
+
+Study `guide/firmware/mac/jitter-20261018/` ("2026-10-30 targets", 58 settings, six robot rows from today). One setting
+for all policies, `--gyro-noise-dq 0.25 --bam-friction-scale 1.4` (gyro vibration proportional to leg speed plus BAM
+friction x1.4), reproduces five of six rows within 2x: walk61 2.1 -> 2.7 jumps/s; T1 default head 21.8 -> 17.2 and
+falls in one seed; T1 neck -0.4 17.1 -> 15.7; t2b neck -0.4 14.0 -> 11.4; t2b neck -0.8 13.6 -> 13.3. The miss is t2b
+with the default head: robot 1.7, sim 8.1 (the anchor's protection has no sim counterpart), so the sim orders
+T1 > t2b > walk61 as the robot does but over-reports t2b's calm row. Mechanism: the same loop on both sides (both legs'
+hip pitch and knee in phase at 1.7-2.2 Hz, a trunk-pitch bounce), the sim at half the robot's amplitude; the robot's
+extra trunk gyro is above 5 Hz and grows with the shaking, so the gap is trunk shake per unit of leg motion (play or
+foot-strike), not the joints. Refuted as the single cause: leg deadband 0.04+ and friction x1.5 (walk61 stops stepping),
+any extra IMU delay (stand61 falls at 2.2 s; the robot has none), head mass, read drops, ankle play, sole and floor
+friction, robotd filters, constant gyro noise. Use for t3: a candidate must keep the neck rows within 2x of walk61's
+default-head jumps in this setting; the t2b default-head row is the known false alarm. Discriminating the >5 Hz power
+(trunk motion against IMU mount vibration) needs a 200 Hz gyro capture during one walk61 walk, when the robot is
+next used anyway.
+
 ## 2026-10-30 evening: t2b on the robot. Walks like walk61, shakes like T1 once the neck is commanded
 
 With the default head t2b walked 0.25 m/s like walk61 (peak tilt 8.7 deg, 1.7 action jumps per s; T1 21.8 and fell).
@@ -249,3 +266,22 @@ torque, under a pose reward that pulls the hip yaws home, so its turning gait ne
 push harder when blocked. A higher servo gain falls in sim (kp 400, 800), as walk61 was trained at kp 200. Remedy
 that changes the authority: retrain with yaw torque disturbances (needs Shawn's nod); meanwhile keep the lead from
 twisting.
+
+## 2026-10-30 17:00-17:20: openWakeWord fails on the duck; LibriSpeech negatives; live test findings
+
+openWakeWord (upstream main 368c037, frozen Google speech embedding + small head, `~/mochi-train/oww` on the Mac mini,
+venv `~/.venvs/oww`): 6000 piper TTS positives spelled "mo chee" (espeak reads "mochi" as MAH-chai), 3510 web clips,
+ACAV100M features (5.6 M rows), our duck negatives, MIT RIRs. Its own validation: recall 0.54, 0 false/h. On our
+held-out set: 1 of 22 duck calls at 0.5-0.8, 0 at 0.9; web held-out 20 of 170 at 0.5 with 0 false. Fits the A7Z
+(2.6 MB, 0.9 ms per 80 ms frame on the M4) but not usable: the duck's calls reach it through the head cavity
+(NAMECALL.md 10.4) and nothing in its training sounds like that.
+LibriSpeech dev+test clean (10.5 h, 80 speakers) as negatives with the verified web set (L0s0/L0s1 fold 0, L4s0 all):
+real speech by held-out speakers 15-26 false wakes in 30 min at 0.9 (22-32/h), synthetic speech 42-57/h, duck calls
+18-22 of 32, web held-out 144-150 of 160. More negatives cut the false rate by about a third, not by the 100x needed.
+Live full behaviour 16:51-16:54 (E2 at 0.9, Shawn seated at the duck's 11 o'clock, about 30 deg left): five answers,
+of which Shawn counts two false (16:54:27 and 16:54:32 by their audio: no "Mochi" shape). The direction was wrong on
+every call (160, 87, 158, 126, -18 deg): replaying the five through `CallLocaliser` in other bands confirms 10.4,
+the low band reads "front" for any caller. The face was never found: the camera, looking down, showed only his shoes
+(`scratchpad/snap_now.jpg`). Body turn (`--turn`) stopped before it turned away from him. Next: person detection to
+follow the body up to the face (agent working), the camera searches in front before the sound bearing is trusted,
+and sealing each microphone to its own hole (foam gasket) plus the mouth-to-cavity path.
