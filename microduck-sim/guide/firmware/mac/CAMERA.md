@@ -111,3 +111,16 @@ a range whose low hue is above its high hue and wraps it through red; the run us
 Standing, the picture of the lowest look (head command 1.4, servo 1.28-1.30) starts 0.10-0.12 m in front of the
 foot-frame origin (centre pixel column), so the trained pick spot (0.087 m) is never in a standing picture: seepick's
 aim treats "not seen" nearer than `BLIND_R` 0.12 m as "pick at the last known position".
+
+## C. Eyes on the target every frame (gaze.py, 2026-10-30)
+
+`gaze.py` is the standing form of PLAN-continuous-vision.md layers A1 and B: every camera frame the orange-ball track
+(the shared track interface: name, u, v, w, h, id, conf) turns into head yaw and pitch commands that keep the ball at
+one spot in the picture, under the walking policy at zero velocity (never `{"mode": "stand"}`). No floor projection
+is in that loop, so the mount fit and the head servo's gain change its speed, not its goal. The landmark filter runs
+beside it and logs the ball's floor position with a camera pitch bias; with head motion alone the range and the bias
+are weakly separable (the body's own motion separates them: test_gaze.py). First robot run and numbers:
+`camera-calib-20261030/gaze-20261030/README.md`.
+
+    ~/.venvs/duck-policy/bin/python gaze.py --observe 10     track and filter only
+    ~/.venvs/duck-policy/bin/python gaze.py --max-s 60       head following
