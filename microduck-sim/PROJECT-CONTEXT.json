@@ -15,7 +15,7 @@
     "id": 1,
     "name": "find_the_item",
     "goal": "Identify the object to pick up (an orange printed part first) in the head camera and locate it on the floor.",
-    "status": "2026-10-21: orange HSV detector locks 57/57 frames; floor projection 1-7 mm in render checks; the real camera's pitch offset was fitted (9.25 deg) and then the camera was swapped for the Radxa 13M 214, so the calibration must be redone (guide/firmware/mac/PICKUP.md, D-015).",
+    "status": "2026-10-30: U20CAM calibrated on the A7Z (guide/firmware/mac/CAMERA.md): lens fisheye 0.403 px over 22 chessboard frames; mount fitted on six floor points laid out on the 1 ft tile grid (robot's toe midpoint on a seam crossing, 12 mm printed ball on crossings and tile centres, 0.32-0.64 m): pitch +8.4, yaw +1.4, roll -0.4 deg, far points within 1 cm, the 0.32 m point 2.2 cm, held-out 1.7 cm (the script's 10 mm line, set for 0.17-0.35 m points, not met; written with --force, fit.passed false). approach.py accepts it. Earlier: 2026-10-21: orange HSV detector locks 57/57 frames; floor projection 1-7 mm in render checks; the real camera's pitch offset was fitted (9.25 deg) and then the camera was swapped for the Radxa 13M 214, so the calibration must be redone (guide/firmware/mac/PICKUP.md, D-015).",
     "acceptance": "On the A7Z head camera the detector locks the orange target in at least 95 % of frames with the duck's own orange parts rejected, and the floor projection is within 3 cm of the measured object position at two distances between 0.15 and 0.50 m, logged by pickup.py --observe with the robot standing on stand61."
    },
    {

@@ -79,3 +79,13 @@ To refit saved captures without the robot (after a new lens file, for example):
 error; the script keeps it only when every component is known to within 3 mm.
 
 After both pass, check with `approach.py --observe 8` (APPROACH.md, robot test step 4).
+
+### Tile-grid variant (2026-10-30)
+
+A floor of 1 ft (30.48 cm) tiles replaces the tape: stand the robot with the midpoint of its toes on a seam crossing,
+facing along a seam, and put the object on crossings and tile centres (left/right judged by eye, about 5 mm). The
+foot-frame origin sits `toe_x` behind the toes (printed by the script, 1.7 to 2.7 cm depending on the stance), so a
+crossing one tile ahead is `--points "<toe_x + 0.3048>,0;..."`. A 12 mm ball at 0.6 m is a 6 px blob: pass
+`--hsv-lo 0,100,100 --min-area 15 --open-px 3`, since the default 5 x 5 opening erases it. Captures from several
+runs at the same head pose merge by concatenating their `obs` lists and refitting with `--mount --from`. The 10 mm
+held-out line was set for points at 0.17 to 0.35 m; at 0.6 m the same angular error is 17 mm.
