@@ -157,9 +157,12 @@ def test_the_spotter_rests_during_the_take_and_starts_afresh_after_it():
     assert b - a > 0.5 and sp.resets == [a]                  # rested through the take, then a fresh stream
 
 
-def test_cli_name_and_any_voice_are_exclusive_and_any_voice_is_the_default():
-    assert nc.parse_args([]).name is None
+def test_cli_name_and_any_voice_are_exclusive_and_the_name_is_the_default():
+    assert nc.parse_args([]).name == "mochi"                # the robot answers to its name (2026-10-30)
+    assert nc.parse_args(["--any-voice"]).name is None
+    assert nc.parse_args(["--wav", "x.wav"]).name is None   # replay tools stay any-voice unless --name is given
     assert nc.parse_args(["--name", "mochi"]).name == "mochi"
+    assert nc.parse_args([]).no_turn and not nc.parse_args(["--turn"]).no_turn
     with pytest.raises(SystemExit):
         nc.parse_args(["--name", "mochi", "--any-voice"])
     with pytest.raises(SystemExit):

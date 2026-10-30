@@ -13,8 +13,10 @@ and waits ATTEND_S for whatever comes next (another call re-aims it, a touch is 
 camera (facefind.FaceFinder: a7z_cam's shared frame -> the SCRFD face detector of pet/identity, 4 Hz, 120 ms per frame
 on the A7Z) a face in view is centred and followed; with none in view for FACE_WAIT_S the head sweeps SCAN_OFFSETS
 once around the heard bearing, pitch at the cap, then waits where the sound came from. A caller behind the head's
-reach: the body turns on the spot and stops on the brain's gyro (GyroTurn), not a clock, and only when the bearing's
-front/back margin is at least TURN_MARGIN_MIN; the attention phase then continues with the head on the caller.
+reach: with --turn the body turns on the spot and stops on the brain's gyro (GyroTurn), not a clock, only when the
+bearing's front/back margin is at least TURN_MARGIN_MIN and no face is in view; the attention phase then continues
+with the head on the caller. The turn is off by default: on 2026-10-30 a turn started by a noise "behind" while
+Shawn's face was locked in front tripped the duck on the table 2.3 s in (PET_ROBOT_LOG 2026-10-30).
 
 Two trigger modes. --name mochi (the default since 2026-10-30; --any-voice for the listen-only checks and the
 tests): a keyword spotter (KeywordGate: sherpa-onnx KeywordSpotter, the public zipformer
@@ -1388,10 +1390,14 @@ class NameCall:
                     rec["quack_own_at"] = round(t_q, 3)
                 else:
                     rec["quack_skipped"] = dict(novelty=round(novelty, 3), why="caller repeating; head only")
-            self.turn = self.plan_turn(az) if (self.head.last["behind"] and not getattr(self.a, "no_turn", False)) else None
+            self.turn = self.plan_turn(az) if (self.head.last["behind"] and not getattr(self.a, "no_turn", True)) else None
             margin = det.get("margin")
             if self.turn is not None and margin is not None and not (margin >= TURN_MARGIN_MIN):
                 rec["turn_skipped"] = dict(margin=margin, why=f"front/back margin under {TURN_MARGIN_MIN}: the bearing is a guess")
+                self.turn = None
+            if self.turn is not None and self.finder is not None and self.finder.latest(now) is not None:
+                # 2026-10-30 table test: a face was locked in front and a noise "behind" started a turn; the turn tripped
+                rec["turn_skipped"] = dict(why="a face is in view; the body stays")
                 self.turn = None
             if self.turn is not None:
                 rec["turn"] = dict(self.turn)
@@ -1709,8 +1715,10 @@ def parse_args(argv=None):
     ap.add_argument("--floor-tau", type=float, default=3.0, help="s, room floor tracking")
     ap.add_argument("--pitch", type=float, default=LOOK_PITCH,
                     help="gaze rad up for the caller; 1.1 = the head pitch cap, camera 30 deg up, a standing face at 1-2 m")
-    ap.add_argument("--no-turn", action="store_true",
-                    help="never turn the body toward a caller the head cannot reach (default: turn on the spot at vtheta 0.3)")
+    ap.add_argument("--turn", action="store_true",
+                    help="turn the body on the spot (vtheta 0.3) toward a caller the head cannot reach; off by default since the "
+                         "2026-10-30 table test, where the turn tripped the duck 2.3 s in")
+    ap.add_argument("--no-turn", action="store_true", help="accepted for old start lines; the body turn is off unless --turn")
     ap.add_argument("--no-keepalive", action="store_true",
                     help="do not hold a silent playback stream open (then every quack silences the capture)")
     ap.add_argument("--no-face", action="store_true",
@@ -1745,6 +1753,7 @@ def parse_args(argv=None):
         a.name = None
     elif a.name is None and not a.wav:
         a.name = "mochi"
+    a.no_turn = not a.turn      # the body turn is opt-in (--turn); --no-turn is kept for old start lines
     return a
 
 
