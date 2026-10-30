@@ -57,6 +57,64 @@ def test_take_runs_under_head_range_and_lands_near_the_caller():
         assert calls[0]["t_abs"] >= (perf.arrival or 0) * 0.5
 
 
+def test_response_looks_up_to_a_standing_face():
+    """The default gaze pitch sends head_pitch to its look-up cap (negative = up on this robot, approach.py;
+    face-view-20261029: -0.75 absolute puts a standing face in frame from 1-2 m). The first robot name-call of
+    2026-10-30 pitched the head DOWN (card signs inverted)."""
+    for seed in range(4):
+        hp = nc.HeadPath(seed=seed, default=dict(nc.DEFAULT_HEAD))
+        perf = hp.start(0.0, 0.5)
+        rows, t = [], 0.0
+        while True:
+            head, ev, active = hp.tick(t)
+            if head is None:
+                break
+            rows.append([head[j] - nc.DEFAULT_HEAD[j] for j in HEAD_JOINTS])
+            t += 0.02
+            if not active:
+                break
+        c = ema(np.array(rows))
+        k = int(round((perf.arrival or 1.0) / 0.02))
+        at_arrival = c[min(k + 10, len(c) - 1)]
+        assert at_arrival[1] < -0.7, (perf.take, at_arrival)       # head_pitch well up (cap -1.10)
+        assert (c[:, 1] > 0.1).sum() == 0, perf.take                 # never a look DOWN on the way
+        assert at_arrival[0] >= -0.05, (perf.take, at_arrival)      # the neck does not drop the head
+
+
+def test_playback_keepalive_starts_before_capture_and_stops():
+    import subprocess as sp
+    started = []
+
+    class Fake:
+        def __init__(self, cmd, **kw):
+            started.append(cmd)
+            self.killed = False
+            self.returncode = None
+            self.stderr = sp.PIPE
+
+        def poll(self):
+            return 0 if self.killed else None
+
+        def kill(self):
+            self.killed = True
+            self.returncode = -9
+
+        def wait(self, timeout=None):
+            return self.returncode
+
+    ka = nc.PlaybackKeepAlive(popen=Fake).start(settle_s=0.0)
+    assert ka.alive and started == [list(nc.KEEPALIVE_CMD)]
+    assert started[0][0] == "aplay" and "/dev/zero" in started[0] and "-D" not in started[0]   # the ALSA default (dmix + softvol)
+    ka.stop()
+    assert not ka.alive
+
+    def failing(cmd, **kw):
+        raise FileNotFoundError("aplay")
+
+    kb = nc.PlaybackKeepAlive(popen=failing).start(settle_s=0.0)
+    assert not kb.alive and "aplay" in kb.err     # the program goes on without it
+
+
 def test_calls_from_behind_turn_as_far_as_the_cap():
     hp = nc.HeadPath(seed=2, default=dict(nc.DEFAULT_HEAD))
     hp.start(0.0, math.radians(150), 0.2)
@@ -244,3 +302,76 @@ def test_wav_replay_through_main(tmp_path):
     rows = [json.loads(l) for l in open(log)]
     calls = [r for r in rows if r["kind"] == "call"]
     assert len(calls) == 1 and abs(calls[0]["az_deg"] - 30) < 4
+
+
+def test_turn_plan_only_for_callers_beyond_the_head():
+    assert nc.NameCall.plan_turn(0.2) is None                         # the head shows it
+    p = nc.NameCall.plan_turn(2.09)                                   # 120 deg behind-left (robot 2026-10-30)
+    assert p["sign"] == 1.0 and 9.5 < p["dur_s"] < 11.5
+    assert nc.NameCall.plan_turn(-3.0)["sign"] == -1.0 and nc.NameCall.plan_turn(-3.0)["dur_s"] <= nc.TURN_S[1]
+    assert nc.NameCall.plan_turn(0.4)["dur_s"] == nc.TURN_S[0]
+
+
+def test_every_response_quacks_and_a_caller_behind_gets_a_body_turn(tmp_path):
+    """The take library drops the call on habituated or glancing takes (vocal_events); namecall adds its own, and a
+    caller beyond YAW_CAP turns the body from the moment the head arrives, the head tracking the caller in the
+    turning frame (Shawn 2026-10-30: turn head and body together, not head, centre, then body)."""
+    cmd = str(tmp_path / "cmd.json")
+    a = args(cmd=cmd, no_sound=False, mute=True, seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    quacks, turns, writes = [], [], []
+    n.log.write = lambda kind, **rec: (quacks.append(rec) if kind == "quack" else turns.append(dict(rec, kind=kind)) if kind in ("turn", "turn_done") else None)
+    real_write = n.writer.write
+    def spy(head=None, vtheta=0.0, for_s=None):
+        writes.append((vtheta, None if head is None else head["head_yaw"], None if head is None else head["head_pitch"]))
+        return real_write(head, vtheta, for_s)
+    n.writer.write = spy
+    t = 0.0
+    for i in range(12):   # twelve calls from behind-left, 16 s apart (take, 10.5 s turn, ease home): novelty habituates
+        det = dict(t=t, az_rad=2.09, az_deg=120.0, bins=100, e_db=-30.0, floor_db=-48.0)
+        writes.clear()
+        n.respond(det, t)
+        t_end = t + 16.0
+        while t < t_end:
+            n.motion_tick(t)
+            t += 0.02
+        turning = [w for w in writes if w[0]]
+        assert turning and all(w[0] == 0.3 for w in turning)                       # body turns left at vtheta 0.3
+        yaws = [w[1] for w in turning]
+        assert yaws[0] > 1.0 and yaws[-1] < 0.5 and all(b <= a_ + 1e-9 for a_, b in zip(yaws, yaws[1:]))   # head unwinds
+        assert all(w[2] < -0.3 for w in turning)                                    # looking up throughout
+        assert writes[-1][0] == 0 and abs(writes[-1][1]) < 1e-6                     # ends at rest, head home
+    assert len(quacks) == 12, len(quacks)                                            # one quack per call, never dropped
+    assert sum(1 for r in turns if r["kind"] == "turn") == 12 and sum(1 for r in turns if r["kind"] == "turn_done") == 12
+    last = json.load(open(cmd))
+    assert nc.zero_walk(last) and "for_s" not in last
+    a2 = args(cmd=cmd, seed=5)
+    a2.no_turn = True
+    n2 = nc.NameCall(a2, nc.Log(None, echo=False))
+    n2.respond(dict(t=0.0, az_rad=0.5, az_deg=29.0, bins=100, e_db=-30.0, floor_db=-48.0), 0.0)
+    assert n2.turn is None
+
+
+def test_quack_skipped_only_when_the_caller_really_repeats(tmp_path):
+    """Novelty x0.75 per call, 40 s recovery: calls 30 s apart are always answered; eight calls 2 s apart lose
+    the quack from about the fifth on (Shawn 2026-10-30: skip only when he has repeated it over and over)."""
+    def run(gap_s, n_calls, seed=7):
+        a = args(cmd=str(tmp_path / "c.json"), no_sound=False, mute=True, seed=seed)
+        a.no_turn = True
+        n = nc.NameCall(a, nc.Log(None, echo=False))
+        quacks = []
+        n.log.write = lambda kind, **rec: quacks.append(rec) if kind == "quack" else None
+        t, recs = 0.0, []
+        for i in range(n_calls):
+            recs.append(n.respond(dict(t=t, az_rad=0.4, az_deg=23.0, bins=100, e_db=-30.0, floor_db=-48.0), t))
+            t_end = t + gap_s
+            while t < t_end:
+                n.motion_tick(t)
+                t += 0.02
+        return quacks, recs
+    q, r = run(30.0, 8)
+    assert len(q) == 8, [x["params"]["novelty"] for x in r]
+    q, r = run(2.0, 8)
+    skipped = [x for x in r if "quack_skipped" in x]
+    assert 4 <= len(q) < 8 and skipped and all(x["quack_skipped"]["novelty"] < nc.QUACK_NOVELTY_MIN for x in skipped)

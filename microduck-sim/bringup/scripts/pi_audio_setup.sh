@@ -18,13 +18,16 @@ if grep -s -n -E 'snd_bcm2835|blacklist' /etc/modules /etc/modprobe.d/raspi-blac
 dpkg -s alsa-utils >/dev/null 2>&1 || sudo apt-get install -y alsa-utils
 # Ceiling: 9 dB amplifier gain (GAIN unconnected) with max_dB -3.0 gives 0.8 W at 0 dBFS into the 8 ohm 1 W speaker
 # (raised from -6.0 on 2026-10-15 at Shawn's request; never above -3.0, 0 dB would be 1.6 W).
+# dmix runs the card at 48000 (changed from 44100 on 2026-10-30, applied by hand on the A7Z): playback and the
+# microphone capture share one I2S clock, so an open playback stream at 44.1 kHz made a 48 kHz arecord deliver
+# 44.1 kHz samples (namecall.py's silent keep-alive stream, NAMECALL.md 11). The 44.1 kHz calls are resampled by plug.
 sudo tee /etc/asound.conf >/dev/null <<'EOT'
 pcm.speakerbonnet { type hw card MAX98357A }
 pcm.dmixer {
   type dmix
   ipc_key 1024
   ipc_perm 0666
-  slave { pcm "speakerbonnet" period_time 0 period_size 1024 buffer_size 8192 rate 44100 channels 2 }
+  slave { pcm "speakerbonnet" period_time 0 period_size 1024 buffer_size 8192 rate 48000 channels 2 }
 }
 ctl.dmixer { type hw card MAX98357A }
 pcm.softvol {

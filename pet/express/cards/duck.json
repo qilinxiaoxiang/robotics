@@ -421,7 +421,7 @@
   "bus scan model: not logged; 1200 = XL330-M288-T per microduck-sim/PROJECT-CONTEXT.json servo_order",
   "bus scan limits: EEPROM position limits never dumped: null",
   "XL330-M288: bus at 7.2 V is above the highest published stall-torque point; torque_nm is that point's value (ROBOTIS e-manual), not extrapolated",
-  "no microphones on the body yet: INMP441 arrived 2026-10-25 (Shawn: \u9ea6\u514b\u98ce\u5230\u4e86 \u6211\u53d1\u73b0\u9001\u4e86\u6392\u9488) (microduck-sim/CURRENT-STATE.json parts_a7z_extensions); no sound events until they are fitted",
+  "no microphones on the body yet: INMP441 arrived 2026-10-25 (Shawn: 麦克风到了 我发现送了排针) (microduck-sim/CURRENT-STATE.json parts_a7z_extensions); no sound events until they are fitted",
   "speaker in the head (output only; quack calls through walk_wired.py)",
   "babbling in MuJoCo (as-built duck, saddle mass, 7.0 V): 14 joints, amplitude grown through [0.02, 0.04, 0.08] rad at KP 200 while the trunk tilted under 3.0 deg, the rest at KP 400; jaw not in the sim model",
   "body schema: moving left_hip_yaw by 0.05 rad does nothing visible; source MuJoCo as-built duck, saddle manifest, 7.0 V, KP 400 stand / 200 babble",
@@ -481,15 +481,15 @@
     {
      "axis": "pitch",
      "to": "head_pitch",
-     "gain": 0.75
+     "gain": -1.0
     },
     {
      "axis": "pitch",
      "to": "neck_pitch",
-     "gain": -0.25
+     "gain": 0.25
     }
    ],
-   "note": "sim signs (as-built MuJoCo head camera): head_yaw + turns left, head_pitch + looks up, neck_pitch + lowers the head"
+   "note": "signs from the robot-tested head commands (approach.py HEAD_PITCH_WALK 0.5-1.1 looks at the floor, NEAR_HEAD neck -0.4 head 1.4 is the lowest look; face-view-20261029 head_pitch -0.75 is the look-up cap): head_yaw + turns left, head_pitch + looks DOWN, neck_pitch + raises the head. Gaze pitch maps 1:1 onto -head_pitch so pitch 1.1 reaches the HEAD_RANGE cap (camera 30 deg up under stand61). Until 2026-10-30 the two pitch gains had the opposite sign and the first robot name-call pitched the head down."
   },
   "ORIENT": {
    "map": [
@@ -551,10 +551,11 @@
    },
    "head_pitch": {
     "limit": [
-     -0.6,
-     0.6
+     -1.1,
+     1.1
     ],
-    "max_rate": 6.0
+    "max_rate": 6.0,
+    "note": "= HEAD_RANGE; -1.1 is the stand61 look-up cap (face-view-20261029, holds with 2 deg of tilt), +1.05 the robot-tested floor look (approach.py NEAR_HEAD)"
    },
    "head_yaw": {
     "limit": [

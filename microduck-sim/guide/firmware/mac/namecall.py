@@ -23,6 +23,13 @@ come from the head CAD (guide/print/ears-mouth-20261023/interface.json, the 2026
 x 60.5, y +-38.5; back mic at x -19.9, y -11 (head frame, mm, x forward, y left). --swap-ears when a tap on the left
 ear raises ch1 instead of ch0.
 
+Sound in and out share the I2S0 card, and on this driver the START of a playback stream silences a running capture
+for good (2026-10-30 home test: arecord level -50 dBFS, aplay starts, -150 dBFS within 0.5 s until arecord is
+reopened). So the program opens a silent playback stream on the ALSA default device (dmix) before the capture and
+keeps it open (PlaybackKeepAlive, --no-keepalive to skip): the quacks then mix into the already running stream, the
+microphones stay live through them and are back at the room floor half a second after the quack ends, and the capture
+starts without its 1.5 s settling ramp.
+
 Detector (--detector bins, the default since the 2 m recordings of 2026-10-29): per 20 ms block, how many 300-4000 Hz
 bins of the three-microphone mix stand --snr-db over a tracked noise spectrum; an onset is --min-bins such bins after
 a quiet block, confirmed by --confirm-blocks of the next three blocks and by the harmonicity of its first 60-80 ms
@@ -94,11 +101,29 @@ MICS_MM = {"left": (60.5, 38.5), "right": (60.5, -38.5), "back": (-19.9, -11.0)}
 CHANNELS = {"left": 0, "right": 1, "back": 2}
 BAND = (300.0, 4000.0)
 YAW_CAP = 1.2                    # rad; the card's head_yaw limit is 1.4 = HEAD_RANGE, this leaves the pre-inverse room
-LOOK_PITCH = 0.2                 # rad up: a standing caller is above the duck
+# gaze pitch for the caller, rad up in pet/express units. The duck card maps it 1:1 onto a head_pitch delta (minus,
+# since head_pitch + looks down on this robot: approach.py HEAD_PITCH_WALK), so 1.1 = the HEAD_RANGE pitch cap =
+# head_pitch -0.75 absolute under stand61, the camera 30 deg above the horizontal (face-view-20261029/README.md): a
+# standing adult's face is in frame from 1.0-2.2 m. A caller is a person above the duck; the microphones cannot
+# measure elevation (all three lie in one horizontal plane), so the duck always looks up to a face.
+LOOK_PITCH = 1.1
+KEEPALIVE_CMD = ("aplay", "-q", "-t", "raw", "-f", "S16_LE", "-c", "2", "-r", "48000", "/dev/zero")
 # policy default head pose (stand61.onnx metadata default_joint_pos; read from the model when it is there)
 DEFAULT_HEAD = {"neck_pitch": 0.349, "head_pitch": 0.349, "head_yaw": 0.0, "head_roll": 0.0}
 BRAIN_FRESH_S = 1.5
 QUACK_DEAF_S = 0.6               # the detector stays deaf this long after the player ends
+QUACK_ALWAYS_OFF_S = 0.35        # a take the library planned silent still answers a call: one quack this long after arrival
+# ... unless the caller is really repeating: the library's novelty drops x0.75 per call and recovers with a 40 s time
+# constant (pet/express/takes.py Habituation); below this novelty the answer is the head alone (Shawn 2026-10-30:
+# skip the call only when he has repeated it over and over). 0.3 = the fifth call inside about 15 s; one call every
+# 30 s or more is always answered.
+QUACK_NOVELTY_MIN = 0.3
+# body turn toward a caller the head cannot reach (|az| > YAW_CAP): the robot-tested turn on the spot, walk61 at
+# vtheta +-0.3 (pet/mind/runner.py, survey 2026-10-30: 7-13 deg/s on the floor), after the head take has drifted home
+TURN_VTHETA = 0.3
+TURN_RATE = 0.17                 # rad/s the robot actually turns at vtheta 0.3 (about 10 deg/s, measured range 7-13)
+TURN_KEEP = 0.3                  # rad of the caller's bearing left for the head when the body stops turning
+TURN_S = (1.5, 12.0)             # turn duration bounds
 
 # name mode (--name): keyword spotter
 KWS_FS = 16000
@@ -169,6 +194,43 @@ class Capture:
     def stop(self):
         if self.proc is not None and self.proc.poll() is None:
             self.proc.kill()
+
+
+class PlaybackKeepAlive:
+    """A silent playback stream on the ALSA default device (dmix), opened before the capture and kept open.
+
+    The sunxi I2S driver behind sndi2s0 silences a running capture when a playback stream starts (module docstring);
+    with this stream already running, the quacks mix into it and the microphones never notice them beyond the sound.
+    """
+
+    def __init__(self, cmd=KEEPALIVE_CMD, popen=subprocess.Popen):
+        self.cmd, self.popen = list(cmd), popen
+        self.proc = None
+        self.err = None
+
+    def start(self, settle_s=0.3):
+        try:
+            self.proc = self.popen(self.cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        except Exception as e:  # no aplay: the program still runs, deaf after each quack as before
+            self.err = repr(e)
+            return self
+        time.sleep(settle_s)   # the stream is running before arecord opens (no capture settling ramp then)
+        if self.proc.poll() is not None:
+            self.err = (self.proc.stderr.read() or b"").decode(errors="replace").strip() or f"exit {self.proc.returncode}"
+            self.proc = None
+        return self
+
+    @property
+    def alive(self):
+        return self.proc is not None and self.proc.poll() is None
+
+    def stop(self):
+        if self.proc is not None and self.proc.poll() is None:
+            self.proc.kill()
+            try:
+                self.proc.wait(timeout=1.0)
+            except subprocess.TimeoutExpired:
+                pass
 
 
 class WavSource:
@@ -1004,8 +1066,12 @@ class CmdWriter:
             return True
         return zero_walk(cur) and set(cur) <= ZERO_KEYS
 
-    def write(self, head=None):
+    def write(self, head=None, vtheta=0.0, for_s=None):
         want = dict(WALK_ZERO)
+        if vtheta:
+            want["vtheta"] = round(float(vtheta), 3)
+        if for_s is not None:
+            want["for_s"] = round(float(for_s), 2)
         if head is not None:
             want["head"] = {k: round(float(v), 4) for k, v in head.items()}
         if not self.claimable():
@@ -1090,7 +1156,10 @@ class NameCall:
         self.gate = BrainGate(args.brain_logs, args.cmd) if not args.no_gate else None
         self.responses = 0
         self.head_yaw_now = 0.0          # the head's commanded yaw in the resting frame: mics turn with the head
-        self.quack_due = []              # (t_abs, event)
+        self.quack_due = []              # (t_abs, event): quacks of the program's own (takes the library planned silent)
+        self.turn = None                 # planned body turn toward a caller behind: dict(sign, dur_s, az_rad)
+        self.turn_until = None           # the body turn runs until this time
+        self.turn_t0 = self.turn_plan = self.turn_home_t = self.turn_home_from = None
         self.deaf_from_quack = False
         self.calls = []                  # per response records (tests / sim)
         self.rows = None                 # offline drivers collect (t, head, events) here
@@ -1198,30 +1267,125 @@ class NameCall:
             rec.update(take=perf.take, behind=self.head.last["behind"], arrival_s=perf.arrival,
                        params={k: (round(v, 4) if isinstance(v, float) else v) for k, v in perf.params.items()},
                        events=perf.events, target_yaw=self.head.last["yaw"])
+            novelty = float(perf.params.get("novelty", 1.0))
+            if not any(e.get("kind") == "call" for e in perf.events):
+                # the library drops the call at random on habituated or glancing takes; a name call is answered
+                # unless the caller is really repeating (QUACK_NOVELTY_MIN)
+                if novelty >= QUACK_NOVELTY_MIN:
+                    t_q = now + (perf.arrival if perf.arrival is not None else 0.8) + QUACK_ALWAYS_OFF_S
+                    self.quack_due.append((t_q, dict(kind="call", pitch=1.0, stretch=1.0, gain_db=0.0, own=True)))
+                    rec["quack_own_at"] = round(t_q, 3)
+                else:
+                    rec["quack_skipped"] = dict(novelty=round(novelty, 3), why="caller repeating; head only")
+            self.turn = self.plan_turn(az) if (self.head.last["behind"] and not getattr(self.a, "no_turn", False)) else None
+            if self.turn is not None:
+                rec["turn"] = dict(self.turn)
         self.responses += 1
         self.calls.append(rec)
         self.log.write("call", **rec)
         return rec
 
+    @staticmethod
+    def plan_turn(az_rest_rad, rate=TURN_RATE, keep=TURN_KEEP, bounds=TURN_S):
+        """Body turn so the caller comes inside the head's reach: sign and seconds at TURN_VTHETA, or None."""
+        rest = abs(az_rest_rad) - keep
+        if rest <= 0:
+            return None
+        dur = float(np.clip(rest / rate, *bounds))
+        return dict(sign=1.0 if az_rest_rad > 0 else -1.0, dur_s=round(dur, 2), az_rad=round(float(az_rest_rad), 4))
+
+    def _quack(self, e):
+        f = self.bank.play(e) if self.bank is not None else None
+        self.log.write("quack", file=None if f is None else os.path.basename(f), pitch=e.get("pitch"),
+                       stretch=e.get("stretch"), muted=self.a.mute or self.bank is None, own=bool(e.get("own")))
+
     # --- motion side
     def motion_tick(self, now):
-        """50 Hz: write the head command, play due calls. Returns False when the control file was taken."""
+        """50 Hz: write the head command, play due calls, run the body turn. Returns False when the control file was taken.
+
+        A caller the head cannot reach: the take snaps the head toward the caller as usual; when it arrives the body
+        starts turning on the spot (walk61 at TURN_VTHETA) and from then on this program holds the head on the caller
+        in the turning body frame (yaw = bearing - estimated body rotation, pitch up to the face), so the head unwinds
+        toward centre as the body comes round, the way a person turns; the turn ends when the bearing left is within
+        TURN_KEEP, the head eases home over a second, and the control file goes back to the zero-command walk.
+        """
         if self.head is None:
             return True
         head, events, active = self.head.tick(now)
         for e in events:
             if e.get("kind") == "call":
-                f = self.bank.play(e) if self.bank is not None else None
-                self.log.write("quack", file=None if f is None else os.path.basename(f), pitch=e.get("pitch"),
-                               stretch=e.get("stretch"), muted=self.a.mute or self.bank is None)
+                self._quack(e)
+        while self.quack_due and self.quack_due[0][0] <= now:
+            self._quack(self.quack_due.pop(0)[1])
         if self.rows is not None and head is not None:
             self.rows.append((now, head, events))
+        if self.turn_until is None and self.turn is not None and self.head.last is not None \
+                and self.head.last["arrival"] is not None and now >= self.head.last["arrival"]:
+            self._start_turn(now)
+            head = None
+        if self.turn_until is not None:
+            return self._turn_tick(now)
         if head is not None:
             self.head_yaw_now = float(head["head_yaw"] - self.head.default["head_yaw"])
             if self.writer is not None and not self.writer.write(head):
                 self.log.write("yield", why="control file written by another program; take stopped", found=self.writer.taken)
                 self.head.active_until, self.head.settle_at = None, None
+                self.turn = None
                 return False
+        return True
+
+    def _start_turn(self, now):
+        plan, self.turn = self.turn, None
+        # the take's own call, not yet due, still happens (the express path stops writing from here)
+        t0 = self.head.last["t"]
+        for e in self.head.last["events"]:
+            if e.get("kind") == "call" and t0 + e["t"] >= now:
+                self.quack_due.append((t0 + e["t"], dict(e)))
+        self.head.active_until, self.head.settle_at = None, None
+        self.turn_until = now + plan["dur_s"]
+        self.turn_t0, self.turn_plan, self.turn_home_t = now, plan, None
+        self.log.write("turn", vtheta=plan["sign"] * TURN_VTHETA, dur_s=plan["dur_s"], az_deg=round(math.degrees(plan["az_rad"]), 1),
+                       until=round(self.turn_until, 3))
+
+    def _turn_head(self, now):
+        """Head on the caller in the turning body frame: yaw unwinds with the estimated body rotation, pitch up."""
+        plan = self.turn_plan
+        theta = plan["sign"] * TURN_RATE * (now - self.turn_t0)
+        yaw = float(np.clip(plan["az_rad"] - theta, -self.head.yaw_cap, self.head.yaw_cap))
+        pitch = -float(np.clip(self.a.pitch, 0.0, HEAD_RANGE[1]))   # head_pitch delta, minus = up
+        return yaw, pitch
+
+    def _turn_tick(self, now):
+        plan = self.turn_plan
+        self.det.deaf_until = max(self.det.deaf_until, now + 0.1)   # own servos while turning
+        if self.turn_home_t is None:
+            yaw, pitch = self._turn_head(now)
+            self.head_yaw_now = yaw
+            head = want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default)
+            left = max(0.0, self.turn_until - now)
+            if now < self.turn_until:
+                ok = self.writer is None or self.writer.write(head, vtheta=plan["sign"] * TURN_VTHETA, for_s=left + 1.0)
+            else:
+                ok = self.writer is None or self.writer.write(head)   # body stops; the head eases home from here
+                self.turn_home_t, self.turn_home_from = now, (yaw, pitch)
+            if not ok:
+                self.log.write("yield", why="control file written by another program; body turn stopped", found=self.writer.taken)
+                self.turn_until = None
+                return False
+            return True
+        f = min(1.0, (now - self.turn_home_t) / 1.0)
+        yaw0, pitch0 = self.turn_home_from
+        yaw, pitch = yaw0 * (1.0 - f), pitch0 * (1.0 - f)
+        self.head_yaw_now = yaw
+        ok = self.writer is None or self.writer.write(want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default))
+        if not ok:
+            self.log.write("yield", why="control file written by another program", found=self.writer.taken)
+            self.turn_until = None
+            return False
+        if f >= 1.0:
+            self.turn_until = None
+            self.log.write("turn_done", az_deg=round(math.degrees(plan["az_rad"]), 1), turned_deg=round(math.degrees(TURN_RATE * plan["dur_s"]), 1))
+            self.det.deaf_until = max(self.det.deaf_until, now + 0.5)
         return True
 
     def mode_info(self):
@@ -1329,7 +1493,8 @@ class NameCall:
                               blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
                               kw_hits=self.kw_hits,
                               writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"))
-                if a.once and self.responses >= a.once and (self.head is None or not self.head.active):
+                if a.once and self.responses >= a.once and (self.head is None or not self.head.active) \
+                        and self.turn is None and self.turn_until is None and not self.quack_due:
                     # the drift home has finished too: the last command is the policy default
                     log.write("done", responses=self.responses)
                     break
@@ -1369,7 +1534,12 @@ def parse_args(argv=None):
     ap.add_argument("--loc-weight", choices=("soft", "hard"), default="soft", help="call localiser: weight bins by SNR or mask them")
     ap.add_argument("--refractory", type=float, default=2.5, help="s between accepted calls")
     ap.add_argument("--floor-tau", type=float, default=3.0, help="s, room floor tracking")
-    ap.add_argument("--pitch", type=float, default=LOOK_PITCH, help="rad up to look at the caller")
+    ap.add_argument("--pitch", type=float, default=LOOK_PITCH,
+                    help="gaze rad up for the caller; 1.1 = the head pitch cap, camera 30 deg up, a standing face at 1-2 m")
+    ap.add_argument("--no-turn", action="store_true",
+                    help="never turn the body toward a caller the head cannot reach (default: turn on the spot at vtheta 0.3)")
+    ap.add_argument("--no-keepalive", action="store_true",
+                    help="do not hold a silent playback stream open (then every quack silences the capture)")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--once", type=int, default=0, help="stop after N responses (0 = run on)")
     ap.add_argument("--mute", action="store_true", help="no quack (first robot test)")
@@ -1439,8 +1609,18 @@ def main(argv=None):
     nc = NameCall(a, log)
     if nc.bank is not None and not nc.bank.available and not a.mute:
         log.write("warn", why="no duck recordings found; quacks are silent")
+    keep = None
+    if not a.no_keepalive:
+        keep = PlaybackKeepAlive().start()
+        log.write("keepalive", alive=keep.alive, err=keep.err, cmd=" ".join(keep.cmd))
+        if not keep.alive:
+            log.write("warn", why="no silent playback stream: the microphones go dead after each quack until the capture is reopened")
     cap = Capture(dev).start()
-    nc.run_live(cap)
+    try:
+        nc.run_live(cap)
+    finally:
+        if keep is not None:
+            keep.stop()
     return 0
 
 

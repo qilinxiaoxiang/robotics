@@ -1066,7 +1066,11 @@ def main():
             max_tilt = {"groundpick": args.max_tilt_gp, "seepick": args.max_tilt_gp,
                         "sit": args.max_tilt_sit}.get(brain.mode, args.max_tilt)
             carried = hold_on and est.e > HOLD_TILT_E  # tilted in a hand, not falling
-            rising = brain.getup is not None  # the recover sequence passes through every tilt on its way up
+            # the recover sequence passes through every tilt on its way up; and in recover mode the brain owns falls
+            # in walk mode altogether (robotd's limp_fall, no tilt stop in Pollen's runtime): 2026-10-30 the first
+            # robot trial entered walk lying on its side and this stop fired on the first tick, 0.2 s before the
+            # brain's lying debounce could arm the sequence, and the duck went to the open-loop STAND on the floor
+            rising = brain.getup is not None or (brain.getup_mode == "recover" and brain.mode == "walk")
             if not diverging and not carried and not rising and info["gb"][2] > -math.cos(math.radians(max_tilt)):
                 diverging = f"body tilt over {max_tilt} deg"
             if diverging and last_goal is not None:
