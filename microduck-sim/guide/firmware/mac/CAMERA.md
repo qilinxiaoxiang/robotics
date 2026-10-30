@@ -101,3 +101,13 @@ with the head fully down the picture's bottom edge meets the floor at about x 0.
 used) picked the ball on the first try: the policy and the 150 mA jaw on bare PLA work when the position is right.
 Next: captures at the pick pose and 0.08-0.20 m, `--mount --fit-shift`; gated trace rows now carry bbox, q and gb
 for that refit.
+
+### Home light and the standing blind zone (2026-10-30 04:40)
+
+In the warm indoor light at home the orange ball reads pink: OpenCV hue 172-178 (S 67-91, V 161-189) close up and
+0-10 at half a metre, so the repo's orange range (hue 5-22, S >= 120) never saw it. `orange_target.detect` now takes
+a range whose low hue is above its high hue and wraps it through red; the run used `--hsv-lo 170,50,150 --hsv-hi
+18,255,255` (zero false blobs on 70 home floor frames without the ruler; the red DigiKey ruler does trip it).
+Standing, the picture of the lowest look (head command 1.4, servo 1.28-1.30) starts 0.10-0.12 m in front of the
+foot-frame origin (centre pixel column), so the trained pick spot (0.087 m) is never in a standing picture: seepick's
+aim treats "not seen" nearer than `BLIND_R` 0.12 m as "pick at the last known position".
