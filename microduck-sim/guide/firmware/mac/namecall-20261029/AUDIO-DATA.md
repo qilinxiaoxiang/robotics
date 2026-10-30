@@ -61,12 +61,18 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
   speech clips (28 min, the held-out false-wake test). Synthetic Mochi positives are not used: even with
   same-voice synthetic speech as negatives they woke on 235 of 561 held-out synthetic sentences (2026-10-30).
 - **tts_speech** (`tts_speech.py`): 38 clips, 15 min of everyday sentences in the same 28 voices (negatives).
-- **mochi_web** (`~/data/mochi_web/`, Mac mini `~/mochi-train/data/mochi_web`, built 2026-10-30, counts as of 20:00
-  with the builder still verifying): real people saying "mochi" in YouTube videos (recipes, tasting, Japanese food),
-  16 kHz mono. `pos/` 1925 tight word cuts (about 0.7 s), `pos_ctx/` 1.5 s cuts with the word in its own background,
-  `neg_adjacent/` 3571 1 s cuts from the same sentences, `neg/` 1.8k 1 s cuts from the same videos, `audio/` the
-  139 source files; file prefix before `_NNN` is the video id. This is the 18-763 lecture 21 recipe (many speakers,
-  the word as the only shared cue); `train_mochi.py --web` holds out the videos whose id hashes to 0 mod 10.
+- **mochi_web** (`~/data/mochi_web/`, final 2026-10-30 16:30; Mac mini `~/mochi-train/data/mochi_web2` is this final
+  set, `mochi_web` there is the earlier unverified cut with 1925 positives that the W runs trained on): real people
+  saying "mochi" in 80 YouTube videos from 65 channels (54 English, 26 Japanese; recipes, tasting), 16 kHz mono,
+  `manifest.json` with video, channel, language, time, transcripts and, inside each clip's `check` record, a `confidence` tier (785 high, 653 medium,
+  248 low: how many of three recognizer readings agree). `pos/` 1686 tight word cuts (0.45-1.0 s, verified by
+  SenseVoice; Whisper reads mochi or a close mishearing in 60 % of them and in 0 of 663 checked negatives),
+  `pos_ctx/` 1686 1.5 s cuts with the word in its own background (`word_offset_in_clip`), `neg_adjacent/` 3158 1 s
+  windows from the same sentence, `neg/` 1198 1 s speech windows at least 2 s from any mochi or sound-alike, `audio/`
+  the 80 source files (2.6 GB); file prefix before `_NNN` is the video id. Limits: cuts keep slivers of neighbouring
+  words, もちもち counts as mochi, 329 positives have background music. Scripts in `scripts/`, `run_final.sh` reruns the
+  cut and check. This is the 18-763 lecture 21 recipe (many speakers, the word as the only shared cue);
+  `train_mochi.py --web` holds out the videos whose id hashes to 0 mod 10.
 
 ## Not duck data
 
