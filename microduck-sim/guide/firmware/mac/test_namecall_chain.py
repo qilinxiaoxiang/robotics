@@ -534,3 +534,14 @@ def test_the_name_is_the_default_trigger_on_the_robot():
     assert nc.parse_args(["--any-voice"]).name is None
     assert nc.parse_args(["--wav", "x.wav"]).name is None                   # replays and the replay tool stay any-voice
     assert nc.parse_args(["--wav", "x.wav", "--name", "mochi"]).name == "mochi"
+
+
+def test_life_log_stop_does_not_crash_namecall(tmp_path):
+    """2026-10-30 18:35: the life log stopped on a nearly full card and its on_stop note crashed namecall
+    (Log.write got 'why' twice); the stop must only log a warning."""
+    src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "namecall.py")).read()
+    line = [l for l in src.splitlines() if "life log stopped" in l][0]
+    assert "**st)" not in line
+    log = nc.Log(None, echo=False)
+    st = dict(why="disk nearly full", used_mb=1.0, free_gb=1.7)
+    log.write("warn", why=f"life log stopped: {st['why']}", **{k: v for k, v in st.items() if k != "why"})

@@ -2008,7 +2008,8 @@ def main(argv=None):
     if a.life_log:
         from life_log import LifeLog
         nc.life = LifeLog(a.life_log, Decimate3, max_gb=a.life_max_gb,
-                          on_stop=lambda st: log.write("warn", why=f"life log stopped: {st['why']}", **st))
+                          on_stop=lambda st: log.write("warn", why=f"life log stopped: {st['why']}",
+                                                         **{k: v for k, v in st.items() if k != "why"}))
         log.write("life_log", dir=nc.life.dir, used_mb=round(nc.life.used / 1e6, 1), max_gb=a.life_max_gb)
     cap = Capture(dev, save_raw=a.save_raw).start()
     try:
