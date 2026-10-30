@@ -7,6 +7,7 @@ new log rows to this Mac (tail -n over ssh; nothing is parsed on the A7Z) and pr
     python3 t1_robot_test.py walk           # 0.25 m/s for 3 s, no head command (compare with walk61)
     python3 t1_robot_test.py walk_neck      # 0.25 m/s for 3 s with the neck at -0.4
     python3 t1_robot_test.py neck_hold      # 0.25 m/s for 2 s with the neck at -0.8, then stop and hold the neck 10 s
+    python3 t1_robot_test.py walk_at 0.10 -0.4   # 4 s at the given speed (0.05..0.25) and neck target, then stop
     python3 t1_robot_test.py home           # walk mode, zero command, head back to the default
     python3 t1_robot_test.py back           # brain restarted with the deployed models (walk61), monitor, torque kept
     python3 t1_robot_test.py report [S]     # report the last S seconds (default 10) without sending anything
@@ -185,6 +186,19 @@ def main():
     elif step == "neck_hold":
         t = put({"mode": "walk", "vx": 0.25, "vy": 0.0, "vtheta": 0.0, "for_s": 2, "head": {"neck_pitch": -0.8}})
         wait = 13
+    elif step == "walk_at":
+        # a slow walk at a chosen speed (0.05..0.25 m/s) and absolute neck target, 4 s, then stop with the neck held
+        vx = float(sys.argv[2]) if len(sys.argv) > 2 else 0.10
+        if not 0.05 <= vx <= 0.25:
+            raise SystemExit("walk_at speed must be 0.05..0.25 m/s")
+        cmd = {"mode": "walk", "vx": vx, "vy": 0.0, "vtheta": 0.0, "for_s": 4}
+        if len(sys.argv) > 3:
+            neck = float(sys.argv[3])
+            if not -1.0 <= neck <= 0.40:
+                raise SystemExit("walk_at neck must be -1.0..0.40 (absolute model angle)")
+            cmd["head"] = {"neck_pitch": neck}
+        t = put(cmd)
+        wait = 9
     else:
         raise SystemExit(__doc__)
     if "t1" not in models and step not in ("stand", "home"):

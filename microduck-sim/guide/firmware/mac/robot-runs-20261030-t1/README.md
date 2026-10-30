@@ -38,3 +38,9 @@ on 10/17-18 (`../robot-runs-20261018`). The sim underestimates how much it costs
 
 - `1_stand` ... `8_home.jsonl`: the brain rows of each step as `t1_robot_test.py` copied them.
 - `walk61_see_walks.jsonl`, `walk61_results.jsonl`, `t1_results.jsonl`: the comparison above.
+
+## Follow-up
+
+Speed-matched sim check and literature: fork `cmu/finetune/modal/FINETUNE-DELTA.md`, "Why T1 jitters". At walk61's
+actual speed (command 0.10-0.15) T1 is close to walk61's smoothness in the sim and keeps the neck down; the next robot
+step is `t1_robot_test.py walk_at 0.10 -0.4` and `walk_at 0.15 -0.8` after `restart`.
