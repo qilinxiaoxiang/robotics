@@ -47,7 +47,7 @@ def ssh(cmd, stdin=None, timeout=30):
 
 def current_cmd():
     try:
-        return json.loads(ssh(f"cat {CMD}"))
+        return json.loads(ssh(f"cat {CMD} 2>/dev/null || true"))   # absent after an A7Z reboot
     except json.JSONDecodeError:
         return None
 

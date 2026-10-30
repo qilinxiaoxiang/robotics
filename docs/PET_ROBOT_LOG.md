@@ -134,6 +134,9 @@ vx 0.25 has 4 jumps per 10 s against the allowed 3. G2's 0.6 m walking-path thre
 walk61's own plain walk covers 0.45 m in that sim, so that row says t2b walks slower than T1, not that it stops.
 t2a (beta 0.5) fails G1 (0.30). Candidate saved as runtime-overlay/models-t2b-best (README has the numbers);
 `t1_robot_test.py restart t2b` loads it. Not robot-tested: the plan needs G2 and G3 passed or Shawn's waiver.
+Shawn waived G2 and G3 the same evening ("豁免，上机测 t2b"): only the robot shows whether the anchor removes T1's
+jitter. models-t2b-best is on the A7Z overlay (hashes match); `t1_robot_test.py` no longer stops when the control
+file is missing after an A7Z reboot.
 
 ## 2026-10-30 afternoon: Mochi spotter v2, a three-seed ensemble
 
@@ -150,3 +153,34 @@ real false hits 1 (142.1 s, walking). The v1 model at its 0.9 threshold on the s
 the ensemble has no false hit but finds 15 of 28. Report `results/mochi_own.json`, from `eval_mochi.py`. Caveat: the
 held-out real negatives come from sessions whose other parts were trained on. Not yet on the duck: the A7Z was off
 Tailscale from about 12:00; install and the live listen-only run follow when it is back.
+
+## 2026-10-30 night: Mochi spotter v3-v5, the data catalog, life log, and the switch to the standard recipe
+
+What the day's runs showed (all on the 28-call held-out set of the v2 entry plus 124 s of held-out real room sounds):
+v3 matched the shortcut cues instead of dropping data. Synthetic-voice Mochi positives with same-voice synthetic
+speech as negatives (`tts_speech.py`, 38 clips in the same 28 voices) still woke on 235 of 561 held-out synthetic
+sentences, so they are out for good; the synthetic speech stays as negatives. RoboClub calls trained in folds
+(`--robo-fold 0/1`, odd or even calls held out) found 6-7 of the 8 noisy-room calls but added real false hits.
+v4 used every recording: calls_201411's eight lab calls (used as negatives for a day, found by rereading this log),
+each microphone as its own sample (`to_mono16.py --mics`, NAME@ch0/1/2), gap negatives between calls, and the
+`mine_life.py` labels of the two namecall runs. Best fold-0 ensemble (M0+M0s1) at 0.9: 23 of 28 calls, synthetic
+speech 0 per hour, 1 real false hit, noisy room 7 of 8; per-mic samples lifted calls_201411 from 1 of 4 to 3-4 of 4.
+The remaining failure is false hits on Shawn's ordinary speech (live_150103 100-144 s): one speaker's positives teach
+"Shawn's voice", and every seed draws a different line through it (F4 seeds: 7, 13, 16 of 20 calls).
+v5 fixed the seed spread at its cause: constant learning rate, no batch norm, last-epoch weights. Batch norm (folded
+into the conv weights at export), one-cycle learning rate and an exponential moving average of the weights; the export
+test `test_exported_model_matches_torch_with_batch_norm_folded` holds the numpy model to the torch one.
+Data: `AUDIO-DATA.md` lists every recording, download and generated set with its labels (the catalog did not exist;
+two sources were misused for lack of it). `life_log.py` records 3-mic 16 kHz segments round every voice, name and answer
+from boot (`namecall.py --life-log`, 8 GB cap, index `life_index.jsonl`), and `mine_life.py` labels them without anyone
+marking: sure calls (spotter P >= 0.9 and template z >= 3), repeated calls (a similar event 1-8 s from a sure call),
+quiet negatives, doubtful hits; on Shawn's ordinary speech it finds 0 calls, on the 14:38 and 14:55 runs 8 and 10.
+The lesson that cost the day: keyword spotting is a named task with a standard recipe, and the 18-763 lecture 21
+notebook Shawn had shown holds it (Speech Commands, thousands of speakers, no own recording: the word is the only
+shared cue). The hand-rolled single-speaker pipeline was patched round after round instead. Rule updated
+(`claude-config/rules/common/literature-before-experiments.md`): a named task starts from the mature routes, a shown
+reference is a recipe to diff, a hand-rolled pipeline that fails twice stops. Now running on the Mac mini, same held-out
+set: (1) the class recipe with real people saying "mochi" from YouTube (`~/data/mochi_web`: 1.9k word cuts, 1.7k cuts
+with context, 5k same-sentence and same-video negatives, videos hashing to 0 mod 10 held out; `train_mochi.py --web`),
+runs W0s0/W0s1 (fold 0) and W4s0 (all data); (2) openWakeWord's pipeline (frozen pretrained speech embedding, small
+head, thousands of TTS voices) in `~/mochi-train/oww`. The better one on the held-out set goes on the duck.
