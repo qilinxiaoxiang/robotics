@@ -255,16 +255,20 @@ def test_chain_sound_to_commands(tmp_path):
     n = nc.NameCall(a, log, now=lambda: 0.0)
     n.head.default = dict(nc.DEFAULT_HEAD)
     rows = []
-    dets = n.run_blocks(blocks(scene([(1.5, 60), (6.0, -45)], 10.0)), head_rows=rows)
-    assert [round(d["t"], 1) for d in dets] == [1.5, 6.0]
+    # the scene renders bearings in the resting head frame, so the second call waits until the attention phase
+    # (ATTEND_S after the first) has let the head drift home; a call during the hold is heard in the turned frame
+    dets = n.run_blocks(blocks(scene([(1.5, 60), (15.5, -45)], 19.0)), head_rows=rows)
+    assert [round(d["t"], 1) for d in dets] == [1.5, 15.5]
     assert abs(dets[0]["az_deg"] - 60) < 4 and abs(dets[1]["az_deg"] + 45) < 4
     assert dets[0]["decided_t"] - dets[0]["t"] < nc.CALL_WINDOW_S + 0.1    # the call localiser hears the whole call first
     assert dets[0]["el_deg"] == 35.0 and dets[0]["bins"] > 50
     assert dets[0]["take"] != dets[1]["take"]
     assert all(abs(h["head_yaw"]) <= 1.4 + 1e-6 for _, h, _ in rows)
-    first = [(t, h) for t, h, _ in rows if 1.5 <= t < 6.0]
+    first = [(t, h) for t, h, _ in rows if 1.5 <= t < 15.5]
     assert first and max(h["head_yaw"] for _, h in first) > 0.5          # turned left toward +60
-    second = [(t, h) for t, h, _ in rows if t >= 6.0]
+    held = [h["head_yaw"] for t, h, _ in rows if 5.0 <= t < 11.0]
+    assert held and min(held) > 0.7                                         # and stayed there through the attention
+    second = [(t, h) for t, h, _ in rows if t >= 15.5]
     assert second and min(h["head_yaw"] for _, h in second) < -0.4         # then right toward -45
     assert json.load(open(cmd))["mode"] == "walk"
     kinds = [json.loads(l)["kind"] for l in open(str(tmp_path / "nc.jsonl"))]
@@ -328,11 +332,11 @@ def test_every_response_quacks_and_a_caller_behind_gets_a_body_turn(tmp_path):
         return real_write(head, vtheta, for_s)
     n.writer.write = spy
     t = 0.0
-    for i in range(12):   # twelve calls from behind-left, 16 s apart (take, 10.5 s turn, ease home): novelty habituates
-        det = dict(t=t, az_rad=2.09, az_deg=120.0, bins=100, e_db=-30.0, floor_db=-48.0)
+    for i in range(12):   # twelve calls from behind-left, 30 s apart (take, 10.5 s turn, 10 s attention, ease home)
+        det = dict(t=t, az_rad=2.09, az_deg=120.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5)
         writes.clear()
         n.respond(det, t)
-        t_end = t + 16.0
+        t_end = t + 30.0
         while t < t_end:
             n.motion_tick(t)
             t += 0.02
@@ -341,7 +345,11 @@ def test_every_response_quacks_and_a_caller_behind_gets_a_body_turn(tmp_path):
         yaws = [w[1] for w in turning]
         assert yaws[0] > 1.0 and yaws[-1] < 0.5 and all(b <= a_ + 1e-9 for a_, b in zip(yaws, yaws[1:]))   # head unwinds
         assert all(w[2] < -0.3 for w in turning)                                    # looking up throughout
-        assert writes[-1][0] == 0 and abs(writes[-1][1]) < 1e-6                     # ends at rest, head home
+        k = max(i for i, w in enumerate(writes) if w[0])
+        held = writes[k + 1:k + 1 + 450]                                            # the next 9 s: attention
+        assert held and all(w[0] == 0 for w in held)
+        assert all(abs(w[1] - yaws[-1]) < 0.25 and w[2] < -0.3 for w in held)     # gaze stays on the caller, up
+        assert writes[-1][0] == 0 and abs(writes[-1][1]) < 1e-6                     # 30 s on: at rest, head home
     assert len(quacks) == 12, len(quacks)                                            # one quack per call, never dropped
     assert sum(1 for r in turns if r["kind"] == "turn") == 12 and sum(1 for r in turns if r["kind"] == "turn_done") == 12
     last = json.load(open(cmd))
@@ -375,3 +383,131 @@ def test_quack_skipped_only_when_the_caller_really_repeats(tmp_path):
     q, r = run(2.0, 8)
     skipped = [x for x in r if "quack_skipped" in x]
     assert 4 <= len(q) < 8 and skipped and all(x["quack_skipped"]["novelty"] < nc.QUACK_NOVELTY_MIN for x in skipped)
+
+
+# --- attention: hold, face lock, scan, gyro turn, margin gate (2026-10-30 home test)
+
+class FakeFinder:
+    """facefind.FaceFinder double: a face fixed in the world at (yaw, pitch up) from t_face on, reported as the offset
+    from the current gaze the camera would see (4 Hz frames); None = no face ever."""
+
+    def __init__(self, gaze, world=None, t_face=0.0):
+        self.gaze, self.world, self.t_face = gaze, world, t_face
+        self.rate_hz, self.det_size = 4.0, 640
+
+    def latest(self, now=None, stale_s=1.0):
+        t_frame = math.floor(now / 0.25) * 0.25
+        if self.world is None or t_frame < self.t_face:
+            return None
+        gy, gp = self.gaze(now)
+        return dict(t=t_frame, yaw_err=gy - self.world[0], pitch_err=self.world[1] - gp, size=0.1, score=0.9)
+
+    def stats(self):
+        return dict(frames=0)
+
+
+def attention_run(tmp_path, az=0.6, finder=None, until=16.0, seed=3, **kw):
+    a = args(cmd=str(tmp_path / "c.json"), seed=seed, pitch=nc.LOOK_PITCH, **kw)
+    a.no_turn = True
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    if finder is not None:
+        n.finder = finder(n.head.gaze) if callable(finder) else finder
+    recs, writes, clock = [], [], [0.0]
+    n.log.write = lambda kind, **rec: recs.append((kind, rec))
+    real = n.writer.write
+    def spy(head=None, vtheta=0.0, for_s=None):
+        writes.append((clock[0], None if head is None else head["head_yaw"], None if head is None else head["head_pitch"]))
+        return real(head, vtheta, for_s)
+    n.writer.write = spy
+    n.respond(dict(t=0.0, az_rad=az, az_deg=round(math.degrees(az)), bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+    t = 0.0
+    while t < until:
+        clock[0] = t
+        n.motion_tick(t)
+        t += 0.02
+    return n, recs, writes
+
+
+def test_attention_holds_the_gaze_on_the_caller_then_drifts_home(tmp_path):
+    """After the take the head stays on the caller, looking up, for ATTEND_S (Shawn 2026-10-30: look at me and wait,
+    do not turn back and stand), then drifts home; with no camera nothing scans."""
+    n, recs, writes = attention_run(tmp_path)
+    at = lambda s: next(w for w in writes if abs(w[0] - s) < 0.011)
+    for s in (4.0, 6.0, 9.5):
+        w = at(s)
+        assert abs(w[1] - 0.6) < 0.15 and w[2] < -0.5, (s, w)            # on the caller (yaw 0.6), camera up
+    assert n.attend_until is None and [k for k, _ in recs if k == "attend_done"] == ["attend_done"]
+    assert not [k for k, _ in recs if k == "scan"]
+    assert abs(writes[-1][1]) < 1e-6 and abs(writes[-1][2] - n.head.default["head_pitch"]) < 1e-6   # home at 16 s
+
+
+def test_a_face_in_view_is_centred_and_followed(tmp_path):
+    """A face 0.2 rad left of the heard bearing and lower than the look-up pitch: the gaze converges on it within a
+    couple of seconds (FACE_GAIN per 4 Hz frame), the sighting is logged once and extends the attention."""
+    n, recs, writes = attention_run(tmp_path, finder=lambda gaze: FakeFinder(gaze, world=(0.8, 0.5), t_face=2.5), until=9.0)
+    yaw, pitch = n.head.gaze(9.0)
+    assert abs(yaw - 0.8) < 0.05 and abs(pitch - 0.5) < 0.05, (yaw, pitch)
+    faces = [r for k, r in recs if k == "face"]
+    assert len(faces) == 1 and faces[0]["yaw_err_deg"] < -5 and faces[0]["pitch_err_deg"] < -20
+    assert n.attend_until is not None and n.attend_until > 9.0 + 8.0          # extended by the last sighting
+    assert not [k for k, _ in recs if k == "scan"]
+
+
+def test_no_face_in_view_sweeps_once_around_the_bearing(tmp_path):
+    """With a camera but no face the head waits FACE_WAIT_S, sweeps SCAN_OFFSETS around the heard bearing at the pitch
+    cap (within YAW_CAP), returns to the bearing and waits; the detector is deafened only as each step starts."""
+    n, recs, writes = attention_run(tmp_path, finder=lambda gaze: FakeFinder(gaze, world=None), until=16.0)
+    scans = [r for k, r in recs if k == "scan"]
+    assert len(scans) == 1 and abs(scans[0]["around_deg"] - math.degrees(0.6)) < 10 and scans[0]["steps"] == len(nc.SCAN_OFFSETS)
+    yaws = [w[1] for w in writes if 3.5 < w[0] < 9.5]
+    assert max(yaws) > 1.1 and min(yaws) < -0.4                              # swept both ways
+    assert all(w[2] < -0.5 for w in writes if 3.5 < w[0] < 9.5)               # pitch stays at the cap
+    assert abs(writes[-1][1]) < 1e-6                                          # 16 s: attention over, home
+
+
+def test_body_turn_stops_on_the_gyro_not_the_clock(tmp_path):
+    """The brain's tick log says how far the body really turned: at 0.4 rad/s (the home floor) a caller at 120 deg is
+    within TURN_KEEP after 4.5 s, not the 10.5 s the planning rate would wait (2026-10-30: a timed turn went 273 deg)."""
+    cmd, log_path = str(tmp_path / "c.json"), str(tmp_path / "brain.jsonl")
+    a = args(cmd=cmd, seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    n.gyro = nc.GyroTurn(log_path)
+    recs = []
+    n.log.write = lambda kind, **rec: recs.append((kind, rec))
+    f = open(log_path, "a")
+    def row(t, gz):
+        f.write(json.dumps(dict(t=t, mode="walk", gyro_body=[0.0, 0.0, gz], cmd=nc.WALK_ZERO)) + "\n")
+        f.flush()
+    row(0.0, 0.0)
+    n.respond(dict(t=0.0, az_rad=2.09, az_deg=120.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+    t = 0.0
+    while t < 20.0:
+        cur = nc.read_cmd_file(cmd) or {}
+        row(t, 0.4 if cur.get("vtheta") else 0.0)       # the body turns left at 0.4 rad/s while the command says so
+        n.motion_tick(t)
+        t += 0.02
+    turn = next(r for k, r in recs if k == "turn")
+    done = next(r for k, r in recs if k == "turn_done")
+    assert turn["dur_s"] > 10 and done["by"] == "gyro" and 4.0 < done["s"] < 5.5, (turn, done)
+    assert abs(done["turned_deg"] - math.degrees(2.09 - nc.TURN_KEEP)) < 6
+    assert n.attend_until is not None or any(k == "attend_done" for k, _ in recs)   # attention followed the turn
+
+
+def test_no_body_turn_on_a_guessed_bearing(tmp_path):
+    """A bearing whose front/back margin is under TURN_MARGIN_MIN gets the head take only (2026-10-30: three
+    noise-level triggers each spun the body for 7-12 s)."""
+    a = args(cmd=str(tmp_path / "c.json"), seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    r = n.respond(dict(t=0.0, az_rad=-1.8, az_deg=-103.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.01), 0.0)
+    assert n.turn is None and r["turn_skipped"]["margin"] == 0.01
+    r = n.respond(dict(t=30.0, az_rad=-1.8, az_deg=-103.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.6), 30.0)
+    assert n.turn is not None and "turn" in r
+
+
+def test_the_name_is_the_default_trigger_on_the_robot():
+    assert nc.parse_args([]).name == "mochi"
+    assert nc.parse_args(["--any-voice"]).name is None
+    assert nc.parse_args(["--wav", "x.wav"]).name is None                   # replays and the replay tool stay any-voice
+    assert nc.parse_args(["--wav", "x.wav", "--name", "mochi"]).name == "mochi"

@@ -8,8 +8,16 @@ Chain, all in this process, numpy only (no scipy on the A7Z):
   EMA pre-inverse of walk_brain's HEAD_ALPHA)  ->  /tmp/duck_cmd.json {"mode": "walk", vx 0, "head": {...}} at 50 Hz
   -> stand61 balances while the head turns  ->  QuackBank plays a pitched duck call through duck_sound.Voice on arrival.
 
-Two trigger modes. --any-voice (the default until the robot test of the name passes): every voice-band onset is a
-call. --name mochi: a keyword spotter (KeywordGate: sherpa-onnx KeywordSpotter, the public zipformer
+After the take the head does not drift home: the attention phase (NameCall._attend_tick) keeps the gaze on the caller
+and waits ATTEND_S for whatever comes next (another call re-aims it, a touch is the brain's business). With the
+camera (facefind.FaceFinder: a7z_cam's shared frame -> the SCRFD face detector of pet/identity, 4 Hz, 120 ms per frame
+on the A7Z) a face in view is centred and followed; with none in view for FACE_WAIT_S the head sweeps SCAN_OFFSETS
+once around the heard bearing, pitch at the cap, then waits where the sound came from. A caller behind the head's
+reach: the body turns on the spot and stops on the brain's gyro (GyroTurn), not a clock, and only when the bearing's
+front/back margin is at least TURN_MARGIN_MIN; the attention phase then continues with the head on the caller.
+
+Two trigger modes. --name mochi (the default since 2026-10-30; --any-voice for the listen-only checks and the
+tests): a keyword spotter (KeywordGate: sherpa-onnx KeywordSpotter, the public zipformer
 gigaspeech-3.3M int8 model in ~/rt/models/kws/, one thread) runs all the time on the two ears downmixed to 16 kHz with
 the keywords file namecall-20261029/keywords_mochi.txt; only a spotted "Mochi" is a call. The onset detector keeps
 running as a source of word starts: the direction is taken from the 4-channel ring buffer (3 s) at the detector onset
@@ -121,9 +129,21 @@ QUACK_NOVELTY_MIN = 0.3
 # body turn toward a caller the head cannot reach (|az| > YAW_CAP): the robot-tested turn on the spot, walk61 at
 # vtheta +-0.3 (pet/mind/runner.py, survey 2026-10-30: 7-13 deg/s on the floor), after the head take has drifted home
 TURN_VTHETA = 0.3
-TURN_RATE = 0.17                 # rad/s the robot actually turns at vtheta 0.3 (about 10 deg/s, measured range 7-13)
+# rad/s assumed for planning the time cap only: the turn itself stops on the body gyro integrated from the brain's tick
+# log (2026-10-30 home floor: 0.4 rad/s at vtheta 0.3, a 12 s timed turn went 273 deg; 7-13 deg/s on the 10/30 survey)
+TURN_RATE = 0.17
 TURN_KEEP = 0.3                  # rad of the caller's bearing left for the head when the body stops turning
-TURN_S = (1.5, 12.0)             # turn duration bounds
+TURN_S = (1.5, 12.0)             # turn duration bounds (the cap when the gyro is not readable)
+TURN_MARGIN_MIN = 0.3            # no body turn on a bearing whose front/back margin is below this (2026-10-30: three
+#                                  noise-level triggers with margin 0.0-0.013 each started a 7-12 s turn)
+# attention after the take: the head stays on the caller (not the drift home) and waits for whatever comes next
+ATTEND_S = 10.0                  # s since the last call or face sighting; then the head drifts home
+FACE_GAIN = 0.6                  # fraction of the measured face offset corrected per new frame
+FACE_WAIT_S = 1.0                # s without a face (after the take arrives, or since the last sighting) before the scan
+FACE_PITCH = (-0.3, 1.1)         # gaze pitch range while tracking a face (express rad up; 1.1 = the head pitch cap)
+SCAN_OFFSETS = (0.0, 0.4, -0.4, 0.8, -0.8, 1.2, -1.2)   # yaw sweep around the heard bearing when no face is in view
+SCAN_NEAR = (0.0, 0.3, -0.3)     # sweep around the last seen face when it is lost
+SCAN_DWELL_S = 0.7               # s per scan step (the brain's head EMA and the detector's 4 Hz both settle in this)
 
 # name mode (--name): keyword spotter
 KWS_FS = 16000
@@ -836,9 +856,11 @@ class HeadPath:
         self.settle_at = None
         self.last = None
         self.home_at = None
+        self.holding = False            # attention: after the take the gaze stays where it is (aim() moves it)
 
-    def start(self, now, az_rad, pitch=LOOK_PITCH):
-        """Returns the Performance (take name in .take, params, events)."""
+    def start(self, now, az_rad, pitch=LOOK_PITCH, hold=False):
+        """Returns the Performance (take name in .take, params, events). hold: after the take keep the gaze on the
+        caller (the attention phase) instead of drifting home."""
         behind = abs(az_rad) > self.yaw_cap
         yaw = float(np.clip(az_rad, -self.yaw_cap, self.yaw_cap))
         perf = self.ex.submit(acknowledge(Target(yaw, pitch, "caller"), warmth=self.warmth, energy=self.energy,
@@ -846,29 +868,67 @@ class HeadPath:
         self.settle_at = now + perf.duration
         self.active_until = self.settle_at + 2.5
         self.home_at = None
+        self.holding = bool(hold)
         self.last = dict(take=perf.take, yaw=yaw, pitch=pitch, behind=behind, t=now,
                          arrival=None if perf.arrival is None else now + perf.arrival, events=list(perf.events))
         return perf
 
     @property
     def active(self):
-        """Still writing head commands (take or the drift home)."""
-        return self.active_until is not None
+        """Still writing head commands (take, attention hold, or the drift home)."""
+        return self.active_until is not None or self.holding
 
     @property
     def busy(self):
         """The take itself is running (the drift home afterwards may be interrupted by a new call)."""
         return self.settle_at is not None
 
+    def gaze(self, now):
+        """(yaw, pitch up) the gaze is at now, express rad."""
+        cur = self.ex.current(now)
+        return float(cur["ATTEND.yaw"]), float(cur["ATTEND.pitch"])
+
+    def aim(self, yaw, pitch):
+        """Attention: move the held gaze to (yaw, pitch up), express rad; the brain's head EMA eases the head there.
+        Ignored while a take runs (the take owns the gaze until it ends)."""
+        if self.ex.perf is not None:
+            return False
+        self.ex.state["ATTEND.yaw"] = float(np.clip(yaw, -self.yaw_cap, self.yaw_cap))
+        self.ex.state["ATTEND.pitch"] = float(np.clip(pitch, *FACE_PITCH))
+        return True
+
+    def set_pose(self, yaw, pitch):
+        """Attention hand-over from the body turn: the gaze is already at (yaw, pitch up) and so is the brain's EMA."""
+        self.holding, self.settle_at, self.active_until = True, None, None
+        if self.ex.perf is not None:
+            self.ex.state = self.ex.current(self.ex._last_now or 0.0)
+            self.ex.perf = None
+        self.ex.state["ATTEND.yaw"], self.ex.state["ATTEND.pitch"] = float(yaw), float(pitch)
+        self.ex._prev_out = None                       # the card's rate limit starts from here, not the take's end
+        self.c[:] = [0.25 * pitch, -pitch, yaw, 0.0]   # the duck card's ATTEND map (neck, head pitch, yaw, roll)
+
+    def release(self, now):
+        """Attention over: drift home over 2.5 s, then quiet."""
+        if not self.holding:
+            return
+        self.holding = False
+        self.ex.submit(content_idle(affect=Affect(self.affect.valence, max(0.2, self.affect.arousal - 0.2))), now)
+        self.active_until = now + 2.5
+
     def tick(self, now):
-        if self.active_until is None and not self.idle:
+        if self.active_until is None and not self.idle and not self.holding:
             return None, [], False
         if self.settle_at is not None and now >= self.settle_at:
-            self.ex.submit(content_idle(affect=Affect(self.affect.valence, max(0.2, self.affect.arousal - 0.2))), now)
             self.settle_at = None
+            if self.holding:
+                self.active_until = None     # the gaze stays on the caller; release() starts the drift home
+            else:
+                self.ex.submit(content_idle(affect=Affect(self.affect.valence, max(0.2, self.affect.arousal - 0.2))), now)
         frame = self.ex.step(now)
         y = np.array([frame["outputs"][j] for j in HEAD_JOINTS])
-        if self.preinverse:
+        if self.preinverse and not (self.holding and self.ex.perf is None):
+            # the EMA pre-inverse serves the take's snaps; the attention hold sends its slow gaze as it is (the
+            # pre-inverse would multiply the idle breathing and each face correction by 1 / HEAD_ALPHA)
             r = np.clip(self.c + (y - self.c) / HEAD_ALPHA, -self.lim, self.lim)
         else:
             r = np.clip(y, -self.lim, self.lim)
@@ -1049,6 +1109,44 @@ class BrainGate:
         return st
 
 
+class GyroTurn:
+    """Body rotation from the brain's tick log: integrates gyro_body z (rad/s, + left) over the rows that appear while
+    a turn runs; update() returns the angle turned since start(), or None before the first two rows."""
+
+    def __init__(self, log_path=None):
+        self.path = log_path
+        self.last_t = None
+        self.theta = 0.0
+        self.n = 0
+
+    @property
+    def ok(self):
+        return self.n >= 2
+
+    def start(self, log_path=None):
+        if log_path:
+            self.path = log_path
+        self.last_t, self.theta, self.n = None, 0.0, 0
+        row = tail_json(self.path) if self.path else None
+        if row and "t" in row:
+            self.last_t, self.n = float(row["t"]), 1
+
+    def update(self):
+        row = tail_json(self.path) if self.path else None
+        if not row or "t" not in row or not row.get("gyro_body"):
+            return self.theta if self.ok else None
+        t = float(row["t"])
+        if self.last_t is None:
+            self.last_t, self.n = t, 1
+            return None
+        if t > self.last_t:
+            dt = min(t - self.last_t, 0.2)          # a stalled log must not integrate a long gap at the last rate
+            self.theta += float(row["gyro_body"][2]) * dt
+            self.last_t = t
+            self.n += 1
+        return self.theta if self.ok else None
+
+
 class CmdWriter:
     """Writes the zero-command walk with a head pose to the control file, only while nobody else has written it."""
 
@@ -1113,7 +1211,7 @@ class NameCall:
 
     def __init__(self, args, log, now=time.time, kws=None):
         self.a, self.log, self.now = args, log, now
-        name = getattr(args, "name", None)
+        name = None if getattr(args, "any_voice", False) else getattr(args, "name", None)
         refractory = getattr(args, "onset_gap", ONSET_GAP_S) if name else args.refractory
         if getattr(args, "detector", "bins") == "bins":
             self.det = CallDetector(snr_db=getattr(args, "snr_db", DET_SNR_DB), min_bins=getattr(args, "min_bins", DET_MIN_BINS),
@@ -1160,6 +1258,16 @@ class NameCall:
         self.turn = None                 # planned body turn toward a caller behind: dict(sign, dur_s, az_rad)
         self.turn_until = None           # the body turn runs until this time
         self.turn_t0 = self.turn_plan = self.turn_home_t = self.turn_home_from = None
+        self.gyro = GyroTurn(self.gate.log if self.gate is not None else None) if self.gate is not None else None
+        self.finder = None               # facefind.FaceFinder (run_live starts it) or a test double with latest(now)
+        self.attend_s = float(getattr(args, "attend", ATTEND_S))
+        self.attend_until = None         # attention phase runs until this time (extended by calls and face sightings)
+        self.attend_base = None          # (yaw, pitch) the scan is built around
+        self.face_t = None               # last face sighting time
+        self.face_used_t = -1e9          # frame time of the last sighting acted on
+        self.face_seen = False           # a face was seen in this attention phase
+        self.scan = None                 # [(until, yaw)] remaining scan steps, [] when the scan is spent
+        self.no_face_since = None
         self.deaf_from_quack = False
         self.calls = []                  # per response records (tests / sim)
         self.rows = None                 # offline drivers collect (t, head, events) here
@@ -1263,7 +1371,10 @@ class NameCall:
         az = (az + math.pi) % (2 * math.pi) - math.pi
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3))
         if self.head is not None:
-            perf = self.head.start(now, az, self.a.pitch)
+            perf = self.head.start(now, az, self.a.pitch, hold=True)
+            self.attend_until = now + self.attend_s
+            self.attend_base = (self.head.last["yaw"], self.a.pitch)
+            self.scan, self.no_face_since, self.face_seen = None, None, False
             rec.update(take=perf.take, behind=self.head.last["behind"], arrival_s=perf.arrival,
                        params={k: (round(v, 4) if isinstance(v, float) else v) for k, v in perf.params.items()},
                        events=perf.events, target_yaw=self.head.last["yaw"])
@@ -1278,6 +1389,10 @@ class NameCall:
                 else:
                     rec["quack_skipped"] = dict(novelty=round(novelty, 3), why="caller repeating; head only")
             self.turn = self.plan_turn(az) if (self.head.last["behind"] and not getattr(self.a, "no_turn", False)) else None
+            margin = det.get("margin")
+            if self.turn is not None and margin is not None and not (margin >= TURN_MARGIN_MIN):
+                rec["turn_skipped"] = dict(margin=margin, why=f"front/back margin under {TURN_MARGIN_MIN}: the bearing is a guess")
+                self.turn = None
             if self.turn is not None:
                 rec["turn"] = dict(self.turn)
         self.responses += 1
@@ -1325,14 +1440,64 @@ class NameCall:
             head = None
         if self.turn_until is not None:
             return self._turn_tick(now)
+        if self.attend_until is not None and not self.head.busy:
+            self._attend_tick(now)
         if head is not None:
             self.head_yaw_now = float(head["head_yaw"] - self.head.default["head_yaw"])
             if self.writer is not None and not self.writer.write(head):
                 self.log.write("yield", why="control file written by another program; take stopped", found=self.writer.taken)
-                self.head.active_until, self.head.settle_at = None, None
-                self.turn = None
+                self.head.active_until, self.head.settle_at, self.head.holding = None, None, False
+                self.turn, self.attend_until = None, None
                 return False
         return True
+
+    # --- attention: hold the gaze on the caller, find the face, wait
+    def _attend_tick(self, now):
+        """After the take (and after a body turn): the gaze stays on the caller; a face in the camera is centred and
+        followed; with no face in view after FACE_WAIT_S the head sweeps SCAN_OFFSETS around the heard bearing, once;
+        ATTEND_S after the last call or sighting the head drifts home (HeadPath.release)."""
+        if now >= self.attend_until:
+            self.attend_until = None
+            self.head.release(now)
+            self.log.write("attend_done", face_seen=self.face_seen)
+            return
+        face = self.finder.latest(now) if self.finder is not None else None
+        if face is not None and face["t"] > self.face_used_t:
+            self.face_used_t, self.face_t = face["t"], now
+            yaw, pitch = self.head.gaze(now)
+            yaw = yaw - FACE_GAIN * face["yaw_err"]       # face right of centre -> yaw down (head_yaw + is left)
+            pitch = pitch + FACE_GAIN * face["pitch_err"]  # face above centre -> look up
+            if self.head.aim(yaw, pitch):
+                self.attend_until = now + self.attend_s
+                self.scan, self.no_face_since = None, None
+                self.attend_base = (self.head.gaze(now)[0], self.head.gaze(now)[1])
+                if not self.face_seen:
+                    self.face_seen = True
+                    self.log.write("face", yaw_err_deg=round(math.degrees(face["yaw_err"]), 1),
+                                   pitch_err_deg=round(math.degrees(face["pitch_err"]), 1), size_deg=round(math.degrees(face["size"]), 1),
+                                   score=face.get("score"), gaze_yaw_deg=round(math.degrees(yaw), 1), gaze_pitch_deg=round(math.degrees(pitch), 1))
+            return
+        if self.no_face_since is None:
+            self.no_face_since = now
+        if self.finder is None or self.scan == [] or now - self.no_face_since < FACE_WAIT_S:
+            return                       # no camera: nothing to scan with, the gaze waits on the heard bearing
+        if self.scan is None:
+            if self.face_seen:
+                base, offs = self.head.gaze(now), SCAN_NEAR
+            else:
+                base, offs = self.attend_base or self.head.gaze(now), SCAN_OFFSETS
+            self.scan = [(now + (i + 1) * SCAN_DWELL_S, base[0] + off) for i, off in enumerate(offs)]
+            self.scan.append((now + (len(offs) + 1) * SCAN_DWELL_S, base[0]))   # back to where the sound came from
+            self.scan_pitch = max(base[1], LOOK_PITCH) if not self.face_seen else base[1]
+            self.log.write("scan", around_deg=round(math.degrees(base[0]), 1), steps=len(offs), near=self.face_seen)
+        until, yaw = self.scan[0]
+        if self.head.aim(yaw, self.scan_pitch) and yaw != getattr(self, "scan_sent", None):
+            self.scan_sent = yaw
+            self.det.deaf_until = max(self.det.deaf_until, now + 0.1)   # own servos as the head steps, not the whole sweep
+        if now >= until:
+            self.scan.pop(0)
+            if not self.scan:
+                self.face_seen = False       # a lost face is searched once; then wait where the sound came from
 
     def _start_turn(self, now):
         plan, self.turn = self.turn, None
@@ -1341,51 +1506,58 @@ class NameCall:
         for e in self.head.last["events"]:
             if e.get("kind") == "call" and t0 + e["t"] >= now:
                 self.quack_due.append((t0 + e["t"], dict(e)))
-        self.head.active_until, self.head.settle_at = None, None
+        self.head.active_until, self.head.settle_at, self.head.holding = None, None, False
         self.turn_until = now + plan["dur_s"]
         self.turn_t0, self.turn_plan, self.turn_home_t = now, plan, None
+        if self.gyro is not None:
+            self.gyro.start(self.gate.log if self.gate is not None else None)
         self.log.write("turn", vtheta=plan["sign"] * TURN_VTHETA, dur_s=plan["dur_s"], az_deg=round(math.degrees(plan["az_rad"]), 1),
-                       until=round(self.turn_until, 3))
+                       until=round(self.turn_until, 3), gyro=self.gyro is not None)
 
-    def _turn_head(self, now):
-        """Head on the caller in the turning body frame: yaw unwinds with the estimated body rotation, pitch up."""
+    def _turned(self, now):
+        """Body rotation since the turn began, rad (+ left): the brain's gyro integral, else the planning rate."""
+        if self.gyro is not None:
+            th = self.gyro.update()
+            if th is not None:
+                return th
+        return self.turn_plan["sign"] * TURN_RATE * (now - self.turn_t0)
+
+    def _turn_head(self, now, theta=None):
+        """Head on the caller in the turning body frame: yaw unwinds with the body rotation, pitch up."""
         plan = self.turn_plan
-        theta = plan["sign"] * TURN_RATE * (now - self.turn_t0)
+        theta = self._turned(now) if theta is None else theta
         yaw = float(np.clip(plan["az_rad"] - theta, -self.head.yaw_cap, self.head.yaw_cap))
         pitch = -float(np.clip(self.a.pitch, 0.0, HEAD_RANGE[1]))   # head_pitch delta, minus = up
         return yaw, pitch
 
     def _turn_tick(self, now):
+        """The body turns at TURN_VTHETA until the caller's bearing is within TURN_KEEP of straight ahead by the gyro
+        (or the time cap), then the attention phase takes over with the head on the caller."""
         plan = self.turn_plan
         self.det.deaf_until = max(self.det.deaf_until, now + 0.1)   # own servos while turning
-        if self.turn_home_t is None:
-            yaw, pitch = self._turn_head(now)
-            self.head_yaw_now = yaw
-            head = want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default)
-            left = max(0.0, self.turn_until - now)
-            if now < self.turn_until:
-                ok = self.writer is None or self.writer.write(head, vtheta=plan["sign"] * TURN_VTHETA, for_s=left + 1.0)
-            else:
-                ok = self.writer is None or self.writer.write(head)   # body stops; the head eases home from here
-                self.turn_home_t, self.turn_home_from = now, (yaw, pitch)
-            if not ok:
-                self.log.write("yield", why="control file written by another program; body turn stopped", found=self.writer.taken)
-                self.turn_until = None
-                return False
-            return True
-        f = min(1.0, (now - self.turn_home_t) / 1.0)
-        yaw0, pitch0 = self.turn_home_from
-        yaw, pitch = yaw0 * (1.0 - f), pitch0 * (1.0 - f)
+        theta = self._turned(now)
+        yaw, pitch = self._turn_head(now, theta)
         self.head_yaw_now = yaw
-        ok = self.writer is None or self.writer.write(want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default))
+        head = want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default)
+        done = now >= self.turn_until or plan["sign"] * (plan["az_rad"] - theta) <= TURN_KEEP
+        if not done:
+            left = max(0.0, self.turn_until - now)
+            ok = self.writer is None or self.writer.write(head, vtheta=plan["sign"] * TURN_VTHETA, for_s=left + 1.0)
+        else:
+            ok = self.writer is None or self.writer.write(head)   # body stops; the gaze stays on the caller
         if not ok:
-            self.log.write("yield", why="control file written by another program", found=self.writer.taken)
-            self.turn_until = None
+            self.log.write("yield", why="control file written by another program; body turn stopped", found=self.writer.taken)
+            self.turn_until = self.attend_until = None
             return False
-        if f >= 1.0:
+        if done:
             self.turn_until = None
-            self.log.write("turn_done", az_deg=round(math.degrees(plan["az_rad"]), 1), turned_deg=round(math.degrees(TURN_RATE * plan["dur_s"]), 1))
+            self.log.write("turn_done", az_deg=round(math.degrees(plan["az_rad"]), 1), turned_deg=round(math.degrees(theta), 1),
+                           by="gyro" if (self.gyro is not None and self.gyro.ok) else "time", s=round(now - self.turn_t0, 2))
             self.det.deaf_until = max(self.det.deaf_until, now + 0.5)
+            self.head.set_pose(yaw, -pitch)
+            self.attend_until = now + self.attend_s
+            self.attend_base = (yaw, -pitch)
+            self.scan, self.no_face_since, self.face_seen = None, None, False
         return True
 
     def mode_info(self):
@@ -1492,9 +1664,10 @@ class NameCall:
                     log.write("heartbeat", floor_db=None if floor is None else round(floor, 1),
                               blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
                               kw_hits=self.kw_hits,
-                              writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"))
+                              writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"),
+                              face=None if self.finder is None else self.finder.stats())
                 if a.once and self.responses >= a.once and (self.head is None or not self.head.active) \
-                        and self.turn is None and self.turn_until is None and not self.quack_due:
+                        and self.turn is None and self.turn_until is None and self.attend_until is None and not self.quack_due:
                     # the drift home has finished too: the last command is the policy default
                     log.write("done", responses=self.responses)
                     break
@@ -1540,6 +1713,9 @@ def parse_args(argv=None):
                     help="never turn the body toward a caller the head cannot reach (default: turn on the spot at vtheta 0.3)")
     ap.add_argument("--no-keepalive", action="store_true",
                     help="do not hold a silent playback stream open (then every quack silences the capture)")
+    ap.add_argument("--no-face", action="store_true",
+                    help="no camera: the attention phase holds the heard bearing without looking for the face")
+    ap.add_argument("--attend", type=float, default=ATTEND_S, help="s the gaze waits on the caller after the last call or face")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--once", type=int, default=0, help="stop after N responses (0 = run on)")
     ap.add_argument("--mute", action="store_true", help="no quack (first robot test)")
@@ -1553,9 +1729,10 @@ def parse_args(argv=None):
     ap.add_argument("--default-head-file", default=None, help="json {joint: rad} instead of the stand61 metadata")
     ap.add_argument("--quiet", action="store_true")
     trig = ap.add_mutually_exclusive_group()
-    trig.add_argument("--any-voice", action="store_true", help="every voice-band onset is a call (the default)")
+    trig.add_argument("--any-voice", action="store_true", help="every voice-band onset is a call (tests, listen-only checks)")
     trig.add_argument("--name", choices=sorted(KEYWORDS), default=None,
-                      help="respond only to this name (keyword spotter; needs sherpa-onnx and the model)")
+                      help="respond only to this name (keyword spotter; needs sherpa-onnx and the model); mochi is the "
+                           "default on the robot since 2026-10-30 (Shawn: answer only to Mochi); --wav replays stay any-voice")
     ap.add_argument("--kws-model", default=None, help=f"model folder (default ~/rt/models/kws/{KWS_MODEL_NAME})")
     ap.add_argument("--kws-keywords", default=None, help="keywords file (default namecall-20261029/keywords_<name>.txt)")
     ap.add_argument("--kws-score", type=float, default=1.0, help="boost for keyword lines without their own :x")
@@ -1563,7 +1740,12 @@ def parse_args(argv=None):
     ap.add_argument("--kws-threads", type=int, default=1)
     ap.add_argument("--kws-gain-db", type=float, default=0.0, help="gain before the spotter")
     ap.add_argument("--onset-gap", type=float, default=ONSET_GAP_S, help="s, detector refractory in name mode")
-    return ap.parse_args(argv)
+    a = ap.parse_args(argv)
+    if a.any_voice:
+        a.name = None
+    elif a.name is None and not a.wav:
+        a.name = "mochi"
+    return a
 
 
 def replay(nc, src, log):
@@ -1615,12 +1797,22 @@ def main(argv=None):
         log.write("keepalive", alive=keep.alive, err=keep.err, cmd=" ".join(keep.cmd))
         if not keep.alive:
             log.write("warn", why="no silent playback stream: the microphones go dead after each quack until the capture is reopened")
+    if nc.head is not None and not a.no_face:
+        try:
+            from facefind import FaceFinder
+            nc.finder = FaceFinder().start()
+            log.write("face_finder", rate_hz=nc.finder.rate_hz, det_size=nc.finder.det_size)
+        except Exception as e:     # no camera daemon, no models: the attention phase holds the heard bearing instead
+            nc.finder = None
+            log.write("warn", why=f"face finder not started: {e!r}; attention holds the heard bearing")
     cap = Capture(dev).start()
     try:
         nc.run_live(cap)
     finally:
         if keep is not None:
             keep.stop()
+        if nc.finder is not None:
+            nc.finder.stop()
     return 0
 
 
