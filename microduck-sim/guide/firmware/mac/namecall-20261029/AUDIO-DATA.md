@@ -40,10 +40,17 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
 - **own_quacks_144713.raw** (10/30 14:47, home, 73 s): all 48 QuackBank calls through the head speaker.
   **own_quacks_144438.raw** (10/30 14:44, 73 s, pulled 10/30 20:00): the first take of the same playback, not yet in
   mono16v2.
-- The A7Z holds no other recording (checked 10/30 20:00, 12 .raw files, all here); the morning live_level runs wrote no
-  files. From 10/30 19:56 the life log `~/duck-logs/life/` (`life_log.py`) records round every voice and answer; pull it
-  with `rsync -a a7z:duck-logs/life/ recordings/life/` and label with `mine_life.py`. The card has 2.5 GB free (brain
-  logs `duck_wired_log_*.jsonl` take 2.4 GB); the life log stops writing below 2 GB free.
+- The A7Z holds no other recording (checked 10/30 16:00, 12 .raw files, all here); the morning live_level runs wrote no
+  files. The card has 2.5 GB free (brain logs `duck_wired_log_*.jsonl` take 2.4 GB); the life log stops writing below
+  2 GB free.
+- **Life log** `recordings/life/<day>/HHMMSS_mmm.wav` (3-ch int16 16 kHz, `life_log.py`, index `life_index.jsonl` with
+  the epoch start of each segment): the duck records round every voice, name and answer from boot. Pull with
+  `rsync -a a7z:duck-logs/life/ recordings/life/`, convert with `to_mono16.py --prefix life_<day>_`, label with
+  `mine_life.py` (no one marks anything). Times: the A7Z ran on UTC until 10/30 16:08 EDT, so file names before that are
+  UTC (195614 = 15:56 EDT); it is on America/New_York since. 10/30 15:56-16:07 EDT (listen-only v2 ensemble, Shawn at
+  home): 15 segments, 10 min, `life_labels_1030_evening.json`: no call, 501 s of quiet negatives; the one live hit at
+  16:01:47 (segment 200104_327, 43.1 s) has no voiced event and the room's own level (-33 dB), the model's P reaches
+  0.75 only at one window phase: a quiet-room false hit, kept as a negative.
 
 ## Downloaded and generated sources
 

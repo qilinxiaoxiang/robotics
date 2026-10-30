@@ -41,6 +41,8 @@ def load(path):
 
 
 def to16(m, fs):
+    if fs == 16000:                     # life_log.py segments are already the decimated stream
+        return m.astype(np.float32)
     if fs == 48000:
         d = nc.Decimate3()
         return np.concatenate([d(m[i:i + 960]) for i in range(0, len(m), 960)]).astype(np.float32)
@@ -51,11 +53,12 @@ def to16(m, fs):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--prefix", default="", help="prepended to each name (life log: life_20261030_ for day folder 20261030)")
     ap.add_argument("files", nargs="+")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     for p in a.files:
-        name = os.path.splitext(os.path.basename(p))[0]
+        name = a.prefix + os.path.splitext(os.path.basename(p))[0]
         x, fs = load(p)
         np.save(os.path.join(a.out, name + ".npy"), to16(x[:, :2].mean(axis=1), fs))
         lv = [20 * np.log10(np.sqrt((x[:, c].astype(np.float64) ** 2).mean()) + 1e-12) for c in range(x.shape[1])]
