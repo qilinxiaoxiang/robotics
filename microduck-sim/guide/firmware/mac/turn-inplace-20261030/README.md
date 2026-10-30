@@ -57,3 +57,19 @@ Holding the lead up keeps it off the floor but does not stop it twisting: the ro
 held end does not. A USB-C lead's twisting stiffness is of this size (about GJ/L with r 2 mm, G 0.5 GPa, L 1 m:
 0.01 N m/rad). Check on the robot: let the held end turn with the duck (or hang the lead from a swivel) during a long
 turn; the turn should then keep going past 90 deg.
+
+## Why the turning push is so small
+
+- Robot, hip-yaw Present Current (`cur_ma`, IDs 5 and 10): standing 11-13 mA; turning 16:11:49-52 mean 15-17, p95
+  30-34 mA; stalled 16:12:22-32 mean 18-22, p95 37-46 mA, with position errors of 5-9 deg mean and 13-24 deg p95.
+  XL330-M288 stall is 0.52 N m at 1.47 A (about 0.35 N m/A at the horn), so 5-35 mA above idle is 0.002-0.012 N m
+  per hip, the size of the turning limit the sim finds.
+- Sim at walk61's kp 200: a steady 0.015 N m yaw torque stops a right turn (-0.8 deg/s); kp 400 and 800 fall in
+  1.7-3.5 s (walk61 was trained at kp 200), so raising the servo gain is not open without retraining.
+- Training (`microduck_rl` `microduck_velocity_env_cfg.py`): pushes set only the x/y linear velocity
+  (VELOCITY_PUSH_RANGE +-0.3 m/s), nothing pushes the yaw; the yaw command range is +-1.0 rad/s; the pose reward pulls
+  the hip yaws home (std 0.3 rad walking, 0.1 standing). In training nothing ever resisted a turn, so the policy
+  learned a gait that turns with almost no hip-yaw torque and has no reason to push harder when the turn is blocked.
+  It does not observe the heading error, only the command, which the heading hold pins at 1.5, outside training.
+- The floor and the servos are not the limit: two feet about 5 cm apart under 8 N with mu 1 hold about 0.2 N m of
+  twist, and each XL330 can give 0.52 N m; the policy uses 1-2 % of the servo.

@@ -240,3 +240,12 @@ stalls a 25 s in-place turn (floor grip, soft soles, foot play, sole twisting fr
 friction); shaking and servo following were the same in turning and stalled seconds on the robot. A restoring torque
 of 0.010 N m per rad of turn (`brain_sim_check.py --yaw-spring`) reproduces it exactly: 70-90 deg in 4 s, then rocking
 with the command pinned at 1.5. A held lead still twists with the duck. Check: turn the held end with the duck.
+
+## 2026-10-30 17:00: why walk61 turns with only about 0.01 N m
+
+The hip-yaw servos draw 15-46 mA while turning or stalled (11-13 mA standing), with 5-24 deg position errors: about
+0.002-0.012 N m per hip of the XL330's 0.52 N m. walk61 was trained with x/y velocity pushes only, never a yaw push or
+torque, under a pose reward that pulls the hip yaws home, so its turning gait needs almost no torque and it does not
+push harder when blocked. A higher servo gain falls in sim (kp 400, 800), as walk61 was trained at kp 200. Remedy
+that changes the authority: retrain with yaw torque disturbances (needs Shawn's nod); meanwhile keep the lead from
+twisting.
