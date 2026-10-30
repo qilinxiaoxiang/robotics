@@ -75,6 +75,7 @@ class Mind:
         self.reflex_end = None
         self.salient = False
         self.interrupted_note = None
+        self.situation = None  # callable -> text the owner gave about the body's situation (runner --tether)
         self.next_round_t = world.t
         self.backend_down_until = -1.0
         self.history: list[dict] = []   # every intention started (for the rigidity check)
@@ -246,7 +247,8 @@ class Mind:
                 "plan": self.shared.active_plan(w.hour, self.today, facts),
                 "rules": self.shared.rules_text(),
                 "personality": str(self.shared.personality.get("traits_text", ""))[:300],
-                "diary": self.shared.retrieve_diary({x.lower() for x in words}), "error": error}
+                "diary": self.shared.retrieve_diary({x.lower() for x in words}), "error": error,
+                "situation": self.situation() if self.situation else None}
 
     def _ask_model(self, facts: dict):
         error, unchecked = None, []

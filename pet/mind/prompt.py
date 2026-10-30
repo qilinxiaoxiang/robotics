@@ -45,6 +45,8 @@ def user_prompt(ctx: dict) -> str:
              f"Drives 0-1: {ctx['drives']}. Mood: {ctx['mood']}."]
     lines.append("Recent events (oldest first): " + ("; ".join(ctx["events"]) or "nothing new"))
     lines.append("Your last 5 min: " + ("; ".join(ctx["behaviour"]) or "nothing yet"))
+    if ctx.get("situation"):
+        lines.append("Your situation: " + ctx["situation"])
     if ctx.get("interrupted"):
         lines.append(f"Interrupted: {ctx['interrupted']}")
     if ctx.get("plan"):

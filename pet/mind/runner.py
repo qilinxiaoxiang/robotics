@@ -24,8 +24,10 @@ velocities, head poses and ground-pick phases.
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import json
+import math
 import os
 import random
 import shutil
@@ -276,11 +278,18 @@ class LiveMind(Mind):
 class Runner:
     def __init__(self, body: BodyCard, shared: SharedState, backend, link, out_dir: Path, mode="dry",
                  clock_fn=time.time, seed=0, events=None, resume_s=RESUME_S, today=None, perception=True,
-                 face_recognise=None, round_min=10.0, inbox=None, rules_path=None, save_frames=False):
+                 face_recognise=None, round_min=10.0, inbox=None, rules_path=None, save_frames=False, tether=None,
+                 vision=None):
         self.body, self.shared, self.backend, self.link, self.mode = body, shared, backend, link, mode
         self.out_dir = Path(out_dir)
         self.out_dir.mkdir(parents=True, exist_ok=True)
         self.frames = FrameRecorder(self.out_dir / "frames") if save_frames else None
+        self.tether = tether            # tether.Tether: the charging cable's limits (--tether)
+        self.vision = vision            # glance.ClaudeVision for the look back at the cable
+        self.cable = None               # the cable reflex while it runs: {"phase", "why", ...}
+        self.cable_log = []
+        self.newest_frame = None        # (t_a7z, jpeg bytes, local time)
+        self.cable_pool = ThreadPoolExecutor(max_workers=1)
         self.clock_fn = clock_fn
         self.now = clock_fn()
         self.t_start = self.now
@@ -291,6 +300,9 @@ class Runner:
                              executor=LiveExecutor(self), today=today or dt.date.fromtimestamp(self.now).isoformat(),
                              round_min=round_min)
         self.readback = Readback()
+        if tether is not None:
+            from .tether import SITUATION
+            self.mind.situation = lambda: SITUATION + " " + tether.describe()
         self.schedule: list[tuple[float, dict, str]] = []
         self.last_written = None
         self.last_seen = None
@@ -333,6 +345,20 @@ class Runner:
     def write(self, cmd: dict, why: str):
         if same_cmd(cmd, self.last_written):
             return
+        if self.tether is not None and self.cable is None:
+            ok, reason = self.tether.allow(cmd)
+            if not ok:
+                self.cable_event("refused", reason, cmd=cmd)
+                self.hard_stop(reason, pause=False)
+                self.world.note(f"I did not do it: {reason}")
+                self.write_idle("cable limit")
+                return
+        if self.tether is not None:
+            vx, vth = float(cmd.get("vx", 0) or 0), float(cmd.get("vtheta", 0) or 0)
+            if cmd.get("mode") == "walk" and vx == 0 and vth != 0:
+                self.tether.turn_cmd_started(self.now, 1.0 if vth > 0 else -1.0)
+            else:
+                self.tether.turn = None
         self.link.write(cmd)
         self.last_written = self.last_seen = cmd
         self.counters["commands"] += 1
@@ -455,6 +481,115 @@ class Runner:
         elif k in ("brain_mode", "brain_waits", "getup", "battery_low", "brain_cleared", "handback"):
             self.log(f"  brain: {ev.get('mode') or ev.get('why') or ev.get('what') or k}")
 
+    # ----- the charging cable (tether.py) -----
+    CABLE_TURN_TIMEOUT_S = 30.0      # a half turn takes 14-26 s at 7-13 deg/s (robot 2026-10-30)
+    CABLE_LOOK_SETTLE_S = 1.6
+    CABLE_VISION_TIMEOUT_S = 25.0
+    CABLE_WALK_MAX_S = 5.0
+
+    def cable_event(self, what: str, why: str, **extra):
+        rec = {"what": what, "why": why, **extra, "tether": self.tether.snapshot()}
+        self.event({"kind": "cable", **rec})
+        self.cable_log.append({"session_s": round(self.now - self.t_start, 1), **rec})
+        self.log(f"CABLE {what}: {why}")
+
+    def cable_start(self, why: str, look: bool, walk_back: bool):
+        self.hard_stop(why, pause=False)
+        self.cable = {"phase": "turn", "why": why, "look": look, "walk_back": walk_back, "t": self.now}
+        turn = self.tether.turn_toward_start()
+        self.cable["target"] = self.tether.yaw_deg + turn
+        self.cable_event("start", f"{why}; turning {turn:+.0f} deg to face where the cable starts",
+                         look=look, walk_back=walk_back)
+        if abs(turn) < 15:
+            self.cable_next()
+        else:
+            self.cable["sign"] = 1.0 if turn > 0 else -1.0
+            self.cable["phase_t"] = self.now
+            self.write({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.3 * self.cable["sign"],
+                        "for_s": self.CABLE_TURN_TIMEOUT_S}, "cable: turn toward the start")
+
+    def cable_next(self):
+        c = self.cable
+        if c["phase"] == "turn" and c["look"]:
+            c.update(phase="look", phase_t=self.now)
+            self.write({**WALK_ZERO, "head": {"head_yaw": 0.0, "head_pitch": 0.3}}, "cable: look at the cable")
+        elif c["phase"] in ("turn", "look") and c["walk_back"]:
+            c.update(phase="walk", phase_t=self.now)
+            self.write({"mode": "walk", "vx": 0.25, "vy": 0.0, "vtheta": 0.0, "for_s": self.CABLE_WALK_MAX_S},
+                       "cable: walk back")
+        else:
+            self.cable_end("done")
+
+    def cable_end(self, how: str):
+        c, self.cable = self.cable, None
+        self.write(dict(WALK_ZERO), "cable: idle")
+        self.cable_event("end", how, after_s=round(self.now - c["t"], 1))
+        what = {"done": "I turned back toward where my cable starts" + (" and walked back" if c["walk_back"] else "")}
+        self.world.note(what.get(how, f"my cable check stopped: {how}") + f" ({c['why']})")
+        self.mind.next_round_t = self.world.t + 1
+
+    def cable_tick(self):
+        t = self.tether
+        if not t.ready or self.state != "running":
+            return
+        c = self.cable
+        if c is None:
+            if t.turn_stalled(self.now):
+                side = "left" if t.turn[2] > 0 else "right"
+                t.turn = None
+                self.cable_event("turn_blocked", f"a turn to the {side} on the spot moved under 10 deg in 4 s")
+                self.hard_stop(f"my turn to the {side} got stuck", pause=False)
+                self.world.note(f"my turn to the {side} got stuck: something is in the way on my {side}")
+                self.write_idle("turn blocked")
+            elif self.readback.mode == "walk" and t.outward_over():
+                self.cable_start(f"the cable is out far ({t.dist:.2f} m)", look=self.vision is not None, walk_back=True)
+            elif t.wants_look_back() and self.vision is not None:
+                t.looked_back = True
+                self.cable_start(f"{t.dist:.2f} m out: look back at the cable", look=True, walk_back=False)
+            return
+        if c["phase"] == "turn":
+            err = (c["target"] - t.yaw_deg) * c["sign"]
+            if err <= 8:
+                self.write(dict(WALK_ZERO), "cable: turned")
+                c["phase"] = "settle"
+                c["phase_t"] = self.now
+            elif self.now - c["phase_t"] > self.CABLE_TURN_TIMEOUT_S or t.turn_stalled(self.now):
+                self.cable_end(f"the turn toward the start got stuck at {t.yaw_deg:+.0f} deg")
+        elif c["phase"] == "settle":
+            if self.now - c["phase_t"] >= 1.0:
+                c["phase"] = "turn"
+                self.cable_next()
+        elif c["phase"] == "look":
+            if "job" not in c:
+                f = self.newest_frame
+                if self.now - c["phase_t"] >= self.CABLE_LOOK_SETTLE_S and f is not None and \
+                        f[2] >= c["phase_t"] + self.CABLE_LOOK_SETTLE_S - 0.3:
+                    from .glance import where_text
+                    from .survey import PROMPT
+                    c["job"] = self.cable_pool.submit(self.vision.describe, f[1], where_text(0.0, 0.3), PROMPT)
+                elif self.now - c["phase_t"] > self.CABLE_LOOK_SETTLE_S + 4:
+                    t.cable = "not seen (no camera frame)"
+                    self.cable_event("look", "no fresh camera frame")
+                    self.cable_next()
+            elif c["job"].done() or self.now - c["phase_t"] > self.CABLE_VISION_TIMEOUT_S:
+                try:
+                    text, _ = c["job"].result(timeout=0)
+                    ans = json.loads(text[text.index("{"):text.rindex("}") + 1])
+                except Exception as e:
+                    ans = {"error": str(e)[:120]}
+                desc = str(ans.get("cable", ""))
+                if ans.get("cable_visible") and "taut" in desc.lower() and "slack" not in desc.lower():
+                    t.learn_taut()
+                    c["walk_back"] = True
+                else:
+                    t.cable = ("slack: " + desc) if ans.get("cable_visible") else "not seen"
+                self.cable_event("look", t.cable or "", answer=ans)
+                self.world.note(f"I looked back at my cable: {t.cable}")
+                self.cable_next()
+        elif c["phase"] == "walk":
+            if t.dist <= max(0.0, 0.6 * (t.limit_m - t.margin_m)) or self.now - c["phase_t"] > self.CABLE_WALK_MAX_S:
+                self.cable_end("done")
+
     # ----- perception -----
     MODE_SETTLE_S = 3.0
 
@@ -486,6 +621,10 @@ class Runner:
                 if k == "sound":
                     out += self.sound.feed(x.get("db"), float(x.get("t", self.now)))
                 elif k == "frame":
+                    try:
+                        self.newest_frame = (float(x.get("t", 0)), base64.b64decode(x.get("jpeg_b64", "")), self.now)
+                    except Exception:
+                        pass
                     if self.frames is not None:
                         self.frames.feed_jpeg(x.get("jpeg_b64", ""), float(x.get("t", self.now)))
                     out += self.face.feed_jpeg(x.get("jpeg_b64", ""), float(x.get("t", self.now)))
@@ -677,6 +816,8 @@ class Runner:
         rows, lines = self.link.new_rows(), self.link.new_lines()
         for ev in self.readback.feed(rows, lines, now):
             self.on_brain_event(ev)
+        if self.tether is not None:
+            self.tether.feed_rows(rows)
         percepts = self.collect_percepts(rows)
         self.check_file()
         self.poll_inbox()
@@ -689,10 +830,15 @@ class Runner:
                 fed += self.world.observe(p)
             if fed:
                 self.mind.perceive(fed)
-            if d > 0:
+            if self.tether is not None:
+                self.cable_tick()
+            if self.cable is not None:
+                self.mind.next_round_t = max(self.mind.next_round_t, self.world.t + 2)  # the reflex has the body
+            elif d > 0:
                 self.mind.tick(d)
             self.flush()
-            if not self.mind.current and not self.mind.reflex and not self.schedule and not self.pending_foreign:
+            if not self.mind.current and not self.mind.reflex and not self.schedule and not self.pending_foreign \
+                    and self.cable is None:
                 self.write_idle()
         else:
             self.world.t += d  # Mind.tick is not called: advance the clock here
@@ -842,6 +988,8 @@ class Runner:
                 for ev in self.learn_events:
                     f.write(ev.to_json() + "\n")
         s = self.summary()
+        if self.tether is not None:
+            s["tether"] = {**self.tether.snapshot(), "events": self.cable_log}
         if self.frames is not None:
             self.frames.close()
             s["frames"] = {"saved": self.frames.saved, "matched_to_a_row": self.frames.matched, "dir": "frames/"}
@@ -868,6 +1016,9 @@ class FakeBrain:
         self.pressed = []
         self.next_t = None
         self.rows = 0
+        self.yaw = 0.0                 # rad, + = left; the IMU quaternion in the rows follows it
+        self.spin_rate = 0.2           # rad/s on the spot for a +-0.3 command (robot 2026-10-30: 7-13 deg/s)
+        self.turn_blocked = False      # a wall on the turning side: turns on the spot do not move
         open(self.log_path, "a").close()
         open(self.out_path, "a").close()
 
@@ -943,12 +1094,20 @@ class FakeBrain:
             if self.gp_phase >= 0.8 and target >= 0.8:
                 self._write(dict(WALK_ZERO), "ground pick complete, stand61 takes over")
                 self.want, self.cmd_since, self.mode = dict(WALK_ZERO), now, "walk"
+        vx = float(want.get("vx", 0) or 0) if self.mode == "walk" and wm == "walk" else 0.0
+        vth = float(want.get("vtheta", 0) or 0) if self.mode == "walk" and wm == "walk" else 0.0
+        moving = vx > 0 or vth != 0
+        if vx > 0:
+            self.yaw += 0.3 * vth * self.period          # arcs turn much less than commanded on the robot
+        elif vth != 0 and not self.turn_blocked:
+            self.yaw += math.copysign(self.spin_rate, vth) * self.period
         gb = [0.9, 0.0, -0.3] if self.fallen else [-0.05, 0.01, -0.998]
         touch = [c + (1500.0 if p in self.pressed else 0.0) for c, p in zip(self.touch, ("L1", "R1", "L2", "R2", "M"))]
         row = {"t": now, "mode": self.mode, "gb": gb, "gyro_body": list(self.gyro), "sit_phase": self.sit_phase,
                "sit_stalled": (self.stall if self.sit_phase == "seated" else None), "torque": self.mode != "monitor",
                "fresh": True, "touch": touch, "touch_age": 0.0, "cmd": want,
-               "policy": {"walk": "stand", "sit": "sitstand", "groundpick": "groundpick"}.get(self.mode),
+               "policy": "walk" if moving else {"walk": "stand", "sit": "sitstand", "groundpick": "groundpick"}.get(self.mode),
+               "quat": [math.cos(self.yaw / 2), 0.0, 0.0, math.sin(self.yaw / 2)],
                "gp_phase": self.gp_phase if self.mode == "groundpick" else None}
         with open(self.log_path, "a") as f:
             f.write(json.dumps(row) + "\n")
@@ -1076,6 +1235,8 @@ def main(argv=None):
     ap.add_argument("--cmd", default=None, help="robot: control file path (default: what ~/duck-run.sh passes)")
     ap.add_argument("--mic", default=None, help="robot: ALSA capture device for sound onsets, e.g. hw:0,0 (off by default)")
     ap.add_argument("--cam-hz", type=float, default=0.0, help="robot: face frames per second while the camera daemon runs")
+    ap.add_argument("--tether", type=float, default=None, metavar="METRES",
+                    help="charging-cable limits (tether.py): how far the cable reaches from the start, e.g. 0.8")
     ap.add_argument("--save-frames", action="store_true",
                     help="save every camera frame with the nearest brain row to <out>/frames/ (needs --cam-hz)")
     ap.add_argument("--inbox", default=None,
@@ -1120,8 +1281,16 @@ def main(argv=None):
     else:
         link = RemoteLink(a.host, a.cmd, mic=a.mic, cam_hz=a.cam_hz)
 
+    tether = vision = None
+    if a.tether is not None:
+        from .tether import SITUATION, Tether
+        tether = Tether(limit_m=a.tether)
+        if mode == "robot" and a.cam_hz > 0:
+            from .glance import ClaudeVision
+            vision = ClaudeVision()
     runner = Runner(body, SharedState(a.state_dir), backend, link, out_dir, mode=mode, seed=a.seed, events=events,
-                    resume_s=a.resume_s, round_min=a.round_min, inbox=a.inbox, save_frames=a.save_frames)
+                    resume_s=a.resume_s, round_min=a.round_min, inbox=a.inbox, save_frames=a.save_frames,
+                    tether=tether, vision=vision)
     signal.signal(signal.SIGINT, lambda *_: setattr(runner, "stop_flag", True))
     signal.signal(signal.SIGTERM, lambda *_: setattr(runner, "stop_flag", True))
     try:

@@ -66,6 +66,30 @@ Add `--inbox pet/state/inbox --state-dir pet/state` when the voice loop (`pet.vo
 ("What the owner says" below). The runner refuses to start unless the control file already holds a zero-command walk and the brain's rows show walk
 mode with the body upright. Then it prints the behaviour log live (`INTENT ...`, `step ...`, `body: seated`, ...).
 
+### On the charging cable (`--tether METRES`)
+
+Shawn 2026-10-30: the cable leaves the backpack at the lower left rear and trails behind; the duck must not trip on it
+and must not walk so far that it runs out. `--tether 0.8` (how far the cable reaches from where the session starts)
+turns on `tether.py`: pose from the IMU quaternion and the walk the brain executes (0.15 m/s at vx 0.25), and three
+rules applied in `write()` and every tick, before the mind's commands reach the brain:
+
+- A walk that would end past `limit - 0.15 m` while moving away is not written; the mind is told why and how much
+  room is left straight ahead. A turn on the spot that could take the net heading past +-200 deg is refused the same
+  way (the cable would wind round the legs).
+- A turn on the spot that moves under 10 deg in 4 s is stopped and reported ("my turn to the left got stuck"): on
+  2026-10-30 the duck turned into a wall.
+- Out past 60 % of the limit for the first time, or past the limit while walking: the runner takes the body, turns on
+  the spot toward the start (the way round that keeps the net turn small), looks at the floor with the head down, asks
+  the vision model whether the cable is slack or taut (needs `--cam-hz`), and walks back when it is taut or the limit
+  was passed. A taut look also lowers the limit to where it happened.
+
+The mind's prompt carries the cable situation (`tether.SITUATION`) and the live distance, bearing to the start and
+net turn. Robot session: duck on open floor at the start point, cable slack behind it, app open as the stop:
+
+```sh
+pet/.venv/bin/python -m pet.mind.runner --robot --allow head,walk --minutes 10 --cam-hz 1 --save-frames --tether 0.8
+```
+
 ### The first session, what you will see
 
 - **Session 1, `--allow head` (default).** Only `turn_head`, `look_around`, `nod`, `wait`, `stop`: the head moves

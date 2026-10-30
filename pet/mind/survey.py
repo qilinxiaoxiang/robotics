@@ -25,10 +25,9 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import numpy as np
-
 from .brain_link import WALK_ZERO, RemoteLink, is_idle, same_cmd, tilt_deg
 from .glance import ClaudeVision, where_text
+from .tether import Heading
 
 OUT = Path(__file__).resolve().parent / "out"
 TURN_RATE = 0.3          # rad/s, the body card's walk vtheta limit
@@ -44,40 +43,6 @@ PROMPT = ("This is one frame from the head camera of a small duck robot, about 2
           "slack or taut, under 20 words>\", \"pile_visible\": true|false, \"pile_xy\": [x, y] or null (centre of the "
           "coil or pile as fractions of image width and height from the top left), \"scene\": \"<other things on "
           "the floor that matter to a small robot, under 20 words>\"}}. Image: {path}")
-
-
-def rot(q):
-    w, x, y, z = q
-    return np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
-                     [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
-                     [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]])
-
-
-class Heading:
-    """Heading change about the vertical from the IMU quaternion ([w, x, y, z], world z up; checked against the
-    brain's body gravity 2026-10-30). A sensor axis that is horizontal at the start is followed in the world plane."""
-
-    def __init__(self, q0):
-        r0 = rot(q0)
-        up_s = r0.T @ np.array([0.0, 0.0, 1.0])
-        v = np.cross(up_s, [0.0, 0.0, 1.0] if abs(up_s[2]) < 0.9 else [1.0, 0.0, 0.0])
-        self.v = v / np.linalg.norm(v)
-        self.a0 = self._angle(r0)
-        self.prev = 0.0
-
-    def _angle(self, r):
-        w = r @ self.v
-        return math.atan2(w[1], w[0])
-
-    def __call__(self, q) -> float:
-        d = self._angle(rot(q)) - self.a0
-        d = (d + math.pi) % (2 * math.pi) - math.pi
-        while d - self.prev > math.pi:      # unwrap against the last value
-            d -= 2 * math.pi
-        while d - self.prev < -math.pi:
-            d += 2 * math.pi
-        self.prev = d
-        return d
 
 
 class Abort(Exception):
