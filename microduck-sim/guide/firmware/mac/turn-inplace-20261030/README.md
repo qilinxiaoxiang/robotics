@@ -36,3 +36,24 @@ direction and builds up as the turn goes on. The duck runs tethered to a USB-C P
 no battery on the robot); a lead dragged or wound by the turn gives that torque (0.1 N at 0.1-0.2 m). This is not yet
 observed directly: the discriminating check is the same turn with the lead held up above the robot so it cannot drag
 or wind. Stepping in place without turning then would rule the lead out.
+
+## Follow-up the same afternoon: lead held up, still stalls
+
+Shawn held the charger lead up off the floor for the head-up turns (head_pitch -0.75, delta -1.10, the top of the
+trained range); the duck still stepped in place. Checked against the robot slice and new sims (`runs3.sh`-`runs5.sh`):
+
+- Not shaking: action jumps 2.3-2.5 per s and peak tilt 8.0-8.3 deg in both turning and stalled seconds (`shake.py`).
+- Servo following and head angle match the sim (pos sd / goal sd, hip yaw R/L robot 0.34/0.41, sim 0.18-0.28/0.53-0.58;
+  head_pitch robot -0.61, sim -0.68).
+- In sim none of these stall the turn: floor mu 2, soft sole (solref 0.06 0.5), foot play +-5-10 deg about yaw, +-6
+  about pitch or roll, sole twisting friction 0.005-0.04 m (new `--sole-torsion`; slows the turn to 18-25 deg/s at
+  most). BAM friction x3 falls over (tilt 40 deg), unlike the robot.
+- A restoring yaw torque proportional to the heading change since the turn began (new `--yaw-spring`, a twisted
+  cable) reproduces the robot: 0.010 N m/rad turns -93 deg (right) or +74 deg (left) in about 4 s, then rocks
+  +-5-10 deg/s with no net turn and the command pinned at -1.50/+1.50; 0.005 gives -181 deg, 0.020 gives -49 deg.
+  Robot: 40-90 deg per turn, then the same rocking.
+
+Holding the lead up keeps it off the floor but does not stop it twisting: the robot end turns with the duck and the
+held end does not. A USB-C lead's twisting stiffness is of this size (about GJ/L with r 2 mm, G 0.5 GPa, L 1 m:
+0.01 N m/rad). Check on the robot: let the held end turn with the duck (or hang the lead from a swivel) during a long
+turn; the turn should then keep going past 90 deg.

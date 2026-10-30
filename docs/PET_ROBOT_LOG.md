@@ -232,3 +232,11 @@ Live, home, listen-only, v2 ensemble at 0.7, 15:56-16:21 EDT: 6 wakes in 25 min 
 auto-labelling finds no call and no doubtful event in any of the 33 segments; the hits sit at the room's own level).
 E2 at 0.9 installed 16:21 (A7Z copy sha256 36fb5f51...), listener restarted. The A7Z clock ran on UTC until 16:08 EDT
 (listener times before that are UTC); now America/New_York.
+
+## 2026-10-30 16:45: the in-place stall matches a twisted lead, not a dragged one
+
+Shawn held the lead up for the head-up turns and the duck still stalled. In the as-built sim nothing on the robot side
+stalls a 25 s in-place turn (floor grip, soft soles, foot play, sole twisting friction, head at the top, servo
+friction); shaking and servo following were the same in turning and stalled seconds on the robot. A restoring torque
+of 0.010 N m per rad of turn (`brain_sim_check.py --yaw-spring`) reproduces it exactly: 70-90 deg in 4 s, then rocking
+with the command pinned at 1.5. A held lead still twists with the duck. Check: turn the held end with the duck.

@@ -841,6 +841,10 @@ def run(args):
         for g in ("left_foot_collision", "right_foot_collision"):
             m.geom_solref[m.geom(g).id] = args.sole_solref
             m.geom_solmix[m.geom(g).id] = 1e3
+    if args.sole_torsion is not None:  # in-place turn check 2026-10-30: the model's condim 3 soles have no twisting friction
+        for g in ("left_foot_collision", "right_foot_collision"):
+            m.geom_condim[m.geom(g).id] = 4
+            m.geom_friction[m.geom(g).id][1] = args.sole_torsion
     idx = {n: names.index(n) for n in NAMES}  # Brain order (servo IDs 1..14) -> model actuator order
     z0 = np.array([math.radians(zero.get(n, 0)) for n in names])
     p0 = np.array([BRAIN_STAND[n] for n in names])  # the Brain's stand pose (pi/stand_pose.py), not static_gap.STAND
@@ -1125,7 +1129,9 @@ def run(args):
         c.q_target = aq[0] + z0
         # --yaw-torque: a steady turn about the vertical on the trunk while walking, a stand-in for whatever turns the
         # real robot left (10/21-22: +22 to +42 deg/s at vx 0.25, cause not isolated)
-        d.xfrc_applied[trunk, 5] = args.yaw_torque if args.walk_at <= t < args.walk_at + args.walk_s else 0.0
+        # --yaw-spring: a cable twisted by the turn (2026-10-30 in-place turn check), restoring torque per rad of heading change
+        d.xfrc_applied[trunk, 5] = (args.yaw_torque - args.yaw_spring * yaw_walk
+                                    if args.walk_at <= t < args.walk_at + args.walk_s else 0.0)
         if args.walk_at <= t < args.walk_at + args.walk_s and "turn" in info:
             turns.append(info["turn"])
         for k_sub in range(sub):
@@ -1443,6 +1449,7 @@ def main():
     ap.add_argument("--vtheta-seq", nargs=2, type=float, action="append", default=[], metavar=("S", "VTHETA"),
                     help="from S seconds into the walk, command this vtheta (repeatable; e.g. a right arc then a left arc)")
     ap.add_argument("--yaw-torque", type=float, default=0.0, help="N m about world up on the trunk while walking (+ = left)")
+    ap.add_argument("--yaw-spring", type=float, default=0.0, help="N m per rad of heading change since the walk began, against it (twisted cable)")
     ap.add_argument("--yaw-trim-file", default=None, help="walk_brain yaw trim file, read at start and updated after the walk")
     ap.add_argument("--sensor-delay", type=int, default=1)
     ap.add_argument("--action-delay", type=int, default=1)
@@ -1495,6 +1502,8 @@ def main():
                     help="axis of --foot-play: pitch (the ankle axis), roll (forward) or yaw (vertical), at the stand pose")
     ap.add_argument("--sole-solref", type=float, nargs=2, default=None, metavar=("TIMECONST", "DAMPRATIO"),
                     help="foot-floor contact softness (MuJoCo solref; the model's own is 0.02 1): a compliant sole")
+    ap.add_argument("--sole-torsion", type=float, default=None, metavar="M",
+                    help="foot-floor torsional friction (m, contact condim 4); the model's own soles have none (condim 3)")
     ap.add_argument("--grip-at", type=float, default=None, help="s; head pads L1, R1, M covered from here (hold.py estimator input)")
     ap.add_argument("--release-at", type=float, default=None, help="s; the hand leaves the pads (and lets go of the head)")
     ap.add_argument("--lift-at", type=float, default=None, help="s; the hand lifts the head --lift-height over 0.6 s from here")
