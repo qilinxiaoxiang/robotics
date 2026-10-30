@@ -31,6 +31,8 @@ PRE_S = 0.15
 N_FRAMES = (int(WINDOW_S * FS16) - WIN) // HOP + 1           # 98, what logmel() yields for a WINDOW_S signal
 SCORE_EVERY = 5      # blocks of 20 ms
 REFRACTORY_S = 1.0
+REPEAT_THRESHOLD = 0.7   # second chance: two score runs >= this, starting REPEAT_GAP_S apart, also fire (None = off);
+REPEAT_GAP_S = (1.0, 5.0)  # chosen offline 2026-10-30 (namecall-20261029/results/operating_point_20261030.json)
 MODEL_DEFAULT = os.path.join(HERE, "namecall-20261029", "models", "mochi_own.npz")
 
 
@@ -156,12 +158,16 @@ class OwnModel:
 class OwnSpotter:
     """KeywordGate stand-in: feed(t, block, silent) -> None or dict(t_hit, keyword, tokens, span_s)."""
 
-    def __init__(self, model_path=MODEL_DEFAULT, ears=(0, 1), threshold=None, gain_db=0.0):
+    def __init__(self, model_path=MODEL_DEFAULT, ears=(0, 1), threshold=None, gain_db=0.0,
+                 repeat_threshold=REPEAT_THRESHOLD, repeat_gap=REPEAT_GAP_S):
         import namecall as nc
         self.nc = nc
         self.model = OwnModel(model_path)
         self.threshold = self.model.threshold if threshold is None else float(threshold)
         self.ears = list(ears)
+        self.repeat_threshold = None if repeat_threshold is None else float(repeat_threshold)
+        self.repeat_gap = tuple(repeat_gap)
+        self.repeats = 0
         self.gain = 10 ** (gain_db / 20.0)
         self.model_dir, self.keywords_file = model_path, None
         self.hits = 0
@@ -173,6 +179,8 @@ class OwnSpotter:
         self.n_blocks = 0
         self.last_hit_t = -1e9
         self.last_p = 0.0
+        self.runs = []           # start times of recent score runs >= repeat_threshold that did not fire
+        self.in_run = False
 
     def feed(self, t, block, silent=False):
         x = block[:, self.ears].mean(axis=1) if block.ndim == 2 else block
@@ -193,7 +201,24 @@ class OwnSpotter:
         if p >= self.threshold:
             self.hits += 1
             self.last_hit_t = t_end
-            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None)
+            self.runs, self.in_run = [], False
+            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None, repeat=False)
+        if self.repeat_threshold is None or p < self.repeat_threshold:
+            self.in_run = False
+            return None
+        if self.in_run:
+            return None
+        self.in_run = True
+        lo, hi = self.repeat_gap
+        if any(lo <= t_end - t0 <= hi for t0 in self.runs):
+            # second chance (Apple, "Hey Siri: An On-device DNN-powered Voice Trigger"): a caller who repeats the name
+            # after a near miss is answered on the repeat (2026-10-30 18:53: two calls at 0.78-0.83, answer 7.6 s late)
+            self.hits += 1
+            self.repeats += 1
+            self.last_hit_t = t_end
+            self.runs, self.in_run = [], False
+            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None, repeat=True)
+        self.runs = [t0 for t0 in self.runs if t_end - t0 <= hi] + [t_end]
         return None
 
 

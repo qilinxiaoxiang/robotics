@@ -1351,7 +1351,9 @@ class NameCall:
             # the duck's own spotter, trained on Shawn's calls (ownkws.py; the public model never heard him, 2026-10-30)
             import ownkws
             self.kws = ownkws.OwnSpotter(getattr(args, "own_model", None) or ownkws.MODEL_DEFAULT, ears=(ch["left"], ch["right"]),
-                                         threshold=getattr(args, "own_threshold", None))
+                                         threshold=getattr(args, "own_threshold", None),
+                                         repeat_threshold=None if getattr(args, "own_repeat_threshold", ownkws.REPEAT_THRESHOLD) < 0
+                                         else getattr(args, "own_repeat_threshold", ownkws.REPEAT_THRESHOLD))
         if self.kws is None and name:
             self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
                                    score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
@@ -1497,7 +1499,8 @@ class NameCall:
         base = dict(onset) if onset is not None else dict(t=t_on)
         # the direction is decided by hear() once the ring holds the localiser's window around t_on
         return dict(base, onset_from="detector" if onset is not None else "keyword", keyword=hit["keyword"],
-                    t_hit=hit["t_hit"], span_s=hit["span_s"])
+                    t_hit=hit["t_hit"], span_s=hit["span_s"], kw_p=hit["tokens"][0] if hit.get("tokens") else None,
+                    repeat=bool(hit.get("repeat")))
 
     def respond(self, det, now):
         """Turn a detection into a take (azimuth in the head frame -> resting frame). A recognised name without a
@@ -2016,6 +2019,8 @@ def parse_args(argv=None):
                     help="name spotter: own = ownkws.py, trained on Shawn's calls (default); sherpa = the public keyword model")
     ap.add_argument("--own-model", default=None, help="ownkws model .npz (default namecall-20261029/models/mochi_own.npz)")
     ap.add_argument("--own-threshold", type=float, default=None, help="P(mochi) to fire (default: the threshold stored in the model)")
+    ap.add_argument("--own-repeat-threshold", type=float, default=0.7,
+                    help="second chance: two score runs at or above this, 1-5 s apart, also fire (negative = off)")
     ap.add_argument("--kws-model", default=None, help=f"model folder (default ~/rt/models/kws/{KWS_MODEL_NAME})")
     ap.add_argument("--kws-keywords", default=None, help="keywords file (default namecall-20261029/keywords_<name>.txt)")
     ap.add_argument("--kws-score", type=float, default=1.0, help="boost for keyword lines without their own :x")
