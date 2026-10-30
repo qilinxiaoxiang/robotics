@@ -75,7 +75,9 @@ BLIND_MAX_M = 0.25   # after the object left the bottom of the picture: at most 
 BLIND_OK_M = 0.15    # a stop it cannot see counts as arrived only after the object left the bottom of the picture
                      # and within this walk since the last detection
 SIDE_TURN_MAX = math.radians(60)  # after it left a side of the picture: arc that way at most this far, then look
-DONE_R = (0.05, 0.17)            # measured range accepted as arrived
+DONE_R = (0.05, 0.20)            # measured range accepted as arrived: the lowest look (NEAR_HEAD) sees the floor from
+#                                  ~0.11 to ~0.25 m, and seepick's creep closes the last centimetres under the camera
+#                                  (was 0.17: a second walk from 0.174 m overshot into the blind zone, 2026-10-30)
 DONE_BEARING = math.radians(25)  # measured bearing accepted as arrived
 MAX_APPROACHES = 4
 PATH_SLACK = 0.30    # m walked (dead reckoning) beyond the first distance to the object: stop
@@ -86,7 +88,9 @@ HEAD_YAW_WALK = 0.0  # rad: no head yaw while walking or before a walk. Sim with
                      # looking toward the turn eats it, so the body turns and the head only pitches
 HEAD_PITCH_WALK = (0.5, 1.1)  # head pitch range while walking (0.5 sees from 0.32 m, 1.1 from 0.13 m)
 AIM_PERIOD_S = 0.25  # head aim recomputed at most this often (A7Z CPU)
-NEAR_HEAD = {"neck_pitch": -0.4, "head_pitch": 1.1, "head_yaw": 0.0}   # sees the floor 0.03-0.19 m out (CAD camera)
+NEAR_HEAD = {"neck_pitch": -0.4, "head_pitch": 1.4, "head_yaw": 0.0}   # the lowest look: the servo reaches ~1.3 and the
+# picture then starts 0.10-0.12 m in front of the foot-frame origin (ruler, robot 2026-10-30); at 1.1 it started at
+# ~0.15 m and the object at the pick spot sat cut on the bottom edge. The policy ignores neck_pitch (stays 0.2-0.4).
 AIM_V = 0.55         # standing: aim the object at this fraction of the image height
 # standing scan (head_pitch, head_yaw); head yaw only while standing. CAD camera on STAND: pitch 0.5 sees the floor
 # from 0.32 m, 0.9 from 0.17 m; yaw +-0.6 with the 51.6 deg picture width covers +-60 deg
@@ -216,7 +220,8 @@ class Approach:
         self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": self.head}, force=stop)
 
     def head_arrived(self, st, head):
-        return all(abs(st["q"][k] - v) < HEAD_SETTLE_RAD for k, v in head.items() if k in st["q"])
+        # neck_pitch is not waited for: the walking policy ignores neck commands (the neck stays 0.2-0.4 on the robot)
+        return all(abs(st["q"][k] - v) < HEAD_SETTLE_RAD for k, v in head.items() if k in st["q"] and k != "neck_pitch")
 
     def head_still(self, st):
         """The head joints moved less than HEAD_STILL_RAD over the last HEAD_STILL_S (the near pose stops short of
@@ -285,10 +290,11 @@ class Approach:
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, cut=[x, y], est=list(self.est)))
             if self.walk_t0 is not None:
                 return None
-            # standing: still a measurement (an upper bound on the range, the bearing good); a tall object at 0.09 m
-            # stays cut in the near head pose (as-built sim), so dropping these left the stop unmeasured
-            return dict(x=x, y=y, cut=True, area=int(det["area"]), cx=det["cx"], cy=det["cy"], frame=idx,
-                        lag=round(self.now() - t_cap, 3))
+            # standing: still a measurement, the bounded range with this frame's bearing (the raw projection sent the
+            # fake robot over a tall cut object, 2026-10-30); a tall object at 0.09 m stays cut in the near head pose
+            # (as-built sim), so dropping these left the stop unmeasured
+            return dict(x=self.est[0], y=self.est[1], cut=True, area=int(det["area"]), cx=det["cx"], cy=det["cy"],
+                        frame=idx, lag=round(self.now() - t_cap, 3))
         fresh = self.est is None or self.now() - (self.seen_t or 0) > 2 * LOST_S
         if not fresh and math.hypot(x - self.est[0], y - self.est[1]) > JUMP_M:
             # far from the estimate: a moved object or a false blob; take it once a second frame agrees
@@ -518,7 +524,9 @@ class Approach:
     def p_settle(self, st, now, m):
         if now - self.t_phase < SETTLE_S:
             return
-        if self.est is not None:
+        if self.est is not None and self.head.get("neck_pitch") != NEAR_HEAD["neck_pitch"]:
+            # the near pose chosen in p_measure ("not seen at the stop") stays; re-aiming here undid it every time and
+            # the settle/measure pair looped for ever (test_object_beside..., 2026-10-30)
             self.head = self.aim_head(st, *self.est)
         self.stand(self.head)
         if self.head_arrived(st, self.head) or now - self.t_phase > SETTLE_S + 2.0:

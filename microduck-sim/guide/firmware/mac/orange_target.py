@@ -30,7 +30,13 @@ def detect(frame_bgr, hsv_lo=HSV_LO, hsv_hi=HSV_HI, min_area=MIN_AREA, mask=Fals
     open_px: side of the opening kernel that removes specks; it also removes any blob narrower than itself (a 12 mm
     ball at 0.6 m is 6 px wide), so small-object callers pass 3 or 0."""
     hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV)
-    mk = cv2.inRange(hsv, tuple(hsv_lo), tuple(hsv_hi))
+    if hsv_lo[0] > hsv_hi[0]:
+        # hue range wraps through red (OpenCV hue 0..179): e.g. lo 170 .. hi 18. The orange ball reads hue 172-178
+        # close up and 0-10 at half a metre in warm indoor light (home, 2026-10-30), so one range cannot hold it.
+        mk = cv2.inRange(hsv, (int(hsv_lo[0]), hsv_lo[1], hsv_lo[2]), (179, hsv_hi[1], hsv_hi[2])) | \
+            cv2.inRange(hsv, (0, hsv_lo[1], hsv_lo[2]), tuple(hsv_hi))
+    else:
+        mk = cv2.inRange(hsv, tuple(hsv_lo), tuple(hsv_hi))
     if open_px > 1:
         mk = cv2.morphologyEx(mk, cv2.MORPH_OPEN, KERNEL if open_px == 5 else np.ones((open_px, open_px), np.uint8))
     n, lab, stats, cents = cv2.connectedComponentsWithStats(mk)

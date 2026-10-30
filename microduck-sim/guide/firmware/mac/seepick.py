@@ -35,14 +35,24 @@ sys.path.insert(0, HERE)
 import approach as ap  # noqa: E402
 
 SPOT = (0.087, 0.0)        # m, foot frame: the trained object position (static grasp OBJECT_NOMINAL_XY)
-PICK_WIN = 0.05            # m: |dx| and |dy| within this -> pick (training: 80 % at +-3 cm, 71 % at +-5 cm). Was 0.04:
-                           # robot 2026-10-30 (seepick_1030-025920), object at dx +4.1 cm, 1 mm over, took a blind
-                           # BURST_S walk instead and lost the ball under the beak; a pick at +-5 cm beats that burst
+PICK_WIN = 0.03            # m: |dx| and |dy| within this -> pick. Robot 2026-10-30: the pick at dx +1.1 dy -1.5 cm held
+                           # (seepick_1030-032226); the picks at dx +4.6 (seepick_1030-044224) and dx +2.5 dy +4.9 cm
+                           # (seepick_1030-044506) both came up empty, so the trained +-5 cm does not hold on the robot.
+                           # Was 0.05 after seepick_1030-025920 (dx +4.1 cm: a blind 0.6 s walk burst lost the ball under the
+                           # beak); now the align re-measures after every move instead (MAX_ALIGN), so a miss costs a turn
+                           # or a burst, not the ball.
+BLIND_R = 0.12             # m: nearer than this the object is under the standing picture (bottom edge 0.10-0.125 m at
+#                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position
+PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
 TURN_RATE = 0.5            # rad/s in place (approach.VTH_SPIN, robot-tested)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
-BURST_S = 0.6              # one short walk burst at approach.VX when the object is too far
-MAX_ALIGN = 3              # align moves per try before picking anyway (inside PICK_WIN + 2 cm) or giving up
+BURST_MAX_S = 1.5          # s: the creep toward a too-far object ends here at the latest (a standing-start walk61 moved
+#                            0-5 cm per 0.6-0.9 s command on the robot 2026-10-30: the first steps are in place)
+BURST_STOP_X = 0.125       # m: the creep stops when the object is measured here or nearer; walk61 coasts about 4 cm after a
+#                            stop (approach.STOP_R), which lands it at the trained spot
+MAX_ALIGN = 6              # align moves per try before picking anyway (inside PICK_WIN + PICK_SLACK) or giving up; a
+#                            standing-start burst moves 0-5 cm (robot 2026-10-30, seepick_1030-044506), so 3 was not enough
 AIM_N, AIM_S = 5, 3.0      # detections for the pick measurement, and the time allowed
 SETTLE_S = 1.0             # after a stop, before measuring (approach.SETTLE_S is 1.2 after a walk)
 TRACK_GATE = 0.04          # m: a detection further than this from the estimate during the pick is another object
@@ -82,6 +92,7 @@ class SeePick:
         self.app, self.try_n, self.align_n = None, 0, 0
         self.obj, self.meas, self.last_idx = None, [], None   # obj: dict x, y, size, t (capture time)
         self.turn = None          # (direction, target yaw change, start yaw)
+        self.head, self.burst_m = None, None   # the aim head pose (kept during a creep), the last sighting during it
         self.cmd_t, self.picked_t, self.seen_pick = 0.0, None, False
         self.holding_since, self.lost_since = None, None
         self.trace, self.attempts = [], []
@@ -166,6 +177,16 @@ class SeePick:
             return
         self.next_try("start")
 
+    def retry_here(self, why):
+        """Another try at the object's last known position without a search: a standing robot cannot see the pick
+        spot (BLIND_R), so after a miss or a slip it aims there again and, unseen, picks blind. Counts as a try."""
+        if self.try_n >= self.tries:
+            self.finish(False, f"{self.tries} tries used ({why})")
+            return
+        self.try_n += 1
+        self.align_n, self.meas = 0, []
+        self.enter("aim", f"try {self.try_n}: {why}")
+
     def next_try(self, why):
         if self.try_n >= self.tries:
             self.finish(False, f"{self.tries} tries used ({why})")
@@ -185,7 +206,7 @@ class SeePick:
 
     def p_aim(self, st, now):
         est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
-        head = self.helper.aim_head(st, *est)
+        head = self.head = self.helper.aim_head(st, *est)
         self.stand(head)
         if now - self.t_phase < SETTLE_S:
             return
@@ -194,7 +215,7 @@ class SeePick:
             self.meas.append(m)
         if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and self.meas):
             med = {k: float(np.median([q[k] for q in self.meas])) for k in ("x", "y", "size")}
-            self.obj = dict(med, t=max(q["t"] for q in self.meas))
+            self.obj = dict(med, t=max(q["t"] for q in self.meas), cut=any(q["cut"] for q in self.meas))
             self.log(f"  object x {med['x']:.3f} y {med['y']:.3f} width {med['size'] * 1000:.0f} mm "
                      f"from {len(self.meas)} frames (spot {SPOT[0]:.3f} {SPOT[1]:.3f})")
             self.enter("align")
@@ -204,12 +225,19 @@ class SeePick:
                 self.log("  not seen (blind zone): picking on the given estimate")
                 self.enter("align")
                 return
+            if math.hypot(*est) < BLIND_R:
+                # standing, the picture starts ~0.10-0.12 m out (robot 2026-10-30): an object this near is under it,
+                # and a search would not find it either; pick where it was last measured or estimated
+                self.obj = dict(x=float(est[0]), y=float(est[1]), size=self.obj["size"] if self.obj else DEFAULT_SIZE, t=now)
+                self.log(f"  not seen (blind zone): picking at the last known position x {est[0]:.3f} y {est[1]:.3f}")
+                self.enter("align")
+                return
             self.obj = None
             self.next_try("not seen at the pick spot")
 
     def p_align(self, st, now):
         dx, dy = self.obj["x"] - SPOT[0], self.obj["y"] - SPOT[1]
-        win = PICK_WIN + (0.02 if self.align_n >= MAX_ALIGN else 0.0)
+        win = PICK_WIN + (PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0)
         if abs(dx) <= win and abs(dy) <= win:
             if self.dry:
                 self.finish(True, f"dry run: would pick at dx {dx * 100:+.1f} dy {dy * 100:+.1f} cm")
@@ -233,6 +261,9 @@ class SeePick:
             self.turn = (1 if bearing > 0 else -1, abs(bearing), st["yaw"])
             self.enter("turning", f"bearing {math.degrees(bearing):+.0f} deg")
         else:
+            self.burst_m = self.obj   # the aim measurement: if it sat cut on the bottom edge, the creep's first step hides it
+            if self.head is None:   # align entered without an aim (tests, a given estimate): look at the object
+                self.head = self.helper.aim_head(st, self.obj["x"], self.obj["y"])
             self.enter("burst", f"dx {dx * 100:+.1f} cm")
 
     def p_turning(self, st, now):
@@ -246,12 +277,28 @@ class SeePick:
         self.send_fn({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": d * TURN_RATE, "for_s": ap.CMD_FOR_S})
 
     def p_burst(self, st, now):
-        if now - self.t_phase < BURST_S:
-            self.send_fn({"mode": "walk", "vx": ap.VX, "vy": 0.0, "vtheta": 0.0, "for_s": ap.CMD_FOR_S})
+        """Creep toward a too-far object with the head on it: walk while the camera still sees it beyond BURST_STOP_X;
+        stop at that mark (walk61 coasts the last centimetres), when it drops under the picture, or at BURST_MAX_S; then
+        aim and measure again. Robot 2026-10-30: a blind 0.6 s burst moved anything from 0 to 5 cm."""
+        ref = self.burst_m or self.obj
+        m = self.measure(st, gate=(ref["x"], ref["y"]))
+        if m is not None:
+            self.burst_m = m
+        if m is not None and m["x"] <= BURST_STOP_X:
+            why = f"object at x {m['x']:.3f}"
+        elif m is None and self.burst_m is not None and self.burst_m.get("cut") and now - self.burst_m["t"] > 0.4:
+            why = "object under the picture"
+        elif now - self.t_phase >= BURST_MAX_S:
+            why = f"{BURST_MAX_S} s"
+        else:
+            cmd = {"mode": "walk", "vx": ap.VX, "vy": 0.0, "vtheta": 0.0, "for_s": ap.CMD_FOR_S}
+            if self.head:
+                cmd["head"] = {k: v for k, v in self.head.items() if k in ("head_pitch", "head_yaw", "neck_pitch")}
+            self.send_fn(cmd)
             return
-        self.stand()
-        self.obj, self.meas = None, []
-        self.enter("aim", "burst done")
+        self.stand(self.head)
+        self.obj, self.meas, self.burst_m = None, [], None
+        self.enter("aim", f"creep done: {why}")
 
     def p_pick(self, st, now):
         if st["mode"] == "seepick":
@@ -280,6 +327,8 @@ class SeePick:
         if held:
             self.holding_since, self.lost_since = now, None
             self.enter("hold", "the jaw holds something")
+        elif self.obj is not None and math.hypot(self.obj["x"], self.obj["y"]) < BLIND_R:
+            self.retry_here("nothing between the bills after the rise")   # a miss leaves it about where it was
         else:
             self.next_try("nothing between the bills after the rise")
 
@@ -290,8 +339,9 @@ class SeePick:
             self.lost_since = self.lost_since or now
             if now - self.lost_since >= SLIP_S:
                 self.attempts[-1]["slipped_after_s"] = round(now - self.holding_since, 2)
-                self.obj = None
-                self.next_try("slipped out of the beak")
+                # it drops in front of the beak, about at the trained spot, under the standing picture
+                self.obj = dict(x=SPOT[0], y=SPOT[1], size=self.obj["size"] if self.obj else DEFAULT_SIZE, t=now)
+                self.retry_here("slipped out of the beak")
                 return
         if now - self.holding_since >= HOLD_WATCH_S:
             self.finish(True, "holding", stop=False)

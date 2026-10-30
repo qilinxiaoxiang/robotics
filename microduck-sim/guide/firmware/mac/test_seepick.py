@@ -140,3 +140,27 @@ def test_too_close_is_not_picked():
     ctl.enter("align")
     ctl.step()
     assert ctl.phase == "approach" and ctl.try_n == 2 and not duck.picks
+
+
+def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
+    """The object 7 cm beyond the trained spot: no blind burst; the creep walks while the camera sees it, stops at
+    BURST_STOP_X and the pick happens inside PICK_WIN (robot 2026-10-30: picks at +4.6 cm came up empty)."""
+    duck = PickDuck((0.16, 0.0), ["hold"])
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=None, now=lambda: duck.t, log=lambda s: None)
+    ctl.try_n = 1
+    ctl.obj = dict(x=0.16, y=0.0, size=0.013, t=0.0)
+    ctl.enter("align")
+    phases = []
+    for _ in range(400):
+        ctl.step()
+        duck.advance()
+        if ctl.phase not in phases:
+            phases.append(ctl.phase)
+        if duck.picks or ctl.phase in ("done", "failed"):
+            break
+    assert phases[:2] == ["burst", "aim"], phases
+    assert duck.picks, (phases, ctl.result)
+    o = duck.picks[0]
+    assert abs(o["x"] - sp.SPOT[0]) <= sp.PICK_WIN and abs(o["y"] - sp.SPOT[1]) <= sp.PICK_WIN, o
+    assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)

@@ -25,7 +25,8 @@ class FakeDuck:
     def __init__(self, obj, mode="walk", turn_gain=1.0):
         self.t, self.X, self.Y, self.th = 0.0, 0.0, 0.0, 0.0
         self.turn_gain, self.ok = turn_gain, True
-        self.head_pitch_max = 9.0   # the robot's head lagged its command while walking (2026-10-24)
+        self.head_pitch_max = 1.32  # the head servo reaches 1.28-1.30 for a 1.4 command (robot 2026-10-30); a test
+        #                             lowers it for the head that lagged its command while walking (2026-10-24)
         self.cut_px = 0   # > 0: the object stays in the picture, cut at the bottom, this many px after its base leaves
         self.obj, self.mode, self.cmd, self.sent = obj, mode, {}, []
         self.q = dict(STAND)
@@ -40,11 +41,17 @@ class FakeDuck:
         c = self.cmd
         if c.get("mode") == "walk":
             self.th += self.turn_gain * float(c.get("vtheta", 0)) * dt
-            v = apc.V_REAL if c.get("vx") else 0.0
+            if c.get("vx"):
+                self.walk_t0 = getattr(self, "walk_t0", None) or self.t
+                # the gait gets going over about a second (robot 2026-10-30: 0-5 cm in the first 0.6-0.9 s of a
+                # standing start); the controller's dead reckoning assumes the same (apc.V_ONSET_S)
+                v = apc.V_REAL * (0.5 if self.t - self.walk_t0 < apc.V_ONSET_S else 1.0)
+            else:
+                self.walk_t0, v = None, 0.0
             self.X += v * math.cos(self.th) * dt
             self.Y += v * math.sin(self.th) * dt
             head = c.get("head") or {}
-            for k in ("neck_pitch", "head_pitch", "head_yaw"):
+            for k in ("head_pitch", "head_yaw"):   # the walking policy ignores neck_pitch commands (robot: neck 0.2-0.4)
                 self.q[k] = float(head.get(k, STAND[k]))
             self.q["head_pitch"] = min(self.q["head_pitch"], self.head_pitch_max)
         self.t += dt
@@ -131,8 +138,8 @@ def test_object_moved_beside_when_close_turns_in_place():
         duck.advance()
         ctl.step()
         x, y = duck.obj_robot()
-        if not moved and math.hypot(x, y) < 0.3:
-            ax, ay = apc.rotate(0.0, 0.15, -duck.th)   # 15 cm to the robot's left
+        if not moved and math.hypot(x, y) < 0.4:   # still in the picture after the move (closer it would walk past
+            ax, ay = apc.rotate(0.0, 0.15, -duck.th)   # 15 cm to the robot's left; it into the blind zone beside a foot)
             duck.obj = (duck.obj[0] + ax, duck.obj[1] + ay)
             moved = True
     assert moved and ctl.result["ok"], ctl.result
