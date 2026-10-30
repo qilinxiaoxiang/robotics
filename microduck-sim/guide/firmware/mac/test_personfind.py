@@ -124,9 +124,10 @@ def run(tmp_path, az, world=None, pitch=0.2, until=12.0, turn=False, life=None, 
     return n, recs
 
 
-def test_legs_at_the_top_of_a_low_frame_lead_the_head_up_to_the_face(tmp_path):
+def test_legs_at_the_top_of_a_low_frame_lead_the_head_up_to_the_face(tmp_path, monkeypatch):
     """The 16:54 case: the gaze starts low (pitch 0.2) on the caller's side; only the legs are in view, cut by the
     frame top. The head pitches up step by step, the face comes into view and the face lock takes over."""
+    monkeypatch.setattr(nc, "EYE_CONTACT_S", (30.0, 30.0))   # the climb to the face, not the contact length
     n, recs = run(tmp_path, az=0.5, world=lambda g: World(g, yaw=0.5, face_pitch=1.0))
     people = [r for k, r in recs if k == "person"]
     faces = [r for k, r in recs if k == "face"]
