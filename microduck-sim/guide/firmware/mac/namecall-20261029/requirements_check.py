@@ -11,7 +11,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAC = os.path.dirname(HERE)
-TEST_FILES = ["test_namecall_chain.py", "test_personfind.py"]
+TEST_FILES = ["test_namecall_chain.py", "test_personfind.py", "test_ownkws.py"]
 STATUS = ("gap", "partial", "built", "met")
 
 

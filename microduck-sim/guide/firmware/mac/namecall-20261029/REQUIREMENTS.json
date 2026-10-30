@@ -21,12 +21,17 @@
     [
      "2026-10-30 19:21",
      "我还没交它 它就看着我了"
+    ],
+    [
+     "2026-10-30 19:33",
+     "刚才又误触发了一次"
     ]
    ],
    "acceptance": "In a live test with Shawn present, every answer follows a real call (zero answers he did not make); offline, held-out false wakes per hour on home talk reported with the operating point.",
    "tests": [],
    "evidence": [
-    "results/operating_point_20261030.json: 0.9 gives 5.6-7.8 false wakes/h on life segments, 0 on held-out LibriSpeech and RoboClub talk"
+    "results/operating_point_20261030.json: 0.9 gives 5.6-7.8 false wakes/h on life segments, 0 on held-out LibriSpeech and RoboClub talk",
+    "19:32:18 answer at 0.944 that Shawn reports false"
    ],
    "status": "gap",
    "gap": "Live false answers at 10:58 (five) and 19:21:08 (score 0.98, segment life/20261030/192104_427.wav about 2.5-4.5 s, labelled as a negative in life_labels_1030_live.json for the next training). Shawn's own nearby talk is the main false-wake source."
@@ -42,18 +47,23 @@
     [
      "2026-10-30 18:54",
      "我叫了好几次才响应我"
+    ],
+    [
+     "2026-10-30 19:34",
+     "但我刚实际叫了两声 却一点反应也没有"
     ]
    ],
    "acceptance": "Live: the first call of each attempt is answered, the answer starts within 1 s of the call's end; offline: recall on held-out calls at the operating point.",
    "tests": [
-    "test_short_localiser_and_energy_detector_decide_at_the_onset"
+    "test_a_repeated_near_miss_is_answered_on_the_repeat"
    ],
    "evidence": [
     "18:53 test: two calls scored 0.78-0.83 under the 0.9 threshold, first answer 7.6 s after the first call",
-    "results/operating_point_20261030.json: two-stage repeat rule (0.9, or two peaks >= 0.7 started 1-5 s apart) answers about 2 s after the first call at 4 of 5 offsets"
+    "results/operating_point_20261030.json: two-stage repeat rule (0.9, or two peaks >= 0.7 started 1-5 s apart) answers about 2 s after the first call at 4 of 5 offsets",
+    "19:33:39 and 19:33:41 calls scored 0.73 and 0.82, 1.9 s apart, no answer at 0.9 alone"
    ],
-   "status": "gap",
-   "gap": "Repeat rule proposed, not deployed; waits on Shawn's choice of operating point."
+   "status": "built",
+   "gap": "Repeat rule (0.9, or two runs >= 0.7 started 1-5 s apart) installed 19:35; not yet seen live. Single calls under 0.9 stay unanswered: the spotter learned from 42 real calls by one speaker."
   },
   {
    "id": "R3",
@@ -164,9 +174,12 @@
     "test_eye_contact_ends_while_the_face_is_still_in_view",
     "test_attention_holds_the_gaze_on_the_caller_then_drifts_home"
    ],
-   "evidence": [],
-   "status": "built",
-   "gap": "Contact cap (EYE_CONTACT_S 5-10 s) installed 2026-10-30, not yet seen live."
+   "evidence": [
+    "19:32:20 face, attention ended 19:32:26 (6 s)",
+    "19:33:29 face, attention ended 19:33:35 (6 s)"
+   ],
+   "status": "partial",
+   "gap": "Two live contacts ended after 6 s; not yet confirmed by Shawn that the face was still in view and that it looked natural."
   },
   {
    "id": "R8",
