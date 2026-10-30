@@ -42,6 +42,14 @@ CLASSES = ["mochi", "speech", "noise"]
 HOLDOUT_FRAC = 0.25
 
 
+def unmatched_cues(pos, neg):
+    """Cues (speaker, synthetic voice, room kept around the word) that some positives carry and no negative does: the
+    model can then learn the cue instead of the word. 2026-10-30: synthetic-voice Mochi without synthetic-voice
+    speech gave 2000+ false wakes/h, RoboClub calls on their own background without enough of that room's babble
+    taught 'babble = mochi'; both times the source was dropped instead of matched."""
+    return sorted(c for c, n in pos.items() if n and not neg.get(c))
+
+
 # ------------------------------------------------------------------------------------------------- audio helpers
 
 def band_db(x):
@@ -135,6 +143,15 @@ def build(a, rng):
     lab = json.load(open(a.labels))
     mono = {os.path.basename(p)[:-4]: np.load(p) for p in glob.glob(os.path.join(a.mono16, "*.npy"))}
 
+    def copies(nm, n):
+        """(signal, repeats) for a recording: the ear mix the robot hears with n repeats, or with --mics also each
+        microphone alone (to_mono16.py NAME@chK.npy), the n repeats split over the copies with at least half each."""
+        mics = [mono[k] for k in sorted(mono) if k.startswith(nm + "@ch")] if a.mics else []
+        if not mics:
+            return [(mono[nm], n)]
+        per = max(1, (n + 1) // 2)
+        return [(mono[nm], per)] + [(m, per) for m in mics]
+
     # home floor noise: the quietest 1 s windows of the home recordings
     floor = []
     for nm in lab["home_files"]:
@@ -156,10 +173,15 @@ def build(a, rng):
         (train_ev if a.final else test_ev).extend((nm, t, t + 0.6) for t in ts)   # --final: the deployed fit uses every home call
 
     X, Y = [], []
+    pos_cues, neg_cues = {}, {}
+    speaker_of = lab.get("speakers", {})                    # file -> who speaks in it (default: Shawn)
 
     def add(w, c):
         X.append(feat(fit_len(w)))
         Y.append(c)
+
+    def cue(d, c, n=1):
+        d[c] = d.get(c, 0) + n
 
     # Positives: the word alone, cut tight from its recording and laid onto a background from somewhere else (our
     # other recordings' call-free stretches, the home floor), so the only thing all positives share is the word.
@@ -172,13 +194,13 @@ def build(a, rng):
             for i in range(int(t0 * FS), min(len(y), int(t1 * FS)) - WIN_N, WIN_N):
                 bg.append(y[i:i + WIN_N])
     taper = np.hanning(int(0.04 * FS))
-    for nm, s, e in train_ev:
-        y = mono[nm]
+    for nm, s, e, y, per in ((nm, s, e, y, per) for nm, s, e in train_ev for y, per in copies(nm, a.pos_aug)):
+        cue(pos_cues, "speaker:" + speaker_of.get(nm, "shawn"))
         word = y[max(0, int((s - 0.08) * FS)): int((e + 0.12) * FS)].copy()
         k = len(taper) // 2
         word[:k] *= taper[:k]
         word[-k:] *= taper[k:]
-        for _ in range(a.pos_aug):
+        for _ in range(per):
             wd = speed(word, rng.uniform(0.9, 1.1))[:WIN_N]
             b = bg[rng.integers(len(bg))].copy()
             b_rms = np.sqrt((b ** 2).mean()) + 1e-9
@@ -188,15 +210,27 @@ def build(a, rng):
             st = max(0, end - len(wd))
             b[st:st + len(wd)] += wd[: WIN_N - st]
             add(b * 10 ** (rng.uniform(-10, 10) / 20), 0)
-    # calls marked by start time (the 10/29 RoboClub calls in a noisy room): all but the last two of each file are
-    # trained, laid onto backgrounds from all our recordings (the lab's own noise is among them); the last two are held out
+    # calls marked by start time (the 10/29 RoboClub calls in a noisy room). --robo-fold 0/1 trains the odd/even calls
+    # and holds out the others; --robo-train trains them all. Half of each call's windows keep its own noisy room
+    # around it, half are laid onto other backgrounds; the room's loudspeaker babble without a call is a weighted
+    # negative (--robo-neg-copies), so babble alone cannot be the cue (2026-10-30: without those negatives the own
+    # background taught 'babble = mochi', 36 false wakes/h)
+    # calls_found: calls located by template match and confirmed by ear (10/29 calls_201411, ears not yet repaired),
+    # handled like word_starts
     wl = lab.get("word_len_s", 0.65)
-    for nm, starts in lab.get("word_starts", {}).items():
-        y = mono[nm]
-        for s0 in (starts[:-2] if a.robo_train else []):
+    marked = dict(lab.get("word_starts", {}))
+    marked.update(lab.get("calls_found", {}))
+    for nm, starts in marked.items():
+        if a.robo_fold in (0, 1):
+            trained = [s for i, s in enumerate(starts) if i % 2 != a.robo_fold]
+        else:
+            trained = list(starts) if a.robo_train else []
+        for s0, y, per in ((s0, y, per) for s0 in trained for y, per in copies(nm, a.pos_aug)):
+            cue(pos_cues, "speaker:" + speaker_of.get(nm, "shawn"))
+            cue(pos_cues, "room:" + nm)                           # half its windows keep its own room
             word = y[int(s0 * FS): int((s0 + wl) * FS)].copy()
-            for j in range(a.pos_aug):
-                if False:   # own background off: the RoboClub loudspeaker speech in it taught 'babble = mochi' (36 false wakes/h)
+            for j in range(per):
+                if j % 2 == 0:
                     end = s0 + wl + rng.uniform(-0.6, 0.0)                # the word ends inside the window
                     w = y[int((end - ok.WINDOW_S) * FS): int(end * FS)]
                     w = fit_len(speed(w, rng.uniform(0.95, 1.05)))
@@ -208,13 +242,14 @@ def build(a, rng):
                     st = max(0, e_i - len(wd))
                     w[st:st + len(wd)] += wd[: WIN_N - st]
                 add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
-        test_ev += [(nm, s0, s0 + wl) for s0 in (starts[-2:] if a.robo_train else starts)]
+        test_ev += [(nm, s0, s0 + wl) for s0 in starts if s0 not in trained]
     # synthetic "Mochi" in many voices (mochi_set.py, macOS voices, en and zh accents): the word without Shawn's voice
     # or our rooms, laid onto our backgrounds, so the shared cue of all positives is the word (openWakeWord recipe)
     if a.tts_pos and a.set and os.path.isdir(a.set):
         for r in json.load(open(os.path.join(a.set, "manifest.json"))):
             if r["kind"] not in ("pos", "pos_zh"):
                 continue
+            cue(pos_cues, "voice:" + r["voice"])
             x = read_wav16(os.path.join(a.set, r["file"]))
             e_s = r.get("speech_end") or len(x) / FS
             word = x[max(0, int((e_s - 0.75) * FS)): int((e_s + 0.05) * FS)]
@@ -254,6 +289,7 @@ def build(a, rng):
     if a.set and os.path.isdir(a.set):
         for r in json.load(open(os.path.join(a.set, "manifest.json"))):
             if r["kind"] == "neg_word":
+                cue(neg_cues, "voice:" + r["voice"])
                 x = read_wav16(os.path.join(a.set, r["file"]))[int(r["speech_start"] * FS) - 1600: int(r["speech_end"] * FS) + 1600]
                 for _ in range(2):
                     w = fit_len(x, rng=rng)
@@ -263,13 +299,46 @@ def build(a, rng):
     # every stretch of our own recordings that holds no call (speech, footsteps, standing up, quacks, quiet):
     # 1 s windows every 0.25 s, twice with gain jitter (2026-10-30: walking and standing up woke the spotter)
     for nm, spans in lab.get("negative_spans", {}).items():
-        y = mono[nm]
-        for t0, t1 in spans:
-            i1 = min(len(y), int(t1 * FS))
-            for i in range(int(t0 * FS), i1 - WIN_N, WIN_N // 4):
-                for _ in range(2):
-                    add(y[i:i + WIN_N] * 10 ** (rng.uniform(-8, 8) / 20), 1)
+        cue(neg_cues, "room:" + nm)
+        for s in lab.get("speech_negatives", {}).get(nm, []):
+            cue(neg_cues, "speaker:" + s)
+        reps = a.robo_neg_copies if nm in marked else 2
+        for y, per in copies(nm, reps):
+            for t0, t1 in spans:
+                i1 = min(len(y), int(t1 * FS))
+                for i in range(int(t0 * FS), i1 - WIN_N, WIN_N // 4):
+                    for _ in range(per):
+                        add(y[i:i + WIN_N] * 10 ** (rng.uniform(-8, 8) / 20), 1)
+    # the gaps between the calls of a call recording: same speaker, same room, same moment, only the word missing
+    # (Shawn 2026-10-30: in one utterance only the name is positive, everything around it is negative). 1 s windows
+    # every 0.25 s that keep 0.15 s clear of every voiced event of the span.
+    for nm, (t0, t1) in lab.get("call_spans", {}).items():
+        busy = [(s - 0.15, e + 0.15) for s, e in spans_used[nm]]
+        cue(neg_cues, "room:" + nm)
+        for y, per in copies(nm, 2):
+            for i in range(int(t0 * FS), min(len(y), int(t1 * FS)) - WIN_N, WIN_N // 4):
+                w0, w1 = i / FS, i / FS + ok.WINDOW_S
+                if all(w1 <= b0 or w0 >= b1 for b0, b1 in busy):
+                    for _ in range(per):
+                        add(y[i:i + WIN_N] * 10 ** (rng.uniform(-8, 8) / 20), 1)
+    # synthetic everyday speech in the same voices as the synthetic Mochi positives (tts_speech.py), laid onto our
+    # backgrounds like them: a synthetic voice alone is not the cue (2026-10-30: positives without these negatives
+    # gave over 2000 false wakes per hour on synthetic speech)
+    if a.tts_speech and os.path.isdir(a.tts_speech):
+        for r in json.load(open(os.path.join(a.tts_speech, "manifest.json"))):
+            cue(neg_cues, "voice:" + r["voice"])
+            x = read_wav16(os.path.join(a.tts_speech, r["file"]))
+            for i in range(0, len(x) - WIN_N, WIN_N // 2):
+                w = bg[rng.integers(len(bg))].copy()
+                s = x[i:i + WIN_N]
+                s = s * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((s ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(0, 25) / 20)
+                add((w + s) * 10 ** (rng.uniform(-10, 10) / 20), 1)
     n_speech = len(Y) - n_pos
+    missing = unmatched_cues(pos_cues, neg_cues)
+    if missing and not a.allow_unmatched:
+        raise SystemExit(f"positives carry cues no negative carries: {missing[:8]}{' ...' if len(missing) > 8 else ''} "
+                         f"({len(missing)}). Add negatives with the same voice / speaker / room (e.g. --tts-speech for "
+                         f"synthetic voices) or pass --allow-unmatched for a study run.")
 
     # ---- noise: robot-recording stretches away from any voice, background noise files
     for nm in lab["home_files"] + lab["no_call_files"]:
@@ -296,6 +365,7 @@ def build(a, rng):
                 add(w, 2)
     n_noise = len(Y) - n_pos - n_speech
     info = dict(train_events=len(train_ev), test_events=len(test_ev), rows=dict(mochi=n_pos, speech=n_speech, noise=n_noise),
+                unmatched_cues=missing,
                 spans=spans_used, test=[(n, s) for n, s, _ in test_ev])
     return np.stack(X).astype(np.float32), np.array(Y), mono, train_ev, test_ev, lab, info
 
@@ -454,7 +524,12 @@ def main():
     ap.add_argument("--set", default=None)
     ap.add_argument("--esc50", default=None, help="ESC-50 audio folder (environmental sounds, noise class)")
     ap.add_argument("--robo-train", action="store_true", help="train on the RoboClub calls (else all are held out)")
+    ap.add_argument("--robo-fold", type=int, default=-1, help="0/1: train the odd/even RoboClub calls, hold out the rest")
+    ap.add_argument("--robo-neg-copies", type=int, default=2, help="copies of each call-free window of a RoboClub call file")
     ap.add_argument("--tts-pos", type=int, default=0, help="augmented windows per synthetic Mochi clip (0: none)")
+    ap.add_argument("--tts-speech", default=None, help="folder of synthetic everyday speech (tts_speech.py), speech class")
+    ap.add_argument("--allow-unmatched", action="store_true", help="train although positives carry cues no negative has")
+    ap.add_argument("--mics", action="store_true", help="also train on each microphone alone (NAME@chK.npy from to_mono16.py)")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--final", action="store_true", help="train on every home call (recipe chosen on the held-out run); real negatives stay held out")
     ap.add_argument("--sounds", default=os.path.join(MAC, "sounds"))

@@ -1255,6 +1255,7 @@ class NameCall:
         self.onsets = collections.deque(maxlen=64)   # name mode: recent detector onsets
         self.last_kw_t = -1e9                        # name mode: spot time of the last accepted call
         self.kw_hits = 0
+        self.life = None         # life_log.LifeLog when --life-log is on (run_live feeds it)
         self.kws_paused = False                      # name mode: the spotter rests while a take runs
         self.block_ms = []                         # offline drivers: processing time per block
         self.pending = None                          # onset waiting for its window to fill
@@ -1677,6 +1678,8 @@ class NameCall:
                 t, block = item
                 det = self.hear(t, block)
                 now = self.now()
+                if self.life is not None:
+                    self.life.feed(t, block, score=getattr(self.kws, "last_p", None))
                 if det is not None:
                     if self.head is not None and self.head.busy:
                         log.write("skip", why="a take is running", az_deg=det["az_deg"])
@@ -1686,6 +1689,8 @@ class NameCall:
                             log.write("skip", why=st["why"], az_deg=det["az_deg"])
                         else:
                             self.respond(det, now)
+                            if self.life is not None:
+                                self.life.note(t, "answer", keyword=det.get("keyword"), az_deg=det.get("az_deg"))
                 if not self.motion_tick(now):
                     pass
                 if now >= next_gate:
@@ -1705,7 +1710,7 @@ class NameCall:
                     floor = self.det.floor
                     log.write("heartbeat", floor_db=None if floor is None else round(floor, 1),
                               blocks=cap.n, gaps=cap.gaps, cpu_share=round(cpu, 3), responses=self.responses,
-                              kw_hits=self.kw_hits,
+                              kw_hits=self.kw_hits, life=None if self.life is None else self.life.stats(),
                               writes=None if self.writer is None else self.writer.writes, brain=st and st.get("mode"),
                               face=None if self.finder is None else self.finder.stats())
                 if a.once and self.responses >= a.once and (self.head is None or not self.head.active) \
@@ -1717,6 +1722,8 @@ class NameCall:
             log.write("stop", why="Ctrl-C")
         finally:
             cap.stop()
+            if self.life is not None:
+                self.life.close()
             if self.writer is not None and self.head is not None:
                 self.writer.write(want_head(np.zeros(4), self.head.default))   # head home; the brain keeps balancing
 
@@ -1778,6 +1785,9 @@ def parse_args(argv=None):
     trig.add_argument("--name", choices=sorted(KEYWORDS), default=None,
                       help="respond only to this name (keyword spotter, --spotter); mochi is the "
                            "default on the robot since 2026-10-30 (Shawn: answer only to Mochi); --wav replays stay any-voice")
+    ap.add_argument("--life-log", default=os.path.expanduser("~/duck-logs/life"),
+                    help="everyday listening record for the spotter's learning (life_log.py); '' turns it off")
+    ap.add_argument("--life-max-gb", type=float, default=8.0, help="life log size cap")
     ap.add_argument("--save-raw", default=None,
                     help="also write the raw 4-channel capture here (S32_LE 48 kHz, headerless) for labelling and retraining")
     ap.add_argument("--spotter", choices=("own", "sherpa"), default="own",
@@ -1857,6 +1867,11 @@ def main(argv=None):
         except Exception as e:     # no camera daemon, no models: the attention phase holds the heard bearing instead
             nc.finder = None
             log.write("warn", why=f"face finder not started: {e!r}; attention holds the heard bearing")
+    if a.life_log:
+        from life_log import LifeLog
+        nc.life = LifeLog(a.life_log, Decimate3, max_gb=a.life_max_gb,
+                          on_stop=lambda st: log.write("warn", why=f"life log stopped: {st['why']}", **st))
+        log.write("life_log", dir=nc.life.dir, used_mb=round(nc.life.used / 1e6, 1), max_gb=a.life_max_gb)
     cap = Capture(dev, save_raw=a.save_raw).start()
     try:
         nc.run_live(cap)

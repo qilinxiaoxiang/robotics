@@ -27,7 +27,7 @@
   "live_204536",
   "live_204926"
  ],
- "note": "2026-10-30: live_141734 110-226 s = Shawn's open-ended home call session (regular two-syllable utterances about 2 s apart; Whisper cannot read them at this level), 0-110 s unlabelled and unused; live_073135 the six home calls of the table test (held out, another session); live_205910/221322 lab conversation without the name (10/29). The 10/29 calls_* files are not used: their by-ear times are off by more than 1 s and the lab acoustics differ. negative_spans: every stretch known to hold no call (10/29 lab conversation, the 48 quacks through the speaker, the table test away from its six calls, the 14:38 run outside Shawn's calls 176-212 s, the 14:55 run's quiet stretches and 125-140 s where Shawn only stood up and walked and the duck answered anyway, the 15:01 ordinary speech recording 0-100 s). heldout_negative_spans: never trained on, must give zero hits: 14:55 run 140 s to the end (two of the five walking false hits), 15:01 speech 100-144 s. word_starts: the 10/29 RoboClub 2 m calls (calls_221619, noisy room with a corridor loudspeaker), the loudest 0.3 s of voice band 0.2-1.6 s after each by-ear time, 0.65 s per word; the rest of that recording, the 10/29 no-speech robot recording (calls_201411, head touches) and the snap/cover tests (live_204536/204926) are negatives.",
+ "note": "2026-10-30: live_141734 110-226 s = Shawn's open-ended home call session (regular two-syllable utterances about 2 s apart; Whisper cannot read them at this level), 0-110 s unlabelled and unused; live_073135 the six home calls of the table test (held out, another session); live_205910/221322 lab conversation without the name (10/29). The 10/29 calls_* files are not used: their by-ear times are off by more than 1 s and the lab acoustics differ. negative_spans: every stretch known to hold no call (10/29 lab conversation, the 48 quacks through the speaker, the table test away from its six calls, the 14:38 run outside Shawn's calls 176-212 s, the 14:55 run's quiet stretches and 125-140 s where Shawn only stood up and walked and the duck answered anyway, the 15:01 ordinary speech recording 0-100 s). heldout_negative_spans: never trained on, must give zero hits: 14:55 run 140 s to the end (two of the five walking false hits), 15:01 speech 100-144 s. word_starts: the 10/29 RoboClub 2 m calls (calls_221619, noisy room with a corridor loudspeaker), the loudest 0.3 s of voice band 0.2-1.6 s after each by-ear time, 0.65 s per word; the rest of that recording, the 10/29 no-speech robot recording (calls_201411, head touches) and the snap/cover tests (live_204536/204926) are negatives. heldout_negative_spans calls_221619 115-150 s: RoboClub loudspeaker babble after the last call, never trained on (2026-10-30 v3). speech_negatives: who speaks (without the name) in a negative_spans file; train_mochi.py refuses to train when a positive's speaker, synthetic voice or kept room has no negative with the same cue. calls_found calls_201411: eight calls of 10/29 before the ear repair (template match, confirmed by Shawn's ear, PET_ROBOT_LOG 10/29); until 2026-10-30 evening the whole file was wrongly a negative. listen_raw.wav is a 24 kHz copy of calls_201411 (correlation 0.965) and is not used. calls_221510 (10/29 22:15, RoboClub, 66 s) has no known call; unused until mined.",
  "negative_spans": {
   "live_205910": [
    [
@@ -93,7 +93,39 @@
   ],
   "calls_201411": [
    [
-    0,
+    0.0,
+    21.25
+   ],
+   [
+    22.95,
+    33.58
+   ],
+   [
+    35.28,
+    41.93
+   ],
+   [
+    43.63,
+    50.57
+   ],
+   [
+    52.27,
+    59.29
+   ],
+   [
+    60.99,
+    68.05
+   ],
+   [
+    69.75,
+    79.81
+   ],
+   [
+    81.51,
+    87.65
+   ],
+   [
+    89.35,
     1000000000.0
    ]
   ],
@@ -144,7 +176,7 @@
    ],
    [
     97.6,
-    1000000000.0
+    115.0
    ]
   ]
  },
@@ -160,6 +192,12 @@
     100.0,
     144.0
    ]
+  ],
+  "calls_221619": [
+   [
+    115.0,
+    150.0
+   ]
   ]
  },
  "word_starts": {
@@ -174,5 +212,22 @@
    95.94
   ]
  },
- "word_len_s": 0.65
+ "word_len_s": 0.65,
+ "speech_negatives": {
+  "live_150103": [
+   "shawn"
+  ]
+ },
+ "calls_found": {
+  "calls_201411": [
+   21.75,
+   34.08,
+   42.43,
+   51.07,
+   59.79,
+   68.55,
+   80.31,
+   88.15
+  ]
+ }
 }

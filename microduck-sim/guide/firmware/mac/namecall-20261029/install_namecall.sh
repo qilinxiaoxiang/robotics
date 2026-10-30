@@ -34,6 +34,7 @@ rsync -a --checksum --relative --itemize-changes \
   microduck-sim/guide/firmware/mac/namecall-20261029/keywords_mochi.txt \
   microduck-sim/guide/firmware/mac/facefind.py \
   microduck-sim/guide/firmware/mac/ownkws.py \
+  microduck-sim/guide/firmware/mac/life_log.py \
   microduck-sim/guide/firmware/mac/namecall-20261029/models/mochi_own.npz \
   pet/__init__.py pet/express/*.py pet/express/cards/duck.json \
   pet/identity/__init__.py pet/identity/face.py pet/identity/models/buffalo_sc/det_500m.onnx pet/identity/models/buffalo_sc/w600k_mbf.onnx \
