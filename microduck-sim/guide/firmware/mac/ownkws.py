@@ -196,13 +196,16 @@ class OwnSpotter:
             return None
         n = int(WINDOW_S * FS16)
         feats = logmel(self.ring[-n:])[:N_FRAMES].reshape(-1)
-        p = self.model.score(feats)
+        return self.decide(self.model.score(feats), t_end)
+
+    def decide(self, p, t_end):
+        """One score p at time t_end -> hit dict or None: the threshold, or the second chance on a repeated near miss."""
         self.last_p = p
         if p >= self.threshold:
             self.hits += 1
             self.last_hit_t = t_end
             self.runs, self.in_run = [], False
-            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None, repeat=False)
+            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(float(p), 3)], span_s=None, repeat=False)
         if self.repeat_threshold is None or p < self.repeat_threshold:
             self.in_run = False
             return None
@@ -217,9 +220,87 @@ class OwnSpotter:
             self.repeats += 1
             self.last_hit_t = t_end
             self.runs, self.in_run = [], False
-            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None, repeat=True)
+            return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(float(p), 3)], span_s=None, repeat=True)
         self.runs = [t0 for t0 in self.runs if t_end - t0 <= hi] + [t_end]
         return None
+
+
+OWW_DIR = os.path.join(HERE, "namecall-20261029", "models", "oww")
+OWW_FRAME = 1280         # 80 ms at 16 kHz: openWakeWord's step
+OWW_MEL_CTX = 480        # the 3 extra 10 ms hops openWakeWord feeds the mel model before each new frame
+
+
+class OwwSpotter(OwnSpotter):
+    """openWakeWord head on the duck (round 2, 2026-10-30): the frozen Google speech-embedding front end
+    (melspectrogram.onnx -> 32-band mel every 10 ms, /10 + 2; embedding_model.onnx -> 96 features per 80 ms from the
+    last 76 mel frames) and a small head trained on the duck-ear calls, web and TTS "mochi" against 2000 h of speech
+    (namecall-20261029/oww/run_v2.sh). Same streaming arithmetic as openwakeword.utils.AudioFeatures, in
+    onnxruntime only; same feed() / decide() contract as OwnSpotter, scored every 80 ms."""
+
+    def __init__(self, head_path, ears=(0, 1), threshold=0.5, gain_db=0.0, repeat_threshold=REPEAT_THRESHOLD,
+                 repeat_gap=REPEAT_GAP_S, front_dir=OWW_DIR, threads=1):
+        import namecall as nc
+        import onnxruntime as ort
+        self.nc = nc
+        so = ort.SessionOptions()
+        so.intra_op_num_threads = so.inter_op_num_threads = threads
+        prov = ["CPUExecutionProvider"]
+        self.mel = ort.InferenceSession(os.path.join(front_dir, "melspectrogram.onnx"), so, providers=prov)
+        self.emb = ort.InferenceSession(os.path.join(front_dir, "embedding_model.onnx"), so, providers=prov)
+        self.head = ort.InferenceSession(head_path, so, providers=prov)
+        self.mel_in, self.emb_in, self.head_in = (m.get_inputs()[0].name for m in (self.mel, self.emb, self.head))
+        self.n_feat = int(self.head.get_inputs()[0].shape[1])      # 16 feature frames = 1.28 s
+        self.threshold = float(threshold)
+        self.ears = list(ears)
+        self.repeat_threshold = None if repeat_threshold is None else float(repeat_threshold)
+        self.repeat_gap = tuple(repeat_gap)
+        self.repeats = 0
+        self.gain = 10 ** (gain_db / 20.0)
+        self.model_dir, self.keywords_file, self.model = head_path, None, None
+        self.hits = 0
+        self.reset()
+
+    def reset(self):
+        self.dec = self.nc.Decimate3()
+        self.pending = np.zeros(0, np.float32)
+        self.raw = np.zeros(OWW_MEL_CTX, np.float32)            # the tail kept for the mel model's context
+        self.melbuf = np.ones((76, 32), np.float32)
+        self.feats = np.zeros((0, 96), np.float32)
+        self.last_hit_t = -1e9
+        self.last_p = 0.0
+        self.runs = []
+        self.in_run = False
+        # like AudioFeatures: a start-up buffer from 4 s of low noise, so the first real frames have a full history
+        noise = (np.random.default_rng(0).integers(-1000, 1000, 4 * FS16) / 32768.0).astype(np.float32)
+        for k in range(0, len(noise) - OWW_FRAME + 1, OWW_FRAME):
+            self._frame(noise[k:k + OWW_FRAME])
+
+    def _frame(self, y16):
+        """One 80 ms frame of 16 kHz float audio -> one new 96-feature row."""
+        x = np.concatenate([self.raw[-OWW_MEL_CTX:], y16]) * 32767.0
+        spec = np.squeeze(self.mel.run(None, {self.mel_in: x[None, :].astype(np.float32)})[0]) / 10.0 + 2.0
+        self.melbuf = np.vstack([self.melbuf, spec.astype(np.float32)])[-970:]
+        e = self.emb.run(None, {self.emb_in: self.melbuf[-76:][None, :, :, None].astype(np.float32)})[0]
+        self.feats = np.vstack([self.feats, e.reshape(1, 96)])[-120:]
+        self.raw = y16[-OWW_MEL_CTX:] if len(y16) >= OWW_MEL_CTX else np.concatenate([self.raw, y16])[-OWW_MEL_CTX:]
+
+    def score(self):
+        return float(np.squeeze(self.head.run(None, {self.head_in: self.feats[-self.n_feat:][None]})[0]))
+
+    def feed(self, t, block, silent=False):
+        x = block[:, self.ears].mean(axis=1) if block.ndim == 2 else block
+        y = self.dec(x) * self.gain
+        if silent:
+            y = np.zeros_like(y)
+        self.pending = np.concatenate([self.pending, y.astype(np.float32)])
+        if len(self.pending) < OWW_FRAME:
+            return None
+        self._frame(self.pending[:OWW_FRAME])
+        self.pending = self.pending[OWW_FRAME:]
+        t_end = t + len(x) / self.nc.FS
+        if t_end - self.last_hit_t < REFRACTORY_S:
+            return None
+        return self.decide(self.score(), t_end)
 
 
 def pack_ensemble(paths, out, threshold):

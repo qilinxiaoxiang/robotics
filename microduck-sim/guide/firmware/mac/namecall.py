@@ -1354,6 +1354,10 @@ class NameCall:
                                          threshold=getattr(args, "own_threshold", None),
                                          repeat_threshold=None if getattr(args, "own_repeat_threshold", ownkws.REPEAT_THRESHOLD) < 0
                                          else getattr(args, "own_repeat_threshold", ownkws.REPEAT_THRESHOLD))
+        if self.kws is None and name and getattr(args, "spotter", "own") == "oww":
+            import ownkws
+            self.kws = ownkws.OwwSpotter(args.oww_model, ears=(ch["left"], ch["right"]), threshold=args.oww_threshold,
+                                         repeat_threshold=None if args.own_repeat_threshold < 0 else args.own_repeat_threshold)
         if self.kws is None and name:
             self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
                                    score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
@@ -1390,6 +1394,10 @@ class NameCall:
         self.face_used_t = -1e9          # frame time of the last sighting acted on
         self.face_seen = False           # a face was seen in this attention phase
         self.contact_until = None        # end of the eye contact for the current call (EYE_CONTACT_S)
+        self.bearing_prior = None        # fit_bearing.py: where callers really were when the duck heard them
+        bp = getattr(args, "bearing_prior", None)
+        if bp and os.path.exists(bp):
+            self.bearing_prior = json.load(open(bp))
         self.gaze_rng = np.random.default_rng(getattr(args, "seed", None))
         self.scan = None                 # [(until, yaw)] remaining scan steps, [] when the scan is spent
         self.no_face_since = None
@@ -1522,11 +1530,17 @@ class NameCall:
         az_front, side = fold_front(az)
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3), az_front_rad=round(az_front, 4),
                    side=side, behind_heard=abs(az) > YAW_CAP)
+        az_look = az_front
+        if self.bearing_prior is not None and side:
+            # the duck's own experience (fit_bearing.py): the heard side is right, the heard magnitude is not, so the
+            # first look goes to the median true bearing on that side and the camera finds the rest
+            az_look = side * math.radians(self.bearing_prior["look_deg"])
+            rec["az_look_deg"] = round(math.degrees(az_look), 1)
         self.call = dict(t=det.get("t", now), now=now, seen=False)
         self.body_rot = 0.0
         if self.head is not None:
             # front first: the take aims at the folded bearing; behind/margin are logged, never acted on
-            perf = self.head.start(now, az_front, self.a.pitch, hold=True)
+            perf = self.head.start(now, az_look, self.a.pitch, hold=True)
             self.attend_until = now + self.attend_s
             self.attend_base = (self.head.last["yaw"], self.a.pitch)
             self.scan, self.no_face_since, self.face_seen = None, None, False
@@ -2015,8 +2029,13 @@ def parse_args(argv=None):
     ap.add_argument("--life-max-gb", type=float, default=8.0, help="life log size cap")
     ap.add_argument("--save-raw", default=None,
                     help="also write the raw 4-channel capture here (S32_LE 48 kHz, headerless) for labelling and retraining")
-    ap.add_argument("--spotter", choices=("own", "sherpa"), default="own",
-                    help="name spotter: own = ownkws.py, trained on Shawn's calls (default); sherpa = the public keyword model")
+    ap.add_argument("--spotter", choices=("own", "oww", "sherpa"), default="own",
+                    help="name spotter: own = ownkws.py, trained on Shawn's calls (default); oww = openWakeWord head on the "
+                         "duck-ear calls (ownkws.OwwSpotter, --oww-model); sherpa = the public keyword model")
+    ap.add_argument("--oww-model", default=os.path.join(HERE, "namecall-20261029", "models", "oww", "mochi_v2.onnx"))
+    ap.add_argument("--oww-threshold", type=float, default=0.5)
+    ap.add_argument("--bearing-prior", default=os.path.join(HERE, "namecall-20261029", "bearing_prior.json"),
+                    help="fit_bearing.py output: the first look goes to the heard side by its look_deg (empty string = off)")
     ap.add_argument("--own-model", default=None, help="ownkws model .npz (default namecall-20261029/models/mochi_own.npz)")
     ap.add_argument("--own-threshold", type=float, default=None, help="P(mochi) to fire (default: the threshold stored in the model)")
     ap.add_argument("--own-repeat-threshold", type=float, default=0.7,

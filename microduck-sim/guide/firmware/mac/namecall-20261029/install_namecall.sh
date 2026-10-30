@@ -38,6 +38,8 @@ rsync -a --checksum --relative --itemize-changes \
   microduck-sim/guide/firmware/mac/ownkws.py \
   microduck-sim/guide/firmware/mac/life_log.py \
   microduck-sim/guide/firmware/mac/namecall-20261029/models/mochi_own.npz \
+  microduck-sim/guide/firmware/mac/namecall-20261029/bearing_prior.json \
+  microduck-sim/guide/firmware/mac/namecall-20261029/models/oww/*.onnx \
   pet/__init__.py pet/express/*.py pet/express/cards/duck.json \
   pet/identity/__init__.py pet/identity/face.py pet/identity/models/buffalo_sc/det_500m.onnx pet/identity/models/buffalo_sc/w600k_mbf.onnx \
   pet/identity/models/yolox/yolox_tiny.onnx \
@@ -46,7 +48,7 @@ rsync -a --checksum --relative --itemize-changes \
 
 echo "== checks on $HOST"
 ssh "$HOST" "cd ~/$REMOTE/microduck-sim/guide/firmware/mac && \
-  for f in namecall.py duck_sound.py facefind.py personfind.py ownkws.py namecall-20261029/models/mochi_own.npz ../../../../pet/express/express.py; do sha256sum \"\$f\"; done && \
+  for f in namecall.py duck_sound.py facefind.py personfind.py ownkws.py namecall-20261029/models/mochi_own.npz namecall-20261029/bearing_prior.json ../../../../pet/express/express.py; do sha256sum \"\$f\"; done && \
   $VENV/bin/python -c 'import namecall, numpy; print(\"namecall imports ok, numpy\", numpy.__version__); \
     print(\"policy default head\", namecall.policy_default_head())' && \
   $VENV/bin/python -c 'import ownkws; m = ownkws.OwnModel(); print(\"own name spotter:\", m.classes, \"threshold\", m.threshold)' && \

@@ -616,3 +616,22 @@ def test_face_tracking_does_not_swing_with_the_real_delays(tmp_path, monkeypatch
         t += 0.02
     yaws = np.array(yaws)
     assert abs(yaws.mean() - 0.2) < 0.04 and yaws.max() - yaws.min() < 0.06, (yaws.mean(), yaws.min(), yaws.max())
+
+
+def test_the_first_look_goes_to_the_heard_side_by_the_learned_bearing(tmp_path):
+    """2026-10-30 19:48, 15 camera-confirmed calls: the heard side was right every time, the heard magnitude never
+    (readings of 100-176 deg from callers 13-51 deg in front). With bearing_prior.json the take aims side * look_deg
+    and the raw bearing stays in the record; without the file the folded bearing is used as before."""
+    prior = tmp_path / "bearing_prior.json"
+    prior.write_text(json.dumps(dict(look_deg=35.0, n=15, side_correct=15)))
+    for az, want in ((2.4, 0.611), (-0.5, -0.611), (1.0, 0.611)):
+        a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH, bearing_prior=str(prior))
+        a.no_turn = True
+        n = nc.NameCall(a, nc.Log(None, echo=False))
+        rec = n.respond(dict(t=0.0, az_rad=az, az_deg=round(math.degrees(az)), bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+        assert abs(rec["target_yaw"] - want) < 0.02 and abs(rec["az_look_deg"] - math.degrees(want)) < 0.1, (az, rec["target_yaw"])
+        assert abs(rec["az_rest_rad"] - az) < 1e-6                       # the heard bearing is kept for fit_bearing.py
+    a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH)
+    a.no_turn = True
+    rec = nc.NameCall(a, nc.Log(None, echo=False)).respond(dict(t=0.0, az_rad=1.0, az_deg=57, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+    assert "az_look_deg" not in rec and abs(rec["target_yaw"] - 1.0) < 0.05
