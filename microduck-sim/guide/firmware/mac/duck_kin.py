@@ -270,6 +270,10 @@ class DuckKin:
             self.offsets = (float(o.get("pitch", 0.0)), float(o.get("yaw", 0.0)), float(o.get("roll", 0.0)))
             self.shift = np.array(mount.get("shift_m") or (0.0, 0.0, 0.0), float)
             self.head_gain = float(mount.get("head_pitch_gain", 1.0))
+        # In the bow the real camera sits lower than the rigid chain says (2026-10-30: 13-20 px per mm along a ruler
+        # on the floor where the chain predicts 9-12); measured as a height, applied by neck angle, zero standing
+        # (camera-calib-20261030/bend-20261030/empirical_pose.py --dz-only).
+        self.bow = (mount or {}).get("bow_height_correction")
         self.pitch_offset = math.radians(pitch_offset_deg)
         self._R_off = None
         self._key, self._pose = None, None
@@ -362,9 +366,24 @@ class DuckKin:
         Rc = Rb @ s["R"]
         return pb + Rb @ s["p"] + Rc @ self.shift, Rc @ self._offset()
 
+    def bow_dz(self, q):
+        """Measured height correction of the camera (m, foot frame z) at this neck angle: the mount's
+        bow_height_correction dz_m in full at neck_pitch <= neck_full, zero at >= neck_none, linear between (the
+        between is not measured; the standing fit and the bow holds are)."""
+        b = self.bow
+        if not b:
+            return 0.0
+        n, full, none = float(q["neck_pitch"]), float(b["neck_full"]), float(b["neck_none"])
+        w = min(1.0, max(0.0, (none - n) / (none - full)))
+        return w * float(b["dz_m"])
+
     def camera_pose(self, q, gb=UPRIGHT):
-        """(pos, R) of the camera in the foot frame; R columns = optical axis, image left, image up."""
-        return self.camera_from_body(*self.camera_body_pose(q, gb))
+        """(pos, R) of the camera in the foot frame; R columns = optical axis, image left, image up. Includes the
+        measured bow height correction (bow_dz); camera_body_pose + camera_from_body, which the standing mount fit
+        uses, do not (the correction is zero standing)."""
+        pos, R = self.camera_from_body(*self.camera_body_pose(q, gb))
+        dz = self.bow_dz(q)
+        return (pos + np.array([0.0, 0.0, dz]) if dz else pos), R
 
     def mouth_tip(self, q, gb=UPRIGHT):
         return self.site_pose("mouth_tip", q, gb)[0]

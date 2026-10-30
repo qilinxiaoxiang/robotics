@@ -413,5 +413,62 @@
   }
  },
  "source": "fit",
- "head_pitch_gain": 0.92
+ "head_pitch_gain": 0.92,
+ "bow_height_correction": {
+  "dz_m": -0.013,
+  "neck_full": -1.2,
+  "neck_none": 0.0,
+  "date": "2026-10-30T07:40",
+  "source": "camera-calib-20261030/bend-20261030/bow_correction_dz.json (empirical_pose.py --dz-only): the camera height fitted per held bow pose from ruler ticks, neck -1.28..-1.34, head -0.03..-0.17: dz -13.1, -14.9, -12.2, -7.8, -11.0 mm (sd 1.2-8 mm); the rise pose (neck -1.61) fits -8.7 +- 3.1 mm. -13 mm chosen as the value with the smallest worst-case tick error over all 54 ticks (test_bow_correction.py scan: bow max 4.6 mm, mean 2.0, rise max 4.9; the uncorrected chain: bow 3.6-15.9, rise 21). Between neck 0 and -1.2 nothing is measured: linear.",
+  "per_pose_mm": [
+   {
+    "sweep": "sweep1",
+    "neck": -1.6105,
+    "head": 0.333,
+    "dz_mm": -8.71,
+    "sd_mm": 3.05,
+    "heldout_max_mm": 6.7
+   },
+   {
+    "sweep": "sweep2",
+    "neck": -1.3361,
+    "head": -0.1534,
+    "dz_mm": -13.07,
+    "sd_mm": 1.21,
+    "heldout_max_mm": 2.8
+   },
+   {
+    "sweep": "sweep2",
+    "neck": -1.3346,
+    "head": -0.0736,
+    "dz_mm": -14.89,
+    "sd_mm": 1.65,
+    "heldout_max_mm": 3.0
+   },
+   {
+    "sweep": "sweep3",
+    "neck": -1.2839,
+    "head": -0.1672,
+    "dz_mm": -12.24,
+    "sd_mm": 7.95,
+    "heldout_max_mm": 4.3
+   },
+   {
+    "sweep": "sweep3",
+    "neck": -1.2824,
+    "head": -0.0721,
+    "dz_mm": -7.75,
+    "sd_mm": 2.94,
+    "heldout_max_mm": 2.5
+   },
+   {
+    "sweep": "sweep3",
+    "neck": -1.2824,
+    "head": -0.0261,
+    "dz_mm": -11.04,
+    "sd_mm": 3.87,
+    "heldout_max_mm": 2.5
+   }
+  ]
+ }
 }

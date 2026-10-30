@@ -124,3 +124,13 @@ are weakly separable (the body's own motion separates them: test_gaze.py). First
 
     ~/.venvs/duck-policy/bin/python gaze.py --observe 10     track and filter only
     ~/.venvs/duck-policy/bin/python gaze.py --max-s 60       head following
+
+### Bow height correction (2026-10-30 07:40)
+
+In the bow (neck about -1.3) the real camera sits 13 mm lower than the rigid chain says: a ruler on the floor shows
+13-20 px per mm where the chain predicts 9-12. Which link or servo is responsible cannot be told from the two neck
+angles the policies reach (standing +0.3, bow -1.3), so the mount carries the measured height as
+`bow_height_correction` (full at neck <= -1.2, zero at >= 0, linear between, unmeasured there) and `DuckKin.camera_pose`
+applies it. With it every ruler tick of the four bend sweeps projects to the floor within 5 mm (was up to 21 mm);
+`test_bow_correction.py` holds that. Fit: `camera-calib-20261030/bend-20261030/empirical_pose.py --dz-only`; the chain
+analysis that led there: `bend-20261030/README.md`.
