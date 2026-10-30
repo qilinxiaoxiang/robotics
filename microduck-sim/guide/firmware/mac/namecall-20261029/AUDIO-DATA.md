@@ -38,8 +38,12 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
 - **live_073014.raw** (10/30 07:30, home, 78 s): unlabelled sounds the any-voice mode answered.
 - **live_150103.raw** (10/30 15:01, home, 144 s): Shawn's ordinary speech, no name.
 - **own_quacks_144713.raw** (10/30 14:47, home, 73 s): all 48 QuackBank calls through the head speaker.
-- Still on the A7Z only (list them when it is back online): the 10/30 morning live_level and namecall runs
-  (06:10-07:22), any later live_*.raw, and from now on the life log `~/duck-logs/life/` (`life_log.py`).
+  **own_quacks_144438.raw** (10/30 14:44, 73 s, pulled 10/30 20:00): the first take of the same playback, not yet in
+  mono16v2.
+- The A7Z holds no other recording (checked 10/30 20:00, 12 .raw files, all here); the morning live_level runs wrote no
+  files. From 10/30 19:56 the life log `~/duck-logs/life/` (`life_log.py`) records round every voice and answer; pull it
+  with `rsync -a a7z:duck-logs/life/ recordings/life/` and label with `mine_life.py`. The card has 2.5 GB free (brain
+  logs `duck_wired_log_*.jsonl` take 2.4 GB); the life log stops writing below 2 GB free.
 
 ## Downloaded and generated sources
 
@@ -50,9 +54,12 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
   speech clips (28 min, the held-out false-wake test). Synthetic Mochi positives are not used: even with
   same-voice synthetic speech as negatives they woke on 235 of 561 held-out synthetic sentences (2026-10-30).
 - **tts_speech** (`tts_speech.py`): 38 clips, 15 min of everyday sentences in the same 28 voices (negatives).
-- **mochi_web** (`~/data/mochi_web/`, being built 2026-10-30): real people saying "mochi" in YouTube videos (recipes,
-  tasting, Japanese food), word cuts as positives, the rest of the same sentence and video as negatives, manifest
-  with video id and time.
+- **mochi_web** (`~/data/mochi_web/`, Mac mini `~/mochi-train/data/mochi_web`, built 2026-10-30, counts as of 20:00
+  with the builder still verifying): real people saying "mochi" in YouTube videos (recipes, tasting, Japanese food),
+  16 kHz mono. `pos/` 1925 tight word cuts (about 0.7 s), `pos_ctx/` 1.5 s cuts with the word in its own background,
+  `neg_adjacent/` 3571 1 s cuts from the same sentences, `neg/` 1.8k 1 s cuts from the same videos, `audio/` the
+  139 source files; file prefix before `_NNN` is the video id. This is the 18-763 lecture 21 recipe (many speakers,
+  the word as the only shared cue); `train_mochi.py --web` holds out the videos whose id hashes to 0 mod 10.
 
 ## Not duck data
 
