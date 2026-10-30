@@ -41,8 +41,11 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
   **own_quacks_144438.raw** (10/30 14:44, 73 s, pulled 10/30 20:00): the first take of the same playback, not yet in
   mono16v2.
 - The A7Z holds no other recording (checked 10/30 16:00, 12 .raw files, all here); the morning live_level runs wrote no
-  files. The card has 2.5 GB free (brain logs `duck_wired_log_*.jsonl` take 2.4 GB); the life log stops writing below
-  2 GB free.
+  files. The life log stops writing below 2 GB free. Since 10/30 18:45 `a7z_offload.py` (launchd
+  `com.xiangzheng.a7z-offload`, hourly on the MacBook) moves every duck-logs file older than 6 h to the Mac: life
+  segments to `recordings/life/<day>/`, everything else (brain logs, blackbox, calls_*.wav) to `~/Backups/a7z-duck-logs/`;
+  run records and health in `~/Backups/a7z-duck-logs/offload-runs.jsonl` and `offload-status.json`. First run freed the
+  card from 1.7 GB to 10 GB free.
 - **Life log** `recordings/life/<day>/HHMMSS_mmm.wav` (3-ch int16 16 kHz, `life_log.py`, index `life_index.jsonl` with
   the epoch start of each segment): the duck records round every voice, name and answer from boot. Pull with
   `rsync -a a7z:duck-logs/life/ recordings/life/`, convert with `to_mono16.py --prefix life_<day>_`, label with
