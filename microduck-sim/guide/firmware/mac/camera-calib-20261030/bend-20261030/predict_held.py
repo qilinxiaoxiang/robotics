@@ -28,20 +28,26 @@ def main():
     params = json.load(open(fit_path))["models"][model]["params"] if model != "current" else {}
     kin = bendfit.BendKin()
     kin.set_params(params)
-    rows = {r["name"]: r for r in json.load(open(os.path.join(HERE, "rows_matched.json")))}
     ticks = json.load(open(os.path.join(HERE, "bend_ticks.json")))
+    # frames of sweep1 live in frames/ with rows_matched.json; sweeps 2-4 in sweepN/ with their own rows_matched.json
+    rows = {}
+    for sweep, sub, fdir in (("sweep1", "rows_matched.json", "frames"), ("sweep2", "sweep2/rows_matched.json", "sweep2"),
+                             ("sweep3", "sweep3/rows_matched.json", "sweep3"), ("sweep4", "sweep4/rows_matched.json", "sweep4")):
+        for r in json.load(open(os.path.join(HERE, sub))):
+            rows.setdefault(r["name"], dict(r, sweep=sweep, fdir=fdir))
     for name in frames:
         r = rows[name]
         q, gb = r["q"], r["gb"]
         tx = cam_calib.toe_x(kin, q, gb)
         pos, R = kin.camera_pose(q, gb)
-        im = cv2.imread(os.path.join(HERE, "frames", f"{name}.png"))
-        print(f"\n{name} phase {r['cmd_phase']} neck {q['neck_pitch']:+.3f} head {q['head_pitch']:+.3f} gb {gb} | "
-              f"cam pos {np.round(pos, 4).tolist()} toe_x {tx:.4f}")
+        im = cv2.imread(os.path.join(HERE, r["fdir"], f"{name}.png"))
+        y_edge = kin.y_edge(tx, tx, r["sweep"])
+        print(f"\n{name} {r['sweep']} phase {r.get('cmd_phase', r.get('phase'))} neck {q['neck_pitch']:+.3f} head "
+              f"{q['head_pitch']:+.3f} gb {gb} | cam pos {np.round(pos, 4).tolist()} toe_x {tx:.4f} y_edge {y_edge:+.4f}")
         pred = {}
         for k10 in range(0, 310):          # mm steps
             mm = k10
-            uv = kin.ground_to_pixel(tx + mm / 1000, bendfit.Y_EDGE, q, gb, 640, 360, z=bendfit.BOARD)
+            uv = kin.ground_to_pixel(tx + mm / 1000, y_edge, q, gb, 640, 360, z=bendfit.BOARD)
             if uv is None:
                 continue
             pred[mm] = uv
