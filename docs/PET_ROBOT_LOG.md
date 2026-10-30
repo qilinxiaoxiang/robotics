@@ -294,3 +294,9 @@ capped by the power bank sliding, and a twist torque that slips past 0.005-0.03 
 Parameters are drawn per episode. walk61 with the lead in the eval sim: walks as far as without (1.32-1.48 m in 12 s),
 in-place turns 12-23 deg/s against 28, no falls. The fine-tune delta `tether` puts the same model in 80 % of the
 training envs; the reward audit passes (standing earns 0.788 of walking, gate 0.8). Kaggle run planned, not started.
+E2 on held-out real speech (LibriSpeech speakers it never heard): 0 false wakes in 30 min at 0.7 and 0.9; its live
+false answers come from Shawn's own talk. E3 = E2 with its two Shawn's-voice members retrained on everything the life
+log heard (his ordinary talk as negatives, the two answers he confirmed false, his three confirmed calls, 20k
+LibriSpeech windows): at 0.9 duck calls 22 of 34 (the two new live calls 2 of 2), synthetic speech, real speech and
+real room sounds all 0. Packed as `models/mochi_own.npz` (sha256 4bd159aa...); not on the duck yet (A7Z offline on
+Tailscale since about 17:25).
