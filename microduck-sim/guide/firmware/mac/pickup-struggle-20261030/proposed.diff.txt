@@ -1,0 +1,90 @@
+--- a/microduck-sim/guide/firmware/mac/hold.py
++++ b/microduck-sim/guide/firmware/mac/hold.py
+@@ -51,6 +51,8 @@
+ GATE_LO, GATE_HI = 0.1, 0.4  # engagement over which unloaded feet count as held (linear in between)
+ A_TOUCH = 0.6               # the hand alone takes at most this share of the authority, until a lift has landed
+ AIRBORNE, LANDED = 0.5, 0.8  # h_load that counts as lifted; load share that counts as set down again
++LAND_S = 0.1                # s the load share must stay over LANDED, read with the legs paused, to count as set down
++S_QUIET = 0.1               # authority at or below which the leg current is the floor's push, not the policy's motion
+ DOWN_RATE = 4.0             # authority falls at most this per s (0.25 s from full to none)
+ UP_RATE = 10.0              # and comes back at most this per s (0.1 s)
+ KP_LEG_MIN = 80             # legs in the air
+@@ -117,6 +119,7 @@
+         self.levels = [0.0] * len(PADS)
+         self.airborne = False     # the feet have been off the ground under this grip
+         self.landed = False       # and are back on it: the hand term stays off until the hand leaves
++        self.land_s = 0.0         # s of quiet foot load seen so far in this lift
+         self.set_cal(cal or {})
+ 
+     def set_cal(self, cal):
+@@ -180,13 +183,24 @@
+         # set down with the hand still on the head: the robot must balance on its own feet now, so only the load term
+         # counts until the hand leaves (sim 2026-10-22, pivot hand: the hand term kept s at 0.4 after touchdown, the
+         # policy's raw action grew to 1.57 rad and the release jumped 1.0-1.3 rad and tilted it 14-33 deg)
++        # A lift ends only when the hand lets go (e < GATE_LO) or the feet are set down. A hand shifting on the head
++        # in the air is still a hand (2026-10-30 01:33: coverage 0.46 -> 0.17 for 0.15 s shrank the gate, the
++        # authority came back, the policy's own leg motion drew 329 mA, read as load 0.80 = "landed", and walk61 at zero
++        # command got full authority in the air). Set-down counts only on load read while the legs hold the pause pose
++        # (s <= S_QUIET) for LAND_S, never on current the policy's motion makes.
+         if self.e < GATE_LO:
+             self.airborne = self.landed = False
++            self.land_s = 0.0
++        elif self.airborne and not self.landed:
++            quiet_load = self.load_f is not None and self.load_f > LANDED and self.s <= S_QUIET
++            self.land_s = self.land_s + dt if quiet_load else 0.0
++            self.landed = self.land_s >= LAND_S
+         elif self.h_load > AIRBORNE:
+             self.airborne = True
+-        elif self.airborne and self.load_f is not None and self.load_f > LANDED:
+-            self.landed = True
+-        held = self.h_load if self.landed else max(self.a_touch * self.e, self.h_load)
++        lifted = self.airborne and not self.landed
++        if lifted:
++            self.h_load = 1.0  # the legs stay soft and the neck stiff for the whole lift
++        held = 1.0 if lifted else self.h_load if self.landed else max(self.a_touch * self.e, self.h_load)
+         target = 1.0 - held
+         if target < self.s:
+             self.s = max(target, self.s - DOWN_RATE * dt)
+--- a/microduck-sim/guide/firmware/mac/test_hold.py
++++ b/microduck-sim/guide/firmware/mac/test_hold.py
+@@ -82,9 +82,11 @@
+         run(self.est, 1.0, pressed=GRIP, legs_ma=200)
+         down = run(self.est, 0.5, pressed=GRIP, legs_ma=1000)  # set down, hand still on
+         knee = [h[1]["left_knee"] for h in down]
+-        self.assertGreater(knee[1], 120)        # no slow ramp back: the gain follows the (smoothed) load
+-        self.assertGreaterEqual(knee[3], 170)   # LOAD_TAU 0.06 s: most of the gain within 0.08 s
+-        self.assertEqual(knee[12], 200)         # and exactly the full gain within 0.25 s
++        land = next(k for k, h in enumerate(down) if h[0] > 0.0)  # the first tick the authority comes back
++        self.assertTrue(all(v == hold.KP_LEG_MIN for v in knee[:land]))  # soft until the load has stood LAND_S
++        self.assertLessEqual(land * DT, hold.LAND_S + 0.1)  # load smoothing (LOAD_TAU) plus LAND_S
++        self.assertGreaterEqual(knee[land], 190)  # then most of the gain at once, no slow ramp back
++        self.assertEqual(knee[land + 3], 200)     # and exactly the full gain 0.06 s later
+         self.assertEqual(down[-1][0], 1.0)              # landed: the hand term is off until the hand leaves
+         letgo = run(self.est, 0.4, legs_ma=1000)
+         s = [h[0] for h in letgo]
+@@ -92,6 +94,25 @@
+         reach = next(k for k, v in enumerate(s) if v >= 0.99) * DT
+         self.assertLess(reach, 0.2)
+ 
++    def test_a_hand_shifting_on_the_head_in_the_air_keeps_the_hold(self):
++        """2026-10-30 01:33 (pickup-struggle-20261030): in the air, the grip coverage fell 0.46 -> 0.17 for 0.15 s
++        while the hand shifted; the gate shrank, the authority came back, the policy's leg motion drew 320-330 mA,
++        read as load 0.80, and the hold latched 'landed' and gave walk61 full authority in the hand."""
++        run(self.est, 1.0, pressed=GRIP, legs_ma=1000)
++        run(self.est, 1.0, pressed=GRIP, legs_ma=200)  # lifted
++        self.assertTrue(self.est.airborne and not self.est.landed)
++        shift = run(self.est, 0.16, pressed=("R2",), legs_ma=200)  # only a small pad still covered: e above GATE_LO
++        self.assertGreater(self.est.e, hold.GATE_LO)
++        spike = run(self.est, 0.06, pressed=GRIP, legs_ma=1000)  # 3 ticks of servo effort, shorter than LAND_S
++        after = run(self.est, 0.5, pressed=GRIP, legs_ma=200)
++        for hist in (shift, spike, after):
++            self.assertTrue(all(s == 0.0 for s, _ in hist))
++            self.assertTrue(all(g["left_knee"] == hold.KP_LEG_MIN for _, g in hist))
++        self.assertFalse(self.est.landed)
++        run(self.est, 0.3, legs_ma=200)  # the hand really leaves in the air: the lift ends, a fall gets the policy
++        self.assertFalse(self.est.airborne)
++        self.assertEqual(self.est.s, 1.0)
++
+     def test_feet_unloaded_without_a_hand_is_a_fall_and_changes_nothing(self):
+         hist = run(self.est, 1.0, legs_ma=200)
+         self.assertTrue(all(s == 1.0 for s, g in hist))

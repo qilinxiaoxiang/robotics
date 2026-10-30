@@ -2,7 +2,7 @@
 
 **Cause.** The graded hold did engage when Shawn lifted the duck by the head: the legs went soft and the policy had no authority for about 0.4 s in the air. Then his hand shifted on the head. The grip reading dipped for 0.15 s, the hold handed part of the authority back, and the policy's own leg motion drew 329 mA. `hold.py` reads summed leg current as weight on the feet, so it decided the robot had been set down (`landed`). It then gave walk61 full authority at full gain while the robot was still in the hand. The legs thrashed for 1.45 s until the action limit stopped the policy and switched to the open-loop stand.
 
-**Fix (proposed in `proposed.diff`, not applied).** Once a lift has started, keep the hold until the hand really lets go or the feet are really loaded. Count a landing only from leg current read while the legs are paused, and only after it has lasted 0.1 s.
+**Fix (proposed in `proposed.diff.txt`, not applied).** Once a lift has started, keep the hold until the hand really lets go or the feet are really loaded. Count a landing only from leg current read while the legs are paused, and only after it has lasted 0.1 s.
 
 Evidence is the brain log on the A7Z, `~/duck-logs/duck_wired_log_app1030-040713.jsonl`, with stdout in `duck_wired_app1030-040713.out`. The excerpt here, `log_app1030-040713_0533.jsonl`, covers 18 s (t 1793338396-1793338414) with the fields used below. `replay.py` feeds the logged touch counts and leg currents through `hold.py` and reproduces the logged `s` and `landed` tick for tick. Times below are seconds after t = 1793338402.0 (05:33:22.0 UTC, 01:33:22 EDT).
 
@@ -46,7 +46,7 @@ Source: pollen-robotics/microduck at 7d866d0 (2026-10-29), `duck-control/src/pic
 
 ## 5. Proposed fix (smallest change, `hold.py` only)
 
-`proposed.diff` applies cleanly to the current tree (`git apply --check`). It changes `hold.py` and `test_hold.py`; `walk_wired.py` and `walk_brain.py` are unchanged. Two rules:
+`proposed.diff.txt` applies cleanly to the current tree (`git apply --check proposed.diff.txt` from the repo root). The `.txt` suffix is there because `microduck-sim/.gitignore` publishes only listed extensions. It changes `hold.py` and `test_hold.py`; `walk_wired.py` and `walk_brain.py` are unchanged. Two rules:
 
 - **Lift latch.** Once `airborne`, the lift ends only when the hand lets go (`e < GATE_LO`, the existing release path) or a set-down is confirmed. During the lift, `held` is 1 and `h_load` is 1, so `s` targets 0 and the legs stay at KP_LEG_MIN. A hand that shifts or regrips no longer returns authority.
 - **Quiet landing.** `landed` needs `load_f > LANDED` for LAND_S = 0.1 s, counted only while the authority `s` <= S_QUIET = 0.1. That way the current comes from the floor pushing on legs that hold the pause pose, not from the policy moving them.
