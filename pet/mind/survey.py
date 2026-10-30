@@ -183,7 +183,18 @@ class Survey:
         self.jobs.append((rec, self.pool.submit(self.vision.describe, jpg, where, PROMPT)))
         self.note(kind="look", **{k: rec[k] for k in ("img", "body_deg", "head_yaw", "head_pitch")})
 
-    def run(self, stops=STOPS):
+    def walk(self, vx, vtheta, seconds):
+        """A robot-tested walk (vx 0.25, vtheta within +-0.3) for `seconds`, then the zero command."""
+        start = self.yaw()
+        self.write({"mode": "walk", "vx": vx, "vy": 0.0, "vtheta": vtheta, "for_s": seconds + 1.0})
+        self.wait(seconds)
+        self.write(dict(WALK_ZERO))
+        self.wait(1.5)
+        self.note(kind="walk", vx=vx, vtheta=vtheta, seconds=seconds, start_deg=round(start, 1),
+                  end_deg=round(self.yaw(), 1))
+        self.heading = Heading(self.row["quat"])   # the survey's stops count from where the walk ended
+
+    def run(self, stops=STOPS, pre_walk=None):
         t0 = time.time()
         while self.row is None or self.row.get("quat") is None or self.frame is None:
             self.wait(0.1)
@@ -197,6 +208,8 @@ class Survey:
         self.written = cur
         self.heading = Heading(self.row["quat"])
         self.note(kind="start", cmd=cur)
+        if pre_walk:
+            self.walk(*pre_walk)
         for i, target in enumerate(stops):
             self.turn_to(target)
             for yaw, pitch in LOOKS:
@@ -233,6 +246,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--host", default="a7z")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--pre-walk", default=None, help="vx,vtheta,seconds walked before the survey, e.g. 0.25,-0.3,2.5")
     ap.add_argument("--right-first", action="store_true", help="turn to -90 first (away from the cable side)")
     a = ap.parse_args()
     out = Path(a.out) if a.out else OUT / f"survey-{dt.datetime.now():%Y%m%d-%H%M%S}"
@@ -240,7 +254,10 @@ def main():
     s = Survey(link, out)
     signal.signal(signal.SIGINT, lambda *_: setattr(s, "stop", True))
     try:
-        s.run(tuple(-x for x in STOPS) if a.right_first else STOPS)
+        pre = tuple(float(x) for x in a.pre_walk.split(",")) if a.pre_walk else None
+        if pre and not (0 <= pre[0] <= 0.25 and abs(pre[1]) <= 0.3 and 0 < pre[2] <= 4):
+            raise SystemExit("--pre-walk outside the robot-tested range (vx 0..0.25, vtheta +-0.3, up to 4 s)")
+        s.run(tuple(-x for x in STOPS) if a.right_first else STOPS, pre)
     except Abort as e:
         s.note(kind="abort", why=str(e))
     finally:
