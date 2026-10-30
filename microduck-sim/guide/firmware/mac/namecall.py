@@ -148,6 +148,7 @@ TURN_MARGIN_MIN = 0.3            # HISTORY: the front/back margin gate (2026-10-
 #                                  only and the back turn waits for an empty front search instead
 # attention after the take: the head stays on the caller (not the drift home) and waits for whatever comes next
 ATTEND_S = 10.0                  # s since the last call or face sighting; then the head drifts home
+FACE_DEADBAND = math.radians(2.0)   # a re-aim smaller than this is detector jitter; the head stays
 FACE_GAIN = 0.6                  # fraction of the measured face offset corrected per new frame
 FACE_WAIT_S = 1.0                # s without a face (after the take arrives, or since the last sighting) before the scan
 FACE_PITCH = (-0.3, 1.1)         # gaze pitch range while tracking a face (express rad up; 1.1 = the head pitch cap)
@@ -1198,6 +1199,59 @@ class GyroTurn:
         return self.theta if self.ok else None
 
 
+class HeadHistory:
+    """The head's measured gaze over the last few seconds, from the brain's tick log (q in walk_brain.NAMES order).
+
+    2026-10-30 18:53 live test: tracking a face by adding FACE_GAIN x the frame's offset to the *commanded* gaze swung
+    the head +-0.35 rad with a 2.2 s period for 40 s. The head reaches a command about 250 ms later (brain EMA and
+    servo), the frame is analysed 160-200 ms after capture, so the same offset was corrected again before the head had
+    moved: an integrator behind about 0.5 s of delay. The fix is the standard one for visual servoing with latency:
+    the target is the measured gaze at the frame's capture time plus the frame's offset (an absolute bearing), which
+    does not change with commands sent after that frame. at(t) gives (yaw, pitch up) in express rad at time t."""
+
+    KEEP_S = 4.0
+
+    def __init__(self, path_fn, default_head=None):
+        self.path_fn = path_fn               # callable -> the brain tick log in use (BrainGate.log)
+        d = dict(DEFAULT_HEAD, **(default_head or {}))
+        self.yaw0, self.pitch0 = d["head_yaw"], d["head_pitch"]
+        self.rows = []                       # (t, yaw, pitch up)
+        try:
+            from walk_brain import NAMES
+            self.i_yaw, self.i_pitch = NAMES.index("head_yaw"), NAMES.index("head_pitch")
+        except Exception:                    # noqa: BLE001 - no walk_brain here (tests): ID order of 2026-10-30
+            self.i_yaw, self.i_pitch = 12, 10
+
+    def update(self):
+        path = self.path_fn() if self.path_fn else None
+        row = tail_json(path) if path else None
+        if not row or "t" not in row or not row.get("q") or len(row["q"]) <= max(self.i_yaw, self.i_pitch):
+            return
+        t = float(row["t"])
+        if self.rows and t <= self.rows[-1][0]:
+            return
+        q = row["q"]
+        # express gaze: yaw = head_yaw - default; pitch up = default head_pitch - head_pitch (the duck card's ATTEND map)
+        self.rows.append((t, float(q[self.i_yaw]) - self.yaw0, self.pitch0 - float(q[self.i_pitch])))
+        while self.rows and t - self.rows[0][0] > self.KEEP_S:
+            self.rows.pop(0)
+
+    def at(self, t, max_gap=0.15):
+        """(yaw, pitch up) measured at time t (linear between the nearest rows), or None outside the kept rows."""
+        r = self.rows
+        if not r or t < r[0][0] - max_gap or t > r[-1][0] + max_gap:
+            return None
+        if t <= r[0][0]:
+            return r[0][1], r[0][2]
+        if t >= r[-1][0]:
+            return r[-1][1], r[-1][2]
+        for (ta, ya, pa), (tb, yb, pb) in zip(r, r[1:]):
+            if ta <= t <= tb:
+                w = (t - ta) / (tb - ta) if tb > ta else 0.0
+                return ya + w * (yb - ya), pa + w * (pb - pa)
+        return None
+
+
 class CmdWriter:
     """Writes the zero-command walk with a head pose to the control file, only while nobody else has written it."""
 
@@ -1316,6 +1370,8 @@ class NameCall:
         self.turn_until = None           # the body turn runs until this time
         self.turn_t0 = self.turn_plan = self.turn_home_t = self.turn_home_from = None
         self.gyro = GyroTurn(self.gate.log if self.gate is not None else None) if self.gate is not None else None
+        self.head_hist = HeadHistory(lambda: self.gate.log, self.head.default) \
+            if (self.gate is not None and self.head is not None) else None
         self.finder = None               # facefind.FaceFinder (run_live starts it) or a test double with latest(now)
         self.attend_s = float(getattr(args, "attend", ATTEND_S))
         self.attend_until = None         # attention phase runs until this time (extended by calls and face sightings)
@@ -1536,6 +1592,8 @@ class NameCall:
             head = None
         if self.turn_until is not None:
             return self._turn_tick(now)
+        if self.head_hist is not None:
+            self.head_hist.update()
         if self.attend_until is not None and not self.head.busy:
             self._attend_tick(now)
         if head is not None:
@@ -1561,13 +1619,19 @@ class NameCall:
         if face is not None and face["t"] > self.face_used_t:
             self.face_used_t, self.face_t = face["t"], now
             gy, gp = self.head.gaze(now)
-            yaw = gy - FACE_GAIN * face["yaw_err"]       # face right of centre -> yaw down (head_yaw + is left)
-            pitch = gp + FACE_GAIN * face["pitch_err"]  # face above centre -> look up
+            fy, fp, _ = self._gaze_at(face["t"], gy, gp)    # no tick log: the commanded gaze stands in
+            # the face's absolute direction: the measured gaze at the frame's capture time plus the frame's offset
+            # (face right of centre -> yaw down, head_yaw + is left; above centre -> look up); FACE_GAIN eases toward
+            # it. Never add the offset to the commanded gaze: that re-corrects what the head has not yet done (HeadHistory)
+            ty, tp = fy - face["yaw_err"], fp + face["pitch_err"]
+            yaw, pitch = gy + FACE_GAIN * (ty - gy), gp + FACE_GAIN * (tp - gp)
+            if abs(yaw - gy) < FACE_DEADBAND and abs(pitch - gp) < FACE_DEADBAND:
+                yaw, pitch = gy, gp          # detector jitter: the head stays
             if self.head.aim(yaw, pitch):
                 self.attend_until = now + self.attend_s
                 self.scan, self.no_face_since = None, None
                 self.attend_base = (self.head.gaze(now)[0], self.head.gaze(now)[1])
-                self._bearing_seen(now, "face", gy, gp, face)
+                self._bearing_seen(now, "face", fy, fp, face)
                 if not self.face_seen:
                     self.face_seen = True
                     self.log.write("face", yaw_err_deg=round(math.degrees(face["yaw_err"]), 1),
@@ -1602,6 +1666,11 @@ class NameCall:
             if not self.scan:
                 self.face_seen = False       # a lost face is searched once; then wait where the sound came from
 
+    def _gaze_at(self, t, gy, gp):
+        """(yaw, pitch up, measured) of the head at capture time t from the tick log; the commanded gaze when unknown."""
+        h = self.head_hist.at(t) if self.head_hist is not None else None
+        return (h[0], h[1], True) if h is not None else (gy, gp, False)
+
     def _person_tick(self, now):
         """No face: a person in the newest frames -> follow the body toward the head (person_aim). Returns True while a
         fresh person sighting holds the gaze (the scan and the back turn wait)."""
@@ -1613,7 +1682,8 @@ class NameCall:
             return True                  # same frame as last time: hold until the next person frame
         self.person_used_t = person["t"]
         gy, gp = self.head.gaze(now)
-        yaw, pitch, how = person_aim(gy, gp, person)
+        fy, fp, _ = self._gaze_at(person["t"], gy, gp)     # measured gaze at the frame (HeadHistory)
+        yaw, pitch, how = person_aim(fy, fp, person)
         if not self.head.aim(yaw, pitch):
             return True
         self.scan, self.no_face_since = None, None
@@ -1622,7 +1692,7 @@ class NameCall:
             self.person_first = now
         # a person keeps the search open, but people alone never hold the head up for more than PERSON_MAX_S
         self.attend_until = max(self.attend_until, min(now + PERSON_HOLD_S, self.person_first + PERSON_MAX_S))
-        self._bearing_seen(now, "person", gy, gp, person)
+        self._bearing_seen(now, "person", fy, fp, person)
         if how != self.person_how:
             self.person_how = how
             self.log.write("person", how=how, yaw_err_deg=round(math.degrees(person["yaw_err"]), 1),

@@ -545,3 +545,58 @@ def test_life_log_stop_does_not_crash_namecall(tmp_path):
     log = nc.Log(None, echo=False)
     st = dict(why="disk nearly full", used_mb=1.0, free_gb=1.7)
     log.write("warn", why=f"life log stopped: {st['why']}", **{k: v for k, v in st.items() if k != "why"})
+
+
+class LaggedWorld:
+    """A face fixed in the world, seen through the real delays of the 2026-10-30 18:53 live test: the head reaches the
+    commanded gaze HEAD_LAG_S later, a frame is captured every FRAME_S and its result arrives DET_S after capture,
+    offset measured from where the head really was at capture. Also stands in for HeadHistory (at(t): the real gaze)."""
+    HEAD_LAG_S, FRAME_S, DET_S = 0.25, 0.22, 0.45
+
+    def __init__(self, gaze, world):
+        self.gaze, self.world = gaze, world
+        self.hist = []                   # (t, commanded yaw, pitch)
+        self.rate_hz, self.det_size = 4.0, 640
+
+    def record(self, now):
+        self.hist.append((now,) + tuple(self.gaze(now)))
+
+    def at(self, t):
+        t -= self.HEAD_LAG_S
+        past = [h for h in self.hist if h[0] <= t]
+        return (past[-1][1], past[-1][2]) if past else (self.hist[0][1], self.hist[0][2]) if self.hist else None
+
+    def latest(self, now=None, stale_s=1.0):
+        t_frame = math.floor((now - self.DET_S) / self.FRAME_S) * self.FRAME_S
+        real = self.at(t_frame) if t_frame > 0 else None
+        if real is None:
+            return None
+        return dict(t=t_frame, yaw_err=real[0] - self.world[0], pitch_err=self.world[1] - real[1], size=0.1, score=0.9)
+
+    def update(self):
+        pass
+
+    def stats(self):
+        return dict(frames=0)
+
+
+def test_face_tracking_does_not_swing_with_the_real_delays(tmp_path):
+    """2026-10-30 18:53: the head swung +-0.35 rad with a 2.2 s period for 40 s around Shawn's face (offset added to
+    the commanded gaze, behind about 0.5 s of delay). With the gaze measured at the frame's capture time it settles
+    on the face and stays there."""
+    a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH)
+    a.no_turn = True
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    w = LaggedWorld(n.head.gaze, world=(0.2, 0.9))
+    n.finder, n.head_hist = w, w
+    n.log.write = lambda kind, **rec: None
+    n.respond(dict(t=0.0, az_rad=0.6, az_deg=34, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+    t, yaws = 0.0, []
+    while t < 14.0:
+        w.record(t)
+        n.motion_tick(t)
+        if t > 9.0:
+            yaws.append(w.at(t)[0])
+        t += 0.02
+    yaws = np.array(yaws)
+    assert abs(yaws.mean() - 0.2) < 0.04 and yaws.max() - yaws.min() < 0.06, (yaws.mean(), yaws.min(), yaws.max())
