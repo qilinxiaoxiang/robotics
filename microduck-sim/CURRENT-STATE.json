@@ -72,6 +72,13 @@
     }
    ]
   },
+  "a7z_brain_memory_lock": {
+   "value": "walk_wired.py locks its pages in RAM at start (mlockall MCL_CURRENT|MCL_FUTURE|MCL_ONFAULT; radxa memlock unlimited via /etc/security/limits.d/90-duck-memlock.conf) and writes its tick log from its own thread. Under a whole-log json load on the A7Z (MemAvailable down to 168 MB, kswapd busy, iowait up to 64 %) the brain in zero-command walk had 0 major faults and a longest tick of 33.5 ms over 4306 ticks; the unlocked brain stalled 348 ms on a page fault under the same kind of load on 2026-10-30 and fell",
+   "verified_at": "2026-10-30",
+   "source": "guide/firmware/a7z/stall-check-20261030/new_brain_load.json (brain_stall_check.py, brain app1030-015959, pid 5975, VmLck 925440 kB, VmSwap 0); blackbox b0043-128f4cfe-sys.jsonl: brain never in D state during the load",
+   "max_age_days": 30,
+   "measure": "the brain's .out start line reads 'memory lock: on'; python3 guide/firmware/a7z/brain_stall_check.py --seconds 90 passes (0 major faults, no tick over 40 ms)"
+  },
   "walk_heading_hold": {
    "value": "walk_brain.py heading hold, turn = trim + vtheta + 3.0 x heading error + 2.0 x its integral (capped at 1.5 rad s), within +-2.0 rad/s; the integral learns only on straight walks and does not grow while the command sits at +-2.0. Arcs: with vtheta set the held heading advances at vtheta, at most ARC_LEAD 0.35 rad ahead, reset to the reached heading on release; walks with a manual turn do not update the trim. App arc rate 0.3 rad/s. Trim -0.716 rad/s in ~/.duck_yaw_trim.json at the 23:01 start. On the A7Z: walk_brain.py md5 a5d3129d..., previous copy ~/rt/walk_brain.py.bak-20261023-arcwindup, running since the brain restart 2026-10-23 23:01 UTC (run app1023-230123); not yet walked with it. Robot arcs before this fix (runs app1023-223352, -225437, target 17 deg/s): right -14.6, -5.1 and +2.0 deg/s with the command pinned at -2.0; left +14.6, +8.4, +4.8 and +3.1 deg/s, the slow ones held at -1.7 to -2.0 by the integral wound up in the right arc before",
    "verified_at": "2026-10-23",
