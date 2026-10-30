@@ -65,6 +65,8 @@ class TetherRig(Rig):
     def advance(self, seconds, dt=0.1):
         for _ in range(int(round(seconds / dt))):
             self.r.newest_frame = (self.clock.t, b"jpg", self.clock.t + dt)   # the camera keeps sending frames
+            if self.r.scene is not None:
+                self.r.scene.feed_frame(*self.r.newest_frame)
             super().advance(dt, dt)
 
 
@@ -110,3 +112,49 @@ def test_the_prompt_carries_the_cable_situation(tmp_path):
     rig = TetherRig(tmp_path, [answer(("wait", {"seconds": 3}))], tether=Tether(0.8)).started()
     ctx = rig.r.mind.context({})
     assert "charging cable" in ctx["situation"] and "from where your cable starts" in ctx["situation"]
+
+
+class SceneVision:
+    """Answers the scene prompt: a person only when the head looks left; a doorway when it looks right."""
+
+    def __init__(self):
+        self.calls = []
+
+    def describe(self, jpeg, where, prompt):
+        self.calls.append(where)
+        if "to its left" in where:
+            ans = {"person": True, "person_x": 0.2, "things": [{"name": "desk", "x": 0.5}], "blocked": False,
+                   "summary": "a person on a chair at a desk"}
+        elif "to its right" in where:
+            ans = {"person": False, "person_x": None, "things": [{"name": "doorway", "x": 0.5}], "blocked": False,
+                   "summary": "an open doorway"}
+        else:
+            ans = {"person": False, "person_x": None, "things": [], "blocked": False, "summary": "bare floor"}
+        return json.dumps(ans), {}
+
+
+def test_sees_the_owner_remembers_the_direction_and_turns_to_walk_there(tmp_path):
+    from pet.mind.glance import bearing_in_frame
+    vision = SceneVision()
+    rig = TetherRig(tmp_path, [answer(("approach_owner", {"seconds": 3}))], tether=Tether(3.0), vision=vision,
+                    see=True).started()
+    for _ in range(200):                                # the startup look finds the person on the left
+        rig.advance(0.1)
+        if rig.r.scene.person is not None:
+            break
+    owner_world = 1.2 * 57.2958 + bearing_in_frame(0.2)  # head yaw + where the person sits in the picture
+    assert rig.r.scene.person[0] == pytest.approx(owner_world, abs=3)
+    ctx = rig.r.mind.context({})
+    assert "my owner (a person) 9" in ctx["situation"] and "deg to your left, seen" in ctx["situation"]
+    assert rig.r.world.owner_visible
+    for _ in range(300):                                # the model's approach_owner: turn on the spot, then walk
+        rig.advance(0.1)
+        if rig.r.turn_then and rig.r.turn_then["phase"] == "walk":
+            break
+    assert rig.r.tether.yaw_deg == pytest.approx(rig.r.scene.person[0], abs=10)
+    assert "my owner (a person) ahead" in rig.r.mind.context({})["situation"]
+    rig.advance(3.5)
+    walks = [c for c in rig.cmds() if c.get("vx")]
+    assert walks and walks[0]["vx"] == 0.25 and walks[0]["vtheta"] == 0.0
+    assert rig.r.tether.walked_m > 0.3
+    assert "toward where the owner was seen" in rig.text()

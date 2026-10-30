@@ -51,6 +51,7 @@ from .perception import (DEFAULT_SESSION, BumpDetector, FaceAdapter, FrameRecord
                          TouchDetector)
 from .prompt import user_prompt
 from .state import EXAMPLES, SharedState, load_body_card
+from .tether import SPIN_MAX_DEG
 from .validator import validate
 from .world import World, clock
 
@@ -71,6 +72,19 @@ UPRIGHT_START_S = 2.0
 ALLOW = {"head": {"turn_head", "look_around", "nod", "wait", "stop"},
          "sit": {"sit", "rest", "stand"},
          "walk": {"walk", "approach_owner", "wander", "bow"}}
+
+
+def robot_tested(cmd: dict) -> dict:
+    """Walk commands as tested on the robot: forward at vx 0.25 (slower barely steps, 2026-10-30), a turn on the spot
+    at vtheta +-0.3 (CURRENT-STATE walk_speed_vx025; robot-tested commands only)."""
+    if cmd.get("mode") != "walk":
+        return cmd
+    vx, vth = float(cmd.get("vx", 0) or 0), float(cmd.get("vtheta", 0) or 0)
+    if vx > 0:
+        return {**cmd, "vx": 0.25, "vtheta": max(-0.3, min(0.3, vth))}
+    if vth != 0:
+        return {**cmd, "vtheta": 0.3 if vth > 0 else -0.3}
+    return cmd
 
 
 def allowed_names(spec: str) -> set | None:
@@ -165,6 +179,28 @@ class LiveExecutor:
         secs = float(step.get("seconds") or r.body.step_seconds(step["primitive"], step["params"]))
         cmds = duck_commands(step, r.world.posture)
         r.schedule = []  # a new step cancels whatever the previous step still had queued
+        r.turn_then = None
+        if r.mode == "robot":
+            cmds = [(off, robot_tested(cmd)) for off, cmd in cmds]
+        if step["primitive"] == "approach_owner" and r.scene is not None and r.tether is not None:
+            rel = r.scene.person_rel(r.now)
+            if rel is not None and abs(r.tether.yaw_deg + rel) > SPIN_MAX_DEG:
+                rel -= math.copysign(360.0, rel)   # the other way round keeps the cable from winding
+            if rel is not None and abs(rel) > 15:
+                turn = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.3 if rel > 0 else -0.3, "for_s": 31.0}
+                r.tether.planned_turn_deg = rel
+                r.write(turn, "approach_owner: turn toward the owner")
+                r.tether.planned_turn_deg = None
+                if not same_cmd(r.last_written, turn):
+                    return 0.5   # refused (the reason is in the log and the mind's events)
+                r.turn_then = {"target": r.tether.yaw_deg + rel, "sign": 1.0 if rel > 0 else -1.0, "t0": r.now,
+                               "then": {"mode": "walk", "vx": 0.25, "vy": 0.0, "vtheta": 0.0}, "then_s": secs,
+                               "prim": step["primitive"], "phase": "turn"}
+                r.log(f"  step approach_owner: turning {rel:+.0f} deg toward where the owner was seen, then walking "
+                      f"{secs:g} s")
+                self.started[step["primitive"]] += 1
+                r.learn("self:did", primitive=step["primitive"])
+                return abs(rel) / 8.0 + secs + 1.0
         for off, cmd in cmds:
             cmd = dict(cmd)
             if cmd.get("mode") == "walk" and (abs(float(cmd.get("vx", 0))) > 0 or abs(float(cmd.get("vtheta", 0))) > 0):
@@ -279,7 +315,7 @@ class Runner:
     def __init__(self, body: BodyCard, shared: SharedState, backend, link, out_dir: Path, mode="dry",
                  clock_fn=time.time, seed=0, events=None, resume_s=RESUME_S, today=None, perception=True,
                  face_recognise=None, round_min=10.0, inbox=None, rules_path=None, save_frames=False, tether=None,
-                 vision=None):
+                 vision=None, see=False):
         self.body, self.shared, self.backend, self.link, self.mode = body, shared, backend, link, mode
         self.out_dir = Path(out_dir)
         self.out_dir.mkdir(parents=True, exist_ok=True)
@@ -290,6 +326,12 @@ class Runner:
         self.cable_log = []
         self.newest_frame = None        # (t_a7z, jpeg bytes, local time)
         self.cable_pool = ThreadPoolExecutor(max_workers=1)
+        self.turn_then = None           # approach_owner: turn on the spot toward the owner, then walk
+        self.startup_looked = False
+        self.scene = None
+        if see and vision is not None:
+            from .glance import Scene
+            self.scene = Scene(vision, self.out_dir / "scene.jsonl")
         self.clock_fn = clock_fn
         self.now = clock_fn()
         self.t_start = self.now
@@ -302,7 +344,9 @@ class Runner:
         self.readback = Readback()
         if tether is not None:
             from .tether import SITUATION
-            self.mind.situation = lambda: SITUATION + " " + tether.describe()
+            self.mind.situation = lambda: " ".join(x for x in (
+                SITUATION if tether.cable_on else "", tether.describe(),
+                self.scene.describe(self.now) if self.scene else "") if x)
         self.schedule: list[tuple[float, dict, str]] = []
         self.last_written = None
         self.last_seen = None
@@ -353,6 +397,9 @@ class Runner:
                 self.world.note(f"I did not do it: {reason}")
                 self.write_idle("cable limit")
                 return
+        if self.scene is not None:
+            h = cmd.get("head") or {}
+            self.scene.set_head(float(h.get("head_yaw", 0.0)), float(h.get("head_pitch", 0.0)), self.now)
         if self.tether is not None:
             vx, vth = float(cmd.get("vx", 0) or 0), float(cmd.get("vtheta", 0) or 0)
             if cmd.get("mode") == "walk" and vx == 0 and vth != 0:
@@ -505,8 +552,10 @@ class Runner:
         else:
             self.cable["sign"] = 1.0 if turn > 0 else -1.0
             self.cable["phase_t"] = self.now
+            self.tether.planned_turn_deg = turn
             self.write({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.3 * self.cable["sign"],
                         "for_s": self.CABLE_TURN_TIMEOUT_S}, "cable: turn toward the start")
+            self.tether.planned_turn_deg = None
 
     def cable_next(self):
         c = self.cable
@@ -590,6 +639,52 @@ class Runner:
             if t.dist <= max(0.0, 0.6 * (t.limit_m - t.margin_m)) or self.now - c["phase_t"] > self.CABLE_WALK_MAX_S:
                 self.cable_end("done")
 
+    # ----- seeing (glance.Scene) -----
+    STARTUP_LOOKS = ((1.2, -0.1), (0.0, -0.1), (-1.2, -0.1))
+    STARTUP_HOLD_S = 4.5
+
+    def startup_look(self):
+        """Before the first intention: look left, ahead and right (head only) so the scene has something in it."""
+        self.startup_looked = True
+        t = 0.0
+        for yaw, pitch in self.STARTUP_LOOKS:
+            self.schedule.append((self.now + t, {**WALK_ZERO, "head": {"head_yaw": yaw, "head_pitch": pitch}},
+                                  "startup look"))
+            t += self.STARTUP_HOLD_S
+        self.schedule.append((self.now + t, dict(WALK_ZERO), "startup look"))
+        self.mind.next_round_t = self.world.t + t + 4.0
+        self.log("  looking around before the first intention (left, ahead, right)")
+
+    def scene_tick(self) -> list[dict]:
+        sc = self.scene
+        walking = self.readback.mode == "walk" and (self.tether.turn is not None if self.tether else False)
+        if self.tether is not None and self.tether.ready:
+            sc.set_body(self.tether.yaw_deg, self.now, walking or self.turn_then is not None)
+        out = []
+        for res in sc.poll(self.now, active=self.state == "running" and self.world.posture == "standing"):
+            self.world.note(res["text"])
+            self.event({"kind": "scene", **res})
+            self.log(f"  [see] {res['text']}")
+            if res["person_rel"] is not None and not self.world.owner_visible:
+                out += self.world.observe({"kind": "face", "who": "owner",
+                                           "direction": math.radians(res["person_rel"])})
+        return out
+
+    def turn_then_tick(self):
+        tt, t = self.turn_then, self.tether
+        if tt is None or tt["phase"] != "turn":
+            return
+        err = (tt["target"] - t.yaw_deg) * tt["sign"]
+        if err <= 8:
+            tt["phase"] = "walk"
+            cmd = {**tt["then"], "for_s": round(tt["then_s"] + 1.0, 1)}
+            self.write(cmd, f"{tt['prim']}: walk")
+            self.schedule.append((self.now + tt["then_s"], dict(WALK_ZERO), tt["prim"]))
+        elif self.now - tt["t0"] > 30.0 or t.turn_stalled(self.now):
+            self.turn_then = None
+            self.write(dict(WALK_ZERO), f"{tt['prim']}: turn stopped")
+            self.world.note("my turn toward my owner got stuck")
+
     # ----- perception -----
     MODE_SETTLE_S = 3.0
 
@@ -623,6 +718,8 @@ class Runner:
                 elif k == "frame":
                     try:
                         self.newest_frame = (float(x.get("t", 0)), base64.b64decode(x.get("jpeg_b64", "")), self.now)
+                        if self.scene is not None:
+                            self.scene.feed_frame(*self.newest_frame)
                     except Exception:
                         pass
                     if self.frames is not None:
@@ -832,6 +929,13 @@ class Runner:
                 self.mind.perceive(fed)
             if self.tether is not None:
                 self.cable_tick()
+                self.turn_then_tick()
+            if self.scene is not None:
+                seen = self.scene_tick()
+                if seen:
+                    self.mind.perceive(seen)
+            if not self.startup_looked and self.scene is not None and self.cable is None:
+                self.startup_look()
             if self.cable is not None:
                 self.mind.next_round_t = max(self.mind.next_round_t, self.world.t + 2)  # the reflex has the body
             elif d > 0:
@@ -1237,6 +1341,8 @@ def main(argv=None):
     ap.add_argument("--cam-hz", type=float, default=0.0, help="robot: face frames per second while the camera daemon runs")
     ap.add_argument("--tether", type=float, default=None, metavar="METRES",
                     help="charging-cable limits (tether.py): how far the cable reaches from the start, e.g. 0.8")
+    ap.add_argument("--see", action="store_true",
+                    help="robot: describe the head camera at each head pause and keep a map of directions (needs --cam-hz)")
     ap.add_argument("--save-frames", action="store_true",
                     help="save every camera frame with the nearest brain row to <out>/frames/ (needs --cam-hz)")
     ap.add_argument("--inbox", default=None,
@@ -1282,15 +1388,16 @@ def main(argv=None):
         link = RemoteLink(a.host, a.cmd, mic=a.mic, cam_hz=a.cam_hz)
 
     tether = vision = None
-    if a.tether is not None:
-        from .tether import SITUATION, Tether
-        tether = Tether(limit_m=a.tether)
+    if a.tether is not None or a.see:
+        from .tether import Tether
+        tether = Tether(limit_m=a.tether if a.tether is not None else 99.0)
+        tether.cable_on = a.tether is not None   # --see alone: the pose only, no cable rules or text
         if mode == "robot" and a.cam_hz > 0:
             from .glance import ClaudeVision
             vision = ClaudeVision()
     runner = Runner(body, SharedState(a.state_dir), backend, link, out_dir, mode=mode, seed=a.seed, events=events,
                     resume_s=a.resume_s, round_min=a.round_min, inbox=a.inbox, save_frames=a.save_frames,
-                    tether=tether, vision=vision)
+                    tether=tether, vision=vision, see=a.see)
     signal.signal(signal.SIGINT, lambda *_: setattr(runner, "stop_flag", True))
     signal.signal(signal.SIGTERM, lambda *_: setattr(runner, "stop_flag", True))
     try:

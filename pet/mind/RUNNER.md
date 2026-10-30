@@ -90,6 +90,23 @@ net turn. Robot session: duck on open floor at the start point, cable slack behi
 pet/.venv/bin/python -m pet.mind.runner --robot --allow head,walk --minutes 10 --cam-hz 1 --save-frames --tether 0.8
 ```
 
+### Seeing and knowing where things are (`--see`)
+
+Shawn 2026-10-30, after the first cable session: it never saw him, walked very slowly and did not know where it was.
+`--see` (robot, with `--cam-hz`) gives the mind eyes and a sense of direction (`glance.Scene`): at each head pause
+(head held 0.8 s, at most every 4 s) one frame goes to the vision model, which answers whether a person is in view and
+where in the picture, up to four named things and whether a wall is within 20 cm. Picture positions become bearings
+through the U20CAM fisheye (f 359.5 px) plus the head yaw plus the IMU heading, so they stay right when the body
+turns. The mind's prompt gets "Around you, relative to where you face now: my owner (a person) 40 deg to your left,
+seen 12 s ago; doorway 90 deg to your right; ...". A person counts as the owner (the note says so). Before the first
+intention the head looks left, ahead and right. `approach_owner` turns on the spot toward the owner's last bearing
+(closed loop on the IMU, the way round that keeps the cable unwound), then walks. On the robot every walk is sent as
+tested: forward at vx 0.25, a turn on the spot at +-0.3.
+
+```sh
+pet/.venv/bin/python -m pet.mind.runner --robot --allow head,walk --minutes 10 --cam-hz 1 --save-frames --tether 1.0 --see
+```
+
 ### The first session, what you will see
 
 - **Session 1, `--allow head` (default).** Only `turn_head`, `look_around`, `nod`, `wait`, `stop`: the head moves

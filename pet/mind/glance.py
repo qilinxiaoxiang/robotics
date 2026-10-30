@@ -20,7 +20,7 @@ from pathlib import Path
 from .backends import HAIKU
 
 STILL_S = 0.8       # the head command must have held this long before a frame counts (spring settle + frame latency)
-EVERY_S = 6.0       # at most one glance this often
+EVERY_S = 4.0       # at most one glance this often
 PROMPT = ("This is one frame from the head camera of a small duck robot, about 25 cm tall, standing on the floor. "
           "Its head is turned {where}. Describe in at most 35 words what is in view that matters to a small pet on "
           "the floor: objects, people, edges, obstacles, cables (say whether a cable looks slack or pulled taut, and "
@@ -63,38 +63,84 @@ class ClaudeVision:
                                                               "cost_usd": out.get("total_cost_usd")}
 
 
-class Glancer:
-    """Feed it frames and the runner's head command; it fires one description per head pause."""
+FISHEYE_F_PX = 359.5    # U20CAM equidistant fisheye focal length on the 640 x 360 published frame (face-view-20261029)
+FRAME_W = 640
+SCENE_PROMPT = ("This is one frame from the head camera of a small duck robot, about 25 cm tall, standing on the floor. "
+                "Its head is turned {where}. Answer with one JSON object and nothing else: "
+                "{{\"person\": true|false, \"person_x\": <horizontal centre of the nearest person as a fraction of "
+                "the image width from the left, or null>, \"things\": [{{\"name\": \"<2-4 words: doorway, desk, "
+                "chair, bed, box, wall corner ...>\", \"x\": <fraction from the left>}}] (at most 4, the biggest or "
+                "most useful for finding its way), \"blocked\": true|false (a wall or object within about 20 cm, "
+                "filling the lower half of the picture), \"summary\": \"<under 20 words>\"}}. Image: {path}")
+
+
+def bearing_in_frame(x_frac: float) -> float:
+    """Degrees left of the camera axis for a point at x_frac of the image width (left of picture = + = left)."""
+    return (0.5 - float(x_frac)) * FRAME_W / FISHEYE_F_PX * 57.2958
+
+
+def rel_text(rel_deg: float) -> str:
+    r = (rel_deg + 180.0) % 360.0 - 180.0
+    if abs(r) < 15:
+        return "ahead"
+    if abs(r) > 150:
+        return "behind you"
+    return f"{abs(r):.0f} deg to your {'left' if r > 0 else 'right'}"
+
+
+class Scene:
+    """What the pet has seen, by direction. Feed it frames, the head command and the body heading (degrees from the
+    session start, + = left; tether.Tether.yaw_deg); at each head pause it asks the vision model once and keeps a small
+    map of directions: the person (taken to be the owner: the only person at home at night, stated in the note) and
+    up to a dozen things. Directions are world bearings in the start frame, so they stay right when the body turns."""
+
+    PERSON_KEEP_S = 120.0
+    THING_KEEP_S = 600.0
 
     def __init__(self, vision, log_path):
         self.vision = vision
         self.pool = ThreadPoolExecutor(max_workers=1)
         self.pending = None
-        self.frame = None          # (t_wall_a7z, jpeg bytes)
+        self.frame = None          # (t_a7z, jpeg bytes, local receive time)
         self.head = (0.0, 0.0)
-        self.head_since = None     # local wall time the current head command began
-        self.done_for = None       # head_since of the pause already described
+        self.head_since = None
+        self.done_for = None
         self.last_t = 0.0
+        self.body_deg = 0.0
         self.log = open(log_path, "a")
         self.count = 0
+        self.person = None         # (world bearing deg, local time)
+        self.things = {}           # name -> (world bearing deg, local time)
+        self.blocked_at = None     # world bearing deg where the last glance saw a wall within ~20 cm
 
     def set_head(self, yaw: float, pitch: float, now: float):
         h = (round(yaw, 3), round(pitch, 3))
         if h != self.head or self.head_since is None:
             self.head, self.head_since = h, now
 
+    def set_body(self, body_deg: float, now: float, turning: bool):
+        if turning or abs(body_deg - self.body_deg) > 3.0:
+            self.head_since = now      # the body moved: wait for the picture to settle again
+        self.body_deg = body_deg
+
     def feed_frame(self, t: float, jpeg: bytes, now: float):
         self.frame = (t, jpeg, now)
 
-    def poll(self, now: float, active: bool) -> list[str]:
+    def busy(self) -> bool:
+        return self.pending is not None
+
+    def poll(self, now: float, active: bool) -> list[dict]:
+        """-> results: {"text", "person_rel", "blocked"}; also fires the next look when the head has held still."""
         out = []
         if self.pending is not None and self.pending[0].done():
-            fut, where, t_req = self.pending
+            fut, where, t_req, body_deg, head_yaw = self.pending
             self.pending = None
             try:
                 text, meta = fut.result()
-                out.append(f"looking {where}, I saw: {text}")
-                self.log.write(json.dumps({"t": round(t_req, 2), "where": where, "text": text, **meta}) + "\n")
+                ans = json.loads(text[text.index("{"):text.rindex("}") + 1])
+                out.append(self._take(ans, where, now, body_deg, head_yaw))
+                self.log.write(json.dumps({"t": round(t_req, 2), "where": where, "body_deg": round(body_deg, 1),
+                                           "answer": ans, **meta}) + "\n")
                 self.count += 1
             except Exception as e:
                 self.log.write(json.dumps({"t": round(t_req, 2), "where": where, "error": str(e)[:200]}) + "\n")
@@ -103,9 +149,50 @@ class Glancer:
                 and self.done_for != self.head_since and now - self.head_since >= STILL_S
                 and now - self.last_t >= EVERY_S and self.frame[2] - self.head_since >= STILL_S):
             where = where_text(*self.head)
-            self.pending = (self.pool.submit(self.vision.describe, self.frame[1], where), where, now)
+            self.pending = (self.pool.submit(self.vision.describe, self.frame[1], where, SCENE_PROMPT), where, now,
+                            self.body_deg, self.head[0])
             self.done_for, self.last_t = self.head_since, now
         return out
+
+    def _take(self, ans: dict, where: str, now: float, body_deg: float, head_yaw: float) -> dict:
+        axis = body_deg + head_yaw * 57.2958
+        res = {"text": f"looking {where}: {ans.get('summary', '')}".strip(), "person_rel": None,
+               "blocked": bool(ans.get("blocked"))}
+        if ans.get("person") and ans.get("person_x") is not None:
+            b = axis + bearing_in_frame(ans["person_x"])
+            self.person = (b, now)
+            res["person_rel"] = b - self.body_deg
+            res["text"] += f" A person is there ({rel_text(b - self.body_deg)}); I take it to be my owner."
+        for th in (ans.get("things") or [])[:4]:
+            try:
+                self.things[str(th["name"])[:30]] = (axis + bearing_in_frame(th["x"]), now)
+            except (KeyError, TypeError, ValueError):
+                continue
+        if len(self.things) > 12:
+            for k in sorted(self.things, key=lambda k: self.things[k][1])[:len(self.things) - 12]:
+                del self.things[k]
+        self.blocked_at = axis if res["blocked"] else (None if abs(axis - (self.blocked_at or 1e9)) < 30 else
+                                                       self.blocked_at)
+        return res
+
+    def person_rel(self, now: float) -> float | None:
+        """Degrees from where the body faces now to the person last seen (+ = left), or None if too old."""
+        if self.person is None or now - self.person[1] > self.PERSON_KEEP_S:
+            return None
+        return (self.person[0] - self.body_deg + 180.0) % 360.0 - 180.0
+
+    def describe(self, now: float) -> str:
+        parts = []
+        pr = self.person_rel(now)
+        if pr is not None:
+            parts.append(f"my owner (a person) {rel_text(pr)}, seen {now - self.person[1]:.0f} s ago")
+        for name, (b, t) in sorted(self.things.items(), key=lambda kv: -kv[1][1]):
+            if now - t <= self.THING_KEEP_S:
+                parts.append(f"{name} {rel_text(b - self.body_deg)}")
+        if self.blocked_at is not None:
+            parts.append(f"something within 20 cm {rel_text(self.blocked_at - self.body_deg)}")
+        return ("Around you, relative to where you face now: " + "; ".join(parts[:10]) + ".") if parts else \
+            "You have not looked around yet: you do not know what is around you."
 
     def close(self):
         self.pool.shutdown(wait=False, cancel_futures=True)

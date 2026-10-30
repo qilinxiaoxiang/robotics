@@ -80,6 +80,8 @@ class Tether:
         self.turn = None             # (start_t, start_yaw, sign) while a turn on the spot is commanded
         self.looked_back = False
         self.cable = None            # last look: "slack" | "taut" | "not seen"
+        self.cable_on = True         # False: pose only (runner --see without --tether)
+        self.planned_turn_deg = None # set by the runner for a closed-loop turn it will stop itself (approach, return)
 
     # ----- state -----
     @property
@@ -123,7 +125,7 @@ class Tether:
     def allow(self, cmd: dict) -> tuple[bool, str]:
         """May the runner write this command? Walks that would end past the distance limit while moving away, and turns
         on the spot that would wind the net heading past SPIN_MAX_DEG, are refused with the reason."""
-        if not self.ready or cmd.get("mode") != "walk":
+        if not self.ready or not self.cable_on or cmd.get("mode") != "walk":
             return True, ""
         vx, vth = float(cmd.get("vx", 0) or 0), float(cmd.get("vtheta", 0) or 0)
         secs = max(0.5, float(cmd.get("for_s", 5.0) or 5.0) - 1.0)  # for_s carries the executor's 1 s dead-man margin
@@ -139,7 +141,9 @@ class Tether:
                                f"{lim:.2f} m; straight ahead there is room for {room:.2f} m "
                                f"(about {room / (SPEED_PER_VX * 0.25):.0f} s at vx 0.25)")
         elif vth != 0:
-            after = self.yaw_deg + math.copysign(min(secs * TURN_RATE_MAX_DEG, 360.0), vth)
+            planned = self.planned_turn_deg if self.planned_turn_deg is not None else \
+                math.copysign(min(secs * TURN_RATE_MAX_DEG, 360.0), vth)
+            after = self.yaw_deg + planned
             if abs(after) > SPIN_MAX_DEG and abs(after) > abs(self.yaw_deg):
                 return False, (f"the cable: turning {'left' if vth > 0 else 'right'} could bring the net turn to "
                                f"{after:+.0f} deg and wind the cable round the legs; turn the other way")
@@ -156,10 +160,10 @@ class Tether:
 
     def outward_over(self) -> bool:
         """Walking away from the start beyond the limit (checked every tick while a walk runs)."""
-        return self.dist > self.limit_m - self.margin_m and abs(self.bearing_to_start_deg()) > 90
+        return self.cable_on and self.dist > self.limit_m - self.margin_m and abs(self.bearing_to_start_deg()) > 90
 
     def wants_look_back(self) -> bool:
-        return not self.looked_back and self.dist > LOOK_BACK_FRACTION * (self.limit_m - self.margin_m)
+        return self.cable_on and not self.looked_back and self.dist > LOOK_BACK_FRACTION * (self.limit_m - self.margin_m)
 
     def turn_cmd_started(self, t: float, sign: float):
         self.turn = (t, self.yaw_deg, sign)
@@ -182,7 +186,7 @@ class Tether:
         self.limit_m = min(self.limit_m, self.dist + self.margin_m * 0.5)
 
     def describe(self) -> str:
-        if not self.ready:
+        if not self.ready or not self.cable_on:
             return ""
         b = self.bearing_to_start_deg()
         side = "behind you" if abs(b) > 150 else f"{abs(b):.0f} deg to your {'left' if b > 0 else 'right'}"
