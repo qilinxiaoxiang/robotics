@@ -2,7 +2,8 @@
 from this Mac. Each motion step writes walk_wired.py's control file on the A7Z (atomic rename), waits, copies only the
 new log rows to this Mac (tail -n over ssh; nothing is parsed on the A7Z) and prints what the policy did.
 
-    python3 t1_robot_test.py restart        # brain on the A7Z restarted with --models models-t1-best (monitor, torque kept)
+    python3 t1_robot_test.py restart [t2b]  # brain on the A7Z restarted with --models models-t1-best, or models-t2b-best
+                                            # (monitor, torque kept)
     python3 t1_robot_test.py stand          # closed-loop stand: walk mode at zero command (stand61 before the first step)
     python3 t1_robot_test.py walk           # 0.25 m/s for 3 s, no head command (compare with walk61)
     python3 t1_robot_test.py walk_neck      # 0.25 m/s for 3 s with the neck at -0.4
@@ -26,7 +27,7 @@ from pathlib import Path
 A7Z = "a7z"
 MAC_DIR = "~/rt/microduck-sim/guide/firmware/mac"
 OVERLAY = "/home/radxa/rt/microduck-sim/hardware-design-20260912/whole-robot-20260912/runtime-overlay"
-MODELS = {"t1": f"{OVERLAY}/models-t1-best", "walk61": f"{OVERLAY}/models"}
+MODELS = {"t1": f"{OVERLAY}/models-t1-best", "t2b": f"{OVERLAY}/models-t2b-best", "walk61": f"{OVERLAY}/models"}
 CMD = "/tmp/duck_cmd.json"
 STATE = Path(__file__).with_name(".t1_robot_test.json")   # which log the running brain writes (this Mac only)
 OUT = Path("/tmp/t1-robot")
@@ -161,7 +162,7 @@ def report(rows, label, models):
 def main():
     step = sys.argv[1] if len(sys.argv) > 1 else "report"
     if step == "restart":
-        return restart("t1")
+        return restart(sys.argv[2] if len(sys.argv) > 2 else "t1")
     if step == "back":
         return restart("walk61")
     if step == "report":
