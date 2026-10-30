@@ -103,6 +103,11 @@ rsync -a --checksum --relative --itemize-changes "${FILES[@]}" "$HOST:$REMOTE_SI
 # no -t: the calls are rebuilt with fresh mtimes every run; content decides (--checksum), so unchanged calls stay quiet
 rsync -rlp --checksum --delete --itemize-changes "$STAGE/sounds/" "$HOST:$REMOTE_SIM/guide/firmware/mac/sounds/" 2> >(quiet >&2)
 rsync -p --checksum --itemize-changes "$HERE/duck-run.sh" "$HOST:duck-run.sh" 2> >(quiet >&2)  # the launcher the app runs
+# walk_wired.py locks its pages in RAM (lock_memory, the 2026-10-30 fall); the kernel counts its whole 850 MB address
+# space against RLIMIT_MEMLOCK (default 245 MB here), so radxa gets no limit. pam_limits applies it at the next ssh
+# login, which is how the app starts ~/duck-run.sh.
+ssh "$HOST" 'f=/etc/security/limits.d/90-duck-memlock.conf; want="radxa - memlock unlimited"
+  [ "$(cat $f 2>/dev/null)" = "$want" ] || { echo "$want" | sudo -n tee $f >/dev/null && echo "installed $f"; }' 2> >(quiet >&2)
 
 echo "== verifying sha256 on $HOST"
 MANIFEST="$STAGE/manifest.sha256"
@@ -125,10 +130,14 @@ if aplay -L 2>/dev/null | grep -qx default; then
 else
   echo "aplay: NO default device in aplay -L"; fail=1
 fi
+[ "$(ulimit -l)" = unlimited ] && echo "memlock: unlimited (walk_wired.py can lock its pages)" || \
+  { echo "memlock: $(ulimit -l) kB, walk_wired.py cannot lock its pages (90-duck-memlock.conf)"; fail=1; }
 cd "$HOME/$REMOTE_SIM/guide/firmware/mac" || exit 1
 "$VENV/bin/python" - <<'PY' || fail=1
 import glob, os, onnxruntime
 print("venv: onnxruntime", onnxruntime.__version__)
+import walk_wired
+print("brain:", walk_wired.lock_memory())  # this check process only; the running brain locks itself at start
 import walk_wired, walk_brain
 b = walk_brain.Brain(os.path.join(walk_wired.WHOLE, "runtime-overlay", "models"))
 print("brain: policies loaded:", ", ".join(sorted(b.sessions)))

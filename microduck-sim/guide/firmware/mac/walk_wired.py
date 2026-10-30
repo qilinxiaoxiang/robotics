@@ -146,6 +146,61 @@ def take_hw_lock(path=HW_LOCK):
     return f
 
 
+def lock_memory(libc=None):
+    """Keep every page this process touches in RAM: mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT). On 2026-10-30 a
+    1.4 GB log reader in another ssh session pushed the brain's code pages out (RSS 11 MB, 42 MB in swap); one tick
+    then waited 348 ms on a page fault from the busy SD card in the middle of a turn on the spot, and the duck fell.
+    ONFAULT locks pages as they are first touched instead of loading the whole 850 MB address space. The kernel counts
+    the whole address space against RLIMIT_MEMLOCK, so the A7Z raises it for radxa (install_teleop.sh,
+    /etc/security/limits.d/90-duck-memlock.conf). -> the line to print; a failure is printed, never fatal."""
+    import ctypes
+    import resource
+    MCL_CURRENT, MCL_FUTURE, MCL_ONFAULT = 1, 2, 4
+    if libc is None:
+        try:
+            libc = ctypes.CDLL(None, use_errno=True)
+        except OSError as e:
+            return f"memory lock: no libc ({e}); page-cache pressure can stall this loop"
+    if not hasattr(libc, "mlockall"):
+        return "memory lock: not available on this system (macOS); page-cache pressure can stall this loop"
+    if libc.mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) == 0:
+        return "memory lock: on (pages stay in RAM once touched)"
+    err = ctypes.get_errno()
+    soft, _ = resource.getrlimit(resource.RLIMIT_MEMLOCK)
+    lim = "unlimited" if soft == resource.RLIM_INFINITY else f"{soft // 1024} kB"
+    return (f"memory lock FAILED ({os.strerror(err)}, memlock limit {lim}): page-cache pressure can stall this loop; "
+            f"run install_teleop.sh and start the brain from a new ssh login")
+
+
+class LogWriter:
+    """The tick log, written and flushed by its own thread: the control loop only queues a line, so a write that waits
+    on the SD card's journal (seen 2026-10-30 in the blackbox: walk_wired in jbd2_journal_get_write_access) never
+    holds up a tick. fileno() is there for the fsync thread."""
+
+    def __init__(self, f):
+        import queue
+        self.f, self.q = f, queue.SimpleQueue()
+        threading.Thread(target=self._run, daemon=True).start()
+
+    def write(self, line: str):
+        self.q.put(line)
+
+    def fileno(self):
+        return self.f.fileno()
+
+    def _run(self):
+        import queue
+        while True:
+            lines = [self.q.get()]
+            try:
+                while len(lines) < 200:
+                    lines.append(self.q.get_nowait())
+            except queue.Empty:
+                pass
+            self.f.write("".join(lines))
+            self.f.flush()
+
+
 class Link:
     """USB serial to openrb_dual_host: DYNAMIXEL status packets and Pi IMU frames arrive as whole units."""
 
@@ -643,7 +698,8 @@ def main():
     # packet carries the Alert bit. The bench accepts those packets and watches Hardware Error Status once a second
     # like the armed guard, so a fault other than the input-voltage flag still freezes the policy.
     link.alert_ok = guard is None or guard.armed
-    log = open(args.log, "a")
+    print(lock_memory(), flush=True)
+    log = LogWriter(open(args.log, "a"))
 
     def _sync_log():  # a brownout loses only what is not on the card: fsync every 50 ms, off the control thread
         pause = threading.Event()  # a wall-clock wait, never the loop's (simulated) clock
@@ -1104,8 +1160,7 @@ def main():
                                   grip_stop=grip_stop.on, legs_ma=legs_ma, jaw_cur_ma=jaw_cur,
                                   jaw_tick=jaw.last_tick, jaw_deg=None if jaw.opening_deg() is None else round(jaw.opening_deg(), 1),
                                   jaw_goal=jaw.goal_deg if jaw.on else None, jaw_clamps=jaw.clamps if jaw.on else [],
-                                  jaw_holding=jaw.holding())) + "\n")
-        log.flush()  # readers (pickup.py) see the newest tick; buffered writes lagged up to ~1 s
+                                  jaw_holding=jaw.holding())) + "\n")  # LogWriter flushes it: readers (pickup.py) see the newest tick
         n += 1
         if now - last_print > 1.0:
             with link.lock:
