@@ -973,8 +973,8 @@ def run(args):
                     vth = v
             want = {"mode": "walk", "vx": args.vx if walking else 0.0, "vy": 0.0,
                     "vtheta": vth if walking else 0.0}
-            if (args.head_yaw or args.head_pitch is not None) and t >= args.walk_at:
-                want["head"] = {"head_yaw": args.head_yaw, "head_pitch": args.head_pitch}
+            if (args.head_yaw or args.head_pitch is not None or args.neck_pitch is not None) and t >= args.walk_at:
+                want["head"] = {"head_yaw": args.head_yaw, "head_pitch": args.head_pitch, "neck_pitch": args.neck_pitch}
             if dance is not None and t >= args.walk_at:  # shoot.py's singing take: the step in force at this time
                 step = None
                 for st_ in dance["steps"]:
@@ -1292,7 +1292,7 @@ def run(args):
                     hard_max_action=HARD_MAX_ACTION, max_tilt_deg=MAX_TILT_GP_DEG)),
                 groundpick=None if gp_at is None else dict(gp, at=gp_at, phase=args.gp_phase, hold_s=args.gp_hold_s,
                                                            done_at=round(gp_done_at, 2)),
-                head=None if not (args.head_yaw or args.head_pitch is not None) else dict(head_yaw=args.head_yaw, head_pitch=args.head_pitch,
+                head=None if not (args.head_yaw or args.head_pitch is not None or args.neck_pitch is not None) else dict(head_yaw=args.head_yaw, head_pitch=args.head_pitch, neck_pitch=args.neck_pitch,
                                                          final={n: round(float(d.qpos[qa[k]] - z0[k]), 3) for k, n in enumerate(names) if "head" in n or "neck" in n}),
                 compensation=args.compensation, first_policy_tick_s=first_policy, max_action=round(max_action, 2), action_jumps=action_jumps,
                 drop=args.drop, imu_hz=args.imu_hz, floor_mu=args.floor_mu, fell_at=fell, fall_dir=fall_dir,
@@ -1467,6 +1467,7 @@ def main():
     ap.add_argument("--dance", default=None, help="dance.json: head and in-place turn steps from --walk-at on (shoot.py sing)")
     ap.add_argument("--head-yaw", type=float, default=0.0, help="rad; head pose command in walk mode from --walk-at on")
     ap.add_argument("--head-pitch", type=float, default=None, help="rad; absolute head_pitch target with --head-yaw")
+    ap.add_argument("--neck-pitch", type=float, default=None, help="rad; absolute neck_pitch target in walk mode from --walk-at on (T1 check: does the policy lower the neck?)")
     ap.add_argument("--quack-at", type=float, nargs="*", default=[],
                     help="s; walk_wired.py quack head tilts (QUACK_HEAD_S raised-cosine profile) starting at these times")
     ap.add_argument("--quack-roll", type=float, default=0.18, help="rad; head_roll delta of the --quack-at tilts")
