@@ -12,13 +12,18 @@ Each file here is the slice `t1_robot_test.py` copied to the Mac for that step; 
   4-12 jumps per s); at 2.0-2.5 s the neck dipped to -0.79, tilt rose to 12-16 deg and jumps to 22-24 per s, and the
   shaking ran on 1.5 s after the stop. Standing afterwards the neck held -0.36 at 3.0 deg. T1, same step: 17.6 deg,
   17.1 jumps per s.
-- **neck_hold, 0.25 m/s for 2 s at neck -0.8, then 10 s standing** (`3_neck_hold.jsonl`): no fall. Walking: peak tilt
+- **neck_hold, 0.25 m/s for 2 s at neck -0.8, then 10 s standing** (`3_neck_hold.jsonl`): no fall, and Shawn saw it
+  refuse to walk (legs moved, no forward progress; the log has no odometry). Walking command: peak tilt
   10.8 deg, mean 4.7, 13.6 jumps per s, neck -0.58..-0.76. Standing: neck -0.64 (command -0.8, off 0.16) at 1.2 deg,
   no jumps. T1, same step: 13.8 deg, 20.6 jumps per s walking, then held -0.816.
 - Shawn switched back to walk61 at 16:02:05 (`t1_robot_test.py back`, log `duck_wired_log_walk611030-160205.jsonl`).
   The whole t2b log (8 MB) stays on the A7Z.
 
 ## What it shows
+
+Both results were predictable without the robot and should have been stated before the waiver: the anchor covered
+default-head states only, so off them the policy is T1; and the 10/17 jitter sim-ID plus the morning's T1 test had
+already shown the sim under-reports robot shaking 4-10x, so G2/G3 were not evidence.
 
 The anchor fixed the walk it was applied to and nothing else. Its states were default-head states only
 (`finetune_worker.py::anchor_mask`), and with the default head t2b walks like walk61. With a neck command, where no
