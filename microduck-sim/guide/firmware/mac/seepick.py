@@ -131,7 +131,8 @@ class SeePick:
             gate_m = self.track_gate   # --track-gate; 0 keeps the given estimate and only records what the camera saw
         if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > gate_m:
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, gated=[p[0], p[1]], t_cap=float(t_cap),
-                                   bbox=[int(v) for v in det["bbox"]], q=sc["q"], gb=list(sc["gb"])))  # refit material
+                                   bbox=[int(v) for v in det["bbox"]], u=float(det.get("base_cx", det["cx"])),
+                                   v=float(y0 + bh), w=w, h=h, q=sc["q"], gb=list(sc["gb"])))  # cam_calib obs row
             return None
         m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx)
         self.trace.append(dict(t=self.now(), phase=self.phase, meas=m))

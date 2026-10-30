@@ -263,11 +263,13 @@ class DuckKin:
         self.cam_site = self.sites["head_camera"]
         self.offsets = (0.0, 0.0, 0.0)            # pitch, yaw, roll in deg (from the mount fit)
         self.shift = np.zeros(3)                  # lens shift in the camera frame, m
+        self.head_gain = 1.0                      # the head_pitch reading times this is the angle the head really turns
         if mount is not None:
             self.cam_site = self.mount_site(mount)
             o = mount.get("offsets_deg") or {}
             self.offsets = (float(o.get("pitch", 0.0)), float(o.get("yaw", 0.0)), float(o.get("roll", 0.0)))
             self.shift = np.array(mount.get("shift_m") or (0.0, 0.0, 0.0), float)
+            self.head_gain = float(mount.get("head_pitch_gain", 1.0))
         self.pitch_offset = math.radians(pitch_offset_deg)
         self._R_off = None
         self._key, self._pose = None, None
@@ -313,7 +315,7 @@ class DuckKin:
     # --- kinematics ---------------------------------------------------------------------------------------------
     def place(self, q, gb=UPRIGHT):
         """World (= foot frame) rotation and position of every body for joints q (dict) and trunk gravity gb."""
-        key = (tuple(round(float(q[n]), 6) for n in self.names), tuple(round(float(x), 6) for x in gb))
+        key = (tuple(round(float(q[n]), 6) for n in self.names), tuple(round(float(x), 6) for x in gb), self.head_gain)
         if key == self._key:
             return self._pose
         Rs, ps = [], []
@@ -324,7 +326,10 @@ class DuckKin:
                 Rp, pp = Rs[b["parent"]], ps[b["parent"]]
                 R, p = Rp @ b["R0"], pp + Rp @ b["p0"]
                 for j in b["joints"]:  # hinge about axis through pos (body frame), angle relative to qpos0
-                    Rj = axis_angle(j["axis"], float(q[j["name"]]) - j["qpos0"])
+                    ang = float(q[j["name"]]) - j["qpos0"]
+                    if j["name"] == "head_pitch":
+                        ang *= self.head_gain   # ruler check 2026-10-30: the head turns about 0.92 x its reading
+                    Rj = axis_angle(j["axis"], ang)
                     p = p + R @ (j["pos"] - Rj @ j["pos"])
                     R = R @ Rj
             Rs.append(R)

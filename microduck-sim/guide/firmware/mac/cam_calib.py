@@ -527,6 +527,7 @@ def report_and_write(kin, obs, args, captures_path):
         mount = json.load(f)
     mount["offsets_deg"] = {"pitch": round(fit["pitch"], 3), "yaw": round(fit["yaw"], 3), "roll": round(fit["roll"], 3)}
     mount["shift_m"] = [round(v, 5) for v in fit["shift_m"]]
+    mount["head_pitch_gain"] = kin.head_gain   # the gain the fit was made with (duck_kin.place)
     mount["source"] = "fit"
     mount["fit"] = {
         "date": time.strftime("%Y-%m-%dT%H:%M:%S"),
