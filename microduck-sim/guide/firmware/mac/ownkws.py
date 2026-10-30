@@ -98,19 +98,28 @@ class OwnModel:
     dense_b, mu / sd (per mel band, applied before conv0), threshold, classes (str array; "mochi" is the target).
     Layers: conv (same padding) -> ReLU -> max-pool, repeated; global max over time; dense; softmax."""
 
-    def __init__(self, path=MODEL_DEFAULT):
-        d = np.load(path, allow_pickle=False)
+    def __init__(self, path=MODEL_DEFAULT, _d=None, _prefix=""):
+        d = np.load(path, allow_pickle=False) if _d is None else _d
+        self.path = path
+        self.threshold = float(d["threshold"]) if "threshold" in d else None
+        if not _prefix and "members" in d:
+            # an ensemble: members m0_, m1_, ... trained with different seeds; probabilities are averaged (2026-10-30:
+            # single seeds of one recipe differed by several false hits and calls on the same held-out audio)
+            self.members = [OwnModel(path, _d=d, _prefix=f"m{j}_") for j in range(int(d["members"]))]
+            self.classes = self.members[0].classes
+            self.target = self.classes.index("mochi")
+            return
+        self.members = None
+        k = lambda name: _prefix + name
         self.convs = []
         i = 0
-        while f"conv{i}_w" in d:
-            self.convs.append((d[f"conv{i}_w"].astype(np.float32), d[f"conv{i}_b"].astype(np.float32), int(d[f"pool{i}"])))
+        while k(f"conv{i}_w") in d:
+            self.convs.append((d[k(f"conv{i}_w")].astype(np.float32), d[k(f"conv{i}_b")].astype(np.float32), int(d[k(f"pool{i}")])))
             i += 1
-        self.dw, self.db = d["dense_w"].astype(np.float32), d["dense_b"].astype(np.float32)
-        self.mu, self.sd = d["mu"].astype(np.float32), d["sd"].astype(np.float32)
-        self.threshold = float(d["threshold"])
-        self.classes = [str(c) for c in d["classes"]]
+        self.dw, self.db = d[k("dense_w")].astype(np.float32), d[k("dense_b")].astype(np.float32)
+        self.mu, self.sd = d[k("mu")].astype(np.float32), d[k("sd")].astype(np.float32)
+        self.classes = [str(c) for c in d[k("classes")]]
         self.target = self.classes.index("mochi")
-        self.path = path
 
     @staticmethod
     def _conv(x, w, b):
@@ -124,6 +133,8 @@ class OwnModel:
         return out + b
 
     def probs(self, feats):
+        if self.members is not None:
+            return np.mean([m.probs(feats) for m in self.members], axis=0)
         x = np.asarray(feats, np.float32).reshape(-1, N_FRAMES, N_MELS)
         x = (x - self.mu) / self.sd
         for w, b, pool in self.convs:
@@ -184,3 +195,15 @@ class OwnSpotter:
             self.last_hit_t = t_end
             return dict(t_hit=round(t_end, 3), keyword="MOCHI", tokens=[round(p, 3)], span_s=None)
         return None
+
+
+def pack_ensemble(paths, out, threshold):
+    """One .npz holding several single models (m0_..., m1_...) and the ensemble threshold."""
+    d = {"members": np.int32(len(paths)), "threshold": np.float32(threshold)}
+    for j, p in enumerate(paths):
+        src = np.load(p, allow_pickle=False)
+        for key in src.files:
+            if key != "threshold":
+                d[f"m{j}_{key}"] = src[key]
+    np.savez(out, **d)
+    return out

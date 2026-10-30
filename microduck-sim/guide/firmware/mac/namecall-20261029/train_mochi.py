@@ -99,7 +99,10 @@ def read_wav16(path):
     x = np.frombuffer(w.readframes(w.getnframes()), np.int16 if sw == 2 else np.int32).reshape(-1, ch)
     x = x.mean(axis=1).astype(np.float32) / 2 ** (8 * sw - 1)
     if fs != FS:
-        x = np.interp(np.linspace(0, len(x) - 1, int(len(x) * FS / fs)), np.arange(len(x)), x).astype(np.float32)
+        from math import gcd
+        from scipy.signal import resample_poly
+        g = gcd(FS, fs)
+        x = resample_poly(x, FS // g, fs // g).astype(np.float32)   # anti-aliased (ESC-50 is 44.1 kHz)
     return x
 
 
@@ -146,11 +149,11 @@ def build(a, rng):
     for nm, (t0, t1) in lab["call_spans"].items():
         ev = events(mono[nm], t0, t1)
         spans_used[nm] = ev
-        k = int(round(len(ev) * (1 - HOLDOUT_FRAC)))
+        k = len(ev) if a.final else int(round(len(ev) * (1 - HOLDOUT_FRAC)))
         train_ev += [(nm, s, e) for s, e in ev[:k]]
         test_ev += [(nm, s, e) for s, e in ev[k:]]
     for nm, ts in lab.get("calls_heldout", {}).items():
-        test_ev += [(nm, t, t + 0.6) for t in ts]
+        (train_ev if a.final else test_ev).extend((nm, t, t + 0.6) for t in ts)   # --final: the deployed fit uses every home call
 
     X, Y = [], []
 
@@ -158,18 +161,71 @@ def build(a, rng):
         X.append(feat(fit_len(w)))
         Y.append(c)
 
+    # Positives: the word alone, cut tight from its recording and laid onto a background from somewhere else (our
+    # other recordings' call-free stretches, the home floor), so the only thing all positives share is the word.
+    # 2026-10-30: windows taken whole from the one call session taught the model that session's background
+    # (it fired every second between the calls as well).
+    bg = list(floor)
+    for nm, spans in lab.get("negative_spans", {}).items():
+        y = mono[nm]
+        for t0, t1 in spans:
+            for i in range(int(t0 * FS), min(len(y), int(t1 * FS)) - WIN_N, WIN_N):
+                bg.append(y[i:i + WIN_N])
+    taper = np.hanning(int(0.04 * FS))
     for nm, s, e in train_ev:
         y = mono[nm]
+        word = y[max(0, int((s - 0.08) * FS)): int((e + 0.12) * FS)].copy()
+        k = len(taper) // 2
+        word[:k] *= taper[:k]
+        word[-k:] *= taper[k:]
         for _ in range(a.pos_aug):
-            st = s - rng.uniform(0.05, 0.45)                       # word anywhere a scoring window holds it
-            seg = y[max(0, int((st - 0.3) * FS)): int((st + ok.WINDOW_S + 0.3) * FS)]
-            f = rng.uniform(0.9, 1.1)
-            seg = speed(seg, f)
-            i0 = int(0.3 * FS / f)
-            w = fit_len(seg[i0:i0 + WIN_N])
-            if rng.random() < 0.7 and floor:
-                w = mix(w, floor[rng.integers(len(floor))], rng.uniform(3, 20))
-            add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
+            wd = speed(word, rng.uniform(0.9, 1.1))[:WIN_N]
+            b = bg[rng.integers(len(bg))].copy()
+            b_rms = np.sqrt((b ** 2).mean()) + 1e-9
+            w_rms = np.sqrt((wd ** 2).mean()) + 1e-9
+            wd = wd * (b_rms / w_rms) * 10 ** (rng.uniform(3, 25) / 20)
+            end = int(rng.uniform(0.35, 0.98) * WIN_N)                 # the word ends anywhere a scoring window holds it
+            st = max(0, end - len(wd))
+            b[st:st + len(wd)] += wd[: WIN_N - st]
+            add(b * 10 ** (rng.uniform(-10, 10) / 20), 0)
+    # calls marked by start time (the 10/29 RoboClub calls in a noisy room): all but the last two of each file are
+    # trained, laid onto backgrounds from all our recordings (the lab's own noise is among them); the last two are held out
+    wl = lab.get("word_len_s", 0.65)
+    for nm, starts in lab.get("word_starts", {}).items():
+        y = mono[nm]
+        for s0 in (starts[:-2] if a.robo_train else []):
+            word = y[int(s0 * FS): int((s0 + wl) * FS)].copy()
+            for j in range(a.pos_aug):
+                if False:   # own background off: the RoboClub loudspeaker speech in it taught 'babble = mochi' (36 false wakes/h)
+                    end = s0 + wl + rng.uniform(-0.6, 0.0)                # the word ends inside the window
+                    w = y[int((end - ok.WINDOW_S) * FS): int(end * FS)]
+                    w = fit_len(speed(w, rng.uniform(0.95, 1.05)))
+                else:
+                    wd = speed(word, rng.uniform(0.9, 1.1))[:WIN_N]
+                    w = bg[rng.integers(len(bg))].copy()
+                    wd = wd * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((wd ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(3, 20) / 20)
+                    e_i = int(rng.uniform(0.6, 0.98) * WIN_N)
+                    st = max(0, e_i - len(wd))
+                    w[st:st + len(wd)] += wd[: WIN_N - st]
+                add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
+        test_ev += [(nm, s0, s0 + wl) for s0 in (starts[-2:] if a.robo_train else starts)]
+    # synthetic "Mochi" in many voices (mochi_set.py, macOS voices, en and zh accents): the word without Shawn's voice
+    # or our rooms, laid onto our backgrounds, so the shared cue of all positives is the word (openWakeWord recipe)
+    if a.tts_pos and a.set and os.path.isdir(a.set):
+        for r in json.load(open(os.path.join(a.set, "manifest.json"))):
+            if r["kind"] not in ("pos", "pos_zh"):
+                continue
+            x = read_wav16(os.path.join(a.set, r["file"]))
+            e_s = r.get("speech_end") or len(x) / FS
+            word = x[max(0, int((e_s - 0.75) * FS)): int((e_s + 0.05) * FS)]
+            for _ in range(a.tts_pos):
+                wd = speed(word, rng.uniform(0.9, 1.1))[:WIN_N]
+                w = bg[rng.integers(len(bg))].copy()
+                wd = wd * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((wd ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(3, 25) / 20)
+                e_i = int(rng.uniform(0.35, 0.98) * WIN_N)
+                st = max(0, e_i - len(wd))
+                w[st:st + len(wd)] += wd[: WIN_N - st]
+                add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
     n_pos = len(Y)
 
     # ---- speech: Speech Commands words in home noise
@@ -204,6 +260,15 @@ def build(a, rng):
                     if floor:
                         w = mix(w, floor[rng.integers(len(floor))], rng.uniform(5, 25))
                     add(w * 10 ** (rng.uniform(-30, -5) / 20), 1)
+    # every stretch of our own recordings that holds no call (speech, footsteps, standing up, quacks, quiet):
+    # 1 s windows every 0.25 s, twice with gain jitter (2026-10-30: walking and standing up woke the spotter)
+    for nm, spans in lab.get("negative_spans", {}).items():
+        y = mono[nm]
+        for t0, t1 in spans:
+            i1 = min(len(y), int(t1 * FS))
+            for i in range(int(t0 * FS), i1 - WIN_N, WIN_N // 4):
+                for _ in range(2):
+                    add(y[i:i + WIN_N] * 10 ** (rng.uniform(-8, 8) / 20), 1)
     n_speech = len(Y) - n_pos
 
     # ---- noise: robot-recording stretches away from any voice, background noise files
@@ -218,6 +283,17 @@ def build(a, rng):
         x = read_wav16(p)
         for i in range(0, len(x) - WIN_N, WIN_N):
             add(x[i:i + WIN_N] * 10 ** (rng.uniform(-40, -10) / 20), 2)
+    if a.esc50 and os.path.isdir(a.esc50):
+        for p in sorted(glob.glob(os.path.join(a.esc50, "*.wav"))):
+            x = read_wav16(p)
+            for i in range(0, max(1, len(x) - WIN_N + 1), WIN_N):
+                w = fit_len(x[i:i + WIN_N])
+                if np.abs(w).max() < 1e-4:
+                    continue
+                w = w / (np.sqrt((w ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(-45, -20) / 20)
+                if floor:
+                    w = w + floor[rng.integers(len(floor))]
+                add(w, 2)
     n_noise = len(Y) - n_pos - n_speech
     info = dict(train_events=len(train_ev), test_events=len(test_ev), rows=dict(mochi=n_pos, speech=n_speech, noise=n_noise),
                 spans=spans_used, test=[(n, s) for n, s, _ in test_ev])
@@ -229,6 +305,7 @@ def build(a, rng):
 def train_torch(X, Y, a, seed):
     import torch
     import torch.nn as nn
+    torch.set_num_threads(a.threads)   # 2026-10-30: default threading on a loaded MacBook stretched a 7 min run past 45 min
     torch.manual_seed(seed)
     mu = X.reshape(-1, ok.N_MELS).mean(axis=0)
     sd = X.reshape(-1, ok.N_MELS).std(axis=0) + 1e-3
@@ -356,7 +433,17 @@ def evaluate(model, mono, test_ev, lab, a):
     for nm in lab.get("scan_files", []):
         ts, ps = cache[nm]
         scan[nm] = {str(t): [round(h, 1) for h in hits(ts, ps, t)] for t in (0.8, 0.9)}
-    return res, dict(speech_hours=round(sp_hours, 3)), scan
+    neg = {}
+    for nm, spans in lab.get("heldout_negative_spans", {}).items():
+        ts, ps = scores(model, mono[nm])
+        for t0, t1 in spans:
+            sel = (ts >= t0 + ok.WINDOW_S) & (ts <= t1)
+            neg[f"{nm} {t0}-{t1}"] = (ts[sel], ps[sel])
+    neg_s = sum(t1 - t0 for spans in lab.get("heldout_negative_spans", {}).values() for t0, t1 in spans)
+    for thr in thresholds:
+        res[str(thr)]["heldout_real_false"] = {k: [round(h, 1) for h in hits(ts, ps, thr)] for k, (ts, ps) in neg.items()}
+        res[str(thr)]["heldout_real_false_n"] = sum(len(v) for v in res[str(thr)]["heldout_real_false"].values())
+    return res, dict(speech_hours=round(sp_hours, 3), heldout_real_negative_s=round(neg_s, 1)), scan
 
 
 def main():
@@ -365,6 +452,11 @@ def main():
     ap.add_argument("--labels", required=True)
     ap.add_argument("--speech-commands", required=True)
     ap.add_argument("--set", default=None)
+    ap.add_argument("--esc50", default=None, help="ESC-50 audio folder (environmental sounds, noise class)")
+    ap.add_argument("--robo-train", action="store_true", help="train on the RoboClub calls (else all are held out)")
+    ap.add_argument("--tts-pos", type=int, default=0, help="augmented windows per synthetic Mochi clip (0: none)")
+    ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--final", action="store_true", help="train on every home call (recipe chosen on the held-out run); real negatives stay held out")
     ap.add_argument("--sounds", default=os.path.join(MAC, "sounds"))
     ap.add_argument("--out", default=os.path.join(HERE, "models", "mochi_own.npz"))
     ap.add_argument("--report", default=os.path.join(HERE, "results", "mochi_own.json"))
@@ -386,7 +478,8 @@ def main():
     np.savez(tmp, **d)
     model = ok.OwnModel(tmp)
     res, extra, scan = evaluate(model, mono, test_ev, lab, a)
-    chosen = next((float(t) for t, r in res.items() if r["fa_per_h"] is not None and r["fa_per_h"] <= a.fa_per_h), 0.98)
+    chosen = next((float(t) for t, r in res.items() if r["fa_per_h"] is not None and r["fa_per_h"] <= a.fa_per_h
+                   and r.get("heldout_real_false_n", 0) == 0), 0.98)
     d["threshold"] = np.float32(chosen)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     np.savez(a.out, **d)
@@ -397,7 +490,8 @@ def main():
     json.dump(rep, open(a.report, "w"), indent=1)
     for t, r in res.items():
         print(f"  thr {t}: held-out calls {r['recall']} {r['per_file']}, false wakes on {extra['speech_hours'] * 60:.0f} min speech: "
-              f"{r['fa_speech']} ({r['fa_per_h']}/h)")
+              f"{r['fa_speech']} ({r['fa_per_h']}/h); held-out real room sounds ({extra['heldout_real_negative_s']} s): "
+              f"{r['heldout_real_false_n']} {r['heldout_real_false']}")
     print(f"threshold {chosen}; model {a.out} ({rep['model_bytes']} B); {rep['wall_s']} s")
     for nm, s in scan.items():
         print(f"  scan {nm}: {s}")

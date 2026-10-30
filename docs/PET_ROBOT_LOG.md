@@ -134,3 +134,19 @@ vx 0.25 has 4 jumps per 10 s against the allowed 3. G2's 0.6 m walking-path thre
 walk61's own plain walk covers 0.45 m in that sim, so that row says t2b walks slower than T1, not that it stops.
 t2a (beta 0.5) fails G1 (0.30). Candidate saved as runtime-overlay/models-t2b-best (README has the numbers);
 `t1_robot_test.py restart t2b` loads it. Not robot-tested: the plan needs G2 and G3 passed or Shawn's waiver.
+
+## 2026-10-30 afternoon: Mochi spotter v2, a three-seed ensemble
+
+Mac mini runs of the all-negatives recipe (`namecall-20261029/train_mochi.py`, `mochi_labels.json`), scored on the same
+held-out set (28 calls: 14 home, 6 table, 8 RoboClub noisy-room; 89 s of held-out real non-calls from the 14:55 walking
+run and Shawn's 15:01 ordinary speech; 28 min synthetic speech). Single seeds of recipe A (home calls cut tight and laid
+onto every recording's background, ESC-50 and Speech Commands negatives) differed by several false hits and calls on the
+same audio. Adding the 262 synthetic-voice Mochi clips (B) gave over 2000 false wakes per hour on synthetic speech: the
+model learned "synthetic voice = Mochi". A final fit with all calls trained was worse than A. Training on the RoboClub
+cuts taught the corridor loudspeaker's babble as Mochi, so they stay a held-out noisy-room test. Deployed: the mean of
+three A seeds (A, A1, A2) packed in one file (`models/mochi_own.npz`, `ownkws.pack_ensemble`, `OwnModel` averages the
+members), threshold 0.7: calls 20 of 28 (home 12/14, table 3/6, RoboClub 5/8), synthetic speech 0 per hour, held-out
+real false hits 1 (142.1 s, walking). The v1 model at its 0.9 threshold on the same set: 19 of 28, 5 false hits. At 0.9
+the ensemble has no false hit but finds 15 of 28. Report `results/mochi_own.json`, from `eval_mochi.py`. Caveat: the
+held-out real negatives come from sessions whose other parts were trained on. Not yet on the duck: the A7Z was off
+Tailscale from about 12:00; install and the live listen-only run follow when it is back.
