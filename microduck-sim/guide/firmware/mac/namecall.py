@@ -153,6 +153,9 @@ TURN_MARGIN_MIN = 0.3            # HISTORY: the front/back margin gate (2026-10-
 #                                  only and the back turn waits for an empty front search instead
 # attention after the take: the head stays on the caller (not the drift home) and waits for whatever comes next
 ATTEND_S = 10.0                  # s since the last call or face sighting; then the head drifts home
+EYE_CONTACT_S = (5.0, 10.0)      # s of eye contact per call once the face is found, drawn uniformly; then the head drifts
+#                                  home (2026-10-30 19:22: attention re-armed on every face frame and the duck stared
+#                                  until stopped; people and animals hold mutual gaze for seconds, then look away)
 FACE_DEADBAND = math.radians(2.0)   # a re-aim smaller than this is detector jitter; the head stays
 FACE_GAIN = 0.6                  # fraction of the measured face offset corrected per new frame
 FACE_WAIT_S = 1.0                # s without a face (after the take arrives, or since the last sighting) before the scan
@@ -1384,6 +1387,8 @@ class NameCall:
         self.face_t = None               # last face sighting time
         self.face_used_t = -1e9          # frame time of the last sighting acted on
         self.face_seen = False           # a face was seen in this attention phase
+        self.contact_until = None        # end of the eye contact for the current call (EYE_CONTACT_S)
+        self.gaze_rng = np.random.default_rng(getattr(args, "seed", None))
         self.scan = None                 # [(until, yaw)] remaining scan steps, [] when the scan is spent
         self.no_face_since = None
         self.person_used_t = -1e9        # frame time of the last person sighting acted on
@@ -1523,6 +1528,7 @@ class NameCall:
             self.attend_base = (self.head.last["yaw"], self.a.pitch)
             self.scan, self.no_face_since, self.face_seen = None, None, False
             self.person_first, self.person_how, self.found = None, None, False
+            self.contact_until = None
             rec.update(take=perf.take, behind=self.head.last["behind"], arrival_s=perf.arrival,
                        params={k: (round(v, 4) if isinstance(v, float) else v) for k, v in perf.params.items()},
                        events=perf.events, target_yaw=self.head.last["yaw"])
@@ -1633,7 +1639,11 @@ class NameCall:
             if abs(yaw - gy) < FACE_DEADBAND and abs(pitch - gp) < FACE_DEADBAND:
                 yaw, pitch = gy, gp          # detector jitter: the head stays
             if self.head.aim(yaw, pitch):
-                self.attend_until = now + self.attend_s
+                if self.contact_until is None:
+                    # eye contact for a few seconds, then the gaze leaves (Shawn 2026-10-30 19:22: it kept staring at
+                    # him; a pet looks, then looks away). Once per call: a lost and refound face does not restart it.
+                    self.contact_until = now + float(self.gaze_rng.uniform(*EYE_CONTACT_S))
+                self.attend_until = self.contact_until
                 self.scan, self.no_face_since = None, None
                 self.attend_base = (self.head.gaze(now)[0], self.head.gaze(now)[1])
                 self._bearing_seen(now, "face", fy, fp, face)

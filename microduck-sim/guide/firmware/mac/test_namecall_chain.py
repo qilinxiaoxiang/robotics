@@ -461,16 +461,31 @@ def test_attention_holds_the_gaze_on_the_caller_then_drifts_home(tmp_path):
     assert abs(writes[-1][1]) < 1e-6 and abs(writes[-1][2] - n.head.default["head_pitch"]) < 1e-6   # home at 16 s
 
 
-def test_a_face_in_view_is_centred_and_followed(tmp_path):
+def test_a_face_in_view_is_centred_and_followed(tmp_path, monkeypatch):
     """A face 0.2 rad left of the heard bearing and lower than the look-up pitch: the gaze converges on it within a
     couple of seconds (FACE_GAIN per 4 Hz frame), the sighting is logged once and extends the attention."""
+    monkeypatch.setattr(nc, "EYE_CONTACT_S", (30.0, 30.0))   # tracking quality, not the contact length
     n, recs, writes = attention_run(tmp_path, finder=lambda gaze: FakeFinder(gaze, world=(0.8, 0.5), t_face=2.5), until=9.0)
     yaw, pitch = n.head.gaze(9.0)
     assert abs(yaw - 0.8) < 0.05 and abs(pitch - 0.5) < 0.05, (yaw, pitch)
     faces = [r for k, r in recs if k == "face"]
     assert len(faces) == 1 and faces[0]["yaw_err_deg"] < -5 and faces[0]["pitch_err_deg"] < -20
-    assert n.attend_until is not None and n.attend_until > 9.0 + 8.0          # extended by the last sighting
+    assert n.attend_until is not None and n.attend_until <= 2.5 + 2.0 + 30.0                     # contact capped from the lock
     assert not [k for k, _ in recs if k == "scan"]
+
+
+def test_eye_contact_ends_while_the_face_is_still_in_view(tmp_path):
+    """A face that stays in view gets EYE_CONTACT_S of eye contact per call, then the head drifts home (Shawn
+    2026-10-30: it kept staring at him; a pet looks for 5-10 s, then looks away). A new call looks again."""
+    n, recs, writes = attention_run(tmp_path, finder=lambda gaze: FakeFinder(gaze, world=(0.8, 0.5), t_face=1.0), until=30.0)
+    lock = next(r for k, r in recs if k == "face")
+    done = [k for k, _ in recs if k == "attend_done"]
+    assert done == ["attend_done"] and n.attend_until is None
+    home = next(w[0] for w in writes if w[0] > 2.0 and abs(w[1]) < 1e-6)
+    assert nc.EYE_CONTACT_S[0] <= home - 1.0 <= nc.EYE_CONTACT_S[1] + 3.0, home        # drifted home after the contact
+    assert abs(writes[-1][1]) < 1e-6                                                       # still home at 30 s, face in view
+    n.respond(dict(t=30.0, az_rad=0.6, az_deg=34, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 30.0)
+    assert n.contact_until is None
 
 
 def test_no_face_in_view_sweeps_once_around_the_bearing(tmp_path):
@@ -580,10 +595,11 @@ class LaggedWorld:
         return dict(frames=0)
 
 
-def test_face_tracking_does_not_swing_with_the_real_delays(tmp_path):
+def test_face_tracking_does_not_swing_with_the_real_delays(tmp_path, monkeypatch):
     """2026-10-30 18:53: the head swung +-0.35 rad with a 2.2 s period for 40 s around Shawn's face (offset added to
     the commanded gaze, behind about 0.5 s of delay). With the gaze measured at the frame's capture time it settles
     on the face and stays there."""
+    monkeypatch.setattr(nc, "EYE_CONTACT_S", (30.0, 30.0))   # tracking quality, not the contact length
     a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH)
     a.no_turn = True
     n = nc.NameCall(a, nc.Log(None, echo=False))
