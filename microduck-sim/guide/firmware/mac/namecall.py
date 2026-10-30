@@ -88,6 +88,11 @@ import subprocess
 import sys
 import threading
 import time
+
+# One BLAS thread before numpy loads: the own spotter scores a 1 s window every 100 ms, and OpenBLAS's default worker
+# threads spin between those calls. A7Z 2026-10-30: 1.74 cores at the default, 0.18 with one thread (12.8 -> 17.5 ms per
+# score); namecall ran at 3.4-4.0 cores live.
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 import wave
 
 import numpy as np
