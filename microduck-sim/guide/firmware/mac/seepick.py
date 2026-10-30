@@ -46,6 +46,8 @@ MAX_ALIGN = 3              # align moves per try before picking anyway (inside P
 AIM_N, AIM_S = 5, 3.0      # detections for the pick measurement, and the time allowed
 SETTLE_S = 1.0             # after a stop, before measuring (approach.SETTLE_S is 1.2 after a walk)
 TRACK_GATE = 0.04          # m: a detection further than this from the estimate during the pick is another object
+TRACK_GATE_HERE = 0.08     # m: the gate on a --pick-here try, whose estimate is a person's guess (robot 2026-10-30: the
+#                            guess was 11 cm off and three true sightings during the bend were gated away)
 CMD_PERIOD = 0.1           # s: the pick command is rewritten at least this often while the camera sees the object
 PICK_MAX_S = 6.0           # the seeing pick takes 3.6 s to the hand-back (phase 0.9 x 4 s)
 VERIFY_S = 0.5
@@ -66,10 +68,13 @@ class SeePick:
     state() / state_at(t) return approach.parse_state dicts plus jaw_holding and sp_phase (SeeTail)."""
 
     def __init__(self, kin, latest_frame, state, state_at, send, detect, make_approach, tries=3, dry=False,
-                 now=time.time, log=print):
+                 now=time.time, log=print, pick_here=None):
         self.kin, self.latest_frame, self.state_fn, self.state_at = kin, latest_frame, state, state_at
         self.send_fn, self.detect, self.make_approach = send, detect, make_approach
         self.tries, self.dry, self.now, self.log = tries, dry, now, log
+        self.pick_here = pick_here   # (x, y) foot frame: the object is already at the feet; the first try skips the
+        #                              approach, aims there and picks on this estimate even if the camera cannot see
+        #                              it (the beak's blind zone); frames seen during the bend still correct it
         self.helper = ap.Approach(kin, latest_frame, state, state_at, send, detect, now=now, log=lambda s: None,
                                   obj_radius=DEFAULT_SIZE / 2)   # its projection and head aiming, never stepped
         self.phase, self.t_phase, self.result = "start", now(), None
@@ -120,7 +125,8 @@ class SeePick:
         p = self.helper.project(det, sc, w, h)
         if p is None or p[0] < 0.03:   # the duck's own coloured parts project under the body
             return None
-        if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > TRACK_GATE:
+        gate_m = TRACK_GATE_HERE if (self.pick_here is not None and self.app is None) else TRACK_GATE
+        if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > gate_m:
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, gated=[p[0], p[1]]))
             return None
         m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx)
@@ -149,6 +155,10 @@ class SeePick:
         if st.get("jaw_deg") is None and not self.dry:
             self.finish(False, "the jaw is not calibrated or not read (jaw_deg missing in walk_wired's log)", stop=False)
             return
+        if self.pick_here is not None:
+            self.try_n, self.align_n, self.app, self.meas = 1, 0, None, []
+            self.enter("aim", f"try 1: pick here, estimate x {self.pick_here[0]:.3f} y {self.pick_here[1]:.3f}")
+            return
         self.next_try("start")
 
     def next_try(self, why):
@@ -169,7 +179,7 @@ class SeePick:
             self.finish(False, f"approach: {self.app.result.get('why')}")
 
     def p_aim(self, st, now):
-        est = (self.obj["x"], self.obj["y"]) if self.obj else (self.app.est or SPOT)
+        est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
         head = self.helper.aim_head(st, *est)
         self.stand(head)
         if now - self.t_phase < SETTLE_S:
@@ -184,6 +194,11 @@ class SeePick:
                      f"from {len(self.meas)} frames (spot {SPOT[0]:.3f} {SPOT[1]:.3f})")
             self.enter("align")
         elif now - self.t_phase > SETTLE_S + AIM_S:
+            if self.pick_here is not None and self.app is None:
+                self.obj = dict(x=float(self.pick_here[0]), y=float(self.pick_here[1]), size=DEFAULT_SIZE, t=now)
+                self.log("  not seen (blind zone): picking on the given estimate")
+                self.enter("align")
+                return
             self.obj = None
             self.next_try("not seen at the pick spot")
 
@@ -306,6 +321,8 @@ def main():
     p.add_argument("--dry", action="store_true", help="approach, aim and align only, no pick")
     p.add_argument("--observe", type=float, default=None, help="s; print detections only, no motion")
     p.add_argument("--max-s", type=float, default=180.0)
+    p.add_argument("--pick-here", nargs=2, type=float, metavar=("X", "Y"),
+                   help="m, foot frame: the object is already at the feet; skip the approach and pick there")
     p.add_argument("--trace", default=os.path.expanduser(f"~/duck-logs/seepick_{time.strftime('%m%d-%H%M%S')}.jsonl"))
     a = p.parse_args()
     import orange_target
@@ -322,6 +339,7 @@ def main():
     cam = ap.ShmCamera()
     send = ap.send_file(a.cmd)
     ctl = SeePick(kin, cam.latest, tail.latest, tail.at, send, detect, tries=a.tries, dry=a.dry,
+                  pick_here=tuple(a.pick_here) if a.pick_here else None,
                   make_approach=lambda: ap.Approach(kin, cam.latest, tail.latest, tail.at, send, detect,
                                                     log=lambda s: print("  approach " + s, flush=True)),
                   log=lambda s: print(s, flush=True))
