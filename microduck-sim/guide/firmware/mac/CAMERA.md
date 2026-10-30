@@ -89,3 +89,15 @@ crossing one tile ahead is `--points "<toe_x + 0.3048>,0;..."`. A 12 mm ball at 
 `--hsv-lo 0,100,100 --min-area 15 --open-px 3`, since the default 5 x 5 opening erases it. Captures from several
 runs at the same head pose merge by concatenating their `obs` lists and refitting with `--mount --from`. The 10 mm
 held-out line was set for points at 0.17 to 0.35 m; at 0.6 m the same angular error is 17 mm.
+
+### Near-range caveat and the first pick (2026-10-30 03:22)
+
+The tile-grid mount fit (rotation only, points 0.32-0.64 m) over-reads range at the pick pose: ball at x 0.098
+y -0.015 (tape), six bend-time sightings read x 0.126-0.156 (+2.8 to +5.8 cm, mean +3.6 cm), y within 1.3 cm
+(`camera-calib-20261030/seepick_1030-032226.jsonl`). The residuals of the fit itself already grow toward near range
+(+21.8 mm at 0.32 m, -6.9 mm at 0.64 m), the signature of a lens position (shift) absorbed into the angles. Standing
+with the head fully down the picture's bottom edge meets the floor at about x 0.14 (model), so the pick spot
+(0.087) is only seen during the bend. `seepick.py --pick-here 0.098 -0.015 --track-gate 0` (camera recorded, not
+used) picked the ball on the first try: the policy and the 150 mA jaw on bare PLA work when the position is right.
+Next: captures at the pick pose and 0.08-0.20 m, `--mount --fit-shift`; gated trace rows now carry bbox, q and gb
+for that refit.

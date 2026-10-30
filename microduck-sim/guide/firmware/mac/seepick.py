@@ -68,10 +68,11 @@ class SeePick:
     state() / state_at(t) return approach.parse_state dicts plus jaw_holding and sp_phase (SeeTail)."""
 
     def __init__(self, kin, latest_frame, state, state_at, send, detect, make_approach, tries=3, dry=False,
-                 now=time.time, log=print, pick_here=None):
+                 now=time.time, log=print, pick_here=None, track_gate=None):
         self.kin, self.latest_frame, self.state_fn, self.state_at = kin, latest_frame, state, state_at
         self.send_fn, self.detect, self.make_approach = send, detect, make_approach
         self.tries, self.dry, self.now, self.log = tries, dry, now, log
+        self.track_gate = track_gate  # m, overrides TRACK_GATE / TRACK_GATE_HERE when given
         self.pick_here = pick_here   # (x, y) foot frame: the object is already at the feet; the first try skips the
         #                              approach, aims there and picks on this estimate even if the camera cannot see
         #                              it (the beak's blind zone); frames seen during the bend still correct it
@@ -126,8 +127,11 @@ class SeePick:
         if p is None or p[0] < 0.03:   # the duck's own coloured parts project under the body
             return None
         gate_m = TRACK_GATE_HERE if (self.pick_here is not None and self.app is None) else TRACK_GATE
+        if self.track_gate is not None:
+            gate_m = self.track_gate   # --track-gate; 0 keeps the given estimate and only records what the camera saw
         if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > gate_m:
-            self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, gated=[p[0], p[1]]))
+            self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, gated=[p[0], p[1]], t_cap=float(t_cap),
+                                   bbox=[int(v) for v in det["bbox"]], q=sc["q"], gb=list(sc["gb"])))  # refit material
             return None
         m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx)
         self.trace.append(dict(t=self.now(), phase=self.phase, meas=m))
@@ -323,6 +327,8 @@ def main():
     p.add_argument("--max-s", type=float, default=180.0)
     p.add_argument("--pick-here", nargs=2, type=float, metavar=("X", "Y"),
                    help="m, foot frame: the object is already at the feet; skip the approach and pick there")
+    p.add_argument("--track-gate", type=float, default=None, metavar="M",
+                   help="override the tracking gate; 0 = never move the estimate on a sighting (sightings are traced)")
     p.add_argument("--trace", default=os.path.expanduser(f"~/duck-logs/seepick_{time.strftime('%m%d-%H%M%S')}.jsonl"))
     a = p.parse_args()
     import orange_target
@@ -339,7 +345,7 @@ def main():
     cam = ap.ShmCamera()
     send = ap.send_file(a.cmd)
     ctl = SeePick(kin, cam.latest, tail.latest, tail.at, send, detect, tries=a.tries, dry=a.dry,
-                  pick_here=tuple(a.pick_here) if a.pick_here else None,
+                  pick_here=tuple(a.pick_here) if a.pick_here else None, track_gate=a.track_gate,
                   make_approach=lambda: ap.Approach(kin, cam.latest, tail.latest, tail.at, send, detect,
                                                     log=lambda s: print("  approach " + s, flush=True)),
                   log=lambda s: print(s, flush=True))
