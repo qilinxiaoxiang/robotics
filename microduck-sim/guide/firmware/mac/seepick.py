@@ -35,7 +35,9 @@ sys.path.insert(0, HERE)
 import approach as ap  # noqa: E402
 
 SPOT = (0.087, 0.0)        # m, foot frame: the trained object position (static grasp OBJECT_NOMINAL_XY)
-PICK_WIN = 0.04            # m: |dx| and |dy| within this -> pick (training reached +-3-4 cm)
+PICK_WIN = 0.05            # m: |dx| and |dy| within this -> pick (training: 80 % at +-3 cm, 71 % at +-5 cm). Was 0.04:
+                           # robot 2026-10-30 (seepick_1030-025920), object at dx +4.1 cm, 1 mm over, took a blind
+                           # BURST_S walk instead and lost the ball under the beak; a pick at +-5 cm beats that burst
 TURN_RATE = 0.5            # rad/s in place (approach.VTH_SPIN, robot-tested)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
