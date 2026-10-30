@@ -285,3 +285,12 @@ the low band reads "front" for any caller. The face was never found: the camera,
 (`scratchpad/snap_now.jpg`). Body turn (`--turn`) stopped before it turned away from him. Next: person detection to
 follow the body up to the face (agent working), the camera searches in front before the sound bearing is trusted,
 and sealing each microphone to its own hole (foam gasket) plus the mouth-to-cavity path.
+
+## 2026-10-30 18:00: the charger lead as a training disturbance
+
+`guide/firmware/mac/tether.py` models the 3 m braided lead as forces on the trunk, not as a cable: hanging weight,
+floor drag that grows with the distance walked (short walks drag only the near part), random snags, a taut pull
+capped by the power bank sliding, and a twist torque that slips past 0.005-0.03 N m (Shawn: keep it moderate).
+Parameters are drawn per episode. walk61 with the lead in the eval sim: walks as far as without (1.32-1.48 m in 12 s),
+in-place turns 12-23 deg/s against 28, no falls. The fine-tune delta `tether` puts the same model in 80 % of the
+training envs; the reward audit passes (standing earns 0.788 of walking, gate 0.8). Kaggle run planned, not started.

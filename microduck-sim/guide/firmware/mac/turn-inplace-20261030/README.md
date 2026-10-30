@@ -73,3 +73,29 @@ turn; the turn should then keep going past 90 deg.
   It does not observe the heading error, only the command, which the heading hold pins at 1.5, outside training.
 - The floor and the servos are not the limit: two feet about 5 cm apart under 8 N with mu 1 hold about 0.2 N m of
   twist, and each XL330 can give 0.52 N m; the policy uses 1-2 % of the servo.
+
+## Training against the lead (plan, 2026-10-30)
+
+Shawn: the duck will often run on this lead, a braided USB-C lead of about 3 m from a power bank on the floor (plug at
+the top of the bank, about 0.18 m up), leaving the backpack at its lower left. Add it to training for walking and
+turning, if training is not hard.
+
+The lead is modelled as a force on the trunk, not as a cable: `../tether.py`, one file for the eval sim (numpy) and
+the fine-tune (torch). At the exit point it applies the weight of the hanging drop, floor drag on the length dragged
+so far (a short walk moves only the near part of the lead, a long one all of it), random snags (a kink or the lead
+caught on the bank: drag x2-4 for 1-4 s, 0.05 per s), a taut pull toward the bank once the lead runs out (at most
+the force that slides the bank, 0.5-1.5 N) and a twist torque, 0-0.02 N m/rad, that slips past 0.005-0.03 N m.
+Every parameter is drawn per episode; the exit side is drawn left or right (Shawn says left; D-007 put the 5991
+socket in the -y wall). The mass per metre is a range for braided leads, not weighed. The slip range stops at
+0.03 N m: Shawn asked not to train for leads that never let go.
+
+`brain_sim_check.py --tether` runs the same model in the as-built eval sim (`runs7.sh`, summaries in `sim/tether/`,
+`--model asbuilt --volt 7.0 --drop 0.04`, seeds 0-4): walk61 walks 1.32-1.48 m in 12 s at 0.25 with the lead
+(1.33 m without) and never falls; in-place right turns of 25 s reach 317-580 deg (12-23 deg/s, 28 deg/s without the
+lead), no falls. The twist draws of these seeds slip below the robot's stall; the robot stalls at about
+0.010 N m/rad with no slip seen within 90 deg.
+
+The fine-tune side (`microduck_rl` `cmu/finetune/modal/finetune_worker.py`, delta `tether`, step event `tether_lead`;
+plan, audit and acceptance in `cmu/finetune/modal/FINETUNE-DELTA.md`): the lead acts in 80 % of the training envs.
+Reward audit with the lead: standing collects 0.788 of walking's reward (gate 0.8), and walk61's in-place turning in
+the training sim drops from 0.25 to 0.17 rad/s. No training run yet; it waits for Shawn's go.
