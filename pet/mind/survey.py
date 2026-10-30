@@ -183,7 +183,7 @@ class Survey:
         self.jobs.append((rec, self.pool.submit(self.vision.describe, jpg, where, PROMPT)))
         self.note(kind="look", **{k: rec[k] for k in ("img", "body_deg", "head_yaw", "head_pitch")})
 
-    def run(self):
+    def run(self, stops=STOPS):
         t0 = time.time()
         while self.row is None or self.row.get("quat") is None or self.frame is None:
             self.wait(0.1)
@@ -197,7 +197,7 @@ class Survey:
         self.written = cur
         self.heading = Heading(self.row["quat"])
         self.note(kind="start", cmd=cur)
-        for i, target in enumerate(STOPS):
+        for i, target in enumerate(stops):
             self.turn_to(target)
             for yaw, pitch in LOOKS:
                 self.look(i, yaw, pitch)
@@ -233,13 +233,14 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--host", default="a7z")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--right-first", action="store_true", help="turn to -90 first (away from the cable side)")
     a = ap.parse_args()
     out = Path(a.out) if a.out else OUT / f"survey-{dt.datetime.now():%Y%m%d-%H%M%S}"
     link = RemoteLink(a.host, None, mic=None, cam_hz=2.0)
     s = Survey(link, out)
     signal.signal(signal.SIGINT, lambda *_: setattr(s, "stop", True))
     try:
-        s.run()
+        s.run(tuple(-x for x in STOPS) if a.right_first else STOPS)
     except Abort as e:
         s.note(kind="abort", why=str(e))
     finally:
