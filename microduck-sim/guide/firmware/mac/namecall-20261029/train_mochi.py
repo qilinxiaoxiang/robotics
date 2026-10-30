@@ -141,6 +141,13 @@ def feat(w):
 
 def build(a, rng):
     lab = json.load(open(a.labels))
+    for p in a.extra_labels:           # mine_life.py fragments: calls_found and negative_spans of everyday recordings
+        x = json.load(open(p))
+        for key in ("calls_found", "negative_spans"):
+            for nm, v in x.get(key, {}).items():
+                if nm not in lab.get(key, {}) and nm not in lab.get("heldout_negative_spans", {}) \
+                        and nm not in lab.get("call_spans", {}) and v:
+                    lab.setdefault(key, {})[nm] = v
     mono = {os.path.basename(p)[:-4]: np.load(p) for p in glob.glob(os.path.join(a.mono16, "*.npy"))}
 
     def copies(nm, n):
@@ -261,7 +268,46 @@ def build(a, rng):
                 st = max(0, e_i - len(wd))
                 w[st:st + len(wd)] += wd[: WIN_N - st]
                 add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
+    # real people saying "mochi" in YouTube videos (~/data/mochi_web, files VIDEOID_NNN*.wav): the lab recipe of
+    # 18-763 lecture 21 (Speech Commands "on"/"off" from thousands of speakers, no own recording) needs many voices per
+    # word, so the word is the only thing all positives share. pos_ctx = the word in its own 1.5 s of audio (cropped
+    # to 1 s around it), pos = the word alone, laid onto our robot backgrounds so the duck's microphones are covered;
+    # the rest of the same sentence (neg_adjacent) and of the same video (neg) are negatives. Videos whose id hashes to
+    # 0 mod 10 are held out (web_test).
+    web_test = []
+    if a.web and os.path.isdir(a.web):
+        import zlib
+        held = lambda f: zlib.crc32(os.path.basename(f)[:11].encode()) % 10 == 0
+        for p in sorted(glob.glob(os.path.join(a.web, "pos_ctx", "*.wav"))):
+            if held(p):
+                web_test.append(p)
+                continue
+            cue(pos_cues, "web:" + os.path.basename(p)[:11])
+            x = read_wav16(p)
+            for _ in range(a.web_aug):
+                i0 = int(rng.uniform(0.1, 0.45) * FS)
+                add(fit_len(speed(x, rng.uniform(0.95, 1.05))[i0:i0 + WIN_N]) * 10 ** (rng.uniform(-10, 10) / 20), 0)
+        for p in sorted(glob.glob(os.path.join(a.web, "pos", "*.wav"))):
+            if held(p):
+                continue
+            word = read_wav16(p)
+            for _ in range(a.web_aug):
+                wd = speed(word, rng.uniform(0.9, 1.1))[:WIN_N]
+                w = bg[rng.integers(len(bg))].copy()
+                wd = wd * (np.sqrt((w ** 2).mean()) + 1e-9) / (np.sqrt((wd ** 2).mean()) + 1e-9) * 10 ** (rng.uniform(3, 25) / 20)
+                e_i = int(rng.uniform(0.6, 0.98) * WIN_N)
+                st = max(0, e_i - len(wd))
+                w[st:st + len(wd)] += wd[: WIN_N - st]
+                add(w * 10 ** (rng.uniform(-10, 10) / 20), 0)
     n_pos = len(Y)
+    if a.web and os.path.isdir(a.web):
+        for sub in ("neg_adjacent", "neg"):
+            for p in sorted(glob.glob(os.path.join(a.web, sub, "*.wav"))):
+                if held(p):
+                    web_test.append(p)
+                    continue
+                cue(neg_cues, "web:" + os.path.basename(p)[:11])
+                add(fit_len(read_wav16(p)) * 10 ** (rng.uniform(-10, 10) / 20), 1)
 
     # ---- speech: Speech Commands words in home noise
     sc = a.speech_commands
@@ -365,7 +411,7 @@ def build(a, rng):
                 add(w, 2)
     n_noise = len(Y) - n_pos - n_speech
     info = dict(train_events=len(train_ev), test_events=len(test_ev), rows=dict(mochi=n_pos, speech=n_speech, noise=n_noise),
-                unmatched_cues=missing,
+                unmatched_cues=missing, web_test=web_test,
                 spans=spans_used, test=[(n, s) for n, s, _ in test_ev])
     return np.stack(X).astype(np.float32), np.array(Y), mono, train_ev, test_ev, lab, info
 
@@ -388,7 +434,7 @@ def train_torch(X, Y, a, seed):
             super().__init__()
             layers, c_in = [], ok.N_MELS
             for c, k, p in zip(ch, ks, pools):
-                layers += [nn.Conv1d(c_in, c, k, padding=k // 2), nn.ReLU()]
+                layers += [nn.Conv1d(c_in, c, k, padding=k // 2), nn.BatchNorm1d(c), nn.ReLU()]
                 if p > 1:
                     layers.append(nn.MaxPool1d(p))
                 c_in = c
@@ -406,6 +452,12 @@ def train_torch(X, Y, a, seed):
     lossf = nn.CrossEntropyLoss(weight=w)
     opt = torch.optim.AdamW(net.parameters(), lr=2e-3, weight_decay=1e-3)
     n = len(Yt)
+    # 2026-10-30: a constant 2e-3 and the last epoch's weights gave seeds of one recipe 7/20 to 16/20 held-out calls;
+    # cosine decay to zero and an exponential moving average of the weights (exported) settle them
+    steps = a.epochs * ((n + 127) // 128)
+    sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=2e-3, total_steps=max(1, steps), pct_start=0.1)
+    ema = torch.optim.swa_utils.AveragedModel(net, multi_avg_fn=torch.optim.swa_utils.get_ema_multi_avg_fn(0.998),
+                                              use_buffers=True)
     for ep in range(a.epochs):
         net.train()
         perm = torch.randperm(n)
@@ -424,16 +476,30 @@ def train_torch(X, Y, a, seed):
             loss = lossf(net(xb), Yt[idx])
             loss.backward()
             opt.step()
+            sched.step()
+            ema.update_parameters(net)
             tot += float(loss.detach()) * len(idx)
         if ep % 5 == 4 or ep == a.epochs - 1:
             print(f"  epoch {ep + 1}: loss {tot / n:.4f}", flush=True)
+    net = ema.module
     net.eval()
     d = dict(mu=mu.astype(np.float32), sd=sd.astype(np.float32), classes=np.array(CLASSES))
     convs = [m for m in net.body if isinstance(m, nn.Conv1d)]
-    for i, (c, p) in enumerate(zip(convs, pools)):
-        d[f"conv{i}_w"] = c.weight.detach().numpy().transpose(2, 1, 0).astype(np.float32)   # (k, c_in, c_out)
-        d[f"conv{i}_b"] = c.bias.detach().numpy().astype(np.float32)
+    bns = [m for m in net.body if isinstance(m, nn.BatchNorm1d)]
+    for i, (c, bn, p) in enumerate(zip(convs, bns, pools)):
+        # batch norm folded into the conv, so ownkws.OwnModel runs unchanged: w * g / s, (b - mean) * g / s + beta
+        g = (bn.weight / torch.sqrt(bn.running_var + bn.eps)).detach()
+        wt = (c.weight.detach() * g[:, None, None]).numpy()
+        bt = ((c.bias.detach() - bn.running_mean) * g + bn.bias.detach()).numpy()
+        d[f"conv{i}_w"] = wt.transpose(2, 1, 0).astype(np.float32)   # (k, c_in, c_out)
+        d[f"conv{i}_b"] = bt.astype(np.float32)
         d[f"pool{i}"] = np.int32(p)
+    global LAST_TORCH_PROBS          # for the export test: the trained network's own probabilities
+
+    def LAST_TORCH_PROBS(F):
+        with torch.no_grad():
+            x = torch.tensor(((np.asarray(F, np.float32).reshape(-1, ok.N_FRAMES, ok.N_MELS) - mu) / sd).astype(np.float32))
+            return torch.softmax(net(x), dim=1).numpy()
     d["dense_w"] = net.head.weight.detach().numpy().T.astype(np.float32)
     d["dense_b"] = net.head.bias.detach().numpy().astype(np.float32)
     return d
@@ -516,8 +582,24 @@ def evaluate(model, mono, test_ev, lab, a):
     return res, dict(speech_hours=round(sp_hours, 3), heldout_real_negative_s=round(neg_s, 1)), scan
 
 
+def web_heldout(model, files, thr):
+    """Held-out web videos: share of pos_ctx clips the model wakes on (best of three crops round the word) and share
+    of the same videos' negative clips it wakes on, per threshold."""
+    pos, neg = [], []
+    for p in files:
+        x = read_wav16(p)
+        if "/pos_ctx/" in p:
+            pos.append(max(model.probs(fit_len(x[int(o * FS):int(o * FS) + WIN_N]))[0] for o in (0.1, 0.25, 0.45)))
+        else:
+            neg.append(model.probs(fit_len(x))[0])
+    pos, neg = np.array(pos), np.array(neg)
+    return {str(t): dict(recall=f"{int((pos >= t).sum())}/{len(pos)}", false=f"{int((neg >= t).sum())}/{len(neg)}") for t in thr}
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--web", default=None, help="~/data/mochi_web: real people saying mochi in YouTube videos (pos, pos_ctx, neg, neg_adjacent)")
+    ap.add_argument("--web-aug", type=int, default=3, help="augmented windows per web positive clip")
     ap.add_argument("--mono16", required=True)
     ap.add_argument("--labels", required=True)
     ap.add_argument("--speech-commands", required=True)
@@ -529,6 +611,7 @@ def main():
     ap.add_argument("--tts-pos", type=int, default=0, help="augmented windows per synthetic Mochi clip (0: none)")
     ap.add_argument("--tts-speech", default=None, help="folder of synthetic everyday speech (tts_speech.py), speech class")
     ap.add_argument("--allow-unmatched", action="store_true", help="train although positives carry cues no negative has")
+    ap.add_argument("--extra-labels", action="append", default=[], help="mine_life.py output to merge (repeatable)")
     ap.add_argument("--mics", action="store_true", help="also train on each microphone alone (NAME@chK.npy from to_mono16.py)")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--final", action="store_true", help="train on every home call (recipe chosen on the held-out run); real negatives stay held out")
@@ -553,6 +636,10 @@ def main():
     np.savez(tmp, **d)
     model = ok.OwnModel(tmp)
     res, extra, scan = evaluate(model, mono, test_ev, lab, a)
+    if info["web_test"]:
+        extra["web_heldout"] = web_heldout(model, info["web_test"], [0.5, 0.7, 0.9])
+        print(f"  web held-out videos: {extra['web_heldout']}")
+    info["web_test"] = len(info["web_test"])
     chosen = next((float(t) for t, r in res.items() if r["fa_per_h"] is not None and r["fa_per_h"] <= a.fa_per_h
                    and r.get("heldout_real_false_n", 0) == 0), 0.98)
     d["threshold"] = np.float32(chosen)
