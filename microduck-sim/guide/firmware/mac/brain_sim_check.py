@@ -1027,7 +1027,8 @@ def run(args):
         # --load-from-legs: the share the robot would read from its leg currents (summed |torque| of the ten leg
         # actuators between the calibrated hanging and standing sums), not the true foot force
         load_in = load_now if args.load_from_legs is None else min(1.0, max(0.0, (tau_legs - args.load_from_legs[1]) / (args.load_from_legs[0] - args.load_from_legs[1])))
-        est.update(0.02, counts=counts, age=0.0, load=None if args.hold_uncal else load_in)
+        est.update(0.02, counts=counts, age=0.0, load=None if args.hold_uncal else load_in,
+                   gyro=float(np.linalg.norm(w_body)))
         if guard["stop"] is not None:  # walk_wired wrote stand (monitor out of a sit or crouch) to the control file
             want = {"mode": guard["stop_to"]}
         if args.wired_hold:  # walk_wired.py's order: grip stop on the file command, then the smoothing, then the gate

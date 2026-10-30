@@ -804,7 +804,8 @@ def main():
                           flush=True)
         legs_ma = legs_current_ma(cur, NAMES)
         hold_dt = 0.02 if hold_t is None else min(0.1, t_hold - hold_t)
-        est.update(hold_dt, touch_counts, touch_age, legs_ma)
+        w_hold = math.sqrt(sum(g * g for g in imu[1][5:8])) if imu is not None and imu[1][12] else None
+        est.update(hold_dt, touch_counts, touch_age, legs_ma, gyro=w_hold)
         hold_t = t_hold
         new_cmd = read_cmd(args.cmd, last_cmd)
         cmd_is_new = new_cmd is not last_cmd
