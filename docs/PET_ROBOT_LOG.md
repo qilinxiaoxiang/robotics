@@ -300,3 +300,9 @@ log heard (his ordinary talk as negatives, the two answers he confirmed false, h
 LibriSpeech windows): at 0.9 duck calls 22 of 34 (the two new live calls 2 of 2), synthetic speech, real speech and
 real room sounds all 0. Packed as `models/mochi_own.npz` (sha256 4bd159aa...); not on the duck yet (A7Z offline on
 Tailscale since about 17:25).
+
+## 2026-10-30 18:10 Body-to-face search installed (commit 02ae5331)
+
+- **Installed** on the A7Z with E3 (`mochi_own.npz` sha256 4bd159aa...); file hashes match the Mac; YOLOX-Tiny loads in the duck-policy venv. `install_namecall.sh` had no entry for `personfind.py` or the model, so the finder would have fallen back to faces only; fixed in the same commit.
+- **CPU on the A7Z** (saved 16:54 shoes frame, 20 s each, brain not running, A7Z just rebooted): face only 0.91 cores at 4.0 Hz, 121 ms per frame; face + person 1.48 cores, face rate 3.2 Hz, person 250 ms per frame at 1.6 Hz, person found at box [2, 1, 162, 184]. The person detector runs only on frames with no face, so with a face in view the cost is unchanged.
+- **Not yet measured:** the same with the brain running (the 16:52 live log showed the face detector at 425-440 ms per frame then, not 120 ms), and the live behaviour with Shawn. Waiting for him at the duck.
