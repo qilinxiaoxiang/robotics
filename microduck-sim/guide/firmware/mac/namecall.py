@@ -177,8 +177,9 @@ def find_card(name=CARD_NAME):
 class Capture:
     """arecord -> 20 ms float blocks on a queue, with the wall-clock time of each block's first sample."""
 
-    def __init__(self, device, fs=FS, block=BLOCK, channels=4, cmd=None):
+    def __init__(self, device, fs=FS, block=BLOCK, channels=4, cmd=None, save_raw=None):
         self.fs, self.block, self.channels = fs, block, channels
+        self.raw = open(save_raw, "wb") if save_raw else None     # copy of the raw stream (S32_LE, 4 ch, 48 kHz)
         self.cmd = cmd or ["arecord", "-q", "-D", device, "-c", str(channels), "-r", str(fs), "-f", "S32_LE", "-t", "raw", "-"]
         self.q = queue.Queue(maxsize=200)
         self.proc = None
@@ -204,6 +205,8 @@ class Capture:
                     return
                 buf += chunk
             now = time.time()
+            if self.raw is not None:
+                self.raw.write(buf)
             if t0 is None or abs(now - (t0 + self.n * per)) > 0.25:
                 t0 = now - self.n * per   # resync the sample clock to the wall clock after a stall
             t_block = t0 + self.n * per
@@ -1406,6 +1409,12 @@ class NameCall:
                 self.turn = None
             if self.turn is not None:
                 rec["turn"] = dict(self.turn)
+        elif self.bank is not None:
+            # no head (listen-only): answer with a quack so a listening test is audible (2026-10-30: silent recognitions
+            # looked like "no reaction")
+            t_q = now + 0.3
+            self.quack_due.append((t_q, dict(kind="call", pitch=1.0, stretch=1.0, gain_db=0.0, own=True)))
+            rec["quack_own_at"] = round(t_q, 3)
         self.responses += 1
         self.calls.append(rec)
         self.log.write("call", **rec)
@@ -1436,6 +1445,8 @@ class NameCall:
         TURN_KEEP, the head eases home over a second, and the control file goes back to the zero-command walk.
         """
         if self.head is None:
+            while self.quack_due and self.quack_due[0][0] <= now:      # listen-only (--no-head): the quack is the answer
+                self._quack(self.quack_due.pop(0)[1])
             return True
         head, events, active = self.head.tick(now)
         for e in events:
@@ -1747,6 +1758,8 @@ def parse_args(argv=None):
     trig.add_argument("--name", choices=sorted(KEYWORDS), default=None,
                       help="respond only to this name (keyword spotter, --spotter); mochi is the "
                            "default on the robot since 2026-10-30 (Shawn: answer only to Mochi); --wav replays stay any-voice")
+    ap.add_argument("--save-raw", default=None,
+                    help="also write the raw 4-channel capture here (S32_LE 48 kHz, headerless) for labelling and retraining")
     ap.add_argument("--spotter", choices=("own", "sherpa"), default="own",
                     help="name spotter: own = ownkws.py, trained on Shawn's calls (default); sherpa = the public keyword model")
     ap.add_argument("--own-model", default=None, help="ownkws model .npz (default namecall-20261029/models/mochi_own.npz)")
@@ -1824,7 +1837,7 @@ def main(argv=None):
         except Exception as e:     # no camera daemon, no models: the attention phase holds the heard bearing instead
             nc.finder = None
             log.write("warn", why=f"face finder not started: {e!r}; attention holds the heard bearing")
-    cap = Capture(dev).start()
+    cap = Capture(dev, save_raw=a.save_raw).start()
     try:
         nc.run_live(cap)
     finally:
