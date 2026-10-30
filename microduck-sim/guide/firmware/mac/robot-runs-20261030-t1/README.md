@@ -39,8 +39,21 @@ on 10/17-18 (`../robot-runs-20261018`). The sim underestimates how much it costs
 - `1_stand` ... `8_home.jsonl`: the brain rows of each step as `t1_robot_test.py` copied them.
 - `walk61_see_walks.jsonl`, `walk61_results.jsonl`, `t1_results.jsonl`: the comparison above.
 
-## Follow-up
+## Follow-up: slow walks, 2026-10-30 11:00-11:01
 
-Speed-matched sim check and literature: fork `cmu/finetune/modal/FINETUNE-DELTA.md`, "Why T1 jitters". At walk61's
-actual speed (command 0.10-0.15) T1 is close to walk61's smoothness in the sim and keeps the neck down; the next robot
-step is `t1_robot_test.py walk_at 0.10 -0.4` and `walk_at 0.15 -0.8` after `restart`.
+The speed-matched sim check (fork `cmu/finetune/modal/FINETUNE-DELTA.md`, "Why T1 jitters") said T1 at walk61's actual
+speed (command 0.10-0.15) is close to walk61's smoothness. The robot says no. Brain restarted with models-t1-best at
+10:53 (log `duck_wired_log_t11030-105326.jsonl`), back to walk61 at 11:01 (`duck_wired_log_walk611030-110115.jsonl`).
+
+- `9_stand_1100.jsonl`: stand61 at zero command, 3.2 deg, actions 0.15.
+- `10_walk_at_010_neck04.jsonl` (0.10 m/s, neck -0.4, 4 s): stayed up. Walking: peak tilt 8.8 deg, mean 5.3, action
+  p95 1.41, 13.5 jumps per s (walk61 at 0.25: 7.4-8.6, 3.4-4.0, 0.91-1.19, 1.4-2.7). Neck -0.38..-0.47. The stop: 15.5
+  deg, actions to 2.5, 45 jumps in 3 s (walk61's stops in the `--see` windows: mostly 3-9 deg, 0-5 jumps).
+- `11_walk_at_015_neck08_fell.jsonl` (0.15 m/s, neck -0.8): fell at 2.7 s, still walking. Neck reached -0.92; from 2.4 s
+  the trunk held about 11 deg of roll to the same side as the morning fall (body gravity y -0.19) without correcting,
+  then pitched forward with the neck dipping to -1.16 and actions climbing to 3.4-4.1; the guard switched to open-loop
+  stand at 37 deg and the duck went over (103 deg). 19 jumps per s.
+
+Slowing down cut T1's jumps by about a third (17-22 -> 13.5 per s), not to walk61's level, and the second slow walk
+fell. The sim's matched-speed rows (3-5 jumps per 10 s) did not predict this: the jitter is a property of the
+fine-tuned policy on the robot, not mainly of its speed.
