@@ -348,3 +348,22 @@ def test_stand_from_a_seat_rearms_with_sit_then_walks():
     cmds = duck_commands(step, "sitting")
     assert cmds[0] == (0, {"mode": "sit"}) and cmds[-1][1] == dict(WALK_ZERO) and cmds[-1][0] > 0
     assert all(c.get("mode") != "stand" for _, c in cmds)
+
+
+def test_frame_recorder_matches_the_nearest_row(tmp_path):
+    import base64
+    from pet.mind.perception import FrameRecorder
+    rec = FrameRecorder(tmp_path / "frames")
+    jpg = base64.b64encode(b"\xff\xd8 not really a jpeg").decode()
+    rec.feed_rows([{"t": T0, "q": [0.0] * 14, "head_cmd": [0, 0, 0, 0], "quat": [1, 0, 0, 0], "gb": [0, 0, -1],
+                    "mode": "walk"}])
+    rec.feed_jpeg(jpg, T0 + 0.05)          # waits: no row newer than the frame yet
+    assert rec.saved == 0
+    rec.feed_rows([{"t": T0 + 0.06, "q": [0.1] * 14, "head_cmd": [0.2, 0, 0, 0], "mode": "walk"}])
+    assert rec.saved == 1 and rec.matched == 1
+    rec.feed_jpeg(jpg, T0 + 5.0)           # no row near it: saved at close, unmatched
+    rec.close()
+    lines = [json.loads(x) for x in (tmp_path / "frames" / "frames.jsonl").read_text().splitlines()]
+    assert lines[0]["q"] == [0.1] * 14 and lines[0]["head_cmd"] == [0.2, 0, 0, 0] and lines[0]["row_dt"] == 0.01
+    assert "q" not in lines[1] and lines[1]["row_dt"] > 4
+    assert (tmp_path / "frames" / lines[0]["img"]).read_bytes() == base64.b64decode(jpg)

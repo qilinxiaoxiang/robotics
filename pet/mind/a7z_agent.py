@@ -36,7 +36,8 @@ FRAME_W, FRAME_H = 640, 360
 HEADER = struct.Struct("<Qd")
 ROW_KEEP = ("t", "mode", "gb", "gyro_body", "sit_phase", "sit_flag", "sit_stalled", "torque", "fresh", "hw_faults",
             "imu_age", "imu_valid", "touch", "touch_age", "touch_seq", "cmd", "policy", "fall_pred", "getup", "kp",
-            "gp_phase", "hold_on", "grip_stop", "battery", "missing")
+            "gp_phase", "hold_on", "grip_stop", "battery", "missing",
+            "q", "head_cmd", "quat")  # joint angles, head command and IMU attitude: the camera's pose for saved frames
 ROW_EVERY = 5  # every 5th 20 ms row (10 Hz), plus every row where the state changed
 NEWEST_EVERY_S = 2.0
 LOCK = threading.Lock()

@@ -184,6 +184,61 @@ class FaceAdapter:
         return out
 
 
+class FrameRecorder:
+    """Saves each camera frame with the brain row nearest its capture time, for labelling and for the head-pose
+    geometry of later stages (docs/PET_DEPLOY_PLAN.md stage 1). The camera daemon (a7z_cam.py) and the brain both
+    stamp with the A7Z's time.time(), so the frame's `t` and the rows' `t` share one clock. A frame waits until a row
+    newer than it has arrived, so the nearest row is chosen from both sides."""
+    KEEP_S = 3.0
+    MATCH_S = 0.1   # a row further than this from the frame is recorded as unmatched
+
+    def __init__(self, out_dir):
+        self.dir = Path(out_dir)
+        (self.dir / "img").mkdir(parents=True, exist_ok=True)
+        self.index = open(self.dir / "frames.jsonl", "a")
+        self.rows = []        # (t, row) of the last KEEP_S seconds
+        self.waiting = []     # (t, jpeg bytes)
+        self.saved = self.matched = 0
+
+    def feed_rows(self, rows: list[dict]):
+        for r in rows:
+            if "t" in r:
+                self.rows.append((float(r["t"]), r))
+        if self.rows:
+            newest = self.rows[-1][0]
+            self.rows = [x for x in self.rows if x[0] >= newest - self.KEEP_S]
+            ready = [w for w in self.waiting if w[0] <= newest]
+            self.waiting = [w for w in self.waiting if w[0] > newest]
+            for t, jpg in ready:
+                self._save(t, jpg)
+
+    def feed_jpeg(self, jpeg_b64: str, t: float):
+        try:
+            self.waiting.append((float(t), base64.b64decode(jpeg_b64)))
+        except Exception:
+            pass
+
+    def _save(self, t: float, jpg: bytes):
+        best = min(self.rows, key=lambda x: abs(x[0] - t), default=None)
+        dt_row = abs(best[0] - t) if best else None
+        name = f"{t:.3f}.jpg"
+        (self.dir / "img" / name).write_bytes(jpg)
+        rec = {"t": round(t, 3), "img": f"img/{name}", "row_dt": None if dt_row is None else round(dt_row, 4)}
+        if best is not None and dt_row <= self.MATCH_S:
+            r = best[1]
+            rec.update({k: r.get(k) for k in ("q", "head_cmd", "quat", "gb", "mode", "policy", "cmd")})
+            self.matched += 1
+        self.index.write(json.dumps(rec) + "\n")
+        self.index.flush()
+        self.saved += 1
+
+    def close(self):
+        for t, jpg in self.waiting:
+            self._save(t, jpg)
+        self.waiting = []
+        self.index.close()
+
+
 def identity_recogniser(db_path=None):
     """pet/identity face pipeline + log-odds identity against the enrolled database, or None when unavailable."""
     try:

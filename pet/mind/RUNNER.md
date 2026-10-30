@@ -57,6 +57,11 @@ cd ~/code/robotics
 pet/.venv/bin/python -m pet.mind.runner --robot --allow head --minutes 10
 ```
 
+`--cam-hz 1 --save-frames` also saves each head-camera frame (while the camera daemon runs) with the brain row
+nearest its capture time (joint angles `q`, `head_cmd`, IMU `quat`, `gb`) to `<out>/frames/` (`frames.jsonl` plus
+`img/`); the agent forwards those three row fields for this. Checked read-only on the robot 2026-10-30: 19 frames in
+20 s, every one matched to a row within 0.07 s.
+
 Add `--inbox pet/state/inbox --state-dir pet/state` when the voice loop (`pet.voice.voice --robot`) runs beside it
 ("What the owner says" below). The runner refuses to start unless the control file already holds a zero-command walk and the brain's rows show walk
 mode with the body upright. Then it prints the behaviour log live (`INTENT ...`, `step ...`, `body: seated`, ...).

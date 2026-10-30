@@ -45,7 +45,8 @@ from .executors import duck_commands
 from .inbox import VoiceInbox, mark_done, merge_rule, translate_task
 from .metrics import rigidity
 from .mind import Mind, fmt_step, percept_text
-from .perception import DEFAULT_SESSION, BumpDetector, FaceAdapter, ScriptedEvents, SoundOnset, TouchDetector
+from .perception import (DEFAULT_SESSION, BumpDetector, FaceAdapter, FrameRecorder, ScriptedEvents, SoundOnset,
+                         TouchDetector)
 from .prompt import user_prompt
 from .state import EXAMPLES, SharedState, load_body_card
 from .validator import validate
@@ -275,10 +276,11 @@ class LiveMind(Mind):
 class Runner:
     def __init__(self, body: BodyCard, shared: SharedState, backend, link, out_dir: Path, mode="dry",
                  clock_fn=time.time, seed=0, events=None, resume_s=RESUME_S, today=None, perception=True,
-                 face_recognise=None, round_min=10.0, inbox=None, rules_path=None):
+                 face_recognise=None, round_min=10.0, inbox=None, rules_path=None, save_frames=False):
         self.body, self.shared, self.backend, self.link, self.mode = body, shared, backend, link, mode
         self.out_dir = Path(out_dir)
         self.out_dir.mkdir(parents=True, exist_ok=True)
+        self.frames = FrameRecorder(self.out_dir / "frames") if save_frames else None
         self.clock_fn = clock_fn
         self.now = clock_fn()
         self.t_start = self.now
@@ -471,6 +473,8 @@ class Runner:
 
     def collect_percepts(self, rows: list[dict]) -> list[dict]:
         out = []
+        if self.frames is not None:
+            self.frames.feed_rows(rows)
         if self.perception:
             for row in rows:
                 t = float(row.get("t", self.now))
@@ -482,6 +486,8 @@ class Runner:
                 if k == "sound":
                     out += self.sound.feed(x.get("db"), float(x.get("t", self.now)))
                 elif k == "frame":
+                    if self.frames is not None:
+                        self.frames.feed_jpeg(x.get("jpeg_b64", ""), float(x.get("t", self.now)))
                     out += self.face.feed_jpeg(x.get("jpeg_b64", ""), float(x.get("t", self.now)))
                 elif k == "note":
                     self.log(f"  agent: {x.get('text')}")
@@ -836,6 +842,9 @@ class Runner:
                 for ev in self.learn_events:
                     f.write(ev.to_json() + "\n")
         s = self.summary()
+        if self.frames is not None:
+            self.frames.close()
+            s["frames"] = {"saved": self.frames.saved, "matched_to_a_row": self.frames.matched, "dir": "frames/"}
         (d / "summary.json").write_text(json.dumps(s, indent=1) + "\n")
         return s
 
@@ -1067,6 +1076,8 @@ def main(argv=None):
     ap.add_argument("--cmd", default=None, help="robot: control file path (default: what ~/duck-run.sh passes)")
     ap.add_argument("--mic", default=None, help="robot: ALSA capture device for sound onsets, e.g. hw:0,0 (off by default)")
     ap.add_argument("--cam-hz", type=float, default=0.0, help="robot: face frames per second while the camera daemon runs")
+    ap.add_argument("--save-frames", action="store_true",
+                    help="save every camera frame with the nearest brain row to <out>/frames/ (needs --cam-hz)")
     ap.add_argument("--inbox", default=None,
                     help="the voice layer's inbox (pet/state/inbox on the robot); rules merge into <state-dir>/rules.json")
     ap.add_argument("--resume-s", type=float, default=RESUME_S)
@@ -1110,7 +1121,7 @@ def main(argv=None):
         link = RemoteLink(a.host, a.cmd, mic=a.mic, cam_hz=a.cam_hz)
 
     runner = Runner(body, SharedState(a.state_dir), backend, link, out_dir, mode=mode, seed=a.seed, events=events,
-                    resume_s=a.resume_s, round_min=a.round_min, inbox=a.inbox)
+                    resume_s=a.resume_s, round_min=a.round_min, inbox=a.inbox, save_frames=a.save_frames)
     signal.signal(signal.SIGINT, lambda *_: setattr(runner, "stop_flag", True))
     signal.signal(signal.SIGTERM, lambda *_: setattr(runner, "stop_flag", True))
     try:
