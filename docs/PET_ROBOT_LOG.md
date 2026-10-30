@@ -194,3 +194,37 @@ set: (1) the class recipe with real people saying "mochi" from YouTube (`~/data/
 with context, 5k same-sentence and same-video negatives, videos hashing to 0 mod 10 held out; `train_mochi.py --web`),
 runs W0s0/W0s1 (fold 0) and W4s0 (all data); (2) openWakeWord's pipeline (frozen pretrained speech embedding, small
 head, thousands of TTS voices) in `~/mochi-train/oww`. The better one on the held-out set goes on the duck.
+
+## 2026-10-30 17:00: the class recipe on our CNN learns the word but not precisely enough; negatives are the gap
+
+Web data final: 1686 verified "mochi" cuts from 80 videos and 65 channels (`AUDIO-DATA.md`). Trained with the class
+recipe on our 1 s log-mel CNN (W0s0/W0s1 fold 0, W4s0 all data, with the 1925-cut pre-verification set): on the
+held-out web videos the word is learned, 159 of 170 clips at 0.9 with 17-22 of 489 negative windows firing
+(3.5-4.5 %); on the duck's held-out calls 20-21 of 32 at 0.9 (old recipe V0s0 21 of 32), the RoboClub lab calls
+rise to 3-4 of 4; real held-out room sounds 0 false hits at 0.9. But synthetic speech wakes 91-195 times per hour
+(old recipe 0): 113 of 561 sentences fire, 83 of them with no near-miss word ("the weather today is mild",
+"the battery needs another hour"), so it is not a sound-alike problem; a window false rate of 3.5 % on open speech is
+hundreds of wakes per hour at 10 windows a second. The old recipe's 0 per hour came from its positives being one
+voice (synthetic speech is trivially "not Shawn"), not from precision. The gap is negatives: about 2 h of open
+speech (Speech Commands words, 5k web windows, 15 min TTS, the duck recordings) against 1686 positives; the standard
+wake-word recipe trains against thousands of hours of speech (openWakeWord: ACAV100M features) or a frozen
+pretrained embedding. Next, both: LibriSpeech dev-clean and test-clean (10.5 h, 80 speakers) as `--neg-speech` with
+held-out speakers giving false wakes per hour on real speech, and the openWakeWord run (in progress on the Mac mini).
+Also tried: ensembles of old-recipe and web-recipe members (E1, E2), results below.
+E1 (V0s0 + W0s0 + W0s1) and E2 (V0s0 + V0s1 + W0s0 + W0s1), probabilities averaged, fold-0 held-out set at 0.9:
+E1 21 of 32, E2 22 of 32 (home 10/14, table 2/6, RoboClub 3/4 and 4/4, 14:38 run 3/4), synthetic speech 0 per hour,
+real room sounds 0 false hits. The old-recipe members veto other voices, so the ensemble finds only 0-3 of 170
+held-out web clips: it is a Shawn's-voice model with the web members' precision, not a general "mochi" spotter. E2
+replaces the v2 ensemble on the duck as the interim model (best on every held-out number so far); the general model
+waits on LibriSpeech negatives and openWakeWord.
+
+## 2026-10-30 16:30: in-place turns stall on the robot, not in sim; points to the charger lead
+
+Shawn's long in-place turns (vx 0, vtheta +-0.5, run walk611030-160205) each turned for 1-4 s (15-35 deg/s), then
+stepped in place with net yaw near 0 (right turn 16:11:53-16:12:33: about -50 deg in 40 s). The heading hold then
+pins walk61's turn input at -1.55 (outside the trained +-1), but as a result of the stall. In the as-built sim the same
+turns run 26-29 deg/s for 25 s with head down, floor mu 0.5, servo friction x1.5 or IMU pitch 4 deg; only an external
+yaw torque stalls them (0.010 N m halves a right turn, 0.020 N m reverses it), so the policy can push only about
+0.01-0.015 N m in place. The duck is tethered to its USB-C charger lead; a dragged or wound lead gives that torque in
+either direction. Check: the same turn with the lead held up. Record and scripts:
+`microduck-sim/guide/firmware/mac/turn-inplace-20261030/`.
