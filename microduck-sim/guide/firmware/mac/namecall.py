@@ -11,12 +11,19 @@ Chain, all in this process, numpy only (no scipy on the A7Z):
 After the take the head does not drift home: the attention phase (NameCall._attend_tick) keeps the gaze on the caller
 and waits ATTEND_S for whatever comes next (another call re-aims it, a touch is the brain's business). With the
 camera (facefind.FaceFinder: a7z_cam's shared frame -> the SCRFD face detector of pet/identity, 4 Hz, 120 ms per frame
-on the A7Z) a face in view is centred and followed; with none in view for FACE_WAIT_S the head sweeps SCAN_OFFSETS
-once around the heard bearing, pitch at the cap, then waits where the sound came from. A caller behind the head's
-reach: with --turn the body turns on the spot and stops on the brain's gyro (GyroTurn), not a clock, only when the
-bearing's front/back margin is at least TURN_MARGIN_MIN and no face is in view; the attention phase then continues
-with the head on the caller. The turn is off by default: on 2026-10-30 a turn started by a noise "behind" while
-Shawn's face was locked in front tripped the duck on the table 2.3 s in (PET_ROBOT_LOG 2026-10-30).
+on the A7Z) a face in view is centred and followed. A frame with no face goes through the person detector (YOLOX-Tiny,
+facefind person=True, 2 Hz): the gaze follows the body toward its head, pitching up while the person box is cut by the
+frame's top edge (person_aim), until the face detector finds the face. With neither in view for FACE_WAIT_S the head
+sweeps SCAN_OFFSETS once around the heard bearing, pitch at the cap, then waits where the sound came from.
+
+Front first (2026-10-30 17:30): the sound's front/back is not trusted, only its side. The take aims at the bearing
+folded into the front half on that side (fold_front); with --turn, and only when that search found neither a face nor
+a person, the body turns toward the back on the same side and stops on the brain's gyro (GyroTurn), not a clock; the
+attention phase then searches again. The behind flag and the front/back margin are logged, never acted on. The turn is
+off by default: on 2026-10-30 a turn started by a noise "behind" while Shawn's face was locked in front tripped the
+duck on the table 2.3 s in (PET_ROBOT_LOG 2026-10-30); a face or person in view still blocks it. The first face or
+person found after a call is logged as bearing_seen (the call's t, the bearing in the body frame at the call, the
+elevation, seconds after the call) and noted in the life log beside that call's audio: direction labels for learning.
 
 Two trigger modes. --name mochi (the default since 2026-10-30; --any-voice for the listen-only checks and the
 tests): a keyword spotter (KeywordGate: sherpa-onnx KeywordSpotter, the public zipformer
@@ -136,8 +143,9 @@ TURN_VTHETA = 0.3
 TURN_RATE = 0.17
 TURN_KEEP = 0.3                  # rad of the caller's bearing left for the head when the body stops turning
 TURN_S = (1.5, 12.0)             # turn duration bounds (the cap when the gyro is not readable)
-TURN_MARGIN_MIN = 0.3            # no body turn on a bearing whose front/back margin is below this (2026-10-30: three
-#                                  noise-level triggers with margin 0.0-0.013 each started a 7-12 s turn)
+TURN_MARGIN_MIN = 0.3            # HISTORY: the front/back margin gate (2026-10-30: three noise-level triggers with
+#                                  margin 0.0-0.013 each started a 7-12 s turn); since front-first the margin is logged
+#                                  only and the back turn waits for an empty front search instead
 # attention after the take: the head stays on the caller (not the drift home) and waits for whatever comes next
 ATTEND_S = 10.0                  # s since the last call or face sighting; then the head drifts home
 FACE_GAIN = 0.6                  # fraction of the measured face offset corrected per new frame
@@ -146,6 +154,18 @@ FACE_PITCH = (-0.3, 1.1)         # gaze pitch range while tracking a face (expre
 SCAN_OFFSETS = (0.0, 0.4, -0.4, 0.8, -0.8, 1.2, -1.2)   # yaw sweep around the heard bearing when no face is in view
 SCAN_NEAR = (0.0, 0.3, -0.3)     # sweep around the last seen face when it is lost
 SCAN_DWELL_S = 0.7               # s per scan step (the brain's head EMA and the detector's 4 Hz both settle in this)
+# follow the body up to the face (facefind person detector, NAMECALL.md 12): with no face but a person in the frame the
+# gaze turns to the box's centre column at FACE_GAIN; a box whose top is inside the frame is aimed at its top (the head);
+# a box cut by the frame's top edge (shoes and legs at the top of a downward frame, 2026-10-30 16:54) means the body
+# goes on above the frame, so the gaze pitches up by PERSON_PITCH_STEP per new person frame, up to FACE_PITCH[1]
+PERSON_PITCH_STEP = 0.3          # rad up per frame; the frame's vertical half-field is 0.5 rad, so the body stays in view
+PERSON_HOLD_S = 4.0              # a person sighting keeps the attention open at least this long ...
+PERSON_MAX_S = 15.0              # ... but person sightings alone never extend it past this after the first one
+# front first (Shawn 2026-10-30 17:30): the head cavity makes front/back from sound unreliable (NAMECALL.md 10.4: at his
+# 11 o'clock five calls read 160, 87, 158, 126, -18 deg, the side right on 4 of 5). A call aims the head at the bearing
+# folded into the front half on the heard side; the body turns toward the back on that side (--turn) only when that
+# search finds neither a face nor a person.
+SIDE_MIN = math.radians(10.0)    # a folded bearing under this is straight ahead
 
 # name mode (--name): keyword spotter
 KWS_FS = 16000
@@ -161,6 +181,30 @@ ONSET_GAP_S = 0.25               # detector refractory in name mode (its onsets 
 
 
 # ----------------------------------------------------------------------------------------------- sound sources
+
+def fold_front(az):
+    """(az_front, side) for a heard bearing (rad, + left): only the side is trusted. az_front = the bearing mirrored
+    into the front half-plane (az if |az| <= 90 deg else sign(az) * (180 deg - |az|)); side = sign, 0 when the folded
+    bearing is within SIDE_MIN of straight ahead (then az_front = 0). The caller caps az_front at YAW_CAP."""
+    az = (az + math.pi) % (2 * math.pi) - math.pi
+    s = 1.0 if az >= 0 else -1.0
+    f = az if abs(az) <= math.pi / 2 else s * (math.pi - abs(az))
+    if abs(f) < SIDE_MIN:
+        return 0.0, 0
+    return f, int(s)
+
+
+def person_aim(gaze_yaw, gaze_pitch, person, gain=FACE_GAIN, step=PERSON_PITCH_STEP, pitch_max=FACE_PITCH[1]):
+    """Gaze (yaw, pitch up) to send for a person sighting with no face, and how: "up" (box cut by the frame top: pitch
+    up one step), "cap" (cut, but the gaze is already at the pitch cap), "aim" (box top in view: aim at the head point).
+    Yaw always follows the box centre (person yaw_err + = right, head yaw + = left)."""
+    yaw = gaze_yaw - gain * person["yaw_err"]
+    if person.get("top_cut"):
+        if gaze_pitch >= pitch_max - 1e-6:
+            return yaw, gaze_pitch, "cap"
+        return yaw, min(pitch_max, gaze_pitch + step), "up"
+    return yaw, gaze_pitch + gain * person["pitch_err"], "aim"
+
 
 def i2s_to_float(raw, channels=4):
     """S32_LE INMP441 frames -> float32 (n, channels) in -1..1 (24-bit left-justified, as duck_selfcheck.py reads them)."""
@@ -1281,6 +1325,13 @@ class NameCall:
         self.face_seen = False           # a face was seen in this attention phase
         self.scan = None                 # [(until, yaw)] remaining scan steps, [] when the scan is spent
         self.no_face_since = None
+        self.person_used_t = -1e9        # frame time of the last person sighting acted on
+        self.person_first = None         # time of the first person sighting in this attention phase
+        self.person_how = None           # last person_aim mode logged in this phase
+        self.found = False               # a face or a person was found since the last call (no back turn then)
+        self.back_turn = None            # body turn toward the back on the heard side, run when the front search is spent
+        self.call = None                 # dict(t, now, rot, seen): the last call, for its bearing_seen label
+        self.body_rot = 0.0              # body rotation since the last call by finished turns, rad + left
         self.deaf_from_quack = False
         self.calls = []                  # per response records (tests / sim)
         self.rows = None                 # offline drivers collect (t, head, events) here
@@ -1399,12 +1450,18 @@ class NameCall:
             return rec
         az = det["az_rad"] + self.head_yaw_now
         az = (az + math.pi) % (2 * math.pi) - math.pi
-        rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3))
+        az_front, side = fold_front(az)
+        rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3), az_front_rad=round(az_front, 4),
+                   side=side, behind_heard=abs(az) > YAW_CAP)
+        self.call = dict(t=det.get("t", now), now=now, seen=False)
+        self.body_rot = 0.0
         if self.head is not None:
-            perf = self.head.start(now, az, self.a.pitch, hold=True)
+            # front first: the take aims at the folded bearing; behind/margin are logged, never acted on
+            perf = self.head.start(now, az_front, self.a.pitch, hold=True)
             self.attend_until = now + self.attend_s
             self.attend_base = (self.head.last["yaw"], self.a.pitch)
             self.scan, self.no_face_since, self.face_seen = None, None, False
+            self.person_first, self.person_how, self.found = None, None, False
             rec.update(take=perf.take, behind=self.head.last["behind"], arrival_s=perf.arrival,
                        params={k: (round(v, 4) if isinstance(v, float) else v) for k, v in perf.params.items()},
                        events=perf.events, target_yaw=self.head.last["yaw"])
@@ -1418,17 +1475,14 @@ class NameCall:
                     rec["quack_own_at"] = round(t_q, 3)
                 else:
                     rec["quack_skipped"] = dict(novelty=round(novelty, 3), why="caller repeating; head only")
-            self.turn = self.plan_turn(az) if (self.head.last["behind"] and not getattr(self.a, "no_turn", True)) else None
-            margin = det.get("margin")
-            if self.turn is not None and margin is not None and not (margin >= TURN_MARGIN_MIN):
-                rec["turn_skipped"] = dict(margin=margin, why=f"front/back margin under {TURN_MARGIN_MIN}: the bearing is a guess")
-                self.turn = None
-            if self.turn is not None and self.finder is not None and self.finder.latest(now) is not None:
-                # 2026-10-30 table test: a face was locked in front and a noise "behind" started a turn; the turn tripped
-                rec["turn_skipped"] = dict(why="a face is in view; the body stays")
-                self.turn = None
-            if self.turn is not None:
-                rec["turn"] = dict(self.turn)
+            # the body never turns at the take any more; a back turn on the heard side waits for the front search
+            self.turn = None
+            self.back_turn = None
+            if not getattr(self.a, "no_turn", True):
+                sign = side if side else (1.0 if az >= 0 else -1.0)
+                self.back_turn = self.plan_turn(sign * (math.pi - abs(az_front)))
+                if self.back_turn is not None:
+                    rec["back_turn_planned"] = dict(self.back_turn)
         elif self.bank is not None:
             # no head (listen-only): answer with a quack so a listening test is audible (2026-10-30: silent recognitions
             # looked like "no reaction")
@@ -1506,21 +1560,28 @@ class NameCall:
         face = self.finder.latest(now) if self.finder is not None else None
         if face is not None and face["t"] > self.face_used_t:
             self.face_used_t, self.face_t = face["t"], now
-            yaw, pitch = self.head.gaze(now)
-            yaw = yaw - FACE_GAIN * face["yaw_err"]       # face right of centre -> yaw down (head_yaw + is left)
-            pitch = pitch + FACE_GAIN * face["pitch_err"]  # face above centre -> look up
+            gy, gp = self.head.gaze(now)
+            yaw = gy - FACE_GAIN * face["yaw_err"]       # face right of centre -> yaw down (head_yaw + is left)
+            pitch = gp + FACE_GAIN * face["pitch_err"]  # face above centre -> look up
             if self.head.aim(yaw, pitch):
                 self.attend_until = now + self.attend_s
                 self.scan, self.no_face_since = None, None
                 self.attend_base = (self.head.gaze(now)[0], self.head.gaze(now)[1])
+                self._bearing_seen(now, "face", gy, gp, face)
                 if not self.face_seen:
                     self.face_seen = True
                     self.log.write("face", yaw_err_deg=round(math.degrees(face["yaw_err"]), 1),
                                    pitch_err_deg=round(math.degrees(face["pitch_err"]), 1), size_deg=round(math.degrees(face["size"]), 1),
                                    score=face.get("score"), gaze_yaw_deg=round(math.degrees(yaw), 1), gaze_pitch_deg=round(math.degrees(pitch), 1))
             return
+        if face is None and self._person_tick(now):
+            return                       # a person in view (no face): follow the body up; no scan, no back turn
         if self.no_face_since is None:
             self.no_face_since = now
+        if now - self.no_face_since >= FACE_WAIT_S and (self.scan == [] or self.finder is None) \
+                and self.back_turn is not None and not self.found:
+            self._start_back_turn(now)   # the front search is spent with nothing found: turn toward the back
+            return
         if self.finder is None or self.scan == [] or now - self.no_face_since < FACE_WAIT_S:
             return                       # no camera: nothing to scan with, the gaze waits on the heard bearing
         if self.scan is None:
@@ -1540,6 +1601,78 @@ class NameCall:
             self.scan.pop(0)
             if not self.scan:
                 self.face_seen = False       # a lost face is searched once; then wait where the sound came from
+
+    def _person_tick(self, now):
+        """No face: a person in the newest frames -> follow the body toward the head (person_aim). Returns True while a
+        fresh person sighting holds the gaze (the scan and the back turn wait)."""
+        latest_person = getattr(self.finder, "latest_person", None)
+        person = latest_person(now) if latest_person is not None else None
+        if person is None:
+            return False
+        if person["t"] <= self.person_used_t:
+            return True                  # same frame as last time: hold until the next person frame
+        self.person_used_t = person["t"]
+        gy, gp = self.head.gaze(now)
+        yaw, pitch, how = person_aim(gy, gp, person)
+        if not self.head.aim(yaw, pitch):
+            return True
+        self.scan, self.no_face_since = None, None
+        self.attend_base = self.head.gaze(now)
+        if self.person_first is None:
+            self.person_first = now
+        # a person keeps the search open, but people alone never hold the head up for more than PERSON_MAX_S
+        self.attend_until = max(self.attend_until, min(now + PERSON_HOLD_S, self.person_first + PERSON_MAX_S))
+        self._bearing_seen(now, "person", gy, gp, person)
+        if how != self.person_how:
+            self.person_how = how
+            self.log.write("person", how=how, yaw_err_deg=round(math.degrees(person["yaw_err"]), 1),
+                           pitch_err_deg=round(math.degrees(person["pitch_err"]), 1), top_cut=person.get("top_cut"),
+                           height_deg=round(math.degrees(person.get("height", 0.0)), 1), score=person.get("score"),
+                           box=person.get("box"), gaze_yaw_deg=round(math.degrees(yaw), 1), gaze_pitch_deg=round(math.degrees(pitch), 1))
+        return True
+
+    def _bearing_seen(self, now, source, gaze_yaw, gaze_pitch, sight):
+        """Self-supervised direction label: the first face or person found after a call, as a bearing in the robot body
+        frame at the call (gaze yaw at the frame - detector yaw offset + body rotation since the call), logged as
+        bearing_seen with the call's t and noted in the life log beside that call's audio."""
+        self.found = True
+        c = self.call
+        if c is None or c["seen"]:
+            return
+        c["seen"] = True
+        head_yaw = gaze_yaw
+        bearing = head_yaw - sight["yaw_err"] + self.body_rot
+        bearing = (bearing + math.pi) % (2 * math.pi) - math.pi
+        rec = dict(t=c["t"], source=source, bearing_deg=round(math.degrees(bearing), 1),
+                   # elevation as gaze pitch (express rad up, 1:1 onto head_pitch; 1.1 = camera about 30 deg above the
+                   # horizontal) plus the detector's pitch angle: an ordering of heights, not a world angle; the parts
+                   # are logged too so a camera model can convert it later
+                   elev_gaze_deg=round(math.degrees(gaze_pitch + sight["pitch_err"]), 1),
+                   gaze_pitch_deg=round(math.degrees(gaze_pitch), 1),
+                   head_yaw_deg=round(math.degrees(head_yaw), 1), det_yaw_deg=round(math.degrees(sight["yaw_err"]), 1),
+                   det_pitch_deg=round(math.degrees(sight["pitch_err"]), 1), body_rot_deg=round(math.degrees(self.body_rot), 1),
+                   after_s=round(now - c["t"], 2), score=sight.get("score"))
+        if source == "person":
+            rec["top_cut"] = sight.get("top_cut")
+        self.log.write("bearing_seen", **rec)
+        if self.life is not None:
+            # in the call's own segment when it is still open (the answer note keeps it open POST_S); otherwise in the
+            # segment open now, with the call's absolute time so the label still joins the call's audio
+            seg = getattr(self.life, "seg", None)
+            t_note = c["t"] if seg is not None and seg["t0"] <= c["t"] else now
+            self.life.note(t_note, "bearing_seen", call_t=round(c["t"], 3), **{k: v for k, v in rec.items() if k != "t"})
+
+    def _start_back_turn(self, now):
+        """The front search found nobody: turn the body toward the back on the heard side (the --turn path), unless
+        a face or a person is in view right now; then search again (the turn's end restarts the attention)."""
+        plan, self.back_turn = self.back_turn, None
+        lp = getattr(self.finder, "latest_person", None)
+        if self.finder is not None and (self.finder.latest(now) is not None or (lp is not None and lp(now) is not None)):
+            self.log.write("turn_skipped", why="a face or a person is in view; the body stays")
+            return
+        self.head.holding = False
+        self.turn = plan
+        self._start_turn(now)
 
     def _start_turn(self, now):
         plan, self.turn = self.turn, None
@@ -1593,6 +1726,7 @@ class NameCall:
             return False
         if done:
             self.turn_until = None
+            self.body_rot += theta       # for the bearing_seen label of the call that started the search
             self.log.write("turn_done", az_deg=round(math.degrees(plan["az_rad"]), 1), turned_deg=round(math.degrees(theta), 1),
                            by="gyro" if (self.gyro is not None and self.gyro.ok) else "time", s=round(now - self.turn_t0, 2))
             self.det.deaf_until = max(self.det.deaf_until, now + 0.5)
@@ -1600,6 +1734,7 @@ class NameCall:
             self.attend_until = now + self.attend_s
             self.attend_base = (yaw, -pitch)
             self.scan, self.no_face_since, self.face_seen = None, None, False
+            self.person_first, self.person_how = None, None
         return True
 
     def mode_info(self):
@@ -1767,6 +1902,8 @@ def parse_args(argv=None):
                     help="do not hold a silent playback stream open (then every quack silences the capture)")
     ap.add_argument("--no-face", action="store_true",
                     help="no camera: the attention phase holds the heard bearing without looking for the face")
+    ap.add_argument("--no-person", action="store_true",
+                    help="faces only: no person detector (YOLOX-Tiny) on face-less frames, so no following a body up to the face")
     ap.add_argument("--attend", type=float, default=ATTEND_S, help="s the gaze waits on the caller after the last call or face")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--once", type=int, default=0, help="stop after N responses (0 = run on)")
@@ -1862,8 +1999,9 @@ def main(argv=None):
     if nc.head is not None and not a.no_face:
         try:
             from facefind import FaceFinder
-            nc.finder = FaceFinder().start()
-            log.write("face_finder", rate_hz=nc.finder.rate_hz, det_size=nc.finder.det_size)
+            nc.finder = FaceFinder(person=not a.no_person).start()
+            log.write("face_finder", rate_hz=nc.finder.rate_hz, det_size=nc.finder.det_size,
+                      person=bool(nc.finder.person), person_hz=nc.finder.person_hz, person_err=nc.finder.person_err)
         except Exception as e:     # no camera daemon, no models: the attention phase holds the heard bearing instead
             nc.finder = None
             log.write("warn", why=f"face finder not started: {e!r}; attention holds the heard bearing")

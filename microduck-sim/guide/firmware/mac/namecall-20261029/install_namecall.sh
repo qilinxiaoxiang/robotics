@@ -33,21 +33,25 @@ rsync -a --checksum --relative --itemize-changes \
   microduck-sim/guide/firmware/mac/namecall-20261029/NAMECALL.md \
   microduck-sim/guide/firmware/mac/namecall-20261029/keywords_mochi.txt \
   microduck-sim/guide/firmware/mac/facefind.py \
+  microduck-sim/guide/firmware/mac/personfind.py \
+  microduck-sim/guide/firmware/mac/test_personfind.py \
   microduck-sim/guide/firmware/mac/ownkws.py \
   microduck-sim/guide/firmware/mac/life_log.py \
   microduck-sim/guide/firmware/mac/namecall-20261029/models/mochi_own.npz \
   pet/__init__.py pet/express/*.py pet/express/cards/duck.json \
   pet/identity/__init__.py pet/identity/face.py pet/identity/models/buffalo_sc/det_500m.onnx pet/identity/models/buffalo_sc/w600k_mbf.onnx \
+  pet/identity/models/yolox/yolox_tiny.onnx \
   --exclude='__pycache__' \
   "$HOST:$REMOTE/" 2>&1 | quiet
 
 echo "== checks on $HOST"
 ssh "$HOST" "cd ~/$REMOTE/microduck-sim/guide/firmware/mac && \
-  for f in namecall.py duck_sound.py facefind.py ownkws.py namecall-20261029/models/mochi_own.npz ../../../../pet/express/express.py; do sha256sum \"\$f\"; done && \
+  for f in namecall.py duck_sound.py facefind.py personfind.py ownkws.py namecall-20261029/models/mochi_own.npz ../../../../pet/express/express.py; do sha256sum \"\$f\"; done && \
   $VENV/bin/python -c 'import namecall, numpy; print(\"namecall imports ok, numpy\", numpy.__version__); \
     print(\"policy default head\", namecall.policy_default_head())' && \
   $VENV/bin/python -c 'import ownkws; m = ownkws.OwnModel(); print(\"own name spotter:\", m.classes, \"threshold\", m.threshold)' && \
   $VENV/bin/python -c 'import facefind; from pet.identity.face import FacePipeline; FacePipeline(); print(\"face finder: SCRFD model loads\")' && \
+  $VENV/bin/python -c 'import personfind; personfind.PersonDetector(); print(\"person finder: YOLOX-Tiny loads\")' && \
   ( $VENV/bin/python -c 'import sherpa_onnx, namecall; m = namecall.find_kws_model(); \
     print(\"name mode: sherpa-onnx\", sherpa_onnx.__version__, \"model\", m or \"MISSING (~/rt/models/kws/)\")' \
     2>/dev/null || echo 'name mode: NO sherpa-onnx (pip install sherpa-onnx==2.0.0 in the venv); --any-voice still works' ) && \

@@ -10,6 +10,12 @@ embedding here) and keeps the largest face: 120 ms per frame on the A7Z at the 6
 Angles: the U20CAM is an equidistant fisheye with f = 359.5 px (face-view-20261029/README.md), so a pixel r from the
 centre lies r / f rad off the axis; a face right of centre gives yaw_err > 0 (turn the head right, i.e. head_yaw
 down), a face above the centre gives pitch_err > 0 (look up).
+
+People (person=True, the default in namecall): a frame with no face also goes through personfind.PersonDetector
+(YOLOX-Tiny, 239 ms on the A7Z at 2 threads), at most PERSON_HZ, in this same thread, so the finder still runs one
+inference at a time on its 2 threads; latest_person() gives the largest person with the angles of the estimated head
+point (the box top) and top_cut when the body runs on above the frame. A frame with a face skips it: the face wins.
+2026-10-30 16:52: the duck only ever saw Shawn's shoes and jeans and never found his face (NAMECALL.md 12).
 """
 import os
 import sys
@@ -28,6 +34,8 @@ F_PX = 359.5          # equidistant fisheye focal length, 640 x 360 frame (manua
 RATE_HZ = 4.0         # detector runs on at most this many frames per second
 DET_SIZE = 640        # SCRFD input; 320 halves the time but loses faces under about 24 px (a standing adult past 1 m)
 STALE_S = 1.0         # a result older than this is not a sighting any more
+PERSON_HZ = 2.0       # person detector at most this often, and only on frames without a face
+PERSON_THREADS = 2    # 239 ms per frame on the A7Z (1 thread: 365 ms); the face detector also uses 2
 
 
 def face_angles(bbox, w, h, f_px=F_PX):
@@ -46,9 +54,18 @@ class FaceFinder:
     pet.identity.face.FacePipeline. frames: a callable returning (bytes, t, idx) or None (a7z_cam.read_frame).
     """
 
-    def __init__(self, pipeline=None, frames=None, hold=None, rate_hz=RATE_HZ, det_size=DET_SIZE, shape=None, now=time.time):
+    def __init__(self, pipeline=None, frames=None, hold=None, rate_hz=RATE_HZ, det_size=DET_SIZE, shape=None, now=time.time,
+                 person=None, person_hz=PERSON_HZ):
         self.pipeline, self.frames, self.hold_fn, self.now = pipeline, frames, hold, now
         self.rate_hz, self.det_size, self.shape = rate_hz, det_size, shape
+        # person: None/False = faces only; True = load personfind.PersonDetector in start(); or a detector object with
+        # detect(img_bgr) -> (n, 5) x1 y1 x2 y2 score (tests)
+        self.person, self.person_hz = person, person_hz
+        self.person_result = None
+        self.person_run_t = -1e9        # capture time of the last frame the person detector ran on
+        self.person_frames = 0
+        self.person_ms = []
+        self.person_err = None
         self.lock = threading.Lock()
         self.result = None
         self.last_idx = None
@@ -69,6 +86,12 @@ class FaceFinder:
         if self.pipeline is None:
             from pet.identity.face import FacePipeline
             self.pipeline = FacePipeline(det_size=self.det_size)
+        if self.person is True:
+            try:
+                from personfind import PersonDetector
+                self.person = PersonDetector(threads=PERSON_THREADS)
+            except Exception as e:      # no model file: faces only, and the reason shows in stats()
+                self.person, self.person_err = None, repr(e)
         self.release = self.hold_fn()
         self.thread = threading.Thread(target=self._loop, name="facefind", daemon=True)
         self.thread.start()
@@ -90,6 +113,17 @@ class FaceFinder:
         """The newest sighting, or None when there is none or it is older than stale_s."""
         with self.lock:
             r = self.result
+        if r is None or "yaw_err" not in r:
+            return None
+        if (self.now() if now is None else now) - r["t"] > stale_s:
+            return None
+        return r
+
+    def latest_person(self, now=None, stale_s=STALE_S):
+        """The newest person sighting (largest box: yaw_err, pitch_err of the head point, top_cut, height, score, box,
+        t), or None when there is none or it is older than stale_s."""
+        with self.lock:
+            r = self.person_result
         if r is None or "yaw_err" not in r:
             return None
         if (self.now() if now is None else now) - r["t"] > stale_s:
@@ -129,6 +163,35 @@ class FaceFinder:
             else:
                 self.result = dict(self.result, seen_t=t, ms=res["ms"], n=0)
         self.n_frames += 1
+        if not faces and self.person and t - self.person_run_t >= 1.0 / self.person_hz:
+            self.person_run_t = t
+            self.analyse_person(img, t)
+        return res
+
+    def analyse_person(self, img, t):
+        """One face-less frame through the person detector -> the person result dict (also stored), or None."""
+        from personfind import people
+        h, w = img.shape[:2]
+        t0 = time.perf_counter()
+        try:
+            dets = self.person.detect(img)
+        except Exception as e:
+            self.person_err = repr(e)
+            return None
+        ms = (time.perf_counter() - t0) * 1000.0
+        self.person_ms.append(ms)
+        if len(self.person_ms) > 200:
+            del self.person_ms[:100]
+        ps = people(dets, w, h)
+        res = dict(t=t, ms=round(ms, 1), n=len(ps), people=ps)
+        if ps:
+            res.update(ps[0])
+        with self.lock:
+            if ps or self.person_result is None or "yaw_err" not in self.person_result:
+                self.person_result = res
+            else:
+                self.person_result = dict(self.person_result, seen_t=t, ms=res["ms"], n=0)
+        self.person_frames += 1
         return res
 
     def _loop(self):
@@ -151,7 +214,12 @@ class FaceFinder:
 
     def stats(self):
         ms = self.ms[-50:]
-        return dict(frames=self.n_frames, ms_mean=round(float(np.mean(ms)), 1) if ms else None, err=self.err)
+        st = dict(frames=self.n_frames, ms_mean=round(float(np.mean(ms)), 1) if ms else None, err=self.err)
+        if self.person or self.person_err:
+            pm = self.person_ms[-50:]
+            st.update(person_frames=self.person_frames, person_ms_mean=round(float(np.mean(pm)), 1) if pm else None,
+                      person_err=self.person_err)
+        return st
 
 
 if __name__ == "__main__":

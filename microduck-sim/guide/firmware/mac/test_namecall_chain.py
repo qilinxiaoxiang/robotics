@@ -318,8 +318,9 @@ def test_turn_plan_only_for_callers_beyond_the_head():
 
 def test_every_response_quacks_and_a_caller_behind_gets_a_body_turn(tmp_path):
     """The take library drops the call on habituated or glancing takes (vocal_events); namecall adds its own, and a
-    caller beyond YAW_CAP turns the body from the moment the head arrives, the head tracking the caller in the
-    turning frame (Shawn 2026-10-30: turn head and body together, not head, centre, then body)."""
+    caller heard behind gets the front-half search first (no camera here, so it is spent after FACE_WAIT_S), then the
+    body turns toward the back on that side, the head tracking the caller in the turning frame (Shawn 2026-10-30:
+    turn head and body together, not head, centre, then body)."""
     cmd = str(tmp_path / "cmd.json")
     a = args(cmd=cmd, no_sound=False, mute=True, seed=5, pitch=nc.LOOK_PITCH)
     a.no_turn = False
@@ -513,16 +514,19 @@ def test_body_turn_stops_on_the_gyro_not_the_clock(tmp_path):
     assert n.attend_until is not None or any(k == "attend_done" for k, _ in recs)   # attention followed the turn
 
 
-def test_no_body_turn_on_a_guessed_bearing(tmp_path):
-    """A bearing whose front/back margin is under TURN_MARGIN_MIN gets the head take only (2026-10-30: three
-    noise-level triggers each spun the body for 7-12 s)."""
+def test_no_body_turn_at_the_take_front_first(tmp_path):
+    """Front first (Shawn 2026-10-30 17:30; replaces the margin gate): a call heard at -103 deg aims the head at the
+    front-half mirror on the right (-77 deg), never turns the body at the take, and plans a back turn to the right
+    for later whatever the margin says; the margin and the behind flag are only logged."""
     a = args(cmd=str(tmp_path / "c.json"), seed=5, pitch=nc.LOOK_PITCH)
     a.no_turn = False
     n = nc.NameCall(a, nc.Log(None, echo=False))
-    r = n.respond(dict(t=0.0, az_rad=-1.8, az_deg=-103.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.01), 0.0)
-    assert n.turn is None and r["turn_skipped"]["margin"] == 0.01
-    r = n.respond(dict(t=30.0, az_rad=-1.8, az_deg=-103.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.6), 30.0)
-    assert n.turn is not None and "turn" in r
+    for margin in (0.01, 0.6):
+        r = n.respond(dict(t=0.0, az_rad=-1.8, az_deg=-103.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=margin), 0.0)
+        assert n.turn is None and "turn_skipped" not in r and r["margin"] == margin and r["behind_heard"]
+        assert r["side"] == -1 and abs(r["az_front_rad"] + (math.pi - 1.8)) < 1e-3
+        assert abs(r["target_yaw"] + min(nc.YAW_CAP, math.pi - 1.8)) < 1e-3         # front half, capped at YAW_CAP
+        assert n.back_turn["sign"] == -1.0 and abs(n.back_turn["az_rad"] + 1.8) < 1e-3
 
 
 def test_the_name_is_the_default_trigger_on_the_robot():
