@@ -1,0 +1,236 @@
+{
+ "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
+ "updated": "2026-10-30",
+ "requirements": [
+  {
+   "id": "R1",
+   "title": "Answers only to Mochi; no answer when nobody called",
+   "shawn": [
+    [
+     "2026-10-29 16:02",
+     "我们要不要给他取个名字 然后叫他的时候它可以转头并叫一下"
+    ],
+    [
+     "2026-10-30 03:02",
+     "再把只响应mochi也做进去"
+    ],
+    [
+     "2026-10-30 10:58",
+     "现在的问题是它回应得太多了 最后它叫的五声我根本没叫它"
+    ],
+    [
+     "2026-10-30 19:21",
+     "我还没交它 它就看着我了"
+    ]
+   ],
+   "acceptance": "In a live test with Shawn present, every answer follows a real call (zero answers he did not make); offline, held-out false wakes per hour on home talk reported with the operating point.",
+   "tests": [],
+   "evidence": [
+    "results/operating_point_20261030.json: 0.9 gives 5.6-7.8 false wakes/h on life segments, 0 on held-out LibriSpeech and RoboClub talk"
+   ],
+   "status": "gap",
+   "gap": "Live false answers at 10:58 (five) and 19:21:08 (score 0.98, segment life/20261030/192104_427.wav about 2.5-4.5 s, labelled as a negative in life_labels_1030_live.json for the next training). Shawn's own nearby talk is the main false-wake source."
+  },
+  {
+   "id": "R2",
+   "title": "Answers the first call, within about a second",
+   "shawn": [
+    [
+     "2026-10-30 01:51",
+     "为什么要等2秒呢 叫的时候听不到声音不是很正常吗 但2秒就不正常了"
+    ],
+    [
+     "2026-10-30 18:54",
+     "我叫了好几次才响应我"
+    ]
+   ],
+   "acceptance": "Live: the first call of each attempt is answered, the answer starts within 1 s of the call's end; offline: recall on held-out calls at the operating point.",
+   "tests": [
+    "test_short_localiser_and_energy_detector_decide_at_the_onset"
+   ],
+   "evidence": [
+    "18:53 test: two calls scored 0.78-0.83 under the 0.9 threshold, first answer 7.6 s after the first call",
+    "results/operating_point_20261030.json: two-stage repeat rule (0.9, or two peaks >= 0.7 started 1-5 s apart) answers about 2 s after the first call at 4 of 5 offsets"
+   ],
+   "status": "gap",
+   "gap": "Repeat rule proposed, not deployed; waits on Shawn's choice of operating point."
+  },
+  {
+   "id": "R3",
+   "title": "Turns to the caller's side, front first",
+   "shawn": [
+    [
+     "2026-10-30 02:51",
+     "我在前面叫的 它往左边看 还一直转 然后还打滑不停往错误方向转"
+    ]
+   ],
+   "acceptance": "Live: the first look lands on the caller's side; a call from the front never starts a body turn; a body turn happens only after the front search found nobody.",
+   "tests": [
+    "test_take_runs_under_head_range_and_lands_near_the_caller",
+    "test_no_body_turn_at_the_take_front_first",
+    "test_front_search_first_then_the_back_turn_on_the_heard_side",
+    "test_body_turn_stops_on_the_gyro_not_the_clock"
+   ],
+   "evidence": [
+    "bearing_seen labels collect the true bearing of each call for the direction error"
+   ],
+   "status": "built",
+   "gap": "No live readback of direction error since front-first search was installed."
+  },
+  {
+   "id": "R4",
+   "title": "Looks up to a standing person's height",
+   "shawn": [
+    [
+     "2026-10-30 01:51",
+     "但是他得看我，他得抬头啊。它不能判断高度吗"
+    ],
+    [
+     "2026-10-30 02:55",
+     "我在前面叫它这次又看向右边 而不是抬头"
+    ]
+   ],
+   "acceptance": "Live: after a call from a standing person the camera ends on the face (face event logged).",
+   "tests": [
+    "test_response_looks_up_to_a_standing_face"
+   ],
+   "evidence": [
+    "19:21 run: person then face event at 19:22:10"
+   ],
+   "status": "partial",
+   "gap": "One live success; no count over several calls."
+  },
+  {
+   "id": "R5",
+   "title": "Head and body turn together, no recentring first",
+   "shawn": [
+    [
+     "2026-10-30 02:22",
+     "我们一般是边转头。边转头边转身，为什么要先回正再转身？感觉很不自然。"
+    ]
+   ],
+   "acceptance": "Live and sim: during a body turn the head keeps pointing at the bearing (no return to centre before the turn).",
+   "tests": [
+    "test_every_response_quacks_and_a_caller_behind_gets_a_body_turn"
+   ],
+   "evidence": [],
+   "status": "built",
+   "gap": "No live body turn observed since the change."
+  },
+  {
+   "id": "R6",
+   "title": "Follows the body up to the face",
+   "shawn": [
+    [
+     "2026-10-29 18:45",
+     "它现在只能看到我的手 它会身体的部分去看脸吗"
+    ],
+    [
+     "2026-10-30 02:55",
+     "而且明明看到我的腿了 不知道顺着躯干寻找头 非常蠢"
+    ]
+   ],
+   "acceptance": "Live: with only legs or torso in view, the head climbs until the face is found (person event before face event).",
+   "tests": [
+    "test_legs_at_the_top_of_a_low_frame_lead_the_head_up_to_the_face",
+    "test_person_aim_pitches_up_while_the_box_is_cut_then_holds_at_the_cap",
+    "test_detector_finds_the_legs_of_1654"
+   ],
+   "evidence": [
+    "19:21 run: person event, then face at 19:22:10"
+   ],
+   "status": "partial",
+   "gap": "One live case; climb from legs only not yet seen live."
+  },
+  {
+   "id": "R7",
+   "title": "Looks at the owner 5-10 s waiting for instructions, then looks away",
+   "shawn": [
+    [
+     "2026-10-30 02:55",
+     "一是看到脸了就转回去站着了 不是应该盯一会儿等待指示嘛"
+    ],
+    [
+     "2026-10-30 19:23",
+     "它现在一直盯着我了 也不用一直看着吧 宠物的行为不是这样的"
+    ],
+    [
+     "2026-10-30 19:25",
+     "一般盯个5-10秒钟"
+    ]
+   ],
+   "acceptance": "Live: after the face lock the gaze stays on the face, then the head drifts home 5-10 s later with the face still in view; a new call looks again.",
+   "tests": [
+    "test_eye_contact_ends_while_the_face_is_still_in_view",
+    "test_attention_holds_the_gaze_on_the_caller_then_drifts_home"
+   ],
+   "evidence": [],
+   "status": "built",
+   "gap": "Contact cap (EYE_CONTACT_S 5-10 s) installed 2026-10-30, not yet seen live."
+  },
+  {
+   "id": "R8",
+   "title": "Steady gaze on the face, no side-to-side swing",
+   "shawn": [
+    [
+     "2026-10-30 18:54",
+     "而且也不是盯着我 而是看着我左右摇头"
+    ]
+   ],
+   "acceptance": "Live: head yaw spread under 0.06 rad while the face is locked (brain log q[12]).",
+   "tests": [
+    "test_face_tracking_does_not_swing_with_the_real_delays"
+   ],
+   "evidence": [
+    "18:53: +-0.35 rad swing, 2.2 s period; fix uses the measured head pose at frame time"
+   ],
+   "status": "built",
+   "gap": "19:21 run tracked a face but its swing was not measured."
+  },
+  {
+   "id": "R9",
+   "title": "Quacks once when it answers",
+   "shawn": [
+    [
+     "2026-10-29 16:02",
+     "叫他的时候它可以转头并叫一下"
+    ],
+    [
+     "2026-10-30 02:15",
+     "开始还有转头 但是没有叫声 后面连转头也没有了"
+    ]
+   ],
+   "acceptance": "Live: every answer plays a quack (unless the caller is really repeating).",
+   "tests": [
+    "test_every_response_quacks_and_a_caller_behind_gets_a_body_turn",
+    "test_quack_skipped_only_when_the_caller_really_repeats",
+    "test_playback_keepalive_starts_before_capture_and_stops"
+   ],
+   "evidence": [],
+   "status": "built",
+   "gap": "No live count of quacks per answer since the playback fix."
+  },
+  {
+   "id": "R10",
+   "title": "Stays balanced; never wanders off after finding the face",
+   "shawn": [
+    [
+     "2026-10-30 02:22",
+     "第二，他摔了，你看看是什么问题导致的。"
+    ],
+    [
+     "2026-10-30 03:37",
+     "而且他都识别到我的脸了 结果开始乱走 自己把自己绊倒了"
+    ]
+   ],
+   "acceptance": "Live: zero falls and zero walking commands other than the planned body turn during name-call tests.",
+   "tests": [
+    "test_writer_writes_zero_walk_and_yields_to_other_writers",
+    "test_gate_accepts_walk_zero_and_stand_only"
+   ],
+   "evidence": [],
+   "status": "built",
+   "gap": "No fall in the 18:53 and 19:21 runs; not counted formally."
+  }
+ ]
+}
