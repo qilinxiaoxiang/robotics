@@ -361,6 +361,25 @@ def test_every_response_quacks_and_a_caller_behind_gets_a_body_turn(tmp_path):
     assert n2.turn is None
 
 
+def test_a_name_without_a_bearing_quacks_and_keeps_the_head_where_it_looks(tmp_path):
+    """No bearing (the localiser found no voice bins): one quack, no take, no turn; during attention it extends the
+    attention instead of moving the head."""
+    a = args(cmd=str(tmp_path / "c.json"), no_sound=False, mute=True, seed=5)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    r = n.respond(dict(t=0.0, az_rad=None, az_deg=None, no_direction=True), 0.0)
+    assert not n.head.busy and n.turn is None and n.attend_until is None
+    assert len(n.quack_due) == 1 and r["quack_own_at"] == 0.3
+    n.respond(dict(t=1.0, az_rad=0.4, az_deg=23.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 1.0)
+    t = 1.0
+    while n.head.busy:
+        n.motion_tick(t)
+        t += 0.02
+    until, yaw = n.attend_until, n.head.last["yaw"]
+    n.respond(dict(t=t, az_rad=None, az_deg=None, no_direction=True), t + 2.0)
+    assert n.attend_until > until and not n.head.busy and n.head.last["yaw"] == yaw
+
+
 def test_quack_skipped_only_when_the_caller_really_repeats(tmp_path):
     """Novelty x0.75 per call, 40 s recovery: calls 30 s apart are always answered; eight calls 2 s apart lose
     the quack from about the fifth on (Shawn 2026-10-30: skip only when he has repeated it over and over)."""

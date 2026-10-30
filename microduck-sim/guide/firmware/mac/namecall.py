@@ -155,6 +155,8 @@ KEYWORDS = {"mochi": os.path.join(HERE, "namecall-20261029", "keywords_mochi.txt
 RING_NAME_S = 3.0                # ring buffer in name mode: the spot comes up to about a second after the word starts
 KW_BACK_S = 0.75                 # aim point for the onset pick; 1.0 (the median spot delay) chose earlier sounds more often (NAMECALL.md 9.4)
 KW_ONSET_WIN = (0.25, 1.6)       # detector onsets between these many seconds before the spot are candidates
+KW_REFRACTORY_S = 1.5            # s between answered names: one spoken Mochi keeps the own spotter over threshold
+                                 # for up to ~1.2 s (two hits 1.0 s apart), and Shawn calls every 2.2-3 s (2026-10-30)
 ONSET_GAP_S = 0.25               # detector refractory in name mode (its onsets are only candidates)
 
 
@@ -1311,6 +1313,10 @@ class NameCall:
                 self.pending = None
                 if est is not None:
                     return det
+                if self.kws is not None:
+                    # the name was recognised; only its bearing is missing (2026-10-30 14:38: three of ten names came
+                    # while the detector was still deaf from the quack before, and were dropped). Answer without one.
+                    return dict(det, az_rad=None, az_deg=None, no_direction=True)
                 self.log.write("skip", why="call heard but the ring no longer holds its start or it had no voice bins",
                                t=det["t"])
         return None
@@ -1363,7 +1369,7 @@ class NameCall:
         if hit is None:
             return None
         self.kw_hits += 1
-        if hit["t_hit"] - self.last_kw_t < self.a.refractory:
+        if hit["t_hit"] - self.last_kw_t < getattr(self.a, "kw_refractory", KW_REFRACTORY_S):
             self.log.write("skip", why="name heard again within the refractory period", keyword=hit["keyword"],
                            t_hit=hit["t_hit"])
             return None
@@ -1376,7 +1382,20 @@ class NameCall:
                     t_hit=hit["t_hit"], span_s=hit["span_s"])
 
     def respond(self, det, now):
-        """Turn a detection into a take (azimuth in the head frame -> resting frame)."""
+        """Turn a detection into a take (azimuth in the head frame -> resting frame). A recognised name without a
+        bearing (az_rad None) gets a quack and no head move; during attention it extends the attention."""
+        if det.get("az_rad") is None:
+            rec = dict(det, head_yaw_now=round(self.head_yaw_now, 3))
+            if self.bank is not None:
+                t_q = now + 0.3
+                self.quack_due.append((t_q, dict(kind="call", pitch=1.0, stretch=1.0, gain_db=0.0, own=True)))
+                rec["quack_own_at"] = round(t_q, 3)
+            if self.head is not None and self.attend_until is not None:
+                self.attend_until = max(self.attend_until, now + self.attend_s)
+            self.responses += 1
+            self.calls.append(rec)
+            self.log.write("call", **rec)
+            return rec
         az = det["az_rad"] + self.head_yaw_now
         az = (az + math.pi) % (2 * math.pi) - math.pi
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3))
@@ -1729,6 +1748,7 @@ def parse_args(argv=None):
     ap.add_argument("--loc-snr-db", type=float, default=3.0, help="call localiser: a time-frequency bin counts this far over its noise on all mics")
     ap.add_argument("--loc-weight", choices=("soft", "hard"), default="soft", help="call localiser: weight bins by SNR or mask them")
     ap.add_argument("--refractory", type=float, default=2.5, help="s between accepted calls")
+    ap.add_argument("--kw-refractory", type=float, default=KW_REFRACTORY_S, help="s between answered names (name mode)")
     ap.add_argument("--floor-tau", type=float, default=3.0, help="s, room floor tracking")
     ap.add_argument("--pitch", type=float, default=LOOK_PITCH,
                     help="gaze rad up for the caller; 1.1 = the head pitch cap, camera 30 deg up, a standing face at 1-2 m")

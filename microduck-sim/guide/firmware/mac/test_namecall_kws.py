@@ -109,10 +109,28 @@ def test_without_a_detector_onset_the_keyword_time_places_the_window():
     assert dets[0]["onset_from"] == "keyword" and abs(dets[0]["az_deg"] - 25) < 6
 
 
+def test_a_name_with_no_direction_is_still_answered():
+    # 2026-10-30 14:38 home run: three of ten recognised names came while the detector was still deaf from the quack
+    # before, the localiser found no voice bins, and the name was dropped. A recognised name is answered anyway; only the
+    # bearing is missing (az None), so the duck quacks and the head does not move.
+    sp = ScriptedSpotter([3.0])
+    n = nc.NameCall(args(no_sound=False, mute=True), nc.Log(None, echo=False), now=lambda: 0.0, kws=sp)
+    n._estimate = lambda x, i_on: None          # the localiser found no voice bins
+    dets = n.run_blocks(blocks(scene([(2.3, 30, "voice")], 5.0)))
+    assert len(dets) == 1 and dets[0]["az_rad"] is None and dets[0]["no_direction"]
+    assert n.responses == 1 and dets[0]["quack_own_at"] == round(dets[0]["decided_t"] + 0.3, 3)
+
+
 def test_a_second_name_within_the_refractory_period_is_one_call():
     n, _, dets = run([1.8, 2.8, 5.5], [(1.0, 10, "voice"), (2.1, 10, "voice"), (4.8, -70, "voice")], 7.0)
     assert len(dets) == 2
     assert abs(dets[1]["az_deg"] + 70) < 4
+
+
+def test_names_called_every_two_seconds_are_each_answered():
+    # Shawn calls every 2.2-3 s; the 2.5 s refractory of the any-voice mode dropped every other one (2026-10-30)
+    n, _, dets = run([1.8, 3.8, 5.8], [(1.0, 10, "voice"), (3.0, 10, "voice"), (5.0, 10, "voice")], 7.0)
+    assert len(dets) == 3
 
 
 def test_the_spotter_hears_silence_while_the_own_quack_plays():
