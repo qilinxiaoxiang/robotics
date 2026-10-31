@@ -627,6 +627,14 @@ class Localiser:
 
 
 LOC_BAND = (1500.0, 8000.0)       # the call localiser's band: under 1.5 kHz this head hears through its cavity (NAMECALL.md 10)
+ILD_BANDS = ((300.0, 1200.0), (2500.0, 4000.0))   # left-minus-right level cues logged per call (eightdir_20261030.json)
+ILD_SIDE_BAND = "2500"            # the band whose level difference decides the side ...
+ILD_SIDE_OFFSET_DB = 1.0          # ... after this right-ear offset (straight ahead read +1.1 dB, behind +2.8 dB) ...
+ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the offset: the six side calls read 1.4-3.1 dB
+                                  # from it except +135 deg (0.2, left to the SRP); a free-field scene (no head) reads
+                                  # about -1.0 and must not override
+ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
+ILD_NOISE_FRAMES = 94             # noise frames behind the level cue (0.5 s at hop 256 / 48 kHz)
 LOC_ELEV = (35.0,)                # elevation prior: a standing owner 2 m from a robot on the floor
 CALL_WINDOW_S = 0.8               # accumulate this long after the onset
 LOC_PRE_S = 2.0                   # noise spectrum from this much audio before the onset ...
@@ -731,7 +739,37 @@ class CallLocaliser:
         margin = float(col[ka] - col[near].max()) if near.any() else float("nan")
         return dict(az_rad=round(az, 4), az_deg=round(math.degrees(az), 1), el_deg=round(float(np.degrees(self.el[ke])), 1),
                     srp=round(float(col[ka]), 3), margin=round(margin, 3), pairs=pairs, bins=n_bins,
-                    frames=int(len(call)), window_s=round(len(call) * self.hop / self.fs, 2))
+                    frames=int(len(call)), window_s=round(len(call) * self.hop / self.fs, 2),
+                    ild_db=self.level_cues(x, (starts >= i0) & (ends <= i_onset + self.after),
+                                           ends <= i_onset - int(self.gap_s * self.fs)))
+
+    def level_cues(self, x, is_call, is_noise):
+        """Left-minus-right level (dB) of the call over the noise, per ILD_BANDS band, in the head frame: the cue the
+        cavity leaves intact. 2026-10-30 eight known-direction calls at 2 m (eightdir_20261030.json): 2.5-4 kHz gave
+        the side on 6 of 6 side calls (+1.2..+3.4 dB left, -0.4..-2.1 dB right, +1.1/+2.8 dB straight ahead/behind),
+        while the 1.5-6 kHz lags over the word sat within one sample in every direction. Also ears-minus-back (EB).
+        Own full-band spectra (the SRP spectra hold only LOC_BAND)."""
+        if not is_call.any():
+            return {}
+        n = (len(x) - self.nfft) // self.hop + 1
+        noise_rows = np.nonzero(is_noise)[0][-ILD_NOISE_FRAMES:]            # the last half second of noise is enough
+        rows = np.concatenate([noise_rows, np.nonzero(is_call)[0]])
+        idx = np.arange(self.nfft)[None, :] + self.hop * rows[:, None]
+        P = np.abs(np.fft.rfft((x[idx] * self.win[None, :, None]).astype(np.float32), axis=1)) ** 2   # (rows, bins, ch)
+        Pn, Pc = P[:len(noise_rows)], P[len(noise_rows):]
+        f = np.fft.rfftfreq(self.nfft, 1 / self.fs)
+        L, R, B = (self.ch[k] for k in ("left", "right", "back"))
+        out = {}
+        for lo, hi in ILD_BANDS:
+            b = (f >= lo) & (f < hi)
+            if not b.any():
+                continue
+            pc = Pc[:, b, :].mean(axis=(0, 1))
+            pn = Pn[:, b, :].mean(axis=(0, 1)) if len(Pn) else 0.0
+            p = np.maximum(pc - pn, 1e-14)
+            out[str(int(lo))] = dict(LR=round(float(10 * np.log10(p[L] / p[R])), 2),
+                                     EB=round(float(10 * np.log10(0.5 * (p[L] + p[R]) / p[B])), 2))
+        return out
 
 
 def synth_call(fs=FS, dur=0.45, f0=210.0, seed=0, kind="voice"):
@@ -1528,8 +1566,18 @@ class NameCall:
         az = det["az_rad"] + self.head_yaw_now
         az = (az + math.pi) % (2 * math.pi) - math.pi
         az_front, side = fold_front(az)
+        # the side from the ear level difference (head frame, ILD_SIDE_BAND) overrides the SRP side while the head is
+        # near rest: on the 2026-10-30 eight-direction calls the level gave 6 of 6 sides, the SRP 5 of 7
+        side_srp, side_ild = side, 0
+        ild = (det.get("ild_db") or {}).get(ILD_SIDE_BAND)
+        if ild is not None:
+            d = ild["LR"] - ILD_SIDE_OFFSET_DB
+            side_ild = (1 if d > 0 else -1) if abs(d) >= ILD_SIDE_MIN_DB else 0
+        if side_ild and side_ild != side and abs(self.head_yaw_now) <= ILD_HEAD_REST_RAD:
+            side = side_ild
+            az_front = side * max(abs(az_front), SIDE_MIN)
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3), az_front_rad=round(az_front, 4),
-                   side=side, behind_heard=abs(az) > YAW_CAP)
+                   side=side, side_srp=side_srp, side_ild=side_ild, behind_heard=abs(az) > YAW_CAP)
         az_look = az_front
         if self.bearing_prior is not None and side:
             # the duck's own experience (fit_bearing.py): the heard side is right, the heard magnitude is not, so the
