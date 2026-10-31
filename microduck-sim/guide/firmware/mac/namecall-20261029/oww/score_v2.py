@@ -22,12 +22,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--heldout", default=os.path.join(OWW, "data", "duck_heldout.json"),
+                    help="recording -> word starts never trained on (round 3: data/duck_heldout_v3.json, four recordings)")
     a = ap.parse_args()
     t0 = time.time()
     model = Model(wakeword_models=[a.model], inference_framework="onnx")
     key = os.path.splitext(os.path.basename(a.model))[0]
     mono = lambda nm: np.load(os.path.join(D, "mono16v2", nm + ".npy")).astype(np.float32)
-    duck = json.load(open(os.path.join(OWW, "data", "duck_heldout.json")))
+    duck = json.load(open(a.heldout))
     life = json.load(open(os.path.join(OWW, "data", "life_heldout.json")))
     duck_sc = {nm: scores(model, key, mono(nm)) for nm in duck}
     life_sc = {nm: scores(model, key, mono(nm)) for nm in life}
@@ -35,9 +37,12 @@ def main():
     res = {}
     for thr in THRESHOLDS:
         got = n = 0
+        per = {}
         for nm, ons in duck.items():
             hs = hits(*duck_sc[nm], thr)
-            got += sum(any(0.2 <= h - o <= 1.6 for h in hs) for o in ons)
+            g = sum(any(0.2 <= h - o <= 1.6 for h in hs) for o in ons)
+            per[nm] = f"{g}/{len(ons)}"
+            got += g
             n += len(ons)
         fa = {}
         for nm, sp in life.items():
@@ -48,8 +53,9 @@ def main():
                 if hs:
                     fa[f"{nm} {s0}-{s1}"] = [round(h, 1) for h in hs]
         nfa = sum(len(v) for v in fa.values())
-        res[str(thr)] = dict(duck_heldout=f"{got}/{n}", life_false=nfa, life_false_per_h=round(nfa / (life_s / 3600), 1), life_false_at=fa)
-        print(f"  thr {thr}: live_141734 held-out calls {got}/{n}; held-out life talk ({life_s / 60:.1f} min): {nfa} false ({res[str(thr)]['life_false_per_h']}/h)")
+        res[str(thr)] = dict(duck_heldout=f"{got}/{n}", duck_heldout_per_recording=per, life_false=nfa,
+                             life_false_per_h=round(nfa / (life_s / 3600), 1), life_false_at=fa)
+        print(f"  thr {thr}: held-out duck calls {got}/{n} {per}; held-out life talk ({life_s / 60:.1f} min): {nfa} false ({res[str(thr)]['life_false_per_h']}/h)")
     rep = dict(made=time.strftime("%Y-%m-%d %H:%M"), model=a.model, life_heldout_s=round(life_s), heldout=res, wall_s=round(time.time() - t0))
     if a.out:
         json.dump(rep, open(a.out, "w"), indent=1)
