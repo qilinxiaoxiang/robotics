@@ -10,17 +10,172 @@
 (() => {
 'use strict';
 
-const STATUS_LABEL = {
-  assembled: 'Already assembled', printed: 'Printed', reprint: 'Reprint needed',
-  'new-print': 'New print', purchased: 'Purchased', owned: 'Owned'
-};
-const PREP_KIND_LABEL = {
-  fastener: 'Fastener', printed: 'Printed part', electronic: 'Electronics', tool: 'Tool', cable: 'Cable', other: 'Other'
-};
-const CABLE_KIND_LABEL = {
-  dxl: 'DYNAMIXEL bus', 'power-20v': '12 V power', 'power-15v': '15 V power', 'power-7v': '7 V power', 'power-5v': '5 V power', ground: 'Ground', usb: 'USB', uart: 'UART link',
-  i2c: 'I²C', i2s: 'I²S audio', speaker: 'Speaker', csi: 'Camera CSI ribbon', touch: 'Touch sensor wire'
-};
+/* UI text, one table per language; the guide data's optional `lang` ("en" default, "zh") picks one. Strict JSON between
+ * the markers: build_guide.py reads it to translate template.html (group "page", whose en strings must match the
+ * template exactly) and the fallback page title, and checks that zh has every en key. {name} marks a filled-in value. */
+const UI_TEXT = /*UI_TEXT*/{
+  "en": {
+    "page": {
+      "skipLink": "Skip to the step instructions", "openSteps": "Open the step list", "sidebar": "Chapters and steps",
+      "sideEyebrow": "Your build, step by step", "sideTitle": "Assembly", "closeSteps": "Close the step list",
+      "search": "Find a step or part", "doneZero": "0 of 0 done", "resetProgress": "Reset progress", "toc": "Steps",
+      "tocEmpty": "No step matches that search.", "stage": "3D assembly view", "copyLink": "Copy a link to this page",
+      "resetViewLabel": "Reset the camera view", "resetView": "Reset view", "flipLabel": "Look at the reverse side",
+      "flipTitle": "Turn the view to the reverse side", "flip": "Reverse side", "labelsLabel": "Show part names",
+      "labelsTitle": "Show the names of the parts added in this step", "labels": "Labels", "contextLabel": "Context parts",
+      "context": "Context", "ghost": "Ghost", "solid": "Solid", "hide": "Hide", "playLabel": "Play the assembly motion",
+      "play": "Play", "apartTitle": "Show the parts and screws pulled back along their paths", "apart": "Pull apart",
+      "seatTitle": "Show everything in its final position", "seat": "Seated", "progress": "Assembly progress",
+      "loading": "Loading the guide…",
+      "hintWide": "Drag to orbit · right-drag to pan · scroll to zoom · click a part or cable to identify it",
+      "hintNarrow": "Drag to orbit · pinch to zoom · tap a part to name it", "panel": "Step instructions",
+      "nav": "Step navigation", "prev": "Previous", "markDone": "Mark done", "next": "Next", "photo": "Reference photo",
+      "close": "Close"
+    },
+    "ui": {
+      "guideTitle": "Assembly guide", "stepCountOne": "{n} step", "stepCount": "{n} steps", "revision": "Revision {v}",
+      "units": "Units: {v}", "frame": "Frame: {v}", "frameDefault": "x forward, y left, z up",
+      "doneCount": "{n} of {total} done", "done": "Done",
+      "resetConfirm": "Clear all done marks and ticked checks for this guide on this device?",
+      "chapterEyebrow": "Chapter {nn} · {title}", "crumbs": "Chapter {nn} / {title}", "stepOf": "Step {n} of {total}",
+      "beforeStep": "Before step {n}", "chapterPrep": "Chapter preparation", "prepShort": "Prep",
+      "announceStep": "Step {n} of {total}: {title}", "announcePage": "{chapter}: {title}",
+      "aboutChapter": "About this chapter", "caution": "Caution", "secLinks": "Detailed pages",
+      "secInstalled": "Installed in this step", "showIn3d": "Show {name} in the 3D view", "groupParts": "{label} ({n} parts)",
+      "secScrews": "Screws in this step", "showScrews": "Show these screws in the 3D view", "markers": "Markers {list}",
+      "tool": "Tool: {v}", "secPrepare": "Prepare", "secAssemble": "Assemble", "secPhotos": "Reference photos",
+      "secCables": "Cables in this step", "cableFallback": "cable", "secChecks": "Check before moving on",
+      "checksAll": "All checks passed. Mark the step done to continue.", "checksSome": "{k} of {n} checked",
+      "noInstructions": "No written instructions for this step.",
+      "partsLead": "Put these on the desk before you start. Match the shape first, then the colour. Tap a row to find the part in the 3D view.",
+      "kitStatus": "{n} {label}", "kitGroupOne": "{n} subassembly", "kitGroupMany": "{n} subassemblies",
+      "kitPlaced": "{n} parts · placed in step {step}", "kitStep": "Step {n}", "secKit": "Parts for this chapter",
+      "screwsLead": "Count each size into its own cup before you start. The 3D view shows where every screw in this chapter goes, coloured by size.",
+      "secScrewsAll": "Screws", "stepTimes": "Step {n} ×{c}", "stepListPrefix": "Step ", "stepListSep": ", ",
+      "stepListSuffix": "", "secOtherFasteners": "Other fasteners", "secFasteners": "Fasteners", "secTools": "Tools",
+      "legendTitle": "Cables", "copied": "copied #{id}", "linkPrompt": "Link to this page", "playing": "Playing",
+      "replay": "Replay", "unpacking": "Unpacking the guide…", "building": "Building the 3D model…",
+      "buildingParts": "Building the 3D model… {i} of {n} parts", "build3dFailed": "The 3D view could not be built.",
+      "loadFailed": "The guide could not load: {msg}", "unavailable": "Unavailable",
+      "noDecompress": "This browser cannot unpack the guide (DecompressionStream missing). Use a current Chrome, Edge, Firefox or Safari 16.4+.",
+      "noData": "No guide data is embedded in this file.", "badData": "Guide data is missing parts or steps.",
+      "noSteps": "The guide has no steps.",
+      "noWebgl": "WebGL is not available here, so the 3D view cannot be shown. The written steps still work.",
+      "canvas": "3D model of the current assembly step", "otherSteps": "Other steps",
+      "identifyParts": "Identify the parts", "prepareScrews": "Prepare screws and tools", "from": "From", "to": "To",
+      "closePart": "Close part label", "roleAdd": "Installed in this step", "roleShow": "Already installed",
+      "roleCtx": "Context only", "partAria": "Part: {name}", "module": "Module {v}", "key": "Key {v}",
+      "nut": "nut: {v}", "washer": "washer: {v}", "wiringStep": "Step through the wires", "wiringAll": "Show all wires",
+      "wiringTitle": "Wiring drawing", "wiringClose": "Close large wiring view",
+      "wiringLargeTitle": "Show this drawing across the whole window", "wiringLarge": "Open large view",
+      "wiringFailed": "The wiring drawing failed to render: {msg}",
+      "wiringMissing": "The wiring drawing could not load in this browser."
+    },
+    "status": {
+      "assembled": "Already assembled", "printed": "Printed", "reprint": "Reprint needed", "new-print": "New print",
+      "purchased": "Purchased", "owned": "Owned"
+    },
+    "prepKind": {
+      "fastener": "Fastener", "printed": "Printed part", "electronic": "Electronics", "tool": "Tool", "cable": "Cable",
+      "other": "Other"
+    },
+    "cableKind": {
+      "dxl": "DYNAMIXEL bus", "power-20v": "12 V power", "power-15v": "15 V power", "power-7v": "7 V power",
+      "power-5v": "5 V power", "ground": "Ground", "usb": "USB", "uart": "UART link", "i2c": "I²C", "i2s": "I²S audio",
+      "speaker": "Speaker", "csi": "Camera CSI ribbon", "touch": "Touch sensor wire"
+    },
+    "screwKind": {
+      "tap": "Self-tapping (TAP), cuts its own thread in plastic", "machine": "Machine screw",
+      "machine-nut": "Machine screw with nut"
+    }
+  },
+  "zh": {
+    "page": {
+      "skipLink": "跳到步骤说明", "openSteps": "打开步骤列表", "sidebar": "章节和步骤",
+      "sideEyebrow": "一步一步装起来", "sideTitle": "组装步骤", "closeSteps": "关闭步骤列表",
+      "search": "搜索步骤或零件", "doneZero": "已完成 0 / 0", "resetProgress": "清除进度", "toc": "步骤",
+      "tocEmpty": "没有找到相符的步骤。", "stage": "3D 组装视图", "copyLink": "复制本页链接",
+      "resetViewLabel": "把视角恢复成默认", "resetView": "重置视角", "flipLabel": "看另一面",
+      "flipTitle": "把视角转到另一面", "flip": "看背面", "labelsLabel": "显示零件名称",
+      "labelsTitle": "显示这一步装上的零件名称", "labels": "名称", "contextLabel": "周围零件",
+      "context": "周围零件", "ghost": "半透明", "solid": "实体", "hide": "隐藏", "playLabel": "播放组装动画",
+      "play": "播放", "apartTitle": "把零件和螺丝沿安装路线退出来看", "apart": "拆开看",
+      "seatTitle": "显示全部装好后的位置", "seat": "装到位", "progress": "组装进度",
+      "loading": "正在加载指南…",
+      "hintWide": "拖动旋转 · 右键拖动平移 · 滚轮缩放 · 点零件或线缆看名称",
+      "hintNarrow": "拖动旋转 · 双指缩放 · 点零件看名称", "panel": "步骤说明",
+      "nav": "步骤切换", "prev": "上一步", "markDone": "标记完成", "next": "下一步", "photo": "参考照片",
+      "close": "关闭"
+    },
+    "ui": {
+      "guideTitle": "组装指南", "stepCountOne": "共 {n} 步", "stepCount": "共 {n} 步", "revision": "版本 {v}",
+      "units": "单位：{v}", "frame": "坐标系：{v}", "frameDefault": "x 向前，y 向左，z 向上",
+      "doneCount": "已完成 {n} / {total}", "done": "已完成",
+      "resetConfirm": "要清除这台设备上这份指南的全部完成标记和已勾选的检查项吗？",
+      "chapterEyebrow": "第 {n} 章 · {title}", "crumbs": "第 {n} 章 / {title}", "stepOf": "第 {n} 步，共 {total} 步",
+      "beforeStep": "第 {n} 步之前", "chapterPrep": "本章准备", "prepShort": "准备",
+      "announceStep": "第 {n} 步，共 {total} 步：{title}", "announcePage": "{chapter}：{title}",
+      "aboutChapter": "本章说明", "caution": "注意", "secLinks": "详细页面",
+      "secInstalled": "本步安装", "showIn3d": "在 3D 视图中显示 {name}", "groupParts": "{label}（{n} 个零件）",
+      "secScrews": "本步螺丝", "showScrews": "在 3D 视图中显示这些螺丝", "markers": "标号 {list}",
+      "tool": "工具：{v}", "secPrepare": "准备", "secAssemble": "组装", "secPhotos": "参考照片",
+      "secCables": "本步线缆", "cableFallback": "线缆", "secChecks": "装好后检查",
+      "checksAll": "全部检查通过。点“标记完成”再往下走。", "checksSome": "已勾选 {k} / {n}",
+      "noInstructions": "这一步没有文字说明。",
+      "partsLead": "开始前把这些零件摆到桌上。先对形状，再对颜色。点一行，就能在 3D 视图里找到这个零件。",
+      "kitStatus": "{label} {n} 件", "kitGroupOne": "预装组件 {n} 个", "kitGroupMany": "预装组件 {n} 个",
+      "kitPlaced": "{n} 个零件 · 第 {step} 步装上", "kitStep": "第 {n} 步", "secKit": "本章零件",
+      "screwsLead": "开始前把每种规格的螺丝分别数进不同的小杯。3D 视图用不同颜色标出本章每颗螺丝的位置，一种颜色一种规格。",
+      "secScrewsAll": "螺丝", "stepTimes": "第 {n} 步 ×{c}", "stepListPrefix": "第 ", "stepListSep": "、",
+      "stepListSuffix": " 步", "secOtherFasteners": "其他紧固件", "secFasteners": "紧固件", "secTools": "工具",
+      "legendTitle": "线缆", "copied": "已复制 #{id}", "linkPrompt": "本页链接", "playing": "播放中",
+      "replay": "重播", "unpacking": "正在解压指南…", "building": "正在生成 3D 模型…",
+      "buildingParts": "正在生成 3D 模型… {i} / {n} 个零件", "build3dFailed": "3D 视图生成失败。",
+      "loadFailed": "指南加载失败：{msg}", "unavailable": "无法使用",
+      "noDecompress": "这个浏览器解不开指南（缺少 DecompressionStream）。请用新版 Chrome、Edge、Firefox 或 Safari 16.4 以上版本。",
+      "noData": "这个文件里没有指南数据。", "badData": "指南数据缺少零件或步骤。",
+      "noSteps": "这份指南没有步骤。",
+      "noWebgl": "这里用不了 WebGL，所以显示不了 3D 视图。文字步骤照常可用。",
+      "canvas": "当前组装步骤的 3D 模型", "otherSteps": "其他步骤",
+      "identifyParts": "认识零件", "prepareScrews": "准备螺丝和工具", "from": "起点", "to": "终点",
+      "closePart": "关闭零件标签", "roleAdd": "本步安装", "roleShow": "已装上",
+      "roleCtx": "仅作参考", "partAria": "零件：{name}", "module": "模块 {v}", "key": "编号 {v}",
+      "nut": "螺母：{v}", "washer": "垫圈：{v}", "wiringStep": "逐根看接线", "wiringAll": "显示全部接线",
+      "wiringTitle": "接线图", "wiringClose": "关闭放大的接线图",
+      "wiringLargeTitle": "把这张图铺满整个窗口", "wiringLarge": "放大查看",
+      "wiringFailed": "接线图显示失败：{msg}",
+      "wiringMissing": "这个浏览器加载不了接线图。"
+    },
+    "status": {
+      "assembled": "已装好", "printed": "已打印", "reprint": "需重新打印", "new-print": "需新打印",
+      "purchased": "需购买", "owned": "已有"
+    },
+    "prepKind": {
+      "fastener": "紧固件", "printed": "打印件", "electronic": "电子件", "tool": "工具", "cable": "线缆",
+      "other": "其他"
+    },
+    "cableKind": {
+      "dxl": "DYNAMIXEL 舵机总线", "power-20v": "12 V 电源", "power-15v": "15 V 电源", "power-7v": "7 V 电源",
+      "power-5v": "5 V 电源", "ground": "地线", "usb": "USB 线", "uart": "UART 串口线", "i2c": "I²C 线", "i2s": "I²S 音频线",
+      "speaker": "喇叭线", "csi": "摄像头 CSI 排线", "touch": "触摸传感器线", "fan": "风扇线", "antenna": "天线"
+    },
+    "screwKind": {
+      "tap": "自攻螺丝（TAP），在塑料里自己攻出螺纹", "machine": "机械螺丝",
+      "machine-nut": "机械螺丝配螺母"
+    }
+  }
+}/*UI_TEXT_END*/;
+const LANGS = Object.keys(UI_TEXT);
+let T = UI_TEXT.en;
+// The bundler writes <html lang="zh-CN"> for a zh guide, so text shown before the data is unpacked already matches.
+function setLang(lang) {
+  const code = LANGS.includes(lang) ? lang : 'en';
+  T = UI_TEXT[code];
+  if (code !== 'en' && !document.documentElement.lang.startsWith(code)) document.documentElement.lang = code === 'zh' ? 'zh-CN' : code;
+}
+setLang(String(document.documentElement.lang || 'en').slice(0, 2));
+// Fill {name} slots in a UI string in one pass, so values that contain braces are left as they are.
+const fmt = (s, vars) => String(s).replace(/\{(\w+)\}/g, (m, k) => (vars && vars[k] != null ? String(vars[k]) : m));
 const HIGHLIGHT = 0x1e7bf0;
 const ADD_GLOW = 0.14;          // steady self-glow on parts added in this step; the hue stays the print colour
 const ADD_GLOW_MOVING = 0.45;   // glow while a part travels along its approach
@@ -128,9 +283,8 @@ const ICON_WARN = ['M12 3.5l9.5 16.5h-19z', 'M12 10v4.5', 'M12 17.6v.1'];
 const ICON_CLOSE = ['M6 6l12 12M18 6L6 18'];
 const ICON_PARTS = ['M4 4h7v7H4z', 'M13 4h7v7h-7z', 'M4 13h7v7H4z', 'M13 13h7v7h-7z'];
 const ICON_SCREW = ['M8 4h8v4H8z', 'M10 8v11l2 2 2-2V8', 'M10 11h4M10 14h4M10 17h4'];
-const SCREW_KIND_TEXT = { tap: 'Self-tapping (TAP), cuts its own thread in plastic', machine: 'Machine screw', 'machine-nut': 'Machine screw with nut' };
 function screwDesc(s) {
-  return [SCREW_KIND_TEXT[String(s.kind || '').toLowerCase()] || s.kind || '', s.nut ? 'nut: ' + s.nut : '', s.washer ? 'washer: ' + s.washer : ''].filter(Boolean).join(' · ');
+  return [T.screwKind[String(s.kind || '').toLowerCase()] || s.kind || '', s.nut ? fmt(T.ui.nut, { v: s.nut }) : '', s.washer ? fmt(T.ui.washer, { v: s.washer }) : ''].filter(Boolean).join(' · ');
 }
 const pad2 = (n) => String(n).padStart(2, '0');
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -177,7 +331,7 @@ function fmtQty(q) {
 }
 function statusPill(status) {
   if (!status) return null;
-  return h('span', { class: 'status status-' + String(status).replace(/[^a-z-]/g, ''), text: STATUS_LABEL[status] || status });
+  return h('span', { class: 'status status-' + String(status).replace(/[^a-z-]/g, ''), text: T.status[status] || status });
 }
 
 /* A to-scale side view of one screw: 4 px per mm, head on the left. */
@@ -216,7 +370,7 @@ function b64ToBytes(text) {
 }
 async function gunzip(bytes) {
   if (typeof DecompressionStream !== 'function') {
-    throw new Error('This browser cannot unpack the guide (DecompressionStream missing). Use a current Chrome, Edge, Firefox or Safari 16.4+.');
+    throw new Error(T.ui.noDecompress);
   }
   const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
   return new Response(stream).arrayBuffer();
@@ -236,7 +390,7 @@ async function readPayload(id) {
 
 /* ------------------------------------------------------------ guide model */
 function prepareGuide(data) {
-  if (!data || !Array.isArray(data.parts) || !Array.isArray(data.steps)) throw new Error('Guide data is missing parts or steps.');
+  if (!data || !Array.isArray(data.parts) || !Array.isArray(data.steps)) throw new Error(T.ui.badData);
   const parts = data.parts;
   const byKey = new Map();
   const byModule = new Map();
@@ -274,7 +428,7 @@ function prepareGuide(data) {
     if (!ch) {
       problems.push('step ' + s.id + ': unknown chapter "' + s.chapter + '"');
       ch = chapterById.get('__other');
-      if (!ch) { ch = { id: '__other', title: 'Other steps', summary: '', steps: [] }; chapters.push(ch); chapterById.set(ch.id, ch); }
+      if (!ch) { ch = { id: '__other', title: T.ui.otherSteps, summary: '', steps: [] }; chapters.push(ch); chapterById.set(ch.id, ch); }
     }
     ch.steps.push(s);
   }
@@ -388,8 +542,8 @@ function prepareGuide(data) {
     }
     ch.loose = [...prep.values()];
     const intro = !inventoryOnly(ch);
-    if (intro && kit.length) pages.push({ kind: 'parts', id: 'parts-' + ch.id, chapter: ch, title: 'Identify the parts' });
-    if (intro && (ch.screws.length || ch.loose.length)) pages.push({ kind: 'screws', id: 'screws-' + ch.id, chapter: ch, title: 'Prepare screws and tools' });
+    if (intro && kit.length) pages.push({ kind: 'parts', id: 'parts-' + ch.id, chapter: ch, title: T.ui.identifyParts });
+    if (intro && (ch.screws.length || ch.loose.length)) pages.push({ kind: 'screws', id: 'screws-' + ch.id, chapter: ch, title: T.ui.prepareScrews });
     for (const s of own) { s.kind = 'step'; pages.push(s); }
   }
   pages.forEach((pg, k) => { pg.page = k; });
@@ -400,14 +554,14 @@ function prepareGuide(data) {
 /* ----------------------------------------------------------------- viewer */
 async function createViewer(container, guide, geoBuf, progress) {
   const { parts, cables } = guide;
-  const canvas = h('canvas', { 'aria-label': '3D model of the current assembly step', role: 'img', tabindex: '0' });
+  const canvas = h('canvas', { 'aria-label': T.ui.canvas, role: 'img', tabindex: '0' });
   container.prepend(canvas);
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   } catch (e) {
     canvas.remove();
-    throw new Error('WebGL is not available here, so the 3D view cannot be shown. The written steps still work.');
+    throw new Error(T.ui.noWebgl);
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0xeef1f4, 1);
@@ -1026,8 +1180,8 @@ async function createViewer(container, guide, geoBuf, progress) {
         const el = h('div', { class: 'end-label', '--dot': dot }, h('span', { class: 'end-role', text: roleText }), text || '—');
         labelsEl.append(el); hoverEls.push(el); keep.push({ el, point: pt });
       };
-      mk('From', c.from, o.ends[0]);
-      mk('To', c.to, o.ends[1]);
+      mk(T.ui.from, c.from, o.ends[0]);
+      mk(T.ui.to, c.to, o.ends[1]);
       const name = h('div', { class: 'hover-label', text: (c.label || c.id) + (c.lengthMM ? ' · ' + c.lengthMM + ' mm' : '') });
       labelsEl.append(name); hoverEls.push(name); keep.push({ el: name, point: point || o.mid });
     };
@@ -1044,12 +1198,12 @@ async function createViewer(container, guide, geoBuf, progress) {
   function openPartCard(i, point) {
     closePartCard();
     const p = parts[i];
-    const close = h('button', { class: 'pc-close', type: 'button', 'aria-label': 'Close part label', onclick: () => { closePartCard(); dirty = true; } }, icon(ICON_CLOSE));
-    const roleText = { add: 'Installed in this step', show: 'Already installed', ctx: 'Context only', off: '' }[role[i]] || '';
-    const el = h('div', { class: 'part-card', role: 'dialog', 'aria-label': 'Part: ' + (p.name || p.key) },
+    const close = h('button', { class: 'pc-close', type: 'button', 'aria-label': T.ui.closePart, onclick: () => { closePartCard(); dirty = true; } }, icon(ICON_CLOSE));
+    const roleText = { add: T.ui.roleAdd, show: T.ui.roleShow, ctx: T.ui.roleCtx, off: '' }[role[i]] || '';
+    const el = h('div', { class: 'part-card', role: 'dialog', 'aria-label': fmt(T.ui.partAria, { name: p.name || p.key }) },
       h('div', { class: 'pc-name', text: p.name || p.key }),
       h('div', { class: 'pc-row' }, h('span', { class: 'swatch', '--c': colorOf(p.color) }), statusPill(p.status), roleText ? h('span', { class: 'pc-meta', text: roleText }) : null),
-      h('div', { class: 'pc-meta', text: [p.module ? 'Module ' + p.module : '', 'Key ' + p.key].filter(Boolean).join(' · ') }),
+      h('div', { class: 'pc-meta', text: [p.module ? fmt(T.ui.module, { v: p.module }) : '', fmt(T.ui.key, { v: p.key })].filter(Boolean).join(' · ') }),
       close);
     labelsEl.parentElement.append(el);
     partCard = { el, point: point.clone(), part: i };
@@ -1389,15 +1543,16 @@ async function createViewer(container, guide, geoBuf, progress) {
 async function main() {
   const status = $('viewer-status');
   const setStatus = (text, isError) => { status.hidden = !text; status.textContent = text || ''; status.classList.toggle('error', !!isError); };
-  setStatus('Unpacking the guide…');
+  setStatus(T.ui.unpacking);
   await nextFrame();
 
   const jsonBuf = await readPayload('guide-data');
-  if (!jsonBuf) throw new Error('No guide data is embedded in this file.');
+  if (!jsonBuf) throw new Error(T.ui.noData);
   const data = JSON.parse(new TextDecoder().decode(jsonBuf));
+  setLang(data && data.lang);
   const guide = prepareGuide(data);
   if (guide.problems.length) console.warn('Guide data references that could not be resolved:\n' + guide.problems.join('\n'));
-  if (!guide.steps.length) throw new Error('The guide has no steps.');
+  if (!guide.steps.length) throw new Error(T.ui.noSteps);
 
   const storeKey = 'mdguide:' + slug(data.title);
   const done = new Set(Object.keys(store.get(storeKey + ':done', {}) || {}).filter((id) => guide.stepById.has(id)));
@@ -1409,11 +1564,12 @@ async function main() {
   const total = guide.steps.length;
 
   /* header + sidebar */
-  document.title = data.title || 'Assembly guide';
-  $('guide-title').textContent = data.title || 'Assembly guide';
-  $('guide-subtitle').textContent = [data.subtitle, data.revision ? 'Revision ' + data.revision : ''].filter(Boolean).join(' · ');
-  $('side-count').textContent = total + (total === 1 ? ' step' : ' steps');
-  $('side-foot').textContent = [data.revision ? 'Revision ' + data.revision : '', data.units ? 'Units: ' + data.units : '', 'Frame: ' + (data.frame || 'x forward, y left, z up')].filter(Boolean).join(' · ');
+  document.title = data.title || T.ui.guideTitle;
+  $('guide-title').textContent = data.title || T.ui.guideTitle;
+  $('guide-subtitle').textContent = [data.subtitle, data.revision ? fmt(T.ui.revision, { v: data.revision }) : ''].filter(Boolean).join(' · ');
+  $('side-count').textContent = fmt(total === 1 ? T.ui.stepCountOne : T.ui.stepCount, { n: total });
+  $('side-foot').textContent = [data.revision ? fmt(T.ui.revision, { v: data.revision }) : '', data.units ? fmt(T.ui.units, { v: data.units }) : '',
+    fmt(T.ui.frame, { v: data.frame || T.ui.frameDefault })].filter(Boolean).join(' · ');
 
   const toc = $('toc');
   const linkById = new Map();
@@ -1464,12 +1620,12 @@ async function main() {
       c.textContent = k + '/' + ch.steps.length;
       c.classList.toggle('complete', k === ch.steps.length);
     }
-    $('done-count').textContent = n + ' of ' + total + ' done';
+    $('done-count').textContent = fmt(T.ui.doneCount, { n, total });
     $('done-bar').style.width = (total ? (100 * n) / total : 0) + '%';
     if (current) {
       const d = done.has(current.id);
       $('done-btn').setAttribute('aria-pressed', String(d));
-      $('done-text').textContent = d ? 'Done' : 'Mark done';
+      $('done-text').textContent = d ? T.ui.done : T.page.markDone;
       const badge = document.querySelector('.step-meta .badge-done');
       if (badge) badge.hidden = !d;
     }
@@ -1477,7 +1633,7 @@ async function main() {
   function saveDone() { const o = {}; for (const id of done) o[id] = true; store.set(storeKey + ':done', o); }
   $('reset-progress').addEventListener('click', () => {
     if (!done.size && !Object.keys(ticks).length) return;
-    if (!window.confirm('Clear all done marks and ticked checks for this guide on this device?')) return;
+    if (!window.confirm(T.ui.resetConfirm)) return;
     done.clear();
     for (const k of Object.keys(ticks)) delete ticks[k];
     store.remove(storeKey + ':done'); store.remove(storeKey + ':checks');
@@ -1535,7 +1691,7 @@ async function main() {
     const pinText = w.pinText || {};
     return Object.assign({
       overviewLabels: 'always',
-      text: { step: 'Step through the wires', exitStep: 'Show all wires' },
+      text: { step: T.ui.wiringStep, exitStep: T.ui.wiringAll },
       pinLabel: (pin, m) => pinText[m.id + '.' + pin.id] || (pin.label === pin.name ? pin.label : pin.label + ' · ' + pin.name),
     }, extra);
   }
@@ -1555,8 +1711,8 @@ async function main() {
     const title = h('h2', { class: 'wo-title', id: 'wiring-large-title' });
     const holder = h('div', { class: 'wiring-holder wo-holder' });
     const caption = h('p', { class: 'wiring-caption wo-caption' });
-    const close = h('button', { class: 'nav-btn wo-close', type: 'button', 'aria-label': 'Close large wiring view',
-      onclick: () => closeBigWiring() }, icon(ICON_CLOSE), h('span', { text: 'Close' }));
+    const close = h('button', { class: 'nav-btn wo-close', type: 'button', 'aria-label': T.ui.wiringClose,
+      onclick: () => closeBigWiring() }, icon(ICON_CLOSE), h('span', { text: T.page.close }));
     const dlg = h('dialog', { class: 'wiring-large', 'aria-labelledby': 'wiring-large-title' },
       h('div', { class: 'wo-head' }, title, close),
       h('div', { class: 'wo-body' }, holder, caption));
@@ -1582,7 +1738,7 @@ async function main() {
     const o = ensureBigWiring();
     dropBigWiring();
     o.holder.textContent = '';
-    o.title.textContent = w.title || 'Wiring drawing';
+    o.title.textContent = w.title || T.ui.wiringTitle;
     o.caption.textContent = w.caption || '';
     o.caption.hidden = !w.caption;
     o.opener = opener || null;
@@ -1596,7 +1752,7 @@ async function main() {
       Object.defineProperty(opts, 'maxHeight', { enumerable: true, get: () => fitHeight(o) });
       bigWiringView = window.WiringKit.render(o.holder, JSON.parse(JSON.stringify(w.bench)), opts);
     } catch (err) {
-      o.holder.append(h('p', { class: 'empty-note', text: 'The wiring drawing failed to render: ' + (err && err.message || err) }));
+      o.holder.append(h('p', { class: 'empty-note', text: fmt(T.ui.wiringFailed, { msg: err && err.message || err }) }));
     }
     o.close.focus({ preventScroll: true });
   }
@@ -1605,11 +1761,11 @@ async function main() {
   function wiringSection(w) {
     const holder = h('div', { class: 'wiring-holder' });
     const large = window.WiringKit ? h('button', { class: 'nav-btn wiring-large-btn', type: 'button',
-      title: 'Show this drawing across the whole window', onclick: (e) => openBigWiring(w, e.currentTarget) },
-    icon(ICON_EXPAND), h('span', { text: 'Open large view' })) : null;
-    const sec = section(w.title || 'Wiring drawing', null, large, holder, w.caption ? h('p', { class: 'wiring-caption', text: w.caption }) : null);
+      title: T.ui.wiringLargeTitle, onclick: (e) => openBigWiring(w, e.currentTarget) },
+    icon(ICON_EXPAND), h('span', { text: T.ui.wiringLarge })) : null;
+    const sec = section(w.title || T.ui.wiringTitle, null, large, holder, w.caption ? h('p', { class: 'wiring-caption', text: w.caption }) : null);
     if (!window.WiringKit) {
-      holder.append(h('p', { class: 'empty-note', text: 'The wiring drawing could not load in this browser.' }));
+      holder.append(h('p', { class: 'empty-note', text: T.ui.wiringMissing }));
       return { sec, mount() {} };
     }
     return {
@@ -1619,7 +1775,7 @@ async function main() {
           wiringView = window.WiringKit.render(holder, JSON.parse(JSON.stringify(w.bench)), wiringOptions(w, { keyboard: false, maxHeight: 900 }));
         } catch (err) {
           holder.textContent = '';
-          holder.append(h('p', { class: 'empty-note', text: 'The wiring drawing failed to render: ' + (err && err.message || err) }));
+          holder.append(h('p', { class: 'empty-note', text: fmt(T.ui.wiringFailed, { msg: err && err.message || err }) }));
         }
       },
     };
@@ -1634,25 +1790,25 @@ async function main() {
     dropWiring();
     stepBody.textContent = '';
     cableButtons = new Map();
-    const badge = h('span', { class: 'badge-done', hidden: !done.has(step.id) }, icon(ICON_CHECK), 'Done');
+    const badge = h('span', { class: 'badge-done', hidden: !done.has(step.id) }, icon(ICON_CHECK), T.ui.done);
     stepBody.append(
-      h('div', { class: 'step-eyebrow', text: 'Chapter ' + pad2(ch.index + 1) + ' · ' + ch.title }),
+      h('div', { class: 'step-eyebrow', text: fmt(T.ui.chapterEyebrow, { nn: pad2(ch.index + 1), n: ch.index + 1, title: ch.title }) }),
       h('h2', { class: 'step-title', id: 'step-title', tabindex: '-1', text: step.title }),
-      h('div', { class: 'step-meta' }, h('span', { text: 'Step ' + step.number + ' of ' + total }), badge)
+      h('div', { class: 'step-meta' }, h('span', { text: fmt(T.ui.stepOf, { n: step.number, total }) }), badge)
     );
     if (step.indexInChapter === 0 && ch.summary) {
-      stepBody.append(h('div', { class: 'chapter-intro' }, h('strong', { text: 'About this chapter' }), ch.summary));
+      stepBody.append(h('div', { class: 'chapter-intro' }, h('strong', { text: T.ui.aboutChapter }), ch.summary));
     }
     const warnings = (raw.warnings || []).filter(Boolean);
     if (warnings.length) {
       stepBody.append(h('div', { class: 'callouts' }, warnings.map((w) =>
-        h('div', { class: 'callout', role: 'note' }, icon(ICON_WARN), h('div', null, h('strong', { text: 'Caution' }), h('p', { text: w }))))));
+        h('div', { class: 'callout', role: 'note' }, icon(ICON_WARN), h('div', null, h('strong', { text: T.ui.caution }), h('p', { text: w }))))));
     }
     // A step's `links`: the detailed bench pages (BRINGUP.html, Chinese, with photos and wiring views) and related guide
     // steps. External pages open in a new tab; '#step-id' links move within this guide.
     const links = (raw.links || []).filter((l) => l && l.href && l.label);
     if (links.length) {
-      stepBody.append(section('Detailed pages', String(links.length), h('ul', { class: 'link-list' }, links.map((l) =>
+      stepBody.append(section(T.ui.secLinks, String(links.length), h('ul', { class: 'link-list' }, links.map((l) =>
         h('li', null, h('a', Object.assign({ class: 'link-row', href: l.href },
           l.external ? { target: '_blank', rel: 'noopener' } : {}),
         h('span', { class: 'link-label', text: l.label + (l.external ? ' ↗' : '') }),
@@ -1660,16 +1816,16 @@ async function main() {
     }
     if (step.group) {
       const first = [...step.add][0];
-      stepBody.append(section('Installed in this step', '1',
-        h('div', { class: 'chips' }, h('button', { class: 'chip', type: 'button', title: 'Show ' + step.group.label + ' in the 3D view',
+      stepBody.append(section(T.ui.secInstalled, '1',
+        h('div', { class: 'chips' }, h('button', { class: 'chip', type: 'button', title: fmt(T.ui.showIn3d, { name: step.group.label }),
           onclick: () => { if (viewer && first !== undefined) viewer.focusPart(first); } },
         h('span', { class: 'swatch', '--c': colorOf(guide.parts[first] && guide.parts[first].color) }),
-        h('span', { class: 'chip-name', text: step.group.label + ' (' + step.add.size + ' parts)' })))));
+        h('span', { class: 'chip-name', text: fmt(T.ui.groupParts, { label: step.group.label, n: step.add.size }) })))));
     } else if (step.add.size) {
-      stepBody.append(section('Installed in this step', String(step.add.size),
+      stepBody.append(section(T.ui.secInstalled, String(step.add.size),
         h('div', { class: 'chips' }, [...step.add].map((i) => {
           const p = guide.parts[i];
-          return h('button', { class: 'chip', type: 'button', title: 'Show ' + (p.name || p.key) + ' in the 3D view',
+          return h('button', { class: 'chip', type: 'button', title: fmt(T.ui.showIn3d, { name: p.name || p.key }),
             onclick: () => { if (viewer) viewer.focusPart(i); } },
           h('span', { class: 'swatch', '--c': colorOf(p.color) }), h('span', { class: 'chip-name', text: p.name || p.key }), statusPill(p.status));
         }))));
@@ -1677,49 +1833,49 @@ async function main() {
     if (step.screws.length) {
       const bySpec = new Map();
       step.screws.forEach((k, j) => { const s = guide.screws[k]; if (!bySpec.has(s.spec)) bySpec.set(s.spec, []); bySpec.get(s.spec).push({ k, n: j + 1 }); });
-      stepBody.append(section('Screws in this step', String(step.screws.length),
+      stepBody.append(section(T.ui.secScrews, String(step.screws.length),
         h('ul', { class: 'screw-list' }, [...bySpec].map(([spec, list]) => {
           const s = guide.screws[list[0].k];
           const where = [...new Set(list.map((x) => guide.screws[x.k].where).filter(Boolean))];
           const tools = [...new Set(list.map((x) => guide.screws[x.k].tool).filter(Boolean))];
           const notes = [...new Set(list.map((x) => guide.screws[x.k].note).filter(Boolean))];
-          return h('li', null, h('button', { class: 'screw-row', type: 'button', title: 'Show these screws in the 3D view',
+          return h('li', null, h('button', { class: 'screw-row', type: 'button', title: T.ui.showScrews,
             onclick: () => { if (viewer) viewer.focusScrews(list.map((x) => x.k)); } },
           screwIcon(s, guide.specColor.get(spec)),
           h('span', { class: 'screw-main' },
             h('span', { class: 'screw-spec', text: spec }),
-            h('span', { class: 'screw-where', text: 'Markers ' + list.map((x) => x.n).join(', ') + (where.length ? ' · ' + where.join('; ') : '') }),
-            tools.length ? h('span', { class: 'screw-where', text: 'Tool: ' + tools.join('; ') }) : null,
+            h('span', { class: 'screw-where', text: fmt(T.ui.markers, { list: list.map((x) => x.n).join(', ') }) + (where.length ? ' · ' + where.join('; ') : '') }),
+            tools.length ? h('span', { class: 'screw-where', text: fmt(T.ui.tool, { v: tools.join('; ') }) }) : null,
             notes.length ? h('span', { class: 'screw-where', text: notes.join(' ') }) : null),
           h('span', { class: 'screw-qty', text: '×' + list.length })));
         }))));
     }
     const prep = (raw.prepare || []).filter((p) => p && p.item);
     if (prep.length) {
-      stepBody.append(section('Prepare', null, h('ul', { class: 'prep-list' }, prep.map((p) =>
+      stepBody.append(section(T.ui.secPrepare, null, h('ul', { class: 'prep-list' }, prep.map((p) =>
         h('li', null, h('span', { class: 'qty', text: fmtQty(p.qty) || '—' }),
           h('div', { class: 'prep-main' },
-            h('div', { class: 'prep-item' }, p.item, p.kind ? h('span', { class: 'kind-tag', text: PREP_KIND_LABEL[p.kind] || p.kind }) : null),
+            h('div', { class: 'prep-item' }, p.item, p.kind ? h('span', { class: 'kind-tag', text: T.prepKind[p.kind] || p.kind }) : null),
             p.note ? h('div', { class: 'prep-note', text: p.note }) : null))))));
     }
     const wiring = raw.wiring && raw.wiring.bench ? wiringSection(raw.wiring) : null;
     if (wiring) { stepBody.append(wiring.sec); wiring.mount(); }
     const ins = (raw.instructions || []).filter(Boolean);
-    if (ins.length) stepBody.append(section('Assemble', null, h('ol', { class: 'instructions' }, ins.map((t) => h('li', null, h('span', { text: t }))))));
+    if (ins.length) stepBody.append(section(T.ui.secAssemble, null, h('ol', { class: 'instructions' }, ins.map((t) => h('li', null, h('span', { text: t }))))));
     const imgs = (raw.images || []).filter((im) => im && typeof im.src === 'string' && /^data:image\//.test(im.src));
     if (imgs.length) {
-      stepBody.append(section('Reference photos', null, h('div', { class: 'figures' }, imgs.map((im) =>
+      stepBody.append(section(T.ui.secPhotos, null, h('div', { class: 'figures' }, imgs.map((im) =>
         h('button', { class: 'figure-btn', type: 'button', onclick: () => openLightbox(im) },
-          h('img', { src: im.src, alt: im.caption || 'Reference photo', loading: 'lazy' }), im.caption ? h('span', { text: im.caption }) : null)))));
+          h('img', { src: im.src, alt: im.caption || T.page.photo, loading: 'lazy' }), im.caption ? h('span', { text: im.caption }) : null)))));
     }
     if (step.cables.length) {
-      stepBody.append(section('Cables in this step', String(step.cables.length), h('ul', { class: 'cable-list' }, step.cables.map((ci) => {
+      stepBody.append(section(T.ui.secCables, String(step.cables.length), h('ul', { class: 'cable-list' }, step.cables.map((ci) => {
         const c = guide.cables[ci];
         const btn = h('button', { class: 'cable-btn', type: 'button', 'aria-pressed': 'false', onclick: () => { if (viewer) viewer.selectCable(ci); } },
           h('span', { class: 'cable-line', '--c': colorOf(c.color, '#444c55') }),
           h('span', { class: 'cable-main' },
             h('span', { class: 'cable-name', text: c.label || c.id }),
-            h('span', { class: 'cable-route', text: ' · ' + (CABLE_KIND_LABEL[c.kind] || c.kind || 'cable') }),
+            h('span', { class: 'cable-route', text: ' · ' + (T.cableKind[c.kind] || c.kind || T.ui.cableFallback) }),
             h('div', { class: 'cable-route', text: (c.from || '?') + ' → ' + (c.to || '?') + (c.lengthMM ? ' · ' + c.lengthMM + ' mm' : '') }),
             c.note ? h('div', { class: 'cable-note', text: c.note }) : null));
         cableButtons.set(ci, btn);
@@ -1746,17 +1902,17 @@ async function main() {
       function updateChecks() {
         const arr = Array.isArray(ticks[step.id]) ? ticks[step.id] : [];
         const k = checks.filter((_, j) => arr[j]).length;
-        statusEl.textContent = k === checks.length ? 'All checks passed. Mark the step done to continue.' : k + ' of ' + checks.length + ' checked';
+        statusEl.textContent = k === checks.length ? T.ui.checksAll : fmt(T.ui.checksSome, { k, n: checks.length });
         statusEl.classList.toggle('all', k === checks.length);
         $('done-btn').classList.toggle('ready', k === checks.length && !done.has(step.id));
       }
-      stepBody.append(section('Check before moving on', null, h('ul', { class: 'checks' }, items), statusEl));
+      stepBody.append(section(T.ui.secChecks, null, h('ul', { class: 'checks' }, items), statusEl));
       updateChecks();
     } else {
       $('done-btn').classList.remove('ready');
     }
     if (!warnings.length && !step.add.size && !prep.length && !ins.length && !checks.length && !step.cables.length) {
-      stepBody.append(h('p', { class: 'empty-note', text: 'No written instructions for this step.' }));
+      stepBody.append(h('p', { class: 'empty-note', text: T.ui.noInstructions }));
     }
   }
 
@@ -1768,12 +1924,12 @@ async function main() {
     kitButtons = [];
     const firstStep = ch.stepList[0];
     stepBody.append(
-      h('div', { class: 'step-eyebrow', text: 'Chapter ' + pad2(ch.index + 1) + ' · ' + ch.title }),
+      h('div', { class: 'step-eyebrow', text: fmt(T.ui.chapterEyebrow, { nn: pad2(ch.index + 1), n: ch.index + 1, title: ch.title }) }),
       h('h2', { class: 'step-title', id: 'step-title', tabindex: '-1', text: pg.title }),
-      h('div', { class: 'step-meta' }, h('span', { text: 'Before step ' + firstStep.number }))
+      h('div', { class: 'step-meta' }, h('span', { text: fmt(T.ui.beforeStep, { n: firstStep.number }) }))
     );
     if (ch.summary && pg === guide.pages.find((x) => x.chapter === ch)) {
-      stepBody.append(h('div', { class: 'chapter-intro' }, h('strong', { text: 'About this chapter' }), ch.summary));
+      stepBody.append(h('div', { class: 'chapter-intro' }, h('strong', { text: T.ui.aboutChapter }), ch.summary));
     }
     if (pg.kind === 'parts') {
       const counts = new Map();
@@ -1781,12 +1937,13 @@ async function main() {
         const st = e.group ? 'subassembly' : guide.parts[e.parts[0]].status || 'other';
         counts.set(st, (counts.get(st) || 0) + (e.group ? 1 : e.parts.length));
       }
-      stepBody.append(h('p', { class: 'page-lead', text: 'Put these on the desk before you start. Match the shape first, then the colour. Tap a row to find the part in the 3D view.' }),
-        h('p', { class: 'kit-summary', text: [...counts].map(([st, c]) => c + ' ' + (st === 'subassembly' ? (c === 1 ? 'subassembly' : 'subassemblies') : (STATUS_LABEL[st] || st).toLowerCase())).join(' · ') }));
+      stepBody.append(h('p', { class: 'page-lead', text: T.ui.partsLead }),
+        h('p', { class: 'kit-summary', text: [...counts].map(([st, c]) => (st === 'subassembly' ? fmt(c === 1 ? T.ui.kitGroupOne : T.ui.kitGroupMany, { n: c })
+          : fmt(T.ui.kitStatus, { n: c, label: (T.status[st] || st).toLowerCase() }))).join(' · ') }));
       const cards = ch.kit.map((e, k) => {
         const p = guide.parts[e.parts[0]];
-        const where = e.group ? e.parts.length + ' parts · placed in step ' + e.step.number : 'Step ' + e.step.number;
-        const btn = h('button', { class: 'kit-card', type: 'button', 'aria-pressed': 'false', title: 'Show ' + e.label + ' in the 3D view',
+        const where = e.group ? fmt(T.ui.kitPlaced, { n: e.parts.length, step: e.step.number }) : fmt(T.ui.kitStep, { n: e.step.number });
+        const btn = h('button', { class: 'kit-card', type: 'button', 'aria-pressed': 'false', title: fmt(T.ui.showIn3d, { name: e.label }),
           onclick: () => { for (const b of kitButtons) b.setAttribute('aria-pressed', String(b === btn)); if (viewer) viewer.focusKit(k); } },
         h('span', { class: 'kit-n', text: String(k + 1) }),
         h('span', { class: 'kit-swatch', '--c': colorOf(p.color) }),
@@ -1796,21 +1953,21 @@ async function main() {
         kitButtons.push(btn);
         return btn;
       });
-      stepBody.append(section('Parts for this chapter', String(ch.kit.length), h('div', { class: 'kit-list' }, cards)));
+      stepBody.append(section(T.ui.secKit, String(ch.kit.length), h('div', { class: 'kit-list' }, cards)));
       return;
     }
     const bySpec = new Map();
     for (const k of ch.screws) { const sp = guide.screws[k].spec; if (!bySpec.has(sp)) bySpec.set(sp, []); bySpec.get(sp).push(k); }
     if (bySpec.size) {
-      stepBody.append(h('p', { class: 'page-lead', text: 'Count each size into its own cup before you start. The 3D view shows where every screw in this chapter goes, coloured by size.' }));
-      stepBody.append(section('Screws', String(ch.screws.length), h('ul', { class: 'screw-list' }, [...bySpec].map(([spec, ks]) => {
+      stepBody.append(h('p', { class: 'page-lead', text: T.ui.screwsLead }));
+      stepBody.append(section(T.ui.secScrewsAll, String(ch.screws.length), h('ul', { class: 'screw-list' }, [...bySpec].map(([spec, ks]) => {
         const s0 = guide.screws[ks[0]];
         const perStep = new Map();
         for (const k of ks) { const st = guide.stepById.get(guide.screws[k].step); perStep.set(st, (perStep.get(st) || 0) + 1); }
         return h('li', null, h('div', { class: 'screw-row static' }, screwIcon(s0, guide.specColor.get(spec)),
           h('span', { class: 'screw-main' }, h('span', { class: 'screw-spec', text: spec }),
             screwDesc(s0) ? h('span', { class: 'screw-where', text: screwDesc(s0) }) : null,
-            h('span', { class: 'screw-steps' }, [...perStep].map(([st, c]) => h('a', { href: '#' + encodeURIComponent(st.id), text: 'Step ' + st.number + ' ×' + c })))),
+            h('span', { class: 'screw-steps' }, [...perStep].map(([st, c]) => h('a', { href: '#' + encodeURIComponent(st.id), text: fmt(T.ui.stepTimes, { n: st.number, c }) })))),
           h('span', { class: 'screw-qty', text: '×' + ks.length })));
       }))));
     }
@@ -1820,10 +1977,11 @@ async function main() {
       stepBody.append(section(title, null, h('ul', { class: 'prep-list' }, list.map((x) =>
         h('li', null, h('span', { class: 'qty', text: x.qtyText || (x.qty ? '×' + x.qty : '—') }),
           h('div', { class: 'prep-main' }, h('div', { class: 'prep-item', text: x.item }),
-            h('div', { class: 'prep-note' }, [...new Set(x.steps)].map((st, j) => [j ? ', ' : 'Step ', h('a', { href: '#' + encodeURIComponent(st.id), text: String(st.number) })]))))))));
+            h('div', { class: 'prep-note' }, T.ui.stepListPrefix || null, [...new Set(x.steps)].map((st, j) => [j ? T.ui.stepListSep : null,
+              h('a', { href: '#' + encodeURIComponent(st.id), text: String(st.number) })]), T.ui.stepListSuffix || null)))))));
     };
-    loose('fastener', bySpec.size ? 'Other fasteners' : 'Fasteners');
-    loose('tool', 'Tools');
+    loose('fastener', bySpec.size ? T.ui.secOtherFasteners : T.ui.secFasteners);
+    loose('tool', T.ui.secTools);
   }
 
   /* legend */
@@ -1835,12 +1993,12 @@ async function main() {
     const kinds = [];
     for (const ci of ids) { const k = guide.cables[ci].kind || 'other'; if (!kinds.includes(k)) kinds.push(k); }
     const given = new Map((Array.isArray(data.legend) ? data.legend : []).map((l) => [l.kind, l]));
-    legend.append(h('span', { class: 'legend-title', text: 'Cables' }));
+    legend.append(h('span', { class: 'legend-title', text: T.ui.legendTitle }));
     for (const k of kinds) {
       const g = given.get(k);
       const first = ids.map((ci) => guide.cables[ci]).find((c) => (c.kind || 'other') === k);
       legend.append(h('span', { class: 'legend-item' }, h('span', { class: 'legend-swatch', '--c': colorOf(g && g.color, colorOf(first && first.color, '#444c55')) }),
-        (g && g.label) || CABLE_KIND_LABEL[k] || k));
+        (g && g.label) || T.cableKind[k] || k));
     }
     legend.hidden = false;
   }
@@ -1848,7 +2006,7 @@ async function main() {
   /* lightbox */
   const lightbox = $('lightbox');
   function openLightbox(im) {
-    $('lightbox-img').src = im.src; $('lightbox-img').alt = im.caption || 'Reference photo';
+    $('lightbox-img').src = im.src; $('lightbox-img').alt = im.caption || T.page.photo;
     $('lightbox-caption').textContent = im.caption || '';
     if (typeof lightbox.showModal === 'function') lightbox.showModal(); else lightbox.setAttribute('open', '');
   }
@@ -1882,9 +2040,9 @@ async function main() {
       const a = linkById.get(pg.id);
       if (a && !narrowQuery.matches) a.scrollIntoView({ block: 'nearest' });
     }
-    $('crumbs').textContent = 'Chapter ' + pad2(pg.chapter.index + 1) + ' / ' + pg.chapter.title;
-    $('step-of').textContent = isStep ? 'Step ' + pg.number + ' of ' + total : 'Chapter preparation';
-    $('top-progress').textContent = isStep ? pg.number + ' / ' + total : 'Prep';
+    $('crumbs').textContent = fmt(T.ui.crumbs, { nn: pad2(pg.chapter.index + 1), n: pg.chapter.index + 1, title: pg.chapter.title });
+    $('step-of').textContent = isStep ? fmt(T.ui.stepOf, { n: pg.number, total }) : T.ui.chapterPrep;
+    $('top-progress').textContent = isStep ? pg.number + ' / ' + total : T.ui.prepShort;
     $('page-id').textContent = '#' + pg.id;
     $('prev-btn').disabled = pg.page === 0;
     $('next-btn').disabled = pg.page === guide.pages.length - 1;
@@ -1893,7 +2051,7 @@ async function main() {
     if (isStep) { renderStep(pg); renderLegend(pg); } else { dropWiring(); renderChapterPage(pg); $('legend').hidden = true; $('done-btn').classList.remove('ready'); }
     refreshProgress();
     $('panel-scroll').scrollTop = 0;
-    $('announcer').textContent = isStep ? 'Step ' + pg.number + ' of ' + total + ': ' + pg.title : pg.chapter.title + ': ' + pg.title;
+    $('announcer').textContent = isStep ? fmt(T.ui.announceStep, { n: pg.number, total, title: pg.title }) : fmt(T.ui.announcePage, { chapter: pg.chapter.title, title: pg.title });
     store.set(storeKey + ':last', pg.id);
     showInViewer(pg, { instant: !!opts.instant });
   }
@@ -1905,9 +2063,9 @@ async function main() {
   window.addEventListener('hashchange', () => { const s = stepFromHash(); if (s) go(s); });
   $('page-id').addEventListener('click', () => {
     const url = location.href.split('#')[0] + '#' + encodeURIComponent(current.id);
-    const done = () => { const b = $('page-id'); b.classList.add('copied'); b.textContent = 'copied #' + current.id; setTimeout(() => { b.classList.remove('copied'); b.textContent = '#' + current.id; }, 1500); };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt('Link to this page', url));
-    else prompt('Link to this page', url);
+    const done = () => { const b = $('page-id'); b.classList.add('copied'); b.textContent = fmt(T.ui.copied, { id: current.id }); setTimeout(() => { b.classList.remove('copied'); b.textContent = '#' + current.id; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt(T.ui.linkPrompt, url));
+    else prompt(T.ui.linkPrompt, url);
   });
   $('prev-btn').addEventListener('click', () => goPage(current.page - 1));
   $('next-btn').addEventListener('click', () => goPage(current.page + 1));
@@ -1971,22 +2129,22 @@ async function main() {
 
   /* 3D */
   try {
-    setStatus('Building the 3D model…');
+    setStatus(T.ui.building);
     await nextFrame();
     const geoBuf = await readPayload('guide-geometry');
-    viewer = await createViewer($('viewer'), guide, geoBuf, (i, n) => setStatus('Building the 3D model… ' + i + ' of ' + n + ' parts'));
+    viewer = await createViewer($('viewer'), guide, geoBuf, (i, n) => setStatus(fmt(T.ui.buildingParts, { i, n })));
     viewer.setContextMode(ctxMode);
     viewer.setPartLabels(labelsOn);
     viewer.onCableSelect((ci) => { for (const [k, b] of cableButtons) b.setAttribute('aria-pressed', String(k === ci)); });
     viewer.onProgress((p, playing) => {
       tlRange.value = String(Math.round(p * 1000));
-      tlPlay.querySelector('span').textContent = playing ? 'Playing' : p >= 1 ? 'Replay' : 'Play';
+      tlPlay.querySelector('span').textContent = playing ? T.ui.playing : p >= 1 ? T.ui.replay : T.page.play;
     });
     showInViewer(current, { instant: true });
     setStatus('');
   } catch (err) {
     console.warn(err);
-    setStatus(err && err.message ? err.message : 'The 3D view could not be built.', true);
+    setStatus(err && err.message ? err.message : T.ui.build3dFailed, true);
   }
 
   window.guideViewer = {
@@ -2007,8 +2165,8 @@ main().catch((err) => {
   console.error(err);
   const box = $('fatal');
   box.hidden = false;
-  box.textContent = 'The guide could not load: ' + (err && err.message ? err.message : String(err));
+  box.textContent = fmt(T.ui.loadFailed, { msg: err && err.message ? err.message : String(err) });
   const status = $('viewer-status');
-  if (status) { status.textContent = 'Unavailable'; status.classList.add('error'); }
+  if (status) { status.textContent = T.ui.unavailable; status.classList.add('error'); }
 });
 })();

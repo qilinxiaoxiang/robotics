@@ -36,6 +36,8 @@ HEX = re.compile(r'^#[0-9a-fA-F]{6}$')
 STATUSES = {'assembled', 'printed', 'reprint', 'new-print', 'purchased', 'owned'}
 PREP_KINDS = {'fastener', 'printed', 'electronic', 'tool', 'cable', 'other'}
 CABLE_KINDS = {'dxl', 'power-20v', 'power-15v', 'power-7v', 'power-5v', 'ground', 'usb', 'uart', 'i2c', 'i2s', 'speaker', 'csi', 'touch', 'fan', 'antenna'}   # fan, antenna: D-022 saddle leads
+LANGS = {'en', 'zh'}
+HTML_LANG = {'en': 'en', 'zh': 'zh-CN'}
 BOUNDS_TOLERANCE_MM = 1.0
 GEOMETRY_CHUNK = 1_500_000  # artifact uploads of one 2.0 MB base64 script dropped on 2026-10-20 while 1.86 MB passed
 
@@ -160,6 +162,8 @@ def validate_guide(data: dict, rep: Report) -> None:
             rep.error(f'missing {field}')
     if data.get('units') not in (None, 'mm'):
         rep.error(f'units must be "mm", got {data.get("units")!r}')
+    if 'lang' in data and data['lang'] not in LANGS:
+        rep.error(f'lang must be one of {sorted(LANGS)}, got {data["lang"]!r}')
     parts = data.get('parts') if isinstance(data.get('parts'), list) else []
     keys = {p.get('key') for p in parts if isinstance(p, dict)}
     modules = {p.get('module') for p in parts if isinstance(p, dict) and p.get('module')}
@@ -395,6 +399,46 @@ def load_three(three_dir: Path) -> tuple[str, str]:
     return script_safe(three_js, 'three.module.js'), script_safe(orbit_js, 'OrbitControls.js')
 
 
+# --------------------------------------------------------------------------- UI language
+
+def load_ui_text(app_js: str) -> dict:
+    """The viewer's UI string table: the strict-JSON block between /*UI_TEXT*/ and /*UI_TEXT_END*/ in app.js."""
+    m = re.search(r'/\*UI_TEXT\*/(.*?)/\*UI_TEXT_END\*/', app_js, re.S)
+    if not m:
+        raise SystemExit('app.js: UI_TEXT table markers not found')
+    try:
+        table = json.loads(m.group(1))
+    except ValueError as exc:
+        raise SystemExit(f'app.js: UI_TEXT table is not strict JSON ({exc})')
+    if set(table) != LANGS:
+        raise SystemExit(f'app.js: UI_TEXT languages {sorted(table)} differ from {sorted(LANGS)}')
+    return table
+
+
+def localize_template(template: str, table: dict, lang: str) -> str:
+    """Translate template.html's static UI text and set <html lang> for a non-English guide. Each `page` string must
+    appear in the template as element text (>text<) or an attribute value ("text"); English builds are untouched."""
+    if lang == 'en':
+        return template
+    en, tr = table['en'], table[lang]
+    missing = [f'{g}.{k}' for g, d in en.items() for k in d if k not in tr.get(g, {})]
+    if missing:
+        raise SystemExit(f'app.js: UI_TEXT.{lang} lacks {", ".join(missing)}')
+    out = template.replace('&hellip;', '…')
+    if out.count('<html lang="en">') != 1:
+        raise SystemExit('template.html: <html lang="en"> not found')
+    out = out.replace('<html lang="en">', f'<html lang="{HTML_LANG[lang]}">')
+    for key, text in sorted(en['page'].items(), key=lambda kv: -len(kv[1])):
+        hits = 0
+        for a, b in (('>', '<'), ('="', '"')):
+            old, new = a + html.escape(text, quote=False) + b, a + html.escape(tr['page'][key]) + b
+            hits += out.count(old)
+            out = out.replace(old, new)
+        if not hits:
+            raise SystemExit(f'template.html: UI_TEXT page.{key} "{text}" not found; keep the table in step with the template')
+    return out
+
+
 # --------------------------------------------------------------------------- packing
 
 def gzip_b64(raw: bytes) -> str:
@@ -431,7 +475,9 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
     css = (VIEWER_DIR / 'style.css').read_text(encoding='utf-8')
     if '</style' in css.lower():
         raise SystemExit('style.css: contains "</style"')
-    template = (VIEWER_DIR / 'template.html').read_text(encoding='utf-8')
+    lang = data.get('lang') if data.get('lang') in LANGS else 'en'
+    ui_text = load_ui_text(app_js)
+    template = localize_template((VIEWER_DIR / 'template.html').read_text(encoding='utf-8'), ui_text, lang)
     for marker in ('/*__STYLE__*/', '<!--__SCRIPTS__-->', '__GUIDE_BUILD__'):
         if template.count(marker) != 1:
             raise SystemExit(f'template.html: marker {marker} must appear exactly once')
@@ -448,7 +494,9 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
     build_info = f'source-sha256={data_sha}; three={EXPECTED_THREE}; parts={geo_stats["parts"]}; triangles={geo_stats["triangles"]}'
     if wk_sha:
         build_info += f'; wiring-kit={wk_sha}'
-    title = data.get('title') or 'Assembly guide'
+    if lang != 'en':
+        build_info += f'; lang={lang}'
+    title = data.get('title') or ui_text[lang]['ui']['guideTitle']
     head, tail = template.replace('__GUIDE_TITLE__', html.escape(title)).replace('__GUIDE_BUILD__', html.escape(build_info)).split('<!--__SCRIPTS__-->')
     head = head.replace('/*__STYLE__*/', css)
     if geometry_script:
@@ -492,6 +540,7 @@ def build(data_path: Path, out_path: Path, three_dir: Path, allow_errors: bool =
         'outBytes': out_path.stat().st_size,
         'sourceSha256': data_sha,
         'title': title,
+        'lang': lang,
         'revision': data.get('revision'),
         'chapters': len(data.get('chapters') or []),
         'steps': len(data.get('steps') or []),
