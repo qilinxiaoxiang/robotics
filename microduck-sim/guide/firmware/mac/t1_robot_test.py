@@ -27,7 +27,8 @@ from pathlib import Path
 A7Z = "a7z"
 MAC_DIR = "~/rt/microduck-sim/guide/firmware/mac"
 OVERLAY = "/home/radxa/rt/microduck-sim/hardware-design-20260912/whole-robot-20260912/runtime-overlay"
-MODELS = {"t1": f"{OVERLAY}/models-t1-best", "t2b": f"{OVERLAY}/models-t2b-best", "walk61": f"{OVERLAY}/models"}
+MODELS = {"t1": f"{OVERLAY}/models-t1-best", "t2b": f"{OVERLAY}/models-t2b-best", "t3b": f"{OVERLAY}/models-t3b-best",
+          "walk61": f"{OVERLAY}/models"}
 CMD = "/tmp/duck_cmd.json"
 STATE = Path(__file__).with_name(".t1_robot_test.json")   # which log the running brain writes (this Mac only)
 OUT = Path("/tmp/t1-robot")
