@@ -362,3 +362,9 @@ Tailscale since about 17:25).
 ## 2026-10-31 Charger-lead work paused (D-035)
 
 - **Shawn**: 现在换成电池了 似乎也不需要充电线拖拽了 那个可以暂停. The duck runs on the battery backpack; tether fine-tunes, tether gates and the runner's `--tether` cable guard are paused. t3bt_a stays the walking candidate, judged on the no-lead cases only; the next fine-tune drops the tether delta.
+
+## 2026-10-31 17:11-17:21 Name spotter v3, first live run
+
+- **Run** (`namecall_20261031-171120.jsonl`, v3 per ear 0.7, `--no-person`, deployed walk61 brain started by the app at 16:59, home): 3 calls, 3 answers (kw_p 0.96, 0.89, 0.86), 0 false answers. Every call ended with the face found and the gaze held about 8 s.
+- **Side**: Shawn stood front-left each time (face at +61, +36, +54 deg). The SRP (time difference) read behind-left once and right twice; the ILD (level difference) read left on all three (+7.0, +11.9, +8.4 dB). Call 2's ILD had band SNR 2.7 dB, under the 3 dB gate added 10/30, so the wrong SRP side was used and the face came only after 7.4 s; call 3's ILD overrode the SRP and was right.
+- **Open**: misses are not counted; the A7Z dropped off Tailscale about 17:21 before the life log was pulled. Next lever for side: lower the ILD SNR gate or weight the ILD by its size (an 11.9 dB difference is not a floor artefact), checked on the 10/30 21:00 and 10/31 17:11 call records before a change.
