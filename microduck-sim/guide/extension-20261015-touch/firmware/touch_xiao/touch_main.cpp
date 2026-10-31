@@ -60,6 +60,9 @@ static void onReceive(int n) {
 
 void setup() {
   Serial.begin(115200);
+  // Never block on USB: with the cable in and the host port closed, each write waited 20 x 100 ms in HWCDC, two lines
+  // in one pass outlasted WDT_S and the task watchdog restarted the XIAO (2026-10-31 probe). Lines are dropped instead.
+  Serial.setTxTimeoutMs(0);
   if (rtc_magic != MAGIC) {
     rtc_magic = MAGIC;
     rtc_line_restarts = 0;
