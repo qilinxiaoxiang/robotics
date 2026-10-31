@@ -127,19 +127,24 @@
    "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
   },
   "power": {
-   "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: the same 20 V from the 5991 -> XL4015 #2 -> header pins 2/6 (one supply for both rails). No battery on the robot.",
-   "verified_at": "2026-10-23",
-   "source": "Shawn's swap test 2026-10-22: 3 A charger -> A7Z froze 4 times within seconds of walking/standing (watchdog HOT-BOOT 16 s later, recorder rows all stop in one instant); 5 A charger -> no stop. Mechanism: the 60 W charger cuts or folds back at the walking/stand-up current peaks, both XL4015 outputs dip together, the XL330s keep running at the lower voltage while the A7Z SoC freezes | 2026-10-23 Shawn: ran today from the Xiaomi 212W power bank; battery bought and backpack in the making, not installed",
+   "value": "Battery backpack (D-010) on the robot: 2S LiPo -> XT30 switch -> OpenRB J4 directly (no converter); DFR1202 on the same switched line -> 5.0 V -> A7Z header pins 2/6 via MR30. Idle servo-reported supply 8.0-8.2 V (full pack); A7Z cold-booted on it with every self-check item passing. Walking-load behaviour on the pack not yet measured.",
+   "verified_at": "2026-10-30",
+   "source": "2026-10-30 22:17 A7Z boot b0051: kernel boot-reason COLD-BOOT, no under-voltage lines; boot self-check (/api/a7z/selfcheck) 15 servos answer at 8.0-8.2 V, IMU, touch, camera, speaker and three mics pass; Shawn: running on battery. Earlier bench history in superseded",
    "max_age_days": 14,
    "measure": "charger label and the 5991 display; walk/stand test with the A7Z flight recorder running (guide/firmware/pi/BLACKBOX.md). Servo-reported voltage (0.1 V steps, one servo per cycle) cannot see millisecond dips and is not evidence of a stable rail",
    "superseded": [
+    {
+     "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: the same 20 V from the 5991 -> XL4015 #2 -> header pins 2/6 (one supply for both rails). No battery on the robot.",
+     "until": "2026-10-30",
+     "why": "Shawn moved the robot onto the D-010 battery backpack on 2026-10-30"
+    },
     {
      "value": "5991 bench supply at 20 V -> XL4015 #1 servo rail (no-load 7.32 V, walking min about 7.0 V) and XL4015 #2 Pi 5.16 V; no battery on the robot",
      "until": "2026-10-22",
      "why": "the charger behind the 5991 decides whether the A7Z survives walking: a 20 V 3 A charger froze the A7Z four times on 10/21-10/22, a 20 V 5 A charger did not (Shawn's swap test); the 10/16 entry did not name the charger rating"
     }
    ],
-   "sources_in_use": "20 V 5 A USB-C PD wall charger, or the Xiaomi 212W HyperCharge Power Bank 25000 over USB-C PD (Shawn ran the robot from it on 2026-10-23; its PD offer to the 5991 and the voltage under walking load are not measured). Battery backpack (D-010): parts bought, frame being made, not installed."
+   "sources_in_use": "2S LiPo battery backpack (D-010). Bench path (5991 + XL4015 #1/#2 from a 20 V 5 A charger or the Xiaomi 212W bank) remains the alternative backpack."
   },
   "servo_rail_v": {
    "value": 7.0,
