@@ -103,6 +103,37 @@ class TouchJamBackoff(unittest.TestCase):
         self.assertTrue(pads.poll())
         self.assertEqual(pads.period(), ww.TOUCH_PERIOD)
 
+    def test_asks_the_xiao_to_restart_while_jammed_and_survives_a_refused_write(self):
+        """The pads must come back without a power-off (Shawn 2026-10-31): a jam triggers the XIAO restart command on
+        detection and on every failed retry, and a write the wedged bus refuses does not stop the reader."""
+        sent, state = [], {"ok": False, "refuse": False}
+
+        def read():
+            if not state["ok"]:
+                raise OSError(121, "Remote I/O error")
+            return bytes(ww.TOUCH_BLOCK)
+
+        def restart():
+            if state["refuse"]:
+                raise OSError(121, "Remote I/O error")
+            sent.append(ww.TOUCH_RESTART)
+
+        pads = ww.TouchPads(read, start=False, restart=restart)
+        for _ in range(ww.TOUCH_JAM_FAILS - 1):
+            pads.poll()
+        self.assertEqual(sent, [])  # a few failed reads are not a jam
+        pads.poll()
+        self.assertEqual(sent, [b"RS"])
+        state["refuse"] = True
+        self.assertFalse(pads.poll())  # the refused write is swallowed
+        state["refuse"] = False
+        pads.poll()
+        self.assertEqual(len(sent), 2)
+        state["ok"] = True
+        self.assertTrue(pads.poll())
+        pads.poll()
+        self.assertEqual(len(sent), 2)  # no restarts once reads work
+
 
 if __name__ == "__main__":
     unittest.main()

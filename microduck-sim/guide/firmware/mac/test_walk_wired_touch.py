@@ -127,6 +127,7 @@ class WiredRun(unittest.TestCase):
         if pads:
             patches.append(mock.patch.object(ww, "open_touch_bus",
                                              lambda path: (self.opened.append(path), pads.read)[1]))
+            patches.append(mock.patch.object(ww, "open_touch_restart", lambda path: lambda: None))
         if link:
             patches.append(mock.patch.object(twb, "make_link", link))
         if sysfs:

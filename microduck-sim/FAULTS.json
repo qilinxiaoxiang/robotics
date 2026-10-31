@@ -1,0 +1,31 @@
+{
+ "schema": "faults/1",
+ "purpose": "Recurring MicroDuck faults: every occurrence, the hypotheses and the tests that separate them, what is only a mitigation, and whether each lost function comes back by itself. Rule: ~/code/claude-config/rules/common/recurring-fault-cause-first.md. Check: python3 microduck-sim/faults_check.py (fails while a repeated fault has no confirmed cause and no test run or queued with its blocker, or while a lost function is not shown to recover after an induced fault).",
+ "faults": {
+  "touch-twi0-jam": {
+   "symptom": "The head touch bus (TWI0 2510000.twi, XIAO ESP32-S3 slave 0x2A, A7Z pins 29/31) stops answering: the XIAO acks its address, every read stalls after the first data byte (kernel 'TWI BUS error state is 0x50', 'bus state 0xf9, isn't idle', 'STOP failed') and the pads stay dead until the duck is powered off.",
+   "required_recovery": "The pads come back by themselves, with no power-off and no opening of the head. Shawn 2026-10-31: \"另外你说出现问题 触摸板自己不能恢复 只能走路 这个解决方案是完全不能接受的\" and \"为什么你会觉得这种残疾方案可以接受呢\".",
+   "occurrences": [
+    {"when": "2026-10-29 about 20:13 EDT", "boot": "unknown", "what": "every read shifted by a 0x55 filler byte from about 15 min into run app1029-195814c, with 'ACK not received' in dmesg (CURRENT-STATE a7z_touch_bus); the same fault family, not yet a jam", "running": "not recorded"},
+    {"when": "2026-10-30 about 21:29 EDT", "boot": "unknown", "what": "touch jam on the bench supply (found in the 10/31 b0052 review)", "running": "not recorded; the 21:24-21:26 brain slices before it read touch with 0 failures"},
+    {"when": "2026-10-31 16:31:29 to 16:33:35 EDT", "boot": "b0052 (up 16:26:23)", "what": "three lone STOP-failed warnings at 16:31:29, 16:32:35, 16:33:12, then 'Arbitration lost' and the lasting jam at 16:33:35; never recovered in that boot (until the battery swap, about 16:50)", "running": "brain (50 Hz touch reads), app telemetry (10 Hz touch reads), namecall.py pid 1365 (up to 409 % CPU) with arecord and aplay, a7z_cam.py, blackbox; blackbox b0052 sys.jsonl"},
+    {"when": "2026-10-31 about 17:17:40 EDT", "boot": "b0053 (up 16:58)", "what": "brain touch age 127 s at 17:19:47; about 145 kernel error lines per s at 17:20; still jammed when the A7Z went offline about 17:22", "running": "brain, app telemetry, namecall.py pid 1516 (started about 17:11:30, --no-person); 16:58-17:11 without namecall: 8 TWI0 lines, touch reads fine"}
+   ],
+   "hypotheses": [
+    {"id": "H1-signal-margin", "claim": "Weak pull-ups on a long bundle: only the chips' internal pull-ups (typical about 100 k on the A7Z, 45 k on the XIAO) on wires running from the head down the neck to the saddle (D-022) next to the amplifier I2S lines and, since 10/29, the microphone I2S lines (BCLK about 3 MHz while capturing). Edges too slow plus crosstalk corrupt a bit; the slave loses step.", "for": "the fault family appears 10/29, the day all three microphones were fitted and capture began; the jammed boots ran namecall's capture; 10/21 in the head with short wires: 611 reads, 0 lost", "against": "not measured: rise time and the bundle route are estimates", "status": "open"},
+    {"id": "H2-master-pauses", "claim": "CPU load (namecall 200-400 %) delays the TWI interrupt between bytes; a long mid-read pause trips the ESP32 slave's own timeout, which resets its state while the master continues, so the two lose step.", "for": "all recorded jams with namecall running", "against": "not measured", "status": "open"},
+    {"id": "H3-slave-firmware", "claim": "touch_main.cpp builds the reply inside onRequest with interrupts off and has no timeout or watchdog: once its TX buffer is out of step (the 10/29 filler shift) it stretches SCL on every read and never recovers.", "for": "the stall after the first data byte with the address still acked; the jam lasts until power-off; the 10/29 misalignment", "against": "explains the persistence, not the onset", "status": "open"}
+   ],
+   "tests": [
+    {"id": "T1-onset", "what": "twi0_jam_test.py on the A7Z: 5 min per condition, reads at the brain's rate: (a) nothing else running, (b) microphone capture only, (c) CPU load only, (d) both; counts TWI0 kernel errors, failed reads and wedges, and records the line state (TWI_LCR) at each wedge. H1 predicts (b) and (d) fail; H2 predicts (c) and (d); neither: firmware only.", "status": "queued", "blocker": "the A7Z has been unreachable over Tailscale since about 17:22 2026-10-31; namecall must be paused for condition (a)/(c), which is its session's call", "runs": "guide/firmware/a7z/twi0_jam_test.py, the moment ssh a7z answers"},
+    {"id": "T2-self-recovery", "what": "after flashing touch_main.cpp with the line watchdog and the RS restart, induce wedges (the T1 condition that fails, or a forced SCL hold from the A7Z GPIO) and measure the time until reads return without a power-off", "status": "queued", "blocker": "the XIAO's USB-C is reachable only with the head open (four wires to the A7Z: 3V3, GND, SCL, SDA)", "runs": "firmware/flash.sh, then twi0_jam_test.py --induce"}
+   ],
+   "mitigations": [
+    "console loglevel 1 (2026-10-31 17:12): the kernel's error lines no longer starve the servo UART; 17:20 jam: brain 47 Hz, 3 of 1500 ticks missing",
+    "walk_wired.py parser length and CRC checks (bb9e9b06), touch back-off (cc0593d7), app telemetry back-off (microduck-simulator 8439ab6)"
+   ],
+   "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "plan": "touch_main.cpp (2026-10-31): restart the I2C slave when a line is held low for 30 ms, task watchdog, RS command; walk_wired.py sends RS while the bus looks jammed. Compiled, not flashed."},
+   "cause": {"status": "unknown", "evidence": "see hypotheses; T1 separates them"}
+  }
+ }
+}
