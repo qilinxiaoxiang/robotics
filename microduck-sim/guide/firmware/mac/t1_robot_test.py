@@ -28,7 +28,7 @@ A7Z = "a7z"
 MAC_DIR = "~/rt/microduck-sim/guide/firmware/mac"
 OVERLAY = "/home/radxa/rt/microduck-sim/hardware-design-20260912/whole-robot-20260912/runtime-overlay"
 MODELS = {"t1": f"{OVERLAY}/models-t1-best", "t2b": f"{OVERLAY}/models-t2b-best", "t3b": f"{OVERLAY}/models-t3b-best",
-          "walk61": f"{OVERLAY}/models"}
+          "t3bt": f"{OVERLAY}/models-t3bt-a", "walk61": f"{OVERLAY}/models"}
 CMD = "/tmp/duck_cmd.json"
 STATE = Path(__file__).with_name(".t1_robot_test.json")   # which log the running brain writes (this Mac only)
 OUT = Path("/tmp/t1-robot")
@@ -91,7 +91,7 @@ def restart(which):
         f"echo '{{\"mode\": \"monitor\"}}' > {CMD}; cd {MAC_DIR} || exit 1; "   # not 'cd && cmd &': that backgrounds a
         # subshell which keeps ssh's output pipe open, and ssh never returns
         f"setsid nohup /home/radxa/.venvs/duck-policy/bin/python walk_wired.py --port /dev/ttyAS2 --baud 500000 --imu-bus 7 "
-        f"--supply bench --models {models} --log {log} > /home/radxa/duck-logs/duck_wired_{suf}.out 2>&1 < /dev/null &")
+        f"--models {models} --log {log} > /home/radxa/duck-logs/duck_wired_{suf}.out 2>&1 < /dev/null &")
     STATE.write_text(json.dumps(dict(log=log, models=models, started=time.strftime("%Y-%m-%dT%H:%M:%S"))))
     t0 = time.time()
     while time.time() - t0 < 25:

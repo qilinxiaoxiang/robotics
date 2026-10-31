@@ -82,5 +82,27 @@ class ReaderResync(unittest.TestCase):
         self.assertEqual(parse(junk + status(8, bytes(10))), [8])
 
 
+class TouchJamBackoff(unittest.TestCase):
+    """A jammed touch bus is tried once every TOUCH_JAM_RETRY_S, not 50 times a second (2026-10-31 16:33:35)."""
+
+    def test_backs_off_after_a_run_of_failures_and_returns_on_the_first_good_read(self):
+        state = {"ok": False}
+
+        def read():
+            if not state["ok"]:
+                raise OSError(22, "Invalid argument")
+            return bytes(ww.TOUCH_BLOCK)
+
+        pads = ww.TouchPads(read, start=False)
+        for _ in range(ww.TOUCH_JAM_FAILS - 1):
+            pads.poll()
+        self.assertEqual(pads.period(), ww.TOUCH_PERIOD)  # a few failures keep the scan rate
+        pads.poll()
+        self.assertEqual(pads.period(), ww.TOUCH_JAM_RETRY_S)
+        state["ok"] = True
+        self.assertTrue(pads.poll())
+        self.assertEqual(pads.period(), ww.TOUCH_PERIOD)
+
+
 if __name__ == "__main__":
     unittest.main()

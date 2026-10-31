@@ -316,6 +316,10 @@ class Link:
 # sequence number, then the raw counts of L1, R1, L2, R2, M (a touch raises them). On the A7Z it sits on the kernel bus
 # of TWI0, header pins 29/31 (CURRENT-STATE.json a7z_touch_bus). The Mac brain has no path to it.
 TOUCH_ADDR, TOUCH_BLOCK, TOUCH_PERIOD = 0x2A, 24, 0.02
+# A jammed TWI0 (2026-10-31 16:33:35: bus not idle, STOP failed on every transfer) makes the kernel print about 100 error
+# lines a second to the serial console, which starves the servo UART of interrupts: replies were lost and the duck fell.
+# After this many failed reads in a row the reader tries only once every TOUCH_JAM_RETRY_S until a read works again.
+TOUCH_JAM_FAILS, TOUCH_JAM_RETRY_S = 10, 5.0
 TOUCH_PADS = ("L1", "R1", "L2", "R2", "M")
 TOUCH_SATURATED = 0x3FFFFF  # touchRead's ceiling, a pad lead on metal; a count above it means a misaligned block
 I2C_SLAVE = 0x0703
@@ -364,15 +368,20 @@ class TouchPads:
         self.newest = None  # (seq, counts, perf_counter time the seq arrived), replaced whole so a reader needs no lock
         self.bad = 0  # reads that failed or were rejected
         self.failing = False
+        self.fails_in_row = 0
         if start:
             threading.Thread(target=self._run, daemon=True).start()
+
+    def period(self):
+        """Seconds to the next read: the scan rate, or TOUCH_JAM_RETRY_S while the bus looks jammed."""
+        return TOUCH_JAM_RETRY_S if self.fails_in_row >= TOUCH_JAM_FAILS else TOUCH_PERIOD
 
     def _run(self):
         pause = threading.Event()  # a wall-clock wait, never the loop's (simulated) clock
         due = _wall()
         while True:
             self.poll()
-            due = max(due + TOUCH_PERIOD, _wall())  # the read time comes out of the pause; a stuck read skips, no burst
+            due = max(due + self.period(), _wall())  # the read time comes out of the pause; a stuck read skips, no burst
             pause.wait(due - _wall())
 
     def poll(self):
@@ -390,10 +399,15 @@ class TouchPads:
                 seq, *counts = block
         if why:
             self.bad += 1
+            self.fails_in_row += 1
             if not self.failing:
                 print(f"touch: read failed ({why}); the pads keep their last block, retrying", flush=True)
                 self.failing = True
+            if self.fails_in_row == TOUCH_JAM_FAILS:
+                print(f"touch: {TOUCH_JAM_FAILS} reads in a row failed, the bus looks jammed; retrying every "
+                      f"{TOUCH_JAM_RETRY_S:.0f} s so the kernel's error lines do not starve the servo UART", flush=True)
             return False
+        self.fails_in_row = 0
         if self.failing:
             print("touch: reads back", flush=True)
             self.failing = False
