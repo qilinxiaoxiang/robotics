@@ -20,6 +20,7 @@ static const uint8_t PAD_PINS[5] = {1, 2, 3, 4, 7};
 static const uint8_t I2C_ADDR = 0x2A;
 static const uint32_t PERIOD_MS = 20;
 static const uint32_t STUCK_MS = 30;     // the A7Z master never holds a line this long; its transfer is 2.2 ms
+static const uint32_t RESTART_GAP_MS = 1000;  // a powered-off A7Z holds both lines low: restart at most once a second
 static const uint32_t WDT_S = 3;
 
 static volatile uint32_t block[6];       // seq, L1, R1, L2, R2, M
@@ -53,14 +54,15 @@ static void startSlave() {
   Wire.begin(I2C_ADDR, D4, D5, 100000);   // slave: address, SDA, SCL, clock; the core's slave init enables the internal pull-ups
 }
 
+static uint32_t stuck_since = 0;   // millis() when a line was first seen low in this stretch, 0 while the bus is idle
+
 // Time a line has been held in a stuck state; 0 while the bus looks normal.
-static uint32_t stuckSince(uint32_t now) {
-  static uint32_t since = 0;
+static uint32_t stuckFor(uint32_t now) {
   int scl = gpio_get_level((gpio_num_t)D5), sda = gpio_get_level((gpio_num_t)D4);
   bool stuck = scl == 0 || sda == 0;   // idle is both high; a byte holds either low for microseconds only
-  if (!stuck) since = 0;
-  else if (!since) since = now ? now : 1;
-  return since ? now - since : 0;
+  if (!stuck) stuck_since = 0;
+  else if (!stuck_since) stuck_since = now ? now : 1;
+  return stuck_since ? now - stuck_since : 0;
 }
 
 void setup() {
@@ -72,7 +74,7 @@ void setup() {
 }
 
 void loop() {
-  static uint32_t next = 0, seq = 0, next_note = 0;
+  static uint32_t next = 0, seq = 0, next_note = 0, last_restart = 0;
   uint32_t now = millis();
   esp_task_wdt_reset();
 
@@ -81,10 +83,12 @@ void loop() {
     Serial.flush();
     ESP.restart();
   }
-  if (stuckSince(now) > STUCK_MS) {
+  if (stuckFor(now) > STUCK_MS && (slave_restarts == 0 || now - last_restart >= RESTART_GAP_MS)) {
     Wire.end();
     startSlave();
     slave_restarts++;
+    last_restart = now;
+    stuck_since = 0;   // the new slave gets a fresh STUCK_MS before it counts as stuck again
   }
   if ((int32_t)(now - next_note) >= 0) {
     next_note = now + 1000;
