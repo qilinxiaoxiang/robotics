@@ -24,7 +24,7 @@
     "console loglevel 1 (2026-10-31 17:12): the kernel's error lines no longer starve the servo UART; 17:20 jam: brain 47 Hz, 3 of 1500 ticks missing",
     "walk_wired.py parser length and CRC checks (bb9e9b06), touch back-off (cc0593d7), app telemetry back-off (microduck-simulator 8439ab6)"
    ],
-   "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "plan": "touch_main.cpp (2026-10-31): restart the I2C slave when a line is held low for 30 ms, task watchdog, RS command; walk_wired.py sends RS while the bus looks jammed. Compiled, not flashed."},
+   "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "plan": "touch_main.cpp (2026-10-31): restart the I2C slave when a line is held low for 30 ms, task watchdog, RS command; walk_wired.py sends RS while the bus looks jammed. Flashed 2026-10-31 evening with the head open (069aec6a, hash verified): 50 Hz scan steady over 30 s on USB, no reboots, one slave restart a second while the powered-off A7Z holds the lines low. Not yet shown against a wedge: twi0_induce.py (aborted bit-banged reads, old firmware then new) runs when the A7Z is powered."},
    "cause": {"status": "unknown", "evidence": "see hypotheses; T1 separates them"}
   }
  }
