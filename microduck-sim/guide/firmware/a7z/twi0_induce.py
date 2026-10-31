@@ -111,18 +111,33 @@ def watch(seconds):
     return None, fails
 
 
+def send(cmd):
+    """Write a two-byte command to the XIAO through the kernel bus; True when it was acked."""
+    fd = os.open(kernel_bus(), os.O_RDWR)
+    try:
+        fcntl.ioctl(fd, 0x0703, ADDR)
+        return os.write(fd, cmd) == len(cmd)
+    except OSError:
+        return False
+    finally:
+        os.close(fd)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--trials", type=int, default=5)
     ap.add_argument("--watch", type=float, default=10.0, help="seconds to wait for reads to come back per trial")
+    ap.add_argument("--recovery-off", action="store_true",
+                    help="send RD first: the XIAO's line watchdog stays off 20 s, so the wedge itself shows, then lifts")
     args = ap.parse_args()
     out = {"start": time.strftime("%Y-%m-%d %H:%M:%S"), "trials": []}
-    if os.system("pgrep -f walk_wired.py >/dev/null") == 0:
+    if os.system("pgrep -f '[w]alk_wired.py' >/dev/null") == 0:  # the bracket keeps pgrep off this shell's own line
         raise SystemExit("a brain is running: stop it first (unbinding TWI0 would kill its touch handle)")
     drv = driver_dir()
     out["baseline"] = watch(2.0)
     for k in range(args.trials):
         bits = random.randint(9, 8 * 23 - 1)          # somewhere inside bytes 2..23 of the block
+        rd = send(b"RD") if args.recovery_off else None
         with open(f"{drv}/unbind", "w") as f:
             f.write(DEV)
         try:
@@ -132,7 +147,7 @@ def main():
                 f.write(DEV)
         time.sleep(0.3)
         back_s, fails = watch(args.watch)
-        out["trials"].append({"bits": bits, "addr_ack": ack, "sda_after_abort": sda_after,
+        out["trials"].append({"bits": bits, "rd_acked": rd, "addr_ack": ack, "sda_after_abort": sda_after,
                               "reads_back_after_s": back_s, "failed_reads": fails})
     out["end"] = time.strftime("%Y-%m-%d %H:%M:%S")
     print(json.dumps(out), flush=True)
