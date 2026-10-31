@@ -2098,8 +2098,11 @@ def parse_args(argv=None):
     ap.add_argument("--spotter", choices=("own", "oww", "sherpa"), default="own",
                     help="name spotter: own = ownkws.py, trained on Shawn's calls (default); oww = openWakeWord head on the "
                          "duck-ear calls (ownkws.OwwSpotter, --oww-model); sherpa = the public keyword model")
-    ap.add_argument("--oww-model", default=os.path.join(HERE, "namecall-20261029", "models", "oww", "mochi_v2.onnx"))
-    ap.add_argument("--oww-threshold", type=float, default=0.5)
+    # round 3 (2026-10-30 22:01, gated clips, tonight's calls, RoboClub room noise): held-out duck calls 21/32 against
+    # v2's 18/32, tonight's 17 live calls 11/17 against 9/17 (per-ear), but one talk event scores 0.67 and the day's
+    # 84 min of life audio one false peak: 0.7 keeps both out (results/mochi_v3_extra.json, compare_v3)
+    ap.add_argument("--oww-model", default=os.path.join(HERE, "namecall-20261029", "models", "oww", "mochi_v3.onnx"))
+    ap.add_argument("--oww-threshold", type=float, default=0.7)
     ap.add_argument("--bearing-prior", default=os.path.join(HERE, "namecall-20261029", "bearing_prior.json"),
                     help="fit_bearing.py output: the first look goes to the heard side by its look_deg (empty string = off)")
     ap.add_argument("--own-model", default=None, help="ownkws model .npz (default namecall-20261029/models/mochi_own.npz)")
