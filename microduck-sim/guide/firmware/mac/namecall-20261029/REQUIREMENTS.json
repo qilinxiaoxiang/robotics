@@ -1,6 +1,6 @@
 {
  "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
- "updated": "2026-10-30",
+ "updated": "2026-10-30 20:45",
  "requirements": [
   {
    "id": "R1",
@@ -25,16 +25,23 @@
     [
      "2026-10-30 19:33",
      "刚才又误触发了一次"
+    ],
+    [
+     "2026-10-30 20:08",
+     "最近一次开机以来的响应都可以作为反例 你看如果用的上的话"
     ]
    ],
    "acceptance": "In a live test with Shawn present, every answer follows a real call (zero answers he did not make); offline, held-out false wakes per hour on home talk reported with the operating point.",
    "tests": [],
    "evidence": [
     "results/operating_point_20261030.json: 0.9 gives 5.6-7.8 false wakes/h on life segments, 0 on held-out LibriSpeech and RoboClub talk",
-    "19:32:18 answer at 0.944 that Shawn reports false"
+    "19:32:18 answer at 0.944 that Shawn reports false",
+    "20:08 Shawn: every answer since the 19:53 restart was false; 19:57:04, 19:57:18, 20:05:11, 20:08:35 labelled negative (life_labels_1030_live.json); 20:21-20:31 E3 answered 12 more times (heartbeat kw_hits 12) with nobody calling",
+    "eightdir_20261030.json: E3 scores 0.95 on a call slice played backwards and 0.8-0.9 on each single microphone: it is a voice detector for Shawn's voice, not a word model (the mechanism of the false answers)",
+    "eightdir_20261030.json: v2 (openWakeWord round 2, models/oww/mochi_v2.onnx) gives 0 peaks >= 0.3 on either ear in the 8.7 min of Shawn moving and talking before the eight calls (20:09-20:17), where E3's live rule would have fired 3 times plus 4 repeat pairs; 0 false on 11.7 min held-out life talk, 28 min synthetic speech, 489 web negatives (results/mochi_v2*.json)"
    ],
    "status": "gap",
-   "gap": "Live false answers at 10:58 (five) and 19:21:08 (score 0.98, segment life/20261030/192104_427.wav about 2.5-4.5 s, labelled as a negative in life_labels_1030_live.json for the next training). Shawn's own nearby talk is the main false-wake source."
+   "gap": "E3 (deployed) answers Shawn's ordinary talk: 4 false answers 19:57-20:08 and 12 in 20:21-20:31. v2 shows zero false wakes on every held-out set and on tonight's 8.7 min pre-call stretch; not yet live (A7Z offline from 20:31)."
   },
   {
    "id": "R2",
@@ -51,6 +58,10 @@
     [
      "2026-10-30 19:34",
      "但我刚实际叫了两声 却一点反应也没有"
+    ],
+    [
+     "2026-10-30 20:26",
+     "v2模型家里的14声都只有8声明确不行啊 家里那么安静都听不清 还有屁用 robobluc比较嘈杂听不清也就算了"
     ]
    ],
    "acceptance": "Live: the first call of each attempt is answered, the answer starts within 1 s of the call's end; offline: recall on held-out calls at the operating point.",
@@ -60,10 +71,13 @@
    "evidence": [
     "18:53 test: two calls scored 0.78-0.83 under the 0.9 threshold, first answer 7.6 s after the first call",
     "results/operating_point_20261030.json: two-stage repeat rule (0.9, or two peaks >= 0.7 started 1-5 s apart) answers about 2 s after the first call at 4 of 5 offsets",
-    "19:33:39 and 19:33:41 calls scored 0.73 and 0.82, 1.9 s apart, no answer at 0.9 alone"
+    "19:33:39 and 19:33:41 calls scored 0.73 and 0.82, 1.9 s apart, no answer at 0.9 alone",
+    "results/mochi_v2_extra.json: 8/14 on the live_141734 held-out spans, flat from 0.5 to 0.85 and under +0..+18 dB gain; five of the six misses are E3-made spans of 0.2-0.4 s (fragments, not the word), so that set does not measure recall on calls",
+    "eightdir_20261030.json: on the eight certain calls (2 m, all directions, 20:17:59-20:19:21) v2 ear mix 7/8 (the +135 call 0.01 on the mix, 0.87 on the right ear), max over the two ears 8/8; E3 8/8 (and 24 runs >= 0.7 on the talk before them)",
+    "the 15 'camera-confirmed' calls of 18:53-19:47 score 0.00 under v2 and under the official openwakeword runtime: they were E3 triggers confirmed only by a face in view, not verified calls; not a test set"
    ],
    "status": "built",
-   "gap": "Repeat rule (0.9, or two runs >= 0.7 started 1-5 s apart) installed 19:35; not yet seen live. Single calls under 0.9 stay unanswered: the spotter learned from 42 real calls by one speaker."
+   "gap": "Acceptance needs a live run with v2 (two-ear max) and Shawn calling: every clear home call answered on the first call. Offline the only certain set is tonight's eight calls (8/8 with the two-ear max). A7Z offline since 20:31; the two-ear scoring is being added to OwwSpotter."
   },
   {
    "id": "R3",
@@ -82,10 +96,12 @@
     "test_body_turn_stops_on_the_gyro_not_the_clock"
    ],
    "evidence": [
-    "bearing_seen labels collect the true bearing of each call for the direction error"
+    "bearing_seen labels collect the true bearing of each call for the direction error",
+    "eightdir_20261030.json (one call per 45 deg at 2 m): live localiser side right on 5 of 7 side calls, magnitude wrong; whole-word 1.5-6 kHz lags within one 48 kHz sample in every direction (no direction at this level); the 2.5-4 kHz left-right level difference gives the side on 6 of 6 side calls (+3.3, +3.4, +1.2 dB at +45/+90/+135; -0.9, -2.1, -0.4 at -45/-90/-135)",
+    "bearing_prior.json (19:48, 15 pairs): side 15/15, magnitude uncorrelated; the pairs after 19:53 are E3 false answers and must be excluded from refits"
    ],
    "status": "built",
-   "gap": "No live readback of direction error since front-first search was installed."
+   "gap": "The head's own level/lag table has one call per direction; a second eight-direction round (three calls each) is needed to validate it before it replaces the side*35 deg prior. First-wavefront (precedence) lags are not usable at 2 m (no clean onset on 7 of 8 calls)."
   },
   {
    "id": "R4",

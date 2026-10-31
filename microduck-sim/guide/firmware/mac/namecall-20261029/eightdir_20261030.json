@@ -1,0 +1,34 @@
+{
+ "recording": "a7z:~/duck-logs/calls_200910.wav (48 kHz, 4 ch S32, 714 s, 20:09:10-20:21:04 EDT; copy in the MacBook session scratchpad, to go to recordings/ with the next offload)",
+ "shawn_words": "我刚才录了8个方向的声音 鸭子在地上 我也站地上 我186cm高 让鸭子每45度顺时针转了一圈",
+ "setup": "Shawn stood still on the floor (186 cm), the duck stood on the floor with namecall stopped (record_calls.sh), the duck was turned 45 deg clockwise between calls; one call per direction, about 10 s apart. Distance not yet stated (assumed 2 m: elevation about 37 deg). Bearing in the duck's frame (positive = left, as MICS_MM) runs 0, +45, +90, +135, 180, -135, -90, -45 if the first call was face on and the duck turned clockwise seen from above; Shawn has not yet confirmed the first direction.",
+ "purpose": "held-out test set for the name spotter (never training) and the first labelled directions for the head's own lag/level table (fit from bearing_seen stays separate)",
+ "calls": [
+  {"t_s": 529.4, "clock": "20:17:59", "bearing_deg": 0, "live_az_deg": -67.2, "e3_p": 1.0, "v2_mix": 0.96, "v2_left": 0.94, "v2_right": 0.95},
+  {"t_s": 552.9, "clock": "20:18:22", "bearing_deg": 45, "live_az_deg": 69.6, "e3_p": 1.0, "v2_mix": 0.97, "v2_left": 0.98, "v2_right": 0.57},
+  {"t_s": 562.6, "clock": "20:18:32", "bearing_deg": 90, "live_az_deg": 19.1, "e3_p": 1.0, "v2_mix": 0.98, "v2_left": 0.97, "v2_right": 0.97},
+  {"t_s": 573.9, "clock": "20:18:43", "bearing_deg": 135, "live_az_deg": 146.7, "e3_p": 1.0, "v2_mix": 0.01, "v2_left": 0.07, "v2_right": 0.87},
+  {"t_s": 582.6, "clock": "20:18:52", "bearing_deg": 180, "live_az_deg": -176.5, "e3_p": 1.0, "v2_mix": 0.98, "v2_left": 0.98, "v2_right": 0.98},
+  {"t_s": 593.1, "clock": "20:19:03", "bearing_deg": -135, "live_az_deg": 112.0, "e3_p": 1.0, "v2_mix": 0.92, "v2_left": 0.78, "v2_right": 0.96},
+  {"t_s": 602.5, "clock": "20:19:12", "bearing_deg": -90, "live_az_deg": 68.7, "e3_p": 1.0, "v2_mix": 0.97, "v2_left": 0.49, "v2_right": 0.96},
+  {"t_s": 611.6, "clock": "20:19:21", "bearing_deg": -45, "live_az_deg": -69.7, "e3_p": 1.0, "v2_mix": 0.98, "v2_left": 0.98, "v2_right": 0.98}
+ ],
+ "before_the_calls_0_to_520_s": {
+  "what": "about 8.7 min of Shawn moving about and talking before the first call (20:09:10-20:17:50); whether he called the duck in there is not yet confirmed",
+  "e3_live_rule_would_fire": {"single_hits_p_ge_0.9": [156.6, 167.8, 310.5], "repeat_pairs_0.7": [[233.9, 237.4], [326.6, 328.4], [328.4, 331.1], [375.8, 377.2]], "runs_ge_0.7": 24},
+  "v2_peaks_ge_0.3_on_the_ear_mix": 0
+ },
+ "spotter_findings": {
+  "e3_is_a_voice_detector": "E3 scores 0.95 on a confirmed-call slice played backwards (c04 reversed; raw 0.98), and 0.79-0.94 on each single microphone: it keys on Shawn's voice spectrum, not on the word. That is the mechanism behind 'I call and it does not answer, I talk and it answers'.",
+  "v2_is_a_word_model": "v2 (openWakeWord round 2) on the eight certain calls: ear mix 7/8 (the +135 call 0.01 on the mix but 0.87 on the right ear; max over the two ears 8/8), 0 peaks >= 0.3 in the 8.7 min before the calls, 0 false on all held-out sets. The '8/14' figure came from E3-made spans of 0.2-0.4 s (fragments, not words): five of the six misses are those fragments; gain made no difference (+0..+18 dB).",
+  "confirmed_15_calls_doubt": "the 15 'camera-confirmed' calls of 18:53-19:47 were triggered by E3 and confirmed only by a face in view afterwards; v2 and the official openwakeword runtime score 0.00 on all 15, so they are not verified calls and cannot serve as a test set until listened to."
+ },
+ "direction_findings": {
+  "live_localiser": "side right on 5 of 7 side calls, magnitude wrong (as every night)",
+  "whole_word_lags_1500_6000": "all within +-27 us (one 48 kHz sample) in every direction: at 2 m with about 8 dB over the room in this band the cross-correlation carries no direction",
+  "ild_2500_4000_LR_db": {"0": 1.1, "45": 3.3, "90": 3.4, "135": 1.2, "180": 2.8, "-135": -0.4, "-90": -2.1, "-45": -0.9},
+  "ild_note": "the 2.5-4 kHz left-right level difference gives the side on 6 of 6 side calls (and about +1 to +3 dB in front and behind, a right-ear offset to calibrate out); one call per direction, so no leave-one-out yet; a second round with three calls per direction validates the table",
+  "onset_first_wavefront": "no clean onset found on 7 of 8 calls at this level (the 'Mo' starts softly); precedence-window lags are not usable at 2 m"
+ },
+ "open_questions_for_shawn": ["first call face on, then duck turned clockwise seen from above?", "distance?", "any call before 20:17:59 (the first 8.7 min)?"]
+}

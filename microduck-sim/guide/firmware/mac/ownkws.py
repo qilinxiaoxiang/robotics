@@ -235,10 +235,13 @@ class OwwSpotter(OwnSpotter):
     (melspectrogram.onnx -> 32-band mel every 10 ms, /10 + 2; embedding_model.onnx -> 96 features per 80 ms from the
     last 76 mel frames) and a small head trained on the duck-ear calls, web and TTS "mochi" against 2000 h of speech
     (namecall-20261029/oww/run_v2.sh). Same streaming arithmetic as openwakeword.utils.AudioFeatures, in
-    onnxruntime only; same feed() / decide() contract as OwnSpotter, scored every 80 ms."""
+    onnxruntime only; same feed() / decide() contract as OwnSpotter, scored every 80 ms.
+    Each ear is its own stream and the score is the larger of the two (per_ear=True): on the eight known-direction
+    calls of 2026-10-30 20:18 the ear mix missed the call from +135 deg (0.01) that the right ear alone heard at 0.87
+    (namecall-20261029/eightdir_20261030.json); the mix of both ears is the single stream when per_ear is False."""
 
     def __init__(self, head_path, ears=(0, 1), threshold=0.5, gain_db=0.0, repeat_threshold=REPEAT_THRESHOLD,
-                 repeat_gap=REPEAT_GAP_S, front_dir=OWW_DIR, threads=1):
+                 repeat_gap=REPEAT_GAP_S, front_dir=OWW_DIR, threads=1, per_ear=True):
         import namecall as nc
         import onnxruntime as ort
         self.nc = nc
@@ -257,15 +260,23 @@ class OwwSpotter(OwnSpotter):
         self.repeats = 0
         self.gain = 10 ** (gain_db / 20.0)
         self.model_dir, self.keywords_file, self.model = head_path, None, None
+        self.per_ear = bool(per_ear) and len(self.ears) > 1
         self.hits = 0
         self.reset()
 
+    class _Stream:
+        """One microphone's streaming state: decimator, pending 16 kHz samples, mel context, mel and feature rows."""
+
+        def __init__(self, dec):
+            self.dec = dec
+            self.pending = np.zeros(0, np.float32)
+            self.raw = np.zeros(OWW_MEL_CTX, np.float32)          # the tail kept for the mel model's context
+            self.melbuf = np.ones((76, 32), np.float32)
+            self.feats = np.zeros((0, 96), np.float32)
+
     def reset(self):
-        self.dec = self.nc.Decimate3()
-        self.pending = np.zeros(0, np.float32)
-        self.raw = np.zeros(OWW_MEL_CTX, np.float32)            # the tail kept for the mel model's context
-        self.melbuf = np.ones((76, 32), np.float32)
-        self.feats = np.zeros((0, 96), np.float32)
+        n = len(self.ears) if self.per_ear else 1
+        self.streams = [self._Stream(self.nc.Decimate3()) for _ in range(n)]
         self.last_hit_t = -1e9
         self.last_p = 0.0
         self.runs = []
@@ -273,31 +284,46 @@ class OwwSpotter(OwnSpotter):
         # like AudioFeatures: a start-up buffer from 4 s of low noise, so the first real frames have a full history
         noise = (np.random.default_rng(0).integers(-1000, 1000, 4 * FS16) / 32768.0).astype(np.float32)
         for k in range(0, len(noise) - OWW_FRAME + 1, OWW_FRAME):
-            self._frame(noise[k:k + OWW_FRAME])
+            for st in self.streams:
+                self._frame(noise[k:k + OWW_FRAME], st)
 
-    def _frame(self, y16):
-        """One 80 ms frame of 16 kHz float audio -> one new 96-feature row."""
-        x = np.concatenate([self.raw[-OWW_MEL_CTX:], y16]) * 32767.0
+    @property
+    def feats(self):
+        return self.streams[0].feats
+
+    def _frame(self, y16, st=None):
+        """One 80 ms frame of 16 kHz float audio -> one new 96-feature row of the stream (the first by default)."""
+        st = self.streams[0] if st is None else st
+        x = np.concatenate([st.raw[-OWW_MEL_CTX:], y16]) * 32767.0
         spec = np.squeeze(self.mel.run(None, {self.mel_in: x[None, :].astype(np.float32)})[0]) / 10.0 + 2.0
-        self.melbuf = np.vstack([self.melbuf, spec.astype(np.float32)])[-970:]
-        e = self.emb.run(None, {self.emb_in: self.melbuf[-76:][None, :, :, None].astype(np.float32)})[0]
-        self.feats = np.vstack([self.feats, e.reshape(1, 96)])[-120:]
-        self.raw = y16[-OWW_MEL_CTX:] if len(y16) >= OWW_MEL_CTX else np.concatenate([self.raw, y16])[-OWW_MEL_CTX:]
+        st.melbuf = np.vstack([st.melbuf, spec.astype(np.float32)])[-970:]
+        e = self.emb.run(None, {self.emb_in: st.melbuf[-76:][None, :, :, None].astype(np.float32)})[0]
+        st.feats = np.vstack([st.feats, e.reshape(1, 96)])[-120:]
+        st.raw = y16[-OWW_MEL_CTX:] if len(y16) >= OWW_MEL_CTX else np.concatenate([st.raw, y16])[-OWW_MEL_CTX:]
 
-    def score(self):
-        return float(np.squeeze(self.head.run(None, {self.head_in: self.feats[-self.n_feat:][None]})[0]))
+    def score(self, st=None):
+        """P(mochi) of one stream, or the largest over the ear streams when none is given."""
+        sts = self.streams if st is None else [st]
+        return max(float(np.squeeze(self.head.run(None, {self.head_in: s.feats[-self.n_feat:][None]})[0])) for s in sts)
 
     def feed(self, t, block, silent=False):
-        x = block[:, self.ears].mean(axis=1) if block.ndim == 2 else block
-        y = self.dec(x) * self.gain
-        if silent:
-            y = np.zeros_like(y)
-        self.pending = np.concatenate([self.pending, y.astype(np.float32)])
-        if len(self.pending) < OWW_FRAME:
+        if block.ndim == 2:
+            chans = [block[:, e] for e in self.ears] if self.per_ear else [block[:, self.ears].mean(axis=1)]
+        else:
+            chans = [block] * len(self.streams)
+        framed = False
+        for st, x in zip(self.streams, chans):
+            y = st.dec(x) * self.gain
+            if silent:
+                y = np.zeros_like(y)
+            st.pending = np.concatenate([st.pending, y.astype(np.float32)])
+            if len(st.pending) >= OWW_FRAME:
+                self._frame(st.pending[:OWW_FRAME], st)
+                st.pending = st.pending[OWW_FRAME:]
+                framed = True
+        if not framed:
             return None
-        self._frame(self.pending[:OWW_FRAME])
-        self.pending = self.pending[OWW_FRAME:]
-        t_end = t + len(x) / self.nc.FS
+        t_end = t + len(chans[0]) / self.nc.FS
         if t_end - self.last_hit_t < REFRACTORY_S:
             return None
         return self.decide(self.score(), t_end)
