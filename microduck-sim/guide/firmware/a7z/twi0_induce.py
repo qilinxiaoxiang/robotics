@@ -63,6 +63,47 @@ def kernel_bus():
     return None
 
 
+def paused_read(bits, pause_ms, glitch=None):
+    """START, address + read, `bits` data bits, SCL held low `pause_ms` (a master whose interrupt runs late), then the
+    rest of the 24-byte block with ACKs, NACK on the last byte and STOP. Returns (address acked, bytes read).
+    glitch "scl": at that bit one extra SCL pulse the master does not count (a noise edge on a slow line), so the slave
+    runs one bit ahead; "sda": a low pulse on SDA while SCL is high (a false START then STOP for the slave)."""
+    chip = os.open(CHIP, os.O_RDWR)
+    try:
+        sda, scl = line(chip, SDA), line(chip, SCL)
+    finally:
+        os.close(chip)
+    data, cur = bytearray(), 0
+
+    def rise():                                        # release SCL and honour the slave's clock stretching
+        put(scl, 1)
+        t = time.monotonic()
+        while not get(scl) and time.monotonic() - t < 1.0:
+            pass
+    try:
+        put(sda, 1); put(scl, 1); time.sleep(0.001)
+        put(sda, 0); put(scl, 0)
+        b = (ADDR << 1) | 1
+        for i in range(8):
+            put(sda, (b >> (7 - i)) & 1); rise(); put(scl, 0)
+        put(sda, 1); rise(); ack = get(sda) == 0; put(scl, 0)
+        for n in range(24 * 8):
+            if n == bits:
+                time.sleep(pause_ms / 1000)            # SCL low the whole pause
+                if glitch == "scl":
+                    rise(); put(scl, 0)
+                elif glitch == "sda":
+                    rise(); put(sda, 0); put(sda, 1); put(scl, 0)
+            rise(); cur = (cur << 1) | get(sda); put(scl, 0)
+            if n % 8 == 7:
+                data.append(cur); cur = 0
+                put(sda, 1 if n == 24 * 8 - 1 else 0); rise(); put(scl, 0); put(sda, 1)
+        put(sda, 0); rise(); put(sda, 1)               # STOP
+    finally:
+        os.close(sda); os.close(scl)
+    return ack, bytes(data)
+
+
 def aborted_read(bits):
     """START, address + read, `bits` data bits clocked in, then stop clocking with SCL high and no STOP."""
     chip = os.open(CHIP, os.O_RDWR)
@@ -129,6 +170,9 @@ def main():
     ap.add_argument("--watch", type=float, default=10.0, help="seconds to wait for reads to come back per trial")
     ap.add_argument("--recovery-off", action="store_true",
                     help="send RD first: the XIAO's line watchdog stays off 20 s, so the wedge itself shows, then lifts")
+    ap.add_argument("--pause-ms", type=float, default=None,
+                    help="instead of abandoning the read, pause it this long with SCL low, then finish it")
+    ap.add_argument("--glitch", choices=("scl", "sda"), default=None, help="with --pause-ms: inject this noise edge")
     args = ap.parse_args()
     out = {"start": time.strftime("%Y-%m-%d %H:%M:%S"), "trials": []}
     if os.system("pgrep -f '[w]alk_wired.py' >/dev/null") == 0:  # the bracket keeps pgrep off this shell's own line
@@ -141,7 +185,11 @@ def main():
         with open(f"{drv}/unbind", "w") as f:
             f.write(DEV)
         try:
-            ack, sda_after = aborted_read(bits)
+            if args.pause_ms is None:
+                ack, sda_after = aborted_read(bits)
+            else:
+                ack, got = paused_read(bits, args.pause_ms, args.glitch)
+                sda_after = got.hex()
         finally:
             with open(f"{drv}/bind", "w") as f:
                 f.write(DEV)

@@ -13,14 +13,16 @@ def problems(fault):
     n = len(fault.get("occurrences", []))
     tests = fault.get("tests", [])
     if n >= 2 and fault.get("cause", {}).get("status") != "confirmed":
-        live = [t for t in tests if t.get("status") == "run" or (t.get("status") == "queued" and t.get("blocker"))]
+        live = [t for t in tests if t.get("status") in ("run", "running")
+                or (t.get("status") == "queued" and t.get("blocker"))]
         if not live:
             out.append(f"seen {n} times, cause not confirmed, and no test run or queued with a named blocker")
         else:
             out.append(f"seen {n} times, cause not confirmed; open tests: "
                        + "; ".join(f"{t['id']} ({t['status']}, blocker: {t.get('blocker', '-')})" for t in live))
     rec = fault.get("recovery", {})
-    if fault.get("required_recovery") and not (rec.get("self_recovers") and rec.get("verified_by_induced_fault")):
+    if fault.get("required_recovery") and not (rec.get("self_recovers") is True
+                                               and rec.get("verified_by_induced_fault") is True):
         out.append("the lost function does not yet come back by itself after an induced fault")
     return out
 
