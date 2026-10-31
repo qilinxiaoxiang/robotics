@@ -35,13 +35,18 @@
    ]
   },
   "servo_read_drop_fraction": {
-   "value": 0.04,
+   "value": 0.17,
    "meaning": "Fraction of 20 ms walk-mode ticks without a fresh servo sync read while the legs step (the policy skips those ticks and the servos hold the last goals).",
-   "verified_at": "2026-10-17",
-   "source": "walk_wired logs /tmp/duck_wired_log_1016{m..zb}.jsonl and 1017a.jsonl: 3.3-5.2 % of stepping-window ticks have missing servos (1017a 4.6 %, 152 ticks); recounted 2026-10-17 after the probe fix",
+   "verified_at": "2026-10-31",
+   "source": "2026-10-31 A7Z brain logs (slices /tmp/t1-robot/163444.jsonl, 163517.jsonl on the Mac): walk 1 16:34:36 17 % stale reads, walk 2 16:35:17 78 % (most after the fall began); standing afterwards 12-22 % (walk61 brain at 16:37 included). Mostly whole frames (all 14 servos missing at once); sync read p50 18.4 ms instead of 9.3, max 48-75 ms; the brain's own compute per tick 6-7 ms, unchanged. First walks on the battery backpack (power). Before: 10/30 21:24-21:26 walks 0-3 %, read p50 9.3 ms, and 10/31 16:31 stand 1 %. A fault state under investigation, not a steady value.",
    "measure": "the probe reads the newest /tmp/duck_wired_log_*.jsonl: walk-mode ticks within 0.3 s of a tick whose leg joints move faster than 0.5 rad/s, counting fresh=False or missing servos",
    "tolerance": 0.02,
    "superseded": [
+    {
+     "value": 0.04,
+     "until": "2026-10-31",
+     "why": "2026-10-31 walks on the battery backpack: 17 % and 78 % stale reads, whole-frame misses; 1016/1017 bench logs had 3.3-5.2 %"
+    },
     {
      "value": 0.08,
      "until": "2026-10-16",
@@ -71,6 +76,13 @@
      "why": "Shawn removed the boot-to-stand start; duck-brain inactive and ~/duck-brain.sh absent on 2026-10-23"
     }
    ]
+  },
+  "a7z_background_processes": {
+   "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; namecall.py (the name-call session, face and person detectors, about 220 % CPU) when that test runs.",
+   "verified_at": "2026-10-31",
+   "source": "2026-10-31 16:35-16:39 EDT on the A7Z (boot b0052): ps with cgroups (duck-camera.service pid 931, duck-blackbox.service pid 322, app ssh session pid 997 --mjpeg, namecall pid 1365 until 16:35:04), systemctl list-unit-files 'duck*', blackbox sys.jsonl CPU rows; a7z_cam.py docstring (one process owns the camera); commits d771dc14 (camera on from boot, 2026-10-26) and f24e6549 (flight recorder).",
+   "max_age_days": 14,
+   "measure": "ssh a7z 'systemctl list-units --no-pager \"duck*\"; ps -eo pid,ni,pcpu,etime,args --sort=-pcpu | head -8'"
   },
   "a7z_brain_memory_lock": {
    "value": "walk_wired.py locks its pages in RAM at start (mlockall MCL_CURRENT|MCL_FUTURE|MCL_ONFAULT; radxa memlock unlimited via /etc/security/limits.d/90-duck-memlock.conf) and writes its tick log from its own thread. Under a whole-log json load on the A7Z (MemAvailable down to 168 MB, kswapd busy, iowait up to 64 %) the brain in zero-command walk had 0 major faults and a longest tick of 33.5 ms over 4306 ticks; the unlocked brain stalled 348 ms on a page fault under the same kind of load on 2026-10-30 and fell",
