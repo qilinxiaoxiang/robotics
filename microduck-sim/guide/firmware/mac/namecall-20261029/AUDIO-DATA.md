@@ -27,6 +27,19 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
 - **live_nc_145512.raw** (10/30 14:55, home, 185 s, namecall running): calls in 20-60 and 95-125 s; 125-185 s
   Shawn only stood up and walked (the duck answered five times, all false). `mine_life.py` finds ten sure calls at
   97.9-120.7 s.
+- **calls_200910.wav** (10/30 20:09-20:21, home, 714 s, 48 kHz 4 ch S32, `record_calls.sh`): the eight-direction
+  protocol recording, `eightdir_20261030.json`. Shawn stood 2 m away on the floor; the duck was turned 45 deg clockwise
+  between calls: one call each at 529.4, 552.9, 562.6, 573.9, 582.6, 593.1, 602.5, 611.6 s = bearings 0, +45, +90, +135,
+  180, -135, -90, -45 (positive = left). 0-520 s is Shawn talking and moving with no call (confirmed): a certified
+  negative stretch. Held out from training (the spotter's only certain home test set). Mac mini `data/calls_200910.wav`
+  and `mono16v2/calls_200910*.npy`.
+- **Life log 10/30 21:00-21:10** (`recordings/life/20261030/2100*-2110*.wav`, 13 segments, namecall running with v2):
+  the first live run of the word spotter. `results/events_2100_20261030.json`: 20 voice events, 17 calls and 3 talk by
+  Whisper transcript; 9 calls scored >= 0.5, 8 quiet calls 0.00-0.20 (the training material round 3 adds). Mac mini
+  `mono16v2/life_20261030_21*.npy`.
+- **Clip gate** (`oww/clip_gate.py`, `results/clip_gate_20261030.json`): from round 3 on every positive clip passes
+  it (Whisper reads the name in the window, or the recording is a protocol one; the clip is the 0.3-1.0 s envelope burst,
+  else the labelled word length). Round 2's live_141734 spans were E3 energy events, 31 of 56 fragments.
 
 ## Duck recordings without the name
 

@@ -50,6 +50,9 @@ MIN_S, MAX_S = 0.30, 1.0
 BURST_DB = 6.0                        # a frame is part of the word this far over the window's floor in either band
 WORD_S = 0.65                         # the labelled word length (mochi_labels.json) when the envelope cannot find it
 PROTOCOL = {"calls_200910", "calls_201411", "calls_221619", "live_073135", "live_141734"}
+FIXED_OK = {"calls_200910", "calls_201411", "calls_221619"}   # 2 m protocol calls: the labelled word start stands in
+                                                              # when the envelope finds no burst; live_141734's spans
+                                                              # are E3 fragments and must show a whole-word burst
 NAME = re.compile(r"(mo+t?ch?i+e*|mo+ji|mo+shi|mo+ti|mo+cci|ma+c?chi|mochee|muchi|モチ|もち|マチ|マジ|まち|まじ|마치|모치|мочи|мати|моти|machi|mowchi)", re.I)
 NFFT, HOP = 512, 160
 
@@ -152,6 +155,10 @@ def candidates():
     def t0_of(pth):
         b = os.path.basename(pth)[:10]
         return int(b[:2]) * 3600 + int(b[2:4]) * 60 + int(b[4:6]) + int(b[7:10]) / 1000
+
+    def dur_of(pth):
+        with wave.open(pth) as w:
+            return w.getnframes() / w.getframerate()
     for e in ev:
         if e["kind"] != "call":
             continue
@@ -159,7 +166,7 @@ def candidates():
         t = int(h) * 3600 + int(mnt) * 60 + float(s)
         for pth in segs:
             t0 = t0_of(pth)
-            if t0 <= t < t0 + 61:
+            if t0 <= t < t0 + dur_of(pth):
                 nm = "life_20261030_" + os.path.basename(pth)[:-4]
                 out.setdefault(nm, (pth, []))[1].append(round(t - t0, 2))
                 break
@@ -188,6 +195,9 @@ def main():
         for t in ts:
             i0, i1 = max(0, int((t - WIN_PRE) * FS)), min(len(y), int((t + WIN_POST) * FS))
             win = y[i0:i1]
+            if len(win) < FS:
+                rec["failed"].append(dict(t=t, why="candidate outside the recording", texts=[]))
+                continue
             peak = float(np.abs(win).max())
             win = win / peak * 0.5 if peak > 0 else win
             texts, read = [], None
@@ -205,14 +215,14 @@ def main():
             why = "no burst at the candidate" if b is None else f"burst {e - s:.2f} s"
             if found:
                 by = "asr" if read else "protocol"
-            elif protocol:
+            elif nm in FIXED_OK:
                 # a 2 m RoboClub call sits a few dB over the room: the envelope cannot find it, the label's word start
                 # and the labelled word length are the clip (calls_201411 by template match and Shawn's ear, calls_221619
                 # by hand, calls_200910 by the protocol)
                 s, e, by = t, t + WORD_S, "protocol_fixed"
-            elif read:
-                # the quiet calls Whisper still reads (the ones round 2 missed): the candidate time is the spotter's or
-                # E3's peak, about the word's end
+            elif read and nm.startswith("life_20261030_21"):
+                # the quiet calls Whisper still reads (the ones round 2 missed): these candidates are the spotter's or
+                # E3's peak times (events_2100), about the word's end
                 s, e, by = t - WORD_S + 0.1, t + 0.1, "asr_fixed"
             else:
                 rec["failed"].append(dict(t=t, why=why if b is None or not found else "Whisper read no name", texts=texts))
