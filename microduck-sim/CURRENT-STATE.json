@@ -599,6 +599,13 @@
      "why": "phase 1 commissioning value (accepted 20..150 mA); held a finger at 14.1 deg on 2026-10-21; in the corrected seeing-pick rehearsal it held only 24/54 (ball 5/27)"
     }
    ]
+  },
+  "backpack_swap_plugs": {
+   "value": "The swap plugs (servo XT30, A7Z MR30) are pulled out of the backpack's lower left rear, outside the OpenRB pack; nothing plugs into the pack's rear channel any more. Backpack fixing: four M2 x 6 into the pack posts until the Dual Lock back plate (release V1.39, D-036) is printed and fitted; it is sliced, not printed.",
+   "verified_at": "2026-10-31",
+   "source": "Shawn 2026-10-31: \"plug不用管 我们现在plug从背包的左下背面拉出来的\"; \"我决定用dual lock 现在有的两个窄条就足够 ... 打印一块openRB那个箱子的背板 然后用背板来贴dual lock\"",
+   "max_age_days": 30,
+   "measure": "look at the robot: where the XT30/MR30 leads leave the backpack, and how the backpack is held"
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

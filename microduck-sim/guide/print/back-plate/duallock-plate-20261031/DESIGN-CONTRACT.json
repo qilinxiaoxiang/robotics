@@ -1,0 +1,29 @@
+{
+  "schema": "design-contract/1",
+  "design": "Dual Lock back plate for the OpenRB rear pack: a solid plate with the V1.8 pack cover outline (|y| <= 18.6, z -44..29.5), screwed for good to the four pack posts with the same M2 x 6; both backpacks (battery and charger box) stick to its rear face with Dual Lock and are no longer screwed on. No wings, no plug window (the swap plugs leave the backpack at its lower left rear); a 2.5 mm top notch lets the charger box's old front lip pass. Backpack prints unchanged.",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-10-31",
+    "quotes": [
+      "microduck的放openRB的箱子和battery pack或者charger pack的更换太麻烦  我决定用dual lock 现在有的两个窄条就足够 还是最好打印一块openRB那个箱子的背板 然后用背板来贴dual lock",
+      "plug不用管 我们现在plug从背包的左下背面拉出来的",
+      "为什么要两个翅膀 好丑哦",
+      "就这样吧"
+    ],
+    "history": "2026-10-31: first concept had a finger window to the swap plugs and copied the backpack front outline with two side wings; Shawn: the plugs are outside the pack, and the wings are ugly. Approved concept: backplate-concept-v3 (cover outline, solid, top notch). Thickness 3 mm (agent's choice: a 2 mm plate bends about 3 mm under a 50 N peel at the centre, 3 mm about 0.9 mm); first build had 1 mm head counterbores, dropped the same day because they left a 0.3 mm sliver at the plate edge (release wall check), so the M2 x 6 heads stand on the rear face outside the Dual Lock area with 3 mm of thread in the posts."
+  },
+  "concept_render": "concept/backplate-concept-v3.png",
+  "geometry": [
+    {
+      "part": "duallock_plate",
+      "says": "front face on the pack posts at x -45, rear (Dual Lock) face at x -48",
+      "bounds": {"x_max": {"gt": -45.05, "lt": -44.95}, "x_min": {"gt": -48.05, "lt": -47.95}}
+    },
+    {
+      "part": "duallock_plate",
+      "says": "no wings: the V1.8 cover width |y| <= 18.6 and height z -44..29.5",
+      "size": {"y": [37.1, 37.3], "z": [73.4, 73.6]}
+    }
+  ],
+  "forbidden_parts": []
+}

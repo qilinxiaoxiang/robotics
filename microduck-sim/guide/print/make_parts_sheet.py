@@ -732,6 +732,20 @@ INCREMENTAL_NOTES_BY_VERSION['V1.38'] = dict(
               'sits firmly and stop; a hairline gap stays at the cap edge. Prints on its flat back face with tree support under the '
               'rounded edges, as before.'))
 
+# V1.39: the Dual Lock back plate (2026-10-31). New part; nothing retired (the backpacks keep their prints).
+RETIRED_INCREMENTAL['V1.39'] = []
+INTRO_BY_VERSION['V1.39'] = ('V1.39 is one orange plate with the Dual Lock back plate. It screws onto the back of the OpenRB pack with the '
+                             'four M2 × 6 that used to hold the backpack, and stays there. The battery backpack and the charger box then '
+                             'stick onto its back with Dual Lock instead of screws.')
+RETIRED_HEADING_BY_VERSION['V1.39'] = 'No longer used'
+RETIRED_LEAD_BY_VERSION['V1.39'] = 'Nothing: both backpacks keep their prints.'
+INCREMENTAL_NAMES_BY_VERSION['V1.39'] = dict(duallock_plate='Dual Lock back plate')
+INCREMENTAL_NOTES_BY_VERSION['V1.39'] = dict(
+    duallock_plate=('Flat 3 mm plate, prints on its back face, no support. The small notch goes at the top. Screw it on with the four '
+                    'M2 × 6 from the backpack; their heads stay outside the middle area. Put the Dual Lock strips in the middle '
+                    '(27 × 60 mm between the screws) and the mating strips on the backpack fronts, off the battery backpack\'s small '
+                    'lead window.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

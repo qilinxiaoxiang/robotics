@@ -1,0 +1,146 @@
+{
+ "schemaVersion": 1,
+ "releaseKind": "incremental",
+ "version": "V1.39",
+ "prototype": true,
+ "prototypeScope": "V1.39: the Dual Lock back plate for the OpenRB rear pack on one Orange plate.",
+ "knownFitBoundary": "Plate front face on the pack posts at x -45; the Dual Lock thickness (about 5.7 mm for 3M SJ3550-class, not measured) sets how far the backpacks move back. Printed sizes not measured.",
+ "baselineStock": {
+  "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
+  "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
+ },
+ "profiles": {
+  "Yellow_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Bambu_editable.3mf",
+   "sha256": "061290b612bb407903c874c609e73bef25480985e6eae3703b08c298fc5bb060"
+  },
+  "Yellow_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Yellow_Elegoo_editable.3mf",
+   "sha256": "c737d7bca008862c870a734859bbfd9afed6b76e12309865b1dd3df80e8e31df"
+  },
+  "White_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/delivery-V1.3-Incremental/White/White_V1.3_editable.3mf",
+   "sha256": "ea11150668bf990d7e30dc932b4295cc55990682ac649f71698ed349fd3a9311"
+  },
+  "White_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/White_Elegoo_editable.3mf",
+   "sha256": "8fb2ced2fc38b8cb21a289608c344b601e0072fba034241b149cc356cc4fcf44"
+  },
+  "Orange_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Bambu_editable.3mf",
+   "sha256": "a901c21c58ff13781f695ffa52a35c0ec615ceb93bd7631bfe31445d456c282b"
+  },
+  "Orange_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Orange_Elegoo_editable.3mf",
+   "sha256": "e6ef710f2a7ca3c220c1b4e02b0ace80056a813fd2a5e96971365ad55b035fca"
+  },
+  "Black_Bambu": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Bambu_editable.3mf",
+   "sha256": "ef9593097fb01bef35b9cb2e8e57f6f539362f8c341b01fdfa78ec74151243a4"
+  },
+  "Black_Elegoo": {
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/12-REPAIR-V1-20261008/dual-printer/Black_Elegoo_editable.3mf",
+   "sha256": "c2954f042a62096191201a4a355c356247b084f8ae5b08398d1db4a612585163"
+  }
+ },
+ "placements": {
+  "Orange": [
+   {
+    "key": "duallock_plate",
+    "copy": 1,
+    "translation": [
+     128.0,
+     135.25,
+     0.0
+    ]
+   }
+  ]
+ },
+ "processOverrides": {},
+ "processOverrideReason": "No process overrides: the Orange profile; a flat 3 mm plate needs no support or brim.",
+ "parts": [
+  {
+   "key": "duallock_plate",
+   "color": "Orange",
+   "quantity": 1,
+   "decision": "addition",
+   "replacesStockIds": [],
+   "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/build/duallock_plate-world.stl",
+   "sha256": "59867d97dfda4477caa7fcec1014c0f79079a31dce3a25dd08359f7d0ad286e5",
+   "sourceFrame": "robot frame (mm, x forward, y left, z up)",
+   "sourceToPrint": [
+    [
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     1,
+     0,
+     0,
+     48.0
+    ],
+    [
+     0,
+     0,
+     0,
+     1
+    ]
+   ],
+   "flatContact": {
+    "minimumAreaMm2": 2200
+   },
+   "poseOrigin": "as the V1.8 rear_pack_cover: the outer face on the bed (robot x -48 becomes print z 0, robot y print x); 2498.7 mm2 bed contact, 3.0 mm tall, no support",
+   "changeReason": "Shawn 2026-10-31: swapping the battery backpack and the charger box on the OpenRB pack takes too long, so they stick on with Dual Lock (the two narrow strips in hand) and a printed back plate carries it. The plate has the V1.8 pack cover outline (|y| <= 18.6, z -44..29.5; no wings, Shawn: \"为什么要两个翅膀 好丑哦\"), is 3 mm thick (the same four M2 x 6 go through with 3 mm of thread in the posts; their heads stand outside the Dual Lock area), has no lip, and a top notch (|y| <= 13.5, z 27 up) for the charger box's old front lip. Both backpacks print unchanged and sit about 8.7 mm further back (3 mm plate plus the Dual Lock). Fit at rest: no overlap; nearest parts the shells 1.4 / 1.9 mm.",
+   "incrementalEvidence": {
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/build/build.json",
+    "sha256": "13b0f3c316cd6fa09beb151ac328531dddad09b3fed9ffb29c3d7da1a79b095b"
+   },
+   "supportBlockers": [],
+   "poseCheck": {
+    "printStl": {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/build/duallock_plate-print.stl",
+     "sha256": "0b8d390c673df1fbcbb45f761e514d701c470a654dccfa461e092eefef24daa1"
+    },
+    "bedContactMm2": 2498.72,
+    "printSizeMm": [
+     37.2,
+     73.5,
+     3.0
+    ]
+   },
+   "evidenceAlso": [
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/build_plate.py",
+     "sha256": "2b3a33625b8cecaeb9c8026c9dae4d56afa4b3be842caf9f79282a0486d56391"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/DESIGN-CONTRACT.json",
+     "sha256": "3680a367700b240362020c8be0f2f43fb776c7e3f128e971f0b01921eda58823"
+    },
+    {
+     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/back-plate/duallock-plate-20261031/concept/backplate-concept-v3.png",
+     "sha256": "c13c53aeb87f1d06800cd52d8ac9a9daf036a8fe120a90a5fcd57f9cca6ef0f9"
+    }
+   ]
+  }
+ ],
+ "retiredParts": [],
+ "deliveryContract": {
+  "colors": [
+   "Orange"
+  ],
+  "filesPerColor": 2,
+  "fileCount": 2,
+  "baseline": "printed releases through V1.38",
+  "supersedes": [],
+  "status": "INCREMENTAL_ADDITION"
+ }
+}
