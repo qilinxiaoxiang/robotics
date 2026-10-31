@@ -82,14 +82,15 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 26 new parts",
+   "title": "Print the 27 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 59,
+   "drawnParts": 60,
    "add": [
     "shell_left",
     "shell_right",
     "rear_pack",
+    "duallock_plate",
     "rear_frame",
     "rear_lid",
     "battery_backpack_frame",
@@ -943,17 +944,50 @@
    "pathCollisions": []
   },
   {
-   "step": "box-frame",
+   "step": "duallock-plate",
    "chapter": "torso",
-   "title": "Fit the rear box frame with the four cover screws",
+   "title": "Screw the Dual Lock back plate onto the pack posts",
    "bench": false,
    "inventory": false,
    "drawnParts": 46,
    "add": [
-    "rear_frame"
+    "duallock_plate"
+   ],
+   "approach": {
+    "duallock_plate": [
+     -30,
+     0,
+     0
+    ]
+   },
+   "group": false,
+   "cables": [
+    "pw-7v"
+   ],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "box-frame",
+   "chapter": "torso",
+   "title": "Stick the rear box frame onto the back plate with Dual Lock",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 48,
+   "add": [
+    "rear_frame",
+    "duallock_strips"
    ],
    "approach": {
     "rear_frame": [
+     -30,
+     0,
+     0
+    ],
+    "duallock_strips": [
      -30,
      0,
      0
@@ -976,7 +1010,7 @@
    "title": "Screw the 5991 into the bottom tier and loop its 15 V wires",
    "bench": false,
    "inventory": false,
-   "drawnParts": 47,
+   "drawnParts": 49,
    "add": [
     "pd5991"
    ],
@@ -1003,7 +1037,7 @@
    "title": "Screw in the 5 V converter, then the 7 V converter above it, IN on the right",
    "bench": false,
    "inventory": false,
-   "drawnParts": 49,
+   "drawnParts": 51,
    "add": [
     "xl4015_mid",
     "xl4015_top"
@@ -1037,7 +1071,7 @@
    "title": "Lead the 7 V pair and the head 5 V lead to their converters' OUT blocks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 49,
+   "drawnParts": 51,
    "add": [],
    "approach": {},
    "group": false,
@@ -1054,7 +1088,7 @@
    "title": "Close the box with its cap lid",
    "bench": false,
    "inventory": false,
-   "drawnParts": 50,
+   "drawnParts": 52,
    "add": [
     "rear_lid"
    ],
@@ -1237,7 +1271,7 @@
    "title": "Lower the neck into the open torso",
    "bench": false,
    "inventory": false,
-   "drawnParts": 61,
+   "drawnParts": 63,
    "add": [
     "motor12",
     "motor11",
@@ -1324,7 +1358,7 @@
    "title": "Close the two torso shells",
    "bench": false,
    "inventory": false,
-   "drawnParts": 63,
+   "drawnParts": 65,
    "add": [
     "shell_left",
     "shell_right"
@@ -1355,7 +1389,7 @@
    "title": "Drive the two roof screws into the pack bar, with nothing on the shell roofs yet",
    "bench": false,
    "inventory": false,
-   "drawnParts": 63,
+   "drawnParts": 65,
    "add": [],
    "approach": {},
    "group": false,
@@ -1464,7 +1498,7 @@
    "title": "Tape the saddle unit onto the torso roof",
    "bench": false,
    "inventory": false,
-   "drawnParts": 82,
+   "drawnParts": 84,
    "add": [
     "saddle_body",
     "sd_a7z_pcb",
@@ -1602,7 +1636,7 @@
    "title": "Push the microSD card in through the notch in the right-hand wall",
    "bench": false,
    "inventory": false,
-   "drawnParts": 83,
+   "drawnParts": 85,
    "add": [
     "sd_microsd_card"
    ],
@@ -1631,7 +1665,7 @@
    "title": "Plug the torso wires onto the A7Z",
    "bench": false,
    "inventory": false,
-   "drawnParts": 85,
+   "drawnParts": 87,
    "add": [
     "sd_dupont_housings",
     "sd_usb_c_plug"
@@ -1898,7 +1932,7 @@
    "title": "Set the head on ID13 and connect 13 \u2192 14",
    "bench": false,
    "inventory": false,
-   "drawnParts": 92,
+   "drawnParts": 94,
    "add": [
     "head_bottom",
     "jaw_frame",
@@ -1961,7 +1995,7 @@
    "title": "Lower the jaw support with ID15 and screw it down",
    "bench": false,
    "inventory": false,
-   "drawnParts": 94,
+   "drawnParts": 96,
    "add": [
     "jaw_support",
     "motor15"
@@ -1994,7 +2028,7 @@
    "title": "Screw the jaw to the ID15 horn",
    "bench": false,
    "inventory": false,
-   "drawnParts": 94,
+   "drawnParts": 96,
    "add": [],
    "approach": {},
    "group": false,
@@ -2032,7 +2066,7 @@
    "title": "Tape the speaker face down into its pocket and the amplifier onto the floor beside it",
    "bench": false,
    "inventory": false,
-   "drawnParts": 98,
+   "drawnParts": 100,
    "add": [
     "speaker_tape",
     "speaker",
@@ -2139,7 +2173,7 @@
    "title": "Set the face with the camera on the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 102,
+   "drawnParts": 104,
    "add": [
     "face_panel",
     "eye_trim",
@@ -2377,7 +2411,7 @@
    "title": "Run the 11 (or 12 with the optional back microphone) head wires and the camera cable through the left-rear exit, tie them once inside the head above the exit and run them down the left side of the neck to the saddle",
    "bench": false,
    "inventory": false,
-   "drawnParts": 102,
+   "drawnParts": 104,
    "add": [],
    "approach": {},
    "group": false,
@@ -2404,7 +2438,7 @@
    "title": "Plug the 11 head wires onto the A7Z",
    "bench": false,
    "inventory": false,
-   "drawnParts": 102,
+   "drawnParts": 104,
    "add": [],
    "approach": {},
    "group": false,
@@ -2431,7 +2465,7 @@
    "title": "Lower the cap onto the head",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 116,
    "add": [
     "head_cap",
     "touch_pad_l1",
@@ -2541,7 +2575,7 @@
    "title": "Screw the head shut",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2556,7 +2590,7 @@
    "title": "Unpowered checks",
    "bench": false,
    "inventory": false,
-   "drawnParts": 113,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2570,7 +2604,7 @@
    "title": "Set up the A7Z software",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2584,7 +2618,7 @@
    "title": "First power: converter readback, bus scan, Shutdown 52 and voltage-limit check",
    "bench": false,
    "inventory": false,
-   "drawnParts": 113,
+   "drawnParts": 115,
    "add": [],
    "approach": {},
    "group": false,
@@ -2603,7 +2637,7 @@
    "title": "Check the IMU, Wi-Fi, speaker, microphones, touch pads and the heatsink blower",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2631,7 +2665,7 @@
    "title": "Close the heatsink end of the saddle with its lid",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 117,
    "add": [
     "saddle_lid"
    ],
@@ -2665,7 +2699,7 @@
    "title": "Range-of-motion check with torque off",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 117,
    "add": [],
    "approach": {},
    "group": false,
@@ -2679,7 +2713,7 @@
    "title": "Measure the servo current through the OpenRB",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 116,
    "add": [],
    "approach": {},
    "group": false,
@@ -2695,7 +2729,7 @@
    "title": "Close the mouth and weigh the robot",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 117,
    "add": [],
    "approach": {},
    "group": false,
@@ -2772,7 +2806,7 @@
   {
    "step": "bp-dfr",
    "chapter": "backpack",
-   "title": "Clip the DFR1202 behind the front plate and lead its plugs out of the window",
+   "title": "Clip the DFR1202 behind the front plate and lead its plugs out at the lower left rear",
    "bench": true,
    "inventory": false,
    "drawnParts": 3,
@@ -2799,15 +2833,14 @@
   {
    "step": "bp-mount",
    "chapter": "backpack",
-   "title": "Swap the rear converter box for the battery backpack",
+   "title": "Swap the rear converter box for the battery backpack on the Dual Lock",
    "bench": false,
    "inventory": false,
-   "drawnParts": 114,
+   "drawnParts": 115,
    "add": [
     "battery_backpack_frame",
     "bp_switch",
-    "bp_dfr1202",
-    "bp_swap_plugs"
+    "bp_dfr1202"
    ],
    "approach": {
     "battery_backpack_frame": [
@@ -2821,11 +2854,6 @@
      0
     ],
     "bp_dfr1202": [
-     -40,
-     0,
-     0
-    ],
-    "bp_swap_plugs": [
      -40,
      0,
      0
@@ -2845,7 +2873,7 @@
    "title": "Slide the battery in upright and connect plug 1",
    "bench": false,
    "inventory": false,
-   "drawnParts": 116,
+   "drawnParts": 117,
    "add": [
     "bp_battery",
     "bp_plugs"
@@ -2876,7 +2904,7 @@
    "title": "Close the backpack with its cap",
    "bench": false,
    "inventory": false,
-   "drawnParts": 117,
+   "drawnParts": 118,
    "add": [
     "battery_backpack_cap"
    ],

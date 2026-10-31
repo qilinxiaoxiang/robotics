@@ -66,6 +66,9 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               'battery_backpack_frame': 'battery_backpack_frame.stl', 'battery_backpack_cap': 'battery_backpack_cap.stl',
               'bp_switch': 'bp_switch.stl', 'bp_battery': 'bp_battery.stl', 'bp_dfr1202': 'bp_dfr1202.stl',
               'bp_plugs': 'bp_plugs.stl', 'bp_swap_plugs': 'bp_swap_plugs.stl',
+              # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/to_guide_world.py): the plate on the
+              # pack posts and the mated Dual Lock pads; both backpacks above are written there 8.7 mm further back.
+              'duallock_plate': 'duallock_plate.stl', 'duallock_strips': 'duallock_strips.stl',
               # 2026-10-19 slip-fit feet (print/foot-slipfit-20261019/foot_slipfit.py): the printed community feet with the
               # ankle socket opened 0.2 mm and the snap hooks removed, seated as fitted to the real socket.
               'foot': 'foot_left.stl', 'right_foot': 'foot_right.stl',

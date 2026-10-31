@@ -52,6 +52,7 @@ HERE = Path(__file__).resolve().parent
 GUIDE = HERE.parent
 SRC = GUIDE / 'data' / 'sources' / 'full-build-data-current.json'
 PRINT = GUIDE / 'print'
+DUALLOCK_WORLD = PRINT / 'back-plate' / 'duallock-plate-20261031' / 'guide-world.json'   # backpack Dual Lock pose
 OUT = GUIDE / 'data' / 'guide-data.json'
 FASTENERS = HERE / 'fasteners.json'
 REUSED_SCREWS = HERE / 'reused-leg-screws.json'   # hip screws the torso chapter takes out and puts back
@@ -88,8 +89,8 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid'],
-    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
+                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid', 'duallock_plate'],
+    'purchased': ['duallock_strips', 'imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
@@ -418,8 +419,19 @@ def build_parts() -> dict:
                 v, f = decimate(v, f, 25000, key)
             parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': module,
                           'status': status, 'v': v, 'f': f, 'source': str(path)}
+    # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/, release V1.39): 3 mm orange plate with the
+    # V1.8 cover outline, screwed for good to the four pack posts (M2 x 6); both backpacks stick to its rear face (x -48) with
+    # 3M Dual Lock (mated pair drawn as two pads, 5.7 mm assumed, size not measured) and sit 8.7 mm further back than when screwed.
+    for key, (name, status, color) in {
+            'duallock_plate': ('Dual Lock back plate (new print), on the four pack posts', 'new-print', None),
+            'duallock_strips': ('3M Dual Lock, mated pair (two strips; drawn as their area, 5.7 mm thick assumed)', 'purchased', '#2b2b2b')}.items():
+        path = first_existing(world / f'{key}.stl')
+        if path:
+            v, f = load_stl(path)
+            parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': 'torso',
+                          'status': status, 'v': v, 'f': f, 'source': str(path)}
     # 2026-10-15 battery backpack (D-010, print/back-plate/battery-backpack-20261015/): the swap alternative to the rear converter
-    # box on the same four cover screws. Frame and cap print orange; the Swann 39 switch rocker-down in the floor pocket, the
+    # box, since 2026-10-31 on the Dual Lock back plate (above), no longer on the four cover screws. Frame and cap print orange; the Swann 39 switch rocker-down in the floor pocket, the
     # Tattu 2S 650 upright behind it, the DFR1202 clipped behind the front plate, the battery and feed XT30 joints (plugs 1, 2)
     # with the balance plug, and the two swap plugs (XT30 servo, MR30 A7Z) standing in the pack channel. guide-data
     # 'alternates' names the two sets: never on the robot together, so the gate skips pairs and cables across them.
@@ -428,8 +440,9 @@ def build_parts() -> dict:
                       'bp_switch': ('Swann 39 rocker switch on its soldered switch lead, rocker down in the backpack floor', 'controller', 'purchased', '#26282b'),
                       'bp_battery': ('Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the backpack', 'controller', 'purchased', '#3a6b35'),
                       'bp_dfr1202': ('DFRobot DFR1202 5 V converter for the A7Z, clipped behind the backpack front plate', 'controller', 'owned', '#1f3f8f'),
-                      'bp_plugs': ('Plug 1 (battery to switch, XT30), plug 2 (switch to feed, XT30) and the battery balance plug', 'controller', 'purchased', '#f2c14e'),
-                      'bp_swap_plugs': ('Swap plugs in the pack channel: plug 3 (servo, XT30) and plug 4 (A7Z 5 V, MR30)', 'controller', 'purchased', '#f2c14e')}
+                      'bp_plugs': ('Plug 1 (battery to switch, XT30), plug 2 (switch to feed, XT30) and the battery balance plug', 'controller', 'purchased', '#f2c14e')}
+    # The swap plugs (plug 3 servo XT30, plug 4 A7Z MR30) leave the backpack at its lower left rear (CURRENT-STATE
+    # backpack_swap_plugs, 2026-10-31); they are no longer drawn in the pack channel (bp_swap_plugs.stl is a record).
     for key, (name, module, status, color) in BACKPACK_PARTS.items():
         path = first_existing(world / f'{key}.stl')
         if path:
@@ -566,9 +579,18 @@ def build_parts() -> dict:
 
 
 def build_cables(routes: dict) -> tuple[list, dict]:
-    R = routes['routes']
+    R = dict(routes['routes'])
     L: dict[str, float] = {}
     cab = []
+    # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/guide-world.json): the bench box sits on the
+    # Dual Lock behind the plate, shiftMm further back than its screwed pose, so its four wires move with it wherever they
+    # lie behind the old seat (x < oldSeatX); the pack-side part of each route stays. dl_extra: added length per cable.
+    dl = json.loads(DUALLOCK_WORLD.read_text())
+    dl_extra = {}
+    for cid in dl['cableShift']['cables']:
+        old = R[cid]
+        R[cid] = [[p[0] + dl['shiftMm'][0], p[1], p[2]] if p[0] < dl['cableShift']['pointsWithXBelow'] else list(p) for p in old]
+        dl_extra[cid] = polyline_length(R[cid]) - polyline_length(old)
 
     def add(cid, label, kind, color, path, frm, to, note='', radius=None, slack=0.0):
         path = [[round(float(x), 1) for x in p] for p in path]
@@ -611,6 +633,9 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     for cid in ('pw-15v', 'pw-15v-link', 'pw-7v', 'pi-lead'):
         if cid not in pw:
             raise SystemExit(f'routes.json powerWiresF.cutMm lacks {cid}')
+        # cut grows by the Dual Lock pose's extra length, rounded up to 5 mm (only the box-to-pack wires change)
+        if dl_extra.get(cid, 0.0) > 0.05:
+            pw = dict(pw, **{cid: int(math.ceil((pw[cid] + dl_extra[cid]) / 5.0) * 5)})
         L[f'cut:{cid}'] = pw[cid]
     add('pw-15v', '15 V feed (22 AWG solid, red + black, 5991 → XL4015 #2 IN)', 'power-15v', '#ef6c00', R['pw-15v'],
         'Adafruit 5991 screw terminal (+ / −), bottom tier of the rear box', 'XL4015 #2 IN (+ / −), middle board', radius=1.0,
@@ -741,7 +766,7 @@ ALTERNATES = [
      'parts': ['rear_frame', 'rear_lid', 'xl4015_top', 'xl4015_mid', 'pd5991'],
      'cables': ['pw-15v', 'pw-15v-link', 'pw-7v', 'pi-lead']},
     {'id': 'battery-backpack', 'label': 'Battery backpack (2S LiPo, D-010)',
-     'parts': ['battery_backpack_frame', 'battery_backpack_cap', 'bp_switch', 'bp_battery', 'bp_dfr1202', 'bp_plugs', 'bp_swap_plugs'],
+     'parts': ['battery_backpack_frame', 'battery_backpack_cap', 'bp_switch', 'bp_battery', 'bp_dfr1202', 'bp_plugs'],
      'cables': []},
 ]
 
@@ -768,7 +793,7 @@ def main() -> None:
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
         'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261026-camera-up',
+        'revision': 'guide-20261031-duallock',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

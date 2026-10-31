@@ -1,7 +1,9 @@
 """Copy the battery backpack (D-010) into guide/print/world for build_guide_data.py and the print gate.
 Run after build_bp.py, release_rows.py and swann_switch.py (the switch is the Swann 39 solid, not build_bp's REV envelope). The printed frame and cap are the release-named world STLs; the bought parts
 come from build/. The DFR1202 and its pads become one closed solid (manifold union).
-    /tmp/microduck-cad-venv/bin/python to_guide_world.py"""
+    /tmp/microduck-cad-venv/bin/python to_guide_world.py
+Since 2026-10-31 the guide draws the backpack on the Dual Lock back plate, 8.7 mm further back: run
+../duallock-plate-20261031/to_guide_world.py after this script (it rewrites these world files in the Dual Lock pose)."""
 import hashlib, json, shutil
 from pathlib import Path
 import numpy as np, trimesh, manifold3d as m3

@@ -1,0 +1,260 @@
+{
+ "method": "Whole-robot mass and COM with the Dual Lock back plate, method of battery-backpack-20261015/bp_mass.py (baseline\nlayout-F/mass_estimate.json; printed parts: CAD volume x 1.24 g/cm3 x 0.851 fill). Changes against the screwed mounts:\n- the plate is added (build/duallock_plate-world.stl, at its mesh centre of mass);\n- every backpack item moves SHIFT_MM in x (guide-world.json): battery backpack from bp_mass.json, bench box from\n  layout-F/mass_estimate.json, except the V1.8 cover removal, which stays where the cover was;\n- the four M2 x 6 stay on the robot in both mounts (bp_mass counts them as already there);\n- Dual Lock: not in the totals (strip size and areal mass not measured); DL_BOUND_G shows the effect of a mated pair of\n  that mass at the pad centre.",
+ "shiftMm": -8.7,
+ "plate": {
+  "id": "duallock_plate",
+  "g": 8.28,
+  "com": [
+   -46.5,
+   -0.0,
+   -7.85
+  ],
+  "label": "CAD volume 7.84 cm3 x 1.24 x 0.851"
+ },
+ "baseline": {
+  "totalMassG": 792.6,
+  "comMm": [
+   0.57,
+   -0.22,
+   21.86
+  ]
+ },
+ "battery_backpack": {
+  "screwed": {
+   "totalG": 883.4,
+   "comMm": [
+    -5.89,
+    -0.2,
+    20.07
+   ]
+  },
+  "duallock": {
+   "items": [
+    {
+     "id": "frame",
+     "g": 16.05,
+     "com": [
+      -62.11,
+      0.01,
+      -0.8
+     ],
+     "label": "CAD volume x 1.24 x 0.851"
+    },
+    {
+     "id": "cap",
+     "g": 8.05,
+     "com": [
+      -80.89,
+      -0.0,
+      6.18
+     ],
+     "label": "CAD volume x 1.24 x 0.851"
+    },
+    {
+     "id": "battery",
+     "g": 43.0,
+     "com": [
+      -74.95,
+      0.0,
+      5.99
+     ],
+     "label": "Tattu listing 43 g"
+    },
+    {
+     "id": "switch_with_leads",
+     "g": 14.0,
+     "com": [
+      -62.9,
+      0,
+      -14.0
+     ],
+     "label": "estimate"
+    },
+    {
+     "id": "dfr1202",
+     "g": 6.0,
+     "com": [
+      -61.9,
+      0.0,
+      25.5
+     ],
+     "label": "estimate"
+    },
+    {
+     "id": "plugs_and_wires",
+     "g": 10.0,
+     "com": [
+      -66.7,
+      0,
+      12.0
+     ],
+     "label": "estimate: 4 XT30 halves, 1 MR30 half, box leads"
+    },
+    {
+     "id": "rear_pack_cover_removed",
+     "g": -6.304,
+     "com": [
+      -45.8,
+      0,
+      -5.3
+     ],
+     "label": "slicer (V1.8 cover)"
+    },
+    {
+     "id": "duallock_plate",
+     "g": 8.28,
+     "com": [
+      -46.5,
+      -0.0,
+      -7.85
+     ],
+     "label": "CAD volume 7.84 cm3 x 1.24 x 0.851"
+    }
+   ],
+   "totalG": 891.7,
+   "comMm": [
+    -7.22,
+    -0.2,
+    19.81
+   ]
+  },
+  "comShiftVsScrewedMm": [
+   -1.32,
+   0.0,
+   -0.26
+  ],
+  "addedGVsScrewed": 8.28,
+  "withDualLockBound": {
+   "g": 4.0,
+   "comShiftVsScrewedMm": [
+    -1.52,
+    0.0,
+    -0.36
+   ]
+  }
+ },
+ "bench_box": {
+  "screwed": {
+   "totalG": 849.8,
+   "comMm": [
+    -3.29,
+    -0.2,
+    21.04
+   ]
+  },
+  "duallock": {
+   "items": [
+    {
+     "id": "rear_frame",
+     "g": 10.86,
+     "com": [
+      -56.96,
+      -0.2,
+      -0.61
+     ],
+     "label": "CAD volume 10.29 cm3 x 1.24 x 0.851"
+    },
+    {
+     "id": "rear_lid",
+     "g": 6.76,
+     "com": [
+      -73.53,
+      0.17,
+      7.05
+     ],
+     "label": "CAD volume 6.40 cm3 x 1.24 x 0.851"
+    },
+    {
+     "id": "xl4015_left",
+     "g": 20.0,
+     "com": [
+      -65.15,
+      0.0,
+      28.2
+     ],
+     "label": "estimate (similar modules); COM = mesh bounding-box centre"
+    },
+    {
+     "id": "xl4015_right",
+     "g": 20.0,
+     "com": [
+      -65.15,
+      0.0,
+      -0.4
+     ],
+     "label": "estimate (similar modules); COM = mesh bounding-box centre"
+    },
+    {
+     "id": "pd5991",
+     "g": 3.5,
+     "com": [
+      -63.75,
+      0.57,
+      -24.16
+     ],
+     "label": "datasheet 3.5 g"
+    },
+    {
+     "id": "screws_8xM2x6_M2x4",
+     "g": 1.36,
+     "com": [
+      -63.7,
+      0.0,
+      0.0
+     ],
+     "label": "estimate"
+    },
+    {
+     "id": "screws_cap_4xM2x10",
+     "g": 1.0,
+     "com": [
+      -59.3,
+      0.0,
+      11.0
+     ],
+     "label": "estimate"
+    },
+    {
+     "id": "rear_pack_cover_removed",
+     "g": -6.304,
+     "com": [
+      -45.8,
+      -0.0,
+      -5.3
+     ],
+     "label": "slicer (V1.8 cover)"
+    },
+    {
+     "id": "duallock_plate",
+     "g": 8.28,
+     "com": [
+      -46.5,
+      -0.0,
+      -7.85
+     ],
+     "label": "CAD volume 7.84 cm3 x 1.24 x 0.851"
+    }
+   ],
+   "totalG": 858.1,
+   "comMm": [
+    -4.35,
+    -0.2,
+    20.77
+   ]
+  },
+  "comShiftVsScrewedMm": [
+   -1.06,
+   0.0,
+   -0.28
+  ],
+  "addedGVsScrewed": 8.28,
+  "withDualLockBound": {
+   "g": 4.0,
+   "comShiftVsScrewedMm": [
+    -1.28,
+    0.0,
+    -0.39
+   ]
+  }
+ }
+}

@@ -22,6 +22,20 @@ PAIR_TEXT = {
              'cover posts and the pack rim at x -45 (cover seat, layout-F/checks.json fit at rest: frame to pack 0 by design); '
              'its lip runs inside the converter channel over the pack side walls.',
         'No change.'),
+    # Dual Lock back plate (2026-10-31, print/back-plate/duallock-plate-20261031/): zero-clearance seats by design (0.0 mm in
+    # the 2026-10-31 gate); these entries name the contacts should the world STLs model them as overlap.
+    frozenset(['duallock_plate', 'rear_pack']): (
+        'c', 'Back plate front face on the ends of the four pack posts at x -45, held by the four M2 x 6 (DL-plate-01..04): '
+             'the V1.8 cover seat, a designed seat.', 'No change.'),
+    frozenset(['duallock_plate', 'duallock_strips']): (
+        'c', 'Dual Lock plate half stuck on the plate rear face (x -48): adhesive contact by design.', 'No change.'),
+    frozenset(['rear_frame', 'duallock_strips']): (
+        'c', 'Dual Lock box half stuck on the box frame front plate (x -53.7): adhesive contact by design.', 'No change.'),
+    frozenset(['battery_backpack_frame', 'duallock_strips']): (
+        'c', 'Dual Lock backpack half stuck on the backpack front plate (x -53.7): adhesive contact by design.', 'No change.'),
+    frozenset(['rear_frame', 'duallock_plate']): (
+        'c', 'Only if the envelopes meet: the box frame lip (|y| <= 13.2, z 27.3..28.5) passes through the plate top notch '
+             '(|y| <= 13.5, from z 27.0) with 0.3 mm each side.', 'No change.'),
     frozenset(['rear_frame', 'xl4015_left']): (
         'c', 'XL4015 #1 (top tier) PCB back face on its four frame bosses (seat x -50.205), held by four M2 x 6; the PCB ends '
              'sit at the side wall inner faces (|y| 30.85): a designed seat.', 'No change.'),
