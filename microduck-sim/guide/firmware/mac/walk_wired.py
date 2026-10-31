@@ -107,7 +107,7 @@ import walk_brain  # noqa: E402
 from duck_sound import Voice  # noqa: E402
 from hold import DOWN_RATE, HOLD_FILE, KP_STEP, UP_RATE, HoldEstimator, legs_current_ma, read_hold_file  # noqa: E402
 from jaw_ctl import GOAL_CURRENT_MA, JAW_ID, POSE_JOINTS, JawCtl  # noqa: E402
-from dxl_fast import _packet  # noqa: E402
+from dxl_fast import _packet, crc16  # noqa: E402
 from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, INPUT_VOLTAGE_BIT, STOP_MARKER,  # noqa: E402
                      BatteryGuard, status_ok, stop_command, stop_settled, voltage_alert_only)
 
@@ -118,6 +118,7 @@ ADDR_TORQUE, ADDR_P_GAIN, ADDR_GOAL, ADDR_VEL = 64, 84, 116, 128
 ADDR_CUR = 126
 STATE_FMT = "<hii"
 STATE_SIZE = struct.calcsize(STATE_FMT)
+MAX_STATUS_LEN = 64  # status packet LEN field (instruction + error + params + CRC); the largest read here is 4 + 10
 IMU_FMT = "<I11fB"
 
 
@@ -251,9 +252,18 @@ class Link:
                 if len(buf) < 3:
                     break
                 if buf[0] == 0xFF and buf[1:4] == b"\xff\xfd\x00" and len(buf) >= 7:
-                    total = 7 + struct.unpack_from("<H", buf, 5)[0]
+                    length = struct.unpack_from("<H", buf, 5)[0]
+                    if not 4 <= length <= MAX_STATUS_LEN:
+                        # a lost byte made the next header's bytes read as the length (0xFDFF): waiting for 65 kB
+                        # blanked every servo read for 6 s and the duck fell (2026-10-31 16:35:10); resync instead
+                        buf = buf[1:]
+                        continue
+                    total = 7 + length
                     if len(buf) < total:
                         break
+                    if crc16(buf[:total - 2]) != struct.unpack_from("<H", buf, total - 2)[0]:
+                        buf = buf[1:]  # a damaged reply: drop it and resync on the next header
+                        continue
                     self.status.append(buf[:total])
                     buf = buf[total:]
                 elif buf[0] == 0xA5 and buf[1] == 0x5A:
