@@ -634,6 +634,8 @@ ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the of
                                   # from it except +135 deg (0.2, left to the SRP); a free-field scene (no head) reads
                                   # about -1.0 and must not override
 ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
+ILD_MIN_SNR_DB = 3.0              # the level side needs the ears' call this far over the noise in the band (2026-10-30
+                                  # 21:03:47: a 7 dB call read 0.0/0.0 after subtraction; the band held no call)
 ILD_NOISE_FRAMES = 94             # noise frames behind the level cue (0.5 s at hop 256 / 48 kHz)
 LOC_ELEV = (35.0,)                # elevation prior: a standing owner 2 m from a robot on the floor
 CALL_WINDOW_S = 0.8               # accumulate this long after the onset
@@ -765,10 +767,15 @@ class CallLocaliser:
             if not b.any():
                 continue
             pc = Pc[:, b, :].mean(axis=(0, 1))
-            pn = Pn[:, b, :].mean(axis=(0, 1)) if len(Pn) else 0.0
-            p = np.maximum(pc - pn, 1e-14)
+            pn = Pn[:, b, :].mean(axis=(0, 1)) if len(Pn) else np.zeros_like(pc)
+            # spectral subtraction with a 10 dB floor: an ear whose call power sits under the noise is still a level,
+            # never 1e-14 (2026-10-30 21:01 live: one ear floored read LR -107 dB and decided the side; 21:03 both
+            # ears floored read 0.0). snr is the ears' call-over-noise in the band; the side rule needs ILD_MIN_SNR_DB.
+            p = np.maximum(pc - pn, 0.1 * pc)
+            snr = float(10 * np.log10(max(pc[[L, R]].mean(), 1e-14) / max(pn[[L, R]].mean(), 1e-14)))
             out[str(int(lo))] = dict(LR=round(float(10 * np.log10(p[L] / p[R])), 2),
-                                     EB=round(float(10 * np.log10(0.5 * (p[L] + p[R]) / p[B])), 2))
+                                     EB=round(float(10 * np.log10(0.5 * (p[L] + p[R]) / p[B])), 2),
+                                     snr=round(snr, 1))
         return out
 
 
@@ -1443,6 +1450,7 @@ class NameCall:
         self.person_first = None         # time of the first person sighting in this attention phase
         self.person_how = None           # last person_aim mode logged in this phase
         self.found = False               # a face or a person was found since the last call (no back turn then)
+        self.more_turn = None            # a second body turn the same way when the back turn's search finds nobody
         self.back_turn = None            # body turn toward the back on the heard side, run when the front search is spent
         self.call = None                 # dict(t, now, rot, seen): the last call, for its bearing_seen label
         self.body_rot = 0.0              # body rotation since the last call by finished turns, rad + left
@@ -1570,7 +1578,7 @@ class NameCall:
         # near rest: on the 2026-10-30 eight-direction calls the level gave 6 of 6 sides, the SRP 5 of 7
         side_srp, side_ild = side, 0
         ild = (det.get("ild_db") or {}).get(ILD_SIDE_BAND)
-        if ild is not None:
+        if ild is not None and ild.get("snr", ILD_MIN_SNR_DB) >= ILD_MIN_SNR_DB:
             d = ild["LR"] - ILD_SIDE_OFFSET_DB
             side_ild = (1 if d > 0 else -1) if abs(d) >= ILD_SIDE_MIN_DB else 0
         if side_ild and side_ild != side and abs(self.head_yaw_now) <= ILD_HEAD_REST_RAD:
@@ -1609,7 +1617,7 @@ class NameCall:
                     rec["quack_skipped"] = dict(novelty=round(novelty, 3), why="caller repeating; head only")
             # the body never turns at the take any more; a back turn on the heard side waits for the front search
             self.turn = None
-            self.back_turn = None
+            self.back_turn = self.more_turn = None
             if not getattr(self.a, "no_turn", True):
                 sign = side if side else (1.0 if az >= 0 else -1.0)
                 self.back_turn = self.plan_turn(sign * (math.pi - abs(az_front)))
@@ -1722,10 +1730,12 @@ class NameCall:
             return                       # a person in view (no face): follow the body up; no scan, no back turn
         if self.no_face_since is None:
             self.no_face_since = now
-        if now - self.no_face_since >= FACE_WAIT_S and (self.scan == [] or self.finder is None) \
-                and self.back_turn is not None and not self.found:
-            self._start_back_turn(now)   # the front search is spent with nothing found: turn toward the back
-            return
+        if now - self.no_face_since >= FACE_WAIT_S and (self.scan == [] or self.finder is None) and not self.found:
+            if self.back_turn is None and self.more_turn is not None:
+                self.back_turn, self.more_turn = self.more_turn, None    # the back turn's search found nobody: turn on
+            if self.back_turn is not None:
+                self._start_back_turn(now)   # the front search is spent with nothing found: turn toward the back
+                return
         if self.finder is None or self.scan == [] or now - self.no_face_since < FACE_WAIT_S:
             return                       # no camera: nothing to scan with, the gaze waits on the heard bearing
         if self.scan is None:
@@ -1820,6 +1830,11 @@ class NameCall:
         if self.finder is not None and (self.finder.latest(now) is not None or (lp is not None and lp(now) is not None)):
             self.log.write("turn_skipped", why="a face or a person is in view; the body stays")
             return
+        if self.finder is not None and not plan.get("more"):
+            # when this turn's search finds nobody either, one more turn the same way (the time cap, about 120 deg)
+            # sweeps the rest of the circle and the camera stops it at the first face or person (2026-10-30 21:03:09:
+            # a side read wrong by 180 deg turned the duck away from Shawn, who stood on the other side; it gave up)
+            self.more_turn = dict(sign=plan["sign"], dur_s=TURN_S[1], az_rad=round(plan["sign"] * math.pi, 4), more=True)
         self.head.holding = False
         self.turn = plan
         self._start_turn(now)
@@ -1864,7 +1879,9 @@ class NameCall:
         yaw, pitch = self._turn_head(now, theta)
         self.head_yaw_now = yaw
         head = want_head(np.array([0.0, pitch, yaw, 0.0]), self.head.default)
-        done = now >= self.turn_until or plan["sign"] * (plan["az_rad"] - theta) <= TURN_KEEP
+        lp = getattr(self.finder, "latest_person", None)
+        seen = self.finder is not None and (self.finder.latest(now) is not None or (lp is not None and lp(now) is not None))
+        done = now >= self.turn_until or plan["sign"] * (plan["az_rad"] - theta) <= TURN_KEEP or seen
         if not done:
             left = max(0.0, self.turn_until - now)
             ok = self.writer is None or self.writer.write(head, vtheta=plan["sign"] * TURN_VTHETA, for_s=left + 1.0)
@@ -1878,7 +1895,8 @@ class NameCall:
             self.turn_until = None
             self.body_rot += theta       # for the bearing_seen label of the call that started the search
             self.log.write("turn_done", az_deg=round(math.degrees(plan["az_rad"]), 1), turned_deg=round(math.degrees(theta), 1),
-                           by="gyro" if (self.gyro is not None and self.gyro.ok) else "time", s=round(now - self.turn_t0, 2))
+                           by="seen" if seen else "gyro" if (self.gyro is not None and self.gyro.ok) else "time",
+                           s=round(now - self.turn_t0, 2), more=bool(plan.get("more")))
             self.det.deaf_until = max(self.det.deaf_until, now + 0.5)
             self.head.set_pose(yaw, -pitch)
             self.attend_until = now + self.attend_s

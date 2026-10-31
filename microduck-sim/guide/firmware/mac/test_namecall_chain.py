@@ -544,6 +544,42 @@ def test_no_body_turn_at_the_take_front_first(tmp_path):
         assert n.back_turn["sign"] == -1.0 and abs(n.back_turn["az_rad"] + 1.8) < 1e-3
 
 
+def test_a_back_turn_that_finds_nobody_turns_on_until_the_camera_sees_someone(tmp_path):
+    """2026-10-30 21:03:09: every side cue read right, Shawn stood on the left; the duck turned right, scanned, found
+    nobody and gave up. With a camera the back turn's failed search is followed by one more turn the same way (the
+    time cap), and any turn stops as soon as a face or a person comes into view; without a camera nothing changes
+    (test_every_response_quacks_... keeps its one turn per call)."""
+    a = args(cmd=str(tmp_path / "c.json"), seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    n.finder = FakeFinder(n.head.gaze, world=(0.0, 0.5), t_face=34.0)     # nobody in view until 34 s
+    recs = []
+    n.log.write = lambda kind, **rec: recs.append((kind, dict(rec)))
+    n.respond(dict(t=0.0, az_rad=-0.57, az_deg=-32.6, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.05), 0.0)
+    t = 0.0
+    while t < 60.0:
+        n.motion_tick(t)
+        t += 0.02
+    turns = [r for k, r in recs if k == "turn"]
+    dones = [r for k, r in recs if k == "turn_done"]
+    assert len(turns) == 2 and len(dones) == 2, (turns, dones)
+    assert turns[0]["vtheta"] == -0.3 and turns[1]["vtheta"] == -0.3            # the same way round, never back
+    assert abs(turns[1]["az_deg"] + 180.0) < 0.1 and dones[1]["more"] and not dones[0]["more"]
+    assert dones[0]["by"] == "time" and dones[1]["by"] == "seen" and dones[1]["s"] < turns[1]["dur_s"] - 1.0
+    assert [k for k, _ in recs if k == "face"]                                   # and the face is then tracked
+    # the same call with the face in view from the start: no body turn at all
+    n2 = nc.NameCall(a, nc.Log(None, echo=False))
+    n2.finder = FakeFinder(n2.head.gaze, world=(-0.5, 0.5), t_face=0.0)
+    recs2 = []
+    n2.log.write = lambda kind, **rec: recs2.append(kind)
+    n2.respond(dict(t=0.0, az_rad=-0.57, az_deg=-32.6, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.05), 0.0)
+    t = 0.0
+    while t < 30.0:
+        n2.motion_tick(t)
+        t += 0.02
+    assert "turn" not in recs2 and "face" in recs2
+
+
 def test_the_name_is_the_default_trigger_on_the_robot():
     assert nc.parse_args([]).name == "mochi"
     assert nc.parse_args(["--any-voice"]).name is None

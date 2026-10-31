@@ -1,6 +1,6 @@
 {
  "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
- "updated": "2026-10-30 20:45",
+ "updated": "2026-10-30 21:30",
  "requirements": [
   {
    "id": "R1",
@@ -29,6 +29,10 @@
     [
      "2026-10-30 20:08",
      "最近一次开机以来的响应都可以作为反例 你看如果用的上的话"
+    ],
+    [
+     "2026-10-30 21:2x",
+     "试了一下 响应不太高 尤其是在比较吵一点的roboclub 基本唤不醒 大概1/5 能唤醒 从背后叫的时候能转生 但有一次我在右边叫的 它去往左边转身"
     ]
    ],
    "acceptance": "In a live test with Shawn present, every answer follows a real call (zero answers he did not make); offline, held-out false wakes per hour on home talk reported with the operating point.",
@@ -38,7 +42,8 @@
     "19:32:18 answer at 0.944 that Shawn reports false",
     "20:08 Shawn: every answer since the 19:53 restart was false; 19:57:04, 19:57:18, 20:05:11, 20:08:35 labelled negative (life_labels_1030_live.json); 20:21-20:31 E3 answered 12 more times (heartbeat kw_hits 12) with nobody calling",
     "eightdir_20261030.json: E3 scores 0.95 on a call slice played backwards and 0.8-0.9 on each single microphone: it is a voice detector for Shawn's voice, not a word model (the mechanism of the false answers)",
-    "eightdir_20261030.json: v2 (openWakeWord round 2, models/oww/mochi_v2.onnx) gives 0 peaks >= 0.3 on either ear in the 8.7 min of Shawn moving and talking before the eight calls (20:09-20:17), where E3's live rule would have fired 3 times plus 4 repeat pairs; 0 false on 11.7 min held-out life talk, 28 min synthetic speech, 489 web negatives (results/mochi_v2*.json)"
+    "eightdir_20261030.json: v2 (openWakeWord round 2, models/oww/mochi_v2.onnx) gives 0 peaks >= 0.3 on either ear in the 8.7 min of Shawn moving and talking before the eight calls (20:09-20:17), where E3's live rule would have fired 3 times plus 4 repeat pairs; 0 false on 11.7 min held-out life talk, 28 min synthetic speech, 489 web negatives (results/mochi_v2*.json)",
+    "21:00-21:08 live run (namecall_20261030-210005.jsonl, v2 per ear 0.5/0.3, ILD side rule): 8 answers; the life recording holds 17 calls by Whisper-small transcript (results/events_2100_20261030.json): 9 scored >= 0.5 (one fell inside the previous answer), 8 scored 0.00-0.20 and went unanswered; the 3 non-call voice events (talk) scored 0.00: no false answer -> R1 holds on this run: 0 false answers in 8 min with Shawn talking in between"
    ],
    "status": "gap",
    "gap": "E3 (deployed) answers Shawn's ordinary talk: 4 false answers 19:57-20:08 and 12 in 20:21-20:31. v2 shows zero false wakes on every held-out set and on tonight's 8.7 min pre-call stretch; not yet live (A7Z offline from 20:31)."
@@ -74,10 +79,11 @@
     "19:33:39 and 19:33:41 calls scored 0.73 and 0.82, 1.9 s apart, no answer at 0.9 alone",
     "results/mochi_v2_extra.json: 8/14 on the live_141734 held-out spans, flat from 0.5 to 0.85 and under +0..+18 dB gain; five of the six misses are E3-made spans of 0.2-0.4 s (fragments, not the word), so that set does not measure recall on calls",
     "eightdir_20261030.json: on the eight certain calls (2 m, all directions, 20:17:59-20:19:21) v2 ear mix 7/8 (the +135 call 0.01 on the mix, 0.87 on the right ear), max over the two ears 8/8; E3 8/8 (and 24 runs >= 0.7 on the talk before them)",
-    "the 15 'camera-confirmed' calls of 18:53-19:47 score 0.00 under v2 and under the official openwakeword runtime: they were E3 triggers confirmed only by a face in view, not verified calls; not a test set"
+    "the 15 'camera-confirmed' calls of 18:53-19:47 score 0.00 under v2 and under the official openwakeword runtime: they were E3 triggers confirmed only by a face in view, not verified calls; not a test set",
+    "21:00-21:08 live run (namecall_20261030-210005.jsonl, v2 per ear 0.5/0.3, ILD side rule): 8 answers; the life recording holds 17 calls by Whisper-small transcript (results/events_2100_20261030.json): 9 scored >= 0.5 (one fell inside the previous answer), 8 scored 0.00-0.20 and went unanswered; the 3 non-call voice events (talk) scored 0.00: no false answer -> 9 of 17 calls heard (53 %); the 8 misses are the quieter calls (6-9 dB over the room against 11-13 dB for the heard ones) and two fast doubles 'Mochi, Mochi'; a threshold cannot reach them (0.00-0.20)"
    ],
-   "status": "built",
-   "gap": "Acceptance needs a live run with v2 (two-ear max) and Shawn calling: every clear home call answered on the first call. Offline the only certain set is tonight's eight calls (8/8 with the two-ear max). A7Z offline since 20:31; the two-ear scoring is being added to OwwSpotter."
+   "status": "gap",
+   "gap": "Live 21:00: 9/17 at home, Shawn reports about 1/5 at RoboClub. The misses score about 0 so the model must learn them: round 3 training with (a) tonight's certified positives (8 eight-direction calls, 17 transcript-checked live calls) and (b) a clip gate (word length 0.45-1.0 s AND Whisper transcript matching Mochi, or a protocol recording with a known count) that keeps E3 fragments out, plus RoboClub room noise mixed in; needs Shawn's go before the Mac mini run"
   },
   {
    "id": "R3",
@@ -98,10 +104,11 @@
    "evidence": [
     "bearing_seen labels collect the true bearing of each call for the direction error",
     "eightdir_20261030.json (one call per 45 deg at 2 m): live localiser side right on 5 of 7 side calls, magnitude wrong; whole-word 1.5-6 kHz lags within one 48 kHz sample in every direction (no direction at this level); the 2.5-4 kHz left-right level difference gives the side on 6 of 6 side calls (+3.3, +3.4, +1.2 dB at +45/+90/+135; -0.9, -2.1, -0.4 at -45/-90/-135)",
-    "bearing_prior.json (19:48, 15 pairs): side 15/15, magnitude uncorrelated; the pairs after 19:53 are E3 false answers and must be excluded from refits"
+    "bearing_prior.json (19:48, 15 pairs): side 15/15, magnitude uncorrelated; the pairs after 19:53 are E3 false answers and must be excluded from refits",
+    "21:00 live: side matched the camera on 6 of 6 calls where a face/person was then found (ILD overrode the SRP on 21:07:21 and was right); 21:03:09: all cues read right (SRP margin 0.05, LR -2.6 dB, right ear v2 0.93 vs left 0.68), the duck turned right -77 deg, scanned, found nobody, gave up; the calls before and after found Shawn on the left: the wrong turn he reported. Two ILD readings were floor artefacts (-107 dB, 0.0/0.0) and are fixed (10 dB spectral floor, snr >= 3 dB gate)"
    ],
    "status": "built",
-   "gap": "The head's own level/lag table has one call per direction; a second eight-direction round (three calls each) is needed to validate it before it replaces the side*35 deg prior. First-wavefront (precedence) lags are not usable at 2 m (no clean onset on 7 of 8 calls)."
+   "gap": "One side cue in 7 was wrong by 180 deg at home; a single-call side read cannot be made certain at 2 m indoors. Fix in place since 21:21 (not yet live-tested): when the back turn's search finds nobody the body turns on the same way (time cap, about 120 deg) and any turn stops at the first face or person in view (test_a_back_turn_that_finds_nobody_turns_on_until_the_camera_sees_someone). Second eight-direction round still wanted for the level table"
   },
   {
    "id": "R4",
@@ -139,9 +146,11 @@
    "tests": [
     "test_every_response_quacks_and_a_caller_behind_gets_a_body_turn"
    ],
-   "evidence": [],
-   "status": "built",
-   "gap": "No live body turn observed since the change."
+   "evidence": [
+    "21:00 live: three body turns (21:02:42 +84 deg, 21:03:09 -77 deg, 21:03:47 +76 deg) with the head held on the bearing; Shawn: 从背后叫的时候能转身"
+   ],
+   "status": "partial",
+   "gap": "Three live turns seen; smoothness not measured against the brain log."
   },
   {
    "id": "R6",
@@ -235,9 +244,11 @@
     "test_quack_skipped_only_when_the_caller_really_repeats",
     "test_playback_keepalive_starts_before_capture_and_stops"
    ],
-   "evidence": [],
-   "status": "built",
-   "gap": "No live count of quacks per answer since the playback fix."
+   "evidence": [
+    "21:00 live: 8 answers, 8 quacks (6 bank calls, 2 own)"
+   ],
+   "status": "partial",
+   "gap": "Shawn has not yet said whether each quack was audible."
   },
   {
    "id": "R10",
