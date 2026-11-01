@@ -122,7 +122,15 @@ ZERO_KEYS = {"mode", "vx", "vy", "vtheta", "head", "for_s"}
 MICS_MM = {"left": (60.5, 38.5), "right": (60.5, -38.5), "back": (-19.9, -11.0)}
 CHANNELS = {"left": 0, "right": 1, "back": 2}
 BAND = (300.0, 4000.0)
-YAW_CAP = 1.2                    # rad; the card's head_yaw limit is 1.4 = HEAD_RANGE, this leaves the pre-inverse room
+# rad; the head answers alone (D-038, Shawn 2026-11-01: 但肢体转身可能就不用了), so the look goes to the trained limit:
+# HEAD_RANGE head_yaw 1.40 (walk/stand/sitstand head_pose_range curriculum). The pre-inverse is clipped there, so the
+# last part of a full glance eases in at the brain's EMA instead of snapping. With the U20CAM's 62 deg field of view the
+# glance sees +-111 deg. The library's body share past orient_threshold is switched off in HeadPath.
+YAW_CAP = 1.40
+# seated answer (R12): head_roll tilt toward the caller's side (rad, inside HEAD_RANGE 0.31) and the head command's rate
+# limit (rad/s per joint); checked on the as-built sim, glance-20261101/
+SIT_TILT = 0.25
+SIT_HEAD_RATE = 1.0
 # gaze pitch for the caller, rad up in pet/express units. The duck card maps it 1:1 onto a head_pitch delta (minus,
 # since head_pitch + looks down on this robot: approach.py HEAD_PITCH_WALK), so 1.1 = the HEAD_RANGE pitch cap =
 # head_pitch -0.75 absolute under stand61, the camera 30 deg above the horizontal (face-view-20261029/README.md): a
@@ -981,7 +989,13 @@ class HeadPath:
     def __init__(self, card=CARD, default=None, seed=None, preinverse=True, yaw_cap=YAW_CAP, warmth=0.8, energy=0.7,
                  affect=(0.6, 0.6), idle=False):
         self.ex = Expressor(load_card(card), seed=int(time.time() * 1000) % 2 ** 31 if seed is None else seed)
+        # no body share (D-038): past the card's orient_threshold (1.2) the library hands part of the gaze to ORIENT,
+        # whose head_yaw gain is -1, so a 1.40 look would leave the head at about 0.6 waiting for a body turn
+        self.ex.orient_threshold = float("inf")
         self.default = default or dict(DEFAULT_HEAD)
+        self.seated = False             # the brain sits (sitstand61): slow head, a tilt, no pre-inverse snaps
+        self._r = np.zeros(4)           # the last head command sent (deltas) and its time: the seated rate limit
+        self._t_prev = None
         self.preinverse, self.yaw_cap, self.idle = preinverse, yaw_cap, idle
         self.warmth, self.energy, self.affect = warmth, energy, Affect(*affect)
         self.lim = np.asarray(HEAD_RANGE, float)
@@ -1040,6 +1054,7 @@ class HeadPath:
         self.ex.state["ATTEND.yaw"], self.ex.state["ATTEND.pitch"] = float(yaw), float(pitch)
         self.ex._prev_out = None                       # the card's rate limit starts from here, not the take's end
         self.c[:] = [0.25 * pitch, -pitch, yaw, 0.0]   # the duck card's ATTEND map (neck, head pitch, yaw, roll)
+        self._r = self.c.copy()
 
     def release(self, now):
         """Attention over: drift home over 2.5 s, then quiet."""
@@ -1060,13 +1075,24 @@ class HeadPath:
                 self.ex.submit(content_idle(affect=Affect(self.affect.valence, max(0.2, self.affect.arousal - 0.2))), now)
         frame = self.ex.step(now)
         y = np.array([frame["outputs"][j] for j in HEAD_JOINTS])
-        if self.preinverse and not (self.holding and self.ex.perf is None):
+        if self.seated:
+            # seated (R12, Shawn 2026-11-01: 坐着歪头就行了): the take's gaze plus a head tilt toward the caller's side
+            # while the take or the attention runs, rate-limited and without the pre-inverse: Pollen saw fast head
+            # jerks tip a seated duck backward (walk_wired QUACK_SIT_SCALE note)
+            g = y.copy()
+            if self.settle_at is not None or self.holding:
+                g[3] += SIT_TILT * (1.0 if y[2] >= 0 else -1.0)
+            g = np.clip(g, -self.lim, self.lim)
+            dt = 0.0 if self._t_prev is None else min(0.1, max(0.0, now - self._t_prev))
+            r = self._r + np.clip(g - self._r, -SIT_HEAD_RATE * dt, SIT_HEAD_RATE * dt)
+        elif self.preinverse and not (self.holding and self.ex.perf is None):
             # the EMA pre-inverse serves the take's snaps; the attention hold sends its slow gaze as it is (the
             # pre-inverse would multiply the idle breathing and each face correction by 1 / HEAD_ALPHA)
             r = np.clip(self.c + (y - self.c) / HEAD_ALPHA, -self.lim, self.lim)
         else:
             r = np.clip(y, -self.lim, self.lim)
         self.c = self.c + HEAD_ALPHA * (r - self.c)
+        self._r, self._t_prev = r, now
         active = True
         if self.active_until is not None and now >= self.active_until:
             self.active_until = None
@@ -1074,6 +1100,7 @@ class HeadPath:
             if not self.idle:
                 r = np.zeros(4)      # one last command at the policy default; the brain's EMA eases into it
                 self.c[:] = 0
+                self._r = r
         return want_head(r, self.default), frame["events"], active
 
 
@@ -1211,7 +1238,8 @@ def read_cmd_file(path=CMD_FILE):
 
 
 class BrainGate:
-    """What the brain is doing, from its newest tick log and the control file; refuses anything but walk/stand at rest."""
+    """What the brain is doing, from its newest tick log and the control file; accepts walk/stand at rest and a finished
+    seat (sit phase "seated"), refuses anything else."""
 
     def __init__(self, log_pattern=BRAIN_LOGS, cmd_file=CMD_FILE, fresh_s=BRAIN_FRESH_S, now=time.time):
         self.pattern, self.cmd_file, self.fresh_s, self.now = log_pattern, cmd_file, fresh_s, now
@@ -1231,9 +1259,14 @@ class BrainGate:
             return dict(ok=False, why=f"no readable tick in {self.log}", mode=None, cmd=None, fresh_s=None, log=self.log)
         age = self.now() - float(row.get("t", 0))
         mode, cmd = row.get("mode"), row.get("cmd") or {}
-        st = dict(ok=False, why=None, mode=mode, cmd=cmd, fresh_s=round(age, 2), log=self.log, torque=row.get("torque"))
+        st = dict(ok=False, why=None, mode=mode, cmd=cmd, fresh_s=round(age, 2), log=self.log, torque=row.get("torque"),
+                  seated=mode == "sit" and row.get("sit_phase") == "seated")
         if age > self.fresh_s:
             st["why"] = f"brain log stale ({age:.1f} s): the brain stopped or hangs"
+        elif mode == "sit":
+            # seated: answered with the head from the seat (R12); sitting down or standing up: wait
+            st["ok"] = st["seated"]
+            st["why"] = None if st["ok"] else f"brain sit phase {row.get('sit_phase')}: waits for the seat"
         elif mode not in ("walk", "stand"):
             st["why"] = f"brain in {mode} mode (needs walk at zero command, or stand)"
         elif mode == "walk" and not zero_walk(cmd):
@@ -1342,17 +1375,23 @@ class CmdWriter:
         self.mine = None
         self.writes = 0
         self.taken = None
+        self.seated = False   # the brain sits: write {"mode": "sit", "head": ...}, never a walk (it would stand it up)
 
     def claimable(self):
         cur = read_cmd_file(self.path)
         if cur is None:
-            return True
+            return not self.seated
         if self.mine is not None and cur == self.mine:
             return True
+        if self.seated:
+            return isinstance(cur, dict) and cur.get("mode") == "sit" and set(cur) <= {"mode", "head"}
         return zero_walk(cur) and set(cur) <= ZERO_KEYS
 
     def write(self, head=None, vtheta=0.0, for_s=None):
         want = dict(WALK_ZERO)
+        if self.seated:
+            want = {"mode": "sit"}
+            vtheta, for_s = 0.0, None   # no body turn from a seat
         if vtheta:
             want["vtheta"] = round(float(vtheta), 3)
         if for_s is not None:
@@ -1452,7 +1491,8 @@ class NameCall:
         self.writer = CmdWriter(args.cmd, dry=args.dry) if not args.no_head else None
         self.gate = BrainGate(args.brain_logs, args.cmd) if not args.no_gate else None
         self.responses = 0
-        self.head_yaw_now = 0.0          # the head's commanded yaw in the resting frame: mics turn with the head
+        self.seated = False              # the brain sits (from its tick log, gate_ok): answers from the seat
+        self.head_yaw_now = 0.0         # the head's commanded yaw in the resting frame: mics turn with the head
         self.quack_due = []              # (t_abs, event): quacks of the program's own (takes the library planned silent)
         self.turn = None                 # planned body turn toward a caller behind: dict(sign, dur_s, az_rad)
         self.turn_until = None           # the body turn runs until this time
@@ -1667,7 +1707,7 @@ class NameCall:
             # the body never turns at the take any more; a back turn on the heard side waits for the front search
             self.turn = None
             self.back_turn = self.more_turn = None
-            if not getattr(self.a, "no_turn", True):
+            if not getattr(self.a, "no_turn", True) and not self.seated:
                 sign = side if side else (1.0 if az >= 0 else -1.0)
                 if behind_sure:
                     # the back microphone says behind: the body turns toward the caller as soon as the head arrives
@@ -1981,6 +2021,14 @@ class NameCall:
         if self.gate is None:
             return True, None
         st = self.gate.state()
+        if st.get("mode") is not None:
+            # posture follows the brain's tick log: seated answers write sit commands with a slow head and a tilt
+            seated = bool(st.get("seated"))
+            self.seated = seated
+            if self.writer is not None:
+                self.writer.seated = seated
+            if self.head is not None:
+                self.head.seated = seated
         return st["ok"], st
 
     # --- drivers
@@ -2060,7 +2108,7 @@ class NameCall:
                     next_gate = now + 0.5
                     ok, st = self.gate_ok()
                     if not ok and (self.head is None or not self.head.active or st["mode"] not in ("walk",)):
-                        if st and st["mode"] not in ("walk", "stand"):
+                        if st and st["mode"] not in ("walk", "stand", "sit"):
                             log.write("stop", why=st["why"])
                             sys.exit(f"namecall: stopped, {st['why']}")
                         if st and st["why"] and "stale" in st["why"]:

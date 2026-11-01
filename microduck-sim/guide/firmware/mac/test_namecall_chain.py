@@ -174,8 +174,8 @@ def test_writer_writes_zero_walk_and_yields_to_other_writers(tmp_path):
 
 # --- brain gate
 
-def brain_log(path, mode, cmd, age=0.0):
-    row = dict(t=time.time() - age, mode=mode, cmd=cmd, torque=True, q=[0] * 14)
+def brain_log(path, mode, cmd, age=0.0, **extra):
+    row = dict(t=time.time() - age, mode=mode, cmd=cmd, torque=True, q=[0] * 14, **extra)
     with open(path, "a") as f:
         f.write(json.dumps(row) + "\n")
 
@@ -194,6 +194,8 @@ def test_gate_accepts_walk_zero_and_stand_only(tmp_path):
     assert g.state()["ok"] and g.state()["mode"] == "stand"
     brain_log(log, "sit", {"mode": "sit"})
     assert not g.state()["ok"]
+    brain_log(log, "sit", {"mode": "sit"}, sit_phase="down")
+    assert not g.state()["ok"] and "down" in g.state()["why"]
     brain_log(log, "walk", {"mode": "walk", "vx": 0, "vy": 0, "vtheta": 0}, age=3.0)
     assert not g.state()["ok"] and "stale" in g.state()["why"]
     # a torn last line is skipped, the previous complete one counts
@@ -201,6 +203,49 @@ def test_gate_accepts_walk_zero_and_stand_only(tmp_path):
     with open(log, "a") as f:
         f.write('{"t": 1, "mode": "wal')
     assert g.state()["ok"]
+
+
+def test_seated_answer_writes_sit_with_a_slow_tilted_head_and_never_a_walk(tmp_path):
+    """R12 (Shawn 2026-11-01: 坐着的时候也能响应我们的呼唤 ... 只要坐着歪头就行了): a finished seat passes the gate,
+    the writer takes over the sit command and keeps it a sit command, the head turns at most SIT_HEAD_RATE and tilts
+    toward the caller's side, and no body turn is planned."""
+    log, p = str(tmp_path / "duck_wired_log_s.jsonl"), str(tmp_path / "cmd.json")
+    json.dump({"mode": "sit"}, open(p, "w"))
+    brain_log(log, "sit", {"mode": "sit"}, sit_phase="seated")
+    a = args(cmd=p, no_gate=False, brain_logs=str(tmp_path / "duck_wired_log_*.jsonl"), no_turn=False)
+    n = nc.NameCall(a, nc.Log(None))
+    ok, st = n.gate_ok()
+    assert ok and st["seated"] and n.seated and n.writer.seated and n.head.seated
+    n.head.start(0.0, 1.5, 0.2, hold=True)
+    rows, t = [], 0.0
+    while t < 4.0:
+        head, _, _ = n.head.tick(t)
+        assert n.writer.write(head)
+        cmd = json.load(open(p))
+        assert cmd["mode"] == "sit" and set(cmd) == {"mode", "head"}
+        rows.append([head[j] - nc.DEFAULT_HEAD[j] for j in HEAD_JOINTS])
+        t += 0.02
+    r = np.array(rows)
+    assert (np.abs(np.diff(r, axis=0)) <= nc.SIT_HEAD_RATE * 0.02 + 1e-9).all()     # no jerk from the seat
+    assert r[-1, 2] > nc.YAW_CAP - 0.1 and r[-1, 3] > 0.2                           # turned to the left and tilted
+    assert (np.abs(r) <= np.asarray(HEAD_RANGE) + 1e-9).all()
+    assert not n.writer.write(None, vtheta=0.3) or json.load(open(p)) == {"mode": "sit"}   # a turn request stays a sit
+    json.dump({"mode": "walk", "vx": 0.2, "vy": 0, "vtheta": 0}, open(p, "w"))
+    assert not n.writer.write(head)                                                 # someone stood it up: yield
+
+
+def test_full_glance_reaches_the_trained_yaw_without_a_body_share():
+    """R11 / D-038: a caller at 90 deg gets the head at YAW_CAP (1.40), not the 0.6 left over when the library's
+    ORIENT share past its 1.2 orient_threshold counter-rotates the head for a body turn that never comes."""
+    hp = nc.HeadPath(seed=4, default=dict(nc.DEFAULT_HEAD))
+    hp.start(0.0, math.pi / 2, 0.2, hold=True)
+    rows, t = [], 0.0
+    while t < 3.0:
+        head, _, _ = hp.tick(t)
+        rows.append([head[j] - nc.DEFAULT_HEAD[j] for j in HEAD_JOINTS])
+        t += 0.02
+    c = ema(np.array(rows))
+    assert abs(c[-1, 2] - nc.YAW_CAP) < 0.05 and (np.abs(np.array(rows)) <= np.asarray(HEAD_RANGE) + 1e-9).all()
 
 
 def test_gate_follows_the_newest_log(tmp_path):
