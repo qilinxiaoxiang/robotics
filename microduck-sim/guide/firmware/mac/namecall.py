@@ -634,6 +634,7 @@ ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the of
                                   # from it except +135 deg (0.2, left to the SRP); a free-field scene (no head) reads
                                   # about -1.0 and must not override
 ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
+SIDE_LAG_MIN = 2.0                # samples at 48 kHz: an ear-pair lag at least this big decides the side (77 mm = 10.8)
 ILD_MIN_SNR_DB = 3.0              # the level side needs the ears' call this far over the noise in the band (2026-10-30
                                   # 21:03:47: a 7 dB call read 0.0/0.0 after subtraction; the band held no call)
 ILD_NOISE_FRAMES = 94             # noise frames behind the level cue (0.5 s at hop 256 / 48 kHz)
@@ -1576,22 +1577,37 @@ class NameCall:
         az_front, side = fold_front(az)
         # the side from the ear level difference (head frame, ILD_SIDE_BAND) overrides the SRP side while the head is
         # near rest: on the 2026-10-30 eight-direction calls the level gave 6 of 6 sides, the SRP 5 of 7
-        side_srp, side_ild = side, 0
+        side_srp, side_ild, side_lag = side, 0, 0
         ild = (det.get("ild_db") or {}).get(ILD_SIDE_BAND)
         if ild is not None and ild.get("snr", ILD_MIN_SNR_DB) >= ILD_MIN_SNR_DB:
             d = ild["LR"] - ILD_SIDE_OFFSET_DB
             side_ild = (1 if d > 0 else -1) if abs(d) >= ILD_SIDE_MIN_DB else 0
-        if side_ild and side_ild != side and abs(self.head_yaw_now) <= ILD_HEAD_REST_RAD:
-            side = side_ild
+        # the ear pair's own delay (left-right GCC-PHAT lag, positive = the left ear later = caller on the right) gave
+        # the side on 12 of 12 camera-confirmed calls since 2026-10-30 21:00, the SRP over all three microphones 5 of
+        # 12 (the back microphone and the aliased band pull it to the wrong lobe); it decides first, the level second
+        lag = ((det.get("pairs") or {}).get("left-right") or {}).get("lag")
+        if lag is not None and abs(lag) >= SIDE_LAG_MIN:
+            side_lag = -1 if lag > 0 else 1
+        side_ears = side_lag or side_ild
+        if side_ears and side_ears != side and abs(self.head_yaw_now) <= ILD_HEAD_REST_RAD:
+            side = side_ears
             az_front = side * max(abs(az_front), SIDE_MIN)
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3), az_front_rad=round(az_front, 4),
-                   side=side, side_srp=side_srp, side_ild=side_ild, behind_heard=abs(az) > YAW_CAP)
+                   side=side, side_srp=side_srp, side_ild=side_ild, side_lag=side_lag, behind_heard=abs(az) > YAW_CAP)
         az_look = az_front
         if self.bearing_prior is not None and side:
             # the duck's own experience (fit_bearing.py): the heard side is right, the heard magnitude is not, so the
             # first look goes to the median true bearing on that side and the camera finds the rest
             az_look = side * math.radians(self.bearing_prior["look_deg"])
             rec["az_look_deg"] = round(math.degrees(az_look), 1)
+        if self.turn_until is not None:
+            # a new call while the body turns for the last one: the turn stops here and the new call is answered from
+            # where the body now points (Shawn 2026-10-31 20:2x: calling again during the search was ignored)
+            theta = self._turned(now)
+            self.turn_until = None
+            self.log.write("turn_done", az_deg=round(math.degrees(self.turn_plan["az_rad"]), 1),
+                           turned_deg=round(math.degrees(theta), 1), by="call", s=round(now - self.turn_t0, 2),
+                           more=bool(self.turn_plan.get("more")))
         self.call = dict(t=det.get("t", now), now=now, seen=False)
         self.body_rot = 0.0
         if self.head is not None:
@@ -1988,6 +2004,8 @@ class NameCall:
                         log.write("skip", why="a take is running", az_deg=det["az_deg"])
                     else:
                         ok, st = self.gate_ok()
+                        if not ok and self.turn_until is not None:
+                            ok = True    # the walking command is this program's own body turn: a new call re-aims
                         if not ok:
                             log.write("skip", why=st["why"], az_deg=det["az_deg"])
                         else:

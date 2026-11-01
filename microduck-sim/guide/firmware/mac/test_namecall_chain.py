@@ -671,3 +671,49 @@ def test_the_first_look_goes_to_the_heard_side_by_the_learned_bearing(tmp_path):
     a.no_turn = True
     rec = nc.NameCall(a, nc.Log(None, echo=False)).respond(dict(t=0.0, az_rad=1.0, az_deg=57, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
     assert "az_look_deg" not in rec and abs(rec["target_yaw"] - 1.0) < 0.05
+
+
+def test_the_ear_pair_delay_decides_the_side_over_the_srp(tmp_path):
+    """2026-10-31 20:20:28: Shawn on the left (camera 127 deg), the SRP read -26.8 deg (right), the ear pair's own lag
+    -11.25 samples (left ear first). Since 2026-10-30 21:00 the lag sign gave the side on 12 of 12 confirmed calls,
+    the SRP on 5 of 12: the lag decides, then the level difference, then the SRP."""
+    prior = tmp_path / "bearing_prior.json"
+    prior.write_text(json.dumps(dict(look_deg=61.5, n=12, side_correct=5)))
+    a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH, bearing_prior=str(prior))
+    a.no_turn = True
+    for lag, ild, srp_az, want_side in ((-11.25, 4.07, -0.4685, 1), (10.5, -0.29, 0.9, -1), (0.5, 4.07, -0.4685, 1),
+                                        (0.5, 0.9, -0.4685, -1)):
+        n = nc.NameCall(a, nc.Log(None, echo=False))
+        det = dict(t=0.0, az_rad=srp_az, az_deg=round(math.degrees(srp_az), 1), bins=100, e_db=-30.0, floor_db=-48.0,
+                   margin=0.5, pairs={"left-right": {"lag": lag, "peak": 0.2}},
+                   ild_db={"2500": {"LR": ild, "EB": 0.0, "snr": 9.0}})
+        rec = n.respond(det, 0.0)
+        assert rec["side"] == want_side, (lag, ild, rec["side"], rec["side_lag"], rec["side_ild"])
+        assert abs(rec["az_look_deg"] - want_side * 61.5) < 0.1
+
+
+def test_a_new_call_during_the_body_turn_stops_it_and_re_aims(tmp_path):
+    """Shawn 2026-10-31 20:2x: calling again while the duck turned to search was ignored. A call answered during the
+    body turn ends the turn (turn_done by "call") and the head takes the new call from where the body now points."""
+    a = args(cmd=str(tmp_path / "c.json"), seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    n.finder = FakeFinder(n.head.gaze, world=None)
+    recs = []
+    n.log.write = lambda kind, **rec: recs.append((kind, dict(rec)))
+    n.respond(dict(t=0.0, az_rad=1.0, az_deg=57.3, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), 0.0)
+    t = 0.0
+    while n.turn_until is None and t < 30.0:
+        n.motion_tick(t)
+        t += 0.02
+    assert n.turn_until is not None, "no body turn started"
+    for _ in range(100):
+        n.motion_tick(t)
+        t += 0.02
+    rec = n.respond(dict(t=t, az_rad=-0.8, az_deg=-45.8, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5), t)
+    assert n.turn_until is None
+    dones = [r for k, r in recs if k == "turn_done"]
+    assert dones and dones[-1]["by"] == "call"
+    # the heard bearing is in the head frame; the head was turned on the first caller, so the body bearing adds it
+    assert abs(rec["az_rest_rad"] - (-0.8 + rec["head_yaw_now"])) < 1e-3 and abs(rec["head_yaw_now"]) > 0.3
+    assert abs(rec["target_yaw"] - rec["az_rest_rad"]) < 0.05
