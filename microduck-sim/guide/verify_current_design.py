@@ -103,12 +103,16 @@ def main() -> int:
         # An extra-printer slice (V1.33 h2s: the club H2S, make_h2s.py) sits in its own H2S/ subfolder: its delivered file and
         # plate picture, byte for byte, from a passing result.
         subs = ['Elegoo', 'X1C']
+        # Since 2026-11-01 every release carries one H2S slice per colour, so h2s may be a list of such entries.
         if rel_.get('h2s'):
-            h = rel_['h2s']; src = rel(h['file']); res = json.loads(rel(h['result']).read_text()); subs = ['Elegoo', 'H2S', 'X1C']
+            hs = rel_['h2s'] if isinstance(rel_['h2s'], list) else [rel_['h2s']]; subs = ['Elegoo', 'H2S', 'X1C']; exp = []; ok_ = True
+            for h in hs:
+                src = rel(h['file']); res = json.loads(rel(h['result']).read_text())
+                exp += [(f.name, sha(f)) for f in (src, src.parent / f"{res['color']}_H2S_plate.png")]
+                ok_ &= res.get('passed') is True and res['delivered']['sha256'] == sha(src)
             got = sorted((f.name, sha(f)) for f in (p / 'H2S').glob('*') if f.is_file() and not f.name.startswith('.'))
-            exp = sorted((f.name, sha(f)) for f in (src, src.parent / f"{res['color']}_H2S_plate.png"))
             c['downloadsH2SFiles'] = len(got)
-            if res.get('passed') is not True or got != exp:
+            if not ok_ or got != sorted(exp):
                 fail('release', 'downloadsCopy_h2s', str(p / 'H2S'))
         c['downloadsFolderFiles'] = len(have)
         if have != want or extra != previews or sorted(x.name for x in p.iterdir() if x.is_dir()) != subs:

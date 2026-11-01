@@ -7,6 +7,8 @@ one preview picture per plate).
 Creates ~/Downloads/zhengxia_MicroDuck_<version>/ with
   X1C/      the Bambu X1C .gcode.3mf files     (copy this folder onto the X1C SD card)
   Elegoo/   the Elegoo Centauri Carbon .gcode   (copy this folder onto the Centauri SD card)
+  H2S/      the club Bambu H2S .gcode.3mf files and their plate thumbnails, from <release>/delivery-h2s/ (make_h2s.py; one per
+            colour by default since Shawn 2026-11-01: "以后默认也切一个H2S好了"); each needs a passing run-h2s/<Colour>/result.json
   <Colour>-plate.png  one picture per plate: a top view of the 256 mm bed with every part's footprint, the bed centre,
                       the excluded corners and the measured centre offset (Shawn 2026-10-15), the thumbnail embedded in
                       each machine file (X1C and Elegoo), and every part rendered on its own, in the pose it prints in
@@ -226,6 +228,13 @@ def main() -> None:
         parts = [p for p in prep['parts'] if p['color'] == colour]
         pic = out / f'{colour}-plate.png'
         plate_picture(version, colour, parts, files, thumbs, names, prep).save(pic, optimize=True); written.append(str(pic))
+    for src in sorted((rel / 'delivery-h2s').glob('*')) if (rel / 'delivery-h2s').is_dir() else []:
+        if src.name.endswith('.gcode.3mf'):
+            colour = src.name.split('_')[2]
+            res = json.loads((rel / 'run-h2s' / colour / 'result.json').read_text())
+            assert res.get('passed') is True and res['delivered']['sha256'] == sha(src), src
+        dst = out / 'H2S' / src.name; dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst); assert sha(dst) == sha(src), dst; written.append(str(dst))
     extra = sorted(str(x.relative_to(out)) for x in out.rglob('*') if x.is_file() and str(x) not in written)
     assert not extra, f'unexpected files in the delivery folder: {extra}'
     print(json.dumps({'out': str(out), 'files': written}, indent=1))

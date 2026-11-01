@@ -17,7 +17,7 @@ job() {  # name max-mib cwd command...
   echo "$name exit $rc"; grep -v 'lock holder' $REL/logs/$name.log | tail -3 | cut -c1-300
   [ $rc -eq 0 ]
 }
-mkdir -p $REL/logs; rm -rf $REL/run $REL/review
+mkdir -p $REL/logs; rm -rf $REL/run $REL/review $REL/run-h2s $REL/delivery-h2s
 $PY $REL/scripts/make_manifest.py > $REL/logs/manifest.log 2>&1; echo "manifest exit $?"; tail -3 $REL/logs/manifest.log
 job step1 1600 $REL $PY $PIPE/release_pipeline_v2.py prepare $REL/manifest-V1.40.json $REL/run
 $PY - $REL/run/preparation.json <<'PYEOF'
@@ -32,6 +32,8 @@ for C in Orange; do for M in Bambu Elegoo; do
   job support-map-$C-$M 1024 $REL $PY $PRINT/orientation-study/scripts/support_map.py $REL/run $C $M $REL/review/${C}_${M}-support-map.png $REL/review/${C}_${M}-support-map.json
   job readback-$C-$M 1024 $REL $PY $PRINT/orientation-study/scripts/slice_readback.py $REL/run $C $M $REL/review/${C}_${M}-readback.json
 done; done
+# Club Bambu H2S, one plate per colour by default (Shawn 2026-11-01: "以后默认也切一个H2S好了"); the delivery folder copies it into H2S/
+for C in Orange; do job h2s-$C 1000 $PRINT $PY make_h2s.py $REL $C; done
 job native-review 600 $REL $PY scripts/make_native_review.py
 job package 1600 $REL $PY $PIPE/release_pipeline_v2.py package $REL/run/preparation.json --native-review $REL/run/native-review.json
 job verify 1600 $PIPE $PY verify_release_v2.py $REL/run --output $REL/run/final-binding-check.json
