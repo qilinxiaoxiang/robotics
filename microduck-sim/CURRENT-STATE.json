@@ -139,12 +139,17 @@
    "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
   },
   "power": {
-   "value": "Battery backpack (D-010) on the robot: 2S LiPo -> XT30 switch -> OpenRB J4 directly (no converter); DFR1202 on the same switched line -> 5.0 V -> A7Z header pins 2/6 via MR30. Idle servo-reported supply 8.0-8.2 V (full pack); A7Z cold-booted on it with every self-check item passing. Walking-load behaviour on the pack not yet measured.",
-   "verified_at": "2026-10-30",
-   "source": "2026-10-30 22:17 A7Z boot b0051: kernel boot-reason COLD-BOOT, no under-voltage lines; boot self-check (/api/a7z/selfcheck) 15 servos answer at 8.0-8.2 V, IMU, touch, camera, speaker and three mics pass; Shawn: running on battery. Earlier bench history in superseded",
+   "value": "Charger backpack back on the robot (Shawn 2026-10-31 evening: \"我现在又把charger pack换上了\"): USB-C PD charger lead -> Adafruit 5991 -> XL4015 #1 -> OpenRB J4, XL4015 #2 -> A7Z header pins 2/6; the charger lead trails from the backpack again. Idle servo-reported supply 7.2 V standing. Which charger (20 V 5 A needed for walking, 2026-10-22) not confirmed this time.",
+   "verified_at": "2026-10-31",
+   "source": "2026-10-31 20:13 A7Z (up 35 min), brain log duck_wired_log_app1031-194539.jsonl last 500 rows copied to the Mac: battery_dv 72 (7.2 V) in open-loop stand, 49.6 Hz, 100 % fresh servo reads, IMU age 10 ms; a 2S pack read 8.0-8.2 V idle on 10/30. Earlier history in superseded",
    "max_age_days": 14,
    "measure": "charger label and the 5991 display; walk/stand test with the A7Z flight recorder running (guide/firmware/pi/BLACKBOX.md). Servo-reported voltage (0.1 V steps, one servo per cycle) cannot see millisecond dips and is not evidence of a stable rail",
    "superseded": [
+    {
+     "value": "Battery backpack (D-010) on the robot: 2S LiPo -> XT30 switch -> OpenRB J4 directly (no converter); DFR1202 on the same switched line -> 5.0 V -> A7Z header pins 2/6 via MR30. Idle servo-reported supply 8.0-8.2 V (full pack); A7Z cold-booted on it with every self-check item passing.",
+     "verified_at": "2026-10-30",
+     "source": "2026-10-30 22:17 A7Z boot b0051 self-check 8.0-8.2 V; replaced 2026-10-31 evening when Shawn put the charger backpack back on"
+    },
     {
      "value": "Servo rail: USB-C PD charger at 20 V 5 A -> Adafruit 5991 -> XL4015 #1 (about 7.2 V) -> OpenRB J4. A 20 V 3 A charger crashes the A7Z while walking or standing up; 20 V 5 A walks without a crash (Shawn, 2026-10-22). A7Z: the same 20 V from the 5991 -> XL4015 #2 -> header pins 2/6 (one supply for both rails). No battery on the robot.",
      "until": "2026-10-30",
