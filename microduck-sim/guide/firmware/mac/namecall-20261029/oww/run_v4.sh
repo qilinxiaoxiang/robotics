@@ -1,7 +1,7 @@
 #!/bin/zsh
 # openWakeWord "mochi" round 4 on the Mac mini: round 3's data (prep_v3.py) plus the duck's own motion noise
-# (data/bg_motion: record_motion_noise.py -> motion_to_bg.py, body turns both ways and head sweeps) as background at
-# duplication rate 5, so the spotter keeps hearing the name while the duck turns or searches. Same stages and steps
+# (data/bg_motion/train: life_motion_bg.py cuts the body turns and head sweeps of the 10/30 and 10/31 name-call runs
+# out of the always-on life log, speech masked) as background at duplication rate 5, so the spotter keeps hearing the name while the duck turns or searches. Same stages and steps
 # as round 3; logs in logs/v4_*.log, DONE_V4 at the end.
 #   nohup ./run_v4.sh > logs/v4_chain.log 2>&1 &
 set -e
@@ -9,10 +9,10 @@ OWW=/Users/shawnxiang/mochi-train/oww
 PY=/Users/shawnxiang/.venvs/oww/bin/python
 cd $OWW
 rm -f $OWW/DONE_V4
-ls data/bg_motion/*.wav > /dev/null || { echo "no data/bg_motion clips"; exit 1; }
+ls data/bg_motion/train/*.wav > /dev/null || { echo "no data/bg_motion/train clips"; exit 1; }
 mkdir -p data/bg_motion_train
-rm -f data/bg_motion_train/*.wav
-for f in data/bg_motion/*.wav; do case "$f" in *_hold.wav) ;; *) cp "$f" data/bg_motion_train/ ;; esac; done
+find data/bg_motion_train -name '*.wav' -delete
+cp data/bg_motion/train/*.wav data/bg_motion_train/
 echo "motion clips for training: $(ls data/bg_motion_train | wc -l)"
 date; echo "== prep_v3"
 $PY $OWW/prep_v3.py > logs/v4_prep.log 2>&1; tail -5 logs/v4_prep.log
