@@ -93,3 +93,21 @@ microphone alone, all three live in every recording). Labels are in `mochi_label
 ## Not duck data
 
 `~/Downloads/audio-17923*.wav` (10/18) are 17-720 breathing recordings from a phone; not usable.
+
+## The duck's own motion noise (body turns, head sweeps, walks)
+
+- **Source**: the life log while the duck moved, cut by `oww/life_motion_bg.py` (speech masked: voiced 60 ms frames and
+  +-2 s around logged calls). Motion times come from the namecall logs (`recordings/motion_sources/`: turn ->
+  turn_done, scan steps) and from brain logs with the walking command per row: the 10/30 t2b walks 16:01-16:05
+  (`robot-runs-20261030-t1/t2b/`) and Shawn's in-place turns at vtheta +-0.5, 16:09-16:13
+  (`turn-inplace-20261030/robot_walk611030-160205_tail20000.jsonl.gz`). Life segment starts come from
+  `life_index.jsonl` (names before 10/30 16:08 EDT are UTC).
+- **Amount** (`recordings/bg_motion_life2/`): 360 training windows of 2 s x 3 streams (left, right, mix); held out:
+  the 10/31 body turns at 20:21:33 and 20:21:49 (`hold/*.npy`, 16 kHz, 3 mics), used only by `oww/eval_motion.py`.
+  Round 4 used the first 167 windows (`recordings/bg_motion_life/`), round 5 all 360.
+- **Not yet pulled**: the 10/31 daytime life log and the 17:11 run stay on the A7Z (offline since 10/31 20:45);
+  `a7z_offload.py` brings them on its next successful run.
+- **Measured** (2026-10-31/11-01): during a body turn the 300-3000 Hz band at the ears is 6-13 dB over standing and
+  4-11 dB over a 2 m call; spectral flatness 0.8 (the loudest 10 % of 4 Hz bins carry 31 % of the added power, no
+  fixed tones); 10 % of the 20 ms frames carry 70 % of the energy (footstep impacts); coherence between the three
+  microphones 0.3-0.5 below 1.5 kHz, under 0.2 above; the same level before and after the glue.
