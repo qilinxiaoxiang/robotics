@@ -30,6 +30,11 @@ WORLD_REGIONS = {   # name: (owner, world box, rule, world point on the overhang
     'battery_backpack_frame:frontPlateCeiling': ('battery_backpack_frame', [[-67.05, -30.85, -32.8], [-47.0, 30.85, 41.8]], 'present', [-47.0, 0.0, 20.0]),
     'battery_backpack_frame:coverFlap': ('battery_backpack_frame', [[-67.05, -15.3, -44.0], [-47.0, 15.3, -34.0]], 'present', [-47.0, 0.0, -40.0]),
 }
+# V1.40 slices the guide-world frame, moved back along x for the Dual Lock (back-plate/battery-backpack-v140/guide-world.json):
+# the regions above are in the unmoved frame, so they move with it.
+_SHIFT = json.loads((Path(__file__).resolve().parents[2] / 'back-plate/battery-backpack-v140/guide-world.json').read_text())['shiftMm']
+WORLD_REGIONS = {n: (k, [[a + s for a, s in zip(lo, _SHIFT)], [a + s for a, s in zip(hi, _SHIFT)]], rule, [a + s for a, s in zip(pt, _SHIFT)])
+                 for n, (k, (lo, hi), rule, pt) in WORLD_REGIONS.items()}
 REACH_TOLERANCE_MM = 0.8   # top Z gap 0.2 plus up to three 0.2 mm interface layers under the overhang
 
 

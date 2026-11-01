@@ -66,8 +66,15 @@ def main():
     out['bp_battery.stl'] = {'source': 'box at the redesign battery seat (listing size, not measured)', 'bounds': [BAT_LO, BAT_HI],
                              'moveMm': [SHIFT_MM, 0.0, 0.0]}
     top = ['plug 1 (on top of the box)', 'balance plug (on top of the box)']
+    # Plug 1 rests on the roof (z 43) at the right front of the box top, as on the robot (Shawn 2026-11-01: "顶上右前，没碰到",
+    # asked whether it touches the camera's USB-C plug). The team box floats it 1 mm above the roof, which puts its top 0.35 mm
+    # into the USB-C plug body (underside z 48.85); resting on the roof its top is z 48.2.
+    p1 = 'plug 1 (on top of the box)'
+    plugs[p1] = dict(lo=[plugs[p1]['lo'][0], plugs[p1]['lo'][1], 43.0],
+                     hi=[plugs[p1]['hi'][0], plugs[p1]['hi'][1], 43.0 + plugs[p1]['hi'][2] - plugs[p1]['lo'][2]])
     moved(boxes([(plugs[k]['lo'], plugs[k]['hi']) for k in top])).export(WORLD / 'bp_plugs.stl')
-    out['bp_plugs.stl'] = {'source': 'microduck_rl cmu/hardware/battery-redesign/checks/checks.json plugs (approximate parking boxes)',
+    out['bp_plugs.stl'] = {'source': ('microduck_rl cmu/hardware/battery-redesign/checks/checks.json plugs (approximate parking boxes); '
+                                      'plug 1 lowered onto the roof per Shawn 2026-11-01 "顶上右前，没碰到"'),
                            'boxes': {k: plugs[k] for k in top}, 'moveMm': [SHIFT_MM, 0.0, 0.0]}
     k2 = 'plug 2 (front bay)'
     moved(boxes([(plugs[k2]['lo'], plugs[k2]['hi'])])).export(WORLD / 'bp_plug2.stl')

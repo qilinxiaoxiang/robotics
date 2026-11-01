@@ -104,14 +104,21 @@ def main():
                           'edge, snaps a 1.2 mm bump on its back flap into the cap slot (root strain 0.77 % at the 1.3 mm release pull) and '
                           'holds the battery down 0.3 mm above its top.'),
     }
+    gw = json.loads((PRINT / 'back-plate/battery-backpack-v140/guide-world.json').read_text())['files']
     for key, (tmpl, pose, change) in spec.items():
         row = copy.deepcopy(tmpl)
-        world = QS / f'build/{key}-world.stl'; T = b['print'][key]['source_to_print']
+        built = QS / f'build/{key}-world.stl'; T = b['print'][key]['source_to_print']
+        # The release slices the guide-world copy, the bytes the guide draws and the print gate checks (verify_current_design
+        # matches released sources to guide world files): the build file moved back for the Dual Lock along x, which
+        # sourceToPrint turns into print z and the drop to the bed removes, so the printed part is the same.
+        world = PRINT / f'world/{key}.stl'; g = gw[f'{key}.stl']
+        assert g['sourceSha256'] == sha(built) and g['sha256'] == sha(world), (key, 'guide world is not the current build')
         k = printed(world, T); area = contact(k); size = (k.bounds[1] - k.bounds[0]).round(2).tolist()
+        kb = printed(built, T); assert np.abs(k.bounds - kb.bounds).max() < 0.01 and abs(contact(kb) - area) < 1.0, key
         assert area >= 0.9 * b['print'][key]['bed_contact_mm2'] - 1, area
         old = TEAM / f'{key}-world.stl'
         if old.exists():
-            diff_confined(old, world); allow = allowances(key, k, printed(old, T), cuts_in_print(world, T))
+            diff_confined(old, built); allow = allowances(key, k, printed(old, T), cuts_in_print(built, T))   # team frame, unshifted
         else:
             allow = []
             assert not thin(k, key), (key, thin(k, key))
@@ -121,7 +128,8 @@ def main():
                    changeReason=why + change, thinWallAllowances=allow,
                    poseCheck=dict(printStl=ref(QS / f'build/{key}-print.stl'), bedContactMm2=round(area, 2), printSizeMm=size),
                    incrementalEvidence=ref(QS / 'build/build.json'),
-                   evidenceAlso=[ref(QS / 'build_quickswap.py'), ref(QS / 'DESIGN-CONTRACT.json')] + ([ref(old)] if old.exists() else []),
+                   evidenceAlso=[ref(built), ref(QS / 'build_quickswap.py'), ref(QS / 'DESIGN-CONTRACT.json'),
+                                 ref(PRINT / 'back-plate/battery-backpack-v140/guide-world.json')] + ([ref(old)] if old.exists() else []),
                    supportBlockers=[])
         row['decision'] = 'addition'; row['replacesStockIds'] = []
         row['supersedes'] = f'{key} of the battery-on-cap redesign (printed, on the robot)' if old.exists() else ''

@@ -37,4 +37,5 @@ job package 1600 $REL $PY $PIPE/release_pipeline_v2.py package $REL/run/preparat
 job verify 1600 $PIPE $PY verify_release_v2.py $REL/run --output $REL/run/final-binding-check.json
 job parts-sheet 900 $PRINT $PY make_parts_sheet.py --incremental $REL/manifest-V1.40.json --out $REL/PARTS-SHEET-V1.40.html
 job delivery-folder 900 $PRINT $PY make_delivery_folder.py $REL --out-root $REL/run/delivery-folder
-find $REL/run/delivery-folder -type f | sort
+job delivery-downloads 900 $PRINT $PY make_delivery_folder.py $REL    # ~/Downloads/zhengxia_MicroDuck_V1.40
+find $REL/run/delivery-folder ~/Downloads/zhengxia_MicroDuck_V1.40 -type f | sort

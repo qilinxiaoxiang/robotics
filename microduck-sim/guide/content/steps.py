@@ -2063,17 +2063,20 @@ def build(ctx):
              warnings=['Never press the hatch down onto a lead.'])
 
         step('bp-plug1', 'backpack', 'Connect plug 1 on top of the box and switch on',
-             add=ctx.keys('bp_plugs'), approach={'bp_plugs': [0, 0, 20]},
+             # slid in from behind: the camera's USB-C plug hangs 5.85 mm over the right front of the roof (Shawn 2026-11-01: plug 1
+             # sits at the right front of the top and does not touch it, "顶上右前，没碰到")
+             add=ctx.keys('bp_plugs'), approach={'bp_plugs': [-20, 0, 0]},
              camera=ctx.cam(ctx.keys('battery_backpack_frame', 'battery_backpack_cap', 'bp_plugs'), direction=TOP_REAR, margin=1.3),
              instructions=[
-                 'Done: plug 1 (the battery\'s XT30 on the switch lead\'s XT30) lies flat along the right (−Y) side of the roof, and the balance plug lies flat on the left (+Y) half of the hatch. The backpack is on.',
+                 'Done: plug 1 (the battery\'s XT30 on the switch lead\'s XT30) lies flat on the roof at its right (−Y) front, under the camera\'s USB-C plug without touching it, and the balance plug lies flat on the left (+Y) half of the hatch. The backpack is on.',
                  'Check that the switch is off.',
                  'Plug the battery\'s female XT30 onto the switch lead\'s male XT30 (plug 1).',
-                 'Lay plug 1 flat along the right (−Y) side of the roof.',
+                 'Lay plug 1 flat on the roof and slide it forward from behind into the right (−Y) front corner, under the camera\'s USB-C plug.',
                  'Lay the balance plug flat on the left (+Y) half of the hatch.',
                  'Switch on from below: press the rocker. Read the A7Z input as in the battery plan before the first boot.',
              ],
              checks=['Plug 1 is fully mated.',
+                     'Plug 1 lies flat on the roof and does not touch the camera\'s USB-C plug above it.',
                      'Neither plug stands more than about 6 mm above the roof.'],
              warnings=['A LiPo is a fire risk if crushed or shorted: never pinch its leads or the balance plug.',
                        f'Before the first battery power, follow the battery plan ({plan}): every servo already holds Shutdown 52 from chapter 11 (confirm with set_shutdown.py --check) and the battery guard runs. A full pack is 8.4 V, above the 7.0 V Max Voltage Limit.'])
