@@ -1,0 +1,18 @@
+{
+ "about": "Hearing the name while the duck walks (2026-11-01, R13). Synthetic overlay: oww/make_turn_mixes.py recordings/bg_motion_life2 OUT walk = the 8 held-out home calls (calls_200910) over 38 s of 10/30 16:01-16:11 walking audio (the non-overlapping 2 s windows of the 14 walk intervals, speech masked), at the same levels as the turn trials (m6 = live post-glue call level, p0, p6, clean, noise alone). Scorer oww/score_mixes.py, max over the two ears. v3 never saw these windows; v4 and v5 trained on them, so their numbers here are not held out.",
+ "noise_level_300_1000Hz_dB": {"walk": {"median": -58.0, "p90": -46.4, "p99": -39.7}, "turn_hold": {"median": -61.1, "p90": -52.1, "p99": -42.6}},
+ "call_window_snr_m6_dB": [2.5, 4.7, 7.0, 3.0, 2.1, 4.5, 6.6, 2.7],
+ "raw": {
+  "v3": {"clean": "8/8", "m6": "1/8 (0.7), 2/8 (0.5)", "p0": "0/8", "noise_max": 0.0, "m6_peaks": [0.7, 0.0, 0.57, 0.0, 0.0, 0.01, 0.0, 0.0]},
+  "v4": {"clean": "7/8", "m6": "2/8", "p0": "0/8", "noise_max": 0.01, "m6_peaks": [0.83, 0.01, 0.94, 0.06, 0.08, 0.0, 0.09, 0.07]},
+  "v5": {"clean": "8/8", "m6": "5/8 (0.7), 7/8 (0.5)", "p0": "4/8", "noise_over_0_5": 2, "noise_max": 0.9}
+ },
+ "deepfilternet3_pre30dB_per_ear": {
+  "v3": {"clean": "8/8", "m6": "2/8 (0.7), 3/8 (0.5)", "p0": "1/8", "noise_max": 0.29, "m6_peaks": [0.34, 0.01, 0.63, 0.71, 0.42, 0.96, 0.0, 0.03]},
+  "v4": {"clean": "8/8", "m6": "4/8", "p0": "2/8", "noise_over_0_5": 2, "noise_max": 0.95, "m6_peaks": [0.23, 0.0, 0.94, 0.94, 0.93, 0.96, 0.0, 0.07]},
+  "v5": {"clean": "7/8", "m6": "3/8", "p0": "1/8", "noise_over_0_5": 2, "noise_max": 0.79}
+ },
+ "lower_threshold_while_walking": "DF + v3 at 0.3 would take 5/8 at the live level, but 32 s of walking alone already reaches 0.29: no margin can be set on this little audio.",
+ "finding": "Walking is the hard case: 3 dB louder than turning in the median and 6 dB at p90 (heel strikes), and the turn front end (DF + v3 7/8 on turns) gives 2/8 here. Calls 1 and 6 score near 0 in every front end and model.",
+ "next": "Minutes of walking audio from the always-on life capture during ordinary walks (any walks on 10/31 after the 20:03 offload are still on the A7Z card), split by walk for a held-out test; then a spotter trained on DeepFilterNet output with calls overlaid on walking noise at the live level."
+}

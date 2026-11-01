@@ -1,6 +1,6 @@
 {
  "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
- "updated": "2026-10-31 21:10",
+ "updated": "2026-11-01 02:30",
  "requirements": [
   {
    "id": "R1",
@@ -154,7 +154,8 @@
     [
      "2026-10-30 02:22",
      "我们一般是边转头。边转头边转身，为什么要先回正再转身？感觉很不自然。"
-    ]
+    ],
+    "2026-11-01 02:1x (superseded by R11): ... 但肢体转身可能就不用了。"
    ],
    "acceptance": "Live and sim: during a body turn the head keeps pointing at the bearing (no return to centre before the turn).",
    "tests": [
@@ -164,7 +165,7 @@
     "21:00 live: three body turns (21:02:42 +84 deg, 21:03:09 -77 deg, 21:03:47 +76 deg) with the head held on the bearing; Shawn: 从背后叫的时候能转身"
    ],
    "status": "partial",
-   "gap": "Three live turns seen; smoothness not measured against the brain log."
+   "gap": "Superseded 2026-11-01 by R11: no body turn; the head answers alone. Kept for the record."
   },
   {
    "id": "R6",
@@ -285,6 +286,63 @@
    "evidence": [],
    "status": "built",
    "gap": "No fall in the 18:53 and 19:21 runs; not counted formally."
+  },
+  {
+   "id": "R11",
+   "title": "Answers with a head glance as wide as balance allows; no body turn",
+   "shawn": [
+    "2026-11-01 02:1x: 其实也未必要做到转身这么复杂。因为我们现在的鸭子转身很慢，如果判断在后面，转身等半天我也懒得等，用户体验也不好 ... 第一，头能不能大幅度扭转？同时在保持平衡的情况下，是不是尽量少涉及大范围的转身？我们其实还是产品导向，想做一个宠物机器人 ... 家里的猫听到你在叫它，它可能也懒得起身，但是头会抬起来，可能朝你那个方向瞟一眼 ... 如果超出范围，它可能也懒得转，转到那个程度就行了。如果能看到你，比如在前180度能看到就看到，如果在后180度看不到就算了。我们能不能调整一下转头的幅度，比如能不能多覆盖一点？但肢体转身可能就不用了。"
+   ],
+   "acceptance": "Live, standing: a call from anywhere in the front half (+-90 deg) is answered by the head alone and the caller is in the camera frame at the end of the glance (head yaw up to the trained +-1.40 rad plus the camera's half field of view, 31 deg, reaches +-111 deg); the body never turns; trunk tilt stays within normal standing. A caller behind is answered with the head turned to the cap on the heard side, nothing more.",
+   "tests": [],
+   "evidence": [
+    "2026-11-01 code facts: namecall.py YAW_CAP 1.2 rad (69 deg) leaves 0.2 rad under walk_brain HEAD_RANGE head_yaw 1.40, the walk/stand/sitstand training range (microduck_rl head_pose_range curriculum, final stage +-1.40); the joint model range is +-2.97 rad, so 1.40 is a training limit, not a joint stop. U20CAM fx 534.2 px on a 640 px frame: horizontal field of view 62 deg. Seen range today +-100 deg (69 + 31), at 1.40 +-111 deg. The body turn has been off by default since 2026-10-30 (namecall --turn)."
+   ],
+   "status": "gap",
+   "gap": "YAW_CAP to 1.40 with the pre-inverse overshoot kept inside HEAD_RANGE; balance at full yaw with the head pitched up to the face checked in the as-built sim, then on the robot. Beyond 1.40 the stand policy has never seen the command: needs training, not a cap change."
+  },
+  {
+   "id": "R12",
+   "title": "Answers while sitting with a head turn and tilt, without standing up",
+   "shawn": [
+    "2026-11-01 02:1x: 第二，我们现在其实有一个坐着的形态，我们希望坐着的时候也能响应我们的呼唤，当然也不用起身，它只要坐着歪头就行了，这也是想做的一件事情。"
+   ],
+   "acceptance": "Live: with the duck seated, a call is answered by a head turn toward the caller's side and a head roll tilt; the sit phase stays 'seated' (knees folded) for the whole answer and after it.",
+   "tests": [],
+   "evidence": [
+    "2026-11-01 code facts: sitstand61 was trained with head pose commands in both postures (same ranges, head_roll +-0.31 rad = 18 deg tilt); walk_brain passes {\"mode\": \"sit\", \"head\": ...} to the policy while seated."
+   ],
+   "status": "gap",
+   "gap": "namecall claims the control file only when it holds a zero walk and always writes mode walk, so today a seated duck does not answer, and a walk write would stand it up. Needs: claim a seated {\"mode\": \"sit\"} and write {\"mode\": \"sit\", \"head\": ...} with a tilt; sim check of the seated head range for balance."
+  },
+  {
+   "id": "R13",
+   "title": "Hears its name while walking, stops and waits for instructions",
+   "shawn": [
+    "2026-11-01 02:2x: 你说的降噪部分不是完全没用，相反来说是很重要的。比如说它在走路或者行动的过程中，如果我们叫它，它应该停下来，然后等我们的指示，而不是一直歪头这个样子。所以在运动过程中能听到我们的叫声、呼唤，也是很重要的，这是一个非常核心的功能。",
+    "2026-11-01 02:2x: 如果需要的话，可能我们明天可以去加几组数据测一测。或者采一点数据再训一训，但可能更多还是要依赖合成数据。就是把我们两段数据合在一起，比如呼唤的声音、走路时舵机转动的声音和噪音，然后把两段音频叠加在一起。这个时候要能听到声音。这种合成数据，看能不能造一点。"
+   ],
+   "acceptance": "Offline: held-out calls overlaid on held-out walking audio at the live call level: at least 7 of 8 answered and no false stop over at least 5 min of held-out walking audio. Live: called during a walk, the duck stops within about 1 s of the call's end, looks toward the caller and waits (R7).",
+   "tests": [],
+   "evidence": [
+    "2026-11-01 synthetic overlay (oww/make_turn_mixes.py walk: the 8 held-out home calls over 38 s of 10/30 walking audio, results/walk_frontend_20261101.json): walking is 3 dB louder than turning in 300-1000 Hz (median -58.0 vs -61.1 dB, p90 -46.4 vs -52.1); call-window SNR at the live level +2 to +7 dB. Raw v3 1/8, v4 2/8; DeepFilterNet3 +30 dB then v3 2/8 (3/8 at 0.5), v4 4/8 with two noise peaks over 0.5 in 32 s of walking. The turn front end (7/8) does not carry over to walking."
+   ],
+   "status": "gap",
+   "gap": "Only 54 s of walking audio exist (10/30 16:01-16:11 t2b walks; 38 s cut without overlap), too little to train and test on. Needs minutes of walking audio from the always-on life capture during ordinary walks, a held-out split by walk, a spotter trained on DeepFilterNet output with calls overlaid on walking noise at the live level, and the stop-and-wait behaviour in namecall (a walk command is someone else's; namecall must be allowed to stop it)."
+  },
+  {
+   "id": "R14",
+   "title": "Fetch demo: look at the caller, follow the orange ball, fetch it, bring it back",
+   "shawn": [
+    "2026-11-01 02:1x: 第三，我们叫它Mochi，它盯着我们，然后我们说：“去把橙色的球捡回来。”它会去尝试找这个橙色的球。或者像家里的宠物一样，我把橙色的球在它眼前晃一晃，它就会盯着那个橙色的球看。然后我说：“去把它捡回来。”它还能顺着我这个橙色球的运动轨迹去扭头看那个轨迹。如果球从头上越过去，那就从前几帧推断吧。然后它可以朝着球滚动的方向前进，尝试找到那个球，把它叼起来，最后走回我们身边 ... 我们能不能做这么一个demo？"
+   ],
+   "acceptance": "Live demo, one take: call Mochi -> it looks at the caller; the ball waved in front of it -> the head follows it; 'go fetch it' -> the head follows the throw (extrapolated from the last frames when the ball leaves the frame), the duck walks to where it rolled, finds it, picks it up with the beak and walks back to the caller.",
+   "tests": [],
+   "evidence": [
+    "2026-11-01 pieces (PROJECT-CONTEXT final_goal): step 1 met on the robot 10/30 (ball located on the floor within 5 mm); gaze.py centred the ball in 0.58 s and held it 19 s on the robot; approach.py walks to a seen object; seepick.py chains approach, aim and the learned seeing pick (sim 80 % at +-3 cm); no robot pickup yet; T2 pixel-feature pick training running."
+   ],
+   "status": "gap",
+   "gap": "Not built: a spoken command after the name ('go fetch it'), throw tracking with extrapolation, finding the caller again and walking back. Depends on R11 (head glance), R13 (hearing while walking) and final-goal steps 3-4 (no object picked up by the robot yet)."
   }
  ]
 }

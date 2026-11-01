@@ -293,3 +293,11 @@
 - **Why:** V1.20 had nothing locating the battery above the step, and a fall could lift it 7.3 mm into the lead space; the cap cradle captures it and the cap, cradle and battery come off together with three screws.
 - **Consequence:** the redesigned backpack is already built and on the robot. Shawn, same day: "已经这么做了 完成了". Its README "Not done yet" items (measured battery, plug 1 fixing, head and neck clearance against the plugs on top, hip sweep, sim battery variant) were not run in CAD; they are now checks on the as-built robot. The swap plugs leave the backpack's lower left through the gap between the backpack and the body (CURRENT-STATE `backpack_swap_plugs`; Shawn: "背包和身体的间隙中间拉出来的"), not through the front-plate window the CAD files still show.
 - **Revisit when:** the plugs on top get hit by the head, neck or a fall, or the measured battery does not fit the cradle.
+
+## D-038 — MicroDuck name call: the head answers alone; no body turn
+
+- **Date:** 2026-11-01
+- **Decision:** The duck answers its name with a head glance only: head yaw up to the trained limit (+-1.40 rad), head pitched up to the face, no body turn toward a caller behind. Seated, it answers with a head turn and tilt and stays seated. Hearing the name while walking leads to a stop and a wait for instructions. The fetch-the-orange-ball demo (Shawn's R14) is the product goal these serve, on top of final-goal steps 1-4.
+- **Why:** Shawn, 2026-11-01: "因为我们现在的鸭子转身很慢，如果判断在后面，转身等半天我也懒得等，用户体验也不好 ... 但肢体转身可能就不用了." A pet that glances without getting up reads as a pet; the camera's 62 deg field of view at a 1.40 rad glance already covers +-111 deg, the whole front half.
+- **Consequence:** namecall's body turn (off by default since 2026-10-30) is dropped from the plan; R5 is superseded by R11. Turn-noise denoising matters for walking, not for answering. Work: YAW_CAP 1.2 -> 1.40 after a balance check at full yaw, seated answers (R12), hearing while walking (R13, data-limited: 54 s of walking audio).
+- **Revisit when:** the 1.40 rad glance tips the duck, or callers behind turn out to matter in daily use.
