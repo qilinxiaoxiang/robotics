@@ -45,6 +45,8 @@ flowchart LR
 
 [MicroDuck 本地环境](microduck-sim/README.md)包含浏览器仿真、训练源码和双击启动脚本；仿真与训练仓库各自保留独立 Git 历史，整套环境不纳入本公开仓库。
 
+同学或队友要控制 MicroDuck 真机、在仿真里做强化学习、把训练好的模型部署到真机，读团队仓库 [qilinxiaoxiang/microduck_rl](https://github.com/qilinxiaoxiang/microduck_rl) README 的 “For teammates” 一节：Tailscale 共享 Mac mini 上的遥控页（一次只有一个人能驾驶，停和停扭矩谁都能按，充电背包与电池背包在页面上切换），两种背包的训练任务，以及 `cmu/deploy/deploy_policy.py` 的仿真闸门、部署和回滚。
+
 [SO-101 与 LeRobot 本地环境](lerobot-sim/README.md)提供免费物理仿真、手动演示记录、LeRobot 数据集导出与动作重放，并整理了 CMU 共享硬件的申请路径。
 
 ## 工作方式

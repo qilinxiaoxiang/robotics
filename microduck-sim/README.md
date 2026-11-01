@@ -4,6 +4,10 @@ Read [PROJECT-CONTEXT.json](PROJECT-CONTEXT.json) before hardware, training or s
 
 这台 MacBook 已经可以直接运行官方 MicroDuck Sandbox。它在浏览器中用 MuJoCo 做物理仿真，并以 50 Hz 运行官方训练好的 ONNX 策略。
 
+## 队友入口
+
+队友控制真机、做强化学习和部署模型，统一看 [microduck_rl/README.md](microduck_rl/README.md) 的 “For teammates” 一节（GitHub：qilinxiaoxiang/microduck_rl）。遥控页的驾驶权锁和背包开关在 `microduck-simulator/app/driver-lease.mjs`、`a7z-bridge.mjs`、`src/robot-remote.js`、`desktop/duck-command.py`；A7Z 上的启动脚本是 `guide/firmware/a7z/duck-run.sh`（读 `~/duck-policy` 和 `~/duck-supply`），改完用 `guide/firmware/a7z/install_teleop.sh` 装到 A7Z。
+
 ## 直接玩
 
 双击 [`Play-MicroDuck.command`](Play-MicroDuck.command)。脚本会启动本地服务并打开：
