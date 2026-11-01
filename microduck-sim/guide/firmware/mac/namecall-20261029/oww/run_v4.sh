@@ -27,7 +27,7 @@ open(p, "w").write(s)
 PYEOF
 grep -n -A4 "background_paths" $OWW/mochi.yml
 mkdir -p work/mochi/bak_v3; mv -f work/mochi/positive_features_train.npy work/mochi/positive_features_test.npy work/mochi/negative_features_train.npy work/mochi/negative_features_test.npy work/mochi/bak_v3/ 2>/dev/null || true
-date; echo "== aug";   ./run_train.sh aug   > logs/v4_aug.log 2>&1;   grep -v "Computing\|Trimming" logs/v4_aug.log | tail -3
+date; echo "== aug";   ./run_train.sh aug   > logs/v4_aug.log 2>&1 || { echo "AUG EXIT $?"; exit 1; };   grep -v "Computing\|Trimming" logs/v4_aug.log | tail -3
 grep -q "skipping" logs/v4_aug.log && { echo "AUG SKIPPED, abort"; exit 1; }
 date; echo "== extra"; ./run_train.sh extra > logs/v4_extra.log 2>&1; tail -3 logs/v4_extra.log
 date; echo "== train"; ./run_train.sh train > logs/v4_train.log 2>&1 || true; grep -E "Final|STAGE|Error|error" logs/v4_train.log | tail -5

@@ -2,7 +2,7 @@
 """Does the spotter hear "Mochi" while the duck turns? Scores spotter models with the robot's own scorer
 (ownkws.OwwSpotter, max over the two ear streams) on the eight held-out calls of calls_200910.wav (home, 2 m, eight
 directions, eightdir_20261030.json), decimated to 16 kHz, with the held-out body-turn noise of the 10/31 20:21 run
-(life_motion_bg.py hold/*.npy, cut from the duck's own life log) added at its recorded level and at +6 dB.
+(life_motion_bg.py hold/*.npy, cut from the duck's own life log) added at -6 dB (the post-glue live call level relative to these pre-glue calls), its recorded level and +6 dB.
 Also counts false peaks on the turn noise alone and prints the peaks over the voiced spans inside it (speech of
 unknown content: reported, never counted as calls).
 
@@ -58,7 +58,7 @@ def main():
     for m in a.models:
         sp = ok.OwwSpotter(m)
         r = {}
-        for gain_db in (0, 6):
+        for gain_db in (-6, 0, 6):
             g = 10 ** (gain_db / 20)
             peaks = []
             for i, tc in enumerate(t_calls):
@@ -68,7 +68,7 @@ def main():
                 clip += g * noise[off:off + len(clip)]
                 rows = stream(sp, clip)
                 peaks.append(round(float(rows[(rows[:, 0] >= 1.0) & (rows[:, 0] <= 2.6), 1].max()), 2))
-            r[f"turn_noise_plus{gain_db}dB"] = dict(peaks=peaks, **{f"hits_{t}": f"{sum(p >= t for p in peaks)}/{len(peaks)}" for t in THR})
+            r[f"turn_noise_{gain_db:+d}dB"] = dict(peaks=peaks, **{f"hits_{t}": f"{sum(p >= t for p in peaks)}/{len(peaks)}" for t in THR})
         rows = stream(sp, calls[int((t_calls[0] - 1) * FS):int((t_calls[-1] + 2) * FS)])
         r["clean_peaks"] = [round(float(rows[(rows[:, 0] >= tc - t_calls[0] + 1.0) & (rows[:, 0] <= tc - t_calls[0] + 2.6), 1].max()), 2) for tc in t_calls]
         r["clean_hits_0.7"] = f"{sum(p >= 0.7 for p in r['clean_peaks'])}/{len(t_calls)}"
