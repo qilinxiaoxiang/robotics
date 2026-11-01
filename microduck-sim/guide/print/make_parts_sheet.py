@@ -746,6 +746,27 @@ INCREMENTAL_NOTES_BY_VERSION['V1.39'] = dict(
                     '(27 × 60 mm between the screws) and the mating strips on the backpack fronts, off the battery backpack\'s small '
                     'lead window.'))
 
+RETIRED_INCREMENTAL['V1.40'] = [
+    ('Battery backpack frame (battery-on-cap redesign)', 'Orange', HERE / 'release-V1.40' / 'retired' / 'battery_backpack_frame-redesign.stl',
+     'No opening over the battery: the battery only comes out with the cap and both bars unscrewed.', 'Frame with the roof opening'),
+    ('Battery backpack cap (battery-on-cap redesign)', 'Orange', HERE / 'release-V1.40' / 'retired' / 'battery_backpack_cap-redesign.stl',
+     'Closed roof and rounded corner over the battery, no snap slot.', 'Cap with the corner opening and snap slot'),
+]
+INTRO_BY_VERSION['V1.40'] = ('V1.40 is one orange plate for a tool-free battery swap: the battery backpack frame and cap with an opening '
+                             'over the battery, and a new hatch that closes it flush. The hatch hooks two front tabs under the frame roof '
+                             'and clicks a flap over the back of the cap. To swap: pull the flap\'s lower edge out with a fingernail, lift '
+                             'the hatch\'s back, take it off backwards and lift the battery straight up. The two bars stay screwed.')
+RETIRED_HEADING_BY_VERSION['V1.40'] = 'Replace this'
+RETIRED_LEAD_BY_VERSION['V1.40'] = 'Move the switch, the DFR1202, the battery and the two bars over to the new frame and cap.'
+INCREMENTAL_NAMES_BY_VERSION['V1.40'] = dict(battery_backpack_frame='Battery backpack frame (roof opening)',
+                                              battery_backpack_cap='Battery backpack cap (corner opening, snap slot)',
+                                              battery_hatch='Battery hatch')
+INCREMENTAL_NOTES_BY_VERSION['V1.40'] = dict(
+    battery_backpack_frame='Prints rim down on tree support, as before. Clear the support under the front plate and from the DFR1202 clip arms.',
+    battery_backpack_cap='Prints back face down, as before. Check the snap slot in the back wall (12.6 × 2.8 mm) is open.',
+    battery_hatch=('Prints flap down, so the 1.2 mm flap bends along its layers. Clear any support under the rounded corner. '
+                   'Fit: front tabs under the frame roof edge first, then press the back down until the flap clicks over the cap.'))
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

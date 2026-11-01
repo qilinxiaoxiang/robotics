@@ -58,7 +58,12 @@ TAB_Y = [(-8.0, -2.0), (4.0, 10.0)]
 PIVOT = np.array([BAR_BACK, 0.0, ROOF_IN])
 WEDGE = [(-70.5, ROOF_IN + 0.1), (-63.4, ROOF_IN + 0.1), (-63.4, BAT_HI[2] + GAP), (-64.4, BAT_HI[2] + GAP)]   # 45 deg rear face
 WEDGE_Y = (-3.0, 6.0)
-NOTCHES = {'main lead': (-11.0, -5.0), 'balance lead': (8.5, 14.5)}
+# Fill and cut faces stay OFF (by about 0.02 mm) the planes that already carry the cap's facets (roof underside z 41.8, the
+# curved corner's facet row at z 40.6, the old roof-opening walls at y -11, -5 and 8.5). Faces exactly on those planes leave
+# vertices that coincide only after float32 STL export, and the release pipeline then rejects the hatch as not closed (V1.40,
+# 131 pinched edges). stl_closed() below runs the pipeline's own test on every exported part.
+SKEW = 0.023
+NOTCHES = {'main lead': (-11.0 - SKEW, -5.0 + SKEW), 'balance lead': (8.5 - SKEW, 14.5)}
 NOTCH_X1, NOTCH_Z0 = -66.0, 38.6
 FLAP_T, FLAP_Y, FLAP_Z0 = 1.2, 14.0, 18.0
 BUMP = dict(depth=1.2, y=6.0, z=(19.0, 21.4), lead_in=1.2)                 # 45 deg lead-in below, square top; flush with the wall's inside
@@ -71,6 +76,12 @@ def flap_strain(y_bump):
     return y_bump * 3 * FLAP_T * L / (x * x * (3 * L - x)), L, x
 
 def overlap(a, b): return float((a ^ b).volume())
+
+def stl_closed(path):
+    """The release pipeline's load_mesh test: exact vertex dedup of the STL as written, then watertight and consistent winding."""
+    m = trimesh.load(path, force='mesh', process=False)
+    v, inv = np.unique(m.vertices, axis=0, return_inverse=True); m = trimesh.Trimesh(v, inv.reshape(-1)[m.faces], process=False)
+    return bool(m.is_watertight and m.is_winding_consistent)
 
 def main():
     frame0 = to_mf(load(BP / 'stl/battery_backpack_frame-world.stl'))
@@ -87,8 +98,8 @@ def main():
 
     # hatch: the removed corner and roof, the roof plane filled (the old lead openings) inside the box outline
     corner = cap0 ^ box((CAP_OUT - 1, -HY, Z_WALL + CL), (-68.15, HY, TOP + 1))
-    plate = box((CAP_IN, -HY, ROOF_IN), (HX1, HY, TOP)) ^ hull
-    plate_deep = box((-72.6, -HY, 40.6), (-68.0, HY, TOP)) ^ hull     # the old lead openings in the curved roof, filled 1.2 deep
+    plate = box((CAP_IN, -HY, ROOF_IN - SKEW), (HX1, HY, TOP)) ^ hull
+    plate_deep = box((-72.6, -HY, 40.6 - SKEW), (-68.0, HY, TOP)) ^ hull     # the old lead openings in the curved roof, filled 1.2 deep
     body = corner + plate + plate_deep
     body = body - U([box((CAP_OUT - 2, a, NOTCH_Z0), (NOTCH_X1, b, TOP + 1)) for a, b in NOTCHES.values()])
     flap = U([box((CAP_OUT - FLAP_T, -FLAP_Y, FLAP_Z0), (CAP_OUT, FLAP_Y, Z_WALL + 1.6)),
@@ -154,6 +165,7 @@ def main():
     for name, M, M0 in (('battery_backpack_frame', frame, frame0), ('battery_backpack_cap', cap, cap0), ('battery_hatch', hatch, None)):
         to_tm(M).export(OUT / f'{name}-world.stl')
         pm, T = to_print(M); pm.export(OUT / f'{name}-print.stl')
+        assert stl_closed(OUT / f'{name}-world.stl'), f'{name}: world STL (the one the release slices) not closed after export'
         bed = float(pm.area_faces[np.max(np.abs(pm.triangles[:, :, 2]), axis=1) <= .01].sum())
         now = [r for r in regions(pm, name) if r.get('status') == 'FAIL']
         new = now
@@ -166,7 +178,8 @@ def main():
             # a region away from every cut is the part's unchanged geometry sampled differently after the boolean
             new = [dict(r, worldCentre=near) for r in new if (near := cut_near(M, r)) is not None]
         out[name] = dict(print_height_mm=r3(pm.bounds[1, 2]), bed_contact_mm2=round(bed, 1), source_to_print=T.tolist(),
-                         thin_regions=len(now), new_thin_regions=new)
+                         thin_regions=len(now), new_thin_regions=new, world_stl_closed=True,
+                         print_stl_closed=stl_closed(OUT / f'{name}-print.stl'))   # the print copy is for renders; translation rounding may pinch it
     ck['print'] = out
     (OUT / 'build.json').write_text(json.dumps(ck, indent=1, ensure_ascii=False))
     print(json.dumps(ck, indent=1, ensure_ascii=False))
