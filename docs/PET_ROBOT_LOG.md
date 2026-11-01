@@ -438,3 +438,14 @@ Tailscale since about 17:25).
 - **Sim** (`namecall-20261029/glance-20261101/README.md`; as-built manifest of 2026-11-01 = battery variant + D-037 battery position and top plugs + head microphones and touch board, all estimates; 7.0/7.8 V, 17 % dropped reads, 3 seeds): standing 18/18 no fall, tilt change <= 1.6 deg, head yaw 1.23-1.31 rad (1.08-1.18 at the old cap), camera sees about +-104 deg. Seated: never knocked over, tilt change <= 5.1 deg, yaw 1.10 left and 0.85 right, tilt 0.2 rad.
 - **Separate finding**: the sit-down itself tips backward to about 63 deg in 6 of 32 sim seats at the 10/31 read-drop rate (17 %) on the 11/01 model, 0 of 32 at 4 %; the battery plan model 8-9 of 32 at either rate; the bench-supply model 0-2. A seated answer needs a seat that holds first.
 - **Not done**: robot check (A7Z offline since 10/31 20:45); the team repo copy of namecall is not synced.
+
+## 2026-11-01 T2 picture pick: trained, works only near the landing spot
+
+- spx-a / spx-b ran the full 11 h on Kaggle (2544 / 2434 iterations). The start-window curriculum stalled at +-3 cm,
+  training success 0.41-0.47 (needs 0.5 to widen), the same stall as the 10-27 seeing pick.
+- Eval at 512 envs (`microduck_rl-grasp/cmu/grasp/seeing-pix-eval.json`): spx-b_2400 picks 72 % within +-1 cm,
+  70 % within +-3 cm, 32 % within +-8 cm, 18 % over the full 8-25 cm, +-45 deg set; falls 2-12 of 512.
+  With the picture zeroed it drops to 6 % at +-3 cm, so the policy does use the camera.
+- Cause of the low full-set number: reach. The beak bites at 10 +- 1.2 cm forward whatever the ball distance; the
+  pick never steps. Next: the walker / gaze hand-over must stop with the ball within +-3 cm of the spot 8.7 cm
+  in front of the feet, or the pick needs a stepping phase. Details: `cmu/grasp/T2-PIXEL.md` (commit 2d4dd54e, cmu/grasp).
