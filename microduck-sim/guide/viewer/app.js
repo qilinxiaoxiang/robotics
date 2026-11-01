@@ -794,7 +794,8 @@ async function createViewer(container, guide, geoBuf, progress) {
       for (const i of step.add) if (meshes[i]) box.union(meshes[i].geometry.boundingBox);
       if (!box.isEmpty()) {
         const el = h('div', { class: 'part-label', text: step.group.label });
-        labelsEl.append(el); partAnchors.push({ el, point: box.getCenter(new THREE.Vector3()), part: [...step.add][0] });
+        // Above the group, so the approach arrow's head (which ends at the group centre) stays visible.
+        labelsEl.append(el); partAnchors.push({ el, point: box.getCenter(new THREE.Vector3()).setZ(box.max.z + 2), part: [...step.add][0] });
       }
       return;
     }
