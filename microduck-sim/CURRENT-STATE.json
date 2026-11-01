@@ -606,6 +606,20 @@
    "source": "Shawn 2026-10-31: \"plug不用管 我们现在plug从背包的左下背面拉出来的\"; \"我决定用dual lock 现在有的两个窄条就足够 ... 打印一块openRB那个箱子的背板 然后用背板来贴dual lock\"",
    "max_age_days": 30,
    "measure": "look at the robot: where the XT30/MR30 leads leave the backpack, and how the backpack is held"
+  },
+  "battery_backpack_design": {
+   "value": "Battery-on-cap redesign (D-037) is built and on the robot: battery in a printed cradle on the cap, held by two screwed bars (2 x M2 x 6 each); battery leads leave through roof openings; plug 1 and the balance plug sit on top of the box. Swap plugs leave at the lower left rear (fact backpack_swap_plugs). Geometry: qilinxiaoxiang/microduck_rl commit 8bce48af, cmu/hardware/battery-backpack/stl/.",
+   "verified_at": "2026-10-31",
+   "source": "Shawn 2026-10-31, after the redesign review: \"可以接受\" (plugs on top), then \"已经这么做了 完成了 可以记一下\"",
+   "max_age_days": 30,
+   "measure": "look at the robot: battery held on the cap by two bars, plug 1 and balance plug on top of the box",
+   "superseded": [
+    {
+     "value": "V1.20 backpack: battery standing in the frame pocket, cap with two fences, plugs inside",
+     "until": "2026-10-31",
+     "why": "Michael Lin's battery-on-cap redesign built"
+    }
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
