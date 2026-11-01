@@ -66,6 +66,9 @@ WORLD_FILE = {'openrb_board': 'openrb-board-upright.stl', 'head_cap': 'head_cap.
               'battery_backpack_frame': 'battery_backpack_frame.stl', 'battery_backpack_cap': 'battery_backpack_cap.stl',
               'bp_switch': 'bp_switch.stl', 'bp_battery': 'bp_battery.stl', 'bp_dfr1202': 'bp_dfr1202.stl',
               'bp_plugs': 'bp_plugs.stl', 'bp_swap_plugs': 'bp_swap_plugs.stl',
+              # 2026-11-01 (print/back-plate/battery-backpack-v140/to_guide_world.py): the battery-on-cap backpack (D-037)
+              # with the V1.40 hatch; frame, cap, battery and plugs above now hold that build.
+              'battery_hatch': 'battery_hatch.stl', 'battery_backpack_bars': 'battery_backpack_bars.stl', 'bp_plug2': 'bp_plug2.stl',
               # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/to_guide_world.py): the plate on the
               # pack posts and the mated Dual Lock pads; both backpacks above are written there 8.7 mm further back.
               'duallock_plate': 'duallock_plate.stl', 'duallock_strips': 'duallock_strips.stl',

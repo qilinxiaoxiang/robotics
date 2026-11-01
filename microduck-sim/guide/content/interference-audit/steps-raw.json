@@ -82,10 +82,10 @@
   {
    "step": "prints",
    "chapter": "start",
-   "title": "Print the 27 new parts",
+   "title": "Print the 28 new parts",
    "bench": true,
    "inventory": true,
-   "drawnParts": 60,
+   "drawnParts": 61,
    "add": [
     "shell_left",
     "shell_right",
@@ -95,6 +95,7 @@
     "rear_lid",
     "battery_backpack_frame",
     "battery_backpack_cap",
+    "battery_hatch",
     "head_cap",
     "head_bottom",
     "jaw_frame",
@@ -2758,9 +2759,30 @@
    "pathCollisions": []
   },
   {
+   "step": "bp-strip",
+   "chapter": "backpack",
+   "title": "Take the backpack on the robot apart and keep its parts",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 4,
+   "add": [
+    "bp_switch",
+    "bp_dfr1202",
+    "bp_battery",
+    "battery_backpack_bars"
+   ],
+   "approach": {},
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "backpack",
+   "robotContextDrawnWithBench": [],
+   "pathCollisions": []
+  },
+  {
    "step": "bp-switch",
    "chapter": "backpack",
-   "title": "Snap the switch into the backpack floor, rocker down",
+   "title": "Snap the switch into the V1.40 frame floor, rocker down",
    "bench": true,
    "inventory": false,
    "drawnParts": 2,
@@ -2806,16 +2828,57 @@
   {
    "step": "bp-dfr",
    "chapter": "backpack",
-   "title": "Clip the DFR1202 behind the front plate and lead its plugs out at the lower left rear",
+   "title": "Clip the DFR1202 behind the front plate, connect plug 2 and lead plugs 3 and 4 out at the lower left rear",
    "bench": true,
    "inventory": false,
-   "drawnParts": 3,
+   "drawnParts": 4,
    "add": [
-    "bp_dfr1202"
+    "bp_dfr1202",
+    "bp_plug2"
    ],
    "approach": {
     "bp_dfr1202": [
      -25,
+     0,
+     0
+    ],
+    "bp_plug2": [
+     [
+      -25,
+      -2,
+      0
+     ],
+     [
+      0,
+      -2,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "backpack",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "bp-battery",
+   "chapter": "backpack",
+   "title": "Set the battery into the cradle on the V1.40 cap",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 2,
+   "add": [
+    "battery_backpack_cap",
+    "bp_battery"
+   ],
+   "approach": {
+    "bp_battery": [
+     25,
      0,
      0
     ]
@@ -2831,16 +2894,86 @@
    "pathCollisions": []
   },
   {
+   "step": "bp-bars",
+   "chapter": "backpack",
+   "title": "Screw the two bars across the battery",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 3,
+   "add": [
+    "battery_backpack_bars"
+   ],
+   "approach": {
+    "battery_backpack_bars": [
+     15,
+     0,
+     0
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "backpack",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "bp-cap",
+   "chapter": "backpack",
+   "title": "Put the cap with the battery on the frame",
+   "bench": true,
+   "inventory": false,
+   "drawnParts": 7,
+   "add": [
+    "battery_backpack_cap",
+    "bp_battery",
+    "battery_backpack_bars"
+   ],
+   "approach": {
+    "battery_backpack_cap": [
+     -25,
+     0,
+     0
+    ],
+    "bp_battery": [
+     -25,
+     0,
+     0
+    ],
+    "battery_backpack_bars": [
+     -25,
+     0,
+     0
+    ]
+   },
+   "group": true,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "benchSubassembly": "backpack",
+   "robotContextDrawnWithBench": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
    "step": "bp-mount",
    "chapter": "backpack",
    "title": "Swap the rear converter box for the battery backpack on the Dual Lock",
    "bench": false,
    "inventory": false,
-   "drawnParts": 115,
+   "drawnParts": 119,
    "add": [
     "battery_backpack_frame",
     "bp_switch",
-    "bp_dfr1202"
+    "bp_dfr1202",
+    "bp_plug2",
+    "battery_backpack_cap",
+    "bp_battery",
+    "battery_backpack_bars"
    ],
    "approach": {
     "battery_backpack_frame": [
@@ -2857,34 +2990,23 @@
      -40,
      0,
      0
-    ]
-   },
-   "group": true,
-   "cables": [],
-   "drawnButNotPresent": [],
-   "pose": null,
-   "flex": null,
-   "alternatives": {},
-   "pathCollisions": []
-  },
-  {
-   "step": "bp-battery",
-   "chapter": "backpack",
-   "title": "Slide the battery in upright and connect plug 1",
-   "bench": false,
-   "inventory": false,
-   "drawnParts": 117,
-   "add": [
-    "bp_battery",
-    "bp_plugs"
-   ],
-   "approach": {
+    ],
+    "bp_plug2": [
+     -40,
+     0,
+     0
+    ],
+    "battery_backpack_cap": [
+     -40,
+     0,
+     0
+    ],
     "bp_battery": [
      -40,
      0,
      0
     ],
-    "bp_plugs": [
+    "battery_backpack_bars": [
      -40,
      0,
      0
@@ -2899,20 +3021,205 @@
    "pathCollisions": []
   },
   {
-   "step": "bp-cap",
+   "step": "bp-hatch",
    "chapter": "backpack",
-   "title": "Close the backpack with its cap",
+   "title": "Close the roof over the battery with the hatch",
    "bench": false,
    "inventory": false,
-   "drawnParts": 118,
+   "drawnParts": 120,
    "add": [
-    "battery_backpack_cap"
+    "battery_hatch"
    ],
    "approach": {
-    "battery_backpack_cap": [
-     -15,
+    "battery_hatch": [
+     [
+      -8,
+      0,
+      8
+     ],
+     [
+      -1.5,
+      0,
+      8
+     ],
+     [
+      -1.5,
+      0,
+      0
+     ]
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {},
+   "pathCollisions": []
+  },
+  {
+   "step": "bp-plug1",
+   "chapter": "backpack",
+   "title": "Connect plug 1 on top of the box and switch on",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 121,
+   "add": [
+    "bp_plugs"
+   ],
+   "approach": {
+    "bp_plugs": [
      0,
-     0
+     0,
+     20
+    ]
+   },
+   "group": false,
+   "cables": [],
+   "drawnButNotPresent": [],
+   "pose": null,
+   "flex": null,
+   "alternatives": {
+    "bp_plugs": [
+     {
+      "vector": [
+       -20.0,
+       0.0,
+       0.0
+      ],
+      "excessVolumeMm3": 0.0,
+      "obstacles": []
+     },
+     {
+      "vector": [
+       0.0,
+       -20.0,
+       0.0
+      ],
+      "excessVolumeMm3": 0.0,
+      "obstacles": []
+     },
+     {
+      "vector": [
+       0.0,
+       20.0,
+       0.0
+      ],
+      "excessVolumeMm3": 14.97,
+      "obstacles": [
+       "sd_usb_c_plug"
+      ]
+     },
+     {
+      "vector": [
+       0.0,
+       0.0,
+       20.0
+      ],
+      "excessVolumeMm3": 127.17,
+      "obstacles": [
+       "sd_usb_c_plug"
+      ]
+     },
+     {
+      "vector": [
+       20.0,
+       0.0,
+       0.0
+      ],
+      "excessVolumeMm3": 240.3,
+      "obstacles": [
+       "saddle_body",
+       "sd_a7z_pcb",
+       "sd_underside_smd",
+       "sd_usb_c_plug"
+      ]
+     },
+     {
+      "vector": [
+       0.0,
+       0.0,
+       -20.0
+      ],
+      "excessVolumeMm3": 1001.77,
+      "obstacles": [
+       "battery_backpack_bars",
+       "battery_backpack_cap",
+       "battery_backpack_frame",
+       "battery_hatch",
+       "bp_battery",
+       "bp_dfr1202"
+      ]
+     }
+    ]
+   },
+   "pathCollisions": [
+    {
+     "obstacle": "sd_usb_c_plug",
+     "maxExcessVolumeMm3": 127.17,
+     "atFraction": 0.325,
+     "firstContactFraction": 0.6,
+     "lastContactFraction": 0.025,
+     "finalOverlapMm3": 9.177,
+     "moving": "bp_plugs",
+     "path": [
+      [
+       0.0,
+       0.0,
+       20.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0
+      ]
+     ],
+     "swingDeg": null,
+     "obstacleRole": "shown",
+     "obstacleLegitimatelyPresent": true,
+     "worst": {
+      "centroid": [
+       -57.65,
+       -12.9,
+       53.1
+      ],
+      "bounds": [
+       [
+        -61.1,
+        -14.8,
+        50.5
+       ],
+       [
+        -54.2,
+        -11.0,
+        55.7
+       ]
+      ],
+      "pcaExtentsMm": [
+       3.8,
+       5.2,
+       6.9
+      ],
+      "thicknessMedianMm": 5.2
+     }
+    }
+   ]
+  },
+  {
+   "step": "bp-swap",
+   "chapter": "backpack",
+   "title": "Swap the battery through the hatch, no tools",
+   "bench": false,
+   "inventory": false,
+   "drawnParts": 119,
+   "add": [
+    "bp_battery"
+   ],
+   "approach": {
+    "bp_battery": [
+     0,
+     0,
+     70
     ]
    },
    "group": false,

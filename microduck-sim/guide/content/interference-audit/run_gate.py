@@ -34,7 +34,8 @@ RUNS = HERE / 'gate-runs'
 # build_solids recomputes every solid when ia_lib changes (about 2.3 GB peak); the other three stay under 1.5 GB.
 # steps_audit.py peaks at about 1560 MiB RSS on an idle machine (2026-10-15, 158 parts, 73 steps); the 1280-1345 MiB
 # seen earlier were measured under memory pressure, where compressed pages do not count as RSS.
-JOBS = [('build_solids.py', 2560), ('pairs.py', 1536), ('steps_audit.py', 2000), ('cables.py', 1536)]
+# cables.py peaked at 1540 MiB on 2026-11-01 (128 parts, V1.40 backpack: 46 cables, 80 s), past its old 1536 MiB cap.
+JOBS = [('build_solids.py', 2560), ('pairs.py', 1536), ('steps_audit.py', 2000), ('cables.py', 1792)]
 
 
 def sha(p: Path) -> str:

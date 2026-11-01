@@ -89,7 +89,7 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'battery_backpack_frame', 'battery_backpack_cap', 'saddle_body', 'saddle_lid', 'duallock_plate'],
+                  'battery_backpack_frame', 'battery_backpack_cap', 'battery_hatch', 'saddle_body', 'saddle_lid', 'duallock_plate'],
     'purchased': ['duallock_strips', 'imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
@@ -435,12 +435,19 @@ def build_parts() -> dict:
     # Tattu 2S 650 upright behind it, the DFR1202 clipped behind the front plate, the battery and feed XT30 joints (plugs 1, 2)
     # with the balance plug, and the two swap plugs (XT30 servo, MR30 A7Z) standing in the pack channel. guide-data
     # 'alternates' names the two sets: never on the robot together, so the gate skips pairs and cables across them.
-    BACKPACK_PARTS = {'battery_backpack_frame': ('Battery backpack frame (new print)', 'torso', 'new-print', None),
-                      'battery_backpack_cap': ('Battery backpack cap (new print)', 'torso', 'new-print', None),
+    # 2026-11-01 (print/back-plate/battery-backpack-v140/guide-world.json): the backpack Shawn builds next is the battery-on-cap
+    # redesign (D-037, qilinxiaoxiang/microduck_rl 8bce48af) with the V1.40 roof opening and tool-free hatch
+    # (print/battery-quickswap-20261101/): the battery stands in a cradle on the cap behind two screwed bars; plug 1 and the
+    # balance plug lie on top of the box (team checks.json parking boxes, approximate), plug 2 in the front bay.
+    BACKPACK_PARTS = {'battery_backpack_frame': ('Battery backpack frame (V1.40 print, roof open over the battery)', 'torso', 'new-print', None),
+                      'battery_backpack_cap': ('Battery backpack cap with the battery cradle (V1.40 print)', 'torso', 'new-print', None),
+                      'battery_hatch': ('Battery hatch (V1.40 print): two front tabs under the frame roof, back flap snapping into the cap', 'torso', 'new-print', None),
+                      'battery_backpack_bars': ('Two battery retainer bars across the battery front face (printed with the D-037 backpack, reused)', 'torso', 'printed', None),
                       'bp_switch': ('Swann 39 rocker switch on its soldered switch lead, rocker down in the backpack floor', 'controller', 'purchased', '#26282b'),
-                      'bp_battery': ('Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the backpack', 'controller', 'purchased', '#3a6b35'),
+                      'bp_battery': ('Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the cradle on the cap', 'controller', 'purchased', '#3a6b35'),
                       'bp_dfr1202': ('DFRobot DFR1202 5 V converter for the A7Z, clipped behind the backpack front plate', 'controller', 'owned', '#1f3f8f'),
-                      'bp_plugs': ('Plug 1 (battery to switch, XT30), plug 2 (switch to feed, XT30) and the battery balance plug', 'controller', 'purchased', '#f2c14e')}
+                      'bp_plug2': ('Plug 2 (switch lead to the DFR1202 feed, XT30) in the front bay', 'controller', 'purchased', '#f2c14e'),
+                      'bp_plugs': ('Plug 1 (battery to switch lead, XT30) and the battery balance plug, lying on top of the box', 'controller', 'purchased', '#f2c14e')}
     # The swap plugs (plug 3 servo XT30, plug 4 A7Z MR30) leave the backpack at its lower left rear (CURRENT-STATE
     # backpack_swap_plugs, 2026-10-31); they are no longer drawn in the pack channel (bp_swap_plugs.stl is a record).
     for key, (name, module, status, color) in BACKPACK_PARTS.items():
@@ -765,8 +772,9 @@ ALTERNATES = [
     {'id': 'bench-box', 'label': 'Rear converter box (USB-C bench supply, D-007)',
      'parts': ['rear_frame', 'rear_lid', 'xl4015_top', 'xl4015_mid', 'pd5991'],
      'cables': ['pw-15v', 'pw-15v-link', 'pw-7v', 'pi-lead']},
-    {'id': 'battery-backpack', 'label': 'Battery backpack (2S LiPo, D-010)',
-     'parts': ['battery_backpack_frame', 'battery_backpack_cap', 'bp_switch', 'bp_battery', 'bp_dfr1202', 'bp_plugs'],
+    {'id': 'battery-backpack', 'label': 'Battery backpack (2S LiPo, D-010; battery on the cap D-037, V1.40 hatch)',
+     'parts': ['battery_backpack_frame', 'battery_backpack_cap', 'battery_hatch', 'battery_backpack_bars', 'bp_switch', 'bp_battery',
+               'bp_dfr1202', 'bp_plug2', 'bp_plugs'],
      'cables': []},
 ]
 
@@ -793,7 +801,7 @@ def main() -> None:
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
         'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261031-duallock',
+        'revision': 'guide-20261101-v140-backpack',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

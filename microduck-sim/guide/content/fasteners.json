@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "generated": "2026-10-09",
- "updated": "2026-10-31",
+ "updated": "2026-11-01",
  "frame": "robot frame, mm; x forward, y left, z up",
  "conventions": {
   "center": "head seat point (underside of the head) measured on the full-resolution V1.6 meshes",
@@ -21,7 +21,7 @@
   }
  },
  "counts": {
-  "total": 101,
+  "total": 105,
   "byStep": {
    "torso-fasten": 6,
    "neck-lower-fasten": 10,
@@ -46,16 +46,17 @@
    "saddle-board": 4,
    "saddle-lid": 2,
    "camera": 4,
-   "jaw-bench": 1
+   "jaw-bench": 1,
+   "bp-bars": 4
   },
   "bySpec": {
    "M2 × 10 TAP": 19,
    "M2 × 8 TAP": 9,
    "M2.6 × 6 TAP": 9,
-   "M2 × 6 TAP": 53,
+   "M2 × 6 TAP": 57,
    "M2 × 4 TAP": 11
   },
-  "verified": 90,
+  "verified": 87,
   "fullMeshHit": 83,
   "guideMeshHit": 83,
   "guideSpecMatches": 85
@@ -6622,7 +6623,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -78.05,
+    -79.85,
     27.0,
     24.0
    ],
@@ -6637,12 +6638,14 @@
    ],
    "intoPart": "battery_backpack_frame",
    "engagementMm": 4.7,
-   "verified": true,
-   "evidence": "bp_checks.json screws 'cap y+27 z+24.0' (2026-10-15, final backpack meshes): head seat x -69.35 on the 3.0 mm cap column floor, tip x -61.35; 5.0 mm of frame boss material on a ring round the axis from seat to tip, 0.3 mm lead-in; head envelope 0 of 288 samples inside the frame or cap; 4 mm driver lane 0 of 500 samples inside.",
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-69.75, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
    "note": "Battery backpack cap to the frame boss.",
    "role": "Battery backpack cap to frame",
-   "source": "print/back-plate/battery-backpack-20261015/build_bp.py CAP_SCREWS",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
+   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
+   "tipMarginMm": 1.2,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
   },
   {
    "id": "BP-cap-02",
@@ -6656,7 +6659,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -78.05,
+    -79.85,
     -27.0,
     24.0
    ],
@@ -6671,12 +6674,14 @@
    ],
    "intoPart": "battery_backpack_frame",
    "engagementMm": 4.7,
-   "verified": true,
-   "evidence": "bp_checks.json screws 'cap y-27 z+24.0' (2026-10-15, final backpack meshes): head seat x -69.35 on the 3.0 mm cap column floor, tip x -61.35; 5.0 mm of frame boss material on a ring round the axis from seat to tip, 0.3 mm lead-in; head envelope 0 of 288 samples inside the frame or cap; 4 mm driver lane 0 of 500 samples inside.",
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-69.75, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
    "note": "Battery backpack cap to the frame boss.",
    "role": "Battery backpack cap to frame",
-   "source": "print/back-plate/battery-backpack-20261015/build_bp.py CAP_SCREWS",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
+   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
+   "tipMarginMm": 1.2,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
   },
   {
    "id": "BP-cap-03",
@@ -6690,7 +6695,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -78.05,
+    -79.85,
     0.0,
     -26.5
    ],
@@ -6705,12 +6710,14 @@
    ],
    "intoPart": "battery_backpack_frame",
    "engagementMm": 4.7,
-   "verified": true,
-   "evidence": "bp_checks.json screws 'cap y+0 z-26.5' (2026-10-15, final backpack meshes): head seat x -69.35 on the 3.0 mm cap column floor, tip x -61.35; 5.0 mm of frame boss material on a ring round the axis from seat to tip, 0.3 mm lead-in; head envelope 0 of 288 samples inside the frame or cap; 4 mm driver lane 0 of 500 samples inside.",
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-70.1, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
    "note": "Battery backpack cap to the frame boss.",
    "role": "Battery backpack cap to frame",
-   "source": "print/back-plate/battery-backpack-20261015/build_bp.py CAP_SCREWS",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
+   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
+   "tipMarginMm": 1.2,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
   },
   {
    "id": "SD-board-01",
@@ -7417,6 +7424,150 @@
    "guideCurrentlySays": "M2 × 10 self-tapping screw (TAP)",
    "guideSpecMatches": true,
    "source": "print/jaw-ring-screw-20261029/build_jaw_ring.py"
+  },
+  {
+   "id": "BP-bar-01",
+   "step": "bp-bars",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -68.95,
+    18.6,
+    24.0
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "battery_backpack_bars",
+   "throughParts": [
+    "battery_backpack_bars"
+   ],
+   "intoPart": "battery_backpack_cap",
+   "engagementMm": 4.2,
+   "tipMarginMm": 1.0,
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
+   "note": "Battery retainer bar to its cap boss.",
+   "role": "Battery retainer bar to cap",
+   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
+   "reuse": true,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+  },
+  {
+   "id": "BP-bar-02",
+   "step": "bp-bars",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -68.95,
+    -18.6,
+    24.0
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "battery_backpack_bars",
+   "throughParts": [
+    "battery_backpack_bars"
+   ],
+   "intoPart": "battery_backpack_cap",
+   "engagementMm": 4.2,
+   "tipMarginMm": 1.0,
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
+   "note": "Battery retainer bar to its cap boss.",
+   "role": "Battery retainer bar to cap",
+   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
+   "reuse": true,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+  },
+  {
+   "id": "BP-bar-03",
+   "step": "bp-bars",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -68.95,
+    18.6,
+    -8.0
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "battery_backpack_bars",
+   "throughParts": [
+    "battery_backpack_bars"
+   ],
+   "intoPart": "battery_backpack_cap",
+   "engagementMm": 4.2,
+   "tipMarginMm": 1.0,
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
+   "note": "Battery retainer bar to its cap boss.",
+   "role": "Battery retainer bar to cap",
+   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
+   "reuse": true,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+  },
+  {
+   "id": "BP-bar-04",
+   "step": "bp-bars",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -68.95,
+    -18.6,
+    -8.0
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "battery_backpack_bars",
+   "throughParts": [
+    "battery_backpack_bars"
+   ],
+   "intoPart": "battery_backpack_cap",
+   "engagementMm": 4.2,
+   "tipMarginMm": 1.0,
+   "verified": false,
+   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
+   "note": "Battery retainer bar to its cap boss.",
+   "role": "Battery retainer bar to cap",
+   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
+   "reuse": true,
+   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
   }
  ],
  "unassignedHoles": [

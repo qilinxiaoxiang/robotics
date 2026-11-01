@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-31T18:30:08-04:00",
+  "checkedAt": "2026-11-01T02:19:33-05:00",
   "scope": "design",
   "passed": false,
   "release": "V1.33",
@@ -43,27 +43,27 @@
       "partsInGuideWorld": 6
     },
     "printGate": {
-      "checkedAt": "2026-10-31T18:24:35-04:00",
-      "guideRevision": "guide-20261031-duallock",
+      "checkedAt": "2026-11-01T02:19:11-05:00",
+      "guideRevision": "guide-20261101-v140-backpack",
       "results": {
         "solids": true,
-        "pairs": true,
-        "steps": true,
+        "pairs": false,
+        "steps": false,
         "cables": true
       }
     },
     "guide": {
-      "dataSha256": "af9a9287757dc055",
+      "dataSha256": "c89533149b9c7ee6",
       "embedded": true
     },
     "screws": {
-      "specsRead": 110,
+      "specsRead": 114,
       "unstocked": []
     },
     "live": {
       "skipped": false,
       "files": {
-        "/MICRODUCK-BUILD.html": true,
+        "/MICRODUCK-BUILD.html": false,
         "/BRINGUP.html": true,
         "/HEAD-3D.html": true,
         "/PARTS-SHEET-V1.14.html": true,
@@ -103,6 +103,36 @@
       "check": "release",
       "code": "part_changed_since_release",
       "detail": "saddle_lid"
+    },
+    {
+      "check": "printGate",
+      "code": "gate_not_passed",
+      "detail": {
+        "pairs": {
+          "candidates": 312,
+          "deeperThan0.1": 8,
+          "unclassified": [
+            {
+              "a": "sd_usb_c_plug",
+              "b": "bp_plugs",
+              "depthMm": 0.35,
+              "volumeMm3": 9.177
+            }
+          ],
+          "passed": false
+        },
+        "steps": {
+          "steps": 91,
+          "drawnBeforePresent": 0,
+          "pathCollisions": 1,
+          "passed": false
+        }
+      }
+    },
+    {
+      "check": "live",
+      "code": "served_bytes_differ",
+      "detail": "/MICRODUCK-BUILD.html"
     }
   ]
 }

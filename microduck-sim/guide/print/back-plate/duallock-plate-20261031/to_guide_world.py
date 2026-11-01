@@ -10,7 +10,8 @@ guide/print/world for build_guide_data.py and the print gate.
   on the Dual Lock at x -48 - DL_MM. Sources are the release-named world STLs of layout-F (bench box) and
   battery-backpack-20261015 (to_guide_world.py's list; the DFR1202 and its pads become one closed solid there too).
   bp_swap_plugs.stl is not written: the swap plugs leave the backpack at its lower left rear (CURRENT-STATE
-  backpack_swap_plugs) and are no longer modelled in the pack channel.
+  backpack_swap_plugs) and are no longer modelled in the pack channel. The battery backpack frame, cap, battery and plugs
+  are no longer written here (2026-11-01): run ../battery-backpack-v140/to_guide_world.py after this script.
 The bench box cables (pw-15v, pw-15v-link, pw-7v, pi-lead) move with the box in build_guide_data.py, which reads
 SHIFT_MM from guide-world.json written here.
     /tmp/microduck-cad-venv/bin/python to_guide_world.py"""
@@ -32,10 +33,9 @@ SHIFTED = {  # world name -> source in its screwed pose
     'rear_frame.stl': LF / 'rear_frame-world.stl', 'rear_lid.stl': LF / 'rear_lid-world.stl',
     'xl4015_left.stl': LF / 'xl4015_top_7V-world.stl', 'xl4015_right.stl': LF / 'xl4015_mid_5V-world.stl',
     'pd5991.stl': LF / 'pd5991_F-world.stl',
-    'battery_backpack_frame.stl': BP / 'battery_backpack_frame-world.stl',
-    'battery_backpack_cap.stl': BP / 'battery_backpack_cap-world.stl',
-    'bp_switch.stl': BP / 'build/switch_swann-world.stl', 'bp_battery.stl': BP / 'build/battery-world.stl',
-    'bp_plugs.stl': BP / 'build/plugs-world.stl'}
+    # Since 2026-11-01 the backpack frame, cap, battery and plugs (battery-on-cap redesign D-037 with the V1.40 hatch) are
+    # written by ../battery-backpack-v140/to_guide_world.py, run after this script; the switch and DFR1202 stay here.
+    'bp_switch.stl': BP / 'build/switch_swann-world.stl'}
 STRIPS = [((-48.0 - DL_MM, -13.5, 12.0), (-48.0, 13.5, 25.5)), ((-48.0 - DL_MM, -13.5, -33.0), (-48.0, 13.5, 2.0))]
 
 

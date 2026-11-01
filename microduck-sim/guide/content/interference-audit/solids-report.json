@@ -1,6 +1,6 @@
 {
- "parts": 125,
- "closed": 125,
+ "parts": 128,
+ "closed": 128,
  "notClosed": [],
  "records": [
   {
@@ -3251,20 +3251,20 @@
   },
   {
    "key": "battery_backpack_frame",
-   "name": "Battery backpack frame (new print)",
+   "name": "Battery backpack frame (V1.40 print, roof open over the battery)",
    "module": "torso",
    "status": "new-print",
-   "displayTriangles": 25938,
+   "displayTriangles": 29638,
    "source": {
     "kind": "print/world STL",
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/battery_backpack_frame.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 15217.02,
+   "volumeMm3": 15348.69,
    "bounds": [
     [
-     -75.75,
+     -76.85,
      -32.05,
      -44.0
     ],
@@ -3283,25 +3283,25 @@
   },
   {
    "key": "battery_backpack_cap",
-   "name": "Battery backpack cap (new print)",
+   "name": "Battery backpack cap with the battery cradle (V1.40 print)",
    "module": "torso",
    "status": "new-print",
-   "displayTriangles": 24998,
+   "displayTriangles": 25000,
    "source": {
     "kind": "print/world STL",
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/battery_backpack_cap.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 7628.43,
+   "volumeMm3": 9264.28,
    "bounds": [
     [
-     -83.151,
+     -84.251,
      -32.049,
      -34.0
     ],
     [
-     -75.75,
+     -70.45,
      32.049,
      43.0
     ]
@@ -3310,7 +3310,71 @@
     "displayToSolidMaxMm": 0.004,
     "displayToSolidP99Mm": 0.001,
     "solidToDisplayMaxMm": 0.004,
-    "solidToDisplayP99Mm": 0.001
+    "solidToDisplayP99Mm": 0.002
+   }
+  },
+  {
+   "key": "battery_hatch",
+   "name": "Battery hatch (V1.40 print): two front tabs under the frame roof, back flap snapping into the cap",
+   "module": "torso",
+   "status": "new-print",
+   "displayTriangles": 6230,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/battery_hatch.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 1527.26,
+   "bounds": [
+    [
+     -85.45,
+     -15.85,
+     18.0
+    ],
+    [
+     -69.65,
+     15.85,
+     43.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "battery_backpack_bars",
+   "name": "Two battery retainer bars across the battery front face (printed with the D-037 backpack, reused)",
+   "module": "torso",
+   "status": "printed",
+   "displayTriangles": 808,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/battery_backpack_bars.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 608.14,
+   "bounds": [
+    [
+     -70.45,
+     -21.1,
+     -10.5
+    ],
+    [
+     -68.95,
+     21.1,
+     26.5
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
    }
   },
   {
@@ -3347,7 +3411,7 @@
   },
   {
    "key": "bp_battery",
-   "name": "Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the backpack",
+   "name": "Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the cradle on the cap",
    "module": "controller",
    "status": "purchased",
    "displayTriangles": 12,
@@ -3360,12 +3424,12 @@
    "volumeMm3": 21204.0,
    "bounds": [
     [
-     -80.95,
+     -82.75,
      -15.5,
      -22.51
     ],
     [
-     -68.95,
+     -70.75,
      15.5,
      34.49
     ]
@@ -3410,28 +3474,60 @@
    }
   },
   {
-   "key": "bp_plugs",
-   "name": "Plug 1 (battery to switch, XT30), plug 2 (switch to feed, XT30) and the battery balance plug",
+   "key": "bp_plug2",
+   "name": "Plug 2 (switch lead to the DFR1202 feed, XT30) in the front bay",
    "module": "controller",
    "status": "purchased",
-   "displayTriangles": 36,
+   "displayTriangles": 12,
+   "source": {
+    "kind": "print/world STL",
+    "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/bp_plug2.stl"
+   },
+   "closedVolume": true,
+   "closure": "as-is (merged duplicate vertices)",
+   "volumeMm3": 1379.04,
+   "bounds": [
+    [
+     -67.8,
+     19.9,
+     3.0
+    ],
+    [
+     -57.6,
+     25.1,
+     29.0
+    ]
+   ],
+   "displayVsSolid": {
+    "displayToSolidMaxMm": 0.0,
+    "displayToSolidP99Mm": 0.0,
+    "solidToDisplayMaxMm": 0.0,
+    "solidToDisplayP99Mm": 0.0
+   }
+  },
+  {
+   "key": "bp_plugs",
+   "name": "Plug 1 (battery to switch lead, XT30) and the battery balance plug, lying on top of the box",
+   "module": "controller",
+   "status": "purchased",
+   "displayTriangles": 24,
    "source": {
     "kind": "print/world STL",
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/guide/print/world/bp_plugs.stl"
    },
    "closedVolume": true,
    "closure": "as-is (merged duplicate vertices)",
-   "volumeMm3": 2974.08,
+   "volumeMm3": 1568.0,
    "bounds": [
     [
-     -79.8,
-     -23.6,
-     3.0
+     -80.2,
+     -21.0,
+     44.0
     ],
     [
-     -69.6,
-     23.6,
-     41.0
+     -54.2,
+     16.0,
+     49.2
     ]
    ],
    "displayVsSolid": {
