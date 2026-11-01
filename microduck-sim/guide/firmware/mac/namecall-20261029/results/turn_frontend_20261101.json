@@ -1,0 +1,86 @@
+{
+ "about": "Front ends for hearing the name while the duck turns its own body (2026-11-01). Test clips: oww/make_turn_mixes.py (8 held-out home calls of calls_200910 + held-out 10/31 turn noise; m6 = live post-glue call level, p0, p6 = noise +0/+6 dB; clean; noise alone). Whole-motion false peaks: 48 motion intervals, 290 s (life log, speech not masked). Scorer oww/score_mixes.py, threshold 0.7.",
+ "noise_shape": "300-1000 Hz: turn frames median -61.3 dB vs standing -62.1, p90 -53.5; a 2 m call median -58.9, p90 -53.0. The noise is footstep/servo impacts: 10 % of 20 ms frames carry 70 % of the energy; flatness 0.8, no fixed tones.",
+ "raw": {
+  "v3": {
+   "clean": "8/8",
+   "m6": "2/8",
+   "p0": "0/8",
+   "motion_peaks": 0
+  },
+  "v4": {
+   "clean": "7/8",
+   "m6": "3/8",
+   "p0": "2/8",
+   "motion_peaks": 3
+  },
+  "v5": {
+   "clean": "8/8",
+   "m6": "6/8",
+   "p0": "3/8",
+   "motion_peaks": 10,
+   "life_talk_false": 7
+  }
+ },
+ "deepfilternet3_pre30dB_per_ear": {
+  "v3": {
+   "clean": "8/8",
+   "m6": "7/8",
+   "p0": "4/8",
+   "p6": "1/8",
+   "motion_peaks": 1,
+   "motion_peak_at": "10-31 20:21:57 (inside the held-out turn where a voiced two-syllable word sits; probably a real call)"
+  },
+  "v4": {
+   "clean": "8/8",
+   "m6": "7/8",
+   "p0": "4/8",
+   "motion_peaks": 2
+  },
+  "v5": {
+   "clean": "7/8",
+   "m6": "7/8",
+   "p0": "5/8",
+   "motion_peaks": 4
+  }
+ },
+ "deepfilternet3_pre40dB_per_ear": {
+  "v3": {
+   "clean": "8/8",
+   "m6": "7/8",
+   "p0": "5/8"
+  },
+  "v4": {
+   "clean": "8/8",
+   "m6": "8/8",
+   "p0": "6/8"
+  }
+ },
+ "deepfilternet3_no_pregain": {
+  "v3": {
+   "clean": "1/8",
+   "m6": "2/8"
+  },
+  "note": "the quiet 2 m call (-62 dB) is suppressed as noise: SNR -8.4 -> +15.7 dB but the call itself falls 15 dB"
+ },
+ "deepfilternet3_pre30dB_mix_only": {
+  "v3": {
+   "clean": "8/8",
+   "m6": "6/8",
+   "p0": "3/8"
+  }
+ },
+ "rnnoise": {
+  "v3": {
+   "clean": "3/8",
+   "m6": "1/8"
+  },
+  "note": "rejected"
+ },
+ "learned_psd_wiener": {
+  "v3_m6_equiv": "0-2/8",
+  "note": "rejected 10/31"
+ },
+ "cost": "DeepFilterNet3 (PyTorch, Mac mini M-series, 1 thread): 0.04 x real time per channel. A7Z cost not measured (offline since 10/31 20:45).",
+ "decision": "Use DeepFilterNet3 with +30 dB pre-gain on each ear only while the duck's own body turns; spotter stays v4 (v5 rejected: 7 false wakes on held-out life talk, 10 peaks on motion audio). Next: an A7Z runtime (ONNX/tract streaming) and its CPU cost while the brain runs."
+}
