@@ -635,6 +635,9 @@ ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the of
                                   # about -1.0 and must not override
 ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
 SIDE_LAG_MIN = 2.0                # samples at 48 kHz: an ear-pair lag at least this big decides the side (77 mm = 10.8)
+PAIR_FIT_HUBER = 3.0              # samples: lag residuals beyond this count linearly in the pair-lag fit
+FB_SURE = 2.0                     # pair-fit front/back margin (cost units) above which a caller behind is acted on at
+                                  # once: the body turns without the front search first
 ILD_MIN_SNR_DB = 3.0              # the level side needs the ears' call this far over the noise in the band (2026-10-30
                                   # 21:03:47: a 7 dB call read 0.0/0.0 after subtraction; the band held no call)
 ILD_NOISE_FRAMES = 94             # noise frames behind the level cue (0.5 s at hop 256 / 48 kHz)
@@ -687,6 +690,28 @@ class CallLocaliser:
             self.steer[(i, j)] = np.exp(2j * math.pi * np.outer(tau, fb)).astype(np.complex64)
         self.lags = np.arange(-16.0, 16.01, 0.25)
         self.lag_mat = np.exp(2j * math.pi * np.outer(self.lags / fs, fb)).astype(np.complex64)
+        # the pair-lag fit (PAIR_FIT): each pair's predicted lag in samples on a 1 deg azimuth grid at the first elevation
+        self.fit_az = np.deg2rad(np.arange(-180.0, 180.0, 1.0))
+        uf = np.stack([np.cos(self.fit_az), np.sin(self.fit_az)], axis=-1) * math.cos(float(self.el[0]))
+        self.fit_pred = {(i, j): -(uf @ (self.pos[i] - self.pos[j])) / c * fs for i, j in self.PAIRS}
+
+    def pair_fit(self, pairs):
+        """(az_rad, front/back margin) from the three pairs' own GCC-PHAT lags: the azimuth whose predicted lags fit them
+        best (Huber loss PAIR_FIT_HUBER samples, each pair weighted by its peak), and how much worse the best azimuth in
+        the mirrored half-plane (front <-> back, within 25 deg of the mirror) fits. 2026-10-31, the 12 camera-confirmed
+        calls since 2026-10-30 21:00: median error 7 deg, 11 of 12 within 30 deg, front/back 11 of 12; the SRP over the
+        same audio median 84 deg, 2 of 12 (the aliased band sums the ear pair's mirror lobes into wrong peaks)."""
+        cost = np.zeros(len(self.fit_az))
+        for i, j in self.PAIRS:
+            p = pairs[f"{i}-{j}"]
+            r = np.abs(p["lag"] - self.fit_pred[(i, j)])
+            h = PAIR_FIT_HUBER
+            cost += max(p["peak"], 0.0) * np.where(r < h, 0.5 * r ** 2, h * (r - 0.5 * h))
+        k = int(np.argmin(cost))
+        az = float(self.fit_az[k])
+        mirror = math.copysign(math.pi, az) - az
+        near = np.abs((self.fit_az - mirror + math.pi) % (2 * math.pi) - math.pi) < math.radians(25)
+        return az, float(cost[near].min() - cost[k])
 
     def stft(self, x):
         n = (len(x) - self.nfft) // self.hop + 1
@@ -740,7 +765,10 @@ class CallLocaliser:
         mi = int(round((mirror % (2 * math.pi)) / (2 * math.pi) * len(self.az))) % len(self.az)
         near = np.abs(((self.az - self.az[mi]) + math.pi) % (2 * math.pi) - math.pi) < math.radians(25)
         margin = float(col[ka] - col[near].max()) if near.any() else float("nan")
+        az_srp = az
+        az, fb_margin = self.pair_fit(pairs)
         return dict(az_rad=round(az, 4), az_deg=round(math.degrees(az), 1), el_deg=round(float(np.degrees(self.el[ke])), 1),
+                    az_srp_deg=round(math.degrees(az_srp), 1), fb_margin=round(fb_margin, 2),
                     srp=round(float(col[ka]), 3), margin=round(margin, 3), pairs=pairs, bins=n_bins,
                     frames=int(len(call)), window_s=round(len(call) * self.hop / self.fs, 2),
                     ild_db=self.level_cues(x, (starts >= i0) & (ends <= i_onset + self.after),
@@ -1595,7 +1623,12 @@ class NameCall:
         rec = dict(det, az_rest_rad=round(az, 4), head_yaw_now=round(self.head_yaw_now, 3), az_front_rad=round(az_front, 4),
                    side=side, side_srp=side_srp, side_ild=side_ild, side_lag=side_lag, behind_heard=abs(az) > YAW_CAP)
         az_look = az_front
-        if self.bearing_prior is not None and side:
+        fitted = det.get("fb_margin") is not None      # CallLocaliser.pair_fit: the heard magnitude and front/back count
+        behind_sure = fitted and abs(az) > math.pi / 2 and det["fb_margin"] >= FB_SURE and side != 0
+        rec["behind_sure"] = bool(behind_sure)
+        if behind_sure:
+            az_look = side * YAW_CAP                    # the head swings as far round as it goes; the body does the rest
+        if self.bearing_prior is not None and side and not fitted:
             # the duck's own experience (fit_bearing.py): the heard side is right, the heard magnitude is not, so the
             # first look goes to the median true bearing on that side and the camera finds the rest
             az_look = side * math.radians(self.bearing_prior["look_deg"])
@@ -1636,9 +1669,18 @@ class NameCall:
             self.back_turn = self.more_turn = None
             if not getattr(self.a, "no_turn", True):
                 sign = side if side else (1.0 if az >= 0 else -1.0)
-                self.back_turn = self.plan_turn(sign * (math.pi - abs(az_front)))
-                if self.back_turn is not None:
-                    rec["back_turn_planned"] = dict(self.back_turn)
+                if behind_sure:
+                    # the back microphone says behind: the body turns toward the caller as soon as the head arrives
+                    # (Shawn 2026-10-31: 前后也要能判断准); if that search finds nobody, one more turn the same way
+                    self.turn = self.plan_turn(sign * abs(az))
+                    if self.turn is not None:
+                        rec["turn_planned"] = dict(self.turn)
+                        if self.finder is not None:
+                            self.more_turn = dict(sign=int(sign), dur_s=TURN_S[1], az_rad=round(sign * math.pi, 4), more=True)
+                else:
+                    self.back_turn = self.plan_turn(sign * (math.pi - abs(az_front)))
+                    if self.back_turn is not None:
+                        rec["back_turn_planned"] = dict(self.back_turn)
         elif self.bank is not None:
             # no head (listen-only): answer with a quack so a listening test is audible (2026-10-30: silent recognitions
             # looked like "no reaction")

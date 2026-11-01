@@ -717,3 +717,32 @@ def test_a_new_call_during_the_body_turn_stops_it_and_re_aims(tmp_path):
     # the heard bearing is in the head frame; the head was turned on the first caller, so the body bearing adds it
     assert abs(rec["az_rest_rad"] - (-0.8 + rec["head_yaw_now"])) < 1e-3 and abs(rec["head_yaw_now"]) > 0.3
     assert abs(rec["target_yaw"] - rec["az_rest_rad"]) < 0.05
+
+
+def test_a_caller_surely_behind_turns_the_body_at_once(tmp_path):
+    """2026-10-31: the pair-lag fit tells front from back (11 of 12 confirmed calls). A call fitted behind with a clear
+    front/back margin turns the body right after the head take, toward the caller, without the front search first;
+    an unsure one (margin 0, a caller near 90 deg) keeps front-first."""
+    a = args(cmd=str(tmp_path / "c.json"), seed=5, pitch=nc.LOOK_PITCH)
+    a.no_turn = False
+    for fb, az, want_turn in ((12.08, -2.234, True), (0.0, 2.234, False)):
+        n = nc.NameCall(a, nc.Log(None, echo=False))
+        n.finder = FakeFinder(n.head.gaze, world=None)
+        recs = []
+        n.log.write = lambda kind, **rec: recs.append((kind, dict(rec)))
+        rec = n.respond(dict(t=0.0, az_rad=az, az_deg=round(math.degrees(az), 1), bins=100, e_db=-30.0, floor_db=-48.0,
+                             margin=0.5, fb_margin=fb, pairs={"left-right": {"lag": 10.5 if az < 0 else -10.5, "peak": 0.4}}), 0.0)
+        assert rec["behind_sure"] is want_turn
+        t, first_turn = 0.0, None
+        while t < 4.0:
+            n.motion_tick(t)
+            if first_turn is None and any(k == "turn" for k, _ in recs):
+                first_turn = t
+            t += 0.02
+        if want_turn:
+            assert first_turn is not None and first_turn < 2.5, first_turn
+            turn = [r for k, r in recs if k == "turn"][0]
+            assert turn["vtheta"] < 0 and abs(turn["az_deg"] + 128.0) < 1.0
+            assert rec["target_yaw"] < -1.0                  # the head swings right as far as it goes
+        else:
+            assert first_turn is None                        # front first: the head searches before any body turn
