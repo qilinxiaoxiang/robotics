@@ -1235,6 +1235,11 @@ async function createViewer(container, guide, geoBuf, progress) {
     }
     tags.sort((p, q) => p.y - q.y);
     const placed = [];
+    for (const a of screwAnchors) {
+      if (a.el.style.display === 'none') continue;
+      const r = a.el.getBoundingClientRect(); const o = labelsEl.getBoundingClientRect();
+      if (r.width) placed.push({ x: r.left - o.left - 2, y: r.top - o.top - 2, a: { w: r.width + 4, h: r.height + 4 } });
+    }
     for (const t of tags) {
       for (let k = 0; k < 10; k++) {
         const hit = placed.find((r) => t.x < r.x + r.a.w + 3 && t.x + t.a.w + 3 > r.x && t.y < r.y + r.a.h + 2 && t.y + t.a.h + 2 > r.y);
@@ -1570,7 +1575,8 @@ async function main() {
   $('guide-subtitle').textContent = [data.subtitle, data.revision ? fmt(T.ui.revision, { v: data.revision }) : ''].filter(Boolean).join(' · ');
   $('side-count').textContent = fmt(total === 1 ? T.ui.stepCountOne : T.ui.stepCount, { n: total });
   $('side-foot').textContent = [data.revision ? fmt(T.ui.revision, { v: data.revision }) : '', data.units ? fmt(T.ui.units, { v: data.units }) : '',
-    fmt(T.ui.frame, { v: data.frame || T.ui.frameDefault })].filter(Boolean).join(' · ');
+    data.frame === '' ? '' : fmt(T.ui.frame, { v: data.frame || T.ui.frameDefault })].filter(Boolean).join(' · ');
+  if (data.stepIds === false) $('page-id').hidden = true;          // a guide can hide the '#step-id' chip
 
   const toc = $('toc');
   const linkById = new Map();
@@ -1862,7 +1868,7 @@ async function main() {
     const wiring = raw.wiring && raw.wiring.bench ? wiringSection(raw.wiring) : null;
     if (wiring) { stepBody.append(wiring.sec); wiring.mount(); }
     const ins = (raw.instructions || []).filter(Boolean);
-    if (ins.length) stepBody.append(section(T.ui.secAssemble, null, h('ol', { class: 'instructions' }, ins.map((t) => h('li', null, h('span', { text: t }))))));
+    if (ins.length) stepBody.append(section(raw.instructionsTitle || T.ui.secAssemble, null, h('ol', { class: 'instructions' }, ins.map((t) => h('li', null, h('span', { text: t }))))));
     const imgs = (raw.images || []).filter((im) => im && typeof im.src === 'string' && /^data:image\//.test(im.src));
     if (imgs.length) {
       stepBody.append(section(T.ui.secPhotos, null, h('div', { class: 'figures' }, imgs.map((im) =>
@@ -1990,10 +1996,18 @@ async function main() {
     const legend = $('legend');
     const ids = [...step.cables, ...step.faintCables];
     legend.textContent = '';
-    if (!step.cables.length) { legend.hidden = true; return; }
+    const partLeg = (Array.isArray(data.legend) ? data.legend : []).filter((l) => Array.isArray(l.parts) && l.parts.some((k) =>
+      guide.byKey.has(k) && (step.show.has(guide.byKey.get(k)) || step.add.has(guide.byKey.get(k)))));
+    if (!step.cables.length && !partLeg.length) { legend.hidden = true; return; }
+    legend.hidden = false;
+    if (partLeg.length) {
+      legend.append(h('span', { class: 'legend-title', text: data.partLegendTitle || 'Parts' }));
+      for (const l of partLeg) legend.append(h('span', { class: 'legend-item' }, h('span', { class: 'legend-swatch', '--c': colorOf(l.color, '#444c55') }), l.label));
+    }
+    if (!step.cables.length) return;
     const kinds = [];
     for (const ci of ids) { const k = guide.cables[ci].kind || 'other'; if (!kinds.includes(k)) kinds.push(k); }
-    const given = new Map((Array.isArray(data.legend) ? data.legend : []).map((l) => [l.kind, l]));
+    const given = new Map((Array.isArray(data.legend) ? data.legend : []).filter((l) => !Array.isArray(l.parts)).map((l) => [l.kind, l]));
     legend.append(h('span', { class: 'legend-title', text: T.ui.legendTitle }));
     for (const k of kinds) {
       const g = given.get(k);
