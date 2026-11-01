@@ -1,0 +1,27 @@
+{
+  "schema": "design-contract/1",
+  "design": "Tool-free battery swap on the battery-on-cap backpack (D-037, qilinxiaoxiang/microduck_rl 8bce48af): a 32 x 12.6 mm opening in the roof straight above the battery (frame and cap, across the cap seam; the cradle roof tab goes), and a printed hatch over it. The hatch has two fixed front tabs under the frame roof edge, a side snap tongue at the rear left whose hook catches under the cap roof edge, a grip tab behind the box to push the tongue in and lift the hatch, a rib that holds the battery down 0.3 mm above its top, and lead notches open to the rear edge. The two retainer bars stay screwed and are no longer removed; the switch, DFR1202, box outline and fixing are unchanged. The battery lifts straight up 62 mm with a Kapton pull tab stuck to its bottom and front face.",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-11-01",
+    "quotes": [
+      "有没有一种方式可以更方便地换电池？比如能不能用卡扣或者Dual Lock等来实现电池非常方便地拆卸，平时稳定，但是要拆卸的时候也不麻烦。",
+      "如果你要设计卡扣的话，PLA的强度是不是足够高？或者能不能通过巧妙的设计，让PLA的强度正好也可以卡住，同时也不会太脆而折断？",
+      "出概念图",
+      "有点意思 试试"
+    ],
+    "history": "2026-11-01: concept sheet concept/concept-sheet.png (top opening, hatch with fixed front tabs and one PLA side snap, bars fixed, pull tab). Shawn asked what the pull tab is (answer: Kapton tape on each battery, 0.05 mm, fits the 0.3 mm play), then 'have a try'. Agent choices after the concept: tongue 1.2 mm (strain 1.3 % at the 1.1 mm release deflection), grip tab behind the box in place of the concept's top knob (the hatch prints top face down), hold-down rib added (without it the battery could rise 8.2 mm to the hatch, the fault the cap cradle was made to remove)."
+  },
+  "concept_render": "concept/concept-sheet.png",
+  "geometry": [
+    {"part": "battery_backpack_frame", "says": "box outline unchanged: front plate x -45, width |y| <= 32.05, top z 43",
+     "bounds": {"x_max": {"gt": -45.05, "lt": -44.95}, "y_max": {"lt": 32.1}, "z_max": {"lt": 43.05}}},
+    {"part": "battery_backpack_cap", "says": "cap outline unchanged: back x -75.55, top z 43",
+     "bounds": {"x_min": {"gt": -75.6, "lt": -75.5}, "z_max": {"lt": 43.05}}},
+    {"part": "battery_hatch", "says": "hatch lies on the roof: top 1.6 mm above z 43, rib stops above the battery top (z 34.49)",
+     "bounds": {"z_max": {"gt": 44.55, "lt": 44.65}, "z_min": {"gt": 34.6}}},
+    {"part": "battery_hatch", "says": "hatch spans the opening plus the grip tab behind the box, within the box width",
+     "bounds": {"y_min": {"gt": -18.0}, "y_max": {"lt": 18.0}, "x_max": {"lt": -60.0}}}
+  ],
+  "forbidden_parts": []
+}
