@@ -1,0 +1,49 @@
+variant STOP_R 0.125 DONE_BEARING 18 DONE_R (0.05, 0.117)
+mode -> stand
+mode -> walk
+[3.0] start -> search
+[3.1] search -> ready: object at x 0.42 y 0.15
+[3.1] ready -> approach: walk: estimate x 0.42 y 0.15
+  seen x 0.42 y 0.15 -> est r 0.45 b +19 deg, vtheta +0.30, walked 0.00 m
+  seen x 0.41 y 0.17 -> est r 0.45 b +23 deg, vtheta +0.30, walked 0.01 m
+  seen x 0.41 y 0.16 -> est r 0.44 b +22 deg, vtheta +0.30, walked 0.02 m
+  seen x 0.42 y 0.14 -> est r 0.44 b +19 deg, vtheta +0.30, walked 0.02 m
+  seen x 0.44 y 0.12 -> est r 0.44 b +16 deg, vtheta +0.28, walked 0.03 m
+  seen x 0.39 y 0.05 -> est r 0.42 b +7 deg, vtheta +0.12, walked 0.04 m
+  left the picture at the left (estimate r 0.40 b -16 deg)
+  seen x 0.52 y -0.16 -> est r 0.47 b -17 deg, vtheta -0.30, walked 0.05 m
+  seen x 0.40 y -0.12 -> est r 0.43 b -18 deg, vtheta -0.30, walked 0.07 m
+  left the picture at the right (estimate r 0.40 b -12 deg)
+  seen x 0.38 y -0.09 -> est r 0.39 b -12 deg, vtheta -0.21, walked 0.11 m
+  seen x 0.34 y -0.17 -> est r 0.38 b -21 deg, vtheta -0.30, walked 0.13 m
+  seen x 0.36 y -0.15 -> est r 0.37 b -26 deg, vtheta -0.30, walked 0.15 m
+[5.3] approach -> face: r 0.35 bearing -23 deg: stop and turn in place
+[6.2] face -> ready: facing it (bearing -5 deg)
+[8.7] ready -> approach: walk: estimate x 0.26 y 0.04
+[9.0] approach -> face: r 0.25 bearing +16 deg: stop and turn in place
+[9.4] face -> ready: facing it (bearing +5 deg)
+[10.4] ready -> approach: walk: estimate x 0.25 y -0.01
+  left the picture at the bottom (estimate r 0.23 b +1 deg)
+[11.3] approach -> face: r 0.20 bearing -16 deg: stop and turn in place
+[11.8] face -> ready: facing it (bearing -4 deg)
+[12.8] ready -> approach: walk: estimate x 0.20 y 0.02
+  left the picture at the bottom (estimate r 0.18 b +11 deg)
+[14.1] approach -> settle: estimate x 0.11 y -0.05 (r 0.12): stop
+[15.6] settle -> measure
+[18.7] measure -> settle: not seen at the stop: near pose
+[18.7] settle -> measure
+[21.8] measure -> search: not seen at the stop
+[33.3] search -> ready: object at x 0.03 y -0.04
+[34.0] ready -> face: bearing -52 deg: turn in place first
+[36.0] face -> ready: facing it (bearing -6 deg)
+[37.0] ready -> settle: already at x 0.05 y 0.01: measure
+[37.9] settle -> measure
+  measured x 0.052 y -0.036 (r 0.063, bearing -35 deg) from 5
+[38.6] measure -> ready: again
+[39.3] ready -> face: bearing -43 deg: turn in place first
+[41.0] face -> ready: facing it (bearing -5 deg)
+[42.0] ready -> settle: already at x 0.06 y 0.00: measure
+[44.0] settle -> measure
+  measured x 0.040 y -0.010 (r 0.041, bearing -14 deg) from 5
+[44.9] measure -> failed: too close (walk61 does not step back)
+{"ok": false, "obj": [0.423, 0.154], "move": null, "reachable": true, "ctl_ok": false, "why": "too close (walk61 does not step back)", "elapsed_s": 43.9, "approaches": null, "true_r": 0.03, "true_bearing_deg": -14.2, "meas": [0.04, -0.01], "meas_err_m": null, "path_m": 1.1, "yaw_range_deg": [-101.2, 40.5], "fell_at": null, "trips": [], "max_tilt": 9.4, "pitch_offset": 0.0, "drift_nm": 0.023, "trim": -1.1079, "drift_when": "forward"}

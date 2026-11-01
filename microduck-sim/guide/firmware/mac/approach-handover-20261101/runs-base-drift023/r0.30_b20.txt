@@ -1,0 +1,26 @@
+mode -> stand
+mode -> walk
+[3.0] start -> search
+[3.1] search -> ready: object at x 0.32 y 0.10
+[3.1] ready -> approach: walk: estimate x 0.32 y 0.10
+[3.2] approach -> face: r 0.33 bearing +18 deg: stop and turn in place
+[4.2] face -> ready: facing it (bearing +6 deg)
+[5.3] ready -> approach: walk: estimate x 0.32 y -0.07
+  left the picture at the bottom (estimate r 0.32 b -7 deg)
+[6.2] approach -> face: r 0.27 bearing -25 deg: stop and turn in place
+[6.9] face -> ready: facing it (bearing -3 deg)
+[8.0] ready -> approach: walk: estimate x 0.27 y -0.00
+  left the picture at the right (estimate r 0.26 b +3 deg)
+[9.7] approach -> settle: estimate x 0.14 y -0.04 (r 0.14): stop
+[11.3] settle -> measure
+[14.4] measure -> settle: not seen at the stop: near pose
+[14.4] settle -> measure
+  measured x 0.033 y -0.092 (r 0.098, bearing -70 deg) from 5
+[15.3] measure -> ready: again
+[16.0] ready -> face: bearing -58 deg: turn in place first
+[18.0] face -> ready: facing it (bearing -6 deg)
+[19.1] ready -> settle: already at x 0.09 y 0.00: measure
+[20.0] settle -> measure
+  measured x 0.057 y -0.026 (r 0.062, bearing -25 deg) from 5
+[20.7] measure -> done: arrived
+{"ok": true, "obj": [0.282, 0.103], "move": null, "reachable": true, "ctl_ok": true, "why": "arrived", "elapsed_s": 19.7, "approaches": 2, "true_r": 0.071, "true_bearing_deg": -9.3, "meas": [0.057, -0.026], "meas_err_m": 0.02, "path_m": 0.73, "yaw_range_deg": [-64.9, 45.5], "fell_at": null, "trips": [], "max_tilt": 9.4, "pitch_offset": 0.0, "drift_nm": 0.023, "trim": -1.1079, "drift_when": "forward"}

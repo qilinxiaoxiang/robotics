@@ -456,3 +456,12 @@ Tailscale since about 17:25).
 - Cause of the low full-set number: reach. The beak bites at 10 +- 1.2 cm forward whatever the ball distance; the
   pick never steps. Next: the walker / gaze hand-over must stop with the ball within +-3 cm of the spot 8.7 cm
   in front of the feet, or the pick needs a stepping phase. Details: `cmu/grasp/T2-PIXEL.md` (commit 2d4dd54e, cmu/grasp).
+
+## 2026-11-01 Walk-up stop accuracy against the T2 bite window
+
+- approach_sim.py, 12 mm ball, 25 placements 0.3-0.9 m and +-40 deg (`microduck-sim/guide/firmware/mac/approach-handover-20261101/README.md`).
+- As deployed (stop at 14.5 cm, accept bearing 25 deg): 23/25 arrive, no falls, but only 52 % end within T2's +-3 cm
+  window: the ball sits about 2.5 cm too far and 10-20 deg left.
+- Sim-only change, stop at 12.5 cm, accept bearing 18 deg and range up to 11.7 cm: 23/25 arrive and 92 % end in the
+  window; with the camera pitch 2 deg off 76-80 %. Expected walk-up-then-bite in sim about 65 %.
+- approach.py is unchanged. The robot's faster walk (0.15 vs 0.11 m/s) coasts further after the stop; not tested.

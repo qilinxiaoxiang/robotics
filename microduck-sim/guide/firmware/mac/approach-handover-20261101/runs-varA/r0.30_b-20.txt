@@ -1,0 +1,18 @@
+variant STOP_R 0.125 DONE_BEARING 10 DONE_R (0.05, 0.117)
+mode -> stand
+mode -> walk
+[3.0] start -> search
+[3.1] search -> ready: object at x 0.33 y -0.11
+[3.1] ready -> approach: walk: estimate x 0.33 y -0.11
+[3.2] approach -> face: r 0.34 bearing -19 deg: stop and turn in place
+[4.3] face -> ready: facing it (bearing -5 deg)
+[5.3] ready -> approach: walk: estimate x 0.30 y -0.01
+  left the picture at the bottom (estimate r 0.27 b +0 deg)
+  left the picture at the bottom (estimate r 0.22 b -5 deg)
+  seen x 0.15 y -0.01 -> est r 0.16 b -2 deg, vtheta -0.04, walked 0.13 m
+  seen x 0.14 y -0.04 -> est r 0.14 b -9 deg, vtheta -0.16, walked 0.15 m
+[7.3] approach -> settle: estimate x 0.12 y -0.02 (r 0.12): stop
+[8.9] settle -> measure
+  measured x 0.099 y 0.005 (r 0.099, bearing +3 deg) from 5
+[9.4] measure -> done: arrived
+{"ok": true, "obj": [0.282, -0.103], "move": null, "reachable": true, "ctl_ok": true, "why": "arrived", "elapsed_s": 8.4, "approaches": 1, "true_r": 0.079, "true_bearing_deg": 2.9, "meas": [0.099, 0.005], "meas_err_m": 0.02, "path_m": 0.36, "yaw_range_deg": [-35.1, 0.0], "fell_at": null, "trips": [], "max_tilt": 9.4, "pitch_offset": 0.0, "drift_nm": 0.015, "trim": -1.1079, "drift_when": "forward"}

@@ -1,0 +1,25 @@
+variant STOP_R 0.125 DONE_BEARING 18 DONE_R (0.05, 0.117)
+mode -> stand
+mode -> walk
+[3.0] start -> search
+[10.3] search -> ready: object at x 0.25 y 0.13
+[12.8] ready -> face: bearing +44 deg: turn in place first
+[14.4] face -> ready: facing it (bearing -1 deg)
+[15.5] ready -> approach: walk: estimate x 0.25 y -0.05
+[17.2] approach -> settle: estimate x 0.12 y 0.00 (r 0.12): stop
+[18.8] settle -> measure
+  measured x 0.120 y 0.053 (r 0.131, bearing +24 deg) from 5
+[19.3] measure -> ready: again
+[21.8] ready -> face: bearing +19 deg: turn in place first
+[23.0] face -> ready: facing it (bearing +6 deg)
+[24.0] ready -> settle: already at x 0.11 y -0.02: measure
+[24.5] settle -> measure
+  measured x 0.099 y -0.050 (r 0.111, bearing -27 deg) from 5
+[25.0] measure -> ready: again
+[27.2] ready -> face: bearing -26 deg: turn in place first
+[28.7] face -> ready: facing it (bearing -5 deg)
+[29.8] ready -> settle: already at x 0.11 y 0.02: measure
+[30.2] settle -> measure
+  measured x 0.101 y 0.030 (r 0.105, bearing +17 deg) from 5
+[30.8] measure -> done: arrived
+{"ok": true, "obj": [0.23, 0.193], "move": null, "reachable": true, "ctl_ok": true, "why": "arrived", "elapsed_s": 29.8, "approaches": 3, "true_r": 0.087, "true_bearing_deg": 15.0, "meas": [0.101, 0.03], "meas_err_m": 0.018, "path_m": 0.55, "yaw_range_deg": [-0.6, 45.7], "fell_at": null, "trips": [], "max_tilt": 9.4, "pitch_offset": 0.0, "drift_nm": 0.015, "trim": -1.1079, "drift_when": "forward"}
