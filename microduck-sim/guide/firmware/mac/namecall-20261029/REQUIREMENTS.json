@@ -1,6 +1,6 @@
 {
  "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
- "updated": "2026-11-01 03:07",
+ "updated": "2026-11-01 13:48",
  "requirements": [
   {
    "id": "R1",
@@ -320,7 +320,7 @@
     "2026-11-01 built (BrainGate accepts sit_phase seated; CmdWriter writes {mode: sit, head}; HeadPath SIT_TILT 0.25 rad toward the caller, SIT_HEAD_RATE 1.0 rad/s, no pre-inverse; no body turn from a seat). As-built sim (glance-20261101/README.md): every seated answer stays seated, no fall, trunk tilt change <= 5.1 deg; head yaw 1.10 rad left, 0.83-0.89 right; tilt 0.19-0.23 rad."
    ],
    "status": "built",
-   "gap": "Not on the robot. The sit-down itself tips backward to about 63 deg in 6 of 32 sim seats on the 2026-11-01 model at the 10/31 read-drop rate (17 %), 0 of 32 at 4 %: a seat that holds comes first (the head answer is not involved). Seated reach is lopsided (right 0.85 rad)."
+   "gap": "Not on the robot. The sit-down holds: 22 robot sit-downs (10/21-10/30, 0-4.2 % dropped reads) never tipped, and the sim at those rates tips 0 of 96 (glance-20261101/README.md, 2026-11-01); it tips only at the 10/31 fault-state rate of 17 %. Seated reach is lopsided (right 0.85 rad)."
   },
   {
    "id": "R13",

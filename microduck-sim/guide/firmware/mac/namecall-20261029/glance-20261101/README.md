@@ -10,12 +10,22 @@ knocks the duck over and the knees stay folded in every run. Trunk tilt changes 
 rad to the left and only 0.83-0.89 to the right, so seated the camera sees about +94 / -80 deg. The tilt reaches
 0.19-0.23 rad (11-13 deg). The sitstand policy takes only about -0.75 of the -1.1 head pitch asked.
 
-**Separate finding: the sit-down itself tips backward.** Before any call, 6 of 32 sit-downs end at about 63 deg on
-the 2026-11-01 model at 17 % dropped reads. The same model at 4 % drops tips 0 of 32. The bench-supply `plugged`
-model tips 0 of 32 at 4 % and 2 of 32 at 17 %. The `battery` plan model tips 9 of 32 at 4 % and 8 of 32 at 17 %. Each
-set is 4 voltages (7.0-8.2 V) x 8 seeds, with the sit command after 4 s of stand61. The cause is the read-drop rate
-measured on 2026-10-31 (17 %, CURRENT-STATE `servo_read_drop_fraction`) together with the battery backpack's rear
-mass. The head answer is not involved. A seated answer needs a seat that holds, so this is open under R12.
+**The sit-down holds at the robot's read-drop rate (checked 2026-11-01).** The answer runs above used 17 % dropped
+reads. That is the 2026-10-31 touch-bus fault value in CURRENT-STATE `servo_read_drop_fraction`, which the console
+loglevel fix of that day brought to 3 in 1500 standing ticks. At 17 % some sim sit-downs tip backward to about 63 deg
+before any call. The robot's own sit-downs never ran at that rate:
+- **Robot.** `real_sits.py` reads every sit-down in the backed-up A7Z brain logs (`~/Backups/a7z-duck-logs`,
+  2026-10-21 to 10-30; output `real_sits.txt`). 22 sit-downs folded the knees to about 1.3 rad and none tipped. Reads
+  dropped on 0-4.2 % of the sit-down ticks (median 1.5 %). Peak trunk tilt was 4.4-11.8 deg (median 6.0).
+- **Sim at the robot's rates.** `glance_sim.py --sit-entry` ran 8 seeds at 7.2 and 8.0 V on the 2026-11-01 model and
+  on the bench-supply `plugged` model (`sitentry_1101.json`, `sitentry_plugged.json`). At 0, 1.5 and 4 % drops, 0 of 96
+  sit-downs tipped. Peak tilt was 6.0-8.0 deg, against the robot's median of 6.0.
+- **Sim at 17 %.** 3 of 16 sit-downs tipped on the 2026-11-01 model and 2 of 16 on `plugged`.
+
+So the sim agrees with the robot. The earlier tip finding came from the fault-state drop rate, not from the seat or
+the mass model. A sit-down during a read-drop fault like the 10/31 one is untested on the robot and tips in the sim.
+(The `battery` plan model also tipped 9 of 32 at 4 %. It is not the robot: it lacks the D-037 battery move and the
+head sensors.)
 
 ## Setup
 
@@ -59,4 +69,6 @@ mass. The head answer is not involved. A seated answer needs a seat that holds, 
 ```bash
 ~/.venvs/microduck-dyn/bin/python glance_sim.py --build-manifest
 ~/.venvs/microduck-dyn/bin/python glance_sim.py --out results.json
+~/.venvs/microduck-dyn/bin/python glance_sim.py --sit-entry 0,0.015,0.04,0.17 --volts 7.2,8.0 --seeds 8 --out sitentry_1101.json
+python3 real_sits.py duck_wired_log_app1030-180856.jsonl ...   # the 14 logs listed in real_sits.txt
 ```

@@ -439,6 +439,13 @@ Tailscale since about 17:25).
 - **Separate finding**: the sit-down itself tips backward to about 63 deg in 6 of 32 sim seats at the 10/31 read-drop rate (17 %) on the 11/01 model, 0 of 32 at 4 %; the battery plan model 8-9 of 32 at either rate; the bench-supply model 0-2. A seated answer needs a seat that holds first.
 - **Not done**: robot check (A7Z offline since 10/31 20:45); the team repo copy of namecall is not synced.
 
+## 2026-11-01 13:20-13:50 Sit-down tip in the sim traced to the fault-state read-drop rate
+
+- **Shawn**: 真机目前不会后翻 可以查下什么原因.
+- **Robot** (`namecall-20261029/glance-20261101/real_sits.py`, `real_sits.txt`, backed-up A7Z brain logs 10/21-10/30): 22 sit-downs folded the knees to about 1.3 rad and none tipped. Reads dropped on 0-4.2 % of the sit-down ticks (median 1.5 %); peak trunk tilt 4.4-11.8 deg (median 6.0).
+- **Sim at the robot's rates** (`glance_sim.py --sit-entry`, 8 seeds, 7.2/8.0 V, 2026-11-01 and plugged models, Mac mini): 0 of 96 sit-downs tipped at 0, 1.5 and 4 % drops; peak tilt 6.0-8.0 deg. At 17 %: 3 of 16 and 2 of 16 tipped.
+- **Cause**: the 03:10 entry used 17 %, the 10/31 touch-bus fault value of CURRENT-STATE `servo_read_drop_fraction`; the robot never sat down at that rate. The sim and the robot agree. A sit-down during a read-drop fault is untested on the robot. R12 gap updated.
+
 ## 2026-11-01 T2 picture pick: trained, works only near the landing spot
 
 - spx-a / spx-b ran the full 11 h on Kaggle (2544 / 2434 iterations). The start-window curriculum stalled at +-3 cm,

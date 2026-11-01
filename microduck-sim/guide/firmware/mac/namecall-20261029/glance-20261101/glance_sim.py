@@ -161,6 +161,11 @@ def run_case(case, seed, volt, drop):
             break
     t_arr = np.array(tr["t"])
     out = dict(case, seed=seed, volt=volt, drop=drop, t_call=t_call, seated_at=seated_at)
+    if sit:
+        # the sit-down alone, as real_sits.py reads it from the robot logs: sit command to 3 s later
+        down = (t_arr >= SIT_AT) & (t_arr < SIT_AT + 3.0)
+        out["sit_peak_deg"] = round(float(np.array(tr["tilt"])[down].max()), 2)
+        out["sit_tipped"] = bool(np.array(tr["tilt"])[t_arr >= SIT_AT].max() > GUARD_TILT_DEG)
     if t_call is None:
         out["error"] = "the call never started (no seat reached)" if sit else "no call"
         return out
@@ -206,9 +211,27 @@ def main():
     ap.add_argument("--volts", default="7.0,7.8")
     ap.add_argument("--drop", type=float, default=0.17)
     ap.add_argument("--only", default=None, help="substring of case names")
+    ap.add_argument("--sit-entry", default=None, metavar="DROPS",
+                    help="sit-down only, at these comma-separated read-drop fractions (8 seeds, --volts, --manifest)")
+    ap.add_argument("--manifest", default=None, help="mass manifest path instead of the 11-01 as-built one")
     a = ap.parse_args()
     if a.build_manifest:
         build_manifest()
+        return
+    global MANIFEST
+    if a.manifest:
+        MANIFEST = os.path.abspath(a.manifest)
+    if a.sit_entry:
+        rows, t0 = [], time.time()
+        case = dict(name="sit_entry", posture="sit", az=0.0, cap=nc.YAW_CAP, rate=1.0, hold_s=0.5)
+        for drop in (float(x) for x in a.sit_entry.split(",")):
+            for volt in (float(v) for v in a.volts.split(",")):
+                for s in range(a.seeds):
+                    r = run_case(case, 7 + s, volt, drop)
+                    rows.append({k: r.get(k) for k in ("drop", "volt", "seed", "sit_peak_deg", "sit_tipped", "seated_at")})
+                    print(json.dumps(rows[-1]), flush=True)
+        json.dump(dict(started=time.strftime("%Y-%m-%dT%H:%M:%S"), wall_s=round(time.time() - t0, 1),
+                       manifest=os.path.basename(MANIFEST), rows=rows), open(a.out, "w"), indent=1)
         return
     rows, t0 = [], time.time()
     for case in CASES:
