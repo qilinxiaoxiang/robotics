@@ -83,6 +83,8 @@ ALLOWLIST = {
     "/PARTS-SHEET-V1.39.html": "PARTS-SHEET-V1.39.html",
     "/PARTS-SHEET-V1.40.html": "PARTS-SHEET-V1.40.html",
     "/RIG-BUILD.html": "RIG-BUILD.html",   # 17-720 OMX-F sensing and cooling rig build guide
+    "/Zero2W-Sensor-Wiring.html": "Zero2W-Sensor-Wiring.html",   # 17-720 RIG pin-level wiring (Zero 2 W, BMP388, C1001, fan)
+    "/Zero2W-Sensor-Wiring.png": "Zero2W-Sensor-Wiring.png",
     "/sources/print-colors.json": "sources/print-colors.json",
     "/sources/motor-fasteners.json": "sources/motor-fasteners.json",
 }
