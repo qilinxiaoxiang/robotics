@@ -162,7 +162,8 @@ def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
     assert phases[:2] == ["burst", "aim"], phases
     assert duck.picks, (phases, ctl.result)
     o = duck.picks[0]
-    assert abs(o["x"] - sp.SPOT[0]) <= sp.PICK_WIN and abs(o["y"] - sp.SPOT[1]) <= sp.PICK_WIN, o
+    # the last sighting before the ball left the picture: its true place is nearer, so the window carries the slack
+    assert abs(o["x"] - sp.SPOT[0]) <= sp.PICK_WIN + sp.PICK_SLACK and abs(o["y"] - sp.SPOT[1]) <= sp.PICK_WIN, o
     assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)
 
 
