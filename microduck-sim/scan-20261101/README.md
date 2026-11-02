@@ -88,7 +88,7 @@ The geometry and the scan point at the servo cable's plug as the first thing to 
 - The front socket faces up in the bend, 14 mm higher (z 36.4 and 38.3). Its plug stays 3.4 mm from the foot through 1.571 rad and only closes in the other direction, 2.6 mm at -1.00 rad; the logged ankle range folded to the bend direction is -0.29 to +1.40 (`ankle_ports_reverse.py`).
 - Moving the cable frees about 0.1-0.15 rad, not the full range: with no plug the servo's own case meets the foot's orange part at about 1.35 rad in the model, and the 1.40 rad fall sets the upper bound. The goal at 1.571 stays out of reach, so the servo still pushes against a stop in the bend, with about 0.2 rad of error against 0.32.
 
-The sockets are electrically the same (`directionMeaning` in the topology), and the front one has no use: the only cable that ever used it was the cross-foot `ttl-01-06`, removed from the design. `LEG-INSTALL-SEQUENCE.md` says these plugs cannot be added in place, because the straight approach is blocked at the ankle and lower link: the swap reopens the ankle fork. The cable's route out of the front socket to the knee has no checked model yet.
+The sockets are electrically the same (`directionMeaning` in the topology), and the front one has no use: the only cable that ever used it was the cross-foot `ttl-01-06`, removed from the design. The swap needs no disassembly: Shawn, 2026-11-02, "换个舵机线不用拆脚踝，走线走到前面就行，这很快，2分钟就搞定了". `LEG-INSTALL-SEQUENCE.md`, which says these plugs cannot be added in place, is wrong on this point. He also expects the heel to stop the ankle soon after, which matches the small gain above.
 
 Effect of more ankle in the replay (`closed_loop_port.json`, bias 4), trunk pitch and camera height in the bend, robot 37.4 deg and 14.5 mm:
 
