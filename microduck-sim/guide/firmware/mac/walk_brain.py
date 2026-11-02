@@ -104,6 +104,9 @@ GP_REST_PHASE = 0.80
 # 0.34-0.40); here the same timeline in jaw_ctl degrees, "grip" once closed (current-limited squeeze).
 SP_PERIOD = 4.0
 SP_AGE_MAX = 2.0
+# T2 with the holding bit keeps the neck bowed (-1.14 rad on the robot, stand61's default +0.35) and stand61 threw it back and
+# fell, 2026-11-01. From this phase, once holding, seepick61 finishes the rise (t2-chain-20261101/README.md).
+SP_RISE_OLD_PHASE = 0.50
 SP_JAW_OPEN_DEG = 22.0
 SP_JAW_REST_DEG = 2.0
 SP_JAW = dict(open_start=0.02, open_end=0.10, close_start=0.34, close_end=0.40)
@@ -440,7 +443,7 @@ class Brain:
         self.sp_body = np.zeros(6, dtype=np.float32)  # seeing-pick body slots last handed to the policy
         self.sp_bit_off_phase = None  # trial (t2-chain-20261101): from this phase T2 reads holding 0, so its neck comes back
         self.sp_blend_s = None        # trial: goals blend from the pick's last goals to stand61's over this long
-        self.sp_rise_old_phase = None # trial: from this phase, with the holding bit on, seepick61 finishes T2's rise
+        self.sp_rise_old_phase = SP_RISE_OLD_PHASE
         self.sp_old_rise = False
         self.hand_blend = None
         self.sp_policy = "seepick"  # "seepickpix" when the pick started with a picture object (u, v, w), fixed per pick

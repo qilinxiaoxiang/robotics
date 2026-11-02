@@ -8,7 +8,7 @@ BASE = ["--model", "asbuilt", "--manifest", "../../../microduck_rl/cmu/model/man
         "--wired-guards", "--walk-s", "0", "--walk-at", "1", "--head-pitch", "1.35", "--head-yaw", "0.0", "--sp-at", "4", "--sp-shape", "ball",
         "--sp-cone", "elliptic", "--sp-impratio", "10", "--sp-after", "4", "--sp-pix", "--models", "models-spx-b_1800", "--sp-jaw-current", "150"]
 RUNS = [(-0.01, 0.0, 0), (0.0, -0.01, 1), (0.01, 0.0, 1), (0.01, 0.0, 2), (0.03, 0.0, 0), (0.03, 0.0, 1)]
-VARS = {"current": [], "bit_off_0.60": ["--sp-bit-off", "0.60"], "bit_off_0.70": ["--sp-bit-off", "0.70"], "blend_1.5": ["--sp-blend", "1.5"],
+VARS = {"current": ["--sp-rise-old", "2"], "bit_off_0.60": ["--sp-bit-off", "0.60"], "bit_off_0.70": ["--sp-bit-off", "0.70"], "blend_1.5": ["--sp-blend", "1.5"],
         "bit_off_0.70_blend_1": ["--sp-bit-off", "0.70", "--sp-blend", "1.0"], "old_rise_0.44": ["--sp-rise-old", "0.44"], "old_rise_0.50": ["--sp-rise-old", "0.50"],
         "old_rise_0.58": ["--sp-rise-old", "0.58"]}
 

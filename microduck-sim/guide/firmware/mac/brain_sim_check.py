@@ -1005,7 +1005,9 @@ def run(args):
     gyro_adr = m.sensor("imu_ang_vel").adr[0]
     c.q_target = p0 + z0
     brain = Brain(args.models, compensation=args.compensation, walk_ramp=args.walk_ramp, yaw_trim_file=args.yaw_trim_file)
-    brain.sp_bit_off_phase, brain.sp_blend_s, brain.sp_rise_old_phase = args.sp_bit_off, args.sp_blend, args.sp_rise_old
+    brain.sp_bit_off_phase, brain.sp_blend_s = args.sp_bit_off, args.sp_blend
+    if args.sp_rise_old is not None:
+        brain.sp_rise_old_phase = args.sp_rise_old
     comp = Breakaway(first=args.ba_first, ramp=args.ba_ramp, cap=args.ba_cap, min_err_ticks=args.ba_min_err, stuck_ticks=args.ba_stuck, cap_ticks=args.ba_cap_ticks)
     Rimu = rot_y(args.imu_pitch)
     Mq = qmul(IMU_MOUNT_QUAT, (1, 0, 0, 0))
@@ -1738,7 +1740,7 @@ def main():
                          "microduck_ground_grasp_env_cfg, a pinched block creeps out of the wedge at pyramidal / 1)")
     sp.add_argument("--sp-pix", action="store_true", help="T2: the object as the tracker's picture box (seepickpix61.onnx in --models)")
     sp.add_argument("--sp-bit-off", type=float, default=None, help="phase from which the policy reads holding 0 (trial)")
-    sp.add_argument("--sp-rise-old", type=float, default=None, help="phase from which seepick61 finishes T2's rise once holding (trial)")
+    sp.add_argument("--sp-rise-old", type=float, default=None, help="phase from which seepick61 finishes T2's rise once holding (default walk_brain.SP_RISE_OLD_PHASE; 2 = never)")
     sp.add_argument("--sp-blend", type=float, default=None, help="s; blend the pick's last goals into stand61's after the hand-back (trial)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
