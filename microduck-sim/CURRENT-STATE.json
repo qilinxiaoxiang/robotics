@@ -672,6 +672,19 @@
     "guide/firmware/mac/duck_kin.py mount interpretation",
     "sim gap studies"
    ]
+  },
+  "ankle_bend_stall": {
+   "value": "In the held bend (groundpick phase 0.33) both ankles stop at about 1.25 rad (-1.246, +1.259) with their goals on the 1.571 rad clamp, 0.32 rad of held error; the sim's ankles reach 1.37-1.43 with 0.07-0.11 rad. A 1.25 rad ankle limit in the sim closes the bend trunk gap (-4.6 to +0.3 deg) and the camera height (23.9 to 15.6 mm, scan 14.5). Mesh contact with the shin servo starts at about 1.30-1.40 rad on the model's foot; the real ankle has not been looked at in the bend.",
+   "meaning": "Why the sim chain and the robot part ways in the bend, and what the groundpick policy's ankle goal does on this robot. Not yet in the sim or training model.",
+   "verified_at": "2026-11-01",
+   "source": "microduck-sim/scan-20261101/README.md (closed_loop.py, ankle_clearance.py, real_windows.json) from duck_wired_log_app1101-203552.jsonl",
+   "measure": "python3 scan-20261101/real_windows.py on a log slice of a groundpick hold: ankle q and goal in the bend window; then closed_loop.py --only chain,stop1.25",
+   "max_age_days": 30,
+   "superseded": [],
+   "consumers": [
+    "sim gap studies",
+    "groundpick and seepick work"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

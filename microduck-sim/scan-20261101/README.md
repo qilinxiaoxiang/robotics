@@ -24,7 +24,7 @@ All offsets are real minus chain, foot frame, x forward, z up. The chain is `tar
 Not settled:
 
 - Where the angle sits. Trunk reads +2.7 to +8 deg forward of the IMU by fit method, and a free fit on the ruler ticks gives trunk +5.0 +- 1.5 deg. Thighs standing read +2.8 and +4.9 deg (+-1.9), which points at the lower leg as well. Single scans do not separate these.
-- The trunk reading conflicts with `IMU_PITCH_TRIM_DEG` = 4 (`walk_brain.py`), which assumes the sensor over-reads forward. Lead, untested.
+- The trunk reading conflicts with `IMU_PITCH_TRIM_DEG` = 4 (`walk_brain.py`), which assumes the sensor over-reads forward. The closed-loop run below does not separate them, because the bias trades against a small hidden ankle angle; the scan's trunk fits also carry 7-8 mm of wire error.
 - Backpack position. The crude colour check (`pack.py`) gave 1 to 21 mm disagreement between poses, polluted by wires. No number from it is usable.
 
 ## What did not pass
@@ -58,6 +58,42 @@ Feet-flat trunk pitch from the leg encoders alone: +0.5 deg standing and +32.4 d
 
 Checks that did not settle it:
 
-- Holding the logged goals open loop (`sim_static.py --settle`): the model falls or folds, because on the robot the policy keeps correcting. No conclusion about the offsets. A closed-loop run with hidden offsets has not been done.
+- Holding the logged goals open loop (`sim_static.py --settle`): the model falls or folds, because on the robot the policy keeps correcting. No conclusion about the offsets. The closed-loop run is below.
 - Position error as a load gauge (`load_check.py`): standing neck error 0.045 rad gives 0.08 Nm/rad on the chain and 1.0 on neck -10.4 deg, against about 0.96 in the sim's servo, which favours a real forward offset. But standing head error reads 0.176 rad at low load after the rise (0.14 Nm/rad), so friction can hold that much error. Weak support only. Logged `cur_ma` runs about 8 times under the torque the same errors imply; do not read it as absolute torque.
 - Bend neck: the error falls from 0.229 to 0.10 rad the moment motion stops while the modelled load stays 0.23 Nm. Friction or the head resting on the floor would both do this; the fitted head clearance is about 3 mm.
+
+## Closed loop against the robot's log (`closed_loop.py`)
+
+`walk_brain.Brain` (the A7Z's file, md5 799f636f) and the A7Z's own walk61 and groundpick61 run the charger-pack model on the Mac mini through the session's commands: walk at zero with two nudges, groundpick phase 0.33, phase 1, walk with the head commands. Each hold is compared with `real_windows.json`; the scan's camera heights (stand 226.3 mm, bend 14.5 mm) were not used to choose the cases, so they act as a held-out check. About 3 s per run.
+
+The main result: in the bend both real ankles stall. Their goals sit on the 1.571 rad clamp from about 1 s after the command until the rise, and the joints stop at -1.241 and +1.256 within 1 s, moving 0.02 rad at most in the next 30 s. The servo holds 0.32 rad of error against a goal it never reaches. The sim's ankles go on to -1.37 and +1.43 with 0.07-0.11 rad of error.
+
+Trunk pitch as the brain sees it, sim minus robot in stand / bend / second stand, camera height stand / bend:
+
+- Chain, sensor bias 4 deg: +0.6, -4.6, -0.5 deg; 239.8, 23.9 mm. Mean joint error 0.071 rad.
+- Ankle limit 1.25 rad, sensor bias 4: +0.6, +0.3, -0.5 deg; 239.8, 15.6 mm. Mean joint error 0.057 rad.
+- Ankle limit 1.25 rad plus neck -5 deg, sensor bias 4: +0.1, -1.4, -1.0 deg; 228.9, 15.8 mm. Mean joint error 0.043 rad. Standing neck error -0.041 rad against the robot's -0.046, where the chain gives the opposite sign (+0.06).
+- Ankle limit 1.25 rad plus hidden ankle 2.5 deg, sensor bias 2 (the trim half right): +1.8, -0.6, -0.2 deg; 229.4, 15.5 mm. Mean joint error 0.043 rad. At bias 0: +0.1, -2.2, -2.1 deg; 225.4, 15.2 mm, joint error 0.052 rad.
+
+Across all 189 plant and bias pairs (128 stayed up), 8 of the 10 lowest joint errors carry the ankle limit, and none of the limit-free cases fits both the joints and the bend. The sensor bias stays open: it trades against a small hidden ankle angle, so bias 4 with none, bias 2 with 2.5 deg and bias 0 with 2.5 deg all land within the sim's own 2 deg spread between holds. This run gives no reason to change the 4 deg trim and no proof of it.
+
+The limit was set from the robot's own ankle angle, so the matching ankle error proves nothing. The bend trunk and camera height were free to miss and did not.
+
+Why this is contact and not servo weakness: `ankle_clearance.py` closes the model's ankle with foot and shin meshes. Away from the hinge the foot's orange part comes 1.4 mm from the shin servo at 1.25 rad, 0.8 mm at 1.30 and under 0.5 mm from 1.35. The largest ankle angle in the logged robot runs is 1.40 rad, in a fall at KP 400 with the foot off the floor (`robot-runs-20261030-t1/11_walk_at_015_neck08_fell.jsonl`), which fits that geometry. A 0.05-0.15 rad gap remains between the robot's 1.25 and the mesh's contact; the model's foot may not be the V1.24/V1.25 bracket on the robot, and nobody has looked at the real ankle in the bend. The sim has no collision between these parts and the policy's trained range runs to 1.571 rad.
+
+Tried and dropped:
+
+- Fixed ankle offsets alone (2.5, 5, 9.7 deg): they fit the bend or the stand, never both, because the bend needs about 5 deg more than the stand. Free ankle play (`foot_play` 1-9 deg) has the same problem and 9 deg falls on the rise.
+- An upward force on the jaw during the hold, standing for the head resting on the floor: at 1 N the trunk loses 5-8 deg and the camera rises to 25-31 mm, and 1.5 N or more tips the robot. The neck still reads -1.41. The head is not carried by the floor to any useful degree; a light touch remains possible (the sim itself shows 0.2-0.5 N in the best cases).
+- Floor friction 1.5: no change; 2.0 and up tips over during the nudges.
+
+Not explained: in the bend the sim's knees and neck sag 2-3 times more than the robot's encoders show (knee error -0.29, +0.38 against -0.12, +0.18; neck -0.28 against -0.11, neck angle -1.40 against -1.27). The robot's camera is as low as the sim's while its neck encoder reads 0.13 rad higher, which suggests sag the encoder does not see. The one test of that (`blind` cases, encoder reads a fraction of the way toward the goal) makes the policy unstable and tips the robot during the nudges, so it says nothing either way. The 5 deg between the encoder chain and the IMU in the bend is therefore still open: the sim reaches 37 deg through more knee bend than the robot has.
+
+Nothing on the robot, in the camera code or in the training model changed.
+
+```
+real reference:   python3 real_windows.py <brain_slice.jsonl>
+all cases:        ~/.venvs/microduck-dyn/bin/python closed_loop.py --jobs 8 --only <plants> --out <json>   (Mac mini)
+report:           python3 closed_loop.py --report <json>
+clearance:        ~/.venvs/microduck-dyn/bin/python ankle_clearance.py
+```
