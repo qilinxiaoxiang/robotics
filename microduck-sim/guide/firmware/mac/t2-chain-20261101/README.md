@@ -75,3 +75,17 @@ My own tool and procedure errors:
 22. I asked Shawn to place the ball and to check the lead when the duck could search for itself. Search first; only a real physical block goes to him.
 
 23. A7Z offline 21:52 to 22:38. The flight recorder (`robot-20261101/a7z-hang-20261101/`, boot b0057) stops at 21:52:11 with no panic, watchdog or error text, within a second of the et7304 unbind, whose last kernel line is `orientation:0, set sw conf UNKNOW -> UNKNOW`; the brain log stops the same second. The recorder fsyncs every 0.1 s, so the board locked up or lost power at that moment; the record cannot separate the two. The next boot record is b0058, a COLD-BOOT at 22:37:58, seconds before Shawn wrote that he had re-plugged. Nothing reached userland between 22:01, when the first power cycle was reported, and 22:37: either the rail was not fully cut then, or a boot died before the recorder starts. Not separated.
+
+## All data of 2026-11-01, analysed (`robot-20261101/analyse_all.py`, `window_sweep.py`)
+
+24. Only two real T2 picks all evening. Run 1 at x 0.100 y -0.021 held; run 2 at x 0.122 y -0.005 bit air. seepick61 on 10/30 held at x 0.098 y -0.015 and missed at x 0.133 y 0 and x 0.112 y +0.049.
+25. The 3 cm window was too wide. As-built sim, real sphere, 150 mA: pad error at close follows the offset (about 2 cm at dx +3, 3 cm at dx +4, 4 cm at dx +6), held 0 of 60 from dx +2 to +6, 2 of 6 at dx +1 dy 0. New T2 window x 0.085 to 0.115, y -0.035 to +0.005. Unsolved limit: even on the spot the sim holds the sphere about one time in three, while the training env reports 64.5 % at +-3 cm with its drawn objects.
+26. Creep boundary: at x 0.125 it stopped after 0.1 s without moving (seven creeps), at x 0.124 it walked until the ball left the picture. Now a timed 1.2 s creep from x 0.135 in.
+27. Run 8 try 2 had the ball in the right place: x 0.124 y -0.021 then a 1.3 s creep. A false detection (x 0.037 y 0.050, width 8 mm, 2 frames) then ended the try. Now the aim gates on the last sighting, needs 3 frames, and an unseen ball after a near creep is picked.
+28. A close turn backs the robot up about 3.5 cm: range 0.107 to 0.142 (run 2), 0.117 to 0.154 (run 8).
+29. The walk veers right of the ball by up to 3.6 cm per creep (0.158 y -0.004 to 0.110 y -0.040). The creep now steers within +-0.3 rad/s toward y -0.018. Robot-tested arc rate, new in the creep.
+30. Picture bottom sits at range about 0.105 at the lowest look, so the band both visible and in the old window was about 1 cm wide.
+31. In-place spins, 51 of at least 1 s (`spins_compact.jsonl`): command 0.5 rad/s (29 deg/s), right ran 1 to 23 deg/s, median 10; left 13 to 24, median 19. Turn input reached the -1.55 clamp in many spins; walk61 was trained at 0.4 to 1.0 in 15 % of envs with no yaw disturbance and was never retrained for turning. Not solved.
+32. Run 8 fell 2.76 s into a look spin, the only spin with the head ramping from 1.33 to 0.45 rad as it began and the only one over 11 deg tilt (20). Look turns now settle the head first; one fall, so the cause is not proven.
+33. Scan misses in run 7 and at the start of run 8 stay unexplained: no frames were saved.
+

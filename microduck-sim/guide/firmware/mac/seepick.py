@@ -43,12 +43,25 @@ PICK_WIN = 0.03            # m: |dx| and |dy| within this -> pick. Robot 2026-10
                            # Was 0.05 after seepick_1030-025920 (dx +4.1 cm: a blind 0.6 s walk burst lost the ball under the
                            # beak); now the align re-measures after every move instead (MAX_ALIGN), so a miss costs a turn
                            # or a burst, not the ball.
+# T2 window, foot frame (t2-chain-20261101/README.md). Robot holds: T2 x 0.100 y -0.021, seepick61 x 0.098 y -0.015. Robot misses: T2 x 0.122
+# y -0.005, seepick61 x 0.133 y 0 and x 0.112 y +0.049. As-built sim, real sphere (window_sweep.py): pad error at close grows with the offset,
+# about 2 cm at dx +3 and 3 cm at dx +4, held 0 of 60 from dx +2 to +6. A wider window only bites air. Two holds: the centre is thin evidence.
+T2_WIN_X = (0.085, 0.115)
+T2_WIN_Y = (-0.035, 0.005)
+T2_Y = -0.018              # m: where the creep and the turn steer the object; the two holds sat here, the walk veers about 2 cm per creep
+NUDGE_FROM = 0.135         # m: from here in the creep is timed, and never stops on what it sees. Stop-on-sight gave 0.1 s and no move at 0.125 and
+NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124. Creeps of 1-1.5 s moved 1-5 cm (12 creeps, robot 2026-11-01)
+AIM_MIN_FRAMES = 3         # T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
+AIM_GATE_BACK = 0.02       # m: T2 gates the aim around the last sighting moved this far toward the robot, within TRACK_GATE
 BLIND_R = 0.12             # m: nearer than this the object is under the standing picture (bottom edge 0.10-0.125 m at
 #                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position
 PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
 TURN_RATE = 0.5            # rad/s in place (approach.VTH_SPIN, robot-tested)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
+LOOK_TURNS = (-1, -1, 1, 1, 1, 1)   # body turns between head scans when nothing is in view: 2 right, back and 2 left. The
+LOOK_SETTLE_S = 0.7                 # head back at the default pose before the turn: run 8 fell in the one spin that began with the head ramping down from 1.33 rad
+LOOK_TURN_S = 3.5                   # scan covers +-60 deg; a 3.5 s spin keeps about 50 deg on the robot (2026-11-01)
 BURST_MAX_S = 1.5          # s: the creep toward a too-far object ends here at the latest (a standing-start walk61 moved
 #                            0-5 cm per 0.6-0.9 s command on the robot 2026-10-30: the first steps are in place)
 BURST_STOP_X = 0.125       # m: the creep stops when the object is measured here or nearer; walk61 coasts about 4 cm after a
@@ -104,6 +117,8 @@ class SeePick:
         self.cmd_t, self.picked_t, self.seen_pick = 0.0, None, False
         self.holding_since, self.lost_since = None, None
         self.trace, self.attempts = [], []
+        self.blind_ok, self.blind_pick, self.last_y = False, False, 0.0   # T2: the creep ended this near; pick unseen; side it was last on
+        self.look_n = 0           # body turns made while looking for the object
 
     # --- helpers -----------------------------------------------------------------------------------------------
     def enter(self, phase, why=""):
@@ -207,6 +222,7 @@ class SeePick:
             self.finish(False, f"{self.tries} tries used ({why})")
             return
         self.try_n += 1
+        self.blind_ok, self.blind_pick = False, False
         self.align_n, self.meas = 0, []
         self.enter("aim", f"try {self.try_n}: {why}")
 
@@ -215,6 +231,7 @@ class SeePick:
             self.finish(False, f"{self.tries} tries used ({why})")
             return
         self.try_n += 1
+        self.blind_ok, self.blind_pick = False, False
         self.align_n = 0
         self.app = self.make_approach()
         self.enter("approach", f"try {self.try_n}: {why}")
@@ -225,7 +242,24 @@ class SeePick:
             self.meas = []
             self.enter("aim", f"arrived at x {self.app.result.get('x')} y {self.app.result.get('y')}")
         elif self.app.phase == "failed":
-            self.next_try(f"approach: {self.app.result.get('why')}")
+            why = self.app.result.get("why")
+            if why == ap.NOT_IN_VIEW and self.look_n < len(LOOK_TURNS):   # looking around does not use up a pick try
+                self.enter("look", f"nothing in view: body turn {self.look_n + 1} of {len(LOOK_TURNS)}")
+            else:
+                self.next_try(f"approach: {why}")
+
+    def p_look(self, st, now):
+        if now - self.t_phase < LOOK_SETTLE_S:
+            self.stand()
+            return
+        if now - self.t_phase >= LOOK_SETTLE_S + LOOK_TURN_S:
+            self.stand()
+            self.look_n += 1
+            self.app = self.make_approach()
+            self.enter("approach", "scan again")
+            return
+        self.send_fn({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": LOOK_TURNS[self.look_n] * (-1 if self.last_y > 0 else 1) * TURN_RATE,
+                      "for_s": ap.CMD_FOR_S})
 
     def p_aim(self, st, now):
         est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
@@ -233,16 +267,25 @@ class SeePick:
         self.stand(head)
         if now - self.t_phase < SETTLE_S:
             return
-        m = self.measure(st)
+        m = self.measure(st, gate=(self.obj["x"] - AIM_GATE_BACK, self.obj["y"]) if self.t2 and self.blind_ok else None)
         if m is not None:
             self.meas.append(m)
-        if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and self.meas):
+        if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and len(self.meas) >= (AIM_MIN_FRAMES if self.t2 else 1)):
             med = {k: float(np.median([q[k] for q in self.meas])) for k in ("x", "y", "size")}
             self.obj = dict(med, t=max(q["t"] for q in self.meas), cut=any(q["cut"] for q in self.meas))
+            self.last_y, self.blind_ok = med["y"], False
             self.log(f"  object x {med['x']:.3f} y {med['y']:.3f} width {med['size'] * 1000:.0f} mm "
                      f"from {len(self.meas)} frames (spot {SPOT[0]:.3f} {SPOT[1]:.3f})")
             self.enter("align")
         elif now - self.t_phase > SETTLE_S + AIM_S:
+            if self.t2 and self.blind_ok:
+                # the creep walked on from x <= NUDGE_FROM and the ball left the picture (it starts at 0.105): this is the pick
+                # place, and another step runs it past the beak. No box: T2 gets the training hand-over, clamped to the edge
+                self.log(f"  under the picture after the creep: picking, last seen x {self.obj['x']:.3f} y {self.obj['y']:.3f}")
+                self.obj = {k: self.obj[k] for k in ("x", "y", "size")} | {"t": now}
+                self.blind_pick = True
+                self.enter("align")
+                return
             if self.pick_here is not None and self.app is None:
                 self.obj = dict(x=float(self.pick_here[0]), y=float(self.pick_here[1]), size=DEFAULT_SIZE, t=now)
                 self.log("  not seen (blind zone): picking on the given estimate")
@@ -259,10 +302,17 @@ class SeePick:
             self.obj = None
             self.next_try("not seen at the pick spot")
 
+    def in_window(self, x, y):
+        s = PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0
+        if self.t2:
+            return T2_WIN_X[0] - s <= x <= T2_WIN_X[1] + s and T2_WIN_Y[0] - s <= y <= T2_WIN_Y[1] + s
+        return abs(x - SPOT[0]) <= PICK_WIN + s and abs(y - SPOT[1]) <= PICK_WIN + s
+
     def p_align(self, st, now):
         dx, dy = self.obj["x"] - SPOT[0], self.obj["y"] - SPOT[1]
         win = PICK_WIN + (PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0)
-        if abs(dx) <= win and abs(dy) <= win:
+        if self.blind_pick or self.in_window(self.obj["x"], self.obj["y"]):
+            self.blind_pick = False
             if self.dry:
                 self.finish(True, f"dry run: would pick at dx {dx * 100:+.1f} dy {dy * 100:+.1f} cm")
                 return
@@ -276,12 +326,13 @@ class SeePick:
         if self.align_n >= MAX_ALIGN:
             self.next_try(f"still off the spot after {MAX_ALIGN} moves (dx {dx * 100:+.1f} dy {dy * 100:+.1f} cm)")
             return
-        if dx < -win:
+        if self.obj["x"] < (T2_WIN_X[0] - PICK_SLACK if self.t2 else SPOT[0] - win):
             self.next_try(f"too close (dx {dx * 100:+.1f} cm; walk61 does not step back)")
             return
         self.align_n += 1
-        bearing = math.atan2(self.obj["y"], self.obj["x"])
-        if abs(dy) > win and abs(bearing) >= TURN_MIN:
+        bearing = math.atan2(self.obj["y"] - T2_Y if self.t2 else self.obj["y"], self.obj["x"])
+        off_side = not T2_WIN_Y[0] <= self.obj["y"] <= T2_WIN_Y[1] if self.t2 else abs(dy) > win
+        if off_side and abs(bearing) >= TURN_MIN:
             self.turn = (1 if bearing > 0 else -1, abs(bearing), st["yaw"])
             self.enter("turning", f"bearing {math.degrees(bearing):+.0f} deg")
         else:
@@ -308,16 +359,21 @@ class SeePick:
         m = self.measure(st, gate=(ref["x"], ref["y"]))
         if m is not None:
             self.burst_m = m
+        nudge = self.t2 and self.obj["x"] <= NUDGE_FROM
         stop_x = BURST_STOP_X if self.obj["x"] > BURST_STOP_X else self.obj["x"] - BURST_INSIDE_M
-        if m is not None and m["x"] <= stop_x:
+        if not nudge and m is not None and m["x"] <= stop_x:
             why = f"object at x {m['x']:.3f}"
         elif m is None and self.burst_m is not None and now - self.burst_m["t"] > 0.4 and (
-                self.burst_m.get("cut") or self.obj["x"] <= BURST_STOP_X):
+                self.burst_m.get("cut") or self.obj["x"] <= BURST_STOP_X or nudge):
             why = "object under the picture"   # this near a blind walk runs the object past the beak
-        elif now - self.t_phase >= BURST_MAX_S:
-            why = f"{BURST_MAX_S} s"
+        elif now - self.t_phase >= (NUDGE_S if nudge else BURST_MAX_S):
+            why = f"{NUDGE_S if nudge else BURST_MAX_S} s"
         else:
-            cmd = {"mode": "walk", "vx": ap.VX, "vy": 0.0, "vtheta": 0.0, "for_s": ap.CMD_FOR_S}
+            vth = 0.0
+            if self.t2 and self.burst_m:   # the walk veers: 0.158 y -0.004 became 0.110 y -0.040 in one creep (robot run 8)
+                b = math.atan2(self.burst_m["y"] - T2_Y, self.burst_m["x"])
+                vth = round(max(-ap.VTH_ARC, min(ap.VTH_ARC, ap.K_TURN * b)), 3)
+            cmd = {"mode": "walk", "vx": ap.VX, "vy": 0.0, "vtheta": vth, "for_s": ap.CMD_FOR_S}
             if self.head:
                 cmd["head"] = {k: v for k, v in self.head.items() if k in ("head_pitch", "head_yaw", "neck_pitch")}
             self.send_fn(cmd)
@@ -325,7 +381,11 @@ class SeePick:
         self.stand(self.head)
         # a ball that left the bottom of the picture keeps its last sighting: the aim's blind zone picks there. Without it
         # the aim fell back on the walk's stale estimate and started a new try (robot 2026-11-01, try 1 of both runs)
-        self.obj = dict(self.burst_m) if why == "object under the picture" and self.burst_m else None
+        if self.t2:    # the aim gates on this sighting; a detection anywhere else is not the ball
+            self.obj, self.blind_ok = dict(self.burst_m or self.obj), nudge or (self.burst_m or self.obj)["x"] <= NUDGE_FROM
+            self.last_y = self.obj["y"]
+        else:
+            self.obj = dict(self.burst_m) if why == "object under the picture" and self.burst_m else None
         self.meas, self.burst_m = [], None
         self.enter("aim", f"creep done: {why}")
 

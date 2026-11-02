@@ -483,3 +483,8 @@ The duck now finds the ball by itself and walks to about 20 cm (run 5, 0.28 m wa
 ## 2026-11-01 22:40: why the A7Z went offline
 
 The flight recorder stops at 21:52:11, within a second of my et7304 driver unbind, with no panic or watchdog text; the next boot is a cold boot at 22:37:58 right after Shawn re-plugged. Not a Wi-Fi or SD fault: Wi-Fi link and CPU were normal up to the last row, and the boot was clean. Open: why the 22:01 power cycle left no boot record. Details: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md` item 23.
+
+## 2026-11-01 23:30 MicroDuck T2 evening data analysed
+
+Real T2 picks: 2 (x 0.100 y -0.021 held, x 0.122 y -0.005 missed). As-built sim sweep with the real sphere: held 0 of 60 from dx +2 to +6, 2 of 6 at dx +1. T2 window tightened to x 0.085-0.115, y -0.035 to +0.005; timed creep from x 0.135; aim gate on the last sighting; creep steering. Run 8 try 2 was in place and ended by a false detection. In-place turning is unsolved: right 10 deg/s, left 19 deg/s median against 29 commanded, input clamped outside the trained range; walk61 never retrained for it. Details: microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md items 24-33. Not yet run on the robot.
+

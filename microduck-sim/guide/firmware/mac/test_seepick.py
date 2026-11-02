@@ -129,6 +129,20 @@ def test_an_object_to_the_side_turns_before_the_pick():
     assert any(c.get("vtheta", 0) > 0 for _, c in duck.sent)   # left, toward +y
 
 
+def test_an_object_out_of_view_is_found_by_turning_the_body():
+    duck = PickDuck((-0.1, -0.5), ["hold"])   # behind the right shoulder: outside every head pose of the scan
+    ctl = run(duck, max_s=240.0)
+    assert ctl.look_n >= 1 and duck.picks and ctl.try_n == 1, ctl.result
+    assert ctl.result["ok"], ctl.result
+
+
+def test_nothing_anywhere_gives_up_after_the_body_turns():
+    duck = PickDuck((0.6, 0.0), [])
+    duck.detect = lambda frame, accept=None: None
+    ctl = run(duck, max_s=400.0)
+    assert ctl.phase == "failed" and ctl.look_n == len(sp.LOOK_TURNS) and not duck.picks
+
+
 def test_too_close_is_not_picked():
     duck = PickDuck((0.5, 0.0), [])
     ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
@@ -184,6 +198,67 @@ def test_a_creep_starting_inside_the_stop_mark_still_walks():
         duck.advance()
     assert any(c.get("vx", 0) > 0 for _, c in duck.sent)
     assert duck.X > 0.01
+
+
+def t2_at(duck):
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=None, now=lambda: duck.t, log=lambda s: None, t2=True)
+    ctl.try_n = 1
+    ctl.pix_box = lambda o: {}
+    return ctl
+
+
+def test_t2_picks_inside_the_held_placements_without_a_move():
+    duck = PickDuck((0.100, -0.021), ["hold"])
+    ctl = t2_at(duck)
+    ctl.obj = dict(x=0.100, y=-0.021, size=0.013, t=0.0)
+    ctl.enter("align")
+    ctl.step()
+    assert duck.picks and ctl.phase == "pick"
+
+
+def test_t2_does_not_pick_at_the_miss_of_run_2():
+    """x 0.122 y -0.005 bit air on the robot and sim holds 0 of 6 at dx +3: it moves on, and the timed creep really walks."""
+    duck = PickDuck((0.122, -0.005), ["hold"])
+    ctl = t2_at(duck)
+    ctl.obj = dict(x=0.122, y=-0.005, size=0.013, t=0.0)
+    ctl.enter("align")
+    ctl.step()
+    assert not duck.picks and ctl.phase == "burst"
+    while ctl.phase == "burst":
+        ctl.step()
+        duck.advance()
+    assert duck.t >= 0.4 and any(c.get("vx", 0) > 0 for _, c in duck.sent)
+
+
+def test_t2_false_detection_after_the_creep_does_not_end_the_try():
+    """Run 8: ball last seen at x 0.124 y -0.021, creep, then x 0.037 y 0.050 width 8 mm from 2 frames: pick at the last sighting."""
+    duck = PickDuck((0.09, -0.02), ["hold"])
+    ctl = t2_at(duck)
+    ctl.obj = dict(x=0.124, y=-0.021, size=0.014, t=duck.t, u=1.0, v=1.0, w=1.0)
+    ctl.blind_ok = True
+    fake = iter([dict(x=0.037, y=0.050, size=0.008, t=0.0, cut=False)] * 2)
+    real = sp.SeePick.measure
+    ctl.measure = lambda st, gate=None: (lambda m: None if m is None or (gate and math.hypot(m["x"] - gate[0], m["y"] - gate[1]) > sp.TRACK_GATE) else m)(next(fake, None))
+    ctl.enter("aim")
+    for _ in range(400):
+        ctl.step()
+        duck.advance()
+        if duck.picks:
+            break
+    assert duck.picks and duck.picks[0]["x"] == 0.124 and "u" not in ctl.obj, ctl.phase
+
+
+def test_t2_creep_steers_toward_the_held_side():
+    duck = PickDuck((0.158, -0.05), ["hold"])
+    ctl = t2_at(duck)
+    ctl.obj = dict(x=0.158, y=-0.05, size=0.013, t=0.0)
+    ctl.head = {}
+    ctl.burst_m = dict(ctl.obj)
+    ctl.t_phase, ctl.phase = duck.t, "burst"
+    ctl.measure = lambda st, gate=None: None
+    ctl.step()
+    assert duck.sent[-1][1]["vtheta"] < 0
 
 
 def test_t2_pick_command_carries_the_box_and_the_blind_zone_clamps_to_the_edge():

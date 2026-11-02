@@ -62,6 +62,7 @@ VTH_ARC = 0.3        # rad/s: the largest arc command, the app's arc rate (robot
 K_TURN = 1.0         # vtheta = K_TURN x bearing within +-VTH_ARC (two-level +-0.3 arcs overshot left in the sim)
 BEARING_DEAD = math.radians(2)
 VTH_SPIN = 0.5       # rad/s turning in place (walk_brain: no straight-walk trim, SPIN_TURN_MAX)
+NOT_IN_VIEW = "no orange object in front"   # the head scan found nothing: seepick turns the body and scans again
 FACE_START = math.radians(20)   # bearing beyond which a walk starts with a turn in place
 FACE_NEAR, FACE_NEAR_R = math.radians(15), 0.35   # closer than FACE_NEAR_R and further off than FACE_NEAR: stop, turn
 FACE_DONE = math.radians(6)
@@ -423,7 +424,7 @@ class Approach:
         self.scan_i += 1
         self.t_phase = now
         if self.scan_i >= len(SCAN):
-            self.finish(False, "no orange object in front (it does not turn around to search)")
+            self.finish(False, NOT_IN_VIEW)
 
     def p_ready(self, st, now, m):
         """Standing, head to the default pose (no head yaw when the walk starts)."""
