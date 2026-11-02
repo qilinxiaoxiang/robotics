@@ -302,3 +302,11 @@
 - **Why:** Shawn, 2026-11-01: "因为我们现在的鸭子转身很慢，如果判断在后面，转身等半天我也懒得等，用户体验也不好 ... 但肢体转身可能就不用了." A pet that glances without getting up reads as a pet; the camera's 62 deg field of view at a 1.40 rad glance already covers +-111 deg, the whole front half.
 - **Consequence:** namecall's body turn (off by default since 2026-10-30) is dropped from the plan; R5 is superseded by R11. Turn-noise denoising matters for walking, not for answering. Work: YAW_CAP 1.2 -> 1.40 after a balance check at full yaw, seated answers (R12), hearing while walking (R13, data-limited: 54 s of walking audio).
 - **Revisit when:** the 1.40 rad glance tips the duck, or callers behind turn out to matter in daily use.
+
+## D-039 — MicroDuck sensors stay where an animal has them: no chest or chin camera, ever
+
+- **Date:** 2026-11-02
+- **Decision:** The duck is a pet, so its senses sit where a living animal's do. Eyes are in the head and face forward; a second forward-facing eye in the head is acceptable if it fits and the neck carries it. A camera on the chest, under the beak, or anywhere an animal has no eye is ruled out permanently, not deferred. The three microphones are the one exception already made and are not a precedent for more. Problems like "the ball leaves the picture near the feet" are solved by behaviour (head pose, memory, learned approach), not by adding a sensor.
+- **Why:** Shawn, 2026-11-02: "摄像头是不可能加在胸口或者嘴下的 ... 我们是想做一个宠物机器人，所以它的行为或者设置应该接近一个真实的生物 ... 理论上说可以有两个眼睛，但是两个眼睛都应该在前方 ... 放在胸口或者嘴下这种，是完全不能接受的。首先，它很怪异；第二，它的使用场景太窄。我们叼球，就是想像猫和狗一样叼东西，猫和狗的下巴和胸口可没有长摄像头 ... 这是我们永远也不可能做的事情."
+- **Consequence:** The dock and pick policies must handle the ball going out of view (head pitch as a policy action, observation history or a learned ball-position memory). A down-looking camera is never proposed as a fix again. Any new sensor proposal states which animal sense it stands in for and where that sense sits on the animal.
+- **Revisit when:** never for chest or chin cameras; a second eye needs a fit and mass check.
