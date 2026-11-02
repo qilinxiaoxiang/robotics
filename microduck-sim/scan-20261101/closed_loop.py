@@ -63,7 +63,7 @@ PLANTS = {
 for _deg in (-2, -3, -4, -6, -7):
     PLANTS[f"neck{_deg}"] = {"neck": float(_deg)}
 # a hard stop on the ankle at the angle the real ankle holds in the bend, with its goal 0.32 rad past it
-for _stop in (1.20, 1.25, 1.30):
+for _stop in (1.20, 1.25, 1.30, 1.35, 1.40):
     PLANTS[f"stop{_stop}"] = {"ankle_stop": _stop}
     for _deg in (-3, -5):
         PLANTS[f"stop{_stop}_neck{_deg}"] = {"ankle_stop": _stop, "neck": float(_deg)}

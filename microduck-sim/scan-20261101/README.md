@@ -79,7 +79,25 @@ Across all 189 plant and bias pairs (128 stayed up), 8 of the 10 lowest joint er
 
 The limit was set from the robot's own ankle angle, so the matching ankle error proves nothing. The bend trunk and camera height were free to miss and did not.
 
-Why this is contact and not servo weakness: `ankle_clearance.py` closes the model's ankle with foot and shin meshes. Away from the hinge the foot's orange part comes 1.4 mm from the shin servo at 1.25 rad, 0.8 mm at 1.30 and under 0.5 mm from 1.35. The largest ankle angle in the logged robot runs is 1.40 rad, in a fall at KP 400 with the foot off the floor (`robot-runs-20261030-t1/11_walk_at_015_neck08_fell.jsonl`), which fits that geometry. A 0.05-0.15 rad gap remains between the robot's 1.25 and the mesh's contact; the model's foot may not be the V1.24/V1.25 bracket on the robot, and nobody has looked at the real ankle in the bend. The sim has no collision between these parts and the policy's trained range runs to 1.571 rad.
+Why this is contact and not servo weakness: `ankle_clearance.py` closes the model's ankle with foot and shin meshes. Away from the hinge the foot's orange part comes 1.4 mm from the shin servo at 1.25 rad, 0.8 mm at 1.30 and under 0.5 mm from 1.35. The largest ankle angle in the logged robot runs is 1.40 rad, in a fall at KP 400 with the foot off the floor (`robot-runs-20261030-t1/11_walk_at_015_neck08_fell.jsonl`), which fits that geometry. The sim has no collision between these parts and the policy's trained range runs to 1.571 rad.
+
+The geometry and the scan point at the servo cable's plug as the first thing to touch; only moving it can prove that on the robot. `ankle_ports.py` puts the two sockets of the ankle servo (`active-topology.json`) on the model and closes the ankle:
+
+- The cable sits in the rear socket on both legs (`ttl-02-01` to motor 1 socket 13, `ttl-07-06` to motor 6 socket 14). In the bend the shin lies nearly flat and that socket faces down at the foot. The plug is 2.6 mm from the foot at 1.00 rad, 1.2 mm at 1.20, 0.6 mm at 1.25 and 0.1 mm from 1.35. A plug and a 1.5 mm cable fill that gap around 1.25 rad, where the robot stops.
+- The bend scan agrees. On both ankles a striped cable runs along the servo's underside into the crease between shin and foot, ending 5-6 mm short of where the model puts the rear socket at the same height: left scan x 11, z 23 against socket x 15.8, z 22.3; right x 4.5, z 24 against x 10.6, z 24.2. The mesh cannot resolve a gap under about 3 mm, so the scan shows the cable in the crease, not its squeeze.
+- The front socket faces up in the bend, 14 mm higher (z 36.4 and 38.3). Its plug stays 3.4 mm from the foot through 1.571 rad and only closes in the other direction, 2.6 mm at -1.00 rad; the logged ankle range folded to the bend direction is -0.29 to +1.40 (`ankle_ports_reverse.py`).
+- Moving the cable frees about 0.1-0.15 rad, not the full range: with no plug the servo's own case meets the foot's orange part at about 1.35 rad in the model, and the 1.40 rad fall sets the upper bound. The goal at 1.571 stays out of reach, so the servo still pushes against a stop in the bend, with about 0.2 rad of error against 0.32.
+
+The sockets are electrically the same (`directionMeaning` in the topology), and the front one has no use: the only cable that ever used it was the cross-foot `ttl-01-06`, removed from the design. `LEG-INSTALL-SEQUENCE.md` says these plugs cannot be added in place, because the straight approach is blocked at the ankle and lower link: the swap reopens the ankle fork. The cable's route out of the front socket to the knee has no checked model yet.
+
+Effect of more ankle in the replay (`closed_loop_port.json`, bias 4), trunk pitch and camera height in the bend, robot 37.4 deg and 14.5 mm:
+
+- Limit 1.25: 37.6 deg, 15.6 mm.
+- Limit 1.30: 37.0 deg, 16.9 mm.
+- Limit 1.35: 34.7 deg, 21.5 mm.
+- Limit 1.40: 33.5 deg, 23.0 mm.
+
+With the neck at -5 deg the camera stays at 15.8-16.6 mm while the trunk goes from 35.9 to 33.3 deg. So on the same policy, freeing the ankle would raise the camera up to 8 mm and bow the trunk up to 4 deg less, and the sim's limit has to follow whichever socket the robot uses.
 
 Tried and dropped:
 
