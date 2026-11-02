@@ -19,7 +19,8 @@ the simulation), stand mode returns to plain STAND, torque stays on, and once th
 not switched on until the servos read 7.6 V or more (a charged or swapped pack), which deletes it. --supply battery
 applies the guard from the start; --supply bench switches it off (the bench rail sags under 6.6 V while walking,
 which the guard reads as an empty pack) but keeps the Alert-bit packets and the hardware-error watch. A failed voltage read is a skipped sample and never
-releases torque. Armed, the loop also reads Hardware Error Status once a second; a fault other than the battery's
+releases torque. After the stop, 6.2 V on three samples (no walking load left to sag) sits the robot down and turns torque
+off, by 6 s at the latest. --supply-file (the phone's backpack switch) changes the guard while running, also while driving. Armed, the loop also reads Hardware Error Status once a second; a fault other than the battery's
 input-voltage flag freezes the policy on its last goals, as a dropped status packet does on the bench.
 
 Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
@@ -111,7 +112,8 @@ from hold import DOWN_RATE, HOLD_FILE, KP_STEP, UP_RATE, HoldEstimator, legs_cur
 from jaw_ctl import GOAL_CURRENT_MA, JAW_ID, POSE_JOINTS, JawCtl  # noqa: E402
 from dxl_fast import _packet, crc16  # noqa: E402
 from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, INPUT_VOLTAGE_BIT, STOP_MARKER,  # noqa: E402
-                     BatteryGuard, status_ok, stop_command, stop_settled, voltage_alert_only)
+                     BatteryGuard, apply_supply_switch, floor_command, status_ok, stop_command, stop_settled,
+                     voltage_alert_only)
 
 ADDR_TORQUE, ADDR_P_GAIN, ADDR_GOAL, ADDR_VEL = 64, 84, 116, 128
 # The per-tick state read: Present Current (126, 2 B signed, 1 mA; the XL330 measures it at its supply input), Present
@@ -761,6 +763,7 @@ def main():
     ap.add_argument("--supply", choices=("auto", "bench", "battery"), default="auto",
                     help="battery guard: auto arms at 7.2 V (2S pack), battery from the start, bench off")
     ap.add_argument("--battery-marker", default=STOP_MARKER)
+    ap.add_argument("--supply-file", help="backpack switch file (bench or battery), read once a second; it overrides --supply")
     ap.add_argument("--max-action", type=float, default=MAX_ACTION, help="walk stops into stand above this |action|, rad")
     ap.add_argument("--max-walk-action", type=float, default=MAX_WALK_ACTION,
                     help="the same limit while a walking speed is commanded, rad")
@@ -802,6 +805,7 @@ def main():
     brain = Brain(args.models, compensation=args.compensation, yaw_trim_file=args.yaw_trim_file)
     print(f"yaw trim {brain.yaw_trim:+.3f} rad/s from {args.yaw_trim_file}", flush=True)
     guard = None if args.supply == "bench" else BatteryGuard(args.supply)
+    next_supply = 0.0
     hw_lock = take_hw_lock()  # noqa: F841  (held until exit)
     link = Link(port, args.baud, args.imu_bus)
     # The bench rail (7.1-7.3 V) is above the servos' 7.0 V Max Voltage Limit, and with Shutdown 52 (D-014) every status
@@ -1035,6 +1039,13 @@ def main():
         if guard and guard.state == "stop":
             # a kick or a sit ends through the walk policy at zero command (the Brain stands a sit up first)
             want = stop_command(torque_on, "walk" if brain.mode in ("kick", "sit") else brain.mode)
+        elif guard and guard.state == "floor":
+            seated = brain.mode == "sit" and brain.sit is not None and brain.sit["phase"] == "seated"
+            want = floor_command(torque_on, seated, now - guard.floor_t)
+            if want["mode"] == "off":
+                # through the control file: the torque-off path at the top of the loop releases the jaw and clears latches
+                write_cmd(args.cmd, want, "battery floor")
+                want = {"mode": "monitor"}
         if imu is None:
             quat, gyro, imu_valid, imu_age = (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0), False, 1.0
             acc, imu_seq = None, None
@@ -1124,7 +1135,8 @@ def main():
         # after the tick, so the stop command has reached the Brain and any ramp to STAND has started
         holding_stand = brain.ramp is None and brain.goal is not None and \
             all(abs(brain.goal[nm] - STAND[nm]) < 1e-6 for nm in NAMES)
-        if guard and guard.state == "stop" and stop_settled(torque_on, brain.mode, holding_stand, now - guard.stop_t):
+        if guard and (guard.state == "floor" or (
+                guard.state == "stop" and stop_settled(torque_on, brain.mode, holding_stand, now - guard.stop_t))):
             holding = {"walk": "policy at zero command, torque on", "stand": "STAND, torque on"}.get(
                 brain.mode, f"{brain.mode}, torque on") if torque_on else "nothing, torque off"
             msg = guard.signal(args.battery_marker, holding)
@@ -1236,6 +1248,16 @@ def main():
         if jaw.on and jaw.goal_deg is not None:
             measured_head = {nm: to_model(nm, t) for nm, t in zip(NAMES, pos) if nm in POSE_JOINTS}
             jaw.write(link, brain.goal or measured_head, measured_head)
+        if args.supply_file and now >= next_supply:
+            next_supply = now + 1.0
+            try:
+                with open(args.supply_file) as f:
+                    guard, msg = apply_supply_switch(guard, f.read().strip())
+            except OSError:
+                msg = None  # no switch setting: the start's --supply stands
+            if msg:
+                print(msg, flush=True)
+                link.alert_ok = guard is None or guard.armed
         if guard and guard.due(now):
             volts = link.sync_read(ADDR_PRESENT_VOLTAGE, 2, IDS, timeout=0.015, allow_alert=True)
             event = guard.update(now, {i: int.from_bytes(b, "little") for i, b in volts.items()})
@@ -1250,6 +1272,8 @@ def main():
                       flush=True)
             elif event == "stop":
                 print(f"BATTERY STOP: {guard.dv / 10:.1f} V; walking stops and the robot keeps standing", flush=True)
+            elif event == "floor":
+                print(f"BATTERY FLOOR: {guard.dv / 10:.1f} V; sitting down, then torque off", flush=True)
         elif (guard is None or guard.armed) and now >= next_hw:  # half a second away from the voltage read
             next_hw = now + 1.0
             hw = link.sync_read(ADDR_HW_ERROR, 1, IDS, timeout=0.015, allow_alert=True)

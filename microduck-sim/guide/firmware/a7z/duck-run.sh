@@ -13,5 +13,5 @@ mkdir -p ~/duck-logs
 echo "{\"mode\": \"monitor\"}" > /tmp/duck_cmd.json
 cd ~/rt/microduck-sim/guide/firmware/mac
 setsid nohup /home/radxa/.venvs/duck-policy/bin/python walk_wired.py --port /dev/ttyAS2 --baud 500000 --imu-bus 7 \
-  --supply $supply ${models:+--models "$models"} --log ~/duck-logs/duck_wired_log_$suf.jsonl > ~/duck-logs/duck_wired_$suf.out 2>&1 < /dev/null &
+  --supply $supply --supply-file ~/duck-supply ${models:+--models "$models"} --log ~/duck-logs/duck_wired_log_$suf.jsonl > ~/duck-logs/duck_wired_$suf.out 2>&1 < /dev/null &
 # the head camera is not started here: approach.py starts a7z_cam.py for its run and stops it after (heat, a7z_cam.py)
