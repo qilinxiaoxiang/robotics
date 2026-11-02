@@ -111,7 +111,7 @@ from duck_sound import Voice  # noqa: E402
 from hold import DOWN_RATE, HOLD_FILE, KP_STEP, UP_RATE, HoldEstimator, legs_current_ma, read_hold_file  # noqa: E402
 from jaw_ctl import GOAL_CURRENT_MA, JAW_ID, POSE_JOINTS, JawCtl  # noqa: E402
 from dxl_fast import _packet, crc16  # noqa: E402
-from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, INPUT_VOLTAGE_BIT, STOP_MARKER,  # noqa: E402
+from battery import (ADDR_HW_ERROR, ADDR_PRESENT_VOLTAGE, ADDR_SHUTDOWN, ALARM_S, INPUT_VOLTAGE_BIT, STOP_MARKER,  # noqa: E402
                      BatteryGuard, apply_supply_switch, floor_command, status_ok, stop_command, stop_settled,
                      voltage_alert_only)
 
@@ -805,7 +805,7 @@ def main():
     brain = Brain(args.models, compensation=args.compensation, yaw_trim_file=args.yaw_trim_file)
     print(f"yaw trim {brain.yaw_trim:+.3f} rad/s from {args.yaw_trim_file}", flush=True)
     guard = None if args.supply == "bench" else BatteryGuard(args.supply)
-    next_supply = 0.0
+    next_supply = next_alarm = 0.0
     hw_lock = take_hw_lock()  # noqa: F841  (held until exit)
     link = Link(port, args.baud, args.imu_bus)
     # The bench rail (7.1-7.3 V) is above the servos' 7.0 V Max Voltage Limit, and with Shutdown 52 (D-014) every status
@@ -1248,6 +1248,9 @@ def main():
         if jaw.on and jaw.goal_deg is not None:
             measured_head = {nm: to_model(nm, t) for nm, t in zip(NAMES, pos) if nm in POSE_JOINTS}
             jaw.write(link, brain.goal or measured_head, measured_head)
+        if guard and guard.state in ALARM_S and now >= next_alarm:
+            next_alarm = now + ALARM_S[guard.state]
+            voice.quack()  # sound only: no jaw or head move on an empty pack
         if args.supply_file and now >= next_supply:
             next_supply = now + 1.0
             try:

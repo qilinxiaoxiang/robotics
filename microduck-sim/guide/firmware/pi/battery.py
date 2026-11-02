@@ -30,6 +30,7 @@ STOP_AT_DV = 66                # 3.3 V per cell: stop walking, hold a standing p
 FLOOR_AT_DV = 62               # 3.1 V per cell, after the stop (no walking load, so no sag): sit down, then torque off
 FLOOR_CONFIRM = 3              # consecutive samples at the floor
 FLOOR_SIT_S = 6.0              # sit prep 0.8 s + glide 2 s + margin; torque goes off by then even without a seat
+ALARM_S = {"warn": 10.0, "stop": 3.0, "floor": 1.5}  # s between duck calls, sound only: Shawn wants it heard (2026-11-02)
 ARM_ABOVE_DV = 72              # --supply auto: no bench supply reads this high (the 7 V rail is set to 6.80 V)
 FRESH_PACK_DV = 76             # 3.8 V per cell (storage charge or more): a new pack clears the stop marker
 WARN_CONFIRM, STOP_CONFIRM = 2, 3   # consecutive low samples, so one sag at a foot strike does not count

@@ -256,6 +256,16 @@ class WiredBattery(unittest.TestCase):
         self.assertEqual((last_log["battery"], last_log["torque"]), ("floor", False))
         self.assertEqual(marker["stop_at_v"], 6.6)
 
+    def test_a_low_pack_calls_out_faster_as_it_empties(self):
+        w = World(shutdown=52, hw_err=0x01, volts_dv=76)
+        with mock.patch.object(ww, "Voice") as voice:
+            self.run_wired(w, lambda t: 76 if t < 5 else (65 if t < 25 else 55), {"mode": "walk"}, end=40.0)
+        self.assertGreater(voice.return_value.quack.call_count, 10)
+        quiet = World(shutdown=52, hw_err=0x01, volts_dv=76)
+        with mock.patch.object(ww, "Voice") as voice:
+            self.run_wired(quiet, lambda t: 76, {"mode": "walk"}, end=10.0)
+        voice.return_value.quack.assert_not_called()
+
     def test_above_the_floor_torque_stays_on_after_a_stop(self):
         w = World(shutdown=52, hw_err=0x01, volts_dv=76)
         text, *_ = self.run_wired(w, lambda t: 76 if t < 5 else 63, {"mode": "walk"}, end=20.0)
