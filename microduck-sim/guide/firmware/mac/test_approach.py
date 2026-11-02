@@ -242,3 +242,19 @@ def test_log_rows_parse_in_walk_brain_order():
     import walk_brain
     row = dict(t=1.0, mode="walk", torque=True, gb=[0.0, 0.0, -1.0], q=[STAND[n] for n in walk_brain.NAMES])
     assert apc.parse_state(row)["q"] == STAND
+
+
+def test_a_spin_never_changes_the_head_command():
+    """All three spin falls of 2026-11-01 had the head moving during the spin."""
+    sent = []
+    a = apc.Approach.__new__(apc.Approach)
+    a.now, a.walk_t0, a.exit, a.turn, a.turn_t0 = (lambda: 5.0), 1.0, None, 1, 4.0
+    a.yaws, a.est, a.head = apc.collections.deque(), (0.2, 0.1), {"head_pitch": 0.72, "head_yaw": 0.0}
+    a.send = sent.append
+    a.aim_head = lambda *x, **k: {"head_pitch": 1.1, "head_yaw": 0.0}
+    a.spin_head = {"head_pitch": 0.72, "head_yaw": 0.0}
+    a.walk(0.0, 0.5, {})
+    assert sent[-1]["head"]["head_pitch"] == 0.72
+    a.spin_head = None
+    a.walk(0.0, 0.5, {})
+    assert "head" not in sent[-1]

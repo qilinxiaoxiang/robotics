@@ -348,9 +348,12 @@ class SeePick:
             self.enter("burst", f"dx {dx * 100:+.1f} cm")
 
     def p_turning(self, st, now):
+        if now - self.t_phase < LOOK_SETTLE_S:   # head to the default pose first: it must not move during the spin (approach.walk)
+            self.stand()
+            return
         d, target, yaw0 = self.turn
         done = abs(ap.wrap(st["yaw"] - yaw0)) >= target - math.radians(3)
-        if done or now - self.t_phase > TURN_MAX_S:
+        if done or now - self.t_phase > LOOK_SETTLE_S + TURN_MAX_S:
             self.stand()
             self.obj, self.meas = None, []
             self.enter("aim", "turned" if done else "turn time limit")

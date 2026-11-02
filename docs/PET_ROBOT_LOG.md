@@ -496,3 +496,7 @@ Run 9: full flow, no fall, two picks in the window, both empty. FK on the logged
 
 Run 10 fell in an in-place turn. Spin rate collapses at input 1.5 and up (about 0 deg/s, against 18-27 at 1.0-1.5). SPIN_TURN_MAX lowered to 1.25 as a test, head fixed during in-place turns, near-ball bearing finished on the IMU. yaw_off on T2's head yaw deployed, sim only so far (dy -2: pad error 2.1 to 0.8 cm). README items 38-40.
 
+## 2026-11-01 23:35 Run 11 fall: head motion during spins
+
+My head change for run 10 caused run 11's fall: head pitch dropped 0.9 rad in 0.6 s at a walk-to-spin change. All three spin falls that evening had the head moving during the spin. A spin now holds its entry head command. Camera dropped off USB again at the fall (third drop); needs a re-plug. Not yet run on the robot.
+

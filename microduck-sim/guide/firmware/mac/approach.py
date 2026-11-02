@@ -165,6 +165,7 @@ class Approach:
         self.pending = None        # a far-off detection waiting for a second one
         self.last_idx, self.walk_t0, self.cmd, self.cmd_t = None, None, None, 0.0
         self.face_b0 = None
+        self.spin_head = None      # head command held through a spin entered from a walk; None: the default pose, reached before the spin
         self.scan_i, self.approaches, self.meas = 0, 0, []
         self.head = dict(DEFAULT_HEAD)
         self.turn = 0              # arc in force: -1 right, 0 straight, +1 left
@@ -214,7 +215,12 @@ class Approach:
         if turn != self.turn or self.turn_t0 is None:
             self.turn, self.turn_t0 = turn, now
         cmd = {"mode": "walk", "vx": vx, "vy": 0.0, "vtheta": round(vth, 3), "for_s": CMD_FOR_S}
-        if vx and now - self.walk_t0 >= HEAD_FREE_S:   # in place the head stays default: run 10's 0.6 rad head drop at 1.25 s came during the spin it fell in
+        if not vx:
+            # the head does not move during a spin. All three spin falls had it moving: run 8 ramp 1.33 to 0.45 as the spin began, run 10 drop of
+            # 0.6 rad at 1.25 s, run 11 pitch 0.72 to 0.19 and neck bowed when the head command was dropped at a walk-to-spin change (robot 2026-11-01)
+            if self.spin_head is not None:
+                cmd["head"] = self.spin_head
+        elif now - self.walk_t0 >= HEAD_FREE_S:
             if st is not None and self.est is not None and now - getattr(self, "aim_t", -1.0) >= AIM_PERIOD_S:
                 self.head, self.aim_t = self.aim_head(st, *self.est, walking=True), now
             cmd["head"] = {k: self.head[k] for k in ("head_pitch", "head_yaw") if k in self.head}
@@ -448,6 +454,7 @@ class Approach:
             if abs(b) > (FACE_NEAR if near else FACE_START):
                 self.enter("face", f"bearing {math.degrees(b):+.0f} deg: turn in place first")
                 self.face_yaw0, self.face_dir = st["yaw"], None
+                self.spin_head = None
                 return
             self.enter("approach", f"walk: estimate x {self.est[0]:.2f} y {self.est[1]:.2f}")
 
@@ -543,6 +550,7 @@ class Approach:
         if (r < FACE_NEAR_R and abs(b) > FACE_NEAR) or abs(b) > MAX_WALK_BEARING:   # too far off for the arcs
             self.stand(self.head)
             self.face_yaw0, self.face_dir = st["yaw"], None
+            self.spin_head = {k: self.head[k] for k in ("head_pitch", "head_yaw") if k in self.head} if self.walk_t0 is not None and now - self.walk_t0 >= HEAD_FREE_S else None
             self.enter("face", f"r {r:.2f} bearing {math.degrees(b):+.0f} deg: stop and turn in place")
             return
         vth = 0.0 if abs(b) < BEARING_DEAD else max(-VTH_ARC, min(VTH_ARC, K_TURN * b))
