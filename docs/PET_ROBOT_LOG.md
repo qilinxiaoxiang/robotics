@@ -500,3 +500,7 @@ Run 10 fell in an in-place turn. Spin rate collapses at input 1.5 and up (about 
 
 My head change for run 10 caused run 11's fall: head pitch dropped 0.9 rad in 0.6 s at a walk-to-spin change. All three spin falls that evening had the head moving during the spin. A spin now holds its entry head command. Camera dropped off USB again at the fall (third drop); needs a re-plug. Not yet run on the robot.
 
+## 2026-11-01 23:45 Run 12: no fall, walked over the ball
+
+Spins held the head and did not fall. The duck walked over the ball because my tightened window sent a seen ball at x 0.086 into a creep, and the aim gate threw out the real ball after the first creep. Both fixed in seepick.py. README items 42-44.
+

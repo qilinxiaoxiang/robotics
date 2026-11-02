@@ -236,10 +236,10 @@ def test_t2_false_detection_after_the_creep_does_not_end_the_try():
     duck = PickDuck((0.09, -0.02), ["hold"])
     ctl = t2_at(duck)
     ctl.obj = dict(x=0.124, y=-0.021, size=0.014, t=duck.t, u=1.0, v=1.0, w=1.0)
-    ctl.blind_ok = True
+    ctl.blind_ok, ctl.aim_gate = True, (0.124, -0.021)
     fake = iter([dict(x=0.037, y=0.050, size=0.008, t=0.0, cut=False)] * 2)
     real = sp.SeePick.measure
-    ctl.measure = lambda st, gate=None: (lambda m: None if m is None or (gate and math.hypot(m["x"] - gate[0], m["y"] - gate[1]) > sp.TRACK_GATE) else m)(next(fake, None))
+    ctl.measure = lambda st, gate=None, gate_m=None: (lambda m: None if m is None or (gate and math.hypot(m["x"] - gate[0], m["y"] - gate[1]) > gate_m) else m)(next(fake, None))
     ctl.enter("aim")
     for _ in range(400):
         ctl.step()
@@ -249,6 +249,33 @@ def test_t2_false_detection_after_the_creep_does_not_end_the_try():
     assert duck.picks and duck.picks[0]["x"] == 0.124 and "u" not in ctl.obj, ctl.phase
 
 
+def test_t2_never_walks_at_a_ball_inside_or_nearer_than_the_window():
+    """Run 12: x 0.086 y -0.019 started a creep and the duck walked over the ball."""
+    for x in (0.086, 0.081, 0.100):
+        duck = PickDuck((x, -0.019), ["hold"])
+        ctl = t2_at(duck)
+        ctl.obj = dict(x=x, y=-0.019, size=0.013, t=0.0)
+        ctl.enter("align")
+        ctl.step()
+        assert duck.picks and not any(c.get("vx", 0) > 0 for _, c in duck.sent), x
+
+
+def test_t2_a_ball_last_seen_past_the_beak_is_looked_for_not_bitten():
+    duck = PickDuck((0.06, -0.004), ["hold"])
+    ctl = t2_at(duck)
+    ctl.make_approach = lambda: type("A", (), {"phase": "search", "step": lambda s: None})()
+    ctl.obj = dict(x=0.063, y=-0.004, size=0.013, t=duck.t)
+    ctl.blind_ok, ctl.aim_gate = True, (0.063, -0.004)
+    ctl.measure = lambda st, gate=None, gate_m=None: None
+    ctl.enter("aim")
+    for _ in range(200):
+        ctl.step()
+        duck.advance()
+        if ctl.phase == "approach":
+            break
+    assert ctl.phase == "approach" and not duck.picks
+
+
 def test_t2_creep_steers_toward_the_held_side():
     duck = PickDuck((0.158, -0.05), ["hold"])
     ctl = t2_at(duck)
@@ -256,7 +283,7 @@ def test_t2_creep_steers_toward_the_held_side():
     ctl.head = {}
     ctl.burst_m = dict(ctl.obj)
     ctl.t_phase, ctl.phase = duck.t, "burst"
-    ctl.measure = lambda st, gate=None: None
+    ctl.measure = lambda st, gate=None, gate_m=None: None
     ctl.step()
     assert duck.sent[-1][1]["vtheta"] < 0
 

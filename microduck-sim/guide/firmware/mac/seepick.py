@@ -55,7 +55,8 @@ T2_Y = -0.018              # m: where the creep and the turn steer the object; t
 NUDGE_FROM = 0.135         # m: from here in the creep is timed, and never stops on what it sees. Stop-on-sight gave 0.1 s and no move at 0.125 and
 NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124. Creeps of 1-1.5 s moved 1-5 cm (12 creeps, robot 2026-11-01)
 AIM_MIN_FRAMES = 3         # T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
-AIM_GATE_BACK = 0.02       # m: T2 gates the aim around the last sighting moved this far toward the robot, within TRACK_GATE
+AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections this near the last sighting. Readings on the move are 1.5 cm off and the ball can
+#                            shift 3 cm in y: a 4 cm gate threw out the real ball at the end of run 12's first creep, and it picked blind at dx +3.5
 BLIND_R = 0.12             # m: nearer than this the object is under the standing picture (bottom edge 0.10-0.125 m at
 #                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position
 PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
@@ -121,6 +122,7 @@ class SeePick:
         self.holding_since, self.lost_since = None, None
         self.trace, self.attempts = [], []
         self.blind_ok, self.blind_pick, self.last_y = False, False, 0.0   # T2: the creep ended this near; pick unseen; side it was last on
+        self.aim_gate = None      # T2: the last sighting of the creep, which the next aim is gated on
         self.look_n = 0           # body turns made while looking for the object
 
     # --- helpers -----------------------------------------------------------------------------------------------
@@ -141,7 +143,7 @@ class SeePick:
             cmd["head"] = {k: v for k, v in head.items() if k in ("head_pitch", "head_yaw", "neck_pitch")}
         self.send_fn(cmd)
 
-    def measure(self, st, gate=None):
+    def measure(self, st, gate=None, gate_m=None):
         """New frame -> (x, y, width, capture time) of the object centre in the capture-time foot frame, or None."""
         fr = self.latest_frame()
         if fr is None:
@@ -163,7 +165,9 @@ class SeePick:
         p = self.helper.project(det, sc, w, h)
         if p is None or p[0] < 0.03:   # the duck's own coloured parts project under the body
             return None
+        gate_given = gate_m
         gate_m = TRACK_GATE_HERE if (self.pick_here is not None and self.app is None) else TRACK_GATE
+        gate_m = gate_given if gate_given is not None else gate_m
         if self.track_gate is not None:
             gate_m = self.track_gate   # --track-gate; 0 keeps the given estimate and only records what the camera saw
         if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > gate_m:
@@ -225,7 +229,7 @@ class SeePick:
             self.finish(False, f"{self.tries} tries used ({why})")
             return
         self.try_n += 1
-        self.blind_ok, self.blind_pick = False, False
+        self.blind_ok, self.blind_pick, self.aim_gate = False, False, None
         self.align_n, self.meas = 0, []
         self.enter("aim", f"try {self.try_n}: {why}")
 
@@ -234,7 +238,7 @@ class SeePick:
             self.finish(False, f"{self.tries} tries used ({why})")
             return
         self.try_n += 1
-        self.blind_ok, self.blind_pick = False, False
+        self.blind_ok, self.blind_pick, self.aim_gate = False, False, None
         self.align_n = 0
         self.app = self.make_approach()
         self.enter("approach", f"try {self.try_n}: {why}")
@@ -273,17 +277,22 @@ class SeePick:
         self.stand(head)
         if now - self.t_phase < SETTLE_S:
             return
-        m = self.measure(st, gate=(self.obj["x"] - AIM_GATE_BACK, self.obj["y"]) if self.t2 and self.blind_ok else None)
+        m = self.measure(st, gate=self.aim_gate, gate_m=AIM_GATE_M) if self.aim_gate else self.measure(st)
         if m is not None:
             self.meas.append(m)
         if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and len(self.meas) >= (AIM_MIN_FRAMES if self.t2 else 1)):
             med = {k: float(np.median([q[k] for q in self.meas])) for k in ("x", "y", "size")}
             self.obj = dict(med, t=max(q["t"] for q in self.meas), cut=any(q["cut"] for q in self.meas))
-            self.last_y, self.blind_ok = med["y"], False
+            self.last_y, self.blind_ok, self.aim_gate = med["y"], False, None
             self.log(f"  object x {med['x']:.3f} y {med['y']:.3f} width {med['size'] * 1000:.0f} mm "
                      f"from {len(self.meas)} frames (spot {SPOT[0]:.3f} {SPOT[1]:.3f})")
             self.enter("align")
         elif now - self.t_phase > SETTLE_S + AIM_S:
+            self.aim_gate = None
+            if self.t2 and self.blind_ok and self.obj["x"] < T2_WIN_X[0] - PICK_SLACK:
+                self.obj = None    # last seen already past the beak: find it again, do not bite the floor
+                self.next_try("last seen past the beak")
+                return
             if self.t2 and self.blind_ok:
                 # the creep walked on from x <= NUDGE_FROM and the ball left the picture (it starts at 0.105): this is the pick
                 # place, and another step runs it past the beak. No box: T2 gets the training hand-over, clamped to the edge
@@ -311,7 +320,8 @@ class SeePick:
     def in_window(self, x, y):
         s = PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0
         if self.t2:
-            return T2_WIN_X[0] - s <= x <= T2_WIN_X[1] + s and T2_WIN_Y[0] - s <= y <= T2_WIN_Y[1] + s
+            # nearer than the window but not "too close" still picks: a creep from there walks over the ball (run 12, x 0.086 to under the beak)
+            return T2_WIN_X[0] - PICK_SLACK <= x <= T2_WIN_X[1] + s and T2_WIN_Y[0] - s <= y <= T2_WIN_Y[1] + s
         return abs(x - SPOT[0]) <= PICK_WIN + s and abs(y - SPOT[1]) <= PICK_WIN + s
 
     def p_align(self, st, now):
@@ -391,8 +401,9 @@ class SeePick:
         # a ball that left the bottom of the picture keeps its last sighting: the aim's blind zone picks there. Without it
         # the aim fell back on the walk's stale estimate and started a new try (robot 2026-11-01, try 1 of both runs)
         if self.t2:    # the aim gates on this sighting; a detection anywhere else is not the ball
-            self.obj, self.blind_ok = dict(self.burst_m or self.obj), nudge or (self.burst_m or self.obj)["x"] <= NUDGE_FROM
-            self.last_y = self.obj["y"]
+            # picking unseen only makes sense when the ball went under the picture or the timed creep ran: a creep stopped at its mark still sees it
+            self.obj, self.blind_ok = dict(self.burst_m or self.obj), nudge or why == "object under the picture"
+            self.last_y, self.aim_gate = self.obj["y"], (self.obj["x"], self.obj["y"])
         else:
             self.obj = dict(self.burst_m) if why == "object under the picture" and self.burst_m else None
         self.meas, self.burst_m = [], None

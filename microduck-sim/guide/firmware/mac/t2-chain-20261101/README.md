@@ -105,3 +105,7 @@ My own tool and procedure errors:
 
 41. Run 11 fell 0.8 s into a walk-to-spin change, caused by the fix for item 39: with no head command in place, head pitch went 0.72 to 0.19 and on to -0.17 in 0.6 s, the neck moved too, at turn 1.25. All three spin falls had the head moving during the spin, against 48 spins that did not fall. A spin now holds the head command it entered with, and every stand-to-spin settles at the default head first. Clamp 1.25 alone did not prevent this fall. The camera dropped off USB at the fall, third drop.
 
+
+42. Run 12 walked over the ball, from my window change. After a pick the duck stands about 3.6 cm further on: the ball read x 0.086 y -0.019, on the hold's y. That was under the tightened window edge 0.090, and any non-window reading that was not "too close" started a creep. The creep ran the ball under the beak (last seen 0.063), and it bit the floor there. Now a seen ball at or nearer than the window picks, only a ball beyond the window gets a creep, and a ball last seen past the beak is searched for.
+43. Run 12's first pick at dx +3.5 was also a bug: the aim's 4 cm gate around (x - 2 cm) threw out the real ball after the creep stopped at its mark, and it picked blind. The gate is now 6 cm around the last sighting, and a creep stopped at its mark never picks unseen.
+44. Spins in run 12: 7 face turns, no fall. No yaw_off verdict yet: both picks were off the ball for the reasons above.
