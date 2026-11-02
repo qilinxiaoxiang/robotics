@@ -310,3 +310,11 @@
 - **Why:** Shawn, 2026-11-02: "摄像头是不可能加在胸口或者嘴下的 ... 我们是想做一个宠物机器人，所以它的行为或者设置应该接近一个真实的生物 ... 理论上说可以有两个眼睛，但是两个眼睛都应该在前方 ... 放在胸口或者嘴下这种，是完全不能接受的。首先，它很怪异；第二，它的使用场景太窄。我们叼球，就是想像猫和狗一样叼东西，猫和狗的下巴和胸口可没有长摄像头 ... 这是我们永远也不可能做的事情."
 - **Consequence:** The dock and pick policies must handle the ball going out of view (head pitch as a policy action, observation history or a learned ball-position memory). A down-looking camera is never proposed as a fix again. Any new sensor proposal states which animal sense it stands in for and where that sense sits on the animal.
 - **Revisit when:** never for chest or chin cameras; a second eye needs a fit and mass check.
+
+## D-040 — MicroDuck sim: the ankle stops at the heel, 1.36 rad
+
+- **Date:** 2026-11-02
+- **Decision:** Every as-built sim and training route limits both ankles to +-1.36 rad, the angle where the shin servo's case meets the heel in the model. The official Pollen robot keeps +-1.571. The cable moves to the front socket of each ankle servo on the robot, so the cable gets no limit in the model.
+- **Why:** Shawn, 2026-11-02: "仿真应该也会卡脚啊", "我理解不需要再加额外限位。如果是舵机线卡住，我们就把它移到前面去好了", "加进去". The sim's foot collides only through its sole and MuJoCo filters parent-child contacts, so nothing stopped the ankle before 1.571 rad.
+- **Consequence:** The robot stays at about 1.25 rad until its cables move. After the move, the replay predicts ankles near 1.36, trunk about 34 deg and camera about 22.6 mm in the bend on the same policy, and the camera's bend height correction needs remeasuring. Policies still command 1.571 until retrained.
+- **Revisit when:** the bend after the cable move stops somewhere other than about 1.36 rad.
