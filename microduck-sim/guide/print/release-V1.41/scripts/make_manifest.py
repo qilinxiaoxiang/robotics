@@ -159,6 +159,10 @@ def main():
     m.pop('deferred', None)
     m['deliveryContract'] = dict(m['deliveryContract'], colors=['Orange'], filesPerColor=2, fileCount=2, baseline='printed releases through V1.40',
                                  status='INCREMENTAL_REPRINT', supersedes=['battery_backpack_cap and battery_hatch of V1.40'])
+    # Profiles are bound by hash at prepare time; the Bambu projects changed to the Textured PEI Plate on 2026-11-01
+    # (the X1C refused the Cool Plate file), so the hashes come from the files, not from the V1.40 manifest.
+    for prof in m['profiles'].values():
+        if Path(prof['path']).is_file(): prof['sha256'] = sha(prof['path'])
     (REL / 'manifest-V1.41.json').write_text(json.dumps(m, indent=1, ensure_ascii=False))
     print(json.dumps(dict(guideWorld=str(GUIDE_WORLD), sizes=sizes, placements=pl,
                           allowances={r['key']: len(r['thinWallAllowances']) for r in rows})))
