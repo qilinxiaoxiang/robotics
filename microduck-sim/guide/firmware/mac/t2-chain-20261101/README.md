@@ -27,3 +27,13 @@ Repairs, six T2 runs that really hold (`handback_fix.py`, median, held at hand-b
 - seepick61 finishes the rise from phase 0.50 once holding: 6 / 3 / 1.17 / 0.2-0.8; from 0.44 and 0.58 the same holds at gyro 2.04 and 1.53
 
 The flags are in `walk_brain.Brain` (`sp_rise_old_phase`, off by default, nothing on the robot changed). Six runs of the training ellipsoid: a choice between repairs, not a pass rate.
+
+## Robot runs 2 and 3, and the in-place stall
+
+- Run 2: empty bite at dx +3.5 cm (a creep starting inside the 12.5 cm mark stopped on its first tick, fixed in a41939e0), no fall; the bit never came on, so the rise repair was not exercised. Try 3 ended on the right-turn guard.
+- Run 3: no pick. Bearings -41 > -4, -22 > -3, -28, then `not following the right arc`.
+- The rise repair (seepick61 from phase 0.50) has still not run on the robot with a real hold.
+
+Why the bearing jumped and the guard tripped (`spin_abs.py`, `face_gyro.py`, yaw about gravity from the gyro): the duck stops gaining heading at about -50 to -55 deg and springs back about 20 deg when the command stops, so "facing it" at -4 becomes -22 a second later. From +89 deg the same right command ran 17-37 deg/s down to -20 deg, so the right turn itself is fine; the stall sits at a fixed heading. The earlier sim result (`--yaw-spring`, 2026-10-30) and this agree on a restoring torque from something attached, most likely the charger lead. Untested: the same turn with the lead untwisted. Register: `microduck-sim/FAULTS.json` `spin-stall-fixed-heading`.
+
+During that test the head camera dropped off USB at 21:37:53 (error -71, a controller rebind did not recover it). Register: `head-camera-usb-drop`. No camera means no further full-flow run until the plug is checked.
