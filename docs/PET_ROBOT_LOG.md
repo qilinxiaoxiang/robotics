@@ -546,3 +546,11 @@ With both legs held symmetric by Shawn, torque off: left knee tick 1496 (-3.5 de
 ## 2026-11-02 14:00 Right knee link refitted, brain back with the guard on
 
 The agent turned the detached ID2 horn to tick 2564 under torque (27 deg/s, 15 mA, no load), Shawn screwed the link back; 13 mA under hold, then torque off and profile velocity restored to 0. Torque off, right 2565 (+0.4 deg), left 1463-1468 (about -6 deg), the right leg was not moved again. Six degrees is far from a hole step (90 deg); the stand test decides the rest. Brain started by duck-run.sh on the A7Z, 49.7 Hz, 15 answer, --supply battery --supply-file; the switch tested live in monitor: bench -> guard off, battery -> guard on within a second. Pack 7.4 V idle. The guard's floor is still untested on the robot.
+
+## 2026-11-02 14:12 Low-battery calls did not sound; one name call looked the wrong way
+
+Shawn saw about 5 % and the duck stayed quiet. The brain log's last row (14:09:17) reads 6.8 V, guard `warn`, walk at zero. The running brain started 13:55, before the alarm code went in, so it had the guard states but no calling. The next brain start loads it. The calling has not been heard on the robot yet. Shawn powered off at about 14:09.
+
+Name call in answer mode, 14:02-14:08: 9 calls, 9 quacks, no known false answer, faces found on 8. At 14:06:32 Shawn was on the left and the duck looked right: the ear-pair lag was +5.5 at peak 0.229, the weakest of the run, and it overrode the SRP side and the +6.49 dB level. Lag now decides only at peak 0.35 or more (`SIDE_LAG_MIN_PEAK`), which sends that call left. This threshold rests on one failure and 7 right calls from one session; older logs on the A7Z were not checked because it is off. Not on the robot yet.
+
+App correction: the battery reading first went into the generated `microduck_rl/cmu/simulator` copy; it now lives in `microduck-simulator` (commit df3dea6) and is deployed to the Mac mini and the Mac vite server.

@@ -643,6 +643,8 @@ ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the of
                                   # about -1.0 and must not override
 ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
 SIDE_LAG_MIN = 2.0                # samples at 48 kHz: an ear-pair lag at least this big decides the side (77 mm = 10.8)
+SIDE_LAG_MIN_PEAK = 0.35          # ... and only with a GCC-PHAT peak this high: 2026-11-02 14:06:32 a 0.229 peak read right (+5.5) with the caller on
+                                  # the left while the SRP and the raw level read left; the 7 camera-confirmed calls that run all peaked at 0.47 or more
 PAIR_FIT_HUBER = 3.0              # samples: lag residuals beyond this count linearly in the pair-lag fit
 FB_SURE = 2.0                     # pair-fit front/back margin (cost units) above which a caller behind is acted on at
                                   # once: the body turns without the front search first
@@ -1653,8 +1655,9 @@ class NameCall:
         # the ear pair's own delay (left-right GCC-PHAT lag, positive = the left ear later = caller on the right) gave
         # the side on 12 of 12 camera-confirmed calls since 2026-10-30 21:00, the SRP over all three microphones 5 of
         # 12 (the back microphone and the aliased band pull it to the wrong lobe); it decides first, the level second
-        lag = ((det.get("pairs") or {}).get("left-right") or {}).get("lag")
-        if lag is not None and abs(lag) >= SIDE_LAG_MIN:
+        ear_pair = (det.get("pairs") or {}).get("left-right") or {}
+        lag = ear_pair.get("lag")
+        if lag is not None and abs(lag) >= SIDE_LAG_MIN and ear_pair.get("peak", 1.0) >= SIDE_LAG_MIN_PEAK:
             side_lag = -1 if lag > 0 else 1
         side_ears = side_lag or side_ild
         if side_ears and side_ears != side and abs(self.head_yaw_now) <= ILD_HEAD_REST_RAD:

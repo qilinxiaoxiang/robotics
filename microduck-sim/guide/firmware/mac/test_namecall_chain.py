@@ -730,11 +730,22 @@ def test_the_ear_pair_delay_decides_the_side_over_the_srp(tmp_path):
                                         (0.5, 0.9, -0.4685, -1)):
         n = nc.NameCall(a, nc.Log(None, echo=False))
         det = dict(t=0.0, az_rad=srp_az, az_deg=round(math.degrees(srp_az), 1), bins=100, e_db=-30.0, floor_db=-48.0,
-                   margin=0.5, pairs={"left-right": {"lag": lag, "peak": 0.2}},
+                   margin=0.5, pairs={"left-right": {"lag": lag, "peak": 0.6}},
                    ild_db={"2500": {"LR": ild, "EB": 0.0, "snr": 9.0}})
         rec = n.respond(det, 0.0)
         assert rec["side"] == want_side, (lag, ild, rec["side"], rec["side_lag"], rec["side_ild"])
         assert abs(rec["az_look_deg"] - want_side * 61.5) < 0.1
+
+
+def test_a_weak_ear_pair_lag_does_not_decide_the_side(tmp_path):
+    # 2026-11-02 14:06:32: Shawn on the left, lag +5.5 at peak 0.229 turned the duck right; SRP and raw level read left
+    a = args(cmd=str(tmp_path / "c.json"), seed=3, pitch=nc.LOOK_PITCH)
+    a.no_turn = True
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    det = dict(t=0.0, az_rad=1.745, az_deg=100.0, bins=100, e_db=-30.0, floor_db=-48.0, margin=0.5,
+               pairs={"left-right": {"lag": 5.5, "peak": 0.229}}, ild_db={"2500": {"LR": 6.49, "EB": 2.34, "snr": -1.1}})
+    rec = n.respond(det, 0.0)
+    assert rec["side_lag"] == 0 and rec["side"] == 1
 
 
 def test_a_new_call_during_the_body_turn_stops_it_and_re_aims(tmp_path):
