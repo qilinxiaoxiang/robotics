@@ -1,73 +1,635 @@
 {
  "source": "17-720 RIG 1.3 reprint plate as printed 2026-10-31 (Bambu H2S, Bambu PLA Basic, 0.2 mm): prints/stl/*.stl, part scripts, Assembly-Guide/content/rig_steps.py screw list. Diameters read back from the STLs (inscribed) and the H2S gcode (wall arc 2.165 = 1.745 hole).",
+ "printer": "H2S",
  "poses": {
   "console_tray": [],
   "console_deck": [],
-  "console_arm_right": [[[1, 0, 0], 180]],
-  "ts001_cradle": [[[0, 1, 0], -90]],
+  "console_arm_right": [
+   [
+    [
+     1,
+     0,
+     0
+    ],
+    180
+   ]
+  ],
+  "ts001_cradle": [
+   [
+    [
+     0,
+     1,
+     0
+    ],
+    -90
+   ]
+  ],
   "zero2w_carrier": [],
-  "radar_carrier": [[[1, 0, 0], 90]],
-  "smps2dxl_holder": [[[1, 0, 0], -90]],
-  "fan_head_frame": [[[0, 1, 0], -90]],
+  "radar_carrier": [
+   [
+    [
+     1,
+     0,
+     0
+    ],
+    90
+   ]
+  ],
+  "smps2dxl_holder": [
+   [
+    [
+     1,
+     0,
+     0
+    ],
+    -90
+   ]
+  ],
+  "fan_head_frame": [
+   [
+    [
+     0,
+     1,
+     0
+    ],
+    -90
+   ]
+  ],
   "holder_cable_clip": [],
   "link_cable_clip": []
  },
  "fits": [
-  {"id": "zero_post_pilot_M2", "type": "pilot", "part": "zero2w_carrier", "screw": "M2", "kind": "unknown", "d": 1.75, "axis": [0, 0, 1], "teardrop": null, "at_bed": false, "engagement": 4.4},
-  {"id": "cradle_cm3_pilot_M2", "type": "pilot", "part": "ts001_cradle", "screw": "M2", "kind": "unknown", "d": 1.75, "axis": [1, 0, 0], "teardrop": null, "at_bed": false, "engagement": 4.9},
-  {"id": "radar_c1001_pilot_M2", "type": "pilot", "part": "radar_carrier", "screw": "M2", "kind": "unknown", "d": 1.75, "axis": [1, 0, 0], "teardrop": null, "at_bed": false, "engagement": 5.0},
-  {"id": "fan_f5_pilot_PTS_M2", "type": "pilot", "part": "fan_head_frame", "screw": "M2", "kind": "tap", "d": 1.75, "axis": [1, 0, 0], "teardrop": null, "at_bed": true, "chamfer": 0.0, "engagement": 7.0},
-  {"id": "tray_pi4_boss_pilot_M2.5", "type": "pilot", "part": "console_tray", "screw": "M2.5", "kind": "tap", "d": 2.2, "axis": [0, 0, 1], "teardrop": null, "at_bed": false, "engagement": 4.0},
-  {"id": "tray_arm_pilot_M3", "type": "pilot", "part": "console_tray", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [1, 0, 0], "teardrop": [0, 0, 1], "at_bed": false, "engagement": 4.1},
-  {"id": "tray_mast_pilot_M3", "type": "pilot", "part": "console_tray", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 1, 0], "teardrop": [0, 0, 1], "at_bed": false, "engagement": 7.0},
-  {"id": "tray_deck_pilot_M3", "type": "pilot", "part": "console_tray", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 0, 1], "teardrop": null, "at_bed": false, "engagement": 4.2},
-  {"id": "deck_-Y_ear_pilot_M3", "type": "pilot", "part": "console_deck", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 1, 0], "teardrop": [0, 0, 1], "at_bed": false, "engagement": 5.0},
-  {"id": "cradle_+Y_lug_pilot_M3", "type": "pilot", "part": "ts001_cradle", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 1, 0], "teardrop": [1, 0, 0], "at_bed": false, "engagement": 4.0},
-  {"id": "radar_axis_lock_pilot_M3", "type": "pilot", "part": "radar_carrier", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 1, 0], "teardrop": null, "at_bed": true, "chamfer": 0.0, "engagement": 5.0},
-  {"id": "radar_axis_friction_pilot_M3", "type": "pilot", "part": "radar_carrier", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [0, 1, 0], "teardrop": null, "at_bed": false, "engagement": 5.5},
-  {"id": "fan_column_pilot_M3", "type": "pilot", "part": "fan_head_frame", "screw": "M3", "kind": "machine", "d": 2.6, "axis": [1, 0, 0], "teardrop": null, "at_bed": false, "engagement": 3.5},
-  {"id": "tray_radar_bracket_clear_M3", "type": "clear", "part": "console_tray", "screw": "M3", "d": 3.4, "axis": [0, 1, 0], "teardrop": [0, 0, 1]},
-  {"id": "deck_+Y_ear_clear_M3", "type": "clear", "part": "console_deck", "screw": "M3", "d": 3.4, "axis": [0, 1, 0], "teardrop": [0, 0, 1]},
-  {"id": "arm_flange_clear_M3", "type": "clear", "part": "console_arm_right", "screw": "M3", "d": 3.4, "axis": [1, 0, 0], "teardrop": [0, 0, -1]},
-  {"id": "deck_screw_clear_M3", "type": "clear", "part": "console_deck", "screw": "M3", "d": 3.4, "axis": [0, 0, 1], "teardrop": null},
-  {"id": "zero_cup_over_pi4_boss", "type": "pair", "fit_class": "locating",
-   "female": {"part": "zero2w_carrier", "d": 6.1, "axis": [0, 0, 1], "teardrop": null, "at_bed": true, "chamfer": 0.0},
-   "male": {"part": "console_tray", "d": 6.0, "axis": [0, 0, 1], "teardrop": null, "at_bed": false}},
-  {"id": "cradle_-Y_pivot_pin_hole", "type": "pair", "fit_class": "sliding",
-   "female": {"part": "ts001_cradle", "d": 3.4, "axis": [0, 1, 0], "teardrop": [1, 0, 0], "at_bed": false},
-   "male": {"part": null, "d": 3.0}},
-  {"id": "holder_clip_bulb_in_robotis_slot", "type": "pair", "fit_class": "sliding",
-   "female": {"part": null, "d": 3.6},
-   "male": {"part": "holder_cable_clip", "d": 3.5, "axis": [0, 0, 1], "teardrop": null, "at_bed": true, "chamfer": 0.0}},
-  {"id": "fan_lead_in_holder_clip_groove", "type": "pair", "fit_class": "locating",
-   "female": {"part": "holder_cable_clip", "d": 4.6, "axis": [0, 0, 1], "teardrop": null, "at_bed": true, "chamfer": 0.0},
-   "male": {"part": null, "d": 4.6}},
-  {"id": "fan_lead_in_link_clip_groove", "type": "pair", "fit_class": "locating",
-   "female": {"part": "link_cable_clip", "d": 4.6, "axis": [1, 0, 0], "teardrop": null, "at_bed": false},
-   "male": {"part": null, "d": 4.6}},
-  {"id": "arm_plug_ribs_in_M5_cbore", "type": "pair", "fit_class": "crush_rib",
-   "female": {"part": null, "d": 10.0},
-   "male": {"part": "console_arm_right", "d": 10.5, "axis": [0, 0, 1], "teardrop": null, "at_bed": false}},
-  {"id": "arm_plug_ribs_in_M6_cbore", "type": "pair", "fit_class": "crush_rib",
-   "female": {"part": null, "d": 13.0},
-   "male": {"part": "console_arm_right", "d": 13.5, "axis": [0, 0, 1], "teardrop": null, "at_bed": false}},
-  {"id": "arm_plug_body_in_M5_cbore", "type": "pair", "fit_class": "locating",
-   "female": {"part": null, "d": 10.0},
-   "male": {"part": "console_arm_right", "d": 9.6, "axis": [0, 0, 1], "teardrop": null, "at_bed": false}},
-  {"id": "arm_pin_in_M6_through_hole", "type": "pair", "fit_class": "locating",
-   "female": {"part": null, "d": 6.5},
-   "male": {"part": "console_arm_right", "d": 6.2, "axis": [0, 0, 1], "teardrop": null, "at_bed": false}},
-  {"id": "smps_plug_keel_in_M6_cbore", "type": "pair", "fit_class": "crush_rib",
-   "female": {"part": null, "d": 13.0},
-   "male": {"part": "smps2dxl_holder", "d": 13.5, "axis": [0, 0, 1], "teardrop": null, "at_bed": true, "chamfer": 0.0}},
-  {"id": "tray_rib_in_arm_groove", "type": "pair", "fit_class": "locating",
-   "female": {"part": "console_arm_right", "d": 3.4, "axis": [0, 1, 0], "teardrop": null, "at_bed": false},
-   "male": {"part": "console_tray", "d": 3.0, "axis": [0, 1, 0], "teardrop": null, "at_bed": false}},
-  {"id": "fan_in_sleeve", "type": "pair", "fit_class": "sliding",
-   "female": {"part": "fan_head_frame", "d": 40.6, "axis": [1, 0, 0], "teardrop": null, "at_bed": false},
-   "male": {"part": null, "d": 40.0}},
-  {"id": "ts001_in_cradle_pocket", "type": "pair", "fit_class": "sliding",
-   "female": {"part": "ts001_cradle", "d": 35.6, "axis": [1, 0, 0], "teardrop": null, "at_bed": false},
-   "male": {"part": null, "d": 35.0}}
+  {
+   "id": "zero_post_pilot_M2",
+   "type": "pilot",
+   "part": "zero2w_carrier",
+   "screw": "M2",
+   "kind": "any",
+   "d": 1.75,
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 4.4
+  },
+  {
+   "id": "cradle_cm3_pilot_M2",
+   "type": "pilot",
+   "part": "ts001_cradle",
+   "screw": "M2",
+   "kind": "any",
+   "d": 1.75,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 4.9
+  },
+  {
+   "id": "radar_c1001_pilot_M2",
+   "type": "pilot",
+   "part": "radar_carrier",
+   "screw": "M2",
+   "kind": "any",
+   "d": 1.75,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 5.0
+  },
+  {
+   "id": "fan_f5_pilot_PTS_M2",
+   "type": "pilot",
+   "part": "fan_head_frame",
+   "screw": "M2",
+   "kind": "tap",
+   "d": 1.75,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": true,
+   "chamfer": 0.0,
+   "engagement": 7.0
+  },
+  {
+   "id": "tray_pi4_boss_pilot_M2.5",
+   "type": "pilot",
+   "part": "console_tray",
+   "screw": "M2.5",
+   "kind": "tap",
+   "d": 2.2,
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 4.0
+  },
+  {
+   "id": "tray_arm_pilot_M3",
+   "type": "pilot",
+   "part": "console_tray",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    1
+   ],
+   "at_bed": false,
+   "engagement": 4.1
+  },
+  {
+   "id": "tray_mast_pilot_M3",
+   "type": "pilot",
+   "part": "console_tray",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    1
+   ],
+   "at_bed": false,
+   "engagement": 7.0
+  },
+  {
+   "id": "tray_deck_pilot_M3",
+   "type": "pilot",
+   "part": "console_tray",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 4.2
+  },
+  {
+   "id": "deck_-Y_ear_pilot_M3",
+   "type": "pilot",
+   "part": "console_deck",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    1
+   ],
+   "at_bed": false,
+   "engagement": 5.0
+  },
+  {
+   "id": "cradle_+Y_lug_pilot_M3",
+   "type": "pilot",
+   "part": "ts001_cradle",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": [
+    1,
+    0,
+    0
+   ],
+   "at_bed": false,
+   "engagement": 4.0
+  },
+  {
+   "id": "radar_axis_lock_pilot_M3",
+   "type": "pilot",
+   "part": "radar_carrier",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": true,
+   "chamfer": 0.0,
+   "engagement": 5.0
+  },
+  {
+   "id": "radar_axis_friction_pilot_M3",
+   "type": "pilot",
+   "part": "radar_carrier",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 5.5
+  },
+  {
+   "id": "fan_column_pilot_M3",
+   "type": "pilot",
+   "part": "fan_head_frame",
+   "screw": "M3",
+   "kind": "any",
+   "d": 2.6,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": null,
+   "at_bed": false,
+   "engagement": 3.5
+  },
+  {
+   "id": "tray_radar_bracket_clear_M3",
+   "type": "clear",
+   "part": "console_tray",
+   "screw": "M3",
+   "d": 3.4,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "id": "deck_+Y_ear_clear_M3",
+   "type": "clear",
+   "part": "console_deck",
+   "screw": "M3",
+   "d": 3.4,
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "id": "arm_flange_clear_M3",
+   "type": "clear",
+   "part": "console_arm_right",
+   "screw": "M3",
+   "d": 3.4,
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "teardrop": [
+    0,
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "deck_screw_clear_M3",
+   "type": "clear",
+   "part": "console_deck",
+   "screw": "M3",
+   "d": 3.4,
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "teardrop": null
+  },
+  {
+   "id": "zero_cup_over_pi4_boss",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": "zero2w_carrier",
+    "d": 6.1,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": true,
+    "chamfer": 0.0
+   },
+   "male": {
+    "part": "console_tray",
+    "d": 6.0,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "cradle_-Y_pivot_pin_hole",
+   "type": "pair",
+   "fit_class": "sliding",
+   "female": {
+    "part": "ts001_cradle",
+    "d": 3.4,
+    "axis": [
+     0,
+     1,
+     0
+    ],
+    "teardrop": [
+     1,
+     0,
+     0
+    ],
+    "at_bed": false
+   },
+   "male": {
+    "part": null,
+    "d": 3.0
+   }
+  },
+  {
+   "id": "holder_clip_bulb_in_robotis_slot",
+   "type": "pair",
+   "fit_class": "sliding",
+   "female": {
+    "part": null,
+    "d": 3.6
+   },
+   "male": {
+    "part": "holder_cable_clip",
+    "d": 3.5,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": true,
+    "chamfer": 0.0
+   }
+  },
+  {
+   "id": "fan_lead_in_holder_clip_groove",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": "holder_cable_clip",
+    "d": 4.6,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": true,
+    "chamfer": 0.0
+   },
+   "male": {
+    "part": null,
+    "d": 4.6
+   }
+  },
+  {
+   "id": "fan_lead_in_link_clip_groove",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": "link_cable_clip",
+    "d": 4.6,
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "teardrop": null,
+    "at_bed": false
+   },
+   "male": {
+    "part": null,
+    "d": 4.6
+   }
+  },
+  {
+   "id": "arm_plug_ribs_in_M5_cbore",
+   "type": "pair",
+   "fit_class": "crush_rib",
+   "female": {
+    "part": null,
+    "d": 10.0
+   },
+   "male": {
+    "part": "console_arm_right",
+    "d": 10.5,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "arm_plug_ribs_in_M6_cbore",
+   "type": "pair",
+   "fit_class": "crush_rib",
+   "female": {
+    "part": null,
+    "d": 13.0
+   },
+   "male": {
+    "part": "console_arm_right",
+    "d": 13.5,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "arm_plug_body_in_M5_cbore",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": null,
+    "d": 10.0
+   },
+   "male": {
+    "part": "console_arm_right",
+    "d": 9.6,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "arm_pin_in_M6_through_hole",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": null,
+    "d": 6.5
+   },
+   "male": {
+    "part": "console_arm_right",
+    "d": 6.2,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "smps_plug_keel_in_M6_cbore",
+   "type": "pair",
+   "fit_class": "crush_rib",
+   "female": {
+    "part": null,
+    "d": 13.0
+   },
+   "male": {
+    "part": "smps2dxl_holder",
+    "d": 13.5,
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "teardrop": null,
+    "at_bed": true,
+    "chamfer": 0.0
+   }
+  },
+  {
+   "id": "tray_rib_in_arm_groove",
+   "type": "pair",
+   "fit_class": "locating",
+   "female": {
+    "part": "console_arm_right",
+    "d": 3.4,
+    "axis": [
+     0,
+     1,
+     0
+    ],
+    "teardrop": null,
+    "at_bed": false
+   },
+   "male": {
+    "part": "console_tray",
+    "d": 3.0,
+    "axis": [
+     0,
+     1,
+     0
+    ],
+    "teardrop": null,
+    "at_bed": false
+   }
+  },
+  {
+   "id": "fan_in_sleeve",
+   "type": "pair",
+   "fit_class": "sliding",
+   "female": {
+    "part": "fan_head_frame",
+    "d": 40.6,
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "teardrop": null,
+    "at_bed": false
+   },
+   "male": {
+    "part": null,
+    "d": 40.0
+   }
+  },
+  {
+   "id": "ts001_in_cradle_pocket",
+   "type": "pair",
+   "fit_class": "sliding",
+   "female": {
+    "part": "ts001_cradle",
+    "d": 35.6,
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "teardrop": null,
+    "at_bed": false
+   },
+   "male": {
+    "part": null,
+    "d": 35.0
+   }
+  }
  ]
 }

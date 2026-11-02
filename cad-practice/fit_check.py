@@ -5,10 +5,12 @@ Usage: fit_check.py FITS.json [--json OUT.json]
 
 FITS.json (one file per release, next to the part scripts; the part scripts write it or it is kept by hand):
 {
+  "printer": "H2S" | "X1C" | "Elegoo-CC",                    # adds print_fit.PRINTER_OFFSET to pilots and clearances
   "poses": {"<part>": [[[ax, ay, az], deg], ...]},          # print_rot exactly as passed to the STL export
   "fits": [
-    {"id": "...", "type": "pilot", "part": "<part>", "screw": "M2", "kind": "tap|machine|unknown",
-     "d": 1.75, "axis": [x, y, z], "teardrop": null | [ux, uy, uz], "at_bed": false, "chamfer": 0.0, "engagement": 4.4},
+    {"id": "...", "type": "pilot", "part": "<part>", "screw": "M2", "kind": "any",
+     "d": 1.85, "axis": [x, y, z], "teardrop": null | [ux, uy, uz], "at_bed": false, "chamfer": 0.0, "engagement": 4.4,
+     "depth": 7.0 | "through", "clamped": 1.6},
     {"id": "...", "type": "clear", "part": "<part>", "screw": "M3", "d": 3.4, "axis": [...], "teardrop": null, ...},
     {"id": "...", "type": "pair", "fit_class": "locating|sliding|loose|press|crush_rib",
      "female": {"part": "<part>" | null, "d": 6.1, "axis": [...], "teardrop": null, "at_bed": true, "chamfer": 0.0},
@@ -17,7 +19,10 @@ FITS.json (one file per release, next to the part scripts; the part scripts writ
 }
 Axes and teardrop vectors are in the part frame; the checker rotates them into the print pose from "poses", so a
 wrong print pose cannot hide behind a hand-written "vertical". "part": null marks a bought part (no print adders).
-"d" is a diameter, or a width across the fit for slots, tongues and grooves. "kind": "unknown" is checked as machine.
+"d" is a diameter, or a width across the fit for slots, tongues and grooves. "kind" defaults to "any" (a pilot takes
+machine and thread-forming screws of its size); "tap" checks as-built evidence against the TAP-only table and warns.
+"depth" (blind pilot depth below the clamped parts) and "clamped" (thickness the screw passes before the pilot) check
+that the longest common length fits.
 """
 import json
 import sys
@@ -68,7 +73,7 @@ def bed_unchamfered(feat):
     return bool(feat.get("at_bed")) and float(feat.get("chamfer", 0.0)) < F.BED_CHAMFER - 1e-9
 
 
-def check(fit, poses):
+def check(fit, poses, printer=None):
     t = fit["type"]
     res = dict(id=fit["id"], type=t, fails=[], warns=[])
     if t in ("pilot", "clear"):
@@ -77,11 +82,12 @@ def check(fit, poses):
         res["fails"] += teardrop_errors(fit, poses, male=False)
         d = fit["d"]
         if t == "pilot":
-            kind = fit.get("kind", "unknown")
-            k = "machine" if kind == "unknown" else kind
-            if kind == "unknown":
-                res["warns"].append("screw kind not declared: checked as a machine screw")
-            req = F.pilot(fit["screw"], o, k)
+            k = fit.get("kind", "any")
+            if k in ("unknown", "machine"):
+                k = "any"
+            if k == "tap":
+                res["warns"].append("checked against the TAP-only table: as-built evidence, not a design value")
+            req = F.pilot(fit["screw"], o, k, printer)
             if bed_unchamfered(fit):
                 req += 0.1
             res["required"] = round(req, 3)
@@ -89,12 +95,17 @@ def check(fit, poses):
                 res["fails"].append(f"pilot {d} under {req:.2f} ({fit['screw']} {k}, {o}{', first-layer mouth' if bed_unchamfered(fit) else ''})")
             elif d > req + F.PILOT_BAND[1] + 1e-9:
                 res["fails"].append(f"pilot {d} over {req + F.PILOT_BAND[1]:.2f}: thread strips")
+            dep = fit.get("depth")
+            if dep is not None and dep != "through" and "clamped" in fit:
+                need = F.pilot_depth(fit["screw"], fit["clamped"])
+                if dep < need - 1e-9:
+                    res["fails"].append(f"blind pilot {dep} mm deep, the longest common {fit['screw']} needs {need}")
             eng = fit.get("engagement")
             dia = float(fit["screw"][1:])
             if eng and eng > F.MAX_ENGAGEMENT_D[k] * dia:
                 res["warns"].append(f"engagement {eng} mm over {F.MAX_ENGAGEMENT_D[k]:g} d: drive torque high")
         else:
-            req = F.clear(fit["screw"], o)
+            req = F.clear(fit["screw"], o, printer)
             res["required"] = req
             if d < req - 0.05 - 1e-9:
                 res["fails"].append(f"clearance {d} under {req} ({fit['screw']}, {o})")
@@ -125,7 +136,10 @@ def main(argv):
         return 2
     spec = json.loads(Path(argv[1]).read_text())
     poses = {k: [(tuple(a), float(d)) for a, d in v] for k, v in spec["poses"].items()}
-    out = [check(f, poses) for f in spec["fits"]]
+    printer = spec.get("printer")
+    if printer:
+        print(f"printer {printer}: pilot/clearance offset {F.PRINTER_OFFSET[printer]:+.2f} ({F.PRINTER_OFFSET_STATUS[printer]})")
+    out = [check(f, poses, printer) for f in spec["fits"]]
     for r in out:
         detail = "; ".join(r["fails"] + r["warns"])
         print(f"{r['verdict']:4}  {r['id']:<34} {detail}")
