@@ -54,7 +54,7 @@ Deployed, not yet shown to work:
 
 Open:
 
-7. "Turning the wrong way" still fires falsely in the first second of a right spin: +23 and +22 deg/s in run 6 after the threshold went to 18. It used two of the three tries.
+7. "Turning the wrong way" still fires falsely in the first second of a right spin: +23 and +22 deg/s in run 6 after the threshold went to 18. It used two of the three tries. Replay of 26 robot spins (`wrongway_replay.py`): worst against the command +21.6 deg/s fitted over 1 s, +7.3 over 1.5 s, so the check is now 10 deg/s over 1.5 s. Tests pass; not deployed, the A7Z is offline.
 8. Stall at a fixed heading, `FAULTS.json` `spin-stall-fixed-heading`. Lead check not done.
 9. Short spins barely turn: 1 to 2 s nets 0 to 13 deg, because stepping starts only about 0.5 to 1 s in. Close-range aiming depends on these.
 10. The duck drifts away while turning: measured range 11.4, 15.5, 17.9, 18.2 cm across run 5's spins, which ended that try on "not arrived".
@@ -73,3 +73,5 @@ My own tool and procedure errors:
 20. A first analysis used yaw from a raw quaternion, gimbal-locked by the IMU mount, and read nonsense (`walk_brain.body_quat` or gyro about gravity are correct).
 21. At 21:52 I unbound the et7304 Type-C driver over ssh to test the camera drop. The A7Z stopped answering on Wi-Fi and Tailscale within seconds. Never unbind this driver with the brain running.
 22. I asked Shawn to place the ball and to check the lead when the duck could search for itself. Search first; only a real physical block goes to him.
+
+23. After the 21:52 hang and a power cycle by Shawn the A7Z did not rejoin Tailscale (last seen 21:53, checked 22:28; boot to ssh is normally about 35 s). Mac and Mac mini both fail to reach it.

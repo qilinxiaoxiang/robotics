@@ -156,7 +156,7 @@ def test_a_turn_the_wrong_way_stops_the_run():
     duck = FakeDuck((0.8, -0.3), turn_gain=-1.0)   # commanded right, turns left (the first robot run)
     ctl = drive(duck)
     assert not ctl.result["ok"] and ("wrong way" in ctl.result["why"] or "not following" in ctl.result["why"])
-    assert duck.th < math.radians(40)              # stopped before it turned far (in place: 29 deg/s for ~1 s)
+    assert duck.th < math.radians(60)              # stopped before it turned far (in place: 29 deg/s for ~1.5-2 s)
 
 
 def test_a_turn_in_place_carries_the_object_past_straight_ahead():

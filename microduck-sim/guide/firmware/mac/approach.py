@@ -105,10 +105,10 @@ JUMP_M = 0.25        # a detection this far from the estimate needs a second one
 JUMP_AGREE_M = 0.10
 TURN_CHECK_S = 3.0   # a turn held this long must show at least TURN_MIN_RATE in its direction (fitted slope)
 TURN_MIN_RATE = math.radians(3)
-WRONG_WAY_RATE = math.radians(18)    # fitted over WRONG_WAY_S, against the command; a real reversal ran 20-29 deg/s, the
-                                     # start of a right spin sways +12 to +14 deg/s (robot 2026-11-01, two false stops)
+WRONG_WAY_RATE = math.radians(10)    # fitted over WRONG_WAY_S, against the command. A real reversal ran 20-29 deg/s; 26 robot
+                                     # spins on 2026-11-01 reach +21.6 deg/s over 1 s (sway) but +7.3 over 1.5 s (wrongway_replay.py)
 LINE_RATE = math.radians(20)         # fitted over WRONG_WAY_S, either way on a straight walk
-WRONG_WAY_S = 1.0
+WRONG_WAY_S = 1.5
 FRAME_MAX_AGE_S = 0.6
 STATE_MAX_AGE_S = 0.5
 STALE_WALK_S = 0.3   # stale state this long while walking: stop
