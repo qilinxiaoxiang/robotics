@@ -1,0 +1,65 @@
+{
+ "variant": "charger-20261101",
+ "describes": "the robot in the 2026-11-01 scans: charger backpack (plugged variant: box lid, XL4015s, 5991, screwed to the OpenRB pack, D-036 plate not fitted) plus the head sensors the plugged model lacks (three INMP441, XIAO touch, their wires, masses from variant-asbuilt-20261101, not weighed)",
+ "base": "../microduck_rl/cmu/model/variants/plugged.json",
+ "remove_ids": [],
+ "position_frame": "guide trunk_base frame at qpos0 = MJCF trunk_base body frame (x forward, y left, z up), mm; head parts take the head cap's position (jaw_soft body)",
+ "add": [
+  {
+   "id": "add-head-mics-inmp441-x3",
+   "body": "jaw_soft",
+   "mass_kg": 0.006,
+   "position_from_id": "add-head_cap_v19",
+   "dimensions_m": [
+    0.03,
+    0.08,
+    0.02
+   ],
+   "basis": "listing",
+   "label": "estimate",
+   "source": "three INMP441 boards (two ears, one back seat V1.33), 2 g each (KitsGuru listing); placed at the head cap's centre"
+  },
+  {
+   "id": "add-head-mic-foam-glue",
+   "body": "jaw_soft",
+   "mass_kg": 0.003,
+   "position_from_id": "add-head_cap_v19",
+   "dimensions_m": [
+    0.03,
+    0.08,
+    0.02
+   ],
+   "basis": "estimate",
+   "label": "estimate",
+   "source": "foam rings, horseshoe rings and hot glue on the three microphones, about 1 g each"
+  },
+  {
+   "id": "add-head-xiao-touch",
+   "body": "jaw_soft",
+   "mass_kg": 0.005,
+   "position_from_id": "add-head_cap_v19",
+   "dimensions_m": [
+    0.021,
+    0.018,
+    0.01
+   ],
+   "basis": "listing",
+   "label": "estimate",
+   "source": "XIAO ESP32-S3 3 g (OpenELAB wiki) plus about 2 g of the five pads and their leads"
+  },
+  {
+   "id": "add-neck-mic-touch-wires",
+   "body": "neck",
+   "mass_kg": 0.003,
+   "position_from_id": "add-cable-amp-vin-saddle-neck",
+   "dimensions_m": [
+    0.01,
+    0.01,
+    0.04
+   ],
+   "basis": "estimate",
+   "label": "estimate",
+   "source": "15 microphone and 4 touch Dupont wires down the neck to the saddle, share on the neck"
+  }
+ ]
+}
