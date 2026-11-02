@@ -166,14 +166,25 @@
           "when": "2026-11-01 21:37:53 EST",
           "boot": "20:30",
           "what": "'usb 1-1: USB disconnect', then 'new full-speed', 'device descriptor read/64, error -71' twice, then nothing; xhci unbind/bind at 21:40 finds no device",
-          "running": "turn_test right spin nearing the -50 deg stall, a7z_cam daemon streaming"
+          "running": "turn_test, within about 0.5 s of the start of a right spin (dmesg times are to the second)"
+        },
+        {
+          "when": "2026-11-01 21:50:55 EST",
+          "boot": "20:30",
+          "what": "Same signature: USB disconnect, full-speed retry, CC1 and CC2 Open; 13 min after the re-plug",
+          "running": "seepick --t2 run 6, within about 0.5 s of the start of a right spin, gyro up to 119 deg/s"
         }
       ],
       "hypotheses": [
         {
           "id": "H1-usbc-plug-contact",
           "claim": "The camera's USB-C plug at the A7Z lost contact: the Type-C chip read CC1 and CC2 Open at 21:37:54, the same second as the disconnect, so VBUS went off and a controller rebind could not bring it back.",
-          "status": "supported: Shawn re-plugged it and at 21:43:15 CC1 read Rd and the camera enumerated at high speed; what moved the plug is not known"
+          "status": "supported: both drops at the first lurch of a right spin with CC open, re-plug recovered the first; the second not yet re-plugged"
+        },
+        {
+          "id": "H2-lead-tug",
+          "claim": "The 1 m camera lead, stiff above the neck and saddle with its excess coiled by the backpack, levers the A-to-C adapter in the A7Z when the body lurches right.",
+          "status": "open"
         }
       ],
       "tests": [
@@ -182,6 +193,12 @@
           "what": "Re-plug the USB-C plug, then lsusb and a fresh frame",
           "status": "run",
           "results": "21:43:15 back, frames fresh"
+        },
+        {
+          "id": "T2-spin-with-plug-held",
+          "what": "Re-plug, relieve the lead at the saddle so the adapter carries no load, then 10 right-spin starts reading dmesg. H1/H2 predict no drop.",
+          "status": "queued",
+          "blocker": "A7Z offline and the plug needs a hand"
         }
       ],
       "mitigations": [],
@@ -192,7 +209,7 @@
       },
       "cause": {
         "status": "hypothesis",
-        "summary": "USB-C plug contact at the A7Z; one occurrence"
+        "summary": "USB-C plug contact at the A7Z, shaken loose on a right-spin lurch; seen twice"
       }
     }
   }

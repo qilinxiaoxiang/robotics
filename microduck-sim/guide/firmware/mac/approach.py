@@ -65,6 +65,9 @@ VTH_SPIN = 0.5       # rad/s turning in place (walk_brain: no straight-walk trim
 FACE_START = math.radians(20)   # bearing beyond which a walk starts with a turn in place
 FACE_NEAR, FACE_NEAR_R = math.radians(15), 0.35   # closer than FACE_NEAR_R and further off than FACE_NEAR: stop, turn
 FACE_DONE = math.radians(6)
+FACE_SPRING = math.radians(12)   # an in-place turn springs back when it stops. Robot 2026-11-01, 16 spins: right +5 to +31 deg
+                                 # (median about +10), left -2 to -10. So the object is carried this far past straight ahead
+FACE_MEAN_S = 0.5                # the bearing that ends a turn is averaged over this: the gait sways the body +-10 deg
 FACE_MAX_TURN = math.radians(150)
 FACE_MAX_S = 10.0
 FACE_REST_S = 1.0    # standing after a turn in place before walking: the in-place turn coasts (sim, 2026-10-24)
@@ -100,9 +103,11 @@ SCAN_DWELL_S = 1.0
 LOST_S = 1.5         # no detection this long while walking: stop and look
 JUMP_M = 0.25        # a detection this far from the estimate needs a second one agreeing within JUMP_AGREE_M
 JUMP_AGREE_M = 0.10
-TURN_CHECK_S = 1.5   # a turn held this long must show at least TURN_MIN_RATE in its direction
+TURN_CHECK_S = 3.0   # a turn held this long must show at least TURN_MIN_RATE in its direction (fitted slope)
 TURN_MIN_RATE = math.radians(3)
-WRONG_WAY_RATE = math.radians(10)    # over WRONG_WAY_S, against the command (or either way when straight: 2x)
+WRONG_WAY_RATE = math.radians(18)    # fitted over WRONG_WAY_S, against the command; a real reversal ran 20-29 deg/s, the
+                                     # start of a right spin sways +12 to +14 deg/s (robot 2026-11-01, two false stops)
+LINE_RATE = math.radians(20)         # fitted over WRONG_WAY_S, either way on a straight walk
 WRONG_WAY_S = 1.0
 FRAME_MAX_AGE_S = 0.6
 STATE_MAX_AGE_S = 0.5
@@ -165,6 +170,7 @@ class Approach:
         self.face_yaw0 = None      # IMU yaw when a turn in place began
         self.rest_until = 0.0      # p_ready stands until then
         self.yaws = collections.deque(maxlen=200)   # (t, unwrapped yaw) while walking
+        self.face_dir, self.face_bs = None, collections.deque()   # the turn in place: its direction, recent bearings
         self.head_qs = collections.deque()          # (t, neck/head pitch/yaw) for head_still
         self.walked, self.walk_budget = 0.0, None
         self.stale_t = None
@@ -347,16 +353,19 @@ class Approach:
                           self.yaws[-1][1] + wrap(st["yaw"] - self.yaws[-1][1])))
 
         def rate(span):
-            old = [p for p in self.yaws if p[0] <= self.yaws[-1][0] - span]
-            if not old:
+            """Fitted slope over the last span s: a gait in place sways +-10 deg, so two end points can cancel a turn
+            (robot 2026-11-01: 43 deg gained in 2.2 s read as -1.2 deg/s)."""
+            if self.yaws[0][0] > self.yaws[-1][0] - span:
                 return None
-            t0, y0 = old[-1]
-            return (self.yaws[-1][1] - y0) / max(1e-3, self.yaws[-1][0] - t0)
+            pts = [p for p in self.yaws if p[0] >= self.yaws[-1][0] - span]
+            mt, my = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
+            den = sum((p[0] - mt) ** 2 for p in pts)
+            return sum((p[0] - mt) * (p[1] - my) for p in pts) / den if den > 0 else None
         w = rate(WRONG_WAY_S)
         if w is not None and now - self.walk_t0 > HEAD_FREE_S:
             if self.turn and self.turn * w < -WRONG_WAY_RATE and now - self.turn_t0 > WRONG_WAY_S:
                 return f"turning the wrong way: {math.degrees(w):+.0f} deg/s while the arc is {'left' if self.turn > 0 else 'right'}"
-            if not self.turn and abs(w) > 2 * WRONG_WAY_RATE and now - self.turn_t0 > WRONG_WAY_S:
+            if not self.turn and abs(w) > LINE_RATE and now - self.turn_t0 > WRONG_WAY_S:
                 return f"not holding the line: {math.degrees(w):+.0f} deg/s on a straight walk"
         if self.turn and now - self.turn_t0 >= TURN_CHECK_S:
             w = rate(TURN_CHECK_S)
@@ -436,7 +445,7 @@ class Approach:
                 return
             if abs(b) > (FACE_NEAR if near else FACE_START):
                 self.enter("face", f"bearing {math.degrees(b):+.0f} deg: turn in place first")
-                self.face_yaw0 = st["yaw"]
+                self.face_yaw0, self.face_dir = st["yaw"], None
                 return
             self.enter("approach", f"walk: estimate x {self.est[0]:.2f} y {self.est[1]:.2f}")
 
@@ -452,7 +461,15 @@ class Approach:
             self.stand(self.head)
             return
         b = math.atan2(self.est[1], self.est[0])
-        if abs(b) < FACE_DONE:
+        if self.face_dir is None:
+            self.face_dir = 1 if b > 0 else -1
+            self.face_bs.clear()
+        self.face_bs.append((now, b))
+        while now - self.face_bs[0][0] > FACE_MEAN_S:
+            self.face_bs.popleft()
+        mean = sum(p[1] for p in self.face_bs) / len(self.face_bs)
+        if self.face_bs[-1][0] - self.face_bs[0][0] >= 0.8 * FACE_MEAN_S and self.face_dir * mean < FACE_DONE - FACE_SPRING:
+            self.face_dir = None
             self.stand(self.head)
             self.rest_until = now + FACE_REST_S
             self.enter("ready", f"facing it (bearing {math.degrees(b):+.0f} deg)")
@@ -461,7 +478,7 @@ class Approach:
             self.enter("settle", "turned in place too long: look")
             self.stand(self.head)
             return
-        self.walk(0.0, math.copysign(VTH_SPIN, b), st)
+        self.walk(0.0, self.face_dir * VTH_SPIN, st)
 
     def p_approach(self, st, now, m):
         x, y = self.est
@@ -512,7 +529,7 @@ class Approach:
             return
         if (r < FACE_NEAR_R and abs(b) > FACE_NEAR) or abs(b) > MAX_WALK_BEARING:   # too far off for the arcs
             self.stand(self.head)
-            self.face_yaw0 = st["yaw"]
+            self.face_yaw0, self.face_dir = st["yaw"], None
             self.enter("face", f"r {r:.2f} bearing {math.degrees(b):+.0f} deg: stop and turn in place")
             return
         vth = 0.0 if abs(b) < BEARING_DEAD else max(-VTH_ARC, min(VTH_ARC, K_TURN * b))

@@ -475,3 +475,7 @@ First robot run with T2 (2026-11-01 21:01, `seepick.py --t2`): found, walked and
 ## 2026-11-01 21:40: T2 retests, in-place stall at a fixed heading, camera lost
 
 Runs 2 and 3 of `seepick.py --t2` did not hold the ball, so the rise repair is still untested with a real hold. The right-turn guard that ended them is the 10/30 stall: turn_test shows it at a fixed heading (-50 to -55 deg, spring-back about 20 deg), and from +89 deg the same right command runs freely. That rules out a weak right turn and supports the twisted-lead reading of 10/30; the lead check itself has not been done. The spring-back also explains the bearing jumps in approach's face state. During the test the U20CAM dropped off USB (error -71, rebind did not help). Details: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`, `microduck-sim/FAULTS.json`.
+
+## 2026-11-01 21:55: T2 runs 4 to 6, 22 problems listed, A7Z offline
+
+The duck now finds the ball by itself and walks to about 20 cm (run 5, 0.28 m walked), but no bite since run 2: close-range turning loses to spring-back and short spins, and false wrong-way stops use up tries. The camera plug dropped twice on a right-spin lurch. My et7304 driver unbind at 21:52 took the A7Z offline. Full list: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`.

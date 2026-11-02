@@ -159,6 +159,22 @@ def test_a_turn_the_wrong_way_stops_the_run():
     assert duck.th < math.radians(40)              # stopped before it turned far (in place: 29 deg/s for ~1 s)
 
 
+def test_a_turn_in_place_carries_the_object_past_straight_ahead():
+    """The robot springs back about 10 deg when a spin stops, so a turn that stops at straight ahead ends short."""
+    duck = FakeDuck((0.4, -0.4))
+    ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                       now=lambda: duck.t, log=lambda s: None)
+    was_face, ended = False, None
+    while ended is None and duck.t < 30.0:
+        duck.advance()
+        ctl.step()
+        was_face = was_face or ctl.phase == "face"
+        if was_face and ctl.phase != "face":
+            ended = math.atan2(ctl.est[1], ctl.est[0])
+    assert ended is not None and ended > 0   # started to the right, ends a little to the left
+    assert ended < math.radians(25)
+
+
 def test_a_blob_cut_at_the_bottom_does_not_walk_it_over():
     duck = FakeDuck((0.6, 0.0))
     duck.head_pitch_max = 0.7   # the picture's bottom edge ~0.2 m out, as when it walked onto the object

@@ -37,3 +37,39 @@ The flags are in `walk_brain.Brain` (`sp_rise_old_phase`, off by default, nothin
 Why the bearing jumped and the guard tripped (`spin_abs.py`, `face_gyro.py`, yaw about gravity from the gyro): the duck stops gaining heading at about -50 to -55 deg and springs back about 20 deg when the command stops, so "facing it" at -4 becomes -22 a second later. From +89 deg the same right command ran 17-37 deg/s down to -20 deg, so the right turn itself is fine; the stall sits at a fixed heading. The earlier sim result (`--yaw-spring`, 2026-10-30) and this agree on a restoring torque from something attached, most likely the charger lead. Untested: the same turn with the lead untwisted. Register: `microduck-sim/FAULTS.json` `spin-stall-fixed-heading`.
 
 During that test the head camera dropped off USB at 21:37:53 (error -71, a controller rebind did not recover it). Register: `head-camera-usb-drop`. No camera means no further full-flow run until the plug is checked.
+
+## Every problem found while debugging T2 on the robot, 2026-11-01
+
+Fixed and deployed, the first two verified on the robot:
+
+1. In-place turn guard compared two end points, and the gait sways +-10 deg, so run 4's real turn (about 43 deg in 2.2 s) read -1.2 deg/s and ended the run. Now a fitted slope over 3 s (`approach.turn_check`, `guard_replay.py`). Run 5 no longer tripped it.
+2. A failed approach ended the whole run with tries still left. It now uses a try (`seepick.p_approach`). Run 5 and run 6 continued.
+3. A creep that starts inside the 12.5 cm mark stopped on its first tick, six times: empty bite at dx +3.5 cm. Fixed in a41939e0, no later run reached this step.
+4. A ball lost under the picture fell back on a stale estimate. Fixed in a41939e0, no later run reached this step.
+
+Deployed, not yet shown to work:
+
+5. Hand-back fall: T2 with the holding bit keeps the neck bowed (-1.14 rad against +0.35), stand61 throws the head back. seepick61 takes the rise from phase 0.50. Never run on the robot with a real hold.
+6. Spring-back after a spin: heading kept is less than heading reached (16 spins: right +5 to +31 deg, median about +10; left -2 to -10), so "facing it" at -4 reads -22 a second later. `FACE_SPRING` 12 deg past straight ahead and a 0.5 s mean bearing. In run 6 the spins ended at +13 and +9, then the walk still found -23 and -33.
+
+Open:
+
+7. "Turning the wrong way" still fires falsely in the first second of a right spin: +23 and +22 deg/s in run 6 after the threshold went to 18. It used two of the three tries.
+8. Stall at a fixed heading, `FAULTS.json` `spin-stall-fixed-heading`. Lead check not done.
+9. Short spins barely turn: 1 to 2 s nets 0 to 13 deg, because stepping starts only about 0.5 to 1 s in. Close-range aiming depends on these.
+10. The duck drifts away while turning: measured range 11.4, 15.5, 17.9, 18.2 cm across run 5's spins, which ended that try on "not arrived".
+11. Camera USB-C plug drops on the first lurch of a right spin, twice in 13 minutes (21:37:53, 21:50:55), `FAULTS.json` `head-camera-usb-drop`. Software cannot bring it back; a loose plug is the leading explanation.
+12. A dead camera is reported as a missing ball: run 6 searched for 16 s and said "no orange object in front" with no camera on the bus. The daemon stays up with a stale frame file.
+13. Approach failures use the same tries as picks, so run 5 and run 6 used all three without a single bite (`attempts` empty).
+14. The walk-up's dead reckoning overstates progress: run 6 estimate 14 cm, measured 22.6 cm; while walking in run 5, seen x swings 0.23 to 0.41 m. Stop parameters varB are still not applied.
+15. The head moves during a spin: approach sends its aim from `HEAD_FREE_S`, head pitch reaches 1.07 rad mid-turn.
+16. The spin pins walk61's turn input at +-1.55, outside the trained +-1.
+17. Touch bus 0x2a read errors appear in dmesg during the spins (touch-twi0-jam family).
+18. Battery-guard auto-arm on the charger rail: promised, not done.
+
+My own tool and procedure errors:
+
+19. `t2snap.py` raised on a stale camera and left the old JPEG in place; I copied and read it as if it were new. It also leaves its head command in `/tmp/duck_cmd.json`.
+20. A first analysis used yaw from a raw quaternion, gimbal-locked by the IMU mount, and read nonsense (`walk_brain.body_quat` or gyro about gravity are correct).
+21. At 21:52 I unbound the et7304 Type-C driver over ssh to test the camera drop. The A7Z stopped answering on Wi-Fi and Tailscale within seconds. Never unbind this driver with the brain running.
+22. I asked Shawn to place the ball and to check the lead when the duck could search for itself. Search first; only a real physical block goes to him.

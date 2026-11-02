@@ -225,7 +225,7 @@ class SeePick:
             self.meas = []
             self.enter("aim", f"arrived at x {self.app.result.get('x')} y {self.app.result.get('y')}")
         elif self.app.phase == "failed":
-            self.finish(False, f"approach: {self.app.result.get('why')}")
+            self.next_try(f"approach: {self.app.result.get('why')}")
 
     def p_aim(self, st, now):
         est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
