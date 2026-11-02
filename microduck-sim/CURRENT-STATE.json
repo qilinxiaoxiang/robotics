@@ -659,6 +659,19 @@
    "source": "Amazon order details page read in Shawn's Chrome 2026-11-01; product page B0H4LC2J37 'About this item' read the same day",
    "max_age_days": 90,
    "measure": "Amazon Your Orders for any later battery or charger order; count the packs and chargers on the bench"
+  },
+  "head_pose_vs_chain_scan": {
+   "value": "Held poses, charger pack on, real minus chain, foot frame. Bend (groundpick 0.33, neck -1.266, head -0.256): camera z -16 mm (14.5 against chain 30.4, deployed correction gives 16.6), x -9.6 mm, axis 6.9 deg, head lowest about 3 mm over the floor against 22. Stand (neck +0.187, head +0.385): camera x +22 mm, z -11 mm, axis 11.3 deg further nose-down. Which joint holds the angle is not separated: one constant of trunk +9.7 deg or neck -10.4 deg explains most of both.",
+   "meaning": "How far the rigid sim chain places the head and camera from the real robot at the logged joint angles. The deployed camera model keeps its -13 mm bow correction and +11.97 deg mount pitch; constant trunk, neck and head offsets did not pass the 5 mm ruler bar.",
+   "verified_at": "2026-11-01",
+   "source": "microduck-sim/scan-20261101/README.md: two Scaniverse meshes fitted to the as-built model with color_fit.py, joints from duck_wired_log_app1101-203552.jsonl",
+   "measure": "rescan the held pose, then run scan-20261101/color_fit.py and chain_fit.py; camera spread 0.3-2 mm among random starts",
+   "max_age_days": 30,
+   "superseded": [],
+   "consumers": [
+    "guide/firmware/mac/duck_kin.py mount interpretation",
+    "sim gap studies"
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
