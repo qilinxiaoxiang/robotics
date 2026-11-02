@@ -1,6 +1,6 @@
 {
  "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
- "updated": "2026-11-01 13:48",
+ "updated": "2026-11-02 12:35",
  "requirements": [
   {
    "id": "R1",
@@ -45,8 +45,8 @@
     "eightdir_20261030.json: v2 (openWakeWord round 2, models/oww/mochi_v2.onnx) gives 0 peaks >= 0.3 on either ear in the 8.7 min of Shawn moving and talking before the eight calls (20:09-20:17), where E3's live rule would have fired 3 times plus 4 repeat pairs; 0 false on 11.7 min held-out life talk, 28 min synthetic speech, 489 web negatives (results/mochi_v2*.json)",
     "21:00-21:08 live run (namecall_20261030-210005.jsonl, v2 per ear 0.5/0.3, ILD side rule): 8 answers; the life recording holds 17 calls by Whisper-small transcript (results/events_2100_20261030.json): 9 scored >= 0.5 (one fell inside the previous answer), 8 scored 0.00-0.20 and went unanswered; the 3 non-call voice events (talk) scored 0.00: no false answer -> R1 holds on this run: 0 false answers in 8 min with Shawn talking in between"
    ],
-   "status": "gap",
-   "gap": "E3 (deployed) answers Shawn's ordinary talk: 4 false answers 19:57-20:08 and 12 in 20:21-20:31. v2 shows zero false wakes on every held-out set and on tonight's 8.7 min pre-call stretch; not yet live (A7Z offline from 20:31)."
+   "status": "partial",
+   "gap": "E3's false answers are history: v2 and v3 ran live with 0 false answers (10/30 21:00 v2, 8 min; 10/31 17:43 v3, 3 calls 3 answers; 10/31 20:19 v3, 4 calls 4 answers). The live time is short; no long stretch with the duck left on has been counted, and v4, the local default, is not on the A7Z."
   },
   {
    "id": "R2",
@@ -93,7 +93,7 @@
     "2026-11-01 front-end trials (results/turn_frontend_20261101.json): turn noise is footstep/servo impacts (10 % of frames carry 70 % of the energy; between impacts the level is near standing). DeepFilterNet3 with +30 dB pre-gain on each ear, then v3: held-out calls with live-level turn noise 7/8 (raw 2/8), clean 8/8, one peak in 290 s of whole motion audio (10/31 20:21:57, probably a real call). v4 the same 7/8 with 2 peaks. RNNoise and a learned-PSD Wiener filter fail; round 5 (v5, 360 motion windows) rejected for 7 false wakes on held-out life talk."
    ],
    "status": "gap",
-   "gap": "Calls spoken while the body turns: solved offline by DeepFilterNet3 (+30 dB pre-gain) during the duck's own turns (7/8 at the live level); not yet on the A7Z: needs a streaming runtime there and its CPU cost with the brain running (A7Z offline since 10/31 20:45)."
+   "gap": "Calls spoken while the body turns: solved offline by DeepFilterNet3 (+30 dB pre-gain) during the duck's own turns (7/8 at the live level); not yet on the A7Z: needs a streaming runtime there and its CPU cost with the brain running. The A7Z has been back online since 11/01; nothing has been installed since the 10/30 22:18 namecall.py and v3 (checked 2026-11-02 12:15)."
   },
   {
    "id": "R3",
@@ -303,7 +303,7 @@
     "2026-11-01 built (namecall.py YAW_CAP 1.40; the expressor's orient_threshold off, without which a 1.40 look left the head at 0.60). As-built sim (glance-20261101/README.md, 2026-11-01 manifest, 7.0/7.8 V, 17 % dropped reads, 3 seeds, caller at +90/-90/+150 deg): 18 of 18 no fall, trunk tilt change <= 1.6 deg, drift <= 0.3 cm, head yaw joint 1.23-1.31 rad (1.08-1.18 at the old 1.2 cap): the camera sees about +-104 deg."
    ],
    "status": "built",
-   "gap": "Not on the robot (A7Z offline since 10/31 20:45): install and a live check that the glance finds a caller at 90 deg."
+   "gap": "Not on the robot: the A7Z is online again and still holds the 10/30 22:18 namecall.py (YAW_CAP 1.2, checked 2026-11-02). Needs the install and a live check that the glance finds a caller at 90 deg."
   },
   {
    "id": "R12",
