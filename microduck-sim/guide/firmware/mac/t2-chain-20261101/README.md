@@ -89,3 +89,16 @@ My own tool and procedure errors:
 32. Run 8 fell 2.76 s into a look spin, the only spin with the head ramping from 1.33 to 0.45 rad as it began and the only one over 11 deg tilt (20). Look turns now settle the head first; one fall, so the cause is not proven.
 33. Scan misses in run 7 and at the start of run 8 stay unexplained: no frames were saved.
 
+
+## Run 9 and the fixed beak spot (`robot-20261101/beak_at_close.py`, `beak_jacobian.py`, `picks/`)
+
+34. Run 9 with the new logic: found the ball, walked up, no fall, two picks inside the window (x 0.110 y -0.028, x 0.102 y -0.007), both empty. The ball stayed where it was after each.
+35. T2 on the robot closes at one spot whatever the ball: mouth tip x 0.118 to 0.122, y 0.003 to 0.006, z 0.011 to 0.018 at phase 0.35 in all four picks, over balls 2.2 cm apart in x and 2.3 cm in y. The sim moved its pad about a third of the offset. Tip minus ball at that moment: held run 1 dx +2.2 dy +2.4; misses dx 0 dy +0.9, dx +0.8 dy +3.1, dx +1.7 dy +1.3. So the working window is about +-0.7 cm around x 0.100 y -0.021, one hold wide.
+36. The picture feeds T2 for only the first 0.35 s (phase 0.08) on the robot and about 1 s in the sim, where it leaves at phase 0.25; the box then stays frozen. All four picks.
+37. Head yaw moves the tip 0.060 m/rad at the close pose. Head and neck pitch move it along the same line, x and z together, so a head correction exists for y and none for x (1 cm of x at constant z needs over 1 rad).
+
+## Yaw correction and run 10 (`yaw_sweep.py`)
+
+38. `yaw_off` on T2's head yaw goal. First T2 took back two thirds of it (action +0.2 against -0.3): it sees the joint off its goal. With the offset hidden from its observation: pad error 2.1 to 0.8 cm at dy -2, 3.0 to 1.8 at dy -3; sim holds 5 of 56 against 2 of 56, no falls. Not yet exercised on the robot.
+39. Run 10 fell in a face turn, second spin fall after run 8. Bearing +25 deg with the ball at x 0.08: head at 0.39 for 1.25 s, then a 0.6 rad head drop mid-spin (the aim head sent after HEAD_FREE_S), turn at 1.55, stop, tilt grew and it went over 0.8 s after the stop. It then burned three tries in 0.8 s on the guard's stand mode.
+40. Spin rate by input, 51 spins: 18 to 27 deg/s at 1.0 to 1.5, -4 and +5 deg/s from 1.5 up, tilt highest there. Wind-up from a stall may feed that bin, so cause and effect are not separated. SPIN_TURN_MAX 2.0 to 1.25 is the test. Head stays default in place; a near ball's bearing finishes on the IMU; a guard stand ends the run. Partial until spins on the robot show the rate and no fall.

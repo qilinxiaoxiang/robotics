@@ -46,8 +46,11 @@ PICK_WIN = 0.03            # m: |dx| and |dy| within this -> pick. Robot 2026-10
 # T2 window, foot frame (t2-chain-20261101/README.md). Robot holds: T2 x 0.100 y -0.021, seepick61 x 0.098 y -0.015. Robot misses: T2 x 0.122
 # y -0.005, seepick61 x 0.133 y 0 and x 0.112 y +0.049. As-built sim, real sphere (window_sweep.py): pad error at close grows with the offset,
 # about 2 cm at dx +3 and 3 cm at dx +4, held 0 of 60 from dx +2 to +6. A wider window only bites air. Two holds: the centre is thin evidence.
-T2_WIN_X = (0.085, 0.115)
-T2_WIN_Y = (-0.035, 0.005)
+# T2 closes at one spot whatever the ball (beak_at_close.py): run 9 missed at x 0.110 y -0.028 and x 0.102 y -0.007. x has no correction and stays
+# about +-0.8 cm around the hold; head yaw (T2_YAW_M_RAD, walk_brain yaw_off) carries y within about +-1.8 cm of T2_Y. Sim yaw_sweep.py: dy -2 err 2.1 -> 0.8 cm.
+T2_WIN_X = (0.090, 0.108)
+T2_WIN_Y = (-0.045, 0.008)
+T2_YAW_M_RAD = 0.060
 T2_Y = -0.018              # m: where the creep and the turn steer the object; the two holds sat here, the walk veers about 2 cm per creep
 NUDGE_FROM = 0.135         # m: from here in the creep is timed, and never stops on what it sees. Stop-on-sight gave 0.1 s and no move at 0.125 and
 NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124. Creeps of 1-1.5 s moved 1-5 cm (12 creeps, robot 2026-11-01)
@@ -177,7 +180,7 @@ class SeePick:
         o = self.obj
         obj = {"x": round(o["x"], 4), "y": round(o["y"], 4), "size": round(o["size"], 4), "t": o["t"]}
         if self.t2:
-            obj.update(self.pix_box(o))
+            obj.update(self.pix_box(o), yaw_off=round((o["y"] - T2_Y) / T2_YAW_M_RAD, 3))
         return {"mode": "seepick", "phase": 1.0, "object": obj}
 
     def pix_box(self, o):
@@ -243,6 +246,9 @@ class SeePick:
             self.enter("aim", f"arrived at x {self.app.result.get('x')} y {self.app.result.get('y')}")
         elif self.app.phase == "failed":
             why = self.app.result.get("why")
+            if "stand mode" in why:   # a guard stood it down, usually a fall: no try can run (run 10 burned three in 0.8 s)
+                self.finish(False, why, stop=False)
+                return
             if why == ap.NOT_IN_VIEW and self.look_n < len(LOOK_TURNS):   # looking around does not use up a pick try
                 self.enter("look", f"nothing in view: body turn {self.look_n + 1} of {len(LOOK_TURNS)}")
             else:

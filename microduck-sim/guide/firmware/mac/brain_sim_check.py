@@ -633,6 +633,8 @@ class SeePick:
             if not self.pix.seen and self.ev["first_lost_view_t"] is None:
                 self.ev["first_lost_view_t"] = round(t - self.switched, 2)
             self.holding_now = self.holding()
+            if self.a.sp_aim_yaw:
+                last = dict(last, yaw_off=self.a.sp_offset[1] / 0.060)
             return {"mode": "seepick", "object": last, "_holding": self.holding_now}
         vis = self.visible()
         if not vis and self.ev["first_lost_view_t"] is None:
@@ -1740,6 +1742,7 @@ def main():
                          "microduck_ground_grasp_env_cfg, a pinched block creeps out of the wedge at pyramidal / 1)")
     sp.add_argument("--sp-pix", action="store_true", help="T2: the object as the tracker's picture box (seepickpix61.onnx in --models)")
     sp.add_argument("--sp-bit-off", type=float, default=None, help="phase from which the policy reads holding 0 (trial)")
+    sp.add_argument("--sp-aim-yaw", action="store_true", help="T2: send yaw_off = dy / 0.060 rad, as seepick.py does")
     sp.add_argument("--sp-rise-old", type=float, default=None, help="phase from which seepick61 finishes T2's rise once holding (default walk_brain.SP_RISE_OLD_PHASE; 2 = never)")
     sp.add_argument("--sp-blend", type=float, default=None, help="s; blend the pick's last goals into stand61's after the hand-back (trial)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")

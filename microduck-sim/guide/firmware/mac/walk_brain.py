@@ -107,6 +107,11 @@ SP_AGE_MAX = 2.0
 # T2 with the holding bit keeps the neck bowed (-1.14 rad on the robot, stand61's default +0.35) and stand61 threw it back and
 # fell, 2026-11-01. From this phase, once holding, seepick61 finishes the rise (t2-chain-20261101/README.md).
 SP_RISE_OLD_PHASE = 0.50
+# T2 on the robot closes at one spot whatever the ball: tip x 0.118-0.122, y 0.003-0.006 at phase 0.35 in all four picks of 2026-11-01
+# (beak_at_close.py). Head yaw moves the tip 0.060 m/rad there (beak_jacobian.py), so a pick can carry "yaw_off" (rad), added to T2's
+# head yaw goal over these phases. Head and neck pitch cannot do the same for x: they move the tip along nearly the same line, x and z together.
+SP_YAW_OFF_MAX = 0.3
+SP_YAW_OFF_PHASES = (0.05, 0.25, 0.44, 0.55)
 SP_JAW_OPEN_DEG = 22.0
 SP_JAW_REST_DEG = 2.0
 SP_JAW = dict(open_start=0.02, open_end=0.10, close_start=0.34, close_end=0.40)
@@ -200,7 +205,9 @@ TURN_MAX = 2.0
 # approach run (2026-10-24) turned left the same way. walk61 starts stepping in place only above a turn command of about
 # 1 (clip 1.0: 14 deg in 6 s); with clip 2.0 and no drift vtheta +-0.5 turns +-170 deg in 6 s. The robot's drift while
 # turning in place is not measured yet (turn_test.py --vx 0).
-SPIN_TURN_MAX = 2.0
+# Robot 2026-11-01, 51 spins binned by input (spins_compact.jsonl): 18-27 deg/s at 1.0-1.5, -4 and +5 deg/s from 1.5 up, with the tilt highest there,
+# and both spin falls (runs 8, 10) at the 1.55 the heading term reached. Wind-up from a stall may feed that bin, so the clamp is a test. Partial: no retrain.
+SPIN_TURN_MAX = 1.25
 ARC_LEAD = 0.35
 # Gains 2026-10-23: with KP 2, KI 1 and the integral capped at 0.5 rad s the integral could not cover a steady drift, so
 # the heading settled left of the start (robot: +40 deg in 3 s, then +10 deg in 8 s). As-built sim, yaw torque 0.020 N m,
@@ -446,6 +453,7 @@ class Brain:
         self.sp_rise_old_phase = SP_RISE_OLD_PHASE
         self.sp_old_rise = False
         self.hand_blend = None
+        self.sp_yaw_off = 0.0
         self.sp_policy = "seepick"  # "seepickpix" when the pick started with a picture object (u, v, w), fixed per pick
         self.head_cmd = np.zeros(4, dtype=np.float32)  # smoothed head pose deltas handed to walk61/stand61
         self.base_want = {"mode": "monitor"}  # the command in force outside a kick (the last one accepted)
@@ -739,6 +747,7 @@ class Brain:
                 # the policy for the whole pick
                 self.sp_policy = "seepickpix" if is_pix_object(want.get("object")) else "seepick"
                 self.sp_old_rise = False
+                self.sp_yaw_off = float(np.clip(float((want.get("object") or {}).get("yaw_off", 0.0)), -SP_YAW_OFF_MAX, SP_YAW_OFF_MAX))
                 if self.sp_policy not in self.sessions:
                     raise RuntimeError(f"no {self.sp_policy}61.onnx in the models directory")
                 self.head_cmd[:] = 0
@@ -926,6 +935,12 @@ class Brain:
                 if np.any(head != 0):
                     info["head_cmd"] = np.round(head, 3).tolist()
             body = self.sp_body if self.mode == "seepick" else np.zeros(6)
+            yaw_off = 0.0
+            if self.mode == "seepick" and self.sp_yaw_off:
+                yaw_off = self.sp_yaw_off * float(np.interp(self.sp_phase, SP_YAW_OFF_PHASES, (0.0, 1.0, 1.0, 0.0)))
+                # T2 hides it from itself: seeing the joint off its goal it took back two thirds of the offset (sim, dy -2 cm)
+                state = state.copy()
+                state[6 + OBSERVATION_DOF_ORDER.index("head_yaw")] -= yaw_off
             obs = np.concatenate([state, self.last_action, command, head, body]).astype(np.float32)
             sess = self.sessions[policy]
             info["policy"] = policy
@@ -939,6 +954,9 @@ class Brain:
             self.last_action = action.astype(np.float32)
             self.goal = clamp_goal({n: self.default[n] + float(action[k]) if n in self.default else self.goal[n]
                                     for k, n in enumerate(OBSERVATION_DOF_ORDER)})
+            if yaw_off:
+                self.goal = clamp_goal(dict(self.goal, head_yaw=self.goal["head_yaw"] + yaw_off))
+                info["sp_yaw_off"] = round(yaw_off, 3)
             if self.hand_blend is not None:
                 w = (now - self.hand_blend[0]) / self.hand_blend[1]
                 if self.mode != "walk" or w >= 1.0:

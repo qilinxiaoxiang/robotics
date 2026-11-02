@@ -488,3 +488,11 @@ The flight recorder stops at 21:52:11, within a second of my et7304 driver unbin
 
 Real T2 picks: 2 (x 0.100 y -0.021 held, x 0.122 y -0.005 missed). As-built sim sweep with the real sphere: held 0 of 60 from dx +2 to +6, 2 of 6 at dx +1. T2 window tightened to x 0.085-0.115, y -0.035 to +0.005; timed creep from x 0.135; aim gate on the last sighting; creep steering. Run 8 try 2 was in place and ended by a false detection. In-place turning is unsolved: right 10 deg/s, left 19 deg/s median against 29 commanded, input clamped outside the trained range; walk61 never retrained for it. Details: microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md items 24-33. Not yet run on the robot.
 
+## 2026-11-01 23:50 T2 closes at a fixed spot on the robot
+
+Run 9: full flow, no fall, two picks in the window, both empty. FK on the logged joints: mouth tip x 0.118-0.122, y 0.003-0.006 at phase 0.35 in all four robot picks whatever the ball; the picture feeds T2 for only 0.35 s. Working window about +-0.7 cm around x 0.100 y -0.021 (one hold). Head yaw moves the tip 0.060 m/rad; no head correction exists for x. Testing a yaw_off on the T2 goal in the sim. README items 34-37.
+
+## 2026-11-01 23:40 Run 10 spin fall, spin clamp
+
+Run 10 fell in an in-place turn. Spin rate collapses at input 1.5 and up (about 0 deg/s, against 18-27 at 1.0-1.5). SPIN_TURN_MAX lowered to 1.25 as a test, head fixed during in-place turns, near-ball bearing finished on the IMU. yaw_off on T2's head yaw deployed, sim only so far (dy -2: pad error 2.1 to 0.8 cm). README items 38-40.
+

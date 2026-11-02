@@ -164,6 +164,7 @@ class Approach:
         self.seen_walked = 0.0     # self.walked at the last detection
         self.pending = None        # a far-off detection waiting for a second one
         self.last_idx, self.walk_t0, self.cmd, self.cmd_t = None, None, None, 0.0
+        self.face_b0 = None
         self.scan_i, self.approaches, self.meas = 0, 0, []
         self.head = dict(DEFAULT_HEAD)
         self.turn = 0              # arc in force: -1 right, 0 straight, +1 left
@@ -213,7 +214,7 @@ class Approach:
         if turn != self.turn or self.turn_t0 is None:
             self.turn, self.turn_t0 = turn, now
         cmd = {"mode": "walk", "vx": vx, "vy": 0.0, "vtheta": round(vth, 3), "for_s": CMD_FOR_S}
-        if now - self.walk_t0 >= HEAD_FREE_S:
+        if vx and now - self.walk_t0 >= HEAD_FREE_S:   # in place the head stays default: run 10's 0.6 rad head drop at 1.25 s came during the spin it fell in
             if st is not None and self.est is not None and now - getattr(self, "aim_t", -1.0) >= AIM_PERIOD_S:
                 self.head, self.aim_t = self.aim_head(st, *self.est, walking=True), now
             cmd["head"] = {k: self.head[k] for k in ("head_pitch", "head_yaw") if k in self.head}
@@ -457,13 +458,24 @@ class Approach:
             if why:
                 self.finish(False, why)
                 return
-        if self.est is None or now - (self.seen_t or 0) > 2.0:
+        lost = self.est is None or now - (self.seen_t or 0) > 2.0
+        if lost and self.face_dir is not None and self.face_b0 is not None and abs(self.face_b0) > 0:
+            # the default head does not see a near object: finish the bearing it had on the IMU
+            if self.face_dir * wrap(st["yaw"] - self.face_yaw0) >= abs(self.face_b0) - FACE_SPRING or now - self.t_phase > FACE_MAX_S:
+                self.face_dir, self.face_b0 = None, None
+                self.stand(self.head)
+                self.rest_until = now + FACE_REST_S
+                self.enter("ready", "turned the bearing on the IMU")
+                return
+            self.walk(0.0, self.face_dir * VTH_SPIN, st)
+            return
+        if lost:
             self.enter("settle", "lost while turning in place: look")
             self.stand(self.head)
             return
         b = math.atan2(self.est[1], self.est[0])
         if self.face_dir is None:
-            self.face_dir = 1 if b > 0 else -1
+            self.face_dir, self.face_b0 = (1 if b > 0 else -1), b
             self.face_bs.clear()
         self.face_bs.append((now, b))
         while now - self.face_bs[0][0] > FACE_MEAN_S:
