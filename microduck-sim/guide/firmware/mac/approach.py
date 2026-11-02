@@ -124,6 +124,9 @@ ALPHA_WALK, ALPHA_STAND = 0.5, 0.8   # filter gain of a new detection
 MIN_AREA = 60
 
 
+MAX_SEE_R = 1.0      # m
+
+
 def below_horizon(kin, st, w, h):
     """accept(x, y, bw, bh) for orange_target.detect: an object on the floor is lower than the camera, so all of it lies
     below the horizon; a blob reaching above it (shelves, walls, people) is something else."""
@@ -132,7 +135,11 @@ def below_horizon(kin, st, w, h):
 
     def accept(x, y, bw, bh):
         v = kin.horizon_v(x + bw / 2.0, st["q"], st["gb"], w, h)
-        return v is None or y > v
+        if not (v is None or y > v):
+            return False
+        # a 12 mm ball is seen to about 0.6 m. Runs 12 and 13 took orange 2.8-5.9 m away for it and walked over the real ball toward it (robot 2026-11-01)
+        p = kin.pixel_to_ground(x + bw / 2.0, y + bh, st["q"], st["gb"], w, h)
+        return p is None or math.hypot(*p) <= MAX_SEE_R
     return accept
 
 
