@@ -642,6 +642,7 @@ ILD_SIDE_MIN_DB = 1.5             # ... when it is at least this far from the of
                                   # from it except +135 deg (0.2, left to the SRP); a free-field scene (no head) reads
                                   # about -1.0 and must not override
 ILD_HEAD_REST_RAD = 0.2           # the level side is in the head frame; it is used only with the head this near rest
+FINDER_WAKE_MARGIN_S = 2.0        # the face finder runs only around a call: this long past the attention that needs it
 SIDE_LAG_MIN = 2.0                # samples at 48 kHz: an ear-pair lag at least this big decides the side (77 mm = 10.8)
 SIDE_LAG_MIN_PEAK = 0.35          # ... and only with a GCC-PHAT peak this high: 2026-11-02 14:06:32 a 0.229 peak read right (+5.5) with the caller on
                                   # the left while the SRP and the raw level read left; the 7 camera-confirmed calls that run all peaked at 0.47 or more
@@ -1627,9 +1628,15 @@ class NameCall:
                     t_hit=hit["t_hit"], span_s=hit["span_s"], kw_p=hit["tokens"][0] if hit.get("tokens") else None,
                     repeat=bool(hit.get("repeat")))
 
+    def wake_finder(self, for_s):
+        wake = getattr(self.finder, "wake", None)   # test doubles only have latest()
+        if wake is not None:
+            wake(for_s)
+
     def respond(self, det, now):
         """Turn a detection into a take (azimuth in the head frame -> resting frame). A recognised name without a
         bearing (az_rad None) gets a quack and no head move; during attention it extends the attention."""
+        self.wake_finder(self.attend_s + FINDER_WAKE_MARGIN_S)
         if det.get("az_rad") is None:
             rec = dict(det, head_yaw_now=round(self.head_yaw_now, 3))
             if self.bank is not None:
@@ -1800,6 +1807,7 @@ class NameCall:
             self.head.release(now)
             self.log.write("attend_done", face_seen=self.face_seen)
             return
+        self.wake_finder(FINDER_WAKE_MARGIN_S)
         face = self.finder.latest(now) if self.finder is not None else None
         if face is not None and face["t"] > self.face_used_t:
             self.face_used_t, self.face_t = face["t"], now
@@ -2288,7 +2296,7 @@ def main(argv=None):
     if nc.head is not None and not a.no_face:
         try:
             from facefind import FaceFinder
-            nc.finder = FaceFinder(person=not a.no_person).start()
+            nc.finder = FaceFinder(person=not a.no_person, on_demand=True).start()
             log.write("face_finder", rate_hz=nc.finder.rate_hz, det_size=nc.finder.det_size,
                       person=bool(nc.finder.person), person_hz=nc.finder.person_hz, person_err=nc.finder.person_err)
         except Exception as e:     # no camera daemon, no models: the attention phase holds the heard bearing instead

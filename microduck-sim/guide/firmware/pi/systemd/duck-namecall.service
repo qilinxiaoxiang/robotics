@@ -1,0 +1,10 @@
+[Unit]
+Description=MicroDuck name call (namecall_boot.py waits for the brain standing in walk mode, then runs namecall.py)
+After=multi-user.target duck-camera.service
+[Service]
+User=radxa
+ExecStart=/home/radxa/.venvs/duck-policy/bin/python /home/radxa/rt/microduck-sim/guide/firmware/mac/namecall_boot.py
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

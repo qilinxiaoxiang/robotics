@@ -55,8 +55,10 @@ class FaceFinder:
     """
 
     def __init__(self, pipeline=None, frames=None, hold=None, rate_hz=RATE_HZ, det_size=DET_SIZE, shape=None, now=time.time,
-                 person=None, person_hz=PERSON_HZ):
+                 person=None, person_hz=PERSON_HZ, on_demand=False):
         self.pipeline, self.frames, self.hold_fn, self.now = pipeline, frames, hold, now
+        # on_demand: the detector stays idle until wake(); about 1.1 of the A7Z's cores otherwise (2026-11-02)
+        self.on_demand, self.awake_until = on_demand, 0.0
         self.rate_hz, self.det_size, self.shape = rate_hz, det_size, shape
         # person: None/False = faces only; True = load personfind.PersonDetector in start(); or a detector object with
         # detect(img_bgr) -> (n, 5) x1 y1 x2 y2 score (tests)
@@ -77,6 +79,9 @@ class FaceFinder:
         self.thread = None
 
     # --- lifecycle
+    def wake(self, for_s):
+        self.awake_until = max(self.awake_until, time.monotonic() + for_s)
+
     def start(self):
         if self.frames is None or self.hold_fn is None or self.shape is None:
             import a7z_cam
@@ -200,6 +205,9 @@ class FaceFinder:
         next_t = 0.0
         while not self.stop_ev.is_set():
             now = time.monotonic()
+            if self.on_demand and now >= self.awake_until:
+                time.sleep(0.05)
+                continue
             if now < next_t:
                 time.sleep(min(0.02, next_t - now))
                 continue

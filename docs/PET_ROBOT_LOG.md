@@ -554,3 +554,7 @@ Shawn saw about 5 % and the duck stayed quiet. The brain log's last row (14:09:1
 Name call in answer mode, 14:02-14:08: 9 calls, 9 quacks, no known false answer, faces found on 8. At 14:06:32 Shawn was on the left and the duck looked right: the ear-pair lag was +5.5 at peak 0.229, the weakest of the run, and it overrode the SRP side and the +6.49 dB level. Lag now decides only at peak 0.35 or more (`SIDE_LAG_MIN_PEAK`), which sends that call left. This threshold rests on one failure and 7 right calls from one session; older logs on the A7Z were not checked because it is off. Not on the robot yet.
 
 App correction: the battery reading first went into the generated `microduck_rl/cmu/simulator` copy; it now lives in `microduck-simulator` (commit df3dea6) and is deployed to the Mac mini and the Mac vite server.
+
+## 2026-11-02 15:30 Name call runs as a service, face finder on demand
+
+Shawn: "先起起来 以后自动启动好了 如果功耗不高的话". The face finder now runs only around a call. Idle name call fell from about 1.5 cores to 0.39, the brain rose from 45.6 to 48.2 Hz, CPU temperature from 52 to 47 C. Battery power was not measured. `duck-namecall.service` runs `namecall_boot.py`, which waits for the brain in walk mode at zero velocity and restarts name call after it exits; records in `~/duck-logs/namecall_boot.jsonl`. Enabled at 15:30; a real power-on and a call on this version are still to be checked. The App does not show this service's health yet.
