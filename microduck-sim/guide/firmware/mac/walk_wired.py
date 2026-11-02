@@ -118,6 +118,7 @@ ADDR_TORQUE, ADDR_P_GAIN, ADDR_GOAL, ADDR_VEL = 64, 84, 116, 128
 # Velocity (128, 4 B) and Present Position (132, 4 B) as one 10-byte block. The current adds 2 bytes to each of the 15
 # status packets: 0.3 ms on the 1 Mbaud servo bus, 0.6 ms on the A7Z's 500 kbaud J12 link, no extra transaction.
 ADDR_CUR = 126
+ADDR_TEMP = 146
 STATE_FMT = "<hii"
 STATE_SIZE = struct.calcsize(STATE_FMT)
 MAX_STATUS_LEN = 64  # status packet LEN field (instruction + error + params + CRC); the largest read here is 4 + 10
@@ -687,6 +688,62 @@ def write_cmd(path, want, why):
     print(f"STOP -> {what}: {why}", flush=True)
 
 
+# 2026-11-02 00:55 (A7Z log app1102-005438, stand-leash-20261102/fall_slice.json): the duck fell on its side, the tilt
+# stop ramped it to STAND on the floor, the right hip and knee pressed against each other 930 and 760 ticks from their
+# goals at 1.8-2.0 A, and after about a second the hip servo latched a hardware error. Measured in that log at KP 400:
+# 60 ticks of error 60 mA, 100 ticks 130 mA, 220 ticks 440 mA, 500 ticks 1550 mA. The power-up stand on the side peaked
+# at 220 ticks (head pitch) and 118 (knees), so 250 leaves that ramp as it was.
+LEASH_LYING_Z = -0.5  # body gravity z over this is lying: the Brain's own "not upright" (walk_brain.py)
+LEASH_TICKS = 250
+LEASH_BLOCKED_TICKS = 60  # lying and pinned this long: no reason to keep pushing, and 450 mA for minutes heats the servo
+LEASH_BLOCKED_S = 1.0
+LEASH_BLOCKED_MOVE_TICKS = 8  # a joint that moved this far is not blocked
+
+
+HW_ERROR_BITS = {0x01: "input voltage", 0x04: "overheating", 0x08: "encoder", 0x10: "electrical shock", 0x20: "overload"}
+
+
+def hw_error_text(bits):
+    return "+".join(n for b, n in HW_ERROR_BITS.items() if bits & b) or f"0x{bits:02x}"
+
+
+class StandLeash:
+    """Open-loop stand, lying down: a joint's goal stays within LEASH_TICKS of where the joint is, so a leg pressed
+    against the floor or the other leg gets a bounded current instead of the whole ramp's error. The ramp itself runs
+    on, so a free joint follows it. A joint engaged while lying keeps its leash after the robot is righted until it has
+    caught up (no snap of the remaining error at KP 400). Standing upright, a joint is never engaged."""
+
+    def __init__(self):
+        self.on, self.ref = set(), {}
+
+    def engaged(self):
+        return sorted(self.on)
+
+    def apply(self, goal, pos, lying, active, now):
+        """goal {id: tick}, pos present ticks in wb.IDS order -> the goal to write."""
+        if not active:
+            self.on, self.ref = set(), {}
+            return goal
+        out = dict(goal)
+        for i, p in zip(IDS, pos):
+            err = goal[i] - p
+            if abs(err) <= LEASH_TICKS:
+                self.on.discard(i)
+                self.ref.pop(i, None)
+                continue
+            if lying:
+                self.on.add(i)
+            if i not in self.on:
+                continue
+            ref_p, ref_t = self.ref.get(i, (p, now))
+            if abs(p - ref_p) > LEASH_BLOCKED_MOVE_TICKS:
+                ref_p, ref_t = p, now
+            self.ref[i] = (ref_p, ref_t)
+            limit = LEASH_BLOCKED_TICKS if lying and now - ref_t >= LEASH_BLOCKED_S else LEASH_TICKS
+            out[i] = p + max(-limit, min(limit, err))
+        return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", default=None, help="default: the only /dev/cu.usbmodem* (Mac) or /dev/ttyACM* (A7Z)")
@@ -819,6 +876,8 @@ def main():
     cmd_s = [0.0, 0.0, 0.0]  # EMA-smoothed (vx, vy, vtheta) handed to the Brain
     next_t = time.perf_counter()
     hw_faults, next_hw, last_block = [], time.perf_counter() + 0.5, float("-inf")
+    hw_bits = {}  # joint -> Hardware Error Status of a latched fault, for the log
+    leash = StandLeash()
     while True:
         t0 = time.perf_counter()
         got = link.sync_read(ADDR_CUR, STATE_SIZE, IDS + [JAW_ID], timeout=0.018)  # USB adds a few ms; median 6-11 ms measured
@@ -1008,7 +1067,7 @@ def main():
             if faults:
                 if now - last_print > 1.0:
                     print(f"torque refused: {faults} report a hardware error (address 70) or did not answer; "
-                          "power-cycle the robot", flush=True)
+                          "the remote's torque-off key clears a hardware error", flush=True)
                 continue
             goal_written = dict(zip(IDS, pos))
             link.sync_write(ADDR_GOAL, 4, goal_written)  # hold where they are, then enable
@@ -1151,6 +1210,12 @@ def main():
             # unchanged) left the walking-phase action jumps at 57-70 per 4 s, the same as unfiltered, and fell
             # once at the stop in three walks (unfiltered: 6 of 6 stood). Pollen trains the policies unfiltered.
             goal_written = {i: to_tick(nm, goal_out[nm]) for i, nm in zip(IDS, NAMES)}
+            was_leashed = leash.engaged()
+            goal_written = leash.apply(goal_written, pos, imu_valid and info["gb"][2] > LEASH_LYING_Z,
+                                       brain.mode == "stand", now)
+            if leash.engaged() != was_leashed:
+                print("stand leash " + (f"on {[NAMES[IDS.index(i)] for i in leash.engaged()]}: lying, goal kept within "
+                                        f"{LEASH_TICKS} ticks of the joint" if leash.engaged() else "off"), flush=True)
             link.sync_write(ADDR_GOAL, 4, goal_written)
             write_delay = 0.8 * write_delay + 0.2 * (time.perf_counter() - t_mid)
         # the jaw: its own servo, its own torque; the body may be off (calibration, grip tests) or on
@@ -1189,9 +1254,15 @@ def main():
             next_hw = now + 1.0
             hw = link.sync_read(ADDR_HW_ERROR, 1, IDS, timeout=0.015, allow_alert=True)
             faults = [nm for i, nm in zip(IDS, NAMES) if i in hw and hw[i][0] & ~INPUT_VOLTAGE_BIT]
+            hw_bits = {nm: hw[i][0] for i, nm in zip(IDS, NAMES) if nm in faults}
             if faults != hw_faults:
-                print(f"HARDWARE ERROR (address 70) on {faults}: the policy holds its last goals; hold the robot and "
-                      "power-cycle" if faults else "hardware errors cleared", flush=True)
+                temps = link.sync_read(ADDR_TEMP, 1, [i for i, nm in zip(IDS, NAMES) if nm in faults], timeout=0.015,
+                                       allow_alert=True) if faults else {}
+                detail = ", ".join(f"{nm} {hw_error_text(hw_bits[nm])}" + (f" {temps[i][0]} C" if i in temps else "")
+                                   for i, nm in zip(IDS, NAMES) if nm in faults)
+                print(f"HARDWARE ERROR (address 70) on {faults} ({detail}): the policy holds its last goals; hold the "
+                      "robot and press the remote's torque-off key, which clears it" if faults
+                      else "hardware errors cleared", flush=True)
                 hw_faults = faults
         if (imu_age > IMU_LOST_S) != imu_lost:
             imu_lost = imu_age > IMU_LOST_S
@@ -1208,6 +1279,7 @@ def main():
                                   torque=torque_on, kp=kp_for_log(kp_now), battery_dv=guard.dv if guard else None,
                                   battery=guard.state if guard else None,
                                   battery_signalled=guard.signalled if guard else None, hw_faults=hw_faults,
+                                  hw_bits=hw_bits if hw_faults else {}, leashed=[NAMES[IDS.index(i)] for i in leash.engaged()],
                                   missing=missing, read_ms=read_ms, late=link.late,
                                   # raw record for later replay and system ID: accel (m/s2, IMU frame), IMU sample
                                   # seq, servo present ticks and the goal ticks last written, the command in force
