@@ -1973,7 +1973,7 @@ def build(ctx):
         step('bp-battery', 'backpack', 'Set the battery into the cradle on the V1.40 cap',
              add=ctx.keys('battery_backpack_cap', 'bp_battery'), show=[], context=[], bench=True,
              approach={'bp_battery': [25, 0, 0]}, camera=cap_cam,
-             prepare=[{'item': 'Battery backpack cap (V1.40 print, orange)', 'qty': 1, 'kind': 'printed'},
+             prepare=[{'item': 'Battery backpack cap (V1.41 print, orange: two ear pockets in the roof)', 'qty': 1, 'kind': 'printed'},
                       {'item': 'Tattu 2S 650 mAh 75C LiPo with XT30, charged and checked (7.0 to 8.4 V)', 'qty': 1, 'kind': 'electronic'},
                       {'item': 'Polyimide (Kapton) tape, about 8 mm wide', 'qty': 'about 80 mm per battery', 'kind': 'other',
                        'note': 'The pull tab that lifts the battery out of the cradle. It is 0.05 mm thick and fits the 0.3 mm play between the battery and the bars.'}],
@@ -2045,21 +2045,24 @@ def build(ctx):
                        'Never plug the bench box\'s XT30 and the battery into the robot at the same time.',
                        'Pull a box off by its walls, never by a lead, a plug on top or the hatch.'])
 
-        # The hatch path stays above the cap back wall (cut to z 37) until it is 1.5 mm behind its seat, drops in, then slides
-        # forward: the front tabs go under the frame roof edge and the flap bump enters the slot horizontally.
+        # V1.41 hatch (V3): the front tabs go under the frame roof edge first with the rear raised 22 deg and the hatch 1.5 mm
+        # back, then the rear swings down about the roof edge (pivot x -61.75, z 41.8 in the robot frame, -8.7 in x here): the two
+        # ears drop into their roof pockets and the flap bump, level with its slot through the whole swing, enters it.
+        HATCH_PIVOT = [-61.75 - 8.7, 0.0, 41.8]
         step('bp-hatch', 'backpack', 'Close the roof over the battery with the hatch',
-             add=ctx.keys('battery_hatch'), approach={'battery_hatch': [[-8, 0, 8], [-1.5, 0, 8], [-1.5, 0, 0]]},
+             add=ctx.keys('battery_hatch'), approach={'battery_hatch': [[-1.5, 0, 0], [0, 0, 0], [0, 0, 6], [0, 0, 0]]},   # tabs in first (push 1.5 at 22 deg), lift clear, then the rear comes down with the swing
+             pose={'parts': ctx.keys('battery_hatch'), 'pivot': HATCH_PIVOT, 'axis': [0, 1, 0], 'deg': 0.0, 'from': 22.0},
              camera=ctx.cam(ctx.keys('battery_backpack_frame', 'battery_backpack_cap'), direction=TOP_REAR, margin=1.3),
-             prepare=[{'item': 'Battery hatch (V1.40 print, orange)', 'qty': 1, 'kind': 'printed'}],
+             prepare=[{'item': 'Battery hatch (V1.41 print, orange)', 'qty': 1, 'kind': 'printed'}],
              instructions=[
-                 'Done: the hatch closes the roof over the battery, flush with the top of the box. Its two front tabs sit under the roof edge of the frame, its flap lies on the back of the cap with its bump in the slot, and the two battery leads leave through the two notches in its rear edge.',
-                 'Hold the hatch by its roof, flap down at the back, just above the opening and a little behind it.',
-                 'Lower it into the opening with the main lead in its right (−Y) rear notch and the balance lead in its left (+Y) rear notch.',
-                 'Slide it forward until both front tabs are under the roof edge of the frame.',
+                 'Done: the hatch closes the roof over the battery, flush with the top of the box. Its two front tabs sit under the roof edge of the frame, its two short ears sit in the two pockets in the cap roof, its flap lies on the back of the cap with its bump in the slot, and both battery leads leave through the one window at its right (−Y) rear.',
+                 'Hold the hatch by its roof, flap down at the back, rear end raised, and pass both battery leads up through its window.',
+                 'Push the two front tabs forward under the roof edge of the frame.',
+                 'Lower the rear until the two ears drop into the pockets in the cap roof and the flap lies on the back of the cap.',
                  'Press the flap against the back of the cap until its bump clicks into the slot.',
              ],
-             checks=['The hatch top is flush with the roof and does not lift when you pull up gently at its rear edge.',
-                     'Both battery leads leave through their notches; no lead is pinched under the hatch.'],
+             checks=['The hatch top is flush with the roof, does not lift when you pull up gently at its rear edge, and does not slide back when you pull it back gently.',
+                     'Both battery leads leave through the window; no lead is pinched under the hatch.'],
              warnings=['Never press the hatch down onto a lead.'])
 
         step('bp-plug1', 'backpack', 'Connect plug 1 on top of the box and switch on',

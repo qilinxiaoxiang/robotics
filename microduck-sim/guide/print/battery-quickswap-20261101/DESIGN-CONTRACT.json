@@ -9,22 +9,80 @@
       "如果你要设计卡扣的话，PLA的强度是不是足够高？或者能不能通过巧妙的设计，让PLA的强度正好也可以卡住，同时也不会太脆而折断？",
       "出概念图",
       "有点意思 试试",
-      "明白了，试试吧。那是不是后盖也得重打？可以下一步再往下推。虽然你的示意图里面是蓝色的，但实际上打印的话，其实都用橙色打，对吧？"
+      "明白了，试试吧。那是不是后盖也得重打？可以下一步再往下推。虽然你的示意图里面是蓝色的，但实际上打印的话，其实都用橙色打，对吧？",
+      "你打的那个小盖子有3个问题 第一上面的孔出不来穿不过电池的xt30 male头 ... 第二是它卡不紧，容易脱落 ... 第三个问题是移除了电池盖的上挡板，那么卡扣它应该从上面压住电池吧",
+      "而且电池的充电头和xt30供电头在同一侧的，所以电池盖不需要设计两个出口",
+      "右侧 出",
+      "不合格的 你完全没考虑材料特性 这种弹簧片和挡舌 用PLA打印会及其脆弱 机器人是会动的 ... 压不紧我就往上贴一点3M的泡沫胶就行 完全没必要考虑那么多 只要管我之前说的3个问题就行",
+      "是的 机器人设计的第一要义是皮实 如果没必要 强烈建议不要设计脆弱结构 另外打印本身不是全部 完全可以利用其他材料才增强",
+      "另外两边那那个挡条 我虽然理解是防止前后移动的 但是有必要做这么长吗 看起来很脆弱"
     ],
-    "history": "2026-11-01: concept sheet concept/concept-sheet.png (top opening, hatch lying 1.6 mm above the roof with fixed front tabs and one PLA side snap, bars fixed, pull tab). Shawn asked what the pull tab is (Kapton tape on each battery, 0.05 mm, fits the 0.3 mm play), then 'have a try'. CAD found the cap's rear rounded top corner overhanging the battery by about 2 mm and only 12 % of the side-snap hook under the roof, so the hatch now includes the corner (flush, no growth) and the snap moved to a back flap (renders/review-sheet.png). Shawn approved this revision with the last quote, and the colour: all Orange."
+    "history": "2026-11-01: concept sheet concept/concept-sheet.png (top opening, hatch lying 1.6 mm above the roof with fixed front tabs and one PLA side snap, bars fixed, pull tab). Shawn asked what the pull tab is (Kapton tape on each battery, 0.05 mm, fits the 0.3 mm play), then 'have a try'. CAD found the cap's rear rounded top corner overhanging the battery by about 2 mm and only 12 % of the side-snap hook under the roof, so the hatch now includes the corner (flush, no growth) and the snap moved to a back flap (renders/review-sheet.png). Shawn approved this revision with the last quote, and the colour: all Orange. 2026-11-01 evening: V1.40 printed and failed three ways (XT30 does not pass the 6 mm notches, the flap bump slides out of its slot on a pull-back, the wedge holds nothing). V2 (inside hooks, then leaf springs and tongues) rejected by Shawn as PLA flexures on a moving robot; V3 as in design_v3, sheet renders-v2/review-sheet.png, released as V1.41."
   },
   "concept_render": "renders/review-sheet.png",
   "geometry": [
-    {"part": "battery_backpack_frame", "says": "box outline unchanged: front plate x -45, width |y| <= 32.05, top z 43",
-     "bounds": {"x_max": {"gt": -45.05, "lt": -44.95}, "y_max": {"lt": 32.1}, "z_max": {"lt": 43.05}}},
-    {"part": "battery_backpack_cap", "says": "cap outline unchanged: back x -75.55, top z 43",
-     "bounds": {"x_min": {"gt": -75.6, "lt": -75.5}, "z_max": {"lt": 43.05}}},
-    {"part": "battery_hatch", "says": "hatch flush with the roof (top z 43, no growth above the box)",
-     "bounds": {"z_max": {"gt": 42.95, "lt": 43.05}}},
-    {"part": "battery_hatch", "says": "back flap on the cap back face: 1.2 mm proud of x -75.55, lower edge at z 18",
-     "bounds": {"x_min": {"gt": -76.8, "lt": -76.7}, "z_min": {"gt": 17.9, "lt": 18.1}}},
-    {"part": "battery_hatch", "says": "hatch within the battery opening width and in front of the front tabs' lip end",
-     "bounds": {"y_min": {"gt": -16.0}, "y_max": {"lt": 16.0}, "x_max": {"lt": -60.9}}}
+    {
+      "part": "battery_backpack_frame",
+      "says": "box outline unchanged: front plate x -45, width |y| <= 32.05, top z 43",
+      "bounds": {
+        "x_max": {
+          "gt": -45.05,
+          "lt": -44.95
+        },
+        "y_max": {
+          "lt": 32.1
+        },
+        "z_max": {
+          "lt": 43.05
+        }
+      }
+    },
+    {
+      "part": "battery_backpack_cap",
+      "says": "cap outline unchanged: back x -75.55, top z 43",
+      "bounds": {
+        "x_min": {
+          "gt": -75.6,
+          "lt": -75.5
+        },
+        "z_max": {
+          "lt": 43.05
+        }
+      }
+    },
+    {
+      "part": "battery_hatch",
+      "says": "hatch flush with the roof (top z 43, no growth above the box)",
+      "bounds": {
+        "z_max": {
+          "gt": 42.95,
+          "lt": 43.05
+        }
+      }
+    },
+    {
+      "part": "battery_hatch",
+      "says": "V3 hatch: flush top z 43, flap 1.2 proud of the back face, ear stubs to |y| 19.5",
+      "bounds": {
+        "z_max": {
+          "gt": 42.95,
+          "lt": 43.05
+        },
+        "x_min": {
+          "gt": -76.8,
+          "lt": -76.7
+        },
+        "y_max": {
+          "gt": 19.45,
+          "lt": 19.55
+        },
+        "y_min": {
+          "gt": -19.55,
+          "lt": -19.45
+        }
+      }
+    }
   ],
-  "forbidden_parts": []
+  "forbidden_parts": [],
+  "design_v3": "V3 (release V1.41, 2026-11-01), after the V1.40 bench test: the hatch keeps the V1.40 outside flap (lift) and front lips (1.0 mm under the frame roof edge); two solid ear stubs (1.55 x 4 x 2.35 mm, |y| 15.5..19.5; Shawn: \"有必要做这么长吗 看起来很脆弱\") on the plate sit in two pockets cut in the cap roof (x -70.0..-68.15, |y| 15.9..19.7) and stop pull-back after 0.15 mm; a solid block (x -73..-63, y 5..13) hangs 0.3 mm above the battery top, foam tape as the fallback; one lead window x -72..-63.4, y -14.65..3.0, open to the rear top above z 38.64, passes the XT30 (10.2 x 5.2) and the JST-XH. No leaf springs, tongues or inside hooks. Cap: V1.40 cut and flap slot plus the two ear pockets. Frame: V1.40, not reprinted."
 }

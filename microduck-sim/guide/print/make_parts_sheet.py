@@ -767,6 +767,25 @@ INCREMENTAL_NOTES_BY_VERSION['V1.40'] = dict(
     battery_hatch=('Prints flap down, so the 1.2 mm flap bends along its layers. Clear any support under the rounded corner. '
                    'Fit: front tabs under the frame roof edge first, then press the back down until the flap clicks over the cap.'))
 
+# V1.41: battery hatch latch redo after the V1.40 bench test (2026-11-01). New cap and hatch; the V1.40 frame stays.
+# release-V1.41/retired/ holds the V1.40 cap and hatch (guide-world bytes of the V1.40 release).
+RETIRED_INCREMENTAL['V1.41'] = [
+    ('Battery backpack cap (V1.40 print)', 'Orange', HERE / 'release-V1.41' / 'retired' / 'battery_backpack_cap-V1.40.stl',
+     'No pockets for the hatch ears.', 'Cap with ear pockets'),
+    ('Battery hatch (V1.40 print)', 'Orange', HERE / 'release-V1.41' / 'retired' / 'battery_hatch-V1.40.stl',
+     'The V1.40 latch did not hold on the bench.', 'Battery hatch (ears, solid block)'),
+]
+INTRO_BY_VERSION['V1.41'] = ('V1.41 is one orange plate that redoes the battery hatch after the V1.40 bench test: a new hatch with '
+                             'two solid ears in roof pockets against pull-back, a solid block over the battery and one lead window the size of a plug, '
+                             'and a cap with a wider opening and two slots for the hooks. The V1.40 frame stays.')
+RETIRED_HEADING_BY_VERSION['V1.41'] = 'Replace this'
+RETIRED_LEAD_BY_VERSION['V1.41'] = 'Swap the cap on the V1.40 frame; the switch, the DFR1202, the battery and the two bars stay.'
+INCREMENTAL_NAMES_BY_VERSION['V1.41'] = dict(battery_backpack_cap='Battery backpack cap (ear pockets)',
+                                              battery_hatch='Battery hatch (ears, solid block, big window)')
+INCREMENTAL_NOTES_BY_VERSION['V1.41'] = dict(
+    battery_backpack_cap='Prints back face down, as V1.40. Check both ear pockets in the roof are open.',
+    battery_hatch='New. Clear any support from the window and the ears before fitting.')
+
 def page_html(version: str, body: list[str]) -> str:
     css = CSS
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

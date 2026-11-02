@@ -677,90 +677,116 @@
    "currentPrintRelease": "build-pack-20260913/redesign-20260913/printing/15-COMPLETE-INCREMENTAL-20261009/run/delivery-index.json"
   },
   "current_incremental_print_release": {
-   "version": "V1.40",
+   "version": "V1.41",
    "status": "RELEASED",
    "problem_ids": [
     "P5",
     "P6"
    ],
    "decision": "D-037",
-   "manifest": "guide/print/release-V1.40/manifest-V1.40.json",
-   "sourceBoundVerification": "guide/print/release-V1.40/run/final-binding-check.json",
-   "nativeReview": "guide/print/release-V1.40/run/native-review.json",
-   "archive": "guide/print/release-V1.40/run/zhengxia_V1.40_SD-files.zip",
-   "archiveSha256": "e541f1d0d7d15d9788c701ce4cfd4537a3fba0612ac745998882a34936980d8e",
-   "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.40",
-   "partsSheet": "guide/print/release-V1.40/PARTS-SHEET-V1.40.html",
-   "baseline": "V1.40 is one Orange plate for the tool-free battery swap on the battery-on-cap backpack (D-037): the frame with the roof opened over the battery, the cap with the roof and rounded rear corner opened and a snap slot, and the new battery hatch (guide/print/battery-quickswap-20261101/, DESIGN-CONTRACT.json). Frame and cap replace the printed redesign parts; switch, DFR1202, battery and bars move over.",
-   "notes": "2026-11-01 (Shawn: \"明白了，试试吧 ... 其实都用橙色打\"). X1C 2h12m / Elegoo 2h17m, about 40 g; hatch with no support. Gate passed with the V1.40 geometry and plug 1 resting on the roof at the right front (Shawn: \"顶上右前，没碰到\"). Guide, PARTS-SHEET-V1.39 and V1.40 deployed to the Mac mini, served bytes equal. Not printed. Releases V1.34 to V1.39 were not recorded in this pointer; their manifests are under guide/print/release-V1.3x/.",
+   "manifest": "guide/print/release-V1.41/manifest-V1.41.json",
+   "sourceBoundVerification": "guide/print/release-V1.41/run/final-binding-check.json",
+   "nativeReview": "guide/print/release-V1.41/run/native-review.json",
+   "archive": "guide/print/release-V1.41/run/zhengxia_V1.41_SD-files.zip",
+   "archiveSha256": "a0b72113910ee59509d4e6afcdbff73a6d6eccf351d53db21b40b09f40831a22",
+   "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.41",
+   "partsSheet": "guide/print/release-V1.41/PARTS-SHEET-V1.41.html",
+   "h2s": [
+    {
+     "file": "guide/print/release-V1.41/delivery-h2s/zhengxia_V1.41_Orange_Bambu-H2S_0h43m.gcode.3mf",
+     "result": "guide/print/release-V1.41/run-h2s/Orange/result.json",
+     "script": "guide/print/make_h2s.py",
+     "note": "Club Bambu H2S, Orange, Generic PLA @BBL H2S, Textured PEI Plate."
+    }
+   ],
+   "baseline": "V1.41 is one Orange plate (cap, hatch) that replaces the V1.40 cap and hatch after the 2026-11-01 bench test; the V1.40 frame stays. Hatch V3: V1.40 flap against lift, two solid ears in cap roof pockets against pull-back, a solid block 0.3 mm over the battery (foam tape fallback), one lead window open to the rear that passes the XT30 and the balance plug (guide/print/battery-quickswap-20261101/build_quickswap_v2.py, DESIGN-CONTRACT.json design_v3).",
+   "notes": "2026-11-01 (Shawn: three bench problems; \"只要管我之前说的3个问题就行\"; \"机器人设计的第一要义是皮实\"; ears shortened to 4 mm stubs: \"有必要做这么长吗 看起来很脆弱\"). X1C 43m / Elegoo 40m / H2S 43m, about 14 g. Not printed. Print gate: solids, pairs and cables pass; steps_audit reports a path collision on bp-hatch (frame 11 mm3, cap 8.6 mm3 at the start of the push-then-swing path): the rigid audit cannot model the flap bump riding down the cap wall, and the linear angle/offset blend of the guide path is not the hand motion (tabs in at 22 deg, then swing). Open item: an x-flex for the flap in steps_audit, or a two-leg pose.",
    "previous": {
-    "version": "V1.33",
+    "version": "V1.40",
     "status": "RELEASED",
     "problem_ids": [
      "P5",
      "P6"
     ],
-    "decision": "D-026",
-    "manifest": "guide/print/release-V1.33/manifest-V1.33.json",
-    "sourceBoundVerification": "guide/print/release-V1.33/run/final-binding-check.json",
-    "nativeReview": "guide/print/release-V1.33/run/native-review.json",
-    "archive": "guide/print/release-V1.33/run/zhengxia_V1.33_SD-files.zip",
-    "archiveSha256": "b642f998fcc37d0fa01b21bd626dfb7a2b702afeb0d430ca33ea4469ffc16057",
-    "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.33",
-    "partsSheet": "guide/print/release-V1.33/PARTS-SHEET-V1.33.html",
-    "h2s": {
-     "file": "guide/print/release-V1.33/delivery-h2s/zhengxia_V1.33_Yellow_Bambu-H2S_2h02m.gcode.3mf",
-     "result": "guide/print/release-V1.33/run-h2s/Yellow/result.json",
-     "script": "guide/print/release-V1.33/scripts/make_h2s.py",
-     "note": "Club Bambu H2S, Yellow only (Overture SUPER PLA+): Generic PLA @BBL H2S, Textured PEI Plate assumed (club plate not checked), 2h02m, 38.9 g."
-    },
-    "baseline": "V1.33 is three plates and supersedes the unprinted V1.32 (its speaker box is dropped). White: the head cap with two INMP441 ears, no amplifier posts, the XIAO at the roof centre and an optional third microphone seat in the back wall (y -11, z 135), plus the still unprinted V1.30 White parts (U20 face panel, A7Z saddle body and lid). Yellow: the lower head shell with the speaker pocket, twelve sound holes, amplifier rails and the 11 x 17 long-round exit (replaces the printed V1.30 shell). Black: the jaw support with the long-round exit (replaces the printed V1.30 jaw support); the V1.30 loose clamp halves still fit.",
-    "notes": "2026-10-24 (Shawn: \"按第三版做\"; H2S yellow slice; third microphone seat approved through the three-microphone session). White X1C 3h41m / Elegoo 3h56m, Yellow X1C 2h9m / Elegoo 1h53m / H2S 2h02m, Black X1C 1h13m / Elegoo 1h5m. Gate passed with the V1.33 geometry and routes (the back seat at z 133 met the drawn ID13-14-15 cables, so it sits at z 135). Support maps for White unchanged from V1.32.",
+    "decision": "D-037",
+    "manifest": "guide/print/release-V1.40/manifest-V1.40.json",
+    "sourceBoundVerification": "guide/print/release-V1.40/run/final-binding-check.json",
+    "nativeReview": "guide/print/release-V1.40/run/native-review.json",
+    "archive": "guide/print/release-V1.40/run/zhengxia_V1.40_SD-files.zip",
+    "archiveSha256": "e541f1d0d7d15d9788c701ce4cfd4537a3fba0612ac745998882a34936980d8e",
+    "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.40",
+    "partsSheet": "guide/print/release-V1.40/PARTS-SHEET-V1.40.html",
+    "baseline": "V1.40 is one Orange plate for the tool-free battery swap on the battery-on-cap backpack (D-037): the frame with the roof opened over the battery, the cap with the roof and rounded rear corner opened and a snap slot, and the new battery hatch (guide/print/battery-quickswap-20261101/, DESIGN-CONTRACT.json). Frame and cap replace the printed redesign parts; switch, DFR1202, battery and bars move over.",
+    "notes": "2026-11-01 (Shawn: \"明白了，试试吧 ... 其实都用橙色打\"). X1C 2h12m / Elegoo 2h17m, about 40 g; hatch with no support. Gate passed with the V1.40 geometry and plug 1 resting on the roof at the right front (Shawn: \"顶上右前，没碰到\"). Guide, PARTS-SHEET-V1.39 and V1.40 deployed to the Mac mini, served bytes equal. Not printed. Releases V1.34 to V1.39 were not recorded in this pointer; their manifests are under guide/print/release-V1.3x/.",
     "previous": {
-     "version": "V1.32",
+     "version": "V1.33",
      "status": "RELEASED",
      "problem_ids": [
       "P5",
       "P6"
      ],
-     "decision": "D-025",
-     "manifest": "guide/print/release-V1.32/manifest-V1.32.json",
-     "sourceBoundVerification": "guide/print/release-V1.32/run/final-binding-check.json",
-     "nativeReview": "guide/print/release-V1.32/run/native-review.json",
-     "archive": "guide/print/release-V1.32/run/zhengxia_V1.32_SD-files.zip",
-     "archiveSha256": "7d1a94704f1c1badfd0ac8db591eb7d870b262634948fd83617888008bc44917",
-     "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.32",
-     "partsSheet": "guide/print/release-V1.32/PARTS-SHEET-V1.32.html",
-     "baseline": "V1.32 is two plates on top of V1.31. White: the head cap with two INMP441 ears (replaces the V1.17 cap), the mouth speaker box (new; the V1.9 speaker retainer is no longer used) and the still unprinted V1.30 White parts (U20 face panel, A7Z saddle body and lid). Yellow: the lower head shell with six floor ports (replaces the printed V1.30 shell, or drill that shell with guide/print/ears-mouth-20261023/drill-template/).",
-     "notes": "2026-10-23 night (Shawn: ears at position A, speaker above the mouth in its own printed box, drill template and yellow reprint both; \"做完后重新给我一个白色打印盘\"). White X1C 3h49m / Elegoo 4h5m, Yellow X1C 2h8m / Elegoo 1h53m; previews checked, plates centred, zero support in the speaker box (blocker over chamber, duct and window). Gate passed with the V1.32 geometry (gate-receipt 2026-10-23T22:04). Guide and PARTS-SHEET-V1.32 deployed to the Mac mini, live sha256 equal to the sources. Not printed.",
+     "decision": "D-026",
+     "manifest": "guide/print/release-V1.33/manifest-V1.33.json",
+     "sourceBoundVerification": "guide/print/release-V1.33/run/final-binding-check.json",
+     "nativeReview": "guide/print/release-V1.33/run/native-review.json",
+     "archive": "guide/print/release-V1.33/run/zhengxia_V1.33_SD-files.zip",
+     "archiveSha256": "b642f998fcc37d0fa01b21bd626dfb7a2b702afeb0d430ca33ea4469ffc16057",
+     "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.33",
+     "partsSheet": "guide/print/release-V1.33/PARTS-SHEET-V1.33.html",
+     "h2s": {
+      "file": "guide/print/release-V1.33/delivery-h2s/zhengxia_V1.33_Yellow_Bambu-H2S_2h02m.gcode.3mf",
+      "result": "guide/print/release-V1.33/run-h2s/Yellow/result.json",
+      "script": "guide/print/release-V1.33/scripts/make_h2s.py",
+      "note": "Club Bambu H2S, Yellow only (Overture SUPER PLA+): Generic PLA @BBL H2S, Textured PEI Plate assumed (club plate not checked), 2h02m, 38.9 g."
+     },
+     "baseline": "V1.33 is three plates and supersedes the unprinted V1.32 (its speaker box is dropped). White: the head cap with two INMP441 ears, no amplifier posts, the XIAO at the roof centre and an optional third microphone seat in the back wall (y -11, z 135), plus the still unprinted V1.30 White parts (U20 face panel, A7Z saddle body and lid). Yellow: the lower head shell with the speaker pocket, twelve sound holes, amplifier rails and the 11 x 17 long-round exit (replaces the printed V1.30 shell). Black: the jaw support with the long-round exit (replaces the printed V1.30 jaw support); the V1.30 loose clamp halves still fit.",
+     "notes": "2026-10-24 (Shawn: \"按第三版做\"; H2S yellow slice; third microphone seat approved through the three-microphone session). White X1C 3h41m / Elegoo 3h56m, Yellow X1C 2h9m / Elegoo 1h53m / H2S 2h02m, Black X1C 1h13m / Elegoo 1h5m. Gate passed with the V1.33 geometry and routes (the back seat at z 133 met the drawn ID13-14-15 cables, so it sits at z 135). Support maps for White unchanged from V1.32.",
      "previous": {
-      "version": "V1.31",
+      "version": "V1.32",
       "status": "RELEASED",
       "problem_ids": [
        "P5",
        "P6"
       ],
-      "decision": "D-010",
-      "manifest": "guide/print/release-V1.31/manifest-V1.31.json",
-      "sourceBoundVerification": "guide/print/release-V1.31/run/final-binding-check.json",
-      "nativeReview": "guide/print/release-V1.31/run/native-review.json",
-      "archive": "guide/print/release-V1.31/run/zhengxia_V1.31_SD-files.zip",
-      "archiveSha256": "244100af735c6e1d296a867486f588355a1159ef225f7a1966937606b85db07e",
-      "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.31",
-      "partsSheet": "guide/print/release-V1.31/PARTS-SHEET-V1.31.html",
-      "baseline": "V1.31 is one Orange part on top of V1.30: the battery backpack frame reprinted with a wider DFR1202 slot; it replaces the printed V1.20 frame.",
-      "notes": "2026-10-23 evening (Shawn: the DFR1202 does not go into the backpack frame; \"按这个改，出橙色架子\"): the V1.20 clip arms stood 0.2 mm from the 26.0 mm board edge and 0.2 mm from the rib behind them, which prints shut, and the lip tips left 25.5 mm. build_bp.py now puts the arms 27.0 apart, ends the ribs 0.9 inside them and gives the lips 0.3 over the board with a 42 deg lead-in. Orange Elegoo 1h42m, X1C 1h38m, previews checked. Gate passed with the new frame in the guide world."
+      "decision": "D-025",
+      "manifest": "guide/print/release-V1.32/manifest-V1.32.json",
+      "sourceBoundVerification": "guide/print/release-V1.32/run/final-binding-check.json",
+      "nativeReview": "guide/print/release-V1.32/run/native-review.json",
+      "archive": "guide/print/release-V1.32/run/zhengxia_V1.32_SD-files.zip",
+      "archiveSha256": "7d1a94704f1c1badfd0ac8db591eb7d870b262634948fd83617888008bc44917",
+      "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.32",
+      "partsSheet": "guide/print/release-V1.32/PARTS-SHEET-V1.32.html",
+      "baseline": "V1.32 is two plates on top of V1.31. White: the head cap with two INMP441 ears (replaces the V1.17 cap), the mouth speaker box (new; the V1.9 speaker retainer is no longer used) and the still unprinted V1.30 White parts (U20 face panel, A7Z saddle body and lid). Yellow: the lower head shell with six floor ports (replaces the printed V1.30 shell, or drill that shell with guide/print/ears-mouth-20261023/drill-template/).",
+      "notes": "2026-10-23 night (Shawn: ears at position A, speaker above the mouth in its own printed box, drill template and yellow reprint both; \"做完后重新给我一个白色打印盘\"). White X1C 3h49m / Elegoo 4h5m, Yellow X1C 2h8m / Elegoo 1h53m; previews checked, plates centred, zero support in the speaker box (blocker over chamber, duct and window). Gate passed with the V1.32 geometry (gate-receipt 2026-10-23T22:04). Guide and PARTS-SHEET-V1.32 deployed to the Mac mini, live sha256 equal to the sources. Not printed.",
+      "previous": {
+       "version": "V1.31",
+       "status": "RELEASED",
+       "problem_ids": [
+        "P5",
+        "P6"
+       ],
+       "decision": "D-010",
+       "manifest": "guide/print/release-V1.31/manifest-V1.31.json",
+       "sourceBoundVerification": "guide/print/release-V1.31/run/final-binding-check.json",
+       "nativeReview": "guide/print/release-V1.31/run/native-review.json",
+       "archive": "guide/print/release-V1.31/run/zhengxia_V1.31_SD-files.zip",
+       "archiveSha256": "244100af735c6e1d296a867486f588355a1159ef225f7a1966937606b85db07e",
+       "downloadsCopy": "~/Downloads/zhengxia_MicroDuck_V1.31",
+       "partsSheet": "guide/print/release-V1.31/PARTS-SHEET-V1.31.html",
+       "baseline": "V1.31 is one Orange part on top of V1.30: the battery backpack frame reprinted with a wider DFR1202 slot; it replaces the printed V1.20 frame.",
+       "notes": "2026-10-23 evening (Shawn: the DFR1202 does not go into the backpack frame; \"按这个改，出橙色架子\"): the V1.20 clip arms stood 0.2 mm from the 26.0 mm board edge and 0.2 mm from the rib behind them, which prints shut, and the lip tips left 25.5 mm. build_bp.py now puts the arms 27.0 apart, ends the ribs 0.9 inside them and gives the lips 0.3 over the board with a 42 deg lead-in. Orange Elegoo 1h42m, X1C 1h38m, previews checked. Gate passed with the new frame in the guide world."
+      }
      }
-    }
-   },
-   "h2s": [
-    {
-     "file": "guide/print/release-V1.40/delivery-h2s/zhengxia_V1.40_Orange_Bambu-H2S_2h11m.gcode.3mf",
-     "result": "guide/print/release-V1.40/run-h2s/Orange/result.json",
-     "script": "guide/print/make_h2s.py",
-     "note": "Club Bambu H2S, Orange (Shawn 2026-11-01: \"切一个H2S\"; default for every release from now: \"以后默认也切一个H2S好了\"): Generic PLA @BBL H2S, Textured PEI Plate, release process settings carried (4 walls, 30 % gyroid, same support as the X1C file), 2h11m, 39.2 g."
-    }
-   ]
+    },
+    "h2s": [
+     {
+      "file": "guide/print/release-V1.40/delivery-h2s/zhengxia_V1.40_Orange_Bambu-H2S_2h11m.gcode.3mf",
+      "result": "guide/print/release-V1.40/run-h2s/Orange/result.json",
+      "script": "guide/print/make_h2s.py",
+      "note": "Club Bambu H2S, Orange (Shawn 2026-11-01: \"切一个H2S\"; default for every release from now: \"以后默认也切一个H2S好了\"): Generic PLA @BBL H2S, Textured PEI Plate, release process settings carried (4 walls, 30 % gyroid, same support as the X1C file), 2h11m, 39.2 g."
+     }
+    ]
+   }
   },
   "servo_power_path": {
    "date": "2026-10-12",
