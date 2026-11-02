@@ -1,0 +1,78 @@
+# Print fit practice (FDM PLA)
+
+Size every printed fit from this file before export: screw pilots, clearance holes, and every male feature that enters a female one. The numbers live in `print_fit.py` (`pilot(screw, orientation, kind)`, `clear(screw, orientation)`, `clearance(fit_class, orientation, at_bed)`), and `fit_check.py FITS.json` fails a release whose declared fits are under-toleranced or whose teardrops point the wrong way. Robotics, RIG and MicroDuck part scripts call these; they do not keep their own copies of the numbers.
+
+## Scope
+
+- **Printers.** Bambu X1C, Bambu H2S, Elegoo Centauri Carbon. One table serves all three because the fit-relevant profile settings match.
+- **Material.** PLA (Bambu PLA Basic, Elegoo/Generic PLA), 0.4 mm nozzle, 0.2 mm layers, 4 walls.
+- **Profile settings the numbers assume.** X-Y hole compensation 0, X-Y contour compensation 0, Bambu auto circle compensation off, elephant-foot compensation 0.1 mm (X1C, Elegoo) or 0.15 mm (H2S), 0.42 mm outer wall. A profile that changes any of these needs a test coupon before the table is trusted.
+- **Diameters are CAD values.** The slicer reproduces them exactly (RIG 1.3 H2S gcode: a 1.75 pilot gets a 2.165 mm outer-wall path, which is 1.745 + 0.42). All shrinkage happens in the physical print, so the allowance must be in the model.
+
+## Orientation decides the allowance
+
+Read every hole axis in the print pose, never in the assembly frame. `print_fit.orientation(axis, print_rot)` rotates the part-frame axis with the same `print_rot` the STL export uses.
+
+- **Vertical (axis within 30 deg of Z).** The hole is a stack of loops. It prints about 0.1 to 0.2 mm under its CAD diameter in PLA (Hydraraptor "Polyholes"; rigid-prints design guide: add 0.2 mm to PLA holes).
+- **Horizontal (axis beyond 30 deg).** Layer steps flatten the sides and the top sags. Add 0.2 mm on the diameter over the vertical value and cut a teardrop.
+- **Bambu's own compensation covers vertical circles only.** Its circle compensation says it handles "complete circles on the horizontal plane"; vertical-plane circles are left uncompensated, and the release profiles turn it off anyway.
+
+## Screw pilots (CAD diameter)
+
+Use screws made to tap plastic wherever a screw threads into PLA. Shawn's stock is M2 x 4, 6, 8, 10 TAP, ROBOTIS M2.6 x 6 and x 8, and the OMX kits' PTS M2 x 10. The guide names the screw kind on every screw line ("M2 x 6 自攻", "M3 x 10 ISO 7380 机械螺丝"); a line without a kind is a defect.
+
+- **Tap screws, vertical:** M2 1.7, M2.5 2.2, M2.6 2.1, M3 2.6.
+- **Tap screws, horizontal (teardrop):** M2 1.9, M2.5 2.4, M2.6 2.3, M3 2.8.
+- **Machine screws cutting their own thread (avoid; use a tap screw, an insert or a nut):** vertical M2 1.9, M2.5 2.3, M3 2.8; horizontal M2 2.1, M2.5 2.5, M3 3.0. Keep engagement at 2 d or less; a longer bite in brittle PLA exceeds what a 2 mm hex or PH0 drive transmits.
+- **Accepted band:** 0.10 under to 0.15 over the table value. Under binds the screw; over strips the thread.
+- **Engagement:** 3 d or less for tap screws.
+- **Pilot mouth on the first layer:** add 0.1 to the diameter or cut a 0.4 x 45 deg mouth chamfer; the first layer flares into the hole even with compensation on.
+- **Smallest hole:** 1.5 mm. Rigid-prints puts the reliable minimum at 2 mm; the M2 rows sit under it and depend on the tap screw forming its own way.
+
+## Clearance holes (screw passes freely)
+
+- **Vertical:** M2 2.4, M2.5 2.9, M2.6 3.0, M3 3.4, M5 5.5, M6 6.6.
+- **Horizontal (teardrop):** M2 2.6, M2.5 3.1, M2.6 3.2, M3 3.6, M5 5.8, M6 6.9.
+- Two horizontal holes in two parts that one screw must pass in line (a hinge ear and its lug) take the horizontal value in both parts and a 0.5 x 45 deg lead-in on the entry mouth.
+
+## Male and female fits (gap per side, CAD)
+
+Gap per side = (female size - male size) / 2, for round features and for slots, tongues, grooves and ribs alike. The class sets the gap for a vertical female feature away from the bed; the adders below apply on top.
+
+- **Press (pins tapped in):** -0.05 to 0.00. Vertical features only, never on the first layer.
+- **Crush ribs:** rib tip -0.10 to -0.15 into the bore. Triangular ribs with a base of 0.8 mm or more, vertical axis only. A wide keel or flat band at that interference is a press fit over a large area, not a rib.
+- **Locating (cups over bosses, ribs in grooves, dowels):** 0.15 to 0.20.
+- **Sliding (pivot pins, hinges, tongues into slots, lids):** 0.20 to 0.30.
+- **Loose (drop-in, bought parts with their own tolerance):** 0.40 to 0.60.
+- **Adders.** Female feature horizontal in print: +0.10 per side. Either mating surface in the first 0.4 mm without a 0.4 x 45 deg chamfer: +0.10 per side.
+- **Snaps** (a bulb passing a narrower mouth) are designed as two fits: the bulb in the slot behind the mouth is a sliding fit, and the snap interference at the mouth is 0.10 to 0.15 per side with a 45 deg lead-in.
+- **Bought parts** (fans, boards, servo holders, cable) carry their own tolerance; take their measured or published size and do not apply print adders to them.
+
+## Teardrops
+
+`cadlib.teardrop(d, p0, axis, length, up)` in the RIG scripts and its MicroDuck equivalents cut the full circle of diameter d plus a 45 deg tip, so a teardrop never narrows the hole; the tip only removes the sagging roof.
+
+- Cut a teardrop on every horizontal hole of 2 mm or more that a screw, pin or cable passes, and on no vertical hole.
+- The tip vector is perpendicular to the hole axis and points to +Z of the print pose. Derive it from `print_rot`; a part printed upside down (`((1, 0, 0), 180)`) takes `up = (0, 0, -1)` in its part frame.
+- A horizontal male cylinder (standoff, pin, axle) takes the tip pointing to -Z of the print pose, so its underside is the self-supporting face.
+- `fit_check.py` rotates both the axis and the tip with the declared pose and fails a tip more than 15 deg off, a tip not perpendicular to the axis, and a teardrop on a vertical axis.
+- The teardrop gives no thread in its tip. A horizontal pilot keeps the horizontal pilot diameter; the tip does not count toward it.
+
+## First layer and elephant foot
+
+The first layer spreads outward and pulls holes inward at the bed. Compensation (0.1 or 0.15) removes most of it; up to 0.1 mm per side remains on the Textured PEI plate (Bambu: on snaps, rails and shaft holes "the flared base directly affects fit").
+
+- A male feature that enters a mating part with 0.3 mm per side or less does not touch the bed: print it with that feature up, or put a 0.4 x 45 deg chamfer on its bed edge.
+- A female feature whose mouth is on the bed (cup, pilot, groove) gets a 0.4 x 45 deg mouth chamfer, or takes the +0.10 bed adder.
+- Fit surfaces start 0.4 mm or more above the bed unless chamfered.
+- Every outer bottom edge of a part that sits in a pocket or against a wall gets a 0.4 to 0.8 mm chamfer.
+
+## Declaring fits for the checker
+
+Each release keeps one `FITS.json` next to its part scripts (format in the `fit_check.py` docstring; examples in `examples/`). Declare every pilot with its screw and kind, every clearance hole a screw passes, and every male/female pair with its fit class. `poses` holds each part's `print_rot` exactly as passed to the export. Run `python3 fit_check.py FITS.json` in the release gate; exit 1 blocks the release.
+
+## Evidence
+
+- **MicroDuck as built (X1C and Elegoo CC, PLA, 0.2 mm, the profile settings above with elephant foot 0.1).** M2 x 6 and x 8 TAP screws drove without drilling into vertical blind pilots of 1.7 mm (A7Z face camera bosses: 4.8 mm bosses, 2.2 mm deep, measured on `microduck-sim/guide/print/face-a7z/face_panel_a7z-print.stl`; eye trim: 5.4 mm deep, `eye_trim_a7z-print.stl`) and 1.6 mm (rear plate OpenRB and 5991 bosses, 4.35 mm engagement, `guide/print/back-plate/build_rear_plate.py`). ROBOTIS M2.6 TAP took 2.0 to 2.2 mm pilots (`guide/content/fasteners.json`, V2.0 head). The 0.3 mm rim gap of the rear converter box cap is the clearance that kept the rim from seating first (D-034). Every MicroDuck M2 screw line in the guide names the screw "TAP". `examples/microduck-as-built.fits.json` passes.
+- **RIG 1.3 reprint plate (H2S, Bambu PLA Basic, 0.2 mm, Textured PEI, elephant foot 0.15), 2026-10-31, bench report 2026-11-01.** M2 pilots needed drilling, male fitted features were too large at their first-layer ridge, and round parts did not enter teardrop holes. The geometry was exported and sliced exactly: every M2 pilot is 1.747 inscribed in the STL and 1.745 in the gcode, all teardrops point to +Z of their print pose, and the slicer fit settings equal the MicroDuck X1C profile except elephant foot 0.15 against 0.1. What differs from MicroDuck is what the table above now covers: the radar carrier's two M2 pilots are horizontal and round (1.75, no teardrop); the guide line for the Zero, CM3, radar and BMP388 screws reads "M2 x 6（手上有）" without a kind, while MicroDuck's says TAP; every M3 joint drives ISO 7380 machine screws into 2.6 pilots, five of them horizontal teardrops; the fan head's F5 pilots open on the first layer with 7 mm of PTS engagement; the Zero carrier cups are 6.1 over 6.0 bosses (0.05 per side) with their mouths on the bed; the cable-holder clip's tongue (bulb 3.5 in a 3.6 slot) prints its first layer on the bed; the arm and SMPS2DXL plugs carry 0.25 mm radial interference, the SMPS2DXL one over a 48 deg keel band on its bed face. `examples/rig13-as-printed.fits.json` fails 23 of 30 fits.
+- **Sources.** Bambu Studio auto circle contour compensation (wiki.bambulab.com/en/software/bambu-studio/manual/auto-circle-contour-compensation): horizontal-plane circles only. Bambu elephant-foot compensation (wiki.bambulab.com/en/software/bambu-studio/parameter/elephant-foot): first-layer flare affects snaps, rails and shaft holes; measure and compensate. Prusa elephant-foot compensation (help.prusa3d.com/article/elephant-foot-compensation_114487): about 0.2 mm for a 0.4 nozzle. Hydraraptor "Polyholes" (hydraraptor.blogspot.com/2011/02/polyholes.html): printed holes come out undersized from faceting and arc shrinkage. Rigid Prints design guide (rigid-prints.pages.dev/design-guide/holes-bosses-threads, /tolerances-and-fits): pilot = screw OD - 0.4 for self-tapping screws, PLA holes +0.2, minimum hole 2 mm, fit classes press -0.05, location +0.05, sliding +0.15, loose +0.3 per face. Where this file's numbers are larger than Rigid Prints', the MicroDuck and RIG evidence set them; the horizontal +0.2 and the bed +0.1 adders are project inference from that evidence, not a published value.
