@@ -55,6 +55,8 @@ BURST_STOP_X = 0.125       # m: the creep stops when the object is measured here
 #                            stop (approach.STOP_R), which lands it at the trained spot
 MAX_ALIGN = 6              # align moves per try before picking anyway (inside PICK_WIN + PICK_SLACK) or giving up; a
 #                            standing-start burst moves 0-5 cm (robot 2026-10-30, seepick_1030-044506), so 3 was not enough
+BURST_INSIDE_M = 0.02      # m: a creep that starts already inside BURST_STOP_X walks until the camera shows this much; it stopped on its first tick
+#                            and moved nothing, six times, then picked at dx +3.5 cm and bit air (robot 2026-11-01)
 AIM_N, AIM_S = 5, 3.0      # detections for the pick measurement, and the time allowed
 SETTLE_S = 1.0             # after a stop, before measuring (approach.SETTLE_S is 1.2 after a walk)
 TRACK_GATE = 0.04          # m: a detection further than this from the estimate during the pick is another object
@@ -251,6 +253,7 @@ class SeePick:
                 # and a search would not find it either; pick where it was last measured or estimated
                 self.obj = dict(x=float(est[0]), y=float(est[1]), size=self.obj["size"] if self.obj else DEFAULT_SIZE, t=now)
                 self.log(f"  not seen (blind zone): picking at the last known position x {est[0]:.3f} y {est[1]:.3f}")
+                self.align_n = MAX_ALIGN   # it is under the picture: another creep can only run it past the beak
                 self.enter("align")
                 return
             self.obj = None
@@ -305,10 +308,12 @@ class SeePick:
         m = self.measure(st, gate=(ref["x"], ref["y"]))
         if m is not None:
             self.burst_m = m
-        if m is not None and m["x"] <= BURST_STOP_X:
+        stop_x = BURST_STOP_X if self.obj["x"] > BURST_STOP_X else self.obj["x"] - BURST_INSIDE_M
+        if m is not None and m["x"] <= stop_x:
             why = f"object at x {m['x']:.3f}"
-        elif m is None and self.burst_m is not None and self.burst_m.get("cut") and now - self.burst_m["t"] > 0.4:
-            why = "object under the picture"
+        elif m is None and self.burst_m is not None and now - self.burst_m["t"] > 0.4 and (
+                self.burst_m.get("cut") or self.obj["x"] <= BURST_STOP_X):
+            why = "object under the picture"   # this near a blind walk runs the object past the beak
         elif now - self.t_phase >= BURST_MAX_S:
             why = f"{BURST_MAX_S} s"
         else:
@@ -318,7 +323,10 @@ class SeePick:
             self.send_fn(cmd)
             return
         self.stand(self.head)
-        self.obj, self.meas, self.burst_m = None, [], None
+        # a ball that left the bottom of the picture keeps its last sighting: the aim's blind zone picks there. Without it
+        # the aim fell back on the walk's stale estimate and started a new try (robot 2026-11-01, try 1 of both runs)
+        self.obj = dict(self.burst_m) if why == "object under the picture" and self.burst_m else None
+        self.meas, self.burst_m = [], None
         self.enter("aim", f"creep done: {why}")
 
     def p_pick(self, st, now):

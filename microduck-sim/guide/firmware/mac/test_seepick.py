@@ -166,6 +166,25 @@ def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
     assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)
 
 
+def test_a_creep_starting_inside_the_stop_mark_still_walks():
+    """Object at 12.2 cm, dx +3.5, inside BURST_STOP_X: the creep must move, not stop on its first tick (robot 2026-11-01)."""
+    duck = PickDuck((0.122, 0.0), ["hold"])
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=None, now=lambda: duck.t, log=lambda s: None)
+    ctl.try_n = 1
+    ctl.obj = dict(x=0.122, y=0.0, size=0.013, t=0.0)
+    ctl.enter("align")
+    assert ctl.phase == "align"
+    ctl.step()
+    duck.advance()
+    assert ctl.phase == "burst"
+    while ctl.phase == "burst":
+        ctl.step()
+        duck.advance()
+    assert any(c.get("vx", 0) > 0 for _, c in duck.sent)
+    assert duck.X > 0.01
+
+
 def test_t2_pick_command_carries_the_box_and_the_blind_zone_clamps_to_the_edge():
     import walk_brain
 
