@@ -465,3 +465,7 @@ Tailscale since about 17:25).
 - Sim-only change, stop at 12.5 cm, accept bearing 18 deg and range up to 11.7 cm: 23/25 arrive and 92 % end in the
   window; with the camera pitch 2 deg off 76-80 %. Expected walk-up-then-bite in sim about 65 %.
 - approach.py is unchanged. The robot's faster walk (0.15 vs 0.11 m/s) coasts further after the stop; not tested.
+
+## 2026-11-01 T2 brain-harness matrix and first robot deployment
+
+Matrix (`microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`): spx-b_1800 is the best T2 candidate in the as-built harness, far below its Kaggle numbers and below seepick61; spx-b_2400 scores 0 here. On the real sphere jaw current does not change the result, correcting the earlier attribution to jaw force. Prediction before the robot run: the beak lands beside the ball and does not hold it. `t2pick.py` runs it on the A7Z and holds the driver lease.

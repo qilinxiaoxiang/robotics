@@ -31,6 +31,13 @@ Modes, switched live by writing JSON to the control file (default /tmp/duck_cmd.
                                             in time.time() seconds, given here as age), the jaw's holding bit and 0.
                                             The jaw follows the trained mouth timeline (SP_JAW below); walk_wired.py
                                             drives it, feeds the holding bit and returns to stand61 after the rise.
+  {"mode": "seepick", "object": {"u": 330.5, "v": 250.0, "w": 28.0, "t": 1793000000.0, "seen": true}}
+                                            T2, the pick that watches the picture (seepickpix61.onnx, task
+                                            Mjlab-SeeingPickPix-FromPick-MicroDuck-CMU-Plugged): the same mode, jaw
+                                            and guards; an object given as the tracker's box (track_iface.py: centre
+                                            u, v and width w in px of the 640 x 360 picture, capture time t of that
+                                            detection, seen = the newest processed frame had it) selects it at the
+                                            switch. Body slots 55..60 [u, v, width, age, holding, visible].
   {"mode": "kick", "foot": "left", "id": 7} Pollen's ball kick (kick_left61 / kick_right61.onnx), one shot per new id
                                             and only from stand or walk mode: KICK_TICKS policy ticks (0.5 s) with an
                                             all-zero command, then walk mode at zero command (stand61). The action
@@ -406,7 +413,8 @@ class Brain:
         self.fall_for = 0.0  # s the fall prediction has held (debounce)
         self.lying_for = 0.0  # s the trunk has read lying (FALLEN_Z)
         self.fall_t = None  # time of the last detector tick
-        names = ["walk", "stand"] + [k for k in ("groundpick", "seepick", "sitstand", "kick_left", "kick_right")
+        names = ["walk", "stand"] + [k for k in ("groundpick", "seepick", "seepickpix", "sitstand", "kick_left",
+                                                 "kick_right")
                                      if os.path.exists(os.path.join(models, k + "61.onnx"))]
         self.sessions = {k: ort.InferenceSession(os.path.join(models, k + "61.onnx"), session_options()) for k in names}
         for k, sess in self.sessions.items():
@@ -430,6 +438,7 @@ class Brain:
         self.gp_phase = 0.0  # ground-pick phase phi handed to the policy; follows want["phase"] at 1/GP_PERIOD per s
         self.sp_phase = 0.0  # seeing-pick phase, 0 -> 1 at 1/SP_PERIOD per s up to want["phase"] (default 1)
         self.sp_body = np.zeros(6, dtype=np.float32)  # seeing-pick body slots last handed to the policy
+        self.sp_policy = "seepick"  # "seepickpix" when the pick started with a picture object (u, v, w), fixed per pick
         self.head_cmd = np.zeros(4, dtype=np.float32)  # smoothed head pose deltas handed to walk61/stand61
         self.base_want = {"mode": "monitor"}  # the command in force outside a kick (the last one accepted)
         self.kick = None  # running kick: {"foot", "id", "ticks", "t0"}
@@ -698,7 +707,7 @@ class Brain:
                 print(f"getup: {self.getup['phase']} ended by the switch to {self.mode}", flush=True)
             self.getup, self.fall_for, self.lying_for = None, 0.0, 0.0
             start = self.goal or q
-            if self.mode in ("groundpick", "seepick") and self.mode not in self.sessions:
+            if self.mode == "groundpick" and self.mode not in self.sessions:
                 raise RuntimeError(f"no {self.mode}61.onnx in the models directory")
             if self.mode != "sit":
                 self.sit = None
@@ -717,6 +726,11 @@ class Brain:
                 # as groundpick: the trained start is standing on stand61, phase 0
                 self.ramp, self.goal = None, dict(start)
                 self.sp_phase, self.sp_body[:] = 0.0, 0.0
+                # T2 (seepickpix61.onnx): the object comes as the tracker's picture box; the form at the switch picks
+                # the policy for the whole pick
+                self.sp_policy = "seepickpix" if is_pix_object(want.get("object")) else "seepick"
+                if self.sp_policy not in self.sessions:
+                    raise RuntimeError(f"no {self.sp_policy}61.onnx in the models directory")
                 self.head_cmd[:] = 0
                 if not was_policy:
                     self.last_action[:] = 0
@@ -810,8 +824,9 @@ class Brain:
                 if target > self.sp_phase:
                     self.sp_phase = min(target, self.sp_phase + 0.02 / SP_PERIOD)
                 a = 2 * math.pi * self.sp_phase
-                command, head, policy = [math.cos(a), math.sin(a), 0.0], np.zeros(4, dtype=np.float32), "seepick"
-                self.sp_body[:] = seepick_body(self.sp_body, want.get("object"), want.get("_holding"), now)
+                command, head, policy = [math.cos(a), math.sin(a), 0.0], np.zeros(4, dtype=np.float32), self.sp_policy
+                body_fn = seepickpix_body if policy == "seepickpix" else seepick_body
+                self.sp_body[:] = body_fn(self.sp_body, want.get("object"), want.get("_holding"), now)
                 info["sp_phase"], info["sp_body"] = round(self.sp_phase, 4), [round(float(v), 4) for v in self.sp_body]
                 info["sp_jaw"] = seepick_jaw(self.sp_phase)
             elif self.mode == "kick":
@@ -923,6 +938,37 @@ def seepick_body(prev, obj, holding, now):
     else:
         out[3] = SP_AGE_MAX if not np.any(out[:3]) else min(SP_AGE_MAX, float(out[3]) + 0.02)
     out[4], out[5] = 1.0 if holding else 0.0, 0.0
+    return out
+
+
+def is_pix_object(obj):
+    """True for a picture object {"u", "v", "w", "t", "seen"} (T2), False for a floor object {"x", "y", "size", "t"}."""
+    return isinstance(obj, dict) and all(k in obj for k in ("u", "v", "w", "t"))
+
+
+# T2 picture slots (microduck_rl cmu_seeing_pix_env_cfg.pix_object_command, cmu/grasp/T2-PIXEL.md): the track's box
+# centre in continuous pixels of the 640 x 360 upright picture (tracker/track_iface.py), normalised to -1..1, its width
+# over the picture width, the capture age of that detection, the holding bit and whether the newest processed frame
+# contained the object.
+PIX_W, PIX_H = 640, 360
+
+
+def seepickpix_body(prev, obj, holding, now):
+    """Body slots [u, v, width, age, holding, visible] from the newest track line's object
+    {"u", "v", "w" (px, of the last detection), "t" (its capture time, time.time() s), "seen" (the newest processed
+    frame had a detection of it), optional "img_w", "img_h"}, or the previous slots aging when there is none. As in
+    training, u, v, width hold the last detection while the age grows to SP_AGE_MAX and visible reads 0."""
+    out = np.array(prev, dtype=np.float32)
+    if obj is not None:
+        iw, ih = float(obj.get("img_w", PIX_W)), float(obj.get("img_h", PIX_H))
+        out[0] = (float(obj["u"]) - iw / 2) / (iw / 2)
+        out[1] = (float(obj["v"]) - ih / 2) / (ih / 2)
+        out[2] = float(obj["w"]) / iw
+        out[3] = float(np.clip(now - float(obj["t"]), 0.0, SP_AGE_MAX))
+        out[5] = 1.0 if obj.get("seen", True) else 0.0
+    else:
+        out[3] = min(SP_AGE_MAX, float(out[3]) + 0.02)
+    out[4] = 1.0 if holding else 0.0
     return out
 
 

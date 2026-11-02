@@ -37,6 +37,8 @@ Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
                                           jaw's holding bit (jaw_ctl.holding) and, once the rise is complete, writes
                                           walk mode at zero command (stand61) with the jaw still gripping. Guarded as
                                           groundpick (--max-tilt-gp, a trip holds the last goals in monitor mode).
+                                          An object {"u", "v", "w", "t", "seen"} (the tracker's box) runs T2,
+                                          seepickpix61.onnx (walk_brain.seepickpix_body); refused without that file.
 
 Remote-control additions (2026-10-20, walk_brain.py has the details):
   {"mode": "kick", "foot": "left" | "right", "id": 7}   one kick per new id, from stand or walk mode: 25 ticks of
@@ -554,14 +556,20 @@ GP_DONE_PHASE = 0.9  # inside the policy's standing rest segment: the rise is co
 SP_DONE_PHASE = 0.9  # seeing pick: trained stand-up ends at 0.66 (TIMELINE return_end), then standing still
 
 
-def seepick_block(want, jaw_calibrated):
+def seepick_block(want, jaw_calibrated, brain_sessions=()):
     """Why a switch to the seeing pick must not start, or None. Without an object the policy reads (0, 0, 0) at age 2,
     an object at its feet; without the jaw marks the mouth stays limp (seepick rehearsal 2026-10-27)."""
     if not jaw_calibrated:
         return "the jaw is not calibrated (mark closed and open first)"
     obj = want.get("object")
-    if not isinstance(obj, dict) or any(k not in obj for k in ("x", "y", "size", "t")):
-        return 'no "object" with x, y, size and t in the command'
+    if not isinstance(obj, dict):
+        return 'no "object" in the command'
+    if all(k in obj for k in ("u", "v", "w", "t")):     # T2: the tracker's box, seepickpix61.onnx
+        if "seepickpix" not in brain_sessions:
+            return "no seepickpix61.onnx in the models directory"
+        return None
+    if any(k not in obj for k in ("x", "y", "size", "t")):
+        return 'no "object" with x, y, size and t (floor) or u, v, w and t (picture) in the command'
     return None
 CMD_ALPHA = 0.2  # velocity command EMA per 20 ms tick, Pollen's robotd default
 # No IMU sample this long: the Brain holds its last goals (blind, so no policy step). 2026-10-15 the Pi Zero lost power
@@ -1011,7 +1019,7 @@ def main():
         # (pollen-robotics/microduck deploy/robotd.toml [control], read 2026-10-16): "a stick snap becomes a ramp the
         # gait can follow". A for_s stop is then a ramp to zero, not a step.
         if want.get("mode") == "seepick" and brain.mode != "seepick":
-            block = seepick_block(want, jaw.calibrated)
+            block = seepick_block(want, jaw.calibrated, brain.sessions)
             if block:
                 want = {"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0} if brain.mode == "walk" else {"mode": brain.mode}
                 write_cmd(args.cmd, want, f"seeing pick refused: {block}")

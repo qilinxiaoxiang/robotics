@@ -65,6 +65,7 @@ from walk_wired import QUACK_HEAD_S, quack_head_block, quack_head_pose  # noqa: 
 from walk_wired import CMD_ALPHA, GripStop, hold_allowed  # noqa: E402
 from walk_wired import SP_DONE_PHASE  # noqa: E402
 import walk_brain  # noqa: E402
+import duck_kin  # noqa: E402
 import jaw_ctl  # noqa: E402
 import jaw_limits as jl  # noqa: E402
 import tether  # noqa: E402
@@ -318,6 +319,123 @@ class SimCamera:
         return self.last
 
 
+# T2 picture camera (--sp-pix), a numpy port of microduck_rl-grasp cmu_seeing_pix_env_cfg: the U20CAM on the head with one
+# mount draw per run, 8.3-10 fps, 0.1-0.3 s delay, drops, stalls, box bias and noise, no detection under the beak.
+PIX_W, PIX_H = 640, 360
+PIX_MOUNT_P = np.array([0.0154994, -0.00009, -0.0779])  # lens centre in the jaw_soft frame
+PIX_MOUNT_R = np.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [-1.0, 0.0, 0.0]])  # columns: optical axis, image left, up
+PIX_OFFSETS_DEG = (11.975, 1.879, -0.686)  # pitch, yaw, roll
+PIX_DR = dict(pitch_deg=2.0, shift_m=0.01, head_gain=(0.90, 1.00), pivot_m=0.01, bow_dz=(-0.015, -0.008))
+PIX_BOW_NECK_FULL, PIX_BOW_NECK_NONE, PIX_NECK_FIT = -1.2, 0.0, 0.349
+PIX_PERIOD_TICKS, PIX_NOISE_PX, PIX_BIAS_PX, PIX_WIDTH_NOISE = (5, 6), 2.0, 3.0, 0.1
+PIX_MIN_DEPTH, PIX_HIDE_M = 0.015, (0.02, 0.03)
+PIX_INIT_AGE_HIDDEN_S = (0.3, 1.0)
+
+
+def _axis_rot(axis, a):
+    return duck_kin.axis_angle(np.asarray(axis, dtype=float), a)
+
+
+class PixCamera:
+    """What the tracker would hand the runtime for one run: {"u", "v", "w", "t", "seen"} in picture pixels."""
+
+    def __init__(self, m, d, rng, delay_s, drop, stalls=True):
+        self.m, self.d, self.rng, self.drop, self.stalls = m, d, rng, drop, stalls
+        self.intr = duck_kin.load_intrinsics()
+        self.body = m.body("jaw_soft").id
+        self.jh, self.jn = m.joint("head_pitch").id, m.joint("neck_pitch").id
+        self.qh, self.qn = m.jnt_qposadr[self.jh], m.jnt_qposadr[self.jn]
+        self.neck_parent = m.body_parentid[m.jnt_bodyid[self.jn]]
+        u = lambda lo_hi: float(rng.uniform(*lo_hi))  # noqa: E731
+        self.draw = dict(dpitch=u((-PIX_DR["pitch_deg"], PIX_DR["pitch_deg"])), gain=u(PIX_DR["head_gain"]),
+                         bow=u(PIX_DR["bow_dz"]), hide=u(PIX_HIDE_M), delay_s=round(delay_s, 3), drop=round(drop, 3),
+                         shift=[u((-PIX_DR["shift_m"], PIX_DR["shift_m"])) for _ in range(3)],
+                         pivot=[u((-PIX_DR["pivot_m"], PIX_DR["pivot_m"])) for _ in range(3)],
+                         bias=[u((-PIX_BIAS_PX, PIX_BIAS_PX)) for _ in range(2)])
+        self.period = int(rng.integers(PIX_PERIOD_TICKS[0], PIX_PERIOD_TICKS[1] + 1))
+        self.delay = int(min(15, max(1, round(delay_s / 0.02))))
+        self.offset = int(rng.integers(0, 6))
+        self.off = duck_kin.offset_rotation(PIX_OFFSETS_DEG[0] + self.draw["dpitch"], PIX_OFFSETS_DEG[1], PIX_OFFSETS_DEG[2])
+        self.frames = collections.deque(maxlen=32)
+        self.last, self.seen, self.stall_until = None, 0.0, -1
+        self.n = dict(frames=0, visible=0, detected=0, delivered=0, stall_frames=0)
+        self.last_delivery_t, self.last_visible_t = None, None
+
+    def pose(self):
+        d, a = self.d, self.draw
+        Rb = d.xmat[self.body].reshape(3, 3)
+        Rc = Rb @ PIX_MOUNT_R
+        p = d.xpos[self.body] + Rb @ PIX_MOUNT_P + Rc @ np.array(a["shift"])
+        R = Rc @ self.off
+        Rg = _axis_rot(d.xaxis[self.jh], (a["gain"] - 1.0) * float(d.qpos[self.qh]))
+        anchor = d.xanchor[self.jh]
+        p, R = anchor + Rg @ (p - anchor), Rg @ R
+        neck = float(d.qpos[self.qn])
+        dw = d.xmat[self.neck_parent].reshape(3, 3) @ np.array(a["pivot"])
+        p = p + dw - _axis_rot(d.xaxis[self.jn], neck - PIX_NECK_FIT) @ dw
+        w = min(1.0, max(0.0, (PIX_BOW_NECK_NONE - neck) / (PIX_BOW_NECK_NONE - PIX_BOW_NECK_FULL)))
+        return p + np.array([0.0, 0.0, w * a["bow"]]), R
+
+    def pixels(self, p_obj, half):
+        """u, v, width, inside; u, v may lie off the picture. None if behind the lens or past the fisheye fold."""
+        cp, R = self.pose()
+        pc = R.T @ (p_obj - cp)
+        c = self.intr.project(pc)
+        if c is None:
+            return None
+        left = R[:, 1]
+        a = self.intr.project(R.T @ (p_obj + half * left - cp))
+        b = self.intr.project(R.T @ (p_obj - half * left - cp))
+        width = abs(a[0] - b[0]) if a is not None and b is not None else 2 * self.intr.fx * half / max(pc[0], 1e-3)
+        inside = bool(pc[0] > PIX_MIN_DEPTH and 0 <= c[0] < PIX_W and 0 <= c[1] < PIX_H)
+        return float(c[0]), float(c[1]), float(width), inside
+
+    def measure(self, u, v, w, t):
+        b = self.draw["bias"]
+        return {"u": round(u + b[0] + float(self.rng.normal(0, PIX_NOISE_PX)), 3),
+                "v": round(v + b[1] + float(self.rng.normal(0, PIX_NOISE_PX)), 3),
+                "w": round(w * max(0.2, 1 + float(self.rng.normal(0, PIX_WIDTH_NOISE))), 3), "t": round(float(t), 4)}
+
+    def start(self, t, p_obj, half, tip):
+        """The hand-over frame: what the camera saw at the start pose, or the last position at the picture's edge."""
+        px = self.pixels(p_obj, half)
+        if px is None:
+            raise RuntimeError("the object is behind the lens at the hand-over")
+        u, v, w, inside = px
+        seen = bool(inside and np.linalg.norm(tip - p_obj) >= self.draw["hide"])
+        age = float(self.rng.uniform(*(SP_INIT_AGE_S if seen else PIX_INIT_AGE_HIDDEN_S)))
+        self.last = self.measure(u, v, w, t - age) if seen else {
+            "u": round(min(PIX_W - 1.0, max(0.0, u)), 3), "v": round(min(PIX_H - 1.0, max(0.0, v)), 3),
+            "w": round(w, 3), "t": round(float(t - age), 4)}
+        self.seen = 1.0 if seen else 0.0
+        return dict(seen=seen, u=round(u, 1), v=round(v, 1), w=round(w, 1), age_s=round(age, 3))
+
+    def step(self, k, t, p_obj, half, tip):
+        px = self.pixels(p_obj, half)
+        seen_now = bool(px is not None and px[3] and np.linalg.norm(tip - p_obj) >= self.draw["hide"])
+        if (k + self.offset) % self.period == 0:
+            if self.stalls and k >= self.stall_until and self.rng.random() < SP_CAM_STALL_PROB:
+                self.stall_until = k + int(round(self.rng.uniform(*SP_CAM_STALL_S) / 0.02))
+            if k >= self.stall_until:
+                self.n["frames"] += 1
+                self.n["visible"] += seen_now
+                if seen_now:
+                    self.last_visible_t = t
+                ok = bool(seen_now and self.rng.random() >= self.drop)
+                self.n["detected"] += ok
+                self.frames.append((k, self.measure(px[0], px[1], px[2], t) if ok else None))
+            else:
+                self.n["stall_frames"] += 1
+        for fk, meas in self.frames:
+            if fk == k - self.delay:
+                self.seen = 1.0 if meas is not None else 0.0
+                if meas is not None:
+                    self.last = meas
+                    self.n["delivered"] += 1
+                    self.last_delivery_t = t
+        return dict(self.last, seen=bool(self.seen))
+
+
 def sp_contacts(m, d, obj_geom, named):
     """{name: summed normal force (N)} of the object's contacts with each named geom set, plus 'floor'."""
     f6, out = np.zeros(6), {k: 0.0 for k in named}
@@ -413,6 +531,10 @@ class SeePick:
         self.cam_cfg = dict(delay_s=round(delay, 3), delay_ticks=self.cam.delay, drop=round(drop, 3),
                             bias_m=[round(float(b), 4) for b in bias], noise_m=args.sp_camera_noise, stalls=not args.sp_no_stalls,
                             half_fov_deg=[round(math.degrees(x), 1) for x in SP_CAM_HALF_FOV], min_depth_m=SP_CAM_MIN_DEPTH)
+        self.pix = PixCamera(m, d, rng, delay, drop, stalls=not args.sp_no_stalls) if args.sp_pix else None
+        if self.pix is not None:
+            self.cam_cfg = dict(self.pix.draw, period_ticks=self.pix.period, stalls=not args.sp_no_stalls, picture=True)
+            self.cam = self.pix
         self.model_report = model_report
         self.switched, self.done_t, self.spawn, self.k = None, None, None, 0
         self.rows = []
@@ -497,10 +619,21 @@ class SeePick:
         if self.switched is None:
             self.place()
             self.switched = t
-            init_age = float(self.rng.uniform(*SP_INIT_AGE_S))
-            self.cam.last = self.cam.measure(self.foot_xy(self.d.xpos[self.body]), self.obj["size"], t - init_age)
-            self.cam_cfg["init_age_s"] = round(init_age, 3)
+            if self.pix is not None:
+                self.cam_cfg["handover"] = self.pix.start(t, self.d.xpos[self.body], max(self.obj["half"][:2]),
+                                                          self.d.site_xpos[self.site["lip_up"]])
+            else:
+                init_age = float(self.rng.uniform(*SP_INIT_AGE_S))
+                self.cam.last = self.cam.measure(self.foot_xy(self.d.xpos[self.body]), self.obj["size"], t - init_age)
+                self.cam_cfg["init_age_s"] = round(init_age, 3)
         self.k = int(round((t - self.switched) / 0.02))
+        if self.pix is not None:
+            last = self.pix.step(self.k, t, self.d.xpos[self.body], max(self.obj["half"][:2]),
+                                 self.d.site_xpos[self.site["lip_up"]])
+            if not self.pix.seen and self.ev["first_lost_view_t"] is None:
+                self.ev["first_lost_view_t"] = round(t - self.switched, 2)
+            self.holding_now = self.holding()
+            return {"mode": "seepick", "object": last, "_holding": self.holding_now}
         vis = self.visible()
         if not vis and self.ev["first_lost_view_t"] is None:
             self.ev["first_lost_view_t"] = round(t - self.switched, 2)
@@ -1592,6 +1725,7 @@ def main():
     sp.add_argument("--sp-impratio", type=float, default=None,
                     help="MuJoCo impratio (the as-built MJCF compiles 1; the training env runs 10, its sticky friction: "
                          "microduck_ground_grasp_env_cfg, a pinched block creeps out of the wedge at pyramidal / 1)")
+    sp.add_argument("--sp-pix", action="store_true", help="T2: the object as the tracker's picture box (seepickpix61.onnx in --models)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
     args = ap.parse_args()
