@@ -479,3 +479,7 @@ Runs 2 and 3 of `seepick.py --t2` did not hold the ball, so the rise repair is s
 ## 2026-11-01 21:55: T2 runs 4 to 6, 22 problems listed, A7Z offline
 
 The duck now finds the ball by itself and walks to about 20 cm (run 5, 0.28 m walked), but no bite since run 2: close-range turning loses to spring-back and short spins, and false wrong-way stops use up tries. The camera plug dropped twice on a right-spin lurch. My et7304 driver unbind at 21:52 took the A7Z offline. Full list: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`.
+
+## 2026-11-01 22:40: why the A7Z went offline
+
+The flight recorder stops at 21:52:11, within a second of my et7304 driver unbind, with no panic or watchdog text; the next boot is a cold boot at 22:37:58 right after Shawn re-plugged. Not a Wi-Fi or SD fault: Wi-Fi link and CPU were normal up to the last row, and the boot was clean. Open: why the 22:01 power cycle left no boot record. Details: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md` item 23.
