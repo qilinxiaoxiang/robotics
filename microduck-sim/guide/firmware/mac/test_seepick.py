@@ -164,3 +164,22 @@ def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
     o = duck.picks[0]
     assert abs(o["x"] - sp.SPOT[0]) <= sp.PICK_WIN and abs(o["y"] - sp.SPOT[1]) <= sp.PICK_WIN, o
     assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)
+
+
+def test_t2_pick_command_carries_the_box_and_the_blind_zone_clamps_to_the_edge():
+    import walk_brain
+
+    class Kin:
+        def ground_to_pixel(self, x, y, q, gb, w, h, z=0.0):
+            return (330.0, 400.0)
+
+    c = sp.SeePick.__new__(sp.SeePick)
+    c.t2, c.kin, c.now, c.state_fn = True, Kin(), lambda: 10.0, lambda: {"q": {}, "gb": [0, 0, -1]}
+    c.obj = dict(x=0.09, y=0.0, size=0.012, t=9.95, u=330.0, v=200.0, w=20.0)
+    o = c.pick_cmd()["object"]
+    assert walk_brain.is_pix_object(o) and o["u"] == 330.0 and o["seen"] is True
+    c.obj = dict(x=0.09, y=0.0, size=0.012, t=9.0)
+    o = c.pick_cmd()["object"]
+    assert o["v"] == 359 and o["seen"] is False and walk_brain.is_pix_object(o)
+    c.t2 = False
+    assert not walk_brain.is_pix_object(c.pick_cmd()["object"])

@@ -843,16 +843,26 @@ class SeePick:
         return out
 
 
+def sp_post(sp, window, stable_after, args):
+    """From the hand-back to the end: peak tilt and gyro, and the time to a stable stand."""
+    if sp.done_t is None:
+        return None
+    seg = window(sp.done_t, 1e9)
+    return dict(peak_tilt=round(max(h[1] for h in seg), 1), peak_gyro=round(max(h[2] for h in seg), 2),
+                peak_tilt_1s=round(max(h[1] for h in seg if h[0] < sp.done_t + 1.0), 1),
+                stable_after_s=stable_after(sp.done_t, args.sp_at)[0])
+
+
 class SpTrace:
     """--sp-trace FILE: per seepick tick the 61 obs and 14 actions the policy saw and gave (captured at the ONNX call),
     the goals written, the true joint positions after the tick's physics (Brain order), trunk height and tilt, lip and
     pad heights, pad and object in the foot frame, beak-floor force and object contacts. Same fields as
     microduck_rl-grasp cmu/grasp/gap_trace.py writes from the training env (gap study, 2026-10-27)."""
 
-    def __init__(self, brain, path):
+    def __init__(self, brain, path, key="seepick"):
         self.f = open(path, "w")
         self.last = None
-        sess = brain.sessions["seepick"]
+        sess = brain.sessions[key]
         tracer = self
 
         class Wrapped:
@@ -867,7 +877,7 @@ class SpTrace:
                 tracer.last = (np.asarray(list(feed.values())[0])[0].tolist(), np.asarray(res[0])[0].tolist())
                 return res
 
-        brain.sessions["seepick"] = Wrapped()
+        brain.sessions[key] = Wrapped()
 
     @staticmethod
     def box_min_z(m, d, name):
@@ -995,6 +1005,7 @@ def run(args):
     gyro_adr = m.sensor("imu_ang_vel").adr[0]
     c.q_target = p0 + z0
     brain = Brain(args.models, compensation=args.compensation, walk_ramp=args.walk_ramp, yaw_trim_file=args.yaw_trim_file)
+    brain.sp_bit_off_phase, brain.sp_blend_s, brain.sp_rise_old_phase = args.sp_bit_off, args.sp_blend, args.sp_rise_old
     comp = Breakaway(first=args.ba_first, ramp=args.ba_ramp, cap=args.ba_cap, min_err_ticks=args.ba_min_err, stuck_ticks=args.ba_stuck, cap_ticks=args.ba_cap_ticks)
     Rimu = rot_y(args.imu_pitch)
     Mq = qmul(IMU_MOUNT_QUAT, (1, 0, 0, 0))
@@ -1045,7 +1056,7 @@ def run(args):
         sp = SeePick(m, d, args, sp_obj, sp_rng, sp_model)
         args.vx = 0.0
         T = max(T, args.sp_at + walk_brain.SP_PERIOD * SP_DONE_PHASE / (1.0 - args.drop) + 0.3 + args.sp_after)
-    sp_trace = SpTrace(brain, args.sp_trace) if args.sp_trace and sp is not None else None
+    sp_trace = SpTrace(brain, args.sp_trace, "seepickpix" if args.sp_pix else "seepick") if args.sp_trace and sp is not None else None
     mouth = m.site("mouth_tip").id
     feet = [m.geom(g).id for g in ("left_foot_collision", "right_foot_collision")]
     gp = dict(mouth_min_z=None, mouth_at_min=None, pose_at_min=None, tilt_at_min=None, max_tilt=0.0, phase_at_min=None)
@@ -1454,7 +1465,7 @@ def run(args):
                 kick=kick, sit=sitr, hold=holdr, quack_head_ran={str(k): v for k, v in quack_ok.items()},
                 quack_head_reached={str(k): {n: round(v, 3) for n, v in r.items()} for k, r in quack_reach.items()},
                 quack_peak_tilt={str(k): round(max(h[1] for h in window(k, k + QUACK_HEAD_S + 1.0)), 1) for k in quack_ok},
-                seepick=None if sp is None else dict(sp.summary(brain), guard=dict(
+                seepick=None if sp is None else dict(sp.summary(brain), post_handback=sp_post(sp, window, stable_after, args), guard=dict(
                     wired=bool(args.wired_guards), stop_at=guard["stop"], why=guard["why"], clipped_ticks=guard["clipped"],
                     hard_max_action=HARD_MAX_ACTION, max_tilt_deg=MAX_TILT_GP_DEG)),
                 groundpick=None if gp_at is None else dict(gp, at=gp_at, phase=args.gp_phase, hold_s=args.gp_hold_s,
@@ -1726,6 +1737,9 @@ def main():
                     help="MuJoCo impratio (the as-built MJCF compiles 1; the training env runs 10, its sticky friction: "
                          "microduck_ground_grasp_env_cfg, a pinched block creeps out of the wedge at pyramidal / 1)")
     sp.add_argument("--sp-pix", action="store_true", help="T2: the object as the tracker's picture box (seepickpix61.onnx in --models)")
+    sp.add_argument("--sp-bit-off", type=float, default=None, help="phase from which the policy reads holding 0 (trial)")
+    sp.add_argument("--sp-rise-old", type=float, default=None, help="phase from which seepick61 finishes T2's rise once holding (trial)")
+    sp.add_argument("--sp-blend", type=float, default=None, help="s; blend the pick's last goals into stand61's after the hand-back (trial)")
     sp.add_argument("--sp-after", type=float, default=3.0, help="s simulated after the hand-back to stand61")
     sp.add_argument("--sp-log", default=None, help="JSONL: per tick jaw goal/written/measured, cap, head pose, body slots")
     args = ap.parse_args()

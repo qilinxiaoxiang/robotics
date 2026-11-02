@@ -469,3 +469,5 @@ Tailscale since about 17:25).
 ## 2026-11-01 T2 brain-harness matrix and first robot deployment
 
 Matrix (`microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`): spx-b_1800 is the best T2 candidate in the as-built harness, far below its Kaggle numbers and below seepick61; spx-b_2400 scores 0 here. On the real sphere jaw current does not change the result, correcting the earlier attribution to jaw force. Prediction before the robot run: the beak lands beside the ball and does not hold it. `t2pick.py` runs it on the A7Z and holds the driver lease.
+
+First robot run with T2 (2026-11-01 21:01, `seepick.py --t2`): found, walked and held the real ball at 150 mA on try 2, against my prediction that it would not hold. Fell 0.9 s after the hand-back: T2 with the holding bit keeps the neck at -1.14 rad, stand61 throws it back. In the sim, seepick61 finishing the rise from phase 0.50 gives peak gyro 1.17 against 3.56 and 3 of 6 held to the end against 0. Details: `microduck-sim/guide/firmware/mac/t2-chain-20261101/README.md`.

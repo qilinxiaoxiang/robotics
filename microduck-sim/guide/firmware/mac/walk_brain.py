@@ -438,6 +438,11 @@ class Brain:
         self.gp_phase = 0.0  # ground-pick phase phi handed to the policy; follows want["phase"] at 1/GP_PERIOD per s
         self.sp_phase = 0.0  # seeing-pick phase, 0 -> 1 at 1/SP_PERIOD per s up to want["phase"] (default 1)
         self.sp_body = np.zeros(6, dtype=np.float32)  # seeing-pick body slots last handed to the policy
+        self.sp_bit_off_phase = None  # trial (t2-chain-20261101): from this phase T2 reads holding 0, so its neck comes back
+        self.sp_blend_s = None        # trial: goals blend from the pick's last goals to stand61's over this long
+        self.sp_rise_old_phase = None # trial: from this phase, with the holding bit on, seepick61 finishes T2's rise
+        self.sp_old_rise = False
+        self.hand_blend = None
         self.sp_policy = "seepick"  # "seepickpix" when the pick started with a picture object (u, v, w), fixed per pick
         self.head_cmd = np.zeros(4, dtype=np.float32)  # smoothed head pose deltas handed to walk61/stand61
         self.base_want = {"mode": "monitor"}  # the command in force outside a kick (the last one accepted)
@@ -702,6 +707,7 @@ class Brain:
                 return None, 0, info
             self.waiting = False
             was_policy = self.mode in self.POLICY_MODES
+            prev_mode = self.mode
             self.mode = want.get("mode", "monitor")
             if self.getup is not None:
                 print(f"getup: {self.getup['phase']} ended by the switch to {self.mode}", flush=True)
@@ -729,6 +735,7 @@ class Brain:
                 # T2 (seepickpix61.onnx): the object comes as the tracker's picture box; the form at the switch picks
                 # the policy for the whole pick
                 self.sp_policy = "seepickpix" if is_pix_object(want.get("object")) else "seepick"
+                self.sp_old_rise = False
                 if self.sp_policy not in self.sessions:
                     raise RuntimeError(f"no {self.sp_policy}61.onnx in the models directory")
                 self.head_cmd[:] = 0
@@ -752,6 +759,8 @@ class Brain:
             elif self.mode == "walk":
                 if not was_policy:
                     self.last_action[:] = 0
+                if prev_mode == "seepick" and self.sp_blend_s:
+                    self.hand_blend = (now, self.sp_blend_s, dict(self.goal))
                 self.head_cmd[:] = 0
                 if self.walk_ramp > 0:
                     # legacy open-loop ramp to the policy pose: tips the real robot forward before the policy
@@ -825,8 +834,18 @@ class Brain:
                     self.sp_phase = min(target, self.sp_phase + 0.02 / SP_PERIOD)
                 a = 2 * math.pi * self.sp_phase
                 command, head, policy = [math.cos(a), math.sin(a), 0.0], np.zeros(4, dtype=np.float32), self.sp_policy
+                holding_in = want.get("_holding")
+                if self.sp_bit_off_phase is not None and self.sp_phase >= self.sp_bit_off_phase:
+                    holding_in = False
+                if (self.sp_rise_old_phase is not None and policy == "seepickpix" and holding_in
+                        and self.sp_phase >= self.sp_rise_old_phase and "seepick" in self.sessions):
+                    # the bite is done and the picture has nothing more to say: the floor-object policy, on the same
+                    # phase clock, brings the neck back with the holding bit on (T2 keeps it bowed, robot 2026-11-01)
+                    self.sp_policy, policy, self.sp_old_rise = "seepick", "seepick", True
+                    self.sp_body[:] = [0.087, 0.0, 0.013, SP_AGE_MAX, 1.0, 0.0]
+                    print(f"seepick61 takes the rise at phase {self.sp_phase:.3f}", flush=True)
                 body_fn = seepickpix_body if policy == "seepickpix" else seepick_body
-                self.sp_body[:] = body_fn(self.sp_body, want.get("object"), want.get("_holding"), now)
+                self.sp_body[:] = body_fn(self.sp_body, None if self.sp_old_rise else want.get("object"), holding_in, now)
                 info["sp_phase"], info["sp_body"] = round(self.sp_phase, 4), [round(float(v), 4) for v in self.sp_body]
                 info["sp_jaw"] = seepick_jaw(self.sp_phase)
             elif self.mode == "kick":
@@ -917,6 +936,12 @@ class Brain:
             self.last_action = action.astype(np.float32)
             self.goal = clamp_goal({n: self.default[n] + float(action[k]) if n in self.default else self.goal[n]
                                     for k, n in enumerate(OBSERVATION_DOF_ORDER)})
+            if self.hand_blend is not None:
+                w = (now - self.hand_blend[0]) / self.hand_blend[1]
+                if self.mode != "walk" or w >= 1.0:
+                    self.hand_blend = None
+                else:
+                    self.goal = {n: self.hand_blend[2][n] + w * (self.goal[n] - self.hand_blend[2][n]) for n in self.goal}
             info["action"] = action.round(4).tolist()
             if self.mode == "kick":
                 self.kick["ticks"] += 1

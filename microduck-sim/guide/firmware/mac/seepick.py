@@ -18,6 +18,8 @@ The policy was trained with the object at SPOT = (0.087, 0.0) m from the standin
 duck_kin) +-3-4 cm (sim: 80 % at +-3 cm, 71 % at +-5 cm, 31-39 % when the object moves before the bite).
 
   ~/.venvs/duck-policy/bin/python seepick.py --color orange          on the A7Z, walk_wired running, jaw calibrated
+  ~/.venvs/duck-policy/bin/python seepick.py --color orange --t2      the pick is T2 (seepickpix61.onnx): the same phases,
+                                                                      the pick command carries the ball's picture box
   ~/.venvs/duck-policy/bin/python seepick.py --color green --dry     approach, aim and align only, no pick
   ~/.venvs/duck-policy/bin/python seepick.py --color green --observe 10   detections only, no motion
 """
@@ -58,6 +60,9 @@ SETTLE_S = 1.0             # after a stop, before measuring (approach.SETTLE_S i
 TRACK_GATE = 0.04          # m: a detection further than this from the estimate during the pick is another object
 TRACK_GATE_HERE = 0.08     # m: the gate on a --pick-here try, whose estimate is a person's guess (robot 2026-10-30: the
 #                            guess was 11 cm off and three true sightings during the bend were gated away)
+PIX_W, PIX_H = 640, 360    # the picture T2 reads
+PIX_SEEN_S = 0.15          # s: a detection this recent counts as the newest frame's (the camera runs about 15-30 fps)
+PIX_BLIND_W = 16.0         # px: the width of the ball at about 10 cm when it has no detection (12 mm ball, robot frames)
 CMD_PERIOD = 0.1           # s: the pick command is rewritten at least this often while the camera sees the object
 PICK_MAX_S = 6.0           # the seeing pick takes 3.6 s to the hand-back (phase 0.9 x 4 s)
 VERIFY_S = 0.5
@@ -78,7 +83,8 @@ class SeePick:
     state() / state_at(t) return approach.parse_state dicts plus jaw_holding and sp_phase (SeeTail)."""
 
     def __init__(self, kin, latest_frame, state, state_at, send, detect, make_approach, tries=3, dry=False,
-                 now=time.time, log=print, pick_here=None, track_gate=None):
+                 now=time.time, log=print, pick_here=None, track_gate=None, t2=False):
+        self.t2 = t2
         self.kin, self.latest_frame, self.state_fn, self.state_at = kin, latest_frame, state, state_at
         self.send_fn, self.detect, self.make_approach = send, detect, make_approach
         self.tries, self.dry, self.now, self.log = tries, dry, now, log
@@ -145,14 +151,29 @@ class SeePick:
                                    bbox=[int(v) for v in det["bbox"]], u=float(det.get("base_cx", det["cx"])),
                                    v=float(y0 + bh), w=w, h=h, q=sc["q"], gb=list(sc["gb"])))  # cam_calib obs row
             return None
-        m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx)
+        m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx,
+                 u=float(x0 + bw / 2), v=float(y0 + bh / 2), w=float(bw))
         self.trace.append(dict(t=self.now(), phase=self.phase, meas=m))
         return m
 
     def pick_cmd(self):
         o = self.obj
-        return {"mode": "seepick", "phase": 1.0,
-                "object": {"x": round(o["x"], 4), "y": round(o["y"], 4), "size": round(o["size"], 4), "t": o["t"]}}
+        obj = {"x": round(o["x"], 4), "y": round(o["y"], 4), "size": round(o["size"], 4), "t": o["t"]}
+        if self.t2:
+            obj.update(self.pix_box(o))
+        return {"mode": "seepick", "phase": 1.0, "object": obj}
+
+    def pix_box(self, o):
+        """T2's picture slots: the last detection's box, seen while that detection is the newest frame. A ball under the
+        picture (blind zone, no detection) reads as its projection clamped to the edge, the hand-over of training
+        (T2-PIXEL.md, brain_sim_check.PixCamera.start)."""
+        now = self.now()
+        if "u" in o:
+            return {"u": round(o["u"], 2), "v": round(o["v"], 2), "w": round(o["w"], 2), "seen": now - o["t"] < PIX_SEEN_S}
+        st = self.state_fn()
+        p = self.kin.ground_to_pixel(o["x"], o["y"], st["q"], st["gb"], PIX_W, PIX_H, z=0.0) if st else None
+        u, v = (PIX_W / 2, PIX_H - 1) if p is None else (min(max(p[0], 0.0), PIX_W - 1), min(max(p[1], 0.0), PIX_H - 1))
+        return {"u": round(float(u), 2), "v": round(float(v), 2), "w": PIX_BLIND_W, "seen": False}
 
     # --- the machine -------------------------------------------------------------------------------------------
     def step(self):
@@ -373,6 +394,7 @@ def main():
     p.add_argument("--cmd", default="/tmp/duck_cmd.json")
     p.add_argument("--log", default=None, help="walk_wired log (default: the --log of the running walk_wired)")
     p.add_argument("--tries", type=int, default=3)
+    p.add_argument("--t2", action="store_true", help="pick with T2, the picture policy (seepickpix61.onnx)")
     p.add_argument("--dry", action="store_true", help="approach, aim and align only, no pick")
     p.add_argument("--observe", type=float, default=None, help="s; print detections only, no motion")
     p.add_argument("--max-s", type=float, default=180.0)
@@ -395,7 +417,7 @@ def main():
     tail = SeeTail(log_path)
     cam = ap.ShmCamera()
     send = ap.send_file(a.cmd)
-    ctl = SeePick(kin, cam.latest, tail.latest, tail.at, send, detect, tries=a.tries, dry=a.dry,
+    ctl = SeePick(kin, cam.latest, tail.latest, tail.at, send, detect, tries=a.tries, dry=a.dry, t2=a.t2,
                   pick_here=tuple(a.pick_here) if a.pick_here else None, track_gate=a.track_gate,
                   make_approach=lambda: ap.Approach(kin, cam.latest, tail.latest, tail.at, send, detect,
                                                     log=lambda s: print("  approach " + s, flush=True)),
