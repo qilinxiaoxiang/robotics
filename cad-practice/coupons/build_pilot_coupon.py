@@ -1,49 +1,83 @@
-"""Pilot coupon: one plate that measures a printer's pilot shrink against print_fit.PILOT.
+"""Pilot coupon: a small strip that measures a printer's pilot shrink against print_fit.PILOT. Rides on any plate.
 
-Row A: vertical blind pilots 1.5 to 2.2 mm (0.1 steps), mouths on the top face (away from the bed), 8 mm deep.
-Row B: the same diameters as vertical through holes, so their bed mouths show the first-layer flare.
-Row C: horizontal teardrop pilots 1.7 to 2.4 mm (0.1 steps), 11 mm deep from the front face, tip to +Z.
-Print it on each printer with the same .3mf, drive one M2 x 8 (machine and thread-forming) into each, and write the
-smallest diameter that takes each screw by hand driver into PRINT-FIT.md and print_fit.PRINTER_OFFSET.
-Run: uv run -q --python 3.12 --with trimesh --with manifold3d python build_pilot_coupon.py
+Strip 6 mm tall (print Z), 7 mm deep, flat on the bed, top face up.
+Left: vertical through pilots 1.5 to 2.2 mm in 0.1 steps (8 holes), labelled on the front face ("15" = 1.5).
+Right: horizontal teardrop pilots 1.7 to 2.3 mm in 0.1 steps (7 holes), axis along Y through the 7 mm depth, tip to +Z,
+labelled on the top face. Walls between holes are 2 mm at the largest hole (4.2 mm pitch).
+Print it from one .3mf on each printer, drive an M2 x 8 machine screw and an M2 x 8 thread-forming screw into each row,
+and write the smallest diameter each enters by hand driver into PRINT-FIT.md and print_fit.PRINTER_OFFSET.
+Run: uv run -q --python 3.12 --with trimesh --with manifold3d --with shapely --with matplotlib python build_pilot_coupon.py
 """
 import math
 from pathlib import Path
+
 import trimesh
+from matplotlib.font_manager import FontProperties
+from matplotlib.textpath import TextPath
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
 
-DIAS = [1.5 + 0.1 * i for i in range(8)]
-HDIAS = [1.7 + 0.1 * i for i in range(8)]
-PITCH, W, H = 6.0, 6.0 * 8 + 4, 10.0
+VDIAS = [round(1.5 + 0.1 * i, 1) for i in range(8)]
+HDIAS = [round(1.7 + 0.1 * i, 1) for i in range(7)]
+PITCH, H, D, END = 4.2, 6.0, 7.0, 2.1         # pitch, height (Z), depth (Y), end margin to first/last hole centre
+HZ = 2.7                                       # horizontal hole centre height
+TXT, ENGRAVE = 2.8, 0.4
+L = 2 * END + PITCH * (len(VDIAS) + len(HDIAS) - 1)
+FONT = FontProperties(family="DejaVu Sans", weight="bold")
 
 
-def cyl(d, h, x, y, z0):
-    c = trimesh.creation.cylinder(radius=d / 2, height=h, sections=96)
-    c.apply_translation((x, y, z0 + h / 2))
-    return c
+def text_poly(s, cx, cy, size):
+    tp = TextPath((0, 0), s, size=size, prop=FONT)
+    polys = []
+    for ring in tp.to_polygons():
+        if len(ring) >= 3:
+            polys.append(Polygon(ring).buffer(0))
+    # even-odd: letters with holes ("0", "8") come as outer + inner rings
+    shape = Polygon()
+    for poly in sorted(polys, key=lambda q: -q.area):
+        shape = shape.difference(poly) if shape.contains(poly) else shape.union(poly)
+    minx, miny, maxx, maxy = shape.bounds
+    return trimesh.transformations.translation_matrix((cx - (minx + maxx) / 2, cy - (miny + maxy) / 2, 0)), shape
+
+
+def label(s, cx, cy, size):
+    T, shape = text_poly(s, cx, cy, size)
+    parts = [trimesh.creation.extrude_polygon(g, ENGRAVE + 0.1) for g in getattr(shape, "geoms", [shape])]
+    m = trimesh.util.concatenate(parts)
+    m.apply_transform(T)
+    return m
 
 
 def teardrop(d, x, z, length):
     r = d / 2
-    pts = [(r * math.cos(a), r * math.sin(a)) for a in [math.radians(t) for t in range(-225, 46, 5)]]
-    pts.append((0.0, r * math.sqrt(2)))                                     # 45 deg tip to +Z
-    from shapely.geometry import Polygon
-    prism = trimesh.creation.extrude_polygon(Polygon(pts), length)         # profile in XY, extruded along Z
-    prism.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))   # profile Y -> +Z, extrusion -> -Y
-    prism.apply_translation((x, length - 1.0, z))
+    pts = [(r * math.cos(math.radians(t)), r * math.sin(math.radians(t))) for t in range(-225, 46, 5)]
+    pts.append((0.0, r * math.sqrt(2)))                                      # 45 deg tip
+    prism = trimesh.creation.extrude_polygon(Polygon(pts), length)
+    prism.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))  # tip -> +Z, extrusion -> -Y
+    prism.apply_translation((x, length - 0.5, z))
     return prism
 
 
-body = trimesh.creation.box((W, 30.0, H))
-body.apply_translation((W / 2, 15.0, H / 2))
+body = trimesh.creation.box((L, D, H))
+body.apply_translation((L / 2, D / 2, H / 2))
 cuts = []
-for i, d in enumerate(DIAS):
-    x = 4 + PITCH * i
-    cuts.append(cyl(d, 8.0 + 0.01, x, 24.0, H - 8.0))          # row A blind from top
-    cuts.append(cyl(d, H + 2, x, 16.0, -1))                    # row B through
-for i, d in enumerate(HDIAS):
-    cuts.append(teardrop(d, 4 + PITCH * i, 5.0, 12.0))         # row C, blind from the y = 0 face
+for i, d in enumerate(VDIAS):
+    x = END + PITCH * i
+    c = trimesh.creation.cylinder(radius=d / 2, height=H + 2, sections=96)
+    c.apply_translation((x, D / 2, H / 2))
+    cuts.append(c)
+    lab = label(f"{int(round(d * 10))}", x, 0, TXT)                    # text in XY, then stood up on the front face
+    lab.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))   # v -> +Z, extrusion -> -Y
+    lab.apply_translation((0, ENGRAVE, H / 2))
+    cuts.append(lab)
+for j, d in enumerate(HDIAS):
+    x = END + PITCH * (len(VDIAS) + j)
+    cuts.append(teardrop(d, x, HZ, D + 1.0))
+    lab = label(f"{int(round(d * 10))}", x, D / 2, TXT)
+    lab.apply_translation((0, 0, H - ENGRAVE))
+    cuts.append(lab)
 out = body.difference(trimesh.util.concatenate(cuts))
-# engraved-free labels: one notch per 0.1 step is not printed; row order is the label (left = smallest)
 p = Path(__file__).with_name("pilot-coupon.stl")
 out.export(p)
-print(p, out.is_watertight, out.bounds.tolist())
+print(p, "watertight", out.is_watertight, "bounds", [[round(v, 2) for v in r] for r in out.bounds.tolist()])
+print(f"volume {out.volume / 1000:.3f} cm3, PLA {out.volume / 1000 * 1.24:.2f} g")
