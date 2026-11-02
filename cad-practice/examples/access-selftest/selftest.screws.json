@@ -1,0 +1,92 @@
+{
+ "mesh_dir": ".",
+ "meshes": {
+  "plate": "plate.stl",
+  "wall": "wall.stl",
+  "lip": "lip.stl"
+ },
+ "screws": [
+  {
+   "id": "open",
+   "step": "s1",
+   "seat": [
+    -15,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "present": [
+    "plate",
+    "wall",
+    "lip"
+   ],
+   "spec": "M3 x 6 button",
+   "head_d": 5.7,
+   "head_h": 1.65,
+   "length": 6,
+   "through_mm": 0,
+   "drive": "hex",
+   "table_z": -3.0
+  },
+  {
+   "id": "3.5 mm from the wall face",
+   "step": "s1",
+   "seat": [
+    16.5,
+    15,
+    0
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "present": [
+    "plate",
+    "wall"
+   ],
+   "spec": "M3 x 6 button",
+   "head_d": 5.7,
+   "head_h": 1.65,
+   "length": 6,
+   "through_mm": 0,
+   "drive": "hex",
+   "table_z": -3.0
+  },
+  {
+   "id": "under the lip",
+   "step": "s1",
+   "seat": [
+    15,
+    -15,
+    0
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "present": [
+    "plate",
+    "wall",
+    "lip"
+   ],
+   "spec": "M3 x 6 button",
+   "head_d": 5.7,
+   "head_h": 1.65,
+   "length": 6,
+   "through_mm": 0,
+   "drive": "hex",
+   "table_z": -3.0
+  }
+ ],
+ "expect": {
+  "open": "OK",
+  "3.5 mm from the wall face": "awkward",
+  "under the lip": "blocked"
+ }
+}
