@@ -7,6 +7,8 @@ the robot's servos first step aside to 100 + ID. The spare is then the only serv
   2. power off, swap the servo, power on
   3. replace_servo.py --id 2 adopt    # exactly one servo under 100, a model 1200: gets the settings, then the ID
   4. replace_servo.py --id 2 unpark   # 100 + ID back to ID; checks that IDs 1-15 answer with the same settings
+  5. Torque off, hold the legs symmetric and compare the joint with its mirror before any torque: the horn's four holes
+     let a link go back 90 deg off (2026-11-02 right knee, tick 1568 where 2600 was right).
 
 Every step can be rerun, also after a power loss in the middle: IDs live in EEPROM and a parked servo stays findable.
 Torque stays off throughout: EEPROM writes need it off and this program never sets it. `status` only reads.
@@ -183,7 +185,8 @@ def unpark(bus, target):
     bad = {i: bus.read(i, ADDR_SHUTDOWN, 1) for i in ALL_IDS if bus.read(i, ADDR_SHUTDOWN, 1) != 52}
     if bad:
         die(f"Shutdown is not 52 on {bad}")
-    print(f"all 15 answer with Shutdown 52; ID{target} position {bus.read(target, ADDR_POS, 4)}")
+    print(f"all 15 answer with Shutdown 52; ID{target} position {bus.read(target, ADDR_POS, 4)}; "
+          "compare it with its mirror joint before any torque (a link can go back 90 deg off)")
 
 
 def brain_running():

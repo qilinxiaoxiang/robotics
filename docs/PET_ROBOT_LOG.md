@@ -542,3 +542,7 @@ Freeing ID 1 does not help: the servo is unreachable because of the 57600 baud, 
 ## 2026-11-02 14:10 Right knee refitted one hole off (90 deg); found before torque
 
 With both legs held symmetric by Shawn, torque off: left knee tick 1496 (-3.5 deg), right knee tick 1568 (-87.2 deg). Mirrored, the right should read about +3.5 deg, tick 2600; it is 1032 ticks off, 90.7 deg, one step of the horn's four-hole pattern. The live view tracked both knees as they moved, so the encoder and link move together. Fix: lower link off the ID2 horn, horn turned until the right knee reads about 0 deg, link back on. Torque stays off until the reading agrees.
+
+## 2026-11-02 14:00 Right knee link refitted, brain back with the guard on
+
+The agent turned the detached ID2 horn to tick 2564 under torque (27 deg/s, 15 mA, no load), Shawn screwed the link back; 13 mA under hold, then torque off and profile velocity restored to 0. Torque off, right 2565 (+0.4 deg), left 1463-1468 (about -6 deg), the right leg was not moved again. Six degrees is far from a hole step (90 deg); the stand test decides the rest. Brain started by duck-run.sh on the A7Z, 49.7 Hz, 15 answer, --supply battery --supply-file; the switch tested live in monitor: bench -> guard off, battery -> guard on within a second. Pack 7.4 V idle. The guard's floor is still untested on the robot.
