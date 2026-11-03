@@ -1,0 +1,629 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "original_R1_sequence_now_blocked_by_look_gate",
+      "passed": true,
+      "state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "source": "recipient"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2,
+          "capture_t": 1.98,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true,
+          "source": "recipient"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ]
+    },
+    {
+      "name": "R1_after_valid_look",
+      "passed": true,
+      "state": "seeking_ball",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.22,
+          "source": "recipient-independent",
+          "capture_t": 0.21,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "source": "recipient-independent",
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2,
+          "source": "recipient-independent",
+          "capture_t": 1.98,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.22,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.3,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 0.28,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "controlled_stop",
+          "reason": "camera_timeout",
+          "keep_payload": false
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        }
+      ]
+    },
+    {
+      "name": "look_missing",
+      "passed": true,
+      "state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "source": "recipient-independent",
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ]
+    },
+    {
+      "name": "look_wrong_caller",
+      "passed": true,
+      "state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.22,
+          "source": "recipient-independent",
+          "capture_t": 0.21,
+          "caller_id": "person-B",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "source": "recipient-independent",
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ]
+    },
+    {
+      "name": "look_stale",
+      "passed": true,
+      "state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.6,
+          "source": "recipient-independent",
+          "capture_t": 0.21,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ]
+    },
+    {
+      "name": "look_valid_releases_search",
+      "passed": true,
+      "state": "approaching",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.22,
+          "source": "recipient-independent",
+          "capture_t": 0.21,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "source": "recipient-independent",
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.22,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.3,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 0.28,
+          "source": "recipient-independent"
+        }
+      ]
+    },
+    {
+      "name": "R1_return_trip",
+      "passed": true,
+      "state": "seeking_caller",
+      "events": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "call",
+          "t": 0,
+          "source": "recipient-independent",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "request",
+          "t": 0.1,
+          "source": "recipient-independent",
+          "caller_id": "person-A",
+          "target_type": "orange_ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.2,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.22,
+          "source": "recipient-independent",
+          "capture_t": 0.21,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.3,
+          "source": "recipient-independent",
+          "capture_t": 0.28,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 0.32,
+          "source": "recipient-independent",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "recipient-entry"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 0.4,
+          "source": "recipient-independent",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 0.5,
+          "source": "recipient-independent",
+          "capture_t": 0.49,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2,
+          "source": "recipient-independent",
+          "capture_t": 1.98,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.2,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.22,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.3,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 0.28,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.32,
+          "intent": "start_pick",
+          "entry_sample": "recipient-entry",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.4,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.5,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 0.49,
+          "source": "recipient-independent"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "controlled_stop",
+          "reason": "camera_timeout",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "name": "expired_selected_target_then_wrong_identity_frame",
+  "events": [
+    {
+      "v": 1,
+      "epoch": 1,
+      "kind": "call",
+      "t": 0,
+      "caller_id": "person-A"
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "kind": "request",
+      "t": 0.1,
+      "caller_id": "person-A",
+      "target_type": "orange_ball"
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "kind": "settled",
+      "t": 0.2
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "kind": "track",
+      "t": 0.3,
+      "capture_t": 0.28,
+      "target_id": "orange-ball",
+      "target_type": "orange_ball",
+      "visible": true,
+      "source": "recipient"
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "kind": "track",
+      "t": 2,
+      "capture_t": 1.98,
+      "target_id": "person-B",
+      "target_type": "person",
+      "visible": true,
+      "source": "recipient"
+    }
+  ],
+  "state": "approaching",
+  "commands": [
+    {
+      "v": 1,
+      "epoch": 1,
+      "t": 0,
+      "intent": "controlled_stop",
+      "preserve_posture": true
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "t": 0.2,
+      "intent": "gaze_only",
+      "target_id": "person-A",
+      "preserve_posture": true
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "t": 0.2,
+      "intent": "find_target",
+      "target_id": "orange-ball"
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "t": 0.3,
+      "intent": "follow_target",
+      "target_id": "orange-ball",
+      "capture_t": 0.28,
+      "source": "recipient"
+    },
+    {
+      "v": 1,
+      "epoch": 1,
+      "t": 2,
+      "intent": "ignore_other_identity",
+      "target_id": "person-B"
+    }
+  ],
+  "expected": "seeking_ball + controlled_stop after selected target expired",
+  "passed": false
+}

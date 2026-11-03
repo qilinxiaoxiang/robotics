@@ -1,0 +1,85 @@
+[
+  {
+    "name": "interaction",
+    "command": [
+      "python",
+      "run.py"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/interaction",
+    "returncode": 0
+  },
+  {
+    "name": "sources",
+    "command": [
+      "python",
+      "reference/verify_sources.py"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/interaction",
+    "returncode": 0
+  },
+  {
+    "name": "vision",
+    "command": [
+      "python",
+      "run.py",
+      "--out",
+      "out"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/vision",
+    "returncode": 0
+  },
+  {
+    "name": "gaze",
+    "command": [
+      "python",
+      "reference/check_reference.py"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/vision",
+    "returncode": 0
+  },
+  {
+    "name": "fixtures",
+    "command": [
+      "python",
+      "replay.py",
+      "fixtures"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/motion",
+    "returncode": 0
+  },
+  {
+    "name": "locomotion",
+    "command": [
+      "python",
+      "replay.py",
+      "locomotion",
+      "--out",
+      "out/gait.json"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/motion",
+    "returncode": 0
+  },
+  {
+    "name": "pickup",
+    "command": [
+      "python",
+      "replay.py",
+      "pickup",
+      "--out",
+      "out/handoff.json"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter/motion",
+    "returncode": 0
+  },
+  {
+    "name": "fresh_tracks",
+    "command": [
+      "python",
+      "rehearse.py",
+      "--tracks",
+      "vision/out/tracks.jsonl"
+    ],
+    "cwd": "/private/var/folders/qc/v7_v9gkn7xb_3rpvz7h0n8ph0000gn/T/microduck-recipient-v4-neabdgkk/fetch-package/starter",
+    "returncode": 0
+  }
+]

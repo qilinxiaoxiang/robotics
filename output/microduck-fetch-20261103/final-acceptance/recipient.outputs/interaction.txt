@@ -1,0 +1,25 @@
+PASS call_then_fetch: called, fetch_requested
+PASS name_only: called
+PASS combined_call_fetch: fetch_requested
+PASS chinese_request: called, fetch_requested
+PASS cancel_active_fetch: called, fetch_requested, cancelled
+PASS cancel_waiting: called, cancelled
+PASS nonaddressed_even_with_name: nonaddressed
+PASS chatter_during_session: called, nonaddressed
+PASS ambiguous_name: ambiguous_caller
+PASS ambiguous_request: called, ambiguous_caller
+PASS request_without_call: call_required
+PASS wrong_target: called, unsupported_text
+PASS negated_fetch: called, unsupported_text
+PASS question_not_command: called, unsupported_text
+PASS second_person_cannot_overwrite: called, fetch_requested, other_caller, other_caller
+PASS wrong_person_before_request: called, other_caller
+PASS duplicate_request_ignored: called, fetch_requested, busy
+PASS request_window_expired: called, call_required
+PASS caller_stays_bound_after_long_fetch: called, fetch_requested, other_caller
+PASS new_caller_after_cancel: called, cancelled, called, fetch_requested
+PASS invalid_time_order: called
+KNOWN ERROR asr_misread_fedch: ASR-style Fedch typo produces no request; parser does not repair transcription.
+KNOWN ERROR unseen_paraphrase: Unseen retrieve paraphrase produces no request; narrow phrase set only.
+Transcript checks: 21; documented limitations: 2; unexpected failures: 0
+Parser fixtures only: no ASR, wake-word, identity, robot or physical stop acceptance.

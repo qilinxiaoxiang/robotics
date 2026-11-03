@@ -1,0 +1,4106 @@
+{
+  "scope": "Motor-free software contract only; physical events are hand-authored fixtures",
+  "actual_inputs": [
+    "interaction/run.py parser output",
+    "/Users/xiangzheng/code/robotics/microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/evidence/baseline_tracks.jsonl"
+  ],
+  "unimplemented": [
+    "live audio and identity",
+    "live body adapters",
+    "validated entry/exit estimators",
+    "camera-to-head/velocity calibration",
+    "safe physical abort",
+    "human-take sensing"
+  ],
+  "cases": 22,
+  "passed": 22,
+  "results": [
+    {
+      "name": "complete_same_caller_then_human_take",
+      "passed": true,
+      "expected_state": "completed",
+      "actual_state": "completed",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "arrived",
+          "t": 2.15,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "within_wait_zone": true,
+          "settled": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "human_take",
+          "t": 3,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "take_confirmed": true,
+          "object_absent": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.15,
+          "intent": "hold_for_human",
+          "caller_id": "person-A",
+          "jaw": "keep_grip"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 3,
+          "intent": "delivery_complete",
+          "caller_id": "person-A"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.15,
+          "event": "arrived",
+          "before": "returning",
+          "after": "waiting_take"
+        },
+        {
+          "t": 3,
+          "event": "human_take",
+          "before": "waiting_take",
+          "after": "completed"
+        }
+      ]
+    },
+    {
+      "name": "call_only_waits_no_body_turn",
+      "passed": true,
+      "expected_state": "ready",
+      "actual_state": "ready",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 0.1,
+          "source": "fixture",
+          "posture": "seated"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 0.12,
+          "source": "fixture",
+          "capture_t": 0.11,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0.1,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 0.1,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 0.12,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "ready"
+        }
+      ]
+    },
+    {
+      "name": "request_waits_for_caller_look",
+      "passed": true,
+      "expected_state": "looking_at_caller",
+      "actual_state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        }
+      ]
+    },
+    {
+      "name": "wrong_person_look_cannot_release_search",
+      "passed": true,
+      "expected_state": "looking_at_caller",
+      "actual_state": "looking_at_caller",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-B",
+          "visible": true,
+          "gaze_aligned": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "looking_at_caller"
+        }
+      ]
+    },
+    {
+      "name": "stale_ball_with_new_distractor_stops",
+      "passed": true,
+      "expected_state": "seeking_ball",
+      "actual_state": "seeking_ball",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2,
+          "source": "fixture",
+          "capture_t": 1.98,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "controlled_stop",
+          "reason": "camera_timeout",
+          "keep_payload": false
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 2,
+          "event": "track",
+          "before": "approaching",
+          "after": "seeking_ball"
+        }
+      ]
+    },
+    {
+      "name": "wrong_person_take_is_not_delivery",
+      "passed": true,
+      "expected_state": "waiting_take",
+      "actual_state": "waiting_take",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "arrived",
+          "t": 2.15,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "within_wait_zone": true,
+          "settled": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "human_take",
+          "t": 3,
+          "source": "fixture",
+          "caller_id": "person-B",
+          "take_confirmed": true,
+          "object_absent": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.15,
+          "intent": "hold_for_human",
+          "caller_id": "person-A",
+          "jaw": "keep_grip"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.15,
+          "event": "arrived",
+          "before": "returning",
+          "after": "waiting_take"
+        },
+        {
+          "t": 3,
+          "event": "human_take",
+          "before": "waiting_take",
+          "after": "waiting_take"
+        }
+      ]
+    },
+    {
+      "name": "request_waits_for_stop_readback",
+      "passed": true,
+      "expected_state": "attending",
+      "actual_state": "attending",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        }
+      ]
+    },
+    {
+      "name": "camera_stale_stops",
+      "passed": true,
+      "expected_state": "seeking_ball",
+      "actual_state": "seeking_ball",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "tick",
+          "t": 1.5,
+          "source": "fixture"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.5,
+          "intent": "controlled_stop",
+          "reason": "camera_timeout",
+          "keep_payload": false
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.5,
+          "event": "tick",
+          "before": "approaching",
+          "after": "seeking_ball"
+        }
+      ]
+    },
+    {
+      "name": "wrong_person_cannot_start_return",
+      "passed": true,
+      "expected_state": "seeking_caller",
+      "actual_state": "seeking_caller",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "seeking_caller"
+        }
+      ]
+    },
+    {
+      "name": "caller_reacquired_after_distractor",
+      "passed": true,
+      "expected_state": "completed",
+      "actual_state": "completed",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.12,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "arrived",
+          "t": 2.15,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "within_wait_zone": true,
+          "settled": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "human_take",
+          "t": 3,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "take_confirmed": true,
+          "object_absent": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.12,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.15,
+          "intent": "hold_for_human",
+          "caller_id": "person-A",
+          "jaw": "keep_grip"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 3,
+          "intent": "delivery_complete",
+          "caller_id": "person-A"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.12,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.15,
+          "event": "arrived",
+          "before": "returning",
+          "after": "waiting_take"
+        },
+        {
+          "t": 3,
+          "event": "human_take",
+          "before": "waiting_take",
+          "after": "completed"
+        }
+      ]
+    },
+    {
+      "name": "empty_bite_reacquires",
+      "passed": true,
+      "expected_state": "seeking_ball",
+      "actual_state": "seeking_ball",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": false,
+          "held": false,
+          "upright": true,
+          "supported_exit": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "controlled_stop",
+          "reason": "empty_bite_reacquire"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_ball"
+        }
+      ]
+    },
+    {
+      "name": "unsupported_pick_exit_waits_for_abort",
+      "passed": true,
+      "expected_state": "cancel_pending",
+      "actual_state": "cancel_pending",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": false
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "request_supported_abort",
+          "reason": "unsupported_pick_exit"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "cancel_pending"
+        }
+      ]
+    },
+    {
+      "name": "drop_during_return_is_failure",
+      "passed": true,
+      "expected_state": "failed",
+      "actual_state": "failed",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "payload_lost",
+          "t": 2.2,
+          "source": "fixture"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.2,
+          "intent": "controlled_stop",
+          "reason": "drop_not_delivery"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.2,
+          "event": "payload_lost",
+          "before": "returning",
+          "after": "failed"
+        }
+      ]
+    },
+    {
+      "name": "object_disappears_while_waiting_is_not_take",
+      "passed": true,
+      "expected_state": "failed",
+      "actual_state": "failed",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "arrived",
+          "t": 2.15,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "within_wait_zone": true,
+          "settled": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "payload_lost",
+          "t": 3,
+          "source": "fixture"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.15,
+          "intent": "hold_for_human",
+          "caller_id": "person-A",
+          "jaw": "keep_grip"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 3,
+          "intent": "controlled_stop",
+          "reason": "drop_not_delivery"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.15,
+          "event": "arrived",
+          "before": "returning",
+          "after": "waiting_take"
+        },
+        {
+          "t": 3,
+          "event": "payload_lost",
+          "before": "waiting_take",
+          "after": "failed"
+        }
+      ]
+    },
+    {
+      "name": "wait_without_releasing",
+      "passed": true,
+      "expected_state": "waiting_take",
+      "actual_state": "waiting_take",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2.1,
+          "source": "fixture",
+          "capture_t": 2.08,
+          "target_id": "person-A",
+          "target_type": "person",
+          "visible": true,
+          "confidence": 1,
+          "bbox_xywh": [
+            200,
+            90,
+            70,
+            180
+          ],
+          "image_wh": [
+            640,
+            360
+          ]
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "arrived",
+          "t": 2.15,
+          "source": "fixture",
+          "caller_id": "person-A",
+          "within_wait_zone": true,
+          "settled": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "follow_target",
+          "target_id": "person-A",
+          "capture_t": 2.08,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.15,
+          "intent": "hold_for_human",
+          "caller_id": "person-A",
+          "jaw": "keep_grip"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "track",
+          "before": "seeking_caller",
+          "after": "returning"
+        },
+        {
+          "t": 2.15,
+          "event": "arrived",
+          "before": "returning",
+          "after": "waiting_take"
+        }
+      ]
+    },
+    {
+      "name": "cancel_approach_needs_supported_stop",
+      "passed": true,
+      "expected_state": "stopped",
+      "actual_state": "stopped",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "cancel",
+          "t": 1.15,
+          "source": "fixture",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "abort_supported",
+          "t": 1.2,
+          "source": "fixture",
+          "supported": true,
+          "settled": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.15,
+          "intent": "request_supported_abort",
+          "keep_payload": false
+        },
+        {
+          "v": 1,
+          "epoch": 2,
+          "t": 1.2,
+          "intent": "revoke_autonomy",
+          "reason": "cancel_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.15,
+          "event": "cancel",
+          "before": "approaching",
+          "after": "cancel_pending"
+        },
+        {
+          "t": 1.2,
+          "event": "abort_supported",
+          "before": "cancel_pending",
+          "after": "stopped"
+        }
+      ]
+    },
+    {
+      "name": "cancel_during_pick_does_not_jump_to_stand",
+      "passed": true,
+      "expected_state": "cancel_pending",
+      "actual_state": "cancel_pending",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "cancel",
+          "t": 1.15,
+          "source": "fixture",
+          "caller_id": "person-A"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.15,
+          "intent": "request_supported_abort",
+          "keep_payload": false
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 1.15,
+          "event": "cancel",
+          "before": "picking",
+          "after": "cancel_pending"
+        }
+      ]
+    },
+    {
+      "name": "old_pick_result_cannot_restart_cancelled_job",
+      "passed": true,
+      "expected_state": "stopped",
+      "actual_state": "stopped",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "cancel",
+          "t": 1.15,
+          "source": "fixture",
+          "caller_id": "person-A"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "abort_supported",
+          "t": 1.2,
+          "source": "fixture",
+          "supported": true,
+          "settled": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.15,
+          "intent": "request_supported_abort",
+          "keep_payload": false
+        },
+        {
+          "v": 1,
+          "epoch": 2,
+          "t": 1.2,
+          "intent": "revoke_autonomy",
+          "reason": "cancel_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 1.15,
+          "event": "cancel",
+          "before": "picking",
+          "after": "cancel_pending"
+        },
+        {
+          "t": 1.2,
+          "event": "abort_supported",
+          "before": "cancel_pending",
+          "after": "stopped"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "stopped",
+          "after": "stopped",
+          "outcome": "revoked_epoch"
+        }
+      ]
+    },
+    {
+      "name": "manual_takeover_revokes_old_job",
+      "passed": true,
+      "expected_state": "stopped",
+      "actual_state": "stopped",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "manual_takeover",
+          "t": 1.11,
+          "source": "fixture"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 2,
+          "t": 1.11,
+          "intent": "revoke_autonomy",
+          "reason": "manual_takeover"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.11,
+          "event": "manual_takeover",
+          "before": "approaching",
+          "after": "stopped"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "stopped",
+          "after": "stopped",
+          "outcome": "revoked_epoch"
+        }
+      ]
+    },
+    {
+      "name": "carrying_expression_preserves_jaw",
+      "passed": true,
+      "expected_state": "seeking_caller",
+      "actual_state": "seeking_caller",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "pick_result",
+          "t": 2,
+          "source": "fixture",
+          "lifted": true,
+          "held": true,
+          "upright": true,
+          "supported_exit": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "expression",
+          "t": 2.1,
+          "source": "fixture",
+          "expression": "quack"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.12,
+          "intent": "start_pick",
+          "entry_sample": "fixture-state-17",
+          "preserve_state": true,
+          "preserve_previous_action": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "find_target",
+          "target_id": "person-A",
+          "keep_payload": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2.1,
+          "intent": "expression_without_jaw",
+          "reason": "preserve_grip"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "picking"
+        },
+        {
+          "t": 2,
+          "event": "pick_result",
+          "before": "picking",
+          "after": "seeking_caller"
+        },
+        {
+          "t": 2.1,
+          "event": "expression",
+          "before": "seeking_caller",
+          "after": "seeking_caller"
+        }
+      ]
+    },
+    {
+      "name": "invalid_pick_entry_rejected",
+      "passed": true,
+      "expected_state": "approaching",
+      "actual_state": "approaching",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.12,
+          "source": "fixture",
+          "profile_id": "wrong-model",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.12,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "approaching"
+        }
+      ]
+    },
+    {
+      "name": "stale_view_cannot_start_pick",
+      "passed": true,
+      "expected_state": "seeking_ball",
+      "actual_state": "seeking_ball",
+      "events": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "caller_looked",
+          "t": 1.04,
+          "source": "fixture",
+          "capture_t": 1.03,
+          "caller_id": "person-A",
+          "visible": true,
+          "gaze_aligned": true
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "dock_ready",
+          "t": 1.5,
+          "source": "fixture",
+          "profile_id": "fixture-entry-v1",
+          "within_entry": true,
+          "history_preserved": true,
+          "sample_id": "fixture-state-17"
+        }
+      ],
+      "commands": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 0,
+          "intent": "controlled_stop",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.04,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.1,
+          "intent": "follow_target",
+          "target_id": "orange-ball",
+          "capture_t": 1.08,
+          "source": "image_detector"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.5,
+          "intent": "controlled_stop",
+          "reason": "camera_timeout",
+          "keep_payload": false
+        }
+      ],
+      "transitions": [
+        {
+          "t": 0,
+          "event": "call",
+          "before": "idle",
+          "after": "attending"
+        },
+        {
+          "t": 1,
+          "event": "request",
+          "before": "attending",
+          "after": "attending"
+        },
+        {
+          "t": 1.02,
+          "event": "settled",
+          "before": "attending",
+          "after": "looking_at_caller"
+        },
+        {
+          "t": 1.04,
+          "event": "caller_looked",
+          "before": "looking_at_caller",
+          "after": "seeking_ball"
+        },
+        {
+          "t": 1.1,
+          "event": "track",
+          "before": "seeking_ball",
+          "after": "approaching"
+        },
+        {
+          "t": 1.5,
+          "event": "dock_ready",
+          "before": "approaching",
+          "after": "seeking_ball"
+        }
+      ]
+    }
+  ]
+}

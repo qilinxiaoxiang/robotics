@@ -1,0 +1,151 @@
+{
+  "schema": "independent-plan-research-review/1",
+  "reviewer": "/root/research_method_review",
+  "verdict": "accepted_for_stated_planning_and_CPU_first_increment_scope",
+  "blocking_findings": [],
+  "not_accepted": [
+    "new-body training readiness",
+    "GPU experiment affordability",
+    "exact PPO resumption",
+    "physical transfer",
+    "complete fetch capability",
+    "unreviewed Chinese synthesis"
+  ],
+  "reviewed_files": [
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/README.md",
+      "sha256": "c5f9219cff56a18f83168ff7e79bdf35bef2d0f57f2b2fb0dd79e2b4b37c74e6"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/tasks/B-visual-approach.md",
+      "sha256": "36775b3a4f305a992d501164181ebc2c94f6a921b42eaf43d20794783f51aad0"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/tasks/C-head-walking.md",
+      "sha256": "332b59d07293c57b407e556a83134188723769b45e846890f73ff74f2b88d2e3"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/tasks/D-pick-and-rise.md",
+      "sha256": "a1581351afd8f0fb38b5be55e5d254ad5075bc1c38e132c277a44785aa1b063e"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/tasks/E-fetch-execution.md",
+      "sha256": "6083cdfa6c0542e51d2542f1c4b58bf8df3c6d83d5ea9c2a0a85645d9ed7d7d5"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/CONTRACT.md",
+      "sha256": "25f7e6322d9a5882b8dbbf84523a8492020a198f248ba1b86573c90458de1d16"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/BODY-READINESS.md",
+      "sha256": "30241a44d2391520a8849f697e08a34d4f36412575182c56af22b3c81587aa70"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/INPUTS.md",
+      "sha256": "b7dd276886244834541f3626701bc31657367f692c86b8fe7419786c2a4bc42b"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/README.md",
+      "sha256": "e5e01b35cf8cdbfbde9356ec1be001ad318ba511d585786f20b618b41319e3c8"
+    }
+  ],
+  "consulted_evidence_files": [
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/motion/results/baseline.json",
+      "sha256": "b501b2470fd00ddb03363b42e679838a1e7f59abf8b94aac774fece9fc33d78f"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/motion/PROVENANCE.json",
+      "sha256": "e4ea074af7cef703c8f11d0343cff485bf8bc7c656724d74bcd62e11d3a2f8e6"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/motion/NEXT-EXPERIMENTS.md",
+      "sha256": "447efeb8164c426df20b683300dae8f4abab9f921959f4510586f454b4159121"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/vision/README.md",
+      "sha256": "618c8bf74fc4298d2de5f3d9663ff70ee61e27f8b90462bec52e5d2d8617a07a"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/rehearse.py",
+      "sha256": "f513ae31ae890c4ec937bb08e9e689e0eb9fee0af8acd5e9e822311b14531006"
+    },
+    {
+      "path": "microduck-sim/microduck_rl/cmu/planning/fetch-20261103/starter/coordinator.py",
+      "sha256": "ec3a255bf9d17aff706a1368bdc4e7fc8682d7b60e68f6994c33105750482548"
+    }
+  ],
+  "checks": [
+    {
+      "name": "measured_gap_vs_hypothesis",
+      "result": "pass_for_planning_scope",
+      "evidence": [
+        "tasks/C-head-walking.md:9\u201315",
+        "tasks/D-pick-and-rise.md:9\u201320"
+      ],
+      "reason": "Observed trace failures anchor distinct controller hypotheses; no sole-cause inference from performance improvement."
+    },
+    {
+      "name": "available_initial_inputs",
+      "result": "pass_for_advertised_CPU_scope",
+      "evidence": [
+        "README.md:19",
+        "INPUTS.md:7",
+        "starter/motion/results/baseline.json"
+      ],
+      "reason": "Supplied four ONNX/real trace inputs allow replay; raw61 and optimizer absence explicit. Independent startup certification belongs to recipient reviewer."
+    },
+    {
+      "name": "single_comparison_and_discriminating_outcomes",
+      "result": "pass_as_future_work_specification",
+      "evidence": [
+        "tasks/C-head-walking.md:14\u201322",
+        "tasks/D-pick-and-rise.md:14\u201322"
+      ],
+      "reason": "One leg-reference change or terminal extension, with frozen matched conditions and component outcomes; exact runnable training configs remain Week1 outputs."
+    },
+    {
+      "name": "matched_new_body_gate",
+      "result": "pass",
+      "evidence": [
+        "BODY-READINESS.md:3\u201311",
+        "README.md:25\u201329"
+      ],
+      "reason": "Owned F0 reconciles geometry, mass, mechanics/timing before new-body conclusions; baseline entries bootstrap D without a new C policy."
+    },
+    {
+      "name": "metric_relevance",
+      "result": "pass_for_planning_scope",
+      "evidence": [
+        "tasks/B-visual-approach.md:20\u201322",
+        "tasks/C-head-walking.md:20\u201322",
+        "tasks/D-pick-and-rise.md:22",
+        "CONTRACT.md:16"
+      ],
+      "reason": "Joint metrics prevent standing/refusing gaze from passing; supported ranges replace arbitrary universal thresholds; fixture state is not physical evidence."
+    },
+    {
+      "name": "resource_feasibility",
+      "result": "not_yet_established_not_claimed_for_training",
+      "evidence": [
+        "README.md:37\u201339",
+        "tasks/C-head-walking.md:22",
+        "starter/motion/NEXT-EXPERIMENTS.md"
+      ],
+      "reason": "CPU first increment is available. Future GPU comparison needs exact task benchmark, finite budget/config and account inventory; no job launched."
+    }
+  ],
+  "next_touch_requirements": [
+    "Freeze exact single-change training config, initialization/export check and finite step budget before launch.",
+    "Measure current-body benchmark and supported physical ranges before policy comparison.",
+    "Acquire odometry and labelled person/take/drop evidence before the corresponding live claims."
+  ],
+  "independence_scope": "Root-authored plan review; own authored motion implementation not independently certified here.",
+  "actions_performed": [
+    "read exact candidate documents and linked procedure",
+    "inspect supplied native motion readback/provenance from prior work",
+    "hash candidate and evidence files",
+    "write review artifacts only"
+  ],
+  "simulation_training_robot_paid_jobs": false
+}

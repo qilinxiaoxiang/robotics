@@ -1,0 +1,167 @@
+{
+  "reviewer": "system_owner_review",
+  "reviewed_at": "2026-11-03",
+  "verdict": "reject",
+  "own_audio_package_excluded_from_independent_credit": true,
+  "source_sha256": {
+    "README.md": "c5f9219cff56a18f83168ff7e79bdf35bef2d0f57f2b2fb0dd79e2b4b37c74e6",
+    "CONTRACT.md": "25f7e6322d9a5882b8dbbf84523a8492020a198f248ba1b86573c90458de1d16",
+    "BODY-READINESS.md": "30241a44d2391520a8849f697e08a34d4f36412575182c56af22b3c81587aa70",
+    "DISCORD.md": "10f33a68c130e2930d2029d6aa1d605b2e7b1b3b7f47aef6ae13b06551413f50",
+    "starter/README.md": "e5e01b35cf8cdbfbde9356ec1be001ad318ba511d585786f20b618b41319e3c8",
+    "starter/coordinator.py": "ec3a255bf9d17aff706a1368bdc4e7fc8682d7b60e68f6994c33105750482548",
+    "starter/rehearse.py": "f513ae31ae890c4ec937bb08e9e689e0eb9fee0af8acd5e9e822311b14531006",
+    "tasks/A-interaction.md": "ddbfd260d04286df4f5aa0cf8b2b7b12dcf7e184ad9b40c1369979be2aa00bae",
+    "tasks/B-visual-approach.md": "36775b3a4f305a992d501164181ebc2c94f6a921b42eaf43d20794783f51aad0",
+    "tasks/C-head-walking.md": "332b59d07293c57b407e556a83134188723769b45e846890f73ff74f2b88d2e3",
+    "tasks/D-pick-and-rise.md": "a1581351afd8f0fb38b5be55e5d254ad5075bc1c38e132c277a44785aa1b063e",
+    "tasks/E-fetch-execution.md": "6083cdfa6c0542e51d2542f1c4b58bf8df3c6d83d5ea9c2a0a85645d9ed7d7d5"
+  },
+  "rehearsal": {
+    "command": "python3 starter/rehearse.py --out /tmp/microduck-independent-rehearsal.json",
+    "passed": 18,
+    "cases": 18,
+    "scope": "Motor-free software contract only; physical events are hand-authored fixtures"
+  },
+  "counterexamples": [
+    {
+      "id": "S1",
+      "inputs": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        },
+        {
+          "v": 1,
+          "kind": "track",
+          "t": 1.1,
+          "capture_t": 1.08,
+          "target_id": "orange-ball",
+          "target_type": "orange_ball",
+          "visible": true,
+          "confidence": 1.0,
+          "bbox_xywh": [
+            273,
+            212,
+            96,
+            74
+          ],
+          "image_wh": [
+            640,
+            360
+          ],
+          "source": "image_detector",
+          "confidence_meaning": "binary HSV hit, uncalibrated",
+          "input": "fixture_frame.png",
+          "timing_origin": "synthetic playback clock",
+          "identity_origin": "configured label; no identity inference",
+          "epoch": 1,
+          "clock_note": "remapped to synthetic rehearsal time, 20ms age preserved"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "track",
+          "t": 2,
+          "source": "fixture",
+          "capture_t": 1.99,
+          "target_id": "person-B",
+          "target_type": "person",
+          "visible": true
+        }
+      ],
+      "actual_state": "approaching",
+      "selected_target_fresh": false,
+      "commands_after_counterexample": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 2,
+          "intent": "ignore_other_identity",
+          "target_id": "person-B"
+        }
+      ],
+      "expected": "selected-target expiry triggers controlled_stop and seeking state even during wrong-identity camera traffic",
+      "passes": false
+    },
+    {
+      "id": "S2",
+      "inputs": [
+        {
+          "v": 1,
+          "kind": "call",
+          "t": 0,
+          "caller_id": "person-A",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "kind": "request",
+          "t": 1,
+          "caller_id": "person-A",
+          "target_type": "orange_ball",
+          "epoch": 1,
+          "source": "transcript_parser"
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "kind": "settled",
+          "t": 1.02,
+          "source": "fixture",
+          "posture": "standing"
+        }
+      ],
+      "actual_state": "seeking_ball",
+      "commands_after_counterexample": [
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "gaze_only",
+          "target_id": "person-A",
+          "preserve_posture": true
+        },
+        {
+          "v": 1,
+          "epoch": 1,
+          "t": 1.02,
+          "intent": "find_target",
+          "target_id": "orange-ball"
+        }
+      ],
+      "expected": "no ball-search until caller-look completed acknowledgement",
+      "passes": false
+    }
+  ],
+  "accepted_planning_findings": [
+    "complete capability coverage through E",
+    "explicit failure/estimator ownership",
+    "F0 and historical baseline break development dependency cycle",
+    "claimable increments and honest low-staff serial fallback",
+    "one/two-week checkpoint does not promise solved robot"
+  ],
+  "repeat_required": true
+}
