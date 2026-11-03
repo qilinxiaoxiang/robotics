@@ -1,6 +1,6 @@
 {
   "about": "Shawn's requirements for the duck answering to its name (namecall.py). One entry per requirement with his words (local time, America/New_York), the acceptance that decides it, the sim tests that guard it and the live evidence. Add a requirement here in the same turn he states or changes one; report progress and the next task from this file (requirements_check.py prints the gaps). status: met (sim tests and a live readback agree), built (code and sim tests pass, no live readback yet), partial (some live evidence, a known failing case), gap (fails live or not built).",
-  "updated": "2026-11-02 14:12",
+  "updated": "2026-11-03 13:19",
   "requirements": [
     {
       "id": "R1",
@@ -346,15 +346,29 @@
       "id": "R14",
       "title": "Fetch demo: look at the caller, follow the orange ball, fetch it, bring it back",
       "shawn": [
-        "2026-11-01 02:1x: 第三，我们叫它Mochi，它盯着我们，然后我们说：“去把橙色的球捡回来。”它会去尝试找这个橙色的球。或者像家里的宠物一样，我把橙色的球在它眼前晃一晃，它就会盯着那个橙色的球看。然后我说：“去把它捡回来。”它还能顺着我这个橙色球的运动轨迹去扭头看那个轨迹。如果球从头上越过去，那就从前几帧推断吧。然后它可以朝着球滚动的方向前进，尝试找到那个球，把它叼起来，最后走回我们身边 ... 我们能不能做这么一个demo？"
+        "2026-11-01 02:1x: 第三，我们叫它Mochi，它盯着我们，然后我们说：“去把橙色的球捡回来。”它会去尝试找这个橙色的球。或者像家里的宠物一样，我把橙色的球在它眼前晃一晃，它就会盯着那个橙色的球看。然后我说：“去把它捡回来。”它还能顺着我这个橙色球的运动轨迹去扭头看那个轨迹。如果球从头上越过去，那就从前几帧推断吧。然后它可以朝着球滚动的方向前进，尝试找到那个球，把它叼起来，最后走回我们身边 ... 我们能不能做这么一个demo？",
+        "2026-11-03: 我们的最终目标是为做出一个真正的宠物机器人服务的 ... 我们叫它的名字 它能盯着我们看 然后我们说 去把那个橙色的球捡回来 然后它就会跑过去捡 然后叼回来给我们"
       ],
       "acceptance": "Live demo, one take: call Mochi -> it looks at the caller; the ball waved in front of it -> the head follows it; 'go fetch it' -> the head follows the throw (extrapolated from the last frames when the ball leaves the frame), the duck walks to where it rolled, finds it, picks it up with the beak and walks back to the caller.",
       "tests": [],
       "evidence": [
-        "2026-11-01 pieces (PROJECT-CONTEXT final_goal): step 1 met on the robot 10/30 (ball located on the floor within 5 mm); gaze.py centred the ball in 0.58 s and held it 19 s on the robot; approach.py walks to a seen object; seepick.py chains approach, aim and the learned seeing pick (sim 80 % at +-3 cm); no robot pickup yet; T2 pixel-feature pick training running."
+        "2026-11-01 pieces (PROJECT-CONTEXT final_goal): step 1 met on the robot 10/30 (ball located on the floor within 5 mm); gaze.py centred the ball in 0.58 s and held it 19 s on the robot; approach.py walks to a seen object; seepick.py chains approach, aim and the learned seeing pick (sim 80 % at +-3 cm); no robot pickup yet; T2 pixel-feature pick training running.",
+        "2026-11-03 source reconciliation: the earlier \"no robot pickup yet\" phrase is superseded. PROJECT-CONTEXT final_goal step 4 records a tape-corrected real seepick61 hold on 10/30; t2-chain-20261101/README.md records a real T2 grip on 11/01 followed by a fall 0.9 s after stand61 hand-back. docs/PET_ROBOT_LOG.md 11/02 14:12 records 9 calls/9 quacks with one wrong-side gaze; 11/03 12:50 records dock-e/f training-metric plateau 17-23%, no final held-out eval or robot test. These are component evidence only."
       ],
       "status": "gap",
-      "gap": "Not built: a spoken command after the name ('go fetch it'), throw tracking with extrapolation, finding the caller again and walking back. Depends on R11 (head glance), R13 (hearing while walking) and final-goal steps 3-4 (no object picked up by the robot yet)."
+      "gap": "Full call -> spoken grounded request -> continuous visual approach/pick -> stable carry -> return to the original caller remains unaccepted. Spoken intent and identity components exist in pet/voice and pet/identity, but their offline checks do not establish the physical fetch chain. T2 pickup and stable loaded hand-back are unreliable; dock-e/f have not had final held-out evaluation. Earlier throw-following requirement remains, as a later expansion of the initial floor-ball scenario. Handover follows R15."
+    },
+    {
+      "id": "R15",
+      "title": "Return to the original caller and hold the ball for the person to take",
+      "shawn": [
+        "2026-11-03: 回到叫它的人面前，等人从嘴里取走"
+      ],
+      "acceptance": "In the same physical fetch attempt, return to the person who called, stop with balance maintained, keep the ball held while waiting, and allow that person to take it. Returning to an empty start point, dropping it on the floor, or merely closing an empty jaw does not establish handover. Numeric distance/duration and the sensing/trigger for release remain proposed engineering parameters until agreed.",
+      "tests": [],
+      "evidence": [],
+      "status": "gap",
+      "gap": "No verified loaded walking, original-caller reacquisition, or human-take release behavior. Establish grasp truth, stable rise/walk transitions, caller identity and a measured handover trigger before full-chain acceptance."
     }
   ]
 }

@@ -146,12 +146,19 @@
    "measure": "the --models directory and --kp flags of the newest walk_wired run in the main session (its stdout header), and the walk61.onnx in that directory; Shawn's go for any change"
   },
   "power": {
-   "value": "Charger backpack on the robot (Shawn 2026-11-01: \"充电背包\"): USB-C PD charger lead -> Adafruit 5991 -> XL4015 #1 -> OpenRB J4, XL4015 #2 -> A7Z header pins 2/6. Backpack setting on the A7Z: ~/duck-supply = bench (the phone remote's switch), so duck-run.sh starts walk_wired.py with --supply bench and the low-battery guard off; under --supply auto the guard armed at this rail's idle 7.2 V. Which charger (20 V 5 A needed for walking, 2026-10-22) not confirmed this time.",
-   "verified_at": "2026-11-01",
-   "source": "2026-11-01 20:51 A7Z: pgrep shows --supply bench, ~/duck-supply reads bench, duck_wired_deploy1101-205114.out has no battery guard line; the previous start duck_wired_app1101-203552.out under auto printed 'battery guard armed: the servos read 7.2 V'. Earlier history in superseded",
+   "value": "Battery backpack fitted, user-reported 2026-11-03: \"我们现在换了电池背包 之后我再做新的3D扫描给你\". Exact fitted geometry, mass, mounting compliance, live supply-file/guard setting and loaded voltage have not been remeasured in this planning session. See battery_backpack_design for the last documented design; do not infer that its dimensions or the old charger-pack scan describe the changed assembly.",
+   "verified_at": "2026-11-03",
+   "source": "Shawn, current planning chat 2026-11-03: \"我们现在换了电池背包 之后我再做新的3D扫描给你\" (physical pack report only; no runtime probe).",
    "max_age_days": 14,
    "measure": "charger label and the 5991 display; walk/stand test with the A7Z flight recorder running (guide/firmware/pi/BLACKBOX.md). Servo-reported voltage (0.1 V steps, one servo per cycle) cannot see millisecond dips and is not evidence of a stable rail",
    "superseded": [
+    {
+     "value": "Charger backpack on the robot (Shawn 2026-11-01: \"充电背包\"): USB-C PD charger lead -> Adafruit 5991 -> XL4015 #1 -> OpenRB J4, XL4015 #2 -> A7Z header pins 2/6. Backpack setting on the A7Z: ~/duck-supply = bench (the phone remote's switch), so duck-run.sh starts walk_wired.py with --supply bench and the low-battery guard off; under --supply auto the guard armed at this rail's idle 7.2 V. Which charger (20 V 5 A needed for walking, 2026-10-22) not confirmed this time.",
+     "verified_at": "2026-11-01",
+     "source": "2026-11-01 20:51 A7Z: pgrep shows --supply bench, ~/duck-supply reads bench, duck_wired_deploy1101-205114.out has no battery guard line; the previous start duck_wired_app1101-203552.out under auto printed 'battery guard armed: the servos read 7.2 V'. Earlier history in superseded",
+     "until": "2026-11-03",
+     "why": "Shawn now reports that the battery backpack has been changed; former bench setting is not current evidence."
+    },
     {
      "value": "Charger backpack back on the robot (Shawn 2026-10-31 evening: \"我现在又把charger pack换上了\"): USB-C PD charger lead -> Adafruit 5991 -> XL4015 #1 -> OpenRB J4, XL4015 #2 -> A7Z header pins 2/6; the charger lead trails from the backpack again. Idle servo-reported supply 7.2 V standing. Which charger (20 V 5 A needed for walking, 2026-10-22) not confirmed this time.",
      "until": "2026-11-01",
@@ -173,7 +180,7 @@
      "why": "the charger behind the 5991 decides whether the A7Z survives walking: a 20 V 3 A charger froze the A7Z four times on 10/21-10/22, a 20 V 5 A charger did not (Shawn's swap test); the 10/16 entry did not name the charger rating"
     }
    ],
-   "sources_in_use": "2S LiPo battery backpack (D-010). Bench path (5991 + XL4015 #1/#2 from a 20 V 5 A charger or the Xiaomi 212W bank) remains the alternative backpack."
+   "sources_in_use": "Battery backpack per Shawn 2026-11-03. Charger backpack remains an alternative; neither its earlier bench setting nor older battery rail measurements prove the present runtime configuration."
   },
   "servo_rail_v": {
    "value": 7.0,
@@ -441,7 +448,13 @@
     "cablecreation_usbc_pigtail": {
      "part": "CableCreation right-angle USB-C OTG pigtail B0194WSKOM",
      "status": "not ordered and not in the cart (checked 2026-11-02 in Shawn's Amazon account: cart has no cable; the two order-search hits for CableCreation are USB-C to DisplayPort cables). Shawn 2026-11-02: 这不就是我嫌贵没买的那根吗 (rejected on price, $12.99). Shawn 2026-11-02 wants a side-bend head, not up/down (不要这种 要侧弯的). Thzzhnno side-bend 0.5 m OTG B0GH6WWLKK rejected the same day (太长了 负担很重). Shawn: no lower limit on length, the shorter the better (不要设长度下限 越短越好). Qisuw side-bend flat 5 cm OTG B0HP9KY7NY ($6.28, head about 8.5 mm) rejected the same day on delivery, Nov 25 to Dec 16; Shawn needs it by Wednesday 2026-11-04 (那太慢了最晚周三要到). Candidates arriving in time, head lengths estimated from listing photos against the 18.75 mm battery-lift limit: this CableCreation 15 cm, $12.99, head about 16 mm; cablecc side-bend 20 cm B00ZUDWZCI, $7.99, head about 18 mm. Rigid side-bend adapter rgzhihuifz B097FY9CB9 (2-pack, $6.59, Prime next day; listing drawing 23.77 along the tongue including it, 26.25 along the USB-A axis, thickness 7.15 listed) ordered 2026-11-02 on Shawn's word (下单这个), order 113-3824150-2461834, $7.05 total, Amazon says arriving 2026-11-03, not yet in hand. About 17.1 mm past the socket face, A opening toward +y, estimated from the listing. This CableCreation pigtail and the other candidates stay not bought",
-     "superseded": [{"value": "in the cart 2026-10-23, order not verified (D-023 open item)", "until": "2026-11-02", "why": "Amazon cart and order search checked"}]
+     "superseded": [
+      {
+       "value": "in the cart 2026-10-23, order not verified (D-023 open item)",
+       "until": "2026-11-02",
+       "why": "Amazon cart and order search checked"
+      }
+     ]
     },
     "usb_a_to_c_adapter": {
      "part": "USB-A female to USB-C male adapter, straight, silver (Shawn's own; shape from photo IMG_7277, 2026-11-02)",
@@ -698,6 +711,19 @@
     "sim gap studies",
     "groundpick and seepick work"
    ]
+  },
+  "as_built_scan_readiness": {
+   "value": {
+    "backpack_changed": true,
+    "new_scan_received": false,
+    "matched_mass_manifest_verified": false,
+    "dynamic_requalification_complete": false
+   },
+   "meaning": "Readiness of the changed battery-backpack assembly for new sim2real studies; these false flags are evidence gaps, not a physical failure result.",
+   "verified_at": "2026-11-03",
+   "source": "Shawn 2026-11-03: \"我们现在换了电池背包 之后我再做新的3D扫描给你\"; source audit: current battery manifest and old charger-pack scan do not establish the changed body.",
+   "measure": "Register the forthcoming scan against synchronized held-pose joint/IMU samples; weigh changed parts; reconcile training and deployment manifests; verify current sensor/power timing before new-body trials.",
+   "max_age_days": 14
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

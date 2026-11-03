@@ -43,7 +43,22 @@
   "guides": "~/code/reports/20261021-microduck-*.html (2026-10-21 investigation: cooling, touch, sit, stand and feet, slope, quack and balance, training methods and cost, sim-to-real program, pickup roadmap, overview)",
   "mvp_acceptance": "The four steps run as one closed loop from pickup.py with no manual positioning: object seen, approached, bent over, gripped and lifted in 5 of 10 robot trials from a 0.3-0.6 m start, each scored by the pickup success check; the learned jaw then replaces the scripted grip as the next stage.",
   "order_of_attack": "Three lanes in parallel (2026-10-21 roadmap): A sim: the aiming bend env (copy of Pollen's ground-pick env with the ball-kick object entity, object (x, y) in the two constant-zero body-command slots, mouth-to-object reward, phase 0 start, jaw still scripted); B robot bring-up: A7Z camera + detector + calibration, then bend with the jaw open and a hand-placed object; C the walking gap (SIM2REAL.md tests, soles). Only step 2's failure mode is not reproduced by the sim, so it is closed by robot tests, not training alone. Targets are proposals until Shawn sets them.",
-  "targets_note": "Acceptance numbers (95 %, 8 of 10, 2 cm, +-5 cm, 5 of 10) are the 2026-10-21 proposal; Shawn sets the final values. Revise with evidence, never relax silently (D-019)."
+  "targets_note": "Acceptance numbers (95 %, 8 of 10, 2 cm, +-5 cm, 5 of 10) are the 2026-10-21 proposal; Shawn sets the final values. Revise with evidence, never relax silently (D-019).",
+  "fetch_contract_20261103": {
+   "stated_by_user": "2026-11-03",
+   "user_statement": "我们的最终目标是为做出一个真正的宠物机器人服务的 ... 我们叫它的名字 它能盯着我们看 然后我们说 去把那个橙色的球捡回来 然后它就会跑过去捡 然后叼回来给我们",
+   "handover_statement": "回到叫它的人面前，等人从嘴里取走",
+   "goal": "A pet robot answers its name with gaze, understands the spoken orange-ball fetch request, visually searches and approaches, grasps and lifts with its beak, carries the ball back to the original caller, and waits with the ball for the person to take it.",
+   "requirement_register": "guide/firmware/mac/namecall-20261029/REQUIREMENTS.json R14/R15",
+   "preserved_constraints": [
+    "Continuous visual control with memory for temporary occlusion; no blind scripted substitute for goal acceptance.",
+    "D-038 head-only name response; D-039 forward-facing head cameras only.",
+    "The earlier four-step pickup milestone is a component milestone, not complete pet/fetch acceptance."
+   ],
+   "status": "planning_and_evidence_audit; end-to-end physical acceptance open",
+   "targets_note": "Numerical gates in the planning pack are proposals for review; running speed and target-ball dimensions are not newly specified.",
+   "body_change": "Read CURRENT-STATE.json power and as_built_scan_readiness; changed battery backpack reported, new scan forthcoming."
+  }
  },
  "current_robot_state": "microduck-sim/CURRENT-STATE.json holds the robot's current measured facts (IMU rate and delay, servo read drops, servo rail voltage, walking policy, power). Read current values only there, never from memory, DECISIONS history, logs or code comments; cite it in every brief. Check: guide/firmware/mac/robot_state_check.py (sim_suite.sh runs it first).",
  "required_capabilities": [
@@ -140,7 +155,17 @@
   "exported_actor": "microduck-simulator/app/public/policies/jaw-ppo.json",
   "scope_source": "microduck-simulator/rl/README.md",
   "observation_source": "privileged simulation state: target position, contacts, support and lift",
-  "remaining_transfer_work": "Replace privileged state with real observations and validate perception, alignment, trained jaw integration, calibration, success assessment and power on hardware."
+  "remaining_transfer_work": "Replace privileged state with real observations and validate perception, alignment, trained jaw integration, calibration, success assessment and power on hardware.",
+  "recent_evidence_index": {
+   "as_of": "2026-11-03",
+   "history_not_current_facts": [
+    "../docs/PET_ROBOT_LOG.md (latest dock-e/f, 2026-11-03 12:50)",
+    "guide/firmware/mac/t2-chain-20261101/README.md",
+    "microduck_rl-grasp/cmu/grasp/T2-PIXEL.md",
+    "microduck_rl-grasp/cmu/grasp/PLAN-continuous-vision.md"
+   ],
+   "scope_note": "The original training block above describes the isolated jaw experiment. Later T2 pixel pick and dock experiments have separate provenance and do not constitute whole-fetch acceptance. The dock source was located in the Mac-mini microduck_rl-dock snapshot during this audit; canonical package reconciliation is open."
+  }
  },
  "current_build": {
   "contract": "build-pack-20260913/redesign-20260913/design-contract.json",

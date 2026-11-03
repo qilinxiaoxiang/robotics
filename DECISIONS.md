@@ -318,3 +318,12 @@
 - **Why:** Shawn, 2026-11-02: "仿真应该也会卡脚啊", "我理解不需要再加额外限位。如果是舵机线卡住，我们就把它移到前面去好了", "加进去". The sim's foot collides only through its sole and MuJoCo filters parent-child contacts, so nothing stopped the ankle before 1.571 rad.
 - **Consequence:** The robot stays at about 1.25 rad until its cables move. After the move, the replay predicts ankles near 1.36, trunk about 34 deg and camera about 22.6 mm in the bend on the same policy, and the camera's bend height correction needs remeasuring. Policies still command 1.571 until retrained.
 - **Revisit when:** the bend after the cable move stops somewhere other than about 1.36 rad.
+
+## D-041 — MicroDuck fetch ends at the original caller, holding the ball for human take
+
+- **Date:** 2026-11-03
+- **Decision:** The product goal is a real pet robot. The demonstration is call its name → gaze at the caller → understand the spoken request to fetch the orange ball → visually approach, pick up and carry it back → wait in front of the original caller for that person to take it from the beak. Shawn: "我们的最终目标是为做出一个真正的宠物机器人服务的"; handover clarification: "回到叫它的人面前，等人从嘴里取走".
+- **Consequence:** The earlier four-step find/approach/bend/grasp milestone is one part of this chain. Original-caller binding, loaded walking, stable skill transitions and human take each need evidence. D-038 head-only name response and D-039 sensor placement remain. The canonical user requirements are R14/R15 in `microduck-sim/guide/firmware/mac/namecall-20261029/REQUIREMENTS.json`; scope is linked from `PROJECT-CONTEXT.json`.
+- **Current body:** Shawn reports a changed battery backpack and will provide a new scan. This report is recorded in `microduck-sim/CURRENT-STATE.json`; it does not establish new mass, geometry, voltage or runtime settings.
+- **Planning boundary:** Four teammate work packages are drafted in `microduck_rl/cmu/planning/fetch-20261103/`. Numeric gates, reward changes and compute allocations remain proposals; this evidence review does not start training or physical operation. First-stage floor-ball testing preserves the earlier throw-tracking expansion.
+- **Revisit when:** Shawn changes the pet interaction or handover requirement. Engineering thresholds are refined using measured task geometry and complete-chain trials, without silently weakening the goal.

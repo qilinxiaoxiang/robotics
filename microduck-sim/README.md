@@ -2,6 +2,8 @@
 
 Read [PROJECT-CONTEXT.json](PROJECT-CONTEXT.json) before hardware, training or scope work. It defines the visual-pickup goal, links the completed training and distinguishes component bring-up from project completion. The procurement entry runs the same goal check.
 
+The 2026-11-03 goal clarification is `final_goal.fetch_contract_20261103`: name → gaze → spoken orange-ball fetch → visual pickup → return to the original caller → wait for the person to take the ball. [Four teammate work packages](microduck_rl/cmu/planning/fetch-20261103/README.md) define proposed evidence gates. The changed battery backpack awaits a new scan and measured model reconciliation; read current readiness only in `CURRENT-STATE.json`.
+
 这台 MacBook 已经可以直接运行官方 MicroDuck Sandbox。它在浏览器中用 MuJoCo 做物理仿真，并以 50 Hz 运行官方训练好的 ONNX 策略。
 
 ## 队友入口
