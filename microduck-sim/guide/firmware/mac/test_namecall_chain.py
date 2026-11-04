@@ -329,6 +329,30 @@ def test_chain_no_head_mode_writes_nothing(tmp_path):
     assert not os.path.exists(cmd)
 
 
+def test_boot_audio_only_answers_without_brain_or_motor_writes(tmp_path):
+    a = nc.parse_args(["--audio-only", "--any-voice", "--no-sound", "--cmd", str(tmp_path / "cmd")])
+    assert a.no_head and a.no_face and not a.no_gate
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    assert n.head is None and n.writer is None and n.gate_ok() == (True, None)
+    played = []
+    class Bank:
+        def play(self, event):
+            played.append(event)
+            return "quack.wav"
+    n.bank = Bank()
+    n.respond(dict(az_rad=None, az_deg=None, keyword="mochi"), 10.0)
+    n.motion_tick(10.4)
+    assert len(played) == 1
+    assert not (tmp_path / "cmd").exists()
+
+
+def test_audio_only_rejects_motion_options():
+    import pytest
+    for flag in ("--turn", "--idle"):
+        with pytest.raises(SystemExit):
+            nc.parse_args(["--audio-only", flag])
+
+
 def test_short_localiser_and_energy_detector_decide_at_the_onset(tmp_path):
     """--localiser short --detector energy: the 64 ms GCC at the onset (the sim evidence of NAMECALL.md 1-5)."""
     cmd = str(tmp_path / "cmd.json")

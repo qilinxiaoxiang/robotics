@@ -78,16 +78,21 @@
    ]
   },
   "a7z_background_processes": {
-   "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; while the app's live page is open, two ssh sessions run microduck-simulator/desktop/duck-telemetry.py from stdin (`python3 -u - duck-telemetry` for health, and `... fast touch bus` for pose and touch, which also reads the head XIAO on TWI0 /dev/i2c-0 at 10 Hz even while the brain reads it, and backs off to one try every 5 s after 10 failed reads since 8439ab6, 2026-10-31); namecall.py only when started by hand: no service, duck-run.sh or app starts it (2026-11-02). Its cost with the touch jam fixed, face detector on and person detector off (10/31 20:20-20:33, boot b0056): whole-system busy 41-42 % of 8 cores against 19-24 % before it, about 1.6 cores, brain 46.8 Hz with 0-0.5 % of ticks missing a read. The 10/31 16:34 starved brain (38.8 Hz, 17 % stale) came from the touch bus jam's kernel error flood, not from namecall's CPU.",
+   "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; while the app's live page is open, two ssh sessions run microduck-simulator/desktop/duck-telemetry.py from stdin (`python3 -u - duck-telemetry` for health, and `... fast touch bus` for pose and touch, which also reads the head XIAO on TWI0 /dev/i2c-0 at 10 Hz even while the brain reads it, and backs off to one try every 5 s after 10 failed reads since 8439ab6, 2026-10-31); duck-namecall.service enabled and active (2026-11-04): boot audio-only listening after selfcheck, guarded head response when brain is fresh and stationary or fully seated. See a7z_namecall_start for current deployment; earlier CPU observations below remain historical. Its cost with the touch jam fixed, face detector on and person detector off (10/31 20:20-20:33, boot b0056): whole-system busy 41-42 % of 8 cores against 19-24 % before it, about 1.6 cores, brain 46.8 Hz with 0-0.5 % of ticks missing a read. The 10/31 16:34 starved brain (38.8 Hz, 17 % stale) came from the touch bus jam's kernel error flood, not from namecall's CPU.",
    "superseded": [
     {
      "value": "namecall.py (the name-call session, face and person detectors, about 220 % CPU) when that test runs",
      "until": "2026-11-02",
      "why": "the 220 % was read during the touch jam of 10/31 16:34 with both detectors on; b0056 measures the fixed state"
+    },
+    {
+     "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; while the app's live page is open, two ssh sessions run microduck-simulator/desktop/duck-telemetry.py from stdin (`python3 -u - duck-telemetry` for health, and `... fast touch bus` for pose and touch, which also reads the head XIAO on TWI0 /dev/i2c-0 at 10 Hz even while the brain reads it, and backs off to one try every 5 s after 10 failed reads since 8439ab6, 2026-10-31); namecall.py only when started by hand: no service, duck-run.sh or app starts it (2026-11-02). Its cost with the touch jam fixed, face detector on and person detector off (10/31 20:20-20:33, boot b0056): whole-system busy 41-42 % of 8 cores against 19-24 % before it, about 1.6 cores, brain 46.8 Hz with 0-0.5 % of ticks missing a read. The 10/31 16:34 starved brain (38.8 Hz, 17 % stale) came from the touch bus jam's kernel error flood, not from namecall's CPU.",
+     "until": "2026-11-04",
+     "why": "Installed/enabled namecall boot service and confirmed live response."
     }
    ],
-   "verified_at": "2026-11-02",
-   "source": "2026-10-31 16:35-16:39 EDT on the A7Z (boot b0052): ps with cgroups (duck-camera.service pid 931, duck-blackbox.service pid 322, app ssh session pid 997 --mjpeg, namecall pid 1365 until 16:35:04), systemctl list-unit-files 'duck*', blackbox sys.jsonl CPU rows; a7z_cam.py docstring (one process owns the camera); commits d771dc14 (camera on from boot, 2026-10-26) and f24e6549 (flight recorder). Telemetry readers: 2026-10-31 17:20 ps on the A7Z (pids 764 and 1798, the second restarted with the back-off) and the app's a7z-bridge.mjs.",
+   "verified_at": "2026-11-04",
+   "source": "2026-10-31 16:35-16:39 EDT on the A7Z (boot b0052): ps with cgroups (duck-camera.service pid 931, duck-blackbox.service pid 322, app ssh session pid 997 --mjpeg, namecall pid 1365 until 16:35:04), systemctl list-unit-files 'duck*', blackbox sys.jsonl CPU rows; a7z_cam.py docstring (one process owns the camera); commits d771dc14 (camera on from boot, 2026-10-26) and f24e6549 (flight recorder). Telemetry readers: 2026-10-31 17:20 ps on the A7Z (pids 764 and 1798, the second restarted with the back-off) and the app's a7z-bridge.mjs. | 2026-11-04 systemctl and boot-acceptance-20261104.json; only namecall startup reverified this turn.",
    "max_age_days": 14,
    "measure": "ssh a7z 'systemctl list-units --no-pager \"duck*\"; ps -eo pid,ni,pcpu,etime,args --sort=-pcpu | head -8'"
   },
@@ -724,6 +729,33 @@
    "source": "Shawn 2026-11-03: \"我们现在换了电池背包 之后我再做新的3D扫描给你\"; source audit: current battery manifest and old charger-pack scan do not establish the changed body.",
    "measure": "Register the forthcoming scan against synchronized held-pose joint/IMU samples; weigh changed parts; reconcile training and deployment manifests; verify current sensor/power timing before new-body trials.",
    "max_age_days": 14
+  },
+  "a7z_namecall_start": {
+   "value": {
+    "enabled": true,
+    "active": true,
+    "boot_mode": "audio-only until fresh stationary/seated brain",
+    "starts_motor_brain": false,
+    "spotter": "mochi_v4.onnx",
+    "cold_boot_verified": false,
+    "live_response_user_confirmed": true
+   },
+   "meaning": "Mochi response is an enabled system service, audio-only without motor control; guarded head response requires a fresh stationary or seated brain.",
+   "verified_at": "2026-11-04",
+   "source": "guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json; user: ok了",
+   "measure": "ssh a7z systemctl show duck-namecall -p ActiveState -p UnitFileState -p NRestarts; bounded tail of ~/duck-logs/namecall_boot.jsonl and latest namecall log",
+   "max_age_days": 14,
+   "consumers": [
+    "guide/firmware/mac/namecall_boot.py",
+    "guide/firmware/pi/systemd/duck-namecall.service"
+   ],
+   "superseded": [
+    {
+     "value": "Service disabled/inactive; manual namecall startup needed",
+     "until": "2026-11-04",
+     "why": "User requested deployed feedback plus automatic startup."
+    }
+   ]
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."

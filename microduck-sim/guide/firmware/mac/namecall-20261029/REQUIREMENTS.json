@@ -43,10 +43,11 @@
         "20:08 Shawn: every answer since the 19:53 restart was false; 19:57:04, 19:57:18, 20:05:11, 20:08:35 labelled negative (life_labels_1030_live.json); 20:21-20:31 E3 answered 12 more times (heartbeat kw_hits 12) with nobody calling",
         "eightdir_20261030.json: E3 scores 0.95 on a call slice played backwards and 0.8-0.9 on each single microphone: it is a voice detector for Shawn's voice, not a word model (the mechanism of the false answers)",
         "eightdir_20261030.json: v2 (openWakeWord round 2, models/oww/mochi_v2.onnx) gives 0 peaks >= 0.3 on either ear in the 8.7 min of Shawn moving and talking before the eight calls (20:09-20:17), where E3's live rule would have fired 3 times plus 4 repeat pairs; 0 false on 11.7 min held-out life talk, 28 min synthetic speech, 489 web negatives (results/mochi_v2*.json)",
-        "21:00-21:08 live run (namecall_20261030-210005.jsonl, v2 per ear 0.5/0.3, ILD side rule): 8 answers; the life recording holds 17 calls by Whisper-small transcript (results/events_2100_20261030.json): 9 scored >= 0.5 (one fell inside the previous answer), 8 scored 0.00-0.20 and went unanswered; the 3 non-call voice events (talk) scored 0.00: no false answer -> R1 holds on this run: 0 false answers in 8 min with Shawn talking in between"
+        "21:00-21:08 live run (namecall_20261030-210005.jsonl, v2 per ear 0.5/0.3, ILD side rule): 8 answers; the life recording holds 17 calls by Whisper-small transcript (results/events_2100_20261030.json): 9 scored >= 0.5 (one fell inside the previous answer), 8 scored 0.00-0.20 and went unanswered; the 3 non-call voice events (talk) scored 0.00: no false answer -> R1 holds on this run: 0 false answers in 8 min with Shawn talking in between",
+        "2026-11-04 current local namecall.py and v4 model installed via install_namecall.sh --enable-boot; live stationary response confirmed by Shawn. See boot-acceptance-20261104.json; seated and extreme-angle acceptance not claimed."
       ],
       "status": "partial",
-      "gap": "E3's false answers are history: v2 and v3 ran live with 0 false answers (10/30 21:00 v2, 8 min; 10/31 17:43 v3, 3 calls 3 answers; 10/31 20:19 v3, 4 calls 4 answers). The live time is short; no long stretch with the duck left on has been counted, and v4, the local default, is not on the A7Z."
+      "gap": "E3's false answers are history: v2 and v3 ran live with 0 false answers (10/30 21:00 v2, 8 min; 10/31 17:43 v3, 3 calls 3 answers; 10/31 20:19 v3, 4 calls 4 answers). The live time is short; no long stretch with the duck left on has been counted, v4 is now on the A7Z (2026-11-04)."
     },
     {
       "id": "R2",
@@ -90,10 +91,11 @@
         "Round 3 (22:01, models/oww/mochi_v3.onnx; oww/prep_v3.py, run_v3.sh; clip gate oww/clip_gate.py: 109 of 124 candidate clips pass, 91 read by Whisper; 77 training calls incl. tonight's 17 and calls_221619, 152 RoboClub room chunks as background, calls_200910 0-520 s talk as negatives). Held-out duck calls never trained on (single-stream scorer): v3 21/32 vs v2 18/32 at 0.5 (eight-direction 8/8 vs 7/8, RoboClub calls_201411 2/8 vs 1/8, live_073135 3/5 both, live_141734 late 8/11 vs 7/11); 0 false on 11.7 min held-out talk for both. Per-ear (the robot's scorer, results/compare_v3_20261030.json): tonight's 17 calls 11/17 vs 9/17 (in-sample for v3; the four quietest still score 0.00-0.08), one talk event 0.67, the day's 84 min of life audio 1 false peak at 0.5 (v2: 0). Deployed as the default with threshold 0.7 (repeat 0.3), installed 22:12, not yet live-tested.",
         "2026-10-31 17:11-17:14 first live run of v3 (namecall_20261031-171120.jsonl, per-ear 0.7, --no-person, deployed walk61 brain, home): 3 calls, 3 answers (kw_p 0.96, 0.89, 0.86), 0 false answers in 17:11-17:21; Shawn gave no count of unanswered calls and the A7Z went offline about 17:21 before the life log was pulled, so misses are not yet counted.",
         "2026-10-31 21:07-21:55 round 4 (v4) trained on the Mac mini with 501 motion clips cut from the existing life log (oww/life_motion_bg.py: turns and head sweeps of the 10/30 20:21, 10/30 21:00 and 10/31 20:19 runs, voiced frames masked; two 10/31 turns held out). oww/eval_motion.py, 8 held-out home calls + held-out turn noise, threshold 0.7: at the live post-glue level (-6 dB) v3 3/8, v4 3/8; at 0 dB v3 1/8, v4 2/8; clean 8/8 both. With head-sweep noise at the live level v3 hears 7/8. Cause: during a body turn the voice band at the ears is 4-11 dB louder than a 2 m call (structure-borne: L/R/back coherence 0.3-0.5 under 1.5 kHz, under 0.2 above; same level before and after the glue), so training, a learned-PSD Wiener filter (0-2/8) and a turn-time voice detector (4/8, removed) do not fix it. v4 is the new default (held-out duck calls 22/32 vs 21/32, web 36/170 vs 27/170, false wakes on 28 min speech 1 vs 2, life talk 0 vs 0). results/motion_v3_v4.json.",
-        "2026-11-01 front-end trials (results/turn_frontend_20261101.json): turn noise is footstep/servo impacts (10 % of frames carry 70 % of the energy; between impacts the level is near standing). DeepFilterNet3 with +30 dB pre-gain on each ear, then v3: held-out calls with live-level turn noise 7/8 (raw 2/8), clean 8/8, one peak in 290 s of whole motion audio (10/31 20:21:57, probably a real call). v4 the same 7/8 with 2 peaks. RNNoise and a learned-PSD Wiener filter fail; round 5 (v5, 360 motion windows) rejected for 7 false wakes on held-out life talk."
+        "2026-11-01 front-end trials (results/turn_frontend_20261101.json): turn noise is footstep/servo impacts (10 % of frames carry 70 % of the energy; between impacts the level is near standing). DeepFilterNet3 with +30 dB pre-gain on each ear, then v3: held-out calls with live-level turn noise 7/8 (raw 2/8), clean 8/8, one peak in 290 s of whole motion audio (10/31 20:21:57, probably a real call). v4 the same 7/8 with 2 peaks. RNNoise and a learned-PSD Wiener filter fail; round 5 (v5, 360 motion windows) rejected for 7 false wakes on held-out life talk.",
+        "2026-11-04 current local namecall.py and v4 model installed via install_namecall.sh --enable-boot; live stationary response confirmed by Shawn. See boot-acceptance-20261104.json; seated and extreme-angle acceptance not claimed."
       ],
       "status": "gap",
-      "gap": "Calls spoken while the body turns: solved offline by DeepFilterNet3 (+30 dB pre-gain) during the duck's own turns (7/8 at the live level); not yet on the A7Z: needs a streaming runtime there and its CPU cost with the brain running. The A7Z has been back online since 11/01; nothing has been installed since the 10/30 22:18 namecall.py and v3 (checked 2026-11-02 12:15)."
+      "gap": "Calls spoken while the body turns: solved offline by DeepFilterNet3 (+30 dB pre-gain) during the duck's own turns (7/8 at the live level); not yet on the A7Z: needs a streaming runtime there and its CPU cost with the brain running. The v4 namecall service is now deployed (2026-11-04); streaming denoiser remains undeployed."
     },
     {
       "id": "R3",
@@ -305,10 +307,11 @@
       ],
       "evidence": [
         "2026-11-01 code facts: namecall.py YAW_CAP 1.2 rad (69 deg) leaves 0.2 rad under walk_brain HEAD_RANGE head_yaw 1.40, the walk/stand/sitstand training range (microduck_rl head_pose_range curriculum, final stage +-1.40); the joint model range is +-2.97 rad, so 1.40 is a training limit, not a joint stop. U20CAM fx 534.2 px on a 640 px frame: horizontal field of view 62 deg. Seen range today +-100 deg (69 + 31), at 1.40 +-111 deg. The body turn has been off by default since 2026-10-30 (namecall --turn).",
-        "2026-11-01 built (namecall.py YAW_CAP 1.40; the expressor's orient_threshold off, without which a 1.40 look left the head at 0.60). As-built sim (glance-20261101/README.md, 2026-11-01 manifest, 7.0/7.8 V, 17 % dropped reads, 3 seeds, caller at +90/-90/+150 deg): 18 of 18 no fall, trunk tilt change <= 1.6 deg, drift <= 0.3 cm, head yaw joint 1.23-1.31 rad (1.08-1.18 at the old 1.2 cap): the camera sees about +-104 deg."
+        "2026-11-01 built (namecall.py YAW_CAP 1.40; the expressor's orient_threshold off, without which a 1.40 look left the head at 0.60). As-built sim (glance-20261101/README.md, 2026-11-01 manifest, 7.0/7.8 V, 17 % dropped reads, 3 seeds, caller at +90/-90/+150 deg): 18 of 18 no fall, trunk tilt change <= 1.6 deg, drift <= 0.3 cm, head yaw joint 1.23-1.31 rad (1.08-1.18 at the old 1.2 cap): the camera sees about +-104 deg.",
+        "2026-11-04 current local namecall.py and v4 model installed via install_namecall.sh --enable-boot; live stationary response confirmed by Shawn. See boot-acceptance-20261104.json; seated and extreme-angle acceptance not claimed."
       ],
       "status": "built",
-      "gap": "Not on the robot: the A7Z is online again and still holds the 10/30 22:18 namecall.py (YAW_CAP 1.2, checked 2026-11-02). Needs the install and a live check that the glance finds a caller at 90 deg."
+      "gap": "Deployed 2026-11-04 with basic live head response confirmed; the 90-degree caller acceptance remains pending."
     },
     {
       "id": "R12",
@@ -322,10 +325,11 @@
       ],
       "evidence": [
         "2026-11-01 code facts: sitstand61 was trained with head pose commands in both postures (same ranges, head_roll +-0.31 rad = 18 deg tilt); walk_brain passes {\"mode\": \"sit\", \"head\": ...} to the policy while seated.",
-        "2026-11-01 built (BrainGate accepts sit_phase seated; CmdWriter writes {mode: sit, head}; HeadPath SIT_TILT 0.25 rad toward the caller, SIT_HEAD_RATE 1.0 rad/s, no pre-inverse; no body turn from a seat). As-built sim (glance-20261101/README.md): every seated answer stays seated, no fall, trunk tilt change <= 5.1 deg; head yaw 1.10 rad left, 0.83-0.89 right; tilt 0.19-0.23 rad."
+        "2026-11-01 built (BrainGate accepts sit_phase seated; CmdWriter writes {mode: sit, head}; HeadPath SIT_TILT 0.25 rad toward the caller, SIT_HEAD_RATE 1.0 rad/s, no pre-inverse; no body turn from a seat). As-built sim (glance-20261101/README.md): every seated answer stays seated, no fall, trunk tilt change <= 5.1 deg; head yaw 1.10 rad left, 0.83-0.89 right; tilt 0.19-0.23 rad.",
+        "2026-11-04 current local namecall.py and v4 model installed via install_namecall.sh --enable-boot; live stationary response confirmed by Shawn. See boot-acceptance-20261104.json; seated and extreme-angle acceptance not claimed."
       ],
       "status": "built",
-      "gap": "Not on the robot. The sit-down holds: 22 robot sit-downs (10/21-10/30, 0-4.2 % dropped reads) never tipped, and the sim at those rates tips 0 of 96 (glance-20261101/README.md, 2026-11-01); it tips only at the 10/31 fault-state rate of 17 %. Seated reach is lopsided (right 0.85 rad)."
+      "gap": "Deployed 2026-11-04; seated live acceptance remains pending. The sit-down holds: 22 robot sit-downs (10/21-10/30, 0-4.2 % dropped reads) never tipped, and the sim at those rates tips 0 of 96 (glance-20261101/README.md, 2026-11-01); it tips only at the 10/31 fault-state rate of 17 %. Seated reach is lopsided (right 0.85 rad)."
     },
     {
       "id": "R13",
@@ -369,6 +373,24 @@
       "evidence": [],
       "status": "gap",
       "gap": "No verified loaded walking, original-caller reacquisition, or human-take release behavior. Establish grasp truth, stable rise/walk transitions, caller identity and a measured handover trigger before full-chain acceptance."
+    },
+    {
+      "id": "R16",
+      "title": "Name response starts automatically at power-on without automatic standing",
+      "shawn": [
+        "2026-11-04: 现在microduck有部署叫名字有反馈并且开机启动吗 如果没有 那就做一下"
+      ],
+      "acceptance": "Boot service enabled and active; after audio selfcheck, no-brain boot listens for Mochi and quacks without motor writes. Fresh zero-command standing or fully seated brain enables guarded head response. Mode changes leave one microphone owner. Live call produces call/quack; cold power-on verification is recorded separately.",
+      "tests": [
+        "test_boot_audio_only_answers_without_brain_or_motor_writes",
+        "test_audio_only_rejects_motion_options"
+      ],
+      "evidence": [
+        "2026-11-04 live inspection: duck-namecall.service disabled/inactive; old wrapper waited for walk-zero and excluded seated/no-brain.",
+        "2026-11-04 boot-acceptance-20261104.json: enabled/active; 77 regression tests pass; live Mochi call/quack/head feedback, user confirmed ok了."
+      ],
+      "status": "partial",
+      "gap": "Actual cold power-on not exercised during this session; configuration and current live response verified. Audio-only boot and seated switching regression-tested; no automatic standing."
     }
   ]
 }

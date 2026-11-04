@@ -1492,7 +1492,10 @@ class NameCall:
                                                        preinverse=not args.smooth, idle=args.idle)
         self.bank = QuackBank(args.bank_dir, args.sounds, muted=args.mute) if not args.no_sound else None
         self.writer = CmdWriter(args.cmd, dry=args.dry) if not args.no_head else None
-        self.gate = BrainGate(args.brain_logs, args.cmd) if not args.no_gate else None
+        audio_only = getattr(args, "audio_only", False)
+        if audio_only and (self.head is not None or self.writer is not None):
+            raise ValueError("audio-only mode must never own head motion or a command writer")
+        self.gate = BrainGate(args.brain_logs, args.cmd) if not (args.no_gate or audio_only) else None
         self.responses = 0
         self.seated = False              # the brain sits (from its tick log, gate_ok): answers from the seat
         self.head_yaw_now = 0.0         # the head's commanded yaw in the resting frame: mics turn with the head
@@ -2235,7 +2238,14 @@ def parse_args(argv=None):
     ap.add_argument("--kws-threads", type=int, default=1)
     ap.add_argument("--kws-gain-db", type=float, default=0.0, help="gain before the spotter")
     ap.add_argument("--onset-gap", type=float, default=ONSET_GAP_S, help="s, detector refractory in name mode")
+    ap.add_argument("--audio-only", action="store_true",
+                    help="on-robot listening and quack without a running brain; never writes motor commands")
     a = ap.parse_args(argv)
+    if a.audio_only:
+        if a.turn or a.idle:
+            ap.error("--audio-only cannot request turning or idle head motion")
+        a.no_head = True
+        a.no_face = True
     if a.any_voice:
         a.name = None
     elif a.name is None and not a.wav:
@@ -2274,7 +2284,7 @@ def main(argv=None):
             for d in dets))
         print("cost: " + json.dumps(stats))
         return 0
-    if not a.no_gate and lock_free():
+    if not a.no_gate and not a.audio_only and lock_free():
         sys.exit("namecall: refused, nobody holds the robot I/O lock (no walk_wired.py brain running)")
     if "duck_selfcheck.py" in procs_named():
         sys.exit("namecall: refused, duck_selfcheck.py is using the sound card; try again when it is done")

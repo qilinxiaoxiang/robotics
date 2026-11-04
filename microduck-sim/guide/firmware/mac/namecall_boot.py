@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Keeps namecall.py running on the A7Z (duck-namecall.service): it starts it once the brain stands in walk mode at zero
-velocity, and again after it exits (the brain left walk mode, a guard trip, a stop). Waiting costs a few file reads: the
-models load only when namecall.py can really run. Every start and exit goes to ~/duck-logs/namecall_boot.jsonl."""
+"""Run name listening from boot, without starting the brain or enabling torque.
+
+Audio-only while the brain is absent/busy; guarded head responses only at rest or
+fully seated. Mode changes stop the complete child process group before a new
+capture process starts. Only a bounded tail of the brain log is read.
+"""
 import glob
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -14,50 +18,126 @@ LOGS = os.path.expanduser("~/duck-logs")
 ARGS = ["--name", "mochi", "--spotter", "oww", "--no-person", "--life-max-gb", "1"]
 POLL_S = 2.0
 FRESH_S = 1.5
-RETRY_S = 5.0      # after namecall.py exits
-QUICK_EXIT_S = 30.0  # an exit this soon counts as a failed start
-BACKOFF_S = 60.0   # after three failed starts in a row
+RETRY_S = 5.0
+QUICK_EXIT_S = 30.0
+BACKOFF_S = 60.0
 
 
 def record(**kw):
+    os.makedirs(LOGS, exist_ok=True)
     with open(os.path.join(LOGS, "namecall_boot.jsonl"), "a") as f:
         f.write(json.dumps(dict(ts=round(time.time(), 2), **kw)) + "\n")
 
 
 def brain_ready(now=None, logs=None):
-    """The newest brain log's last line, read from its tail only: fresh, walk mode, zero velocity."""
+    """Fresh zero-speed walk or completed seat permits guarded head responses."""
     now = time.time() if now is None else now
     paths = glob.glob(os.path.join(logs or LOGS, "duck_wired_log_*.jsonl"))
     if not paths:
         return False
-    path = max(paths, key=os.path.getmtime)
-    if now - os.path.getmtime(path) > FRESH_S:
-        return False
-    with open(path, "rb") as f:
-        f.seek(0, os.SEEK_END)
-        f.seek(max(0, f.tell() - 8192))
-        lines = f.read().splitlines()
     try:
+        path = max(paths, key=os.path.getmtime)
+        if not 0 <= now - os.path.getmtime(path) <= FRESH_S:
+            return False
+        with open(path, "rb") as f:
+            f.seek(0, os.SEEK_END)
+            f.seek(max(0, f.tell() - 8192))
+            lines = f.read().splitlines()
         row = json.loads(lines[-1])
-    except (ValueError, IndexError):
+        if not 0 <= now - float(row.get("t", 0)) <= FRESH_S:
+            return False
+        cmd = row.get("cmd") or {}
+        return (row.get("mode") == "sit" and row.get("sit_phase") == "seated") or (
+            row.get("mode") == "walk" and not any(cmd.get(k) for k in ("vx", "vy", "vtheta")))
+    except (OSError, ValueError, IndexError, TypeError, AttributeError):
         return False
-    cmd = row.get("cmd") or {}
-    return row.get("mode") == "walk" and not any(cmd.get(k) for k in ("vx", "vy", "vtheta"))
+
+
+def selfcheck_running():
+    # Read process command lines, not a whole robot log. Selfcheck owns audio.
+    p = subprocess.run(["pgrep", "-f", "[d]uck_selfcheck.py"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return p.returncode == 0
+
+
+def desired_mode(ready, selfcheck):
+    return None if selfcheck else "head" if ready else "audio-only"
+
+
+def command(mode):
+    return [sys.executable, os.path.join(HERE, "namecall.py"), *ARGS,
+            *(["--audio-only"] if mode == "audio-only" else [])]
+
+
+def stop_child(proc, killpg=os.killpg):
+    """Reap the child and its audio helpers even if the leader already exited."""
+    if proc is None:
+        return
+    try:
+        killpg(proc.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        pass
+    # A reaped parent does not establish that every audio helper has exited.
+    try:
+        killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    proc.wait()
+
+
+class Supervisor:
+    def __init__(self, popen=subprocess.Popen, stop=stop_child, log=record):
+        self.popen, self.stop, self.log = popen, stop, log
+        self.child = None
+        self.mode = None
+        self.started = 0.0
+        self.retry_at = 0.0
+        self.failed = 0
+
+    def tick(self, mode, now):
+        if self.child is not None and (self.mode != mode or self.child.poll() is not None):
+            rc = self.child.poll()
+            changed = self.mode != mode
+            ran = now - self.started
+            self.stop(self.child)
+            self.log(event="exit", mode=self.mode, rc=rc, ran_s=round(ran, 1),
+                     reason="mode-change" if changed else "child-exit")
+            self.child = None
+            self.failed = 0 if changed or ran >= QUICK_EXIT_S else self.failed + 1
+            self.retry_at = now if changed else now + (BACKOFF_S if self.failed >= 3 else RETRY_S)
+        if self.child is None and mode is not None and now >= self.retry_at:
+            self.child = self.popen(command(mode), cwd=HERE, start_new_session=True)
+            self.mode, self.started = mode, now
+            self.log(event="start", mode=mode, pid=self.child.pid)
+
+    def close(self):
+        if self.child is not None:
+            self.stop(self.child)
+            self.log(event="stop", mode=self.mode)
+            self.child = None
 
 
 def main():
-    failed = 0
-    while True:
-        if not brain_ready():
+    stopping = False
+
+    def request_stop(_signum, _frame):
+        nonlocal stopping
+        stopping = True
+
+    signal.signal(signal.SIGTERM, request_stop)
+    signal.signal(signal.SIGINT, request_stop)
+    os.makedirs(LOGS, exist_ok=True)
+    supervisor = Supervisor()
+    try:
+        while not stopping:
+            supervisor.tick(desired_mode(brain_ready(), selfcheck_running()), time.monotonic())
             time.sleep(POLL_S)
-            continue
-        t0 = time.time()
-        record(event="start")
-        rc = subprocess.run([sys.executable, os.path.join(HERE, "namecall.py"), *ARGS], cwd=HERE).returncode
-        ran = time.time() - t0
-        record(event="exit", rc=rc, ran_s=round(ran, 1))
-        failed = failed + 1 if ran < QUICK_EXIT_S else 0
-        time.sleep(BACKOFF_S if failed >= 3 else RETRY_S)
+    finally:
+        supervisor.close()
 
 
 if __name__ == "__main__":

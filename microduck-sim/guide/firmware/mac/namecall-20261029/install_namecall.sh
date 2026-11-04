@@ -4,10 +4,17 @@
 #
 #   microduck-sim/guide/firmware/mac/namecall-20261029/install_namecall.sh      # A7Z_HOST=a7z by default
 #
-# Idempotent (rsync --checksum). Never moves the robot: no servo traffic, no restart of a running brain, no start of
-# namecall.py. Afterwards it checks on the A7Z that the duck-policy venv imports namecall (numpy, onnxruntime,
+# Idempotent (rsync --checksum). Default copies only. --enable-boot also installs/enables/restarts the listener;
+# it never starts the motor brain. The listener quacks in audio-only mode until guarded head motion is available.
+# Afterwards it checks on the A7Z that the duck-policy venv imports namecall (numpy, onnxruntime,
 # duck_sound, pet.express), that the sndi2s0 capture card exists and that the sounds folder has calls.
 set -euo pipefail
+ENABLE_BOOT=0
+case "${1:-}" in
+  --enable-boot) ENABLE_BOOT=1 ;;
+  "") ;;
+  *) echo "usage: $0 [--enable-boot]" >&2; exit 2 ;;
+esac
 
 HOST=${A7Z_HOST:-a7z}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -26,6 +33,8 @@ done
 echo "== copy"
 rsync -a --checksum --relative --itemize-changes \
   microduck-sim/guide/firmware/mac/namecall.py \
+  microduck-sim/guide/firmware/mac/namecall_boot.py \
+  microduck-sim/guide/firmware/mac/duck_sound.py \
   microduck-sim/guide/firmware/mac/test_namecall_detector.py \
   microduck-sim/guide/firmware/mac/test_namecall_direction.py \
   microduck-sim/guide/firmware/mac/test_namecall_chain.py \
@@ -63,3 +72,14 @@ ssh "$HOST" "cd ~/$REMOTE/microduck-sim/guide/firmware/mac && \
 echo "== local sha256 for comparison"
 shasum -a 256 microduck-sim/guide/firmware/mac/namecall.py microduck-sim/guide/firmware/mac/duck_sound.py pet/express/express.py
 echo "== done: start order and the first test are in $HERE/NAMECALL.md"
+if [ "$ENABLE_BOOT" = 1 ]; then
+  scp "$ROOT/microduck-sim/guide/firmware/pi/systemd/duck-namecall.service" "$HOST:/tmp/duck-namecall.service"
+  ssh "$HOST" 'set -e
+    sudo -n install -m 644 /tmp/duck-namecall.service /etc/systemd/system/duck-namecall.service
+    sudo -n systemd-analyze verify /etc/systemd/system/duck-namecall.service
+    sudo -n systemctl daemon-reload
+    sudo -n systemctl enable duck-namecall.service
+    sudo -n systemctl restart duck-namecall.service
+    systemctl is-enabled duck-namecall.service
+    systemctl is-active duck-namecall.service'
+fi
