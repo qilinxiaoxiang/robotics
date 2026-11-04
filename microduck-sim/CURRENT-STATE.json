@@ -720,15 +720,28 @@
   "as_built_scan_readiness": {
    "value": {
     "backpack_changed": true,
-    "new_scan_received": false,
+    "new_scan_received": true,
     "matched_mass_manifest_verified": false,
-    "dynamic_requalification_complete": false
+    "dynamic_requalification_complete": false,
+    "estimated_articulated_model_reconciled": true
    },
-   "meaning": "Readiness of the changed battery-backpack assembly for new sim2real studies; these false flags are evidence gaps, not a physical failure result.",
-   "verified_at": "2026-11-03",
-   "source": "Shawn 2026-11-03: \"我们现在换了电池背包 之后我再做新的3D扫描给你\"; source audit: current battery manifest and old charger-pack scan do not establish the changed body.",
+   "meaning": "Changed battery assembly readiness: scan and estimated articulated model delivery are separate from metric pose registration and physical/dynamic qualification.",
+   "verified_at": "2026-11-04",
+   "source": "Shawn 2026-11-04: 我们microduck的电池包形态也扫描了. Supplied Scaniverse 2026-11-04 105634.zip and Scaniverse 2026-11-04 105915.zip (OBJ+MTL+JPG, declared metres); sanitized shared copies: microduck_rl/cmu/model/scans/2026-11-04/. Scan receipt establishes appearance evidence, not mass, articulated registration or dynamic qualification. User clarified 2026-11-04: scan 105634 is powered closed-loop standing and 105915 is powered bending; existing component estimates should be reused and recalculated, not requested as unavailable scale readings.",
    "measure": "Register the forthcoming scan against synchronized held-pose joint/IMU samples; weigh changed parts; reconcile training and deployment manifests; verify current sensor/power timing before new-body trials.",
-   "max_age_days": 14
+   "max_age_days": 14,
+   "superseded": [
+    {
+     "value": {
+      "backpack_changed": true,
+      "new_scan_received": false,
+      "matched_mass_manifest_verified": false,
+      "dynamic_requalification_complete": false
+     },
+     "until": "2026-11-04",
+     "why": "User supplied two Scaniverse battery-configuration scans on 2026-11-04."
+    }
+   ]
   },
   "a7z_namecall_start": {
    "value": {
@@ -756,6 +769,23 @@
      "why": "User requested deployed feedback plus automatic startup."
     }
    ]
+  },
+  "battery_sim_model_20261104": {
+   "value": {
+    "variant": "battery-20261104",
+    "model_mass_g_estimate": 960.451608,
+    "mass_manifest": "microduck_rl/cmu/model/manifests/battery-20261104.json",
+    "mass_manifest_sha256": "232708646e618ee45eaf6d14311856573e8969d4d397277dad8b7e6e23c7cb79",
+    "visual": "microduck_rl/cmu/model/visual-20261104/visual.json",
+    "scan_registration_complete": false,
+    "physical_validation_complete": false,
+    "published_commit": "628c187cebe236e9929304b5f64443f24a2f2cd4"
+   },
+   "meaning": "Dated component-based engineering estimate for classmates, not a new weighing. Legacy variants retained. New geometry is visual; baseline collision set remains, so no new self-contact clearance acceptance.",
+   "verified_at": "2026-11-04",
+   "source": "Existing CAD-volume × 1.24 g/cm3 × 0.851 method, source meshes and component estimates documented in microduck_rl/cmu/model/battery-20261104-mass-provenance.json; check_delivery.py + CPU task tests. User confirms powered stand/bend scans and asks reuse/recalculate prior estimates.",
+   "measure": "Regenerate manifest and dated scene; run cmu/model/check_delivery.py and tests/test_cmu_asbuilt_cfg.py; review updated CAD/component inventory.",
+   "max_age_days": null
   }
  },
  "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
