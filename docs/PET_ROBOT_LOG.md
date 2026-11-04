@@ -567,3 +567,14 @@ Audit a6 (return per episode, stage0): stand +6.9, walk_over -41.8, intended +68
 
 ### 2026-11-03 12:50 dock-e/dock-f finished: first policy that docks, plateau at 17-23 % from 5 cm starts; work paused on Shawn's word
 Both seeds ran the full 3000 iterations (5.2 h each). The task metric docked_ema (ball within 1 cm of T2's spot, still, upright, judged over the last 0.5 s) went from 0 to a plateau by iteration 750: dock-e 0.20-0.23 (max 0.26), dock-f 0.13-0.19 (max 0.21). Falls 2-4 %, action std converged to 0.02 by iteration 1000, the curriculum window stayed at 5 cm (advance needs 0.5). The oracle (stand61 with the ball held on the spot) scores 69 % on the same metric, so the policy reached about a third of the ceiling and stopped. Checkpoints in microduck_rl cmu/dock cmu/grasp/policies/ (dock-e_2999, dock-f_2999, dock-e_1000). Not done, in order of value: (1) dock_eval.py on the checkpoints and a per-env trace of why the oracle itself is only 69 % (settling, head wander or ball contact); (2) a look at what the plateaued policy does in the failing 80 % (walks past, stops short, never still); (3) only then a reward or observation change. Kaggle quota: 7.5 h used on dock, 9.7 h left this week (reset 2026-11-07). Shawn: "把进展记录下来吧 其他先停下好了"; nothing else is running.
+
+
+## 2026-11-04 Mochi response deployed and boot service enabled
+
+Problems P5/P6: make the existing name response available without manual process startup. Initial live inspection found `duck-namecall.service` disabled/inactive despite the earlier November 2 enablement record; the cause of the intervening disablement was not established. The old supervisor also waited for a stationary motor brain, so enabling it alone could not provide a cold-boot response without starting motor control.
+
+Deployed `namecall.py --audio-only`, a supervisor that chooses audio-only or guarded stationary/seated head response, and the corrected service ordering. No motor brain starts automatically. The service waits for audio selfcheck, reaps capture helpers before mode changes, and restarts after failures. A live service restart returned to one listener and one capture process. Installed files matched the canonical source hashes.
+
+Live acceptance: three detected Mochi calls, three unmuted quack events and face detections; Shawn replied “ok了” to the request to verify audible calls and head turns. All 77 name-response and supervisor regression checks passed. Actual cold power-on and seated physical response were not exercised; moving-call stop and complete fetch remain open.
+
+Current configuration belongs to `microduck-sim/CURRENT-STATE.json` fact `a7z_namecall_start`. Evidence: `microduck-sim/guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json`; acceptance register R16 remains partial because cold-boot observation is outstanding. Deployment implementation commit: `1c3bfef8`.

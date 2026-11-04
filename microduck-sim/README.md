@@ -6,6 +6,8 @@ The 2026-11-03 goal clarification is `final_goal.fetch_contract_20261103`: name 
 
 这台 MacBook 已经可以直接运行官方 MicroDuck Sandbox。它在浏览器中用 MuJoCo 做物理仿真，并以 50 Hz 运行官方训练好的 ONNX 策略。
 
+Name-response deployment: read `CURRENT-STATE.json` fact `a7z_namecall_start` for the current boot service, and [the 2026-11-04 live acceptance record](guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json) for tested behavior and the remaining cold-boot check.
+
 ## 队友入口
 
 队友控制真机、做强化学习和部署模型，统一看 [microduck_rl/README.md](microduck_rl/README.md) 的 “For teammates” 一节（GitHub：qilinxiaoxiang/microduck_rl）。遥控页的驾驶权锁（在 A7Z 上，本地和 Mac mini 共用）和背包开关在 `microduck-simulator/desktop/duck-command.py`、`app/a7z-bridge.mjs`、`app/src/robot-remote.js`；A7Z 上的启动脚本是 `guide/firmware/a7z/duck-run.sh`（读 `~/duck-policy` 和 `~/duck-supply`），改完用 `guide/firmware/a7z/install_teleop.sh` 装到 A7Z（它会连工作区里没提交的大脑改动一起拷，别的会话在改 `walk_brain.py` 时先看 `git diff`）。
