@@ -134,6 +134,17 @@ Source: the Steve Jobs biography describes a pen Jony Ive designed, with a small
 
 - **Fiddle feature with an emotional answer.** `can` / `build`, not designed yet. A small part on the duck that the owner can idly flick or play with, and the pet reacts to it: teased, comfortable, or something else. The reaction is the point: the same flick can read differently depending on mood and on how it is done (section 4 drives, section 12 expressive motion). Open: what the part is, where it sits, how the flick is sensed. Any printed form follows the printed-part rules: no PLA flexure or snap on the robot.
 
+## 15. Business and brand thinking (Shawn 2026-11-05, unfinished)
+
+Status: thinking in progress, no decision taken and nothing built. Quotes are Shawn's words; the last bullet holds questions the agent added.
+
+- **The business is companionship.** The pet robot and the robotics community share one essence, and it is not robots: "本质都是做陪伴生意". Big-group badminton classes showed him the same thing: "能不能学到技术，也能学一点，但更多的是陪伴".
+- **Brand and identity.** "要做品牌 要让我们产品或者服务的用户有自我认同感 提供情绪价值". Users should feel the product says something about who they are, and it should give them emotional value.
+- **Users take part and get swept along.** "让用户自己也可以参与进来 也可以被裹挟 让用户有一种和时代和产品的连接感". Examples he named: users extend and develop features themselves, teach the pet skills, or build analyses on the data the pet collects day to day.
+- **Possible entry point: companion robot for middle-aged and older people.** Emotional interaction plus healthcare monitoring as the early selling point: "比如做中老年陪伴机器人 主打情感互动和healthcare监控". Data can be exported with the user's authorisation for analysis on more professional platforms.
+- **Two axes for telling offers apart.** Axis 1: older users and young users, "是一条轴的两边"; what each receives must differ. Axis 2, possibly: professional and everyday, "目前还没有想的很清楚".
+- **Open questions (agent's, not decided by Shawn).** Whether the no-speech principle still holds for older users. Which health signals the animal-layout sensors (head cameras, microphones, touch) can really measure at home. Where a monitoring claim starts to need medical-device approval; not checked yet.
+
 ## 8. Purchases and open decisions
 
 - VL53L5CX ToF for stair edges: wanted, not bought.

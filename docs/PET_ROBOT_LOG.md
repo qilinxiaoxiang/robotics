@@ -582,3 +582,7 @@ Current configuration belongs to `microduck-sim/CURRENT-STATE.json` fact `a7z_na
 ## 2026-11-05 Idea: a small thing to flick, and the pet answers
 
 Shawn, reading the Steve Jobs biography: Jony Ive once designed a pen with a small ball on the cap to flick, for a playful emotional bond with the pen. He wants the same kind of small human-pet interaction on the pet robot, with the pet reacting (teased, comfortable, or similar). Recorded as an idea in `PET_ROBOT_FEATURES.md` section 14; nothing designed or built.
+
+## 2026-11-05 Business thinking: companionship, brand, participation, older users
+
+Shawn's unfinished thinking, recorded with his words in `PET_ROBOT_FEATURES.md` section 15: pet robot and community are both a companionship business; build a brand that gives users identity and emotional value; let users take part (extend features, teach skills, analyse the pet's daily data); a companion robot for middle-aged and older people with emotional interaction and healthcare monitoring as a possible entry point, with authorised data export; older and young users as one axis, professional and everyday as a possible second axis, not settled. No decision taken.
