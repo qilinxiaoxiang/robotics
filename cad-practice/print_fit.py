@@ -59,7 +59,7 @@ def pilot_depth(screw, clamped, max_len=None):
 # Clearance (screw passes freely) holes
 CLEAR = {"M2": {"vertical": 2.4, "horizontal": 2.6}, "M2.5": {"vertical": 2.9, "horizontal": 3.1},
          "M2.6": {"vertical": 3.0, "horizontal": 3.2}, "M3": {"vertical": 3.4, "horizontal": 3.6},
-         "M5": {"vertical": 5.5, "horizontal": 5.8}, "M6": {"vertical": 6.6, "horizontal": 6.9}}
+         "M4": {"vertical": 4.5, "horizontal": 4.7}, "M5": {"vertical": 5.5, "horizontal": 5.8}, "M6": {"vertical": 6.6, "horizontal": 6.9}}
 
 # Gap per side (CAD) between a male and a female feature, by fit class, for a VERTICAL female feature away from the bed.
 # Negative = interference.

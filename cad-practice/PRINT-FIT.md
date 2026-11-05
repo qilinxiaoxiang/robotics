@@ -34,8 +34,8 @@ Shawn's rule: "screw kind is never prescribed: pilots take machine or thread-for
 
 ## Clearance holes (screw passes freely)
 
-- **Vertical:** M2 2.4, M2.5 2.9, M2.6 3.0, M3 3.4, M5 5.5, M6 6.6.
-- **Horizontal (teardrop):** M2 2.6, M2.5 3.1, M2.6 3.2, M3 3.6, M5 5.8, M6 6.9.
+- **Vertical:** M2 2.4, M2.5 2.9, M2.6 3.0, M3 3.4, M4 4.5, M5 5.5, M6 6.6.
+- **Horizontal (teardrop):** M2 2.6, M2.5 3.1, M2.6 3.2, M3 3.6, M4 4.7, M5 5.8, M6 6.9.
 - Two horizontal holes in two parts that one screw must pass in line (a hinge ear and its lug) take the horizontal value in both parts and a 0.5 x 45 deg lead-in on the entry mouth.
 
 ## Per-printer offsets
