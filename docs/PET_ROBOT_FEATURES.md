@@ -143,7 +143,8 @@ Status: thinking in progress, no decision taken and nothing built. Quotes are Sh
 - **Users take part and get swept along.** "让用户自己也可以参与进来 也可以被裹挟 让用户有一种和时代和产品的连接感". Examples he named: users extend and develop features themselves, teach the pet skills, or build analyses on the data the pet collects day to day.
 - **Possible entry point: companion robot for middle-aged and older people.** Emotional interaction plus healthcare monitoring as the early selling point: "比如做中老年陪伴机器人 主打情感互动和healthcare监控". Data can be exported with the user's authorisation for analysis on more professional platforms.
 - **Two axes for telling offers apart.** Axis 1: older users and young users, "是一条轴的两边"; what each receives must differ. Axis 2, possibly: professional and everyday, "目前还没有想的很清楚".
-- **Open questions (agent's, not decided by Shawn).** Whether the no-speech principle still holds for older users. Which health signals the animal-layout sensors (head cameras, microphones, touch) can really measure at home. Where a monitoring claim starts to need medical-device approval; first read in section 16.
+- **A seated-only pet is ruled out.** Shawn 2026-11-05: "坐着的肯定不行 因为是和家庭屏或者只能摄像头功能其实是冲突". A pet that stays put would compete with home screens and smart cameras.
+- **Facts still to check.** Which health signals the animal-layout sensors (head cameras, microphones, touch) can really measure at home. Where a monitoring claim starts to need medical-device approval; first read in section 16.
 
 ## 16. Feature matrix by how sure the path is (Shawn 2026-11-05: "哪些是很快就能走出来的 某些要去寻找路径")
 
@@ -180,8 +181,7 @@ First cut, written 2026-11-05 by the agent from this register, the `pet/` README
 
 **Regulation, first read only.** FDA revised its General Wellness guidance on 2026-01-06: low-risk, non-invasive products with wellness-only claims can stay outside device oversight, and diagnosis, treatment or prevention claims are excluded (cooley.com/news/insight/2026/2026-01-20-fda-opens-aperture-for-wearables-in-latest-general-wellness-guidance). It is enforcement discretion and its new examples are wearables; how it applies to a robot, and China's NMPA rules, are not checked. Needs regulatory counsel before a health claim is published.
 
-**Older-user evidence, first read only.** ElliQ, a talking tabletop robot, reported more than 800 participants in a New York State pilot, over 30 interactions a day and a 95 % loneliness reduction; state and vendor figures, no controlled trial (robotics247.com/article/elliq_companion_robot_reduces_loneliness_95_percent_finds_new_york_state_rollout). It does not stand or walk, and it talks, so it bears on the no-speech question without settling it.
-
+**Older-user evidence, first read only.** ElliQ, a talking tabletop robot, reported more than 800 participants in a New York State pilot, over 30 interactions a day and a 95 % loneliness reduction; state and vendor figures, no controlled trial (robotics247.com/article/elliq_companion_robot_reduces_loneliness_95_percent_finds_new_york_state_rollout).
 ## 8. Purchases and open decisions
 
 - VL53L5CX ToF for stair edges: wanted, not bought.
