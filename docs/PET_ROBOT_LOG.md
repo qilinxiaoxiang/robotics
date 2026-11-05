@@ -590,3 +590,7 @@ Shawn's unfinished thinking, recorded with his words in `PET_ROBOT_FEATURES.md` 
 ## 2026-11-05 Feature matrix by path certainty
 
 Shawn: plan a feature matrix as well as a product matrix, separating what can ship soon from what needs a path found. First cut in `PET_ROBOT_FEATURES.md` section 16: Lane A quick, Lane B path known, Lane C find a path. Each big promise (teach it, it keeps learning, it watches over health) splits across the lanes, so it can ship shallow while the frontier version stays research. Four standard web searches back the Lane C and regulation notes; coverage is thin and marked as a first read. Not yet reviewed by Shawn.
+
+## 2026-11-05 Open question: generalise across robot forms at all?
+
+Shawn, from the Jobs biography (NeXT as a brain for many machines, Apple later running only on its own hardware): the project may not need the generalisation route. Recorded in `PET_ROBOT_FEATURES.md` section 15 as open; section 11 and the existing body cards (duck, OMX arm, vacuum) are unchanged. No decision taken.
