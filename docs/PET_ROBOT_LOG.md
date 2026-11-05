@@ -586,3 +586,7 @@ Shawn, reading the Steve Jobs biography: Jony Ive once designed a pen with a sma
 ## 2026-11-05 Business thinking: companionship, brand, participation, older users
 
 Shawn's unfinished thinking, recorded with his words in `PET_ROBOT_FEATURES.md` section 15: pet robot and community are both a companionship business; build a brand that gives users identity and emotional value; let users take part (extend features, teach skills, analyse the pet's daily data); a companion robot for middle-aged and older people with emotional interaction and healthcare monitoring as a possible entry point, with authorised data export; older and young users as one axis, professional and everyday as a possible second axis, not settled. No decision taken.
+
+## 2026-11-05 Feature matrix by path certainty
+
+Shawn: plan a feature matrix as well as a product matrix, separating what can ship soon from what needs a path found. First cut in `PET_ROBOT_FEATURES.md` section 16: Lane A quick, Lane B path known, Lane C find a path. Each big promise (teach it, it keeps learning, it watches over health) splits across the lanes, so it can ship shallow while the frontier version stays research. Four standard web searches back the Lane C and regulation notes; coverage is thin and marked as a first read. Not yet reviewed by Shawn.

@@ -143,7 +143,44 @@ Status: thinking in progress, no decision taken and nothing built. Quotes are Sh
 - **Users take part and get swept along.** "让用户自己也可以参与进来 也可以被裹挟 让用户有一种和时代和产品的连接感". Examples he named: users extend and develop features themselves, teach the pet skills, or build analyses on the data the pet collects day to day.
 - **Possible entry point: companion robot for middle-aged and older people.** Emotional interaction plus healthcare monitoring as the early selling point: "比如做中老年陪伴机器人 主打情感互动和healthcare监控". Data can be exported with the user's authorisation for analysis on more professional platforms.
 - **Two axes for telling offers apart.** Axis 1: older users and young users, "是一条轴的两边"; what each receives must differ. Axis 2, possibly: professional and everyday, "目前还没有想的很清楚".
-- **Open questions (agent's, not decided by Shawn).** Whether the no-speech principle still holds for older users. Which health signals the animal-layout sensors (head cameras, microphones, touch) can really measure at home. Where a monitoring claim starts to need medical-device approval; not checked yet.
+- **Open questions (agent's, not decided by Shawn).** Whether the no-speech principle still holds for older users. Which health signals the animal-layout sensors (head cameras, microphones, touch) can really measure at home. Where a monitoring claim starts to need medical-device approval; first read in section 16.
+
+## 16. Feature matrix by how sure the path is (Shawn 2026-11-05: "哪些是很快就能走出来的 某些要去寻找路径")
+
+First cut, written 2026-11-05 by the agent from this register, the `pet/` READMEs and `microduck-sim/CURRENT-STATE.json`; not yet reviewed by Shawn. Tags: [all] any product line, [older] older-user line, [young] young or maker line. Placement rule: a feature moves up only on evidence from the robot.
+
+**Lane A: quick. Runs on the robot, or the software exists and the rest is integration.**
+- Answers to its name, head turn and quack [all]: boot service live on the robot; most acceptance items in `namecall-20261029/REQUIREMENTS.json` are still partial or built, none met.
+- Touch response, including the flick idea of section 14 [all]: touch board and bus are on the robot; the emotional reactions are not written; the flick part is not designed.
+- Expressive motion, idle breathing, attention [all]: `pet/express`, sim and Mac only.
+- Owner and stranger recognition, familiarity [all]: `pet/identity`, not on the robot.
+- Drives and intention loop [all]: `pet/mind`, sim only.
+- Learning from a few exposures, owner rules, diary [all]: `pet/learn`, arithmetic plus a nightly model, no motor learning; not on the robot.
+- Teach by words: a spoken sentence becomes a rule or a script over known primitives [young, older]: `pet/voice` + `pet/mind` validator, off the robot.
+- Day log and authorised data export [all]: the event log exists; export is ordinary software.
+
+**Lane B: path known, needs engineering, training or measurement.**
+- Get up after a fall [all]: two robot trials on 2026-10-30, neither rose (CURRENT-STATE `getup`).
+- Find, walk to, bend, grasp [young]: section 7; bend and grasp are `train`.
+- Localise at home, last-seen table, obstacle and stair stop [all]: sections 1 and 5; success rate unmeasured, ToF not bought.
+- Teach by motion replay: owner moves or films a pose, duck plays it back through a balance check [young]; inferred path, nothing built.
+- Routine-change signals for wellness: active or not today, seen at the usual time, sound of activity [older]; inferred from existing camera and microphones, accuracy unmeasured, and the duck only senses what is near it.
+- Third-party extensions over primitives and the event log [young]: needs a public API and a safety validator; the validator exists.
+
+**Lane C: find a path first. No promise to users until a path is shown.**
+- New motor skill from a few demonstrations, no sim step [young]. Evidence: DemoDiffusion (one human demo, 8 tabletop tasks on an arm, 83.8 % success, needs a pretrained base policy; arxiv.org/abs/2506.20668). One search found no result on legged robots in homes.
+- Continual learning of the motor policy from daily life [all]. Evidence: reviews still list catastrophic forgetting and onboard limits as open, and describe robot continual learning as early (arxiv.org/pdf/2604.15395, preprints.org/manuscript/202412.0453).
+- Vital signs or diagnosis from the duck's sensors [older]: no evidence checked; measuring from a moving floor-level robot is unproven.
+- End-to-end pet model, continuous monocular SLAM, one policy across bodies: sections 5, 10, 11.
+
+**One promise, three depths.** A user promise can ship at Lane A while the frontier version stays research:
+- "Teach it": words to rules and scripts (A), motion replay (B), new skill from demonstrations (C).
+- "It keeps learning": rules, diary and personality updated nightly (A), new policies pushed as updates after sim training (B), the policy learning from life (C).
+- "It watches over health": day log and authorised export (A), routine-change signals (B), vital signs and diagnosis (C).
+
+**Regulation, first read only.** FDA revised its General Wellness guidance on 2026-01-06: low-risk, non-invasive products with wellness-only claims can stay outside device oversight, and diagnosis, treatment or prevention claims are excluded (cooley.com/news/insight/2026/2026-01-20-fda-opens-aperture-for-wearables-in-latest-general-wellness-guidance). It is enforcement discretion and its new examples are wearables; how it applies to a robot, and China's NMPA rules, are not checked. Needs regulatory counsel before a health claim is published.
+
+**Older-user evidence, first read only.** ElliQ, a talking tabletop robot, reported more than 800 participants in a New York State pilot, over 30 interactions a day and a 95 % loneliness reduction; state and vendor figures, no controlled trial (robotics247.com/article/elliq_companion_robot_reduces_loneliness_95_percent_finds_new_york_state_rollout). It does not stand or walk, and it talks, so it bears on the no-speech question without settling it.
 
 ## 8. Purchases and open decisions
 
