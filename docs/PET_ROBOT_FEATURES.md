@@ -128,6 +128,12 @@ The candidate single principle is homeostasis under uncertainty: an organism kee
 
 - **Homeostatic drive layer.** `can` / `build`. Replace the hand-written drives with a table of essential variables and comfort ranges (battery, temperature, owner distance, time since touch, unexplained surprise) and one objective: pick the intention that minimises expected deviation plus expected information gain. The intention prompt states ranges and deviations instead of drive scores. References: Keramati and Gutkin 2014 (homeostatic RL), Yoshida et al. 2021 (homeostatic agents that develop foraging/rest/explore rhythms). Experiment: run both drive layers through the same simulated day in `pet/mind` and compare behaviour against animal-likeness criteria (self-started action, contingent reaction, goal-directed course change, habituation).
 
+## 14. A small thing to play with (Shawn 2026-11-05, idea only)
+
+Source: the Steve Jobs biography describes a pen Jony Ive designed, with a small ball on the cap that the user could flick, to build a playful emotional bond between person and pen. Shawn: "这感觉可以用在我们的宠物机器人项目中 ... 是一个可以互动的东西，然后宠物会给一些反馈，比如宠物感觉被捉弄，或者感觉很舒服".
+
+- **Fiddle feature with an emotional answer.** `can` / `build`, not designed yet. A small part on the duck that the owner can idly flick or play with, and the pet reacts to it: teased, comfortable, or something else. The reaction is the point: the same flick can read differently depending on mood and on how it is done (section 4 drives, section 12 expressive motion). Open: what the part is, where it sits, how the flick is sensed. Any printed form follows the printed-part rules: no PLA flexure or snap on the robot.
+
 ## 8. Purchases and open decisions
 
 - VL53L5CX ToF for stair edges: wanted, not bought.

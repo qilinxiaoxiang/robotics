@@ -578,3 +578,7 @@ Deployed `namecall.py --audio-only`, a supervisor that chooses audio-only or gua
 Live acceptance: three detected Mochi calls, three unmuted quack events and face detections; Shawn replied “ok了” to the request to verify audible calls and head turns. All 77 name-response and supervisor regression checks passed. Actual cold power-on and seated physical response were not exercised; moving-call stop and complete fetch remain open.
 
 Current configuration belongs to `microduck-sim/CURRENT-STATE.json` fact `a7z_namecall_start`. Evidence: `microduck-sim/guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json`; acceptance register R16 remains partial because cold-boot observation is outstanding. Deployment implementation commit: `1c3bfef8`.
+
+## 2026-11-05 Idea: a small thing to flick, and the pet answers
+
+Shawn, reading the Steve Jobs biography: Jony Ive once designed a pen with a small ball on the cap to flick, for a playful emotional bond with the pen. He wants the same kind of small human-pet interaction on the pet robot, with the pet reacting (teased, comfortable, or similar). Recorded as an idea in `PET_ROBOT_FEATURES.md` section 14; nothing designed or built.
