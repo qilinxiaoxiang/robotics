@@ -21,10 +21,6 @@ FRESH_S = 1.5
 RETRY_S = 5.0
 QUICK_EXIT_S = 30.0
 BACKOFF_S = 60.0
-# Entering head mode restarts the listener (a 2-3 s deaf gap). The brain's readiness flickers while Shawn drives it
-# (zero-command stops between walks, short mode changes): 2026-11-06 15:49-16:04 the listener restarted 22 times in
-# 15 min, 8 runs lasting 2 s. So head mode starts only after readiness has held this long; leaving it stays immediate.
-HEAD_HOLD_S = 10.0
 
 
 def record(**kw):
@@ -101,21 +97,8 @@ class Supervisor:
         self.started = 0.0
         self.retry_at = 0.0
         self.failed = 0
-        self.head_since = None
-
-    def effective(self, mode, now):
-        """Hold off entering head mode until it has been wanted for HEAD_HOLD_S; a running head child stays."""
-        if mode != "head":
-            self.head_since = None
-            return mode
-        if self.head_since is None:
-            self.head_since = now
-        if self.child is not None and self.mode == "head":
-            return "head"
-        return "head" if now - self.head_since >= HEAD_HOLD_S else "audio-only"
 
     def tick(self, mode, now):
-        mode = self.effective(mode, now)
         if self.child is not None and (self.mode != mode or self.child.poll() is not None):
             rc = self.child.poll()
             changed = self.mode != mode

@@ -36,25 +36,6 @@ def test_no_old_or_broken_brain_log_is_not_ready(tmp_path):
         assert not nb.brain_ready(logs=str(tmp_path))
 
 
-def test_flickering_readiness_does_not_restart_the_listener():
-    s, events, children = harness()
-    s.tick("audio-only", 0)
-    t = 2.0
-    for ready in (True, False, True, True, False, True, False, True, True, False):   # 2 s polls, never 10 s steady
-        s.tick(nb.desired_mode(ready, False), t)
-        t += 2.0
-    assert len(children) == 1 and events == [("start", 100, True)]
-
-
-def test_leaving_head_mode_is_immediate():
-    s, events, children = harness()
-    s.tick("head", 0)
-    s.tick("head", nb.HEAD_HOLD_S)
-    assert s.mode == "head"
-    s.tick("audio-only", nb.HEAD_HOLD_S + 2)
-    assert events[-1] == ("start", 102, True) and s.mode == "audio-only"
-
-
 class Child:
     def __init__(self, pid):
         self.pid = pid
@@ -88,10 +69,8 @@ def test_boot_audio_to_head_and_back_stops_old_capture_first():
     s.tick("audio-only", 1)
     assert len(children) == 1
     s.tick(nb.desired_mode(True, False), 2)
-    assert len(children) == 1          # head wanted, but not yet held for HEAD_HOLD_S
-    s.tick(nb.desired_mode(True, False), 2 + nb.HEAD_HOLD_S)
     assert events[-2:] == [("stop", 100), ("start", 101, False)]
-    s.tick(nb.desired_mode(False, False), 13)
+    s.tick(nb.desired_mode(False, False), 4)
     assert events[-2:] == [("stop", 101), ("start", 102, True)]
     s.close()
     assert events[-1] == ("stop", 102)
@@ -107,9 +86,7 @@ def test_selfcheck_owns_audio_until_it_finishes():
     assert events[-1] == ("stop", 100)
     assert s.child is None
     s.tick(nb.desired_mode(True, False), 6)
-    assert events[-1] == ("start", 101, True)   # audio first; head after HEAD_HOLD_S
-    s.tick(nb.desired_mode(True, False), 6 + nb.HEAD_HOLD_S)
-    assert events[-1] == ("start", 102, False)
+    assert events[-1] == ("start", 101, False)
 
 
 def test_crashed_child_cleanup_and_bounded_restart_backoff():
