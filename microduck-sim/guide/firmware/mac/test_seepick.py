@@ -305,3 +305,51 @@ def test_t2_pick_command_carries_the_box_and_the_blind_zone_clamps_to_the_edge()
     assert o["v"] == 359 and o["seen"] is False and walk_brain.is_pix_object(o)
     c.t2 = False
     assert not walk_brain.is_pix_object(c.pick_cmd()["object"])
+
+
+def test_a_guard_stand_during_the_aim_ends_the_run_without_walk():
+    """Robot 2026-11-06: the aim kept writing walk to a duck the tilt guard had stood down (lying at 50 deg)."""
+    duck = PickDuck((0.6, 0.05), ["hold"])
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=lambda: apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(),
+                                                        duck.send, duck.detect, now=lambda: duck.t, log=lambda s: None),
+                     now=lambda: duck.t, log=lambda s: None)
+    while ctl.phase != "aim" and duck.t < 60:
+        ctl.step()
+        duck.advance()
+    assert ctl.phase == "aim"
+    duck.mode = "stand"
+    n = len(duck.sent)
+    for _ in range(20):
+        ctl.step()
+        duck.advance()
+    assert ctl.phase == "failed" and "stand" in ctl.result["why"]
+    assert not [c for _, c in duck.sent[n:] if c.get("mode") == "walk"], duck.sent[n:]
+
+
+def test_no_look_down_or_pick_while_the_body_rocks():
+    """Robot 2026-11-06: the aim lowered the head to 1.4 just after a turn in place (gyro 1-1.5 rad/s); the duck fell."""
+    duck = PickDuck((0.6, 0.05), ["hold"])
+    rock = {"on": False}
+    base = duck.state
+    duck.state = lambda: dict(base(), gyro=(0.0, 1.2 if rock["on"] else 0.02, 0.0))
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=lambda: apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(),
+                                                        duck.send, duck.detect, now=lambda: duck.t, log=lambda s: None),
+                     now=lambda: duck.t, log=lambda s: None)
+    while ctl.phase != "aim" and duck.t < 60:
+        ctl.step()
+        duck.advance()
+    rock["on"] = True
+    n = len(duck.sent)
+    for _ in range(60):
+        ctl.step()
+        duck.advance()
+    bad = [c for _, c in duck.sent[n:] if c.get("mode") == "seepick" or
+           (c.get("head") or {}).get("head_pitch", 0) > apc.DEFAULT_HEAD["head_pitch"] + 1e-6]
+    assert not bad, bad[:3]
+    rock["on"] = False
+    while ctl.phase not in ("done", "failed") and duck.t < 120:
+        ctl.step()
+        duck.advance()
+    assert ctl.result["ok"], ctl.result

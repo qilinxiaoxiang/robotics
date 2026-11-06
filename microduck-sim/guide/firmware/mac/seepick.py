@@ -124,6 +124,7 @@ class SeePick:
         self.blind_ok, self.blind_pick, self.last_y = False, False, 0.0   # T2: the creep ended this near; pick unseen; side it was last on
         self.aim_gate = None      # T2: the last sighting of the creep, which the next aim is gated on
         self.look_n = 0           # body turns made while looking for the object
+        self.rock_t, self.step_t = -1e9, None   # last time |trunk gyro| > ap.STILL_GYRO; the previous step's time
 
     # --- helpers -----------------------------------------------------------------------------------------------
     def enter(self, phase, why=""):
@@ -207,8 +208,19 @@ class SeePick:
             if now - self.t_phase > ap.STALE_START_S:
                 self.finish(False, "no fresh walk_wired state")
             return
-        if self.phase not in ("start", "approach") and st["mode"] == "monitor":
-            self.finish(False, "walk_wired is in monitor mode (a guard trip or a manual command)", stop=False)
+        if self.phase not in ("start", "approach", "done", "failed") and st["mode"] in ("monitor", "stand"):
+            # a guard (tilt, action limit) or a person stood it down: writing walk back would hand a fallen or tilted
+            # robot to the policy again (2026-11-06: aim kept writing walk to a duck lying at 50 deg)
+            self.finish(False, f"walk_wired is in {st['mode']} mode (a guard trip or a manual command)", stop=False)
+            return
+        dt, self.step_t = (now - self.step_t if self.step_t is not None else 0.0), now
+        if st.get("gyro") is not None and math.sqrt(sum(g * g for g in st["gyro"])) > ap.STILL_GYRO:
+            self.rock_t = now
+        if self.phase in ("aim", "align") and now - self.rock_t < ap.STILL_S:
+            # no look-down head pose and no pick start on a rocking body (2026-11-06: the aim lowered the head to 1.4
+            # right after a turn in place, trunk gyro 1-1.5 rad/s, and the duck fell); the phase clock pauses
+            self.send_fn({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0})
+            self.t_phase += dt
             return
         getattr(self, "p_" + self.phase)(st, now)
 
