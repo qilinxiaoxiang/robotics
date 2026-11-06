@@ -18,6 +18,9 @@ LOGS = os.path.expanduser("~/duck-logs")
 ARGS = ["--name", "mochi", "--spotter", "oww", "--no-person", "--life-max-gb", "1"]
 POLL_S = 2.0
 FRESH_S = 1.5
+# The brain writes 50 rows a second: a row or mtime newer than our "now" is the freshest data, not stale
+# (2026-11-06: rejecting it flipped head<->audio-only on 3 % of polls, each flip restarting the listener twice).
+SKEW_S = 0.5
 RETRY_S = 5.0
 QUICK_EXIT_S = 30.0
 BACKOFF_S = 60.0
@@ -37,14 +40,14 @@ def brain_ready(now=None, logs=None):
         return False
     try:
         path = max(paths, key=os.path.getmtime)
-        if not 0 <= now - os.path.getmtime(path) <= FRESH_S:
+        if not -SKEW_S <= now - os.path.getmtime(path) <= FRESH_S:
             return False
         with open(path, "rb") as f:
             f.seek(0, os.SEEK_END)
             f.seek(max(0, f.tell() - 8192))
             lines = f.read().splitlines()
         row = json.loads(lines[-1])
-        if not 0 <= now - float(row.get("t", 0)) <= FRESH_S:
+        if not -SKEW_S <= now - float(row.get("t", 0)) <= FRESH_S:
             return False
         cmd = row.get("cmd") or {}
         return (row.get("mode") == "sit" and row.get("sit_phase") == "seated") or (

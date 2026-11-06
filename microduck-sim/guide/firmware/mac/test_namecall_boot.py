@@ -193,3 +193,11 @@ def test_the_1104_namecall_unit_is_caught():
     units["duck-namecall.service"] = ("[Unit]\nAfter=duck-camera.service duck-selfcheck.service sound.target\n"
                                       "[Install]\nWantedBy=multi-user.target\n")
     assert "duck-namecall.service" in boot_cycle(unit_ordering(units))
+
+
+def test_a_row_written_just_after_now_is_fresh(tmp_path):
+    # 2026-11-06: the brain wrote between our time.time() and the read; the negative age read as stale and the
+    # listener restarted twice per false poll.
+    logs = write(tmp_path, mode="walk", cmd=dict(vx=0.0), t=time.time() + 0.01)
+    assert nb.brain_ready(now=time.time() - 0.05, logs=logs)
+    assert not nb.brain_ready(now=time.time() - 2.0, logs=logs)
