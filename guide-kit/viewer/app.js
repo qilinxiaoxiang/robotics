@@ -717,6 +717,7 @@ async function createViewer(container, guide, geoBuf, progress) {
     return geoCache.get(k);
   };
   const installedMat = new THREE.MeshStandardMaterial({ color: 0x8d949c, roughness: 0.35, metalness: 0.7 });
+  const washerMat = new THREE.MeshStandardMaterial({ color: 0xd4d8dc, roughness: 0.3, metalness: 0.8 });
   const specMats = new Map();
   for (const [spec, c] of specColor) specMats.set(spec, new THREE.MeshStandardMaterial({ color: new THREE.Color(c), roughness: 0.4, metalness: 0.3, emissive: new THREE.Color(c), emissiveIntensity: 0.25 }));
   const stepNumber = new Map(guide.steps.map((s) => [s.id, s.number]));
@@ -732,6 +733,13 @@ async function createViewer(container, guide, geoBuf, progress) {
     shank.position.set(0, L / 2, 0);
     const g = new THREE.Group();
     g.add(head, shank);
+    if (s.washer) {                 // a washer under the head: head lifted by its thickness, ring against the seat face
+      const t = 0.6;
+      head.position.y -= t;
+      const ring = new THREE.Mesh(cyl(Math.max(hd / 2 + 0.6, d * 1.15), Math.max(hd / 2 + 0.6, d * 1.15), t, 24), washerMat);
+      ring.position.set(0, -t / 2, 0);
+      g.add(ring);
+    }
     g.quaternion.setFromUnitVectors(yUp, axis);
     const home = new THREE.Vector3(...s.center);
     g.position.copy(home);
@@ -1227,7 +1235,8 @@ async function createViewer(container, guide, geoBuf, progress) {
     const tags = [];
     for (const a of partAnchors) {
       const m = meshes[a.part];
-      project(m ? a.point.clone().add(m.position) : a.point, scr);
+      if (m) m.updateMatrixWorld();                // follows a posed part too (turned, not only moved)
+      project(m ? a.point.clone().applyMatrix4(m.matrixWorld) : a.point, scr);
       a.el.style.display = scr.ok ? '' : 'none';
       if (!scr.ok) continue;
       if (a.w === undefined) { a.w = a.el.offsetWidth; a.h = a.el.offsetHeight; }
@@ -1572,7 +1581,8 @@ async function main() {
   /* header + sidebar */
   document.title = data.title || T.ui.guideTitle;
   $('guide-title').textContent = data.title || T.ui.guideTitle;
-  $('guide-subtitle').textContent = [data.subtitle, data.revision ? fmt(T.ui.revision, { v: data.revision }) : ''].filter(Boolean).join(' · ');
+  $('guide-subtitle').textContent = [data.subtitle, data.revision && data.subtitleRevision !== false ? fmt(T.ui.revision, { v: data.revision }) : ''].filter(Boolean).join(' · ');
+  if (data.logo) document.querySelector('.brand-mark').textContent = data.logo;
   $('side-count').textContent = fmt(total === 1 ? T.ui.stepCountOne : T.ui.stepCount, { n: total });
   $('side-foot').textContent = [data.revision ? fmt(T.ui.revision, { v: data.revision }) : '', data.units ? fmt(T.ui.units, { v: data.units }) : '',
     data.frame === '' ? '' : fmt(T.ui.frame, { v: data.frame || T.ui.frameDefault })].filter(Boolean).join(' · ');
@@ -1996,6 +2006,8 @@ async function main() {
     const legend = $('legend');
     const ids = [...step.cables, ...step.faintCables];
     legend.textContent = '';
+    legend.append(h('button', { class: 'legend-toggle', type: 'button', text: data.legendToggle || T.ui.legendTitle,
+      onclick: () => legend.classList.toggle('open') }));
     const partLeg = (Array.isArray(data.legend) ? data.legend : []).filter((l) => Array.isArray(l.parts) && l.parts.some((k) =>
       guide.byKey.has(k) && (step.show.has(guide.byKey.get(k)) || step.add.has(guide.byKey.get(k)))));
     if (!step.cables.length && !partLeg.length) { legend.hidden = true; return; }

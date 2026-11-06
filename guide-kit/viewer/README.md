@@ -1,20 +1,22 @@
-# MicroDuck assembly guide viewer
+# Guide viewer and data schema
 
 `build_guide.py` turns one `guide-data.json` into one self-contained HTML file. The file opens from disk or any static host and makes no network requests: three.js r164.1 and OrbitControls are inlined, and a Content-Security-Policy blocks external loads.
 
 ## Build
 
 ```bash
-cd ~/code/robotics/microduck-sim
-python3 guide/build_guide.py --data <guide-data.json> --out <file.html>
-python3 guide/build_guide.py --data <guide-data.json> --check     # validate only, exit 1 on errors
+python3 ~/code/robotics/guide-kit/build_guide.py --data <guide-data.json> --out <file.html>
+python3 ~/code/robotics/guide-kit/build_guide.py --data <guide-data.json> --check     # validate only, exit 1 on errors
 ```
 
-Options: `--manifest <summary.json>` writes the build summary that is also printed to stdout. `--allow-errors` builds despite validation errors. `--three <dir>` points at another three.js package; the default is `microduck-simulator/app/node_modules/three`. The bundler uses only the Python standard library.
+MicroDuck calls it through `microduck-sim/guide/build_guide.py`, a thin loader; `microduck-sim/guide/viewer` is a symlink to this directory.
+
+Options: `--manifest <summary.json>` writes the build summary that is also printed to stdout. `--allow-errors` builds despite validation errors. `--three <dir>` points at another three.js package; the default is `guide-kit/three` (0.164.1, the files the bundler reads). The bundler uses only the Python standard library.
 
 Development fixture (real meshes, placeholder steps and cables):
 
 ```bash
+cd ~/code/robotics/microduck-sim
 python3 guide/dev/make_sample_data.py
 python3 guide/build_guide.py --data guide/dev/sample-data.json --out guide/dev/sample.html
 ```
