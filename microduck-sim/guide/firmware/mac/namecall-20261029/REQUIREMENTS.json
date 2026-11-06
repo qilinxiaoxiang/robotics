@@ -389,7 +389,8 @@
         "2026-11-04 live inspection: duck-namecall.service disabled/inactive; old wrapper waited for walk-zero and excluded seated/no-brain.",
         "2026-11-04 boot-acceptance-20261104.json: enabled/active; 77 regression tests pass; live Mochi call/quack/head feedback, user confirmed ok了.",
         "2026-11-06 Shawn: 我们的microduck开机没有启动听名字的进程. Cause reproduced in a VM: the 11/04 unit forms a boot ordering cycle with duck-selfcheck and multi-user.target, systemd deletes its start job (FAULTS.json namecall-not-started-at-boot). Unit fixed (After=multi-user.target), installer now verifies default.target, test_namecall_boot.py has the cycle tests.",
-        "2026-11-06 on the A7Z: after power-on 15:45 the unit was inactive and verify default.target showed the cycle; fixed unit deployed, sudo systemctl reboot 15:47, listener started by itself at 15:48:53 after selfcheck, boot_check.sh PASS."
+        "2026-11-06 on the A7Z: after power-on 15:45 the unit was inactive and verify default.target showed the cycle; fixed unit deployed, sudo systemctl reboot 15:47, listener started by itself at 15:48:53 after selfcheck, boot_check.sh PASS.",
+        "2026-11-06 ~16:00 Shawn called Mochi: 没反应. Logs: 22 listener restarts in 15 min (8 runs of 2 s: brain readiness flickering between head and audio-only), and kw_hits 0 in all 22 namecall logs (no name recognised at all; same namecall.py and mochi_v4 as the 11/04 success). Restart churn fixed in namecall_boot.py (HEAD_HOLD_S 10, tests), not deployed; the zero-hit cause is open, A7Z went offline at ~16:00 before a capture could be taken."
       ],
       "status": "partial",
       "gap": "A Mochi call answered in a boot started by the fixed unit is not yet recorded; a separate power-off/on not run (reboot runs the same boot transaction)."
