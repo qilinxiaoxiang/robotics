@@ -174,6 +174,9 @@ bow, bite and rise without a fall, beak empty (aim read the ball 3.2 cm beyond t
 Run 5 (same carpet, fixes 2-4 deployed): no fall. Arrived on the second approach (x 0.131 y -0.036), the aim turned
 16 deg, the ball went under the picture with the estimate at 0.121 m, just over seepick's 0.12 m blind edge, and the
 run gave up without a bite. BLIND_R is now 0.15 m (an unseen ball that near is picked at its last position).
+Run 6 (16:40, BLIND_R 0.15 deployed, starting about 11 cm from the ball where run 5 stopped): arrived without walking,
+try 1 bit empty at dx +0.9 dy -1.1 cm, try 2 picked blind at the last position (dx +3.0 cm) and the jaw HOLDS (9.5 deg,
+10 s), no fall: the first robot pick with the learned seeing pick. Still to show: walk-up from 0.45 m and pick in one run.
 The approach sim was not rerun for fix 4.
 
 ## Limits
