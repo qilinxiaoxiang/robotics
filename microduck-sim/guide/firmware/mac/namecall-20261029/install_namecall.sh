@@ -78,6 +78,10 @@ if [ "$ENABLE_BOOT" = 1 ]; then
     sudo -n install -m 644 /tmp/duck-namecall.service /etc/systemd/system/duck-namecall.service
     sudo -n systemd-analyze verify /etc/systemd/system/duck-namecall.service
     sudo -n systemctl daemon-reload
+    # A unit-file verify misses boot ordering cycles; only the boot transaction shows them (2026-11-06).
+    if sudo -n systemd-analyze verify default.target 2>&1 | grep -i "ordering cycle"; then
+      echo "boot transaction has an ordering cycle: a unit would be dropped at power-on" >&2; exit 1
+    fi
     sudo -n systemctl enable duck-namecall.service
     sudo -n systemctl restart duck-namecall.service
     systemctl is-enabled duck-namecall.service

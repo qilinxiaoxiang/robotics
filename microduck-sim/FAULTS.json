@@ -235,6 +235,60 @@
         "status": "hypothesis",
         "summary": "USB-C plug contact at the A7Z, shaken loose on a right-spin lurch; seen twice"
       }
+    },
+    "namecall-not-started-at-boot": {
+      "symptom": "After a power-on the Mochi name response (duck-namecall.service -> namecall_boot.py -> namecall.py) is not running, although it was enabled and running when last deployed.",
+      "required_recovery": "",
+      "occurrences": [
+        {
+          "when": "found 2026-11-04 (enabled 2026-11-02 15:30)",
+          "boot": "unknown",
+          "what": "live inspection found the unit disabled and inactive (PET_ROBOT_LOG 2026-11-04)",
+          "running": "not recorded"
+        },
+        {
+          "when": "reported by Shawn 2026-11-06 (deployed and enabled 2026-11-04 11:08 by `systemctl restart`, never cold-booted)",
+          "boot": "unknown; A7Z offline on 2026-11-06",
+          "what": "Shawn: \"我们的microduck开机没有启动听名字的进程\"",
+          "running": "not recorded"
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "H1-boot-ordering-cycle",
+          "claim": "The 11/04 unit has After=duck-selfcheck.service but not After=multi-user.target; duck-selfcheck is After=multi-user.target, and multi-user.target gets the implicit After=duck-namecall because it Wants it. The cycle multi-user.target -> duck-namecall -> duck-selfcheck -> multi-user.target makes systemd delete the duck-namecall start job at every boot. `systemctl restart` (the 11/04 acceptance) never builds that transaction.",
+          "status": "reproduced in a VM for occurrence 2; not yet read on the A7Z journal"
+        },
+        {
+          "id": "H2-disabled-by-a-command",
+          "claim": "Occurrence 1: something ran `systemctl disable` between 11/02 15:30 and 11/04. The 11/02 unit (After=multi-user.target duck-camera.service) had no cycle, so H1 does not explain it.",
+          "status": "open; no script in the repo disables or stops this unit (grep 2026-11-06)"
+        }
+      ],
+      "tests": [
+        {
+          "id": "T1-vm-boot",
+          "what": "Disposable Ubuntu VM (colima on the Mac mini, systemd 255): install stub duck-camera / duck-selfcheck with the A7Z ordering plus the 11/04 duck-namecall unit, enable, reboot; then the corrected unit.",
+          "status": "run",
+          "results": "11/04 unit: 'multi-user.target: Job duck-namecall.service/start deleted to break ordering cycle starting with multi-user.target/start', namecall inactive. Corrected repo unit: no cycle, namecall started 2 ms after selfcheck finished. `systemd-analyze verify <unit file>` printed nothing for the bad unit; `systemd-analyze verify default.target` printed the cycle."
+        },
+        {
+          "id": "T2-a7z-boot-check",
+          "what": "Power on, wait 1 min, run guide/firmware/mac/namecall-20261029/boot_check.sh: H1 predicts the cycle line in `journalctl -b`; the sudo log since 11/02 shows whether anyone disabled the unit (H2). Then install the fixed unit (install_namecall.sh --enable-boot), `sudo reboot`, boot_check.sh again: PASS expected.",
+          "status": "queued",
+          "blocker": "A7Z offline (ssh a7z timed out 2026-11-06 14:3x)"
+        }
+      ],
+      "mitigations": [],
+      "recovery": {
+        "self_recovers": false,
+        "verified_by_induced_fault": false,
+        "evidence": "fix in repo (After=multi-user.target, install-time default.target verify, test_namecall_boot.py cycle tests); not deployed"
+      },
+      "cause": {
+        "status": "hypothesis",
+        "summary": "occurrence 2: boot ordering cycle (reproduced in VM); occurrence 1: unknown, sudo log to be read"
+      }
     }
   }
 }

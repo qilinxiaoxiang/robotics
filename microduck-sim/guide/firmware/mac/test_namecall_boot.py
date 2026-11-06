@@ -127,3 +127,69 @@ def test_group_cleanup_escalates_if_process_does_not_exit():
     signals = []
     nb.stop_child(Proc(), lambda pid, sig: signals.append((pid, sig)))
     assert signals[-1] == (456, signal.SIGKILL)
+
+
+SYSTEMD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "pi", "systemd")
+
+
+def unit_ordering(texts):
+    """name -> set of units it starts after, with systemd's implicit target edges.
+
+    A target adds After= on every unit it Wants unless that unit already orders itself after the target
+    (systemd unit_add_default_target_dependency); that implicit edge is how a boot cycle can appear.
+    """
+    after, wanted_by = {}, {}
+    for name, text in texts.items():
+        keys = {}
+        for line in text.splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                k, v = line.split("=", 1)
+                keys.setdefault(k.strip(), []).extend(v.split())
+        after[name] = set(keys.get("After", []))
+        wanted_by[name] = set(keys.get("WantedBy", []))
+    for name in texts:
+        for target in wanted_by[name]:
+            if target not in after[name]:
+                after.setdefault(target, set()).add(name)
+    return after
+
+
+def boot_cycle(after):
+    """First ordering cycle found, as a list of units, or None."""
+    state = {}
+
+    def visit(u, path):
+        state[u] = 1
+        for v in after.get(u, ()):
+            if state.get(v) == 1:
+                return path + [u, v]
+            if v not in state:
+                found = visit(v, path + [u])
+                if found:
+                    return found
+        state[u] = 2
+        return None
+
+    for u in list(after):
+        if u not in state:
+            found = visit(u, [])
+            if found:
+                return found
+    return None
+
+
+def systemd_units():
+    return {n: open(os.path.join(SYSTEMD, n)).read() for n in os.listdir(SYSTEMD) if n.endswith(".service")}
+
+
+def test_boot_units_have_no_ordering_cycle():
+    assert boot_cycle(unit_ordering(systemd_units())) is None
+
+
+def test_the_1104_namecall_unit_is_caught():
+    # The 2026-11-04 unit: systemd dropped duck-namecall at boot ("Job duck-namecall.service/start deleted to
+    # break ordering cycle starting with multi-user.target/start", reproduced in a VM 2026-11-06).
+    units = systemd_units()
+    units["duck-namecall.service"] = ("[Unit]\nAfter=duck-camera.service duck-selfcheck.service sound.target\n"
+                                      "[Install]\nWantedBy=multi-user.target\n")
+    assert "duck-namecall.service" in boot_cycle(unit_ordering(units))

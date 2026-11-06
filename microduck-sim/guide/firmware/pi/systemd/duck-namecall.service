@@ -1,6 +1,9 @@
 [Unit]
 Description=MicroDuck name response (audio from boot; guarded head response at rest)
-After=duck-camera.service duck-selfcheck.service sound.target
+# multi-user.target must be listed: duck-selfcheck runs After=multi-user.target, so without it systemd adds the
+# implicit multi-user.target After=duck-namecall and deletes this start job at boot to break the ordering cycle
+# (2026-11-06, reproduced in a VM; `systemctl restart` never shows it, only a boot transaction does).
+After=multi-user.target duck-camera.service duck-selfcheck.service sound.target
 [Service]
 User=radxa
 ExecStart=/home/radxa/.venvs/duck-policy/bin/python /home/radxa/rt/microduck-sim/guide/firmware/mac/namecall_boot.py

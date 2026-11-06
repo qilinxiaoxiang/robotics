@@ -387,10 +387,11 @@
       ],
       "evidence": [
         "2026-11-04 live inspection: duck-namecall.service disabled/inactive; old wrapper waited for walk-zero and excluded seated/no-brain.",
-        "2026-11-04 boot-acceptance-20261104.json: enabled/active; 77 regression tests pass; live Mochi call/quack/head feedback, user confirmed ok了."
+        "2026-11-04 boot-acceptance-20261104.json: enabled/active; 77 regression tests pass; live Mochi call/quack/head feedback, user confirmed ok了.",
+        "2026-11-06 Shawn: 我们的microduck开机没有启动听名字的进程. Cause reproduced in a VM: the 11/04 unit forms a boot ordering cycle with duck-selfcheck and multi-user.target, systemd deletes its start job (FAULTS.json namecall-not-started-at-boot). Unit fixed (After=multi-user.target), installer now verifies default.target, test_namecall_boot.py has the cycle tests; not deployed."
       ],
-      "status": "partial",
-      "gap": "Actual cold power-on not exercised during this session; configuration and current live response verified. Audio-only boot and seated switching regression-tested; no automatic standing."
+      "status": "gap",
+      "gap": "Name response does not start at power-on on the robot. Next on power-on: boot_check.sh, install_namecall.sh --enable-boot, sudo reboot, boot_check.sh PASS, then a Mochi call heard after a real power-off/on."
     }
   ]
 }

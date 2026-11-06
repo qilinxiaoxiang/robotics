@@ -78,7 +78,7 @@
    ]
   },
   "a7z_background_processes": {
-   "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; while the app's live page is open, two ssh sessions run microduck-simulator/desktop/duck-telemetry.py from stdin (`python3 -u - duck-telemetry` for health, and `... fast touch bus` for pose and touch, which also reads the head XIAO on TWI0 /dev/i2c-0 at 10 Hz even while the brain reads it, and backs off to one try every 5 s after 10 failed reads since 8439ab6, 2026-10-31); duck-namecall.service enabled and active (2026-11-04): boot audio-only listening after selfcheck, guarded head response when brain is fresh and stationary or fully seated. See a7z_namecall_start for current deployment; earlier CPU observations below remain historical. Its cost with the touch jam fixed, face detector on and person detector off (10/31 20:20-20:33, boot b0056): whole-system busy 41-42 % of 8 cores against 19-24 % before it, about 1.6 cores, brain 46.8 Hz with 0-0.5 % of ticks missing a read. The 10/31 16:34 starved brain (38.8 Hz, 17 % stale) came from the touch bus jam's kernel error flood, not from namecall's CPU.",
+   "value": "Besides the brain (walk_wired.py, started by the app's duck-run.sh or t1_robot_test.py), the A7Z runs from boot: duck-camera.service (a7z_cam.py, the only process that opens the U20CAM; frames to /dev/shm/a7z_cam.bgr, about 20 % CPU), duck-blackbox.service (blackbox.py as root, nice -5: kernel log + 5 Hz system snapshot, fsynced to the SD card every 0.1 s, about 30 % CPU, plus the SD journal and irq/467-mmc0 work it causes, 20-50 % of one core), duck-thermal-log.service (1 Hz), and the one-shot duck-bootinfo and duck-selfcheck. On demand: the app's camera window runs a7z_cam.py --mjpeg (nice 10), which reads the shared frame and does not open the camera; while the app's live page is open, two ssh sessions run microduck-simulator/desktop/duck-telemetry.py from stdin (`python3 -u - duck-telemetry` for health, and `... fast touch bus` for pose and touch, which also reads the head XIAO on TWI0 /dev/i2c-0 at 10 Hz even while the brain reads it, and backs off to one try every 5 s after 10 failed reads since 8439ab6, 2026-10-31); duck-namecall.service enabled (2026-11-04) but dropped at power-on by a boot ordering cycle until the fixed unit is installed (2026-11-06, a7z_namecall_start): boot audio-only listening after selfcheck, guarded head response when brain is fresh and stationary or fully seated. See a7z_namecall_start for current deployment; earlier CPU observations below remain historical. Its cost with the touch jam fixed, face detector on and person detector off (10/31 20:20-20:33, boot b0056): whole-system busy 41-42 % of 8 cores against 19-24 % before it, about 1.6 cores, brain 46.8 Hz with 0-0.5 % of ticks missing a read. The 10/31 16:34 starved brain (38.8 Hz, 17 % stale) came from the touch bus jam's kernel error flood, not from namecall's CPU.",
    "superseded": [
     {
      "value": "namecall.py (the name-call session, face and person detectors, about 220 % CPU) when that test runs",
@@ -746,16 +746,17 @@
   "a7z_namecall_start": {
    "value": {
     "enabled": true,
-    "active": true,
+    "starts_at_power_on": false,
+    "why_not": "deployed 11/04 unit lacks After=multi-user.target; boot ordering cycle via duck-selfcheck makes systemd delete its start job (reproduced in a VM 2026-11-06; fixed unit in the repo, not deployed)",
     "boot_mode": "audio-only until fresh stationary/seated brain",
     "starts_motor_brain": false,
     "spotter": "mochi_v4.onnx",
     "cold_boot_verified": false,
     "live_response_user_confirmed": true
    },
-   "meaning": "Mochi response is an enabled system service, audio-only without motor control; guarded head response requires a fresh stationary or seated brain.",
-   "verified_at": "2026-11-04",
-   "source": "guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json; user: ok了",
+   "meaning": "Mochi response is an enabled system service, audio-only without motor control; guarded head response requires a fresh stationary or seated brain. It runs only after a manual `systemctl restart` until the fixed unit is installed.",
+   "verified_at": "2026-11-06",
+   "source": "Shawn 2026-11-06: 开机没有启动听名字的进程; FAULTS.json namecall-not-started-at-boot T1-vm-boot; guide/firmware/mac/namecall-20261029/boot-acceptance-20261104.json; user: ok了",
    "measure": "ssh a7z systemctl show duck-namecall -p ActiveState -p UnitFileState -p NRestarts; bounded tail of ~/duck-logs/namecall_boot.jsonl and latest namecall log",
    "max_age_days": 14,
    "consumers": [
@@ -763,6 +764,11 @@
     "guide/firmware/pi/systemd/duck-namecall.service"
    ],
    "superseded": [
+    {
+     "value": "enabled true, active true (read right after `systemctl restart` on 2026-11-04)",
+     "until": "2026-11-06",
+     "why": "active after a restart did not carry over to power-on: the boot transaction drops the unit (ordering cycle)."
+    },
     {
      "value": "Service disabled/inactive; manual namecall startup needed",
      "until": "2026-11-04",
