@@ -151,6 +151,28 @@ ssh a7z 'cd ~/rt/microduck-sim/guide/firmware/mac && ~/.venvs/duck-policy/bin/py
    Pass per run: `"why": "arrived"`, no guard trip, the object 5-17 cm from the point between the feet and within
    25 deg of straight ahead by tape measure. Trace: `~/duck-logs/approach_<time>.jsonl`.
 
+## Robot runs 2026-11-06 (seepick full flow, table then carpet; logs in `seepick-fall-20261106/`)
+
+Four walk-ups with `seepick.py`, four falls, no pick from a walk-up. One pick from standing (`--pick-here 0.087 0`):
+bow, bite and rise without a fall, beak empty (aim read the ball 3.2 cm beyond the spot; the bow-time over-read of
+2.8-5.8 cm from 2026-10-30 makes the true error unknown). Each fall and its fix:
+
+1. Colour: the default orange range never saw the ball; the 10/30 home range (`170,50,150`..`18,255,255`) took
+   Shawn's hand as the larger blob and the steering flipped +-0.3 while walking. `--hsv-lo 172,80,185 --hsv-hi
+   8,255,255` keeps only the ball in the saved frames (CAMERA.md). Not yet the default.
+2. Guard overwritten: after the action guard stood the duck down, `Approach.finish` (and later seepick's aim) wrote
+   walk back, handing a tilted robot to the policy (action 5.72 rad, fall). Both now end without a command when
+   walk_wired is in stand or monitor mode (caf829ea, 108adc20).
+3. Look-down on a rocking body: the near look pose (neck -0.4, head 1.4) went out about 1 s after a turn in place,
+   trunk gyro median 0.97 rad/s, and the duck fell forward; twice, from approach and from seepick's aim. Head-down and
+   the pick start now wait for |gyro| < 0.5 rad/s over 0.5 s (calm standing reads 0.01-0.4) (b84cd9cf, 108adc20).
+4. Turn-in-place ping-pong (carpet): every in-place turn stopped 13-22 deg past straight ahead, beyond the 15 deg
+   near re-turn limit, so it turned back: 6 turns, then the 7th at vtheta 0.5 rolled it over (action 4.7 rad). In-place
+   turns are now 0.3 rad/s, a second turn needs 35 deg (the walking arcs take smaller residuals) and after 3 turns only
+   60 deg. The fake-duck reproduction with an 18 deg coast made 22 turns before, 2 after.
+
+Not shown on the robot yet: any of fixes 2-4 in a run. The approach sim was not rerun for fix 4.
+
 ## Limits
 
 - The 8 fps camera and about 50 ms of servo latency bound how fast a moving object can be followed; the 720p USB camera

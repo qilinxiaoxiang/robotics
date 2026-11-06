@@ -7,7 +7,7 @@ writes walk_wired's control file. Final-goal step 2 (walk to it), D-019; the cro
 
 Walking uses vx 0.25 with vtheta within +-0.3 (the app's arc rate; walk_brain holds it with the IMU against the
 robot's left drift, trim in ~/.duck_yaw_trim.json), proportional to the bearing (K_TURN). Turning in place is vx 0,
-vtheta +-0.5 (walk_brain applies no straight-walk trim there, SPIN_TURN_MAX): used when the object is more than
+vtheta +-0.3 (VTH_SPIN; walk_brain applies no straight-walk trim there, SPIN_TURN_MAX): used when the object is more than
 FACE_START to the side at the start, or closer than FACE_NEAR_R and more than FACE_NEAR to the side (Shawn,
 2026-10-24: get close as fast as possible, turning in place allowed). The first robot run (2026-10-24,
 approach_1024-215636) also used turning in place, vtheta 0.6 and head yaw while walking, none of them robot-tested:
@@ -61,7 +61,14 @@ V_ONSET_S = 1.0      # the gait needs about a second to get going; the estimate 
 VTH_ARC = 0.3        # rad/s: the largest arc command, the app's arc rate (robot-remote.js ARC_VTHETA)
 K_TURN = 1.0         # vtheta = K_TURN x bearing within +-VTH_ARC (two-level +-0.3 arcs overshot left in the sim)
 BEARING_DEAD = math.radians(2)
-VTH_SPIN = 0.5       # rad/s turning in place (walk_brain: no straight-walk trim, SPIN_TURN_MAX)
+VTH_SPIN = 0.3       # rad/s turning in place (walk_brain: no straight-walk trim, SPIN_TURN_MAX). Was 0.5 (sim only):
+#                      robot 2026-11-06 on carpet, the 7th in-place turn at 0.5 rolled the duck onto its side
+# Every in-place turn on the robot 2026-11-06 (table and carpet) stopped 13-22 deg past straight ahead, more than
+# FACE_NEAR, so the next check turned it back the other way: 6 turns in a row, then the fall. After a first turn the
+# residual is left to the walking arcs (+-0.3, robot-tested): another turn needs FACE_REFACE, and after FACE_MAX_N turns
+# only MAX_WALK_BEARING.
+FACE_REFACE = math.radians(35)
+FACE_MAX_N = 3
 NOT_IN_VIEW = "no orange object in front"   # the head scan found nothing: seepick turns the body and scans again
 FACE_START = math.radians(20)   # bearing beyond which a walk starts with a turn in place
 FACE_NEAR, FACE_NEAR_R = math.radians(15), 0.35   # closer than FACE_NEAR_R and further off than FACE_NEAR: stop, turn
@@ -185,6 +192,7 @@ class Approach:
         self.face_yaw0 = None      # IMU yaw when a turn in place began
         self.rest_until = 0.0      # p_ready stands until then
         self.rock_t = -1e9         # last time the trunk gyro was over STILL_GYRO
+        self.faces = 0             # in-place turns started in this approach (FACE_REFACE, FACE_MAX_N)
         self.yaws = collections.deque(maxlen=200)   # (t, unwrapped yaw) while walking
         self.face_dir, self.face_bs = None, collections.deque()   # the turn in place: its direction, recent bearings
         self.head_qs = collections.deque()          # (t, neck/head pitch/yaw) for head_still
@@ -254,6 +262,13 @@ class Approach:
                 if k in sent:
                     sent[k] = min(sent[k], DEFAULT_HEAD[k]) if k == "head_pitch" else DEFAULT_HEAD[k]
         self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": sent}, force=stop)
+
+    def face_limit(self, base):
+        """Bearing beyond which an in-place turn starts: base before the first turn, FACE_REFACE after it (the turn
+        overshoots; the arcs take the rest), MAX_WALK_BEARING once FACE_MAX_N turns are used."""
+        if self.faces >= FACE_MAX_N:
+            return MAX_WALK_BEARING
+        return base if self.faces == 0 else max(base, FACE_REFACE)
 
     def rocking(self):
         return self.now() - self.rock_t < STILL_S
@@ -479,7 +494,8 @@ class Approach:
                 self.enter("settle", f"already at x {self.est[0]:.2f} y {self.est[1]:.2f}: measure")
                 self.t_phase -= SETTLE_S
                 return
-            if abs(b) > (FACE_NEAR if near else FACE_START):
+            if abs(b) > self.face_limit(FACE_NEAR if near else FACE_START):
+                self.faces += 1
                 self.enter("face", f"bearing {math.degrees(b):+.0f} deg: turn in place first")
                 self.face_yaw0, self.face_dir = st["yaw"], None
                 self.spin_head = None
@@ -575,7 +591,8 @@ class Approach:
             self.enter("settle", f"not seen for {LOST_S} s at r {r:.2f}: stop and look")
             self.stand(self.head)
             return
-        if (r < FACE_NEAR_R and abs(b) > FACE_NEAR) or abs(b) > MAX_WALK_BEARING:   # too far off for the arcs
+        if (r < FACE_NEAR_R and abs(b) > self.face_limit(FACE_NEAR)) or abs(b) > MAX_WALK_BEARING:   # too far off for the arcs
+            self.faces += 1
             self.stand(self.head)
             self.face_yaw0, self.face_dir = st["yaw"], None
             self.spin_head = {k: self.head[k] for k in ("head_pitch", "head_yaw") if k in self.head} if self.walk_t0 is not None and now - self.walk_t0 >= HEAD_FREE_S else None

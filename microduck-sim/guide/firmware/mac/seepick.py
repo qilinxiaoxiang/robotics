@@ -60,7 +60,7 @@ AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections thi
 BLIND_R = 0.12             # m: nearer than this the object is under the standing picture (bottom edge 0.10-0.125 m at
 #                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position
 PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
-TURN_RATE = 0.5            # rad/s in place (approach.VTH_SPIN, robot-tested)
+TURN_RATE = ap.VTH_SPIN     # rad/s in place (0.3; 0.5 rolled the duck over on carpet, robot 2026-11-06)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
 LOOK_TURNS = (-1, -1, 1, 1, 1, 1)   # body turns between head scans when nothing is in view: 2 right, back and 2 left. The

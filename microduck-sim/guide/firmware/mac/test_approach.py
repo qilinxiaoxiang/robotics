@@ -293,3 +293,36 @@ def test_head_does_not_look_down_while_the_body_rocks():
         duck.advance()
         ctl.step()
     assert ctl.phase != "settle" and duck.t - t_calm >= apc.STILL_S - 0.06, (ctl.phase, duck.t - t_calm)
+
+
+def test_an_overshooting_turn_in_place_does_not_ping_pong():
+    """Robot 2026-11-06 (table and carpet): every in-place turn stopped 13-22 deg past straight ahead; with a 15 deg
+    re-turn limit the duck turned back and forth 6 times and fell on the 7th. After the first turn the arcs take the
+    residual: at most FACE_MAX_N turns, no back-and-forth."""
+    duck = FakeDuck((0.30, -0.12))
+    over = math.radians(18)
+    base_advance = duck.advance
+    spin = {"dir": 0}
+
+    def advance(dt=0.05):
+        c = duck.cmd
+        d = 0 if c.get("vx") else int(math.copysign(1, c.get("vtheta", 0))) if c.get("vtheta") else 0
+        if spin["dir"] and d == 0:
+            duck.th += spin["dir"] * over      # the turn coasts on after the stop
+        spin["dir"] = d
+        base_advance(dt)
+    duck.advance = advance
+    ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                       now=lambda: duck.t, log=lambda s: None)
+    faces = 0
+    prev = None
+    while ctl.phase not in ("done", "failed") and duck.t < 60:
+        duck.advance()
+        ctl.step()
+        if ctl.phase == "face" and prev != "face":
+            faces += 1
+        prev = ctl.phase
+    spins = [c for _, c in duck.sent if c.get("mode") == "walk" and not c.get("vx") and c.get("vtheta")]
+    assert faces <= 2, faces
+    assert all(abs(c["vtheta"]) <= 0.3 + 1e-9 for c in spins), {c["vtheta"] for c in spins}
+    assert ctl.result["ok"], ctl.result
