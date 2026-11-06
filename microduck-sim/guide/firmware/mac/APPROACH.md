@@ -171,7 +171,10 @@ bow, bite and rise without a fall, beak empty (aim read the ball 3.2 cm beyond t
    turns are now 0.3 rad/s, a second turn needs 35 deg (the walking arcs take smaller residuals) and after 3 turns only
    60 deg. The fake-duck reproduction with an 18 deg coast made 22 turns before, 2 after.
 
-Not shown on the robot yet: any of fixes 2-4 in a run. The approach sim was not rerun for fix 4.
+Run 5 (same carpet, fixes 2-4 deployed): no fall. Arrived on the second approach (x 0.131 y -0.036), the aim turned
+16 deg, the ball went under the picture with the estimate at 0.121 m, just over seepick's 0.12 m blind edge, and the
+run gave up without a bite. BLIND_R is now 0.15 m (an unseen ball that near is picked at its last position).
+The approach sim was not rerun for fix 4.
 
 ## Limits
 

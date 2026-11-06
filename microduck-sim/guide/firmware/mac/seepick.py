@@ -57,8 +57,11 @@ NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124.
 AIM_MIN_FRAMES = 3         # T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
 AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections this near the last sighting. Readings on the move are 1.5 cm off and the ball can
 #                            shift 3 cm in y: a 4 cm gate threw out the real ball at the end of run 12's first creep, and it picked blind at dx +3.5
-BLIND_R = 0.12             # m: nearer than this the object is under the standing picture (bottom edge 0.10-0.125 m at
-#                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position
+BLIND_R = 0.15             # m: nearer than this the object can be under the standing picture (bottom edge 0.10-0.125 m at
+#                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position.
+#                            Was 0.12: robot 2026-11-06 the duck turned 16 deg toward a ball at 0.12 m, lost it under
+#                            the picture, its estimate read 0.121 and the run gave up without a pick. A wrong blind
+#                            pick costs one empty bite; a search from there cannot see the ball either.
 PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
 TURN_RATE = ap.VTH_SPIN     # rad/s in place (0.3; 0.5 rolled the duck over on carpet, robot 2026-11-06)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)

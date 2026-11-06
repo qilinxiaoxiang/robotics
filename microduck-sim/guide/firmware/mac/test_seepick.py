@@ -353,3 +353,19 @@ def test_no_look_down_or_pick_while_the_body_rocks():
         ctl.step()
         duck.advance()
     assert ctl.result["ok"], ctl.result
+
+
+def test_a_ball_lost_just_past_the_old_blind_edge_is_picked_not_given_up():
+    """Robot 2026-11-06: after a 16 deg turn toward the ball the estimate read 0.121 m, just over the old 0.12 m blind
+    edge; unseen, the run gave up without a bite. Unseen inside BLIND_R (0.15 m) picks at the last known position."""
+    duck = PickDuck((0.6, 0.0), ["hold"])
+    duck.detect = lambda frame, accept=None: None      # the ball is under the picture
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=lambda: None, tries=1, now=lambda: duck.t, log=lambda s: None)
+    ctl.try_n, ctl.align_n, ctl.meas = 1, 0, []
+    ctl.obj = dict(x=0.117, y=-0.031, size=0.012, t=0.0)   # |est| 0.121 m
+    ctl.enter("aim")
+    while ctl.phase == "aim" and duck.t < 20:
+        ctl.step()
+        duck.advance()
+    assert ctl.phase in ("align", "pick", "turning"), (ctl.phase, ctl.result)
