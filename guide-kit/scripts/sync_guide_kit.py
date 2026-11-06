@@ -7,7 +7,8 @@
 `sync` writes the kit files exactly as committed at --ref (default HEAD of ~/code/robotics; uncommitted kit edits
 are never shipped), replaces whatever was in --dest, and writes KIT-MANIFEST.json (kit commit and each file's
 sha256) plus check_guide_kit.py. The vendored copy is read-only by contract: a consumer change goes into the kit,
-is committed there, and is synced again.
+is committed there, and is synced again. `sync` also installs the kit's skill as the consumer's project skill
+(<repo>/.claude/skills/build-assembly-guide/SKILL.md), so collaborators' Claude Code loads it; `check` fails if it drifts.
 
 `check` (check_guide_kit.py, standard library only, no kit checkout needed) fails when a vendored file differs from
 its manifest hash, a manifest file is missing, or an extra file sits in the vendor directory. With --kit <repo> it
@@ -27,7 +28,15 @@ from pathlib import Path
 KIT = Path(__file__).resolve().parents[1]
 REPO = KIT.parent
 PREFIX = 'guide-kit/'
-SHIP = ('build_guide.py', 'README.md', 'requirements-audit.txt', 'viewer/', 'three/', 'audit/')
+SHIP = ('build_guide.py', 'README.md', 'requirements-audit.txt', 'viewer/', 'three/', 'audit/', 'skill/')
+SKILL = 'skill/build-assembly-guide/SKILL.md'
+
+
+def project_skill(dest: Path) -> Path:
+    """Where Claude Code loads the skill in the consumer: <repo>/.claude/skills/<name>/SKILL.md."""
+    top = subprocess.run(['git', '-C', str(dest.parent), 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
+    root = Path(top.stdout.strip()) if top.returncode == 0 else dest.parent.parent
+    return root / '.claude' / 'skills' / 'build-assembly-guide' / 'SKILL.md'
 MANIFEST = 'KIT-MANIFEST.json'
 CHECKER = 'check_guide_kit.py'
 
@@ -66,6 +75,10 @@ def sync(dest: Path, ref: str) -> int:
                 'checker_sha256': hashlib.sha256(checker).hexdigest(),
                 'rule': 'read-only copy; change the kit, commit it, then rerun sync'}
     (dest / MANIFEST).write_text(json.dumps(manifest, indent=1) + '\n')
+    if SKILL in hashes:
+        target = project_skill(dest)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((dest / SKILL).read_bytes())
     print(json.dumps({'dest': str(dest), 'commit': commit, 'files': len(hashes)}))
     return 0
 
@@ -85,6 +98,12 @@ def check(dest: Path, kit_repo: Path | None) -> int:
             r = p.relative_to(dest).as_posix()
             if r not in allowed:
                 problems.append(f'extra {r} (not in the kit)')
+    if SKILL in m['files']:
+        installed = project_skill(dest)
+        if not installed.is_file():
+            problems.append(f'missing project skill {installed} (rerun sync)')
+        elif hashlib.sha256(installed.read_bytes()).hexdigest() != m['files'][SKILL]:
+            problems.append(f'edited project skill {installed} (change the kit skill and resync)')
     if hashlib.sha256((dest / CHECKER).read_bytes()).hexdigest() != m.get('checker_sha256'):
         problems.append(f'edited {CHECKER}')
     behind = None

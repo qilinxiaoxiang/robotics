@@ -52,3 +52,7 @@ python3 vendor/guide-kit/audit/pair_audit.py --guide dist/assembly/index.html --
 ```
 
 `sync` writes the files exactly as committed (uncommitted kit edits never ship), `KIT-MANIFEST.json` with the commit and every file's sha256, and `check_guide_kit.py`. The check fails on an edited, missing or extra file; `--kit ~/code/robotics` also confirms the manifest against the kit's history and prints how many kit commits the pin is behind. A viewer change a consumer needs goes into the kit as an opt-in data field so other guides build unchanged, is committed here, and is synced.
+
+## Skill
+
+`skill/build-assembly-guide/SKILL.md` is the one source of the `build-assembly-guide` skill. `~/.claude/skills/build-assembly-guide` links to it on Shawn's machines; `sync_guide_kit.py sync` installs it in each consumer as `.claude/skills/build-assembly-guide/SKILL.md`, so collaborators get it, and `check_guide_kit.py` fails if that copy drifts.
