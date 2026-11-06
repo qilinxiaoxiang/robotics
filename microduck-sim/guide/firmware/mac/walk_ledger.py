@@ -55,6 +55,7 @@ LEDGER_DIR = os.path.join(ROOT, "walk-ledger")
 LEDGER = os.path.join(LEDGER_DIR, "ledger.jsonl")
 REPORT = os.path.join(LEDGER_DIR, "REPORT.md")
 RUNS = os.path.join(LEDGER_DIR, "runs.jsonl")
+STILL = os.path.join(LEDGER_DIR, "still.jsonl")
 RAW = os.path.expanduser("~/duck-walks/raw")
 
 
@@ -239,6 +240,27 @@ def analyse_segment(walk, post, source, log_end=False):
         joints=joints)
 
 
+def still_record(path, source):
+    """Standing still under the policy (walk mode, zero command): left share of the load-bearing leg current and
+    the median roll (+ = leaning left, body y points left). A one-sided weight shows up here without any stepping."""
+    L = R = 0.0
+    rolls = []
+    for r in walk_rows(path):
+        if r.get("mode") != "walk" or moving(r) or not r.get("cur_ma") or r.get("policy") not in ("stand", "walk"):
+            continue
+        cu = r["cur_ma"]
+        L += sum(abs(cu[NAMES.index("left_" + j)] or 0) for j in LOAD_JOINTS)
+        R += sum(abs(cu[NAMES.index("right_" + j)] or 0) for j in LOAD_JOINTS)
+        gb = r.get("gb")
+        if gb and r.get("imu_valid", True):
+            rolls.append(math.degrees(math.atan2(gb[1], -gb[2])))
+    if len(rolls) < 100 or L + R <= 0:
+        return None
+    rolls.sort()
+    return dict(source=source, kind="still", ticks=len(rolls), left_share=round(L / (L + R), 3),
+                roll_median_deg=round(rolls[len(rolls) // 2], 2))
+
+
 def load_jsonl(path):
     if not os.path.exists(path):
         return []
@@ -261,7 +283,7 @@ def analyse_logs(paths, note):
         src = os.path.basename(p).replace(".gz", "")
         old = {r["t_start"]: r for r in ledger if r["source"] == src}
         ledger = [r for r in ledger if r["source"] != src]
-        segs = segments(walk_rows(p))
+        segs = [(w, post) for w, post in segments(walk_rows(p)) if len(w) >= 10]  # under 0.2 s: no step
         for k, (w, post) in enumerate(segs):
             last_t = (post or w)[-1]["t"]
             rec = analyse_segment(w, post, src, log_end=k == len(segs) - 1 and last_t - w[-1]["t"] < POST_S - 0.1)
@@ -270,6 +292,13 @@ def analyse_logs(paths, note):
             ledger.append(rec)
         done += len(segs)
         print(f"{src}: {len(segs)} walks")
+        st = still_record(p, src)
+        stills = [r for r in load_jsonl(STILL) if r["source"] != src]
+        if st:
+            prev = next((r for r in load_jsonl(STILL) if r["source"] == src), None)
+            st["note"] = prev.get("note") if prev and prev.get("note") else note
+            stills.append(st)
+        write_jsonl(STILL, sorted(stills, key=lambda r: r["source"]))
     ledger.sort(key=lambda r: r["t_start"])
     write_jsonl(LEDGER, ledger)
     return done
@@ -371,11 +400,20 @@ def report(last):
             lines.append(f"- drift: {mean([r['drift_deg_s'] for r in earlier]) or 0:+.1f} -> "
                          f"{mean([r['drift_deg_s'] for r in recent]) or 0:+.1f} deg/s; falls "
                          f"{sum(r['fell'] for r in earlier)}/{len(earlier)} -> {falls}/{len(recent)}")
-        notes = sorted({r.get("note") for r in ledger if r.get("note")})
+        stills = load_jsonl(STILL)
+        notes = sorted({r.get("note") for r in ledger + stills if r.get("note")})
         if len(notes) > 1:
             lines += ["", "## By condition (--note)", ""]
             for nt in notes:
+                ss = [r for r in stills if r.get("note") == nt]
+                if ss:
+                    lines.append(f"- {nt}, standing still: left leg share {mean([r['left_share'] for r in ss]):.2f}, "
+                                 f"roll {mean([r['roll_median_deg'] for r in ss]):+.1f} deg (+ = leaning left), "
+                                 f"{len(ss)} logs")
+            for nt in notes:
                 rs = [r for r in ledger if r.get("note") == nt]
+                if not rs:
+                    continue
                 lines.append(f"- {nt}: {len(rs)} walks, drift {mean([r['drift_deg_s'] for r in rs]):+.1f} deg/s, "
                              f"falls {sum(r['fell'] for r in rs)}, knee stance L "
                              f"{deg(pair_stats(rs, 'knee')['left']['stance'])} R "
