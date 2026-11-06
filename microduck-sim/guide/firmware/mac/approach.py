@@ -117,6 +117,11 @@ STALE_START_S = 8.0  # stale state this long before the first step: give up
 CMD_PERIOD_S = 0.2
 CMD_FOR_S = 0.6
 SETTLE_S = 1.2       # after a stop, before measuring
+# The look-down head pose (NEAR_HEAD, head pitch 1.4) waits for a body that has stopped rocking: |trunk gyro| under
+# STILL_GYRO for STILL_S. Robot 2026-11-06: standing calm reads median 0.01-0.4 rad/s; 1 s after a turn in place it
+# was still rocking (median 0.97, peak 3.07), the head went down at once (the "already at" path skipped the settle)
+# and the duck fell forward (seepick-fall-20261106/).
+STILL_GYRO, STILL_S = 0.5, 0.5
 HEAD_SETTLE_RAD = 0.1
 HEAD_STILL_RAD, HEAD_STILL_S = 0.02, 0.3   # a head that has stopped short of its goal (load, limits) still measures
 MEASURE_N, MEASURE_S = 5, 3.0
@@ -179,6 +184,7 @@ class Approach:
         self.turn_t0 = None
         self.face_yaw0 = None      # IMU yaw when a turn in place began
         self.rest_until = 0.0      # p_ready stands until then
+        self.rock_t = -1e9         # last time the trunk gyro was over STILL_GYRO
         self.yaws = collections.deque(maxlen=200)   # (t, unwrapped yaw) while walking
         self.face_dir, self.face_bs = None, collections.deque()   # the turn in place: its direction, recent bearings
         self.head_qs = collections.deque()          # (t, neck/head pitch/yaw) for head_still
@@ -242,7 +248,15 @@ class Approach:
         stop = self.walk_t0 is not None or bool((self.cmd or {}).get("vtheta") or (self.cmd or {}).get("vx"))
         self.walk_t0, self.turn, self.turn_t0 = None, 0, None
         self.head = dict(head)
-        self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": self.head}, force=stop)
+        sent = dict(self.head)
+        if self.rocking():   # no look-down on a rocking body (STILL_GYRO); the wanted pose goes out once it is calm
+            for k in ("head_pitch", "neck_pitch"):
+                if k in sent:
+                    sent[k] = min(sent[k], DEFAULT_HEAD[k]) if k == "head_pitch" else DEFAULT_HEAD[k]
+        self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": sent}, force=stop)
+
+    def rocking(self):
+        return self.now() - self.rock_t < STILL_S
 
     def head_arrived(self, st, head):
         # neck_pitch is not waited for: the walking policy ignores neck commands (the neck stays 0.2-0.4 on the robot)
@@ -405,6 +419,8 @@ class Approach:
             return
         if self.phase in ("done", "failed"):
             return
+        if st.get("gyro") is not None and math.sqrt(sum(g * g for g in st["gyro"])) > STILL_GYRO:
+            self.rock_t = now
         if self.phase != "start" and st["mode"] != "walk":
             self.finish(False, f"walk_wired is in {st['mode']} mode (a guard, a head grip or a manual command)",
                         stop=False)
@@ -572,7 +588,9 @@ class Approach:
                      f"vtheta {vth:+.2f}, walked {self.walked:.2f} m")
 
     def p_settle(self, st, now, m):
-        if now - self.t_phase < SETTLE_S:
+        if now - self.t_phase < SETTLE_S or self.rocking():
+            if self.rocking():
+                self.stand(self.head)   # stand() holds the head up while the body rocks
             return
         if self.est is not None and self.head.get("neck_pitch") != NEAR_HEAD["neck_pitch"]:
             # the near pose chosen in p_measure ("not seen at the stop") stays; re-aiming here undid it every time and
@@ -710,6 +728,7 @@ def parse_state(row):
     # first robot run had all 14 missing for 5.5 s after the walk switch, gyro frozen at 0)
     ok = bool(row.get("imu_valid", True)) and len(row.get("missing") or []) < len(NAMES) // 2
     return dict(t=row["t"], mode=row["mode"], torque=row.get("torque"), gb=row["gb"], q=dict(zip(NAMES, row["q"])),
+                gyro=row.get("gyro_body"),
                 yaw=yaw_of(body_quat(row["quat"])) if row.get("quat") else 0.0, ok=ok)
 
 

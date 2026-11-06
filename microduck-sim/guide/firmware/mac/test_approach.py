@@ -261,3 +261,35 @@ def test_a_spin_never_changes_the_head_command():
     a.spin_head = None
     a.walk(0.0, 0.5, {})
     assert "head" not in sent[-1]
+
+
+def test_head_does_not_look_down_while_the_body_rocks():
+    """Robot 2026-11-06: the 'already at' path lowered the head 1 s after a turn in place while the trunk still rocked
+    (gyro median 0.97 rad/s) and the duck fell forward. The settle now waits for STILL_S of a calm gyro."""
+    duck = FakeDuck((0.35, 0.0))
+    rock = {"on": False, "done": False}   # the body rocks from the first step until the test calms it
+    base_state = duck.state
+
+    def state():
+        if not rock["done"] and (duck.cmd.get("vx") or duck.cmd.get("vtheta")):
+            rock["on"] = True
+        return dict(base_state(), gyro=(0.0, 1.0 if rock["on"] else 0.05, 0.0))
+    duck.state = state
+    ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                       now=lambda: duck.t, log=lambda s: None)
+    t_settle = None
+    while duck.t < 30 and (t_settle is None or duck.t < t_settle + 3.0):
+        duck.advance()
+        ctl.step()
+        if ctl.phase == "settle" and t_settle is None:
+            t_settle = duck.t
+        assert ctl.phase != "measure", "measured while the body rocked"
+        if t_settle is not None:
+            assert duck.cmd.get("head", {}).get("head_pitch", 0) <= apc.DEFAULT_HEAD["head_pitch"] + 1e-6, duck.cmd
+    assert t_settle is not None, ctl.phase
+    rock["on"], rock["done"] = False, True
+    t_calm = duck.t
+    while ctl.phase == "settle" and duck.t < t_calm + 6:
+        duck.advance()
+        ctl.step()
+    assert ctl.phase != "settle" and duck.t - t_calm >= apc.STILL_S - 0.06, (ctl.phase, duck.t - t_calm)
