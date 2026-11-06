@@ -248,7 +248,7 @@
         },
         {
           "when": "reported by Shawn 2026-11-06 (deployed and enabled 2026-11-04 11:08 by `systemctl restart`, never cold-booted)",
-          "boot": "unknown; A7Z offline on 2026-11-06",
+          "boot": "A7Z boot 2026-11-06 15:45:43: unit enabled, inactive, never started",
           "what": "Shawn: \"我们的microduck开机没有启动听名字的进程\"",
           "running": "not recorded"
         }
@@ -257,12 +257,12 @@
         {
           "id": "H1-boot-ordering-cycle",
           "claim": "The 11/04 unit has After=duck-selfcheck.service but not After=multi-user.target; duck-selfcheck is After=multi-user.target, and multi-user.target gets the implicit After=duck-namecall because it Wants it. The cycle multi-user.target -> duck-namecall -> duck-selfcheck -> multi-user.target makes systemd delete the duck-namecall start job at every boot. `systemctl restart` (the 11/04 acceptance) never builds that transaction.",
-          "status": "reproduced in a VM for occurrence 2; not yet read on the A7Z journal"
+          "status": "confirmed on the A7Z 2026-11-06 15:46: unit inactive after power-on; `systemd-analyze verify default.target` printed the same cycle"
         },
         {
           "id": "H2-disabled-by-a-command",
           "claim": "Occurrence 1: something ran `systemctl disable` between 11/02 15:30 and 11/04. The 11/02 unit (After=multi-user.target duck-camera.service) had no cycle, so H1 does not explain it.",
-          "status": "open; no script in the repo disables or stops this unit (grep 2026-11-06)"
+          "status": "confirmed 2026-11-06: sudo log Nov 02 15:30:02 `systemctl disable --now duck-namecall` by session 9e86daa9 on Shawn's \"快回滚\" (rollback); PET_ROBOT_LOG then recorded \"Enabled at 15:30\" by mistake. A deliberate disable, not a fault."
         }
       ],
       "tests": [
@@ -275,19 +275,19 @@
         {
           "id": "T2-a7z-boot-check",
           "what": "Power on, wait 1 min, run guide/firmware/mac/namecall-20261029/boot_check.sh: H1 predicts the cycle line in `journalctl -b`; the sudo log since 11/02 shows whether anyone disabled the unit (H2). Then install the fixed unit (install_namecall.sh --enable-boot), `sudo reboot`, boot_check.sh again: PASS expected.",
-          "status": "queued",
-          "blocker": "A7Z offline (ssh a7z timed out 2026-11-06 14:3x)"
+          "status": "run",
+          "results": "before deploy: inactive, cycle in verify default.target (FAIL). install_namecall.sh --enable-boot (new default.target check passed), sudo systemctl reboot 15:47:31: unit active 15:48:53 after selfcheck, namecall.py --name mochi running, no cycle: boot_check.sh PASS."
         }
       ],
       "mitigations": [],
       "recovery": {
-        "self_recovers": false,
-        "verified_by_induced_fault": false,
-        "evidence": "fix in repo (After=multi-user.target, install-time default.target verify, test_namecall_boot.py cycle tests); not deployed"
+        "self_recovers": true,
+        "verified_by_induced_fault": true,
+        "evidence": "reboot with the fixed unit starts the listener by itself (boot_check PASS 2026-11-06 15:49)"
       },
       "cause": {
-        "status": "hypothesis",
-        "summary": "occurrence 2: boot ordering cycle (reproduced in VM); occurrence 1: unknown, sudo log to be read"
+        "status": "confirmed",
+        "summary": "occurrence 2: boot ordering cycle (fixed unit deployed 2026-11-06); occurrence 1: deliberate rollback disable recorded wrongly as enabled"
       }
     }
   }
