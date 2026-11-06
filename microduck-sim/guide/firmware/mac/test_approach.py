@@ -215,9 +215,12 @@ def test_guard_trip_ends_the_run():
         duck.advance()
         ctl.step()
     duck.mode = "stand"
+    n_sent = len(duck.sent)
     duck.advance()
     ctl.step()
     assert ctl.phase == "failed" and "stand" in ctl.result["why"]
+    # the guard's stand stays: no walk command after the trip (2026-11-06, a walk written back made the duck fall)
+    assert not [c for _, c in duck.sent[n_sent:] if c.get("mode") == "walk"], duck.sent[n_sent:]
 
 
 def test_old_frames_are_not_used():

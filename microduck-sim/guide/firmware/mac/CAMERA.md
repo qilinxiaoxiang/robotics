@@ -108,6 +108,10 @@ In the warm indoor light at home the orange ball reads pink: OpenCV hue 172-178 
 0-10 at half a metre, so the repo's orange range (hue 5-22, S >= 120) never saw it. `orange_target.detect` now takes
 a range whose low hue is above its high hue and wraps it through red; the run used `--hsv-lo 170,50,150 --hsv-hi
 18,255,255` (zero false blobs on 70 home floor frames without the ruler; the red DigiKey ruler does trip it).
+2026-11-06, CMU library table under white ceiling light: that range takes skin. Shawn's hand (hue 173, S 77-88, V
+155-170) was a larger blob (167 px) than the ball at 0.49 m (134 px; hue 176-4, S 84-118, V 200-240), and the
+walk-up steered between them until the duck fell (`seepick-fall-20261106/`). `--hsv-lo 172,80,185 --hsv-hi
+8,255,255` keeps only the ball in both saved frames (with hand, fruit, red chair; without the ball: zero blobs).
 Standing, the picture of the lowest look (head command 1.4, servo 1.28-1.30) starts 0.10-0.12 m in front of the
 foot-frame origin (centre pixel column), so the trained pick spot (0.087 m) is never in a standing picture: seepick's
 aim treats "not seen" nearer than `BLIND_R` 0.12 m as "pick at the last known position".

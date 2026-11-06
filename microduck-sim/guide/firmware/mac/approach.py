@@ -196,10 +196,14 @@ class Approach:
         self.log(f"[{self.now():.1f}] {self.phase} -> {phase}{': ' + why if why else ''}")
         self.phase, self.t_phase = phase, self.now()
 
-    def finish(self, ok, why, **kw):
+    def finish(self, ok, why, stop=True, **kw):
+        """stop=False leaves the control file alone: a guard or a person put the brain in another mode, and writing walk
+        back would hand a tilted robot to the policy again (2026-11-06 seepick: the walk written 0.12 s after a guard
+        stand drove a 15 deg roll to a 5.72 rad action and the duck fell)."""
         self.result = dict(ok=ok, why=why, **kw)
         self.walk_t0 = None
-        self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": dict(self.head)}, force=True)
+        if stop:
+            self.send({"mode": "walk", "vx": 0.0, "vy": 0.0, "vtheta": 0.0, "head": dict(self.head)}, force=True)
         self.enter("done" if ok else "failed", why)
 
     def send(self, cmd, force=False):
@@ -402,7 +406,8 @@ class Approach:
         if self.phase in ("done", "failed"):
             return
         if self.phase != "start" and st["mode"] != "walk":
-            self.finish(False, f"walk_wired is in {st['mode']} mode (a guard, a head grip or a manual command)")
+            self.finish(False, f"walk_wired is in {st['mode']} mode (a guard, a head grip or a manual command)",
+                        stop=False)
             return
         if not st.get("ok", True):    # servo reads missing or the IMU not fresh: the robot is blind
             self.stale_t = self.stale_t or now
