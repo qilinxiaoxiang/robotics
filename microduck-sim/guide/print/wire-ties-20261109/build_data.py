@@ -16,13 +16,13 @@ import evaluate_delay as ev
 TIES = {
     'T1': ('jaw_soft', (10.0, 18.5, 98.7)),    # inside-head tie at the left-rear exit (D-029), bottom of the head floor
     'T2': ('neck', (11.0, 16.8, 57.0)),        # left face of the neck link, the two-servo waist
-    'T3': ('trunk_base', (-4.2, 16.0, 56.0)),  # saddle front wall, outer face (wall x -5, Dupont bundle)
-    'T4': ('trunk_base', (-9.0, 37.2, 54.0)),  # saddle left wall outer face, front end (bulge y 36.4, USB cable)
-    'T5': ('trunk_base', (-40.0, 35.2, 54.0)), # saddle left wall outer face, rear end (wall y 34.4, USB cable)
+    'T3': ('trunk_base', (-9.0, 37.2, 54.0)),  # saddle left wall outer face, front end (bulge y 36.4): cables arrive here, the coil starts here
+    'T4': ('trunk_base', (-40.0, 35.2, 54.0)), # saddle left wall outer face, rear end (wall y 34.4)
 }
-SPANS = [('T1', 'T2'), ('T2', 'T3'), ('T2', 'T4')]
-# Wire length to leave in each moving span: the longest straight distance over the joint limits, about +10 % for the bends, rounded up
-WIRE = {('T1', 'T2'): 75.0, ('T2', 'T3'): 70.0, ('T2', 'T4'): 75.0}
+SPANS = [('T1', 'T2'), ('T2', 'T3')]
+# Wire length to leave in each moving span: the longest straight distance over the range the robot can be commanded to or was logged at
+# (neck down to -80 deg, head pitch -45..85, yaw +-80, roll +-18), plus a margin for the bend at each tie
+WIRE = {('T1', 'T2'): 65.0, ('T2', 'T3'): 72.0}
 
 PARTS = [  # file, body, colour, opacity
     ('shell_left', 'trunk_base', 0xE9E7DF, 1), ('shell_right', 'trunk_base', 0xE9E7DF, 1),
@@ -78,7 +78,7 @@ for t in itertools.product(*grid):
     P = {k: tie(k) for k in TIES}
     for s in SPANS: rows[s].append(float(np.linalg.norm(P[s[0]] - P[s[1]])))
 poses = np.array(poses)
-used = (np.abs(poses[:, 2]) <= 80) & (np.abs(poses[:, 3]) <= 18)
+used = (np.abs(poses[:, 2]) <= 80) & (np.abs(poses[:, 3]) <= 18) & (poses[:, 0] >= -80) & (poses[:, 1] >= -45) & (poses[:, 1] <= 85)
 sweep = {}
 for s in SPANS:
     a = np.array(rows[s])
@@ -86,13 +86,12 @@ for s in SPANS:
     sweep['-'.join(s)] = dict(homeMm=round(home[s], 1), minMm=round(float(a.min()), 1), maxLimitsMm=round(float(a.max()), 1),
                               maxYaw80Roll18Mm=round(float(a[used].max()), 1), maxPoseDeg=poses[i].round().tolist(), wireMm=WIRE[s])
     print(s, sweep['-'.join(s)])
-    assert WIRE[s] >= a.max() * 1.05, f'wire {s} too short for the joint limits'
+    assert WIRE[s] >= a[used].max() * 1.05, f'wire {s} too short for the range in use'
 (HERE / 'sweep.json').write_text(json.dumps(sweep, indent=1) + '\n')
 
 # 2. the poses the page can show
-POSES = [('stand', '站立', None, None, None, None), ('bow', '低头到底', -90.0, 0.0, 0.0, 0.0), ('pick', '捡球弯腰', -72.5, -14.7, 0.0, 0.0),
-         ('back', '后仰', 32.0, 0.0, 0.0, 0.0), ('left', '头左转 80°', None, None, 80.0, None), ('right', '头右转 80°', None, None, -80.0, None),
-         ('worst', '低头加右转', -90.0, 0.0, -80.0, -18.0)]
+POSES = [('stand', '站立', None, None, None, None), ('pick', '捡球弯腰', -72.5, -14.7, 0.0, 0.0), ('low', '低头最低 79°', -79.0, 0.0, 0.0, 0.0),
+         ('back', '后仰', 32.0, 0.0, 0.0, 0.0), ('left', '头左转 80°', None, None, 80.0, None), ('right', '头右转抬头', None, -43.0, -80.0, -18.0)]
 
 def bez(a, b, dirv, h, n=28):
     c1, c2 = a + (b - a) * .2 + dirv * h, a + (b - a) * .8 + dirv * h
@@ -115,8 +114,7 @@ for key, label, *a in POSES:
     c = (body_T('neck') @ axis_loc)[:3]
     mid = (P['T1'] + P['T2']) / 2 - c; mid[2] = 0; up = mid / (np.linalg.norm(mid) + 1e-9)
     side = np.array([0.15, 1.0, 0.1]); side /= np.linalg.norm(side)
-    wires = {'T1-T2': curve(P['T1'], P['T2'], up, WIRE[('T1', 'T2')]), 'T2-T3': curve(P['T2'], P['T3'], side, WIRE[('T2', 'T3')]),
-             'T2-T4': curve(P['T2'], P['T4'], side, WIRE[('T2', 'T4')])}
+    wires = {'T1-T2': curve(P['T1'], P['T2'], up, WIRE[('T1', 'T2')]), 'T2-T3': curve(P['T2'], P['T3'], side, WIRE[('T2', 'T3')])}
     Ts = {b: (body_T(b) @ np.linalg.inv(T0[b])) for b in BODIES}
     out_p.append(dict(key=key, label=label, T={b: Ts[b].ravel().round(5).tolist() for b in BODIES},
                       ties={k: P[k].round(2).tolist() for k in P}, dist={'-'.join(s): round(float(np.linalg.norm(P[s[0]] - P[s[1]])), 1) for s in SPANS},
