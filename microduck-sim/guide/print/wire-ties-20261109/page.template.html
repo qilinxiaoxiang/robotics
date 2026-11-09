@@ -1,0 +1,206 @@
+<title>MicroDuck 扎线点</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: the 3D robot stays beside the numbers on a wide screen and on top on a phone; tie numbers ①–⑤ tie the text to the model. */
+:root{
+  --bg:#F2F4F3; --panel:#FFFFFF; --ink:#1C2226; --muted:#5C676E; --line:#D8DEDC;
+  --saddle:#D9661C; --tie:#0B7F63; --dupont:#2467C8; --usb:#15181B; --warn:#B3421A;
+  --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
+  --num:ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:26px}
+h1{font-size:clamp(28px,4.6vw,40px);line-height:1.2;margin:0 0 8px;letter-spacing:.01em;text-wrap:balance}
+.lead{font-size:18px;margin:0;max-width:44em}
+h2{font-size:21px;line-height:1.35;margin:0 0 12px;text-wrap:balance}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:26px;align-items:start}
+.stick{position:sticky;top:calc(12px + env(safe-area-inset-top,0px));display:grid;gap:10px;min-width:0}
+.col{display:grid;gap:30px;min-width:0}
+#view{position:relative;height:min(62vh,560px);min-height:320px;background:#E3E8E6;border-radius:6px;overflow:hidden;touch-action:none;cursor:grab}
+#view canvas{display:block;width:100%;height:100%}
+#hint{position:absolute;left:10px;bottom:8px;font-size:13px;color:var(--muted);pointer-events:none}
+.poses{display:flex;flex-wrap:wrap;gap:6px}
+.poses button{font:inherit;font-size:16px;padding:6px 12px;min-height:40px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;cursor:pointer}
+.poses button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.poses button:focus-visible{outline:2px solid var(--tie);outline-offset:1px}
+.bars{display:grid;gap:8px}
+.bar .t{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.bar .t b{font-weight:600}
+.bar .n{font-family:var(--num);font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.track{height:9px;background:#fff;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.fill{height:100%;background:var(--tie);transition:width .35s}
+.list{display:grid;gap:0;border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.dot{width:30px;height:30px;border-radius:50%;background:var(--tie);color:#fff;display:grid;place-items:center;font:600 16px var(--num)}
+.item h3{font-size:17px;margin:2px 0 2px;line-height:1.4}
+.item p{margin:0}
+.item .sub{color:var(--muted);font-size:15px}
+.span{padding:12px 0;border-bottom:1px solid var(--line);display:grid;gap:2px}
+.span .head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.span h3{font-size:17px;margin:0;line-height:1.4}
+.len{font:600 18px var(--num);white-space:nowrap}
+.len.zero{color:var(--muted);font:500 16px var(--sans)}
+.span.move .len{color:var(--tie)}
+.span p{margin:0;color:var(--muted);font-size:15px}
+ol{margin:0;padding-left:1.4em;display:grid;gap:7px}
+.note{border-left:3px solid var(--warn);padding:2px 0 2px 12px}
+.note p{margin:0 0 6px}.note p:last-child{margin:0}
+.key{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--muted)}
+.key i{display:inline-block;width:18px;height:4px;vertical-align:middle;margin-right:6px;border-radius:2px}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}.stick{position:static}#view{height:56vh}}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+<div class="wrap">
+  <header>
+    <h1>MicroDuck 扎线点</h1>
+    <p class="lead">五个点把线收住。只有跨脖子的两段要留余量，其余的线贴平就行。杜邦线现在就能扎，USB 线到货后再加。</p>
+  </header>
+  <div class="grid">
+    <div class="stick">
+      <div id="view" role="img" aria-label="MicroDuck 上半身 3D 模型，标有五个扎线点，可拖动旋转"><span id="hint">拖动旋转，滚轮或双指缩放。腿没有画。</span></div>
+      <div class="poses" id="poses"></div>
+      <div class="key"><span><i style="background:var(--dupont)"></i>杜邦线束</span><span><i style="background:var(--usb)"></i>USB 线</span><span><i style="background:var(--tie)"></i>扎点</span></div>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="col">
+      <section>
+        <h2>五个点分别扎在哪</h2>
+        <div class="list">
+          <div class="item"><div class="dot">1</div><div><h3>头里的出线口</h3><p>扎带绕住全部线束，贴着出线口上方拉紧，扎带头压在颌支架上。</p><p class="sub">这是已有做法（D-029）。头被拽时，力落在这里，碰不到摄像头插座和功放。</p></div></div>
+          <div class="item"><div class="dot">2</div><div><h3>脖子中段，舵机连接处</h3><p>一根长扎带绕住脖子一整圈，线束压在鸭子左侧的侧板外面，扎带头也放在左侧。</p><p class="sub">脖子这段是一个刚体，上下两个舵机加两块侧板。避开舵机的线插头。</p></div></div>
+          <div class="item"><div class="dot">3</div><div><h3>鞍座前墙外面，靠左</h3><p>贴一块 3M 泡沫胶，杜邦线束放上去，再用 Kapton（聚酰亚胺胶带）横着压一道。</p><p class="sub">前墙现成的两个 3 mm 槽在右边，离线束过来的位置约 35 mm，用它会把线横拖过脖子背后，后仰时会夹线。</p></div></div>
+          <div class="item"><div class="dot">4</div><div><h3>鞍座左墙外面，靠前</h3><p>USB 线单独走这里，泡沫胶贴住，Kapton 压一道。</p></div></div>
+          <div class="item"><div class="dot">5</div><div><h3>鞍座左墙外面，靠后</h3><p>同样贴住 USB 线。从这里到 USB 插头不再固定。</p></div></div>
+        </div>
+      </section>
+      <section>
+        <h2>两点之间留多少线</h2>
+        <div>
+          <div class="span"><div class="head"><h3>摄像头和各板子到 ①</h3><span class="len zero">不留，也不加点</span></div><p>都在头里。头盖要能往后翻，麦克风线保持现在的长度。</p></div>
+          <div class="span move"><div class="head"><h3>① 到 ②，杜邦线和 USB 线</h3><span class="len">75 mm</span></div><p>跨头的三个关节。站立时两点相距 42 mm，转到关节极限 64 mm。</p></div>
+          <div class="span move"><div class="head"><h3>② 到 ③，杜邦线</h3><span class="len">70 mm</span></div><p>跨脖子根部的关节。站立时相距 15 mm，低头到底 61 mm。站立时多出来的线朝鸭子左边弯成一个软环。</p></div>
+          <div class="span move"><div class="head"><h3>② 到 ④，USB 线</h3><span class="len">75 mm</span></div><p>同一个关节。站立时相距 29 mm，低头到底 68 mm。</p></div>
+          <div class="span"><div class="head"><h3>③ 到排针</h3><span class="len zero">每根松 5 到 10 mm</span></div><p>都在身体上，不用余量，这点松量只为不让线拽杜邦插头。</p></div>
+          <div class="span"><div class="head"><h3>④ 到 ⑤，USB 线</h3><span class="len zero">贴平，不留</span></div><p>都在鞍座上。别在棱角上绷紧。</p></div>
+          <div class="span"><div class="head"><h3>⑤ 到 USB 插头</h3><span class="len zero">约 20 mm 不贴</span></div><p>顺着插头朝向走，留这一小段，走路时线不撬插头。</p></div>
+        </div>
+      </section>
+      <section>
+        <h2>不用尺子的扎法</h2>
+        <ol>
+          <li>断电，确认 ① 已经扎好。</li>
+          <li>把脖子低到最低，头向左右各转约 80°，停在线最紧的那边。</li>
+          <li>在这个姿势下让线顺直、不受力，再多放 5 mm，扎 ②。</li>
+          <li>姿势不变，贴 ③。USB 线到货后同样做法，在 ② 旁边加一根扎带，再贴 ④ 和 ⑤。</li>
+          <li>回到站立，把多出来的线朝鸭子左边捋成软环，别塞进脖子和鞍座之间。</li>
+          <li>把低头、后仰、左转、右转走一遍。线在任何姿势下都不能绷直，也不能被夹住。</li>
+        </ol>
+      </section>
+      <section>
+        <h2>还要你看一眼的</h2>
+        <div class="note">
+          <p>这些点来自 CAD 和走线数据，最新的整机照片是 11/02 的，没有拍到脖子。② 和 ③ 的位置以实物能放下为准，上下挪 5 mm 不影响这些线长。</p>
+          <p>杜邦线的实际长度我没有记录。① 到排针全程要 165 到 200 mm，哪根在第 3 步够不到，那根要换长的。</p>
+          <p>USB 线先用 30 cm 那根。摄像头到 A7Z 全程约 260 到 280 mm，够用。50 cm 那根会多出 20 cm 以上。</p>
+          <p>身体内部的 IMU、串口和电源线都不跨关节，贴平就行。腿上的线这次没有算。</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<script id="d" type="application/json">/*DATA*/</script>
+<script type="module">
+/*THREE*/
+{
+const D=JSON.parse(document.getElementById('d').textContent);
+const view=document.getElementById('view');
+const renderer=new WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+view.prepend(renderer.domElement);
+const scene=new Scene();scene.background=new Color(0xE3E8E6);
+const cam=new PerspectiveCamera(32,1,5,2000);cam.up.set(0,0,1);
+scene.add(new HemisphereLight(0xffffff,0x8a9490,2.0));
+const key=new DirectionalLight(0xffffff,1.9);key.position.set(-120,180,260);scene.add(key);
+const fill=new DirectionalLight(0xffffff,.7);fill.position.set(200,-120,60);scene.add(fill);
+const dec=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer;
+const groups={};
+for(const m of D.meshes){
+  const g=new BufferGeometry();
+  g.setAttribute('position',new BufferAttribute(new Float32Array(dec(m.p)),3));
+  g.setIndex(new BufferAttribute(new Uint32Array(dec(m.f)),1));
+  g.computeVertexNormals();
+  const see=m.opacity<1;
+  const mat=new MeshStandardMaterial({color:m.color,roughness:.72,metalness:.02,transparent:see,opacity:m.opacity,depthWrite:!see,side:DoubleSide,flatShading:true});
+  const me=new Mesh(g,mat);me.renderOrder=see?2:0;
+  (groups[m.body]||(groups[m.body]=new Group())).add(me);
+}
+for(const k in groups){groups[k].matrixAutoUpdate=false;scene.add(groups[k])}
+const tieMat=new MeshStandardMaterial({color:0x0B7F63,roughness:.5});
+function loop(pts,r){return new Mesh(new TubeGeometry(new CatmullRomCurve3(pts.map(p=>new Vector3(...p)),true,'catmullrom',.15),64,r,8,true),tieMat)}
+// T2: the tie round the neck waist (neck body frame = guide frame at HOME), wide enough for the bundle on the left
+const z=57,b=loop([[6,-15.5,z],[30,-15.5,z],[31,0,z],[30,20,z],[6,20,z],[5,0,z]],.9);groups.neck.add(b);
+// T1: the tie round the bundle in the head, above the exit
+const c=[10,18.5,106],ring=[];for(let i=0;i<12;i++){const a=i/12*Math.PI*2;ring.push([c[0]+4.6*Math.cos(a),c[1]+4.6*Math.sin(a),c[2]])}
+groups.jaw_soft.add(loop(ring,.8));
+function pad(x,y,z,sx,sy,sz){const m=new Mesh(new BoxGeometry(sx,sy,sz),new MeshStandardMaterial({color:0x0B7F63,transparent:true,opacity:.55}));m.position.set(x,y,z);groups.trunk_base.add(m)}
+pad(-4.4,16,56,1.2,14,12);pad(-9,36.9,54,12,1.2,10);pad(-40,34.9,54,12,1.2,10);
+function sprite(n){const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');x.fillStyle='#0B7F63';x.beginPath();x.arc(48,48,44,0,7);x.fill();x.fillStyle='#fff';x.font='600 58px ui-monospace,Menlo,monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(n,48,52);const s=new Sprite(new SpriteMaterial({map:new CanvasTexture(c),depthTest:false}));s.renderOrder=9;s.scale.set(10,10,1);scene.add(s);return s}
+const labels={T1:sprite('1'),T2:sprite('2'),T3:sprite('3'),T4:sprite('4'),T5:sprite('5')};
+const offs={T1:[-2,10,-6],T2:[6,11,2],T3:[-8,4,-9],T4:[2,10,0],T5:[0,10,0]};
+const wMat={d:new MeshStandardMaterial({color:0x2467C8,roughness:.6}),u:new MeshStandardMaterial({color:0x15181B,roughness:.6})};
+const tubes=[];
+function tube(p,r,m){const t=new Mesh(new TubeGeometry(new CatmullRomCurve3(p.map(a=>new Vector3(...a))),48,r,8,false),m);scene.add(t);tubes.push(t)}
+function clearT(){for(const t of tubes){scene.remove(t);t.geometry.dispose()}tubes.length=0}
+const off=(p,d)=>p.map(a=>[a[0]+d[0],a[1]+d[1],a[2]+d[2]]);
+let cur=null;
+const lerp=(a,b,t)=>a+(b-a)*t;
+function apply(from,to,t){
+  const p=new Vector3,q=new Quaternion,s=new Vector3,p2=new Vector3,q2=new Quaternion,M=new Matrix4,M2=new Matrix4;
+  for(const k in groups){
+    M.fromArray(from.T[k]).transpose().decompose(p,q,s);M2.fromArray(to.T[k]).transpose().decompose(p2,q2,s);
+    p.lerp(p2,t);q.slerp(q2,t);groups[k].matrix.compose(p,q,new Vector3(1,1,1));groups[k].matrixWorldNeedsUpdate=true;
+  }
+  const mix=k=>from.wires[k].map((a,i)=>a.map((v,j)=>lerp(v,to.wires[k][i][j],t)));
+  clearT();
+  tube(mix('T1-T2'),2.7,wMat.d);tube(off(mix('T1-T2'),[3.6,1.6,0]),1.7,wMat.u);
+  tube(mix('T2-T3'),2.7,wMat.d);tube(mix('T2-T4'),1.7,wMat.u);
+  const a=to.ties,b0=from.ties;
+  const pt=k=>[0,1,2].map(i=>lerp(b0[k][i],a[k][i],t));
+  const P4=pt('T4'),P5=pt('T5');tube([P4,[(P4[0]+P5[0])/2,(P4[1]+P5[1])/2+.8,P4[2]],P5],1.7,wMat.u);
+  tube([P5,[P5[0]-6,P5[1]+.4,P5[2]],[P5[0]-11,P5[1]-7,P5[2]+.5],[-52,14,53]],1.7,wMat.u);
+  for(const k in labels){const v=pt(k);labels[k].position.set(v[0]+offs[k][0],v[1]+offs[k][1],v[2]+offs[k][2])}
+}
+const orb={th:2.1,ph:.42,r:345,tg:new Vector3(-6,8,76)};
+function place(){const c=Math.cos(orb.ph);cam.position.set(orb.tg.x+orb.r*c*Math.cos(orb.th),orb.tg.y+orb.r*c*Math.sin(orb.th),orb.tg.z+orb.r*Math.sin(orb.ph));cam.lookAt(orb.tg);renderer.render(scene,cam)}
+function size(){const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();place()}
+new ResizeObserver(size).observe(view);
+const ptr=new Map;let pd=0;
+view.addEventListener('pointerdown',e=>{view.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY])});
+view.addEventListener('pointermove',e=>{
+  const o=ptr.get(e.pointerId);if(!o)return;
+  if(ptr.size===1){orb.th-=(e.clientX-o[0])*.008;orb.ph=Math.min(1.45,Math.max(-1.2,orb.ph+(e.clientY-o[1])*.008))}
+  ptr.set(e.pointerId,[e.clientX,e.clientY]);
+  if(ptr.size===2){const [a,b]=[...ptr.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd)orb.r=Math.min(600,Math.max(90,orb.r*pd/d));pd=d}
+  place()});
+const up=e=>{ptr.delete(e.pointerId);pd=0};view.addEventListener('pointerup',up);view.addEventListener('pointercancel',up);
+view.addEventListener('wheel',e=>{e.preventDefault();orb.r=Math.min(600,Math.max(90,orb.r*Math.exp(e.deltaY*.001)));place()},{passive:false});
+const barsEl=document.getElementById('bars');
+const SP=[['T1-T2','① 到 ②'],['T2-T3','② 到 ③ 杜邦线'],['T2-T4','② 到 ④ USB']];
+barsEl.innerHTML=SP.map(([k,n])=>`<div class="bar"><div class="t"><b>${n}</b><span class="n" id="n${k}"></span></div><div class="track"><div class="fill" id="f${k}"></div></div></div>`).join('');
+function bars(p){for(const [k] of SP){const w=D.sweep[k].wireMm,d=p.dist[k];document.getElementById('n'+k).textContent=`两点 ${Math.round(d)} / 线长 ${w} mm`;document.getElementById('f'+k).style.width=(d/w*100).toFixed(1)+'%'}}
+const po=document.getElementById('poses');
+D.poses.forEach((p,i)=>{const b=document.createElement('button');b.id='pose-'+p.key;b.textContent=p.label;b.setAttribute('aria-pressed',i===0);b.onclick=()=>go(i);po.append(b)});
+let anim=0;
+function go(i){
+  const to=D.poses[i],from=cur||to;[...po.children].forEach((b,j)=>b.setAttribute('aria-pressed',j===i));bars(to);
+  cancelAnimationFrame(anim);const t0=performance.now(),dur=matchMedia('(prefers-reduced-motion:reduce)').matches?0:550;
+  const step=n=>{const t=dur?Math.min(1,(n-t0)/dur):1,e=t*t*(3-2*t);apply(from,to,e);place();if(t<1)anim=requestAnimationFrame(step);else cur=to};
+  if(from===to){apply(to,to,1);cur=to;place()}else anim=requestAnimationFrame(step);
+}
+const start=Math.max(0,D.poses.findIndex(p=>p.key===location.hash.slice(1)));
+go(start);size();
+addEventListener('hashchange',()=>{const i=D.poses.findIndex(p=>p.key===location.hash.slice(1));if(i>=0)go(i)});
+}
+</script>
