@@ -1,0 +1,556 @@
+<title>机器人的五套系统</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one long page, one chapter per system; text on the left, the live thing (3D page, demo, video) on the right; stacks on a phone. Colours come from MicroDuck itself: white shell, duck yellow, orange brackets, black servos. */
+:root{
+  --bg:#EEF0EE; --panel:#FFFFFF; --ink:#16191C; --muted:#56606A; --line:#D5DAD7;
+  --yellow:#F2C230; --orange:#C9561A; --servo:#1E2226; --on-yellow:#1E1A0A; --soft:#E3E7E4;
+  --display:"Space Grotesk","Noto Sans SC",system-ui,sans-serif;
+  --sans:"Noto Sans SC","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;
+  --num:"Space Grotesk",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121518; --panel:#1B1F23; --ink:#ECEEEC; --muted:#A3ABB2; --line:#2E343A;
+  --yellow:#F2C230; --orange:#F08A4B; --servo:#0B0D0F; --on-yellow:#1E1A0A; --soft:#242A2F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121518; --panel:#1B1F23; --ink:#ECEEEC; --muted:#A3ABB2; --line:#2E343A;
+  --yellow:#F2C230; --orange:#F08A4B; --servo:#0B0D0F; --on-yellow:#1E1A0A; --soft:#242A2F; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--ink);font:17px/1.75 var(--sans);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--servo)}
+a{color:var(--orange)}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--servo);color:#EDEDE8}
+nav .in{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav .brand{font:700 15px var(--display);color:var(--yellow);white-space:nowrap;margin-right:8px}
+nav a{color:#C9CCC8;text-decoration:none;font-size:14px;white-space:nowrap;padding:5px 11px;border-radius:999px;border:1px solid transparent}
+nav a:hover,nav a:focus-visible{border-color:#4A5057;outline:none}
+nav a.on{background:var(--yellow);color:var(--on-yellow);font-weight:700}
+nav .keys{margin-left:auto;font-size:12px;color:#8A9096;white-space:nowrap;padding-left:12px}
+
+/* hero */
+.hero{position:relative;background:var(--servo);color:#F4F3EE;overflow:hidden}
+.hero video,.hero img.poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero .in{position:relative;padding-block:72px 64px;display:grid;gap:22px}
+.eyebrow{font:700 14px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+.hero .eyebrow{color:var(--yellow)}
+.hero h1{font:900 clamp(40px,7vw,84px)/1.08 var(--sans);margin:0;letter-spacing:.01em;text-wrap:balance;max-width:11em}
+.hero p.lead{font-size:clamp(17px,2vw,21px);max-width:34em;margin:0;color:#DCDBD3}
+.bodymap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:880px;margin-top:10px}
+.bodymap a{display:grid;gap:2px;text-decoration:none;color:#F4F3EE;background:rgba(20,23,26,.72);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px 14px;backdrop-filter:blur(6px)}
+.bodymap a:hover,.bodymap a:focus-visible{border-color:var(--yellow);outline:none}
+.bodymap b{font:700 13px var(--display);color:var(--yellow);letter-spacing:.06em}
+.bodymap span{font-size:18px;font-weight:700}
+.bodymap small{font-size:14px;color:#BDBDB4;line-height:1.5}
+.bodymap a.last{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow)}
+.bodymap a.last b,.bodymap a.last small{color:var(--on-yellow)}
+
+/* chapters */
+section.ch{padding-block:72px;border-bottom:1px solid var(--line);scroll-margin-top:52px}
+section.ch.alt{background:var(--soft)}
+.head{display:grid;gap:10px;margin-bottom:34px;max-width:52em}
+h2{font:900 clamp(30px,4.4vw,48px)/1.18 var(--sans);margin:0;text-wrap:balance}
+.head p{margin:0;color:var(--muted);font-size:18px}
+h3{font:700 21px/1.4 var(--sans);margin:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:36px;align-items:start}
+.two.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.col{display:grid;gap:22px;min-width:0}
+.pts{display:grid;gap:16px}
+.pt{display:grid;gap:3px}
+.pt p{margin:0;color:var(--muted)}
+.pt p b{color:var(--ink)}
+figure{margin:0;display:grid;gap:8px;min-width:0}
+figure img,figure video{width:100%;border-radius:8px;display:block;background:var(--panel)}
+figcaption{font-size:13px;color:var(--muted);line-height:1.5}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.contain img{object-fit:contain;aspect-ratio:4/3;background:#fff}
+.cover img{object-fit:cover;aspect-ratio:4/3}
+.tall img{object-fit:cover;aspect-ratio:3/4}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:10px;min-width:0}
+.card.ours{border:2px solid var(--yellow)}
+.tag{justify-self:start;font:700 12px var(--display);letter-spacing:.08em;background:var(--yellow);color:var(--on-yellow);padding:2px 8px;border-radius:4px}
+.note{border-left:3px solid var(--orange);padding:4px 0 4px 14px;color:var(--muted);font-size:15px}
+.note b{color:var(--ink)}
+.lesson{background:var(--servo);color:#E7E7E1;border-radius:12px;padding:18px 20px;font-size:15px;line-height:1.7}
+.lesson b{color:var(--yellow);font-family:var(--display);letter-spacing:.06em;display:block;margin-bottom:4px;font-size:12px}
+
+/* embeds */
+.embed{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;min-width:0}
+.embed .bar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.embed .bar span{font-size:14px;font-weight:700}
+.embed .bar a{font-size:13px}
+.embed .stage{position:relative;height:min(72vh,640px);min-height:380px;background:var(--soft);display:grid;place-items:center}
+.embed .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.embed .stage .go{display:grid;gap:10px;justify-items:center;text-align:center;padding:24px;max-width:30em}
+.embed .stage .go p{margin:0;color:var(--muted);font-size:15px}
+button{font:inherit}
+.btn{font:700 16px var(--sans);background:var(--yellow);color:var(--on-yellow);border:0;border-radius:999px;padding:11px 22px;min-height:44px;cursor:pointer}
+.btn:focus-visible,.seg button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel);gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink);font-size:15px;padding:7px 14px;border-radius:999px;cursor:pointer;min-height:38px}
+.seg button[aria-pressed=true]{background:var(--servo);color:#fff}
+
+/* servo demo */
+.servo-demo{display:grid;gap:16px}
+.dials{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.dial{display:grid;gap:6px;justify-items:center;text-align:center}
+.dial svg{width:100%;max-width:220px;height:auto}
+.dial .read{font:700 22px var(--num);font-variant-numeric:tabular-nums}
+.dial .sub{font-size:14px;color:var(--muted);line-height:1.45}
+input[type=range]{font-size:16px;width:100%;accent-color:var(--orange);height:32px}
+.lbl{display:flex;justify-content:space-between;font-size:15px}
+.lbl b{font-family:var(--num);font-variant-numeric:tabular-nums}
+
+/* mic demo */
+#mic{width:100%;height:auto;aspect-ratio:1/1;max-height:520px;touch-action:none;cursor:grab;background:var(--panel);border-radius:12px;border:1px solid var(--line);display:block}
+.micctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#micsay{font-size:16px;min-height:3.4em;margin:0}
+#micsay b{color:var(--orange)}
+
+/* power diagram */
+.power svg{width:100%;height:auto;display:block}
+.power text{font-family:var(--sans);fill:var(--ink)}
+
+/* design split */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.split ul{margin:0;padding-left:1.2em;display:grid;gap:8px}
+.split .free{background:var(--servo);color:#EDEDE8;border-color:var(--servo)}
+.split .free h3{color:var(--yellow)}
+footer{padding-block:40px 64px;color:var(--muted);font-size:13px;line-height:1.7}
+
+@media (max-width:860px){
+  .two,.two.even,.split{grid-template-columns:minmax(0,1fr)}
+  .bodymap{grid-template-columns:repeat(2,minmax(0,1fr))}
+  nav .keys{display:none}
+}
+@media (max-width:480px){
+  .trio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .bodymap{grid-template-columns:minmax(0,1fr)}
+  section.ch{padding-block:52px}
+}
+</style>
+
+<nav class="gut" aria-label="章节"><div class="in" id="navin">
+  <span class="brand">MicroDuck</span>
+  <a href="#top">总览</a><a href="#body">1 外观</a><a href="#power">2 动力</a><a href="#brain">3 大脑感官</a><a href="#energy">4 能源</a><a href="#wires">5 线缆</a><a href="#build">拼装</a><a href="#design">设计</a><a href="#sim">仿真到真机</a>
+  <span class="keys">← → 换章节</span>
+</div></nav>
+
+<header class="hero" id="top">
+  <video src="media/hero-walk.mp4" poster="media/hero.jpg" autoplay muted loop playsinline aria-label="MicroDuck 在桌上走路"></video>
+  <div class="in gut">
+    <p class="eyebrow">机器人也是一个身体</p>
+    <h1>五套系统，一次拼装</h1>
+    <p class="lead">我们的小鸭子 MicroDuck 就是按这个顺序做出来的。每一章讲一套系统，以及设计时必须守住的东西。最后一章是设计师可以放手发挥的地方。</p>
+    <div class="bodymap">
+      <a href="#body"><b>1 外观与支撑</b><span>骨架和皮肤</span><small>3D 打印或金属</small></a>
+      <a href="#power"><b>2 动力</b><span>肌肉和关节</span><small>舵机、伺服、控制板</small></a>
+      <a href="#brain"><b>3 电脑与传感器</b><span>大脑和感官</span><small>小电脑、摄像头、麦克风</small></a>
+      <a href="#energy"><b>4 能源</b><span>消化系统</span><small>电池、降压、稳压</small></a>
+      <a href="#wires"><b>5 线缆</b><span>血管和神经</span><small>电源线、信号线</small></a>
+      <a href="#build" class="last"><b>最后</b><span>拼装</span><small>好装、好修</small></a>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- 1 BODY -->
+<section class="ch gut" id="body"><div class="in">
+  <div class="head"><p class="eyebrow">系统 1 · 外观与支撑</p><h2>小机器人用 3D 打印，大机器人用金属</h2><p>这一套给机器人长相，也承担一部分重量。设计上最重要的一件事：分清哪些零件承重，哪些只是外壳。</p></div>
+  <div class="two">
+    <div class="col">
+      <div class="pts">
+        <div class="pt"><h3>小型：3D 打印 PLA</h3><p>便宜、改得快、什么形状都能做。PLA 最常见，<b>又硬又脆</b>：撑得起小鸭子，撑不起机械狗。</p></div>
+        <div class="pt"><h3>机械狗、人形大小：金属</h3><p>铝合金骨架承重，外面的塑料壳只负责好看。这层壳正是设计师最能发挥的地方。</p></div>
+        <div class="pt"><h3>脚底要防滑</h3><p>打印件又硬又光，在桌上会打滑。脚底贴一层薄橡胶、砂纸或软 TPU；脚边做成圆弧，鞋底要能包住这段弧。</p></div>
+      </div>
+      <div class="pair">
+        <figure class="cover"><img src="media/printer.jpg" alt="桌面 3D 打印机和打印出的零件" loading="lazy"><figcaption>桌面 3D 打印</figcaption></figure>
+        <figure class="cover"><img src="media/spot.jpg" alt="波士顿动力 Spot 机械狗" loading="lazy"><figcaption>Spot：金属骨架加外壳</figcaption></figure>
+      </div>
+      <figure class="contain"><img src="media/guidefoot.jpg" alt="拼装指南里组装小腿和黄色脚的一步" loading="lazy"><figcaption>MicroDuck 拼装指南：黄色的脚，下面贴防滑层</figcaption></figure>
+    </div>
+    <div class="embed" data-src="embeds/head-3d.html">
+      <div class="bar"><span>头部 3D 拆解（可旋转）</span><a href="embeds/head-3d.html" target="_blank" rel="noopener">新标签打开</a></div>
+      <div class="stage"><div class="go"><p>看外壳怎么包住里面的板子、摄像头和舵机。拖动旋转，滚轮缩放。</p><button class="btn" type="button">加载 3D 模型</button></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 2 POWER -->
+<section class="ch gut alt" id="power"><div class="in">
+  <div class="head"><p class="eyebrow">系统 2 · 动力</p><h2>“肌肉”分三档：玩具、智能、工业</h2><p>中文里“舵机”一般指玩具级，“伺服”指工业级；英文都叫 servo，都是电机加减速器加位置反馈。控制板（MCU）给每个舵机发目标角度。</p></div>
+  <div class="trio" style="margin-bottom:28px">
+    <div class="card"><figure class="contain"><img src="media/sg90.jpg" alt="蓝色 SG90 小舵机" loading="lazy"></figure><h3>玩具舵机</h3><p style="margin:0;color:var(--muted)">几块钱。大概能转到，但说不出自己实际在哪。</p></div>
+    <div class="card ours"><span class="tag">我们用的</span><figure class="contain"><img src="media/xl330.jpg" alt="Dynamixel X 系列智能舵机" loading="lazy"></figure><h3>智能舵机 XL330</h3><p style="margin:0;color:var(--muted)">外形和小舵机差不多，能在总线上报告角度、负载、温度。</p></div>
+    <div class="card"><figure class="contain"><img src="media/harmonic.jpg" alt="环形的谐波减速器" loading="lazy"></figure><h3>工业伺服</h3><p style="margin:0;color:var(--muted)">几百到几千美元。关节常做成扁平的环，谐波减速器装在里面，几乎没有间隙。</p></div>
+  </div>
+  <div class="two even">
+    <div class="col">
+      <div class="card servo-demo">
+        <h3>试一试：让舵机转到同一个角度</h3>
+        <div class="lbl"><span>目标角度</span><b id="tgtv">90°</b></div>
+        <input type="range" id="tgt" min="0" max="180" value="90" aria-label="目标角度">
+        <div class="dials">
+          <div class="dial"><svg viewBox="0 0 200 120" id="d1" aria-label="玩具舵机表盘"></svg><div class="read" id="r1">?</div><div class="sub">玩具舵机：有虚位，小于 4° 的变化不动；实际停在哪它不知道</div></div>
+          <div class="dial"><svg viewBox="0 0 200 120" id="d2" aria-label="智能舵机表盘"></svg><div class="read" id="r2">90.0°</div><div class="sub">智能舵机：误差很小，而且把实际角度报回来</div></div>
+        </div>
+      </div>
+      <div class="note"><b>比较只看四个数：</b>扭矩（多大力）、转速、精度（离目标多近）、尺寸重量和价格。</div>
+    </div>
+    <div class="col">
+      <figure><img src="media/servoids.jpg" alt="MicroDuck 15 个舵机的编号图" loading="lazy" style="background:#fff"><figcaption>MicroDuck 的 15 个舵机：每条腿 5 个，脖子和头 4 个，嘴 1 个</figcaption></figure>
+      <div class="pts">
+        <div class="pt"><h3>一个转动关节，配一个舵机</h3><p>动物的关节都近似旋转，所以舵机也以旋转为主。要几个自由度，就配几个舵机。</p></div>
+        <div class="pt"><h3>每个舵机都要空间</h3><p>放它自己、走线，还要伸得进螺丝刀。这是外形设计的第一条硬约束。</p></div>
+        <div class="pt"><h3>也可以藏起来</h3><p>电机放肚子里，用连杆或拉线传到四肢，像前臂肌肉通过肌腱拉手指，四肢就能做细。</p></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 3 BRAIN -->
+<section class="ch gut" id="brain"><div class="in">
+  <div class="head"><p class="eyebrow">系统 3 · 电脑与传感器</p><h2>一块信用卡大小的电脑就是大脑</h2><p>舵机是肌肉骨骼，这一套是大脑和感官。我们用 Radxa Cubie A7Z，感官有摄像头、麦克风、功放和扬声器、平衡传感器（IMU）、头顶的触摸片。</p></div>
+  <div class="two">
+    <div class="col">
+      <figure class="contain"><img src="media/a7z.jpg" alt="Radxa Cubie A7Z 单板电脑正反面" loading="lazy"><figcaption>Radxa Cubie A7Z</figcaption></figure>
+      <div class="pair">
+        <figure><video src="media/quack.mp4" controls playsinline preload="metadata" poster="media/hero.jpg" aria-label="MicroDuck 张嘴叫"></video><figcaption>扬声器加嘴：叫一声</figcaption></figure>
+        <figure><video src="media/touch-stop.mp4" controls playsinline preload="metadata" poster="media/hero.jpg" aria-label="摸头让 MicroDuck 停下"></video><figcaption>触摸片：摸头它就停</figcaption></figure>
+      </div>
+      <div class="pts">
+        <div class="pt"><h3>设计要点 1：通风散热</h3><p>性能越高越烫。闷在壳里会过热降频，甚至重启。要留风道、散热片，必要时加风扇。</p></div>
+        <div class="pt"><h3>设计要点 2：感官要有视野</h3><p>摄像头要干净的窗口，麦克风要开口，并且离扬声器远一点。</p></div>
+      </div>
+      <div class="lesson"><b>我们踩过的坑</b>A7Z 一开始装在封闭的头里，9 分钟就到了 93°C，CPU 被锁在最低频率，还重启了三次。后来把板子挪到背上，配风扇散热片才解决。挪出来还有第二个好处：头变轻了，更容易站稳（见“给设计师”一章的重心实验）。</div>
+    </div>
+    <div class="embed" data-src="embeds/ducts.html">
+      <div class="bar"><span>头部风道：空气怎么走</span><a href="embeds/ducts.html" target="_blank" rel="noopener">新标签打开</a></div>
+      <div class="stage"><div class="go"><p>我们当时给头部设计的风道说明，能看到为什么要加挡板。</p><button class="btn" type="button">加载风道动画</button></div></div>
+    </div>
+  </div>
+
+  <div class="two even" style="margin-top:56px">
+    <div class="col">
+      <h3 style="font-size:26px">眼睛：一只眼看不准远近</h3>
+      <div class="pts">
+        <div class="pt"><p>捂住一只眼，两根手指尖对一下，很容易对不准。<b>一个摄像头</b>只能靠大小和阴影去猜距离。</p></div>
+        <div class="pt"><p><b>两个摄像头</b>（双目）或深度传感器才能量出来。</p></div>
+        <div class="pt"><p><b>或者动一动头</b>：近处的东西移动得多、远处移动得少，一只会动的眼睛也能估距离，机器学习模型也能从单张图估深度，只是不精确。</p></div>
+      </div>
+      <h3 style="font-size:26px;margin-top:12px">耳朵：几个麦克风能分清方向？</h3>
+      <div class="pts">
+        <div class="pt"><p><b>1 个</b>：只听得到。<b>2 个</b>：分得出左右，但前后会混。<b>3 个且不在一条线上</b>：一圈都分得清。要分上下，需要 4 个且不在一个平面。</p></div>
+        <div class="pt"><p>人两只耳朵也能分前后，是因为<b>耳廓</b>会改变身后声音的音色，而且我们会<b>转头</b>。宠物机器人可以做大耳朵加机器学习，或者干脆转头去找声音，这个动作本身就很可爱。</p></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="gap:14px">
+        <h3>试一试：拖动声源</h3>
+        <div class="micctl">
+          <div class="seg" role="group" aria-label="麦克风数量">
+            <button type="button" data-n="1" aria-pressed="false">1 个麦克风</button>
+            <button type="button" data-n="2" aria-pressed="true">2 个</button>
+            <button type="button" data-n="3" aria-pressed="false">3 个</button>
+          </div>
+          <button type="button" class="seg" id="turn" style="padding:7px 14px;cursor:pointer;color:var(--ink)">转头 30°</button>
+        </div>
+        <canvas id="mic" width="800" height="800" aria-label="俯视图：鸭头、麦克风和声源"></canvas>
+        <p id="micsay"></p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 4 ENERGY -->
+<section class="ch gut alt" id="energy"><div class="in">
+  <div class="head"><p class="eyebrow">系统 4 · 能源</p><h2>一块电池，好几种电压</h2><p>能源就像消化系统：把储存的“食物”变成每个器官能用的形式。可以接电源，也可以接电池；宠物机器人一般要用电池。</p></div>
+  <div class="two">
+    <div class="col">
+      <div class="card power">
+        <svg viewBox="0 0 520 250" role="img" aria-label="电池 7.4V 直接供给舵机，经降压板变成 5V 供给电脑">
+          <rect x="10" y="95" width="130" height="60" rx="10" fill="var(--yellow)"/>
+          <text x="75" y="120" text-anchor="middle" font-size="17" font-weight="700" style="fill:var(--on-yellow)">电池</text>
+          <text x="75" y="142" text-anchor="middle" font-size="14" style="fill:var(--on-yellow)">2 节锂电 · 7.4 V</text>
+          <path d="M140 125 H200 V55 H370" fill="none" stroke="var(--orange)" stroke-width="4"/>
+          <path d="M200 125 V195 H250" fill="none" stroke="var(--orange)" stroke-width="4"/>
+          <rect x="370" y="25" width="140" height="60" rx="10" fill="var(--servo)"/>
+          <text x="440" y="51" text-anchor="middle" font-size="17" font-weight="700" style="fill:#fff">15 个舵机</text>
+          <text x="440" y="72" text-anchor="middle" font-size="14" style="fill:#cfd3d0">直接吃电池电压</text>
+          <rect x="250" y="168" width="100" height="54" rx="10" fill="var(--panel)" stroke="var(--muted)" stroke-width="1.5"/>
+          <text x="300" y="192" text-anchor="middle" font-size="15" font-weight="700">降压板</text>
+          <text x="300" y="211" text-anchor="middle" font-size="13" style="fill:var(--muted)">降压 + 稳压</text>
+          <path d="M350 195 H370" fill="none" stroke="var(--orange)" stroke-width="4"/>
+          <rect x="370" y="165" width="140" height="60" rx="10" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/>
+          <text x="440" y="191" text-anchor="middle" font-size="17" font-weight="700">电脑 A7Z</text>
+          <text x="440" y="212" text-anchor="middle" font-size="14" style="fill:var(--muted)">要稳定的 5 V</text>
+          <text x="290" y="45" text-anchor="middle" font-size="14" style="fill:var(--muted)">走路时约 7.6 V</text>
+        </svg>
+      </div>
+      <div class="pair">
+        <figure class="contain"><img src="media/battery.jpg" alt="Tattu 2S 650 mAh 锂电池" loading="lazy"><figcaption>我们的电池：2S 650 mAh</figcaption></figure>
+        <figure class="contain"><img src="media/xl4015.jpg" alt="XL4015 降压模块" loading="lazy"><figcaption>降压模块</figcaption></figure>
+      </div>
+      <div class="pts">
+        <div class="pt"><h3>能跑多久？</h3><p>电池越大越耐用，但腿得扛着它走。电池又是最重、最能挪位置的零件，放哪里直接决定重心。</p></div>
+        <div class="pt"><h3>好不好换？</h3><p>我们的电池装在背包里，插头伸手就能拔，几块电池轮流充。</p></div>
+        <div class="pt"><h3>能边充边用吗？</h3><p>要电源电路专门支持，否则只能停下来充。</p></div>
+      </div>
+    </div>
+    <div class="embed" data-src="embeds/backpack-3d.html">
+      <div class="bar"><span>电池背包：3D 拼装步骤</span><a href="embeds/backpack-3d.html" target="_blank" rel="noopener">新标签打开</a></div>
+      <div class="stage"><div class="go"><p>背包怎么装到鸭子背上，插头从哪里出来。文件较大（约 13 MB）。</p><button class="btn" type="button">加载 3D 步骤</button></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 5 WIRES -->
+<section class="ch gut" id="wires"><div class="in">
+  <div class="head"><p class="eyebrow">系统 5 · 线缆</p><h2>线要跟着关节一起动</h2><p>线缆既是血管（电源线送能量）也是神经（信号线传命令）。杜邦线、扁平排线、USB 线、实心线，各有用处。</p></div>
+  <div class="two">
+    <div class="col">
+      <div class="trio">
+        <figure class="cover"><img src="media/jumper.jpg" alt="一把彩色杜邦线" loading="lazy"><figcaption>杜邦线</figcaption></figure>
+        <figure class="cover"><img src="media/ffc.jpg" alt="扁平软排线" loading="lazy"><figcaption>扁平排线</figcaption></figure>
+        <figure class="contain"><img src="media/chain.jpg" alt="工业拖链" loading="lazy"><figcaption>工业拖链</figcaption></figure>
+      </div>
+      <div class="pts">
+        <div class="pt"><h3>用固线器把线藏好</h3><p>松散的线会勾住腿，把机器人绊倒。沿规划好的路线固定。</p></div>
+        <div class="pt"><h3>每个关节都留余量</h3><p>两个固线点之间的线，要够关节转到底。右边可以切换脖子和头的姿态，看每一段线需要多长。</p></div>
+        <div class="pt"><h3>电源线和信号线分开走</h3><p>舵机电源线会干扰音频、摄像头的线（串扰）。设计时给它们留两条通道；屏蔽本身属于电路设计。</p></div>
+      </div>
+      <div class="lesson"><b>我们踩过的坑</b>头部摄像头的 USB 插头被线拉松过，后来改了转接头的收纳方式才好。余量和应力释放是真问题。</div>
+    </div>
+    <div class="embed" data-src="embeds/wire-ties.html">
+      <div class="bar"><span>脖子走线：扎线点和每段余量</span><a href="embeds/wire-ties.html" target="_blank" rel="noopener">新标签打开</a></div>
+      <div class="stage"><div class="go"><p>切换低头、转头等姿态，看每段线被拉长多少，扎线点该放在哪。</p><button class="btn" type="button">加载走线 3D</button></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- BUILD -->
+<section class="ch gut alt" id="build"><div class="in">
+  <div class="head"><p class="eyebrow">最后一步 · 拼装</p><h2>设计时就想好：怎么装、怎么换</h2><p>拼装指南也是设计的一部分：每一步只做一个动作，写清楚用几颗什么螺丝。</p></div>
+  <div class="two">
+    <div class="col">
+      <div class="pts">
+        <div class="pt"><h3>螺丝刀伸得进去</h3><p>两个螺丝孔画得再好，上方没有螺丝刀杆和手柄的通道，就拧不上。</p></div>
+        <div class="pt"><h3>PLA 别做卡扣</h3><p>卡扣靠材料弯一下再弹回，PLA 又硬又脆，一弯就断。用螺丝、魔术贴或泡棉胶。</p></div>
+        <div class="pt"><h3>坏了能单独换</h3><p>舵机、电池、板子都要能单独拆下，不用把整只鸭子拆开。</p></div>
+      </div>
+      <div class="lesson"><b>我们踩过的坑</b>电池舱盖试过两版打印卡扣，都盖不紧、容易掉，最后用 3M 泡棉胶贴住。</div>
+    </div>
+    <div class="embed" data-src="embeds/build-guide.html">
+      <div class="bar"><span>MicroDuck 拼装指南（3D，逐步）</span><a href="embeds/build-guide.html" target="_blank" rel="noopener">新标签打开</a></div>
+      <div class="stage"><div class="go"><p>躯干、脖子、头和接线，每一步都有 3D 模型、零件和螺丝规格。界面是英文。</p><button class="btn" type="button">加载拼装指南</button></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- DESIGN -->
+<section class="ch gut" id="design"><div class="in">
+  <div class="head"><p class="eyebrow">给设计师</p><h2>守住硬约束，剩下的都可以发挥</h2><p>可爱和功能常常能合二为一：大耳朵既是造型也帮着听方向，转头找声音既是功能也是表情。</p></div>
+  <div class="two even" style="margin-bottom:40px">
+    <div class="col">
+      <h3 style="font-size:26px">最难的权衡：大头大眼很可爱，但头重脚轻</h3>
+      <div class="pts">
+        <div class="pt"><p>重心越高，身体稍微一歪，重心就跑出脚掌范围，机器人就倒了。头是全身最高的部分，<b>头上每加一克，重心就往上抬一点</b>。</p></div>
+        <div class="pt"><p>所以我们把电脑 A7Z 从头里挪到了背上：一半为了散热，一半为了让头变轻。</p></div>
+        <div class="pt"><p>简单的原则：<b>头可以大，但要轻</b>（薄壳、空心、重东西往下放）；<b>身体可以小，但要重</b>（电池、板子放低）。</p></div>
+      </div>
+    </div>
+    <div class="card" style="gap:14px">
+      <h3>试一试：头有多重，能歪多少度不倒</h3>
+      <div class="lbl"><span>头的重量</span><b id="hmv">150 g</b></div>
+      <input type="range" id="hm" min="40" max="300" step="10" value="150" aria-label="头的重量">
+      <div class="lbl"><span>身体（含电池）放多低</span><b id="blv">中间</b></div>
+      <input type="range" id="bl" min="0" max="2" step="1" value="1" aria-label="身体重物的高度">
+      <svg viewBox="0 0 320 300" id="com" role="img" aria-label="机器人侧视简图，标出重心和最大倾斜角" style="width:100%;max-width:380px;justify-self:center"></svg>
+      <p id="comsay" style="margin:0"></p>
+      <p style="margin:0;font-size:13px;color:var(--muted)">示意模型：身体 400 g，脚掌宽 6 cm，头在 26 cm 高处。数字只用来比较趋势，不是 MicroDuck 的实测值。</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="card"><h3>硬约束：不能动</h3><ul>
+      <li>舵机的尺寸和关节位置</li>
+      <li>重心低、身体轻：每加一克都要腿来扛，头太重会摔</li>
+      <li>电脑周围的散热风道</li>
+      <li>摄像头窗口、麦克风开口</li>
+      <li>线缆通道和关节余量</li>
+      <li>螺丝刀通道，零件能拆能换</li>
+      <li>关节缝隙别夹到手指</li>
+    </ul></div>
+    <div class="card free"><h3>可以发挥：让它可爱</h3><ul>
+      <li>外壳的形状和比例：大头、圆润</li>
+      <li>颜色和材质搭配</li>
+      <li>脸：眼睛、嘴、灯光表情</li>
+      <li>声音和小动作：歪头、转头找声音</li>
+      <li>耳朵：既可爱又帮忙听方向</li>
+      <li>手感：摸头时的触摸区域</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<!-- SIM -->
+<section class="ch gut alt" id="sim"><div class="in">
+  <div class="head"><p class="eyebrow">拼好之后</p><h2>先在仿真里学会走，再到真机上走</h2><p>这一步叫 Sim to Real。仿真里用机器学习反复试错几百万次，摔了也不心疼；跑稳了，再把学到的“小脑”装进真鸭子。</p></div>
+  <div class="pair">
+    <figure class="cover"><img src="media/sim.jpg" alt="仿真软件里的 MicroDuck 数字模型" loading="lazy"><figcaption>仿真里的 MicroDuck</figcaption></figure>
+    <figure><video src="media/hero-walk.mp4" controls muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-label="真实的 MicroDuck 走路"></video><figcaption>真机走路</figcaption></figure>
+  </div>
+  <p class="note" style="margin-top:22px"><b>所以外观改动也会影响训练：</b>仿真模型要和真机一样重、一样的形状、脚底一样的摩擦。改了外壳，仿真模型也要跟着改，否则仿真里能走，真机上会摔。</p>
+</div></section>
+</main>
+
+<footer class="gut"><div class="in">
+  图片来源：Wikimedia Commons（3D 打印 CC BY-SA；Spot CC BY-SA 4.0；SG90；Harmonic Drive 减速器；杜邦线 CC BY-SA 2.0；排线 CC BY-SA 3.0；拖链 CC BY-SA 2.5）、ROBOTIS（Dynamixel）、Radxa（A7Z）。其余照片、视频、3D 页面来自 MicroDuck 项目。代码与设计：<a href="https://github.com/qilinxiaoxiang/cmu-microduck" target="_blank" rel="noopener">github.com/qilinxiaoxiang/cmu-microduck</a>
+</div></footer>
+
+<script>
+(()=>{
+// lazy embeds
+document.querySelectorAll('.embed').forEach(e=>{
+  const b=e.querySelector('.btn');
+  b.addEventListener('click',()=>{
+    const st=e.querySelector('.stage'), f=document.createElement('iframe');
+    f.src=e.dataset.src; f.title=e.querySelector('.bar span').textContent; f.loading='eager';
+    st.querySelector('.go').hidden=true; st.appendChild(f);
+  });
+});
+
+// nav highlight + arrow keys
+const ids=['top','body','power','brain','energy','wires','build','design','sim'];
+const links=[...document.querySelectorAll('#navin a')];
+const secs=ids.map(i=>document.getElementById(i));
+function cur(){let k=0;const y=innerHeight*0.35;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<=y)k=i});return k}
+function mark(){const k=cur();links.forEach((a,i)=>a.classList.toggle('on',i===k))}
+addEventListener('scroll',mark,{passive:true});mark();
+addEventListener('keydown',ev=>{
+  if(ev.target.closest&&ev.target.closest('input,textarea,iframe'))return;
+  if(ev.key!=='ArrowRight'&&ev.key!=='ArrowLeft'&&ev.key!=='PageDown'&&ev.key!=='PageUp')return;
+  const k=cur()+((ev.key==='ArrowRight'||ev.key==='PageDown')?1:-1);
+  if(k<0||k>=secs.length)return; ev.preventDefault(); secs[k].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+});
+
+// servo demo
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function dial(svg,target,actual,known){
+  const pt=a=>{const r=Math.PI*(1-a/180);return[100+80*Math.cos(r),105-80*Math.sin(r)]};
+  const [tx,ty]=pt(target),[ax,ay]=pt(actual);
+  svg.innerHTML=`<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="${css('--line')}" stroke-width="10" stroke-linecap="round"/>
+  <line x1="100" y1="105" x2="${tx}" y2="${ty}" stroke="${css('--muted')}" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="100" y1="105" x2="${ax}" y2="${ay}" stroke="${known?css('--orange'):css('--ink')}" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="100" cy="105" r="9" fill="${css('--servo')}"/>`;
+}
+const tgt=document.getElementById('tgt'),d1=document.getElementById('d1'),d2=document.getElementById('d2');
+let toy=90, toyOff=0;
+function upd(){
+  const t=+tgt.value; document.getElementById('tgtv').textContent=t+'°';
+  if(Math.abs(t-toy+toyOff)>=4){toyOff=(Math.random()*6-3);toy=t+toyOff}
+  const sm=t+(Math.random()*0.6-0.3);
+  dial(d1,t,Math.max(0,Math.min(180,toy)),false); dial(d2,t,sm,true);
+  document.getElementById('r1').textContent='实际：?'; document.getElementById('r2').textContent='实际：'+sm.toFixed(1)+'°';
+}
+tgt.addEventListener('input',upd); upd();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{upd();draw()});
+
+// mic demo
+const cv=document.getElementById('mic'),cx=cv.getContext('2d'),say=document.getElementById('micsay');
+let n=2, head=0, src={x:0.55,y:-0.62};
+const W=800,C=400,R=95;
+function micsLocal(){ // unit offsets in head frame (x right, y forward)
+  if(n===1)return[[0,0.6]];
+  if(n===2)return[[-1,0],[1,0]];
+  return[[-0.87,-0.5],[0.87,-0.5],[0,1]];
+}
+function rot(p,a){const c=Math.cos(a),s=Math.sin(a);return[p[0]*c-p[1]*s,p[0]*s+p[1]*c]}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),or=css('--orange'),ye=css('--yellow'),ln=css('--line'),pn=css('--panel');
+  cx.clearRect(0,0,W,W); cx.fillStyle=pn; cx.fillRect(0,0,W,W);
+  // ring
+  cx.strokeStyle=ln; cx.lineWidth=2; cx.setLineDash([6,8]); cx.beginPath(); cx.arc(C,C,300,0,7); cx.stroke(); cx.setLineDash([]);
+  const sx=C+src.x*300, sy=C+src.y*300;
+  const ang=Math.atan2(src.x,-src.y); // world bearing, 0 = up
+  const rel=ang-head; // bearing in head frame
+  const rays=[];
+  if(n===1){
+    cx.fillStyle=or+'22'; cx.beginPath(); cx.arc(C,C,300,0,7); cx.arc(C,C,R+20,0,7,true); cx.fill('evenodd');
+    say.innerHTML='<b>1 个麦克风</b>：只知道“有声音”，一整圈哪个方向都有可能。';
+  }else if(n===2){
+    const mirror=Math.PI-rel; // front-back mirror across the ear axis
+    rays.push(ang); const ghost=mirror+head;
+    const same=Math.abs(Math.atan2(Math.sin(ghost-ang),Math.cos(ghost-ang)))<0.08;
+    if(!same) rays.push(ghost);
+    say.innerHTML=same?'<b>2 个麦克风</b>：声音正好在耳朵连线上，方向唯一。':'<b>2 个麦克风</b>：只算得出“偏左还是偏右、偏多少”，前方和后方两个方向听起来一样（虚线）。点“转头 30°”试试：转一下，真假就分开了。';
+  }else{
+    rays.push(ang); say.innerHTML='<b>3 个麦克风（不排成一条线）</b>：声音到每个麦克风的先后不同，一圈方向都分得清。';
+  }
+  rays.forEach((a,i)=>{const ex=C+Math.sin(a)*300,ey=C-Math.cos(a)*300;
+    cx.strokeStyle=i?mut:or; cx.lineWidth=i?3:5; cx.setLineDash(i?[10,10]:[]); cx.beginPath(); cx.moveTo(C,C); cx.lineTo(ex,ey); cx.stroke(); cx.setLineDash([]);
+    if(i){cx.fillStyle=mut;cx.font='600 26px "Noto Sans SC",sans-serif';cx.textAlign='center';cx.fillText('也可能在这',ex,ey+(ey<C?-14:34));}
+  });
+  // head
+  cx.save(); cx.translate(C,C); cx.rotate(head);
+  cx.fillStyle='#FBFBF8'; cx.strokeStyle=ink; cx.lineWidth=3; cx.beginPath(); cx.ellipse(0,0,R,R*1.05,0,0,7); cx.fill(); cx.stroke();
+  cx.fillStyle=ye; cx.beginPath(); cx.ellipse(0,-R*1.02,R*0.55,R*0.28,0,0,7); cx.fill(); cx.stroke(); // beak = front
+  cx.fillStyle=ink; cx.font='700 24px "Noto Sans SC",sans-serif'; cx.textAlign='center'; cx.fillText('前',0,-R*1.02+8);
+  micsLocal().forEach(m=>{cx.fillStyle=or; cx.beginPath(); cx.arc(m[0]*R*0.82,-m[1]*R*0.82,14,0,7); cx.fill(); cx.strokeStyle='#fff'; cx.lineWidth=3; cx.stroke();});
+  cx.restore();
+  // source
+  cx.fillStyle=ink; cx.beginPath(); cx.arc(sx,sy,24,0,7); cx.fill();
+  cx.strokeStyle=ink; cx.lineWidth=3; [36,50].forEach(r=>{cx.beginPath(); cx.arc(sx,sy,r,ang+Math.PI-0.6-Math.PI/2,ang+Math.PI+0.6-Math.PI/2); cx.stroke();});
+  cx.fillStyle=mut; cx.font='600 24px "Noto Sans SC",sans-serif'; cx.textAlign='center'; cx.fillText('声源（拖我）',sx,sy+(sy>C?78:-62));
+}
+function setSrc(ev){const r=cv.getBoundingClientRect();let x=(ev.clientX-r.left)/r.width*W-C,y=(ev.clientY-r.top)/r.height*W-C;const d=Math.hypot(x,y)||1;src={x:x/d,y:y/d};draw()}
+let drag=false;
+cv.addEventListener('pointerdown',e=>{drag=true;cv.setPointerCapture(e.pointerId);setSrc(e)});
+cv.addEventListener('pointermove',e=>{if(drag)setSrc(e)});
+cv.addEventListener('pointerup',()=>drag=false);
+document.querySelectorAll('.seg [data-n]').forEach(b=>b.addEventListener('click',()=>{n=+b.dataset.n;head=0;document.querySelectorAll('.seg [data-n]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('turn').hidden=n!==2;draw()}));
+document.getElementById('turn').addEventListener('click',()=>{
+  const start=head,end=head===0?Math.PI/6:0,t0=performance.now();
+  const step=t=>{const k=Math.min(1,(t-t0)/450);head=start+(end-start)*k;draw();if(k<1)requestAnimationFrame(step);else if(end!==0){say.innerHTML='<b>转头之后</b>：真方向的“左右偏差”按预期变化，假方向变化相反，于是只剩一个答案。宠物转头找声音就是在做这件事。';}};
+  requestAnimationFrame(step);
+});
+document.fonts&&document.fonts.ready.then(draw); draw();
+
+// centre of mass demo
+const hm=document.getElementById('hm'),bl=document.getElementById('bl'),cs=document.getElementById('com');
+function comDraw(){
+  const mh=+hm.value, mb=400, hh=26, hb=[6,10,14][+bl.value], half=3;
+  document.getElementById('hmv').textContent=mh+' g';
+  document.getElementById('blv').textContent=['放低','中间','偏高'][+bl.value];
+  const h=(mh*hh+mb*hb)/(mh+mb), tip=Math.atan(half/h)*180/Math.PI;
+  const s=9, gx=160, gy=280, Y=v=>gy-v*s;
+  const ink=css('--ink'),or=css('--orange'),ye=css('--yellow'),mu=css('--muted'),ln=css('--line'),sv=css('--servo');
+  const hr=18+mh/12;
+  cs.innerHTML=`<line x1="20" y1="${gy}" x2="300" y2="${gy}" stroke="${ln}" stroke-width="3"/>
+  <rect x="${gx-half*s}" y="${gy-8}" width="${half*2*s}" height="8" rx="3" fill="${ye}"/>
+  <line x1="${gx-10}" y1="${gy-8}" x2="${gx-10}" y2="${Y(8)}" stroke="${sv}" stroke-width="8"/>
+  <line x1="${gx+10}" y1="${gy-8}" x2="${gx+10}" y2="${Y(8)}" stroke="${sv}" stroke-width="8"/>
+  <rect x="${gx-34}" y="${Y(17)}" width="68" height="${9*s}" rx="16" fill="var(--panel)" stroke="${ink}" stroke-width="2.5"/>
+  <rect x="${gx-22}" y="${Y(hb+2)}" width="44" height="${4*s}" rx="5" fill="${sv}"/>
+  <text x="${gx}" y="${Y(hb+2)+24}" text-anchor="middle" font-size="13" fill="#fff">电池</text>
+  <line x1="${gx}" y1="${Y(17)}" x2="${gx}" y2="${Y(hh)+hr}" stroke="${sv}" stroke-width="7"/>
+  <circle cx="${gx}" cy="${Y(hh)}" r="${hr}" fill="var(--panel)" stroke="${ink}" stroke-width="2.5"/>
+  <ellipse cx="${gx+hr}" cy="${Y(hh)+4}" rx="${hr*0.5}" ry="${hr*0.25}" fill="${ye}" stroke="${ink}" stroke-width="2"/>
+  <line x1="${gx}" y1="${Y(h)}" x2="${gx}" y2="${gy}" stroke="${or}" stroke-width="2" stroke-dasharray="5 5"/>
+  <line x1="${gx+half*s}" y1="${gy}" x2="${gx}" y2="${Y(h)}" stroke="${or}" stroke-width="2"/>
+  <circle cx="${gx}" cy="${Y(h)}" r="9" fill="${or}" stroke="#fff" stroke-width="2"/>
+  <text x="${gx-16}" y="${Y(h)+5}" text-anchor="end" font-size="15" font-weight="700" fill="${or}">重心 ${h.toFixed(1)} cm</text>
+  <text x="${gx+half*s+8}" y="${gy-12}" font-size="14" fill="${mu}">最多歪 ${tip.toFixed(0)}°</text>`;
+  document.getElementById('comsay').innerHTML=`头 ${mh} g 时，重心在 <b>${h.toFixed(1)} cm</b>，身体歪过 <b>${tip.toFixed(0)}°</b> 就会倒。${tip<9?'头太重了，走路时一晃就容易摔。':tip<12?'能站，但余量不多。':'余量充足，走路更稳。'}`;
+}
+hm.addEventListener('input',comDraw); bl.addEventListener('input',comDraw); comDraw();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',comDraw);
+})();
+</script>
