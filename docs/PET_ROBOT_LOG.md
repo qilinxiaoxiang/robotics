@@ -650,3 +650,5 @@ Page (Chinese, self-contained, true-scale 3D with stand / real logged bend / hea
 Evidence that would change the decision: one fan measuring under 634 g on 4S (683 g if the fan weighs 113 g); rear_pack screw posts too shallow for the wing plate (2.7 mm engagement recorded as unverified); a retrained policy that cannot walk at 1.69 kg.
 
 Not established: real fan thrust, mass and housing size (vendor claims only, no independent test of this unit); XT30 current rating at 22 to 41 A per pack; yaw source (compass near 40 to 80 A leads); height hold across the table edge; A7Z spare UART (never enabled); walking, turning and bending with the pack (retraining not started, needs Shawn's nod); sit and kick poses; side-fall strength. No CAD, no DESIGN-CONTRACT entry, nothing ordered.
+
+2026-11-10, Shawn on the single-fan bench gate: "不用 默认推力够". The design proceeds on the vendor thrust figure (950 g per fan); no separate fan bench test. The first tethered hover reads thrust from the hover throttle. The 634 g gate above is withdrawn; fan mass and housing size are still measured on arrival.
