@@ -1096,6 +1096,9 @@ def run(args):
                  tilt_skipped=0)
     load_now, tau_legs = 1.0, 0.0
     grip_stop, cmd_s, hold_s, wz_t, grip_stop_at = GripStop(), [0.0, 0.0, 0.0], 1.0, None, None  # --wired-hold
+    replay = None
+    if args.cmd_replay:  # [[s after --walk-at, control-file command], ...] in time order (scorecard.py writes it)
+        replay = [(float(rt), dict(rc)) for rt, rc in json.load(open(args.cmd_replay))]
     settled_at = None
     for tick in range(int(T / 0.02)):
         t = tick * 0.02
@@ -1148,6 +1151,14 @@ def run(args):
                     dance_vth[0] = dv
                     want = dict(want, vx=0.0, vtheta=dv if walking else 0.0,
                                 head={n: brain.default[n] + d for n, d in step.get("head", {}).items()})
+            if replay is not None and t >= args.walk_at:  # a robot log's control-file commands, at their own times
+                rcmd = None
+                for rt, rc in replay:  # the last command written at or before this time wins
+                    if t - args.walk_at >= rt:
+                        rcmd = rc
+                if rcmd is not None:
+                    want = {k: v for k, v in rcmd.items() if k != "for_s"}  # walk_wired logs the for_s expiry itself
+                    walking = want.get("mode") == "walk" and any(float(want.get(k, 0)) for k in ("vx", "vy", "vtheta"))
             if args.kick_at is not None and t >= args.kick_at and kick_done_t is None:
                 want = {"mode": "kick", "foot": args.kick_foot, "id": 1}
             if args.sit_at is not None and t >= args.sit_at and (args.unsit_at is None or t < args.unsit_at):
@@ -1194,6 +1205,14 @@ def run(args):
                    gyro=float(np.linalg.norm(w_body)))
         if guard["stop"] is not None:  # walk_wired wrote stand (monitor out of a sit or crouch) to the control file
             want = {"mode": guard["stop_to"]}
+        if replay is not None and not args.wired_hold:  # walk_wired.py smooths every file command (CMD_ALPHA)
+            if want.get("mode") == "walk":
+                for k, key in enumerate(("vx", "vy", "vtheta")):
+                    cmd_s[k] += CMD_ALPHA * (float(want.get(key, 0)) - cmd_s[k])
+                    cmd_s[k] = 0.0 if abs(cmd_s[k]) < 1e-4 else cmd_s[k]
+                want = dict(want, vx=cmd_s[0], vy=cmd_s[1], vtheta=cmd_s[2])
+            else:
+                cmd_s = [0.0, 0.0, 0.0]
         if args.wired_hold:  # walk_wired.py's order: grip stop on the file command, then the smoothing, then the gate
             if grip_stop.update(want, args.hold and not args.hold_uncal, est.e) == "stop" and grip_stop_at is None:
                 grip_stop_at = round(t, 2)
@@ -1648,6 +1667,10 @@ def main():
     ap.add_argument("--gp-at", type=float, default=None, help="s; switch stand61 to groundpick (Pollen alpha_ground_pick) here")
     ap.add_argument("--gp-phase", type=float, default=0.4, help="phase to descend to and hold (0.375..0.425 is the lowest)")
     ap.add_argument("--gp-hold-s", type=float, default=2.0, help="s to hold the low pose before the rise")
+    ap.add_argument("--cmd-replay", default=None,
+                    help="JSON [[s, cmd], ...]: from --walk-at on, the commands a robot run wrote to the control file "
+                         "(walk/stand modes, velocities, head), smoothed by CMD_ALPHA as walk_wired.py does; "
+                         "replaces --vx/--vtheta schedules (scorecard-20261109/scorecard.py)")
     ap.add_argument("--dance", default=None, help="dance.json: head and in-place turn steps from --walk-at on (shoot.py sing)")
     ap.add_argument("--head-yaw", type=float, default=0.0, help="rad; head pose command in walk mode from --walk-at on")
     ap.add_argument("--head-pitch", type=float, default=None, help="rad; absolute head_pitch target with --head-yaw")
