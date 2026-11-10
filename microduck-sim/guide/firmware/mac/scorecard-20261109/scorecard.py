@@ -24,6 +24,7 @@ import math
 import os
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAC = os.path.dirname(HERE)
@@ -208,14 +209,108 @@ def report():
     print("\n".join(lines))
 
 
+AUTO_MAX_S = 30.0  # a replay covers at most this much of an action (the last 30 s before a fall)
+# Mass model by the date of the run (the body the robot carried; the sim has no per-run record of it)
+MODEL_BY_DATE = [("2026-11-02", "battery-20261104"), ("0000-00-00", None)]
+
+
+def manifest_for(day):
+    for d, name in MODEL_BY_DATE:
+        if day >= d:
+            return name
+    return None
+
+
+def auto(episodes_path, data, n_jobs):
+    """Replay every replayable action of the run ledger not replayed yet (run_ledger.py tick calls this), then write
+    data/scorecard-auto.json: per action the robot's outcome and the sim's, and match rates by kind and by day.
+    Only falls count here (both sides receive the robot's own guard stops as commands)."""
+    out_dir = os.path.join(data, "scorecard-auto")
+    os.makedirs(out_dir, exist_ok=True)
+    eps = [json.loads(l) for l in open(episodes_path) if l.strip()]
+    jobs, plans = [], {}
+    for e in eps:
+        if not e.get("replayable"):
+            continue
+        rows = rows_of(os.path.join(data, e["trajectory"]))
+        if not rows:
+            continue
+        t0, t1 = e["t_start"], e["t_end"] + 1.0
+        if e["outcome"] == "fell":
+            fall = next((r["t"] for r in rows if r.get("gb") and r["t"] >= t0 and tilt_deg(r["gb"]) > FALL_DEG), t1)
+            t0, t1 = max(t0, fall - AUTO_MAX_S), fall + 1.0
+        else:
+            t1 = min(t1, t0 + AUTO_MAX_S)
+        replay = replay_of(rows, t0, t1)
+        if not replay:
+            continue
+        volt, drop = condition_of(rows, t0, t1, {})
+        stand_s = WALK_AT if replay[0][1].get("mode") == "stand" else STAND_S
+        args = ["--model", "asbuilt", "--volt", str(volt or 7.4), "--drop", str(drop), "--stand-s", str(stand_s),
+                "--walk-at", str(WALK_AT), "--until", str(round(WALK_AT + (t1 - t0) + 0.5, 2)), "--walk-s", "0"]
+        man = manifest_for(e["day"])
+        if man:
+            args += ["--manifest", os.path.join(MANIFESTS, man + ".json")]
+        rp = os.path.join(out_dir, f"{e['id']}.replay.json")
+        json.dump(replay, open(rp, "w"))
+        args += ["--cmd-replay", rp]
+        plans[e["id"]] = dict(e=e, rows=rows, t0=t0, t1=t1, model=man)
+        for seed in SEEDS:
+            tl = os.path.join(out_dir, f"{e['id']}.seed{seed}.ticks.jsonl")
+            if not (os.path.exists(tl) and os.path.getsize(tl)):
+                jobs.append({"case": e["id"], "seed": seed, "tick_log": tl,
+                             "argv": [SIM_PY, os.path.join(MAC, "brain_sim_check.py")] + args + ["--seed", str(seed), "--tick-log", tl]})
+
+    def one(job):
+        p = subprocess.run(job["argv"], capture_output=True, text=True, timeout=900)
+        with open(job["tick_log"] + ".out", "w") as f:
+            f.write(f"exit {p.returncode}\n{p.stdout.strip()[-2000:]}\n--- stderr tail\n{p.stderr[-3000:]}")
+        return p.returncode
+
+    if jobs:
+        with concurrent.futures.ThreadPoolExecutor(n_jobs) as ex:
+            list(ex.map(one, jobs))
+    results = []
+    for cid, pl in plans.items():
+        real = metrics(pl["rows"], pl["t0"], pl["t1"], True)
+        sims = []
+        for seed in SEEDS:
+            tl = os.path.join(out_dir, f"{cid}.seed{seed}.ticks.jsonl")
+            if os.path.exists(tl) and os.path.getsize(tl):
+                sims.append(metrics(rows_of(tl), WALK_AT, WALK_AT + pl["t1"] - pl["t0"], True))
+        if not sims:
+            continue
+        votes = collections.Counter(s["outcome"] for s in sims)
+        so = votes.most_common(1)[0][0]
+        results.append(dict(id=cid, kind=pl["e"]["kind"], day=pl["e"]["day"], model=pl["model"],
+                            robot=real["outcome"], sim=so, sim_votes=dict(votes), match=so == real["outcome"],
+                            robot_max_tilt=real["max_tilt_deg"], sim_max_tilt=[s["max_tilt_deg"] for s in sims],
+                            robot_jitter=real["jitter"], sim_jitter=[s["jitter"] for s in sims]))
+    falls = [r for r in results if r["robot"] == "fell"]
+    summ = (f"{sum(r['match'] for r in results)}/{len(results)} actions match (fall or not); robot falls predicted "
+            f"{sum(r['match'] for r in falls)}/{len(falls)}") if results else "no replays yet"
+    by_kind = {k: f"{sum(r['match'] for r in rs)}/{len(rs)}" for k, rs in
+               collections.defaultdict(list, {k: [r for r in results if r['kind'] == k] for k in {r['kind'] for r in results}}).items()}
+    by_day = {d: f"{sum(r['match'] for r in results if r['day'] == d)}/{sum(1 for r in results if r['day'] == d)}"
+              for d in sorted({r["day"] for r in results})}
+    json.dump(dict(summary=summ, by_kind=by_kind, by_day=by_day, results=results, model_by_date=MODEL_BY_DATE,
+                   written=time.strftime("%Y-%m-%d %H:%M:%S")),
+              open(os.path.join(data, "scorecard-auto.json"), "w"), indent=1, ensure_ascii=False)
+    print(f"{len(jobs)} new sims; {summ}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("step", choices=("prepare", "run", "report"))
+    ap.add_argument("step", choices=("prepare", "run", "report", "auto"))
     ap.add_argument("--jobs", type=int, default=4)
+    ap.add_argument("--episodes", default=os.path.expanduser("~/duck-walks/episodes.jsonl"))
+    ap.add_argument("--data", default=os.path.expanduser("~/duck-walks"))
     a = ap.parse_args()
     if a.step == "prepare":
         prepare()
     elif a.step == "run":
         run(a.jobs)
+    elif a.step == "auto":
+        auto(a.episodes, a.data, a.jobs)
     else:
         report()

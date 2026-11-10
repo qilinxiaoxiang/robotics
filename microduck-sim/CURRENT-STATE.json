@@ -7,11 +7,18 @@
   "imu_rate_hz": {
    "value": 50,
    "meaning": "IMU samples reaching the 50 Hz policy loop per second while walking: full rate, every tick fresh.",
-   "verified_at": "2026-10-18",
-   "source": "2026-10-18 A7Z head board (J12 UART2 500 kbaud): walk-mode status lines of runs 1018a/b/d (/tmp/duck_wired_1018{a,b,d}.out, archived in guide/firmware/mac/robot-runs-20261018), median 51/s, none below 38/s",
+   "verified_at": "2026-11-06",
+   "source": "nine A7Z brain logs 2026-11-02..11-06 (app1102-010842 .. app1106-154805, copied by the run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html)): share of stand/walk ticks whose IMU frame number (imu_seq) changed 0.997-1.000; the head board sends about 190 frames/s. The brain loop itself ran 46.4-48.8 ticks/s (20.5-21.6 ms per tick, not 20.0); stdout status lines were not captured for these app-started runs. Earlier: 2026-10-18 runs 1018a/b/d, median 51/s",
    "measure": "the probe reads the newest run's stdout (/tmp/duck_wired_<suffix>.out next to /tmp/duck_wired_log_<suffix>.jsonl): median of torque-on 'imu N/s' lines; at most max_low_share of lines may sit more than two tolerances below (the 10/16 brownout run 1016k had 46 %)",
    "tolerance": 6,
    "superseded": [
+    {
+     "value": 50,
+     "until": "2026-11-06",
+     "verified_at": "2026-10-18",
+     "source": "2026-10-18 A7Z head board (J12 UART2 500 kbaud): walk-mode status lines of runs 1018a/b/d (/tmp/duck_wired_1018{a,b,d}.out, archived in guide/firmware/mac/robot-runs-20261018), median 51/s, none below 38/s",
+     "why": "re-verified on the battery runs; same value"
+    },
     {
      "value": "31-39 samples/s",
      "until": "2026-10-16",
@@ -22,7 +29,8 @@
    "probe": "~/.venvs/microduck-dyn/bin/python guide/firmware/mac/robot_state_check.py --probe imu_rate_hz",
    "consumers": [
     "microduck_rl/modal/sim_suite.sh via robot_state_check.py --print-sim-args (--imu-hz)"
-   ]
+   ],
+   "loop_tick_hz": "46.4-48.8 (loop period 20.5-21.6 ms; the sim steps exactly 50 Hz)"
   },
   "imu_added_delay_ms": {
    "value": 0,
@@ -35,13 +43,20 @@
    ]
   },
   "servo_read_drop_fraction": {
-   "value": 0.17,
+   "value": 0.036,
    "meaning": "Fraction of 20 ms walk-mode ticks without a fresh servo sync read while the legs step (the policy skips those ticks and the servos hold the last goals).",
-   "verified_at": "2026-10-31",
-   "source": "2026-10-31 A7Z brain logs (slices /tmp/t1-robot/163444.jsonl, 163517.jsonl on the Mac): walk 1 16:34:36 17 % stale reads, walk 2 16:35:17 78 % (most after the fall began); standing afterwards 12-22 % (walk61 brain at 16:37 included). Mostly whole frames (all 14 servos missing at once); sync read p50 18.4 ms instead of 9.3, max 48-75 ms; the brain's own compute per tick 6-7 ms, unchanged. Before: 10/30 21:24-21:26 walks 0-3 %, read p50 9.3 ms, and 10/31 16:31-16:33:20 on the battery 0-3.6 %. Onset 16:33:30 EDT, the second the head touch bus (TWI0 2510000.twi, XIAO 0x2a) locked up: about 100 kernel error lines per s from then on (b0052 kmsg), IMU 193 -> 75 samples/s, whole-frame servo misses whose replies never arrive (lost, not late). The same touch fault happened on 10/30 about 21:29 on the bench supply. Likely path (inference): the error flood printed to the 115200 serial console at console loglevel 4 plus the touch driver's busy-waits delays interrupts, and the DMA-less servo UART ttyAS2 drops bytes. A fault state, not a steady value: a fresh boot reads at the old rate until the touch bus locks up again. After the battery-swap boot (b0053, 16:58): 0 % stale in 500 standing ticks at 17:13, read p50 9.4 ms, 47.5 Hz, touch bus not jammed. Fixes deployed 17:12 (cc0593d7: parser length and CRC checks, touch back-off, console loglevel 1, supply auto); they load at the next brain start. Controlled check 17:20 (b0053): the touch bus jammed again at about 17:20 (about 145 kernel error lines per s, worse than 16:33) with console loglevel 1 live and the OLD brain code still running; standing in walk mode at zero command it read 47.2-47.5 Hz, 3 of 1500 ticks missing, IMU 182-196 samples/s. So the console printing was the starving path; stepping ticks under a jam are not measured yet.",
+   "verified_at": "2026-11-06",
+   "source": "robot_state_check.py --probe servo_read_drop_fraction on the five newest A7Z brain logs (copied by the run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html)): app1102-141013 0.0355 (1184 legs-moving ticks), app1104-111127 0.0353 (2434), app1106-135049 0.0372 (6499), app1106-140057 0.0425 (2233), app1106-140704 0.0328 (2470); median 0.036",
    "measure": "the probe reads the newest /tmp/duck_wired_log_*.jsonl: walk-mode ticks within 0.3 s of a tick whose leg joints move faster than 0.5 rad/s, counting fresh=False or missing servos",
    "tolerance": 0.02,
    "superseded": [
+    {
+     "value": 0.17,
+     "until": "2026-11-06",
+     "verified_at": "2026-10-31",
+     "source": "2026-10-31 A7Z brain logs (slices /tmp/t1-robot/163444.jsonl, 163517.jsonl on the Mac): walk 1 16:34:36 17 % stale reads, walk 2 16:35:17 78 % (most after the fall began); standing afterwards 12-22 % (walk61 brain at 16:37 included). Mostly whole frames (all 14 servos missing at once); sync read p50 18.4 ms instead of 9.3, max 48-75 ms; the brain's own compute per tick 6-7 ms, unchanged. Before: 10/30 21:24-21:26 walks 0-3 %, read p50 9.3 ms, and 10/31 16:31-16:33:20 on the battery 0-3.6 %. Onset 16:33:30 EDT, the second the head touch bus (TWI0 2510000.twi, XIAO 0x2a) locked up: about 100 kernel error lines per s from then on (b0052 kmsg), IMU 193 -> 75 samples/s, whole-frame servo misses whose replies never arrive (lost, not late). The same touch fault happened on 10/30 about 21:29 on the bench supply. Likely path (inference): the error flood printed to the 115200 serial console at console loglevel 4 plus the touch driver's busy-waits delays interrupts, and the DMA-less servo UART ttyAS2 drops bytes. A fault state, not a steady value: a fresh boot reads at the old rate until the touch bus locks up again. After the battery-swap boot (b0053, 16:58): 0 % stale in 500 standing ticks at 17:13, read p50 9.4 ms, 47.5 Hz, touch bus not jammed. Fixes deployed 17:12 (cc0593d7: parser length and CRC checks, touch back-off, console loglevel 1, supply auto); they load at the next brain start. Controlled check 17:20 (b0053): the touch bus jammed again at about 17:20 (about 145 kernel error lines per s, worse than 16:33) with console loglevel 1 live and the OLD brain code still running; standing in walk mode at zero command it read 47.2-47.5 Hz, 3 of 1500 ticks missing, IMU 182-196 samples/s. So the console printing was the starving path; stepping ticks under a jam are not measured yet.",
+     "why": "the 10/31 17 % was the touch-bus (TWI0) jam; the 11/02-11/06 battery runs read 3.3-4.3 %"
+    },
     {
      "value": 0.04,
      "until": "2026-10-31",
@@ -188,13 +203,20 @@
    "sources_in_use": "Battery backpack per Shawn 2026-11-03. Charger backpack remains an alternative; neither its earlier bench setting nor older battery rail measurements prove the present runtime configuration."
   },
   "servo_rail_v": {
-   "value": 7.0,
+   "value": 7.6,
    "meaning": "Servo supply voltage while walking; sim_suite.sh passes it to brain_sim_check.py as --volt for the real cases (the sim holds the supply constant).",
-   "no_load_v": 7.32,
-   "verified_at": "2026-10-16",
-   "source": "memory microduck-walk-1016-state, 10/16 afternoon walk 4: XL4015 #1 current-limit trimmer at its end, no-load 7.32 V, rail min 7.0 V while walking (1 Hz servo voltage samples)",
-   "measure": "walk_wired --supply auto or battery logs the servo-reported supply (bench runs do not); not re-measured by the check (age-limited by max_age_days)",
+   "no_load_v": null,
+   "verified_at": "2026-11-06",
+   "source": "servo-reported supply (battery_dv) over the 67 walk and 35 turn actions of 2026-11-02, 11-04 and 11-06 in the run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html): median 7.6 V per day (7.5, 7.8, 7.6), lowest action 7.2 V, highest 8.2 V (fresh pack); 2S Tattu 650 mAh battery backpack",
+   "measure": "median of battery_dv in walk/turn actions of the newest run-ledger episodes (walk_wired --supply battery logs it every tick)",
    "superseded": [
+    {
+     "value": 7.0,
+     "until": "2026-11-06",
+     "verified_at": "2026-10-16",
+     "source": "memory microduck-walk-1016-state, 10/16 afternoon walk 4: XL4015 #1 current-limit trimmer at its end, no-load 7.32 V, rail min 7.0 V while walking (1 Hz servo voltage samples)",
+     "why": "the 10/16 value was the XL4015 bench rail; since 11/02 the robot walks on the 2S battery backpack"
+    },
     {
      "value": 7.4,
      "until": "2026-10-16",
@@ -464,7 +486,13 @@
     "usb_a_to_c_adapter": {
      "part": "USB-A female to USB-C male adapter, straight, silver (Shawn's own; shape from photo IMG_7277, 2026-11-02)",
      "status": "replaced at the A7Z port (Shawn 2026-11-09: \"是usb头松脱 现在换了转接头 下面也垫了东西\"): the camera's USB plug at the A7Z worked loose and dropped the camera (FAULTS.json head-camera-usb-drop, cause confirmed); a new adapter is fitted with packing underneath. Which adapter (the rgzhihuifz side-bend B097FY9CB9 ordered 2026-11-02 or another) was not named",
-     "superseded": [{"value": "in hand and in use: camera lead's USB-A plug into this adapter into the A7Z rear port, a straight rigid stack about 80 mm long estimated from the photo, running above the battery hatch (Shawn 2026-11-02: 挡换电池, 线跑一跑会松)", "until": "2026-11-09", "why": "Shawn replaced the adapter after the plug worked loose"}],
+     "superseded": [
+      {
+       "value": "in hand and in use: camera lead's USB-A plug into this adapter into the A7Z rear port, a straight rigid stack about 80 mm long estimated from the photo, running above the battery hatch (Shawn 2026-11-02: 挡换电池, 线跑一跑会松)",
+       "until": "2026-11-09",
+       "why": "Shawn replaced the adapter after the plug worked loose"
+      }
+     ],
      "note": "Shawn's plan 2026-10-26: keep the camera cable's factory plugs at both ends and cut out a middle section, one splice, USB-A plug into this adapter into the A7Z. Not yet a design decision: D-023/D-028 route the cable with the USB-A plug cut off and a right-angle pigtail along the saddle rear wall"
     },
     "raspberry_pi_zero_2w": {
@@ -530,15 +558,24 @@
    ]
   },
   "walking_stability": {
-   "value": "stable: walks without falls (Shawn 2026-10-26: 走路现在挺稳的 没有任何问题了已经). The 10/16-10/18 falls (ft3 candidates, walk61 approach run drifting left) are history, not the current condition",
+   "value": "stable: of 67 walk actions on 2026-11-02/04/06, 65 ended upright; 35 of 35 turns upright. The two misses are the first two walks of the 11/06 13:59 run (one fall 2 s in, one guard stop 1 s in at vx 0.25). Standing (walk policy at zero command): 29/29 on 11/02, 17/20 on 11/04, 45/49 on 11/06; every stand fall or guard stop sits in three short clusters (11/04 10:53 and 11:09, 11/06 13:43 and 13:59), each at the start of a session",
    "meaning": "Whether walking is a current blocker. It is not; do not cite old fall records as a present gap",
-   "verified_at": "2026-10-26",
-   "source": "Shawn's report 2026-10-26 in chat; he says he stated this earlier too. No logged run on file since the 10/24 approach runs",
+   "verified_at": "2026-11-06",
+   "source": "run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html): every action cut from the A7Z brain logs, outcome from tilt, guard stops and mode switches; Shawn 2026-11-09 via the strategy session: 现在基本都能站稳",
    "max_age_days": 30,
-   "measure": "the newest walk_wired / approach.py logs under guide/firmware/mac: a walk that ends in a fall would supersede this",
+   "measure": "run_ledger.py outcomes for walk, turn and balance actions in the newest days (the page shows the per-day success rate)",
    "consumers": [
     "pet-robot planning",
     "any session listing MicroDuck gaps"
+   ],
+   "superseded": [
+    {
+     "value": "stable: walks without falls (Shawn 2026-10-26: 走路现在挺稳的 没有任何问题了已经). The 10/16-10/18 falls (ft3 candidates, walk61 approach run drifting left) are history, not the current condition",
+     "until": "2026-11-06",
+     "verified_at": "2026-10-26",
+     "source": "Shawn's report 2026-10-26 in chat; he says he stated this earlier too. No logged run on file since the 10/24 approach runs",
+     "why": "replaced by logged runs"
+    }
    ]
   },
   "getup": {
@@ -568,7 +605,8 @@
    "consumers": [
     "pet robot body competence",
     "robot trial of the get-up"
-   ]
+   ],
+   "note_20261110": "No get-up attempt on the robot since 2026-10-30: the run ledger (all brain logs 11/02-11/06) holds no getup action, so the 10/30 result above is still the current one."
   },
   "open_loop_stand_pose": {
    "value": "pi/stand_pose.py STAND_POSE = NEUTRAL with neck_pitch 0.25 rad (D-030), stand KP 400; on the A7Z since 2026-10-26 20:25 (sha256 matches the repository); not yet stood on the robot",

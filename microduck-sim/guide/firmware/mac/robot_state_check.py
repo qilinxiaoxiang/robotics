@@ -28,7 +28,8 @@ CHECKER = os.path.expanduser("~/code/claude-config/scripts/state_check.py")
 
 
 def imu_rates(out_path):
-    return [int(m.group(1)) for line in open(out_path, errors="replace") if "torque True" in line
+    return [int(m.group(1)) for line in open(out_path, errors="replace")
+            if ("torque True" in line or "goals sent True" in line)  # status text before / after 2026-11-10
             and line.split(" ", 1)[0] in ("walk", "groundpick")
             for m in [re.search(r"imu\s+(\d+)/s", line)] if m]
 

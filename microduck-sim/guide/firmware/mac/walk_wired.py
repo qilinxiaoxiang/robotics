@@ -746,6 +746,33 @@ class StandLeash:
         return out
 
 
+def write_run_meta(args):
+    """One JSON line per brain start in <log>.meta.jsonl beside the tick log: code and policy file hashes, the
+    arguments and the gains, so run_ledger.py can say which version produced each action. The tick rows are
+    unchanged. Never stops the brain: any failure is printed and skipped."""
+    import hashlib
+    try:
+        def sha(path):
+            with open(path, "rb") as f:
+                return hashlib.sha256(f.read()).hexdigest()[:16]
+        import walk_brain as _wb
+        code = {os.path.basename(p): sha(p) for p in
+                [os.path.abspath(__file__), _wb.__file__] + [os.path.join(HERE, n) for n in ("hold.py", "jaw_ctl.py")]
+                if p and os.path.exists(p)}
+        models = {n: sha(os.path.join(args.models, n)) for n in sorted(os.listdir(args.models)) if n.endswith(".onnx")}
+        meta = dict(t=round(time.time(), 3), when=time.strftime("%Y-%m-%d %H:%M:%S"), host=os.uname().nodename,
+                    log=os.path.abspath(args.log), argv=sys.argv[1:], models_dir=os.path.abspath(args.models),
+                    code_sha=code, model_sha=models, kp_rl=_wb.KP_RL, kp_stand=_wb.KP_DEFAULT,
+                    max_action=args.max_action, max_walk_action=args.max_walk_action, max_tilt=args.max_tilt,
+                    supply=args.supply)
+        path = (args.log[:-6] if args.log.endswith(".jsonl") else args.log) + ".meta.jsonl"
+        with open(path, "a") as f:
+            f.write(json.dumps(meta) + "\n")
+        print(f"run meta -> {path}", flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"run meta not written: {e!r}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", default=None, help="default: the only /dev/cu.usbmodem* (Mac) or /dev/ttyACM* (A7Z)")
@@ -814,6 +841,7 @@ def main():
     link.alert_ok = guard is None or guard.armed
     print(lock_memory(), flush=True)
     log = LogWriter(open(args.log, "a"))
+    write_run_meta(args)
 
     def _sync_log():  # a brownout loses only what is not on the card: fsync every 50 ms, off the control thread
         pause = threading.Event()  # a wall-clock wait, never the loop's (simulated) clock
@@ -1323,9 +1351,12 @@ def main():
             with link.lock:
                 imu_hz, link.imu_count = link.imu_count / (now - t_stat), 0
             gb = info["gb"]
+            # before the first IMU sample the quaternion is the identity placeholder, which the mount rotation turns
+            # into body g [0, -1, 0] (a robot on its side): never print it as a pose (2026-10-30, read as "side-lying")
+            g_txt = f"[{gb[0]:+.2f} {gb[1]:+.2f} {gb[2]:+.2f}]" if imu_valid else "[no IMU sample yet]"
             print(f"{brain.mode:<7} {n / (now - t_stat):4.1f} Hz loop {loop_ms:4.1f} ms misses {misses} imu "
                   f"{imu_hz:4.0f}/s age {imu_age * 1000:4.1f} ms joint age {joint_age * 1000:4.1f} ms | body g "
-                  f"[{gb[0]:+.2f} {gb[1]:+.2f} {gb[2]:+.2f}] torque {torque_on}"
+                  f"{g_txt} goals sent {torque_on}"
                   + (f" | gp phase {info['gp_phase']:.2f}" if info.get("gp_phase") is not None else "")
                   + (f" | jaw {jaw.opening_deg():.1f} deg -> {jaw.goal_deg}{' HOLDING' if jaw.holding() else ''}"
                      f"{' clamp ' + ','.join(jaw.clamps) if jaw.clamps else ''}" if jaw.on and jaw.opening_deg() is not None else "")
