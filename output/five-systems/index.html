@@ -405,7 +405,7 @@ footer{padding-block:40px 64px;color:var(--muted);font-size:13px;line-height:1.7
   <div class="head"><p class="eyebrow">拼好之后</p><h2>先在仿真里学会走，再到真机上走</h2><p>这一步叫 Sim to Real。仿真里用机器学习反复试错几百万次，摔了也不心疼；跑稳了，再把学到的“小脑”装进真鸭子。</p></div>
   <div class="pair">
     <figure class="cover"><img src="media/sim.jpg" alt="仿真软件里的 MicroDuck 数字模型" loading="lazy"><figcaption>仿真里的 MicroDuck</figcaption></figure>
-    <figure><video src="media/hero-walk.mp4" controls muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-label="真实的 MicroDuck 走路"></video><figcaption>真机走路</figcaption></figure>
+    <figure><video data-same-as-hero controls muted loop playsinline preload="metadata" poster="media/hero.jpg" aria-label="真实的 MicroDuck 走路"></video><figcaption>真机走路</figcaption></figure>
   </div>
   <p class="note" style="margin-top:22px"><b>所以外观改动也会影响训练：</b>仿真模型要和真机一样重、一样的形状、脚底一样的摩擦。改了外壳，仿真模型也要跟着改，否则仿真里能走，真机上会摔。</p>
 </div></section>
@@ -417,6 +417,8 @@ footer{padding-block:40px 64px;color:var(--muted);font-size:13px;line-height:1.7
 
 <script>
 (()=>{
+// the sim chapter replays the hero clip; reuse its source instead of shipping it twice
+document.querySelectorAll('video[data-same-as-hero]').forEach(v=>{v.src=document.querySelector('.hero video').src});
 // lazy embeds
 document.querySelectorAll('.embed').forEach(e=>{
   const b=e.querySelector('.btn');
