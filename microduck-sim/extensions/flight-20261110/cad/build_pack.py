@@ -49,8 +49,34 @@ FCB_SCREWS = [(-48.0, 21.75), (-64.0, 21.75), (-48.5, 55.75), (-63.5, 55.75)]
 FC_CENTRE = (-56.0, 40.0)                                            # 30.5 pattern centre (y, z)
 FC_BOSS = 4.0                                                        # M3 standoff bosses behind the plate
 FCB_WINDOW_Z = (25.5, 37.0)                                          # 2.5 mm above the lower plate screws' holes
-CAP_SLOTS_Y = (-58.0, -76.0)                                         # capacitor y -79..-54 on the arm's outer half (head reach ends near y -47)
-CAP_Y0 = -79.0
+# ESC input capacitor (12.5 x 20 mm, keep-out d 13 x 25 with the leg roots) lies along x on the right top flange with its
+# legs toward the ESC battery tabs (x -80, y -60.6 / -51.5, z 60.6; wiring/wiring.json esc_tabs_world), so its own legs
+# reach the tabs (about 8.5 mm end face to tab). Body x -50.6..-75.6, y -62.5..-49.5 (outboard of the head reach near
+# y -47), resting on the flange (x -64..-50.2) and the FC plate top edge (x -67..-64). One zip tie through two flange
+# slots at x -55.5..-52.5 (the upper FC bosses fill x -64..-56); the soldered legs hold the far end.
+CAP_AXIS = dict(x0=-50.6, y=-56.0)
+CAP_SLOTS = [(-66.0, -62.5), (-49.5, -46.0)]                         # (y0, y1) of the two tie slots
+CAP_SLOT_X = (-55.5, -52.5)
+# Stack spacing (x, rear = -x). Sources: MicoAir 55A ESC dimension drawing (wiring/sources/micoair-55a-esc-dimensions.png:
+# 6 mm overall, side-entry SH1.0-8P socket on the board edge) and the MicoAir743v2 manual ("36 x 36 x 8 mm"). The maker
+# publishes no spacer length. ESC component side rearward (wiring.json notes_for_cad): ESC PCB 1.6 + parts 4.4; an 8 mm
+# ESC-to-FC spacer leaves 8 - 4.4 = 3.6 mm for the FC's underside parts (assumed <= 2 mm of its 8 mm) and the
+# side-entry plug clears the board gap edge-on.
+STACK = dict(esc_pcb=1.6, esc_h=6.0, spacer=8.0, fc_pcb=1.6, fc_h=8.0, fc_under=2.0, grommet=1.0)
+# A7Z-to-FC lead centreline (guide frame). Header pin pair k sits at y = 24.13 - 2.54 (k - 1) (pin 1 at robot left):
+# pins 14/16/18 = pairs 7/8/9 at y 8.89 / 6.35 / 3.81. Ends on the UART1 plug on the FC top edge (z 58 + 6 mm plug).
+A7Z_LINK = [(-15.2, 6.35, 67.0), (-15.2, -33.4, 68.0), (-46.8, -33.4, 68.0), (-48.8, -35.0, 64.0),
+            (-84.0, -35.0, 64.0), (-88.6, -56.0, 65.0)]
+
+
+def tube_path(r, pts):
+    """Round-cornered tube along a polyline (keep-out of a flexible lead)."""
+    out = []
+    for a, b in zip(pts[:-1], pts[1:]):
+        d = np.subtract(b, a)
+        out.append(L.cyl(r, a, tuple(d), float(np.linalg.norm(d))))
+    out += [m3.Manifold.sphere(r, 24).translate(p) for p in pts]
+    return out
 MTF_C = (-86.0, -59.0)                                               # MTF-01 centre (x, y): behind the leg sweep at x > -70
 SHELF_Z = (13.5, 17.5)
 
@@ -121,8 +147,8 @@ def wing_plate():
     for j, (yb, zb_) in enumerate(FCB_SCREWS):
         cuts.append(L.cyl(PIL_V / 2, (W["arm_x_rear"] - 1, yb, zb_), X_AX, 9.01))
         fit_pilot(f"wing-fcb-{j}", "wing_plate", X_AX, PIL_V, None, FCB_T, "through", 8 - FCB_T)
-    for yc in CAP_SLOTS_Y:            # zip-tie slots around the ESC input capacitor lying on the right top flange
-        cuts.append(L.box((-58.5, yc - 1.75, zt - W["flange_t"] - 1), (-55.5, yc + 1.75, zt + 1)))
+    for (ya, yb_) in CAP_SLOTS:       # zip-tie slots around the ESC input capacitor lying on the right top flange
+        cuts.append(L.box((CAP_SLOT_X[0], ya, zt - W["flange_t"] - 1), (CAP_SLOT_X[1], yb_, zt + 1)))
     w = w - L.union(cuts)
     named = dict(centre=centre)
     return w, named
@@ -252,6 +278,12 @@ def fc_bracket():
                          teardrop=None, at_bed=False, chamfer=0.0, engagement=FC_BOSS + FCB_T, depth="through", clamped=0.0))
         screw(f"fc-standoff-{j}", "M3 x 6 male-female nylon standoff (male end into the pilot)", "FC/ESC stack to the FC bracket",
               (x0 - FC_BOSS, y, z), (1, 0, 0), 0.0, "stack")
+        xe = x0 - FC_BOSS - 6.0 - STACK["esc_pcb"]          # ESC rear PCB face
+        screw(f"esc-fc-spacer-{j}", f"M3 x {STACK['spacer']:.0f} male-female nylon spacer (male end through the ESC into the standoff)",
+              "ESC clamped between the plate standoff and this spacer; carries the FC", (xe, y, z), (1, 0, 0), STACK["esc_pcb"], "stack")
+        xf = xe - STACK["spacer"] - STACK["fc_pcb"] - STACK["grommet"]   # head seat on the FC grommet
+        screw(f"fc-screw-{j}", "M3 x 8 nylon screw into the spacer's female end (the spacer chain ends female, so a nut has no thread to sit on)",
+              "FC on the ESC-to-FC spacer", (xf, y, z), (1, 0, 0), STACK["fc_pcb"] + STACK["grommet"], "stack")
     mx, my = MTF_C
     for j, (a, bb) in enumerate(((-1, -1), (-1, 1), (1, -1), (1, 1))):
         p = (mx + a * MTF01["holes"][0] / 2, my + bb * MTF01["holes"][1] / 2)
@@ -283,11 +315,23 @@ def dummies():
         D[f"battery_leads_{nm}"] = L.box((W["x_back"] - 4.0, wy0, lw["z"][0] + 0.5), (bx + 0.01, wy1, lw["z"][1] - 0.5))
     x0 = FCB_X[0] - FC_BOSS
     yc, zc = FC_CENTRE
-    esc = L.box((x0 - 6.0 - 6.0, yc - 20.5, zc - 20.5), (x0 - 6.0, yc + 20.5, zc + 20.5))
-    fc = L.box((x0 - 12.0 - 5.0 - 8.0, yc - 18.0, zc - 18.0), (x0 - 12.0 - 5.0, yc + 18.0, zc + 18.0))
-    plugs = L.box((x0 - 12.0 - 5.0 - 8.0, yc - 18.0 - 10.0, zc - 18.0), (x0 - 12.0 - 5.0, yc - 18.0, zc + 18.0))   # JST-SH plugs, outboard edge
-    D["fc_esc_stack"] = esc + fc + plugs
-    D["esc_capacitor"] = L.cyl(Pm.CAP["d"] / 2, (-57.0, CAP_Y0, W["arm_z"][1] + Pm.CAP["d"] / 2), Y_AX, Pm.CAP["h"])
+    st = STACK
+    xe0 = x0 - 6.0                                     # ESC front PCB face on the 6 mm plate standoffs
+    xe1 = xe0 - st["esc_h"]
+    xf0 = xe0 - st["esc_pcb"] - st["spacer"] + st["fc_under"]     # FC envelope front (underside parts)
+    xf1 = xf0 - st["fc_h"]
+    esc = L.box((xe1, yc - 20.5, zc - 20.5), (xe0, yc + 20.5, zc + 20.5))
+    fc = L.box((xf1, yc - 18.0, zc - 18.0), (xf0, yc + 18.0, zc + 18.0))
+    plugs = L.box((xf1, yc - 18.0 - 10.0, zc - 18.0), (xf0, yc - 18.0, zc + 18.0))   # UART4 SH plug + MTF lead, outboard edge
+    uart1 = L.box((xf1, yc - 5.0, zc + 18.0 - 0.01), (xf0, yc + 5.0, zc + 18.0 + 6.0))  # UART1 SH plug on the top edge
+    D["fc_esc_stack"] = esc + fc + plugs + uart1
+    D["esc_capacitor"] = L.cyl(Pm.CAP["d"] / 2, (CAP_AXIS["x0"], CAP_AXIS["y"], W["arm_z"][1] + Pm.CAP["d"] / 2), (-1, 0, 0), Pm.CAP["h"])
+    # A7Z-to-FC lead (A7Z header pins 14 GND, 16 UART4 TX, 18 RX -> FC UART1; SH1.0 to Dupont, 3 wires, bundle d 3).
+    # Dupont housings on the edge row (world sd_dupont_housings models housings on all 40 pins: x -17.7..-12.7, z to
+    # 64.1); wires leave the housing tops, run along the header strip (not over the 6530B fan intake) to the right saddle
+    # side wall, along its top edge rearward, drop outboard of the saddle rear window (|y| < 30), run behind the right
+    # transition column inboard of the arm flange (y -35) to the stack, and end in the UART1 plug on the FC top edge.
+    D["a7z_link"] = L.union([L.box((-17.7, 2.5, 64.1 - 0.01), (-12.7, 10.2, 68.0))] + tube_path(1.5, A7Z_LINK))
     mx, my = MTF_C
     sz = MTF01["size"]
     D["mtf01"] = L.box((mx - sz[0] / 2, my - sz[1] / 2, SHELF_Z[0] - sz[2]), (mx + sz[0] / 2, my + sz[1] / 2, SHELF_Z[0]))

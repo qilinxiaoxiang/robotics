@@ -37,6 +37,7 @@ SKIP = {   # world files that are not on the robot as built, with the reason
     "rear_frame": "retired V1.2x backpack", "rear_lid": "retired V1.2x backpack", "pd5991": "retired V1.2x backpack",
     "xl4015_left": "retired V1.2x backpack", "xl4015_right": "retired V1.2x backpack",
     "openrb-board": "retired flat OpenRB pose", "openrb_tray": "retired flat OpenRB pose",
+    "saddle_lid": "not fitted (CURRENT-STATE parts_a7z_extensions: V1.35 saddle, '盖没有盖')",
 }
 PROTECT = {"saddle_body": 1.5, "saddle_lid": 1.5, "battery_hatch": 1.0, "bp_plugs": 2.0, "bp_plug2": 2.0, "bp_switch": 2.0,
            "bp_swap_plugs": 2.0, "sd_usb_c_plug": 2.0, "camera_cable_stub": 2.0}
@@ -57,9 +58,16 @@ DESIGNED = {   # contacts by design (face contact or a bought part seated in its
     ("dummy:battery_leads_L", "dummy:battery_L"): "leads leave the pack end", ("dummy:battery_leads_R", "dummy:battery_R"): "leads leave the pack end",
     ("wing_plate", "bp_swap_plugs"): "unchanged: plugs 3 + 4 stand 0.8 in front of the x -45 face today (backpack front plate)",
     ("dummy:fc_esc_stack", "fc_bracket"): "on its standoffs", ("dummy:esc_capacitor", "wing_plate"): "lies on the top flange",
+    ("dummy:esc_capacitor", "fc_bracket"): "rests on the plate top edge",
+    ("dummy:a7z_link", "sd_dupont_housings"): "the lead's Dupont housings are on the header (world block covers all 40 pins)",
+    ("dummy:a7z_link", "saddle_body"): "lead lies on the right side wall top edge",
+    ("dummy:a7z_link", "dummy:fc_esc_stack"): "lead ends in the UART1 plug",
 }
 EXISTING = {   # world-part relations the wing plate inherits unchanged from today's backpack front plate at x -45
     ("wing_plate", "bp_swap_plugs"),
+}
+RESTING = {    # a flexible lead (3 x 28 AWG, about 3 g) lying unattached on a protected part: no tie, no load path through it
+    ("dummy:a7z_link", "saddle_body"),
 }
 
 
@@ -158,7 +166,7 @@ def main():
             r["designed"] = designed
             if r["min_gap_mm"] < 3.0 or (r["overlap_mm3"] or 0) > 0.01:
                 fit[a][b] = r
-                need = 0.0 if (a, b) in EXISTING else PROTECT.get(b, 0.0)
+                need = 0.0 if (a, b) in EXISTING or (a, b) in RESTING else PROTECT.get(b, 0.0)
                 bad = ((r["overlap_mm3"] or 0) > 0.05 and not designed) or (need and r["min_gap_mm"] < need) or \
                       (r["overlap_mm3"] is None and r["min_gap_mm"] < 0.3 and not designed)
                 if bad:

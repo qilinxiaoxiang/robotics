@@ -67,6 +67,9 @@ def main():
             lay["note"] = "superseded by v6 CAD"
     (H.parent / "pack_geometry.json").write_text(json.dumps(pg, indent=1))
 
+    ll = json.loads((H / "checks" / "lead_lengths.json").read_text())      # cad/lead_lengths.py
+    lead, wires = ll["leads"], ll["mass_g"]
+
     def fan_com(which, side):
         x, y, z = Pm.fan_point(which, 45.0, side)      # housing + motor: mass centre about 45 mm down the axis
         return [round(x, 1), round(y, 1), round(z + Z, 1)]
@@ -89,8 +92,11 @@ def main():
                dict(name="FC + 4in1 ESC stack + M3 standoffs/nuts", g=Pm.FC["mass_g"] + Pm.FC["hw_g"], pos=box_c("dummy_fc_esc_stack")),
                dict(name="ESC capacitor", g=6.0, pos=box_c("dummy_esc_capacitor")),
                dict(name="flow + range module", g=Pm.MTF01["mass_g"], pos=box_c("dummy_mtf01")),
-               dict(name="cross harness (left fans 6 x 16 AWG ~250/200 mm, left battery pair, bullets)", g=50.0, pos=box_c("dummy_cross_harness")),
-               dict(name="right leads, XT60s, capacitor leads", g=25.0, pos=[-70.0, -60.0, 150.0]),
+               dict(name=f"left leads (fan extensions {lead['fan FL']['extension_mm']}/{lead['fan RL']['extension_mm']} mm x 3 x 16 AWG, "
+                         f"battery pigtail {lead['battery L']['pigtail_mm']} mm 12 AWG + XT60, bullets; checks/lead_lengths.json)",
+                    g=wires["left"], pos=box_c("dummy_cross_harness")),
+               dict(name=f"right leads (fan extensions {lead['fan FR']['extension_mm']}/{lead['fan RR']['extension_mm']} mm, battery pigtail "
+                         f"{lead['battery R']['pigtail_mm']} mm + XT60, A7Z-to-FC lead)", g=wires["right"], pos=[-70.0, -60.0, 150.0]),
                dict(name="screws, straps, ties", g=20.0, pos=[-30.0, 0.0, 150.0])]
         return it
 
@@ -100,8 +106,9 @@ def main():
     mb["cases"]["v6 CAD, fans 80 g"] = items(80.0)
     mb["cases"]["v6 CAD, fans 113 g"] = items(113.0)
     mb["note_v6"] = (f"v6 cases: printed parts from {src}; fans 80 g at 45 mm down each axis; batteries 151 g (CNHL listing); "
-                     "stack 24 g + 6 g hardware; MTF-01 4.5 g; compass deleted (Shawn 2026-11-10); wiring 95 g estimated from the "
-                     "routed lengths (16 AWG ~15 g/m, 12 AWG pair ~36 g/m per lead, XT60 4 g, bullets).")
+                     "stack 24 g + 6 g hardware; MTF-01 4.5 g; compass deleted (Shawn 2026-11-10); wiring "
+                     f"{wires['left'] + wires['right']:.0f} g from the routed lengths in checks/lead_lengths.json (16 AWG 15 g/m, "
+                     "12 AWG 35 g/m per conductor, XT60 half 4 g, bullet 0.6 g, A7Z lead 3 g) plus 20 g screws, straps and ties.")
     (H.parent / "mass_budget.json").write_text(json.dumps(mb, indent=1))
     tot = sum(i["g"] for i in mb["cases"]["v6 CAD, fans 80 g"])
     print(f"layout written; v6 pack {tot:.0f} g (fans 80 g); printed parts {src}:", {k: grams[k] for k in sorted(grams)})

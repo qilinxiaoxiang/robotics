@@ -10,7 +10,8 @@
   "xl4015_left": "retired V1.2x backpack",
   "xl4015_right": "retired V1.2x backpack",
   "openrb-board": "retired flat OpenRB pose",
-  "openrb_tray": "retired flat OpenRB pose"
+  "openrb_tray": "retired flat OpenRB pose",
+  "saddle_lid": "not fitted (CURRENT-STATE parts_a7z_extensions: V1.35 saddle, '\u76d6\u6ca1\u6709\u76d6')"
  },
  "fit": {
   "wing_plate": {
@@ -176,10 +177,10 @@
    },
    "dummy:esc_capacitor": {
     "overlap_mm3": 0.0,
-    "min_gap_mm": 0.02,
+    "min_gap_mm": 0.04,
     "at": [
-     -56.6,
-     -70.7,
+     -51.2,
+     -55.9,
      59.5
     ],
     "designed": "lies on the top flange"
@@ -404,16 +405,6 @@
     ],
     "designed": null
    },
-   "dummy:esc_capacitor": {
-    "overlap_mm3": 0.0,
-    "min_gap_mm": 1.53,
-    "at": [
-     -50.9,
-     -80.4,
-     62.5
-    ],
-    "designed": null
-   },
    "dummy:fan_front_R": {
     "overlap_mm3": 0.0,
     "min_gap_mm": 0.15,
@@ -478,12 +469,22 @@
     ],
     "designed": "plate on the flange bosses"
    },
+   "dummy:esc_capacitor": {
+    "overlap_mm3": 0.0,
+    "min_gap_mm": 0.07,
+    "at": [
+     -66.8,
+     -55.6,
+     59.5
+    ],
+    "designed": "rests on the plate top edge"
+   },
    "dummy:fc_esc_stack": {
     "overlap_mm3": 0.0,
     "min_gap_mm": 2.0,
     "at": [
-     -82.5,
-     -56.1,
+     -78.6,
+     -59.5,
      17.5
     ],
     "designed": "on its standoffs"
@@ -497,6 +498,38 @@
      13.5
     ],
     "designed": "under its shelf"
+   }
+  },
+  "dummy:a7z_link": {
+   "saddle_body": {
+    "overlap_mm3": 0.0,
+    "min_gap_mm": 0.02,
+    "at": [
+     -28.6,
+     -33.3,
+     66.5
+    ],
+    "designed": "lead lies on the right side wall top edge"
+   },
+   "sd_dupont_housings": {
+    "overlap_mm3": 0.39,
+    "min_gap_mm": 0.02,
+    "at": [
+     -17.1,
+     8.8,
+     64.1
+    ],
+    "designed": "the lead's Dupont housings are on the header (world block covers all 40 pins)"
+   },
+   "dummy:fc_esc_stack": {
+    "overlap_mm3": 5.9,
+    "min_gap_mm": 0.08,
+    "at": [
+     -89.7,
+     -56.0,
+     63.9
+    ],
+    "designed": "lead ends in the UART1 plug"
    }
   },
   "dummy:battery_L": {
@@ -672,31 +705,31 @@
   "dummy:esc_capacitor": {
    "wing_plate": {
     "overlap_mm3": 0.0,
-    "min_gap_mm": 0.02,
+    "min_gap_mm": 0.04,
     "at": [
-     -56.6,
-     -70.7,
+     -51.2,
+     -55.9,
      59.5
     ],
     "designed": "lies on the top flange"
    },
-   "nacelle_inner_R": {
+   "fc_bracket": {
     "overlap_mm3": 0.0,
-    "min_gap_mm": 1.53,
+    "min_gap_mm": 0.07,
     "at": [
-     -51.4,
-     -79.0,
-     62.8
+     -66.9,
+     -55.5,
+     59.5
     ],
-    "designed": null
+    "designed": "rests on the plate top edge"
    },
-   "dummy:fan_rear_R": {
+   "dummy:fc_esc_stack": {
     "overlap_mm3": 0.0,
-    "min_gap_mm": 0.13,
+    "min_gap_mm": 1.4,
     "at": [
-     -50.6,
-     -79.0,
-     66.8
+     -75.6,
+     -53.4,
+     60.1
     ],
     "designed": null
    }
@@ -818,16 +851,6 @@
     ],
     "designed": null
    },
-   "dummy:esc_capacitor": {
-    "overlap_mm3": 0.0,
-    "min_gap_mm": 0.13,
-    "at": [
-     -50.5,
-     -79.1,
-     66.9
-    ],
-    "designed": null
-   },
    "dummy:fan_front_R": {
     "overlap_mm3": 0.0,
     "min_gap_mm": 1.35,
@@ -844,11 +867,31 @@
     "overlap_mm3": 0.0,
     "min_gap_mm": 2.0,
     "at": [
-     -82.5,
-     -56.1,
+     -78.6,
+     -59.5,
      19.5
     ],
     "designed": "on its standoffs"
+   },
+   "dummy:a7z_link": {
+    "overlap_mm3": 5.9,
+    "min_gap_mm": 0.08,
+    "at": [
+     -89.7,
+     -56.1,
+     64.0
+    ],
+    "designed": "lead ends in the UART1 plug"
+   },
+   "dummy:esc_capacitor": {
+    "overlap_mm3": 0.0,
+    "min_gap_mm": 1.4,
+    "at": [
+     -77.0,
+     -53.4,
+     60.1
+    ],
+    "designed": null
    }
   },
   "dummy:mtf01": {
@@ -873,6 +916,7 @@
   "nacelle_inner_R": 0,
   "nacelle_outer_R": 0,
   "fc_bracket": 0,
+  "dummy:a7z_link": 0,
   "dummy:battery_L": 0,
   "dummy:battery_R": 0,
   "dummy:battery_leads_L": 0,
@@ -918,7 +962,7 @@
    },
    "legs random, 100 % of joint range": {
     "min_mm": 0.0,
-    "inside_pts": 5661,
+    "inside_pts": 5641,
     "at_guide": [
      -64.0,
      -52.5,
@@ -927,7 +971,7 @@
    },
    "head random, 100 % of joint range": {
     "min_mm": 0.0,
-    "inside_pts": 2779,
+    "inside_pts": 2769,
     "at_guide": [
      -45.0,
      17.0,
@@ -1227,7 +1271,7 @@
    },
    "head random, 100 % of joint range": {
     "min_mm": 0.02,
-    "inside_pts": 258,
+    "inside_pts": 259,
     "at_guide": [
      -73.5,
      -66.0,
@@ -1236,6 +1280,66 @@
    },
    "head scan poses of pickup.py (yaw to +-1.2 rad, looking down)": null,
    "head yaw alone, full +-170 deg, stand pitch": null,
+   "logged real bend poses (1046 rows): legs": null,
+   "logged real bend poses (1046 rows): head": null
+  },
+  "dummy:a7z_link": {
+   "stand: legs": null,
+   "stand: head": {
+    "min_mm": 16.02,
+    "inside_pts": 0,
+    "at_guide": [
+     1.5,
+     -4.0,
+     72.5
+    ]
+   },
+   "legs random, 50 % of joint range": null,
+   "head random, 50 % of joint range": {
+    "min_mm": 0.07,
+    "inside_pts": 72,
+    "at_guide": [
+     -14.5,
+     -17.5,
+     69.0
+    ]
+   },
+   "legs random, 100 % of joint range": {
+    "min_mm": 0.06,
+    "inside_pts": 59,
+    "at_guide": [
+     -46.0,
+     -33.0,
+     66.5
+    ]
+   },
+   "head random, 100 % of joint range": {
+    "min_mm": 0.05,
+    "inside_pts": 940,
+    "at_guide": [
+     -33.5,
+     -32.0,
+     67.5
+    ]
+   },
+   "head scan poses of pickup.py (yaw to +-1.2 rad, looking down)": {
+    "min_mm": 16.0,
+    "inside_pts": 0,
+    "at_guide": [
+     1.5,
+     14.5,
+     74.0
+    ]
+   },
+   "head yaw alone, full +-170 deg, stand pitch": {
+    "min_mm": 16.02,
+    "inside_pts": 0,
+    "at_guide": [
+     1.5,
+     -4.0,
+     72.5
+    ]
+   },
    "logged real bend poses (1046 rows): legs": null,
    "logged real bend poses (1046 rows): head": null
   },
@@ -1480,30 +1584,30 @@
    "stand: head": null,
    "legs random, 50 % of joint range": null,
    "head random, 50 % of joint range": {
-    "min_mm": 0.04,
-    "inside_pts": 14,
+    "min_mm": 0.18,
+    "inside_pts": 12,
     "at_guide": [
      -51.5,
-     -54.0,
-     66.5
+     -54.5,
+     72.5
     ]
    },
    "legs random, 100 % of joint range": {
-    "min_mm": 0.04,
-    "inside_pts": 108,
+    "min_mm": 0.1,
+    "inside_pts": 109,
     "at_guide": [
-     -57.0,
-     -58.0,
-     59.5
+     -63.0,
+     -59.5,
+     60.5
     ]
    },
    "head random, 100 % of joint range": {
-    "min_mm": 0.01,
-    "inside_pts": 97,
+    "min_mm": 0.07,
+    "inside_pts": 238,
     "at_guide": [
-     -51.0,
-     -54.0,
-     63.5
+     -68.0,
+     -62.0,
+     68.5
     ]
    },
    "head scan poses of pickup.py (yaw to +-1.2 rad, looking down)": null,
@@ -1782,7 +1886,7 @@
    },
    "legs random, 100 % of joint range": {
     "min_mm": 0.0,
-    "inside_pts": 1901,
+    "inside_pts": 2283,
     "at_guide": [
      -83.0,
      -35.5,
@@ -1791,11 +1895,11 @@
    },
    "head random, 100 % of joint range": {
     "min_mm": 0.04,
-    "inside_pts": 117,
+    "inside_pts": 147,
     "at_guide": [
-     -80.0,
-     -35.5,
-     52.5
+     -77.0,
+     -50.5,
+     37.5
     ]
    },
    "head scan poses of pickup.py (yaw to +-1.2 rad, looking down)": null,
@@ -1864,7 +1968,7 @@
    "min_mm": 1.25,
    "p1_mm": 1.8,
    "n_under_1_2": 0,
-   "n": 6527,
+   "n": 6528,
    "thin_at": [],
    "thin_d": []
   },
@@ -1926,5 +2030,5 @@
   }
  },
  "issues": [],
- "seconds": 79.9
+ "seconds": 85.1
 }

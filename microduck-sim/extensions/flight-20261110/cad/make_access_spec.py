@@ -48,17 +48,19 @@ def main():
         "nacelle R on wing": (robot + ["wing_plate"] + trays + nac, None),
         "FC bracket on wing (before the stack)": (robot + ["wing_plate", "fc_bracket"] + trays + nac, None),
         "flow module": (robot + ["wing_plate", "fc_bracket", "dummy_fc_esc_stack"] + trays + nac, None),
+        "stack": (robot + ["wing_plate", "fc_bracket", "dummy_esc_capacitor"] + trays + nac, None),
         "nacelle L": (["nacelle_inner_L", "nacelle_outer_L"] + BENCH_FAN["L"], None),
         "nacelle R": (["nacelle_inner_R", "nacelle_outer_R"] + BENCH_FAN["R"], None),
     }
     screws = []
     for s in json.loads((CP.B / "screws.json").read_text()):
-        if s["id"].startswith("fc-standoff"):
+        if s["id"].startswith(("fc-standoff", "esc-fc-spacer")):
             continue
         length = int(s["spec"].split("x")[1].split()[0])
         pres, table = present[s["step"]]
+        head = dict(HEAD, head_d=5.5, head_h=2.4) if s["spec"].startswith("M3") else HEAD   # M3 pan head
         screws.append(dict(id=s["id"], step=s["step"], spec=s["spec"], where=s["joins"], seat=s["seat"], axis=s["axis"],
-                           length=length, through_mm=round(s["through_mm"], 2), present=pres, movable=[], table_z=table, **HEAD))
+                           length=length, through_mm=round(s["through_mm"], 2), present=pres, movable=[], table_z=table, **head))
     spec = dict(mesh_dir=str(OUT), meshes=meshes, screws=screws)
     sp = H / "checks" / "access.screws.json"
     sp.write_text(json.dumps(spec, indent=1))
