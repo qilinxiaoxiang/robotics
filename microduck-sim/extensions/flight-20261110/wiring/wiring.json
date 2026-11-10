@@ -1,0 +1,2747 @@
+{
+ "schema": "flight-pack wiring v1",
+ "date": "2026-11-10",
+ "frame": "guide frame, mm (x forward, y left, z up); stand-world z = guide z + 120",
+ "status": {
+  "complete_at_pin_level": true,
+  "orderable": true,
+  "blocks_order": [],
+  "buy_with_order": [
+   "Female bullet connectors for the fan extensions",
+   "Heat-shrink tubing",
+   "SH1.0 4-pin to 2.54 mm Dupont female cable, 30 cm",
+   "M3 nylon standoffs and nuts for the stack"
+  ],
+  "note": "Every pin, wire and joint is defined. Four small items are not in any cart (MISSING.md). Open facts are confirmed on arrival and do not change what to buy."
+ },
+ "sources": {
+  "ap_hwdef": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_HAL_ChibiOS/hwdef/MicoAir743v2/hwdef.dat",
+   "local": "sources/ardupilot-MicoAir743v2-hwdef-master.dat",
+   "quote": "SERIAL_ORDER OTG1 USART1 USART2 USART3 UART4 UART5 USART6 UART7 UART8; define HAL_BATT_CURR_SCALE 40.2",
+   "checked": "2026-11-10"
+  },
+  "ap_hwdef_463": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/Copter-4.6.3/libraries/AP_HAL_ChibiOS/hwdef/MicoAir743v2/hwdef.dat",
+   "quote": "target present in the Copter-4.6.3 release tag (same UART order and battery defines)",
+   "checked": "2026-11-10"
+  },
+  "ap_readme": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_HAL_ChibiOS/hwdef/MicoAir743v2/README.md",
+   "local": "sources/ardupilot-MicoAir743v2-README.md",
+   "quote": "SERIAL1 -> UART1 (MAVLink2, DMA-enabled) ... SERIAL4 -> UART4 (MAVLink2, DMA-enabled) ... SERIAL7 -> UART7 (RX only, ESC Telemetry)",
+   "checked": "2026-11-10"
+  },
+  "ap_ports": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_HAL_ChibiOS/hwdef/MicoAir743v2/MicoAir743v2_Ports_Connection.jpg",
+   "local": "sources/micoair743v2-ports-ardupilot.jpg",
+   "quote": "ESC socket labels Curr, RX7, M4, M3, M2, M1, VBAT, GND (silk C R 4 3 2 1 V G); UART4 GND 5V TX4 RX4; UART1 GND 5V TX1 RX1",
+   "checked": "2026-11-10"
+  },
+  "mico_fc": {
+   "url": "https://micoair.com/en/docs/flight-controller/micoair743/micoair743v2-flight-controller-manual",
+   "quote": "Dual 5 V / 3 A and 12 V / 3 A BECs ... Connect flight-controller TX to peripheral RX, and flight-controller RX to peripheral TX ... BATT_CURR_SCALE 40.2 ... do not apply to every ESC",
+   "checked": "2026-11-10"
+  },
+  "mico_esc": {
+   "url": "https://micoair.com/en/docs/esc/55a-am32-esc",
+   "quote": "Maximum continuous current: 55 A x 4 channels ... Current-sensor output: 12.75 mV/A ... NC: no connection required ... VBAT: battery-voltage output",
+   "checked": "2026-11-10"
+  },
+  "mico_esc_img": {
+   "url": "https://micoair.com/api/media/file/docs/2026/07/67d3e95c068ba-fd56fc7cb1.png",
+   "local": "sources/micoair-55a-esc-dimensions.png",
+   "quote": "SH1.0-8P pin row Curr NC M4 M3 M2 M1 VBAT GND; motor pad groups 1-4 at the corners; + and - battery tabs",
+   "checked": "2026-11-10"
+  },
+  "mico_esc_wiring": {
+   "url": "https://micoair.com/api/media/file/docs/2026/07/67d3eb2826e2a-d00354e597.png",
+   "local": "sources/micoair-55a-esc-wiring.png",
+   "quote": "maker wiring diagram: straight 8-wire lead Curr-Curr, NC-Rx7, M4-M4, M3-M3, M2-M2, M1-M1, VBAT-VBAT, GND-GND; capacitor across the battery tabs",
+   "checked": "2026-11-10"
+  },
+  "mico_esc_am32": {
+   "url": "https://micoair.com/api/media/file/docs/2026/07/67edfc009328d-55af8ec36a.png",
+   "quote": "AM32 configurator per-ESC checkboxes \"Reversed\", \"3D mode\"; Motor KV 2220, Motor poles 14 (defaults)",
+   "checked": "2026-11-10"
+  },
+  "mico_mtf": {
+   "url": "https://micoair.com/en/docs/sensors/sensors/mtf-01-sensors",
+   "quote": "LVTTL (3.3 V) UART, 115200 baud ... Supply voltage: 5 V ... Rx: connect to the FC UART Tx; Tx: connect to the FC UART Rx ... SERIALn_BAUD 115, SERIALn_OPTIONS 1024, SERIALn_PROTOCOL 1, FLOW_TYPE 5, RNGFND1_TYPE 10, RNGFND1_MAX_CM 800, RNGFND1_MIN_CM 1, RNGFND1_ORIENT 25",
+   "checked": "2026-11-10"
+  },
+  "mico_mtf_pins": {
+   "url": "https://micoair.com/api/media/file/docs/2026/10/6694fd5a8d782-d7cef158a6-0b3f2a03d3.webp",
+   "local": "sources/mtf01-pins.png",
+   "quote": "SH1.0-4P: GND, 5V, Rx, Tx",
+   "checked": "2026-11-10"
+  },
+  "mico_mtf_wiring": {
+   "url": "https://micoair.com/api/media/file/docs/2026/10/669a25d2736c0-418cf76b4c-98ef6f222b.webp",
+   "local": "sources/mtf01-micoair743-wiring.png",
+   "quote": "MicoAir743: MTF-01 GND/5V/Rx/Tx to UART4 GND/5V/Tx4/Rx4 (straight lead)",
+   "checked": "2026-11-10"
+  },
+  "ap_motors": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Motors/AP_MotorsMatrix.cpp",
+   "quote": "QUAD MOTOR_FRAME_TYPE_X: {45, CCW, 1}, {-135, CCW, 3}, {-45, CW, 4}, {135, CW, 2}  (motor 1..4: angle, spin, test order)",
+   "checked": "2026-11-10"
+  },
+  "ap_wiki_motors": {
+   "url": "https://ardupilot.org/copter/docs/connect-escs-and-motors.html",
+   "quote": "Motor Direction is reversed simply by interchanging two of the three ESC to motor power leads.",
+   "checked": "2026-11-10"
+  },
+  "ap_gcs_fs": {
+   "url": "https://ardupilot.org/copter/docs/gcs-failsafe.html",
+   "quote": "if no GCS is ever connected, the GCS failsafe will remain inactive regardless of parameter settings",
+   "checked": "2026-11-10"
+  },
+  "ap_params_463": {
+   "url": "https://github.com/ArduPilot/ardupilot/tree/Copter-4.6.3 (ArduCopter/Parameters.cpp, AP_Arming.cpp, AP_MotorsMulticopter.cpp, AP_BLHeli.cpp, AP_SerialManager.cpp, SRV_Channel.cpp, AP_RangeFinder_Params.cpp, AP_Math/rotations.h)",
+   "quote": "ARMING_CHECK bitmask 6:RC Channels; FS_THR_ENABLE 0:Disabled; FS_GCS_ENABLE 5:Land; FS_GCS_TIMEOUT range 2-120; MOT_BAT_CURR_MAX range 0-200; MOT_PWM_TYPE 5:DShot300; SERVO_BLH_POLES default 14; SERVOn_FUNCTION 33:Motor1 ... 36:Motor4; SERIALn_OPTIONS bit 10 Don't forward mavlink; RNGFND1_MIN_CM/MAX_CM present",
+   "checked": "2026-11-10"
+  },
+  "radxa_pins": {
+   "url": "https://docs.radxa.com/cubie/a7z/hardware-use/pin-gpio",
+   "local": "../../../guide/print/a7z-head/sources/radxa-a7z-pin-gpio.md",
+   "quote": "pin 16 PJ24 UART4-TX, pin 18 PJ25 UART4-RX, pin 14 GND; UART4 = /dev/ttyAS4; rsetup Overlay -> Manage overlays -> Enable UART4",
+   "checked": "2026-11-10"
+  },
+  "radxa_uart4": {
+   "url": "https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/allwinner/overlays/sun60iw2p1-uart4.dtso",
+   "local": "sources/radxa-sun60iw2p1-uart4.dtso",
+   "quote": "title \"Enable UART4\"; compatible radxa,cubie-a7z; exclusive PJ24, PJ25, uart4; \"On Radxa Cubie A7Z, this is pin 16 and pin 18.\"",
+   "checked": "2026-11-10"
+  },
+  "a7z_logic": {
+   "url": "file: microduck-sim/bringup/a7z/README.md (schematic V1.11 read 2026-10-15)",
+   "quote": "Page 7: ball 1L6 VCC-PJ is wired to VCC33-LCD (SWOUT1 \"3.3V with ON/OFF\")",
+   "checked": "2026-11-10"
+  },
+  "a7z_bench": {
+   "url": "file: microduck-sim/bringup/a7z/a7z_bench.py (A7Z-PINS map, as built)",
+   "quote": "used pins 1 2 3 4 5 6 7 9 11 12 17 25 29 31 34 35 38 39 40; 8 and 10 debug UART0 (10 carries the optional back-mic flag)",
+   "checked": "2026-11-10"
+  },
+  "current_state": {
+   "url": "file: microduck-sim/CURRENT-STATE.json (servo_bus_hosts, a7z_imu_bus, a7z_touch_bus, a7z_audio_capture, power)",
+   "quote": "A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud; overlays zz-duck-twi7-engine, zz-duck-twi0-touch, zz-duck-i2s0-din3, sun60iw2p1-i2s0-2ch; no UART4 overlay recorded",
+   "checked": "2026-11-10"
+  },
+  "qx_listing": {
+   "url": "https://qwinout.com/products/qx-motor-qf2611-3300-4000kv-4600kv-5000kv-brushless-motor-cw-ccw-3-4s-50mm-12-paddle-edf-ducted-fan-for-fms-rc-plane-helicopter",
+   "quote": "Configuration: 9N6P ... Weight: 76g ... Max continuous power: 550w ... Max continuous current: 45A; no lead length, gauge or bullet size given",
+   "checked": "2026-11-10"
+  },
+  "qx_photo": {
+   "url": "https://cdn.shopify.com/s/files/1/0070/9473/0823/products/QX-MOTOR-QF2611-3300-4000KV-4600KV-5000KV-Brushless-Motor-CW-CCW-3-4S-50mm-12-Paddle.jpg",
+   "local": "sources/qx-qf2611-leads.jpg",
+   "quote": "three leads red/black/yellow ending in heat-shrunk gold male bullets; scaled on the 25.8 mm can: lead OD about 1.7 mm, bullet tip about 1-2 mm (inference)",
+   "checked": "2026-11-10"
+  },
+  "cnhl": {
+   "url": "https://pyrodrone.com/products/cnhl-black-series-v2-0-1300mah-14-8v-4s-130c-lipo-battery-xt60",
+   "quote": "Discharge Rate: 130C Continual / 260C Burst ... Output Connector: XT60 ... Balance Connector: JST / XH ... Wire (AWG): 12#",
+   "checked": "2026-11-10"
+  },
+  "stack_listing": {
+   "url": "https://pyrodrone.com/products/micoair-743-v2-stack-with-h743-bmi088-bmi270-bluetooth-flight-controller-and-2-6s-55a-am32-4in1-esc-30x30mm",
+   "quote": "Package Includes: 1 x MicoAir 743 V2 Stack (no cable, capacitor or hardware listed)",
+   "checked": "2026-11-10"
+  },
+  "sh_kit": {
+   "url": "https://pyrodrone.com/products/diy-sh-silicone-cable-kit",
+   "quote": "18x Double crimped cables - 5cm / 10cm / 15cm; 3x each SH1.0 2- to 12-pin connectors",
+   "checked": "2026-11-10"
+  },
+  "b6": {
+   "url": "https://www.amazon.com/dp/B0G64JZ7JV",
+   "quote": "LiPo: 1-6 cells ... What You Can Get: One RC Battery Charger; One DC Crocodile Clip; One Connector Splitter; One Adapter; One AC Power Cable ...; images: 2S-6S balance ports, banana splitter with an XT60 plug",
+   "checked": "2026-11-10"
+  },
+  "amass_xt60": {
+   "url": "https://datasheet.lcsc.com/datasheet/pdf/266fd4de8ced439ab8f3a91fc5a49212.pdf",
+   "quote": "XT60: rated 30 A, max 60 A (quoted in ../procurement.json, OCR of the Amass table)",
+   "checked": "2026-11-10"
+  },
+  "powerstream": {
+   "url": "https://www.powerstream.com/Wire_Size.htm",
+   "quote": "AWG 12: 5.20864 ohm/km, chassis 41 A; AWG 14: 8.282, 32 A; AWG 16: 13.17248, 22 A",
+   "checked": "2026-11-10"
+  },
+  "esc_lead_practice": {
+   "url": "https://endless-sphere.com/sphere/threads/adding-caps-to-castle-creations-escs.35420/ ; https://flyfreak.net/index.php/topic,15051.0.html",
+   "quote": "forum practice (not a maker spec): extend motor leads rather than battery leads; if battery leads are long, add low-ESR capacitance at the ESC, 220-440 uF per 10 cm beyond 40 cm",
+   "checked": "2026-11-10"
+  },
+  "cad": {
+   "url": "file: microduck-sim/extensions/flight-20261110/cad (commit 0a940d32): flight_params.py, build_pack.py, build/dummy_*-world.stl",
+   "quote": "FC bracket plate x -67..-64 behind the right arm, stack centre (y, z) = (-56, 40), ESC envelope x -83..-77, FC x -96..-88; capacitor y -79..-54 on the right top flange; cross harness x -86.8..-50.4, y -33..37.6, z 4..28",
+   "checked": "2026-11-10"
+  },
+  "mass_v6": {
+   "url": "file: microduck-sim/extensions/flight-20261110/mass_budget.json (cases \"v6 CAD, fans 80 g\" / \"113 g\") and leg_load.json",
+   "quote": "v6 pack 927 g (80 g fans) / 1059 g (113 g fans); duck 960.5 g; totals 1887 / 2019 g",
+   "checked": "2026-11-10"
+  },
+  "pet_log": {
+   "url": "file: robotics/docs/PET_ROBOT_LOG.md (2026-11-10 entries)",
+   "quote": "vendor thrust 950 g per fan; the only independent bench tests 440-680 g; Shawn: \"不用 默认推力够\"",
+   "checked": "2026-11-10"
+  },
+  "inventory": {
+   "url": "file: robotics/roboclub/INVENTORY.md",
+   "quote": "Soldering bench: crimp terminals, ferrules, DuPont housings, JST XH housings + crimps, M2/M2.5/M3 screws, M3x10, M-F jumpers, solder spools; no bullets, heat-shrink, standoffs or silicone wire gauge listed",
+   "checked": "2026-11-10"
+  }
+ },
+ "boards": {
+  "fc": {
+   "name": "MicoAir743v2 flight controller (top board of the stack)",
+   "where": "stack behind the right arm, top face toward the rear, ESC socket at the bottom edge",
+   "connectors": {
+    "ESC": {
+     "type": "JST-SH 1.0 mm 8-pin socket (board), plug lead needed",
+     "pins": [
+      "Curr",
+      "RX7",
+      "M4",
+      "M3",
+      "M2",
+      "M1",
+      "VBAT",
+      "GND"
+     ],
+     "sources": [
+      "ap_ports",
+      "mico_esc_wiring"
+     ]
+    },
+    "UART4": {
+     "type": "JST-SH 1.0 mm 4-pin socket",
+     "pins": [
+      "GND",
+      "5V",
+      "TX4",
+      "RX4"
+     ],
+     "sources": [
+      "ap_ports",
+      "mico_mtf_wiring"
+     ]
+    },
+    "UART1": {
+     "type": "JST-SH 1.0 mm 4-pin socket",
+     "pins": [
+      "GND",
+      "5V",
+      "TX1",
+      "RX1"
+     ],
+     "sources": [
+      "ap_ports",
+      "ap_readme"
+     ]
+    },
+    "USB": {
+     "type": "USB Type-C",
+     "pins": [
+      "USB"
+     ],
+     "sources": [
+      "ap_ports"
+     ]
+    }
+   }
+  },
+  "esc": {
+   "name": "MicoAir 55A AM32 4in1 ESC (bottom board of the stack)",
+   "where": "stack behind the right arm, component side toward the rear, battery tabs UP",
+   "connectors": {
+    "FC": {
+     "type": "JST-SH 1.0 mm 8-pin socket",
+     "pins": [
+      "Curr",
+      "NC",
+      "M4",
+      "M3",
+      "M2",
+      "M1",
+      "VBAT",
+      "GND"
+     ],
+     "sources": [
+      "mico_esc_img",
+      "mico_esc"
+     ]
+    },
+    "BAT": {
+     "type": "two gold battery tabs with a solder notch",
+     "pins": [
+      "+",
+      "-"
+     ],
+     "sources": [
+      "mico_esc_img"
+     ]
+    },
+    "M1": {
+     "type": "three solder pads",
+     "pins": [
+      "a",
+      "b",
+      "c"
+     ],
+     "sources": [
+      "mico_esc_img"
+     ]
+    },
+    "M2": {
+     "type": "three solder pads",
+     "pins": [
+      "a",
+      "b",
+      "c"
+     ],
+     "sources": [
+      "mico_esc_img"
+     ]
+    },
+    "M3": {
+     "type": "three solder pads",
+     "pins": [
+      "a",
+      "b",
+      "c"
+     ],
+     "sources": [
+      "mico_esc_img"
+     ]
+    },
+    "M4": {
+     "type": "three solder pads",
+     "pins": [
+      "a",
+      "b",
+      "c"
+     ],
+     "sources": [
+      "mico_esc_img"
+     ]
+    }
+   }
+  },
+  "mtf": {
+   "name": "MicoAir MTF-01 optical flow + rangefinder",
+   "where": "shelf under the stack, lens down",
+   "connectors": {
+    "J1": {
+     "type": "JST-SH 1.0 mm 4-pin socket",
+     "pins": [
+      "GND",
+      "5V",
+      "Rx",
+      "Tx"
+     ],
+     "sources": [
+      "mico_mtf_pins",
+      "mico_mtf"
+     ]
+    }
+   }
+  },
+  "a7z": {
+   "name": "Radxa Cubie A7Z (duck computer, roof saddle)",
+   "where": "40-pin header at the saddle front edge, pin 1 at the robot-left end",
+   "connectors": {
+    "J11": {
+     "type": "2.54 mm 40-pin male header",
+     "pins": [
+      "14 GND",
+      "16 PJ24 UART4-TX",
+      "18 PJ25 UART4-RX"
+     ],
+     "sources": [
+      "radxa_pins",
+      "radxa_uart4",
+      "a7z_bench"
+     ]
+    }
+   }
+  },
+  "batt_L": {
+   "name": "CNHL 4S 1300 mAh 130C, left tray",
+   "where": "left battery tray, leads out the rear end through the left lead window",
+   "connectors": {
+    "XT60": {
+     "type": "XT60 on the pack lead (female, inference from the listing photo), 12 AWG",
+     "pins": [
+      "+",
+      "-"
+     ],
+     "sources": [
+      "cnhl"
+     ]
+    },
+    "BAL": {
+     "type": "JST-XH 5-pin balance lead",
+     "pins": [
+      "GND",
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+     ],
+     "sources": [
+      "cnhl"
+     ]
+    }
+   }
+  },
+  "batt_R": {
+   "name": "CNHL 4S 1300 mAh 130C, right tray",
+   "where": "right battery tray, leads out the rear end through the right lead window",
+   "connectors": {
+    "XT60": {
+     "type": "XT60 on the pack lead (female, inference), 12 AWG",
+     "pins": [
+      "+",
+      "-"
+     ],
+     "sources": [
+      "cnhl"
+     ]
+    },
+    "BAL": {
+     "type": "JST-XH 5-pin balance lead",
+     "pins": [
+      "GND",
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+     ],
+     "sources": [
+      "cnhl"
+     ]
+    }
+   }
+  },
+  "cap": {
+   "name": "Rubycon 1000 uF 35 V low-ESR, 12.5 x 20 mm radial",
+   "where": "lying on the right arm top flange (zip-tie slots), leads toward the ESC tabs",
+   "connectors": {
+    "LEADS": {
+     "type": "radial legs: long leg +, stripe side -",
+     "pins": [
+      "+",
+      "-"
+     ],
+     "sources": [
+      "mico_esc_wiring"
+     ]
+    }
+   }
+  },
+  "fan_FR": {
+   "name": "QX-Motor QF2611 4000KV 50 mm EDF, front right (CCW unit)",
+   "where": "right nacelle, front",
+   "connectors": {
+    "LEADS": {
+     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "pins": [
+      "red",
+      "black",
+      "yellow"
+     ],
+     "sources": [
+      "qx_photo",
+      "qx_listing"
+     ]
+    }
+   }
+  },
+  "fan_RR": {
+   "name": "QX-Motor QF2611 4000KV 50 mm EDF, rear right (CW unit)",
+   "where": "right nacelle, rear",
+   "connectors": {
+    "LEADS": {
+     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "pins": [
+      "red",
+      "black",
+      "yellow"
+     ],
+     "sources": [
+      "qx_photo",
+      "qx_listing"
+     ]
+    }
+   }
+  },
+  "fan_FL": {
+   "name": "QX-Motor QF2611 4000KV 50 mm EDF, front left (CW unit)",
+   "where": "left nacelle, front",
+   "connectors": {
+    "LEADS": {
+     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "pins": [
+      "red",
+      "black",
+      "yellow"
+     ],
+     "sources": [
+      "qx_photo",
+      "qx_listing"
+     ]
+    }
+   }
+  },
+  "fan_RL": {
+   "name": "QX-Motor QF2611 4000KV 50 mm EDF, rear left (CCW unit)",
+   "where": "left nacelle, rear",
+   "connectors": {
+    "LEADS": {
+     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "pins": [
+      "red",
+      "black",
+      "yellow"
+     ],
+     "sources": [
+      "qx_photo",
+      "qx_listing"
+     ]
+    }
+   }
+  }
+ },
+ "netlist": [
+  {
+   "id": "xt60_Rp",
+   "group": "power",
+   "from": {
+    "board": "batt_R",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60 (on the pack lead)",
+    "gender": "female (inference)",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "pigtail_R",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60",
+    "gender": "male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "pack lead",
+    "length_mm": null,
+    "length_basis": "mated connector, no wire",
+    "source": "pack lead: in the battery box; male XT60: RoboClub stock (Shawn 2026-11-10 \"XT60和线\")"
+   },
+   "sources": [
+    "cnhl",
+    "amass_xt60"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "pack connector gender read from a listing photo only",
+   "zh": "右电池 XT60（母，电池自带）插尾线 XT60（公）+"
+  },
+  {
+   "id": "pig_Rp",
+   "group": "power",
+   "from": {
+    "board": "pigtail_R",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60 solder cup",
+    "gender": "male",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "red",
+    "length_mm": 40,
+    "length_basis": "route 35 mm incl. x1.15 slack (bay behind the right arm web); CAD claim 100 mm",
+    "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "powerstream",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "both pigtails land on the same ESC tab (parallel packs); twist the pair",
+   "zh": "右尾线红 +：XT60 公头焊杯 → ESC + 片"
+  },
+  {
+   "id": "xt60_Rn",
+   "group": "power",
+   "from": {
+    "board": "batt_R",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60 (on the pack lead)",
+    "gender": "female (inference)",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "pigtail_R",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60",
+    "gender": "male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "pack lead",
+    "length_mm": null,
+    "length_basis": "mated connector, no wire",
+    "source": "pack lead: in the battery box; male XT60: RoboClub stock (Shawn 2026-11-10 \"XT60和线\")"
+   },
+   "sources": [
+    "cnhl",
+    "amass_xt60"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "pack connector gender read from a listing photo only",
+   "zh": "右电池 XT60（母，电池自带）插尾线 XT60（公）−"
+  },
+  {
+   "id": "pig_Rn",
+   "group": "power",
+   "from": {
+    "board": "pigtail_R",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60 solder cup",
+    "gender": "male",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "black",
+    "length_mm": 40,
+    "length_basis": "route 35 mm incl. x1.15 slack (bay behind the right arm web); CAD claim 100 mm",
+    "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "powerstream",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "both pigtails land on the same ESC tab (parallel packs); twist the pair",
+   "zh": "右尾线黑 −：XT60 公头焊杯 → ESC − 片"
+  },
+  {
+   "id": "xt60_Lp",
+   "group": "power",
+   "from": {
+    "board": "batt_L",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60 (on the pack lead)",
+    "gender": "female (inference)",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "pigtail_L",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60",
+    "gender": "male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "pack lead",
+    "length_mm": null,
+    "length_basis": "mated connector, no wire",
+    "source": "pack lead: in the battery box; male XT60: RoboClub stock (Shawn 2026-11-10 \"XT60和线\")"
+   },
+   "sources": [
+    "cnhl",
+    "amass_xt60"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "pack connector gender read from a listing photo only",
+   "zh": "左电池 XT60（母，电池自带）插尾线 XT60（公）+"
+  },
+  {
+   "id": "pig_Lp",
+   "group": "power",
+   "from": {
+    "board": "pigtail_L",
+    "connector": "XT60",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "XT60 solder cup",
+    "gender": "male",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "red",
+    "length_mm": 260,
+    "length_basis": "route 250 mm incl. x1.15 slack (cross harness behind the backpack cap); CAD claim 220 mm",
+    "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "powerstream",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "both pigtails land on the same ESC tab (parallel packs); twist the pair; runs in the cross harness",
+   "zh": "左尾线红 +：XT60 公头焊杯 → ESC + 片"
+  },
+  {
+   "id": "xt60_Ln",
+   "group": "power",
+   "from": {
+    "board": "batt_L",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60 (on the pack lead)",
+    "gender": "female (inference)",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "pigtail_L",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60",
+    "gender": "male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "pack lead",
+    "length_mm": null,
+    "length_basis": "mated connector, no wire",
+    "source": "pack lead: in the battery box; male XT60: RoboClub stock (Shawn 2026-11-10 \"XT60和线\")"
+   },
+   "sources": [
+    "cnhl",
+    "amass_xt60"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "pack connector gender read from a listing photo only",
+   "zh": "左电池 XT60（母，电池自带）插尾线 XT60（公）−"
+  },
+  {
+   "id": "pig_Ln",
+   "group": "power",
+   "from": {
+    "board": "pigtail_L",
+    "connector": "XT60",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "XT60 solder cup",
+    "gender": "male",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 12,
+    "colour": "black",
+    "length_mm": 260,
+    "length_basis": "route 250 mm incl. x1.15 slack (cross harness behind the backpack cap); CAD claim 220 mm",
+    "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "powerstream",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "both pigtails land on the same ESC tab (parallel packs); twist the pair; runs in the cross harness",
+   "zh": "左尾线黑 −：XT60 公头焊杯 → ESC − 片"
+  },
+  {
+   "id": "cap_p",
+   "group": "power",
+   "from": {
+    "board": "cap",
+    "connector": "LEADS",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "radial leg",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "+",
+    "signal": "VBAT+",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "red",
+    "length_mm": 30,
+    "length_basis": "capacitor lead end (y -54) to the + tab, x1.15; leg plus a 16 AWG extension if the leg is shorter",
+    "source": "capacitor: Amazon cart; extension: RoboClub wire"
+   },
+   "sources": [
+    "mico_esc_wiring",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "polarity: long leg and the side without the stripe go to +",
+   "zh": "电容长脚 + → ESC + 片"
+  },
+  {
+   "id": "cap_n",
+   "group": "power",
+   "from": {
+    "board": "cap",
+    "connector": "LEADS",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "radial leg",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "esc",
+    "connector": "BAT",
+    "pin": "-",
+    "signal": "VBAT-",
+    "connector_type": "battery tab",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "black",
+    "length_mm": 30,
+    "length_basis": "capacitor lead end (y -54) to the + tab, x1.15; leg plus a 16 AWG extension if the leg is shorter",
+    "source": "capacitor: Amazon cart; extension: RoboClub wire"
+   },
+   "sources": [
+    "mico_esc_wiring",
+    "cad"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "polarity: long leg and the side without the stripe go to +",
+   "zh": "电容白条一侧 − → ESC − 片"
+  },
+  {
+   "id": "fan_FR_a",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M1",
+    "pin": "a",
+    "signal": "motor 1 phase A",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FR",
+    "connector": "LEADS",
+    "pin": "red",
+    "signal": "phase (red lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "red",
+    "length_mm": 100,
+    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 1a 焊盘 → 红色 16 AWG 延长线 → 母子弹头，插右前风扇红线"
+  },
+  {
+   "id": "fan_FR_b",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M1",
+    "pin": "b",
+    "signal": "motor 1 phase B",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FR",
+    "connector": "LEADS",
+    "pin": "yellow",
+    "signal": "phase (yellow lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "yellow",
+    "length_mm": 100,
+    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 1b 焊盘 → 黄色 16 AWG 延长线 → 母子弹头，插右前风扇黄线"
+  },
+  {
+   "id": "fan_FR_c",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M1",
+    "pin": "c",
+    "signal": "motor 1 phase C",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FR",
+    "connector": "LEADS",
+    "pin": "black",
+    "signal": "phase (black lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "black",
+    "length_mm": 100,
+    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 1c 焊盘 → 黑色 16 AWG 延长线 → 母子弹头，插右前风扇黑线"
+  },
+  {
+   "id": "fan_RR_a",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M2",
+    "pin": "a",
+    "signal": "motor 2 phase A",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RR",
+    "connector": "LEADS",
+    "pin": "red",
+    "signal": "phase (red lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "red",
+    "length_mm": 40,
+    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 2a 焊盘 → 红色 16 AWG 延长线 → 母子弹头，插右后风扇红线"
+  },
+  {
+   "id": "fan_RR_b",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M2",
+    "pin": "b",
+    "signal": "motor 2 phase B",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RR",
+    "connector": "LEADS",
+    "pin": "yellow",
+    "signal": "phase (yellow lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "yellow",
+    "length_mm": 40,
+    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 2b 焊盘 → 黄色 16 AWG 延长线 → 母子弹头，插右后风扇黄线"
+  },
+  {
+   "id": "fan_RR_c",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M2",
+    "pin": "c",
+    "signal": "motor 2 phase C",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RR",
+    "connector": "LEADS",
+    "pin": "black",
+    "signal": "phase (black lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "black",
+    "length_mm": 40,
+    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 2c 焊盘 → 黑色 16 AWG 延长线 → 母子弹头，插右后风扇黑线"
+  },
+  {
+   "id": "fan_FL_a",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M3",
+    "pin": "a",
+    "signal": "motor 3 phase A",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FL",
+    "connector": "LEADS",
+    "pin": "red",
+    "signal": "phase (red lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "red",
+    "length_mm": 280,
+    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 3a 焊盘 → 红色 16 AWG 延长线 → 母子弹头，插左前风扇红线"
+  },
+  {
+   "id": "fan_FL_b",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M3",
+    "pin": "b",
+    "signal": "motor 3 phase B",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FL",
+    "connector": "LEADS",
+    "pin": "yellow",
+    "signal": "phase (yellow lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "yellow",
+    "length_mm": 280,
+    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 3b 焊盘 → 黄色 16 AWG 延长线 → 母子弹头，插左前风扇黄线"
+  },
+  {
+   "id": "fan_FL_c",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M3",
+    "pin": "c",
+    "signal": "motor 3 phase C",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_FL",
+    "connector": "LEADS",
+    "pin": "black",
+    "signal": "phase (black lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "black",
+    "length_mm": 280,
+    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 3c 焊盘 → 黑色 16 AWG 延长线 → 母子弹头，插左前风扇黑线"
+  },
+  {
+   "id": "fan_RL_a",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M4",
+    "pin": "a",
+    "signal": "motor 4 phase A",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RL",
+    "connector": "LEADS",
+    "pin": "red",
+    "signal": "phase (red lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "red",
+    "length_mm": 160,
+    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 4a 焊盘 → 红色 16 AWG 延长线 → 母子弹头，插左后风扇红线"
+  },
+  {
+   "id": "fan_RL_b",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M4",
+    "pin": "b",
+    "signal": "motor 4 phase B",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RL",
+    "connector": "LEADS",
+    "pin": "yellow",
+    "signal": "phase (yellow lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "yellow",
+    "length_mm": 160,
+    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 4b 焊盘 → 黄色 16 AWG 延长线 → 母子弹头，插左后风扇黄线"
+  },
+  {
+   "id": "fan_RL_c",
+   "group": "fans",
+   "from": {
+    "board": "esc",
+    "connector": "M4",
+    "pin": "c",
+    "signal": "motor 4 phase C",
+    "connector_type": "solder pad",
+    "gender": "n/a",
+    "joint": "soldered"
+   },
+   "to": {
+    "board": "fan_RL",
+    "connector": "LEADS",
+    "pin": "black",
+    "signal": "phase (black lead)",
+    "connector_type": "bullet",
+    "gender": "female on the extension mates the fan male",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 16,
+    "colour": "black",
+    "length_mm": 160,
+    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "qx_photo",
+    "powerstream",
+    "cad"
+   ],
+   "verified": false,
+   "verified_date": "2026-11-10",
+   "note": "phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)",
+   "zh": "电调 4c 焊盘 → 黑色 16 AWG 延长线 → 母子弹头，插左后风扇黑线"
+  },
+  {
+   "id": "escfc_1",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 1,
+    "signal": "Curr",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 1,
+    "signal": "Curr",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 1 位：ESC Curr ↔ 飞控 Curr"
+  },
+  {
+   "id": "escfc_2",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 2,
+    "signal": "NC",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 2,
+    "signal": "RX7",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n; ESC NC lands on FC RX7 (no ESC telemetry; harmless)",
+   "zh": "8 针排线第 2 位：ESC NC ↔ 飞控 RX7"
+  },
+  {
+   "id": "escfc_3",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 3,
+    "signal": "M4",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 3,
+    "signal": "M4",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 3 位：ESC M4 ↔ 飞控 M4"
+  },
+  {
+   "id": "escfc_4",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 4,
+    "signal": "M3",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 4,
+    "signal": "M3",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 4 位：ESC M3 ↔ 飞控 M3"
+  },
+  {
+   "id": "escfc_5",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 5,
+    "signal": "M2",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 5,
+    "signal": "M2",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 5 位：ESC M2 ↔ 飞控 M2"
+  },
+  {
+   "id": "escfc_6",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 6,
+    "signal": "M1",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 6,
+    "signal": "M1",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 6 位：ESC M1 ↔ 飞控 M1"
+  },
+  {
+   "id": "escfc_7",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 7,
+    "signal": "VBAT",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 7,
+    "signal": "VBAT",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 7 位：ESC VBAT ↔ 飞控 VBAT"
+  },
+  {
+   "id": "escfc_8",
+   "group": "signal",
+   "from": {
+    "board": "esc",
+    "connector": "FC",
+    "pin": 8,
+    "signal": "GND",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "fc",
+    "connector": "ESC",
+    "pin": 8,
+    "signal": "GND",
+    "connector_type": "JST-SH 8-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead (any colour)",
+    "length_mm": 50,
+    "length_basis": "ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge",
+    "source": "lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)"
+   },
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring",
+    "stack_listing",
+    "sh_kit"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead: housing position n to position n",
+   "zh": "8 针排线第 8 位：ESC GND ↔ 飞控 GND"
+  },
+  {
+   "id": "mtf_1",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART4",
+    "pin": 1,
+    "signal": "GND",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "mtf",
+    "connector": "J1",
+    "pin": 1,
+    "signal": "GND",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead",
+    "length_mm": 100,
+    "length_basis": "FC UART4 (outboard edge, about y -69, z 40) down to the MTF-01 on the shelf (z 13.5), about 50 mm direct",
+    "source": "MTF-01 box lead if included (not stated); else SH kit 10 cm leads + 2 x 4-pin housings (cart)"
+   },
+   "sources": [
+    "ap_ports",
+    "mico_mtf_pins",
+    "mico_mtf_wiring"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead; the TX/RX cross is in the pin names",
+   "zh": "4 针线第 1 位：飞控 UART4 GND ↔ 光流 GND"
+  },
+  {
+   "id": "mtf_2",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART4",
+    "pin": 2,
+    "signal": "5V",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "mtf",
+    "connector": "J1",
+    "pin": 2,
+    "signal": "5V",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead",
+    "length_mm": 100,
+    "length_basis": "FC UART4 (outboard edge, about y -69, z 40) down to the MTF-01 on the shelf (z 13.5), about 50 mm direct",
+    "source": "MTF-01 box lead if included (not stated); else SH kit 10 cm leads + 2 x 4-pin housings (cart)"
+   },
+   "sources": [
+    "ap_ports",
+    "mico_mtf_pins",
+    "mico_mtf_wiring"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead; the TX/RX cross is in the pin names",
+   "zh": "4 针线第 2 位：飞控 UART4 5V ↔ 光流 5V"
+  },
+  {
+   "id": "mtf_3",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART4",
+    "pin": 3,
+    "signal": "TX4",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "mtf",
+    "connector": "J1",
+    "pin": 3,
+    "signal": "Rx",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead",
+    "length_mm": 100,
+    "length_basis": "FC UART4 (outboard edge, about y -69, z 40) down to the MTF-01 on the shelf (z 13.5), about 50 mm direct",
+    "source": "MTF-01 box lead if included (not stated); else SH kit 10 cm leads + 2 x 4-pin housings (cart)"
+   },
+   "sources": [
+    "ap_ports",
+    "mico_mtf_pins",
+    "mico_mtf_wiring"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead; the TX/RX cross is in the pin names",
+   "zh": "4 针线第 3 位：飞控 UART4 TX4 ↔ 光流 Rx"
+  },
+  {
+   "id": "mtf_4",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART4",
+    "pin": 4,
+    "signal": "RX4",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "mtf",
+    "connector": "J1",
+    "pin": 4,
+    "signal": "Tx",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "kit lead",
+    "length_mm": 100,
+    "length_basis": "FC UART4 (outboard edge, about y -69, z 40) down to the MTF-01 on the shelf (z 13.5), about 50 mm direct",
+    "source": "MTF-01 box lead if included (not stated); else SH kit 10 cm leads + 2 x 4-pin housings (cart)"
+   },
+   "sources": [
+    "ap_ports",
+    "mico_mtf_pins",
+    "mico_mtf_wiring"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "straight lead; the TX/RX cross is in the pin names",
+   "zh": "4 针线第 4 位：飞控 UART4 RX4 ↔ 光流 Tx"
+  },
+  {
+   "id": "mav_gnd",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART1",
+    "pin": 1,
+    "signal": "GND",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "a7z",
+    "connector": "J11",
+    "pin": 14,
+    "signal": "14 GND",
+    "connector_type": "2.54 mm Dupont",
+    "gender": "female housing on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "black",
+    "length_mm": 300,
+    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
+   },
+   "sources": [
+    "ap_ports",
+    "radxa_pins",
+    "radxa_uart4",
+    "a7z_logic"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "UART1 position 2 (5 V) stays empty: no 5 V joins the duck",
+   "zh": "飞控 UART1 GND ↔ A7Z 14 号针（ground）"
+  },
+  {
+   "id": "mav_tx1",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART1",
+    "pin": 3,
+    "signal": "TX1",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "a7z",
+    "connector": "J11",
+    "pin": 18,
+    "signal": "18 PJ25 UART4-RX",
+    "connector_type": "2.54 mm Dupont",
+    "gender": "female housing on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "yellow",
+    "length_mm": 300,
+    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
+   },
+   "sources": [
+    "ap_ports",
+    "radxa_pins",
+    "radxa_uart4",
+    "a7z_logic"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "UART1 position 2 (5 V) stays empty: no 5 V joins the duck",
+   "zh": "飞控 UART1 TX1 ↔ A7Z 18 号针（FC TX -> A7Z RX）"
+  },
+  {
+   "id": "mav_rx1",
+   "group": "signal",
+   "from": {
+    "board": "fc",
+    "connector": "UART1",
+    "pin": 4,
+    "signal": "RX1",
+    "connector_type": "JST-SH 4-pin",
+    "gender": "plug on the lead",
+    "joint": "plugged"
+   },
+   "to": {
+    "board": "a7z",
+    "connector": "J11",
+    "pin": 16,
+    "signal": "16 PJ24 UART4-TX",
+    "connector_type": "2.54 mm Dupont",
+    "gender": "female housing on the lead",
+    "joint": "plugged"
+   },
+   "wire": {
+    "gauge_awg": 28,
+    "colour": "green",
+    "length_mm": 300,
+    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
+   },
+   "sources": [
+    "ap_ports",
+    "radxa_pins",
+    "radxa_uart4",
+    "a7z_logic"
+   ],
+   "verified": true,
+   "verified_date": "2026-11-10",
+   "note": "UART1 position 2 (5 V) stays empty: no 5 V joins the duck",
+   "zh": "飞控 UART1 RX1 ↔ A7Z 16 号针（A7Z TX -> FC RX）"
+  }
+ ],
+ "open_pins": [
+  {
+   "where": "fc UART1 position 2 (5V)",
+   "why": "5 V rails of the two supplies must never be joined; pull the contact out of the housing or cut that wire at the housing and shrink it"
+  },
+  {
+   "where": "a7z pins 2 and 4 (5V)",
+   "why": "unchanged duck supply; nothing from the flight pack touches them"
+  },
+  {
+   "where": "batt_L / batt_R balance leads (JST-XH 5-pin)",
+   "why": "used only on the charger; tucked under the strap in flight"
+  },
+  {
+   "where": "fc 12V pads, VTX/camera sockets, GPS socket, UART5, UART6, I2C",
+   "why": "not used (no receiver, no GPS, no compass, no camera)"
+  },
+  {
+   "where": "esc NC (8-pin position 2) -> fc RX7",
+   "why": "connected by the straight lead, carries nothing (the ESC has no serial telemetry)"
+  }
+ ],
+ "checks": [
+  {
+   "id": "esc_fc_cable",
+   "title": "FC ESC socket vs ESC socket vs the lead",
+   "status": "pass",
+   "evidence": "ESC socket positions 1-8: Curr, NC, M4, M3, M2, M1, VBAT, GND (maker drawing). FC socket positions 1-8: Curr, RX7, M4, M3, M2, M1, VBAT, GND (ArduPilot port diagram, silk \"C R 4 3 2 1 V G\"). Maker wiring diagram draws a straight lead. On the robot both boards face rear with the sockets on the same (bottom) edge and in the same left-right order, so a straight lead (position n to n) is correct.",
+   "sources": [
+    "mico_esc_img",
+    "ap_ports",
+    "mico_esc_wiring"
+   ],
+   "open": "Whether the stack box contains the 8-pin lead is not stated (listing: \"1 x MicoAir 743 V2 Stack\"); the SH kit in the cart makes one either way."
+  },
+  {
+   "id": "motor_map",
+   "title": "ArduPilot Quad-X numbering, spin, ESC pad sets",
+   "status": "pass",
+   "evidence": "AP_MotorsMatrix QUAD X: motor 1 at +45 deg (front right) CCW, motor 2 at -135 (rear left) CCW, motor 3 at -45 (front left) CW, motor 4 at +135 (rear right) CW. ESC stood behind the right arm with tabs up puts pad sets 1 and 2 on the outboard (right) edge and 3 and 4 on the inboard edge, so outputs are remapped: SERVO1_FUNCTION 33 (pad 1 -> FR, motor 1), SERVO2_FUNCTION 36 (pad 2 -> RR, motor 4), SERVO3_FUNCTION 35 (pad 3 -> FL, motor 3), SERVO4_FUNCTION 34 (pad 4 -> RL, motor 2). CW units go front-left and rear-right, CCW units front-right and rear-left (spin seen from above = from the inlet, since the inlets face up). Direction: an EDF rotor is handed, so each unit must turn its own way to blow down; set it by swapping two leads at the bullets (ArduPilot wiki) or the AM32 \"Reversed\" box (MicoAir AM32 page).",
+   "sources": [
+    "ap_motors",
+    "ap_wiki_motors",
+    "mico_esc_am32",
+    "ap_params_463"
+   ],
+   "open": "Which way QX means by \"CW\" (from the inlet or the exhaust) is not published: confirm at the first motor test (air must leave downward; the unit's rotation seen from above must match the map). If both CW units turn out CCW seen from above, swap the fans left-right between nacelles (no part changes). Pad 1 = connector M1 is the silkscreen convention; Mission Planner motor test confirms output-to-pad before any fan is mounted."
+  },
+  {
+   "id": "mtf01",
+   "title": "MTF-01 pinout, voltage, UART, ArduPilot parameters",
+   "status": "pass",
+   "evidence": "MTF-01 SH1.0-4P: GND, 5V, Rx, Tx; supply 5 V, about 100 mA; LVTTL 3.3 V UART 115200. FC UART4 socket GND, 5V, TX4, RX4 (5 V from the FC 5 V/3 A BEC). MicoAir draws exactly this pairing for the MicoAir743 (straight lead). ArduPilot: SERIAL4_PROTOCOL 1, SERIAL4_BAUD 115, SERIAL4_OPTIONS 1024, FLOW_TYPE 5, RNGFND1_TYPE 10, RNGFND1_MIN_CM 1, RNGFND1_MAX_CM 800, RNGFND1_ORIENT 25 (maker guide; MIN_CM/MAX_CM still exist in Copter 4.6.3).",
+   "sources": [
+    "mico_mtf",
+    "mico_mtf_pins",
+    "mico_mtf_wiring",
+    "ap_params_463"
+   ],
+   "open": "FLOW_ORIENT_YAW depends on how CAD turns the module on the shelf (ArduPilot default: heading points from the lenses toward the chip side, maker image)."
+  },
+  {
+   "id": "a7z_link",
+   "title": "A7Z to FC MAVLink link",
+   "status": "pass",
+   "evidence": "Free A7Z pins: 14 (GND), 16 (PJ24, UART4-TX), 18 (PJ25, UART4-RX); not in the as-built 19-wire map (used: 1 2 3 4 5 6 7 9 11 12 17 25 29 31 34 35 38 39 40). UART2 (pins 7/11) carries the servo bus and is not touched; UART3 is on the IMU pins 3/5; UART0 (8/10) is the debug console. Radxa's stock overlay sun60iw2p1-uart4 (\"Enable UART4\", compatible radxa,cubie-a7z, \"pin 16 and pin 18\") gives /dev/ttyAS4. Levels: PJ bank VCC-PJ = VCC33-LCD 3.3 V (schematic V1.11); STM32H743 UART at 3.3 V; no level shifter needed. FC: SERIAL1 (UART1), default MAVLink2.",
+   "sources": [
+    "radxa_pins",
+    "radxa_uart4",
+    "a7z_logic",
+    "a7z_bench",
+    "ap_readme",
+    "current_state"
+   ],
+   "open": "A spare UART has never been enabled on this A7Z: CURRENT-STATE lists only the TWI7, TWI0, I2S0 overlays and UART2; no session enabled uart4 (transcript search \"ttyAS4\": documentation mentions only). The A7Z was offline on 2026-11-10 (ssh timeout), so /dev/ttyAS* was not read. Physical access to pins 14/16/18 in the saddle (edge row) not seen on the robot. 921600 baud on the A7Z UART is untested (115200 fallback)."
+  },
+  {
+   "id": "power_path",
+   "title": "Two packs in parallel into the ESC tabs; currents vs ratings",
+   "status": "unknown",
+   "evidence": "Mass used: v6 CAD 1888 g all-up with 80 g fans (2020 g with 113 g fans); hover thrust 472-505 g per fan. Hover current per fan 13.0-26.5 A (three methods: {'vendor': [13.0, 14.4], 'bench': [23.9, 26.5], 'momentum': [22.9, 25.3]}), total 52-106 A. Peak per fan 45 A (listing max continuous), 180 A total uncapped. Right pack share 54% (shorter pigtail). Per pack: hover 28.2-57.4 A, peak 97.6 A uncapped, 59.6 A with MOT_BAT_CURR_MAX 110. Ratings: ESC 55 A per channel vs fan 45 A max: pass. Pack 130C x 1.3 Ah = 169 A claimed: pass. XT60 (Amass) rated 30 A, max 60 A: hover may exceed the 30 A rating on the worst case; peaks stay at or under 60 A only with the MOT_BAT_CURR_MAX cap. 12 AWG chassis 41 A: hover at most at that rating, flights 1-1.5 min. 16 AWG chassis 22 A vs per-fan hover rms (0.82 x DC in six-step) and 45 A bursts: see motor_leads. Harness: one male XT60 pigtail per pack, both soldered to the same ESC tab pair; no Y-splice.",
+   "sources": [
+    "mass_v6",
+    "pet_log",
+    "qx_listing",
+    "cnhl",
+    "amass_xt60",
+    "powerstream",
+    "mico_esc"
+   ],
+   "open": "The hover current spans 2x between methods (13 vs 26 A per fan) and decides the outcome. Low case (about 52 A total): each XT60 carries about 28 A, inside its 30 A rating, and the 110 A cap leaves 2x control headroom. High case (about 106 A total): each XT60 carries about 57 A continuous, at its 60 A maximum, and the 110 A cap leaves almost no headroom, so the cap would have to rise and the XT60s would run above rating; the fix then is soldering the pack leads straight to the pigtails or XT90 connectors (no change to what is ordered: the packs and wire stay the same). Decided by the first tethered hover: read BATT current (after BATT_AMP_PERVLT 78.43) and feel the XT60 bodies after 60 s. A flight-envelope limit, not a wiring blocker."
+  },
+  {
+   "id": "capacitor",
+   "title": "Capacitor place, polarity, lead length",
+   "status": "pass",
+   "evidence": "Across the ESC battery tabs, as the maker diagram shows; 35 V on a 16.8 V pack. CAD places it lying on the right arm top flange, lead end about 30 mm from the + tab: each leg reaches the tab with a short 16 AWG extension if the leg is shorter, soldered on the tab together with the two pigtails. Long leg / side without the stripe to +. Left battery loop is long (about 0.3 m with the pack lead); forum practice adds 220-440 uF per 10 cm beyond 40 cm: 1000 uF low-ESR at the tabs covers it, and the right pack (short lead) sits in parallel.",
+   "sources": [
+    "mico_esc_wiring",
+    "cad",
+    "esc_lead_practice"
+   ],
+   "open": "Rubycon leg length not published; if the legs reach the tabs directly, no extension and two fewer joints. Moving the capacitor so its legs touch the tabs is a CAD option."
+  },
+  {
+   "id": "grounds",
+   "title": "Ground and supply separation between duck and flight pack",
+   "status": "pass",
+   "evidence": "Joined: exactly one conductor, FC UART1 position 1 (GND) to A7Z pin 14 (GND), plus the two UART signal lines. Open: FC UART1 position 2 (5V); A7Z 5 V pins 2/4 untouched; no other conductor between the systems (printed frame, no metal path). No loop in flight: the only return path between the two negatives is that one 28 AWG wire, and no load current has a reason to flow in it. Back-feed: no 5 V or VBAT crosses. The one weak case: with the A7Z off and the FC powered, FC TX1 idles at 3.3 V into PJ25 of an unpowered SoC (through its protection diode, a few mA). Rule: duck on before the flight packs, flight packs off first (or unplug the 3-pin lead).",
+   "sources": [
+    "ap_ports",
+    "radxa_pins",
+    "a7z_logic"
+   ],
+   "open": "If the FC USB and an A7Z USB cable go to the same Mac at the same time, the Mac ground joins them a second time: harmless at bench currents, do not hover like that."
+  },
+  {
+   "id": "motor_leads",
+   "title": "Motor lead length and extensions",
+   "status": "pass",
+   "evidence": "Fan leads about 70 mm (not published; photo estimate). Routed lengths from the CAD geometry (x1.15): FR 156 mm -> extension 100 mm, RR 46 mm -> extension 40 mm, FL 330 mm -> extension 280 mm, RL 220 mm -> extension 160 mm (CAD agent claimed FL 250, RL 200, FR 80, RR 50). Every fan needs an extension: 16 AWG silicone, female bullet at the fan end, soldered to the ESC pad. Factory leads look about 1.7 mm OD (about 18 AWG, inference), so 16 AWG does not bottleneck them. 16 AWG over 0.29 m at 45 A: 13.2 mOhm/m, two phases conduct, drop about 0.34 V (2.3 %); rms per phase about 37 A, above the 22 A chassis figure, so full throttle is a burst of seconds; hover rms 10-20 A is within it. Long motor leads with short battery leads is the ESC-friendly split; here the left side has both, unavoidable with one ESC on the right.",
+   "sources": [
+    "qx_photo",
+    "cad",
+    "powerstream",
+    "esc_lead_practice"
+   ],
+   "open": "Bullet size: the listing does not say; photo scale points to 2.0 mm, not the 3.5 mm the CAD agent assumed. Measure on arrival; MISSING.md buys both sizes so either fits."
+  },
+  {
+   "id": "charger",
+   "title": "HTRC B6 V2 charges the 4S packs",
+   "status": "pass",
+   "evidence": "Listing: \"LiPo: 1-6 cells\", 80 W 6 A; images show 2S to 6S JST-XH balance ports (4S port labelled), 4 mm banana outputs and a \"Connector Splitter\" lead with an XT60 plug; box: charger, crocodile clip lead, connector splitter, 15 V 6 A adapter, AC cable. 4S at 1C (1.3 A) is 22 W, far under 80 W. Charge the packs one at a time, never through the flight harness.",
+   "sources": [
+    "b6"
+   ],
+   "open": "Gender of the splitter XT60 not visible (charge leads are normally male, matching the female pack plug)."
+  },
+  {
+   "id": "arming",
+   "title": "Arm and stop without an RC receiver",
+   "status": "pass",
+   "evidence": "No extra hardware. Parameters (Copter 4.6.3 sources): FS_THR_ENABLE 0 (no RC throttle failsafe); ARMING_CHECK with bit 6 \"RC Channels\" cleared (1047998 = all individual checks except RC); arm, mode changes and take-off from the A7Z over MAVLink (MAV_CMD_COMPONENT_ARM_DISARM, GUIDED, MAV_CMD_NAV_TAKEOFF); stop = disarm, force with param2 21196; FS_GCS_ENABLE 5 (Land), FS_GCS_TIMEOUT 2 (minimum); the A7Z is the GCS (heartbeats at sysid 255 = SYSID_MYGCS default) and must land on its own if the web page stops (the FC only sees the A7Z). GCS failsafe only arms after a GCS has been seen, which arming from the A7Z guarantees. The board has no safety switch.",
+   "sources": [
+    "ap_params_463",
+    "ap_gcs_fs",
+    "ap_hwdef"
+   ],
+   "open": "Bench test before the first hover: kill the web page -> A7Z lands; kill the A7Z link -> FC lands after 2 s."
+  },
+  {
+   "id": "current_sensor",
+   "title": "Battery current scale (found while checking)",
+   "status": "fail",
+   "evidence": "ArduPilot default BATT_AMP_PERVLT 40.2 belongs to another ESC; this ESC outputs 12.75 mV/A, so the value is 1000 / 12.75 = 78.43 A/V. Until set, current, mAh and MOT_BAT_CURR_MAX read about half the truth.",
+   "sources": [
+    "mico_esc",
+    "ap_hwdef",
+    "mico_fc"
+   ],
+   "open": "Set BATT_AMP_PERVLT 78.43 at setup; check against a clamp meter or the charger's mAh refill."
+  },
+  {
+   "id": "am32_poles",
+   "title": "AM32 motor poles and KV (found while checking)",
+   "status": "fail",
+   "evidence": "QF2611 is 9N6P (6 magnet poles); AM32 default is 14 poles, KV 2220 (MicoAir). Set Motor poles 6 and KV 4000 in AM32 on all four ESCs, and SERVO_BLH_POLES 6 in ArduPilot for bidirectional DShot RPM.",
+   "sources": [
+    "qx_listing",
+    "mico_esc_am32",
+    "mico_esc",
+    "ap_params_463"
+   ],
+   "open": "Set through ArduPilot BLHeli passthrough (SERVO_BLH_AUTO 1) and the AM32 configurator."
+  }
+ ],
+ "currents": {
+  "duck_g": 960.5,
+  "pack_g_80": 927.0,
+  "pack_g_113": 1059.0,
+  "total_g_nominal": 1887.5,
+  "total_g_heavy": 2019.5,
+  "hover_thrust_per_fan_g": [
+   472,
+   505
+  ],
+  "methods": {
+   "vendor": [
+    13.0,
+    14.4
+   ],
+   "bench": [
+    23.9,
+    26.5
+   ],
+   "momentum": [
+    22.9,
+    25.3
+   ]
+  },
+  "method_notes": {
+   "vendor": "P = 550 W x (T / 950 g)^1.5 (vendor max thrust and power, momentum-theory scaling)",
+   "bench": "same with max thrust 2/3 of vendor (independent tests of similar 50 mm fans)",
+   "momentum": "ideal annulus power / 0.5 (bore 50.0 mm, hub 25.8 mm)"
+  },
+  "hover_A_per_fan": [
+   13.0,
+   26.5
+  ],
+  "hover_A_total": [
+   52,
+   106
+  ],
+  "peak_A_per_fan": 45.0,
+  "peak_A_total_uncapped": 180.0,
+  "pack_share_right": 0.542,
+  "hover_A_right_pack": [
+   28.2,
+   57.4
+  ],
+  "cap_MOT_BAT_CURR_MAX": 110.0,
+  "peak_A_right_pack_capped": 59.6,
+  "peak_A_right_pack_uncapped": 97.6,
+  "assumptions": "pack voltage 14.8 V nominal; pack internal resistance 12 mOhm (inference, not published); pigtail lengths from battery_route()"
+ },
+ "lengths": {
+  "fans": {
+   "FR": {
+    "route_mm": 156,
+    "ext_mm": 100,
+    "pts": [
+     [
+      25.0,
+      -97.1,
+      24.0
+     ],
+     [
+      25.0,
+      -73.8,
+      24.0
+     ],
+     [
+      -45.0,
+      -73.8,
+      29.0
+     ],
+     [
+      -55.2,
+      -73.8,
+      29.0
+     ],
+     [
+      -80.0,
+      -76.5,
+      48.8
+     ]
+    ]
+   },
+   "RR": {
+    "route_mm": 46,
+    "ext_mm": 40,
+    "pts": [
+     [
+      -49.0,
+      -97.1,
+      24.0
+     ],
+     [
+      -54.0,
+      -87.1,
+      24.0
+     ],
+     [
+      -80.0,
+      -76.5,
+      31.0
+     ]
+    ]
+   },
+   "FL": {
+    "route_mm": 330,
+    "ext_mm": 280,
+    "pts": [
+     [
+      25.0,
+      97.1,
+      24.0
+     ],
+     [
+      25.0,
+      73.8,
+      24.0
+     ],
+     [
+      -45.0,
+      73.8,
+      29.0
+     ],
+     [
+      -52.2,
+      73.8,
+      29.0
+     ],
+     [
+      -50.4,
+      35.1,
+      21.0
+     ],
+     [
+      -83.7,
+      35.1,
+      10.0
+     ],
+     [
+      -83.7,
+      -33.0,
+      10.0
+     ],
+     [
+      -80.0,
+      -36.1,
+      10.0
+     ],
+     [
+      -80.0,
+      -36.1,
+      48.8
+     ]
+    ]
+   },
+   "RL": {
+    "route_mm": 220,
+    "ext_mm": 160,
+    "pts": [
+     [
+      -49.0,
+      97.1,
+      24.0
+     ],
+     [
+      -50.4,
+      35.1,
+      21.0
+     ],
+     [
+      -83.7,
+      35.1,
+      10.0
+     ],
+     [
+      -83.7,
+      -33.0,
+      10.0
+     ],
+     [
+      -80.0,
+      -36.1,
+      10.0
+     ],
+     [
+      -80.0,
+      -36.1,
+      31.0
+     ]
+    ]
+   }
+  },
+  "batteries": {
+   "L": {
+    "route_mm": 250,
+    "pigtail_mm": 260,
+    "pts": [
+     [
+      -58.2,
+      61.0,
+      45.0
+     ],
+     [
+      -50.4,
+      35.1,
+      21.0
+     ],
+     [
+      -83.7,
+      35.1,
+      10.0
+     ],
+     [
+      -83.7,
+      -33.0,
+      10.0
+     ],
+     [
+      -80.0,
+      -60.6,
+      10.0
+     ],
+     [
+      -80.0,
+      -60.6,
+      60.6
+     ]
+    ]
+   },
+   "R": {
+    "route_mm": 35,
+    "pigtail_mm": 40,
+    "pts": [
+     [
+      -58.2,
+      -61.0,
+      45.0
+     ],
+     [
+      -68.2,
+      -61.0,
+      60.6
+     ],
+     [
+      -80.0,
+      -60.6,
+      60.6
+     ]
+    ]
+   }
+  },
+  "a7z_link_mm": 236,
+  "a7z_link_pts": [
+   [
+    -15.0,
+    8.0,
+    50.0
+   ],
+   [
+    -15.0,
+    8.0,
+    30.0
+   ],
+   [
+    -50.0,
+    20.0,
+    20.0
+   ],
+   [
+    -60.0,
+    30.0,
+    10.0
+   ],
+   [
+    -86.0,
+    0.0,
+    10.0
+   ],
+   [
+    -90.0,
+    -40.0,
+    30.0
+   ],
+   [
+    -96.0,
+    -54.7,
+    53.3
+   ]
+  ],
+  "capacitor_lead_mm": 30,
+  "fan_lead_assumed_mm": 70.0,
+  "cad_agent_claims": {
+   "FL": 250,
+   "RL": 200,
+   "FR": 80,
+   "RR": 50,
+   "bat_L": 220,
+   "bat_R": 100
+  },
+  "esc_pads_world": {
+   "M1": [
+    -80.0,
+    -76.5,
+    48.8
+   ],
+   "M2": [
+    -80.0,
+    -76.5,
+    31.0
+   ],
+   "M3": [
+    -80.0,
+    -36.1,
+    48.8
+   ],
+   "M4": [
+    -80.0,
+    -36.1,
+    31.0
+   ]
+  },
+  "esc_tabs_world": {
+   "+": [
+    -80.0,
+    -60.6,
+    60.6
+   ],
+   "-": [
+    -80.0,
+    -51.5,
+    60.6
+   ]
+  }
+ },
+ "parameters": {
+  "ArduPilot Copter 4.6.x (MicoAir743v2)": [
+   {
+    "name": "FRAME_CLASS",
+    "value": 1,
+    "why": "Quad"
+   },
+   {
+    "name": "FRAME_TYPE",
+    "value": 1,
+    "why": "X"
+   },
+   {
+    "name": "SERVO1_FUNCTION",
+    "value": 33,
+    "why": "ESC pad set 1 -> motor 1 (front right, CCW)"
+   },
+   {
+    "name": "SERVO2_FUNCTION",
+    "value": 36,
+    "why": "ESC pad set 2 -> motor 4 (rear right, CW)"
+   },
+   {
+    "name": "SERVO3_FUNCTION",
+    "value": 35,
+    "why": "ESC pad set 3 -> motor 3 (front left, CW)"
+   },
+   {
+    "name": "SERVO4_FUNCTION",
+    "value": 34,
+    "why": "ESC pad set 4 -> motor 2 (rear left, CCW)"
+   },
+   {
+    "name": "MOT_PWM_TYPE",
+    "value": 5,
+    "why": "DShot300 (MicoAir recommends DShot300)"
+   },
+   {
+    "name": "SERVO_BLH_AUTO",
+    "value": 1,
+    "why": "AM32 passthrough over the FC USB"
+   },
+   {
+    "name": "SERVO_BLH_BDMASK",
+    "value": 15,
+    "why": "bidirectional DShot on outputs 1-4"
+   },
+   {
+    "name": "SERVO_BLH_POLES",
+    "value": 6,
+    "why": "QF2611 9N6P"
+   },
+   {
+    "name": "BATT_MONITOR",
+    "value": 4,
+    "why": "analog voltage and current"
+   },
+   {
+    "name": "BATT_VOLT_MULT",
+    "value": 21.12,
+    "why": "hwdef default"
+   },
+   {
+    "name": "BATT_AMP_PERVLT",
+    "value": 78.43,
+    "why": "1000 / 12.75 mV/A (MicoAir 55A ESC)"
+   },
+   {
+    "name": "BATT_CAPACITY",
+    "value": 2600,
+    "why": "two 1300 mAh in parallel"
+   },
+   {
+    "name": "MOT_BAT_CURR_MAX",
+    "value": 110,
+    "why": "keeps the right XT60 at or under 60 A"
+   },
+   {
+    "name": "SERIAL1_PROTOCOL",
+    "value": 2,
+    "why": "MAVLink2 to the A7Z"
+   },
+   {
+    "name": "SERIAL1_BAUD",
+    "value": 921,
+    "why": "921600; 115 if the A7Z UART refuses it"
+   },
+   {
+    "name": "SERIAL4_PROTOCOL",
+    "value": 1,
+    "why": "MTF-01 (maker guide)"
+   },
+   {
+    "name": "SERIAL4_BAUD",
+    "value": 115,
+    "why": ""
+   },
+   {
+    "name": "SERIAL4_OPTIONS",
+    "value": 1024,
+    "why": "don't forward MAVLink"
+   },
+   {
+    "name": "FLOW_TYPE",
+    "value": 5,
+    "why": "MAVLink flow"
+   },
+   {
+    "name": "RNGFND1_TYPE",
+    "value": 10,
+    "why": "MAVLink rangefinder"
+   },
+   {
+    "name": "RNGFND1_MIN_CM",
+    "value": 1,
+    "why": ""
+   },
+   {
+    "name": "RNGFND1_MAX_CM",
+    "value": 800,
+    "why": ""
+   },
+   {
+    "name": "RNGFND1_ORIENT",
+    "value": 25,
+    "why": "down"
+   },
+   {
+    "name": "FS_THR_ENABLE",
+    "value": 0,
+    "why": "no RC"
+   },
+   {
+    "name": "ARMING_CHECK",
+    "value": 1047998,
+    "why": "all checks except RC Channels (bit 6)"
+   },
+   {
+    "name": "FS_GCS_ENABLE",
+    "value": 5,
+    "why": "Land when A7Z heartbeats stop"
+   },
+   {
+    "name": "FS_GCS_TIMEOUT",
+    "value": 2,
+    "why": "seconds (minimum)"
+   },
+   {
+    "name": "AHRS_ORIENTATION",
+    "value": "board stands vertical, arrow down",
+    "why": "pick from the list at setup and confirm on the HUD (derivation suggests 29 Roll180Pitch90; inference)"
+   }
+  ],
+  "AM32 (each of the 4 ESCs)": [
+   {
+    "name": "Motor poles",
+    "value": 6,
+    "why": "default 14"
+   },
+   {
+    "name": "Motor KV",
+    "value": 4000,
+    "why": "default 2220"
+   },
+   {
+    "name": "Reversed",
+    "value": "per motor test",
+    "why": "only if a fan blows the wrong way and the leads are not swapped"
+   }
+  ],
+  "A7Z (Radxa OS)": [
+   {
+    "name": "overlay",
+    "value": "Enable UART4 (sun60iw2p1-uart4) in rsetup -> Overlay -> Manage overlays",
+    "why": "pins 16/18 -> /dev/ttyAS4; reboot"
+   },
+   {
+    "name": "serial",
+    "value": "/dev/ttyAS4 at 921600 8N1, MAVLink2",
+    "why": "the duck runtime acts as GCS, sysid 255"
+   }
+  ]
+ },
+ "missing": [
+  {
+   "item": "Female bullet connectors for the fan extensions",
+   "qty": "12 (plus spares)",
+   "why": "fan leads end in male bullets; the extensions need the mating female so a fan can be unplugged from its nacelle",
+   "spec": "gold bullets, sold as male/female pairs, in BOTH 2.0 mm and 3.5 mm (fan size not published; photo suggests 2.0 mm, CAD agent assumed 3.5 mm); solder-cup type, 16 AWG entry",
+   "source": "not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Hobby shops (Pyrodrone, Amazon \"2mm 3.5mm bullet connector set\")"
+  },
+  {
+   "item": "Heat-shrink tubing",
+   "qty": "about 1 m mixed",
+   "why": "insulates 12 bullet joints, the XT60 cups and the capacitor legs",
+   "spec": "3 mm and 4 mm (bullets, 16 AWG), 6 mm (12 AWG at the XT60), 2:1, polyolefin",
+   "source": "not in INVENTORY.md and not named by Shawn on 2026-11-10 (sourcing-policy.json lists heat-shrink as RoboClub supply from 2026-09-13; bin stock not asserted)"
+  },
+  {
+   "item": "SH1.0 4-pin to 2.54 mm Dupont female cable, 30 cm",
+   "qty": "1",
+   "why": "FC UART1 (JST-SH) to A7Z pins 14/16/18 (Dupont); the SH kit leads are SH on both ends and at most 15 cm",
+   "spec": "JST-SH 1.0 mm 4-pin housing one end, four single 2.54 mm female Dupont housings the other end, 28 AWG, 300 mm; the 5 V wire is pulled out or cut at the SH end",
+   "source": "Amazon/AliExpress listings for \"JST SH 1.0 4 pin to Dupont female\"; no-buy alternative: one 15 cm SH kit lead per wire with a Dupont crimp at the free end, only if RoboClub has a Dupont crimper (not listed)"
+  },
+  {
+   "item": "M3 nylon standoffs and nuts for the stack",
+   "qty": "4 M3 x 6 male-female (plate to ESC, CAD screws.json) + 4 M3 male-female ESC-to-FC spacers + 4 M3 nylon nuts",
+   "why": "the stack box lists only \"1 x MicoAir 743 V2 Stack\"; CAD lists only the four plate standoffs; INVENTORY has M3 screws, no standoffs",
+   "spec": "nylon (no metal near the FC), M3; ESC-to-FC spacer length set by CAD (the envelope implies about 8 mm board to board, inference); nuts M3 nylon",
+   "source": "M3 nylon standoff assortment kit (Amazon); RoboClub stock reported as not holding them (coordinator 2026-11-10)"
+  },
+  {
+   "item": "12 AWG and 16 AWG silicone wire, red and black (16 AWG also yellow)",
+   "qty": "12 AWG: about 300 mm each colour; 16 AWG: about 580 mm each of three colours",
+   "why": "pigtails and fan extensions",
+   "spec": "silicone-insulated, fine-strand",
+   "source": "RoboClub stock by Shawn's word (\"XT60和线\"); only listed here so the gauges are checked at the club before the order: 12 AWG and 16 AWG specifically were not named"
+  },
+  {
+   "item": "USB-C data cable for FC setup",
+   "qty": "1",
+   "why": "flash firmware, set parameters, AM32 passthrough",
+   "spec": "USB-C to the FC; the Mac end as the Mac needs",
+   "source": "probably the cable already used for the OpenRB or A7Z (not verified to be a data cable); buy only if none is at hand"
+  }
+ ],
+ "checked_not_missing": [
+  "FC-ESC 8-pin lead (SH kit in the Pyrodrone cart)",
+  "MTF-01 lead (SH kit)",
+  "XT60 male connectors (RoboClub, Shawn)",
+  "bulk capacitor (Amazon cart)",
+  "battery straps (cart)",
+  "charger leads (in the B6 V2 box: splitter with XT60, balance ports on the charger)",
+  "solder, flux (RoboClub supply)",
+  "zip ties (RoboClub supply)",
+  "M2 x 4 for the MTF-01, M2 x 8 / x 10 for the brackets (MicoAir screw stock: even M2 lengths 4-10)",
+  "receiver, GPS, compass (not used: deleted or replaced by the A7Z link)"
+ ],
+ "soldering": [
+  {
+   "joint": "ESC + tab: right pigtail red, left pigtail red, capacitor + leg",
+   "count": 1,
+   "conductors": 3,
+   "why_not_plug": "the ESC has bare battery tabs only; a plug here would be one more XT60 in series carrying both packs (120 A peak), worse than solder"
+  },
+  {
+   "joint": "ESC - tab: right pigtail black, left pigtail black, capacitor - leg",
+   "count": 1,
+   "conductors": 3,
+   "why_not_plug": "same as the + tab"
+  },
+  {
+   "joint": "XT60 male solder cups on the two pigtails (+ and -)",
+   "count": 4,
+   "conductors": 4,
+   "why_not_plug": "XT60 contacts are solder-cup parts; there is no crimp XT60 in the parts list"
+  },
+  {
+   "joint": "Fan extensions onto the ESC motor pads (4 fans x 3)",
+   "count": 12,
+   "conductors": 12,
+   "why_not_plug": "the ESC has solder pads only; no connector option on this board"
+  },
+  {
+   "joint": "Female bullets onto the fan-side end of each extension",
+   "count": 12,
+   "conductors": 12,
+   "why_not_plug": "bullets are solder-cup parts; this joint is what makes the fan end a plug"
+  },
+  {
+   "joint": "Capacitor leg extensions (only if the legs do not reach the tabs)",
+   "count": "0 or 2",
+   "conductors": 2,
+   "why_not_plug": "a capacitor must be soldered at the tabs to work; moving it in CAD so the legs reach removes these two"
+  }
+ ],
+ "notes_for_cad": [
+  "ESC orientation chosen here: component side to the rear, battery tabs up (toward the capacitor). Pad sets 1/2 outboard, 3/4 inboard; FC turned the same way (ESC socket at the bottom edge).",
+  "FC SH sockets: UART4 on the outboard edge, UART1 on the top edge, ESC on the bottom edge (CAD keep-out box sits only on the outboard edge).",
+  "A7Z-to-FC lead (300 mm, 3 wires) is not routed in CAD; it should follow the A7Z 5 V lead.",
+  "Capacitor legs would reach the tabs directly if the capacitor lay about 20 mm further toward the stack.",
+  "screws.json lists only the four M3 x 6 plate standoffs: ESC-to-FC spacers and M3 nuts are missing there."
+ ]
+}
