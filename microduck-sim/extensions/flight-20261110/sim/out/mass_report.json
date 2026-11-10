@@ -1,0 +1,239 @@
+{
+ "date": "2026-11-10",
+ "frame": "trunk_base = CAD guide frame, mm, x forward y left z up, stand keyframe (stand-world z = guide z + 120)",
+ "duck_without_pack": {
+  "mass_g": 960.5,
+  "com_trunk_mm": [
+   -7.6,
+   0.3,
+   25.3
+  ],
+  "inertia_about_com_kgm2": {
+   "xx": 0.00568,
+   "yy": 0.00587,
+   "zz": 0.00177,
+   "xy": 1e-06,
+   "xz": -0.000609,
+   "yz": -8e-06
+  },
+  "model": "cmu/model/scenes/scene_battery-20261104.xml (battery-20261104 manifest, 960.45 g component estimate, never weighed)"
+ },
+ "pack": {
+  "mass_g": 936.2,
+  "com_trunk_mm": [
+   -15.9,
+   -3.1,
+   34.7
+  ],
+  "by_group_g": {
+   "fan": 320.0,
+   "battery": 302.0,
+   "print": 169.5,
+   "fc": 30.0,
+   "mtf01": 4.5,
+   "capacitor": 5.0,
+   "wire": 60.7,
+   "xt60": 6.0,
+   "bullet": 12.0,
+   "signal": 3.0,
+   "solder": 6.0,
+   "strap": 8.0,
+   "screw": 9.6
+  },
+  "backpack_shift": "battery backpack moved 3.5 mm back (two signed parts, net 0 g)"
+ },
+ "duck_with_pack": {
+  "mass_g": 1896.7,
+  "com_trunk_mm": [
+   -11.9,
+   -1.4,
+   29.9
+  ],
+  "inertia_about_com_kgm2": {
+   "xx": 0.0128,
+   "yy": 0.00746,
+   "zz": 0.00985,
+   "xy": -0.000215,
+   "xz": -0.00063,
+   "yz": 3e-05
+  }
+ },
+ "vs_old_mass_budget": {
+  "old_pack_g": 730,
+  "note": "mass_budget.json (pre-procurement): batteries 2 x 100 g, printed 120 g, wiring 45 g; now 2 x 151 g batteries, printed parts from CAD volumes, wiring from routed lengths"
+ },
+ "assumptions": [
+  "printed parts: H2S slicer grams of the v6 CAD (cad/slices/grams.json, Generic PLA 0.20 mm); PETG (1.27) would add 2 %",
+  "fan 80 g (76 g listing + leads); one heavier listing said 113 g (not used; see mass +10 % case)",
+  "wire lengths are routing estimates; connector, solder and strap masses are estimates",
+  "nothing in the pack is in hand or weighed"
+ ],
+ "missing_or_assumed_vs_robot_now": [
+  "the duck itself (960.45 g) is the battery-20261104 component estimate, never weighed; its backpack, saddle, A7Z and camera lead are estimates in that manifest",
+  "the pack is not built; the CAD is still being edited (cad/ is read at run time)",
+  "no tray-to-wing screws listed in cad/build/screws.json yet (about 4 x M2, 1.3 g, not counted)",
+  "MTF-01 and FC-to-A7Z cable lengths not known"
+ ],
+ "variants": {
+  "mass+5": {
+   "mass_g": 1943.5,
+   "com_trunk_mm": [
+    -12.0,
+    -1.4,
+    30.0
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01316,
+    "yy": 0.00754,
+    "zz": 0.01026,
+    "xy": -0.000225,
+    "xz": -0.000631,
+    "yz": 3.2e-05
+   }
+  },
+  "mass+10": {
+   "mass_g": 1990.3,
+   "com_trunk_mm": [
+    -12.1,
+    -1.5,
+    30.2
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01351,
+    "yy": 0.00761,
+    "zz": 0.01066,
+    "xy": -0.000236,
+    "xz": -0.000633,
+    "yz": 3.3e-05
+   }
+  },
+  "comx-10": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -21.9,
+    -1.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.0128,
+    "yy": 0.00781,
+    "zz": 0.0102,
+    "xy": -0.000248,
+    "xz": -0.00054,
+    "yz": 3e-05
+   }
+  },
+  "comx-5": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -16.9,
+    -1.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.0128,
+    "yy": 0.00758,
+    "zz": 0.00998,
+    "xy": -0.000231,
+    "xz": -0.000585,
+    "yz": 3e-05
+   }
+  },
+  "comx+5": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -6.9,
+    -1.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.0128,
+    "yy": 0.00743,
+    "zz": 0.00983,
+    "xy": -0.000198,
+    "xz": -0.000675,
+    "yz": 3e-05
+   }
+  },
+  "comx+10": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -1.9,
+    -1.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.0128,
+    "yy": 0.0075,
+    "zz": 0.0099,
+    "xy": -0.000182,
+    "xz": -0.00072,
+    "yz": 3e-05
+   }
+  },
+  "comy-10": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -11.9,
+    -11.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01306,
+    "yy": 0.00746,
+    "zz": 0.01011,
+    "xy": -0.000291,
+    "xz": -0.00063,
+    "yz": 0.00012
+   }
+  },
+  "comy-5": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -11.9,
+    -6.4,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01288,
+    "yy": 0.00746,
+    "zz": 0.00994,
+    "xy": -0.000253,
+    "xz": -0.00063,
+    "yz": 7.5e-05
+   }
+  },
+  "comy+5": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -11.9,
+    3.6,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01282,
+    "yy": 0.00746,
+    "zz": 0.00987,
+    "xy": -0.000177,
+    "xz": -0.00063,
+    "yz": -1.5e-05
+   }
+  },
+  "comy+10": {
+   "mass_g": 1896.7,
+   "com_trunk_mm": [
+    -11.9,
+    8.6,
+    29.9
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01293,
+    "yy": 0.00746,
+    "zz": 0.00998,
+    "xy": -0.000139,
+    "xz": -0.00063,
+    "yz": -6e-05
+   }
+  }
+ }
+}
