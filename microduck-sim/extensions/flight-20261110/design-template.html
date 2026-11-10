@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>飞行版 MicroDuck：四涵道喷气背包细化设计</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#1f2937;--mute:#5b6472;--line:#d9d6cc;--acc:#1d4ed8;--ok:#166534;--warn:#9a3412;--bad:#991b1b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;line-height:1.65;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+h1{font-size:24px;margin:4px 0 4px}h2{font-size:20px;margin:34px 0 8px;padding-top:10px;border-top:2px solid var(--line)}h3{font-size:17px;margin:18px 0 6px}
+p{margin:8px 0}.lead{color:var(--mute);font-size:15px}
+a{color:var(--acc);overflow-wrap:anywhere}code{background:#eeece4;border-radius:4px;padding:1px 5px;font-size:.88em;overflow-wrap:anywhere}
+#stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fbfaf7}
+#view{width:100%;height:min(66vh,620px);touch-action:none;display:block}
+.lab{position:absolute;transform:translate(-50%,-120%);background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;white-space:nowrap;pointer-events:none;color:var(--ink)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.bar span{align-self:center;color:var(--mute);font-size:14px}
+button{font:inherit;font-size:16px;padding:7px 13px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.card b{display:block;font-size:13px;color:var(--mute);font-weight:500}.card .v{font-size:18px}.card p{margin:4px 0;font-size:15px}
+.card h4{margin:0 0 4px;font-size:16px}
+ul{padding-left:22px;margin:6px 0}li{margin:4px 0}
+.tag{display:inline-block;font-size:12px;border-radius:999px;padding:1px 9px;margin-right:6px;border:1px solid currentColor;vertical-align:middle}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:middle;border:1px solid #0002}
+.note{font-size:14px;color:var(--mute)}
+nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
+</style></head><body><div class="wrap">
+<h1>飞行版 MicroDuck：四涵道喷气背包细化设计</h1>
+<p class="lead">四个 50 毫米涵道风扇、4 节电池。目标是飞上约 0.75 米的桌面再飞下来，同时保留走路、转身、弯腰夹东西、转头这些现有行为。状态：概念设计，全部数字来自计算和厂商资料；没有建模出打印件，没有下单，没有做仿真。2026-11-10。</p>
+<nav><a href="#sum">一览</a><a href="#m3d">三维图</a><a href="#parts">零件</a><a href="#layout">布局</a><a href="#mount">固定</a><a href="#mass">重量重心</a><a href="#thrust">推力续航</a><a href="#elec">电气</a><a href="#ctrl">控制</a><a href="#sw">软件</a><a href="#beh">现有行为</a><a href="#fly">飞行过程</a><a href="#test">验证</a><a href="#open">未定事项</a><a href="#src">来源</a></nav>
+
+<h2 id="sum">一览</h2>
+<div class="cards">
+<div class="card"><b>推进</b><div class="v">4 个 50 毫米涵道风扇</div><p>身体两侧各一个助推舱，每舱前后两个。4 节电池。</p></div>
+<div class="card"><b>重量</b><div class="v">背包约 730 克，总重约 1.69 千克</div><p>鸭子本体约 960 克（按零件估算，没称过）。</p></div>
+<div class="card"><b>推重比</b><div class="v">1.5 到 2.25</div><p>2.25 按厂商标称（单个 950 克），1.5 按标称打三分之二折。没有这款风扇的第三方实测。</p></div>
+<div class="card"><b>续航</b><div class="v">悬停 53 到 97 秒</div><p>上下桌一个来回约 22 秒，一组电池 2.0 到 3.7 个来回。</p></div>
+<div class="card"><b>外形</b><div class="v">总宽约 284 毫米</div><p>现在最宽处 142 毫米。站高不变（274 毫米），舱顶比头底低 20 毫米。</p></div>
+<div class="card"><b>腿的负担</b><div class="v">最吃力的关节用到上限的 33%</div><p>单腿支撑时的髋侧摆，现在是 20%。走路策略要按新重量重新训练。</p></div>
+<div class="card"><b>价格</b><div class="v">已核价部分约 285 美元</div><p>加上没核价的充电器、指南针和线材，估计 330 到 380 美元。不含运费和税。</p></div>
+<div class="card"><b>最先要做的一件事</b><div class="v">买一个风扇上秤</div><p>约 25 美元。单个实测不到 634 克，推重比就不到 1.5，要停下来重新选型。</p></div>
+</div>
+
+<h2 id="m3d">三维图（真实比例）</h2>
+<p class="lead">鸭子是仿真模型里的真实外形，背包零件按真实尺寸画成简单几何体。拖动旋转，滚轮或双指缩放。地面每格 50 毫米。姿态按钮里的"弯腰夹取"是 10 月 30 日真机记录到的最深的一帧弯腰姿态。</p>
+<div class="bar"><span>姿态</span><button data-pose="stand" class="on">站立</button><button data-pose="bend">弯腰夹取</button><button data-pose="scan">低头转头找东西</button></div>
+<div id="stage"><canvas id="view"></canvas></div>
+<div class="bar"><button id="tPack" class="on">背包</button><button id="tShell" class="on">舱外壳</button><button id="tJet" class="on">气流</button><button id="tLab" class="on">标注</button><span>视角</span><button data-view="iso">斜视</button><button data-view="front">正面</button><button data-view="side">侧面</button><button data-view="back">背面</button><button data-view="top">俯视</button></div>
+<p class="note"><span class="sw" style="background:#23324d"></span>涵道风扇　<span class="sw" style="background:#e8e6df"></span>舱外壳（半透明）　<span class="sw" style="background:#b4332b"></span>飞行电池　<span class="sw" style="background:#3f4650"></span>翼板和电池托板　<span class="sw" style="background:#1b7f5a"></span>飞控加电调　<span class="sw" style="background:#d9822b"></span>光流测距模块　<span class="sw" style="background:#7c3aed"></span>指南针</p>
+
+<h2 id="parts">零件清单</h2>
+<div class="cards">
+<div class="card"><h4>涵道风扇 × 4（两个正转、两个反转）</h4><p>选型：QX-Motor 50 毫米 12 叶，QF2611 电机 4000KV，4 节电池用。</p><p>厂商数字：16.2 伏、34 安、551 瓦时推力 950 克。自重标 76 克（页面没说是电机还是整套，另一处标 113 克）。</p><p>外形尺寸厂商没有公布。图里按同类风扇（内径 50.7、外径 55.4、唇口处 63 毫米）画。</p><p>约 25 美元一个，四个 100 美元。<a href="https://qwinout.com/products/qx-motor-qf2611-3300-4000kv-4600kv-5000kv-brushless-motor-cw-ccw-3-4s-50mm-12-paddle-edf-ducted-fan-for-fms-rc-plane-helicopter">商品页</a>，<a href="https://racer.lt/item/qx-motor-50mm-12-blades-ducted-fan-edf-cw-ccw-with-qf2611-3s-4s-brushless-motor-21984.html">推力表</a></p></div>
+<div class="card"><h4>飞行电池 × 2（并联）</h4><p>选型：4 节 850 毫安时，标称 150C，XT30 插头。每块约 100 克，59 × 30 × 32 毫米，左右各一块。</p><p>合计 4 节 1700 毫安时，约 25 瓦时。</p><p>约 23 美元一块。<a href="https://pyrodrone.com/products/tattu-r-line-version-5-0-850mah-4s-14-8v-150c-lipo-battery-pack-xt30">商品页</a></p><p class="warn">悬停时每块电池出 22 到 41 安。XT30 插头的额定电流我没有核实，要先查；不够就换成带 XT60 的 4 节 1300 毫安时电池（每块约 151 克，总重多约 100 克）。</p></div>
+<div class="card"><h4>飞控</h4><p>选型：Holybro Kakute H7 V2。8 克，35 × 35 毫米，ArduPilot 固件里带光流和测距功能，四个空闲串口。</p><p>52 美元，写这页时 Holybro 官网缺货。备选 Matek H743-SLIM。</p><p><a href="https://ardupilot.org/copter/docs/common-holybro-kakuteh7-v2.html">ArduPilot 说明页</a></p><p class="warn">之前提过的 SpeedyBee F405 V4 不能用：它的 ArduPilot 固件没有编入光流和测距。</p></div>
+<div class="card"><h4>四合一电调</h4><p>选型：Holybro Tekko32 F4 4in1 50A。每路持续 50 安、瞬时 60 安，支持 4 到 6 节电池，13.8 克，48 × 37 × 6 毫米，带电流传感器。</p><p>62.99 美元，有货。<a href="https://holybro.com/products/tekko32-f4-4in1-50a-esc">商品页</a></p><p>风扇满油门厂商标 34 安，在 50 安以内。</p></div>
+<div class="card"><h4>光流加测距模块</h4><p>选型：MicoAir MTF-01。4.5 克，29.3 × 17 × 14.5 毫米。测距 2 厘米到 8 米；光流要离地 8 厘米以上，视角 42 度，环境光 60 勒克斯以上。5 伏供电，串口输出。</p><p>22.90 美元。<a href="https://micoair.com/optical_range_sensor_mtf-01/">规格页</a></p><p class="ok">鸭子站在地上时它离地约 130 毫米，高于 8 厘米的下限。</p></div>
+<div class="card"><h4>指南针模块</h4><p>ArduPilot 的光流定位需要一个航向来源，文档里用的是指南针，而 Kakute H7 V2 板上没有。</p><p class="warn">型号和价格没查。电机线里几十安的电流会干扰指南针，装在哪里、能不能用，都要实测。见"未定事项"。</p></div>
+<div class="card"><h4>打印件</h4><p>翼板一块（带左右电池托板），助推舱外壳两套（每套两半，螺丝合拢夹住两个风扇），光流模块座一个。</p><p>还没有建模。按项目规定，进入建模前要先把这页里你认可的布局写进设计合同文件。</p></div>
+<div class="card"><h4>其他</h4><p>4 节电池充电器（现有充电器只能充 2 节和 3 节）；XT30 并联线；电调输入端电容；硅胶线；M2 螺丝；魔术贴。都没有核价。</p></div>
+</div>
+
+<h2 id="layout">布局和尺寸</h2>
+<p>坐标以站立姿态为准：x 向前，y 向左，z 向上，单位毫米，原点在两脚之间的地面上。鸭子自身：躯干 x −77 到 35、y ±35、z 76 到 187；头 z 215 到 274；大腿外侧 y ±71，腿最高点 z 113。</p>
+<div class="cards">
+<div class="card"><h4>助推舱</h4><p>中心在 y ±110。舱底 z 131，舱顶（含唇口）z 195。外壳长约 128、宽约 64、高约 58。</p><p>每舱两个风扇前后排，中心距 64：前风扇 x +20，后风扇 x −44。</p></div>
+<div class="card"><h4>风扇斜装 6 度</h4><p>前面两个风扇的喷口略朝前下，后面两个略朝后下。目的是加强原地转向的控制力，见"控制"一节。升力只损失 0.5%。</p></div>
+<div class="card"><h4>电池</h4><p>躯干侧壁（y 35）和助推舱内壁（y 78）之间有约 43 毫米的空当，每侧平放一块电池：x −38 到 21，y 41 到 71，z 146 到 178。</p></div>
+<div class="card"><h4>翼板和托板</h4><p>翼板是一块竖直的板，夹在躯干后面的舵机板盒和电池背包之间，左右各伸出到 y ±78。从翼板两端各向前伸出一块水平托板（z 141 到 146），电池放在托板上，助推舱固定在托板外沿。</p></div>
+<div class="card"><h4>飞控加电调</h4><p>叠在一起竖放在右侧翼板后面：x −72 到 −51，y −76 到 −38，z 146 到 194。这里在电池背包的右边，不挡背包的电池小盖和顶上的插头。</p></div>
+<div class="card"><h4>光流测距模块</h4><p>装在右侧翼板后下角，朝正下方：x −82，y −55，离地约 130。它正下方没有腿和脚，离最近的气流边缘约 25 毫米。</p><p>它在身体最后面，所以它看到桌面时整只鸭子已经在桌面上方。</p></div>
+</div>
+<h3>和第一版草图相比改了什么</h3>
+<ul>
+<li><b>去掉了头后面那根横管。</b>核对发现头转动时后脑勺会撞到它（随机头部姿态里 21% 会碰）。现在左右两侧通过背后的翼板相连，躯干顶上不加任何东西。躯干顶上本来也装着 A7Z 电脑的鞍座，没有空位。</li>
+<li><b>助推舱降低 15 毫米、外移 7 毫米。</b>原位置下，低头并转头找东西时头会碰到舱顶。</li>
+<li><b>背上不再放东西。</b>背后是电池背包，它的小盖、顶上的插头和底下的电源开关都要够得着。</li>
+</ul>
+
+<h2 id="mount">怎么固定在身体上</h2>
+<p>躯干后面现在的叠法是：舵机板盒，一块 3 毫米的背板（用 4 颗 M2×6 螺丝锁在板盒的四个柱子上），电池背包。背包和背板之间按设计是用蘑菇搭扣粘的，实物上有没有贴，记录里没有确认。</p>
+<ul>
+<li><b>做法：把那块 3 毫米背板重新打印成"翼板"。</b>中间部分和现在一样，孔位不变，背包照旧装在它后面；左右两边加长伸出身体，再向前拐出电池托板。</li>
+<li><b>受力：</b>飞行时约 17 牛的升力从助推舱经托板、翼板传到 4 颗螺丝上。翼板是竖直的，螺丝是水平的，所以螺丝受的是剪切，每颗约 4 牛，不是往外拔。</li>
+<li><b>翼板根部：</b>每侧一半升力约 8 牛，作用在离躯干约 75 毫米处，根部弯矩约 0.6 牛米。按 4 毫米厚、40 毫米高的截面算，应力不到 1 兆帕，正常飞行时很宽裕。摔倒时的冲击远大于这个数，没有算。</li>
+<li><b>全部用螺丝。</b>助推舱外壳两半用螺丝合拢夹住风扇，舱用螺丝锁在托板上。电池用魔术贴粘在托板上，再用一条魔术扎带绕托板一圈。不用卡扣，不在现有零件上钻孔或切割，要改的零件都重新打印。</li>
+</ul>
+<p class="warn"><span class="tag warn">没查清</span>这 4 颗螺丝现在拧进柱子的深度记录是 2.7 毫米，而且标着"未验证"，拧的是塑料底孔，没有铜螺母。翼板加厚以后螺丝要相应加长，柱子里的孔够不够深，要在模型里看过才知道。这是建模前要先查的第一件事。</p>
+<p class="warn"><span class="tag warn">没查清</span>仿真模型里背包的位置比图纸靠前 8.7 毫米（图纸算上了搭扣的厚度，仿真没算）。这页的坐标按仿真模型，实物上背包可能更靠后，翼板位置随之变化，助推舱位置不受影响。</p>
+<p class="warn"><span class="tag warn">没查清</span>躯干左侧有头部线束（沿鞍座左壁，离电池约 4 毫米）、天线和换电插头，摄像头线多出来的一段也盘在背包附近，具体位置没有记录。电池和飞控会不会和它们抢位置，要对着实物看。</p>
+
+<h2 id="mass">重量和重心</h2>
+<div class="cards">
+<div class="card"><h4>背包重量表</h4><ul><li>风扇 4 个：320 克（按每个 80 克；若实为 113 克，多 132 克）</li><li>舱外壳 2 套：60 克（估计）</li><li>电池 2 块：200 克</li><li>翼板和托板：60 克（估计）</li><li>飞控、电调和安装件：35 克</li><li>线材、插头、电容：45 克（估计）</li><li>光流模块、指南针：10 克</li><li><b>合计约 730 克</b></li></ul></div>
+<div class="card"><h4>重心</h4><p>现在：x −7.6，离地 145。</p><p>装上背包：x −12.1，离地 152。后移 4.5 毫米，升高 7 毫米。</p><p>四个风扇的中心也放在 x −12，推力线穿过重心，离地时不产生翻转力矩。</p></div>
+<div class="card"><h4>站立余量</h4><p>脚底接触面前后是 x −19 到 33。重心离脚跟边缘从现在的 11 毫米变成 7 毫米。</p><p>站姿要整体前倾约 2 度把重心挪回来，这一条随重新训练一起解决。</p></div>
+<div class="card"><h4>左右转动惯量</h4><p>按质点粗算，鸭子自身约 0.0051 千克平方米，背包再加约 0.0055，大约翻倍。走路时身体左右晃动会变慢，这是必须重新训练的主要原因之一。</p></div>
+</div>
+<h3>腿的负担（静力计算）</h3>
+<p>站立姿态下单腿支撑，一条腿扛住全部重量，是走路时最吃力的瞬间。数字是各关节要出的力矩占模型里舵机力矩上限（0.96 牛米）的比例。</p>
+<div class="cards">
+<div class="card"><b>现在（960 克）</b><p>髋侧摆 20%，髋俯仰 10%，膝 9%，踝 8%</p></div>
+<div class="card"><b>带背包（1690 克）</b><p>髋侧摆 33%，髋俯仰 27%，踝 21%，膝 10%</p></div>
+<div class="card"><b>风扇若是 113 克一个（1822 克）</b><p>髋侧摆 36%，髋俯仰 29%，踝 23%，膝 11%</p></div>
+</div>
+<p>结论：静态下舵机力气够，最吃力的关节还有约 3 倍余量。这只说明扛得动，不说明能走。</p>
+
+<h2 id="thrust">推力和续航</h2>
+<ul>
+<li><b>悬停时每个风扇要出约 423 克。</b></li>
+<li><b>最大推力：</b>厂商标称单个 950 克，四个共 3.8 千克，推重比 2.25。4 节电池的 50 毫米风扇，我找到的两份非厂商实测（别的品牌）大约只有标称的三分之二。按这个折扣是单个 633 克，推重比 1.5。这一款没有任何第三方实测。</li>
+<li><b>悬停油门：</b>推重比 2.25 时风扇出力约 44%，1.5 时约 67%。ArduPilot 文档给的正常范围是 20% 到 60%，电机顶到 100% 后飞控保不住姿态。所以 1.5 是能接受的下限。</li>
+<li><b>悬停功率：</b>按厂商效率推算约 0.65 千瓦，按折扣后推算约 1.2 千瓦。总电流 44 到 81 安。</li>
+<li><b>电量：</b>两块电池共约 25 瓦时，只用 70% 是 17.6 瓦时。悬停 53 到 97 秒。</li>
+<li><b>来回次数：</b>上桌约 10 秒，下桌约 12 秒，按悬停功率的 1.2 倍算，一组电池 2.0 到 3.7 个来回。</li>
+<li><b>出风口离地 131 毫米</b>，约 5 个风扇半径，在近地推力最低的区域之上。</li>
+</ul>
+<p class="warn"><span class="tag warn">判定条件</span>单个风扇上秤，4 节电池下最大推力不低于 634 克才往下做。若风扇实际是 113 克一个，这条线升到 683 克。</p>
+<p class="note">50 毫米风扇也有 6 节电池的版本，标称 1240 克，但我只查到一款，而且快断货，所以不作为主线。舱的外形尺寸两种通用，以后可以换。</p>
+
+<h2 id="elec">电气连接</h2>
+<div class="cards">
+<div class="card"><h4>动力</h4><p>左右两块电池各出一根线，在右侧翼板后面并到一起，接电调的电源输入。输入端并一个电容。</p><p>电调四路输出各三根线接四个风扇。左侧两个风扇的线沿翼板背面横穿过去，每根约 25 厘米。</p></div>
+<div class="card"><h4>飞控</h4><p>飞控叠在电调上，由电调上的排线供电并读取总电流。</p><p>串口一：光流测距模块（5 伏、地、收、发四根线）。</p><p>串口二：A7Z 电脑。</p><p>接口三：指南针。</p></div>
+<div class="card"><h4>和鸭子本体的连接</h4><p>只有三根线：地、收、发，从飞控接到 A7Z 的排针。鸭子的舵机和 A7Z 继续用现有的 2 节电池，两套电源只共地。</p><p>A7Z 就在躯干顶上的鞍座里，线从鞍座底部的开口上去，很短。</p></div>
+<div class="card"><h4>A7Z 用哪个口</h4><p>排针上空着的串口有 4 号串口（第 16、18 针）和 3 号串口（第 27、28 针）。</p><p class="warn">这两个串口在 A7Z 上都没有启用和测试过，要先加设备树配置。备用的 USB-C 口默认是从设备模式，而且接着 5 伏供电时不能用，所以不选。</p></div>
+<div class="card"><h4>要焊的地方</h4><p>风扇线接电调（12 个焊点，或者都用香蕉头），电池并联线，电容。飞控到 A7Z 和光流模块用现成的插头线。</p></div>
+<div class="card"><h4>充电</h4><p>现有充电器只能充 2 节和 3 节。4 节电池要另买充电器。</p></div>
+</div>
+
+<h2 id="ctrl">控制</h2>
+<h3>三层分工</h3>
+<ul>
+<li><b>飞控管姿态。</b>它自带陀螺仪，每秒几百次分别调四个风扇，保持机身水平。鸭子自己的惯性传感器和走路策略不参与。</li>
+<li><b>光流测距模块管高度和漂移。</b>测距给出离地高度，光流给出水平移动速度，都直接送进飞控。</li>
+<li><b>A7Z 管任务。</b>告诉飞控起飞到多高、往哪边移动多快、什么时候降落，并在飞行前后切换腿和头的模式。</li>
+</ul>
+<h3>四个风扇怎么分工</h3>
+<div class="cards">
+<div class="card"><b>1 号：右前，逆时针</b><p>喷口斜向前</p></div><div class="card"><b>2 号：左后，逆时针</b><p>喷口斜向后</p></div><div class="card"><b>3 号：左前，顺时针</b><p>喷口斜向前</p></div><div class="card"><b>4 号：右后，顺时针</b><p>喷口斜向后</p></div>
+</div>
+<ul>
+<li><b>前后倾：</b>前面两个和后面两个一多一少。前后间距只有 64 毫米，这个方向的控制力臂短，是机身布局决定的。</li>
+<li><b>左右倾：</b>左边两个和右边两个一多一少，力臂 220 毫米，控制力很足。</li>
+<li><b>原地转向：</b>普通四轴靠螺旋桨的反扭矩转向。涵道风扇后面有导流片，把气流的旋转抵消了，反扭矩很小。所以把四个风扇各斜装 6 度：1、2 号加速、3、4 号减速时，喷气的水平分力合起来推着机身转，方向和反扭矩一致。按两组推力差 20% 算，转向力矩约 0.037 牛米，角加速度约每秒 300 度每秒。</li>
+<li><b>这是标准四轴固件支持的排法</b>（机架类型选 X 形）。这两块飞控的默认机架类型不是这个，要手动改，电机顺序接错会一起飞就翻。</li>
+</ul>
+<h3>飞控要设的关键参数（来自 ArduPilot 文档）</h3>
+<ul>
+<li>光流测距模块：<code>FLOW_TYPE = 5</code>，<code>RNGFND1_TYPE = 10</code>，<code>RNGFND1_MAX = 8</code>，<code>RNGFND1_MIN = 0.01</code>，<code>RNGFND1_ORIENT = 25</code>，串口波特率 115200。模块装的方向不对会让光流反馈反向，文档原话是可能飞丢。</li>
+<li>定位来源：<code>EK3_SRC1_VELXY = 5</code>（光流），<code>EK3_SRC1_POSXY = 0</code>，<code>EK3_SRC1_YAW = 1</code>（指南针）。还要手动设定定位原点。</li>
+<li>不接遥控器：<code>FS_THR_ENABLE = 0</code>，解锁检查里跳过遥控器一项。解锁后几秒内不起飞会自动上锁。</li>
+<li>失联保护：<code>FS_GCS_ENABLE = 5</code>（一律降落），<code>FS_GCS_TIMEOUT = 2</code>。飞控 2 秒收不到 A7Z 的心跳就自己降落。我之前说 1 秒，文档里这个值最小是 2 秒。另外速度指令 3 秒不更新，飞控会自己停住。</li>
+<li>急停：强制上锁指令，电机立刻停，飞在空中也会停，会直接掉下来。只在系绳或者离地很低时用。</li>
+</ul>
+
+<h2 id="sw">软件</h2>
+<div class="cards">
+<div class="card"><h4>A7Z 上新增一个飞行程序</h4><p>通过串口和飞控说话（MAVLink 协议），发心跳、起飞、速度、降落和急停，读回高度、姿态、电压、电流。它不碰舵机。</p></div>
+<div class="card"><h4>和现有大脑程序配合</h4><p>现有程序用一个指令文件切换模式。飞行前先站稳，然后切到"保持"模式：舵机保持当前位置、力矩不关，腿和头就锁住了。落地后切回站立或走路。</p><p>不用开环站立模式锁腿，那个模式之前让鸭子摔过。</p></div>
+<div class="card"><h4>手机页面加一个飞行面板</h4><p>加在现有的遥控页面里，走现有的通道（手机到 Mac mini 的桥，再到 A7Z）。</p><p>按钮：解锁、起飞到指定高度、前后左右微移、降落、急停。显示：离地高度、电池电压和电流、四个风扇的出力、飞控状态。</p></div>
+<div class="card"><h4>急停的可靠性</h4><p>页面急停要经过手机、Wi-Fi、Mac mini、A7Z 四段，任何一段卡住都到不了飞控。兜底靠飞控自己的失联降落（2 秒）和测试时的系绳。</p><p class="warn">这比遥控器急停慢，也是没有遥控器的代价。</p></div>
+</div>
+
+<h2 id="beh">对现有行为的影响</h2>
+<p>间隙是把真实外形按关节角度摆出来以后量的（只做几何计算，不是仿真）。背包固定在躯干上，随躯干一起动。</p>
+<div class="cards">
+<div class="card"><h4><span class="tag ok">间隙够</span>站立</h4><p>腿离背包最近 23 毫米，头离背包最近 23 毫米。重心后移 4.5 毫米，站姿要前倾约 2 度。</p></div>
+<div class="card"><h4><span class="tag ok">间隙够</span>走路、转身</h4><p>腿在各关节一半活动范围内随机摆 300 个姿态，离背包最近 2 到 3 毫米，没有碰到。走路实际用的范围比这小。</p><p class="warn">策略必须按新的重量和转动惯量重新训练，结果现在没有。</p></div>
+<div class="card"><h4><span class="tag ok">间隙够</span>弯腰夹东西</h4><p>用 10 月 30 日真机记录的 1046 帧弯腰姿态核对：腿离背包最近 16 毫米，头离背包最近 23 毫米，背包最低点离地 77 毫米。正前方完全空着。</p><p class="warn">弯腰是个平衡动作，重心高了、身体重了，现在的弯腰策略能不能直接用没有依据。</p></div>
+<div class="card"><h4><span class="tag ok">间隙够</span>低头转头找东西</h4><p>夹取程序里的找东西动作（低头，左右转到 69 度）：头离舱顶最近 7 毫米，离电池 18 毫米。</p></div>
+<div class="card"><h4><span class="tag ok">间隙够</span>只转头</h4><p>平视时左右转满 170 度：最近 22 毫米。</p></div>
+<div class="card"><h4><span class="tag warn">要限位</span>头大幅后仰或歪头时转头</h4><p>在头部各关节一半范围内随机摆，约 2% 到 3% 的姿态会碰到翼板、飞控或电池。要在软件里给头加一条随背包生效的限位。</p></div>
+<div class="card"><h4><span class="tag bad">会碰</span>腿的极限姿态</h4><p>腿在全部活动范围内随机摆，约四分之一的姿态会碰到托板，一成左右会碰到助推舱。这些是大腿抬到接近水平并且膝盖深弯的姿态。</p><p>倒地起身动作会用到这类姿态。记录里起身动作在真机上本来也还没成功过。带着背包起身，按现在的布局不成立。</p></div>
+<div class="card"><h4><span class="tag warn">没核对</span>坐下、踢</h4><p>程序里有这两个模式，我没有找到它们的真机关节记录，没有核对间隙。</p></div>
+<div class="card"><h4><span class="tag ok">不受影响</span>换电池、开关、充电口</h4><p>电池背包的小盖、顶上的插头、底下的电源开关、A7Z 后面的接口都没有被挡住。</p></div>
+<div class="card"><h4><span class="tag warn">变差</span>摔倒</h4><p>助推舱比身体宽出一截，侧倒时先着地的是舱。舱壳和翼板要按承受侧摔设计，这一条没有算。</p></div>
+</div>
+
+<h2 id="fly">一次飞行的过程</h2>
+<ol>
+<li><b>准备。</b>鸭子走到离桌子 0.5 米以上的位置站稳。切到保持模式锁住腿和头。飞行程序检查电压、定位状态和心跳。</li>
+<li><b>解锁并起飞。</b>风扇先加到约六成悬停推力，此时腿还承着重；然后一次加到爬升推力，以每秒 0.5 米升到离地 1.05 米（桌高 0.75 加 0.3 余量）。不在贴地高度停留。</li>
+<li><b>前移。</b>每秒 0.3 米向前。</li>
+<li><b>过桌沿。</b>光流测距模块在身体最后面。它的读数突然少掉约 0.75 米，说明整只鸭子已经在桌面上方。</li>
+<li><b>下降。</b>再前移一小段后以每秒 0.3 米下降。</li>
+<li><b>落地。</b>测距读数回到站立时的高度、腿部舵机电流上升，就判定脚已着地：风扇停转，切回站立，再交给走路。</li>
+</ol>
+<p>飞下桌面是同一过程反过来。落地速度每秒 0.3 米，冲击很小；危险的是空中失去动力，从 1 米掉下约 17 焦，会摔坏打印件，所以早期测试全部系绳。</p>
+<p class="warn"><span class="tag warn">没有现成做法</span>过桌沿时脚下的"地面"突然高了 0.75 米。飞控如果用测距定高，会以为自己突然掉了下去而猛加油门；如果用气压计定高，室内风扇气流又会干扰气压计。怎么设置才能平稳过桌沿，文档里没有现成答案，要在系绳测试里专门试。</p>
+
+<h2 id="test">验证步骤和通过条件</h2>
+<ol>
+<li><b>称鸭子。</b>把 960 克这个估算值换成实测值，重算。</li>
+<li><b>单个风扇上秤。</b>买一个风扇、一个单路电调和一块 4 节电池。通过条件：最大推力不低于 634 克。同时称风扇自重、量外形尺寸，这两项厂商没给。</li>
+<li><b>在模型里查翼板的螺丝柱。</b>见"怎么固定"。</li>
+<li><b>你点头后，把背包的质量写进仿真模型，重新训练走路。</b>再背着等重的配重在真机上验证站立、走路、转身、弯腰。</li>
+<li><b>建模、打印、装背包。</b>先不装到鸭子上。</li>
+<li><b>背包挂 960 克配重系绳飞。</b>调悬停、转向和定高。通过条件：悬停 20 秒，水平漂移在 20 厘米以内，转向不振荡。</li>
+<li><b>鸭子背着背包系绳悬停。</b>离地 10 厘米，腿和头锁住，再试落地切换。</li>
+<li><b>过桌沿。</b>先由人拿着在桌沿来回移动，记录测距和光流读数；再系绳飞。</li>
+<li><b>自由飞上桌面和飞下。</b></li>
+</ol>
+
+<h2 id="open">没有依据或没有定的事</h2>
+<ul>
+<li><b>风扇真实推力、自重和外形尺寸。</b>都只有厂商标称或者根本没公布。第 2 步解决。</li>
+<li><b>翼板螺丝柱够不够结实。</b>第 3 步解决。</li>
+<li><b>带背包走路、转身、弯腰。</b>要重新训练，没开始。</li>
+<li><b>航向来源。</b>指南针会被电机电流干扰；不用指南针时 ArduPilot 的光流定位怎么工作，我没有查清。</li>
+<li><b>过桌沿时的定高设置。</b>见上。</li>
+<li><b>电池插头的电流能力。</b>没核实。</li>
+<li><b>A7Z 的空闲串口。</b>没启用过。</li>
+<li><b>涵道风扇做四轴的转向能力。</b>6 度斜装是按力学算的，没有找到同样做法的实测。</li>
+<li><b>水平漂移。</b>已发表的两台喷气人形机器人都报告了明显漂移。光流的效果要实测。</li>
+<li><b>起身、坐下、踢。</b>见"对现有行为的影响"。</li>
+<li><b>侧摔时舱和翼板的强度。</b>没算。</li>
+<li><b>噪声和气流。</b>出口气流约每秒 46 米，会吹飞桌上的纸；室内会很吵，没有分贝数据。</li>
+<li><b>安全。</b>每分钟几万转的转子进气口朝上敞开，离手和脸很近。测试时戴护目镜，系绳。</li>
+</ul>
+
+<h2 id="src">来源和计算文件</h2>
+<ul>
+<li>机器人现状：<code>~/code/robotics/microduck-sim/CURRENT-STATE.json</code>（电池背包、充电器、A7Z 接线、供电等条目），紧固件表 <code>guide/content/fasteners.json</code>，A7Z 引脚说明 <code>bringup/A7Z-PINS.html</code>。</li>
+<li>外形和质量：仿真场景 <code>microduck_rl/cmu/model/scenes/scene_battery-20261104.xml</code>。</li>
+<li>弯腰姿态：<code>guide/firmware/mac/camera-calib-20261030/bend-20261030/</code> 里的真机记录。</li>
+<li>本页的计算：<code>~/code/robotics/microduck-sim/extensions/flight-20261110/</code> 下的 <code>pack_geometry.json</code>（零件位置）、<code>sweep_check.py</code>（间隙）、<code>mass_budget.json</code> 和 <code>leg_load.py</code>（重量、重心、腿负担）。</li>
+<li>零件规格：见零件卡片里的链接。电池另见 <a href="https://www.racedayquads.com/products/cnhl-black-series-v2-0-14-8v-4s-1300mah-130c-lipo-battery-xt60">4 节 1300 毫安时备选</a>；6 节风扇见 <a href="https://www.turbines-rc.com/en/edf-units/4833-edf-ducted-fan-xfly-galaxy-x5-xfly-model-50mm-12-blades-6s-motor-3200kv.html">XFly 商品页</a>；同类风扇外形尺寸见 <a href="https://www.turbines-rc.com/en/turbines-rc-fd/2698-edf-ducted-fan-fd-model-50mm-11-blades-4s-motor-4300kv.html">FD Model 商品页</a>。</li>
+<li>ArduPilot 文档：<a href="https://ardupilot.org/copter/docs/common-mtf-01.html">光流测距模块设置</a>，<a href="https://ardupilot.org/copter/docs/common-optical-flow-sensor-setup.html">光流定位来源</a>，<a href="https://ardupilot.org/copter/docs/common-non-gps-navigation-landing-page.html">无卫星定位导航</a>，<a href="https://ardupilot.org/copter/docs/connect-escs-and-motors.html">电机顺序</a>，<a href="https://ardupilot.org/copter/docs/gcs-failsafe.html">失联保护</a>，<a href="https://ardupilot.org/copter/docs/common-gcs-only-operation.html">不接遥控器</a>，<a href="https://ardupilot.org/dev/docs/copter-commands-in-guided-mode.html">引导模式指令</a>，<a href="https://ardupilot.org/dev/docs/mavlink-arming-and-disarming.html">解锁和强制上锁</a>，<a href="https://ardupilot.org/copter/docs/thrust_loss_yaw_imbalance.html">推力不足说明</a>。</li>
+<li>推力、先例和更早的方案比较：报告 <code>~/code/reports/20261110-flying-microduck.html</code>。</li>
+</ul>
+</div>
+<script type="application/json" id="mesh">__MESH__</script>
+<script type="text/plain" id="three-src">__THREE__</script>
+<script type="module">
+const THREE=await import(URL.createObjectURL(new Blob([document.getElementById('three-src').textContent],{type:'text/javascript'})));
+const data=JSON.parse(document.getElementById('mesh').textContent);
+const cv=document.getElementById('view'),stage=document.getElementById('stage');
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xfbfaf7);
+const cam=new THREE.PerspectiveCamera(32,1,10,6000);cam.up.set(0,0,1);
+scene.add(new THREE.HemisphereLight(0xffffff,0xb8b2a4,1.15));
+const sun=new THREE.DirectionalLight(0xffffff,1.6);sun.position.set(400,-300,700);scene.add(sun);
+const fill=new THREE.DirectionalLight(0xffffff,.5);fill.position.set(-300,400,200);scene.add(fill);
+const b64=(s,T)=>{const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new T(u.buffer)};
+const bodies={};
+for(const p of data.parts){
+  let geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(b64(p.pos,Float32Array),3));geo.setIndex(new THREE.BufferAttribute(b64(p.idx,Uint32Array),1));
+  geo=geo.toNonIndexed();geo.computeVertexNormals();
+  const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:new THREE.Color().setRGB(p.color[0],p.color[1],p.color[2],THREE.SRGBColorSpace),roughness:.6,metalness:.05}));
+  m.matrixAutoUpdate=false;(bodies[p.body]??=[]).push(m);scene.add(m);
+}
+const grid=new THREE.GridHelper(900,18,0xbdb8aa,0xdedacf);grid.rotation.x=Math.PI/2;scene.add(grid);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:.1},o));
+const pack=new THREE.Group();pack.matrixAutoUpdate=false;scene.add(pack);
+const jets=[],shells=[];
+const box=(lo,hi,mat)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2]),mat);m.position.set((lo[0]+hi[0])/2,(lo[1]+hi[1])/2,(lo[2]+hi[2])/2);pack.add(m);return m};
+const duct=M(0x23324d),lip=M(0x3b5b8c),dark=M(0x30343b),shellM=M(0xe8e6df,{transparent:true,opacity:.5}),batt=M(0xb4332b),plate=M(0x3f4650),fcM=M(0x1b7f5a),flowM=M(0xd9822b),magM=M(0x7c3aed),jetM=M(0x4f8df5,{transparent:true,opacity:.15,depthWrite:false});
+const XF=-12,Y=110,Z0=133,ZH=56,CANT=6*Math.PI/180;
+function fan(x,y,dir){const g=new THREE.Group();g.position.set(x,y,Z0+ZH/2);g.rotation.y=-dir*CANT;   // dir +1: exhaust tilts forward
+  const c=new THREE.Mesh(new THREE.CylinderGeometry(28,28,ZH,48,1,true),duct);c.rotation.x=Math.PI/2;c.material.side=THREE.DoubleSide;g.add(c);
+  const t=new THREE.Mesh(new THREE.TorusGeometry(29.5,2.5,12,48),lip);t.position.z=ZH/2;g.add(t);
+  const h=new THREE.Mesh(new THREE.CylinderGeometry(4,11,ZH*.7,24),dark);h.rotation.x=Math.PI/2;g.add(h);
+  for(let i=0;i<12;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(17,1.2,9),dark);const a=i*Math.PI/6;b.position.set(Math.cos(a)*17,Math.sin(a)*17,ZH*.25);b.rotation.z=a;b.rotation.x=.5;g.add(b)}
+  const L=Z0+30,j=new THREE.Mesh(new THREE.CylinderGeometry(25,36,L,40,1,true),jetM);j.rotation.x=Math.PI/2;j.position.z=-ZH/2-L/2;jets.push(j);g.add(j);pack.add(g)}
+for(const s of[1,-1]){fan(XF+32,s*Y,1);fan(XF-32,s*Y,-1);
+  const sh=new THREE.Shape(),r=32,a=32;sh.absarc(a,0,r,-Math.PI/2,Math.PI/2,false);sh.absarc(-a,0,r,Math.PI/2,Math.PI*1.5,false);
+  const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:54,bevelEnabled:false,curveSegments:32}),shellM);m.position.set(XF,s*Y,Z0+1);shells.push(m);pack.add(m);
+  box([-38,s>0?41:-71,146],[21,s>0?71:-41,178],batt);
+  box([-49,s>0?37:-78,141],[21,s>0?78:-37,146],plate)}
+box([-49,-78,141],[-45,78,182],plate);
+box([-72,-76,146],[-52,-39,194],fcM);
+box([-90,-64,129],[-74,-47,143],flowM);box([-76,-58,143],[-49,-52,147],plate);
+box([-68,50,166],[-52,66,170],magM);
+const labels=[['右前风扇 1 号',[XF+32,-Y,196]],['左前风扇 3 号',[XF+32,Y,196]],['右后风扇 4 号',[XF-32,-Y,196]],['左后风扇 2 号',[XF-32,Y,196]],['飞行电池',[-8,56,180]],['飞行电池',[-8,-56,180]],['翼板',[-47,70,184]],['电池托板',[10,-78,141]],['飞控加电调',[-62,-58,196]],['光流测距模块',[-82,-56,128]],['指南针',[-60,58,172]]]
+ .map(([t,p])=>{const e=document.createElement('div');e.className='lab';e.textContent=t;stage.appendChild(e);return{e,p:new THREE.Vector3(...p)}});
+const mat=a=>new THREE.Matrix4().set(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],a[10],a[11],0,0,0,1);
+let show={pack:true,shell:true,jet:true,lab:true},pose='stand';
+function setPose(n){pose=n;const P=data.poses[n];for(const b in bodies)for(const m of bodies[b]){m.matrix.copy(mat(P[b]));m.matrixWorldNeedsUpdate=true}
+  pack.matrix.copy(mat(P[data.trunk]));pack.matrixWorldNeedsUpdate=true;
+  document.querySelectorAll('[data-pose]').forEach(b=>b.classList.toggle('on',b.dataset.pose===n));draw()}
+const tgt=new THREE.Vector3(-10,0,135);let az=-.9,el=.32,dist=innerWidth<600?900:640;
+function draw(){const w=cv.clientWidth,h=cv.clientHeight,pr=R.getPixelRatio();if(cv.width!==Math.round(w*pr)||cv.height!==Math.round(h*pr)){R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+  pack.visible=show.pack;shells.forEach(s=>s.visible=show.shell);jets.forEach(j=>j.visible=show.jet&&pose==='stand');
+  cam.position.set(tgt.x+dist*Math.cos(el)*Math.cos(az),tgt.y+dist*Math.cos(el)*Math.sin(az),tgt.z+dist*Math.sin(el));cam.lookAt(tgt);cam.updateMatrixWorld();R.render(scene,cam);
+  for(const l of labels){const v=l.p.clone().applyMatrix4(pack.matrix).project(cam);const on=show.lab&&show.pack&&v.z<1;l.e.style.display=on?'block':'none';if(on){l.e.style.left=((v.x+1)/2*w)+'px';l.e.style.top=((1-v.y)/2*h)+'px'}}}
+const pts=new Map();let pinch=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY])});
+cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
+  if(pts.size===1){az-=(e.clientX-p[0])*.008;el=Math.max(-.2,Math.min(1.5,el+(e.clientY-p[1])*.006))}
+  pts.set(e.pointerId,[e.clientX,e.clientY]);
+  if(pts.size===2){const a=[...pts.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch)dist=Math.max(300,Math.min(2500,dist*pinch/d));pinch=d}draw()});
+const up=e=>{pts.delete(e.pointerId);pinch=0};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(300,Math.min(2500,dist*(1+Math.sign(e.deltaY)*.08)));draw()},{passive:false});
+const views={iso:[-.9,.32],front:[0,.02],side:[-Math.PI/2,.02],back:[Math.PI,.15],top:[-Math.PI/2,1.5]};
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{[az,el]=views[b.dataset.view];draw()});
+document.querySelectorAll('[data-pose]').forEach(b=>b.onclick=()=>setPose(b.dataset.pose));
+for(const[id,k]of[['tPack','pack'],['tShell','shell'],['tJet','jet'],['tLab','lab']])document.getElementById(id).onclick=e=>{show[k]=!show[k];e.target.classList.toggle('on',show[k]);draw()};
+addEventListener('resize',draw);
+const q=new URLSearchParams(location.search);if(q.get('view'))[az,el]=views[q.get('view')];if(q.get('lab')==='0'){show.lab=false;document.getElementById('tLab').classList.remove('on')}
+setPose(q.get('pose')||'stand');window.__ready=true;
+</script></body></html>

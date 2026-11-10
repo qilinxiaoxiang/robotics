@@ -636,3 +636,17 @@ Design (all by calculation, sources in the report):
 Evidence that would change the decision: a single 6S fan measuring under 625 g on the bench (thrust-to-weight under 1.5); the real weight differing from 960 g; a retrained policy that cannot walk at 1.67 kg.
 
 Not established: walking, turning and get-up with the pack (needs retraining with the new mass, not started, needs Shawn's nod); pack-to-trunk mounting; yaw authority; noise.
+
+## 2026-11-10 Flying MicroDuck, detailed design: four 50 mm EDFs on 4S ("四涵道喷气背包")
+
+Shawn's decisions, in his words: "那不是4助推器吗 为什么叫双助推器 ... 感觉还是4个电机好一点"; "遥控可以省掉，我们做页面的就行"; "货源只有一款也太局限了，换都不好换" (about the single-source 6S 50 mm fan); "64太大太重了 就按50来做 细化一下 出个页面 细化一下所有细节". Calculation and geometry only, no simulation.
+
+Page (Chinese, self-contained, true-scale 3D with stand / real logged bend / head-scan poses): `microduck-sim/extensions/flight-20261110/flying-duck-design.html`, built by `build_design.py` from `design-template.html` and `duck_poses.json` (`export_duck_poses.py`; generated files not committed). It supersedes the 6S "twin-booster" layout in the entry above and in `~/code/reports/20261110-flying-microduck.html`.
+
+- Design: 4 x QX-Motor 50 mm 12-blade QF2611 4000KV on 4S (vendor 950 g each, CW and CCW sold), two per side nacelle at y +-110, z 131..195; 2 x 4S 850 mAh in parallel beside the trunk; Kakute H7 V2 + Tekko32 F4 4in1 50A on the right rear; MicoAir MTF-01 flow + range at the right rear looking down; external compass; ArduPilot QUAD X, fans canted 6 deg fore-aft for yaw; A7Z over a spare UART (MAVLink), control and stop from the robot-live page, GCS failsafe land at 2 s (the minimum; the earlier "about 1 s" was wrong).
+- Corrections to the earlier entry: the A7Z is on the trunk roof saddle, not in the head; the back carries the battery backpack; SpeedyBee F405 V4 is ruled out (its ArduPilot build lacks optical flow); the tube over the trunk top is removed (the head hits it). Mount: the V1.39 back plate reprinted as a wing plate on the same 4 x M2 pattern, screws in shear.
+- Numbers (`mass_budget.json`, `leg_load.py`, `pack_geometry.json`, `sweep_check.py`, `sweep_result.txt`): pack 730 g, total 1690 g; thrust-to-weight 2.25 on the vendor figure, 1.5 at two thirds of it; hover 53 to 97 s, 2.0 to 3.7 table round trips; COM 4.5 mm back and 7 mm up, heel margin 11 to 7 mm; single-support hip roll 33 % of the 0.96 N.m model limit (20 % today); forward-kinematics clearance: stand >= 23 mm, 1046 logged real bend rows >= 16 mm, pickup head scan >= 7 mm, legs at half joint range >= 2 mm; full-range leg poses and far-back head poses hit the pack (get-up with the pack does not work in this layout; head needs a software limit).
+
+Evidence that would change the decision: one fan measuring under 634 g on 4S (683 g if the fan weighs 113 g); rear_pack screw posts too shallow for the wing plate (2.7 mm engagement recorded as unverified); a retrained policy that cannot walk at 1.69 kg.
+
+Not established: real fan thrust, mass and housing size (vendor claims only, no independent test of this unit); XT30 current rating at 22 to 41 A per pack; yaw source (compass near 40 to 80 A leads); height hold across the table edge; A7Z spare UART (never enabled); walking, turning and bending with the pack (retraining not started, needs Shawn's nod); sit and kick poses; side-fall strength. No CAD, no DESIGN-CONTRACT entry, nothing ordered.
