@@ -162,7 +162,7 @@
           "id": "T2-lead-turned-with-duck",
           "what": "Same right turn past -55 deg after the lead is untwisted and its held end turns with the duck. H1 predicts the stall moves or goes.",
           "status": "queued",
-          "blocker": "needs Shawn's hands on the lead; the camera USB drop must be cleared first"
+          "blocker": "needs Shawn's hands on the lead (the camera USB drop it waited on is fixed, 2026-11-09)"
         }
       ],
       "mitigations": [],
@@ -203,12 +203,12 @@
         {
           "id": "H1-usbc-plug-contact",
           "claim": "The camera's USB-C plug at the A7Z lost contact: the Type-C chip read CC1 and CC2 Open at 21:37:54, the same second as the disconnect, so VBUS went off and a controller rebind could not bring it back.",
-          "status": "supported: both drops at the first lurch of a right spin with CC open, re-plug recovered the first; the second not yet re-plugged"
+          "status": "confirmed by Shawn 2026-11-09: \"掉线原因早就查清楚了呀 ... 是usb头松脱 现在换了转接头 下面也垫了东西\""
         },
         {
           "id": "H2-lead-tug",
           "claim": "The 1 m camera lead, stiff above the neck and saddle with its excess coiled by the backpack, levers the A-to-C adapter in the A7Z when the body lurches right.",
-          "status": "open"
+          "status": "part of the confirmed cause: the tug is what loosened the plug; the new adapter is packed from below so it no longer moves"
         }
       ],
       "tests": [
@@ -221,19 +221,20 @@
         {
           "id": "T2-spin-with-plug-held",
           "what": "Re-plug, relieve the lead at the saddle so the adapter carries no load, then 10 right-spin starts reading dmesg. H1/H2 predict no drop.",
-          "status": "queued",
-          "blocker": "A7Z offline and the plug needs a hand"
+          "status": "superseded",
+          "results": "Not run as written: Shawn found the cause himself (the USB plug at the A7Z came loose), replaced the adapter and packed it from below. The inducing condition (turns, lurches, falls) then ran on the robot in the 2026-11-06 seepick attempts, below."
         }
       ],
       "mitigations": [],
+      "fix": "Shawn (reported 2026-11-09, done before the 2026-11-06 runs): new adapter at the A7Z USB-C port with packing underneath so the plug cannot work loose. Which adapter is in CURRENT-STATE parts_a7z_extensions.cablecreation_usbc_pigtail note (the rgzhihuifz side-bend adapter ordered 2026-11-02) is not confirmed by him; the record says only 'new adapter'.",
       "recovery": {
-        "self_recovers": false,
-        "verified_by_induced_fault": false,
-        "evidence": "needs a re-plug by hand; xhci rebind did not recover it (21:40), re-plug did (21:43)"
+        "self_recovers": true,
+        "verified_by_induced_fault": true,
+        "evidence": "Required recovery is 'the connection stops dropping'. 2026-11-06 seepick: eight attempts with in-place turns, aim turns at gyro 1-1.5 rad/s and four falls (the condition of all three drops), and seepick kept reading the head camera in the attempts after each fall (guide/firmware/mac/robot-runs-20261106-seepick/README.md); no camera loss is recorded there. Before the fix a re-plug by hand was needed (xhci rebind 2026-11-01 21:40 did not help). Not re-checked in the A7Z kernel log: the A7Z was offline on 2026-11-09."
       },
       "cause": {
-        "status": "hypothesis",
-        "summary": "USB-C plug contact at the A7Z, shaken loose on a right-spin lurch; seen twice"
+        "status": "confirmed",
+        "summary": "The camera's USB plug at the A7Z came loose when the body lurched (Shawn 2026-11-09). Fixed with a new adapter packed from below."
       }
     },
     "namecall-not-started-at-boot": {
