@@ -558,10 +558,10 @@
    ]
   },
   "walking_stability": {
-   "value": "stable: of 67 walk actions on 2026-11-02/04/06, 65 ended upright; 35 of 35 turns upright. The two misses are the first two walks of the 11/06 13:59 run (one fall 2 s in, one guard stop 1 s in at vx 0.25). Standing (walk policy at zero command): 29/29 on 11/02, 17/20 on 11/04, 45/49 on 11/06; every stand fall or guard stop sits in three short clusters (11/04 10:53 and 11:09, 11/06 13:43 and 13:59), each at the start of a session",
+   "value": "mostly stable, not fall-free: 2026-11-02/04/06 logged actions, each fall charged to the one action it began in: walks 63 of 67 upright, in-place turns 33 of 35 (all 35 at 0.5 rad/s; the two falls, 11-02 15:33:31 and 11-06 13:57:40, began 0.5-0.9 s after the turn ended), zero-command balance 92 of 98 upright (6 falls), one kick and one stand fell; 14 falls in all. They cluster in short stretches at the start of sessions (11-04 10:53 and 11:08-11:09, 11-06 13:43 and 13:57-14:00)",
    "meaning": "Whether walking is a current blocker. It is not; do not cite old fall records as a present gap",
    "verified_at": "2026-11-06",
-   "source": "run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html): every action cut from the A7Z brain logs, outcome from tilt, guard stops and mode switches; Shawn 2026-11-09 via the strategy session: 现在基本都能站稳",
+   "source": "run ledger (guide/firmware/mac/run_ledger.py, Mac mini ~/duck-walks/episodes.jsonl, page http://today.tailfc7c94.ts.net:5180/runs/index.html): every action cut from the A7Z brain logs; a fall is charged to the action running at its onset, to the action before when it starts within 1 s of a switch to stand, and short balances after an action count as its end (run_ledger.py charge_falls, 2026-11-10); Shawn 2026-11-09 via the strategy session: 现在基本都能站稳",
    "max_age_days": 30,
    "measure": "run_ledger.py outcomes for walk, turn and balance actions in the newest days (the page shows the per-day success rate)",
    "consumers": [
@@ -569,6 +569,11 @@
     "any session listing MicroDuck gaps"
    ],
    "superseded": [
+    {
+     "value": "stable: of 67 walk actions on 2026-11-02/04/06, 65 ended upright; 35 of 35 turns upright. The two misses are the first two walks of the 11/06 13:59 run (one fall 2 s in, one guard stop 1 s in at vx 0.25). Standing (walk policy at zero command): 29/29 on 11/02, 17/20 on 11/04, 45/49 on 11/06; every stand fall or guard stop sits in three short clusters (11/04 10:53 and 11:09, 11/06 13:43 and 13:59), each at the start of a session",
+     "until": "2026-11-10",
+     "why": "the first ledger lost falls that began in a short zero-command balance or just after a switch to stand; corrected 2026-11-10"
+    },
     {
      "value": "stable: walks without falls (Shawn 2026-10-26: 走路现在挺稳的 没有任何问题了已经). The 10/16-10/18 falls (ft3 candidates, walk61 approach run drifting left) are history, not the current condition",
      "until": "2026-11-06",

@@ -55,7 +55,8 @@ SCORE_DIR = os.path.join(HERE, "scorecard-20261109")
 
 FALL_DEG, GUARD_TILT_DEG, GUARD_ACTION = 45.0, 30.0, 3.0
 GP_DONE, SP_DONE = 0.98, 0.98
-MERGE_GAP_S, PAD_S, MIN_BALANCE_S = 0.5, 1.0, 1.0
+# PAD_S: a fall charged to an action can come up to 1.5 s (short balance) + FALL_CARRY_S after its end
+MERGE_GAP_S, PAD_S, MIN_BALANCE_S = 0.5, 3.0, 1.0
 SETTLE_S = 180  # a log not grown for this long belongs to a finished brain run
 REPLAYABLE = ("walk", "turn", "balance", "stand", "bend")  # brain_sim_check --cmd-replay covers these commands
 
@@ -184,15 +185,49 @@ def fall_events(rows):
     return ev
 
 
-def outcome(kind, rs, after, falls):
-    """(outcome, detail): a fall is charged to the one action in force at its onset; actions that start between a
-    fall and the recovery are started_fallen."""
+FALL_CARRY_S = 1.0  # a fall that starts this soon after a switch belongs to the action that just ended
+
+
+def charge_falls(kept, falls):
+    """{kept index: (fall_t, how)}: every fall with a real onset is charged to exactly one action. That is the last
+    action started at or before the onset; the short zero-command balances dropped from the ledger (MIN_BALANCE_S) are
+    part of the action before them, so a fall that starts in one is that action's. When the onset comes within
+    FALL_CARRY_S after the start of a stand or monitor (the robot's own stop command, or the guard's) and the previous
+    action ended at most 1.5 s earlier, the fall is the previous action's: the switch is how that action ended.
+    Before 2026-11-10 a fall that started in a dropped short balance was charged to nothing, and one that started just
+    after a switch to stand was charged to the stand: the 0.5 rad/s turns of 2026-11-02 15:33:31 and 2026-11-06 13:57:40
+    both fell and were counted clean. A fall whose onset is the first row of a log (the robot lying at boot) is no
+    action's."""
+    out = {}
+    starts = [rs[0]["t"] for _, rs in kept]
+    for onset, fall_t, _ in falls:
+        j = max((i for i, t in enumerate(starts) if t <= onset), default=None)
+        if j is None:
+            continue
+        k, rs = kept[j]
+        how = "into"
+        if j > 0 and rs[0].get("mode") in ("stand", "monitor") and onset - rs[0]["t"] < FALL_CARRY_S \
+                and rs[0]["t"] - kept[j - 1][1][-1]["t"] <= 1.5:
+            j, how = j - 1, f"after the switch to {rs[0].get('mode')}"
+        elif onset > rs[-1]["t"]:
+            how = "after its end, in the short balance that followed"
+        out.setdefault(j, (fall_t, how))
+    return out
+
+
+def outcome(kind, rs, after, falls, charged=None, carried_in=False):
+    """(outcome, detail): a fall is the action's when charge_falls charged it here (charged = (fall_t, how));
+    an action that starts after a fall and before the recovery, or right after a charged switch, is started_fallen."""
     t0, t1 = rs[0]["t"], rs[-1]["t"]
+    if charged is not None:
+        fall_t, how = charged
+        when = f"{fall_t - t0:.1f} s into the action" if how == "into" else f"{fall_t - t1:.1f} s {how}"
+        return "fell", f"tilt over {fall_limit(kind):.0f} deg {when}"
+    if carried_in:
+        return "started_fallen", "the fall began in the previous action"
     for onset, fall_t, rec in falls:
-        if onset < t0 and (rec is None or t0 < rec):
+        if onset <= t0 and (rec is None or t0 < rec) and fall_t <= t1:
             return "started_fallen", None
-        if t0 <= onset <= t1:
-            return "fell", f"tilt over {fall_limit(kind):.0f} deg {fall_t - t0:.1f} s into the action"
     nxt = after[0] if after else None
     if any(r.get("hw_faults") for r in rs[-10:]):
         return "guard", "servo hardware fault"
@@ -261,17 +296,18 @@ def cut(paths):
         falls = fall_events(rows)
         idx = {id(r): i for i, r in enumerate(rows)}
         os.makedirs(os.path.join(EPI_DIR, stem), exist_ok=True)
-        for k, rs in segs:
+        kept = [(k, rs) for k, rs in segs if not (k == "balance" and rs[-1]["t"] - rs[0]["t"] < MIN_BALANCE_S)]
+        charged = charge_falls(kept, falls)
+        for j, (k, rs) in enumerate(kept):
             dur = rs[-1]["t"] - rs[0]["t"]
-            if k == "balance" and dur < MIN_BALANCE_S:
-                continue
             i0, i1 = idx[id(rs[0])], idx[id(rs[-1])]
             after = rows[i1 + 1:i1 + 1 + 200]
-            oc, detail = outcome(k, rs, after, falls)
+            oc, detail = outcome(k, rs, after, falls, charged.get(j),
+                                (j - 1) in charged and "switch" in charged[j - 1][1] and j not in charged)
             meta = meta_for(p, rs[0]["t"])
             pol = sorted({r.get("policy") for r in rs if r.get("policy")})
             eid = f"{stem}-{rs[0]['t']:.2f}-{k}"
-            pad = [r for r in rows[max(0, i0 - 60):i1 + 61] if rs[0]["t"] - PAD_S <= r["t"] <= rs[-1]["t"] + PAD_S]
+            pad = [r for r in rows[max(0, i0 - 200):i1 + 200] if rs[0]["t"] - PAD_S <= r["t"] <= rs[-1]["t"] + PAD_S]
             traj = os.path.join(EPI_DIR, stem, f"{eid}.jsonl.gz")
             with gzip.open(traj, "wt") as f:
                 for r in pad:
