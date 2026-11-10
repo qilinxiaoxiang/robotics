@@ -1,0 +1,27 @@
+{
+  "schema": "design-contract/1",
+  "design": "Flying MicroDuck four-EDF jetpack, printed parts: a wing plate between the OpenRB rear pack and the battery backpack on the four existing post holes (shared M2 x 10 screws), two battery trays, two nacelles (inner and outer clamp halves around two QX-Motor 50 mm EDFs each), FC/ESC bracket on the right arm with the flow-module shelf under it at the right rear. No compass part: the external GPS/compass module is deleted. Frame: guide frame, mm (x forward, y left, z up); stand-keyframe world z = guide z + 120.",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-11-10",
+    "quotes": [
+      "那不是4助推器吗 为什么叫双助推器 ... 感觉还是4个电机好一点",
+      "64太大太重了 就按50来做 细化一下 出个页面 细化一下所有细节",
+      "不用 默认推力够",
+      "现在这个设计 挡住了usb口还是其一，其二是你打算固定在saddle上是吧 ... 目前saddle是靠3M胶粘贴在侧壳上的，强度不够",
+      "现在没装背板，是直接battery pack装在openRB盒子上的",
+      "共用螺丝",
+      "删掉"
+    ],
+    "history": "2026-11-10 (docs/PET_ROBOT_LOG.md): four 50 mm EDFs on 4S chosen over 64 mm; thrust taken as the vendor figure (no bench gate); the wing plate must not block the A7Z rear ports or rest on the taped saddle; the Dual Lock back plate is not fitted, the battery backpack sits directly on the OpenRB box; Shawn chose shared screws: backpack front plate 2 mm + wing-plate centre 3.5 mm + M2 x 10 (4.5 mm bite in the 4.8 mm pilots). The fans are NOT in hand (nothing ordered); Shawn asked for slice files now, so every fan-dependent dimension is a parameter in cad/flight_params.py FAN, fed from the maker drawing the coordinator read (QX-Motor 50 mm 12-blade: lip OD 63.0, duct OD 54.0, housing 39.08, motor OD 25.8 printed; the rest scaled +-0.4 mm). Fan reference: lip-face centres at x +20 and -44, y +-110, lip top at guide z 75 (stand 195), duct axes canted 6 deg fore-aft (front fans' exhaust forward, rear fans' rearward). Later on 2026-11-10 Shawn deleted the external GPS/compass module from the cart ('删掉', relayed by the coordinator): heading comes from the duck's own IMU via the A7Z (ArduPilot ExternalNav yaw) with the FC's onboard compass as fallback, so no compass bracket is printed. The XT60 pigtails left the cart too (RoboClub stock); the battery-lead routing is unchanged."
+  },
+  "concept_render": "../flying-duck-design.html",
+  "geometry": [
+    {"part": "wing_plate", "says": "centre on the pack posts: front face x -45, nothing forward of it", "bounds": {"x_max": {"gt": -45.05, "lt": -44.95}}},
+    {"part": "wing_plate_centre", "says": "centre plate 3.5 mm: x -48.5..-45 (backpack front plate behind it moves 3.5 mm back; M2 x 10 bites 4.5 mm)", "bounds": {"x_min": {"gt": -48.55, "lt": -48.45}, "x_max": {"gt": -45.05, "lt": -44.95}}},
+    {"part": "wing_plate_mid", "says": "wing plate across |y| < 37 stays below guide z 45 (stand 165): A7Z rear ports and camera plug behind the saddle window stay free", "bounds": {"z_max": {"lt": 45.0}}},
+    {"part": "nacelle_inner_L", "says": "left nacelle around the fans at y +110 (split plane), nothing above the lip top z 75", "bounds": {"y_max": {"gt": 109.5, "lt": 110.5}, "z_max": {"lt": 75.0}}},
+    {"part": "nacelle_outer_L", "says": "left nacelle outer half starts at the split plane y 110", "bounds": {"y_min": {"gt": 109.5, "lt": 110.5}, "z_max": {"lt": 75.0}}}
+  ],
+  "forbidden_parts": ["saddle_mount", "back_plate_wing", "compass_bracket"]
+}

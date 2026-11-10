@@ -3,7 +3,7 @@ Pose sets: the stand pose, random leg/head poses over half and full joint ranges
 poses (camera-calib-20261030/bend-20261030) and the head scan poses pickup.py commands. The trunk is fixed; pack
 volumes are trunk-fixed boxes in the stand-keyframe world frame (mm). For bend poses the lowest pack point above
 the sole plane is also reported, using the logged gravity vector.
-  microduck_rl/.venv/bin/python sweep_check.py [N]
+  microduck_rl/.venv/bin/python sweep_check.py [N] [layout-name-substring]
 """
 import glob, json, sys
 from pathlib import Path
@@ -92,7 +92,9 @@ for r in rows:
 sets[f"logged real bend poses ({len(rows)} rows): legs"] = Pl
 sets[f"logged real bend poses ({len(rows)} rows): head"] = Ph
 
+ONLY = sys.argv[2] if len(sys.argv) > 2 else ""      # optional: only layouts whose name contains this text
 for lname, lay in LAYOUTS.items():
+    if __name__ != "__main__" or ONLY not in lname: continue   # importing builds the pose sets only (cad/pose_clouds.py)
     vols = {k: (np.array(v["lo"], float), np.array(v["hi"], float)) for k, v in lay["volumes"].items()}
     print(f"\n===== layout {lname}: {lay.get('note', '')}")
     for sname, P in sets.items():
