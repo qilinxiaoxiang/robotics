@@ -602,3 +602,18 @@ Problem P5 (sim-to-real for MicroDuck motion). Shawn asked whether the simulatio
 ## 2026-11-10 Scorecard corrected: the replayed stop command, not the plant, made the sim's falls
 
 Problem P5. A recount in the strategy session found two reading errors, both fixed and rerun on the Mac mini. (1) The card read sim falls from the tick log, which never holds the falling tick (brain_sim_check.py writes the row before the physics step and stops in the step that passes the limit); it now reads the sim's own `fell_at`. With that, the sim seemed to follow 10 of 13 robot falls, 0.5-0.9 s late. (2) The run ledger lost or misplaced falls that began in a short zero-command balance or just after a switch to stand; each fall is now charged to one action: 14 falls, walks 63/67, turns 33/35 (all at 0.5 rad/s), balance 92/98. A control then replaced the robot's own stand command, which its controllers write when the robot is already tipping (robot 15-49 deg, sim 3-7 deg at that moment), with walk at zero command: the sim stayed up in 12 of 13 ledger falls and 4 of 4 card falls. So the sim reproduces 1 of 17 robot falls by itself, falls on its own in 3 actions the robot survived, and an upright sim robot tips over within a second of a walk-to-stand switch (not tested on the robot). Evidence: `microduck-sim/guide/firmware/mac/scorecard-20261109/README.md`, `control-nostand.json`, `scorecard-auto.json`.
+
+## 2026-11-10 Flying MicroDuck: feasibility and first design for hopping onto a table
+
+Problem P0 (side exploration of the MicroDuck body, Shawn's idea after a Handmade Geng video: jetpack plus a second battery, fly up onto a table and down again; "所有方案都可以改，包括涵道电机，喷气背包等"). Report: `~/code/reports/20261110-flying-microduck.html`, source `~/code/reports/src/20261110-flying-microduck.md`, sizing script `~/code/reports/assets/20261110-flying-microduck/calc.py`. Nothing bought, nothing built, no decision by Shawn yet.
+
+Findings (duck mass 960 g is the component estimate in `microduck-sim/CURRENT-STATE.json`, never weighed):
+- Four 50 mm EDFs (previous session's plan): pack about 670 g, take-off 1.63 kg. Vendor thrust 750-950 g per fan, the only independent bench tests 440-680 g, so thrust-to-weight 1.2-1.5; hover 0.8-1.2 kW.
+- Four 64 mm EDFs: thrust-to-weight 2.0-2.5 but the pack is about 1.03 kg (take-off 1.99 kg).
+- Four 76 mm ducted props (3 inch, T-Motor F2004 KV3000 + Gemfan D76, vendor bench 794 g at 4S): pack about 430 g, take-off 1.39 kg, thrust-to-weight 1.7-2.3, hover 560-660 W, about 2.8 floor-table-floor round trips on a 4S 1300 mAh pack. Recommended in the report.
+- Published precedent closest to this: Jet-HR2 (17 kg, four 90 mm EDFs, take-off at thrust-to-weight 1.17, 2 s, caught by poles, yaw oscillation). ArduPilot documents loss of attitude and altitude control at motor saturation.
+- Proposed control split: separate ArduPilot flight controller for attitude, downward optical flow plus rangefinder, A7Z sends take-off / move / land over MAVLink. The 0.75 m rangefinder step at the table edge has no ready-made handling.
+
+Evidence that would change the decision: a single-prop bench test below 520 g at 4S (thrust-to-weight under 1.5); the duck failing to stand or walk with 430 g of dummy mass at shoulder height (zero-cost first test); the real weight differing from 960 g.
+
+Not established: whether the walking policy (trained at 0.96 kg) walks with the pack; how the pack attaches to the trunk; noise; drift under optical flow. A naive held-pose MuJoCo check of standing under load was abandoned because the held pose fell even without load, so it says nothing either way.
