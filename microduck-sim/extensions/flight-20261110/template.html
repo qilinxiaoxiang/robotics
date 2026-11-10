@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>飞行版 MicroDuck：真实比例 3D 示意</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#1f2937;--mute:#5b6472;--line:#d9d6cc;--acc:#1d4ed8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 2px}p.lead{margin:0 0 12px;color:var(--mute);font-size:15px}
+#view{width:100%;height:min(68vh,640px);background:#fbfaf7;border:1px solid var(--line);border-radius:12px;touch-action:none;display:block}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+button{font:inherit;font-size:16px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card b{display:block;font-size:13px;color:var(--mute);font-weight:500}.card span{font-size:18px}
+.note{font-size:14px;color:var(--mute);margin-top:12px}
+#desc{margin:10px 0 12px;font-size:16px}
+</style></head><body><div class="wrap">
+<h1>飞行版 MicroDuck：真实比例 3D 示意</h1>
+<p class="lead">鸭子是当前仿真模型里的真实外形（站立姿态），背包零件按真实尺寸画成简单几何体。拖动旋转，滚轮或双指缩放。旁边的易拉罐（直径 66、高 122 毫米）和地面 50 毫米方格是比例参照。</p>
+<div class="bar" id="variants"></div>
+<canvas id="view"></canvas>
+<div class="bar">
+<button id="tJet" class="on">显示气流</button><button id="tFair" class="on">显示外壳</button><button id="vFront">正面</button><button id="vSide">侧面</button><button id="vTop">顶部</button><button id="vIso">斜视</button>
+</div>
+<div id="desc"></div>
+<div class="cards" id="cards"></div>
+<p class="note">数字来源：机器人 960 克和外形取自 <code>microduck-sim/CURRENT-STATE.json</code> 与仿真模型；腿部负载是站立姿态下的静力计算（<code>leg_load.py</code>）；推力区间下限按独立台架实测对厂商标称的折扣估计，上限是厂商标称。</p>
+</div>
+<script type="application/json" id="mesh">__MESH__</script>
+<script type="text/plain" id="three-src">__THREE__</script>
+<script type="module">
+const url=URL.createObjectURL(new Blob([document.getElementById('three-src').textContent],{type:'text/javascript'}));
+const THREE=await import(url);
+const data=JSON.parse(document.getElementById('mesh').textContent);
+const cv=document.getElementById('view');
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xfbfaf7);
+const cam=new THREE.PerspectiveCamera(32,1,10,6000);cam.up.set(0,0,1);
+scene.add(new THREE.HemisphereLight(0xffffff,0xb8b2a4,1.15));
+const sun=new THREE.DirectionalLight(0xffffff,1.6);sun.position.set(400,-300,700);scene.add(sun);
+const fill=new THREE.DirectionalLight(0xffffff,0.5);fill.position.set(-300,400,200);scene.add(fill);
+function b64(s,T){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new T(u.buffer)}
+const duck=new THREE.Group();
+for(const g of data.groups){
+  const pos=b64(g.pos,Float32Array),idx=b64(g.idx,Uint32Array);
+  for(let i=0;i<pos.length;i++)pos[i]*=1000;
+  let geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setIndex(new THREE.BufferAttribute(idx,1));
+  geo=geo.toNonIndexed();geo.computeVertexNormals();
+  duck.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:new THREE.Color().setRGB(g.color[0],g.color[1],g.color[2],THREE.SRGBColorSpace),roughness:.6,metalness:.05})));
+}
+scene.add(duck);
+const grid=new THREE.GridHelper(900,18,0xbdb8aa,0xdedacf);grid.rotation.x=Math.PI/2;scene.add(grid);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:.1},o));
+function cyl(r,h,mat,x,y,z,r2){const m=new THREE.Mesh(new THREE.CylinderGeometry(r2??r,r,h,48,1,false),mat);m.rotation.x=Math.PI/2;m.position.set(x,y,z+h/2);return m}
+function box(sx,sy,sz,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),mat);m.position.set(x,y,z);return m}
+function tubeY(r,y0,y1,mat,x,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,Math.abs(y1-y0),24),mat);m.position.set(x,(y0+y1)/2,z);return m}
+function stadium(len,wid,h,mat,x,y,z){const s=new THREE.Shape(),r=wid/2,a=len/2-r;s.absarc(a,0,r,-Math.PI/2,Math.PI/2,false);s.absarc(-a,0,r,Math.PI/2,Math.PI*1.5,false);
+  const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:32}),mat);m.position.set(x,y,z);return m}
+const can=new THREE.Group();can.add(cyl(33,122,M(0xc8ccd2,{metalness:.6,roughness:.3}),0,0,0));can.position.set(-140,250,0);scene.add(can);
+const duct=M(0x23324d),lip=M(0x3b5b8c),shell=M(0xf2f1ec,{transparent:true,opacity:.55}),batt=M(0xb4332b),dark=M(0x30343b),carbon=M(0x22252a),jet=M(0x4f8df5,{transparent:true,opacity:.16,depthWrite:false}),vane=M(0xd9822b);
+const COMx=data.com_mm[0];
+function fan(g,x,y,z0,r,h,jets){g.add(cyl(r+3,h,duct,x,y,z0));const t=new THREE.Mesh(new THREE.TorusGeometry(r+3,3.5,12,48),lip);t.position.set(x,y,z0+h);g.add(t);
+  g.add(cyl(r*.38,h*.5,dark,x,y,z0+h*.5,r*.1));const j=cyl(r*1.25,z0-2,jet,x,y,2,r);j.userData.jet=1;jets.push(j);g.add(j)}
+const V={
+ none:{name:'原样',desc:'现在的鸭子，没有背包。',cards:[['总重','约 960 克（估算，未称重）'],['最宽处','腿外侧 142 毫米，头 92 毫米'],['站高','274 毫米'],['单腿支撑时最吃力的关节','髋侧摆，力矩上限的 20%']],build(g){}},
+ A:{name:'方案 A：双助推器',desc:'身体两侧各一个助推舱，每舱前后两个 50 毫米涵道风扇。两块 3 节电池竖放在身体和助推舱之间当挂架，串联成 6 节。背上只有飞控和电调。助推舱顶部低于头，头可以自由转；舱在腿的外侧，弯腰和迈步都碰不到。',
+  cards:[['加重','约 705 克，总重约 1.67 千克'],['总宽','约 266 毫米（现在 142）'],['推重比','约 2.0（厂商标称 3.0，按实测折扣后）'],['悬停功率','约 0.8 到 1.2 千瓦'],['一块电池','约 2.8 个上下桌来回'],['单腿支撑时最吃力的关节','髋侧摆 33%，髋俯仰 22%（现在 20% 和 10%）'],['控制','四个风扇转速差，标准四轴固件'],['充电','现有充电器能充 3 节电池']],
+  build(g,jets,fair){const xc=-13,z0=146,h=60;for(const s of[1,-1]){const y=s*103;fan(g,xc+32,y,z0,25,h,jets);fan(g,xc-32,y,z0,25,h,jets);
+    const f=stadium(126,64,h-6,shell,xc,y,z0+2);f.userData.fair=1;fair.push(f);g.add(f);
+    g.add(box(72,26,36,batt,xc,s*55,172));g.add(box(60,8,10,carbon,xc,s*70,196))}
+   g.add(tubeY(5,-103,103,carbon,-40,198));g.add(box(8,60,60,dark,-84,0,140));g.add(box(10,26,14,dark,-84,0,100))}},
+ B:{name:'方案 B：双喷口',desc:'两侧各一个 70 毫米大涵道，喷口下面是偏转气流的舵片。6 节电池在背上。只有两个风扇，俯仰和偏航全靠舵片，没有找到成功的同类制作记录。',
+  cards:[['加重','约 880 克，总重约 1.84 千克'],['总宽','约 320 毫米'],['推重比','约 1.8 到 2.7（只有一条未核实的厂商推力说法）'],['悬停功率','约 0.9 到 1.3 千瓦'],['单腿支撑时最吃力的关节','髋俯仰 45%，踝 39%（电池在背后，重心靠后）'],['控制','舵片矢量，需要自写混控并上台架调']],
+  build(g,jets,fair){const xc=-22,z0=128,h=78;for(const s of[1,-1]){const y=s*118;fan(g,xc,y,z0,35,h,jets);g.add(box(70,4,16,vane,xc,y,z0-10));g.add(box(4,70,16,vane,xc,y,z0-10));
+    g.add(box(40,44,12,carbon,xc,s*60,190))}
+   g.add(tubeY(5,-118,118,carbon,-40,198));g.add(box(40,76,42,batt,-100,0,140))}}
+};
+let cur=null,grp=null,jets=[],fair=[],showJet=true,showFair=true;
+function mark(x,y,z,c){const m=new THREE.Mesh(new THREE.SphereGeometry(5,16,12),M(c));m.position.set(x,y,z);return m}
+function pick(k){cur=k;if(grp)scene.remove(grp);grp=new THREE.Group();jets=[];fair=[];V[k].build(grp,jets,fair);scene.add(grp);
+  jets.forEach(j=>j.visible=showJet);fair.forEach(f=>f.visible=showFair);
+  document.getElementById('desc').textContent=V[k].desc;
+  document.getElementById('cards').innerHTML=V[k].cards.map(c=>`<div class="card"><b>${c[0]}</b><span>${c[1]}</span></div>`).join('');
+  document.querySelectorAll('#variants button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));draw()}
+const vb=document.getElementById('variants');for(const k in V){const b=document.createElement('button');b.textContent=V[k].name;b.dataset.k=k;b.onclick=()=>pick(k);vb.appendChild(b)}
+const tgt=new THREE.Vector3(-10,0,140);let az=-0.9,el=0.32,dist=950;
+function draw(){const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*R.getPixelRatio())||cv.height!==Math.round(h*R.getPixelRatio())){R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+  cam.position.set(tgt.x+dist*Math.cos(el)*Math.cos(az),tgt.y+dist*Math.cos(el)*Math.sin(az),tgt.z+dist*Math.sin(el));cam.lookAt(tgt);R.render(scene,cam)}
+const pts=new Map();let pinch=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY])});
+cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
+  if(pts.size===1){az-=(e.clientX-p[0])*.008;el=Math.max(-.2,Math.min(1.5,el+(e.clientY-p[1])*.006))}
+  pts.set(e.pointerId,[e.clientX,e.clientY]);
+  if(pts.size===2){const a=[...pts.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch)dist=Math.max(300,Math.min(2500,dist*pinch/d));pinch=d}
+  draw()});
+const up=e=>{pts.delete(e.pointerId);pinch=0};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(300,Math.min(2500,dist*(1+Math.sign(e.deltaY)*.08)));draw()},{passive:false});
+const view=(a,e)=>()=>{az=a;el=e;draw()};
+document.getElementById('vFront').onclick=view(0,0.02);document.getElementById('vSide').onclick=view(-Math.PI/2,0.02);
+document.getElementById('vTop').onclick=view(-Math.PI/2,1.5);document.getElementById('vIso').onclick=view(-0.9,0.32);
+document.getElementById('tJet').onclick=e=>{showJet=!showJet;e.target.classList.toggle('on',showJet);jets.forEach(j=>j.visible=showJet);draw()};
+document.getElementById('tFair').onclick=e=>{showFair=!showFair;e.target.classList.toggle('on',showFair);fair.forEach(f=>f.visible=showFair);draw()};
+addEventListener('resize',draw);
+const q=new URLSearchParams(location.search);if(q.get('az'))az=+q.get('az');if(q.get('el'))el=+q.get('el');
+pick(q.get('v')||'A');window.__ready=true;
+</script></body></html>

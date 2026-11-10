@@ -617,3 +617,22 @@ Findings (duck mass 960 g is the component estimate in `microduck-sim/CURRENT-ST
 Evidence that would change the decision: a single-prop bench test below 520 g at 4S (thrust-to-weight under 1.5); the duck failing to stand or walk with 430 g of dummy mass at shoulder height (zero-cost first test); the real weight differing from 960 g.
 
 Not established: whether the walking policy (trained at 0.96 kg) walks with the pack; how the pack attaches to the trunk; noise; drift under optical flow. A naive held-pose MuJoCo check of standing under load was abandoned because the held pose fell even without load, so it says nothing either way.
+
+### 2026-11-10 Flying MicroDuck, design corrected to a twin-booster jetpack (problem P0)
+
+Shawn's requirements, in his words:
+- Look: "你这不就成了一个肩膀上架着一个四旋翼无人机了吗 看着一点都不炫酷啊". The ducted-prop quad recommended above is withdrawn.
+- Default premise: "能不能在不影响我们之前那些行为的基础上 或者至少重新训练模型就能做到之前那些行为的基础上 让它变成飞行版". This was always the premise ("这不是默认的要求吗"), not a changed requirement.
+- Method: "现在要你计算和出设计 仿真走路承重也只要算就知道". No simulation for this study.
+
+Design (all by calculation, sources in the report):
+- One nacelle per side, two 50 mm EDFs in tandem in each (centre y = +-103 mm, z 146..208 mm), above and outside the legs (leg top z 113, outer y 71), below the head (z 215). Total width about 266 mm.
+- 6S supply from two 3S 1300 mAh packs in series, one in each pylon between trunk side and nacelle; the existing charger charges 3S. Combined COM moves about 2 mm back and 12 mm up.
+- Pack about 705 g, take-off about 1665 g. Thrust-to-weight about 2.0 with the vendor 6S figure (1240 g per fan, vendor only) derated to two thirds; 3.0 on the vendor figure. Hover 0.83 to 1.19 kW, 61 to 87 s, about 2.8 round trips.
+- Static single-support joint torque vs the model limit 0.96 N m (`microduck-sim/extensions/flight-20261110/leg_load.py`): today hip roll 20 %; with the pack hip roll 33 %, hip pitch 22 %, ankle 17 %, knee 13 %. A back-mounted battery variant reaches hip pitch 45 %, ankle 39 % and was rejected.
+- Control unchanged: ArduPilot quad mixing on the four fans, optical flow plus rangefinder, A7Z over MAVLink. Yaw authority is the weakest axis.
+- True-scale 3D page built from the sim meshes: `microduck-sim/extensions/flight-20261110/flying-duck-3d.html` (built by `build_page.py` from `template.html` and `duck_mesh.json`; both large files are generated and not committed).
+
+Evidence that would change the decision: a single 6S fan measuring under 625 g on the bench (thrust-to-weight under 1.5); the real weight differing from 960 g; a retrained policy that cannot walk at 1.67 kg.
+
+Not established: walking, turning and get-up with the pack (needs retraining with the new mass, not started, needs Shawn's nod); pack-to-trunk mounting; yaw authority; noise.
