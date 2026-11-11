@@ -61,8 +61,10 @@ except the hand-over commands below, as walk_wired.py and ArduPilot would on the
   flight, then back to the policy when the estimated feet height in the land phase drops below 3 cm
   (`--handover-h 0.03`, the landing probe's release height: policy running, released 2-3 cm up). Both switches are
   plain control-file commands; the runtime needs only the rangefinder height from the flight controller.
-  `--air-pose held` (stand mode with the -4 deg ankle trim) and `--air-legs monitor` (last policy goals frozen) are the
-  variants that did worse.
+  Variants: `--air-pose held` (stand mode with the -4 deg ankle trim) gives the same total at nominal plus 90 %
+  (15 of 18) but its failures are falls over 45 deg after the disarm (nominal 7/9, 90 % 8/9), where the default's
+  are sits onto a nacelle at about 21 deg (nominal 9/9, 90 % 6/9); `--air-legs monitor` (last policy goals frozen)
+  is worse (nominal 3/9, 90 % 2/9).
 
 Success fields: `airborne_success` lift-off to first foot touchdown on the wanted surface, upright, slower than
 0.8 m/s, nothing hit before it. `success` (mission) landed, disarmed and upright at the old mission end.

@@ -758,7 +758,7 @@ def main():
                          "(the policy's last goals held where they are)")
     ap.add_argument("--air-pose", choices=("default", "held"), default="default",
                     help="--air-legs stand: the Brain stand pose (the policy's default pose, untrimmed) or the held legs' "
-                         "trimmed pose (--trim-*; with ankle -4 deg 2 of 9 nominal runs fell after the disarm, 2026-11-11)")
+                         "trimmed pose (--trim-*; README 'Full sequence' compares the two)")
     ap.add_argument("--handover-h",type=float, default=0.03, help="m, estimated feet height in the land phase at which "
                     "--legs handover gives the legs back to the policy (landing probe: released 2-3 cm up)")
     ap.add_argument("--after-s", type=float, default=None, help="s to run on after the disarm (default 6 with --legs policy, "
