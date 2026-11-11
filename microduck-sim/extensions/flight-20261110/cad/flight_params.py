@@ -118,6 +118,8 @@ NAC = dict(
     inner_y=7.0, outer_y=5.0,                                  # block/web depth each side of the split plane (minimums)
     lug_x=(-45.0, -36.8), lug_y=(70.0, 82.0), lug_top=58.0,     # inner half: bolts to the wing arm web front face (x -45)
     lug_screw_y=74.0, lug_screw_z=(37.0, 44.5, 52.0),
+    # Shawn 2026-11-11 '改成 M3': lug screws M3 (RoboClub); 12 long bites 6.8 into the 8.2 lug (<= 2.5 d = 7.5)
+    lug_screw="M3", lug_screw_len=12.0,
 )
 NAC["bite"] = (round(NAC["screw_len"] - NAC["washer"]["t"] - NAC["under_head"] - NAC["split_gap"], 2), round(_eng_max, 2))   # largest .. smallest fan
 # the skirt below the collar is bored out to clear the rim: keep >= 1.6 mm of wall there too

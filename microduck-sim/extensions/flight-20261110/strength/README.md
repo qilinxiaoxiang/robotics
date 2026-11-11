@@ -1,6 +1,6 @@
 # Flight pack: printed-part strength check
 
-Geometry: commit `480610d1` (cable-gate round E). It adds a camera-cable notch at the left arm's inner upper corner (x −51..−44.9, y 37.8..43, z 47..54) and makes the battery lead windows 11 × 18 in both arms. The two inner ribs per side are now rear-open slots over z 22..34. The centre flat window is raised from 4.9 to 7.0, the FC bracket window is 11 × 17.5, and the old fan window is filled. The nacelle clamp screws are M2 × 12 with shallower counterbores. Both print plates are now at 100 % infill (Orange since 6fa0d176, Black since 4fed9fa5). STL sha256 prefixes: wing_plate `541b5c193bfb6200`, tray_L `9cffe3d30bf8900a`, nacelle_inner_L `34dcd547be3383aa`, nacelle_outer_L `76dcde97dd4a0ea8`, fc_bracket `d5edc0088c51581f`. All numbers are in `results.json`: `gates`, `summary_by_case`, then the rows. Earlier rounds are under `history`.
+Geometry: commit `821288b7` plus the M3 lug screws of 2026-11-11 (wing plate with the arm root wedge, the R 2.5 slot fillet and 3.5 mm lug clearance holes; nacelle inner halves with 3.1 mm M3 lug pilots; STL prefixes in `cad/slices/release-FlightPack-D1/STATUS.json`). The wing, nacelle inner and hand calculations were rerun on it; the clamp and FC bracket numbers below are from `480610d1` (their parts did not change). Before that, commit `480610d1` (cable-gate round E). It adds a camera-cable notch at the left arm's inner upper corner (x −51..−44.9, y 37.8..43, z 47..54) and makes the battery lead windows 11 × 18 in both arms. The two inner ribs per side are now rear-open slots over z 22..34. The centre flat window is raised from 4.9 to 7.0, the FC bracket window is 11 × 17.5, and the old fan window is filled. The nacelle clamp screws are M2 × 12 with shallower counterbores. Both print plates are now at 100 % infill (Orange since 6fa0d176, Black since 4fed9fa5). STL sha256 prefixes: wing_plate `541b5c193bfb6200`, tray_L `9cffe3d30bf8900a`, nacelle_inner_L `34dcd547be3383aa`, nacelle_outer_L `76dcde97dd4a0ea8`, fc_bracket `d5edc0088c51581f`. All numbers are in `results.json`: `gates`, `summary_by_case`, then the rows. Earlier rounds are under `history`.
 
 ## Gates
 
@@ -21,7 +21,7 @@ Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left an
 - **With both fixes:** lift left SF 1.79 (y 20.7, 17.9 MPa), lift right 1.73 (y −20.7, 18.5 MPa; y −33 at 18.1). Thrust is unchanged at 3.2 or better.
 - **What still caps lift at about 1.75:** the raised band starts at |y| 23, so the edge at |y| 20.7 carries the bending. The space below it is held clear for the backpack top plugs, so it cannot be filled. Reaching 2 there needs a different material: in PETG the same stress gives about 2.1, and in PA-CF about 3.6.
 
-**Lug screws, lift by one nacelle: SF 1.29** on the low pull-out estimate. Unchanged; the pull-out test below decides.
+**Lug screws are M3 × 12 since 2026-11-11** (Shawn: "改成 M3"; three per side, 6.8 mm bite in a 3.1 mm teardrop pilot through the 8.2 mm lug, 3.5 mm clearance in the web). On the low pull-out estimate, lift by one nacelle is **SF 2.64** (92.9 N on the top screw against 245 N; it was 1.29 with M2 × 10) and peak thrust is **SF 5.74** (42.7 N; it was 2.81). Thread bearing: lift 6.7, thrust 12.9. With M3 × 10 (4.8 mm bite, the length RoboClub's list names) the same model gives lift 1.86 and thrust 4.05. The nacelle inner half FEA with the larger pilots is unchanged (lift: 13.8 MPa at x −36, 16.0 at x −25, lug root corner 22.7). The pull-out test below still decides the absolute value.
 
 **Clamp under snug preload (gate):**
 - **Hand:** wall bending SF 2.2, washer seat 4.0.
@@ -34,10 +34,10 @@ Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left an
 **Nacelle inner half, lift (now solid):** 13.8 MPa at x −36 and 16.0 MPa at x −25, so SF about 2.0 to 2.3. The lug root corner peak is 22.7 MPa.
 
 **Crash cases, information only:**
-- **Landing 15.6 g:** wing root SF 1.13 to 1.17 at y ±20.7; post screws 2.13, tray screws 1.95, lug screws 1.16.
+- **Landing 15.6 g:** wing root SF 1.13 to 1.17 at y ±20.7; post screws 2.13, tray screws 1.95, lug screws 2.37 (M3 × 12; 1.16 with M2 × 10).
 - **10 g fore-aft:** wing root 1.12 to 1.18; post screws 1.27.
 - **10 g sideways:** wing root 1.5 to 1.62; post screws 1.87.
-- **Topple, 131 N on a nacelle end:** wing 0.26, post screws 0.27, lug screws 0.14 to 0.43. A topple breaks the plate.
+- **Topple, 131 N on a nacelle end:** wing 0.26, post screws 0.27, lug screws 0.29 to 0.88 (M3 × 12). A topple breaks the plate.
 
 ## Materials (design allowables = TDS strength × about 0.8, in the part's print orientation)
 
@@ -51,6 +51,7 @@ Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left an
   - Tray: flat.
 - **Printed section:** both plates print at 100 % infill (`cad/make_slice_manifest.py`), so every part is taken as solid.
 - **M2 thread-forming screw in a horizontal pilot:** no published pull-out value. The check uses 120 N (low) and 260 N (high) for a 4.8 mm bite, scaled by bite length; the low value is the design value. Snug preload is 167 N (0.1 N·m, K = 0.3).
+- **M3 in a horizontal pilot (nacelle lug):** also no published value. Both ends of the M2 range are scaled by the threaded cylinder area, pilot diameter × bite (`common.pullout`): 3.1 / 2.15 × 6.8 / 4.8 = 2.04, so 245 N low and 531 N high for M3 × 12. The high end is thread shear on that cylinder, so it scales this way directly; the low end is a shell pull-out per mm whose perimeter grows with the diameter, which is an assumption.
 
 ## Load cases
 
@@ -82,9 +83,9 @@ Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left an
 - Notch sensitivity of PLA at the band edge at |y| 20.7, the slot corners and the cable notch.
 - Vibration fatigue, and creep of the clamp preload in PLA.
 - ESC heat on the FC bracket.
-- The M2 pull-out capacity, which still sets the lug screw verdict.
+- The real pull-out capacity of the M3 lug screws and the M2 tray, post and bracket screws in printed pilots.
 
-**Cheap test that closes the largest gap:** print a 20 × 20 × 12 mm block on the plate settings (100 % infill) with the 2.15 mm horizontal teardrop pilot. Drive an M2 × 10 to a 4.8 mm bite and hang weights from the head until it pulls out. If it holds about 186 N, the lug screws reach SF 2 when lifted by one nacelle.
+**Cheap test that closes the largest gap:** print a 20 × 20 × 12 mm block on the plate settings (100 % infill) with the 3.1 mm horizontal teardrop pilot. Drive an M3 × 12 to a 6.8 mm bite and hang weights from the head until it pulls out. If it holds about 186 N, the lug screws keep SF 2 when lifted by one nacelle.
 
 ## Reproduce
 

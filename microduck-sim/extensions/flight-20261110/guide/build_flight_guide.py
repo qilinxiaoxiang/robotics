@@ -156,9 +156,9 @@ def screw_spec(s):
         return 'M3 × 8 尼龙公母隔离柱', 'machine', 14.0, None
     if sp.startswith('M3 x 8 nylon screw'):
         return 'M3 × 8 尼龙螺丝', 'machine', 8.0, None
-    m = re.match(r'M2 x (\d+)$', sp)
+    m = re.match(r'(M[23]) x (\d+)$', sp)
     assert m, sp
-    return f'M2 × {m.group(1)}', 'tap', float(m.group(1)), None
+    return f'{m.group(1)} × {m.group(2)}', 'tap', float(m.group(2)), None
 
 
 WHERE = {
@@ -336,9 +336,15 @@ def club_rows():
         f'1 个 1000 µF 电解电容，耐压 25 V 以上、低内阻（俱乐部 D 柜有 1000 µF 的抽屉，耐压没登记；不合适就用 Amazon 购物车里那个 35 V 的：{cap}）。',
         '热缩管：5 mm（子弹头）和 6 mm（XT60）各约半米。',
         '焊锡、助焊剂、几根小扎带。',
+        f'{N_LUG} 颗 {LUG_ZH} 螺丝（机舱耳朵拧到臂上，每边 3 颗；焊接台 Craftsman 柜里有 M3 螺丝，清单上只写明了 M3×10，'
+        f'找不到 {LUG_ZH} 就用 M3 × 10）。',
     ]
 
 
+LUG_SPECS = sorted({s['spec'] for s in SCREWS if s['id'].startswith('lug-')})
+assert len(LUG_SPECS) == 1 and LUG_SPECS[0].startswith('M3 x '), LUG_SPECS
+LUG_ZH = LUG_SPECS[0].replace(' x ', ' × ')                       # 'M3 × 12' (Shawn 2026-11-11 '改成 M3')
+N_LUG = sum(s['id'].startswith('lug-') for s in SCREWS)
 N_POST = sum(s['spec'].startswith('M2 x 12 (existing') for s in SCREWS)
 N_CLAMP = sum(s['spec'].startswith('M2 x 12 (with M2 washer)') for s in SCREWS)
 N_M2 = {n: sum(re.fullmatch(f'M2 x {n}', s['spec']) is not None for s in SCREWS) for n in (4, 8, 10)}
@@ -349,6 +355,7 @@ TOOLS = [
     '热风枪（或打火机）缩热缩管',
     f'1.5 mm 内六角起子（拧 {N_POST + N_CLAMP} 颗 M2 × 12 内六角螺丝）',
     '平时拧 M2 螺丝用的小螺丝刀（M2 × 4、× 8、× 10）',
+    f'配 {LUG_ZH} 螺丝头的螺丝刀（按从俱乐部拿到的螺丝选）',
     '1 mm 厚双面泡棉胶（3M 那种）和剪刀',
     f'Zuorery M2 螺丝盒里的 M2 × 12 内六角螺丝 {N_POST + N_CLAMP} 颗和 M2 垫片 {N_CLAMP} 个',
     'Mac 和一根 USB-C 数据线（转向检查时连飞控）',
@@ -383,7 +390,8 @@ step(id='overview', chapter='start', title='飞行背包：先把东西备齐',
                   ['三、去俱乐部拿：'] + ['· ' + r for r in club_rows()] +
                   ['四、工具和自备的东西：'] + ['· ' + r for r in TOOLS] +
                   [f'M2 × 12 内六角一共 {N_POST + N_CLAMP} 颗，都从 Zuorery 盒里拿，是同一种螺丝：{N_CLAMP} 颗夹两个机舱（每颗配一个 M2 垫片），{N_POST} 颗把翼板和背包拧到 OpenRB 盒子上。',
-                   f'其它 M2 是自攻螺丝：M2 × 10 {N_M2[10]} 颗、M2 × 8 {N_M2[8]} 颗、M2 × 4 {N_M2[4]} 颗。'],
+                   f'其它 M2 是自攻螺丝：M2 × 10 {N_M2[10]} 颗、M2 × 8 {N_M2[8]} 颗、M2 × 4 {N_M2[4]} 颗。',
+                   f'{LUG_ZH} {N_LUG} 颗，只用在两个机舱耳朵上（每边 3 颗）。'],
      warnings=['全部焊接都在第 1 章桌上做完，XT60 头也在桌上焊好。焊好的线带着 XT60 从后面放进翼板的开口槽、穿过支架的方窗，不用拆线。',
                '首次上电（除了第 2 章的转向检查）和第一次飞行不在这一章。'])
 
@@ -592,7 +600,7 @@ for side, zh, front, rear in (('L', '左', 'fan_FL', 'fan_RL'), ('R', '右', 'fa
          group={'label': f'{zh}机舱（两个风扇已经夹在里面）', 'approach': up},
          screws=screws_for(f'nacelle {side} on wing', f'r-nac-{side}'),
          instructions=[f'{zh}机舱进风口朝上，内半上往里伸的方块耳朵贴住{zh}臂外端的正面，耳朵上的三个小孔对准臂上的三个孔。',
-                       '三颗 M2 × 10 从臂背后最外面的格子里穿过臂板，拧进方块耳朵，拧到机舱贴紧不晃。'],
+                       f'三颗 {LUG_ZH} 从臂背后最外面的格子里穿过臂板，拧进{zh}机舱内半的方块耳朵，拧到机舱贴紧不晃。'],
          checks=['机舱比托盘高，进风口上面什么都没有。'])
 
 step(id='r-left-wires', chapter='robot', title='左边的线束：从电调绕到背包后面，再沿背包左侧进左臂',

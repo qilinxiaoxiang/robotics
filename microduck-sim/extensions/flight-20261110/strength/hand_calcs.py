@@ -11,7 +11,7 @@ import trimesh
 
 from common import (BUILD, FAN_MASS_F, FAN_MASS_R, G, HANDLING_N, INFILL_E, M2_PRELOAD, M2_PULLOUT, MAT, MB_CASE, OUT,
                     PACK_C, PACK_G, PEAK, Pm, Q_MOTOR, SIDE, SLICE, THRUST_N, fan_centre, resultant, section_raster,
-                    section_stress, snapshot, thrust_dir)
+                    section_stress, snapshot, thrust_dir, pullout)
 
 PLA = MAT["PLA"]
 EX, EY, EZ = np.eye(3)
@@ -217,19 +217,27 @@ for _fy, _top in zip((Pm.TRAY["flange_y"], Pm.TRAY["flange2_y"]), Pm.TRAY["flang
 TRAY_BOLTS = [tuple(p) for p in Pm.WING["tray_screws"]]
 
 
+LUG_SCREW, LUG_LEN = Pm.NAC["lug_screw"], Pm.NAC["lug_screw_len"]
+LUG_D = float(LUG_SCREW[1:])
+
+
 def joint_checks(case, L):
-    for name, loads, face, bolts, part in ((f"nacelle lug to arm web ({len(LUG_BOLTS)} x M2 x 10)", L["nac"], LUG_FACE, LUG_BOLTS, "nacelle_inner_L"),
-                                           (f"tray flange to arm web ({len(TRAY_BOLTS)} x M2 x 10)", L["tray"], TRAY_FACE, TRAY_BOLTS, "tray_L")):
+    for name, loads, face, bolts, part, scr, d, bite in (
+            (f"nacelle lug to arm web ({len(LUG_BOLTS)} x {LUG_SCREW} x {LUG_LEN:.0f})", L["nac"], LUG_FACE, LUG_BOLTS, "nacelle_inner_L",
+             LUG_SCREW, LUG_D, LUG_LEN - 5.2),
+            (f"tray flange to arm web ({len(TRAY_BOLTS)} x M2 x 10)", L["tray"], TRAY_FACE, TRAY_BOLTS, "tray_L", "M2", 2.0, 10.0 - 5.2)):
         if not loads:
             continue
         F, Mf = resultant(loads)
         T, S, p = bolt_group(face, bolts, F, Mf)
         i = int(np.argmax(T))
+        cap = pullout(scr, bite)
         row(part, case, f"{name}: screw pull-out", float(T.max()), f"screw at (y, z) {bolts[i]}", "thread in a horizontal pilot",
-            M2_PULLOUT["low"], f"tensions {np.round(T, 1).tolist()} N; low-end M2 capacity {M2_PULLOUT['low']:.0f} N (no published value)")
-        bear = float(S.max()) / (2.0 * (10.0 - 5.2))
+            cap["low"], f"tensions {np.round(T, 1).tolist()} N; low-end {scr} capacity {cap['low']:.0f} N at {bite:.1f} mm bite "
+            f"(M2 120 N x pilot d x bite; high end {cap['high']:.0f} N; no published value)")
+        bear = float(S.max()) / (d * bite)
         row(part, case, f"{name}: thread bearing", bear, "pilot wall", "in-layer bearing", 1.2 * PLA["design_xy"],
-            f"screw shear {np.round(S, 1).tolist()} N on d 2 x 4.8 mm, friction not counted")
+            f"screw shear {np.round(S, 1).tolist()} N on d {d:.0f} x {bite:.1f} mm, friction not counted")
 
 
 # ------------------------------------------------------------------ 3. nacelle inner half: lug root and the beam to the front fan

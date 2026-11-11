@@ -21,14 +21,16 @@ CLR_H = F.clear("M2", "horizontal", PR)        # 2.7
 PIL_V = F.pilot("M2", "vertical", "any", PR)   # 1.95
 PIL_H = F.pilot("M2", "horizontal", "any", PR) # 2.15
 M3_PIL_V = F.pilot("M3", "vertical", "any", PR)  # 2.9
+LUG_PIL_H = F.pilot(NAC["lug_screw"], "horizontal", "any", PR)   # M3: 3.1 (nacelle lug, axis in the layer plane)
+LUG_CLR_V = F.clear(NAC["lug_screw"], "vertical", PR)            # M3: 3.5 (arm web, axis vertical in the wing pose)
 X_AX, Y_AX, Z_AX = (1, 0, 0), (0, 1, 0), (0, 0, 1)
 WEB_T = WING["x_front"] - WING["x_back"]       # 5.2
 
 FITS, SCREWS = [], []
 
 
-def fit_pilot(fid, part, axis, d, teardrop, clamped, depth, eng):
-    FITS.append(dict(id=fid, type="pilot", part=part, screw="M2", kind="any", d=d, axis=list(axis), teardrop=teardrop,
+def fit_pilot(fid, part, axis, d, teardrop, clamped, depth, eng, screw="M2"):
+    FITS.append(dict(id=fid, type="pilot", part=part, screw=screw, kind="any", d=d, axis=list(axis), teardrop=teardrop,
                      at_bed=False, chamfer=0.0, engagement=round(eng, 2), depth=depth, clamped=round(clamped, 2)))
 
 
@@ -101,7 +103,7 @@ def wing_plate():
         p = [B(xcb, xf, W["centre_half_w"] - 0.01, W["centre_ext_w"], W["band_z"][0], W["centre_top"]),
              B(xd, xcb + 0.01, W["centre_half_w"] + 0.3, W["centre_ext_w"], W["band_z"][0], W["centre_top"]),
              # root: band, column and transition solid 8.5 deep (x_band_back) out to root_y; the arm web stays 5.2 so the
-             # tray and lug M2 x 10 still bite 4.8 (strength/SPAR-OPTION.md, landing case)
+             # tray M2 x 10 still bites 4.8 (strength/SPAR-OPTION.md, landing case); lug screws are M3 x 12 (bite 6.8)
              B(xd, xb + 0.01, W["band_y"][0] - 0.01, W["band_y"][1] + 0.01, W["band_z"][0], W["band_z"][1]),
              B(xd, xb + 0.01, W["col_y"][0], yd, W["col_z"][0], W["col_z"][1]),
              B(xd, xb + 0.01, W["trans_y"][0], yd, W["col_z"][1] - 0.01, W["trans_z"][1]),
@@ -147,8 +149,8 @@ def wing_plate():
             screw(f"tray-{nm}-{j}", "M2 x 10", f"tray {nm} flange to the wing arm web (from behind)",
                   (xb, s * y, z), (1, 0, 0), WEB_T, f"tray {nm} on wing")
         for j, z in enumerate(NAC["lug_screw_z"]):
-            cuts.append(L.cyl(CLR_V / 2, (xb - 1, s * NAC["lug_screw_y"], z), X_AX, WEB_T + 2))
-            fit_clear(f"wing-lug-{nm}{j}", "wing_plate", X_AX, CLR_V)
+            cuts.append(L.cyl(LUG_CLR_V / 2, (xb - 1, s * NAC["lug_screw_y"], z), X_AX, WEB_T + 2))
+            fit_clear(f"wing-lug-{nm}{j}", "wing_plate", X_AX, LUG_CLR_V, screw=NAC["lug_screw"])
         cs = W["centre_step"]
         y0, y1 = sorted((s * cs["y"], s * (W["centre_ext_w"] + 0.01)))
         cuts.append(L.box((xr, y0, cs["z"]), (xf + 1, y1, W["centre_top"] + 1)))
@@ -392,11 +394,12 @@ def nacelle(side=+1):
             fit_clear(f"nac-split-clear-{k}", "nacelle_outer_L", Y_AX, CLR_H, [0, 0, 1])
         screw(f"nac-{nm}-{k}", f"M2 x {N['screw_len']:.0f} (with M2 washer)", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
               (x, side * (Pm.FAN_Y + g + uh + wt), z), (0, -side, 0), round(uh + wt, 2), f"nacelle {nm}")
+    ls, ll = N["lug_screw"], N["lug_screw_len"]
     for k, z in enumerate(N["lug_screw_z"]):
-        ci.append(L.teardrop(PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))
+        ci.append(L.teardrop(LUG_PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))
         if side > 0:
-            fit_pilot(f"nac-lug-pilot-{k}", "nacelle_inner_L", X_AX, PIL_H, [0, 0, 1], WEB_T, "through", 10 - WEB_T)
-        screw(f"lug-{nm}-{k}", "M2 x 10", f"nacelle inner {nm} lug to the wing arm web (from behind)",
+            fit_pilot(f"nac-lug-pilot-{k}", "nacelle_inner_L", X_AX, LUG_PIL_H, [0, 0, 1], WEB_T, "through", ll - WEB_T, screw=ls)
+        screw(f"lug-{nm}-{k}", f"{ls} x {ll:.0f}", f"nacelle inner {nm} lug to the wing arm web (from behind)",
               (WING["x_back"], side * N["lug_screw_y"], z), (1, 0, 0), WEB_T, f"nacelle {nm} on wing")
     inner, outer = inner - L.union(ci), outer - L.union(co)
     return inner, outer, dict(holes=holes, top=top, bed=bed)

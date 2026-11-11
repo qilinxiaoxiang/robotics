@@ -124,6 +124,15 @@ Q_MOTOR = P_SHAFT / OMEGA     # N m on the stator; sim/flight.py: 30 % reaches t
 # round the pilot), high 260 N (thread shear on the pilot cylinder, 0.75 fill, tau 0.6 x 17.5 MPa x 4.8 mm). Low end used.
 M2_PULLOUT = dict(low=120.0, high=260.0, per_mm_low=120.0 / 4.8)
 M2_PRELOAD = dict(snug=0.10 / (0.3 * 0.002), strip=M2_PULLOUT["low"])   # T = K F d, K 0.3, 0.10 N m hand-snug
+# Other sizes (nacelle lug screws are M3 x 12 since Shawn 2026-11-11 '改成 M3'): both ends of the M2 range scale with the
+# threaded cylinder area, pilot diameter x bite (the high end is thread shear on that cylinder; the low end is the pull-out
+# per mm of a shell round the pilot, whose perimeter scales with the diameter). Reference: M2, 2.15 pilot, 4.8 mm bite.
+PILOT_D = {"M2": 2.15, "M3": 3.10}       # cad/build_pack.py PIL_H / LUG_PIL_H (print_fit horizontal + H2S 0.10)
+
+
+def pullout(screw, bite):
+    k = PILOT_D[screw] / PILOT_D["M2"] * bite / 4.8
+    return dict(low=M2_PULLOUT["low"] * k, high=M2_PULLOUT["high"] * k)
 
 
 # ------------------------------------------------------------------ printed sections
