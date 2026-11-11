@@ -1,0 +1,382 @@
+{
+ "fix": [
+  "--com-est",
+  "true",
+  "--ground-pitch",
+  "level",
+  "--takeoff-twr",
+  "1.6",
+  "--takeoff-ramp",
+  "0.1",
+  "--thrust",
+  "0.7",
+  "--ctl-thrust-known",
+  "0.7"
+ ],
+ "cases": {
+  "nominal": [],
+  "thrust90": [
+   "--thrust",
+   "0.9"
+  ],
+  "thrust80": [
+   "--thrust",
+   "0.8"
+  ],
+  "thrust70": [
+   "--thrust",
+   "0.7"
+  ],
+  "mass+5": [
+   "--mass-variant",
+   "mass+5"
+  ],
+  "mass+10": [
+   "--mass-variant",
+   "mass+10"
+  ],
+  "comx+5": [
+   "--mass-variant",
+   "comx+5"
+  ],
+  "comx-5": [
+   "--mass-variant",
+   "comx-5"
+  ],
+  "comx+10": [
+   "--mass-variant",
+   "comx+10"
+  ],
+  "comx-10": [
+   "--mass-variant",
+   "comx-10"
+  ],
+  "comy+5": [
+   "--mass-variant",
+   "comy+5"
+  ],
+  "comy-5": [
+   "--mass-variant",
+   "comy-5"
+  ],
+  "comy+10": [
+   "--mass-variant",
+   "comy+10"
+  ],
+  "comy-10": [
+   "--mass-variant",
+   "comy-10"
+  ],
+  "comx+5_arm0": [
+   "--mass-variant",
+   "comx+5",
+   "--arm-at",
+   "0.0"
+  ],
+  "comx-5_arm0": [
+   "--mass-variant",
+   "comx-5",
+   "--arm-at",
+   "0.0"
+  ],
+  "comx+10_arm0": [
+   "--mass-variant",
+   "comx+10",
+   "--arm-at",
+   "0.0"
+  ],
+  "comx-10_arm0": [
+   "--mass-variant",
+   "comx-10",
+   "--arm-at",
+   "0.0"
+  ],
+  "tau0.05": [
+   "--tau",
+   "0.05"
+  ],
+  "tau0.15": [
+   "--tau",
+   "0.15"
+  ],
+  "tau0.20": [
+   "--tau",
+   "0.20"
+  ],
+  "tau0.20_retune": [
+   "--tau",
+   "0.20",
+   "--retune"
+  ],
+  "delay20ms": [
+   "--sensor-delay",
+   "0.02"
+  ],
+  "delay50ms": [
+   "--sensor-delay",
+   "0.05"
+  ],
+  "weak_RF": [
+   "--weak-fan",
+   "0"
+  ],
+  "weak_LR": [
+   "--weak-fan",
+   "1"
+  ],
+  "weak_LF": [
+   "--weak-fan",
+   "2"
+  ],
+  "weak_RR": [
+   "--weak-fan",
+   "3"
+  ],
+  "push2N": [
+   "--gust",
+   "2.0"
+  ],
+  "push4N": [
+   "--gust",
+   "4.0"
+  ],
+  "soc30": [
+   "--soc",
+   "0.3"
+  ],
+  "fan113": [
+   "--mass-variant",
+   "fan113"
+  ],
+  "naive_range": [
+   "--naive-range"
+  ],
+  "eff-30pct": [
+   "--power-scale",
+   "1.4285714285714286"
+  ],
+  "eff-60pct": [
+   "--power-scale",
+   "2.5"
+  ],
+  "ARE_nominal": [
+   "--fan",
+   "areswei"
+  ],
+  "ARE_thrust90": [
+   "--fan",
+   "areswei",
+   "--thrust",
+   "0.9"
+  ],
+  "ARE_thrust80": [
+   "--fan",
+   "areswei",
+   "--thrust",
+   "0.8"
+  ],
+  "ARE_thrust70": [
+   "--fan",
+   "areswei",
+   "--thrust",
+   "0.7"
+  ],
+  "ARE_eff-30pct": [
+   "--fan",
+   "areswei",
+   "--power-scale",
+   "1.4285714285714286"
+  ],
+  "ARE_eff-60pct": [
+   "--fan",
+   "areswei",
+   "--power-scale",
+   "2.5"
+  ],
+  "thrust80_lean10": [
+   "--thrust",
+   "0.8",
+   "--lean-max",
+   "10"
+  ],
+  "thrust70_lean10": [
+   "--thrust",
+   "0.7",
+   "--lean-max",
+   "10"
+  ],
+  "nominal_lean10": [
+   "--lean-max",
+   "10"
+  ]
+ },
+ "summary": {
+  "ARE_nominal|hover": {
+   "n": 3,
+   "airborne_success": 3,
+   "mission_success": 0,
+   "full_success": 0,
+   "legs": [
+    "held"
+   ],
+   "fell45_at": [
+    12.318,
+    12.335,
+    12.305
+   ],
+   "fell45_phase": [
+    "disarmed",
+    "disarmed",
+    "disarmed"
+   ],
+   "touchdown_tilt_deg": [
+    1.2,
+    1.4,
+    1.0
+   ],
+   "touchdown_vz": [
+    -0.329,
+    -0.32,
+    -0.337
+   ],
+   "max_tilt_deg": 15.2,
+   "touchdown_vz_worst": -0.337,
+   "touchdown_pos_err_max_m": 0.025,
+   "takeoff_drift_max_m": 0.131,
+   "hover_throttle_pct": 94.8,
+   "thrust_to_weight": 1.337,
+   "hover_current_a": 107.9,
+   "hover_minutes_80pct": 1.16,
+   "pack_current_peak_a": 73.6,
+   "pack_current_avg_a": 52.2,
+   "esc_channel_peak_a": 39.1,
+   "mah_used": 334.9,
+   "flight_s": 11.533,
+   "mixer_saturated_s": 0.76,
+   "range_jumps": [
+    []
+   ],
+   "fell_at": [
+    12.385,
+    12.402,
+    12.373
+   ],
+   "acc_v_peak_g": 4.14,
+   "acc_h_peak_g": 2.2
+  },
+  "ARE_nominal|table_up": {
+   "n": 3,
+   "airborne_success": 3,
+   "mission_success": 0,
+   "full_success": 0,
+   "legs": [
+    "held"
+   ],
+   "fell45_at": [
+    10.438,
+    10.565,
+    10.545
+   ],
+   "fell45_phase": [
+    "disarmed",
+    "disarmed",
+    "disarmed"
+   ],
+   "touchdown_tilt_deg": [
+    1.3,
+    1.6,
+    1.2
+   ],
+   "touchdown_vz": [
+    -0.351,
+    -0.334,
+    -0.363
+   ],
+   "max_tilt_deg": 14.5,
+   "touchdown_vz_worst": -0.363,
+   "touchdown_pos_err_max_m": 0.052,
+   "takeoff_drift_max_m": 0.13,
+   "hover_throttle_pct": 94.733,
+   "thrust_to_weight": 1.348,
+   "hover_current_a": 107.5,
+   "hover_minutes_80pct": 1.16,
+   "pack_current_peak_a": 73.6,
+   "pack_current_avg_a": 51.767,
+   "esc_channel_peak_a": 39.1,
+   "mah_used": 279.1,
+   "flight_s": 9.697,
+   "mixer_saturated_s": 1.02,
+   "range_jumps": [
+    [
+     6.4,
+     10.56,
+     10.62,
+     10.64
+    ]
+   ],
+   "fell_at": [
+    10.505,
+    10.633,
+    10.615
+   ],
+   "acc_v_peak_g": 5.12,
+   "acc_h_peak_g": 4.86
+  },
+  "ARE_nominal|table_down": {
+   "n": 3,
+   "airborne_success": 3,
+   "mission_success": 0,
+   "full_success": 0,
+   "legs": [
+    "held"
+   ],
+   "fell45_at": [
+    11.703,
+    11.285,
+    11.752
+   ],
+   "fell45_phase": [
+    "disarmed",
+    "disarmed",
+    "disarmed"
+   ],
+   "touchdown_tilt_deg": [
+    1.1,
+    1.2,
+    1.2
+   ],
+   "touchdown_vz": [
+    -0.314,
+    -0.324,
+    -0.312
+   ],
+   "max_tilt_deg": 16.5,
+   "touchdown_vz_worst": -0.324,
+   "touchdown_pos_err_max_m": 0.03,
+   "takeoff_drift_max_m": 0.178,
+   "hover_throttle_pct": 94.167,
+   "thrust_to_weight": 1.341,
+   "hover_current_a": 106.467,
+   "hover_minutes_80pct": 1.17,
+   "pack_current_peak_a": 73.4,
+   "pack_current_avg_a": 52.133,
+   "esc_channel_peak_a": 39.1,
+   "mah_used": 314.633,
+   "flight_s": 10.853,
+   "mixer_saturated_s": 0.81,
+   "range_jumps": [
+    [
+     4.82,
+     11.92
+    ]
+   ],
+   "fell_at": [
+    11.77,
+    11.353,
+    11.82
+   ],
+   "acc_v_peak_g": 4.2,
+   "acc_h_peak_g": 2.09
+  }
+ }
+}

@@ -73,6 +73,27 @@ Success fields: `airborne_success` lift-off to first foot touchdown on the wante
 with `--legs` other than held continues 6 s past the disarm. `batch.py` summaries count these as `airborne_success`,
 `mission_success` and `full_success`.
 
+## Why 80 % thrust fails here (2026-11-11, `out/t80_diag/`)
+Cause: the stand-in controller's thrust model, not lack of thrust or pitch authority. `t_max_est` (flight.py) is the
+vendor point scaled by bus voltage only, so at `--thrust 0.8` every commanded newton delivers 0.8 N. Held-leg trace
+`base80__hover__s0` (`--log-ctl`, columns 26-36): the 1.6 x weight take-off collective delivers 1.2 to 1.3 x, lift-off at
+1.0 s; then the altitude loop's feed-forward commands 1.00 to 1.05 x weight and 0.85 x arrives. The duck peaks 12 cm up
+at 1.4 s and sinks back; the climb integrator (`ki_vz` 1.5, climb-rate demand only 0.29 m/s once the 0.30 m target is
+reached) grows from 0.06 to 0.4 by 1.95 s against the about 1.6 it needs (1.25 x weight commanded). Back on the floor with the fans carrying the
+whole weight, the unloaded feet skid backwards, the position loop leans up to 16 deg against it, and the duck tips
+(3.8 s). Mixer saturation: 0.28 s in the take-off ramp, 0.04 s in the air, 1.5 s after the floor re-contact.
+table_up survives only because its target keeps rising (demand clipped at 0.6 m/s), so the integrator winds twice as
+fast and the sink stops 5 cm above the floor. 90 % has half the deficit and a faster lift-off.
+Test (one knob, `--ctl-thrust-known`, default 1.0 = all earlier rows; default reruns of ARE_nominal seed 0, all three
+scenarios, equal `out/batch` in every old field): `--thrust 0.8 --ctl-thrust-known 0.8` airborne 9 of 9 with held legs (saturation 0.35 to 0.42 s,
+take-off pitch excursion 6 deg) and 9 of 9 airborne, 8 of 9 full with `--legs handover` (published row: 1 of 9 and 0).
+Sweep, held legs, airborne of 9: model unknown 85 % 9, 75 % 0; model known 70 % 9, 60 % 0 (thrust-to-weight 1.21, the
+take-off collective cannot be met). `--ctl-thrust-known 0.87` at 80 % (the feed-forward ArduPilot would have with its
+hover throttle capped at 0.6875, `AP_MotorsMulticopter.h`) airborne 9 of 9.
+Hover thrust fraction needed: 0.56 nominal, 0.65 at 90 %, 0.75 at 80 %. ArduPilot's MOT_THST_HOVER range is 0.125 to
+0.6875 (parameter list, ardupilot.org/copter/docs/parameters.html), so below about 85 % of vendor thrust the learned
+hover value saturates and its integrator must carry the rest.
+
 ## What the simulation cannot show
 Real EDF thrust and inlet losses next to the body (one vendor point per fan is the only data), ground effect and
 recirculation near the floor and table, heat, real ArduPilot tuning and land detector, servo behaviour beyond the BAM

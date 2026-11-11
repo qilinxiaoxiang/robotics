@@ -418,7 +418,9 @@ def run(a):
             phase, disarm_t = "disarmed", t
         # ---- control
         v_bus_prev = getattr(bat, "v_last", bat.ocv())
-        t_max_est = T_REF * (v_bus_prev / V_REF) ** 2
+        # the controller's thrust model: vendor point x --ctl-thrust-known (1.0 = vendor, every row before 2026-11-11)
+        t_max_est = T_REF * (v_bus_prev / V_REF) ** 2 * a.ctl_thrust_known
+        ctl_row = [float("nan")] * 11     # --log-ctl: roll_d, pitch_d, Fz, T_cmd x4, sat, vz_est, i_vz, gyro_y
         if phase in ("idle", "disarmed", "cut"):
             u = np.zeros(4)
         else:
@@ -472,6 +474,7 @@ def run(a):
                 T, sat = ctl.mix(Fz, Mb, t_max_est)
                 if sat: stats["sat_s"] += dt
                 u = np.sqrt(np.clip(T / t_max_est, 0, 1))
+                ctl_row = [roll_d, pitch_d, Fz, *T, float(sat), vz_est, ctl.i_vz, float(gyro_s[1])]
         # ---- plant: fans, battery, forces
         P_guess = getattr(bat, "p_last", 0.0)
         v_bus, i_tot = bat.solve(P_guess + 7.0)        # 7 W avionics (FC, flow, BEC), estimate
@@ -586,7 +589,7 @@ def run(a):
         if k % 8 == 0:
             log.append([t, *d.qpos[0:3], *rpy, z_est, surf_est, *x_est, tgt["z"], tgt["x"], *u, *Tf, v_bus, i_tot,
                         rng_true, float(np.abs(d.actuator_force[leg_act]).max()), ["idle", "spool", "climb", "hold1", "move", "hold2", "hover",
-                        "land", "spooldown", "disarmed", "cut"].index(phase)])
+                        "land", "spooldown", "disarmed", "cut"].index(phase)] + (ctl_row if a.log_ctl else []))
         if a.scenario == "cut" and phase == "cut" and stats.get("cut_t") is None:
             stats["cut_t"] = round(t, 3)
         if a.scenario == "cut" and stats.get("cut_t") and t > stats["cut_t"] + 2.0:
@@ -669,6 +672,8 @@ def run(a):
                            trim_hip=a.trim_hip, wn=a.wn, ground_pitch=a.ground_pitch, com_est=a.com_est,
                            rigid_legs=a.rigid_legs, start_air=a.start_air, floor_mu=a.floor_mu, power_scale=a.power_scale, settle_s=a.settle_s, trim_knee=a.trim_knee,
                            table_gap=a.table_gap, spool_down_frac=a.spool_down_frac, lean_max=a.lean_max))
+    if a.ctl_thrust_known != 1.0:      # recorded only when used, so default rows stay field-identical to earlier ones
+        row["params"]["ctl_thrust_known"] = a.ctl_thrust_known
     if a.log:
         np.savez_compressed(a.log, log=np.array(log, dtype=float))
     if a.video:
@@ -763,6 +768,12 @@ def main():
                     "--legs handover gives the legs back to the policy (landing probe: released 2-3 cm up)")
     ap.add_argument("--after-s", type=float, default=None, help="s to run on after the disarm (default 6 with --legs policy, "
                     "none with held: the old mission end)")
+    ap.add_argument("--ctl-thrust-known", type=float, default=1.0,
+                    help="diagnostic: fraction of the vendor thrust the controller's thrust model assumes (1.0 = vendor point, "
+                         "all rows before 2026-11-11); set equal to --thrust for a controller whose hover throttle is measured "
+                         "(ArduPilot MOT_THST_HOVER learned)")
+    ap.add_argument("--log-ctl", action="store_true", help="--log: append roll_d, pitch_d, Fz demand, commanded T x4, "
+                    "mixer saturated, vz_est, i_vz, gyro_y (columns 26-36)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--log", default=None)
     ap.add_argument("--video", default=None)
