@@ -290,6 +290,79 @@
         "status": "confirmed",
         "summary": "occurrence 2: boot ordering cycle (fixed unit deployed 2026-11-06); occurrence 1: deliberate rollback disable recorded wrongly as enabled"
       }
+    },
+    "yaw-oscillation-after-yaw-disturbance": {
+      "symptom": "Standing or walking at zero command, the robot gets a yaw disturbance (a turn in place stops, or the head yaw moves); instead of damping, a body yaw/roll oscillation grows over 1-2.5 s (gyro z to 6-8 rad/s, leg currents 5-6 A) and the robot rolls over.",
+      "required_recovery": "After any turn or head-yaw move the duck settles and keeps standing. Shawn 2026-11-11: \"看下为什么摔 而且走得这么不稳\", \"又摔倒了\".",
+      "occurrences": [
+        {
+          "when": "2026-11-06 runs 3, 4 (table) and 6 (carpet)",
+          "what": "falls ~1 s after a turn in place while the trunk still rocked (gyro 0.97-1.5 rad/s), described in guide/firmware/mac/robot-runs-20261106-seepick/README.md",
+          "running": "seepick.py + approach.py on walk_wired, walk61/stand61"
+        },
+        {
+          "when": "2026-11-11 14:0x, seepick 1111a (robot t0 1794423510.0, +28.5 to +32.5 s)",
+          "what": "aim turn vtheta -0.3 for 1.5 s, stop at +30.0; gyro z 1.4 -> 2.2 -> 3.2 -> 5.9 rad/s, legs 0.5 -> 5.6 A, rolled over at +32.0",
+          "running": "seepick.py, walk_wired 50 Hz, IMU fresh, loop normal; guide/firmware/mac/robot-runs-20261111-seepick/run1-seepick-post-turn-yaw-fall.jsonl.gz"
+        },
+        {
+          "when": "2026-11-11, +337.5 to +339.8 s after the same t0",
+          "what": "standing still (gyro 0.00) at zero command; namecall turned head yaw to -0.355 rad (settled by +338.1); at +339.0 the policy's head-yaw action began a growing oscillation to +-3 rad, body yaw rate 8 rad/s, legs 6 A, guard to stand at +339.76, fell",
+          "running": "namecall.py look-at-owner; guide/firmware/mac/robot-runs-20261111-seepick/run2-namecall-headyaw-oscillation-fall.jsonl.gz"
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "H1-yaw-loop-gap",
+          "claim": "The real yaw loop (hip yaw and head yaw XL330s with backlash and deadband, low KP, the heavy head) has less damping or more delay than the sim, so stand61/walk61 feedback on a yaw disturbance is unstable on the robot and stable in sim. Predicts: sim replay of the same commands on the current model stays upright through the turn; adding yaw backlash/delay in sim reproduces the growth.",
+          "status": "open; first replay check pending"
+        },
+        {
+          "id": "H2-head-yaw-out-of-distribution",
+          "claim": "The head_pose command (head yaw -0.355 with neck 0.35) or the post-turn state lies outside the policy's training distribution. Predicts: the same disturbance inside the trained range does not grow.",
+          "status": "open"
+        },
+        {
+          "id": "H3-external-contact",
+          "claim": "A hand or the cable touched the robot (run 2 leg current jumped 271 -> 816 mA in one tick at +339.09 before the gyro grew).",
+          "status": "open; no camera record"
+        },
+        {
+          "id": "H4-no-target-low-pass",
+          "claim": "Pollen's robotd low-pass filters the policy targets (legs alpha 0.7, head 0.5) and scales walking actions by 0.9 and by 7.4 V / battery; robotd.toml says the alpha policies (walk61, stand61) were trained with that filter. walk_wired sends targets unfiltered and unscaled (a uniform 0.5 goal EMA trial on 2026-10-16 was inconclusive and removed). Run 2's growing head-yaw action is what an unfiltered head target with too much loop gain looks like. Predicts: sim replay with the robotd filter damps the growth where the unfiltered replay does not; on the robot the head-yaw step (T3) settles with the filter.",
+          "status": "open"
+        }
+      ],
+      "tests": [
+        {
+          "id": "T1-sim-replay",
+          "what": "brain_sim_check.py --model asbuilt --manifest current --volt 7.6 --drop 0.036 --cmd-replay replay_1111a_cut.json (Mac mini ~/sims/fullflow-20261111), elliptic contact, seeds 0-3, trace tilt and gyro z through +28 to +33",
+          "status": "queued",
+          "blocker": "2026-11-11 run did not finish: a 7 s replay passed 120 s on the Mac mini at load 9 (Chrome helpers); rerun when the Mac mini is free, see microduck-sim/HANDOFF-20261111-walk-stability.md"
+        },
+        {
+          "id": "T2-sim-yaw-backlash",
+          "what": "same replay with hip-yaw/head-yaw backlash and the measured action delay; growth reproduced = H1",
+          "status": "queued",
+          "blocker": "T1 result; next session per microduck-sim/HANDOFF-20261111-walk-stability.md"
+        },
+        {
+          "id": "T3-robot-head-yaw-step",
+          "what": "robot standing, step head yaw 0 -> -0.35 and back with no other motion, five times, IMU live; repeat at -0.15",
+          "status": "queued",
+          "blocker": "robot powered off 2026-11-11"
+        }
+      ],
+      "mitigations": [],
+      "recovery": {
+        "self_recovers": false,
+        "verified_by_induced_fault": false,
+        "evidence": "the robot falls; the guard switches to stand only after the roll"
+      },
+      "cause": {
+        "status": "hypothesis",
+        "summary": "H1 yaw-loop sim gap is the lead; T1 separates sim-stable from sim-unstable"
+      }
     }
   }
 }
