@@ -26,7 +26,9 @@ def main():
     text = data.read_text(errors='replace')
     missing_data = [k for k in PARTS if f'"{k}"' not in text]
     missing_world = [k for k in PARTS if not (GUIDE / 'print/world' / f'{k}.stl').exists()]
-    st = dict(version='FlightPack-D1', geometry='c31e5e2d', checked=datetime.datetime.now().astimezone().isoformat(timespec='seconds'),
+    # geometry: the printed STLs the gate audits, by hash (the commit holding them may not exist yet when the gate runs)
+    world = {k: sha(GUIDE / 'print/world' / f'{k}.stl')[:12] for k in PARTS if (GUIDE / 'print/world' / f'{k}.stl').exists()}
+    st = dict(version='FlightPack-D1', geometry=world, checked=datetime.datetime.now().astimezone().isoformat(timespec='seconds'),
               guideData=dict(path=str(data), sha256=sha(data)), missingInGuideData=missing_data, missingWorldStl=missing_world)
     if missing_data or missing_world:
         st.update(status='PREPARED_GATE_PENDING',

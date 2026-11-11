@@ -151,13 +151,23 @@ def thickness(t, n=8000, edge_skip=0.6):
                 thin_at=np.round(p[thin][:12], 1).tolist(), thin_d=np.round(d[thin][:12], 2).tolist())
 
 
-def main():
-    res = dict(backpack_shift_mm=BACKPACK_SHIFT, skipped=SKIP)
-    world = {}
+def world_files():
+    """Robot-side world STLs near the pack. The guide copies the eight printed flight parts (and fp_* bought parts) into
+    guide/print/world as mirrors of cad/build; they are this pack's own parts, loaded from cad/build, never as world."""
     for f in sorted(WORLD.glob("*.stl")):
         stem = f.stem
         if any(stem.startswith(k) for k in SKIP) or "-v1" in stem or "_v18" in stem or "-2026" in stem or stem.startswith("a7z_"):
             continue
+        if stem in PARTS or stem.startswith("fp_"):
+            continue
+        yield f
+
+
+def main():
+    res = dict(backpack_shift_mm=BACKPACK_SHIFT, skipped=SKIP)
+    world = {}
+    for f in world_files():
+        stem = f.stem
         shift = [BACKPACK_SHIFT, 0, 0] if f.name.startswith(BACKPACK) else None
         world[stem] = load(f, shift)
     mine = {n: load(B / f"{n}-world.stl") for n in PARTS}

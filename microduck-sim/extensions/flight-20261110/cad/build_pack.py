@@ -49,7 +49,9 @@ FCB_X = (WING["arm_x_rear"] - FCB_T, WING["arm_x_rear"])            # FC plate x
 FCB_SCREWS = [(-48.0, 21.75), (-64.0, 21.75), (-48.5, 55.75), (-63.5, 55.75)]
 FC_CENTRE = (-56.0, 40.0)                                            # 30.5 pattern centre (y, z)
 FC_BOSS = 4.0                                                        # M3 standoff bosses behind the plate
-FCB_WINDOW_Z = (25.5, 37.0)                                          # 2.5 mm above the lower plate screws' holes
+# 2.5 mm above the lower plate screws' holes; 17.5 high (11 wide) so the right pigtail, soldered to the ESC on the bench,
+# passes with its XT60 upright (Pm.XT60_ENV 15.8 x 8.2)
+FCB_WINDOW_Z = (25.5, 43.0)
 # ESC input capacitor (12.5 x 20 mm, keep-out d 13 x 25 with the leg roots) lies along x on the right top flange with its
 # legs toward the ESC battery tabs (x -80, y -60.6 / -51.5, z 60.6; wiring/wiring.json esc_tabs_world), so its own legs
 # reach the tabs (about 8.5 mm end face to tab). Body x -50.6..-75.6, y -62.5..-49.5 (outboard of the head reach near
@@ -66,8 +68,11 @@ CAP_SLOT_X = (-55.5, -52.5)
 STACK = dict(esc_pcb=1.6, esc_h=6.0, spacer=8.0, fc_pcb=1.6, fc_h=8.0, fc_under=2.0, grommet=1.0)
 # A7Z-to-FC lead centreline (guide frame). Header pin pair k sits at y = 24.13 - 2.54 (k - 1) (pin 1 at robot left):
 # pins 14/16/18 = pairs 7/8/9 at y 8.89 / 6.35 / 3.81. Ends on the UART1 plug on the FC top edge (z 58 + 6 mm plug).
-A7Z_LINK = [(-15.2, 6.35, 67.0), (-15.2, -33.4, 68.0), (-46.8, -33.4, 68.0), (-48.8, -35.0, 64.0),
-            (-84.0, -35.0, 64.0), (-88.6, -56.0, 65.0)]
+# Over the right saddle wall in front of the lid (lid x <= -19.6), then rearward outboard of the lid edge (|y| 34.4) at
+# y -36.3 along the wall's outer top corner, behind the transition column, over the ESC top (above the left battery tail)
+# and down into the plug.
+A7Z_LINK = [(-15.2, 6.35, 67.0), (-15.2, -33.4, 68.6), (-15.6, -36.4, 68.4), (-17.5, -36.4, 66.5), (-46.8, -36.3, 66.5), (-48.8, -36.3, 64.0),
+            (-76.0, -36.3, 64.0), (-82.0, -38.0, 68.5), (-88.6, -50.0, 68.0), (-88.6, -56.0, 65.0)]
 
 
 def tube_path(r, pts):
@@ -147,13 +152,17 @@ def wing_plate():
         cuts.append(L.box((xr, y0, W["band_lip_z"]), (xf + 1, y1, cs["z"] + 0.01)))
         y0, y1 = sorted((s * 14.5, s * (W["centre_half_w"] + 0.01)))             # lower corners: 50 % leg reach at z -40
         cuts.append(L.box((xcb - 1, y0, W["centre_bot"] - 1), (xf + 1, y1, -40.5)))
-        for win in (W["lead_window"], W["fan_window"]):
-            y0, y1 = sorted((s * win["y"][0], s * win["y"][1]))
-            cuts.append(L.box((xb - 1, y0, win["z"][0]), (xf + 1, y1, win["z"][1])))
+        win = W["lead_window"]
+        y0, y1 = sorted((s * win["y"][0], s * win["y"][1]))
+        cuts.append(L.box((xb - 1, y0, win["z"][0]), (xf + 1, y1, win["z"][1])))
+        if s > 0:                     # the camera USB cable runs on the left only
+            cn = W["cam_notch"]
+            cuts.append(L.box((cn["x"][0], cn["y"][0], cn["z"][0]), (cn["x"][1], cn["y"][1], cn["z"][1])))
         gw = W["gusset_window"]
         for (g0, g1) in W["gussets"]:
             y0, y1 = sorted((s * (g0 - 1), s * (g1 + 1)))
-            cuts.append(L.box((gw["x"][0], y0, gw["z"][0]), (gw["x"][1], y1, gw["z"][1])))
+            gx0 = gw["x_open"] if (g0, g1) in gw["open_rear"] else gw["x"][0]
+            cuts.append(L.box((gx0, y0, gw["z"][0]), (gw["x"][1], y1, gw["z"][1])))
     sw = W["swap_window"]
     cuts.append(L.box((xcb - 1, sw["y"][0], sw["z"][0]), (xf + 1, sw["y"][1], sw["z"][1])))
     for j, (yb, zb_) in enumerate(FCB_SCREWS):
@@ -167,7 +176,8 @@ def wing_plate():
 
 
 # ================================================================== battery tray (printed deck-down)
-def tray():
+def tray(cam=True):
+    """Left tray (y > 0); the right tray is its mirror built with cam=False (the camera USB cable runs on the left only)."""
     T = TRAY
     deck = L.box((T["x"][0], T["y"][0], T["deck_z"][0]), (T["x"][1], T["y"][1], T["deck_z"][1]))
     fl = [L.box((T["flange_x"][0], fy[0], T["flange_z"][0] - 0.01), (T["flange_x"][1], fy[1], T["flange_z"][1]))
@@ -180,9 +190,13 @@ def tray():
     for (x0, x1) in T["strap_x"]:
         for (y0, y1) in (T["strap_y_in"], T["strap_y_out"]):
             cuts.append(L.box((x0, y0, T["deck_z"][0] - 1), (x1, y1, T["deck_z"][1] + 1)))
+    if cam:
+        cn = T["cam_notch"]
+        cuts.append(L.box((cn["x"][0], cn["y"][0], cn["z"][0]), (cn["x"][1], cn["y"][1], cn["z"][1])))
     for j, (y, z) in enumerate(WING["tray_screws"]):
         cuts.append(L.teardrop(PIL_H, (T["flange_x"][0] - 0.5, y, z), X_AX, T["flange_x"][1] - T["flange_x"][0] + 1.0, up=(0, 0, 1)))
-        fit_pilot(f"tray-pilot-{j}", "tray_L", X_AX, PIL_H, [0, 0, 1], WEB_T, "through", 10 - WEB_T)
+        if cam:                       # declared once: the right tray's pilots are the mirror of these
+            fit_pilot(f"tray-pilot-{j}", "tray_L", X_AX, PIL_H, [0, 0, 1], WEB_T, "through", 10 - WEB_T)
     return t - L.union(cuts)
 
 
@@ -360,9 +374,9 @@ def nacelle(side=+1):
         wt = N["washer"]["t"]                                     # M2 washer in the 5.4 seat, head on top of it
         clamped = uh + wt + (N["split_gap"] - N["travel"])      # smallest fan: seams 0.5 apart, bite 5.0
         if side > 0:
-            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], round(clamped, 2), round(pdep, 2), round(10 - clamped, 2))
+            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], round(clamped, 2), round(pdep, 2), round(N["screw_len"] - clamped, 2))
             fit_clear(f"nac-split-clear-{k}", "nacelle_outer_L", Y_AX, CLR_H, [0, 0, 1])
-        screw(f"nac-{nm}-{k}", "M2 x 10 (with M2 washer)", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
+        screw(f"nac-{nm}-{k}", f"M2 x {N['screw_len']:.0f} (with M2 washer)", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
               (x, side * (Pm.FAN_Y + g + uh + wt), z), (0, -side, 0), round(uh + wt, 2), f"nacelle {nm}")
     for k, z in enumerate(N["lug_screw_z"]):
         ci.append(L.teardrop(PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))
@@ -478,7 +492,7 @@ def main():
     nir, nor, _ = nacelle(-1)
     tl = tray()
     fcb, _ = fc_bracket()
-    parts = {"wing_plate": wing, "tray_L": tl, "tray_R": L.mirror_y(tl), "nacelle_inner_L": nil, "nacelle_outer_L": nol,
+    parts = {"wing_plate": wing, "tray_L": tl, "tray_R": L.mirror_y(tray(cam=False)), "nacelle_inner_L": nil, "nacelle_outer_L": nol,
              "nacelle_inner_R": nir, "nacelle_outer_R": nor, "fc_bracket": fcb}
     contract = {"wing_plate_centre": named["centre"], "wing_plate_mid": wing ^ L.box((-100, -37, -100), (0, 37, 200))}
     info = {}
@@ -508,7 +522,7 @@ def main():
         collar_t=[round(NAC["t0"], 2), round(NAC["t1"], 2)], ear_pocket=NAC.get("ear_pocket"), lead_slots_deg=Pm.lead_angles(1),
         says=(f"closes on duct OD {Pm.CLAMP[0]}..{Pm.CLAMP[1]} mm with one layer of 1 mm foam tape in each bore: largest fan with "
               f"the seams {NAC['split_gap']} apart (tape at {NAC['tape']['firm']}), smallest after the screws close them "
-              f"{NAC['travel']} mm (tape at {NAC['tape']['grip']}); M2 x 10 bite {NAC['bite'][0]}..{NAC['bite'][1]} mm"))
+              f"{NAC['travel']} mm (tape at {NAC['tape']['grip']}); M2 x {NAC['screw_len']:.0f} bite {NAC['bite'][0]}..{NAC['bite'][1]} mm"))
     print("clamp:", info["clamp"]["says"])
     info["fan"] = dict(lip_centre_z=round(Pm.LIP_Z, 2),
                        motor_end_axis={w: [round(v, 2) for v in Pm.fan_point(w, FAN["motor_t"][1])] for w in ("front", "rear")},

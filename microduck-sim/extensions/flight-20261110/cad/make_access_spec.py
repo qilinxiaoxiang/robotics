@@ -23,10 +23,8 @@ BENCH_FAN = {"L": ["dummy_fan_front_L", "dummy_fan_rear_L"], "R": ["dummy_fan_fr
 
 def main():
     meshes = {}
-    for f in sorted(CP.WORLD.glob("*.stl")):
+    for f in CP.world_files():
         stem = f.stem
-        if any(stem.startswith(k) for k in CP.SKIP) or "-v1" in stem or "_v18" in stem or "-2026" in stem or stem.startswith("a7z_"):
-            continue
         shift = [CP.BACKPACK_SHIFT, 0, 0] if f.name.startswith(CP.BACKPACK) else None
         CP.load(f, shift).export(OUT / f.name)
         meshes[stem] = f.name

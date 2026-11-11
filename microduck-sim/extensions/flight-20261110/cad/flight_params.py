@@ -103,7 +103,11 @@ NAC = dict(
     # an M2 washer (ISO 7089, 5.0 x 0.3) under each clamp head in a 5.4 seat: the bare head bearing was SF 1.62 at snug and
     # 1.04 at the strip load (strength/README.md, "Clamp screw head bearing"); with the washer about 4
     washer=F.WASHER["M2"], head_seat=F.WASHER_SEAT["M2"],
-    screw_len=10.0, under_head=round(10.0 - F.WASHER["M2"]["t"] - _eng_max - _res, 2),   # material under the washer: bite 5.0 (smallest) .. 5.0 - travel (largest)
+    # M2 x 12 (the post screws' Zuorery kit length): with 6.2 mm under the washer the head top stands level with the outer
+    # block face (outer_y 9.4 is set by the ear-pocket skin), so the driver corridor starts outside the face where the end
+    # walls keep 4 mm free (PRINT-FIT "Access": a counterbore wall above the head top counts as a wall; M2 x 10 left the
+    # head 1.8 mm down a 5.4 seat, free radius 2.7). Bite window unchanged.
+    screw_len=12.0, under_head=round(12.0 - F.WASHER["M2"]["t"] - _eng_max - _res, 2),   # material under the washer: bite 5.0 (smallest) .. 5.0 - travel (largest)
     wall=3.0,
     # collar ends clear the lip flare and the rear ring by tol + 0.5 whichever way the fan is off
     t0=FAN["duct_t"][0] + TOL + 0.5, t1=FAN["duct_t"][1] - TOL - 0.5,
@@ -214,10 +218,23 @@ WING = dict(
     # landing, SF 1.2 (strength/README.md, "Tray flange screws"); with (46, 45) the worst is 60 N, SF 2.0 at the low
     # pull-out (results.json fixes.tray). Both screws cannot rise to z 45: y 63 is inside the lead window
     tray_screws=[(46.0, 31.0), (63.0, 31.0), (46.0, 45.0)],
-    lead_window=dict(y=(55.5, 66.5), z=(38.0, 52.0)),          # battery XT60 + balance lead through the arm web into the bay
-    fan_window=dict(y=(70.5, 77.0), z=(26.0, 32.0)),           # front fan leads (along the tray top) through the web
-    gusset_window=dict(x=(-60.0, -52.0), z=(22.0, 34.0)),      # harness passes along the bays behind the web
-    swap_window=dict(y=(-11.5, 11.5), z=(4.6, 9.5)),           # matches the backpack front-plate window: swap plugs 3 + 4 leads
+    # battery XT60 + balance lead through the arm web into the bay; 11 x 18 so the pack's XT60 (XT60_ENV, 15.8 x 8.2
+    # across its axis) passes upright at every battery change; top 4 mm under the arm top, bottom 1.5 over the tray flange
+    lead_window=dict(y=(55.5, 66.5), z=(37.5, 55.5)),
+    # NOT CUT since round E (2026-11-10): the front fan leads now run outboard of the tray and round the arm's outer end
+    # into the bay (they lay under the battery here). Kept only because wiring/build_wiring.py still draws through it.
+    fan_window=dict(y=(70.5, 77.0), z=(26.0, 32.0)),
+    # harness and left battery tail along the bays behind the web; the windows of the gussets listed in open_rear run out
+    # through the gusset's rear edge (x -64) so the left battery pigtail, soldered to the ESC on the bench, is laid in from
+    # behind with its XT60 on (an XT60 does not pass an 8 x 12 window)
+    gusset_window=dict(x=(-60.0, -52.0), z=(22.0, 34.0), open_rear=((37.9, 40.0), (52.5, 54.5)), x_open=-64.6),
+    # swap plugs 3 (XT30) + 4 (MR30): the backpack-side halves pass the wing centre with their leads on, plug axis along x;
+    # world bp_swap_plugs bodies are 5.2 / 4.8 thick (x) and 10.2 wide, so the window is 7.0 high (backpack window 4.9)
+    swap_window=dict(y=(-11.5, 11.5), z=(4.6, 11.6)),
+    # existing camera USB cable (guide cable cam-usb, r 2.0, passes (-46, 39.5, 50.5) -> (-52.5, 30, 52)): notch in the
+    # arm web's inboard top corner, open to the inboard side (nothing at |y| < 37.9 above the transition top z 42.5), so
+    # the fitted cable is laid in sideways; 1 mm round the drawn tube
+    cam_notch=dict(x=(-51.0, -44.9), y=(37.8, 43.0), z=(47.0, 54.0)),
     centre_step=dict(y=17.0, z=26.0, y_low=19.8),              # recessed to x_recess: |y| > 17 above z 26 (shell top lip), |y| > 19.8 above z 9 (side lip)
     # Cross harness (left fans' 6 x 16 AWG + left battery pair): the slot along the wing plate between the backpack
     # front (x -50.5) and the shell lip / saddle (x -46.1 / -46.5) is 3.8 x 11.5 mm = 44 mm2 for a ~61 mm2 bundle, so the
@@ -240,10 +257,15 @@ TRAY = dict(deck_z=(22.0, 26.0), x=(-45.0, 42.4), y=(37.9, 80.5),
             # the raised part starts at y 41.5: at y 39.5, z 46.5 the head reaches it in the 50 % random head poses
             flange_raised_y0=41.5,
             strap_w=16.0 + 2.0, strap_t=3.0, strap_x=[(-30.0, -12.0), (14.0, 32.0)],
-            strap_y_in=(39.3, 42.3), strap_y_out=(75.8, 78.8))
+            strap_y_in=(39.3, 42.3), strap_y_out=(75.8, 78.8),
+            # camera USB cable (cam-usb, r 2.0) along y 40, z 50 over the raised inboard flange's inboard top corner
+            cam_notch=dict(x=(-46.0, -36.0), y=(41.4, 43.5), z=(47.0, 50.1)))
 
 # ------------------------------------------------------------------ electronics (procurement.json cad_handoff)
 FC = dict(board=(36.0, 36.0, 8.0), esc=(41.0, 41.0, 6.0), pattern=30.5, hole=4.0, mass_g=24.0, hw_g=6.0)
 MTF01 = dict(size=(29.3, 17.0, 14.5), holes=(24.3, 12.0), hole_d=2.5, mass_g=4.5, cone_half_deg=21.0)
 CAP = dict(d=13.0, h=25.0)
+# XT60 housing across its axis, mm (Amass XT60 as commonly listed, 15.8 x 8.2 x 16; the Amass PDF in wiring.json sources
+# was not readable on 2026-11-10, so this is a listing figure): sizes the battery lead window and the FC plate window
+XT60_ENV = (15.8, 8.2)
 PLA_DENSITY = 1.24      # g/cm3
