@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>鸭嘴触觉叠层</title>
+<style>
+  :root {
+    --ink: #1f2933; --muted: #52606d; --line: #e4e7eb; --bg: #ffffff; --card: #f8fafc;
+    --row: #2563eb; --col: #ea580c; --fpc: #f2b544; --pla: #fde68a; --film: #1f1f1f; --press: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  p { font-size: 16px; line-height: 1.7; margin: 8px 0; }
+  .lead { color: var(--muted); }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-top: 20px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0 4px; }
+  button { font: inherit; font-size: 16px; padding: 10px 16px; border-radius: 10px; border: 1px solid #9aa5b1;
+    background: #fff; color: var(--ink); cursor: pointer; }
+  button.primary { background: #1f2933; color: #fff; border-color: #1f2933; }
+  label.sl { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  input[type=range] { width: 180px; font-size: 16px; }
+
+  /* 3D stack */
+  .stagewrap { width: 100%; overflow: hidden; position: relative; }
+  .stage { width: 900px; height: 600px; position: relative; perspective: 1500px; transform-origin: 0 0; }
+  .stack { position: absolute; left: 150px; top: 250px; width: 588px; height: 210px;
+    transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-32deg); }
+  .layer { position: absolute; left: 0; top: 0; width: 588px; height: 210px; transform-style: preserve-3d;
+    transition: transform .5s ease, opacity .3s; }
+  .layer svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  .layer.dim { opacity: .18; }
+  .anc { position: absolute; left: 566px; top: 176px; width: 2px; height: 2px; }
+  .tag { position: absolute; font-size: 16px; font-weight: 700; white-space: nowrap; background: #fff;
+    border: 1.5px solid #1f2933; border-radius: 8px; padding: 2px 8px; transform: translateY(-50%); }
+  .narrow #tags, .narrow #lead { display: none; }
+  .narrow .badge { transform: scale(1.9); transform-box: fill-box; transform-origin: center; }
+  .xleg { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 15px; }
+  .xleg li { display: flex; align-items: center; gap: 6px; }
+  .xleg i { width: 16px; height: 16px; border-radius: 3px; display: inline-block; border: 1px solid #6b7280; }
+  .notrans .layer, .notrans .ball { transition: none !important; }
+  #lead { position: absolute; left: 0; top: 0; pointer-events: none; }
+  .ball { position: absolute; width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffd2a8, #f97316 55%, #c2410c);
+    box-shadow: 0 6px 14px rgba(0,0,0,.25); transition: transform .5s ease; }
+
+  .list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+  .list li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; line-height: 1.55;
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+  .list li.on { border-color: #1f2933; box-shadow: 0 0 0 2px #1f2933 inset; }
+  .sw { flex: 0 0 22px; height: 22px; border-radius: 5px; border: 1px solid #6b7280; margin-top: 2px; }
+  .num { font-weight: 700; flex: 0 0 auto; }
+
+  .readout { font-size: 16px; margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: #fff; border: 1px solid var(--line); }
+  .readout b { color: var(--press); }
+  .meter { height: 14px; border-radius: 7px; background: #e4e7eb; overflow: hidden; margin-top: 6px; }
+  .meter > div { height: 100%; width: 4%; background: var(--press); transition: width .5s ease; }
+  svg text { font-family: inherit; }
+  .steps { margin: 8px 0 0; padding-left: 22px; font-size: 16px; line-height: 1.7; }
+  .note { font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>鸭嘴触觉：五层东西怎么叠在一起</h1>
+  <p class="lead">为了看清楚，把鸭头翻过来、嘴朝上。上嘴的内表面现在朝上，被夹的东西从上往下压。五层从下往上贴，最下面是鸭嘴本身，最上面是看得见的那层皮。</p>
+
+  <section>
+    <h2>1　把五层拉开看</h2>
+    <p>拖动滑块可以把五层拉开或合上。点下面的任意一层，只看它自己。</p>
+    <div class="controls">
+      <label class="sl">合上 <input id="gap" type="range" min="0" max="70" value="55"> 拉开</label>
+      <button id="press3d" class="primary">压一下</button>
+      <button id="showall">显示全部层</button>
+    </div>
+    <div class="stagewrap" id="wrap">
+      <div class="stage" id="stage">
+        <svg id="lead" width="900" height="600"></svg>
+        <div id="tags"></div>
+        <div class="stack" id="stack">
+
+          <!-- 1 PLA -->
+          <div class="layer" data-i="0">
+            <svg width="588" height="210" viewBox="0 0 588 210">
+              <rect x="1" y="1" width="586" height="208" rx="40" fill="#fde68a" stroke="#b7791f" stroke-width="3"/>
+              <g fill="#7c5a12">
+                <circle cx="231" cy="66" r="8"/><circle cx="273" cy="66" r="8"/><circle cx="315" cy="66" r="8"/><circle cx="357" cy="66" r="8"/>
+                <circle cx="231" cy="92" r="8"/><circle cx="273" cy="92" r="8"/><circle cx="315" cy="92" r="8"/><circle cx="357" cy="92" r="8"/>
+                <circle cx="231" cy="118" r="8"/><circle cx="273" cy="118" r="8"/><circle cx="315" cy="118" r="8"/><circle cx="357" cy="118" r="8"/>
+              </g>
+            <g class="badge"><circle cx="36" cy="176" r="17" fill="#ffffff" stroke="#1f2933" stroke-width="2.5"/><text x="36" y="183" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2933">①</text></g></svg>
+            <i class="anc"></i>
+          </div>
+
+          <!-- 2 tape -->
+          <div class="layer" data-i="1">
+            <svg width="588" height="210" viewBox="0 0 588 210">
+              <path fill-rule="evenodd" fill="rgba(255,255,255,.88)" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 5"
+                d="M41,1 H547 A40,40 0 0 1 587,41 V169 A40,40 0 0 1 547,209 H41 A40,40 0 0 1 1,169 V41 A40,40 0 0 1 41,1 Z
+                   M189,40 V140 H399 V40 Z"/>
+            <g class="badge"><circle cx="36" cy="176" r="17" fill="#ffffff" stroke="#1f2933" stroke-width="2.5"/><text x="36" y="183" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2933">②</text></g></svg>
+            <i class="anc"></i>
+          </div>
+
+          <!-- 3 FPC -->
+          <div class="layer" data-i="2">
+            <svg width="588" height="290" viewBox="0 0 588 290" id="fpcsvg">
+              <path fill-rule="evenodd" fill="#f2b544" stroke="#a16207" stroke-width="2"
+                d="M41,1 H547 A40,40 0 0 1 587,41 V169 A40,40 0 0 1 547,209 H324 V250 H264 V209 H41 A40,40 0 0 1 1,169 V41 A40,40 0 0 1 41,1 Z
+                   M189,40 V140 H399 V40 Z"/>
+              <g id="traces"></g>
+              <g id="pads"></g>
+              <rect x="270" y="222" width="20" height="20" rx="2" fill="#374151"/>
+              <rect x="298" y="222" width="20" height="20" rx="2" fill="#374151"/>
+              <rect x="276" y="250" width="36" height="34" fill="#e5e7eb" stroke="#6b7280"/>
+            <text x="340" y="272" font-size="15" fill="#1f2933">尾巴 → 进头里接 XIAO</text><g class="badge"><circle cx="36" cy="176" r="17" fill="#ffffff" stroke="#1f2933" stroke-width="2.5"/><text x="36" y="183" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2933">③</text></g></svg>
+            <i class="anc"></i>
+          </div>
+
+          <!-- 4 film -->
+          <div class="layer" data-i="3">
+            <svg width="588" height="210" viewBox="0 0 588 210">
+              <rect x="10" y="8" width="169" height="176" rx="4" fill="#1f1f1f" opacity=".93"/>
+              <rect x="409" y="8" width="169" height="176" rx="4" fill="#1f1f1f" opacity=".93"/>
+            <g class="badge"><circle cx="36" cy="160" r="17" fill="#ffffff" stroke="#1f2933" stroke-width="2.5"/><text x="36" y="167" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2933">④</text></g></svg>
+            <i class="anc"></i>
+          </div>
+
+          <!-- 5 cover -->
+          <div class="layer" data-i="4">
+            <svg width="588" height="210" viewBox="0 0 588 210">
+              <path fill-rule="evenodd" fill="rgba(255,244,196,.9)" stroke="#d4a72c" stroke-width="2"
+                d="M41,1 H547 A40,40 0 0 1 587,41 V169 A40,40 0 0 1 547,209 H41 A40,40 0 0 1 1,169 V41 A40,40 0 0 1 41,1 Z
+                   M189,40 V140 H399 V40 Z"/>
+            <circle id="coverRing" cx="74" cy="75" r="20" fill="none" stroke="#dc2626" stroke-width="5" opacity="0"/><g class="badge"><circle cx="36" cy="176" r="17" fill="#ffffff" stroke="#1f2933" stroke-width="2.5"/><text x="36" y="183" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2933">⑤</text></g></svg>
+            <i class="anc"></i>
+          </div>
+
+          <div class="ball" id="ball3d"></div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="xleg">
+      <li><i style="background:repeating-linear-gradient(90deg,#2563eb 0 6px,transparent 6px 10px);border:none"></i><i style="background:repeating-linear-gradient(90deg,#ea580c 0 6px,transparent 6px 10px);border:none"></i>虚线 = 藏在 FPC 里面的行线、列线（透视画出，表面看不到）</li>
+      <li><i style="background:#7c3aed"></i>汇到尾巴的线束（也在板子里面）</li>
+      <li><i style="background:#374151"></i>尾巴上的 2 颗读数芯片</li>
+      <li><i style="background:#e5e7eb"></i>排线插头</li>
+      <li><i style="background:#fff;border:3px solid #dc2626"></i>被压的那个触点</li>
+    </ul>
+    <ul class="list" id="list">
+      <li data-i="4"><span class="sw" style="background:#fff4c4"></span><span><span class="num">⑤ 覆盖层（最上面，看得见的皮）</span><br>一层薄胶带或 0.4 mm 的黄色打印片。挡住里面的铜和黑膜，让东西不容易滑。出声孔的位置开窗。</span></li>
+      <li data-i="3"><span class="sw" style="background:#1f1f1f"></span><span><span class="num">④ 压阻膜 Velostat（两块黑色薄膜）</span><br>只盖在两块触点区上面，不接任何线。它的作用：哪里被压，哪里的电阻就变小。</span></li>
+      <li data-i="2"><span class="sw" style="background:#f2b544"></span><span><span class="num">③ FPC 柔性电路板（橙黄色那层）</span><br>FPC 就是“软的电路板”：底板是约 0.1 mm 厚的聚酰亚胺塑料膜，铜线夹在里面，外面再盖一层绝缘膜，所以能弯、能贴在鸭嘴上。笔记本屏幕转轴里那条橙黄色软排线就是 FPC。这块 FPC 表面只在触点处开口，露出 32 个“梳子”触点，蓝色梳子属于某一行，橙色梳子属于某一列，两把梳子挨着但不相连。铜线都在板子里面，汇到后面的尾巴：尾巴上有 2 颗读数芯片和一个排线插头，尾巴弯进头里，插到 XIAO 那根排线上。</span></li>
+      <li data-i="1"><span class="sw" style="background:#fff;border-style:dashed"></span><span><span class="num">② 双面胶</span><br>把 FPC 粘在鸭嘴上。和 FPC 一样，在出声孔的位置开窗。</span></li>
+      <li data-i="0"><span class="sw" style="background:#fde68a"></span><span><span class="num">① 上嘴 PLA 底板（最下面，就是鸭嘴本身）</span><br>头壳的一部分，不会动。中间这 12 个小孔是扬声器的出声孔。</span></li>
+    </ul>
+    <div class="readout" id="read3d">还没压。点“压一下”，小球会压在左边那块第 2 行、第 2 列的触点上。</div>
+  </section>
+
+  <section>
+    <h2>2　切开一个触点，看压下去时发生了什么</h2>
+    <p>把 ③④⑤ 三层在一个触点的位置竖着切开，放大很多倍来看（② 双面胶和 ① 鸭嘴在下面，没画）。</p>
+    <div class="controls">
+      <button id="pressX" class="primary">压下去</button>
+    </div>
+    <svg id="xsec" viewBox="0 0 900 330" width="100%" role="img" aria-label="一个触点的截面">
+      <g id="xs-static"></g>
+      <g id="xs-film"></g>
+      <g id="xs-arrows"></g>
+      <circle id="xs-ball" cx="430" cy="80" r="40" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+      <text id="xs-balltxt" x="430" y="86" text-anchor="middle" font-size="15" fill="#fff">被夹的东西</text>
+      <g id="xs-labels"></g>
+    </svg>
+    <ul class="xleg">
+      <li><i style="background:#fff4c4"></i>⑤ 覆盖层</li>
+      <li><i style="background:#2b2b2b"></i>④ 压阻膜，灰点是碳粉</li>
+      <li><i style="background:#2563eb"></i>行梳（铜）</li>
+      <li><i style="background:#ea580c"></i>列梳（铜）</li>
+      <li><i style="background:#f2b544"></i>③ FPC 本体</li>
+      <li><i style="background:#dc2626"></i>电流路径</li>
+    </ul>
+    <div class="readout">
+      <div id="xs-state">没压：黑膜只是轻轻搭在梳子上，里面的碳粉也离得远，蓝梳子到橙梳子之间的电阻<b>很大</b>，电流几乎过不去。</div>
+      <div class="meter"><div id="xs-meter"></div></div>
+      <div class="note">红条代表读数芯片在这一列量到的电压。数值只是示意。</div>
+    </div>
+    <ol class="steps">
+      <li>读数芯片给这一行的蓝梳子加 3.3 V，别的行接地。</li>
+      <li>东西压下来，黑膜被压薄、贴紧梳子，碳粉颗粒挤到一起，蓝梳子到旁边的橙梳子之间连通了（红色箭头）。</li>
+      <li>电流从蓝梳子穿过黑膜流进橙梳子，再顺着这一列的铜线到尾巴，经过一个电阻接地。黑膜电阻越小，这个电阻上分到的电压越高，尾巴上的读数芯片（ADC）就读到这一列电压升高。</li>
+      <li>芯片一行一行轮流做这件事，一轮就知道 32 个触点里哪几个被压、压得多重。</li>
+    </ol>
+  </section>
+
+  <p class="note">示意图，不是 CAD。上嘴内面按 10/26 的 CAD 测量约 84 × 30 mm，出声孔左右 ±15 mm，孔的前后位置是示意。各层厚度放大了很多。叠层做法参考 ART-Glove（Changyi Lin, Ding Zhao, arXiv 2606.16370）。</p>
+</main>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var params = new URLSearchParams(location.search);
+
+  /* ---------- FPC pads and traces ---------- */
+  var colsL = [34, 74, 114, 155], colsR = [433, 473, 514, 554], rows = [33, 75, 117, 159];
+  var pads = document.getElementById('pads'), traces = document.getElementById('traces');
+  var padEls = {};
+  function comb(cx, cy, key) {
+    var g = el('g', {}, pads);
+    el('rect', {x: cx - 14, y: cy - 14, width: 28, height: 28, rx: 3, fill: '#fde9b8', stroke: '#a16207', 'stroke-width': 1}, g);
+    // blue comb: spine left, fingers right
+    el('rect', {x: cx - 11, y: cy - 10, width: 3, height: 20, fill: '#2563eb'}, g);
+    [-10, -1, 8].forEach(function (dy) { el('rect', {x: cx - 11, y: cy + dy - 1, width: 19, height: 3, fill: '#2563eb'}, g); });
+    // orange comb: spine right, fingers left
+    el('rect', {x: cx + 8, y: cy - 10, width: 3, height: 20, fill: '#ea580c'}, g);
+    [-5.5, 3.5].forEach(function (dy) { el('rect', {x: cx - 8, y: cy + dy - 1, width: 19, height: 3, fill: '#ea580c'}, g); });
+    var hl = el('rect', {x: cx - 16, y: cy - 16, width: 32, height: 32, rx: 4, fill: 'none', stroke: '#dc2626', 'stroke-width': 4, opacity: 0}, g);
+    padEls[key] = hl;
+  }
+  var rowLines = {}, colLines = {};
+  rows.forEach(function (y, r) {
+    [colsL, colsR].forEach(function (cols, side) {
+      var l = el('line', {x1: cols[0], y1: y, x2: cols[3], y2: y, stroke: '#2563eb', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: .55}, traces);
+      (rowLines[r] = rowLines[r] || []).push(l);
+    });
+  });
+  [colsL, colsR].forEach(function (cols, side) {
+    cols.forEach(function (x, c) {
+      var l = el('line', {x1: x, y1: rows[0], x2: x, y2: 196, stroke: '#ea580c', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: .55}, traces);
+      colLines[side * 4 + c] = l;
+    });
+  });
+  // bundles to tail
+  el('path', {d: 'M34,196 H270 V222', fill: 'none', stroke: '#7c3aed', 'stroke-width': 4, 'stroke-dasharray': '8 4'}, traces);
+  el('path', {d: 'M554,196 H318 V222', fill: 'none', stroke: '#7c3aed', 'stroke-width': 4, 'stroke-dasharray': '8 4'}, traces);
+  rows.forEach(function (y, r) { colsL.forEach(function (x, c) { comb(x, y, 'L' + r + c); }); colsR.forEach(function (x, c) { comb(x, y, 'R' + r + c); }); });
+
+  /* ---------- 3D stack ---------- */
+  var layers = Array.prototype.slice.call(document.querySelectorAll('.layer'));
+  var gapIn = document.getElementById('gap');
+  if (params.has('gap')) gapIn.value = params.get('gap');
+  var pressed3d = false;
+  var ball = document.getElementById('ball3d');
+  function layout() {
+    var g = +gapIn.value;
+    layers.forEach(function (L, i) { L.style.transform = 'translateZ(' + (i * g) + 'px)'; });
+    var topZ = 4 * g + 4;
+    var bx = colsL[1] - 28, by = rows[1] - 28;
+    var z = pressed3d ? topZ + 28 : topZ + 150;
+    ball.style.transform = 'translate3d(' + bx + 'px,' + by + 'px,' + z + 'px) rotateZ(32deg) rotateX(-58deg)';
+  }
+  var TAGTXT = ['① 鸭嘴 PLA', '② 双面胶', '③ FPC', '④ 压阻膜', '⑤ 覆盖层'];
+  var tagBox = document.getElementById('tags'), lead = document.getElementById('lead');
+  var tagEls = TAGTXT.map(function (t) { var d = document.createElement('div'); d.className = 'tag'; d.textContent = t; tagBox.appendChild(d); return d; });
+  function placeTags() {
+    var stage = document.getElementById('stage'), sr = stage.getBoundingClientRect();
+    var s = sr.width / 900; var ys = [];
+    layers.forEach(function (L, i) { var r = L.querySelector('.anc').getBoundingClientRect(); ys.push({i: i, ax: (r.left - sr.left) / s, ay: (r.top - sr.top) / s}); });
+    var order = ys.slice().sort(function (a, b) { return b.i - a.i; });
+    var last = -1e9; order.forEach(function (o) { o.ty = Math.max(o.ay, last + 34); last = o.ty; });
+    lead.innerHTML = '';
+    ys.forEach(function (o) {
+      var tx = 770; tagEls[o.i].style.left = tx + 'px'; tagEls[o.i].style.top = o.ty + 'px';
+      tagEls[o.i].style.opacity = layers[o.i].classList.contains('dim') ? .3 : 1;
+      var l = document.createElementNS(NS, 'polyline');
+      l.setAttribute('points', o.ax + ',' + o.ay + ' ' + (tx - 14) + ',' + o.ty + ' ' + tx + ',' + o.ty);
+      l.setAttribute('fill', 'none'); l.setAttribute('stroke', '#6b7280'); l.setAttribute('stroke-width', '1.5');
+      lead.appendChild(l);
+      var c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', o.ax); c.setAttribute('cy', o.ay); c.setAttribute('r', 4); c.setAttribute('fill', '#1f2933'); lead.appendChild(c);
+    });
+  }
+  var tagUntil = 0;
+  function trackTags() { tagUntil = performance.now() + 650; (function f() { placeTags(); if (performance.now() < tagUntil) requestAnimationFrame(f); })(); }
+  gapIn.addEventListener('input', function () { layout(); trackTags(); });
+  var savedGap = null;
+  function setPress3d(on) {
+    pressed3d = on;
+    if (on) { savedGap = gapIn.value; gapIn.value = 0; } else if (savedGap !== null) { gapIn.value = savedGap; }
+    var ring = document.getElementById('coverRing'); if (ring) ring.setAttribute('opacity', on ? 1 : 0);
+    padEls['L11'].setAttribute('opacity', on ? 1 : 0);
+    rowLines[1].forEach(function (l) { l.setAttribute('opacity', on ? 1 : .55); l.setAttribute('stroke-width', on ? 4 : 2); });
+    colLines[1].setAttribute('opacity', on ? 1 : .55); colLines[1].setAttribute('stroke-width', on ? 4 : 2);
+    document.getElementById('press3d').textContent = on ? '松开' : '压一下';
+    document.getElementById('read3d').innerHTML = on
+      ? '压住了：五层合上贴在一起，小球压在红圈位置。下面左边那块<b>第 2 行、第 2 列</b>的梳子被黑膜连通（把滑块往右拉，可以看到 FPC 上被压的那个触点）。加粗的蓝线是这一行，加粗的橙线是这一列，信号顺着它们和紫色线到尾巴上的芯片。'
+      : '还没压。点“压一下”，小球会压在左边那块第 2 行、第 2 列的触点上。';
+    layout(); trackTags();
+  }
+  document.getElementById('press3d').addEventListener('click', function () { setPress3d(!pressed3d); });
+
+  var listItems = Array.prototype.slice.call(document.querySelectorAll('#list li'));
+  function focusLayer(i) {
+    layers.forEach(function (L) { L.classList.toggle('dim', i !== null && +L.dataset.i !== i); });
+    listItems.forEach(function (li) { li.classList.toggle('on', i !== null && +li.dataset.i === i); });
+    placeTags();
+  }
+  listItems.forEach(function (li) { li.addEventListener('click', function () { focusLayer(+li.dataset.i); }); });
+  document.getElementById('showall').addEventListener('click', function () { focusLayer(null); });
+
+  function fit() {
+    var wrap = document.getElementById('wrap'), w = wrap.clientWidth, narrow = w < 640;
+    var stage = document.getElementById('stage');
+    wrap.classList.toggle('narrow', narrow);
+    if (narrow) {
+      var s = w / 760;
+      stage.style.transform = 'translate(' + (-95 * s) + 'px,' + (10 * s) + 'px) scale(' + s + ')';
+      wrap.style.height = (580 * s) + 'px';
+    } else {
+      var s2 = Math.min(1, w / 900);
+      stage.style.transform = 'scale(' + s2 + ')';
+      wrap.style.height = (600 * s2) + 'px';
+    }
+    var xs = document.getElementById('xsec');
+    xs.setAttribute('viewBox', narrow ? '180 40 500 240' : '0 0 900 330');
+    document.getElementById('xs-labels').style.display = narrow ? 'none' : '';
+  }
+  window.addEventListener('resize', function () { fit(); placeTags(); });
+
+  /* ---------- cross-section ---------- */
+  var st = document.getElementById('xs-static');
+  var X0 = 180, X1 = 680;
+  el('rect', {x: X0, y: 232, width: X1 - X0, height: 26, fill: '#f2b544', stroke: '#a16207'}, st);
+  var fingers = [];
+  for (var i = 0, x = 196; x + 22 <= X1 - 10; i++, x += 38) {
+    var blue = i % 2 === 0;
+    el('rect', {x: x, y: 220, width: 22, height: 12, fill: blue ? '#2563eb' : '#ea580c'}, st);
+    fingers.push({x: x + 11, blue: blue});
+  }
+  var filmG = document.getElementById('xs-film'), arrowsG = document.getElementById('xs-arrows');
+  var filmPath = el('path', {fill: '#2b2b2b', opacity: .92}, filmG);
+  var coverPath = el('path', {fill: '#fff4c4', stroke: '#d4a72c'}, filmG);
+  var dots = [];
+  var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (var d = 0; d < 170; d++) dots.push({x: X0 + 4 + rnd() * (X1 - X0 - 8), u: 0.12 + rnd() * 0.76, e: el('circle', {r: 2.4, fill: '#9ca3af'}, filmG)});
+  var arrowEls = [];
+  el('defs', {}, arrowsG).innerHTML = '<marker id="xa" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>';
+  for (var f = 0; f < fingers.length - 1; f++) {
+    var a = fingers[f], b = fingers[f + 1];
+    if (Math.abs((a.x + b.x) / 2 - 430) > 75) continue;
+    var from = a.blue ? a : b, to = a.blue ? b : a;
+    arrowEls.push(el('path', {d: 'M' + from.x + ',219 Q' + (from.x + to.x) / 2 + ',200 ' + to.x + ',219',
+      fill: 'none', stroke: '#dc2626', 'stroke-width': 3, 'marker-end': 'url(#xa)', opacity: 0}, arrowsG));
+  }
+  function bell(x) { var k = (x - 430) / 75; return Math.exp(-k * k); }
+  function filmTop(x, t) { return 186 + t * 13 * bell(x); }
+  function filmBot(x, t) { return 219 + t * 1 * bell(x); }
+  function drawX(t) {
+    var top = [], bot = [], ctop = [];
+    for (var x = X0; x <= X1; x += 5) { top.push(x + ',' + filmTop(x, t).toFixed(1)); bot.push(x + ',' + filmBot(x, t).toFixed(1)); ctop.push(x + ',' + (filmTop(x, t) - 10).toFixed(1)); }
+    filmPath.setAttribute('d', 'M' + top.join(' L') + ' L' + bot.reverse().join(' L') + ' Z');
+    var cb = []; for (var x2 = X0; x2 <= X1; x2 += 5) cb.push(x2 + ',' + filmTop(x2, t).toFixed(1));
+    coverPath.setAttribute('d', 'M' + ctop.join(' L') + ' L' + cb.reverse().join(' L') + ' Z');
+    dots.forEach(function (p) {
+      var y = filmTop(p.x, t) + p.u * (filmBot(p.x, t) - filmTop(p.x, t));
+      p.e.setAttribute('cx', p.x.toFixed(1)); p.e.setAttribute('cy', y.toFixed(1));
+      var hot = t > 0.5 && bell(p.x) > 0.45;
+      p.e.setAttribute('fill', hot ? '#f3f4f6' : '#9ca3af');
+    });
+    arrowEls.forEach(function (e) { e.setAttribute('opacity', Math.max(0, (t - 0.6) / 0.4)); });
+    var cy = (1 - t) * 80 + t * (filmTop(430, 1) - 10 - 40);
+    document.getElementById('xs-ball').setAttribute('cy', cy.toFixed(1));
+    document.getElementById('xs-balltxt').setAttribute('y', (cy + 6).toFixed(1));
+  }
+  // labels
+  var lab = document.getElementById('xs-labels');
+  [['⑤ 覆盖层', 181, 120], ['④ 压阻膜（灰点是碳粉）', 205, 160], ['③ 表面的铜：蓝行梳、橙列梳', 226, 200], ['③ FPC 本体（铜线在里面）', 245, 240], ['② 双面胶和 ① 鸭嘴在下面', 258, 280]]
+    .forEach(function (L) {
+      el('polyline', {points: X1 + ',' + L[1] + ' ' + (X1 + 18) + ',' + L[2] + ' ' + (X1 + 26) + ',' + L[2], fill: 'none', stroke: '#9aa5b1'}, lab);
+      var t = el('text', {x: X1 + 30, y: L[2] + 5, 'font-size': 14, fill: '#1f2933'}, lab); t.textContent = L[0];
+    });
+  var tl = el('text', {x: 180, y: 300, 'font-size': 14, fill: '#52606d'}, lab);
+  tl.textContent = '图里只画了两把梳子交错的一小段，真实触点约 5 mm 宽，各层都放大了几十倍。';
+  // label overflow guard: labels extend right of X1; keep inside viewBox 900
+  var tx = 0, pressedX = false, anim = null;
+  function animate(to) {
+    var from = tx, t0 = performance.now();
+    cancelAnimationFrame(anim);
+    (function step(now) {
+      var k = Math.min(1, (now - t0) / 600); k = k * k * (3 - 2 * k);
+      tx = from + (to - from) * k; drawX(tx);
+      if (k < 1) anim = requestAnimationFrame(step);
+    })(t0);
+  }
+  function setPressX(on, instant) {
+    pressedX = on;
+    document.getElementById('pressX').textContent = on ? '松开' : '压下去';
+    document.getElementById('xs-state').innerHTML = on
+      ? '压下去：黑膜变薄、贴紧梳子，碳粉挤在一起（变白的点），蓝梳子和橙梳子之间的电阻<b>变小</b>，电流过去了（红色箭头）。压得越重，电阻越小。'
+      : '没压：黑膜只是轻轻搭在梳子上，里面的碳粉也离得远，蓝梳子到橙梳子之间的电阻<b>很大</b>，电流几乎过不去。';
+    document.getElementById('xs-meter').style.width = on ? '78%' : '4%';
+    if (instant) { tx = on ? 1 : 0; drawX(tx); } else animate(on ? 1 : 0);
+  }
+  document.getElementById('pressX').addEventListener('click', function () { setPressX(!pressedX); });
+
+  if (params.has('press') || params.has('gap') || params.has('focus')) document.body.classList.add('notrans');
+  layout(); fit(); drawX(0); placeTags();
+  if (params.get('press') === '1') { setPress3d(true); setPressX(true, true); }
+  if (params.has('focus')) focusLayer(+params.get('focus'));
+  placeTags();
+})();
+</script>
+</body>
+</html>
