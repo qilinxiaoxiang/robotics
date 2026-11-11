@@ -232,6 +232,9 @@ def run(a):
         pose[f"{side}_ankle"] += sgn * math.radians(a.trim_ankle)
         pose[f"{side}_hip_pitch"] += sgn * math.radians(a.trim_hip)
         pose[f"{side}_knee"] += sgn * math.radians(a.trim_knee)
+    held_pose = dict(pose)                                # the held legs' pose (Brain stand-mode overrides in --legs handover)
+    if a.legs != "held":   # the policy starts from the Brain's stand pose untrimmed, as in the probes
+        pose = dict(STAND_POSE)
     p0 = np.array([pose[n] for n in names])
     Rt = feet_flat_rot(m, d, names, dict(zip(names, p0)))
     q = np.zeros(4); mujoco.mju_mat2Quat(q, Rt.ravel())
@@ -260,6 +263,17 @@ def run(a):
             d.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
         mujoco.mj_forward(m, d)
     c.q_target = p0.copy()
+    legs = None
+    ho = dict(to_stand=None, to_policy=None)
+    if a.legs != "held":   # fq2 1999 through the runtime Brain, zero command from the first tick (sim/policy_legs.py)
+        import policy_legs
+        legs = policy_legs.PolicyLegs(m, d, names, c, bam, seed=a.seed)
+
+    def surface_now_true():   # the real surface under the feet: table top if the trunk is over the table
+        if a.scenario in ("table_up", "table_down") and abs(d.xpos[trunk][0] - m.geom_pos[table][0]) < 0.40 \
+                and abs(d.xpos[trunk][1]) < 0.50:
+            return 0.75
+        return 0.0
     M = float(m.body_mass[1:].sum())
     surface0 = 0.75 if on_table else 0.0
     # controller's model of itself: nominal manifest numbers (it does not know the perturbation)
@@ -297,6 +311,9 @@ def run(a):
     # mission
     # hover: 6 + hover_s timed out at 80-90 % thrust from the ground (slower climb)
     T_end = {"hover": 10.0 + a.hover_s, "table_up": 20.0, "table_down": 20.0, "cut": 9.0}[a.scenario]
+    after_s = a.after_s if a.after_s is not None else (6.0 if a.legs != "held" else None)
+    if after_s is not None:   # full sequence: run on until after_s past the disarm (the cap only stops a run that never lands)
+        T_end += 15.0
     armed_at, armed = a.arm_at, False
     phase = "idle"; t_phase = 0.0
     land_t = None; disarm_t = None; contact_t = None; spool = 0.0
@@ -470,6 +487,30 @@ def run(a):
         if gust and gust["t0"] <= t < gust["t0"] + gust["dur"]:
             F += np.array([0.0, gust["f"], 0.0])
         d.xfrc_applied[trunk, 0:3] = F; d.xfrc_applied[trunk, 3:6] = Tq
+        if legs is not None and k % 8 == 0:    # 50 Hz Brain tick on the state before this 20 ms block
+            want_l = None                      # zero-command walk (stand61)
+            if a.legs == "handover":
+                # take-off hand-over at arming: Brain stand mode (2 s ramp to the held pose, KP_DEFAULT) through the flight;
+                # touchdown hand-over: back to the policy when the estimated feet height drops below --handover-h in the
+                # land phase (the landing probe: policy running, released 2-3 cm up), or at the land detector at the latest
+                if ho["to_stand"] is None and armed and (a.takeoff_handover == "arm" or hs > a.handover_h):
+                    ho["to_stand"] = round(t, 3)
+                    ho["at_stand"] = dict(phase=phase, feet_h_est_m=round(float(hs), 3), vz_mps=round(float(vcom[2]), 3),
+                                          tilt_deg=round(math.degrees(math.acos(max(-1, min(1, R[2, 2])))), 1))
+                if ho["to_stand"] is not None and ho["to_policy"] is None:
+                    if (phase == "land" and hs < a.handover_h) or phase in ("spooldown", "disarmed"):
+                        ho["to_policy"] = dict(t=round(t, 3), phase=phase, feet_h_est_m=round(float(hs), 3),
+                                               feet_h_true_m=round(float(np.vstack(sole_points(m, d))[:, 2].min() - surface_now_true()), 3),
+                                               vz_mps=round(float(vcom[2]), 3), roll_deg=round(math.degrees(rpy[0]), 1),
+                                               pitch_deg=round(math.degrees(rpy[1]), 1),
+                                               tilt_deg=round(math.degrees(math.acos(max(-1, min(1, R[2, 2])))), 1))
+                    else:   # stand: 2 s ramp to the Brain stand pose (or the trimmed held pose) at KP_DEFAULT;
+                        # monitor: the last policy goals and gains stay
+                        if a.air_legs == "monitor":
+                            want_l = {"mode": "monitor"}
+                        else:
+                            want_l = dict(held_pose, mode="stand") if a.air_pose == "held" else {"mode": "stand"}
+            legs.tick(t, want_l)
         c.update()
         mujoco.mj_step(m, d)
         # ---- readback
@@ -528,6 +569,18 @@ def run(a):
             stats["acc_h_peak_g"] = max(stats.get("acc_h_peak_g", 0.0), float(np.hypot(am[0], am[1])) / G)
         if tilt > 60 and stats["fell"] is None:
             stats["fell"] = round(t, 3)
+        if tilt > 45 and stats.get("fell45") is None:          # brain_sim_check's fall rule (tilt over 45 deg)
+            stats["fell45"] = round(t, 3); stats["fell45_phase"] = phase
+        if first_air is not None and stats.get("liftoff") is None:   # take-off: the moment the COM is 3 cm up
+            stats["liftoff"] = dict(t=round(first_air, 3), tilt_deg=round(tilt, 1), roll_deg=round(math.degrees(rpy[0]), 1),
+                                    pitch_deg=round(math.degrees(rpy[1]), 1), vz_mps=round(float(vcom[2]), 3))
+        if stats["vz_touch"] is not None and stats.get("touch_rpy") is None:
+            stats["touch_rpy"] = [round(math.degrees(rpy[0]), 1), round(math.degrees(rpy[1]), 1)]
+        if stats["vz_touch"] is not None and t >= stats["touch_t"]:
+            stats["tilt_after_touch"] = max(stats.get("tilt_after_touch", 0.0), tilt)
+        if disarm_t is not None and t >= disarm_t:
+            stats["tilt_after_disarm"] = max(stats.get("tilt_after_disarm", 0.0), tilt)
+            stats["t_last"] = t
         if k % 16 == 0 and a.video:
             qlog.append(d.qpos.copy())
         if k % 8 == 0:
@@ -539,6 +592,8 @@ def run(a):
         if a.scenario == "cut" and stats.get("cut_t") and t > stats["cut_t"] + 2.0:
             break
         if stats["fell"] is not None and t > stats["fell"] + 1.0:
+            break
+        if after_s is not None and disarm_t is not None and t >= disarm_t + after_s:
             break
     # ---- outcome
     R = d.xmat[trunk].reshape(3, 3)
@@ -567,9 +622,26 @@ def run(a):
     air_ok = bool(tt is not None and abs(stats["vz_touch"]) < 0.8 and stats.get("touch_tilt", 99) < 25
                   and want in stats.get("touch_surface", []) and (stats["fell"] is None or stats["fell"] > tt)
                   and (stats["nacelle_hit"] is None or stats["nacelle_hit"] > tt) and stats["z_max"] < 1.6)
+    # full sequence: airborne part ok, disarmed, then still standing (no tilt over 45 deg at any time) for 5 s after the
+    # disarm with the feet on the wanted surface, nothing else touching it
+    after_disarm = (stats["t_last"] - disarm_t) if (disarm_t is not None and "t_last" in stats) else 0.0
+    full_ok = bool(air_ok and disarm_t is not None and after_disarm >= 5.0 - 1e-6 and stats.get("fell45") is None
+                   and stats["fell"] is None and feet_on[want] and tilt_end < 25 and stats["nacelle_hit"] is None)
     i_avg = i_sum / max(1, i_n)
     hov_i = float(np.mean(stats["i_hover"])) if stats["i_hover"] else None
     row = dict(scenario=a.scenario, case=a.case, seed=a.seed, success=bool(ok), airborne_success=air_ok,
+               legs=a.legs, full_success=full_ok, disarm_t=None if disarm_t is None else round(disarm_t, 3),
+               after_disarm_s=round(after_disarm, 2), fell45_at=stats.get("fell45"), fell45_phase=stats.get("fell45_phase"),
+               liftoff=stats.get("liftoff"), touchdown_roll_pitch_deg=stats.get("touch_rpy"),
+               tilt_max_after_touch_deg=round(stats.get("tilt_after_touch", 0.0), 1),
+               tilt_max_after_disarm_deg=round(stats.get("tilt_after_disarm", 0.0), 1),
+               policy=None if legs is None else dict(first_tick_s=legs.first_policy, max_action_rad=round(legs.max_action, 3),
+                                                     models=str(policy_legs.POLICY_DIR), drop=policy_legs.DROP,
+                                                     handover=ho if a.legs == "handover" else None,
+                                                     handover_h=a.handover_h if a.legs == "handover" else None,
+                                                     takeoff_handover=a.takeoff_handover if a.legs == "handover" else None,
+                                                     air_legs=a.air_legs if a.legs == "handover" else None,
+                                                     air_pose=a.air_pose if a.legs == "handover" else None),
                touchdown_tilt_deg=stats.get("touch_tilt"), touchdown_surface=stats.get("touch_surface"),
                phase_end=phase, mass_g=round(M * 1000, 1),
                thrust_to_weight=round(t_max0 / weight, 3),
@@ -619,6 +691,8 @@ def render(m, d, a, qlog):
         r.update_scene(d, cam, opt); frames.append(r.render())
         if a.still_t is not None and i == int(round(a.still_t * 25)):
             imageio.imwrite(str(Path(a.video).with_name(Path(a.video).stem + f"_t{a.still_t:g}.png")), frames[-1])
+    if a.still_t is not None and a.still_t < 0:     # --still-t -1: the last frame (after the final stand)
+        imageio.imwrite(str(Path(a.video).with_name(Path(a.video).stem + "_end.png")), frames[-1])
     imageio.mimwrite(a.video, frames, fps=25)
     pick = [frames[int(i)] for i in np.linspace(0, len(frames) - 1, 8)]
     sheet = np.concatenate([np.concatenate(pick[:4], axis=1), np.concatenate(pick[4:], axis=1)], axis=0)
@@ -673,6 +747,22 @@ def main():
     ap.add_argument("--spool-down", type=float, default=0.3, help="s, thrust ramp to zero after the land detector")
     ap.add_argument("--wn", type=float, default=8.0, help="attitude loop natural frequency, rad/s (capped at 0.8 / fan lag)")
     ap.add_argument("--trim-hip", type=float, default=0.0, help="deg added to both hip pitches (mirrored) in the held pose")
+    ap.add_argument("--legs", choices=("held", "policy", "handover"), default="held",
+                    help="held: legs at the open-loop stand pose, KP --kp (rows before 2026-11-11); policy: fq2 1999 through "
+                         "the runtime Brain at zero command from the first tick, through flight and landing (sim/policy_legs.py); "
+                         "handover: policy on the ground, Brain stand mode (held pose) from arming, policy again below --handover-h")
+    ap.add_argument("--takeoff-handover", choices=("arm", "lift"), default="lift",
+                    help="--legs handover: policy to stand mode at arming, or once the estimated feet height exceeds --handover-h")
+    ap.add_argument("--air-legs", choices=("stand", "monitor"), default="stand",
+                    help="--legs handover, legs while airborne: Brain stand mode (ramp to the held pose) or monitor mode "
+                         "(the policy's last goals held where they are)")
+    ap.add_argument("--air-pose", choices=("default", "held"), default="default",
+                    help="--air-legs stand: the Brain stand pose (the policy's default pose, untrimmed) or the held legs' "
+                         "trimmed pose (--trim-*; with ankle -4 deg 2 of 9 nominal runs fell after the disarm, 2026-11-11)")
+    ap.add_argument("--handover-h",type=float, default=0.03, help="m, estimated feet height in the land phase at which "
+                    "--legs handover gives the legs back to the policy (landing probe: released 2-3 cm up)")
+    ap.add_argument("--after-s", type=float, default=None, help="s to run on after the disarm (default 6 with --legs policy, "
+                    "none with held: the old mission end)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--log", default=None)
     ap.add_argument("--video", default=None)

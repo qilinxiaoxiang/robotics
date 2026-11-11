@@ -58,6 +58,8 @@ def one(job):
         return f
     cmd = [sys.executable, str(H / "flight.py"), "--scenario", scen, "--case", case, "--seed", str(seed), *FIX, *CASES[case],
            "--out", str(f)]
+    if "--legs" in FIX:   # full-sequence runs keep their 50 Hz log for the hand-over analysis
+        cmd += ["--log", str(f.with_suffix(".npz"))]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return f
 
@@ -78,7 +80,13 @@ def summarize():
             def mean(k):
                 v = vals(k); return round(st.mean(v), 3) if v else None
             summ[f"{case}|{scen}"] = dict(
-                n=len(rs), airborne_success=sum(r["airborne_success"] for r in rs), full_success=sum(r["success"] for r in rs),
+                # mission_success = flight.py "success" (landed, disarmed, upright at the mission end); full_success =
+                # still standing 5 s after the disarm (rows from 2026-11-11 on; None for older rows)
+                n=len(rs), airborne_success=sum(r["airborne_success"] for r in rs), mission_success=sum(r["success"] for r in rs),
+                full_success=(sum(r["full_success"] for r in rs) if all("full_success" in r for r in rs) else None),
+                legs=sorted({r.get("legs", "held") for r in rs}),
+                fell45_at=[r.get("fell45_at") for r in rs], fell45_phase=[r.get("fell45_phase") for r in rs],
+                touchdown_tilt_deg=[r.get("touchdown_tilt_deg") for r in rs], touchdown_vz=[r.get("landing_vz_mps") for r in rs],
                 max_tilt_deg=mx("max_tilt_deg"), touchdown_vz_worst=min(vals("landing_vz_mps"), default=None),
                 touchdown_pos_err_max_m=mx("touchdown_pos_err_m"), takeoff_drift_max_m=mx("takeoff_drift_m"),
                 hover_throttle_pct=mean("hover_throttle_pct"), thrust_to_weight=mean("thrust_to_weight"),
@@ -99,8 +107,19 @@ if __name__ == "__main__":
     ap.add_argument("--only", default=None)
     ap.add_argument("--air", action="store_true", help="airborne part only: start hovering 0.3 m above the start surface, trunk level")
     ap.add_argument("--force", action="store_true", help="rerun cases whose result file exists")
+    ap.add_argument("--legs", choices=("held", "policy", "handover"), default="held",
+                    help="policy / handover: leg policy joined to the flight, run to 6 s after the disarm "
+                         "(results in sim/out/fullseq_<legs>)")
+    ap.add_argument("--out-dir", default=None, help="result folder instead of sim/out/batch (or sim/out/fullseq_<legs>)")
+    ap.add_argument("--flight-args", default="", help="extra flight.py flags for every job, space separated")
     a = ap.parse_args()
     FORCE = a.force
+    FIX += a.flight_args.split()
+    if a.legs != "held":
+        OUT = H / "out" / f"fullseq_{a.legs}"
+        FIX += ["--legs", a.legs]
+    if a.out_dir:
+        OUT = Path(a.out_dir).resolve()
     if a.air:
         OUT = H / "out" / "batch_air"
         FIX += ["--start-air", "0.3", "--air-level"]
@@ -112,6 +131,7 @@ if __name__ == "__main__":
         list(ex.map(one, jobs))
     s = summarize()
     for k, v in s.items():
-        print(k, "air", f"{v['airborne_success']}/{v['n']}", "full", v["full_success"], "tilt", v["max_tilt_deg"], "vz", v["touchdown_vz_worst"],
+        print(k, "air", f"{v['airborne_success']}/{v['n']}", "mission", v["mission_success"], "full5s", v["full_success"],
+              "fell45", v["fell45_at"], v["fell45_phase"], "tilt", v["max_tilt_deg"], "vz", v["touchdown_vz_worst"],
               "err", v["touchdown_pos_err_max_m"], "drift", v["takeoff_drift_max_m"], "I_hov", v["hover_current_a"], "Ipk", v["pack_current_peak_a"],
               "esc", v["esc_channel_peak_a"], "mAh", v["mah_used"])

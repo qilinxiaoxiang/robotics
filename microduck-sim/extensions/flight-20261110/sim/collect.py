@@ -49,6 +49,14 @@ res = dict(
     ground_options=summary("walk/summary.json"),         # zero-training ground options (walk_batch.py)
     part_c=summary("partc/summary.json"),                # thrust-assisted walking (partc.py)
     authority=summary("authority.json"),
+    # full sequence with the leg policy (README "Full sequence"): full_success = airborne part ok, disarmed, then still
+    # standing (no tilt over 45 deg, feet on the wanted surface, nothing else on it, tilt under 25 deg) 5 s after the disarm
+    full_sequence=dict(handover=summary("fullseq_handover/summary.json"),
+                       handover_heldpose=summary("fullseq_handover_heldpose/summary.json"),
+                       handover_monitor=summary("fullseq_handover_monitor/summary.json"),
+                       policy_through_flight=summary("fullseq_policy/summary.json"),
+                       diag_fan_cut_at_land_detect=summary("fullseq_diag_fancut/summary.json"),
+                       held_mode_reproduces=summary("heldcheck/heldcheck.json")),
     landing_settle=flight("landing/*.json"),
     crouch_hold_probe=flight("crouch/*.json"),
     mass=json.load(open(OUT / "mass_report.json")),

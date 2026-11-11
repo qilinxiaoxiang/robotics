@@ -6,11 +6,11 @@ set -e
 P=sim/out/pack_visual
 mkdir -p $P train/video
 $PY sim/pack_visual.py --manifest train/manifests/flightpack-nominal.json --out sim/out/visual/flightpack-nominal.json
-# walk (as the original clip: case walk, seed 0, key frame at 10 s)
+# walk (as the original clip: case walk, seed 0, key frame at 10 s; policy from the first tick as in the with-pack evals)
 $PY train/flight_video.py --models train/ckpt/fq2_1999 --manifest train/manifests/flightpack-nominal.json --case walk \
-  --seed 0 --out $P/fq2_1999_walk_nopack > $P/fq2_1999_walk_nopack.json
+  --seed 0 --extra="--stand-s 0" --out $P/fq2_1999_walk_nopack > $P/fq2_1999_walk_nopack.json
 $PY train/flight_video.py --models train/ckpt/fq2_1999 --manifest sim/out/visual/flightpack-nominal.json --case walk \
-  --seed 0 --out train/video/fq2_1999_walk_pack > $P/fq2_1999_walk_pack.json
+  --seed 0 --extra="--stand-s 0" --out train/video/fq2_1999_walk_pack > $P/fq2_1999_walk_pack.json
 # landing (as the original clip: case stand, landing release, key frame at 1 s)
 $PY train/flight_video.py --models train/ckpt/fq2_1999 --manifest train/manifests/flightpack-nominal.json --case stand \
   --landing --key-t 1 --seed 0 --out $P/fq2_1999_landing_nopack > $P/fq2_1999_landing_nopack.json

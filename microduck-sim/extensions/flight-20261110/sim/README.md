@@ -27,6 +27,8 @@ MuJoCo 3.10.0 on the as-built duck (official scene + battery-20261104 manifest) 
   files stay without visual_parts because copies of them load in mirrors that do not hold `cad/build`.
   `pack_visual_check.py` proves the physics unchanged and renders stand-pose stills; `render_pack_videos.sh` renders the
   fq2 clips with and without the pack and a take-off clip (`out/pack_visual/`, `train/video/*_pack*`).
+- `policy_legs.py`, `fullseq_runs.sh`, `heldcheck.py`, `fullseq_falls.py`, `fullseq_trace.py`, `render_full_videos.sh`:
+  the full sequence with the leg policy (next section).
 - `thrust_assist_literature.md` published work on thrust-assisted walking and the ArduPilot interface questions.
 
 ## Reproduce
@@ -43,7 +45,35 @@ zsh sim/mini.sh pull
 python3 sim/collect.py
 ```
 
+## Full sequence with the leg policy (`flight.py --legs`)
+The leg policy fq2 1999 (`train/policy/walk61.onnx` = `stand61.onnx`, read only) runs through the runtime's Brain with
+the probe's real-condition flags (`brain_sim_check.py --volt 7.6 --drop 0.036`, sensor and action delay one tick,
+policy from the first tick) inside flight.py's physics loop. The flight controller and the Brain never exchange data
+except the hand-over commands below, as walk_wired.py and ArduPilot would on the robot.
+
+- `--legs held` (default): the legs at the trimmed open-loop stand pose, KP 400, as every row before 2026-11-11.
+  `heldcheck.py` reruns ARE_nominal (3 scenarios x 3 seeds) in this mode: all 45 fields of every row equal
+  `out/batch` (`out/heldcheck/heldcheck.json`). This mode cannot stand once the fans stop (the hover fall at 11.5 s).
+- `--legs policy`: the policy at zero command through the whole flight. Airborne it flails (actions up to 4.5 rad)
+  and throws the duck: 4 of 27 airborne successes, 0 full (`out/fullseq_policy`). Not usable.
+- `--legs handover` (used for the clips): policy on the ground until the estimated feet height exceeds 3 cm in the
+  climb (`--takeoff-handover lift`), then Brain stand mode (2 s ramp to the Brain stand pose, KP_DEFAULT) through the
+  flight, then back to the policy when the estimated feet height in the land phase drops below 3 cm
+  (`--handover-h 0.03`, the landing probe's release height: policy running, released 2-3 cm up). Both switches are
+  plain control-file commands; the runtime needs only the rangefinder height from the flight controller.
+  `--air-pose held` (stand mode with the -4 deg ankle trim) and `--air-legs monitor` (last policy goals frozen) are the
+  variants that did worse.
+
+Success fields: `airborne_success` lift-off to first foot touchdown on the wanted surface, upright, slower than
+0.8 m/s, nothing hit before it. `success` (mission) landed, disarmed and upright at the old mission end.
+`full_success` airborne part ok, disarmed, then still standing 5 s after the disarm: no tilt over 45 deg at any time
+(brain_sim_check's fall rule), feet on the wanted surface, no nacelle on the surface, end tilt under 25 deg. A run
+with `--legs` other than held continues 6 s past the disarm. `batch.py` summaries count these as `airborne_success`,
+`mission_success` and `full_success`.
+
 ## What the simulation cannot show
 Real EDF thrust and inlet losses next to the body (one vendor point per fan is the only data), ground effect and
 recirculation near the floor and table, heat, real ArduPilot tuning and land detector, servo behaviour beyond the BAM
-XL330 model, and MuJoCo soft-contact impact peaks (the g values depend on contact stiffness).
+XL330 model, and MuJoCo soft-contact impact peaks (the g values depend on contact stiffness). The leg hand-over
+assumes walk_wired.py gets the flight controller's rangefinder height over MAVLink with negligible delay; that link
+does not exist yet.
