@@ -193,6 +193,9 @@ def main():
     if sp.exists():          # strength/SPAR-OPTION.md: spar_clearance.py (Mac mini) then spar_calcs.py
         res["spar_option"] = dict(doc="strength/SPAR-OPTION.md", calcs=json.loads(sp.read_text()),
                                   corridor=json.loads((OUT / "spar_clearance.json").read_text()))
+    ra = OUT / "root_alignment.json"
+    if ra.exists():          # strength/SPAR-OPTION.md "Thrust centre and the arm": root_alignment.py
+        res["root_alignment"] = dict(doc="strength/SPAR-OPTION.md#thrust-centre-and-the-arm", **json.loads(ra.read_text()))
     (OUT.parent / "results.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps(dict(clamp=res["clamp"], fixes=res["fixes"]), indent=1, default=float))
     print("wing FEA fails:", [(r["case"], r["y"], r["safety_factor"]) for r in wing_fail])

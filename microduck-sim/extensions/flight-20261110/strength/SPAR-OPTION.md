@@ -114,3 +114,35 @@ That is a layout change, not a part change. Until it happens, the root fix stays
 3. Copy the results back: `rsync 'mac-mini:code/flight-cad-mirror/robotics/microduck-sim/extensions/flight-20261110/strength/out/spar_clearance*' strength/out/`
 4. Run the hand calculations, a few seconds: `/tmp/microduck-cad-venv/bin/python strength/spar_calcs.py`
 5. Merge into `results.json`: `/tmp/microduck-cad-venv/bin/python strength/build_results.py`
+
+## Thrust centre and the arm
+
+Answer: the twist lever is physical and cannot be removed. A solid PLA band reaches SF 2 at 8.5 mm deep, but that depth only fits if the backpack moves 3.4 mm back. In today's slot (at most 5.45 mm), PLA reaches SF about 1.0 and PA-CF about 2.0. Script: `strength/root_alignment.py`, output `out/root_alignment.json`, merged into `results.json` under `root_alignment`. Hand calculation only.
+
+**1. Thrust centre and arm.** On each side the two fans have collar centres at x 21.95 and -45.95. They are canted ±6 degrees, so at equal thrust the fore-aft parts cancel and the resultant is vertical at x -12.0. Hover requires that point to sit on the COM, which is at x -11.9 (sim/out/authority.json). The root band is at x -50.15..-45.05, with its centroid at -47.6. The thrust lever about the band is therefore 35.6 mm. The landing and lift cases twist the band through the nacelle masses, whose centroid is at x -12.2, the same lever.
+
+**2. What blocks an arm at x -12** between the nacelle and the four post screws:
+- The rear pack (OpenRB enclosure) and its posts, x -45..-13, |y| < 27.6, z -44..39. This is the duck's own printed part with the servo board inside. The posts are the only hard points, so the arm must end at them regardless.
+- The A7Z saddle, x -45..-5, |y| < 36.4, z 26.4..66.5. It is a printed duck part and can be reprinted. Its 1.5 mm keep-out and its rear window (x -59..-44, z 47.8..58, |y| < 30) are design choices.
+- The trunk shells: side lip |y| ≤ 28, top lip at x -46.1 for |y| < 18. These are the duck's printed body.
+- The head sweep above z 66 and the hips and upper legs below z -7 at |y| 25..71. These are physical, because those parts move.
+- The batteries, x -36..42, |y| 42.5..75.5, z 26..57. These are bought parts on printed trays, and both can move.
+
+An arm at x -12 would have to pass through the rear pack and saddle at |y| 20..36. That needs a redesign of the duck's own back, so it is not a fix inside the flight pack.
+
+**3. Moving the fans back.** Shifting both fans and their nacelles (413 g of 1897 g) back by s moves the thrust centre by s but the COM by only 0.22 s. The offset is 0.78 s. At 80 % thrust the pitch authority is 0.391 N·m and the demand is 0.186 N·m, so margin 2 leaves 0.0095 N·m for trim. That allows s ≤ 0.65 mm. Effect of larger shifts:
+- 5 mm: margin 1.51.
+- 10 mm: margin 1.18.
+- 20 mm: margin 0.82.
+- 35.6 mm (onto the arm): 0.52 N·m of trim, more than the whole authority.
+
+Rebalancing with the batteries would need them to move about 175 mm. The lever is fixed by physics; the design did not choose it.
+
+**4. Solid band in PLA at 100 % infill.** This is a solid rectangle, x from -45.05 rearward d mm, at the real band heights y 21, 29 and 31. Shear uses Roark τ = T/(α b t²) and is checked at 0.55 × 32 MPa. The worst section is always y 29, which is 19 mm tall. SF per case:
+- Today's 5.1 mm made solid: thrust ×1.5 2.48, landing 15.6 g 0.89, lift by one nacelle 1.24, fore-aft 10 g 1.07, sideways 10 g 1.33.
+- 7 mm: 3.97, 1.49, 2.08, 1.98, 2.28.
+- 8.5 mm: 5.20, 2.03, 2.81, 2.88, 3.15 (about +1.4 g per side).
+
+The landing case controls, through torsion: τ falls from 19.6 to 8.1 MPa. The slot behind the band ends at the backpack front plate, x -50.5, which leaves 5.45 mm. SF 2 in PLA therefore needs the backpack, a printed part whose position is a design choice, to move 3.4 mm back (to x -53.6). The COM moves by m_backpack × 3.4 / 1897, which stays inside the 0.5 mm trim allowance for any backpack under about 280 g.
+
+If the backpack stays where it is, no PLA option reaches SF 2: the 5.45 mm solid band gives about 1.0. The smallest material step that does is PA-CF (65 MPa in-layer), at about 2.0 on hand numbers. PETG (38 MPa) gives about 1.2, which is not enough.
