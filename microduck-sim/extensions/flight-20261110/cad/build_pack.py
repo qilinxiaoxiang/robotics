@@ -92,8 +92,14 @@ def wing_plate():
     for s in (1, -1):
         def B(x0, x1, y0, y1, z0, z1):
             return L.box((x0, min(s * y0, s * y1), z0), (x1, max(s * y0, s * y1), z1))
+        xd, yd = W["x_band_back"], W["root_y"]
         p = [B(xcb, xf, W["centre_half_w"] - 0.01, W["centre_ext_w"], W["band_z"][0], W["centre_top"]),
-             B(xb, xcb + 0.01, W["centre_half_w"] + 0.3, W["centre_ext_w"], W["band_z"][0], W["centre_top"]),
+             B(xd, xcb + 0.01, W["centre_half_w"] + 0.3, W["centre_ext_w"], W["band_z"][0], W["centre_top"]),
+             # root: band, column and transition solid 8.5 deep (x_band_back) out to root_y; the arm web stays 5.2 so the
+             # tray and lug M2 x 10 still bite 4.8 (strength/SPAR-OPTION.md, landing case)
+             B(xd, xb + 0.01, W["band_y"][0] - 0.01, W["band_y"][1] + 0.01, W["band_z"][0], W["band_z"][1]),
+             B(xd, xb + 0.01, W["col_y"][0], yd, W["col_z"][0], W["col_z"][1]),
+             B(xd, xb + 0.01, W["trans_y"][0], yd, W["col_z"][1] - 0.01, W["trans_z"][1]),
              B(xb, xf, W["band_y"][0] - 0.01, W["band_y"][1], W["band_z"][0], W["band_lip_z"]),
              B(xb, xr, W["band_y"][0] - 0.01, W["band_y"][1], W["band_lip_z"] - 0.01, W["band_z"][1]),
              B(xb, xf, W["col_y"][0] - 0.01, W["col_y"][1], W["col_z"][0], W["saddle_zone"]["z"]),
@@ -107,6 +113,8 @@ def wing_plate():
         for (g0, g1) in W["gussets"]:
             z0 = W["col_z"][0] if g0 < 39 else zb
             p.append(B(W["arm_x_rear"], xb + 0.01, g0, g1, z0, zt))
+        for rf in W["root_fix"]:
+            p.append(B(rf["x"][0], rf["x"][1], rf["y"][0], rf["y"][1], rf["z"][0], rf["z"][1]))
         parts += p
     for (yb, zb_) in FCB_SCREWS:      # FC plate bosses on the right arm's flange rear edges
         z0, z1 = (zb, zb + 7.5) if zb_ < 40 else (zt - 7.5, zt)
@@ -114,12 +122,15 @@ def wing_plate():
     w = L.union(parts)
     cuts = []
     for i, (y, z) in enumerate(W["holes"]):
-        cuts.append(L.cyl(CLR_V / 2, (xcb - 1, y, z), X_AX, 6))
+        cuts.append(L.cyl(CLR_V / 2, (xcb - 1, y, z), X_AX, xf - xcb + 2))
         fit_clear(f"wing-post-{i}", "wing_plate", X_AX, CLR_V)
-        # shared with the backpack: head inside the backpack box on its 2 mm front plate (x -50.5 shifted), through the
-        # wing centre (3.5) into the existing OpenRB-pack post pilot; driven with the backpack open, as today
-        screw(f"post-{i}", "M2 x 10 (existing backpack screw)", "backpack front plate + wing centre to the OpenRB pack post",
-              (xcb - 2.0, y, z), (1, 0, 0), 5.5, "wing plate and backpack on the pack")
+        # shared with the backpack: head inside the backpack box on its 2 mm front plate, through the wing centre (6.9)
+        # into the existing OpenRB-pack post pilot (4.8 deep); M2 x 12 bites 3.1 (Shawn '用 M2×12'); driven with the
+        # backpack open, as today
+        stack = W["backpack_plate_t"] + (xf - xcb)
+        screw(f"post-{i}", f"{W['post_screw']} (existing backpack screw position; Zuorery M2 kit)",
+              "backpack front plate + wing centre to the OpenRB pack post",
+              (xcb - W["backpack_plate_t"], y, z), (1, 0, 0), round(stack, 2), "wing plate and backpack on the pack")
     for s, nm in ((1, "L"), (-1, "R")):
         for j, (y, z) in enumerate(W["tray_screws"]):
             cuts.append(L.cyl(CLR_V / 2, (xb - 1, s * y, z), X_AX, WEB_T + 2))
@@ -161,6 +172,9 @@ def tray():
     deck = L.box((T["x"][0], T["y"][0], T["deck_z"][0]), (T["x"][1], T["y"][1], T["deck_z"][1]))
     fl = [L.box((T["flange_x"][0], fy[0], T["flange_z"][0] - 0.01), (T["flange_x"][1], fy[1], T["flange_z"][1]))
           for fy in (T["flange_y"], T["flange2_y"])]
+    for fy, top in zip((T["flange_y"], T["flange2_y"]), T["flange_top"]):
+        if top > T["flange_z"][1]:      # raised inboard flange for the third screw (strength case 'tray flange screws')
+            fl.append(L.box((T["flange_x"][0], T["flange_raised_y0"], T["flange_z"][1] - 0.01), (T["flange_x"][1], fy[1], top)))
     t = L.union([deck] + fl)
     cuts = []
     for (x0, x1) in T["strap_x"]:
@@ -340,7 +354,7 @@ def nacelle(side=+1):
         if side > 0:
             fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], round(clamped, 2), round(pdep, 2), round(10 - clamped, 2))
             fit_clear(f"nac-split-clear-{k}", "nacelle_outer_L", Y_AX, CLR_H, [0, 0, 1])
-        screw(f"nac-{nm}-{k}", "M2 x 10 + M2 washer", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
+        screw(f"nac-{nm}-{k}", "M2 x 10 (with M2 washer)", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
               (x, side * (Pm.FAN_Y + g + uh + wt), z), (0, -side, 0), round(uh + wt, 2), f"nacelle {nm}")
     for k, z in enumerate(N["lug_screw_z"]):
         ci.append(L.teardrop(PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))

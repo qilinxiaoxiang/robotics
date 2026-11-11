@@ -13,7 +13,7 @@ job() {   # job <name> <max MiB> <seconds> <command...>
   eval "$RUN --max-mib $mib --seconds $sec --report checks/runs/$name.json $*"
 }
 job build 3000 300 --contract-dir . -- $PY build_pack.py | grep -E "nacelle_|clamp:|Error|Trace|FAIL|PASS|contract"
-job check_parts 11500 600 -- $PY check_parts.py | tail -14
+job check_parts 11000 600 -- $PY check_parts.py | tail -40   # peak 9.2 GB RSS; 11000 + the 2 GB reserve fits the mini's 13.4 GB free
 job lead_lengths 1500 120 -- $PY lead_lengths.py | tail -8
 job update_layout 1500 120 -- $PY update_layout.py | cut -c1-160
 job leg_load 1500 120 -- "sh -c 'cd .. && $PY leg_load.py'" | grep -E "v7|hip_roll" | head -4

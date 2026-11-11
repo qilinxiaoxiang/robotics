@@ -181,7 +181,17 @@ if "ear_pocket" in NAC:
 
 # ------------------------------------------------------------------ wing plate (one piece, printed front face down)
 WING = dict(
-    x_front=-45.0, x_centre_back=-48.5,          # centre: 3.5 mm on the pack posts (shared M2 x 10)
+    # centre: 6.9 mm on the pack posts (shared M2 x 12, Shawn '用 M2×12'); the backpack sits 3.4 mm further back so the
+    # root band can be 8.5 deep (strength/SPAR-OPTION.md "Thrust centre and the arm": landing SF 0.89 -> 2.03)
+    x_front=-45.0, x_centre_back=-45.0 - 6.9,
+    post_screw="M2 x 12", backpack_plate_t=2.0,
+    x_band_back=-45.0 - 8.5,                     # root band, column and transition at |y| 18.9..root_y: solid 8.5 deep
+    root_y=32.1,                                 # deep part stops 0.5 inside the cross-harness run at |y| 32.6
+    # corner fill of the first strength report (strength/fea_setup.py ROOT_FIX): the band raised to z 42.5 behind the shell
+    # lip / saddle zone, from |y| 23 (2 mm below the backpack top plugs at |y| <= 21, z 43) to 30; and the column front
+    # filled down to z -1 at |y| 28.5..30 (28.2 in fea_setup touched the right shell at |y| 28.3, so it starts at the column face)
+    root_fix=[dict(x=(-45.0 - 8.5, -46.8), y=(23.0, 30.0), z=(28.0, 42.5)),
+              dict(x=(-46.8, -45.0), y=(28.5, 30.0), z=(-1.0, 24.9))],
     x_recess=-46.8,                              # front face where the shell rear lips (to x -46.3) / saddle (x -45, 1.5 mm) are
     x_back=-50.2,                                # behind the band: backpack box front moves to x -50.5
     x_back_out=-51.8,                            # outboard of |y| 32.8 (backpack is |y| <= 32)
@@ -194,7 +204,10 @@ WING = dict(
     trans_y=(30.0, 37.9), trans_z=(9.0, 42.5),                 # transition column -> arm, kept under z 45
     arm_y=(37.9, 79.0), arm_z=(18.0, 59.5), arm_x_rear=-64.0,  # arm web x -50.2..-45 (5.2): M2 x 10 from behind bites 4.8
     flange_t=3.5, gussets=[(37.9, 40.0), (52.5, 54.5), (67.6, 69.4)],
-    tray_screws=[(46.0, 31.0), (63.0, 31.0)],
+    # third tray screw high on the raised inboard flange: the two at z 31 pulled 81 / 99 N on a 9 mm lever at the 15.6 g
+    # landing, SF 1.2 (strength/README.md, "Tray flange screws"); with (46, 45) the worst is 60 N, SF 2.0 at the low
+    # pull-out (results.json fixes.tray). Both screws cannot rise to z 45: y 63 is inside the lead window
+    tray_screws=[(46.0, 31.0), (63.0, 31.0), (46.0, 45.0)],
     lead_window=dict(y=(55.5, 66.5), z=(38.0, 52.0)),          # battery XT60 + balance lead through the arm web into the bay
     fan_window=dict(y=(70.5, 77.0), z=(26.0, 32.0)),           # front fan leads (along the tray top) through the web
     gusset_window=dict(x=(-60.0, -52.0), z=(22.0, 34.0)),      # harness passes along the bays behind the web
@@ -203,9 +216,11 @@ WING = dict(
     # Cross harness (left fans' 6 x 16 AWG + left battery pair): the slot along the wing plate between the backpack
     # front (x -50.5) and the shell lip / saddle (x -46.1 / -46.5) is 3.8 x 11.5 mm = 44 mm2 for a ~61 mm2 bundle, so the
     # harness runs back outboard of the backpack (|y| 32.6..37.6) and crosses behind the backpack cap below the hatch.
-    harness_side=dict(x=(-80.6, -50.4), y=(32.6, 37.6), z=(14.0, 28.0)),
-    harness_rear=dict(x=(-86.8, -80.6), y=(-33.0, 37.6), z=(4.0, 16.0)),   # ends at the ESC's inboard edge on the right
+    # The rear crossing follows the backpack cap 3.4 mm further back since the centre grew to 6.9 mm (M2 x 12 decision).
+    harness_side=dict(x=(-80.6 - 3.4, -50.4), y=(32.6, 37.6), z=(14.0, 28.0)),
+    harness_rear=dict(x=(-86.8 - 3.4, -80.6 - 3.4), y=(-33.0, 37.6), z=(4.0, 16.0)),   # ends at the ESC's inboard edge on the right
 )
+WING["harness_cross_x"] = round(sum(WING["harness_rear"]["x"]) / 2, 2)    # route line of the rear crossing (lead_lengths)
 
 # ------------------------------------------------------------------ battery tray (printed flat)
 BATT = dict(size=(74.0 + 4.0, 33.0, 31.0), listed=(74.0, 33.0, 31.0), mass_g=151.0,    # +4 mm length slack (listing +-1..5)
@@ -213,6 +228,11 @@ BATT = dict(size=(74.0 + 4.0, 33.0, 31.0), listed=(74.0, 33.0, 31.0), mass_g=151
 TRAY = dict(deck_z=(22.0, 26.0), x=(-45.0, 42.4), y=(37.9, 80.5),
             flange_x=(-45.0, -37.0), flange_z=(26.0, 36.0), flange_y=(39.0, 54.5),   # flange stops under the lead window
             flange2_y=(59.0, 69.5),
+            # inboard flange raised to z 50 for the third screw (strength case above); the outboard one stays at z 36,
+            # under the lead window (y 55.5..66.5, z 38..52) the battery XT60 and balance lead pass through
+            flange_top=(50.0, 36.0),
+            # the raised part starts at y 41.5: at y 39.5, z 46.5 the head reaches it in the 50 % random head poses
+            flange_raised_y0=41.5,
             strap_w=16.0 + 2.0, strap_t=3.0, strap_x=[(-30.0, -12.0), (14.0, 32.0)],
             strap_y_in=(39.3, 42.3), strap_y_out=(75.8, 78.8))
 

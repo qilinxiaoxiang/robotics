@@ -28,7 +28,8 @@ sys.path.insert(0, str(H))
 import flight_params as Pm  # noqa: E402
 
 T0 = time.time()
-BACKPACK_SHIFT = 8.7 - 3.5     # world files hold the Dual Lock pose (-8.7); with the wing plate the pack sits 3.5 behind today's
+# world files hold the Dual Lock pose (-8.7); with the wing plate the pack sits the wing-centre thickness (6.9) behind today's
+BACKPACK_SHIFT = round(8.7 - (Pm.WING["x_front"] - Pm.WING["x_centre_back"]), 3)
 BACKPACK = ("battery_backpack_frame.", "battery_backpack_cap.", "battery_backpack_bars.", "battery_hatch.", "bp_battery.",
             "bp_plugs.", "bp_plug2.", "bp_switch.", "bp_dfr1202.")
 SKIP = {   # world files that are not on the robot as built, with the reason

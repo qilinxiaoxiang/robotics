@@ -54,7 +54,8 @@ def main():
         front_tail = [(25.0, s * 78.0, 28.0), (WING["x_front"], s * fwy, fwz), (-52.0, s * fwy, fwz)]
         rear_tail = [(-55.0, s * 77.0, 24.0)]
         if s > 0:   # left: along the bay through the gusset windows to the harness, behind the backpack, up the ESC inboard edge
-            cross = [(-56.0, 35.1, 24.0), (-83.7, 35.1, 10.0), (-83.7, -33.0, 10.0)]
+            xc = WING["harness_cross_x"]          # behind the backpack cap (moves with the backpack)
+            cross = [(-56.0, 35.1, 24.0), (xc, 35.1, 10.0), (xc, -33.0, 10.0)]
             routes["fan FL"] = (longest(lambda r0: [r0] + front_tail + [(-56.0, 39.0, 28.0)] + cross + [PAD["M3"]], "front", s),
                                 "fan window, arm bay, gusset windows, harness side run, rear crossing, ESC pad set 3")
             routes["fan RL"] = (longest(lambda r0: [r0] + rear_tail + [(-56.0, 39.0, 26.0)] + cross + [PAD["M4"]], "rear", s),

@@ -84,8 +84,14 @@ def main():
                 x += ext[0] + GAP
             y += h + GAP
         placements[colour] = pl
-    m.update(version=VER, parts=rows, placements=placements, processOverrides={},
-             processOverrideReason="No process overrides: the Orange and Black profiles as released.",
+    # the wing plate prints at 100 % infill (strength/SPAR-OPTION.md: the 8.5 mm solid root band is sized as solid PLA).
+    # The pipeline has plate-wide process overrides only (objectSettings take brim keys), so the whole Orange plate
+    # (wing plate, trays, FC bracket) gets it; the mass budget already counts printed parts as solid.
+    solid = {"sparse_infill_density": "100%"}
+    m.update(version=VER, parts=rows, placements=placements,
+             processOverrides={"Orange_Bambu": dict(solid), "Orange_Elegoo": dict(solid)},
+             processOverrideReason="Orange plate at 100 % sparse infill for the wing plate's solid root band (strength check, "
+                                   "plain PLA; plate-wide because the pipeline sets no per-object infill). Black as released.",
              retiredParts=[],
              prototypeScope=f"{VER}: flight pack draft, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate "
                             "(nacelle inner/outer halves L/R). Not released: pending the print gate and the fans.",
