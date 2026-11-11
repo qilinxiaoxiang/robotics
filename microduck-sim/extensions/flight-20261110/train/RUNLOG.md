@@ -359,3 +359,7 @@ running total of worst cases; real spend read from `modal billing report` before
   18.4 / 14.6 (none), 21.9 / 21.3 (batteries out), 21.3 / 22.2 (full), step width 119-122 mm; head motion 0 falls
   with the pack and batteries out, 1 / 7 / 6 falls without the pack (scan, head pitch 0.5, 1.1). These are the
   same-machine references for the candidates.
+- 06:19 fk-uni-a2 RUNNING 15 min after the push (GPU present, past setup); fk-uni-a (run B) RUNNING. A paired kernel
+  stays RUNNING if only one of its jobs dies, so per-job health is known only at the end. Next: 10:45 fetch fk-uni-a
+  (run B), 12:50 fetch fk-uni-a2 (run A and the bend), then `accept_universal.py run/score`, `accept_bend.sh
+  fetch/runtime/env/video`, and the walk clips with the pack drawn.
