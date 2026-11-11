@@ -327,3 +327,14 @@ running total of worst cases; real spend read from `modal billing report` before
 - 05:30 bend3 audit with the hold running (out/bendaudit_hold_*.json; 22-24 % of env-steps held, longest 4.04 s):
   PASS at every load. none stand -1.23, half 0.12, stay 0.34; full stand -2.36, half 0.27, stay 0.73, sit back 0.53;
   batteries out stand -1.80, half 0.19, stay 0.62, sit back -0.08. Gate recorded (bend3), smoke 2 iterations in 4.5 s.
+- 05:44 Scratch pair ended (COMPLETE, 10 h cap at iteration 7400 of 12000, both seeds; fetched to
+  kaggle/out/fk-scratch-s1). Training log at the end: reward 112 / 111, speed on moving commands 0.001 / 0.002 m/s:
+  it learned to stand, not to walk. Reference probe on the Mac mini (final ONNX in both slots, full pack, 20
+  episodes, eval/st_scr_*_pack_*.json): s1 walk 0 falls, speed 0.0001 m/s, leg p99 0.24; s1 stand 0 falls;
+  s2 walk 0 falls, 0.0001 m/s, p99 0.34, saturation up to 20 %; s2 stand 0 falls. A stander that ignores the walk
+  command: Pollen's recipe from scratch does not learn to walk with the pack in 7400 iterations. Reference only.
+- 05:46:01 Kaggle bend pair pushed (`push_bend_when_free.sh`, after the scratch pair freed its session), kernel
+  shawnxiang9527/microduck-fk-bend-a: fk-bend-a (seed 1, GPU 0) and fk-bend-b (seed 2, GPU 1), both from groundpick61,
+  task Mjlab-GroundPick-Flat-MicroDuck, delta bend3, 4096 envs, 2500 iterations or 3 h, 100 critic warm-up, max-lr 3e-4,
+  saves every 100, reward guard off, no track guard. RUNNING at 05:46. Expected end about 09:00 (3 h cap plus setup).
+  Quota at 05:46: 12.20 of 30 h used, 17.80 left; universal pair up to about 8.3 h more and the bend 3 h fit.
