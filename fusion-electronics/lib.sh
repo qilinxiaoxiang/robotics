@@ -1,13 +1,12 @@
-# Shared shell helpers for the Fusion tools. Source with: . "$HERE/lib.sh"
+# Shell helpers for dialog_watch.sh. The bridge client and data commands are in fusion.py.
 # Fusion's main window title contains "Autodesk Fusion"; docked palettes have fixed names.
 # Every other window (including untitled ones, which report an empty name) is a dialog.
-FUSION_PALETTES='^(.*Autodesk Fusion.*|BROWSER|SHEETS|TEXT COMMANDS|COMMENTS|PLACE COMPONENTS|INSPECTOR)$'
 FUSION_SHOT_DIR=${FUSION_SHOT_DIR:-${TMPDIR:-/tmp}/fusion-shots}
 
 fusion_windows() {
   osascript -e 'tell application "System Events" to tell (first process whose name is "Autodesk Fusion") to get name of every window' 2>/dev/null
 }
-fusion_dialog_names() {   # one line per dialog: name;subrole;WxH (used to tell toasts from modals)
+fusion_dialog_names() {   # one line per dialog: name;subrole;WxH (to tell short-lived windows from modals)
   osascript -e 'set out to ""' \
     -e 'tell application "System Events" to tell (first process whose name is "Autodesk Fusion")' \
     -e 'repeat with w in every window' \
@@ -15,18 +14,9 @@ fusion_dialog_names() {   # one line per dialog: name;subrole;WxH (used to tell 
     -e 'end repeat' -e 'end tell' -e 'return out' 2>/dev/null \
     | grep -v '^$' | grep -vE "^(.*Autodesk Fusion.*|BROWSER|SHEETS|TEXT COMMANDS|COMMENTS|PLACE COMPONENTS|INSPECTOR);" | sed 's/^;/<untitled>;/'
 }
-fusion_dialog_count() {
-  fusion_windows | tr ',' '\n' | sed 's/^ //' | grep -vEc "$FUSION_PALETTES"
-}
 fusion_shot() {   # fusion_shot <tag> -> prints the screenshot path
   mkdir -p "$FUSION_SHOT_DIR"
   f="$FUSION_SHOT_DIR/$1-$(date +%H%M%S).png"
   screencapture -x "$f" 2>/dev/null && sips -Z 1400 "$f" >/dev/null 2>&1
   echo "$f"
-}
-# Pressing a key needs Fusion frontmost, which steals the user's focus. Use only for the
-# Upload Options dialog that uploadFile always raises; never as a generic dialog closer.
-fusion_key() {
-  osascript -e 'tell application "System Events" to tell (first process whose name is "Autodesk Fusion")' \
-    -e 'set frontmost to true' -e 'delay 0.3' -e "key code $1" -e 'end tell'
 }
