@@ -189,6 +189,10 @@ def main():
                           ("cut03", "hover_nominal", "comx+10_table_up_s2_air", "ARE_thrust80_table_down_s2")})
     for k in res["sim_probe"].values():
         k.pop("args", None)
+    sp = OUT / "spar_calcs.json"
+    if sp.exists():          # strength/SPAR-OPTION.md: spar_clearance.py (Mac mini) then spar_calcs.py
+        res["spar_option"] = dict(doc="strength/SPAR-OPTION.md", calcs=json.loads(sp.read_text()),
+                                  corridor=json.loads((OUT / "spar_clearance.json").read_text()))
     (OUT.parent / "results.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps(dict(clamp=res["clamp"], fixes=res["fixes"]), indent=1, default=float))
     print("wing FEA fails:", [(r["case"], r["y"], r["safety_factor"]) for r in wing_fail])
