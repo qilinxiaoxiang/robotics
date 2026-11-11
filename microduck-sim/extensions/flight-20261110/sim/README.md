@@ -12,6 +12,16 @@ MuJoCo 3.10.0 on the as-built duck (official scene + battery-20261104 manifest) 
 - `showlog.py` prints a `--log` npz. `collect.py` writes `out/results.json`.
 - `hold_probe.sh` held stand pose (fans off) over hip/ankle trims. `ground_probe.sh` lift-off and touchdown variants.
 - `walk_probe.sh` walk61/stand61 through `microduck_rl/cmu/mac/brain_sim_check.py` with and without the pack.
+- `drift_tests.sh`, `drift_tests2.sh`, `drift_tests3.sh` take-off drift, one knob per test; `diag_com.py` true model COM vs the
+  mixer's estimate; `authority.py` roll/pitch/yaw authority and margins (`out/authority.json`).
+- `batch.py` airborne perturbation batch (`--air`: start hovering, trunk level) -> `out/batch*/summary.json`. `--fan areswei`
+  in flight.py switches the vendor point to the ARESWEI HDS001 (980 g, 40 A at 16.8 V); default is the QX QF2611 point.
+  `--lean-max` sets the position loop's lean limit (default 20 deg); `batch.py --force` reruns existing result files.
+  `walk_case.py` fan currents use the QX point; multiply by about 1.18 for the ARESWEI (ratio of the two hover currents).
+- `landing_tests.sh` crouch hold probe and landings with the fans carrying part of the weight while the legs settle.
+- `walk_case.py` brain_sim_check plus partial thrust with an attitude loop, action scaling, crouch start, shoves, forward
+  force; `walk_batch.py` the zero-training ground options; `partc.py` thrust-assisted walking (Part C).
+- `thrust_assist_literature.md` published work on thrust-assisted walking and the ArduPilot interface questions.
 
 ## Reproduce
 ```
@@ -28,6 +38,6 @@ python3 sim/collect.py
 ```
 
 ## What the simulation cannot show
-Real EDF thrust and inlet losses next to the body (vendor point 950 g at 16.2 V is the only data), ground effect and
+Real EDF thrust and inlet losses next to the body (one vendor point per fan is the only data), ground effect and
 recirculation near the floor and table, heat, real ArduPilot tuning and land detector, servo behaviour beyond the BAM
 XL330 model, and MuJoCo soft-contact impact peaks (the g values depend on contact stiffness).

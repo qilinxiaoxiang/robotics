@@ -46,6 +46,21 @@ G = 9.81
 T_REF = 0.950 * G      # N, 950 g at 16.2 V, 34 A, 550.8 W, QF2611 4000KV 50 mm 12-blade
 V_REF, P_REF, I_REF = 16.2, 550.8, 34.0
 W_REF = 4000 * 16.2 * 0.9 * 2 * math.pi / 60   # rad/s at full throttle, loaded (KV x V x 0.9), estimate
+FAN_POINTS = {
+    "qx": dict(T=0.950, V=16.2, P=550.8, I=34.0, KV=4000),     # racer.lt QX table (read 2026-11-10)
+    # ARESWEI HDS001 50 mm 11-blade 4650KV, seller claim 980 g and 40 A at 16.8 V (procurement.json fan_change_2026_11_10)
+    "areswei": dict(T=0.980, V=16.8, P=16.8 * 40.0, I=40.0, KV=4650),
+}
+
+
+def set_fan(name):
+    """Switch the module's vendor point (thrust, voltage, power, speed) to another fan."""
+    global T_REF, V_REF, P_REF, I_REF, W_REF
+    f = FAN_POINTS[name]
+    T_REF, V_REF, P_REF, I_REF = f["T"] * G, f["V"], f["P"], f["I"]
+    W_REF = f["KV"] * f["V"] * 0.9 * 2 * math.pi / 60
+
+
 ETA_MOTOR = 0.85       # shaft / electrical power, estimate
 J_ROTOR = 4e-6         # kg m2 rotor + fan, estimate (no data)
 ESC_LIMIT_A = 55.0     # MicoAir AM32 per channel continuous
@@ -93,6 +108,7 @@ class FanSet:
             self.scale[weak] *= weak_frac
         self.tau_up, self.tau_down = tau, (tau_down or tau)
         self.resid = resid
+        self.power_scale = 1.0     # electrical power for the same thrust (1 / efficiency relative to the vendor point)
         self.w = np.zeros(4)
 
     def step(self, u, v_bus, dt):
@@ -102,7 +118,7 @@ class FanSet:
         self.w = self.w + dw
         r = self.w / W_REF
         T = T_REF * self.scale * r ** 2
-        P = P_REF * r ** 3 + J_ROTOR * self.w * np.maximum(dw / dt, 0) / ETA_MOTOR
+        P = self.power_scale * P_REF * r ** 3 + J_ROTOR * self.w * np.maximum(dw / dt, 0) / ETA_MOTOR
         q_aero = ETA_MOTOR * P_REF * r ** 3 / np.maximum(self.w, 1.0)          # rotor drag torque, N m
         q_body = self.resid * q_aero + J_ROTOR * dw / dt                        # on the housing; stators recover the rest
         return T, P, q_body
@@ -137,6 +153,7 @@ class Controller:
         self.kd_att = np.array([2 * z * wn, 2 * z * wn, 2 * z * 0.6 * wn])
         self.ki_att = 0.3 * self.kp_att
         self.i_att = np.zeros(3)
+        self.i_lim = np.array([0.97, 0.32, 0.12]) / np.maximum(self.ki_att * self.I, 1e-9)
         self.kp_pos, self.kp_vel, self.ki_vel = 0.9, 1.6, 0.4
         self.kp_z, self.kp_vz, self.ki_vz = 1.3, 3.0, 1.5
         self.i_vel, self.i_vz = np.zeros(2), 0.0
@@ -173,7 +190,9 @@ class Controller:
         e = np.array(q_des_rpy) - np.array(rpy)
         e[2] = (e[2] + math.pi) % (2 * math.pi) - math.pi
         if not freeze_i:
-            self.i_att = np.clip(self.i_att + e * dt, -0.3, 0.3)
+            # integrator limit as a moment (ArduPilot ATC_RAT_*_IMAX style): up to about half the hover authority
+            # (roll 0.97, pitch 0.32 N m; sim/out/authority.json); the earlier 0.3 rad s clip capped the trim at 0.07 N m
+            self.i_att = np.clip(self.i_att + e * dt, -self.i_lim, self.i_lim)
         acc = self.kp_att * e - self.kd_att * gyro + self.ki_att * self.i_att
         return self.I * acc
 
@@ -205,6 +224,7 @@ def run(a):
     for side, sgn in (("left", +1), ("right", -1)):      # mirrored joints: same physical rotation on both legs
         pose[f"{side}_ankle"] += sgn * math.radians(a.trim_ankle)
         pose[f"{side}_hip_pitch"] += sgn * math.radians(a.trim_hip)
+        pose[f"{side}_knee"] += sgn * math.radians(a.trim_knee)
     p0 = np.array([pose[n] for n in names])
     Rt = feet_flat_rot(m, d, names, dict(zip(names, p0)))
     q = np.zeros(4); mujoco.mju_mat2Quat(q, Rt.ravel())
@@ -219,15 +239,37 @@ def run(a):
     zmin = np.vstack(sole_points(m, d))[:, 2].min()
     d.qpos[2] -= zmin - (0.75 if on_table else 0.0) - 0.0005
     mujoco.mj_forward(m, d)
+    if a.rigid_legs:      # diagnostic: every leg joint locked at the held pose by a zero-width joint limit (no servo compliance)
+        for n in names:
+            if any(k in n for k in ("hip", "knee", "ankle")):
+                j = m.joint(n).id; qv = float(d.qpos[m.jnt_qposadr[j]])
+                m.jnt_range[j] = [qv - 1e-4, qv + 1e-4]; m.jnt_limited[j] = 1
+    if a.floor_mu is not None:   # diagnostic: sliding friction of floor and table
+        m.geom_friction[floor, 0] = a.floor_mu; m.geom_friction[table, 0] = a.floor_mu
+        for g in feet: m.geom_friction[g, 0] = a.floor_mu
+    if a.start_air:       # diagnostic: start airborne at this feet height, zero velocity, fans at hover speed
+        d.qpos[2] += a.start_air
+        if a.air_level:
+            d.qpos[3:7] = [1.0, 0.0, 0.0, 0.0]
+        mujoco.mj_forward(m, d)
     c.q_target = p0.copy()
     M = float(m.body_mass[1:].sum())
     surface0 = 0.75 if on_table else 0.0
     # controller's model of itself: nominal manifest numbers (it does not know the perturbation)
     rep = json.loads((H / "out" / "mass_report.json").read_text())["duck_with_pack"]
     I = rep["inertia_about_com_kgm2"]
+    com_est = np.array(rep["com_trunk_mm"]) / 1000
+    if a.com_est == "true":   # the controller knows the nominal robot's COM in this start pose (a calibrated hover trim)
+        R0_ = d.xmat[trunk].reshape(3, 3)
+        com_est = R0_.T @ (d.subtree_com[trunk] - d.xpos[trunk])
+        full = json.loads((H / "out" / "mass_report.json").read_text())
+        if a.mass_variant.startswith(("mass", "com")):   # an unknown perturbation: subtract it again
+            com_est = com_est - (np.array(full["variants"][a.mass_variant]["com_trunk_mm"]) - np.array(rep["com_trunk_mm"])) / 1000
     ctl = Controller(mass_est=rep["mass_g"] / 1000, I_est=[I["xx"], I["yy"], I["zz"]],
-                     com_est=np.array(rep["com_trunk_mm"]) / 1000, tau_nom=(a.tau if a.retune else 0.10), wn=a.wn)
+                     com_est=com_est, tau_nom=(a.tau if a.retune else 0.10), wn=a.wn)
+    ctl.lean_max = math.radians(a.lean_max)
     fans = FanSet(thrust_scale=a.thrust, weak=a.weak_fan, tau=a.tau, resid=a.resid)
+    fans.power_scale = a.power_scale
     bat = Battery(soc=a.soc, r_pack=a.r_pack)
     # sensors: gyro/attitude at 400 Hz with delay; rangefinder + flow at 50 Hz with 30 ms; yaw (A7Z ExternalNav) 50 Hz 40 ms
     n_att = max(1, int(round((0.0025 + a.sensor_delay) / dt)))
@@ -237,14 +279,17 @@ def run(a):
     GG = np.array([1, 0, 0, 0, 0, 0], dtype=np.uint8)          # rays see group 0 only: floor and table
     MTF = np.array([-0.086, -0.059, 0.006])                     # MTF-01 lens, trunk frame (cad dummy_mtf01)
     R0 = d.xmat[trunk].reshape(3, 3)
-    SENS0 = float((d.xpos[trunk] + R0 @ MTF)[2]) - surface0      # sensor height above the surface when standing
-    z_est, vz_est, surf_est = surface0 + SENS0, 0.0, surface0
-    com0_z = float(d.subtree_com[trunk][2])
+    SENS0 = float((d.xpos[trunk] + R0 @ MTF)[2]) - surface0 - a.start_air   # sensor height above the surface when standing
+    z_est, vz_est, surf_est = surface0 + SENS0 + a.start_air, 0.0, surface0
+    com0_z = float(d.subtree_com[trunk][2]) - a.start_air
+    if a.start_air:
+        fans.w[:] = math.sqrt(M * G / 4 / (T_REF * a.thrust)) * W_REF
     qlog = []
     x_est = np.zeros(2); v_est = np.zeros(2)
     flow_v = np.zeros(2); rng_meas = None; rng_jumps = []
     # mission
-    T_end = {"hover": 12.0, "table_up": 16.0, "table_down": 16.0, "cut": 9.0}[a.scenario]
+    # hover: 6 + hover_s timed out at 80-90 % thrust from the ground (slower climb)
+    T_end = {"hover": 10.0 + a.hover_s, "table_up": 20.0, "table_down": 20.0, "cut": 9.0}[a.scenario]
     armed_at, armed = a.arm_at, False
     phase = "idle"; t_phase = 0.0
     land_t = None; disarm_t = None; contact_t = None; spool = 0.0
@@ -311,6 +356,9 @@ def run(a):
         # ---- mission state machine
         surface_now = surf_est
         hs = z_est - surf_est - SENS0       # estimated feet height above the surface below
+        if not armed and a.start_air:       # airborne start: the mission continues from the climb (hover: climb to 0.3 m, hold)
+            armed, phase, t_phase = True, "climb", t
+            tgt["z"] = surface0 + SENS0 + a.start_air
         if not armed and t >= armed_at:
             armed, phase, t_phase = True, "spool", t
         if phase == "spool" and t - t_phase > a.spool_s:
@@ -329,7 +377,7 @@ def run(a):
                 phase, t_phase = "hold2", t
         if phase == "hold2" and t - t_phase > 1.5:
             phase, t_phase = "land", t
-        if phase == "hover" and t - t_phase > 7.0:
+        if phase == "hover" and t - t_phase > a.hover_s:
             phase, t_phase = "land", t
         if phase == "land":
             tgt["z"] -= 0.30 * dt                                    # ArduPilot LAND_SPEED minimum 30 cm/s
@@ -342,7 +390,7 @@ def run(a):
                     ctl.i_att[:] = 0; ctl.i_vel[:] = 0
             else:
                 contact_t = None
-        if phase == "spooldown" and t - t_phase > a.spool_down:
+        if phase == "spooldown" and t - t_phase > a.settle_s + a.spool_down:
             phase, disarm_t = "disarmed", t
         # ---- control
         v_bus_prev = getattr(bat, "v_last", bat.ocv())
@@ -394,7 +442,8 @@ def run(a):
                 if phase == "climb" and on_ground:   # then leave the floor fast (thrust ramp to takeoff_twr x weight in 0.25 s)
                     Fz = ctl.m * G * min(a.takeoff_twr, a.spool_frac + (a.takeoff_twr - a.spool_frac) * (t - t_phase) / a.takeoff_ramp)
                 if phase == "spooldown":
-                    Fz = ctl.m * G * a.spool_down_frac * max(0.0, 1 - (t - t_phase) / a.spool_down)
+                    # fans carry spool_down_frac of the weight with the attitude loop on for settle_s, then ramp to zero
+                    Fz = ctl.m * G * a.spool_down_frac * max(0.0, 1 - max(0.0, t - t_phase - a.settle_s) / a.spool_down)
                 Mb = ctl.attitude([roll_d, pitch_d, yaw0], rpy_s, gyro_s, dt, freeze_i=on_ground or phase == "spooldown")
                 T, sat = ctl.mix(Fz, Mb, t_max_est)
                 if sat: stats["sat_s"] += dt
@@ -424,6 +473,9 @@ def run(a):
         if phase not in ("idle", "spool", "disarmed") or (a.scenario == "cut" and phase == "cut"):
             stats["max_tilt"] = max(stats["max_tilt"], tilt); stats["max_yaw"] = max(stats["max_yaw"], abs(ycur))
         stats["z_max"] = max(stats["z_max"], float(com[2]))
+        if phase == "hover":
+            stats["hover_drift"] = max(stats.get("hover_drift", 0.0), float(np.hypot(*(d.qpos[0:2] - start_xy))))
+            stats["hover_pitch"] = max(stats.get("hover_pitch", 0.0), abs(math.degrees(rpy[1])))
         if phase in ("spool", "climb", "hold1"):
             stats["takeoff_drift"] = max(stats.get("takeoff_drift", 0.0), float(np.hypot(*(d.qpos[0:2] - start_xy))))
             if phase != "hold1":
@@ -445,8 +497,17 @@ def run(a):
             if other in feet: touch_feet = True
         if touch_nac and stats["nacelle_hit"] is None and first_air is not None:
             stats["nacelle_hit"] = round(t, 3)
-        if first_air is not None and touch_feet and stats["vz_touch"] is None and t > first_air + 0.3:
+        if (first_air is not None and touch_feet and stats["vz_touch"] is None and t > first_air + 0.3
+                and phase in ("land", "spooldown", "disarmed", "cut")):
             stats["vz_touch"] = round(float(vcom[2]), 3); stats["touch_t"] = round(t, 3)
+            stats["touch_err"] = round(float(np.hypot(*(com[:2] - start_xy - np.array([x_goal, 0.0])))), 3)
+            stats["touch_tilt"] = round(tilt, 1)
+            surf_hit = set()
+            for j in range(d.ncon):
+                g1, g2 = d.contact[j].geom1, d.contact[j].geom2
+                if {g1, g2} & feet:
+                    surf_hit |= {"table"} if table in (g1, g2) else {"floor"} if floor in (g1, g2) else set()
+            stats["touch_surface"] = sorted(surf_hit)
         if stats["vz_touch"] is not None and t < stats["touch_t"] + 0.5:
             tl = np.abs(d.actuator_force[leg_act])
             if tl.max() > stats["leg_tau_peak"]:
@@ -494,16 +555,25 @@ def run(a):
           and (a.scenario == "cut" or (stats["vz_touch"] is not None and abs(stats["vz_touch"]) < 0.8)))
     if a.scenario == "table_up":
         ok = ok and stats["z_max"] < 1.6
+    # airborne part only: lift-off to first foot touchdown on the wanted surface, upright, slow, nothing hit before it
+    tt = stats.get("touch_t")
+    air_ok = bool(tt is not None and abs(stats["vz_touch"]) < 0.8 and stats.get("touch_tilt", 99) < 25
+                  and want in stats.get("touch_surface", []) and (stats["fell"] is None or stats["fell"] > tt)
+                  and (stats["nacelle_hit"] is None or stats["nacelle_hit"] > tt) and stats["z_max"] < 1.6)
     i_avg = i_sum / max(1, i_n)
     hov_i = float(np.mean(stats["i_hover"])) if stats["i_hover"] else None
-    row = dict(scenario=a.scenario, case=a.case, seed=a.seed, success=bool(ok), phase_end=phase, mass_g=round(M * 1000, 1),
+    row = dict(scenario=a.scenario, case=a.case, seed=a.seed, success=bool(ok), airborne_success=air_ok,
+               touchdown_tilt_deg=stats.get("touch_tilt"), touchdown_surface=stats.get("touch_surface"),
+               phase_end=phase, mass_g=round(M * 1000, 1),
                thrust_to_weight=round(t_max0 / weight, 3),
                hover_throttle_pct=round(100 * float(np.mean(stats["u_hover"])), 1) if stats["u_hover"] else None,
                hover_thrust_frac=round(float(np.mean(stats["u_hover"])) ** 2, 3) if stats["u_hover"] else None,
                max_tilt_deg=round(stats["max_tilt"], 1), max_yaw_deg=round(stats["max_yaw"], 1), tilt_end_deg=round(tilt_end, 1),
                fell_at=stats["fell"], nacelle_hit_at=stats["nacelle_hit"], feet_on=feet_on, z_max_m=round(stats["z_max"], 3),
                landing_vz_mps=stats["vz_touch"], takeoff_drift_m=round(stats.get("takeoff_drift", 0.0), 3),
-               takeoff_pitch_excursion_deg=round(stats.get("takeoff_pitch", 0.0), 1), range_jumps_at=rng_jumps, mixer_saturated_s=round(stats["sat_s"], 2),
+               takeoff_pitch_excursion_deg=round(stats.get("takeoff_pitch", 0.0), 1),
+               hover_drift_m=round(stats.get("hover_drift", 0.0), 3), hover_pitch_max_deg=round(stats.get("hover_pitch", 0.0), 1),
+               touchdown_pos_err_m=stats.get("touch_err"), range_jumps_at=rng_jumps, mixer_saturated_s=round(stats["sat_s"], 2),
                pack_current_peak_a=round(stats["i_pack_peak"], 1), pack_current_avg_a=round(i_avg / 2, 1),
                pack_rating_a=PACK_C * PACK_MAH / 1000, esc_channel_peak_a=round(stats["i_esc_peak"], 1), esc_limit_a=ESC_LIMIT_A,
                mah_used=round(bat.mah, 1), mah_available=2 * PACK_MAH, flight_s=round(i_n * dt, 2),
@@ -517,8 +587,9 @@ def run(a):
                            gust_n=a.gust, soc0=a.soc, mass_variant=a.mass_variant, naive_range=a.naive_range, retune=a.retune,
                            kp=a.kp, r_pack=a.r_pack, cut_alt=a.cut_alt, takeoff_twr=a.takeoff_twr, takeoff_ramp=a.takeoff_ramp,
                            spool_frac=a.spool_frac, spool_down=a.spool_down, flare_h=a.flare_h, trim_ankle=a.trim_ankle,
-                           trim_hip=a.trim_hip, wn=a.wn, ground_pitch=a.ground_pitch,
-                           table_gap=a.table_gap, spool_down_frac=a.spool_down_frac))
+                           trim_hip=a.trim_hip, wn=a.wn, ground_pitch=a.ground_pitch, com_est=a.com_est,
+                           rigid_legs=a.rigid_legs, start_air=a.start_air, floor_mu=a.floor_mu, power_scale=a.power_scale, settle_s=a.settle_s, trim_knee=a.trim_knee,
+                           table_gap=a.table_gap, spool_down_frac=a.spool_down_frac, lean_max=a.lean_max))
     if a.log:
         np.savez_compressed(a.log, log=np.array(log, dtype=float))
     if a.video:
@@ -568,6 +639,17 @@ def main():
                     "the only trim in sim/out/hold that stands with the pack")
     ap.add_argument("--spool-s", type=float, default=0.25, help="s, spool-up to --spool-frac of the weight before the climb")
     ap.add_argument("--spool-frac", type=float, default=0.4)
+    ap.add_argument("--settle-s", type=float, default=0.0, help="s after the land detector with the fans at --spool-down-frac and the attitude loop on")
+    ap.add_argument("--trim-knee", type=float, default=0.0, help="deg added to both knees (mirrored) in the held pose")
+    ap.add_argument("--power-scale", type=float, default=1.0, help="electrical power per thrust vs the vendor point (1/0.7, 1/0.4 for 30 %%, 60 %% less efficient)")
+    ap.add_argument("--rigid-legs", action="store_true", help="diagnostic: lock the leg joints at the held pose")
+    ap.add_argument("--lean-max", type=float, default=20.0, help="deg, lean angle limit of the position loop (ArduPilot ANGLE_MAX stand-in)")
+    ap.add_argument("--start-air", type=float, default=0.0, help="diagnostic: start airborne at this feet height (m), fans at hover speed")
+    ap.add_argument("--com-est", choices=("report", "true"), default="report",
+                    help="COM the mixer assumes: mass_report.json estimate, or the model's true COM (hover trim calibrated)")
+    ap.add_argument("--air-level", action="store_true", help="with --start-air: start with the trunk level instead of the standing pitch")
+    ap.add_argument("--floor-mu", type=float, default=None, help="diagnostic: sliding friction of floor, table and feet")
+    ap.add_argument("--hover-s", type=float, default=7.0, help="s of position hold in the hover scenario")
     ap.add_argument("--table-gap", type=float, default=0.30, help="m from the floor start to the table's near edge")
     ap.add_argument("--spool-down-frac", type=float, default=0.6, help="weight fraction the fans carry at the start of the spool-down")
     ap.add_argument("--ground-pitch", choices=("rest", "level", "track"), default="rest", help="attitude target while the feet are on the ground")
@@ -579,8 +661,11 @@ def main():
     ap.add_argument("--out", default=None)
     ap.add_argument("--log", default=None)
     ap.add_argument("--video", default=None)
+    ap.add_argument("--fan", choices=sorted(FAN_POINTS), default="qx", help="vendor thrust/current point (qx: QF2611 4000KV; areswei: HDS001 4650KV)")
     a = ap.parse_args()
+    set_fan(a.fan)
     row = run(a)
+    row["fan"] = dict(name=a.fan, **FAN_POINTS[a.fan])
     s = json.dumps(row)
     if a.out:
         Path(a.out).write_text(s)

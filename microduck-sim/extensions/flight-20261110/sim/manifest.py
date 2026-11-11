@@ -122,7 +122,7 @@ def pack_parts():
     for sc in screws:
         if "existing" in sc["spec"]:
             continue          # the shared post screws: counted below as the M2 x 6 -> M2 x 10 difference
-        g = NYLON_STANDOFF_G if "standoff" in sc["spec"] else STEEL_SCREW_G[sc["spec"].split(" (")[0]]
+        g = NYLON_STANDOFF_G if "nylon" in sc["spec"] else STEEL_SCREW_G[sc["spec"].split(" (")[0]]
         parts.append(part(f"screw-{sc['id']}", g, sc["seat"], f"cad/build/screws.json {sc['spec']}; steel estimate", size_mm=[4, 4, 10]))
     for i, (y, z) in enumerate(FP.WING["holes"]):
         parts.append(part(f"screw-post-upgrade-{i}", STEEL_SCREW_G["M2 x 10"] - STEEL_SCREW_G["M2 x 6"], [-48.5, y, z],
@@ -223,6 +223,15 @@ def main():
         "mass+5": variant(parts, mass_scale=1.05),
         "mass+10": variant(parts, mass_scale=1.10),
     }
+    # heavy-fan case: 113 g per fan (the heavier listing) at the same mass centre, inertia scaled
+    variants["fan113"] = [dict(p, mass_kg=p["mass_kg"] * 113 / 80,
+                               inertia_about_com_kg_m2=(np.array(p["inertia_about_com_kg_m2"]) * 113 / 80).tolist())
+                          if p["id"].startswith("fan-") else p for p in parts]
+    # battery moves for the ground-phase study (mm, trunk frame): forward / down / both
+    for name, dv in (("batt_fwd20", (20, 0, 0)), ("batt_fwd40", (40, 0, 0)), ("batt_down20", (0, 0, -20)),
+                     ("batt_fwd40_down20", (40, 0, -20))):
+        variants[name] = [dict(p, position_m=(np.array(p["position_m"]) + np.array(dv) / 1000).round(6).tolist())
+                          if p["id"].startswith(("battery-", "strap-")) else p for p in parts]
     Mt, Mp = full["mass_g"] / 1000, pack_g / 1000
     for ax, idx in (("x", 0), ("y", 1)):
         for dmm in (-10, -5, 5, 10):

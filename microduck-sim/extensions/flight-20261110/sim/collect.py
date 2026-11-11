@@ -37,8 +37,20 @@ def hold():
     return rows
 
 
+def summary(path):
+    p = OUT / path
+    return json.load(open(p)) if p.exists() else None
+
+
 w = walk()
 res = dict(
+    batch_ground=summary("batch/summary.json"),          # take-off from the ground, every perturbation
+    batch_air=summary("batch_air/summary.json"),         # start hovering 0.3 m up, every perturbation
+    ground_options=summary("walk/summary.json"),         # zero-training ground options (walk_batch.py)
+    part_c=summary("partc/summary.json"),                # thrust-assisted walking (partc.py)
+    authority=summary("authority.json"),
+    landing_settle=flight("landing/*.json"),
+    crouch_hold_probe=flight("crouch/*.json"),
     mass=json.load(open(OUT / "mass_report.json")),
     flight=flight("cut/*.json"),
     ground_transition_probe=flight("ground/*.json"),
