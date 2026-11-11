@@ -11,6 +11,7 @@ import argparse
 import glob
 import json
 import math
+import os
 import struct
 import sys
 import time
@@ -78,7 +79,12 @@ def run_sim(args):
     import mujoco
     import numpy as np
     from walk_brain import STAND
-    m, d, c, names, bam = b.ev.load(b.cfg(0.09, model="asbuilt", kp=args.kp, voltage=7.4))
+    c0 = b.cfg(0.09, model="asbuilt", kp=args.kp, voltage=7.4)
+    # the robot as it is now (microduck_rl/cmu/model/current.json); until 2026-11-11 the 2026-10-15 base manifest
+    with open(b.CURRENT_MODEL) as f:
+        cur = json.load(f)
+    c0["mass_manifest"] = os.path.normpath(os.path.join(os.path.dirname(b.CURRENT_MODEL), "..", "..", cur["mass_manifest"]))
+    m, d, c, names, bam = b.ev.load(c0)
     pose = {n: STAND[n] for n in names}
     Rt = b.feet_flat_rot(m, d, names, pose)
     qt = np.zeros(4)
