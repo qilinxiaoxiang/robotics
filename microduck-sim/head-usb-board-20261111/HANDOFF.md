@@ -84,6 +84,12 @@ Shawn's questions: can a head PCB carry a CSI socket for the Radxa CSI camera; d
 
 Recommended to Shawn (awaiting his word, nothing designed or ordered): Plan A as a passive collector board. Amp module and XIAO solder onto the board by their header pins; each mic gets one 5-pin through-hole socket; I2C pull-ups (2.2 k) sit on the board, which is the deferred `touch-twi0-jam` fix; 3V3 comes from the XIAO regulator. Neck: one latching 8-core cable (9 with the back mic: 5 V, GND, BCLK, LRC, amp DIN, mic SD, SCL, SDA) plus the camera's factory 30 cm USB cable. No software change. Plan B stays a later bench experiment.
 
+### Shawn's reply (2026-11-11) and the revised direction
+
+Shawn rejected Plan A: "还是要8根线 那不就跟没做一样吗也少不了几根呀". Eight cores is the floor for any passive board (eight distinct signals), so the goal is again one USB cable across the neck, and the open question is only which chip turns audio into USB with the least unproven firmware. The "crackling speaker" above is a third party's ESP32-S3 USB sound card attempt (atomic14 blog), not the duck; the duck's own audio is fine (Shawn: "现在声音很好").
+
+Lead found the same day, not yet tested: public RP2040 firmware that already is a USB sound card with INMP441 mics and an I2S DAC (github.com/denisgav/pico-usb-headset, github.com/denisgav/rpi_usb_sound_card: `stereo_microphone_i2s`, `stereo_speaker`; TinyUSB, Pico SDK). RoboClub stock has Raspberry Pi Pico boards and 2 XIAO RP2040 (`roboclub/INVENTORY.md`). Candidate head layout: CH334F hub with three downstream devices: camera, an RP2040 as USB sound card (two ear mics + amp; the back mic is dropped), the existing XIAO sending touch over Arduino USB serial. Unverified: mic and speaker in one device at the same time on that firmware, 48 kHz capture, MAX98357A as the DAC, total current against the ~1 A port, A7Z drivers. Silicon Labs CP2615 (USB to I2S bridge, 48 kHz 16/24-bit stereo both ways) was looked at and set aside: marked not for new designs. First step is a bench test on a Mac with a club Pico before any PCB.
+
 ## Board-joining terms explained to Shawn
 
 Fly wires between pads (test only), pin headers through holes soldered underneath (amp module), castellated edge holes soldered flat onto a carrier (XIAO style). "Putting the chip on the board" means using a bare ESP32-S3 or a module on our own PCB instead of a finished XIAO, so all pins are available.
