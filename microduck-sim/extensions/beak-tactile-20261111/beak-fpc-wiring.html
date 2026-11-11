@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>鸭嘴 FPC 接线</title>
+<style>
+  :root { --ink:#1f2933; --muted:#52606d; --line:#e4e7eb; --card:#f8fafc; --row:#2563eb; --col:#ea580c; --pi:#f2b544; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:#fff; color:var(--ink); font-family:"PingFang SC","Hiragino Sans GB","Helvetica Neue",sans-serif; }
+  main { max-width:1040px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:26px; margin:0 0 8px; }
+  h2 { font-size:20px; margin:0 0 6px; }
+  p, li { font-size:16px; line-height:1.7; }
+  p { margin:6px 0; }
+  .lead { color:var(--muted); }
+  section { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:18px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin-top:8px; }
+  .fig { background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .fig h3 { font-size:17px; margin:0 0 4px; }
+  .fig p { font-size:15px; margin:4px 0 0; color:var(--muted); }
+  svg { width:100%; height:auto; display:block; }
+  .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .scroll svg { min-width:720px; }
+  .hint { display:none; font-size:14px; color:var(--muted); margin:4px 0 0; }
+  @media (max-width:760px) { .hint { display:block; } }
+  svg text { font-family:inherit; }
+  .leg { display:flex; flex-wrap:wrap; gap:6px 18px; list-style:none; padding:0; margin:8px 0 0; font-size:15px; }
+  .leg li { display:flex; align-items:center; gap:6px; line-height:1.4; }
+  .leg i { display:inline-block; width:26px; height:0; border-top:4px solid; }
+  ol.steps { padding-left:22px; margin:6px 0 0; }
+  .note { font-size:14px; color:var(--muted); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:8px; font-size:16px; line-height:1.7; }
+  code { font-size:15px; background:#eef2f7; padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>鸭嘴 FPC：铜线怎么画，最后接到哪里</h1>
+  <p class="lead">“线”就是 FPC 里印出来的铜线，和普通电路板上的铜线一样，宽约 0.3 mm（ART-Glove 论文附录写的走线宽度就是 0.3 mm）。下面画的是左边那片 4 × 4。右边那片是同样的梳子，4 根行线和左片共用（下层行线一直通过去），它自己的 4 根列线 C5–C8 也汇到同一条尾巴，所以整块 FPC 只有一条尾巴、12 根金手指。</p>
+
+  <section>
+    <h2>1　FPC 有上下两层铜，中间隔着一层塑料膜</h2>
+    <p>行线和列线要交叉，又不能碰在一起，所以把它们分在两层：列线在上层，行线在下层。上层的蓝梳子要连到下层的行线，靠的是“过孔”，也就是打穿塑料膜、孔壁镀了铜的小孔。</p>
+    <div class="grid">
+      <div class="fig"><h3>上层铜（贴压阻膜的那一面）</h3><svg id="top" viewBox="0 0 460 590"></svg>
+        <p>每个触点是一对梳子。橙梳子用竖直的铜线连成一列，一直走到尾巴。蓝梳子只连到一个过孔（小圆圈）。12 根金手指全在这一面。</p></div>
+      <div class="fig"><h3>下层铜（贴鸭嘴的那一面）</h3><svg id="bot" viewBox="0 0 460 590"></svg>
+        <p>每一行的 4 个过孔用一根横向铜线串起来，这就是“行线”，它往右接着通到右片。4 根行线从左边绕下来，在尾巴里各经过一个过孔回到上层，接上金手指（虚线框）。</p></div>
+      <div class="fig"><h3>两层叠在一起（透视）</h3><svg id="both" viewBox="0 0 460 590"></svg>
+        <p>实线是上层，虚线是下层。行线和列线看起来交叉，其实一上一下，中间隔着塑料膜，不会短路。尾巴末端是 12 根金手指（裸露的铜条），全在同一面，背面贴一片加强板，加厚到插座要求的厚度（常见 0.3 mm），插进排线插座。</p></div>
+    </div>
+    <ul class="leg">
+      <li><i style="border-color:#ea580c"></i>上层铜：橙梳子 + 列线 C1–C8</li>
+      <li><i style="border-color:#2563eb"></i>上层铜：蓝梳子</li>
+      <li><i style="border-color:#2563eb;border-top-style:dashed"></i>下层铜：行线 R1–R4</li>
+      <li><span style="display:inline-block;width:14px;height:14px;border-radius:50%;border:3px solid #111827;background:#fff"></span>过孔：上下两层在这里接通</li>
+      <li><span style="display:inline-block;width:12px;height:18px;background:#d4a017;border:1px solid #8a6a00"></span>金手指：尾巴上的接点</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2　切开一个过孔看</h2>
+    <div class="scroll"><svg id="via" viewBox="0 0 900 250"></svg></div><p class="hint">手机上图可以左右滑动。</p>
+    <p class="note">最上面的绝缘膜（覆盖膜）在梳子的位置开口，梳子的铜露出来，和压阻膜直接接触；别处的铜线都被覆盖膜盖住，所以表面看不到线。各层厚度是放大画的，整块 FPC 约 0.1 到 0.2 mm 厚。</p>
+  </section>
+
+  <section>
+    <h2>3　FPC 对外接什么：逐根接线</h2>
+    <p>两片合起来，尾巴上一共 12 根金手指：4 根行线（两片共用）加 8 根列线。<b>需要额外的芯片</b>，因为 XIAO 只剩 D6、D7、D9、D10 四个空脚，接不下 12 根线，还要能读电压。所以加两块现成小板：一块负责“选行”，一块负责“读列”，两块和 XIAO 之间只用 4 根线。原型阶段，除了 FPC 本身，其余全部用现成的板子。</p>
+    <div class="scroll"><svg id="wire" viewBox="0 0 1000 560"></svg></div><p class="hint">手机上图可以左右滑动。</p>
+    <ul class="leg">
+      <li><i style="border-color:#2563eb"></i>行线 R1–R4</li>
+      <li><i style="border-color:#ea580c"></i>列线 C1–C8</li>
+      <li><i style="border-color:#7c3aed"></i>4 根 I2C 线：3V3、GND、SDA、SCL</li>
+      <li><i style="border-color:#15803d"></i>已有的线</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4　读一帧要传哪些信号</h2>
+    <p>XIAO 是指挥。两块小板只听它的命令，全程走同一组 I2C 线（I2C 是一种用 2 根数据线、按地址和多个芯片说话的通信方式）。</p>
+    <div class="scroll"><svg id="seq" viewBox="0 0 900 420"></svg></div><p class="hint">手机上图可以左右滑动。</p>
+    <p class="note">一帧是 4 次换行加 32 次读数问答。I2C 跑 400 kHz 时一帧约 4 ms，跑 100 kHz 时约 13 ms，也就是每秒约 75 到 250 帧。这是按字节数估算的，要在板子上实测。</p>
+  </section>
+
+  <section>
+    <h2>5　哪些是现成的，哪些要做</h2>
+    <div class="card"><b>现成，直接买：</b>Adafruit ADS7830 板（8 路 ADC，负责读 8 根列线的电压）、Adafruit MCP23017 板（IO 扩展，负责给 4 根行线轮流加 3.3 V），两块都带 4 针 STEMMA QT 插头，用现成的线串起来；12 针 0.5 mm 的 FFC 转接板；8 个下拉电阻；Velostat 压阻膜。两块芯片都有官方 Arduino 库。</div>
+    <div class="card"><b>要画、要找厂家做：</b>FPC 本身。用 KiCad 画出上面那两层铜、过孔、覆盖膜开口、尾巴金手指和背面加强板，交给 JLCPCB 这类厂家生产，不需要芯片设计。</div>
+    <div class="card"><b>要写的代码（嵌入式，量不大）：</b>XIAO 固件加一段扫描循环，大约几十行，就是第 4 部分那几步；A7Z 这边读数据块的代码要跟着加 32 个值。不需要写驱动，两块芯片的库是现成的。</div>
+    <div class="card"><b>以后可以做得更紧凑：</b>原型跑通以后，可以把这两颗芯片和 8 个电阻直接贴在 FPC 尾巴上（厂家可以代贴），这样从鸭嘴出来只有一根 4 芯排线，省掉两块小板。</div>
+    <p class="note">还没核对的事：两块小板和转接板放进头里有没有空间；具体型号的价格、库存和尺寸要按购买流程再核查。ADS7830 默认用芯片内部 2.5 V 基准，而行线用 3.3 V 驱动，压得重时读数会顶满 255，所以下拉电阻要选小一些让电压不超过 2.5 V，或者改用外部 3.3 V 基准，阻值上板实测时定。同一列里还有别的点被压时，读数会互相影响一点，这是这种矩阵的正常现象。</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(p, tag, a, txt) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; p.appendChild(e); return e; }
+  var X = [90, 190, 290, 390], Y = [60, 140, 220, 300];
+  var FING = []; for (var k = 0; k < 12; k++) FING.push(150 + 20 * k);
+  var NAMES = ['R1','R2','R3','R4','C1','C2','C3','C4','C5','C6','C7','C8'];
+
+  function pad(g, cx, cy) {
+    el(g, 'rect', {x: cx - 26, y: cy - 26, width: 52, height: 52, rx: 4, fill: '#fde9b8', stroke: '#c9a24a'});
+    el(g, 'rect', {x: cx - 22, y: cy - 18, width: 4, height: 36, fill: '#2563eb'});
+    [-18, -2, 14].forEach(function (d) { el(g, 'rect', {x: cx - 22, y: cy + d, width: 36, height: 4, fill: '#2563eb'}); });
+    el(g, 'rect', {x: cx + 18, y: cy - 18, width: 4, height: 36, fill: '#ea580c'});
+    [-10, 6].forEach(function (d) { el(g, 'rect', {x: cx - 14, y: cy + d, width: 36, height: 4, fill: '#ea580c'}); });
+  }
+  function via(g, cx, cy) { el(g, 'circle', {cx: cx, cy: cy, r: 6, fill: '#fff', stroke: '#111827', 'stroke-width': 3}); }
+  function outline(g) {
+    el(g, 'path', {d: 'M20,20 H440 V460 H385 V540 H135 V460 H20 Z', fill: '#f2b544', stroke: '#a16207', 'stroke-width': 2, opacity: .55});
+  }
+  function fingers(g, real) {
+    FING.forEach(function (x, k) {
+      if (real) el(g, 'rect', {x: x - 6, y: 505, width: 12, height: 32, fill: '#d4a017', stroke: '#8a6a00'});
+      else el(g, 'rect', {x: x - 6, y: 505, width: 12, height: 32, fill: 'none', stroke: '#8a6a00', 'stroke-dasharray': '3 3'});
+      el(g, 'text', {x: x + 5, y: 546, 'font-size': 17, transform: 'rotate(90 ' + (x + 5) + ' 546)', fill: k < 4 ? '#1d4ed8' : '#c2410c'}, NAMES[k]);
+    });
+  }
+  function colTraces(g) {
+    var a = {fill: 'none', stroke: '#ea580c', 'stroke-width': 4};
+    ['M112,60 V425 H230 V505', 'M212,60 V415 H250 V505', 'M312,60 V415 H270 V505', 'M412,60 V425 H290 V505']
+      .forEach(function (d) { el(g, 'path', Object.assign({d: d}, a)); });
+    [432, 438, 444, 450].forEach(function (y, i) { el(g, 'path', Object.assign({d: 'M440,' + y + ' H' + FING[8 + i] + ' V505'}, a)); });
+  }
+  function rowTraces(g, dash) {
+    var a = {fill: 'none', stroke: '#2563eb', 'stroke-width': 4}; if (dash) a['stroke-dasharray'] = '7 5';
+    Y.forEach(function (y, r) {
+      var xv = 30 + 7 * r, yend = 452 - 7 * r;
+      el(g, 'path', Object.assign({d: 'M440,' + y + ' H' + xv + ' V' + yend + ' H' + FING[r] + ' V485'}, a));
+    });
+  }
+  function tailStubs(g) { for (var r = 0; r < 4; r++) el(g, 'line', {x1: FING[r], y1: 485, x2: FING[r], y2: 505, stroke: '#2563eb', 'stroke-width': 4}); }
+  function tailVias(g) { for (var r = 0; r < 4; r++) via(g, FING[r], 485); }
+  function viasAll(g) { Y.forEach(function (y) { X.forEach(function (x) { via(g, x - 22, y); }); }); }
+  function sideNotes(g, rows, cols) {
+    if (rows) el(g, 'text', {x: 452, y: 24, 'font-size': 18, 'text-anchor': 'end', fill: '#1d4ed8'}, '行线通到右片 →');
+    if (cols) { el(g, 'text', {x: 392, y: 478, 'font-size': 15, fill: '#c2410c'}, '← 右片'); el(g, 'text', {x: 392, y: 497, 'font-size': 15, fill: '#c2410c'}, 'C5–C8'); }
+  }
+
+  // top
+  var t = document.getElementById('top');
+  outline(t); colTraces(t); tailStubs(t);
+  Y.forEach(function (y) { X.forEach(function (x) { pad(t, x, y); }); }); viasAll(t); tailVias(t); fingers(t, true);
+  X.forEach(function (x, c) { el(t, 'text', {x: x + 22, y: 14, 'font-size': 16, 'text-anchor': 'middle', fill: '#c2410c'}, 'C' + (c + 1)); });
+  sideNotes(t, false, true);
+
+  // bottom
+  var b = document.getElementById('bot');
+  outline(b);
+  Y.forEach(function (y) { X.forEach(function (x) { el(b, 'rect', {x: x - 26, y: y - 26, width: 52, height: 52, rx: 4, fill: 'none', stroke: '#c9a24a', 'stroke-dasharray': '3 3'}); }); });
+  rowTraces(b, false); viasAll(b); tailVias(b); fingers(b, false);
+  Y.forEach(function (y, r) { el(b, 'text', {x: 418, y: y - 8, 'font-size': 16, 'text-anchor': 'middle', fill: '#1d4ed8'}, 'R' + (r + 1)); });
+  sideNotes(b, true, false);
+
+  // both
+  var o = document.getElementById('both');
+  outline(o); rowTraces(o, true); colTraces(o); tailStubs(o);
+  Y.forEach(function (y) { X.forEach(function (x) { pad(o, x, y); }); }); viasAll(o); tailVias(o); fingers(o, true);
+  sideNotes(o, true, true);
+
+  // via section
+  var v = document.getElementById('via');
+  el(v, 'rect', {x: 60, y: 70, width: 600, height: 14, fill: '#fef3c7', stroke: '#b7791f'});    // coverlay
+  el(v, 'rect', {x: 330, y: 68, width: 140, height: 18, fill: '#fff'});                          // opening
+  el(v, 'rect', {x: 60, y: 84, width: 600, height: 12, fill: '#b45309'});                        // top copper
+  el(v, 'rect', {x: 60, y: 96, width: 600, height: 44, fill: '#f2b544', stroke: '#a16207'});     // polyimide
+  el(v, 'rect', {x: 60, y: 140, width: 600, height: 12, fill: '#b45309'});                       // bottom copper
+  el(v, 'rect', {x: 60, y: 152, width: 600, height: 14, fill: '#fef3c7', stroke: '#b7791f'});    // bottom coverlay
+  el(v, 'rect', {x: 186, y: 70, width: 28, height: 96, fill: '#fff'});                           // hole
+  el(v, 'rect', {x: 186, y: 84, width: 5, height: 68, fill: '#b45309'});
+  el(v, 'rect', {x: 209, y: 84, width: 5, height: 68, fill: '#b45309'});
+  el(v, 'rect', {x: 330, y: 84, width: 140, height: 12, fill: '#2563eb'});                       // exposed comb
+  el(v, 'text', {x: 200, y: 200, 'font-size': 16, 'text-anchor': 'middle'}, '过孔：孔壁镀铜');
+  el(v, 'text', {x: 200, y: 222, 'font-size': 16, 'text-anchor': 'middle'}, '把上下两层接通');
+  el(v, 'text', {x: 400, y: 52, 'font-size': 16, 'text-anchor': 'middle'}, '开口：梳子的铜露出来');
+  var labs = [['覆盖膜（绝缘）', 77], ['上层铜', 90], ['聚酰亚胺塑料膜', 118], ['下层铜', 146], ['覆盖膜（绝缘）', 159]];
+  labs.forEach(function (L, i) {
+    var ly = 40 + i * 40;
+    el(v, 'polyline', {points: '660,' + L[1] + ' 690,' + ly + ' 702,' + ly, fill: 'none', stroke: '#9aa5b1'});
+    el(v, 'text', {x: 708, y: ly + 5, 'font-size': 16}, L[0]);
+  });
+
+  // wiring diagram
+  var w = document.getElementById('wire');
+  function box(x, y, wd, ht, title, sub, stroke) {
+    el(w, 'rect', {x: x, y: y, width: wd, height: ht, rx: 10, fill: '#fff', stroke: stroke || '#1f2933', 'stroke-width': 2});
+    el(w, 'text', {x: x + wd / 2, y: y + 26, 'font-size': 17, 'font-weight': 700, 'text-anchor': 'middle'}, title);
+    if (sub) sub.forEach(function (s, i) { el(w, 'text', {x: x + wd / 2, y: y + 50 + i * 20, 'font-size': 14, 'text-anchor': 'middle', fill: '#52606d'}, s); });
+  }
+  // FPC tail + adapter
+  box(20, 120, 150, 330, 'FPC 尾巴', ['12 根金手指', '插进转接板'], '#a16207');
+  box(220, 120, 130, 330, 'FFC 转接板', ['现成', '0.5 mm 排线座', '→ 12 个焊点'], '#1f2933');
+  box(450, 40, 240, 150, 'MCP23017 板', ['现成（Adafruit）', 'IO 扩展：轮流给', '一根行线加 3.3 V'], '#1f2933');
+  box(450, 300, 240, 200, 'ADS7830 板', ['现成（Adafruit）', '8 路 ADC：一根一根', '依次读 8 根列线电压'], '#1f2933');
+  box(790, 190, 190, 150, 'XIAO ESP32-S3', ['已在头里', 'D9 = SDA，D10 = SCL', '（第二路 I2C）'], '#15803d');
+  box(790, 420, 190, 100, 'A7Z 大脑', ['针 29/31', '照旧读 XIAO'], '#15803d');
+  // lines FPC->adapter (12)
+  for (var i = 0; i < 12; i++) {
+    var yy = 150 + i * 24, isRow = i < 4;
+    el(w, 'line', {x1: 170, y1: yy, x2: 220, y2: yy, stroke: isRow ? '#2563eb' : '#ea580c', 'stroke-width': 3});
+    el(w, 'text', {x: 195, y: yy - 4, 'font-size': 14, 'text-anchor': 'middle', fill: isRow ? '#1d4ed8' : '#c2410c'}, isRow ? 'R' + (i + 1) : 'C' + (i - 3));
+  }
+  // adapter -> MCP (rows R1..R4 to GPA0..3)
+  for (var r = 0; r < 4; r++) {
+    var y0 = 150 + r * 24, y1 = 100 + r * 22;
+    el(w, 'path', {d: 'M350,' + y0 + ' H' + (380 + r * 10) + ' V' + y1 + ' H450', fill: 'none', stroke: '#2563eb', 'stroke-width': 3});
+    el(w, 'text', {x: 456, y: y1 + 5, 'font-size': 14, fill: '#1d4ed8'}, 'GPA' + r);
+  }
+  el(w, 'text', {x: 400, y: 32, 'font-size': 14, 'text-anchor': 'middle', fill: '#1d4ed8'}, 'R1–R4 → GPA0–GPA3');
+  // adapter -> ADS (cols C1..C8 to A0..A7) with pull-down
+  for (var c = 0; c < 8; c++) {
+    var ya = 246 + c * 24, yb = 330 + c * 20;
+    el(w, 'path', {d: 'M350,' + ya + ' H' + (432 - c * 7) + ' V' + yb + ' H450', fill: 'none', stroke: '#ea580c', 'stroke-width': 3});
+    el(w, 'text', {x: 456, y: yb + 5, 'font-size': 14, fill: '#c2410c'}, 'A' + c);
+  }
+  // resistors note
+  el(w, 'rect', {x: 500, y: 510, width: 140, height: 24, rx: 4, fill: '#fff', stroke: '#6b7280'});
+  el(w, 'text', {x: 570, y: 527, 'font-size': 13, 'text-anchor': 'middle'}, '8 个下拉电阻 → GND');
+  el(w, 'line', {x1: 570, y1: 500, x2: 570, y2: 510, stroke: '#6b7280', 'stroke-width': 2});
+  el(w, 'text', {x: 500, y: 552, 'font-size': 13, fill: '#52606d'}, '焊在转接板上，接 ADS7830 板的 GND');
+  // I2C chain
+  el(w, 'path', {d: 'M690,115 H740 V250 H790', fill: 'none', stroke: '#7c3aed', 'stroke-width': 5});
+  el(w, 'path', {d: 'M690,400 H740 V280 H790', fill: 'none', stroke: '#7c3aed', 'stroke-width': 5});
+  el(w, 'text', {x: 732, y: 236, 'font-size': 13, 'text-anchor': 'end', fill: '#6d28d9'}, '4 芯线');
+  el(w, 'text', {x: 732, y: 254, 'font-size': 13, 'text-anchor': 'end', fill: '#6d28d9'}, 'STEMMA QT');
+  el(w, 'path', {d: 'M885,340 V420', fill: 'none', stroke: '#15803d', 'stroke-width': 5});
+  el(w, 'text', {x: 893, y: 385, 'font-size': 13, fill: '#166534'}, 'D4/D5 已有');
+
+  // sequence
+  var s = document.getElementById('seq');
+  var lanes = [['XIAO', 150, '#15803d'], ['MCP23017（行）', 450, '#1f2933'], ['ADS7830（列）', 750, '#1f2933']];
+  lanes.forEach(function (L) {
+    el(s, 'rect', {x: L[1] - 85, y: 10, width: 170, height: 36, rx: 8, fill: '#fff', stroke: L[2], 'stroke-width': 2});
+    el(s, 'text', {x: L[1], y: 34, 'font-size': 16, 'font-weight': 700, 'text-anchor': 'middle'}, L[0]);
+    el(s, 'line', {x1: L[1], y1: 46, x2: L[1], y2: 410, stroke: '#9aa5b1', 'stroke-width': 2});
+  });
+  el(s, 'defs', {}).innerHTML = '<marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52606d"/></marker>';
+  function msg(y, x1, x2, txt) {
+    el(s, 'line', {x1: x1, y1: y, x2: x2, y2: y, stroke: '#52606d', 'stroke-width': 2, 'marker-end': 'url(#sa)'});
+    el(s, 'text', {x: (x1 + x2) / 2, y: y - 8, 'font-size': 15, 'text-anchor': 'middle', stroke: '#f8fafc', 'stroke-width': 6, 'paint-order': 'stroke'}, txt);
+  }
+  msg(90, 150, 450, '① 只让 R1 = 3.3 V，R2–R4 = 0 V');
+  el(s, 'text', {x: 460, y: 124, 'font-size': 14, fill: '#52606d', stroke: '#f8fafc', 'stroke-width': 6, 'paint-order': 'stroke'}, '② 压阻膜把电流从 R1 送进被压的那几列');
+  msg(160, 150, 750, '③ 请读 A0（下一次 A1……一直到 A7）');
+  msg(200, 750, 150, '④ 每次回 1 个数，8 次问答拿到第 1 行 8 个点');
+  msg(260, 150, 450, '⑤ 换成 R2 = 3.3 V，其余 0 V');
+  msg(300, 150, 750, '⑥ 再逐个读 A0…A7');
+  el(s, 'text', {x: 450, y: 342, 'font-size': 15, 'text-anchor': 'middle', fill: '#52606d', stroke: '#f8fafc', 'stroke-width': 6, 'paint-order': 'stroke'}, '…… R3、R4 同样各做一遍');
+  el(s, 'rect', {x: 30, y: 362, width: 260, height: 40, rx: 8, fill: '#ecfdf5', stroke: '#15803d'});
+  el(s, 'text', {x: 160, y: 388, 'font-size': 15, 'text-anchor': 'middle'}, '⑦ 4 × 8 = 32 个数，等 A7Z 来取');
+})();
+</script>
+</body>
+</html>
