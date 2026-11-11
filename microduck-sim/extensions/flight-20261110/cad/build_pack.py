@@ -4,6 +4,7 @@ Writes build/<part>-world.stl (robot pose), build/<part>-print.stl (print pose, 
     /tmp/microduck-cad-venv/bin/python cad/build_pack.py          (about 10 s)
 """
 import json
+import math
 from pathlib import Path
 import numpy as np
 import manifold3d as m3
@@ -231,15 +232,66 @@ def fan_dummy(which, side=+1):
     return fan_place(L.union(parts), which, side)
 
 
+def end_walls(which, side=+1):
+    """Thick collar wall (NAC end_wall) where the fore and aft screw blocks and the middle web end, tapering back to the
+    normal wall over NAC end_taper of arc (strength/README.md, clamp case). Local frame: both blocks lie on local +-x."""
+    N = NAC
+    rw, ro = N["bore"] / 2 + N["end_wall"], N["r_out"]
+    pe = math.asin(max(N["inner_y"], N["outer_y"]) / rw)        # block edge
+    pt = pe + N["end_taper"] / ro                                 # taper end
+    pts = [(0.0, 0.0)]
+    for a in np.linspace(-pt, pt, 49):
+        f = min(1.0, max(0.0, (abs(a) - pe) / (pt - pe)))
+        r = rw + (ro - rw) * f
+        pts.append((r * math.cos(a), r * math.sin(a)))
+    cs = m3.CrossSection([pts])
+    h = N["t1"] + 12.0 - N["t0"]
+    lobe = cs.extrude(h).translate([0, 0, -(N["t1"] + 12.0)])
+    return fan_place(lobe + lobe.rotate([0, 0, 180]), which, side)
+
+
+def lug_fillet(side=+1):
+    """3 mm round where the inner half's lug (+x face, x = lug_x[1]) meets the rear collar (strength/README.md, handling
+    case). The corner wedge (lug face, collar surface, buried 0.3..0.5 into both) is hulled between the bottom and top of
+    the lug, so it follows the canted collar; the round is a cylinder through the fillet centres at both ends."""
+    N = NAC
+    r, R, Y, xl = N["lug_fillet_r"], N["r_out"], Pm.FAN_Y, N["lug_x"][1]
+    z_lo, z_hi = N["bed_z"] - 1.0, N["lug_top"] + 1.0
+    wedge, centres = [], []
+    for z in (z_lo, z_hi):
+        ax = Pm.fan_point("rear", (Pm.LIP_Z - z) / C, side)[0]
+        ox = xl + r
+        oy = Y - math.sqrt((R + r) ** 2 - (ox - ax) ** 2)
+        bx, by = ax + (ox - ax) * R / (R + r), Y + (oy - Y) * R / (R + r)
+        cx = xl - 0.5
+        cy = Y - math.sqrt(R ** 2 - (cx - ax) ** 2)
+        cin = (cx + (ax - cx) * 0.2 / R, cy + (Y - cy) * 0.2 / R)          # 0.2 inside the collar
+        bin_ = (ax + (bx - ax) * (R - 0.3) / R, Y + (by - Y) * (R - 0.3) / R)
+        for (x, y) in ((cx, oy), cin, bin_, (bx, by), (xl, oy)):
+            wedge.append((x, side * y, z))
+        centres.append((ox, side * oy, z))
+    w = m3.Manifold.hull_points(wedge)
+    disc = m3.Manifold.cylinder(0.01, r, r, L.SEG)
+    cutter = (disc.translate(list(centres[0])) + disc.translate(list(centres[1]))).hull()
+    band = L.box((-300, -300, N["bed_z"]), (300, 300, N["lug_top"]))
+    return (w - cutter) ^ band
+
+
 def nacelle(side=+1):
     N = NAC
     ro = N["r_out"]
     nm = "L" if side > 0 else "R"
     top = Pm.LIP_Z - N["t0"] * C
     bed = N["bed_z"]
-    solids = [fan_place(lcyl(ro, N["t0"], N["t1"] + 12.0) - lcyl(N["bore"] / 2, N["t0"] - 1, N["t1"] + 13.0), w, side)
-              for w in ("front", "rear")]
     y0, y1 = sorted((side * (Pm.FAN_Y - N["inner_y"]), side * (Pm.FAN_Y + N["outer_y"])))
+    # thick end walls everywhere except outboard of the middle web on the outer half: the web screw's driver comes in there
+    # (its axis is only 33.6 from each fan axis, inside the 34.0 thick-wall face); the inner side of the web keeps them
+    ax_r = max(Pm.fan_point("rear", t, side)[0] for t in (N["t0"], N["t1"]))
+    ax_f = min(Pm.fan_point("front", t, side)[0] for t in (N["t0"], N["t1"]))
+    oy0, oy1 = sorted((side * (Pm.FAN_Y + N["outer_y"]), side * 300.0))
+    web_drv = L.box((ax_r, oy0, -300), (ax_f, oy1, 300))
+    solids = [(fan_place(lcyl(ro, N["t0"], N["t1"] + 12.0), w, side) + (end_walls(w, side) - web_drv))
+              - fan_place(lcyl(N["bore"] / 2, N["t0"] - 1, N["t1"] + 13.0), w, side) for w in ("front", "rear")]
     holes = []
     for w, sgn in (("front", +1), ("rear", -1)):
         xs = [Pm.fan_point(w, t, side)[0] + sgn * N["screw_r"] for t in N["ear_screw_t"]]
@@ -262,12 +314,15 @@ def nacelle(side=+1):
     holes.append((sum(N["web_x"]) / 2, Pm.fan_point("front", N["web_screw_t"], side)[2]))
     keep = fan_keepout("front", side) + fan_keepout("rear", side)
     above = L.box((-300, -300, bed), (300, 300, 300))
-    solid = (L.union(solids) - keep) ^ above
+    # 4 mm free radius over every clamp screw axis outside the outer face, for the driver (the thick end walls of the middle
+    # web otherwise wrap over the web screw, whose axis sits only 33.6 from each fan axis)
+    drv = L.union([L.cyl(4.0, (x, side * (Pm.FAN_Y + N["outer_y"]), z), (0, side, 0), 60.0) for x, z in holes])
+    solid = (L.union(solids) - keep - drv) ^ above
     g = N["split_gap"] / 2
     inner_space = L.box((-300, min(0, side * (Pm.FAN_Y - g)), -300), (300, max(0, side * (Pm.FAN_Y - g)), 300))
     outer_space = L.box((-300, min(side * (Pm.FAN_Y + g), side * 300), -300), (300, max(side * (Pm.FAN_Y + g), side * 300), 300))
     ly0, ly1 = sorted((side * N["lug_y"][0], side * N["lug_y"][1]))
-    lug = L.box((N["lug_x"][0], ly0, bed), (N["lug_x"][1], ly1, N["lug_top"]))
+    lug = L.box((N["lug_x"][0], ly0, bed), (N["lug_x"][1], ly1, N["lug_top"])) + lug_fillet(side)
     inner = (solid ^ inner_space) + ((lug - keep) ^ above)
     outer = solid ^ outer_space
     ci, co = [], []
@@ -280,12 +335,13 @@ def nacelle(side=+1):
         ci.append(L.teardrop(PIL_H, (x, side * (Pm.FAN_Y - g - pdep), z), (0, side, 0), pdep + 0.01, up=(0, 0, 1)))
         co.append(L.teardrop(CLR_H, (x, side * (Pm.FAN_Y + g - 0.5), z), (0, side, 0), N["outer_y"] + 1.0, up=(0, 0, 1)))
         co.append(L.teardrop(hs_d, (x, side * (Pm.FAN_Y + g + uh), z), (0, side, 0), N["outer_y"] - g - uh + 1.0, up=(0, 0, 1)))
-        clamped = uh + (N["split_gap"] - N["travel"])           # smallest fan: seams 0.5 apart, bite 5.0
+        wt = N["washer"]["t"]                                     # M2 washer in the 5.4 seat, head on top of it
+        clamped = uh + wt + (N["split_gap"] - N["travel"])      # smallest fan: seams 0.5 apart, bite 5.0
         if side > 0:
-            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], clamped, round(pdep, 2), round(10 - clamped, 2))
+            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], round(clamped, 2), round(pdep, 2), round(10 - clamped, 2))
             fit_clear(f"nac-split-clear-{k}", "nacelle_outer_L", Y_AX, CLR_H, [0, 0, 1])
-        screw(f"nac-{nm}-{k}", "M2 x 10", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
-              (x, side * (Pm.FAN_Y + g + uh), z), (0, -side, 0), round(uh, 2), f"nacelle {nm}")
+        screw(f"nac-{nm}-{k}", "M2 x 10 + M2 washer", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
+              (x, side * (Pm.FAN_Y + g + uh + wt), z), (0, -side, 0), round(uh + wt, 2), f"nacelle {nm}")
     for k, z in enumerate(N["lug_screw_z"]):
         ci.append(L.teardrop(PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))
         if side > 0:

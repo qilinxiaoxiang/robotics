@@ -5,7 +5,8 @@ import math
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path.home() / "code/robotics/cad-practice"))
+# the cad-practice beside this checkout (robotics/cad-practice), so the Mac mini mirror uses the synced copy, not its own
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "cad-practice"))
 import print_fit as F  # noqa: E402
 
 PRINTER = "H2S"                                  # default club printer; one STL serves all three (see HOLE notes)
@@ -99,7 +100,10 @@ _eng_max = F.MAX_ENGAGEMENT_D["any"] * 2.0                     # 5.0 mm bite at 
 NAC = dict(
     bore=round(_bore, 2), tape=TAPE, clamp_od=CLAMP,
     travel=round(_travel, 2), split_gap=round(_travel + _res, 2),   # printed gap at each seam; closes by "travel" at most
-    screw_len=10.0, under_head=round(10.0 - _eng_max - _res, 2),    # material under the head: bite 5.0 (smallest) .. 5.0 - travel (largest)
+    # an M2 washer (ISO 7089, 5.0 x 0.3) under each clamp head in a 5.4 seat: the bare head bearing was SF 1.62 at snug and
+    # 1.04 at the strip load (strength/README.md, "Clamp screw head bearing"); with the washer about 4
+    washer=F.WASHER["M2"], head_seat=F.WASHER_SEAT["M2"],
+    screw_len=10.0, under_head=round(10.0 - F.WASHER["M2"]["t"] - _eng_max - _res, 2),   # material under the washer: bite 5.0 (smallest) .. 5.0 - travel (largest)
     wall=3.0,
     # collar ends clear the lip flare and the rear ring by tol + 0.5 whichever way the fan is off
     t0=FAN["duct_t"][0] + TOL + 0.5, t1=FAN["duct_t"][1] - TOL - 0.5,
@@ -111,7 +115,7 @@ NAC = dict(
     lug_x=(-45.0, -36.8), lug_y=(70.0, 82.0), lug_top=58.0,     # inner half: bolts to the wing arm web front face (x -45)
     lug_screw_y=74.0, lug_screw_z=(37.0, 44.5, 52.0),
 )
-NAC["bite"] = (round(NAC["screw_len"] - NAC["under_head"] - NAC["split_gap"], 2), round(_eng_max, 2))   # largest .. smallest fan
+NAC["bite"] = (round(NAC["screw_len"] - NAC["washer"]["t"] - NAC["under_head"] - NAC["split_gap"], 2), round(_eng_max, 2))   # largest .. smallest fan
 # the skirt below the collar is bored out to clear the rim: keep >= 1.6 mm of wall there too
 NAC["wall"] = max(NAC["wall"], round((NAC["relief"] - NAC["bore"]) / 2 + 1.6, 1))
 NAC["r_out"] = NAC["bore"] / 2 + NAC["wall"]
@@ -128,9 +132,17 @@ if "ear_t" in FAN:
 # the clamp side must hold the head seat over under_head; the pilot side must take the 5.0 mm bite plus 1 mm
 NAC["outer_y"] = max(NAC["outer_y"], round(NAC["split_gap"] / 2 + NAC["under_head"], 1))
 NAC["inner_y"] = max(NAC["inner_y"], round(NAC["split_gap"] / 2 + _eng_max + 1.0 + 1.2, 1))
-NAC["head_seat"] = F.HEAD_SEAT["M2"]
 # clamp screws along y through the fore and aft blocks: 4.5 mm driver room past the collar, and >= 2 mm of wall to an ear pocket
 NAC["screw_r"] = round(max(NAC["r_out"] + 4.5, NAC.get("ear_pocket", {}).get("r", 0.0) + NAC["head_seat"][0] / 2 + 2.0), 2)
+# Collar wall where each screw block (and the middle web) ends: tightening bends the 3.4 mm wall there, SF 0.42 at snug
+# (strength/README.md, "Nacelle clamp: fails at assembly"); the check sized 7.0 mm for SF 2.0. The thick wall's face stands
+# 4.0 mm from the screw axis (driver corridor), which gives >= 7.0; it tapers back to the normal wall over 10 mm of arc.
+NAC["end_wall"] = round(NAC["screw_r"] - 4.0 - NAC["bore"] / 2, 2)
+NAC["end_taper"] = 10.0
+assert NAC["end_wall"] >= 7.0, f"block-end collar wall {NAC['end_wall']} < 7.0 (strength check)"
+# Fillet where the inner half's lug meets the rear collar on its +x face: FEA put the handling case at SF ~1.8 there from
+# shear lag (strength/README.md, "Nacelle inner half under handling")
+NAC["lug_fillet_r"] = 3.0
 # upper screw: 1.6 mm of skin between the block top (collar top) and the tip of the head-seat teardrop (r * sqrt 2);
 # t0 + 4.1 left 0.85 mm there once the seat grew to 4.6 mm (2026-11-10 check)
 NAC["ear_screw_t"] = (round(NAC["t0"] + (1.6 + NAC["head_seat"][0] / 2 * 2 ** 0.5) / C, 2), round(NAC["t1"] - 4.4, 2))
@@ -150,7 +162,11 @@ if "ear_pocket" in NAC:
     def _plane(x, which):
         d = abs(x - fan_point(which, _ft)[0]) / C
         return LIP_Z - _ft * C - d * S if d < NAC["keep_lip_r"] else LIP_Z - NAC["t0"] * C
-    _z_hi = min(_plane(_xm - _rh, "rear"), _plane(_xm + _rh, "front"), LIP_Z - NAC["t0"] * C - _rh) - 1.2
+    # bound on the hole centre: 1.2 skin over the teardrop tip (r * sqrt 2, at the centre x) and over the round sides
+    # (r, at x -+ r); the old bound left the planes unreduced and the 5.4 washer seat came to 0.9 mm (2026-11-10 check)
+    _tip = _rh * 2 ** 0.5
+    _z_hi = min(_plane(_xm, "rear") - _tip, _plane(_xm, "front") - _tip, _plane(_xm - _rh, "rear") - _rh,
+                _plane(_xm + _rh, "front") - _rh, LIP_Z - NAC["t0"] * C - _tip) - 1.2
     assert _z_lo < _z_hi, f"no room for the middle web screw: {_z_lo:.2f} .. {_z_hi:.2f}"
     NAC["web_screw_t"] = round((LIP_Z - (_z_lo + _z_hi) / 2) / C, 2)
     NAC["web_screw_room_z"] = (round(_z_lo, 2), round(_z_hi, 2))

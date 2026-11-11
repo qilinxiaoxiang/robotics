@@ -47,6 +47,8 @@ PRINTER_OFFSET_STATUS = {"X1C": "as-built", "Elegoo-CC": "as-built", "H2S": "pro
 COMMON_LENGTHS = {"M2": (4, 6, 8, 10), "M2.5": (6, 8), "M2.6": (6, 8), "M3": (6, 8, 10, 12, 16)}
 HEAD_SEAT = {             # (seat diameter, seat depth) that takes a pan head (ISO 7045 / ISO 14583) or a button head (ISO 7380)
     "M2": (4.6, 1.7), "M2.5": (5.6, 1.9), "M2.6": (5.6, 1.9), "M3": (6.3, 2.1)}
+WASHER = {"M2": dict(od=5.0, t=0.3)}      # ISO 7089 plain washer (M2 washers come with the Zuorery M2 kit on the bench)
+WASHER_SEAT = {s: (round(w["od"] + 0.4, 2), w["t"]) for s, w in WASHER.items()}   # (seat diameter, washer thickness)
 
 
 def pilot_depth(screw, clamped, max_len=None):

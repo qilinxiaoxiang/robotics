@@ -64,7 +64,7 @@ def main():
     spec = dict(mesh_dir=str(OUT), meshes=meshes, screws=screws)
     sp = H / "checks" / "access.screws.json"
     sp.write_text(json.dumps(spec, indent=1))
-    r = subprocess.run([sys.executable, str(Path.home() / "code/robotics/cad-practice/access_check.py"), str(sp),
+    r = subprocess.run([sys.executable, str(Path(__file__).resolve().parents[4] / "cad-practice/access_check.py"), str(sp),
                         "--json", str(H / "checks" / "access.json")], capture_output=True, text=True)
     print(r.stdout[-6000:], r.stderr[-2000:])
     sys.exit(r.returncode)
