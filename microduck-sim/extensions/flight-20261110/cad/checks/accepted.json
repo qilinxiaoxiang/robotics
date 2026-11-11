@@ -21,6 +21,23 @@
    "source": "pose_culprits.py 2026-11-10",
    "evidence": "checks/pose_culprits.json: the 8 deepest poses put the jaw 0.5 to 4 mm into the saddle, A7Z heatsink and USB-C plug first; logged real head poses, pickup scan poses and head yaw alone have no point within 20 mm of the wing plate box",
    "reason": "not reachable: the jaw meets the duck's own saddle and A7Z before the arm top"
+  },
+  {
+   "id": "A-GATE-BPHATCH",
+   "what": "print-gate exception for release FlightPack-D1 only: the two step path collisions of the MicroDuck guide's chapter-12 step bp-hatch (the battery hatch's 22 deg swing closing the backpack roof), present in every gate run since 9f9a09e0 (MicroDuck V1.41 battery hatch V3, 2026-11-01) and unrelated to the flight pack",
+   "source": "Shawn 2026-11-11 '记为例外放行' (relayed by the coordinator, answering whether these two collisions may be recorded as an exception for this release)",
+   "evidence": "gate-receipt.json on 480610d1 (guide chapter f78a3548): solids 155/155, pairs 0 unclassified, cables 0 mid-route, steps 0 in the flight chapter and exactly these two; gate receipts in git: 4924e67f passed with 0 path collisions, 9f9a09e0 and every later run have these 2",
+   "scope": "only this release (FlightPack-D1) and only these two records; any other step collision, a new obstacle, another step, a larger volume (over the recorded value + 0.5 mm3) or a drawn-before-present part fails cad/slices/release-FlightPack-D1/scripts/gate_status.py; it does not skip the steps stage",
+   "gate_exception": {
+    "release": "FlightPack-D1",
+    "since_commit": "9f9a09e0",
+    "volume_tolerance_mm3": 0.5,
+    "step_collisions": [
+     {"step": "bp-hatch", "moving": "battery_hatch", "obstacle": "battery_backpack_frame", "maxExcessVolumeMm3": 10.98},
+     {"step": "bp-hatch", "moving": "battery_hatch", "obstacle": "battery_backpack_cap", "maxExcessVolumeMm3": 8.6}
+    ]
+   },
+   "reason": "the hatch is held by foam tape on the robot (rule printed-latch-and-exit-checks, 2026-11-02) and its swing path in the guide is a chapter-12 matter; a separate guide fix removes this exception"
   }
  ]
 }

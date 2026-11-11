@@ -21,6 +21,34 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+ACCEPTED = CAD / 'checks/accepted.json'
+
+
+def exception_covers(rec: Path):
+    """Shawn's exception A-GATE-BPHATCH (cad/checks/accepted.json, 2026-11-11 '记为例外放行'): the gate may fail only on the
+    steps stage, and only with exactly the recorded step collisions (same step, moving part and obstacle, volume no more
+    than recorded + tolerance), nothing drawn before it is present. Anything else, or any other failing stage, fails."""
+    acc = next(a for a in json.loads(ACCEPTED.read_text())['accepted'] if a['id'] == 'A-GATE-BPHATCH')
+    ex = acc['gate_exception']
+    if ex['release'] != 'FlightPack-D1' or not rec.exists():
+        return False, dict(id=acc['id'], covered=False, why='exception is for another release or no receipt')
+    r = json.loads(rec.read_text())
+    bad_stages = [k for k, v in r['checks'].items() if not v.get('passed') and k != 'steps']
+    steps = json.loads((GATE / 'steps-raw.json').read_text())['steps']
+    found = [dict(step=s['step'], moving=c.get('moving'), obstacle=c['obstacle'], maxExcessVolumeMm3=c['maxExcessVolumeMm3'])
+             for s in steps for c in (s.get('pathCollisions') or [])]
+    premature = sum(len(s.get('drawnButNotPresent') or []) for s in steps)
+    want = {(c['step'], c['moving'], c['obstacle']): c['maxExcessVolumeMm3'] for c in ex['step_collisions']}
+    got = {(c['step'], c['moving'], c['obstacle']): c['maxExcessVolumeMm3'] for c in found}
+    unexpected = [c for c in found if (c['step'], c['moving'], c['obstacle']) not in want
+                  or c['maxExcessVolumeMm3'] > want[(c['step'], c['moving'], c['obstacle'])] + ex['volume_tolerance_mm3']]
+    covered = (not bad_stages and not premature and not unexpected and len(found) == len(got) and set(got) == set(want)
+               and r['checks']['steps']['pathCollisions'] == len(want))
+    return covered, dict(id=acc['id'], source=acc['source'], covered=covered, failingStages=bad_stages,
+                         drawnBeforePresent=premature, found=found, unexpected=unexpected,
+                         missingFromRun=[list(k) for k in set(want) - set(got)])
+
+
 def main():
     data = GUIDE / 'data/guide-data.json'
     text = data.read_text(errors='replace')
@@ -40,8 +68,12 @@ def main():
     else:
         rc = subprocess.run([PY, 'run_gate.py'], cwd=GATE).returncode
         rec = GATE / 'gate-receipt.json'
-        st.update(gateExit=rc, gateReceipt=dict(path=str(rec), sha256=sha(rec)) if rec.exists() else None,
-                  status='RELEASED' if rc == 0 else 'GATE_FAILED')
+        st.update(gateExit=rc, gateReceipt=dict(path=str(rec), sha256=sha(rec)) if rec.exists() else None)
+        if rc == 0:
+            st.update(status='RELEASED')
+        else:
+            ok, why = exception_covers(rec)
+            st.update(exception=why, status='RELEASED_WITH_EXCEPTION' if ok else 'GATE_FAILED')
     (REL / 'STATUS.json').write_text(json.dumps(st, indent=1))
     print(json.dumps(st, indent=1))
 

@@ -20,6 +20,9 @@ job() {  # name max-mib cwd command...
   echo "$name exit $rc"; grep -v 'lock holder' $REL/logs/$name.log | tail -3 | cut -c1-300
   [ $rc -eq 0 ]
 }
+# release gate first: STATUS.json (scripts/gate_status.py) must say RELEASED or RELEASED_WITH_EXCEPTION (Shawn's
+# A-GATE-BPHATCH, cad/checks/accepted.json) for exactly the printed STLs that will be sliced (cad/build = guide/print/world)
+$PY $REL/scripts/check_gate_for_slicing.py || { echo "slicing refused: gate status does not cover the current geometry"; exit 1; }
 [ -x /Volumes/OrcaSlicer/OrcaSlicer.app/Contents/MacOS/OrcaSlicer ] || \
   hdiutil attach -readonly -nobrowse -mountpoint /Volumes/OrcaSlicer ~/Library/Caches/microduck/OrcaSlicer-2.4.2.dmg
 mkdir -p $REL/logs

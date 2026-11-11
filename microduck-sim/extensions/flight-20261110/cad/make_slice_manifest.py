@@ -103,14 +103,18 @@ def main():
                                    "parts as solid.",
              retiredParts=[],
              prototypeScope=f"{VER}: flight pack, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate "
-                            "(nacelle inner/outer halves L/R). Print gate pending (guide data for the flight pack).",
+                            "(nacelle inner/outer halves L/R). Print gate: see STATUS.json (chapter-12 bp-hatch exception "
+                            "A-GATE-BPHATCH, Shawn 2026-11-11 '记为例外放行').",
              knownFitBoundary=("Fans not in hand: ARESWEI HDS001 duct OD 50.6 (clamp closes on 49.1..52.5 with 1 mm foam "
                                "tape), lip OD 58.4, ears from the listing drawing (+-1.5 mm). Battery 74 x 33 x 31 from the listing (+4 mm length slack). FC/ESC 30.5 mm pattern and "
                                "MTF-01 holes from the listings, not measured. M3 standoffs are not in stock."))
     for k in ("deferred", "supersedes"):
         m.pop(k, None)
     m["deliveryContract"] = dict(m["deliveryContract"], colors=list(LAYOUT), filesPerColor=2, fileCount=2 * len(LAYOUT),
-                                 baseline="printed releases through V1.41 (no stock part replaced)", status="PREPARED_GATE_PENDING",
+                                 baseline="printed releases through V1.41 (no stock part replaced)",
+                                 # gate state as scripts/gate_status.py recorded it (A-GATE-BPHATCH exception included)
+                                 status=json.loads((REL / "STATUS.json").read_text()).get("status", "PREPARED_GATE_PENDING")
+                                 if (REL / "STATUS.json").exists() else "PREPARED_GATE_PENDING",
                                  supersedes=[])
     REL.mkdir(parents=True, exist_ok=True)
     (REL / f"manifest-{VER}.json").write_text(json.dumps(m, indent=1, ensure_ascii=False))
