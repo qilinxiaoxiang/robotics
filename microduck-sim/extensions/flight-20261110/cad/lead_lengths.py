@@ -4,7 +4,8 @@ harness side run and rear crossing (left side), FC plate lead window (right batt
 wiring/wiring.json (esc_pads_world, esc_tabs_world: pad set 1 FR, 2 RR, 3 FL, 4 RL). Writes checks/lead_lengths.json.
     /tmp/microduck-cad-venv/bin/python cad/lead_lengths.py
 Rules: fan extension = route + 20 mm (two joints with strain relief, 10 mm each) - the factory lead (FAN lead_len, the
-active fan set: ARESWEI about 140 mm per the seller, measure on arrival), at least 40 mm so every fan unplugs at its nacelle on bullets (wiring.json missing: female bullets);
+active fan set: ARESWEI about 140 mm per the seller), at least 40 mm; the lead may leave the motor in any of
+Pm.lead_angles, and the longest of those routes sets the length, so every fan unplugs at its nacelle on bullets (wiring.json missing: female bullets);
 battery pigtail = route from the pack's XT60 + 20 mm; the pack's own lead ends with its XT60 22 mm behind the web
 (CNHL lead length not published: assumed); routes are rounded up to 10 mm.
 """
@@ -32,12 +33,17 @@ def up10(v):
     return int(math.ceil(v / 10.0) * 10)
 
 
-def ring(which, s):
-    """Where the motor leads leave the fan: motor front ring, radius motor_od / 2, direction Pm.lead_angle(s)."""
+def ring(which, s, deg):
+    """Where the motor leads leave the fan: motor front ring, radius motor_od / 2, direction deg (one of Pm.lead_angles)."""
     x, y, z = Pm.fan_point(which, sum(FAN["lead_t"]) / 2, s)
-    a = math.radians(Pm.lead_angle(s))
+    a = math.radians(deg)
     r = FAN["motor_od"] / 2
     return (round(x + r * math.cos(a) * Pm.C, 1), round(y + r * math.sin(a), 1), round(z + r * math.cos(a) * Pm.DIR[which] * Pm.S, 1))
+
+
+def longest(build, which, s):
+    """The lead may leave in any of Pm.lead_angles: route each and keep the longest (the extension must reach from all)."""
+    return max((build(ring(which, s, a)) for a in Pm.lead_angles(s)), key=length)
 
 
 def main():
@@ -45,17 +51,21 @@ def main():
     fwy, fwz = sum(fw["y"]) / 2, sum(fw["z"]) / 2
     routes = {}
     for s, nm in ((1, "L"), (-1, "R")):
-        front = [ring("front", s), (25.0, s * 78.0, 28.0), (WING["x_front"], s * fwy, fwz), (-52.0, s * fwy, fwz)]
-        rear = [ring("rear", s), (-55.0, s * 77.0, 24.0)]
+        front_tail = [(25.0, s * 78.0, 28.0), (WING["x_front"], s * fwy, fwz), (-52.0, s * fwy, fwz)]
+        rear_tail = [(-55.0, s * 77.0, 24.0)]
         if s > 0:   # left: along the bay through the gusset windows to the harness, behind the backpack, up the ESC inboard edge
             cross = [(-56.0, 35.1, 24.0), (-83.7, 35.1, 10.0), (-83.7, -33.0, 10.0)]
-            routes["fan FL"] = (front + [(-56.0, 39.0, 28.0)] + cross + [PAD["M3"]], "fan window, arm bay, gusset windows, harness side run, rear crossing, ESC pad set 3")
-            routes["fan RL"] = (rear + [(-56.0, 39.0, 26.0)] + cross + [PAD["M4"]], "arm bay outer end, gusset windows, harness side run, rear crossing, ESC pad set 4")
+            routes["fan FL"] = (longest(lambda r0: [r0] + front_tail + [(-56.0, 39.0, 28.0)] + cross + [PAD["M3"]], "front", s),
+                                "fan window, arm bay, gusset windows, harness side run, rear crossing, ESC pad set 3")
+            routes["fan RL"] = (longest(lambda r0: [r0] + rear_tail + [(-56.0, 39.0, 26.0)] + cross + [PAD["M4"]], "rear", s),
+                                "arm bay outer end, gusset windows, harness side run, rear crossing, ESC pad set 4")
             routes["battery L"] = ([(-58.2, 61.0, 45.0), (-56.0, 39.0, 30.0)] + cross + [(-82.0, -34.0, 64.0), (-80.0, -56.0, 62.0)],
                                    "lead window, arm bay, gusset windows, harness, rear crossing, up the ESC inboard edge, tabs from above")
         else:       # right: around the FC plate's outboard edge to pad sets 1/2; battery through the plate lead window
-            routes["fan FR"] = (front + [(-60.0, -76.5, 31.0), PAD["M1"]], "fan window, arm bay, round the FC plate outboard edge, ESC pad set 1")
-            routes["fan RR"] = (rear + [PAD["M2"]], "arm bay outer end, round the FC plate outboard edge, ESC pad set 2")
+            routes["fan FR"] = (longest(lambda r0: [r0] + front_tail + [(-60.0, -76.5, 31.0), PAD["M1"]], "front", s),
+                                "fan window, arm bay, round the FC plate outboard edge, ESC pad set 1")
+            routes["fan RR"] = (longest(lambda r0: [r0] + rear_tail + [PAD["M2"]], "rear", s),
+                                "arm bay outer end, round the FC plate outboard edge, ESC pad set 2")
             routes["battery R"] = ([(-58.2, -61.0, 45.0), (-60.0, -61.0, 31.0), (-76.0, -61.0, 31.0), (-76.0, -61.0, 58.0), (-80.0, -58.0, 61.0)],
                                    "lead window, arm bay, FC plate lead window, up between plate and ESC, tabs from the side")
     cap_end = (CAP_AXIS["x0"] - Pm.CAP["h"], CAP_AXIS["y"], WING["arm_z"][1] + Pm.CAP["d"] / 2)

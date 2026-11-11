@@ -15,7 +15,7 @@ import flight_params as Pm
 H = Path(__file__).resolve().parent
 B = H / "build"
 Z = 120.0
-LAYOUT = (f"v7 CAD (cad/build_pack.py): v6 parts with fan set {Pm.FAN_ID} (provisional until measured): wing plate, trays, "
+LAYOUT = (f"v7 CAD (cad/build_pack.py): v6 parts with fan set {Pm.FAN_ID} (listing drawing, nacelle fits the +-{Pm.TOL:g} mm band): wing plate, trays, "
           "clamp nacelles, FC bracket with flow shelf; no compass")
 CASE = f"v7 CAD, {Pm.FAN_ID} fans {Pm.FAN['mass_g']:g} g"
 
@@ -107,7 +107,7 @@ def main():
         case[:] = [i for i in case if "compass" not in i["name"]]
     # the v6 QX cases (fans 80 / 113 g) stay as written on 2026-11-10 (wiring/build_wiring.py cites "v6 CAD, fans 80 g")
     mb["cases"][CASE] = items(Pm.FAN["mass_g"])
-    mb["note_v7"] = (f"{CASE}: active fan set {Pm.FAN_ID} (flight_params.FANS, provisional until measured), printed parts "
+    mb["note_v7"] = (f"{CASE}: active fan set {Pm.FAN_ID} (flight_params.FANS, from the listing drawing), printed parts "
                      f"from {src}; fan mass at 45 mm down each axis; batteries 151 g (CNHL listing); "
                      "stack 24 g + 6 g hardware; MTF-01 4.5 g; wiring "
                      f"{wires['left'] + wires['right']:.0f} g from checks/lead_lengths.json plus 20 g screws, straps and ties.")

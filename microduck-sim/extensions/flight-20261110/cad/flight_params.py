@@ -13,8 +13,9 @@ PRINTER = "H2S"                                  # default club printer; one STL
 # ------------------------------------------------------------------ the fan: one named parameter set, one source
 # Axial positions t are measured from the inlet lip face toward the motor (mm). Every fan-dependent dimension of the
 # nacelle (bore, axial stops, clamp length, ear pockets, screw radius, middle web), the fan envelope used by the
-# clearance checks, the lead exit and the lead lengths derive from the active set. When the real fan is measured
-# (cad/FAN-MEASURE.md), edit only FANS["ARESWEI_HDS001"] and rebuild.
+# clearance checks, the lead exits and the lead lengths derive from the active set. "tol" is the band (mm) every
+# position and size may be off by; the nacelle fits any fan inside it (clamp range "clamp_od", foam liner, stop and
+# pocket clearances), and the fan envelope used by the clearance checks is the largest fan in the band.
 # Optional keys: band_* (raised band above the clamp), spinner_* (nose cone ahead of the lip face), ear_* (moulded ears).
 FANS = {
     "QX_50_12B": dict(
@@ -28,23 +29,27 @@ FANS = {
         stator_t=(39.08, 46.5), stator_od=(45.0, 25.8),
         motor_od=25.8, motor_t=(46.5, 75.8),
         lead_t=(47.0, 49.0), lead_len=70.0, lead_od=1.6,   # three leads leave radially at the motor front ring
-        mass_g=80.0,
+        mass_g=80.0, tol=0.4, clamp_od=(53.6, 54.4),
     ),
     "ARESWEI_HDS001": dict(
-        source=("ARESWEI HDS001 50 mm 11-blade 4650KV (Amazon B0H4KJLR6P CW / B0H4KSDT77 CCW). PROVISIONAL: no maker drawing. "
-                "Pixel-scaled from the listing side view (3.3 / 2.3 / 2.0 / 1.3 / 0.9 inch labels, inch values rounded to 0.1, "
-                "so +-3 %): scale 9.24 px/mm from the 2.3 inch lip; front view for the ears and the lead direction. Duct OD "
-                "conflict: the coordinator read 53..54.5, the duct/lip pixel ratio 0.867 gives 50.3..52.0 (rotor 49 mm per "
-                "the seller fits the smaller value); 52.0 used until measured. Seller: 77 g, leads ~140 mm, 3.5 mm bullets. "
-                "Measure on arrival (cad/FAN-MEASURE.md) before the nacelle plate is sliced."),
-        lip_od=59.0, lip_t=(0.0, 5.4),           # removable inlet ring (flare), modelled as a cylinder of its largest OD
-        duct_od=52.0, duct_t=(5.4, 32.6),        # straight clampable duct
-        rim_od=54.6, rim_t=(32.6, 33.6),         # rear rim flange (1.3 mm proud of the duct): lower axial stop
-        stator_t=(33.6, 43.0), stator_od=(53.0, 20.0),     # tail cone behind the rim
-        motor_od=25.5, motor_t=(43.0, 69.0),     # can 25..26, end cap and shaft tip at t 69 (overall 81..84 with the spinner)
-        spinner_od=22.0, spinner_t=(-12.8, 0.0), # nose cone stands 12.8 above the lip face
-        ear_t=(17.9, 27.6), ear_r=31.5, ear_w=8.0,          # two moulded ears 180 deg apart, screw boss each (hole unknown)
-        ear_from_lead_deg=(-45.0, 135.0),        # seen from the inlet, counter-clockwise: ears at lead -45 and lead +135
+        source=("ARESWEI HDS001 50 mm 11-blade 4650KV (Amazon B0H4KJLR6P CW / B0H4KSDT77 CCW). Fan dimensions come from the "
+                "listing dimension drawing, no caliper step (Shawn 2026-11-10). STATED (each rounded to 0.1 inch, so +-1.3 mm): "
+                "overall spinner tip to motor end 3.3 in = 83.8, inlet lip OD 2.3 in = 58.4, rear ring OD 2.0 in = 50.8, "
+                "housing lip face to rear ring 1.3 in = 33.0, motor can OD 0.9 in = 22.9. PIXEL-SCALED from the same drawing "
+                "with the 2.3 in lip as the scale (9.33 px/mm): straight duct OD 50.6, rear ring 52.9 (the stated 2.0 in and "
+                "the pixels disagree by 2 mm: the band below spans both), inlet flare 5.4 long, spinner tip 12.8 ahead of the "
+                "lip face, ear block t 17.9..27.6 reaching r ~31.5 (inlet view), leads leaving the motor front ring at t "
+                "41..44.5. Seller: 77 g, leads ~140 mm, 3.5 mm bullets. Ear width and hole, and which of the mirror-image "
+                "lead directions the moulding has, are not shown: the nacelle accepts every option."),
+        tol=1.5,                                 # every position and size below may be off by this much (stated +-1.3)
+        lip_od=58.4, lip_t=(0.0, 5.4),           # removable inlet ring (flare), modelled as a cylinder of its largest OD
+        duct_od=50.6, duct_t=(5.4, 32.0),        # straight clampable duct (pixel); ends at the rear ring
+        clamp_od=(49.1, 52.5),                   # duct OD range the clamp must close on: pixel 50.6 +-1.5, and at least 49.5..52.5
+        rim_od=52.9, rim_t=(32.0, 33.0),         # rear ring (pixel 52.9; stated 2.0 in = 50.8), back face at the stated 33.0
+        stator_t=(33.0, 43.0), stator_od=(52.0, 20.0),     # tail cone behind the rim
+        motor_od=22.9, motor_t=(43.0, 71.0),     # stated can OD; motor end = overall 83.8 - spinner 12.8
+        spinner_od=22.0, spinner_t=(-12.8, 0.0), # nose cone ahead of the lip face
+        ear_t=(17.9, 27.6), ear_r=31.5, ear_w=8.0,          # two moulded ears 180 deg apart, screw boss each (not used)
         lead_t=(41.0, 44.5), lead_len=140.0, lead_od=2.4,
         mass_g=77.0,
     ),
@@ -66,51 +71,97 @@ def fan_point(which, t, side=+1):
     return (FAN_X[which] + d * S * t, side * FAN_Y, LIP_Z - C * t)
 
 
-def lead_angle(side=+1):
-    """Direction (deg in the plane across the fan axis, 0 = +x forward, 90 = +y left) in which the three motor leads leave.
-    With ears the fan is turned so both ears lie in the nacelle split plane (0 / 180 deg, captured between the halves);
-    the moulding then leaves two possible lead directions and the more inboard one is used. Without ears: straight inboard."""
+def lead_angles(side=+1):
+    """Every direction (deg in the plane across the fan axis, 0 = +x forward, 90 = +y left) in which the three motor leads
+    may leave. With ears the fan is turned so both ears lie in the nacelle split plane (0 / 180 deg, captured between the
+    halves); the inlet view shows the leads 45 deg off the ears, and a mirror-image moulding cannot be ruled out, so all
+    four diagonals are possible: the nacelle leaves each one open and the lead lengths take the longest. Without ears:
+    straight inboard."""
     if "ear_t" not in FAN:
-        return 270.0 if side > 0 else 90.0
-    cands = sorted({(e - o) % 360 for e in (0.0, 180.0) for o in FAN["ear_from_lead_deg"]})
-    return min(cands, key=lambda a: side * math.sin(math.radians(a)))
+        return [270.0 if side > 0 else 90.0]
+    return [45.0, 135.0, 225.0, 315.0]
 
 
 # ------------------------------------------------------------------ nacelle clamp (every number from FAN or print_fit)
 PIL_M2 = F.pilot("M2", "horizontal", "any", PRINTER)          # 2.15 on the H2S (same call as build_pack PIL_H)
+# Clamp that fits every fan in the band, nothing measured: one layer of 1 mm foam double-sided tape lines each bore (the
+# foam tape on record in the robotics memory, and Shawn allows 3M foam tape); the largest duct (clamp_od max) presses the
+# tape to TAPE["firm"] with the halves fully open, and the smallest grips once the tape is at TAPE["grip"]; the halves
+# close the difference at both seams under the five clamp screws. The screw bite then stays inside 2.5 d (PRINT-FIT.md
+# "Engagement") over the whole travel because each head sits in a counterbore that leaves TAPE-independent "under_head".
+TAPE = dict(free=1.0, grip=0.8, firm=0.35)
+TOL = FAN.get("tol", 0.0)
+CLAMP = FAN.get("clamp_od", (FAN["duct_od"], FAN["duct_od"]))
+_bore = CLAMP[1] + 2 * TAPE["firm"]
+_travel = _bore - (CLAMP[0] + 2 * TAPE["grip"])                # how far the halves close between the largest and smallest fan
+_res = 0.5                                                     # seam gap left at the smallest fan
+_eng_max = F.MAX_ENGAGEMENT_D["any"] * 2.0                     # 5.0 mm bite at the smallest fan
 NAC = dict(
-    bore=F.clearance("locating") * 2 + FAN["duct_od"],         # locating 0.15/side on the bought duct (vertical in print)
+    bore=round(_bore, 2), tape=TAPE, clamp_od=CLAMP,
+    travel=round(_travel, 2), split_gap=round(_travel + _res, 2),   # printed gap at each seam; closes by "travel" at most
+    screw_len=10.0, under_head=round(10.0 - _eng_max - _res, 2),    # material under the head: bite 5.0 (smallest) .. 5.0 - travel (largest)
     wall=3.0,
-    t0=FAN["duct_t"][0] + 0.5, t1=FAN["duct_t"][1] - 0.5,      # collar on the straight duct, 0.5 axial play to the stops
-    split_gap=0.6,                                             # 0.3 per half: screws draw the halves onto the duct (max squeeze 0.15/side)
-    relief=FAN["rim_od"] + 1.5,                                # skirt bore below the collar clears the rim
-    front_t=FAN["duct_t"][0] + 0.3,                            # lip (and band) keep-out ends here
-    keep_lip_r=max(FAN["lip_od"], FAN.get("band_od", 0.0)) / 2 + 1.0,
-    ear_r_screw=F.clear("M2", "horizontal") / 2 + 0.0,
+    # collar ends clear the lip flare and the rear ring by tol + 0.5 whichever way the fan is off
+    t0=FAN["duct_t"][0] + TOL + 0.5, t1=FAN["duct_t"][1] - TOL - 0.5,
+    relief=FAN["rim_od"] + 2 * TOL + 1.0,                      # skirt bore below the collar clears the largest rear ring
+    front_t=FAN["lip_t"][1] + TOL + 0.3,                       # lip (and band) keep-out ends here
+    keep_lip_r=(max(FAN["lip_od"], FAN.get("band_od", 0.0)) + 2 * TOL) / 2 + 1.0,
     ear_out=4.0,                                               # block material past the screw axis
-    inner_y=7.0, outer_y=5.0,                                  # block/web depth each side of the split (pilot side 7 >= 6, clamp side 5)
+    inner_y=7.0, outer_y=5.0,                                  # block/web depth each side of the split plane (minimums)
     lug_x=(-45.0, -36.8), lug_y=(70.0, 82.0), lug_top=58.0,     # inner half: bolts to the wing arm web front face (x -45)
     lug_screw_y=74.0, lug_screw_z=(37.0, 44.5, 52.0),
 )
+NAC["bite"] = (round(NAC["screw_len"] - NAC["under_head"] - NAC["split_gap"], 2), round(_eng_max, 2))   # largest .. smallest fan
 # the skirt below the collar is bored out to clear the rim: keep >= 1.6 mm of wall there too
 NAC["wall"] = max(NAC["wall"], round((NAC["relief"] - NAC["bore"]) / 2 + 1.6, 1))
 NAC["r_out"] = NAC["bore"] / 2 + NAC["wall"]
-if "ear_t" in FAN:   # pocket for each ear, half in each nacelle half (ears lie in the split plane)
-    NAC["ear_pocket"] = dict(t=(FAN["ear_t"][0] - 0.5, FAN["ear_t"][1] + 0.5), r=FAN["ear_r"] + 0.5, w=FAN["ear_w"] + 0.6)
-    # each half keeps >= 1.6 mm of skin outside its half of the pocket (rule: nothing under 1.2 mm)
-    NAC["outer_y"] = max(NAC["outer_y"], round(NAC["ear_pocket"]["w"] / 2 + 1.6, 1))
-    NAC["inner_y"] = max(NAC["inner_y"], round(NAC["ear_pocket"]["w"] / 2 + 1.6, 1))
+if "ear_t" in FAN:
+    # one pocket per ear, centred on the split plane (half in each half). Clearance: the ear may be tol off in position and
+    # size each way, plus 0.3; across the split, also the half's own travel (the halves sit split_gap / 2 off the plane
+    # when printed and close to _res / 2), so the ear never bears on a pocket side before the clamp grips.
+    hw = (FAN["ear_w"] + TOL) / 2 + TOL + 0.3 + (NAC["split_gap"] - _res) / 2
+    NAC["ear_pocket"] = dict(t=(FAN["ear_t"][0] - TOL - 0.3, FAN["ear_t"][1] + TOL + 0.3), r=FAN["ear_r"] + TOL + 0.3,
+                             half_w=round(hw, 2))
+    # each half keeps >= 1.6 mm of skin outside the pocket (rule: nothing under 1.2 mm)
+    NAC["outer_y"] = max(NAC["outer_y"], round(hw + 1.6, 1))
+    NAC["inner_y"] = max(NAC["inner_y"], round(hw + 1.6, 1))
+# the clamp side must hold the head seat over under_head; the pilot side must take the 5.0 mm bite plus 1 mm
+NAC["outer_y"] = max(NAC["outer_y"], round(NAC["split_gap"] / 2 + NAC["under_head"], 1))
+NAC["inner_y"] = max(NAC["inner_y"], round(NAC["split_gap"] / 2 + _eng_max + 1.0 + 1.2, 1))
+NAC["head_seat"] = F.HEAD_SEAT["M2"]
 # clamp screws along y through the fore and aft blocks: 4.5 mm driver room past the collar, and >= 2 mm of wall to an ear pocket
-NAC["screw_r"] = round(max(NAC["r_out"] + 4.5, NAC.get("ear_pocket", {}).get("r", 0.0) + PIL_M2 / 2 + 2.0), 2)
-NAC["ear_screw_t"] = (round(NAC["t0"] + 4.1, 2), round(NAC["t1"] - 4.4, 2))
+NAC["screw_r"] = round(max(NAC["r_out"] + 4.5, NAC.get("ear_pocket", {}).get("r", 0.0) + NAC["head_seat"][0] / 2 + 2.0), 2)
+# upper screw: 1.6 mm of skin between the block top (collar top) and the tip of the head-seat teardrop (r * sqrt 2);
+# t0 + 4.1 left 0.85 mm there once the seat grew to 4.6 mm (2026-11-10 check)
+NAC["ear_screw_t"] = (round(NAC["t0"] + (1.6 + NAC["head_seat"][0] / 2 * 2 ** 0.5) / C, 2), round(NAC["t1"] - 4.4, 2))
 # middle web between the two collars: its faces stand 2.8 mm past each collar's outer surface at the collar bottom, where
-# the canted collars reach furthest apart, so a web face never crosses a collar surface (that left a 1.0 mm sliver);
-# its screw sits below the ear pockets
+# the canted collars reach furthest apart, so a web face never crosses a collar surface (that left a 1.0 mm sliver).
+# Its screw sits above the ear pockets when there is room (below them the web runs into the print bed), else below.
 _xr = FAN_X["rear"] - S * NAC["t1"] + NAC["r_out"] / C
 _xf = FAN_X["front"] + S * NAC["t1"] - NAC["r_out"] / C
 NAC["web_x"] = (round(_xr - 2.8, 2), round(_xf + 2.8, 2))
-NAC["web_screw_t"] = round(max(NAC["t1"] - 3.4, NAC.get("ear_pocket", {}).get("t", (0, 0))[1] + PIL_M2 / 2 + 1.5), 2)
+if "ear_pocket" in NAC:
+    # web screw above the two facing ear pockets, centred between the pocket tops (+1.2 skin under its head seat) and the
+    # lip keep-out planes over it (+1.2 skin above); the web rises to the collar top between the two lip keep-outs
+    _p, _rh, _xm = NAC["ear_pocket"], NAC["head_seat"][0] / 2, sum(NAC["web_x"]) / 2
+    _z_lo = LIP_Z - C * _p["t"][0] - S * _p["r"] + 1.2 + _rh
+    _ft = NAC["front_t"]
+
+    def _plane(x, which):
+        d = abs(x - fan_point(which, _ft)[0]) / C
+        return LIP_Z - _ft * C - d * S if d < NAC["keep_lip_r"] else LIP_Z - NAC["t0"] * C
+    _z_hi = min(_plane(_xm - _rh, "rear"), _plane(_xm + _rh, "front"), LIP_Z - NAC["t0"] * C - _rh) - 1.2
+    assert _z_lo < _z_hi, f"no room for the middle web screw: {_z_lo:.2f} .. {_z_hi:.2f}"
+    NAC["web_screw_t"] = round((LIP_Z - (_z_lo + _z_hi) / 2) / C, 2)
+    NAC["web_screw_room_z"] = (round(_z_lo, 2), round(_z_hi, 2))
+else:
+    NAC["web_screw_t"] = round(NAC["t1"] - 3.4, 2)
 NAC["bed_z"] = LIP_Z - NAC["t1"] * C - NAC["r_out"] * S          # lowest collar point: print bed plane of both halves
+if "ear_pocket" in NAC:
+    # the canted pocket floor dips toward the middle web; keep 1.6 mm of floor under its lowest corner (it sat 0.25 mm
+    # above the collar-bottom bed, 2026-11-10 check)
+    _p = NAC["ear_pocket"]
+    NAC["bed_z"] = min(NAC["bed_z"], LIP_Z - _p["t"][1] * C - _p["r"] * S - 1.6)
 
 # ------------------------------------------------------------------ wing plate (one piece, printed front face down)
 WING = dict(

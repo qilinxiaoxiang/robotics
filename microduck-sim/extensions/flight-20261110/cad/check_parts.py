@@ -51,7 +51,8 @@ DESIGNED = {   # contacts by design (face contact or a bought part seated in its
     ("wing_plate", "battery_backpack_frame"): "backpack front plate on the centre plate (face contact x -48.5)",
     ("tray_L", "wing_plate"): "flange on the arm web (face contact)", ("tray_R", "wing_plate"): "flange on the arm web",
     ("nacelle_inner_L", "wing_plate"): "lug on the arm web", ("nacelle_inner_R", "wing_plate"): "lug on the arm web",
-    ("nacelle_inner_L", "nacelle_outer_L"): "split plane, 0.6 gap", ("nacelle_inner_R", "nacelle_outer_R"): "split plane",
+    ("nacelle_inner_L", "nacelle_outer_L"): "split plane, 3.0 printed seam gap (screws close it)",
+    ("nacelle_inner_R", "nacelle_outer_R"): "split plane, 3.0 printed seam gap (screws close it)",
     ("fc_bracket", "wing_plate"): "plate on the flange bosses",
     ("dummy:battery_L", "tray_L"): "pack on its deck", ("dummy:battery_R", "tray_R"): "pack on its deck",
     ("dummy:mtf01", "fc_bracket"): "under its shelf",
@@ -256,6 +257,9 @@ def main():
     print("mtf cone:", res["mtf_cone"])
     for n, t in res["thickness"].items():
         print(f"  thickness {n:18s} min {t['min_mm']} p1 {t['p1_mm']} under1.2 {t['n_under_1_2']}/{t['n']}")
+    clamp = json.loads((B / "build.json").read_text()).get("clamp")
+    if clamp:
+        print("clamp:", clamp["says"])
     print("ISSUES:" if issues else "no issues", *issues, sep="\n  ")
     print(f"{res['seconds']} s")
 

@@ -20,11 +20,15 @@ case "$1" in
     rsync -a --delete $LOCAL/$SIM/guide/print/world/ mac-mini:$REMOTE/$SIM/guide/print/world/
     rsync -a $LOCAL/$SIM/guide/print/design_contract.py mac-mini:$REMOTE/$SIM/guide/print/
     rsync -a $LOCAL/$SIM/CURRENT-STATE.json mac-mini:$REMOTE/$SIM/          # the contract's bought-part check reads it
+    # the bounded CAD runner: jobs on the mini run under it too (zsh cad/mini_sync.sh run '$RUN -- $PY ...'; $RUN --status)
+    ssh mac-mini "mkdir -p $REMOTE/$SIM/build-pack-20260913/redesign-20260913/head-redesign-20261008"
+    rsync -a $LOCAL/$SIM/build-pack-20260913/redesign-20260913/head-redesign-20261008/run_bounded_cad.py \
+      mac-mini:$REMOTE/$SIM/build-pack-20260913/redesign-20260913/head-redesign-20261008/
     rsync -a --exclude='*.html' --exclude='duck_mesh.json' --exclude='duck_poses.json' --exclude='cad/build/' --exclude='cad/slices/' \
       $LOCAL/$FL/ mac-mini:$REMOTE/$FL/
     ;;
   run)
-    ssh mac-mini "cd $REMOTE/$FL && PY=\$HOME/.venvs/flight-cad/bin/python && export PY && $2"
+    ssh mac-mini "cd $REMOTE/$FL && PY=\$HOME/.venvs/flight-cad/bin/python && RUN=\"\$PY \$HOME/$REMOTE/$SIM/build-pack-20260913/redesign-20260913/head-redesign-20261008/run_bounded_cad.py\" && export PY RUN && $2"
     ;;
   pull)
     rsync -a --delete mac-mini:$REMOTE/$FL/cad/build/ $LOCAL/$FL/cad/build/

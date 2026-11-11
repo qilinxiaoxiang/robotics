@@ -198,25 +198,37 @@ def fan_keepout(which, side=+1):
          + lcyl(NAC["relief"] / 2, NAC["t1"] + 0.1, 110.0))
     if "ear_pocket" in NAC:
         p = NAC["ear_pocket"]
-        m = m + ear_boxes(p["r"], p["w"], *p["t"])
+        m = m + ear_boxes(p["r"], 2 * p["half_w"], *p["t"])
+        # between the pocket floor and the skirt relief the collar end ring was 0.7 mm thick: open it inside the relief
+        # radius; the ear's motor-side stop is the pocket floor outside that radius (relief/2 .. pocket r)
+        m = m + ear_boxes(NAC["relief"] / 2, 2 * p["half_w"], p["t"][1] - 0.01, NAC["t1"] + 0.2)
+    # a lead slot in every direction the leads may leave (Pm.lead_angles): no printed material there, whichever moulding
+    f, T = FAN, Pm.TOL
+    for a in Pm.lead_angles(side):
+        slot = m3.Manifold.cube([60.0, 9.0, f["lead_t"][1] - f["lead_t"][0] + 2 * T + 1.0])
+        m = m + slot.translate([0.0, -4.5, -f["lead_t"][1] - T - 0.5]).rotate([0, 0, a])
     return fan_place(m, which, side)
 
 
 def fan_dummy(which, side=+1):
-    """Bought-part envelope of the active FAN set: spinner, lip, band, duct, ears, rim, stator cone, motor, lead exit."""
-    f = FAN
-    parts = [lcyl(f["lip_od"] / 2, *f["lip_t"]), lcyl(f["duct_od"] / 2, *f["duct_t"]),
-             lcyl(f["rim_od"] / 2, *f["rim_t"]), lcyl(f["motor_od"] / 2, *f["motor_t"]),
-             lcyl(f["stator_od"][1] / 2, f["stator_t"][0], f["stator_t"][1], r2=f["stator_od"][0] / 2)]
+    """Envelope of the largest fan in the band of the active FAN set (every size + tol, every end pushed out by tol):
+    spinner, lip, band, duct, ears, rim, stator cone, motor, and a lead stub in every possible lead direction."""
+    f, T = FAN, Pm.TOL
+    parts = [lcyl(f["lip_od"] / 2 + T, f["lip_t"][0], f["lip_t"][1] + T), lcyl(Pm.CLAMP[1] / 2, *f["duct_t"]),
+             lcyl(f["rim_od"] / 2 + T, f["rim_t"][0] - T, f["rim_t"][1] + T),
+             lcyl(f["motor_od"] / 2 + T, f["motor_t"][0], f["motor_t"][1] + T),
+             lcyl(f["stator_od"][1] / 2 + T, f["stator_t"][0], f["stator_t"][1], r2=f["stator_od"][0] / 2 + T)]
     if "band_t" in f:
-        parts.append(lcyl(f["band_od"] / 2, *f["band_t"]))
+        parts.append(lcyl(f["band_od"] / 2 + T, *f["band_t"]))
     if "spinner_t" in f:
-        parts.append(lcyl(f["spinner_od"] / 2, *f["spinner_t"], r2=1.5))
+        parts.append(lcyl(f["spinner_od"] / 2 + T, f["spinner_t"][0] - T, f["spinner_t"][1], r2=1.5))
     if "ear_t" in f:
-        parts.append(ear_boxes(f["ear_r"], f["ear_w"], *f["ear_t"]))
-    # three leads leave the motor front ring radially in Pm.lead_angle(side); keep-out 6 x 6 to 8 mm past the can
-    lead = m3.Manifold.cube([f["motor_od"] / 2 + 8.0, 6.0, 6.0]).translate([0.0, -3.0, -f["lead_t"][1] - 1.5])
-    return fan_place(L.union(parts) + lead.rotate([0, 0, Pm.lead_angle(side)]), which, side)
+        parts.append(ear_boxes(f["ear_r"] + T, f["ear_w"] + T, f["ear_t"][0] - T, f["ear_t"][1] + T))
+    # three leads leave the motor front ring radially; a 6 x 6 stub to 8 mm past the can in each possible direction
+    for a in Pm.lead_angles(side):
+        lead = m3.Manifold.cube([f["motor_od"] / 2 + T + 8.0, 6.0, 6.0]).translate([0.0, -3.0, -f["lead_t"][1] - 1.5])
+        parts.append(lead.rotate([0, 0, a]))
+    return fan_place(L.union(parts), which, side)
 
 
 def nacelle(side=+1):
@@ -244,6 +256,8 @@ def nacelle(side=+1):
     ft = N["front_t"]
     dists = ((Pm.fan_point("front", ft)[0] - N["web_x"][1]) / C, (N["web_x"][0] - Pm.fan_point("rear", ft)[0]) / C)
     web_top = Pm.LIP_Z - ft * C - min(min(d, N["keep_lip_r"]) for d in dists) * S - 0.3
+    if "ear_pocket" in N:      # the web screw sits above the ear pockets: the web rises to the collar top, the lip keep-outs cut it
+        web_top = Pm.LIP_Z - N["t0"] * C
     solids.append(L.box((N["web_x"][0], y0, bed), (N["web_x"][1], y1, web_top)))
     holes.append((sum(N["web_x"]) / 2, Pm.fan_point("front", N["web_screw_t"], side)[2]))
     keep = fan_keepout("front", side) + fan_keepout("rear", side)
@@ -257,15 +271,21 @@ def nacelle(side=+1):
     inner = (solid ^ inner_space) + ((lug - keep) ^ above)
     outer = solid ^ outer_space
     ci, co = [], []
+    # clamp screws: blind pilot in the inner half for the longest bite (smallest fan, seams nearly closed) + 1 mm; the head
+    # sits in a counterbore so under_head of material stays under it and the bite stays within 2.5 d over the travel
+    uh, bite_max = N["under_head"], N["bite"][1]
+    pdep = bite_max + 1.0
+    hs_d = N["head_seat"][0]
     for k, (x, z) in enumerate(holes):
-        ci.append(L.teardrop(PIL_H, (x, side * (Pm.FAN_Y - N["inner_y"] - 0.5), z), (0, side, 0), N["inner_y"] + 0.5 - g + 0.01, up=(0, 0, 1)))
+        ci.append(L.teardrop(PIL_H, (x, side * (Pm.FAN_Y - g - pdep), z), (0, side, 0), pdep + 0.01, up=(0, 0, 1)))
         co.append(L.teardrop(CLR_H, (x, side * (Pm.FAN_Y + g - 0.5), z), (0, side, 0), N["outer_y"] + 1.0, up=(0, 0, 1)))
-        clamped = N["outer_y"] - g + N["split_gap"]
+        co.append(L.teardrop(hs_d, (x, side * (Pm.FAN_Y + g + uh), z), (0, side, 0), N["outer_y"] - g - uh + 1.0, up=(0, 0, 1)))
+        clamped = uh + (N["split_gap"] - N["travel"])           # smallest fan: seams 0.5 apart, bite 5.0
         if side > 0:
-            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], clamped, "through", 10 - clamped)
+            fit_pilot(f"nac-split-pilot-{k}", "nacelle_inner_L", Y_AX, PIL_H, [0, 0, 1], clamped, round(pdep, 2), round(10 - clamped, 2))
             fit_clear(f"nac-split-clear-{k}", "nacelle_outer_L", Y_AX, CLR_H, [0, 0, 1])
-        screw(f"nac-{nm}-{k}", "M2 x 10", f"nacelle outer {nm} to nacelle inner {nm} (clamps the duct band)",
-              (x, side * (Pm.FAN_Y + N["outer_y"]), z), (0, -side, 0), round(clamped, 2), f"nacelle {nm}")
+        screw(f"nac-{nm}-{k}", "M2 x 10", f"nacelle outer {nm} to nacelle inner {nm} (closes the seams onto the taped duct)",
+              (x, side * (Pm.FAN_Y + g + uh), z), (0, -side, 0), round(uh, 2), f"nacelle {nm}")
     for k, z in enumerate(N["lug_screw_z"]):
         ci.append(L.teardrop(PIL_H, (N["lug_x"][0] - 0.01, side * N["lug_screw_y"], z), X_AX, N["lug_x"][1] - N["lug_x"][0] + 0.02, up=(0, 0, 1)))
         if side > 0:
@@ -404,6 +424,14 @@ def main():
             f.unlink()
     info["nacelle"] = dict(bed_z=round(NAC["bed_z"], 2), collar_top=round(ninfo["top"], 2), bore=NAC["bore"],
                            holes_xz=[[round(a, 2) for a in p] for p in ninfo["holes"]])
+    info["clamp"] = dict(
+        fan=Pm.FAN_ID, duct_od_range=list(Pm.CLAMP), tol=Pm.TOL, bore=NAC["bore"], tape=NAC["tape"],
+        printed_seam_gap=NAC["split_gap"], screw_travel=NAC["travel"], under_head=NAC["under_head"], bite_mm=list(NAC["bite"]),
+        collar_t=[round(NAC["t0"], 2), round(NAC["t1"], 2)], ear_pocket=NAC.get("ear_pocket"), lead_slots_deg=Pm.lead_angles(1),
+        says=(f"closes on duct OD {Pm.CLAMP[0]}..{Pm.CLAMP[1]} mm with one layer of 1 mm foam tape in each bore: largest fan with "
+              f"the seams {NAC['split_gap']} apart (tape at {NAC['tape']['firm']}), smallest after the screws close them "
+              f"{NAC['travel']} mm (tape at {NAC['tape']['grip']}); M2 x 10 bite {NAC['bite'][0]}..{NAC['bite'][1]} mm"))
+    print("clamp:", info["clamp"]["says"])
     info["fan"] = dict(lip_centre_z=round(Pm.LIP_Z, 2),
                        motor_end_axis={w: [round(v, 2) for v in Pm.fan_point(w, FAN["motor_t"][1])] for w in ("front", "rear")},
                        motor_end_lowest_z=round(Pm.LIP_Z - FAN["motor_t"][1] * C - FAN["motor_od"] / 2 * S, 2))
