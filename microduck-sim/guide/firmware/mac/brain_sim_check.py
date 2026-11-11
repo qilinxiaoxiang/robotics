@@ -1100,6 +1100,8 @@ def run(args):
     if args.cmd_replay:  # [[s after --walk-at, control-file command], ...] in time order (scorecard.py writes it)
         replay = [(float(rt), dict(rc)) for rt, rc in json.load(open(args.cmd_replay))]
     settled_at = None
+    if STORY is not None:  # fullflow_sim.py: a scripted scene drives the commands and records the video
+        STORY.setup(m, d, sp, args, trunk)
     for tick in range(int(T / 0.02)):
         t = tick * 0.02
         # what the sensors report, in commanded (encoder) frame and the BNO's own frame
@@ -1188,6 +1190,8 @@ def run(args):
                     if quack_ok[qt]:
                         want["head"] = quack_head_pose({"head_roll": args.quack_roll, "head_yaw": args.quack_yaw,
                                                         "head_pitch": args.quack_pitch}, t - qt, brain)
+        if STORY is not None:
+            want = STORY.want(t, want, brain)
         if sp is not None and sp.active(t) and guard["stop"] is None:
             want = sp.want(t)
         if stop_at is not None and t >= stop_at:
@@ -1369,6 +1373,10 @@ def run(args):
             sp.observe(t, brain, info, tilt, tz)
         if sp_trace is not None:
             sp_trace.row(t, brain, info, goal, m, d, sp, qa, z0, names, tilt, tz)
+        if STORY is not None:
+            STORY.after(t, brain, info, tilt)
+            if STORY.done:
+                break
         if args.kick_at is not None:
             fz = float(d.geom_xpos[kick_geom, 2])
             if kick_start_t is None:
@@ -1586,6 +1594,7 @@ def hold_summary(args, rows, hand, guard, stable_after, leg_names):
 
 
 tick_log = None
+STORY = None  # fullflow_sim.Story: setup(m, d, sp, args, trunk), want(t, want, brain) -> want, after(t, brain, info, tilt), done
 
 
 def head_keys(keys, t):
