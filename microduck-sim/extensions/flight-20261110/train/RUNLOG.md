@@ -338,3 +338,17 @@ running total of worst cases; real spend read from `modal billing report` before
   task Mjlab-GroundPick-Flat-MicroDuck, delta bend3, 4096 envs, 2500 iterations or 3 h, 100 critic warm-up, max-lr 3e-4,
   saves every 100, reward guard off, no track guard. RUNNING at 05:46. Expected end about 09:00 (3 h cap plus setup).
   Quota at 05:46: 12.20 of 30 h used, 17.80 left; universal pair up to about 8.3 h more and the bend 3 h fit.
+- 06:01 fk-bend-a ERROR at start, both jobs: "FileNotFoundError: /root/assets/init/groundpick61.onnx". Cause: the
+  shared kernel_entry.py copies only assets/* and assets/manifests/* to /root/assets; the start policies added under
+  assets/init/ never reached the kernel. The same applies to the universal kernel pushed 04:03: its pulled source shows
+  fk-uni-a with --onnx /root/assets/init/fq2_1999.onnx and no init copy, so run A (from fq2 1999) died at start and
+  only run B (from walk61, /root/assets/walk61.onnx) is training; the paired kernel stays RUNNING on B alone and its
+  log is blind until the end. Fix in kaggle_flight.py's own copy of the entry (copies assets/init/*, records the list);
+  the shared entry is unchanged. Pushed source of the new kernel checked: the init copy is in it, staged
+  groundpick61.onnx sha ffbf5109 equals the local file.
+- 06:04 Kaggle kernel shawnxiang9527/microduck-fk-uni-a2, paired: fk-uni-a2 (GPU 0) = universal run A exactly as
+  approved (fq2 1999, universal2, 5000 iterations, cap 10 h, track guard 2.0, seed 1); fk-bend-a2 (GPU 1) = the bend
+  run (groundpick61, bend3, 2500 iterations or 3 h, seed 1; the plan's one first run of about 3 h). One session for
+  both, since run B holds the other session until about 10:45. Expected end of the kernel about 12:50 (5000 iterations
+  at 0.21 it/s plus setup), latest 16:10 (cap); the bend job finishes about 09:15 but its output comes with the kernel.
+  Quota estimate: 12.75 used + run B 4.7 + this kernel 6.9 = about 24.3 of 30 h, about 5.7 h left for seepick61.

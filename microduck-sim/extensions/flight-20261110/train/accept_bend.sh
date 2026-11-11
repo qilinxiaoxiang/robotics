@@ -1,7 +1,8 @@
 #!/bin/zsh
-# Acceptance of the bend fine-tune (BEND-PLAN.md section 6) after the Kaggle pair fk-bend-a/b ends. MacBook side:
-# fetch, stage models dirs, then every simulation runs on the Mac mini, one at a time, each job under 10 minutes.
-#   zsh train/accept_bend.sh fetch      kaggle fetch fk-bend-a; stage ckpt/bend3_<a|b>[_best]/ (fq2 1999 in the
+# Acceptance of the bend fine-tune (BEND-PLAN.md section 6) after its Kaggle kernel ends (fk-bend-a2 rides in the
+# paired kernel fk-uni-a2). MacBook side: fetch, stage models dirs, then every simulation runs on the Mac mini, one at
+# a time, each job under 10 minutes.
+#   zsh train/accept_bend.sh fetch [K] [runs]  kaggle fetch K; stage ckpt/bend_a2[_best]/ (fq2 1999 in the
 #                                       stand and walk slots, the fine-tuned groundpick61, the original seepick61)
 #   zsh train/accept_bend.sh runtime R  style_eval bend case (PICKUP command, 20 episodes) at full / batteries out /
 #                                       none for models dir ckpt/R -> eval/st_<R>_gp_<load>.json
@@ -14,14 +15,19 @@ RL=/Users/xiangzheng/code/robotics/microduck-sim/microduck_rl
 GP="--walk-at 1 --walk-s 0 --gp-at 2 --gp-phase 0.33 --gp-hold-s 4"
 case "$1" in
   fetch)
-    (cd $RL && python3 cmu/finetune/flight/kaggle_flight.py fetch fk-bend-a 2>&1 | grep -v outdated | tail -4)
-    for r in a b; do
-      RUN=$T/kaggle/out/fk-bend-a/runs/fk-bend-$r
+    # $2 kernel (default fk-uni-a2, the paired kernel that carries fk-bend-a2), $3.. bend run names (default fk-bend-a2)
+    K=${2:-fk-uni-a2}
+    RUNS=(${@:3})
+    [ ${#RUNS} -eq 0 ] && RUNS=(fk-bend-a2)
+    (cd $RL && python3 cmu/finetune/flight/kaggle_flight.py fetch $K 2>&1 | grep -v outdated | tail -4)
+    for rn in $RUNS; do
+      RUN=$T/kaggle/out/$K/runs/$rn
+      r=${rn#fk-}
       for v in "" _best; do
-        D=$T/ckpt/bend3_$r$v
+        D=$T/ckpt/${r//-/_}$v
         mkdir -p $D
         cp $T/ckpt/fq2_1999/stand61.onnx $T/ckpt/fq2_1999/walk61.onnx $T/ckpt/bend_spec/seepick61.onnx $D/
-        cp $RUN/fk-bend-$r$v.onnx $D/groundpick61.onnx
+        cp $RUN/$rn$v.onnx $D/groundpick61.onnx
         print "staged $D"
       done
       python3 -c "import json,sys; r=json.load(open(sys.argv[1])); print({k: r.get(k) for k in ('final_iter','stop_reason','elapsed_s')})" $RUN/run_record.json
