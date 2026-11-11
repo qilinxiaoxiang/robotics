@@ -146,10 +146,10 @@ FLIGHT_FRAME = ['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'fc', 'capacitor']
 # ---------------------------------------------------------------------------------------------- screws
 def screw_spec(s):
     sp = s['spec']
+    if sp.startswith('M2 x 12 (with M2 washer)'):
+        return 'M2 × 12 内六角 + M2 垫片', 'tap', 12.0, 'M2 垫片'
     if sp.startswith('M2 x 12'):
         return 'M2 × 12 内六角', 'machine', 12.0, None
-    if sp.startswith('M2 x 10 (with M2 washer)'):
-        return 'M2 × 10 + M2 垫片', 'tap', 10.0, 'M2 垫片'
     if sp.startswith('M3 x 6 male-female'):
         return 'M3 × 6 尼龙公母柱', 'machine', 12.0, None
     if sp.startswith('M3 x 8 male-female'):
@@ -216,6 +216,8 @@ cable('c-batR', f'右电池尾线（红黑 12 AWG，{W.BAT_LEN["R"]["pigtail_mm"
 for nm, zh in (('FL', '左前'), ('RL', '左后'), ('FR', '右前'), ('RR', '右后')):
     cable(f'c-{nm}', f'{zh}风扇线（红黄黑 16 AWG，{W.FAN_LEN[nm]["ext_mm"]} mm，加风扇自带线）', 'power-15v', '#c99a00',
           L[f'fan {nm}']['pts'], 2.2, W.FAN_LEN[nm]['ext_mm'], frm='电调焊盘', to=f'{zh}风扇子弹头')
+# lead_lengths.json needs 170 mm; the kit's only SH-to-female-Dupont leads are 15 and 20 cm (its 30 cm lead is SH at both ends)
+assert L['A7Z to FC']['needed_mm'] <= 200, L['A7Z to FC']
 cable('c-a7z', 'A7Z ↔ 飞控线（SH1.0 转杜邦，20 cm，三根）', 'uart', '#1f9d55', L['A7Z to FC']['pts'], 1.5, 200,
       frm='飞控 UART1', to='A7Z 14、16、18 号针')
 LEGEND = [{'kind': 'power-20v', 'color': '#c62828', 'label': '电池尾线（12 AWG 红黑）'},
@@ -337,14 +339,18 @@ def club_rows():
     ]
 
 
+N_POST = sum(s['spec'].startswith('M2 x 12 (existing') for s in SCREWS)
+N_CLAMP = sum(s['spec'].startswith('M2 x 12 (with M2 washer)') for s in SCREWS)
+N_M2 = {n: sum(re.fullmatch(f'M2 x {n}', s['spec']) is not None for s in SCREWS) for n in (4, 8, 10)}
+assert N_POST == 4 and N_CLAMP and all(N_M2.values()), (N_POST, N_CLAMP, N_M2)
 TOOLS = [
     '烙铁（焊 12 AWG 和 XT60 要用大烙铁头、温度调高）、焊锡、助焊剂、夹线的第三只手',
     '剥线钳（12 AWG、16 AWG）、斜口钳',
     '热风枪（或打火机）缩热缩管',
-    '1.5 mm 内六角起子（只用于 4 颗 M2 × 12 内六角螺丝）',
+    f'1.5 mm 内六角起子（拧 {N_POST + N_CLAMP} 颗 M2 × 12 内六角螺丝）',
     '平时拧 M2 螺丝用的小螺丝刀（M2 × 4、× 8、× 10）',
     '1 mm 厚双面泡棉胶（3M 那种）和剪刀',
-    'Zuorery M2 螺丝盒里的 M2 垫片 10 个和 M2 × 12 内六角螺丝 4 颗',
+    f'Zuorery M2 螺丝盒里的 M2 × 12 内六角螺丝 {N_POST + N_CLAMP} 颗和 M2 垫片 {N_CLAMP} 个',
     'Mac 和一根 USB-C 数据线（转向检查时连飞控）',
     '一条细纸条（转向检查时看风往哪边吹）',
 ]
@@ -376,8 +382,9 @@ step(id='overview', chapter='start', title='飞行背包：先把东西备齐',
                   ['二、要买（状态来自 CURRENT-STATE.json）：'] + ['· ' + r for r in buy_rows()] +
                   ['三、去俱乐部拿：'] + ['· ' + r for r in club_rows()] +
                   ['四、工具和自备的东西：'] + ['· ' + r for r in TOOLS] +
-                  ['螺丝一共五种长度。全书只有一个地方用 M2 × 12（4 颗内六角，从 Zuorery 盒里拿），其它 M2 都是 × 10、× 8、× 4 的自攻螺丝。开工前先把 4 颗 M2 × 12 单独放进一个小盒，盒上写“翼板”。'],
-     warnings=['全部焊接都在第 1 章桌上做完。焊好的电调、尾线和风扇线要先穿过翼板和支架上的小窗，才能焊 XT60 头，所以第 1 章的顺序不要调换。',
+                  [f'M2 × 12 内六角一共 {N_POST + N_CLAMP} 颗，都从 Zuorery 盒里拿，是同一种螺丝：{N_CLAMP} 颗夹两个机舱（每颗配一个 M2 垫片），{N_POST} 颗把翼板和背包拧到 OpenRB 盒子上。',
+                   f'其它 M2 是自攻螺丝：M2 × 10 {N_M2[10]} 颗、M2 × 8 {N_M2[8]} 颗、M2 × 4 {N_M2[4]} 颗。'],
+     warnings=['全部焊接都在第 1 章桌上做完，XT60 头也在桌上焊好。焊好的线带着 XT60 从后面放进翼板的开口槽、穿过支架的方窗，不用拆线。',
                '首次上电（除了第 2 章的转向检查）和第一次飞行不在这一章。'])
 
 # ---- chapter 1: bench
@@ -437,37 +444,21 @@ step(id='b-mtf', chapter='bench', bench=True, title='光流模块拧到支架下
                    '四颗 M2 × 4 从下往上穿过光流的孔，拧进平台，拧到光流贴平就停。'],
      checks=['镜头朝下、前面没有挡住；线从光流上伸出来。'])
 
-step(id='b-xt60R', chapter='bench', bench=True, title='右电池尾线穿过支架上的方窗，再焊 XT60 头', show=['esc', 'capacitor', 'fc_bracket', 'mtf01'],
-     wiring=only(BENCH_POWER, wires={'pig_Rp', 'pig_Rn'}, title='右电池尾线'),
-     prepare=[dict(item='XT60 公头', qty=1, kind='electronic'), dict(item='6 mm 热缩管', qty=2, kind='other')],
-     instructions=['电调放在支架背面（没有凸台的那一面朝桌子时，凸台在上），电池片朝支架上沿。',
-                   '“右电池”的红、黑两根线从支架背面穿过中间偏下的方窗，拉到正面。',
-                   '在正面，每根线套一段 6 mm 热缩管，推远。',
+step(id='b-xt60', chapter='bench', bench=True, title='两根电池尾线的另一头各焊一个 XT60 公头', show=['esc', 'capacitor'],
+     wiring=only(BENCH_POWER, wires={'pig_Rp', 'pig_Rn', 'pig_Lp', 'pig_Ln'}, title='两根电池尾线'),
+     prepare=[dict(item='XT60 公头', qty=2, kind='electronic'), dict(item='6 mm 热缩管', qty=4, kind='other')],
+     instructions=['“右电池”红、黑两根线的空头，每根套一段 6 mm 热缩管，推远。',
                    'XT60 公头夹在第三只手上，认清头上印的 + 号。',
                    '红线焊进 + 焊杯，黑线焊进 − 焊杯，焊法和子弹头一样。',
-                   '热缩管推上来盖住焊杯，缩紧。'],
-     checks=['红线在 XT60 的 + 号那边。', '电调还在支架背面，两根线从方窗里穿过来。'],
-     warnings=['顺序不能反：先穿窗再焊头，焊好的 XT60 穿不过这个窗。'])
+                   '热缩管推上来盖住焊杯，缩紧。',
+                   '“左电池”两根线同样焊另一个 XT60 公头。'],
+     checks=['两个 XT60 都是红线在 + 号那边。', '两个 XT60 各连在写着“左电池”“右电池”的线上。'])
 
-step(id='b-xt60L', chapter='bench', bench=True, title='左电池尾线穿过翼板左臂的两个筋窗，再焊 XT60 头', add=['wing_plate'],
-     show=['esc', 'capacitor', 'fc_bracket', 'mtf01'],
-     wiring=only(BENCH_POWER, wires={'pig_Lp', 'pig_Ln'}, title='左电池尾线'),
-     prepare=[dict(item='翼板（橙色）', qty=1, kind='printed'), dict(item='XT60 公头', qty=1, kind='electronic'),
-              dict(item='6 mm 热缩管', qty=2, kind='other')],
-     instructions=['翼板正面（平的那面）朝下放在桌上，两条臂背面的竖筋朝上。',
-                   '看左臂（摆好后在你左手边）：臂背面有三片竖筋，靠中间的两片上各有一个方窗。',
-                   '“左电池”的红、黑两根线一起，先穿最靠中间那片筋的方窗，再穿第二片筋的方窗，线头停在第二、三片筋之间的格子里。',
-                   '把线头从格子后面拉出来多一点，每根套一段 6 mm 热缩管。',
-                   '红线焊 XT60 公头的 + 焊杯，黑线焊 − 焊杯；离开塑料再焊，烙铁不要碰到翼板。',
-                   '热缩管推上来缩紧，再把线往回拉，让 XT60 头躺回第二、三片筋之间的格子里。'],
-     checks=['左 XT60 在左臂第二、三片筋之间，红线在 + 号那边。'],
-     warnings=['焊好的 XT60 穿不过筋窗：一定先穿窗再焊头。'])
-
-step(id='b-bracket', chapter='bench', bench=True, title='支架拧到翼板右臂背后', show=['wing_plate', 'mtf01'], add=['fc_bracket'],
-     approach={'fc_bracket': [-30, 0, 0]}, screws=screws_for('FC bracket on wing (before the stack)', 'b-bracket'),
-     instructions=['翼板正面朝下放着，右臂在你右手边。',
+step(id='b-bracket', chapter='bench', bench=True, title='支架拧到翼板右臂背后', show=['fc_bracket', 'mtf01'], add=['wing_plate'],
+     approach={'wing_plate': [30, 0, 0]}, screws=screws_for('FC bracket on wing (before the stack)', 'b-bracket'),
+     prepare=[dict(item='翼板（橙色）', qty=1, kind='printed')],
+     instructions=['翼板正面（平的那面）朝下放在桌上，右臂在你右手边。',
                    '支架的平面贴住右臂背后的四个小凸台，小平台和光流在下（靠翼板底边）。',
-                   '电调还挂在支架背面的尾线上，先放在旁边，不要压在支架下面。',
                    '四颗 M2 × 8 从支架背面穿过，拧进四个凸台，拧到支架贴平就停。'],
      checks=['支架四角都贴着凸台，不晃。'])
 
@@ -483,7 +474,8 @@ step(id='b-esc', chapter='bench', bench=True, title='电调套到尼龙柱上，
      wiring=only(BENCH_SIGNAL, groups={'escfc'}, title='电调 ↔ 飞控 8 针直通线'),
      prepare=[dict(item='SH1.0 套装里 8 针的线', qty=1, kind='cable')],
      instructions=['先把 8 针线的一头插进电调的 8 针插座。',
-                   '电调元件面朝外（朝你），两片电池片朝上，四个角孔套进四个尼龙柱。',
+                   '“右电池”尾线的 XT60 头竖着，从支架中间偏下的方窗塞过去，落进右臂背后的格子里。',
+                   '电调元件面朝外（朝你），两片电池片朝上，四个角孔套进四个尼龙柱；右电池尾线夹在支架和电调之间往下走。',
                    '电容顺势躺到右臂顶上，罐子沿着臂的方向放进两个小槽之间。',
                    '四个 M3 × 8 尼龙隔离柱，公头朝下穿过电调的四个角孔，用手拧进下面的尼龙柱，拧到电调被夹住不晃。'],
      checks=['电池片在上沿，8 针线从电调下沿伸出来。', '尾线从支架方窗里出来，没有被电调压住。'])
@@ -523,13 +515,15 @@ for side, zh, front, rear in (('L', '左', 'fan_FL', 'fan_RL'), ('R', '右', 'fa
                        f'{rcol}的风扇放进后面的槽（靠方块耳朵的那个），同样进风口朝上沿、两只耳朵落进耳槽。',
                        '每个风扇的三根线从最近的出线缝出来。'],
          checks=[f'{fz}是{fcol}，{rz}是{rcol}。', '两个风扇都坐到底，耳朵在耳槽里。'])
-    step(id=f'b-close-{side}', chapter='bench', bench=True, title=f'盖上{zh}机舱外半，五颗 M2 × 10 加垫片轻轻夹住风扇',
+    step(id=f'b-close-{side}', chapter='bench', bench=True, title=f'盖上{zh}机舱外半，五颗 M2 × 12 加垫片轻轻夹住风扇',
          show=[f'nacelle_inner_{side}', front, rear], add=[f'nacelle_outer_{side}'], approach={f'nacelle_outer_{side}': out},
          screws=screws_for(f'nacelle {side}', f'b-close-{side}'),
-         prepare=[dict(item=f'{zh}机舱外半（黑色）', qty=1, kind='printed')],
+         prepare=[dict(item=f'{zh}机舱外半（黑色）', qty=1, kind='printed'),
+                  dict(item='M2 × 12 内六角（Zuorery 盒）', qty=5, kind='fastener'), dict(item='M2 垫片', qty=5, kind='fastener'),
+                  dict(item='1.5 mm 内六角起子', qty=1, kind='tool')],
          instructions=['外半的两个半圆槽也同样贴一层 1 mm 泡棉胶，撕掉离型纸。',
                        '外半剖面朝下，盖到两个风扇上，风扇耳朵的另一半落进外半的耳槽。',
-                       '五颗 M2 × 10 各套一个 M2 垫片，从外半的五个沉孔拧进去。',
+                       '五颗 M2 × 12 内六角各套一个 M2 垫片，从外半的五个沉孔拧进去。',
                        '五颗先都拧到刚吃上，再轮流每颗拧半圈。',
                        '拧到两半刚好把风扇压住、用手转不动风扇壳就停。'],
          checks=['两半之间留一条缝是正常的（风扇细就缝小，粗就缝大），不要为了合缝继续拧。'],
@@ -550,24 +544,25 @@ step(id='r-open', chapter='robot', title='关机，打开电池背包，把背�
 step(id='r-wing', chapter='robot', title='翼板组件贴到 OpenRB 盒子背面', context=OPEN_CTX,
      show=['bp_swap_plugs'], add=FLIGHT_FRAME,
      group={'label': '第 1 章装好的翼板（带支架、光流、飞控堆叠和电容）', 'approach': [-90, 0, 0]},
-     instructions=['两个机舱还没装到翼板上：把它们放在鸭子旁边的桌上，它们靠风扇线连着电调。拿翼板时一手托住支架和飞控。',
+     instructions=['两个机舱先放在桌上，后面再装。拿翼板时一手托住支架和飞控，电池尾线和风扇线让它们垂着。',
                    '翼板正面（平的那面）贴住 OpenRB 盒子背面，中间那块的四个孔对准盒子上的四个螺丝孔。',
                    '翼板的上沿在 A7Z 座后窗下面，不碰座子。',
+                   '鸭子左侧那根摄像头 USB 线在 A7Z 座后面往里拐：翼板贴上去时，把这根线从侧面放进左臂根部上角的小缺口里，不要压在翼板下面。',
                    '一只手按住翼板，下一步装背包时不要松手；或者请人扶住。'],
-     checks=['四个孔对齐，翼板没有压到两边侧壳的后沿。'],
+     checks=['四个孔对齐，翼板没有压到两边侧壳的后沿。', '摄像头 USB 线在左臂根部的缺口里，没有被夹住。'],
      warnings=['这一步翼板只是贴着，还没有螺丝，松手会掉。'])
 
 step(id='r-backpack', chapter='robot', title='背包外框贴到翼板背面，四颗 M2 × 12 一起拧进 OpenRB 盒子', context=OPEN_CTX,
      show=FLIGHT_FRAME + ['bp_swap_plugs'], add=['battery_backpack_frame', 'bp_dfr1202', 'bp_switch', 'bp_plug2'],
      group={'label': '背包外框（连着里面的 DFR1202 和开关）', 'approach': [-40, 0, 0]},
      screws=screws_for('wing plate and backpack on the pack', 'r-backpack'),
-     prepare=[dict(item='M2 × 12 内六角（从“翼板”小盒里拿，正好 4 颗）', qty=4, kind='fastener'),
+     prepare=[dict(item='M2 × 12 内六角（Zuorery 盒）', qty=4, kind='fastener'),
               dict(item='1.5 mm 内六角起子', qty=1, kind='tool')],
-     instructions=['插头 3、4 的背包这一侧的线，从背包前板的扁窗穿出来，再穿过翼板中间的扁窗，和线槽里的机器人一侧插回去（XT30 对 XT30，MR30 对 MR30）。',
+     instructions=['插头 3（XT30）和插头 4（MR30）背包这一侧的头，插头朝前，从后面穿过翼板中间的扁窗，和线槽里的机器人一侧插回去（XT30 对 XT30，MR30 对 MR30）。',
                    '背包外框前板贴住翼板背面，前板的四个孔对准翼板的四个孔。',
                    '从背包里面，4 颗 M2 × 12 穿过背包前板和翼板，拧进 OpenRB 盒子的柱子。',
                    '四颗先都拧到刚吃上，再轮流拧到背包和翼板都贴紧、不晃。'],
-     checks=['用的是 4 颗 M2 × 12（最长的那种），小盒空了。', '翼板和背包一起不晃。'],
+     checks=['四颗都是 M2 × 12，不是 × 10。', '翼板和背包一起不晃。'],
      warnings=['这里只能用 M2 × 12：M2 × 10 咬不住柱子，翼板会掉。'])
 
 step(id='r-bpclose', chapter='robot', title='背包后盖装回去，舱盖盖好', context=OPEN_CTX,
@@ -583,9 +578,10 @@ for side, zh in (('L', '左'), ('R', '右')):
          show=FLIGHT_FRAME + ['battery_backpack_frame'], add=[f'tray_{side}'],
          approach={f'tray_{side}': [40, 0, 0]}, screws=screws_for(f'tray {side} on wing', f'r-tray-{side}'),
          prepare=[dict(item=f'{zh}电池托盘（橙色平板）', qty=1, kind='printed')],
-         instructions=[f'{zh}托盘平放，带竖边的那头朝后，竖边贴住{zh}臂正面，竖边上的三个小孔对准臂上的三个孔。',
-                       '三颗 M2 × 10 从臂背后的格子里穿过臂板，拧进托盘竖边，拧到托盘贴紧。'],
-         checks=['托盘平，不往下垂。'])
+         instructions=[f'{zh}托盘平放，带竖边的那头朝后，竖边贴住{zh}臂正面，竖边上的三个小孔对准臂上的三个孔。']
+                      + (['左托盘竖边靠里的上角有一个小缺口：摄像头 USB 线放在这个缺口里，托盘贴上去时不要夹住它。'] if side == 'L' else [])
+                      + ['三颗 M2 × 10 从臂背后的格子里穿过臂板，拧进托盘竖边，拧到托盘贴紧。'],
+         checks=['托盘平，不往下垂。'] + (['摄像头 USB 线在托盘缺口里，没有被压扁。'] if side == 'L' else []))
 
 for side, zh, front, rear in (('L', '左', 'fan_FL', 'fan_RL'), ('R', '右', 'fan_FR', 'fan_RR')):
     up = [0, 60 if side == 'L' else -60, 40]
@@ -601,18 +597,22 @@ for side, zh, front, rear in (('L', '左', 'fan_FL', 'fan_RL'), ('R', '右', 'fa
 step(id='r-left-wires', chapter='robot', title='左边的线束：从电调绕到背包后面，再沿背包左侧进左臂',
      context=OPEN_CTX, show=[k for k in ALL_FLIGHT if not k.startswith('battery')] + ['battery_backpack_frame'] + BACKPACK_BODY,
      cables=['c-batL', 'c-FL', 'c-RL'],
-     instructions=['“左电池”尾线已经穿在左臂的筋窗里。把它从电调左边往下拉，贴着背包后盖背面的下半截横到左边，再沿背包左侧壁外面往前，进左臂最靠中间的格子。',
-                   '“左后”三根风扇线（母子弹头朝前）沿同一条路走：电调左边 → 背包后面下半截 → 背包左侧 → 依次穿过左臂三片筋的方窗，停在最外面的格子里。',
-                   '“左前”三根风扇线也走同一条路，穿过三片筋的方窗后，再从臂板外端的小方窗穿到臂正面，沿托盘上面往前到左前风扇。',
-                   '线束在背包后面要压在舱盖下沿以下，不要挡住舱盖。'],
-     checks=['背包后面的线束整齐贴着后盖，没有绕到腿能踢到的地方。'])
+     prepare=[dict(item='小扎带', qty=1, kind='other')],
+     instructions=['“左电池”尾线、“左后”和“左前”风扇线，三束一起从电调背后往下，到背包后盖背面的最下面，贴着后盖横到左边，再沿背包左侧壁外面往前到左臂背后。',
+                   '左臂背后有三片竖筋，靠中间的两片上的方窗朝后开口。把三束线从后面一起按进这两个开口槽：先最靠中间那片，再第二片。',
+                   '“左电池”尾线的 XT60 头留在第二、三片筋之间的格子里，正对臂板上的大方窗（电池线从这个窗过来）。',
+                   '“左后”风扇线的子弹头一端穿过第三片筋（最外面那片）的方窗，停在最外面的格子里。',
+                   '“左前”风扇线也穿过第三片筋的方窗，再绕过左臂的外端到正面，沿左托盘外侧的边往前到左前风扇。不要放在托盘上面，电池会压住它。',
+                   '背包后面，线束在后盖最下面，舱盖下沿以下，不要挡住舱盖。',
+                   '在背包后面线束往上拐向电调的地方，一根扎带绕住线束和飞控支架下面小平台靠里的那条边：扎带从飞控下面穿过，不要套住光流，拉紧，剪平尾巴。'],
+     checks=['背包后面的线束整齐贴着后盖，没有绕到腿能踢到的地方。', '三束线都在两个开口槽里。', '扎带没有套住光流，也没有压在飞控上。'])
 
 step(id='r-right-wires', chapter='robot', title='右边的线：右前、右后风扇线绕过支架外侧进右臂',
      context=OPEN_CTX, show=[k for k in ALL_FLIGHT if not k.startswith('battery')] + ['battery_backpack_frame'] + BACKPACK_BODY,
      cables=['c-batR', 'c-FR', 'c-RR'],
-     instructions=['“右后”三根风扇线从电调右边，绕过支架外侧的边，进右臂最外面的格子。',
-                   '“右前”三根风扇线同样绕过支架外侧，再从右臂外端的小方窗穿到臂正面，沿托盘上面往前到右前风扇。',
-                   '“右电池”尾线的 XT60 已经在右臂中间的格子里，放着不动。'],
+     instructions=['“右后”三根风扇线从电调右边，绕过支架外侧的边（不要从支架和飞控前面过），进右臂最外面的格子。',
+                   '“右前”三根风扇线同样绕过支架外侧进最外面的格子，再绕过右臂的外端到正面，沿右托盘外侧的边往前到右前风扇。不要放在托盘上面。',
+                   '“右电池”尾线的 XT60 已经在右臂背后的格子里：把它放在第二、三片筋之间，正对臂板上的大方窗。'],
      checks=['支架外侧的线没有压在飞控上。'])
 
 step(id='r-bullets', chapter='robot', title='12 个子弹头插上，多出来的风扇线扎好',
@@ -620,8 +620,7 @@ step(id='r-bullets', chapter='robot', title='12 个子弹头插上，多出来�
      cables=['c-FL', 'c-RL', 'c-FR', 'c-RR'],
      prepare=[dict(item='小扎带', qty=4, kind='other')],
      instructions=['每个风扇自带的三根线（公子弹头）插进写着它名字的那三个母头里，三根之间的顺序随便。',
-                   '右后风扇的线最长，多出来的那段折成小 S，用扎带扎在右臂最外面的格子里。',
-                   '其它风扇多出来的线也同样折好扎在臂格子里，剪平扎带尾巴。'],
+                   '每个风扇多出来的线折成小 S，用扎带扎在同一侧臂最外面的格子里，剪平扎带尾巴。'],
      checks=['12 个子弹头都插到底，露出的金属部分都在热缩管里。', '没有线垂在机舱进风口上方。'])
 
 step(id='r-batt', chapter='robot', title='两块 4S 电池放到托盘上绑好，XT60 先不插', context=OPEN_CTX,
@@ -631,9 +630,10 @@ step(id='r-batt', chapter='robot', title='两块 4S 电池放到托盘上绑好�
      instructions=['每个托盘上穿两根绑带：从托盘下面穿过一对绑带槽。',
                    '电池放到托盘上，引线那头朝后（朝翼板），贴住托盘竖边。',
                    '电池的 XT60 线和平衡线从臂板上的大方窗穿到后面的格子里。',
+                   '左电池的绑带拉紧之前，把摄像头 USB 线往里（朝鸭子中间）推，让它在绑带里侧，不被绑带压住。',
                    '两根绑带绕过电池拉紧扣好；平衡线压在绑带下面。',
                    'XT60 先不插。'],
-     checks=['电池推不动、也不往外滑。'])
+     checks=['电池推不动、也不往外滑。', '摄像头 USB 线在左电池绑带的里侧，没有被压住。'])
 
 step(id='r-spin', chapter='robot', title='转向检查：一次转一个风扇，看风向和转向',
      context=OPEN_CTX, show=[k for k in ALL_FLIGHT] + ['battery_backpack_frame'],
@@ -660,7 +660,9 @@ step(id='r-a7z', chapter='robot', title='A7Z ↔ 飞控线：一头插飞控 UAR
                    '黑线的杜邦头插 14 号针。',
                    '黄线的杜邦头插 16 号针。',
                    '蓝线的杜邦头插 18 号针。',
-                   '线从排针沿着 A7Z 座右侧壁的上沿往后，在座后窗的外侧往下，从右臂内侧到飞控，多出来的线绕两圈用扎带扎在支架上。'],
+                   '线从排针往右，在座盖前面翻过 A7Z 座的右侧壁。',
+                   '然后贴着右侧壁外侧的上棱往后走，在座盖边的外面，不要压在座盖上。',
+                   '到座子后面，越过电调顶上，到飞控上沿的 UART1 插座；多出来的线绕成小圈，用扎带扎在支架上。'],
      checks=['A7Z 上原来插着的线一根都没动。', '红线已经剪掉，剪口包好。'],
      warnings=['先开鸭子、后开飞行电池；关的时候先拔飞行电池。'])
 
