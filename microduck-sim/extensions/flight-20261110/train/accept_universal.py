@@ -133,7 +133,9 @@ def lines_for(models, ref):
     if all(R[k] for k in nop):
         line("no pack: 0 falls (80 episodes)", sum(R[k]["falls"] for k in nop) == 0, str({k: R[k]["falls"] for k in nop}))
         v = R["nopack_walk"]["speed_median_upright"]
-        line("no pack: walk 0.082-0.15 m/s (section 5 band)", 0.082 <= v <= 0.15, f"{v}")
+        # The old 0.082-0.15 band came from the earlier with-pack plan and contradicted the 0.15 m/s floor below
+        # (2026-11-11); one rule now: no upper limit, same floor as every load.
+        line("no pack: walk at least 0.15 m/s on the 0.25 command", v >= 0.15, f"{v}")
         tl, tr = R["nopack_turnL"]["turn_rate_rad_s_median"], R["nopack_turnR"]["turn_rate_rad_s_median"]
         line("no pack: turns within 10 % of +-0.3 rad/s", tl is not None and tr is not None and abs(abs(tl) - 0.3) <= 0.03
              and abs(abs(tr) - 0.3) <= 0.03, f"turnL {tl}, turnR {tr}")
