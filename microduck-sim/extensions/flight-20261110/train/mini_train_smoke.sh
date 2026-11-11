@@ -31,6 +31,7 @@ case "$1" in
     grep -E "\[payload\]|\[smoke\]|\[asbuilt\] total|Error|Traceback" $LOCAL/$FL/train/logs/universal_smoke.log | head -60
     ;;
   audit)
+    zsh $LOCAL/$FL/train/mini.sh run true  # waits while another agent's simulation runs on the mini
     # universal-env degenerate audit on CPU (UNIVERSAL-PLAN.md section 4): assets laid out as the training image's
     # /root/assets (walk61/stand61 = today's runtime models, fq2 = the with-pack choice, manifests, mass audit)
     NE=${2:-128}
@@ -45,5 +46,27 @@ case "$1" in
       > $LOCAL/$FL/train/logs/universal_audit.log || true
     scp -q mac-mini:/tmp/universal_audit/audit.json $LOCAL/$FL/train/out/universal_audit.json || true
     grep -E "\[audit\]|Traceback|Error" $LOCAL/$FL/train/logs/universal_audit.log | head -30
+    ;;
+  audit2)
+    # reward-redesign audit, one load per call (full | nobatt | none), under 10 minutes each: stand, shuffle and
+    # lean-and-hold against the intended walk, with the candidate terms at weight 1e-6 (--diag) so designs are priced
+    # offline by train/reward_design.py; $4 = optional reward_mods JSON for a confirmation run of the chosen design
+    LD=$2
+    NE=${3:-128}
+    ST=${4:-400}
+    RM=${5:-}
+    TAG=${6:-diag}
+    zsh $LOCAL/$FL/train/mini.sh run true
+    A=\$HOME/$REMOTE/smoke-assets
+    rsync -a $LOCAL/$FL/train/ckpt/fq2_1999/walk61.onnx mac-mini:$REMOTE/smoke-assets/fq2_1999.onnx
+    mkdir -p $LOCAL/$FL/train/logs
+    print -r -- "$RM" > $LOCAL/$FL/train/logs/rm_$TAG.json
+    scp -q $LOCAL/$FL/train/logs/rm_$TAG.json mac-mini:/tmp/flight_rm_$TAG.json
+    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs universal2 \
+      --loads $LD --diag --reward-mods \"\$(cat /tmp/flight_rm_$TAG.json)\" --device cpu --num-envs $NE --steps $ST \
+      --assets $A --policy fq2=$A/fq2_1999.onnx --walker fq2 --out /tmp/audit2_${TAG}_$LD 2>&1" \
+      > $LOCAL/$FL/train/logs/audit2_${TAG}_$LD.log || true
+    scp -q mac-mini:/tmp/audit2_${TAG}_$LD/audit.json $LOCAL/$FL/train/out/audit2_${TAG}_$LD.json || true
+    grep -E "\[audit\]|\[style\]|Traceback|Error" $LOCAL/$FL/train/logs/audit2_${TAG}_$LD.log | head -30
     ;;
 esac

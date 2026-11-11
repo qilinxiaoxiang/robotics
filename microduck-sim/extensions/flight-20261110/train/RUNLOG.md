@@ -276,3 +276,16 @@ running total of worst cases; real spend read from `modal billing report` before
   under walk commands 0.821 of fq2 walking (gate 0.80) and higher tracking (1.107 against 1.062 per s); fq2 walks only
   0.051 m/s in the training env; posture reward 0.80 standing against 0.32 walking. No pack: stand 0.774, shuffle 0.90,
   fq2 0.78, all lose. Plan section 4 now asks for a tracking-weight change and re-audit before any launch.
+- 01:40-03:05 Preparation for the universal and bend plans (evaluation only, Mac mini, no training):
+  reward audit `flight_audit.py --jobs universal2 --diag` (stand, step in place, lean +-0.2 rad at full / batteries out
+  / none, splayed fq2 against walk61 without the pack), priced offline by `reward_design.py` (`out/reward_design.json`).
+  Training-env command ranges give no passing design (walkers 0.05-0.09 m/s, standing tracks as well). Runtime ranges
+  (x -0.05..0.30, y +-0.05, yaw +-0.5) make the walker win tracking; with air time 6, tracking 3, upright 0.5, head-pose
+  tracking 2 to 1, hip-yaw std 0.15 and foot heading -8 every degenerate ratio is at most 0.80 (worst 0.797, step in
+  place without the pack). Splayed fq2 tracks the same as walk61 (1.411 / 1.405) and is faster, so speed alone does not
+  remove toe-out. Bend statics (`bend_statics.py`, `out/bend_statics.json`): groundpick61's path needs hip 0.28 / 0.22
+  N m at full / batteries out; battery room about 1 mm (`out/battery_room.json`); one battery hip 0.27. Seepick jaw
+  error fixed (reused worker wrapped the visual hook twice, `flight_eval.py`); seepick with the pack 20/20 falls, without
+  1/20. Quack runs with `--walk-s 0`: 0 falls, yaw 0.25-0.28 reached. Hand-back swap test (`handback_diff.py`): the
+  trunk_base load (+129 g, COM 13 mm back and up) alone causes 4/6 falls; the robot's 11-06 logs show 5/5 hand-backs
+  without a fall (`robot_handback_scan.py`). Plans: `UNIVERSAL-PLAN.md` sections 4, 7, 8; `BEND-PLAN.md`.

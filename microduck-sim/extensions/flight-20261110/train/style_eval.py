@@ -198,6 +198,9 @@ def main():
     for j in eps[0]["per_joint_all"]:
         pj[j] = round(float(np.median([e["per_joint_all"][j]["p99_nm"] for e in eps])), 3)
     summ["joint_p99_nm"] = pj
+    qr = [all(e["probe"]["quack_head_ran"].values()) for e in eps if (e.get("probe") or {}).get("quack_head_ran")]
+    if qr:  # walk_wired's quack gate, as the probe applies it: episodes in which every quack moved the head
+        summ["quack_ran_episodes"] = sum(qr)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(dict(summary=summ, episodes=eps), indent=1))
     print(json.dumps({k: v for k, v in summ.items() if k != "joint_p99_nm"}))

@@ -21,6 +21,12 @@ case "$1" in
     rsync -a --exclude='kaggle/out/' --exclude='eval/' --exclude='video/' $LOCAL/$FL/train/ mac-mini:$REMOTE/$FL/train/
     ;;
   run)
+    # one sim at a time on the shared mini: wait (up to 10 min) while another agent's simulation runs
+    for i in $(seq 1 60); do
+      ssh mac-mini "cd $REMOTE/$FL && zsh train/mini_busy.sh" && break
+      [ $i -eq 60 ] && { echo "mini still busy after 10 min"; exit 3; }
+      sleep 10
+    done
     ssh mac-mini "cd $REMOTE/$FL && PY=\$HOME/$VENV/bin/python && export PY && $2"
     ;;
   pull)

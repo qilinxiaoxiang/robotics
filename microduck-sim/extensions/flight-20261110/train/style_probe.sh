@@ -48,4 +48,21 @@ case "$1" in
     run head_walk05_spec_none train/ckpt/bend_spec $NONE walk "--head-pitch 0.5"
     run head_walk11_spec_none train/ckpt/bend_spec $NONE walk "--head-pitch 1.1"
     ;;
+  fixsp|fixq)
+    # reruns after two probe-harness faults (2026-11-11). Seeing pick: flight_eval.py now restores the visual hook per
+    # episode (reused workers added the jaw body twice). Quack: the probe's walk window (2-17 s, the stand case's
+    # zero command inside it) counts as walking, and walk_wired's gate blocks a quack while walking; --walk-s 0
+    # makes the whole run a zero-command stand, so the gate sees stand61 at rest, as on the robot
+    SP="--walk-at 1 --walk-s 0 --sp-at 2"
+    Q="--walk-at 1 --walk-s 0 --quack-at 4 8 12"
+    if [ "$1" = fixsp ]; then
+      run bend_sp_fq2_pack train/ckpt/bend_fq2 $PACK stand "$S0 $SP"
+      run bend_sp_fs1_pack train/ckpt/bend_fs1 $PACK stand "$S0 $SP"
+      run bend_sp_spec_none train/ckpt/bend_spec $NONE stand "$SP"
+    else
+      run head_quack_fq2_pack train/ckpt/bend_fq2 $PACK stand "$S0 $Q"
+      run head_quack_fs1_pack train/ckpt/bend_fs1 $PACK stand "$S0 $Q"
+      run head_quack_spec_none train/ckpt/bend_spec $NONE stand "$Q"
+    fi
+    ;;
 esac

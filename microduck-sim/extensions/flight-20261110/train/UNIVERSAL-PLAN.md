@@ -13,10 +13,12 @@ matter most. Sim only. Nothing is deployed; the runtime, the A7Z and the team re
   and falls 2 of 20, where walk61 falls 0 at 0.090 m/s. The universal run has to close that gap without losing the
   with-pack result.
 - One Kaggle T4 pair (free, about 6.7 h, one quota session): run A from fq2 1999, run B from walk61. No Modal.
-- Not ready to launch yet: the incentive audit fails with the full pack (standing earns 0.821 of walking, gate 0.80;
-  section 4), and two new requirements came from Shawn's video review: no toe-out (fq2 walks at 21-22 deg against
-  walk61's 4-7, section 7), and the bend falls with the pack in 20 of 20 (a bend-policy job, section 8). Head motion
-  with the pack is fine (0 falls).
+- The incentive audit now passes at every load with the redesigned reward (section 4: runtime command ranges, air
+  time 6, tracking 3, upright 0.5, head-pose tracking 1, hip-yaw std 0.15, stance-foot-heading -8; worst degenerate
+  ratio 0.797). That reward carries Shawn's toe-out requirement (section 7; speed alone would not remove it) and his
+  speed requirement (at least 0.15 m/s on the 0.25 command at every load). The bend with the pack is a separate
+  bend-policy fine-tune (`BEND-PLAN.md`; the servos can hold it statically). Head motion and the quack tilt with the
+  pack: 0 falls. Launch waits for Shawn's go.
 - Fallback if the universal policy fails the gate: keep two policy sets and let the A7Z pick by pack detection
   (FP-R2). That works in sim today: fq2 1999 for every pack state, stand61/walk61 without the pack.
 
@@ -89,11 +91,39 @@ as written is not launched.
 - Without the pack: standing 0.774, stepping in place 0.90, fq2 on the light robot 0.78; all lose to walk61 walking.
 - old walk61 with the pack earns 0.23 (falls 45 per env-minute); it is flagged only because a falling robot's
   tracking term per second is high, not a risk.
-- The style term of section 7 would make it worse (it tightens posture while walking), so the next step before any
-  launch is one reward change and a re-audit, in this order: velocity tracking weight 2 to 3 (or its std from
-  sqrt(0.05) down), then the stance-foot-heading term, each re-audited in this env at every pinned load until standing is
-  at most 0.80 of walking and walking wins tracking. The audit then also runs at 2048 envs on the training GPU, the size
-  of the earlier gates (this one is 256 envs on CPU).
+Redesign (2026-11-11, `flight_audit.py --jobs universal2 --diag`, Mac mini, 128 envs, 400 steps per case; priced
+offline by `reward_design.py`, `out/reward_design.json`). Cases per load (full, batteries out, none): the intended
+walker (fq2 with the pack, walk61 composed with stand61 without it), standing still under walk commands, stepping in
+place (yaw 0.3 only), and leaning forward / back 0.2 rad at the hip pitch while standing. Rewards do not change the
+dynamics, so one deterministic rollout per case gives every term's raw value; the weighted sum reproduces the measured
+reward per second within 0.02 for every case.
+- Why weight and std changes alone failed: with the training env's command ranges (x ±0.4, y ±0.3, yaw ±1.0) the
+  walkers move only 0.05-0.09 m/s along their commands, so standing tracks about as well (track ratio 1.10 full,
+  1.11 batteries out). No tracking weight or std in the grid (weight 2-3, std 0.224/0.15/0.10) made the walker win.
+- Change 1, command ranges matched to what the runtime sends (robot-tested commands: vx 0.25, yaw 0 or ±0.3): x
+  -0.05..0.30, y -0.05..0.05, yaw -0.5..0.5 m/s and rad/s. Now the walker wins tracking at every load (standing's
+  track ratio 0.88 full, 0.97 batteries out, 0.91 none), but reward ratios stay 0.81-0.88 (`out/audit2_cmd_*.json`).
+- What standing still earns: upright (1.86 walk / 1.67-1.87 stand per s) and head-pose tracking (1.91 / 1.65-1.77)
+  pay any upright robot alike; air time (1.23 / 0.08 full) is the only large walk-only term.
+- Change 2, the chosen weights (fewest changes among the passing designs that carry Shawn's style and speed terms):
+  air time 3 to 6, velocity tracking weight 2 to 3, upright 2 to 0.5, head-pose tracking 2 to 1, walking hip-yaw std
+  0.30 to 0.15, new stance-foot-heading cost weight -8 (section 7). Pose weight 1, tracking std 0.224 unchanged.
+  Degenerate / intended reward ratio, before (runtime ranges, old weights) and after:
+  full: stand 0.833 to 0.742, step in place 0.846 to 0.765, lean forward 0.756 to 0.653, lean back 0.811 to 0.713;
+  batteries out: stand 0.842 to 0.758, step 0.849 to 0.780, lean 0.766 / 0.799 to 0.672 / 0.697;
+  none: stand 0.813 to 0.689, step 0.878 to 0.797, lean 0.689 / 0.690 to 0.558 / 0.551.
+  Every ratio is at most 0.80 and the walker wins tracking in every pair. Step in place without the pack (0.797) is
+  the closest; 203 of the 6,480 grid designs pass, 18 with the style terms.
+- Risk of the lower upright weight: falls still end the episode (termination), and the acceptance below counts falls,
+  so a policy that trades uprightness for air time fails the gate rather than passing it.
+- Live confirmation of the chosen design in the env (`rm_chosen.json` through the worker's `reward_mods`,
+  `out/audit2_chosen_*.json`, 03:09-03:20): PASS at full, batteries out and none, every ratio equal to the priced one
+  to the third decimal.
+- The audit also runs at 2048 envs on the training GPU at the start of the run, the size of the earlier gates.
+Accepted walking speed on the 0.25 m/s command (`style_probe.sh`, 20 episodes): at least 0.15 m/s at full pack, at
+batteries out and without the pack, with 0 falls at the two pack states and at most 1 of 20 without it, and the
+toe-out limits of section 7. Today: fq2 0.105 with the pack, walk61 0.090 without it, fq2 0.163 without it (toe-out 18 /
+14 deg).
 Stop rule on the task metric, never on total reward: Kaggle is blind until the session ends, so the in-run stops are
 the worker's caps and its stepping floor (walk command answered below 0.03 m/s); the reward guard stays off. After the
 session every saved checkpoint from 1000 on gets a short probe (walk, 10 episodes, no pack, batteries out, full pack);
@@ -134,6 +164,20 @@ from 50 % load up; at 25 % walk 3 of 20).
 
 ## 7. Style requirement: no toe-out (外八)
 Shawn, 2026-11-11, after `video/fq2_1999_walk.mp4`: "训练完成以后走路怎么有点外八 有点难看啊。。。".
+Shawn, 2026-11-11, on the cause: "外八那个问题 肯定是没把移动速度考虑进去 如果外八那么走肯定很慢". Facts behind it: command
+0.25 m/s; fq2 with the pack walks 0.105, walk61 without the pack 0.090, fq2 without the pack 0.163 while still toeing out
+18 / 14 deg; in the training env velocity tracking pays standing slightly more than walking (1.107 against 1.062 per
+second), so speed is in the reward but too weak to matter. Section 4 makes the speed incentive real and tests whether
+speed alone would remove the toe-out.
+Speed alone does not remove it (audit pair without the pack, same commands, runtime ranges, `out/audit2_cmd_none.json`):
+the splayed fq2 gait moves faster along the commands than straight-footed walk61 (0.100 against 0.057 m/s) and
+earns the same velocity tracking (1.411 against 1.405 per s; with the tracking std tightened to 0.10 the splayed gait
+earns more, 0.446 against 0.396 raw). So a stronger speed term pays toe-out at least as well as a straight foot. What
+separates them is the posture and the foot: hip-yaw pose 0.325 against 0.764, foot-heading cost 0.063 against 0.012
+raw per s (at weight -8: 0.50 against 0.10 per s). The splayed gait's lower total (0.756 of walk61's under the old
+weights, 0.706 under the chosen ones) is confounded by its falls on the light robot (63 against 3 in the audit), so
+the foot-heading term and the tighter hip-yaw tolerance are both kept; the speed change stays for Shawn's speed
+requirement, not as the toe-out fix.
 Measured (`style_eval.py`, Mac mini, 20 episodes, `out/style_bend_head.json`; stance foot yaw against the trunk heading,
 toe-out positive, from the trained start pose):
 - walk61 without the pack (the gait he knows): toe-out 7.3 deg left, 4.2 right (p95 9.6 / 5.5); hip yaw -6.1 / +3.2
@@ -174,16 +218,32 @@ Results (pack fitted, policy from the first tick, 20 episodes each, `out/style_b
   torque than the servos have to rotate the trunk forward, and groundpick61 never saw the pack. Without the pack
   (today's stand61) the bend reaches the floor (mouth 2.1 cm, tilt 35 deg) and holds; 18 of 20 then fall at 10.0 s, the
   hand-back from the rise to stand61, a gap of the current 960 g robot model that the older default model does not
-  show (0 of 3). The seeing pick could not be run with the flight manifests (the probe stops with "repeated name 'jaw' in body"; likely
-  its seepick hook adds a jaw the battery-model manifest already brings, not checked further), so the bend result is groundpick61 only.
+  show (0 of 3). The seeing pick first stopped with "repeated name 'jaw' in body": the probe worker is reused across
+  episodes and wrapped the visual hook a second time, adding the jaw twice (fixed in `flight_eval.py`, which restores
+  the original hook before each episode). Rerun with the pack: fq2 and fs1 in the stand slot both fall 20 of 20 at
+  about 2.9 s, beak on the floor (lip 4.3-4.5 cm), tilt up to 92 deg, leg p99 0.54: the same failure as the bend.
+  The static check (`BEND-PLAN.md`) shows the servos can hold a floor-reaching bend with the full pack (hip at most
+  0.28 N m on groundpick61's path), so this is a policy fine-tune, not a hardware limit.
 - Head scan while standing (approach.py's scan, 1 s dwell, head pitch 0.5-1.4, yaw ±0.6, neck down to -0.4, two cycles):
   0 falls for fq2 and fs1 with the pack; trunk pitch excursion 2.6 deg (fq2) and 4.6 (fs1) median; leg p99 0.22-0.25 N
   m; head pitch reached 0.45-1.24, yaw ±0.6, neck down to -0.30 (fq2) / -0.41 (fs1). stand61 without the pack: 2.5 deg.
 - Walking with the head down (vx 0.25, head pitch 0.5 and 1.1, approach.py's walking range): fq2 with the pack 0 falls,
   0.105 m/s both, trunk pitch excursion 5.6 / 7.1 deg median (max 10.2), leg p99 0.45-0.46. walk61 without the pack:
   0 falls but at head pitch 1.1 it stops walking (0.000 m/s).
-- The quack tilt (`--quack-at`) did not run in this probe (head yaw stayed at 0.01 rad in every case, pack or not);
-  not counted.
+- The quack tilt first did not run: `brain_sim_check.py`'s walking flag is a time window (walk_at to walk_at +
+  walk_s), and `quack_head_block` refuses a tilt while walking, so with the default 10 s walk window every quack was
+  blocked. With `--walk-s 0` (`style_probe.sh fixq`, `eval/st_head_quack_*.json`) all three tilts run in 20 of 20
+  episodes: fq2 and fs1 with the pack 0 falls, head yaw reached 0.25-0.28 rad and roll 0.12-0.13 (commanded at most
+  0.25 / 0.18), trunk tilt peak 6.0-6.5 deg; stand61 without the pack 0 falls, peak 0.7 deg.
+- No-pack hand-back (18 of 20 falls at 10 s on the 960 g model, 0 of 3 on the default model): swap test
+  (`handback_diff.py`, `out/handback_diff.json`, 6 bend episodes each). Only three bodies differ: trunk_base +129 g
+  with its COM 13.4 mm further back and up (x -25.4 to -33.5 mm, z 8.0 to 18.6 mm; the D-037 battery backpack, A7Z
+  saddle and heatsink, the USB coil, minus the old XL4015 box), neck +6 g, jaw -2 g. Default model 0 of 6 falls, 960 g
+  model 4 of 6; default with only the trunk_base swapped 4 of 6; neck or jaw swapped 0 of 6. The trunk_base load is
+  the whole cause. The real robot with the backpack (2026-11-06 logs, `robot_handback_scan.py` over
+  `guide/firmware/mac/seepick-fall-20261106/`): 5 hand-backs (2 groundpick, 3 seepick), 0 falls, tilt after the
+  hand-back at most 7.4 deg. One difference stays untested: the robot hands back to walk mode (walk61 at zero
+  command), the probe to stand61. Report only; the runtime is unchanged.
 Training requirement: the universal run cannot fix the bend, since the bend is groundpick61/seepick61. A with-pack bend
 needs its own fine-tune of the bend policy on the payload env (`universal` payload event, same states), started from
 groundpick61 (and seepick61 for the pick), with hip-pitch torque inside the clamp. Acceptance for it: the PICKUP.md

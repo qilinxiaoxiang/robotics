@@ -42,6 +42,15 @@ def episode(job):
     import mujoco
     import brain_sim_check as b
 
+    # the seeing pick (--sp-at) wraps visual.apply_visual_to_spec on every run; worker processes are reused, so a
+    # second episode would wrap the wrapper and add the jaw body twice ("repeated name 'jaw' in body", 2026-11-11):
+    # restore the original before each episode
+    sys.path.insert(0, str(RL / "cmu/model"))
+    import visual
+    if not hasattr(visual, "_flight_orig_avs"):
+        visual._flight_orig_avs = visual.apply_visual_to_spec
+    visual.apply_visual_to_spec = visual._flight_orig_avs
+
     rng = np.random.default_rng([seed, 99])
     st = dict(n=0, peak=0.0, peak_after1=0.0, legs=None, trunk=None, after1=[])
     drop_h = float(rng.uniform(0.02, 0.03)) if landing else 0.0
@@ -105,7 +114,10 @@ def episode(job):
                     for n, col in zip(LEGS, np.array(st["per"]).T)},
                 # trunk_base height from 1 s on: a policy that rests the trunk or pack on the floor reads low here
                 trunk_z_m=None if not st.get("z") else dict(min=round(min(st["z"]), 4), median=round(float(np.median(st["z"])), 4)),
-                landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None)
+                landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None,
+                # the probe's own pass-through fields for the bend and quack studies (absent keys stay None)
+                probe={k: r.get(k) for k in ("quack_head_ran", "quack_head_reached", "quack_peak_tilt", "seepick", "groundpick")
+                       if r.get(k) is not None})
 
 
 def main():
