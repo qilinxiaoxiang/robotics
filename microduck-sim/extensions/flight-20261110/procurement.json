@@ -483,5 +483,78 @@
       "placed": false
     },
     "fit_status": "fan envelope pixel-scaled only; nacelle bore, axial stops, lead length, bullet size (listing: 3.5 mm) and mass to be measured on arrival"
+  },
+  "small_parts_2026_11_10": {
+    "source": "wiring/MISSING.md and wiring.json (missing, checked_not_missing, soldering), cad/build/screws.json, roboclub/INVENTORY.md; pages read in Shawn's signed-in Chrome 2026-11-10 (Pittsburgh 15217)",
+    "purchase_fit_check": "~/code/claude-config/skills/purchase-fit/scripts/check_candidates.py run on three decision records 2026-11-10: each carted candidate 'eligible'; rejected/not-eligible ones listed per item",
+    "items": [
+      {
+        "item": "3.5 mm female bullets for the 12 fan leads",
+        "chosen": {"title": "20Pair Amass 3.5mm Gold Bullet Banana Plug Connectors Male Female for Battery ESC Motor RC Car Boat Drone Electric Wire Parts", "asin": "B07CR81N69", "url": "https://www.amazon.com/dp/B07CR81N69", "seller": "SoloGood (brand/manufacturer field: Amass), arrives with Amazon delivery", "price": 9.99, "pack": "20 male + 20 female + 1 battery strap", "arrival": "Thu 2026-11-12", "returns": "FREE refund/replacement until Jan 31, 2027"},
+        "fit": [
+          {"req": "3.5 mm female, >= 12", "status": "pass", "quote": "Diameter:3.5 length:12mm ... 20pcs male plugs + 20pcs female plugs+1pc battery strap (Amazon listing)"},
+          {"req": "solder cup, 16 AWG", "status": "pass", "quote": "3.5mm Half Slot ... Easy to be welded with the welding groove (listing); Amass GC3514: cable cross-sections up to 2 mm2 / 14 AWG (originhobbies.com)"},
+          {"req": "covers 40 A peak per fan", "status": "pass", "quote": "Amass GC3514-F: 25 A Continuous Load, 50 A Max Current (https://originhobbies.com/shop/esc-accessories/3-5mm-gold-plated-connector-female-gc3514-f); Amass 3.5 mm: max. 50 A, 0.45 mOhm (kiwiquads.co.nz). Rating is Amass's part rating read at resellers; the Amazon listing itself publishes none. Hover phase current about 12-23 A RMS, peak about 33 A RMS (wiring.json currents x 0.82)"}
+        ],
+        "rejected": [
+          {"asin": "B07C69VDV3", "why": "JFtech 20 pairs $7.99 (Fri 11-13): no current rating, unbranded -> not_eligible"},
+          {"asin": "B071G173ZW", "why": "Hobbypark 10 sets $8.97: only 10 females, 12 needed; no rating"},
+          {"asin": "B07RFKZ7X4 / B071PDF297 / B0D8Q3XXPL / B0FPFBGQZZ", "why": "no current rating published"}
+        ]
+      },
+      {
+        "item": "M3 nylon FC/ESC stack hardware (4 x M3x6 M-F standoff, 4 x M3x8 M-F spacer, 4 x M3x8 screw)",
+        "chosen": {"title": "610pcs M3 Black Male Female Nylon Hex Spacer Standoff Screw Nut Set Assortment Kit (AvrestYPT)", "asin": "B0H25CJN5K", "url": "https://www.amazon.com/dp/B0H25CJN5K", "seller": "方延商城, arrives with Amazon delivery", "price": 9.99, "pack": "610 pcs nylon M3", "arrival": "Thu 2026-11-12", "returns": "FREE refund/replacement until Jan 31, 2027"},
+        "fit": [
+          {"req": "M3x6 M-F", "status": "pass", "quote": "box-lid chart: M3*6*6 (6 mm body, 6 mm male) 25 PCS + 20 PCS"},
+          {"req": "M3x8 M-F", "status": "pass", "quote": "box-lid chart: M3*8*6 (8 mm body, 6 mm male) 20 PCS + 20 PCS"},
+          {"req": "M3x8 screw, nylon", "status": "pass", "quote": "box-lid chart: M3*8 (8 mm under head) 35 PCS; listing: 'made of premium nylon'"}
+        ],
+        "kit_contents": "F-F M3x6 40, M3x10 40, M3x15 30, M3x20 35; M-F 6+6 45, 8+6 40, 10+6 35, 15+6 20, 20+6 20; screws M3x8 35, M3x12 35, M3x20 35; flat washers 100; nuts 100 (box-lid chart)",
+        "cad_note": "male threads are 6 mm: standoff male end 6 mm into the bracket pilot; spacer male 6 mm through the 1.6 mm ESC leaves 4.4 mm into the standoff's female end; M3x8 screw through FC 1.6 + grommet 1.0 leaves 5.4 mm",
+        "rejected": [
+          {"asin": "B0BNB1K5P2", "why": "260 pcs $7.58: M-F only 6/10/15/20 and screws 6/12/20, no 8 mm spacer or M3x8 screw"},
+          {"asin": "B0H1QS5Q6N", "why": "Vibit 640 $9.99: same gap (no 8 mm M-F, no M3x8 screw)"},
+          {"asin": "B0GC6GN9S7", "why": "620 pcs $9.99 Fri: no 8 mm M-F, no M3x8 screw"},
+          {"asin": "B07K679ZV9 + separate 6+6 and screws", "why": "three listings, dearer in total than one kit"},
+          {"url": "https://pyrodrone.com/products/300pcs-m3-nylon-black-hex-screw-nut-spacer-stand-off-varied-length-assortment-kit-box", "why": "$14.99, contents chart not published -> not_eligible"}
+        ]
+      },
+      {
+        "item": "FC UART1 (SH1.0 4-pin) to A7Z pins 14/16/18 lead",
+        "chosen": {"title": "Minidodca I2C Qwiic Cable Kit Stemma QT Wire ... 4 Pin Sh1.0 Connector+2Pcs Alligator Clip Test Leads", "asin": "B0D5VKR885", "url": "https://www.amazon.com/dp/B0D5VKR885", "seller": "Minidodoca Electron", "price": 8.88, "pack": "14 cables: SH-SH 10 cm x3, 20 cm x3, 30 cm, 50 cm; SH-to-male jumper 15 and 20 cm; SH-to-female jumper 15 and 20 cm; 2 alligator leads", "arrival": "Wed 2026-11-11", "returns": "FREE refund/replacement until Jan 31, 2027"},
+        "fit": [
+          {"req": "SH1.0 4-pin plug", "status": "pass", "quote": "title '4 Pin Sh1.0 Connector'; image: plug 6.9 mm wide"},
+          {"req": "four single 2.54 female Dupont", "status": "pass", "quote": "length image: 20 cm SH-to-female-jumper lead with separate housings"},
+          {"req": ">= 170 mm", "status": "pass", "quote": "length image '20 cm (7.9 Inch)'; wiring.json lengths a7z_link_mm 170"}
+        ],
+        "use": "the 20 cm SH-to-female lead. Wire colours follow Qwiic order black/red/blue/yellow = pins 1-4; with UART1 listed GND/5V/TX1/RX1 that gives black -> A7Z 14, red (5 V) unplugged and taped, blue (TX1) -> A7Z 18, yellow (RX1) -> A7Z 16. Inference: confirm pin 1 against the FC silkscreen before plugging",
+        "pyrodrone_kit_check": "DIY JST-SH1.0 Silicone Cable Kit (H2-5877) holds SH-SH cables of 5/10/15 cm only: too short (170 mm needed) and the A7Z end would need a Dupont crimp. Not a duplicate; still needed for the ESC and MTF-01 leads",
+        "rejected": [
+          {"asin": "B0992PHLBC", "why": "SparkFun female jumper: arrives Mon 11-16"},
+          {"asin": "B0D2MQ85LK", "why": "$19.99 loose pre-crimped wires to be inserted into housings; dearer, not a ready lead"}
+        ]
+      }
+    ],
+    "not_carted": [
+      {"item": "heat-shrink tubing 5 mm and 6 mm", "why": "sourcing-policy.json items.heatshrink = club_supply with purchase_requires_stock_check; INVENTORY.md lists no heat-shrink either way; check the club bin first"},
+      {"item": "12 AWG and 16 AWG silicone wire", "why": "Shawn: XT60和线 from RoboClub; INVENTORY.md silent on gauges (Cabinet A Row 4 'unlabelled, wire' only); confirm gauges at the club"},
+      {"item": "USB-C data cable", "why": "MISSING.md: buy only if none at hand"},
+      {"item": "capacitor 1000 uF 35 V (B0FVG77HZV)", "why": "Shawn unticked it on purpose: 电容我打算明天去RoboClub里面看一看，可能有现成的电容，所以我就没买. INVENTORY.md Cabinet D (60-drawer, passives) lists electrolytic 1000 uF and 3300 uF drawers; voltage and ESR not recorded"}
+    ],
+    "amazon_cart_readback_2026_11_10": {
+      "ticked": [
+        {"asin": "B0D5VKR885", "qty": 1, "price": 8.88},
+        {"asin": "B07CR81N69", "qty": 1, "price": 9.99},
+        {"asin": "B0H25CJN5K", "qty": 1, "price": 9.99}
+      ],
+      "unticked_untouched": [
+        {"asin": "B0G64JZ7JV", "item": "HTRC B6 V2 charger", "qty": 1, "price": 39.99},
+        {"asin": "B0FVG77HZV", "item": "Rubycon 1000 uF 35 V x7", "qty": 1, "price": 6.99}
+      ],
+      "subtotal_ticked": 28.86,
+      "subtotal_label": "Subtotal (3 items): $28.86",
+      "placed": false
+    }
   }
 }
