@@ -1,14 +1,24 @@
 # Full-flow demo simulation for the final-project office hours (2026-11-11)
 
-One as-built MuJoCo run of the whole story, recorded as a video: the owner calls "Mochi!", the duck glances up at the
-owner and quacks, the owner says "Mochi, go find the orange ball", the duck searches, walks to the ball, picks it up
-with the learned seeing pick and brings it back to the owner's feet. Final-goal steps 1 to 4 plus the name call, in
-one scene. Simulation only; nothing here talks to the robot.
+One MuJoCo run of the whole story on the robot as it is now, recorded as a video: the owner calls "Mochi!", the duck
+glances up at the owner's face and quacks, the owner says "Mochi, go find the orange ball", the duck searches, walks to
+the ball, picks it up with the learned seeing pick and brings it back to the owner. Final-goal steps 1 to 4 plus the
+name call, in one scene. Simulation only; nothing here talks to the robot.
+
+Second version, same day. The first version ran the retired charger-pack model (`plugged.json`, white saddle, rear
+converter box), drew the jaw fixed to the head so the beak stayed shut around the held ball, and stood the duck on the
+floor, where its look-up camera does not have a standing adult's face in the picture. Now:
+
+- Model: `microduck_rl/cmu/model/current.json` (`battery-20261104`: battery backpack, orange V1.35 saddle), passed as
+  `--manifest current`; the loaders draw the visual layer that matches the mass manifest.
+- Jaw: the drawn jaw (`visual.json` piece "jaw") rides on the `passive_mouth` hinge, so it opens with the beak boxes.
+- Table: the duck works on a 1.4 x 1.4 m table top (the sim floor), the owner stands on the room floor beside it (eyes
+  1.60 m, 0.85 m above the top), 1.21 m from the duck; the run fails if the trunk comes within 0.10 m of an edge.
 
 ## How it runs
 
 - `../fullflow_sim.py` drives `brain_sim_check.run` through a small hook (`brain_sim_check.STORY`: setup, want,
-  after) with the seepick rehearsal's corrected harness: as-built model, plugged manifest, COM -2.25 mm, elliptic cone
+  after) with the seepick rehearsal's corrected harness: the current robot (`--manifest current`), COM -2.25 mm, elliptic cone
   with impratio 10, 4 % read drops, wired guards, servo rail from `microduck-sim/CURRENT-STATE.json` (7.6 V), jaw at
   150 mA (`jaw_grip_current_ma`). Ball: 12 mm, 1 g, friction 0.6, a physical body on the floor from the start.
 - Video: a follow camera (1280 x 720, 25 fps, video time = sim time) plus the rendered head camera in the corner, with
@@ -39,29 +49,29 @@ pinched at the very tip, where the real robot held its ball at 9.5 deg (2026-11-
 pick is a tip pinch and says nothing either way about the real carry; carrying the ball while walking has never been
 trained or tried on the robot.
 
-## Runs (2026-11-11, final settings, `run_c*.log`, `fullflow_c*.json`)
+## Runs (2026-11-11, second version, `run_d*.log`, `fullflow_d*.json`)
 
-Four seeds (the seed draws the pick camera's delay, drops and bias). Three of four brought the ball to the owner; picks
-held on 3 of 5 attempts.
+Four seeds (the seed draws the pick camera's delay, drops and bias). Two of four brought the ball back; every pick that
+was tried on the table held (2 of 2).
 
-- **Seed 0, the demo video** (`MicroDuck-fullflow-sim.mp4`, 50 s, local only): walked straight into the window (x
-  0.108, y 0.000), picked on the first try (lift 0.198 m), delivered at 43.9 s. No fall, no guard trip.
-- **Seed 3** (`MicroDuck-fullflow-sim-retry.mp4`, 80 s, local only): five creeps and back steps left the ball 4.8 cm
-  short of the landing spot; the first pick missed, the retry from x 0.107 held; delivered at 75.2 s.
-- **Seed 2:** eight creeps, then a pick at y +2.7 cm held; delivered at 65.8 s.
-- **Seed 1:** the walk-up overshot (ball at x -0.012, under the feet), the 0.2 m/s back steps did not move the duck,
-  the pick at -9.7 cm missed and the ball ended far off; time limit in the second attempt.
+- **Seed 3, the demo video** (`MicroDuck-fullflow-sim.mp4`, 47 s, local only): one creep, picked on the first try
+  (lift 0.201 m), ball back in front of the owner at 42.8 s. No fall, no guard trip.
+- **Seed 2** (`MicroDuck-fullflow-sim-seed2.mp4`, 65 s, local only): seven creeps, picked at y +0.2 cm (lift 0.199 m),
+  delivered at 60.7 s.
+- **Seed 0:** creeps drifted sideways; stopped by the table-edge check at 44.1 s before a pick.
+- **Seed 1:** after eight creeps the ball was 0.39 m off; the pick missed; time limit.
 
-Earlier runs on the same day (not kept): with a stop at 0.20 m and creeps from a standstill, walk61 often stepped on
-the spot (seed 3: eight 1.5 s bursts, no progress), and every pick that held lost the ball at the hand-back (5 runs).
+The creep is still the weak part: from a standstill, short walk61 bursts and back steps move the sim duck unreliably.
+The robot's own walk-up (seepick.py) is tuned on the robot and was not copied here.
 
-The creep is the weak part of this scene: from a standstill, short walk61 bursts and back steps move the sim duck
-unreliably. The robot's own walk-up (seepick.py) is tuned on the robot and was not copied here.
+Carry assist (shown on the video while on): after a pick that held, the beak goes to 10 deg (the robot held its ball
+at 9.5 deg on 2026-11-06) and the ball, contacts off, slides in 0.6 s from the tip to between the pads, until the beak
+opens in front of the owner.
 
 ## Reproduce
 
 ```
 cd microduck-sim/guide/firmware/mac
-./fullflow_sync.sh run 0                        # Mac mini; video + events land in fullflow-20261111/
-python3 fullflow_mux.py fullflow-20261111/fullflow_s0.mp4 fullflow-20261111/fullflow_s0.json out.mp4
+./fullflow_sync.sh run 3                        # Mac mini; video + events land in fullflow-20261111/
+python3 fullflow_mux.py fullflow-20261111/fullflow_s3.mp4 fullflow-20261111/fullflow_s3.json out.mp4
 ```
