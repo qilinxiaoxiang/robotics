@@ -14,7 +14,17 @@
       ],
       "acceptance": "Starting in each mode loads that mode's policies and start-up flow, shown on the page; a start with the pack fitted in normal mode, or without it in jetpack mode, is refused or warned before torque comes on.",
       "status": "recorded, not implemented; the with-pack policy exists in simulation only and nothing is deployed to the robot",
-      "open": "whether the mode is only chosen by hand or also checked against the flight controller's heartbeat on the A7Z serial port"
+      "open": "resolved by FP-R2: the mode is detected, not chosen by hand"
+    },
+    {
+      "id": "FP-R2",
+      "date": "2026-11-11",
+      "words": "等等，这个其实是A7Z是可以探测到的，对吧？A7Z探测到有背包，那就用背包模式。根本就不用手切，对吗？",
+      "meaning": "The A7Z detects the pack and selects jetpack mode by itself; no manual switch in normal use. This replaces the hand-chosen switch of FP-R1; what the mode selects stays as in FP-R1.",
+      "mechanism_planned": "The flight controller sends a MAVLink heartbeat about once a second on FC UART1 to A7Z pins 16/18 (wiring/wiring.json). Heartbeat seen before torque comes on = jetpack mode; none = normal mode. The page shows the detected mode before torque.",
+      "known_gap": "The flight controller is powered only from the flight batteries. Pack fitted but its batteries unplugged gives no heartbeat, so detection alone would pick normal mode with about 1 kg on the back. Needs one of: a detection that works unpowered, or the page showing the detected mode with a manual override as the fallback.",
+      "acceptance": "Brain started with the pack powered loads the with-pack policies with no user action and shows 'jetpack mode' on the page; started without the pack shows 'normal mode'; the unpowered-pack case is either detected or visibly flagged before torque.",
+      "status": "recorded, not implemented; the A7Z spare serial port has not been enabled or tested yet"
     }
   ]
 }
