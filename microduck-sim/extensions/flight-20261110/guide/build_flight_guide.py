@@ -139,6 +139,7 @@ for key, name in DUCK:
     add_part(key, name, '#c9ced6' if not key.startswith(('bp_', 'battery_')) else '#9fb3c8', 'duck', 'assembled', m)
 
 DUCK_ALL = [k for k, _ in DUCK]
+
 DUCK_CTX = ['rear_pack', 'shell_left', 'shell_right', 'saddle_body', 'head_bottom']
 FLIGHT_FRAME = ['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'fc', 'capacitor']
 
@@ -697,6 +698,31 @@ assert used == placed, f'screws.json entries not placed in any step: {sorted(use
 SCREWS_OUT = [{k: v for k, v in s.items() if k != 'id'} for s in SCREW_LIST]
 
 
+BODY_ZH = {'left-leg': '左腿（鸭子原有，已装好）', 'right-leg': '右腿（鸭子原有，已装好）', 'neck': '脖子（鸭子原有，已装好）',
+           'head': '头（鸭子原有，已装好）', 'camera': '脸和眼眶（鸭子原有，已装好）', 'torso': '躯干（鸭子原有，已装好）'}
+BODY_TORSO = {'torso_base', 'ring10_torso', 'ring5_torso', 'saddle_lid'}
+
+
+def add_duck_body() -> list[str]:
+    """The rest of the robot (legs, neck, head, face) for the overview's whole-body view, standalone page only: the MicroDuck
+    guide's own meshes (guide/data/guide-data.json, same guide frame, audited by its print gate), copied as they are. No later
+    step shows them, and main_fragment() never sees them (the MicroDuck guide build imports this module before writing that file)."""
+    src = SIM / 'guide' / 'data' / 'guide-data.json'
+    assert src.exists(), f'{src} missing: build the MicroDuck guide first (guide/content/build_guide_data.py)'
+    keys = []
+    for p in json.loads(src.read_text())['parts']:
+        mod, k = p.get('module'), p['key']
+        if mod not in BODY_ZH or k in PARTS or (mod == 'torso' and k not in BODY_TORSO):
+            continue
+        PARTS[k] = dict(key=k, name=BODY_ZH[mod], color='#c9ced6', module='duck', status='assembled',
+                        positionB64=p['positionB64'], indexB64=p['indexB64'], bounds=p['bounds'])
+        keys.append(k)
+    ov = next(s for s in STEPS if s['id'] == 'overview')
+    ov['show'] += keys
+    ov['instructions'].insert(0, '图里是整只鸭子装好背包后的样子：灰色是鸭子原有的部分（腿、身体、脖子、头），彩色是这一章要装的东西。')
+    return keys
+
+
 def standalone() -> dict:
     return dict(schemaVersion=1, lang='zh', title='MicroDuck 飞行背包组装', subtitle='四个 50 mm 涵道风扇、两块 4S 电池、飞控堆叠',
                 revision='FlightPack-D1',
@@ -760,6 +786,7 @@ def main_fragment(world: Path, guide_keys: set) -> dict:
 
 
 if __name__ == '__main__':
+    add_duck_body()
     OUT.write_text(json.dumps(standalone(), ensure_ascii=False))
     print(json.dumps(dict(parts=len(PARTS), steps=len(STEPS), screws=len(SCREW_LIST), cables=len(CABLES),
                           lengths=dict(fans={k: v['ext_mm'] for k, v in W.FAN_LEN.items()}, pigtails={k: v['pigtail_mm'] for k, v in W.BAT_LEN.items()}),

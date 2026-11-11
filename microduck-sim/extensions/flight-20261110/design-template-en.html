@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flying MicroDuck: Four-Fan Jet Pack Design</title>
+__CSS__</head><body><div class="wrap">
+<h1>Flying MicroDuck: four-fan jet pack design</h1>
+<p class="lead">MicroDuck is our small two-legged duck robot (about 27 cm tall). This pack adds four 50 mm electric ducted fans (EDFs: small fans inside a tube), two per side in two pods called nacelles, two 4S lithium batteries (four cells in series, about 14.8 V), and a flight controller with a downward-looking optical-flow sensor on its back. The goal is to fly up onto a table about 0.75 m high and back down, while keeping the duck's walking, turning, bending to pick things up, and head motion. <a href="FLIGHT-PACK-DESIGN.html">中文版</a></p>
+<p class="lead">Status ({{state_verified}}): the printed parts are modelled and the print files are released (revision {{release}}), not printed yet. The fans are ordered and due {{fan_arrive}}; the flight controller, batteries and flow sensor are ordered and in transit. In simulation the whole flight runs end to end. Training for walking and bending with the pack is running and has no result yet. Nothing has flown, thrust has not been measured, and no part is in hand.</p>
+<p class="note">Each number carries its source: <span class="src">vendor</span> seller's claim; <span class="src">calc</span> computed from the CAD and formulas; <span class="src">sim</span> MuJoCo physics simulation; <span class="src">slicer</span> from the slicing software. Nothing on this page was measured on hardware.</p>
+<nav><a href="#sum">Summary</a><a href="#m3d">3D view</a><a href="#parts">Parts</a><a href="#layout">Layout</a><a href="#mount">Mounting</a><a href="#mass">Mass and balance</a><a href="#thrust">Thrust and endurance</a><a href="#elec">Electrical</a><a href="#ctrl">Control</a><a href="#sw">Software</a><a href="#beh">Existing behaviours</a><a href="#fly">A flight</a><a href="#test">Tests</a><a href="#open">Not done yet</a><a href="#src">Sources</a></nav>
+
+<h2 id="sum">Summary</h2>
+<p>Whether it flies depends on fan thrust, which nobody has measured: at the vendor's rated thrust all {{sim_nom_n}} simulated flights succeed; at 90 % it still flies; at 80 % it cannot take off.</p>
+<div class="cards">
+<div class="card"><b>Propulsion</b><div class="v">Four 50 mm ducted fans</div><p>ARESWEI HDS001, rated {{fan_thrust_g}} g thrust each at {{fan_V}} V, {{fan_mass_g}} g each. <span class="src">vendor</span></p></div>
+<div class="card"><b>Mass</b><div class="v">Pack about {{pack_g}} g, robot about {{total_kg}} kg</div><p>The duck's own {{duck_g}} g is a parts estimate; it has never been weighed. <span class="src">calc</span></p></div>
+<div class="card"><b>Thrust-to-weight</b><div class="v">{{twr_vendor}}</div><p>Sum of the four rated thrusts over the robot's weight. At two thirds of the rating it is {{twr_two_thirds}}. <span class="src">calc</span></p></div>
+<div class="card"><b>Simulated flights</b><div class="v">Rated thrust: {{sim_nom_full}} of {{sim_nom_n}} succeed</div><p>90 % thrust {{sim_t90_full}} of {{sim_t90_n}}, 80 % thrust {{sim_t80_full}} of {{sim_t80_n}}. Each set is three hovers, three flights up onto the table and three down. <span class="src">sim</span></p></div>
+<div class="card"><b>Endurance</b><div class="v">{{hover_min_lo}} to {{hover_min_hi}} min hover</div><p>Using 80 % of the charge. One table flight uses {{sim_mah}} mAh in simulation, so about {{sim_trips}} flights per charge. <span class="src">calc</span><span class="src">sim</span></p></div>
+<div class="card"><b>Size</b><div class="v">{{width}} mm wide</div><p>Nacelle tops are {{nac_top}} mm off the ground, below the head; standing height is unchanged. <span class="src">calc</span></p></div>
+<div class="card"><b>Printing</b><div class="v">Two plates, about {{printed_g}} g</div><p>Orange plate {{orange_h2s_time}}, black plate {{black_h2s_time}} (Bambu H2S, 100 % infill). <span class="src">slicer</span></p></div>
+<div class="card"><b>Cost</b><div class="v">About ${{usd_ordered}} ordered</div><p>Fans ${{usd_fans}} with tax; Pyrodrone order ${{usd_pyro}} plus ${{usd_ship}} shipping, before tax. {{n_amazon_carted}} items worth ${{usd_amazon_carted}} sit in an Amazon cart, not ordered.</p></div>
+<div class="card"><b>Walking</b><div class="v">Walks with the pack, but toes out</div><p>In simulation the with-pack walking policy falls {{walk_pack_falls}} times in {{walk_pack_eps}} runs, but its feet point out {{toe_pack_L}} and {{toe_pack_R}} degrees (without the pack: {{toe_ref_L}} and {{toe_ref_R}}). The pickup bend falls {{bend_pack_falls}} of {{bend_pack_eps}}. Improved training is running. <span class="src">sim</span></p></div>
+</div>
+
+<h2 id="m3d">3D view (true scale)</h2>
+<p class="lead">The duck is the real shape from the simulation model. The pack is the released CAD (revision {{release}}) placed as is: printed parts in their real colours, fans, batteries, flight controller and flow sensor as stand-in shapes of the vendors' sizes. Drag to rotate, scroll or pinch to zoom; ground squares are 50 mm. "Bend to pick up" is the deepest bend pose logged on the real robot on 30 October.</p>
+<div class="bar"><span>Pose</span><button data-pose="stand" class="on">Standing</button><button data-pose="bend">Bend to pick up</button><button data-pose="scan">Head down, looking around</button></div>
+<div id="stage"><canvas id="view"></canvas></div>
+<div class="bar"><button id="tPack" class="on">Pack</button><button id="tShell" class="on">Nacelles</button><button id="tJet" class="on">Airflow</button><button id="tLab" class="on">Labels</button><span>View</span><button data-view="iso">Angled</button><button data-view="front">Front</button><button data-view="side">Side</button><button data-view="back">Back</button><button data-view="top">Top</button></div>
+<p class="note"><span class="sw" style="background:#f2731a"></span>Orange prints (wing plate, battery trays, flight-controller bracket) <span class="sw" style="background:#2a2a2e"></span>Black prints: nacelles (see-through) <span class="sw" style="background:#8c949f"></span>Ducted fans <span class="sw" style="background:#b4332b"></span>Flight batteries <span class="sw" style="background:#1f55b3"></span>Flight controller and ESC <span class="sw" style="background:#268c52"></span>Flow sensor <span class="sw" style="background:#f2c200"></span>A7Z rear ports (grey: the camera plug fitted today). Battery, controller and sensor colours only tell them apart; the real parts look different. Airflow shows in the standing pose only.</p>
+<p class="note">The duck's battery backpack is drawn where it sits today; with the wing plate fitted it moves {{centre_t}} mm further back.</p>
+
+<h2 id="parts">Parts</h2>
+<p>Four of the six things to buy are ordered; the charger and some small parts are still in a cart; the compass was dropped. Status comes from <code>CURRENT-STATE.json</code> ({{state_verified}}).</p>
+<div class="cards">
+<div class="card"><h4>Ducted fans × 4 <span class="tag ok">{{st_fans}}</span></h4><p>ARESWEI HDS001, 50 mm, 11 blades, 4650KV (4650 rpm per volt), for 4S. Two green motors (clockwise), two red (counterclockwise).</p><p>Rated {{fan_thrust_g}} g thrust at {{fan_V}} V, {{fan_peak_A}} A peak, {{fan_mass_g}} g, about 140 mm leads with 3.5 mm bullet plugs. <span class="src">vendor</span></p><p>No millimetre drawing exists. The nacelles are sized from the listing picture and clamp any fan within ±1.5 mm of it. Due {{fan_arrive}}; sizes get checked on arrival.</p><p>${{usd_fans}} for four, with tax. <a href="https://www.amazon.com/dp/B0H4KJLR6P">Clockwise</a>, <a href="https://www.amazon.com/dp/B0H4KSDT77">counterclockwise</a></p></div>
+<div class="card"><h4>Flight batteries × 2 <span class="tag ok">{{st_batt}}</span></h4><p>CNHL Black Series 4S 1300 mAh 130C with an XT60 plug (a common high-current connector). 151 g, 31 × 33 × 74 mm each. <span class="src">vendor</span></p><p>In parallel: {{batt_mah}} mAh, about {{batt_wh}} Wh. One per side, strapped to a tray.</p><p>${{usd_batt}} each. <a href="https://pyrodrone.com/products/cnhl-black-series-v2-0-1300mah-14-8v-4s-130c-lipo-battery-xt60">Listing</a></p></div>
+<div class="card"><h4>Flight controller and 4-in-1 ESC <span class="tag ok">{{st_stack}}</span></h4><p>MicoAir 743 V2 stack: a MicoAir743v2 flight controller (FC, keeps the attitude) on top of a 55 A four-in-one electronic speed controller (ESC, drives the four motors), 30 × 30 mm hole pattern.</p><p>The FC runs ArduPilot (open-source autopilot firmware), which supports this board officially. The ESC runs AM32 firmware, 55 A per channel, 15 A above the fan's {{fan_peak_A}} A peak. <span class="src">vendor</span></p><p>${{usd_stack}}. <a href="https://pyrodrone.com/products/micoair-743-v2-stack-with-h743-bmi088-bmi270-bluetooth-flight-controller-and-2-6s-55a-am32-4in1-esc-30x30mm">Listing</a></p></div>
+<div class="card"><h4>Optical flow and range sensor <span class="tag ok">{{st_mtf}}</span></h4><p>MicoAir MTF-01: looks at the floor and reports height (up to 8 m) and sideways speed. 29.3 × 17 × 14.5 mm, 4.5 g, 5 V, serial output. <span class="src">vendor</span></p><p>${{usd_mtf}}. <a href="https://pyrodrone.com/products/micoair-mtf-01-optical-flow-8m-range-2in1-sensor">Listing</a></p></div>
+<div class="card"><h4>Compass <span class="tag">{{st_compass}}</span></h4><p>No external compass (decided 10 November). The duck's own inertial sensor (IMU) sends heading to the FC through the A7Z; the compass on the FC board is the fallback. Neither route has been tried on hardware.</p></div>
+<div class="card"><h4>Charger <span class="tag warn">{{st_charger}}</span></h4><p>HTRC B6 V2, 80 W, 1 to 6 cell balance charger with power adapter, ${{usd_charger}}. The existing charger handles only 2 and 3 cells.</p></div>
+<div class="card"><h4>Small parts</h4><ul><li>3.5 mm bullet plugs, 20 pairs: {{st_bullets}}</li><li>M3 nylon standoff kit (for the FC stack): {{st_standoffs}}</li><li>SH1.0-to-Dupont lead kit (FC to A7Z): {{st_uartlead}}</li><li>SH1.0 silicone lead kit: {{st_shkit}}</li><li>Two battery straps: {{st_straps}}</li><li>1000 µF capacitor: {{st_cap}} (checking the club's stock first)</li></ul></div>
+<div class="card"><h4>From the RoboClub stock</h4><ul><li>XT60 plugs and silicone wire (12 AWG, 16 AWG): not bought, club stock</li><li>{{n_lug}} steel M3 × 12 screws for the nacelle lugs: {{st_lugscrews}}. The inventory lists M3 and M3 × 10; the 12 mm length has not been checked at the drawer</li></ul></div>
+<div class="card"><h4>Eight printed parts</h4><p>Orange: wing plate {{g_wing_plate}} g, two battery trays {{g_tray_L}} g each, FC bracket {{g_fc_bracket}} g. Black: two nacelles, each an inner half of {{g_nacelle_inner_L}} g and an outer half of {{g_nacelle_outer_L}} g. <span class="src">slicer</span></p><p>All 100 % infill, with print files for three printers (X1C, Elegoo Centauri Carbon, H2S). They are used straight off the printer: no trimming, drilling or filing.</p></div>
+</div>
+
+<h2 id="layout">Layout and dimensions</h2>
+<p>One nacelle per side with a fan at each end; the batteries sit between body and nacelle; everything hangs from the wing plate on the back, and nothing is added on top of the body or the A7Z computer.</p>
+<p class="note">Coordinates are for the standing pose: x forward, y left, z up, in mm, origin on the ground between the feet.</p>
+<div class="cards">
+<div class="card"><h4>Nacelles</h4><p>One per side, an inner and an outer half clamping two fans. y {{nac_y_in}} to {{nac_y_out}} (mirrored on the right), z {{nac_bottom}} to {{nac_top}}, {{nac_len}} long.</p><p>Fan inlet centres: front at x {{fan_x_front}}, rear at x {{fan_x_rear}}, {{fan_pitch}} apart, y ±{{fan_y}}; the highest inlet point is z {{lip_top}}, below the head.</p></div>
+<div class="card"><h4>Fans tilted {{cant}} degrees</h4><p>The front fans' jets point slightly forward and down, the rear fans' slightly back and down. When thrust is shifted between the fan pairs, the sideways parts of the jets turn the robot on the spot; see Control.</p></div>
+<div class="card"><h4>Batteries</h4><p>One per side on a tray between the body side and the nacelle: x {{batt_x0}} to {{batt_x1}}, y {{batt_y0}} to {{batt_y1}}, z {{batt_z0}} to {{batt_z1}}.</p></div>
+<div class="card"><h4>Wing plate</h4><p>One orange print. Its centre, {{centre_t}} mm thick, is clamped between the OpenRB box (the black box on the duck's back that holds the servo controller board) and the battery backpack; two arms reach out to y ±{{wing_y}} and carry the trays and nacelles. x {{wing_x0}} to {{wing_x1}}, top at z {{wing_ztop}}.</p><p>Within the body's width it stays below z {{mid_zmax}}, under the A7Z's rear ports, so USB-C, HDMI and the camera plug still plug in from behind.</p></div>
+<div class="card"><h4>Flight controller stack</h4><p>Stands upright on an orange bracket behind the right arm: x {{fc_x0}} to {{fc_x1}}, y {{fc_y0}} to {{fc_y1}}, z {{fc_z0}} to {{fc_z1}}. The 1000 µF capacitor lies on top of the right arm.</p></div>
+<div class="card"><h4>Flow sensor</h4><p>Screwed to a small shelf under the FC bracket, lens straight down: x {{mtf_x}}, y {{mtf_y}}, its face {{mtf_z}} mm off the ground. It is the rearmost point of the robot, so when it sees the table the whole duck is already above it.</p></div>
+</div>
+
+<h2 id="mount">How it attaches</h2>
+<p>Screws only: no glue, no snap fits, and no change to existing parts. Load path: nacelle → wing-plate arm → wing-plate centre → four {{spec_post}} screws → OpenRB box → the two hip servos.</p>
+<ul>
+<li><b>Wing plate and battery backpack share {{n_post}} {{spec_post}} screws:</b> through the backpack's front plate and the wing centre ({{post_through}} mm together) into the four existing posts of the OpenRB box, {{post_bite}} mm of thread engagement. The backpack moves {{centre_t}} mm back; the backpack itself is unchanged.</li>
+<li><b>Battery trays:</b> three {{spec_tray}} per side from behind the arm into the tray flange, {{n_tray}} in all.</li>
+<li><b>Nacelle clamp:</b> five {{spec_clamp}} with washers per nacelle, {{n_clamp}} in all, pull the outer half onto the inner half; a layer of 1 mm foam tape lines the bore and the fans' two ears are trapped between the halves. Tighten to snug, then back off by half (about 0.05 N·m): overtightening cracks the printed corners.</li>
+<li><b>Nacelle to arm:</b> three steel {{spec_lug}} per side from behind the arm into the nacelle's square lug, {{n_lug}} in all.</li>
+<li><b>FC bracket and stack:</b> {{n_fcb}} {{spec_fcb}} fix the bracket behind the right arm; the FC stack sits on M3 nylon standoffs and screws ({{n_stack}} pieces); the flow sensor takes {{n_mtf}} {{spec_mtf}}.</li>
+<li><b>Nothing rests on the saddle.</b> The saddle (the cradle on top of the body that holds the A7Z) is stuck on with foam tape and is not strong enough, and its only two screw holes sit under the A7Z board where no screwdriver reaches once fitted.</li>
+</ul>
+<h3>Strength</h3>
+<p>Normal flight and handling have margin; only lifting the whole robot by one nacelle falls short of the target, so the assembly guide says to pick the duck up by its body. All of this is calculation (finite element analysis, FEA, plus hand checks) for PLA (ordinary printing plastic) at 100 % infill; screw pull-out in printed holes has not been tested.</p>
+<div class="cards">
+<div class="card"><b>Peak thrust × 1.5</b><div class="v">Safety factor {{sf_thrust}} or more</div><p>Safety factor (SF) = what the material can take divided by the computed stress; the target is {{sf_target}}. Nacelle lug screws {{sf_lug_thrust}}. <span class="src">calc</span></p></div>
+<div class="card"><b>Lifting the robot by one nacelle (2 kg × 1.5)</b><div class="v">Left {{sf_lift_L}}, right {{sf_lift_R}}</div><p>Below the target {{sf_target}}, accepted. The limit is the top edge of the wing centre, which cannot grow because the backpack's top plugs need that space; PETG would give about 2.1. Lug screws {{sf_lug_lift}}. <span class="src">calc</span></p></div>
+<div class="card"><b>Crashes (for information)</b><div class="v">Hard landing {{sf_land}}, topple onto a nacelle {{sf_topple}}</div><p>In a topple the nacelle lands first and the wing plate breaks; the fix is reprinting it. Crashes are not design gates (decided 10 November). <span class="src">calc</span></p></div>
+</div>
+
+<h2 id="mass">Mass and balance</h2>
+<p>The pack doubles the robot's weight, moves the centre of mass about {{com_shift_x}} mm back and {{com_rise_z}} mm up, and makes the side-to-side moment of inertia {{iner_ratio}} times larger, so the walking and bending policies (the neural-network controllers that drive the legs) must be retrained.</p>
+<div class="cards">
+<div class="card"><h4>Pack mass</h4><ul><li>Four fans: {{pack_fans_g}} g <span class="src">vendor</span></li><li>Two batteries: {{pack_batt_g}} g <span class="src">vendor</span></li><li>Eight prints: {{pack_printed_g}} g <span class="src">slicer</span></li><li>FC stack, capacitor and standoffs: {{pack_stack_g}} g</li><li>Wires, plugs, bullets: {{pack_leads_g}} g (from routed lengths)</li><li>Screws, straps, ties: {{pack_hw_g}} g (estimate)</li><li>Flow sensor: {{pack_flow_g}} g</li><li><b>Total about {{pack_g}} g</b></li></ul></div>
+<div class="card"><h4>Centre of mass</h4><p>Without the pack: x {{com_duck_x}}, {{com_duck_z}} mm up.</p><p>With the pack: x {{com_tot_x}}, {{com_tot_z}} mm up. <span class="src">calc</span></p><p>The fans' combined thrust centre lines up fore-aft with the centre of mass, so the robot does not pitch over at lift-off.</p></div>
+<div class="card"><h4>Moment of inertia (roll axis)</h4><p>{{iner_duck}} without and {{iner_pack}} kg·m² with the pack, about {{iner_ratio}} times. The body sways more slowly, one reason the old walking policy falls almost every time with the pack. <span class="src">calc</span></p></div>
+<div class="card"><h4>The legs can hold the bend</h4><p>Along the existing pickup bend, gravity only: with the pack the hardest-working joint is the knee at {{bend_tau_full}} N·m, {{bend_pct_full}} % of the servo torque limit in the model ({{servo_limit}}); without the pack {{bend_tau_none}}. It holds, with little margin. <span class="src">calc</span></p></div>
+</div>
+<p class="note">The simulation uses a pack of {{sim_pack_g}} g (prints from an older slicing, {{sim_printed_g}} g), about {{mass_gap_g}} g lighter than this table.</p>
+
+<h2 id="thrust">Thrust and endurance</h2>
+<p>To hover each fan must give about {{hover_per_fan_g}} g, {{hover_share_pct}} % of its rated maximum. The design takes the vendor's thrust as given (decided 10 November, no separate bench test); the first tethered hover is the thrust measurement.</p>
+<ul>
+<li><b>Thrust-to-weight:</b> {{twr_vendor}} at the rating. Independent tests of fans this size often reach only two thirds of the rating, which would give {{twr_two_thirds}}. <span class="src">calc</span></li>
+<li><b>In simulation:</b> hover throttle about {{sim_throttle}} %, hover current about {{sim_hover_A}} A in total, up to {{sim_esc_peak}} A on one ESC channel and {{sim_pack_peak}} A from one battery. The simulated flight controller is a stand-in written to behave like ArduPilot, not ArduPilot itself. <span class="src">sim</span></li>
+<li><b>Hover current:</b> three methods give {{hover_A_lo}} to {{hover_A_hi}} A in total ({{hover_A_fan_lo}} to {{hover_A_fan_hi}} A per fan), a factor of two apart; a measurement decides. The FC caps total current at {{curr_cap}} A to protect the battery plugs. <span class="src">calc</span></li>
+<li><b>Endurance:</b> {{batt_mah}} mAh, 80 % used: {{hover_min_lo}} to {{hover_min_hi}} min of hover. One table flight takes about {{sim_flight_s}} s and {{sim_mah}} mAh in simulation, so about {{sim_trips}} flights per charge. <span class="src">calc</span><span class="src">sim</span></li>
+<li><b>If thrust is short:</b> at 90 % all {{sim_t90_n}} simulated flights take off and land, {{sim_t90_full}} of them ending standing; at 80 % only {{sim_t80_air}} gets airborne. <span class="src">sim</span></li>
+</ul>
+
+<h2 id="elec">Electrical</h2>
+<p>The pack has its own power and shares only three signal wires with the duck (ground, transmit, receive); the duck's servos and its A7Z computer stay on the duck's own 2-cell battery.</p>
+<div class="cards">
+<div class="card"><h4>Power</h4><p>Each battery plugs into an XT60 pigtail (12 AWG); both pigtails and the capacitor are soldered to the ESC's two battery tabs, where the batteries join in parallel.</p><p>Each of the ESC's four motor pad sets gets three 16 AWG wires ending in 3.5 mm female bullets, which take the fans' own male bullets, so each fan unplugs on its own.</p></div>
+<div class="card"><h4>Flight controller</h4><p>The FC sits on the ESC; one 8-pin lead carries power, throttle signals and the current reading.</p><p>Serial port 4: the flow sensor. Serial port 1: the A7Z.</p></div>
+<div class="card"><h4>Link to the duck</h4><p>A 20 cm SH1.0-to-Dupont lead from FC serial port 1 to the A7Z header: pin 14 ground, pin 16 A7Z transmit to FC receive, pin 18 FC transmit to A7Z receive. The lead's 5 V wire is cut and insulated; the two supplies share only ground.</p><p class="warn">This A7Z serial port (UART4, pins 16 and 18) has not been enabled or tested; it must be switched on in the operating system first.</p></div>
+<div class="card"><h4>Soldering</h4><p>12 motor pads, 12 bullets, 2 battery tabs (three wires each), 4 XT60 cups. All on the bench before anything goes on the duck.</p></div>
+<div class="card"><h4>Charging</h4><p>The batteries are strapped to the trays: unplug the XT60, open the strap and lift the battery out to charge; the pack stays on.</p></div>
+</div>
+
+<h2 id="ctrl">Control</h2>
+<p>The flight controller holds attitude and height by itself, and the A7Z only gives it tasks; the walking policy takes no part in the air.</p>
+<ul>
+<li><b>The FC holds attitude.</b> It has its own gyroscope and adjusts the four fans hundreds of times a second to keep the body level.</li>
+<li><b>The flow sensor holds height and drift.</b> The rangefinder gives height and the optical flow gives sideways speed, both straight into the FC.</li>
+<li><b>The A7Z runs the mission.</b> Over MAVLink (the standard drone telemetry protocol) it tells the FC how high to climb, where to move and when to land, and switches the legs' control mode at take-off and touchdown.</li>
+</ul>
+<h3>Fan numbering</h3>
+<div class="cards">
+<div class="card"><b>1: front right, counterclockwise (red motor)</b><p>Jet tilted forward</p></div><div class="card"><b>2: rear left, counterclockwise (red motor)</b><p>Jet tilted back</p></div><div class="card"><b>3: front left, clockwise (green motor)</b><p>Jet tilted forward</p></div><div class="card"><b>4: rear right, clockwise (green motor)</b><p>Jet tilted back</p></div>
+</div>
+<ul>
+<li><b>Roll:</b> left pair against right pair, {{fan_y}} mm lever arm: strong.</li>
+<li><b>Pitch:</b> front pair against rear pair, only {{fan_pitch}} mm apart: weaker.</li>
+<li><b>Yaw:</b> the ducts' stator vanes cancel the swirl, so reaction torque is weak. Hence the {{cant}} degree tilt: speeding up fans 1 and 2 and slowing 3 and 4 makes the jets' sideways components turn the body.</li>
+</ul>
+<h3>Key flight controller settings (ArduPilot parameters)</h3>
+<ul>
+<li>Frame: <code>FRAME_CLASS = {{p_FRAME_CLASS}}</code> (quad), <code>FRAME_TYPE = {{p_FRAME_TYPE}}</code> (X). The ESC pads do not match the motor numbers, so <code>SERVO1..4_FUNCTION = {{p_SERVO1_FUNCTION}}, {{p_SERVO2_FUNCTION}}, {{p_SERVO3_FUNCTION}}, {{p_SERVO4_FUNCTION}}</code> remaps them. A wrong motor order flips the robot at take-off; the assembly guide checks each fan's spin.</li>
+<li>Flow and range: <code>FLOW_TYPE = {{p_FLOW_TYPE}}</code>, <code>RNGFND1_TYPE = {{p_RNGFND1_TYPE}}</code>, <code>RNGFND1_ORIENT = {{p_RNGFND1_ORIENT}}</code> (down), range {{p_RNGFND1_MIN_CM}} to {{p_RNGFND1_MAX_CM}} cm.</li>
+<li>Current: <code>BATT_AMP_PERVLT = {{p_BATT_AMP_PERVLT}}</code> (the default belongs to another ESC and reads half), <code>MOT_BAT_CURR_MAX = {{p_MOT_BAT_CURR_MAX}}</code> A.</li>
+<li>No radio: <code>FS_THR_ENABLE = {{p_FS_THR_ENABLE}}</code>, with the radio check skipped at arming.</li>
+<li>Link loss: <code>FS_GCS_ENABLE = {{p_FS_GCS_ENABLE}}</code>, <code>FS_GCS_TIMEOUT = {{p_FS_GCS_TIMEOUT}}</code>: if the FC hears no heartbeat from the A7Z for {{p_FS_GCS_TIMEOUT}} s it lands by itself.</li>
+<li>A7Z link: <code>SERIAL1_PROTOCOL = {{p_SERIAL1_PROTOCOL}}</code> (MAVLink2) at 921600 baud, 115200 if the A7Z port cannot do it.</li>
+</ul>
+
+<h2 id="sw">Software</h2>
+<p>None of the flight software is written yet; below is what has to be written and the leg hand-over already proven in simulation.</p>
+<div class="cards">
+<div class="card"><h4>Flight program on the A7Z</h4><p>Talks MAVLink to the FC over serial: heartbeat, take off, move, land, emergency stop; reads back height, attitude, voltage, current. It does not touch the servos.</p></div>
+<div class="card"><h4>What the legs do in the air</h4><p>Proven in simulation: when the estimated foot height passes 3 cm in the climb, the legs switch to a locked standing pose; when it drops below 3 cm in the descent, the walking policy takes over to catch the landing. Running the walking policy in the air makes the legs flail and is not usable. <span class="src">sim</span></p><p>This needs the FC to send its range height to the A7Z in real time; that link does not exist yet.</p></div>
+<div class="card"><h4>Detecting the pack</h4><p>Shawn's requirement: the A7Z detects whether the pack is fitted and picks jetpack mode by itself, with no manual switch. The plan is the FC's once-a-second heartbeat.</p><p class="warn">Gap: the FC is powered only by the flight batteries, so a fitted pack with its batteries unplugged sends no heartbeat and looks like no pack. Either a detection that works unpowered, or the page shows the detected mode with a manual override.</p></div>
+<div class="card"><h4>Flight panel in the phone app</h4><p>Added to the existing remote page: arm, take off to a height, nudge, land, stop; shows height, voltage, current and FC state.</p><p class="warn">The stop button goes phone → Wi-Fi → Mac mini → A7Z → FC, and any stuck link blocks it. The backstops are the FC's own {{p_FS_GCS_TIMEOUT}} s link-loss landing and a tether during tests.</p></div>
+</div>
+
+<h2 id="beh">Effect on existing behaviours</h2>
+<p>Geometrically, standing, walking, bending and head motion all clear the pack. Dynamically, walking with the pack works in simulation but toes out, and the bend still falls; training is running. Once fitted the pack stays on (Shawn's requirement), so all of this must hold with the pack.</p>
+<div class="cards">
+<div class="card"><h4><span class="tag ok">Clear</span>Standing</h4><p>Legs at least {{clr_stand_legs}} mm from the pack, head at least {{clr_stand_head}} mm (including the FC-to-A7Z lead). <span class="src">calc</span></p></div>
+<div class="card"><h4><span class="tag ok">Clear</span>Bending to pick up</h4><p>Checked against {{bend_rows}} bend poses logged on the real robot on 30 October: legs at least {{clr_bend_legs}} mm away, head more than 20 mm. <span class="src">calc</span></p></div>
+<div class="card"><h4><span class="tag warn">Close</span>Head down, looking around</h4><p>The pickup program's search motion (head down, turned up to 1.2 rad each way): the head comes within {{clr_scan}} mm of the left battery. The battery is a vendor-size box and the real one varies by 1 to 5 mm, so it may touch; check against the real battery when it arrives. <span class="src">calc</span></p></div>
+<div class="card"><h4><span class="tag ok">Clear</span>Head turn only</h4><p>Looking level, turning the full 170 degrees each way: at least {{clr_yaw}} mm. <span class="src">calc</span></p></div>
+<div class="card"><h4><span class="tag warn">Accepted</span>Extreme poses</h4><p>Random leg and head poses within half the joint range occasionally graze the wing centre's lower corner or the arm tops; real motions stay more than 20 mm away, so this is accepted. Across the full range they collide, and getting up after a fall with the pack is not possible with this layout. <span class="src">calc</span></p></div>
+<div class="card"><h4><span class="tag warn">Toes out</span>Walking with the pack</h4><p>The current walking policy falls almost every time with the pack. A policy trained with the pack (fq2 1999) falls {{walk_pack_falls}} times in {{walk_pack_eps}} runs at {{walk_pack_speed}} m/s, but its feet point out {{toe_pack_L}} and {{toe_pack_R}} degrees with a {{width_pack}} mm step width (without the pack: {{toe_ref_L}} and {{toe_ref_R}} degrees, {{width_ref}} mm). <span class="src">sim</span></p><p>A universal policy for 0 to 1 kg on the back is training now, with foot-direction and speed terms added to its reward; no result yet.</p></div>
+<div class="card"><h4><span class="tag bad">Falls</span>Bending with the pack</h4><p>The existing bend policy falls {{bend_pack_falls}} of {{bend_pack_eps}} times with the pack: the body tips about 14 degrees nose-down, then goes over backwards. Strength is enough (see Mass and balance); the policy has never seen the pack. A fine-tune of the bend policy with the pack is training. <span class="src">sim</span></p></div>
+<div class="card"><h4><span class="tag ok">No falls</span>Head motion</h4><p>With the pack, head-down search while standing, head down while walking, and the quack head tilt: {{head_falls}} falls in {{head_eps}} runs. <span class="src">sim</span></p></div>
+<div class="card"><h4><span class="tag ok">Free</span>A7Z ports</h4><p>The wing centre tops out at z {{mid_zmax}}; the A7Z's two USB-C ports, HDMI and the camera plug sit above it and stay usable.</p></div>
+</div>
+
+<h2 id="fly">One flight, step by step</h2>
+<p>This sequence runs in simulation (three hovers, three flights up, three down, all succeed at rated thrust); it has not run on the robot.</p>
+<ol>
+<li><b>Prepare.</b> The duck stands on its walking policy. The A7Z checks the FC heartbeat, voltage and position estimate.</li>
+<li><b>Arm and take off.</b> The fans go to take-off thrust; at 3 cm foot height the legs lock in the standing pose. The legs are still moving at lift-off, so the robot drifts sideways during take-off, up to {{sim_drift}} m in simulation.</li>
+<li><b>Fly over the table.</b> The flow sensor is at the back of the body; when its reading suddenly drops by about 0.75 m, the whole duck is over the table and the FC re-bases its height on the table top.</li>
+<li><b>Descend and land.</b> Below 3 cm foot height the walking policy takes the legs back; touchdown is at most {{sim_vz}} m/s, then the fans stop, the FC disarms and the duck keeps standing.</li>
+</ol>
+<p class="warn"><span class="tag warn">No known recipe</span>In simulation the stand-in flight controller re-bases height at the table edge by design. Real ArduPilot holding height on the rangefinder will see the "ground" jump 0.75 m up, think it is falling and add throttle; the right settings for a smooth table crossing must be found in tethered tests.</p>
+<p>A power loss at 1 m breaks printed parts, so early tests are all tethered, with safety glasses.</p>
+
+<h2 id="test">Tests and pass conditions</h2>
+<ol>
+<li><b>Fans arrive:</b> check they fall inside the nacelle's size band and see which side the leads leave.</li>
+<li><b>Print both plates and assemble</b> following the assembly guide: <a href="FLIGHT-PACK-BUILD.html">FLIGHT-PACK-BUILD.html</a> (Chinese).</li>
+<li><b>M3 pull-out test:</b> print a 20 × 20 × 12 mm block on the plate settings with a 3.1 mm sideways hole, drive an M3 × 12 and hang weights. If it holds about 186 N (about 19 kg), the nacelle lugs keep a safety factor of 2 when the robot is lifted by one nacelle.</li>
+<li><b>Spin check:</b> run one fan at a time and check spin and airflow direction (last steps of the assembly guide).</li>
+<li><b>FC setup:</b> set the parameters above; check <code>BATT_AMP_PERVLT</code> against a clamp meter or the charger's refill.</li>
+<li><b>First tethered hover:</b> read the logged hover current and feel the XT60 plugs after 60 s. This is also the thrust measurement: at the low end of the current range plugs and endurance are fine; at the high end, solder the battery leads directly or fit bigger plugs.</li>
+<li><b>Walking and bending with the pack:</b> only after the trained policies pass in simulation (no worse than today's, toe-out gone, bend without falls) do they go on the robot.</li>
+<li><b>Table edge:</b> first carry the pack by hand across a table edge and log range and flow readings, then fly it tethered.</li>
+</ol>
+
+<h2 id="open">Not done yet</h2>
+<ul>
+<li><b>Thrust and hover current:</b> unmeasured; first tethered hover.</li>
+<li><b>Parts:</b> none in hand. Fan sizes unchecked, charger and small parts not ordered, steel M3 × 12 screws and the capacitor to be found at RoboClub.</li>
+<li><b>Printing and assembly:</b> not started.</li>
+<li><b>Screw pull-out in printed holes:</b> untested; the strength numbers use estimates.</li>
+<li><b>Walking and bending policies with the pack:</b> training, no result; nothing deployed on the robot.</li>
+<li><b>A7Z flight program, range height link, pack detection, phone flight panel:</b> not written; the A7Z's serial port 4 has never been enabled.</li>
+<li><b>Heading source:</b> the duck's IMU or the FC's onboard compass, neither tried.</li>
+<li><b>Height hold across the table edge:</b> no known recipe.</li>
+<li><b>Noise, airflow and safety:</b> the jets will blow papers off the table and be loud indoors, no data; the inlets face up and open, close to hands and faces.</li>
+</ul>
+<div class="card"><h4>What changed since the 10 November concept page</h4><ul><li>Fans: QX-Motor QF2611 replaced by ARESWEI HDS001 (buyable on Amazon).</li><li>Batteries: 850 mAh XT30 replaced by 1300 mAh XT60 (the XT30's current rating is too low).</li><li>FC and ESC: Kakute H7 plus Tekko32 replaced by the MicoAir 743 V2 stack (the former were sold out).</li><li>Compass: dropped.</li><li>Screws: the four shared screws went from M2 × 10 to M2 × 12 and the wing centre from 3.5 to {{centre_t}} mm; the nacelle lugs use M3 × 12.</li><li>3D view: the block sketch is replaced by the released CAD parts.</li></ul></div>
+
+<h2 id="src">Sources and calculation files</h2>
+<ul>
+<li>Parts and purchase status: <code>~/code/robotics/microduck-sim/CURRENT-STATE.json</code>, fact <code>parts_flight_pack</code>.</li>
+<li>Geometry and design rationale: in <code>extensions/flight-20261110/cad/</code>, <code>DESIGN-CONTRACT.json</code>, <code>features.json</code>, <code>build/screws.json</code>, <code>checks/accepted.json</code>, <code>checks/check_parts.json</code>; print files <code>slices/release-FlightPack-D1/</code>, <code>slices/grams.json</code>.</li>
+<li>Strength: <code>strength/README.md</code>, <code>strength/results.json</code>.</li>
+<li>Flight simulation: <code>sim/README.md</code>, results <code>sim/out/fullseq_handover/summary.json</code>, mass <code>sim/out/mass_report.json</code>.</li>
+<li>Walking, bending, training: <code>train/UNIVERSAL-PLAN.md</code>, <code>train/BEND-PLAN.md</code>, <code>train/RUNLOG.md</code>, <code>train/out/style_bend_head.json</code>, <code>train/out/bend_statics.json</code>.</li>
+<li>Wiring and FC parameters: <code>wiring/wiring.json</code>; mass table <code>mass_budget.json</code>; Shawn's requirements <code>REQUIREMENTS.json</code>.</li>
+<li>This page is generated by <code>build_design.py</code> from those files (numbers read in <code>design_facts.py</code>); the Chinese and English pages share one set of numbers.</li>
+<li>ArduPilot docs: <a href="https://ardupilot.org/copter/docs/common-mtf-01.html">MTF-01 setup</a>, <a href="https://ardupilot.org/copter/docs/connect-escs-and-motors.html">motor order</a>, <a href="https://ardupilot.org/copter/docs/gcs-failsafe.html">GCS failsafe</a>, <a href="https://ardupilot.org/copter/docs/common-gcs-only-operation.html">operation without a radio</a>, <a href="https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_HAL_ChibiOS/hwdef/MicoAir743v2/README.md">MicoAir743v2 board notes</a>.</li>
+</ul>
+</div>
+<script type="application/json" id="i18n">{"labels":{"fan_FR":"Fan 1, front right","fan_RL":"Fan 2, rear left","fan_FL":"Fan 3, front left","fan_RR":"Fan 4, rear right","battery_L":"Flight battery","battery_R":"Flight battery","wing_plate":"Wing plate","tray_R":"Battery tray","fc":"Flight controller and ESC","mtf01":"Flow and range sensor","nacelle_L":"Nacelle (two halves clamp the fans)","ports":"A7Z rear ports"}}</script>
+<script type="application/json" id="mesh">__MESH__</script>
+<script type="application/json" id="pack">__PACK__</script>
+<script type="text/plain" id="three-src">__THREE__</script>
+<script type="module">__VIEW__</script></body></html>
