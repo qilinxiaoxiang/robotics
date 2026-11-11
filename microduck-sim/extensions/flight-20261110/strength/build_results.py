@@ -17,8 +17,11 @@ CFG = json.loads((OUT / "fea_inputs.json").read_text())
 FEA = {m: json.loads((OUT / f"fea_{m}.json").read_text()) for m in CFG if m != "geometry" and (OUT / f"fea_{m}.json").exists()}
 PLA = MAT["PLA"]
 SF_TARGET = 2.0
-ROOT_Y = (21.0, 25.0, 29.0, 31.0, 33.0)          # band and deep column (solid to x -53.5 out to |y| 32.1)
-ARM_Y = (35.0, 37.0, 40.0, 45.0, 60.0)           # column outboard of the deep part, transition and arm web
+ROOT_MAX_Y = 33.5          # |y| <= 33.5: band and deep column (solid to x -53.5 out to |y| 32.1); beyond: column, arm web
+# Shawn 2026-11-10: PLA, crash cases are not design gates ("不用考虑极端情况"). Gates: the normal-use cases and the clamp
+# preload at assembly; the rest is information only.
+GATES = ("thrust_1.5x_on_ground", "handling_lift_by_nacelle", "handling_lift_by_right_nacelle")
+INFO = ("vertical_impact_15.6g", "fore_aft_10g", "lateral_10g", "topple_strike_front_end", "topple_strike_rear_end")
 
 
 def hand_rows(part=None, case=None, contains=None):
@@ -40,7 +43,8 @@ def wing_rows(model):
             # the FEA decides (restrained warping and the real shape); the hand combined value adds peak bending and the
             # Saint-Venant shear peak, which on the raster sits at a re-entrant corner, so it is an upper bound kept beside it
             gov = s["vm_peak_far"]
-            rows.append(dict(model=model, case=case, y=y, part="root" if y in ROOT_Y else "column/arm",
+            rows.append(dict(model=model, case=case, y=y, side="L" if y > 0 else "R",
+                             part=("root " if abs(y) <= ROOT_MAX_Y else "column/arm ") + ("L" if y > 0 else "R"),
                              fea_sigma_nn_MPa=s["sigma_nn_peak"], fea_tau_MPa=s["tau_peak"], fea_vm_MPa=s["vm_peak"],
                              fea_vm_far_MPa=s["vm_peak_far"], fea_vm_far_at=s["vm_far_where"], fea_torque_Nmm=s["torque_about_centroid"],
                              hand_sigma_MPa=hb, hand_tau_MPa=ht, hand_vm_MPa=hv,
@@ -54,12 +58,28 @@ def wing_rows(model):
     return rows
 
 
+def fc_bracket_rows():
+    if "fc_bracket" not in FEA:
+        return []
+    rows = []
+    for case, r in FEA["fc_bracket"]["cases"].items():
+        worst = max(r["sections"], key=lambda s: s["vm_peak_far"])
+        rows.append(dict(case=case, gate=case in GATES, worst_cut=f"z {worst['at']}", fea_vm_far_MPa=worst["vm_peak_far"],
+                         at=worst["vm_far_where"], safety_factor=round(PLA["design_xy"] / max(worst["vm_peak_far"], 1e-9), 1),
+                         corner_peak_vm_MPa=r["von_mises"]["peak"], corner_at=r["von_mises"]["at"], regions=r.get("regions")))
+    return rows
+
+
 def case_summary(wing):
-    """Per case, the smallest SF of each load path (wing root, column/arm, post screws, tray and lug screws)."""
+    """Per case, the smallest SF of each load path (wing root and column/arm per side, post screws, tray and lug screws,
+    FC bracket), marked gate or information."""
     out = {}
+    fcb = {r["case"]: r for r in fc_bracket_rows()}
     for case in H["cases"]:
-        d = {}
-        for part in ("root", "column/arm"):
+        d = dict(role="gate" if case in GATES else "information only")
+        if case in fcb:
+            d["fc bracket (FEA)"] = dict(sf=fcb[case]["safety_factor"], cut=fcb[case]["worst_cut"])
+        for part in ("root L", "column/arm L", "root R", "column/arm R"):
             rs = [r for r in wing if r["case"] == case and r.get("part") == part and r["safety_factor"]]
             if rs:
                 w = min(rs, key=lambda r: r["safety_factor"])
@@ -92,6 +112,16 @@ def history():
         for k in ("spar_option", "root_alignment"):
             if k in old:
                 hist[f"{k} study (on 1b392541 / 4a5232a1 geometry; strength/SPAR-OPTION.md)"] = old[k]
+    # a later round: keep its verdicts when the geometry has changed since
+    if "summary_by_case" in old and old.get("fea_geometry", {}).get("sha256") != CFG["geometry"]["sha256"]:
+        key = f"rerun, geometry {old['fea_geometry']['git_head'][:8]} (before {CFG['geometry']['git_head'][:8]})"
+        if key.startswith("rerun, geometry d2de61ac"):
+            key = "rerun, geometry 6fa0d176 (8.5 mm solid root band, M2 x 12 posts, tray third screw)"
+        hist[key] = dict(full_file="git show HEAD~:microduck-sim/extensions/flight-20261110/strength/results.json at the commit "
+                                   "that wrote it", fea_geometry=old["fea_geometry"], summary_by_case=old["summary_by_case"],
+                         wing_fails=old.get("wing_fails", [])[:12], clamp_fea=old.get("clamp", {}).get("fea"),
+                         wing_variants={m: [dict(case=r["case"], y=r["y"], fea_vm_far_MPa=r.get("fea_vm_far_MPa")) for r in rows
+                                            if isinstance(r["y"], float)] for m, rows in old.get("wing_variants", {}).items()})
     return hist
 
 
@@ -121,7 +151,9 @@ def main():
                load_cases=H["cases"], side_masses_g=H["side_masses_g"], topple_strike_N=H["topple_strike_N"],
                summary_by_case=case_summary(wing), hand_rows=H["rows"], hand_fails=fails,
                wing_sections_hand_vs_fea=wing, wing_fails=wing_fail, wing_variants=variants,
-               nacelle_inner_hand_vs_fea=nac, clamp=clamp,
+               nacelle_inner_hand_vs_fea=nac, clamp=clamp, fc_bracket_fea=fc_bracket_rows(),
+               gates=dict(cases=list(GATES) + ["clamp_preload_snug"], information_only=list(INFO),
+                          decision="Shawn 2026-11-10: PLA; crash cases are not design gates (不用考虑极端情况)"),
                sim_probe={k: json.loads((OUT / "sim_probe" / f"{k}.json").read_text()) for k in
                           ("cut03", "hover_nominal", "comx+10_table_up_s2_air", "ARE_thrust80_table_down_s2")},
                history=hist)

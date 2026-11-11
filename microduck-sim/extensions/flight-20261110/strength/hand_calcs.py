@@ -81,19 +81,32 @@ def row(part, case, what, peak, at, allow_dir, allowable, note="", fea=None):
 # ------------------------------------------------------------------ 1. wing plate root and arm sections (y = const)
 wing = trimesh.load(BUILD / "wing_plate-world.stl", force="mesh")
 WING_SECTIONS = {}
-for y in (21.0, 29.0, 31.0, 35.0, 45.0, 60.0):
+# both arms (480610d1: the camera-cable notch at y 37.8..43, z 47..54 is on the left arm only); y 40 / 42 cut the notch,
+# y 60 the 11 x 18 lead window
+WING_Y = (21.0, 29.0, 31.0, 35.0, 40.0, 42.0, 45.0, 60.0)
+for y in WING_Y + tuple(-v for v in WING_Y):
     WING_SECTIONS[y] = section_raster(wing, [0, y, 0], [0, 1, 0], (0, 2), build_axis=0, skin_mm=0.6,
                                       infill_E=INFILL_E[BJ["wing_plate"]["colour"]])
 
 
-def wing_checks(case, L):
-    loads = L["nac"] + L["tray"]
-    F, Mf = resultant(loads)
+def mirror_y(loads):
+    return [(np.asarray(f, float) * [1, -1, 1], np.asarray(p, float) * [1, -1, 1]) for f, p in loads]
+
+
+def wing_checks(case, L, sides=(1, -1)):
+    """Sections of the arm(s) carrying the case's one-side loads: the left arm takes L, the right arm the mirror of L
+    (symmetric cases load both; a one-nacelle case names its side)."""
     for y, r in WING_SECTIONS.items():
-        def M_about(c2, y=y):
+        s_ = 1 if y > 0 else -1
+        if s_ not in sides:
+            continue
+        loads = L["nac"] + L["tray"] if s_ > 0 else mirror_y(L["nac"] + L["tray"])
+        F, Mf = resultant(loads)
+
+        def M_about(c2, y=y, Mf=Mf):
             return Mf(np.array([c2[0], y, c2[2]]))
-        s = section_stress(r, (0, 2), EY, F, M_about)
-        ss = section_stress(r, (0, 2), EY, F, M_about, solid=True)
+        s = section_stress(r, (0, 2), s_ * EY, F, M_about)
+        ss = section_stress(r, (0, 2), s_ * EY, F, M_about, solid=True)
         # Saint-Venant torsion of the real section shape (Prandtl stress function on the raster, free warping)
         tau = torsion_sv(r, s["torsion"])
         row("wing_plate", case, f"bending at y {y:.0f}", s["sigma"], f"y {y:.0f}, (x, z) {s['at']}", "in-layer (sigma_yy, layers x = const)",
@@ -323,6 +336,33 @@ def post_checks():
             "in-layer shear", 0.55 * PLA["design_xy"], f"screw shear {np.round(S, 1).tolist()} N; shear-out area {A:.1f} mm2")
 
 
+# ------------------------------------------------------------------ 5b. FC bracket on the right arm (stack + MTF-01)
+_SCR = json.loads((BUILD / "screws.json").read_text())
+_SCR = _SCR if isinstance(_SCR, list) else _SCR.get("screws", list(_SCR.values()))
+FCB_SCREWS = [(s["seat"][1], s["seat"][2]) for s in _SCR if s["id"].startswith("fcb-")]
+FCB_BITE = 8.0 - 3.0                         # M2 x 8 through the 3 mm plate into the arm flange boss
+_MB = {r["name"]: r for r in json.loads((BUILD.parents[1] / "mass_budget.json").read_text())["cases"][MB_CASE]}
+_mbp = lambda n: np.array(_MB[n]["pos"], float) - [0, 0, 120.0]
+_stack = next(n for n in _MB if n.startswith("FC + 4in1"))
+_flow = next(n for n in _MB if n.startswith("flow"))
+FCB_MASSES = [(_MB[_stack]["g"], _mbp(_stack)), (_MB[_flow]["g"], _mbp(_flow))]
+# accelerations of the carried masses (g, gravity folded in as +1 up): lift by one nacelle accelerates the duck at
+# HANDLING_N / (2 kg g) = 1.5 g -> 1.5 g apparent; thrust on the ground 1 g; landing / 10 g cases information only
+FCB_CASES = {"thrust_1.5x_on_ground": (0, 0, 1), "handling_lift_by_nacelle": (0, 0, HANDLING_N / (2.0 * G)),
+             "vertical_impact_15.6g": (0, 0, IMPACT_G), "fore_aft_10g": (10, 0, 1), "lateral_10g": (0, 10, 1)}
+
+
+def fc_bracket_checks():
+    for case, acc in FCB_CASES.items():
+        F, Mf = resultant(inertia(FCB_MASSES, acc))
+        # plate front face (x -64) on the four flange bosses; loads on the plate, normal into the arm (+x)
+        face = [(min(y for y, _ in FCB_SCREWS) - 3, max(y for y, _ in FCB_SCREWS) + 3,
+                 min(z for _, z in FCB_SCREWS) - 3, max(z for _, z in FCB_SCREWS) + 3)]
+        T, S, p = bolt_group(face, FCB_SCREWS, F, Mf, plane_x=-64.0, normal=EX)
+        row("fc_bracket", case, "plate screws pull-out (4 x M2 x 8 into the arm flange bosses)", float(T.max()),
+            "flange boss pilots", "thread", M2_PULLOUT["low"] * FCB_BITE / 4.8, f"tensions {np.round(T, 2).tolist()} N")
+
+
 # ------------------------------------------------------------------ 6. clamp ring under screw preload (membrane estimate)
 def clamp_checks():
     N = Pm.NAC
@@ -370,14 +410,20 @@ def clamp_checks():
 
 def main():
     for case, L in CASES.items():
-        wing_checks(case, L)
+        one_side = case.startswith("handling") or case.startswith("topple")
+        wing_checks(case, L, sides=(1,) if one_side else (1, -1))
+        if case == "handling_lift_by_nacelle":      # the same lift by the right nacelle (the arms differ since 480610d1)
+            wing_checks("handling_lift_by_right_nacelle", L, sides=(-1,))
         joint_checks(case, L)
         nacelle_checks(case, L)
         tray_checks(case, L)
     post_checks()
+    fc_bracket_checks()
     clamp_checks()
     res = dict(geometry=snapshot(), side_masses_g=SIDE, topple_strike_N=TOPPLE_N,
-               cases={k: v["src"] for k, v in CASES.items()}, slicing=SLICE,
+               cases=dict({k: v["src"] for k, v in CASES.items()},
+                          handling_lift_by_right_nacelle="the same lift by the right nacelle (mirror); wing plate only"),
+               slicing=SLICE,
                rows=ROWS)
     (OUT / "hand_calcs.json").write_text(json.dumps(res, indent=1, default=float))
     worst = sorted(ROWS, key=lambda r: r["safety_factor"])

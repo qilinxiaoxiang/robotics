@@ -1,108 +1,111 @@
 # Flight pack: printed-part strength check
 
-Geometry: commit `6fa0d176`. The wing root band is solid to x −53.5, out to |y| 32.1, with the corner filled. The wing centre is 6.9 mm thick. The post screws are M2 × 12 with a 3.1 mm bite, and the backpack sits 3.4 mm further back. The Orange plate prints at 100 % infill. The inner tray flange rises to z 50 with a third screw at (46, 45). The clamp collar wall is 7.4 mm at the block ends, with M2 washers, and the lug has a 3 mm fillet. STL sha256 prefixes: wing_plate `18a9cdd3d1a161fb`, tray_L `0898024d71a26756`, nacelle_inner_L `c9e9875c704a041c`, nacelle_outer_L `7b646b6cd392b989`. All numbers are in `results.json`: `summary_by_case`, then the rows. Earlier rounds are under `history`.
+Geometry: commit `480610d1` (cable-gate round E). It adds a camera-cable notch at the left arm's inner upper corner (x −51..−44.9, y 37.8..43, z 47..54) and makes the battery lead windows 11 × 18 in both arms. The two inner ribs per side are now rear-open slots over z 22..34. The centre flat window is raised from 4.9 to 7.0, the FC bracket window is 11 × 17.5, and the old fan window is filled. The nacelle clamp screws are M2 × 12 with shallower counterbores. Both print plates are now at 100 % infill (Orange since 6fa0d176, Black since 4fed9fa5). STL sha256 prefixes: wing_plate `541b5c193bfb6200`, tray_L `9cffe3d30bf8900a`, nacelle_inner_L `34dcd547be3383aa`, nacelle_outer_L `76dcde97dd4a0ea8`, fc_bracket `d5edc0088c51581f`. All numbers are in `results.json`: `gates`, `summary_by_case`, then the rows. Earlier rounds are under `history`.
+
+## Gates
+
+Shawn's decision (2026-11-10) is PLA, with crash cases excluded from the design gates ("不用考虑极端情况"). The gates are therefore peak thrust × 1.5, lift by either nacelle and clamp preload at assembly, with target SF 2. The left and right arms are no longer mirror images, so each side is checked on its own.
 
 ## Conclusion
 
-The wing root is three times stronger than before, but it still misses SF 2 in plain PLA in the landing, fore-aft and sideways cases. Within the space that exists, no depth or fillet reaches SF 2. The smallest step that does is printing the wing plate in PA-CF. The topple still breaks the plate.
+Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left and 1.70 on the right** (it was 1.84). Two small CAD additions bring it to 1.79 / 1.73. What remains under 2 is the root band top edge at |y| 20.7. That edge was already there, and the earlier 1.84 came from a cut that missed it. No local fix for it fits in the available space. The clamp passes nominally, but its corner peaks sit near SF 1. Half of snug torque fixes that.
 
-**Wing plate, FEA von Mises on the cut** (the FEA decides). Each line gives the first-check SF, then the SF now, then where the worst section is:
-- Peak thrust × 1.5: 1.1 → 3.1, at the arm root, y 40.
-- 15.6 g landing: 0.55 → 1.37, at the band top edge, y 21. The arm root at y 40 gives 1.40.
-- Lift by one nacelle: 0.69 → 1.84 at y 40; the root at y 21 gives 1.95.
-- 10 g fore-aft: 0.33 to 0.45 → 1.28, where the deep part ends at y 33. The band at y 21 gives 1.37.
-- 10 g sideways: 0.51 → 1.51, at y 33.
-- Topple, 131 N on a nacelle end: 0.07 to 0.14 → 0.26. Still a reprint.
+**Wing plate, FEA von Mises on the cut (the FEA decides):**
+- **Peak thrust × 1.5 (gate):** left SF 2.9 at the arm root y 40 (11.0 MPa), right 3.0 at y −40. The roots are at 3.16 to 3.27. Pass; it was 3.07.
+- **Lift by the left nacelle (gate):** SF 1.67 at y 40 (19.1 MPa at (−45.9, 39.9, 17.7)). This is where the arm underside steps up from the column bottom at z 9 to the web bottom at z 18. The rear-open slots and the cable notch took section out of this spot. The root edge at y 20.7 gives 18.2 MPa (SF 1.76), and the slot top corner at y 38.5 gives 17.6 MPa.
+- **Lift by the right nacelle (gate):** SF 1.70 at y −20.7 (18.8 MPa, on the band top edge at x −50.1, z 27.9). The arm root at y −40 gives 18.2 MPa (SF 1.76).
 
-**What still fails at SF 2, and the smallest fix:**
-- **Wing plate in PLA** (landing 1.37, fore-aft 1.28, sideways 1.51, handling 1.84).
-  - Carrying the 8.5 mm depth out to the gusset above and below the cross harness (variant `wing_deep_transition`, +0.6 cm³) lifts y 33 to 40. Even so, fore-aft drops to 1.20 at y 29 and the landing stays at 1.36 at y 21.
-  - The y 21 band is boxed in: the backpack front is at x −53.9, the backpack top plugs need 2 mm at |y| ≤ 21 below z 43, the shell lip is below.
-  - One line: no PLA geometry in this space reaches SF 2. The wing plate in PA-CF at 100 % infill (65 MPa) reaches 2.6 fore-aft, 2.8 landing and 3.0 sideways. PETG (38 MPa) gives 1.5, which is not enough.
-- **Post screws, 10 g fore-aft: SF 1.31** (was 2.0 with a 4.5 mm bite). Sideways 1.93, landing 2.21.
-  - The 3.1 mm bite carries 65 % of the 4.8 mm thread.
-  - A full 4.8 mm bite would give 2.0. That needs a 13.7 mm screw: M2 × 14 bottoms in the 4.8 mm pilot, and M2 × 12 is what is stocked.
-  - If the pull-out test below gives the high estimate (260 N), the post screws pass at 2.8.
-- **Tray screws, landing: SF 1.96** (was 1.21). The third screw takes 61 N. It misses 2.0 only because the tray at 100 % infill now weighs 21.7 g instead of 14.5 g. The flange layer interfaces pass at 2.3 or more.
-- **Lug screws: SF 1.24 landing, 1.29 handling.** Unchanged and still open. The pull-out test decides.
-- **Clamp under snug preload: improved, still marginal in FEA.**
-  - Hand: SF 2.2 at snug (was 0.42), 1.4 at the 260 N high pull-out.
-  - FEA: the corner peak fell from 217 to 77 MPa. A band of 30 to 45 MPa now sits on the bore face where the thick wall tapers back to 3.4 mm, about SF 0.7 to 1.1 at snug. The bending moved off the block end to the end of the taper.
-  - The fan needs only about 13 N per screw on landing. A quarter of hand-snug torque (about 0.025 N·m) keeps the clamp at SF 2 or more with 3 × margin on retention. Alternatively, run the 7.4 mm wall over 20 mm of arc before it tapers. Neither is computed in FEA.
-- **Nacelle inner half, handling:** FEA 12.9 MPa solid at the lug end of the beam (x −36), about 17 MPa printed, so SF about 1.9. The 3 mm fillet barely changed the lug root (24.1 → 22.7 MPa corner peak). Marginal, as before.
-- **Topple:** every load path is below SF 0.5 (wing 0.26, post screws 0.27, lug screws 0.14 to 0.43, nacelle beam 0.46). This is still prevented in flight control (fans at 40 to 50 % after touchdown) or accepted as a wing-plate reprint.
+**Smallest local fix, both checked in FEA (`VARIANTS` in `fea_setup.py`):**
+1. **Wedge under each arm web** (variant `wing_arm_root_wedge`). The wedge spans x −50.2..−45. It fills the step from the column bottom up to the web: at |y| 37.9 it runs z 9..18.1, and at |y| 43.9..46 it runs z 15.75..18.1, a linear ramp between. It goes on both arms, adds 0.28 cm³ in total, and stays below the web, away from the camera notch (z 47..54) and the lead windows. Left y 40 drops from 19.1 to 13.5 MPa.
+2. **R 2.5 fillet at the top front corner of each rear-open gusset slot** (variant `wing_wedge_slot_corner`). The corner is at x −52, z 34, in both arms. Left y 38.5 drops from 17.5 to 15.3 MPa. The XT60 passes through this slot, so the CAD agent must rerun the cable and lead check after adding it.
+- **With both fixes:** lift left SF 1.79 (y 20.7, 17.9 MPa), lift right 1.73 (y −20.7, 18.5 MPa; y −33 at 18.1). Thrust is unchanged at 3.2 or better.
+- **What still caps lift at about 1.75:** the raised band starts at |y| 23, so the edge at |y| 20.7 carries the bending. The space below it is held clear for the backpack top plugs, so it cannot be filled. Reaching 2 there needs a different material: in PETG the same stress gives about 2.1, and in PA-CF about 3.6.
 
-**Pass:** tray deck SF ≥ 3.1, tray flange layers ≥ 2.3, post-hole tear-out ≥ 10, washer seat 4.0 at snug, ear pockets and motor torque > 70, fan friction retention 2.5 with 10 % of the preload left.
+**Lug screws, lift by one nacelle: SF 1.29** on the low pull-out estimate. Unchanged; the pull-out test below decides.
+
+**Clamp under snug preload (gate):**
+- **Hand:** wall bending SF 2.2, washer seat 4.0.
+- **FEA:** the corner peak fell to 60.5 MPa at the block top corner (53.7, 119.2, 64.3). It was 77 MPa on 6fa0d176 and 217 in the first check. The collar's largest principal stress is 30.4 MPa on the middle web (−6.9, 119.8, 60.7) and 26.7 MPa at the rear collar. Most of the bore face sits at 10 to 20 MPa.
+- **Verdict:** nominal SF is about 1.6 to 3, and about 1.05 at the local peaks.
+- **Fix, an assembly instruction rather than geometry:** tighten to half of snug, about 0.05 N·m. The peaks then fall to about 15 MPa, SF about 2.1. Preload stays at about 83 N per screw against the 13 N the fan needs. At 260 N per screw the peak is 94 MPa, so do not overtighten.
+
+**FC bracket:** FEA SF over 100 in every case, and its plate screws over 50. The 11 × 17.5 window has no strength effect.
+
+**Nacelle inner half, lift (now solid):** 13.8 MPa at x −36 and 16.0 MPa at x −25, so SF about 2.0 to 2.3. The lug root corner peak is 22.7 MPa.
+
+**Crash cases, information only:**
+- **Landing 15.6 g:** wing root SF 1.13 to 1.17 at y ±20.7; post screws 2.13, tray screws 1.95, lug screws 1.16.
+- **10 g fore-aft:** wing root 1.12 to 1.18; post screws 1.27.
+- **10 g sideways:** wing root 1.5 to 1.62; post screws 1.87.
+- **Topple, 131 N on a nacelle end:** wing 0.26, post screws 0.27, lug screws 0.14 to 0.43. A topple breaks the plate.
 
 ## Materials (design allowables = TDS strength × about 0.8, in the part's print orientation)
 
 - **PLA:** 32 MPa in the layer plane, 17.5 MPa across layers. HDT 57 to 60 C. The allowable falls to about half at 55 C, so keep PLA away from the ESCs. Sources: Bambu PLA Basic TDS, Polymaker PolyLite PLA TDS.
 - **PETG:** 38 / 19.5 MPa. HDT 69 C. Source: Bambu PETG Basic TDS.
-- **PLA-CF:** 22.6 / 6.3 MPa. Weaker than PLA across layers, so do not use it.
+- **PLA-CF:** 22.6 / 6.3 MPa. It is weaker than PLA across layers; do not use it.
 - **PA-CF:** 65 / 32 MPa, dry. HDT 194 to 215 C. Needs a hardened nozzle (the X1C and H2S have one) and dried filament. Sources: Bambu PAHT-CF TDS, Polymaker PolyMide PA6-CF TDS.
 - **Print orientations:**
   - Wing plate: front face down, layers at x = const. The root stresses σyy and τ lie in the layer plane.
   - Nacelles: upright, layers at z = const.
   - Tray: flat.
-- **Printed section:**
-  - The Orange plate (wing plate, trays, FC bracket) is at 100 % infill (`cad/make_slice_manifest.py`), so it is solid. The plate has not been resliced yet.
-  - The Black nacelles keep 4 walls (1.77 mm) and 30 % gyroid, taken as 0.15 E.
-- **M2 thread-forming screw in a horizontal pilot:** no published pull-out value. 120 N (low) and 260 N (high) for a 4.8 mm bite, scaled by bite length; low is the design value. Snug preload is 167 N (0.1 N·m, K = 0.3).
+- **Printed section:** both plates print at 100 % infill (`cad/make_slice_manifest.py`), so every part is taken as solid.
+- **M2 thread-forming screw in a horizontal pilot:** no published pull-out value. The check uses 120 N (low) and 260 N (high) for a 4.8 mm bite, scaled by bite length; the low value is the design value. Snug preload is 167 N (0.1 N·m, K = 0.3).
 
 ## Load cases
 
-- **Thrust:** 980 g seller thrust × 1.5 per fan, along each canted axis, feet on the ground.
-- **Landing:** 15.6 g upward trunk acceleration from a 0.3 m throttle cut (`sim/out/cut/cut03.json`, `sim_contact_probe.py`). The sim's `qacc` excludes gravity, so the side masses carry 16.6 g down.
-- **10 g fore-aft and sideways:** inertia of the side assemblies only.
-- **Handling:** 2 kg lifted by one front collar, × 1.5.
-- **Topple:** the 10 ms mean nacelle contact force of 131 N, under soft MuJoCo contact, so a hard floor gives more.
-- **Clamp preload:** snug, and up to 260 N per screw.
-- **Masses:** from `mass_budget.json`, v7 case. Per side: ARESWEI fans 2 × 77 g at their own centre 45 mm down each axis, nacelle 53.8 g, tray 21.7 g (solid), battery 151 g, straps and leads 19 g. Pack 967.2 g at (−18.0, −4.6, 34.2) in the guide frame.
+- **Thrust (gate):** 980 g seller thrust × 1.5 per fan, along each canted axis, feet on the ground.
+- **Lift by one nacelle (gate):** 2 kg lifted by one front collar, × 1.5. It is computed for the left and the right nacelle separately.
+- **Clamp preload (gate):** snug, and up to 260 N per screw.
+- **Landing (information):** 15.6 g upward trunk acceleration from a 0.3 m throttle cut (`sim/out/cut/cut03.json`, `sim_contact_probe.py`). The sim's `qacc` excludes gravity, so the side masses carry 16.6 g down.
+- **10 g fore-aft and sideways (information):** inertia of the side assemblies only.
+- **Topple (information):** the 10 ms mean nacelle contact force of 131 N under soft MuJoCo contact; a hard floor gives more.
+- **FC bracket:** stack 30 g and flow sensor 4.5 g from `mass_budget.json`, under the same accelerations.
+- **Masses:** from `mass_budget.json`, v7 case. Per side: ARESWEI fans 2 × 77 g at their own centre 45 mm down each axis, nacelle 53.8 g, tray 21.7 g, battery 151 g, straps and leads 19 g. Pack 967.2 g at (−18.0, −4.6, 34.2) in the guide frame.
 
 ## Method and hand-vs-FEA check
 
 - **Hand calculations** (`hand_calcs.py`):
-  - Sections cut from the built meshes, unsymmetric bending.
-  - Saint-Venant torsion from the Prandtl stress function solved on the section raster. It matches Roark for an 8.5 × 19 rectangle: J within 0.1 %, τ within 3 %. This replaces the earlier per-row Σ t³/3. At y 35 to 60 (web plus flanges) the old method overstated J several times and under-reported the arm torsion; at the root band it was close.
-  - Bolt groups as a rigid plate on compression-only contact. Clamp wall as an eccentric strip.
+  - Sections are cut from the built meshes at ±y, with unsymmetric bending.
+  - Saint-Venant torsion comes from the Prandtl stress function solved on the section raster. It matches Roark for an 8.5 × 19 rectangle: J within 0.1 %, τ within 3 %.
+  - Bolt groups are a rigid plate on compression-only contact. The clamp wall is an eccentric strip. The FC bracket bolt group sits on the plate face at x −64.
+  - The hand values on the right arm (y −35 and beyond) come out several times lower than on the left. The mirroring of the arm loads is not trusted there, and the FEA, which models both sides directly, is used.
 - **FEA** (`fea_run.py`): linear hex voxels at 0.6 mm, about 940 k DOF, pyamg CG on the Mac mini, solid isotropic.
-  - Each y cut reports σyy, the shear on the cut and von Mises of the element-mean stress, away from supports and load patches.
-  - The torque about each root cut matches the hand value within 1 %. Arm cuts (y 45, 60) differ where a load patch straddles the cut.
-- **Hand vs FEA at the root:**
-  - Normal stress, vertical cases: FEA is 2.9 to 3.2 × hand at y 21 to 29, because the posts restrain warping. Compare 2.3 to 2.7 × for the open band.
-  - Shear: FEA is 0.6 to 0.7 × hand, because the hand Prandtl peak sits on raster re-entrant corners.
-  - Combined, vertical cases: FEA von Mises is 0.8 to 1.0 × the hand upper bound.
-  - Combined, fore-aft and sideways: FEA is 1.7 to 3.0 × hand, from shear lag at the band step and the deep-part edge.
-  - Either way the FEA governs.
-- **Arm, y 35 to 60:** the hand free-warping torsion of the open web gives SF 0.6 to 1.0 in the landing case. The FEA gives 0.15 to 0.4 × that, because the gussets and the tray and lug patches restrain the web. The FEA value is used.
-- **Corner peaks** (not nominal values): 43 MPa in the landing case at (−53.1, 22.5, 27.9), where the raised band starts at y 23. Clamp: 77 MPa at the top edge where the thick wall ends.
+  - Each cut reports σnn, the shear on the cut and von Mises of the element-mean stress, away from supports and load patches.
+  - Voxel layers sit at ±(0.3 + 0.6k) mm. A cut asked for at y 21 therefore landed at 21.3 on one side and 20.7 on the other. Cuts at 20.7 and 21.3 are now requested on both sides. The band edge at 20.7 is the higher of the two, and earlier rounds sampled only 21.3 on the left.
+- **Hand vs FEA at the root (vertical cases):** FEA von Mises is 0.8 to 1.0 × the hand upper bound. FEA normal stress is about 3 × hand, because the posts restrain warping. FEA shear is 0.6 to 0.7 × hand, because the hand Prandtl peak sits on raster corners. Either way the FEA governs.
+- **Corner peaks** (mesh-dependent, they mark crack start points, not nominal stress): clamp 60.5 MPa at the block top corner.
 
 ## What the calculation cannot show
 
-- Layer-adhesion scatter between printers and spools. Allowables are TDS values for dry filament.
-- Brittle impact behaviour of PLA and notch sensitivity at the band step at y 23 and the deep-part edge at y 32.
-- Vibration fatigue, and creep of clamp preload in PLA.
+- Layer-adhesion scatter between printers and spools. The allowables are TDS values for dry filament.
+- Notch sensitivity of PLA at the band edge at |y| 20.7, the slot corners and the cable notch.
+- Vibration fatigue, and creep of the clamp preload in PLA.
 - ESC heat on the FC bracket.
-- The real topple force on a hard floor.
-- The M2 pull-out capacity, which still sets the post, tray and lug verdicts.
+- The M2 pull-out capacity, which still sets the lug screw verdict.
 
-**Cheap test that closes the largest gap:** print a 20 × 20 × 12 mm block on the Orange plate settings (100 % infill) with the 2.15 mm horizontal teardrop pilot. Drive an M2 × 10 to 4.8 mm bite and hang weights from the head until it pulls out; repeat at 3.1 mm bite for the post screws. Above about 125 N at 4.8 mm, the tray screws pass. Above about 195 N at 4.8 mm, the lug screws pass. Above about 120 N at 3.1 mm, the post screws pass.
+**Cheap test that closes the largest gap:** print a 20 × 20 × 12 mm block on the plate settings (100 % infill) with the 2.15 mm horizontal teardrop pilot. Drive an M2 × 10 to a 4.8 mm bite and hang weights from the head until it pulls out. If it holds about 186 N, the lug screws reach SF 2 when lifted by one nacelle.
 
 ## Reproduce
 
-- **Hand calculations**, about a second: `/tmp/microduck-cad-venv/bin/python strength/hand_calcs.py`.
+- **Hand calculations,** about a second: `/tmp/microduck-cad-venv/bin/python strength/hand_calcs.py`.
 - **FEA inputs:** `/tmp/microduck-cad-venv/bin/python strength/fea_setup.py`. The sizing variants are in `VARIANTS`.
 - **FEA on the Mac mini:**
   1. Rsync `strength/` to `~/code/flight-strength-mirror/strength/`.
-  2. Run `.venv/bin/python strength/fea_run.py <wing|nacelle_inner|nacelle_outer_preload|wing_deep_transition> --h 0.6`. About 3 to 4 minutes for the wing (7 cases), less for the others.
+  2. Run `.venv/bin/python strength/fea_run.py <wing|nacelle_inner|nacelle_outer_preload|fc_bracket|wing_arm_root_wedge|wing_wedge_slot_corner> --h 0.6`. The wing takes about 4 minutes for 8 cases; the others are shorter.
   3. Rsync `out/fea_*.json` and the PNG files back.
 - **Merge:** `/tmp/microduck-cad-venv/bin/python strength/build_results.py` writes `results.json`. It moves the previous round under `history` once.
-- **Plots:** local only. `out/fea_wing_vertical_impact_15.6g.png`, `out/fea_wing_fore_aft_10g.png`, `out/fea_nacelle_outer_preload_preload_snug.png`.
 
 ## History
 
 - **First check, geometry `1b392541`:** wing centre 3.5 mm, band 5.1 mm open section, 30 % infill.
-  - Root SF 1.1 / 0.55 / 0.69 / 0.33 to 0.45 / 0.51 (thrust, landing, handling, fore-aft, sideways).
-  - Clamp 0.42 at snug, tray screws 1.21, post screws 2.0 fore-aft with a 4.5 mm bite.
-  - Fixes proposed then: the clamp end wall, the tray third screw, the washer and the lug fillet are now built. The root package (corner fill and solid section) was built as the 8.5 mm solid band, after `SPAR-OPTION.md` showed that the twist lever is physical.
-  - Full file: `git show 2458251d:microduck-sim/extensions/flight-20261110/strength/results.json`. A compact copy is in `results.json → history`.
+  - Root SF 1.1 / 0.55 / 0.69 / 0.33 to 0.45 / 0.51 (thrust, landing, lift, fore-aft, sideways).
+  - Clamp 0.42 at snug, tray screws 1.21.
+  - The fixes proposed then (clamp end wall, tray third screw, washer, lug fillet, solid root band) were all built.
+  - Full file: `git show 2458251d:microduck-sim/extensions/flight-20261110/strength/results.json`.
+- **Rerun, geometry `6fa0d176`:** 8.5 mm solid root band, M2 × 12 posts, tray third screw.
+  - Thrust 3.1, landing 1.37, lift 1.84 (left only; that cut missed the y 20.7 edge), fore-aft 1.28, sideways 1.51.
+  - Clamp FEA corner peak 77 MPa.
+  - The PLA-vs-PA-CF discussion closed with Shawn's PLA decision.
+  - Full file: `git show f9a4dc2e:microduck-sim/extensions/flight-20261110/strength/results.json`.
+- **Spar option and thrust-centre studies:** `SPAR-OPTION.md`, summarised in `results.json → history`.

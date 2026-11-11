@@ -64,11 +64,23 @@ def wing_model():
             ps += patches(-1, L) if cname != "lateral_10g" else patches(-1, dict(nac=[(f * [1, 1, 1], p * [1, -1, 1]) for f, p in L["nac"]],
                                                                                     tray=[(f, p * [1, -1, 1]) for f, p in L["tray"]]))
         cases[cname] = ps
+        if cname == "handling_lift_by_nacelle":     # the arms differ since 480610d1 (camera notch left): lift by the right one too
+            cases["handling_lift_by_right_nacelle"] = patches(-1, L)
+    cn, lw = Pm.WING["cam_notch"], Pm.WING["lead_window"]
+    # the voxel layers sit at +-(0.3 + 0.6 k): 20.7 and 21.3 are both cut on each side, so the band-edge peak near
+    # |y| 21 is compared like for like (a lone "21" picks 21.3 on one side and 20.7 on the other)
+    ys = [20.7, 21.3, 25.0, 29.0, 31.0, 33.0, 35.0, 37.0, 38.5, 40.0, 42.0, 45.0, 57.0, 60.0, 64.0]
     return dict(stl=path, stl_sha256=sha, fixed=fixed, cases=cases, exclude_mm=2.0, grid_origin=[-45.0, 0.0, 0.0],
                 regions=dict(band_L=dict(y=[19.0, 32.1]), column_L=dict(y=[32.1, 38.0]), arm_L=dict(y=[38.0, 80.0]),
-                             band_R=dict(y=[-32.1, -19.0]), column_R=dict(y=[-38.0, -32.1]), centre=dict(y=[-18.6, 18.6])),
-                probes=dict(lug_L=[-45.0, 76.0, 48.0], tray_L=[-45.0, 50.0, 31.0]), views=[[20, -50], [20, 140]],
-                sections=[dict(axis="y", at=[21.0, 25.0, 29.0, 31.0, 33.0, 35.0, 37.0, 40.0, 45.0, 60.0])])
+                             band_R=dict(y=[-32.1, -19.0]), column_R=dict(y=[-38.0, -32.1]), arm_R=dict(y=[-80.0, -38.0]),
+                             centre=dict(y=[-18.6, 18.6]),
+                             cam_notch_L=dict(x=[cn["x"][0] - 3, cn["x"][1] + 0.2], y=[cn["y"][0] - 3, cn["y"][1] + 3],
+                                              z=[cn["z"][0] - 3, cn["z"][1] + 3]),
+                             lead_window_L=dict(y=[lw["y"][0] - 3, lw["y"][1] + 3], z=[lw["z"][0] - 3, lw["z"][1] + 3]),
+                             lead_window_R=dict(y=[-lw["y"][1] - 3, -lw["y"][0] + 3], z=[lw["z"][0] - 3, lw["z"][1] + 3])),
+                probes=dict(lug_L=[-45.0, 76.0, 48.0], tray_L=[-45.0, 50.0, 31.0], lug_R=[-45.0, -76.0, 48.0]),
+                views=[[20, -50], [20, 140]],
+                sections=[dict(axis="y", at=ys + [-v for v in ys])])
 
 
 def nacelle_inner_model():
@@ -123,6 +135,28 @@ def nacelle_outer_preload_model():
                 views=[[25, -60], [25, 120]])
 
 
+def fc_bracket_model():
+    """FC plate behind the right arm (x -67..-64): held at its four M2 screws on the arm flange bosses (front face bears
+    on the bosses), loaded by the FC/ESC stack on the four M3 boss rear faces (x -71) and the MTF-01 under the shelf.
+    Cases are accelerations of the carried masses (g, with gravity folded in as +1 up)."""
+    path, sha = stl("fc_bracket")
+    x0, x1 = -67.0, -64.0
+    fixed = []
+    for (y, z) in hc.FCB_SCREWS:
+        fixed.append(dict(box=dict(x=[x1 - 0.35, x1 + 0.35], y=[y - 3.0, y + 3.0], z=[z - 3.0, z + 3.0]), normal=[1, 0, 0]))
+        fixed.append(dict(cyl=[[x0 + 1.5, y, z], [1, 0, 0], [0.9, 1.6]], box=dict(x=[x0 - 0.1, x1 + 0.1], y=[y - 2, y + 2], z=[z - 2, z + 2])))
+    stack = dict(name="stack", sel=dict(box=dict(x=[-71.35, -70.65], y=[-74.0, -37.0], z=[18.0, 62.0]), normal=[-1, 0, 0]), normal=[-1, 0, 0])
+    mtf = dict(name="mtf", sel=dict(box=dict(x=[-102.0, -64.0], y=[-72.0, -46.0], z=[13.15, 13.85]), normal=[0, 0, -1]), normal=[0, 0, -1])
+    cases = {}
+    for cname, acc in hc.FCB_CASES.items():
+        cases[cname] = [dict(stack, forces=flist(hc.inertia([hc.FCB_MASSES[0]], acc))),
+                        dict(mtf, forces=flist(hc.inertia([hc.FCB_MASSES[1]], acc)))]
+    return dict(stl=path, stl_sha256=sha, fixed=fixed, cases=cases, exclude_mm=1.5, grid_origin=[x1, -56.0, 40.0],
+                regions=dict(plate=dict(x=[x0, x1]), window_band=dict(x=[x0, x1], z=[22.0, 46.0]), shelf=dict(z=[12.0, 19.0], x=[-102.0, x0])),
+                probes=dict(stack_centre=[-71.0, -56.0, 40.0]), views=[[20, -60], [20, 120]],
+                sections=[dict(axis="z", at=[20.0, 24.0, 30.0, 36.0, 42.0, 46.0, 52.0], box=dict(x=[x0 - 0.1, x1 + 0.1]))])
+
+
 def variant_model(base, name, boxes, cases):
     """A sizing variant of the wing plate (analysed only, cad/ is not edited): the built plate plus boxes (lo, hi) on
     both sides, mirrored in y."""
@@ -144,18 +178,30 @@ def variant_model(base, name, boxes, cases):
     return cfg
 
 
-# name -> (boxes, cases): sizing runs for what still fails (README "What still fails")
-# deep_transition: carry the 8.5 mm depth (x -53.5) from |y| 32.1 out to the gusset at 37.9 above and below the cross
-# harness run (|y| 32.6..37.6, x <= -50.4, z 14..28, kept 0.5 mm clear); the backpack is |y| <= 32, the legs stay
-# below z 4, the saddle zone (front face <= -46.5 above z 24.9) is in front, so this space is free
+# name -> (boxes, cases): sizing runs for what still fails (README). The 6fa0d176 round ran "deep_transition" (8.5 mm depth
+# carried to |y| 37.95 above and below the cross harness); its result is in results.json history.
 _XD = Pm.WING["x_band_back"]
-VARIANTS = {"deep_transition": ([((_XD, 32.0, 28.5), (-50.1, 37.95, 42.5)), ((_XD, 32.0, 9.0), (-50.1, 37.95, 13.5))],
-                                ("vertical_impact_15.6g", "fore_aft_10g", "lateral_10g", "handling_lift_by_nacelle",
-                                 "thrust_1.5x_on_ground"))}
+# arm_root_wedge (480610d1 round): the lift case peaks where the arm bottom (z 18) steps up from the transition column
+# bottom (z 9) at |y| 37.9..40, front face. A web-depth wedge under the arm (x -50.2..-45, the web's own depth) from
+# (|y| 37.9, z 9) to (|y| 46, z 18), as 2 mm steps; free space: the legs stay below z -7 there, the cross harness is at
+# |y| <= 37.6, the tray and its flange are in front of x -45, the camera cable runs at z >= 47
+_XW = (Pm.WING["x_back"], Pm.WING["x_front"])
+_WEDGE = [((_XW[0], 37.85, 9.0), (_XW[1], 40.0, 18.1)), ((_XW[0], 39.9, 11.25), (_XW[1], 42.0, 18.1)),
+          ((_XW[0], 41.9, 13.5), (_XW[1], 44.0, 18.1)), ((_XW[0], 43.9, 15.75), (_XW[1], 46.0, 18.1))]
+# slot_corner: with the wedge, the left lift case next peaks at the top front corner (x -52, z 34) of the inner gusset's
+# rear-open slot (|y| 37.9..40); a 2.5 mm corner fillet there, as two steps, in both rear-open gussets
+_GW = Pm.WING["gusset_window"]
+_CORNER = []
+for (g0, g1) in _GW["open_rear"]:
+    _CORNER += [((_GW["x"][1] - 2.5, g0 - 0.05, _GW["z"][1] - 1.0), (_GW["x"][1] + 0.01, g1 + 0.05, _GW["z"][1] + 0.01)),
+                ((_GW["x"][1] - 1.0, g0 - 0.05, _GW["z"][1] - 2.5), (_GW["x"][1] + 0.01, g1 + 0.05, _GW["z"][1] + 0.01))]
+_GATE_CASES = ("thrust_1.5x_on_ground", "handling_lift_by_nacelle", "handling_lift_by_right_nacelle")
+VARIANTS = {"arm_root_wedge": (_WEDGE, _GATE_CASES), "wedge_slot_corner": (_WEDGE + _CORNER, _GATE_CASES)}
 
 
 def main():
-    cfg = dict(wing=wing_model(), nacelle_inner=nacelle_inner_model(), nacelle_outer_preload=nacelle_outer_preload_model())
+    cfg = dict(wing=wing_model(), nacelle_inner=nacelle_inner_model(), nacelle_outer_preload=nacelle_outer_preload_model(),
+               fc_bracket=fc_bracket_model())
     for name, (boxes, cases) in VARIANTS.items():
         cfg[f"wing_{name}"] = variant_model(cfg["wing"], name, boxes, cases)
     # bore loads: uniform traction = resultant / bore area (computed on the mini from the selected facets)

@@ -95,7 +95,8 @@ PACK_G = round(sum(r["g"] for r in MB["cases"][MB_CASE]), 1)                    
 PACK_C = np.array([sum(r["g"] * r["pos"][i] for r in MB["cases"][MB_CASE]) / PACK_G for i in range(3)]) - [0, 0, Z_STAND]
 # printed structure by plate: the Orange plate (wing plate, trays, FC bracket) prints at 100 % sparse infill
 # (cad/make_slice_manifest.py processOverrides); the Black nacelles at the release 30 % gyroid
-INFILL_E = dict(Orange=1.0, Black=SLICE["infill_E_factor"])
+# and since 4fed9fa5 the Black plate (nacelles) too, at 100 % zig-zag; both plates are solid
+INFILL_E = dict(Orange=1.0, Black=1.0)
 
 
 def fan_centre(which, side=+1):
