@@ -1,0 +1,20 @@
+{
+  "about": "Behaviour and control requirements Shawn stated for the flight pack, in his words. Hardware geometry facts live in cad/DESIGN-CONTRACT.json; part status in ../../CURRENT-STATE.json (parts_flight_pack). Add a requirement here in the turn he states it.",
+  "requirements": [
+    {
+      "id": "FP-R1",
+      "date": "2026-11-11",
+      "words": "所以遥控器上可能最初就要有一个开关，是喷气背包模式还是普通模式。这个应该可能最开始就要区分。",
+      "meaning": "The remote (robot-live page) has a switch chosen at the start: jetpack mode or normal mode. The choice is made before the brain starts moving the robot, not switched mid-run.",
+      "why": "The with-pack policy (train/out/results.json, fq2 1999) falls 5 of 20 walking without the pack, and the old policies fall 279 of 280 with it; the runtime's open-loop stand mode falls in 0.54 s with the pack, so with the pack the policy must take over from the first tick.",
+      "what_the_mode_selects": [
+        "policy pair: with-pack stand/walk policy versus the current stand61/walk61",
+        "start-up flow: with the pack, no open-loop stand; the policy runs from the first tick",
+        "whether flight controls (arm, take off, land, stop fans) are shown and enabled"
+      ],
+      "acceptance": "Starting in each mode loads that mode's policies and start-up flow, shown on the page; a start with the pack fitted in normal mode, or without it in jetpack mode, is refused or warned before torque comes on.",
+      "status": "recorded, not implemented; the with-pack policy exists in simulation only and nothing is deployed to the robot",
+      "open": "whether the mode is only chosen by hand or also checked against the flight controller's heartbeat on the A7Z serial port"
+    }
+  ]
+}
