@@ -90,16 +90,18 @@ def hip_p99(s):
 
 
 def score(a):
-    lines, ok_all, missing = lines_for(a.models, a.ref)
-    ref_lines, _, _ = lines_for(a.ref, a.ref)
-    ref_by = {ln["line"]: ln for ln in ref_lines}
-    for ln in lines:
-        r = ref_by.get(ln["line"])
-        ln["ref"] = f"{r['result']} {r['detail']}" if r else None
+    refs = a.ref.split(",")
+    lines, ok_all, missing = lines_for(a.models, refs[0])
+    for i, rn in enumerate(refs):
+        ref_by = {ln["line"]: ln for ln in lines_for(rn, refs[0])[0]}
+        for ln in lines:
+            r = ref_by.get(ln["line"])
+            ln["ref" if i == 0 else f"ref_{rn}"] = f"{r['result']} {r['detail']}" if r else None
     out = dict(models=a.models, ref=a.ref, missing=missing, verdict="PASS" if ok_all and not missing else "FAIL", lines=lines)
     (TRAIN / f"out/accept_{a.models}.json").write_text(json.dumps(out, indent=1))
     for ln in lines:
-        print(f"{ln['result']:7s} {ln['line']}: {ln['detail']}  || {a.ref}: {ln['ref']}")
+        extra = "".join(f"  || {rn}: {ln[f'ref_{rn}']}" for rn in refs[1:])
+        print(f"{ln['result']:7s} {ln['line']}: {ln['detail']}  || {refs[0]}: {ln['ref']}{extra}")
     print(f"verdict {out['verdict']}; missing cases {missing}")
 
 
@@ -125,8 +127,7 @@ def lines_for(models, ref):
         rf = sum(F[k]["falls"] for k in pack) if all(F[k] for k in pack) else None
         line("with pack: falls (14 cases, 280 episodes) no more than the reference", rf is not None and falls <= rf,
              f"{falls} vs {a.ref} {rf}")
-        v = R["nominal_walk"]["speed_median_upright"]
-        line("with pack: nominal walk at least 0.099 m/s", v >= 0.099, f"{v}")
+        # Walk speed is judged by the 0.15 m/s floor at every load below (the old 0.099 line was a weaker duplicate).
         p = R["nominal_walk"].get("leg_force_p99_nm_median")
         line("with pack: walk torque p99 at most 0.48 N m", p is not None and p <= 0.48, f"{p}")
     nop = [f"nopack_{k}" for k in ("stand", "walk", "turnL", "turnR")]
@@ -144,8 +145,8 @@ def lines_for(models, ref):
         if st and wk:
             hp = max(x for x in (hip_p99(st), hip_p99(wk)) if x is not None)
             sat = max(st.get("leg_force_sat_frac_max", 0), wk.get("leg_force_sat_frac_max", 0))
-            line(f"{ld}: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
-                 st["falls"] == 0 and wk["falls"] == 0 and wk["speed_median_upright"] >= 0.07 and hp <= 0.45 and sat <= 0.01,
+            line(f"{ld}: 0 falls, hip p99 <= 0.45, <= 1 % at 95 % of clamp (speed: the 0.15 floor line)",
+                 st["falls"] == 0 and wk["falls"] == 0 and hp <= 0.45 and sat <= 0.01,
                  f"falls {st['falls']}/{wk['falls']}, walk {wk['speed_median_upright']}, hip p99 {hp}, sat {sat}")
     st, wk = R["nominal_stand"], R["load100_walk"]
     if st and wk:
