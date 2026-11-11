@@ -1,0 +1,2826 @@
+{
+ "summary": {
+  "name": "ua_uni_b_load025_walk",
+  "models": "train/ckpt/uni_b",
+  "manifest": "flightpack-load025.json",
+  "case": "walk",
+  "extra": "--stand-s 0",
+  "episodes": 20,
+  "falls": 0,
+  "fall_times": [],
+  "speed_median_upright": 0.2037,
+  "leg_force_p99_nm_median": 0.43,
+  "leg_force_sat_frac_max": 0.0025,
+  "limit_nm": 0.538,
+  "max_tilt": 18.1,
+  "trunk_pitch_excursion_deg_median": 9.91,
+  "trunk_pitch_excursion_deg_max": 11.46,
+  "trunk_yaw_osc_p95_deg": 1.73,
+  "step_width_mm": 117.55,
+  "stance_width_start_mm": 81.3,
+  "stand_width_mm": null,
+  "neck_pitch_min": 0.04,
+  "neck_pitch_max": 0.35,
+  "neck_pitch_mean": 0.12,
+  "head_pitch_min": 0.33,
+  "head_pitch_max": 0.62,
+  "head_pitch_mean": 0.5,
+  "head_yaw_min": -0.3,
+  "head_yaw_max": 0.21,
+  "head_yaw_mean": -0.05,
+  "left_stance_toe_out_deg_mean": 10.03,
+  "left_stance_toe_out_deg_p95": 11.98,
+  "left_stance_toe_out_abs_deg_mean": 10.25,
+  "left_stance_toe_out_vs_path_deg_mean": 9.86,
+  "left_hip_yaw_deg_mean": -9.59,
+  "left_hip_yaw_deg_start": 0.0,
+  "left_hip_roll_deg_mean": -3.46,
+  "left_hip_roll_deg_start": -5.0,
+  "left_foot_yaw_per_hip_yaw": -0.29,
+  "left_roll_at_touchdown_deg_mean": 0.51,
+  "right_stance_toe_out_deg_mean": 1.7,
+  "right_stance_toe_out_deg_p95": 6.21,
+  "right_stance_toe_out_abs_deg_mean": 1.92,
+  "right_stance_toe_out_vs_path_deg_mean": 1.57,
+  "right_hip_yaw_deg_mean": 5.96,
+  "right_hip_yaw_deg_start": 0.0,
+  "right_hip_roll_deg_mean": -3.04,
+  "right_hip_roll_deg_start": 5.0,
+  "right_foot_yaw_per_hip_yaw": -0.83,
+  "right_roll_at_touchdown_deg_mean": 9.2,
+  "joint_p99_nm": {
+   "left_hip_yaw": 0.112,
+   "left_hip_roll": 0.259,
+   "left_hip_pitch": 0.365,
+   "left_knee": 0.392,
+   "left_ankle": 0.303,
+   "right_hip_yaw": 0.131,
+   "right_hip_roll": 0.243,
+   "right_hip_pitch": 0.299,
+   "right_knee": 0.403,
+   "right_ankle": 0.322
+  }
+ },
+ "episodes": [
+  {
+   "seed": 0,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.7,
+   "speed": 0.2045,
+   "dist_x": 3.067,
+   "yaw_walk_deg": -1.2,
+   "action_jumps": 15,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4315,
+   "leg_force_sat_frac": 0.0014,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0356,
+     "p99_nm": 0.1214,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1096,
+     "p99_nm": 0.2581,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0892,
+     "p99_nm": 0.3534,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1335,
+     "p99_nm": 0.3955,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.091,
+     "p99_nm": 0.3039,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0352,
+     "p99_nm": 0.1312,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1141,
+     "p99_nm": 0.2331,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0969,
+     "p99_nm": 0.3202,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1663,
+     "p99_nm": 0.4155,
+     "sat_frac": 0.0011
+    },
+    "right_ankle": {
+     "mean_nm": 0.1079,
+     "p99_nm": 0.333,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1105,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.035,
+      "max": 0.357,
+      "mean": 0.115
+     },
+     "head_pitch": {
+      "min": 0.352,
+      "max": 0.646,
+      "mean": 0.501
+     },
+     "head_yaw": {
+      "min": -0.304,
+      "max": 0.21,
+      "mean": -0.056
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 2.14,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.81,
+      "stance_toe_out_deg_p95": 12.03,
+      "stance_toe_out_abs_deg_mean": 10.03,
+      "stance_toe_out_vs_path_deg_mean": 9.64,
+      "hip_yaw_deg_mean": -9.52,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.45,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.4,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.4,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 2.02,
+      "stance_toe_out_deg_p95": 6.15,
+      "stance_toe_out_abs_deg_mean": 2.25,
+      "stance_toe_out_vs_path_deg_mean": 1.87,
+      "hip_yaw_deg_mean": 6.12,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.89,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.809,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.17,
+      "stance_frac": 0.534
+     }
+    },
+    "step_width_mm_mean": 117.4,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.77,
+     "min": 3.45,
+     "max": 16.7,
+     "excursion": 9.93
+    }
+   }
+  },
+  {
+   "seed": 1,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.9,
+   "speed": 0.2041,
+   "dist_x": 3.062,
+   "yaw_walk_deg": 1.3,
+   "action_jumps": 10,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4239,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0359,
+     "p99_nm": 0.1088,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1069,
+     "p99_nm": 0.2618,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0929,
+     "p99_nm": 0.3836,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1292,
+     "p99_nm": 0.3917,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0936,
+     "p99_nm": 0.3066,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0349,
+     "p99_nm": 0.132,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1184,
+     "p99_nm": 0.2442,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0993,
+     "p99_nm": 0.3009,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1707,
+     "p99_nm": 0.406,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1102,
+     "p99_nm": 0.3274,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1122,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.035,
+      "max": 0.35,
+      "mean": 0.111
+     },
+     "head_pitch": {
+      "min": 0.335,
+      "max": 0.624,
+      "mean": 0.497
+     },
+     "head_yaw": {
+      "min": -0.262,
+      "max": 0.221,
+      "mean": -0.035
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.67,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.12,
+      "stance_toe_out_deg_p95": 11.7,
+      "stance_toe_out_abs_deg_mean": 10.34,
+      "stance_toe_out_vs_path_deg_mean": 10.01,
+      "hip_yaw_deg_mean": -9.7,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.34,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.251,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.65,
+      "stance_frac": 0.495
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.61,
+      "stance_toe_out_deg_p95": 6.49,
+      "stance_toe_out_abs_deg_mean": 1.83,
+      "stance_toe_out_vs_path_deg_mean": 1.51,
+      "hip_yaw_deg_mean": 5.94,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.34,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.851,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.46,
+      "stance_frac": 0.53
+     }
+    },
+    "step_width_mm_mean": 118.3,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.54,
+     "min": 4.02,
+     "max": 16.93,
+     "excursion": 10.4
+    }
+   }
+  },
+  {
+   "seed": 2,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.6,
+   "speed": 0.2049,
+   "dist_x": 3.073,
+   "yaw_walk_deg": 1.3,
+   "action_jumps": 8,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4196,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0354,
+     "p99_nm": 0.1034,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1051,
+     "p99_nm": 0.255,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0916,
+     "p99_nm": 0.3664,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1304,
+     "p99_nm": 0.3869,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0915,
+     "p99_nm": 0.3018,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0341,
+     "p99_nm": 0.1307,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1197,
+     "p99_nm": 0.2444,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0982,
+     "p99_nm": 0.3,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1715,
+     "p99_nm": 0.402,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1098,
+     "p99_nm": 0.3149,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1119,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.048,
+      "max": 0.35,
+      "mean": 0.111
+     },
+     "head_pitch": {
+      "min": 0.336,
+      "max": 0.624,
+      "mean": 0.493
+     },
+     "head_yaw": {
+      "min": -0.232,
+      "max": 0.212,
+      "mean": -0.042
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.57,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.06,
+      "stance_toe_out_deg_p95": 11.85,
+      "stance_toe_out_abs_deg_mean": 10.29,
+      "stance_toe_out_vs_path_deg_mean": 9.94,
+      "hip_yaw_deg_mean": -9.65,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.38,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.249,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.63,
+      "stance_frac": 0.497
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.69,
+      "stance_toe_out_deg_p95": 6.33,
+      "stance_toe_out_abs_deg_mean": 1.92,
+      "stance_toe_out_vs_path_deg_mean": 1.58,
+      "hip_yaw_deg_mean": 5.99,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.21,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.84,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.34,
+      "stance_frac": 0.53
+     }
+    },
+    "step_width_mm_mean": 117.9,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.65,
+     "min": 3.04,
+     "max": 16.52,
+     "excursion": 9.88
+    }
+   }
+  },
+  {
+   "seed": 3,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 17.0,
+   "speed": 0.2061,
+   "dist_x": 3.091,
+   "yaw_walk_deg": 0.4,
+   "action_jumps": 12,
+   "peak_leg_force_nm": 0.5377,
+   "peak_leg_force_after1s_nm": 0.5377,
+   "leg_force_p99_nm": 0.4329,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0355,
+     "p99_nm": 0.1153,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1053,
+     "p99_nm": 0.2587,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0918,
+     "p99_nm": 0.3841,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1278,
+     "p99_nm": 0.397,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0922,
+     "p99_nm": 0.3126,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0357,
+     "p99_nm": 0.1372,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.119,
+     "p99_nm": 0.2457,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0972,
+     "p99_nm": 0.2948,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.169,
+     "p99_nm": 0.3944,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1112,
+     "p99_nm": 0.3219,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1126,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.027,
+      "max": 0.359,
+      "mean": 0.121
+     },
+     "head_pitch": {
+      "min": 0.325,
+      "max": 0.621,
+      "mean": 0.493
+     },
+     "head_yaw": {
+      "min": -0.301,
+      "max": 0.259,
+      "mean": -0.033
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.64,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.19,
+      "stance_toe_out_deg_p95": 12.82,
+      "stance_toe_out_abs_deg_mean": 10.42,
+      "stance_toe_out_vs_path_deg_mean": 10.08,
+      "hip_yaw_deg_mean": -9.67,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.32,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.451,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.26,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.51,
+      "stance_toe_out_deg_p95": 6.46,
+      "stance_toe_out_abs_deg_mean": 1.73,
+      "stance_toe_out_vs_path_deg_mean": 1.4,
+      "hip_yaw_deg_mean": 5.89,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.35,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.875,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.52,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 118.0,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.63,
+     "min": 3.77,
+     "max": 16.85,
+     "excursion": 10.22
+    }
+   }
+  },
+  {
+   "seed": 4,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.7,
+   "speed": 0.2031,
+   "dist_x": 3.046,
+   "yaw_walk_deg": 1.2,
+   "action_jumps": 7,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4176,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0348,
+     "p99_nm": 0.1021,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1157,
+     "p99_nm": 0.2584,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0853,
+     "p99_nm": 0.353,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1257,
+     "p99_nm": 0.377,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0893,
+     "p99_nm": 0.3023,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0335,
+     "p99_nm": 0.1288,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1189,
+     "p99_nm": 0.2352,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0971,
+     "p99_nm": 0.2983,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1653,
+     "p99_nm": 0.404,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1087,
+     "p99_nm": 0.3205,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1124,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.047,
+      "max": 0.349,
+      "mean": 0.116
+     },
+     "head_pitch": {
+      "min": 0.368,
+      "max": 0.625,
+      "mean": 0.494
+     },
+     "head_yaw": {
+      "min": -0.336,
+      "max": 0.202,
+      "mean": -0.055
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.54,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.95,
+      "stance_toe_out_deg_p95": 11.83,
+      "stance_toe_out_abs_deg_mean": 10.17,
+      "stance_toe_out_vs_path_deg_mean": 9.73,
+      "hip_yaw_deg_mean": -9.55,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.53,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.185,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.62,
+      "stance_frac": 0.491
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.81,
+      "stance_toe_out_deg_p95": 6.11,
+      "stance_toe_out_abs_deg_mean": 2.03,
+      "stance_toe_out_vs_path_deg_mean": 1.6,
+      "hip_yaw_deg_mean": 6.02,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.06,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.801,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 8.99,
+      "stance_frac": 0.535
+     }
+    },
+    "step_width_mm_mean": 117.5,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.65,
+     "min": 3.46,
+     "max": 16.69,
+     "excursion": 10.05
+    }
+   }
+  },
+  {
+   "seed": 5,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 17.3,
+   "speed": 0.209,
+   "dist_x": 3.135,
+   "yaw_walk_deg": 3.4,
+   "action_jumps": 16,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4493,
+   "leg_force_sat_frac": 0.0025,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0371,
+     "p99_nm": 0.127,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1099,
+     "p99_nm": 0.2618,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0872,
+     "p99_nm": 0.3449,
+     "sat_frac": 0.0016
+    },
+    "left_knee": {
+     "mean_nm": 0.1418,
+     "p99_nm": 0.3972,
+     "sat_frac": 0.0001
+    },
+    "left_ankle": {
+     "mean_nm": 0.0876,
+     "p99_nm": 0.2929,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0341,
+     "p99_nm": 0.1277,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1176,
+     "p99_nm": 0.2454,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0952,
+     "p99_nm": 0.3439,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1628,
+     "p99_nm": 0.4329,
+     "sat_frac": 0.0006
+    },
+    "right_ankle": {
+     "mean_nm": 0.1084,
+     "p99_nm": 0.329,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1099,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.056,
+      "max": 0.362,
+      "mean": 0.138
+     },
+     "head_pitch": {
+      "min": 0.325,
+      "max": 0.653,
+      "mean": 0.504
+     },
+     "head_yaw": {
+      "min": -0.368,
+      "max": 0.211,
+      "mean": -0.077
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 2.94,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.24,
+      "stance_toe_out_deg_p95": 12.12,
+      "stance_toe_out_abs_deg_mean": 9.47,
+      "stance_toe_out_vs_path_deg_mean": 8.99,
+      "hip_yaw_deg_mean": -9.62,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.21,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.704,
+      "touchdowns": 20,
+      "roll_at_touchdown_deg_mean": 1.07,
+      "stance_frac": 0.495
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 2.8,
+      "stance_toe_out_deg_p95": 6.55,
+      "stance_toe_out_abs_deg_mean": 3.02,
+      "stance_toe_out_vs_path_deg_mean": 2.55,
+      "hip_yaw_deg_mean": 6.43,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.26,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.768,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 8.76,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 116.1,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.65,
+     "min": 5.0,
+     "max": 17.29,
+     "excursion": 10.64
+    }
+   }
+  },
+  {
+   "seed": 6,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.3,
+   "speed": 0.2064,
+   "dist_x": 3.096,
+   "yaw_walk_deg": 0.6,
+   "action_jumps": 8,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4282,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0345,
+     "p99_nm": 0.1127,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1048,
+     "p99_nm": 0.2615,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0915,
+     "p99_nm": 0.3715,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1289,
+     "p99_nm": 0.3961,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0941,
+     "p99_nm": 0.3067,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0365,
+     "p99_nm": 0.1371,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1157,
+     "p99_nm": 0.246,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0994,
+     "p99_nm": 0.295,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1721,
+     "p99_nm": 0.397,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.111,
+     "p99_nm": 0.3203,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.112,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.032,
+      "max": 0.354,
+      "mean": 0.117
+     },
+     "head_pitch": {
+      "min": 0.335,
+      "max": 0.621,
+      "mean": 0.497
+     },
+     "head_yaw": {
+      "min": -0.271,
+      "max": 0.273,
+      "mean": -0.034
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.71,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.25,
+      "stance_toe_out_deg_p95": 12.88,
+      "stance_toe_out_abs_deg_mean": 10.47,
+      "stance_toe_out_vs_path_deg_mean": 10.15,
+      "hip_yaw_deg_mean": -9.65,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.48,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.412,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.26,
+      "stance_frac": 0.497
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.61,
+      "stance_toe_out_deg_p95": 6.15,
+      "stance_toe_out_abs_deg_mean": 1.83,
+      "stance_toe_out_vs_path_deg_mean": 1.51,
+      "hip_yaw_deg_mean": 5.98,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.14,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.853,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.5,
+      "stance_frac": 0.529
+     }
+    },
+    "step_width_mm_mean": 117.5,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.58,
+     "min": 3.83,
+     "max": 16.26,
+     "excursion": 9.68
+    }
+   }
+  },
+  {
+   "seed": 7,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.2,
+   "speed": 0.2035,
+   "dist_x": 3.052,
+   "yaw_walk_deg": 1.9,
+   "action_jumps": 7,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4171,
+   "leg_force_sat_frac": 0.0004,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.035,
+     "p99_nm": 0.1118,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.114,
+     "p99_nm": 0.2559,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0869,
+     "p99_nm": 0.368,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1255,
+     "p99_nm": 0.3923,
+     "sat_frac": 0.0001
+    },
+    "left_ankle": {
+     "mean_nm": 0.0904,
+     "p99_nm": 0.3059,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0347,
+     "p99_nm": 0.1315,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1171,
+     "p99_nm": 0.241,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0962,
+     "p99_nm": 0.297,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1663,
+     "p99_nm": 0.4022,
+     "sat_frac": 0.0003
+    },
+    "right_ankle": {
+     "mean_nm": 0.1084,
+     "p99_nm": 0.315,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1117,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.043,
+      "max": 0.352,
+      "mean": 0.117
+     },
+     "head_pitch": {
+      "min": 0.307,
+      "max": 0.617,
+      "mean": 0.495
+     },
+     "head_yaw": {
+      "min": -0.329,
+      "max": 0.196,
+      "mean": -0.051
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.73,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.08,
+      "stance_toe_out_deg_p95": 11.85,
+      "stance_toe_out_abs_deg_mean": 10.3,
+      "stance_toe_out_vs_path_deg_mean": 9.91,
+      "hip_yaw_deg_mean": -9.62,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.48,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.206,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.53,
+      "stance_frac": 0.492
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.68,
+      "stance_toe_out_deg_p95": 6.18,
+      "stance_toe_out_abs_deg_mean": 1.9,
+      "stance_toe_out_vs_path_deg_mean": 1.52,
+      "hip_yaw_deg_mean": 5.94,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.03,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.823,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.16,
+      "stance_frac": 0.533
+     }
+    },
+    "step_width_mm_mean": 117.7,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.34,
+     "min": 3.41,
+     "max": 16.17,
+     "excursion": 9.83
+    }
+   }
+  },
+  {
+   "seed": 8,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 17.3,
+   "speed": 0.2041,
+   "dist_x": 3.062,
+   "yaw_walk_deg": 1.9,
+   "action_jumps": 12,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4198,
+   "leg_force_sat_frac": 0.0008,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0342,
+     "p99_nm": 0.1078,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1058,
+     "p99_nm": 0.2581,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0919,
+     "p99_nm": 0.3738,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1286,
+     "p99_nm": 0.3916,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0937,
+     "p99_nm": 0.3028,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0367,
+     "p99_nm": 0.1338,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1194,
+     "p99_nm": 0.2465,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0992,
+     "p99_nm": 0.2921,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1695,
+     "p99_nm": 0.3975,
+     "sat_frac": 0.0005
+    },
+    "right_ankle": {
+     "mean_nm": 0.1127,
+     "p99_nm": 0.3227,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1119,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.054,
+      "max": 0.358,
+      "mean": 0.117
+     },
+     "head_pitch": {
+      "min": 0.322,
+      "max": 0.623,
+      "mean": 0.495
+     },
+     "head_yaw": {
+      "min": -0.28,
+      "max": 0.234,
+      "mean": -0.037
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.5,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.15,
+      "stance_toe_out_deg_p95": 11.86,
+      "stance_toe_out_abs_deg_mean": 10.38,
+      "stance_toe_out_vs_path_deg_mean": 10.06,
+      "hip_yaw_deg_mean": -9.71,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.43,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.249,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.51,
+      "stance_frac": 0.495
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.56,
+      "stance_toe_out_deg_p95": 6.32,
+      "stance_toe_out_abs_deg_mean": 1.78,
+      "stance_toe_out_vs_path_deg_mean": 1.47,
+      "hip_yaw_deg_mean": 5.9,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.31,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.849,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.42,
+      "stance_frac": 0.531
+     }
+    },
+    "step_width_mm_mean": 117.9,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.64,
+     "min": 3.78,
+     "max": 17.16,
+     "excursion": 10.51
+    }
+   }
+  },
+  {
+   "seed": 9,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.7,
+   "speed": 0.2002,
+   "dist_x": 3.003,
+   "yaw_walk_deg": 0.7,
+   "action_jumps": 8,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4209,
+   "leg_force_sat_frac": 0.0009,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0341,
+     "p99_nm": 0.1123,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1079,
+     "p99_nm": 0.26,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0879,
+     "p99_nm": 0.35,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1304,
+     "p99_nm": 0.3797,
+     "sat_frac": 0.0006
+    },
+    "left_ankle": {
+     "mean_nm": 0.091,
+     "p99_nm": 0.2933,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0341,
+     "p99_nm": 0.1247,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1187,
+     "p99_nm": 0.2394,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0986,
+     "p99_nm": 0.3083,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1668,
+     "p99_nm": 0.3999,
+     "sat_frac": 0.0003
+    },
+    "right_ankle": {
+     "mean_nm": 0.1081,
+     "p99_nm": 0.3266,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1116,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.043,
+      "max": 0.329,
+      "mean": 0.108
+     },
+     "head_pitch": {
+      "min": 0.323,
+      "max": 0.602,
+      "mean": 0.5
+     },
+     "head_yaw": {
+      "min": -0.327,
+      "max": 0.211,
+      "mean": -0.05
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.74,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.87,
+      "stance_toe_out_deg_p95": 11.69,
+      "stance_toe_out_abs_deg_mean": 10.09,
+      "stance_toe_out_vs_path_deg_mean": 9.66,
+      "hip_yaw_deg_mean": -9.53,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.46,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.185,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.41,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.88,
+      "stance_toe_out_deg_p95": 6.19,
+      "stance_toe_out_abs_deg_mean": 2.1,
+      "stance_toe_out_vs_path_deg_mean": 1.68,
+      "hip_yaw_deg_mean": 5.97,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.85,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.823,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.19,
+      "stance_frac": 0.533
+     }
+    },
+    "step_width_mm_mean": 117.3,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.51,
+     "min": 3.86,
+     "max": 16.74,
+     "excursion": 10.23
+    }
+   }
+  },
+  {
+   "seed": 10,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.4,
+   "speed": 0.2041,
+   "dist_x": 3.062,
+   "yaw_walk_deg": -2.1,
+   "action_jumps": 12,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.427,
+   "leg_force_sat_frac": 0.0011,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0354,
+     "p99_nm": 0.1075,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1151,
+     "p99_nm": 0.2595,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0875,
+     "p99_nm": 0.3634,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1292,
+     "p99_nm": 0.3895,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0893,
+     "p99_nm": 0.3034,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0338,
+     "p99_nm": 0.1277,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1174,
+     "p99_nm": 0.2452,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0949,
+     "p99_nm": 0.3082,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1654,
+     "p99_nm": 0.4115,
+     "sat_frac": 0.0008
+    },
+    "right_ankle": {
+     "mean_nm": 0.1072,
+     "p99_nm": 0.3321,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1117,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.052,
+      "max": 0.35,
+      "mean": 0.117
+     },
+     "head_pitch": {
+      "min": 0.336,
+      "max": 0.626,
+      "mean": 0.495
+     },
+     "head_yaw": {
+      "min": -0.31,
+      "max": 0.205,
+      "mean": -0.053
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.74,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.99,
+      "stance_toe_out_deg_p95": 11.94,
+      "stance_toe_out_abs_deg_mean": 10.21,
+      "stance_toe_out_vs_path_deg_mean": 9.82,
+      "hip_yaw_deg_mean": -9.58,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.45,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.294,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.55,
+      "stance_frac": 0.494
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.93,
+      "stance_toe_out_deg_p95": 6.22,
+      "stance_toe_out_abs_deg_mean": 2.15,
+      "stance_toe_out_vs_path_deg_mean": 1.78,
+      "hip_yaw_deg_mean": 6.05,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.88,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.807,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.16,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.4,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.65,
+     "min": 3.52,
+     "max": 16.24,
+     "excursion": 9.6
+    }
+   }
+  },
+  {
+   "seed": 11,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 17.0,
+   "speed": 0.2033,
+   "dist_x": 3.05,
+   "yaw_walk_deg": -2.0,
+   "action_jumps": 14,
+   "peak_leg_force_nm": 0.5356,
+   "peak_leg_force_after1s_nm": 0.5356,
+   "leg_force_p99_nm": 0.4273,
+   "leg_force_sat_frac": 0.0004,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0352,
+     "p99_nm": 0.1139,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1094,
+     "p99_nm": 0.2609,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0901,
+     "p99_nm": 0.3659,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1302,
+     "p99_nm": 0.3931,
+     "sat_frac": 0.0
+    },
+    "left_ankle": {
+     "mean_nm": 0.0915,
+     "p99_nm": 0.3028,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0355,
+     "p99_nm": 0.1345,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1162,
+     "p99_nm": 0.2457,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0964,
+     "p99_nm": 0.287,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1698,
+     "p99_nm": 0.4073,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1097,
+     "p99_nm": 0.3225,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1122,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.039,
+      "max": 0.384,
+      "mean": 0.12
+     },
+     "head_pitch": {
+      "min": 0.325,
+      "max": 0.628,
+      "mean": 0.498
+     },
+     "head_yaw": {
+      "min": -0.332,
+      "max": 0.218,
+      "mean": -0.04
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.86,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.14,
+      "stance_toe_out_deg_p95": 12.37,
+      "stance_toe_out_abs_deg_mean": 10.37,
+      "stance_toe_out_vs_path_deg_mean": 10.01,
+      "hip_yaw_deg_mean": -9.75,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.32,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.347,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.57,
+      "stance_frac": 0.494
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.71,
+      "stance_toe_out_deg_p95": 6.23,
+      "stance_toe_out_abs_deg_mean": 1.94,
+      "stance_toe_out_vs_path_deg_mean": 1.59,
+      "hip_yaw_deg_mean": 5.96,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.12,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.827,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.4,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.8,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.79,
+     "min": 3.24,
+     "max": 16.34,
+     "excursion": 9.54
+    }
+   }
+  },
+  {
+   "seed": 12,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 18.1,
+   "speed": 0.2029,
+   "dist_x": 3.044,
+   "yaw_walk_deg": 2.3,
+   "action_jumps": 14,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4443,
+   "leg_force_sat_frac": 0.0013,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0357,
+     "p99_nm": 0.1204,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1058,
+     "p99_nm": 0.2561,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0887,
+     "p99_nm": 0.3736,
+     "sat_frac": 0.0004
+    },
+    "left_knee": {
+     "mean_nm": 0.1274,
+     "p99_nm": 0.3961,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0883,
+     "p99_nm": 0.3074,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0353,
+     "p99_nm": 0.1329,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1183,
+     "p99_nm": 0.2468,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0953,
+     "p99_nm": 0.2886,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1711,
+     "p99_nm": 0.4041,
+     "sat_frac": 0.0006
+    },
+    "right_ankle": {
+     "mean_nm": 0.1094,
+     "p99_nm": 0.3214,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1122,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.041,
+      "max": 0.376,
+      "mean": 0.127
+     },
+     "head_pitch": {
+      "min": 0.337,
+      "max": 0.62,
+      "mean": 0.494
+     },
+     "head_yaw": {
+      "min": -0.278,
+      "max": 0.268,
+      "mean": -0.047
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 2.06,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.02,
+      "stance_toe_out_deg_p95": 12.26,
+      "stance_toe_out_abs_deg_mean": 10.24,
+      "stance_toe_out_vs_path_deg_mean": 9.81,
+      "hip_yaw_deg_mean": -9.59,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.57,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.356,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.44,
+      "stance_frac": 0.491
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.79,
+      "stance_toe_out_deg_p95": 6.3,
+      "stance_toe_out_abs_deg_mean": 2.01,
+      "stance_toe_out_vs_path_deg_mean": 1.59,
+      "hip_yaw_deg_mean": 5.91,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.93,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.842,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.09,
+      "stance_frac": 0.535
+     }
+    },
+    "step_width_mm_mean": 117.1,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.36,
+     "min": 3.79,
+     "max": 17.83,
+     "excursion": 11.46
+    }
+   }
+  },
+  {
+   "seed": 13,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.3,
+   "speed": 0.2035,
+   "dist_x": 3.053,
+   "yaw_walk_deg": 4.5,
+   "action_jumps": 13,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4285,
+   "leg_force_sat_frac": 0.0014,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0354,
+     "p99_nm": 0.1151,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1046,
+     "p99_nm": 0.2611,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0872,
+     "p99_nm": 0.3631,
+     "sat_frac": 0.0005
+    },
+    "left_knee": {
+     "mean_nm": 0.1358,
+     "p99_nm": 0.3899,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0867,
+     "p99_nm": 0.303,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.036,
+     "p99_nm": 0.1299,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1096,
+     "p99_nm": 0.2473,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0956,
+     "p99_nm": 0.3165,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1638,
+     "p99_nm": 0.4058,
+     "sat_frac": 0.0006
+    },
+    "right_ankle": {
+     "mean_nm": 0.1075,
+     "p99_nm": 0.3211,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1109,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.034,
+      "max": 0.352,
+      "mean": 0.119
+     },
+     "head_pitch": {
+      "min": 0.327,
+      "max": 0.622,
+      "mean": 0.495
+     },
+     "head_yaw": {
+      "min": -0.304,
+      "max": 0.245,
+      "mean": -0.054
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.88,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.9,
+      "stance_toe_out_deg_p95": 12.25,
+      "stance_toe_out_abs_deg_mean": 10.12,
+      "stance_toe_out_vs_path_deg_mean": 9.62,
+      "hip_yaw_deg_mean": -9.52,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.54,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.36,
+      "touchdowns": 20,
+      "roll_at_touchdown_deg_mean": 0.51,
+      "stance_frac": 0.492
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.93,
+      "stance_toe_out_deg_p95": 6.06,
+      "stance_toe_out_abs_deg_mean": 2.15,
+      "stance_toe_out_vs_path_deg_mean": 1.67,
+      "hip_yaw_deg_mean": 6.0,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.78,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.81,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.02,
+      "stance_frac": 0.533
+     }
+    },
+    "step_width_mm_mean": 117.2,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.36,
+     "min": 4.46,
+     "max": 16.17,
+     "excursion": 9.81
+    }
+   }
+  },
+  {
+   "seed": 14,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.5,
+   "speed": 0.2027,
+   "dist_x": 3.04,
+   "yaw_walk_deg": -1.1,
+   "action_jumps": 13,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4264,
+   "leg_force_sat_frac": 0.0005,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0344,
+     "p99_nm": 0.1126,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1059,
+     "p99_nm": 0.257,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0884,
+     "p99_nm": 0.3759,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1291,
+     "p99_nm": 0.3917,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0908,
+     "p99_nm": 0.3097,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0346,
+     "p99_nm": 0.132,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1184,
+     "p99_nm": 0.2402,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0962,
+     "p99_nm": 0.3151,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1689,
+     "p99_nm": 0.4092,
+     "sat_frac": 0.0003
+    },
+    "right_ankle": {
+     "mean_nm": 0.1093,
+     "p99_nm": 0.3252,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1113,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.026,
+      "max": 0.347,
+      "mean": 0.115
+     },
+     "head_pitch": {
+      "min": 0.327,
+      "max": 0.632,
+      "mean": 0.499
+     },
+     "head_yaw": {
+      "min": -0.344,
+      "max": 0.193,
+      "mean": -0.046
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.88,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.1,
+      "stance_toe_out_deg_p95": 12.37,
+      "stance_toe_out_abs_deg_mean": 10.32,
+      "stance_toe_out_vs_path_deg_mean": 9.91,
+      "hip_yaw_deg_mean": -9.58,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.49,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.33,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.41,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.63,
+      "stance_toe_out_deg_p95": 6.2,
+      "stance_toe_out_abs_deg_mean": 1.85,
+      "stance_toe_out_vs_path_deg_mean": 1.44,
+      "hip_yaw_deg_mean": 5.9,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.07,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.826,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.32,
+      "stance_frac": 0.533
+     }
+    },
+    "step_width_mm_mean": 117.6,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.64,
+     "min": 3.54,
+     "max": 16.5,
+     "excursion": 9.86
+    }
+   }
+  },
+  {
+   "seed": 15,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 17.2,
+   "speed": 0.2036,
+   "dist_x": 3.054,
+   "yaw_walk_deg": -0.5,
+   "action_jumps": 7,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4206,
+   "leg_force_sat_frac": 0.0009,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0353,
+     "p99_nm": 0.1099,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1149,
+     "p99_nm": 0.2646,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0872,
+     "p99_nm": 0.3587,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1286,
+     "p99_nm": 0.3939,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0904,
+     "p99_nm": 0.3015,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0351,
+     "p99_nm": 0.1301,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1189,
+     "p99_nm": 0.2423,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0966,
+     "p99_nm": 0.2904,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1682,
+     "p99_nm": 0.4009,
+     "sat_frac": 0.0006
+    },
+    "right_ankle": {
+     "mean_nm": 0.1094,
+     "p99_nm": 0.3215,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1121,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.046,
+      "max": 0.349,
+      "mean": 0.113
+     },
+     "head_pitch": {
+      "min": 0.357,
+      "max": 0.641,
+      "mean": 0.497
+     },
+     "head_yaw": {
+      "min": -0.35,
+      "max": 0.207,
+      "mean": -0.049
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.59,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.03,
+      "stance_toe_out_deg_p95": 11.58,
+      "stance_toe_out_abs_deg_mean": 10.25,
+      "stance_toe_out_vs_path_deg_mean": 9.87,
+      "hip_yaw_deg_mean": -9.56,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.56,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.183,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.52,
+      "stance_frac": 0.494
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.71,
+      "stance_toe_out_deg_p95": 6.28,
+      "stance_toe_out_abs_deg_mean": 1.93,
+      "stance_toe_out_vs_path_deg_mean": 1.56,
+      "hip_yaw_deg_mean": 5.96,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.02,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.826,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.2,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.6,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.78,
+     "min": 3.92,
+     "max": 17.16,
+     "excursion": 10.38
+    }
+   }
+  },
+  {
+   "seed": 16,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.3,
+   "speed": 0.2038,
+   "dist_x": 3.057,
+   "yaw_walk_deg": 0.5,
+   "action_jumps": 15,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4277,
+   "leg_force_sat_frac": 0.0008,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0334,
+     "p99_nm": 0.1118,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1106,
+     "p99_nm": 0.2563,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.088,
+     "p99_nm": 0.3635,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1358,
+     "p99_nm": 0.3847,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0871,
+     "p99_nm": 0.2959,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0343,
+     "p99_nm": 0.1265,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.119,
+     "p99_nm": 0.2405,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0949,
+     "p99_nm": 0.305,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1629,
+     "p99_nm": 0.4023,
+     "sat_frac": 0.0005
+    },
+    "right_ankle": {
+     "mean_nm": 0.1095,
+     "p99_nm": 0.3283,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1121,
+    "median": 0.1225
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.037,
+      "max": 0.358,
+      "mean": 0.117
+     },
+     "head_pitch": {
+      "min": 0.334,
+      "max": 0.608,
+      "mean": 0.501
+     },
+     "head_yaw": {
+      "min": -0.293,
+      "max": 0.192,
+      "mean": -0.062
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.75,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 9.8,
+      "stance_toe_out_deg_p95": 12.04,
+      "stance_toe_out_abs_deg_mean": 10.02,
+      "stance_toe_out_vs_path_deg_mean": 9.54,
+      "hip_yaw_deg_mean": -9.54,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.36,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.36,
+      "touchdowns": 20,
+      "roll_at_touchdown_deg_mean": 0.67,
+      "stance_frac": 0.492
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 2.12,
+      "stance_toe_out_deg_p95": 6.06,
+      "stance_toe_out_abs_deg_mean": 2.34,
+      "stance_toe_out_vs_path_deg_mean": 1.87,
+      "hip_yaw_deg_mean": 6.04,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -2.61,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.804,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 8.94,
+      "stance_frac": 0.533
+     }
+    },
+    "step_width_mm_mean": 117.3,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.5,
+     "min": 5.49,
+     "max": 16.33,
+     "excursion": 9.82
+    }
+   }
+  },
+  {
+   "seed": 17,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.6,
+   "speed": 0.2046,
+   "dist_x": 3.069,
+   "yaw_walk_deg": 1.8,
+   "action_jumps": 8,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4215,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0347,
+     "p99_nm": 0.1129,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1051,
+     "p99_nm": 0.2574,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0893,
+     "p99_nm": 0.3742,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1279,
+     "p99_nm": 0.3834,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0931,
+     "p99_nm": 0.3074,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0343,
+     "p99_nm": 0.1327,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1141,
+     "p99_nm": 0.2418,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.099,
+     "p99_nm": 0.2922,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1691,
+     "p99_nm": 0.4032,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1109,
+     "p99_nm": 0.3198,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1114,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.041,
+      "max": 0.352,
+      "mean": 0.11
+     },
+     "head_pitch": {
+      "min": 0.323,
+      "max": 0.615,
+      "mean": 0.497
+     },
+     "head_yaw": {
+      "min": -0.293,
+      "max": 0.244,
+      "mean": -0.041
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.57,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.14,
+      "stance_toe_out_deg_p95": 12.18,
+      "stance_toe_out_abs_deg_mean": 10.37,
+      "stance_toe_out_vs_path_deg_mean": 9.99,
+      "hip_yaw_deg_mean": -9.67,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.46,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.276,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.38,
+      "stance_frac": 0.494
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.62,
+      "stance_toe_out_deg_p95": 6.18,
+      "stance_toe_out_abs_deg_mean": 1.85,
+      "stance_toe_out_vs_path_deg_mean": 1.47,
+      "hip_yaw_deg_mean": 5.93,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.23,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.835,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.27,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.8,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.53,
+     "min": 4.11,
+     "max": 16.57,
+     "excursion": 10.04
+    }
+   }
+  },
+  {
+   "seed": 18,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.4,
+   "speed": 0.2022,
+   "dist_x": 3.033,
+   "yaw_walk_deg": 0.1,
+   "action_jumps": 6,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4139,
+   "leg_force_sat_frac": 0.0005,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0338,
+     "p99_nm": 0.1071,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.107,
+     "p99_nm": 0.2568,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0888,
+     "p99_nm": 0.3534,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1288,
+     "p99_nm": 0.3788,
+     "sat_frac": 0.0001
+    },
+    "left_ankle": {
+     "mean_nm": 0.0928,
+     "p99_nm": 0.3001,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0345,
+     "p99_nm": 0.1281,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1181,
+     "p99_nm": 0.2364,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.0999,
+     "p99_nm": 0.2986,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1671,
+     "p99_nm": 0.4018,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1102,
+     "p99_nm": 0.317,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1119,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.038,
+      "max": 0.347,
+      "mean": 0.109
+     },
+     "head_pitch": {
+      "min": 0.342,
+      "max": 0.626,
+      "mean": 0.499
+     },
+     "head_yaw": {
+      "min": -0.299,
+      "max": 0.188,
+      "mean": -0.054
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.73,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.0,
+      "stance_toe_out_deg_p95": 11.53,
+      "stance_toe_out_abs_deg_mean": 10.22,
+      "stance_toe_out_vs_path_deg_mean": 9.77,
+      "hip_yaw_deg_mean": -9.53,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.57,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.038,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.44,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.69,
+      "stance_toe_out_deg_p95": 6.19,
+      "stance_toe_out_abs_deg_mean": 1.91,
+      "stance_toe_out_vs_path_deg_mean": 1.47,
+      "hip_yaw_deg_mean": 5.95,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.01,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.806,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.13,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.5,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.69,
+     "min": 3.07,
+     "max": 16.21,
+     "excursion": 9.52
+    }
+   }
+  },
+  {
+   "seed": 19,
+   "fell_at": null,
+   "fall_dir": null,
+   "max_tilt": 16.4,
+   "speed": 0.2028,
+   "dist_x": 3.042,
+   "yaw_walk_deg": -1.4,
+   "action_jumps": 6,
+   "peak_leg_force_nm": 0.538,
+   "peak_leg_force_after1s_nm": 0.538,
+   "leg_force_p99_nm": 0.4173,
+   "leg_force_sat_frac": 0.0007,
+   "per_joint_all": {
+    "left_hip_yaw": {
+     "mean_nm": 0.0337,
+     "p99_nm": 0.1045,
+     "sat_frac": 0.0
+    },
+    "left_hip_roll": {
+     "mean_nm": 0.1076,
+     "p99_nm": 0.2595,
+     "sat_frac": 0.0
+    },
+    "left_hip_pitch": {
+     "mean_nm": 0.0879,
+     "p99_nm": 0.3576,
+     "sat_frac": 0.0
+    },
+    "left_knee": {
+     "mean_nm": 0.1268,
+     "p99_nm": 0.3851,
+     "sat_frac": 0.0003
+    },
+    "left_ankle": {
+     "mean_nm": 0.0925,
+     "p99_nm": 0.3067,
+     "sat_frac": 0.0
+    },
+    "right_hip_yaw": {
+     "mean_nm": 0.0352,
+     "p99_nm": 0.1322,
+     "sat_frac": 0.0
+    },
+    "right_hip_roll": {
+     "mean_nm": 0.1159,
+     "p99_nm": 0.2412,
+     "sat_frac": 0.0
+    },
+    "right_hip_pitch": {
+     "mean_nm": 0.099,
+     "p99_nm": 0.3022,
+     "sat_frac": 0.0
+    },
+    "right_knee": {
+     "mean_nm": 0.1686,
+     "p99_nm": 0.3944,
+     "sat_frac": 0.0004
+    },
+    "right_ankle": {
+     "mean_nm": 0.1095,
+     "p99_nm": 0.3171,
+     "sat_frac": 0.0
+    }
+   },
+   "trunk_z_m": {
+    "min": 0.1112,
+    "median": 0.1226
+   },
+   "landing": null,
+   "probe": {
+    "quack_head_ran": {},
+    "quack_head_reached": {},
+    "quack_peak_tilt": {}
+   },
+   "style": {
+    "window_s": [
+     4.0,
+     17.0
+    ],
+    "head_reached": {
+     "neck_pitch": {
+      "min": 0.042,
+      "max": 0.35,
+      "mean": 0.113
+     },
+     "head_pitch": {
+      "min": 0.337,
+      "max": 0.624,
+      "mean": 0.498
+     },
+     "head_yaw": {
+      "min": -0.301,
+      "max": 0.2,
+      "mean": -0.047
+     }
+    },
+    "trunk_yaw_osc_p95_deg": 1.7,
+    "feet": {
+     "left": {
+      "stance_toe_out_deg_mean": 10.03,
+      "stance_toe_out_deg_p95": 11.64,
+      "stance_toe_out_abs_deg_mean": 10.25,
+      "stance_toe_out_vs_path_deg_mean": 9.86,
+      "hip_yaw_deg_mean": -9.56,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.54,
+      "hip_roll_deg_start": -5.0,
+      "foot_yaw_per_hip_yaw": -0.206,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 0.36,
+      "stance_frac": 0.493
+     },
+     "right": {
+      "stance_toe_out_deg_mean": 1.63,
+      "stance_toe_out_deg_p95": 6.34,
+      "stance_toe_out_abs_deg_mean": 1.85,
+      "stance_toe_out_vs_path_deg_mean": 1.47,
+      "hip_yaw_deg_mean": 5.96,
+      "hip_yaw_deg_start": 0.0,
+      "hip_roll_deg_mean": -3.18,
+      "hip_roll_deg_start": 5.0,
+      "foot_yaw_per_hip_yaw": -0.832,
+      "touchdowns": 21,
+      "roll_at_touchdown_deg_mean": 9.21,
+      "stance_frac": 0.532
+     }
+    },
+    "step_width_mm_mean": 117.6,
+    "stance_width_start_mm": 81.3,
+    "trunk_pitch_deg": {
+     "start": 6.65,
+     "min": 3.68,
+     "max": 16.1,
+     "excursion": 9.45
+    }
+   }
+  }
+ ]
+}

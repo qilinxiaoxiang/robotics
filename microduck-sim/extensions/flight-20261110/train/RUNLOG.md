@@ -363,3 +363,20 @@ running total of worst cases; real spend read from `modal billing report` before
   stays RUNNING if only one of its jobs dies, so per-job health is known only at the end. Next: 10:45 fetch fk-uni-a
   (run B), 12:50 fetch fk-uni-a2 (run A and the bend), then `accept_universal.py run/score`, `accept_bend.sh
   fetch/runtime/env/video`, and the walk clips with the pack drawn.
+- 11:30 Universal run B (fk-uni-b, from walk61, 5000 iterations) acceptance on the Mac mini, final (iteration 4999,
+  ckpt/uni_b, sha aa1ad6de) and best by reward (about 4000, ckpt/uni_b_best, sha c51cd111); 36 cases, 20 episodes;
+  scores out/accept_uni_b.json and out/accept_uni_b_best.json, reference fq2 1999 from the same machine. Verdict FAIL
+  for both. Final / best / fq2: with-pack falls 92 / 83 / 1 of 280 (walk cases 5-20 of 20 each; stands, turns, stand
+  shove and landing 0); nominal walk 0.162 / 0.143 / 0.109 (pass); walk torque p99 0.54 / 0.54 / 0.46 (limit 0.48,
+  fail); no pack 0 / 0 / 2 falls (pass), walk 0.231 / 0.216 / 0.163 (section 5 band 0.082-0.15 fail; the band
+  contradicts the section 4 floor 0.15); turns within 10 % (pass); load025 pass; load050 final fails on saturation
+  3.7 %, best passes; load075 walk falls 12 / 2, sat 12.2 % / 5.3 % (fail); batteries out sat 5.1 % / 2.6 % (fail);
+  load100 walk falls 17 / 16 at 5-10 s (fail); speed floor 0.15 final pass (min 0.151), best fail (0.139); toe-out
+  means now within 12 / 9 at every load, but step width 117 / 113 mm at none / batteries out and p95 18.1 at full
+  (final fail; best fails width at every load); head motion final 0/0/1 none, 0/1/12 batteries out, 0/18/20 full.
+  Refutation: it walks (0.14-0.23 m/s at every load, stands 0.000); nominal and load100 manifests add 1.252 / 1.268 kg
+  against 0.313 kg for none. Cause read from the numbers: walking with the heavy pack at 0.14-0.17 m/s drives leg
+  torque into the clamp (sat 12-46 %) and it falls after 5-10 s. Clips (final): video/uni_b_walk_pack.mp4 (pack
+  drawn from sim/out/visual/flightpack-nominal.json, falls backward at 7.8 s) and video/uni_b_walk_nopack.mp4 (no
+  fall, 0.233 m/s, 3.5 m). Not run: clips of the best checkpoint; p99 for the shove and landing cases (flight_eval
+  gives falls only). fk-uni-a2 untouched.

@@ -90,6 +90,24 @@ def hip_p99(s):
 
 
 def score(a):
+    lines, ok_all, missing = lines_for(a.models, a.ref)
+    ref_lines, _, _ = lines_for(a.ref, a.ref)
+    ref_by = {ln["line"]: ln for ln in ref_lines}
+    for ln in lines:
+        r = ref_by.get(ln["line"])
+        ln["ref"] = f"{r['result']} {r['detail']}" if r else None
+    out = dict(models=a.models, ref=a.ref, missing=missing, verdict="PASS" if ok_all and not missing else "FAIL", lines=lines)
+    (TRAIN / f"out/accept_{a.models}.json").write_text(json.dumps(out, indent=1))
+    for ln in lines:
+        print(f"{ln['result']:7s} {ln['line']}: {ln['detail']}  || {a.ref}: {ln['ref']}")
+    print(f"verdict {out['verdict']}; missing cases {missing}")
+
+
+def lines_for(models, ref):
+    class A:
+        pass
+    a = A()
+    a.models, a.ref = models, ref
     lines, ok_all = [], True
 
     def line(name, ok, detail):
@@ -127,6 +145,11 @@ def score(a):
             line(f"{ld}: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
                  st["falls"] == 0 and wk["falls"] == 0 and wk["speed_median_upright"] >= 0.07 and hp <= 0.45 and sat <= 0.01,
                  f"falls {st['falls']}/{wk['falls']}, walk {wk['speed_median_upright']}, hip p99 {hp}, sat {sat}")
+    st, wk = R["nominal_stand"], R["load100_walk"]
+    if st and wk:
+        line("load100 (full pack): 0 falls stand and walk (per-load view of the with-pack line)",
+             st["falls"] == 0 and wk["falls"] == 0,
+             f"falls {st['falls']}/{wk['falls']}, walk fall times {wk.get('fall_times', [])[:6]}, walk {wk['speed_median_upright']}")
     sp = {k: R[k]["speed_median_upright"] for k in ("nopack_walk", "load025_walk", "load050_walk", "load075_walk",
                                                        "nobatt_walk", "load100_walk", "nominal_walk") if R[k]}
     line("speed floor: at least 0.15 m/s on the 0.25 command at every load (section 4)", bool(sp) and min(sp.values()) >= 0.15,
@@ -145,11 +168,7 @@ def score(a):
         if all(hs):
             line(f"head motion at {ld}: scan and head-down walks 0 falls", all(h["falls"] == 0 for h in hs),
                  f"falls {[h['falls'] for h in hs]}, head-down walk speeds {hs[1]['speed_median_upright']} / {hs[2]['speed_median_upright']}")
-    out = dict(models=a.models, ref=a.ref, missing=missing, verdict="PASS" if ok_all and not missing else "FAIL", lines=lines)
-    (TRAIN / f"out/accept_{a.models}.json").write_text(json.dumps(out, indent=1))
-    for ln in lines:
-        print(f"{ln['result']:7s} {ln['line']}: {ln['detail']}")
-    print(f"verdict {out['verdict']}; missing cases {missing}")
+    return lines, ok_all, missing
 
 
 def main():
