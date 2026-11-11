@@ -352,3 +352,10 @@ running total of worst cases; real spend read from `modal billing report` before
   both, since run B holds the other session until about 10:45. Expected end of the kernel about 12:50 (5000 iterations
   at 0.21 it/s plus setup), latest 16:10 (cap); the bend job finishes about 09:15 but its output comes with the kernel.
   Quota estimate: 12.75 used + run B 4.7 + this kernel 6.9 = about 24.3 of 30 h, about 5.7 h left for seepick61.
+- 06:06 Universal acceptance reference rerun on the Mac mini (`accept_universal.py run fq2_1999`, 36 cases, 20
+  episodes each, eval/ua_fq2_1999_*.json; score out/accept_fq2_1999.json). fq2 1999: with pack 1 fall in 280, nominal
+  walk 0.109 m/s, p99 0.46; no pack 2 walk falls of 80, walk 0.163 (above the 0.15 band), turns 0.299 / -0.302;
+  partial loads 0 falls, walk 0.078-0.122, hip p99 at most 0.353; speed floor 0.15 missed at every pack load; toe-out
+  18.4 / 14.6 (none), 21.9 / 21.3 (batteries out), 21.3 / 22.2 (full), step width 119-122 mm; head motion 0 falls
+  with the pack and batteries out, 1 / 7 / 6 falls without the pack (scan, head pitch 0.5, 1.1). These are the
+  same-machine references for the candidates.

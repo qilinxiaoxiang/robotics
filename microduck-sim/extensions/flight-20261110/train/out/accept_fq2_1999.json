@@ -1,0 +1,93 @@
+{
+ "models": "fq2_1999",
+ "ref": "fq2_1999",
+ "missing": [],
+ "verdict": "FAIL",
+ "lines": [
+  {
+   "line": "with pack: falls (14 cases, 280 episodes) no more than the reference",
+   "result": "PASS",
+   "detail": "1 vs fq2_1999 1"
+  },
+  {
+   "line": "with pack: nominal walk at least 0.099 m/s",
+   "result": "PASS",
+   "detail": "0.1093"
+  },
+  {
+   "line": "with pack: walk torque p99 at most 0.48 N m",
+   "result": "PASS",
+   "detail": "0.46"
+  },
+  {
+   "line": "no pack: 0 falls (80 episodes)",
+   "result": "FAIL",
+   "detail": "{'nopack_stand': 0, 'nopack_walk': 2, 'nopack_turnL': 0, 'nopack_turnR': 0}"
+  },
+  {
+   "line": "no pack: walk 0.082-0.15 m/s (section 5 band)",
+   "result": "FAIL",
+   "detail": "0.1626"
+  },
+  {
+   "line": "no pack: turns within 10 % of +-0.3 rad/s",
+   "result": "PASS",
+   "detail": "turnL 0.299, turnR -0.302"
+  },
+  {
+   "line": "load025: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
+   "result": "PASS",
+   "detail": "falls 0/0, walk 0.1224, hip p99 0.312, sat 0.0008"
+  },
+  {
+   "line": "load050: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
+   "result": "PASS",
+   "detail": "falls 0/0, walk 0.1047, hip p99 0.314, sat 0.0021"
+  },
+  {
+   "line": "load075: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
+   "result": "PASS",
+   "detail": "falls 0/0, walk 0.1016, hip p99 0.326, sat 0.0003"
+  },
+  {
+   "line": "nobatt: 0 falls, walk >= 0.07 m/s, hip p99 <= 0.45, <= 1 % at 95 % of clamp",
+   "result": "PASS",
+   "detail": "falls 0/0, walk 0.0779, hip p99 0.353, sat 0.0018"
+  },
+  {
+   "line": "speed floor: at least 0.15 m/s on the 0.25 command at every load (section 4)",
+   "result": "FAIL",
+   "detail": "{\"nopack_walk\": 0.1626, \"load025_walk\": 0.1224, \"load050_walk\": 0.1047, \"load075_walk\": 0.1016, \"nobatt_walk\": 0.0779, \"load100_walk\": 0.1048, \"nominal_walk\": 0.1093}"
+  },
+  {
+   "line": "toe-out at none: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm",
+   "result": "FAIL",
+   "detail": "mean 18.37 / 14.57, p95 23.21 / 20.02, step width 121.5"
+  },
+  {
+   "line": "toe-out at nobatt: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm",
+   "result": "FAIL",
+   "detail": "mean 21.86 / 21.31, p95 25.72 / 24.64, step width 118.8"
+  },
+  {
+   "line": "toe-out at full: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm",
+   "result": "FAIL",
+   "detail": "mean 21.3 / 22.19, p95 24.99 / 24.82, step width 119.15"
+  },
+  {
+   "line": "head motion at none: scan and head-down walks 0 falls",
+   "result": "FAIL",
+   "detail": "falls [1, 7, 6], head-down walk speeds 0.1724 / 0.1845"
+  },
+  {
+   "line": "head motion at nobatt: scan and head-down walks 0 falls",
+   "result": "PASS",
+   "detail": "falls [0, 0, 0], head-down walk speeds 0.0789 / 0.0821"
+  },
+  {
+   "line": "head motion at load100: scan and head-down walks 0 falls",
+   "result": "PASS",
+   "detail": "falls [0, 0, 0], head-down walk speeds 0.1051 / 0.105"
+  }
+ ]
+}
