@@ -330,7 +330,7 @@
         {
           "id": "H4-no-target-low-pass",
           "claim": "Pollen's robotd low-pass filters the policy targets (legs alpha 0.7, head 0.5) and scales walking actions by 0.9 and by 7.4 V / battery; robotd.toml says the alpha policies (walk61, stand61) were trained with that filter. walk_wired sends targets unfiltered and unscaled (a uniform 0.5 goal EMA trial on 2026-10-16 was inconclusive and removed). Run 2's growing head-yaw action is what an unfiltered head target with too much loop gain looks like. Predicts: sim replay with the robotd filter damps the growth where the unfiltered replay does not; on the robot the head-yaw step (T3) settles with the filter.",
-          "status": "open"
+          "status": "rejected 2026-11-11 (Shawn: \"加滤波肯定不是一个好的方式 我们之前试过很多次\"): no evidence separates it from H1. Against it: the 2026-10-16 robot trial (goal EMA 0.5) left the action jumps unchanged and fell once at the stop in three walks (walk_wired.py:1249); the 2026-10-29 sim check of robotd's 0.7/0.5 low-pass on the rise still fell 2 of 4; the public microduck_rl trains walk61's family unfiltered (low-pass reverted 2026-07-07); a low-pass adds phase lag, which feeds a growing oscillation rather than damping it. Not to be tried again without a new discriminating result."
         }
       ],
       "tests": [
