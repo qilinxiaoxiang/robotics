@@ -66,8 +66,13 @@ J_ROTOR = 4e-6         # kg m2 rotor + fan, estimate (no data)
 ESC_LIMIT_A = 55.0     # MicoAir AM32 per channel continuous
 PACK_C, PACK_MAH = 130.0, 1300.0
 # fan geometry (trunk frame = CAD guide frame, m); 1 RF CCW, 2 LR CCW, 3 LF CW, 4 RR CW (design page, ArduPilot QUAD X)
-CANT = math.radians(6.0); FAN_Y = 0.110; LIP_TOP_Z = 0.075; LIP_OD = 0.063
-FAN_X = {"front": 0.020, "rear": -0.044}; DIR = {"front": +1, "rear": -1}
+if FP is not None:      # read from the CAD (cad/flight_params.py)
+    CANT = math.radians(FP.CANT_DEG); FAN_Y = FP.FAN_Y / 1000; LIP_TOP_Z = FP.LIP_TOP_Z / 1000; LIP_OD = FP.FAN["lip_od"] / 1000
+    FAN_X = {k: v / 1000 for k, v in FP.FAN_X.items()}
+else:                   # fallback copy of the 2026-11-10 values
+    CANT = math.radians(6.0); FAN_Y = 0.110; LIP_TOP_Z = 0.075; LIP_OD = 0.063
+    FAN_X = {"front": 0.020, "rear": -0.044}
+DIR = {"front": +1, "rear": -1}
 LIP_Z = LIP_TOP_Z - LIP_OD / 2 * math.sin(CANT)
 FANS = []
 for name, which, side, spin in (("1 RF", "front", -1, +1), ("2 LR", "rear", +1, +1), ("3 LF", "front", +1, -1), ("4 RR", "rear", -1, -1)):

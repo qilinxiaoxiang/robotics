@@ -28,7 +28,9 @@ import flight_params as FP  # noqa: E402  (read only; imports cad-practice/print
 
 PLA = 1.24          # g/cm3, flight_params.PLA_DENSITY
 PRINT_FRACTION = 0.851   # effective print fraction the project uses for every printed part (battery-20261104 provenance)
-STEEL_SCREW_G = {"M2 x 10": 0.316, "M2 x 8": 0.26, "M2 x 6": 0.21, "M2 x 4": 0.15}   # 0.316 g: the model's M2 x 10 estimate
+STEEL_SCREW_G = {"M2 x 12": 0.37, "M2 x 10": 0.316, "M2 x 8": 0.26, "M2 x 6": 0.21, "M2 x 4": 0.15}   # 0.316 g: the model's M2 x 10 estimate; x 12 by the 0.027 g/mm step
+BACKPACK_SHIFT_MM = [0.0]   # set by pack_parts from flight_params.WING
+POST_SCREW_BASE = "M2 x 6"  # the backpack post screws in battery-20261104 (already in the duck's mass)
 NYLON_STANDOFF_G = 0.30
 WIRE_G_PER_M = {"16AWG": 15.0, "14AWG": 24.0}   # silicone wire: copper 1.31/2.08 mm2 x 8.96 g/cm3 + jacket (estimate)
 
@@ -69,7 +71,7 @@ def pack_parts():
         for side, s in (("L", +1), ("R", -1)):
             p = FP.fan_point(which, 45.0, s)
             parts.append(part(f"fan-{which}-{side}", FP.FAN["mass_g"], p,
-                              "76 g listing (qwinout spec table, procurement.json) + 4 g leads = flight_params.FAN mass_g 80; "
+                              f"cad/flight_params.FAN mass_g {FP.FAN['mass_g']} (FAN_ID {FP.FAN_ID}, seller listing incl. leads); "
                               "mass centre t 45 mm on the canted axis (cad/flight_params.fan_point); cylinder inertia estimate",
                               basis="vendor+estimate", inertia=fan_inertia(FP.FAN["mass_g"], which)))
     # batteries: CAD dummy box (listing 74 x 33 x 31 + 4 mm slack), 151 g listing
@@ -80,7 +82,8 @@ def pack_parts():
     # printed parts: H2S slicer grams (cad/slices/grams.json, v6 CAD) at the CAD centroid; volume x PLA x 0.851 only as fallback
     sliced = {}
     gp = FL / "cad/slices/grams.json"
-    if gp.exists():
+    # slicer grams only when they were sliced from this build (grams.json newer than build.json); otherwise CAD volume
+    if gp.exists() and gp.stat().st_mtime >= (FL / "cad/build/build.json").stat().st_mtime:
         sliced = json.loads(gp.read_text()).get("parts", {})
     for name, v in build.items():
         if not isinstance(v, dict) or v.get("volume_cm3") is None:
@@ -118,24 +121,29 @@ def pack_parts():
     for side, s in (("L", 1), ("R", -1)):
         lo, hi = stl_bounds(FL / f"cad/build/dummy_battery_{side}-world.stl")
         parts.append(part(f"strap-{side}", 4.0, (lo + hi) / 2 + np.array([0, 0, 0]), "Pyrodrone strap 16 x 250 mm, 4 g (listing)", basis="vendor", size_mm=[40, 40, 40]))
-    # screws from the CAD screw list, plus the 4 shared post screws going from M2 x 6 to M2 x 10 (+0.106 g each)
+    # screws from the CAD screw list; the shared post screws (spec "existing ...") replace the duck's M2 x 6, so only the
+    # length difference is added, at the seat the CAD lists
     for sc in screws:
+        spec = sc["spec"].split(" (")[0]
         if "existing" in sc["spec"]:
-            continue          # the shared post screws: counted below as the M2 x 6 -> M2 x 10 difference
-        g = NYLON_STANDOFF_G if "nylon" in sc["spec"] else STEEL_SCREW_G[sc["spec"].split(" (")[0]]
+            parts.append(part(f"screw-{sc['id']}-upgrade", STEEL_SCREW_G[spec] - STEEL_SCREW_G[POST_SCREW_BASE], sc["seat"],
+                              f"cad/build/screws.json {sc['spec']}: shared post screw {POST_SCREW_BASE} -> {spec}, mass difference",
+                              size_mm=[4, 4, 10]))
+            continue
+        g = NYLON_STANDOFF_G if "nylon" in sc["spec"] else STEEL_SCREW_G[spec]
         parts.append(part(f"screw-{sc['id']}", g, sc["seat"], f"cad/build/screws.json {sc['spec']}; steel estimate", size_mm=[4, 4, 10]))
-    for i, (y, z) in enumerate(FP.WING["holes"]):
-        parts.append(part(f"screw-post-upgrade-{i}", STEEL_SCREW_G["M2 x 10"] - STEEL_SCREW_G["M2 x 6"], [-48.5, y, z],
-                          "shared post screw M2 x 6 -> M2 x 10 (Shawn 2026-11-10 '共用螺丝'), mass difference", size_mm=[4, 4, 10]))
-    # the battery backpack moves 3.5 mm back on the 3.5 mm wing-plate centre: move its parts' mass -3.5 mm in x
+    # the battery backpack moves back by the wing-plate centre thickness (cad/flight_params.WING x_front - x_centre_back)
+    shift = FP.WING["x_front"] - FP.WING["x_centre_back"]
     base = json.loads(BASE_MANIFEST.read_text())["parts"]
     bp = [p for p in base if p["body"] == "trunk_base" and p["id"].startswith("add-bp")]
     bpg = sum(p["mass_kg"] for p in bp) * 1000
     bpc = sum(np.array(p["position_m"]) * p["mass_kg"] for p in bp) / max(1e-9, sum(p["mass_kg"] for p in bp)) * 1000
     parts.append(part("backpack-shift-minus", -bpg, bpc, f"battery backpack parts of battery-20261104 ({bpg:.1f} g) removed at their COM ...",
                       basis="geometry", size_mm=[1, 1, 1], group="shift"))
-    parts.append(part("backpack-shift-plus", bpg, bpc + np.array([-3.5, 0, 0]), "... and put back 3.5 mm behind (wing plate centre 3.5 mm, cad/flight_params.WING)",
+    parts.append(part("backpack-shift-plus", bpg, bpc + np.array([-shift, 0, 0]),
+                      f"... and put back {shift:.1f} mm behind (wing plate centre, cad/flight_params.WING x_front - x_centre_back)",
                       basis="geometry", size_mm=[1, 1, 1], group="shift"))
+    BACKPACK_SHIFT_MM[0] = shift
     return parts, proc
 
 
@@ -197,14 +205,16 @@ def main():
         duck_without_pack=dict(duck, model="cmu/model/scenes/scene_battery-20261104.xml (battery-20261104 manifest, 960.45 g "
                                "component estimate, never weighed)"),
         pack=dict(mass_g=round(pack_g, 1), com_trunk_mm=pack_com.round(1).tolist(), by_group_g={k: round(v, 1) for k, v in groups.items()},
-                  backpack_shift="battery backpack moved 3.5 mm back (two signed parts, net 0 g)"),
+                  backpack_shift=f"battery backpack moved {BACKPACK_SHIFT_MM[0]:.1f} mm back (two signed parts, net 0 g)"),
         duck_with_pack=full,
         vs_old_mass_budget=dict(old_pack_g=730, note="mass_budget.json (pre-procurement): batteries 2 x 100 g, printed 120 g, wiring 45 g; "
                                 "now 2 x 151 g batteries, printed parts from CAD volumes, wiring from routed lengths"),
         assumptions=[
             "printed parts: H2S slicer grams of the v6 CAD (cad/slices/grams.json, Generic PLA 0.20 mm); "
             "PETG (1.27) would add 2 %",
-            "fan 80 g (76 g listing + leads); one heavier listing said 113 g (not used; see mass +10 % case)",
+            f"fan {FP.FAN['mass_g']} g (cad/flight_params FAN_ID {FP.FAN_ID}); fan113 variant scales the fan parts to 113 g",
+            "printed parts use H2S slicer grams only when cad/slices/grams.json is newer than cad/build/build.json; "
+            "otherwise CAD volume x 1.24 g/cm3 x 0.851 print fraction (solid volume would be 1/0.851 heavier)",
             "wire lengths are routing estimates; connector, solder and strap masses are estimates",
             "nothing in the pack is in hand or weighed",
         ],
@@ -224,8 +234,9 @@ def main():
         "mass+10": variant(parts, mass_scale=1.10),
     }
     # heavy-fan case: 113 g per fan (the heavier listing) at the same mass centre, inertia scaled
-    variants["fan113"] = [dict(p, mass_kg=p["mass_kg"] * 113 / 80,
-                               inertia_about_com_kg_m2=(np.array(p["inertia_about_com_kg_m2"]) * 113 / 80).tolist())
+    kf = 113.0 / FP.FAN["mass_g"]
+    variants["fan113"] = [dict(p, mass_kg=p["mass_kg"] * kf,
+                               inertia_about_com_kg_m2=(np.array(p["inertia_about_com_kg_m2"]) * kf).tolist())
                           if p["id"].startswith("fan-") else p for p in parts]
     # battery moves for the ground-phase study (mm, trunk frame): forward / down / both
     for name, dv in (("batt_fwd20", (20, 0, 0)), ("batt_fwd40", (40, 0, 0)), ("batt_down20", (0, 0, -20)),

@@ -19,16 +19,16 @@
   "model": "cmu/model/scenes/scene_battery-20261104.xml (battery-20261104 manifest, 960.45 g component estimate, never weighed)"
  },
  "pack": {
-  "mass_g": 938.6,
+  "mass_g": 955.1,
   "com_trunk_mm": [
-   -16.0,
+   -16.9,
    -3.2,
-   34.7
+   34.8
   ],
   "by_group_g": {
-   "fan": 320.0,
+   "fan": 308.0,
    "battery": 302.0,
-   "print": 169.5,
+   "print": 197.1,
    "fc": 30.0,
    "mtf01": 4.5,
    "capacitor": 5.0,
@@ -38,24 +38,24 @@
    "signal": 3.0,
    "solder": 6.0,
    "strap": 8.0,
-   "screw": 12.0
+   "screw": 12.8
   },
-  "backpack_shift": "battery backpack moved 3.5 mm back (two signed parts, net 0 g)"
+  "backpack_shift": "battery backpack moved 6.9 mm back (two signed parts, net 0 g)"
  },
  "duck_with_pack": {
-  "mass_g": 1899.1,
+  "mass_g": 1915.6,
   "com_trunk_mm": [
-   -12.0,
-   -1.4,
+   -12.6,
+   -1.5,
    30.0
   ],
   "inertia_about_com_kgm2": {
-   "xx": 0.01281,
-   "yy": 0.00747,
-   "zz": 0.00986,
-   "xy": -0.000221,
-   "xz": -0.000624,
-   "yz": 3.3e-05
+   "xx": 0.01271,
+   "yy": 0.00756,
+   "zz": 0.00981,
+   "xy": -0.000224,
+   "xz": -0.000649,
+   "yz": 3.2e-05
   }
  },
  "vs_old_mass_budget": {
@@ -64,7 +64,8 @@
  },
  "assumptions": [
   "printed parts: H2S slicer grams of the v6 CAD (cad/slices/grams.json, Generic PLA 0.20 mm); PETG (1.27) would add 2 %",
-  "fan 80 g (76 g listing + leads); one heavier listing said 113 g (not used; see mass +10 % case)",
+  "fan 77.0 g (cad/flight_params FAN_ID ARESWEI_HDS001); fan113 variant scales the fan parts to 113 g",
+  "printed parts use H2S slicer grams only when cad/slices/grams.json is newer than cad/build/build.json; otherwise CAD volume x 1.24 g/cm3 x 0.851 print fraction (solid volume would be 1/0.851 heavier)",
   "wire lengths are routing estimates; connector, solder and strap masses are estimates",
   "nothing in the pack is in hand or weighed"
  ],
@@ -76,243 +77,243 @@
  ],
  "variants": {
   "mass+5": {
-   "mass_g": 1946.0,
+   "mass_g": 1963.3,
    "com_trunk_mm": [
-    -12.1,
-    -1.5,
-    30.1
-   ],
-   "inertia_about_com_kgm2": {
-    "xx": 0.01316,
-    "yy": 0.00755,
-    "zz": 0.01027,
-    "xy": -0.000231,
-    "xz": -0.000625,
-    "yz": 3.4e-05
-   }
-  },
-  "mass+10": {
-   "mass_g": 1993.0,
-   "com_trunk_mm": [
-    -12.2,
+    -12.7,
     -1.5,
     30.2
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01352,
-    "yy": 0.00762,
-    "zz": 0.01067,
-    "xy": -0.000242,
-    "xz": -0.000626,
-    "yz": 3.6e-05
+    "xx": 0.01306,
+    "yy": 0.00763,
+    "zz": 0.01021,
+    "xy": -0.000235,
+    "xz": -0.000651,
+    "yz": 3.4e-05
+   }
+  },
+  "mass+10": {
+   "mass_g": 2011.1,
+   "com_trunk_mm": [
+    -12.8,
+    -1.5,
+    30.3
+   ],
+   "inertia_about_com_kgm2": {
+    "xx": 0.01342,
+    "yy": 0.00771,
+    "zz": 0.01061,
+    "xy": -0.000246,
+    "xz": -0.000653,
+    "yz": 3.5e-05
    }
   },
   "fan113": {
-   "mass_g": 2031.1,
+   "mass_g": 2059.6,
    "com_trunk_mm": [
-    -12.0,
+    -12.6,
     -1.3,
     29.8
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01448,
-    "yy": 0.00773,
-    "zz": 0.01167,
-    "xy": -0.000221,
-    "xz": -0.000624,
+    "xx": 0.01454,
+    "yy": 0.00784,
+    "zz": 0.01178,
+    "xy": -0.000224,
+    "xz": -0.000648,
     "yz": 3.3e-05
    }
   },
   "batt_fwd20": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -8.7,
-    -1.4,
+    -9.4,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.00776,
-    "zz": 0.01015,
-    "xy": -0.000229,
-    "xz": -0.000695,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00785,
+    "zz": 0.01011,
+    "xy": -0.000233,
+    "xz": -0.00072,
+    "yz": 3.2e-05
    }
   },
   "batt_fwd40": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -5.4,
-    -1.4,
+    -6.2,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.00826,
-    "zz": 0.01065,
-    "xy": -0.000238,
-    "xz": -0.000767,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00836,
+    "zz": 0.01062,
+    "xy": -0.000242,
+    "xz": -0.000791,
+    "yz": 3.2e-05
    }
   },
   "batt_down20": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -12.0,
-    -1.4,
-    26.7
+    -12.6,
+    -1.5,
+    26.8
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01277,
-    "yy": 0.00743,
-    "zz": 0.00986,
-    "xy": -0.000221,
-    "xz": -0.000531,
+    "xx": 0.01268,
+    "yy": 0.00752,
+    "zz": 0.00981,
+    "xy": -0.000224,
+    "xz": -0.000552,
     "yz": 4.1e-05
    }
   },
   "batt_fwd40_down20": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -5.4,
-    -1.4,
-    26.7
+    -6.2,
+    -1.5,
+    26.8
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01277,
-    "yy": 0.00822,
-    "zz": 0.01065,
-    "xy": -0.000238,
-    "xz": -0.000466,
+    "xx": 0.01268,
+    "yy": 0.00832,
+    "zz": 0.01062,
+    "xy": -0.000242,
+    "xz": -0.000486,
     "yz": 4.1e-05
    }
   },
   "comx-10": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -22.0,
-    -1.4,
+    -22.6,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.00782,
-    "zz": 0.01021,
-    "xy": -0.000254,
-    "xz": -0.000533,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00791,
+    "zz": 0.01017,
+    "xy": -0.000258,
+    "xz": -0.000557,
+    "yz": 3.2e-05
    }
   },
   "comx-5": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -17.0,
-    -1.4,
+    -17.6,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.0076,
-    "zz": 0.00999,
-    "xy": -0.000237,
-    "xz": -0.000578,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00769,
+    "zz": 0.00994,
+    "xy": -0.000241,
+    "xz": -0.000603,
+    "yz": 3.2e-05
    }
   },
   "comx+5": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -7.0,
-    -1.4,
+    -7.6,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.00744,
-    "zz": 0.00983,
-    "xy": -0.000204,
-    "xz": -0.000669,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00752,
+    "zz": 0.00978,
+    "xy": -0.000207,
+    "xz": -0.000694,
+    "yz": 3.2e-05
    }
   },
   "comx+10": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -2.0,
-    -1.4,
+    -2.6,
+    -1.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01281,
-    "yy": 0.00751,
-    "zz": 0.0099,
-    "xy": -0.000187,
-    "xz": -0.000714,
-    "yz": 3.3e-05
+    "xx": 0.01271,
+    "yy": 0.00758,
+    "zz": 0.00984,
+    "xy": -0.00019,
+    "xz": -0.00074,
+    "yz": 3.2e-05
    }
   },
   "comy-10": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -12.0,
-    -11.4,
+    -12.6,
+    -11.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01307,
-    "yy": 0.00747,
-    "zz": 0.01013,
-    "xy": -0.000298,
-    "xz": -0.000624,
+    "xx": 0.01298,
+    "yy": 0.00756,
+    "zz": 0.01007,
+    "xy": -0.000306,
+    "xz": -0.000649,
     "yz": 0.000123
    }
   },
   "comy-5": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -12.0,
-    -6.4,
+    -12.6,
+    -6.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01289,
-    "yy": 0.00747,
-    "zz": 0.00995,
-    "xy": -0.000259,
-    "xz": -0.000624,
+    "xx": 0.0128,
+    "yy": 0.00756,
+    "zz": 0.00989,
+    "xy": -0.000265,
+    "xz": -0.000649,
     "yz": 7.8e-05
    }
   },
   "comy+5": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -12.0,
-    3.6,
+    -12.6,
+    3.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01282,
-    "yy": 0.00747,
-    "zz": 0.00988,
-    "xy": -0.000182,
-    "xz": -0.000624,
-    "yz": -1.3e-05
+    "xx": 0.01273,
+    "yy": 0.00756,
+    "zz": 0.00983,
+    "xy": -0.000183,
+    "xz": -0.000649,
+    "yz": -1.4e-05
    }
   },
   "comy+10": {
-   "mass_g": 1899.1,
+   "mass_g": 1915.6,
    "com_trunk_mm": [
-    -12.0,
-    8.6,
+    -12.6,
+    8.5,
     30.0
    ],
    "inertia_about_com_kgm2": {
-    "xx": 0.01293,
-    "yy": 0.00747,
-    "zz": 0.00999,
-    "xy": -0.000143,
-    "xz": -0.000624,
-    "yz": -5.8e-05
+    "xx": 0.01284,
+    "yy": 0.00756,
+    "zz": 0.00994,
+    "xy": -0.000142,
+    "xz": -0.000649,
+    "yz": -5.9e-05
    }
   }
  }
