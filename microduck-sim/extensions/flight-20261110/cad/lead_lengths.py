@@ -3,8 +3,8 @@ One waypoint list per lead, through the openings the parts provide: fan window (
 harness side run and rear crossing (left side), FC plate lead window (right battery), ESC pads and tabs as in
 wiring/wiring.json (esc_pads_world, esc_tabs_world: pad set 1 FR, 2 RR, 3 FL, 4 RL). Writes checks/lead_lengths.json.
     /tmp/microduck-cad-venv/bin/python cad/lead_lengths.py
-Rules: fan extension = route + 20 mm (two joints with strain relief, 10 mm each) - the 70 mm factory lead (fan not in
-hand: assumed), at least 40 mm so every fan unplugs at its nacelle on bullets (wiring.json missing: female bullets);
+Rules: fan extension = route + 20 mm (two joints with strain relief, 10 mm each) - the factory lead (FAN lead_len, the
+active fan set: ARESWEI about 140 mm per the seller, measure on arrival), at least 40 mm so every fan unplugs at its nacelle on bullets (wiring.json missing: female bullets);
 battery pigtail = route from the pack's XT60 + 20 mm; the pack's own lead ends with its XT60 22 mm behind the web
 (CNHL lead length not published: assumed); routes are rounded up to 10 mm.
 """
@@ -33,8 +33,11 @@ def up10(v):
 
 
 def ring(which, s):
-    x, _, z = Pm.fan_point(which, sum(FAN["lead_t"]) / 2, s)
-    return (round(x, 1), s * (Pm.FAN_Y - FAN["motor_od"] / 2), round(z, 1))
+    """Where the motor leads leave the fan: motor front ring, radius motor_od / 2, direction Pm.lead_angle(s)."""
+    x, y, z = Pm.fan_point(which, sum(FAN["lead_t"]) / 2, s)
+    a = math.radians(Pm.lead_angle(s))
+    r = FAN["motor_od"] / 2
+    return (round(x + r * math.cos(a) * Pm.C, 1), round(y + r * math.sin(a), 1), round(z + r * math.cos(a) * Pm.DIR[which] * Pm.S, 1))
 
 
 def main():

@@ -16,6 +16,8 @@ import trimesh
 from shapely import contains_xy
 from shapely.geometry import Polygon
 
+import flight_params as Pm
+
 H = Path(__file__).resolve().parent
 N = 120.0 / 3.5
 ROD = dict(d=3.0, x=-48.45, z=29.6, y=(-30.0, 30.0))
@@ -38,8 +40,10 @@ def section(wing, y):
 
 def main():
     wing = trimesh.load(H / "build" / "wing_plate-world.stl", force="mesh")
-    total_g = 1883.0                                  # v6 all-up, fans 80 g (mass_budget.json)
-    side_g = 2 * 80 + 25.4 + 21.2 + 151 + 14.5
+    ll = json.loads((H.parent / "leg_load.json").read_text())["cases"]
+    case = next(k for k in ll if k.startswith("v7 CAD"))
+    total_g = ll[case]["total_g"]                     # all-up of the active fan set (leg_load.json)
+    side_g = 2 * Pm.FAN["mass_g"] + 25.4 + 21.2 + 151 + 14.5
     FA, FB = 2 * total_g / 1000 * 9.81 / 2, 5 * side_g / 1000 * 9.81
     A = np.pi * ROD["d"] ** 2 / 4
     Ir = np.pi * ROD["d"] ** 4 / 64

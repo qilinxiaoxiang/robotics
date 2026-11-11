@@ -184,22 +184,39 @@ def lcyl(r, t0, t1, r2=None):
     return m3.Manifold.cylinder(t1 - t0, r, r if r2 is None else r2, L.SEG).translate([0, 0, -t1])
 
 
+def ear_boxes(r, w, t0, t1):
+    """The two ears (or their pockets) in the local frame: along local +-x (the nacelle split plane), from the axis to r."""
+    b = m3.Manifold.cube([r, w, t1 - t0]).translate([0.0, -w / 2, -t1])
+    return b + b.rotate([0, 0, 180])
+
+
 def fan_keepout(which, side=+1):
-    """Space no printed part enters: lip and band (r 32.5 for t < 9.7), the duct bore, the rim, stator, motor and jet."""
-    m = lcyl(NAC["keep_lip_r"], -30.0, 9.7) + lcyl(NAC["bore"] / 2, 9.6, 36.6) + lcyl(NAC["relief"] / 2, 36.5, 110.0)
+    """Space no printed part enters: lip (and band) ahead of the duct, the duct bore, the ear pockets, the rim, stator,
+    motor and jet. Every number from FAN through NAC."""
+    ft = NAC["front_t"]
+    m = (lcyl(NAC["keep_lip_r"], -30.0, ft) + lcyl(NAC["bore"] / 2, ft - 0.1, NAC["t1"] + 0.2)
+         + lcyl(NAC["relief"] / 2, NAC["t1"] + 0.1, 110.0))
+    if "ear_pocket" in NAC:
+        p = NAC["ear_pocket"]
+        m = m + ear_boxes(p["r"], p["w"], *p["t"])
     return fan_place(m, which, side)
 
 
 def fan_dummy(which, side=+1):
-    """Bought-part envelope: lip, band, duct, rim, stator cone, motor (FAN dict), lead exit toward the body."""
+    """Bought-part envelope of the active FAN set: spinner, lip, band, duct, ears, rim, stator cone, motor, lead exit."""
     f = FAN
-    m = L.union([lcyl(f["lip_od"] / 2, *f["lip_t"]), lcyl(f["band_od"] / 2, *f["band_t"]), lcyl(f["duct_od"] / 2, *f["duct_t"]),
-                 lcyl(f["rim_od"] / 2, *f["rim_t"]), lcyl(f["motor_od"] / 2, *f["motor_t"]),
-                 lcyl(f["stator_od"][1] / 2, f["stator_t"][0], f["stator_t"][1], r2=f["stator_od"][0] / 2)])
-    # three leads leave the motor front ring radially; keep-out 6 x 6 toward the body (world -side*y), 20 mm past the can
-    lead = m3.Manifold.cube([6.0, f["motor_od"] / 2 + 8.0, 6.0]).translate([-3.0, 0.0, -f["lead_t"][1] - 2.0])
-    lead = lead.mirror([0, 1, 0]) if side > 0 else lead
-    return fan_place(m + lead, which, side)
+    parts = [lcyl(f["lip_od"] / 2, *f["lip_t"]), lcyl(f["duct_od"] / 2, *f["duct_t"]),
+             lcyl(f["rim_od"] / 2, *f["rim_t"]), lcyl(f["motor_od"] / 2, *f["motor_t"]),
+             lcyl(f["stator_od"][1] / 2, f["stator_t"][0], f["stator_t"][1], r2=f["stator_od"][0] / 2)]
+    if "band_t" in f:
+        parts.append(lcyl(f["band_od"] / 2, *f["band_t"]))
+    if "spinner_t" in f:
+        parts.append(lcyl(f["spinner_od"] / 2, *f["spinner_t"], r2=1.5))
+    if "ear_t" in f:
+        parts.append(ear_boxes(f["ear_r"], f["ear_w"], *f["ear_t"]))
+    # three leads leave the motor front ring radially in Pm.lead_angle(side); keep-out 6 x 6 to 8 mm past the can
+    lead = m3.Manifold.cube([f["motor_od"] / 2 + 8.0, 6.0, 6.0]).translate([0.0, -3.0, -f["lead_t"][1] - 1.5])
+    return fan_place(L.union(parts) + lead.rotate([0, 0, Pm.lead_angle(side)]), which, side)
 
 
 def nacelle(side=+1):
@@ -216,13 +233,17 @@ def nacelle(side=+1):
         xs = [Pm.fan_point(w, t, side)[0] + sgn * N["screw_r"] for t in N["ear_screw_t"]]
         holes += [(x, Pm.fan_point(w, t, side)[2]) for x, t in zip(xs, N["ear_screw_t"])]
         axs = [Pm.fan_point(w, t, side)[0] for t in (N["t0"], N["t1"])]
+        # the block's inner face reaches 2 mm into the collar where the canted axis is nearest the block (the bore cut
+        # removes the excess): a face that only met the round collar at one end left a 1 mm sliver (2026-11-10)
         if sgn > 0:
-            xa, xb = max(axs) + ro - 2.0, max(xs) + N["ear_out"]
+            xa, xb = min(axs) + ro - 2.0, max(xs) + N["ear_out"]
         else:
-            xa, xb = min(xs) - N["ear_out"], min(axs) - ro + 2.0
+            xa, xb = min(xs) - N["ear_out"], max(axs) - ro + 2.0
         solids.append(L.box((xa, y0, bed), (xb, y1, top)))
     # middle web top stays under both lip keep-outs (their tilted lower faces reach z 59.2 at the web edges): no feather edge
-    web_top = Pm.LIP_Z - 9.7 * C - (N["keep_lip_r"] - 4.9) * S - 0.3
+    ft = N["front_t"]
+    dists = ((Pm.fan_point("front", ft)[0] - N["web_x"][1]) / C, (N["web_x"][0] - Pm.fan_point("rear", ft)[0]) / C)
+    web_top = Pm.LIP_Z - ft * C - min(min(d, N["keep_lip_r"]) for d in dists) * S - 0.3
     solids.append(L.box((N["web_x"][0], y0, bed), (N["web_x"][1], y1, web_top)))
     holes.append((sum(N["web_x"]) / 2, Pm.fan_point("front", N["web_screw_t"], side)[2]))
     keep = fan_keepout("front", side) + fan_keepout("rear", side)

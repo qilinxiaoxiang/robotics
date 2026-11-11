@@ -15,7 +15,9 @@ import flight_params as Pm
 H = Path(__file__).resolve().parent
 B = H / "build"
 Z = 120.0
-LAYOUT = "v6 CAD (cad/build_pack.py): wing plate, trays, clamp nacelles, FC bracket with flow shelf; no compass"
+LAYOUT = (f"v7 CAD (cad/build_pack.py): v6 parts with fan set {Pm.FAN_ID} (provisional until measured): wing plate, trays, "
+          "clamp nacelles, FC bracket with flow shelf; no compass")
+CASE = f"v7 CAD, {Pm.FAN_ID} fans {Pm.FAN['mass_g']:g} g"
 
 
 def bounds(name, ysel=None):
@@ -63,8 +65,8 @@ def main():
     pg["layouts"][LAYOUT] = dict(note="current design: envelopes of the built parts and bought-part dummies (bounding boxes per group)",
                                  volumes=vols)
     for k, lay in pg["layouts"].items():
-        if k != LAYOUT and lay.get("note") == "current design":
-            lay["note"] = "superseded by v6 CAD"
+        if k != LAYOUT and lay.get("note", "").startswith("current design"):
+            lay["note"] = "superseded by " + LAYOUT.split(" (")[0]
     (H.parent / "pack_geometry.json").write_text(json.dumps(pg, indent=1))
 
     ll = json.loads((H / "checks" / "lead_lengths.json").read_text())      # cad/lead_lengths.py
@@ -103,15 +105,19 @@ def main():
     mb = json.loads((H.parent / "mass_budget.json").read_text())
     for case in mb["cases"].values():
         case[:] = [i for i in case if "compass" not in i["name"]]
-    mb["cases"]["v6 CAD, fans 80 g"] = items(80.0)
-    mb["cases"]["v6 CAD, fans 113 g"] = items(113.0)
-    mb["note_v6"] = (f"v6 cases: printed parts from {src}; fans 80 g at 45 mm down each axis; batteries 151 g (CNHL listing); "
+    # the v6 QX cases (fans 80 / 113 g) stay as written on 2026-11-10 (wiring/build_wiring.py cites "v6 CAD, fans 80 g")
+    mb["cases"][CASE] = items(Pm.FAN["mass_g"])
+    mb["note_v7"] = (f"{CASE}: active fan set {Pm.FAN_ID} (flight_params.FANS, provisional until measured), printed parts "
+                     f"from {src}; fan mass at 45 mm down each axis; batteries 151 g (CNHL listing); "
+                     "stack 24 g + 6 g hardware; MTF-01 4.5 g; wiring "
+                     f"{wires['left'] + wires['right']:.0f} g from checks/lead_lengths.json plus 20 g screws, straps and ties.")
+    mb["note_v6"] = (f"v6 cases (QX fans, frozen 2026-11-10): printed parts from {src}; fans 80 g at 45 mm down each axis; batteries 151 g (CNHL listing); "
                      "stack 24 g + 6 g hardware; MTF-01 4.5 g; compass deleted (Shawn 2026-11-10); wiring "
                      f"{wires['left'] + wires['right']:.0f} g from the routed lengths in checks/lead_lengths.json (16 AWG 15 g/m, "
                      "12 AWG 35 g/m per conductor, XT60 half 4 g, bullet 0.6 g, A7Z lead 3 g) plus 20 g screws, straps and ties.")
     (H.parent / "mass_budget.json").write_text(json.dumps(mb, indent=1))
-    tot = sum(i["g"] for i in mb["cases"]["v6 CAD, fans 80 g"])
-    print(f"layout written; v6 pack {tot:.0f} g (fans 80 g); printed parts {src}:", {k: grams[k] for k in sorted(grams)})
+    tot = sum(i["g"] for i in mb["cases"][CASE])
+    print(f"layout written; {CASE}: pack {tot:.0f} g; printed parts {src}:", {k: grams[k] for k in sorted(grams)})
 
 
 if __name__ == "__main__":

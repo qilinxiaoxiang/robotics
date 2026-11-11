@@ -129,6 +129,21 @@ def thickness(t, n=8000, edge_skip=0.6):
         ok = dist > 0.05
         np.minimum.at(d, ri[ok], dist[ok] + 0.02)
     thin = np.isfinite(d) & (d < 1.2)
+    # confirm each thin reading with two rays started 0.1 mm to the side: a lone ray can report a false hit near a
+    # triangle edge (2026-11-10: 1.01 on a nacelle face whose wall is 2.6 mm in every direction)
+    for i in np.flatnonzero(thin):
+        tang = np.cross(nrm[i], [0.0, 0.0, 1.0] if abs(nrm[i][2]) < 0.9 else [1.0, 0.0, 0.0])
+        tang /= np.linalg.norm(tang)
+        reads = []
+        for s in (+0.1, -0.1):
+            oi = o[i] + tang * s
+            li, _, _ = t.ray.intersects_location([oi], [-nrm[i]], multiple_hits=True)
+            di = np.linalg.norm(li - oi, axis=1) if len(li) else np.array([])
+            di = di[di > 0.05]
+            reads.append(di.min() + 0.02 if len(di) else np.inf)
+        if min(reads) >= 1.2:
+            thin[i] = False
+            d[i] = min(reads)
     return dict(min_mm=round(float(d[np.isfinite(d)].min()), 2), p1_mm=round(float(np.percentile(d[np.isfinite(d)], 1)), 2),
                 n_under_1_2=int(thin.sum()), n=int(len(p)),
                 thin_at=np.round(p[thin][:12], 1).tolist(), thin_d=np.round(d[thin][:12], 2).tolist())
@@ -225,6 +240,9 @@ def main():
 
     # 4: wall thickness of the printed parts
     res["thickness"] = {n: thickness(mine[n]) for n in PARTS}
+    for n, t in res["thickness"].items():      # rule: nothing under 1.2 mm on a printed part
+        if t["n_under_1_2"]:
+            issues.append(f"{n}: {t['n_under_1_2']} wall samples under 1.2 mm (min {t['min_mm']})")
     res["issues"] = issues
     res["seconds"] = round(time.time() - T0, 1)
     (OUT / "check_parts.json").write_text(json.dumps(res, indent=1))

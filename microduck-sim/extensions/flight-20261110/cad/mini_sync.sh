@@ -19,6 +19,7 @@ case "$1" in
       $LOCAL/$SIM/guide/firmware/mac/camera-calib-20261030/bend-20261030/ mac-mini:$REMOTE/$SIM/guide/firmware/mac/camera-calib-20261030/bend-20261030/
     rsync -a --delete $LOCAL/$SIM/guide/print/world/ mac-mini:$REMOTE/$SIM/guide/print/world/
     rsync -a $LOCAL/$SIM/guide/print/design_contract.py mac-mini:$REMOTE/$SIM/guide/print/
+    rsync -a $LOCAL/$SIM/CURRENT-STATE.json mac-mini:$REMOTE/$SIM/          # the contract's bought-part check reads it
     rsync -a --exclude='*.html' --exclude='duck_mesh.json' --exclude='duck_poses.json' --exclude='cad/build/' --exclude='cad/slices/' \
       $LOCAL/$FL/ mac-mini:$REMOTE/$FL/
     ;;
@@ -28,6 +29,7 @@ case "$1" in
   pull)
     rsync -a --delete mac-mini:$REMOTE/$FL/cad/build/ $LOCAL/$FL/cad/build/
     rsync -a mac-mini:$REMOTE/$FL/cad/FITS.json $LOCAL/$FL/cad/FITS.json
+    for f in mass_budget.json pack_geometry.json leg_load.json; do rsync -a mac-mini:$REMOTE/$FL/$f $LOCAL/$FL/$f; done
     rsync -a --include='*.txt' --include='*.json' --exclude='*' mac-mini:$REMOTE/$FL/cad/checks/ $LOCAL/$FL/cad/checks/ 2>/dev/null || true
     ;;
 esac
