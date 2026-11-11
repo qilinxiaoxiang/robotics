@@ -33,12 +33,12 @@ nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
 <nav><a href="#sum">一览</a><a href="#m3d">三维图</a><a href="#parts">零件</a><a href="#layout">布局</a><a href="#mount">固定</a><a href="#mass">重量重心</a><a href="#thrust">推力续航</a><a href="#elec">电气</a><a href="#ctrl">控制</a><a href="#sw">软件</a><a href="#beh">现有行为</a><a href="#fly">飞行过程</a><a href="#test">验证</a><a href="#open">未完成</a><a href="#src">来源</a></nav>
 
 <h2 id="sum">一览</h2>
-<p>能不能飞起来，取决于还没测过的风扇推力：按厂商标称推力，仿真里 {{sim_nom_n}} 次飞行全部成功；推力打九折还能飞，打八折就飞不起来。</p>
+<p>能不能飞起来，取决于还没测过的风扇推力：按厂商标称推力，仿真里 {{sim_nom_n}} 次飞行全部成功。只要飞控知道真实推力（悬停油门设对），推力只有标称的 {{t80d_k70_pct}}% 也能飞起来；推力要有标称的约 {{t80d_u85_pct}}%，ArduPilot 的悬停油门才不会顶到上限。</p>
 <div class="cards">
 <div class="card"><b>推进</b><div class="v">4 个 50 毫米涵道风扇</div><p>ARESWEI HDS001，每个标称推力 {{fan_thrust_g}} 克（{{fan_V}} 伏时），自重 {{fan_mass_g}} 克。<span class="src">厂商</span></p></div>
 <div class="card"><b>重量</b><div class="v">背包约 {{pack_g}} 克，整机约 {{total_kg}} 千克</div><p>鸭子本体 {{duck_g}} 克是按零件估的，没称过。<span class="src">计算</span></p></div>
 <div class="card"><b>推重比</b><div class="v">{{twr_vendor}}</div><p>四个风扇标称推力之和除以整机重量。按标称打三分之二折是 {{twr_two_thirds}}。<span class="src">计算</span></p></div>
-<div class="card"><b>仿真飞行</b><div class="v">标称推力 {{sim_nom_full}} / {{sim_nom_n}} 成功</div><p>推力九折 {{sim_t90_full}} / {{sim_t90_n}}，八折 {{sim_t80_full}} / {{sim_t80_n}}。每种都是原地悬停、上桌、下桌各 3 次。<span class="src">仿真</span></p></div>
+<div class="card"><b>仿真飞行</b><div class="v">标称推力 {{sim_nom_full}} / {{sim_nom_n}} 成功</div><p>推力九折 {{sim_t90_full}} / {{sim_t90_n}}；八折且飞控知道真实推力时 {{t80d_ho80_full}} / {{t80d_ho80_n}}。每种都是原地悬停、上桌、下桌各 3 次。<span class="src">仿真</span></p></div>
 <div class="card"><b>续航</b><div class="v">悬停 {{hover_min_lo}} 到 {{hover_min_hi}} 分钟</div><p>只用 80% 电量。仿真里一次上桌用 {{sim_mah}} 毫安时，一组电池约 {{sim_trips}} 次。<span class="src">计算</span><span class="src">仿真</span></p></div>
 <div class="card"><b>外形</b><div class="v">总宽 {{width}} 毫米</div><p>机舱顶离地 {{nac_top}} 毫米，在头的下面，站高不变。<span class="src">计算</span></p></div>
 <div class="card"><b>打印</b><div class="v">两盘，共约 {{printed_g}} 克</div><p>橙色一盘 {{orange_h2s_time}}，黑色一盘 {{black_h2s_time}}（H2S 打印机，100% 填充）。<span class="src">切片</span></p></div>
@@ -106,7 +106,7 @@ nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
 <div class="card"><h4>转动惯量（绕前后轴）</h4><p>不带背包 {{iner_duck}}，带背包 {{iner_pack}} 千克平方米，约 {{iner_ratio}} 倍。身体左右晃得更慢，这是旧的走路策略带背包几乎每次都摔的原因之一。<span class="src">计算</span></p></div>
 <div class="card"><h4>弯腰时腿扛得动</h4><p>沿现有的弯腰夹取路径，只算重力：带背包时最吃力的是膝关节，{{bend_tau_full}} 牛米，是仿真模型里舵机力矩上限 {{servo_limit}} 的 {{bend_pct_full}}%；不带背包是 {{bend_tau_none}}。扛得动，但余量很小。<span class="src">计算</span></p></div>
 </div>
-<p class="note">仿真里用的背包重量是 {{sim_pack_g}} 克（打印件按旧版切片算 {{sim_printed_g}} 克），比上面这张表轻约 {{mass_gap_g}} 克。</p>
+<p class="note">飞行仿真按整机 {{sim_robot_g}} 克算（背包 {{sim_pack_g}} 克，打印件按旧版切片 {{sim_printed_g}} 克）。按这次切片克数，整机是 {{total_g}} 克，重约 {{mass_gap_g}} 克，约 {{mass_gap_pct}}%，所以真机需要的推力比仿真数字高约 {{mass_gap_pct}}%。</p>
 
 <h2 id="thrust">推力和续航</h2>
 <p>悬停时每个风扇要出约 {{hover_per_fan_g}} 克，是标称最大推力的 {{hover_share_pct}}%。推力按厂商标称设计（你 11 月 10 日定的，不单独上秤测），第一次系绳悬停就是推力的实测。</p>
@@ -115,7 +115,11 @@ nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
 <li><b>仿真里：</b>悬停油门约 {{sim_throttle}}%，悬停总电流约 {{sim_hover_A}} 安，单个电调通道最高 {{sim_esc_peak}} 安，一块电池最高 {{sim_pack_peak}} 安。这里的飞控是仿 ArduPilot 写的替身，不是 ArduPilot 本身。<span class="src">仿真</span></li>
 <li><b>悬停电流：</b>三种算法给出总电流 {{hover_A_lo}} 到 {{hover_A_hi}} 安（每个风扇 {{hover_A_fan_lo}} 到 {{hover_A_fan_hi}} 安），差一倍，要靠实测定。飞控把总电流限在 {{curr_cap}} 安，保护电池插头。<span class="src">计算</span></li>
 <li><b>续航：</b>两块电池共 {{batt_mah}} 毫安时，用 80%：悬停 {{hover_min_lo}} 到 {{hover_min_hi}} 分钟。仿真里一次上桌或下桌约 {{sim_flight_s}} 秒、{{sim_mah}} 毫安时，一组电池约 {{sim_trips}} 次。<span class="src">计算</span><span class="src">仿真</span></li>
-<li><b>推力不够会怎样：</b>仿真里推力九折时 {{sim_t90_n}} 次全都能飞起来落下，其中 {{sim_t90_full}} 次落地后站稳；八折时只有 {{sim_t80_air}} 次飞起来。<span class="src">仿真</span></li>
+<li><b>推力九折：</b>仿真里 {{sim_t90_n}} 次全都能飞起来落下，其中 {{sim_t90_full}} 次落地后站稳。<span class="src">仿真</span></li>
+<li><b>推力八折：</b>旧版仿真只有 {{sim_t80_air}} / {{sim_t80_n}} 次飞起来，原因在仿真里的替身飞控：它按标称推力算油门，每要 1 份推力实际只给出 0.8 份，刚离地就掉回地面。升力和俯仰控制能力其实都够。告诉它真实推力后（相当于 ArduPilot 设好或学到悬停油门 <code>MOT_THST_HOVER</code>）：腿按交接方式控制 {{t80d_ho80_air}} / {{t80d_ho80_n}} 次飞起来，{{t80d_ho80_full}} 次落地后站稳；腿锁住 {{t80d_k80_air}} / {{t80d_k80_n}} 次飞起来。<span class="src">仿真</span></li>
+<li><b>最少要多少推力：</b>飞控知道真实推力时，标称的 {{t80d_k70_pct}}% 还能 {{t80d_k70_air}} / {{t80d_k70_n}} 次飞起来，{{t80d_k60_pct}}% 就 {{t80d_k60_air}} / {{t80d_k60_n}}（推重比 {{t80d_k60_twr}}，起飞推力真的不够）。飞控不知道时，{{t80d_u85_pct}}% {{t80d_u85_air}} / {{t80d_u85_n}}，{{t80d_u75_pct}}% {{t80d_u75_air}} / {{t80d_u75_n}}。<span class="src">仿真</span></li>
+<li><b>ArduPilot 的上限：</b>悬停要用的推力占比，标称推力时 {{hover_frac_nom}}%，九折 {{hover_frac_t90}}%，八折 {{hover_frac_t80}}%。<code>MOT_THST_HOVER</code> 最大只能到 {{ap_thst_hover_max}}，所以推力低于标称约 {{t80d_u85_pct}}% 时，悬停油门顶到上限，剩下的靠飞控的积分慢慢补。仿真里按这个上限给八折推力（告诉飞控 {{t80d_cap_known}}）也是 {{t80d_cap_air}} / {{t80d_cap_n}} 次飞起来。ArduPilot 本身没有在仿真里跑过。<span class="src">仿真</span></li>
+<li><b>实际做法：</b>先测推力；第一次系绳悬停后，把飞控记录的悬停油门写进 <code>MOT_THST_HOVER</code>，悬停学习保持打开（<code>MOT_HOVER_LEARN</code> = 2，学习并保存，默认值）。</li>
 </ul>
 
 <h2 id="elec">电气连接</h2>
@@ -150,6 +154,7 @@ nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
 <li>光流和测距：<code>FLOW_TYPE = {{p_FLOW_TYPE}}</code>，<code>RNGFND1_TYPE = {{p_RNGFND1_TYPE}}</code>，<code>RNGFND1_ORIENT = {{p_RNGFND1_ORIENT}}</code>（朝下），量程 {{p_RNGFND1_MIN_CM}} 到 {{p_RNGFND1_MAX_CM}} 厘米。</li>
 <li>电流：<code>BATT_AMP_PERVLT = {{p_BATT_AMP_PERVLT}}</code>（默认值是别的电调的，不改会读成一半），<code>MOT_BAT_CURR_MAX = {{p_MOT_BAT_CURR_MAX}}</code> 安。</li>
 <li>不接遥控器：<code>FS_THR_ENABLE = {{p_FS_THR_ENABLE}}</code>，解锁检查跳过遥控器一项。</li>
+<li>悬停油门：<code>MOT_THST_HOVER</code> 用第一次系绳悬停读出的值，<code>MOT_HOVER_LEARN = 2</code> 保持学习。推力偏小时这一项最要紧，见“推力和续航”。</li>
 <li>失联保护：<code>FS_GCS_ENABLE = {{p_FS_GCS_ENABLE}}</code>，<code>FS_GCS_TIMEOUT = {{p_FS_GCS_TIMEOUT}}</code>：飞控 {{p_FS_GCS_TIMEOUT}} 秒收不到 A7Z 的心跳就自己降落。</li>
 <li>和 A7Z 的串口：<code>SERIAL1_PROTOCOL = {{p_SERIAL1_PROTOCOL}}</code>（MAVLink2），921600 波特率，A7Z 不支持时降到 115200。</li>
 </ul>
@@ -195,14 +200,14 @@ nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:8px 0 4px}
 <li><b>M3 螺丝拉脱测试：</b>按打印设置打一块 20 × 20 × 12 毫米的小块，带 3.1 毫米横孔，拧进 M3 × 12 挂重物。能挂住约 186 牛（约 19 千克），机舱耳朵在"抓一个机舱提起"时安全系数就有 2。</li>
 <li><b>转向检查：</b>一次转一个风扇，看转向和风向（组装指南最后几步）。</li>
 <li><b>飞控设置：</b>按上面的参数设，<code>BATT_AMP_PERVLT</code> 用夹表或充电器回充量核对。</li>
-<li><b>第一次系绳悬停：</b>读飞控记录的悬停电流，60 秒后摸 XT60 插头的温度。这一步同时就是推力实测：电流在低的一端，插头和续航都没问题；在高的一端，要把电池线直接焊或换更大的插头。</li>
+<li><b>第一次系绳悬停：</b>读飞控记录的悬停电流，60 秒后摸 XT60 插头的温度。这一步同时就是推力实测：电流在低的一端，插头和续航都没问题；在高的一端，要把电池线直接焊或换更大的插头。读出的悬停油门写进 <code>MOT_THST_HOVER</code>。</li>
 <li><b>带背包走路和弯腰：</b>训练结果在仿真里过验收（不比现有策略差、外八消失、弯腰不摔）以后，才放到真机上。</li>
 <li><b>过桌沿：</b>先人手拿着在桌沿来回移动，记录测距和光流读数，再系绳飞。</li>
 </ol>
 
 <h2 id="open">还没完成的事</h2>
 <ul>
-<li><b>推力和悬停电流：</b>没测过，第一次系绳悬停时测。</li>
+<li><b>推力和悬停电流：</b>没测过，第一次系绳悬停时测。仿真里飞控知道真实推力时，推力在标称的 {{t80d_k60_pct}}% 到 {{t80d_k70_pct}}% 之间开始飞不起来。</li>
 <li><b>零件：</b>都没到手。风扇尺寸没核对，充电器和小零件没下单，M3 × 12 钢螺丝和电容要去 RoboClub 找。</li>
 <li><b>打印和组装：</b>没开始。</li>
 <li><b>螺丝在打印孔里的拉脱力：</b>没实测，强度里用的是估计值。</li>

@@ -111,6 +111,36 @@ def facts() -> dict:
     for key, pre in (("nom", "ARE_nominal"), ("t90", "ARE_thrust90"), ("t80", "ARE_thrust80")):
         n, a, f = tally(pre)
         F[f"sim_{key}_n"], F[f"sim_{key}_air"], F[f"sim_{key}_full"] = str(n), str(a), str(f)
+    # why 80 % failed (sim/README.md "Why 80 % thrust fails here", sim/out/t80_diag/): the stand-in controller assumed vendor
+    # thrust. Each batch: thrust fraction delivered, thrust the controller is told (--ctl-thrust-known, absent = vendor), legs
+    def batch(d):
+        j = J(f"sim/out/t80_diag/{d}/summary.json")
+        s, fx = j["summary"], j["fix"]
+        opt = lambda n, a: a[a.index(n) + 1] if n in a else None
+        case = next(iter(s)).split("|")[0]
+        thrust = float(opt("--thrust", fx) or opt("--thrust", j["cases"][case]) or 1.0)
+        known = opt("--ctl-thrust-known", fx)
+        return dict(thrust=thrust, known=float(known) if known else None, n=sum(v["n"] for v in s.values()),
+                    air=sum(v["airborne_success"] for v in s.values()), full=sum(v["full_success"] for v in s.values()),
+                    twr=min(v["thrust_to_weight"] for v in s.values()))
+    pct = lambda x: r0(100 * x)
+    for key, d in (("ho80", "handover_known80"), ("cap", "held_cap0.87"), ("k70", "held_known0.7"), ("k60", "held_known0.6"),
+                   ("u85", "held_unknown0.85"), ("u75", "held_unknown0.75")):
+        b_ = batch(d)
+        F.update({f"t80d_{key}_pct": pct(b_["thrust"]), f"t80d_{key}_n": str(b_["n"]), f"t80d_{key}_air": str(b_["air"]),
+                  f"t80d_{key}_full": str(b_["full"]), f"t80d_{key}_twr": r2(b_["twr"])})
+        if b_["known"]:
+            F[f"t80d_{key}_known"] = r2(b_["known"])
+    k80 = [J(str(p.relative_to(H))) for p in sorted(H.glob("sim/out/t80_diag/known80__*__s*.json"))]
+    F.update(t80d_k80_n=str(len(k80)), t80d_k80_air=str(sum(x["airborne_success"] for x in k80)),
+             t80d_k80_pct=pct(k80[0]["params"]["thrust"]))
+    assert all(x["params"]["thrust"] == x["params"]["ctl_thrust_known"] == k80[0]["params"]["thrust"] for x in k80)
+    hf = {k: J(f"sim/out/t80_diag/{f}.json")["hover_thrust_frac"] for k, f in
+          (("nom", "nominal__hover__s0"), ("t90", "base90__hover__s0"), ("t80", "known80__hover__s0"))}
+    F.update(hover_frac_nom=pct(hf["nom"]), hover_frac_t90=pct(hf["t90"]), hover_frac_t80=pct(hf["t80"]))
+    F["ap_thst_hover_max"] = "0.6875"   # ArduPilot MOT_THST_HOVER upper limit (parameter list; AP_MotorsMulticopter.h)
+    F["sim_robot_g"] = r1(J("sim/out/t80_diag/nominal__hover__s0.json")["mass_g"])
+    F["mass_gap_pct"] = r0(100 * (float(F["total_g"]) - float(F["sim_robot_g"])) / float(F["sim_robot_g"]))
     nom = [fs[k] for k in fs if k.startswith("ARE_nominal|")]
     F.update(sim_throttle=r0(max(x["hover_throttle_pct"] for x in nom)), sim_twr=r2(min(x["thrust_to_weight"] for x in nom)),
              sim_hover_A=r0(max(x["hover_current_a"] for x in nom)), sim_flight_s=r0(max(x["flight_s"] for x in nom)),

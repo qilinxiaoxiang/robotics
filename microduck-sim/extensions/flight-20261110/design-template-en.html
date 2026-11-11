@@ -9,12 +9,12 @@ __CSS__</head><body><div class="wrap">
 <nav><a href="#sum">Summary</a><a href="#m3d">3D view</a><a href="#parts">Parts</a><a href="#layout">Layout</a><a href="#mount">Mounting</a><a href="#mass">Mass and balance</a><a href="#thrust">Thrust and endurance</a><a href="#elec">Electrical</a><a href="#ctrl">Control</a><a href="#sw">Software</a><a href="#beh">Existing behaviours</a><a href="#fly">A flight</a><a href="#test">Tests</a><a href="#open">Not done yet</a><a href="#src">Sources</a></nav>
 
 <h2 id="sum">Summary</h2>
-<p>Whether it flies depends on fan thrust, which nobody has measured: at the vendor's rated thrust all {{sim_nom_n}} simulated flights succeed; at 90 % it still flies; at 80 % it cannot take off.</p>
+<p>Whether it flies depends on fan thrust, which nobody has measured: at the vendor's rated thrust all {{sim_nom_n}} simulated flights succeed. If the flight controller knows the real thrust (hover throttle set correctly), it still takes off at {{t80d_k70_pct}} % of the rating; to keep ArduPilot's hover throttle under its limit the fans need about {{t80d_u85_pct}} %.</p>
 <div class="cards">
 <div class="card"><b>Propulsion</b><div class="v">Four 50 mm ducted fans</div><p>ARESWEI HDS001, rated {{fan_thrust_g}} g thrust each at {{fan_V}} V, {{fan_mass_g}} g each. <span class="src">vendor</span></p></div>
 <div class="card"><b>Mass</b><div class="v">Pack about {{pack_g}} g, robot about {{total_kg}} kg</div><p>The duck's own {{duck_g}} g is a parts estimate; it has never been weighed. <span class="src">calc</span></p></div>
 <div class="card"><b>Thrust-to-weight</b><div class="v">{{twr_vendor}}</div><p>Sum of the four rated thrusts over the robot's weight. At two thirds of the rating it is {{twr_two_thirds}}. <span class="src">calc</span></p></div>
-<div class="card"><b>Simulated flights</b><div class="v">Rated thrust: {{sim_nom_full}} of {{sim_nom_n}} succeed</div><p>90 % thrust {{sim_t90_full}} of {{sim_t90_n}}, 80 % thrust {{sim_t80_full}} of {{sim_t80_n}}. Each set is three hovers, three flights up onto the table and three down. <span class="src">sim</span></p></div>
+<div class="card"><b>Simulated flights</b><div class="v">Rated thrust: {{sim_nom_full}} of {{sim_nom_n}} succeed</div><p>90 % thrust {{sim_t90_full}} of {{sim_t90_n}}; 80 % thrust with the controller told the real thrust {{t80d_ho80_full}} of {{t80d_ho80_n}}. Each set is three hovers, three flights up onto the table and three down. <span class="src">sim</span></p></div>
 <div class="card"><b>Endurance</b><div class="v">{{hover_min_lo}} to {{hover_min_hi}} min hover</div><p>Using 80 % of the charge. One table flight uses {{sim_mah}} mAh in simulation, so about {{sim_trips}} flights per charge. <span class="src">calc</span><span class="src">sim</span></p></div>
 <div class="card"><b>Size</b><div class="v">{{width}} mm wide</div><p>Nacelle tops are {{nac_top}} mm off the ground, below the head; standing height is unchanged. <span class="src">calc</span></p></div>
 <div class="card"><b>Printing</b><div class="v">Two plates, about {{printed_g}} g</div><p>Orange plate {{orange_h2s_time}}, black plate {{black_h2s_time}} (Bambu H2S, 100 % infill). <span class="src">slicer</span></p></div>
@@ -82,7 +82,7 @@ __CSS__</head><body><div class="wrap">
 <div class="card"><h4>Moment of inertia (roll axis)</h4><p>{{iner_duck}} without and {{iner_pack}} kg·m² with the pack, about {{iner_ratio}} times. The body sways more slowly, one reason the old walking policy falls almost every time with the pack. <span class="src">calc</span></p></div>
 <div class="card"><h4>The legs can hold the bend</h4><p>Along the existing pickup bend, gravity only: with the pack the hardest-working joint is the knee at {{bend_tau_full}} N·m, {{bend_pct_full}} % of the servo torque limit in the model ({{servo_limit}}); without the pack {{bend_tau_none}}. It holds, with little margin. <span class="src">calc</span></p></div>
 </div>
-<p class="note">The simulation uses a pack of {{sim_pack_g}} g (prints from an older slicing, {{sim_printed_g}} g), about {{mass_gap_g}} g lighter than this table.</p>
+<p class="note">The flight simulation uses a {{sim_robot_g}} g robot (pack {{sim_pack_g}} g, prints from an older slicing at {{sim_printed_g}} g). With this release's slicer grams the robot is {{total_g}} g, about {{mass_gap_g}} g ({{mass_gap_pct}} %) heavier, so the real robot needs about {{mass_gap_pct}} % more thrust than the simulated numbers.</p>
 
 <h2 id="thrust">Thrust and endurance</h2>
 <p>To hover each fan must give about {{hover_per_fan_g}} g, {{hover_share_pct}} % of its rated maximum. The design takes the vendor's thrust as given (decided 10 November, no separate bench test); the first tethered hover is the thrust measurement.</p>
@@ -91,7 +91,11 @@ __CSS__</head><body><div class="wrap">
 <li><b>In simulation:</b> hover throttle about {{sim_throttle}} %, hover current about {{sim_hover_A}} A in total, up to {{sim_esc_peak}} A on one ESC channel and {{sim_pack_peak}} A from one battery. The simulated flight controller is a stand-in written to behave like ArduPilot, not ArduPilot itself. <span class="src">sim</span></li>
 <li><b>Hover current:</b> three methods give {{hover_A_lo}} to {{hover_A_hi}} A in total ({{hover_A_fan_lo}} to {{hover_A_fan_hi}} A per fan), a factor of two apart; a measurement decides. The FC caps total current at {{curr_cap}} A to protect the battery plugs. <span class="src">calc</span></li>
 <li><b>Endurance:</b> {{batt_mah}} mAh, 80 % used: {{hover_min_lo}} to {{hover_min_hi}} min of hover. One table flight takes about {{sim_flight_s}} s and {{sim_mah}} mAh in simulation, so about {{sim_trips}} flights per charge. <span class="src">calc</span><span class="src">sim</span></li>
-<li><b>If thrust is short:</b> at 90 % all {{sim_t90_n}} simulated flights take off and land, {{sim_t90_full}} of them ending standing; at 80 % only {{sim_t80_air}} gets airborne. <span class="src">sim</span></li>
+<li><b>90 % thrust:</b> all {{sim_t90_n}} simulated flights take off and land, {{sim_t90_full}} of them ending standing. <span class="src">sim</span></li>
+<li><b>80 % thrust:</b> the earlier simulation got only {{sim_t80_air}} of {{sim_t80_n}} airborne. The cause was the simulator's stand-in flight controller: it sets throttle from the rated thrust, so each newton it asks for delivers 0.8, and the duck sinks back right after lift-off. Lift and pitch authority are enough. With the controller told the real thrust (what ArduPilot does once <code>MOT_THST_HOVER</code> is set or learned): with the leg hand-over {{t80d_ho80_air}} of {{t80d_ho80_n}} airborne and {{t80d_ho80_full}} standing after landing; with locked legs {{t80d_k80_air}} of {{t80d_k80_n}} airborne. <span class="src">sim</span></li>
+<li><b>Minimum thrust:</b> with the controller told the real thrust, {{t80d_k70_pct}} % of the rating still gives {{t80d_k70_air}} of {{t80d_k70_n}} airborne and {{t80d_k60_pct}} % gives {{t80d_k60_air}} of {{t80d_k60_n}} (thrust-to-weight {{t80d_k60_twr}}: really too little for take-off). Not told: {{t80d_u85_pct}} % {{t80d_u85_air}} of {{t80d_u85_n}}, {{t80d_u75_pct}} % {{t80d_u75_air}} of {{t80d_u75_n}}. <span class="src">sim</span></li>
+<li><b>ArduPilot's limit:</b> the share of available thrust needed to hover is {{hover_frac_nom}} % at the rating, {{hover_frac_t90}} % at 90 % and {{hover_frac_t80}} % at 80 %. <code>MOT_THST_HOVER</code> cannot exceed {{ap_thst_hover_max}}, so below about {{t80d_u85_pct}} % of the rating the hover value saturates and the controller's integrator has to carry the rest. Capping the simulated controller the same way at 80 % thrust (told {{t80d_cap_known}}) still gives {{t80d_cap_air}} of {{t80d_cap_n}} airborne. ArduPilot itself was not run in the simulation. <span class="src">sim</span></li>
+<li><b>In practice:</b> measure thrust; after the first tethered hover write the logged hover throttle into <code>MOT_THST_HOVER</code> and keep hover learning on (<code>MOT_HOVER_LEARN</code> = 2, learn and save, the default).</li>
 </ul>
 
 <h2 id="elec">Electrical</h2>
@@ -126,6 +130,7 @@ __CSS__</head><body><div class="wrap">
 <li>Flow and range: <code>FLOW_TYPE = {{p_FLOW_TYPE}}</code>, <code>RNGFND1_TYPE = {{p_RNGFND1_TYPE}}</code>, <code>RNGFND1_ORIENT = {{p_RNGFND1_ORIENT}}</code> (down), range {{p_RNGFND1_MIN_CM}} to {{p_RNGFND1_MAX_CM}} cm.</li>
 <li>Current: <code>BATT_AMP_PERVLT = {{p_BATT_AMP_PERVLT}}</code> (the default belongs to another ESC and reads half), <code>MOT_BAT_CURR_MAX = {{p_MOT_BAT_CURR_MAX}}</code> A.</li>
 <li>No radio: <code>FS_THR_ENABLE = {{p_FS_THR_ENABLE}}</code>, with the radio check skipped at arming.</li>
+<li>Hover throttle: <code>MOT_THST_HOVER</code> from the first tethered hover, <code>MOT_HOVER_LEARN = 2</code> to keep learning. This matters most if thrust is low; see Thrust and endurance.</li>
 <li>Link loss: <code>FS_GCS_ENABLE = {{p_FS_GCS_ENABLE}}</code>, <code>FS_GCS_TIMEOUT = {{p_FS_GCS_TIMEOUT}}</code>: if the FC hears no heartbeat from the A7Z for {{p_FS_GCS_TIMEOUT}} s it lands by itself.</li>
 <li>A7Z link: <code>SERIAL1_PROTOCOL = {{p_SERIAL1_PROTOCOL}}</code> (MAVLink2) at 921600 baud, 115200 if the A7Z port cannot do it.</li>
 </ul>
@@ -171,14 +176,14 @@ __CSS__</head><body><div class="wrap">
 <li><b>M3 pull-out test:</b> print a 20 × 20 × 12 mm block on the plate settings with a 3.1 mm sideways hole, drive an M3 × 12 and hang weights. If it holds about 186 N (about 19 kg), the nacelle lugs keep a safety factor of 2 when the robot is lifted by one nacelle.</li>
 <li><b>Spin check:</b> run one fan at a time and check spin and airflow direction (last steps of the assembly guide).</li>
 <li><b>FC setup:</b> set the parameters above; check <code>BATT_AMP_PERVLT</code> against a clamp meter or the charger's refill.</li>
-<li><b>First tethered hover:</b> read the logged hover current and feel the XT60 plugs after 60 s. This is also the thrust measurement: at the low end of the current range plugs and endurance are fine; at the high end, solder the battery leads directly or fit bigger plugs.</li>
+<li><b>First tethered hover:</b> read the logged hover current and feel the XT60 plugs after 60 s. This is also the thrust measurement: at the low end of the current range plugs and endurance are fine; at the high end, solder the battery leads directly or fit bigger plugs. Write the logged hover throttle into <code>MOT_THST_HOVER</code>.</li>
 <li><b>Walking and bending with the pack:</b> only after the trained policies pass in simulation (no worse than today's, toe-out gone, bend without falls) do they go on the robot.</li>
 <li><b>Table edge:</b> first carry the pack by hand across a table edge and log range and flow readings, then fly it tethered.</li>
 </ol>
 
 <h2 id="open">Not done yet</h2>
 <ul>
-<li><b>Thrust and hover current:</b> unmeasured; first tethered hover.</li>
+<li><b>Thrust and hover current:</b> unmeasured; first tethered hover. In simulation, with the controller told the real thrust, take-off fails somewhere between {{t80d_k60_pct}} % and {{t80d_k70_pct}} % of the rating.</li>
 <li><b>Parts:</b> none in hand. Fan sizes unchecked, charger and small parts not ordered, steel M3 × 12 screws and the capacitor to be found at RoboClub.</li>
 <li><b>Printing and assembly:</b> not started.</li>
 <li><b>Screw pull-out in printed holes:</b> untested; the strength numbers use estimates.</li>
