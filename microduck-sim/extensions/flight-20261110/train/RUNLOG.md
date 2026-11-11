@@ -315,3 +315,15 @@ running total of worst cases; real spend read from `modal billing report` before
   2 PPO iterations in 4.6 s.
 - 04:56 Kaggle bend pair push refused: "Maximum batch GPU session count of 2 reached" (scratch pair + universal pair).
   Quota 10.54 h used, 19.46 left. Bend pair goes up when the scratch pair ends (about 05:33).
+- 05:02 Gap found before launch: Pollen's ground-pick env never holds the crouch (phase passes 0.375-0.425 in 0.2 s),
+  while PICKUP.md and the acceptance hold phase 0.33 for 4 s. Delta bend3 = bend2 plus the runtime's held crouch in
+  half the envs (bend_terms.held_phase_cfg; a first version set class_type only, which mjlab ignores since the cfg's
+  build() names its class: the audit's hold check read 0.000, that run discarded).
+- 05:11 Bend acceptance probe in the training env (`bend_accept.py`, `mini_train_smoke.sh bendaccept`), checked on
+  groundpick61 without the pack (eval/bendaccept_gp61_none.json): 11 envs held the full 4 s, mouth median 22.7 mm,
+  trunk 34.0 deg, the runtime sim's numbers (PICKUP.md: 22 mm, 34-35 deg). Falls there (11 of 20, in the pre-stand,
+  the descent and after hand-back) come from the training env's harsher randomisation; the falls line of the
+  acceptance stays with style_probe.sh.
+- 05:30 bend3 audit with the hold running (out/bendaudit_hold_*.json; 22-24 % of env-steps held, longest 4.04 s):
+  PASS at every load. none stand -1.23, half 0.12, stay 0.34; full stand -2.36, half 0.27, stay 0.73, sit back 0.53;
+  batteries out stand -1.80, half 0.19, stay 0.62, sit back -0.08. Gate recorded (bend3), smoke 2 iterations in 4.5 s.

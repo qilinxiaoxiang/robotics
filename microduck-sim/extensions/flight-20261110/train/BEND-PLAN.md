@@ -56,8 +56,11 @@ Task `Mjlab-GroundPick-Flat-MicroDuck` (`microduck_rl/src/mjlab_microduck/tasks/
 Pollen's rewards: mouth proximity, mouth orientation, feet grounded and flat, return pose, return upright, head impact),
 on the no-pack 960 g model with the universal payload event (`microduck_rl/cmu/finetune/flight/payload.py`):
 full pack 40 %, batteries out 25 %, no pack 10 %, scaled pack U(0, 1.15) 25 %. Added: fq2's torque hinge (-12 above
-0.45 N m, summed over every actuator), so the policy learns to stay inside the clamp; and the two mouth costs of
-section 5 (delta `bend2`). Kept: the existing
+0.45 N m, summed over every actuator), so the policy learns to stay inside the clamp; the two mouth costs of
+section 5 (delta `bend2`); and the runtime's held crouch (delta `bend3`, `bend_terms.held_phase_command_class`): in
+half the envs the phase stops at 0.33 for 4 s once per cycle, then runs on to the rise. Pollen's env never holds (it
+passes 0.375-0.425 in 0.2 s), while PICKUP.md and the acceptance below hold phase 0.33 for 4 s, so without it the
+accepted command would be a state the fine-tune never trains on. Kept: the existing
 domain randomisation of the velocity env (gains, friction, delay, voltage, IMU noise).
 
 ## 4. Start checkpoint and compute
@@ -87,6 +90,15 @@ Weaker costs fail: at -160 / -160 standing with the full pack still earns 0.891.
 cost itself (groundpick61 reaches the floor only at phase 0.375), so its reward falls from 5.7 to 3.0 per s at full.
 Live confirmation in the env (`out/bendaudit_chosen_*.json`, 2026-11-11): PASS at every load with the priced ratios
 to the third decimal; the gate is recorded in `out/audit_gate.json` (delta bend2).
+The launched delta is bend3 (bend2 plus the held crouch of section 3), re-audited with the hold running
+(`out/bendaudit_hold_*.json`; hold check 22-24 % of env-steps at phase 0.33, longest 4.04 s):
+- none: stand -1.226, half bend 0.123, stay down 0.337 (intended 7.84 per s);
+- full: stand -2.359, half bend 0.274, stay down 0.732, sit back 0.527 (2.97 per s);
+- batteries out: stand -1.797, half bend 0.189, stay down 0.618, sit back -0.081 (4.71 per s).
+PASS at every load; gate recorded for bend3 (`out/audit_gate.json`), Mac mini 2-iteration smoke passed
+(`logs/bend3_smoke.log`: held command built, groundpick61 loaded, 2 PPO iterations in 4.5 s).
+Standing pays the hold cost for 4 s more per cycle; staying down comes closer to the gate (0.73) because the intended
+bend now spends 4 s of each held cycle low itself.
 
 Method:
 Price each candidate behaviour with the bend env's own reward, deterministic, 128 envs, at full / batteries out / no
@@ -106,6 +118,10 @@ Pass: every degenerate behaviour earns at most 0.80 of the intended per second a
 refuses a bend delta without that PASS (`audit_gate.py`).
 
 ## 6. Acceptance (sim, 20 episodes per state, `style_probe.sh` bend case)
+Two probes: `style_probe.sh bend` on the runtime sim (falls, hand-back, torque p99), and
+`microduck_rl/cmu/finetune/flight/bend_accept.py` in the training env (`mini_train_smoke.sh bendaccept`: the same
+command, the payload pinned per load, mouth tip height and trunk pitch over the hold, per-actuator p99), since the
+runtime probe does not record the mouth.
 - PICKUP.md bend: phase 0.33 held 4 s, then rise and hand-back to the stand slot (fq2 or the universal stander);
   18 of 20 without a fall at full pack, batteries out and no pack.
 - Mouth within 3 cm of the floor at the hold; trunk pitch 25-45 deg.

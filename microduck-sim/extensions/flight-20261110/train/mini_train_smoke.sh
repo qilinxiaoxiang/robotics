@@ -92,8 +92,26 @@ case "$1" in
     ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/bend_audit.py --load $LD --diag \
       --reward-mods \"\$(cat /tmp/flight_rm_$TAG.json)\" --device cpu --num-envs $NE --steps $ST --assets $A \
       --policy fq2=$A/fq2_1999.onnx --policy groundpick61=$A/groundpick61.onnx --intended-correction $CO ${8:+--manifest $8} \
-      --out /tmp/bendaudit_${TAG}_$LD 2>&1" > $LOCAL/$FL/train/logs/bendaudit_${TAG}_$LD.log || true
+      --delta ${9:-bend} --out /tmp/bendaudit_${TAG}_$LD 2>&1" > $LOCAL/$FL/train/logs/bendaudit_${TAG}_$LD.log || true
     scp -q mac-mini:/tmp/bendaudit_${TAG}_$LD/audit.json $LOCAL/$FL/train/out/bendaudit_${TAG}_$LD.json || true
     grep -E "\[bend-audit\]|\[payload\]|Traceback|Error" $LOCAL/$FL/train/logs/bendaudit_${TAG}_$LD.log | cut -c1-700 | head -30
+    ;;
+  bendaccept)
+    # bend acceptance in the training env (BEND-PLAN.md section 6, bend_accept.py), one load per call:
+    # $2 load, $3 bend policy ONNX (local path), $4 stand-slot policy ONNX (local path), $5 tag, $6 envs
+    LD=$2
+    TAG=${5:-bend}
+    NE=${6:-20}
+    zsh $LOCAL/$FL/train/mini.sh run true
+    A=\$HOME/$REMOTE/smoke-assets
+    rsync -a $3 mac-mini:$REMOTE/smoke-assets/accept_${TAG}_bend.onnx
+    rsync -a $4 mac-mini:$REMOTE/smoke-assets/accept_${TAG}_stander.onnx
+    mkdir -p $LOCAL/$FL/train/logs $LOCAL/$FL/train/eval
+    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/bend_accept.py --load $LD \
+      --device cpu --num-envs $NE --assets $A --policy bend=$A/accept_${TAG}_bend.onnx \
+      --policy stander=$A/accept_${TAG}_stander.onnx --out /tmp/bendaccept_${TAG}_$LD 2>&1" \
+      > $LOCAL/$FL/train/logs/bendaccept_${TAG}_$LD.log || true
+    scp -q mac-mini:/tmp/bendaccept_${TAG}_$LD/accept.json $LOCAL/$FL/train/eval/bendaccept_${TAG}_$LD.json || true
+    grep -E "\[bend-accept\]|Traceback|Error" $LOCAL/$FL/train/logs/bendaccept_${TAG}_$LD.log | cut -c1-900 | head -20
     ;;
 esac
