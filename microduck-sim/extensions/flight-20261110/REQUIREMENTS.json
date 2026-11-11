@@ -25,6 +25,14 @@
       "known_gap": "The flight controller is powered only from the flight batteries. Pack fitted but its batteries unplugged gives no heartbeat, so detection alone would pick normal mode with about 1 kg on the back. Needs one of: a detection that works unpowered, or the page showing the detected mode with a manual override as the fallback.",
       "acceptance": "Brain started with the pack powered loads the with-pack policies with no user action and shows 'jetpack mode' on the page; started without the pack shows 'normal mode'; the unpowered-pack case is either detected or visibly flagged before torque.",
       "status": "recorded, not implemented; the A7Z spare serial port has not been enabled or tested yet"
+    },
+    {
+      "id": "FP-R3",
+      "date": "2026-11-11",
+      "words": "或者能不能训练一个能通用的走路和支撑模型？就像人扛着一个重物和不扛重物都能适应，都能适应着走 ... 负重为0或者1公斤在背上都能走，是不是这样会好一点？ / 可以的，对，尽量按照通用模型来试吧。",
+      "meaning": "Prefer one universal stand/walk policy that works with any back load from 0 to about 1 kg, so that walking does not depend on mode selection (FP-R1, FP-R2 stay as the fallback and for showing flight controls).",
+      "acceptance": "In the existing probe the universal policy is not worse than the with-pack specialist (fq2 1999) with the pack, not worse than stand61/walk61 without it, and holds at intermediate loads; otherwise two policy sets plus detection remain.",
+      "status": "plan requested (train/UNIVERSAL-PLAN.md); no training launched; Shawn sees the plan before any run"
     }
   ]
 }
