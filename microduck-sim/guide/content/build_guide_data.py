@@ -40,6 +40,7 @@ from __future__ import annotations
 import base64
 import json
 import math
+import os
 import re
 import sys
 from pathlib import Path
@@ -779,6 +780,24 @@ ALTERNATES = [
 ]
 
 
+FLIGHT = GUIDE.parent / 'extensions/flight-20261110/guide/build_flight_guide.py'
+
+
+def flight_chapter(data: dict, keys: set) -> None:
+    """Chapter 13, the flight pack (extensions/flight-20261110/guide/build_flight_guide.py is its one source; the page Shawn
+    builds from is its own Chinese guide there). Appended after the existing chapters, which it leaves unchanged; its parts form
+    the 'flight-pack' swap set. MICRODUCK_GUIDE_NO_FLIGHT=1 builds without it."""
+    if os.environ.get('MICRODUCK_GUIDE_NO_FLIGHT') or not FLIGHT.exists():
+        return
+    sys.path.insert(0, str(FLIGHT.parent))
+    import build_flight_guide as fg
+    frag = fg.main_fragment(PRINT / 'world', keys)
+    clash = {p['key'] for p in frag['parts']} & keys
+    assert not clash, f'flight parts reuse guide keys {clash}'
+    for f in ('parts', 'chapters', 'steps', 'screws', 'cables', 'legend', 'alternates'):
+        data[f] = data[f] + frag[f]
+
+
 def main() -> None:
     routes = json.loads((HERE / 'routes.json').read_text())
     parts = build_parts()
@@ -814,9 +833,13 @@ def main() -> None:
         # cable-part pairs across two sets; steps.py removes one set in the swap step.
         'alternates': [a for a in ALTERNATES if all(k in parts for k in a['parts'])],
     }
+    flight_chapter(data, set(parts))
     # material words: every printed part is PLA (the release pipeline asserts filament_type == PLA); a step or part note naming
-    # another material is an unverified claim (2026-10-25 'white PETG' came from an assumption)
-    other = sorted({m.group(0) for m in re.finditer(r'\b(PETG|ABS|ASA|TPU|nylon|PA12)\b', json.dumps(data, ensure_ascii=False), re.I)})
+    # another material is an unverified claim (2026-10-25 'white PETG' came from an assumption). Mesh base64 and embedded
+    # images (board photos in wiring SVGs) are not text.
+    words = json.dumps({**data, 'parts': [{k: v for k, v in p.items() if not k.endswith('B64')} for p in data['parts']]}, ensure_ascii=False)
+    words = re.sub(r'base64,[A-Za-z0-9+/=]+', '', words)
+    other = sorted({m.group(0) for m in re.finditer(r'\b(PETG|ABS|ASA|TPU|nylon|PA12)\b', words, re.I)})
     if other:
         raise SystemExit(f'guide text names a material other than PLA: {other}')
     OUT.parent.mkdir(parents=True, exist_ok=True)

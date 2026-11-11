@@ -124,12 +124,28 @@ def alternate_of(g: dict) -> dict:
     for alt in g.get('alternates', []):
         for k in alt['parts'] + alt.get('cables', []):
             out[k] = alt['id']
+    # opt-in 'neverWith': parts outside every set that a set takes off the robot (the flight pack removes the Dual Lock plate)
+    never = {}
+    for alt in g.get('alternates', []):
+        for k in alt.get('neverWith', []):
+            never.setdefault(k, set()).add(alt['id'])
+    if never:
+        out[NEVER] = never
     return out
 
 
+NEVER = '\0neverWith'
+
+
 def apart(alt: dict, a: str, b: str) -> bool:
-    """True when a and b (part keys or cable ids) belong to different swap alternatives, so they never meet."""
-    return a in alt and b in alt and alt[a] != alt[b]
+    """True when a and b (part keys or cable ids) belong to different swap alternatives, so they never meet, or when one
+    belongs to a set that lists the other under 'neverWith'."""
+    if a in alt and b in alt and alt[a] != alt[b]:
+        return True
+    never = alt.get(NEVER)
+    if not never:
+        return False
+    return (a in alt and alt[a] in never.get(b, ())) or (b in alt and alt[b] in never.get(a, ()))
 
 
 def solid_path(key: str) -> Path:

@@ -126,6 +126,33 @@ PAIR_TEXT = {
         'c', 'Only if the envelopes meet: as sd_usb_c_otg_dp / sd_heatsink_6530b (socket top 52.9 vs base envelope 52.7, estimated).', 'No change.'),
     frozenset(['sd_heatsink_6530b', 'sd_dupont_housings']): (
         'c', 'Only if the envelopes meet: the fin block starts 0.36 mm behind the housings (HS d 6.4, estimated from photos; measured on the part).', 'No change.'),
+    # 2026-11-10 flight pack (extensions/flight-20261110/, guide chapter 13, contacts from cad/check_parts.py DESIGNED). The pack
+    # is its own swap set: it never meets the Dual Lock backpack, the rear converter box or the Dual Lock plate (guide-data
+    # 'alternates' neverWith). fp_ keys are the bought parts and the backpack remounted 6.9 mm behind the wing plate.
+    frozenset(['wing_plate', 'rear_pack']): (
+        'c', 'Wing centre plate on the ends of the four pack posts at x -45, held by the four M2 x 12: the V1.8 cover seat.', 'No change.'),
+    frozenset(['wing_plate', 'fp_battery_backpack_frame']): (
+        'c', 'Backpack front plate on the wing centre plate rear face, face contact, held by the same four M2 x 12.', 'No change.'),
+    **{frozenset([f'tray_{s}', 'wing_plate']): (
+        'c', f'{s} battery tray flange on the arm web front face, held by three M2 x 10: a designed seat.', 'No change.') for s in 'LR'},
+    **{frozenset([f'nacelle_inner_{s}', 'wing_plate']): (
+        'c', f'{s} nacelle lug on the arm web front face, held by three M2 x 10: a designed seat.', 'No change.') for s in 'LR'},
+    **{frozenset([f'fp_battery_{s}', f'tray_{s}']): (
+        'c', f'{s} 4S pack lying on its tray deck under the straps: a designed seat.', 'No change.') for s in 'LR'},
+    frozenset(['fc_bracket', 'wing_plate']): (
+        'c', 'FC bracket plate on the four flange bosses, held by four M2 x 8: a designed seat.', 'No change.'),
+    frozenset(['fp_mtf01', 'fc_bracket']): (
+        'c', 'MTF-01 under its bracket shelf, held by four M2 x 4: a designed seat.', 'No change.'),
+    frozenset(['fp_esc', 'fc_bracket']): (
+        'c', 'ESC board on its nylon standoffs on the bracket plate: a designed seat.', 'No change.'),
+    frozenset(['fp_capacitor', 'wing_plate']): (
+        'c', 'ESC capacitor lying on the right top flange, zip-tied: a designed rest.', 'No change.'),
+    frozenset(['fp_capacitor', 'fc_bracket']): (
+        'c', 'ESC capacitor resting on the bracket plate top edge: a designed rest.', 'No change.'),
+    frozenset(['fp_battery_backpack_frame', 'fp_bp_switch']): (
+        'c', 'As battery_backpack_frame / bp_switch: REV snap wings modelled relaxed in the floor panel (remounted backpack).', 'No change.'),
+    frozenset(['fp_battery_backpack_frame', 'fp_bp_dfr1202']): (
+        'c', 'As battery_backpack_frame / bp_dfr1202: board edges in the unflexed clip lips (remounted backpack).', 'No change.'),
 }
 
 
