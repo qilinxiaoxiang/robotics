@@ -1,4 +1,8 @@
-# Universal stand/walk policy: plan (not launched; waits for Shawn's go)
+# Universal stand/walk policy: plan (approved 2026-11-11)
+
+Approval: Shawn, 2026-11-11, asked by the coordinator whether this plan and BEND-PLAN.md may run on Kaggle: "两个都跑".
+Scope: the run A / run B pair of section 3 with the section 4 reward (`rm_chosen.json`, delta `universal2`), 5000
+iterations each, cap 10 h, Kaggle free quota only; no Modal, no paid compute, no MacBook training, nothing deployed.
 
 Goal (Shawn, 2026-11-11): one stand/walk policy for any back load from 0 to about 1 kg, "就像人扛着一个重物和不扛重物都能适应";
 the pack stays fitted (FP-R4 in `../REQUIREMENTS.json`), so full pack and pack-with-batteries-out are the states that

@@ -289,3 +289,29 @@ running total of worst cases; real spend read from `modal billing report` before
   1/20. Quack runs with `--walk-s 0`: 0 falls, yaw 0.25-0.28 reached. Hand-back swap test (`handback_diff.py`): the
   trunk_base load (+129 g, COM 13 mm back and up) alone causes 4/6 falls; the robot's 11-06 logs show 5/5 hand-backs
   without a fall (`robot_handback_scan.py`). Plans: `UNIVERSAL-PLAN.md` sections 4, 7, 8; `BEND-PLAN.md`.
+- 04:00 Shawn approved both plans (relayed by the coordinator, his words 2026-11-11: "两个都跑"): the universal pair of
+  UNIVERSAL-PLAN.md with rm_chosen.json, and the bend fine-tune of BEND-PLAN.md (groundpick61 first, seepick61 after
+  the bend passes). Kaggle free quota only. Kaggle quota at 04:00: 8.75 of 30 h used, 21.25 left (reset 11-14), with
+  the scratch pair still running (ends about 05:33 at its 10 h cap); the two plans need about 6.7 h (universal pair,
+  cap 10 h) plus about 3 h (bend), so the quota covers both.
+- 04:02 Audit gate for Kaggle (`audit_gate.py`, out/audit_gate.json; `kaggle_flight.py push run` refuses a delta without
+  a PASS at full / batteries out / none): universal2 PASS from out/audit2_chosen_*.json. Mac mini 2-iteration smoke of
+  universal2 from fq2 1999 (out/universal2_smoke.json): reward mods applied, stance_foot_heading active, actor 61 /
+  critic 80, payload mass exact, 2 PPO iterations in 4.1 s.
+- 04:03:50 Kaggle universal pair pushed, kernel shawnxiang9527/microduck-fk-uni-a (paired): fk-uni-a from fq2 1999
+  (seed 1, GPU 0), fk-uni-b from walk61 (seed 2, GPU 1); delta universal2, no-pack compile + payload, 4096 envs, 5000
+  iterations, 100 critic warm-up, max-lr 3e-4, saves every 250, cap 10 h, reward guard off, track guard 2.0 (its
+  0.03 m/s stepping floor). Expected end about 10:45 (5000 iterations at about 0.21 it/s), at the latest 14:05 (cap).
+  Status RUNNING at 04:09, 04:14, 04:19, 04:28.
+- 04:30 Bend incentive audit of Pollen's ground-pick reward (`bend_audit.py`, out/bendaudit_base_*.json) FAILS at every
+  load (stand / intended 1.06 none, 1.21 full, 1.17 batteries out). Redesign priced offline (`bend_design.py`,
+  out/bend_design.json): delta bend2 = two mouth-height costs at -240 (`bend_terms.py`), rm_bend_chosen.json.
+- 04:44-04:55 Live confirmation (out/bendaudit_chosen_*.json), PASS at every load, equal to the priced numbers:
+  none stand 0.439, half 0.073, stay 0.171 (intended 6.12 per s); full stand 0.592, half -0.013, stay 0.154, sit back
+  0.153 (3.05); batteries out stand 0.521, half 0.125, stay 0.235, sit back 0.034 (3.81). Gate recorded:
+  `audit_gate.py record bend2` PASS; kaggle_flight.py also checks BEND_MODS_CHOSEN equals rm_bend_chosen.json.
+- 04:55 Mac mini 2-iteration bend smoke (out/bend_smoke.json): GroundPick task, delta bend2, mouth_high_at_hold,
+  mouth_low_at_rest and torque_margin active, actor 61 / critic 78, groundpick61 loaded, payload mass exact,
+  2 PPO iterations in 4.6 s.
+- 04:56 Kaggle bend pair push refused: "Maximum batch GPU session count of 2 reached" (scratch pair + universal pair).
+  Quota 10.54 h used, 19.46 left. Bend pair goes up when the scratch pair ends (about 05:33).

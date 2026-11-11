@@ -21,14 +21,18 @@ case "$1" in
     ssh mac-mini "cd $REMOTE/$RL && /opt/homebrew/bin/uv sync 2>&1 | tail -5"
     ;;
   run)
+    # $4 = smoke tag, $5.. = extra universal_smoke.py flags (--delta universal2, --task ..., --init <mirror path>)
     IT=${2:-3}
     NE=${3:-64}
+    TG=${4:-universal}
+    XA="${@:5}"
+    zsh $LOCAL/$FL/train/mini.sh run true
     mkdir -p $LOCAL/$FL/train/logs
-    ssh mac-mini "cd $REMOTE/$RL && FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests timeout 1500 .venv/bin/python \
-      cmu/finetune/flight/universal_smoke.py --envs $NE --iters $IT --out /tmp/universal_smoke.json 2>&1" \
-      > $LOCAL/$FL/train/logs/universal_smoke.log || true
-    scp -q mac-mini:/tmp/universal_smoke.json $LOCAL/$FL/train/out/universal_smoke.json || true
-    grep -E "\[payload\]|\[smoke\]|\[asbuilt\] total|Error|Traceback" $LOCAL/$FL/train/logs/universal_smoke.log | head -60
+    ssh mac-mini "cd $REMOTE/$RL && FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests timeout 590 .venv/bin/python \
+      cmu/finetune/flight/universal_smoke.py --envs $NE --iters $IT $XA --out /tmp/${TG}_smoke.json 2>&1" \
+      > $LOCAL/$FL/train/logs/${TG}_smoke.log || true
+    scp -q mac-mini:/tmp/${TG}_smoke.json $LOCAL/$FL/train/out/${TG}_smoke.json || true
+    grep -E "\[payload\]|\[smoke\]|\[style\]|\[pack\]|\[asbuilt\] total|Error|Traceback" $LOCAL/$FL/train/logs/${TG}_smoke.log | cut -c1-400 | head -60
     ;;
   audit)
     zsh $LOCAL/$FL/train/mini.sh run true  # waits while another agent's simulation runs on the mini
@@ -68,5 +72,28 @@ case "$1" in
       > $LOCAL/$FL/train/logs/audit2_${TAG}_$LD.log || true
     scp -q mac-mini:/tmp/audit2_${TAG}_$LD/audit.json $LOCAL/$FL/train/out/audit2_${TAG}_$LD.json || true
     grep -E "\[audit\]|\[style\]|Traceback|Error" $LOCAL/$FL/train/logs/audit2_${TAG}_$LD.log | head -30
+    ;;
+  bendaudit)
+    # bend incentive audit (BEND-PLAN.md section 5), one load per call: $2 load, $3 envs, $4 steps, $5 intended
+    # correction (reward/s, the static extra torque cost x1.5), $6 tag, $7 optional reward_mods JSON
+    LD=$2
+    NE=${3:-128}
+    ST=${4:-400}
+    CO=${5:-0}
+    TAG=${6:-bend}
+    RM=${7:-}
+    zsh $LOCAL/$FL/train/mini.sh run true
+    A=\$HOME/$REMOTE/smoke-assets
+    rsync -a $LOCAL/$FL/train/ckpt/fq2_1999/walk61.onnx mac-mini:$REMOTE/smoke-assets/fq2_1999.onnx
+    rsync -a $LOCAL/$FL/train/ckpt/bend_spec/groundpick61.onnx mac-mini:$REMOTE/smoke-assets/groundpick61.onnx
+    mkdir -p $LOCAL/$FL/train/logs
+    print -r -- "$RM" > $LOCAL/$FL/train/logs/rm_$TAG.json
+    scp -q $LOCAL/$FL/train/logs/rm_$TAG.json mac-mini:/tmp/flight_rm_$TAG.json
+    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/bend_audit.py --load $LD --diag \
+      --reward-mods \"\$(cat /tmp/flight_rm_$TAG.json)\" --device cpu --num-envs $NE --steps $ST --assets $A \
+      --policy fq2=$A/fq2_1999.onnx --policy groundpick61=$A/groundpick61.onnx --intended-correction $CO ${8:+--manifest $8} \
+      --out /tmp/bendaudit_${TAG}_$LD 2>&1" > $LOCAL/$FL/train/logs/bendaudit_${TAG}_$LD.log || true
+    scp -q mac-mini:/tmp/bendaudit_${TAG}_$LD/audit.json $LOCAL/$FL/train/out/bendaudit_${TAG}_$LD.json || true
+    grep -E "\[bend-audit\]|\[payload\]|Traceback|Error" $LOCAL/$FL/train/logs/bendaudit_${TAG}_$LD.log | cut -c1-700 | head -30
     ;;
 esac

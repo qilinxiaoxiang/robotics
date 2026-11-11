@@ -1,4 +1,8 @@
-# Bend with the pack: fine-tune plan for groundpick61 (not launched; waits for Shawn's go)
+# Bend with the pack: fine-tune plan for groundpick61 (approved 2026-11-11)
+
+Approval: Shawn, 2026-11-11, asked by the coordinator whether this plan and UNIVERSAL-PLAN.md may run on Kaggle:
+"两个都跑". Scope: groundpick61 first (about 3 h), seepick61 with the same recipe only after the bend passes; Kaggle
+free quota only, launched only after the section 5 audit passes and a Mac mini smoke; nothing deployed.
 
 Goal (Shawn, 2026-11-11: "另外弯腰那些还能做吗"): the PICKUP.md bend (groundpick phase 0.33, 4 s hold, rise, hand-back to
 the stand slot) works with the pack fitted, with the batteries out and without the pack. Sim only; nothing is deployed.
@@ -52,7 +56,8 @@ Task `Mjlab-GroundPick-Flat-MicroDuck` (`microduck_rl/src/mjlab_microduck/tasks/
 Pollen's rewards: mouth proximity, mouth orientation, feet grounded and flat, return pose, return upright, head impact),
 on the no-pack 960 g model with the universal payload event (`microduck_rl/cmu/finetune/flight/payload.py`):
 full pack 40 %, batteries out 25 %, no pack 10 %, scaled pack U(0, 1.15) 25 %. Added: fq2's torque hinge (-12 above
-0.45 N m) on the hip, knee and ankle pitch, so the policy learns to stay inside the clamp. Kept: the existing
+0.45 N m, summed over every actuator), so the policy learns to stay inside the clamp; and the two mouth costs of
+section 5 (delta `bend2`). Kept: the existing
 domain randomisation of the velocity env (gains, friction, delay, voltage, IMU noise).
 
 ## 4. Start checkpoint and compute
@@ -61,16 +66,44 @@ the actor the way the flight worker loads walk61, with the 100-iteration critic 
 the same recipe for the pick after the bend passes. Kaggle T4 only (free quota), no Modal, no MacBook. One run of
 about 3 h first; stopped on the task metrics in section 6, never on total reward.
 
-## 5. Incentive audit before launch (to run; launch only if it passes)
+## 5. Incentive audit before launch (run 2026-11-11; result first, method below)
+Result (`microduck_rl/cmu/finetune/flight/bend_audit.py`, Mac mini, 128 envs, 400 steps per behaviour,
+`out/bendaudit_base_*.json`): Pollen's ground-pick reward FAILS at every load, even without the pack. Degenerate /
+intended reward per second:
+- none: stand 1.058, half bend 0.769, stay down 0.895.
+- full: stand 1.209, half bend 0.981, stay down 1.072, sit back 0.629.
+- batteries out: stand 1.170, half bend 0.988, stay down 1.078, sit back 0.449.
+Why: standing collects the return-pose, return-upright and feet terms almost as fully as the bend does (legs 2.19 /
+1.97 per s without the pack), while the bend pays action rate (-1.0 against -0.37), the torque hinge (-0.55 against
+-0.20) and head contact; the mouth terms it gains (proximity 0.66, orientation 0.59) do not cover that. A robot that
+stays down earns more proximity than the bend (1.11 against 0.66). groundpick61 itself falls 13-16 times per
+env-minute in this env (the 960 g model's trunk_base load, the same cause as the hand-back falls).
+Redesign (`bend_terms.py`, priced offline by `bend_design.py`, `out/bend_design.json`): two windowed costs on the mouth
+tip height, weight -240 each: above 3 cm during the low hold (phase 0.33-0.45) and below 18 cm during the standing
+rest (phase 0.85-1.0). Every other weight unchanged (delta `bend2`). Priced ratios after: full stand 0.592, half bend
+-0.01, stay down 0.154, sit back 0.153; batteries out stand 0.521, half 0.125, stay 0.235, sit back 0.034; none stand
+0.440, half 0.073, stay 0.171. 723 of 6,075 grid designs pass; this one has the fewest changes (two) and, among those, the largest margin.
+Weaker costs fail: at -160 / -160 standing with the full pack still earns 0.891. The intended bend pays part of the hold
+cost itself (groundpick61 reaches the floor only at phase 0.375), so its reward falls from 5.7 to 3.0 per s at full.
+Live confirmation in the env (`out/bendaudit_chosen_*.json`, 2026-11-11): PASS at every load with the priced ratios
+to the third decimal; the gate is recorded in `out/audit_gate.json` (delta bend2).
+
+Method:
 Price each candidate behaviour with the bend env's own reward, deterministic, 128 envs, at full / batteries out / no
 pack, the way `flight_audit.py` does for the walker:
-- intended: groundpick61 without the pack (it reaches the floor and rises, so its rollout is the target behaviour);
-- stand still: stand61 held at every phase (no bend);
-- half bend: groundpick61 with the phase command clamped at 0.15 (never reaches the floor);
-- sit back: the trunk-back fall path that groundpick61 takes with the pack;
-- reach and stay: phase 0.33 held through the return window (never rises).
-Pass: every degenerate behaviour earns at most 0.80 of the intended per second at every load. If "reach and stay"
-or "stand still" earns more, the return and proximity weights are rebalanced before launch.
+- intended: groundpick61 following the phase command (descend, hold, rise, rest; 4 s period);
+- stand: a stander at zero command that never bends (stand61 without the pack, fq2 with it, since stand61 falls with
+  the pack);
+- half bend: groundpick61 shown a phase clamped at 0.15;
+- stay down: groundpick61 shown a phase clamped at 0.40 (it never rises);
+- sit back (pack loads): groundpick61 on the real pack dynamics, today's backward fall.
+No policy bends with the pack yet, so at the pack loads the groundpick61 cases run with the payload's weight carried
+by an upward force at the payload COM: the motion is the bend the fine-tune should learn and the payload still counts
+in every reward. The intended reward is lowered by the static extra torque cost of the same bend (from
+`bend_statics.py`, x1.5: -0.005 per s full, -0.001 batteries out); the compensated degenerate cases keep their
+too-low torque cost. Both errors favour the degenerate side.
+Pass: every degenerate behaviour earns at most 0.80 of the intended per second at every load. The Kaggle launcher
+refuses a bend delta without that PASS (`audit_gate.py`).
 
 ## 6. Acceptance (sim, 20 episodes per state, `style_probe.sh` bend case)
 - PICKUP.md bend: phase 0.33 held 4 s, then rise and hand-back to the stand slot (fq2 or the universal stander);
