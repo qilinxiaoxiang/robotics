@@ -1,10 +1,10 @@
 {
  "schemaVersion": 1,
  "releaseKind": "incremental",
- "version": "FlightPack-D1-DRAFT",
+ "version": "FlightPack-D1",
  "prototype": true,
- "prototypeScope": "FlightPack-D1-DRAFT: flight pack draft, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate (nacelle inner/outer halves L/R). Not released: pending the print gate and the fans.",
- "knownFitBoundary": "Fans not in hand: duct OD 54.0, lip OD 63.0, band/rim stops from the QX-Motor drawing (+-0.4 mm scaled). Battery 74 x 33 x 31 from the listing (+4 mm length slack). FC/ESC 30.5 mm pattern and MTF-01 holes from the listings, not measured. M3 standoffs are not in stock.",
+ "prototypeScope": "FlightPack-D1: flight pack, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate (nacelle inner/outer halves L/R). Print gate pending (guide data for the flight pack).",
+ "knownFitBoundary": "Fans not in hand: ARESWEI HDS001 duct OD 50.6 (clamp closes on 49.1..52.5 with 1 mm foam tape), lip OD 58.4, ears from the listing drawing (+-1.5 mm). Battery 74 x 33 x 31 from the listing (+4 mm length slack). FC/ESC 30.5 mm pattern and MTF-01 holes from the listings, not measured. M3 standoffs are not in stock.",
  "baselineStock": {
   "path": "/Users/xiangzheng/code/robotics/microduck-sim/build-pack-20260913/redesign-20260913/printing/copy-manifest.json",
   "sha256": "6baa7326bb3a16cd8e7b8cd2241c77f494a39afabd5450b40ae403c89510f42a"
@@ -88,7 +88,7 @@
     "copy": 1,
     "translation": [
      140.0,
-     -18.0435,
+     -30.0435,
      0.0
     ]
    },
@@ -97,7 +97,7 @@
     "copy": 1,
     "translation": [
      140.0,
-     -15.0435,
+     -19.0435,
      0.0
     ]
    },
@@ -106,7 +106,7 @@
     "copy": 1,
     "translation": [
      140.0,
-     239.5,
+     243.5,
      0.0
     ]
    },
@@ -115,7 +115,7 @@
     "copy": 1,
     "translation": [
      140.0,
-     315.5435,
+     327.5435,
      0.0
     ]
    }
@@ -123,10 +123,12 @@
  },
  "processOverrides": {
   "Orange_Bambu": {
-   "sparse_infill_density": "100%"
+   "sparse_infill_density": "100%",
+   "sparse_infill_pattern": "zig-zag"
   },
   "Orange_Elegoo": {
-   "sparse_infill_density": "100%"
+   "sparse_infill_density": "100%",
+   "sparse_infill_pattern": "zig-zag"
   }
  },
  "processOverrideReason": "Orange plate at 100 % sparse infill for the wing plate's solid root band (strength check, plain PLA; plate-wide because the pipeline sets no per-object infill). Black as released.",
@@ -171,7 +173,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "front face (x -45) down: the arm webs, flanges and gussets stand up; the post holes print vertical; 6117.7 mm2 bed contact, 19.0 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: wing plate (56.31 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: wing plate (56.31 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -191,7 +193,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -245,7 +247,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "deck underside down; 3507.2 mm2 bed contact, 28.0 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: tray L (17.47 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: tray L (17.47 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -265,7 +267,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -319,7 +321,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "deck underside down; 3507.2 mm2 bed contact, 28.0 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: tray R (17.47 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: tray R (17.47 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -339,7 +341,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -393,7 +395,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "upright, the lowest collar rim (bed plane z 32.36) down; the clamp bore prints vertical (locating fit); 899.8 mm2 bed contact, 30.5 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: nacelle inner L (28.96 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: nacelle inner L (28.96 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -413,7 +415,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -467,7 +469,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "upright, the lowest collar rim (bed plane z 32.36) down; the clamp bore prints vertical (locating fit); 786.8 mm2 bed contact, 30.5 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: nacelle outer L (25.87 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: nacelle outer L (25.87 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -487,7 +489,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -541,7 +543,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "upright, the lowest collar rim (bed plane z 32.36) down; the clamp bore prints vertical (locating fit); 899.8 mm2 bed contact, 30.5 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: nacelle inner R (28.96 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: nacelle inner R (28.96 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -561,7 +563,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -615,7 +617,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "upright, the lowest collar rim (bed plane z 32.36) down; the clamp bore prints vertical (locating fit); 786.8 mm2 bed contact, 30.5 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: nacelle outer R (25.87 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: nacelle outer R (25.87 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -635,7 +637,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -689,7 +691,7 @@
     "reason": "90 % of the measured contact in this pose."
    },
    "poseOrigin": "plate front face (x -64) down; the M3 standoff bosses stand up; 1529.5 mm2 bed contact, 38.0 mm tall",
-   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). DRAFT pending the print gate: the fans are not in hand, so the nacelle bore and stops follow the QX-Motor drawing and are confirmed on arrival. New part: fc bracket (8.68 cm3).",
+   "changeReason": "Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing and are confirmed on arrival. New part: fc bracket (8.68 cm3).",
    "incrementalEvidence": {
     "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/build/build.json",
     "sha256": "d19000dce23cb3157c84b2713e171caf233d4972cfcf700b4828bcb3e1a6db66"
@@ -709,7 +711,7 @@
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/features.json",
-     "sha256": "34dd6c6d945ecadfa575553721dec30f163154e12e8a4d26e5424bdd0d4d1b58"
+     "sha256": "61af4520e4be3091f13771f234f9a7d59f0158dbd3f7a9f63968a093003e8790"
     },
     {
      "path": "/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/cad/FITS.json",
@@ -734,6 +736,6 @@
   "fileCount": 4,
   "baseline": "printed releases through V1.41 (no stock part replaced)",
   "supersedes": [],
-  "status": "DRAFT_PENDING_GATE"
+  "status": "PREPARED_GATE_PENDING"
  }
 }
