@@ -214,7 +214,9 @@ def run(a):
     if not scene.exists():
         write_scene(scene)
     c0 = cfg(0.09, model="asbuilt", kp=a.kp, voltage=SERVO_V)
-    c0["mass_manifest"] = str(H / "out" / f"manifest_pack_{a.mass_variant}.json")
+    # the visual copy: same mass parts plus the pack's visual_parts (drawn only; sim/pack_visual.py)
+    import pack_visual
+    c0["mass_manifest"] = str(pack_visual.with_visuals(H / "out" / f"manifest_pack_{a.mass_variant}.json"))
     c0["scene"] = str(scene)
     m, d, c, names, bam = ev.load(c0)
     dt = m.opt.timestep
@@ -606,14 +608,17 @@ def render(m, d, a, qlog):
     """Replay the logged qpos (every 16 physics steps = 25 fps) to an mp4 and a contact sheet of frames."""
     import imageio
     r = mujoco.Renderer(m, 480, 640)
-    cam = mujoco.MjvCamera(); cam.azimuth, cam.elevation, cam.distance = 125, -12, 2.4
-    opt = mujoco.MjvOption(); opt.geomgroup[3] = 1      # draw the nacelle collision boxes
+    cam = mujoco.MjvCamera(); cam.azimuth, cam.elevation, cam.distance = a.cam_az, a.cam_el, a.cam_dist
+    opt = mujoco.MjvOption(); opt.geomgroup[3] = 0      # the pack itself is drawn (visual_parts); hide the collision boxes
+    trunk = m.body("trunk_base").id
     frames = []
-    for q in qlog:
+    for i, q in enumerate(qlog):
         d.qpos[:] = q
         mujoco.mj_forward(m, d)
-        cam.lookat[:] = [0.25, 0, 0.55]
+        cam.lookat[:] = d.xpos[trunk] if a.cam_follow else [0.25, 0, 0.55]
         r.update_scene(d, cam, opt); frames.append(r.render())
+        if a.still_t is not None and i == int(round(a.still_t * 25)):
+            imageio.imwrite(str(Path(a.video).with_name(Path(a.video).stem + f"_t{a.still_t:g}.png")), frames[-1])
     imageio.mimwrite(a.video, frames, fps=25)
     pick = [frames[int(i)] for i in np.linspace(0, len(frames) - 1, 8)]
     sheet = np.concatenate([np.concatenate(pick[:4], axis=1), np.concatenate(pick[4:], axis=1)], axis=0)
@@ -648,6 +653,11 @@ def main():
     ap.add_argument("--trim-knee", type=float, default=0.0, help="deg added to both knees (mirrored) in the held pose")
     ap.add_argument("--power-scale", type=float, default=1.0, help="electrical power per thrust vs the vendor point (1/0.7, 1/0.4 for 30 %%, 60 %% less efficient)")
     ap.add_argument("--rigid-legs", action="store_true", help="diagnostic: lock the leg joints at the held pose")
+    ap.add_argument("--cam-dist", type=float, default=2.4, help="video camera distance, m")
+    ap.add_argument("--cam-az", type=float, default=125.0)
+    ap.add_argument("--cam-el", type=float, default=-12.0)
+    ap.add_argument("--cam-follow", action="store_true", help="video camera looks at the trunk")
+    ap.add_argument("--still-t", type=float, default=None, help="also save the video frame at this time as <video>_t<T>.png")
     ap.add_argument("--lean-max", type=float, default=20.0, help="deg, lean angle limit of the position loop (ArduPilot ANGLE_MAX stand-in)")
     ap.add_argument("--start-air", type=float, default=0.0, help="diagnostic: start airborne at this feet height (m), fans at hover speed")
     ap.add_argument("--com-est", choices=("report", "true"), default="report",

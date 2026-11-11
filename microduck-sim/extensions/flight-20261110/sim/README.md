@@ -21,6 +21,12 @@ MuJoCo 3.10.0 on the as-built duck (official scene + battery-20261104 manifest) 
 - `landing_tests.sh` crouch hold probe and landings with the fans carrying part of the weight while the legs settle.
 - `walk_case.py` brain_sim_check plus partial thrust with an attitude loop, action scaling, crouch start, shoves, forward
   force; `walk_batch.py` the zero-training ground options; `partc.py` thrust-assisted walking (Part C).
+- `pack_visual.py` the drawn pack: `visual_parts` (CAD world STLs read by path, release colours) in the visual copies
+  `out/visual/<manifest>`; the loader (`cmu/model/visual.py::apply_manifest_visuals`, called by evaluate_delay.load)
+  adds them as visual geoms (no mass, no contact). `flight.py` uses the visual copy; the `out/manifest_pack_*.json`
+  files stay without visual_parts because copies of them load in mirrors that do not hold `cad/build`.
+  `pack_visual_check.py` proves the physics unchanged and renders stand-pose stills; `render_pack_videos.sh` renders the
+  fq2 clips with and without the pack and a take-off clip (`out/pack_visual/`, `train/video/*_pack*`).
 - `thrust_assist_literature.md` published work on thrust-assisted walking and the ArduPilot interface questions.
 
 ## Reproduce
