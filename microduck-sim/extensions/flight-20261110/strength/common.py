@@ -51,7 +51,8 @@ MAT = {
 NU = 0.35
 SLICE = dict(walls=4, wall_mm=0.42 + 3 * 0.45, infill=0.30, infill_E_factor=0.15, pattern="gyroid",
              orange=dict(layer=0.2, bottom=3, top=5), black=dict(layer=0.1, bottom=3, top=5),
-             src="cad/slices/release-FlightPack-D1-DRAFT/run-h2s/{Orange,Black}/plate_1.gcode header")
+             src="cad/slices/release-FlightPack-D1-DRAFT/run-h2s/{Orange,Black}/plate_1.gcode header; Orange plate overridden "
+                 "to 100 % infill in cad/make_slice_manifest.py (6fa0d176, not yet resliced)")
 # gyroid 30 %: relative modulus about 0.1-0.2 (Gibson-Ashby bending-dominated scaling, rho^2 = 0.09 .. rho^1.5 = 0.16);
 # 0.15 used, it only matters where a section is thicker than two walls.
 
@@ -69,13 +70,32 @@ def part_g(name):
     return GRAMS["plates"][col]["H2S"]["grams"] * BJ[name]["volume_cm3"] / sum(vols.values())
 
 
-FAN_G = 80.0          # 77 g listing + leads (sim manifest uses 80)
+# Masses and their positions: the current mass budget (mass_budget.json, v7 case: ARESWEI HDS001 fans 77 g, printed parts
+# CAD volume x 1.24 g/cm3, i.e. solid; the Orange plate is 100 % infill, the Black nacelles are counted solid as an upper
+# bound). Positions there are in the stand frame: z = guide + 120.
+MB = json.loads((FL / "mass_budget.json").read_text())
+MB_CASE = next(k for k in MB["cases"] if k.startswith("v7"))
+MBR = {r["name"]: r for r in MB["cases"][MB_CASE]}
+Z_STAND = 120.0
+
+
+def mb_pos(name):
+    p = np.array(MBR[name]["pos"], float)
+    p[2] -= Z_STAND
+    return p
+
+
+FAN_G = MBR["fan FL"]["g"]                       # 77 g seller figure (CURRENT-STATE parts_flight_pack)
+FAN_MASS_F, FAN_MASS_R = mb_pos("fan FL"), mb_pos("fan RL")    # fan mass centre, 45 mm down each axis
 BATT_G = Pm.BATT["mass_g"]
-SIDE = dict(fan_g=FAN_G, nacelle_g=part_g("nacelle_inner_L") + part_g("nacelle_outer_L"), tray_g=part_g("tray_L"),
+SIDE = dict(fan_g=FAN_G, nacelle_g=MBR["nacelle_inner_L"]["g"] + MBR["nacelle_outer_L"]["g"], tray_g=MBR["tray_L"]["g"],
             batt_g=BATT_G, straps_leads_g=4.0 + 15.0)
 SIDE["total_g"] = 2 * FAN_G + SIDE["nacelle_g"] + SIDE["tray_g"] + BATT_G + SIDE["straps_leads_g"]
-PACK_G = 938.6        # sim/out/results.json mass.pack
-DUCK_G = 960.5        # sim/out/results.json mass.duck_without_pack (estimate, never weighed)
+PACK_G = round(sum(r["g"] for r in MB["cases"][MB_CASE]), 1)                      # 967.2 g
+PACK_C = np.array([sum(r["g"] * r["pos"][i] for r in MB["cases"][MB_CASE]) / PACK_G for i in range(3)]) - [0, 0, Z_STAND]
+# printed structure by plate: the Orange plate (wing plate, trays, FC bracket) prints at 100 % sparse infill
+# (cad/make_slice_manifest.py processOverrides); the Black nacelles at the release 30 % gyroid
+INFILL_E = dict(Orange=1.0, Black=SLICE["infill_E_factor"])
 
 
 def fan_centre(which, side=+1):

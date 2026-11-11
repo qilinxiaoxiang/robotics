@@ -309,8 +309,23 @@ def main():
                     Ma = float((snn * c[:, others[0]]).sum() * dA)   # first moments (about the global origin)
                     Mb = float((snn * c[:, others[1]]).sum() * dA)
                     i = int(np.argmax(np.abs(snn)))
+                    # shear on the cut and von Mises of the element-mean tensor: the torsion the hand model carries as tau
+                    ss = sc[sel]
+                    tau = np.hypot(ss[:, ax, others[0]], ss[:, ax, others[1]])
+                    dv = ss - np.trace(ss, axis1=1, axis2=2)[:, None, None] / 3 * np.eye(3)
+                    vmc = np.sqrt(1.5 * np.einsum("eij,eij->e", dv, dv))
+                    # same, without the cells within exclude_mm of supports and load patches (the corner/patch peaks)
+                    far = ~near[sel]
+                    jt, jv = int(np.argmax(tau)), int(np.argmax(vmc))
+                    jvf = int(np.argmax(np.where(far, vmc, -1.0))) if far.any() else jv
+                    Mt = float((ss[:, ax, others[1]] * (c[:, others[0]] - c[:, others[0]].mean())
+                                - ss[:, ax, others[0]] * (c[:, others[1]] - c[:, others[1]].mean())).sum() * dA)
                     res.setdefault("sections", []).append(dict(axis=sn["axis"], at=v0, sigma_nn_peak=round(float(abs(snn[i])), 2),
                                                                where=np.round(c[i], 1).tolist(), N=round(Fn, 2),
+                                                               tau_peak=round(float(tau[jt]), 2), tau_where=np.round(c[jt], 1).tolist(),
+                                                               vm_peak=round(float(vmc[jv]), 2), vm_where=np.round(c[jv], 1).tolist(),
+                                                               vm_peak_far=round(float(vmc[jvf]), 2), vm_far_where=np.round(c[jvf], 1).tolist(),
+                                                               torque_about_centroid=round(Mt, 1),
                                                                first_moments=[round(Ma, 1), round(Mb, 1)], cells=int(sel.sum())))
         # displacements at probe points (stiffness)
         for pn, pt in cfg.get("probes", {}).items():

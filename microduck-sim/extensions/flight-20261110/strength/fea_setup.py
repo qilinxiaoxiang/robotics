@@ -36,15 +36,18 @@ def stl(name):
 def wing_model():
     path, sha = stl("wing_plate")
     fixed = []
+    xf, xcb = Pm.WING["x_front"], Pm.WING["x_centre_back"]          # centre plate x -51.9..-45 (6.9 thick)
     for (y, z) in hc.POSTS:
-        fixed.append(dict(box=dict(x=[-45.35, -44.65], y=[y - 3.0, y + 3.0], z=[z - 3.0, z + 3.0]), normal=[1, 0, 0]))
-        fixed.append(dict(cyl=[[-47.0, y, z], [1, 0, 0], [1.0, 1.5]], box=dict(x=[-48.6, -44.9], y=[y - 2, y + 2], z=[z - 2, z + 2])))
+        fixed.append(dict(box=dict(x=[xf - 0.35, xf + 0.35], y=[y - 3.0, y + 3.0], z=[z - 3.0, z + 3.0]), normal=[1, 0, 0]))
+        fixed.append(dict(cyl=[[xf - 2.0, y, z], [1, 0, 0], [1.0, 1.5]], box=dict(x=[xcb + 0.3, xf + 0.1], y=[y - 2, y + 2], z=[z - 2, z + 2])))
 
     def patches(side, L):
         s = 1 if side > 0 else -1
         lug = dict(name=f"lug_{'L' if s > 0 else 'R'}", sel=dict(box=dict(x=[-45.35, -44.65], y=sorted([s * 70.0, s * 82.0]), z=[37.0, 58.5]),
                                                                 normal=[1, 0, 0]), normal=[1, 0, 0])
-        tray = dict(name=f"tray_{'L' if s > 0 else 'R'}", sel=dict(box=dict(x=[-45.35, -44.65], y=sorted([s * 37.9, s * 69.5]), z=[22.0, 36.0]),
+        # tray contact on the web face: deck edge and both flanges, the inboard one up to flange_top (z 50, 6fa0d176)
+        tz = max(Pm.TRAY["flange_top"])
+        tray = dict(name=f"tray_{'L' if s > 0 else 'R'}", sel=dict(box=dict(x=[-45.35, -44.65], y=sorted([s * 37.9, s * 69.5]), z=[22.0, tz]),
                                                                   normal=[1, 0, 0]), normal=[1, 0, 0])
         nac, tr = (L["nac"], L["tray"]) if s > 0 else (mirror(L["nac"]), mirror(L["tray"]))
         out = []
@@ -62,10 +65,10 @@ def wing_model():
                                                                                     tray=[(f, p * [1, -1, 1]) for f, p in L["tray"]]))
         cases[cname] = ps
     return dict(stl=path, stl_sha256=sha, fixed=fixed, cases=cases, exclude_mm=2.0, grid_origin=[-45.0, 0.0, 0.0],
-                regions=dict(band_L=dict(y=[19.0, 31.0]), column_L=dict(y=[31.0, 38.0]), arm_L=dict(y=[38.0, 80.0]),
-                             band_R=dict(y=[-31.0, -19.0]), centre=dict(y=[-18.6, 18.6])),
+                regions=dict(band_L=dict(y=[19.0, 32.1]), column_L=dict(y=[32.1, 38.0]), arm_L=dict(y=[38.0, 80.0]),
+                             band_R=dict(y=[-32.1, -19.0]), column_R=dict(y=[-38.0, -32.1]), centre=dict(y=[-18.6, 18.6])),
                 probes=dict(lug_L=[-45.0, 76.0, 48.0], tray_L=[-45.0, 50.0, 31.0]), views=[[20, -50], [20, 140]],
-                sections=[dict(axis="y", at=[21.0, 25.0, 29.0, 31.0, 35.0, 45.0, 60.0])])
+                sections=[dict(axis="y", at=[21.0, 25.0, 29.0, 31.0, 33.0, 35.0, 37.0, 40.0, 45.0, 60.0])])
 
 
 def nacelle_inner_model():
@@ -120,41 +123,41 @@ def nacelle_outer_preload_model():
                 views=[[25, -60], [25, 120]])
 
 
-# Proposed root fix, analysed only (cad/ is not edited): per side
-#  - band raised: x -50.2..-46.8, |y| 20.3..30.0, z 28..42.5 (the free slot left by the removed cross channel; same limits as
-#    the transition: under z 45, 1.5 mm behind the saddle zone, in front of the backpack at x -50.5)
-#  - corner filled: x -46.8..-45, |y| 28.2..30.0, z -1..24.9 (the band's lower front lip and the column's front lip met only
-#    along one edge at y 28.5, z 9; outboard of the shell side lip |y| <= 28, inboard of the leg reach |y| >= 30)
-ROOT_FIX = [((-50.2, 20.3, 28.0), (-46.8, 30.0, 42.5)), ((-46.8, 28.2, -1.0), (-45.0, 30.0, 24.9))]
-
-
-def wing_fix_model(base):
+def variant_model(base, name, boxes, cases):
+    """A sizing variant of the wing plate (analysed only, cad/ is not edited): the built plate plus boxes (lo, hi) on
+    both sides, mirrored in y."""
     import manifold3d as m3
     import trimesh
     w = trimesh.load(BUILD / "wing_plate-world.stl", force="mesh")
     man = m3.Manifold(m3.Mesh(vert_properties=np.asarray(w.vertices, np.float32), tri_verts=np.asarray(w.faces, np.uint32)))
     for s in (1, -1):
-        for lo, hi in ROOT_FIX:
+        for lo, hi in boxes:
             y0, y1 = sorted((s * lo[1], s * hi[1]))
-            b = m3.Manifold.cube([hi[0] - lo[0], y1 - y0, hi[2] - lo[2]]).translate([lo[0], y0, lo[2]])
-            man = man + b
+            man = man + m3.Manifold.cube([hi[0] - lo[0], y1 - y0, hi[2] - lo[2]]).translate([lo[0], y0, lo[2]])
     mm = man.to_mesh()
-    out = trimesh.Trimesh(mm.vert_properties[:, :3], mm.tri_verts)
-    dst = GEO / "wing_plate_rootfix-world.stl"
-    out.export(dst)
-    added = (man.volume() - w.volume) / 1000
+    dst = GEO / f"wing_plate_{name}-world.stl"
+    trimesh.Trimesh(mm.vert_properties[:, :3], mm.tri_verts).export(dst)
     cfg = json.loads(json.dumps(base))
-    cfg["stl"] = f"out/geometry/{dst.name}"
-    cfg["stl_sha256"] = hashlib.sha256(dst.read_bytes()).hexdigest()[:16]
-    cfg["added_cm3"] = round(added, 3)
-    cfg["cases"] = {k: v for k, v in cfg["cases"].items() if k in ("fore_aft_10g", "lateral_10g", "vertical_impact_15.6g",
-                                                                    "topple_strike_front_end", "handling_lift_by_nacelle")}
+    cfg.update(stl=f"out/geometry/{dst.name}", stl_sha256=hashlib.sha256(dst.read_bytes()).hexdigest()[:16],
+               added_cm3=round((man.volume() - w.volume) / 1000, 3), boxes=[[list(lo), list(hi)] for lo, hi in boxes])
+    cfg["cases"] = {k: v for k, v in cfg["cases"].items() if k in cases}
     return cfg
+
+
+# name -> (boxes, cases): sizing runs for what still fails (README "What still fails")
+# deep_transition: carry the 8.5 mm depth (x -53.5) from |y| 32.1 out to the gusset at 37.9 above and below the cross
+# harness run (|y| 32.6..37.6, x <= -50.4, z 14..28, kept 0.5 mm clear); the backpack is |y| <= 32, the legs stay
+# below z 4, the saddle zone (front face <= -46.5 above z 24.9) is in front, so this space is free
+_XD = Pm.WING["x_band_back"]
+VARIANTS = {"deep_transition": ([((_XD, 32.0, 28.5), (-50.1, 37.95, 42.5)), ((_XD, 32.0, 9.0), (-50.1, 37.95, 13.5))],
+                                ("vertical_impact_15.6g", "fore_aft_10g", "lateral_10g", "handling_lift_by_nacelle",
+                                 "thrust_1.5x_on_ground"))}
 
 
 def main():
     cfg = dict(wing=wing_model(), nacelle_inner=nacelle_inner_model(), nacelle_outer_preload=nacelle_outer_preload_model())
-    cfg["wing_fix"] = wing_fix_model(cfg["wing"])
+    for name, (boxes, cases) in VARIANTS.items():
+        cfg[f"wing_{name}"] = variant_model(cfg["wing"], name, boxes, cases)
     # bore loads: uniform traction = resultant / bore area (computed on the mini from the selected facets)
     (OUT / "fea_inputs.json").write_text(json.dumps(dict(cfg, geometry=snapshot()), indent=1))
     print("wrote", OUT / "fea_inputs.json")

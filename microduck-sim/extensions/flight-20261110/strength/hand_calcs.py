@@ -9,8 +9,9 @@ import math
 import numpy as np
 import trimesh
 
-from common import (BUILD, G, HANDLING_N, M2_PRELOAD, M2_PULLOUT, MAT, OUT, PACK_G, PEAK, Pm, Q_MOTOR, SIDE, SLICE,
-                    THRUST_N, fan_centre, resultant, section_raster, section_stress, snapshot, thrust_dir)
+from common import (BUILD, FAN_MASS_F, FAN_MASS_R, G, HANDLING_N, INFILL_E, M2_PRELOAD, M2_PULLOUT, MAT, MB_CASE, OUT,
+                    PACK_C, PACK_G, PEAK, Pm, Q_MOTOR, SIDE, SLICE, THRUST_N, fan_centre, resultant, section_raster,
+                    section_stress, snapshot, thrust_dir)
 
 PLA = MAT["PLA"]
 EX, EY, EZ = np.eye(3)
@@ -22,7 +23,8 @@ batt_c = np.array([Pm.BATT["x0"] + Pm.BATT["size"][0] / 2, Pm.BATT["y0"] + Pm.BA
 nac_c = 0.5 * (np.array(BJ["nacelle_inner_L"]["centroid"]) + np.array(BJ["nacelle_outer_L"]["centroid"]))
 tray_c = np.array(BJ["tray_L"]["centroid"])
 FAN_F, FAN_R = fan_centre("front"), fan_centre("rear")
-NAC_MASSES = [(SIDE["fan_g"], FAN_F), (SIDE["fan_g"], FAN_R), (SIDE["nacelle_g"], nac_c), (7.5, (FAN_F + FAN_R) / 2)]
+# fan masses at their own centre (45 mm down each axis, mass_budget.json); thrust acts at the collar (FAN_F / FAN_R)
+NAC_MASSES = [(SIDE["fan_g"], FAN_MASS_F), (SIDE["fan_g"], FAN_MASS_R), (SIDE["nacelle_g"], nac_c), (7.5, (FAN_F + FAN_R) / 2)]
 TRAY_MASSES = [(SIDE["batt_g"], batt_c), (SIDE["tray_g"], tray_c), (11.5, batt_c)]
 NAC_TIP_FRONT = np.array([64.0, 110.0, 50.0])      # nacelle front end (build.json bounds x max 64.3), mid height
 NAC_TIP_REAR = np.array([-88.0, 110.0, 50.0])
@@ -80,7 +82,8 @@ def row(part, case, what, peak, at, allow_dir, allowable, note="", fea=None):
 wing = trimesh.load(BUILD / "wing_plate-world.stl", force="mesh")
 WING_SECTIONS = {}
 for y in (21.0, 29.0, 31.0, 35.0, 45.0, 60.0):
-    WING_SECTIONS[y] = section_raster(wing, [0, y, 0], [0, 1, 0], (0, 2), build_axis=0, skin_mm=0.6)
+    WING_SECTIONS[y] = section_raster(wing, [0, y, 0], [0, 1, 0], (0, 2), build_axis=0, skin_mm=0.6,
+                                      infill_E=INFILL_E[BJ["wing_plate"]["colour"]])
 
 
 def wing_checks(case, L):
@@ -91,25 +94,54 @@ def wing_checks(case, L):
             return Mf(np.array([c2[0], y, c2[2]]))
         s = section_stress(r, (0, 2), EY, F, M_about)
         ss = section_stress(r, (0, 2), EY, F, M_about, solid=True)
-        # torsion of the open section (thin rectangles, J = sum b t^3 / 3 from the raster: per-row max run)
-        tau = torsion_open(r, s["torsion"])
+        # Saint-Venant torsion of the real section shape (Prandtl stress function on the raster, free warping)
+        tau = torsion_sv(r, s["torsion"])
         row("wing_plate", case, f"bending at y {y:.0f}", s["sigma"], f"y {y:.0f}, (x, z) {s['at']}", "in-layer (sigma_yy, layers x = const)",
             PLA["design_xy"], f"solid-section value {ss['sigma']:.2f} MPa (for the FEA comparison); printed/solid {s['sigma'] / max(ss['sigma'], 1e-9):.2f}")
         if abs(tau) > 0.5:
             row("wing_plate", case, f"torsion shear at y {y:.0f}", abs(tau), f"y {y:.0f}", "in-layer shear",
-                0.55 * PLA["design_xy"], "open-section torsion")
+                0.55 * PLA["design_xy"], f"Saint-Venant torsion, T {s['torsion']:.0f} N mm, J {r['J']:.0f} mm4 (free warping; FEA has the restraint)")
+            vm = math.hypot(s["sigma"], math.sqrt(3) * abs(tau))
+            row("wing_plate", case, f"combined (von Mises) at y {y:.0f}", vm, f"y {y:.0f}", "in-layer", PLA["design_xy"],
+                "peak bending and peak torsion shear added as if at one point (upper bound)")
 
 
-def torsion_open(r, T):
-    """Shear stress of an open thin-walled section: tau = T t_max / J, J = sum over strips of b t^3 / 3 (raster runs along
-    the longer direction)."""
-    m = r["mask"]
-    st = r["step"]
-    # thickness of each column (along a = x) and of each row (along b = z): take the decomposition into the longer strips
-    tx = m.sum(axis=0) * st          # thickness in x at each z row
-    J = (tx[tx > 0] ** 3 / 3).sum() * st
-    tmax = tx.max()
-    return T * tmax / J if J > 0 else 0.0
+def torsion_sv(r, T, step=0.1):
+    """Saint-Venant torsion of the section on its raster: Prandtl stress function, laplacian(phi) = -2 inside, phi = 0 on
+    the boundary; J = 2 int phi dA, tau = |grad phi| T / J. Works for open, closed-off and solid shapes alike (a solid
+    8.5 x 19 rectangle at 0.1 mm: J within 0.1 %, tau within 3 % of Roark). Cached on r."""
+    if "J" not in r:
+        import scipy.sparse as sp
+        import scipy.sparse.linalg as spl
+        k = max(1, int(round(step / r["step"])))
+        m = r["mask"][::k, ::k]
+        h = r["step"] * k
+        m = np.pad(m, 1)
+        idx = -np.ones(m.shape, int)
+        idx[m] = np.arange(m.sum())
+        # cell-centred grid, phi = 0 on the true edge half a cell outside the last pixel (ghost value -phi)
+        rows, cols, vals = [], [], []
+        ii, jj = np.nonzero(m)
+        me = idx[ii, jj]
+        diag = np.full(len(me), -4.0)
+        edge_g = np.zeros(len(me))
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nb = idx[ii + di, jj + dj]
+            ok = nb >= 0
+            rows += list(me[ok]); cols += list(nb[ok]); vals += [1.0] * int(ok.sum())
+            diag[~ok] -= 1.0
+            edge_g[~ok] = 1.0
+        n = int(m.sum())
+        A = sp.csr_matrix((vals, (rows, cols)), shape=(n, n)) + sp.diags(diag)
+        phi_v = spl.spsolve(A.tocsc(), -2 * h * h * np.ones(n))
+        phi = np.zeros(m.shape)
+        phi[m] = phi_v
+        gy, gx = np.gradient(phi, h)
+        g_in = np.hypot(gx, gy)[m]
+        g_edge = np.where(edge_g > 0, 2 * phi_v / h, 0.0)             # phi falls to 0 over the half cell to the edge
+        r["J"] = float(2 * phi.sum() * h * h)
+        r["tau_unit"] = float(max(g_in.max(), g_edge.max()) / r["J"])  # tau per N mm of torque
+    return T * r["tau_unit"]
 
 
 # ------------------------------------------------------------------ 2. bolt groups (rigid plate, compression-only face)
@@ -161,14 +193,20 @@ def bolt_group(face_rects, bolts, F, M_about, plane_x=-45.0, normal=-EX):
 
 LUG_FACE = [(Pm.NAC["lug_y"][0], Pm.NAC["lug_y"][1], BJ["nacelle"]["bed_z"], Pm.NAC["lug_top"])]
 LUG_BOLTS = [(Pm.NAC["lug_screw_y"], z) for z in Pm.NAC["lug_screw_z"]]
-TRAY_FACE = [(Pm.TRAY["flange_y"][0], Pm.TRAY["flange_y"][1], 26.0, 36.0), (Pm.TRAY["flange2_y"][0], Pm.TRAY["flange2_y"][1], 26.0, 36.0),
+# tray contact on the arm web front face: both flanges z 26..36, the inboard one raised to flange_top from flange_raised_y0
+# (6fa0d176), and the deck edge
+_FZ = Pm.TRAY["flange_z"]
+TRAY_FACE = [(Pm.TRAY["flange_y"][0], Pm.TRAY["flange_y"][1], _FZ[0], _FZ[1]), (Pm.TRAY["flange2_y"][0], Pm.TRAY["flange2_y"][1], _FZ[0], _FZ[1]),
              (Pm.TRAY["y"][0], Pm.TRAY["y"][1], Pm.TRAY["deck_z"][0], Pm.TRAY["deck_z"][1])]
+for _fy, _top in zip((Pm.TRAY["flange_y"], Pm.TRAY["flange2_y"]), Pm.TRAY["flange_top"]):
+    if _top > _FZ[1]:
+        TRAY_FACE.append((Pm.TRAY["flange_raised_y0"], _fy[1], _FZ[1], _top))
 TRAY_BOLTS = [tuple(p) for p in Pm.WING["tray_screws"]]
 
 
 def joint_checks(case, L):
-    for name, loads, face, bolts, part in (("nacelle lug to arm web (3 x M2 x 10)", L["nac"], LUG_FACE, LUG_BOLTS, "nacelle_inner_L"),
-                                           ("tray flange to arm web (2 x M2 x 10)", L["tray"], TRAY_FACE, TRAY_BOLTS, "tray_L")):
+    for name, loads, face, bolts, part in ((f"nacelle lug to arm web ({len(LUG_BOLTS)} x M2 x 10)", L["nac"], LUG_FACE, LUG_BOLTS, "nacelle_inner_L"),
+                                           (f"tray flange to arm web ({len(TRAY_BOLTS)} x M2 x 10)", L["tray"], TRAY_FACE, TRAY_BOLTS, "tray_L")):
         if not loads:
             continue
         F, Mf = resultant(loads)
@@ -211,7 +249,8 @@ def nacelle_checks(case, L):
 
 # ------------------------------------------------------------------ 4. tray deck bending (cantilever from the web face)
 tray = trimesh.load(BUILD / "tray_L-world.stl", force="mesh")
-TRAY_SECTIONS = {x: section_raster(tray, [x, 0, 0], [1, 0, 0], (1, 2), build_axis=1, skin_mm=0.6) for x in (-36.5, -29.0, -20.0, 15.0)}
+TRAY_SECTIONS = {x: section_raster(tray, [x, 0, 0], [1, 0, 0], (1, 2), build_axis=1, skin_mm=0.6, infill_E=INFILL_E[BJ["tray_L"]["colour"]])
+                 for x in (-36.5, -29.0, -20.0, 15.0)}
 
 
 def tray_checks(case, L):
@@ -233,37 +272,53 @@ def tray_checks(case, L):
     # flange-to-deck joint (layer interface z 26): screw tension pulls the flange, the deck pushes; interlayer tension
     F, Mf = resultant(loads)
     T, S, p = bolt_group(TRAY_FACE, TRAY_BOLTS, F, Mf)
-    A_if = (Pm.TRAY["flange_x"][1] - Pm.TRAY["flange_x"][0]) * ((Pm.TRAY["flange_y"][1] - Pm.TRAY["flange_y"][0]) + (Pm.TRAY["flange2_y"][1] - Pm.TRAY["flange2_y"][0]))
-    Mif = T.sum() * (31.0 - 26.0)
-    Sif = A_if / 8.0 * 8.0 ** 2 / 6
-    sig = Mif / Sif + T.sum() / A_if
-    row("tray_L", case, "flange-to-deck layer interface (z 26)", sig, "flange root", "across layers", PLA["design_z"],
-        f"screw pull {T.sum():.1f} N at 5 mm above the interface")
+    # each screw pulls its flange off the web; the flange bends about its root on the deck (x thickness 8, layer planes z)
+    fx = Pm.TRAY["flange_x"][1] - Pm.TRAY["flange_x"][0]
+    for k, (fy, top) in enumerate(zip((Pm.TRAY["flange_y"], Pm.TRAY["flange2_y"]), Pm.TRAY["flange_top"])):
+        on = [i for i, (y, z) in enumerate(TRAY_BOLTS) if fy[0] <= y <= fy[1]]
+        for z_if, y0 in ((_FZ[0], fy[0]), (_FZ[1], Pm.TRAY["flange_raised_y0"])) if top > _FZ[1] else ((_FZ[0], fy[0]),):
+            lev = [(T[i], TRAY_BOLTS[i][1] - z_if) for i in on if TRAY_BOLTS[i][1] > z_if]
+            if not lev:
+                continue
+            A_if = fx * (fy[1] - y0)
+            Mif = sum(t * d for t, d in lev)
+            sig = 6 * Mif / ((fy[1] - y0) * fx ** 2) + sum(t for t, _ in lev) / A_if
+            row("tray_L", case, f"flange {k + 1} layer interface (z {z_if:.0f})", sig, f"flange {k + 1} root, y {y0}..{fy[1]}",
+                "across layers", PLA["design_z"], f"screw pulls {[round(float(t), 1) for t, _ in lev]} N on levers {[round(float(d), 1) for _, d in lev]} mm")
 
 
 # ------------------------------------------------------------------ 5. shared post screws (whole pack on the duck)
-POSTS = [(16.1, 26.0), (16.1, -36.5), (-16.1, 26.0), (-16.1, -36.5)]
+POSTS = [tuple(p) for p in Pm.WING["holes"]]
+W_CENTRE_T = Pm.WING["x_front"] - Pm.WING["x_centre_back"]                    # 6.9
+POST_LEN = float(Pm.WING["post_screw"].split("x")[1])                         # M2 x 12
+POST_BITE = round(POST_LEN - Pm.WING["backpack_plate_t"] - W_CENTRE_T, 2)     # 3.1 into the 4.8 pilot
 
 
 def post_checks():
-    pack_c = np.array([-16.0, -3.2, 34.7])
-    duck_c = np.array([-7.6, 0.3, 25.3])
+    pack_c = PACK_C
     cases = {
         "vertical_impact_15.6g": [(-PACK_G / 1000 * G * IMPACT_G * EZ, pack_c)],
         "thrust_1.5x_on_ground": [(4 * PEAK * THRUST_N * EZ - PACK_G / 1000 * G * EZ, pack_c)],
         "fore_aft_10g": [(-PACK_G / 1000 * G * 10 * EX, pack_c)],
+        "lateral_10g": [(PACK_G / 1000 * G * 10 * EY, pack_c)],
+        # duck lifted by the left nacelle: the hand force on the nacelle, the pack's own weight x 1.5; the rest (the duck)
+        # hangs from the posts
+        "handling_lift_by_nacelle": [(HANDLING_N * EZ, NAC_TOP_OUT), (-PACK_G / 1000 * G * 1.5 * EZ, pack_c)],
         "topple_strike_front_end": [(-TOPPLE_N * EX, NAC_TIP_FRONT)],
     }
     for case, loads in cases.items():
         F, Mf = resultant(loads)
         # wing centre on the pack posts: the centre face (x -45) bears on the pack; loads on the wing, normal into the pack +x
-        face = [(-18.6, 18.6, -40.5, 29.0)]
-        T, S, p = bolt_group(face, POSTS, F, Mf, plane_x=-45.0, normal=EX)
-        row("wing_plate + OpenRB pack posts", case, "post screw pull-out (4 x M2 x 10, 4.5 mm bite)", float(T.max()),
-            "post pilots in the OpenRB pack", "thread", M2_PULLOUT["low"] * 4.5 / 4.8, f"tensions {np.round(T, 1).tolist()} N")
+        hw = Pm.WING["centre_half_w"]
+        face = [(-hw, hw, Pm.WING["centre_bot"] + 3.5, Pm.WING["centre_top"])]
+        T, S, p = bolt_group(face, POSTS, F, Mf, plane_x=Pm.WING["x_front"], normal=EX)
+        row("wing_plate + OpenRB pack posts", case, f"post screw pull-out (4 x {Pm.WING['post_screw']}, {POST_BITE} mm bite)", float(T.max()),
+            "post pilots in the OpenRB pack", "thread", M2_PULLOUT["low"] * POST_BITE / 4.8,
+            f"tensions {np.round(T, 1).tolist()} N; capacity scaled by bite {POST_BITE} / 4.8 from the low estimate; high estimate "
+            f"{M2_PULLOUT['high'] * POST_BITE / 4.8:.0f} N")
         # tear-out of the upper post holes toward the top edge (1.75 mm ligament above d 2.5 hole) under shear S
         e = Pm.WING["centre_top"] - 26.0
-        A = 2 * 3.5 * (e - 1.25 * math.cos(math.radians(40)))
+        A = 2 * W_CENTRE_T * (e - 1.25 * math.cos(math.radians(40)))
         row("wing_plate", case, "upper post hole tear-out (1.75 mm ligament)", float(S.max()) / A, "centre plate top edge",
             "in-layer shear", 0.55 * PLA["design_xy"], f"screw shear {np.round(S, 1).tolist()} N; shear-out area {A:.1f} mm2")
 
@@ -279,16 +334,18 @@ def clamp_checks():
             "in-layer hoop", PLA["design_xy"], f"{P:.0f} N per M2; uniform contact assumed")
         # the screws pull along y at screw_r, the wall mid-plane is at r_in + wall / 2: the eccentricity bends the wall
         # where the block ends (FEA: out/fea_nacelle_outer_preload.json, peak on that corner)
-        e = N["screw_r"] - (N["r_out"] - N["wall"] / 2)
+        tw = N["end_wall"]          # thick collar wall where each block ends (4a5232a1)
+        e = N["screw_r"] - (N["bore"] / 2 + tw / 2)
         b = L_col * Pm.C
-        sigb = 6 * end * e / (b * N["wall"] ** 2) + end / (b * N["wall"])
+        sigb = 6 * end * e / (b * tw ** 2) + end / (b * tw)
         row("nacelle halves", f"clamp_preload_{lab}", "collar wall bending where the screw block ends", sigb,
             "collar at the end of the front and rear blocks", "in-layer hoop", PLA["design_xy"],
-            f"{P:.0f} N per M2, eccentricity {e:.1f} mm, wall {N['wall']} mm over {b:.1f} mm; the seams stay open with the largest fan")
-        # head seat bearing in the outer half (pan head d 3.8 on the counterbore floor)
-        A = math.pi / 4 * (3.8 ** 2 - 2.7 ** 2)
-        row("nacelle_outer_L", f"clamp_preload_{lab}", "screw head bearing on the seat floor", P / A, "head seat",
-            "compression (horizontal screw: in-layer)", 1.5 * PLA["design_xy"], "compressive bearing allowable 1.5 x tensile")
+            f"{P:.0f} N per M2, eccentricity {e:.1f} mm, end wall {tw} mm over {b:.1f} mm; the seams stay open with the largest fan")
+        # seat bearing in the outer half: M2 washer (OD 5.0) under the pan head on the 5.4 seat floor
+        A = math.pi / 4 * (N["washer"]["od"] ** 2 - 2.7 ** 2)
+        row("nacelle_outer_L", f"clamp_preload_{lab}", "washer bearing on the seat floor", P / A, "head seat",
+            "compression (horizontal screw: in-layer)", 1.5 * PLA["design_xy"],
+            f"washer OD {N['washer']['od']} on a d 2.7 clearance; compressive bearing allowable 1.5 x tensile")
     # thrust held by the ear pockets (upper face) and the clamp friction
     Fear = PEAK * THRUST_N / 2
     A = (Pm.FAN["ear_w"] - Pm.TOL) * (Pm.FAN["ear_r"] - Pm.FAN["duct_od"] / 2 - Pm.TOL)

@@ -146,3 +146,5 @@ Rebalancing with the batteries would need them to move about 175 mm. The lever i
 The landing case controls, through torsion: τ falls from 19.6 to 8.1 MPa. The slot behind the band ends at the backpack front plate, x -50.5, which leaves 5.45 mm. SF 2 in PLA therefore needs the backpack, a printed part whose position is a design choice, to move 3.4 mm back (to x -53.6). The COM moves by m_backpack × 3.4 / 1897, which stays inside the 0.5 mm trim allowance for any backpack under about 280 g.
 
 If the backpack stays where it is, no PLA option reaches SF 2: the 5.45 mm solid band gives about 1.0. The smallest material step that does is PA-CF (65 MPa in-layer), at about 2.0 on hand numbers. PETG (38 MPa) gives about 1.2, which is not enough.
+
+Since the 6fa0d176 rerun (strength/README.md), the `spar_option` and `root_alignment` entries live in `results.json → history`; they were computed on the 1b392541 / 4a5232a1 geometry.
