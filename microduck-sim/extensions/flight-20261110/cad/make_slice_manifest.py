@@ -93,9 +93,14 @@ def main():
     # Bambu Studio refuses gyroid at 100 % ("gyroid doesn't work at 100% density", 2026-11-10): zig-zag lines, as both slicers take
     solid = {"sparse_infill_density": "100%", "sparse_infill_pattern": "zig-zag"}
     m.update(version=VER, parts=rows, placements=placements,
-             processOverrides={"Orange_Bambu": dict(solid), "Orange_Elegoo": dict(solid)},
-             processOverrideReason="Orange plate at 100 % sparse infill for the wing plate's solid root band (strength check, "
-                                   "plain PLA; plate-wide because the pipeline sets no per-object infill). Black as released.",
+             processOverrides={f"{c}_{m}": dict(solid) for c in ("Orange", "Black") for m in ("Bambu", "Elegoo")},
+             processOverrideReason="Both plates at 100 % sparse infill (zig-zag). Orange: the wing plate's solid root band "
+                                   "(strength check, plain PLA). Black: the clamp strength (7.4 mm collar wall at the screw "
+                                   "blocks), the lug and the ear-pocket floors are sized as solid, and at 30 % gyroid with 4 walls "
+                                   "(about 1.8 mm a side) every section over about 3.5 mm held sparse infill (2026-11-10 slice "
+                                   "readback); closing a 12 mm block with walls needs about 13 loops a side, i.e. solid anyway. "
+                                   "Plate-wide because the pipeline sets no per-object infill; the mass budget counts printed "
+                                   "parts as solid.",
              retiredParts=[],
              prototypeScope=f"{VER}: flight pack, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate "
                             "(nacelle inner/outer halves L/R). Print gate pending (guide data for the flight pack).",
