@@ -251,17 +251,25 @@ def end_walls(which, side=+1):
     normal wall over NAC end_taper of arc (strength/README.md, clamp case). Local frame: both blocks lie on local +-x."""
     N = NAC
     rw, ro = N["bore"] / 2 + N["end_wall"], N["r_out"]
-    pe = math.asin(max(N["inner_y"], N["outer_y"]) / rw)        # block edge
-    pt = pe + N["end_taper"] / ro                                 # taper end
-    pts = [(0.0, 0.0)]
-    for a in np.linspace(-pt, pt, 49):
-        f = min(1.0, max(0.0, (abs(a) - pe) / (pt - pe)))
-        r = rw + (ro - rw) * f
-        pts.append((r * math.cos(a), r * math.sin(a)))
-    cs = m3.CrossSection([pts])
+    edge = math.asin(max(N["inner_y"], N["outer_y"]) / rw)      # block edge
     h = N["t1"] + 12.0 - N["t0"]
-    lobe = cs.extrude(h).translate([0, 0, -(N["t1"] + 12.0)])
-    return fan_place(lobe + lobe.rotate([0, 0, 180]), which, side)
+
+    def lobe(pe, taper, smooth):
+        pt = pe + taper / ro                                      # taper end
+        pts = [(0.0, 0.0)]
+        for a in np.linspace(-pt, pt, 97):
+            f = min(1.0, max(0.0, (abs(a) - pe) / (pt - pe)))
+            if smooth:
+                f = f * f * (3.0 - 2.0 * f)
+            r = rw + (ro - rw) * f
+            pts.append((r * math.cos(a), r * math.sin(a)))
+        return m3.CrossSection([pts]).extrude(h).translate([0, 0, -(N["t1"] + 12.0)])
+    # outer-end block (front fan local +x, rear fan local -x; local x is world +x): long thick stretch, long smooth taper
+    end = lobe(max(edge, math.radians(N["end_thick_deg"])), N["end_taper_long"], True)
+    web = lobe(edge, N["end_taper"], False).rotate([0, 0, 180])
+    if which == "rear":
+        end, web = end.rotate([0, 0, 180]), web.rotate([0, 0, 180])
+    return fan_place(end + web, which, side)
 
 
 def lug_fillet(side=+1):

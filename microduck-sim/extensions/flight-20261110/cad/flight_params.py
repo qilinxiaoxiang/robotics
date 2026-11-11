@@ -139,6 +139,12 @@ NAC["screw_r"] = round(max(NAC["r_out"] + 4.5, NAC.get("ear_pocket", {}).get("r"
 # 4.0 mm from the screw axis (driver corridor), which gives >= 7.0; it tapers back to the normal wall over 10 mm of arc.
 NAC["end_wall"] = round(NAC["screw_r"] - 4.0 - NAC["bore"] / 2, 2)
 NAC["end_taper"] = 10.0
+# At the outer-end blocks (front fan +x, rear fan -x) the 2026-11-10 rerun on 6fa0d176 put the snug-preload bending at the
+# taper end: outer-face max principal (95th pct per 5 deg) 20 / 50 / 54 / 35 / 30 / 28 / 22 / 18 MPa at 25..65 deg from the
+# block axis (strength FEA probe, clamp_band binning). The thick wall now runs to 50 deg there and tapers back over 20 mm of
+# arc (at r_out) with a smoothstep profile; the middle-web side (<= 22 MPa) keeps the short 10 mm taper.
+NAC["end_thick_deg"] = 50.0
+NAC["end_taper_long"] = 20.0
 assert NAC["end_wall"] >= 7.0, f"block-end collar wall {NAC['end_wall']} < 7.0 (strength check)"
 # Fillet where the inner half's lug meets the rear collar on its +x face: FEA put the handling case at SF ~1.8 there from
 # shear lag (strength/README.md, "Nacelle inner half under handling")
