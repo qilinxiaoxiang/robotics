@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "goal": "Find Amazon listings that can replace items in the Pyrodrone cart (read back 2026-11-11, subtotal $219.93) without changing the released FlightPack-D1 CAD, wiring or guide.",
+    "chain": {
+      "from": "FlightPack-D1 as released (battery trays, FC bracket, wiring.json)",
+      "to": "the bought part, used as it arrives"
+    },
+    "allowed_companions": [],
+    "allowed_modifications": [],
+    "requirements": [
+      {
+        "id": "same_fit",
+        "requirement": "Part matches what the CAD and wiring were built around: battery CNHL 4S 1300 mAh 31 x 33 x 74 mm 151 g XT60 (tray room about 1 mm); MicoAir743v2 + MicoAir 55A AM32 4in1 stack; MTF-01 speaking the ArduPilot protocol out of the box.",
+        "source": "procurement.json cad_handoff; train/out/battery_room.json; microduck-sim/CURRENT-STATE.json parts_flight_pack"
+      },
+      {
+        "id": "arrival",
+        "requirement": "Arrives no later than the Pyrodrone ground estimate (2026-11-18).",
+        "source": "pyrodrone.com/policies/shipping-policy read 2026-11-11; Shawn leaves Pittsburgh 2026-12-05"
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "id": "amazon_micoair743v2_stack_B0HJZSYFDX",
+      "primary": "https://www.amazon.com/dp/B0HJZSYFDX",
+      "chain": "same stack, shipped and sold by Lotus Mall",
+      "companions": [],
+      "modifications": [],
+      "checks": {
+        "same_fit": {
+          "status": "pass",
+          "observed": "Title: MicoAir 743 V2 Flight Controller, AM32 55A 30x30 FC&ESC Stack; $118.99 against $122.99.",
+          "evidence": "Amazon product page read in Shawn's Chrome 2026-11-11"
+        },
+        "arrival": {
+          "status": "fail",
+          "observed": "FREE delivery November 24 - December 4; fastest (paid) November 18 - 20.",
+          "evidence": "Amazon product page delivery block 2026-11-11"
+        }
+      }
+    },
+    {
+      "id": "amazon_cnhl_1500_4s_2pack_B0DN67PXJ6",
+      "primary": "https://www.amazon.com/dp/B0DN67PXJ6",
+      "chain": "CNHL Black 1500 mAh 4S 130C XT60, 2 pack, sold by HobbyFlash Store, ships from Amazon",
+      "companions": [],
+      "modifications": [],
+      "checks": {
+        "same_fit": {
+          "status": "fail",
+          "observed": "1500 mAh, 76 x 33 x 36 mm, 174 g each: 5 mm thicker and 23 g heavier per battery than the 1300 mAh the trays and the mass model use. $44.99 for two against $51.98.",
+          "evidence": "Amazon listing specification bullet 2026-11-11"
+        },
+        "arrival": {
+          "status": "pass",
+          "observed": "FREE delivery Tomorrow, November 12; free return until 2027-01-31.",
+          "evidence": "Amazon product page 2026-11-11"
+        }
+      }
+    },
+    {
+      "id": "amazon_mtf01_inav_B0CQZNNG5C",
+      "primary": "https://www.amazon.com/dp/B0CQZNNG5C",
+      "chain": "MicoAir MTF-01, variant labelled (INAV), sold by ROBOFUSION, ships from Amazon",
+      "companions": [],
+      "modifications": [],
+      "checks": {
+        "same_fit": {
+          "status": "unknown",
+          "observed": "Same sensor, but the variant is labelled INAV and the listing says the protocol is switched with a USB to UART TTL module; the Pyrodrone item is the auto-protocol-detection version. $32.00 against $32.99.",
+          "evidence": "Amazon title and first bullet 2026-11-11"
+        },
+        "arrival": {
+          "status": "pass",
+          "observed": "FREE delivery Tomorrow, November 12.",
+          "evidence": "Amazon product page 2026-11-11"
+        }
+      }
+    }
+  ],
+  "recommended": [],
+  "cart": [],
+  "incident": "Asked by Shawn 2026-11-11 whether the Pyrodrone items can be bought on Amazon or cheaper there. Not found on Amazon: CNHL 1300 mAh 4S 130C (searches 'CNHL Black Series 1300mAh 4S 130C XT60' and 'CNHL 1300mAh 4S 130C XT60 lipo' returned the 1500 mAh 4S and 1300 mAh 6S packs only), a 16 x 250 mm strap (16 x 200 and 16 x 300 five-packs at $8.99 against $3.98 for two). SH1.0 cable kits on Amazon $15.99 to $19.99 against $7.99. Other brands' 1300 mAh 4S packs (Zeee 120C $26.39, Ovonic) were not checked for size. Nothing carted or removed."
+}
