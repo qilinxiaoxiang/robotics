@@ -243,3 +243,36 @@ running total of worst cases; real spend read from `modal billing report` before
 - 00:16 Videos of fq2 1999 (Modal OSMesa, both apps completed, no retries): `video/fq2_1999_walk.mp4` and key frame
   `_t10.png` (upright mid-stride at 10 s), `video/fq2_1999_landing.mp4` and `_t1.png` (upright on both feet 1 s after
   the release). The pack has no visible geometry in the model, only its mass and inertia.
+
+## Universal stand/walk plan (2026-11-11, Shawn's direction relayed by the coordinator; nothing launched)
+- 00:30 Payload randomisation written (`microduck_rl/cmu/finetune/flight/payload.py`, delta `universal` in
+  flight_worker.py): no-pack compile plus the real pack's parts as a per-env payload on trunk_base, states full 40 %,
+  batteries out 25 %, none 10 %, scaled 0-1.15 x 25 %, critic gets payload kg + trunk COM. Probe manifests from the
+  latest sim snapshot (d2de61ac, pack 955.1 g, batteries 302 g): `make_payload_manifests.py`.
+- 00:38 Mac mini smoke (`mini_train_smoke.sh`, uv venv built in the mirror, 64 envs CPU): env builds, actor 61 / critic
+  80, sampled payloads 0-0.988 kg, mass exact after resets (1.2e-7 kg), full state = compiled pack model (1.30744 kg both,
+  J difference 3.7e-9), 2 PPO iterations in 4.6 s. `out/universal_smoke.json`.
+- 00:53 Per-load probe on the Mac mini (`payload_probe.sh`, 20 episodes per case, `out/payload_probe.json`): fq2 1999
+  0 falls at 25/50/75 %, batteries out and full pack, stand and walk (walk 0.078-0.122 m/s); no pack walk 2 of 20 at
+  0.157-0.163 m/s (with --stand-s 0 and with today's 0.3 s start). stand61/walk61: 0 falls without the pack (walk
+  0.090), 3 of 20 walking at 25 %, 20 of 20 from 50 % up. Same fq2 no-pack walk gave 5 of 20 on Modal: probe counts are
+  compared on one machine only. Hips (fq2, all loads) p99 0.31-0.35 N m, 0-0.5 % of time near the clamp.
+- 00:57 Universal audit started on the Mac mini (256 envs, 750 steps, CPU). Kaggle fk-scratch pair still RUNNING;
+  Kaggle quota 5.55 of 30 h used at 00:45. Modal: no live apps; the one alert email is the 20:42 incident, closed.
+- Plan written: `UNIVERSAL-PLAN.md`. No training launched; waiting for Shawn's go.
+- 01:05-01:27 Shawn's two questions after the fq2 walk video (relayed): toe-out, and bending/head motion with the
+  pack. Evaluation only, Mac mini, `style_eval.py` + `style_probe.sh`, results `out/style_bend_head.json`.
+  Toe-out (stance foot yaw against the trunk, from the start pose): walk61 no pack 7.3 / 4.2 deg, fq2 with the pack
+  21.3 / 22.2 deg; hip yaw -21.1 / +22.7 against -6.1 / +3.2 (gain foot/hip about -1), hip roll's 5 deg inward stance
+  gone, step width 119 against 94 mm, trunk yaw oscillation unchanged (2.3 against 2.5 deg). Present already in fw1
+  1250 (no torque hinge, 19-20 deg). Only leg-posture term: "pose" weight 1.0, hip yaw walking std 0.3 rad.
+  Bend (groundpick61 phase 0.33, PICKUP.md): with the pack 20/20 falls at 2.6 s (fq2 or fs1 in the stand slot), trunk
+  tips back to 72-79 deg nose-up, hip pitch p99 at 0.538. Without the pack the bend holds (mouth 2.1 cm) and 18/20 fall at
+  the 10.0 s hand-back to stand61 (current 960 g model; default model 0/3). Seeing pick not runnable with the flight
+  manifests ("repeated name 'jaw' in body"). Head scan standing: 0 falls (fq2, fs1), pitch excursion 2.6 / 4.6 deg;
+  walking with head pitch 0.5 and 1.1: fq2 0 falls, 0.105 m/s; walk61 without the pack stops walking at 1.1. Quack
+  tilts did not run in the probe (not counted). Plan sections 7 (style) and 8 (bend, head) added.
+- 01:29 Universal audit (Mac mini CPU, 256 envs, 750 steps, `out/universal_audit.json`): FAIL. Full pack: fq2 standing
+  under walk commands 0.821 of fq2 walking (gate 0.80) and higher tracking (1.107 against 1.062 per s); fq2 walks only
+  0.051 m/s in the training env; posture reward 0.80 standing against 0.32 walking. No pack: stand 0.774, shuffle 0.90,
+  fq2 0.78, all lose. Plan section 4 now asks for a tracking-weight change and re-audit before any launch.
