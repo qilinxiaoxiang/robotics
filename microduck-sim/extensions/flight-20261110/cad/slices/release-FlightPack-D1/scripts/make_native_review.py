@@ -34,7 +34,8 @@ for row in prep['rows']:
     a = Path(res['archive']['path']).resolve(); archives[str(a)] = sha(a)
 fl = lambda c, m, k: o[c, m]['firstLayerComparison'][f'{k}_1']['v111']
 parts = {c: [p['key'] for p in prep['parts'] if p['color'] == c] for c in COLOURS}
-notes = ('FlightPack-D1, geometry c31e5e2d. Orange plate at 100 % sparse infill (wing plate root band sized as solid PLA). '
+GEO = json.loads((REL / 'STATUS.json').read_text())['geometry']
+notes = (f"FlightPack-D1, geometry: world STL sha256[:12] in STATUS.json (wing_plate {GEO['wing_plate']}). Orange plate at 100 % sparse infill (wing plate root band sized as solid PLA). "
          'First layer, Bambu / Elegoo: '
          + '; '.join(f"{k} {fl(c, 'Bambu', k)} / {fl(c, 'Elegoo', k)} mm2" for c in COLOURS for k in parts[c]) + '. '
          'No support regions apply (review_fp.py reports support, does not limit it). Brims as planned (review_brim.py).')

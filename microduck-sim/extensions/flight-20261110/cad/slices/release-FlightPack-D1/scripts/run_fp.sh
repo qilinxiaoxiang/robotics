@@ -1,5 +1,5 @@
 #!/bin/zsh
-# FlightPack-D1 print release (geometry c31e5e2d): Orange (wing plate, trays L/R, FC bracket, 100 % infill) and Black (four
+# FlightPack-D1 print release (geometry: the world STL hashes in STATUS.json): Orange (wing plate, trays L/R, FC bracket, 100 % infill) and Black (four
 # nacelle clamp halves); X1C (Textured PEI), Elegoo Centauri Carbon and H2S. From guide/print/release-V1.41/scripts/run_v141.sh.
 # Every job runs under the bounded runner (10 minute cap); logs in logs/. The slicers (Bambu Studio, the pinned OrcaSlicer 2.4.2
 # image) exist only on the MacBook, so this runs here with per-job memory caps.

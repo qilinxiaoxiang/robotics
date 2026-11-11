@@ -38,6 +38,7 @@
     ]
    },
    "reason": "the hatch is held by foam tape on the robot (rule printed-latch-and-exit-checks, 2026-11-02) and its swing path in the guide is a chapter-12 matter; a separate guide fix removes this exception"
-  }
+  },
+  {"id": "A-LIFT-ONE-NACELLE", "what": "one-nacelle lift (2 kg by one front collar x 1.5) stays under the SF 2 target for release FlightPack-D1: SF 1.79 left / 1.73 right with the arm root wedge and slot corner fillet (1.67 / 1.70 without them)", "source": "Shawn 2026-11-10 '不用考虑极端情况' (relayed by the coordinator 2026-11-11, accepting these numbers); the flight guide says to pick the duck up by its body (guide commit 44ed0ada, steps 29, 31)", "evidence": "strength/README.md and results.json at 13955e83 on geometry 480610d1: thrust x 1.5 SF 2.9 L / 3.0 R; lift by one nacelle 1.67 L (y 40, 19.1 MPa) / 1.70 R (y -20.7, 18.8 MPa); variants wing_arm_root_wedge and wing_wedge_slot_corner: 1.79 L (y 20.7, 17.9 MPa) / 1.73 R (y -20.7, 18.5 MPa); the remaining cap is the band top edge at |y| 20.7, whose underside is held clear for the backpack top plugs (PETG about 2.1, PA-CF about 3.6); wing FEA rerun 2026-11-11 on the built plate with both fixes (linear wedge, R 2.5 arc fillet; h 0.6 hex on the Mac mini): lift left y 20.7 17.92 MPa, y 38.5 16.17, y 40 13.48; lift right y -20.7 18.54, y -33 17.88; thrust left y 40 6.66 (base 11.04), so 1.79 / 1.73 hold", "scope": "release FlightPack-D1 in plain PLA at 100 % infill; any geometry change at the root band, arm web or slots reruns the strength gate", "reason": "lifting by a nacelle is handling misuse the guide tells against; thrust and normal handling pass at SF 2.9 or better"}
  ]
 }

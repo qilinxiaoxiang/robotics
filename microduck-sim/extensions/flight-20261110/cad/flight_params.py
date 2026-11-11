@@ -228,6 +228,13 @@ WING = dict(
     # through the gusset's rear edge (x -64) so the left battery pigtail, soldered to the ESC on the bench, is laid in from
     # behind with its XT60 on (an XT60 does not pass an 8 x 12 window)
     gusset_window=dict(x=(-60.0, -52.0), z=(22.0, 34.0), open_rear=((37.9, 40.0), (52.5, 54.5)), x_open=-64.6),
+    # lift by one nacelle peaks at the top front corner (x -52, z 34) of the rear-open slots: R 2.5 corner fillet there
+    # (strength/README.md, variant wing_wedge_slot_corner, commit 13955e83)
+    slot_fillet_r=2.5,
+    # lift by one nacelle peaks where the arm web bottom (z 18) steps up from the transition column bottom (z 9):
+    # a web-depth wedge (x_back..x_front) under each arm, (|y|, z) profile ramping linearly from z 9 at |y| 37.85 to
+    # z 15.75 at |y| 43.9, flat to |y| 46 (strength/README.md, variant wing_arm_root_wedge)
+    arm_root_wedge=((37.85, 9.0), (43.9, 15.75), (46.0, 15.75), (46.0, 18.1), (37.85, 18.1)),
     # swap plugs 3 (XT30) + 4 (MR30): the backpack-side halves pass the wing centre with their leads on, plug axis along x;
     # world bp_swap_plugs bodies are 5.2 / 4.8 thick (x) and 10.2 wide, so the window is 7.0 high (backpack window 4.9)
     swap_window=dict(y=(-11.5, 11.5), z=(4.6, 11.6)),

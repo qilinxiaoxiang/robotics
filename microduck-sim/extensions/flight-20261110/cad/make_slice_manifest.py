@@ -1,4 +1,4 @@
-"""Write the slice manifest of the flight pack, geometry frozen at c31e5e2d (Shawn 2026-11-10 asked for slice files; the fans are
+"""Write the slice manifest of the flight pack, geometry as hashed in the release STATUS.json (Shawn 2026-11-10 asked for slice files; the fans are
 not in hand, so the nacelle bore follows the listing drawing and is confirmed on arrival; the release waits for the print gate). Two plates: Orange (wing plate, two battery trays, FC
 bracket) and Black (the four nacelle clamp halves; they do not fit beside the wing on one bed). Sources are cad/build/*-world.stl
 in the print poses of build_pack.POSES; profiles and the 89-record baseline stock come from guide/print/release-V1.41
@@ -54,7 +54,7 @@ def main():
     m = json.loads(BASE.read_text())
     build = json.loads((H / "build/build.json").read_text())
     reason = ("Flying MicroDuck four-EDF jetpack (Shawn 2026-11-10: '感觉还是4个电机好一点', '64太大太重了 就按50来做', '共用螺丝'). "
-              "Geometry frozen at c31e5e2d; the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing "
+              f"Geometry: world STL sha256[:12] in STATUS.json (wing_plate {json.loads((REL / 'STATUS.json').read_text())['geometry']['wing_plate']}); the fans are not in hand, so the nacelle bore and stops follow the ARESWEI listing drawing "
               "and are confirmed on arrival. New part: ")
     rows, placed = [], {}
     for key in POSES:

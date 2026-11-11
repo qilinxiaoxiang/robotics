@@ -120,6 +120,10 @@ def wing_plate():
             p.append(B(W["arm_x_rear"], xb + 0.01, g0, g1, z0, zt))
         for rf in W["root_fix"]:
             p.append(B(rf["x"][0], rf["x"][1], rf["y"][0], rf["y"][1], rf["z"][0], rf["z"][1]))
+        # arm root wedge: (|y|, z) profile extruded along x over the web depth (local a = |y|, b = z, c = x - xb)
+        wedge = m3.CrossSection([list(W["arm_root_wedge"])]).extrude(xf - xb)
+        wedge = wedge.transform(np.array([[0, 0, 1, xb], [1, 0, 0, 0], [0, 1, 0, 0]], float))
+        p.append(wedge if s > 0 else L.mirror_y(wedge))
         parts += p
     for (yb, zb_) in FCB_SCREWS:      # FC plate bosses on the right arm's flange rear edges
         z0, z1 = (zb, zb + 7.5) if zb_ < 40 else (zt - 7.5, zt)
@@ -171,6 +175,16 @@ def wing_plate():
     for (ya, yb_) in CAP_SLOTS:       # zip-tie slots around the ESC input capacitor lying on the right top flange
         cuts.append(L.box((CAP_SLOT_X[0], ya, zt - W["flange_t"] - 1), (CAP_SLOT_X[1], yb_, zt + 1)))
     w = w - L.union(cuts)
+    # R slot_fillet_r fillet in the top front corner (x gw x1, z gw z1) of each rear-open slot, across the gusset only
+    gw, r = W["gusset_window"], W["slot_fillet_r"]
+    gxf, gzt = gw["x"][1], gw["z"][1]
+    fil = []
+    for s in (1, -1):
+        for (g0, g1) in gw["open_rear"]:
+            y0, y1 = sorted((s * g0, s * g1))
+            sq = L.box((gxf - r, y0, gzt - r), (gxf + 0.01, y1, gzt + 0.01))
+            fil.append(sq - L.cyl(r, (gxf - r, y0 - 1, gzt - r), Y_AX, y1 - y0 + 2))
+    w = w + L.union(fil)
     named = dict(centre=centre)
     return w, named
 

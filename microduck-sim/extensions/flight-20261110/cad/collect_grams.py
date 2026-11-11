@@ -27,7 +27,8 @@ def main():
         for k in keys:
             parts[k] = round(h2s["filamentGrams"] * vol[k] / tot, 1)
         plates[colour] = p
-    out = dict(source="slices of release-FlightPack-D1, geometry c31e5e2d; parts split from the H2S plate grams by CAD volume (Generic PLA @BBL H2S, 0.20 mm Standard, release profile; Orange at 100 % infill)",
+    geo = json.loads((REL / "STATUS.json").read_text())["geometry"]
+    out = dict(source=f"slices of release-FlightPack-D1, geometry: world STL sha256[:12] in its STATUS.json (wing_plate {geo['wing_plate']}); parts split from the H2S plate grams by CAD volume (Generic PLA @BBL H2S, 0.20 mm Standard, release profile; Orange at 100 % infill)",
                plates=plates, parts=parts)
     (H / "slices" / "grams.json").write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
