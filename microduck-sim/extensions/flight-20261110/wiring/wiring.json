@@ -7,12 +7,32 @@
   "orderable": true,
   "blocks_order": [],
   "buy_with_order": [
-   "Female bullet connectors for the fan extensions",
+   "Capacitor in the Amazon order",
+   "3.5 mm female bullet connectors for the fan wires",
    "Heat-shrink tubing",
    "SH1.0 4-pin to 2.54 mm Dupont female cable, 30 cm",
-   "M3 nylon standoffs and nuts for the stack"
+   "M3 nylon standoffs, spacers and screws for the stack"
   ],
-  "note": "Every pin, wire and joint is defined. Four small items are not in any cart (MISSING.md). Open facts are confirmed on arrival and do not change what to buy."
+  "note": "Every pin, wire and joint is defined for the ARESWEI HDS001 fans. Tick the capacitor in the Amazon order and buy four small items that are in no cart (MISSING.md). Open facts (pole count, CW viewing side, hover current) are settled on the bench and do not change what to buy."
+ },
+ "fan": {
+  "model": "ARESWEI HDS001 50 mm 11-blade 4650KV 4S",
+  "kv": 4650,
+  "peak_A": 40.0,
+  "thrust_g": 980.0,
+  "thrust_V": 16.8,
+  "mass_g": 77,
+  "rotor_mm": 49.0,
+  "motor_od_mm": 22.86,
+  "lead_mm": 140,
+  "bullet": "3.5 mm",
+  "poles": null,
+  "sources": [
+   "areswei_cw",
+   "areswei_ccw",
+   "areswei_imgs"
+  ],
+  "note": "all fan figures are seller claims; pole count, lead gauge and CW viewing side not published"
  },
  "sources": {
   "ap_hwdef": {
@@ -87,6 +107,11 @@
    "quote": "QUAD MOTOR_FRAME_TYPE_X: {45, CCW, 1}, {-135, CCW, 3}, {-45, CW, 4}, {135, CW, 2}  (motor 1..4: angle, spin, test order)",
    "checked": "2026-11-10"
   },
+  "ap_blh_poles": {
+   "url": "https://github.com/ArduPilot/ardupilot/blob/Copter-4.6.3/libraries/AP_BLHeli/AP_BLHeli.cpp",
+   "quote": "SERVO_BLH_POLES: \"This allows calculation of true RPM from ESC's eRPM. The default is 14.\" (the RPM feeds logs and the ESC-telemetry harmonic notch, INS_HNTCH_MODE 3)",
+   "checked": "2026-11-10"
+  },
   "ap_wiki_motors": {
    "url": "https://ardupilot.org/copter/docs/connect-escs-and-motors.html",
    "quote": "Motor Direction is reversed simply by interchanging two of the three ESC to motor power leads.",
@@ -129,15 +154,36 @@
    "quote": "A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud; overlays zz-duck-twi7-engine, zz-duck-twi0-touch, zz-duck-i2s0-din3, sun60iw2p1-i2s0-2ch; no UART4 overlay recorded",
    "checked": "2026-11-10"
   },
-  "qx_listing": {
-   "url": "https://qwinout.com/products/qx-motor-qf2611-3300-4000kv-4600kv-5000kv-brushless-motor-cw-ccw-3-4s-50mm-12-paddle-edf-ducted-fan-for-fms-rc-plane-helicopter",
-   "quote": "Configuration: 9N6P ... Weight: 76g ... Max continuous power: 550w ... Max continuous current: 45A; no lead length, gauge or bullet size given",
+  "areswei_cw": {
+   "url": "https://www.amazon.com/dp/B0H4KJLR6P",
+   "quote": "SELLER CLAIM: \"50mm EDF Ducted Fan 11-Blade 4650KV 4S 40A 14.8V, CW\" ... \"Green coded motor runs clockwise\" ... \"Delivers up to 980g static thrust at full charged 16.8V with peak working current of 40A\" ... \"Pre-wired 3.5mm bullet connectors\" ... \"49mm rotor, 60mm outer duct, total 77g\"; no pole count, wire gauge or viewing side for CW",
    "checked": "2026-11-10"
   },
-  "qx_photo": {
-   "url": "https://cdn.shopify.com/s/files/1/0070/9473/0823/products/QX-MOTOR-QF2611-3300-4000KV-4600KV-5000KV-Brushless-Motor-CW-CCW-3-4S-50mm-12-Paddle.jpg",
-   "local": "sources/qx-qf2611-leads.jpg",
-   "quote": "three leads red/black/yellow ending in heat-shrunk gold male bullets; scaled on the 25.8 mm can: lead OD about 1.7 mm, bullet tip about 1-2 mm (inference)",
+  "areswei_ccw": {
+   "url": "https://www.amazon.com/dp/B0H4KSDT77",
+   "quote": "SELLER CLAIM: \"Red coded motor runs counterclockwise\" ... same 4650KV, 40A peak, 980 g at 16.8 V, 3.5 mm bullets, 77 g",
+   "checked": "2026-11-10"
+  },
+  "areswei_imgs": {
+   "url": "https://www.amazon.com/dp/B0H4KJLR6P (listing images, m.media-amazon.com/images/I/61Ah-2i0xEL and siblings)",
+   "local": "sources/areswei-hds001-listing-images.jpg",
+   "quote": "SELLER DRAWING: lead length labelled \"55.1 inch\" (a misplaced decimal: drawn to scale the leads are about 2.3x the 1.9 in fan, i.e. 5.51 in = 140 mm, inference); motor can \"0.9 inch\"; three leads black/red/yellow from the motor end, gold male bullets under red/black/yellow shrink",
+   "checked": "2026-11-10"
+  },
+  "am32_src": {
+   "url": "https://github.com/am32-firmware/AM32/blob/077b6a49852a1d5642d89ccc4d1259cb8e3802dd/Src/main.c",
+   "local": "sources/am32-main.c",
+   "quote": "motor_poles appears only in: low_rpm_level = motor_kv / 100 / rpm_level_div; high_rpm_level = motor_kv / 12 / rpm_level_div (rpm_level_div = 32 / motor_poles; the low-RPM duty-limit window, line 812-817); the sine-start step delay (line 2491); and the RPM speed-control target (lines 1337, 2023). Commutation follows the back-EMF zero crossings and does not read motor_poles",
+   "checked": "2026-11-10"
+  },
+  "lead_lengths": {
+   "url": "file: microduck-sim/extensions/flight-20261110/cad/checks/lead_lengths.json (commit ce57adc9)",
+   "quote": "routed: fan FL 275 mm, RL 184, FR 132, RR 47; battery L 209 (pigtail 230), R 63 (pigtail 90); capacitor end face 8.3 mm from each tab; A7Z to FC route 136, needed 170",
+   "checked": "2026-11-10"
+  },
+  "fan_change": {
+   "url": "file: microduck-sim/extensions/flight-20261110/procurement.json key fan_change_2026_11_10; CURRENT-STATE.json parts_flight_pack",
+   "quote": "Fans changed from QX QF2611 4000KV (qwinout) to ARESWEI HDS001 4650KV (Amazon) ... capacitor B0FVG77HZV in cart but unticked, not in this order ... placed: false",
    "checked": "2026-11-10"
   },
   "cnhl": {
@@ -181,8 +227,8 @@
    "checked": "2026-11-10"
   },
   "mass_v6": {
-   "url": "file: microduck-sim/extensions/flight-20261110/mass_budget.json (cases \"v6 CAD, fans 80 g\" / \"113 g\") and leg_load.json",
-   "quote": "v6 pack 927 g (80 g fans) / 1059 g (113 g fans); duck 960.5 g; totals 1887 / 2019 g",
+   "url": "file: microduck-sim/extensions/flight-20261110/leg_load.json (case \"v6 CAD, fans 80 g\": total_g 1883) and the coordinator brief of 2026-11-10 (all-up 1883 to 1897 g with the ARESWEI fans)",
+   "quote": "\"v6 CAD, fans 80 g\": pack_g 922, total_g 1883; coordinator: all-up 1883 to 1897 g",
    "checked": "2026-11-10"
   },
   "pet_log": {
@@ -445,73 +491,77 @@
    }
   },
   "fan_FR": {
-   "name": "QX-Motor QF2611 4000KV 50 mm EDF, front right (CCW unit)",
+   "name": "ARESWEI HDS001 50 mm 11-blade 4650KV EDF, front right (CCW unit, red motor, Amazon B0H4KSDT77)",
    "where": "right nacelle, front",
    "connectors": {
     "LEADS": {
-     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "type": "three factory leads (red, black, yellow), about 140 mm, pre-fitted 3.5 mm male bullets (seller claim); gauge not published",
      "pins": [
       "red",
       "black",
       "yellow"
      ],
      "sources": [
-      "qx_photo",
-      "qx_listing"
+      "areswei_cw",
+      "areswei_ccw",
+      "areswei_imgs"
      ]
     }
    }
   },
   "fan_RR": {
-   "name": "QX-Motor QF2611 4000KV 50 mm EDF, rear right (CW unit)",
+   "name": "ARESWEI HDS001 50 mm 11-blade 4650KV EDF, rear right (CW unit, green motor, Amazon B0H4KJLR6P)",
    "where": "right nacelle, rear",
    "connectors": {
     "LEADS": {
-     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "type": "three factory leads (red, black, yellow), about 140 mm, pre-fitted 3.5 mm male bullets (seller claim); gauge not published",
      "pins": [
       "red",
       "black",
       "yellow"
      ],
      "sources": [
-      "qx_photo",
-      "qx_listing"
+      "areswei_cw",
+      "areswei_ccw",
+      "areswei_imgs"
      ]
     }
    }
   },
   "fan_FL": {
-   "name": "QX-Motor QF2611 4000KV 50 mm EDF, front left (CW unit)",
+   "name": "ARESWEI HDS001 50 mm 11-blade 4650KV EDF, front left (CW unit, green motor, Amazon B0H4KJLR6P)",
    "where": "left nacelle, front",
    "connectors": {
     "LEADS": {
-     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "type": "three factory leads (red, black, yellow), about 140 mm, pre-fitted 3.5 mm male bullets (seller claim); gauge not published",
      "pins": [
       "red",
       "black",
       "yellow"
      ],
      "sources": [
-      "qx_photo",
-      "qx_listing"
+      "areswei_cw",
+      "areswei_ccw",
+      "areswei_imgs"
      ]
     }
    }
   },
   "fan_RL": {
-   "name": "QX-Motor QF2611 4000KV 50 mm EDF, rear left (CCW unit)",
+   "name": "ARESWEI HDS001 50 mm 11-blade 4650KV EDF, rear left (CCW unit, red motor, Amazon B0H4KSDT77)",
    "where": "left nacelle, rear",
    "connectors": {
     "LEADS": {
-     "type": "three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)",
+     "type": "three factory leads (red, black, yellow), about 140 mm, pre-fitted 3.5 mm male bullets (seller claim); gauge not published",
      "pins": [
       "red",
       "black",
       "yellow"
      ],
      "sources": [
-      "qx_photo",
-      "qx_listing"
+      "areswei_cw",
+      "areswei_ccw",
+      "areswei_imgs"
      ]
     }
    }
@@ -579,14 +629,14 @@
    "wire": {
     "gauge_awg": 12,
     "colour": "red",
-    "length_mm": 40,
-    "length_basis": "route 35 mm incl. x1.15 slack (bay behind the right arm web); CAD claim 100 mm",
+    "length_mm": 90,
+    "length_basis": "CAD routed 63 mm + 20 mm (FC plate lead window, up between plate and ESC); own polyline estimate 35 mm",
     "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
    },
    "sources": [
     "mico_esc_img",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -654,14 +704,14 @@
    "wire": {
     "gauge_awg": 12,
     "colour": "black",
-    "length_mm": 40,
-    "length_basis": "route 35 mm incl. x1.15 slack (bay behind the right arm web); CAD claim 100 mm",
+    "length_mm": 90,
+    "length_basis": "CAD routed 63 mm + 20 mm (FC plate lead window, up between plate and ESC); own polyline estimate 35 mm",
     "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
    },
    "sources": [
     "mico_esc_img",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -729,14 +779,14 @@
    "wire": {
     "gauge_awg": 12,
     "colour": "red",
-    "length_mm": 260,
-    "length_basis": "route 250 mm incl. x1.15 slack (cross harness behind the backpack cap); CAD claim 220 mm",
+    "length_mm": 230,
+    "length_basis": "CAD routed 209 mm + 20 mm (cross harness behind the backpack cap); own polyline estimate 250 mm",
     "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
    },
    "sources": [
     "mico_esc_img",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -804,14 +854,14 @@
    "wire": {
     "gauge_awg": 12,
     "colour": "black",
-    "length_mm": 260,
-    "length_basis": "route 250 mm incl. x1.15 slack (cross harness behind the backpack cap); CAD claim 220 mm",
+    "length_mm": 230,
+    "length_basis": "CAD routed 209 mm + 20 mm (cross harness behind the backpack cap); own polyline estimate 250 mm",
     "source": "12 AWG silicone: RoboClub stock (Shawn 2026-11-10 \"XT60和线\"; gauge in stock not confirmed)"
    },
    "sources": [
     "mico_esc_img",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -840,15 +890,16 @@
     "joint": "soldered"
    },
    "wire": {
-    "gauge_awg": 16,
-    "colour": "red",
-    "length_mm": 30,
-    "length_basis": "capacitor lead end (y -54) to the + tab, x1.15; leg plus a 16 AWG extension if the leg is shorter",
-    "source": "capacitor: Amazon cart; extension: RoboClub wire"
+    "gauge_awg": null,
+    "colour": "capacitor leg",
+    "length_mm": null,
+    "length_basis": "CAD now seats the capacitor end face 8.3 mm from each tab: the legs reach the tabs directly, no wire",
+    "source": "capacitor B0FVG77HZV: in the Amazon cart but UNTICKED in the 2026-11-10 checkout readback (MISSING.md)"
    },
    "sources": [
     "mico_esc_wiring",
-    "cad"
+    "lead_lengths",
+    "fan_change"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -877,15 +928,16 @@
     "joint": "soldered"
    },
    "wire": {
-    "gauge_awg": 16,
-    "colour": "black",
-    "length_mm": 30,
-    "length_basis": "capacitor lead end (y -54) to the + tab, x1.15; leg plus a 16 AWG extension if the leg is shorter",
-    "source": "capacitor: Amazon cart; extension: RoboClub wire"
+    "gauge_awg": null,
+    "colour": "capacitor leg",
+    "length_mm": null,
+    "length_basis": "CAD now seats the capacitor end face 8.3 mm from each tab: the legs reach the tabs directly, no wire",
+    "source": "capacitor B0FVG77HZV: in the Amazon cart but UNTICKED in the 2026-11-10 checkout readback (MISSING.md)"
    },
    "sources": [
     "mico_esc_wiring",
-    "cad"
+    "lead_lengths",
+    "fan_change"
    ],
    "verified": true,
    "verified_date": "2026-11-10",
@@ -916,15 +968,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "red",
-    "length_mm": 100,
-    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 40,
+    "length_basis": "CAD routed 132 mm + 20 mm - 140 mm fan lead = 12 mm -> 40 mm stub only (carries the female bullet); 28 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -955,15 +1008,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "yellow",
-    "length_mm": 100,
-    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 40,
+    "length_basis": "CAD routed 132 mm + 20 mm - 140 mm fan lead = 12 mm -> 40 mm stub only (carries the female bullet); 28 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -994,15 +1048,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "black",
-    "length_mm": 100,
-    "length_basis": "route 156 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 80 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 40,
+    "length_basis": "CAD routed 132 mm + 20 mm - 140 mm fan lead = 12 mm -> 40 mm stub only (carries the female bullet); 28 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1034,14 +1089,15 @@
     "gauge_awg": 16,
     "colour": "red",
     "length_mm": 40,
-    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_basis": "CAD routed 47 mm + 20 mm - 140 mm fan lead = -73 mm -> 40 mm stub only (carries the female bullet); 113 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1073,14 +1129,15 @@
     "gauge_awg": 16,
     "colour": "yellow",
     "length_mm": 40,
-    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_basis": "CAD routed 47 mm + 20 mm - 140 mm fan lead = -73 mm -> 40 mm stub only (carries the female bullet); 113 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1112,14 +1169,15 @@
     "gauge_awg": 16,
     "colour": "black",
     "length_mm": 40,
-    "length_basis": "route 46 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 50 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_basis": "CAD routed 47 mm + 20 mm - 140 mm fan lead = -73 mm -> 40 mm stub only (carries the female bullet); 113 mm of fan lead spare, folded and tied in the arm bay",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1150,15 +1208,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "red",
-    "length_mm": 280,
-    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 160,
+    "length_basis": "CAD routed 275 mm + 20 mm - 140 mm fan lead = 155 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1189,15 +1248,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "yellow",
-    "length_mm": 280,
-    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 160,
+    "length_basis": "CAD routed 275 mm + 20 mm - 140 mm fan lead = 155 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1228,15 +1288,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "black",
-    "length_mm": 280,
-    "length_basis": "route 330 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 250 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 160,
+    "length_basis": "CAD routed 275 mm + 20 mm - 140 mm fan lead = 155 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1267,15 +1328,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "red",
-    "length_mm": 160,
-    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 70,
+    "length_basis": "CAD routed 184 mm + 20 mm - 140 mm fan lead = 64 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1306,15 +1368,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "yellow",
-    "length_mm": 160,
-    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 70,
+    "length_basis": "CAD routed 184 mm + 20 mm - 140 mm fan lead = 64 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1345,15 +1408,16 @@
    "wire": {
     "gauge_awg": 16,
     "colour": "black",
-    "length_mm": 160,
-    "length_basis": "route 220 mm (x1.15) minus the 70 mm fan lead plus 10 mm; CAD claim 200 mm",
-    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); female bullets: NOT in stock or cart (MISSING.md)"
+    "length_mm": 70,
+    "length_basis": "CAD routed 184 mm + 20 mm - 140 mm fan lead = 64 mm",
+    "source": "16 AWG silicone: RoboClub stock (Shawn \"XT60和线\"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)"
    },
    "sources": [
     "mico_esc_img",
-    "qx_photo",
+    "areswei_cw",
+    "areswei_imgs",
     "powerstream",
-    "cad"
+    "lead_lengths"
    ],
    "verified": false,
    "verified_date": "2026-11-10",
@@ -1857,7 +1921,7 @@
     "gauge_awg": 28,
     "colour": "black",
     "length_mm": 300,
-    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "length_basis": "CAD route 136 mm, needed 170 mm with plug slack (housing tops, along the header strip, right saddle side wall top, outboard of the rear window, y -35 behind the transition column, FC UART1 on the top edge); the 300 mm lead leaves the rest tied",
     "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
    },
    "sources": [
@@ -1896,7 +1960,7 @@
     "gauge_awg": 28,
     "colour": "yellow",
     "length_mm": 300,
-    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "length_basis": "CAD route 136 mm, needed 170 mm with plug slack (housing tops, along the header strip, right saddle side wall top, outboard of the rear window, y -35 behind the transition column, FC UART1 on the top edge); the 300 mm lead leaves the rest tied",
     "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
    },
    "sources": [
@@ -1935,7 +1999,7 @@
     "gauge_awg": 28,
     "colour": "green",
     "length_mm": 300,
-    "length_basis": "estimate 236 mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)",
+    "length_basis": "CAD route 136 mm, needed 170 mm with plug slack (housing tops, along the header strip, right saddle side wall top, outboard of the rear window, y -35 behind the transition column, FC UART1 on the top edge); the 300 mm lead leaves the rest tied",
     "source": "SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper"
    },
    "sources": [
@@ -1989,14 +2053,16 @@
    "id": "motor_map",
    "title": "ArduPilot Quad-X numbering, spin, ESC pad sets",
    "status": "pass",
-   "evidence": "AP_MotorsMatrix QUAD X: motor 1 at +45 deg (front right) CCW, motor 2 at -135 (rear left) CCW, motor 3 at -45 (front left) CW, motor 4 at +135 (rear right) CW. ESC stood behind the right arm with tabs up puts pad sets 1 and 2 on the outboard (right) edge and 3 and 4 on the inboard edge, so outputs are remapped: SERVO1_FUNCTION 33 (pad 1 -> FR, motor 1), SERVO2_FUNCTION 36 (pad 2 -> RR, motor 4), SERVO3_FUNCTION 35 (pad 3 -> FL, motor 3), SERVO4_FUNCTION 34 (pad 4 -> RL, motor 2). CW units go front-left and rear-right, CCW units front-right and rear-left (spin seen from above = from the inlet, since the inlets face up). Direction: an EDF rotor is handed, so each unit must turn its own way to blow down; set it by swapping two leads at the bullets (ArduPilot wiki) or the AM32 \"Reversed\" box (MicoAir AM32 page).",
+   "evidence": "AP_MotorsMatrix QUAD X: motor 1 at +45 deg (front right) CCW, motor 2 at -135 (rear left) CCW, motor 3 at -45 (front left) CW, motor 4 at +135 (rear right) CW. ESC stood behind the right arm with tabs up puts pad sets 1 and 2 on the outboard (right) edge and 3 and 4 on the inboard edge, so outputs are remapped: SERVO1_FUNCTION 33 (pad 1 -> FR, motor 1), SERVO2_FUNCTION 36 (pad 2 -> RR, motor 4), SERVO3_FUNCTION 35 (pad 3 -> FL, motor 3), SERVO4_FUNCTION 34 (pad 4 -> RL, motor 2). Rotor spin seen from above (= from the inlet, inlets face up) must be CW at front-left and rear-right, CCW at front-right and rear-left. ARESWEI sells handed units: green motor = \"CW\" (B0H4KJLR6P), red motor = \"CCW\" (B0H4KSDT77) (seller claims), so planned placement is green at FL and RR, red at FR and RL, if the seller's CW is seen from the inlet. Direction: an EDF rotor is handed, so each unit must turn its own way to blow down; set it by swapping two leads at the bullets (ArduPilot wiki) or the AM32 \"Reversed\" box (MicoAir AM32 page).",
    "sources": [
     "ap_motors",
     "ap_wiki_motors",
     "mico_esc_am32",
-    "ap_params_463"
+    "ap_params_463",
+    "areswei_cw",
+    "areswei_ccw"
    ],
-   "open": "Which way QX means by \"CW\" (from the inlet or the exhaust) is not published: confirm at the first motor test (air must leave downward; the unit's rotation seen from above must match the map). If both CW units turn out CCW seen from above, swap the fans left-right between nacelles (no part changes). Pad 1 = connector M1 is the silkscreen convention; Mission Planner motor test confirms output-to-pad before any fan is mounted."
+   "open": "Which end ARESWEI's \"CW\" is seen from is not published. Rotation procedure, before the fans go into the nacelles (fan held in a clamp, inlet up, nothing near the inlet; Mission Planner Motor Test, 5 % for 2 s, one output at a time): (1) the motor test letter A to D must spin the fan planned for it (A = motor 1 FR, B = motor 4 RR, C = motor 2 RL, D = motor 3 FL in Quad-X test order); (2) airflow: a paper strip at the lip is pulled in and one under the motor end is blown away; if the air runs backwards, swap any two bullets of that fan (or tick AM32 Reversed) and repeat; (3) with air flowing the right way, look into the inlet from above: FL and RR must turn clockwise, FR and RL counterclockwise. If a green unit turns counterclockwise from above when it blows the right way, the seller's CW is seen from the motor end: swap green and red units side to side (FL<->FR, RR<->RL; re-plug the bullets, no soldering) and repeat (2) and (3). A unit in the wrong place still lifts but its torque reverses the yaw control, so the duck spins at take-off: step (3) is not optional."
   },
   {
    "id": "mtf01",
@@ -2030,29 +2096,31 @@
    "id": "power_path",
    "title": "Two packs in parallel into the ESC tabs; currents vs ratings",
    "status": "unknown",
-   "evidence": "Mass used: v6 CAD 1888 g all-up with 80 g fans (2020 g with 113 g fans); hover thrust 472-505 g per fan. Hover current per fan 13.0-26.5 A (three methods: {'vendor': [13.0, 14.4], 'bench': [23.9, 26.5], 'momentum': [22.9, 25.3]}), total 52-106 A. Peak per fan 45 A (listing max continuous), 180 A total uncapped. Right pack share 54% (shorter pigtail). Per pack: hover 28.2-57.4 A, peak 97.6 A uncapped, 59.6 A with MOT_BAT_CURR_MAX 110. Ratings: ESC 55 A per channel vs fan 45 A max: pass. Pack 130C x 1.3 Ah = 169 A claimed: pass. XT60 (Amass) rated 30 A, max 60 A: hover may exceed the 30 A rating on the worst case; peaks stay at or under 60 A only with the MOT_BAT_CURR_MAX cap. 12 AWG chassis 41 A: hover at most at that rating, flights 1-1.5 min. 16 AWG chassis 22 A vs per-fan hover rms (0.82 x DC in six-step) and 45 A bursts: see motor_leads. Harness: one male XT60 pigtail per pack, both soldered to the same ESC tab pair; no Y-splice.",
+   "evidence": "Mass used: all-up 1883 to 1897 g with the ARESWEI fans; hover thrust 471-474 g per fan (48 % of the seller's 980 g). Hover current per fan 15.1-28.1 A (three methods: {'vendor': [15.1, 15.3], 'bench': [27.8, 28.1], 'momentum': [22.5, 22.8]}; {'vendor': 'P = 672 W x (T / 980 g)^1.5 / 14.8 V (seller point 980 g at 16.8 V and 40 A, momentum-theory scaling)', 'bench': 'same with max thrust 2/3 of the seller figure (independent tests of similar 50 mm fans, PET log)', 'momentum': 'ideal annulus power / 0.5 (rotor 49.0 mm, hub 23 mm, seller drawing)'}), total 60-112 A. Peak per fan 40 A (seller claim, \"peak working current of 40A\" at 16.8 V), 160 A total uncapped. Right pack share 53% (shorter pigtail). Per pack: hover 31.8-59.2 A, peak 84.3 A uncapped, 57.9 A with MOT_BAT_CURR_MAX 110. Ratings: ESC 55 A per channel vs fan 40 A peak: pass (15 A margin). Pack 130C x 1.3 Ah = 169 A claimed vs at most 84.3 A per pack: pass. XT60 (Amass) rated 30 A, max 60 A: low hover case inside the rating, high hover case at the maximum; peaks stay at or under 60 A only with the MOT_BAT_CURR_MAX cap. 12 AWG chassis 41 A: hover at most at that figure, flights 1-1.5 min. 16 AWG chassis 22 A vs per-fan hover rms (0.82 x DC in six-step) and 40 A bursts: see motor_leads. Harness: one male XT60 pigtail per pack, both soldered to the same ESC tab pair; no Y-splice.",
    "sources": [
     "mass_v6",
     "pet_log",
-    "qx_listing",
+    "areswei_cw",
+    "areswei_imgs",
     "cnhl",
     "amass_xt60",
     "powerstream",
-    "mico_esc"
+    "mico_esc",
+    "lead_lengths"
    ],
-   "open": "The hover current spans 2x between methods (13 vs 26 A per fan) and decides the outcome. Low case (about 52 A total): each XT60 carries about 28 A, inside its 30 A rating, and the 110 A cap leaves 2x control headroom. High case (about 106 A total): each XT60 carries about 57 A continuous, at its 60 A maximum, and the 110 A cap leaves almost no headroom, so the cap would have to rise and the XT60s would run above rating; the fix then is soldering the pack leads straight to the pigtails or XT90 connectors (no change to what is ordered: the packs and wire stay the same). Decided by the first tethered hover: read BATT current (after BATT_AMP_PERVLT 78.43) and feel the XT60 bodies after 60 s. A flight-envelope limit, not a wiring blocker."
+   "open": "The hover current spans about 2x between methods (15.1 vs 28.1 A per fan) and decides the outcome. Low case (about 60 A total): the right XT60 carries about 31.8 A, at about its 30 A rating, and the 110 A cap leaves about 1.8x control headroom. High case (about 112 A total): the right XT60 carries about 59.2 A continuous, at its 60 A maximum, and hover alone reaches the 110 A cap, so it cannot climb; the cap would have to rise and the XT60s would run above their maximum. The fix then is soldering the pack leads straight to the pigtails or fitting XT90s (nothing different to order now: the packs and wire stay). Decided by the first tethered hover: read BATT current (after BATT_AMP_PERVLT 78.43) and feel the XT60 bodies after 60 s. A flight-envelope limit, not a wiring blocker."
   },
   {
    "id": "capacitor",
    "title": "Capacitor place, polarity, lead length",
    "status": "pass",
-   "evidence": "Across the ESC battery tabs, as the maker diagram shows; 35 V on a 16.8 V pack. CAD places it lying on the right arm top flange, lead end about 30 mm from the + tab: each leg reaches the tab with a short 16 AWG extension if the leg is shorter, soldered on the tab together with the two pigtails. Long leg / side without the stripe to +. Left battery loop is long (about 0.3 m with the pack lead); forum practice adds 220-440 uF per 10 cm beyond 40 cm: 1000 uF low-ESR at the tabs covers it, and the right pack (short lead) sits in parallel.",
+   "evidence": "Across the ESC battery tabs, as the maker diagram shows; 35 V on a 16.8 V pack. CAD (lead_lengths.json) now seats it with its end face 8.3 mm from each tab, so the legs are soldered straight onto the tabs together with the two pigtails: no extension wire, no extra joint. Long leg / side without the stripe to +. Left battery loop is long (pigtail 230 mm plus the pack lead); forum practice adds 220-440 uF per 10 cm beyond 40 cm: 1000 uF low-ESR at the tabs covers it, and the right pack (90 mm pigtail) sits in parallel.",
    "sources": [
     "mico_esc_wiring",
-    "cad",
+    "lead_lengths",
     "esc_lead_practice"
    ],
-   "open": "Rubycon leg length not published; if the legs reach the tabs directly, no extension and two fewer joints. Moving the capacitor so its legs touch the tabs is a CAD option."
+   "open": "The capacitor (Amazon B0FVG77HZV) was unticked in the 2026-11-10 Amazon checkout readback (procurement.json fan_change_2026_11_10): tick it before placing that order (MISSING.md)."
   },
   {
    "id": "grounds",
@@ -2070,14 +2138,15 @@
    "id": "motor_leads",
    "title": "Motor lead length and extensions",
    "status": "pass",
-   "evidence": "Fan leads about 70 mm (not published; photo estimate). Routed lengths from the CAD geometry (x1.15): FR 156 mm -> extension 100 mm, RR 46 mm -> extension 40 mm, FL 330 mm -> extension 280 mm, RL 220 mm -> extension 160 mm (CAD agent claimed FL 250, RL 200, FR 80, RR 50). Every fan needs an extension: 16 AWG silicone, female bullet at the fan end, soldered to the ESC pad. Factory leads look about 1.7 mm OD (about 18 AWG, inference), so 16 AWG does not bottleneck them. 16 AWG over 0.29 m at 45 A: 13.2 mOhm/m, two phases conduct, drop about 0.34 V (2.3 %); rms per phase about 37 A, above the 22 A chassis figure, so full throttle is a burst of seconds; hover rms 10-20 A is within it. Long motor leads with short battery leads is the ESC-friendly split; here the left side has both, unavoidable with one ESC on the right.",
+   "evidence": "Fan leads about 140 mm with 3.5 mm male bullets (seller: \"Pre-wired 3.5mm bullet connectors\"; the drawing label reads \"55.1 inch\", a misplaced decimal: drawn to scale the leads are 5.5 in). Routed distances from cad/checks/lead_lengths.json, extension = route + 20 mm - lead: FR 132 mm -> lead reaches; 40 mm stub, 28 mm spare lead tied, RR 47 mm -> lead reaches; 40 mm stub, 113 mm spare lead tied, FL 275 mm -> 160 mm extension, RL 184 mm -> 70 mm extension. Every pad set still gets three 16 AWG wires with a 3.5 mm female bullet: the bullet needs a wire to sit on and the fan must unplug at its nacelle. 16 AWG over 160 mm at 40 A: 13.2 mOhm/m, two phases conduct, drop about 0.17 V; rms per phase about 33 A, above the 22 A chassis figure, so full throttle is a burst of seconds; hover rms 12-23 A is at that figure. Fan lead gauge is not published. Long motor leads with short battery leads is the ESC-friendly split; the left side has both, unavoidable with one ESC on the right.",
    "sources": [
-    "qx_photo",
-    "cad",
+    "areswei_cw",
+    "areswei_imgs",
+    "lead_lengths",
     "powerstream",
     "esc_lead_practice"
    ],
-   "open": "Bullet size: the listing does not say; photo scale points to 2.0 mm, not the 3.5 mm the CAD agent assumed. Measure on arrival; MISSING.md buys both sizes so either fits."
+   "open": "Lead length and bullet size are seller figures: measure on arrival (2026-11-12). If a lead is shorter than 140 mm, the FL and RL extensions grow by the difference (cut from the same 16 AWG stock)."
   },
   {
    "id": "charger",
@@ -2115,72 +2184,74 @@
   },
   {
    "id": "am32_poles",
-   "title": "AM32 motor poles and KV (found while checking)",
-   "status": "fail",
-   "evidence": "QF2611 is 9N6P (6 magnet poles); AM32 default is 14 poles, KV 2220 (MicoAir). Set Motor poles 6 and KV 4000 in AM32 on all four ESCs, and SERVO_BLH_POLES 6 in ArduPilot for bidirectional DShot RPM.",
+   "title": "AM32 motor KV and pole count",
+   "status": "unknown",
+   "evidence": "KV 4650 (seller claim) replaces the AM32 default 2220 (MicoAir AM32 page). The pole count is not published. What a wrong value affects, from the AM32 source (main.c at 077b6a4): motor_poles never enters commutation, which follows the back-EMF zero crossings; it only scales the low-RPM duty-limit window (low_rpm_level = KV / 100 / (32 / poles), high_rpm_level = KV / 12 / (32 / poles)), the sine-start step (only with sine start on) and the RPM speed-control mode (not used with DShot throttle). A wrong count therefore shifts the start-up throttle limit, not whether the motor runs. In ArduPilot SERVO_BLH_POLES only converts eRPM to true RPM (\"This allows calculation of true RPM from ESC's eRPM\"): logs and the ESC-RPM harmonic notch filter would sit at the wrong frequency. Finding it on the bench: (a) look through the motor can vents and count the magnets (poles = magnets; small 50 mm EDF outrunners are commonly 12N14P or 9N6P, inference); (b) or with bidirectional DShot on, run one fan at a steady low throttle, read the ESC eRPM in Mission Planner (ESC telemetry with SERVO_BLH_POLES 2 gives eRPM directly), and record the fan sound with a phone spectrum app: the strongest line is the blade-passing frequency f = RPM / 60 x 11 blades, so poles = 2 x eRPM / (60 x f / 11).",
    "sources": [
-    "qx_listing",
+    "areswei_cw",
     "mico_esc_am32",
-    "mico_esc",
-    "ap_params_463"
+    "am32_src",
+    "ap_blh_poles"
    ],
-   "open": "Set through ArduPilot BLHeli passthrough (SERVO_BLH_AUTO 1) and the AM32 configurator."
+   "open": "Set AM32 Motor poles and SERVO_BLH_POLES to the counted value; until then leave 14 (the motor still commutates; only RPM readings and the low-RPM limit are off)."
   }
  ],
  "currents": {
   "duck_g": 960.5,
-  "pack_g_80": 927.0,
-  "pack_g_113": 1059.0,
-  "total_g_nominal": 1887.5,
-  "total_g_heavy": 2019.5,
+  "total_g_nominal": 1883.0,
+  "total_g_heavy": 1897.0,
+  "fan": "ARESWEI HDS001 50 mm 11-blade 4650KV 4S",
   "hover_thrust_per_fan_g": [
-   472,
-   505
+   471,
+   474
   ],
   "methods": {
    "vendor": [
-    13.0,
-    14.4
+    15.1,
+    15.3
    ],
    "bench": [
-    23.9,
-    26.5
+    27.8,
+    28.1
    ],
    "momentum": [
-    22.9,
-    25.3
+    22.5,
+    22.8
    ]
   },
   "method_notes": {
-   "vendor": "P = 550 W x (T / 950 g)^1.5 (vendor max thrust and power, momentum-theory scaling)",
-   "bench": "same with max thrust 2/3 of vendor (independent tests of similar 50 mm fans)",
-   "momentum": "ideal annulus power / 0.5 (bore 50.0 mm, hub 25.8 mm)"
+   "vendor": "P = 672 W x (T / 980 g)^1.5 / 14.8 V (seller point 980 g at 16.8 V and 40 A, momentum-theory scaling)",
+   "bench": "same with max thrust 2/3 of the seller figure (independent tests of similar 50 mm fans, PET log)",
+   "momentum": "ideal annulus power / 0.5 (rotor 49.0 mm, hub 23 mm, seller drawing)"
   },
   "hover_A_per_fan": [
-   13.0,
-   26.5
+   15.1,
+   28.1
   ],
   "hover_A_total": [
-   52,
-   106
+   60,
+   112
   ],
-  "peak_A_per_fan": 45.0,
-  "peak_A_total_uncapped": 180.0,
-  "pack_share_right": 0.542,
+  "peak_A_per_fan": 40.0,
+  "peak_A_total_uncapped": 160.0,
+  "pack_share_right": 0.527,
   "hover_A_right_pack": [
-   28.2,
-   57.4
+   31.8,
+   59.2
   ],
   "cap_MOT_BAT_CURR_MAX": 110.0,
-  "peak_A_right_pack_capped": 59.6,
-  "peak_A_right_pack_uncapped": 97.6,
-  "assumptions": "pack voltage 14.8 V nominal; pack internal resistance 12 mOhm (inference, not published); pigtail lengths from battery_route()"
+  "peak_A_right_pack_capped": 57.9,
+  "peak_A_right_pack_uncapped": 84.3,
+  "assumptions": "pack voltage 14.8 V nominal; pack internal resistance 12 mOhm (inference, not published); pigtail lengths from cad/checks/lead_lengths.json; fan figures are seller claims"
  },
  "lengths": {
   "fans": {
    "FR": {
-    "route_mm": 156,
-    "ext_mm": 100,
+    "route_mm": 132,
+    "ext_mm": 40,
+    "stub_only": true,
+    "spare_fan_lead_mm": 28,
+    "own_estimate_mm": 155,
     "pts": [
      [
       25.0,
@@ -2189,18 +2260,23 @@
      ],
      [
       25.0,
-      -73.8,
-      24.0
+      -78.0,
+      28.0
      ],
      [
       -45.0,
-      -73.8,
+      -73.75,
       29.0
      ],
      [
-      -55.2,
-      -73.8,
+      -52.0,
+      -73.75,
       29.0
+     ],
+     [
+      -60.0,
+      -76.5,
+      31.0
      ],
      [
       -80.0,
@@ -2210,8 +2286,11 @@
     ]
    },
    "RR": {
-    "route_mm": 46,
+    "route_mm": 47,
     "ext_mm": 40,
+    "stub_only": true,
+    "spare_fan_lead_mm": 113,
+    "own_estimate_mm": 46,
     "pts": [
      [
       -49.0,
@@ -2219,8 +2298,8 @@
       24.0
      ],
      [
-      -54.0,
-      -87.1,
+      -55.0,
+      -77.0,
       24.0
      ],
      [
@@ -2231,8 +2310,11 @@
     ]
    },
    "FL": {
-    "route_mm": 330,
-    "ext_mm": 280,
+    "route_mm": 275,
+    "ext_mm": 160,
+    "stub_only": false,
+    "spare_fan_lead_mm": 5,
+    "own_estimate_mm": 329,
     "pts": [
      [
       25.0,
@@ -2241,23 +2323,28 @@
      ],
      [
       25.0,
-      73.8,
-      24.0
+      78.0,
+      28.0
      ],
      [
       -45.0,
-      73.8,
+      73.75,
       29.0
      ],
      [
-      -52.2,
-      73.8,
+      -52.0,
+      73.75,
       29.0
      ],
      [
-      -50.4,
+      -56.0,
+      39.0,
+      28.0
+     ],
+     [
+      -56.0,
       35.1,
-      21.0
+      24.0
      ],
      [
       -83.7,
@@ -2267,11 +2354,6 @@
      [
       -83.7,
       -33.0,
-      10.0
-     ],
-     [
-      -80.0,
-      -36.1,
       10.0
      ],
      [
@@ -2282,8 +2364,11 @@
     ]
    },
    "RL": {
-    "route_mm": 220,
-    "ext_mm": 160,
+    "route_mm": 184,
+    "ext_mm": 70,
+    "stub_only": false,
+    "spare_fan_lead_mm": 6,
+    "own_estimate_mm": 221,
     "pts": [
      [
       -49.0,
@@ -2291,9 +2376,19 @@
       24.0
      ],
      [
-      -50.4,
+      -55.0,
+      77.0,
+      24.0
+     ],
+     [
+      -56.0,
+      39.0,
+      26.0
+     ],
+     [
+      -56.0,
       35.1,
-      21.0
+      24.0
      ],
      [
       -83.7,
@@ -2303,11 +2398,6 @@
      [
       -83.7,
       -33.0,
-      10.0
-     ],
-     [
-      -80.0,
-      -36.1,
       10.0
      ],
      [
@@ -2320,8 +2410,9 @@
   },
   "batteries": {
    "L": {
-    "route_mm": 250,
-    "pigtail_mm": 260,
+    "route_mm": 209,
+    "pigtail_mm": 230,
+    "own_estimate_mm": 250,
     "pts": [
      [
       -58.2,
@@ -2329,9 +2420,14 @@
       45.0
      ],
      [
-      -50.4,
+      -56.0,
+      39.0,
+      30.0
+     ],
+     [
+      -56.0,
       35.1,
-      21.0
+      24.0
      ],
      [
       -83.7,
@@ -2344,20 +2440,21 @@
       10.0
      ],
      [
-      -80.0,
-      -60.6,
-      10.0
+      -82.0,
+      -34.0,
+      64.0
      ],
      [
       -80.0,
-      -60.6,
-      60.6
+      -56.0,
+      62.0
      ]
     ]
    },
    "R": {
-    "route_mm": 35,
-    "pigtail_mm": 40,
+    "route_mm": 63,
+    "pigtail_mm": 90,
+    "own_estimate_mm": 35,
     "pts": [
      [
       -58.2,
@@ -2365,65 +2462,70 @@
       45.0
      ],
      [
-      -68.2,
+      -60.0,
       -61.0,
-      60.6
+      31.0
+     ],
+     [
+      -76.0,
+      -61.0,
+      31.0
+     ],
+     [
+      -76.0,
+      -61.0,
+      58.0
      ],
      [
       -80.0,
-      -60.6,
-      60.6
+      -58.0,
+      61.0
      ]
     ]
    }
   },
-  "a7z_link_mm": 236,
+  "a7z_link_mm": 170,
   "a7z_link_pts": [
    [
-    -15.0,
-    8.0,
-    50.0
+    -15.2,
+    6.3,
+    67.0
    ],
    [
-    -15.0,
-    8.0,
-    30.0
+    -15.2,
+    -33.4,
+    68.0
    ],
    [
-    -50.0,
-    20.0,
-    20.0
+    -46.8,
+    -33.4,
+    68.0
    ],
    [
-    -60.0,
-    30.0,
-    10.0
+    -48.8,
+    -35.0,
+    64.0
    ],
    [
-    -86.0,
-    0.0,
-    10.0
+    -84.0,
+    -35.0,
+    64.0
    ],
    [
-    -90.0,
-    -40.0,
-    30.0
-   ],
-   [
-    -96.0,
-    -54.7,
-    53.3
+    -88.6,
+    -56.0,
+    65.0
    ]
   ],
-  "capacitor_lead_mm": 30,
-  "fan_lead_assumed_mm": 70.0,
+  "capacitor_lead_mm": 0,
+  "fan_lead_assumed_mm": 140,
   "cad_agent_claims": {
-   "FL": 250,
-   "RL": 200,
-   "FR": 80,
-   "RR": 50,
-   "bat_L": 220,
-   "bat_R": 100
+   "FL": 230,
+   "RL": 140,
+   "FR": 90,
+   "RR": 40,
+   "bat_L": 230,
+   "bat_R": 90
   },
   "esc_pads_world": {
    "M1": [
@@ -2509,8 +2611,8 @@
    },
    {
     "name": "SERVO_BLH_POLES",
-    "value": 6,
-    "why": "QF2611 9N6P"
+    "value": "counted on the bench (14 until then)",
+    "why": "ARESWEI pole count not published; RPM display and the ESC-RPM notch only"
    },
    {
     "name": "BATT_MONITOR",
@@ -2615,14 +2717,14 @@
   ],
   "AM32 (each of the 4 ESCs)": [
    {
-    "name": "Motor poles",
-    "value": 6,
-    "why": "default 14"
+    "name": "Motor KV",
+    "value": 4650,
+    "why": "seller claim; default 2220"
    },
    {
-    "name": "Motor KV",
-    "value": 4000,
-    "why": "default 2220"
+    "name": "Motor poles",
+    "value": "counted on the bench",
+    "why": "default 14; affects the low-RPM throttle limit only, not commutation"
    },
    {
     "name": "Reversed",
@@ -2645,17 +2747,24 @@
  },
  "missing": [
   {
-   "item": "Female bullet connectors for the fan extensions",
+   "item": "Capacitor in the Amazon order",
+   "qty": "1 (pack of 7, B0FVG77HZV)",
+   "why": "the bulk capacitor across the ESC tabs; it sits in the Amazon cart but was unticked in the 2026-11-10 checkout readback, so the fan order as read back does not include it",
+   "spec": "1000 uF 35 V low-ESR radial, 12.5 x 20 mm (as carted)",
+   "source": "tick it in the Amazon cart before placing the order (procurement.json fan_change_2026_11_10: \"capacitor B0FVG77HZV in cart but unticked, not in this order\")"
+  },
+  {
+   "item": "3.5 mm female bullet connectors for the fan wires",
    "qty": "12 (plus spares)",
-   "why": "fan leads end in male bullets; the extensions need the mating female so a fan can be unplugged from its nacelle",
-   "spec": "gold bullets, sold as male/female pairs, in BOTH 2.0 mm and 3.5 mm (fan size not published; photo suggests 2.0 mm, CAD agent assumed 3.5 mm); solder-cup type, 16 AWG entry",
-   "source": "not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Hobby shops (Pyrodrone, Amazon \"2mm 3.5mm bullet connector set\")"
+   "why": "the ARESWEI leads end in 3.5 mm male bullets (seller claim); each pad wire needs the mating female so a fan unplugs at its nacelle",
+   "spec": "3.5 mm gold bullets, solder-cup, 16 AWG entry; usually sold as male/female pairs (only the females are used)",
+   "source": "not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Amazon \"3.5mm bullet connector\" packs"
   },
   {
    "item": "Heat-shrink tubing",
    "qty": "about 1 m mixed",
-   "why": "insulates 12 bullet joints, the XT60 cups and the capacitor legs",
-   "spec": "3 mm and 4 mm (bullets, 16 AWG), 6 mm (12 AWG at the XT60), 2:1, polyolefin",
+   "why": "insulates the 12 bullet joints and the XT60 cups",
+   "spec": "5 mm (3.5 mm bullets), 6 mm (12 AWG at the XT60), 2:1, polyolefin",
    "source": "not in INVENTORY.md and not named by Shawn on 2026-11-10 (sourcing-policy.json lists heat-shrink as RoboClub supply from 2026-09-13; bin stock not asserted)"
   },
   {
@@ -2666,15 +2775,15 @@
    "source": "Amazon/AliExpress listings for \"JST SH 1.0 4 pin to Dupont female\"; no-buy alternative: one 15 cm SH kit lead per wire with a Dupont crimp at the free end, only if RoboClub has a Dupont crimper (not listed)"
   },
   {
-   "item": "M3 nylon standoffs and nuts for the stack",
-   "qty": "4 M3 x 6 male-female (plate to ESC, CAD screws.json) + 4 M3 male-female ESC-to-FC spacers + 4 M3 nylon nuts",
-   "why": "the stack box lists only \"1 x MicoAir 743 V2 Stack\"; CAD lists only the four plate standoffs; INVENTORY has M3 screws, no standoffs",
-   "spec": "nylon (no metal near the FC), M3; ESC-to-FC spacer length set by CAD (the envelope implies about 8 mm board to board, inference); nuts M3 nylon",
-   "source": "M3 nylon standoff assortment kit (Amazon); RoboClub stock reported as not holding them (coordinator 2026-11-10)"
+   "item": "M3 nylon standoffs, spacers and screws for the stack",
+   "qty": "4 M3 x 6 male-female standoffs + 4 M3 x 8 male-female spacers + 4 M3 x 8 nylon screws (cad/build/screws.json; no nuts)",
+   "why": "the stack box lists only \"1 x MicoAir 743 V2 Stack\"; INVENTORY has M3 screws but no standoffs or nylon parts",
+   "spec": "nylon, M3: standoffs male end into the bracket pilots, spacers through the ESC into the standoffs, screws hold the FC on the spacers",
+   "source": "M3 nylon standoff assortment kit (Amazon, holds all three sizes); RoboClub stock reported as not holding them (coordinator 2026-11-10)"
   },
   {
    "item": "12 AWG and 16 AWG silicone wire, red and black (16 AWG also yellow)",
-   "qty": "12 AWG: about 300 mm each colour; 16 AWG: about 580 mm each of three colours",
+   "qty": "12 AWG: about 320 mm each colour; 16 AWG: about 310 mm each of three colours",
    "why": "pigtails and fan extensions",
    "spec": "silicone-insulated, fine-strand",
    "source": "RoboClub stock by Shawn's word (\"XT60和线\"); only listed here so the gauges are checked at the club before the order: 12 AWG and 16 AWG specifically were not named"
@@ -2691,7 +2800,9 @@
   "FC-ESC 8-pin lead (SH kit in the Pyrodrone cart)",
   "MTF-01 lead (SH kit)",
   "XT60 male connectors (RoboClub, Shawn)",
-  "bulk capacitor (Amazon cart)",
+  "fan-side bullets (3.5 mm males pre-fitted on the ARESWEI leads, seller claim)",
+  "2.0 mm bullets (dropped: the ARESWEI fans use 3.5 mm)",
+  "capacitor leg extensions (CAD seats the capacitor 8.3 mm from the tabs)",
   "battery straps (cart)",
   "charger leads (in the B6 V2 box: splitter with XT60, balance ports on the charger)",
   "solder, flux (RoboClub supply)",
@@ -2704,7 +2815,7 @@
    "joint": "ESC + tab: right pigtail red, left pigtail red, capacitor + leg",
    "count": 1,
    "conductors": 3,
-   "why_not_plug": "the ESC has bare battery tabs only; a plug here would be one more XT60 in series carrying both packs (120 A peak), worse than solder"
+   "why_not_plug": "the ESC has bare battery tabs only; a plug here would be one more XT60 in series carrying both packs (up to 160 A uncapped, 110 A capped), worse than solder"
   },
   {
    "joint": "ESC - tab: right pigtail black, left pigtail black, capacitor - leg",
@@ -2719,29 +2830,22 @@
    "why_not_plug": "XT60 contacts are solder-cup parts; there is no crimp XT60 in the parts list"
   },
   {
-   "joint": "Fan extensions onto the ESC motor pads (4 fans x 3)",
+   "joint": "16 AWG fan wires onto the ESC motor pads (4 fans x 3; FL 160 mm, RL 70 mm, FR 40 mm, RR 40 mm)",
    "count": 12,
    "conductors": 12,
    "why_not_plug": "the ESC has solder pads only; no connector option on this board"
   },
   {
-   "joint": "Female bullets onto the fan-side end of each extension",
+   "joint": "3.5 mm female bullets onto the free end of each pad wire",
    "count": 12,
    "conductors": 12,
-   "why_not_plug": "bullets are solder-cup parts; this joint is what makes the fan end a plug"
-  },
-  {
-   "joint": "Capacitor leg extensions (only if the legs do not reach the tabs)",
-   "count": "0 or 2",
-   "conductors": 2,
-   "why_not_plug": "a capacitor must be soldered at the tabs to work; moving it in CAD so the legs reach removes these two"
+   "why_not_plug": "bullets are solder-cup parts; this joint makes the fan end a plug. A female bullet cannot sit on the pad itself: three 3.5 mm bullets do not fit side by side on a pad set about 4.5 mm apart"
   }
  ],
  "notes_for_cad": [
   "ESC orientation chosen here: component side to the rear, battery tabs up (toward the capacitor). Pad sets 1/2 outboard, 3/4 inboard; FC turned the same way (ESC socket at the bottom edge).",
   "FC SH sockets: UART4 on the outboard edge, UART1 on the top edge, ESC on the bottom edge (CAD keep-out box sits only on the outboard edge).",
-  "A7Z-to-FC lead (300 mm, 3 wires) is not routed in CAD; it should follow the A7Z 5 V lead.",
-  "Capacitor legs would reach the tabs directly if the capacitor lay about 20 mm further toward the stack.",
-  "screws.json lists only the four M3 x 6 plate standoffs: ESC-to-FC spacers and M3 nuts are missing there."
+  "Fan leads are about 140 mm (seller): RR has about 113 mm and FR about 28 mm of spare lead to fold and tie in the arm bay; leave room for it.",
+  "The ARESWEI leads leave the motor end of the unit (seller images), not the duct ring; lead_lengths.json fan exits should follow the real fan when it arrives."
  ]
 }

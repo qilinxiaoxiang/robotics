@@ -68,6 +68,8 @@ SOURCES = {
                             quote='MicoAir743: MTF-01 GND/5V/Rx/Tx to UART4 GND/5V/Tx4/Rx4 (straight lead)'),
     'ap_motors': dict(url='https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Motors/AP_MotorsMatrix.cpp',
                       quote='QUAD MOTOR_FRAME_TYPE_X: {45, CCW, 1}, {-135, CCW, 3}, {-45, CW, 4}, {135, CW, 2}  (motor 1..4: angle, spin, test order)'),
+    'ap_blh_poles': dict(url='https://github.com/ArduPilot/ardupilot/blob/Copter-4.6.3/libraries/AP_BLHeli/AP_BLHeli.cpp',
+                         quote='SERVO_BLH_POLES: "This allows calculation of true RPM from ESC\'s eRPM. The default is 14." (the RPM feeds logs and the ESC-telemetry harmonic notch, INS_HNTCH_MODE 3)'),
     'ap_wiki_motors': dict(url='https://ardupilot.org/copter/docs/connect-escs-and-motors.html',
                            quote='Motor Direction is reversed simply by interchanging two of the three ESC to motor power leads.'),
     'ap_gcs_fs': dict(url='https://ardupilot.org/copter/docs/gcs-failsafe.html',
@@ -86,11 +88,20 @@ SOURCES = {
                       quote='used pins 1 2 3 4 5 6 7 9 11 12 17 25 29 31 34 35 38 39 40; 8 and 10 debug UART0 (10 carries the optional back-mic flag)'),
     'current_state': dict(url='file: microduck-sim/CURRENT-STATE.json (servo_bus_hosts, a7z_imu_bus, a7z_touch_bus, a7z_audio_capture, power)',
                           quote='A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud; overlays zz-duck-twi7-engine, zz-duck-twi0-touch, zz-duck-i2s0-din3, sun60iw2p1-i2s0-2ch; no UART4 overlay recorded'),
-    'qx_listing': dict(url='https://qwinout.com/products/qx-motor-qf2611-3300-4000kv-4600kv-5000kv-brushless-motor-cw-ccw-3-4s-50mm-12-paddle-edf-ducted-fan-for-fms-rc-plane-helicopter',
-                       quote='Configuration: 9N6P ... Weight: 76g ... Max continuous power: 550w ... Max continuous current: 45A; no lead length, gauge or bullet size given'),
-    'qx_photo': dict(url='https://cdn.shopify.com/s/files/1/0070/9473/0823/products/QX-MOTOR-QF2611-3300-4000KV-4600KV-5000KV-Brushless-Motor-CW-CCW-3-4S-50mm-12-Paddle.jpg',
-                     local='sources/qx-qf2611-leads.jpg',
-                     quote='three leads red/black/yellow ending in heat-shrunk gold male bullets; scaled on the 25.8 mm can: lead OD about 1.7 mm, bullet tip about 1-2 mm (inference)'),
+    'areswei_cw': dict(url='https://www.amazon.com/dp/B0H4KJLR6P',
+                       quote='SELLER CLAIM: "50mm EDF Ducted Fan 11-Blade 4650KV 4S 40A 14.8V, CW" ... "Green coded motor runs clockwise" ... "Delivers up to 980g static thrust at full charged 16.8V with peak working current of 40A" ... "Pre-wired 3.5mm bullet connectors" ... "49mm rotor, 60mm outer duct, total 77g"; no pole count, wire gauge or viewing side for CW'),
+    'areswei_ccw': dict(url='https://www.amazon.com/dp/B0H4KSDT77',
+                        quote='SELLER CLAIM: "Red coded motor runs counterclockwise" ... same 4650KV, 40A peak, 980 g at 16.8 V, 3.5 mm bullets, 77 g'),
+    'areswei_imgs': dict(url='https://www.amazon.com/dp/B0H4KJLR6P (listing images, m.media-amazon.com/images/I/61Ah-2i0xEL and siblings)',
+                         local='sources/areswei-hds001-listing-images.jpg',
+                         quote='SELLER DRAWING: lead length labelled "55.1 inch" (a misplaced decimal: drawn to scale the leads are about 2.3x the 1.9 in fan, i.e. 5.51 in = 140 mm, inference); motor can "0.9 inch"; three leads black/red/yellow from the motor end, gold male bullets under red/black/yellow shrink'),
+    'am32_src': dict(url='https://github.com/am32-firmware/AM32/blob/077b6a49852a1d5642d89ccc4d1259cb8e3802dd/Src/main.c',
+                     local='sources/am32-main.c',
+                     quote='motor_poles appears only in: low_rpm_level = motor_kv / 100 / rpm_level_div; high_rpm_level = motor_kv / 12 / rpm_level_div (rpm_level_div = 32 / motor_poles; the low-RPM duty-limit window, line 812-817); the sine-start step delay (line 2491); and the RPM speed-control target (lines 1337, 2023). Commutation follows the back-EMF zero crossings and does not read motor_poles'),
+    'lead_lengths': dict(url='file: microduck-sim/extensions/flight-20261110/cad/checks/lead_lengths.json (commit ce57adc9)',
+                         quote='routed: fan FL 275 mm, RL 184, FR 132, RR 47; battery L 209 (pigtail 230), R 63 (pigtail 90); capacitor end face 8.3 mm from each tab; A7Z to FC route 136, needed 170'),
+    'fan_change': dict(url='file: microduck-sim/extensions/flight-20261110/procurement.json key fan_change_2026_11_10; CURRENT-STATE.json parts_flight_pack',
+                       quote='Fans changed from QX QF2611 4000KV (qwinout) to ARESWEI HDS001 4650KV (Amazon) ... capacitor B0FVG77HZV in cart but unticked, not in this order ... placed: false'),
     'cnhl': dict(url='https://pyrodrone.com/products/cnhl-black-series-v2-0-1300mah-14-8v-4s-130c-lipo-battery-xt60',
                  quote='Discharge Rate: 130C Continual / 260C Burst ... Output Connector: XT60 ... Balance Connector: JST / XH ... Wire (AWG): 12#'),
     'stack_listing': dict(url='https://pyrodrone.com/products/micoair-743-v2-stack-with-h743-bmi088-bmi270-bluetooth-flight-controller-and-2-6s-55a-am32-4in1-esc-30x30mm',
@@ -107,8 +118,8 @@ SOURCES = {
                               quote='forum practice (not a maker spec): extend motor leads rather than battery leads; if battery leads are long, add low-ESR capacitance at the ESC, 220-440 uF per 10 cm beyond 40 cm'),
     'cad': dict(url='file: microduck-sim/extensions/flight-20261110/cad (commit 0a940d32): flight_params.py, build_pack.py, build/dummy_*-world.stl',
                 quote='FC bracket plate x -67..-64 behind the right arm, stack centre (y, z) = (-56, 40), ESC envelope x -83..-77, FC x -96..-88; capacitor y -79..-54 on the right top flange; cross harness x -86.8..-50.4, y -33..37.6, z 4..28'),
-    'mass_v6': dict(url='file: microduck-sim/extensions/flight-20261110/mass_budget.json (cases "v6 CAD, fans 80 g" / "113 g") and leg_load.json',
-                    quote='v6 pack 927 g (80 g fans) / 1059 g (113 g fans); duck 960.5 g; totals 1887 / 2019 g'),
+    'mass_v6': dict(url='file: microduck-sim/extensions/flight-20261110/leg_load.json (case "v6 CAD, fans 80 g": total_g 1883) and the coordinator brief of 2026-11-10 (all-up 1883 to 1897 g with the ARESWEI fans)',
+                    quote='"v6 CAD, fans 80 g": pack_g 922, total_g 1883; coordinator: all-up 1883 to 1897 g'),
     'pet_log': dict(url='file: robotics/docs/PET_ROBOT_LOG.md (2026-11-10 entries)',
                     quote='vendor thrust 950 g per fan; the only independent bench tests 440-680 g; Shawn: "不用 默认推力够"'),
     'inventory': dict(url='file: robotics/roboclub/INVENTORY.md',
@@ -130,7 +141,6 @@ FCB_T = bp_const('FCB_T')
 FCB_X = (FP.WING['arm_x_rear'] - FCB_T, FP.WING['arm_x_rear'])
 FC_CENTRE = bp_const('FC_CENTRE')
 FC_BOSS = bp_const('FC_BOSS')
-CAP_Y0 = bp_const('CAP_Y0')
 MTF_C = bp_const('MTF_C')
 SHELF_Z = bp_const('SHELF_Z')
 X0 = FCB_X[0] - FC_BOSS                       # -71: standoff tips
@@ -139,9 +149,7 @@ FC_X = X0 - 25.0                              # -96: FC top face (envelope x0-25
 YC, ZC = FC_CENTRE
 HS, HR = FP.WING['harness_side'], FP.WING['harness_rear']
 LW, FW = FP.WING['lead_window'], FP.WING['fan_window']
-CAP_C = (-57.0, CAP_Y0, FP.WING['arm_z'][1] + FP.CAP['d'] / 2)
 SLACK = 1.15
-FAN_LEAD = FP.FAN['lead_len']                 # 70 mm, coordinator estimate from photos (not published)
 
 # ESC pad and tab offsets on the maker drawing (component side, tabs down), mm from the 30.5 pattern centre:
 # 10.4 px/mm on micoair-55a-esc-dimensions.png, pattern centre at (370, 445.5) px.
@@ -232,18 +240,21 @@ def a7z_route():
 
 
 # ====================================================================== currents
+LL = json.loads((FLIGHT / 'cad' / 'checks' / 'lead_lengths.json').read_text())
+FAN = dict(model='ARESWEI HDS001 50 mm 11-blade 4650KV 4S', kv=4650, peak_A=40.0, thrust_g=980.0, thrust_V=16.8, mass_g=77,
+           rotor_mm=49.0, motor_od_mm=0.9 * 25.4, lead_mm=140, bullet='3.5 mm', poles=None)   # seller claims (areswei_cw/ccw/imgs)
+
+
 def currents():
-    mb = json.loads((FLIGHT / 'mass_budget.json').read_text())
     ll = json.loads((FLIGHT / 'leg_load.json').read_text())
     duck = ll['duck']['mass_g']
-    pack80 = sum(p['g'] for p in mb['cases']['v6 CAD, fans 80 g'])
-    pack113 = sum(p['g'] for p in mb['cases']['v6 CAD, fans 113 g'])
-    m_nom, m_hi = duck + pack80, duck + pack113
+    m_nom, m_hi = 1883.0, 1897.0                         # coordinator 2026-11-10 (leg_load v6 total 1883); ARESWEI fans
     v_pack = 14.8
-    p_max, t_vendor, i_fan_max = 550.0, 950.0, 45.0     # listing: 550 W, 45 A max continuous; vendor thrust 950 g
-    t_bench = t_vendor * 2 / 3                           # PET log: independent tests 440-680 g; two thirds of vendor
+    t_vendor, i_fan_max = FAN['thrust_g'], FAN['peak_A']
+    p_max = FAN['thrust_V'] * i_fan_max                  # 672 W at the seller's 980 g point (16.8 V x 40 A)
+    t_bench = t_vendor * 2 / 3                           # PET log: independent tests of 50 mm fans reach about 2/3 of the claim
     eta = 0.5                                            # figure of merit x motor/ESC efficiency (inference)
-    area = math.pi / 4 * ((FP.FAN['bore'] / 1000) ** 2 - (FP.FAN['motor_od'] / 1000) ** 2)
+    area = math.pi / 4 * ((FAN['rotor_mm'] / 1000) ** 2 - (FAN['motor_od_mm'] / 1000) ** 2)
 
     def per_fan(m, method):
         t = m / 4
@@ -259,44 +270,55 @@ def currents():
     hi = max(v[1] for v in rows.values())
     # Share between the packs: the left pigtail is longer (both conductors), pack IR assumed 12 mOhm (inference).
     r_pack = 0.012
-    lr, _ = battery_route(+1)
-    rr, _ = battery_route(-1)
+    lr, rr = LL['leads']['battery L']['pigtail_mm'], LL['leads']['battery R']['pigtail_mm']
     r12 = 5.20864e-3
-    rl, rrt = r_pack + 2 * up10(lr) / 1000 * r12, r_pack + 2 * up10(rr) / 1000 * r12
+    rl, rrt = r_pack + 2 * lr / 1000 * r12, r_pack + 2 * rr / 1000 * r12
     share_r = rl / (rl + rrt)
     cap_total = 110.0
     return dict(
-        duck_g=duck, pack_g_80=pack80, pack_g_113=pack113, total_g_nominal=m_nom, total_g_heavy=m_hi,
+        duck_g=duck, total_g_nominal=m_nom, total_g_heavy=m_hi, fan=FAN['model'],
         hover_thrust_per_fan_g=[round(m_nom / 4), round(m_hi / 4)],
         methods={k: [round(a, 1), round(b, 1)] for k, (a, b) in rows.items()},
-        method_notes={'vendor': 'P = 550 W x (T / 950 g)^1.5 (vendor max thrust and power, momentum-theory scaling)',
-                      'bench': 'same with max thrust 2/3 of vendor (independent tests of similar 50 mm fans)',
-                      'momentum': f'ideal annulus power / {eta} (bore {FP.FAN["bore"]} mm, hub {FP.FAN["motor_od"]} mm)'},
+        method_notes={'vendor': f'P = {p_max:.0f} W x (T / 980 g)^1.5 / 14.8 V (seller point 980 g at 16.8 V and 40 A, momentum-theory scaling)',
+                      'bench': 'same with max thrust 2/3 of the seller figure (independent tests of similar 50 mm fans, PET log)',
+                      'momentum': f'ideal annulus power / {eta} (rotor {FAN["rotor_mm"]} mm, hub {FAN["motor_od_mm"]:.0f} mm, seller drawing)'},
         hover_A_per_fan=[round(lo, 1), round(hi, 1)], hover_A_total=[round(4 * lo), round(4 * hi)],
         peak_A_per_fan=i_fan_max, peak_A_total_uncapped=4 * i_fan_max,
         pack_share_right=round(share_r, 3),
         hover_A_right_pack=[round(4 * lo * share_r, 1), round(4 * hi * share_r, 1)],
         cap_MOT_BAT_CURR_MAX=cap_total, peak_A_right_pack_capped=round(cap_total * share_r, 1),
         peak_A_right_pack_uncapped=round(4 * i_fan_max * share_r, 1),
-        assumptions='pack voltage 14.8 V nominal; pack internal resistance 12 mOhm (inference, not published); pigtail lengths from battery_route()',
+        assumptions='pack voltage 14.8 V nominal; pack internal resistance 12 mOhm (inference, not published); pigtail lengths from cad/checks/lead_lengths.json; fan figures are seller claims',
     )
 
 
 CUR = currents()
 
 # ====================================================================== lengths
+# Routed distances come from the CAD check (lead_lengths.json); our own polyline estimate is kept as a cross-check.
+# Extension = route + 20 mm (two joints with strain relief) - fan lead (140 mm, seller drawing), rounded up to 10 mm.
+# A fan whose own lead already reaches still gets a 40 mm stub: the 3.5 mm female bullet needs a wire to sit on
+# (three 3.5 mm bullets side by side do not fit a pad set 4.5 mm apart), and the fan must unplug at its nacelle.
+FAN_LEAD = FAN['lead_mm']
+STUB = 40
 FAN_LEN = {}
 for nm in FAN_POS:
-    route, pts = fan_route(nm)
-    ext = max(40, up10(route - FAN_LEAD + 10))   # 10 mm for the bullet overlap; at least 40 mm so the plug sits free
-    FAN_LEN[nm] = dict(route_mm=round(route), ext_mm=ext, pts=[[round(c, 1) for c in p] for p in pts])
+    own, pts = fan_route(nm)
+    route = LL['leads'][f'fan {nm}']['route_mm']
+    need = route + 20 - FAN_LEAD
+    ext = up10(need) if need > STUB else STUB
+    spare = max(0, FAN_LEAD + ext - 20 - route)
+    FAN_LEN[nm] = dict(route_mm=route, ext_mm=ext, stub_only=need <= STUB, spare_fan_lead_mm=round(spare),
+                       own_estimate_mm=round(own), pts=LL['leads'][f'fan {nm}']['pts'])
 BAT_LEN = {}
 for side, nm in ((+1, 'L'), (-1, 'R')):
-    r, pts = battery_route(side)
-    BAT_LEN[nm] = dict(route_mm=round(r), pigtail_mm=up10(r), pts=[[round(c, 1) for c in p] for p in pts])
-A7Z_LEN, A7Z_PTS = a7z_route()
-CAP_LEN = up10(math.dist(CAP_C[:1] + (CAP_C[1] + FP.CAP['h'],) + CAP_C[2:], esc_world(ESC_TABS_PX['+'])) * SLACK)
-CAD_CLAIMS = {'FL': 250, 'RL': 200, 'FR': 80, 'RR': 50, 'bat_L': 220, 'bat_R': 100}
+    own, pts = battery_route(side)
+    c = LL['leads'][f'battery {nm}']
+    BAT_LEN[nm] = dict(route_mm=c['route_mm'], pigtail_mm=c['pigtail_mm'], own_estimate_mm=round(own), pts=c['pts'])
+A7Z_LEN, A7Z_PTS = LL['leads']['A7Z to FC']['needed_mm'], LL['leads']['A7Z to FC']['pts']
+CAP_GAP = max(LL['capacitor']['to_plus_tab_mm'], LL['capacitor']['to_minus_tab_mm'])   # legs reach the tabs directly
+CAP_LEN = 0
+CAD_CLAIMS = {'FL': 230, 'RL': 140, 'FR': 90, 'RR': 40, 'bat_L': 230, 'bat_R': 90}     # lead_lengths.json for a 70 mm lead
 
 # ====================================================================== boards and pins (with sources)
 BOARDS = {
@@ -329,10 +351,10 @@ BOARDS = {
 }
 for nm, (which, side, mot, spin, grp, out) in FAN_POS.items():
     BOARDS[f'fan_{nm}'] = dict(
-        name=f'QX-Motor QF2611 4000KV 50 mm EDF, {"front" if which == "front" else "rear"} {"left" if side > 0 else "right"} ({spin} unit)',
+        name=f'ARESWEI HDS001 50 mm 11-blade 4650KV EDF, {"front" if which == "front" else "rear"} {"left" if side > 0 else "right"} ({spin} unit, {"green" if spin == "CW" else "red"} motor, Amazon {"B0H4KJLR6P" if spin == "CW" else "B0H4KSDT77"})',
         where=f'{"left" if side > 0 else "right"} nacelle, {which}', connectors={'LEADS': dict(
-            type='three factory leads (red, black, yellow) with male bullets; size not published (photo scale suggests 2.0 mm)',
-            pins=['red', 'black', 'yellow'], sources=['qx_photo', 'qx_listing'])})
+            type='three factory leads (red, black, yellow), about 140 mm, pre-fitted 3.5 mm male bullets (seller claim); gauge not published',
+            pins=['red', 'black', 'yellow'], sources=['areswei_cw', 'areswei_ccw', 'areswei_imgs'])})
 
 # ====================================================================== netlist
 NET = []
@@ -362,19 +384,19 @@ for nm, side in (('R', -1), ('L', +1)):
             end(f'pigtail_{nm}', 'XT60', pol, sig, 'XT60 solder cup', 'male', 'soldered'),
             end('esc', 'BAT', pol, sig, 'battery tab', 'n/a', 'soldered'),
             dict(gauge_awg=12, colour=col, length_mm=BAT_LEN[nm]['pigtail_mm'],
-                 length_basis=f'route {BAT_LEN[nm]["route_mm"]} mm incl. x{SLACK} slack ({"cross harness behind the backpack cap" if side > 0 else "bay behind the right arm web"}); CAD claim {CAD_CLAIMS["bat_" + nm]} mm',
+                 length_basis=f'CAD routed {BAT_LEN[nm]["route_mm"]} mm + 20 mm ({"cross harness behind the backpack cap" if side > 0 else "FC plate lead window, up between plate and ESC"}); own polyline estimate {BAT_LEN[nm]["own_estimate_mm"]} mm',
                  source='12 AWG silicone: RoboClub stock (Shawn 2026-11-10 "XT60和线"; gauge in stock not confirmed)'),
-            ['mico_esc_img', 'powerstream', 'cad'], True,
+            ['mico_esc_img', 'powerstream', 'lead_lengths'], True,
             'both pigtails land on the same ESC tab (parallel packs); twist the pair' + ('; runs in the cross harness' if side > 0 else ''),
             f'{"左" if side > 0 else "右"}尾线{"红 +" if pol == "+" else "黑 −"}：XT60 公头焊杯 → ESC {"+" if pol == "+" else "−"} 片')
 for pol, col in (('+', 'red'), ('-', 'black')):
     add(f'cap_{"p" if pol == "+" else "n"}', 'power',
         end('cap', 'LEADS', pol, 'VBAT+' if pol == '+' else 'VBAT-', 'radial leg', 'n/a', 'soldered'),
         end('esc', 'BAT', pol, 'VBAT+' if pol == '+' else 'VBAT-', 'battery tab', 'n/a', 'soldered'),
-        dict(gauge_awg=16, colour=col, length_mm=CAP_LEN,
-             length_basis=f'capacitor lead end (y {CAP_C[1] + FP.CAP["h"]:.0f}) to the + tab, x{SLACK}; leg plus a 16 AWG extension if the leg is shorter',
-             source='capacitor: Amazon cart; extension: RoboClub wire'),
-        ['mico_esc_wiring', 'cad'], True, 'polarity: long leg and the side without the stripe go to +',
+        dict(gauge_awg=None, colour='capacitor leg', length_mm=None,
+             length_basis=f'CAD now seats the capacitor end face {CAP_GAP} mm from each tab: the legs reach the tabs directly, no wire',
+             source='capacitor B0FVG77HZV: in the Amazon cart but UNTICKED in the 2026-11-10 checkout readback (MISSING.md)'),
+        ['mico_esc_wiring', 'lead_lengths', 'fan_change'], True, 'polarity: long leg and the side without the stripe go to +',
         f'电容{"长脚 +" if pol == "+" else "白条一侧 −"} → ESC {"+" if pol == "+" else "−"} 片')
 
 # --- fans: ESC pads -> 16 AWG extension -> female bullet <- fan male bullet
@@ -387,9 +409,10 @@ for nm, (which, side, mot, spin, grp, out) in FAN_POS.items():
             end('esc', f'M{grp}', pad, f'motor {grp} phase {pad.upper()}', 'solder pad', 'n/a', 'soldered'),
             end(f'fan_{nm}', 'LEADS', lead, f'phase ({lead} lead)', 'bullet', 'female on the extension mates the fan male', 'plugged'),
             dict(gauge_awg=16, colour=col, length_mm=FAN_LEN[nm]['ext_mm'],
-                 length_basis=f'route {FAN_LEN[nm]["route_mm"]} mm (x{SLACK}) minus the {FAN_LEAD:.0f} mm fan lead plus 10 mm; CAD claim {CAD_CLAIMS[nm]} mm',
-                 source='16 AWG silicone: RoboClub stock (Shawn "XT60和线"); female bullets: NOT in stock or cart (MISSING.md)'),
-            ['mico_esc_img', 'qx_photo', 'powerstream', 'cad'], False,
+                 length_basis=(f'CAD routed {FAN_LEN[nm]["route_mm"]} mm + 20 mm - {FAN_LEAD} mm fan lead = {FAN_LEN[nm]["route_mm"] + 20 - FAN_LEAD} mm'
+                               + (f' -> {STUB} mm stub only (carries the female bullet); {FAN_LEN[nm]["spare_fan_lead_mm"]} mm of fan lead spare, folded and tied in the arm bay' if FAN_LEN[nm]['stub_only'] else '')),
+                 source='16 AWG silicone: RoboClub stock (Shawn "XT60和线"); 3.5 mm female bullets: NOT in stock or cart (MISSING.md)'),
+            ['mico_esc_img', 'areswei_cw', 'areswei_imgs', 'powerstream', 'lead_lengths'], False,
             'phase order is arbitrary; direction is set after the motor test (swap two leads at the bullets or AM32 Reversed)',
             f'电调 {grp}{pad} 焊盘 → {ZHC[col]}色 16 AWG 延长线 → 母子弹头，插{ZHF[nm]}风扇{ZHC[lead]}线')
 
@@ -421,7 +444,7 @@ for f, a, pid, sig, col in A7Z_LINK:
     add(f'mav_{f.lower()}', 'signal',
         end('fc', 'UART1', pos, f, 'JST-SH 4-pin', 'plug on the lead', 'plugged'),
         end('a7z', 'J11', int(a.split()[0]), a, '2.54 mm Dupont', 'female housing on the lead', 'plugged'),
-        dict(gauge_awg=28, colour=col, length_mm=300, length_basis=f'estimate {A7Z_LEN:.0f} mm (x1.25, route not modelled in CAD: along the A7Z 5 V lead through the saddle floor and torso to the backpack gap, then across to the FC)',
+        dict(gauge_awg=28, colour=col, length_mm=300, length_basis=f'CAD route {LL["leads"]["A7Z to FC"]["route_mm"]} mm, needed {A7Z_LEN} mm with plug slack ({LL["leads"]["A7Z to FC"]["path"]}); the 300 mm lead leaves the rest tied',
              source='SH1.0 4-pin to Dupont female cable, 30 cm: NOT in a cart (MISSING.md); extra length: RoboClub M-F jumper'),
         ['ap_ports', 'radxa_pins', 'radxa_uart4', 'a7z_logic'], True, 'UART1 position 2 (5 V) stays empty: no 5 V joins the duck',
         f'飞控 UART1 {f} ↔ A7Z {a.split()[0]} 号针（{sig}）')
@@ -447,12 +470,17 @@ CHECKS = [
          evidence=('AP_MotorsMatrix QUAD X: motor 1 at +45 deg (front right) CCW, motor 2 at -135 (rear left) CCW, motor 3 at -45 (front left) CW, motor 4 at +135 (rear right) CW. '
                    'ESC stood behind the right arm with tabs up puts pad sets 1 and 2 on the outboard (right) edge and 3 and 4 on the inboard edge, so outputs are remapped: '
                    'SERVO1_FUNCTION 33 (pad 1 -> FR, motor 1), SERVO2_FUNCTION 36 (pad 2 -> RR, motor 4), SERVO3_FUNCTION 35 (pad 3 -> FL, motor 3), SERVO4_FUNCTION 34 (pad 4 -> RL, motor 2). '
-                   'CW units go front-left and rear-right, CCW units front-right and rear-left (spin seen from above = from the inlet, since the inlets face up). '
-                   'Direction: an EDF rotor is handed, so each unit must turn its own way to blow down; set it by swapping two leads at the bullets (ArduPilot wiki) or the AM32 "Reversed" box (MicoAir AM32 page).'),
-         sources=['ap_motors', 'ap_wiki_motors', 'mico_esc_am32', 'ap_params_463'],
-         open=('Which way QX means by "CW" (from the inlet or the exhaust) is not published: confirm at the first motor test (air must leave downward; the unit\'s rotation seen '
-               'from above must match the map). If both CW units turn out CCW seen from above, swap the fans left-right between nacelles (no part changes). '
-               'Pad 1 = connector M1 is the silkscreen convention; Mission Planner motor test confirms output-to-pad before any fan is mounted.')),
+                   'Rotor spin seen from above (= from the inlet, inlets face up) must be CW at front-left and rear-right, CCW at front-right and rear-left. '
+                   'ARESWEI sells handed units: green motor = "CW" (B0H4KJLR6P), red motor = "CCW" (B0H4KSDT77) (seller claims), so planned placement is green at FL and RR, red at FR and RL, '
+                   'if the seller\'s CW is seen from the inlet. Direction: an EDF rotor is handed, so each unit must turn its own way to blow down; set it by swapping two leads at the bullets '
+                   '(ArduPilot wiki) or the AM32 "Reversed" box (MicoAir AM32 page).'),
+         sources=['ap_motors', 'ap_wiki_motors', 'mico_esc_am32', 'ap_params_463', 'areswei_cw', 'areswei_ccw'],
+         open=('Which end ARESWEI\'s "CW" is seen from is not published. Rotation procedure, before the fans go into the nacelles (fan held in a clamp, inlet up, nothing near the inlet; '
+               'Mission Planner Motor Test, 5 % for 2 s, one output at a time): (1) the motor test letter A to D must spin the fan planned for it (A = motor 1 FR, B = motor 4 RR, C = motor 2 RL, D = motor 3 FL in Quad-X test order); '
+               '(2) airflow: a paper strip at the lip is pulled in and one under the motor end is blown away; if the air runs backwards, swap any two bullets of that fan (or tick AM32 Reversed) and repeat; '
+               '(3) with air flowing the right way, look into the inlet from above: FL and RR must turn clockwise, FR and RL counterclockwise. If a green unit turns counterclockwise from above when it blows the right way, '
+               'the seller\'s CW is seen from the motor end: swap green and red units side to side (FL<->FR, RR<->RL; re-plug the bullets, no soldering) and repeat (2) and (3). '
+               'A unit in the wrong place still lifts but its torque reverses the yaw control, so the duck spins at take-off: step (3) is not optional.')),
     dict(id='mtf01', title='MTF-01 pinout, voltage, UART, ArduPilot parameters', status='pass',
          evidence=('MTF-01 SH1.0-4P: GND, 5V, Rx, Tx; supply 5 V, about 100 mA; LVTTL 3.3 V UART 115200. FC UART4 socket GND, 5V, TX4, RX4 (5 V from the FC 5 V/3 A BEC). '
                    'MicoAir draws exactly this pairing for the MicoAir743 (straight lead). ArduPilot: SERIAL4_PROTOCOL 1, SERIAL4_BAUD 115, SERIAL4_OPTIONS 1024, FLOW_TYPE 5, '
@@ -469,26 +497,29 @@ CHECKS = [
                '(transcript search "ttyAS4": documentation mentions only). The A7Z was offline on 2026-11-10 (ssh timeout), so /dev/ttyAS* was not read. '
                'Physical access to pins 14/16/18 in the saddle (edge row) not seen on the robot. 921600 baud on the A7Z UART is untested (115200 fallback).')),
     dict(id='power_path', title='Two packs in parallel into the ESC tabs; currents vs ratings', status='unknown',
-         evidence=(f'Mass used: v6 CAD {C["total_g_nominal"]:.0f} g all-up with 80 g fans ({C["total_g_heavy"]:.0f} g with 113 g fans); hover thrust {C["hover_thrust_per_fan_g"][0]}-{C["hover_thrust_per_fan_g"][1]} g per fan. '
-                   f'Hover current per fan {C["hover_A_per_fan"][0]}-{C["hover_A_per_fan"][1]} A (three methods: {C["methods"]}), total {C["hover_A_total"][0]}-{C["hover_A_total"][1]} A. '
-                   f'Peak per fan {C["peak_A_per_fan"]:.0f} A (listing max continuous), {C["peak_A_total_uncapped"]:.0f} A total uncapped. Right pack share {C["pack_share_right"]:.0%} (shorter pigtail). '
+         evidence=(f'Mass used: all-up {C["total_g_nominal"]:.0f} to {C["total_g_heavy"]:.0f} g with the ARESWEI fans; hover thrust {C["hover_thrust_per_fan_g"][0]}-{C["hover_thrust_per_fan_g"][1]} g per fan '
+                   f'(48 % of the seller\'s 980 g). Hover current per fan {C["hover_A_per_fan"][0]}-{C["hover_A_per_fan"][1]} A (three methods: {C["methods"]}; {C["method_notes"]}), '
+                   f'total {C["hover_A_total"][0]}-{C["hover_A_total"][1]} A. Peak per fan {C["peak_A_per_fan"]:.0f} A (seller claim, "peak working current of 40A" at 16.8 V), '
+                   f'{C["peak_A_total_uncapped"]:.0f} A total uncapped. Right pack share {C["pack_share_right"]:.0%} (shorter pigtail). '
                    f'Per pack: hover {C["hover_A_right_pack"][0]}-{C["hover_A_right_pack"][1]} A, peak {C["peak_A_right_pack_uncapped"]} A uncapped, {C["peak_A_right_pack_capped"]} A with MOT_BAT_CURR_MAX {C["cap_MOT_BAT_CURR_MAX"]:.0f}. '
-                   'Ratings: ESC 55 A per channel vs fan 45 A max: pass. Pack 130C x 1.3 Ah = 169 A claimed: pass. XT60 (Amass) rated 30 A, max 60 A: hover may exceed the 30 A rating '
-                   'on the worst case; peaks stay at or under 60 A only with the MOT_BAT_CURR_MAX cap. 12 AWG chassis 41 A: hover at most at that rating, flights 1-1.5 min. '
-                   '16 AWG chassis 22 A vs per-fan hover rms (0.82 x DC in six-step) and 45 A bursts: see motor_leads. Harness: one male XT60 pigtail per pack, both soldered to the same ESC tab pair; no Y-splice.'),
-         sources=['mass_v6', 'pet_log', 'qx_listing', 'cnhl', 'amass_xt60', 'powerstream', 'mico_esc'],
-         open=('The hover current spans 2x between methods (13 vs 26 A per fan) and decides the outcome. Low case (about 52 A total): each XT60 carries about 28 A, inside its 30 A rating, '
-               'and the 110 A cap leaves 2x control headroom. High case (about 106 A total): each XT60 carries about 57 A continuous, at its 60 A maximum, and the 110 A cap leaves almost '
-               'no headroom, so the cap would have to rise and the XT60s would run above rating; the fix then is soldering the pack leads straight to the pigtails or XT90 connectors '
-               '(no change to what is ordered: the packs and wire stay the same). Decided by the first tethered hover: read BATT current (after BATT_AMP_PERVLT 78.43) and feel the XT60 '
-               'bodies after 60 s. A flight-envelope limit, not a wiring blocker.')),
+                   'Ratings: ESC 55 A per channel vs fan 40 A peak: pass (15 A margin). Pack 130C x 1.3 Ah = 169 A claimed vs at most '
+                   f'{C["peak_A_right_pack_uncapped"]} A per pack: pass. XT60 (Amass) rated 30 A, max 60 A: low hover case inside the rating, high hover case at the maximum; '
+                   'peaks stay at or under 60 A only with the MOT_BAT_CURR_MAX cap. 12 AWG chassis 41 A: hover at most at that figure, flights 1-1.5 min. '
+                   '16 AWG chassis 22 A vs per-fan hover rms (0.82 x DC in six-step) and 40 A bursts: see motor_leads. Harness: one male XT60 pigtail per pack, both soldered to the same ESC tab pair; no Y-splice.'),
+         sources=['mass_v6', 'pet_log', 'areswei_cw', 'areswei_imgs', 'cnhl', 'amass_xt60', 'powerstream', 'mico_esc', 'lead_lengths'],
+         open=(f'The hover current spans about 2x between methods ({C["hover_A_per_fan"][0]} vs {C["hover_A_per_fan"][1]} A per fan) and decides the outcome. '
+               f'Low case (about {C["hover_A_total"][0]} A total): the right XT60 carries about {C["hover_A_right_pack"][0]} A, at about its 30 A rating, and the 110 A cap leaves about 1.8x control headroom. '
+               f'High case (about {C["hover_A_total"][1]} A total): the right XT60 carries about {C["hover_A_right_pack"][1]} A continuous, at its 60 A maximum, and hover alone reaches the 110 A cap, '
+               'so it cannot climb; the cap would have to rise and the XT60s would run above their maximum. The fix then is soldering the pack leads straight to the pigtails or fitting XT90s '
+               '(nothing different to order now: the packs and wire stay). Decided by the first tethered hover: read BATT current (after BATT_AMP_PERVLT 78.43) and feel the XT60 bodies after 60 s. '
+               'A flight-envelope limit, not a wiring blocker.')),
     dict(id='capacitor', title='Capacitor place, polarity, lead length', status='pass',
-         evidence=(f'Across the ESC battery tabs, as the maker diagram shows; 35 V on a 16.8 V pack. CAD places it lying on the right arm top flange, lead end about {CAP_LEN} mm '
-                   'from the + tab: each leg reaches the tab with a short 16 AWG extension if the leg is shorter, soldered on the tab together with the two pigtails. '
-                   'Long leg / side without the stripe to +. Left battery loop is long (about 0.3 m with the pack lead); forum practice adds 220-440 uF per 10 cm beyond 40 cm: '
-                   '1000 uF low-ESR at the tabs covers it, and the right pack (short lead) sits in parallel.'),
-         sources=['mico_esc_wiring', 'cad', 'esc_lead_practice'],
-         open='Rubycon leg length not published; if the legs reach the tabs directly, no extension and two fewer joints. Moving the capacitor so its legs touch the tabs is a CAD option.'),
+         evidence=(f'Across the ESC battery tabs, as the maker diagram shows; 35 V on a 16.8 V pack. CAD (lead_lengths.json) now seats it with its end face {CAP_GAP} mm from each tab, so the '
+                   'legs are soldered straight onto the tabs together with the two pigtails: no extension wire, no extra joint. Long leg / side without the stripe to +. '
+                   'Left battery loop is long (pigtail 230 mm plus the pack lead); forum practice adds 220-440 uF per 10 cm beyond 40 cm: 1000 uF low-ESR at the tabs covers it, '
+                   'and the right pack (90 mm pigtail) sits in parallel.'),
+         sources=['mico_esc_wiring', 'lead_lengths', 'esc_lead_practice'],
+         open='The capacitor (Amazon B0FVG77HZV) was unticked in the 2026-11-10 Amazon checkout readback (procurement.json fan_change_2026_11_10): tick it before placing that order (MISSING.md).'),
     dict(id='grounds', title='Ground and supply separation between duck and flight pack', status='pass',
          evidence=('Joined: exactly one conductor, FC UART1 position 1 (GND) to A7Z pin 14 (GND), plus the two UART signal lines. Open: FC UART1 position 2 (5V); A7Z 5 V pins 2/4 untouched; '
                    'no other conductor between the systems (printed frame, no metal path). No loop in flight: the only return path between the two negatives is that one 28 AWG wire, '
@@ -497,14 +528,16 @@ CHECKS = [
          sources=['ap_ports', 'radxa_pins', 'a7z_logic'],
          open='If the FC USB and an A7Z USB cable go to the same Mac at the same time, the Mac ground joins them a second time: harmless at bench currents, do not hover like that.'),
     dict(id='motor_leads', title='Motor lead length and extensions', status='pass',
-         evidence=('Fan leads about 70 mm (not published; photo estimate). Routed lengths from the CAD geometry (x1.15): '
-                   + ', '.join(f'{k} {v["route_mm"]} mm -> extension {v["ext_mm"]} mm' for k, v in FAN_LEN.items())
-                   + f' (CAD agent claimed FL 250, RL 200, FR 80, RR 50). Every fan needs an extension: 16 AWG silicone, female bullet at the fan end, soldered to the ESC pad. '
-                   'Factory leads look about 1.7 mm OD (about 18 AWG, inference), so 16 AWG does not bottleneck them. 16 AWG over 0.29 m at 45 A: 13.2 mOhm/m, two phases '
-                   'conduct, drop about 0.34 V (2.3 %); rms per phase about 37 A, above the 22 A chassis figure, so full throttle is a burst of seconds; hover rms 10-20 A is within it. '
-                   'Long motor leads with short battery leads is the ESC-friendly split; here the left side has both, unavoidable with one ESC on the right.'),
-         sources=['qx_photo', 'cad', 'powerstream', 'esc_lead_practice'],
-         open='Bullet size: the listing does not say; photo scale points to 2.0 mm, not the 3.5 mm the CAD agent assumed. Measure on arrival; MISSING.md buys both sizes so either fits.'),
+         evidence=(f'Fan leads about {FAN_LEAD} mm with 3.5 mm male bullets (seller: "Pre-wired 3.5mm bullet connectors"; the drawing label reads "55.1 inch", a misplaced decimal: '
+                   'drawn to scale the leads are 5.5 in). Routed distances from cad/checks/lead_lengths.json, extension = route + 20 mm - lead: '
+                   + ', '.join((f'{k} {v["route_mm"]} mm -> {v["ext_mm"]} mm extension' if not v['stub_only'] else f'{k} {v["route_mm"]} mm -> lead reaches; {v["ext_mm"]} mm stub, {v["spare_fan_lead_mm"]} mm spare lead tied') for k, v in FAN_LEN.items())
+                   + '. Every pad set still gets three 16 AWG wires with a 3.5 mm female bullet: the bullet needs a wire to sit on and the fan must unplug at its nacelle. '
+                   f'16 AWG over {max(v["ext_mm"] for v in FAN_LEN.values())} mm at 40 A: 13.2 mOhm/m, two phases conduct, drop about '
+                   f'{2 * 13.17e-3 * max(v["ext_mm"] for v in FAN_LEN.values()) / 1000 * 40:.2f} V; rms per phase about 33 A, above the 22 A chassis figure, so full throttle is a burst of seconds; '
+                   'hover rms 12-23 A is at that figure. Fan lead gauge is not published. Long motor leads with short battery leads is the ESC-friendly split; '
+                   'the left side has both, unavoidable with one ESC on the right.'),
+         sources=['areswei_cw', 'areswei_imgs', 'lead_lengths', 'powerstream', 'esc_lead_practice'],
+         open=f'Lead length and bullet size are seller figures: measure on arrival (2026-11-12). If a lead is shorter than {FAN_LEAD} mm, the FL and RL extensions grow by the difference (cut from the same 16 AWG stock).'),
     dict(id='charger', title='HTRC B6 V2 charges the 4S packs', status='pass',
          evidence=('Listing: "LiPo: 1-6 cells", 80 W 6 A; images show 2S to 6S JST-XH balance ports (4S port labelled), 4 mm banana outputs and a "Connector Splitter" lead with an XT60 plug; '
                    'box: charger, crocodile clip lead, connector splitter, 15 V 6 A adapter, AC cable. 4S at 1C (1.3 A) is 22 W, far under 80 W. Charge the packs one at a time, never through the flight harness.'),
@@ -520,9 +553,17 @@ CHECKS = [
     dict(id='current_sensor', title='Battery current scale (found while checking)', status='fail',
          evidence='ArduPilot default BATT_AMP_PERVLT 40.2 belongs to another ESC; this ESC outputs 12.75 mV/A, so the value is 1000 / 12.75 = 78.43 A/V. Until set, current, mAh and MOT_BAT_CURR_MAX read about half the truth.',
          sources=['mico_esc', 'ap_hwdef', 'mico_fc'], open='Set BATT_AMP_PERVLT 78.43 at setup; check against a clamp meter or the charger\'s mAh refill.'),
-    dict(id='am32_poles', title='AM32 motor poles and KV (found while checking)', status='fail',
-         evidence='QF2611 is 9N6P (6 magnet poles); AM32 default is 14 poles, KV 2220 (MicoAir). Set Motor poles 6 and KV 4000 in AM32 on all four ESCs, and SERVO_BLH_POLES 6 in ArduPilot for bidirectional DShot RPM.',
-         sources=['qx_listing', 'mico_esc_am32', 'mico_esc', 'ap_params_463'], open='Set through ArduPilot BLHeli passthrough (SERVO_BLH_AUTO 1) and the AM32 configurator.'),
+    dict(id='am32_poles', title='AM32 motor KV and pole count', status='unknown',
+         evidence=('KV 4650 (seller claim) replaces the AM32 default 2220 (MicoAir AM32 page). The pole count is not published. What a wrong value affects, from the AM32 source '
+                   '(main.c at 077b6a4): motor_poles never enters commutation, which follows the back-EMF zero crossings; it only scales the low-RPM duty-limit window '
+                   '(low_rpm_level = KV / 100 / (32 / poles), high_rpm_level = KV / 12 / (32 / poles)), the sine-start step (only with sine start on) and the RPM speed-control mode '
+                   '(not used with DShot throttle). A wrong count therefore shifts the start-up throttle limit, not whether the motor runs. In ArduPilot SERVO_BLH_POLES only converts '
+                   'eRPM to true RPM ("This allows calculation of true RPM from ESC\'s eRPM"): logs and the ESC-RPM harmonic notch filter would sit at the wrong frequency. '
+                   'Finding it on the bench: (a) look through the motor can vents and count the magnets (poles = magnets; small 50 mm EDF outrunners are commonly 12N14P or 9N6P, inference); '
+                   '(b) or with bidirectional DShot on, run one fan at a steady low throttle, read the ESC eRPM in Mission Planner (ESC telemetry with SERVO_BLH_POLES 2 gives eRPM directly), '
+                   'and record the fan sound with a phone spectrum app: the strongest line is the blade-passing frequency f = RPM / 60 x 11 blades, so poles = 2 x eRPM / (60 x f / 11).'),
+         sources=['areswei_cw', 'mico_esc_am32', 'am32_src', 'ap_blh_poles'],
+         open='Set AM32 Motor poles and SERVO_BLH_POLES to the counted value; until then leave 14 (the motor still commutates; only RPM readings and the low-RPM limit are off).'),
 ]
 
 PARAMS = {
@@ -534,7 +575,7 @@ PARAMS = {
         ('SERVO4_FUNCTION', 34, 'ESC pad set 4 -> motor 2 (rear left, CCW)'),
         ('MOT_PWM_TYPE', 5, 'DShot300 (MicoAir recommends DShot300)'),
         ('SERVO_BLH_AUTO', 1, 'AM32 passthrough over the FC USB'), ('SERVO_BLH_BDMASK', 15, 'bidirectional DShot on outputs 1-4'),
-        ('SERVO_BLH_POLES', 6, 'QF2611 9N6P'),
+        ('SERVO_BLH_POLES', 'counted on the bench (14 until then)', 'ARESWEI pole count not published; RPM display and the ESC-RPM notch only'),
         ('BATT_MONITOR', 4, 'analog voltage and current'), ('BATT_VOLT_MULT', 21.12, 'hwdef default'),
         ('BATT_AMP_PERVLT', 78.43, '1000 / 12.75 mV/A (MicoAir 55A ESC)'), ('BATT_CAPACITY', 2600, 'two 1300 mAh in parallel'),
         ('MOT_BAT_CURR_MAX', 110, 'keeps the right XT60 at or under 60 A'),
@@ -545,43 +586,49 @@ PARAMS = {
         ('FS_GCS_ENABLE', 5, 'Land when A7Z heartbeats stop'), ('FS_GCS_TIMEOUT', 2, 'seconds (minimum)'),
         ('AHRS_ORIENTATION', 'board stands vertical, arrow down', 'pick from the list at setup and confirm on the HUD (derivation suggests 29 Roll180Pitch90; inference)'),
     ],
-    'AM32 (each of the 4 ESCs)': [('Motor poles', 6, 'default 14'), ('Motor KV', 4000, 'default 2220'), ('Reversed', 'per motor test', 'only if a fan blows the wrong way and the leads are not swapped')],
+    'AM32 (each of the 4 ESCs)': [('Motor KV', 4650, 'seller claim; default 2220'), ('Motor poles', 'counted on the bench', 'default 14; affects the low-RPM throttle limit only, not commutation'), ('Reversed', 'per motor test', 'only if a fan blows the wrong way and the leads are not swapped')],
     'A7Z (Radxa OS)': [('overlay', 'Enable UART4 (sun60iw2p1-uart4) in rsetup -> Overlay -> Manage overlays', 'pins 16/18 -> /dev/ttyAS4; reboot'),
                        ('serial', '/dev/ttyAS4 at 921600 8N1, MAVLink2', 'the duck runtime acts as GCS, sysid 255')],
 }
 
 # ====================================================================== missing items and soldering
 MISSING = [
-    dict(item='Female bullet connectors for the fan extensions', qty='12 (plus spares)', why='fan leads end in male bullets; the extensions need the mating female so a fan can be unplugged from its nacelle',
-         spec='gold bullets, sold as male/female pairs, in BOTH 2.0 mm and 3.5 mm (fan size not published; photo suggests 2.0 mm, CAD agent assumed 3.5 mm); solder-cup type, 16 AWG entry',
-         source='not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Hobby shops (Pyrodrone, Amazon "2mm 3.5mm bullet connector set")'),
-    dict(item='Heat-shrink tubing', qty='about 1 m mixed', why='insulates 12 bullet joints, the XT60 cups and the capacitor legs',
-         spec='3 mm and 4 mm (bullets, 16 AWG), 6 mm (12 AWG at the XT60), 2:1, polyolefin',
+    dict(item='Capacitor in the Amazon order', qty='1 (pack of 7, B0FVG77HZV)', why='the bulk capacitor across the ESC tabs; it sits in the Amazon cart but was unticked in the 2026-11-10 checkout readback, so the fan order as read back does not include it',
+         spec='1000 uF 35 V low-ESR radial, 12.5 x 20 mm (as carted)',
+         source='tick it in the Amazon cart before placing the order (procurement.json fan_change_2026_11_10: "capacitor B0FVG77HZV in cart but unticked, not in this order")'),
+    dict(item='3.5 mm female bullet connectors for the fan wires', qty='12 (plus spares)', why='the ARESWEI leads end in 3.5 mm male bullets (seller claim); each pad wire needs the mating female so a fan unplugs at its nacelle',
+         spec='3.5 mm gold bullets, solder-cup, 16 AWG entry; usually sold as male/female pairs (only the females are used)',
+         source='not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Amazon "3.5mm bullet connector" packs'),
+    dict(item='Heat-shrink tubing', qty='about 1 m mixed', why='insulates the 12 bullet joints and the XT60 cups',
+         spec='5 mm (3.5 mm bullets), 6 mm (12 AWG at the XT60), 2:1, polyolefin',
          source='not in INVENTORY.md and not named by Shawn on 2026-11-10 (sourcing-policy.json lists heat-shrink as RoboClub supply from 2026-09-13; bin stock not asserted)'),
     dict(item='SH1.0 4-pin to 2.54 mm Dupont female cable, 30 cm', qty='1', why='FC UART1 (JST-SH) to A7Z pins 14/16/18 (Dupont); the SH kit leads are SH on both ends and at most 15 cm',
          spec='JST-SH 1.0 mm 4-pin housing one end, four single 2.54 mm female Dupont housings the other end, 28 AWG, 300 mm; the 5 V wire is pulled out or cut at the SH end',
          source='Amazon/AliExpress listings for "JST SH 1.0 4 pin to Dupont female"; no-buy alternative: one 15 cm SH kit lead per wire with a Dupont crimp at the free end, only if RoboClub has a Dupont crimper (not listed)'),
-    dict(item='M3 nylon standoffs and nuts for the stack', qty='4 M3 x 6 male-female (plate to ESC, CAD screws.json) + 4 M3 male-female ESC-to-FC spacers + 4 M3 nylon nuts',
-         why='the stack box lists only "1 x MicoAir 743 V2 Stack"; CAD lists only the four plate standoffs; INVENTORY has M3 screws, no standoffs',
-         spec='nylon (no metal near the FC), M3; ESC-to-FC spacer length set by CAD (the envelope implies about 8 mm board to board, inference); nuts M3 nylon',
-         source='M3 nylon standoff assortment kit (Amazon); RoboClub stock reported as not holding them (coordinator 2026-11-10)'),
+    dict(item='M3 nylon standoffs, spacers and screws for the stack', qty='4 M3 x 6 male-female standoffs + 4 M3 x 8 male-female spacers + 4 M3 x 8 nylon screws (cad/build/screws.json; no nuts)',
+         why='the stack box lists only "1 x MicoAir 743 V2 Stack"; INVENTORY has M3 screws but no standoffs or nylon parts',
+         spec='nylon, M3: standoffs male end into the bracket pilots, spacers through the ESC into the standoffs, screws hold the FC on the spacers',
+         source='M3 nylon standoff assortment kit (Amazon, holds all three sizes); RoboClub stock reported as not holding them (coordinator 2026-11-10)'),
     dict(item='12 AWG and 16 AWG silicone wire, red and black (16 AWG also yellow)', qty=f'12 AWG: about {BAT_LEN["L"]["pigtail_mm"] + BAT_LEN["R"]["pigtail_mm"]} mm each colour; 16 AWG: about {sum(v["ext_mm"] for v in FAN_LEN.values())} mm each of three colours',
          why='pigtails and fan extensions', spec='silicone-insulated, fine-strand',
          source='RoboClub stock by Shawn\'s word ("XT60和线"); only listed here so the gauges are checked at the club before the order: 12 AWG and 16 AWG specifically were not named'),
     dict(item='USB-C data cable for FC setup', qty='1', why='flash firmware, set parameters, AM32 passthrough',
          spec='USB-C to the FC; the Mac end as the Mac needs', source='probably the cable already used for the OpenRB or A7Z (not verified to be a data cable); buy only if none is at hand'),
 ]
-NOT_MISSING = ['FC-ESC 8-pin lead (SH kit in the Pyrodrone cart)', 'MTF-01 lead (SH kit)', 'XT60 male connectors (RoboClub, Shawn)', 'bulk capacitor (Amazon cart)',
+NOT_MISSING = ['FC-ESC 8-pin lead (SH kit in the Pyrodrone cart)', 'MTF-01 lead (SH kit)', 'XT60 male connectors (RoboClub, Shawn)',
+               'fan-side bullets (3.5 mm males pre-fitted on the ARESWEI leads, seller claim)', '2.0 mm bullets (dropped: the ARESWEI fans use 3.5 mm)',
+               'capacitor leg extensions (CAD seats the capacitor 8.3 mm from the tabs)',
                'battery straps (cart)', 'charger leads (in the B6 V2 box: splitter with XT60, balance ports on the charger)', 'solder, flux (RoboClub supply)', 'zip ties (RoboClub supply)',
                'M2 x 4 for the MTF-01, M2 x 8 / x 10 for the brackets (MicoAir screw stock: even M2 lengths 4-10)', 'receiver, GPS, compass (not used: deleted or replaced by the A7Z link)']
 
 SOLDER = [
-    dict(joint='ESC + tab: right pigtail red, left pigtail red, capacitor + leg', count=1, conductors=3, why_not_plug='the ESC has bare battery tabs only; a plug here would be one more XT60 in series carrying both packs (120 A peak), worse than solder'),
+    dict(joint='ESC + tab: right pigtail red, left pigtail red, capacitor + leg', count=1, conductors=3, why_not_plug='the ESC has bare battery tabs only; a plug here would be one more XT60 in series carrying both packs (up to 160 A uncapped, 110 A capped), worse than solder'),
     dict(joint='ESC - tab: right pigtail black, left pigtail black, capacitor - leg', count=1, conductors=3, why_not_plug='same as the + tab'),
     dict(joint='XT60 male solder cups on the two pigtails (+ and -)', count=4, conductors=4, why_not_plug='XT60 contacts are solder-cup parts; there is no crimp XT60 in the parts list'),
-    dict(joint='Fan extensions onto the ESC motor pads (4 fans x 3)', count=12, conductors=12, why_not_plug='the ESC has solder pads only; no connector option on this board'),
-    dict(joint='Female bullets onto the fan-side end of each extension', count=12, conductors=12, why_not_plug='bullets are solder-cup parts; this joint is what makes the fan end a plug'),
-    dict(joint='Capacitor leg extensions (only if the legs do not reach the tabs)', count='0 or 2', conductors=2, why_not_plug='a capacitor must be soldered at the tabs to work; moving it in CAD so the legs reach removes these two'),
+    dict(joint=f'16 AWG fan wires onto the ESC motor pads (4 fans x 3; FL {FAN_LEN["FL"]["ext_mm"]} mm, RL {FAN_LEN["RL"]["ext_mm"]} mm, FR {FAN_LEN["FR"]["ext_mm"]} mm, RR {FAN_LEN["RR"]["ext_mm"]} mm)', count=12, conductors=12,
+         why_not_plug='the ESC has solder pads only; no connector option on this board'),
+    dict(joint='3.5 mm female bullets onto the free end of each pad wire', count=12, conductors=12,
+         why_not_plug='bullets are solder-cup parts; this joint makes the fan end a plug. A female bullet cannot sit on the pad itself: three 3.5 mm bullets do not fit side by side on a pad set about 4.5 mm apart'),
 ]
 
 # ====================================================================== wiring.json
@@ -590,8 +637,10 @@ def wiring_json():
         schema='flight-pack wiring v1', date=CHECKED, frame='guide frame, mm (x forward, y left, z up); stand-world z = guide z + 120',
         status=dict(complete_at_pin_level=True, orderable=True,
                     blocks_order=[],
-                    buy_with_order=[m['item'] for m in MISSING[:4]],
-                    note='Every pin, wire and joint is defined. Four small items are not in any cart (MISSING.md). Open facts are confirmed on arrival and do not change what to buy.'),
+                    buy_with_order=[m['item'] for m in MISSING[:5]],
+                    note=('Every pin, wire and joint is defined for the ARESWEI HDS001 fans. Tick the capacitor in the Amazon order and buy four small items that are in no cart (MISSING.md). '
+                          'Open facts (pole count, CW viewing side, hover current) are settled on the bench and do not change what to buy.')),
+        fan=dict(FAN, sources=['areswei_cw', 'areswei_ccw', 'areswei_imgs'], note='all fan figures are seller claims; pole count, lead gauge and CW viewing side not published'),
         sources={k: dict(v, checked=CHECKED) for k, v in SOURCES.items()},
         boards=BOARDS, netlist=NET, open_pins=OPEN_PINS, checks=CHECKS, currents=CUR,
         lengths=dict(fans=FAN_LEN, batteries=BAT_LEN, a7z_link_mm=round(A7Z_LEN), a7z_link_pts=[[round(c, 1) for c in p] for p in A7Z_PTS],
@@ -602,16 +651,15 @@ def wiring_json():
         missing=MISSING, checked_not_missing=NOT_MISSING, soldering=SOLDER,
         notes_for_cad=['ESC orientation chosen here: component side to the rear, battery tabs up (toward the capacitor). Pad sets 1/2 outboard, 3/4 inboard; FC turned the same way (ESC socket at the bottom edge).',
                        'FC SH sockets: UART4 on the outboard edge, UART1 on the top edge, ESC on the bottom edge (CAD keep-out box sits only on the outboard edge).',
-                       'A7Z-to-FC lead (300 mm, 3 wires) is not routed in CAD; it should follow the A7Z 5 V lead.',
-                       'Capacitor legs would reach the tabs directly if the capacitor lay about 20 mm further toward the stack.',
-                       'screws.json lists only the four M3 x 6 plate standoffs: ESC-to-FC spacers and M3 nuts are missing there.'],
+                       f'Fan leads are about {FAN_LEAD} mm (seller): RR has about {FAN_LEN["RR"]["spare_fan_lead_mm"]} mm and FR about {FAN_LEN["FR"]["spare_fan_lead_mm"]} mm of spare lead to fold and tie in the arm bay; leave room for it.',
+                       'The ARESWEI leads leave the motor end of the unit (seller images), not the duct ring; lead_lengths.json fan exits should follow the real fan when it arrives.'],
     )
 
 
 # ====================================================================== markdown files
 def missing_md():
-    out = ['# Flight pack: items not in any cart', '',
-           f'Generated by build_wiring.py from the same data as wiring.json ({CHECKED}). Nothing here has been added to a cart.', '']
+    out = ['# Flight pack: items not in the order', '',
+           f'Generated by build_wiring.py from the same data as wiring.json ({CHECKED}), fans ARESWEI HDS001 4650KV. Nothing here has been added to a cart.', '']
     for m in MISSING:
         out += [f'## {m["item"]}', '', f'- Quantity: {m["qty"]}', f'- Why: {m["why"]}', f'- Spec: {m["spec"]}', f'- Where from: {m["source"]}', '']
     out += ['## Checked and not missing', ''] + [f'- {x}' for x in NOT_MISSING] + ['']
@@ -620,7 +668,7 @@ def missing_md():
 
 def solder_md():
     total = sum(s['count'] for s in SOLDER if isinstance(s['count'], int))
-    out = ['# Flight pack: solder joints', '', f'Generated by build_wiring.py ({CHECKED}). {total} joints, plus 2 if the capacitor legs need extending. Everything else plugs.', '']
+    out = ['# Flight pack: solder joints', '', f'Generated by build_wiring.py ({CHECKED}). {total} joints (fans ARESWEI HDS001; capacitor legs go straight onto the tabs). Everything else plugs.', '']
     for s in SOLDER:
         out += [f'- **{s["joint"]}** ({s["count"]} joint(s), {s["conductors"]} conductors). Why not a plug: {s["why_not_plug"]}']
     out += ['', 'Plugged, no solder: XT60 pack-to-pigtail (2), 12 fan bullets, FC-ESC 8-pin, FC-MTF-01 4-pin, FC-A7Z 3-wire lead, balance leads (charger only).', '']
@@ -743,7 +791,7 @@ def fan_module(nm):
     zh = {'FR': '右前', 'RR': '右后', 'FL': '左前', 'RL': '左后'}[nm]
     x_pins = 22.0 if side < 0 else 0.0
     pins = [pin(lead, ZHC[lead], f'{zh}风扇{ZHC[lead]}线（公子弹头）', 'signal', x_pins, 6.0 + 5.0 * i, 16.8) for i, lead in enumerate(['red', 'yellow', 'black'])]
-    return outline(f'fan{nm}', f'{zh}涵道风扇（{spin}）', f'ArduPilot 电机 {mot}，从上看{"逆时针" if spin == "CCW" else "顺时针"}；接电调 {grp} 号焊盘', f'{zh}风扇', 22.0, 22.0, '#2b2b2b',
+    return outline(f'fan{nm}', f'{zh}涵道风扇（{"绿色电机 CW" if spin == "CW" else "红色电机 CCW"}）', f'ArduPilot 电机 {mot}，从上看{"逆时针" if spin == "CCW" else "顺时针"}；接电调 {grp} 号焊盘', f'{zh}风扇', 22.0, 22.0, '#2b2b2b',
                    pins, [{'x': 4, 'y': 4, 'w': 14, 'h': 14, 'label': f'M{mot}', 'color': '#b8860b'}])
 
 
@@ -852,7 +900,7 @@ def wire_cards(group_ids):
         joints = [('焊' if f['joint'] == 'soldered' else '插'), ('焊' if t['joint'] == 'soldered' else '插')]
         cls = lambda j: 'solder' if j == '焊' else 'plug'
         col = {'red': RED, 'black': BLK, 'yellow': YEL, 'green': GRN}.get(wr['colour'], '#c9ced6')
-        length = f'{wr["length_mm"]} mm' if wr['length_mm'] else '对插，无导线'
+        length = f'{wr["length_mm"]} mm' if wr['length_mm'] else ('电容脚直接焊，无导线' if wr['colour'] == 'capacitor leg' else '对插，无导线')
         gauge = f'{wr["gauge_awg"]} AWG' if wr['gauge_awg'] else ''
         out.append(f'<label class="wire"><input type="checkbox" aria-label="{esc_(w["id"])} 完成"><div><b><span class="sw" style="background:{col}"></span>{esc_(w["zh"])}</b>'
                    f'<div class="meta">{esc_(gauge)} · {esc_(length)} · 一头<span class="pill {cls(joints[0])}">{joints[0]}</span>另一头<span class="pill {cls(joints[1])}">{joints[1]}</span></div>'
@@ -863,17 +911,19 @@ def wire_cards(group_ids):
 ZH_STATUS = {'pass': '通过', 'fail': '要改设置', 'unknown': '待实测'}
 ZH_CHECK = {
     'esc_fc_cable': ('电调和飞控之间的 8 针线', '两块板的插座顺序完全相同（Curr、NC/RX7、M4、M3、M2、M1、VBAT、GND），厂家接线图画的就是直通线。装上后两块板都朝后、插座都在下沿，所以直通线就对。盒里有没有这根线没写，购物车里的 SH 线套件能做一根。'),
-    'motor_map': ('四个风扇的编号、转向和焊盘', 'ArduPilot 四轴 X：1 号右前逆时针，2 号左后逆时针，3 号左前顺时针，4 号右后顺时针（从上看）。电调电池片朝上装时，1、2 号焊盘在外侧（右），3、4 号在内侧，所以在参数里重新对应：1 号焊盘接右前，2 号接右后，3 号接左前，4 号接左后。顺时针的两个风扇放左前和右后。QX 没写“顺时针”是从哪面看的，第一次电机测试时看风往下吹、从上看转向对，不对就把左右风扇对调（零件不改）。'),
+    'motor_map': ('四个风扇的编号、转向和焊盘', 'ArduPilot 四轴 X：1 号右前逆时针，2 号左后逆时针，3 号左前顺时针，4 号右后顺时针（从上看）。电调电池片朝上装时，1、2 号焊盘在外侧（右），3、4 号在内侧，所以在参数里重新对应：1 号焊盘接右前，2 号接右后，3 号接左前，4 号接左后。卖家说绿色电机是顺时针（CW）、红色是逆时针（CCW），计划绿色放左前和右后，红色放右前和左后。卖家没写“顺时针”是从哪头看的，所以装进机舱前逐个测：风扇夹住、进风口朝上，Mission Planner 电机测试 5% 转 2 秒（A 右前、B 右后、C 左后、D 左前）。① 测试字母转的是不是计划的那个风扇；② 进风口放纸条应被吸进去，电机那头的纸条被吹开，反了就对调这个风扇任意两根子弹头；③ 风向对了以后从上往进风口看：左前、右后要顺时针，右前、左后要逆时针。如果绿色的从上看是逆时针，说明卖家的 CW 是从电机那头看的，把绿红左右对调（左前↔右前、右后↔左后，重插子弹头，不用焊），再做一遍 ②③。放错位置也能吹起来，但偏航方向会反，起飞就打转，第 ③ 步不能省。'),
     'mtf01': ('光流模块', '4 针：GND、5V、Rx、Tx，5 V 供电，3.3 V 串口 115200。接飞控 UART4（GND、5V、TX4、RX4），厂家给 MicoAir743 画的就是这根直通线。参数照厂家 ArduPilot 指南。'),
     'a7z_link': ('A7Z 和飞控的 MAVLink 线', 'A7Z 的 14（地）、16（UART4 发）、18（UART4 收）三根针现在都空着；舵机用的 UART2（7、11）不动。Radxa 自带“Enable UART4”覆盖，指名 A7Z 的 16、18 号针，设备是 /dev/ttyAS4。两边都是 3.3 V。这块 A7Z 以前从没开过备用串口；今天 A7Z 不在线，没能读设备列表。'),
-    'power_path': ('电池并联和电流', f'按 v6 总重 {C["total_g_nominal"]:.0f} 克（重风扇 {C["total_g_heavy"]:.0f} 克）算，悬停每个风扇 {C["hover_A_per_fan"][0]}～{C["hover_A_per_fan"][1]} A，合计 {C["hover_A_total"][0]}～{C["hover_A_total"][1]} A；满油门每个 45 A。右电池尾线短，分到 {C["pack_share_right"]:.0%}。电调 55 A、电池 130C 都够。XT60 额定 30 A、最大 60 A。估算低的一头（合计约 52 A），每个 XT60 约 28 A，在额定内，限流 110 A 还留一倍余量；高的一头（合计约 106 A），每个 XT60 持续约 57 A，贴着最大值，限流 110 A 几乎没有控制余量，那时改成电池线直接焊尾线或换 XT90，要买的东西不变。实际落在哪一边，看第一次拴绳悬停读到的电流。'),
-    'capacitor': ('电容', f'跨在电调电池片上，长脚接 +。CAD 里它躺在右臂顶上，脚尖离 + 片约 {CAP_LEN} mm：脚不够长就各接一段 16 AWG 短线，和两根尾线一起焊在片上。左电池引线较长，1000 µF 低内阻电容放在片上就够。'),
+    'power_path': ('电池并联和电流', f'按总重 {C["total_g_nominal"]:.0f}～{C["total_g_heavy"]:.0f} 克算，每个风扇悬停要 {C["hover_thrust_per_fan_g"][0]}～{C["hover_thrust_per_fan_g"][1]} 克推力（卖家标 980 克的一半不到），悬停电流每个 {C["hover_A_per_fan"][0]}～{C["hover_A_per_fan"][1]} A，合计 {C["hover_A_total"][0]}～{C["hover_A_total"][1]} A；满油门每个 40 A（卖家说法），合计 {C["peak_A_total_uncapped"]:.0f} A。电调每路 55 A，比 40 A 多 15 A 余量；电池 130C×1.3 Ah=169 A，够。右电池尾线短，分到 {C["pack_share_right"]:.0%}。XT60 额定 30 A、最大 60 A：估算低的一头右边 XT60 约 {C["hover_A_right_pack"][0]} A，接近额定，限流 110 A 还有约 1.8 倍余量；高的一头约 {C["hover_A_right_pack"][1]} A，贴着最大值，光悬停就碰到 110 A 限流、爬不上去，那时改成电池线直接焊尾线或换 XT90，现在要买的东西不变。实际落在哪一边，看第一次拴绳悬停读到的电流。'),
+    'capacitor': ('电容', f'跨在电调电池片上，长脚接 +。CAD 已经把电容挪到离两片各 {CAP_GAP} mm 处，脚直接焊在片上，和两根尾线一起，不用加长线。左电池引线较长，1000 µF 低内阻电容放在片上就够。注意：2026-11-10 的 Amazon 结账页里电容没勾选，下单前要勾上。'),
     'grounds': ('两套电源只共一根地线', '只连三根：飞控 UART1 的地 ↔ A7Z 14 号针，加两根信号线。飞控 UART1 的 5V 位空着，A7Z 的 5 V 针不碰。没有第二条地线回路，没有 5 V 或电池电压过去。顺序：先开鸭子，再插飞行电池；先拔飞行电池，再关鸭子。'),
-    'motor_leads': ('风扇引线长度', '风扇自带线约 70 mm（未公布），四个都要接延长线：' + '，'.join(f'{ {"FR": "右前", "RR": "右后", "FL": "左前", "RL": "左后"}[k]} {v["ext_mm"]} mm' for k, v in FAN_LEN.items()) + '。16 AWG 在悬停电流下够用，满油门只能是几秒的冲刺。子弹头尺寸没公布，照片比例看像 2.0 mm（CAD 那边假设的是 3.5 mm），两种都买。'),
+    'motor_leads': ('风扇引线长度', f'卖家说风扇自带线约 {FAN_LEAD} mm、头上已装 3.5 mm 公子弹头（图上标的“55.1 inch”是小数点错位）。按 CAD 走线长度：'
+                    + '，'.join((f'{ZHF[k]}走线 {v["route_mm"]} mm，接 {v["ext_mm"]} mm 延长线' if not v['stub_only'] else f'{ZHF[k]}走线 {v["route_mm"]} mm，自带线够长，只焊 {v["ext_mm"]} mm 短线挂母头，多出约 {v["spare_fan_lead_mm"]} mm 折好扎在臂舱里') for k, v in FAN_LEN.items())
+                    + '。四组焊盘都要焊三根 16 AWG 线配母子弹头：母头要有线才能焊，风扇也要能在机舱处拔下。16 AWG 悬停够用，满油门只能是几秒的冲刺。到货后量一下线长，短了左边两根延长线相应加长。'),
     'charger': ('充电器', 'HTRC B6 V2 支持 1～6 节锂电，机身上有 2S～6S 平衡口，盒里的多头转接线带 XT60。4S 1300 按 1C 充只要 22 W。两块电池分开充，不要通过飞行线束一起充。'),
     'arming': ('没有遥控器怎么解锁和停机', '不需要加任何硬件。关掉遥控相关的检查和油门失控保护，由 A7Z 用 MAVLink 解锁、切模式、起飞、强制上锁；A7Z 心跳停 2 秒，飞控自己降落。网页断了，A7Z 要自己让它降落。'),
     'current_sensor': ('电流读数要改设置', 'ArduPilot 默认的电流系数 40.2 是别的电调的；这个电调是 12.75 mV/A，要设 78.43。不改的话，电流和限流都只读到一半左右。'),
-    'am32_poles': ('电调里的电机极数要改', 'QF2611 是 6 极，AM32 默认 14 极、KV 2220。四个电调都改成 6 极、KV 4000，ArduPilot 里 SERVO_BLH_POLES 也设 6。'),
+    'am32_poles': ('电调里的 KV 和电机极数', 'KV 改成 4650（卖家说法，AM32 默认 2220）。极数卖家没公布。查 AM32 源码：极数不参与换相（换相看反电动势过零），只影响低转速时的油门上限区间、正弦启动和转速闭环模式（DShot 油门用不到），所以填错电机照样转，只是起转时的油门限制偏了。ArduPilot 的 SERVO_BLH_POLES 只用来把电转速换成真转速，填错只会让转速读数和按转速走的陷波滤波器偏掉。怎么数：① 从电机外壳的缝里数磁铁个数，磁铁数就是极数；② 或者开双向 DShot，单个风扇定在低油门，记下飞控读到的电转速（SERVO_BLH_POLES 先设 2，读数就是电转速），同时用手机频谱 App 录风扇声，最强的那条是叶片频率 f=转速/60×11 片叶，极数 = 2×电转速 ÷（60×f÷11）。数出来以后 AM32 和 SERVO_BLH_POLES 都填这个数。'),
 }
 
 
@@ -887,35 +937,35 @@ def page():
         checks.append(f'<div class="card"><h3><span class="pill {c["status"]}">{ZH_STATUS[c["status"]]}</span>{esc_(t)}</h3><p>{esc_(body)}</p>'
                       f'<p class="src">来源：{"、".join(esc_(s) for s in c["sources"])}（见页尾）</p></div>')
     miss = ''.join(f'<div class="card"><h3>{esc_(z)}</h3><p>{esc_(d)}</p></div>' for z, d in [
-        ('母子弹头 12 个（2.0 mm 和 3.5 mm 各买一套）', '风扇线头是公子弹头，延长线要配母头，风扇才能拔下来。尺寸没公布，到货后用卡尺量，用对的那套。'),
-        ('热缩管约 1 米', '3 mm、4 mm（子弹头和 16 AWG）、6 mm（XT60 上的 12 AWG）。俱乐部清单里没有，今天你也没提。'),
+        ('电容：Amazon 购物车里有，但结账页没勾选', '2026-11-10 读回的 Amazon 结账页里，电容（B0FVG77HZV，1000 µF 35 V）在车里但没勾，这一单不包含它。下单前勾上。'),
+        ('3.5 mm 母子弹头 12 个（加几个备用）', '卖家说风扇线头已装 3.5 mm 公子弹头，焊盘线另一头要配母头，风扇才能在机舱处拔下来。2.0 mm 那套不用买了。'),
+        ('热缩管约 1 米', '5 mm（3.5 mm 子弹头）、6 mm（XT60 上的 12 AWG）。俱乐部清单里没有，今天你也没提。'),
         ('SH1.0 4 针转杜邦母头线，30 cm，1 根', '飞控 UART1 是 SH 插座，A7Z 是 2.54 mm 排针；套件里的线两头都是 SH，最长 15 cm。'),
-        ('M3 尼龙铜柱和螺母', '堆叠盒里只写“1 个 743 V2 堆叠”。要 4 个 M3×6 公母柱（CAD 已有）、4 个电调到飞控的 M3 公母柱（长度由 CAD 定）、4 个 M3 尼龙螺母。'),
+        ('M3 尼龙柱和螺丝', '堆叠盒里只写“1 个 743 V2 堆叠”。CAD 现在列的是：4 个 M3×6 公母柱、4 个 M3×8 公母隔离柱、4 个 M3×8 尼龙螺丝，不用螺母。一盒 M3 尼龙柱套装就全有。'),
         ('要在俱乐部确认的线规', '12 AWG 和 16 AWG 硅胶线你说俱乐部有，但没说线规；下单前看一眼有没有这两种。USB-C 数据线用现有的就行。')])
     solder = ''.join(f'<li><b>{esc_(z)}</b>：{esc_(d)}</li>' for z, d in [
         ('电调 + 片（1 处，3 根线）', '右尾线红、左尾线红、电容长脚。电调只有裸片，没有插座可选。'),
         ('电调 − 片（1 处，3 根线）', '右尾线黑、左尾线黑、电容另一脚。'),
         ('两根尾线上的 XT60 公头（4 处）', 'XT60 是焊杯式，没有压接款。'),
-        ('四个风扇延长线焊到电调焊盘（12 处）', '电调电机输出只有焊盘。'),
-        ('延长线另一头焊母子弹头（12 处）', '子弹头是焊杯式；焊了这一头，风扇那头才能插拔。'),
-        ('电容脚加长（0 或 2 处）', '只在电容脚够不到电池片时需要；CAD 把电容挪近 20 mm 就省掉。')])
+        (f'四组焊盘各焊三根 16 AWG 线（12 处：左前 {FAN_LEN["FL"]["ext_mm"]} mm、左后 {FAN_LEN["RL"]["ext_mm"]} mm、右前 {FAN_LEN["FR"]["ext_mm"]} mm、右后 {FAN_LEN["RR"]["ext_mm"]} mm）', '电调电机输出只有焊盘。'),
+        ('线的另一头焊 3.5 mm 母子弹头（12 处）', '子弹头是焊杯式；焊了这一头，风扇才能插拔。母头不能直接焊在焊盘上：三个 3.5 mm 子弹头并排放不进约 4.5 mm 间距的一组焊盘。')])
     params = ''.join(f'<h3>{esc_(k)}</h3><ul class="tight">' + ''.join(f'<li><code>{esc_(a)} = {esc_(b)}</code> <span class="mute">{esc_(c)}</span></li>' for a, b, c in v) + '</ul>'
                      for k, v in PARAMS.items())
     srcs = ''.join(f'<li><b>{esc_(k)}</b>：<a href="{esc_(v["url"].split(" ")[0])}">{esc_(v["url"])}</a>，{CHECKED} 查。“{esc_(v["quote"])}”</li>' for k, v in SOURCES.items())
     body = f"""
 <main>
 <h1>飞行背包接线</h1>
-<p class="lead">四个 50 mm 涵道风扇、两块 4S 电池并联、MicoAir 743 V2 飞控加四合一电调、MTF-01 光流，飞控通过一根三芯线和鸭子的 A7Z 说话。每根线两头的针脚、线规、长度、焊还是插，都在下面。</p>
-<div class="card verdict"><b>结论：</b>到针脚为止已经完整，可以下单。下单时另外买 4 样小东西（子弹头、热缩管、SH 转杜邦线、M3 尼龙柱和螺母），见“缺的东西”。
-有两项设置必须改（电流系数、电调极数），一项待第一次拴绳悬停实测（悬停电流和 XT60 额定的关系）。共 {n_solder} 个焊点，其余全是插接。</div>
+<p class="lead">四个 ARESWEI 50 mm 11 叶 4650KV 涵道风扇（绿色电机顺时针、红色逆时针，各两个）、两块 4S 电池并联、MicoAir 743 V2 飞控加四合一电调、MTF-01 光流，飞控通过一根三芯线和鸭子的 A7Z 说话。每根线两头的针脚、线规、长度、焊还是插，都在下面。风扇的数字都是卖家说法。</p>
+<div class="card verdict"><b>结论：</b>到针脚为止已经完整，可以下单。Amazon 那一单要先把电容勾上；另外买 4 样小东西（3.5 mm 母子弹头、热缩管、SH 转杜邦线、M3 尼龙柱和螺丝），见“缺的东西”。
+电流系数必须改；电机极数卖家没公布，到货后在台上数；悬停电流和 XT60 额定的关系等第一次拴绳悬停实测。共 {n_solder} 个焊点，其余全是插接。</div>
 <nav class="toc"><a href="#power">电源</a><a href="#fans">风扇</a><a href="#signal">信号</a><a href="#list">逐根清单</a><a href="#solder">焊点</a><a href="#missing">缺的东西</a><a href="#checks">检查</a><a href="#params">参数</a><a href="#src">来源</a></nav>
 <p class="mute">所有板子都按“站在机器人后面往前看”画：图的左边是鸭子的左边。点一块板子只亮它的线；“逐根接线”一根一根走。</p>
 
 <h2 id="power">一、电源：两块电池并联到电调</h2>
 <p>每块电池自带 XT60 母头，插一根 12 AWG 尾线（XT60 公头）。两根尾线的红线都焊在电调 + 片上，黑线都焊在 − 片上，电容也焊在同一对片上。没有分线器。插电池前确认两块都是充满的（每节电压差 0.05 V 以内），不然插上的一瞬间会互相大电流充电。</p>
 {bench_html('b-power', bench_power())}
-<h2 id="fans">二、风扇：电调焊盘 → 延长线 → 子弹头</h2>
-<p>每个风扇三根线，任意顺序接三块焊盘，转向等电机测试后再调（对调两根子弹头，或在 AM32 里勾 Reversed）。左边两个风扇的延长线走背包外侧、从背包盖后面横过来。</p>
+<h2 id="fans">二、风扇：电调焊盘 → 16 AWG 线 → 3.5 mm 子弹头</h2>
+<p>每个风扇三根线，任意顺序接三块焊盘，转向等电机测试后再调（对调两根子弹头，或在 AM32 里勾 Reversed）。绿色电机（顺时针）放左前和右后，红色（逆时针）放右前和左后，装进机舱前按“检查结果”里的转向步骤逐个确认。左边两个风扇的线走背包外侧、从背包盖后面横过来；右后风扇自带线有富余，折好扎在臂舱里。</p>
 {bench_html('b-fans', bench_fans())}
 <h2 id="signal">三、信号：电调、飞控、光流、A7Z</h2>
 <p>电调和飞控之间一根 8 针直通线；飞控 UART4 到光流一根 4 针直通线；飞控 UART1 到 A7Z 三根线（地、两根串口线），UART1 的 5V 那一位空着。</p>
@@ -927,7 +977,7 @@ def page():
 <h3>信号</h3>{wire_cards({'signal'})}
 <div class="card"><b>空着不接的：</b>飞控 UART1 第 2 位（5V，把这根线从插头里拔出或齐根剪掉包好）；A7Z 2、4 号 5 V 针（不动）；两块电池的平衡头（只给充电器用，飞行时压在绑带下）；飞控的 12V、图传、GPS、UART5、UART6、I2C（不用）。</div>
 
-<h2 id="solder">五、焊点（共 {n_solder} 个，外加电容可能的 2 个）</h2>
+<h2 id="solder">五、焊点（共 {n_solder} 个）</h2>
 <ul class="tight">{solder}</ul>
 <p class="mute">插接、不用焊：两对 XT60、12 个风扇子弹头、电调–飞控 8 针、飞控–光流 4 针、飞控–A7Z 线、平衡头。</p>
 
