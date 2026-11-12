@@ -35,12 +35,70 @@ LEGS = ("left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_an
         "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle")
 
 
+class _StatefulSession:
+    """A history policy (HISTORY-PLAN.md: inputs obs [1, 61] + hist_in, outputs actions + hist_out) seen by
+    walk_brain.Brain as a plain 61-input session. hist_out is fed back as the next hist_in; the state is zeroed (the
+    graph then back-fills it with the current frame) whenever the previous control tick did not run a policy from the
+    same file, i.e. on every entry into the policy. Slots loaded from one file (walk61 and stand61 of a universal policy)
+    share one state, so the stand/walk switch inside walk mode keeps the history."""
+
+    def __init__(self, sess, brain, group):
+        self.sess, self.brain, self.group = sess, brain, group
+        ins = sess.get_inputs()
+        self.state_name, self.state_shape = ins[1].name, tuple(ins[1].shape)
+
+    def get_inputs(self):
+        return self.sess.get_inputs()[:1]
+
+    def get_outputs(self):
+        return self.sess.get_outputs()[:1]
+
+    def get_modelmeta(self):
+        return self.sess.get_modelmeta()
+
+    def run(self, out, feed):
+        b, tick = self.brain, self.brain._hist_tick
+        st = b._hist_state.get(self.group)
+        if st is None or b._hist_last.get(self.group) != tick - 1:
+            st = np.zeros(self.state_shape, dtype=np.float32)
+        res = self.sess.run(None, dict(feed, **{self.state_name: st}))
+        b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
+        return res[:1]
+
+
+def install_stateful_policies(b):
+    """Make brain_sim_check's Brain run history policies (no-op for 61-input policies, so every existing models dir
+    evaluates exactly as before). The runtime's own walk_brain.Brain is not changed (HISTORY-PLAN.md, runtime change)."""
+    if getattr(b, "_flight_stateful", False):
+        return
+    import hashlib
+    base = b.Brain
+
+    class StatefulBrain(base):
+        def __init__(self, models, *a, **k):
+            super().__init__(models, *a, **k)
+            self._hist_tick, self._hist_state, self._hist_last = 0, {}, {}
+            for key, sess in list(self.sessions.items()):
+                if len(sess.get_inputs()) > 1:
+                    path = os.path.join(models, key + "61.onnx")
+                    group = hashlib.sha256(open(path, "rb").read()).hexdigest()[:16]
+                    self.sessions[key] = _StatefulSession(sess, self, group)
+
+        def tick(self, *a, **k):
+            self._hist_tick += 1
+            return super().tick(*a, **k)
+
+    b.Brain = StatefulBrain
+    b._flight_stateful = True
+
+
 def episode(job):
     models, manifest, case, seed, shove_ns, shove_at, landing = job[:7]
     extra = list(job[7]) if len(job) > 7 else []  # diagnostics only: probe flags appended last (they win)
     sys.path.insert(0, str(RL / "cmu/mac"))
     import mujoco
     import brain_sim_check as b
+    install_stateful_policies(b)
 
     # the seeing pick (--sp-at) wraps visual.apply_visual_to_spec on every run; worker processes are reused, so a
     # second episode would wrap the wrapper and add the jaw body twice ("repeated name 'jaw' in body", 2026-11-11):

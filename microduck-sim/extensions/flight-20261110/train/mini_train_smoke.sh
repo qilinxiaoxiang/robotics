@@ -34,6 +34,25 @@ case "$1" in
     scp -q mac-mini:/tmp/${TG}_smoke.json $LOCAL/$FL/train/out/${TG}_smoke.json || true
     grep -E "\[payload\]|\[smoke\]|\[style\]|\[pack\]|\[asbuilt\] total|Error|Traceback" $LOCAL/$FL/train/logs/${TG}_smoke.log | cut -c1-400 | head -60
     ;;
+  history)
+    # HISTORY-PLAN.md design A smoke: universal3h env, uni_a padded, PPO iterations, stateful ONNX export and checks;
+    # $2 iterations, $3 envs, $4 identifiability probe steps (0 = off). Output: train/out/history_smoke.json,
+    # train/logs/history_smoke.log, the exported ONNX in train/ckpt/hist_smoke/ (walk61 = stand61, for flight_eval)
+    IT=${2:-3}
+    NE=${3:-64}
+    PS=${4:-0}
+    zsh $LOCAL/$FL/train/mini.sh run true
+    mkdir -p $LOCAL/$FL/train/logs $LOCAL/$FL/train/ckpt/hist_smoke
+    ssh mac-mini "mkdir -p $REMOTE/smoke-assets"
+    rsync -a $LOCAL/$FL/train/ckpt/uni_a/walk61.onnx mac-mini:$REMOTE/smoke-assets/uni_a.onnx
+    ssh mac-mini "cd $REMOTE/$RL && FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests timeout 590 .venv/bin/python \
+      cmu/finetune/flight/history_smoke.py --init \$HOME/$REMOTE/smoke-assets/uni_a.onnx --envs $NE --iters $IT \
+      --probe-steps $PS --outdir /tmp/history_smoke 2>&1" > $LOCAL/$FL/train/logs/history_smoke.log || true
+    scp -q mac-mini:/tmp/history_smoke/history_smoke.json $LOCAL/$FL/train/out/history_smoke.json || true
+    scp -q mac-mini:/tmp/history_smoke/history_smoke.onnx $LOCAL/$FL/train/ckpt/hist_smoke/walk61.onnx || true
+    cp $LOCAL/$FL/train/ckpt/hist_smoke/walk61.onnx $LOCAL/$FL/train/ckpt/hist_smoke/stand61.onnx || true
+    grep -E "\[smoke\]|\[history\]|Error|Traceback" $LOCAL/$FL/train/logs/history_smoke.log | cut -c1-500 | head -40
+    ;;
   audit)
     zsh $LOCAL/$FL/train/mini.sh run true  # waits while another agent's simulation runs on the mini
     # universal-env degenerate audit on CPU (UNIVERSAL-PLAN.md section 4): assets laid out as the training image's
