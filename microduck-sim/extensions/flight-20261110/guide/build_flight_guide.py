@@ -152,11 +152,11 @@ def screw_spec(s):
     if sp.startswith('M2 x 12'):
         return 'M2 × 12 内六角', 'machine', 12.0, None
     if sp.startswith('M3 x 6 male-female'):
-        return 'M3 × 6 尼龙公母柱', 'machine', 12.0, None
+        return 'M3 × 6 金属公母柱', 'machine', 12.0, None
     if sp.startswith('M3 x 8 male-female'):
-        return 'M3 × 8 尼龙公母隔离柱', 'machine', 14.0, None
-    if sp.startswith('M3 x 8 nylon screw'):
-        return 'M3 × 8 尼龙螺丝', 'machine', 8.0, None
+        return 'M3 × 8 金属公母隔离柱', 'machine', 14.0, None
+    if sp.startswith('M3 x 8 metal screw'):
+        return 'M3 × 8 螺丝', 'machine', 8.0, None
     m = re.match(r'(M[23]) x (\d+)$', sp)
     assert m, sp
     return f'{m.group(1)} × {m.group(2)}', 'tap', float(m.group(2)), None
@@ -168,9 +168,9 @@ WHERE = {
     'nac': '从机舱外半的沉孔拧进内半',
     'lug': '从臂后面穿过臂板，拧进机舱内半的方块耳朵',
     'fcb': '从支架背面穿过，拧进右臂的四个凸台',
-    'fc-standoff': '公头拧进支架的凸台（手拧）',
-    'esc-fc-spacer': '公头穿过电调的孔，拧进下面的尼龙柱（手拧）',
-    'fc-screw': '穿过飞控的胶圈孔，拧进隔离柱（手拧）',
+    'fc-standoff': '公头拧进支架的凸台（先手拧，再用 5.5 mm 扳手或尖嘴钳拧紧）',
+    'esc-fc-spacer': '公头穿过电调的孔，拧进下面的金属柱（5.5 mm 扳手或尖嘴钳）',
+    'fc-screw': '穿过飞控的胶圈孔，拧进隔离柱（拧到飞控不晃就停）',
     'mtf': '从下往上穿过光流的孔，拧进小平台',
 }
 STEP_OF = {}   # filled from the step list: screws.json step name -> guide step id
@@ -250,8 +250,9 @@ def only(bench, groups=None, wires=None, title=None, caption=None):
 BENCH_FANS = W.bench_fans()
 BENCH_POWER = W.bench_power()
 BENCH_SIGNAL = W.bench_signal()
-# The A7Z lead is the 20 cm SH1.0-to-female-Dupont lead of the Minidodca kit (CURRENT-STATE parts_flight_pack
-# uart_lead_qwiic_kit_minidodca: wires black / red / blue / yellow by plug position 1..4). Position 2 (red, 5 V) is removed.
+# The A7Z lead is made on the bench (step b-a7zlead, 2026-11-12: Shawn "线我们可以自己做"): three 5 cm SH1.0 kit wires in
+# a 4-pin housing at positions 1, 3, 4, each soldered to a club M-F Dupont jumper (male end cut): black / blue / yellow.
+# Position 2 (FC 5 V) stays empty.
 KIT_COL = {'mvGND': ('#1d1d1f', '黑', 1), 'mvTX1': ('#1f6fd1', '蓝', 3), 'mvRX1': ('#c99a00', '黄', 4)}
 for w in BENCH_SIGNAL['wires']:
     if w['id'] in KIT_COL:
@@ -298,7 +299,7 @@ def status_zh(s):
         if s.startswith(k):
             return z
     if s.startswith('ordered'):
-        m = re.search(r'arriving \w+ (\d{4}-\d{2}-\d{2})', s)
+        m = re.search(r'arriving (?:\w+ )?(\d{4}-\d{2}-\d{2})', s)
         return '已下单' + (f'，预计 {m.group(1)} 到' if m else '') + '，还没到手'
     if s.startswith('carted'):
         return '在购物车里，还没下单'
@@ -311,9 +312,7 @@ BUY = [  # CURRENT-STATE key, Chinese line
     ('fc_esc_micoair743v2_stack', 'MicoAir 743 V2 堆叠：飞控 + 55A 四合一电调'),
     ('optical_flow_mtf01', 'MicoAir MTF-01 光流模块'),
     ('fan_bullets_amass_3p5mm', 'Amass 3.5 mm 子弹头 20 对（用 12 个母头）'),
-    ('stack_m3_nylon_kit_avrestypt_610', 'M3 尼龙柱套装（用 4 个 M3×6 公母柱、4 个 M3×8 公母隔离柱、4 颗 M3×8 尼龙螺丝）'),
-    ('sh1_cable_kit', 'SH1.0 硅胶线套装（电调↔飞控 8 针线、飞控↔光流 4 针线从这里拿）'),
-    ('uart_lead_qwiic_kit_minidodca', 'SH1.0 4 针线套装（用其中 20 cm 的 SH 转杜邦母头线：飞控↔A7Z）'),
+    ('sh1_cable_kit', 'SH1.0 硅胶线套装（电调↔飞控 8 针线、飞控↔光流 4 针线，还有自己做 A7Z 线用的 3 根 5 cm 线和 1 个 4 针外壳）'),
     ('battery_straps', '2 根 16 × 250 mm 电池绑带'),
     ('charger_htrc_b6_v2', 'HTRC B6 V2 平衡充电器'),
 ]
@@ -329,12 +328,13 @@ def buy_rows():
 def club_rows():
     l12 = W.BAT_LEN['L']['pigtail_mm'] + W.BAT_LEN['R']['pigtail_mm']
     l16 = sum(W.FAN_LEN[n]['ext_mm'] for n in ('FL', 'RL', 'FR', 'RR'))
-    cap = status_zh(PARTS_STATE['esc_capacitor_1000uf_35v']['status'])
     return [
         '2 个 XT60 公头（焊杯式）。',
         f'12 AWG 硅胶线：红、黑各至少 {l12} mm（两根电池尾线）。',
         f'16 AWG 硅胶线：红、黄、黑各至少 {l16} mm（12 根风扇线）。',
-        f'1 个 1000 µF 电解电容，耐压 25 V 以上、低内阻（俱乐部 D 柜有 1000 µF 的抽屉，耐压没登记；不合适就用 Amazon 购物车里那个 35 V 的：{cap}）。',
+        '1 个 1000 µF 35 V 电解电容，直径 13 mm、长 21 mm（俱乐部 Tnisesm 电容盒里那颗，已拿到）。',
+        '4 个 M3 × 6 金属公母柱、4 个 M3 × 8 金属公母隔离柱（外螺纹都是 6 mm，长度差 1 到 2 mm 也行）、4 颗 M3 × 8 螺丝。',
+        '3 根杜邦公母线（一头公针、一头母头，20 cm 左右；最好一根黑、一根黄、一根蓝）。',
         '热缩管：5 mm（子弹头）和 6 mm（XT60）各约半米。',
         '焊锡、助焊剂、几根小扎带。',
         f'{N_LUG} 颗 {LUG_ZH} 螺丝（机舱耳朵拧到臂上，每边 3 颗；焊接台 Craftsman 柜里有 M3 螺丝，清单上只写明了 M3×10，'
@@ -353,6 +353,7 @@ assert N_POST == 4 and N_CLAMP and all(N_M2.values()), (N_POST, N_CLAMP, N_M2)
 TOOLS = [
     '烙铁（焊 12 AWG 和 XT60 要用大烙铁头、温度调高）、焊锡、助焊剂、夹线的第三只手',
     '剥线钳（12 AWG、16 AWG）、斜口钳',
+    '5.5 mm 扳手或尖嘴钳（拧 M3 金属柱的六角）',
     '热风枪（或打火机）缩热缩管',
     f'1.5 mm 内六角起子（拧 {N_POST + N_CLAMP} 颗 M2 × 12 内六角螺丝）',
     '平时拧 M2 螺丝用的小螺丝刀（M2 × 4、× 8、× 10）',
@@ -463,6 +464,20 @@ step(id='b-xt60', chapter='bench', bench=True, title='两根电池尾线的另�
                    '“左电池”两根线同样焊另一个 XT60 公头。'],
      checks=['两个 XT60 都是红线在 + 号那边。', '两个 XT60 各连在写着“左电池”“右电池”的线上。'])
 
+step(id='b-a7zlead', chapter='bench', bench=True, title='自己做 A7Z ↔ 飞控线：SH 4 针插头 + 三根杜邦母头', show=['fc'],
+     wiring=only(BENCH_SIGNAL, groups={'mav'}, title='做好的线：SH 插头第 1、3、4 位 → 三个杜邦母头',
+                 caption='SH 插头第 2 位空着（那是飞控的 5 V，不接）。'),
+     prepare=[dict(item='SH1.0 套装里 5 cm 的线', qty=3, kind='cable'), dict(item='SH1.0 套装里 4 针的白色外壳', qty=1, kind='other'),
+              dict(item='杜邦公母线（黑、黄、蓝各一根，20 cm 左右）', qty=3, kind='cable'), dict(item='最细的热缩管', qty=3, kind='other')],
+     instructions=['三根 5 cm 的 SH 线，每根两头都带小金属端子。每根只留一头的端子，另一头连端子剪掉，剥出 3 mm 线芯。',
+                   '白色 4 针外壳按插进去的方向，对准飞控上沿的 UART1 插座比一下：对着插座 GND 针（接线图里第 1 位）的孔是第 1 位，往另一头依次是第 2、3、4 位。用笔在第 1 位旁边点一下。',
+                   '三根线留着的端子，分别推进第 1、3、4 位，听到“咔”一声，轻拉不掉出来。第 2 位空着。',
+                   '三根杜邦公母线，把公针那头剪掉，剥出 3 mm 线芯，各套一段热缩管推远。',
+                   '黑色杜邦线焊到第 1 位那根线上，蓝色焊到第 3 位，黄色焊到第 4 位：线芯拧在一起，上锡。',
+                   '热缩管推上来盖住焊点，缩紧。',
+                   '颜色不全就用别的颜色，在每根杜邦头上贴胶带写上“1”“3”“4”。'],
+     checks=['SH 插头第 2 位是空的。', '三根线轻拉都不会从 SH 外壳里掉出来。', '每根线从 SH 插头量到杜邦头，至少 20 cm。'])
+
 step(id='b-bracket', chapter='bench', bench=True, title='支架拧到翼板右臂背后', show=['fc_bracket', 'mtf01'], add=['wing_plate'],
      approach={'wing_plate': [30, 0, 0]}, screws=screws_for('FC bracket on wing (before the stack)', 'b-bracket'),
      prepare=[dict(item='翼板（橙色）', qty=1, kind='printed')],
@@ -471,25 +486,30 @@ step(id='b-bracket', chapter='bench', bench=True, title='支架拧到翼板右�
                    '四颗 M2 × 8 从支架背面穿过，拧进四个凸台，拧到支架贴平就停。'],
      checks=['支架四角都贴着凸台，不晃。'])
 
-step(id='b-standoffs', chapter='bench', bench=True, title='四个 M3 × 6 尼龙柱拧进支架的四个圆凸台', show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'capacitor'],
+step(id='b-standoffs', chapter='bench', bench=True, title='四个 M3 × 6 金属柱拧进支架的四个圆凸台', show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'capacitor'],
      screws=screws_for('stack', 'b-standoffs', ids=['fc-standoff']),
-     instructions=['四个 M3 × 6 尼龙公母柱，公头朝支架，用手拧进四个圆凸台的孔里，拧到底。'],
-     checks=['四个柱子都竖直、一样高。'],
-     warnings=['尼龙件只用手拧，不用工具，拧过头螺纹会滑。'])
+     prepare=[dict(item='5.5 mm 扳手或尖嘴钳', qty=1, kind='other')],
+     instructions=['四个 M3 × 6 金属公母柱，公头朝支架，先用手拧进四个圆凸台的孔里，拧到拧不动。',
+                   '再用 5.5 mm 扳手（或尖嘴钳）夹住六角，拧到柱子底面贴住凸台就停。'],
+     checks=['四个柱子都竖直、一样高，底面贴着凸台。'],
+     warnings=['贴住凸台就停手，再拧塑料螺纹会滑丝。'])
 
-step(id='b-esc', chapter='bench', bench=True, title='电调套到尼龙柱上，插上 8 针线，再拧四个隔离柱',
+step(id='b-esc', chapter='bench', bench=True, title='电调套到金属柱上，插上 8 针线，再拧四个隔离柱',
      show=['wing_plate', 'fc_bracket', 'mtf01', 'capacitor'], add=['esc'], approach={'esc': [-25, 0, 0]},
      screws=screws_for('stack', 'b-esc', ids=['esc-fc-spacer']),
      wiring=only(BENCH_SIGNAL, groups={'escfc'}, title='电调 ↔ 飞控 8 针直通线'),
      prepare=[dict(item='SH1.0 套装里 8 针的线', qty=1, kind='cable')],
      instructions=['先把 8 针线的一头插进电调的 8 针插座。',
                    '“右电池”尾线的 XT60 头竖着，从支架中间偏下的方窗塞过去，落进右臂背后的格子里。',
-                   '电调元件面朝外（朝你），两片电池片朝上，四个角孔套进四个尼龙柱；右电池尾线夹在支架和电调之间往下走。',
+                   '电调四个角孔里如果有黑色胶圈，留着别拿掉。',
+                   '电调元件面朝外（朝你），两片电池片朝上，四个角孔套进四个金属柱；右电池尾线夹在支架和电调之间往下走。',
                    '电容顺势躺到右臂顶上，罐子沿着臂的方向放进两个小槽之间。',
-                   '四个 M3 × 8 尼龙隔离柱，公头朝下穿过电调的四个角孔，用手拧进下面的尼龙柱，拧到电调被夹住不晃。'],
-     checks=['电池片在上沿，8 针线从电调下沿伸出来。', '尾线从支架方窗里出来，没有被电调压住。'])
+                   '四个 M3 × 8 金属隔离柱，公头朝下穿过电调的四个角孔，先用手拧进下面的金属柱，再用扳手轻轻带紧，拧到电调被夹住不晃。'],
+     checks=['电池片在上沿，8 针线从电调下沿伸出来。', '尾线从支架方窗里出来，没有被电调压住。',
+             '八个金属柱都没有碰到电调上的焊盘、焊点和元件。'],
+     warnings=['金属柱导电：哪个柱子贴到了焊盘或元件，先拆下来把那根线或元件拨开再装。'])
 
-step(id='b-fc', chapter='bench', bench=True, title='飞控插好两根线，扣到隔离柱上，拧四颗尼龙螺丝',
+step(id='b-fc', chapter='bench', bench=True, title='飞控插好两根线，扣到隔离柱上，拧四颗 M3 螺丝',
      show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'capacitor'], add=['fc'], approach={'fc': [-25, 0, 0]},
      screws=screws_for('stack', 'b-fc', ids=['fc-screw']),
      wiring=only(BENCH_SIGNAL, groups={'escfc', 'mtf'}, title='电调 ↔ 飞控，飞控 ↔ 光流', caption='两根都是直通线：第 1 位对第 1 位。'),
@@ -497,7 +517,7 @@ step(id='b-fc', chapter='bench', bench=True, title='飞控插好两根线，扣�
      instructions=['8 针线的另一头插进飞控的 ESC 插座。',
                    '光流线的另一头插进飞控的 UART4 插座。',
                    '飞控和电调同一个方向（ESC 插座都在下沿），四个胶圈孔套到四个隔离柱上。',
-                   '四颗 M3 × 8 尼龙螺丝穿过胶圈，用手拧进隔离柱，拧到飞控不晃就停，胶圈不要压扁。'],
+                   '四颗 M3 × 8 螺丝穿过胶圈，拧进隔离柱，拧到飞控不晃就停，胶圈不要压扁。'],
      checks=['8 针线在两块板的下沿，没有被夹在两块板中间。', '飞控 UART1 插座（上沿）空着，留给 A7Z 线。'])
 
 step(id='b-cap', chapter='bench', bench=True, title='一根扎带把电容绑在右臂顶上', show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'fc', 'capacitor'],
@@ -663,10 +683,9 @@ step(id='r-spin', chapter='robot', title='转向检查：一次转一个风扇�
 step(id='r-a7z', chapter='robot', title='A7Z ↔ 飞控线：一头插飞控 UART1，三根杜邦头插 A7Z 的 14、16、18 号针',
      context=OPEN_CTX + ['sd_dupont_housings'], show=FLIGHT_FRAME + ['battery_backpack_frame'], cables=['c-a7z'],
      wiring=only(BENCH_SIGNAL, groups={'mav'}, title='飞控 UART1 → A7Z 排针',
-                 caption='A7Z 从上往下看。SH 插头第 2 位（红线，5 V）不用：剪掉。'),
-     prepare=[dict(item='20 cm SH 转杜邦母头线（Minidodca 套装）', qty=1, kind='cable'), dict(item='5 mm 热缩管一小段', qty=1, kind='other')],
-     instructions=['先处理红线：在 SH 插头根部把红线剪断，剪口套一小段热缩管缩紧；剪下来的红线连杜邦头一起扔掉。',
-                   'SH 插头插进飞控上沿的 UART1 插座。',
+                 caption='A7Z 从上往下看。SH 插头第 2 位（5 V）空着。'),
+     prepare=[dict(item='第 1 章自己做的 A7Z ↔ 飞控线', qty=1, kind='cable')],
+     instructions=['SH 插头插进飞控上沿的 UART1 插座。',
                    'A7Z 排针：靠前边的那一排，从左边（天线座那头）数第 7、8、9 根针，就是 14、16、18 号针。',
                    '黑线的杜邦头插 14 号针。',
                    '黄线的杜邦头插 16 号针。',
@@ -674,7 +693,7 @@ step(id='r-a7z', chapter='robot', title='A7Z ↔ 飞控线：一头插飞控 UAR
                    '线从排针往右，在座盖前面翻过 A7Z 座的右侧壁。',
                    '然后贴着右侧壁外侧的上棱往后走，在座盖边的外面，不要压在座盖上。',
                    '到座子后面，越过电调顶上，到飞控上沿的 UART1 插座；多出来的线绕成小圈，用扎带扎在支架上。'],
-     checks=['A7Z 上原来插着的线一根都没动。', '红线已经剪掉，剪口包好。'],
+     checks=['A7Z 上原来插着的线一根都没动。', 'SH 插头第 2 位是空的。'],
      warnings=['先开鸭子、后开飞行电池；关的时候先拔飞行电池。'])
 
 step(id='r-final', chapter='robot', title='最后检查：腿、头、进风口',

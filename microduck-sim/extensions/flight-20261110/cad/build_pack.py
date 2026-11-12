@@ -426,13 +426,15 @@ def fc_bracket():
         cuts.append(L.cyl(M3_PIL_V / 2, (x0 - FC_BOSS - 0.5, y, z), X_AX, FC_BOSS + FCB_T + 1))
         FITS.append(dict(id=f"fcb-m3-{j}", type="pilot", part="fc_bracket", screw="M3", kind="any", d=M3_PIL_V, axis=[1, 0, 0],
                          teardrop=None, at_bed=False, chamfer=0.0, engagement=FC_BOSS + FCB_T, depth="through", clamped=0.0))
-        screw(f"fc-standoff-{j}", "M3 x 6 male-female nylon standoff (male end into the pilot)", "FC/ESC stack to the FC bracket",
+        # metal (brass/steel) since 2026-11-12: RoboClub has no nylon M3 standoffs (Shawn: "尼龙换成金属"); the 2.9 pilot is the
+        # PRINT-FIT "any" M3 value, which machine threads form without a drill
+        screw(f"fc-standoff-{j}", "M3 x 6 male-female metal standoff (male end into the pilot)", "FC/ESC stack to the FC bracket",
               (x0 - FC_BOSS, y, z), (1, 0, 0), 0.0, "stack")
         xe = x0 - FC_BOSS - 6.0 - STACK["esc_pcb"]          # ESC rear PCB face
-        screw(f"esc-fc-spacer-{j}", f"M3 x {STACK['spacer']:.0f} male-female nylon spacer (male end through the ESC into the standoff)",
+        screw(f"esc-fc-spacer-{j}", f"M3 x {STACK['spacer']:.0f} male-female metal spacer (male end through the ESC into the standoff)",
               "ESC clamped between the plate standoff and this spacer; carries the FC", (xe, y, z), (1, 0, 0), STACK["esc_pcb"], "stack")
         xf = xe - STACK["spacer"] - STACK["fc_pcb"] - STACK["grommet"]   # head seat on the FC grommet
-        screw(f"fc-screw-{j}", "M3 x 8 nylon screw into the spacer's female end (the spacer chain ends female, so a nut has no thread to sit on)",
+        screw(f"fc-screw-{j}", "M3 x 8 metal screw into the spacer's female end (the spacer chain ends female, so a nut has no thread to sit on)",
               "FC on the ESC-to-FC spacer", (xf, y, z), (1, 0, 0), STACK["fc_pcb"] + STACK["grommet"], "stack")
     mx, my = MTF_C
     for j, (a, bb) in enumerate(((-1, -1), (-1, 1), (1, -1), (1, 1))):

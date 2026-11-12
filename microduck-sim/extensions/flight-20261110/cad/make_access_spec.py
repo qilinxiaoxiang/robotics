@@ -5,7 +5,8 @@ checks/access.screws.json, then runs the checker into checks/access.json.
 Assembly order (each step's solids are present for its screws): nacelle halves on the bench around the fans; wing plate and
 backpack frame on the pack posts (bars, cap, hatch and battery off, as today); trays on the arm webs; nacelles on the arm webs; FC bracket
 on the right arm (it covers the right tray and lug screw heads, so it comes after them); MTF-01 under the shelf. The four M3
-nylon standoffs are turned by hand into their pilots and are not driver screws.
+metal standoffs and four spacers are hex parts turned on the bench (fingers, then a 5.5 mm wrench or pliers on the open
+bracket) and are not driver screws.
 """
 import json
 import subprocess

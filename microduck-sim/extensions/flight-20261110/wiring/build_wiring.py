@@ -593,22 +593,22 @@ PARAMS = {
 
 # ====================================================================== missing items and soldering
 MISSING = [
-    dict(item='Capacitor in the Amazon order', qty='1 (pack of 7, B0FVG77HZV)', why='the bulk capacitor across the ESC tabs; it sits in the Amazon cart but was unticked in the 2026-11-10 checkout readback, so the fan order as read back does not include it',
-         spec='1000 uF 35 V low-ESR radial, 12.5 x 20 mm (as carted)',
-         source='tick it in the Amazon cart before placing the order (procurement.json fan_change_2026_11_10: "capacitor B0FVG77HZV in cart but unticked, not in this order")'),
+    dict(item='ESC bulk capacitor', qty='1 (in hand)', why='the bulk capacitor across the ESC tabs',
+         spec='1000 uF 35 V radial, 13 x 21 mm, generic (ESR not published)',
+         source='RoboClub Tnisesm electrolytic assortment, taken by Shawn 2026-11-12; the Amazon Rubycon line was removed from the cart'),
     dict(item='3.5 mm female bullet connectors for the fan wires', qty='12 (plus spares)', why='the ARESWEI leads end in 3.5 mm male bullets (seller claim); each pad wire needs the mating female so a fan unplugs at its nacelle',
          spec='3.5 mm gold bullets, solder-cup, 16 AWG entry; usually sold as male/female pairs (only the females are used)',
-         source='not in any cart, not in roboclub/INVENTORY.md, not named by Shawn. Amazon "3.5mm bullet connector" packs'),
+         source='Amass 20 pairs (B07CR81N69) ordered on Amazon by Shawn 2026-11-12; RoboClub has none'),
     dict(item='Heat-shrink tubing', qty='about 1 m mixed', why='insulates the 12 bullet joints and the XT60 cups',
          spec='5 mm (3.5 mm bullets), 6 mm (12 AWG at the XT60), 2:1, polyolefin',
          source='not in INVENTORY.md and not named by Shawn on 2026-11-10 (sourcing-policy.json lists heat-shrink as RoboClub supply from 2026-09-13; bin stock not asserted)'),
-    dict(item='SH1.0 4-pin to 2.54 mm Dupont female cable, 30 cm', qty='1', why='FC UART1 (JST-SH) to A7Z pins 14/16/18 (Dupont); the SH kit leads are SH on both ends and at most 15 cm',
-         spec='JST-SH 1.0 mm 4-pin housing one end, four single 2.54 mm female Dupont housings the other end, 28 AWG, 300 mm; the 5 V wire is pulled out or cut at the SH end',
-         source='Amazon/AliExpress listings for "JST SH 1.0 4 pin to Dupont female"; no-buy alternative: one 15 cm SH kit lead per wire with a Dupont crimp at the free end, only if RoboClub has a Dupont crimper (not listed)'),
-    dict(item='M3 nylon standoffs, spacers and screws for the stack', qty='4 M3 x 6 male-female standoffs + 4 M3 x 8 male-female spacers + 4 M3 x 8 nylon screws (cad/build/screws.json; no nuts)',
-         why='the stack box lists only "1 x MicoAir 743 V2 Stack"; INVENTORY has M3 screws but no standoffs or nylon parts',
-         spec='nylon, M3: standoffs male end into the bracket pilots, spacers through the ESC into the standoffs, screws hold the FC on the spacers',
-         source='M3 nylon standoff assortment kit (Amazon, holds all three sizes); RoboClub stock reported as not holding them (coordinator 2026-11-10)'),
+    dict(item='SH1.0 4-pin to 2.54 mm Dupont female lead, about 25 cm (made on the bench)', qty='1', why='FC UART1 (JST-SH) to A7Z pins 14/16/18 (Dupont); the SH kit leads are SH on both ends and at most 15 cm, the route needs 170 mm',
+         spec='three 5 cm SH kit wires in a 4-pin SH housing at positions 1, 3, 4 (position 2, FC 5 V, empty), each soldered to a club M-F Dupont jumper with its male end cut (black / blue / yellow), heat-shrunk',
+         source='made by hand (Shawn 2026-11-12: "线我们可以自己做 有夹线器"); guide step b-a7zlead. The Minidodca Qwiic kit was removed from the Amazon cart'),
+    dict(item='M3 metal standoffs, spacers and screws for the stack', qty='4 M3 x 6 male-female standoffs + 4 M3 x 8 male-female spacers + 4 M3 x 8 screws (cad/build/screws.json; no nuts)',
+         why='the stack box lists only "1 x MicoAir 743 V2 Stack"',
+         spec='brass or steel, M3, 6 mm male thread: standoffs male end into the bracket pilots (2.9, PRINT-FIT M3 any), spacers through the ESC into the standoffs, screws hold the FC on the spacers; keep them clear of ESC pads',
+         source='RoboClub stock (Shawn 2026-11-12: no nylon M3 standoffs at the club, "尼龙换成金属"); the Amazon nylon kit was removed from the cart'),
     dict(item='12 AWG and 16 AWG silicone wire, red and black (16 AWG also yellow)', qty=f'12 AWG: about {BAT_LEN["L"]["pigtail_mm"] + BAT_LEN["R"]["pigtail_mm"]} mm each colour; 16 AWG: about {sum(v["ext_mm"] for v in FAN_LEN.values())} mm each of three colours',
          why='pigtails and fan extensions', spec='silicone-insulated, fine-strand',
          source='RoboClub stock by Shawn\'s word ("XT60和线"); only listed here so the gauges are checked at the club before the order: 12 AWG and 16 AWG specifically were not named'),
@@ -846,7 +846,7 @@ def bench_signal():
     for fn, an, pid, sig, col in A7Z_LINK:
         pos = ['GND', '5V', 'TX1', 'RX1'].index(fn) + 1
         wires.append({'id': f'mv{fn}', 'from': f'fc.U1_{pos}', 'to': f'a7z.{pid}', 'color': {'black': BLK, 'yellow': YEL, 'green': GRN}[col], 'group': 'mav',
-                      'label': f'飞控 UART1 {fn} → A7Z {an.split()[0]} 号针（{ {"GND": "地", "TX1": "飞控发、A7Z 收", "RX1": "A7Z 发、飞控收"}[fn] }），30 cm SH 转杜邦线'})
+                      'label': f'飞控 UART1 {fn} → A7Z {an.split()[0]} 号针（{ {"GND": "地", "TX1": "飞控发、A7Z 收", "RX1": "A7Z 发、飞控收"}[fn] }），自己做的 SH 转杜邦线'})
     return {'modules': [e, f, m, a],
             'placements': [{'module': 'esc', 'rotation': 180, 'x': 0, 'y': 52}, {'module': 'fc', 'rotation': 180, 'x': 2, 'y': 0},
                            {'module': 'mtf', 'x': 0, 'y': 108}, {'module': 'a7z', 'x': 80, 'y': 0}],
