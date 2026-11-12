@@ -1,0 +1,14 @@
+{
+  "note": "Corrections from KiCad's placement export to JLCPCB's placement file, per KiCad footprint. KiCad reports a through-hole part at pin 1 and uses its own zero angle; JLCPCB places its part model at the body centre with the model's zero angle. offset_mm is the model centre in the footprint's own frame (KiCad x right, y down, before rotation); rot_deg is added to KiCad's angle. Every row was read from JLCPCB's placement preview for this board (order page, 2026-11-12): pin-1 dot of the model against the silkscreen triangle for chips, body outline against the silkscreen outline for connectors.",
+  "footprints": {
+    "QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm": {"rot_deg": 270, "seen": "CH334F C5187527: model pin 1 was a quarter turn counter-clockwise of the silkscreen triangle"},
+    "TQFN-16-1EP_3x3mm_P0.5mm_EP1.23x1.23mm": {"rot_deg": 270, "seen": "MAX98357A C910544: same quarter turn"},
+    "Winbond_USON-8-1EP_3x2mm_P0.5mm_EP0.2x1.6mm": {"rot_deg": 270, "seen": "W25Q16JVUXIQ C2843335: same quarter turn"},
+    "SOT-23-5": {"rot_deg": 270, "seen": "AP2112K C51118: model lay across the pads, pin 1 at the lower left"},
+    "PinSocket_1x05_P2.54mm_Vertical": {"rot_deg": 270, "offset_mm": [0, 5.08], "seen": "C50950: model stood across the row, centred on pin 1"},
+    "PinSocket_1x02_P2.54mm_Vertical": {"rot_deg": 270, "offset_mm": [0, 1.27], "seen": "C54876674: same as the 1x5 socket"},
+    "PinHeader_1x03_P2.54mm_Vertical": {"rot_deg": 270, "offset_mm": [0, 2.54], "seen": "C49257: model stood across the row, centred on pin 1"},
+    "TerminalBlock_Xinya_XY308-2.54-2P_1x02_P2.54mm_Horizontal": {"offset_mm": [1.27, 0], "seen": "C557685: wire-entry side matched the silkscreen, model centred on pin 1"},
+    "Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical": {"rot_deg": 180, "offset_mm": [2.5, 0], "seen": "C471412: model half a turn from the silkscreen outline (pins on the wrong side of the body), centred on pin 1"}
+  }
+}

@@ -4,12 +4,13 @@
   build/fab/bom.csv   Comment, Designator, Footprint, LCSC Part #   (one row per LCSC number)
   build/fab/cpl.csv   Designator, Mid X, Mid Y, Layer, Rotation     (every assembled part)
 Parts with "dnf" or no LCSC number (test pads) are left out of both. Fails if a placed footprint has no row in
-lcsc_parts.json or a row names a ref that is not on the board. Rotations are KiCad's; JLCPCB's own part
-rotations differ for some packages and are corrected in its placement preview at order time.
+lcsc_parts.json or a row names a ref that is not on the board. KiCad's positions and angles are corrected
+per footprint by jlc_placement.json (JLCPCB places the body centre and uses its own zero angles).
 Run: python3 fab.py   (after run.sh fab)
 """
 import csv
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -19,6 +20,7 @@ OUT = HERE / "build" / "fab"
 
 def main():
     parts = json.loads((HERE / "lcsc_parts.json").read_text())
+    fix = json.loads((HERE / "jlc_placement.json").read_text())["footprints"]
     row_of = {}
     for p in parts:
         for r in p["refs"]:
@@ -46,8 +48,15 @@ def main():
         for p in used:
             for r in sorted(p["refs"]):
                 q = placed[r]
-                w.writerow([r, f"{float(q['PosX']):.4f}mm", f"{float(q['PosY']):.4f}mm",
-                            "Top" if q["Side"].lower().startswith(("f", "t")) else "Bottom", f"{float(q['Rot']):.0f}"])
+                c = fix.get(q["Package"], {})
+                rot = float(q["Rot"])
+                dx, dy = c.get("offset_mm", (0.0, 0.0))        # footprint frame, y down; KiCad turns counter-clockwise
+                a = math.radians(rot)
+                x = float(q["PosX"]) + dx * math.cos(a) + dy * math.sin(a)
+                y = float(q["PosY"]) - (-dx * math.sin(a) + dy * math.cos(a))    # the export's y points up
+                w.writerow([r, f"{x:.4f}mm", f"{y:.4f}mm",
+                            "Top" if q["Side"].lower().startswith(("f", "t")) else "Bottom",
+                            f"{(rot + c.get('rot_deg', 0)) % 360:.0f}"])
                 n += 1
     skipped = sorted(r for p in parts if p not in used for r in p["refs"])
     print(f"bom.csv: {len(used)} lines; cpl.csv: {n} parts; not assembled: {' '.join(skipped)}")
