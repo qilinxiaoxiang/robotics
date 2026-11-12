@@ -160,3 +160,14 @@ Not done, in order of risk:
 3. Speaker terminal wire-entry side: read from the footprint outline only (KiCad convention puts entry on the +y side, toward the low parts); check against the maker drawing.
 4. No silkscreen labels for the builder (which plug goes where), no mounting feature (how the board is held on the camera back), no fiducials.
 5. Manufacturing files (Gerber, BOM with LCSC numbers, placement file), firmware, A7Z-side checks: not started.
+
+## 2026-11-12: fit of the board as drawn (Shawn: "为什么变大？... 那头里面能放下吗？3×3这个东西。")
+
+Why 30 x 30 and not the contract's 30 x 20 target: the target was written before the parts were counted. Plugs can only stand in the top 13.5 mm band (the only place with room behind the board), and the connectors fill that band; the chips and their passives need about 30 x 16 mm below it. The front face sits against the camera back, so nothing can go there. A 30 x 20 outline would leave 6.5 mm under the band, less than the 7 mm RP2040 alone.
+
+`fit_check.py` (Mac mini, `~/.venvs/microduck-dyn/bin/python fit_check.py`, about 2 min; result `fit-check.json`; footprint boxes from `pcb/dump_footprints.py` under KiCad's Python) puts every footprint of the routed board in the head as a box (courtyard x height) plus a plug box per connector (Dupont housing and wire exit 16 mm, PicoBlade 14 mm), rear face at x 59.8, outline y -29 to 1, z 115.5 to 145.5.
+- HOME, parts only: zero contacts. With a 1 mm margin the plug tops of J_EAR_R, J_EAR_L and J_BACK come within 1 mm of the touch XIAO above them, the J_UP plug within 1 mm of the head cap and touch pad r1, and the board's top edge within 1 mm of the cap. The outline is the whole free rectangle (31.5 mm at zero margin), so there is no spare room on any side.
+- Head poses (2574 poses over the MJCF ranges head_pitch +-90, head_yaw +-170, head_roll +-25; moving parts: yaw bracket group, neck pitch group, neck): the only part that reaches the board is the yaw bracket (head_yaw_link, motor13), and only with head roll. New board: plug of J_TOUCH_3V3 touches from roll -15, J_BACK from -20, J_EAR_L at -25; gap 0.5 mm at -10; positive roll never touches (0.5 mm at +25).
+- Same sweep on the breadboard that is on the robot today (its block and a 16 mm plug tail): touches from roll -5. So the new board is no worse than today's wiring in this model; the plug box is a straight 16 mm tail, which real leads bend out of.
+- Not covered: wires (about 34 in the head today), lowering the cap on, the mounting.
+Open layout item from this: move J_TOUCH_3V3 (the lowest plug, board y 10.1 to 13.7) and keep plug rows above board y 9 where possible, then rerun `fit_check.py`.
