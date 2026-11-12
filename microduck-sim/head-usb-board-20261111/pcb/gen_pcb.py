@@ -47,7 +47,8 @@ CONN = {  # ref -> (library, footprint)
     "J_BACK": ("Connector_PinSocket_2.54mm", "PinSocket_1x05_P2.54mm_Vertical"),
     "J_BACK_SD": ("Connector_PinHeader_2.54mm", "PinHeader_1x01_P2.54mm_Vertical"),
     "J_TOUCH": ("Connector_PinHeader_2.54mm", "PinHeader_1x03_P2.54mm_Vertical"),
-    "J_TOUCH_3V3": ("Connector_PinSocket_2.54mm", "PinSocket_1x01_P2.54mm_Vertical"),
+    # 1x2 with the second hole unused: no 1x1 socket of this height was in stock at JLCPCB on 2026-11-12
+    "J_TOUCH_3V3": ("Connector_PinSocket_2.54mm", "PinSocket_1x02_P2.54mm_Vertical"),
     "J_SPK": ("TerminalBlock", "TerminalBlock_Xinya_XY308-2.54-2P_1x02_P2.54mm_Horizontal"),
     "J_UP": ("Connector_Molex", "Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical"),
     "J_CAM": ("Connector_Molex", "Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical"),
@@ -60,6 +61,16 @@ POWER_NETS = {"VBUS": 0.4, "+3V3": 0.3, "+1V1": 0.25, "HUB_3V3": 0.25, "AMP_P": 
 
 sys.path.insert(0, str(HERE))
 from placement import PLACE  # noqa: E402  ref -> (x, y, rotation degrees, side "F"/"B")
+
+# (text, x, y, rotation): R right ear, L left ear, B back microphone (rows 1 to 3, pin 1 = 3V3 at the left);
+# row 4: SD back-microphone data pin, T touch (GND SCL SDA); 3V touch 3V3 socket; SPK speaker; A7Z uplink; CAM camera.
+SILK = [
+    ("R", 13.9, 1.7, 0), ("L", 13.9, 4.24, 0), ("B", 13.9, 6.78, 0),
+    ("SD.T", 12.6, 9.32, 0), ("3V", 4.3, 11.86, 0),
+    ("SPK", 17.2, 7.3, 0),
+    ("A7Z", 25.1, 4.95, 0), ("CAM", 25.1, 6.55, 0),
+    ("5V", 20.55, 2.4, 90), ("5V", 20.55, 8.9, 90),
+]
 
 
 def pad_of(kind, pin):
@@ -204,6 +215,67 @@ def place():
     print(f"placed {len(list(board.GetFootprints()))} footprints, {len(nets)} nets, dsn {'ok' if ok else 'FAILED'}")
 
 
+# ---------------------------------------------------------------- the two 480 Mbit/s USB pairs, drawn by rule
+# The autorouter knows nothing about pairs (2026-11-12: it left 12.8 mm between the two uplink lines). Each pair is
+# drawn here instead: a short stub on the front from the hub pin to one via, then side by side on B.Cu over the
+# inner plane straight into the through-hole pins of its PicoBlade header. Width and gap are for 90 ohm on JLCPCB's
+# JLC04161H-3313 stack (0.0994 mm prepreg, Dk 4.1) by the IPC-2141 microstrip formula: 0.14 / 0.13 mm gives 89 ohm.
+# The hub's D+ and D- leave each side in the opposite order to the header pins, so the two vias are staggered and one
+# line passes under the other's front stub. usb_pairs.py measures the result.
+PAIR_W, PAIR_P = 0.14, 0.27          # track width, centre pitch
+_P = PAIR_P
+USB_PAIRS = {
+    # net: (front stub from the hub pad to the via, back path from the via to the header pin)
+    "UP_DM": ([(20.337, 19.15), (21.2, 19.15)],
+              [(21.2, 19.15), (21.2, 5.55), (21.55, 5.2), (23.5, 5.2), (23.85, 4.85), (23.85, 2.1)]),
+    "UP_DP": ([(20.337, 18.65), (21.95, 18.65)],
+              [(21.95, 18.65), (21.2 + _P, 18.65 - (21.95 - 21.2 - _P)), (21.2 + _P, 5.55 + _P + 0.08),
+               (21.55 + _P + 0.08, 5.2 + _P), (24.75, 5.2 + _P), (25.1, 5.2 + _P - 0.35), (25.1, 2.1)]),
+    "CAM_DM": ([(18.15, 20.337), (18.15, 21.1)],
+               [(18.15, 21.1), (23.5, 21.1), (23.85, 20.75), (23.85, 8.6)]),
+    "CAM_DP": ([(18.65, 20.337), (18.65, 21.9)],
+               [(18.65, 21.9), (18.65 + (21.9 - 21.1 - _P), 21.1 + _P), (23.85 + _P - 0.35 + 0.08, 21.1 + _P),
+                (23.85 + _P, 21.1 + _P - 0.35 + 0.08), (23.85 + _P, 10.5), (25.1, 10.5 - (25.1 - 23.85 - _P)),
+                (25.1, 8.6)]),
+}
+
+
+def usb_pairs(board):
+    """Draw the pairs (locked). Returns (segments [(a, b, width, net)], vias [(x, y, net)]) for the plane fan-out."""
+    segs, vias = [], []
+    for name, (front, back) in USB_PAIRS.items():
+        net = board.FindNet(name)
+        if net is None:
+            raise SystemExit(f"USB pair net {name} is not on the board")
+        # ends sit exactly on the pad centres: the router calls a stub that ends half a micron off "unrouted"
+        ends = {}
+        for fp in board.GetFootprints():
+            for pad in fp.Pads():
+                if pad.GetNetname() == name:
+                    p = pad.GetPosition()
+                    ends[fp.GetReference()[:2]] = (pcbnew.ToMM(p.x), pcbnew.ToMM(p.y))
+        hub, pin = ends["U1"], ends["J_"]
+        if max(abs(hub[0] - front[0][0]), abs(hub[1] - front[0][1]), abs(pin[0] - back[-1][0]), abs(pin[1] - back[-1][1])) > 0.01:
+            raise SystemExit(f"{name}: drawn path ends are not on its pads {hub} {pin}; redraw USB_PAIRS")
+        front = [hub] + list(front[1:])
+        back = list(back[:-1]) + [pin]
+        for layer, path in ((pcbnew.F_Cu, front), (pcbnew.B_Cu, back)):
+            for a, b in zip(path, path[1:]):
+                t = pcbnew.PCB_TRACK(board)
+                t.SetStart(pcbnew.VECTOR2I(MM(a[0]), MM(a[1]))); t.SetEnd(pcbnew.VECTOR2I(MM(b[0]), MM(b[1])))
+                t.SetWidth(MM(PAIR_W)); t.SetLayer(layer); t.SetNet(net); t.SetLocked(True)
+                board.Add(t)
+                segs.append((a, b, PAIR_W, name, layer == pcbnew.F_Cu))
+        x, y = front[-1]
+        v = pcbnew.PCB_VIA(board)
+        v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
+        v.SetWidth(pcbnew.F_Cu, MM(VIA_D)); v.SetDrill(MM(VIA_DRILL)); v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+        v.SetNet(net); v.SetLocked(True)
+        board.Add(v)
+        vias.append((x, y, name))
+    return segs, vias
+
+
 PLANE_NETS = ("GND", "+3V3")
 ANCHOR = {("J_EAR_R", "1"), ("J_EAR_R", "2")}     # through-hole 3V3 and GND pins that keep the plane nets alive for the router
 VIA_D, VIA_DRILL, CLR = 0.5, 0.3, 0.13
@@ -251,6 +323,9 @@ def plane_fanout(board, nets):
             lanes.append((s, (s[0] + d[0] * 1.2, s[1] + d[1] * 1.2), q["net"], q["ref"], q["num"]))
     vias, stubs, failed = [], [], []      # vias: (x, y, net); stubs: (a, b, width, net)
     owner = {}                            # copper position (nm) -> "ref.pad" it belongs to
+    pair_segs, pair_vias = usb_pairs(board)      # drawn first: plane vias and stubs keep clear of them
+    stubs.extend(s[:4] for s in pair_segs if s[4]); vias.extend(pair_vias)
+    back = [s[:4] for s in pair_segs if not s[4]]      # B.Cu copper: in the way of through vias, not of front stubs
 
     def via_ok(x, y, net, me):
         if not (0.3 + VIA_D / 2 <= x <= W - 0.3 - VIA_D / 2 and 0.3 + VIA_D / 2 <= y <= H - 0.3 - VIA_D / 2):
@@ -264,7 +339,7 @@ def plane_fanout(board, nets):
         for vx, vy, vn in vias:
             if math.hypot(x - vx, y - vy) < VIA_D + (CLR if vn != net else 0.1) + 0.02:
                 return False
-        for a, b, w, sn in stubs:
+        for a, b, w, sn in stubs + back:
             if sn != net and seg_dist(a, b, x, y) < VIA_D / 2 + w / 2 + CLR + 0.02:
                 return False
         for a, b, ln, ref, num in lanes:
@@ -329,7 +404,7 @@ def plane_fanout(board, nets):
                 break
         else:
             failed.append(f"{q['ref']}.{q['num']}")
-    return len(vias), failed, owner
+    return len(vias) - len(pair_vias), failed, owner
 
 
 def write_project(path):
@@ -361,6 +436,12 @@ def finish():
     board = pcbnew.LoadBoard(str(out / "board.kicad_pcb"))
     if not pcbnew.ImportSpecctraSES(board, str(out / "board.ses")):
         raise SystemExit("SES import failed")
+    # the pairs are this file's, not the router's: they are locked in the router's copy; if the import dropped
+    # them they are drawn again (usb_pairs.py then measures whatever is on the board)
+    kept = sum(1 for t in board.GetTracks() if t.GetNetname() in USB_PAIRS)
+    if kept == 0:
+        usb_pairs(board)
+    print(f"USB pair copper kept by the import: {kept} items")
     # The router necks a few very short segments below the 0.1 mm minimum where it squeezes past a pad. They
     # are widened back to 0.1 mm here; the rule check that follows still judges their clearance.
     widened = 0
@@ -368,6 +449,19 @@ def finish():
         if t.GetClass() != "PCB_VIA" and t.GetWidth() < MM(0.1):
             t.SetWidth(MM(0.1)); widened += 1
     print(f"segments widened to 0.1 mm: {widened}")
+    # Builder's labels, added after routing (added before it, they changed the router's input and it left six
+    # connections open). Part references are hidden: at this density they only cover one another. The labels say
+    # which plug goes where and mark the 5 V end of the two USB headers (the red wire must sit at that mark).
+    for fp in board.GetFootprints():
+        fp.Reference().SetVisible(False)
+        fp.Value().SetVisible(False)
+    for text, x, y, rot in SILK:
+        t = pcbnew.PCB_TEXT(board)
+        t.SetText(text); t.SetLayer(pcbnew.F_SilkS)
+        t.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
+        t.SetTextSize(pcbnew.VECTOR2I(MM(0.8), MM(0.8))); t.SetTextThickness(MM(0.15))
+        t.SetTextAngleDegrees(rot)
+        board.Add(t)
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(str(out / "board.kicad_pcb"), board)
     print(f"tracks and vias: {len(list(board.GetTracks()))}")

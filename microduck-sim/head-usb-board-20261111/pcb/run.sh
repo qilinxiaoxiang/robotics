@@ -1,6 +1,6 @@
 #!/bin/sh
 # Build the head USB board on the Mac mini (KiCad and Freerouting live there) and bring the results back.
-# Usage: sh run.sh place | route [passes] | drc | all
+# Usage: sh run.sh place | route [passes] | drc | all | fab   (fab: pair measurement, Gerbers, drill, placement)
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 REMOTE=code/robotics/microduck-sim/head-usb-board-20261111
@@ -30,6 +30,15 @@ case "$STAGE" in
 esac
 \$CLI pcb drc --severity-error --format json -o build/drc.json build/board.kicad_pcb > build/drc.log 2>&1 || true
 tail -2 build/drc.log
+case "$STAGE" in
+  fab)
+    \$PY usb_pairs.py 2>&1 | grep -v assert
+    mkdir -p build/fab/gerber
+    \$CLI pcb export gerbers --layers F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts --subtract-soldermask --no-protel-ext -o build/fab/gerber/ build/board.kicad_pcb > /dev/null
+    \$CLI pcb export drill --format excellon --excellon-separate-th -o build/fab/gerber/ build/board.kicad_pcb > /dev/null
+    \$CLI pcb export pos --format csv --units mm --side both -o build/pos.csv build/board.kicad_pcb > /dev/null
+    (cd build/fab && zip -q -j -FS gerber.zip gerber/*) ;;
+esac
 \$CLI pcb export svg --layers F.Cu,B.Cu,Edge.Cuts,F.Courtyard,F.SilkS --mode-single --page-size-mode 2 --exclude-drawing-sheet -o build/board.svg build/board.kicad_pcb > /dev/null 2>&1 || echo "svg export failed"
 EOF
 mkdir -p "$HERE/build"

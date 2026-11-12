@@ -36,6 +36,7 @@ SHAPES = [
     ('TerminalBlock', 9.0, 9.0 + 16.0),        # screwdriver comes straight from behind
 ]
 LOW = 1.5                                      # everything else (SOT-23-5 is the tallest, 1.45 max)
+PLUG_CELLS = {'J_TOUCH_3V3': 1}                # 1x2 socket (no 1x1 in stock), the single lead plugs into pin 1 at the left
 CLEARANCES = (0.0, 1.0)
 MOVING = {                                     # MJCF body -> guide parts it carries (neck-route/nr_lib.py)
     'yaw_roll_motion': ['motor13', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b'],
@@ -59,7 +60,11 @@ def boxes():
         lo_yz, hi_yz = [Y_AT_X0 - x1, Z_AT_Y0 - y1], [Y_AT_X0 - x0, Z_AT_Y0 - y0]
         out.append((p['ref'], 'body', [X_REAR - body] + lo_yz, [X_REAR] + hi_yz))
         if plug:
-            out.append((p['ref'], 'plug', [X_REAR - plug] + lo_yz, [X_REAR - body] + hi_yz))
+            px0, px1 = x0, x1
+            if p['ref'] in PLUG_CELLS:             # a socket longer than its plug: the plug stands on its first cells only
+                px1 = min(x1, x0 + 2.54 * PLUG_CELLS[p['ref']] + 0.5)
+            out.append((p['ref'], 'plug', [X_REAR - plug, Y_AT_X0 - px1, Z_AT_Y0 - y1],
+                        [X_REAR - body, Y_AT_X0 - px0, Z_AT_Y0 - y0]))
     return [(r, k, np.array(lo), np.array(hi)) for r, k, lo, hi in out]
 
 
