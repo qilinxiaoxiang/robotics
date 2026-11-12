@@ -419,3 +419,11 @@ running total of worst cases; real spend read from `modal billing report` before
   -4.1 / -1.5 of the bend (bend3 paid it 1.72 / 1.00); gate recorded. Hand-back survival with every cycle handed back:
   13.4 / 9.5 / 3.1 stander falls per minute. No ankle cost: groundpick61 itself exceeds the robot's 1.25 rad stop.
   Kaggle 26.75 of 30 h used at 03:30 (another session's play-a kernel running), refresh 2026-11-14T00:00:00.
+
+## History plan follow-up (2026-11-12 afternoon; code only, nothing launched)
+- 13:30-14:00 New session. fk-uni3 (pushed 11:44 by the earlier session) still RUNNING. Added: history step scale in
+  the worker (`--history-step-scale`, refused without it for a history actor; hook check 0 of 4 falls, same weight
+  changes as the earlier 0.04 arm), `--hist-repeat` in both evaluators (checked on hist_m0 and fc_h_warm100),
+  `screen_checkpoints.py` for the five decision cases per checkpoint, a template argument in `ckpt2onnx.py`.
+  Details: HISTORY-PLAN.md section 8.
+

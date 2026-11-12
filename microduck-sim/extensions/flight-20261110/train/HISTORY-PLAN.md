@@ -345,6 +345,26 @@ Why the 3-iteration policy falls although iteration 0 equals uni_a (controlled c
   history run is a short kernel that stops at iteration 250. The evidence here is 64 envs, 4 episodes, one seed,
   CPU; that it carries over to 4096 envs is inference.
 
-Not done: the per-column history step scale in the worker, the teacher delta and the distillation worker (design B),
-the walk_brain runtime change, the A7Z loop measurement, the other 17 universal3h audit cases and their gate record,
-and any training run.
+Added 2026-11-12 afternoon (code only, no training run):
+- History step scale in the worker: `flight_worker.py --history-step-scale S` (`history.scale_history_step`, installed
+  on the runner's optimizer; a history actor refuses to train without the flag, and `kaggle_flight.py` refuses a
+  `universal3h` push without it). Every save prints the mean |W| of the current and history columns, so a scale at
+  which the history branch does not move shows in the log. Check through the worker's hook (`fall_check.sh
+  "h_s004_hook|--warmup-iters 100 --max-lr 0.0003 --history-step-scale 0.04"`): 0 of 4 falls, 0.170 m/s, weight
+  changes identical to the earlier arm (16.845 current, 13.677 history).
+- Repeated-frame control: `flight_eval.py` / `style_eval.py --hist-repeat` (every history slot holds the current
+  frame; recorded as `hist_repeat` in the summary). Zero-history export: same result as normal (0 falls, 0.1732 m/s,
+  `eval/histrepeat_hist_m0.json`); the 3-iteration unscaled history policy: 3 of 4 falls against 4 of 4
+  (`eval/histrepeat_fc_h_warm100.json`), so the switch reaches the network.
+- Checkpoint screen: `screen_checkpoints.py stage|run|table <run>` converts every `model_<iter>.pt` of a fetched
+  kernel, runs the five decision cases of section 6 on the dev seeds and prints them beside uni_a and fq2 1999.
+  `ckpt2onnx.py` takes a template ONNX as a third argument for history checkpoints (shapes checked).
+- Early checkpoints need no new code: the short first history kernel runs `--save-interval 10 --max-iters 250`, which
+  saves at 110, 120, ..., 250.
+- The scale comparison is not run on the Mac mini: at 64 envs within the 10-minute job limit it collects about as many
+  samples as 2 iterations of a 4096-env run, which cannot show whether the history branch learns. It is the first
+  short Kaggle kernel instead (two scales on the two GPUs, 250 iterations each), after Shawn's go and the quota refresh.
+
+Not done: the scale comparison itself, the teacher delta and the distillation worker (design B), the walk_brain
+runtime change, the A7Z loop measurement, the other 17 universal3h audit cases and their gate record, and any
+training run.

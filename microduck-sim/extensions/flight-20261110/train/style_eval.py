@@ -163,7 +163,10 @@ def main():
     ap.add_argument("--name", default="")
     ap.add_argument("--out", required=True)
     ap.add_argument("--seed0", type=int, default=0, help="first seed; seeds are seed0..seed0+episodes-1")
+    ap.add_argument("--hist-repeat", action="store_true", help="history policies see the current frame in every slot")
     a = ap.parse_args()
+    if a.hist_repeat:
+        os.environ["FLIGHT_HIST_REPEAT"] = "1"  # read by flight_eval's stateful session in the worker processes
     jobs = [(os.path.abspath(a.models), os.path.abspath(a.manifest), a.case, s, 0.0, 8.0, False, a.extra.split())
             for s in range(a.seed0, a.seed0 + a.episodes)]
     with ProcessPoolExecutor(a.workers) as ex:
@@ -174,7 +177,7 @@ def main():
     def agg(get):
         v = [x for x in (get(e) for e in eps) if x is not None]
         return round(float(np.median(v)), 2) if v else None
-    summ = dict(name=a.name, models=a.models, manifest=Path(a.manifest).name, case=a.case, extra=a.extra, episodes=len(eps),
+    summ = dict(name=a.name, hist_repeat=a.hist_repeat, models=a.models, manifest=Path(a.manifest).name, case=a.case, extra=a.extra, episodes=len(eps),
                 falls=len(falls), fall_times=sorted(e["fell_at"] for e in falls),
                 speed_median_upright=round(float(np.median(sp)), 4) if sp else None,
                 leg_force_p99_nm_median=agg(lambda e: e["leg_force_p99_nm"]),

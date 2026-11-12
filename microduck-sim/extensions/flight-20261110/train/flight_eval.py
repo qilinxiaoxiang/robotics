@@ -59,7 +59,9 @@ class _StatefulSession:
     def run(self, out, feed):
         b, tick = self.brain, self.brain._hist_tick
         st = b._hist_state.get(self.group)
-        if st is None or b._hist_last.get(self.group) != tick - 1:
+        # FLIGHT_HIST_REPEAT=1 (--hist-repeat): always pass an empty state, so the graph fills all slots with the
+        # current frame. Same network, no past: the control for "does the policy use the history" (HISTORY-PLAN.md 6)
+        if st is None or b._hist_last.get(self.group) != tick - 1 or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
             st = np.zeros(self.state_shape, dtype=np.float32)
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
@@ -191,14 +193,17 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--extra", default="", help="probe flags appended last, space separated (e.g. '--stand-s 0')")
     ap.add_argument("--seed0", type=int, default=0, help="first seed; seeds are seed0..seed0+episodes-1")
+    ap.add_argument("--hist-repeat", action="store_true", help="history policies see the current frame in every slot")
     a = ap.parse_args()
+    if a.hist_repeat:
+        os.environ["FLIGHT_HIST_REPEAT"] = "1"  # inherited by the worker processes
     jobs = [(os.path.abspath(a.models), os.path.abspath(a.manifest), a.case, s, a.shove_ns, a.shove_at, a.landing,
              a.extra.split()) for s in range(a.seed0, a.seed0 + a.episodes)]
     with ProcessPoolExecutor(a.workers) as ex:
         eps = list(ex.map(episode, jobs))
     falls = [e for e in eps if e["fell_at"] is not None]
     sp = [e["speed"] for e in eps if e["fell_at"] is None and e["speed"] is not None]
-    summ = dict(models=a.models, manifest=Path(a.manifest).name, case=a.case, episodes=len(eps), falls=len(falls),
+    summ = dict(models=a.models, hist_repeat=a.hist_repeat, manifest=Path(a.manifest).name, case=a.case, episodes=len(eps), falls=len(falls),
                 fall_times=sorted(e["fell_at"] for e in falls), shove_ns=a.shove_ns, landing=a.landing,
                 speed_median_upright=round(float(np.median(sp)), 4) if sp else None,
                 speed_min_upright=round(float(np.min(sp)), 4) if sp else None,
