@@ -107,12 +107,24 @@ The lean is real, the IMU was right (2026-11-12, `scan-11-04-stand-fit.json`): t
 `crop_robot.py`, `model_pose.py`, `fit_scan.py`) against the joint angles logged during it (app1104-105329, 10:56:34,
 IMU roll reading +3.1 deg untrimmed). Real minus model, rotation about forward / left / up in degrees: trunk +3.8 /
 +7.1 / +0.4; left foot -5.0 / +4.6 / -7.3; right foot +1.7 / +1.0 / +0.9; left thigh -5.2 / -0.6 / -6.3; right thigh
-+4.4 / +4.4 / +3.1. So the trunk is rolled 3.8 deg where the IMU read 3.1, the right sole lies about flat, and the
-left foot is rolled 5 deg outer edge down and turned 7 deg, as Shawn sees. Both thighs sit about 5 deg in roll and
-3 to 6 deg in yaw from where the hip encoders put them, mirrored left against right: angle the hip roll and hip yaw
-encoders do not see, on both sides; the left foot follows its thigh and the right foot does not. One scan, part fits
-2.5 to 4.5 mm rms with scan-to-CAD scale 0.81 to 0.97, so each angle is good to about 2 to 3 deg; the mirrored thigh
-part could partly be that scale error. `walk_brain.IMU_ROLL_TRIM_DEG` is back at 0 in the repository; the A7Z copy
++4.4 / +4.4 / +3.1. CORRECTION, same day: those angles are measured against a model whose trunk `model_pose.py` had
+already placed with the IMU gravity (`target_ground.place(q, gb)`), so "trunk +3.8" is not a lean and does not confirm
+the IMU; the sentence that it did was wrong. Redone in the floor frame (the scan's floor is its own RANSAC plane and
+the registration only turns and shifts on it; `~/sims/scan-1104/scan_true.py` and `kin_floor.py` on the Mac mini):
+- Feet (the parts on the floor): real left sole has its left, outer edge 2.2 deg lower; real right sole is flat
+  (+0.1 deg) and its lowest point is 3.4 mm higher than the left sole's.
+- Joint angles alone: hip roll read right +7.2, left -6.2 deg. With both soles on the floor they give a pelvis 0.8 deg
+  left side down, left sole outer edge down 0.9, right sole outer edge down 0.4. With the pelvis 3 to 4.5 deg left side
+  down they give left sole outer edge down 1.6 to 2.1, right sole flat (-0.2 to -0.5) and 3.5 to 5.6 mm off the floor.
+  The scanned feet match the second case, the one the IMU reports (3.1 deg left side down).
+- Against it: the trunk's own fit has its left side 0.7 deg up and the two thigh fits put the hips level (0.1 deg).
+  The trunk fit is the worst of the scan (5.5 mm rms, scale 0.887) and the thigh hip points come out 90.3 mm apart
+  against 84.6 in the model, so these two are the weaker evidence.
+So on 11-04 the robot stood rolled about 3 deg to its left on the outer edge of the left sole with the right foot
+nearly unloaded, which is what Shawn sees on 11-12, what the knee currents say (left 2 to 3.7 times the right) and what
+the untrimmed IMU reads. The IMU roll is right within about 1 deg; the cause of the lean is open (hip roll angles the
+encoders do not see, or the mass sitting left of where the model has it). One scan, each angle good to 2 to 3 deg.
+`walk_brain.IMU_ROLL_TRIM_DEG` is back at 0 in the repository; the A7Z copy
 still has -3 (robot powered off 15:10) and must be replaced at its next start, before any walk.
 
 Phone remote stutter, same log: 30 stops "walk for_s 0.6 elapsed" in one minute while the brain ran at 48 Hz, so the
