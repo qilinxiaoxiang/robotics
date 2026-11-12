@@ -86,6 +86,11 @@ Established:
 - Ruled out: a servo gain change on ID2 after its 11-02 factory reset, a hidden static angle in either leg, a gyro
   bias after start, foot scuffing (robot clearance 12.5 / 19.7 mm).
 
+- The 2 deg left hip roll zero offset tried from the 11-11 23:38 log (`pi/joint_signs.py`) does not help: robot gait
+  unchanged (45 walks with it, swing 0.17 / 0.27 s), sim gait worse with it (0.14 / 0.28 s against 0.18 / 0.26) and
+  0.22 / 0.26 s with the IMU roll trimmed (0.24 / 0.24 without the offset). Removed from the file 2026-11-12; the A7Z
+  copy keeps it until the next deploy (robot offline at the time).
+
 Not reproduced: fed the robot's own turn signal (`--turn-replay`), 17 fell + 30 up walks, seed 0, the sim falls 0 of
 17 with every gap alone and together: floor mu 0.25, COM +-6..18 mm, friction x1.5, joint play 2 deg, 8.1 V, IMU
 pitch 2 and roll -3. All together its yaw-rate rms is 1.00 rad/s (robot 0.95), so the wobble is matched and the falls
