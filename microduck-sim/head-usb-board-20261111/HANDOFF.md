@@ -4,7 +4,7 @@ Goal: cut the bundle of wires that runs from the MicroDuck head down the neck to
 
 ## Current wiring (authoritative sources)
 
-- Pin map: `microduck-sim/bringup/A7Z-PINS.html` (19 Dupont wires on the A7Z 40-pin header). Read it, not the overlays, for wire counts.
+- Pin map: `microduck-sim/bringup/A7Z-PINS.html` (20 Dupont wires on the A7Z 40-pin header, corrected 2026-11-11). The page is a guide, not the authority: what is fitted and plugged now is in `microduck-sim/CURRENT-STATE.json` (`a7z_audio_capture`, `a7z_touch_bus`, `parts_a7z_extensions`); check the page against it before quoting a count.
 - From the torso (8, unchanged by any plan): 5 V red 2 / black 6; IMU 1, 3, 5, 9; UART 7 (A7Z TX), 11 (A7Z RX).
 - From the head, across the neck (12):
   - Amp MAX98357A (5): Vin 4, BCLK 12, LRC 35, GND 39, DIN 40.

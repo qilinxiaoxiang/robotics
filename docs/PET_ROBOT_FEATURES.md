@@ -36,11 +36,11 @@ Scenario: it walks around the home, falls on a rug, gets up; bends to the floor 
 Scenario: owner on the sofa, a stranger walks in; the pet tells them apart, goes to the owner, and after a week treats a frequent visitor as familiar.
 
 - **Face.** `can` / `build`. InsightFace `buffalo_sc` (SCRFD-500MF + MobileFaceNet, 16 MB ONNX). Needs >= 10 px inter-pupil distance (about 1.5-2 m on our 720p / 120 deg camera, inferred) and degrades past 15-30 deg upward pitch, so: recognise when the person is near or the head has tracked up; enrol the owner from five angles including from below (Astro's practice). Licence: non-commercial. In progress 2026-10-26 (`pet/identity/`).
-- **Voice.** `can` / `build`. CAM++ or ECAPA-TDNN ONNX via sherpa-onnx; 2-3 s of speech; enrol one phrase; verify only while standing still (servo noise). Waits on the ear mics being soldered for the robot; Mac first.
+- **Voice.** `can` / `build`. CAM++ or ECAPA-TDNN ONNX via sherpa-onnx; 2-3 s of speech; enrol one phrase; verify only while standing still (servo noise). The robot's three microphones are fitted and recording (CURRENT-STATE `a7z_audio_capture`); Mac first.
 - **Familiarity memory.** `can` / `build`. Store embeddings by day; nightly HDBSCAN; a new person only after >= 3 similar samples (Immich's rule); familiarity = encounters x recency; owner pinned. In progress (`pet/identity/memory.py`).
 - **Silhouette and clothing when the face is out of frame.** `can` / `train`. OSNet embeddings with a gallery reset daily and relabelled by confident face/voice matches. Gait at knee height: `frontier`, no evidence.
 - **Fusion face + voice (+ body).** `can` / `build`. Log-odds accumulation with time decay; no product does more than face.
-- **Where did the sound come from.** `can` / `build`. GCC-PHAT with interpolation on the two ear mics (about 10-15 deg at 6 cm), rear mic resolves front/back. Waits on the mics.
+- **Where did the sound come from.** `can` / `build`. GCC-PHAT with interpolation on the two ear mics (about 10-15 deg at 6 cm), rear mic resolves front/back. All three microphones are fitted (CURRENT-STATE `a7z_audio_capture`).
 - **Look up at a person.** `can` / `build`. YOLOv8n person detection on the A7Z NPU (Radxa: 12.6 ms inference + 25.9 ms post, ACUITY toolchain) -> head pitch/yaw target through `approach.py`'s head control. RL gaze control: `frontier`, marginal gain.
 - **Recognise the owner by smell.** `cannot`. Dropped (Shawn 2026-10-26).
 
@@ -187,7 +187,7 @@ First cut, written 2026-11-05 by the agent from this register, the `pet/` README
 
 - VL53L5CX ToF for stair edges: wanted, not bought.
 - No lidar, no smell sensor (Shawn 2026-10-26).
-- Ear mics: in hand, not soldered (CURRENT-STATE `parts_a7z_extensions`).
+- Microphones: two ear and one back-of-head INMP441 fitted and recording since 2026-10-29 (CURRENT-STATE `a7z_audio_capture`); no spares.
 - Privacy: faces and voices are biometric data (Illinois BIPA and similar); embeddings only, on device, non-owner samples deleted after N days.
 
 ## 9. Sources

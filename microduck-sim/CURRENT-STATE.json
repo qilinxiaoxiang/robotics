@@ -502,7 +502,7 @@
         },
         "inmp441_mics": {
           "part": "AITRIP INMP441 I2S microphones (D-025), shipped with header pins",
-          "status": "arrived 2026-10-25 (Shawn: 麦克风到了 我发现送了排针)"
+          "status": "fitted: all three on the robot since 2026-10-29 (Shawn: 我把东西都装上了; wiring and channels in a7z_audio_capture); no spare microphones (Shawn 2026-11-11: 没有备用吧). Before that: arrived 2026-10-25 (Shawn: 麦克风到了 我发现送了排针)"
         },
         "ac019_antenna": {
           "part": "Radxa AC019 dual-band FPC antenna with IPEX pigtail",
@@ -789,9 +789,11 @@
       "consumer_checks": [
         {"file": "bringup/A7Z-PINS.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
         {"file": "bringup/A7Z-SOLDER.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
-        {"file": "head-usb-board-20261111/HANDOFF.md", "must_not_match": "(?m)^.*back-of-head mic.*not plugged\\.$", "must_match": "fitted and working since 2026-10-29", "why": "the handoff copied the stale guide page on 2026-11-11"}
+        {"file": "head-usb-board-20261111/HANDOFF.md", "must_not_match": "(?m)^.*back-of-head mic.*not plugged\\.$", "must_match": "fitted and working since 2026-10-29", "why": "the handoff copied the stale guide page on 2026-11-11"},
+        {"file": "../docs/PET_ROBOT_FEATURES.md", "must_not_match": "Ear mics: in hand, not soldered|Waits on the (?:ear )?mics", "why": "all three microphones fitted and recording since 2026-10-29"},
+        {"file": "guide/content/steps.py", "must_not_match": "UNPLUGGED|Pins 8 and 10 stay empty|nineteen plugs", "why": "assembly guide still treats the back microphone as optional and unplugged (11 head wires, 19 plugs); open 2026-11-11: correcting it changes guide-data.json, which needs a guide rebuild and a print-gate rerun"}
       ],
-      "claim_terms": ["后脑勺?(?:那个|的)?麦克风", "耳朵(?:的)?麦克风", "back[- ](?:of[- ]head )?mic", "ear mics?", "INMP441", "三个麦克风", "麦克风.{0,12}(?:没插|未插|不插|闲置|可选)"]
+      "claim_terms": ["(?:后脑勺?|脑后|头后面?)(?:那个|那颗|的)?麦克风", "耳朵(?:的)?麦克风", "第三个麦克风", "三个麦克风", "麦克风.{0,14}(?:没插|未插|不插|没接|未接|闲置|可选|没焊|备用)", "\\b(?:back|rear|third)[- ](?:of[- ]head )?mic(?:rophone)?s?\\b", "\\bear mic(?:rophone)?s?\\b", "\\bINMP441\\b"]
     },
     "jaw_grip_current_ma": {
       "value": 150,
