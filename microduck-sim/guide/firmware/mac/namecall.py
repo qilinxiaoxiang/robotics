@@ -192,7 +192,12 @@ KEYWORDS = {"mochi": os.path.join(HERE, "namecall-20261029", "keywords_mochi.txt
 RING_NAME_S = 3.0                # ring buffer in name mode: the spot comes up to about a second after the word starts
 KW_BACK_S = 0.75                 # aim point for the onset pick; 1.0 (the median spot delay) chose earlier sounds more often (NAMECALL.md 9.4)
 KW_ONSET_WIN = (0.25, 1.6)       # detector onsets between these many seconds before the spot are candidates
-KW_REFRACTORY_S = 1.5            # s between answered names: one spoken Mochi keeps the own spotter over threshold
+# oww second chance. It was the own spotter's 0.7, equal to the oww threshold, so it could never fire: on 2026-11-12
+# 00:56 four quiet-room calls scored 0.60, 0.21, 0.49, 0.90 and only the last was answered. Replaying the live 0.1 s
+# scores of every life segment since v4 (189 segments, 2.0 h of voiced audio): at 0.3-0.45 the rule fires only on
+# real calls (11-06 16:13:32, 11-12 00:56:32), none on talk.
+OWW_REPEAT_THRESHOLD = 0.4
+KW_REFRACTORY_S = 1.5           # s between answered names: one spoken Mochi keeps the own spotter over threshold
                                  # for up to ~1.2 s (two hits 1.0 s apart), and Shawn calls every 2.2-3 s (2026-10-30)
 ONSET_GAP_S = 0.25               # detector refractory in name mode (its onsets are only candidates)
 
@@ -1473,7 +1478,8 @@ class NameCall:
         if self.kws is None and name and getattr(args, "spotter", "own") == "oww":
             import ownkws
             self.kws = ownkws.OwwSpotter(args.oww_model, ears=(ch["left"], ch["right"]), threshold=args.oww_threshold,
-                                         repeat_threshold=None if args.own_repeat_threshold < 0 else args.own_repeat_threshold)
+                                         repeat_threshold=None if getattr(args, "oww_repeat_threshold", OWW_REPEAT_THRESHOLD) < 0
+                                         else getattr(args, "oww_repeat_threshold", OWW_REPEAT_THRESHOLD))
         if self.kws is None and name:
             self.kws = KeywordGate(args.kws_model or find_kws_model(), args.kws_keywords or KEYWORDS[name],
                                    score=args.kws_score, threshold=args.kws_threshold, threads=args.kws_threads,
@@ -2273,6 +2279,8 @@ def parse_args(argv=None):
     ap.add_argument("--own-threshold", type=float, default=None, help="P(mochi) to fire (default: the threshold stored in the model)")
     ap.add_argument("--own-repeat-threshold", type=float, default=0.7,
                     help="second chance: two score runs at or above this, 1-5 s apart, also fire (negative = off)")
+    ap.add_argument("--oww-repeat-threshold", type=float, default=OWW_REPEAT_THRESHOLD,
+                    help="oww second chance: two score runs at or above this, 1-5 s apart, also fire (negative = off)")
     ap.add_argument("--kws-model", default=None, help=f"model folder (default ~/rt/models/kws/{KWS_MODEL_NAME})")
     ap.add_argument("--kws-keywords", default=None, help="keywords file (default namecall-20261029/keywords_<name>.txt)")
     ap.add_argument("--kws-score", type=float, default=1.0, help="boost for keyword lines without their own :x")

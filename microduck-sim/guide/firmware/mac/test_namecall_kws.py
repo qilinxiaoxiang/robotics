@@ -263,3 +263,29 @@ def test_a_spoken_mochi_wakes_it_and_points_at_the_speaker(tmp_path):
     assert calls[0]["keyword"] == "MOCHI" and abs(calls[0]["az_deg"] + 55) < 8
     rep = [r for r in rows if r["kind"] == "replay"][0]
     assert rep["trigger"] == "name" and rep["kw_hits"] >= 1
+
+
+def test_oww_second_chance_answers_two_near_misses_from_11_12():
+    """2026-11-12 00:56: quiet room, four calls scored 0.60, 0.21, 0.49, 0.90; the second chance sat at the 0.7
+    threshold and never fired. With the oww default it answers the third call."""
+    import ownkws
+    a = nc.parse_args([])
+    assert a.oww_repeat_threshold < a.oww_threshold
+    sp = object.__new__(ownkws.OwwSpotter)
+    sp.threshold, sp.repeat_threshold, sp.repeat_gap = a.oww_threshold, a.oww_repeat_threshold, ownkws.REPEAT_GAP_S
+    sp.hits = sp.repeats = 0
+    sp.last_hit_t, sp.last_p, sp.runs, sp.in_run = -1e9, 0.0, [], False
+    fired = []
+    for t, p in ((18.1, 0.60), (18.2, 0.1), (20.5, 0.21), (20.6, 0.1), (23.0, 0.49)):
+        hit = sp.decide(p, t)
+        if hit:
+            fired.append((t, hit["repeat"]))
+    assert fired == [(23.0, True)]
+
+
+def test_oww_repeat_threshold_at_the_threshold_is_refused():
+    import ownkws
+    import pytest
+    model = os.path.join(os.path.dirname(os.path.abspath(__file__)), "namecall-20261029", "models", "oww", "mochi_v4.onnx")
+    with pytest.raises(ValueError):
+        ownkws.OwwSpotter(model, threshold=0.7, repeat_threshold=0.7)

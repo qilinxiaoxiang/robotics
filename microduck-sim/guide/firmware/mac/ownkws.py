@@ -240,7 +240,7 @@ class OwwSpotter(OwnSpotter):
     calls of 2026-10-30 20:18 the ear mix missed the call from +135 deg (0.01) that the right ear alone heard at 0.87
     (namecall-20261029/eightdir_20261030.json); the mix of both ears is the single stream when per_ear is False."""
 
-    def __init__(self, head_path, ears=(0, 1), threshold=0.5, gain_db=0.0, repeat_threshold=REPEAT_THRESHOLD,
+    def __init__(self, head_path, ears=(0, 1), threshold=0.5, gain_db=0.0, repeat_threshold=None,
                  repeat_gap=REPEAT_GAP_S, front_dir=OWW_DIR, threads=1, per_ear=True):
         import namecall as nc
         import onnxruntime as ort
@@ -256,6 +256,9 @@ class OwwSpotter(OwnSpotter):
         self.threshold = float(threshold)
         self.ears = list(ears)
         self.repeat_threshold = None if repeat_threshold is None else float(repeat_threshold)
+        if self.repeat_threshold is not None and self.repeat_threshold >= self.threshold:
+            # a second chance at or above the threshold never fires (2026-11-12: 0.7 = 0.7 left near misses unanswered)
+            raise ValueError(f"repeat threshold {self.repeat_threshold} must be below the threshold {self.threshold}")
         self.repeat_gap = tuple(repeat_gap)
         self.repeats = 0
         self.gain = 10 ** (gain_db / 20.0)
