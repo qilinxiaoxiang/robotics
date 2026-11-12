@@ -223,3 +223,10 @@ Uploaded in Shawn's JLCPCB account (project name `gerber`, saved by the site): `
 - Placement: the first upload showed the through-hole connectors at pin 1 and turned, and four chips a quarter turn off. `pcb/jlc_placement.json` now holds the correction per footprint and `fab.py` applies it. Second upload, 2D preview: every model sits in its silkscreen outline; pin 1 of U1 to U5 at the silkscreen triangle; D1 cathode left; picture `pcb/build/jlcpcb-placement-preview.jpg`. The preview says the final placement is checked by JLCPCB's engineers after ordering (DFM analysis in the order history).
 - Quote: PCB USD 25.35, assembly USD 109.70 (setup 25.75, stencil 8.27, components 33.63, feeder loading 29.45, soldering and handling the rest), total USD 135.05 before shipping (page estimate UPS Express Saver DDP USD 26.60), coupons and tax. Build time 3 days PCB plus 5 to 6 days assembly.
 - Still to do at the page: choose "Product Description" (customs category), Save to cart, checkout. Waiting for Shawn's word on the total.
+
+## 2026-11-12: camera-to-board lead (sourcing result, board unchanged)
+
+Every short double-ended 1.25 mm 5-pin lead found is crossed, circuit 1 to circuit 5: Molex 15134-0500 (50 mm) and 15134-0501 (100 mm) by their sales drawing ("A1 B5 ... A5 B1"), Amazon B09DSK8KPS (10 cm, 5 pieces, USD 12.87) and B0H34212VG by their photos. The only lead shown straight is Adafruit 4925, 20 cm, too long for the head. AliExpress and LCSC listings could not be read.
+
+Decision: the board keeps the camera's own pin order on J_CAM (draft 3, as uploaded to JLCPCB). Shawn re-pins one end of a bought lead, as he did with the USB cable on 2026-11-11 (Shawn 2026-11-12: "线序要更换很容易", "换下线序很快"). A reversed J_CAM was started and withdrawn the same day; nothing of it is in the repository. Before first power the red-to-5V check at the silkscreen mark still applies; Molex's lead is all black, so a coloured lead is easier to check.
+No lead is bought or in a cart yet.
