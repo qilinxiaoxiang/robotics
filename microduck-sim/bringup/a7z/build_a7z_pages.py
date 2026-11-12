@@ -384,7 +384,7 @@ S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知�
 <p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 上边（前沿），1 号针在左端，USB-C 口在下边（后沿）。插到它上面的板子画在排针前面：左半边是躯干里的（IMU、OpenRB、5 V 降压板），右半边是头里的（两只耳朵和后脑的三个麦克风、面包板、功放、触摸板）。</p>
 <div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的板子和线变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。上面的按钮按组筛选；“逐根接线”一根一根走，手机上会把两头放大。</div>
 <div style="margin:10px 0">{AB.html()}</div>
-<p>线的颜色：5 V 线、串口、IMU 线、触摸板四根和功放五根（蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN）是实际的颜色；麦克风和面包板下来的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面：功放 BCLK、功放 LRC、触摸板 3V3 和右耳的 SCK、WS、VDD 各插一个孔，分在黄、绿、红三条上，每条一根公对母线下到 12、35、17 号针。右耳的五根线还焊到左耳的同名焊盘；左耳的 SD 下到 38 号针，GND 一整根下到 34 号针（双麦克风）。后脑麦克风的 SCK、WS、VDD 也插这三条，右耳和后脑的 GND 插第四条黑条，黑条下到 34 号针，左耳那根 GND 就不要了。后脑的 SD 单独一根，插 10 号针。</p>
+<p>线的颜色：5 V 线、串口、IMU 线、触摸板四根和功放五根（蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN）是实际的颜色；麦克风和面包板下来的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面，有黄、绿、红、黑、蓝五条，同一条上的孔连通：功放 BCLK、功放 LRC、触摸板 3V3 分别插黄、绿、红三条；三个麦克风的 SCK、WS、VDD 也各插这三条，三个麦克风的 GND 插黑条，两只耳朵的 SD 插蓝条。每条一根公对母线下到 A7Z：黄 12、绿 35、红 17、黑 34、蓝 38 号针。后脑的 SD 不进面包板，单独一根插 10 号针。耳朵之间不焊线（第 8 步）。</p>
 ''')
 
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
@@ -586,9 +586,9 @@ S_SOFT = step('software', '第 10 步 · 10 分钟', '打开 I2C、串口和 I2S
 <ul>
 <li><b>Enable TWI7</b>：IMU 的 I2C，3、5 号针。</li>
 <li><b>Enable UART2</b>：OpenRB 串口，7、11 号针。</li>
-<li><b>Enable I2S0</b>：功放和麦克风的声音，12、35、40 号针出声，38 号针收声。</li>
+<li><b>Enable I2S0</b>：功放和麦克风的声音，12、35、40 号针出声，38 号针收两只耳朵的声音。</li>
 </ul>
-触摸板的 TWI0（29、31 号针）不在这个列表里：它用我们自己写的配置，已经装在这块 A7Z 上，见下面的框。<br>
+后脑麦克风的 10 号针（I2S0 的 DIN3）和触摸板的 TWI0（29、31 号针）不在这个列表里：它们用我们自己写的配置，已经装在这块 A7Z 上，见下面的框。<br>
 Radxa 文档的原话：“进入 <code>rsetup</code> 的 <code>Overlay</code> -&gt; <code>Manage overlays</code> 勾选 <code>Enable TWI7</code> 选项，勾选后重启系统”。</li>
 <li>{tag('a7z')}重启，1 分钟后重新 ssh 登录：
 {cmd('a7z', 'sudo reboot')}</li>
@@ -611,11 +611,16 @@ UART2 应该叫 <code>/dev/ttyAS2</code>：Radxa 文档里 UART4 叫 <code>/dev/
 <div class="card" id="twi0"><b>触摸板的 TWI0：已装好（2026-10-21）</b>
 <p>Radxa 现成的 Enable TWI0 是给另一块板子（CM-A7）写的，用 PG8、PG9，A7Z 上用不了。我们自己写了一个：<code>guide/firmware/pi/duck-twi0-touch.dts</code>，让 TWI0 用 29、31 号针上的 PB2、PB3，100 kHz，engine 模式（和 IMU 的 TWI7 一样，drv 模式会卡死）。装在 <code>/boot/dtbo/zz-duck-twi0-touch.dtbo</code>，重启后系统里多出 <code>/dev/i2c-0</code>，触摸板在 0x2A。</p>
 <p>别在 rsetup 里装 Radxa 的 TWI0。要撤掉：删掉这个文件，跑 <code>sudo u-boot-update</code>，重启。</p></div>
-<div class="pend"><b>声音：还没在这块板上试过</b>
-<p>Radxa 的 Enable I2S0 overlay 做的是一张两声道的“空壳”声卡（dummy sound card），它自己的说明写着 “This overlay is only for demonstration purpose. It does not support any specific hardware device.”。MAX98357A 上电就工作，系统不用给它写任何设置（不需要 codec 驱动），所以预计这张空壳声卡能带它，但还没验证。</p>
-<p>喇叭试音先不做：那道 −3 dB 的音量上限（D-012）在 A7Z 上还没设好。到时由我通过 ssh 来做。</p></div>
-<div class="pend"><b>麦克风：还没录过音</b>
-<p>重启以后在 A7Z 上跑 <code>arecord -l</code>，列表里要有一个 I2S0 的录音设备（capture）。如果没有，说明 Radxa 的 I2S0 overlay 只开了放音，录音要另写一份设备树配置；这一步由我通过 ssh 来做，插线不受影响。</p></div>
+<div class="card" id="i2s0"><b>声音和三个麦克风：已经在这块板上工作</b>
+<p>I2S0 由两份配置一起打开：Radxa 的 Enable I2S0（rsetup 里勾的那项），加上我们自己的 <code>/boot/dtbo/zz-duck-i2s0-din3.dtbo</code>（源文件 <code>guide/firmware/pi/duck-i2s0-din3.dts</code>），它把 10 号针设成 DIN3，收后脑麦克风。两份都已经装在这块 A7Z 上。重启后系统里是一张声卡 sndi2s0，4 个录音通道，48 kHz：通道 0 是左耳、通道 1 是右耳（都在 38 号针上，左耳 L/R 接 GND 占左声道），通道 2 是后脑（10 号针），通道 3 一直是 0。</p>
+<p>2026-10-29 装好以后，开机自检让喇叭放一段“嘀”，三个麦克风都听到了，分别比底噪高 53、45、41 dB。所以喇叭和三个麦克风都通。</p>
+<p>喇叭试音先不做：那道 −3 dB 的音量上限（D-012）在 A7Z 上还没设好。到时由我通过 ssh 来做。</p>
+<p><b>自己查一遍：</b>在 A7Z 上录 5 秒，录的时候轮流敲一下三个麦克风：</p>
+{cmd('a7z', 'arecord -D hw:0,0 -c 4 -r 48000 -f S32_LE -d 5 /tmp/m.wav')}
+<p>敲后脑麦克风只有通道 2 变大，敲哪只耳朵就是那只耳朵的通道变大。录的时候别放声音：这张声卡上一开始放音，正在录的那一路就没声了，要重新录。</p>
+<p>想边敲边看电平，跑现成的 <code>live_level.sh</code>：每 0.2 秒打一行左、右、后三个麦克风比底噪高多少 dB（它会先停掉听名字的程序，因为一张声卡同时只能一个程序录）。</p>
+{cmd('a7z', '~/rt/microduck-sim/guide/firmware/mac/namecall-20261029/live_level.sh 60')}</div>
+<details><summary>撤掉 DIN3 配置</summary><p>删掉 <code>/boot/dtbo/zz-duck-i2s0-din3.dtbo</code>，跑 <code>sudo u-boot-update</code>，重启。之前的 <code>/boot/extlinux/extlinux.conf</code> 留了一份 <code>extlinux.conf.before-din3-20261029</code>。</p></details>
 <details><summary>不成功时</summary><ul>
 <li>表里全是 <code>--</code>，IMU 绿灯不亮：红线或黑线插错了针，回第 4 步。</li>
 <li>表里全是 <code>--</code>，绿灯亮：蓝、黄插反或插偏了一根。再数：蓝是里排第 2 根，黄是里排第 3 根。都对的话把 IMU 那头的白色小插头换一个插座。</li>

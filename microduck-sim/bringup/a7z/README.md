@@ -28,7 +28,8 @@ Inner row (odd): 1 IMU red 3.3 V, 3 IMU blue SDA (TWI7), 5 IMU yellow SCL (TWI7)
 Edge row (even): 2 5 V lead red, 4 amplifier Vin, 6 5 V lead black, 10 back microphone SD (I2S0 DIN3; overlay
 `zz-duck-i2s0-din3.dtbo`, 3 boots verified), 12 amplifier BCLK (also microphone SCK; method pending Shawn), 34 microphone GND,
 38 ear microphones SD (I2S0 DIN0), 40 amplifier DIN. 20 wires in all (12 inner, 8 edge): 8 from the torso, 12 from the head.
-8 stays empty (debug console TX). The camera board covers edge-row pins 10 to 34 (coordinating session's CAD check).
+8 stays empty (debug console TX). The camera is the Innomaker U20CAM on USB (D-023; current status in
+`../../CURRENT-STATE.json` fact `parts_a7z_extensions.innomaker_u20cam`); it has no wire on the header.
 
 ## Sources (checked 2026-10-15)
 
@@ -60,13 +61,14 @@ Edge row (even): 2 5 V lead red, 4 amplifier Vin, 6 5 V lead black, 10 back micr
   computed 2026-10-15).
 - Wire colours, flags and wording: `../build/template.html` steps 4, 11, 12, 13. Backpack 5 V: `DECISIONS.md` D-010.
 
+## Verified on the robot (current values in `../../CURRENT-STATE.json`)
+
+- Touch TWI0 on pins 29/31: custom overlay `/boot/dtbo/zz-duck-twi0-touch.dtbo`, XIAO at 0x2A on `/dev/i2c-0` (fact `a7z_touch_bus`).
+- UART2 is `/dev/ttyAS2`; 15/15 servos answer on it at 500 kbaud (fact `servo_bus_hosts`).
+- Speaker and the three microphones: I2S0 4-channel capture with the DIN3 overlay; the boot self-check hears the speaker
+  sweep on all three microphones (fact `a7z_audio_capture`).
+
 ## Not verified
 
-- No stock overlay enables TWI0 on A7Z pins 29/31 (PB2/PB3). Decision (coordinating session, 2026-10-15): the page marks
-  it pending (`#twi0`); a custom overlay (TWI0 on PB2/PB3, fallback i2c-gpio on the same pins, 100 kHz, internal pull-ups
-  on both sides) is written and verified at bench acceptance, and only then added to the page.
-
-- UART2 device name `/dev/ttyAS2` is inferred from UART4 = `/dev/ttyAS4`; the page asks for `ls /dev/ttyAS*`.
 - The ssh host `radxa@cubie-a7z.local` is inferred from the doc prompt `radxa@cubie-a7z`.
-- Speaker output through the Enable I2S0 dummy card is untested on the A7Z; the page marks it pending.
 - Pin 12 BCLK connection method (short single female header socket) awaits Shawn's confirmation.
