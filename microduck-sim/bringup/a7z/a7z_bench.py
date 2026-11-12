@@ -76,19 +76,19 @@ WIRES = [  # id, from, to, colour, group, caption, note
     ('lsd', 'micl.SD', 'bb.SD', PINK, 'mic', '左耳 SD → 面包板蓝条', '带公头的线。'),
     ('lvdd', 'micl.VDD', 'bb.VDD', RED, 'mic', '左耳 VDD → 面包板红条', '带公头的线。'),
     ('lgnd', 'micl.GND', 'bb.GND', BLK, 'mic', '左耳 GND → 面包板黑条', '带公头的线。'),
-    ('bsck', 'micb.SCK', 'bb.SCK', TEAL, 'micb', '后脑麦克风 SCK → 面包板黄条', '可选。带公头的线。'),
-    ('bws', 'micb.WS', 'bb.WS', PUR, 'micb', '后脑麦克风 WS → 面包板绿条', '可选。带公头的线。'),
-    ('bvdd', 'micb.VDD', 'bb.VDD', RED, 'micb', '后脑麦克风 VDD → 面包板红条', '可选。带公头的线（3.3 V）。'),
-    ('bgnd', 'micb.GND', 'bb.GND', BLK, 'micb', '后脑麦克风 GND → 面包板黑条', '可选。带公头的线。'),
+    ('bsck', 'micb.SCK', 'bb.SCK', TEAL, 'micb', '后脑麦克风 SCK → 面包板黄条', '带公头的线。'),
+    ('bws', 'micb.WS', 'bb.WS', PUR, 'micb', '后脑麦克风 WS → 面包板绿条', '带公头的线。'),
+    ('bvdd', 'micb.VDD', 'bb.VDD', RED, 'micb', '后脑麦克风 VDD → 面包板红条', '带公头的线（3.3 V）。'),
+    ('bgnd', 'micb.GND', 'bb.GND', BLK, 'micb', '后脑麦克风 GND → 面包板黑条', '带公头的线。'),
     ('ggnd', 'bb.GND', 'a7z.p34', BLK, 'mic', '面包板黑条 → A7Z 34 号针', '小旗 34。30 cm 公对母杜邦线，不剪。'),
     ('gsd', 'bb.SD', 'a7z.p38', PINK, 'mic', '面包板蓝条 → A7Z 38 号针', '小旗 38，两只耳朵的数据线（I2S0 DIN0）。30 cm 公对母杜邦线，不剪。'),
-    ('bsd', 'micb.SD', 'a7z.p10', PINK, 'micb', '后脑麦克风 SD（小旗 10）→ 贴在 10 号针旁，先不插',
-     '可选。它自己的数据线（I2S0 DIN3），带插头。10 号针现在是调试串口的接收脚，DIN3 的设置试过以前插头用胶带贴在排针旁边，不插上去。'),
+    ('bsd', 'micb.SD', 'a7z.p10', PINK, 'micb', '后脑麦克风 SD（小旗 10）→ A7Z 10 号针',
+     '它自己的数据线（I2S0 DIN3），带插头。10 号针也是调试串口的接收脚；DIN3 的设备树配置已经装好，插着开机试过 3 次都正常进系统。'),
 ]
 GROUPS = [{'id': 'power', 'label': '5 V 电源', 'color': RED}, {'id': 'uart', 'label': '舵机串口', 'color': GRN},
           {'id': 'imu', 'label': 'IMU', 'color': BLU}, {'id': 'audio', 'label': '功放', 'color': ORG},
           {'id': 'touch', 'label': '触摸板', 'color': BRN}, {'id': 'mic', 'label': '麦克风', 'color': PINK},
-          {'id': 'micb', 'label': '后脑麦克风（可选）', 'color': PINK}]
+          {'id': 'micb', 'label': '后脑麦克风', 'color': PINK}]
 
 A7Z_ROLE = {  # what each used pin carries in this robot, shown when the pin is tapped
     1: 'IMU 3.3 V', 2: '5 V 进（5 V 线红）', 3: 'IMU SDA（TWI7）', 4: '功放 Vin（5 V 出）', 5: 'IMU SCL（TWI7）',
@@ -97,7 +97,7 @@ A7Z_ROLE = {  # what each used pin carries in this robot, shown when the pin is 
     29: 'PB2 · 触摸板 SCL（TWI0）', 31: 'PB3 · 触摸板 SDA（TWI0）',
     35: 'I2S0 LRCK：面包板绿条（功放 LRC + 麦克风 WS）', 38: 'I2S0 DIN0：面包板蓝条（两只耳朵的 SD）', 39: '功放 GND', 40: 'I2S0 DOUT0：功放 DIN',
     34: '麦克风 GND：面包板黑条',
-    8: '调试串口 TX：空着', 10: '调试串口 RX：空着；后脑麦克风 SD（小旗 10）贴在旁边，先不插',
+    8: '调试串口 TX：空着', 10: 'I2S0 DIN3：后脑麦克风 SD（小旗 10）；这根针也是调试串口 RX',
 }
 
 
@@ -218,7 +218,7 @@ def bench() -> dict:
     a = a7z()
     mods = [a, imu(), openrb(), xl2(), amp(), TB.xiao(), mic('micl', '左耳麦克风', '左耳', '焊一根短线到 GND：左声道'),
             mic('micr', '右耳麦克风', '右耳', '焊一根短线到 VDD：右声道'),
-            mic('micb', '后脑麦克风（可选）', '后脑', '焊一根短线到 GND：DIN3 线上的左声道'), breadboard()]
+            mic('micb', '后脑麦克风', '后脑', '焊一根短线到 GND：DIN3 线上的左声道'), breadboard()]
     for m in mods:
         if m['id'] == 'xiao':
             m['subtitle'] = '触摸板，头盖内顶中间'

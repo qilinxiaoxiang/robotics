@@ -62,7 +62,7 @@ HWW = HW['wires']
 HEAD_WIRE_NAMES = [('amp-vin', '功放 Vin', '功放'), ('amp-bclk', '功放 BCLK', '功放'), ('amp-lrc', '功放 LRC', '功放'),
                    ('amp-gnd', '功放 GND', '功放'), ('amp-din', '功放 DIN', '功放'), ('touch-pin17', '触摸板 3V3', '触摸板'),
                    ('touch-pin25', '触摸板 GND', '触摸板'), ('touch-pin29', '触摸板 SCL', '触摸板'), ('touch-pin31', '触摸板 SDA', '触摸板'),
-                   ('mic-gnd', '麦克风 GND', ''), ('mic-sd', '耳朵麦克风 SD', '左耳焊盘'), ('mic-sd3', '后脑麦克风 SD（可选）', '后脑焊盘')]
+                   ('mic-gnd', '麦克风 GND', ''), ('mic-sd', '耳朵麦克风 SD', '左耳焊盘'), ('mic-sd3', '后脑麦克风 SD', '后脑焊盘')]
 BB = HW['breadboard']
 JOINED = {'amp-bclk': ('黄条', '两只耳朵和后脑的 SCK'), 'amp-lrc': ('绿条', '两只耳朵和后脑的 WS'), 'touch-pin17': ('红条', '两只耳朵和后脑的 VDD')}
 
@@ -225,9 +225,16 @@ USED = {
     34: (MIC, '麦克风 GND'),
     38: (MIC, '麦克风 SD'),
     40: (ORG, '功放橙 DIN'),
+    10: (MIC, '后脑麦克风 SD'),
 }
 USED[17] = (RED, '触摸板红 3.3 V + 麦克风 VDD')
-NOTE = {8: '调试串口 空着', 10: '调试串口；后脑 SD 贴旁边'}
+NOTE = {8: '调试串口 空着'}
+TORSO_PINS = (1, 2, 3, 5, 6, 7, 9, 11)          # 5 V lead, IMU, UART: up from the torso
+N_INNER = sum(1 for n in USED if n % 2)
+N_OUTER = sum(1 for n in USED if n % 2 == 0)
+N_ALL = len(USED)
+N_HEAD = N_ALL - len(TORSO_PINS)
+assert N_HEAD == len(HEAD_WIRE_NAMES), (N_HEAD, len(HEAD_WIRE_NAMES))
 
 
 def pin_map_svg() -> str:
@@ -282,7 +289,7 @@ IMG_BOTTOM = uri(P.bottom_figure(), TOP_W)
 IMG_POWER = top_fig([(2, '#e53935'), (4, '#1f6fd1'), (6, '#1d1d1f')],
                     [('U1', P.USBC1_TOP, 30, 1130), ('U2', P.USBC2_TOP, 30, 880)])
 IMG_IMU = top_fig([(1, '#d7263d'), (3, '#1f6fd1'), (5, '#c99a00'), (9, '#1d1d1f')])
-IMG_UART = top_fig([(7, '#1f9d55'), (11, '#ffffff'), (8, '#9e9e9e'), (10, '#9e9e9e')])
+IMG_UART = top_fig([(7, '#1f9d55'), (11, '#ffffff'), (8, '#9e9e9e'), (10, MIC)])
 IMG_AUDIO = top_fig([(4, '#1f6fd1'), (12, '#f9a825'), (35, '#7b5ea7'), (39, '#1d1d1f'), (40, '#ef6c00')])
 IMG_TOUCH = top_fig([(17, '#d7263d'), (25, '#1d1d1f'), (29, '#1f6fd1'), (31, '#1f9d55')])
 def mic_pads_figure() -> Image.Image:
@@ -323,7 +330,7 @@ HEAD_POSES_CAP = ('同一根线（12 号针）在四种姿态下的“集线点�
                   f'低头叼东西最低时 {PF["gp_low"]["straightMm"]:.0f} mm，起身时脖子到 -90° 限位 {PF["gp_max"]["straightMm"]:.0f} mm；蓝线前墙顶到针 20 mm。剪线长度按最远那种留，再加两头各 5 mm。'
                   '35、39、40 号在排针另一头，蓝线沿墙顶多走 30 多 mm。低头的动作取 Pollen 的 groundpick61 在仿真里的关节轨迹（D-027）。')
 HEAD_WIRES_CAP = f'按组装指南的 CAD 画的，比例尺 50 mm。黄框是摄像头背面的面包板。橙线功放 BCLK、粉线右耳、紫线左耳、红线触摸板 3V3 按直角路线到面包板的插头尾；棕线面包板到集线点；黑线集线点到出线口；蓝实线头朝前时出线口到前墙顶 {round(HW["spanMm"]["home"])} mm；蓝虚线是低头叼东西时出线口离前墙顶最远的姿态（起身时脖子到 -90° 限位），{round(HW["spanMm"]["pickup"])} mm。'
-IMG_MIC = top_fig([(12, '#f9a825'), (17, '#d7263d'), (34, MIC), (35, AMP), (38, MIC), (10, '#9e9e9e')])
+IMG_MIC = top_fig([(12, '#f9a825'), (17, '#d7263d'), (34, MIC), (35, AMP), (38, MIC), (10, MIC)])
 IMG_XIAO = uri(P.xiao_figure([('3V3', '17', '#d7263d'), ('GND', '25', '#1d1d1f'), ('D5', '29', '#1f6fd1'), ('D4', '31', '#1f9d55')]), 1100)
 IMG_ANT_PHOTO = top_fig([(1, '#ffd600')], [('A', P.IPEX_TOP, 22, 150), ('F', P.FAN_TOP, 22, 40)])
 
@@ -347,7 +354,7 @@ S_CHANGES = f'''
 <p>Radxa Cubie A7Z（瑞莎的小电脑板）不在头里了，装在躯干顶上、后面转换盒上方的白色背包座里（D-022）。躯干的线从下面上来，头里的线从上面下来，都插在它的 40 针排针上：</p>
 <ul class="acts">
 <li><b>躯干的 8 根</b>（从背包座底板开口上来，从板子和前墙之间的缝上到排针）：5 V 线红 2、黑 6；IMU 红 1、蓝 3、黄 5、黑 9；串口绿 7、白 11。</li>
-<li><b>头里的 11 根</b>（从头的左后出线口顺着脖子下来，翻过背包座前墙的顶直接落到排针上，不走背包座下面）：功放 4、12、35、39、40；触摸板 17、25、29、31；麦克风 34、38。装了可选的后脑麦克风，还多下来一根小旗 10 的 SD，插头贴在 10 号针旁边，先不插。</li>
+<li><b>头里的 {N_HEAD} 根</b>（从头的左后出线口顺着脖子下来，翻过背包座前墙的顶直接落到排针上，不走背包座下面）：功放 4、12、35、39、40；触摸板 17、25、29、31；麦克风 34、38，后脑麦克风 SD 10。</li>
 </ul>
 <div class="card">
 <p><b>板子在背包座里的方向（新背包座 V2，D-028）：</b>元件面朝上，排针沿着<b>前沿</b>（靠脖子那边），<b>1 号针在机器人左端</b>，天线插座、风扇插座都在这一头；两个 USB-C 口和 micro HDMI 口在后沿，从背包座后墙的窗口插。排针上面不盖盖子，盖子只盖散热片。</p>
@@ -358,11 +365,11 @@ S_CHANGES = f'''
 <ul class="acts">
 <li>新背包座 V2 把板子掉了个头：排针从后沿移到前沿，1 号针从机器人右边移到左边。针号和每根线插哪根针都不变。</li>
 <li>摄像头不再挡在排针前面（它换成了 USB 摄像头，D-023），插头都竖直插。躯干的线从底板开口上来；头里的线从插头顶上出来，往前翻过背包座前墙的顶（排针这一段前墙降到 63 mm 高），直接上到脖子左边，不从背包座下面绕。</li>
-<li>新加两个耳朵麦克风（D-025），只多两根线下脖子：SD 插 38、GND 插 34。麦克风的五根线都插在摄像头背面的迷你面包板上：SCK、WS、VDD 和功放、触摸板的线接在一起，不占新针；GND、SD 各一条，各一根线下到 34、38。可选的第三个麦克风在后脑（D-026 附录），再多一根 SD 下脖子，先不插（第 8 步）。</li>
+<li>新加两个耳朵麦克风（D-025），只多两根线下脖子：SD 插 38、GND 插 34。麦克风的五根线都插在摄像头背面的迷你面包板上：SCK、WS、VDD 和功放、触摸板的线接在一起，不占新针；GND、SD 各一条，各一根线下到 34、38。第三个麦克风在后脑（D-026 附录），再多一根 SD 下脖子，插 10 号针（第 8 步）。三个麦克风 2026-10-29 起都装在机器人上。</li>
 <li>针号和以前一样：IMU 1、3、5、9，串口 7、11，5 V 2、6，功放 4、12、35、39、40，触摸板 17、25、29、31。</li>
 </ul></div>
 <div class="card">
-<p><b>按步骤焊：</b><a href="A7Z-SOLDER-2MIC.html">A7Z-SOLDER-2MIC</a>（双麦克风，只有两只耳朵）和 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>（三个麦克风）把下面这些线排成一步一步，每个焊盘焊哪几根、多长、细线还是带母头，一次说清。</p>
+<p><b>按步骤焊：</b><a href="A7Z-SOLDER.html">A7Z-SOLDER</a>（三个麦克风，机器人现在的装法）把下面这些线排成一步一步，每个焊盘焊哪几根、多长、细线还是带母头，一次说清。<a href="A7Z-SOLDER-2MIC.html">A7Z-SOLDER-2MIC</a> 是只装两只耳朵的版本，不是机器人现在的装法。</p>
 <p><b>共用的线插面包板，不焊接头：</b>功放 BCLK、功放 LRC、触摸板 3V3 和麦克风的 SCK、WS、VDD、GND、SD 以前在头盖左后角焊成接头，头盖和下面的板子就焊死在一起了。现在每根末端留一个杜邦公头，插进摄像头背面横贴的 25 孔迷你面包板，同一条上的孔连通；每条再用一根 30 cm 公对母杜邦线下到 A7Z。拆头盖拔插头就行。</p>
 <p><b>头里下来的线剪多长（新背包座 V2，排针在前沿）：</b>所有线先汇到集线点（头盖左后角、出线口正上方，只是线汇成一束的地方，没有接头），再往下。集线点到排针 = 往下到出线口 34 mm + 出线口直线到背包座前墙顶 + 沿墙顶走到自己那一列、落到针上。元器件到面包板、面包板到集线点按贴着壳走的直角路线量。粗体留够低头叼东西（和走路时转头）的余量，括号里是头只朝前不动的长度。每段两头各加 5 mm，进到 5 mm。</p>
 {figure(IMG_HEAD_WIRES, '头里下来的线：侧视和俯视，按比例', HEAD_WIRES_CAP)}
@@ -374,10 +381,10 @@ S_CHANGES = f'''
 </section>'''
 
 S_MAP = step('map', '总接线图', '每个元器件怎么连到 A7Z', '你知道每块板子的每根线插 A7Z 的哪根针。', f'''
-<p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 上边（前沿），1 号针在左端，USB-C 口在下边（后沿）。插到它上面的板子画在排针前面：左半边是躯干里的（IMU、OpenRB、5 V 降压板），右半边是头里的（两只耳朵的麦克风、面包板、功放、触摸板；后脑麦克风是可选的）。</p>
+<p>A7Z 画成在背包座里从上往下看的样子（机器人的头朝上）：排针在 A7Z 上边（前沿），1 号针在左端，USB-C 口在下边（后沿）。插到它上面的板子画在排针前面：左半边是躯干里的（IMU、OpenRB、5 V 降压板），右半边是头里的（两只耳朵和后脑的三个麦克风、面包板、功放、触摸板）。</p>
 <div class="card"><b>怎么用：</b>点一块板子（或图下面它的按钮），只亮它的线，别的板子和线变半透明；点“全部”回来。点一根针或一根线看它是什么、接到哪。上面的按钮按组筛选；“逐根接线”一根一根走，手机上会把两头放大。</div>
 <div style="margin:10px 0">{AB.html()}</div>
-<p>线的颜色：5 V 线、串口、IMU 线、触摸板四根和功放五根（蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN）是实际的颜色；麦克风和面包板下来的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面：功放 BCLK、功放 LRC、触摸板 3V3 和右耳的 SCK、WS、VDD 各插一个孔，分在黄、绿、红三条上，每条一根公对母线下到 12、35、17 号针。右耳的五根线还焊到左耳的同名焊盘；左耳的 SD 下到 38 号针，GND 一整根下到 34 号针（双麦克风）。装后脑麦克风时，它的 SCK、WS、VDD 也插这三条，右耳和后脑的 GND 插第四条黑条，黑条下到 34 号针，左耳那根 GND 就不要了。后脑的 SD 画到 10 号针，实际插头贴在旁边，先不插。</p>
+<p>线的颜色：5 V 线、串口、IMU 线、触摸板四根和功放五根（蓝 Vin、白 BCLK、紫 LRC、黑 GND、橙 DIN）是实际的颜色；麦克风和面包板下来的杜邦线颜色随意，按小旗认。黄色的“面包板”贴在摄像头背面：功放 BCLK、功放 LRC、触摸板 3V3 和右耳的 SCK、WS、VDD 各插一个孔，分在黄、绿、红三条上，每条一根公对母线下到 12、35、17 号针。右耳的五根线还焊到左耳的同名焊盘；左耳的 SD 下到 38 号针，GND 一整根下到 34 号针（双麦克风）。后脑麦克风的 SCK、WS、VDD 也插这三条，右耳和后脑的 GND 插第四条黑条，黑条下到 34 号针，左耳那根 GND 就不要了。后脑的 SD 单独一根，插 10 号针。</p>
 ''')
 
 S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线插座那头数', '你能在 A7Z 上指出 1 号针和 2 号针，知道从哪一头往下数。', f'''
@@ -392,18 +399,17 @@ S_COUNT = step('count', '第 1 步 · 最重要', '先认 1 号针：从天线�
 {figure(IMG_COUNT, 'A7Z 正面竖放：1、2 号针在天线插座那头，39、40 号在 microSD 那头', 'A7Z 正面（Radxa 官方照片）。针上的颜色是 Radxa 标的功能，不是线的颜色。', PIN_LEGEND_COUNT)}
 {figure(IMG_BOTTOM, 'A7Z 背面竖放：microSD 卡槽在下面，1 号针的孔在左上', 'A7Z 背面（Radxa 官方照片），绕竖着的长边翻过来：排针的孔到了左边。', [('pin', '1', '1 号针的孔：在天线插座那头，靠板子中间那一列。'), ('land', 'SD', 'microSD 卡槽：这一头是 39、40 号针。')])}
 </div>
-<h3>全部 19 根线插在哪里</h3>
+<h3>全部 {N_ALL} 根线插在哪里</h3>
 <p>和上面照片同一个方向：1 号针在上，里排在左，外排在右。灰色的针空着。在背包座里，这张图的上边是机器人左边，右边（外排）朝前、朝脖子。</p>
 <figure class="narrow">{pin_map_svg()}<figcaption>功放和触摸板的针按实际线色画：功放蓝 Vin、黑 GND、橙 DIN，触摸板红 3.3 V、黑 GND、蓝 SCL、绿 SDA；12、35 号针是面包板下来的线（黄条、绿条），粉色是麦克风的线（这几根杜邦线颜色随意，按小旗认）。12、17、35 号针的线从面包板下来，麦克风的线插在面包板同一条上。</figcaption></figure>
-<div class="card"><b>装进背包座以后：</b>元件面朝上，排针在前沿，外排挨着板边、朝脖子，1 号针和天线插座那头在机器人<b>左边</b>。板子和 6530B 散热片先在桌上从下面拧到打印的托板上，托板再放进背包座；之后先插躯干上来的八根（第 3 到 5 步），最后插头里下来的十一根（第 6 到 8 步）。</div>
+<div class="card"><b>装进背包座以后：</b>元件面朝上，排针在前沿，外排挨着板边、朝脖子，1 号针和天线插座那头在机器人<b>左边</b>。板子和 6530B 散热片先在桌上从下面拧到打印的托板上，托板再放进背包座；之后先插躯干上来的 {len(TORSO_PINS)} 根（第 3 到 5 步），最后插头里下来的 {N_HEAD} 根（第 6 到 8 步）。</div>
 ''')
 
-S_FLAGS = step('flags', '第 2 步 · 5 分钟', '每根线贴小旗', '19 个插头后面都有一面小旗，写着它在 A7Z 上的针号。', f'''
+S_FLAGS = step('flags', '第 2 步 · 5 分钟', '每根线贴小旗', f'{N_ALL} 个插头后面都有一面小旗，写着它在 A7Z 上的针号。', f'''
 <p>小旗就是插头后面绕一圈的纸胶带，上面写着针号。先贴旗，再插线，插的时候只看旗。已经贴了的看一眼字还清楚就行。</p>
 <ol class="acts">
 <li>{tag('hand')}躯干上来的 8 根：5 V 线 <span class="wire" style="background:{RED}"></span>红 2、<span class="wire" style="background:{BLK}"></span>黑 6；IMU 红 1、蓝 3、黄 5、黑 9；串口 <span class="wire" style="background:{GRN}"></span>绿 7、<span class="wire" style="background:{WHT}"></span>白 11。</li>
-<li>{tag('hand')}头里下来的 11 根：功放 Vin 4、BCLK 12、LRC 35、GND 39、DIN 40；触摸板 3.3 V 17、GND 25、SCL 29、SDA 31；麦克风 GND 34、SD 38。</li>
-<li>{tag('hand')}装了后脑麦克风：它的 SD 插头贴小旗 10。这面旗只说明它是谁，插头不上排针。</li>
+<li>{tag('hand')}头里下来的 {N_HEAD} 根：功放 Vin 4、BCLK 12、LRC 35、GND 39、DIN 40；触摸板 3.3 V 17、GND 25、SCL 29、SDA 31；麦克风 GND 34、SD 38；后脑麦克风 SD 10。</li>
 </ol>
 <p>以前写过 8、10（串口）或 34（功放地线）的旗是 Pi 时代的，现在串口是 7、11，功放地线是 39，34 归麦克风。</p>
 ''')
@@ -443,19 +449,19 @@ S_IMU = step('imu', '第 4 步 · 5 分钟', 'IMU：红 1、蓝 3、黄 5、黑 
 </div></div>
 ''')
 
-S_UART = step('uart', '第 5 步 · 5 分钟', 'OpenRB 串口：绿 7、白 11，8 和 10 空着', '绿线插 7 号针，白线插 11 号针，8、10 号针空着。', f'''
+S_UART = step('uart', '第 5 步 · 5 分钟', 'OpenRB 串口：绿 7、白 11，8 号空着', '绿线插 7 号针，白线插 11 号针，8 号针空着。', f'''
 <p>就是第 11 步焊在 OpenRB 那两根线，另一头的插头改插这里。也在<b>里排</b>，紧接着 IMU：</p>
 <ol class="acts">
 <li>{tag('hand')}<span class="wire" style="background:{GRN}"></span>绿（小旗 7）插里排第 4 根，7 号针。A7Z 从这根<b>发</b>（TX），进 OpenRB 的 Rx 孔。</li>
 <li>{tag('hand')}<span class="wire" style="background:{WHT}"></span>白（小旗 11）插里排第 6 根，11 号针。A7Z 从这根<b>收</b>（RX），来自 OpenRB 的 Tx 孔。</li>
-<li>{tag('hand')}外排第 4、5 根（8、10 号）不插：那是调试串口。</li>
+<li>{tag('hand')}外排第 4 根（8 号）不插：那是调试串口的发送脚。外排第 5 根（10 号）是调试串口的接收脚，不接 OpenRB，插后脑麦克风的 SD（第 8 步）。</li>
 </ol>
 <p>插完以后里排最上面 6 根从上往下正好是：<b>红、蓝、黄、绿、黑、白</b>。</p>
 <div class="pair">
-{figure(IMG_UART, '串口用的 7、11 号针，8、10 号空着', 'A7Z 正面，竖放。灰圈的 8、10 号空着。', [('pin', '7', '绿：A7Z 发 → OpenRB Rx'), ('pin', '11', '白：A7Z 收 ← OpenRB Tx'), ('pin', '8', '空着：调试串口'), ('pin', '10', '空着：调试串口')])}
+{figure(IMG_UART, '串口用的 7、11 号针，8 号空着，10 号是后脑麦克风 SD', 'A7Z 正面，竖放。8 号空着；10 号插后脑麦克风的 SD（第 8 步）。', [('pin', '7', '绿：A7Z 发 → OpenRB Rx'), ('pin', '11', '白：A7Z 收 ← OpenRB Tx'), ('pin', '8', '空着：调试串口 TX'), ('pin', '10', '后脑麦克风 SD（第 8 步）')])}
 <div class="card">
 <p><b>为什么是 7、11：</b>Radxa 的 UART2 overlay 写着 “On Radxa Cubie A7Z, TX is pin 7 and RX is pin 11.” 7、11 在里排，摄像头板不挡。</p>
-<p><b>为什么 8、10 空着：</b>Radxa 串口调试文档：UART0_TX 是 Pin8，UART0_RX 是 Pin10，115200 波特率，系统在这里输出开机信息和登录提示。接 OpenRB 会和它打架。</p>
+<p><b>为什么 8、10 不接 OpenRB：</b>Radxa 串口调试文档：UART0_TX 是 Pin8，UART0_RX 是 Pin10，115200 波特率，系统在这里输出开机信息和登录提示。接 OpenRB 会和它打架。</p>
 <p><b>电平：</b>7、11 号针是 3.3 V 电平，和 OpenRB 的串口一样，直接对接，不用电平转换板。原理图第 14 页：7、11 号针就是 PB0、PB1，中间没有别的零件；第 4 页：给这组引脚供电的 VCC-IO 是 3.3 V。</p>
 <p>接反了不会坏东西：以后扫不到舵机，先把绿、白两个插头对调再试。</p>
 </div></div>
@@ -497,32 +503,32 @@ S_TOUCH = step('touch', '第 7 步 · 5 分钟', '触摸板：3.3 V 17、GND 25�
 </div>
 ''')
 
-S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后脑 SD 先不插', '两只耳朵的 GND 插在 34 号针，SD 插在 38 号针；SCK、WS、VDD 经面包板接到 12、35、17 号针的线；装了后脑麦克风的话，它的小旗 10 插头贴在 10 号针旁边。', f'''
-<p>一共三个 INMP441 麦克风：两只耳朵在头盖两侧（D-025），第三个在头盖后壁内侧，可选（D-026 附录，可行性见 2026-10-24 的三麦克风调研报告）。一步一步怎么焊（每个焊盘焊哪几根、多长）见 <a href="A7Z-SOLDER-2MIC.html">A7Z-SOLDER-2MIC</a>（双麦克风）或 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>（三个）；组装指南第 9 章 mics、mic-splice、mic-back 三步。到排针这里只有两个新插头要插：</p>
+S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后脑 SD 10', '麦克风的 GND 插在 34 号针，两只耳朵的 SD 插在 38 号针，后脑麦克风的 SD 插在 10 号针；SCK、WS、VDD 经面包板接到 12、35、17 号针的线。', f'''
+<p>一共三个 INMP441 麦克风，2026-10-29 起都装在机器人上：两只耳朵在头盖两侧（D-025），第三个在头盖后壁内侧（D-026 附录，可行性见 2026-10-24 的三麦克风调研报告）。一步一步怎么焊（每个焊盘焊哪几根、多长）见 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>（三个麦克风）；组装指南第 9 章 mics、mic-splice、mic-back 三步。到排针这里有三个麦克风自己的插头要插：</p>
 <ol class="acts">
 <li>{tag('hand')}小旗 34（面包板黑条下来，麦克风 GND）插<b>外排第 17 根</b>，34 号针。</li>
 <li>{tag('hand')}小旗 38（面包板蓝条下来，耳朵麦克风 SD，I2S0 DIN0）插<b>外排第 19 根</b>，38 号针，紧挨着最后一根 40 号（功放 DIN）。</li>
 <li>{tag('hand')}SCK、WS、VDD 没有自己的插头：它们插在摄像头背面面包板的黄、绿、红三条上，和功放 BCLK、功放 LRC、触摸板 3V3 共用三根下到 12、35、17 号针的线，第 6、7 步插那三根线时就一起接上了。</li>
-<li>{tag('hand')}装了后脑麦克风：它的 SD 插头（小旗 10）用胶带贴在排针旁边，<b>不插</b> 10 号针。</li>
+<li>{tag('hand')}小旗 10（后脑麦克风 SD，I2S0 DIN3）插<b>外排第 5 根</b>，10 号针，在 8 号（空着）和 12 号（BCLK）之间。</li>
 </ol>
 <div class="warn"><b>34 和 38 只隔一根针（36 号空着）。</b>插完从 40 号往回数：外排最后一根是 40，倒数第二根是 38，倒数第三根空，倒数第四根是 34。</div>
 <div class="pair">
-{figure(IMG_MIC, 'A7Z 正面竖放：麦克风用到的 12、17、34、35、38 号针，10 号针旁边贴后脑 SD', 'A7Z 正面，竖放。34、38 是麦克风自己的两根，从面包板黑条、蓝条下来；12、17、35 是和功放、触摸板共用的；10 号针空着，后脑 SD 的插头贴在旁边。', [('pin', '34', '麦克风 GND（面包板黑条下来）'), ('pin', '38', '耳朵麦克风 SD（面包板蓝条下来）'), ('pin', '12', '面包板黄条：功放 BCLK + 麦克风 SCK'), ('pin', '35', '面包板绿条：功放 LRC + 麦克风 WS'), ('pin', '17', '面包板红条：触摸板 3V3 + 麦克风 VDD'), ('pin', '10', '后脑麦克风 SD：插头贴在旁边，先不插')])}
-{figure(IMG_MIC_PADS, 'INMP441 印字那面：上排 SCK、WS、L/R，下排 SD、VDD、GND', 'INMP441 印字那面（卖家 AITRIP 的照片，直径 13.4 mm）。中间的孔是声孔，这一面贴头盖内壁。框里写的是每个焊盘最后接到哪。', [('pin', 'SD', '耳朵 → 面包板蓝条 → 38 号针（两只耳朵共用）；后脑 → 小旗 10'), ('pin', 'GND', '→ 面包板黑条 → 34 号针'), ('pin', 'SCK', '→ 面包板黄条 → 12 号针'), ('pin', 'WS', '→ 面包板绿条 → 35 号针'), ('pin', 'VDD', '→ 面包板红条 → 17 号针（3.3 V）'), ('pin', 'L/R', '左耳和后脑短线到 GND，右耳短线到 VDD')])}
+{figure(IMG_MIC, 'A7Z 正面竖放：麦克风用到的 10、12、17、34、35、38 号针', 'A7Z 正面，竖放。34、38 是麦克风自己的两根，从面包板黑条、蓝条下来；10 号是后脑麦克风自己的 SD；12、17、35 是和功放、触摸板共用的。', [('pin', '34', '麦克风 GND（面包板黑条下来）'), ('pin', '38', '耳朵麦克风 SD（面包板蓝条下来）'), ('pin', '12', '面包板黄条：功放 BCLK + 麦克风 SCK'), ('pin', '35', '面包板绿条：功放 LRC + 麦克风 WS'), ('pin', '17', '面包板红条：触摸板 3V3 + 麦克风 VDD'), ('pin', '10', '后脑麦克风 SD（I2S0 DIN3）')])}
+{figure(IMG_MIC_PADS, 'INMP441 印字那面：上排 SCK、WS、L/R，下排 SD、VDD、GND', 'INMP441 印字那面（卖家 AITRIP 的照片，直径 13.4 mm）。中间的孔是声孔，这一面贴头盖内壁。框里写的是每个焊盘最后接到哪。', [('pin', 'SD', '耳朵 → 面包板蓝条 → 38 号针（两只耳朵共用）；后脑 → 小旗 10 → 10 号针'), ('pin', 'GND', '→ 面包板黑条 → 34 号针'), ('pin', 'SCK', '→ 面包板黄条 → 12 号针'), ('pin', 'WS', '→ 面包板绿条 → 35 号针'), ('pin', 'VDD', '→ 面包板红条 → 17 号针（3.3 V）'), ('pin', 'L/R', '左耳和后脑短线到 GND，右耳短线到 VDD')])}
 </div>
 <div class="card">
 <p><b>三个麦克风怎么连到一起：</b>每个麦克风有五根要接的线：SCK（位时钟）、WS（左右声道时钟）、SD（声音数据）、VDD（3.3 V）、GND。三个麦克风的 SCK、WS、VDD、GND 各自连成一条线，SD 分两条。</p>
 <ul class="acts">
 <li><b>两只耳朵到面包板：</b>每只耳朵的五个焊盘各焊一根带公头的线，插进面包板的黄（SCK）、绿（WS）、红（VDD）、黑（GND）、蓝（SD）五条。同一条上的孔连通，两只耳朵的同名焊盘就接在一起了，不用在耳朵之间再焊线。</li>
 <li><b>面包板到 A7Z：</b>黄、绿、红三条和功放 BCLK、功放 LRC、触摸板 3V3 共用，每条一根 30 cm 公对母线下到 12、35、17 号针；黑条、蓝条各一根下到 34、38 号针。</li>
-<li><b>后脑（可选）：</b>SCK、WS、VDD、GND 四根带公头的线插黄、绿、红、黑四条。SD 单独下脖子，贴小旗 10。</li>
+<li><b>后脑：</b>SCK、WS、VDD、GND 四根带公头的线插黄、绿、红、黑四条。SD 单独下脖子，贴小旗 10，插 10 号针。</li>
 </ul>
 <p><b>每个焊盘最多两根线：</b>只有接 L/R 短线的焊盘是两根，右耳 VDD、左耳和后脑的 GND。两根线头并在一起拧紧、一起上锡，再一起插进孔里焊。</p>
 </div>
 <div class="card">
 <p><b>为什么两只耳朵共用一根 SD：</b>I2S 一根数据线能带左右两个声道。WS 低的半帧是左声道，WS 高的半帧是右声道。L/R 焊盘接 GND 的那个只在左声道的半帧说话，接 VDD 的只在右声道的半帧说话，另一半帧把输出松开，不占线。A7Z 录下来就是一个立体声文件。</p>
 <p><b>为什么后脑要自己一根 SD：</b>INMP441 只会普通 I2S，一根数据线一帧只有左、右两个位置，两只耳朵已经占满了。后脑的接 I2S0 的另一根数据输入 DIN3，就是 10 号针。三个麦克风共用 A7Z 的同一套时钟，所以三路声音的时间差能直接比，定位要的就是这个。</p>
-<p><b>为什么 10 号针先不插：</b>10 号针现在是调试串口的接收脚。要先在桌上用一个备用麦克风接 10 号针，装好 DIN3 的设备树配置，录到四个通道、冷启动十次都能正常进系统以后，才把小旗 10 插上去（三麦克风调研报告第七节第 2 步）。</p>
+<p><b>10 号针也是调试串口的接收脚：</b>这块 A7Z 上已经装了让 10 号针当 DIN3 用的设备树配置（<code>/boot/dtbo/zz-duck-i2s0-din3.dtbo</code>），后脑 SD 插在 10 号针上开机试过 3 次，都正常进了系统。</p>
 </div>
 <div class="card">
 <p><b>焊的时候：</b>线焊在另一面（有金属小方块那面），那面没有字。板子绕竖直的轴翻过去，左右对调：缺口朝上看金属面，上排从左到右是 L/R、WS、SCK，下排是 GND、VDD、SD。焊之前对着印字面认一遍。</p>
@@ -532,7 +538,7 @@ S_MIC = step('mic', '第 8 步 · 5 分钟', '麦克风：GND 34、SD 38，后�
 <ul class="acts">
 <li>右耳到面包板：SCK、WS、SD、VDD、GND 带公头的线，各 {BB['toBoard']['mic-r']} mm（含 25 mm，头盖还能像盖子一样往后翻开）。</li>
 <li>左耳到面包板：同样五根，各 {BB['toBoard']['mic-l']} mm（含 25 mm）。</li>
-<li>后脑（可选）：SCK、WS、VDD、GND 带公头的线，各 {BB['toBoard']['mic-b']} mm；SD 带一个插头，一整根 <b>{HWW['mic-sd3']['cut']['whole']['pickup']} mm</b>（{HWW['mic-sd3']['cut']['whole']['home']}）。</li>
+<li>后脑：SCK、WS、VDD、GND 带公头的线，各 {BB['toBoard']['mic-b']} mm；SD 带一个插头，一整根 <b>{HWW['mic-sd3']['cut']['whole']['pickup']} mm</b>（{HWW['mic-sd3']['cut']['whole']['home']}）。</li>
 <li>面包板到 A7Z：每条一根 30 cm 公对母杜邦线，不剪：12 号要 {BB['boardToPin']['12']} mm，35 号 {BB['boardToPin']['35']} mm，17 号 {BB['boardToPin']['17']} mm，34 号 {BB['boardToPin']['34']} mm，38 号 {BB['boardToPin']['38']} mm，多出来的在面包板后面折一下贴住。</li>
 </ul>
 <p>每根线怎么量、为什么这么长，见开头“现在的装法”里的按比例图。</p>
@@ -551,14 +557,14 @@ S_CHECK = step('check', '第 9 步 · 10 分钟', '通电前检查，再接 MR30
 <li>{tag('hand')}XIAO 的 GND 焊盘和 MR30 黑线针：<b>响</b>。XIAO 的 D4、D5 焊盘，分别和 MR30 红线针：<b>不响</b>。</li>
 <li>{tag('hand')}左耳麦克风的 VDD 焊盘和 XIAO 的 3V3 焊盘：<b>响</b>。左耳麦克风的 GND 焊盘和 MR30 黑线针：<b>响</b>。</li>
 <li>{tag('hand')}左耳麦克风的 SD、SCK、WS 焊盘，分别和 MR30 红线针：<b>不响</b>。VDD 焊盘和 MR30 红线针：<b>不响</b>（麦克风只能吃 3.3 V）。</li>
-<li>{tag('hand')}装了后脑麦克风：它的 VDD 焊盘和 XIAO 的 3V3 焊盘：<b>响</b>；它的 GND 焊盘和 MR30 黑线针：<b>响</b>；它的 SD 焊盘和小旗 10 插头：<b>响</b>。小旗 10 插头和 MR30 红线针、黑线针：<b>都不响</b>。</li>
+<li>{tag('hand')}后脑麦克风的 VDD 焊盘和 XIAO 的 3V3 焊盘：<b>响</b>；它的 GND 焊盘和 MR30 黑线针：<b>响</b>；它的 SD 焊盘和 MR30 红线针、黑线针：<b>都不响</b>（不响才说明小旗 10 没插到 2、6 号针上）。</li>
 </ol>
 <p>有一条不对，就是插偏了一根针：回第 1 步再数一遍。</p>
 <h3>照着数一遍，拍张照片发给我</h3>
 <div class="card">
-<p><b>里排，从天线插座那头数：</b>红、蓝、黄、绿、黑、白（第 1 到 6 根），第 7、8 根空，第 9 根触摸板 3.3 V（17），第 10 到 12 根空，第 13 根触摸板 GND（25），第 14 根空，第 15 根触摸板 SCL（29），第 16 根触摸板 SDA（31），第 17 根空，第 18 根 LRC，第 19 根空，第 20 根功放 GND。里排一共 12 根线。</p>
-<p><b>外排，从天线插座那头数：</b>红（5 V）、Vin、黑（5 V 地），第 4、5 根空（调试串口），第 6 根 BCLK，第 7 到 16 根空，第 17 根麦克风 GND（34），第 18 根空，第 19 根麦克风 SD（38），第 20 根 DIN。外排一共 7 根线。</p>
-<p><b>合计 19 根：</b>里排 12 根加外排 7 根。数出来不是 19，先别通电。后脑麦克风的小旗 10 插头贴在排针旁边，不在这 19 根里；贴的时候让它离开排针，别碰到任何针。</p>
+<p><b>里排，从天线插座那头数：</b>红、蓝、黄、绿、黑、白（第 1 到 6 根），第 7、8 根空，第 9 根触摸板 3.3 V（17），第 10 到 12 根空，第 13 根触摸板 GND（25），第 14 根空，第 15 根触摸板 SCL（29），第 16 根触摸板 SDA（31），第 17 根空，第 18 根 LRC，第 19 根空，第 20 根功放 GND。里排一共 {N_INNER} 根线。</p>
+<p><b>外排，从天线插座那头数：</b>红（5 V）、Vin、黑（5 V 地），第 4 根空（调试串口 TX），第 5 根后脑麦克风 SD（10），第 6 根 BCLK，第 7 到 16 根空，第 17 根麦克风 GND（34），第 18 根空，第 19 根耳朵麦克风 SD（38），第 20 根 DIN。外排一共 {N_OUTER} 根线。</p>
+<p><b>合计 {N_ALL} 根：</b>里排 {N_INNER} 根加外排 {N_OUTER} 根。数出来不是 {N_ALL}，先别通电。</p>
 </div>
 <h3>通电</h3>
 <ol class="acts">
@@ -627,12 +633,12 @@ SOURCES_PINS = '''
 <li>调试串口 Pin8/Pin10、115200：Radxa 文档 “串口调试”（radxa-a7z-uart-debug.md）。电源灯：“硬件接口”（a7z-hardware-info.md）。</li>
 <li>5 V 和 USB-C：Radxa Cubie A7Z 原理图 V1.11 第 13 页（J16 VBUS → FB2 60R 3A → VCC5V0_SYS）、第 14 页（J11 的 2、4 号是 VCC5V0_SYS，1 号 DCDC1，8/10 号 CPUX-TX/RX）、第 12 页（USB 3.1 口 VBUS 经 U4）。</li>
 <li>摄像头板和插头的距离：组装指南 CAD（guide/print/world/camera_board.stl 和排针插头的位置），背面元件范围按 Radxa 背面照片，2026-10-15 核对（guide/print/face-a7z/pin-clearance/pin-clearance.png）。接线颜色和小旗沿用 BRINGUP.html 第 4、11、12、13 步。背包电源：DECISIONS.md D-010。</li>
-<li>背包座布局（板子方向、躯干 8 根和头里 11 根的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。线长：bringup/a7z/head_wire_lengths.py（head-wire-lengths.json），图：render_head_wires.py（img/head_wires.png）：元器件到集线点取组装指南的线路；面包板（摄像头背面，2026-10-26）的线按贴壳直角路线量到插头尾，再到集线点；集线点往下到出线口 34 mm，出线口到背包座前墙顶（线束翻墙的地方，z 64.6）的直线距离由 head_sweep_v2.py 扫出最大值：走路时的转头范围，和低头叼东西的关节轨迹（groundpick_head_traj.py，groundpick61 在 as-built 仿真里）取大的（neck-exit-20261023/cable_sweep.py 的 V2 版），背包座里一段按 a7z-saddle/build/pins.json 的针位沿墙顶到自己那一列、跨过插头落到针上，每段两头各加 5 mm，进到 5 mm。头里的线不走背包座下面：a7z-saddle/DESIGN-CONTRACT.json 第 2 条要求。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
+<li>背包座布局（板子方向、躯干和头里各根线的针号）：DECISIONS.md D-022，组装指南 guide/data/guide-data.json 的 saddle-board、saddle-plugs、saddle-head-plugs 三步。线长：bringup/a7z/head_wire_lengths.py（head-wire-lengths.json），图：render_head_wires.py（img/head_wires.png）：元器件到集线点取组装指南的线路；面包板（摄像头背面，2026-10-26）的线按贴壳直角路线量到插头尾，再到集线点；集线点往下到出线口 34 mm，出线口到背包座前墙顶（线束翻墙的地方，z 64.6）的直线距离由 head_sweep_v2.py 扫出最大值：走路时的转头范围，和低头叼东西的关节轨迹（groundpick_head_traj.py，groundpick61 在 as-built 仿真里）取大的（neck-exit-20261023/cable_sweep.py 的 V2 版），背包座里一段按 a7z-saddle/build/pins.json 的针位沿墙顶到自己那一列、跨过插头落到针上，每段两头各加 5 mm，进到 5 mm。头里的线不走背包座下面：a7z-saddle/DESIGN-CONTRACT.json 第 2 条要求。麦克风接法：D-025、D-026（含附录：第三个麦克风），组装指南 mics、mic-splice、mic-back 三步和剪线表（wire-list）。第三个麦克风的可行性：~/code/reports/20261024-microduck-three-mic-localization.html（A733 驱动的 rxfifo-pinmap 支持 DIN3，10 号针 = I2S0-DIN3 / UART0-RX）。转头时出线口到背包座的距离：guide/print/neck-exit-20261023/cable_sweep.json。INMP441 焊盘：AITRIP 在 Amazon 的商品图（B0972XP1YS，副本 bringup/a7z/sources/inmp441-label-face-aitrip.png）。</li>
 <li>总接线图：bringup/a7z/a7z_bench.py，用 ~/code/wiring-kit 画（点板子只亮它的线）。</li>
 <li>核对日期：2026-10-15，背包座和麦克风部分 2026-10-25。</li></ul></section>'''
 
 PINS_BODY = S_CHANGES + S_MAP + S_COUNT + S_FLAGS + S_POWER + S_IMU + S_UART + S_AUDIO + S_TOUCH + S_MIC + S_CHECK + S_SOFT + SOURCES_PINS
-PINS_LEAD = ('<p class="lead">MicroDuck 的电脑 Radxa Cubie A7Z 装在躯干顶上的背包座里。这一页先用一张总接线图讲每个元器件怎么连到它，再一步一步讲 40 针排针上 19 根杜邦线各插哪里，和插好以后要打开的接口。'
+PINS_LEAD = (f'<p class="lead">MicroDuck 的电脑 Radxa Cubie A7Z 装在躯干顶上的背包座里。这一页先用一张总接线图讲每个元器件怎么连到它，再一步一步讲 40 针排针上 {N_ALL} 根杜邦线各插哪里，和插好以后要打开的接口。'
              '全程断电插线，最后检查完才通电。</p>')
 PINS_NAV = [('changes', '现在的装法'), ('map', '总接线图'), ('count', '1 认针'), ('flags', '2 小旗'), ('power', '3 5 V'), ('imu', '4 IMU'),
             ('uart', '5 串口'), ('audio', '6 功放'), ('touch', '7 触摸板'), ('mic', '8 麦克风'), ('check', '9 检查'),

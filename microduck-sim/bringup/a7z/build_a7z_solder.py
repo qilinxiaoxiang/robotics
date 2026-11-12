@@ -257,8 +257,10 @@ def no(key: str) -> str:
 
 
 def note_top() -> str:
-    other = ('<p><b>只装两只耳朵：</b>用 <a href="A7Z-SOLDER-2MIC.html">双麦克风版</a>，没有后脑那一步，面包板每条少插一个孔。</p>' if BACK else
-             '<p><b>这是双麦克风版：</b>只有左右两只耳朵，像动物一样两只耳朵听声音。头盖后壁的第三个麦克风座空着。三个麦克风的版本在 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a>。</p>')
+    other = ('<p><b>这一页是机器人现在的装法：</b>三个麦克风 2026-10-29 起都装在机器人上，后脑麦克风的 SD 插 A7Z 10 号针。'
+             '<a href="A7Z-SOLDER-2MIC.html">双麦克风版</a>只装两只耳朵，不是现在的装法。</p>' if BACK else
+             '<p><b>这是双麦克风版，不是机器人现在的装法：</b>机器人上三个麦克风都装了（2026-10-29 起），后脑麦克风的 SD 插 A7Z 10 号针，'
+             '照 <a href="A7Z-SOLDER.html">A7Z-SOLDER</a> 来。这一页只有左右两只耳朵，头盖后壁的第三个麦克风座空着。</p>')
     return f"""
 <div class="card">
 <p><b>怎么用这一页：</b>一步一块板子。每个焊盘后面写着<b>这个焊盘一共要焊几根线、各是哪根</b>，同一个焊盘的线一次焊上，不会再回来加。每根线写清楚多长、是哪种线、另一头去哪。</p>
@@ -343,7 +345,7 @@ def s2():
 
 def s3():
     rows = [('1', 'SCK', [male(TOB('mic-b'), '黄', '黄条')], ''), ('2', 'WS', [male(TOB('mic-b'), '绿', '绿条')], ''),
-            ('3', 'SD', [plug(PICK('mic-sd3'), 10, '蓝') + '，插头最后贴在 A7Z 10 号针旁边，先不插'], ''),
+            ('3', 'SD', [plug(PICK('mic-sd3'), 10, '蓝') + '，插头最后插 A7Z 10 号针'], ''),
             ('4', 'VDD', [male(TOB('mic-b'), '红', '红条')], ''),
             ('5', 'GND', [male(TOB('mic-b'), '黑', '黑条'), f'新取一根 <b>{LINK} mm 细线</b>（短线）的一头'], ''),
             ('6', 'L/R', [link_end('另一头')], '后脑的 L/R 接 GND。')]
@@ -425,10 +427,10 @@ def s_bb():
 
 def s12():
     pins = [(4, '#d7263d'), (12, '#c99a00'), (17, '#d7263d'), (25, '#1d1d1f'), (29, '#1f6fd1'), (31, '#1f9d55'), (34, '#1d1d1f'),
-            (35, '#1f9d55'), (38, '#1f6fd1'), (39, '#1d1d1f'), (40, '#1f6fd1')] + ([(10, '#9e9e9e')] if BACK else [])
-    goal = '11 个插头插在 A7Z 上；小旗 10 贴在 10 号针旁边，不插。' if BACK else '11 个插头插在 A7Z 上，10 号针空着。'
-    cap = 'A7Z 正面竖放（1 号针在上）。灰色的 10 号针先不插。' if BACK else 'A7Z 正面竖放（1 号针在上）。'
-    mic = '后脑麦克风：10 先不插' if BACK else ''
+            (35, '#1f9d55'), (38, '#1f6fd1'), (39, '#1d1d1f'), (40, '#1f6fd1')] + ([(10, '#1f6fd1')] if BACK else [])
+    goal = f'{len(pins)} 个插头插在 A7Z 上，后脑麦克风的小旗 10 插 10 号针。' if BACK else f'{len(pins)} 个插头插在 A7Z 上，10 号针空着。'
+    cap = 'A7Z 正面竖放（1 号针在上）。'
+    mic = '后脑麦克风 SD：10' if BACK else ''
     return AP.step('s12', no('s12'), '插到 A7Z：小旗几号就插几号针', goal, f"""
 <div class="pair"><div>{AP.figure(AP.top_fig(pins), f'A7Z 上要插的 {len(pins)} 个针', cap)}</div>
 <div><p>插法、怎么数针号、插完怎么检查，见 <a href="A7Z-PINS.html#audio">A7Z-PINS 第 6 到 8 步</a>。</p>
@@ -449,7 +451,7 @@ def build(back: bool) -> None:
     lead = (f"<p class=\"lead\">头里的线一步一步怎么焊：先焊每块板子（第 1 到 {N['s6']} 步），面包板贴到摄像头背面（{no('s7')}），"
             f"共用的线插进面包板（{no('bb')}），最后插到 A7Z（{no('s12')}）。不再有焊接接头，头盖拔插头就能拆。"
             '为什么是这些长度见 <a href="A7Z-PINS.html#changes">A7Z-PINS“现在的装法”</a>。</p>')
-    title = 'A7Z 头里的线：一步一步焊' + ('' if back else '（双麦克风）')
+    title = 'A7Z 头里的线：一步一步焊' + ('' if back else '（双麦克风版，不是机器人现在的装法）')
     extra_css = '<style>.pads li { margin:10px 0; } .pads .dot { margin-top:2px; }</style>'
     out = AP.page(title, title, lead + note_top(), nav, ''.join(steps))
     out = out.replace('</head>', extra_css + '</head>', 1)

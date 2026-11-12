@@ -3,7 +3,7 @@
 Two standalone Chinese pages for the MicroDuck head computer change from the Raspberry Pi Zero W to the Radxa Cubie A7Z.
 The Pi pages (`../BRINGUP.html`, built from `../build/`) are unchanged.
 
-- `../A7Z-PINS.html`: Dupont wires on the A7Z 40-pin header in the roof saddle (D-022), 19 wires with the two microphones (anchors `#changes #map #count #flags #power #imu #uart #audio #touch #mic #check #software #twi0`). `#map` is the wiring-kit overview `a7z_bench.py`: every board that connects to the A7Z, drawn from photos, A7Z as seen from above in the saddle (header at the bottom, pin 1 at the right); tapping a board or its button under the view highlights its wires and fades the rest (wiring-kit module selection). Microphone SCK/WS/VDD are drawn to pins 12/35/17 because they are spliced into those wires in the head. INMP441 pads from the AITRIP listing photo `sources/inmp441-label-face-aitrip.png` (Amazon B0972XP1YS, read 2026-10-25).
+- `../A7Z-PINS.html`: Dupont wires on the A7Z 40-pin header in the roof saddle (D-022), 20 wires with the three microphones fitted on the robot since 2026-10-29 (back microphone SD on pin 10, I2S0 DIN3; count derived from `USED` in the builder) (anchors `#changes #map #count #flags #power #imu #uart #audio #touch #mic #check #software #twi0`). `#map` is the wiring-kit overview `a7z_bench.py`: every board that connects to the A7Z, drawn from photos, A7Z as seen from above in the saddle (header at the bottom, pin 1 at the right); tapping a board or its button under the view highlights its wires and fades the rest (wiring-kit module selection). Microphone SCK/WS/VDD are drawn to pins 12/35/17 because they are spliced into those wires in the head. INMP441 pads from the AITRIP listing photo `sources/inmp441-label-face-aitrip.png` (Amazon B0972XP1YS, read 2026-10-25).
 - `../A7Z-WIRES.html`: one-picture summary, Pi Zero W pin -> A7Z pin for each wire, click a pin, wire or row to show only that wire (builder `build_a7z_wires.py`, probe `node probe_wires.mjs`).
 - `../A7Z-ANTENNA.html`: AC019 FPC antenna in the head cap (sections in assembly order: `#parts #stick #mount #clip #plug #check`; the IPEX plug goes on after the cap wire clip, as in guide/content/steps.py).
 - `../A7Z-COOLING.html` (builder `build_a7z_cooling.py`, 2026-10-20): open the head (three M2.6 × 6, the board, speaker, amplifier and antenna all ride on the cap), stick a 15 × 15 × 5 mm copper heatsink on the A733 with its fins perpendicular to the header row (vertical in the closed head; drawn on the photo by `sink_figure()`), 12.8 mm free from the chip top to the camera's back components (2026-10-21 cooling study, A733 package 0.951 mm), solder a 470 µF electrolytic across the 5 V lead 2 cm from pins 2/6, optional min-hold meter reading during `guide/firmware/pi/a7z_load_test.sh`, close and check (`#parts #off #open #sink #cap #meter #close`). A733 and RAM centres read on a7z-top.png: `SOC`, `RAM` in the builder, check figure `shots/check_cooling.png`.
@@ -20,13 +20,15 @@ node probe_pages.mjs                                     # headless Chrome at 12
 `photos.py` holds the marked Radxa photos and the marked XIAO ESP32-S3 pinout crop (`sources/xiao-esp32s3-front-pinout-crop.png`, from
 Seeed's `XIAO_ESP32-S3_front_pinout.png` on the XIAO ESP32S3 getting-started wiki, read 2026-10-15) (pixel coordinates read on the source photos and checked on `shots/check_*.png`).
 
-## Final pin map (2026-10-15)
+## Pin map (as built; microphones since 2026-10-29)
 
 Inner row (odd): 1 IMU red 3.3 V, 3 IMU blue SDA (TWI7), 5 IMU yellow SCL (TWI7), 7 UART green (A7Z TX to OpenRB Rx),
-9 IMU black GND, 11 UART white (A7Z RX from OpenRB Tx), 17 touch board 3.3 V (XIAO 3V3), 25 touch GND, 29 touch SCL
-(XIAO D5), 31 touch SDA (XIAO D4), 35 amplifier LRC, 39 amplifier GND. 17 wires in all (12 inner, 5 edge; D-013).
-Edge row (even): 2 5 V lead red, 4 amplifier Vin, 6 5 V lead black, 12 amplifier BCLK (method pending Shawn), 40 amplifier DIN.
-8 and 10 stay empty (debug console). The camera board covers edge-row pins 10 to 34 (coordinating session's CAD check).
+9 IMU black GND, 11 UART white (A7Z RX from OpenRB Tx), 17 touch board 3.3 V (XIAO 3V3, also microphone VDD), 25 touch GND, 29 touch SCL
+(XIAO D5), 31 touch SDA (XIAO D4), 35 amplifier LRC (also microphone WS), 39 amplifier GND.
+Edge row (even): 2 5 V lead red, 4 amplifier Vin, 6 5 V lead black, 10 back microphone SD (I2S0 DIN3; overlay
+`zz-duck-i2s0-din3.dtbo`, 3 boots verified), 12 amplifier BCLK (also microphone SCK; method pending Shawn), 34 microphone GND,
+38 ear microphones SD (I2S0 DIN0), 40 amplifier DIN. 20 wires in all (12 inner, 8 edge): 8 from the torso, 12 from the head.
+8 stays empty (debug console TX). The camera board covers edge-row pins 10 to 34 (coordinating session's CAD check).
 
 ## Sources (checked 2026-10-15)
 

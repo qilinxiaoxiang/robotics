@@ -24,8 +24,8 @@ WIRES = [
     ('imu-blk', 'IMU 黑 GND', BLK, 9, 9, ''),
     ('pwr-red', '5 V 线 红', RED, 2, 2, ''),
     ('pwr-blk', '5 V 线 黑 GND', BLK, 6, 6, ''),
-    ('uart-grn', '串口 绿（A7Z 发 → OpenRB Rx）', GRN, 8, 7, 'A7Z 的 8、10 号是调试串口，空着'),
-    ('uart-wht', '串口 白（A7Z 收 ← OpenRB Tx）', WHT, 10, 11, 'A7Z 的 8、10 号是调试串口，空着'),
+    ('uart-grn', '串口 绿（A7Z 发 → OpenRB Rx）', GRN, 8, 7, 'A7Z 的 8、10 号是调试串口，不接 OpenRB'),
+    ('uart-wht', '串口 白（A7Z 收 ← OpenRB Tx）', WHT, 10, 11, 'A7Z 的 8、10 号是调试串口，不接 OpenRB'),
     ('amp-vin', '功放 Vin 5 V', AMP, 4, 4, ''),
     ('amp-bclk', '功放 BCLK', AMP, 12, 12, 'A7Z 只有 12 号针能出 BCLK；线贴着插头往下折'),
     ('amp-lrc', '功放 LRC', AMP, 35, 35, ''),
@@ -36,7 +36,9 @@ WIRES = [
     ('t-scl', '触摸板 SCL（XIAO D5）', TOUCH, None, 29, '新线，Pi 上没有'),
     ('t-sda', '触摸板 SDA（XIAO D4）', TOUCH, None, 31, '新线，Pi 上没有'),
 ]
-EMPTY_NOTE = {('a', 8): 'A7Z 8 号：调试串口，空着', ('a', 10): 'A7Z 10 号：调试串口，空着'}
+EMPTY_NOTE = {('a', 8): 'A7Z 8 号：调试串口 TX，空着', ('a', 10): 'A7Z 10 号：调试串口 RX，插着后脑麦克风 SD（这一页不画麦克风的线）'}
+# A7Z pins used by the microphones, which this Pi-to-A7Z page does not draw (wiring: build_a7z_pages.py)
+MIC_NOTE = {('a', 34): 'A7Z 34 号：麦克风 GND（这一页不画麦克风的线）', ('a', 38): 'A7Z 38 号：耳朵麦克风 SD（这一页不画麦克风的线）'}
 
 # geometry: both headers drawn the same way: pin 1 on top, odd (inner) column left, even (edge) column right
 W, TOP, DY, SQ = 440, 96, 30, 22
@@ -100,7 +102,9 @@ def svg() -> str:
                            f'<text x="{cx}" y="{cy + 4.5}" fill="{tc}" text-anchor="middle">{n}</text></g>')
             else:
                 cls = 'pin off dbg' if (board, n) in EMPTY_NOTE else 'pin off'
-                out.append(f'<g class="{cls}" data-b="{board}" data-n="{n}">'
+                note = (EMPTY_NOTE | MIC_NOTE).get((board, n))
+                attr = f' data-note="{note}"' if note else ''
+                out.append(f'<g class="{cls}" data-b="{board}" data-n="{n}"{attr}>'
                            f'<rect x="{cx - SQ / 2}" y="{cy - SQ / 2}" width="{SQ}" height="{SQ}" rx="4"/>'
                            f'<text x="{cx}" y="{cy + 4.5}" text-anchor="middle">{n}</text></g>')
     # touch board pads, each level with its A7Z pin
@@ -181,7 +185,7 @@ txt.innerHTML='<b>'+w[1]+'</b>：'+src+' → A7Z <b>'+w[4]+'</b> 号针'+chg+(w[
 document.addEventListener('click',e=>{const t=e.target.closest('[data-w]');
 if(t){const id=t.dataset.w;if(map.classList.contains('sel')&&t.classList.contains('hl'))clear();else show(id);return}
 const p=e.target.closest('.pin');if(p){clear();const b=p.dataset.b==='p'?'Pi':'A7Z';
-txt.innerHTML=(p.classList.contains('dbg')?'<b>'+b+' '+p.dataset.n+' 号</b>：调试串口，空着':'<b>'+b+' '+p.dataset.n+' 号</b>：空着');return}
+txt.innerHTML=p.dataset.note?p.dataset.note:(p.classList.contains('dbg')?'<b>'+b+' '+p.dataset.n+' 号</b>：调试串口，空着':'<b>'+b+' '+p.dataset.n+' 号</b>：空着');return}
 if(e.target.closest('#reset')||e.target.closest('svg'))clear()});
 ''' % json.dumps([list(w) for w in WIRES], ensure_ascii=False)
 
@@ -198,7 +202,7 @@ def page() -> str:
 <div class="info"><span class="txt" id="txt">点一根线、一根针或下面的一行，只显示这根线。</span><button id="reset" type="button">全部显示</button></div>
 <div class="fig">{svg()}</div>
 {chips()}
-<p class="foot">虚线框的 A7Z 8、10 号是调试串口，空着。17 根线：{MOVED} 根从 Pi 搬过来（{CHANGED} 根换针），{NEW} 根是新加的触摸板线。详细步骤和来源：<a href="A7Z-PINS.html">A7Z-PINS.html</a>。</p>
+<p class="foot">虚线框的 A7Z 8、10 号是调试串口：8 号空着，10 号插着后脑麦克风的 SD。这一页画 {len(WIRES)} 根线：{MOVED} 根从 Pi 搬过来（{CHANGED} 根换针），{NEW} 根是新加的触摸板线；麦克风自己的线（A7Z 10、34、38 号）不在这一页。详细步骤和来源：<a href="A7Z-PINS.html">A7Z-PINS.html</a>。</p>
 </main><script>{JS}</script></body></html>'''
 
 
