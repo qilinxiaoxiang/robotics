@@ -267,8 +267,14 @@ MOUNT_FIX = (0.7071068, 0.7071068, 0.0, 0.0)
 # x +0.070 against the model's +0.001; with a 4 deg sensor pitch the model reads +0.058 and the ankles match within
 # 0.6 deg. IMU_PITCH_TRIM rotates the body frame back by that much (brain_sim_check.py --imu-pitch is the same angle).
 IMU_PITCH_TRIM_DEG = 4.0
-_h = math.radians(IMU_PITCH_TRIM_DEG) / 2
-IMU_PITCH_TRIM = (math.cos(_h), 0.0, math.sin(_h), 0.0)
+# Roll was never trimmed. 2026-11-12 (play-locate-20261112/README.md): at quiet stand the robot reads +2 to +3 deg of
+# roll in every log since 11-02 (the sim 0), and a sim sensor rolled by brain_sim_check.py --imu-roll -3 reproduces the
+# robot's stand reading, its walking roll and its left-leg-heavy gait. IMU_ROLL_TRIM_DEG uses the sim's sign (-3 undoes
+# that sensor). It stays 0 on the robot until Shawn says to switch it on; MICRODUCK_IMU_ROLL_TRIM sets it for sim checks.
+IMU_ROLL_TRIM_DEG = float(os.environ.get("MICRODUCK_IMU_ROLL_TRIM", "0"))
+_h, _r = math.radians(IMU_PITCH_TRIM_DEG) / 2, math.radians(IMU_ROLL_TRIM_DEG) / 2
+# the whole sensor trim, qy(pitch) * qx(roll); the name is kept for the scripts that import it
+IMU_PITCH_TRIM = (math.cos(_h) * math.cos(_r), math.cos(_h) * math.sin(_r), math.sin(_h) * math.cos(_r), -math.sin(_h) * math.sin(_r))
 TICK = 2 * math.pi / 4096
 VEL_UNIT = 0.229 * 2 * math.pi / 60  # rad/s per velocity LSB
 

@@ -34,6 +34,7 @@ walk-mode tick, as in the 2026-10-22 runs.
   ~/.venvs/microduck-dyn/bin/python brain_sim_check.py [--volt 5.0] [--walk-ramp 0] [--com-x 5] [--zero left_hip_pitch -8 ...]
 """
 import argparse
+import bisect
 import collections
 import json
 import math
@@ -1000,9 +1001,10 @@ def run(args):
         c0["joint_play"] = dict(joints={n: args.joint_play for n in NAMES if re.search(args.joint_play_only, n)})
     if args.manifest:  # another signed-part manifest on the same loader (the 90 g NP-F970 removal is still applied by the loader)
         c0["mass_manifest"] = os.path.abspath(args.manifest)
-    if args.com_x:
+    if args.com_x or args.com_y:  # a 50 g pair on the trunk; com_x keeps its 0.76 kg scaling, com_y uses the 0.96 kg battery robot
         c0["mass_parts"] = [dict(body="trunk_base", mass_kg=-0.05, position_m=[0, 0, 0.0]),
-                            dict(body="trunk_base", mass_kg=0.05, position_m=[args.com_x / 1000 * 0.76 / 0.05, 0, 0.0])]
+                            dict(body="trunk_base", mass_kg=0.05, position_m=[args.com_x / 1000 * 0.76 / 0.05,
+                                                                              args.com_y / 1000 * 0.96 / 0.05, 0.0])]
     sp_rng = np.random.default_rng([args.seed, 7]) if args.sp_at is not None else None
     sp_obj = sp_object_draw(args, sp_rng) if args.sp_at is not None else None
     sp_model = sp_install_model_hook(args, sp_obj) if args.sp_at is not None else None
@@ -1052,7 +1054,8 @@ def run(args):
     if args.sp_rise_old is not None:
         brain.sp_rise_old_phase = args.sp_rise_old
     comp = Breakaway(first=args.ba_first, ramp=args.ba_ramp, cap=args.ba_cap, min_err_ticks=args.ba_min_err, stuck_ticks=args.ba_stuck, cap_ticks=args.ba_cap_ticks)
-    Rimu = rot_y(args.imu_pitch)
+    _ar = math.radians(args.imu_roll)
+    Rimu = rot_y(args.imu_pitch) @ np.array([[1, 0, 0], [0, math.cos(_ar), -math.sin(_ar)], [0, math.sin(_ar), math.cos(_ar)]])
     Mq = qmul(IMU_MOUNT_QUAT, (1, 0, 0, 0))
     sub = round(0.02 / m.opt.timestep)
     aq = collections.deque([p0.copy()] * (args.action_delay + 1), maxlen=args.action_delay + 1)
@@ -1140,6 +1143,13 @@ def run(args):
     replay = None
     if args.cmd_replay:  # [[s after --walk-at, control-file command], ...] in time order (scorecard.py writes it)
         replay = [(float(rt), dict(rc)) for rt, rc in json.load(open(args.cmd_replay))]
+    turn_t = turn_v = None
+    if args.turn_replay:  # the robot's own policy turn input, tick by tick: the sim's heading hold is taken out
+        tr = json.load(open(args.turn_replay))
+        turn_t, turn_v = [float(x[0]) for x in tr], [float(x[1]) for x in tr]
+        walk_brain.HEADING_KP = walk_brain.HEADING_KI = 0.0
+        walk_brain.SPIN_TURN_MAX = walk_brain.TURN_MAX
+        brain.yaw_trim = 0.0
     settled_at = None
     if STORY is not None:  # fullflow_sim.py: a scripted scene drives the commands and records the video
         STORY.setup(m, d, sp, args, trunk)
@@ -1147,7 +1157,7 @@ def run(args):
         t = tick * 0.02
         # what the sensors report, in commanded (encoder) frame and the BNO's own frame
         q_trunk = d.qpos[3:7].copy()
-        if args.imu_pitch:
+        if args.imu_pitch or args.imu_roll:
             qp = np.zeros(4)
             mujoco.mju_mat2Quat(qp, Rimu.ravel())
             q_trunk = np.array(qmul(q_trunk, qp))
@@ -1258,6 +1268,9 @@ def run(args):
                 want = dict(want, vx=cmd_s[0], vy=cmd_s[1], vtheta=cmd_s[2])
             else:
                 cmd_s = [0.0, 0.0, 0.0]
+        if turn_t is not None and want.get("mode") == "walk" and t >= args.walk_at:
+            k_turn = bisect.bisect_right(turn_t, t - args.walk_at) - 1
+            want = dict(want, vtheta=turn_v[k_turn] if k_turn >= 0 else 0.0)
         if args.wired_hold:  # walk_wired.py's order: grip stop on the file command, then the smoothing, then the gate
             if grip_stop.update(want, args.hold and not args.hold_uncal, est.e) == "stop" and grip_stop_at is None:
                 grip_stop_at = round(t, 2)
@@ -1687,8 +1700,10 @@ def main():
                          "printed and written to the result")
     ap.add_argument("--walk-ramp", type=float, default=0.0, help="Brain walk_ramp; 1.5 reproduces the old behaviour")
     ap.add_argument("--com-x", type=float, default=0.0, help="whole-robot COM shift forward, mm")
+    ap.add_argument("--com-y", type=float, default=0.0, help="whole-robot COM shift to the left (+y), mm")
     ap.add_argument("--zero", nargs=2, action="append", default=[], metavar=("JOINT", "DEG"))
     ap.add_argument("--imu-pitch", type=float, default=0.0)
+    ap.add_argument("--imu-roll", type=float, default=0.0, help="IMU mounting error about the trunk's forward axis, deg (the policy sees gravity rolled by this)")
     ap.add_argument("--compensation", action="store_true")
     ap.add_argument("--stand-s", type=float, default=1.0)
     ap.add_argument("--walk-at", type=float, default=4.0)
@@ -1725,6 +1740,10 @@ def main():
                     help="JSON [[s, cmd], ...]: from --walk-at on, the commands a robot run wrote to the control file "
                          "(walk/stand modes, velocities, head), smoothed by CMD_ALPHA as walk_wired.py does; "
                          "replaces --vx/--vtheta schedules (scorecard-20261109/scorecard.py)")
+    ap.add_argument("--turn-replay", default=None,
+                    help="JSON [[s, turn], ...]: from --walk-at on, the yaw-rate command the robot's policy was fed "
+                         "(the log's `turn`: trim + heading hold), given to the sim's policy as it is; the sim's own "
+                         "heading hold is switched off (play-locate-20261112/turn_replay_sweep.py)")
     ap.add_argument("--dance", default=None, help="dance.json: head and in-place turn steps from --walk-at on (shoot.py sing)")
     ap.add_argument("--head-yaw", type=float, default=0.0, help="rad; head pose command in walk mode from --walk-at on")
     ap.add_argument("--head-pitch", type=float, default=None, help="rad; absolute head_pitch target with --head-yaw")

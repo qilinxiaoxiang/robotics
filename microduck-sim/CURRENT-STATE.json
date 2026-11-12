@@ -321,6 +321,14 @@
         "brain_sim_check.py --foot-play studies"
       ]
     },
+    "imu_mount_trim": {
+      "value": {"brain_pitch_trim_deg": 4.0, "brain_roll_trim_deg": 0.0, "quiet_stand_reading_deg": {"pitch": "+1 to +2.6", "roll": "+2 to +3"}, "sim_sensor_that_matches": "--imu-pitch 2 --imu-roll -3", "roll_trim_checked_in_sim_only_deg": -3.0},
+      "meaning": "How the BNO085 sits against the trunk and what the brain undoes. Roll is not trimmed on the robot: the policy sees 2 to 3 deg of roll at a level stand and walks left-leg-heavy (swing 0.17 s left, 0.28 s right). Sims that should match the robot pass --imu-pitch 2 --imu-roll -3; without them the sim policy sees +3.9 deg pitch and 0 roll.",
+      "verified_at": "2026-11-12",
+      "source": "guide/firmware/mac/play-locate-20261112/README.md, second pass: foot_flat_check.py and stance_asym.py over every brain log 2026-11-02..11-12 (Mac mini ~/sims/fall-onset-20261112/cache), turn_replay_sweep.py tags roll-2.5, p2r3, trimmed; walk_brain.IMU_PITCH_TRIM_DEG and IMU_ROLL_TRIM_DEG",
+      "measure": "python3 foot_flat_check.py and stance_asym.py on the Mac mini (quiet-stand IMU roll and pitch per log); grep IMU_ROLL_TRIM_DEG in walk_brain.py and the env MICRODUCK_IMU_ROLL_TRIM in the brain's service",
+      "max_age_days": 30
+    },
     "leg_play": {
       "value": "No static play: with all ten leg encoders still (0.5 s windows, double stance), the trunk moves at most 0.06 deg (p90 pitch and roll, 35742 windows in every log 2026-11-02..11-11), the rigid 10/19 one-piece-ankle level (2026-10-21 loose two-half ankle: p90 2.2 deg). While walking, in single stance on the LEFT foot the trunk pitches about 10 deg across the stance beyond what the left leg's encoders give with the foot flat (+3.2 to -6.9 deg by stance phase), with a spread of 4-10 deg inside each phase bin; on the right foot about 3 deg (-1.5 to +1.4), the sim 3 deg with a spread of 1.3-2.1. Roll matches the sim. Same pattern before and after the 11-09 cable tidy.",
       "meaning": "Where the robot moves without its encoders seeing it: nowhere in quiet stance, and in the left leg's pitch axis (ankle, knee and hip pitch are parallel; the foot-to-ankle chain is the first suspect) once the left foot carries the whole robot and the ankle load swings heel to toe. A screw hunt elsewhere is not supported by the data. Servo-to-link play of 2 or 4 deg on every leg joint in the sim (brain_sim_check --joint-play) raises the sim's pitch gap only from about 3 to 4 deg, so a few degrees of play cannot be the whole difference.",

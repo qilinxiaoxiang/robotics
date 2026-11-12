@@ -59,6 +59,41 @@ fail the jitter gate. Detail in the team repo's `cmu/finetune/modal/FINETUNE-DEL
 Supply voltage is not it either: over 442 robot actions with a logged voltage the fall rate is 9 % at 7.2-7.5 V and
 5 % above 8.1 V; walking trains on 6.5-8.2 V with load sag (`microduck_constants.py` vin_range since 2026-06-29).
 
+## Second pass, 2026-11-12: existing logs only, no robot test
+
+Windows rebuilt from the brain logs (Mac mini `~/sims/fall-onset-20261112/`): 153 forward walks 11-02..11-12, 17 fell.
+Of the scorecard's 36 "robot fell, sim up" actions about 10 are the robot being handled (zero command, gyro under
+0.5 rad/s), and its balance replays start from a clean sim stand, so a fall that begins after a walk stops cannot
+reproduce there.
+
+Established:
+
+- IMU roll was never trimmed. At quiet stand the robot reads +2 to +3 deg of roll in every log (sim 0), the left foot
+  is 3 to 5 deg off flat by its encoders and the right under 1.5 (`foot_flat_check.py`). A sim sensor rolled by
+  `--imu-roll -3` (with `--imu-pitch 2`) reads +2.5 deg at stand, +2.0 deg mean while walking, swings left 0.18 s /
+  right 0.26 s and lifts left 10.7 mm / right 17.6 mm; the robot reads +2 to +5 deg walking, 0.17 / 0.28 s and
+  12.5 / 19.7 mm. The left-knee load (robot L/R mean error -204 / +80 ticks) follows too. A lateral COM shift of 6 mm
+  gives the same gait but no part on the robot is heavy enough for it. With `walk_brain.IMU_ROLL_TRIM_DEG = -3`
+  (env `MICRODUCK_IMU_ROLL_TRIM`, default 0, not on the robot) the sim reads 0.00 deg and swings 0.24 / 0.24 s.
+  Unexplained: the one session with a symmetric gait and no fall (11-02 12:13, 18 walks) has the same stand reading.
+- No sim run passes the sensor pitch that the brain's 4 deg pitch trim undoes: the sim policy sees +3.9 deg at stand,
+  the robot +1 to +2.6. `--imu-pitch 2` matches the robot.
+- Two falls follow a control-loop stall: 11-11 22:55:06 (251 ms, 0.44 s before onset) and 11-12 00:26:58 (176 ms,
+  0.14 s). Four gaps over 100 ms in 658 s of walking; the other 15 falls have no gap over 45 ms in their last 2 s.
+- Falls by time upright before the walk: 5 of 22 within 10 s of being stood up, 3 of 58 after 80 s. By the largest
+  turn command the policy saw: 0 of 25 under 0.5, 6 of 24 at 1.9 or more (walk61 trained on 1.0; the sim's own
+  heading hold never exceeds 0.5). By supply: 8 of 37 at 7.85 V or more, 9 of 98 below.
+- Ruled out: a servo gain change on ID2 after its 11-02 factory reset, a hidden static angle in either leg, a gyro
+  bias after start, foot scuffing (robot clearance 12.5 / 19.7 mm).
+
+Not reproduced: fed the robot's own turn signal (`--turn-replay`), 17 fell + 30 up walks, seed 0, the sim falls 0 of
+17 with every gap alone and together: floor mu 0.25, COM +-6..18 mm, friction x1.5, joint play 2 deg, 8.1 V, IMU
+pitch 2 and roll -3. All together its yaw-rate rms is 1.00 rad/s (robot 0.95), so the wobble is matched and the falls
+are not. Training on these gaps therefore has no evidence behind it.
+
+Scripts: `compact_logs.py`, `fall_onset.py`, `turn_cmd_stats.py`, `turn_replay_sweep.py`, `fall_trace.py`,
+`swing_clearance.py`, `stance_asym.py`, `foot_flat_check.py`; sim flags `--turn-replay`, `--com-y`, `--imu-roll`.
+
 ## Files
 
 - `frozen_swing.py`: static check (stand_check.py check 1, any torque-on mode).
