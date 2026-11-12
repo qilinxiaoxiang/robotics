@@ -230,3 +230,7 @@ Every short double-ended 1.25 mm 5-pin lead found is crossed, circuit 1 to circu
 
 Decision: the board keeps the camera's own pin order on J_CAM (draft 3, as uploaded to JLCPCB). Shawn re-pins one end of a bought lead, as he did with the USB cable on 2026-11-11 (Shawn 2026-11-12: "线序要更换很容易", "换下线序很快"). A reversed J_CAM was started and withdrawn the same day; nothing of it is in the repository. Before first power the red-to-5V check at the silkscreen mark still applies; Molex's lead is all black, so a coloured lead is easier to check.
 No lead is bought or in a cart yet.
+
+## 2026-11-12: board in the JLCPCB cart (not ordered)
+
+Shawn kept the plugs (no soldering) and the pin order. Customs description "DIY Hobby Circuit Board", then Save to cart. Cart summary: merchandise USD 135.05, shipping estimate USD 31.69, coupon -10.00, subtotal USD 156.74, estimated ship date 2026-11-21. Checkout and payment not started; they wait for Shawn's word on that total.
