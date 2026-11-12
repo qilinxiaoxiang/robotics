@@ -301,7 +301,11 @@ def auto(episodes_path, data, n_jobs):
         plans[e["id"]] = dict(e=e, rows=rows, t0=t0, t1=t1, model=man, key=key, argv=list(args))
         for seed in SEEDS:
             tl = os.path.join(out_dir, f"{e['id']}.{key}.seed{seed}.ticks.jsonl")
-            if not (os.path.exists(tl) and os.path.getsize(tl) and os.path.exists(tl + ".out")):  # a killed run leaves no .out
+            # a killed run leaves no .out; a crashed one (exit != 0) is rerun, never cached (2026-11-12: two
+            # recursive_mutex crashes were skipped as done on the next tick)
+            done = os.path.exists(tl) and os.path.getsize(tl) and os.path.exists(tl + ".out") \
+                and open(tl + ".out").readline().strip() == "exit 0"
+            if not done:
                 jobs.append({"case": e["id"], "seed": seed, "tick_log": tl,
                              "argv": [SIM_PY, os.path.join(MAC, "brain_sim_check.py")] + args + ["--seed", str(seed), "--tick-log", tl]})
 
