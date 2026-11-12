@@ -29,6 +29,31 @@ which have no play. Current fact: `leg_play` in `microduck-sim/CURRENT-STATE.jso
 The large spread inside each stance bin says the give is not a fixed sole shape (that would repeat stride to stride);
 it is something that yields differently each step under the full-body load on the left foot.
 
+## Which modelled effect closes the gap (`gap_sweep.py`, 2026-11-12)
+
+The scorecard's gap: the robot fell in 36 replayed actions (walk, turn, zero-command balance) of 11-02..11-11 where
+the sim stayed up, and its trunk jitter (scorecard definition) is about 3 times the sim's. Each effect below was added
+alone to the as-built sim and the same robot commands replayed (36 robot-fell and 24 robot-up actions, 3 seeds),
+scored with the scorecard's own rules (fall over 45 deg inside the robot's window, falls within 1 s of a replayed
+stand counted as the switch's). `gap-sweep.json`, `gap-sweep-com.json`.
+
+- base: sim falls in 1 of 93 robot-fell runs, 0 of 72 robot-up; jitter 0.19 against the robot's 0.59.
+- play, each alone, reproduces 10-16 % of the robot's falls and fells no robot-up run: head/neck play 8 deg 15/93,
+  leg play 4 deg 14/93, soft sole 13/93, foot play +-3 deg 11/93, all joints 4 deg 10/93. Jitter stays 0.16-0.22.
+- more servo friction (deadband) is not the cause: x1.5 gives 5/93 and 3/72 false falls; x2.0 raises jitter to 0.38
+  but fells 49 of 72 runs the robot walked through.
+- COM 5 mm forward: 4/30, no false falls. 3 mm back or more: the sim falls backward in its opening open-loop stand,
+  before the replay starts, so the backward shift is untested; 10 mm either way fells every run.
+- dropped reads at 10 %: 6/93. Everything combined (friction x1.5, 4 deg play everywhere, foot play): 16/93 with
+  10/72 false falls, jitter 0.23.
+
+No modelled effect brings the jitter near the robot's, and the play effects together explain about a sixth of the
+robot's extra falls. The rest is unmodelled. Shawn found loose screws on 2026-11-12 and walking felt steadier after
+he tightened them, so structural looseness beyond a few degrees at one joint is the first candidate.
+
+Supply voltage is not it either: over 442 robot actions with a logged voltage the fall rate is 9 % at 7.2-7.5 V and
+5 % above 8.1 V; walking trains on 6.5-8.2 V with load sag (`microduck_constants.py` vin_range since 2026-06-29).
+
 ## Files
 
 - `frozen_swing.py`: static check (stand_check.py check 1, any torque-on mode).
@@ -41,3 +66,7 @@ it is something that yields differently each step under the full-body load on th
 
 Log fields: `q` is in servo-ID order (`walk_brain.NAMES`), not `OBSERVATION_DOF_ORDER`; `goal_tick` is a dict keyed
 by servo ID; `pos_tick` a list in servo-ID order.
+- `gap_sweep.py`: the effect-by-effect replay sweep above (Mac mini, about 40 min for 1980 sims at 9 jobs).
+- `drive_bouts.py`: short test walks driven from the Mac through the app's command writer and its driver lease.
+- `wiggle_live.py`: live per-joint encoder readout while a part is pushed by hand (read-only).
+- `free_minimac_disk.py`: deletes files over 5 MB in old `~/sims` studies on the Mac mini.
