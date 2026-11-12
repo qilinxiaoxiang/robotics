@@ -785,7 +785,13 @@
       "consumers": [
         "A7Z-SOLDER / A7Z-PINS back-microphone step",
         "sound localisation (three-mic report 20261024)"
-      ]
+      ],
+      "consumer_checks": [
+        {"file": "bringup/A7Z-PINS.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
+        {"file": "bringup/A7Z-SOLDER.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
+        {"file": "head-usb-board-20261111/HANDOFF.md", "must_not_match": "(?m)^.*back-of-head mic.*not plugged\\.$", "must_match": "fitted and working since 2026-10-29", "why": "the handoff copied the stale guide page on 2026-11-11"}
+      ],
+      "claim_terms": ["后脑勺?(?:那个|的)?麦克风", "耳朵(?:的)?麦克风", "back[- ](?:of[- ]head )?mic", "ear mics?", "INMP441", "三个麦克风", "麦克风.{0,12}(?:没插|未插|不插|闲置|可选)"]
     },
     "jaw_grip_current_ma": {
       "value": 150,
