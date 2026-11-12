@@ -405,3 +405,17 @@ running total of worst cases; real spend read from `modal billing report` before
   0.58-0.63), hip pitch near 0, trunk 13-16 deg; trunk height 0.066 m against 0.117 standing. It did not straighten
   the knee. Clips: video/uni_a_walk_pack.mp4 (pack drawn, no fall, 0.177 m/s), video/uni_a_walk_nopack.mp4 (no fall,
   0.169 m/s), video/bend_a2_bend_pack.mp4 (seed 0, pack drawn, a squat with the head on the floor, no fall).
+
+## Next round plan (2026-11-12, NEXT-PLAN.md; nothing launched)
+- 00:35-03:20 The queued audits stalled: the universal3 batteries-out and no-pack jobs (five cases each) hit the
+  590 s timeout without writing audit.json, and the queue waited for a verdict line that a timeout never prints.
+  Fix: one case per job (`flight_audit.py --cases`), and the queue scripts now wait for another session's sims with
+  a 60 min limit instead of ignoring the busy check.
+- 03:23-04:52 universal3: stepping in place earned 0.843 of the walk at batteries out (FAIL) because the Gaussian
+  tracking pays 0.89 at 0.03 m/s; added a capped progress-along-command term (weight 8). All 18 cases PASS at every
+  load, worst 0.718 (out/audit3_u3e_*, out/audit3_u3efast_* for commands of 0.15-0.30 m/s); gate recorded.
+- 04:55-05:34 bend4: in-episode hand-back to run A's walker (a quarter of cycles, 2 s) and a bend guard on task
+  metrics, both checked on the Mac mini (guard test, 3-iteration smokes). Audit PASS at every load: squat -16.7 /
+  -4.1 / -1.5 of the bend (bend3 paid it 1.72 / 1.00); gate recorded. Hand-back survival with every cycle handed back:
+  13.4 / 9.5 / 3.1 stander falls per minute. No ankle cost: groundpick61 itself exceeds the robot's 1.25 rad stop.
+  Kaggle 26.75 of 30 h used at 03:30 (another session's play-a kernel running), refresh 2026-11-14T00:00:00.
