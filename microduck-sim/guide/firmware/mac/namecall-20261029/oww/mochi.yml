@@ -1,0 +1,50 @@
+# openWakeWord training config for the duck's name "mochi" (from openWakeWord/examples/custom_model.yml,
+# commit 368c037). Run on the Mac mini from /Users/shawnxiang/mochi-train/oww with ~/.venvs/oww.
+model_name: "mochi"
+# spelled "mo chee": espeak-ng reads "mochi" as m'ɑːtʃaɪ (MAH-chai) but "mo chee" as m'oʊ tʃ'iː (MOH-chee), and both
+# words are in the CMU dictionary, so the phoneme-overlap negatives need no DeepPhonemizer download (its S3 host is
+# gone, 403 on 2026-10-30)
+target_phrase:
+  - "mo chee"
+# near-misses the duck must not wake on (the automatic phoneme-overlap negatives come on top of these)
+custom_negative_phrases:
+  - "mocha"
+  - "macho"
+  - "moshi"
+  - "mushy"
+  - "motion"
+  - "much"
+n_samples: 6000
+n_samples_val: 1000
+tts_batch_size: 50
+augmentation_batch_size: 16
+# shim round piper-sample-generator 3.2.0 (see psg_shim/generate_samples.py)
+piper_sample_generator_path: "/Users/shawnxiang/mochi-train/oww/psg_shim"
+output_dir: "/Users/shawnxiang/mochi-train/oww/work"
+rir_paths:
+  - "/Users/shawnxiang/mochi-train/oww/data/mit_rirs"
+background_paths:
+  - "/Users/shawnxiang/mochi-train/oww/data/bg16k"
+  - "/Users/shawnxiang/mochi-train/oww/data/bg_roboclub"
+  - "/Users/shawnxiang/mochi-train/oww/data/bg_motion_train"
+background_paths_duplication_rate:
+  - 1
+  - 3
+  - 5
+false_positive_validation_data_path: "/Users/shawnxiang/mochi-train/oww/dl/validation_set_features.npy"
+augmentation_rounds: 1
+feature_data_files:
+  "ACAV100M_sample": "/Users/shawnxiang/mochi-train/oww/dl/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
+  "real_negative": "/Users/shawnxiang/mochi-train/oww/work/mochi/real_negative_features.npy"
+  "web_negative": "/Users/shawnxiang/mochi-train/oww/work/mochi/web_negative_features.npy"
+batch_n_per_class:
+  "ACAV100M_sample": 1024
+  "adversarial_negative": 50
+  "positive": 50
+  "real_negative": 50
+  "web_negative": 50
+model_type: "dnn"
+layer_size: 32
+steps: 50000
+max_negative_weight: 1500
+target_false_positives_per_hour: 0.2
