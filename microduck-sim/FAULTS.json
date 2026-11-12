@@ -370,6 +370,73 @@
         "status": "hypothesis",
         "summary": "H1 supported: the robot's effective loop lag is about 40 ms longer than the sim's, so turn stops sit near the delay stability edge (sim falls at +40 ms); policies were trained with 15-30 ms delay, KP fixed and friction 0.9-1.1x"
       }
+    },
+    "stand-leans-left-on-left-outer-edge": {
+      "symptom": "Powered stand and walk: the body leans about 3 deg to its left, the left sole sits on its outer edge, the right foot is nearly unloaded; left knee current 2 to 3.7 times the right; left swing 0.18-0.23 s against 0.23-0.28 s right.",
+      "required_recovery": "The robot stands level with both soles loaded and walks with equal steps. Shawn 2026-11-12: \"左脚还是一直用脚掌外侧在走路和站立 整体走路的时候 身体也往左侧倾倒 ... 肯定有系统性问题\".",
+      "occurrences": [
+        {
+          "when": "2026-11-04 10:56:34",
+          "what": "powered-stand scan 105634: left sole outer edge 2.2 deg lower, right sole flat and 3.4 mm higher; IMU roll +3.1 deg",
+          "running": "stand, log app1104-105329"
+        },
+        {
+          "when": "2026-11-02 to 2026-11-12, every brain log",
+          "what": "quiet-stand IMU roll +2 to +3 deg; walking left-leg-heavy",
+          "running": "walk_wired stand and walk61"
+        },
+        {
+          "when": "2026-11-12 14:53-15:06 and after",
+          "what": "Shawn sees the left foot on its outer edge and the body leaning left, standing and walking, also with a short USB cable",
+          "running": "walk_wired with IMU roll trim -3 (log app1112-145302)"
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "H1-imu-mounted-rolled",
+          "claim": "The IMU sits rolled 3 deg and the robot stands level.",
+          "status": "refuted 2026-11-12: with roll trim -3 the walk stayed left-heavy, and the scanned soles match the joint angles only with the pelvis 3 to 4.5 deg left side down (scan-20261101/floor_truth.py)"
+        },
+        {
+          "id": "H2-left-hip-roll-zero",
+          "claim": "The left hip roll zero is 2 deg off.",
+          "status": "refuted: a 2 deg offset ran 2026-11-11 23:38 to 11-12 14:50 over 45 walks with no change in gait; removed"
+        },
+        {
+          "id": "H3-hidden-hip-angle",
+          "claim": "A hip roll or hip yaw joint holds angle its encoder does not see (horn seating, play under load).",
+          "status": "open"
+        },
+        {
+          "id": "H4-mass-left-of-model",
+          "claim": "The robot's mass sits left of where the model has it, so it settles onto the left sole.",
+          "status": "open"
+        }
+      ],
+      "tests": [
+        {
+          "id": "T1-in-air-hips",
+          "what": "Robot lifted, stand pose held: compare left and right hip roll and yaw by eye and with wiggle_live.py on ID9, ID10, ID4, ID5; separates H3 from H4",
+          "status": "queued",
+          "blocker": "robot powered off since 2026-11-12 15:10"
+        },
+        {
+          "id": "T2-sim-com-shift",
+          "what": "brain_sim_check.py --com-y sweep against the scanned stand (pelvis roll, sole slopes, right sole lift) to size H4",
+          "status": "queued",
+          "blocker": "none; next step of play-locate-20261112"
+        }
+      ],
+      "mitigations": [],
+      "recovery": {
+        "self_recovers": false,
+        "verified_by_induced_fault": false,
+        "evidence": "standing condition, present in every log since 2026-11-02"
+      },
+      "cause": {
+        "status": "open",
+        "summary": "Not a sensor offset and not the left hip roll zero; H3 and H4 remain."
+      }
     }
   }
 }

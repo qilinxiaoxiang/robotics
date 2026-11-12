@@ -136,6 +136,8 @@ if "R" in H:
 he = np.isin(lab, [names.index("jaw_soft")])
 d1, _ = KD(mp[he]).query(Qg, distance_upper_bound=0.03)
 print("head scan points z min (p1, p50 lowest)", np.percentile(Qg[np.isfinite(d1), 2], [0.5, 2]).round(4), " model head z min", mp[he, 2].min().round(4))
+print("NOTE: every 'real-minus-model' angle above is relative to a model whose trunk was placed with the pose's IMU gravity;"
+      " none of them is a lean against the floor and none can confirm the IMU. Run floor_truth.py for absolute posture.")
 np.savez(f"{S}/fit_{scan}.npz", Qg=Qg, col=col)
 json.dump(out, open(f"{S}/fit_{scan}.json", "w"), indent=1)
 

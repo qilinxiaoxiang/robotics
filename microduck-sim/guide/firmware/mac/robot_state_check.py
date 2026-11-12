@@ -96,7 +96,42 @@ def probe(fact, facts, out, log):
                 "ok": low <= f["max_low_share"],
                 "detail": f"{os.path.basename(src)} median over {len(rates)} lines, {low:.1%} below {floor}/s"
                           f" (max {f['max_low_share']:.0%}){'; ' + note if note else ''}"}
+    if fact == "sensor_and_zero_offsets_in_code":
+        return offsets_probe(facts[fact])
     raise SystemExit(f"no probe for {fact}")
+
+
+STRUCTURAL_OFFSETS = {"right_knee": 45.0, "left_knee": -45.0, "left_ankle": -90.0, "right_hip_pitch": -91.41}
+
+
+def offsets_probe(f):
+    """The IMU trims and joint zero offsets the brain applies, read from the code. Any value that changes what the
+    policy senses or where a joint's zero sits must be backed by a measurement that does not come from the sim
+    (a sim match cannot tell a rolled sensor from a robot that really leans: 2026-11-12, roll trim -3)."""
+    import re
+    here = os.path.dirname(os.path.abspath(__file__))
+    src = open(os.path.join(here, "walk_brain.py")).read()
+    pitch = float(re.search(r"^IMU_PITCH_TRIM_DEG = ([-0-9.]+)", src, re.M).group(1))
+    roll = float(re.search(r'^IMU_ROLL_TRIM_DEG = float\(os\.environ\.get\("MICRODUCK_IMU_ROLL_TRIM", "([-0-9.]+)"\)\)', src, re.M).group(1))
+    sys.path.insert(0, os.path.join(here, "..", "pi"))
+    import joint_signs
+    import math
+    joints = {k: round(math.degrees(v), 2) for k, v in joint_signs.MOTOR_OFFSET.items() if abs(v) > 1e-9}
+    value = {"imu_pitch_trim_deg": pitch, "imu_roll_trim_deg": roll, "joint_zero_offsets_deg": joints}
+    need = [k for k, v in (("imu_pitch_trim_deg", pitch), ("imu_roll_trim_deg", roll)) if v]
+    need += [k for k, v in joints.items() if abs(v - STRUCTURAL_OFFSETS.get(k, 0.0)) > 0.05]
+    ev, missing, weak = f.get("evidence", {}), [], []
+    for k in need:
+        e = ev.get(k) or {}
+        if e.get("independent_measurement"):
+            continue
+        (weak if e.get("grandfathered") else missing).append(k)
+    out = {"value": value, "measured_at": day(os.path.join(here, "walk_brain.py")), "ok": not missing,
+           "detail": ("no independent (non-sim) measurement recorded for: " + ", ".join(missing)) if missing
+           else f"{len(need)} non-structural offset(s) in code"}
+    if weak and not missing:
+        out["warn"] = "sim-match evidence only, never measured independently: " + ", ".join(weak)
+    return out
 
 
 def sim_args(facts):
