@@ -66,6 +66,8 @@ def main():
     ap.add_argument("--up", type=int, default=12, help="robot-up walk/turn replays")
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     ap.add_argument("--only", nargs="*", default=None)
+    ap.add_argument("--models", default=None, help="policy directory for brain_sim_check --models (a fine-tune candidate)")
+    ap.add_argument("--tag", default="", help="names this policy's tick logs and result file (gap-sweep<-tag>.json)")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     conds = {k: v for k, v in CONDS.items() if not a.only or k in a.only}
@@ -75,10 +77,11 @@ def main():
         base = [x for x in r["sim_argv"] if x]
         for cond, extra in conds.items():
           for seed in a.seeds:
-            tl = os.path.join(OUT, f"{r['id']}.{cond}.seed{seed}.ticks.jsonl")
+            tl = os.path.join(OUT, f"{r['id']}.{cond}{'.' + a.tag if a.tag else ''}.seed{seed}.ticks.jsonl")
             jobs.append(dict(until=float(base[base.index("--until") + 1]), case=r["id"], kind=r["kind"], robot=r["robot"], robot_jitter=r["robot_jitter"], cond=cond,
                              tl=tl, replay=base[base.index("--cmd-replay") + 1],
                              argv=[PY, os.path.join(MAC, "brain_sim_check.py")] + base + extra +
+                             (["--models", os.path.abspath(a.models)] if a.models else []) +
                              ["--seed", str(seed), "--tick-log", tl]))
     t0 = time.time()
     done = [0]
@@ -127,7 +130,7 @@ def main():
             robot_jitter_median=round(float(np.median(g["robot_jitter"])), 3) if g["robot_jitter"] else None)
         print(f"{cond:10s}", summary[cond], flush=True)
     json.dump(dict(summary=summary, rows=rows, conds=CONDS, written=time.strftime("%Y-%m-%d %H:%M")),
-              open(os.path.join(HERE, "gap-sweep.json"), "w"), indent=1)
+              open(os.path.join(HERE, f"gap-sweep{'-' + a.tag if a.tag else ''}.json"), "w"), indent=1)
     errs = [r for r in rows if "error" in r]
     if errs:
         print(len(errs), "sims failed, first:", errs[0])
