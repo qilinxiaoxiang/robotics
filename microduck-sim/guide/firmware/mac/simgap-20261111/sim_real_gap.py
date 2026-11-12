@@ -198,7 +198,7 @@ def sim_tick_log(eid):
     return c[-1] if c and os.path.exists(c[-1] + ".out") else None
 
 
-def pair(e, kin):
+def pair(e, kin, card):
     rows = sc.rows_of(os.path.join(DATA, e["trajectory"]))
     t0, t1 = windows(e, rows)
     tl = sim_tick_log(e["id"])
@@ -212,7 +212,9 @@ def pair(e, kin):
     if not real or not sim:
         return None
     return {"id": e["id"], "t0": e["t_start"], "kind": e["kind"], "when": e["when"], "outcome": e["outcome"],
-            "sim_outcome": (sc.sim_summary(tl) or {}).get("fell_at"),
+            # the scorecard's verdict: majority of 3 seeds, falls read from the .out summary, and a sim fall within 1 s
+            # of a replayed stand/monitor counted as the switch's (stop_topple), never as a predicted fall
+            "sim_outcome": card.get(e["id"]),
             "commands": e.get("commands"), "real": real, "sim": sim, "sim_log": os.path.basename(tl)}
 
 
@@ -342,7 +344,7 @@ def page(p):
                   f' 误差 {a["err_deg"]}°</span><span class="s">仿真 幅度 {b["amp"]:.2f} 滞后 {b["lag"]} 死区 {b["dead"]}'
                   f' 误差 {b["err_deg"]}°</span>{"<span class=flag>差得多</span>" if bad else ""}</div>')
     res_real = "摔倒" if p["outcome"] == "fell" else "没摔"
-    res_sim = "摔倒" if p.get("sim_outcome") else "没摔"
+    res_sim = {"fell": "摔倒", "up": "没摔"}.get(p.get("sim_outcome"), "未评分")
     return f"""<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>仿真真机差异 {html.escape(p['when'])}</title><style>{CSS}</style></head><body><main>
 <p><a href="index.html">← 全部动作</a></p>
@@ -445,10 +447,12 @@ def main():
                 or (a.what == "auto" and e["kind"] in kinds and e.get("replayable")
                     and sim_tick_log(e["id"]) and (e["id"], os.path.basename(sim_tick_log(e["id"]))) not in done)]
         kin = Kin()
+        cp = os.path.join(DATA, "scorecard-auto.json")
+        card = {r["id"]: r["sim"] for r in json.load(open(cp))["results"]} if os.path.exists(cp) else {}
         new = []
         for e in todo:
             try:
-                p = pair(e, kin)
+                p = pair(e, kin, card)
             except Exception:
                 record["skipped"] += 1
                 record["error"] = traceback.format_exc()[-600:]
