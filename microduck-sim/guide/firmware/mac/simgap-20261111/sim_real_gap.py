@@ -14,7 +14,11 @@ reads both tick logs with the same code and writes one page per action plus an i
              What it can do is predict the trunk's tilt from the joint angles with the stance foot flat (forward
              kinematics on the as-built model). The angle between that prediction and the IMU is the motion the
              joints do not explain: play, loose screws, sole roll and slip. In the rigid sim it is only sole roll, so
-             robot minus sim is the part the model is missing.
+             robot minus sim is the part the model is missing. It is split by whether the leg encoders move: in 0.5 s
+             windows where all ten stay within 3 ticks (static) the robot is as rigid as the sim (0.10 vs 0.04 deg
+             over 11-02..11-12, matching play-locate-20261112's 0.06 deg); the gap sits in the ticks where the
+             balance policy moves a joint (2.3 vs 0.19 deg): the trunk does not follow the joint the way the rigid
+             model says, which is give under a load change (horn, link, sole), not slack at rest.
   current    the robot's peak leg current (the sim logs none)
 
   sim_real_gap.py auto            pages for every replayed action not yet drawn; appends ~/duck-walks/gap-runs.jsonl
@@ -138,6 +142,7 @@ def spectrum(x):
     return np.fft.rfftfreq(n, DT), p
 
 
+STATIC_W, STATIC_TICKS = 25, 3   # 0.5 s with every leg encoder within 3 ticks = joints at rest
 PLAY_KINDS = ("balance", "stand")   # actions where the robot stands still long enough for the play measure
 
 
@@ -159,6 +164,16 @@ def measure(rows, kin, kind):
                             "dead": round(float(np.mean(np.abs(dp[small]) < 1)), 3) if small.sum() >= 5 else None,
                             "err_deg": round(float(np.sqrt(np.mean((G[:, j] - P[:, j]) ** 2)) * 360 / 4096), 2)}
     res, n_quiet, t_quiet = residual(kin, rows) if kind in PLAY_KINDS else (None, 0, [])
+    play_static = play_moving = moving_share = None
+    if res is not None:
+        legp = P[:, LEGS]
+        static = np.zeros(len(rows), bool)
+        for i in range(len(rows) - STATIC_W + 1):
+            if (legp[i:i + STATIC_W].max(0) - legp[i:i + STATIC_W].min(0)).max() <= STATIC_TICKS:
+                static[i:i + STATIC_W] = True
+        sq = static[np.linalg.norm(gy, axis=1) < QUIET_GYRO]
+        rms = lambda x: round(float(np.sqrt(np.mean(x ** 2))), 2) if len(x) >= 10 else None
+        play_static, play_moving, moving_share = rms(res[sq]), rms(res[~sq]), round(float(np.mean(~sq)), 3)
     cur = [r.get("cur_ma") for r in rows if r.get("cur_ma")]
     return {
         "ticks": len(rows),
@@ -168,6 +183,7 @@ def measure(rows, kin, kind):
         "tilt_max": round(max(sc.tilt_deg(r["gb"]) for r in rows), 1),
         "quiet_ticks": n_quiet,
         "play_rms": None if res is None else round(float(np.sqrt(np.mean(res ** 2))), 2),
+        "play_static": play_static, "play_moving": play_moving, "moving_share": moving_share,
         "play_range": None if res is None else round(float(np.percentile(res, 97.5) - np.percentile(res, 2.5)), 2),
         "amp": round(float(np.mean([v["amp"] for v in joints.values()])), 3),
         "lag": round(float(np.mean([v["lag"] for v in joints.values()])), 2),
@@ -297,8 +313,12 @@ def page(p):
         ratio_card("5 Hz 以上抖动占比", float(np.mean(R["hf"])), float(np.mean(S["hf"])), "",
                    "刚体仿真几乎全在 5 Hz 以下"),
         ratio_card("最大偏航角速度", R["yaw_max"], S["yaw_max"], " rad/s", "摔倒前常见偏航冲高", hi=1.5),
-        ratio_card("旷量指标：静站时关节解释不了的躯干晃动（RMS）", R["play_rms"], S["play_rms"], "°",
-                   "只在静站时算；编码器加运动学预测的姿态和 IMU 之差", hi=1.5),
+        ratio_card("关节静止时：关节解释不了的躯干倾斜（真正的旷量）", R.get("play_static"), S.get("play_static"), "°",
+                   "腿部编码器 0.5 秒内都不动时算；平时约 0.1°，和仿真接近", hi=2.0),
+        ratio_card("关节在动时：躯干没按运动学跟上", R.get("play_moving"), S.get("play_moving"), "°",
+                   "平衡策略动关节时，躯干和预测的差；受力换向时舵盘、连杆、鞋底的让量", hi=2.0),
+        ratio_card("旷量指标：静站全部时间（RMS）", R["play_rms"], S["play_rms"], "°",
+                   "上面两项合起来；编码器加运动学预测的姿态和 IMU 之差", hi=1.5),
         ratio_card("旷量指标：晃动范围（95%）", R["play_range"], S["play_range"], "°", "拧紧螺丝后应该下降", hi=1.5),
         "" if R["play_rms"] is not None else
         '<div class="card"><b>旷量指标</b><div class="v mut">只在静站和平衡动作里算</div>'
@@ -385,15 +405,18 @@ def latest(recs):
     as a rise even though the robot never matches the rigid sim."""
     recs = sorted(recs, key=lambda r: r.get("t0", 0))
     items = []
-    stand = [r for r in recs if r["real"].get("play_rms") is not None]
-    if stand:
-        now, hist = stand[-1], [r["real"]["play_rms"] for r in stand[:-1]][-30:]
+    for key, label, hint in (("play_static", "旷量（关节静止时躯干的松动）", "：比平时大，查螺丝和舵盘"),
+                             ("play_moving", "受力让量（关节在动时躯干没跟上）", "：比平时大，查踝、髋偏航的舵盘和鞋底")):
+        stand = [r for r in recs if r["real"].get(key) is not None and r["sim"].get(key) is not None]
+        if not stand:
+            continue
+        now, hist = stand[-1], [r["real"][key] for r in stand[:-1]][-30:]
         med = float(np.median(hist)) if hist else None
-        ok = None if med is None else now["real"]["play_rms"] <= 1.5 * med
-        items.append({"label": "旷量（静站时关节解释不了的躯干晃动）", "ok": ok, "page": now["id"] + ".html",
-                      "detail": f'{now["when"][11:]} 真机 {now["real"]["play_rms"]:.2f}°，仿真 {now["sim"]["play_rms"]:.2f}°'
+        ok = None if med is None else now["real"][key] <= 1.5 * med
+        items.append({"label": label, "ok": ok, "page": now["id"] + ".html",
+                      "detail": f'{now["when"][11:]} 真机 {now["real"][key]:.2f}°，仿真 {now["sim"][key]:.2f}°'
                                 + (f'，平时 {med:.2f}°' if med is not None else "，还没有往常数据")
-                                + ("" if ok is not False else "：比平时大，查螺丝和舵盘")})
+                                + ("" if ok is not False else hint)})
     moves = [r for r in recs if r["kind"] in ("walk", "turn")]
     if moves:
         now = moves[-1]
