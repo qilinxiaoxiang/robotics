@@ -74,7 +74,9 @@ Established:
   right 0.26 s and lifts left 10.7 mm / right 17.6 mm; the robot reads +2 to +5 deg walking, 0.17 / 0.28 s and
   12.5 / 19.7 mm. The left-knee load (robot L/R mean error -204 / +80 ticks) follows too. A lateral COM shift of 6 mm
   gives the same gait but no part on the robot is heavy enough for it. With `walk_brain.IMU_ROLL_TRIM_DEG = -3`
-  (env `MICRODUCK_IMU_ROLL_TRIM`, default 0, not on the robot) the sim reads 0.00 deg and swings 0.24 / 0.24 s.
+  the sim reads 0.00 deg and swings 0.24 / 0.24 s. On the robot since 2026-11-12 14:50 (default -3, env
+  `MICRODUCK_IMU_ROLL_TRIM` overrides; `brain_sim_check.py --imu-roll` defaults to the same angle). Check on the
+  next log: `stance_asym.py` quiet-stand roll near 0, `swing_clearance.py` swing left and right alike.
   Unexplained: the one session with a symmetric gait and no fall (11-02 12:13, 18 walks) has the same stand reading.
 - No sim run passes the sensor pitch that the brain's 4 deg pitch trim undoes: the sim policy sees +3.9 deg at stand,
   the robot +1 to +2.6. `--imu-pitch 2` matches the robot.
@@ -88,8 +90,7 @@ Established:
 
 - The 2 deg left hip roll zero offset tried from the 11-11 23:38 log (`pi/joint_signs.py`) does not help: robot gait
   unchanged (45 walks with it, swing 0.17 / 0.27 s), sim gait worse with it (0.14 / 0.28 s against 0.18 / 0.26) and
-  0.22 / 0.26 s with the IMU roll trimmed (0.24 / 0.24 without the offset). Removed from the file 2026-11-12; the A7Z
-  copy keeps it until the next deploy (robot offline at the time).
+  0.22 / 0.26 s with the IMU roll trimmed (0.24 / 0.24 without the offset). Removed 2026-11-12 and copied to the A7Z at 14:50.
 
 Not reproduced: fed the robot's own turn signal (`--turn-replay`), 17 fell + 30 up walks, seed 0, the sim falls 0 of
 17 with every gap alone and together: floor mu 0.25, COM +-6..18 mm, friction x1.5, joint play 2 deg, 8.1 V, IMU

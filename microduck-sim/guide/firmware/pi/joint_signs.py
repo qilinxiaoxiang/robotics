@@ -38,7 +38,7 @@ MOTOR_OFFSET.update(right_hip_pitch=-1040 * 2 * math.pi / 4096)
 # 2026-11-11 trial (Shawn: "左大腿超前的那个舵机 从前面看 逆时针调个两度作为0点试试"): left hip roll (ID9) zero moved 2 deg
 # counter-clockwise seen from the front. The model's left_hip_roll axis is world +x (forward), so CCW from the front is
 # + roll (left foot outward) and model 0 commanded tick 2071 instead of 2048. On the robot from the 11-11 23:38 log.
-# Reverted 2026-11-12 in this file (the A7Z copy still has it until the next deploy): 45 walks with it against 25
+# Reverted 2026-11-12 (copied to the A7Z 14:50, brain not running then): 45 walks with it against 25
 # without on 11-11 show the same gait (swing left 0.17 s / right 0.27 s, 0.17-0.20 / 0.24-0.29 before), and in the sim
 # it makes the left-heavy gait worse (0.14 / 0.28 s against 0.18 / 0.26) and leaves 0.22 / 0.26 once the IMU roll is
 # trimmed (0.24 / 0.24 without it). The asymmetry is the untrimmed IMU roll (play-locate-20261112/README.md).

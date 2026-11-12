@@ -1703,7 +1703,8 @@ def main():
     ap.add_argument("--com-y", type=float, default=0.0, help="whole-robot COM shift to the left (+y), mm")
     ap.add_argument("--zero", nargs=2, action="append", default=[], metavar=("JOINT", "DEG"))
     ap.add_argument("--imu-pitch", type=float, default=0.0)
-    ap.add_argument("--imu-roll", type=float, default=0.0, help="IMU mounting error about the trunk's forward axis, deg (the policy sees gravity rolled by this)")
+    ap.add_argument("--imu-roll", type=float, default=walk_brain.IMU_ROLL_TRIM_DEG,
+                    help="IMU mounting error about the trunk's forward axis, deg (default: the roll the brain trims out, so the policy sees a level sensor)")
     ap.add_argument("--compensation", action="store_true")
     ap.add_argument("--stand-s", type=float, default=1.0)
     ap.add_argument("--walk-at", type=float, default=4.0)
