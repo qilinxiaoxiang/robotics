@@ -788,3 +788,14 @@ Modal this month: 17.57 USD metered (`modal billing report --for "this month" --
 nothing ran on Modal today), no live apps, no alert mail (`modal_watch.py` clean). Credits were covering all usage
 (billed 0.00 on 11-11); the Credits tab could not be read today (Chrome is signed out of modal.com). Other free compute
 checked: Kaggle quota is used up until the 11-14 refresh; no other free GPU is set up on Shawn's accounts.
+
+### 2026-11-12 17:25 Compute: AWS credit to be used for training; free-compute search dispatched
+
+Shawn: "其他能薅的要你派agents出去搜和找啊" and "哦对 我们有150元的aws额度 不用也是浪费". Two search agents are out (public
+free-GPU offers; CMU resources plus credits already in his mail, course files and past sessions). AWS, read-only check
+with the `default` CLI profile in us-east-1: on-demand G and VT quota 16 vCPUs, G spot quota 8 vCPUs, P quota 0; one
+instance exists, i-0229118871664e9a9 (g5.4xlarge, c3-carla, stopped), which belongs to the 24-784 session and is not
+ours to touch (it needs the whole on-demand quota when running, so training uses the spot quota). Month-to-date net
+cost reads 0.00 USD (Cost Explorer); the credit balance itself is not readable from the CLI and was not verified.
+An agent is building `extensions/flight-20261110/train/aws_train.py` (spot GPU, self-terminating, S3 checkpoints,
+dollar cap) with a smoke of at most 1 USD; no training launched on AWS.
