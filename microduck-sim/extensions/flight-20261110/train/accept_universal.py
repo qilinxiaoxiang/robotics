@@ -125,8 +125,13 @@ def lines_for(models, ref):
     if all(R[k] for k in pack):
         falls = sum(R[k]["falls"] for k in pack)
         rf = sum(F[k]["falls"] for k in pack) if all(F[k] for k in pack) else None
-        line("with pack: falls (14 cases, 280 episodes) no more than the reference", rf is not None and falls <= rf,
-             f"{falls} vs {a.ref} {rf}")
+        # One line per scenario (2026-11-12): the 14-case sum let a gain in one case hide a loss in another.
+        for k in pack:
+            fk = F[k]["falls"] if F[k] else None
+            line(f"with pack, {k}: falls no more than the reference", fk is not None and R[k]["falls"] <= fk,
+                 f"{R[k]['falls']} vs {a.ref} {fk}")
+        lines.append(dict(line="with pack: falls summed over the 14 cases (information, not a gate)", result="INFO",
+                          detail=f"{falls} vs {a.ref} {rf}"))
         # Walk speed is judged by the 0.15 m/s floor at every load below (the old 0.099 line was a weaker duplicate).
         p = R["nominal_walk"].get("leg_force_p99_nm_median")
         line("with pack: walk torque p99 at most 0.48 N m", p is not None and p <= 0.48, f"{p}")
