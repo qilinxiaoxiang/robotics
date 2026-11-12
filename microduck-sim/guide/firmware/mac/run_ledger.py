@@ -346,16 +346,31 @@ def copy_from_robot(host):
     return "ok", None
 
 
-def settled_logs(state):
-    """Logs whose size has not changed for SETTLE_S and that were not cut at this size."""
+def settled_logs(state, live=False):
+    """Logs whose size has not changed for SETTLE_S and that were not cut at this size; with live, also the newest
+    log while the brain still writes it (cut again on every tick it grew, so each action is replayed and drawn a
+    tick or two after it ends instead of after the brain stops; its last, unfinished action is redone next time)."""
     now, out = time.time(), []
-    for p in sorted(glob.glob(os.path.join(RAW, "duck_wired_log_*.jsonl"))):
-        if p.endswith(".meta.jsonl"):
-            continue
+    paths = [p for p in sorted(glob.glob(os.path.join(RAW, "duck_wired_log_*.jsonl"))) if not p.endswith(".meta.jsonl")]
+    newest = max(paths, key=os.path.getmtime) if paths else None
+    for p in paths:
         st = os.stat(p)
-        if now - st.st_mtime >= SETTLE_S and state.get(os.path.basename(p)) != st.st_size:
+        if state.get(os.path.basename(p)) == st.st_size:
+            continue
+        if now - st.st_mtime >= SETTLE_S or (live and p == newest):
             out.append(p)
     return out
+
+
+def feed_gap():
+    """Sim-vs-robot gap pages for the newly replayed actions (simgap-20261111/sim_real_gap.py, needs mujoco)."""
+    py = os.path.expanduser("~/.venvs/microduck-dyn/bin/python")
+    p = subprocess.run([py, os.path.join(HERE, "simgap-20261111", "sim_real_gap.py"), "auto"],
+                       capture_output=True, text=True, timeout=900)
+    line = (p.stdout.strip().splitlines() or [""])[-1]
+    if p.returncode != 0:
+        raise RuntimeError(f"sim_real_gap exit {p.returncode}: {(line or p.stderr.strip())[-400:]}")
+    return line
 
 
 def feed_scorecard():
@@ -442,7 +457,7 @@ code{{font-size:12px;overflow-wrap:anywhere}} .bad{{color:var(--bad)}} li{{margi
 </style></head><body><main>
 <h1>MicroDuck 动作记录</h1>
 <div class="card">每次开机后的每个动作都从大脑日志自动切出：结果（ok 成功 / fell 摔倒 / guard 保护停机 / incomplete 未完成）、指令、策略、轨迹。
-共 {len(eps)} 个动作，{len(days)} 天。</div>
+共 {len(eps)} 个动作，{len(days)} 天。<br><a href="gap/index.html">仿真和真机的差异：每个动作的 IMU、舵机跟随、旷量对比图</a></div>
 <div class="card"><b>采集状态</b>：最近一次 {esc(h.get("when", "-"))}，{esc(h.get("status", "-"))}{(" · " + esc(h["error"])) if h.get("error") else ""}；
 连续失败 <span class="{"bad" if h.get("consecutive_failures") else ""}">{h.get("consecutive_failures", 0)}</span> 次；
 上次成功 {esc(h.get("last_ok", "-"))}；上次新增动作 {h.get("last_new", 0)} 个。</div>
@@ -466,13 +481,15 @@ def tick(host):
     try:
         status, err = copy_from_robot(host)
         rec.update(copy=status, copy_error=err)
-        logs = settled_logs(state)
+        logs = settled_logs(state, live=True)
+        sizes = {p: os.path.getsize(p) for p in logs}   # the live log keeps growing while it is cut
         n = cut(logs) if logs else 0
         for p in logs:
-            state[os.path.basename(p)] = os.path.getsize(p)
+            state[os.path.basename(p)] = sizes[p]
         json.dump(state, open(STATE, "w"))
         rec.update(logs_cut=len(logs), actions=n)
         rec["scorecard"] = feed_scorecard() if n else None
+        rec["gap"] = feed_gap() if n else None
         rec["status"] = "error" if status == "error" else ("robot offline" if status == "offline" else "ok")
         rec["error"] = err if status == "error" else None
     except Exception as e:  # noqa: BLE001

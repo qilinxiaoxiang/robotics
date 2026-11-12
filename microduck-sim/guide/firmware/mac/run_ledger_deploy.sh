@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install the run ledger on the Mac mini: copy run_ledger.py, the scorecard and the sim code it replays with, the
-# change list (the Mac mini copy has no git), and a launchd job that runs `run_ledger.py tick` every 5 minutes.
+# change list (the Mac mini copy has no git), and a launchd job that runs `run_ledger.py tick` every 2 minutes.
 # Checks that the job is loaded, one tick ran and the page is served by the phone remote at :5180/runs/.
 #   ./run_ledger_deploy.sh
 set -euo pipefail
@@ -14,6 +14,8 @@ cd ../../..   # microduck-sim
 rsync -aR --exclude __pycache__ --exclude 'scorecard-20261109/out' \
   ./$MAC_REL/run_ledger.py ./$MAC_REL/run-ledger-changes.json ./$MAC_REL/brain_sim_check.py ./$MAC_REL/walk_brain.py \
   ./$MAC_REL/walk_wired.py ./$MAC_REL/hold.py ./$MAC_REL/tether.py ./$MAC_REL/scorecard-20261109 \
+  ./$MAC_REL/simgap-20261111/sim_real_gap.py ./microduck_rl/cmu/model/scenes/scene_battery.xml \
+  ./microduck_rl/cmu/model/current.json ./microduck_rl/cmu/model/visual.py \
   ./hardware-design-20260912/whole-robot-20260912/dynamics/realgap-20261014/static_gap.py \
   ./hardware-design-20260912/whole-robot-20260912/dynamics/asbuilt-20261015/asbuilt.config.json \
   "mac-mini:$SIM/"
@@ -26,7 +28,7 @@ ssh mac-mini "mkdir -p ~/Library/LaunchAgents ~/duck-walks && cat > ~/Library/La
   <key>ProgramArguments</key><array>
     <string>$PY</string><string>/Users/shawnxiang/$SIM/$MAC_REL/run_ledger.py</string><string>tick</string>
   </array>
-  <key>StartInterval</key><integer>300</integer>
+  <key>StartInterval</key><integer>120</integer>
   <key>RunAtLoad</key><true/>
   <key>Nice</key><integer>10</integer>
   <key>EnvironmentVariables</key><dict><key>PATH</key><string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string></dict>

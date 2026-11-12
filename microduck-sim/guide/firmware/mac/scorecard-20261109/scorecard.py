@@ -312,9 +312,10 @@ def auto(episodes_path, data, n_jobs):
             f.write(f"exit {p.returncode}\n{(p.stdout.strip().splitlines() or [''])[-1]}\n--- stderr tail\n{p.stderr[-3000:]}")
         return p.returncode
 
+    failed = []
     if jobs:
         with concurrent.futures.ThreadPoolExecutor(n_jobs) as ex:
-            list(ex.map(one, jobs))
+            failed = [j for j, code in zip(jobs, ex.map(one, jobs)) if code != 0]
     results = []
     for cid, pl in plans.items():
         real = metrics(pl["rows"], pl["t0"], pl["t1"], True)
@@ -360,6 +361,11 @@ def auto(episodes_path, data, n_jobs):
                    written=time.strftime("%Y-%m-%d %H:%M:%S")),
               open(os.path.join(data, "scorecard-auto.json"), "w"), indent=1, ensure_ascii=False)
     print(f"{len(jobs)} new sims; {summ}")
+    if failed:
+        # 2026-11-12: every replay of the night crashed (the Mac mini lacked cmu/model/current.json) while the ledger
+        # reported ok and the night's actions silently dropped out of the card; a crashed sim now fails the tick
+        tail = open(failed[0]["tick_log"] + ".out").read().strip().splitlines()[-1:]
+        raise SystemExit(f"{len(failed)} of {len(jobs)} sims crashed, first: {failed[0]['case']}: {tail}")
 
 
 if __name__ == "__main__":
