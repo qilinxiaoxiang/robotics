@@ -11,6 +11,11 @@ PY=/Users/shawnxiang/.venvs/oww/bin/python
 cd $OWW
 rm -f $OWW/DONE_V6
 : ${ZC:?set ZC} ${V4MIN:?set V4MIN}
+# every feature file mochi.yml names must exist before hours of prep (2026-11-12: dl/ was gone, train failed after
+# aug and the old work/mochi.onnx was copied as v6)
+for f in $($PY -c "import yaml; c = yaml.safe_load(open('$OWW/mochi.yml')); print(' '.join([c['false_positive_validation_data_path']] + [v for k, v in c['feature_data_files'].items() if 'work/mochi' not in v]))"); do
+  [ -s "$f" ] || { echo "missing training input: $f"; exit 1; }
+done
 ls data/bg_motion/train.v4/*.wav > /dev/null || { echo "no data/bg_motion/train.v4 clips (round 4 motion set)"; exit 1; }
 mkdir -p data/bg_motion_train
 find data/bg_motion_train -name '*.wav' -delete
@@ -32,8 +37,12 @@ mkdir -p work/mochi/bak_v5; mv -f work/mochi/positive_features_train.npy work/mo
 date; echo "== aug";   ./run_train.sh aug   > logs/v6_aug.log 2>&1 || { echo "AUG EXIT $?"; exit 1; };   grep -v "Computing\|Trimming" logs/v6_aug.log | tail -3
 grep -q "skipping" logs/v6_aug.log && { echo "AUG SKIPPED, abort"; exit 1; }
 date; echo "== extra"; ./run_train.sh extra > logs/v6_extra.log 2>&1; tail -3 logs/v6_extra.log
-date; echo "== train"; ./run_train.sh train > logs/v6_train.log 2>&1 || true; grep -E "Final|STAGE|Error|error" logs/v6_train.log | tail -5
-cp $OWW/work/mochi.onnx $OWW/models/mochi_v6.onnx 2>/dev/null || cp $OWW/work/mochi/mochi.onnx $OWW/models/mochi_v6.onnx
+date; echo "== train"; rm -f $OWW/work/mochi.onnx $OWW/work/mochi/mochi.onnx
+./run_train.sh train > logs/v6_train.log 2>&1 || { grep -E "Error|error" logs/v6_train.log | tail -3; echo "TRAIN FAILED"; exit 1; }
+grep -E "Final|STAGE" logs/v6_train.log | tail -5
+if [ -s $OWW/work/mochi.onnx ]; then cp $OWW/work/mochi.onnx $OWW/models/mochi_v6.onnx
+elif [ -s $OWW/work/mochi/mochi.onnx ]; then cp $OWW/work/mochi/mochi.onnx $OWW/models/mochi_v6.onnx
+else echo "TRAIN WROTE NO MODEL"; exit 1; fi
 ls -la $OWW/models/mochi_v6.onnx
 date; echo "== score"
 $PY $OWW/score_oww.py --model models/mochi_v6.onnx --out results/mochi_v6.json > logs/v6_score.log 2>&1; grep -E "thr|web" logs/v6_score.log
