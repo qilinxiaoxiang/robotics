@@ -49,7 +49,7 @@ Thrust passes on both sides. Lift by one nacelle is now **SF 1.67 on the left an
   - Wing plate: front face down, layers at x = const. The root stresses σyy and τ lie in the layer plane.
   - Nacelles: upright, layers at z = const.
   - Tray: flat.
-- **Printed section:** both plates print at 100 % infill (`cad/make_slice_manifest.py`), so every part is taken as solid.
+- **Printed section:** the Orange plate (wing plate, trays, FC bracket) prints at 100 % infill and is taken as solid. The Black plate (nacelle halves) prints at 6 walls (about 2.7 mm a side) and 40 % gyroid since 2026-11-12 (`cad/make_slice_manifest.py`). The governing nacelle sections at x −36 and x −25 (94 and 122 mm²) have no point deeper than 2.7 mm from the surface, so they print solid and the solid-section FEA holds there; sparse core appears only in the thick screw blocks and ear-pocket regions, which carry low stress.
 - **M2 thread-forming screw in a horizontal pilot:** no published pull-out value. The check uses 120 N (low) and 260 N (high) for a 4.8 mm bite, scaled by bite length; the low value is the design value. Snug preload is 167 N (0.1 N·m, K = 0.3).
 - **M3 in a horizontal pilot (nacelle lug):** also no published value. Both ends of the M2 range are scaled by the threaded cylinder area, pilot diameter × bite (`common.pullout`): 3.1 / 2.15 × 6.8 / 4.8 = 2.04, so 245 N low and 531 N high for M3 × 12. The high end is thread shear on that cylinder, so it scales this way directly; the low end is a shell pull-out per mm whose perimeter grows with the diameter, which is an assumption.
 

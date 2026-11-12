@@ -124,22 +124,28 @@
  "processOverrides": {
   "Orange_Bambu": {
    "sparse_infill_density": "100%",
-   "sparse_infill_pattern": "zig-zag"
+   "sparse_infill_pattern": "zig-zag",
+   "layer_height": "0.2"
   },
   "Orange_Elegoo": {
    "sparse_infill_density": "100%",
-   "sparse_infill_pattern": "zig-zag"
+   "sparse_infill_pattern": "zig-zag",
+   "layer_height": "0.2"
   },
   "Black_Bambu": {
-   "sparse_infill_density": "100%",
-   "sparse_infill_pattern": "zig-zag"
+   "sparse_infill_density": "40%",
+   "sparse_infill_pattern": "gyroid",
+   "wall_loops": "6",
+   "layer_height": "0.2"
   },
   "Black_Elegoo": {
-   "sparse_infill_density": "100%",
-   "sparse_infill_pattern": "zig-zag"
+   "sparse_infill_density": "40%",
+   "sparse_infill_pattern": "gyroid",
+   "wall_loops": "6",
+   "layer_height": "0.2"
   }
  },
- "processOverrideReason": "Both plates at 100 % sparse infill (zig-zag). Orange: the wing plate's solid root band (strength check, plain PLA). Black: the clamp strength (7.4 mm collar wall at the screw blocks), the lug and the ear-pocket floors are sized as solid, and at 30 % gyroid with 4 walls (about 1.8 mm a side) every section over about 3.5 mm held sparse infill (2026-11-10 slice readback); closing a 12 mm block with walls needs about 13 loops a side, i.e. solid anyway. Plate-wide because the pipeline sets no per-object infill; the mass budget counts printed parts as solid.",
+ "processOverrideReason": "Orange at 100 % sparse infill (zig-zag): the wing plate's solid root band (strength check, plain PLA, lift SF 1.67 already under 2). Black (nacelle halves) at 6 walls and 40 % gyroid since 2026-11-12: the 100 % plate took 8h36m at the stock Black 0.1 mm layers and 4h42m at 0.2 mm; the nacelle loads are bending, carried by the walls. Both plates 0.2 mm layers (PRINT-FIT.md basis). Plate-wide because the pipeline sets no per-object infill.",
  "parts": [
   {
    "key": "wing_plate",

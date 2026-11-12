@@ -91,16 +91,24 @@ def main():
     # The pipeline has plate-wide process overrides only (objectSettings take brim keys), so the whole Orange plate
     # (wing plate, trays, FC bracket) gets it; the mass budget already counts printed parts as solid.
     # Bambu Studio refuses gyroid at 100 % ("gyroid doesn't work at 100% density", 2026-11-10): zig-zag lines, as both slicers take
-    solid = {"sparse_infill_density": "100%", "sparse_infill_pattern": "zig-zag"}
+    # layer_height 0.2 on every plate: the stock Black profile is 0.1 mm (made for the duck's cosmetic shells), which put the
+    # functional nacelle plate at 8h36m on the H2S (2026-11-12, Shawn: "怎么要8个小时"); the fit numbers in
+    # cad-practice/PRINT-FIT.md are measured at 0.2 mm layers.
+    solid = {"sparse_infill_density": "100%", "sparse_infill_pattern": "zig-zag", "layer_height": "0.2"}
+    # Black (nacelle halves): 6 walls (about 2.7 mm a side, every screw hole gets its own 6 loops) + 40 % gyroid, 2026-11-12
+    # (Shawn: "如果不需要实心就简化一下 搞快点"). The nacelle gates are bending (lift by one nacelle, thrust): the stress sits in
+    # the outer fibres the walls now fill; the solid-isotropic FEA (SF about 2.0 at x -36/-25) overstates the core's share.
+    shell = {"sparse_infill_density": "40%", "sparse_infill_pattern": "gyroid", "wall_loops": "6", "layer_height": "0.2"}
+    over = {f"Orange_{m}": dict(solid) for m in ("Bambu", "Elegoo")}
+    over.update({f"Black_{m}": dict(shell) for m in ("Bambu", "Elegoo")})
     m.update(version=VER, parts=rows, placements=placements,
-             processOverrides={f"{c}_{m}": dict(solid) for c in ("Orange", "Black") for m in ("Bambu", "Elegoo")},
-             processOverrideReason="Both plates at 100 % sparse infill (zig-zag). Orange: the wing plate's solid root band "
-                                   "(strength check, plain PLA). Black: the clamp strength (7.4 mm collar wall at the screw "
-                                   "blocks), the lug and the ear-pocket floors are sized as solid, and at 30 % gyroid with 4 walls "
-                                   "(about 1.8 mm a side) every section over about 3.5 mm held sparse infill (2026-11-10 slice "
-                                   "readback); closing a 12 mm block with walls needs about 13 loops a side, i.e. solid anyway. "
-                                   "Plate-wide because the pipeline sets no per-object infill; the mass budget counts printed "
-                                   "parts as solid.",
+             processOverrides=over,
+             processOverrideReason="Orange at 100 % sparse infill (zig-zag): the wing plate's solid root band (strength "
+                                   "check, plain PLA, lift SF 1.67 already under 2). Black (nacelle halves) at 6 walls and "
+                                   "40 % gyroid since 2026-11-12: the 100 % plate took 8h36m at the stock Black 0.1 mm layers "
+                                   "and 4h42m at 0.2 mm; the nacelle loads are bending, carried by the walls. Both plates "
+                                   "0.2 mm layers (PRINT-FIT.md basis). Plate-wide because the pipeline sets no per-object "
+                                   "infill.",
              retiredParts=[],
              prototypeScope=f"{VER}: flight pack, Orange plate (wing plate, battery trays L/R, FC bracket) and Black plate "
                             "(nacelle inner/outer halves L/R). Print gate: see STATUS.json (chapter-12 bp-hatch exception "
