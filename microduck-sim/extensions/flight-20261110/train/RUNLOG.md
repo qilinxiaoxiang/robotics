@@ -380,3 +380,28 @@ running total of worst cases; real spend read from `modal billing report` before
   drawn from sim/out/visual/flightpack-nominal.json, falls backward at 7.8 s) and video/uni_b_walk_nopack.mp4 (no
   fall, 0.233 m/s, 3.5 m). Not run: clips of the best checkpoint; p99 for the shove and landing cases (flight_eval
   gives falls only). fk-uni-a2 untouched.
+- 22:55 Universal run A (fk-uni-a2, from fq2 1999, universal2, 5000 iterations, "max_iters reached") and the bend
+  run (fk-bend-a2, from groundpick61, bend3, stopped by the 3 h cap at iteration 1900) acceptance on the Mac mini,
+  from the coordinator's download (no Kaggle refetch). Staged ckpt/uni_a (sha 82a7493c), ckpt/uni_a_best (0c96219f),
+  ckpt/bend_a2 (81081369) and ckpt/bend_a2_best (704ee5d3; its weights equal the final's, only run_path differs, so
+  every bend number is the same for both), fq2 1999 in the bend stand slot; reference ckpt/bend_gp61ref = the original
+  groundpick61. The Mac mini was held by another session's fullflow sim from about 14:25 to 22:38; uni_a_best lost
+  5 cases in that window, filled afterwards. accept_universal.py: the 0.099 and 0.07 speed lines dropped (the 0.15
+  floor covers them, coordinator's decision), extra reference columns (--ref a,b,c). New score_bend.py; bend_accept.py
+  records the leg pose at the lowest mouth sample, knee and ankle p99.
+  Universal A final (out/accept_uni_a.json), FAIL: with-pack falls 37 of 280 (fq2 1, uni_b 92): comx+10 stand 5 and
+  walk 19 at about 0.9 s (saturated from the first tick), walk shove 11, mass+10 walk 2; nominal walk, landing, turns 0.
+  Walk p99 0.53 (limit 0.48). No pack 0 falls, 0.167 m/s, turns within 10 %. Loads 25/50/nobatt pass, 75 fails on
+  saturation 1.08 % only, full pack walk 0 falls (uni_b 17). Speed floor pass (min 0.167). Toe-out means and p95
+  within limits at every load, step width 123 mm (limit 105) fails at every load. Head motion 0 falls at none and
+  batteries out, 3 at full (head pitch 1.1). Best (out/accept_uni_a_best.json), FAIL: 44 with-pack falls (walk
+  shove 17, comx+10 walk 12, mass+10 walk 10), 3 no-pack walk falls, load050 saturation 1.4 %, full walk 2 falls.
+  Bend (out/accept_bend_bend_a2.json, same for _best), FAIL: runtime no-fall 2 / 19 / 4 of 20 at full / batteries
+  out / none, all falls 11.3-12.3 s, after the rise and the hand-back to the fq2 stander (original groundpick61: 0 of
+  20 at every load, falls at 2.5 s in the descent with the pack, 10 s without); training env mouth within 3 cm in
+  9/17, 7/17, 14/17 held episodes (medians 3.0 / 3.2 / 2.5 cm), trunk pitch 16 / 14 / 13 deg (limit 25-45; original
+  34-44); runtime p99 hip 0.538 / 0.431 / 0.533, knee 0.538 at every load, ankle 0.538 / 0.394 / 0.38 (limit 0.50).
+  The policy squats: knee at its 1.571 rad joint limit at the lowest point (median |q| 1.575 at every load, original
+  0.58-0.63), hip pitch near 0, trunk 13-16 deg; trunk height 0.066 m against 0.117 standing. It did not straighten
+  the knee. Clips: video/uni_a_walk_pack.mp4 (pack drawn, no fall, 0.177 m/s), video/uni_a_walk_nopack.mp4 (no fall,
+  0.169 m/s), video/bend_a2_bend_pack.mp4 (seed 0, pack drawn, a squat with the head on the floor, no fall).
