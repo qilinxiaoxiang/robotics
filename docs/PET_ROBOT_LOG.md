@@ -779,3 +779,12 @@ Plan: fine-tune seepick61 (sp-b-1027_2000) in its own env (`microduck_rl-grasp`,
 one change, the pack load drawn per episode (none, batteries out, full); actor inputs and reward unchanged; stop and
 acceptance on held counts per load; pre-launch checks without quota (start policy in the training env against the
 runtime-sim numbers, reward audit at the pack loads, Mac mini smoke). Launch needs Shawn's nod and the 11-14 quota.
+
+### 2026-11-12 17:05 Flight pack: Shawn allows Modal for the pickup fine-tune
+
+Shawn: "没必要等吧 你看看不是浪费时间就上modal上去跑 或者看看有没有其他羊毛可以薅". Reading: the seepick61-with-pack
+fine-tune may launch on Modal once the pre-launch checks show it is worth running; the 35 USD project cap stays.
+Modal this month: 17.57 USD metered (`modal billing report --for "this month" --json`, 61 app rows, full days only;
+nothing ran on Modal today), no live apps, no alert mail (`modal_watch.py` clean). Credits were covering all usage
+(billed 0.00 on 11-11); the Credits tab could not be read today (Chrome is signed out of modal.com). Other free compute
+checked: Kaggle quota is used up until the 11-14 refresh; no other free GPU is set up on Shawn's accounts.
