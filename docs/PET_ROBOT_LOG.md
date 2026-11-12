@@ -767,3 +767,15 @@ Reading: bend4 was fine-tuned from groundpick61, the blind bend with no item in 
 The pickup with the pack needs seepick61 trained with the pack, accepted by "held" counts per load. Not started; needs
 Shawn's nod and Kaggle quota (refresh 2026-11-14T00:00). Mac mini ssh hung twice after the remote job had finished
 (result file written, no remote process); the hung client was killed and the script went on.
+
+### 2026-11-12 16:40 Flight pack: plan for the pickup with the pack (seepick61 fine-tune), shown to Shawn, NOT launched
+
+Shawn: "可以，出方案" (to: train the policy that really picks, accept by held counts). Correction to the 16:15 entry:
+BEND-PLAN.md (approved 11-11) already had groundpick61 first and seepick61 second and recorded the seeing pick's
+20 of 20 falls with the pack; the defect was the order and a bend acceptance without a pickup measure, not an unknown.
+How it fails with the pack (`train/eval/pk_bend4_{load100,nobatt}_ball.json`): falls about 1 s after the switch, at phase
+0.155 of the descent, lips still 4 to 8 cm up, hip pitch and knee at the 0.538 N m clamp, mostly backward or sideways.
+Plan: fine-tune seepick61 (sp-b-1027_2000) in its own env (`microduck_rl-grasp`, `cmu_seeing_pick_env_cfg.py`) with
+one change, the pack load drawn per episode (none, batteries out, full); actor inputs and reward unchanged; stop and
+acceptance on held counts per load; pre-launch checks without quota (start policy in the training env against the
+runtime-sim numbers, reward audit at the pack loads, Mac mini smoke). Launch needs Shawn's nod and the 11-14 quota.
