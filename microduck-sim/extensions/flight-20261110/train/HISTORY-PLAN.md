@@ -7,9 +7,11 @@ saturated from the first tick), the 0.5 N s walking shove (11/20), walk torque p
 prepares the next step if universal3 is not enough: an actor that sees its own recent past, built the way the 16-831
 course teaches (a privileged teacher distilled into a history student), with the runtime change it needs.
 
-Recommendation in short: wait for universal3's checkpoints and run the decision rule in section 6. If history is
-needed, train the course's teacher-student pair (design B): a PPO teacher that sees the true load, then a DAgger
-student that sees the 61 inputs plus 0.5 s of its own proprioception. The student's observation, ONNX contract,
+Recommendation in short (revised 2026-11-12 after an outside review): wait for universal3's checkpoints and run the
+decision rule in section 6. If the target cases still fail, run design A once with a fixed budget against a
+one-frame control, to measure what history alone buys; the course's teacher-student pair (design B: a PPO teacher
+that sees the true load, then a DAgger student that sees the 61 inputs plus 0.5 s of its own proprioception) follows
+only on evidence that the extra information helps. Not established: that history fixes the comx+10 falls. The student's observation, ONNX contract,
 warm start and evaluator support are implemented and smoke-tested now (delta `universal3h`, which also runs alone as
 the one-stage design A); the teacher delta and the distillation worker are not written yet.
 
@@ -120,9 +122,14 @@ under throttling against a p90 acceptance of 18 ms.
   payload term, 4 values) and trunk linear velocity (3, which carries the shove), 68 inputs. Trained by PPO (lecture
   11 p33) on universal3's env and reward, warm-started from universal3's best with zero weights on the 7 new
   columns. GPU: about one universal3 run, 2.9 h T4.
-- The teacher is also the test of the lecture's identifiability condition and of the value of load information: it
-  is the "expert" line of RMA's Table II. If a teacher that knows the true COM still falls at comx+10 or on the
-  shove, no history student can do better, and the work stops after stage 1.
+- The teacher is a gate on distilling this teacher, not a bound on the history route. One trained teacher can fail
+  for reasons of budget, reward, start point or coverage, so a failing teacher does not show that history cannot
+  work; a passing teacher shows that the extra information can help, not that a student can infer it from its
+  sensors. Rule: if the teacher does not improve the target cases (comx+10, walking shove, torque) over the
+  one-frame policy from the same start with the same budget, it is not distilled and its failure is diagnosed first.
+- The teacher's 7 extra inputs mix two kinds of information (load: kg and COM; motion: trunk linear velocity). Two
+  teachers are compared when the teacher stage is run: load only (4 inputs) and load plus velocity (7), so a gain is
+  attributed to the right one.
 - Student pi_theta(a_t | o_{t-24..t}): the shared 1261-input contract above. Trained by DAgger in action space
   (lecture 6 transcript 00:30:15, lecture 11 p33): the student drives the sim, the teacher labels every visited state,
   MSE loss on actions. rsl_rl 5.0.1 ships this as `algorithms/distillation.py` (student acts, teacher labels) with
@@ -208,10 +215,25 @@ carries `hist_out` between ticks and zeros it when the policy is re-entered; 61-
 
 For each universal3 checkpoint (iterations 250 to 2000 and best), run the comx+10 walk and stand cases and the walking
 shove through accept_universal.py. History is not needed if comx+10 walk falls drop to fq2 1999's count (0) and the
-shove to its line without the nominal or no-pack lines getting worse. History (design B) is the next run if comx+10
-falls stay flat across checkpoints although forward-COM coverage rose from 1.2 % to 8 % of resets, or if they trade
-against the nominal or no-pack lines. If only the torque or step-width lines fail, the next step is section 7, not
-history.
+shove to its line without the nominal or no-pack lines getting worse. If comx+10 falls stay flat across checkpoints
+although forward-COM coverage rose from 1.2 % to 8 % of resets, or trade against the nominal or no-pack lines, the
+next run is design A with a fixed budget (one run, the universal3 settings, same start checkpoint and seed as a
+one-frame control of the same length): it changes only what the actor sees, so a gain is the gain of history.
+Design B's teacher stage follows only if A shows a gain or the load-only teacher beats the one-frame control; B
+changes both the information and the training method and cannot by itself say where a gain came from. If only the
+torque or step-width lines fail, the next step is section 7, not history.
+
+Gates are per scenario, never a sum: comx+10 (stand, walk), comx-10, mass +10 %, standing and walking shove,
+landing, nominal and no-pack each have their own line against the reference (`accept_universal.py`, per-case lines
+added 2026-11-12; the old 14-case sum let a gain in one case hide a loss in another). Checkpoints are picked on the
+acceptance seeds; the final verdict is run again on seeds not used for picking. Twenty episodes without a fall bound
+the fall rate only below about 14 % (one-sided 95 %), so 20 is a screen; a candidate that passes is rerun at 100
+episodes on the cases it was picked for.
+
+Warm start is not a guarantee during training: iteration 0 equals the start policy, but the 3-iteration smoke policy
+fell at 3.0 s (section 8; cause not established, the smoke had no critic warm-up). Every run keeps the start
+checkpoint as a control in the same evaluation, and a checkpoint is chosen on falls, speed and torque; moved history
+weights or a falling imitation loss are not evidence of success.
 
 ## 7. Torque and step width as constraints (24-784 M3-1, optional)
 
