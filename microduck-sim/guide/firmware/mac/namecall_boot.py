@@ -15,7 +15,9 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOGS = os.path.expanduser("~/duck-logs")
-ARGS = ["--name", "mochi", "--spotter", "oww", "--no-person", "--life-max-gb", "1"]
+# The life log is the only record of a missed call (its index keeps the spotter score every 0.1 s). At 1 GB it filled
+# on 2026-11-11 23:54 and stopped, so the 11-12 00:26 calls left no audio; life_log.py still stops at 2 GB disk free.
+ARGS = ["--name", "mochi", "--spotter", "oww", "--no-person", "--life-max-gb", "4"]
 POLL_S = 2.0
 FRESH_S = 1.5
 # The brain writes 50 rows a second: a row or mtime newer than our "now" is the freshest data, not stale
