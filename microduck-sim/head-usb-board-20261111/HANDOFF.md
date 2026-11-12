@@ -234,3 +234,14 @@ No lead is bought or in a cart yet.
 ## 2026-11-12: board in the JLCPCB cart (not ordered)
 
 Shawn kept the plugs (no soldering) and the pin order. Customs description "DIY Hobby Circuit Board", then Save to cart. Cart summary: merchandise USD 135.05, shipping estimate USD 31.69, coupon -10.00, subtotal USD 156.74, estimated ship date 2026-11-21. Checkout and payment not started; they wait for Shawn's word on that total.
+
+## 2026-11-12: cheaper variant quoted (cart unchanged)
+
+Shawn: "这么贵这么久 有没有什么便宜又快一点的选择". Read on the JLCPCB quote page through Edit Order, nothing saved, the cart still holds the Standard order above.
+
+- Economic PCBA is refused while the stackup is JLC04161H-3313; with Layer Stackup "No requirement" (JLC04161H-7628, prepreg 0.2104 mm) it is offered.
+- Economic, 2 of 5 boards assembled, ENIG kept: PCB USD 24.73 + assembly USD 57.67 (setup 8.24, stencil 1.55, components 14.19, extended parts fee 24.72, SMT 0.84, hand soldering 3.61, manual assembly 1.34, nitrogen reflow 0.86, depanel 2.32) = USD 82.40 against USD 135.05. The page counted 25 component lines, not 26: one BOM row lost its tick and must be re-ticked before saving this variant.
+- Build time: PCB 3 to 4 days + assembly 3 to 4 days + 1 day, against 3 + 5 to 6 + 1. A 2 to 3 day PCB costs USD 66.20 more.
+- HASL instead of ENIG would take off about USD 17; not quoted to the end.
+- Shipping options (cart, 0.56 kg): UPS Express Saver DDP USD 31.69 (2 to 4 business days), DHL Express 33.08, FedEx 44.49, Global Standard Direct Line USD 14.43 (8 to 10 business days, lands around Shawn's 2026-12-05 departure).
+- Consequence for the design: on the 7628 stack the two 480 Mbit/s pairs as routed (0.14 mm wide, 0.13 mm gap) come to about 114 ohm by the same IPC-2141 formula; 90 ohm needs about 0.25 mm width at the same gap. The pairs must be redrawn in `gen_pcb.py` `USB_PAIRS` and the board rebuilt and re-exported before this variant is ordered.
