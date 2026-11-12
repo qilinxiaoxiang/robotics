@@ -1,0 +1,21 @@
+#usage "Write board airwire count and copper layers per signal to argv[1]."
+string out = argv[1];
+if (board) board(B) {
+  int air = 0, zero = 0;
+  output(out, "wt") {
+    B.signals(S) {
+      S.wires(W) {
+        if (W.layer == 19) {
+          air++;
+          if (W.x1 == W.x2 && W.y1 == W.y2) zero++;
+          printf("AIR %s %d %f %f %f %f\n", S.name, W.layer, u2mm(W.x1), u2mm(W.y1), u2mm(W.x2), u2mm(W.y2));
+        } else {
+          printf("WIRE %s %d\n", S.name, W.layer);
+        }
+      }
+    }
+    B.signals(S) { S.vias(V) { printf("VIA %s %d %d\n", S.name, V.start, V.end); } }
+    B.layers(L) { if (L.used) printf("LAYER %d %s\n", L.number, L.name); }
+    printf("TOTAL %d ZERO %d\n", air, zero);
+  }
+}

@@ -50,10 +50,35 @@ Keep `sh dialog_watch.sh` running under a Monitor for the whole session. `fx.sh 
 - **`app.executeTextCommand("Electron.run EXPORT IMAGE '<png>' <dpi>;")`** renders the active schematic sheet to a PNG.
 - **Seeing dialogs needs System Events.** `osascript ... get name of every window` reads them. The main window's title contains "Autodesk Fusion", and docked palettes have fixed names. `osascript click` is denied (no assistive access), but `key code` works once Fusion is frontmost.
 
+## Boards: schematic to routed PCB (proven 2026-11-12, 18-021 shield)
+
+Route that works, all through `fusion.py run` jobs on the live board (no `.brd` upload):
+1. Activate the saved schematic and run `Electron.run BOARD`. Fusion opens a new unsaved BoardDocument linked to it with a default 160 x 100 mm outline.
+2. Generate placement and routes in code (outline, holes, element MOVE/ROTATE, then wires and vias per net) as EAGLE command lines, and replay them one net at a time with a dialog check after each.
+3. Accept with Fusion's own connectivity: `RATSNEST`, then `RUN ulp/airwires.ulp OUT.txt`. Require `TOTAL 0` and copper only on Top (1) and Bottom (304). Then export the `.brd` and compare geometry with the plan.
+4. Save: `board.saveAs(name, parentDesign.dataFile.parentFolder, msg, '')` and `parentDesign.save(msg)`. Close and reopen the board (`close(False)`, then `BOARD` on the schematic) and rerun step 3 on the stored copy.
+5. 3D: `commandDefinitions.itemById('Switch3dPcbDocCmd').execute()` on the board, then `saveAs` the new FusionDocument into the same folder. `app.activeViewport.saveAsImageFile(path, w, h)` renders it without bringing Fusion forward.
+
+Traps, each seen for real:
+- **Layer 16 is the inner layer `Route16`.** Bottom copper is layer 304 `Bottom`. `LAYER 16` puts wires and pours on an unconnected inner layer, every via and through-hole pad then carries a zero-length airwire (a yellow X), and the exported `.brd` still writes them as layer 16. Always write `LAYER Top` / `LAYER Bottom` by name. To repair: `DISPLAY NONE Route16; GROUP ALL; CHANGE LAYER Bottom (>1 1); DISPLAY ALL`.
+- **The exported `.brd` cannot prove connectivity.** It omits zero-length airwires and maps Route16 to 16. Only the ULP (or the Inspector's Airwires count) shows them.
+- `SET OBSTACLE_MODE IGNORE` before any WIRE. The default walkaround reshapes wires and raises pusher.cpp "inLocator" assert dialogs.
+- `SET OPTIMIZING OFF` (else collinear segments merge and endpoint junctions turn into mid-segment touches), `SET WIRE_BEND 2` (straight segments), `GRID MM 0.001` (else HOLE and MOVE snap).
+- Wires connect only at endpoints. Never end a WIRE on a point where two segments of that layer already meet, or mid-segment; draw a branch starting at the junction. Never branch at a via.
+- `RIPUP;` (all) opens an UNROUTE confirmation dialog. `RIPUP net1 net2` has none but only rips copper reachable from pads on visible layers.
+- Use the board's signal names (read them from an exported `.brd`): a supply symbol may name its net `+3.3V`, not `+3V3`. A wrong name silently creates a floating signal.
+- `AUTO` (autorouter) does nothing through the bridge, and `AUTO LOAD` resets its parameters. `DISPLAY 16` does nothing; use layer names.
+- In ULPs, iterating `S.polygons(P)` aborts the ULP silently; check pour layers through `B.layers(L)` `L.used` instead.
+- Stray keypresses moved elements once; after any unexplained change, discard the unsaved board and rebuild from the schematic rather than patching.
+- `RATSNEST` shows a small untitled "Info / N airwires" toast (320 x 61), only while Fusion is frontmost. The 3D workspace shows untitled browser palettes (300 x 868, 300 x 25). Neither is modal; `fusion.py` ignores the Info toast.
+- Assert dialogs (420 x 265) ignore keys sent by osascript. A Quartz mouse click on OK at window x+248, y+232 closes them.
+- Screenshots: capture Fusion by window id (`screencapture -l <id>`, id from `CGWindowListCopyWindowInfo`). The user has two displays and a whole-screen or rectangle capture shows whatever window is on top.
+
 ## Files
 
 - `addin/ClaudeBridge/`: the Fusion add-in. It listens on 127.0.0.1:8777 and runs posted Python on Fusion's main thread with `app`, `ui` and `adsk` defined. The installed copy is in `~/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/ClaudeBridge/`; check it with `diff -r addin/ClaudeBridge "<installed path>"`.
-- `fusion.py`: `ls`, `rename`, `delete`, `delete-folder`, `import [--replace] [--check CMD]`, `export`, `image`, `run`. `fusion.sh` and `fx.sh` are entry points to it.
+- `fusion.py`: `ls`, `rename`, `delete`, `delete-folder`, `import [--replace] [--check CMD]`, `export`, `image`, `run`, `airwires` (foreground only: reads the RATSNEST toast).
+- `ulp/airwires.ulp OUT`: writes every airwire (zero-length ones too), each wire's layer, via spans and used layers, ending with `TOTAL n ZERO m`. Run it with `Electron.run RUN "<ulp>" "<out>";` after RATSNEST. `fusion.sh` and `fx.sh` are entry points to it.
 - `jobs/*.py`: bridge job templates. `folder.py` is the prelude that resolves `FUSION_PROJECT/FUSION_PATH` and refuses an empty path; `fusion.py` fills the `'@@KEY@@'` placeholders with `repr()`.
 - `sch_lint.py`: checks format, display, geometry (wire ends, T-junctions, split segments, labels on their own wires, mirrored parts) and layout (frames and text collisions).
 - `tests/run_tests.py FIXTURE_DIR`: runs sch_lint on a project-owned fixture set (good*.sch must pass; each mutations/m_<defect>.sch must fail with its named check). Fixtures stay in the project; the 18-021 set is in `~/Desktop/courses/18-021/.work/final/lint-fixtures`.

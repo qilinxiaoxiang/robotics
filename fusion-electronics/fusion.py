@@ -47,7 +47,8 @@ def windows():
     script = ('set out to ""\n'
               'tell application "System Events" to tell (first process whose name is "Autodesk Fusion")\n'
               'repeat with w in every window\n'
-              'set out to out & (name of w) & "\t" & (subrole of w) & "\t" & ((size of w) as string) & linefeed\n'
+              'set {ww, hh} to size of w\n'
+              'set out to out & (name of w) & "\t" & (subrole of w) & "\t" & ww & "x" & hh & linefeed\n'
               'end repeat\nend tell\nreturn out')
     for attempt in range(4):     # reads fail for a moment while Fusion's main thread is busy
         r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
@@ -60,23 +61,75 @@ def windows():
                    "is Fusion running and does this terminal have Automation access to System Events?")
 
 
+def toast_texts():
+    """Static texts of Fusion's untitled 'Info' toasts (RATSNEST prints 'N airwires' there).
+    They close by themselves and block nothing."""
+    script = ('set out to ""\n'
+              'tell application "System Events" to tell (first process whose name is "Autodesk Fusion")\n'
+              'repeat with w in (every window whose name is "")\n'
+              'set t to value of every static text of w\n'
+              'set AppleScript\'s text item delimiters to "|"\n'
+              'set out to out & (t as string) & linefeed\n'
+              'end repeat\nend tell\nreturn out')
+    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    return [l for l in r.stdout.splitlines() if l.startswith("Info|")]
+
+
 def dialogs():
-    return [w for w in windows() if "Autodesk Fusion" not in w[0] and w[0] not in PALETTES]
+    d = [w for w in windows() if "Autodesk Fusion" not in w[0] and w[0] not in PALETTES]
+    # the 3D PCB workspace keeps two untitled 300-px-wide browser palettes open; not modal
+    d = [w for w in d if not (w[0] == "" and w[2].startswith("300x"))]
+    if d and all(w[0] == "" for w in d) and len(toast_texts()) == len(d):
+        return []          # only Info toasts
+    return d
+
+
+def airwires():
+    """Fusion's own airwire count after RATSNEST, read from its Info toast. The exported .brd
+    cannot show this: it omits zero-length airwires and writes inner layer Route16 as 16 too."""
+    import re
+    bridge("print(app.executeTextCommand('Electron.run RATSNEST;'))", 60, expect_dialog=True)
+    for _ in range(40):            # the toast appears a few seconds after the call returns
+        for t in toast_texts():
+            m = re.search(r"(\d+) airwires|No airwires", t)
+            if m:
+                return int(m.group(1) or 0)
+        time.sleep(0.5)
+    raise Fail(f"no RATSNEST toast found; screenshot {shot('ratsnest')}")
 
 
 def shot(tag):
     SHOTS.mkdir(parents=True, exist_ok=True)
     f = SHOTS / f"{tag}-{time.strftime('%H%M%S')}.png"
-    subprocess.run(["screencapture", "-x", str(f)])
+    # capture the screen rectangle of Fusion's largest window, wherever it is (two displays:
+    # the main display may show another app). A rectangle also catches dialogs floating on it.
+    script = ('tell application "System Events" to tell (first process whose name is "Autodesk Fusion")\n'
+              'set best to {0, 0, 0, 0}\nrepeat with w in every window\n'
+              'set {x, y} to position of w\nset {ww, hh} to size of w\n'
+              'if ww * hh > (item 3 of best) * (item 4 of best) then set best to {x, y, ww, hh}\n'
+              'end repeat\nend tell\nset AppleScript\'s text item delimiters to ","\nreturn best as string')
+    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    rect = r.stdout.strip() if r.returncode == 0 and not r.stdout.startswith("0,0,0,0") else None
+    subprocess.run(["screencapture", "-x"] + (["-R", rect] if rect else []) + [str(f)])
     subprocess.run(["sips", "-Z", "1400", str(f)], capture_output=True)
     return f
 
 
 def key(code):
     """Only for dialogs fusion.py itself raised (Upload Options, and the Error report of the
-    upload it started). Brings Fusion to the front, so never a generic dialog closer."""
-    subprocess.run(["osascript", "-e", 'tell application "System Events" to tell (first process whose name is "Autodesk Fusion")',
-                    "-e", "set frontmost to true", "-e", "delay 0.3", "-e", f"key code {code}", "-e", "end tell"])
+    upload it started). Brings Fusion to the front, so never a generic dialog closer.
+
+    `set frontmost` alone does not take while the user works in another app (2026-11-12: the
+    Claude window stayed in front and the keys went to it). So the app is activated, the
+    frontmost process is read back, and the key is sent only if it is Fusion; else Fail."""
+    script = ['tell application "Autodesk Fusion" to activate', "delay 0.6",
+              'tell application "System Events"',
+              'set p to first process whose frontmost is true',
+              'if name of p is not "Autodesk Fusion" then return "NOT FRONT: " & (name of p)',
+              f"key code {code}", 'return "sent"', "end tell"]
+    r = subprocess.run(["osascript"] + sum([["-e", s] for s in script], []), capture_output=True, text=True)
+    if r.stdout.strip() != "sent":
+        raise Fail(f"key {code} not sent, Fusion is not frontmost ({r.stdout.strip() or r.stderr.strip()})")
 
 
 # ------------------------------------------------------------------ bridge
@@ -277,12 +330,14 @@ def main(argv):
         print(cmd_delete(a[0], "folder"))
     elif c == "export":
         print(cmd_export(*a))
+    elif c == "airwires":
+        print(airwires())
     elif c == "image":
         print(cmd_image(*a))
     elif c == "run":
         code = Path(a[0]).read_text()
         import re
-        if re.search(r"\bADD\s+[^;'\"@]*[;'\"]", code, re.I):
+        if re.search(r"Electron\.run[^'\"\n]*\bADD\s+[^;'\"@]*[;'\"]", code, re.I):
             raise Fail("ADD without name@library opens a modal picker; use exact names")
         print(bridge(code, int(os.environ.get("FX_TIMEOUT", "10"))))
     elif c == "import":
