@@ -171,3 +171,11 @@ Why 30 x 30 and not the contract's 30 x 20 target: the target was written before
 - Same sweep on the breadboard that is on the robot today (its block and a 16 mm plug tail): touches from roll -5. So the new board is no worse than today's wiring in this model; the plug box is a straight 16 mm tail, which real leads bend out of.
 - Not covered: wires (about 34 in the head today), lowering the cap on, the mounting.
 Open layout item from this: move J_TOUCH_3V3 (the lowest plug, board y 10.1 to 13.7) and keep plug rows above board y 9 where possible, then rerun `fit_check.py`.
+
+## 2026-11-12: outline approved, layout draft 2 (plug rows)
+
+Shawn approved the outline after seeing `board-in-head.html` (built by `build_view3d.py`, not committed, 8 MB): "可以，30 x 30". `DESIGN-CONTRACT.json` now says 30 x 30 mm.
+
+Draft 2 turns the 2.54 mm connectors from four columns into rows (three 1x5 sockets in rows 1 to 3, back-SD pin and the three touch pins in row 4, plugs ending at board y 11.2 instead of 13.7); the single 3V3 socket sits alone under row 4 at the far left, because the yaw bracket reaches the right end of the rows first. J_SPK moved right to x 15.9, the five band-floor passives with it. Routed with 120 passes: 0 unconnected, 0 rule errors (10 waived connector courtyards).
+`fit_check.py` on draft 2: HOME zero contacts (within 1 mm: board top edge and J_UP plug to the head cap, J_UP plug to touch pad r1, J_EAR_R plug to the touch XIAO). Head poses: no contact anywhere in the joint ranges; smallest gap to the yaw bracket 2.5 mm at roll 0, 1.0 mm at -15 and +20, 0.5 mm at -20 and +25, 0.02 mm at -25 (the J_TOUCH_3V3 plug tail). So the extreme roll has no margin in this model, against contact from roll -5 for today's breadboard block.
+A tried variant (3V3 socket at the right end of row 4, MCU group 1.3 mm higher) also routed but touched the bracket at roll -20 and -25; it was dropped.
