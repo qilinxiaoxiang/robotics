@@ -1,0 +1,220 @@
+{
+ "t_pio_ns": 162.76041666666669,
+ "t_sys_ns": 16.276041666666668,
+ "assumed_pad_delay_ns": 5.0,
+ "mic_clock": {
+  "period_ns": [
+   325.5208333332557,
+   325.52083333337214
+  ],
+  "high_ns": 162.76041666662786,
+  "low_ns": 162.76041666662786,
+  "bit_clock_hz": 3071999.9999999995,
+  "clocks_per_frame": [
+   64
+  ],
+  "clocks_in_left_half": [
+   32
+  ],
+  "frame_hz": 47999.99999999999,
+  "ws_setup_ns": 162.76041666662786,
+  "ws_hold_ns": 162.76041666662786
+ },
+ "spk_clock": {
+  "period_ns": [
+   325.5208333332557,
+   325.52083333337214
+  ],
+  "high_ns": 162.76041666662786,
+  "low_ns": 162.76041666662786,
+  "bit_clock_hz": 3071999.999999999,
+  "clocks_per_frame": [
+   64
+  ],
+  "clocks_in_left_half": [
+   32
+  ],
+  "frame_hz": 47999.99999999999,
+  "ws_setup_ns": 162.76041666662786,
+  "ws_hold_ns": 162.76041666662786
+ },
+ "mic_sd_delay_pass_ns": [
+  0,
+  5,
+  10,
+  15,
+  20,
+  25,
+  30,
+  35,
+  40,
+  45,
+  50,
+  55,
+  60,
+  65,
+  70,
+  75,
+  80,
+  85,
+  90,
+  95,
+  100,
+  105,
+  110,
+  115,
+  120,
+  125,
+  130,
+  135,
+  140,
+  145,
+  150,
+  155,
+  160,
+  165,
+  170,
+  175,
+  180,
+  185,
+  190,
+  195,
+  200,
+  205,
+  210,
+  215,
+  220,
+  225,
+  230,
+  235,
+  240,
+  245,
+  250,
+  255,
+  260,
+  265,
+  270,
+  275,
+  280,
+  285
+ ],
+ "checks": [
+  {
+   "check": "model constants match src/audio.h",
+   "ok": true,
+   "detail": "clk_sys 61440000 Hz, divider 10"
+  },
+  {
+   "check": "PLL settings give clk_sys exactly and are legal for the RP2040 (12 MHz reference, VCO 750 to 1600 MHz, post dividers 1 to 7)",
+   "ok": true,
+   "detail": "VCO 1536000000 Hz = 12 MHz x 128, / 5 / 5 = 61440000 Hz"
+  },
+  {
+   "check": "both programs fit one PIO block (32 instructions)",
+   "ok": true,
+   "detail": "12 + 10 instructions"
+  },
+  {
+   "check": "mic: SCK is 3.072 MHz (64 x 48 kHz) and inside 0.5 to 3.2 MHz",
+   "ok": true,
+   "detail": "3072000.0 Hz"
+  },
+  {
+   "check": "mic: SCK period >= 312 ns, every period equal",
+   "ok": true,
+   "detail": "325.52 ns"
+  },
+  {
+   "check": "mic: SCK high >= 50 ns and low >= 50 ns",
+   "ok": true,
+   "detail": "high 162.76 ns, low 162.76 ns"
+  },
+  {
+   "check": "mic: 64 SCK per frame, 32 in each half",
+   "ok": true,
+   "detail": "per frame [64], left half [32]"
+  },
+  {
+   "check": "mic: WS is 48 kHz",
+   "ok": true,
+   "detail": "48000.000 Hz"
+  },
+  {
+   "check": "mic: WS setup >= 0 ns and hold >= 20 ns around the SCK rising edge",
+   "ok": true,
+   "detail": "setup 162.8 ns, hold 162.8 ns"
+  },
+  {
+   "check": "mic: every frame decodes to the top 16 bits of each microphone's 24-bit sample, ch3 = 0 (left ear, right ear, back; includes the first frame)",
+   "ok": true,
+   "detail": "40 of 40 frames"
+  },
+  {
+   "check": "mic: gain shift 8 returns the low bits too (24-bit sample saturated to 16 bits)",
+   "ok": true,
+   "detail": "40 of 40 frames"
+  },
+  {
+   "check": "mic: no stall while the FIFO is drained",
+   "ok": true,
+   "detail": "0 stalled cycles"
+  },
+  {
+   "check": "mic: decodes for every SD output delay from 0 to at least 250 ns after the SCK falling edge",
+   "ok": true,
+   "detail": "passes 0 to 285 ns (5 ns steps); model: sample point 288.0 ns after the edge that launched the bit"
+  },
+  {
+   "check": "mic: a full RX FIFO pauses the clocks and no word is lost or shifted afterwards",
+   "ok": true,
+   "detail": "419 stalled cycles, 40 of 40 frames"
+  },
+  {
+   "check": "control: started without the entry code (words one bit early) the same data does NOT decode",
+   "ok": true,
+   "detail": "0 of 40 frames match"
+  },
+  {
+   "check": "control: an SD delay of a whole SCK period does NOT decode",
+   "ok": true,
+   "detail": "0 of 12 frames match"
+  },
+  {
+   "check": "spk: BCLK is 3.072 MHz = 64 x LRC, LRC 48 kHz",
+   "ok": true,
+   "detail": "3072000.0 Hz, [64] per frame, LRC 48000.000 Hz"
+  },
+  {
+   "check": "spk: BCLK high >= 15 ns and low >= 15 ns, every period equal",
+   "ok": true,
+   "detail": "high 162.76 ns, low 162.76 ns"
+  },
+  {
+   "check": "spk: DIN and LRC setup >= 10 ns and hold >= 10 ns to the BCLK rising edge",
+   "ok": true,
+   "detail": "setup 162.8 ns, hold 162.8 ns"
+  },
+  {
+   "check": "spk: every slot is 32 bits long",
+   "ok": true,
+   "detail": "0 slots of another length"
+  },
+  {
+   "check": "spk: the amplifier model reads each 16-bit sample MSB first, one BCLK after the LRC edge, left while LRC is low, zeros in the low 16 bits",
+   "ok": true,
+   "detail": "41 frames read; they match the frames sent starting at frame 0"
+  },
+  {
+   "check": "spk: no stall while the FIFO is kept fed",
+   "ok": true,
+   "detail": "0 stalled cycles"
+  },
+  {
+   "check": "touch: line is 'T ' + 48 hex digits and bytes.fromhex(line[2:]) returns the 24 bytes read",
+   "ok": true,
+   "detail": "T 101112131415161718191a1b1c1d1e1f2021222324252627"
+  }
+ ],
+ "passed": 23,
+ "failed": 0
+}

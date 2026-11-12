@@ -1,0 +1,33 @@
+; MicroDuck head USB board: I2S master transmitter for the MAX98357A amplifier.
+; Original work for this project (BSD-3-Clause, see ../README.md, Licences). Not derived from any other I2S PIO program.
+;
+; Pins (sch/netlist.py): side-set base = SPK_BCLK (GPIO18), base+1 = SPK_LRC (GPIO19); out base = SPK_DIN (GPIO20).
+; Clock: 2 PIO cycles per BCLK period at 6.144 MHz -> BCLK 3.072 MHz = 64 x 48 kHz (integer divider from 61.44 MHz;
+;        the MAX98357A has no MCLK and derives its clock from BCLK, so BCLK must be free of divider jitter).
+;
+; One BCLK period is [BCLK low, 1 cycle][BCLK high, 1 cycle]. DIN and LRC change with the BCLK falling edge and the
+; amplifier reads them on the rising edge half a period later (162 ns setup, 162 ns hold; it needs 10 ns each).
+; I2S: the MSB of a slot goes out one BCLK period after LRC changes, so the last bit of the left word is sent in
+; period 0 of the right slot, and the last bit of the right word in period 0 of the next left slot.
+;
+; TX FIFO: one 32-bit word per slot, left word first, MSB first; the firmware puts the 16-bit sample in the top
+; half and zeros below. Autopull at 32 bits. The DMA ring keeps the FIFO fed; an empty FIFO would stall the clocks.
+
+.program i2s_spk
+.side_set 2                         ; bit 0 = BCLK, bit 1 = LRC
+
+public entry:
+    set x, 30           side 0b00   ; left period 0, low half (LRC low = left); DIN stays 0
+    nop                 side 0b01   ; left period 0, high half
+.wrap_target
+left_loop:                          ; left periods 1..31: left word bits 31..1
+    out pins, 1         side 0b00
+    jmp x-- left_loop   side 0b01
+    out pins, 1         side 0b10   ; right period 0: left word bit 0, LRC rises
+    set x, 30           side 0b11
+right_loop:                         ; right periods 1..31: right word bits 31..1
+    out pins, 1         side 0b10
+    jmp x-- right_loop  side 0b11
+    out pins, 1         side 0b00   ; left period 0: right word bit 0, LRC falls
+    set x, 30           side 0b01
+.wrap

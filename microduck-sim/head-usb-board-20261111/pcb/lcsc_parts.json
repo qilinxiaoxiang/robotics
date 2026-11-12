@@ -97,7 +97,7 @@
   "quote_source": "JLCPCB part record 'describe' field (cart.jlcpcb.com getComponentDetail, the data behind the partdetail page), read 2026-11-12",
   "assembly": "In JLCPCB's assembly parts library: SMT, machine placed (record: assemblyProcess SMT, componentStatus yes)",
   "status": "verified",
-  "note": "Same part as X1. Whether 10 pF suits the CH334F's built-in load capacitors was not checked here."
+  "note": "Same part as X1. WCH CH334/335 datasheet (LCSC copy for C5187527), section 6: 'XI 和 XO 引脚已内置约 16pF 振荡电容，建议晶体 X1 不加外部振荡电容' (about 16 pF built in on each pin, no external capacitors advised): two 16 pF in series are 8 pF plus stray, which matches a 10 pF crystal. The datasheet states no ESR limit for the crystal."
  },
  {
   "refs": [
@@ -233,7 +233,7 @@
   "quote_source": "JLCPCB part record 'describe' field (cart.jlcpcb.com getComponentDetail, the data behind the partdetail page), read 2026-11-12",
   "assembly": "In JLCPCB's assembly parts library: SMT, machine placed (record: assemblyProcess SMT, componentStatus yes)",
   "status": "verified",
-  "note": "Page: load 10 pF, ESR 80 ohm. The RP2040 reference crystal ABM8-272-T3 is 10 pF with 50 ohm max ESR, so ESR is higher than the reference part (reference value not re-read here)."
+  "note": "Kept after the 2026-11-12 ESR check. YXC YSX321SL datasheet: 12~15MHz '80Ω Max', CL 10 pF, drive '10~200μW Max (100μW typical)', pads 1 and 3 crystal, 2 and 4 GND. Raspberry Pi 'Hardware design with RP2040' tunes 2 x 15 pF + 1 k for the ABM8-272-T3 (max ESR 50 ohm, 10 pF, drive 10 typ / 200 max uW) and says 'Any deviation from the crystal circuit shown here ... will require extensive testing'. ABM8-272-T3 C20625731: JLCPCB stock 1, LCSC 0. No in-stock 10 pF 3225 12 MHz part stating 50 ohm or less was found. Datasheet-confirmed 50 ohm alternative: Yajingxin TAXM12M4RLBDDT2T C133334 (stock 80828, same pad layout) but 20 pF load (C7/C8 would become 33 pF), drive level 100 uW, -30 C; not adopted because the doubled load raises drive power and start-up demand more than the lower ESR saves (inference, not tested). huaxindianzi CF4012M00012001 C7294550 is listed as 40 ohm on the page but its datasheet says resonant resistance <=80 ohm."
  },
  {
   "refs": [

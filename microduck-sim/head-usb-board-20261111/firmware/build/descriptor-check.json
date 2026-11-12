@@ -1,0 +1,423 @@
+{
+ "elf": "build/head_usb.elf",
+ "device": {
+  "bcdUSB": 512,
+  "class": [
+   239,
+   2,
+   1
+  ],
+  "vid": "0x1209",
+  "pid": "0x0001",
+  "configurations": 1
+ },
+ "config_bytes": 277,
+ "max_power_ma": 100,
+ "sample_rates": [
+  48000
+ ],
+ "capture": {
+  "number": 2,
+  "alt": 1,
+  "endpoints_declared": 1,
+  "class": 1,
+  "subclass": 2,
+  "protocol": 32,
+  "endpoints": [
+   {
+    "address": 129,
+    "attributes": 5,
+    "max_packet": 392,
+    "interval": 1
+   }
+  ],
+  "as_general": {
+   "terminal": 19,
+   "format_type": 1,
+   "formats": 1,
+   "channels": 4,
+   "channel_config": 0
+  },
+  "format": {
+   "format_type": 1,
+   "subslot_bytes": 2,
+   "bits": 16
+  }
+ },
+ "playback": {
+  "number": 1,
+  "alt": 1,
+  "endpoints_declared": 1,
+  "class": 1,
+  "subclass": 2,
+  "protocol": 32,
+  "endpoints": [
+   {
+    "address": 1,
+    "attributes": 9,
+    "max_packet": 196,
+    "interval": 1
+   }
+  ],
+  "as_general": {
+   "terminal": 1,
+   "format_type": 1,
+   "formats": 1,
+   "channels": 2,
+   "channel_config": 0
+  },
+  "format": {
+   "format_type": 1,
+   "subslot_bytes": 2,
+   "bits": 16
+  }
+ },
+ "cdc_ports": 1,
+ "uf2": {
+  "ok": true,
+  "blocks": 178,
+  "flash_start": "0x10000000",
+  "flash_end": "0x1000b200",
+  "bytes": 45568,
+  "why": ""
+ },
+ "checks": [
+  {
+   "check": "device descriptor length",
+   "got": [
+    18,
+    1
+   ],
+   "want": [
+    18,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "check": "device class Misc/Common/IAD (composite with interface associations)",
+   "got": [
+    239,
+    2,
+    1
+   ],
+   "want": [
+    239,
+    2,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "check": "one configuration",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "configuration total length equals the table",
+   "got": 277,
+   "want": 277,
+   "ok": true
+  },
+  {
+   "check": "interface numbers are 0..n-1 and match bNumInterfaces",
+   "got": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "want": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "ok": true
+  },
+  {
+   "check": "one audio interface association",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "audio association is UAC2 and spans control + 2 streaming interfaces",
+   "got": [
+    32,
+    3
+   ],
+   "want": [
+    32,
+    3
+   ],
+   "ok": true
+  },
+  {
+   "check": "audio control header says Audio Class 2.00",
+   "got": 512,
+   "want": 512,
+   "ok": true
+  },
+  {
+   "check": "one clock source",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "sample rates reported by the clock source (usb_audio_sample_rates)",
+   "got": [
+    48000
+   ],
+   "want": [
+    48000
+   ],
+   "ok": true
+  },
+  {
+   "check": "no feature unit (no device-side volume)",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "check": "one capture streaming setting",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "one playback streaming setting",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "interface 1 alt 0 has no endpoint (zero bandwidth)",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "check": "interface 2 alt 0 has no endpoint (zero bandwidth)",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "check": "capture: channels",
+   "got": 4,
+   "want": 4,
+   "ok": true
+  },
+  {
+   "check": "capture: Type I PCM",
+   "got": [
+    1,
+    1
+   ],
+   "want": [
+    1,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "check": "capture: bits per sample",
+   "got": 16,
+   "want": 16,
+   "ok": true
+  },
+  {
+   "check": "capture: bytes per sample slot",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "check": "capture: isochronous endpoint",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "capture: packet size holds 48+1 frames of 48000 Hz and fits full speed",
+   "got": 392,
+   "want": true,
+   "ok": true
+  },
+  {
+   "check": "capture: one packet per 1 ms frame",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "capture: stream terminal is fed by an input terminal with the same channel count",
+   "got": 4,
+   "want": 4,
+   "ok": true
+  },
+  {
+   "check": "capture: asynchronous endpoint (the board's crystal sets the rate)",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "playback: channels",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "check": "playback: Type I PCM",
+   "got": [
+    1,
+    1
+   ],
+   "want": [
+    1,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "check": "playback: bits per sample",
+   "got": 16,
+   "want": 16,
+   "ok": true
+  },
+  {
+   "check": "playback: bytes per sample slot",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "check": "playback: isochronous endpoint",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "playback: packet size holds 48+1 frames of 48000 Hz and fits full speed",
+   "got": 196,
+   "want": true,
+   "ok": true
+  },
+  {
+   "check": "playback: one packet per 1 ms frame",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "playback: stream terminal channel count",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "check": "CDC communication interfaces (serial ports)",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "CDC data interfaces",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "check": "CDC is Abstract Control Model",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "check": "CDC notification endpoint is interrupt IN",
+   "got": [
+    [
+     3,
+     1
+    ]
+   ],
+   "want": [
+    [
+     3,
+     1
+    ]
+   ],
+   "ok": true
+  },
+  {
+   "check": "CDC data endpoints are bulk OUT and bulk IN",
+   "got": [
+    [
+     2,
+     0
+    ],
+    [
+     2,
+     1
+    ]
+   ],
+   "want": [
+    [
+     2,
+     0
+    ],
+    [
+     2,
+     1
+    ]
+   ],
+   "ok": true
+  },
+  {
+   "check": "no endpoint address used twice",
+   "got": [
+    "0x01",
+    "0x81",
+    "0x82",
+    "0x03",
+    "0x83"
+   ],
+   "want": true,
+   "ok": true
+  },
+  {
+   "check": "endpoint numbers within the RP2040's 15",
+   "got": [
+    1,
+    1,
+    2,
+    3,
+    3
+   ],
+   "want": true,
+   "ok": true
+  },
+  {
+   "check": "UF2: RP2040 family, contiguous numbering, inside the 2 MB flash",
+   "got": {
+    "ok": true,
+    "blocks": 178,
+    "flash_start": "0x10000000",
+    "flash_end": "0x1000b200",
+    "bytes": 45568,
+    "why": ""
+   },
+   "want": true,
+   "ok": true
+  }
+ ],
+ "passed": 40,
+ "failed": 0
+}
