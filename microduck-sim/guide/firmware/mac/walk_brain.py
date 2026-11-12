@@ -270,9 +270,11 @@ IMU_PITCH_TRIM_DEG = 4.0
 # Roll was never trimmed. 2026-11-12 (play-locate-20261112/README.md): at quiet stand the robot reads +2 to +3 deg of
 # roll in every log since 11-02 (the sim 0), and a sim sensor rolled by brain_sim_check.py --imu-roll -3 reproduces the
 # robot's stand reading, its walking roll and its left-leg-heavy gait. IMU_ROLL_TRIM_DEG uses the sim's sign (-3 undoes
-# that sensor). On since 2026-11-12 (Shawn: "一起装"); MICRODUCK_IMU_ROLL_TRIM overrides it (0 = the old behaviour).
-# brain_sim_check.py's sensor carries the same roll by default, so a sim without --imu-roll stays consistent.
-IMU_ROLL_TRIM_DEG = float(os.environ.get("MICRODUCK_IMU_ROLL_TRIM", "-3"))
+# that sensor). It ran at -3 on the robot for one session, 2026-11-12 14:53-15:06, and is back at 0: the walk stayed
+# left-heavy, and the 11-04 powered-stand scan (scan-20261101/fit_scan.py on scan 105634) puts the trunk 3.8 deg
+# rolled against the feet where the untrimmed IMU read 3.1 deg, so the sensor was right and the robot really leans.
+# MICRODUCK_IMU_ROLL_TRIM sets it for sim checks; brain_sim_check.py --imu-roll defaults to the same angle.
+IMU_ROLL_TRIM_DEG = float(os.environ.get("MICRODUCK_IMU_ROLL_TRIM", "0"))
 _h, _r = math.radians(IMU_PITCH_TRIM_DEG) / 2, math.radians(IMU_ROLL_TRIM_DEG) / 2
 # the whole sensor trim, qy(pitch) * qx(roll); the name is kept for the scripts that import it
 IMU_PITCH_TRIM = (math.cos(_h) * math.cos(_r), math.cos(_h) * math.sin(_r), math.sin(_h) * math.cos(_r), -math.sin(_h) * math.sin(_r))

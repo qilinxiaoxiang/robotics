@@ -101,9 +101,19 @@ rolled sensor is one way to get this gait. The lean is in the robot. One fall in
 off (Shawn). Open: which part holds the angle. `regs-20261112-1508.json` (every servo's control table, read with
 `regdump_full.py`, torque off): all documented settings are equal on the ten leg servos except return delay 250 on
 ID1 (factory value; the rest 0) and homing -1024 on ID10 (and ID14); undocumented bytes 28-30 read 80, 243, 1 on ID2
-(the knee that was factory-reset 11-02) and 255, 255, 0 on all others. Not yet done: the powered-stand scan of 11-04
-(`microduck_rl/cmu/model/scans/2026-11-04/`, 105634) registered against log app1104-105329 to read the trunk's and
-each sole's true angle to the floor.
+(the knee that was factory-reset 11-02) and 255, 255, 0 on all others. 
+The lean is real, the IMU was right (2026-11-12, `scan-11-04-stand-fit.json`): the 11-04 powered-stand scan
+(`microduck_rl/cmu/model/scans/2026-11-04/`, 105634) registered with `scan-20261101/` (`inspect_scan.py`,
+`crop_robot.py`, `model_pose.py`, `fit_scan.py`) against the joint angles logged during it (app1104-105329, 10:56:34,
+IMU roll reading +3.1 deg untrimmed). Real minus model, rotation about forward / left / up in degrees: trunk +3.8 /
++7.1 / +0.4; left foot -5.0 / +4.6 / -7.3; right foot +1.7 / +1.0 / +0.9; left thigh -5.2 / -0.6 / -6.3; right thigh
++4.4 / +4.4 / +3.1. So the trunk is rolled 3.8 deg where the IMU read 3.1, the right sole lies about flat, and the
+left foot is rolled 5 deg outer edge down and turned 7 deg, as Shawn sees. Both thighs sit about 5 deg in roll and
+3 to 6 deg in yaw from where the hip encoders put them, mirrored left against right: angle the hip roll and hip yaw
+encoders do not see, on both sides; the left foot follows its thigh and the right foot does not. One scan, part fits
+2.5 to 4.5 mm rms with scan-to-CAD scale 0.81 to 0.97, so each angle is good to about 2 to 3 deg; the mirrored thigh
+part could partly be that scale error. `walk_brain.IMU_ROLL_TRIM_DEG` is back at 0 in the repository; the A7Z copy
+still has -3 (robot powered off 15:10) and must be replaced at its next start, before any walk.
 
 Phone remote stutter, same log: 30 stops "walk for_s 0.6 elapsed" in one minute while the brain ran at 48 Hz, so the
 0.3 s repeats arrived 0.7 to 2.4 s apart. Mac mini to A7Z measured after: 300 pings, 0 lost, p99 126 ms. Page changed
