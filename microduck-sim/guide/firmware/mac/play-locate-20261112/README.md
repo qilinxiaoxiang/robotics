@@ -92,6 +92,24 @@ Established:
   unchanged (45 walks with it, swing 0.17 / 0.27 s), sim gait worse with it (0.14 / 0.28 s against 0.18 / 0.26) and
   0.22 / 0.26 s with the IMU roll trimmed (0.24 / 0.24 without the offset). Removed 2026-11-12 and copied to the A7Z at 14:50.
 
+First robot log with the roll trim and without the hip offset (app1112-145302, 14:53-15:06, Mac mini
+`~/sims/fall-onset-20261112/raw/`): quiet-stand roll reads -1.3 deg (the trim overshoots by about 1.3), but walking
+still reads +0.3 to +3.0 deg mean roll, left/right knee current 2.1 to 3.7 and swing 0.18-0.23 s left / 0.23-0.28 s
+right. Shawn saw the left foot on its outer edge standing and walking and the body leaning left, also with a short
+USB lead. So the untrimmed IMU roll is not the cause of the left-heavy walk; the sim match above shows only that a
+rolled sensor is one way to get this gait. The lean is in the robot. One fall in this log began when the saddle came
+off (Shawn). Open: which part holds the angle. `regs-20261112-1508.json` (every servo's control table, read with
+`regdump_full.py`, torque off): all documented settings are equal on the ten leg servos except return delay 250 on
+ID1 (factory value; the rest 0) and homing -1024 on ID10 (and ID14); undocumented bytes 28-30 read 80, 243, 1 on ID2
+(the knee that was factory-reset 11-02) and 255, 255, 0 on all others. Not yet done: the powered-stand scan of 11-04
+(`microduck_rl/cmu/model/scans/2026-11-04/`, 105634) registered against log app1104-105329 to read the trunk's and
+each sole's true angle to the floor.
+
+Phone remote stutter, same log: 30 stops "walk for_s 0.6 elapsed" in one minute while the brain ran at 48 Hz, so the
+0.3 s repeats arrived 0.7 to 2.4 s apart. Mac mini to A7Z measured after: 300 pings, 0 lost, p99 126 ms. Page changed
+to repeat 0.15 s / lifetime 1.5 s and the bridge logs late repeats with page, arrival and A7Z times
+(`~/Library/Logs/microduck-remote-cmd.jsonl` on the Mac mini), deployed 2026-11-12; not yet walked with.
+
 Not reproduced: fed the robot's own turn signal (`--turn-replay`), 17 fell + 30 up walks, seed 0, the sim falls 0 of
 17 with every gap alone and together: floor mu 0.25, COM +-6..18 mm, friction x1.5, joint play 2 deg, 8.1 V, IMU
 pitch 2 and roll -3. All together its yaw-rate rms is 1.00 rad/s (robot 0.95), so the wobble is matched and the falls
