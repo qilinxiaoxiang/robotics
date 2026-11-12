@@ -18,8 +18,10 @@ PLACE = {
     "J_TOUCH": (2.0 + P, 1.7 + 3 * P, 90, "F"),
     "J_TOUCH_3V3": (2.0, 1.7 + 4 * P, 90, "F"),          # far left: the yaw bracket reaches the right end of row 4 first
     "J_SPK": (15.9, 3.2, 0, "F"),
-    "J_UP": (22.6, 3.0, 0, "F"),
-    "J_CAM": (22.6, 9.5, 0, "F"),
+    # Turned half a turn when the pin order was settled (circuit 5 = 5 V, HANDOFF 2026-11-12): 5 V stays at the left
+    # end as routed in draft 2 and the housings keep their place; the lock-window wall now faces the board top.
+    "J_UP": (27.6, 2.1, 180, "F"),
+    "J_CAM": (27.6, 8.6, 180, "F"),
     # --- microphone and touch passives, band floor
     "R8": (15.0, 9.4, 90, "F"), "R9": (16.2, 9.4, 90, "F"), "C27": (17.4, 9.4, 90, "F"),
     "R10": (18.6, 9.4, 90, "F"), "R11": (19.8, 9.4, 90, "F"),

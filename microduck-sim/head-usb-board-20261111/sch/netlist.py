@@ -13,7 +13,6 @@ From memory, to be checked against the part datasheet before layout: AP2112K-3.3
 
 Open items carried on the sheet as OPEN_* values:
   X1 load: the reference design is tuned for a 10 pF crystal (ABM8-272-T3); the JLCPCB basic 12 MHz 3225 is 20 pF.
-  J_CAM / J_UP pin 1 end: the camera board prints V M P G G; which end is pin 1 must be read off the real board.
 """
 
 TITLE = "MicroDuck head USB board: hub + USB sound card + amp, one USB cable across the neck (draft 1, 2026-11-12)"
@@ -149,10 +148,12 @@ conn("TOUCH", "J_TOUCH_3V3", "socket 1x1 2.54: XIAO 3V3", ["+3V3"])
 two("TOUCH", "R10", "R", "2.2k", "TOUCH_SDA", "+3V3")
 two("TOUCH", "R11", "R", "2.2k", "TOUCH_SCL", "+3V3")
 
-# ---------------------------------------------------------------- USB connectors (camera order V M P G G)
-USB5 = lambda dp, dm: ["VBUS", dm, dp, "GND", "GND"]
-conn("USB_PLUGS", "J_UP", "PicoBlade 5P: to A7Z OPEN_PIN1", USB5("UP_DP", "UP_DM"))
-conn("USB_PLUGS", "J_CAM", "PicoBlade 5P: camera OPEN_PIN1", USB5("CAM_DP", "CAM_DM"))
+# ---------------------------------------------------------------- USB connectors
+# Same circuit numbering as the U20CAM's own socket, so its factory cable mates with J_UP as it mates with the camera:
+# circuit 1 shield (silk G), 2 GND (G), 3 D+ (P), 4 D- (M), 5 5 V (V). Evidence in HANDOFF.md, 2026-11-12 pin order.
+USB5 = lambda dp, dm: ["GND", "GND", dp, dm, "VBUS"]
+conn("USB_PLUGS", "J_UP", "PicoBlade 5P: to A7Z (1 shield .. 5 5V)", USB5("UP_DP", "UP_DM"))
+conn("USB_PLUGS", "J_CAM", "PicoBlade 5P: camera (1 shield .. 5 5V)", USB5("CAM_DP", "CAM_DM"))
 
 ROWS = [["USB_PLUGS", "USB_HUB", "POWER"],
         ["MCU", "FLASH", "DEBUG_PADS"],

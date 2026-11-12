@@ -156,7 +156,7 @@ Research agent results folded in (sources in the chat report of 2026-11-12): AP2
 
 Not done, in order of risk:
 1. USB data lines are routed as ordinary single tracks. The camera and uplink pairs carry 480 Mbit/s and need to be routed as matched 90 ohm pairs side by side over the ground plane before ordering; the stackup's track width for 90 ohm has to come from JLCPCB's calculator for the chosen 4-layer stack.
-2. Camera socket pin 1 end (board silk reads V M P G G) still unknown; J_CAM and J_UP pin order depends on it.
+2. Camera socket pin 1 end: settled from documents on 2026-11-12, see "camera socket pin order" below.
 3. Speaker terminal wire-entry side: read from the footprint outline only (KiCad convention puts entry on the +y side, toward the low parts); check against the maker drawing.
 4. No silkscreen labels for the builder (which plug goes where), no mounting feature (how the board is held on the camera back), no fiducials.
 5. Manufacturing files (Gerber, BOM with LCSC numbers, placement file), firmware, A7Z-side checks: not started.
@@ -179,3 +179,21 @@ Shawn approved the outline after seeing `board-in-head.html` (built by `build_vi
 Draft 2 turns the 2.54 mm connectors from four columns into rows (three 1x5 sockets in rows 1 to 3, back-SD pin and the three touch pins in row 4, plugs ending at board y 11.2 instead of 13.7); the single 3V3 socket sits alone under row 4 at the far left, because the yaw bracket reaches the right end of the rows first. J_SPK moved right to x 15.9, the five band-floor passives with it. Routed with 120 passes: 0 unconnected, 0 rule errors (10 waived connector courtyards).
 `fit_check.py` on draft 2: HOME zero contacts (within 1 mm: board top edge and J_UP plug to the head cap, J_UP plug to touch pad r1, J_EAR_R plug to the touch XIAO). Head poses: no contact anywhere in the joint ranges; smallest gap to the yaw bracket 2.5 mm at roll 0, 1.0 mm at -15 and +20, 0.5 mm at -20 and +25, 0.02 mm at -25 (the J_TOUCH_3V3 plug tail). So the extreme roll has no margin in this model, against contact from roll -5 for today's breadboard block.
 A tried variant (3V3 socket at the right end of row 4, MCU group 1.3 mm higher) also routed but touched the bracket at roll -20 and -25; it was dropped.
+
+## 2026-11-12: camera socket pin order (from documents)
+
+Result: on the U20CAM socket the 5 V pin (silk V) is Molex circuit 5 and the shield is circuit 1. `sch/netlist.py` now gives J_UP and J_CAM the same numbering: pad 1 shield, 2 GND, 3 D+, 4 D-, 5 5 V. The camera's own cable therefore lands on J_UP exactly as it lands on the camera. Recorded in `../CURRENT-STATE.json` (`parts_a7z_extensions.innomaker_u20cam.socket_circuits`).
+
+Evidence chain (images in `evidence-cam-socket/`):
+- Silk V M P G G sits over the five pins with V nearest the corner mounting hole: Innomaker manual pages 1 and 5 (github.com/INNO-MAKER/U20CAM-720P, board DT720-V1.0) and the Amazon gallery of B0CLRJZG8D.
+- The socket's cut-down long wall faces the board centre, the full-height wall with the lock windows faces the board edge: `sock_big.jpg` (Amazon gallery) against the Molex isometric view `crop_iso-1.png`.
+- Molex drawing 530470001-SD (`crop_a-1.png`): facing the lock-window wall with the opening up, circuit 1 is at the left; so facing the cut-down wall it is at the right, the end away from the corner hole.
+- KiCad footprint `Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical`: pad 1 at the origin, lock-window wall on the +y side, 1.15 mm from the pins; pad 1 is circuit 1.
+
+Inferred, not read: the camera's socket is a compatible part assumed to follow the Molex housing; its orientation comes from the seller's photos and manual, not from Shawn's board; the tin-plated drawing 530470000-SD was not fetched. If the socket on the real board sat the other way round, the order would reverse. The check costs nothing at assembly: the board silk will mark the 5 V end of J_UP and J_CAM, and the red wire of the camera cable must sit at that mark before power.
+
+Consequence for the camera lead (J_CAM to camera, not owned): it must be straight, circuit k to circuit k. The generic double-ended MX1.25 leads bought on AliExpress were reversed and killed the first camera (`CURRENT-STATE.json`), so the lead is specified and checked by wire colour at both plugs before use.
+
+Layout: J_UP and J_CAM are turned half a turn so 5 V stays at the left end where draft 2 routed it; housings keep their place, pads move 0.9 mm up.
+
+Why this was missed for four replies: the pin order and the seller's ASIN were already in the camera's state entry, written by another session the day before, and the listing shows the socket; none of it was opened before asking Shawn to look. Rule `part-facts-before-asking.md` and its Stop guard in claude-config now cover it.
