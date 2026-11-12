@@ -315,17 +315,17 @@
         {
           "id": "H1-yaw-loop-gap",
           "claim": "The real yaw loop (hip yaw and head yaw XL330s with backlash and deadband, low KP, the heavy head) has less damping or more delay than the sim, so stand61/walk61 feedback on a yaw disturbance is unstable on the robot and stable in sim. Predicts: sim replay of the same commands on the current model stays upright through the turn; adding yaw backlash/delay in sim reproduces the growth.",
-          "status": "open; first replay check pending"
+          "status": "supported 2026-11-11: (a) all 14 A7Z brain logs, yaw_events.py: 24 full-window turn stops, 6 grew (4 fell), 25 %; even the 18 that settled peaked at 1-3 rad/s yaw in the first second; (b) current-model sim of the same turn stop (vtheta -0.3 for 1.5 s): nominal delay peaks 0.9-1.1 rad/s and decays to 0.02 within 1 s; +20 ms action delay (--action-delay 2) peaks 3.6 and keeps 2.5 rad/s in s 1-3 (seed 1), tilt 7-17 deg across seeds; +40 ms falls even standing still; (c) the robot's transport latency is short (joint sample to goal write 16 ms median, IMU 21 ms), shorter than the sim default (about 44 ms). So the real robot carries roughly 40 ms more effective lag than the sim, in the servo and body response, not in the bus. Training saw action delay 15-30 ms, KP exactly 200 (KP DR off) and friction 0.9-1.1x."
         },
         {
           "id": "H2-head-yaw-out-of-distribution",
           "claim": "The head_pose command (head yaw -0.355 with neck 0.35) or the post-turn state lies outside the policy's training distribution. Predicts: the same disturbance inside the trained range does not grow.",
-          "status": "open"
+          "status": "weakened 2026-11-11: -0.355 rad is inside the trained head-yaw range (+-1.40); 76 of 77 full-window head-yaw steps in all logs settled"
         },
         {
           "id": "H3-external-contact",
           "claim": "A hand or the cable touched the robot (run 2 leg current jumped 271 -> 816 mA in one tick at +339.09 before the gyro grew).",
-          "status": "open; no camera record"
+          "status": "open for 11-11 run 2 only (the one head step of 77 that grew); no video"
         },
         {
           "id": "H4-no-target-low-pass",
@@ -343,14 +343,21 @@
         {
           "id": "T2-sim-yaw-backlash",
           "what": "same replay with hip-yaw/head-yaw backlash and the measured action delay; growth reproduced = H1",
-          "status": "queued",
-          "blocker": "T1 result; next session per microduck-sim/HANDOFF-20261111-walk-stability.md"
+          "status": "run",
+          "blocker": "sim not identified against the robot; needs T3 step responses",
+          "results": "delay grid (out/yawgrid on the Mac mini mirror ~/sims/fullflow-20261111): action delay 1-2 ticks stands in head and turn cases, 3+ ticks falls even before the disturbance; BAM friction 1.5x raises the turn's peak tilt from 3-4 to 8-11 deg; +20 ms reproduces the real post-stop yaw amplitude. Backlash not yet tried. KP grid 2026-11-11 (out/kpgrid, out/kpgrid2, out/walkgrid): under 2-tick delay KP 250/300 are worse (all turn stops fall at 250); KP 160/180 settle the -0.3 and -0.5 turn stops (post-stop yaw 0.01-0.11 rad/s vs KP 200 up to 3.3). But no single sim setting matches the robot: with 2-tick delay KP 200 also falls mid-walk at vx 0.25 (3 of 3), while the robot walks steadily at KP 200; with 1-tick delay turn stops never grow. Lower KP also costs: at 1.5x friction KP 160 falls right after a walk stops (3 of 3, 1-tick delay) where KP 200 does not. So the delay knob alone does not reproduce the robot, and a runtime KP change is not supported by the sim as a fix; it can only be judged on the robot."
         },
         {
           "id": "T3-robot-head-yaw-step",
-          "what": "robot standing, step head yaw 0 -> -0.35 and back with no other motion, five times, IMU live; repeat at -0.15",
+          "what": "robot standing, step head yaw 0 -> -0.35 and back with no other motion, five times, IMU live; repeat at -0.15; plus 20 induced turn stops (vtheta +-0.3/+-0.5, 1-2 s) at KP 200 and 20 at KP 180, counting stops whose yaw rate exceeds 2 rad/s in s 1-3 (baseline 25 %); same session gives hip-yaw and head-yaw step responses to fit the sim",
           "status": "queued",
           "blocker": "robot powered off 2026-11-11"
+        },
+        {
+          "id": "T4-all-logs-event-scan",
+          "what": "guide/firmware/mac/robot-runs-20261111-seepick/yaw_events.py over the 14 A7Z brain logs (Mac mini ~/robot-data)",
+          "status": "run",
+          "results": "154 events; turn stops 24 full-window, 6 grew (25 %), no single feature (turn length, rate, battery, read drops) separates them; head steps 77 full-window, 1 grew (11-11 run 2)"
         }
       ],
       "mitigations": [],
@@ -361,7 +368,7 @@
       },
       "cause": {
         "status": "hypothesis",
-        "summary": "H1 yaw-loop sim gap is the lead; T1 separates sim-stable from sim-unstable"
+        "summary": "H1 supported: the robot's effective loop lag is about 40 ms longer than the sim's, so turn stops sit near the delay stability edge (sim falls at +40 ms); policies were trained with 15-30 ms delay, KP fixed and friction 0.9-1.1x"
       }
     }
   }

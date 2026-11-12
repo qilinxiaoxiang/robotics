@@ -556,9 +556,10 @@ def main():
     story.blend = a.sp_blend
     bsc.STORY = story
     # the seepick rehearsal's corrected harness (seepick-gap-20261029): elliptic cone, impratio 10, the current robot
-    # (microduck_rl/cmu/model/current.json: battery backpack, orange saddle),
-    # COM calibration; jaw current from CURRENT-STATE.json jaw_grip_current_ma (150 mA); servo rail from servo_rail_v
-    sys.argv = ["brain_sim_check.py", "--model", "asbuilt", "--manifest", "current", "--com-x", "-2.25", "--drop", "0.04",
+    # (microduck_rl/cmu/model/current.json: battery backpack, orange saddle); no --com-x: the -2.25 mm of the
+    # 2026-10-27 rehearsal calibrated the retired plugged model, and on the battery model (COM already ~5 mm further
+    # back) it tips stand61 backward at 1.0 s; jaw current from CURRENT-STATE.json jaw_grip_current_ma (150 mA)
+    sys.argv = ["brain_sim_check.py", "--model", "asbuilt", "--manifest", "current", "--drop", "0.04",
                 "--wired-guards", "--walk-at", "1e6", "--walk-s", "0", "--sp-at", "150", "--sp-shape", "ball",
                 "--sp-half", "0.006", "0.006", "0.006", "--sp-mass", "1.0", "--sp-friction", "0.6",
                 "--sp-jaw-current", "150", "--sp-cone", "elliptic", "--sp-impratio", "10", "--sp-after", "0",
