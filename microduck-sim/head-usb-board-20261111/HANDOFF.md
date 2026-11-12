@@ -113,3 +113,18 @@ Fly wires between pads (test only), pin headers through holes soldered underneat
 - Adafruit CH334F 2-port hub: https://adafruit.com/product/5999 and guide https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout
 - CH334F at LCSC: https://www.lcsc.com/product-detail/C5187527.html
 - CH334 datasheet extract: https://www.compel.ru/infosheet/WCH/CH334Q
+
+## 2026-11-12: concept approved, schematic draft 1
+
+Shawn approved the one-USB board concept ("对 开始画"); load-bearing facts are in `DESIGN-CONTRACT.json`. Draft 1 of the schematic is generated from `sch/netlist.py` by `sch/gen_sch.py` into `sch/build/head_usb_board.sch` (64 parts, 45 nets; `sch_lint.py` PASS, `sch/check_netlist.py` PASS; picture `sch/build/head_usb_board.png` from `sch/render_svg.py`). Symbols only, no footprints yet; not imported into Fusion (Fusion had the 18-021 board open).
+
+Choices in draft 1:
+- Hub CH334F on its own internal 3.3 V regulator, 12 MHz crystal with no load capacitors, RESET#, PSELF, OVCUR#, PWREN#, LEDs and ports 3 and 4 open (WCH datasheet V3.0 section 6; Adafruit breakout does the same). Port 1 to the RP2040 through 27 ohm, port 2 to the camera.
+- RP2040 per the Raspberry Pi minimal design (W25Q16JV flash, 1 k on QSPI_SS to a BOOT pad, 15 pF + 1 k crystal circuit). GPIO: 4/5 touch I2C0 (2.2 k pull-ups to 3V3), 10/11 mic SCK/WS, 12 ears SD, 13 back SD, 18/19/20 amp BCLK/LRC/DIN, 0 debug TX pad, 25 LED.
+- Amp MAX98357A on 5 V with SD_MODE 1 M to 5 V and GAIN open, the same as the Adafruit 3006 module now fitted ((L+R)/2, 9 dB); ferrite beads and 220 pF on the outputs as on that module; speaker on a 2-position screw terminal (the leads are bare ends in the module's terminal today).
+- Microphones and touch on 2.54 mm sockets and pins so the existing Dupont ends plug in unchanged: three 1x5 sockets (3V3, GND, SCK, WS, SD), one pin for the back SD lead (female end today), 1x3 pins for the XIAO's GND/SCL/SDA (female ends) and one socket for its 3V3 (male end). Lead ends are read from the wiring page source (`bringup/a7z/build_a7z_solder.py`), not yet confirmed on the robot.
+- Camera and uplink on two 5-pin PicoBlade headers with the camera's order (V, D-, D+, G, G), so the camera's present cable becomes the neck cable; the camera then needs a short double-ended 1.25 mm lead (not owned).
+
+Open before layout: which end of the camera socket is pin 1 (unpublished; board silk reads V M P G G); a 12 MHz crystal with 10 pF load at JLCPCB for the RP2040 (the basic part C9002 is 20 pF); AP2112K and W25Q16JV pinouts were written from memory and need their datasheets; the INMP441 modules' own pull-downs; PIO pin-order needs of the firmware; A7Z USB host, drivers and port current; fit of the outline with 2.54 mm headers.
+
+Sources read 2026-11-12 (by two research agents, quotes in their reports): WCH CH334/335 datasheet V3.0 (wch-ic.com/downloads/CH334DS1_PDF.html); Adafruit-CH334F-Breakout-PCB; Raspberry Pi hardware-design-with-rp2040.pdf and Minimal-KiCAD.zip; rp2040-datasheet.pdf; MAX98357A datasheet 19-6779 Rev 7; Adafruit MAX98357 breakout schematic; INMP441 DS-INMP441-00 Rev 1.1; JLCPCB part pages (CH334F C5187527, RP2040 C2040, W25Q16JVUXIQ C2843335, MAX98357AETE+T C910544, AP2112K-3.3 C51118, PicoBlade 53047-0510 C471412 / 53261-0571 C17256390), all Extended library, in stock that day.

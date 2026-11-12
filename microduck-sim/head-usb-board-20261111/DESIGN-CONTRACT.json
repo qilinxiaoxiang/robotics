@@ -1,0 +1,31 @@
+{
+  "schema": "design-contract/1",
+  "design": "MicroDuck head USB board: one small board in the head that turns the camera, the three microphones, the speaker amp and the touch board into one USB cable across the neck",
+  "approved": {
+    "by": "Shawn",
+    "date": "2026-11-12",
+    "quotes": [
+      "那要不画画试试 我们搞一发看看",
+      "对 开始画"
+    ],
+    "what_was_shown": "concept picture head_usb_board_concept (chat, 2026-11-12): head with one new board about 30 x 20 mm carrying a CH334F hub chip, an RP2040 and a MAX98357A; camera into the hub; three microphones and the touch board into the RP2040; speaker from the amp chip; one USB cable from the hub across the neck to the A7Z USB port"
+  },
+  "state_file": "../CURRENT-STATE.json",
+  "load_bearing": [
+    "Across the neck: one USB cable (plus the unchanged servo bus). No Dupont wires from the head to the A7Z 40-pin header.",
+    "On the board: USB 2.0 hub chip CH334F, RP2040 as the USB sound card, MAX98357A amp chip (same chip as the amp module fitted now). The breadboard and the amp module leave the head.",
+    "All three fitted INMP441 microphones stay (two ears and the back of the head), unchanged and not re-soldered; their existing leads plug into the board.",
+    "The camera stays the U20CAM on USB; its lead plugs into the board's hub.",
+    "The touch XIAO ESP32-S3 keeps its firmware and its I2C interface (slave 0x2A); its four wires go to the RP2040, which forwards touch to the A7Z over the same USB cable.",
+    "Shawn solders nothing on the board: JLCPCB assembles the chips; every lead is a plug.",
+    "Target size about 30 x 20 mm, upright behind the camera where the breadboard is; the size is a target until layout, and a larger outline needs Shawn's word."
+  ],
+  "unverified_at_approval": [
+    "Fit of the outline in the head (voxel check without wires, inference).",
+    "Three-channel microphone firmware (public firmware sends one or two channels).",
+    "A7Z side: snd-usb-audio and cdc_acm in the kernel, and the USB port's current for amp peaks (robot offline 2026-11-11)."
+  ],
+  "parts": {},
+  "geometry": [],
+  "forbidden_parts": []
+}
