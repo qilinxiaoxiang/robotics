@@ -51,6 +51,11 @@ No modelled effect brings the jitter near the robot's, and the play effects toge
 robot's extra falls. The rest is unmodelled. Shawn found loose screws on 2026-11-12 and walking felt steadier after
 he tightened them, so structural looseness beyond a few degrees at one joint is the first candidate.
 
+Training with that play does not help (2026-11-12): play-a (play randomised per episode, head 8, ankles 6, other leg
+joints 4 deg total) and its no-play twin playctl-a both cut the falls in the five play sims from walk61's 63 to 44
+and 43 of 465 (`gap-sweep-play-a.json`, `gap-sweep-playctl-a.json`), so the gain is the shared fine-tune, and both
+fail the jitter gate. Detail in the team repo's `cmu/finetune/modal/FINETUNE-DELTA.md`.
+
 Supply voltage is not it either: over 442 robot actions with a logged voltage the fall rate is 9 % at 7.2-7.5 V and
 5 % above 8.1 V; walking trains on 6.5-8.2 V with load sag (`microduck_constants.py` vin_range since 2026-06-29).
 
@@ -66,7 +71,8 @@ Supply voltage is not it either: over 442 robot actions with a logged voltage th
 
 Log fields: `q` is in servo-ID order (`walk_brain.NAMES`), not `OBSERVATION_DOF_ORDER`; `goal_tick` is a dict keyed
 by servo ID; `pos_tick` a list in servo-ID order.
-- `gap_sweep.py`: the effect-by-effect replay sweep above (Mac mini, about 40 min for 1980 sims at 9 jobs).
+- `gap_sweep.py`: the effect-by-effect replay sweep above (Mac mini, about 40 min for 1980 sims at 9 jobs);
+  `run_candidates.sh TAG...` runs it for fine-tune candidates in `models-<TAG>/`.
 - `drive_bouts.py`: short test walks driven from the Mac through the app's command writer and its driver lease.
 - `wiggle_live.py`: live per-joint encoder readout while a part is pushed by hand (read-only).
 - `free_minimac_disk.py`: deletes files over 5 MB in old `~/sims` studies on the Mac mini.

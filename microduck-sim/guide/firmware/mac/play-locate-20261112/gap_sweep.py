@@ -59,6 +59,15 @@ def cases(n_fell, n_up):
     return fell + up
 
 
+def finished(out):
+    """A sim counts when it exited 0, or when it printed its result row and then aborted at teardown (exit -6:
+    onnxruntime's "recursive_mutex lock failed" at interpreter exit, after the tick log is complete)."""
+    lines = open(out).read().split("\n")
+    if lines[0].strip() == "exit 0":
+        return True
+    return lines[0].strip() == "exit -6" and len(lines) > 1 and lines[1].startswith("{") and "recursive_mutex" in lines[-1] + "".join(lines[2:])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--jobs", type=int, default=9)
@@ -87,7 +96,7 @@ def main():
     done = [0]
 
     def one(j):
-        if os.path.exists(j["tl"] + ".out") and open(j["tl"] + ".out").readline().strip() == "exit 0":
+        if os.path.exists(j["tl"] + ".out") and finished(j["tl"] + ".out"):
             return
         p = subprocess.run(j["argv"], capture_output=True, text=True, timeout=1800)
         last = (p.stdout.strip().splitlines() or [""])[-1]
@@ -102,7 +111,7 @@ def main():
     rows = []
     for j in jobs:
         lines = open(j["tl"] + ".out").read().split("\n")
-        if lines[0].strip() != "exit 0":
+        if not finished(j["tl"] + ".out"):
             rows.append(dict(case=j["case"], cond=j["cond"], error=lines[0] + " " + lines[-1][-300:]))
             continue
         # the scorecard's own verdict: fall (> 45 deg) inside the robot's window (its fall + 1 s), times from the
