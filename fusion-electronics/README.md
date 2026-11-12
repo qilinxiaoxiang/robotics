@@ -74,6 +74,21 @@ Traps, each seen for real:
 - Assert dialogs (420 x 265) ignore keys sent by osascript. A Quartz mouse click on OK at window x+248, y+232 closes them.
 - Screenshots: capture Fusion by window id (`screencapture -l <id>`, id from `CGWindowListCopyWindowInfo`). The user has two displays and a whole-screen or rectangle capture shows whatever window is on top.
 
+## When not to lay out in Fusion: the KiCad + Freerouting route (proven 2026-11-12, MicroDuck head USB board)
+
+Use the Fusion route above for boards whose routing a simple two-layer script can do (through-hole, wide pitch). For fine-pitch chips (0.5 mm QFN and below), four layers with planes, or anything that needs a real autorouter, build the board outside Fusion: Fusion's AUTO does not run through the bridge. The cost is that the board cannot be edited in Fusion afterwards.
+
+Worked example and the reusable scripts: `microduck-sim/head-usb-board-20261111/pcb/` (`gen_pcb.py`, `placement.py`, `run.sh`, `check_drc.py`). Everything runs on the Mac mini; one command places, routes, checks and renders in about 40 s.
+
+- KiCad 10 lives at `~/Applications/KiCad/KiCad.app` on the Mac mini (copied from the cask's dmg, no sudo). Its own Python (`Contents/Frameworks/Python.framework/Versions/3.9/bin/python3.9`) has `pcbnew`; `Contents/MacOS/kicad-cli` runs the rule check and exports pictures.
+- Freerouting: run the jar (`~/code/robotics/pcb-tools/freerouting-2.5.0.jar`) on Homebrew `openjdk` with a time limit. The native `freerouting-cli` 2.5.0 dies on footprints with outlines and then hangs.
+- Board constraints and net classes are stored in the `.kicad_pro`, not the `.kicad_pcb`. Without that file `kicad-cli pcb drc` judges against 0.2 mm defaults.
+- Freerouting does not drop vias from surface pads to a plane. Place those vias in the generator, and in the router's copy of the board give each plane pad a private net so the router routes signals only.
+- Keep the planes in the router's copy (one anchor pin per plane net). Without planes it routes signals on the inner layers and cuts them up; with track keep-outs on the inner layers it places no vias at all.
+- Set the plane clearance (0.2 mm). KiCad's default 0.5 mm merges the openings of neighbouring 2.54 mm header holes and isolates part of the plane.
+- The router keeps only track clearance from the outline: give it an outline drawn inside the real one by the difference to the edge rule. It also necks a few short segments below the minimum width: widen them before the rule check.
+- Acceptance is `kicad-cli pcb drc` with zero unconnected items and zero errors, not the router's own count. The router does not route USB pairs as pairs; high-speed pairs need their own pass.
+
 ## Files
 
 - `addin/ClaudeBridge/`: the Fusion add-in. It listens on 127.0.0.1:8777 and runs posted Python on Fusion's main thread with `app`, `ui` and `adsk` defined. The installed copy is in `~/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/ClaudeBridge/`; check it with `diff -r addin/ClaudeBridge "<installed path>"`.
