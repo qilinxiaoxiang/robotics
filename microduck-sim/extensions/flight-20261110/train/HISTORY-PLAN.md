@@ -103,9 +103,16 @@ the call site (line 947, `sess.run(None, {sess.get_inputs()[0].name: obs[None]})
 file. Also `cmu/mac/walk_brain.py` through `cmu/sync_from_robotics.py`, `scripts/infer_policy.py` (it reads only the
 first input), and the publish shape gate (`src/mjlab_microduck/publish/manifest.py`), which runs one input. Stand,
 groundpick and seepick stay 61-input files and pass through unchanged, so the hot-swap contract survives. Cost per
-call, single thread on the Mac mini: 6.5 us p50 for uni_a against 16.6 us for the history ONNX (2.5x). The A7Z must be
-measured before any deploy: CURRENT-STATE.json `a7z_closed_head_thermal_and_resets` records a 23.6 ms p50 brain loop
-under throttling against a p90 acceptance of 18 ms.
+call, single thread on the Mac mini: 6.5 us p50 for uni_a against 16.6 us for the history ONNX (2.5x); this says
+nothing about the A7Z. On the A7Z, CURRENT-STATE.json holds two loop figures from different conditions. The 23.6 ms
+p50 / 24.6 ms p90 brain loop (about 42 ticks/s) in `a7z_closed_head_thermal_and_resets` was measured 2026-10-22 with
+the board inside the closed V1.17 head, both CPU clusters throttled to 416 MHz, on a bench supply; the acceptance it
+was judged against is a p90 of 18 ms or less and 49 ticks/s or more after a one-hour soak. The board now sits on the
+V1.35 saddle on the Radxa 6530B heatsink, saddle lid not fitted (`parts_a7z_extensions`, recorded as inferred from
+Shawn's 2026-10-26 report), and the newest loop record is 46.4-48.8 ticks/s (20.5-21.6 ms per tick) over nine brain
+logs of 2026-11-02 to 11-06 (`imu_rate_hz` source), with no p90 and no separate policy cost. Before any deploy, measure
+in that installation: the full control loop (tick rate, p50 and p90) with the two-input ONNX for walk and stand, the
+switching between stand and walk, and that the history state is zeroed on every policy re-entry.
 
 ### Design A: stacked history, one stage (cheapest; implemented as delta `universal3h`)
 - Actor: the shared 1261 inputs. Critic: 80 (payload kg, loaded trunk COM xyz). This is lecture 11's asymmetric
@@ -172,22 +179,43 @@ refresh 2026-11-14 00:00, so B fits one weekly quota only after universal3 is do
 ## 4. The timing question: does a history estimator have time before the fall?
 
 Run A falls about 0.9 s after a comx+10 start, with torque saturated from the first tick. A 0.5 s history is full at
-0.5 s. Measured on the Mac mini (CPU, `out/history_smoke.json` probe, 256 envs of the universal3h env with
-universal3's COM and payload randomization, uni_a driving, all envs started at t = 0; ridge readout fit on 192 envs,
-R^2 on the other 64; the per-env target spread is 12.0 mm of loaded trunk COM x):
-- Trunk COM x from one frame: R^2 0.61 at 0.1 s, 0.67 at 0.2 s, 0.60 at 0.3 s, 0.47 at 0.5 s, 0.54 at 0.8 s and 1.0 s.
-  Adding the history mean and oldest frame: 0.62, 0.68, 0.64, 0.55, 0.61, 0.55. Pooled over 0.5-3 s: one frame 0.52,
-  full 1261-input history 0.64.
-- Payload kg from one frame: about 0 pooled (-0.03); from the full history 0.47. Per time bin the history adds 0.1-0.2
-  at 0.1-0.8 s.
-- Reading: the forward COM shows up in the posture within the first 0.1 s, in one frame, well before the 0.9 s fall;
-  the history adds little for COM and most for mass. So the comx+10 fall is not an identification-time problem: the
-  single-frame actor already has most of the COM signal and, saturated from the first tick, lacks a trained response
-  (the coverage gap universal3 targets; fq2 1999, also one frame, holds comx+10 with 0 falls). History is a candidate
-  for the mass-dependent lines (torque p99, saturation at 75 % load) and the shove, not the first fix for comx+10.
-- Limits: a linear probe under one driving policy is a lower bound on what a trained network extracts; 64 test envs
-  per bin make single bins noisy (negative R^2 in late bins for kg is overfitting of 144 features on 192 envs); envs
-  that fell and reset mid-probe add a small time-label error.
+0.5 s. The probe below asks how much of the load a linear readout can extract from the actor's inputs, early and late.
+
+Method (`cmu/finetune/flight/history_probe.py`, run by `zsh train/mini_train_smoke.sh probe 1024 200` on the Mac mini
+CPU; `out/history_probe.json`, `logs/history_probe.log`). 1024 envs of the universal3h env with universal3's COM and
+payload randomization, uni_a driving at its own commands for 200 steps (4 s). Targets: the whole-robot COM x offset
+that the payload event drew for that env and episode (range -11.9 to +12.0 mm, sd 6.8 mm), and the payload mass (sd
+290 g). Features: the same 61 current inputs with and without the 25-frame history (61 against 1261). Time is each
+env's own frames since its last reset (18 envs reset during the probe and restart their clock); the pooled fit uses
+only frames whose whole history is real (0.5 s or more since reset), every 5th step. Ridge regression, lambda chosen
+on an inner split of the 768 training envs, scores on the 256 held-out envs (about 1030 samples per time bin over
+both sets, of which 47 held-out samples sit at +8 mm or more).
+
+COM x offset, held-out RMSE (and at offsets of +8 mm or more: mean signed error, RMSE), 61 inputs against 1261:
+- 0.1 s: 2.6 mm (-1.5, 3.0) against 2.2 mm (-1.0, 2.5); R^2 0.85 against 0.89.
+- 0.2 s: 2.2 mm (-0.9, 2.3) against 2.0 mm (-0.8, 2.1); R^2 0.90 against 0.91.
+- 0.3 s: 2.4 mm (-1.4, 3.0) against 1.9 mm (-0.7, 2.0).
+- 0.5 s: 2.9 mm (-1.8, 3.7) against 2.0 mm (-0.7, 2.1).
+- 0.8 s: 3.6 mm (-3.3, 4.6) against 2.5 mm (-1.6, 3.1).
+- 1.0 s: 3.6 mm (-3.4, 4.3) against 3.0 mm (-2.0, 3.6).
+- Pooled, 0.5 s and later: 3.8 mm (-3.5, 4.4), R^2 0.69, against 3.3 mm (-2.6, 3.9), R^2 0.76.
+
+Payload mass, held-out RMSE, 61 inputs against 1261: 183 g against 138 g at 0.1 s, 155 against 109 at 0.2 s, 221
+against 107 at 0.3 s, 239 against 115 at 0.5 s, 248 against 208 at 0.8 s, 240 against 219 at 1.0 s; pooled 266 g
+(R^2 0.16) against 205 g (R^2 0.50).
+
+What this supports, and no more:
+- A linear readout of the 61 current inputs already locates the COM offset to about 2-3 mm in the first 0.1-0.3 s,
+  before the 0.9 s fall; the history lowers that error by 0.2-0.9 mm in every bin and roughly halves the bias at the
+  +10 mm end. At the forward end both readouts underestimate the offset, the 61-input one by 1-3.5 mm.
+- The readout is easiest early, while the robot settles from the reset pose, and worse once the gait runs.
+- The history helps the mass much more than the COM (for example 107 against 221 g at 0.3 s).
+- It does not show what the policy uses, nor whether 2-4 mm of COM error is small enough to avoid the fall. It
+  therefore does not establish whether the comx+10 falls are a coverage problem or an information problem. fq2 1999
+  holding comx+10 with 0 falls on one frame is an existence proof that one frame can suffice for that case, nothing
+  more. The universal3 checkpoints and the gates in section 6 decide it.
+- Limits: linear readout under one driving policy (a trained network may extract more, or use less); one seed; per
+  bin only 47 held-out samples at the forward end.
 
 ## 5. Incentive audit and task-metric stop
 
@@ -259,7 +287,8 @@ fixed weights). Not proposed for this round; it is the route if universal3 still
 Code (team repo `microduck_rl`): `cmu/finetune/flight/history.py` (history observation, warm start, two-input export,
 stateful wrapper), `history_smoke.py`, delta `universal3h` and the 61-or-history loaders in `flight_worker.py`,
 `universal3h` in `flight_audit.py` and in the launcher's audit check in `kaggle_flight.py`. Here:
-`flight_eval.py` (stateful policies) and `mini_train_smoke.sh history`.
+`flight_eval.py` (stateful policies), `mini_train_smoke.sh history` and `probe`, `fall_check.sh`; team repo also
+`history_probe.py` and `smoke_fall_check.py`.
 
 Smoke (`zsh train/mini_train_smoke.sh history 3 256 150`; `logs/history_smoke.log`, `out/history_smoke.json`):
 actor obs 1261, critic 80; history columns equal the last 25 frames (max |diff| 0 over 138 envs without an episode
@@ -271,7 +300,30 @@ against the torch actor over 60 steps with a reset 6.0e-7; the history weights m
 Evaluator (`train/flight_eval.py`, nominal manifest, walk, `--stand-s 0`, 2 episodes): the zero-history export
 (`ckpt/hist_m0`) and uni_a give identical results (0 falls, 0.1732 m/s median, max tilt 16.7) in
 `eval/eqcheck_s0_uni_a.json` and `eval/eqcheck_s0_hist_m0.json`; the 3-iteration smoke policy (`ckpt/hist_smoke`)
-loads and runs, and falls at 3.0 s, as an untrained policy should (`eval/eqcheck_s0_hist_smoke.json`).
+loads and runs, and falls at 3.0 s (`eval/eqcheck_s0_hist_smoke.json`).
 
-Not done: the teacher delta and the distillation worker (design B), the walk_brain runtime change, the A7Z latency
-measurement, the other 17 universal3h audit cases and their gate record, and any training run.
+Why the 3-iteration policy falls although iteration 0 equals uni_a (controlled check,
+`cmu/finetune/flight/smoke_fall_check.py`, run on the Mac mini CPU by `zsh train/fall_check.sh "<arm>|<flags>" ...`). Every arm starts from uni_a,
+64 envs, 3 PPO iterations, then the same evaluation (nominal walk, 4 episodes, `--stand-s 0`):
+`out/fallcheck_<arm>.json` (lr trace, first-layer weight change) and `eval/fallcheck_<arm>.json`.
+- Smoke settings (no critic warm-up, cfg lr 1e-3 adaptive): history actor 4 of 4 falls (0.9-2.6 s); history columns
+  frozen 4 of 4 (3.0 s); the one-frame universal3 actor 4 of 4 (4.9-13.4 s). In these settings any actor falls, so
+  the smoke fall alone says nothing about history.
+- Learning rate alone: history actor with lr clamped to 3e-4, no warm-up, 3 of 4 falls; with 1e-5, 0 of 4.
+- Launch settings (100 critic-only warm-up iterations with the actor frozen, lr clamped to 3e-4, as `--warmup-iters
+  100 --max-lr 0.0003`): one-frame actor 1 of 4 falls (10.9 s); history actor 4 of 4 (3.3-6.1 s); history actor with
+  its 1200 history columns frozen 0 of 4; history actor with the optimizer step on those columns scaled by 0.04, 0 of
+  4 (0.170 m/s).
+- Cause: the update of the 1200 zero-initialised history weights. Adam moves each weight by about the learning rate
+  whatever its gradient, so after 3 iterations the history block changed by 279 (sum of |dW|) against 14 for the 61
+  current inputs, and its pre-activations swamp the walker's. Freezing those columns or scaling their step removes
+  the fall under the launch settings; the warm-up and the lr clamp alone do not.
+- Consequence for a launch of universal3h or the design B student: as written, `universal3h` trains the history
+  columns at the full rate; it needs a per-column step scale (0.04 tested) in the worker before a run. Not done. The
+  evidence is 64 envs, 4 episodes, one seed, CPU; the mechanism does not depend on batch size (inference), but the
+  first Kaggle checkpoint after warm-up (iteration 250) must be evaluated on nominal walk and no-pack walk before the
+  run is allowed to continue, against the model_0 export.
+
+Not done: the per-column history step scale in the worker, the teacher delta and the distillation worker (design B),
+the walk_brain runtime change, the A7Z loop measurement, the other 17 universal3h audit cases and their gate record,
+and any training run.

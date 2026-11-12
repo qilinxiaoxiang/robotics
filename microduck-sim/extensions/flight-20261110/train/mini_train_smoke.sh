@@ -53,6 +53,20 @@ case "$1" in
     cp $LOCAL/$FL/train/ckpt/hist_smoke/walk61.onnx $LOCAL/$FL/train/ckpt/hist_smoke/stand61.onnx || true
     grep -E "\[smoke\]|\[history\]|Error|Traceback" $LOCAL/$FL/train/logs/history_smoke.log | cut -c1-500 | head -40
     ;;
+  probe)
+    # HISTORY-PLAN.md section 4 probe alone (history_probe.py): $2 envs, $3 steps; out/history_probe.json
+    NE=${2:-1024}
+    PS=${3:-200}
+    zsh $LOCAL/$FL/train/mini.sh run true
+    mkdir -p $LOCAL/$FL/train/logs
+    ssh mac-mini "mkdir -p $REMOTE/smoke-assets"
+    rsync -a $LOCAL/$FL/train/ckpt/uni_a/walk61.onnx mac-mini:$REMOTE/smoke-assets/uni_a.onnx
+    ssh mac-mini "cd $REMOTE/$RL && FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests timeout 590 .venv/bin/python \
+      cmu/finetune/flight/history_smoke.py --init \$HOME/$REMOTE/smoke-assets/uni_a.onnx --envs $NE --probe-only \
+      --probe-steps $PS --outdir /tmp/history_probe 2>&1" > $LOCAL/$FL/train/logs/history_probe.log || true
+    scp -q mac-mini:/tmp/history_probe/history_probe.json $LOCAL/$FL/train/out/history_probe.json || true
+    grep -E "\[smoke\]|\[history\]|Error|Traceback" $LOCAL/$FL/train/logs/history_probe.log | cut -c1-300 | head -20
+    ;;
   audit)
     zsh $LOCAL/$FL/train/mini.sh run true  # waits while another agent's simulation runs on the mini
     # universal-env degenerate audit on CPU (UNIVERSAL-PLAN.md section 4): assets laid out as the training image's
