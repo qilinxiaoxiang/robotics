@@ -136,3 +136,27 @@ Sources read 2026-11-12 (by two research agents, quotes in their reports): WCH C
 - Where straight-back Dupont plugs (16 mm behind the board) also clear every part: only the top band, 27.5 x 13.5 mm (y -26.5 to 1.0, z 131.5 to 145.0); below z 131.5 parts sit behind the board.
 - The camera lead in its present position changes neither number.
 Consequence for layout: 2.54 mm headers go in the top 13.5 mm band (5 rows x 10 columns possible, about 21 positions needed); chips and the two PicoBlade headers go below it on the same face, with side-entry PicoBlade parts because nothing can plug straight back there. Thickness budget 11.3 mm: PCB 1.6 + socket 8.5 = 10.1. Not covered: wires (about 34 in the head today), head poses other than HOME, and the cap being lowered on.
+
+## 2026-11-12: board layout draft 1 (KiCad + Freerouting on the Mac mini)
+
+Tool choice: KiCad 10.0.8 (`~/Applications/KiCad/KiCad.app` on the Mac mini, installed without sudo) builds the board from `sch/netlist.py`, Freerouting 2.5.0 routes it, `kicad-cli pcb drc` judges it. Reason: 0.4 mm pitch QFN-56 and USB in 30 x 30 mm are beyond the two-layer router written for 18-021, and Fusion's AUTO does not run through the bridge. Cost: this board is not editable in Fusion. One command: `sh pcb/run.sh all 80` (place, plane vias, route, rule check, picture; about 40 s), then `python3 pcb/check_drc.py`.
+
+Result (`pcb/build/board.kicad_pcb`, picture `pcb/build/board.png`): 30 x 30 mm, 4 layers (front, GND plane, +3V3 plane, back), all 64 parts on the rear face, 45 nets, 0 unconnected, 0 rule errors at JLCPCB-level limits (track/space min 0.1 mm, default 0.15/0.13, via 0.5/0.3, edge 0.3). Waived: 7 courtyard overlaps between the 2.54 mm headers, which stand on one 2.54 mm grid like a multi-row header. Warnings not cleaned: 201 silkscreen overlaps (reference texts).
+
+Placement follows a depth probe behind the board's rear face (same voxel grid as `space_check.py`): over 30 mm free in the top band (board y < 13.5), 4 to 5 mm under the band on the left half, 9 to 10 mm on the right half. So every part that takes a plug is in the band (three 1x5 sockets, back-SD pin, touch pins and socket, speaker screw terminal, and both PicoBlade headers as the vertical 53047-0510); below the band only parts up to about 1.3 mm tall. The outline 30 x 30 is larger than the contract's 30 x 20 target and still needs Shawn's word in `DESIGN-CONTRACT.json`.
+
+How the build works, and what failed first (all in `pcb/gen_pcb.py` comments):
+- The native `freerouting-cli` 2.5.0 dies on this board (UnsupportedFeatureError ComponentOutline) and hangs; `run.sh` runs the jar (sha256 matches the release) on Homebrew openjdk 27 with an 8 minute limit.
+- KiCad keeps constraints and net classes in the `.kicad_pro`, not the board; without it `kicad-cli drc` judged against 0.2 mm defaults. `write_project()` writes it.
+- Freerouting does not drop vias from surface pads to a plane. `plane_fanout()` gives every GND and +3V3 surface pad its own via (78 vias, in the pad for exposed pads), and the router's copy of the board puts each such pad on a private, already-complete net so it routes signals only.
+- Signals stay off the inner layers only when the planes are present in the router's copy (one anchor pin per plane). Without planes it routed on them and cut them into islands; with wire keep-outs it placed no vias.
+- Plane clearance 0.2 mm (KiCad's default 0.5 merged the header holes into a slot that isolated part of the 3V3 plane). The router's outline is 0.2 mm inside the real one (edge rule). Segments it necks below 0.1 mm are widened to 0.1 mm before the rule check.
+
+Research agent results folded in (sources in the chat report of 2026-11-12): AP2112K-3.3 pinout 1 VIN, 2 GND, 3 EN, 4 NC, 5 VOUT (Diodes DS39724); W25Q16JVUXIQ pinout as drawn, exposed pad may float (Winbond rev H; the Pico leaves it open, so does this board); crystal pads 1 and 3 are the crystal, 2 and 4 ground (YXC, matches the KiCad footprint); CH334F exposed pad 2.6 mm and MAX98357A T1633 pad match the chosen footprints. Crystal choice: YXC X322512MMB4SI, C50430, 10 pF load, for both chips (RP2040 with 2 x 15 pF and 1 k as in the Raspberry Pi guide; CH334F with no capacitors); its ESR is 80 ohm max against the guide's 50, so the 1 k value is unproven. Screw terminal C557685 (Xinya XY308-2.54-2P, matches the footprint). 1x5 sockets: 8.5 mm C50950, or 5.7 mm C2913789 (insertion depth for a 6 mm pin not confirmed).
+
+Not done, in order of risk:
+1. USB data lines are routed as ordinary single tracks. The camera and uplink pairs carry 480 Mbit/s and need to be routed as matched 90 ohm pairs side by side over the ground plane before ordering; the stackup's track width for 90 ohm has to come from JLCPCB's calculator for the chosen 4-layer stack.
+2. Camera socket pin 1 end (board silk reads V M P G G) still unknown; J_CAM and J_UP pin order depends on it.
+3. Speaker terminal wire-entry side: read from the footprint outline only (KiCad convention puts entry on the +y side, toward the low parts); check against the maker drawing.
+4. No silkscreen labels for the builder (which plug goes where), no mounting feature (how the board is held on the camera back), no fiducials.
+5. Manufacturing files (Gerber, BOM with LCSC numbers, placement file), firmware, A7Z-side checks: not started.
