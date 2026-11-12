@@ -6,11 +6,11 @@ Goal: cut the bundle of wires that runs from the MicroDuck head down the neck to
 
 - Pin map: `microduck-sim/bringup/A7Z-PINS.html` (19 Dupont wires on the A7Z 40-pin header). Read it, not the overlays, for wire counts.
 - From the torso (8, unchanged by any plan): 5 V red 2 / black 6; IMU 1, 3, 5, 9; UART 7 (A7Z TX), 11 (A7Z RX).
-- From the head, across the neck (11, plus 1 optional):
+- From the head, across the neck (12):
   - Amp MAX98357A (5): Vin 4, BCLK 12, LRC 35, GND 39, DIN 40.
   - Touch board XIAO ESP32-S3 (4): 3V3 17, GND 25, SCL 29, SDA 31 (TWI0, I2C slave 0x2A).
   - Ear mics INMP441 x2 (2): GND 34, SD 38. Their SCK/WS/VDD share the amp and touch lines on a 25-hole mini breadboard on the back of the camera.
-  - Optional back-of-head mic (1): SD to pin 10, not plugged.
+  - Back-of-head mic INMP441 (1): SD to pin 10, fitted and working since 2026-10-29 (ALSA ch2; `CURRENT-STATE.json` `a7z_audio_capture`). Corrected 2026-11-11: this line said "optional, not plugged", which was wrong and was repeated to Shawn; he rejected it. All three microphones are in use, so any plan must carry three mic channels (two I2S data lines) or state plainly that it removes a working function.
 - Camera: U20CAM, its own USB cable to the A7Z USB-C through a USB-A to C adapter. The camera has a Molex PicoBlade 1.25 mm 5-pin socket on its board.
 - Overlays: `guide/firmware/pi/duck-i2s0-din3.dts`, `duck-twi0-touch.dts`.
 - Touch firmware: `guide/extension-20261015-touch/firmware/touch_xiao/touch_main.cpp`. Pads L1 D0 (GPIO1), R1 D1 (GPIO2), L2 D2 (GPIO3), R2 D3 (GPIO4), M D8 (GPIO7); I2C slave on D4 SDA / D5 SCL. Arduino framework.
@@ -88,7 +88,7 @@ Recommended to Shawn (awaiting his word, nothing designed or ordered): Plan A as
 
 Shawn rejected Plan A: "还是要8根线 那不就跟没做一样吗也少不了几根呀". Eight cores is the floor for any passive board (eight distinct signals), so the goal is again one USB cable across the neck, and the open question is only which chip turns audio into USB with the least unproven firmware. The "crackling speaker" above is a third party's ESP32-S3 USB sound card attempt (atomic14 blog), not the duck; the duck's own audio is fine (Shawn: "现在声音很好").
 
-Lead found the same day, not yet tested: public RP2040 firmware that already is a USB sound card with INMP441 mics and an I2S DAC (github.com/denisgav/pico-usb-headset, github.com/denisgav/rpi_usb_sound_card: `stereo_microphone_i2s`, `stereo_speaker`; TinyUSB, Pico SDK). RoboClub stock has Raspberry Pi Pico boards and 2 XIAO RP2040 (`roboclub/INVENTORY.md`). Candidate head layout: CH334F hub with three downstream devices: camera, an RP2040 as USB sound card (two ear mics + amp; the back mic is dropped), the existing XIAO sending touch over Arduino USB serial. Unverified: mic and speaker in one device at the same time on that firmware, 48 kHz capture, MAX98357A as the DAC, total current against the ~1 A port, A7Z drivers. Silicon Labs CP2615 (USB to I2S bridge, 48 kHz 16/24-bit stereo both ways) was looked at and set aside: marked not for new designs. First step is a bench test on a Mac with a club Pico before any PCB.
+Lead found the same day, not yet tested: public RP2040 firmware that already is a USB sound card with INMP441 mics and an I2S DAC (github.com/denisgav/pico-usb-headset, github.com/denisgav/rpi_usb_sound_card: `stereo_microphone_i2s`, `stereo_speaker`; TinyUSB, Pico SDK). RoboClub stock has Raspberry Pi Pico boards and 2 XIAO RP2040 (`roboclub/INVENTORY.md`). Candidate head layout: CH334F hub with three downstream devices: camera, an RP2040 as USB sound card (two ear mics + amp; this firmware covers two mic channels only, so the working back mic would be lost unless a third channel is added: open problem, not an accepted loss), the existing XIAO sending touch over Arduino USB serial. Unverified: mic and speaker in one device at the same time on that firmware, 48 kHz capture, MAX98357A as the DAC, total current against the ~1 A port, A7Z drivers. Silicon Labs CP2615 (USB to I2S bridge, 48 kHz 16/24-bit stereo both ways) was looked at and set aside: marked not for new designs. First step is a bench test on a Mac with a club Pico before any PCB.
 
 ## Board-joining terms explained to Shawn
 
