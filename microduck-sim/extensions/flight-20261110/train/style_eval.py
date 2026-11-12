@@ -162,9 +162,10 @@ def main():
     ap.add_argument("--extra", default="")
     ap.add_argument("--name", default="")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--seed0", type=int, default=0, help="first seed; seeds are seed0..seed0+episodes-1")
     a = ap.parse_args()
     jobs = [(os.path.abspath(a.models), os.path.abspath(a.manifest), a.case, s, 0.0, 8.0, False, a.extra.split())
-            for s in range(a.episodes)]
+            for s in range(a.seed0, a.seed0 + a.episodes)]
     with ProcessPoolExecutor(a.workers) as ex:
         eps = list(ex.map(episode, jobs))
     falls = [e for e in eps if e["fell_at"] is not None]

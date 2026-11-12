@@ -21,6 +21,11 @@ from pathlib import Path
 
 TRAIN = Path(__file__).resolve().parent
 S0 = "--stand-s 0"
+# Two seed sets (2026-11-12): checkpoints are picked on "dev" (seeds 0..19, files ua_*), the verdict on a picked one is
+# run on "final" (seeds 1000..1099, files uaf_*), which is never used for picking. Each set has its own result files,
+# so a final run never skips because a dev file exists, and score refuses files whose seeds or count do not match.
+SETS = {"dev": dict(prefix="ua", seed0=0, episodes=20), "final": dict(prefix="uaf", seed0=1000, episodes=100)}
+SET = SETS["dev"]
 SCAN = "--dance train/specs/head_scan_dance.json"
 
 
@@ -51,19 +56,20 @@ def cases(models):
 
 
 def command(models, e, episodes):
-    out = f"train/eval/ua_{models}_{e['name']}.json"
+    out = f"train/eval/{SET['prefix']}_{models}_{e['name']}.json"
     man = f"train/manifests/flightpack-{e['manifest']}.json"
     tool = "style_eval.py" if e["tool"] == "style" else "flight_eval.py"
-    name = f"--name ua_{models}_{e['name']} " if e["tool"] == "style" else ""
+    name = f"--name {SET['prefix']}_{models}_{e['name']} " if e["tool"] == "style" else ""
     return (f"$PY train/{tool} {name}--models train/ckpt/{models} --manifest {man} --case {e['case']} --episodes {episodes} "
-            f"--workers 8 {e['flags']} --extra='{e['extra']}' --out {out} > /dev/null 2>&1; echo done {e['name']}")
+            f"--workers 8 --seed0 {SET['seed0']} {e['flags']} --extra='{e['extra']}' --out {out} > /dev/null 2>&1; echo done {e['name']}")
 
 
 def run(a):
     mini = str(TRAIN / "mini.sh")
     subprocess.run(["zsh", mini, "push"], check=True, capture_output=True)
-    todo = [e for e in cases(a.models) if a.redo or not (TRAIN / f"eval/ua_{a.models}_{e['name']}.json").exists()]
-    print(f"{len(todo)} cases to run for {a.models}", flush=True)
+    todo = [e for e in cases(a.models) if (not a.only or e["name"] in a.only.split(","))
+            and (a.redo or not (TRAIN / f"eval/{SET['prefix']}_{a.models}_{e['name']}.json").exists())]
+    print(f"{len(todo)} cases to run for {a.models} ({a.set}: seeds {SET['seed0']}..{SET['seed0'] + a.episodes - 1})", flush=True)
     for i in range(0, len(todo), a.chunk):
         cmd = "; ".join(command(a.models, e, a.episodes) for e in todo[i:i + a.chunk])
         r = subprocess.run(["zsh", mini, "run", cmd], capture_output=True, text=True)
@@ -72,12 +78,18 @@ def run(a):
 
 
 def load(models, name):
-    p = TRAIN / f"eval/ua_{models}_{name}.json"
+    p = TRAIN / f"eval/{SET['prefix']}_{models}_{name}.json"
     if not p.exists():
         return None
     d = json.loads(p.read_text())
     s = d["summary"]
     eps = d.get("episodes", [])
+    want = list(range(SET["seed0"], SET["seed0"] + SET["episodes"]))
+    got = sorted(e.get("seed") for e in eps)
+    if got != want:  # wrong seed set or a short run: not a result for this set
+        print(f"seed check: {p.name} has {len(got)} episodes, seeds {got[:1]}..{got[-1:]}, expected {want[0]}..{want[-1]}")
+        return None
+    s["seeds"] = f"{want[0]}..{want[-1]}"
     yaws = [e.get("yaw_walk_deg") for e in eps if e.get("yaw_walk_deg") is not None and e.get("fell_at") is None]
     s["turn_rate_rad_s_median"] = round(sorted(yaws)[len(yaws) // 2] / 15.0 / 57.2958, 3) if yaws else None
     return s
@@ -98,7 +110,9 @@ def score(a):
             r = ref_by.get(ln["line"])
             ln["ref" if i == 0 else f"ref_{rn}"] = f"{r['result']} {r['detail']}" if r else None
     out = dict(models=a.models, ref=a.ref, missing=missing, verdict="PASS" if ok_all and not missing else "FAIL", lines=lines)
-    (TRAIN / f"out/accept_{a.models}.json").write_text(json.dumps(out, indent=1))
+    suffix = "" if a.set == "dev" else f"_{a.set}"
+    out["set"], out["seeds"] = a.set, f"{SET['seed0']}..{SET['seed0'] + SET['episodes'] - 1}"
+    (TRAIN / f"out/accept_{a.models}{suffix}.json").write_text(json.dumps(out, indent=1))
     for ln in lines:
         extra = "".join(f"  || {rn}: {ln[f'ref_{rn}']}" for rn in refs[1:])
         print(f"{ln['result']:7s} {ln['line']}: {ln['detail']}  || {refs[0]}: {ln['ref']}{extra}")
@@ -183,11 +197,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=("run", "score"))
     ap.add_argument("models")
-    ap.add_argument("--episodes", type=int, default=20)
-    ap.add_argument("--chunk", type=int, default=8)
+    ap.add_argument("--set", choices=sorted(SETS), default="dev")
+    ap.add_argument("--episodes", type=int, default=None, help="default: the set's count (dev 20, final 100)")
+    ap.add_argument("--only", default="", help="comma-separated case names to run (score still needs every case)")
+    ap.add_argument("--chunk", type=int, default=None, help="cases per Mac mini job (default 8 for dev, 2 for final)")
     ap.add_argument("--redo", action="store_true")
     ap.add_argument("--ref", default="fq2_1999")
     a = ap.parse_args()
+    global SET
+    SET = dict(SETS[a.set])
+    if a.episodes:
+        SET["episodes"] = a.episodes
+    a.episodes = SET["episodes"]
+    a.chunk = a.chunk or (8 if a.set == "dev" else 2)
     run(a) if a.mode == "run" else score(a)
 
 

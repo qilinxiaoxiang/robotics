@@ -190,9 +190,10 @@ def main():
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--out", required=True)
     ap.add_argument("--extra", default="", help="probe flags appended last, space separated (e.g. '--stand-s 0')")
+    ap.add_argument("--seed0", type=int, default=0, help="first seed; seeds are seed0..seed0+episodes-1")
     a = ap.parse_args()
     jobs = [(os.path.abspath(a.models), os.path.abspath(a.manifest), a.case, s, a.shove_ns, a.shove_at, a.landing,
-             a.extra.split()) for s in range(a.episodes)]
+             a.extra.split()) for s in range(a.seed0, a.seed0 + a.episodes)]
     with ProcessPoolExecutor(a.workers) as ex:
         eps = list(ex.map(episode, jobs))
     falls = [e for e in eps if e["fell_at"] is not None]

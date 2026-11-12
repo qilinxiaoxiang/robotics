@@ -170,7 +170,8 @@ switching between stand and walk, and that the history state is zeroed on every 
   universal runs) and highest risk. Rejected for this round.
 
 ### Comparison
-GPU hours: A about 3 h, B about 4-4.5 h (teacher 2.9 h plus student 1-1.5 h), C several runs. Runtime change: the
+GPU hours per single run: A about 3 h, B about 4-4.5 h (teacher 2.9 h plus student 1-1.5 h), C several runs; the
+counts with controls and both teachers are in section 6. Runtime change: the
 same for all three (the two-input stateful ONNX). Risk: A may not use its history; B has a stage-1 gate that tells
 whether load knowledge helps at all before the student is trained, and the student gets a supervised target for
 every state instead of a reward signal; C has no warm start. Kaggle: 26.75 of 30 h used at 03:30 on 2026-11-12,
@@ -245,21 +246,35 @@ For each universal3 checkpoint (iterations 250 to 2000 and best), run the comx+1
 shove through accept_universal.py. History is not needed if comx+10 walk falls drop to fq2 1999's count (0) and the
 shove to its line without the nominal or no-pack lines getting worse. If comx+10 falls stay flat across checkpoints
 although forward-COM coverage rose from 1.2 % to 8 % of resets, or trade against the nominal or no-pack lines, the
-next run is design A with a fixed budget (one run, the universal3 settings, same start checkpoint and seed as a
-one-frame control of the same length): it changes only what the actor sees, so a gain is the gain of history.
-Design B's teacher stage follows only if A shows a gain or the load-only teacher beats the one-frame control; B
-changes both the information and the training method and cannot by itself say where a gain came from. If only the
-torque or step-width lines fail, the next step is section 7, not history.
+next run is design A with a fixed budget against a one-frame control of the same length from the same start
+checkpoint and seed. A differs from the control in more than the time information (more parameters, a separate
+step scale), so a better A shows that the whole change helps, not yet that the past is used. The picked A checkpoint
+therefore gets one more evaluation: normal history against the current frame repeated into all 25 slots; only a
+clear loss with repeated frames shows the policy uses the past.
+
+After A: if A meets the acceptance, stop there; B is not run. If a gap worth closing remains, the teacher stage of B
+is run, and the student is distilled only if a teacher clearly beats the one-frame control on that gap. If the
+torque or step-width lines are what remains, the choice between history and the constraint route of section 7 is
+made from the A-against-control result on those lines (history may help the load-dependent torque; automatic
+weights are not guaranteed to meet both lines either), not fixed in advance.
+
+Budget, counted per run (T4 hours, estimates from the universal3 rate, not measured for history): A is two runs,
+history and the one-frame control, about 3 h each, about 6 h if not paired; paired on the two GPUs of one Kaggle
+session they count once, about 3 h of quota. B's teacher stage is two teachers (load only, load plus velocity),
+about 3 h paired; the student about 1 to 1.5 h. Whole path A then B: about 7 to 7.5 h of quota paired, about 13 h
+of GPU time. The short scale check before A is extra (under 1 h).
 
 Gates are per scenario, never a sum: comx+10 (stand, walk), comx-10, mass +10 %, standing and walking shove,
 landing, nominal and no-pack each have their own line against the reference (`accept_universal.py`, per-case lines
-added 2026-11-12; the old 14-case sum let a gain in one case hide a loss in another). Checkpoints are picked on the
-acceptance seeds; the final verdict is run again on seeds not used for picking. Twenty episodes without a fall bound
-the fall rate only below about 14 % (one-sided 95 %), so 20 is a screen; a candidate that passes is rerun at 100
-episodes on the cases it was picked for.
+added 2026-11-12; the old 14-case sum let a gain in one case hide a loss in another). Two seed sets, implemented in
+`accept_universal.py --set`: `dev` (seeds 0 to 19, files `ua_*`) for picking checkpoints, `final` (seeds 1000 to
+1099, 100 episodes, files `uaf_*`, score in `out/accept_<dir>_final.json`) for the verdict on a picked one. The sets
+have separate result files, so a final run is never skipped because a dev file exists, and `score` rejects a file
+whose seed list or episode count does not match its set. Twenty episodes without a fall bound the fall rate only
+below about 14 % (one-sided 95 %), so dev is a screen.
 
 Warm start is not a guarantee during training: iteration 0 equals the start policy, but the 3-iteration smoke policy
-fell at 3.0 s (section 8; cause not established, the smoke had no critic warm-up). Every run keeps the start
+fell at 3.0 s (section 8 has the controlled check). Every run keeps the start
 checkpoint as a control in the same evaluation, and a checkpoint is chosen on falls, speed and torque; moved history
 weights or a falling imitation loss are not evidence of success.
 
@@ -314,15 +329,21 @@ Why the 3-iteration policy falls although iteration 0 equals uni_a (controlled c
   100 --max-lr 0.0003`): one-frame actor 1 of 4 falls (10.9 s); history actor 4 of 4 (3.3-6.1 s); history actor with
   its 1200 history columns frozen 0 of 4; history actor with the optimizer step on those columns scaled by 0.04, 0 of
   4 (0.170 m/s).
-- Cause: the update of the 1200 zero-initialised history weights. Adam moves each weight by about the learning rate
-  whatever its gradient, so after 3 iterations the history block changed by 279 (sum of |dW|) against 14 for the 61
-  current inputs, and its pre-activations swamp the walker's. Freezing those columns or scaling their step removes
-  the fall under the launch settings; the warm-up and the lr clamp alone do not.
-- Consequence for a launch of universal3h or the design B student: as written, `universal3h` trains the history
-  columns at the full rate; it needs a per-column step scale (0.04 tested) in the worker before a run. Not done. The
-  evidence is 64 envs, 4 episodes, one seed, CPU; the mechanism does not depend on batch size (inference), but the
-  first Kaggle checkpoint after warm-up (iteration 250) must be evaluated on nominal walk and no-pack walk before the
-  run is allowed to continue, against the model_0 export.
+- What this supports: the intervention result. Freezing the history columns or scaling their step removes the fall
+  under the launch settings; the warm-up and the lr clamp alone do not. So the update of the history branch is what
+  breaks the walker in this small test. The weight-change totals (279 summed |dW| on the history block against 14 on
+  the 61 current inputs) are not evidence of an abnormal update by themselves: there are 1200 history columns
+  against 61, a ratio of 19.7, and the change ratio is 19.3, so the per-column change is the same.
+- Consequence for a launch of universal3h or the design B student: the worker needs a separate step scale for the
+  history columns. 0.04 is one candidate that kept the walker over 3 iterations; it is not shown that the history
+  branch still learns at that scale. Before a full run, a short check (a few hundred iterations) compares two or
+  three scales on both questions: does walking survive, and does the policy come to use the history (the
+  repeated-frame test in section 6). Not done.
+- Early checkpoints: a history run saves at iterations 110, 125, 150 and 200 as well as every 250 (the first is 10
+  iterations after the warm-up ends), and each is evaluated on nominal walk and no-pack walk against the model_0
+  export before the run is trusted further. On Kaggle the outputs appear only when the kernel ends, so the first
+  history run is a short kernel that stops at iteration 250. The evidence here is 64 envs, 4 episodes, one seed,
+  CPU; that it carries over to 4096 envs is inference.
 
 Not done: the per-column history step scale in the worker, the teacher delta and the distillation worker (design B),
 the walk_brain runtime change, the A7Z loop measurement, the other 17 universal3h audit cases and their gate record,
