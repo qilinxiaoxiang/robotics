@@ -826,3 +826,108 @@ def test_a_caller_surely_behind_turns_the_body_at_once(tmp_path):
             assert rec["target_yaw"] < -1.0                  # the head swings right as far as it goes
         else:
             assert first_turn is None                        # front first: the head searches before any body turn
+
+
+class ScriptedCapture:
+    """Live capture double: hands run_live the scene's blocks in order, runs a hook on each block's time (to change
+    the brain's tick log mid-run), then ends the capture."""
+
+    def __init__(self, x, clock, hook):
+        self.items = list(blocks(x))
+        self.clock, self.hook = clock, hook
+        self.proc, self.err, self.n, self.gaps = None, None, 0, 0
+
+    def stop(self):
+        pass
+
+    class _Q:
+        def __init__(self, cap):
+            self.cap = cap
+
+        def get(self, timeout=None):
+            cap = self.cap
+            if not cap.items:
+                return None
+            t, b = cap.items.pop(0)
+            cap.clock[0] = t
+            cap.n += 1
+            cap.hook(t)
+            return t, b
+
+    @property
+    def q(self):
+        return self._Q(self)
+
+
+def test_follow_brain_answers_while_driven_with_a_quack_then_with_the_head_and_never_exits(tmp_path):
+    """2026-11-12: one listener for the whole boot. While the app drives the duck (walk with a speed) a call is
+    answered with a quack and the control file is not touched; once the brain rests the next call turns the head;
+    the brain going away and coming back never ends the program."""
+    log, cmd = str(tmp_path / "duck_wired_log_f.jsonl"), str(tmp_path / "cmd.json")
+    a = args(cmd=cmd, no_gate=False, brain_logs=str(tmp_path / "duck_wired_log_*.jsonl"), follow_brain=True,
+             no_sound=False, mute=True, no_turn=True)
+    clock = [0.0]
+    n = nc.NameCall(a, nc.Log(str(tmp_path / "nc.jsonl"), echo=False), now=lambda: clock[0])
+    n.head.default = dict(nc.DEFAULT_HEAD)
+    played = []
+
+    class Bank:
+        files = ["q.wav"]
+
+        def play(self, event):
+            played.append(event)
+            return "q.wav"
+
+        def playing(self):
+            return False
+    n.bank = Bank()
+
+    n.gate.now = lambda: 1e9 + clock[0]                                     # the brain clock runs on the scene clock
+
+    def tick(row):
+        with open(log, "a") as f:
+            f.write(json.dumps(dict(t=1e9 + clock[0], mode=row["mode"], cmd=row, torque=True, q=[0] * 14)) + "\n")
+
+    def hook(t):
+        if t < 6.0:
+            row = {"mode": "walk", "vx": 0.25, "vy": 0, "vtheta": 0}          # the app drives
+            json.dump(row, open(cmd, "w"))
+            tick(row)
+        elif t < 8.0:
+            pass                                                              # brain log goes stale: no exit
+        else:
+            if t < 8.05:
+                json.dump({"mode": "walk", "vx": 0, "vy": 0, "vtheta": 0}, open(cmd, "w"))
+            tick({"mode": "walk", "vx": 0, "vy": 0, "vtheta": 0})
+    hook(0.0)
+    cap = ScriptedCapture(scene([(1.5, 60), (15.5, -45)], 19.0), clock, hook)
+    try:
+        n.run_live(cap)
+    except SystemExit as e:
+        assert "capture ended" in str(e)                                     # only the end of audio ends it
+    calls = [json.loads(l) for l in open(str(tmp_path / "nc.jsonl")) if json.loads(l)["kind"] == "call"]
+    assert len(calls) == 2
+    assert calls[0]["answer"] == "quack" and "walking" in calls[0]["head_why"]
+    assert "take" in calls[1] and calls[1]["take"]
+    assert len(played) >= 2
+    assert json.load(open(cmd)).get("head") is not None                      # the head answered the second call
+
+
+def test_follow_brain_treats_stand_mode_as_quack_only(tmp_path):
+    log = str(tmp_path / "duck_wired_log_s.jsonl")
+    brain_log(log, "stand", {"mode": "stand"})
+    a = args(cmd=str(tmp_path / "cmd.json"), no_gate=False, brain_logs=str(tmp_path / "duck_wired_log_*.jsonl"),
+             follow_brain=True)
+    n = nc.NameCall(a, nc.Log(None, echo=False))
+    ok0, st0 = n.gate_ok()
+    assert ok0, st0                             # the plain gate still accepts stand for hand-run tests
+    ok, st = n.head_ready()
+    assert not ok and "stand" in st["why"]
+
+
+def test_follow_brain_rejects_conflicting_flags():
+    import pytest
+    for extra in (["--audio-only"], ["--no-gate"], ["--turn"], ["--idle"]):
+        with pytest.raises(SystemExit):
+            nc.parse_args(["--follow-brain", *extra])
+    assert nc.parse_args(["--follow-brain"]).follow_brain

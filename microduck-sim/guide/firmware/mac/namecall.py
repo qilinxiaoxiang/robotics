@@ -2045,6 +2045,37 @@ class NameCall:
                 self.head.seated = seated
         return st["ok"], st
 
+    def head_ready(self):
+        """(ok, st): may a call move the head now? --follow-brain: only a fresh zero-command walk or a finished seat,
+        the boot supervisor's old readiness (stand would need this program to switch the brain to walk, and the
+        open-loop stand must never carry head moves); otherwise the plain gate."""
+        ok, st = self.gate_ok()
+        if ok and getattr(self.a, "follow_brain", False) and st and st.get("mode") == "stand":
+            return False, dict(st, ok=False, why="brain in stand mode: answers with a quack, the head stays")
+        return ok, st
+
+    def respond_audio(self, det, now, why):
+        """A recognised name while the head may not move (the app drives, stand mode, no brain): answer with a quack
+        only, so the call is never silently dropped (2026-11-12: driving the duck made it deaf to its name)."""
+        rec = dict(det, answer="quack", head_why=why)
+        if self.bank is not None:
+            t_q = now + 0.3
+            self.quack_due.append((t_q, dict(kind="call", pitch=1.0, stretch=1.0, gain_db=0.0, own=True)))
+            rec["quack_own_at"] = round(t_q, 3)
+        self.responses += 1
+        self.calls.append(rec)
+        self.log.write("call", **rec)
+        return rec
+
+    def drop_take(self, why):
+        """--follow-brain: the brain left rest mid-take (stale log, another mode): stop writing head commands."""
+        if self.head is None or not (self.head.active or self.attend_until is not None or self.turn_until is not None):
+            return False
+        self.head.active_until, self.head.settle_at, self.head.holding = None, None, False
+        self.turn, self.turn_until, self.attend_until = None, None, None
+        self.log.write("yield", why=f"brain left rest: {why}; take stopped")
+        return True
+
     # --- drivers
     def run_blocks(self, blocks, head_rows=None):
         """Offline: iterate (t, block) pairs; motion ticks follow the block clock (the same motion_tick as the robot,
@@ -2065,10 +2096,11 @@ class NameCall:
 
     def run_live(self, cap):
         a, log = self.a, self.log
+        follow = getattr(a, "follow_brain", False)
         ok, st = self.gate_ok()
-        if not ok:
+        if not ok and not follow:
             sys.exit(f"namecall: refused, {st['why'] if st else 'gate'}")
-        if st and st["mode"] == "stand":
+        if st and st["mode"] == "stand" and not follow:
             if self.writer is None or not self.writer.write(None):
                 sys.exit("namecall: refused, the brain stands but the control file belongs to another program")
             log.write("start", note="brain in stand mode: wrote the zero-command walk (stand61), waiting for walk mode")
@@ -2107,10 +2139,14 @@ class NameCall:
                     if self.head is not None and self.head.busy:
                         log.write("skip", why="a take is running", az_deg=det["az_deg"])
                     else:
-                        ok, st = self.gate_ok()
+                        ok, st = self.head_ready()
                         if not ok and self.turn_until is not None:
                             ok = True    # the walking command is this program's own body turn: a new call re-aims
-                        if not ok:
+                        if not ok and follow:
+                            self.respond_audio(det, now, st["why"] if st else "no brain")
+                            if self.life is not None:
+                                self.life.note(t, "answer", keyword=det.get("keyword"), az_deg=det.get("az_deg"))
+                        elif not ok:
                             log.write("skip", why=st["why"], az_deg=det["az_deg"])
                         else:
                             self.respond(det, now)
@@ -2121,7 +2157,13 @@ class NameCall:
                 if now >= next_gate:
                     next_gate = now + 0.5
                     ok, st = self.gate_ok()
-                    if not ok and (self.head is None or not self.head.active or st["mode"] not in ("walk",)):
+                    if follow:
+                        # one listener for the whole boot: the brain coming and going only switches the head off
+                        # and on (2026-11-12: restarting per mode change left the duck deaf 28 times in 8 min)
+                        if not ok and self.turn_until is None and st and (
+                                st["mode"] not in ("walk", "stand", "sit") or (st["why"] and "stale" in st["why"])):
+                            self.drop_take(st["why"])
+                    elif not ok and (self.head is None or not self.head.active or st["mode"] not in ("walk",)):
                         if st and st["mode"] not in ("walk", "stand", "sit"):
                             log.write("stop", why=st["why"])
                             sys.exit(f"namecall: stopped, {st['why']}")
@@ -2240,7 +2282,12 @@ def parse_args(argv=None):
     ap.add_argument("--onset-gap", type=float, default=ONSET_GAP_S, help="s, detector refractory in name mode")
     ap.add_argument("--audio-only", action="store_true",
                     help="on-robot listening and quack without a running brain; never writes motor commands")
+    ap.add_argument("--follow-brain", action="store_true",
+                    help="boot listener: one process for the whole boot; the head answers only while the brain rests "
+                         "(zero-command walk or seated), otherwise a quack answers; never exits on brain state")
     a = ap.parse_args(argv)
+    if a.follow_brain and (a.audio_only or a.no_gate or a.turn or a.idle):
+        ap.error("--follow-brain needs the brain gate and cannot be combined with --audio-only, --no-gate, --turn or --idle")
     if a.audio_only:
         if a.turn or a.idle:
             ap.error("--audio-only cannot request turning or idle head motion")
@@ -2284,7 +2331,7 @@ def main(argv=None):
             for d in dets))
         print("cost: " + json.dumps(stats))
         return 0
-    if not a.no_gate and not a.audio_only and lock_free():
+    if not a.no_gate and not a.audio_only and not a.follow_brain and lock_free():
         sys.exit("namecall: refused, nobody holds the robot I/O lock (no walk_wired.py brain running)")
     if "duck_selfcheck.py" in procs_named():
         sys.exit("namecall: refused, duck_selfcheck.py is using the sound card; try again when it is done")

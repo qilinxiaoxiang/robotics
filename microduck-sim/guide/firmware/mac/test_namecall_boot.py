@@ -1,39 +1,9 @@
-import json
 import os
 import signal
 import subprocess
 import time
 
 import namecall_boot as nb
-
-
-def write(tmp_path, **row):
-    p = tmp_path / "duck_wired_log_a.jsonl"
-    row.setdefault("t", time.time())
-    p.write_text("x" * 20000 + "\n" + json.dumps(row) + "\n")
-    return str(tmp_path)
-
-
-def test_ready_only_at_rest_on_a_fresh_log(tmp_path):
-    logs = write(tmp_path, mode="walk", cmd=dict(vx=0.0, vy=0.0, vtheta=0.0))
-    assert nb.brain_ready(logs=logs)
-    assert not nb.brain_ready(now=time.time() + 5, logs=logs)
-    for mode in ("monitor", "stand", "stop"):
-        assert not nb.brain_ready(logs=write(tmp_path, mode=mode, cmd={}))
-    assert not nb.brain_ready(logs=write(tmp_path, mode="walk", cmd=dict(vx=0.2)))
-    assert not nb.brain_ready(logs=write(tmp_path, mode="walk", cmd=dict(vtheta=-0.1)))
-    assert nb.brain_ready(logs=write(tmp_path, mode="sit", sit_phase="seated"))
-    for phase in ("sitting", "rising", None):
-        assert not nb.brain_ready(logs=write(tmp_path, mode="sit", sit_phase=phase))
-
-
-def test_no_old_or_broken_brain_log_is_not_ready(tmp_path):
-    assert not nb.brain_ready(logs=str(tmp_path))
-    assert not nb.brain_ready(logs=write(tmp_path, mode="walk", t=time.time() - 10))
-    p = tmp_path / "duck_wired_log_a.jsonl"
-    for content in ("", "broken\n", "{}\n", "[]\n", "null\n"):
-        p.write_text(content)
-        assert not nb.brain_ready(logs=str(tmp_path))
 
 
 class Child:
@@ -62,44 +32,40 @@ def harness():
     return nb.Supervisor(start, stop, lambda **kw: None), events, children
 
 
-def test_boot_audio_to_head_and_back_stops_old_capture_first():
+def test_one_listener_for_the_whole_boot():
+    # 2026-11-12: brain readiness flipping as the app drove the duck restarted the listener 28 times in 8 min.
     s, events, children = harness()
-    s.tick(nb.desired_mode(False, False), 0)
-    assert events == [("start", 100, True)]
-    s.tick("audio-only", 1)
-    assert len(children) == 1
-    s.tick(nb.desired_mode(True, False), 2)
-    assert events[-2:] == [("stop", 100), ("start", 101, False)]
-    s.tick(nb.desired_mode(False, False), 4)
-    assert events[-2:] == [("stop", 101), ("start", 102, True)]
+    for t in range(0, 60, 2):
+        s.tick(nb.desired_mode(False), t)
+    assert events == [("start", 100, False)]
+    assert "--follow-brain" in nb.command("listen") and "--audio-only" not in nb.command("listen")
     s.close()
-    assert events[-1] == ("stop", 102)
-    assert s.child is None
+    assert events[-1] == ("stop", 100)
 
 
 def test_selfcheck_owns_audio_until_it_finishes():
     s, events, children = harness()
-    s.tick(nb.desired_mode(False, True), 0)
+    s.tick(nb.desired_mode(True), 0)
     assert events == []
-    s.tick(nb.desired_mode(False, False), 2)
-    s.tick(nb.desired_mode(True, True), 4)
+    s.tick(nb.desired_mode(False), 2)
+    s.tick(nb.desired_mode(True), 4)
     assert events[-1] == ("stop", 100)
     assert s.child is None
-    s.tick(nb.desired_mode(True, False), 6)
+    s.tick(nb.desired_mode(False), 6)
     assert events[-1] == ("start", 101, False)
 
 
 def test_crashed_child_cleanup_and_bounded_restart_backoff():
     s, events, children = harness()
-    s.tick("audio-only", 0)
+    s.tick("listen", 0)
     for failed_at, restart_at in ((1, 6), (7, 12), (13, 73)):
         children[-1].rc = 1
-        s.tick("audio-only", failed_at)
+        s.tick("listen", failed_at)
         assert s.child is None
         assert events[-1][0] == "stop"
-        s.tick("audio-only", restart_at - 0.1)
+        s.tick("listen", restart_at - 0.1)
         assert s.child is None
-        s.tick("audio-only", restart_at)
+        s.tick("listen", restart_at)
         assert s.child is not None
 
 
@@ -193,11 +159,3 @@ def test_the_1104_namecall_unit_is_caught():
     units["duck-namecall.service"] = ("[Unit]\nAfter=duck-camera.service duck-selfcheck.service sound.target\n"
                                       "[Install]\nWantedBy=multi-user.target\n")
     assert "duck-namecall.service" in boot_cycle(unit_ordering(units))
-
-
-def test_a_row_written_just_after_now_is_fresh(tmp_path):
-    # 2026-11-06: the brain wrote between our time.time() and the read; the negative age read as stale and the
-    # listener restarted twice per false poll.
-    logs = write(tmp_path, mode="walk", cmd=dict(vx=0.0), t=time.time() + 0.01)
-    assert nb.brain_ready(now=time.time() - 0.05, logs=logs)
-    assert not nb.brain_ready(now=time.time() - 2.0, logs=logs)

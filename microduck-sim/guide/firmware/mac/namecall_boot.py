@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Run name listening from boot, without starting the brain or enabling torque.
 
-Audio-only while the brain is absent/busy; guarded head responses only at rest or
-fully seated. Mode changes stop the complete child process group before a new
-capture process starts. Only a bounded tail of the brain log is read.
+One namecall.py --follow-brain process listens for the whole boot: it answers with the
+head only while the brain rests (zero-command walk or fully seated) and with a quack
+otherwise. The child is restarted only when it exits (bounded backoff) and stopped while
+duck_selfcheck.py owns the sound card; a stop takes the whole child process group.
 """
-import glob
 import json
 import os
 import signal
@@ -19,10 +19,6 @@ LOGS = os.path.expanduser("~/duck-logs")
 # on 2026-11-11 23:54 and stopped, so the 11-12 00:26 calls left no audio; life_log.py still stops at 2 GB disk free.
 ARGS = ["--name", "mochi", "--spotter", "oww", "--no-person", "--life-max-gb", "4"]
 POLL_S = 2.0
-FRESH_S = 1.5
-# The brain writes 50 rows a second: a row or mtime newer than our "now" is the freshest data, not stale
-# (2026-11-06: rejecting it flipped head<->audio-only on 3 % of polls, each flip restarting the listener twice).
-SKEW_S = 0.5
 RETRY_S = 5.0
 QUICK_EXIT_S = 30.0
 BACKOFF_S = 60.0
@@ -34,30 +30,6 @@ def record(**kw):
         f.write(json.dumps(dict(ts=round(time.time(), 2), **kw)) + "\n")
 
 
-def brain_ready(now=None, logs=None):
-    """Fresh zero-speed walk or completed seat permits guarded head responses."""
-    now = time.time() if now is None else now
-    paths = glob.glob(os.path.join(logs or LOGS, "duck_wired_log_*.jsonl"))
-    if not paths:
-        return False
-    try:
-        path = max(paths, key=os.path.getmtime)
-        if not -SKEW_S <= now - os.path.getmtime(path) <= FRESH_S:
-            return False
-        with open(path, "rb") as f:
-            f.seek(0, os.SEEK_END)
-            f.seek(max(0, f.tell() - 8192))
-            lines = f.read().splitlines()
-        row = json.loads(lines[-1])
-        if not -SKEW_S <= now - float(row.get("t", 0)) <= FRESH_S:
-            return False
-        cmd = row.get("cmd") or {}
-        return (row.get("mode") == "sit" and row.get("sit_phase") == "seated") or (
-            row.get("mode") == "walk" and not any(cmd.get(k) for k in ("vx", "vy", "vtheta")))
-    except (OSError, ValueError, IndexError, TypeError, AttributeError):
-        return False
-
-
 def selfcheck_running():
     # Read process command lines, not a whole robot log. Selfcheck owns audio.
     p = subprocess.run(["pgrep", "-f", "[d]uck_selfcheck.py"],
@@ -65,13 +37,15 @@ def selfcheck_running():
     return p.returncode == 0
 
 
-def desired_mode(ready, selfcheck):
-    return None if selfcheck else "head" if ready else "audio-only"
+def desired_mode(selfcheck):
+    # One listener for the whole boot: namecall.py --follow-brain switches the head on and off itself as the brain
+    # rests or moves. 2026-11-12 00:26-00:34 the old head/audio-only split restarted the listener at every app drive
+    # or stand change, 28 times in 8 minutes, and the duck missed most of Shawn's calls while it reloaded.
+    return None if selfcheck else "listen"
 
 
 def command(mode):
-    return [sys.executable, os.path.join(HERE, "namecall.py"), *ARGS,
-            *(["--audio-only"] if mode == "audio-only" else [])]
+    return [sys.executable, os.path.join(HERE, "namecall.py"), *ARGS, "--follow-brain"]
 
 
 def stop_child(proc, killpg=os.killpg):
@@ -139,7 +113,7 @@ def main():
     supervisor = Supervisor()
     try:
         while not stopping:
-            supervisor.tick(desired_mode(brain_ready(), selfcheck_running()), time.monotonic())
+            supervisor.tick(desired_mode(selfcheck_running()), time.monotonic())
             time.sleep(POLL_S)
     finally:
         supervisor.close()
