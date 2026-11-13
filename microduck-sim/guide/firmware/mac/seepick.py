@@ -94,7 +94,9 @@ DEFAULT_SIZE = 0.013       # m, the training mean width (BODY_SLOT_MEAN)
 SIZE_RANGE = (0.008, 0.03)
 # OpenCV HSV (H 0-180). Orange is approach.py's tested range; the others are starting points to check on real frames
 # (orange_target.py --hist on a snapshot).
-COLORS = {"orange": ((5, 120, 120), (22, 255, 255)), "yellow": ((22, 100, 120), (35, 255, 255)),
+# orange: robot 2026-11-12 (seepick_1112b, office light) the 12 mm ball read H 1-5, S 67-115 (median 90) at about 0.4 m, so S >= 120
+# dropped the whole ball and the scan never saw it; S 70 / H 0 found only the ball (118 px) in the same frame, floor and cabinets clear.
+COLORS = {"orange": ((0, 70, 120), (22, 255, 255)), "yellow": ((22, 100, 120), (35, 255, 255)),
           "green": ((40, 80, 60), (85, 255, 255)), "blue": ((95, 100, 60), (130, 255, 255)),
           "red": ((170, 120, 90), (180, 255, 255)), "pink": ((145, 60, 120), (170, 255, 255))}
 
