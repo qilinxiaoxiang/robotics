@@ -99,9 +99,12 @@ HEAD_YAW_WALK = 0.0  # rad: no head yaw while walking or before a walk. Sim with
                      # looking toward the turn eats it, so the body turns and the head only pitches
 HEAD_PITCH_WALK = (0.5, 1.1)  # head pitch range while walking (0.5 sees from 0.32 m, 1.1 from 0.13 m)
 AIM_PERIOD_S = 0.25  # head aim recomputed at most this often (A7Z CPU)
-NEAR_HEAD = {"neck_pitch": -0.4, "head_pitch": 1.4, "head_yaw": 0.0}   # the lowest look: the servo reaches ~1.3 and the
-# picture then starts 0.10-0.12 m in front of the foot-frame origin (ruler, robot 2026-10-30); at 1.1 it started at
-# ~0.15 m and the object at the pick spot sat cut on the bottom edge. The policy ignores neck_pitch (stays 0.2-0.4).
+NEAR_HEAD = {"neck_pitch": -0.75, "head_pitch": 1.45, "head_yaw": 0.0}  # the lowest look the brain accepts (both at the
+# walk_brain HEAD_RANGE clip, default 0.35 -+ 1.10). Robot 2026-11-12, standing in walk mode: this command reads back
+# head 1.27 / neck 0.04 and the 12 mm ball Shawn had put about 3 cm in front of the toes (toes 0.037 m ahead of the
+# foot-frame origin) sits on the picture's bottom edge; the old (-0.4, 1.4) read 1.26 / 0.15 and did not show it, and
+# its "picture starts at 0.10-0.12 m" (ruler, 2026-10-30) was that pose's edge, not a limit of the robot. The policy
+# follows neck_pitch only weakly (command -0.75 moves it 0.2 rad), and the head is not at a physical stop here.
 AIM_V = 0.55         # standing: aim the object at this fraction of the image height
 # standing scan (head_pitch, head_yaw); head yaw only while standing. CAD camera on STAND: pitch 0.5 sees the floor
 # from 0.32 m, 0.9 from 0.17 m; yaw +-0.6 with the 51.6 deg picture width covers +-60 deg

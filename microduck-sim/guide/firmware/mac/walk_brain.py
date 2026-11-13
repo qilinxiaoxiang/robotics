@@ -746,6 +746,13 @@ class Brain:
             if self.mode != "sit":
                 self.sit = None
             if self.mode == "stand":
+                if was_policy and self.goal is not None:
+                    # Torque-continuous entry from a policy mode: the policy holds loaded joints at KP_RL with goals
+                    # far ahead of the positions (robot 2026-11-12 22:02: knees 186 and 244 ticks = 16 and 21 deg).
+                    # Keeping those goals while the gain steps to KP_DEFAULT doubled the knee torque on one tick
+                    # (currents 94/-128 -> 224/-351 mA) and threw the robot over in 0.6 s (FAULTS.json
+                    # fall-on-switch-policy-stand-to-open-loop-stand). Scale the lead by the gain ratio instead.
+                    start = {n: q[n] + (self.goal[n] - q[n]) * KP_RL / KP_DEFAULT for n in NAMES}
                 self.ramp = (now, dict(start), dict(STAND), 2.0)
             elif self.mode == "groundpick":
                 # from stand61/walk61 (the trained start is the standing default pose): hold the present pose until
