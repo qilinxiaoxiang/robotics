@@ -485,7 +485,7 @@
           "what": "Shawn's trial (\"把这个偏差放到模型外面 不要送进模型\", \"不要跑仿真了 直接在真机上试\", \"左髋从前面看 逆时针转几度\"): walk mode only, +3 deg added to the left_hip_roll servo goal after the policy (walk_brain.py GOAL_OFFSET, ~/duck-goal-offset.json on the A7Z); the policy's readings are untouched. Shawn walks it and watches the left sole; then compare hip roll, roll and falls in the new log with app1112-2010.",
           "status": "running since the brain restart app1112-goaloff3 (A7Z walk_brain.py sha256 e552b618d62cb6cc)",
           "blocker": "none",
-          "results": "Sim before the robot (Mac mini ~/sims/lean-t8, brain_sim_check.py --goal-offset): left +3 alone ends R 5.2 / L 3.7, roll +0.8, walk completes; both hips 2, 4, 6 deg toward zero end 4.5/4.1, 4.0/3.9, 3.3/3.6, walk completes."
+          "results": "ROBOT 2026-11-12 20:39 (log app1112-goaloff3): with +3 deg the robot did not step. Forward (vx 0.25) arrived 5 times for about 2 s each; the policy's actions stayed at most 0.24 rad (a normal walk start reaches 0.86 within 0.5 s, log app1112-2010), knees did not move. The robot also stood level in this log (roll 0.0, 1.2 to 1.8 before) and at another heading, so it had been moved. Offset turned off 20:42 (brain app1112-nooff) to separate: if it walks now, the offset stopped the gait start. Sim before the robot (Mac mini ~/sims/lean-t8, brain_sim_check.py --goal-offset): left +3 alone ends R 5.2 / L 3.7, roll +0.8, walk completes; both hips 2, 4, 6 deg toward zero end 4.5/4.1, 4.0/3.9, 3.3/3.6, walk completes."
         }
       ],
       "mitigations": [],
