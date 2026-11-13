@@ -867,3 +867,18 @@ Pre-launch checks, all on the Mac mini (`microduck-sim/extensions/flight-2026111
   fetch `modal volume get microduck-seepick-spk1 runs/spk1 <dir>`; recipe in `cmu/grasp/PLAN-seeing-pickup.md`.
 - Tests: 14 new CPU tests pass; the existing seeing-pick test file passes 3 of 3 reruns after one failure of its
   camera-position test (0.051 m against 0.04, object 1.5 m away; the env fixture has no fixed seed).
+
+### 2026-11-12 21:25 Flight pack: pickup-with-pack fine-tune spk1 launched on Modal (FP-R7)
+
+Go: Shawn 2026-11-12 "你看看不是浪费时间就上modal上去跑". Pre-launch gate passed: the training env reproduces the
+runtime sim (seepick61, 256 episodes per load, after the torque fix: no pack 190 held / 10 falls, batteries out 1 / 254,
+full 0 / 253; runtime sim 11-16 of 20 held without the pack, 0 of 20 with it). Torque ceiling: the training env ran the
+bam default 1.75 A (0.641 N m) against the runtime sim's 1.47 A (0.538 N m); the pack task now uses 1.47 A and 7.2-8.2 V
+(`microduck_rl-grasp` 28dd49d0). The robot itself logged up to 2.06 A in position mode (11-02..11-06 tick logs), so both
+sims are below the robot; the flight walking env has the same 1.75 A vs 0.538 mismatch (not changed yet).
+Launch 20:59 EST from `microduck_rl-grasp` 28dd49d0: `SPK_RUN=spk1 SPK_HOURS=3.5 MICRODUCK_GPU=L4 modal run --detach
+cmu/grasp/seepick_pack_modal.py::run --max-dollars 6`; app ap-R4vLTDvI2CuzYOLzy4C3sv, call
+fc-01M79BDGQMRCVA03PN2BNZGGXT, args read back: 4096 envs, 1000 iterations, save every 100, seed 1, check at 300 on the
+pack-load held keys, cap 3.5 h = 3.91 USD (6 USD argument), start sp-b-1027 model_2500.pt (actor = seepick61).
+Image build about 20 min; at 21:25 the app is detached with no task yet (waiting for an L4). Modal credit before
+the run 36.61 USD. Watch: scratchpad spk_wait.sh (checkpoint, stop or alert mail).
