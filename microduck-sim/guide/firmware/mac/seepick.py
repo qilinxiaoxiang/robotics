@@ -175,6 +175,8 @@ class SeePick:
         if self.track_gate is not None:
             gate_m = self.track_gate   # --track-gate; 0 keeps the given estimate and only records what the camera saw
         if gate is not None and math.hypot(p[0] - gate[0], p[1] - gate[1]) > gate_m:
+            if self.phase == "pick":
+                self.seen_elsewhere = (float(p[0]), float(p[1]), float(t_cap))   # the bite may have knocked it there
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, gated=[p[0], p[1]], t_cap=float(t_cap),
                                    bbox=[int(v) for v in det["bbox"]], u=float(det.get("base_cx", det["cx"])),
                                    v=float(y0 + bh), w=w, h=h, q=sc["q"], gb=list(sc["gb"])))  # cam_calib obs row
@@ -352,6 +354,7 @@ class SeePick:
             self.seen_pick, self.picked_t = False, None
             self.send_fn(self.pick_cmd())
             self.cmd_t = now
+            self.seen_elsewhere = None
             self.enter("pick", f"dx {dx * 100:+.1f} dy {dy * 100:+.1f} cm")
             return
         if self.align_n >= MAX_ALIGN:
@@ -451,6 +454,13 @@ class SeePick:
         if held:
             self.holding_since, self.lost_since = now, None
             self.enter("hold", "the jaw holds something")
+        elif getattr(self, "seen_elsewhere", None) is not None:
+            # robot 2026-11-12 (seepick_1112a): the ball was in the beak, the bite knocked it 5 cm aside, the camera saw
+            # it there (gated out as "another object") and the second try still bit the old spot blind. Seen away from
+            # the estimate during the pick = it moved: look for it again.
+            x, y, _ = self.seen_elsewhere
+            self.seen_elsewhere, self.obj = None, None
+            self.next_try(f"nothing between the bills after the rise; seen at x {x:.3f} y {y:.3f} during the pick")
         elif self.obj is not None and math.hypot(self.obj["x"], self.obj["y"]) < BLIND_R:
             self.retry_here("nothing between the bills after the rise")   # a miss leaves it about where it was
         else:

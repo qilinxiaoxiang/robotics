@@ -369,3 +369,26 @@ def test_a_ball_lost_just_past_the_old_blind_edge_is_picked_not_given_up():
         ctl.step()
         duck.advance()
     assert ctl.phase in ("align", "pick", "turning"), (ctl.phase, ctl.result)
+
+
+class KnockDuck(PickDuck):
+    """The bite touches the ball and knocks it away: 2 s into the pick it lies 0.20 m ahead and 0.08 m to the left."""
+
+    def advance(self, dt=0.05):
+        if self.pick_t is not None and self.outcome == "miss" and not getattr(self, "knocked", False) \
+                and self.t - self.pick_t >= 2.0:
+            self.knocked = True
+            c, s = math.cos(self.th), math.sin(self.th)
+            self.obj = (self.X + 0.20 * c - 0.08 * s, self.Y + 0.20 * s + 0.08 * c)
+        super().advance(dt)
+
+
+def test_a_ball_knocked_away_by_the_bite_is_looked_for_not_bitten_blind():
+    """Robot 2026-11-12 (seepick_1112a): try 1 had the ball in the beak and knocked it 5 cm aside; the camera saw it
+    there during the pick, and try 2 still bit the old spot blind (Shawn: "第二次完全是瞎试 因为球完全不在范围内")."""
+    duck = KnockDuck((0.5, 0.0), ["miss", "hold"])
+    ctl = run(duck)
+    whys = [r.get("why", "") for r in ctl.trace]
+    assert any("seen at x" in w for w in whys), whys
+    assert not any("blind zone" in w for w in whys)
+    assert ctl.result["ok"] and ctl.try_n == 2, ctl.result
