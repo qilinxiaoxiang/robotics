@@ -1036,7 +1036,9 @@ def run(args):
             m.geom_friction[m.geom(g).id][1] = args.sole_torsion
     idx = {n: names.index(n) for n in NAMES}  # Brain order (servo IDs 1..14) -> model actuator order
     z0 = np.array([math.radians(zero.get(n, 0)) for n in names])
-    p0 = np.array([BRAIN_STAND[n] for n in names])  # the Brain's stand pose (pi/stand_pose.py), not static_gap.STAND
+    goal_off = {k: float(v) for k, v in args.goal_offset}  # added to the servo goal only; the policy's readings are untouched
+    g0 = np.array([math.radians(goal_off.get(n, 0)) for n in names])
+    p0 =np.array([BRAIN_STAND[n] for n in names])  # the Brain's stand pose (pi/stand_pose.py), not static_gap.STAND
     true0 = dict(zip(names, p0 + z0))
     Rt = feet_flat_rot(m, d, names, true0)
     q = np.zeros(4)
@@ -1362,7 +1364,7 @@ def run(args):
         else:
             target = aq[-1].copy()
         aq.append(target.copy())
-        c.q_target = aq[0] + z0
+        c.q_target = aq[0] + z0 + (g0 if brain.mode == "walk" else 0.0)
         # --yaw-torque: a steady turn about the vertical on the trunk while walking, a stand-in for whatever turns the
         # real robot left (10/21-22: +22 to +42 deg/s at vx 0.25, cause not isolated)
         # --yaw-spring: a cable twisted by the turn (2026-10-30 in-place turn check), restoring torque per rad of heading change
@@ -1702,6 +1704,8 @@ def main():
     ap.add_argument("--com-x", type=float, default=0.0, help="whole-robot COM shift forward, mm")
     ap.add_argument("--com-y", type=float, default=0.0, help="whole-robot COM shift to the left (+y), mm")
     ap.add_argument("--zero", nargs=2, action="append", default=[], metavar=("JOINT", "DEG"))
+    ap.add_argument("--goal-offset", nargs=2, action="append", default=[], metavar=("JOINT", "DEG"),
+                    help="walk mode only: add DEG to this joint's servo goal after the policy, outside what the policy reads")
     ap.add_argument("--imu-pitch", type=float, default=0.0)
     ap.add_argument("--imu-roll", type=float, default=walk_brain.IMU_ROLL_TRIM_DEG,
                     help="IMU mounting error about the trunk's forward axis, deg (default: the roll the brain trims out, so the policy sees a level sensor)")

@@ -476,8 +476,16 @@
         {
           "id": "T7-why-wider-hips-on-the-robot",
           "what": "Find what makes walk61 at zero command hold the hips wider on the robot than in the sim: replay the robot's logged observations (app1112-2010, 20:04-20:06) through walk61 and compare its hip roll actions with the sim's at the same pose; then test in the sim the inputs that differ (roll reading, hip roll tracking error at KP 200)",
-          "status": "queued",
-          "blocker": "none; Mac mini"
+          "status": "run",
+          "blocker": "-",
+          "results": "2026-11-12 (play-locate-20261112/t7_replay.py, t7_course.py, t7_run_batch.sh; Mac mini ~/sims/lean-t7, 36 sims). WORDING FIX: 'wider hips' in this fault means a larger hip roll magnitude, and in the model that is the leg turned INWARD (left_hip_roll + = counter-clockwise from the front = left foot outward; the robot's left reads -6.6 to -6.9; +3 deg moves the left foot 4 mm outward, ~/sims/stance.py). ACTION ORDER FIX: action follows OBSERVATION_DOF_ORDER, not servo ID order; the 'R -0.079 / L -0.030' quoted in T3 were left knee and head roll. Measured, robot 20:04:10-20:05:40: default 4.98 / 4.98, goal R 8.62 / L 7.82, position 5.32 / 6.59. Sim lean-t3 base: goal 10.55 / 10.86, position 4.80 / 4.36. So the policy asks for MORE hip roll in the sim than on the robot, and neither reaches its goal: with both feet on the ground the hip roll is set by where the feet stand, not by the goal (--kp-rl 300 moves the goals, not the positions). Offline replay reproduces the logged actions within 0.0002 rad; swapping input groups shows the action difference comes from the joint position feedback (a larger hip roll reading makes the policy ask for less), gravity only about 1 deg on the left. Time course: the robot reaches hip roll sum 11.9 within 1.5 s of zero command and does not move for 100 s; the sim stops at 11.7 and creeps back to 9.05 in 20 s. No sim flag reproduces the robot (closest: --joint-play 6 on left_hip_roll only, 5.58 / 5.48, roll 1.6). Inference, not verified: the robot's feet stay where the last steps put them (floor friction, gear stiction) and the sim's creep back. Every standstill in the log (scratchpad t7_stops.py): stand KP 400 4.4 / 4.4 roll +1.8 and +1.2; walk mode 5.3 / 6.6 roll +2.3 (twice), 4.0 / 4.9 roll +2.1 (4 s), 6.7 / 6.9 roll +2.6: the lean is 1.2 to 1.8 deg even with level hips, so the hip roll explains the sole angle but not all of the pelvis roll."
+        },
+        {
+          "id": "T8-left-hip-roll-goal-offset-outside-the-policy",
+          "what": "Shawn's trial (\"把这个偏差放到模型外面 不要送进模型\", \"不要跑仿真了 直接在真机上试\", \"左髋从前面看 逆时针转几度\"): walk mode only, +3 deg added to the left_hip_roll servo goal after the policy (walk_brain.py GOAL_OFFSET, ~/duck-goal-offset.json on the A7Z); the policy's readings are untouched. Shawn walks it and watches the left sole; then compare hip roll, roll and falls in the new log with app1112-2010.",
+          "status": "running since the brain restart app1112-goaloff3 (A7Z walk_brain.py sha256 e552b618d62cb6cc)",
+          "blocker": "none",
+          "results": "Sim before the robot (Mac mini ~/sims/lean-t8, brain_sim_check.py --goal-offset): left +3 alone ends R 5.2 / L 3.7, roll +0.8, walk completes; both hips 2, 4, 6 deg toward zero end 4.5/4.1, 4.0/3.9, 3.3/3.6, walk completes."
         }
       ],
       "mitigations": [],

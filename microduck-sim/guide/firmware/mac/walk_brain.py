@@ -276,6 +276,12 @@ IMU_PITCH_TRIM_DEG = 4.0
 # untrimmed IMU read 3.1 deg: the sensor is right within about 1 deg and the robot really leans to its left.
 # MICRODUCK_IMU_ROLL_TRIM sets it for sim checks; brain_sim_check.py --imu-roll defaults to the same angle.
 IMU_ROLL_TRIM_DEG = float(os.environ.get("MICRODUCK_IMU_ROLL_TRIM", "0"))
+# Walk-mode goal offsets outside the policy, {"joint": deg} in ~/duck-goal-offset.json; no file = none. Model sign:
+# left_hip_roll + = counter-clockwise seen from the front = left foot outward. A trial, recorded in CURRENT-STATE.json.
+try:
+    GOAL_OFFSET = {k: math.radians(float(v)) for k, v in json.load(open(os.path.expanduser("~/duck-goal-offset.json"))).items()}
+except (OSError, ValueError):
+    GOAL_OFFSET = {}
 _h, _r = math.radians(IMU_PITCH_TRIM_DEG) / 2, math.radians(IMU_ROLL_TRIM_DEG) / 2
 # the whole sensor trim, qy(pitch) * qx(roll); the name is kept for the scripts that import it
 IMU_PITCH_TRIM = (math.cos(_h) * math.cos(_r), math.cos(_h) * math.sin(_r), math.sin(_h) * math.cos(_r), -math.sin(_h) * math.sin(_r))
@@ -964,6 +970,11 @@ class Brain:
             self.last_action = action.astype(np.float32)
             self.goal = clamp_goal({n: self.default[n] + float(action[k]) if n in self.default else self.goal[n]
                                     for k, n in enumerate(OBSERVATION_DOF_ORDER)})
+            if GOAL_OFFSET and self.mode == "walk":
+                # trial 2026-11-12 (Shawn: "把这个偏差放到模型外面 不要送进模型", "左髋从前面看 逆时针转几度"): added to
+                # the servo goal after the policy; the policy's readings and its last action are untouched
+                self.goal = clamp_goal({n: v + GOAL_OFFSET.get(n, 0.0) for n, v in self.goal.items()})
+                info["goal_offset_deg"] = {n: round(math.degrees(v), 2) for n, v in GOAL_OFFSET.items()}
             if yaw_off:
                 self.goal = clamp_goal(dict(self.goal, head_yaw=self.goal["head_yaw"] + yaw_off))
                 info["sp_yaw_off"] = round(yaw_off, 3)
