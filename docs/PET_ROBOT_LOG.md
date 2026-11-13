@@ -1155,3 +1155,27 @@ Launch (after spk2 has ended; the launcher refuses while microduck-seepick-spk2 
 
 Rate 1.117 USD/h (L4 + 4 cores + 16 GiB), cap min(3.5 h, 4 / 1.117) = 3.5 h = 3.91 USD over all attempts; the spk3
 task's ceiling in code is 4 USD. Nothing deployed.
+
+## 2026-11-13 16:00 Right hip ID3 and ID4 silent at boot; in-place 57600 rescue does not work; jaw ID15 left at 57600 by the test
+
+After a boot on the 2S pack (7.8 V) the bus scan answers 13/15: ID3 and ID4 silent, Shawn sees one red light on the right leg. Brain 39 Hz from the sync-read timeouts, so the remote greys the policy buttons (same signature as 11-02 ID2). Cause not established; whether the pack ran flat before is not checked. With ID1-3 unplugged and ID4 alone on the chain, `pi/rescue_factory_servo.py --id 4 --unplugged 1 2 3` (new flag) failed 3 tries, and a 96-combination timing sweep (bit clock +-2 %, 17-20 frames, idle gaps, phase) failed too. Control test: jaw ID15 set to 57600 with a normal 1 Mbaud write (it went silent as expected), then 72 drawings of "baud = 1 M" to ID15 (bit clock +-1.5 %, 17-19 frames, edge shift 0/3/5/7 us, phase): it never came back. So a 57600 waveform drawn with 1 Mbaud bytes through openrb_dual_host does not reach an XL330; the tool cannot work, and ID4's silence says nothing yet about ID4. State now: ID3, ID4 silent (unknown settings), ID15 at 57600 with ID 15 and its other settings intact, torque off, brain stopped. Fix needs a real 57600 transmitter: the spare OpenRB on the Mac (`mac/restore_factory_servo.py`), or A7Z UART0 TX (header pin 8, /dev/ttyAS0, now the serial console) wired to the bus data line with a broadcast write (untested). Also this turn: `tailscale set --ssh` on the A7Z made the Mac mini remote's ssh wait for a browser check; turned off again.
+
+### 2026-11-13 16:45 Flight pack: spk2 finished (s_max 0.86), spk3 with the runtime jaw launched (FP-R7)
+
+spk2 ended at its 3.5 h cap, iteration 1296, 3.81 USD: s_max 0.86 (78 rises), no-pack held 50-iteration mean 0.44;
+training slices at the end: s 0.50-0.75 held 0.35 fell 0.19, s 0.75-1.0 held 0.31 fell 0.29. Runtime sim, its
+exported best ONNX (train/ckpt/spk2_best, fq2 stander, ball, 20 dev seeds), held / pinched / falls:
+none 1 / 1 / 0; 25 % 1 / 2 / 0; 50 % 1 / 3 / 7 (right); 75 % 2 / 3 / 2; batteries out 0 / 0 / 17 (right);
+full 3 / 3 / 14 (12 backward).
+- The pinch is gone at every load (the fast training jaw, entry 03:35).
+- Falls: 0-2 of 20 at 0, 25 and 75 %, 7 at 50 %; the full pack still falls 14 of 20.
+- Batteries out (0.653 kg, COM x -0.027 m against the scaled pack's -0.018) falls 17 of 20 although 75 % of the full
+  pack (0.716 kg) falls 2: the scale curriculum only trains scaled copies of the full pack, so the no-battery mass
+  distribution is not covered. FP-R7 counts that load; a later run has to put it in the curriculum.
+spk3 (matched jaw 0.55 / 0.0549 / 0.10, start spk2 model_best, floor 0.25, s_start 0.50 from f181a38b) was first
+launched at 04:50 but the session ended during the launch and nothing started (0 live apps at 16:33). Relaunched
+16:34 EST from `microduck_rl-grasp` f181a38b: `SPK_TASK=spk3 SPK_RUN=spk3 SPK_HOURS=3.5
+SPK_INIT=microduck-seepick-spk2:runs/spk2/model_best.pt MICRODUCK_GPU=L4 modal run --detach
+cmu/grasp/seepick_pack_modal.py::run --max-iters 1300 --max-dollars 4`; app ap-FNHETdeMUdmTJBAQlPUI3m, waiting for
+an L4 at 16:40. Modal spend on this task so far: spk1 1.02, spk2 3.81, checks about 0.80 USD.
+Scripts now in the repo (the session scratchpad was wiped): train/pickup_ckpt.sh, train/spk_wait.sh.
