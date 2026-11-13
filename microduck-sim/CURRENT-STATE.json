@@ -263,10 +263,11 @@
       "measure": "from the Mac: tailscale status | grep microduck-a7z; ssh a7z hostname"
     },
     "servo_bus_hosts": {
-      "value": "Mac over OpenRB USB (walk_wired.py) or A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud (dynamixel-sdk installed on the A7Z 2026-10-19); 15/15 servos answer on the A7Z path, 7.2 V idle",
+      "value": "Mac over OpenRB USB (walk_wired.py) or A7Z over J12 UART2 /dev/ttyAS2 at 500 kbaud (dynamixel-sdk installed on the A7Z 2026-10-19); 15/15 servos answer on the A7Z path, 8.0 V idle. Bridge firmware since 2026-11-13: openrb_dual_host with the ID 253 rescue path (bus to 9600/57600/115200/2 M/3 M for one write, then back to 1 Mbaud), image ~/.cache/microduck-fw/odh-rescue-20261113b.bin; a servo at factory settings (ID 1, 57600) is restored in place with ~/duck/rescue_factory_servo.py --id N",
       "meaning": "Which hosts can drive the DYNAMIXEL bus through the openrb_dual_host bridge and the last full bus scan.",
-      "verified_at": "2026-10-19",
-      "source": "ssh a7z 'cd ~/duck && python3 scan_bus.py --port /dev/ttyAS2 --baud 500000' after Shawn replugged the servo cables: IDs 1-15 model 1200, 7.2-7.3 V, error 0x80 (the known >7.0 V max-voltage alert bit)",
+      "verified_at": "2026-11-13",
+      "source": "2026-11-13: ssh a7z 'cd ~/duck && python3 scan_bus.py --port /dev/ttyAS2 --baud 500000' reads 15/15 after ID3, ID4 (both found at factory settings) and jaw ID15 were restored through the rescue path (docs/PET_ROBOT_LOG.md 2026-11-13 17:00)",
+      "superseded": [{"value": "15/15 on the A7Z path, 7.2 V idle; bridge fixed at 1 Mbaud with no rescue path", "verified_at": "2026-10-19"}],
       "measure": "run that scan; exit 0 only when IDs 1-15 all answer",
       "max_age_days": 30,
       "consumers": [

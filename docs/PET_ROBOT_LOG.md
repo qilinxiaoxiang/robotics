@@ -1183,3 +1183,7 @@ Scripts now in the repo (the session scratchpad was wiped): train/pickup_ckpt.sh
 ## 2026-11-13 17:00 OpenRB reflashed with a 57600 rescue path (Shawn: "现在直接刷"); jaw ID15 and hip ID4 restored on the robot
 
 openrb_dual_host now takes a packet addressed to ID 253 (4-byte baud, raw bytes): bus to that baud, write, back to 1 Mbaud. Built with OpenRB-150:samd 0.2.1 (GCC 7.2.1, same generation as the 10-15 known-good build), flashed over USB by 1200-baud touch and the recorded bossac command; images in ~/.cache/microduck-fw/odh-rescue-20261113b.bin (running) and dual-20261018-ran (previous). First image accepted any baud: a 4 Mbaud request hung the bridge in flush() (bus dead, USB still up); second image whitelists 9600/57600/115200/2 M/3 M. Results: jaw ID15 back with one 57600 write. ID4 was at factory settings (read after rescue: RDT 250, Shutdown 53), now ID 4, RDT 0, Shutdown 52, torque off, position 2010. So ID4 really had fallen back to factory; the cause is still inferred (pack ran flat overnight), not proven. `pi/rescue_factory_servo.py` rewritten for this path (`--id N`, `--baud-only N`); the drawing code is removed. ID3 pending: its cable is still unplugged. A scan in the first ~0.3 s after a rescue write returns nothing; the tool waits.
+
+## 2026-11-13 17:10 ID3 restored; 15/15
+
+Right leg plugged back whole; `rescue_factory_servo.py --id 3` brought ID3 back on the first try with the robot's settings. Scan 15/15. Three servos (ID3, ID4 at factory settings; cause still inferred) restored in place, no spare board.
