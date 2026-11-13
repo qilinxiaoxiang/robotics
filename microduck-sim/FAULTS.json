@@ -410,7 +410,7 @@
         {
           "id": "H4-mass-left-of-model",
           "claim": "The robot's mass sits left of where the model has it, so it settles onto the left sole.",
-          "status": "open"
+          "status": "not sufficient alone (T2): needs about 35 mm of mass shift"
         }
       ],
       "tests": [
@@ -423,8 +423,8 @@
         {
           "id": "T2-sim-com-shift",
           "what": "brain_sim_check.py --com-y sweep against the scanned stand (pelvis roll, sole slopes, right sole lift) to size H4",
-          "status": "queued",
-          "blocker": "none; next step of play-locate-20261112"
+          "status": "run",
+          "results": "2026-11-12, static instead of a sweep (Mac mini ~/sims/scan-1104/com_static.py, 11-04 stand joints): the model's centre of mass falls 1 mm from the midpoint between the soles (left share 51 %; 58 % with the pelvis 3.1 deg left down). Unloading the right foot by mass alone needs the mass about 35 mm further left, which no part on the robot can give. H4 alone does not explain the lean. With the pelvis 3 deg left down and both soles touching, the left leg is about 3.5 to 4 mm shorter than its encoders say (or the right longer): that is H3, a joint angle the encoders do not see"
         }
       ],
       "mitigations": [],
