@@ -984,3 +984,18 @@ envs, 1300 iterations, save every 100, seed 1, cap 3.5 h = 3.91 USD; image carri
 0.8 of the no-pack rate over 10 iterations. In-run stops: s_max still 0.08 at iteration 100; no-pack held below 0.7 of
 its first-50-iteration mean. At 01:08 the app is detached and waiting for an L4. Modal spend so far today: spk1 1.02
 USD, spk2 checks 0.24 USD. Watch: scratchpad spk2_wait.sh.
+
+### 2026-11-13 01:45 Flight pack: spk2 is learning, s_max 0.08 -> 0.14 by iteration 110 (FP-R7)
+
+First iteration about 01:18 EST (about 20 min wait for an L4). At iteration 111: 0.357 USD at iteration ~100, about
+9.5 s per iteration. Curriculum decisions every 10 iterations: s_max 0.08, 0.09 (it 20), 0.10 (50), 0.11 (70), 0.12
+(80), 0.13 (90), 0.14 (110); 6 rises in 11 decisions; ratio at the decisions 0.71-0.88 against the 0.8 needed.
+Per-slice rates with exploration noise, iteration 10 -> 110: no pack held 0.37 -> 0.42, fell 0.27 -> 0.14; scale
+0-0.05 held 0.34 -> 0.38, fell 0.35 -> 0.15; scale 0.05-0.10 held 0.26 -> 0.36, fell 0.45 -> 0.21; scale 0.10-0.20
+(from iteration 80) held 0.20 -> 0.33, fell 0.43 -> 0.27. No-pack 50-iteration mean 0.381 against reference 0.348,
+so neither in-run stop is near. Unlike spk1 the fall rate drops at every load.
+Defect: the worker exported only the iteration-0 ONNX to the run folder; model_100.pt and the trainer's own ONNX are
+in runs/spk2/logs/rsl_rl/seeing_pick_pack_curriculum/2026-11-13_06-17-42_spk2/. The trainer's ONNX fetched at 01:38
+(differs from the iteration-0 file, max weight difference 0.11; only iterations 0 and 100 had been saved) is staged
+as train/ckpt/spk2_100/seepick61.onnx with the fq2 stander; runtime-sim pickup test (ball, no pack and 25 % load)
+running on the Mac mini.
