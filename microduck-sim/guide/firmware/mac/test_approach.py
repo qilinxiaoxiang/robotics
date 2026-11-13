@@ -32,6 +32,7 @@ class FakeDuck:
         self.q = dict(STAND)
         self.frame_i, self.frame = 0, None
         self.frame_age = 0.1
+        self.coast_m = 0.0   # m the robot runs on when a forward walk stops (the robot coasts 4-5 cm; a test sets more)
 
     def send(self, cmd):
         self.cmd = dict(cmd)
@@ -47,7 +48,11 @@ class FakeDuck:
                 # standing start); the controller's dead reckoning assumes the same (apc.V_ONSET_S)
                 v = apc.V_REAL * (0.5 if self.t - self.walk_t0 < apc.V_ONSET_S else 1.0)
                 v = -v if float(c["vx"]) < 0 else v   # walk61 walks backward too (sim and robot, 2026-11-12)
+                self.walk_fwd = v > 0
             else:
+                if getattr(self, "walk_t0", None) is not None and self.coast_m and self.walk_fwd:
+                    self.X += self.coast_m * math.cos(self.th)
+                    self.Y += self.coast_m * math.sin(self.th)
                 self.walk_t0, v = None, 0.0
             self.X += v * math.cos(self.th) * dt
             self.Y += v * math.sin(self.th) * dt
@@ -123,7 +128,7 @@ def test_head_stays_default_when_a_walk_starts():
 
 
 def test_object_beside_turns_in_place_then_arrives():
-    duck = FakeDuck((0.25, 0.3))   # 50 deg left at 0.39 m: no arc reaches it
+    duck = FakeDuck((0.34, 0.195))   # 30 deg left at 0.39 m: in the straight-ahead picture, beyond FACE_START
     ctl = drive(duck)
     assert ctl.result["ok"], ctl.result
     walks = walk_cmds(duck)
@@ -164,7 +169,7 @@ def test_a_turn_the_wrong_way_stops_the_run():
 
 def test_a_turn_in_place_carries_the_object_past_straight_ahead():
     """The robot springs back about 10 deg when a spin stops, so a turn that stops at straight ahead ends short."""
-    duck = FakeDuck((0.4, -0.4))
+    duck = FakeDuck((0.5, -0.3))   # 31 deg right: the scan has no head yaw, so it must be in the straight-ahead picture
     ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
                        now=lambda: duck.t, log=lambda s: None)
     was_face, ended = False, None
@@ -348,7 +353,7 @@ class SlowConfirm:
 
 
 def scan_result(confirm_s):
-    duck = FakeDuck((0.3, -0.4))   # seen only with the head turned right
+    duck = FakeDuck((0.9, 0.0))   # seen only in the last scan pose (pitch 0.5; pitch 0.9 shows the floor to about 0.6 m)
     ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, SlowConfirm(duck, confirm_s),
                        now=lambda: duck.t, log=lambda s: None)
     while ctl.phase in ("start", "search") and duck.t < 60.0:
@@ -363,3 +368,75 @@ def test_the_scan_waits_on_a_candidate_the_detector_has_not_confirmed_yet():
     assert scan_result(0.0).phase == "ready"          # the ball is in view of one scan pose
     ctl = scan_result(apc.SETTLE_S + apc.SCAN_DWELL_S + 1.5)
     assert ctl.phase == "ready", ctl.result
+
+
+def test_a_turn_in_place_from_standing_keeps_the_head_command():
+    """All three spin falls of 2026-11-01 began with the head moving. A turn started from the stand before a walk
+    carries the head command of that stand; without one walk_brain eases the head to the default pose as it starts."""
+    duck = FakeDuck((0.34, 0.195))   # 30 deg left: a turn in place before the first walk
+    drive(duck)
+    i0 = next(i for i, (_, c) in enumerate(duck.sent) if not c.get("vx") and c.get("vtheta"))
+    assert not any(c.get("vx") for _, c in duck.sent[:i0])          # entered from standing, not from a walk
+    stood = duck.sent[i0 - 1][1]["head"]
+    assert stood["head_pitch"] > apc.DEFAULT_HEAD["head_pitch"] + 0.1   # the head was on the object, not at default
+    spin = []
+    for _, c in duck.sent[i0:]:
+        if c.get("vx") or not c.get("vtheta"):
+            break
+        spin.append(c)
+    assert spin and all(c.get("head") == stood for c in spin), spin[:2]
+
+
+def test_a_ball_lost_close_by_is_reported_as_lost_at_the_feet():
+    """The walk stops near the ball and the lowest look does not show it: it is under the picture at the toes. The
+    run ends with LOST_AT_FEET (the caller steps back); no blind arrival, no scan from there, no NOT_IN_VIEW."""
+    duck = FakeDuck((0.6, 0.0))
+    duck.coast_m = 0.09   # runs on further than the 4-5 cm on record, so the ball ends under the picture
+    ctl = drive(duck)
+    x, y = duck.obj_robot()
+    assert x < 0.073, x   # nearer than the lowest look shows
+    assert not ctl.result["ok"] and ctl.result["why"] == apc.LOST_AT_FEET, ctl.result
+    assert duck.sent[-1][1]["head"]["head_pitch"] == apc.NEAR_HEAD["head_pitch"]   # the head stays down
+    assert not any(c.get("vtheta") for _, c in duck.sent if not c.get("vx"))        # no turn in place
+
+
+def test_an_object_inside_the_arrival_range_is_measured_not_walked_at():
+    """An object the scan finds inside the range p_measure accepts as arrived (0.19 m ahead; beyond NEAR_KEEP_R, so it
+    goes through "ready") is measured from where the robot stands. A walk from there coasts 4-5 cm into the blind zone
+    (the second walk from 0.174 m, 2026-10-30)."""
+    duck = FakeDuck((0.19, 0.0))
+    ctl = drive(duck)
+    assert ctl.result["ok"], ctl.result
+    assert not walk_cmds(duck), walk_cmds(duck)[:2]
+    assert abs(ctl.result["x"] - 0.19) < 0.02
+
+
+def test_the_scan_looks_down_first_and_never_turns_the_head():
+    """seepick turns the body 50 deg between scans and the picture shows +-35 deg, so head-yaw poses only look again at
+    a direction another scan covers. The scan starts with the lowest look and takes 6.6 s per direction."""
+    assert apc.SCAN[0] == apc.NEAR_HEAD
+    assert all(p["head_yaw"] == 0.0 for p in apc.SCAN)
+    duck = FakeDuck((0.5, 0.0))
+    duck.detect = lambda frame, accept=None: None
+    ctl = drive(duck)
+    assert ctl.result["why"] == apc.NOT_IN_VIEW
+    assert duck.t <= len(apc.SCAN) * (apc.SETTLE_S + apc.SCAN_DWELL_S) + 0.3 <= 7.0, duck.t
+    first_head = next(c["head"] for _, c in duck.sent if c.get("head", {}).get("head_pitch") != apc.DEFAULT_HEAD["head_pitch"])
+    assert first_head["head_pitch"] == apc.NEAR_HEAD["head_pitch"]
+
+
+def test_the_first_scan_pose_waits_for_a_calm_body():
+    """stand() holds the head up while the body rocks (after a body turn): the lowest look, first in the scan, gets its
+    full time once the body is calm instead of passing with the head up."""
+    duck = FakeDuck((0.5, 0.0))
+    duck.detect = lambda frame, accept=None: None
+    base, calm_t = duck.state, 2.0
+    duck.state = lambda: dict(base(), gyro=(0.0, 1.0 if duck.t < calm_t else 0.05, 0.0))
+    ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                       now=lambda: duck.t, log=lambda s: None)
+    while ctl.scan_i == 0 and duck.t < 20:
+        duck.advance()
+        ctl.step()
+    down = [t for t, c in duck.sent if c.get("head", {}).get("head_pitch") == apc.NEAR_HEAD["head_pitch"]]
+    assert down and down[0] >= calm_t + apc.STILL_S - 0.06, down[:1]
+    assert duck.t - down[0] >= apc.SETTLE_S + apc.SCAN_DWELL_S - 0.06, (duck.t, down[0])

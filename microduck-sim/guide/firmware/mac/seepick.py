@@ -54,12 +54,15 @@ T2_YAW_M_RAD = 0.060
 T2_Y = -0.018              # m: where the creep and the turn steer the object; the two holds sat here, the walk veers about 2 cm per creep
 NUDGE_FROM = 0.135         # m: from here in the creep is timed, and never stops on what it sees. Stop-on-sight gave 0.1 s and no move at 0.125 and
 NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124. Creeps of 1-1.5 s moved 1-5 cm (12 creeps, robot 2026-11-01)
-AIM_MIN_FRAMES = 3         # T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
+AIM_MIN_FRAMES = 3         # T1 and T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
 AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections this near the last sighting. Readings on the move are 1.5 cm off and the ball can
 #                            shift 3 cm in y: a 4 cm gate threw out the real ball at the end of run 12's first creep, and it picked blind at dx +3.5
 NEAR_LOOK_R = 0.17         # m: an object estimated nearer than this is aimed at with the lowest look (approach.NEAR_HEAD), whose
 #                            picture covers x 0.07-0.19 m at the centre line (robot 2026-11-12), and the creep keeps that look
 BACK_MAX_S = 1.2           # s: the step back ends here at the latest
+FEET_R = 0.13              # m: last seen nearer than this and not in the aim's picture: it is under the picture at the toes
+#                            (the lowest look starts at x 0.073, the toe front edge is at 0.055): step back, no new search
+LOST_BACKS = 2             # step-backs for a ball lost at the feet before the normal search takes over
 BACK_VX = -0.4             # m/s: robot 2026-11-12, standing start: -0.25 for 2.5 s leaned back 5 deg and never stepped (actions
 #                            under 0.13); -0.4 stepped from 0.4 s, 2 s and 1.5 s runs stayed up (max tilt 11.4 deg). The as-built
 #                            sim steps back at -0.20, which the robot does not.
@@ -77,7 +80,8 @@ BLIND_R = 0.15         # m: nearer than this the object can be under the standin
 PICK_FAR_X = 0.105         # m: the far edge of the pick window. Every robot hold sat at x 0.098-0.100 (10-30 03:22, 11-01 run 7);
 #                            the bites of 2026-11-12 at x 0.110, 0.110, 0.112 and 0.125 closed on nothing (jaw to -1.1 deg at
 #                            -18 mA; a held ball stops it at 10.1 deg, -117 mA), and the sim held 0 of 60 from dx +2 cm.
-PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
+PICK_SLACK = 0.01          # m: T2 only, the fixed margin on the near edge of its window (a creep from there walks over the ball).
+#                            The window does not widen after MAX_ALIGN moves: the bites beyond x 0.105 all closed on nothing
 TURN_RATE = ap.VTH_SPIN     # rad/s in place (0.3; 0.5 rolled the duck over on carpet, robot 2026-11-06)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
@@ -92,7 +96,7 @@ BURST_MAX_S = 1.5          # s: the creep toward a too-far object ends here at t
 #                            0-5 cm per 0.6-0.9 s command on the robot 2026-10-30: the first steps are in place)
 BURST_STOP_X = 0.125       # m: the creep stops when the object is measured here or nearer; walk61 coasts about 4 cm after a
 #                            stop (approach.STOP_R), which lands it at the trained spot
-MAX_ALIGN = 6              # align moves per try before picking anyway (inside PICK_WIN + PICK_SLACK) or giving up; a
+MAX_ALIGN = 6              # align moves per try; still outside the pick window after them: no bite, the try ends. A
 #                            standing-start burst moves 0-5 cm (robot 2026-10-30, seepick_1030-044506), so 3 was not enough
 BURST_INSIDE_M = 0.02      # m: a creep that starts already inside BURST_STOP_X walks until the camera shows this much; it stopped on its first tick
 #                            and moved nothing, six times, then picked at dx +3.5 cm and bit air (robot 2026-11-01)
@@ -148,6 +152,9 @@ class SeePick:
         self.blind_ok, self.blind_pick, self.last_y = False, False, 0.0   # T2: the creep ended this near; pick unseen; side it was last on
         self.aim_gate = None      # T2: the last sighting of the creep, which the next aim is gated on
         self.look_n = 0           # body turns made while looking for the object
+        self.sight = None         # (x, y) of the last sighting (measure, or the approach's arrival) since the last search
+        self.lost_backs = 0       # step-backs made for a ball lost at the feet since it was last seen
+        self.pick_late = False    # the pick ran past PICK_MAX_S and has not handed back yet
         self.rock_t, self.step_t = -1e9, None   # last time |trunk gyro| > ap.STILL_GYRO; the previous step's time
 
     # --- helpers -----------------------------------------------------------------------------------------------
@@ -209,6 +216,7 @@ class SeePick:
         m = dict(x=float(p[0]), y=float(p[1]), size=size, t=float(t_cap), cut=bool(p[2]), frame=idx,
                  u=float(x0 + bw / 2), v=float(y0 + bh / 2), w=float(bw))
         self.trace.append(dict(t=self.now(), phase=self.phase, meas=m))
+        self.sight = (m["x"], m["y"])
         return m
 
     def pick_cmd(self):
@@ -282,18 +290,41 @@ class SeePick:
         self.try_n += 1
         self.blind_ok, self.blind_pick, self.aim_gate = False, False, None
         self.align_n = 0
+        self.sight, self.lost_backs = None, 0
         self.app = self.make_approach()
         self.enter("approach", f"try {self.try_n}: {why}")
+
+    def time_limit(self, why):
+        """The run's time limit (--max-s). A pick in progress is not written over: walk_wired hands back first (p_pick
+        bounds that), then the next call finishes the run. True once the run is finished."""
+        if self.phase == "pick":
+            return False
+        self.finish(False, why)
+        return True
+
+    def back_lost(self, why):
+        """Step back from a ball that is under the picture at the toes, the head in the lowest look, then aim again.
+        Not a try and no body turn: a search from here cannot show it, and a turn puts a foot on it."""
+        self.lost_backs += 1
+        self.obj, self.meas = None, []
+        self.blind_ok, self.blind_pick, self.aim_gate = False, False, None
+        self.head = dict(ap.NEAR_HEAD)
+        self.enter("back", f"{why}: step back {self.lost_backs} of {LOST_BACKS}")
 
     def p_approach(self, st, now):
         self.app.step()
         if self.app.phase == "done":
             self.meas = []
+            if self.app.result.get("x") is not None:
+                self.sight = (self.app.result["x"], self.app.result["y"])
             self.enter("aim", f"arrived at x {self.app.result.get('x')} y {self.app.result.get('y')}")
         elif self.app.phase == "failed":
             why = self.app.result.get("why")
             if "stand mode" in why:   # a guard stood it down, usually a fall: no try can run (run 10 burned three in 0.8 s)
                 self.finish(False, why, stop=False)
+                return
+            if why == ap.LOST_AT_FEET and self.lost_backs < LOST_BACKS:
+                self.back_lost("approach: lost at the feet")
                 return
             if why == ap.NOT_IN_VIEW and self.look_n < len(LOOK_TURNS):   # looking around does not use up a pick try
                 self.enter("look", f"nothing in view: body turn {self.look_n + 1} of {len(LOOK_TURNS)}")
@@ -316,7 +347,7 @@ class SeePick:
     def p_aim(self, st, now):
         est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
         head = self.helper.aim_head(st, *est)
-        if math.hypot(*est) < NEAR_LOOK_R:
+        if math.hypot(*est) < NEAR_LOOK_R or self.lost_backs:   # after a step back from a ball lost at the feet: lowest look
             head = dict(ap.NEAR_HEAD)
         self.head = head
         self.stand(head)
@@ -325,10 +356,11 @@ class SeePick:
         m = self.measure(st, gate=self.aim_gate, gate_m=AIM_GATE_M) if self.aim_gate else self.measure(st)
         if m is not None:
             self.meas.append(m)
-        if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and len(self.meas) >= (AIM_MIN_FRAMES if self.t2 else 1)):
+        if len(self.meas) >= AIM_N or (now - self.t_phase > SETTLE_S + AIM_S and len(self.meas) >= AIM_MIN_FRAMES):
             med = {k: float(np.median([q[k] for q in self.meas])) for k in ("x", "y", "size")}
             self.obj = dict(med, t=max(q["t"] for q in self.meas), cut=any(q["cut"] for q in self.meas))
             self.last_y, self.blind_ok, self.aim_gate = med["y"], False, None
+            self.lost_backs = 0
             self.log(f"  object x {med['x']:.3f} y {med['y']:.3f} width {med['size'] * 1000:.0f} mm "
                      f"from {len(self.meas)} frames (spot {SPOT[0]:.3f} {SPOT[1]:.3f})")
             self.enter("align")
@@ -355,19 +387,25 @@ class SeePick:
             # 0.07 to 0.19 m ahead (robot 2026-11-12), which holds the whole pick window; "not seen" there means the
             # ball is not there. The old branch bit the last known position (seepick_1112a try 2, 1112c both tries:
             # Shawn "为什么还在瞎试 这个时候视野里根本不可能有球").
+            # Last seen nearer than FEET_R (or already stepping back for a ball lost at the feet): it is under the
+            # picture at the toes, so the robot steps back and aims again; a new search from here would not show it.
+            last = (self.obj["x"], self.obj["y"]) if self.obj else self.sight
+            if self.lost_backs < LOST_BACKS and (self.lost_backs or (last is not None and math.hypot(*last) < FEET_R)):
+                self.back_lost("not seen at the pick spot, last seen at the feet")
+                return
             self.obj = None
             self.next_try("not seen at the pick spot")
 
     def in_window(self, x, y):
-        s = PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0
+        """The same window on every align move: it does not widen after MAX_ALIGN."""
         if self.t2:
             # nearer than the window but not "too close" still picks: a creep from there walks over the ball (run 12, x 0.086 to under the beak)
-            return T2_WIN_X[0] - PICK_SLACK <= x <= T2_WIN_X[1] + s and T2_WIN_Y[0] - s <= y <= T2_WIN_Y[1] + s
-        return SPOT[0] - PICK_WIN - s <= x <= PICK_FAR_X + s and abs(y - SPOT[1]) <= PICK_WIN + s
+            return T2_WIN_X[0] - PICK_SLACK <= x <= T2_WIN_X[1] and T2_WIN_Y[0] <= y <= T2_WIN_Y[1]
+        return SPOT[0] - PICK_WIN <= x <= PICK_FAR_X and abs(y - SPOT[1]) <= PICK_WIN
 
     def p_align(self, st, now):
         dx, dy = self.obj["x"] - SPOT[0], self.obj["y"] - SPOT[1]
-        win = PICK_WIN + (PICK_SLACK if self.align_n >= MAX_ALIGN else 0.0)
+        win = PICK_WIN
         if self.blind_pick or self.in_window(self.obj["x"], self.obj["y"]):
             self.blind_pick = False
             if self.dry:
@@ -413,8 +451,9 @@ class SeePick:
 
     def p_back(self, st, now):
         """Step back from an object that is nearer than the pick window, the head in the lowest look so the camera
-        keeps it; stop when it is measured at the pick spot or at BACK_MAX_S, then aim and measure again."""
-        m = self.measure(st, gate=(self.obj["x"], self.obj["y"]), gate_m=BACK_GATE_M) if self.obj else None
+        keeps it; stop when it is measured at the pick spot or at BACK_MAX_S, then aim and measure again. A ball lost at
+        the feet has no position to gate on: the first sighting is taken as it comes."""
+        m = self.measure(st, gate=(self.obj["x"], self.obj["y"]), gate_m=BACK_GATE_M) if self.obj else self.measure(st)
         if m is not None:
             self.obj = m
             self.track_head(m)
@@ -485,10 +524,18 @@ class SeePick:
     def p_pick(self, st, now):
         if st["mode"] == "seepick":
             self.seen_pick = True
+        elif self.pick_late:   # the late pick has handed back: now the run ends
+            self.pick_late = False
+            self.finish(False, f"seeing pick did not hand back within {PICK_MAX_S} s (handed back after {now - self.t_phase:.1f} s)")
+            return
         elif self.seen_pick:   # walk_wired handed back to stand61 after the rise
             self.enter("verify")
             return
         if now - self.t_phase > PICK_MAX_S:
+            if st["mode"] == "seepick":
+                # the pick is still running: no mode change is written into the bend or the rise; wait for the hand-back
+                self.pick_late = True
+                return
             self.finish(False, f"seeing pick did not hand back within {PICK_MAX_S} s (mode {st['mode']})")
             return
         if (st.get("sp_phase") or 0.0) >= 0.85:
@@ -610,8 +657,7 @@ def main():
             return
         end = time.time() + a.max_s
         while ctl.phase not in ("done", "failed"):
-            if time.time() > end:
-                ctl.finish(False, f"time limit {a.max_s} s")
+            if time.time() > end and ctl.time_limit(f"time limit {a.max_s} s"):
                 break
             ctl.step()
             time.sleep(0.05)
