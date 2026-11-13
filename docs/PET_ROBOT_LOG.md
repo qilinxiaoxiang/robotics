@@ -999,3 +999,19 @@ in runs/spk2/logs/rsl_rl/seeing_pick_pack_curriculum/2026-11-13_06-17-42_spk2/. 
 (differs from the iteration-0 file, max weight difference 0.11; only iterations 0 and 100 had been saved) is staged
 as train/ckpt/spk2_100/seepick61.onnx with the fq2 stander; runtime-sim pickup test (ball, no pack and 25 % load)
 running on the Mac mini.
+
+### 2026-11-13 01:50 Flight pack: early spk2 policy stops falling but lands the beak 2 cm right in the runtime sim (FP-R7)
+
+Runtime-sim pickup test (12 mm ball, 20 dev seeds, fq2 stander) of the trainer's ONNX fetched 01:38 (saved between
+iteration 100 and 130; staged as train/ckpt/spk2_100, passive_mouth dropped from its metadata, graph untouched):
+- No pack: 5 held (1 still held 3 s later), 0 falls. Start policy: 15 held (12), 1 fall.
+- 25 % load: 6 held (4), 1 fall. Start policy: 0 held, 18 falls.
+Where it misses: pad at close in the switch-time root frame, mean y -0.0191 m (start policy -0.0058); object minus pad
+mean [0.001, 0.020] m, sd 5 mm, so a steady offset, not scatter; the policy's item slots read y 0.003 at close. At
+25 % load the offset is [0.004, 0.034], sd [0.015, 0.038]. Control with the original stander before the pick: 5 held,
+0 falls, so the stander is not the cause. spk1 iteration 100 had no offset (y -0.0057) but 12 mm scatter and 4 held.
+Reading: the fine-tune removed the falls (the balance part works) but the body ends about 2 cm right of the item and
+the item estimate does not show it; the training env counts these as held more often than the runtime sim does
+(training held at s = 0 rose 0.37 -> 0.42 over the same iterations). Cause not found yet; diagnosis dispatched
+(same policy in the training env with the same probe, then the sim differences one at a time). spk2 keeps running
+(0.40 USD at iteration 130): its balance gain is real and later checkpoints are needed to see whether the offset grows.
