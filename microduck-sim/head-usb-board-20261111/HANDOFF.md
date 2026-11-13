@@ -264,3 +264,18 @@ Shawn said "下单" on the USD 99.00 cart figure. At checkout (only gerber_Y3) t
 - DHL Express DDP and FedEx Express DDP: shipping 35.00 + duty 28.85 + fee 7.52, USD 153.77.
 - Global Standard Direct Line is refused for this order (the page allows it only under USD 59.00).
 - Continue was not clicked; nothing is submitted or paid. The order waits for Shawn's word on the new total. Card details are his to enter.
+
+## 2026-11-12 night: US order cancelled, board to be ordered in China
+
+Shawn agreed to the new total, the order was submitted unpaid (W2026111308410924), and the payment page added sales tax 7.93 and a PayPal fee 0.73: USD 154.40 before a 10 dollar coupon. He then stopped: he flies to China on 2026-12-05, and freight 30.05, duty 28.85, disbursement 4.44 and sales tax 7.93 (about USD 71) exist only for US delivery. He cancelled ("取消吧"); the order history shows Order Cancelled. Nothing was paid. His words on the files: "文件可以保存 回国还能用".
+
+## Ordering in China
+
+Everything needed is in this directory; nothing depends on the JLCPCB account or its cart.
+
+- Upload `pcb/build/fab/gerber.zip`, then `bom.csv` and `cpl.csv` for assembly. These are the files of the cancelled order (board rerouted for the default stack, commit 506fe342; `check_drc.py` and `usb_pairs.py` PASS).
+- Board options: 4 layers, 30 x 30 mm, 1.6 mm, default stackup JLC04161H-7628 (the USB pairs are drawn for it: 0.21 mm wide, 0.13 mm gap), ENIG, no impedance-control service.
+- Assembly options: top side, Economic type, 2 of 5 boards assembled (or more), edge rails removed by the factory. The BOM has 26 lines with LCSC part numbers; on the US site the 1x5 socket and the PicoBlade rows had to be ticked by hand, and the placement preview was checked part by part.
+- The domestic site (嘉立创, jlc.com) is a separate site and account from jlcpcb.com. Its stackup names, the calculator width for 90 ohm pairs and the part availability must be read there before ordering; if its default 4-layer stack differs from 7628 with 0.2104 mm prepreg, redo the pair width with that site's calculator (`PAIR_W`, `PAIR_P` in `pcb/gen_pcb.py`) and rerun `pcb/run.sh all`, `check_drc.py`, `usb_pairs.py`, `fab.py`. Not quoted there yet.
+- Firmware to flash on arrival: `firmware/build/head_usb.uf2` (built, never run on hardware).
+- Still open before fitting: A7Z driver and port-current checks, the insulating layer between socket tails and the camera back, the camera-to-board lead (not bought).
