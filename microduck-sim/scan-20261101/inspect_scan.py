@@ -15,12 +15,14 @@ C = img[np.clip(((1 - uv[:, 1]) * h).astype(int), 0, h - 1), np.clip((uv[:, 0] *
 # floor by RANSAC
 rng = np.random.default_rng(0)
 best, bn, bd = 0, None, None
-for _ in range(1500):
+for _ in range(20000):
     p = V[rng.choice(len(V), 3, replace=False)]
     n = np.cross(p[1] - p[0], p[2] - p[0])
     if np.linalg.norm(n) < 1e-9:
         continue
     n /= np.linalg.norm(n)
+    if abs(n[1]) < 0.94:  # Scaniverse meshes are gravity-aligned with y up: only planes within 20 deg of level can be
+        continue          # the floor (2026-11-12: on a plain white table the largest plane was a wall)
     d = np.abs((V - p[0]) @ n)
     c = (d < 0.003).sum()
     if c > best:

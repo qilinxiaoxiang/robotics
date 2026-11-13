@@ -391,9 +391,14 @@
           "running": "walk_wired with IMU roll trim -3 (log app1112-145302)"
         },
         {
-          "when": "2026-11-12 20:10-20:14, log app1112-2010 (roll trim 0)",
-          "what": "stand mode (KP 400) before walking: roll +1.1 deg, legs mirrored within 0.6 deg. One 3.6 s walk at vx 0.25, then walk mode at zero command (KP 200) for 60 s: roll +2.3 deg, constant. Joints after the walk, right / left magnitude in deg: hip pitch 25.3 / 20.8, ankle 25.8 / 22.9, hip roll 5.3 / 6.6. Goals stay mirrored within 2 deg (hip pitch 26.8 / 24.9); the left hip pitch sits 4.1 deg short of its goal, the right 1.5; both knees sit 6 deg short. Shawn: \"现在走了几步 就偏的多了吧\"",
+          "when": "2026-11-12 20:01-20:10, log app1112-2010 (the suffix is a label; the brain started 20:01:26, roll trim 0)",
+          "what": "stand mode (KP 400) before walking: roll +1.1 deg, legs mirrored within 0.6 deg. One 3.6 s walk at vx 0.25 (20:03:56), then walk mode at zero command (KP 200) for 60 s: roll +2.3 deg, constant. Joints after the walk, right / left magnitude in deg: hip pitch 25.3 / 20.8, ankle 25.8 / 22.9, hip roll 5.3 / 6.6. Goals stay mirrored within 2 deg (hip pitch 26.8 / 24.9); the left hip pitch sits 4.1 deg short of its goal, the right 1.5; both knees sit 6 deg short. Shawn: \"现在走了几步 就偏的多了吧\"",
           "running": "walk_wired walk61, zero command after a walk"
+        },
+        {
+          "when": "2026-11-12 20:05:49 and 20:08:12, two Scaniverse scans on a table, walk mode at zero command after walks (a short turn and three steps between them)",
+          "what": "scan a / scan b, against the table plane: left sole outer edge lower by 2.8 / 2.4 deg (foot fits 2.7 / 1.9 mm rms), right sole flat (+0.1 / 0.0 deg). IMU roll +2.25 / +2.64; the table itself is tilted 0.6 deg left side down / 0.5 deg right side down about the robot by the phone's gravity, so the trunk is 1.7 / 3.1 deg left side down against the table. Hip roll read R +5.3 L -6.6 / R +6.7 L -6.9. The 11-04 scan gave the same picture (left sole 2.2, right 0.1)",
+          "running": "walk_wired walk61 zero command, log app1112-2010; Mac mini ~/sims/scan-1112 (floor_truth.py, table_tilt.py)"
         }
       ],
       "hypotheses": [
@@ -409,8 +414,8 @@
         },
         {
           "id": "H3-hidden-hip-angle",
-          "claim": "A hip roll or hip yaw joint holds angle its encoder does not see (horn seating, play under load).",
-          "status": "open"
+          "claim": "The left leg holds roll angle its encoders do not see (hip roll or hip yaw horn seating, bracket flex or play under load, or a sole pad thicker on its inner side).",
+          "status": "supported by three scans, not located: with the right sole flat on the table, the logged joint angles put the left sole only 0.3 to 1.1 deg outer edge down; the scans measure 2.2 to 2.8. About 1.5 to 2 deg of left-leg roll is outside the encoders. The thigh and shin fits (3 to 5 mm rms, free scale 0.79 to 0.98) are too poor to say which joint"
         },
         {
           "id": "H4-mass-left-of-model",
@@ -441,6 +446,12 @@
           "what": "brain_sim_check.py: walk 4 s then zero command 30 s, with and without a 1 deg starting asymmetry; does the sim policy at KP 200 settle into the same uneven stance (hip pitch 4.5 deg apart, roll over 2 deg)?",
           "status": "run",
           "results": "2026-11-12, Mac mini ~/sims/lean-t3 (asbuilt current, --volt 7.6 --drop 0.036 --imu-pitch 2, walk 3.6 s at 0.25, --after-walk 30). Roll before the walk / 5-15 s after / last 10 s: no offset 0.00 / 0.15 / 0.26; mass 3 mm left 0.29 / 0.63 / 0.69; mass 6 mm left 0.52 / 1.30 / 1.21 (robot 1.1 / 2.3 / 2.35). In every case the sim also ends with the left hip pitch 2 to 3 deg less bent than the right and the left ankle 2 to 3 deg less (robot 4.5 and 2.9): the uneven fore-aft stance after a walk is the policy's own and not a robot defect. The sim roughly doubles a sideways offset after the walk, as the robot does (H5 supported). What the sim does not show: its left hip roll moves inward as it tips left (R 5.6 / L 3.5), the robot's moves outward (R 5.3 / L 6.6); and the robot needs more than the 6 mm offset to start at 1.1 deg"
+        },
+        {
+          "id": "T4-two-scans-after-walk",
+          "what": "Scan the robot as it stops after a walk, twice, and read sole and pelvis angles against the table with scan-20261101/floor_truth.py",
+          "status": "run",
+          "results": "2026-11-12, see the 20:05:49 / 20:08:12 occurrence. Repeats the 11-04 scan within 0.6 deg on both soles. inspect_scan.py had picked a wall as the floor on the plain white table; it now accepts only planes within 20 deg of level"
         }
       ],
       "mitigations": [],
