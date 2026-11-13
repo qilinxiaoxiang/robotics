@@ -245,3 +245,13 @@ Shawn: "这么贵这么久 有没有什么便宜又快一点的选择". Read on 
 - HASL instead of ENIG would take off about USD 17; not quoted to the end.
 - Shipping options (cart, 0.56 kg): UPS Express Saver DDP USD 31.69 (2 to 4 business days), DHL Express 33.08, FedEx 44.49, Global Standard Direct Line USD 14.43 (8 to 10 business days, lands around Shawn's 2026-12-05 departure).
 - Consequence for the design: on the 7628 stack the two 480 Mbit/s pairs as routed (0.14 mm wide, 0.13 mm gap) come to about 114 ohm by the same IPC-2141 formula; 90 ohm needs about 0.25 mm width at the same gap. The pairs must be redrawn in `gen_pcb.py` `USB_PAIRS` and the board rebuilt and re-exported before this variant is ordered.
+
+## 2026-11-12 evening: cheaper variant built and in the cart (not ordered)
+
+Shawn chose it: "ok 这个好".
+
+- Pair width from JLCPCB's impedance calculator, not the formula: 90 ohm differential on an outer layer of JLC04161H-7628 is 8.61 mil (0.219 mm) at 5.1 mil spacing. Built: 0.21 mm wide, 0.13 mm gap (pitch 0.34), front stubs 0.22 mm. The autorouter is sensitive to these numbers (0.22/0.22/0.35 left 1 connection open, 0.14/0.22/0.35 three, 0.14/0.21/0.34 six); this set routes completely.
+- Checks on the built board: `check_drc.py` PASS (0 violations, 0 unconnected), `usb_pairs.py` PASS: uplink 21.44 / 20.15 mm (skew 1.29), camera 20.35 / 18.76 mm (skew 1.59), one via per line, widths 0.21 and 0.22. `bom.csv` and `cpl.csv` are unchanged (no part moved); `gerber.zip` is new (commit 506fe342).
+- A trial script reported a pass that was the previous build's result (its `run.sh` call had not reached the Mac mini), and a hung ssh left the export waiting from 15:20 to 19:15. A pass counts only when the run's own output shows the router and DRC lines, and `usb_pairs.py` shows the new widths.
+- JLCPCB: new upload gerber_Y3, ENIG, stackup not specified (default 7628), Economic PCBA, 2 of 5 assembled, depanel before delivery Yes, 26 BOM lines matched (the 1x5 socket and PicoBlade rows ticked by hand again), placement preview as verified before. Quote USD 24.73 + 57.67 = 82.40; build PCB 3 days + assembly 3 to 4 days + 1 day. Cart with only this item ticked: shipping USD 26.60, coupon -10.00, subtotal USD 99.00, estimated ship date 2026-11-19.
+- The old Standard item gerber_Y2 is still in the cart, unticked. It was not deleted; it must not be checked out.
