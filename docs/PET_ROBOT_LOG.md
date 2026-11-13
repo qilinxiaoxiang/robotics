@@ -1084,3 +1084,74 @@ under it (4/16), so the close must be re-learned; freezing the start policy's he
 that already fails in the training env with the matched jaw. Worker fix: grasp_worker.py exports each checkpoint
 once its size is unchanged across two 30 s polls and copies model_best.pt live; the mini smoke exported model_4
 51 s after it was saved, before model_6 existed. 16-env samples: about plus or minus 2 envs each.
+
+### 2026-11-13 04:05 Flight pack: spk3 built and checked, NOT launched (FP-R7)
+
+spk3 = spk2's curriculum with the training jaw matched to the runtime jaw, no reward change (grasp_lift start stays at
+phase 0.37). Code in `microduck-sim/microduck_rl-grasp` (branch cmu/grasp, commit 64dd5fdc): task
+`Mjlab-SeeingPick-PackSpk3-FromPick-MicroDuck-CMU-Current` (spk2's task unchanged), runner SeeingPickPackSpk3Runner,
+tests `tests/test_cmu_seeing_pick_pack_spk3.py` (38 passed with the spk2 and pack cfg tests, Mac mini). Checks: one
+Modal L4 call `microduck-spk3chk-a` (17 jobs, 552 s in the container; ledger 0.226 USD counting the 5 min L4 queue,
+cap 0.50), smoke and runtime-sim check on the Mac mini. spk2 untouched (iteration about 900 at 04:00).
+
+Runtime jaw, read from the runtime code and `microduck-sim/CURRENT-STATE.json`: XL330 BAM m6 at jaw kP 200, Goal Current
+150 mA (`jaw_grip_current_ma`), 7.6 V: torque ceiling min(7.6 kt/R, 0.150 kt) = 0.0549 N m, BAM static stiffness
+4.33 N m/rad (the code comment's 0.55 is wrong), armature 0.0018. spk3 mouth: stiffness 0.55, effort 0.0549, damping 0.10
+(a fit to the runtime timeline, not the BAM stiffness).
+
+Jaw angle (deg, mean of 256 envs, s = 0, ball) at phase 0.36 / 0.38 / 0.40 / 0.42 / 0.45; runtime 20.2 / 17.4 / 11.1 / 3.5:
+- spk3 mouth, seepick61: 20.1 / 17.0 / 11.6 / 6.6 / 2.1 (minus runtime -0.1 / -0.4 / +0.5 / +3.1). spk2 model_best:
+  19.9 / 17.1 / 11.7 / 6.7 / 2.3. Within 0.5 deg at 0.40, so damping stays 0.10; at 0.42 it lags 3 deg (end of close).
+- spk2's fast mouth, spk2 model_best: 18.0 / 11.0 / 0.0 / -2.2 / -1.3.
+- kP 4.33 (BAM), effort 0.0549, damping 0.04, seepick61: 18.5 / 14.1 / 6.9 / 0.6 / -1.3 (4.2 deg fast at 0.40).
+- Held at the end in that probe (check placement): seepick61 63/256 matched against 170/256 at kP 4.33; spk2 best
+  84/256 matched against 225/256 fast.
+
+Floor (no-pack held at the episode end, training placement: window 0.04, kicks, distractors; 256 envs, s = 0):
+- seepick61, fast jaw: noise 76/256 = 0.297 (spk2's in-run reference with the same policy and jaw: 0.348, so the in-run
+  measure reads x1.17), deterministic 0.551.
+- seepick61, matched jaw: noise 0.141, deterministic 0.199.
+- spk2 model_best (iteration 860, s_max 0.69), fast jaw: noise 0.340, deterministic 0.605.
+- spk2 model_best, matched jaw: noise 0.148, deterministic 0.301.
+Floor 0.25 (in-run units, 0.21 in check units): halfway between broken (0.14-0.15) and working (0.30); 0.72 of the
+working in-run 0.348. s_start 0.08, step 0.01, frac 0.8 as spk2.
+
+Stops: no-pack held 50-iteration mean below 0.25 at iteration 400. Allowance: 50 critic warm-up iterations (actor
+frozen) + 50 to fill the window, then the start (about 0.17 in-run) must gain 0.08; spk2 gained 0.05 per 100
+iterations after its warm-up (0.353 at 50, 0.402 at 150), so 160-200 iterations, allowed 300 (1.5 x 200). Second stop:
+after the floor was first reached, that mean below 0.7 x its own best 50-iteration mean. model_best = highest s_max
+among checkpoints taken while the 50-iteration mean is at or above the floor.
+
+Start policy (spk2 model_best, matched jaw, check placement, deterministic, 256 episodes), held at end / success / falls:
+s = 0: 89 (0.348) / 94 / 3; s = 0.10: 108 / 115 / 1; s = 0.25: 122 (0.477) / 132 / 3; s = 0.50: 135 (0.527) / 142 / 8;
+s = 1.00: 80 / 84 / 89. It still balances to s = 0.5; the pinch is the deficit, and the start holds more with load than
+without it, as spk2 did.
+
+Degenerate-policy audit under the matched jaw (episode returns; fall at 0.7 s / fq2 stander standing still (not fallen,
+n) / held pick from the start policy's successes):
+- s = 0: 4.93 / 13.06 (199) / 92.29; s = 0.10: 4.85 / 12.16 (211) / 91.62; s = 0.25: 4.67 / 14.11 (215) / 90.60;
+  s = 0.50: 4.34 / 13.87 (232) / 88.60; s = 1.00: 3.03 / 14.01 (210) / 73.88.
+- Falling early never beats standing still, and a held pick beats both by 5 x or more at every s.
+
+Smoke (Mac mini CPU, 64 envs, start = spk2 model_best through SEEPICK_PACK_INIT; init line: actor + critic from the file,
+md5 1c4bff00..., iteration 860, critic 97 -> 97 as saved, common_step_counter 80688):
+- A, ratio always passes (frac 0) and floor 1.1: 3 decisions, 3 "rise blocked by the floor", s_max stays 0.080.
+  Live export: model_2.onnx written 03:52:22, model_4.pt 03:53:53, model_4.onnx 03:53:59 (each about 6 s after its
+  checkpoint, while the run went on). A hit the 290 s smoke timeout at iteration 5 of 8 (about 48 s per CPU iteration),
+  so it wrote no run record; the stop path is covered by B and the tests.
+- B, floor 0: s_max 0.08 -> 0.09 -> 0.10, model_best at iterations 1 and 2, exports 0, 2, 3 and best, exit 0.
+- Runtime sim, smoke iteration-4 ONNX copied unchanged into train/ckpt/spk3_smoke4 (fq2 stander), style_eval 2 episodes
+  (ball, the FP-R7 pickup flags): loads as it is, 0 falls, held at the hand-back 2 of 2, at the end 1 of 2.
+
+Open: with the matched jaw the training env holds less than the runtime sim with the same policy and jaw settings
+(seepick61 deterministic 63/256 = 0.25 in the probe against 15 of 20 in the runtime sim with the fq2 stander), so the
+matched mouth makes the training env harder than the runtime, not equal to it; the next runtime-sim checkpoint tests
+will show whether spk3's training rate carries over.
+
+Launch (after spk2 has ended; the launcher refuses while microduck-seepick-spk2 has a live app), from microduck_rl-grasp:
+
+    SPK_TASK=spk3 SPK_RUN=spk3 SPK_HOURS=3.5 SPK_INIT=microduck-seepick-spk2:runs/spk2/model_best.pt MICRODUCK_GPU=L4 \
+      ~/code/robotics/omx-local/.venv/bin/modal run --detach cmu/grasp/seepick_pack_modal.py::run --max-iters 1300 --max-dollars 4
+
+Rate 1.117 USD/h (L4 + 4 cores + 16 GiB), cap min(3.5 h, 4 / 1.117) = 3.5 h = 3.91 USD over all attempts; the spk3
+task's ceiling in code is 4 USD. Nothing deployed.

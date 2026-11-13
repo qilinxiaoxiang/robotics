@@ -38,7 +38,7 @@ case "$1" in
     ;;
   test)
     zsh $T/mini.sh run true
-    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && timeout 590 .venv/bin/python -m pytest -q tests/test_cmu_seeing_pick_pack_cfg.py tests/test_cmu_seeing_pick_pack_curriculum.py >/tmp/seepick_pack_tests.log 2>&1; echo exit \$? >> /tmp/seepick_pack_tests.log" || true
+    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && timeout 590 .venv/bin/python -m pytest -q tests/test_cmu_seeing_pick_pack_cfg.py tests/test_cmu_seeing_pick_pack_curriculum.py tests/test_cmu_seeing_pick_pack_spk3.py >/tmp/seepick_pack_tests.log 2>&1; echo exit \$? >> /tmp/seepick_pack_tests.log" || true
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/seepick_pack_tests.log $T/logs/seepick_pack_tests.log || true
     tail -15 $T/logs/seepick_pack_tests.log
     ;;
@@ -73,6 +73,21 @@ case "$1" in
     done
     grep -hE "\[spk|spk-curriculum|in-run stop|exit|Traceback|Error" $T/logs/spk2_smoke/A.log $T/logs/spk2_smoke/A_train.log \
       $T/logs/spk2_smoke/B.log $T/logs/spk2_smoke/B_train.log | cut -c1-300 | head -60
+    ;;
+  spk3smoke)
+    # cmu/grasp/spk3_smoke.sh: the floor blocking a rise (A), its floor-0 control (B), live numbered ONNX export;
+    # $2 = the start checkpoint (spk2 model_best.pt), copied to the mini's /tmp/spk3/spk2_best.pt
+    ssh mac-mini "mkdir -p /tmp/spk3"
+    rsync -a $2 mac-mini:/tmp/spk3/spk2_best.pt
+    zsh $T/mini.sh run true
+    timeout -k 15 900 ssh $SSHO mac-mini "cd $MIRROR/$G && zsh cmu/grasp/spk3_smoke.sh" || true
+    mkdir -p $T/logs/spk3_smoke $T/ckpt/spk3_smoke_onnx
+    for f in A.log B.log A_record.json B_record.json A_train.log B_train.log; do
+      timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/spk3_smoke/$f $T/logs/spk3_smoke/$f || true
+    done
+    timeout -k 5 90 scp -q -o ServerAliveInterval=15 "mac-mini:/tmp/spk3_smoke/*.onnx" $T/ckpt/spk3_smoke_onnx/ || true
+    grep -hE "\[spk|spk-curriculum|in-run stop|exported|^exit|Traceback|Error|init" $T/logs/spk3_smoke/A.log $T/logs/spk3_smoke/A_train.log \
+      $T/logs/spk3_smoke/B.log $T/logs/spk3_smoke/B_train.log | cut -c1-300 | head -80
     ;;
   smoke)
     IT=${2:-4}; NE=${3:-64}; WU=${4:-2}
