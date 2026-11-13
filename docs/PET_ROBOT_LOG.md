@@ -923,3 +923,49 @@ Reading:
 Published recipe this follows: automatic curricula that widen a randomized physical parameter only while the success
 rate at the edge holds (automatic domain randomization, OpenAI 2019, arXiv 1910.07113; the terrain-level curriculum
 in Rudin et al. 2021, arXiv 2109.11978).
+
+### 2026-11-13 00:55 Flight pack: spk2 (load-scale curriculum) built and checked, not launched (FP-R7)
+
+Task `Mjlab-SeeingPick-PackCurriculum-FromPick-MicroDuck-CMU-Current` (microduck_rl-grasp commit 01caed31): the
+spk1 pack env (1.47 A, 7.2-8.2 V, same start and critic) with the load as a share s of the full pack, every pack part's
+mass and inertia x s at its own position (make_payload_manifests.py's scaling; at s = 0.25 the payload pseudo-inertia
+equals flightpack-load025's pack parts, a test). 25 % of episodes at s = 0, the rest U[0, s_max].
+Start-policy cliff (seepick61 in the training env, kicks and distractors off, 256 episodes per s, Mac mini CPU, held at
+the episode end, its ratio to s = 0, successes, falls, median fall time):
+s 0.00 (0 kg) 172/256 = 0.672, 1.00, 191, 27, 1.32 s; s 0.02 (0.019 kg) 171 = 0.668, 0.994, 179, 33, 1.40 s;
+s 0.05 (0.048 kg) 160 = 0.625, 0.93, 172, 38, 1.44 s; s 0.10 (0.096 kg) 141 = 0.551, 0.82, 146, 55, 1.12 s;
+s 0.15 (0.143 kg) 111 = 0.434, 0.645, 113, 95, 1.18 s; s 0.20 (0.191 kg) 96 = 0.375, 0.558, 99, 119, 1.08 s.
+On the L4 (seed 1): s 0.50 seepick61 falls 236/256; s 1.00 held 1, falls 253. Three of four leg-pitch joints at the
+0.538 N m clamp at p99 from s = 0; the right knee reaches it from s = 0.05.
+s = 0 against the pinned no-pack load (spk1's path): 172 held, 27 falls (Mac mini, seeds 1-8, 32 envs) and 181, 10
+(spk1 start check, same seeds) against 184, 16 on the L4 (seed 1). The model fields after reset match (trunk mass
+identical, trunk COM offsets uniform within +-3 mm: std 1.68/1.70/1.86 mm against 1.79/1.70/1.78 mm over 256 envs, total
+mass 0.9663 +- 0.0105 against 0.9666 +- 0.0104 kg); the scale path takes extra random draws at startup, so the episodes
+differ. The spread is between draws, not a changed load.
+Chosen: s_start 0.08, step 0.01 (9.6 g; about 0.026 of the ratio between 0.10 and 0.20, about one standard error of a
+decision window of about 900 top-slice episodes), FRAC 0.8 (above the start policy at 0.15, just below it at 0.10; its
+0.06-0.08 slice holds about 0.9), top slice s >= 0.75 s_max, a decision every 10 iterations with at least 300 top and
+200 no-pack episodes.
+Fall-early audit (full-episode returns in seeing_pack_check.py's units; fall at 0.7 s = seepick61's mean return
+accumulated by 0.7 s; stand still = fq2 stander episodes that did not fall; held pick = seepick61 successes, carried
+seepick61 at s 1.0): s 0.00 4.35 / 12.68 / 87.05; 0.02 4.28 / 13.38 / 89.55; 0.05 4.17 / 13.24 / 87.17; 0.10 3.98 /
+12.16 / 86.94; 0.15 3.79 / 12.31 / 86.65; 0.20 3.59 / 13.72 / 84.12; 0.50 2.45 / 13.22 / 76.06; 1.00 1.55 / 12.91 /
+61.17. The start policy's own return falls from 73.2 (s 0) to 39.9 (0.20), 4.6 (0.50) and 0.24 (1.00). Falling early
+never beats standing still, so no penalty: SPK2_FALL_PENALTY = 0 and the after audit equals the before one. The
+early_end term was checked anyway: at fall_penalty 10 every fallen episode gets exactly -10.0, every other episode 0
+(s 0.20, L4). spk1's reading 2 (an early-fall incentive) is refuted for these loads; at full load the start policy
+earns less than standing (0.24 against 12.9), which the curriculum keeps out of reach until the lighter loads are held.
+In-run stops: `[spk-stop] no rise` when s_max is still 0.08 at iteration 100 (the start policy passes the first
+decisions; 100 iterations are about 15 min and 0.28 USD on the L4 at 9.1 s per iteration); `[spk-stop] no-pack loss`
+when the s = 0 held rate over 50 iterations is below 0.7 x its mean over iterations 0-49. model_best.pt by s_max, ties
+by top-slice held; checkpoints every 100. Launch: Modal L4 1300 iterations, 4 USD ceiling in code (worker cap 3.5 h,
+3.91 USD), or AWS spot through aws_train.py; commands in microduck_rl-grasp/cmu/grasp/PLAN-seeing-pickup.md.
+Checks and where they ran: tests 29 passed (Mac mini, 10 s); cliff s 0-0.20 Mac mini, 22:25-23:45 (s 0.05-0.20 as two
+8 x 16-env waves each; 32-env parts hit the 590 s cap at load 29); fall-early audit runs, early_end check and control
+on a Modal L4 (one process, 424 s of runs, 17 min waiting for an L4); curriculum smoke Mac mini 00:27-00:40 (64 envs,
+CPU): s_max 0.10 -> 0.13 in three forced decisions, the resume restored s_max 0.13 with rises 3 and went on to 0.14,
+and the forced case stopped with "in-run stop: no rise: s_max 0.100 still at its start 0.100 at iteration 2 (limit 2;
+last ratio 0.00, need 2.0)" in the run record. Modal billed 0.224 USD for the checks (spk2chk-a 0.006 + 0.116 with the
+image build, spk2chk-b 0.102; `modal billing report`), 0 live apps after. The first check call failed (policies not in
+the image, 0.12 USD) and a build was stopped by another session's edit in the worktree; the Modal image is now built
+from a snapshot of the worktree.

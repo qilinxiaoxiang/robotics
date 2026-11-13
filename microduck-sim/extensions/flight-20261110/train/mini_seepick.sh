@@ -4,8 +4,9 @@
 # behind other sessions' simulations (mini.sh's busy check), each under 10 minutes.
 #   zsh train/mini_seepick.sh push                   mirror code, models, the seepick61 checkpoint, payload.py
 #   zsh train/mini_seepick.sh setup                  uv sync in the mirror (first time)
-#   zsh train/mini_seepick.sh test                   pytest tests/test_cmu_seeing_pick_pack_cfg.py -> logs/seepick_pack_tests.log
-#   zsh train/mini_seepick.sh check LOAD BASE CASES [ENVS] [TAG]   seeing_pack_check.py -> out/spk_<TAG>_<BASE>_<LOAD>.json
+#   zsh train/mini_seepick.sh test                   pytest the pack cfg and spk2 curriculum tests -> logs/seepick_pack_tests.log
+#   zsh train/mini_seepick.sh check LOAD BASE CASES [ENVS] [PARTS] [TAG]   seeing_pack_check.py -> out/spk_<TAG>_<BASE>_<LOAD>.json
+#        LOAD s<scale> = spk2 whole-pack scale (e.g. s0.05); env SPK_CHECK_EXTRA passes extra check arguments
 #   zsh train/mini_seepick.sh smoke [ITERS] [ENVS] [WARMUP]        grasp_worker.py PPO smoke + resume -> logs/seepick_pack_smoke.log
 # ssh sometimes hangs after the remote job has finished: every job writes its result file on the mini first and the
 # fetch looks for that file, so a hung ssh is killed by `timeout` and the result is still copied back.
@@ -37,7 +38,7 @@ case "$1" in
     ;;
   test)
     zsh $T/mini.sh run true
-    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && timeout 590 .venv/bin/python -m pytest -q tests/test_cmu_seeing_pick_pack_cfg.py > /tmp/seepick_pack_tests.log 2>&1; echo exit \$? >> /tmp/seepick_pack_tests.log" || true
+    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && timeout 590 .venv/bin/python -m pytest -q tests/test_cmu_seeing_pick_pack_cfg.py tests/test_cmu_seeing_pick_pack_curriculum.py >/tmp/seepick_pack_tests.log 2>&1; echo exit \$? >> /tmp/seepick_pack_tests.log" || true
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/seepick_pack_tests.log $T/logs/seepick_pack_tests.log || true
     tail -15 $T/logs/seepick_pack_tests.log
     ;;
@@ -46,10 +47,32 @@ case "$1" in
     LD=$2; BS=$3; CS=$4; NE=${5:-64}; NP=${6:-4}; TG=${7:-start}
     OUT=spk_${TG}_${BS}_${LD}
     zsh $T/mini.sh run true
-    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && zsh cmu/grasp/seeing_pack_parts.sh $LD $BS $CS $NE $NP /tmp/$OUT" || true
+    timeout -k 15 700 ssh $SSHO mac-mini "cd $MIRROR/$G && SPK_CHECK_EXTRA='$SPK_CHECK_EXTRA' SPK_SEED0='${SPK_SEED0:-0}' zsh cmu/grasp/seeing_pack_parts.sh $LD $BS $CS $NE $NP /tmp/$OUT" || true
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/$OUT.log $T/logs/$OUT.log || true
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/$OUT.json $T/out/$OUT.json || true
     grep -E "\[pack-check\] merged|Error|Traceback|^exit|^part" $T/logs/$OUT.log | cut -c1-700
+    ;;
+  merge)
+    # merge part files of earlier check waves left in the mini's /tmp: merge OUTSTEM STEM1 [STEM2 ...]
+    #   -> out/OUTSTEM.json (e.g. two 8 x 16-env waves of one load, seeds 1-8 and 9-16)
+    MO=$2; shift 2
+    PS=""
+    for st in "$@"; do PS="$PS /tmp/${st}_p*.json"; done
+    timeout -k 15 120 ssh $SSHO mac-mini "cd $MIRROR/$G && .venv/bin/python cmu/grasp/seeing_pack_check.py --merge /tmp/$MO.json $PS > /tmp/$MO.log 2>&1; echo exit \$? >> /tmp/$MO.log" || true
+    timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/$MO.log $T/logs/$MO.log || true
+    timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/$MO.json $T/out/$MO.json || true
+    grep -E "\[pack-check\] merged|Error|Traceback|^exit" $T/logs/$MO.log | cut -c1-700
+    ;;
+  spk2smoke)
+    # cmu/grasp/spk2_smoke.sh: the curriculum moving s_max, a resume keeping it, a forced "no rise" stop
+    zsh $T/mini.sh run true
+    timeout -k 15 900 ssh $SSHO mac-mini "cd $MIRROR/$G && zsh cmu/grasp/spk2_smoke.sh" || true
+    mkdir -p $T/logs/spk2_smoke
+    for f in A.log B.log A_record_part1.json A_record.json B_record.json A_train.log B_train.log; do
+      timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/spk2_smoke/$f $T/logs/spk2_smoke/$f || true
+    done
+    grep -hE "\[spk|spk-curriculum|in-run stop|exit|Traceback|Error" $T/logs/spk2_smoke/A.log $T/logs/spk2_smoke/A_train.log \
+      $T/logs/spk2_smoke/B.log $T/logs/spk2_smoke/B_train.log | cut -c1-300 | head -60
     ;;
   smoke)
     IT=${2:-4}; NE=${3:-64}; WU=${4:-2}
@@ -66,7 +89,7 @@ case "$1" in
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/spk_smoke/$RN/train.log $T/logs/seepick_pack_smoke_train.log || true
     timeout -k 5 90 scp -q -o ServerAliveInterval=15 mac-mini:/tmp/spk_smoke/$RN/run_record.json $T/out/seepick_pack_smoke_record.json || true
     mkdir -p $T/ckpt/spk_smoke
-    timeout -k 5 90 scp -q -o ServerAliveInterval=15"mac-mini:/tmp/spk_smoke/$RN/*.onnx" $T/ckpt/spk_smoke/ || true
+    timeout -k 5 90 scp -q -o ServerAliveInterval=15 "mac-mini:/tmp/spk_smoke/$RN/*.onnx" $T/ckpt/spk_smoke/ || true
     tail -3 $T/logs/seepick_pack_smoke.log
     ;;
 esac
