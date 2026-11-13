@@ -255,3 +255,12 @@ Shawn chose it: "ok 这个好".
 - A trial script reported a pass that was the previous build's result (its `run.sh` call had not reached the Mac mini), and a hung ssh left the export waiting from 15:20 to 19:15. A pass counts only when the run's own output shows the router and DRC lines, and `usb_pairs.py` shows the new widths.
 - JLCPCB: new upload gerber_Y3, ENIG, stackup not specified (default 7628), Economic PCBA, 2 of 5 assembled, depanel before delivery Yes, 26 BOM lines matched (the 1x5 socket and PicoBlade rows ticked by hand again), placement preview as verified before. Quote USD 24.73 + 57.67 = 82.40; build PCB 3 days + assembly 3 to 4 days + 1 day. Cart with only this item ticked: shipping USD 26.60, coupon -10.00, subtotal USD 99.00, estimated ship date 2026-11-19.
 - The old Standard item gerber_Y2 is still in the cart, unticked. It was not deleted; it must not be checked out.
+
+## 2026-11-12 night: checkout opened, stopped before submit
+
+Shawn said "下单" on the USD 99.00 cart figure. At checkout (only gerber_Y3) the shipping address was saved in the account, and the page added US import duty that the cart had not shown.
+
+- UPS Express Saver DDP, 2-4 business days (selected): shipping 30.05 + customs duty 28.85 + disbursement fee 4.44, grand total USD 145.74 before the coupon (applied in the payment step).
+- DHL Express DDP and FedEx Express DDP: shipping 35.00 + duty 28.85 + fee 7.52, USD 153.77.
+- Global Standard Direct Line is refused for this order (the page allows it only under USD 59.00).
+- Continue was not clicked; nothing is submitted or paid. The order waits for Shawn's word on the new total. Card details are his to enter.
