@@ -799,3 +799,16 @@ ours to touch (it needs the whole on-demand quota when running, so training uses
 cost reads 0.00 USD (Cost Explorer); the credit balance itself is not readable from the CLI and was not verified.
 An agent is building `extensions/flight-20261110/train/aws_train.py` (spot GPU, self-terminating, S3 checkpoints,
 dollar cap) with a smoke of at most 1 USD; no training launched on AWS.
+
+### 2026-11-12 19:10 Compute: Modal balance read, AWS credit source, 16-831 follow-up drafted
+
+- Modal Credits tab (signed in with the CMU Google account at Shawn's word, 2026-11-12): 36.61 USD of credit left in
+  total = 24.22 of the 500 USD Nova hackathon grant (expires 2026-11-30) + 12.40 of this month's 30 USD plan credit.
+  `modal billing summary`: metered 17.60 this month, credits -17.60, billed 0.00. Usage limit and spend limit 85 USD.
+- The 150 USD AWS credit is the 24-784 course credit (second batch, sent to AWS 2026-11-06; Cost Explorer shows credit
+  records from 11-07). It shares the account with the Challenge 3 machine (due 11-28); anything beyond it bills the card.
+- 16-831 AWS project credit: late request 9-15, Prof. Shi 9-16 "I can try but no guarantee", nothing since. Follow-up
+  drafted in the same thread in the CMU mailbox (draft only, not sent), asking whether AWS's Free-plan skip that hit
+  24-784 also hit the 16-831 credits.
+- Free-compute search (two agents): nothing usable today beats AWS + Modal; large pools (Chameleon, ACCESS Jetstream2,
+  Bridges-2) need a faculty lead and 1 to 14 days.
