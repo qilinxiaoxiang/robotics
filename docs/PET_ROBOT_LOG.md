@@ -1015,3 +1015,17 @@ the item estimate does not show it; the training env counts these as held more o
 (training held at s = 0 rose 0.37 -> 0.42 over the same iterations). Cause not found yet; diagnosis dispatched
 (same policy in the training env with the same probe, then the sim differences one at a time). spk2 keeps running
 (0.40 USD at iteration 130): its balance gain is real and later checkpoints are needed to see whether the offset grows.
+
+### 2026-11-13 02:15 Flight pack: spk2 at iteration 310 holds 9 of 20 at 25 % load in the runtime sim (FP-R7)
+
+Training: s_max 0.08 -> 0.30 by iteration 310 (21 rises by 290), no-pack held 50-iteration mean 0.39-0.41 against
+reference 0.348, 0.96 USD at iteration 326, about 9.5 s per iteration. Runtime-sim pickup test of the trainer's ONNX
+saved at iteration 310 (train/ckpt/spk2_320, fq2 stander, ball, 20 dev seeds):
+- No pack: 4 held (1 at end), 3 falls. Start policy 15 held.
+- 25 % load (0.239 kg): 9 held (8 at end), 0 falls. Start policy 0 held, 18 falls; the 01:38 file 6 held.
+- 50 % load (0.478 kg, above s_max): 0 held, 12 falls. Start policy 0 held, 20 falls.
+The 2 cm lateral offset of the 01:38 file is gone: object minus pad at close [0.003, 0.006] without pack and
+[0.004, 0.004] at 25 %, like the start policy's [0.007, 0.006]. Open: without the pack the fine-tuned policy holds
+4-5 of 20 in the runtime sim while training reports the s = 0 held rate rising; it does better at 25 % than at zero.
+Diagnosis continues with the agent (same policy in the training env at s = 0, body at s = 0 against the runtime
+"none" manifest, failure stage of the no-pack episodes).
