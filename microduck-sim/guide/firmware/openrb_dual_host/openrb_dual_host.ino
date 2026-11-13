@@ -14,6 +14,10 @@
 // alone, so a host that only listens still gets the IMU.
 // Every stream is parsed into whole packets before forwarding, so DYNAMIXEL status packets and IMU frames never
 // interleave on the USB link. A partial packet is dropped after 3 ms of silence (resync).
+// Rescue path for a servo that fell back to factory settings (57600 baud, 2026-11-13): a packet addressed to ID 253
+// (no servo can have it) is not forwarded. Its parameters are a 4-byte little-endian baud rate followed by raw bytes;
+// the bus is switched to that baud, the raw bytes are written, and the bus returns to BAUD. Replies at the other baud
+// are not relayed; the host checks the result at BAUD afterwards (pi/rescue_factory_servo.py).
 // Based on ROBOTIS usb_to_dynamixel.ino (Apache-2.0).
 
 #include <Dynamixel2Arduino.h>
@@ -105,11 +109,34 @@ void blink() {
   ledOffAt = millis() + 20;
 }
 
+const uint8_t RESCUE_ID = 253;
+
+// True when the packet was a rescue request and has been handled here.
+bool rescue(uint8_t *b, int n) {
+  if (b[4] != RESCUE_ID) return false;
+  if (n < 15) return true;  // header 7 + instruction 1 + baud 4 + at least 1 raw byte + CRC 2
+  uint32_t baud = (uint32_t)b[8] | ((uint32_t)b[9] << 8) | ((uint32_t)b[10] << 16) | ((uint32_t)b[11] << 24);
+  // 4 Mbaud and over is out of the SAMD21's range at 16x oversampling: the write never completes and flush() hangs (2026-11-13)
+  if (baud != 9600 && baud != 57600 && baud != 115200 && baud != 2000000 && baud != 3000000) return true;
+  DXL_BUS.flush();
+  dxl.begin(baud);
+  DXL_BUS.write(b + 12, n - 14);
+  DXL_BUS.flush();
+  delay(20);  // the servo's EEPROM write and its reply at the other baud
+  dxl.begin(BAUD);
+  while (DXL_BUS.available()) DXL_BUS.read();
+  fromBus.len = 0;
+  blink();
+  return true;
+}
+
 void usbPacket(uint8_t *b, int n) {
+  if (b[0] == 0xFF && rescue(b, n)) return;
   if (b[0] == 0xFF) { owner = &USB_HOST; DXL_BUS.write(b, n); lastInstr = micros(); blink(); }
 }
 
 void piPacket(uint8_t *b, int n) {
+  if (b[0] == 0xFF && rescue(b, n)) return;
   if (b[0] == 0xFF) { owner = &PI_HOST; DXL_BUS.write(b, n); lastInstr = micros(); blink(); }
   else if (n <= (int)sizeof(imuPending)) { memcpy(imuPending, b, n); imuLen = n; }  // sent when the bus is quiet
 }
