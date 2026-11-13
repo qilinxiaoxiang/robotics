@@ -4,7 +4,7 @@ Runs once per boot from duck-selfcheck.service (/home/radxa/rt/microduck-sim/gui
 radxa) and again on request from the phone app. Writes /home/radxa/duck-logs/selfcheck/latest.json and appends the same
 record to history.jsonl; the app's a7z bridge reads latest.json. Exit code 0 when no item failed.
 
-Items (ok true = green, false = red, null = skipped or not fitted, each with a Chinese detail line for the app):
+Items (ok true = green, false = red, null = skipped or not fitted, each with an English detail line for the app):
   imu      BNO085 at 0x4A on i2c-7 (CURRENT-STATE a7z_imu_bus): accelerometer magnitude 8.0-11.6 m/s2 within 4 s
   touch    XIAO at 0x2A on the TWI0 bus (a7z_touch_bus): 24-byte block, five counts below 4194303, sequence advancing
   camera   U20CAM on USB and a7z_cam.py publishing frames to /dev/shm/a7z_cam.bgr (frame index advancing, not black)
@@ -29,7 +29,7 @@ HW_LOCK = "/tmp/duck-hw.lock"
 CARD = "sndi2s0"   # the I2S0 card's number changes between boots (HDMI is sometimes card 0): always by name
 SHM = "/dev/shm/a7z_cam.bgr"
 SERVO_PORT, SERVO_BAUD = "/dev/ttyAS2", 500_000
-MIC_NAMES = ["耳朵 A（L/R 接地，第 0 路）", "耳朵 B（L/R 接 VDD，第 1 路）", "后脑（10 号针，第 2 路）"]
+MIC_NAMES = ["Ear A (L/R to GND, channel 0)", "Ear B (L/R to VDD, channel 1)", "Back of head (pin 10, channel 2)"]
 
 
 def holders(dev):
@@ -60,13 +60,13 @@ def take_hw_lock(wait_s=4.0):
         except BlockingIOError:
             if time.time() > end:
                 f.close()
-                return None, holders(HW_LOCK) or ["另一个程序"]
+                return None, holders(HW_LOCK) or ["another program"]
             time.sleep(0.2)
 
 
 def check_imu():
     if not os.path.exists("/dev/i2c-7"):
-        return {"ok": False, "detail": "没有 i2c-7（TWI7 补丁没加载）"}
+        return {"ok": False, "detail": "No i2c-7 (TWI7 overlay not loaded)"}
     try:
         from adafruit_bno08x import BNO_REPORT_ACCELEROMETER
         from adafruit_bno08x.i2c import BNO08X_I2C
@@ -81,10 +81,10 @@ def check_imu():
                 break
             time.sleep(0.05)
     except Exception as e:  # the library raises plain RuntimeError/OSError subclasses
-        return {"ok": False, "detail": imu_diagnosis() or f"读不到 IMU：{type(e).__name__} {e}"[:160]}
+        return {"ok": False, "detail": imu_diagnosis() or f"Cannot read the IMU: {type(e).__name__} {e}"[:160]}
     if g is None or not 8.0 <= g <= 11.6:
-        return {"ok": False, "detail": f"IMU 回应了，但重力读数不对：{g if g is None else round(g, 2)} m/s²"}
-    return {"ok": True, "detail": f"重力 {g:.2f} m/s²"}
+        return {"ok": False, "detail": f"IMU answers, but gravity reads wrong: {g if g is None else round(g, 2)} m/s²"}
+    return {"ok": True, "detail": f"Gravity {g:.2f} m/s²"}
 
 
 def imu_diagnosis():
@@ -97,9 +97,9 @@ def imu_diagnosis():
         finally:
             os.close(fd)
     except OSError:
-        return "IMU 不应答（0x4A 没回应）：查 1、3、5、9 号针和 IMU 插头"
+        return "IMU does not answer (no reply at 0x4A): check pins 1, 3, 5, 9 and the IMU plug"
     if head == b"\0\0\0\0":
-        return "IMU 应答地址，但不发数据（卡住了）：拔掉 A7Z 电源 5 秒再插上（重启不会给 IMU 断电）"
+        return "IMU answers its address but sends no data (stuck): unplug the A7Z power for 5 s, then plug it back in (a reboot does not power-cycle the IMU)"
     return None
 
 
@@ -124,7 +124,7 @@ def touch_decode(raw):
 def check_touch():
     dev = touch_bus()
     if dev is None:
-        return {"ok": False, "detail": "没有 TWI0 总线（触摸板补丁没加载）"}
+        return {"ok": False, "detail": "No TWI0 bus (touch board overlay not loaded)"}
     blocks = []
     try:
         fd = os.open(dev, os.O_RDWR)
@@ -136,22 +136,22 @@ def check_touch():
         finally:
             os.close(fd)
     except OSError as e:
-        return {"ok": False, "detail": f"触摸板（0x2A）没回应：{e.strerror}"}
+        return {"ok": False, "detail": f"Touch board (0x2A) does not answer: {e.strerror}"}
     if None in blocks:
-        return {"ok": False, "detail": "触摸板回应了，但数据对不上（读数都超出范围）"}
+        return {"ok": False, "detail": "Touch board answers, but the data does not decode (all readings out of range)"}
     counts = blocks[-1][1:]
     bad = [p for p, c in zip(["L1", "R1", "L2", "R2", "M"], counts) if c == 0 or c >= 4194303]
     if blocks[0][0] == blocks[1][0]:
-        return {"ok": False, "detail": "触摸板回应了，但计数不更新（扫描卡住）"}
+        return {"ok": False, "detail": "Touch board answers, but the counter does not advance (scan stuck)"}
     if bad:
-        return {"ok": False, "detail": f"触摸点读数异常：{', '.join(bad)}（碰到金属或断线）"}
-    return {"ok": True, "detail": "五个触摸点 " + " ".join(str(c) for c in counts)}
+        return {"ok": False, "detail": f"Bad pad readings: {', '.join(bad)} (touching metal or a broken wire)"}
+    return {"ok": True, "detail": "Five pads " + " ".join(str(c) for c in counts)}
 
 
 def check_camera():
     usb = subprocess.run(["lsusb"], capture_output=True, text=True).stdout
     if "U20CAM" not in usb:
-        return {"ok": False, "detail": "USB 上没有摄像头（U20CAM 没接上或线坏了）"}
+        return {"ok": False, "detail": "No camera on USB (U20CAM not connected or bad cable)"}
 
     def frame():
         try:
@@ -163,25 +163,25 @@ def check_camera():
 
     first = frame()
     if first is None:
-        return {"ok": None, "detail": "摄像头在 USB 上；摄像头程序没开（App 里的开关关着），没取画面"}
+        return {"ok": None, "detail": "Camera is on USB; the camera program is off (the app's switch is off), so no picture was taken"}
     time.sleep(1.5)
     last = frame()
     if last is None or last[0] == first[0]:
-        return {"ok": False, "detail": "摄像头程序开着，但 1.5 秒内没有新画面"}
+        return {"ok": False, "detail": "Camera program is running, but no new frame in 1.5 s"}
     mean = sum(last[1][::997]) / len(last[1][::997])
     if mean < 4:
-        return {"ok": False, "detail": f"画面在更新，但全黑只有噪点（平均亮度 {mean:.0f}）：镜头朝下或被挡住了"}
-    return {"ok": True, "detail": f"画面在更新，平均亮度 {mean:.0f}"}
+        return {"ok": False, "detail": f"Frames are updating, but all black with only noise (mean brightness {mean:.0f}): lens facing down or covered"}
+    return {"ok": True, "detail": f"Frames are updating, mean brightness {mean:.0f}"}
 
 
 def check_servos():
     try:
         from dynamixel_sdk import COMM_SUCCESS, PacketHandler, PortHandler
     except ImportError:
-        return {"ok": False, "detail": "缺 dynamixel_sdk"}
+        return {"ok": False, "detail": "dynamixel_sdk is missing"}
     port, packet = PortHandler(SERVO_PORT), PacketHandler(2.0)
     if not port.openPort() or not port.setBaudRate(SERVO_BAUD):
-        return {"ok": False, "detail": f"打不开 {SERVO_PORT}"}
+        return {"ok": False, "detail": f"Cannot open {SERVO_PORT}"}
     missing, volts = [], []
     try:
         for sid in range(1, 16):
@@ -197,10 +197,10 @@ def check_servos():
     finally:
         port.closePort()
     if len(missing) == 15:
-        return {"ok": False, "detail": "15 个舵机都没回应（舵机电源开了吗？OpenRB 接着吗？）"}
+        return {"ok": False, "detail": "None of the 15 servos answer (is servo power on? is the OpenRB connected?)"}
     if missing:
-        return {"ok": False, "detail": f"没回应的舵机：{', '.join(map(str, missing))}"}
-    return {"ok": True, "detail": f"15 个都回应，电压 {min(volts):.1f}-{max(volts):.1f} V" if volts else "15 个都回应"}
+        return {"ok": False, "detail": f"Servos not answering: {', '.join(map(str, missing))}"}
+    return {"ok": True, "detail": f"All 15 answer, {min(volts):.1f}-{max(volts):.1f} V" if volts else "All 15 answer"}
 
 
 def sweep_wav(path, sr=48000):
@@ -218,11 +218,11 @@ def check_audio():
     import numpy as np
     card = os.path.basename(os.path.realpath(f"/proc/asound/{CARD}"))   # e.g. card1
     if not card.startswith("card"):
-        return {"ok": False, "detail": f"没有 {CARD} 声卡（I2S0 补丁没加载）"}, []
+        return {"ok": False, "detail": f"No {CARD} sound card (I2S0 overlay not loaded)"}, []
     pcm = glob.glob(f"/dev/snd/pcmC{card[4:]}D0*")
     held = sorted({n for p in pcm for n in holders(p)})
     if held:
-        return {"ok": None, "detail": f"跳过：声卡正被 {', '.join(held)} 使用"}, []
+        return {"ok": None, "detail": f"Skipped: the sound card is in use by {', '.join(held)}"}, []
     sweep, rec = "/tmp/duck_selfcheck_sweep.wav", "/tmp/duck_selfcheck_rec.wav"
     sweep_wav(sweep)
     r = subprocess.Popen(["arecord", "-q", "-D", f"hw:CARD={CARD},DEV=0", "-c", "4", "-r", "48000", "-f", "S32_LE", "-d", "3", rec],
@@ -231,7 +231,7 @@ def check_audio():
     p = subprocess.run(["aplay", "-q", "-D", f"hw:CARD={CARD},DEV=0", sweep], capture_output=True, text=True)
     err = r.communicate(timeout=10)[1].decode().strip()
     if r.returncode or p.returncode:
-        return {"ok": False, "detail": f"录音或放音失败：{(err or p.stderr).strip()[:120]}"}, []
+        return {"ok": False, "detail": f"Recording or playback failed: {(err or p.stderr).strip()[:120]}"}, []
     with wave.open(rec) as w:
         x = (np.frombuffer(w.readframes(w.getnframes()), "<i4").reshape(-1, 4) >> 8).astype(float)
     sr, blk = 48000, 2400
@@ -242,20 +242,20 @@ def check_audio():
         v = x[:, ch]
         if not v.any():
             mics.append({"ok": None if ch == 2 else False,
-                         "detail": "全是 0：没装（可选）" if ch == 2 else "全是 0：这一路没有数据（SD 线断了或没插）"})
+                         "detail": "All zeros: not fitted (optional)" if ch == 2 else "All zeros: no data on this channel (SD wire broken or unplugged)"})
             continue
         e = np.array([(np.abs(np.fft.rfft(v[i:i + blk] * np.hanning(blk)))[band] ** 2).sum()
                       for i in range(0, len(v) - blk, blk)])
         db = 10 * np.log10(np.maximum(e, 1))
         floor = np.median(np.r_[db[2:14], db[-12:]])  # before the sweep starts (1.1 s) and after it ends (1.6 s)
         heard = db[20:34].max() - floor               # blocks covering 1.0-1.7 s
-        mics.append({"ok": bool(heard >= 15), "detail": f"听到“嘀”比底噪高 {heard:.0f} dB" if heard >= 15 else
-                     f"没听到“嘀”（只高 {heard:.0f} dB）"})
+        mics.append({"ok": bool(heard >= 15), "detail": f"Heard the beep {heard:.0f} dB above the noise floor" if heard >= 15 else
+                     f"Did not hear the beep (only {heard:.0f} dB above the floor)"})
     any_heard = any(m["ok"] for m in mics)
     live = [m for m in mics if m["ok"] is not None]
-    speaker = ({"ok": True, "detail": "麦克风听到了它放的“嘀”"} if any_heard else
+    speaker = ({"ok": True, "detail": "A microphone heard the beep it played"} if any_heard else
                {"ok": None if not live else False,
-                "detail": "没有能用的麦克风，测不了喇叭" if not live else "放了“嘀”，三个麦克风都没听到（功放或喇叭不响）"})
+                "detail": "No working microphone, so the speaker cannot be tested" if not live else "Played the beep; none of the three microphones heard it (amp or speaker silent)"})
     return speaker, mics
 
 
@@ -269,34 +269,34 @@ def main():
 
     def add(key, label, fn):
         if key in skip:
-            items.append({"id": key, "label": label, "ok": None, "detail": "这次没测"})
+            items.append({"id": key, "label": label, "ok": None, "detail": "Not tested this time"})
             return
         t0 = time.time()
         try:
             res = fn()
         except Exception as e:
-            res = {"ok": False, "detail": f"体检程序出错：{type(e).__name__} {e}"[:160]}
+            res = {"ok": False, "detail": f"Self-check program error: {type(e).__name__} {e}"[:160]}
         items.append({"id": key, "label": label, **res, "s": round(time.time() - t0, 1)})
 
     lock, held_by = take_hw_lock() if {"imu", "servos"} - skip else (None, None)
-    for key, label, fn in [("imu", "IMU", check_imu), ("touch", "触摸板", check_touch),
-                           ("camera", "摄像头", check_camera), ("servos", "舵机", check_servos)]:
+    for key, label, fn in [("imu", "IMU", check_imu), ("touch", "Touch board", check_touch),
+                           ("camera", "Camera", check_camera), ("servos", "Servos", check_servos)]:
         if key in ("imu", "servos") and key not in skip and lock is None:
             items.append({"id": key, "label": label, "ok": None,
-                          "detail": f"跳过：大脑正在用舵机总线和 IMU（{', '.join(held_by)}）"})
+                          "detail": f"Skipped: the brain is using the servo bus and IMU ({', '.join(held_by)})"})
             continue
         add(key, label, fn)
     if lock is not None:
         lock.close()
     if "audio" in skip:
-        items += [{"id": k, "label": l, "ok": None, "detail": "这次没测"}
-                  for k, l in [("speaker", "功放和喇叭")] + [(f"mic{i}", n) for i, n in enumerate(MIC_NAMES)]]
+        items += [{"id": k, "label": l, "ok": None, "detail": "Not tested this time"}
+                  for k, l in [("speaker", "Amp and speaker")] + [(f"mic{i}", n) for i, n in enumerate(MIC_NAMES)]]
     else:
         try:
             speaker, mics = check_audio()
         except Exception as e:
-            speaker, mics = {"ok": False, "detail": f"体检程序出错：{type(e).__name__} {e}"[:160]}, []
-        items.append({"id": "speaker", "label": "功放和喇叭", **speaker})
+            speaker, mics = {"ok": False, "detail": f"Self-check program error: {type(e).__name__} {e}"[:160]}, []
+        items.append({"id": "speaker", "label": "Amp and speaker", **speaker})
         items += [{"id": f"mic{i}", "label": n, **m} for i, (n, m) in enumerate(zip(MIC_NAMES, mics))]
     with open("/proc/uptime") as f:
         uptime = float(f.read().split()[0])
