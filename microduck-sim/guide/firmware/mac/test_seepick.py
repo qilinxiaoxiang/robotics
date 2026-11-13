@@ -181,23 +181,20 @@ def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
     assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)
 
 
-def test_a_creep_starting_inside_the_stop_mark_still_walks():
-    """Object at 12.2 cm, dx +3.5, inside BURST_STOP_X: the creep must move, not stop on its first tick (robot 2026-11-01)."""
-    duck = PickDuck((0.122, 0.0), ["hold"])
+def test_inside_the_stop_mark_picks_without_a_creep():
+    """Robot 2026-11-12 (seepick_1112c): measured at 11.9 cm, inside BURST_STOP_X, the creep put the ball between the feet.
+    Inside the mark it picks from where it stands and never walks."""
+    duck = PickDuck((0.119, 0.012), ["hold"])
     ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
                      make_approach=None, now=lambda: duck.t, log=lambda s: None)
     ctl.try_n = 1
-    ctl.obj = dict(x=0.122, y=0.0, size=0.013, t=0.0)
+    ctl.obj = dict(x=0.119, y=0.012, size=0.013, t=0.0)
     ctl.enter("align")
-    assert ctl.phase == "align"
-    ctl.step()
-    duck.advance()
-    assert ctl.phase == "burst"
-    while ctl.phase == "burst":
+    for _ in range(3):
         ctl.step()
         duck.advance()
-    assert any(c.get("vx", 0) > 0 for _, c in duck.sent)
-    assert duck.X > 0.01
+    assert ctl.phase in ("pick", "verify", "hold", "done"), ctl.phase
+    assert not any(c.get("vx", 0) > 0 for _, c in duck.sent)
 
 
 def t2_at(duck):

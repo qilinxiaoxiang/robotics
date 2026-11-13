@@ -371,6 +371,12 @@ class SeePick:
         if off_side and abs(bearing) >= TURN_MIN:
             self.turn = (1 if bearing > 0 else -1, abs(bearing), st["yaw"])
             self.enter("turning", f"bearing {math.degrees(bearing):+.0f} deg")
+        elif not self.t2 and self.obj["x"] <= BURST_STOP_X:
+            # robot 2026-11-12 (seepick_1112c): measured at x 0.119, at the bottom edge of the standing picture, it crept 0.9 s,
+            # coasted, and the ball ended between the feet (Shawn watched it); both picks then bit the stale 0.110 sighting.
+            # A creep from inside BURST_STOP_X always overshoots (first steps plus 4-5 cm coast): pick from here.
+            self.blind_pick = True
+            self.enter("align", f"x {self.obj['x']:.3f} inside the creep mark: pick from here, no creep")
         else:
             self.burst_m = self.obj   # the aim measurement: if it sat cut on the bottom edge, the creep's first step hides it
             if self.head is None:   # align entered without an aim (tests, a given estimate): look at the object
