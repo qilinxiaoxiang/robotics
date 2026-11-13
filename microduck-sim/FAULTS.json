@@ -377,7 +377,7 @@
       "occurrences": [
         {
           "when": "2026-11-04 10:56:34",
-          "what": "powered-stand scan 105634: left sole outer edge 2.2 deg lower, right sole flat and 3.4 mm higher; IMU roll +3.1 deg",
+          "what": "powered-stand scan 105634: left sole outer edge 2.2 deg lower, right sole flat and 3.4 mm higher; IMU roll +3.1 deg CORRECTED 2026-11-12 late: the sole angles in this entry came from a biased estimate in floor_truth.py (plane through the lower half of the sole's vertices), which read a tilted sole 3 to 4 times too small. With the sole's true normal the scans read: 11-12 scan a left 5.0 deg outer edge down, right 1.3; scan b left 6.1, right 0.1; 11-04 left 10.9, right 2.1.",
           "running": "stand, log app1104-105329"
         },
         {
@@ -397,7 +397,7 @@
         },
         {
           "when": "2026-11-12 20:05:49 and 20:08:12, two Scaniverse scans on a table, walk mode at zero command after walks (a short turn and three steps between them)",
-          "what": "scan a / scan b, against the table plane: left sole outer edge lower by 2.8 / 2.4 deg (foot fits 2.7 / 1.9 mm rms), right sole flat (+0.1 / 0.0 deg). IMU roll +2.25 / +2.64; the table itself is tilted 0.6 deg left side down / 0.5 deg right side down about the robot by the phone's gravity, so the trunk is 1.7 / 3.1 deg left side down against the table. Hip roll read R +5.3 L -6.6 / R +6.7 L -6.9. The 11-04 scan gave the same picture (left sole 2.2, right 0.1)",
+          "what": "scan a / scan b, against the table plane: left sole outer edge lower by 2.8 / 2.4 deg (foot fits 2.7 / 1.9 mm rms), right sole flat (+0.1 / 0.0 deg). IMU roll +2.25 / +2.64; the table itself is tilted 0.6 deg left side down / 0.5 deg right side down about the robot by the phone's gravity, so the trunk is 1.7 / 3.1 deg left side down against the table. Hip roll read R +5.3 L -6.6 / R +6.7 L -6.9. The 11-04 scan gave the same picture (left sole 2.2, right 0.1) CORRECTED 2026-11-12 late: the sole angles in this entry came from a biased estimate in floor_truth.py (plane through the lower half of the sole's vertices), which read a tilted sole 3 to 4 times too small. With the sole's true normal the scans read: 11-12 scan a left 5.0 deg outer edge down, right 1.3; scan b left 6.1, right 0.1; 11-04 left 10.9, right 2.1.",
           "running": "walk_wired walk61 zero command, log app1112-2010; Mac mini ~/sims/scan-1112 (floor_truth.py, table_tilt.py)"
         }
       ],
@@ -415,7 +415,7 @@
         {
           "id": "H3-hidden-hip-angle",
           "claim": "The left leg holds roll angle its encoders do not see (hip roll or hip yaw horn seating, bracket flex or play under load, or a sole pad thicker on its inner side).",
-          "status": "supported by three scans, not located: with the right sole flat on the table, the logged joint angles put the left sole only 0.3 to 1.1 deg outer edge down; the scans measure 2.2 to 2.8. About 1.5 to 2 deg of left-leg roll is outside the encoders. The thigh and shin fits (3 to 5 mm rms, free scale 0.79 to 0.98) are too poor to say which joint. Hip play ruled out by T1 (2026-11-12)"
+          "status": "withdrawn 2026-11-12: the '1.5 to 2 deg outside the encoders' came from the biased sole estimate. With the true sole normal the logged joint angles predict the scanned soles within the scans' 1 to 2 deg (scan b: predicted left 6.2, right 0.0 at the IMU's pelvis roll; measured 6.1 and 0.1). Shawn's hand test found no extra hip slack either"
         },
         {
           "id": "H4-mass-left-of-model",
@@ -430,7 +430,12 @@
         {
           "id": "H6-left-sole-wedge-or-foot-seating",
           "claim": "The roll sits at the left foot: either the hand-applied sole (hot glue coat of 2026-10-21 plus the black pad) is thicker under the inner edge, or the left foot sits tilted on its two-half ankle bracket.",
-          "status": "open, leading: Shawn's standing photo IMG_7352 shows the black layer under the left foot about 3 mm tall at the inner edge and under 1 mm at the outer edge (2 mm over the 43 mm sole = 2.7 deg, the scans' 2.4 to 2.8), while the right foot's layer is thin and even. The photo cannot tell a thicker pad from a lifted inner edge"
+          "status": "withdrawn 2026-11-12: Shawn sees no thickness difference in the sole layer (\"鞋底也没有肉眼可见的厚薄区别\"), and the encoders already explain the sole angle (H7)"
+        },
+        {
+          "id": "H7-hips-held-wider-than-the-flat-sole-angle",
+          "claim": "There is no ankle roll joint, so a sole's side tilt is pelvis roll plus hip roll minus about 3.7 deg (the hip roll at which the sole lies flat; from target_ground at the logged poses, both legs). Walk mode at zero command holds the left hip roll at 6.6 to 6.9 deg and the right at 5.3 to 6.7: both soles sit on their outer edges (left 3 deg, right 1.6 to 3), a V that cannot rest level, so the robot tips to the wider side, the left; the 2.3 to 2.6 deg lean then adds to the left sole (5 to 6 deg) and flattens the right. Stand mode holds 4.5 / 4.5 (0.8 deg each) and leans 1.1 to 1.8.",
+          "status": "supported: predicted and scanned sole angles agree in both 11-12 scans; the sim policy at zero command holds 4.7 / 4.3 and stands at roll 0.2 (lean-t3 base). Open: why the robot's policy holds the hips 1 to 2.5 deg wider than the sim's (its hip roll actions are R -0.079 L -0.030 against the sim's -0.057 / -0.003)"
         }
       ],
       "tests": [
@@ -461,8 +466,14 @@
         {
           "id": "T5-paper-under-left-inner-edge",
           "what": "Robot standing in stand mode on the table: does a sheet of paper slide under the inner edge of the left foot? Yes = the foot is tilted and the inner edge is off the table (cause above the sole); no = the sole layer itself is thicker inside",
+          "status": "run",
+          "results": "2026-11-12: not needed as asked. Shawn: sole layer even, and \"但是左脚确实是外侧脚掌着地\". The inner edge is off the table because the hip is abducted past the flat-sole angle (H7)"
+        },
+        {
+          "id": "T7-why-wider-hips-on-the-robot",
+          "what": "Find what makes walk61 at zero command hold the hips wider on the robot than in the sim: replay the robot's logged observations (app1112-2010, 20:04-20:06) through walk61 and compare its hip roll actions with the sim's at the same pose; then test in the sim the inputs that differ (roll reading, hip roll tracking error at KP 200)",
           "status": "queued",
-          "blocker": "Shawn at the robot, asked 2026-11-12"
+          "blocker": "none; Mac mini"
         }
       ],
       "mitigations": [],
@@ -473,7 +484,7 @@
       },
       "cause": {
         "status": "open",
-        "summary": "Not a sensor offset and not the left hip roll zero; H3 and H4 remain."
+        "summary": "Mechanism found (H7): walk mode holds the hips wider than the 3.7 deg at which the soles lie flat, so the robot rests on a sole edge and tips left. Not a sensor offset, not hip slack, not the sole layer. Why the robot's policy holds them wider than the sim's is open (T7)."
       }
     }
   }
