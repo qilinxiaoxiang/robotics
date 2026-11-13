@@ -282,6 +282,7 @@ try:
     GOAL_OFFSET = {k: math.radians(float(v)) for k, v in json.load(open(os.path.expanduser("~/duck-goal-offset.json"))).items()}
 except (OSError, ValueError):
     GOAL_OFFSET = {}
+GOAL_OFFSET_AFTER_S = 0.8  # s of commanded motion before the offset fades in (a normal start is stepping by 0.6 s)
 _h, _r = math.radians(IMU_PITCH_TRIM_DEG) / 2, math.radians(IMU_ROLL_TRIM_DEG) / 2
 # the whole sensor trim, qy(pitch) * qx(roll); the name is kept for the scripts that import it
 IMU_PITCH_TRIM = (math.cos(_h) * math.cos(_r), math.cos(_h) * math.sin(_r), math.sin(_h) * math.cos(_r), -math.sin(_h) * math.sin(_r))
@@ -973,8 +974,19 @@ class Brain:
             if GOAL_OFFSET and self.mode == "walk":
                 # trial 2026-11-12 (Shawn: "把这个偏差放到模型外面 不要送进模型", "左髋从前面看 逆时针转几度"): added to
                 # the servo goal after the policy; the policy's readings and its last action are untouched
-                self.goal = clamp_goal({n: v + GOAL_OFFSET.get(n, 0.0) for n, v in self.goal.items()})
-                info["goal_offset_deg"] = {n: round(math.degrees(v), 2) for n, v in GOAL_OFFSET.items()}
+                # 20:39 robot run: with the offset on from standstill walk61 never started stepping (actions <= 0.24 rad).
+                # So it fades in only once the robot has been commanded to move for GOAL_OFFSET_AFTER_S, and fades out
+                # after the command returns to zero; every start from standstill is the policy's own.
+                mv = math.hypot(float(want.get("vx", 0) or 0), float(want.get("vy", 0) or 0)) > 1e-3
+                self._off_move_t = (getattr(self, "_off_move_t", None) or now) if mv else None
+                s = getattr(self, "_off_s", 0.0)
+                if mv and now - self._off_move_t >= GOAL_OFFSET_AFTER_S:
+                    s = min(1.0, s + 0.05)   # 0.4 s up
+                elif not mv:
+                    s = max(0.0, s - 0.02)   # 1 s down
+                self._off_s = s
+                self.goal = clamp_goal({n: v + s * GOAL_OFFSET.get(n, 0.0) for n, v in self.goal.items()})
+                info["goal_offset_deg"] = {n: round(s * math.degrees(v), 2) for n, v in GOAL_OFFSET.items()}
             if yaw_off:
                 self.goal = clamp_goal(dict(self.goal, head_yaw=self.goal["head_yaw"] + yaw_off))
                 info["sp_yaw_off"] = round(yaw_off, 3)
