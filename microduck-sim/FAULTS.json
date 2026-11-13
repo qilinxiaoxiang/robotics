@@ -389,6 +389,11 @@
           "when": "2026-11-12 14:53-15:06 and after",
           "what": "Shawn sees the left foot on its outer edge and the body leaning left, standing and walking, also with a short USB cable",
           "running": "walk_wired with IMU roll trim -3 (log app1112-145302)"
+        },
+        {
+          "when": "2026-11-12 20:10-20:14, log app1112-2010 (roll trim 0)",
+          "what": "stand mode (KP 400) before walking: roll +1.1 deg, legs mirrored within 0.6 deg. One 3.6 s walk at vx 0.25, then walk mode at zero command (KP 200) for 60 s: roll +2.3 deg, constant. Joints after the walk, right / left magnitude in deg: hip pitch 25.3 / 20.8, ankle 25.8 / 22.9, hip roll 5.3 / 6.6. Goals stay mirrored within 2 deg (hip pitch 26.8 / 24.9); the left hip pitch sits 4.1 deg short of its goal, the right 1.5; both knees sit 6 deg short. Shawn: \"现在走了几步 就偏的多了吧\"",
+          "running": "walk_wired walk61, zero command after a walk"
         }
       ],
       "hypotheses": [
@@ -411,6 +416,11 @@
           "id": "H4-mass-left-of-model",
           "claim": "The robot's mass sits left of where the model has it, so it settles onto the left sole.",
           "status": "not sufficient alone (T2): needs about 35 mm of mass shift"
+        },
+        {
+          "id": "H5-soft-gain-holds-uneven-stance",
+          "claim": "The lean is not built into one joint. After a walk the policy at zero command holds the robot at KP 200, where loaded joints sit 2 to 6 deg short of their goals; the left leg ends the walk carrying more, sags more, the body tips further left and the left leg carries more still. Stand mode at KP 400 pulls the legs back to a mirrored pose and the lean drops to about 1 deg.",
+          "status": "open; supported by the 2026-11-12 20:10 log (same robot, same minute: 1.1 deg at KP 400, 2.3 deg at KP 200 after the walk). Not yet separated from H3 for the remaining 1 deg"
         }
       ],
       "tests": [
@@ -425,6 +435,12 @@
           "what": "brain_sim_check.py --com-y sweep against the scanned stand (pelvis roll, sole slopes, right sole lift) to size H4",
           "status": "run",
           "results": "2026-11-12, static instead of a sweep (Mac mini ~/sims/scan-1104/com_static.py, 11-04 stand joints): the model's centre of mass falls 1 mm from the midpoint between the soles (left share 51 %; 58 % with the pelvis 3.1 deg left down). Unloading the right foot by mass alone needs the mass about 35 mm further left, which no part on the robot can give. H4 alone does not explain the lean. With the pelvis 3 deg left down and both soles touching, the left leg is about 3.5 to 4 mm shorter than its encoders say (or the right longer): that is H3, a joint angle the encoders do not see"
+        },
+        {
+          "id": "T3-sim-zero-command-after-walk",
+          "what": "brain_sim_check.py: walk 4 s then zero command 30 s, with and without a 1 deg starting asymmetry; does the sim policy at KP 200 settle into the same uneven stance (hip pitch 4.5 deg apart, roll over 2 deg)?",
+          "status": "queued",
+          "blocker": "none; runs on the Mac mini"
         }
       ],
       "mitigations": [],
