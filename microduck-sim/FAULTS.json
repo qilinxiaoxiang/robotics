@@ -376,6 +376,10 @@
       "required_recovery": "The robot stands level with both soles loaded and walks with equal steps. Shawn 2026-11-12: \"左脚还是一直用脚掌外侧在走路和站立 整体走路的时候 身体也往左侧倾倒 ... 肯定有系统性问题\".",
       "occurrences": [
         {
+          "when": "2026-11-12 late evening",
+          "what": "Shawn: \"另外我总觉头是往左歪的\" and \"走几步就能明显看到做脚掌外侧着地了\". Head checked against the two 11-12 scans (Mac mini ~/sims/scan-1112/head_abs.py, head fit 2.1 and 2.5 mm rms, scale 0.98 to 1.00): head left side down 2.6 and 1.2 deg against the table; the model with the logged joints and IMU roll predicts 3.2 and 2.9. Head roll joint reads 0.7 and 0.2 deg, head yaw -1.7 and -0.7. So the head's left tilt is the body's lean carried up; no separate head tilt above the scan's roughly 1.5 deg resolution. The outer-edge landing after a few steps matches H7 (walk mode holds the hips wider than stand mode)."
+        },
+        {
           "when": "2026-11-04 10:56:34",
           "what": "powered-stand scan 105634: left sole outer edge 2.2 deg lower, right sole flat and 3.4 mm higher; IMU roll +3.1 deg CORRECTED 2026-11-12 late: the sole angles in this entry came from a biased estimate in floor_truth.py (plane through the lower half of the sole's vertices), which read a tilted sole 3 to 4 times too small. With the sole's true normal the scans read: 11-12 scan a left 5.0 deg outer edge down, right 1.3; scan b left 6.1, right 0.1; 11-04 left 10.9, right 2.1.",
           "running": "stand, log app1104-105329"
