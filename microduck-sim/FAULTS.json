@@ -524,7 +524,7 @@
         {"when": "2026-11-13 15:47 boot", "what": "right hip ID3 and ID4 silent, one red light seen; ID4 read RDT 250, Shutdown 53 after the rescue, ID3 came back by the same factory-ID write", "running": "first boot after about 16 h offline; what the pack did before is not recorded"}
       ],
       "hypotheses": [
-        {"id": "H1-flat-pack-brownout", "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.", "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried)"}
+        {"id": "H1-flat-pack-brownout", "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.", "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried). Shawn 2026-11-13, a guess, not an observation: \"可能是电池放空过，我猜\""}
       ],
       "tests": [
         {"id": "T1-rail-history-before-1113", "what": "read the last rail voltages of the brain and blackbox logs before the 2026-11-13 15:47 boot (slice copied off the A7Z); a rail under about 5 V supports H1, a clean shutdown at 7 V or more speaks against it", "status": "queued", "blocker": "A7Z offline (ssh timed out 2026-11-13 after the repair); runs at the next session with the robot on"}
