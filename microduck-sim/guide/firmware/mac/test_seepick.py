@@ -352,9 +352,9 @@ def test_no_look_down_or_pick_while_the_body_rocks():
     assert ctl.result["ok"], ctl.result
 
 
-def test_a_ball_lost_just_past_the_old_blind_edge_is_picked_not_given_up():
-    """Robot 2026-11-06: after a 16 deg turn toward the ball the estimate read 0.121 m, just over the old 0.12 m blind
-    edge; unseen, the run gave up without a bite. Unseen inside BLIND_R (0.15 m) picks at the last known position."""
+def test_a_ball_not_seen_at_the_pick_spot_is_never_bitten():
+    """Robot 2026-11-12: the lowest look shows the floor from 0.07 m, so the pick window is in the picture; a ball not
+    seen there is not there. The old rule bit the last known position (seepick_1112a try 2, 1112c both tries)."""
     duck = PickDuck((0.6, 0.0), ["hold"])
     duck.detect = lambda frame, accept=None: None      # the ball is under the picture
     ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
@@ -365,7 +365,7 @@ def test_a_ball_lost_just_past_the_old_blind_edge_is_picked_not_given_up():
     while ctl.phase == "aim" and duck.t < 20:
         ctl.step()
         duck.advance()
-    assert ctl.phase in ("align", "pick", "turning"), (ctl.phase, ctl.result)
+    assert ctl.phase == "failed" and ctl.result["attempts"] == [] and not duck.picks, (ctl.phase, ctl.result)
 
 
 class KnockDuck(PickDuck):
@@ -386,6 +386,7 @@ def test_a_ball_knocked_away_by_the_bite_is_looked_for_not_bitten_blind():
     duck = KnockDuck((0.5, 0.0), ["miss", "hold"])
     ctl = run(duck)
     whys = [r.get("why", "") for r in ctl.trace]
-    assert any("seen at x" in w for w in whys), whys
     assert not any("blind zone" in w for w in whys)
-    assert ctl.result["ok"] and ctl.try_n == 2, ctl.result
+    # the look at the old spot finds nothing and bites nothing; the search finds the ball and the second bite holds
+    assert ctl.result["ok"] and len(duck.picks) == 2, ctl.result
+    assert any("not seen at the pick spot" in w for w in whys), whys

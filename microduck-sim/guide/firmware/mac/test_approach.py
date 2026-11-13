@@ -54,6 +54,8 @@ class FakeDuck:
             for k in ("head_pitch", "head_yaw"):   # the walking policy ignores neck_pitch commands (robot: neck 0.2-0.4)
                 self.q[k] = float(head.get(k, STAND[k]))
             self.q["head_pitch"] = min(self.q["head_pitch"], self.head_pitch_max)
+            # the neck follows its command only weakly (robot 2026-11-12: command 0.35 reads 0.22, -0.75 reads 0.04)
+            self.q["neck_pitch"] = 0.22 + 0.164 * (float(head.get("neck_pitch", STAND["neck_pitch"])) - 0.35)
         self.t += dt
         if int(self.t / 0.125) != int((self.t - dt) / 0.125):
             self.frame_i += 1

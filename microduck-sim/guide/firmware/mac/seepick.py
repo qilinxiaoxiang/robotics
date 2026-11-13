@@ -57,7 +57,9 @@ NUDGE_S = 1.2              # s  a walk until the ball left the picture at 0.124.
 AIM_MIN_FRAMES = 3         # T2: fewer frames than this is no sighting (x 0.037 width 8 mm from 2 frames ended run 8's good try)
 AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections this near the last sighting. Readings on the move are 1.5 cm off and the ball can
 #                            shift 3 cm in y: a 4 cm gate threw out the real ball at the end of run 12's first creep, and it picked blind at dx +3.5
-BLIND_R = 0.15             # m: nearer than this the object can be under the standing picture (bottom edge 0.10-0.125 m at
+NEAR_LOOK_R = 0.17         # m: an object estimated nearer than this is aimed at with the lowest look (approach.NEAR_HEAD), whose
+#                            picture covers x 0.07-0.19 m at the centre line (robot 2026-11-12), and the creep keeps that look
+BLIND_R = 0.15           # m: nearer than this the object can be under the standing picture (bottom edge 0.10-0.125 m at
 #                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position.
 #                            Was 0.12: robot 2026-11-06 the duck turned 16 deg toward a ball at 0.12 m, lost it under
 #                            the picture, its estimate read 0.121 and the run gave up without a pick. A wrong blind
@@ -292,7 +294,10 @@ class SeePick:
 
     def p_aim(self, st, now):
         est = (self.obj["x"], self.obj["y"]) if self.obj else ((self.app.est if self.app else None) or self.pick_here or SPOT)
-        head = self.head = self.helper.aim_head(st, *est)
+        head = self.helper.aim_head(st, *est)
+        if math.hypot(*est) < NEAR_LOOK_R:
+            head = dict(ap.NEAR_HEAD)
+        self.head = head
         self.stand(head)
         if now - self.t_phase < SETTLE_S:
             return
@@ -325,14 +330,10 @@ class SeePick:
                 self.log("  not seen (blind zone): picking on the given estimate")
                 self.enter("align")
                 return
-            if math.hypot(*est) < BLIND_R:
-                # standing, the picture starts ~0.10-0.12 m out (robot 2026-10-30): an object this near is under it,
-                # and a search would not find it either; pick where it was last measured or estimated
-                self.obj = dict(x=float(est[0]), y=float(est[1]), size=self.obj["size"] if self.obj else DEFAULT_SIZE, t=now)
-                self.log(f"  not seen (blind zone): picking at the last known position x {est[0]:.3f} y {est[1]:.3f}")
-                self.align_n = MAX_ALIGN   # it is under the picture: another creep can only run it past the beak
-                self.enter("align")
-                return
+            # No pick on an object the camera does not show. The lowest look (approach.NEAR_HEAD) shows the floor from
+            # 0.07 to 0.19 m ahead (robot 2026-11-12), which holds the whole pick window; "not seen" there means the
+            # ball is not there. The old branch bit the last known position (seepick_1112a try 2, 1112c both tries:
+            # Shawn "为什么还在瞎试 这个时候视野里根本不可能有球").
             self.obj = None
             self.next_try("not seen at the pick spot")
 
