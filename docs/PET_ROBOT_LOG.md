@@ -1044,3 +1044,43 @@ about iteration 120, 310, 590) while training's own s = 0 held rate rose 0.37 ->
 pinch that works in the training env's beak-ball contact and not in the runtime sim's. Diagnosis with the agent now
 targets the contact and jaw model difference and the head/jaw actions in the close window. spk2 keeps running for
 the balance result (how far s_max goes at the 0.538 N m ceiling).
+
+### 2026-11-13 03:35 Flight pack: the training jaw closes twice as fast as the runtime XL330, and spk2 lifts on that timing (FP-R7)
+
+Diagnosis of why spk2 picks better in the training env and worse in the runtime sim. Compute: Mac mini CPU probes, and
+Modal L4 (2 calls of 12 and 13 probes, billed 0.108 USD; spk2 app untouched).
+Cause, with the runtime traces of bend4 (start) and spk2_600 on seeds 0, 2, 3, 5 and 7 (bend4 held, spk2 missed):
+- The jaw is scripted the same in both sims (open 0.02-0.10, close ramp 0.34-0.40). Jaw angle at phase 0.36 / 0.38 /
+  0.40 / 0.42: training mouth 18.4 / 9.2 / 0.2 / -1.9 deg; runtime XL330 20.2 / 17.4 / 11.1 / 3.5 deg.
+- Mean lip height (lip_up, jaw_tip_bottom) at the same phases: spk2_600 lifts at the same time in both sims (training
+  1.2 / 2.8 / 9.6 / 32.2 mm, runtime 1.9 / 2.7 / 9.7 / 29.9 mm). The runtime start policy stays down until 0.40
+  (0.0 / 1.8 / 2.9 / 20.3 mm); the same policy in training lifts early (7.5 / 5.7 / 8.6 / 27.1 mm).
+- Per seed, lip 8 mm above its minimum at phase 0.395-0.405 with the jaw at 9.5-13.1 deg for spk2 (no pinch in any of
+  the 5), and at 0.405-0.415 with the jaw at 7.2-10.3 deg for bend4 (pinched at 0.400-0.405 in all 5).
+- So spk2 lifts while the slow runtime jaw is still open, and the ball stays behind; the training jaw is closed by
+  then. The start policy's runtime success rests on its lift being late in the runtime sim, a margin the fine-tune
+  removed. The training reward pays the lift from phase 0.37 (grasp_lift phase_start = close_start + 0.03).
+Matched jaw in training (iteration-590 ONNX, s = 0, ball, 16 envs, mouth kp 0.55 N m/rad, effort 0.0549 N m), by
+mouth damping: 0.03 -> 14/16 held, jaw 5.9 deg at 0.40; 0.06 -> 10/16, 8.1 deg; 0.10 -> 4/16, 10.6 deg (runtime
+11.1). The start policy at damping 0.10: 4/16, jaw 11.1 deg at 0.40. Default mouth: spk2_600 27/32, start 22/32;
+kp and effort alone (damping 0.01): spk2_600 22/32, jaw 5.8 deg at 0.40, too fast, which is why the earlier
+runtime-mouth test (256 envs: start 203 -> 195, p320 229 -> 219) did not separate the policies.
+Ruled out, with numbers:
+- Contact solver is the same: the pack env reads elliptic, impratio 10, timestep 0.005 (cfg readback).
+- Beak friction: runtime beak mu 0.01 in training cost both policies 3-5 %; training mouth in the runtime (beak 1.5,
+  1500 mA jaw) left spk2_320 at 15 of 20 contact-no-pinch.
+- Body: runtime "none" manifest and training s = 0 both 0.96045 kg, COM within 0.22 mm.
+- Head, neck and jaw actions in the close window: neck pitch differs by at most 0.30 rad (0.38-0.42), head pitch,
+  yaw and roll by at most 0.12, 0.08 and 0.11 rad before phase 0.42.
+- Lateral: spk2_600 starts the pick with a larger trunk yaw transient after the stand61 switch (ball bearing -12.2
+  deg at phase 0.05 against -5.4, gyro z peak 3.1 against 1.8 rad/s) and arrives with the ball -3.9 deg off against
+  +1.2. Training: trunk yaw at close +2.5 deg (spk2_600) and -2.7 deg (start), object minus pad y -0.001 and 0.009 m.
+  Feeding the runtime's stand61 last action into the first observation changed nothing (spk2_600 57/64, start 54/64).
+- Earlier (02:00-02:50): goal clamp, floor mu 0.5, window 0.03, observation delay 1 did not reproduce the gap; action
+  delay 1 broke both policies.
+Proposal (not launched): make the training mouth match the runtime jaw's timeline (stiffness 0.55, effort 0.0549,
+damping 0.10, checked by the probe's jaw angle at phase 0.38-0.42 against 17.4 / 11.1 / 3.5 deg). Both policies fail
+under it (4/16), so the close must be re-learned; freezing the start policy's head and jaw would keep a lift timing
+that already fails in the training env with the matched jaw. Worker fix: grasp_worker.py exports each checkpoint
+once its size is unchanged across two 30 s polls and copies model_best.pt live; the mini smoke exported model_4
+51 s after it was saved, before model_6 existed. 16-env samples: about plus or minus 2 envs each.
