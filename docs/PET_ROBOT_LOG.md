@@ -1206,3 +1206,24 @@ Reference: start policy seepick61 without pack 15 (12), 1 fall; spk2 best 0-3 he
 - Batteries out (12 falls) and full (16 falls) still fail on balance, falling right. s_max is only 0.59 at this
   checkpoint, so full is beyond what this checkpoint trained on; batteries out is the uncovered mass distribution.
 Run continues to its cap (1300 iterations / 3.5 h / 4 USD); next runtime test at the iteration-400 checkpoint.
+
+### 2026-11-13 18:50 Flight pack: spk3 stopped at iteration ~681 (1.96 USD); best runtime checkpoint is iteration 300 (FP-R7)
+
+Stopped by hand (`modal app stop`, 0 live apps after): the runtime sim got worse while training kept improving.
+Training: s_max rose by 0.01 at every 10-iteration decision from iteration 60 and reached 1.00 by about 560;
+at 560 the training slices read held 0.55 (none), 0.60 (s 0.50-0.75), 0.46 (s 0.75-1.0).
+Runtime sim (fq2 stander, ball, 20 dev seeds; train/eval/pk_spk3_<it>_<load>_ball.json), held (at end) / falls:
+- it 100: none 19 (13) / 1; 25 % 20 (16) / 0; 50 % 17 (15) / 0; 75 % 14 (14) / 3; nobatt 7 / 12; full 5 (3) / 16
+- it 300: none 19 (15) / 0; 25 % 20 (20) / 0; 50 % 19 (18) / 0; 75 % 14 (12) / 3; nobatt 3 / 13; full 5 (1) / 19
+- it 400: 50 % 14 / 1; 75 % 10 / 1
+- it 500: 50 % 13 / 5; 75 % 14 / 5
+- it 600: none 19 (18) / 0; 25 % 16 (15) / 0; 50 % 6 (5) / 12; 75 % 5 / 9; nobatt 12 / 8; full 3 / 16
+Falls are to the right, 1.3 to 1.5 s after the switch to the pick policy (during the bend), with leg torque at the
+0.538 N m ceiling 10 to 16 % of the time. The leg ceiling is the same in training (1.47 A, limit_servos).
+Reading: (1) the jaw fix holds (pinched 19-20 of 20 at none/25/50 % at it 300, above seepick61's 15 without a pack);
+(2) the training env overstates balance under heavy load: it reports 0.46 held at s 0.75-1.0 where the runtime
+falls 16-19 of 20, and once s_max passed about 0.8 the policy moved to a bend that works only in training;
+(3) the curriculum's rise test (top slice >= 0.8 x no-pack) never blocked, so it cannot see this. Not yet known:
+which training-vs-runtime difference lets the loaded bend balance in training. Next: diagnose that difference
+before any further run. Best policy so far: train/ckpt/spk3_300.
+Modal spend on this task: spk1 1.02, spk2 3.81, spk3 1.96, checks about 0.80 USD.
