@@ -105,7 +105,8 @@ NEAR_HEAD = {"neck_pitch": -0.75, "head_pitch": 1.45, "head_yaw": 0.0}  # the lo
 # foot-frame origin) sits on the picture's bottom edge; the old (-0.4, 1.4) read 1.26 / 0.15 and did not show it, and
 # its "picture starts at 0.10-0.12 m" (ruler, 2026-10-30) was that pose's edge, not a limit of the robot. The policy
 # follows neck_pitch only weakly (command -0.75 moves it 0.2 rad), and the head is not at a physical stop here.
-AIM_V = 0.55         # standing: aim the object at this fraction of the image height
+NEAR_KEEP_R = 0.17   # m: an object found this near stays in the lowest look until it is measured (no head lift, no turn)
+AIM_V = 0.55       # standing: aim the object at this fraction of the image height
 # standing scan (head_pitch, head_yaw); head yaw only while standing. CAD camera on STAND: pitch 0.5 sees the floor
 # from 0.32 m, 0.9 from 0.17 m; yaw +-0.6 with the 51.6 deg picture width covers +-60 deg
 SCAN = tuple({"head_pitch": p, "head_yaw": y} for p, y in ((0.5, 0.0), (0.9, 0.0), (0.7, -0.6), (0.7, 0.6))) + tuple(
@@ -469,6 +470,16 @@ class Approach:
     def p_search(self, st, now, m):
         """Standing scan, no stepping; then the head back to straight ahead before any walk."""
         if self.est is not None and self.seen_t is not None and now - self.seen_t < 0.5:
+            if self.est[0] > 0 and math.hypot(*self.est) <= NEAR_KEEP_R:
+                # found at the feet with the head down: keep looking at it and measure. Robot 2026-11-12
+                # (seepick_1112e): the scan saw the ball at x 0.08 y -0.02, "ready" lifted the head after 0.8 s to
+                # turn in place 25 deg, and the ball was not in the picture when the head came down again (Shawn:
+                # "一低头都能看到球了 还在找", "每次都是只快速低一下").
+                self.head = dict(NEAR_HEAD)
+                self.meas = []
+                self.enter("settle", f"object at the feet x {self.est[0]:.2f} y {self.est[1]:.2f}: keep the head down, measure")
+                self.t_phase -= SETTLE_S
+                return
             self.enter("ready", f"object at x {self.est[0]:.2f} y {self.est[1]:.2f}")
             return
         self.stand(dict(SCAN[self.scan_i]))
@@ -630,7 +641,9 @@ class Approach:
             r, b = math.hypot(x, y), math.atan2(y, x)
             self.est, self.est_t, self.est_yaw = (x, y), st["t"], st["yaw"]
             self.log(f"  measured x {x:.3f} y {y:.3f} (r {r:.3f}, bearing {math.degrees(b):+.0f} deg) from {len(self.meas)}")
-            if DONE_R[0] <= r <= DONE_R[1] and abs(b) <= DONE_BEARING:
+            if DONE_R[0] <= r <= DONE_R[1] and (abs(b) <= DONE_BEARING or (x > 0 and r <= NEAR_KEEP_R)):
+                # at the feet the bearing is large for a small side offset (3 cm at 7 cm is 23 deg) and a turn in
+                # place moves the feet over the ball: the pick's own align step handles the side offset
                 self.finish(True, "arrived", x=round(x, 3), y=round(y, 3), r=round(r, 3),
                             bearing_deg=round(math.degrees(b), 1), approaches=self.approaches + 1)
                 return

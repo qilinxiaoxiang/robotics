@@ -957,6 +957,54 @@ def foot_load(m, d, floor, foot_geoms):
     return tot
 
 
+def tick_diag(m, d, trunk, va):
+    """--tick-diag: world pose of the trunk and both feet, each foot's floor force, centre of pressure along the foot's
+    own x (m from the foot body origin, + = toe side) and slip speed, and the servo torques (N m, model actuator order)."""
+    out = dict(trunk=[round(float(v), 4) for v in d.xpos[trunk]], com=[round(float(v), 4) for v in d.subtree_com[trunk]],
+               tau=[round(float(v), 3) for v in d.qfrc_actuator[va]])
+    floor, f6 = m.geom("floor").id, np.zeros(6)
+    fwd = d.xmat[trunk].reshape(3, 3)[:, 0].copy()  # trunk forward, flattened to the floor
+    fwd[2] = 0.0
+    fwd /= np.linalg.norm(fwd)
+    along, fsum, msum = [], 0.0, 0.0
+    for i in range(d.ncon):  # support along the trunk's forward direction, mm from the COM (+ = in front of it)
+        con = d.contact[i]
+        if floor in (int(con.geom1), int(con.geom2)):
+            mujoco.mj_contactForce(m, d, i, f6)
+            a = float(fwd @ (con.pos - d.subtree_com[trunk])) * 1000
+            along.append(a)
+            fsum += float(f6[0])
+            msum += float(f6[0]) * a
+    out["support_mm"] = dict(rear=round(min(along), 1), front=round(max(along), 1),
+                             cop=round(msum / fsum, 1) if fsum > 1e-6 else None, fn=round(fsum, 2)) if along else None
+    for side in ("left", "right"):
+        g = m.geom(side + "_foot_collision").id
+        b = m.geom_bodyid[g]
+        R = d.xmat[b].reshape(3, 3)
+        if m.geom_type[g] == mujoco.mjtGeom.mjGEOM_MESH:  # the part of the sole within 0.3 mm of its lowest point
+            mid = m.geom_dataid[g]
+            w = d.geom_xpos[g] + m.mesh_vert[m.mesh_vertadr[mid]:m.mesh_vertadr[mid] + m.mesh_vertnum[mid]] @ d.geom_xmat[g].reshape(3, 3).T
+            a = ((w - d.subtree_com[trunk]) @ fwd * 1000)[w[:, 2] < w[:, 2].min() + 0.0003]
+            out[side + "_sole_mm"] = [round(float(a.min()), 1), round(float(a.max()), 1), round(float(w[:, 2].min()) * 1000, 2)]
+        fn, mx, pts = 0.0, 0.0, []
+        for i in range(d.ncon):
+            con = d.contact[i]
+            if {int(con.geom1), int(con.geom2)} == {floor, g}:
+                mujoco.mj_contactForce(m, d, i, f6)
+                fn += float(f6[0])
+                mx += float(f6[0]) * float(R[:, 0] @ (con.pos - d.xpos[b]))
+                pts.append(round(float(R[:, 0] @ (con.pos - d.xpos[b])), 4))
+        vel = np.zeros(6)
+        mujoco.mj_objectVelocity(m, d, mujoco.mjtObj.mjOBJ_BODY, b, vel, 0)
+        out[side] = dict(pos=[round(float(v), 4) for v in d.xpos[b]],
+                         yaw=round(math.degrees(math.atan2(R[1, 0], R[0, 0])), 2),
+                         pitch=round(math.degrees(math.asin(max(-1.0, min(1.0, -R[2, 0])))), 2),
+                         roll=round(math.degrees(math.atan2(R[2, 1], R[2, 2])), 2),
+                         fn=round(fn, 2), cop_x=round(mx / fn, 4) if fn > 1e-6 else None, pts_x=pts,
+                         v=[round(float(v) * 1000, 2) for v in vel[3:]])
+    return out
+
+
 CURRENT_MODEL = os.path.join(HERE, "..", "..", "..", "microduck_rl", "cmu", "model", "current.json")
 
 
@@ -1020,6 +1068,15 @@ def run(args):
         if args.sp_cone != "elliptic" or (args.sp_impratio or 1.0) < 10:
             print("seepick: WITHOUT --sp-cone elliptic --sp-impratio 10 the sim is not the one the policy was trained in "
                   "(a pinched object creeps out of the beak): seepick-gap-20261029/README.md", flush=True)
+    if args.cone == "elliptic":  # stand-switch gap 2026-11-12: the foot-floor contact with the training env's solver settings
+        m.opt.cone = mujoco.mjtCone.mjCONE_ELLIPTIC
+    if args.impratio is not None:
+        m.opt.impratio = args.impratio
+    if args.stiction_hard is not None:  # stand-switch gap 2026-11-12: how soft MuJoCo's joint friction constraint is
+        # (ev.load compiles solimp 0.99..0.9999, damping 200); a servo held by gear friction on the robot does not drift
+        dmin = 1.0 - (1.0 - 0.99) / args.stiction_hard
+        m.dof_solimp[6:, 0], m.dof_solimp[6:, 1] = dmin, 1.0 - (1.0 - dmin) / 100
+        m.dof_solref[6:, 1] = -200.0 * args.stiction_hard
     if args.bam_friction_scale != 1.0:  # sim-ID knob (2026-10-17): scale BAM's stiction/load-friction budget, as the training env's friction DR does
         for pname in ("friction_base", "friction_stribeck", "load_friction_base", "load_friction_stribeck", "load_friction_motor",
                       "load_friction_external", "load_friction_motor_stribeck", "load_friction_external_stribeck"):
@@ -1344,6 +1401,8 @@ def run(args):
             if goal is not None:
                 row["goal_tick"] = {str(i): to_tick(n, goal[n]) for i, n in zip(IDS, NAMES)}
                 row["kp"] = kp
+            if args.tick_diag:  # ground truth the robot log cannot have: where the trunk and the feet really are
+                row["diag"] = tick_diag(m, d, trunk, va)
             tick_log.write(json.dumps(row) + "\n")
         if args.breakaway and goal is not None and kp:
             goal = comp.apply(goal, {n: to_model(n, tk) for n, tk in zip(NAMES, pos_t)}, kp)
@@ -1811,6 +1870,14 @@ def main():
     ap.add_argument("--wired-guards", action="store_true", help="walk_wired.py's walk-mode stops (3.0 rad hard limit, 30 deg tilt)")
     ap.add_argument("--until", type=float, default=0.0, help="s; run at least this long")
     ap.add_argument("--bvh-refit", action="store_true", help="accepted for older command lines, no effect: evaluate_delay.load refits the collision bounding volumes itself since 2026-10-29 (prints the empty change set)")
+    ap.add_argument("--cone", choices=("pyramidal", "elliptic"), default="pyramidal",
+                    help="MuJoCo friction cone for the whole run (the as-built MJCF compiles pyramidal; the training env runs elliptic)")
+    ap.add_argument("--impratio", type=float, default=None,
+                    help="MuJoCo impratio for the whole run (the as-built MJCF compiles 1; the training env runs 10: less contact creep)")
+    ap.add_argument("--stiction-hard", type=float, default=None, metavar="FACTOR",
+                    help="trial: make the joint friction constraint FACTOR times harder (less creep under a load the "
+                         "friction budget can hold); 1 = the model's own")
+    ap.add_argument("--tick-diag", action="store_true", help="with --tick-log: add sim ground truth per tick (trunk, COM and foot poses, foot floor force, centre of pressure, foot velocity mm/s, servo torques)")
     ap.add_argument("--tick-log", default=None, help="write one JSON row per 20 ms tick (q, dq, gb, gyro_body, action) like /tmp/duck_wired_log_*.jsonl")
     sp = ap.add_argument_group("seeing pick (walk_brain mode seepick, seepick61.onnx)")
     sp.add_argument("--sp-at", type=float, default=None, help="s; switch stand61 to seepick here (forces vx 0)")
