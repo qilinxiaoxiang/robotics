@@ -515,6 +515,23 @@
       "mitigations": ["Until T1 is on the robot: agent scripts do not send {\"mode\": \"stand\"} to a robot standing on the policy in walk mode; they leave it in walk mode at zero command."],
       "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "evidence": "the robot lies on the floor with torque on until Shawn rights it"},
       "cause": {"status": "supported, fix not applied", "summary": "Gain step 200 -> 400 on goals that lead the knee positions by 16-21 deg (H1). Open: why earlier walk-to-stand switches after stepping did not fall (their knee lead was not compared)."}
+    },
+    "servo-factory-reset": {
+      "symptom": "After a power-up one or more leg servos answer nothing at 1 Mbaud and blink red; the brain runs about 39 Hz on the sync-read timeouts and the remote greys the policy buttons.",
+      "required_recovery": "A servo at factory settings is brought back on the robot without pulling it out or fetching another board. Shawn 2026-11-13: \"你能不能用现有的东西修复它\".",
+      "occurrences": [
+        {"when": "2026-11-02 12:33-13:05", "what": "right knee ID2 silent with a red light after the pack ran flat (rail 7.2 -> 4.5 V, guard off on --supply bench); alone on a spare OpenRB it read ID 1, 57600, RDT 250, Shutdown 53", "running": "brain in walk on a flat 2S pack"},
+        {"when": "2026-11-13 15:47 boot", "what": "right hip ID3 and ID4 silent, one red light seen; ID4 read RDT 250, Shutdown 53 after the rescue, ID3 came back by the same factory-ID write", "running": "first boot after about 16 h offline; what the pack did before is not recorded"}
+      ],
+      "hypotheses": [
+        {"id": "H1-flat-pack-brownout", "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.", "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried)"}
+      ],
+      "tests": [
+        {"id": "T1-rail-history-before-1113", "what": "read the last rail voltages of the brain and blackbox logs before the 2026-11-13 15:47 boot (slice copied off the A7Z); a rail under about 5 V supports H1, a clean shutdown at 7 V or more speaks against it", "status": "queued", "blocker": "A7Z offline (ssh timed out 2026-11-13 after the repair); runs at the next session with the robot on"}
+      ],
+      "mitigations": ["Switch the robot off when unused; the battery guard only runs while the brain runs."],
+      "recovery": {"self_recovers": false, "verified_by_induced_fault": true, "evidence": "Not automatic: one command, `~/duck/rescue_factory_servo.py --id N`, through the bridge's ID 253 path (openrb_dual_host since 2026-11-13). Verified on an induced fault (jaw ID15 set to 57600 on purpose, back with one write) and on the real ID3 and ID4; 15/15 after. Guide: guide/firmware/pi/SERVO-RESCUE.md."},
+      "cause": {"status": "hypothesis", "summary": "Factory reset of single XL330s, twice after the robot sat on a draining pack (H1); not proven."}
     }
   }
 }
