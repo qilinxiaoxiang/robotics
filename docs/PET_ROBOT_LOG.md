@@ -1187,3 +1187,7 @@ openrb_dual_host now takes a packet addressed to ID 253 (4-byte baud, raw bytes)
 ## 2026-11-13 17:10 ID3 restored; 15/15
 
 Right leg plugged back whole; `rescue_factory_servo.py --id 3` brought ID3 back on the first try with the robot's settings. Scan 15/15. Three servos (ID3, ID4 at factory settings; cause still inferred) restored in place, no spare board.
+
+## 2026-11-13 17:40 Red light again after the rescue: latched voltage alarm on ID3 and ID4, cleared by Reboot
+
+Shawn pressed stand; a red light came back. Registers: all 15 Shutdown 52, hw 1 (input voltage only), but ID3 and ID4 torque 0 while the other legs read 1. The factory Shutdown 53 had tripped on the 7.8 V pack at power-up, and that alarm stays latched after Shutdown is rewritten to 52; the brain's torque-off path does not reboot it because it masks the input-voltage bit. Reboot (0x08) to ID3 and ID4 cleared it (hw 0, torque 0). Sending it under a running brain broke every sync read (35 Hz, all IDs missed; cause not examined, likely the rebooted servos' RAM setup); a brain restart fixed it (49.7 Hz, misses 1). `rescue_factory_servo.py` now reboots the servo after writing its settings.

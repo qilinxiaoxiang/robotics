@@ -42,6 +42,12 @@ def rescue(bus, target, baud_only=False, tries=3):
                 for addr, size, value in SETTINGS:
                     if not bus.write(target, addr, size, value):
                         sys.exit(f"rescue: ID{target} answers but address {addr} did not read back {value}; rerun")
+                # Factory Shutdown 53 alarms on the pack's voltage and latches at power-up: the servo blinks red and
+                # refuses torque even after Shutdown is 52 again (2026-11-13, ID3 and ID4). Reboot clears the latch.
+                bus.ser.write(packet(target, 0x08))
+                time.sleep(1.0)
+                if target not in bus.scan():
+                    sys.exit(f"rescue: ID{target} did not come back from its reboot")
             print(f"ID{target} is back at 1 Mbaud on try {attempt}" + ("" if baud_only else ", with the robot's settings") + "; torque off")
             return
     sys.exit(f"rescue: ID{target} still silent after {tries} tries: not at 57600, not powered, or the bridge firmware predates 2026-11-13")
