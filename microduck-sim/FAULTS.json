@@ -439,8 +439,8 @@
         {
           "id": "T3-sim-zero-command-after-walk",
           "what": "brain_sim_check.py: walk 4 s then zero command 30 s, with and without a 1 deg starting asymmetry; does the sim policy at KP 200 settle into the same uneven stance (hip pitch 4.5 deg apart, roll over 2 deg)?",
-          "status": "queued",
-          "blocker": "none; runs on the Mac mini"
+          "status": "run",
+          "results": "2026-11-12, Mac mini ~/sims/lean-t3 (asbuilt current, --volt 7.6 --drop 0.036 --imu-pitch 2, walk 3.6 s at 0.25, --after-walk 30). Roll before the walk / 5-15 s after / last 10 s: no offset 0.00 / 0.15 / 0.26; mass 3 mm left 0.29 / 0.63 / 0.69; mass 6 mm left 0.52 / 1.30 / 1.21 (robot 1.1 / 2.3 / 2.35). In every case the sim also ends with the left hip pitch 2 to 3 deg less bent than the right and the left ankle 2 to 3 deg less (robot 4.5 and 2.9): the uneven fore-aft stance after a walk is the policy's own and not a robot defect. The sim roughly doubles a sideways offset after the walk, as the robot does (H5 supported). What the sim does not show: its left hip roll moves inward as it tips left (R 5.6 / L 3.5), the robot's moves outward (R 5.3 / L 6.6); and the robot needs more than the 6 mm offset to start at 1.1 deg"
         }
       ],
       "mitigations": [],

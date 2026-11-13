@@ -1076,7 +1076,7 @@ def run(args):
     rng = np.random.default_rng(args.seed)
     imu_hold, imu_t = None, 0.0
     max_action, action_jumps, prev_action = 0.0, 0, None
-    T = args.walk_at + args.walk_s + 3.0
+    T = args.walk_at + args.walk_s + args.after_walk
     dance = None
     if args.dance:
         with open(args.dance) as f:
@@ -1709,6 +1709,7 @@ def main():
     ap.add_argument("--stand-s", type=float, default=1.0)
     ap.add_argument("--walk-at", type=float, default=4.0)
     ap.add_argument("--walk-s", type=float, default=10.0)
+    ap.add_argument("--after-walk", type=float, default=3.0, help="s simulated at zero command after the walk (how the policy settles)")
     ap.add_argument("--vx", type=float, default=0.3)
     ap.add_argument("--vtheta", type=float, default=0.0, help="rad/s yaw rate command while walking")
     ap.add_argument("--vtheta-seq", nargs=2, type=float, action="append", default=[], metavar=("S", "VTHETA"),
