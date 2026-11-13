@@ -812,3 +812,14 @@ dollar cap) with a smoke of at most 1 USD; no training launched on AWS.
   24-784 also hit the 16-831 credits.
 - Free-compute search (two agents): nothing usable today beats AWS + Modal; large pools (Chameleon, ACCESS Jetstream2,
   Bridges-2) need a faculty lead and 1 to 14 days.
+
+### 2026-11-12 20:05 Compute: AWS spot launcher built and smoke-tested (no training run)
+
+- `microduck-sim/extensions/flight-20261110/train/aws_train.py` (guide `AWS.md` beside it) runs any worker command on
+  one g5.xlarge spot instance (A10G; g4dn as capacity fallback) that terminates itself at command end and at a
+  wall-clock limit computed from the dollar cap and the current spot price. Outputs go to the Mac mini every minute
+  over SSH, not S3: the CLI user has no S3 write or IAM role permissions, so the instance holds no credentials.
+- Measured: 2.4 s per PPO iteration at 4096 envs (flight worker, packwalk), setup 2-8 min, so 1000 iterations cost about
+  $0.40 against about $0.95 on Modal A10. Resume, fetch, stop, both self-termination paths and the leftover sweep
+  passed; the smoke cost about $0.24 and nothing is left running.
+- Spot capacity is intermittent: two of five launch commands found none in any zone at first.

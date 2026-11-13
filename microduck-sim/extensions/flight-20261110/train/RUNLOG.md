@@ -427,3 +427,26 @@ running total of worst cases; real spend read from `modal billing report` before
   `screen_checkpoints.py` for the five decision cases per checkpoint, a template argument in `ckpt2onnx.py`.
   Details: HISTORY-PLAN.md section 8.
 
+
+## AWS launcher (2026-11-12 evening; smoke only, no training run)
+- 18:45-20:05 `train/aws_train.py` (+ `aws_boot.sh`, `aws_pull.py`, `AWS.md`): one spot GPU instance per run in
+  us-east-1, self-terminating, dollar cap turned into a wall-clock limit from the current spot price, outputs pulled to
+  the Mac mini (`~/code/microduck-train-aws/<run>/`) every minute, `--resume` from the newest checkpoint, `fetch` into
+  `train/aws/out/<run>/`. No S3 and no instance role: the CLI user lacks `s3:CreateBucket`/`s3:PutObject` and
+  `iam:CreateRole`/`iam:PassRole` (simulate-principal-policy), so the instance carries no credentials (AWS.md).
+- Smoke `awssmoke1`, attempt 1 (i-0129118d7aca29401, g5.xlarge spot us-east-1f, $0.5058/h): setup 125 s (uv sync
+  57 s; torch 2.9.1+cu128, CUDA on A10G, mujoco 3.10.0, warp 1.12.0), flight_worker packwalk from walk61 (exact,
+  0.00 diff), 64 envs 6 iterations 1.23 s/it, then 4096 envs 12 iterations: 2.25-2.43 s per iteration (0.41 it/s),
+  checkpoints model_0/4/8/11 and ONNX exported; command end -> final pull -> ack -> "Client.InstanceInitiatedShutdown"
+  -> terminated, no volume left.
+- Attempt 2 (`--resume`, i-06c2aed29ba8d77cf, same type and zone; the first try found no spot capacity anywhere):
+  setup 476 s (uv sync 409 s, slow downloads), "[init] resumed from model_11.pt at iteration 11", iterations 12-15,
+  then the command slept on purpose; the wall timer (720 s) powered it off: last pull 00:38:37Z, timer 00:39:34Z,
+  InstanceInitiatedShutdown -> terminated.
+- `stop` test `awsstop1` (i-010535f327607804d, g4dn.xlarge spot us-east-1d after seven g5 refusals): final pull,
+  terminate by Run tag. `stop --run c3-carla` finds nothing (the filter needs Project=microduck-train).
+- Smoke cost about $0.24 (about 31 instance-minutes, mostly g5.xlarge spot). Final `sweep`: billable none; free key
+  pair microduck-train and security group microduck-train-ssh kept; no puller left; c3-carla still stopped.
+- Cost basis for 1000 iterations at 4096 envs: g5.xlarge spot 2.4 s/it = 40 min + 2-8 min setup, about $0.40 at the
+  current price ($0.51 at the 1.25x max price); Modal A10 ($1.42/h, fq2 ran 2000 iterations in about 80 min) about
+  $0.95; Modal L4 ($1.117/h) has no measured rate here, $0.75 at A10 speed.
