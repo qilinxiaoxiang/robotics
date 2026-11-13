@@ -969,3 +969,18 @@ last ratio 0.00, need 2.0)" in the run record. Modal billed 0.224 USD for the ch
 image build, spk2chk-b 0.102; `modal billing report`), 0 live apps after. The first check call failed (policies not in
 the image, 0.12 USD) and a build was stopped by another session's edit in the worktree; the Modal image is now built
 from a snapshot of the worktree.
+
+### 2026-11-13 01:10 Flight pack: load-curriculum run spk2 launched on Modal (FP-R7)
+
+Pre-launch checks read back from `train/out/spk2_prelaunch_summary.json` (entry 00:55): start policy held at end per
+256 episodes 172 / 171 / 160 / 141 / 111 / 96 at load scale 0 / 0.02 / 0.05 / 0.10 / 0.15 / 0.20; falling at 0.7 s
+earns 1.6-4.4 per episode against 12-14 for standing still and 61-90 for a held pick at every scale, so no fall
+penalty was added. Go: Shawn's standing word for this run (2026-11-12 "你看看不是浪费时间就上modal上去跑").
+Launch 00:56 EST from `microduck_rl-grasp` 01caed31: `SPK_TASK=curriculum SPK_RUN=spk2 SPK_HOURS=3.5 MICRODUCK_GPU=L4
+modal run --detach cmu/grasp/seepick_pack_modal.py::run --max-iters 1300 --max-dollars 4`; app
+ap-gXXVrmMeQb1BGugd2jM3WE, call fc-01M79R680J8XEBGYR4VVAJRWCE, Volume microduck-seepick-spk2; args read back: 4096
+envs, 1300 iterations, save every 100, seed 1, cap 3.5 h = 3.91 USD; image carries SPK_TASK=curriculum. Curriculum:
+25 % of envs without pack, the rest uniform in [0, s_max], s_max from 0.08 in steps of 0.01 when the top slice holds
+0.8 of the no-pack rate over 10 iterations. In-run stops: s_max still 0.08 at iteration 100; no-pack held below 0.7 of
+its first-50-iteration mean. At 01:08 the app is detached and waiting for an L4. Modal spend so far today: spk1 1.02
+USD, spk2 checks 0.24 USD. Watch: scratchpad spk2_wait.sh.
