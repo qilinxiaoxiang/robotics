@@ -59,7 +59,17 @@ AIM_GATE_M = 0.06          # m: T2's aim after a creep only takes detections thi
 #                            shift 3 cm in y: a 4 cm gate threw out the real ball at the end of run 12's first creep, and it picked blind at dx +3.5
 NEAR_LOOK_R = 0.17         # m: an object estimated nearer than this is aimed at with the lowest look (approach.NEAR_HEAD), whose
 #                            picture covers x 0.07-0.19 m at the centre line (robot 2026-11-12), and the creep keeps that look
-BLIND_R = 0.15           # m: nearer than this the object can be under the standing picture (bottom edge 0.10-0.125 m at
+BACK_MAX_S = 1.2           # s: the step back ends here at the latest
+BACK_VX = -0.4             # m/s: robot 2026-11-12, standing start: -0.25 for 2.5 s leaned back 5 deg and never stepped (actions
+#                            under 0.13); -0.4 stepped from 0.4 s, 2 s and 1.5 s runs stayed up (max tilt 11.4 deg). The as-built
+#                            sim steps back at -0.20, which the robot does not.
+SIGHT_LOST_S = 0.4         # s: a creep or step back with no sighting of the object for this long stops. Robot 2026-11-12
+#                            (seepick_1112f, recorded frames): the creep kept the lowest look, walk61 dropped the neck 0.3 rad
+#                            more once it stepped, the ball left the top of the picture after 0.3 s, the creep walked its full
+#                            1.5 s unseen and the left foot came down on the ball; the duck fell.
+TRACK_GAIN = 0.2           # rad of head pitch per picture height of error, per sighting: the head follows the object while walking
+BACK_GATE_M = 0.12         # m: detections this near the last sighting are the object while it moves away in the picture
+BLIND_R = 0.15         # m: nearer than this the object can be under the standing picture (bottom edge 0.10-0.125 m at
 #                            the lowest look, ruler 2026-10-30); not seen there means pick at the last known position.
 #                            Was 0.12: robot 2026-11-06 the duck turned 16 deg toward a ball at 0.12 m, lost it under
 #                            the picture, its estimate read 0.121 and the run gave up without a pick. A wrong blind
@@ -364,7 +374,10 @@ class SeePick:
             self.next_try(f"still off the spot after {MAX_ALIGN} moves (dx {dx * 100:+.1f} dy {dy * 100:+.1f} cm)")
             return
         if self.obj["x"] < (T2_WIN_X[0] - PICK_SLACK if self.t2 else SPOT[0] - win):
-            self.next_try(f"too close (dx {dx * 100:+.1f} cm; walk61 does not step back)")
+            # walk61 walks backward (Pollen trains lin_vel_x -0.4..0.4); the robot needs BACK_VX to start stepping
+            self.align_n += 1
+            self.head = dict(ap.NEAR_HEAD)
+            self.enter("back", f"too close (dx {dx * 100:+.1f} cm): step back")
             return
         self.align_n += 1
         bearing = math.atan2(self.obj["y"] - T2_Y if self.t2 else self.obj["y"], self.obj["x"])
@@ -383,6 +396,31 @@ class SeePick:
             if self.head is None:   # align entered without an aim (tests, a given estimate): look at the object
                 self.head = self.helper.aim_head(st, self.obj["x"], self.obj["y"])
             self.enter("burst", f"dx {dx * 100:+.1f} cm")
+
+    def track_head(self, m):
+        """Head pitch command that keeps a sighting near the middle of the picture while the body walks (the neck and
+        the trunk move under the camera): a sighting high in the picture lifts the head, one low in it lowers it."""
+        if m is None or not self.head:
+            return
+        err = m["v"] / PIX_H - 0.5
+        hp = self.head.get("head_pitch", ap.NEAR_HEAD["head_pitch"]) + TRACK_GAIN * err
+        self.head = dict(self.head, head_pitch=round(max(0.35, min(ap.NEAR_HEAD["head_pitch"], hp)), 3))
+
+    def p_back(self, st, now):
+        """Step back from an object that is nearer than the pick window, the head in the lowest look so the camera
+        keeps it; stop when it is measured at the pick spot or at BACK_MAX_S, then aim and measure again."""
+        m = self.measure(st, gate=(self.obj["x"], self.obj["y"]), gate_m=BACK_GATE_M) if self.obj else None
+        if m is not None:
+            self.obj = m
+            self.track_head(m)
+        if (m is not None and m["x"] >= SPOT[0]) or now - self.t_phase >= BACK_MAX_S:
+            why = f"object at x {m['x']:.3f}" if m is not None and m["x"] >= SPOT[0] else f"{BACK_MAX_S} s"
+            self.stand(self.head)
+            self.obj, self.meas = None, []
+            self.enter("aim", f"step back done: {why}")
+            return
+        self.send_fn({"mode": "walk", "vx": BACK_VX, "vy": 0.0, "vtheta": 0.0, "for_s": ap.CMD_FOR_S,
+                      "head": {k: v for k, v in self.head.items() if k in ("head_pitch", "head_yaw", "neck_pitch")}})
 
     def p_turning(self, st, now):
         if now - self.t_phase < LOOK_SETTLE_S:   # head to the default pose first: it must not move during the spin (approach.walk)
@@ -405,6 +443,7 @@ class SeePick:
         m = self.measure(st, gate=(ref["x"], ref["y"]))
         if m is not None:
             self.burst_m = m
+            self.track_head(m)
         nudge = self.t2 and self.obj["x"] <= NUDGE_FROM
         stop_x = BURST_STOP_X if self.obj["x"] > BURST_STOP_X else self.obj["x"] - BURST_INSIDE_M
         if not nudge and m is not None and m["x"] <= stop_x:
@@ -412,6 +451,8 @@ class SeePick:
         elif m is None and self.burst_m is not None and now - self.burst_m["t"] > 0.4 and (
                 self.burst_m.get("cut") or self.obj["x"] <= BURST_STOP_X or nudge):
             why = "object under the picture"   # this near a blind walk runs the object past the beak
+        elif not self.t2 and now - max(self.t_phase, (self.burst_m or {}).get("t", 0.0)) > SIGHT_LOST_S:
+            why = f"object not seen for {SIGHT_LOST_S} s"   # never walk at a near object the camera does not show
         elif now - self.t_phase >= (NUDGE_S if nudge else BURST_MAX_S):
             why = f"{NUDGE_S if nudge else BURST_MAX_S} s"
         else:
@@ -513,6 +554,7 @@ def main():
     p.add_argument("--color", default="orange", choices=sorted(COLORS))
     p.add_argument("--hsv-lo", default=None, help="override the colour table, e.g. 40,80,60")
     p.add_argument("--hsv-hi", default=None)
+    p.add_argument("--colour-only", action="store_true", help="orange: the colour filter alone, no learned detector")
     p.add_argument("--cmd", default="/tmp/duck_cmd.json")
     p.add_argument("--log", default=None, help="walk_wired log (default: the --log of the running walk_wired)")
     p.add_argument("--tries", type=int, default=3)
@@ -532,6 +574,10 @@ def main():
     lo = tuple(int(v) for v in a.hsv_lo.split(",")) if a.hsv_lo else lo
     hi = tuple(int(v) for v in a.hsv_hi.split(",")) if a.hsv_hi else hi
     detect = lambda f, accept=None: orange_target.detect(f, lo, hi, ap.MIN_AREA, accept=accept)  # noqa: E731
+    if a.color == "orange" and not a.colour_only:   # the ball: the colour filter proposes, the learned detector decides
+        import ball_detect
+        detect = ball_detect.BallDetect(lo, hi, ap.MIN_AREA)
+        print(f"detector: colour filter confirmed by the learned detector ({ball_detect.learned_target.MODEL})")
     log_path = a.log or ap.find_log()
     if not log_path:
         sys.exit("no walk_wired log found: start the brain from the app first")

@@ -155,8 +155,18 @@ def below_horizon(kin, st, w, h):
             return False
         # a 12 mm ball is seen to about 0.6 m. Runs 12 and 13 took orange 2.8-5.9 m away for it and walked over the real ball toward it (robot 2026-11-01)
         p = kin.pixel_to_ground(x + bw / 2.0, y + bh, st["q"], st["gb"], w, h)
+        if p is not None and p[0] < OWN_FOOT_X and OWN_FOOT_Y[0] < abs(p[1]) < OWN_FOOT_Y[1]:
+            return False   # the robot's own foot
         return p is None or math.hypot(*p) <= MAX_SEE_R
     return accept
+
+
+# The feet are yellow-green outside and orange inside; in the lowest look the camera sees them. Robot 2026-11-12
+# (seepick_1112g): three "objects" measured at x 0.03-0.04 y 0.04-0.06, width 8 mm, were the left foot (toe front edge
+# projects to x 0.055, the foot covers y 0.02-0.05, recorded frame of seepick_1112f); the robot stepped back from its
+# own foot three times while the ball lay by the door. Between the feet (|y| under 0.015) stays a place a ball can be.
+OWN_FOOT_X = 0.058
+OWN_FOOT_Y = (0.015, 0.07)
 
 
 def wrap(a):

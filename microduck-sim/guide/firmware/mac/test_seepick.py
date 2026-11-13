@@ -153,7 +153,7 @@ def test_too_close_is_not_picked():
     ctl.obj = dict(x=0.02, y=0.0, size=0.013, t=0.0)
     ctl.enter("align")
     ctl.step()
-    assert ctl.phase == "approach" and ctl.try_n == 2 and not duck.picks
+    assert ctl.phase == "back" and ctl.try_n == 1 and not duck.picks   # too close: step back, never bite (see below)
 
 
 def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
@@ -390,3 +390,49 @@ def test_a_ball_knocked_away_by_the_bite_is_looked_for_not_bitten_blind():
     # the look at the old spot finds nothing and bites nothing; the search finds the ball and the second bite holds
     assert ctl.result["ok"] and len(duck.picks) == 2, ctl.result
     assert any("not seen at the pick spot" in w for w in whys), whys
+
+
+def test_an_object_too_close_is_stepped_back_from():
+    """Shawn 2026-11-12: "同时现在没有后退 为什么 完全应该有后退". An object nearer than the pick window: the robot
+    walks backward at the speed that steps on the robot (BACK_VX), then aims again; the try is not given up."""
+    duck = PickDuck((0.04, 0.0), ["hold"])
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
+                     make_approach=lambda: apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(),
+                                                        duck.send, duck.detect, now=lambda: duck.t, log=lambda s: None),
+                     now=lambda: duck.t, log=lambda s: None)
+    ctl.try_n = 1
+    ctl.obj = dict(x=0.04, y=0.0, size=0.013, t=0.0)
+    ctl.enter("align")
+    x0 = duck.obj[0]
+    while ctl.phase in ("align", "back") and duck.t < 10.0:
+        ctl.step()
+        duck.advance()
+    assert ctl.phase == "aim" and ctl.try_n == 1, (ctl.phase, ctl.try_n)
+    backs = [c for _, c in duck.sent if c.get("mode") == "walk" and c.get("vx", 0) < 0]
+    assert backs and all(c["vx"] == sp.BACK_VX for c in backs)
+    assert not duck.picks
+
+
+def test_a_creep_stops_when_the_object_leaves_the_picture():
+    """Robot 2026-11-12 (seepick_1112f): the creep held the lowest look, the neck dropped once walk61 stepped, the ball
+    left the top of the picture and the creep walked on unseen for 1 s; the left foot came down on the ball and the
+    duck fell. A creep with no sighting for SIGHT_LOST_S stops."""
+    duck = PickDuck((0.16, 0.0), [])
+    seen = {"on": True}
+    ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send,
+                     lambda f, accept=None: duck.detect(f, accept) if seen["on"] else None,
+                     make_approach=lambda: apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(),
+                                                        duck.send, duck.detect, now=lambda: duck.t, log=lambda s: None),
+                     now=lambda: duck.t, log=lambda s: None)
+    ctl.try_n = 1
+    ctl.obj = dict(x=0.16, y=0.0, size=0.013, t=0.0)
+    ctl.enter("align")
+    ctl.step()
+    assert ctl.phase == "burst"
+    seen["on"] = False
+    t0 = duck.t
+    while ctl.phase == "burst" and duck.t < t0 + 3.0:
+        ctl.step()
+        duck.advance()
+    assert ctl.phase == "aim" and duck.t - t0 <= sp.SIGHT_LOST_S + 0.15, (ctl.phase, duck.t - t0)
+    assert any("not seen" in r.get("why", "") for r in ctl.trace)

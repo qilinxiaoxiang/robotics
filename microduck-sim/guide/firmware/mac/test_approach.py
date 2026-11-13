@@ -46,6 +46,7 @@ class FakeDuck:
                 # the gait gets going over about a second (robot 2026-10-30: 0-5 cm in the first 0.6-0.9 s of a
                 # standing start); the controller's dead reckoning assumes the same (apc.V_ONSET_S)
                 v = apc.V_REAL * (0.5 if self.t - self.walk_t0 < apc.V_ONSET_S else 1.0)
+                v = -v if float(c["vx"]) < 0 else v   # walk61 walks backward too (sim and robot, 2026-11-12)
             else:
                 self.walk_t0, v = None, 0.0
             self.X += v * math.cos(self.th) * dt
