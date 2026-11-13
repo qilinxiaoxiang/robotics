@@ -823,3 +823,47 @@ dollar cap) with a smoke of at most 1 USD; no training launched on AWS.
   $0.40 against about $0.95 on Modal A10. Resume, fetch, stop, both self-termination paths and the leftover sweep
   passed; the smoke cost about $0.24 and nothing is left running.
 - Spot capacity is intermittent: two of five launch commands found none in any zone at first.
+
+### 2026-11-12 20:16 Flight pack: seepick61-with-pack fine-tune prepared and checked, not launched (FP-R7)
+
+Built in `microduck-sim/microduck_rl-grasp` (branch cmu/grasp, commit 7fc17f36): task
+`Mjlab-SeeingPick-Pack-FromPick-MicroDuck-CMU-Current`, the seeing-pick env with one change, a pack load drawn on
+trunk_base at every reset (none 0.30, batteries out 0.30, full 0.40; mass and COM from the flight env's `payload.py`
+and manifests, imported). Robot model flightpack-none (the pack is defined against it; sp-b-1027 trained on the
+retired "plugged" model, kept for comparison). Actor inputs and rewards unchanged. Start = sp-b-1027 `model_2500.pt`
+(its actor is the robot's seepick61.onnx; the grasp worktree's `sp-b-1027_2000.onnx` is a byte copy from the old export
+bug) with its critic: the payload (kg, COM x y z) is appended to the critic's 93 inputs with zero weights, the actor is
+frozen for 50 iterations while the critic learns the pack, curricula held at the checkpoint's step counter.
+Pre-launch checks, all on the Mac mini (`microduck-sim/extensions/flight-20261110/train/out/spk_prelaunch_summary.json`):
+- The env reproduces the runtime-sim result. seepick61, 256 episodes per load: no pack 191 held (75 %), 15 falls;
+  batteries out 2 held, 254 falls; full 1 held, 253 falls (median fall 0.7 to 0.8 s). On the old plugged model: no
+  pack 200 held, 4 falls; full 1 held, 251 falls. Runtime sim (FP-R7, 20 seeds): no pack 11 to 16 of 20 held, 0 to 1
+  falls; both pack loads 0 of 20 held, 20 of 20 falls.
+- Reward audit (reward per second, 128 episodes). No pack: seepick61 19.3 (a successful hold 22.6), stand61 2.4, fq2
+  standing 0.75, blind bow (groundpick61) 0.03. Batteries out: seepick61 0.28, fq2 1.04, stand61 -2.6, blind -3.0,
+  seepick61 with the pack weight carried by an upward force 7.7 (35 held, 62 falls; a successful hold 18.8). Full:
+  seepick61 -0.22, fq2 1.43, stand61 -3.2, blind -2.7, carried 4.6 (22 held; hold 15.3). So at the pack loads standing
+  still (fq2) out-earns seepick61 as it is, by about 1 to 1.6 per second, while a hold earns 15 to 19 per second, about
+  ten times standing. Inference, not measured: the actor does not see the load and a third of episodes have no pack,
+  where bowing earns 19 per second, so giving up the bow costs more than it gains unless the actor learns to tell the
+  load from its own joints.
+- Contradictions to the plan: the training env lets hip pitch and knee reach 0.641 N m (p99 in every case) while the
+  runtime sim clamps at 0.538, so the fine-tune can learn torque the runtime will not give; the runtime-sim acceptance
+  (`train/accept_seepick.py`) catches it but the env does not. Even with the weight carried, seepick61 still falls in
+  half the pack episodes, so the pack's COM and inertia matter beyond its weight.
+- Modal path (`cmu/grasp/seepick_pack_modal.py`): L4, detached spawn, one Volume per run with the trainer logs on it,
+  2 retries that resume from the newest checkpoint, checkpoint and ONNX every 100, stop at iteration 300 if held_full
+  and held_nobatt were never above zero, dollar cap from L4 + 4 cores + 16 GiB (1.117 USD/h, default 6 USD), import
+  check and Warp kernel compile at image build. Smoke spk-smoke-1112c (4096 envs, exact configuration, 180 s): started,
+  logged per-load keys, wrote model_0 to model_5 on the Volume, exported ONNX as they appeared; 8.4 s per iteration.
+  The first smoke reached no iteration: Warp compiled CUDA kernels for over 100 s on a cold container (292 s at image
+  build), hence the compile step in the image. The L4 took about 20 minutes to schedule. Modal spend today 0.18 USD,
+  no live app, `modal_watch.py` clean. Resume tested on the mini (CPU): a second call resumed from model_3 at
+  iteration 3, kept the warm-up count and summed both attempts' time.
+- Estimate for 1000 iterations: Modal L4 about 2.4 h, about 2.7 USD (worst case 3.9 USD at SPK_HOURS 3.5); Kaggle T4
+  about 3.5 h at sp-b-1027's 12.75 s per iteration. A stop at iteration 300 costs about 0.8 USD on Modal.
+- Launch (not run): from microduck_rl-grasp, `SPK_RUN=spk1 SPK_HOURS=3.5 MICRODUCK_GPU=L4
+  ~/code/robotics/omx-local/.venv/bin/modal run --detach cmu/grasp/seepick_pack_modal.py::run --max-dollars 6`;
+  fetch `modal volume get microduck-seepick-spk1 runs/spk1 <dir>`; recipe in `cmu/grasp/PLAN-seeing-pickup.md`.
+- Tests: 14 new CPU tests pass; the existing seeing-pick test file passes 3 of 3 reruns after one failure of its
+  camera-position test (0.051 m against 0.04, object 1.5 m away; the env fixture has no fixed seed).

@@ -1,0 +1,40 @@
+{
+ "run": "spk-smoke-1112c",
+ "app": "microduck-seepick-spk-smoke-1112c",
+ "gpu": "L4",
+ "rate_per_hour": 1.117,
+ "num_envs": 4096,
+ "date": "2026-11-12",
+ "iteration_time_s": [
+  9.81,
+  7.75,
+  7.95,
+  8.63,
+  8.66,
+  8.84
+ ],
+ "steady_s_per_iteration": 8.37,
+ "checkpoints": [
+  "model_0.pt",
+  "model_1.pt",
+  "model_2.pt",
+  "model_3.pt",
+  "model_4.pt",
+  "model_5.pt"
+ ],
+ "onnx_exported_live": [
+  "Mjlab-SeeingPick-Pack-FromPick-MicroDuck-CMU-Current_0.onnx",
+  "Mjlab-SeeingPick-Pack-FromPick-MicroDuck-CMU-Current_1.onnx"
+ ],
+ "progress": {
+  "elapsed_s": 171.4,
+  "attempts": 1,
+  "iteration": 2,
+  "check_best": 0.0,
+  "cap_hours": 0.035,
+  "dollars": 0.053,
+  "time": "2026-11-13T00:34:57+0000"
+ },
+ "note": "180 s function timeout ended the call during the final exports (expected for the smoke); app stopped, no live app after. Earlier attempt spk-smoke-1112b reached no iteration: cold Warp compile (~100 s+ in the container, 292 s at image build), now done once at image build by warp_warm.py.",
+ "iteration1_onnx_vs_seepick61_max_abs_action_diff": 0.0012
+}
