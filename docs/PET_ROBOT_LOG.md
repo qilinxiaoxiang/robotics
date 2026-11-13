@@ -896,3 +896,30 @@ A held pick still pays 8 to 13 times the best degenerate policy (fq2 standing st
 ceiling did not change the incentive. Every leg-pitch p99 sits at the 0.538 N m clamp at both pack loads, as in the
 runtime sim. Outputs: extensions/flight-20261110/train/out/spk_audit_*.json and spk_prelaunch_summary.json (the two
 plugged start cases are still the 1.75 A run); the 1.75 A results are kept in out/i175/.
+
+### 2026-11-12 22:20 Flight pack: spk1 stopped at iteration 325, no learning on the pack loads (FP-R7)
+
+Stopped by hand (`modal app stop -y ap-R4vLTDvI2CuzYOLzy4C3sv`), `modal_watch.py` afterwards: 0 live apps, 0 alert
+mails. Cost 0.92 USD (2976 s on L4, about 9.1 s per iteration at 4096 envs). Volume `microduck-seepick-spk1`.
+Curve, 50-iteration means of the training log (with exploration noise): held without pack 0.33, 0.35, 0.32, 0.31,
+0.31, 0.33, 0.34; held batteries out 0.0035, 0.0053, 0.0026, 0.0023, 0.0031, 0.0034, 0.0038; held full 0.0028,
+0.0038, 0.0018, 0.0012, 0.0014, 0.0011, 0.0012; fell batteries out 0.926 -> 0.991; fell full 0.883 -> 0.987.
+The falls got more frequent, not fewer. Iteration-100 acceptance (dev seeds, fq2 stander, `train/eval/spa_spk1_100_*`):
+no pack ball 4/20 held (start policy 15/20), box 13/20; batteries out and full 0/20 held, 20/20 falls about 0.7 s
+after the switch, leg torque p99 0.38-0.49 N m (below the 0.538 clamp).
+Where the start policy breaks (seepick61, fq2 stander, ball, 20 seeds, runtime sim, `train/eval/pk_bend4_load0*_ball.json`):
+25 % load (0.239 kg) 0 held, 18 falls, 17 to the right, 1.0-1.6 s after the switch; 50 % 0 held, 20 falls; 75 % 0 held,
+20 falls. At 25 % the legs are not torque-limited (clamp fraction 1-2 % per joint, 0.4 % without the pack), the pack's
+added mass sits 3 mm right of centre and its fans at y = +-0.11 m add roll inertia: the fall is the unchanged bend
+motion meeting a different body, not a strength limit.
+Reading:
+1. The jump from no pack to 0.65 kg gave PPO almost no successes to learn from (0.2-0.5 % by chance), while the cliff
+   is below 0.24 kg. The load has to grow from zero in small steps.
+2. The rising fall rate fits an early-fall incentive: at full load the start policy earns -0.15 per second and
+   standing with stand61 -2.97, so an episode that ends early by falling can cost less than one that stays up without
+   picking. The pre-launch audit compared do-nothing policies and never priced "fall early". Next audit prices it.
+3. The in-run stop ("pack success never above zero by iteration 300") could not fire because chance successes exist
+   from the start (check_best 0.0112). The next stop is on the curriculum level reached.
+Published recipe this follows: automatic curricula that widen a randomized physical parameter only while the success
+rate at the edge holds (automatic domain randomization, OpenAI 2019, arXiv 1910.07113; the terrain-level curriculum
+in Rudin et al. 2021, arXiv 2109.11978).
