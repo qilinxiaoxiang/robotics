@@ -882,3 +882,17 @@ fc-01M79BDGQMRCVA03PN2BNZGGXT, args read back: 4096 envs, 1000 iterations, save 
 pack-load held keys, cap 3.5 h = 3.91 USD (6 USD argument), start sp-b-1027 model_2500.pt (actor = seepick61).
 Image build about 20 min; at 21:25 the app is detached with no task yet (waiting for an L4). Modal credit before
 the run 36.61 USD. Watch: scratchpad spk_wait.sh (checkpoint, stop or alert mail).
+
+### 2026-11-12 21:40 Flight pack: reward audit on the 1.47 A pack env still pays the hold (FP-R7)
+
+Rerun of the hold-reward audit (seepick_prelaunch.sh nonebase, Mac mini, 128 episodes per case) on the env spk1 trains
+in (1.47 A, 7.2-8.2 V). Reward per second, 1.47 A (1.75 A before):
+- No pack: seepick61 19.38 (19.27), its successes 22.69; stand61 2.04 (2.43), fq2 0.95 (0.75), blind bow 0.44 (0.03).
+- Batteries out: carried hold 7.49 (7.70; 34 held, 64 falls; successes 18.11), fq2 1.35 (1.04), seepick61 0.30, stand61
+  -2.97, blind -2.91.
+- Full pack: carried hold 4.44 (4.59; 22 held, 79 falls; successes 14.73), fq2 1.83 (1.43), seepick61 -0.15, stand61
+  -2.97, blind -2.57.
+A held pick still pays 8 to 13 times the best degenerate policy (fq2 standing still) at every load, so the lower
+ceiling did not change the incentive. Every leg-pitch p99 sits at the 0.538 N m clamp at both pack loads, as in the
+runtime sim. Outputs: extensions/flight-20261110/train/out/spk_audit_*.json and spk_prelaunch_summary.json (the two
+plugged start cases are still the 1.75 A run); the 1.75 A results are kept in out/i175/.

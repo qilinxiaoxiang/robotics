@@ -4,12 +4,14 @@
 #   start: seepick61 at each load, 256 episodes (8 parts x 32 envs), on the fine-tune's model (none) and on
 #          sp-b-1027's training model (plugged) at no pack and full pack -> out/spk_start_<base>_<load>.json
 #   audit: stand61, fq2, blind bow, carried seepick61 at each load, 128 episodes -> out/spk_audit_<case>_none_<load>.json
-#   zsh train/seepick_prelaunch.sh [start|audit|all]
+#   zsh train/seepick_prelaunch.sh [start|audit|all|nonebase]   (nonebase: all without the plugged start cases)
 set -e
 T=/Users/xiangzheng/code/robotics/microduck-sim/extensions/flight-20261110/train
 WHAT=${1:-all}
 zsh $T/mini_seepick.sh push
-[ $WHAT = audit ] || for spec in "none none" "nobatt none" "full none" "none plugged" "full plugged"; do
+SPECS=("none none" "nobatt none" "full none" "none plugged" "full plugged")
+[ $WHAT = nonebase ] && SPECS=("none none" "nobatt none" "full none")   # start + audit on the fine-tune's model only
+[ $WHAT = audit ] || for spec in $SPECS; do
   set -- ${=spec}
   echo "== start $1 $2 $(date +%H:%M:%S)"
   zsh $T/mini_seepick.sh check $1 $2 seepick 32 8 start
