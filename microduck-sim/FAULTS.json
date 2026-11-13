@@ -415,7 +415,7 @@
         {
           "id": "H3-hidden-hip-angle",
           "claim": "The left leg holds roll angle its encoders do not see (hip roll or hip yaw horn seating, bracket flex or play under load, or a sole pad thicker on its inner side).",
-          "status": "supported by three scans, not located: with the right sole flat on the table, the logged joint angles put the left sole only 0.3 to 1.1 deg outer edge down; the scans measure 2.2 to 2.8. About 1.5 to 2 deg of left-leg roll is outside the encoders. The thigh and shin fits (3 to 5 mm rms, free scale 0.79 to 0.98) are too poor to say which joint"
+          "status": "supported by three scans, not located: with the right sole flat on the table, the logged joint angles put the left sole only 0.3 to 1.1 deg outer edge down; the scans measure 2.2 to 2.8. About 1.5 to 2 deg of left-leg roll is outside the encoders. The thigh and shin fits (3 to 5 mm rms, free scale 0.79 to 0.98) are too poor to say which joint. Hip play ruled out by T1 (2026-11-12)"
         },
         {
           "id": "H4-mass-left-of-model",
@@ -426,14 +426,19 @@
           "id": "H5-soft-gain-holds-uneven-stance",
           "claim": "The lean is not built into one joint. After a walk the policy at zero command holds the robot at KP 200, where loaded joints sit 2 to 6 deg short of their goals; the left leg ends the walk carrying more, sags more, the body tips further left and the left leg carries more still. Stand mode at KP 400 pulls the legs back to a mirrored pose and the lean drops to about 1 deg.",
           "status": "open; supported by the 2026-11-12 20:10 log (same robot, same minute: 1.1 deg at KP 400, 2.3 deg at KP 200 after the walk). Not yet separated from H3 for the remaining 1 deg"
+        },
+        {
+          "id": "H6-left-sole-wedge-or-foot-seating",
+          "claim": "The roll sits at the left foot: either the hand-applied sole (hot glue coat of 2026-10-21 plus the black pad) is thicker under the inner edge, or the left foot sits tilted on its two-half ankle bracket.",
+          "status": "open, leading: Shawn's standing photo IMG_7352 shows the black layer under the left foot about 3 mm tall at the inner edge and under 1 mm at the outer edge (2 mm over the 43 mm sole = 2.7 deg, the scans' 2.4 to 2.8), while the right foot's layer is thin and even. The photo cannot tell a thicker pad from a lifted inner edge"
         }
       ],
       "tests": [
         {
           "id": "T1-in-air-hips",
           "what": "Robot lifted, stand pose held: compare left and right hip roll and yaw by eye and with wiggle_live.py on ID9, ID10, ID4, ID5; separates H3 from H4",
-          "status": "queued",
-          "blocker": "needs Shawn's hands on the robot (asked 2026-11-12 20:15: with the robot standing, push each thigh sideways in and out and compare the slack left against right; encoders cannot see horn, bracket or shaft play)"
+          "status": "run",
+          "results": "2026-11-12 about 20:40, Shawn pushed each thigh sideways with the robot standing: \"两边没有明显差别 硬要说的 甚至是右腿更松一点点\". No extra slack at the left hip; the hidden left-leg roll is not hip play"
         },
         {
           "id": "T2-sim-com-shift",
@@ -452,6 +457,12 @@
           "what": "Scan the robot as it stops after a walk, twice, and read sole and pelvis angles against the table with scan-20261101/floor_truth.py",
           "status": "run",
           "results": "2026-11-12, see the 20:05:49 / 20:08:12 occurrence. Repeats the 11-04 scan within 0.6 deg on both soles. inspect_scan.py had picked a wall as the floor on the plain white table; it now accepts only planes within 20 deg of level"
+        },
+        {
+          "id": "T5-paper-under-left-inner-edge",
+          "what": "Robot standing in stand mode on the table: does a sheet of paper slide under the inner edge of the left foot? Yes = the foot is tilted and the inner edge is off the table (cause above the sole); no = the sole layer itself is thicker inside",
+          "status": "queued",
+          "blocker": "Shawn at the robot, asked 2026-11-12"
         }
       ],
       "mitigations": [],
