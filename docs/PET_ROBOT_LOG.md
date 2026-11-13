@@ -1029,3 +1029,18 @@ The 2 cm lateral offset of the 01:38 file is gone: object minus pad at close [0.
 4-5 of 20 in the runtime sim while training reports the s = 0 held rate rising; it does better at 25 % than at zero.
 Diagnosis continues with the agent (same policy in the training env at s = 0, body at s = 0 against the runtime
 "none" manifest, failure stage of the no-pack episodes).
+
+### 2026-11-13 03:00 Flight pack: spk2 at iteration 590 balances to 50 % load, the pinch is what fails (FP-R7)
+
+Training: s_max 0.51 at iteration 590 (43 rises), no-pack held 50-iteration mean 0.43 against reference 0.348, 1.76
+USD at iteration 601. Runtime-sim pickup test of the trainer's ONNX saved at iteration 590 (train/ckpt/spk2_600, fq2
+stander, ball, 20 dev seeds), held (still held 3 s later) / falls:
+- No pack 2 (0) / 0; 25 % load 5 (3) / 0; 50 % load 6 (3) / 1; 75 % load 1 (1) / 10.
+Start policy: 15 (12) / 1, then 0 held with 18, 20 and 20 falls. So the falls are gone up to 50 % load.
+Stage counts without pack: beak contact 20, pinched 3, holding bit 2, held 2 (start policy 20, 16, 11, 15); the lower
+jaw touches first in 5 of 20 (start policy 0). Beak position at close is like the start policy's (object minus pad
+[0.006, 0.003], lip_min 0.0003, pad height 0.020, tilt 46 deg). The no-pack held count fell with training (5, 4, 2 at
+about iteration 120, 310, 590) while training's own s = 0 held rate rose 0.37 -> 0.43: the fine-tune drifts to a
+pinch that works in the training env's beak-ball contact and not in the runtime sim's. Diagnosis with the agent now
+targets the contact and jaw model difference and the head/jaw actions in the close window. spk2 keeps running for
+the balance result (how far s_max goes at the 0.538 N m ceiling).
