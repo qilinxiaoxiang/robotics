@@ -498,6 +498,23 @@
         "status": "open",
         "summary": "Mechanism found (H7): walk mode holds the hips wider than the 3.7 deg at which the soles lie flat, so the robot rests on a sole edge and tips left. Not a sensor offset, not hip slack, not the sole layer. Why the robot's policy holds them wider than the sim's is open (T7)."
       }
+    },
+    "fall-on-switch-policy-stand-to-open-loop-stand": {
+      "symptom": "Standing on the policy in walk mode at zero command (KP 200), a {\"mode\": \"stand\"} command (open-loop ramp to STAND_POSE, KP 400) tips the robot over within 0.6 s.",
+      "required_recovery": "A switch from walk mode to stand mode never tips the robot. Shawn 2026-11-12: \"为什么摔倒了\".",
+      "occurrences": [
+        {"when": "2026-10-30", "what": "an agent's {\"mode\": \"stand\"} neck sweep switched Shawn's closed-loop stand to open loop and the duck fell twice (robotics memory microduck-no-openloop-stand-for-head.md); no log slice kept", "running": "closed-loop stand, then {\"mode\": \"stand\"}"},
+        {"when": "2026-11-12 22:02, log duck_wired_log_app1112-214313.jsonl", "what": "look_sweep.py (head poses in walk mode at zero command for 140 s, never stepped) ended with {\"mode\": \"stand\"}; the body pitched from the first tick and was over 90 deg after 0.6 s. Shawn righted it 24 s later; it stands again.", "running": "walk mode zero command (stand61 before the first step), KP 200, left hip hidden zero shift 3 deg, battery about 7.3 V"}
+      ],
+      "hypotheses": [
+        {"id": "H1-gain-step-on-stale-lead", "claim": "In walk mode at KP 200 the policy holds the knees with goals far ahead of the positions (2026-11-12: right knee goal 2699 against position 2513, left 1355 against 1598, i.e. 186 and 244 ticks = 16 and 21 deg, currents 94 and -128 mA). Stand entry keeps those goals as the ramp start (walk_brain.py: start = self.goal or q) and doubles the gain on the same tick, so the knee torque doubles at once.", "status": "supported by the 11-12 log: on the two ticks after the switch the knee currents rose to 224 and -351 mA with unchanged goals, the knees moved 90 and 115 ticks (8 and 10 deg) in 0.15 s, and the body pitch followed (gyro y -0.7 rad/s at 0.07 s, gravity x -0.28 at 0.3 s). The ramp itself had moved the goals 2 ticks by then."}
+      ],
+      "tests": [
+        {"id": "T1-torque-continuous-entry", "what": "Stand entry from a policy mode starts the ramp from position + (goal - position) * KP_walk / KP_stand, so the torque is the same on the first tick; check in brain_sim_check.py with a walk-to-stand switch after standing on the policy, then on the robot with Shawn's hand near it.", "status": "not run; proposed, not applied"}
+      ],
+      "mitigations": ["Until T1 is on the robot: agent scripts do not send {\"mode\": \"stand\"} to a robot standing on the policy in walk mode; they leave it in walk mode at zero command."],
+      "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "evidence": "the robot lies on the floor with torque on until Shawn rights it"},
+      "cause": {"status": "supported, fix not applied", "summary": "Gain step 200 -> 400 on goals that lead the knee positions by 16-21 deg (H1). Open: why earlier walk-to-stand switches after stepping did not fall (their knee lead was not compared)."}
     }
   }
 }
