@@ -48,6 +48,10 @@ FILES=(
   guide/firmware/mac/u20cam_intrinsics.json
   guide/firmware/mac/u20cam_mount.json
   guide/firmware/mac/orange_target.py
+  guide/firmware/mac/learned_target.py
+  guide/firmware/mac/ball_detect.py
+  guide/firmware/mac/cam_record.py
+  hardware-design-20260912/whole-robot-20260912/runtime-overlay/models/learned_target.onnx
   guide/firmware/mac/turn_test.py
   guide/firmware/mac/shoot.py
   guide/firmware/mac/seepick.py

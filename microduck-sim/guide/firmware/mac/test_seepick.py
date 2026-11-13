@@ -181,20 +181,18 @@ def test_a_too_far_object_is_crept_up_to_with_the_camera_then_picked():
     assert all(c.get("vx", 0) <= apc.VX for _, c in duck.sent)
 
 
-def test_inside_the_stop_mark_picks_without_a_creep():
-    """Robot 2026-11-12 (seepick_1112c): measured at 11.9 cm, inside BURST_STOP_X, the creep put the ball between the feet.
-    Inside the mark it picks from where it stands and never walks."""
+def test_an_object_beyond_the_hold_range_is_not_bitten_from_there():
+    """Robot 2026-11-12: the bites at x 0.110, 0.110, 0.112 and 0.125 all closed on nothing; every robot hold sat at
+    x 0.098-0.100. Measured at 11.9 cm the robot moves closer first; it does not bite from there."""
     duck = PickDuck((0.119, 0.012), ["hold"])
     ctl = sp.SeePick(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, duck.detect,
                      make_approach=None, now=lambda: duck.t, log=lambda s: None)
     ctl.try_n = 1
     ctl.obj = dict(x=0.119, y=0.012, size=0.013, t=0.0)
     ctl.enter("align")
-    for _ in range(3):
-        ctl.step()
-        duck.advance()
-    assert ctl.phase in ("pick", "verify", "hold", "done"), ctl.phase
-    assert not any(c.get("vx", 0) > 0 for _, c in duck.sent)
+    ctl.step()
+    assert ctl.phase == "burst" and not duck.picks, ctl.phase
+    assert not ctl.in_window(0.119, 0.012) and ctl.in_window(0.100, -0.015)
 
 
 def t2_at(duck):
@@ -384,7 +382,7 @@ def test_a_ball_knocked_away_by_the_bite_is_looked_for_not_bitten_blind():
     """Robot 2026-11-12 (seepick_1112a): try 1 had the ball in the beak and knocked it 5 cm aside; the camera saw it
     there during the pick, and try 2 still bit the old spot blind (Shawn: "第二次完全是瞎试 因为球完全不在范围内")."""
     duck = KnockDuck((0.5, 0.0), ["miss", "hold"])
-    ctl = run(duck)
+    ctl = run(duck, tries=5)
     whys = [r.get("why", "") for r in ctl.trace]
     assert not any("blind zone" in w for w in whys)
     # the look at the old spot finds nothing and bites nothing; the search finds the ball and the second bite holds

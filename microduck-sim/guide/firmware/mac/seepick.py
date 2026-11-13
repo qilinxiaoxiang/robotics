@@ -74,11 +74,18 @@ BLIND_R = 0.15         # m: nearer than this the object can be under the standin
 #                            Was 0.12: robot 2026-11-06 the duck turned 16 deg toward a ball at 0.12 m, lost it under
 #                            the picture, its estimate read 0.121 and the run gave up without a pick. A wrong blind
 #                            pick costs one empty bite; a search from there cannot see the ball either.
+PICK_FAR_X = 0.105         # m: the far edge of the pick window. Every robot hold sat at x 0.098-0.100 (10-30 03:22, 11-01 run 7);
+#                            the bites of 2026-11-12 at x 0.110, 0.110, 0.112 and 0.125 closed on nothing (jaw to -1.1 deg at
+#                            -18 mA; a held ball stops it at 10.1 deg, -117 mA), and the sim held 0 of 60 from dx +2 cm.
 PICK_SLACK = 0.01          # m: after MAX_ALIGN moves pick anyway inside PICK_WIN + this (4 cm, between the hit and the misses)
 TURN_RATE = ap.VTH_SPIN     # rad/s in place (0.3; 0.5 rolled the duck over on carpet, robot 2026-11-06)
 TURN_MIN = math.radians(8)  # a bearing under this is not worth a turn (the in-place turn coasts)
 TURN_MAX_S = 3.0
-LOOK_TURNS = (-1, -1, 1, 1, 1, 1)   # body turns between head scans when nothing is in view: 2 right, back and 2 left. The
+LOOK_TURNS = (-1, -1, -1, -1, -1, -1, -1)   # body turns between head scans when nothing is in view: always the same way,
+#                                     7 x about 50 deg = once round. Was (-1, -1, 1, 1, 1, 1): two right, then back through the
+#                                     two directions already scanned before two left, from the days of the charger lead; on
+#                                     the battery it only looked again where it had looked (Shawn 2026-11-12: "再转一次身就能
+#                                     看到了，结果又转回去了"). The
 LOOK_SETTLE_S = 0.7                 # head back at the default pose before the turn: run 8 fell in the one spin that began with the head ramping down from 1.33 rad
 LOOK_TURN_S = 3.5                   # scan covers +-60 deg; a 3.5 s spin keeps about 50 deg on the robot (2026-11-01)
 BURST_MAX_S = 1.5          # s: the creep toward a too-far object ends here at the latest (a standing-start walk61 moved
@@ -172,9 +179,13 @@ class SeePick:
         self.last_idx = idx
         sc = self.state_at(t_cap) or st
         h, w = frame.shape[:2]
-        det = self.detect(frame, ap.below_horizon(self.kin, sc, w, h))
+        # while the robot moves or bites, only a box from this very frame counts: a background box is about a second old
+        det = self.helper.detect_at(frame, sc, w, h, late_ok=self.phase == "aim")
         if det is None:
             return None
+        if det.get("ctx") is not None and det["ctx"] is not sc:
+            sc = det["ctx"]
+            t_cap = sc["t"]
         x0, y0, bw, bh = det["bbox"]
         a = self.kin.pixel_to_ground(x0, y0 + bh, sc["q"], sc["gb"], w, h, z=0.0)
         b = self.kin.pixel_to_ground(x0 + bw, y0 + bh, sc["q"], sc["gb"], w, h, z=0.0)
@@ -352,7 +363,7 @@ class SeePick:
         if self.t2:
             # nearer than the window but not "too close" still picks: a creep from there walks over the ball (run 12, x 0.086 to under the beak)
             return T2_WIN_X[0] - PICK_SLACK <= x <= T2_WIN_X[1] + s and T2_WIN_Y[0] - s <= y <= T2_WIN_Y[1] + s
-        return abs(x - SPOT[0]) <= PICK_WIN + s and abs(y - SPOT[1]) <= PICK_WIN + s
+        return SPOT[0] - PICK_WIN - s <= x <= PICK_FAR_X + s and abs(y - SPOT[1]) <= PICK_WIN + s
 
     def p_align(self, st, now):
         dx, dy = self.obj["x"] - SPOT[0], self.obj["y"] - SPOT[1]
@@ -385,12 +396,6 @@ class SeePick:
         if off_side and abs(bearing) >= TURN_MIN:
             self.turn = (1 if bearing > 0 else -1, abs(bearing), st["yaw"])
             self.enter("turning", f"bearing {math.degrees(bearing):+.0f} deg")
-        elif not self.t2 and self.obj["x"] <= BURST_STOP_X:
-            # robot 2026-11-12 (seepick_1112c): measured at x 0.119, at the bottom edge of the standing picture, it crept 0.9 s,
-            # coasted, and the ball ended between the feet (Shawn watched it); both picks then bit the stale 0.110 sighting.
-            # A creep from inside BURST_STOP_X always overshoots (first steps plus 4-5 cm coast): pick from here.
-            self.blind_pick = True
-            self.enter("align", f"x {self.obj['x']:.3f} inside the creep mark: pick from here, no creep")
         else:
             self.burst_m = self.obj   # the aim measurement: if it sat cut on the bottom edge, the creep's first step hides it
             if self.head is None:   # align entered without an aim (tests, a given estimate): look at the object
@@ -576,7 +581,9 @@ def main():
     detect = lambda f, accept=None: orange_target.detect(f, lo, hi, ap.MIN_AREA, accept=accept)  # noqa: E731
     if a.color == "orange" and not a.colour_only:   # the ball: the colour filter proposes, the learned detector decides
         import ball_detect
-        detect = ball_detect.BallDetect(lo, hi, ap.MIN_AREA)
+        import functools
+        detect = ball_detect.BallDetect(lo, hi, ap.MIN_AREA,
+                                        learned=functools.partial(ball_detect.learned_target.detect, threads=2))
         print(f"detector: colour filter confirmed by the learned detector ({ball_detect.learned_target.MODEL})")
     log_path = a.log or ap.find_log()
     if not log_path:

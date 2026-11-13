@@ -329,3 +329,37 @@ def test_an_overshooting_turn_in_place_does_not_ping_pong():
     assert faces <= 2, faces
     assert all(abs(c["vtheta"]) <= 0.3 + 1e-9 for c in spins), {c["vtheta"] for c in spins}
     assert ctl.result["ok"], ctl.result
+
+
+class SlowConfirm:
+    """A detector like ball_detect: the candidate is in the picture at once (pending), the confirmed box comes after
+    confirm_s of looking at it without a break."""
+    def __init__(self, duck, confirm_s):
+        self.duck, self.confirm_s, self.pending, self.since = duck, confirm_s, False, None
+
+    def __call__(self, frame, accept=None, ctx=None, late_ok=True):
+        det = self.duck.detect(frame, accept)
+        if det is None:
+            self.pending, self.since = False, None
+            return None
+        self.since = self.duck.t if self.since is None else self.since
+        self.pending = self.duck.t - self.since < self.confirm_s
+        return None if self.pending else dict(det, ctx=ctx)
+
+
+def scan_result(confirm_s):
+    duck = FakeDuck((0.3, -0.4))   # seen only with the head turned right
+    ctl = apc.Approach(KIN, lambda: duck.frame, duck.state, lambda t: duck.state(), duck.send, SlowConfirm(duck, confirm_s),
+                       now=lambda: duck.t, log=lambda s: None)
+    while ctl.phase in ("start", "search") and duck.t < 60.0:
+        duck.advance()
+        ctl.step()
+    return ctl
+
+
+def test_the_scan_waits_on_a_candidate_the_detector_has_not_confirmed_yet():
+    """Robot 2026-11-12 (seepick_1112m), Shawn: "球都出现在视野里面了，还是不看球": the scan left each head pose on its
+    timer although the ball was in the picture and the learned detector needs about a second per look."""
+    assert scan_result(0.0).phase == "ready"          # the ball is in view of one scan pose
+    ctl = scan_result(apc.SETTLE_S + apc.SCAN_DWELL_S + 1.5)
+    assert ctl.phase == "ready", ctl.result

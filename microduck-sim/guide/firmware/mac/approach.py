@@ -112,7 +112,14 @@ AIM_V = 0.55       # standing: aim the object at this fraction of the image heig
 SCAN = tuple({"head_pitch": p, "head_yaw": y} for p, y in ((0.5, 0.0), (0.9, 0.0), (0.7, -0.6), (0.7, 0.6))) + tuple(
     dict(NEAR_HEAD, head_yaw=y) for y in (0.0, -0.6, 0.6))   # then close in (an object moved beside the robot)
 SCAN_DWELL_S = 1.0
+SCAN_HOLD_S = 4.0    # s more on a scan pose while the detector has an unruled candidate in the picture
 LOST_S = 1.5         # no detection this long while walking: stop and look
+NEAR_BLIND_R = 0.30  # m: with the estimate this near, the walk stops after NEAR_BLIND_S without a real sighting, whatever
+NEAR_BLIND_S = 0.5   # the reason (blur, left the picture, a turn). Robot 2026-11-12 (seepick_1112i, recorded frames): the
+#                      ball was last in the picture at 0.5 m; the robot turned in place twice on its estimate, "ready"
+#                      stamped a sighting it did not have, and it walked 1.5 s at an estimate of 0.34 m with the camera
+#                      on the cabinets. It trod on the ball. A walk near the object needs the object in the picture.
+READY_SEE_S = 3.0    # s: standing before a walk, the head on the estimate: no real sighting in this time -> search
 JUMP_M = 0.25        # a detection this far from the estimate needs a second one agreeing within JUMP_AGREE_M
 JUMP_AGREE_M = 0.10
 TURN_CHECK_S = 3.0   # a turn held this long must show at least TURN_MIN_RATE in its direction (fitted slope)
@@ -194,6 +201,7 @@ class Approach:
         self.phase, self.result, self.t_phase = "start", None, now()
         self.est = None            # (x, y) of the object in the current foot frame
         self.est_t, self.est_yaw, self.seen_t = None, None, None
+        self.real_seen_t = None   # the last frame that showed the object (seen_t is also stamped by phase changes)
         self.seen_walked = 0.0     # self.walked at the last detection
         self.pending = None        # a far-off detection waiting for a second one
         self.last_idx, self.walk_t0, self.cmd, self.cmd_t = None, None, None, 0.0
@@ -328,6 +336,14 @@ class Approach:
         x, y = rotate(self.est[0], self.est[1], wrap(st["yaw"] - self.est_yaw))
         self.est, self.est_t, self.est_yaw = (x - step, y), st["t"], st["yaw"]
 
+    def detect_at(self, frame, sc, w, h, late_ok=True):
+        """Run the detector on a frame taken in state sc. A detector that works in the background (ball_detect) gets
+        the state with the frame and hands it back with a box it found later; a plain function gets the frame only."""
+        accept = below_horizon(self.kin, sc, w, h)
+        if hasattr(self.detect, "pending"):
+            return self.detect(frame, accept, ctx=sc, late_ok=late_ok)
+        return self.detect(frame, accept)
+
     def look(self, st):
         """New camera frame -> detection projected with the state at its capture time, folded into the estimate."""
         fr = self.latest_frame()
@@ -339,10 +355,11 @@ class Approach:
         self.last_idx = idx
         sc = self.state_at(t_cap) or st
         h, w = frame.shape[:2]
-        det = self.detect(frame, below_horizon(self.kin, sc, w, h))
+        det = self.detect_at(frame, sc, w, h, late_ok=self.walk_t0 is None)
         if det is None:
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, det=None))
             return None
+        sc = det.get("ctx") or sc   # a box the background detector found belongs to the state of its own frame
         p = self.project(det, sc, w, h)
         if p is None or p[0] < 0.03:  # the duck's own orange parts project under the body
             return None
@@ -355,6 +372,7 @@ class Approach:
             b = math.atan2(y, x)
             self.est, self.est_t, self.est_yaw = (r * math.cos(b), r * math.sin(b)), st["t"], st["yaw"]
             self.seen_t, self.seen_walked = self.now(), self.walked
+            self.real_seen_t = self.seen_t
             self.trace.append(dict(t=self.now(), phase=self.phase, frame=idx, cut=[x, y], est=list(self.est)))
             if self.walk_t0 is not None:
                 return None
@@ -380,6 +398,7 @@ class Approach:
             a = ALPHA_WALK if self.walk_t0 is not None else ALPHA_STAND
             self.est = (self.est[0] + a * (x - self.est[0]), self.est[1] + a * (y - self.est[1]))
         self.est_t, self.est_yaw, self.seen_t = st["t"], st["yaw"], self.now()
+        self.real_seen_t = self.seen_t
         self.seen_walked = self.walked
         self.last_box = tuple(det["bbox"]) + (w, h)   # where it was in the picture, for where it leaves it
         m = dict(x=x, y=y, cut=bool(p[2]), area=int(det["area"]), cx=det["cx"], cy=det["cy"], frame=idx,
@@ -495,19 +514,33 @@ class Approach:
         self.stand(dict(SCAN[self.scan_i]))
         if now - self.t_phase < SETTLE_S + SCAN_DWELL_S:
             return
+        # A candidate in the picture that the learned detector has not confirmed yet: stay on this pose until it has
+        # ruled on still frames. Robot 2026-11-12 (seepick_1112m, Shawn watching): "最后一次转头已经看到球了，结果还是
+        # 一样，完全不看": the scan left the pose on its timer while one learned pass takes a second.
+        if getattr(self.detect, "pending", False) and now - self.t_phase < SETTLE_S + SCAN_DWELL_S + SCAN_HOLD_S:
+            return
         self.scan_i += 1
         self.t_phase = now
         if self.scan_i >= len(SCAN):
             self.finish(False, NOT_IN_VIEW)
 
     def p_ready(self, st, now, m):
-        """Standing, head to the default pose (no head yaw when the walk starts)."""
-        self.stand(dict(DEFAULT_HEAD))
+        """Standing, the head on the estimate with no head yaw (a walk never starts with the head round); the walk
+        starts only once a frame shows the object there."""
+        head = dict(DEFAULT_HEAD)
+        if self.est is not None:
+            head["head_pitch"] = self.aim_head(st, self.est[0], self.est[1], walking=True)["head_pitch"]
+        self.stand(head)
         if now < self.rest_until:
             return
-        if self.head_arrived(st, DEFAULT_HEAD) or now - self.t_phase > 2.5:
+        if self.head_arrived(st, head) or now - self.t_phase > 2.5:
             if self.est is None:
                 self.enter("search", "lost while the head came back")
+                return
+            if now - (self.real_seen_t or 0) > NEAR_BLIND_S:
+                if now - self.t_phase > READY_SEE_S:
+                    self.est = None
+                    self.enter("search", "not seen before the walk: look for it")
                 return
             if self.walk_budget is None:
                 self.walk_budget = math.hypot(*self.est) + PATH_SLACK
@@ -580,6 +613,10 @@ class Approach:
                 self.finish(False, f"walked {self.walked:.2f} m, more than the {self.walk_budget:.2f} m budget",
                             x=round(x, 3), y=round(y, 3))
                 return
+        if r <= NEAR_BLIND_R and now - (self.real_seen_t or 0) > NEAR_BLIND_S:
+            self.enter("settle", f"not seen for {NEAR_BLIND_S} s at r {r:.2f}: no blind walk near the object")
+            self.stand(self.head)
+            return
         if r <= STOP_R:
             self.enter("settle", f"estimate x {x:.2f} y {y:.2f} (r {r:.2f}): stop")
             self.stand(self.head)
