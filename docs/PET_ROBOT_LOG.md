@@ -1191,3 +1191,18 @@ Right leg plugged back whole; `rescue_factory_servo.py --id 3` brought ID3 back 
 ## 2026-11-13 17:40 Red light again after the rescue: latched voltage alarm on ID3 and ID4, cleared by Reboot
 
 Shawn pressed stand; a red light came back. Registers: all 15 Shutdown 52, hw 1 (input voltage only), but ID3 and ID4 torque 0 while the other legs read 1. The factory Shutdown 53 had tripped on the 7.8 V pack at power-up, and that alarm stays latched after Shutdown is rewritten to 52; the brain's torque-off path does not reboot it because it masks the input-voltage bit. Reboot (0x08) to ID3 and ID4 cleared it (hw 0, torque 0). Sending it under a running brain broke every sync read (35 Hz, all IDs missed; cause not examined, likely the rebooted servos' RAM setup); a brain restart fixed it (49.7 Hz, misses 1). `rescue_factory_servo.py` now reboots the servo after writing its settings.
+
+### 2026-11-13 17:25 Flight pack: spk3 iteration 100 picks with the pack in the runtime sim (FP-R7)
+
+spk3 started 16:50 on an L4 (16 min queue), iteration 153 at 17:12, 0.46 USD. Training (matched jaw) at iteration
+~150: no-pack held 0.56, s_max 0.59 from 0.50, 5 floor blocks early. Runtime sim, exported iteration-100 ONNX
+(train/ckpt/spk3_100, fq2 stander, ball, 20 dev seeds; train/eval/pk_spk3_100_*_ball.json), held at hand-back
+(still held 3 s later) / pinched / falls:
+none 19 (13) / 20 / 1; 25 % 20 (16) / 20 / 0; 50 % 17 (15) / 18 / 0; 75 % 14 (14) / 14 / 3 (right);
+batteries out 7 (7) / 8 / 12 (right); full 5 (3) / 5 / 16 (15 right).
+Reference: start policy seepick61 without pack 15 (12), 1 fall; spk2 best 0-3 held at every load.
+- The matched jaw was the cause of the lost pinch: one change, pinched 1-3 of 20 -> 14-20 of 20 up to 75 %.
+- No pack, 25 % and 50 % now meet or beat the original pick policy's no-pack count.
+- Batteries out (12 falls) and full (16 falls) still fail on balance, falling right. s_max is only 0.59 at this
+  checkpoint, so full is beyond what this checkpoint trained on; batteries out is the uncovered mass distribution.
+Run continues to its cap (1300 iterations / 3.5 h / 4 USD); next runtime test at the iteration-400 checkpoint.
