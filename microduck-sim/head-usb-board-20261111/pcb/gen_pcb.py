@@ -219,10 +219,17 @@ def place():
 # The autorouter knows nothing about pairs (2026-11-12: it left 12.8 mm between the two uplink lines). Each pair is
 # drawn here instead: a short stub on the front from the hub pin to one via, then side by side on B.Cu over the
 # inner plane straight into the through-hole pins of its PicoBlade header. Width and gap are for 90 ohm on JLCPCB's
-# JLC04161H-3313 stack (0.0994 mm prepreg, Dk 4.1) by the IPC-2141 microstrip formula: 0.14 / 0.13 mm gives 89 ohm.
+# default JLC04161H-7628 stack (0.2104 mm prepreg), the only one Economic assembly accepts: JLCPCB's impedance
+# calculator gives 8.61 mil (0.219 mm) width at 5.1 mil (0.13 mm) spacing for a 90 ohm pair on an outer layer
+# (read 2026-11-12). On the JLC04161H-3313 stack the same pair was 0.14 / 0.13 mm.
 # The hub's D+ and D- leave each side in the opposite order to the header pins, so the two vias are staggered and one
 # line passes under the other's front stub. usb_pairs.py measures the result.
-PAIR_W, PAIR_P = 0.14, 0.27          # track width, centre pitch
+# The board is tight and the autorouter's result changes with these three numbers (2026-11-12: 0.22/0.22/0.35
+# left 1 connection open, 0.14/0.22/0.35 left 3, 0.14/0.21/0.34 left 6); this set routes completely with DRC clean.
+# 0.21 against the calculator's 0.219 is a few ohm above 90, inside the usual 10 % band. After any change here,
+# check_drc.py and usb_pairs.py must both pass on a run that really reached the Mac mini.
+STUB_W = 0.22
+PAIR_W, PAIR_P = 0.21, 0.34        # track width, centre pitch
 _P = PAIR_P
 USB_PAIRS = {
     # net: (front stub from the hub pad to the via, back path from the via to the header pin)
@@ -263,9 +270,11 @@ def usb_pairs(board):
             for a, b in zip(path, path[1:]):
                 t = pcbnew.PCB_TRACK(board)
                 t.SetStart(pcbnew.VECTOR2I(MM(a[0]), MM(a[1]))); t.SetEnd(pcbnew.VECTOR2I(MM(b[0]), MM(b[1])))
-                t.SetWidth(MM(PAIR_W)); t.SetLayer(layer); t.SetNet(net); t.SetLocked(True)
+                # the front stub is about 1 mm from the hub pin to its via: it stays at the pad-escape width
+                w = STUB_W if layer == pcbnew.F_Cu else PAIR_W
+                t.SetWidth(MM(w)); t.SetLayer(layer); t.SetNet(net); t.SetLocked(True)
                 board.Add(t)
-                segs.append((a, b, PAIR_W, name, layer == pcbnew.F_Cu))
+                segs.append((a, b, w, name, layer == pcbnew.F_Cu))
         x, y = front[-1]
         v = pcbnew.PCB_VIA(board)
         v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
