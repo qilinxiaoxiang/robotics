@@ -120,13 +120,37 @@ def version(slicer: str) -> str:
     return info['CFBundleShortVersionString']
 
 
-def profile_root(slicer: str) -> Path:
-    return SLICERS[slicer]['app'] / 'Contents/Resources/profiles'
+def profile_root(slicer: str, vendor: str | None = None) -> Path:
+    root = SLICERS[slicer]['app'] / 'Contents/Resources/profiles'
+    if slicer == 'orca' and any(root.glob('*.opc')):
+        return orca_source_profiles(version('orca'), vendor)
+    return root
+
+
+ORCA_CACHE = Path.home() / 'Library/Caches/print-kit'
+
+
+def orca_source_profiles(ver: str, vendor: str | None) -> Path:
+    """OrcaSlicer 2.5 ships its system presets as packed .opc files. The JSON they are built from is in the source
+    repository at the same release tag; fetch only the needed vendor folders (sparse, blobless clone) and cache them."""
+    repo = ORCA_CACHE / f'OrcaSlicer-v{ver}'
+    want = ['resources/profiles/OrcaFilamentLibrary', 'resources/profiles/OrcaFilamentLibrary.json']
+    if vendor:
+        want += [f'resources/profiles/{vendor}', f'resources/profiles/{vendor}.json']
+    if not (repo / '.git').is_dir():
+        ORCA_CACHE.mkdir(parents=True, exist_ok=True)
+        subprocess.run(['git', 'clone', '--quiet', '--depth', '1', '--filter=blob:none', '--sparse', '--branch', f'v{ver}',
+                        'https://github.com/OrcaSlicer/OrcaSlicer.git', str(repo)], check=True)
+        subprocess.run(['git', '-C', str(repo), 'sparse-checkout', 'set', '--no-cone', *want], check=True)
+    elif any(not (repo / w).exists() for w in want):
+        have = subprocess.run(['git', '-C', str(repo), 'sparse-checkout', 'list'], capture_output=True, text=True).stdout.split()
+        subprocess.run(['git', '-C', str(repo), 'sparse-checkout', 'set', '--no-cone', *sorted(set(have + want))], check=True)
+    return repo / 'resources/profiles'
 
 
 # ---------------------------------------------------------------- system presets
 def _find(slicer: str, vendor: str, domain: str, name: str) -> Path:
-    root = profile_root(slicer)
+    root = profile_root(slicer, vendor)
     for folder in (root / vendor / domain, root / 'OrcaFilamentLibrary' / domain):
         hits = sorted(folder.rglob(f'{name}.json')) if folder.is_dir() else []
         if hits:
