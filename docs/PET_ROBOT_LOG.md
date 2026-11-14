@@ -1263,3 +1263,18 @@ Scripts: `train/spk3diag_runtime.sh`, `spk3diag_table.py`, `spk3diag_clamps.py`,
 `spk3diag_robot_ages.py`, `spk3diag_modal_batches.sh`, `flight_eval.py` (SPK3DIAG_JOINT_RANGE); worktree
 `cmu/grasp/spk3diag_modal.py`, `spk3diag_cfgdump.py`, `spk2diag_probe.py` (`--joint-obs-delay`, fall direction).
 Modal: 10 calls, wall-time ledger 0.706 USD (`cmu/grasp/.spk3diag_spend.json`, queue time included; bill lower).
+
+### 2026-11-13 19:45 Flight pack: original pick policy under the shorter loop delay; decision for spk4 (FP-R7)
+
+Checked the 19:37 entry's runtime numbers from the `pkd3_*.json` files (they match). Added the original pick policy
+(`train/ckpt/bend4`) under `--sensor-delay 0` (about 24 ms sample to applied goal): no pack 6 held (6 at end), 0 falls,
+against 15 (12) at the default 44 ms; full pack 0 held, 20 falls (`eval/pkd3_bend4_{none,load100}_sd0_ball.json`).
+So the original policy's pinch is better at the longer delay and spk3's balance is better at the shorter one: neither
+delay setting is shown to be the robot's. The robot logs give 16 ms joint age at the brain tick; the time from goal
+write to servo motion is not in them.
+Decision: the shared runtime gate stays as it is (44 ms). FP-R7 is judged at both delays, and the next run (spk4)
+changes one thing: the joint position and velocity inputs get a random extra lag of 0 to 1 policy step, so the loaded
+bend has to hold from about 15 to 50 ms. Start: spk3 `model_600.pt` (s_max already 1.0; under the extra 20 ms it scores
+152 / 256 at full load in training, above the floor).
+spk3 it 600 at the short delay, held (at end) / falls: none 20 (19) / 0; 50 % 20 (20) / 0; 75 % 20 (20) / 0;
+batteries out 19 (18) / 1; full 19 (18) / 0.
