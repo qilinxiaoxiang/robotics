@@ -21,11 +21,11 @@ Read every hole axis in the print pose, never in the assembly frame. `print_fit.
 
 Shawn's rule: "screw kind is never prescribed: pilots take machine or thread-forming screws of that size, pilots through or deep enough for common lengths, seats for pan and button heads". A pilot is sized so a machine screw (ISO 7380, DIN 912, ISO 7045) forms its thread without a drill and a thread-forming screw (TAP, PT, ROBOTIS PTS) still bites. The guide gives the size and length ("M2 x 6"), never a kind.
 
-- **Vertical:** M2 1.85, M2.5 2.30, M2.6 2.35, M3 2.80.
-- **Horizontal (teardrop):** M2 2.05, M2.5 2.50, M2.6 2.55, M3 3.00.
+- **Vertical:** M2 1.85, M2.5 2.30, M2.6 2.35, M3 2.80, M5 4.60 (M5 has no bench result yet: Rigid Prints OD - 0.4, first used on the Scout Mini PETG rail blocks 2026-11-13; write the bench result here when they are fitted).
+- **Horizontal (teardrop):** M2 2.05, M2.5 2.50, M2.6 2.55, M3 3.00, M5 4.80.
 - **Printer offset:** add `PRINTER_OFFSET[printer]` (H2S +0.10, provisional; see Per-printer offsets). `pilot(screw, orientation, printer=...)` does it.
 - **Accepted band:** 0.10 under to 0.15 over the table value. Under binds a machine screw; over strips a thread-forming one.
-- **Depth.** A blind pilot reaches the longest common length of its size plus 1 mm below the clamped stack: `pilot_depth(screw, clamped)`, with common lengths M2 4 to 10, M2.5 and M2.6 6 to 8, M3 6 to 16. Where the part is thinner than that, the pilot runs through. `fit_check.py` fails a declared `depth` shorter than that.
+- **Depth.** A blind pilot reaches the longest common length of its size plus 1 mm below the clamped stack: `pilot_depth(screw, clamped)`, with common lengths M2 4 to 10, M2.5 and M2.6 6 to 8, M3 6 to 16, M5 10 to 20. Where the part is thinner than that, the pilot runs through. `fit_check.py` fails a declared `depth` shorter than that.
 - **Engagement:** 2.5 d or less over the length that threads; a longer bite in PLA needs more torque than a 2 mm hex or PH0 driver transmits.
 - **Head seats:** a counterbore or flat that takes both a pan head (ISO 7045, ISO 14583) and a button head (ISO 7380): M2 4.6 x 1.7, M2.5 and M2.6 5.6 x 1.9, M3 6.3 x 2.1 (`HEAD_SEAT`). The head clearance rule in Access still applies. Where a head bears on a thin or highly loaded printed face, put an ISO 7089 washer under it and seat it at washer OD + 0.4 (M2: washer 5.0 x 0.3, seat 5.4; `WASHER_SEAT`); count the washer in the clamped stack.
 - **Pilot mouth on the first layer:** add 0.1 to the diameter or cut a 0.4 x 45 deg mouth chamfer; the first layer flares into the hole even with compensation on.

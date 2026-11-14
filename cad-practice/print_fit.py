@@ -22,6 +22,9 @@ PILOT = {
         "M2.5": {"vertical": 2.30, "horizontal": 2.50},
         "M2.6": {"vertical": 2.35, "horizontal": 2.55},
         "M3":   {"vertical": 2.80, "horizontal": 3.00},
+        # M5 (2026-11-13, Scout Mini PETG rail blocks): no bench evidence yet. Rigid Prints self-tapping rule
+        # (screw OD - 0.4), the same 0.93 x OD ratio as the M3 row. Replace with the first bench result.
+        "M5":   {"vertical": 4.60, "horizontal": 4.80},
     },
     "tap": {
         "M2":   {"vertical": 1.70, "horizontal": 1.90},
@@ -44,7 +47,7 @@ PRINTER_OFFSET_STATUS = {"X1C": "as-built", "Elegoo-CC": "as-built", "H2S": "pro
 
 # Screw stock and seats the pilots must accept (Shawn's rule: pilots through or deep enough for common lengths, seats for
 # pan and button heads).
-COMMON_LENGTHS = {"M2": (4, 6, 8, 10), "M2.5": (6, 8), "M2.6": (6, 8), "M3": (6, 8, 10, 12, 16)}
+COMMON_LENGTHS = {"M2": (4, 6, 8, 10), "M2.5": (6, 8), "M2.6": (6, 8), "M3": (6, 8, 10, 12, 16), "M5": (10, 12, 16, 20)}
 HEAD_SEAT = {             # (seat diameter, seat depth) that takes a pan head (ISO 7045 / ISO 14583) or a button head (ISO 7380)
     "M2": (4.6, 1.7), "M2.5": (5.6, 1.9), "M2.6": (5.6, 1.9), "M3": (6.3, 2.1)}
 WASHER = {"M2": dict(od=5.0, t=0.3)}      # ISO 7089 plain washer (M2 washers come with the Zuorery M2 kit on the bench)
