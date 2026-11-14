@@ -1300,3 +1300,34 @@ Launch 20:23: app ap-3Vsc82biLU44TdTTkkcIpl, call fc-01M7BTDV6THGGBH3MJNR8S7KXC,
 retries 2. L4 from 20:26, 8.9 s per iteration (about 2.0 h for 800). The first launch at 20:16 failed in its image
 build (stopped together with the smoke's status call), relaunched once. Modal bill so far: check 0.046, smoke 0.193
 (incl. the stopped status rebuild), spk4 0.12 USD at iteration 6.
+
+### 2026-11-13 22:50 Flight pack: spk4 finished; iteration 300 picks at every load at both loop delays (FP-R7)
+
+spk4 (spk3 + joint position and velocity inputs 0 or 1 policy step older, one draw per env per episode; start spk3
+`model_600.pt`, s_max 1.0 throughout) ran all 800 iterations on a Modal L4, 20:26 to 22:29, 2.28 USD; app
+ap-3Vsc82biLU44TdTTkkcIpl ended by itself, watch clean, 0 live apps. Checkpoints every 100 on Volume
+`microduck-seepick-spk4` `runs/spk4/`.
+Runtime pickup test (fq2 stander, 12 mm ball, 20 seeds), held (still held 3 s later) / falls. "44 ms" is the runtime
+default, "24 ms" is `--sensor-delay 0`; "new seeds" are seeds 100-119, never used before.
+- it 300 (ONNX md5 de6579e9), 44 ms: none 18 (12) / 0; 25 % 20 (17) / 0; 50 % 20 (19) / 0; 75 % 19 (19) / 1;
+  batteries out 19 (17) / 0; full 13 (12) / 5. New seeds: 16 (9) / 0; 19 (15) / 0; 19 (18) / 0; 18 (17) / 0;
+  18 (18) / 2; 18 (15) / 0.
+  24 ms: none 19 (18) / 0; 25 % 18 (16) / 0; 50 % 18 (17) / 0; 75 % 19 (19) / 0; batteries out 18 (18) / 2;
+  full 16 (16) / 2. New seeds: none 20 (19) / 0; 50 % 20 (20) / 0; batteries out 18 (18) / 1; full 16 (16) / 1.
+- it 400, 44 ms: none 17 (13) / 0; 25 % 18 (14) / 0; 50 % 19 (16) / 1; 75 % 15 (15) / 3; batteries out 19 (19) / 0;
+  full 15 (15) / 3. New seeds: 18 (16) / 0; 15 (14) / 1; 15 (15) / 0; 14 (14) / 3; 20 (20) / 0; 16 (14) / 2.
+  24 ms: 19 (18) / 0; 20 (19) / 0; 20 (20) / 0; 19 (19) / 0; 16 (16) / 0; 18 (18) / 0. New seeds: none 20 (20) / 0;
+  50 % 20 (20) / 0; batteries out 19 (19) / 0; full 18 (18) / 0.
+- Original pick policy (bend4), 44 ms: none 15 (12) / 0, new seeds 14 (12) / 0; every pack load 0 or 1 held,
+  18 to 20 falls, on both seed sets.
+- Other checkpoints, 44 ms, 75 % / batteries out / full: it 100 16 / 4, 6 / 13, 1 / 19; it 200 16 / 4, 5 / 13,
+  3 / 15; it 500 18 / 1, 16 / 2, 8 / 9; it 600 12 / 6, 6 / 11, 2 / 18 (24 ms full 12 / 8); it 700 9 / 9, 4 / 15,
+  1 / 19.
+Reading: iterations 300 and 400 hold at every load at both delays and at least match the original policy's no-pack
+count; the checkpoints before and after do not, so the policy drifts during training and the checkpoint is chosen
+by the runtime test only (training's own numbers and model_best do not show it). Weakest cells of it 300: full pack at
+44 ms (13 and 18 of 20, 5 falls in 40) and "still held 3 s later" with no pack at 44 ms (12 and 9, original 12 and 12).
+Candidate: it 300. Simulation only: nothing is on the robot.
+Tests now run detached on the Mac mini (`train/pickup_batch.sh`, `mini_pickup_batch.sh`, `pickup_table.py`) because
+the MacBook slept with its lid closed and stalled an ssh-driven test for an hour.
+Modal for this task so far: spk1 1.02, spk2 3.81, spk3 1.96, spk4 2.28, checks and diagnosis about 1.75 USD.
