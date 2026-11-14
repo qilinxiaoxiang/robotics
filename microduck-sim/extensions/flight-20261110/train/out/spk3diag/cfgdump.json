@@ -1,0 +1,191 @@
+[mdp] Patches 1-2 active: NaN-safe reward/advantage
+[mdp] Patch 4 active: ONNX export filters passive_* joints
+[mdp] Patch 5 active: MICRODUCK_WARM_START=1 restarts curricula after checkpoint load
+{
+ "timestep": 0.005,
+ "decimation": 4,
+ "obs": {
+  "base_ang_vel": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 3,
+   "delay_update_period": 64,
+   "func": "base_ang_vel_imu_misaligned"
+  },
+  "projected_gravity": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 3,
+   "delay_update_period": 64,
+   "func": "projected_gravity_imu_misaligned"
+  },
+  "joint_pos": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "delay_update_period": 0,
+   "func": "joint_pos_rel"
+  },
+  "joint_vel": {
+   "delay_min_lag": 1,
+   "delay_max_lag": 1,
+   "delay_update_period": 0,
+   "func": "joint_vel_rel"
+  },
+  "actions": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "delay_update_period": 0,
+   "func": "last_action"
+  },
+  "command": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "delay_update_period": 0,
+   "func": "generated_commands"
+  },
+  "head_command": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "delay_update_period": 0,
+   "func": "zero_command_padding"
+  },
+  "body_command": {
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "delay_update_period": 0,
+   "func": "seeing_object_command"
+  }
+ },
+ "actuators": [
+  {
+   "target_names_expr": [
+    "^(?!passive_).*"
+   ],
+   "delay_min_lag": 3,
+   "delay_max_lag": 6,
+   "kp_fw": 200.0,
+   "vin_range": [
+    7.2,
+    8.2
+   ],
+   "vin_drop_gain_range": [
+    0.0,
+    0.2
+   ],
+   "vin_min": 6.0,
+   "max_current": 1.47,
+   "cls": "CurrentLimitedBamActuatorCfg"
+  },
+  {
+   "target_names_expr": [
+    "passive_mouth"
+   ],
+   "delay_min_lag": 0,
+   "delay_max_lag": 0,
+   "stiffness": 0.55,
+   "damping": 0.1,
+   "effort_limit": 0.0549,
+   "cls": "BuiltinPositionActuatorCfg"
+  }
+ ],
+ "actions": {
+  "joint_pos": {
+   "scale": 1.0,
+   "use_default_offset": true,
+   "clip": {
+    "left_hip_yaw": [
+     -0.5363323129985824,
+     0.6235987755982988
+    ],
+    "left_hip_roll": [
+     -0.62,
+     0.62
+    ],
+    "left_hip_pitch": [
+     -1.670796326794949,
+     1.6707963267948442
+    ],
+    "left_knee": [
+     -1.6707963267948984,
+     1.6707963267948949
+    ],
+    "left_ankle": [
+     -1.6707963267949064,
+     1.6707963267948869
+    ],
+    "neck_pitch": [
+     -1.6707963267948975,
+     1.1471975511965968
+    ],
+    "head_pitch": [
+     -1.6707963267948966,
+     1.6707963267948966
+    ],
+    "head_yaw": [
+     -3.0670597283903613,
+     3.0670597283903596
+    ],
+    "head_roll": [
+     -0.5363323129985833,
+     0.5363323129985815
+    ],
+    "right_hip_yaw": [
+     -0.623598775598297,
+     0.5363323129985842
+    ],
+    "right_hip_roll": [
+     -0.62,
+     0.62
+    ],
+    "right_hip_pitch": [
+     -1.6707963267949402,
+     1.6707963267948531
+    ],
+    "right_knee": [
+     -1.670796326794934,
+     1.6707963267948593
+    ],
+    "right_ankle": [
+     -1.6707963267949029,
+     1.6707963267948904
+    ]
+   },
+   "actuator_names": [
+    "^(?!passive_).*"
+   ]
+  },
+  "mouth": {
+   "scale": null,
+   "use_default_offset": null,
+   "clip": null,
+   "actuator_names": null
+  }
+ },
+ "terminations": {
+  "time_out": {
+   "func": "time_out",
+   "params": {}
+  },
+  "fell_over": {
+   "func": "bad_orientation",
+   "params": {
+    "limit_angle": "1.3962634015954636"
+   }
+  },
+  "out_of_terrain_bounds": {
+   "func": "out_of_terrain_bounds",
+   "params": {}
+  },
+  "nan_state": {
+   "func": "robot_state_is_nan",
+   "params": {}
+  },
+  "beak_on_floor": {
+   "func": "beak_floor_contact_in_window",
+   "params": {
+    "command_name": "twist",
+    "phase_start": "0.22",
+    "phase_end": "0.34",
+    "threshold": "0.5"
+   }
+  }
+ }
+}

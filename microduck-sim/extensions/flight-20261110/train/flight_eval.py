@@ -101,6 +101,10 @@ def episode(job):
     import mujoco
     import brain_sim_check as b
     install_stateful_policies(b)
+    # diagnostics only (spk3diag, PET_ROBOT_LOG 2026-11-13): JSON {joint: [lo, hi]} replaces walk_brain.JOINT_RANGE
+    # entries in this sim process, i.e. the range the runtime Brain clamps policy goals to (unset: unchanged)
+    if os.environ.get("SPK3DIAG_JOINT_RANGE"):
+        b.walk_brain.JOINT_RANGE.update({k: tuple(v) for k, v in json.loads(os.environ["SPK3DIAG_JOINT_RANGE"]).items()})
 
     # the seeing pick (--sp-at) wraps visual.apply_visual_to_spec on every run; worker processes are reused, so a
     # second episode would wrap the wrapper and add the jaw body twice ("repeated name 'jaw' in body", 2026-11-11):

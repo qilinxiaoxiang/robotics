@@ -1227,3 +1227,39 @@ falls 16-19 of 20, and once s_max passed about 0.8 the policy moved to a bend th
 which training-vs-runtime difference lets the loaded bend balance in training. Next: diagnose that difference
 before any further run. Best policy so far: train/ckpt/spk3_300.
 Modal spend on this task: spk1 1.02, spk2 3.81, spk3 1.96, checks about 0.80 USD.
+
+### 2026-11-13 19:37 Flight pack: the runtime sim's heavy-load falls come from 20 ms of extra loop delay (FP-R7, spk3diag)
+
+Cause: the runtime sim (brain_sim_check defaults `--sensor-delay 1 --action-delay 1`) runs about 40 ms from sample
+to applied goal; training runs 15-30 ms on the joints (BAM `delay_min_lag 3`, `delay_max_lag 6` physics steps,
+joint_pos lag 0, joint_vel lag 1) and 0-60 ms on the IMU terms (lag 0-3 policy steps); the robot measures 16 ms
+joint sample to goal write (median, p10-p90 15.2-17.4) and 21 ms IMU age (15.7-27.2), pooled over 27 866 policy
+ticks of 23 wired logs (robot-runs-20261030-t1, -20261106-seepick, -20261111-seepick; `train/out/spk3diag/robot_ages.txt`).
+So the runtime sim adds about one tick (20 ms) that neither training nor the robot has.
+
+Runtime sim, one setting changed, fq2 stander, 12 mm ball, 20 dev seeds, held / falls (`train/eval/pkd3_*.json`):
+- it 600, 50 %: base 6 / 12; sd0 20 / 0; ad0 20 / 0. 75 %: base 5 / 9; sd0 20 / 0; ad0 20 / 0.
+  full: base 3 / 16; sd0 19 / 0; ad0 19 / 1. nobatt: base 12 / 8; sd0 19 / 1; ad0 20 / 0. none: 20 / 0 either way.
+- it 300, full: base 5 / 19; sd0 14 / 5; ad0 11 / 2. nobatt: 3 / 13; 18 / 1; 18 / 1. 75 %: 14 / 3; 18 / 0; 20 / 0.
+- Refuted at it 600, 50 %: hip-roll goal clamp widened to the training action clip (hrwide) 7 / 11; servo read drop 0
+  (drop0) 7 / 11; wired guards off 6 / 12 (so the termination and guard definition do not cause it).
+- sd2 (60 ms) makes the stander itself fall 20 / 20 with no pack, so it says nothing about pick margin.
+Training env (spk2diag_probe.py, 256 envs, seed 1, matched jaw; `train/out/spk3diag/*.json`), success / falls of 256,
+plain vs od1 (the runtime's extra 20 ms on the 34 proprioceptive inputs):
+- it 600: s 0.50 232 / 0 vs 197 / 25 (joints only, jd1: 221 / 6); s 0.75 231 / 1 vs 192 / 27; s 1.00 218 / 10 vs
+  152 / 45; s 0.00 od1 224 / 7. Runtime goal clamp at s 0.75: 232 / 3 (refuted).
+- it 300: s 0.50 232 / 1 vs 193 / 29.
+Training-side falls point forward/backward, runtime-side falls right; the two scripts' direction labels were not
+reconciled. Not checked: payload COM/inertia, floor friction and the stander-to-pick hand-over in the loaded cases
+(the latency change alone restores the runtime results); the training probes at nobatt (budget stop); the real robot.
+
+Proposal (not run): (1) the acceptance runtime sim should use the robot's measured one-tick loop, `--sensor-delay 0
+--action-delay 1`, for every policy; that side disagrees with the robot logs. (2) Next training run, single change:
+randomize an extra 0-1 policy-step lag (0-20 ms) on joint_pos and joint_vel obs, so the bend keeps a margin up to
+the old runtime latency. (3) The rise test needs a robustness signal: the top slice's fall rate under that lag, since
+training at s 0.50 reads 0 falls while +20 ms gives 25 of 256.
+
+Scripts: `train/spk3diag_runtime.sh`, `spk3diag_table.py`, `spk3diag_clamps.py`, `spk3diag_train_table.py`,
+`spk3diag_robot_ages.py`, `spk3diag_modal_batches.sh`, `flight_eval.py` (SPK3DIAG_JOINT_RANGE); worktree
+`cmu/grasp/spk3diag_modal.py`, `spk3diag_cfgdump.py`, `spk2diag_probe.py` (`--joint-obs-delay`, fall direction).
+Modal: 10 calls, wall-time ledger 0.706 USD (`cmu/grasp/.spk3diag_spend.json`, queue time included; bill lower).
