@@ -103,21 +103,10 @@ def update(check_only=False):
     return f'OrcaSlicer updated {have} -> {now}'
 
 
-def notify(text):
-    subprocess.run(['osascript', '-e', f'display notification {json.dumps(text)} with title "OrcaSlicer update"'],
-                   capture_output=True)
-
-
 if __name__ == '__main__':
-    # --notify: the launchd job (com.xiangzheng.update-orca, every 6 h and at login) shows the result as a macOS
-    # notification when something changed or failed; a quiet "current" check shows nothing.
     try:
         msg = update('--check' in sys.argv)
     except Exception as e:
         log(result='error', error=f'{type(e).__name__}: {e}')
-        if '--notify' in sys.argv:
-            notify(f'Update failed: {e}')
         raise
-    if '--notify' in sys.argv and 'updated' in msg:
-        notify(msg)
     print(msg)
