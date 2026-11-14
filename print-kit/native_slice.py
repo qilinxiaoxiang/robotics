@@ -85,7 +85,30 @@ def sha(path) -> str:
     return h.hexdigest()
 
 
+_ORCA_CHECKED = False
+
+
+def ensure_latest_orca():
+    """Shawn 2026-11-14: keep OrcaSlicer on the newest stable release; checked once per run before slicing.
+    A network failure is printed and slicing continues on the installed version; a failed install stops the run."""
+    global _ORCA_CHECKED
+    if _ORCA_CHECKED:
+        return
+    _ORCA_CHECKED = True
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import update_orca
+    try:
+        update_orca.latest()
+    except OSError as e:
+        print(f'OrcaSlicer update check skipped, no network: {e}')
+        return
+    print(update_orca.update())
+
+
 def exe(slicer: str) -> Path:
+    if slicer == 'orca':
+        ensure_latest_orca()
     s = SLICERS[slicer]
     p = s['app'] / 'Contents/MacOS' / s['name']
     assert p.is_file(), f'{s["name"]} is not installed at {s["app"]}'
