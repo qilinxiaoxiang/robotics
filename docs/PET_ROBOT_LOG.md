@@ -1278,3 +1278,25 @@ bend has to hold from about 15 to 50 ms. Start: spk3 `model_600.pt` (s_max alrea
 152 / 256 at full load in training, above the floor).
 spk3 it 600 at the short delay, held (at end) / falls: none 20 (19) / 0; 50 % 20 (20) / 0; 75 % 20 (20) / 0;
 batteries out 19 (18) / 1; full 19 (18) / 0.
+
+### 2026-11-13 20:30 Flight pack: spk4 launched, spk3 plus a 0-1 step extra joint lag (FP-R7)
+
+Task `Mjlab-SeeingPick-PackSpk4-FromPick-MicroDuck-CMU-Current` (worktree cmu/grasp, commit 0450e680): spk3's env, jaw,
+floor, stops and model_best rule, one change: the actor's joint_pos and joint_vel inputs are 0 or 1 extra policy step
+(20 ms) old (`extra_lag_obs` in `cmu_seeing_pick_pack_env_cfg.py`). Sampling: one draw per env per episode at reset,
+uniform over {0, 1}, the same lag for both inputs, on top of spk3's (joint_pos 0, joint_vel 1 step). IMU lags, critic
+and rewards unchanged. Curriculum s_start 1.00 (cap), so s_max stays at 1.0 and model_best is the first iteration the
+floor holds; the numbered checkpoints are the ones to test.
+Start check, spk3 `model_600.pt` in the spk4 env (256 envs, seed 1, matched jaw, deterministic, check placement),
+success / falls (split lag 0 | lag 1): s 0: 236 / 1 (121 / 1 | 115 / 0); 0.25: 239 / 2 (123 / 0 | 116 / 2); 0.50:
+232 / 6 (121 / 0 | 111 / 6); 0.75: 227 / 5 (116 / 1 | 111 / 4); 1.00: 213 / 10 (109 / 5 | 104 / 5); batteries out
+222 / 3. Without the lag at 1.00: 216 / 8 (spk3diag 218 / 10 with the ONNX). Floor measure (s 0, noise, training
+placement): held at end 138 / 256 = 0.54 with the lag, 144 without; floor 0.21 in these units, so s_start stays 1.00.
+Joints-only lag costs much less than the 19:37 od1 (IMU plus joints: 152 / 45 at 1.00).
+Smoke on Modal (64 envs, 5 iterations): init from model_600 (md5 b7a00091..., critic 97 as saved), s_max 1.000,
+ONNX 0 / 2 / 4 exported live, exit 0. Tests: spk2 curriculum, spk3, spk4 files 30 passed (Mac mini CPU).
+Launch 20:23: app ap-3Vsc82biLU44TdTTkkcIpl, call fc-01M7BTDV6THGGBH3MJNR8S7KXC, Volume microduck-seepick-spk4,
+`--run-name spk4 --num-envs 4096 --max-iters 800 --save-interval 100 --max-hours 2.5 --max-dollars 3.0 --seed 1`,
+retries 2. L4 from 20:26, 8.9 s per iteration (about 2.0 h for 800). The first launch at 20:16 failed in its image
+build (stopped together with the smoke's status call), relaunched once. Modal bill so far: check 0.046, smoke 0.193
+(incl. the stopped status rebuild), spk4 0.12 USD at iteration 6.
