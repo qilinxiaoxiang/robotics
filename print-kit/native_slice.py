@@ -254,7 +254,16 @@ def pack(parts: list[Part], bed_xy, margin=15.0, gap=10.0) -> list[list[dict]]:
                   all(x + w + gap <= c[0] + 1e-9 or c[2] + gap <= x + 1e-9 or y + h + gap <= c[1] + 1e-9 or
                       c[3] + gap <= y + 1e-9 for c in rects)]
             if ok:
-                y, x = min(ok)
+                # Keep the plate's group compact: take the spot that keeps the group's footprint smallest (larger side
+                # first, then area), so small parts gather round the big one instead of strung along an edge; the
+                # group is centred on the bed below. (2026-11-14: bottom-left-first left a row of standoffs 16 mm
+                # from the Kobra bed edge; Shawn: prints go as near the middle as possible.)
+                def grown(y, x):
+                    lo = np.min([[x, y]] + [r[:2] for r in rects], axis=0)
+                    hi = np.max([[x + w, y + h]] + [r[2:] for r in rects], axis=0)
+                    e = hi - lo
+                    return (round(max(e), 3), round(e[0] * e[1], 1), y, x)
+                y, x = min(ok, key=lambda c: grown(*c))
                 if not plate:
                     plates.append(plate)
                 plate.append(dict(part=p, copy=copy, rect=(x, y, x + w, y + h),
