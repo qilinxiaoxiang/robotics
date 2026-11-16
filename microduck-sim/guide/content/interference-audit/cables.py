@@ -3,12 +3,17 @@
 
 The viewer draws each cable as a THREE.TubeGeometry of radius r (default 0.9 mm) around a centripetal
 Catmull-Rom curve through the route points (viewer/app.js). Both that drawn curve and the raw polyline are
-sampled at <= 0.25 mm spacing. At each sample the signed distance to every nearby audit solid is computed
-(exact closest point on the closed mesh; inside/outside by ray parity), giving tube penetration
-depth = r + (distance inside, negative outside). A run of samples with depth > 0.1 mm is one finding; the run
-records the route segment index i (between path[i] and path[i+1]), the deepest point, whether the centreline
-itself is inside the solid (the cable passes through material) and the length of centreline inside.
-Writes cables-raw.json.
+sampled at <= 0.25 mm spacing. At each sample the signed distance to every nearby audit solid is computed,
+giving tube penetration depth = r + (distance inside, negative outside). Distance: exact closest point on the
+closed mesh (libigl AABB tree, one call per cable, sampling mode and part). Inside/outside: winding number of the
+closed solid, which is 1 inside and 0 outside; libigl's fast winding number decides it, and any sample whose
+fast value lies between 0.1 and 0.9 is decided by the exact winding number instead. Samples within 1e-8 mm of the
+surface count as on it (not inside), as trimesh.proximity.signed_distance does. A run of samples with
+depth > 0.1 mm is one finding; the run records the route segment index i (between path[i] and path[i+1]), the
+deepest point (the first sample within 1e-9 mm of the run's maximum depth, so a flat run gives a fixed point),
+whether the centreline itself is inside the solid (the cable passes through material) and the length of
+centreline inside.
+Needs libigl (pip install libigl) next to numpy and trimesh. Writes cables-raw.json.
 """
 from __future__ import annotations
 
@@ -16,12 +21,24 @@ import json
 import math
 import sys
 
+import igl
 import numpy as np
-import trimesh
 
 from ia_lib import HERE, aabb_overlap, alternate_of, apart, load_guide, load_solid, manifest, rnd
 
 THRESH = 0.1
+ON_SURFACE = 1e-8   # trimesh.tol.merge: trimesh.proximity.signed_distance leaves these samples unsigned (+)
+TIE = 1e-9          # deepest point: first sample within this of the run's maximum depth
+
+
+def signed_distance(v, f, p):
+    """Signed distance of points p to the closed solid (v, f), positive inside."""
+    d = igl.signed_distance(p, v, f, igl.SIGNED_DISTANCE_TYPE_UNSIGNED)[0]
+    w = igl.fast_winding_number(v, f, p)
+    unsure = np.abs(w - 0.5) < 0.4
+    if unsure.any():
+        w[unsure] = igl.winding_number(v, f, np.ascontiguousarray(p[unsure]))
+    return np.where((d > ON_SURFACE) & (w < 0.5), -d, d)
 
 
 def catmull_centripetal(points: np.ndarray, t: np.ndarray):
@@ -103,7 +120,7 @@ def main():
                 meshes.clear()
                 import gc; gc.collect()
             v, f = load_solid(k)
-            meshes[k] = trimesh.Trimesh(v, f, process=False)
+            meshes[k] = (np.ascontiguousarray(v, np.float64), np.ascontiguousarray(f, np.int64))
         return meshes[k]
 
     findings, coverage = [], []
@@ -121,14 +138,11 @@ def main():
                 near = np.all((x >= b[0] - r - 0.2) & (x <= b[1] + r + 0.2), axis=1)
                 if not near.any():
                     continue
-                m = mesh(k)
                 sd = np.full(len(x), -np.inf)
-                idx = np.flatnonzero(near)
-                for q in range(0, len(idx), 64):  # small batches keep trimesh's candidate lists bounded
-                    sd[idx[q:q + 64]] = trimesh.proximity.signed_distance(m, x[idx[q:q + 64]])  # + inside
+                sd[near] = signed_distance(*mesh(k), np.ascontiguousarray(x[near]))  # + inside
                 depth = sd + r
                 for i, j in runs(depth > THRESH):
-                    kk = i + int(np.argmax(depth[i:j + 1]))
+                    kk = i + int(np.argmax(depth[i:j + 1] >= depth[i:j + 1].max() - TIE))
                     inside = sd[i:j + 1] > 0
                     findings.append({
                         'cable': c['id'], 'mode': mode, 'part': k, 'radius': r,
