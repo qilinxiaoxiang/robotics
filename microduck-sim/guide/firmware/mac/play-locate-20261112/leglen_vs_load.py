@@ -64,13 +64,19 @@ def encoder_roll(q, gb):
     return (lo + hi) / 2
 
 
-eps = [json.loads(l) for l in open(os.path.join(LEDGER, "episodes.jsonl"))]
-out = []
-for e in eps:
+def main():
+    eps = [json.loads(l) for l in open(os.path.join(LEDGER, "episodes.jsonl"))]
+    out = []
+    for e in eps:
+        one(e, out)
+    json.dump(out, open(sys.argv[1], "w"), indent=0)
+
+
+def one(e, out):
     if e["kind"] not in ("balance", "stand") or e["dur_s"] < 3 or e["outcome"] not in ("ok", None):
-        continue
+        return
     if "145302" in e["log"]:  # roll trim -3 in that log
-        continue
+        return
     rows = []
     try:
         with gzip.open(os.path.join(LEDGER, e["trajectory"]), "rt") as f:
@@ -79,9 +85,9 @@ for e in eps:
                 if r.get("gb") and r.get("q") and r.get("torque") and r.get("cur_ma"):
                     rows.append(r)
     except OSError:
-        continue
+        return
     if len(rows) < 50:
-        continue
+        return
     rows = rows[len(rows) // 3:]
     q = dict(zip(N, [st.median(r["q"][i] for r in rows) for i in range(14)]))
     gb = [st.median(r["gb"][i] for r in rows) for i in range(3)]
@@ -94,4 +100,7 @@ for e in eps:
                     residual=round(imu - enc, 2), knee_ma_l=kl, knee_ma_r=kr, left_share=share))
     print(e["when"], e["kind"][:4], "imu %+.2f enc %+.2f resid %+.2f kneeL %s kneeR %s" % (imu, enc, imu - enc, kl, kr),
           flush=True)
-json.dump(out, open(sys.argv[1], "w"), indent=0)
+
+
+if __name__ == "__main__":
+    main()
