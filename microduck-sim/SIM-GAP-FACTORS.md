@@ -105,3 +105,51 @@ A factor leaves list 1 only for one of two reasons. Not having measured it is ne
    2. Computation
       - Loop stalls
       - Processing mismatch
+
+## Measurement methods
+
+A method is listed only if it gives a number, follows a fixed protocol (fixed script, pose, load and repeat count),
+repeats within a stated spread, and one person can run it in minutes. Anything that relies on a hand holding or
+pushing a part fails the protocol test and is not listed.
+
+Split: the instrument that produces the number. Tags (cross-cutting): **P** passive, uses logs of normal runs;
+**A** active, a dedicated motion script; **C** control, change one condition (cable on or off, floor, load) and
+compare before and after.
+
+1. **The robot's own sensors** (split: which signals are compared)
+   1. Command against encoder: fixed step, sweep and full-range scripts per joint; output lag, deadband width,
+      reached fraction, range end and the current spike at it [A C].
+      Covers: stiction deadband, lag, range limited by part interference, cable snag; with C, cable stiffness.
+   2. IMU against encoder kinematics: trunk attitude from the IMU against the attitude the encoders and the rigid
+      model give, in fixed stances; output the residual, split by load and by motion direction [P A].
+      Covers: assembly zero, IMU mount offset, play, elastic deformation (as one sum, separated by method 2.2).
+   3. Run statistics: servo temperature registers, loop time, dropped reads, over each run [P].
+      Covers: temperature, loop stalls.
+   4. Replay: feed recorded robot observations through the training environment's processing code and compare the
+      outputs term by term [P].
+      Covers: processing mismatch.
+2. **External camera** (split: what the camera tracks)
+   1. Markerless pose: fit the CAD model to each frame; output trunk and link angles against the encoders [P A].
+      Covers: assembly zero, large deformation, whole-chain residual.
+   2. Marker tracking: printed fiducial markers on each link, high frame rate; output each link's six-axis pose
+      against the encoders and the IMU [A C].
+      Covers: play in both directions, elastic deformation, IMU mount vibration, internal servo backlash
+      (with the link loaded by gravity in a fixed pose).
+   3. Foot contact video: side view, high frame rate, fixed floor and step script; output slip distance and
+      impact duration per step [A C].
+      Covers: contact stiffness and damping, friction in use.
+3. **3D scan** (split: what is compared)
+   1. Scan against CAD in a fixed pose; output per-part pose and shape error [A].
+      Covers: assembly zero, permanent deformation (repeated over time), electronics position, sole geometry.
+   2. Scan pairs of the same pose under two loads; output the difference [A C].
+      Covers: elastic deformation.
+4. **Bench measurements** (split: the quantity measured)
+   1. Weighing and suspension: weigh each part and cable, hang the robot from two points for the centre of mass
+      [A].
+      Covers: part mass and centre of mass, cable weight.
+   2. Tilt test: sole on a board of the floor material, raise it until slip; friction coefficient is the tangent
+      of the angle [A].
+      Covers: friction coefficient.
+   3. Locked-output sweep: the link held in a fixture, the servo sweeps slowly at a low current limit; output the
+      zero-current band (play) and the slope (stiffness) [A].
+      Covers: play in the rotation direction, elastic deformation, internal servo backlash.
