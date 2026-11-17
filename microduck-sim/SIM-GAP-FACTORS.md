@@ -153,3 +153,54 @@ compare before and after.
    3. Locked-output sweep: the link held in a fixture, the servo sweeps slowly at a low current limit; output the
       zero-current band (play) and the slope (stiffness) [A].
       Covers: play in the rotation direction, elastic deformation, internal servo backlash.
+
+## Coverage matrix
+
+Rows: list 2 factors. Columns: methods by number. **●** measures the factor on its own; **○** sees it only as part
+of a sum that another method must split.
+
+| Factor | 1.1 | 1.2 | 1.3 | 1.4 | 2.1 | 2.2 | 2.3 | 3.1 | 3.2 | 4.1 | 4.2 | 4.3 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Internal servo backlash | | | | | | ● | | | | | | ● |
+| Stiction deadband | ● | | | | | | | | | | | |
+| Lag | ● | | | | | | | | | | | |
+| Temperature | | | ● | | | | | | | | | |
+| Assembly zero | | ○ | | | ● | | | ● | | | | |
+| Elastic deformation | | ○ | | | | ● | | | ● | | | ● |
+| Permanent deformation | | | | | | | | ● | | | | |
+| Play, rotation direction | | ○ | | | | ● | | | | | | ● |
+| Play, other directions | | | | | | ● | | | | | | |
+| Range limited by interference | ● | | | | | | | | | | | |
+| Part mass and centre of mass | | | | | | | | | | ● | | |
+| Electronics and battery position | | | | | | | | ● | | | | |
+| Cable stiffness | ● | | | | | | | | | | | |
+| Cable weight | | | | | | | | | | ● | | |
+| Cable snag | ● | | | | | | | | | | | |
+| Ground friction | | | | | | | ● | | | | ● | |
+| Contact stiffness and damping | | | | | | | ● | | | | | |
+| Sole geometry | | | | | | | | ● | | | | |
+| IMU mount offset | | ● | | | | | | | | | | |
+| IMU mount vibration | | | | | | ● | | | | | | |
+| Loop stalls | | | ● | | | | | | | | | |
+| Processing mismatch | | | | ● | | | | | | | | |
+
+Single-method factors have no cross-check; their method's protocol must carry its own repeatability test. Play in
+other directions and IMU mount vibration rest on marker tracking alone, so method 2.2 needs two cameras and a high
+frame rate (below).
+
+## Camera protocol
+
+- **Cameras.** One camera, square to the plane of motion, measures motion in that plane (for a leg, the pitch
+  joints from the side). Depth and rotation out of that plane are poorly determined from one view, so roll, yaw
+  and play in other directions need a second camera at roughly 90 degrees (side and front).
+- **Frame rate.** Sample at least 5 to 10 times the highest frequency of interest. Joint angles and posture over a
+  gait: 60 fps. Vibration, foot impact and the instant play is taken up at a reversal: 240 fps.
+- **Fixed setup.** Tripod, fixed distance and height, the robot filling most of the frame, bright even light,
+  exposure and focus locked. Markers sized to span at least about 50 pixels at the chosen resolution.
+- **Synchronisation.** Start every run with a fixed sync motion (one sharp joint step) that appears in the robot
+  log and in every video; align on it. Phones are not hardware-synced, and 240 fps bounds the offset to one frame,
+  about 4 ms.
+- **Calibration.** Calibrate each camera's lens once with a printed checkerboard, and the two-camera pair's relative
+  pose before each session.
+- **Files.** Transfer the original high-frame-rate file; a shared slow-motion clip may be re-encoded at a lower
+  frame rate.
