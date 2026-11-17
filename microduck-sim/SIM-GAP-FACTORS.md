@@ -1,7 +1,8 @@
 # MicroDuck sim-to-real gap factors
 
 The base list every sim-to-real gap analysis starts from. List 1 is the complete factor tree; list 2 keeps only the
-factors we already measure; the removed factors are the blind spots, where an unexplained gap is most likely to hide.
+open candidates: a factor leaves it only with evidence that it is small on this robot or already modelled in the sim
+with its measured value. Being hard to measure is never a reason to drop a factor.
 Current values live in `CURRENT-STATE.json` (fact names in brackets), never in this file.
 
 Structure: a pyramid, at most four children per node, children MECE under the split named at the node
@@ -58,55 +59,34 @@ The gap comes from the four parts of the sim model not matching the robot (split
       - Loop stalls [V E]
       - Processing mismatch: filters and action scaling differ from training [F E]
 
-## List 2: factors we already measure
+## List 2: open candidates
 
-Same tree, unmeasured leaves removed; a node with no measured leaf is removed.
+List 1 minus the six factors below. Every other leaf stays open, including all unmeasured ones.
+
+Removed, each with its evidence:
 
 1. **Actuation**
-   1. Static accuracy
-      - Stiction deadband: 10/15 gain sweep, unloaded probes [leg_joint_friction_unloaded]
-   2. Dynamic response
-      - Gain: register dump 10/15
-      - Lag: tick logs, sim-real comparison 10/17
-   3. Operating conditions
-      - Supply voltage: servo-reported voltage in every walk [servo_rail_v]
+   - Gain: the sim's XL330 model uses the same P/256 the register dump confirmed (10/15), and static knee sag matches
+     (sim 0.041 rad, robot 0.05)
+   - Supply voltage: the sim runs at the measured walking voltage (`robot_state_check.py --print-sim-args` passes
+     `--volt` from [servo_rail_v])
 2. **Structure**
-   1. Dimensions and zeros
-      - Assembly zero: scans through `scan-20261101/floor_truth.py`, `guide/firmware/mac/measure_gap.py`
-        [sensor_and_zero_offsets_in_code, stand_posture_asbuilt, head_pose_vs_chain_scan]
-   2. Joints
-      - Play in the rotation direction, indirectly: trunk motion against leg encoders in stance [leg_play]
-      - Range limited by interference: print gate `pairs.py`, bend scan [ankle_bend_stall]
-   3. Mass distribution
-      - Part mass and electronics position: sourced mass manifest, some parts estimated
-        [battery_sim_model_20261104]
+   - Part dimensions: bounded small. Assumption, not measured: FDM holes within about 0.2 mm on 50 mm links give
+     under 0.3 deg and 0.5 mm, an order below the gaps seen ([leg_play] 7 deg, [head_pose_vs_chain_scan] 10 deg)
 3. **Sensing and control**
-   1. Sensor
-      - IMU mount offset [imu_mount_trim]
-      - IMU latency [imu_added_delay_ms]
-   2. Communication
-      - Dropped servo reads [servo_read_drop_fraction]
-   3. Computation
-      - Loop stalls: `loop_ms` in every tick log
-      - Processing mismatch: code compared with Pollen's runtime 10/17
+   - IMU latency: measured with no delay beyond the normal pipeline, which the sim has [imu_added_delay_ms]
+   - Dropped servo reads: the sim runs at the measured fraction (`--drop` from [servo_read_drop_fraction]), and
+     adding them did not raise sim jitter (10/17)
+   - (IMU rate is fed the same way through `--imu-hz`; it was never a list 1 leaf.)
 
-## Removed: not measured, or hard to measure
+Open candidates with a direct lead from an observed gap, so they are examined first:
 
-Each removed leaf and why. A gap that list 2 cannot explain is looked for here first.
-
-1. **Actuation**
-   - Internal servo backlash: never separated from joint play
-   - Temperature: servo temperature is readable but not logged; only the A7Z SoC is
-2. **Structure**
-   - Part dimensions: not measured; scans resolve about 2 mm
-   - Elastic and permanent deformation: need a fixture or a camera on the part
-   - Play in other directions: encoders cannot see it, no external measurement yet
-3. **External forces** (whole branch)
-   - Cable stiffness, weight and snag: not measured
-   - Ground friction, contact stiffness, sole geometry: not measured
-4. **Sensing and control**
-   - IMU mount vibration: trunk gyro shake is measured, but not separated from impacts and play
-
-Example of why this matters: [leg_play] shows the trunk pitching about 10 deg beyond the left leg's encoders in
-left single stance (sim 3 deg). List 2 sees the gap; its cause lies among the removed leaves (play in other
-directions, part deformation, ground contact).
+- [leg_play] left single stance, trunk pitches about 10 deg beyond the encoders (sim 3): play in either direction,
+  elastic deformation of the left leg or foot, ground contact
+- [stand_posture_asbuilt] lean with the left sole's outer edge 5-6 deg low: assembly zero, IMU mount offset,
+  elastic deformation, sole geometry
+- [head_pose_vs_chain_scan] about 10 deg constant at trunk or neck: assembly zero, IMU mount offset, cable stiffness
+  on the head
+- Trunk gyro shake 4-6 times the sim at 5-25 Hz with matching joint spectra (10/17): play, deformation, ground
+  impact, IMU mount vibration
+- [ankle_bend_stall] ankles stop at 1.25 rad in the bend: range limited by interference (plug against the foot)
