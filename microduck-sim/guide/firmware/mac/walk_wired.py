@@ -760,11 +760,21 @@ def write_run_meta(args):
                 [os.path.abspath(__file__), _wb.__file__] + [os.path.join(HERE, n) for n in ("hold.py", "jaw_ctl.py")]
                 if p and os.path.exists(p)}
         models = {n: sha(os.path.join(args.models, n)) for n in sorted(os.listdir(args.models)) if n.endswith(".onnx")}
+
+        def trial_file(name):  # trial zero and goal shifts, {"joint": deg}; None when the file is absent
+            try:
+                with open(os.path.expanduser(name)) as f:
+                    return json.load(f)
+            except (OSError, ValueError):
+                return None
         meta = dict(t=round(time.time(), 3), when=time.strftime("%Y-%m-%d %H:%M:%S"), host=os.uname().nodename,
                     log=os.path.abspath(args.log), argv=sys.argv[1:], models_dir=os.path.abspath(args.models),
                     code_sha=code, model_sha=models, kp_rl=_wb.KP_RL, kp_stand=_wb.KP_DEFAULT,
                     max_action=args.max_action, max_walk_action=args.max_walk_action, max_tilt=args.max_tilt,
-                    supply=args.supply)
+                    supply=args.supply, imu_pitch_trim_deg=getattr(_wb, "IMU_PITCH_TRIM_DEG", None),
+                    imu_roll_trim_deg=getattr(_wb, "IMU_ROLL_TRIM_DEG", None),
+                    zero_offset_deg=trial_file("~/duck-zero-offset.json"),
+                    goal_offset_deg=trial_file("~/duck-goal-offset.json"))
         path = (args.log[:-6] if args.log.endswith(".jsonl") else args.log) + ".meta.jsonl"
         with open(path, "a") as f:
             f.write(json.dumps(meta) + "\n")
