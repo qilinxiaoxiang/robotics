@@ -69,7 +69,13 @@ const UI_TEXT = /*UI_TEXT*/{
       "wiringTitle": "Wiring drawing", "wiringClose": "Close large wiring view",
       "wiringLargeTitle": "Show this drawing across the whole window", "wiringLarge": "Open large view",
       "wiringFailed": "The wiring drawing failed to render: {msg}",
-      "wiringMissing": "The wiring drawing could not load in this browser."
+      "wiringMissing": "The wiring drawing could not load in this browser.",
+      "wkAll": "All", "wkPrev": "← Prev", "wkNext": "Next →", "wkStepOf": "Wire {n} of {t}",
+      "wkZoomIn": "Zoom to the ends", "wkZoomOut": "Hide close-ups", "wkHint": "Tap a pin or a wire for details.",
+      "wkDiagram": "Wiring diagram", "wkPower": "power", "wkGround": "ground", "wkSignal": "signal", "wkNc": "not connected",
+      "wkWires": "Wires", "wkNoWire": "No wire on this pin.", "wkIssues": "Checks", "wkPart": "Part",
+      "wkUnrouted": "No clear route: drawn as a dashed straight line.",
+      "boardShow3d": "3D view", "boardShowDrawing": "Drawing", "boardToggleTitle": "Switch between the drawing and the 3D view"
     },
     "status": {
       "assembled": "Already assembled", "printed": "Printed", "reprint": "Reprint needed", "new-print": "New print",
@@ -144,7 +150,13 @@ const UI_TEXT = /*UI_TEXT*/{
       "wiringTitle": "接线图", "wiringClose": "关闭放大的接线图",
       "wiringLargeTitle": "把这张图铺满整个窗口", "wiringLarge": "放大查看",
       "wiringFailed": "接线图显示失败：{msg}",
-      "wiringMissing": "这个浏览器加载不了接线图。"
+      "wiringMissing": "这个浏览器加载不了接线图。",
+      "wkAll": "全部", "wkPrev": "← 上一根", "wkNext": "下一根 →", "wkStepOf": "第 {n} 根，共 {t} 根",
+      "wkZoomIn": "放大两头", "wkZoomOut": "收起放大图", "wkHint": "点一根线或一个焊点看详细说明。",
+      "wkDiagram": "接线图", "wkPower": "电源", "wkGround": "地", "wkSignal": "信号", "wkNc": "不接",
+      "wkWires": "线", "wkNoWire": "这个焊点不接线。", "wkIssues": "检查", "wkPart": "零件",
+      "wkUnrouted": "没有找到清楚的走线：画成虚直线。",
+      "boardShow3d": "看 3D", "boardShowDrawing": "看图", "boardToggleTitle": "在图和 3D 视图之间切换"
     },
     "status": {
       "assembled": "已装好", "printed": "已打印", "reprint": "需重新打印", "new-print": "需新打印",
@@ -1708,7 +1720,10 @@ async function main() {
     const pinText = w.pinText || {};
     return Object.assign({
       overviewLabels: 'always',
-      text: { step: T.ui.wiringStep, exitStep: T.ui.wiringAll },
+      text: { step: T.ui.wiringStep, exitStep: T.ui.wiringAll, all: T.ui.wkAll, prev: T.ui.wkPrev, next: T.ui.wkNext,
+        stepOf: (n, t) => fmt(T.ui.wkStepOf, { n, t }), zoomIn: T.ui.wkZoomIn, zoomOut: T.ui.wkZoomOut, hint: T.ui.wkHint,
+        diagram: T.ui.wkDiagram, roles: { power: T.ui.wkPower, ground: T.ui.wkGround, signal: T.ui.wkSignal, nc: T.ui.wkNc },
+        wires: T.ui.wkWires, noWire: T.ui.wkNoWire, issues: T.ui.wkIssues, part: T.ui.wkPart, unrouted: T.ui.wkUnrouted },
       pinLabel: (pin, m) => pinText[m.id + '.' + pin.id] || (pin.label === pin.name ? pin.label : pin.label + ' · ' + pin.name),
     }, extra);
   }
@@ -1775,12 +1790,39 @@ async function main() {
   }
   // A step's `wiring` field is a wiring-kit bench (window.WiringKit, inlined by build_guide.py): an interactive
   // drawing of pads, wires and far ends with a wire-by-wire mode. Markers come from wiring.pinText.
-  function wiringSection(w) {
+  // A step's `stage` ("wiring" or "images") puts its wiring drawing or its images in the main view in place of the
+  // 3D model, for bench steps (cutting, soldering) where the model has nothing useful to show. A tool button
+  // switches between that drawing and the 3D view.
+  const viewerEl = $('viewer');
+  const board = h('div', { class: 'stage-board', id: 'stage-board', hidden: true });
+  const boardBtn = h('button', { class: 'tool-btn board-btn', type: 'button', hidden: true, title: T.ui.boardToggleTitle,
+    onclick: () => setBoard(!viewerEl.classList.contains('board-on')) });
+  viewerEl.append(board);
+  viewerEl.querySelector('.viewer-tools').prepend(boardBtn);
+  function setBoard(on) {
+    viewerEl.classList.toggle('board-on', on);
+    board.hidden = !on;
+    boardBtn.textContent = on ? T.ui.boardShow3d : T.ui.boardShowDrawing;
+  }
+  function clearBoard() {
+    setBoard(false);
+    boardBtn.hidden = true;
+    board.textContent = '';
+  }
+  function boardFitHeight(holder) {
+    const stage = holder.querySelector('.wk-stage');
+    const top = stage ? stage.getBoundingClientRect().top - board.getBoundingClientRect().top + board.scrollTop : 60;
+    return Math.max(260, board.clientHeight - top - 16);
+  }
+  function wiringSection(w, onBoard) {
     const holder = h('div', { class: 'wiring-holder' });
     const large = window.WiringKit ? h('button', { class: 'nav-btn wiring-large-btn', type: 'button',
       title: T.ui.wiringLargeTitle, onclick: (e) => openBigWiring(w, e.currentTarget) },
     icon(ICON_EXPAND), h('span', { text: T.ui.wiringLarge })) : null;
-    const sec = section(w.title || T.ui.wiringTitle, null, large, holder, w.caption ? h('p', { class: 'wiring-caption', text: w.caption }) : null);
+    const sec = onBoard
+      ? h('div', { class: 'board-sec' }, h('div', { class: 'board-head' }, h('h3', { class: 'board-title', text: w.title || T.ui.wiringTitle }), large),
+        w.caption ? h('p', { class: 'wiring-caption', text: w.caption }) : null, holder)
+      : section(w.title || T.ui.wiringTitle, null, large, holder, w.caption ? h('p', { class: 'wiring-caption', text: w.caption }) : null);
     if (!window.WiringKit) {
       holder.append(h('p', { class: 'empty-note', text: T.ui.wiringMissing }));
       return { sec, mount() {} };
@@ -1789,7 +1831,9 @@ async function main() {
       sec,
       mount() {
         try {
-          wiringView = window.WiringKit.render(holder, JSON.parse(JSON.stringify(w.bench)), wiringOptions(w, { keyboard: false, maxHeight: 900 }));
+          const opts = wiringOptions(w, { keyboard: false, maxHeight: 900 });
+          if (onBoard) Object.defineProperty(opts, 'maxHeight', { enumerable: true, get: () => boardFitHeight(holder) });
+          wiringView = window.WiringKit.render(holder, JSON.parse(JSON.stringify(w.bench)), opts);
         } catch (err) {
           holder.textContent = '';
           holder.append(h('p', { class: 'empty-note', text: fmt(T.ui.wiringFailed, { msg: err && err.message || err }) }));
@@ -1805,7 +1849,10 @@ async function main() {
     const raw = step.raw;
     const ch = step.chapter;
     dropWiring();
+    clearBoard();
     stepBody.textContent = '';
+    const imgs = (raw.images || []).filter((im) => im && typeof im.src === 'string' && /^data:image\//.test(im.src));
+    const stageMode = raw.stage === 'wiring' && raw.wiring && raw.wiring.bench ? 'wiring' : raw.stage === 'images' && imgs.length ? 'images' : null;
     cableButtons = new Map();
     const badge = h('span', { class: 'badge-done', hidden: !done.has(step.id) }, icon(ICON_CHECK), T.ui.done);
     stepBody.append(
@@ -1875,12 +1922,18 @@ async function main() {
             h('div', { class: 'prep-item' }, p.item, p.kind ? h('span', { class: 'kind-tag', text: T.prepKind[p.kind] || p.kind }) : null),
             p.note ? h('div', { class: 'prep-note', text: p.note }) : null))))));
     }
-    const wiring = raw.wiring && raw.wiring.bench ? wiringSection(raw.wiring) : null;
-    if (wiring) { stepBody.append(wiring.sec); wiring.mount(); }
+    if (stageMode) { boardBtn.hidden = false; setBoard(true); }
+    const wiring = raw.wiring && raw.wiring.bench ? wiringSection(raw.wiring, stageMode === 'wiring') : null;
+    if (wiring) { (stageMode === 'wiring' ? board : stepBody).append(wiring.sec); wiring.mount(); }
+    if (stageMode === 'images') {
+      board.append(h('div', { class: 'board-figures' }, imgs.map((im) =>
+        h('figure', { class: 'board-figure' },
+          h('img', { src: im.src, alt: im.caption || T.page.photo, onclick: () => openLightbox(im) }),
+          im.caption ? h('figcaption', { text: im.caption }) : null))));
+    }
     const ins = (raw.instructions || []).filter(Boolean);
     if (ins.length) stepBody.append(section(raw.instructionsTitle || T.ui.secAssemble, null, h('ol', { class: 'instructions' }, ins.map((t) => h('li', null, h('span', { text: t }))))));
-    const imgs = (raw.images || []).filter((im) => im && typeof im.src === 'string' && /^data:image\//.test(im.src));
-    if (imgs.length) {
+    if (imgs.length && stageMode !== 'images') {
       stepBody.append(section(T.ui.secPhotos, null, h('div', { class: 'figures' }, imgs.map((im) =>
         h('button', { class: 'figure-btn', type: 'button', onclick: () => openLightbox(im) },
           h('img', { src: im.src, alt: im.caption || T.page.photo, loading: 'lazy' }), im.caption ? h('span', { text: im.caption }) : null)))));
@@ -2075,7 +2128,7 @@ async function main() {
     $('next-btn').disabled = pg.page === guide.pages.length - 1;
     $('done-btn').style.visibility = isStep ? '' : 'hidden';
     document.querySelector('.viewer-tools .seg').hidden = !isStep;
-    if (isStep) { renderStep(pg); renderLegend(pg); } else { dropWiring(); renderChapterPage(pg); $('legend').hidden = true; $('done-btn').classList.remove('ready'); }
+    if (isStep) { renderStep(pg); renderLegend(pg); } else { dropWiring(); clearBoard(); renderChapterPage(pg); $('legend').hidden = true; $('done-btn').classList.remove('ready'); }
     refreshProgress();
     $('panel-scroll').scrollTop = 0;
     $('announcer').textContent = isStep ? fmt(T.ui.announceStep, { n: pg.number, total, title: pg.title }) : fmt(T.ui.announcePage, { chapter: pg.chapter.title, title: pg.title });

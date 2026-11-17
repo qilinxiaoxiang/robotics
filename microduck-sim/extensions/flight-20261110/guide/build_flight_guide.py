@@ -43,6 +43,8 @@ import build_pack as BP        # noqa: E402  constants only (FCB_X, FC_BOSS, FC_
 import check_parts as CP       # noqa: E402  BACKPACK, BACKPACK_SHIFT (the backpack's flight pose, as the CAD checks place it)
 import flight_params as Pm     # noqa: E402
 import build_wiring as W       # noqa: E402  benches, netlist, FAN_LEN / BAT_LEN from lead_lengths.json
+sys.path.insert(0, str(HERE))
+import bench_figures as BF     # noqa: E402  SVG cut list (to scale) and bullet-soldering figure for the bench steps
 
 LL = json.loads((CAD / 'checks' / 'lead_lengths.json').read_text())
 SCREWS = json.loads((B / 'screws.json').read_text())
@@ -400,7 +402,10 @@ step(id='overview', chapter='start', title='飞行背包：先把东西备齐',
 # ---- chapter 1: bench
 FL, RL, FR, RR = (W.FAN_LEN[n]['ext_mm'] for n in ('FL', 'RL', 'FR', 'RR'))
 BL, BR = W.BAT_LEN['L']['pigtail_mm'], W.BAT_LEN['R']['pigtail_mm']
-step(id='b-cut', chapter='bench', bench=True, title='剪好 16 根线，每根贴上名字',
+step(id='b-cut', chapter='bench', bench=True, title='剪好 16 根线，每根贴上名字', stage='images',
+     images=[dict(src=BF.cut_list({n: W.FAN_LEN[n]['ext_mm'] for n in ('FL', 'RL', 'FR', 'RR')},
+                                  {n: W.BAT_LEN[n]['pigtail_mm'] for n in ('L', 'R')}),
+                  caption='剪线清单（按比例画）：每组线一样长，贴一张写名字的胶带。')],
      prepare=[dict(item='16 AWG 硅胶线（红、黄、黑）', qty=1, kind='cable'), dict(item='12 AWG 硅胶线（红、黑）', qty=1, kind='cable'),
               dict(item='斜口钳、剥线钳、胶带和笔', qty=1, kind='tool')],
      instructions=[f'16 AWG 剪 12 根：红、黄、黑各 1 根 {FL} mm，每根贴胶带写“左前”。',
@@ -413,7 +418,9 @@ step(id='b-cut', chapter='bench', bench=True, title='剪好 16 根线，每根�
                    '所有线头蘸助焊剂，用烙铁上一层薄锡。'],
      checks=['桌上一共 16 根线，每根都有名字。'])
 
-step(id='b-bullets', chapter='bench', bench=True, title='12 根风扇线的长头各焊一个 3.5 mm 母子弹头',
+step(id='b-bullets', chapter='bench', bench=True, title='12 根风扇线的长头各焊一个 3.5 mm 母子弹头', stage='images',
+     images=[dict(src=u, caption=c) for u, c in zip(BF.bullet_steps(), ('剥皮长的那头接子弹头；剥 2 mm 的短头留到下一步焊电调。',
+                                                                       '灰色是化满的锡。', '锡凝固前线不要动。', '12 根线都这样做。'))],
      prepare=[dict(item='3.5 mm 母子弹头', qty=12, kind='electronic'), dict(item='5 mm 热缩管，每段比子弹头长一点', qty=12, kind='other'),
               dict(item='烙铁、焊锡、热风枪', qty=1, kind='tool')],
      instructions=['每根 16 AWG 线先套一段 5 mm 热缩管，推到离线头远的地方。',
@@ -423,7 +430,7 @@ step(id='b-bullets', chapter='bench', bench=True, title='12 根风扇线的长�
                    '12 根都这样做。'],
      checks=['每个子弹头用力拉一下不松。', '插口里没有锡，也没有被热缩管盖住。'])
 
-step(id='b-pads', chapter='bench', bench=True, title='12 根风扇线的短头焊到电调的四组电机焊盘', add=['esc'],
+step(id='b-pads', chapter='bench', bench=True, stage='wiring', title='12 根风扇线的短头焊到电调的四组电机焊盘', add=['esc'],
      wiring=only(BENCH_FANS, title='电调四组焊盘 → 四个风扇', caption='从机器人后面往前看。第 1、2 组在右边（外侧），第 3、4 组在左边。'),
      prepare=[dict(item='MicoAir 55A 四合一电调', qty=1, kind='electronic')],
      instructions=['电调元件面朝上平放，两片金色电池片朝远离你的方向，和上图一样。',
@@ -433,7 +440,7 @@ step(id='b-pads', chapter='bench', bench=True, title='12 根风扇线的短头�
      checks=['12 根线都焊牢，拉一下不动。', '相邻焊盘之间没有锡连在一起。'],
      warnings=['风扇的转向不在这里定。第 2 章的转向检查里，转反了的风扇对调两根子弹头就行，不用重焊。'])
 
-step(id='b-tabs', chapter='bench', bench=True, title='两根电池尾线和电容焊到电调的两片电池片', show=['esc'], add=['capacitor'],
+step(id='b-tabs', chapter='bench', bench=True, stage='wiring', title='两根电池尾线和电容焊到电调的两片电池片', show=['esc'], add=['capacitor'],
      wiring=only(BENCH_POWER, title='两块电池并联到电调', caption='红线全部到 + 片，黑线全部到 − 片。XT60 头这一步还不焊。'),
      prepare=[dict(item='1000 µF 电容', qty=1, kind='electronic')],
      instructions=['认电容的脚：长脚是 +，罐身上有白条的那一侧是 −。',
@@ -454,7 +461,7 @@ step(id='b-mtf', chapter='bench', bench=True, title='光流模块拧到支架下
                    '四颗 M2 × 4 从下往上穿过光流的孔，拧进平台，拧到光流贴平就停。'],
      checks=['镜头朝下、前面没有挡住；线从光流上伸出来。'])
 
-step(id='b-xt60', chapter='bench', bench=True, title='两根电池尾线的另一头各焊一个 XT60 公头', show=['esc', 'capacitor'],
+step(id='b-xt60', chapter='bench', bench=True, stage='wiring', title='两根电池尾线的另一头各焊一个 XT60 公头', show=['esc', 'capacitor'],
      wiring=only(BENCH_POWER, wires={'pig_Rp', 'pig_Rn', 'pig_Lp', 'pig_Ln'}, title='两根电池尾线'),
      prepare=[dict(item='XT60 公头', qty=2, kind='electronic'), dict(item='6 mm 热缩管', qty=4, kind='other')],
      instructions=['“右电池”红、黑两根线的空头，每根套一段 6 mm 热缩管，推远。',
@@ -464,7 +471,7 @@ step(id='b-xt60', chapter='bench', bench=True, title='两根电池尾线的另�
                    '“左电池”两根线同样焊另一个 XT60 公头。'],
      checks=['两个 XT60 都是红线在 + 号那边。', '两个 XT60 各连在写着“左电池”“右电池”的线上。'])
 
-step(id='b-a7zlead', chapter='bench', bench=True, title='自己做 A7Z ↔ 飞控线：SH 4 针插头 + 三根杜邦母头', show=['fc'],
+step(id='b-a7zlead', chapter='bench', bench=True, stage='wiring', title='自己做 A7Z ↔ 飞控线：SH 4 针插头 + 三根杜邦母头', show=['fc'],
      wiring=only(BENCH_SIGNAL, groups={'mav'}, title='做好的线：SH 插头第 1、3、4 位 → 三个杜邦母头',
                  caption='SH 插头第 2 位空着（那是飞控的 5 V，不接）。'),
      prepare=[dict(item='SH1.0 套装里 5 cm 的线', qty=3, kind='cable'), dict(item='SH1.0 套装里 4 针的白色外壳', qty=1, kind='other'),

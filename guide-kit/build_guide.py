@@ -302,6 +302,13 @@ def validate_guide(data: dict, rep: Report) -> None:
                 rep.error(f'{where}: images[{i}].src must be a data:image/... URI (no external files)')
         if 'wiring' in s:
             validate_wiring(s['wiring'], f'{where}: wiring', rep)
+        if 'stage' in s:
+            if s['stage'] not in ('wiring', 'images'):
+                rep.error(f'{where}: stage must be "wiring" or "images"')
+            elif s['stage'] == 'wiring' and not (s.get('wiring') or {}).get('bench'):
+                rep.error(f'{where}: stage "wiring" needs a wiring bench')
+            elif s['stage'] == 'images' and not s.get('images'):
+                rep.error(f'{where}: stage "images" needs images')
         if not s.get('add') and not s.get('cables') and not s.get('instructions'):
             rep.warn(f'{where}: adds no parts, draws no cables and has no instructions')
     for cid in sorted(cable_ids - used_cables):

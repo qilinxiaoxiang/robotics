@@ -545,3 +545,25 @@ html.wiring-large-open, html.wiring-large-open body { overflow: hidden; }
   padding: 12px calc(16px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
 }
 .wo-caption { font-size: 14px; }
+
+/* step `stage`: the wiring drawing or the step's images fill the main view in place of the 3D model */
+.stage-board {
+  position: absolute; inset: 0; z-index: 3; overflow: auto; overscroll-behavior: contain; touch-action: pan-x pan-y pinch-zoom;
+  background: var(--surface); padding: 56px 18px 18px;
+}
+.viewer.board-on .viewer-tools { z-index: 6; }
+.viewer.board-on .viewer-tools > :not(.board-btn),
+.viewer.board-on .timeline, .viewer.board-on .legend, .viewer.board-on .viewer-hint, .viewer.board-on .labels,
+.viewer.board-on .part-card { display: none !important; }
+.board-btn { font-weight: 600; }
+.board-sec { max-width: 1200px; margin: 0 auto; }
+.board-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; justify-content: space-between; margin-bottom: 6px; }
+.board-title { font-size: 16px; font-weight: 650; }
+.board-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 14px 18px; max-width: 1200px; margin: 0 auto; }
+.board-figure img { display: block; width: 100%; height: auto; cursor: zoom-in; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+.board-figure figcaption { margin-top: 6px; font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+.viewer-tools .board-btn { width: auto; padding: 0 14px; white-space: nowrap; }
+@media (max-width: 860px) {
+  .stage-board { padding: 54px 10px 10px; }
+  .stage:has(.viewer.board-on) { flex-basis: 64vh; flex-basis: 64dvh; }
+}
