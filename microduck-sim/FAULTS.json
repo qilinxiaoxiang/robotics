@@ -514,6 +514,13 @@
           "status": "run",
           "blocker": "-",
           "results": "Model from encoders: both soles about flat (sole roll +0.6 left and right), both legs rolled about 7 deg outward (pitch axes 7 deg off horizontal), left toe 5 mm behind the right, left toe-in 3.7 deg against 0.9. Photo (camera roll 0 by the level hip-roll servo edges, about +-2 deg): both soles outer edge down about 7 deg (front sole edge: right 7.2, left 6.7), both shins about vertical, left toe about 10 mm behind (Shawn). So about 6 to 7 deg of leg roll the encoders report is not in the real legs, on both sides about equally; the left looks worse partly because it sits further back and toes in. Candidates: hip-roll output-to-leg zero on both sides, or roll compliance under body weight. Separating test: front video at 60 fps while the robot is lifted 1-2 cm and set down (shins tilt and soles flatten in the air = compliance; no change = geometry or zero)."
+        },
+        {
+          "id": "T13-lift-video-20261117",
+          "what": "Shawn's front videos IMG_7368 (walk toward the camera and stop) and IMG_7369 (stand, lifted 1-2 cm from 7.0 to 10.2 s, set down), 60 fps, 2026-11-17 16:18; frames 2.0 s (standing) and 8.0 s (lifted) against log app1117-nooffset aligned by the start time (lift seen as body tilt 7-8 deg and knee current reversing). Edges read on 2x grid crops: servo-bottom screw line, sole front top edge, sole front bottom edge. play-locate-20261112/photo_leg_angles.py (automatic fit, unreliable on the shin because of cables; manual grid reading used).",
+          "status": "run",
+          "blocker": "-",
+          "results": "Encoders unchanged through the lift (hip roll R +7.2, L -5.5; policy default +-5.0). Standing: screw lines R 7.3, L 8.4 deg outer edge down; sole top edge R 7.7, L 3.1; bottom edge R 2.7, L 6.1. Lifted: top edge R 8.7, L 6.1; bottom edge R 3.7, L 1.3. Changes stand to lifted are within the +-3 deg spread between edges of one foot, and in no consistent direction; compliance under body weight would flatten the soles by about 7 deg in the air. So the outer-edge-down tilt is in the unloaded leg: geometry at or above the hip roll joint (shins about vertical in IMG_7367 and IMG_7369 against the model's 7 deg outward), about 6.5 to 7 deg on each leg, both sides alike. Candidate next trial: equal hip-roll zero shift outward on both legs, hidden from the policy, checked by a front photo (not run; untested on the robot)."
         }
       ],
       "mitigations": [],
