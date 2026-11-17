@@ -507,6 +507,13 @@
           "status": "run",
           "blocker": "-",
           "results": "2026-11-17: walk-mode zero-command roll -0.11, +0.29, -0.23, -0.29 deg (left side down positive) in four headings, against +2.3 to +2.6 on 11-12; IMU minus encoder model -0.97, -0.28, -0.63, -0.89 (T10 median +1.80 before 11-13). Hip roll read R 7.47/6.94/6.06/7.39, L 5.53/7.39/6.77/6.42: both legs still wider than the 3.7 deg flat-sole angle (H7), now alike, so by the sole formula both soles sit about 2 to 4 deg outer edge down. Knee current now left higher (33-47 mA against 14-35). Head roll joint -0.35 to +0.53 deg: with the body level the chain gives no head tilt; a head that looks tilted would be outside the encoders (head roll assembly). The left lean is gone since 11-13 (0.43 then, with the +3 shift; about 0 today without it); what changed between 11-12 night and 11-13 17:11 is not established (that day ID3/ID4 were factory-reset and rescued with the right leg cables unplugged; their homing was 0 before, 11-12 register dump). Shift not restored: with the lean gone, +3 on the left alone would make the soles unequal again. Independent check still missing: a front video or scan of the soles and head."
+        },
+        {
+          "id": "T12-front-photo-against-model-20261117",
+          "what": "Shawn's front photo IMG_7367 (2026-11-17 16:07:48 local, phone on the floor, robot after the T11 run; a head camera snapshot confirms a front view, image right = robot left) against the rigid model at the same moment (log app1117-nooffset, 6 s window; play-locate-20261112/sole_pose.py and segment_roll.py).",
+          "status": "run",
+          "blocker": "-",
+          "results": "Model from encoders: both soles about flat (sole roll +0.6 left and right), both legs rolled about 7 deg outward (pitch axes 7 deg off horizontal), left toe 5 mm behind the right, left toe-in 3.7 deg against 0.9. Photo (camera roll 0 by the level hip-roll servo edges, about +-2 deg): both soles outer edge down about 7 deg (front sole edge: right 7.2, left 6.7), both shins about vertical, left toe about 10 mm behind (Shawn). So about 6 to 7 deg of leg roll the encoders report is not in the real legs, on both sides about equally; the left looks worse partly because it sits further back and toes in. Candidates: hip-roll output-to-leg zero on both sides, or roll compliance under body weight. Separating test: front video at 60 fps while the robot is lifted 1-2 cm and set down (shins tilt and soles flatten in the air = compliance; no change = geometry or zero)."
         }
       ],
       "mitigations": [],
@@ -524,35 +531,86 @@
       "symptom": "Standing on the policy in walk mode at zero command (KP 200), a {\"mode\": \"stand\"} command (open-loop ramp to STAND_POSE, KP 400) tips the robot over within 0.6 s.",
       "required_recovery": "A switch from walk mode to stand mode never tips the robot. Shawn 2026-11-12: \"为什么摔倒了\".",
       "occurrences": [
-        {"when": "2026-10-30", "what": "an agent's {\"mode\": \"stand\"} neck sweep switched Shawn's closed-loop stand to open loop and the duck fell twice (robotics memory microduck-no-openloop-stand-for-head.md); no log slice kept", "running": "closed-loop stand, then {\"mode\": \"stand\"}"},
-        {"when": "2026-11-12 22:02, log duck_wired_log_app1112-214313.jsonl", "what": "look_sweep.py (head poses in walk mode at zero command for 140 s, never stepped) ended with {\"mode\": \"stand\"}; the body pitched from the first tick and was over 90 deg after 0.6 s. Shawn righted it 24 s later; it stands again.", "running": "walk mode zero command (stand61 before the first step), KP 200, left hip hidden zero shift 3 deg, battery about 7.3 V"}
+        {
+          "when": "2026-10-30",
+          "what": "an agent's {\"mode\": \"stand\"} neck sweep switched Shawn's closed-loop stand to open loop and the duck fell twice (robotics memory microduck-no-openloop-stand-for-head.md); no log slice kept",
+          "running": "closed-loop stand, then {\"mode\": \"stand\"}"
+        },
+        {
+          "when": "2026-11-12 22:02, log duck_wired_log_app1112-214313.jsonl",
+          "what": "look_sweep.py (head poses in walk mode at zero command for 140 s, never stepped) ended with {\"mode\": \"stand\"}; the body pitched from the first tick and was over 90 deg after 0.6 s. Shawn righted it 24 s later; it stands again.",
+          "running": "walk mode zero command (stand61 before the first step), KP 200, left hip hidden zero shift 3 deg, battery about 7.3 V"
+        }
       ],
       "hypotheses": [
-        {"id": "H1-gain-step-on-stale-lead", "claim": "In walk mode at KP 200 the policy holds the knees with goals far ahead of the positions (2026-11-12: right knee goal 2699 against position 2513, left 1355 against 1598, i.e. 186 and 244 ticks = 16 and 21 deg, currents 94 and -128 mA). Stand entry keeps those goals as the ramp start (walk_brain.py: start = self.goal or q) and doubles the gain on the same tick, so the knee torque doubles at once.", "status": "supported by the 11-12 log: on the two ticks after the switch the knee currents rose to 224 and -351 mA with unchanged goals, the knees moved 90 and 115 ticks (8 and 10 deg) in 0.15 s, and the body pitch followed (gyro y -0.7 rad/s at 0.07 s, gravity x -0.28 at 0.3 s). The ramp itself had moved the goals 2 ticks by then."}
+        {
+          "id": "H1-gain-step-on-stale-lead",
+          "claim": "In walk mode at KP 200 the policy holds the knees with goals far ahead of the positions (2026-11-12: right knee goal 2699 against position 2513, left 1355 against 1598, i.e. 186 and 244 ticks = 16 and 21 deg, currents 94 and -128 mA). Stand entry keeps those goals as the ramp start (walk_brain.py: start = self.goal or q) and doubles the gain on the same tick, so the knee torque doubles at once.",
+          "status": "supported by the 11-12 log: on the two ticks after the switch the knee currents rose to 224 and -351 mA with unchanged goals, the knees moved 90 and 115 ticks (8 and 10 deg) in 0.15 s, and the body pitch followed (gyro y -0.7 rad/s at 0.07 s, gravity x -0.28 at 0.3 s). The ramp itself had moved the goals 2 ticks by then."
+        }
       ],
       "tests": [
-        {"id": "T1-torque-continuous-entry", "what": "Stand entry from a policy mode starts the ramp from position + (goal - position) * KP_walk / KP_stand, so the torque is the same on the first tick; check in brain_sim_check.py with a walk-to-stand switch after standing on the policy, then on the robot with Shawn's hand near it.", "status": "sim run 2026-11-12 (Mac mini ~/sims/standsw, asbuilt current, 7.6 V, old code = commit f8ba3253): switch after standing on the policy without a step: old code tilts 2.6 deg within 0.2 s and falls later (36.8 s), new code stays at 0.0 deg and stands to the end (53 s, max tilt 0.9). Switch after a 3.6 s walk: old falls 2.6 s after the switch, new 4.8 s after it, both backward and not on the switch tick. Correction 2026-11-12: the earlier note that the robot made this switch several times that day without falling has no log behind it (the five robot log slices hold two walk-to-stand switches: the 22:02 fall and one with the robot held in the hand). Sim study the same evening: the sim's open-loop stand has its centre of mass 5.0 mm behind the ankle axis and drifts backward (1.5 deg/min) even without a walk; the robot's ankle goal leads and currents in stand show a centre of mass about 2-3 mm further forward (+-1 mm); a +1.5 mm trial shift (--com-x) made the sim stand in every case tried. No model change made: which part's mass or position is wrong is not identified (battery-20261104 is unweighed). In walk_brain.py and copied to the A7Z (takes effect at the next brain start); not yet switched on the robot."}
+        {
+          "id": "T1-torque-continuous-entry",
+          "what": "Stand entry from a policy mode starts the ramp from position + (goal - position) * KP_walk / KP_stand, so the torque is the same on the first tick; check in brain_sim_check.py with a walk-to-stand switch after standing on the policy, then on the robot with Shawn's hand near it.",
+          "status": "sim run 2026-11-12 (Mac mini ~/sims/standsw, asbuilt current, 7.6 V, old code = commit f8ba3253): switch after standing on the policy without a step: old code tilts 2.6 deg within 0.2 s and falls later (36.8 s), new code stays at 0.0 deg and stands to the end (53 s, max tilt 0.9). Switch after a 3.6 s walk: old falls 2.6 s after the switch, new 4.8 s after it, both backward and not on the switch tick. Correction 2026-11-12: the earlier note that the robot made this switch several times that day without falling has no log behind it (the five robot log slices hold two walk-to-stand switches: the 22:02 fall and one with the robot held in the hand). Sim study the same evening: the sim's open-loop stand has its centre of mass 5.0 mm behind the ankle axis and drifts backward (1.5 deg/min) even without a walk; the robot's ankle goal leads and currents in stand show a centre of mass about 2-3 mm further forward (+-1 mm); a +1.5 mm trial shift (--com-x) made the sim stand in every case tried. No model change made: which part's mass or position is wrong is not identified (battery-20261104 is unweighed). In walk_brain.py and copied to the A7Z (takes effect at the next brain start); not yet switched on the robot."
+        }
       ],
-      "mitigations": ["Until T1 is on the robot: agent scripts do not send {\"mode\": \"stand\"} to a robot standing on the policy in walk mode; they leave it in walk mode at zero command."],
-      "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "evidence": "the robot lies on the floor with torque on until Shawn rights it"},
-      "cause": {"status": "supported, fix not applied", "summary": "Gain step 200 -> 400 on goals that lead the knee positions by 16-21 deg (H1). Open: why earlier walk-to-stand switches after stepping did not fall (their knee lead was not compared)."}
+      "mitigations": [
+        "Until T1 is on the robot: agent scripts do not send {\"mode\": \"stand\"} to a robot standing on the policy in walk mode; they leave it in walk mode at zero command."
+      ],
+      "recovery": {
+        "self_recovers": false,
+        "verified_by_induced_fault": false,
+        "evidence": "the robot lies on the floor with torque on until Shawn rights it"
+      },
+      "cause": {
+        "status": "supported, fix not applied",
+        "summary": "Gain step 200 -> 400 on goals that lead the knee positions by 16-21 deg (H1). Open: why earlier walk-to-stand switches after stepping did not fall (their knee lead was not compared)."
+      }
     },
     "servo-factory-reset": {
       "symptom": "After a power-up one or more leg servos answer nothing at 1 Mbaud and blink red; the brain runs about 39 Hz on the sync-read timeouts and the remote greys the policy buttons.",
       "required_recovery": "A servo at factory settings is brought back on the robot without pulling it out or fetching another board. Shawn 2026-11-13: \"你能不能用现有的东西修复它\".",
       "occurrences": [
-        {"when": "2026-11-02 12:33-13:05", "what": "right knee ID2 silent with a red light after the pack ran flat (rail 7.2 -> 4.5 V, guard off on --supply bench); alone on a spare OpenRB it read ID 1, 57600, RDT 250, Shutdown 53", "running": "brain in walk on a flat 2S pack"},
-        {"when": "2026-11-13 15:47 boot", "what": "right hip ID3 and ID4 silent, one red light seen; ID4 read RDT 250, Shutdown 53 after the rescue, ID3 came back by the same factory-ID write", "running": "first boot after about 16 h offline; what the pack did before is not recorded"}
+        {
+          "when": "2026-11-02 12:33-13:05",
+          "what": "right knee ID2 silent with a red light after the pack ran flat (rail 7.2 -> 4.5 V, guard off on --supply bench); alone on a spare OpenRB it read ID 1, 57600, RDT 250, Shutdown 53",
+          "running": "brain in walk on a flat 2S pack"
+        },
+        {
+          "when": "2026-11-13 15:47 boot",
+          "what": "right hip ID3 and ID4 silent, one red light seen; ID4 read RDT 250, Shutdown 53 after the rescue, ID3 came back by the same factory-ID write",
+          "running": "first boot after about 16 h offline; what the pack did before is not recorded"
+        }
       ],
       "hypotheses": [
-        {"id": "H1-flat-pack-brownout", "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.", "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried). Shawn 2026-11-13, a guess, not an observation: \"可能是电池放空过，我猜\""}
+        {
+          "id": "H1-flat-pack-brownout",
+          "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.",
+          "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried). Shawn 2026-11-13, a guess, not an observation: \"可能是电池放空过，我猜\""
+        }
       ],
       "tests": [
-        {"id": "T1-rail-history-before-1113", "what": "read the last rail voltages of the brain and blackbox logs before the 2026-11-13 15:47 boot (slice copied off the A7Z); a rail under about 5 V supports H1, a clean shutdown at 7 V or more speaks against it", "status": "queued", "blocker": "A7Z offline (ssh timed out 2026-11-13 after the repair); runs at the next session with the robot on"}
+        {
+          "id": "T1-rail-history-before-1113",
+          "what": "read the last rail voltages of the brain and blackbox logs before the 2026-11-13 15:47 boot (slice copied off the A7Z); a rail under about 5 V supports H1, a clean shutdown at 7 V or more speaks against it",
+          "status": "queued",
+          "blocker": "A7Z offline (ssh timed out 2026-11-13 after the repair); runs at the next session with the robot on"
+        }
       ],
-      "mitigations": ["Switch the robot off when unused; the battery guard only runs while the brain runs."],
-      "recovery": {"self_recovers": false, "verified_by_induced_fault": true, "evidence": "Not automatic: one command, `~/duck/rescue_factory_servo.py --id N`, through the bridge's ID 253 path (openrb_dual_host since 2026-11-13). Verified on an induced fault (jaw ID15 set to 57600 on purpose, back with one write) and on the real ID3 and ID4; 15/15 after. Guide: guide/firmware/pi/SERVO-RESCUE.md."},
-      "cause": {"status": "hypothesis", "summary": "Factory reset of single XL330s, twice after the robot sat on a draining pack (H1); not proven."}
+      "mitigations": [
+        "Switch the robot off when unused; the battery guard only runs while the brain runs."
+      ],
+      "recovery": {
+        "self_recovers": false,
+        "verified_by_induced_fault": true,
+        "evidence": "Not automatic: one command, `~/duck/rescue_factory_servo.py --id N`, through the bridge's ID 253 path (openrb_dual_host since 2026-11-13). Verified on an induced fault (jaw ID15 set to 57600 on purpose, back with one write) and on the real ID3 and ID4; 15/15 after. Guide: guide/firmware/pi/SERVO-RESCUE.md."
+      },
+      "cause": {
+        "status": "hypothesis",
+        "summary": "Factory reset of single XL330s, twice after the robot sat on a draining pack (H1); not proven."
+      }
     }
   }
 }

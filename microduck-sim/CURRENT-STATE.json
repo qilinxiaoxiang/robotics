@@ -267,7 +267,14 @@
       "meaning": "Which hosts can drive the DYNAMIXEL bus through the openrb_dual_host bridge and the last full bus scan.",
       "verified_at": "2026-11-13",
       "source": "2026-11-13: ssh a7z 'cd ~/duck && python3 scan_bus.py --port /dev/ttyAS2 --baud 500000' reads 15/15 after ID3, ID4 (both found at factory settings) and jaw ID15 were restored through the rescue path (docs/PET_ROBOT_LOG.md 2026-11-13 17:00)",
-      "superseded": [{"value": "15/15 on the A7Z path, 7.2 V idle; bridge fixed at 1 Mbaud with no rescue path", "verified_at": "2026-10-19"}],
+      "superseded": [
+        {
+          "value": "15/15 on the A7Z path, 7.2 V idle; bridge fixed at 1 Mbaud with no rescue path",
+          "verified_at": "2026-10-19",
+          "until": "2026-11-13",
+          "why": "ID3 restored through the bridge rescue path on 2026-11-13, so the bridge now has a rescue path (commit f96548a6)"
+        }
+      ],
       "measure": "run that scan; exit 0 only when IDs 1-15 all answer",
       "max_age_days": 30,
       "consumers": [
@@ -323,7 +330,25 @@
       ]
     },
     "imu_mount_trim": {
-      "value": {"brain_roll_trim_on_a7z_file_deg": 0.0, "brain_roll_trim_wanted_deg": 0.0, "roll_trim_status": "A7Z walk_brain.py replaced 2026-11-12 20:01 with the repository file (sha256 669817f64feff7ec, roll trim 0), brain restarted as app1112-2010 and put back in stand; stand reading then roll +1.8 deg (left side down), pitch +1.2 deg. The -3 trim ran on the robot only 2026-11-12 14:53-15:06 and 19:55-20:01 (stand only). The sensor is right within about 1 deg and the robot leans to its left (stand_posture_asbuilt, play-locate-20261112/README.md correction paragraph)", "brain_pitch_trim_deg": 4.0, "brain_roll_trim_deg": 0.0,"left_hip_roll_zero_offset_deg": 0.0, "left_hip_roll_zero_shift_hidden_from_policy_deg": {"value": 3.0, "status": "Back at 3.0 since 2026-11-12 21:37 (brain app1112-zero3b): at 4.5 (brain app1112-212227, 21:25-21:35) the body leaned MORE, roll +2.5 to +3.4 at 7 walk-mode stops and +1.5 to +2.5 in stand, against +1.1 to +1.9 at 3.0 (20:49); the roll grows with the shift and cancels it at the sole, so the hip roll angle is not what tips the body. Shawn at 4.5: \"总感觉还在往左偏 还是得找找原因 ... 长短腿？\", \"感觉比之前走得稳定了已经\". Earlier: 4.5 since 2026-11-12 21:22 (file on the A7Z changed after its 20:51 clean shutdown and 21:21 boot; acts from the next brain start; Shawn: \"再继续调个1度2度？ 你看着调，感觉还没有完全放平\"). At 3.0 (20:49-20:50) the left sole computed -0.5 to +1.4 deg outer edge down, roll +1.1 to +1.9. Earlier: TRIAL 3, on the robot since 2026-11-12 20:47 A7Z time (brain app1112-zero3): ~/duck-zero-offset.json on the A7Z, read by pi/joint_signs.py, moves goal and reading together, so the policy sees nothing and the real left hip sits 3 deg counter-clockwise seen from the front (left foot outward) in every mode. This is what Shawn meant (\"我说了不用送进模型 是模型外的偏差\", \"模型该怎么走怎么走\"); trials 1 and 2 shifted only the goal, which the policy sees through the encoder. The repository default stays 0. Not accepted yet (FAULTS.json T8). Undo: delete ~/duck-zero-offset.json on the A7Z and restart the brain"}, "walk_goal_offset_outside_policy_deg": {"left_hip_roll": 0.0, "status": "OFF (file renamed ~/duck-goal-offset.json.off at the app1112-zero3 restart). Earlier: TRIAL 2, on the robot since 2026-11-12 about 20:50 (brain app1112-offramp, A7Z walk_brain.py sha256 58e6ed02337e6826): the +3 fades in only after 0.8 s of commanded motion and fades out within 1 s of a zero command, so each start from standstill is the policy's own. Not accepted yet. Undo: delete ~/duck-goal-offset.json on the A7Z and restart the brain. Without the offset (brain app1112-nooff, 20:42) the robot walked and stopped at hip roll R 6.2 / L 6.6, roll +0.3. Trial 1 (offset on from standstill, 20:39): with +3 the robot did not step on forward (Shawn: \"按前进不走路\"; log app1112-goaloff3: vx 0.25 received 5 times, policy actions at most 0.24 rad against 1.09 in a normal walk, knees still); whether the offset is the reason is being separated by the walk without it. Earlier text: TRIAL, applied on the robot 2026-11-12 evening on Shawn's word (\"左髋从前面看 逆时针转几度\", \"不要跑仿真了 直接在真机上试\"): walk mode only, added to the servo goal after the policy, read from ~/duck-goal-offset.json on the A7Z; A7Z walk_brain.py sha256 e552b618d62cb6cc, brain app1112-goaloff3. Not accepted yet (FAULTS.json T8). Undo: delete ~/duck-goal-offset.json on the A7Z and restart the brain"},"sim_sensor_that_matches": "--imu-pitch 2 (roll -3 is the sim default)", "robot_stand_reading_with_roll_trim": "roll -1.3 deg, pitch +1.0 deg (log app1112-145302)", "walking_with_roll_trim": "still left-heavy: mean roll +0.3 to +3.0 deg, knee current L/R 2.1 to 3.7, swing 0.18-0.23 s left / 0.23-0.28 s right; Shawn sees the left foot on its outer edge and the body leaning left. The roll trim did not remove it; the cause is in the robot and is open"},
+      "value": {
+        "brain_roll_trim_on_a7z_file_deg": 0.0,
+        "brain_roll_trim_wanted_deg": 0.0,
+        "roll_trim_status": "A7Z walk_brain.py replaced 2026-11-12 20:01 with the repository file (sha256 669817f64feff7ec, roll trim 0), brain restarted as app1112-2010 and put back in stand; stand reading then roll +1.8 deg (left side down), pitch +1.2 deg. The -3 trim ran on the robot only 2026-11-12 14:53-15:06 and 19:55-20:01 (stand only). The sensor is right within about 1 deg and the robot leans to its left (stand_posture_asbuilt, play-locate-20261112/README.md correction paragraph)",
+        "brain_pitch_trim_deg": 4.0,
+        "brain_roll_trim_deg": 0.0,
+        "left_hip_roll_zero_offset_deg": 0.0,
+        "left_hip_roll_zero_shift_hidden_from_policy_deg": {
+          "value": 0.0,
+          "status": "OFF since 2026-11-17 (~/duck-zero-offset.json moved to ~/duck-zero-offset.json.bak-20261117, brain app1117-nooffset): walk-mode stops then read level in four headings (FAULTS T11) and a front photo showed both soles about equally outer edge down, so a left-only shift would make them unequal (T12). Restore: move the .bak file back and restart the brain. Before: Back at 3.0 since 2026-11-12 21:37 (brain app1112-zero3b): at 4.5 (brain app1112-212227, 21:25-21:35) the body leaned MORE, roll +2.5 to +3.4 at 7 walk-mode stops and +1.5 to +2.5 in stand, against +1.1 to +1.9 at 3.0 (20:49); the roll grows with the shift and cancels it at the sole, so the hip roll angle is not what tips the body. Shawn at 4.5: \"总感觉还在往左偏 还是得找找原因 ... 长短腿？\", \"感觉比之前走得稳定了已经\". Earlier: 4.5 since 2026-11-12 21:22 (file on the A7Z changed after its 20:51 clean shutdown and 21:21 boot; acts from the next brain start; Shawn: \"再继续调个1度2度？ 你看着调，感觉还没有完全放平\"). At 3.0 (20:49-20:50) the left sole computed -0.5 to +1.4 deg outer edge down, roll +1.1 to +1.9. Earlier: TRIAL 3, on the robot since 2026-11-12 20:47 A7Z time (brain app1112-zero3): ~/duck-zero-offset.json on the A7Z, read by pi/joint_signs.py, moves goal and reading together, so the policy sees nothing and the real left hip sits 3 deg counter-clockwise seen from the front (left foot outward) in every mode. This is what Shawn meant (\"我说了不用送进模型 是模型外的偏差\", \"模型该怎么走怎么走\"); trials 1 and 2 shifted only the goal, which the policy sees through the encoder. The repository default stays 0. Not accepted yet (FAULTS.json T8). Undo: delete ~/duck-zero-offset.json on the A7Z and restart the brain"
+        },
+        "walk_goal_offset_outside_policy_deg": {
+          "left_hip_roll": 0.0,
+          "status": "OFF (file renamed ~/duck-goal-offset.json.off at the app1112-zero3 restart). Earlier: TRIAL 2, on the robot since 2026-11-12 about 20:50 (brain app1112-offramp, A7Z walk_brain.py sha256 58e6ed02337e6826): the +3 fades in only after 0.8 s of commanded motion and fades out within 1 s of a zero command, so each start from standstill is the policy's own. Not accepted yet. Undo: delete ~/duck-goal-offset.json on the A7Z and restart the brain. Without the offset (brain app1112-nooff, 20:42) the robot walked and stopped at hip roll R 6.2 / L 6.6, roll +0.3. Trial 1 (offset on from standstill, 20:39): with +3 the robot did not step on forward (Shawn: \"按前进不走路\"; log app1112-goaloff3: vx 0.25 received 5 times, policy actions at most 0.24 rad against 1.09 in a normal walk, knees still); whether the offset is the reason is being separated by the walk without it. Earlier text: TRIAL, applied on the robot 2026-11-12 evening on Shawn's word (\"左髋从前面看 逆时针转几度\", \"不要跑仿真了 直接在真机上试\"): walk mode only, added to the servo goal after the policy, read from ~/duck-goal-offset.json on the A7Z; A7Z walk_brain.py sha256 e552b618d62cb6cc, brain app1112-goaloff3. Not accepted yet (FAULTS.json T8). Undo: delete ~/duck-goal-offset.json on the A7Z and restart the brain"
+        },
+        "sim_sensor_that_matches": "--imu-pitch 2 (roll -3 is the sim default)",
+        "robot_stand_reading_with_roll_trim": "roll -1.3 deg, pitch +1.0 deg (log app1112-145302)",
+        "walking_with_roll_trim": "still left-heavy: mean roll +0.3 to +3.0 deg, knee current L/R 2.1 to 3.7, swing 0.18-0.23 s left / 0.23-0.28 s right; Shawn sees the left foot on its outer edge and the body leaning left. The roll trim did not remove it; the cause is in the robot and is open"
+      },
       "meaning": "How the BNO085 sits against the trunk and what the brain undoes. Roll trim -3 deg (sim sign) and the left hip roll zero back at 0 were copied to the A7Z 2026-11-12 14:50 (Shawn: \"一起装\"); the brain was not running, so they act from its next start. Before that the policy saw +2 to +3 deg of roll at stand (written here as 'a level stand', which was an assumption and wrong: see stand_posture_asbuilt) and walked left-leg-heavy (swing 0.17 s left, 0.28 s right); in the sim the trim gives 0.0 deg and 0.24 / 0.24 s. The robot's quiet-stand roll with the trim is expected near 0 and has not been logged yet. Sims that should match the robot pass --imu-pitch 2; without it the sim policy sees +3.9 deg pitch against the robot's +1 to +2.6. Undo: MICRODUCK_IMU_ROLL_TRIM=0, or the .bak-20261112 files beside walk_brain.py and joint_signs.py on the A7Z.",
       "verified_at": "2026-11-12",
       "source": "guide/firmware/mac/play-locate-20261112/README.md, second pass: foot_flat_check.py and stance_asym.py over every brain log 2026-11-02..11-12 (Mac mini ~/sims/fall-onset-20261112/cache), turn_replay_sweep.py tags roll-2.5, p2r3, trimmed; walk_brain.IMU_PITCH_TRIM_DEG and IMU_ROLL_TRIM_DEG",
@@ -495,7 +520,7 @@
           ],
           "note": "Board socket: Molex PicoBlade 1.25 mm 5-pin (photo 2026-10-28; Innomaker pin order red 5V, white D-, green D+, black GND, shield). The 2026-10-28 cut-and-splice of the factory cable failed; no splice route",
           "socket_circuits": "2026-11-12, from documents, not yet confirmed on the part: the 5 V pin (silk V) is the one nearest the corner mounting hole, and it is Molex circuit 5 of the socket; circuit 1 is the shield at the other end (1 shield G, 2 GND G, 3 D+ P, 4 D- M, 5 5V V). Chain: silk V M P G G with V at the corner hole (Innomaker manual photos, github.com/INNO-MAKER/U20CAM-720P, board DT720-V1.0; Amazon gallery of B0CLRJZG8D); the socket's cut-down wall faces the board centre and the lock-window wall the board edge (same photos); Molex drawing 530470001-SD puts circuit 1 at the left when facing the lock-window wall with the opening up; the KiCad footprint Molex_PicoBlade_53047-0510 has pad 1 = circuit 1. Inferred links: the socket is a compatible part assumed to follow the Molex housing, and its orientation is read from seller photos. Downloads: head-usb-board-20261111/HANDOFF.md names them",
-            "seller_inquiry": "2026-10-29: asked InnoMaker USA (Amazon seller, B0CLRJZG8D; orders 2026-10-07 and 112-6361443-6313007 of 2026-10-23) whether a third camera can come with an extra ~50 cm cable (1.25 mm 5-pin board side to USB-A), price and how to order; Amazon says reply expected by 2026-10-31. Seller replied 2026-11-02 3:19 AM (Amazon thread): 'Our store also sells a cable specifically designed for this camera separately. The length of the cable is 1 meter. If you can't find please send us email'. So a separate 1 m cable exists; no 50 cm offered, no price, listing or connector confirmation given. Nothing ordered."
+          "seller_inquiry": "2026-10-29: asked InnoMaker USA (Amazon seller, B0CLRJZG8D; orders 2026-10-07 and 112-6361443-6313007 of 2026-10-23) whether a third camera can come with an extra ~50 cm cable (1.25 mm 5-pin board side to USB-A), price and how to order; Amazon says reply expected by 2026-10-31. Seller replied 2026-11-02 3:19 AM (Amazon thread): 'Our store also sells a cable specifically designed for this camera separately. The length of the cable is 1 meter. If you can't find please send us email'. So a separate 1 m cable exists; no 50 cm offered, no price, listing or connector confirmation given. Nothing ordered."
         },
         "cablecreation_usbc_pigtail": {
           "part": "CableCreation right-angle USB-C OTG pigtail B0194WSKOM",
@@ -545,7 +570,11 @@
           "status": "in cart, not ordered (added 2026-10-26 in Shawn's Chrome)",
           "purpose": "custom rectangular beak contact film (copper foil electrodes + Velostat) cut to the upper beak underside, about 84 x 30 mm flat at z 106.5, speaker holes left open; read by XIAO ADC D9/D10"
         },
-        "head_usb_board_jlcpcb": {"part": "Head USB board draft 3 (head-usb-board-20261111), 5 assembled boards from JLCPCB", "status": "NOT ORDERED, nothing paid. Shawn cancelled the US order 2026-11-12 night ('取消吧'): order W2026111308410924 reads Order Cancelled in his JLCPCB order history. Reason: he flies to China 2026-12-05 and about USD 71 of the USD 154.40 total was US-only cost (freight 30.05, duty 28.85, disbursement 4.44, sales tax 7.93). Plan in his words: '文件可以保存 回国还能用'. The board is to be ordered in China from the saved files (head-usb-board-20261111/pcb/build/fab: gerber.zip, bom.csv, cpl.csv; steps in HANDOFF.md 'Ordering in China'); domestic prices not quoted yet. The old Standard item gerber_Y2 is still in the JLCPCB cart, unticked. History of the cancelled US order follows. It was IN THE CART since 2026-11-12, not paid. Item (ticked), chosen by Shawn 2026-11-12 ('ok 这个好'): gerber_Y3, PCB prototype Y3-14104556A (5 boards, ENIG, default JLC04161H-7628 stack) and Economic PCBA SMT026111360070 (2 of the 5 assembled, depanelled before delivery), from the board rerouted with 0.21 mm / 0.13 mm USB pairs (commit 506fe342). Cart summary read 2026-11-12 evening: merchandise USD 82.40, shipping estimate USD 26.60 (UPS Express Saver DDP), coupon -10.00, subtotal USD 99.00, estimated ship date 2026-11-19; customs description: DIY Hobby Circuit Board. The earlier Standard order gerber_Y2 (5 assembled, USD 135.05, old 3313-stack Gerbers) is still listed in the cart, unticked: it must not be checked out. Shawn said '下单' 2026-11-12 on the USD 99.00 cart figure. Checkout page (trade.jlcpcb.com, read 2026-11-12 night, only gerber_Y3 in the settlement): shipping address saved in the account (legal name, Pittsburgh home address, US mobile); the cart figure left out US import duty. Totals before the coupon, which is applied in the payment step: UPS Express Saver DDP (2-4 business days, selected) shipping 30.05 + customs duty 28.85 + duty disbursement fee 4.44 = USD 145.74; DHL Express DDP and FedEx Express DDP (3-5 days) each shipping 35.00 + duty 28.85 + fee 7.52 = USD 153.77; Global Standard Direct Line is refused for this order (page: only for orders under USD 59.00). Shawn then agreed to the new total ('行吧 试试'), Submit Order was clicked 2026-11-12 night: an UNPAID order now exists (batch W2026111308410924), stopped on the payment page, NOT PAID. Payment page added US sales tax 7.93 and a PayPal fee 0.73: grand total USD 154.40 before a coupon (three coupons offered there: 10 shipping, 6 PCB, 10 SMT; one per order). Shawn stopped the flow before payment and is reconsidering whether to order from the US at all, since he flies to China 2026-12-05 and the domestic route has no US duty, tax or international freight. Do not pay without his new word. Quote history: design saved there as project 'gerber' (Gerber, BOM and corrected placement file uploaded; all 26 BOM lines matched and selected; placement preview checked part by part). Options chosen: 4 layers, 30 x 30 mm, 1.6 mm, stackup JLC04161H-3313, ENIG, vias plugged, no impedance-control service, Standard PCBA top side, 5 of 5 assembled, edge rails removed by JLCPCB. Quote: PCB USD 25.35 + assembly USD 109.70 = USD 135.05 before shipping (page estimate UPS Express Saver DDP USD 26.60) and before coupons or tax. Waiting for Shawn's word on the total. The camera-to-board lead (double-ended 1.25 mm 5-pin) is not owned, not in a cart, not ordered: every short ready-made one found is crossed 1 to 5 (Molex 15134-0500 drawing; Amazon B09DSK8KPS photos), so Shawn re-pins one end (Shawn 2026-11-12: 换下线序很快); the board keeps the camera's pin order on J_CAM"}, "camera_short_usb_cables_20261103": {
+        "head_usb_board_jlcpcb": {
+          "part": "Head USB board draft 3 (head-usb-board-20261111), 5 assembled boards from JLCPCB",
+          "status": "NOT ORDERED, nothing paid. Shawn cancelled the US order 2026-11-12 night ('取消吧'): order W2026111308410924 reads Order Cancelled in his JLCPCB order history. Reason: he flies to China 2026-12-05 and about USD 71 of the USD 154.40 total was US-only cost (freight 30.05, duty 28.85, disbursement 4.44, sales tax 7.93). Plan in his words: '文件可以保存 回国还能用'. The board is to be ordered in China from the saved files (head-usb-board-20261111/pcb/build/fab: gerber.zip, bom.csv, cpl.csv; steps in HANDOFF.md 'Ordering in China'); domestic prices not quoted yet. The old Standard item gerber_Y2 is still in the JLCPCB cart, unticked. History of the cancelled US order follows. It was IN THE CART since 2026-11-12, not paid. Item (ticked), chosen by Shawn 2026-11-12 ('ok 这个好'): gerber_Y3, PCB prototype Y3-14104556A (5 boards, ENIG, default JLC04161H-7628 stack) and Economic PCBA SMT026111360070 (2 of the 5 assembled, depanelled before delivery), from the board rerouted with 0.21 mm / 0.13 mm USB pairs (commit 506fe342). Cart summary read 2026-11-12 evening: merchandise USD 82.40, shipping estimate USD 26.60 (UPS Express Saver DDP), coupon -10.00, subtotal USD 99.00, estimated ship date 2026-11-19; customs description: DIY Hobby Circuit Board. The earlier Standard order gerber_Y2 (5 assembled, USD 135.05, old 3313-stack Gerbers) is still listed in the cart, unticked: it must not be checked out. Shawn said '下单' 2026-11-12 on the USD 99.00 cart figure. Checkout page (trade.jlcpcb.com, read 2026-11-12 night, only gerber_Y3 in the settlement): shipping address saved in the account (legal name, Pittsburgh home address, US mobile); the cart figure left out US import duty. Totals before the coupon, which is applied in the payment step: UPS Express Saver DDP (2-4 business days, selected) shipping 30.05 + customs duty 28.85 + duty disbursement fee 4.44 = USD 145.74; DHL Express DDP and FedEx Express DDP (3-5 days) each shipping 35.00 + duty 28.85 + fee 7.52 = USD 153.77; Global Standard Direct Line is refused for this order (page: only for orders under USD 59.00). Shawn then agreed to the new total ('行吧 试试'), Submit Order was clicked 2026-11-12 night: an UNPAID order now exists (batch W2026111308410924), stopped on the payment page, NOT PAID. Payment page added US sales tax 7.93 and a PayPal fee 0.73: grand total USD 154.40 before a coupon (three coupons offered there: 10 shipping, 6 PCB, 10 SMT; one per order). Shawn stopped the flow before payment and is reconsidering whether to order from the US at all, since he flies to China 2026-12-05 and the domestic route has no US duty, tax or international freight. Do not pay without his new word. Quote history: design saved there as project 'gerber' (Gerber, BOM and corrected placement file uploaded; all 26 BOM lines matched and selected; placement preview checked part by part). Options chosen: 4 layers, 30 x 30 mm, 1.6 mm, stackup JLC04161H-3313, ENIG, vias plugged, no impedance-control service, Standard PCBA top side, 5 of 5 assembled, edge rails removed by JLCPCB. Quote: PCB USD 25.35 + assembly USD 109.70 = USD 135.05 before shipping (page estimate UPS Express Saver DDP USD 26.60) and before coupons or tax. Waiting for Shawn's word on the total. The camera-to-board lead (double-ended 1.25 mm 5-pin) is not owned, not in a cart, not ordered: every short ready-made one found is crossed 1 to 5 (Molex 15134-0500 drawing; Amazon B09DSK8KPS photos), so Shawn re-pins one end (Shawn 2026-11-12: 换下线序很快); the board keeps the camera's pin order on J_CAM"
+        },
+        "camera_short_usb_cables_20261103": {
           "part": "USB-A to MX1.25 5-pin camera data cables, A5 30 cm and A6 50 cm",
           "status": "ordered 2026-11-03, user-reported paid and verified in user-provided native AliExpress orders screenshot: Integrity Paper Student Store A5 30 cm x1 and A6 50 cm x1, two separate orders, combined displayed total USD 4.46. Arrived and fitted on the camera 2026-11-11 (Shawn: 摄像头的usb线到了 换上去了; which length not named). With it the camera does NOT enumerate: boot of 2026-11-11 14:23 UTC, port0 Type-C host/source with partner CC1 Rd (same as working boots 11-02 and 11-06), but zero USB connect events on bus 1/2 (xhci2, where 0c45:6367 appeared before). Board-side pin order of this generic cable not yet compared with the old cable.",
           "authorization": "Shawn 2026-11-03: 已经登录好了，你看一看加到购物车里是什么样的。挑快一点的吧。如果价格差不多的话；如果差很多，那就再看。 No payment authorization.",
@@ -695,7 +724,13 @@
       },
       "meaning": "Which RoboClub PLA colours can be printed now. A release plate in a colour that is out is not deliverable; scheme C (white shells, thighs, cap) resumes when white is restocked.",
       "verified_at": "2026-11-12",
-      "superseded": [{"value": {"orange_pla": "available; interim colour for saddle V2 parts"}, "until": "2026-11-12", "why": "orange spool gone (Shawn)"}],
+      "superseded": [
+        {
+          "value": "colours recorded as *_petg",
+          "until": "2026-10-25 evening",
+          "why": "agent assumption, never verified; every printed MicroDuck part is PLA"
+        }
+      ],
       "source": "Shawn 2026-11-12: roboclub里目前没有橙色filament 我先用黑色打了 | Shawn 2026-10-25: 目前有个问题就是白色filament用完了 roboclub补货可能要一周 先用其他颜色打吧 比如橙色 | material: Shawn 2026-10-25: \"什么PETG 我们用的PLA\"; the 18:38 entry said PETG without any source (agent assumption), corrected the same evening",
       "measure": "ask Shawn or look at the RoboClub filament shelf before slicing a plate; update when a spool runs out or arrives",
       "max_age_days": 14,
@@ -703,14 +738,7 @@
         "guide/print/release-* colour choice",
         "print-delivery-format memory"
       ],
-      "material": "PLA (RoboClub stock; the release pipeline slices every plate with the PLA profiles and asserts filament_type == PLA, release_pipeline_v2.py check_profile)",
-      "superseded": [
-        {
-          "value": "colours recorded as *_petg",
-          "until": "2026-10-25 evening",
-          "why": "agent assumption, never verified; every printed MicroDuck part is PLA"
-        }
-      ]
+      "material": "PLA (RoboClub stock; the release pipeline slices every plate with the PLA profiles and asserts filament_type == PLA, release_pipeline_v2.py check_profile)"
     },
     "walking_stability": {
       "value": "mostly stable, not fall-free: 2026-11-02/04/06 logged actions, each fall charged to the one action it began in: walks 63 of 67 upright, in-place turns 33 of 35 (all 35 at 0.5 rad/s; the two falls, 11-02 15:33:31 and 11-06 13:57:40, began 0.5-0.9 s after the turn ended), zero-command balance 92 of 98 upright (6 falls), one kick and one stand fell; 14 falls in all. They cluster in short stretches at the start of sessions (11-04 10:53 and 11:08-11:09, 11-06 13:43 and 13:57-14:00)",
@@ -813,13 +841,43 @@
         "sound localisation (three-mic report 20261024)"
       ],
       "consumer_checks": [
-        {"file": "bringup/A7Z-PINS.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
-        {"file": "bringup/A7Z-SOLDER.html", "must_not_match": "先不插", "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"},
-        {"file": "head-usb-board-20261111/HANDOFF.md", "must_not_match": "(?m)^.*back-of-head mic.*not plugged\\.$", "must_match": "fitted and working since 2026-10-29", "why": "the handoff copied the stale guide page on 2026-11-11"},
-        {"file": "../docs/PET_ROBOT_FEATURES.md", "must_not_match": "Ear mics: in hand, not soldered|Waits on the (?:ear )?mics", "why": "all three microphones fitted and recording since 2026-10-29"},
-        {"file": "guide/content/steps.py", "must_not_match": "UNPLUGGED|Pins 8 and 10 stay empty|nineteen plugs", "why": "assembly guide still treats the back microphone as optional and unplugged (11 head wires, 19 plugs); open 2026-11-11: correcting it changes guide-data.json, which needs a guide rebuild and a print-gate rerun"}
+        {
+          "file": "bringup/A7Z-PINS.html",
+          "must_not_match": "先不插",
+          "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"
+        },
+        {
+          "file": "bringup/A7Z-SOLDER.html",
+          "must_not_match": "先不插",
+          "why": "back microphone SD has been plugged on pin 10 since 2026-10-29"
+        },
+        {
+          "file": "head-usb-board-20261111/HANDOFF.md",
+          "must_not_match": "(?m)^.*back-of-head mic.*not plugged\\.$",
+          "must_match": "fitted and working since 2026-10-29",
+          "why": "the handoff copied the stale guide page on 2026-11-11"
+        },
+        {
+          "file": "../docs/PET_ROBOT_FEATURES.md",
+          "must_not_match": "Ear mics: in hand, not soldered|Waits on the (?:ear )?mics",
+          "why": "all three microphones fitted and recording since 2026-10-29"
+        },
+        {
+          "file": "guide/content/steps.py",
+          "must_not_match": "UNPLUGGED|Pins 8 and 10 stay empty|nineteen plugs",
+          "why": "assembly guide still treats the back microphone as optional and unplugged (11 head wires, 19 plugs); open 2026-11-11: correcting it changes guide-data.json, which needs a guide rebuild and a print-gate rerun"
+        }
       ],
-      "claim_terms": ["(?:后脑勺?|脑后|头后面?)(?:那个|那颗|的)?麦克风", "耳朵(?:的)?麦克风", "第三个麦克风", "三个麦克风", "麦克风.{0,14}(?:没插|未插|不插|没接|未接|闲置|可选|没焊|备用)", "\\b(?:back|rear|third)[- ](?:of[- ]head )?mic(?:rophone)?s?\\b", "\\bear mic(?:rophone)?s?\\b", "\\bINMP441\\b"]
+      "claim_terms": [
+        "(?:后脑勺?|脑后|头后面?)(?:那个|那颗|的)?麦克风",
+        "耳朵(?:的)?麦克风",
+        "第三个麦克风",
+        "三个麦克风",
+        "麦克风.{0,14}(?:没插|未插|不插|没接|未接|闲置|可选|没焊|备用)",
+        "\\b(?:back|rear|third)[- ](?:of[- ]head )?mic(?:rophone)?s?\\b",
+        "\\bear mic(?:rophone)?s?\\b",
+        "\\bINMP441\\b"
+      ]
     },
     "jaw_grip_current_ma": {
       "value": 150,
@@ -1204,8 +1262,61 @@
       "source": "gh issue list -R qilinxiaoxiang/microduck_rl (live readback 2026-11-06); Discord 16-831 · Microduck #general read in Shawn's Chrome 2026-11-06",
       "measure": "gh issue list -R qilinxiaoxiang/microduck_rl --state all --json number,title,state,assignees"
     },
-    "stand_posture_asbuilt": {"value": {"pelvis_roll_deg": "about 0 since 2026-11-13: 2026-11-17 on a floor, no trial zero shift, four walk-mode zero-command stops after a walk and after turns in four headings read -0.11, +0.29, -0.23, -0.29 (left side down positive), stand mode -1.4 while just set down; the IMU against the encoder model differs by -0.3 to -1.0 (+1.8 median 11-02..11-12). 11-13, eight stops after the right hip ID3/ID4 rescue, 0.43. Until 11-12: about 3, left side down. Cause of the change not established (FAULTS T11)", "measured_20261117": "log app1117-nooffset, guide/firmware/mac/play-locate-20261112/lean_walk_turn.py and stand_read.py; hip roll read R 6.1-7.5 / L 5.5-7.4, so by the sole formula below both soles about 2 to 4 deg outer edge down, left and right alike; head roll joint -0.35 to +0.53, head yaw -1 to -2.6. Not yet checked by a scan or Shawn's eye", "left_sole": "outer (left) edge lower by 5.0 and 6.1 deg in the two 2026-11-12 scans after a walk (10.9 in the poorer 11-04 scan). Earlier values of 2.2 to 2.8 were a biased estimate, 3 to 4 times too small", "flat_sole_hip_roll_deg": "about 3.7: sole side tilt = pelvis roll + hip roll - 3.7 (no ankle roll joint). Stand mode holds 4.5 / 4.5, walk mode at zero command 5.3 to 6.7 right, 6.6 to 6.9 left", "right_sole": "near flat in the 11-12 scans (1.3 and 0.1 deg; 2.1 on 11-04). The fits put it 3 to 6 mm above the left sole, but the raw toe-cap heights do not (left cap 2 mm higher), so the lift is not established", "after_a_walk": "walk mode at zero command (KP 200) holds roll +2.3 to +2.6 deg where stand mode (KP 400) holds +1.1 to +1.8; trunk against the table 1.7 and 3.1 deg left side down in the two 11-12 scans", "roll_outside_the_encoders_deg": "none found: with the true sole normal the logged joints predict the scanned soles within 1 to 2 deg (the earlier 1.5 to 2 was the biased estimate)", "hip_roll_encoders_deg": {"right": 7.2, "left": -6.2}, "imu_roll_reading_untrimmed_deg": "+3.1 in that pose; +2 to +3 at quiet stand in every log 2026-11-02..11-12; +1.8 on 2026-11-12 20:02 (stand on a table, trim 0, hip roll read +4.4 / -4.5, leg currents under 21 mA and equal left to right; Shawn's front photo IMG_7352 shows the pelvis about 1.3 deg left side down against the line of the feet)", "knee_current_left_over_right": "2.1 to 3.7 walking (2026-11-12)", "cause": "walk mode holds the hips wider than the flat-sole angle, so the robot rests on a sole edge and tips left (FAULTS.json H7); why the robot's policy holds them wider than the sim's is open"}, "meaning": "How the powered robot really stands against the floor. Until 2026-11-12 it was NOT level: any reading taken 'at stand' (IMU roll, joint loads, foot contact) is taken on a robot leaning about 3 deg to its left on the outer edge of the left sole. Never treat a stand reading as an offset of the sensor without a measurement that is independent of the sim. Shawn 2026-11-12: left foot on its outer edge standing and walking, body leaning left, also with a short USB cable.", "verified_at": "2026-11-17", "source": "11-04 powered-stand scan 105634 with log app1104-105329 (10:56:34), scan-20261101/floor_truth.py blocks 2 and 3 (Mac mini ~/sims/scan-1104); guide/firmware/mac/play-locate-20261112/README.md correction paragraph. One scan, angles good to 2 to 3 deg; its trunk and thigh fits (5.5 mm rms) read level and are the weaker evidence.", "measure": "scan the powered stand, then scan-20261101: inspect_scan.py, crop_robot.py, model_pose.py, fit_scan.py, floor_truth.py <dir> <scan> stand; quick read without a scan: lean_walk_turn.py then stand_read.py --mode walk", "max_age_days": 30, "superseded": [{"value": "pelvis roll about 3 deg left side down, left sole outer edge 5 to 6 deg low, right near flat (2026-11-02..11-12)", "until": "2026-11-17", "why": "2026-11-17 walk-mode stops read level within 0.3 deg in four headings; 11-13 already 0.43"}]},
-    "sensor_and_zero_offsets_in_code": {"value": {"imu_pitch_trim_deg": 4.0, "imu_roll_trim_deg": 0.0, "joint_zero_offsets_deg": {"right_knee": 45.0, "left_knee": -45.0, "left_ankle": -90.0, "right_hip_pitch": -91.41}}, "meaning": "The IMU trims and joint zero offsets in the repository's walk_brain.py and pi/joint_signs.py. Each nonzero trim and each joint offset beyond the four structural ones needs an entry under evidence with independent_measurement: a measurement that does not come from the sim (scan through floor_truth.py, a level or a jig on the robot). A sim that reproduces the robot's readings after the change is not such a measurement. The probe fails the state check when an entry is missing, and it must pass before the files are copied to the A7Z. The A7Z copy is tracked in imu_mount_trim.", "evidence": {"imu_pitch_trim_deg": {"independent_measurement": null, "grandfathered": "2026-10-15: joints matched the sim within 0.6 deg with a 4 deg sensor pitch; sim match only, never measured independently"}}, "verified_at": "2026-11-12", "tolerance": 0, "source": "guide/firmware/mac/walk_brain.py IMU_PITCH_TRIM_DEG and IMU_ROLL_TRIM_DEG, guide/firmware/pi/joint_signs.py MOTOR_OFFSET", "measure": "the probe reads both files", "probe": "~/.venvs/microduck-dyn/bin/python guide/firmware/mac/robot_state_check.py --probe sensor_and_zero_offsets_in_code", "max_age_days": 30}
+    "stand_posture_asbuilt": {
+      "value": {
+        "pelvis_roll_deg": "about 0 since 2026-11-13: 2026-11-17 on a floor, no trial zero shift, four walk-mode zero-command stops after a walk and after turns in four headings read -0.11, +0.29, -0.23, -0.29 (left side down positive), stand mode -1.4 while just set down; the IMU against the encoder model differs by -0.3 to -1.0 (+1.8 median 11-02..11-12). 11-13, eight stops after the right hip ID3/ID4 rescue, 0.43. Until 11-12: about 3, left side down. Cause of the change not established (FAULTS T11)",
+        "measured_20261117": "log app1117-nooffset, guide/firmware/mac/play-locate-20261112/lean_walk_turn.py and stand_read.py; hip roll read R 6.1-7.5 / L 5.5-7.4, so by the sole formula below both soles about 2 to 4 deg outer edge down, left and right alike; head roll joint -0.35 to +0.53, head yaw -1 to -2.6. Not yet checked by a scan or Shawn's eye",
+        "left_sole": "outer (left) edge lower by 5.0 and 6.1 deg in the two 2026-11-12 scans after a walk (10.9 in the poorer 11-04 scan). Earlier values of 2.2 to 2.8 were a biased estimate, 3 to 4 times too small",
+        "flat_sole_hip_roll_deg": "about 3.7: sole side tilt = pelvis roll + hip roll - 3.7 (no ankle roll joint). Stand mode holds 4.5 / 4.5, walk mode at zero command 5.3 to 6.7 right, 6.6 to 6.9 left",
+        "right_sole": "near flat in the 11-12 scans (1.3 and 0.1 deg; 2.1 on 11-04). The fits put it 3 to 6 mm above the left sole, but the raw toe-cap heights do not (left cap 2 mm higher), so the lift is not established",
+        "after_a_walk": "walk mode at zero command (KP 200) holds roll +2.3 to +2.6 deg where stand mode (KP 400) holds +1.1 to +1.8; trunk against the table 1.7 and 3.1 deg left side down in the two 11-12 scans",
+        "roll_outside_the_encoders_deg": "none found: with the true sole normal the logged joints predict the scanned soles within 1 to 2 deg (the earlier 1.5 to 2 was the biased estimate)",
+        "hip_roll_encoders_deg": {
+          "right": 7.2,
+          "left": -6.2
+        },
+        "imu_roll_reading_untrimmed_deg": "+3.1 in that pose; +2 to +3 at quiet stand in every log 2026-11-02..11-12; +1.8 on 2026-11-12 20:02 (stand on a table, trim 0, hip roll read +4.4 / -4.5, leg currents under 21 mA and equal left to right; Shawn's front photo IMG_7352 shows the pelvis about 1.3 deg left side down against the line of the feet)",
+        "knee_current_left_over_right": "2.1 to 3.7 walking (2026-11-12)",
+        "cause": "walk mode holds the hips wider than the flat-sole angle, so the robot rests on a sole edge and tips left (FAULTS.json H7); why the robot's policy holds them wider than the sim's is open"
+      },
+      "meaning": "How the powered robot really stands against the floor. Until 2026-11-12 it was NOT level: any reading taken 'at stand' (IMU roll, joint loads, foot contact) is taken on a robot leaning about 3 deg to its left on the outer edge of the left sole. Never treat a stand reading as an offset of the sensor without a measurement that is independent of the sim. Shawn 2026-11-12: left foot on its outer edge standing and walking, body leaning left, also with a short USB cable.",
+      "verified_at": "2026-11-17",
+      "source": "11-04 powered-stand scan 105634 with log app1104-105329 (10:56:34), scan-20261101/floor_truth.py blocks 2 and 3 (Mac mini ~/sims/scan-1104); guide/firmware/mac/play-locate-20261112/README.md correction paragraph. One scan, angles good to 2 to 3 deg; its trunk and thigh fits (5.5 mm rms) read level and are the weaker evidence.",
+      "measure": "scan the powered stand, then scan-20261101: inspect_scan.py, crop_robot.py, model_pose.py, fit_scan.py, floor_truth.py <dir> <scan> stand; quick read without a scan: lean_walk_turn.py then stand_read.py --mode walk",
+      "max_age_days": 30,
+      "superseded": [
+        {
+          "value": "pelvis roll about 3 deg left side down, left sole outer edge 5 to 6 deg low, right near flat (2026-11-02..11-12)",
+          "until": "2026-11-17",
+          "why": "2026-11-17 walk-mode stops read level within 0.3 deg in four headings; 11-13 already 0.43"
+        }
+      ]
+    },
+    "sensor_and_zero_offsets_in_code": {
+      "value": {
+        "imu_pitch_trim_deg": 4.0,
+        "imu_roll_trim_deg": 0.0,
+        "joint_zero_offsets_deg": {
+          "right_knee": 45.0,
+          "left_knee": -45.0,
+          "left_ankle": -90.0,
+          "right_hip_pitch": -91.41
+        }
+      },
+      "meaning": "The IMU trims and joint zero offsets in the repository's walk_brain.py and pi/joint_signs.py. Each nonzero trim and each joint offset beyond the four structural ones needs an entry under evidence with independent_measurement: a measurement that does not come from the sim (scan through floor_truth.py, a level or a jig on the robot). A sim that reproduces the robot's readings after the change is not such a measurement. The probe fails the state check when an entry is missing, and it must pass before the files are copied to the A7Z. The A7Z copy is tracked in imu_mount_trim.",
+      "evidence": {
+        "imu_pitch_trim_deg": {
+          "independent_measurement": null,
+          "grandfathered": "2026-10-15: joints matched the sim within 0.6 deg with a 4 deg sensor pitch; sim match only, never measured independently"
+        }
+      },
+      "verified_at": "2026-11-12",
+      "tolerance": 0,
+      "source": "guide/firmware/mac/walk_brain.py IMU_PITCH_TRIM_DEG and IMU_ROLL_TRIM_DEG, guide/firmware/pi/joint_signs.py MOTOR_OFFSET",
+      "measure": "the probe reads both files",
+      "probe": "~/.venvs/microduck-dyn/bin/python guide/firmware/mac/robot_state_check.py --probe sensor_and_zero_offsets_in_code",
+      "max_age_days": 30
+    }
   },
   "sim_real_condition": "The as-built suite's 'real' cases take every sensor and supply flag from these facts through robot_state_check.py --print-sim-args (--volt from servo_rail_v, IMU hold only if imu_rate_hz < 49, read drops only if servo_read_drop_fraction > 0, extra sensor delay only if imu_added_delay_ms > 0). Cases with harsher settings are 'stress' cases: report them, never accept or reject a policy on them."
 }
