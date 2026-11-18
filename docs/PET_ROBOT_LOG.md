@@ -1729,3 +1729,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   and load 21 to 47. Back at 18:11; ports 5180, 5181, 8766 and 5050 answer. All simulation jobs there were lost,
   the Kaggle session is unaffected. Rule from now: one simulation job at a time on the Mac mini, 8 workers at most,
   enforced by a lock and a swap pre-flight in the launch scripts; gap checks first, acceptance after.
+- 2026-11-18 18:16 Mac mini limit in place (agent-reported, lock file seen by the main session): `train/mini_lock.sh`,
+  one simulation job at a time, pre-flight refuses above 4 GB swap used or 10 simulation processes, evaluator pool
+  capped at 8; refusal, stale-lock and queueing tested. Gap checks restarted alone at 18:16.
+  First gap-check result (read by the main session from `eval/bc_t2a_999_*priv*.json`): teacher A-999 on a full-pack
+  robot with its privileged inputs set to the no-pack constants, with only payload and COM replaced, or all zeroed
+  falls 20/20 in the COM x +10 mm and shove cases, at 0.4 to 1.0 s. The teacher's actions depend sharply on the seven
+  privileged inputs; a student starting from an empty state cannot know them in the first half second. Ordered next:
+  a sanity cell (no-pack robot with no-pack constants must give 0/20) and a precision sweep (payload input x0.9 /
+  0.75 / 0.5, COM x input off by 5 and 10 mm, velocity inputs zeroed).
