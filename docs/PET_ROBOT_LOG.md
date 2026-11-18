@@ -1685,3 +1685,9 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   dominated by A-999, and push Mamba and LSTM students of A-999 at once instead of waiting about 70 minutes for a
   free slot. Modal was considered and not used: the distillation worker has no dollar cap and no tested resume, the
   Modal client is not installed in the project venv, and set-up would have taken most of the time it saved.
+- 2026-11-18 14:37 The cancel did not happen (the decision above was made about 14:33, not 14:50): the Kaggle CLI has
+  no cancel, the SDK call needs a session id no endpoint returns, and a new version push is refused while two GPU
+  sessions run. The only command-line route is `kaggle kernels delete`, a permanent delete, which needs Shawn's own
+  confirmation and was not run. Default path: the A-999 students push by themselves (`ts2_push_when_free.sh`, every
+  2 minutes) when the control session ends about 15:40, result about 17:25. Shawn can stop `microduck-ts2-mamba` in
+  the Kaggle web page to start them about an hour earlier.
