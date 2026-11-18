@@ -114,6 +114,18 @@ def episode(job):
     # entries in this sim process, i.e. the range the runtime Brain clamps policy goals to (unset: unchanged)
     if os.environ.get("SPK3DIAG_JOINT_RANGE"):
         b.walk_brain.JOINT_RANGE.update({k: tuple(v) for k, v in json.loads(os.environ["SPK3DIAG_JOINT_RANGE"]).items()})
+    # diagnostics only (ts_sep.py, 2026-11-18): JSON {NAME: number} replaces module constants of walk_brain in this sim
+    # process, e.g. {"HEADING_KP": 0, "HEADING_KI": 0} switches the runtime's heading hold off (unset: unchanged)
+    if os.environ.get("FLIGHT_BRAIN_SET"):
+        for k, v in json.loads(os.environ["FLIGHT_BRAIN_SET"]).items():
+            assert hasattr(b.walk_brain, k), k
+            setattr(b.walk_brain, k, v)
+    # diagnostics only (ts_sep.py, 2026-11-18): JSON merged into the run config that evaluate_delay.load builds the
+    # simulated robot from, e.g. {"current_limit": 100} lifts the servo current limit (1.47 A = the 0.538 N m clamp)
+    if os.environ.get("FLIGHT_CFG_SET"):
+        if not hasattr(b, "_flight_orig_cfg"):
+            b._flight_orig_cfg = b.cfg
+        b.cfg = lambda *a, **k: dict(b._flight_orig_cfg(*a, **k), **json.loads(os.environ["FLIGHT_CFG_SET"]))
 
     # the seeing pick (--sp-at) wraps visual.apply_visual_to_spec on every run; worker processes are reused, so a
     # second episode would wrap the wrapper and add the jaw body twice ("repeated name 'jaw' in body", 2026-11-11):

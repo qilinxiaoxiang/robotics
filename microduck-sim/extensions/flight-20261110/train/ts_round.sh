@@ -88,6 +88,22 @@ case "$1" in
     scp -q mac-mini:/tmp/ts_teval_${NM}_$LD/audit.json $T/out/teval_${NM}_$LD.json || true
     grep -E "\[audit\] universal3t|Traceback|Error" $T/logs/teval_${NM}_$LD.log | cut -c1-300 | head -5
     ;;
+  tdelay)
+    # zsh train/ts_round.sh tdelay <name> <policy.onnx> <load> <tag> <delay.json>
+    # teval with flight_audit.py --delay-mods: the training env with its delays switched (-> out/tsep_<name>_<load>_<tag>.json)
+    # optional 7th argument: the audit case to add beside the intended walk (walk025 = vx 0.25 held; default none)
+    NM=$2; LD=$4; TG=$5; CS=${7:-none}
+    rsync -a "$3" mac-mini:$REMOTE/smoke-assets/ts_eval_$NM.onnx
+    rsync -a "$6" mac-mini:$REMOTE/smoke-assets/ts_delay_$TG.json
+    wait_idle
+    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs universal3t \
+      --cases $CS --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/$FL/train/rm_universal3.json)\" --device cpu --num-envs 128 --steps 500 \
+      --delay-mods \"\$(cat \$HOME/$REMOTE/smoke-assets/ts_delay_$TG.json)\" \
+      --assets $A --policy p=$A/ts_eval_$NM.onnx --walker p --out /tmp/ts_tsep_${NM}_${LD}_$TG 2>&1" \
+      > $T/logs/tsep_${NM}_${LD}_$TG.log || true
+    scp -q mac-mini:/tmp/ts_tsep_${NM}_${LD}_$TG/audit.json $T/out/tsep_${NM}_${LD}_$TG.json || true
+    grep -E "\[audit\] universal3t|\[audit\] delay|Traceback|Error" $T/logs/tsep_${NM}_${LD}_$TG.log | cut -c1-300 | head -6
+    ;;
   adapt)
     NM=$2; LD=$5
     rsync -a "$3" mac-mini:$REMOTE/smoke-assets/ts_adapt_$NM.pt

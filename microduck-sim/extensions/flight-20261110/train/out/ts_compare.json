@@ -595,5 +595,226 @@
    "head motion at load100: scan and head-down walks 0 falls: falls [0, 19, 20], head-down walk speeds 0.2899 / None"
   ],
   "missing": []
+ },
+ "ts_lstm_a": {
+  "loads": {
+   "none": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1926,
+    "walk_leg_p99_nm": 0.43,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1794
+   },
+   "load025": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1884,
+    "walk_leg_p99_nm": 0.44,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.185
+   },
+   "load050": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1839,
+    "walk_leg_p99_nm": 0.48,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1746
+   },
+   "load075": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1829,
+    "walk_leg_p99_nm": 0.51,
+    "head_walk_falls": 1,
+    "head_walk_speed": 0.1723
+   },
+   "nobatt": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1787,
+    "walk_leg_p99_nm": 0.48,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1701
+   },
+   "load100": {
+    "stand_falls": 0,
+    "walk_falls": 9,
+    "walk_speed": 0.1743,
+    "walk_leg_p99_nm": 0.54,
+    "head_walk_falls": 4,
+    "head_walk_speed": 0.169
+   }
+  },
+  "extra": {
+   "nominal_walk": {
+    "falls": 6,
+    "speed": 0.176
+   },
+   "comx+10_stand": {
+    "falls": 18,
+    "speed": -0.0002
+   },
+   "comx+10_walk": {
+    "falls": 18,
+    "speed": 0.2066
+   },
+   "comx-10_walk": {
+    "falls": 2,
+    "speed": 0.1724
+   },
+   "mass+10_walk": {
+    "falls": 13,
+    "speed": 0.1729
+   },
+   "nominal_walk_shove05": {
+    "falls": 16,
+    "speed": 0.1768
+   },
+   "nominal_stand_shove05": {
+    "falls": 0,
+    "speed": 0.0037
+   },
+   "nominal_walk_landing": {
+    "falls": 6,
+    "speed": 0.1819
+   },
+   "nominal_turnL": {
+    "falls": 0,
+    "speed": 0.3018
+   },
+   "nopack_turnL": {
+    "falls": 0,
+    "speed": 0.3036
+   }
+  },
+  "verdict": "FAIL",
+  "failed_lines": [
+   "with pack, nominal_walk: falls no more than the reference: 6 vs fq2_1999 0",
+   "with pack, mass+10_walk: falls no more than the reference: 13 vs fq2_1999 0",
+   "with pack, comx+10_stand: falls no more than the reference: 18 vs fq2_1999 0",
+   "with pack, comx+10_walk: falls no more than the reference: 18 vs fq2_1999 0",
+   "with pack, comx-10_walk: falls no more than the reference: 2 vs fq2_1999 0",
+   "with pack, nominal_walk_shove05: falls no more than the reference: 16 vs fq2_1999 1",
+   "with pack, nominal_walk_landing: falls no more than the reference: 6 vs fq2_1999 0",
+   "with pack: walk torque p99 at most 0.48 N m: 0.54",
+   "load075: 0 falls, hip p99 <= 0.45, <= 1 % at 95 % of clamp (speed: the 0.15 floor line): falls 0/0, walk 0.1829, hip p99 0.43, sat 0.0153",
+   "load100 (full pack): 0 falls stand and walk (per-load view of the with-pack line): falls 0/9, walk fall times [9.72, 10.38, 10.58, 12.24, 12.36, 12.74], walk 0.1743",
+   "toe-out at none: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 5.18 / 5.37, p95 9.84 / 10.13, step width 122.4",
+   "toe-out at nobatt: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 6.76 / 8.43, p95 9.96 / 14.26, step width 124.25",
+   "toe-out at full: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 6.62 / 8.11, p95 13.47 / 15.77, step width 119.15",
+   "head motion at load100: scan and head-down walks 0 falls: falls [0, 10, 11], head-down walk speeds 0.1724 / 0.1709"
+  ],
+  "missing": []
+ },
+ "ts_mamba_a": {
+  "loads": {
+   "none": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1835,
+    "walk_leg_p99_nm": 0.43,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1857
+   },
+   "load025": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1829,
+    "walk_leg_p99_nm": 0.45,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1802
+   },
+   "load050": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1765,
+    "walk_leg_p99_nm": 0.45,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1741
+   },
+   "load075": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1762,
+    "walk_leg_p99_nm": 0.51,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1723
+   },
+   "nobatt": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1743,
+    "walk_leg_p99_nm": 0.48,
+    "head_walk_falls": 0,
+    "head_walk_speed": 0.1693
+   },
+   "load100": {
+    "stand_falls": 0,
+    "walk_falls": 0,
+    "walk_speed": 0.1709,
+    "walk_leg_p99_nm": 0.54,
+    "head_walk_falls": 2,
+    "head_walk_speed": 0.1653
+   }
+  },
+  "extra": {
+   "nominal_walk": {
+    "falls": 0,
+    "speed": 0.1736
+   },
+   "comx+10_stand": {
+    "falls": 7,
+    "speed": -0.0002
+   },
+   "comx+10_walk": {
+    "falls": 14,
+    "speed": 0.1895
+   },
+   "comx-10_walk": {
+    "falls": 0,
+    "speed": 0.1655
+   },
+   "mass+10_walk": {
+    "falls": 5,
+    "speed": 0.1697
+   },
+   "nominal_walk_shove05": {
+    "falls": 10,
+    "speed": 0.1751
+   },
+   "nominal_stand_shove05": {
+    "falls": 0,
+    "speed": 0.0034
+   },
+   "nominal_walk_landing": {
+    "falls": 1,
+    "speed": 0.1747
+   },
+   "nominal_turnL": {
+    "falls": 0,
+    "speed": 0.2991
+   },
+   "nopack_turnL": {
+    "falls": 0,
+    "speed": 0.3036
+   }
+  },
+  "verdict": "FAIL",
+  "failed_lines": [
+   "with pack, mass+10_walk: falls no more than the reference: 5 vs fq2_1999 0",
+   "with pack, comx+10_stand: falls no more than the reference: 7 vs fq2_1999 0",
+   "with pack, comx+10_walk: falls no more than the reference: 14 vs fq2_1999 0",
+   "with pack, nominal_walk_shove05: falls no more than the reference: 10 vs fq2_1999 1",
+   "with pack, nominal_walk_landing: falls no more than the reference: 1 vs fq2_1999 0",
+   "with pack: walk torque p99 at most 0.48 N m: 0.54",
+   "load075: 0 falls, hip p99 <= 0.45, <= 1 % at 95 % of clamp (speed: the 0.15 floor line): falls 0/0, walk 0.1762, hip p99 0.475, sat 0.0171",
+   "toe-out at none: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 4.63 / 5.56, p95 9.46 / 9.68, step width 121.75",
+   "toe-out at nobatt: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 6.25 / 8.47, p95 8.87 / 13.12, step width 123.5",
+   "toe-out at full: mean <= 12 L / 9 R deg, p95 <= 15, step width <= 105 mm: mean 6.51 / 8.14, p95 10.75 / 14.34, step width 123.9",
+   "head motion at load100: scan and head-down walks 0 falls: falls [0, 0, 1], head-down walk speeds 0.1706 / 0.1577"
+  ],
+  "missing": []
  }
 }

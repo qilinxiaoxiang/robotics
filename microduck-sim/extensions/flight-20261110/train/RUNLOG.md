@@ -541,3 +541,63 @@ running total of worst cases; real spend read from `modal billing report` before
   `eval/un_<dir>_walk_<load>.json`): both students fall 20/20 at none, 50 %, batteries out and full pack, against
   20/6/9/17 (LSTM) and 17/17/15/20 (Mamba) with the state carried. The students do use their state; it does not
   make them walk better than the one-frame control.
+- 09:05 Diagnostic session `microduck-ts-lstm-a` COMPLETE (1.64 h of quota; total for the round 6.41 h of the 10 h
+  cap, `kaggle_flight.py quota`). Both arms reached iteration 140 with run A as the teacher: LSTM 0.0336 it/s, action
+  MSE 0.0016, training-env falls 0.78 per env-min at 0.138 m/s (teacher 1.12); Mamba 0.0252 it/s, MSE 0.0010, falls
+  0.73 (teacher 0.79). Staged as `ckpt/ts_lstm_a`, `ckpt/ts_mamba_a` (final ONNX + `model_140.pt`).
+- 09:35 Full acceptance of the diagnostic students (`out/accept_ts_lstm_a.json`, `out/accept_ts_mamba_a.json`,
+  `out/ts_compare.json`, `out/accept_head_uni_a.json`): Mamba from run A FAIL with 11 failed lines, LSTM from run A
+  FAIL with 14, start point 10. Walk falls of 20 at none / 25 / 50 / 75 / nobatt / full: Mamba-A 0/0/0/0/0/0 at 0.17
+  to 0.18 m/s, LSTM-A 0/0/0/0/0/9 at 0.17 to 0.19 m/s; head-command walk Mamba-A 0/0/0/0/0/2, LSTM-A 0/0/0/1/0/4.
+  With pack: comx+10 walk 14 (Mamba-A), 18 (LSTM-A), start 19; walking shove 10, 16, start 11; mass+10 walk 5, 13,
+  start 2. Reading: a recurrent student carries over to the runtime simulation when its teacher's gait does (the
+  Mamba student matches run A line for line, the LSTM is weaker at full pack). The falls of `ts_lstm` and `ts_mamba`
+  therefore come from the teacher they copied (iteration 750, the universal3 gait that also falls as the one-frame
+  control), not from the recurrent core or the evaluator.
+
+### Why the universal3-trained policies fall in the runtime simulation (2026-11-18 09:40 to 11:00, Mac mini CPU only)
+
+Question: the one-frame control (`tsc_750`, `tsc_999`) walks in the training env and falls in the runtime simulation.
+Method: the same ONNX in the runtime simulation with one difference switched at a time (`ts_sep.py`, 20 seeds, result
+files `eval/sep_<dir>_<load>_<tag>.json`, logs `logs/ts_sep*.log`), then the opposite switch in the training env
+(`ts_tsep.sh`, `flight_audit.py --delay-mods` and the case `walk025` = vx 0.25 held, 128 envs x 10 s, result files
+`out/tsep_<name>_<load>_<tag>.json`).
+
+Answer: the dead time of the control loop. The runtime simulation hands the policy readings that are one tick old
+(joints and IMU, `--sensor-delay 1`) and applies each goal one tick later (`--action-delay 1`): 40 ms from measurement
+to the servo. The training env delays only the command, 15 to 30 ms (`delay_min_lag 3`, `delay_max_lag 6` at 5 ms),
+and reads joint positions with no delay. Taking 20 ms out of the runtime loop in any of three ways removes the falls.
+
+- Runtime simulation, walk falls of 20, base / `--sensor-delay 0` / `--action-delay 0` / `--compensation` (the Brain
+  extrapolates the stale reading; off by default in `walk_wired.py` and in the probe): `tsc_999` full pack 19 / 0 / 0 / 0;
+  `tsc_999` batteries out 10 / 0 / 0 / 0; `tsc_999` no pack 2 / 0 / 0 / 2; `tsc_750` full pack 6 / 0 / 0 / 3;
+  `tsc_750` batteries out 5 / 0 / 0 / 0; `tsc_750` no pack 20 / 7 / 5 / 4; LSTM student full pack 17 / 0 / 0 / 1; Mamba
+  student full pack 20 / 0 / 0 / 1; LSTM student no pack 20 / 13 / 13 / 14 (it walks 0.39 m/s there, a second problem);
+  start point full pack 0 / 0 / 0 / 0.
+- Switches that do not remove the falls (`tsc_750` no pack / `tsc_999` full pack, base 20 / 19): no dropped reads 20 / 20;
+  supply 8.2 V 14 / 15; servo current limit raised from 1.47 A to the training env's 1.75 A 20 / 19, and removed 20 / 18
+  (leg torque p99 then 0.80 to 0.86 N m, so the 0.538 N m clamp is not the cause); friction 0.9 and 1.1 20 / 16 and
+  20 / 19; floor friction 0.8 and 1.2 20 / 20 and 20 / 19; elliptic contact cone 20 / 19; earlier mass model 20 / 19;
+  walk ramp 20 / 20; heading hold limited to the trained 1.0 rad/s 20 / 16; heading hold off 4 / 19 (without it the
+  no-pack robot wanders 50 to 200 degrees in 15 s, so it is not a fix); goal clamp widened 13 / 10; command 0.20
+  instead of 0.25 10 / 5; servo gain 250 16 / 9, 160 20 / 20.
+- Leg torque at the clamp is a symptom of the delayed loop: with either delay off, p99 drops from 0.538 to 0.49 N m
+  (`tsc_999` no pack) and from 0.534 to 0.45 to 0.46 N m (start point, full pack).
+- Dead time against falls, runtime simulation at full pack (4 / 20 / 24 / 44 / 64 ms): `tsc_999` 0 / 0 / 0 / 19 / 20;
+  `tsc_750` 0 / 0 / 0 / 6 / 20; start point 0 / 0 / 0 / 0 / 20 (at 64 ms every policy falls within 2 s, standing).
+- Training env, falls per env-minute at vx 0.25 held, trained delays / 40 ms / 60 ms dead time: `tsc_750` no pack
+  0.56 / 2.2 / 15.9 (80 ms: 42); `tsc_999` full pack 0.47 / 0.80 / 20.6; start point no pack 0.52 / 0.80 / 7.5; start
+  point full pack 0.75 / 1.45 / 16.1. With the env's own sampled commands at 40 ms: 0.56 and 0.89, unchanged.
+- Reading: both simulations have the same cliff, and the runtime simulation reaches it about 20 ms earlier (falls from
+  44 ms; the training env from 60 ms). The start point sits below the cliff at the runtime's 44 ms; the universal3
+  fine-tune, trained at 15 to 30 ms with fresh joint readings, bought its faster walk (0.27 to 0.36 against 0.17 m/s)
+  with that margin. Where the 20 ms offset between the two simulations comes from is not found (same nominal dead time
+  of 40 ms gives 19 of 20 falls in one and 0.8 per minute in the other; servo gain moves it, model, contact and torque
+  limit do not).
+- Consequence for the next recipe: train with the runtime's loop, joint and IMU readings one tick old and the command
+  20 ms late, with margin toward 60 ms, and pick checkpoints on runtime-simulation falls, not on training-env falls.
+  Turning on the Brain's compensation is a runtime change on the robot and was only measured here, not adopted.
+- Tool changes for this study: `flight_eval.py` (FLIGHT_BRAIN_SET, FLIGHT_CFG_SET, diagnostics only), `ts_sep.py`,
+  `ts_tsep.sh`, `ts_round.sh tdelay`, `train/delay/*.json`, `flight_audit.py --delay-mods` and the `--cases walk025`
+  diagnostic case (never part of the launch verdict). One stale-connection stall of the Mac mini ssh at 09:36 was
+  cleared by stopping the session's own local processes and rerunning.
