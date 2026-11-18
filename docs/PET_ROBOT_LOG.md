@@ -1416,3 +1416,49 @@ built or trained; training needs Shawn's nod on a plan first.
 - Open design point Shawn raised: fast/slow/memory are not yet specified clearly. Working definition proposed in chat
   (by time scale: reflex 20 ms onboard, situation 1 s to minutes on the Mac mini, episodes across days, consolidation
   overnight; real logs choose what to practise, the sim does the practising). Proposal only.
+
+## 2026-11-17 Memory requirements from Shawn; what already exists; sound direction; recurrent policy route
+
+**Correction to the two entries above.** The layer split proposed in chat today was not new: `PET_ROBOT_FEATURES.md`
+section 0 (2026-10-26) already fixes reflex (A7Z) / intention (Mac mini, 10-30 s) / reflection (nightly), and `pet/`
+holds code for it: `pet/identity` (face and voice enrolment, familiarity memory with nightly consolidation, fusion),
+`pet/learn` (event log of 41 types, nightly reflection into diary and rules, Rescorla-Wagner, retrieval), `pet/mind`
+(drives, intentions, validator, reflexes, runner, glance, survey). Built and tested off the robot; no pet service is
+listed in CURRENT-STATE `a7z_background_processes`, live status not checked today. Today's additions are the recurrent
+reflex policy and the slow-to-fast skill transfer; the rest is integration of what exists.
+
+**Shawn's memory requirements (his words, 2026-11-17).** "今天给我换了这个模型，或者给我换了那个模型"; "今天我做了什么，
+让我去点球；今天标定了，比如左腿脑袋做了微调"; "今天开机时看到了谁 ... 建一个图库，把我们十几个人、这只鸭子的16831课队友
+的声音和脸录进去"; "看见了谁、谁开机了、他们在干什么". He also wants it to keep taking in what it hears and write down
+what happened (like ChatGPT's memory), and to go and look when curious. Mapping to what exists:
+- model swap, calibration, actions done: already recorded as data by the run ledger (`run_ledger.py`: one meta line per
+  brain start with code and policy hashes, arguments, gains, IMU trims; one record per action with outcome). Missing: a
+  bridge that turns those into `pet/learn` events (new types needed, e.g. model changed, calibration changed).
+- who was seen at power-on: `pet/identity` does this off the robot. Missing: enrolment of the teammates (faces from
+  photos, voice from a spoken phrase; each person's consent), and the live hookup at boot.
+- what people are doing: not covered. Needs a vision-language caption of a keyframe on the Mac mini or in the cloud.
+- what it hears: `life_log.py` already keeps voice-triggered three-microphone segments; `mine_life.py` pulls them to the
+  Mac mini. Missing: transcription of those segments into events and the nightly diary.
+- curiosity look: `pet/mind/glance.py` and the name-call head path exist; missing: a trigger on unexplained events.
+
+**17-720 lecture of 2026-11-17 (microphone arrays, beamforming, angle of arrival).** No slide deck is posted: the
+course site's row for Nov 17 lists six papers only, and Canvas files hold nothing new (both read 2026-11-17). The six
+papers and the Bartlett/MVDR tutorial are already saved under the course's `Reading-08-Microphone-Arrays/Papers/`.
+- The duck already estimates direction (GCC-PHAT / SRP-PHAT on three microphones, `namecall.py`, NAMECALL.md).
+- "Listen only to that direction" with this head, by arithmetic: three microphones give at most 10 log10(3) = 4.8 dB
+  against diffuse noise with delay-and-sum; 77 mm ear spacing aliases above 343 / (2 x 0.077) = 2.2 kHz; MVDR can null
+  at most two point sources. The loudest noise is the duck's own servos (requirements R2, R13), close and not from one
+  direction, where a beamformer helps least. The head is the steerable part: turn to the sound, then sum the two ears.
+  The reading "Hybrid Neural Networks for On-device Directional Hearing" (beamformer plus a small network) is the
+  matching recipe and joins the open R2 item (denoising on the A7Z). Offline test possible on the saved three-channel
+  life segments with known bearings; not run.
+
+**Recurrent reflex policy: route (not launched; training needs Shawn's nod).**
+- Current policy: MLP 512-256-128, 61 inputs (`microduck_velocity_env_cfg.py`), rsl_rl 5.0.1 (has `rnn_model.py`).
+- The plumbing already exists in `extensions/flight-20261110/train/HISTORY-PLAN.md` and `cmu/finetune/flight/history.py`
+  (plan not approved, not launched): an actor that sees its last K frames, warm-started so that at iteration 0 it equals
+  the existing 61-input policy, and an ONNX contract where the runtime feeds a state tensor back each tick. A GRU uses
+  the same contract with its hidden state in place of the frame stack.
+- Order proposed: (1) history design A against a one-frame control, fixed budget, existing acceptance tables; (2) only
+  if history helps, a GRU student distilled from the existing policies (DAgger), then RL fine-tune; (3) command
+  conditioning for several skills. An MLP cannot be fine-tuned into a GRU; its behaviour is carried over by distillation.
