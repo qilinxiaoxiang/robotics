@@ -1706,3 +1706,15 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   swing between 13 and 61 and the last one is worse than the start point, while the privileged teacher ends at 0.
   The first selection pass failed on every cell (control ONNX exported without metadata); rebuilt from the start
   policy as template and rerun (agent-reported). A-999 students still training, end by 17:25.
+- 2026-11-18 17:50 A-999 students finished (Mamba stopped by the 1.7 h cap at iteration 132, LSTM reached 140).
+  Runtime-simulation selection, falls of 20 at none / batteries out / full / COM x +10 mm / shove, read by the main
+  session from `eval/pk_{s2c,l2c}_*.json`. Mamba: 100 1/0/6/1/5 = 13; 132 0/0/0/12/5 = 17 (0.26 to 0.32 m/s);
+  80 = 20; 60 = 20; 120 0/0/1/20/8 = 29. LSTM: 40 = 20; 140 0/0/2/9/11 = 22; 100 = 77. Reference: teacher A-999 0,
+  control c2a_375 13, start point 30. The students do not reproduce the teacher in the runtime simulation.
+  In the training env they do (`kaggle/out/ts2-mamba-c/runs/ts2-mamba-c/progress.csv`, iteration 132: student 1.19
+  falls per env-minute against the teacher's 1.29, speed 0.230 against 0.233, action MSE 0.0042 and still falling).
+  So the open gap is between the training env and the runtime simulation, or in what the student must infer without
+  the privileged inputs. Checks ordered by the main session: teacher with privileged inputs held constant or zeroed;
+  students with dropped reads off / sensor delay 0 / action delay 0; and both students continued to 300 iterations
+  on the idle Kaggle session. Agent-reported: older students from A-250 and B-500 best 18 and 13 (the latter barely
+  walks), full acceptance of c2a_375 fails 14 lines and s2a_120 fails 9; Kaggle quota 14.44 h of 30.
