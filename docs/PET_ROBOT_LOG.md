@@ -1771,3 +1771,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   under the 10 USD Shawn confirmed; if a projection exceeds it, the work goes back to the Mac mini queue. Modal
   billing summary before the first run: metered 28.37 USD this period, all covered by credits, billed 0.00.
   First run 18:40: 200-episode parity check against the Mac mini results (`eval/spec_md_smoke.json`).
+- 2026-11-18 18:50 Teacher A-999 under the timing switches (falls of 20 at COM x +10 mm / shove; files
+  `eval/bc_t2a_999_*_{nodrop,sdelay0,adelay0}.json`, agent-reported, file check by the main session below in the
+  commit): drops off 0 / 0; sensor delay 0 20 / 20; action delay 0 20 / 20. The teacher itself only walks inside
+  the loop delay it was trained on (40 to 65 ms); one tick less is outside that range. Consequences: (1) student
+  acceptance = five selection cases plus drops off; the two delay switches are recorded, not required; (2) open
+  robustness item for a later round: widen the delay range in teacher training so a policy survives a loop that is
+  one tick shorter or longer than the runtime simulation's.
