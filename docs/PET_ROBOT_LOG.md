@@ -1635,3 +1635,9 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   IMU readings one tick old, command 20 ms late, margin toward 60 ms) and pick checkpoints on runtime-simulation
   falls. Not adopted: the Brain's compensation switch (a robot runtime change, only measured). Not launched: any new
   training; it waits for Shawn's nod on the plan. Kaggle quota left in the cap: 3.59 h.
+- 2026-11-18 Round 2 approved by Shawn ("开跑") and dispatched to the build agent: retrain the privileged teacher with
+  the runtime simulation's loop timing (readings one tick old, action 20 ms late, dead time randomised toward 60 ms),
+  verify on the Mac mini that the new training env reproduces the runtime ordering (start point holds, the round-1
+  control falls) before any Kaggle time, pick the teacher checkpoint on runtime-simulation falls, distil one Mamba
+  student. Budget: the remaining 3.59 h of the 10 h Kaggle cap; simulation only, nothing deployed, no push. Round-1
+  code is in local commits robotics c2aabda1 and microduck_rl d3c8bc2d (agent-reported).
