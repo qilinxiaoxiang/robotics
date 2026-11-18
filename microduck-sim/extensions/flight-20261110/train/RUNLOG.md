@@ -689,3 +689,131 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
 - 14:48 Second seed set for the A-999 result (seeds 2000-2019, `eval/pk2_*.json`): A-999 COM x +10 mm walk 1 of 20,
   walking shove 0 of 20; A-875 COM x +10 mm walk 20 of 20 again (falls from 3.0 s). The step from 875 to 999 is not a
   seed accident.
+- 14:35-15:39 Cancel of `microduck-ts2-mamba` (students of A-250 and B-500) asked by the coordinator, not possible from
+  here: the CLI has no cancel, the SDK call needs a session id the API does not return (`kaggle_cancel.py`), a new
+  version push is refused while two sessions run, and Shawn's Chrome is not signed in to Kaggle. `kaggle kernels
+  delete` is a permanent deletion and was not run. The session keeps running (end about 16:05), so no quota was saved.
+- 15:39:25 `microduck-ts2-ctrl` COMPLETE; `ts2_push_when_free.sh` pushed `microduck-ts2-mamba-c` (ts2-mamba-c on GPU 0,
+  ts2-lstm-c on GPU 1; teacher A-999, delta universal4, 140 iterations, 1.7 h cap, seed 1) into the freed session and
+  exited. RUNNING at 15:39:50, expected end by 17:25. Quota after the control pair: 12.29 h of 30 used.
+- 15:45 Two rules for the rest of the round (coordinator, after the 14:23 push held a slot for 100 minutes):
+  (1) a student or follow-up job is pushed only after every saved checkpoint of its teacher or control has been run on
+  the selection cases; (2) a blocked slot is reported in one line with the time it clears by itself, never as a
+  question whose only route is a permanent delete or a manual click.
+- 15:40-16:27 Control pair (one-frame, same reward and loop delay, 1000 iterations each; `ts2-ctrl` universal4 5390 s,
+  `ts2-ctrl-b` universal4b 5479 s) fetched and run on the selection cases (`eval/pk_c2a_*`, `pk_c2b_*`,
+  `logs/ts2_pick_c2.log`). The first pass failed on every cell with KeyError 'observation_names': a one-frame run's
+  `model_0.onnx` carries no metadata; `ts2_stage.sh` now takes the template as a fourth argument and the sixteen
+  folders were rebuilt from `ckpt/ts_start/walk61.onnx`. Falls of 100 (none/nobatt/full/comx/shove):
+  universal4: 125=39, 250=27 (0/0/0/20/7), 375=13 (0/0/4/0/9), 500=23 (1/0/0/7/15), 625=29, 750=61, 875=40, 999=54;
+  universal4b: 125=34, 250=50, 375=42, 500=61, 625=77, 750=57, 875=53, 999=46.
+  Control checkpoint: c2a_375 (13; the only one under the start point's 30 by a clear margin, and the only one that
+  holds COM x +10 mm). Against it teacher A-999 has 0. The longer-delay control never beats the start point.
+- 16:27 `microduck-ts2-mamba` COMPLETE (5720 s and 5735 s, 140 iterations each); checkpoints staged with
+  `ts2_stage_student.py` as `ckpt/s2a_<iter>` (from A-250) and `ckpt/s2b_<iter>` (from B-500), selection cases running.
+- 16:28-16:51 Selection cases on the first student pair (`eval/pk_s2a_*`, `pk_s2b_*`, `logs/ts2_pick_s2.log`), falls of
+  100 (none/nobatt/full/comx/shove). Mamba from A-250: 20=29, 40=18 (0/0/0/14/4), 60=31, 80=22, 100=21,
+  120=19 (0/0/0/18/1), 140=26. Mamba from B-500: 20=71, 40=47, 60=20, 80=26, 100=13 (0/0/0/11/2, but 0.07 m/s with no
+  pack and 0.09 m/s at COM x), 120=32, 140=33. Both keep their teacher's COM x +10 mm failure (A-250 teacher 20 of 20
+  there, B-500 teacher 20 of 20), so neither is better than round 1's Mamba-A (24) where it matters; the shove case
+  did improve (1 to 6 of 20 against 10). These two are kept as reference rows only; s2a_120 gets a full acceptance.
+- 16:52-17:20 Full acceptance of c2a_375 (control) and s2a_120 (`out/accept_c2a_375.json`, `out/accept_s2a_120.json`,
+  `logs/accept_score_*.log`). Control c2a_375: 14 failed lines; with the pack mass +10 % walk 4 falls, walking shove 9,
+  walk landing 6, stand landing 1, full-pack walk 4 of 20 (falls at 2.5-2.6 s), 50 % load stand 8, head-down walks 1
+  at none and 4 + 8 at full pack, torque p99 0.54, toe-out at three loads. Student s2a_120: 9 failed lines; COM x
+  +10 mm walk 18 falls, head-down walks at none 2 + 13, torque p99 0.54, hip saturation and toe-out lines; no other
+  falls.
+- 17:25 `microduck-ts2-mamba-c` COMPLETE (6154 s; Mamba reached iteration 132 at the 1.7 h cap, LSTM 140). Quota read
+  at 17:48: 14.44 h of 30 used. Checkpoints staged as `ckpt/s2c_<iter>` (Mamba) and `ckpt/l2c_<iter>` (LSTM).
+- 17:26-17:48 Selection cases on the students of teacher A-999 (`eval/pk_s2c_*`, `pk_l2c_*`, `logs/ts2_pick_c999.log`),
+  falls of 100 (none/nobatt/full/comx/shove). Mamba: 20=34, 40=26, 60=20, 80=20 (0/0/0/14/6), 100=13 (1/0/6/1/5),
+  120=29 (0/0/1/20/8), 132=17 (0/0/0/12/5). LSTM: 20=56, 40=20 (0/2/0/7/11), 60=26, 80=22, 100=77, 120=23, 140=22
+  (0/0/2/9/11). The teacher's 0 of 100 is not reproduced: the best students sit at 13 to 20, about where the first
+  pair's students and the control are, and the COM x and shove cells swing from checkpoint to checkpoint
+  (COM x 1, 20, 12 of 20 at Mamba 100, 120, 132).
+- 17:49 Full acceptance started on s2c_132, s2c_100 and l2c_40, then adapt_eval of s2c_132 at full, nobatt and none
+  and the comparison table.
+- 17:50-17:59 Continuation of both A-999 students (coordinator: in the training env the Mamba student already matches
+  the teacher, action error still falling). `distill_worker.py` got `--resume-pt`: weights from a saved
+  `model_<iter>.pt`, iteration count kept, the first `--warmup-iters` iterations teacher-driven without updates (the
+  baseline the task-metric stop needs), then beta 0, learning rate from `--lr` at the resume iteration to `--lr-final`
+  at `--max-iters`; saves now carry the optimizer state. The two files to continue were saved without it, so Adam
+  starts fresh. Smoke on the Mac mini (`ts2_resume_smoke.sh`, 64 envs, `logs/resume_smoke_mamba.log`, `_lstm.log`):
+  Mamba resumed at 132 and ran 133-135, LSTM at 140 and ran 141-143, ONNX export 1e-6 from the torch student; both
+  ended on the task-metric stop, which at 64 envs compares against a teacher baseline of 0 falls in 2 env-minutes.
+  17:59:01 pushed `microduck-ts2-mamba-d` (ts2-mamba-d from `s2c_132`, lr 2.46e-4; ts2-lstm-d from `l2c_140`, lr 2e-4;
+  both to iteration 300, lr-final 5e-5, saves every 20, warmup 2, 2.3 h cap, otherwise the settings of the first
+  run). Expected end by 20:25.
+- 18:10 INCIDENT: the Mac mini kernel-panicked (watchdog timeout from memory thrashing) and rebooted. Cause, mine:
+  the acceptance batch (s2c_132, s2c_100, l2c_40), check B (`ts2_bcheck.py`) and the resume smoke ran there together;
+  `mini.sh run` only waited for other agents' simulations and let this mirror's own jobs overlap. 18:07 reading by the
+  coordinator: swap 20.56 of 20.99 GB, load 21 to 47, 33 simulation python processes on 16 GB RAM. All jobs there
+  were lost; result files already written stayed. The acceptance chain was stopped at 18:09 before the reboot.
+- 18:12-18:15 Limit put where jobs start: `mini_lock.sh` on the mini (lock file `~/.flight-mirror-sim.lock` with the
+  holder's pid, stale lock cleared, waits up to 90 min; then a pre-flight that refuses with exit 4 when swap used is
+  over 4096 MB or more than 10 simulation pythons run, after six looks 30 s apart). `mini.sh run` takes the lock
+  for every command, `ts_round.sh` and `ts2_resume_smoke.sh` run each job under `mini_lock.sh run`, and
+  `flight_eval.py` caps its pool at 8 workers. Tests: forced swap reading 5000 MB gave "REFUSED", exit 4, nothing
+  started, lock released; a planted lock of a dead pid was cleared; a second `mini.sh run` started 5 s after the
+  first one ended. Readings after the reboot (18:15): swap 0 MB used, load 4.87 / 14.90 / 9.04, no simulation
+  python left, no orphan workers. `mini_cut.sh` stops this mirror's jobs and orphan workers by hand.
+- 18:16 Check B restarted alone (cells with a result file are skipped); the acceptance batch follows it, one job at
+  a time.
+- 18:22 Check B done (`ts2_bcheck.py`, `eval/bc_*.json`, `out/ts2_bcheck.json`, `logs/ts2_bcheck.log`); falls of 20 at
+  COM x +10 mm walk / walking shove, runtime simulation, selection seeds. Mini after it: swap 1801 MB used, load 10.
+  B1 teacher A-999: as is 0 / 0; privileged inputs set to the no-pack constants 20 / 20 (falls at 0.4-0.6 s); payload
+  and COM set to no-pack with the true velocity 20 / 20 (0.5-1.0 s); all seven zero 20 / 20 (0.7-0.8 s). Both cases
+  carry the full pack, so this is a 0.94 kg error in the payload input: the teacher cannot walk on grossly wrong
+  inputs; the precision it needs is the next entry.
+  B2 student s2c_132 (as is 12 / 5): dropped servo reads off 0 / 0; sensor delay 0 20 / 20 (falls 3.2-4.2 s); action
+  delay 0 20 / 20 (3.4-4.0 s). Student s2c_100 (as is 1 / 5): dropped reads off 0 / 20 (all at 1.2 s, before the
+  shove); sensor delay 0 1 / 0; action delay 0 0 / 0. The one runtime ingredient the training env lacks and s2c_132
+  is sensitive to is the dropped servo read (--drop 0.036: the Brain skips that tick, the recurrent state is not
+  stepped and the last action is held). The delays are trained in; removing them breaks s2c_132. s2c_100 does not
+  follow the same pattern (it falls at 1.2 s with reads never dropped), so single checkpoints differ in kind.
+  B3 student s2c_132 with teacher A-999 driving the first 100 ticks (2 s) then released: 8 / 4, falls from 8.5 s;
+  first 250 ticks (5 s): 6 / 2, falls from 8.5 s. A teacher-driven start does not remove the falls and they come
+  seconds after the release, so they are not the student's first-seconds load inference.
+- 18:22-18:27 Precision of the teacher's privileged inputs (`ts2_bprec.py`, `eval/bp_t2a_999_*.json`,
+  `out/ts2_bprec.json`; teacher A-999, full pack, falls of 20 at plain walk / COM x +10 mm walk, one input group
+  changed, the rest true). Sanity: no pack with the no-pack constants 0 of 20 at 0.34 m/s (the replacement is right).
+  Payload input x 0.9: 0 / 0; x 0.75: 0 / 0; x 0.5: 0 / 0 (speed down to 0.16 / 0.20 m/s). Trunk COM x input
+  -5 mm: 10 / 20; -10 mm: 20 / 20; +5 mm: 0 / 0. Velocity inputs zeroed: 20 / 20 (falls 1.3-2.6 s). So the payload
+  mass may be off by half, the COM x must not read more than a few mm further back than it is, and the trunk velocity
+  is needed throughout.
+- 18:23-18:30 Dropped servo reads in the distillation (coordinator's decision after check B). The runtime simulation
+  drops each tick independently (`brain_sim_check.py` line 1356, `rng.random() >= args.drop`), so no extra bursts
+  were added. `distill_worker.py --drop-max 0.08`: per env a drop probability uniform in 0 to 0.08, redrawn at reset
+  (robot: 0.036, `CURRENT-STATE.json` servo_read_drop_fraction); on a dropped tick the student is not called, its
+  state is kept, the previous action stays applied; state zeroed after more than 5 skipped ticks as the evaluator
+  does; the teacher labels every tick, the loss counts only the ticks the student ran. It is a worker flag on the
+  audited env universal4, not a new delta (the env and its rewards are unchanged, so no new audit). Smoke through the
+  lock (`ts2_drop_smoke.sh`, `logs/drop_smoke_scratch.log`, `_resume.log`): dropped-tick fraction 0.039 to 0.047
+  (mean of the draw 0.04), ONNX within 1e-6 of the torch student, scratch 3 iterations, resumed 133-136.
+  18:30:27 pushed `microduck-ts2-mamba-e` (GPU 0 ts2-mamba-e: Mamba resumed from `s2c_132`, beta 0, to iteration 292,
+  lr 2.46e-4 to 5e-5; GPU 1 ts2-mamba-f: Mamba from scratch, 160 iterations, beta over 30; both --drop-max 0.08,
+  saves every 20, 2.3 h cap). RUNNING at 18:30:50, expected end by 20:55. Quota read 14.98 h of 30. The no-drop
+  continuation `microduck-ts2-mamba-d` keeps running as the comparison.
+- 18:31 Mac mini queue, one job at a time: teacher A-999 on the three timing switches, then the acceptance batch.
+- 18:31-18:36 Teacher A-999 on the three timing switches (`eval/bc_t2a_999_*_{nodrop,sdelay0,adelay0}.json`), falls of
+  20 at COM x +10 mm walk / walking shove: dropped reads off 0 / 0; sensor delay 0 20 / 20 (falls at 3.0 s and
+  8.2-8.4 s); action delay 0 20 / 20 (3.0-3.1 s, 8.3 s). The teacher itself needs the loop delay it was trained
+  with, so a student cannot be asked to hold with a delay removed; the switch that separates students from the
+  teacher is the dropped read alone.
+- 18:37 Division of work from Shawn's word at about 18:35 (evaluation may leave the Mac mini): the main session
+  selects the checkpoints of `microduck-ts2-mamba-d` and `-e` on Modal; here the Mac mini runs only the acceptance of
+  s2c_132, adapt_eval and the comparison table (s2c_100 and l2c_40 acceptance dropped). Two watchers fetch and stage
+  the Kaggle checkpoints as `ckpt/s2d_*`, `l2d_*` (no drops) and `s2e_*` (resumed, drops), `s2f_*` (scratch, drops).
+- 18:37-18:47 Student s2c_132 (Mamba of teacher A-999, iteration 132, no drops in training), one job at a time; mini
+  after it: swap 1066 MB used, load 4.
+  Full acceptance (`out/accept_s2c_132.json`, `logs/accept_score_s2c_132.log`): FAIL, 21 failed lines. With the pack:
+  COM x +10 mm walk 12 falls, walking shove 5, mass +10 % walk 4 and stand 2, COM x stand 2, standing shove 2, both
+  landings 2, nominal stand / walk / turn left / turn right 1 each; torque p99 0.54; hip saturation at 25, 50, 75 %
+  and no battery; toe-out at three loads (left mean 13-14 deg, right 4-5). No falls in the per-load walks
+  (0.32 / 0.31 / 0.26 / 0.25 / 0.26 / 0.27 m/s from no pack to full) or the head-command walks.
+  adapt_eval in the training env universal4, pushes off, 64 envs (`out/adapt_s2c132_{full,nobatt,none}.json`):
+  after a reset the action error settles in 7 to 11 ticks (0.14-0.22 s) to 0.042-0.057 rad with 0 falls; after the
+  0.26 m/s push 3 to 24 ticks with 4, 6, 5 falls of 64; after re-entry with an empty state 35 to 48 ticks (0.7-1.0 s)
+  with 3, 4, 1 falls. Round 1's students settled to about the same error; the falls after the push are the gap.
+  Comparison table `logs/ts2_compare.log`, `out/ts_compare.json` (uni_a start point, ts_mamba_a, c2a_375 control,
+  t2a_999 teacher, s2a_120, s2c_132): failed lines 10, 11, 14, 10, 9, 21.

@@ -28,7 +28,9 @@ case "$1" in
       [ $i -eq 60 ] && { echo "mini still busy after 10 min"; exit 3; }
       sleep 10
     done
-    ssh mac-mini "cd $REMOTE/$FL && PY=\$HOME/$VENV/bin/python && export PY && $2"
+    # one simulation job of this mirror at a time, none on a loaded machine: mini_lock.sh (lock + pre-flight, exit 4 on
+    # refusal); the holder is the remote shell of this job, so a dropped connection leaves a stale lock that is cleared
+    ssh mac-mini "cd $REMOTE/$FL && PY=\$HOME/$VENV/bin/python && export PY && zsh train/mini_lock.sh acquire \$\$ && { $2; rc=\$?; zsh train/mini_lock.sh release \$\$; exit \$rc; }"
     ;;
   pull)
     mkdir -p $LOCAL/$FL/train/eval

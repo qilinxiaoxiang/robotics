@@ -17,6 +17,9 @@ FL=extensions/flight-20261110
 T=$LOCAL/$FL/train
 A="\$HOME/$REMOTE/smoke-assets"
 ENVV="FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests"
+# every job below runs under the mirror's lock and pre-flight (mini_lock.sh: one simulation job at a time, refusal on a
+# loaded machine; 2026-11-18 kernel panic). mini.sh push puts the file there.
+LK="\$HOME/$REMOTE/$FL/train/mini_lock.sh"
 source $T/ssh_guard.sh  # ssh / scp / rsync with keepalives, a local wall-clock limit and one retry
 
 wait_idle() {
@@ -45,7 +48,7 @@ case "$1" in
   teacher)
     IT=${2:-3}; NE=${3:-64}; DL=${4:-universal3t}
     wait_idle
-    ssh mac-mini "cd $REMOTE/$RL && $ENVV timeout 590 .venv/bin/python cmu/finetune/flight/teacher_smoke.py \
+    ssh mac-mini "cd $REMOTE/$RL && $ENVV zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/teacher_smoke.py \
       --init $A/ts_start.onnx --envs $NE --iters $IT --delta $DL --outdir /tmp/teacher_smoke 2>&1" > $T/logs/teacher_smoke.log || true
     scp -q mac-mini:/tmp/teacher_smoke/teacher_smoke.json $T/out/teacher_smoke.json || true
     mkdir -p $T/ckpt/ts_teacher_m0
@@ -58,7 +61,7 @@ case "$1" in
     TE="$A/ts_teacher_m0.onnx"
     if [ -n "$6" ]; then rsync -a "$6" mac-mini:$REMOTE/smoke-assets/ts_teacher_x.onnx; TE="$A/ts_teacher_x.onnx"; fi
     wait_idle
-    ssh mac-mini "mkdir -p /tmp/ts_distill && cd $REMOTE/$RL && $ENVV timeout 590 .venv/bin/python cmu/finetune/flight/flight_worker.py --distill \
+    ssh mac-mini "mkdir -p /tmp/ts_distill && cd $REMOTE/$RL && $ENVV zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_worker.py --distill \
       --run-name smoke_$CORE --root /tmp/ts_distill --teacher-onnx $TE --core $CORE --device cpu --num-envs $NE \
       --max-iters $IT --bptt-steps $BP --delta $DL --warmup-iters 1 --beta-iters 1 --save-interval 1 --mb-envs 32 --max-hours 0.15 \
       --manifest \$HOME/$REMOTE/$FL/train/manifests/flightpack-none.json --audit $A/existing-model-mass-audit.json 2>&1" \
@@ -73,7 +76,7 @@ case "$1" in
     CS=$2; LD=$3; TAG=$4; RM=${5:-$T/rm_universal3.json}; JOB=${6:-universal3t}
     scp -q $RM mac-mini:/tmp/ts_rm_$TAG.json
     wait_idle
-    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs $JOB \
+    ssh mac-mini "cd $REMOTE/$RL && zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs $JOB \
       --cases $CS --loads $LD --reward-mods \"\$(cat /tmp/ts_rm_$TAG.json)\" --device cpu --num-envs 128 --steps ${TSSTEPS:-400} \
       --assets $A --policy start=$A/ts_start.onnx --walker start --out /tmp/ts_audit_${TAG}_${CS}_$LD 2>&1" \
       > $T/logs/audit_${TAG}_${CS}_$LD.log || true
@@ -84,7 +87,7 @@ case "$1" in
     NM=$2; LD=$4
     rsync -a "$3" mac-mini:$REMOTE/smoke-assets/ts_eval_$NM.onnx
     wait_idle
-    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs ${TSJOB:-universal3t} \
+    ssh mac-mini "cd $REMOTE/$RL && zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs ${TSJOB:-universal3t} \
       --cases ${TSCASE:-none} --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/$FL/train/rm_universal3.json)\" --device cpu --num-envs 128 --steps 500 \
       --assets $A --policy p=$A/ts_eval_$NM.onnx --walker p --out /tmp/ts_teval_${NM}_$LD 2>&1" \
       > $T/logs/teval_${NM}_$LD.log || true
@@ -99,7 +102,7 @@ case "$1" in
     rsync -a "$3" mac-mini:$REMOTE/smoke-assets/ts_eval_$NM.onnx
     rsync -a "$6" mac-mini:$REMOTE/smoke-assets/ts_delay_$TG.json
     wait_idle
-    ssh mac-mini "cd $REMOTE/$RL && timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs ${TSJOB:-universal3t} \
+    ssh mac-mini "cd $REMOTE/$RL && zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs ${TSJOB:-universal3t} \
       --cases $CS --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/$FL/train/rm_universal3.json)\" --device cpu --num-envs 128 --steps 500 \
       --delay-mods \"\$(cat \$HOME/$REMOTE/smoke-assets/ts_delay_$TG.json)\" \
       --assets $A --policy p=$A/ts_eval_$NM.onnx --walker p --out /tmp/ts_tsep_${NM}_${LD}_$TG 2>&1" \
@@ -112,7 +115,7 @@ case "$1" in
     rsync -a "$3" mac-mini:$REMOTE/smoke-assets/ts_adapt_$NM.pt
     rsync -a "$4" mac-mini:$REMOTE/smoke-assets/ts_adapt_teacher.onnx
     wait_idle
-    ssh mac-mini "cd $REMOTE/$RL && $ENVV timeout 590 .venv/bin/python cmu/finetune/flight/adapt_eval.py \
+    ssh mac-mini "cd $REMOTE/$RL && $ENVV zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/adapt_eval.py \
       --student-pt $A/ts_adapt_$NM.pt --teacher-onnx $A/ts_adapt_teacher.onnx --load $LD --envs 64 --delta ${TSDELTA:-universal3} \
       --out /tmp/ts_adapt_${NM}_$LD.json 2>&1" > $T/logs/adapt_${NM}_$LD.log || true
     scp -q mac-mini:/tmp/ts_adapt_${NM}_$LD.json $T/out/adapt_${NM}_$LD.json || true

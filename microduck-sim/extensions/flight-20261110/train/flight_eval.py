@@ -74,6 +74,17 @@ class _StatefulSession:
             st = np.zeros(self.state_shape, dtype=np.float32)
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
+        # diagnostics only (round 2, 2026-11-18): FLIGHT_HANDOVER="<teacher onnx>:<ticks>" lets the privileged teacher
+        # drive the first <ticks> control ticks of the episode while the student still sees every observation and
+        # builds its state, then the student's own action is used ("released")
+        ho = os.environ.get("FLIGHT_HANDOVER")
+        if ho and tick <= int(ho.rsplit(":", 1)[1]):
+            if "sess" not in _HANDOVER:
+                import onnxruntime as ort
+                _HANDOVER["sess"] = ort.InferenceSession(ho.rsplit(":", 1)[0])
+                _HANDOVER["name"] = _HANDOVER["sess"].get_inputs()[0].name
+            obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
+            return _HANDOVER["sess"].run(None, {_HANDOVER["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[:1]
         return res[:1]
 
 
@@ -104,6 +115,9 @@ def install_stateful_policies(b):
 
 
 PRIV = dict(m=None, d=None, kg=0.0, log=[])  # the simulator state the privileged teacher reads (set per episode)
+# payload kg and trunk COM of the no-pack robot as the teacher reads them (eval/pk_t2a_999_none.json priv_first)
+NOPACK_PRIV = (0.0, -0.0335, 0.0007, 0.0186)
+_HANDOVER = {}
 
 
 def priv_now():
@@ -120,6 +134,28 @@ def priv_now():
     mujoco.mju_quat2Mat(R, d.qpos[3:7])
     v = R.reshape(3, 3).T @ d.qvel[0:3]
     p = np.concatenate([[PRIV["kg"]], m.body_ipos[tb], v]).astype(np.float32)
+    # diagnostics only (round 2, 2026-11-18: does the teacher need its privileged inputs in the runtime simulation?)
+    #   nopack   all seven constant: payload 0, the no-pack trunk COM, velocity 0
+    #   loadonly payload and COM as nopack, the true velocity
+    #   zero     all seven zero
+    fix = os.environ.get("FLIGHT_PRIV_FIX")
+    if fix == "zero":
+        p[:] = 0.0
+    elif fix in ("nopack", "loadonly"):
+        p[:4] = NOPACK_PRIV
+        if fix == "nopack":
+            p[4:] = 0.0
+    elif fix:
+        raise SystemExit(f"FLIGHT_PRIV_FIX={fix!r} is not nopack | loadonly | zero")
+    # precision sweep (ts2_bprec.py): FLIGHT_PRIV_MOD JSON {"kg_scale": 0.9, "comx_add": -0.005, "vel_zero": 1}
+    # changes one group of the true inputs: payload scaled, trunk COM x offset (m), the three velocities zeroed
+    mod = json.loads(os.environ.get("FLIGHT_PRIV_MOD") or "{}")
+    if mod:
+        assert set(mod) <= {"kg_scale", "comx_add", "vel_zero"}, mod
+        p[0] *= mod.get("kg_scale", 1.0)
+        p[1] += mod.get("comx_add", 0.0)
+        if mod.get("vel_zero"):
+            p[4:] = 0.0
     if len(PRIV["log"]) < 3:
         PRIV["log"].append([round(float(x), 4) for x in p])
     return p
@@ -316,7 +352,7 @@ def main():
         os.environ["FLIGHT_HIST_REPEAT"] = "1"  # inherited by the worker processes
     jobs = [(os.path.abspath(a.models), os.path.abspath(a.manifest), a.case, s, a.shove_ns, a.shove_at, a.landing,
              a.extra.split()) for s in range(a.seed0, a.seed0 + a.episodes)]
-    with ProcessPoolExecutor(a.workers) as ex:
+    with ProcessPoolExecutor(min(a.workers, 8)) as ex:   # at most 8 workers on the shared Mac mini (16 GB RAM)
         eps = list(ex.map(episode, jobs))
     falls = [e for e in eps if e["fell_at"] is not None]
     sp = [e["speed"] for e in eps if e["fell_at"] is None and e["speed"] is not None]
