@@ -1757,3 +1757,9 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   20 / 20. So a student must infer trunk velocity and the fore-aft COM to a few millimetres (one-sided); payload
   mass itself is not critical. Dropped-tick distillation is implemented as a `--drop-max` switch of
   `distill_worker.py` on the audited universal4 env (agent-reported); its smoke is queued on the Mac mini.
+- 2026-11-18 18:30 `microduck-ts2-mamba-e` pushed, RUNNING (status read by the main session): Mamba with dropped ticks
+  (`--drop-max 0.08`), GPU 0 resumed from s2c_132 for 160 more iterations at beta 0, GPU 1 from scratch for 160
+  iterations, saves every 20, 2.3 h limit, end by 20:55. The no-drop continuation `microduck-ts2-mamba-d` keeps
+  running as the comparison (end by 20:25). Agent-reported: smoke drop fraction 0.039 to 0.047, export equal to the
+  model; Kaggle quota 14.98 h of 30, about 24 h if both sessions run to their limits (26 h is the ceiling that keeps
+  4 h unused). Earlier log times after 18:30 in this file were written a few minutes fast.
