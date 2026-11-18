@@ -645,3 +645,47 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
 - 13:21 Push of the control pair (`ts2-ctrl` + `ts2-ctrl-b`) refused by Kaggle: "Maximum batch GPU session count of 2
   reached". It goes up when a teacher session ends. Paid compute (Modal, AWS) not used: the go-ahead reached this
   agent only as a relayed message.
+- 14:03 `microduck-ts2-teach-b` COMPLETE (999 iterations, 0.189 it/s, 1.49 h); 14:10 `microduck-ts2-teach` COMPLETE
+  (999 iterations, 0.193 it/s, 1.46 h). Quota 9.88 h of 30 after both. 14:03 control pair pushed into the freed
+  session: `microduck-ts2-ctrl` = `ts2-ctrl` (`universal4`) + `ts2-ctrl-b` (`universal4b`), one-frame, same settings.
+- 14:03 to 14:30 Teacher selection in the runtime simulation (`ts2_stage.sh`, `ts2_pick.py`; falls of 20 at none /
+  batteries out / full / COM x +10 mm / 0.5 N s shove, total of 100, speed range of the upright walks;
+  `eval/pk_<dir>_<case>.json`, `out/ts2_pick.json`). References: start point 0 / 0 / 0 / 19 / 11 = 30 (0.17-0.19
+  m/s); Mamba-A 0 / 0 / 0 / 14 / 10 = 24; round-1 teacher 750 = 85.
+  Teacher B (`universal4tb`, 55-80 ms), dirs `ckpt/t2b_<iter>`: 125 0 / 0 / 1 / 20 / 15 = 36; 250 1 / 1 / 0 / 20 / 7 = 29;
+  375 0 / 0 / 0 / 20 / 3 = 23; 500 0 / 0 / 0 / 20 / 0 = 20 (0.25-0.38 m/s); 625 10 / 0 / 9 / 20 / 20 = 59; 750 98; 875 79;
+  999 91.
+  Teacher A (`universal4t`, 40-65 ms), dirs `ckpt/t2a_<iter>`: 125 0 / 0 / 1 / 19 / 11 = 31; 250 0 / 0 / 0 / 20 / 0 = 20
+  (0.27-0.33 m/s); 375 14 / 0 / 0 / 20 / 17 = 51; 500 0 / 0 / 6 / 11 / 0 = 17; 625 0 / 0 / 0 / 17 / 6 = 23; 750 0 / 0 / 0 /
+  20 / 0 = 20; 875 0 / 0 / 0 / 20 / 0 = 20; 999 0 / 0 / 0 / 0 / 0 = 0 of 100 (0.23-0.34 m/s, leg p99 still at 0.538 N m).
+- 14:23 Students pushed before teacher A's later rows existed (rule: nominal walks at 0 falls first, then total; at
+  that moment A-250 and B-500, both 20 of 100): `microduck-ts2-mamba` = `ts2-mamba` (teacher `ckpt/ts2_teacher` =
+  A-250, env `universal4`) + `ts2-mamba-b` (teacher `ckpt/ts2b_teacher` = B-500, env `universal4b`), Mamba, 140
+  iterations of 100 ticks, 2 epochs, minibatch 256, as `ts-mamba-a`. A-250 over A-500: A-500 is the only early
+  checkpoint that walks COM x +10 mm better than the start point (11 against 19 falls) but drops the full pack 6 of
+  20, and the rule puts the nominal walks first.
+- 14:30 A-999 arrived: 0 falls of 100, the only checkpoint that holds the COM x +10 mm walk (0 of 20) and the
+  shove, at 0.25 m/s with the full pack. It is the best teacher by the rule. Its students (`ts2-mamba-c` Mamba +
+  `ts2-lstm-c` LSTM, teacher `ckpt/ts2a999_teacher`, env `universal4`) are pushed by `ts2_push_when_free.sh` the
+  moment Kaggle frees a session (both are taken until about 15:40; running sessions are not cancelled). Reading: the
+  shorter delay setting keeps improving in the runtime simulation with training, the longer one peaks at 500 and then
+  walks faster than it can hold. The full acceptance set on teacher A-999 itself runs on the Mac mini meanwhile, as
+  the ceiling for its students.
+- 14:35 Coordinator asked to cancel `microduck-ts2-mamba` (A-250 and B-500 students) so the A-999 students start at
+  once. Not done: the Kaggle CLI has no cancel, the SDK's CancelKernelSession needs a session id that no status or
+  kernel call returns, a new version pushed to the same kernel was refused ("Maximum batch GPU session count of 2
+  reached", the old session kept running), and Shawn's Chrome is not signed in to Kaggle. The remaining command,
+  `kaggle kernels delete`, removes the kernel for good and waits for Shawn's own confirmation. `ts2_push_when_free.sh`
+  keeps trying every 2 minutes (`logs/ts2_push_when_free.log`). `train/kaggle_cancel.py` is the lookup that found no id.
+- 14:31 to 14:47 Full acceptance of teacher A-999 in the runtime simulation with its privileged inputs fed
+  (`out/accept_t2a_999.json`, `eval/ua_t2a_999_*.json`, `eval/uh_t2a_999_*.json`; a teacher cannot run on the robot,
+  this is the ceiling for its students): FAIL with 10 failed lines, none of them a walking fall. Walk falls 0 of 20 at
+  none / 25 / 50 / 75 % / batteries out / full at 0.34 / 0.31 / 0.29 / 0.28 / 0.23 / 0.25 m/s (start point 0.17-0.18);
+  head-command walk 0 falls at every load; with the pack COM x +10 mm stand 0 and walk 0 (Mamba-A 7 and 14), COM x
+  -10 mm 0, mass +10 % 0 (Mamba-A 5), walking shove 0 (Mamba-A 10), turns 0. Failed lines: standing shove 2 falls,
+  landing 1 (stand) and 1 (walk), walk torque p99 0.54 N m against 0.48, hip saturation share at 50 % / 75 % /
+  batteries out (1.4 / 3.1 / 3.2 % against 1 %), toe-out at none / batteries out / full (right-foot p95 18 deg at
+  none, left mean 13-14 deg with the pack; step width 95-101 mm passes).
+- 14:48 Second seed set for the A-999 result (seeds 2000-2019, `eval/pk2_*.json`): A-999 COM x +10 mm walk 1 of 20,
+  walking shove 0 of 20; A-875 COM x +10 mm walk 20 of 20 again (falls from 3.0 s). The step from 875 to 999 is not a
+  seed accident.
