@@ -1610,3 +1610,14 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   the training recipe (a fast gait the runtime simulation does not hold), shared by the one-frame control, not the
   recurrent core as such; the students add imitation error on top. Next: the diagnostic result, then a one-switch-
   at-a-time comparison of the training env against the runtime simulation for the control policy.
+- 2026-11-18 Diagnostic result at 09:55 EST (`microduck-ts-lstm-a`, students distilled from run A itself, 140
+  iterations; `out/accept_ts_lstm_a.json`, `out/accept_ts_mamba_a.json`, `out/ts_compare.json`, numbers read by the
+  main session). Walk falls of 20 at none / 25 / 50 / 75 % / batteries out / full: start 0/0/0/0/0/0, Mamba student
+  0/0/0/0/0/0, LSTM student 0/0/0/0/0/9, all at 0.17 to 0.19 m/s. Failed gate lines: start 10, Mamba 11, LSTM 14.
+  Hard cases with pack (start / Mamba / LSTM): comx+10 walk 19 / 14 / 18, walking shove 11 / 10 / 16, mass+10 walk
+  2 / 5 / 13. Conclusion: a recurrent student carries over to the runtime simulation when the teacher's gait does;
+  the earlier student falls came from the teacher (universal3 gait), not from the recurrent core. The Mamba core
+  copied the teacher more closely than the LSTM here (one run each, no repeat). The student does not yet beat its
+  teacher: it was given nothing the teacher lacks. Quota used 6.41 h of the 10 h cap. Still open: which single
+  difference between the training env and the runtime simulation makes the universal3 gait fall (separation test
+  started 09:35 on the Mac mini, no result yet).
