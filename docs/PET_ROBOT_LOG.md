@@ -1763,3 +1763,11 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   running as the comparison (end by 20:25). Agent-reported: smoke drop fraction 0.039 to 0.047, export equal to the
   model; Kaggle quota 14.98 h of 30, about 24 h if both sessions run to their limits (26 h is the ceiling that keeps
   4 h unused). Earlier log times after 18:30 in this file were written a few minutes fast.
+- 2026-11-18 18:35 Shawn: "如果Mac mini变成瓶颈，那我们就不再依赖Mac mini好了。我们应该是有额度的，还怕什么？用呗。
+  如果预计额度会花超，那你用一下Mac mini也无妨。如果额度还可以，就先不用全挤在Mac mini上，阻塞我们的进度吧。"
+  Applied: checkpoint selection and timing-switch evaluation move to Modal CPU (`train/flight_eval_modal.py`, one
+  container per episode, 0.0473 USD per core-hour plus memory), launched by the main session; the Mac mini keeps one
+  serial queue (teacher switch reference, acceptance of s2c_132, comparison table). The round's paid total stays
+  under the 10 USD Shawn confirmed; if a projection exceeds it, the work goes back to the Mac mini queue. Modal
+  billing summary before the first run: metered 28.37 USD this period, all covered by credits, billed 0.00.
+  First run 18:40: 200-episode parity check against the Mac mini results (`eval/spec_md_smoke.json`).
