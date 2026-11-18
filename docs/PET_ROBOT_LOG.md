@@ -1750,3 +1750,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   Main-session decision: add dropped ticks (0 to 8 % per env) to the distillation env, train one Mamba resumed from
   132 and one from scratch on the free Kaggle session, keep the no-drop continuation as comparison, and accept a
   student only if it holds under the selection cases and all three timing switches.
+- 2026-11-18 19:15 Teacher A-999 precision sweep on its privileged inputs, full pack, falls of 20 at plain walk /
+  COM x +10 mm walk, one input group changed at a time (read by the main session from `eval/bp_t2a_999_*.json`).
+  Sanity (no-pack robot, no-pack constants): 0. Payload input x0.9, x0.75, x0.5: 0 / 0 each (speed falls to 0.16 to
+  0.20 m/s at x0.5). Trunk COM x input -5 mm: 10 / 20; -10 mm: 20 / 20; +5 mm: 0 / 0. Velocity inputs zeroed:
+  20 / 20. So a student must infer trunk velocity and the fore-aft COM to a few millimetres (one-sided); payload
+  mass itself is not critical. Dropped-tick distillation is implemented as a `--drop-max` switch of
+  `distill_worker.py` on the audited universal4 env (agent-reported); its smoke is queued on the Mac mini.
