@@ -1785,3 +1785,14 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   `train/ts2_modal_spec.py` writes the Modal spec for the seven acceptance cells per checkpoint (five selection
   cases plus drops off at COM x and shove) with the Mac mini's file names, skips existing results and prints the
   ranking; about 0.13 USD per checkpoint.
+- 2026-11-18 19:10 Full acceptance, read by the main session from `out/accept_t2a_999.json` and
+  `out/accept_s2c_132.json` (the information line not counted). Teacher A-999: 10 failed lines, of which falls: stand
+  shove 2, stand landing 1, walk landing 1 (4 falls over the 14 with-pack cases against the start point's 37); the
+  rest is effort and style: walk torque p99 0.54 N m (limit 0.48, start point 0.53), hip p99 0.42 to 0.47 with
+  saturation 1.4 to 3.2 % at half load, three-quarter load and batteries out, toe-out at all three loads (left mean
+  up to 14.3 deg against 12). Walks 0.23 to 0.29 m/s. Student s2c_132: 21 failed lines, 35 falls over the 14 cases
+  (COM x walk 12, shoved walk 5, mass +10 % walk 4, one or two in most others), hip p99 0.46 to 0.53, toe-out.
+  Agent-reported comparison (`out/ts_compare.json`): failed lines start point 10, Mamba-A 11, control c2a_375 14,
+  s2a_120 9; adapt_eval of s2c_132 in the training env settles 0.14 to 0.22 s after reset and still falls 4 to 6 of
+  64 after a 0.26 m/s push. Reading: the teacher removes nearly all falls but pays with torque at the clamp and
+  toe-out; the no-drop student keeps the effort cost and loses the robustness.
