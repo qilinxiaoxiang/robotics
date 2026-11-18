@@ -1655,3 +1655,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   first at 09:36) while the build agent waited on it. Main session killed the hung ssh call and told the agent to
   push the teacher with the delta that already passed its incentive audit (universal4tb), add ssh keepalive and a
   local time limit to every Mac mini call, and launch the second delta when its audit passes.
+- 2026-11-18 12:33 Round 2 teachers pushed to Kaggle, both RUNNING at 12:40 (status read by the main session):
+  `microduck-ts2-teach` (delta universal4t, readings one tick old, dead time 40 to 65 ms) and `microduck-ts2-teach-b`
+  (universal4tb, 55 to 80 ms); from run A final, 1000 iterations, saves every 125, 1.6 h limit, expected end about
+  14:10. Agent-reported: incentive audit PASS for both deltas at three loads; the training env does not reproduce the
+  runtime ordering at any dead time, hence two delay arms selected in the runtime simulation; the runtime evaluator
+  now feeds the teacher's 7 privileged inputs; ssh stall fixed with `train/ssh_guard.sh`. Modal and AWS not used: the
+  agent declined to spend on a relayed authorization, and two Kaggle sessions cover the current arms.
