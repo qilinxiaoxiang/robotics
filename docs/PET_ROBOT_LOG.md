@@ -1723,3 +1723,9 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   Agent-reported: `distill_worker.py` gained `--resume-pt` (3-iteration smoke on the Mac mini passed); the old
   checkpoints hold no optimizer state, so Adam restarts; lr-final lowered from 2e-4 to 5e-5 so the rate keeps
   falling. The runtime gap checks run on the Mac mini in parallel with the acceptance batch.
+- 2026-11-18 18:10 Mac mini kernel panic and automatic reboot (`panic-full-2026-11-18-181042`: watchdog timeout, no
+  watchdogd check-in for 91 s). Cause: the main session ordered the runtime gap checks in parallel with the student
+  acceptance batch; at 18:07 the machine (10 cores, 16 GB) had 33 flight-sim workers, 20.56 of 20.99 GB swap used
+  and load 21 to 47. Back at 18:11; ports 5180, 5181, 8766 and 5050 answer. All simulation jobs there were lost,
+  the Kaggle session is unaffected. Rule from now: one simulation job at a time on the Mac mini, 8 workers at most,
+  enforced by a lock and a swap pre-flight in the launch scripts; gap checks first, acceptance after.
