@@ -1718,3 +1718,8 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   students with dropped reads off / sensor delay 0 / action delay 0; and both students continued to 300 iterations
   on the idle Kaggle session. Agent-reported: older students from A-250 and B-500 best 18 and 13 (the latter barely
   walks), full acceptance of c2a_375 fails 14 lines and s2a_120 fails 9; Kaggle quota 14.44 h of 30.
+- 2026-11-18 17:59 `microduck-ts2-mamba-d` pushed and RUNNING (status read by the main session): both A-999 students
+  continued to iteration 300 (Mamba from 132, LSTM from 140), beta 0, saves every 20, 2.3 h limit, end by 20:25.
+  Agent-reported: `distill_worker.py` gained `--resume-pt` (3-iteration smoke on the Mac mini passed); the old
+  checkpoints hold no optimizer state, so Adam restarts; lr-final lowered from 2e-4 to 5e-5 so the rate keeps
+  falling. The runtime gap checks run on the Mac mini in parallel with the acceptance batch.
