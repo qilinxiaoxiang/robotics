@@ -1566,3 +1566,8 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   the teacher sees load and COM, the student infers them from its history. Acceptance therefore runs every skill at
   every load state. Project inference: the mechanism that covers load is the history input, not parameter count; the
   one-frame runs failed on forward-COM and shove cases at 197,896 parameters and more width was never the tested fix.
+- 2026-11-18 Shawn: "可以开跑呗". Approved scope: Kaggle free quota only, cap 10 GPU-hours, sim only, nothing deployed.
+  Dispatched to a background agent: privileged teacher + history student (DAgger) for stand, walk and head-follow at
+  every load state, with a control arm on the second GPU; plan file to be written at
+  microduck-sim/extensions/flight-20261110/train/TEACHER-STUDENT-PLAN.md. The bend is not in this round (the earlier
+  line kept it as a separate policy with a hand-back); it follows once this round has an accepted walker.
