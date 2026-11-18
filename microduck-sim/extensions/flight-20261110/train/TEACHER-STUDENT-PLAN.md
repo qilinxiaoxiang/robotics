@@ -151,3 +151,49 @@ For the LSTM student, the Mamba student, the control arm and the start point, id
   walking; settle time = first tick from which the median error stays within 1.5 x the steady value + 0.005 rad for
   10 ticks (`out/adapt_<student>_<load>.json`).
 Training reward and imitation loss are not evidence; a student is chosen on falls, speed and torque.
+
+## 8. Round 2 (approved 2026-11-18, "开跑"; cap lifted 11:44, "超了也没事 主要是太慢了呀")
+
+Goal: the same teacher-student pair, trained with the runtime simulation's loop timing, because round 1's policies
+fall in the runtime simulation from dead time alone (RUNLOG.md, "Why the universal3-trained policies fall").
+
+Env terms changed (`flight_worker.py` `apply_loop_delay`, delta key `loop_delay`; reward, payload, commands, pushes
+and every other randomisation are universal3's, unchanged):
+- actor `joint_pos`: delay 0 -> 1 control tick (20 ms old);
+- actor `joint_vel`: delay 1 -> 2 ticks (its own one-tick lag in the base recipe plus the stale reading);
+- actor `base_ang_vel` and projected gravity: delay 0-1 -> 1 tick;
+- actuator command lag: 3-6 physics steps redrawn every step -> a range in 5 ms steps, one draw kept for 400 steps
+  (2 s) per env. Two settings train side by side:
+  - `universal4t` (teacher) / `universal4` (one-frame, and the students' env): 4-9 steps, dead time 40-65 ms;
+  - `universal4tb` / `universal4b`: 7-12 steps, dead time 55-80 ms.
+- The critic's observations are not delayed (as before).
+
+Against the runtime simulation (`brain_sim_check.py --sensor-delay 1 --action-delay 1`: readings 20 ms old plus about
+4 ms, command one tick late, 40-44 ms from measurement to servo): the first setting has the runtime's nominal value
+at its low end and reaches 25 ms past it; the second starts 15 ms past it.
+
+Why two settings: the training env does not reproduce the runtime ordering at any single dead time (step 1 check,
+128 envs, 10 s, full pack, vx 0.25 held, falls per env-minute, tsc_999 / start point): 40 ms 0.80 / 1.45, 45 ms
+2.16 / 2.11, 50 ms 4.92 / 3.94, 55 ms 10.3 / 8.3, 60 ms 20.6 / 16.1 (`out/tsep_{c999,start}_full_w25{runtime,d45,
+d50,d55,d60}.json`). Both policies degrade together; the runtime simulation at 44 ms drops tsc_999 19 of 20 and the
+start point 0 of 20. With random pushes off, tsc_999 at 45 ms falls 0.19 per env-minute
+(`out/tsep_c999_full_np45.json`): in the training env the falls under delay come with the pushes, in the runtime
+simulation they come without any. So no delay value alone makes the training env a stand-in for the runtime
+simulation, and checkpoints are picked in the runtime simulation itself.
+
+Steps:
+1. Incentive audit of each delta at full / batteries out / none (`ts2_prelaunch.sh`: stand still, shuffle, lean
+   forward and back against the intended walk; 128 envs, 250 steps), recorded in `out/audit_gate.json`; the launcher
+   refuses a delta without a PASS.
+2. Mac mini smoke of the teacher with the delta, then Kaggle: `ts2-teach` (`universal4t`) and `ts2-teach-b`
+   (`universal4tb`), one kernel each (pushed separately as each audit passed), both from run A final, 1000 iterations, warm-up 100, learning-rate clamp 1e-4,
+   save every 125, `--track-guard 2.0`.
+3. Teacher checkpoint picked on runtime-simulation falls (`ts2_pick.py`: walk at none, batteries out, full, COM x
+   +10 mm and with the 0.5 N s shove, 20 episodes each). `flight_eval.py` feeds a teacher its seven privileged inputs
+   from the simulator (`_PrivSession`: payload kg from the manifests, trunk COM from the model, trunk velocity from
+   the free joint).
+4. One Mamba student per usable teacher, in that teacher's env without the privileged columns (`--delta universal4`
+   or `universal4b`), settings as `ts-mamba-a` (140 iterations of 100 ticks, 2 epochs, minibatch 256).
+5. Acceptance as section 7 with the state carried, `accept_head.py`, `adapt_eval.py --delta`, and the table against
+   the start point, Mamba-A and the round-2 one-frame control.
+Budget: Kaggle free weekly quota only, leaving about 4 h of the 30 h unused.

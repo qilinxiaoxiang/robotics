@@ -103,6 +103,83 @@ def install_stateful_policies(b):
     b._flight_stateful = True
 
 
+PRIV = dict(m=None, d=None, kg=0.0, log=[])  # the simulator state the privileged teacher reads (set per episode)
+
+
+def priv_now():
+    """The teacher's seven privileged inputs (microduck_rl/cmu/finetune/flight/teacher.py PRIV_NAMES) read from the
+    runtime simulation: payload kg (manifest total minus the no-pack manifest's), loaded trunk_base COM in its body
+    frame (model body_ipos), trunk_base linear velocity in its body frame (free-joint velocity rotated by its attitude)."""
+    import mujoco
+    m, d = PRIV["m"], PRIV["d"]
+    assert m is not None, "the teacher was called before the first physics step"
+    tb = m.body("trunk_base").id
+    ja = m.body_jntadr[tb]
+    assert m.jnt_type[ja] == mujoco.mjtJoint.mjJNT_FREE and m.jnt_qposadr[ja] == 0, "trunk_base is not the free root"
+    R = np.zeros(9)
+    mujoco.mju_quat2Mat(R, d.qpos[3:7])
+    v = R.reshape(3, 3).T @ d.qvel[0:3]
+    p = np.concatenate([[PRIV["kg"]], m.body_ipos[tb], v]).astype(np.float32)
+    if len(PRIV["log"]) < 3:
+        PRIV["log"].append([round(float(x), 4) for x in p])
+    return p
+
+
+class _PrivSession:
+    """A privileged teacher ONNX (obs [1, 61 + 7], TEACHER-STUDENT-PLAN.md) seen by walk_brain.Brain as a 61-input
+    session: the seven privileged values are appended from the simulator at every call. Evaluation only; a teacher never
+    runs on the robot."""
+
+    def __init__(self, sess, obs_names):
+        from types import SimpleNamespace
+        self.sess = sess
+        i0 = sess.get_inputs()[0]
+        self.name = i0.name
+        self._in = [SimpleNamespace(name=i0.name, shape=[1, 61], type=i0.type)]
+        meta = dict(sess.get_modelmeta().custom_metadata_map)
+        if "joint_names" not in meta:  # a teacher exported without metadata: its start policy's (same task and joints)
+            import onnxruntime as ort
+            meta = dict(ort.InferenceSession(str(HERE / "ckpt/ts_start/walk61.onnx")).get_modelmeta().custom_metadata_map)
+        meta["observation_names"] = obs_names  # the teacher's own list ends with its privileged term
+        self._meta = SimpleNamespace(custom_metadata_map=meta)
+
+    def get_inputs(self):
+        return self._in
+
+    def get_outputs(self):
+        return self.sess.get_outputs()
+
+    def get_modelmeta(self):
+        return self._meta
+
+    def run(self, out, feed):
+        obs = np.asarray(feed[self.name], dtype=np.float32)
+        return self.sess.run(out, {self.name: np.concatenate([obs, priv_now()[None]], axis=1)})
+
+
+def install_priv_policies(b):
+    """walk_brain builds its sessions through this shim: a 68-input ONNX becomes a _PrivSession, anything else is
+    onnxruntime's own session (so every existing models dir evaluates exactly as before)."""
+    wb = b.walk_brain
+    if getattr(wb, "_flight_priv", False):
+        return
+    real = wb.ort
+
+    class _Ort:
+        def __getattr__(self, k):
+            return getattr(real, k)
+
+        @staticmethod
+        def InferenceSession(path, *a, **k):
+            sess = real.InferenceSession(path, *a, **k)
+            if len(sess.get_inputs()) == 1 and sess.get_inputs()[0].shape == [1, 68]:
+                return _PrivSession(sess, wb.OBS_NAMES)
+            return sess
+
+    wb.ort = _Ort()
+    wb._flight_priv = True
+
+
 def episode(job):
     models, manifest, case, seed, shove_ns, shove_at, landing = job[:7]
     extra = list(job[7]) if len(job) > 7 else []  # diagnostics only: probe flags appended last (they win)
@@ -110,6 +187,10 @@ def episode(job):
     import mujoco
     import brain_sim_check as b
     install_stateful_policies(b)
+    install_priv_policies(b)
+    none_parts = json.loads((HERE / "manifests/flightpack-none.json").read_text())["parts"]
+    PRIV.update(m=None, d=None, log=[], kg=sum(p["mass_kg"] for p in json.loads(Path(manifest).read_text())["parts"])
+                - sum(p["mass_kg"] for p in none_parts))
     # diagnostics only (spk3diag, PET_ROBOT_LOG 2026-11-13): JSON {joint: [lo, hi]} replaces walk_brain.JOINT_RANGE
     # entries in this sim process, i.e. the range the runtime Brain clamps policy goals to (unset: unchanged)
     if os.environ.get("SPK3DIAG_JOINT_RANGE"):
@@ -144,6 +225,7 @@ def episode(job):
     mujoco._flight_orig_step = orig
 
     def step(m, d):
+        PRIV["m"], PRIV["d"] = m, d
         if st["legs"] is None:
             st["legs"] = [m.actuator(n).id for n in LEGS]
             st["trunk"] = m.body("trunk_base").id
@@ -173,6 +255,15 @@ def episode(job):
             st.setdefault("z", []).append(float(d.xpos[st["trunk"], 2]))
         st.setdefault("per", []).append(np.abs(d.actuator_force[st["legs"]]).copy())  # every step, from t = 0
 
+    orig_fwd = getattr(mujoco, "_flight_orig_forward", mujoco.mj_forward)  # never wrap a wrapper (reused workers)
+    mujoco._flight_orig_forward = orig_fwd
+
+    def forward(m, d):  # the probe calls mj_forward on its model before the first tick: a teacher called with
+        if m.nu >= len(LEGS):  # --stand-s 0 reads its privileged inputs before any physics step
+            PRIV["m"], PRIV["d"] = m, d
+        return orig_fwd(m, d)
+
+    mujoco.mj_forward = forward
     mujoco.mj_step = step
     b.mujoco.mj_step = step
     argv = ["brain_sim_check.py", "--model", "asbuilt", "--manifest", manifest, "--volt", "7.6", "--drop", "0.036",
@@ -200,6 +291,7 @@ def episode(job):
                 # trunk_base height from 1 s on: a policy that rests the trunk or pack on the floor reads low here
                 trunk_z_m=None if not st.get("z") else dict(min=round(min(st["z"]), 4), median=round(float(np.median(st["z"])), 4)),
                 landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None,
+                priv_first=PRIV["log"] or None,  # a teacher's first privileged inputs (kg, COM xyz, velocity xyz)
                 # the probe's own pass-through fields for the bend and quack studies (absent keys stay None)
                 probe={k: r.get(k) for k in ("quack_head_ran", "quack_head_reached", "quack_peak_tilt", "seepick", "groundpick")
                        if r.get(k) is not None})

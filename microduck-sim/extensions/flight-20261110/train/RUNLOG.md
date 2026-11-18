@@ -601,3 +601,47 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   `ts_tsep.sh`, `ts_round.sh tdelay`, `train/delay/*.json`, `flight_audit.py --delay-mods` and the `--cases walk025`
   diagnostic case (never part of the launch verdict). One stale-connection stall of the Mac mini ssh at 09:36 was
   cleared by stopping the session's own local processes and rerunning.
+
+### Round 2: teachers with the runtime loop delay (2026-11-18, TEACHER-STUDENT-PLAN.md section 8)
+
+- 11:10 to 11:45 Step 1 check, training env against runtime ordering (128 envs, 10 s, full pack, vx 0.25 held, falls
+  per env-minute, `tsc_999` / start point): 40 ms 0.80 / 1.45; 45 ms 2.16 / 2.11; 50 ms 4.92 / 3.94; 55 ms 10.3 / 8.3;
+  60 ms 20.6 / 16.1 (`out/tsep_{c999,start}_full_w25{runtime,d45,d50,d55,d60}.json`). The ordering of the runtime
+  simulation (44 ms: `tsc_999` 19 of 20, start point 0 of 20) is not reproduced at any dead time; both degrade
+  together. With random pushes off `tsc_999` at 45 ms falls 0.19 per env-minute (`out/tsep_c999_full_np45.json`): the
+  training env's falls under delay come with its pushes. The remaining no-push cells were stopped at 11:45 on the
+  coordinator's instruction (speed first); the open offset is bracketed by two training arms instead.
+- 11:46 Deltas (`flight_worker.py`): `universal4t` / `universal4` = universal3t / universal3 plus joint and IMU
+  readings one tick old and a command lag of 4-9 physics steps kept 2 s per env (dead time 40-65 ms);
+  `universal4tb` / `universal4b` the same with 7-12 steps (55-80 ms). Teacher smoke on the Mac mini with
+  `universal4tb` passed (obs 68, export equal to the start policy, 3 PPO iterations; `logs/teacher_smoke.log`).
+- 11:50 to 12:33 Incentive audit, 128 envs, 250 steps, start point as the intended walk, reward ratio of stand / shuffle /
+  lean forward / lean back to the intended walk (limit 0.80): `universal4tb` full 0.64 / 0.61 / 0.58 / 0.60, batteries
+  out 0.65 / 0.65 / 0.58 / 0.59, none 0.63 / 0.67 / 0.57 / 0.55; `universal4t` full 0.59 / 0.68 / 0.55 / 0.54, batteries
+  out 0.60 / 0.68 / 0.54 / 0.51, none 0.61 / 0.67 / 0.54 / 0.53. PASS at every load for both
+  (`out/audit_r2universal4t*_*.json`, gate `out/audit_gate.json`). The start point in these envs falls 8.3 / 5.7 / 4.5
+  per env-minute (55-80 ms) and 2.4 / 0.8 / 1.3 (40-65 ms) at full / batteries out / none.
+- 12:01 to 12:31 Second occurrence of the Mac mini ssh stall (first 09:36): the `universal4t` batteries-out audit had
+  ended on the mini (file time 12:02) and the local ssh sat on a dead connection for 30 minutes until the coordinator
+  stopped it. Fix: `train/ssh_guard.sh`, sourced by `ts_round.sh` and `mini.sh`: keepalives (15 s x 4), connect
+  timeout 20 s, a local 640 s limit above the remote `timeout 590`, one retry after the mirror's remote jobs have
+  ended. Checked with a forced over-limit call (ends at the limit, retried once, returns 142) and a normal call.
+- 12:33 Kaggle, both private, one T4 each, both from run A final (`ts_start.onnx`), 1000 iterations, warm-up 100,
+  learning-rate clamp 1e-4, save every 125, `--track-guard 2.0`, `--max-hours 1.6`: `microduck-ts2-teach-b`
+  (`ts2-teach-b`, delta `universal4tb`) and `microduck-ts2-teach` (`ts2-teach`, delta `universal4t`). Both RUNNING at
+  12:35; expected end about 14:10. Quota before the push 6.41 h of 30.
+- 12:36 to 12:43 Runtime evaluator for teachers: `flight_eval.py` `_PrivSession` feeds a 68-input ONNX its seven
+  privileged values from the simulator (payload kg from the manifests, trunk COM from the model, trunk velocity from
+  the free joint). Check against the training env: full pack 0.9551 kg and COM (-0.0219, -0.0022, 0.0305) m against
+  the env's 0.9551 and (-0.0215, -0.0023, 0.0304); no pack 0 kg and (-0.0335, 0.0007, 0.0186) against (-0.0327,
+  0.0006, 0.0186). Selection cases (`ts2_pick.py`: runtime walk at none / batteries out / full / COM x +10 mm / 0.5 N s
+  shove, falls of 20 each, `eval/pk_<dir>_<case>.json`, `out/ts2_pick.json`):
+  round-1 teacher 750 14 / 13 / 18 / 20 / 20 = 85 of 100 (0.25-0.38 m/s, leg p99 at 0.538 N m);
+  start point 0 / 0 / 0 / 19 / 11 = 30 (0.17-0.19 m/s); Mamba-A 0 / 0 / 0 / 14 / 10 = 24.
+- 12:45 to 13:20 Incentive audit of the one-frame deltas `universal4` and `universal4b`: PASS at every load
+  (`out/audit_r2universal4_*.json`, `out/audit_r2universal4b_*.json`). The Tailscale link to the Mac mini dropped
+  from about 12:52 to 13:05; `ssh_guard.sh` ended the dead call within a minute, the retry also failed (connect
+  timeout), the chain went on and the lost cell (`universal4b` full) was rerun at 13:12.
+- 13:21 Push of the control pair (`ts2-ctrl` + `ts2-ctrl-b`) refused by Kaggle: "Maximum batch GPU session count of 2
+  reached". It goes up when a teacher session ends. Paid compute (Modal, AWS) not used: the go-ahead reached this
+  agent only as a relayed message.

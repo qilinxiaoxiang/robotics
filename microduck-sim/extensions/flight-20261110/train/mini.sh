@@ -11,6 +11,7 @@ SIM=microduck-sim
 RL=$SIM/microduck_rl
 FL=$SIM/extensions/flight-20261110
 VENV=.venvs/flight-sim
+source $LOCAL/$FL/train/ssh_guard.sh  # ssh / scp / rsync with keepalives, a local wall-clock limit and one retry
 case "$1" in
   push)
     ssh mac-mini "mkdir -p $REMOTE/$RL $REMOTE/$FL/train"
