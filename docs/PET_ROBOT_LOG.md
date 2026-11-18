@@ -1621,3 +1621,17 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   teacher: it was given nothing the teacher lacks. Quota used 6.41 h of the 10 h cap. Still open: which single
   difference between the training env and the runtime simulation makes the universal3 gait fall (separation test
   started 09:35 on the Mac mini, no result yet).
+- 2026-11-18 Separation result at 11:00 EST (RUNLOG.md "Question: the one-frame control ..."; files
+  `microduck-sim/extensions/flight-20261110/train/eval/sep_<policy>_<load>_<switch>.json` and `out/tsep_*.json`; the
+  fall counts for base, sensor delay 0, action delay 0, compensation, no dropped reads and no current limit were read
+  by the main session from the sep files). Cause: control-loop dead time. The runtime simulation gives the policy
+  readings one tick old and applies each goal one tick later, about 40 ms from measurement to servo; the training
+  env delays only the command by 15 to 30 ms and reads joints with no delay. Runtime walk falls of 20 for the
+  one-frame control at iteration 999, full pack: base 19, sensor delay off 0, action delay off 0, Brain compensation
+  on 0; no dropped reads 20, no current limit 18. Start point at full pack: 0 at the runtime delay, 20 with one more
+  tick of action delay. Agent-reported, not rechecked: friction, supply, mass model, contact model, ramp and goal
+  clamp do not remove the falls; in the training env the same cliff sits about 20 ms later, and where that 20 ms
+  offset comes from is not found. Consequence for the next recipe: train with the runtime's loop timing (joint and
+  IMU readings one tick old, command 20 ms late, margin toward 60 ms) and pick checkpoints on runtime-simulation
+  falls. Not adopted: the Brain's compensation switch (a robot runtime change, only measured). Not launched: any new
+  training; it waits for Shawn's nod on the plan. Kaggle quota left in the cap: 3.59 h.
