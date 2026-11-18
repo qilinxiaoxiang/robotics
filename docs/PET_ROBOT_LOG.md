@@ -1694,3 +1694,6 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
 - 2026-11-18 14:50 Second seed set (2000 to 2019, 20 episodes each, read by the main session from `eval/pk2_*.json`):
   A-999 COM x +10 mm walk 1/20 falls, shoved walk 0/20; A-875 COM x +10 mm 20/20. The 875 to 999 difference is not a
   seed accident. A-999 students still wait for a free Kaggle GPU session.
+- 2026-11-18 15:39 A-999 students pushed to Kaggle as `microduck-ts2-mamba-c` (Mamba on GPU 0, LSTM on GPU 1, 140
+  iterations, 1.7 h limit, expected end by 17:25), in the slot freed by the control session. The older student
+  session `microduck-ts2-mamba` was never cancelled and runs to about 16:05. Agent-reported quota 12.29 h of 30.
