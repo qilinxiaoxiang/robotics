@@ -61,6 +61,8 @@ DESIGNED = {   # contacts by design (face contact or a bought part seated in its
     ("wing_plate", "bp_swap_plugs"): "unchanged: plugs 3 + 4 stand 0.8 in front of the x -45 face today (backpack front plate)",
     ("dummy:fc_esc_stack", "fc_bracket"): "on its standoffs", ("dummy:esc_capacitor", "wing_plate"): "lies on the top flange",
     ("dummy:esc_capacitor", "fc_bracket"): "rests on the plate top edge",
+    ("dummy:cap_tape", "wing_plate"): "foam tape strip stuck on the right top flange",
+    ("dummy:cap_tape", "dummy:esc_capacitor"): "can stuck on the foam tape strip",
     ("dummy:a7z_link", "sd_dupont_housings"): "the lead's Dupont housings are on the header (world block covers all 40 pins)",
     ("dummy:a7z_link", "saddle_body"): "lead lies on the right side wall top edge",
     ("dummy:a7z_link", "dummy:fc_esc_stack"): "lead ends in the UART1 plug",
@@ -163,8 +165,38 @@ def world_files():
         yield f
 
 
+def carried_check():
+    """A feature made to carry something (a zip tie, a lead) names the modelled solid in `carries`, so the pair check
+    below meets it; a tie feature without one, or with an `unmodelled` reason, is listed. 2026-11-18: the capacitor tie
+    slots were cut with the tie never modelled, and the tie could not cross under the flange."""
+    import re
+    feats = json.loads((H / "features.json").read_text())
+    missing, unmodelled = [], {}
+    for sec, items in feats.items():
+        if not isinstance(items, list):
+            continue
+        for f in items:
+            for n in f.get("carries", []):
+                if n not in DUMMIES:
+                    missing.append(f"{f['id']}: carries dummy_{n}, not built")
+            text = json.dumps({k: f.get(k) for k in ("what", "purpose")}).lower()
+            if re.search(r"zip.?tie|\btie\b|cable tie", text) and not f.get("carries"):
+                if f.get("unmodelled"):
+                    unmodelled[f["id"]] = f["unmodelled"]
+                else:
+                    missing.append(f"{f['id']}: mentions a tie but names no modelled solid in carries (or an unmodelled reason)")
+    return missing, unmodelled
+
+
 def main():
-    res = dict(backpack_shift_mm=BACKPACK_SHIFT, skipped=SKIP)
+    missing, unmodelled = carried_check()
+    for m in missing:
+        print("FAIL carried:", m)
+    for k, v in unmodelled.items():
+        print(f"OPEN carried: {k} not modelled ({v})")
+    if missing:
+        raise SystemExit(1)
+    res = dict(backpack_shift_mm=BACKPACK_SHIFT, skipped=SKIP, unmodelled_carried=unmodelled)
     world = {}
     for f in world_files():
         stem = f.stem

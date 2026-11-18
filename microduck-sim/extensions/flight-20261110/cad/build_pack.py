@@ -85,7 +85,12 @@ def tube_path(r, pts):
         out.append(L.cyl(r, a, tuple(d), float(np.linalg.norm(d))))
     out += [m3.Manifold.sphere(r, 24).translate(p) for p in pts]
     return out
-MTF_C = (-86.0, -59.0)                                               # MTF-01 centre (x, y): behind the leg sweep at x > -70
+# The capacitor is held by a strip of 1 mm double-sided foam tape on the right top flange plus its soldered legs. The two
+# tie slots (CAP_SLOTS) cannot take a tie on D1: under the flange the gusset at y -54.5..-52.5 is solid down to its
+# window (z 22..34), and a tie taken round through that window runs taut straight across the outer bay, behind the battery
+# lead window the pack's XT60 passes at every battery change (2026-11-18, found when the guide drew the tie).
+CAP_TAPE = dict(t=1.0, x=(-63.5, -51.5), w=6.0)
+MTF_C = (-86.0, -59.0)                                             # MTF-01 centre (x, y): behind the leg sweep at x > -70
 SHELF_Z = (13.5, 17.5)
 
 
@@ -477,7 +482,10 @@ def dummies():
     plugs = L.box((xf1, yc - 18.0 - 10.0, zc - 18.0), (xf0, yc - 18.0, zc + 18.0))   # UART4 SH plug + MTF lead, outboard edge
     uart1 = L.box((xf1, yc - 5.0, zc + 18.0 - 0.01), (xf0, yc + 5.0, zc + 18.0 + 6.0))  # UART1 SH plug on the top edge
     D["fc_esc_stack"] = esc + fc + plugs + uart1
-    D["esc_capacitor"] = L.cyl(Pm.CAP["d"] / 2, (CAP_AXIS["x0"], CAP_AXIS["y"], W["arm_z"][1] + Pm.CAP["d"] / 2), (-1, 0, 0), Pm.CAP["h"])
+    zt_tape = W["arm_z"][1] + CAP_TAPE["t"]          # can on the foam tape strip, not on the bare flange
+    D["esc_capacitor"] = L.cyl(Pm.CAP["d"] / 2, (CAP_AXIS["x0"], CAP_AXIS["y"], zt_tape + Pm.CAP["d"] / 2), (-1, 0, 0), Pm.CAP["h"])
+    D["cap_tape"] = L.box((CAP_TAPE["x"][0], CAP_AXIS["y"] - CAP_TAPE["w"] / 2, W["arm_z"][1]),
+                          (CAP_TAPE["x"][1], CAP_AXIS["y"] + CAP_TAPE["w"] / 2, zt_tape))
     # A7Z-to-FC lead (A7Z header pins 14 GND, 16 UART4 TX, 18 RX -> FC UART1; SH1.0 to Dupont, 3 wires, bundle d 3).
     # Dupont housings on the edge row (world sd_dupont_housings models housings on all 40 pins: x -17.7..-12.7, z to
     # 64.1); wires leave the housing tops, run along the header strip (not over the 6530B fan intake) to the right saddle

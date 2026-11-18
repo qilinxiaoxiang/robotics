@@ -268,6 +268,19 @@ def validate_guide(data: dict, rep: Report) -> None:
                 rep.warn(f'{where}: "{ref}" was already added in step "{added_at[ref]}"')
             else:
                 added_at[ref] = sid
+        # A step that installs something must show it moving. A step with nothing in motion (no add, group, pose, flex
+        # or screws) states why in `still` (a check, a setting, a cable-only step); a missing reason fails the build.
+        # 2026-11-18: the flight-pack capacitor tie step had nothing moving and its zip tie was never drawn, which hid
+        # that the tie could not cross under the arm flange.
+        moving = s.get('add') or group or pose or flex or s.get('screws')
+        still = s.get('still')
+        if still is not None and not (isinstance(still, str) and len(still.strip()) >= 4):
+            rep.error(f'{where}: still must be a short reason string')
+        elif not moving and still is None:
+            rep.error(f'{where}: nothing moves in this step; add the installed part (or consumable such as a zip tie) '
+                      'with an approach, or state why the step is still in "still"')
+        elif moving and still is not None:
+            rep.warn(f'{where}: still is set but the step has motion')
         approach = s.get('approach', {}) or {}
         if not isinstance(approach, dict):
             rep.error(f'{where}: approach must be an object')
