@@ -1331,3 +1331,73 @@ Candidate: it 300. Simulation only: nothing is on the robot.
 Tests now run detached on the Mac mini (`train/pickup_batch.sh`, `mini_pickup_batch.sh`, `pickup_table.py`) because
 the MacBook slept with its lid closed and stalled an ssh-driven test for an hour.
 Modal for this task so far: spk1 1.02, spk2 3.81, spk3 1.96, spk4 2.28, checks and diagnosis about 1.75 USD.
+
+## 2026-11-17 Computing model for the pet robot: fast system, slow system, memory, consolidation
+
+Source: Shawn's voice conversation with ChatGPT (share 6afd0f70-039c-83ea-a758-6a0f7d34b12e, second half), his follow-up
+questions the same day, and four literature passes (sources reopened 2026-11-17 where marked "checked"). Nothing here is
+built or trained; training needs Shawn's nod on a plan first.
+
+**Shawn's line of thought (his positions, in order).**
+1. Hardware follows workload. "不能拿着锤子找钉子": no robot chip question before the model architecture is settled. ROS is
+   plumbing, not the load. The π0.7 load is transformer inference throughout, so it does not call for a new chip by itself.
+2. The fast system may want a different architecture. The brain controls a body with a state that is carried forward and
+   updated, closer to a recurrent system than to re-reading a context window; transformers get order from an add-on
+   (position encoding), recurrent models have it in the update. He asked whether such models, pretrained on video and
+   action rather than language, would learn the physical world better. Status: hypothesis, no evidence at scale.
+3. Fast and slow are coupled, not isolated: separate modules, a shared world state, different rates, and skills that move
+   from slow to fast with practice (distillation plus RL plus habit). RL trains the fast system while the slow one is frozen.
+4. Learning runs on several time scales: state update every step (no weight change), small modules over hours, replay and
+   consolidation overnight (hippocampus and cortex, sleep replay). "白天快学、晚上巩固".
+5. Goal: applications, not theory. The pet robot needs continual learning, long-term memory, a fast body system and a slow
+   planner. Today it has per-task RL policies glued by ChatGPT/Claude-written code, which does not generalise.
+
+**π0.7 facts (arXiv 2604.15483v1, 2026-04-16, checked).**
+- Three models, not four systems: the VLA (about 5B: Gemma3 4B VLM, 400M vision encoder in the MEM video-history design,
+  860M flow-matching action expert), a high-level language policy on the same architecture, and a subgoal-image world
+  model initialised from BAGEL (14B mixture of transformers). "Hippocampus" is our analogy, not PI's.
+- "The π0.7 model and the high-level policy ... use a single NVIDIA H100 GPU for inference": 38 ms minimal, 127 ms worst
+  case. The 4 H100 are the world model only ("4-way tensor parallelism on 4xH100", 8-bit, 25 denoising steps in 1.25 s,
+  nearly 10,000 tokens), run asynchronously while the robot keeps moving.
+- Memory: up to six past frames per camera at 1 s stride, compressed to one frame's token count; text memory is the
+  history of subtask instructions. MEM (arXiv 2603.03596): video memory to about 54 s, rewritten text summary to 15 min,
+  within one task.
+- No recurrent or state-space layer in any PI paper read (agent report; "recurrent" and "state space" do not occur in the
+  π0.7 text, checked).
+- An H100 is PI's choice, not a requirement: π0 ran 73 ms on an RTX 4090 (arXiv 2410.24164); third-party π0.5 on Jetson
+  AGX Thor about 44 to 54 ms quantised (agent report, not reopened).
+
+**Recurrent architectures (agent report; Mamba-3 abstract checked).**
+- Mamba is not the newest or the strongest: Mamba-3 (arXiv 2603.15569, 2026-03) exists, trained only to 1.5B. Large
+  models that win are hybrids (mostly recurrent or linear layers plus a few attention layers: NVIDIA 8B study arXiv
+  2406.07887, Qwen3-Next, Kimi Linear). Pure fixed-state models are weak at exact retrieval and copying.
+- Speed: the gain shows with long histories or long decodes. For a short context (a few images, short text) prefill can
+  be slower than attention (Mamba-3 latency table, agent-reported, not reopened). A VLA control step is mostly that
+  short prefill plus iterative denoising, so swapping the backbone would not make π0.7 faster.
+- No fully recurrent VLA at 2B+ pretrained on large robot data with released weights. Downloadable recurrent checkpoints
+  are text models (Mamba-2 hybrid 8B, xLSTM-7B, RWKV-7, RecurrentGemma) or small VLMs (Cobra). Robot uses so far are small:
+  MaIL (CoRL 2024), LRAM/xLSTM (ICML 2025, sim only), Mamba action expert in SmolVLA (arXiv 2608.21407, checked title),
+  AnolisVLA (arXiv 2603.15046, checked title), DASH asynchronous fast/slow (arXiv 2611.11854, checked title).
+
+**Fast + slow + memory + continual learning on one robot (agent report).**
+- Each piece is published separately: dual systems (Helix 02 at 1 kHz / 200 Hz / 7-9 Hz, GR00T N1, Fast-in-Slow, DASH);
+  within-task memory (MEM, MemER, MemoryVLA); map memory (ReMEmbR); post-deployment learning (π*0.6 Recap, RL Token
+  with a frozen VLA and a small online actor-critic head, HIL-SERL); sleep-style consolidation in sim ("When Robots
+  Sleep", arXiv 2606.17493); DayDreamer (arXiv 2206.14176, checked title) learned to walk on a real quadruped in 1 hour.
+- No published system runs all four on one robot, and none was found on a low-cost or pet robot. Closest: EmbodiedRSI
+  (arXiv 2610.10498, checked title; frozen model, no fast motor loop), PI's separate papers, Learning to Forget on ARMAR-7.
+
+**What fits MicroDuck (project inference, not built).**
+- Fast body system, onboard, 50 Hz: one recurrent policy that follows a command vector (velocity, head, posture, later a
+  small skill latent) instead of one policy per task. Trained in sim with RL from scratch; a few million parameters at
+  most, so a pretrained Mamba adds nothing here. The recurrent state is also the standard answer to what the pickup tests
+  showed (sensitivity to delay and pack load are partial-observability problems).
+- Slow system, Mac mini or cloud, 1 to 5 Hz: a VLM that outputs commands or latents, not code.
+- Memory, Mac mini: episodic log plus a fact store with retrieval (already the direction of the always-on capture).
+- Consolidation, while charging: replay the day's logs, update small modules only, pass the sim suite before anything
+  reaches the robot.
+- Not recommended: a VLA onboard (no source shows one at 50 Hz on a 2 GB ARM CPU; no demonstrations to train it), or
+  fine-tuning a multi-billion recurrent language model for body control.
+- First test that could refute the recurrent fast system: same sim budget, MLP versus GRU/LSTM versus small Mamba core,
+  scored on the existing pickup table (pack loads, 24 and 44 ms delay, held 3 s later) and push recovery. If the
+  recurrent core is not clearly better on the delay and load cells, the architecture question is closed for this robot.
