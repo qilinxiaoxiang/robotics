@@ -586,8 +586,8 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
 - Dead time against falls, runtime simulation at full pack (4 / 20 / 24 / 44 / 64 ms): `tsc_999` 0 / 0 / 0 / 19 / 20;
   `tsc_750` 0 / 0 / 0 / 6 / 20; start point 0 / 0 / 0 / 0 / 20 (at 64 ms every policy falls within 2 s, standing).
 - Training env, falls per env-minute at vx 0.25 held, trained delays / 40 ms / 60 ms dead time: `tsc_750` no pack
-  0.56 / 2.2 / 15.9 (80 ms: 42); `tsc_999` full pack 0.47 / 0.80 / 20.6; start point no pack 0.52 / 0.80 / 7.5; start
-  point full pack 0.75 / 1.45 / 16.1. With the env's own sampled commands at 40 ms: 0.56 and 0.89, unchanged.
+  0.56 / 2.2 / 15.9 (80 ms: 42); `tsc_999` full pack 0.47 / 0.80 / 20.6; start point no pack 0.52 / 0.80 / 7.5 (80 ms: 30.3); start
+  point full pack 0.75 / 1.45 / 16.1 (80 ms: 50.0). With the env's own sampled commands at 40 ms: 0.56 and 0.89, unchanged.
 - Reading: both simulations have the same cliff, and the runtime simulation reaches it about 20 ms earlier (falls from
   44 ms; the training env from 60 ms). The start point sits below the cliff at the runtime's 44 ms; the universal3
   fine-tune, trained at 15 to 30 ms with fresh joint readings, bought its faster walk (0.27 to 0.36 against 0.17 m/s)
