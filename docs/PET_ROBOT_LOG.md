@@ -1697,3 +1697,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
 - 2026-11-18 15:39 A-999 students pushed to Kaggle as `microduck-ts2-mamba-c` (Mamba on GPU 0, LSTM on GPU 1, 140
   iterations, 1.7 h limit, expected end by 17:25), in the slot freed by the control session. The older student
   session `microduck-ts2-mamba` was never cancelled and runs to about 16:05. Agent-reported quota 12.29 h of 30.
+- 2026-11-18 16:35 One-frame controls of round 2 (same universal4 / universal4b recipes without privileged inputs or
+  memory), runtime-simulation selection, falls of 20 at none / batteries out / full / COM x +10 mm / shove, read by the
+  main session from `eval/pk_c2*.json`. Short delay (40 to 65 ms): 125 = 39; 250 = 27; 375 0/0/4/0/9 = 13
+  (0.21 to 0.30 m/s); 500 = 23; 625 = 29; 750 = 61; 875 = 40; 999 20/1/0/15/18 = 54. Long delay (55 to 80 ms): 34 to
+  77, none better than the start point (30). Chosen control: c2a_375. Reference: teacher A-999 0, start point 30,
+  Mamba-A 24. Finding: loop delay in training also helps a one-frame policy (best 13 against 30), but its checkpoints
+  swing between 13 and 61 and the last one is worse than the start point, while the privileged teacher ends at 0.
+  The first selection pass failed on every cell (control ONNX exported without metadata); rebuilt from the start
+  policy as template and rerun (agent-reported). A-999 students still training, end by 17:25.
