@@ -1594,3 +1594,19 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   one-frame control, 1000 iterations, 1.6 h cap) pushed 02:10 and RUNNING. Shawn before sleeping: "你自己冒烟完继续往下训吧".
   The build agent continues through student distillation and acceptance without stopping, inside the same limits
   (Kaggle free quota, 10 GPU-hours, simulation only, nothing to the robot or team repo, no push).
+- 2026-11-18 Teacher-student round, result at 09:00 EST (files in `microduck-sim/extensions/flight-20261110/train/out/`:
+  `ts_compare.json`, `accept_ts_lstm.json`, `accept_ts_mamba.json`, `accept_tsc_750.json`, `accept_tsc_999.json`,
+  `ts_gate.json`, `adapt_*.json`; verdicts and per-load falls read by the main session from `ts_compare.json`).
+  No policy of this round beats the start point (run A, uni_a). Failed gate lines: start 10, one-frame control 22
+  and 23, LSTM student 27, Mamba student 25. Walk falls of 20 at none / 25 / 50 / 75 % / batteries out / full:
+  start 0/0/0/0/0/0 at 0.17 to 0.18 m/s; control 750 20/8/3/1/5/6; control 999 2/0/0/9/10/19; LSTM 20/19/6/6/9/17;
+  Mamba 17/15/17/13/15/20. Every policy trained with the universal3 recipe walks 0.26 to 0.36 m/s with leg torque
+  p99 at the 0.54 N m clamp in the runtime simulation; standing is fine (0 to 2 falls). Agent-reported, not
+  rechecked: teacher passed its gate only at iteration 750; students settle 0.2 to 0.3 s after a reset and 0.7 to
+  1.2 s after a zeroed state; with the state zeroed every call both students fall 20/20, so they use their memory.
+  Evaluator fault fixed on the way: the stateful session wiped the recurrent state on every dropped servo read; the
+  robot runtime would need the same rule. Kaggle quota used 4.77 h plus a diagnostic session still running
+  (`microduck-ts-lstm-a`, students distilled from run A itself, cap 1.7 h). Project inference: the main failure is
+  the training recipe (a fast gait the runtime simulation does not hold), shared by the one-frame control, not the
+  recurrent core as such; the students add imitation error on top. Next: the diagnostic result, then a one-switch-
+  at-a-time comparison of the training env against the runtime simulation for the control policy.
