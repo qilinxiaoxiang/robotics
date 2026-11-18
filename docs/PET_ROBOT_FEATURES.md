@@ -54,7 +54,7 @@ Scenario: keys jingle, the owner leaves; by day four the pet is at the door when
 - **Diary and retrieval.** `can` / `build`. Nightly summary sentences with embeddings; the intention layer retrieves similar past situations.
 - **Personality and growth.** `can` / `build`. Drive rates and thresholds per robot; nudged nightly within bounds.
 - **Anticipation beyond rules (time-of-day patterns).** `can` / `build`. Nightly plan from the diary ("17:30 wait at the door"), executed by the intention layer.
-- **Concrete daily memories (Shawn 2026-11-17).** `can` / `build`. "今天给我换了这个模型"; "今天标定了，比如左腿脑袋做了微调"; "今天开机时看到了谁"; "看见了谁、谁开机了、他们在干什么"; a gallery of the 16-831 teammates' faces and voices. Sources exist (run ledger meta and episodes, `pet/identity`, `life_log.py`); missing: the bridge into the event log, teammate enrolment, transcription of heard speech, keyframe captions. Detail in `PET_ROBOT_LOG.md` 2026-11-17.
+- **Concrete daily memories (Shawn 2026-11-17).** `can` / `build`. "今天给我换了这个模型"; "今天标定了，比如左腿脑袋做了微调"; "今天开机时看到了谁"; "看见了谁、谁开机了、他们在干什么". Sources exist (run ledger meta and episodes, `pet/identity`, `life_log.py`); missing: the bridge into the event log, enrolment of the people it should know, transcription of heard speech, keyframe captions. Detail in `PET_ROBOT_LOG.md` 2026-11-17.
 - **Learning a new motor skill from a few demonstrations.** `train`, course-relevant; see section 7.
 
 ## 4. Initiative and liveliness

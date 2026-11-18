@@ -1462,3 +1462,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
 - Order proposed: (1) history design A against a one-frame control, fixed budget, existing acceptance tables; (2) only
   if history helps, a GRU student distilled from the existing policies (DAgger), then RL fine-tune; (3) command
   conditioning for several skills. An MLP cannot be fine-tuned into a GRU; its behaviour is carried over by distillation.
+
+## 2026-11-17 Shawn's correction: architecture and model sizes, not implementation steps
+
+- "什么十几位队友？整天扯淡": the teammate-gallery reading of his dictated note was wrong; removed from the register. Who
+  gets enrolled is his call, not assumed.
+- He asked for a system architecture with a size estimate and an implementation path per model, deployable on the duck,
+  covering long and short-term memory, instruction following, companionship and its own intentions; the previous reply
+  drifted into integration tasks. Architecture summary given in chat the same day (four layers by time scale, four
+  kinds of memory, size per model; sizes other than the walking policy and buffalo_sc are estimates, not measured).
