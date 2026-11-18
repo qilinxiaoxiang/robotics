@@ -1560,3 +1560,9 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   student side implemented and the privileged teacher and distillation worker not written. The first step of the trial
   is therefore the unevaluated universal3 gate (dispatched to a background agent, Mac mini, sim only), then the
   teacher-student run proposed to Shawn; no training launched.
+- 2026-11-18 Shawn: the earlier universal line was load training for the future jet pack; the new model should cover
+  that load range too, "这样换喷气背包时就不用换一个新的模型了". Folded into the proposed run: the payload event of
+  UNIVERSAL-PLAN.md section 2 (no pack, batteries out, full pack, any load 0 to about 1.1 kg) stays on in every skill,
+  the teacher sees load and COM, the student infers them from its history. Acceptance therefore runs every skill at
+  every load state. Project inference: the mechanism that covers load is the history input, not parameter count; the
+  one-frame runs failed on forward-COM and shove cases at 197,896 parameters and more width was never the tested fix.
