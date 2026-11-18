@@ -1691,3 +1691,6 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   confirmation and was not run. Default path: the A-999 students push by themselves (`ts2_push_when_free.sh`, every
   2 minutes) when the control session ends about 15:40, result about 17:25. Shawn can stop `microduck-ts2-mamba` in
   the Kaggle web page to start them about an hour earlier.
+- 2026-11-18 14:50 Second seed set (2000 to 2019, 20 episodes each, read by the main session from `eval/pk2_*.json`):
+  A-999 COM x +10 mm walk 1/20 falls, shoved walk 0/20; A-875 COM x +10 mm 20/20. The 875 to 999 difference is not a
+  seed accident. A-999 students still wait for a free Kaggle GPU session.
