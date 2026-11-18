@@ -1499,3 +1499,20 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
     the perception layer, and the architecture pattern (frozen encoder + small recurrent core + small action head)
     trained by us in sim. Not checked: the pasted claims about Mamba-2 "8x" state, TTT/Titans adapting on robots within
     seconds, Mamba inside Cosmos, tactile fusion at 500 to 1000 Hz, and 60 Hz on a Jetson Orin.
+
+## 2026-11-17 Sim-pretrained fast system on the A7Z: Shawn's five points
+
+- Shawn: MuJoCo already is the dynamics model; calibration against real logs should not be needed; the fast system is
+  a single-frame ViT/CNN plus a multi-frame Mamba on the duck, sized with headroom; the slow system stays on the
+  computer. Asked for the largest model the duck can run and whether that is enough for routine behaviour.
+- Agreed corrections: a separately learned dynamics model is not needed for pretraining (MuJoCo is the dynamics); it
+  was dropped from the list. Calibration is not a gate: randomize the body over a range around the already measured
+  facts and let the recurrent core adapt. The remaining check is whether real logs fall inside the randomized family.
+- A7Z budget from microduck-sim/CURRENT-STATE.json (read 2026-11-17): brain compute 6 to 7 ms of a 20 ms tick, loop
+  already at 20.5 to 21.6 ms; camera service about 20 % CPU and the flight recorder about 30 %; the brain locks about
+  925 MB of the 2 GB; MemAvailable fell to 168 MB under a heavy load on 2026-10-30.
+- Size estimate (project inference, nothing benchmarked on the A7Z): 50 Hz motor core stays near 1M parameters; vision
+  runs in its own process at 5 to 15 Hz. Comfortable total 5 to 10M parameters (CNN encoder 3 to 5M on the NPU, Mamba or
+  GRU core 2 to 5M on CPU, head under 1M), 20 to 40 MB. Ceiling about 25 to 30M (a DINOv2-Small-class ViT) at 2 to 5
+  frames per second, and only if the NPU runs transformer layers, which is unverified. First measurement before any
+  training: time random-weight models of these sizes on the A7Z beside the running brain.
