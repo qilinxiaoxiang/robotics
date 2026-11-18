@@ -1,0 +1,158 @@
+{
+ "time": "2026-11-18T01:53:43",
+ "num_envs": 128,
+ "steps": 400,
+ "results": {
+  "universal3t": {
+   "nobatt:intended": {
+    "steps": 400,
+    "envs": 128,
+    "episodes": 5,
+    "falls": 5,
+    "timeouts": 0,
+    "falls_per_env_minute": 0.293,
+    "mean_ep_len_s": 4.78,
+    "survived_to_end": 123,
+    "track_err_xy": 0.224,
+    "speed_along_cmd": 0.137,
+    "moving_samples": 20299,
+    "low_cmd_speed": 0.125,
+    "reward_per_s": 10.267,
+    "terms_per_s": {
+     "track_linear_velocity": 2.4928,
+     "track_angular_velocity": 1.5759,
+     "upright": 0.4101,
+     "pose": 0.2004,
+     "body_ang_vel": -0.0081,
+     "angular_momentum": -0.0,
+     "dof_pos_limits": -0.0037,
+     "action_rate_l2": -0.0942,
+     "air_time": 2.965,
+     "foot_clearance": -0.0048,
+     "foot_swing_height": -0.0024,
+     "foot_slip": -0.0001,
+     "self_collisions": -0.0005,
+     "head_pose_tracking": 0.9124,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": -0.1326,
+     "torque_margin": -0.0353,
+     "stance_foot_heading": -0.0321,
+     "step_width_over": -0.0799,
+     "progress_along_cmd": 2.1035
+    },
+    "diag_raw_per_s": {},
+    "model": "u_nobatt",
+    "policy": "start",
+    "obs_command_override": {
+     "compose": "start",
+     "thr": 0.05
+    },
+    "wall_s": 54.1,
+    "weights": {
+     "track_linear_velocity": 3.0,
+     "track_angular_velocity": 2.0,
+     "upright": 0.5,
+     "pose": 1.0,
+     "body_ang_vel": -0.05,
+     "angular_momentum": -0.02,
+     "dof_pos_limits": -1.0,
+     "action_rate_l2": -1.0,
+     "air_time": 6.0,
+     "foot_clearance": -2.0,
+     "foot_swing_height": -0.25,
+     "foot_slip": -0.1,
+     "self_collisions": -1.0,
+     "head_pose_tracking": 1.0,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": 3.0,
+     "torque_margin": -20.0,
+     "stance_foot_heading": -8.0,
+     "step_width_over": -15.0,
+     "progress_along_cmd": 8.0
+    }
+   },
+   "nobatt:lean_back": {
+    "steps": 400,
+    "envs": 128,
+    "episodes": 2,
+    "falls": 2,
+    "timeouts": 0,
+    "falls_per_env_minute": 0.117,
+    "mean_ep_len_s": 2.52,
+    "survived_to_end": 126,
+    "track_err_xy": 0.261,
+    "speed_along_cmd": -0.004,
+    "moving_samples": 20030,
+    "low_cmd_speed": -0.004,
+    "reward_per_s": 5.281,
+    "terms_per_s": {
+     "track_linear_velocity": 2.0636,
+     "track_angular_velocity": 1.56,
+     "upright": 0.4151,
+     "pose": 0.6278,
+     "body_ang_vel": -0.0051,
+     "angular_momentum": -0.0,
+     "dof_pos_limits": -0.0019,
+     "action_rate_l2": -0.0796,
+     "air_time": 0.1561,
+     "foot_clearance": -0.0008,
+     "foot_swing_height": -0.0016,
+     "foot_slip": -0.0001,
+     "self_collisions": -0.0,
+     "head_pose_tracking": 0.8727,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": -0.3978,
+     "torque_margin": -0.0766,
+     "stance_foot_heading": -0.0357,
+     "step_width_over": -0.0017,
+     "progress_along_cmd": 0.1862
+    },
+    "diag_raw_per_s": {},
+    "model": "u_nobatt",
+    "policy": "start",
+    "obs_command_override": {
+     "cmd": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "lean": -0.2
+    },
+    "wall_s": 58.4,
+    "weights": {
+     "track_linear_velocity": 3.0,
+     "track_angular_velocity": 2.0,
+     "upright": 0.5,
+     "pose": 1.0,
+     "body_ang_vel": -0.05,
+     "angular_momentum": -0.02,
+     "dof_pos_limits": -1.0,
+     "action_rate_l2": -1.0,
+     "air_time": 6.0,
+     "foot_clearance": -2.0,
+     "foot_swing_height": -0.25,
+     "foot_slip": -0.1,
+     "self_collisions": -1.0,
+     "head_pose_tracking": 1.0,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": 3.0,
+     "torque_margin": -20.0,
+     "stance_foot_heading": -8.0,
+     "step_width_over": -15.0,
+     "progress_along_cmd": 8.0
+    }
+   },
+   "verdict": {
+    "checks": {
+     "nobatt:lean_back": {
+      "reward_ratio": 0.514,
+      "track_lin_ratio": 0.828,
+      "intended_wins": true
+     }
+    },
+    "max_stand_ratio": null,
+    "verdict": "PASS"
+   }
+  }
+ }
+}

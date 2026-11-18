@@ -1,0 +1,158 @@
+{
+ "time": "2026-11-18T01:39:30",
+ "num_envs": 128,
+ "steps": 400,
+ "results": {
+  "universal3t": {
+   "full:intended": {
+    "steps": 400,
+    "envs": 128,
+    "episodes": 4,
+    "falls": 4,
+    "timeouts": 0,
+    "falls_per_env_minute": 0.234,
+    "mean_ep_len_s": 5.3,
+    "survived_to_end": 124,
+    "track_err_xy": 0.221,
+    "speed_along_cmd": 0.14,
+    "moving_samples": 20693,
+    "low_cmd_speed": 0.129,
+    "reward_per_s": 10.18,
+    "terms_per_s": {
+     "track_linear_velocity": 2.4925,
+     "track_angular_velocity": 1.5518,
+     "upright": 0.3995,
+     "pose": 0.2029,
+     "body_ang_vel": -0.0084,
+     "angular_momentum": -0.0,
+     "dof_pos_limits": -0.0062,
+     "action_rate_l2": -0.0975,
+     "air_time": 2.921,
+     "foot_clearance": -0.0049,
+     "foot_swing_height": -0.0024,
+     "foot_slip": -0.0002,
+     "self_collisions": -0.0004,
+     "head_pose_tracking": 0.9226,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": -0.113,
+     "torque_margin": -0.077,
+     "stance_foot_heading": -0.0366,
+     "step_width_over": -0.09,
+     "progress_along_cmd": 2.1259
+    },
+    "diag_raw_per_s": {},
+    "model": "u_full",
+    "policy": "start",
+    "obs_command_override": {
+     "compose": "start",
+     "thr": 0.05
+    },
+    "wall_s": 54.0,
+    "weights": {
+     "track_linear_velocity": 3.0,
+     "track_angular_velocity": 2.0,
+     "upright": 0.5,
+     "pose": 1.0,
+     "body_ang_vel": -0.05,
+     "angular_momentum": -0.02,
+     "dof_pos_limits": -1.0,
+     "action_rate_l2": -1.0,
+     "air_time": 6.0,
+     "foot_clearance": -2.0,
+     "foot_swing_height": -0.25,
+     "foot_slip": -0.1,
+     "self_collisions": -1.0,
+     "head_pose_tracking": 1.0,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": 3.0,
+     "torque_margin": -20.0,
+     "stance_foot_heading": -8.0,
+     "step_width_over": -15.0,
+     "progress_along_cmd": 8.0
+    }
+   },
+   "full:lean_fwd": {
+    "steps": 400,
+    "envs": 128,
+    "episodes": 7,
+    "falls": 7,
+    "timeouts": 0,
+    "falls_per_env_minute": 0.41,
+    "mean_ep_len_s": 1.59,
+    "survived_to_end": 121,
+    "track_err_xy": 0.266,
+    "speed_along_cmd": -0.002,
+    "moving_samples": 14923,
+    "low_cmd_speed": -0.003,
+    "reward_per_s": 5.389,
+    "terms_per_s": {
+     "track_linear_velocity": 2.2428,
+     "track_angular_velocity": 1.6062,
+     "upright": 0.4091,
+     "pose": 0.5688,
+     "body_ang_vel": -0.007,
+     "angular_momentum": -0.0,
+     "dof_pos_limits": -0.0079,
+     "action_rate_l2": -0.0915,
+     "air_time": 0.1369,
+     "foot_clearance": -0.0009,
+     "foot_swing_height": -0.002,
+     "foot_slip": -0.0001,
+     "self_collisions": -0.0007,
+     "head_pose_tracking": 0.8797,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": -0.3695,
+     "torque_margin": -0.1368,
+     "stance_foot_heading": -0.0243,
+     "step_width_over": -0.0027,
+     "progress_along_cmd": 0.1884
+    },
+    "diag_raw_per_s": {},
+    "model": "u_full",
+    "policy": "start",
+    "obs_command_override": {
+     "cmd": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "lean": 0.2
+    },
+    "wall_s": 60.0,
+    "weights": {
+     "track_linear_velocity": 3.0,
+     "track_angular_velocity": 2.0,
+     "upright": 0.5,
+     "pose": 1.0,
+     "body_ang_vel": -0.05,
+     "angular_momentum": -0.02,
+     "dof_pos_limits": -1.0,
+     "action_rate_l2": -1.0,
+     "air_time": 6.0,
+     "foot_clearance": -2.0,
+     "foot_swing_height": -0.25,
+     "foot_slip": -0.1,
+     "self_collisions": -1.0,
+     "head_pose_tracking": 1.0,
+     "body_pose_tracking": 0.0,
+     "head_pose_bias": 3.0,
+     "torque_margin": -20.0,
+     "stance_foot_heading": -8.0,
+     "step_width_over": -15.0,
+     "progress_along_cmd": 8.0
+    }
+   },
+   "verdict": {
+    "checks": {
+     "full:lean_fwd": {
+      "reward_ratio": 0.529,
+      "track_lin_ratio": 0.9,
+      "intended_wins": true
+     }
+    },
+    "max_stand_ratio": null,
+    "verdict": "PASS"
+   }
+  }
+ }
+}

@@ -1,0 +1,116 @@
+{
+ "run_name": "smoke_lstm",
+ "task": "Mjlab-Velocity-Flat-MicroDuck",
+ "gpu": "?",
+ "args": {
+  "run_name": "smoke_lstm",
+  "root": "/tmp/ts_distill",
+  "teacher_onnx": "/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/ts_teacher_m0.onnx",
+  "core": "lstm",
+  "hidden": 128,
+  "layers": 2,
+  "delta": "universal3",
+  "manifest": "/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110/train/manifests/flightpack-none.json",
+  "audit": "/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/existing-model-mass-audit.json",
+  "remove_battery_kg": 0.09,
+  "num_envs": 64,
+  "max_iters": 3,
+  "bptt_steps": 100,
+  "warmup_iters": 1,
+  "beta_iters": 1,
+  "act_noise": 0.1,
+  "epochs": 2,
+  "mb_envs": 32,
+  "lr": 0.001,
+  "lr_final": 0.0002,
+  "save_interval": 1,
+  "stop_after": 120,
+  "seed": 1,
+  "max_hours": 0.15,
+  "max_dollars": 1.0,
+  "rate_per_hour": 0.0,
+  "gpu": "?",
+  "device": "cpu"
+ },
+ "student": {
+  "core": "lstm",
+  "d": 128,
+  "layers": 2,
+  "state_dim": 512,
+  "params": 306830,
+  "target_slots": 8
+ },
+ "delta": {
+  "track_lin_vel": {
+   "tau_s": 0.5,
+   "std": 0.22360679774997896
+  },
+  "drop_z": [
+   0.12,
+   0.15
+  ],
+  "torque_margin": {
+   "limit": 0.45,
+   "weight": -12.0
+  },
+  "payload": {
+   "nominal": "flightpack-load100.json",
+   "none": "flightpack-none.json"
+  },
+  "reward_mods": {
+   "cmd_ranges": {
+    "lin_vel_x": [
+     -0.05,
+     0.3
+    ],
+    "lin_vel_y": [
+     -0.05,
+     0.05
+    ],
+    "ang_vel_z": [
+     -0.5,
+     0.5
+    ]
+   },
+   "weights": {
+    "air_time": 6.0,
+    "track_linear_velocity": 3.0,
+    "upright": 0.5,
+    "head_pose_tracking": 1.0
+   },
+   "pose_std_walking": {
+    ".*hip_yaw.*": 0.15
+   },
+   "foot_heading_weight": -8.0,
+   "push_x": [
+    -0.35,
+    0.35
+   ],
+   "com_x_whole_m": 0.012,
+   "step_width": {
+    "limit": 0.1,
+    "weight": -15.0
+   },
+   "torque_margin_weight": -20.0,
+   "progress": {
+    "weight": 8.0,
+    "min_cmd": 0.1
+   }
+  }
+ },
+ "teacher_onnx": "/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/ts_teacher_m0.onnx",
+ "teacher_rebuild_max_abs": 5.960464477539062e-07,
+ "started": "2026-11-18T01:31:42",
+ "finished": "2026-11-18T01:32:10",
+ "final_iter": 3,
+ "stop_reason": "max_iters reached",
+ "best": null,
+ "elapsed_s": 28.1,
+ "teacher_base": {
+  "env_min": 2.13,
+  "falls_per_env_min": 0.0,
+  "speed": 0.1109,
+  "low_speed": 0.1109
+ },
+ "onnx": "/tmp/ts_distill/smoke_lstm/smoke_lstm.onnx"
+}
