@@ -1526,3 +1526,28 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   NPU, recurrent core as LSTM or GRU on the NPU or CPU, total 60 to 70 MB. Not covered by these sources: Mamba layers
   are not in the zoo (state file parts_a7z_extensions and earlier sessions hold no NPU benchmark either), the page does
   not name the CLIP variant, and the figures are for an idle board, not beside the brain.
+
+## 2026-11-18 Unified multi-skill motor core: size of the training job, 16-831 lecture 22, expected benefit
+
+- Deployed Pollen policies, read from the ONNX files in `whole-robot-20260912/runtime-overlay/models`: MLP
+  61 -> 512 -> 256 -> 128 -> 14 with ELU, 197,896 parameters, 794 KB, no memory, one file per task (walk61, stand61,
+  sitstand61, kick, groundpick61, seepick61). Our own `learned_target.onnx` is a YOLO-class CNN, 9.73M parameters, 39 MB.
+- Shawn's direction: one model for all motor skills is of interest; an end-to-end eye-plus-body model was discussed and
+  not recommended as the first step (rendering cost, visual sim gap, 10 Hz camera against 50 Hz control).
+- Measured size of one of our runs (cmu/finetune/modal/FINETUNE-DELTA.md): 4096 envs x 24 steps x 1000 iterations =
+  98.3M steps = 546 hours of simulated duck time; 56 min on a Modal L4 ($1.05), 82 to 83 min on a free Kaggle T4, 82 to
+  114 min on the Mac mini. These were fine-tunes from walk61.
+- Estimate for a multi-skill recurrent core (not a plan, no run approved): 5,000 to 20,000 iterations, 0.5 to 2
+  billion steps, 7 to 27 hours on one T4. Earlier cost estimates in this project ran about ten times off, so this is a
+  range to be replaced by a 40-iteration bench before any run.
+- 16-831 lecture 22 (Sim2Real, Guanya Shi, 2026-11-17; explained page in the course folder, week 12) maps onto this:
+  domain randomization (already used; too wide makes the policy conservative, and it cannot cover effects the sim has
+  no equation for, such as backlash); privileged teacher then history-only student with DAgger (the recipe for the
+  recurrent core; the lecture says plain PPO on history is the harder way); real-to-sim (system identification narrows
+  the randomization range, a residual or actuator model covers the missing effects); perception randomization in RPL
+  (camera pose, field of view, pixel dropout, noise) for a later vision stage. This qualifies the earlier "no
+  calibration needed": not a gate, but identification pays off and backlash-type effects need it.
+- Expected benefit, by source: unification gives no policy swap between skills and combined commands (walk while the
+  head looks down); memory gives adaptation (slip, payload, delay); neither gives more speed or stronger turns, which
+  are set by the command range trained and the servo limits. Evidence for the combined-command gap: walk61 moves 7 mm in
+  6 s under a head command where the t1 fine-tune walks 0.95 to 1.16 m (sim), and t1 then fell on the robot.
