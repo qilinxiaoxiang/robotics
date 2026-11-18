@@ -1401,3 +1401,18 @@ built or trained; training needs Shawn's nod on a plan first.
 - First test that could refute the recurrent fast system: same sim budget, MLP versus GRU/LSTM versus small Mamba core,
   scored on the existing pickup table (pack loads, 24 and 44 ms delay, held 3 s later) and push recovery. If the
   recurrent core is not clearly better on the delay and load cells, the architecture question is closed for this robot.
+
+## 2026-11-17 Computing model, corrections after Shawn's review
+
+- Shawn: PI's approach is not what we mean by fast and slow systems ("和我们想象中的人脑这样的快慢系统根本就不是一回事"). Agreed
+  reading: π0.7 is one imitation-trained transformer prompted at several levels (subtask text, one generated subgoal
+  image, the VLA conditioned on both); MEM is within-task memory in a context window. No state carried between calls, no
+  memory across days, no learning after deployment in that paper. Shared with us: only the high-level-to-low-level split.
+- Shawn: "充电时巩固" does not fit this robot: the 2S Tattu 650 pack is charged outside the robot on the HTRC balance
+  charger, robot off (CURRENT-STATE `parts_battery_charging`, `power`). Correction to the entry above: consolidation runs
+  on the Mac mini from logs already sent over Wi-Fi (run ledger `~/duck-walks/episodes.jsonl`); the robot can be off.
+  New weights and facts load at the next start. Self-docking and charging while running is a separate product feature
+  (always-present pet), not a prerequisite for learning. Not designed, no parts chosen.
+- Open design point Shawn raised: fast/slow/memory are not yet specified clearly. Working definition proposed in chat
+  (by time scale: reflex 20 ms onboard, situation 1 s to minutes on the Mac mini, episodes across days, consolidation
+  overnight; real logs choose what to practise, the sim does the practising). Proposal only.
