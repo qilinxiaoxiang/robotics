@@ -527,7 +527,8 @@ step(id='b-fc', chapter='bench', bench=True, title='飞控插好两根线，扣�
                    '四颗 M3 × 8 螺丝穿过胶圈，拧进隔离柱，拧到飞控不晃就停，胶圈不要压扁。'],
      checks=['8 针线在两块板的下沿，没有被夹在两块板中间。', '飞控 UART1 插座（上沿）空着，留给 A7Z 线。'])
 
-step(id='b-cap', chapter='bench', bench=True, title='一根扎带把电容绑在右臂顶上', show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'fc', 'capacitor'],
+step(id='b-cap', chapter='bench', bench=True, title='一根扎带把电容绑在右臂顶上', show=['wing_plate', 'fc_bracket', 'mtf01', 'esc', 'fc'],
+     add=['capacitor'], approach={'capacitor': [0, 0, 25]},
      prepare=[dict(item='小扎带', qty=1, kind='other')],
      instructions=['扎带从右臂顶面的一个小槽穿下去，从另一个小槽穿上来，绕过电容罐。',
                    '拉紧到电容不滚，剪平扎带尾巴。'],
