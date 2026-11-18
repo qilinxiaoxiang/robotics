@@ -1571,3 +1571,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   every load state, with a control arm on the second GPU; plan file to be written at
   microduck-sim/extensions/flight-20261110/train/TEACHER-STUDENT-PLAN.md. The bend is not in this round (the earlier
   line kept it as a separate policy with a hand-back); it follows once this round has an accepted walker.
+- 2026-11-18 Shawn's correction: this is meant to be a new architecture (single-frame CNN or ViT, recurrent core such
+  as Mamba), so what is the old model for. The dispatched brief had the student as the existing history-window MLP,
+  which is not recurrent. Changed before any long run: student = recurrent core carrying its own state (GRU or LSTM,
+  61 inputs per tick, single-step ONNX with state in and out), second arm = small Mamba core if it installs and exports
+  cleanly, otherwise the history-window MLP. The old MLP policies keep two roles: warm start for the privileged teacher
+  and baseline in acceptance; their weights are not loaded into the student. No image input in this round: the encoder
+  stays a separate module that will feed a small target vector.
