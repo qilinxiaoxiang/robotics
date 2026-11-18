@@ -35,6 +35,9 @@ LEGS = ("left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_an
         "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle")
 
 
+RECURRENT_MAX_GAP = 5  # control ticks (0.1 s) a recurrent policy's state survives without a call
+
+
 class _StatefulSession:
     """A history policy (HISTORY-PLAN.md: inputs obs [1, 61] + hist_in, outputs actions + hist_out) seen by
     walk_brain.Brain as a plain 61-input session. hist_out is fed back as the next hist_in; the state is zeroed (the
@@ -61,7 +64,13 @@ class _StatefulSession:
         st = b._hist_state.get(self.group)
         # FLIGHT_HIST_REPEAT=1 (--hist-repeat): always pass an empty state, so the graph fills all slots with the
         # current frame. Same network, no past: the control for "does the policy use the history" (HISTORY-PLAN.md 6)
-        if st is None or b._hist_last.get(self.group) != tick - 1 or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
+        # A recurrent policy (TEACHER-STUDENT-PLAN.md: second input named state_in) keeps its state over the control
+        # ticks the Brain skips (a dropped servo read; 37 of 1000 ticks in a standing episode, 2026-11-18): the state
+        # is zeroed only on entry into the policy, i.e. after more than RECURRENT_MAX_GAP ticks without a call.
+        # History policies are unchanged: any skipped tick empties the window and the graph back-fills it.
+        gap = tick - b._hist_last.get(self.group, -10 ** 9)
+        entered = gap > RECURRENT_MAX_GAP if self.state_name == "state_in" else gap != 1
+        if st is None or entered or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
             st = np.zeros(self.state_shape, dtype=np.float32)
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick

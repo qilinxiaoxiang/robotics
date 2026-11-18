@@ -450,3 +450,94 @@ running total of worst cases; real spend read from `modal billing report` before
 - Cost basis for 1000 iterations at 4096 envs: g5.xlarge spot 2.4 s/it = 40 min + 2-8 min setup, about $0.40 at the
   current price ($0.51 at the 1.25x max price); Modal A10 ($1.42/h, fq2 ran 2000 iterations in about 80 min) about
   $0.95; Modal L4 ($1.117/h) has no measured rate here, $0.75 at A10 speed.
+
+## Teacher-student round (2026-11-18; TEACHER-STUDENT-PLAN.md; Kaggle free quota, cap 10 h; sim only)
+- 00:40-01:27 Code: `flight/teacher.py` (7 privileged actor columns, padded warm start, torch rebuild of an MLP ONNX),
+  `flight/recurrent.py` (LSTM and single-step Mamba students, stateful ONNX `obs` + `state_in` -> `actions` +
+  `state_out`), `flight/distill_worker.py` (DAgger, 100-tick BPTT, state carried across segments), delta
+  `universal3t`, `flight_worker.py --distill`, `teacher_smoke.py`, `adapt_eval.py`, launcher flags and assets;
+  `train/ts_round.sh`, `ts_audit_all.sh`, `ts_gate.sh`, `accept_head.py`. Start point chosen from the other
+  session's acceptance (`out/accept_uni3_best.json`, `accept_uni3_1500.json`, `accept_uni_a.json`): run A final.
+- 01:27-01:33 Mac mini smokes (CPU, 64 envs). Teacher: obs 68 / 80, privileged columns equal the simulator read
+  (0.0), 68 % of walking env-steps carry a head command above 0.3 rad, iteration-0 export equals run A (0.0), 3 PPO
+  iterations, trained export equals the torch actor (6e-7) (`out/teacher_smoke.json`). Distillation, 3 iterations
+  of 100 ticks each: LSTM (306,830 parameters, state 512) and Mamba (277,134, state 9,728), ONNX equals torch over
+  a sequence (2e-7, 3e-7) (`out/distill_smoke_{lstm,mamba}.json`); both smoke ONNX run through `flight_eval.py`
+  with the state carried (they fall at 1.1 s, as 3-iteration students should).
+- 01:33-01:49 Kaggle benches, 4096 envs, both COMPLETE, 0.42 h of quota: `microduck-ts-bench-t` (teacher PPO 0.19 to
+  0.20 it/s; LSTM distillation 25 s per 100-tick iteration, 5.4 GB) and `microduck-ts-bench-mamba256` (Mamba 40 s
+  at minibatch 256, 8.8 GB; 33 s at minibatch 512, 12.4 GB). After 12 iterations on run A's labels the Mamba
+  student at minibatch 256 fell 1.36 times per env-minute against 1.42 for the teacher-driven envs.
+- 01:33-02:09 Incentive audit of `universal3t`, 18 cases, PASS at every load, worst 0.748 (step in place,
+  batteries out); gate recorded (`out/audit_ts_*`, `out/audit_tsfast_*`).
+- 02:10 Session 1 pushed: kernel `microduck-ts-teach` = `ts-teach` (teacher, GPU 0) + `ts-ctrl` (one-frame control,
+  GPU 1), both from run A final, 1000 iterations, learning-rate clamp 1e-4, `--max-hours 1.6`, saves every 250.
+- 02:12 `adapt_eval.py` checked on the Mac mini with the bench Mamba student (`logs/adapt_benchmamba_full.log`).
+- 02:15 Added head case on the start point (`accept_head.py`, walk with neck 0.5 rad and head yaw 0.6 rad): 0 falls
+  of 20 at none / 25 / 50 / 75 % / batteries out / full, 0.164 to 0.178 m/s (`out/accept_head_uni_a.json`).
+- 03:45 Session 1 COMPLETE, 1.58 h of quota (2.00 h used in total). Both arms reached iteration 999 (0.184 to
+  0.186 it/s). Training log: teacher reward 80 -> 86, episode length 764 -> 838 steps, speed along the command 0.12
+  -> 0.24 m/s; control reward 84 -> 63, episode length 757 -> 718, speed 0.12 -> 0.22.
+- 03:47-04:09 Teacher gate, the intended walk alone in the teacher env (128 envs x 500 steps, 21 env-minutes per
+  cell, so a cell holds only 3 to 18 falls; `out/ts_gate.json`). Falls per env-minute at full / batteries out /
+  none: start 0.42 / 0.42 / 0.52 at 0.14 to 0.16 m/s; teacher 500: 0.52 / 0.47 / 0.42, control 500: 0.80 / 0.38 /
+  0.33; teacher 750: 0.33 / 0.14 / 0.28, control 750: 0.61 / 0.80 / 0.56; teacher 999: 0.75 / 0.56 / 0.70, control
+  999: 0.84 / 0.66 / 0.52. All trained checkpoints walk 0.22 to 0.30 m/s. Torque-margin cost per s at full: teacher
+  -0.128 / -0.112 / -0.095, control -0.177 / -0.145 / -0.184 (start -0.087). Gate: passed at iteration 750 only (16
+  falls against 42 over the three loads at equal speed); at 500 and 999 the teacher is not separable from the
+  control on falls, and it keeps the lower torque cost at every iteration. Teacher used for the students:
+  iteration 750 (`ckpt/ts_teacher/teacher.onnx`, sha256 3fb696c8763b0c97).
+- 04:03 Session 2 pushed: kernel `microduck-ts-lstm` = `ts-lstm` (GPU 0) + `ts-mamba` (GPU 1), 240 iterations of
+  100 ticks, minibatch 256, `--max-hours 2.75`. Expected end about 06:55.
+- 04:10 Control-arm acceptance started on the Mac mini (`ts_accept.sh tsc_750 tsc_999`).
+- 04:22 Kaggle kept session 2 QUEUED for about 19 minutes; RUNNING from about 04:22.
+- 04:10-04:41 Control arm in the runtime simulation (`out/accept_tsc_750.json`, `out/accept_tsc_999.json`, both
+  FAIL, 22 and 23 failed lines; start point `out/accept_uni_a.json` 10). The trained one-frame policies overshoot the
+  0.25 m/s command (0.27 to 0.36 m/s; in the training env they walked 0.23 to 0.30) with the leg torque p99 at the
+  0.54 N m clamp and fall: walk falls of 20 at none / 25 / 50 / 75 % / batteries out / full: iteration 750: 20 / 8 /
+  3 / 1 / 5 / 6, iteration 999: 2 / 0 / 0 / 9 / 10 / 19, start point 0 at every load at 0.17 to 0.18 m/s. Same
+  pattern as fk-uni3: the universal3 recipe trains a faster walk that the runtime simulation does not hold. The
+  learning-rate clamp of 1e-4 did not prevent it. Table: `out/ts_compare.json` (`ts_compare.py`).
+  `accept_universal.py score` crashed on a case with no upright episode (speed None); one comparison made None-safe.
+- 04:43 Pipeline check, not a result: the 12-iteration bench Mamba student (labels from run A itself) in six runtime
+  cases: stands (0 falls with and without the pack), walks 0.20 to 0.29 m/s and falls 18 of 20 in the nominal walk
+  where run A falls 0 (`eval/ua_ts_benchmamba_*.json`). A coarse imitation does not carry run A's runtime behaviour.
+- 07:10 Session 2 COMPLETE, 2.77 h of quota (4.77 h used in total, benches included). Both students reached
+  iteration 240 (LSTM 0.0335 it/s = 30 s per iteration, 2.02 h; Mamba 0.0247 it/s = 40 s, 2.72 h), no stop fired.
+  Student-driven envs at iteration 240 (training env, noise on half of them): LSTM 0.65 falls per env-minute at
+  0.244 m/s, action error 0.0027 rad^2; Mamba 0.67 at 0.243 m/s, 0.0023 rad^2; the teacher-driven envs of the first
+  32 iterations 1.25 and 0.82 at 0.24 m/s. Final checkpoints staged as `ckpt/ts_lstm` and `ckpt/ts_mamba` (the same
+  ONNX in both runtime roles), acceptance started.
+- 07:17 Evaluator fault found and fixed. `flight_eval.py::_StatefulSession` zeroed the state after every control
+  tick without a policy call; the runtime Brain skips ticks on a dropped servo read (37 of 1000 ticks in a standing
+  episode, `ts_statecheck.py`), so the recurrent state was wiped 38 times in 20 s. Right for a history window (the
+  graph back-fills it), wrong for a recurrent state. Now a policy whose second input is named `state_in` keeps its
+  state over gaps of up to 5 ticks (`RECURRENT_MAX_GAP`); history policies are unchanged. After the fix: 1 zeroing
+  per episode (the start). The first student acceptance (before the fix) was stopped and redone with `--redo`.
+  The same rule is needed in the robot runtime before a recurrent policy could ever run there.
+- 07:24 With the state carried, six cases, falls of 20 (stand / stand no pack / walk / walk no pack / walk 50 % /
+  walk comx+10): LSTM 2 / 0 / 16 / 20 / 6 / 20, Mamba 1 / 0 / 20 / 17 / 17 / 20; walking falls come 0.6 to 1.5 s
+  after the walk command starts, speeds of the upright episodes 0.21 to 0.36 m/s, leg torque p99 at the clamp.
+- 07:25 Diagnostic session pushed (not in the original plan, inside the quota cap): kernel `microduck-ts-lstm-a` =
+  `ts-lstm-a` + `ts-mamba-a`, the same distillation with run A itself as the teacher (`ts_teacher_m0.onnx`, privileged
+  weights zero), 140 iterations, `--max-hours 1.7`. Question it answers: do the students fall in the runtime
+  simulation because of the teacher's faster gait (the control arm falls too) or because a recurrent student does
+  not carry over to the runtime simulation at all.
+- 07:52 Full acceptance with the state carried (dev seeds 0 to 19, `out/accept_ts_lstm.json`, `out/accept_ts_mamba.json`,
+  side by side in `out/ts_compare.json`, head-command walk in `out/accept_head_uni_a.json`): LSTM student FAIL, 27
+  failed lines; Mamba student FAIL, 25; control 750 FAIL 22; control 999 FAIL 23; start point (run A) FAIL 10.
+  Walk falls of 20 at none / 25 / 50 / 75 / nobatt / full: start 0/0/0/0/0/0 (0.17 to 0.18 m/s); control 750
+  20/8/3/1/5/6; control 999 2/0/0/9/10/19; LSTM 20/19/6/6/9/17; Mamba 17/15/17/13/15/20. Head-command walk
+  (neck 0.5, yaw 0.6): start 0 everywhere; control 750 20/1/0/2/3/3; control 999 0/0/3/8/7/20; LSTM 20/18/8/12/9/17;
+  Mamba 16/19/20/16/18/20. Standing: all 0 falls except full pack LSTM 2, Mamba 1. Every universal3-trained
+  policy walks 0.19 to 0.36 m/s with leg torque p99 at the 0.54 N m clamp; the start point stays at 0.44 to 0.53.
+  No policy of this round beats the start point; the recurrent students are worse than their one-frame control.
+- 07:59 Adaptation time (`adapt_eval.py`, student in the training env against teacher 750, 50 Hz ticks,
+  `out/adapt_<lstm|mamba>_<full|nobatt|none>.json`). Ticks until the action error settles after a reset: LSTM
+  15 / 15 / 13, Mamba 13 / 14 / 10 (full / nobatt / none), about 0.2 to 0.3 s. After a push: LSTM 19 / 12 / 3,
+  Mamba 21 / 6 / 2. After re-entry with a zero state while moving: LSTM 56 / 58 / 35, Mamba 42 / 37 / 33
+  (0.7 to 1.2 s). Steady action error 0.033 rad with pack, 0.05 rad without.
+- 08:06 No-memory control (`ts_nomem.py`, acceptance walk with `--hist-repeat`, state zero at every call, files
+  `eval/un_<dir>_walk_<load>.json`): both students fall 20/20 at none, 50 %, batteries out and full pack, against
+  20/6/9/17 (LSTM) and 17/17/15/20 (Mamba) with the state carried. The students do use their state; it does not
+  make them walk better than the one-frame control.

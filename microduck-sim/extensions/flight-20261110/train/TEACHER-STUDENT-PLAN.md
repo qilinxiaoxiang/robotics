@@ -131,6 +131,11 @@ COMPLETE; 0.42 h of quota for the two sessions):
 - Quota: 0.42 h used by the benches + about 1.55 h + about 2.8 h = about 4.8 h of the 10 h cap. The rest is held
   back; nothing else is planned on it.
 
+Outcome of session 1 and the gate (2026-11-18 04:09, numbers in RUNLOG.md and `out/ts_gate.json`): the teacher
+passed the gate at iteration 750 only (0.33 / 0.14 / 0.28 falls per env-minute at full / batteries out / none against
+the control's 0.61 / 0.80 / 0.56, both near 0.24 to 0.27 m/s); iteration 750 is the teacher the students are
+distilled from. Each gate cell holds only 3 to 18 falls, so the gate is a screen.
+
 ## 7. Acceptance (Mac mini, runtime simulation, policy from the first tick)
 
 For the LSTM student, the Mamba student, the control arm and the start point, identical cases and seeds:
