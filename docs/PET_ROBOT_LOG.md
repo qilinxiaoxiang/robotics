@@ -1738,3 +1738,15 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   privileged inputs; a student starting from an empty state cannot know them in the first half second. Ordered next:
   a sanity cell (no-pack robot with no-pack constants must give 0/20) and a precision sweep (payload input x0.9 /
   0.75 / 0.5, COM x input off by 5 and 10 mm, velocity inputs zeroed).
+- 2026-11-18 18:50 Runtime gap checks done (falls of 20 at COM x +10 mm walk / shoved walk, read by the main session
+  from `eval/bc_*.json`). Teacher A-999 as is 0 / 0. Mamba student s2c_132 as is 12 / 5: dropped servo reads off
+  0 / 0; sensor delay 0 20 / 20; action delay 0 20 / 20 (falls from 3.2 s). Teacher drives the first 2 s then hands
+  over 8 / 4, first 5 s 6 / 2, all falls after 8.5 s, so the falls are not a cold-start inference problem.
+  s2c_100 as is 1 / 5: drops off 0 / 20 (all at 1.2 s); sensor delay 0 1 / 0; action delay 0 0 / 0.
+  Reading: the recurrent students are tuned to the exact timing of their training env. The runtime ingredient the
+  training env lacks is dropped ticks (robot value 0.036, `microduck-sim/CURRENT-STATE.json`
+  servo_read_drop_fraction: the policy is skipped, its state not updated, the last action held), and that alone
+  explains s2c_132's falls; neighbouring checkpoints react in opposite ways, so one checkpoint proves nothing.
+  Main-session decision: add dropped ticks (0 to 8 % per env) to the distillation env, train one Mamba resumed from
+  132 and one from scratch on the free Kaggle session, keep the no-drop continuation as comparison, and accept a
+  student only if it holds under the selection cases and all three timing switches.
