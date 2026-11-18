@@ -1583,3 +1583,14 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   state carried across segments, and the run now reports a measured adaptation time per load state. Project inference:
   load, delay, friction and shove show within a few tenths of a second; remembering where a seen object was needs
   seconds and belongs to a later round with a target input.
+- 2026-11-18 Acceptance of the earlier one-frame universal3 run (`microduck-sim/extensions/flight-20261110/train/out/accept_uni3_best.json`,
+  `accept_uni3_1500.json`; top-level verdict FAIL in both, read by the main session; per-line figures from the
+  evaluation agent's RUNLOG entry): best checkpoint fails 12 of 30 gate lines (uni_a 10), final checkpoint 23 of 30.
+  Forward COM +10 mm walking falls 20 of 20 at every checkpoint from 250 to 1500. Longer one-frame training made the
+  nominal and no-pack walks worse. This supports the memory-based teacher-student round.
+- 2026-11-18 Teacher-student round status at 03:42 EST (RUNLOG.md "Teacher-student round"): code written, Mac mini
+  smokes done 01:33, Kaggle benches done (0.42 h quota; LSTM student 306,830 parameters, Mamba student 277,134,
+  both export to a stateful ONNX), incentive audit PASS, session 1 `microduck-ts-teach` (privileged teacher and
+  one-frame control, 1000 iterations, 1.6 h cap) pushed 02:10 and RUNNING. Shawn before sleeping: "你自己冒烟完继续往下训吧".
+  The build agent continues through student distillation and acceptance without stopping, inside the same limits
+  (Kaggle free quota, 10 GPU-hours, simulation only, nothing to the robot or team repo, no push).
