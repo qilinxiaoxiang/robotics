@@ -1662,3 +1662,16 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   runtime ordering at any dead time, hence two delay arms selected in the runtime simulation; the runtime evaluator
   now feeds the teacher's 7 privileged inputs; ssh stall fixed with `train/ssh_guard.sh`. Modal and AWS not used: the
   agent declined to spend on a relayed authorization, and two Kaggle sessions cover the current arms.
+- 2026-11-18 14:23 Round 2 teachers selected in the runtime simulation (walk vx 0.25, 20 episodes each at none /
+  batteries out / full / COM x +10 mm / 0.5 N s shove; falls read by the main session from `eval/pk_*.json`):
+  start point 0/0/0/19/11 = 30 (0.17 to 0.19 m/s); Mamba-A 0/0/0/14/10 = 24; round-1 teacher 750 14/13/18/20/20 = 85.
+  Teacher A (40 to 65 ms): 125 0/0/1/19/11 = 31; 250 0/0/0/20/0 = 20 (0.27 to 0.33 m/s); 375 14/0/0/20/17 = 51;
+  500 0/0/6/11/0 = 17; 625 to 999 not evaluated yet. Teacher B (55 to 80 ms): 125 36; 250 29; 375 23;
+  500 0/0/0/20/0 = 20 (0.25 to 0.38 m/s); 625 59; 750 98; 875 79; 999 91.
+  Finding: training with loop delay removes nominal and shove falls at 0.25 m/s and above, but only at early
+  checkpoints; longer training walks faster and falls again. COM x +10 mm still falls 20/20 for both picks.
+  Chosen by the agent: A-250 and B-500. Open: A-500 (the only checkpoint better than the start point at COM x +10,
+  with 6 full-pack falls) and A 625 to 999; the agent was told to evaluate them and record the choice in RUNLOG.md.
+  Kaggle RUNNING at 14:35: `microduck-ts2-mamba` (two Mamba students, from A-250 and B-500, 140 iterations, expected
+  end about 16:05) and `microduck-ts2-ctrl` (one-frame controls universal4 and universal4b, expected about 15:40).
+  Both teacher sessions COMPLETE. No paid compute used.
