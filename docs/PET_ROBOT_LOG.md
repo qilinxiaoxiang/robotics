@@ -1641,3 +1641,8 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   control falls) before any Kaggle time, pick the teacher checkpoint on runtime-simulation falls, distil one Mamba
   student. Budget: the remaining 3.59 h of the 10 h Kaggle cap; simulation only, nothing deployed, no push. Round-1
   code is in local commits robotics c2aabda1 and microduck_rl d3c8bc2d (agent-reported).
+- 2026-11-18 11:44 Shawn: "超了也没事 主要是太慢了呀". The 10 h cap on the round is lifted; the limit is the Kaggle free
+  weekly quota (30 h, about 4 h kept unused). Still free quota only, simulation only, nothing deployed, no push.
+  Speed first: the build agent stops the serial Mac mini pre-launch cells, launches teacher arms now with two delay
+  settings bracketing the unexplained 20 ms offset, and starts the Mamba student as soon as one teacher checkpoint
+  passes selection in the runtime simulation.
