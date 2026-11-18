@@ -1646,3 +1646,7 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   Speed first: the build agent stops the serial Mac mini pre-launch cells, launches teacher arms now with two delay
   settings bracketing the unexplained 20 ms offset, and starts the Mamba student as soon as one teacher checkpoint
   passes selection in the runtime simulation.
+- 2026-11-18 Shawn's correction: "不是 我是说超了可以用modal和aws". Modal and AWS are allowed for round 2, for
+  speed. Dollar limit set by the main session, not by Shawn: 10 USD in total, enforced in the launchers, each run's
+  price, hours and dollars recorded in RUNLOG.md. Kaggle runs already pushed keep going; paid compute carries the
+  extra parallel arms (more teacher delay settings, control, students started as soon as a teacher is selected).
