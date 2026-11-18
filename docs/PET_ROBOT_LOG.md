@@ -1578,3 +1578,8 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   cleanly, otherwise the history-window MLP. The old MLP policies keep two roles: warm start for the privileged teacher
   and baseline in acceptance; their weights are not loaded into the student. No image input in this round: the encoder
   stays a separate module that will feed a small target vector.
+- 2026-11-18 Shawn asked whether 0.5 s is enough. The recurrent student has no fixed window; its trained horizon is the
+  backpropagation segment, which would have defaulted to the 24-step rollout (0.48 s). Set to about 100 steps (2 s) with
+  state carried across segments, and the run now reports a measured adaptation time per load state. Project inference:
+  load, delay, friction and shove show within a few tenths of a second; remembering where a seen object was needs
+  seconds and belongs to a later round with a target input.
