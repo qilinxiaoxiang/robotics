@@ -1471,3 +1471,31 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   covering long and short-term memory, instruction following, companionship and its own intentions; the previous reply
   drifted into integration tasks. Architecture summary given in chat the same day (four layers by time scale, four
   kinds of memory, size per model; sizes other than the walking policy and buffalo_sc are estimates, not measured).
+
+## 2026-11-17 Skill transfer, quality-rated data, and which pretrained models are usable as they are
+
+- Shawn accepts two limits of the four-layer architecture: the brain is not in the body, and there is no single
+  unified model.
+- Skill transfer splits in two. Decision transfer (the reflex layer learns the slow layer's repeated choices) is
+  behaviour cloning and routine. Motor-skill transfer needs simulation and on-robot acceptance; that acceptance is the
+  uncertain part (our own walking fine-tunes scored better in sim and worse on the robot).
+- Quality-conditioned training (Shawn's proposal, after pi0.7's "episode metadata that describes the data quality",
+  checked in the paper): the small policy gets an extra quality input; data = real logs rated from run-ledger outcomes
+  plus sim-generated good examples; each new skill needs one success criterion, not a shaped reward. Limit: conditioning
+  cannot produce behaviour absent from the data, so the sim-generated good examples are required. The pi*0.6
+  advantage-labelling detail is from recollection, not reopened.
+- Shawn pasted a ChatGPT list of small pretrained models (RoboMamba, Mamba policies, SmolVLA, Octo, TinyVLA, DINOv2,
+  V-JEPA) and asked whether we can use them directly. Abstracts reopened 2026-11-17:
+  - RoboMamba (arXiv 2406.04339): vision encoder + Mamba language model, a policy head of 0.1 % of the parameters
+    predicting SE(3) end-effector poses, for arm manipulation.
+  - Octo (arXiv 2405.12213): transformer policy trained on 800k Open X-Embodiment trajectories, "generalist policies
+    for robotic manipulation", fine-tuned to new action spaces in hours on a consumer GPU.
+  - SmolVLA (arXiv 2506.01844): small VLA trained on community data from affordable arms, runs on consumer GPUs or CPUs,
+    asynchronous chunked inference.
+  - Drama (arXiv 2410.08893): Mamba world model, 7M parameters, Atari100k only (not a robot result).
+  - Project inference: every pretrained robot policy on the list learned arm manipulation, so none carries knowledge of
+    a walking biped's legs; their pretrained action knowledge does not transfer to the duck's reflex layer. Usable as
+    they are: the frozen vision encoders (DINOv2-Small, about 22M parameters, figure from recollection) as the eyes of
+    the perception layer, and the architecture pattern (frozen encoder + small recurrent core + small action head)
+    trained by us in sim. Not checked: the pasted claims about Mamba-2 "8x" state, TTT/Titans adapting on robots within
+    seconds, Mamba inside Cosmos, tactile fusion at 500 to 1000 Hz, and 60 Hz on a Jetson Orin.
