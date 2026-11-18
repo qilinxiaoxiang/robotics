@@ -1551,3 +1551,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   head looks down); memory gives adaptation (slip, payload, delay); neither gives more speed or stronger turns, which
   are set by the command range trained and the servo limits. Evidence for the combined-command gap: walk61 moves 7 mm in
   6 s under a head command where the t1 fine-tune walks 0.95 to 1.16 m (sim), and t1 then fell on the robot.
+- 2026-11-18 Shawn: "那来试试吧"; "Kobo" was a dictation error for Kaggle. Kaggle quota read the same day: 0 of 30 GPU
+  hours used, refresh 2026-11-21.
+- Existing work found before planning (microduck-sim/extensions/flight-20261110/train): the universal stand/walk line
+  (UNIVERSAL-PLAN.md, approved 2026-11-11) already trains one 61-input policy over all back loads; uni_a and uni_b fail
+  its acceptance gate (out/accept_uni_a.json, accept_uni_b.json); universal3 (kernel fk-uni3) stopped at iteration 1500
+  on its time cap and no acceptance file for it was found; HISTORY-PLAN.md holds the history-student design with the
+  student side implemented and the privileged teacher and distillation worker not written. The first step of the trial
+  is therefore the unevaluated universal3 gate (dispatched to a background agent, Mac mini, sim only), then the
+  teacher-student run proposed to Shawn; no training launched.
