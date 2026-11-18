@@ -1675,3 +1675,13 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   Kaggle RUNNING at 14:35: `microduck-ts2-mamba` (two Mamba students, from A-250 and B-500, 140 iterations, expected
   end about 16:05) and `microduck-ts2-ctrl` (one-frame controls universal4 and universal4b, expected about 15:40).
   Both teacher sessions COMPLETE. No paid compute used.
+- 2026-11-18 14:30 Teacher A late checkpoints (runtime simulation, same five cases, read by the main session from
+  `eval/pk_t2a_*.json`): 625 0/0/0/17/6 = 23; 750 0/0/0/20/0 = 20; 875 0/0/0/20/0 = 20; 999 0/0/0/0/0 = 0
+  (0.23 to 0.34 m/s; agent-reported leg torque p99 still at the 0.538 N m clamp). A-999 is the only checkpoint that
+  walks COM x +10 mm, and the first policy in this project with zero falls in all five cases above 0.23 m/s. Unlike
+  teacher B (55 to 80 ms), teacher A (40 to 65 ms) did not degrade with longer training. Open: 875 to 999 flips COM x
+  from 20/20 to 0/20, so a second seed set is being run to rule out a seed accident.
+  Main-session decision 14:50 (speed first): cancel the Kaggle session with the A-250 and B-500 students, both
+  dominated by A-999, and push Mamba and LSTM students of A-999 at once instead of waiting about 70 minutes for a
+  free slot. Modal was considered and not used: the distillation worker has no dollar cap and no tested resume, the
+  Modal client is not installed in the project venv, and set-up would have taken most of the time it saved.
