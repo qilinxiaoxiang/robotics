@@ -1778,3 +1778,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   acceptance = five selection cases plus drops off; the two delay switches are recorded, not required; (2) open
   robustness item for a later round: widen the delay range in teacher training so a policy survives a loop that is
   one tick shorter or longer than the runtime simulation's.
+- 2026-11-18 18:38 Modal evaluation parity (main session, `eval/md_*.json`, app ap-L0rKXBydNZWvPoLSHD0sLR, 200
+  episodes in 2 min 13 s, about 0.2 USD, no live app left): s2c_132 COM x / shove as is 11 / 6 on Modal against
+  12 / 5 on the Mac mini; drops off 0 / 0 on both. Borderline episodes differ by about one in twenty between hosts.
+  Same run: s2c_80 with drops off 20 / 0, sensor delay 0 20 / 20, action delay 0 20 / 20. New
+  `train/ts2_modal_spec.py` writes the Modal spec for the seven acceptance cells per checkpoint (five selection
+  cases plus drops off at COM x and shove) with the Mac mini's file names, skips existing results and prints the
+  ranking; about 0.13 USD per checkpoint.
