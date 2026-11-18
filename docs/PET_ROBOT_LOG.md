@@ -1650,3 +1650,8 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   speed. Dollar limit set by the main session, not by Shawn: 10 USD in total, enforced in the launchers, each run's
   price, hours and dollars recorded in RUNLOG.md. Kaggle runs already pushed keep going; paid compute carries the
   extra parallel arms (more teacher delay settings, control, students started as soon as a teacher is selected).
+- 2026-11-18 12:31 Shawn confirmed the 10 USD limit ("这个数没问题") and asked whether training had started. It had
+  not: the round-2 prelaunch chain hung from 12:01 on a dead ssh connection to the Mac mini (second occurrence today,
+  first at 09:36) while the build agent waited on it. Main session killed the hung ssh call and told the agent to
+  push the teacher with the delta that already passed its incentive audit (universal4tb), add ssh keepalive and a
+  local time limit to every Mac mini call, and launch the second delta when its audit passes.
