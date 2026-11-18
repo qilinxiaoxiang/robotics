@@ -1516,3 +1516,13 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   GRU core 2 to 5M on CPU, head under 1M), 20 to 40 MB. Ceiling about 25 to 30M (a DINOv2-Small-class ViT) at 2 to 5
   frames per second, and only if the NPU runs transformer layers, which is unverified. First measurement before any
   training: time random-weight models of these sizes on the A7Z beside the running brain.
+- Correction the same day, from the maker's published figures (Radxa docs, Cubie A7Z NPU model zoo, read 2026-11-17,
+  https://docs.radxa.com/en/cubie/a7z/app-dev/npu-dev/model-zoo; Allwinner A733, Vivante VIP9000 NPU, "3 TOPS@INT8",
+  inference time only, 8-bit unless noted): CLIP image encoder 224x224 (63.7 MB model file) 13.7 ms; MobileNetV2
+  224x224 (3.6 MB) 2.0 ms; YOLO11s 640x640 (6.9 MB) 31.9 ms; two-layer LSTM with 128 hidden units (1.1 MB) 1.2 ms; Lite
+  Transformer, 16 tokens, 16-bit, 24 ms. So the NPU does run transformer layers and the size estimate above was too
+  low: a ViT image encoder of the CLIP class (tens of millions of 8-bit weights) fits at the camera's 10 frames per
+  second, and an LSTM core costs about 1 ms. Revised budget: encoder up to the CLIP-image class (about 64 MB) on the
+  NPU, recurrent core as LSTM or GRU on the NPU or CPU, total 60 to 70 MB. Not covered by these sources: Mamba layers
+  are not in the zoo (state file parts_a7z_extensions and earlier sessions hold no NPU benchmark either), the page does
+  not name the CLIP variant, and the figures are for an idle board, not beside the brain.
