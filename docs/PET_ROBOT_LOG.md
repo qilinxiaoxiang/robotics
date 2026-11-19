@@ -1966,3 +1966,10 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   +10 walk 3 | 3, COM y -10 walk 0 | 0. Stop line (3 of 540, confirmed) not met; round 6 running with landing
   starts at 22 % of episodes, s2r5_8 driving. Main session: round 6 is the last, then pick on the six-group sum and
   run the full acceptance. Bill 31.17 USD metered (baseline 28.37).
+- 2026-11-19 03:47 DAgger round 6, the last (agent; main session read `out/dagger/eval60_s2r6_4*.json`). Pick
+  s2r6_4. Nine cells, falls of 540, seeds 0/2000/3000 | 4000/5000/6000: 2 | 3 (rear-COM stand 1 and walk 1 on each
+  group, the same episode counted twice; forward COM 0 | 1; all other cells 0). Eight distinct cells x 120 seeds:
+  s2r6_4 3 of 960, s2r5_2 5, s2r5_8 5 (agent-reported sums). Zero-command creep at forward COM 0.0064 m/s. The
+  round's nine candidates range 2 to 15 on the selection group, so only this one beats round 5 and 3 against 5 of
+  960 is inside the noise; it is the pick by the stated rule. Collection r6: 3000 episodes, s2r5_8 driving.
+  Full acceptance of s2r6_4 running on the Mac mini, report cells on Modal.
