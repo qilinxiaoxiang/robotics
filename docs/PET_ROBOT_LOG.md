@@ -1864,3 +1864,19 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   walk onset near the edge, where a dropped read tips it). The earlier handover result on s2c_132 (8 and 6 of 20)
   was a less trained checkpoint. Not settled: whether the start fails for lack of coverage in distillation or
   because the COM cannot be inferred before motion; follow-up check dispatched (`out/ts2_cause_start.json`).
+- 2026-11-19 01:00 Start-up cause (agent on the Mac mini under the lock; main session read
+  `out/ts2_cause_start.json`). s2g_200, COM x +10 mm, drop 0.036, seeds 0 to 19, falls of 20. Empty state 7 (walks
+  0.084 m/s at zero command in the first 2 s, 16 of 20 episodes creep above 0.05 m/s); warm state taken from the
+  end of a finished episode with the same pack 0, no creep (0.005 m/s); warm state taken from a no-pack episode
+  20, all at 0.54 to 0.58 s. Empty state at zero command for 20 s: 2 falls (0.70, 0.82 s), creep ends by itself
+  after 2 s. Empty state with nominal pack or no pack 0 falls, creep 0.024 and 0.007 m/s. Landing start with empty
+  state 13 (12 before 2 s), teacher 0. Reading: the recurrent state holds the load and COM estimate; correct state
+  = no fault, wrong state = immediate fall, empty state needs about 1.5 s of motion to converge and the robot
+  creeps meanwhile. Coverage is not the cause (agent-reported from code and a 256-env CPU run: 19.4 % of resets
+  start at zero command, state zeroed at every reset, COM range reaches +11.5 mm; in the distillation env the same
+  empty start creeps only 0.004 to 0.008 m/s, 1 to 4 falls of 256). Not separated: why the empty start is harmless
+  in the distillation env and harmful in the runtime simulation (start pose, neck pitch off by 0.099 rad, and loop
+  timing remain). Consequence for the product goal: a pack swap with the policy running needs a state reset or a
+  re-warm, because the old pack's state on the new pack falls 20 of 20. Next check dispatched, no training: a
+  deployable 61-input policy drives the first 1 to 2 s at zero command while the student builds its state
+  (`out/ts2_warmup.json`).
