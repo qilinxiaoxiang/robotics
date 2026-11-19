@@ -1110,3 +1110,19 @@ Deployment checklist (for Shawn's go; every robot step is his or the main sessio
 Robot facts above are from `microduck-sim/CURRENT-STATE.json` (several entries there show STALE in the session
 notice, including `servo_rail_v`, `walking_policy`, `walk_speed_vx025`); start-up behaviour from
 `guide/firmware/mac/walk_brain.py`, `walk_wired.py` and `guide/firmware/a7z/duck-run.sh`.
+**Withdrawn 2026-11-19: s2r6_4 fell on the robot at standstill in 4.4 s and fails the chatter gates below. This
+checklist is not to be used for it.**
+
+## Round 3: the chatter gap (2026-11-19; simulation only; Modal for batches)
+Robot evidence: `docs/PET_ROBOT_LOG.md` 2026-11-19 16:00, `a7z-20261119/robot_s2r6_4_stand_fall.jsonl`.
+- Like for like (`ts3_chatter_stats.py`, `ts3_like.sh`, `out/chatter/like_*_stats.json`): simulated standstill of
+  s2r6_4 has 0.5 jumps per 10 s, median step 0.001 rad, no fall; robot 172, 0.40 rad, fall at 4.4 s. The simulation
+  does not under-report the chatter, it lacks it.
+- Matched cell (`ts3_gap_sweep.py`, `out/chatter/gap_{a,b,c,d}.json`): `--kp-rl 400` ("gain400"), no pack. s2r6_4
+  falls at standstill 7 of 10 (median 2.9 s), walk61 0 of 10. 25 other conditions leave the standstill quiet.
+- Gates (`ts3_gates.py`, first in `ts_accept.sh`; `out/gates/gates_<dir>.json`), 10 seeds, against walk61 in the same
+  cell: G1 action distance from walk61 on its robot walks at most 0.25 rad; G2 no pack; G3 no pack gain400; G4 pack;
+  G5 pack gain400; falls and jumps per 10 s on each.
+  s2r6_4 FAIL 11 lines (G1 1.099); ts_start FAIL 8 (G1 1.454; gain400 standstill 8 falls of 10, walking 10 of 10);
+  teacher t2a_999 FAIL 10. walk61 reference: standstill 0 falls 0 jumps in both cells, walking 0 falls 0.75 jumps,
+  gain400 walking 2 falls 18.5 jumps. Modal 280 episodes, metered 32.50 to 32.52 USD.
