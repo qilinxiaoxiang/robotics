@@ -941,3 +941,36 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   comx landing): s2g_200 N=100 0, 0, 0, 11, 2, 0, 0, 15, 9; N=50 0, 0, 0, 9, 0, 0, 0, 14, 8; s2g_140 N=100 1, 0,
   0, 7, 6, 0, 0, 11, not run. Without warm-up (pk_/dr_/cz_ records): s2g_200 0, 0, 0, 6, 0, 0 (comx drop 0), 14
   (drop 0.072), 13 (landing). No deployable 61-input policy we have stands at comx+10, so there is no driver.
+- 11-18 23:50 to 11-19 01:45 DAgger in the runtime simulation (Shawn 11-18 late: training for this fix needs no
+  further nod). The student drives brain_sim_check episodes from an empty state on Modal, teacher t2a_999 labels
+  every called tick through `priv_now()`; the fine-tune runs on the Mac mini CPU. Tools: `flight_eval.py`
+  FLIGHT_DAGGER=<beta> (default off; float16 obs / teacher label / student action, skipped ticks, counters),
+  `ts2_dagger_modal.py` (collection -> `out/dagger/r<k>.npz` + `.json`; npz not committed), `ts2_dagger_train.py` +
+  `.sh` (stateful as distill_worker.py, 100-tick BPTT, lr 5e-5, minibatch 64 episodes, first 100 ticks weighted),
+  `ts2_dagger_spec.py` (ten held-out cells with the 0-2 s forward speed; `flight_eval_modal.py` spec key `seed0`).
+  Training seeds 10000-10599, 20000-21199, 30000-30999; evaluation seeds 0-19 and 2000-2019 never collected.
+  Falls of 20, seeds 0-19 (none, nobatt, full, comx, shove, comx drop 0, shove drop 0 | comx drop 0.072, comx
+  landing, comx stand) and forward speed at zero command 0-2 s in the comx cell; s2g_200 before: 0, 0, 0, 6, 0, 0,
+  0 | 14, 13, - and 0.084 m/s.
+  Round 1, 600 episodes of 20 s (527,955 ticks), beta 0.5, student s2g_200. Plain imitation of the teacher on every
+  tick, `s2r1_8`: 6, 0, 0, 20, 17, 20, 20 | 20, 20, 0; creep 0.016; it walks 0.32 m/s and falls after the shove
+  and when the walk command ends. Rejected. From here on `--anchor-after K`: teacher label on the first K called
+  ticks of an episode, the collecting student's own action after that (only the start is corrected). K 150:
+  `s2r1a_5` 1, 3, 8, 5, 0, 0, 0 | 13, 8, 0, creep 0.047; `s2r1a_10` 1, 6, 1, 3, 0, 0, 0 | 10, 11, 0, creep 0.023
+  (a half-learned start falls forward at other loads).
+  Round 2, 1200 episodes of 8 s (383,244 ticks), beta 0.2, student s2r1a_10 (comx-10: 69 of 79 fell), pool r1+r2
+  from s2r1a_10, K 150, first 100 ticks x5: `s2r2_4` 0, 1, 0, 3, 0, 0, 0 | 9, 5, 0, creep 0.010.
+  Round 3, 1000 episodes of 10 s (466,097 ticks), beta 0, student s2r2_4, pool r1+r2+r3 (2800 episodes, 1,377,296
+  ticks) from s2r2_4, K 250: `s2r3_3` 0, 0, 0, 3, 0, 0, 0 | 5, 4, 0, creep 0.0095 (comx falls at 15.30, 16.94,
+  17.36 s, none at the start); `s2r3_6` 0, 0, 0, 4, 2, 0, 0 | 14, 8, 0 (worse; epochs differ by more than rounds
+  on the comx cells). Best: `s2r3_3`. Seeds 2000-2019: s2r3_3 0, 0, 0, 1, 1, 0, 0 | 4, 5, 0, creep 0.008; s2g_200
+  on the same seeds (four cells run): comx 6, shove 1, comx drop 0.072 11, comx landing 11, creep 0.110.
+  Both seed sets, falls of 40: comx 4 against 12, comx drop 0.072 9 against 25, landing 9 against 24.
+  Stop rule (comx 0-1 of 20 with the other six at 0, creep under 0.02): creep met; comx met on seeds 2000-2019 (1,
+  with 1 shove fall), not on seeds 0-19 (3). The remaining comx falls are late in the walk or at its end, where the
+  target was the student's own action. No distillation-env sequences were mixed in; forgetting is held by the
+  anchor term and by keeping every round's data. Results `out/dagger/eval_*.json`, logs `out/dagger/s2r*_log.json`.
+  Modal: 4,286 episodes (2,200 of them 8 or 10 s long), estimated 3.0 USD of the 3.5 allowed (not read from the
+  bill). Slips: the first smoke crash-looped about 8 min on an import path (no episode ran; app stopped); ssh_guard's
+  640 s limit cut the first fine-tune at epoch 14 and restarted it (limit raised for this script; s2r1_8 is that
+  run's epoch 8); the first round 3 fine-tune sat 6 min decompressing the npz once per episode (fixed).

@@ -31,14 +31,14 @@ def load(files, anchor_after=None):
     obs, lab, skip, n = [], [], [], []
     for f in files:
         z = np.load(f)
-        off = z["offsets"]
+        off, zo, zl, zs, zk = z["offsets"], z["obs"], z["lab"], z["stu"], z["skip"]  # one decompression per array
         for a, b in zip(off[:-1], off[1:]):
-            obs.append(z["obs"][a:b].astype(np.float32))
-            y = z["lab"][a:b].astype(np.float32)
+            obs.append(zo[a:b].astype(np.float32))
+            y = zl[a:b].astype(np.float32)
             if anchor_after is not None:  # from this called tick on the target is the collecting student's own action
-                y[anchor_after:] = z["stu"][a:b].astype(np.float32)[anchor_after:]
+                y[anchor_after:] = zs[a:b].astype(np.float32)[anchor_after:]
             lab.append(y)
-            skip.append(z["skip"][a:b])
+            skip.append(zk[a:b])
             n.append(b - a)
     N, T = len(n), int(max(n))
     O, L = np.zeros((T, N, 61), np.float32), np.zeros((T, N, 14), np.float32)
@@ -130,7 +130,13 @@ def main():
     t0 = time.time()
     for ep in range(1, a.epochs + 1):
         student.train()
-        tr = run(student, O, L, V, Z, trn[torch.randperm(len(trn))], a, opt)
+        # minibatches of episodes of similar length (rounds differ: 20 s, 8 s and 10 s episodes), in random order
+        order = trn[torch.randperm(len(trn))]
+        order = order[torch.argsort(V[:, order].sum(dim=0) // 150, stable=True)]
+        chunks = [order[i:i + a.mb] for i in range(0, len(order), a.mb)]
+        order = torch.cat([chunks[i] for i in torch.randperm(len(chunks)).tolist() if len(chunks[i]) == a.mb]
+                          + [c for c in chunks if len(c) != a.mb])
+        tr = run(student, O, L, V, Z, order, a, opt)
         student.eval()
         with torch.no_grad():
             va = run(student, O, L, V, Z, val, a)

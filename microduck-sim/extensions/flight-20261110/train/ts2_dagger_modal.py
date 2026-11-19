@@ -44,7 +44,8 @@ def collect(job: dict) -> dict:
 
 
 @app.local_entrypoint()
-def main(rnd: int, models: str, beta: float, episodes: int = 600):
+def main(rnd: int, models: str, beta: float, episodes: int = 600, walk_s: float = 15.0):
+    # walk_s: length of the walk command (15 s as the evaluation; 3 s gives 8 s episodes, 2.5 x as many starts per dollar)
     import numpy as np
     out = HERE / "out/dagger"
     out.mkdir(parents=True, exist_ok=True)
@@ -61,8 +62,11 @@ def main(rnd: int, models: str, beta: float, episodes: int = 600):
         extra = ["--drop", str(drop)]
         if not (man == "none" and g.random() < 0.5):
             extra += ["--stand-s", "0"]
+        if walk_s != 15.0:
+            extra += ["--walk-s", str(walk_s)]
         jobs.append(dict(models=models, manifest=man, case=case, seed=seed, landing=landing, shove_ns=0.5 if shove else 0.0,
-                         shove_at=round(float(g.uniform(4.0, 14.0)), 2), extra=extra, beta=beta, drop=drop))
+                         shove_at=round(float(g.uniform(4.0, 14.0 if walk_s == 15.0 else 1.0 + walk_s)), 2), extra=extra, beta=beta,
+                         drop=drop, walk_s=walk_s))
     print(f"round {rnd}: {len(jobs)} episodes, student {models}, beta {beta}", flush=True)
     eps, arr, failed = [], dict(obs=[], lab=[], stu=[], skip=[], tick=[]), 0
     for r in collect.map(jobs, order_outputs=False, return_exceptions=True):
