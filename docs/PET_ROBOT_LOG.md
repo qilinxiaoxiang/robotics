@@ -2002,3 +2002,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   matches the repository (last recorded hash 2026-10-23); the team-repo copy `microduck_rl/cmu/mac/walk_brain.py`
   is not synced; `deploy_policy.py` only accepts single-input models; CURRENT-STATE.json entries servo_rail_v,
   walking_policy, walk_speed_vx025 are STALE. The robot trial waits for Shawn's word.
+
+### 2026-11-19 15:45 s2r6_4 on the A7Z (Shawn: "可以，上机"), files and timing only, no motion yet
+
+- A7Z tree against the repository before the copy: `walk_brain.py` and `walk_wired.py` on the A7Z are dated 2026-11-13 16:23 and carry a pick revision (`PICK_REVISIONS`, `seepickpix_r161.onnx`, `rise_old`) that is in no commit of this repository; the repository has `write_run_meta` and the IMU placeholder print the A7Z lacks. Overwriting would have removed the pick revision, so the recurrent change (37aaf151) was merged onto the A7Z file with `git merge-file` (clean, compiles). Copies kept in `microduck-sim/extensions/flight-20261110/train/a7z-20261119/` (before and merged). The session that wrote the pick revision is not found (`transcript_search.py PICK_REVISIONS`, `seepickpix_r1`: 0 sessions); open item: bring that code into the repository.
+- Copied: `~/policies/s2r6_4/` (walk61 = stand61 sha256 3b509e76fb33, plus copies of the eight other deployed files), merged `walk_brain.py` (sha256 019565e3edab, previous file `walk_brain.py.bak-20261119`), `~/duck-policy` -> `/home/radxa/policies/s2r6_4`. `walk_wired.py` on the A7Z unchanged.
+- One policy call on the A7Z (`ts2_policy_cost.py`, 1000 calls, SoC 34.6 C): recurrent median 0.53 ms, p99 0.75, max 0.91; current walk61 0.12 ms; ratio 4.4. The earlier 2.5 to 9 ms guess was far too high.
+- Brain started with the new set (`duck_wired_s2r6_1119a.out`, monitor mode, no goals sent): loads without an assertion, 49.7 Hz, IMU 196/s, battery 8.1 V, robot lying on its side.
+- Shawn: the jet pack is not fitted yet; first test is plain standing with the remote. Scope note for him: s2r6_4 replaces stand and walk only; pick, sit and kick are the unchanged deployed policies.
+- CURRENT-STATE.json `walking_policy` carries the trial under `on_trial`.
