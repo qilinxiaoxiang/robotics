@@ -1988,3 +1988,17 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   cap; no live app. Open for a later round (teacher retraining): torque and hip effort, toe-out, delay-range
   robustness. Next, dispatched: runtime support for the recurrent policy in the repository with a tick-for-tick
   parity test and a deployment checklist; nothing deployed.
+- 2026-11-19 04:20 Clock note: the entry above stamped 04:50 was written at about 04:00. Robot-trial readiness of
+  s2r6_4 in the repository (agent commit 37aaf151; main session read the diff, `train/out/ts2_runtime_parity.json`
+  and `ts2_policy_cost.json`). `guide/firmware/mac/walk_brain.py` now runs policies with a `state_in` input: state
+  fed back, kept over up to 5 skipped control ticks, zeroed on entry after a longer gap, shared by walk61 and
+  stand61 of one file, reset by `reset_policy_state()` or a new `policy_reset` value in the command file; plain
+  61-input policies take the old `sess.run` path. Parity with the evaluation wrapper: 15 episodes (forward COM,
+  shoved nominal, no pack; seeds 0 to 4; default drops), 14,476 policy ticks, 524 skipped ticks, same ticks and
+  slots, max action difference 0.0, no falls on either side. One call, one thread: s2r6_4 0.058 ms against 0.008 ms
+  for the current walk61 on the Mac mini (7.1x); the A7Z is not measured (agent's estimate 2.5 to 9 ms of the 20 ms
+  tick, from the 0.6 to 1.3 ms noted for 61-input policies in walk_brain). Checklist: RUNLOG.md section
+  "Robot-trial readiness of s2r6_4". Not done and not verified: nothing copied to the A7Z; whether the A7Z's code
+  matches the repository (last recorded hash 2026-10-23); the team-repo copy `microduck_rl/cmu/mac/walk_brain.py`
+  is not synced; `deploy_policy.py` only accepts single-input models; CURRENT-STATE.json entries servo_rail_v,
+  walking_policy, walk_speed_vx025 are STALE. The robot trial waits for Shawn's word.
