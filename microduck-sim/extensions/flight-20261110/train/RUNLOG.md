@@ -899,3 +899,32 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   s2g_200 (trained with drops) is left with 1 of 20, s2d_300 (trained without) with 2 to 5 in steady walking.
   Not established: why the cold start goes wrong (COM not yet inferred from history, or a start state the
   distillation env does not produce); the handover result with these 20 seeds only.
+- 23:05-23:50 Cold-start study, no training: why does s2g_200 move forward at zero command in the first 2 s at COM x
+  +10 mm? Result file `out/ts2_cause_start.json` (`ts2_start.py`, `ts2_start_env.py` + `.sh`,
+  `ts2_start_analyse.py`; cells `eval/cz_s2g_200_*.json` and `eval/cz_start_env_*.json`, not committed). New
+  default-off switches with counters: `flight_eval.py` FLIGHT_STATE_DUMP / FLIGHT_WARM (save the recurrent state at
+  the end of an episode without a fall, start an episode from it), `payload.py` key `com_x_fixed_whole_m`
+  (diagnostic envs only). Mac mini, one job at a time through the lock; env runs on its CPU, 256 envs.
+  B, runtime simulation, comx+10, drop 0.036, seeds 0-19, forward speed over 0-2 s at zero command and falls of 20:
+  empty state 0.084 m/s (first half second 0.160), 7 falls; state of the same seed's finished comx+10 episode 0.005
+  m/s, 0 falls in the whole 20 s (20 of 20 states loaded); teacher 0.006, 0. Empty state at other loads: nominal
+  0.024 (0.070 in the first half second), 0 falls; no pack 0.007, 0 falls. Zero command for the whole episode,
+  empty state: 0.084 m/s in the first 2 s, then under 0.001 for the remaining 18 s, 2 falls (0.70, 0.82 s); warm
+  state 0 falls. A state saved at the end of no-pack episodes and used at comx+10: 20 of 20 fall forward at
+  0.54-0.58 s. So the state carries the load and COM, the right one removes the creep and every fall, a wrong one
+  drops the robot at once, and an empty one costs about 1.5 s of forward steps that grow with the forward COM.
+  A, coverage (line references in the file's `training_env.reading`): zero twist on 9.0 % of ticks in the first 8 s
+  of a fresh env and at 19.4 % of resets (248 resets; config 0.25 standing x 0.85); the student's state is zeroed at
+  every reset; reset = default pose, zero velocity, released at 0.12-0.15 m (the runtime starts at the Brain's
+  stand pose on the floor, neck pitch 0.099 rad off the default); COM: the runtime's comx+10 is trunk COM x -6.4
+  mm, +11.5 mm in the env's whole-robot terms against a range of +-12 mm: 4 of 300 full-pack draws at or beyond
+  it, 28 of 300 beyond +10 mm. Measured in the env, full pack, zero twist, zero head and body commands, empty
+  state, 256 envs, 2 s: COM x +11.5 mm student 0.004 m/s, 1 fall (with drops 0.003, 2 falls), teacher 0.001, 0;
+  reset on the floor instead of released: student 0.007, 1 fall (with drops 0.008, 4), teacher 0.003, 0; COM x 0:
+  student 0.007 and 0.004 on the floor, 1 and 3 falls. The env does not reproduce the creep (0.004-0.008 against
+  0.084 m/s). The runtime simulation started the env's way (released 2.5-3.5 cm above the floor, up to 5 deg tilt):
+  student 13 of 20 fall, 12 before 2 s; teacher 0.
+  Verdicts: A refuted for the four coverage items (they are in the distillation data and the student handles them
+  in the env); B supported (the empty state is necessary for the fault and the state is what holds the load).
+  Open: the same empty-state start is harmless in the env and harmful in the runtime simulation; which runtime
+  difference does that (start pose or loop timing) is not separated.

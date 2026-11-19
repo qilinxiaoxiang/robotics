@@ -70,7 +70,16 @@ class _StatefulSession:
         # History policies are unchanged: any skipped tick empties the window and the graph back-fills it.
         gap = tick - b._hist_last.get(self.group, -10 ** 9)
         entered = gap > RECURRENT_MAX_GAP if self.state_name == "state_in" else gap != 1
-        if st is None or entered or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
+        # diagnostics only (cold-start study, 2026-11-18; default off): FLIGHT_WARM=<dir> starts the episode with the
+        # recurrent state saved by an earlier episode of the same seed (FLIGHT_STATE_DUMP=<dir>, written at the end of
+        # an episode without a fall) instead of an empty one
+        warm = os.environ.get("FLIGHT_WARM")
+        warm_file = os.path.join(warm, f"state_{DIAG.get('seed')}.npy") if warm else None
+        if st is None and warm_file and self.state_name == "state_in" and os.path.exists(warm_file):
+            st = np.load(warm_file).astype(np.float32)
+            assert st.shape == tuple(self.state_shape), (st.shape, self.state_shape)
+            DIAG["stat"]["warm_state_loaded"] = DIAG["stat"].get("warm_state_loaded", 0) + 1
+        elif st is None or entered or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
             st = np.zeros(self.state_shape, dtype=np.float32)
         elif (os.environ.get("FLIGHT_CATCHUP") == "1" and self.state_name == "state_in" and 1 < gap <= RECURRENT_MAX_GAP
               and getattr(self, "_last_feed", None) is not None):
@@ -83,6 +92,8 @@ class _StatefulSession:
             self._last_feed = {k: np.array(v, copy=True) for k, v in feed.items()}
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
+        if os.environ.get("FLIGHT_STATE_DUMP"):
+            DIAG["last_state"] = res[1]
         # diagnostics only (round 2 cause study, 2026-11-18; both default off). The student always runs and keeps its
         # state; the privileged teacher (FLIGHT_TEACHER, default ckpt/ts2a999_teacher) is computed from the same
         # observation plus priv_now().
@@ -301,7 +312,7 @@ def episode(job):
     install_stateful_policies(b)
     install_priv_policies(b)
     none_parts = json.loads((HERE / "manifests/flightpack-none.json").read_text())["parts"]
-    DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed))
+    DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed), last_state=None)
     PRIV.update(m=None, d=None, log=[], kg=sum(p["mass_kg"] for p in json.loads(Path(manifest).read_text())["parts"])
                 - sum(p["mass_kg"] for p in none_parts))
     # diagnostics only (spk3diag, PET_ROBOT_LOG 2026-11-13): JSON {joint: [lo, hi]} replaces walk_brain.JOINT_RANGE
@@ -394,6 +405,11 @@ def episode(job):
     with contextlib.redirect_stdout(buf):
         b.main()
     r = json.loads(buf.getvalue().strip().splitlines()[-1])
+    dump = os.environ.get("FLIGHT_STATE_DUMP")
+    if dump and r["fell_at"] is None and DIAG.get("last_state") is not None:
+        os.makedirs(dump, exist_ok=True)
+        np.save(os.path.join(dump, f"state_{int(seed)}.npy"), DIAG["last_state"])
+        DIAG["stat"]["state_dumped"] = 1
     speed = None
     if r.get("dist_x") is not None:
         speed = round(r["dist_x"] / WALK_S, 4) if case in ("walk", "stand") else round(math.radians(r["yaw_walk_deg"]) / WALK_S, 4)
