@@ -974,3 +974,25 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   bill). Slips: the first smoke crash-looped about 8 min on an import path (no episode ran; app stopped); ssh_guard's
   640 s limit cut the first fine-tune at epoch 14 and restarted it (limit raised for this script; s2r1_8 is that
   run's epoch 8); the first round 3 fine-tune sat 6 min decompressing the npz once per episode (fixed).
+  Full acceptance of s2r3_3 (`out/accept_s2r3_3.json`, 36 cases, seeds 0-19): 12 failed lines: one fall each in
+  comx+10 walk, comx-10 stand, comx-10 walk, nominal stand with shove; walk torque p99 0.54 against 0.48; hip load
+  lines at load 25 / 50 / 75 % and batteries out; toe-out at none, batteries out, full.
+- 11-19 01:50-03:40 DAgger round 4 (main session: the Modal bill, not the per-episode estimate, is the budget:
+  metered 28.37 USD before this work, 29.33 after rounds 1 to 3, ceiling 35.00). Selection from here on 60 held-out
+  seeds per cell (0-19, 2000-2019, 3000-3019; `ts2_dagger_spec.py --spec60 / --sum60` -> `out/dagger/eval60_*.json`),
+  falls of 60 (none, nobatt, full, comx, shove, comx drop 0, shove drop 0 | comx drop 0.072, landing, comx stand):
+  s2g_200 0, 0, 0, 18, 3, 0, 0 | 39, 37, 7 (seven cells 21 of 420, creep 0.101 m/s); s2r2_4 0, 1, 0, 12, 0, 0, 0 |
+  28, 21, 3 (13); s2r3_3 0, 0, 0, 6, 1, 0, 0 | 12, 11, 0 (7, creep 0.0085).
+  Round 4: 3000 episodes of 20 s (2,794,491 ticks), student s2r3_3, beta 0, comx+10 902 episodes (110 fell).
+  Pool r1-r4, 5800 episodes, 4,171,787 ticks, from s2r3_3: teacher label on every tick, and from tick 250 on a
+  second term of weight 1 toward the collecting student's action (`--anchor-w 1.0`); 4.8 min per epoch on the Mac
+  mini CPU, every epoch saved and evaluated:
+  `s2r4_1` 0, 0, 0, 0, 1, 0, 0 | 4, 3, 0 (seven cells 1 of 420, creep 0.0062);
+  `s2r4_2` 3, 0, 1, 60, 37, 60, 0 | 60, 59, 0 (161: the forward-COM walk collapses for one epoch);
+  `s2r4_3` 0, 0, 1, 2, 1, 0, 0 | 6, 6, 0 (4); `s2r4_4` 0, 0, 0, 0, 4, 0, 0 | 7, 6, 0 (4).
+  Pick: `s2r4_1`. Because it was picked among four on those seeds, it was run on 60 fresh seeds per cell
+  (4000-4019, 5000-5019, 6000-6019) beside s2g_200: s2r4_1 0, 0, 0, 0, 1, 0, 0 | 2, 6, 0 (seven cells 1, creep
+  0.0062); s2g_200 0, 0, 0, 21, 1, 0, 0 | 40, 30, 8 (22, creep 0.093). Stop rule met (seven cells 0 to 2 over 60
+  seeds with comx at most 2). Caution: neighbouring epochs differ from 1 to 161 falls, so a checkpoint of this
+  fine-tune is only as good as its own held-out run; nothing here says the next epoch is safe.
+  Modal after round 4 and its evaluations: metered 30.20 USD (9,286 further episodes since 29.33).

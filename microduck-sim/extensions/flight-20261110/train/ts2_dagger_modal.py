@@ -25,7 +25,8 @@ sys.path.insert(0, str(HERE) if modal.is_local() else "/root/robotics/microduck-
 import flight_eval_modal as fem  # noqa: E402  (the eval image: same code, probe and pins)
 
 app = modal.App("microduck-flight-dagger", image=fem.image)
-MANIFESTS = ["comx+10"] * 3 + ["load100", "nominal"] * 2 + ["none", "nobatt", "load000", "load025", "load050", "load075", "comx-10", "mass+10"]
+# rounds 1 to 3 were drawn with comx+10 x3 (20 %); from round 4 on x5 (29 %; with load100 and nominal 53 %)
+MANIFESTS = ["comx+10"] * 5 +["load100", "nominal"] * 2 + ["none", "nobatt", "load000", "load025", "load050", "load075", "comx-10", "mass+10"]
 CASES = [("walk", False, False)] * 55 + [("stand", False, False)] * 15 + [("walk", True, False)] * 12 + [("walk", False, True)] * 8 \
     + [("turnL", False, False)] * 5 + [("turnR", False, False)] * 5
 

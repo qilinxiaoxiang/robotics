@@ -27,7 +27,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[2] / "microduck_rl/cmu/finetune/flight"))
 
 
-def load(files, anchor_after=None):
+def load(files, anchor_after=None, anchor_w=None):
     obs, lab, skip, n = [], [], [], []
     for f in files:
         z = np.load(f)
@@ -35,8 +35,13 @@ def load(files, anchor_after=None):
         for a, b in zip(off[:-1], off[1:]):
             obs.append(zo[a:b].astype(np.float32))
             y = zl[a:b].astype(np.float32)
-            if anchor_after is not None:  # from this called tick on the target is the collecting student's own action
+            if anchor_after is not None and anchor_w is None:  # from this called tick on the target is the collecting student's own action
                 y[anchor_after:] = zs[a:b].astype(np.float32)[anchor_after:]
+            elif anchor_after is not None:
+                # teacher label on every tick plus, from anchor_after on, a second term of weight anchor_w toward the
+                # collecting student's action: (a - lab)^2 + w (a - stu)^2 has its minimum at the mixed target below
+                # (the factor 1 + w on those ticks is left out, so every tick keeps weight 1)
+                y[anchor_after:] = (y[anchor_after:] + anchor_w * zs[a:b].astype(np.float32)[anchor_after:]) / (1.0 + anchor_w)
             lab.append(y)
             skip.append(zk[a:b])
             n.append(b - a)
@@ -101,6 +106,9 @@ def main():
     ap.add_argument("--early-ticks", type=int, default=100)
     ap.add_argument("--early-w", type=float, default=3.0)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--anchor-w", type=float, default=None,
+                    help="with --anchor-after: keep the teacher label on every tick and add the student's own action as a "
+                         "second term of this weight from that tick on (round 4: 1.0, then halved per round)")
     ap.add_argument("--anchor-after", type=int, default=None,
                     help="from this called tick of an episode on, the target is the collecting student's own action (stored "
                          "as stu) instead of the teacher's: only the start is corrected, the rest is held where it was. Valid "
@@ -112,7 +120,7 @@ def main():
     import recurrent as rc
     torch.manual_seed(a.seed)
     torch.set_num_threads(8)
-    O, L, V, Z = load(a.data, a.anchor_after)
+    O, L, V, Z = load(a.data, a.anchor_after, a.anchor_w)
     N = O.shape[1]
     val = torch.arange(0, N, 20)
     trn = torch.tensor([i for i in range(N) if i % 20])
