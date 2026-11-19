@@ -1931,3 +1931,15 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   entries above (totals of 5.8 to 7.1 USD) were about ten times too high. Round 4 on: 3000 full-length episodes
   per round, teacher labels over the whole episode with a decreasing own-action anchor, selection on 60 held-out
   seeds per cell; spend tracked by the bill (keep metered under 35.00).
+- 2026-11-19 01:55 DAgger round 4 (agent; main session read `out/dagger/eval60_*.json`). s2r4_1: pool of four
+  rounds (5800 episodes, 4,171,787 called ticks), teacher labels over the whole episode plus an own-action anchor of
+  weight 1 after tick 250, first saved epoch. Falls of 60 per cell (seeds 0-19, 2000-2019, 3000-3019), none /
+  nobatt / full / COM x / shove / COM x drops off / shove drops off: s2r4_1 0/0/0/0/1/0/0 = 1 of 420; s2g_200
+  0/0/0/18/3/0/0 = 21; s2r3_3 7. Outside the seven (drop 0.072 / landing / stand-only at COM x): s2r4_1 4/3/0,
+  s2g_200 39/37/7. Check on seeds never used for the pick (4000-, 5000-, 6000-): s2r4_1 0/0/0/0/1/0/0 = 1, extra
+  2/6/0; s2g_200 0/0/0/21/1/0/0 = 22, extra 40/30/8. Zero-command creep at COM x 0.0062 m/s on both sets (s2g_200
+  0.101 and 0.093). Stop rule met. Caution: the next saved epoch s2r4_2 collapses (161 of 420, COM x 60 of 60), so
+  the fine-tune is not stable from epoch to epoch and s2r4_1's standing rests on its own 120 held-out seeds per
+  cell; no further training on this pool. Full acceptance, agent-reported: s2r3_3 12 failed lines (s2c_132 21,
+  teacher 10, start point 10); s2r4_1 acceptance running on the Mac mini. Bill: metered 30.12 USD (baseline 28.37,
+  so about 1.8 USD for the whole round).
