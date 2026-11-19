@@ -1019,3 +1019,23 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   stand 0 / 0. Landing starts are weaker than s2r4_1.
   Stop rule (nine at most 3 of 540, confirmed) not met: best 4. Modal metered 30.09 before, 31.17 after.
   Round 6 started: s2r5_8 drives 3000 episodes, landing starts 22 % (walk 45 %), otherwise as round 5.
+- 11-19 DAgger round 6, the last round of this fix (main session: pick over six seed groups with the rearward COM
+  counted once = eight distinct cells x 120 seeds; candidates the round 6 saves plus s2r5_2 and s2r5_8).
+  Round 6: 3000 episodes (2,779,944 ticks), student s2r5_8, beta 0, landing starts 612 episodes (34 fell), comx+10
+  744 (58 fell), comx-10 755 (56 fell), 141 falls in all (`out/dagger/r6.json`). Fine-tune s2r6 from s2r5_8 on r1 to
+  r6, lr 2.5e-5, clip 1.0, anchor after 250 weight 1, early weight 5, 2 epochs, a save every 46 minibatches (8 saves)
+  + `s2r6_avg` (`out/dagger/s2r6_log.json`).
+  Nine cells of 540, seeds 0-/2000-/3000- then 4000-/5000-/6000-: saves 1 to 8: 12/5, 11/6, 9/8, 2/3, 5/6, 7/5, 15/6,
+  10/4; s2r6_avg 6/6; s2r5_2 4/3; s2r5_8 4/4. Neighbour jumps on the first set up to 8 (7 to 15).
+  Eight distinct cells of 960: s2r6_4 3, s2r5_2 5, s2r5_8 5, s2r6_6 7, s2r6_avg 7, s2r6_5 8, s2r6_8 8, s2r6_1 10,
+  s2r6_2 11, s2r6_3 12, s2r6_7 12. Pick: `s2r6_4` (3 against 5 is a small margin on 960 episodes).
+  Report cells of s2r6_4 (first set / second set, of 60): comx+10 drop 0.072 3 / 3, comx+10 landing 10 / 9, comx-10
+  landing 3 / 7, comy+10 walk 4 / 2, comy-10 walk 0 / 0, comx+10 stand 0 / 0 (s2r5_8: 2 / 3, 5 / 3, 5 / 6, 4 / 1,
+  0 / 0, 0 / 0). The landing start at comx+10 did not improve with 22 % landing starts in the collection.
+  Creep at comx+10 0.0064 m/s; walk speed median (six groups): none 0.341 to 0.343, batteries out 0.269 to 0.272,
+  full 0.241 to 0.244, comx+10 0.299 to 0.300, comx-10 0.246 to 0.259.
+  Full acceptance of s2r6_4 (`out/accept_s2r6_4.json`, 36 cases, seeds 0-19, Mac mini): 9 failed lines, 21 pass
+  (s2r4_1 10): nominal landing stand 1 fall of 20 and landing walk 1 of 20 (new); walk torque p99 0.54 against 0.48;
+  hip lines load 50 % (p99 0.431, sat 0.0188), 75 % (0.461, 0.0411), batteries out (0.477, 0.0404); toe-out at none,
+  batteries out, full. comx-10 stand and walk and the shoved stand, failed by s2r4_1, pass.
+  Modal metered 32.49 USD after round 6 and its evaluations (31.17 before; ceiling 35.00). No round 7.
