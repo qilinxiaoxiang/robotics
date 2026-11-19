@@ -78,10 +78,66 @@ class _StatefulSession:
             # previous observation (actions discarded), so it advances one step per control tick as in training
             for _ in range(gap - 1):
                 st = self.sess.run(None, dict(self._last_feed, **{self.state_name: st}))[1]
+                DIAG["stat"]["catchup_steps"] = DIAG["stat"].get("catchup_steps", 0) + 1
         if self.state_name == "state_in":
             self._last_feed = {k: np.array(v, copy=True) for k, v in feed.items()}
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
+        # diagnostics only (round 2 cause study, 2026-11-18; both default off). The student always runs and keeps its
+        # state; the privileged teacher (FLIGHT_TEACHER, default ckpt/ts2a999_teacher) is computed from the same
+        # observation plus priv_now().
+        #   FLIGHT_SHADOW=1                 log per called tick: skipped ticks before it, both actions, trunk pitch/roll/vx
+        #   FLIGHT_SWAP=teach_after:N       the teacher's action is applied on the N called ticks after every skip
+        #   FLIGHT_SWAP=student_after:N     the teacher drives, the student's action is applied on those N ticks
+        #   FLIGHT_SWAP=teach_rand:N:p      the teacher's action on N ticks from random ticks (start probability p)
+        #   FLIGHT_SWAP=teach_noise:s       the teacher drives every tick, Gaussian noise of s rad on its action
+        #   (student_after:0 = the teacher drives every tick; with FLIGHT_SHADOW the student's action is still logged)
+        # DIAG["stat"] counts the calls, the skips seen and the ticks each switch really changed.
+        shadow, swap = os.environ.get("FLIGHT_SHADOW") == "1", os.environ.get("FLIGHT_SWAP")
+        if shadow or swap:
+            obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
+            ta = _teacher_action(obs)
+            skipped = gap - 1 if 1 < gap < 1000 else 0
+            stat = DIAG["stat"]
+            stat["calls"] = stat.get("calls", 0) + 1
+            if skipped:
+                stat["calls_after_skip"] = stat.get("calls_after_skip", 0) + 1
+                stat["skipped_ticks"] = stat.get("skipped_ticks", 0) + skipped
+            use_teacher = False
+            if swap:
+                kind, *arg = swap.split(":")
+                if kind == "teach_noise":   # the teacher drives every tick with Gaussian noise of arg[0] rad on its action
+                    stat["teacher_applied_ticks"] = stat.get("teacher_applied_ticks", 0) + 1
+                    stat["noise_ticks"] = stat.get("noise_ticks", 0) + 1
+                    return [(ta + float(arg[0]) * DIAG["rng"].standard_normal(ta.shape)).astype(np.float32)]
+                if kind == "teach_rand":
+                    start = DIAG["rng"].random() < float(arg[1])
+                else:
+                    assert kind in ("teach_after", "student_after"), swap
+                    start = bool(skipped)
+                if start:
+                    DIAG["swap_left"] = int(arg[0])
+                    stat["windows"] = stat.get("windows", 0) + 1
+                win = DIAG["swap_left"] > 0
+                DIAG["swap_left"] = max(0, DIAG["swap_left"] - 1)
+                use_teacher = (not win) if kind == "student_after" else win
+                stat["window_ticks"] = stat.get("window_ticks", 0) + int(win)
+                stat["teacher_applied_ticks"] = stat.get("teacher_applied_ticks", 0) + int(use_teacher)
+            if shadow:
+                import mujoco
+                m, d = PRIV["m"], PRIV["d"]
+                R = np.zeros(9)
+                mujoco.mju_quat2Mat(R, d.qpos[3:7])
+                R = R.reshape(3, 3)
+                g = R.T @ np.array([0.0, 0.0, -1.0])
+                row = dict(k=int(tick), time=round(float(d.time), 4), skip=int(skipped), s=np.round(res[0][0], 4).tolist(), t=np.round(ta[0], 4).tolist(),
+                           pitch=round(math.atan2(-g[0], -g[2]), 4), roll=round(math.atan2(g[1], -g[2]), 4),
+                           vx=round(float((R.T @ d.qvel[0:3])[0]), 4), by="t" if use_teacher else "s")
+                if tick <= 400 and DIAG.get("seed", 99) < 3:
+                    row["obs"] = np.round(obs[0], 4).tolist()
+                DIAG["rows"].append(row)
+            if use_teacher:
+                return [ta]
         # diagnostics only (round 2, 2026-11-18): FLIGHT_HANDOVER="<teacher onnx>:<ticks>" lets the privileged teacher
         # drive the first <ticks> control ticks of the episode while the student still sees every observation and
         # builds its state, then the student's own action is used ("released")
@@ -92,6 +148,7 @@ class _StatefulSession:
                 _HANDOVER["sess"] = ort.InferenceSession(ho.rsplit(":", 1)[0])
                 _HANDOVER["name"] = _HANDOVER["sess"].get_inputs()[0].name
             obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
+            DIAG["stat"]["handover_ticks"] = DIAG["stat"].get("handover_ticks", 0) + 1
             return _HANDOVER["sess"].run(None, {_HANDOVER["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[:1]
         return res[:1]
 
@@ -126,6 +183,17 @@ PRIV = dict(m=None, d=None, kg=0.0, log=[])  # the simulator state the privilege
 # payload kg and trunk COM of the no-pack robot as the teacher reads them (eval/pk_t2a_999_none.json priv_first)
 NOPACK_PRIV = (0.0, -0.0335, 0.0007, 0.0186)
 _HANDOVER = {}
+_TEACH = {}
+DIAG = dict(rows=[], stat={}, swap_left=0, rng=None, phys=[])   # cause-study switches, reset per episode
+
+
+def _teacher_action(obs):
+    """the privileged teacher's action [1, 14] for a 61-wide observation [1, 61] (cause-study switches only)"""
+    if "sess" not in _TEACH:
+        import onnxruntime as ort
+        _TEACH["sess"] = ort.InferenceSession(os.environ.get("FLIGHT_TEACHER") or str(HERE / "ckpt/ts2a999_teacher/teacher.onnx"))
+        _TEACH["name"] = _TEACH["sess"].get_inputs()[0].name
+    return _TEACH["sess"].run(None, {_TEACH["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[0]
 
 
 def priv_now():
@@ -233,6 +301,7 @@ def episode(job):
     install_stateful_policies(b)
     install_priv_policies(b)
     none_parts = json.loads((HERE / "manifests/flightpack-none.json").read_text())["parts"]
+    DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed))
     PRIV.update(m=None, d=None, log=[], kg=sum(p["mass_kg"] for p in json.loads(Path(manifest).read_text())["parts"])
                 - sum(p["mass_kg"] for p in none_parts))
     # diagnostics only (spk3diag, PET_ROBOT_LOG 2026-11-13): JSON {joint: [lo, hi]} replaces walk_brain.JOINT_RANGE
@@ -289,6 +358,13 @@ def episode(job):
             d.xfrc_applied[st["trunk"], 0] = (shove_ns / 0.1) if on else 0.0
         orig(m, d)
         st["n"] += 1
+        if os.environ.get("FLIGHT_SHADOW") == "1" and d.time <= 8.2:
+            # cause study, check 3: the true joint-angle sum and trunk gravity after every physics step of the first
+            # 8 s, so a logged observation can be matched to the time its readings were taken
+            Rm = np.zeros(9)
+            mujoco.mju_quat2Mat(Rm, d.qpos[3:7])
+            DIAG["phys"].append((round(float(d.time), 4), float(d.qpos[7:].sum()),
+                                 (Rm.reshape(3, 3).T @ np.array([0.0, 0.0, -1.0])).round(5).tolist()))
         if FRAME_HOOK is not None:  # flight_video.py renders from here
             FRAME_HOOK(m, d, t)
         f = float(np.max(np.abs(d.actuator_force[st["legs"]])))
@@ -336,6 +412,8 @@ def episode(job):
                 trunk_z_m=None if not st.get("z") else dict(min=round(min(st["z"]), 4), median=round(float(np.median(st["z"])), 4)),
                 landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None,
                 priv_first=PRIV["log"] or None,  # a teacher's first privileged inputs (kg, COM xyz, velocity xyz)
+                diag_stat=dict(DIAG["stat"]) or None, shadow=list(DIAG["rows"]) or None,  # cause-study switches
+                shadow_phys=(list(DIAG["phys"]) or None) if seed < 3 else None,
                 # the probe's own pass-through fields for the bend and quack studies (absent keys stay None)
                 probe={k: r.get(k) for k in ("quack_head_ran", "quack_head_reached", "quack_peak_tilt", "seepick", "groundpick")
                        if r.get(k) is not None})

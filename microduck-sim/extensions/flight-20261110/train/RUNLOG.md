@@ -855,3 +855,47 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   noise; the falls still scale with the drop rate. The stale state is not what makes the students fall on dropped
   ticks; what is left is the held action itself (a 20 ms longer hold that the stateless teacher tolerates and the
   students do not). Whether the switch fired was not instrumented; the episodes differ from the reference runs.
+- 22:05-23:00 Cause study, no training: why do the students fall at forward COM with dropped reads while teacher
+  A-999 does not? Runtime simulation, walk, comx+10, `--stand-s 0`, seeds 0-19, drop 0.036 unless stated; Mac mini,
+  one job at a time through the lock, 8 workers. New default-off switches in `flight_eval.py`, each with counters in
+  the episode record (`diag_stat`): FLIGHT_SHADOW=1 (the teacher's action computed beside the student's on every
+  called tick, from the same observation plus priv_now()), FLIGHT_SWAP=teach_after:N / student_after:N /
+  teach_rand:N:p / teach_noise:s; FLIGHT_HANDOVER and FLIGHT_CATCHUP now count their ticks too. Scripts
+  `ts2_cause.py` (cells `eval/cz_<dir>_<cell>.json`, not committed, 13-21 MB for the shadow cells),
+  `ts2_cause_analyse.py`, `ts2_parity_env.py` + `.sh` (distillation env universal4, 4 envs, a held action on ticks 30
+  and 50). Results: `out/ts2_cause_swap.json`, `out/ts2_cause_shadow.json`, `out/ts2_cause_parity.json`.
+  Check 2, causal swap, falls of 20 (s2g_200 | s2d_300); every switch fired (536-664 windows per cell, counters in
+  the file): student alone 7 | 8 (drops off 0 | 0); teacher on the 1 tick after every skip 5 | 11; on the 3 ticks
+  after every skip 4 | 10; teacher on 3 ticks at random times at the same rate 8 | 10; reverse (teacher drives,
+  student on the 3 ticks after every skip, 10 % of the ticks) 0 | 0. The ticks after a skipped tick are not where
+  the falls are made.
+  Check 1, shadow log: leg-joint |student - teacher|, median / p90 rad, surviving episodes: s2g_200 first tick after
+  a skip 0.053 / 0.138, second 0.054 / 0.140, third 0.052 / 0.135, no skip in the last 10 ticks 0.051 / 0.130, drops
+  off 0.048 / 0.117; s2d_300 0.068 / 0.174, 0.057 / 0.154, 0.056 / 0.147, 0.055 / 0.139, drops off 0.043 / 0.121
+  (falling episodes within 0.01 of these). Time from the last skipped tick to the fall 0.02 to 1.2 s, no joint
+  repeats as the largest difference (knees 3 and 3 of 7 and 8). Where the falls are: 5 of 7 and 7 of 8 before 4 s
+  (0.7 and 0.8 s on seeds 0 and 11 for both students, the rest of the early ones at the walk start 2.4-3.6 s).
+  By window, student driving, drops on: standing start 0-2 s p90 0.26 | 0.22 rad and the robot moves forward at 0.084
+  | 0.087 m/s on a zero command (drops off 0.096 | 0.128); the teacher driving the same start stands at 0.006 m/s and
+  the students' p90 on the teacher's path is 0.045 | 0.042. Walking from 4 s: student path 0.131 | 0.144, teacher's
+  path 0.088 | 0.087.
+  Check 3, observation parity at a skipped tick (line references in `out/ts2_cause_parity.json` `reading`): the
+  last-action slot is the policy's last output in the runtime and the held applied action in training, equal (0.0
+  difference on 17 after-skip ticks and on the held env ticks); joint and IMU readings are one tick old after a skip
+  as on any tick (runtime joint-sum residual 0.0016 at one tick of age against 0.30-0.34 at zero or two; gravity
+  0.0034 against 0.026; env joint residual lowest at one tick); the sensor queue advances on the skipped tick and
+  the held goal is appended to the action queue again, nothing lost. One difference: the runtime's turn command
+  (heading hold) steps by a median 0.040 rad/s after a skip against 0.022 on other ticks; training keeps the command
+  constant. It is there with drops off as well (0 falls). Constant, not skip-related: joint velocity is 2 ticks old
+  in training and 1 in the runtime simulation, for the teacher too.
+  Beyond the three checks: teacher with Gaussian action noise 0.08 rad (the students' error size) and drops: 0 of 20;
+  0.15 rad: 16 of 20 with drops, 12 without (first fall 2.9 s, none in the standing start). Teacher drives the first
+  100 ticks (2 s), then the student alone: 1 | 2 of 20 (4.1 s | 13.2, 16.0 s); first 200 ticks: 1 | 5 (6.9 s | 10.7,
+  12.2, 16.6, 17.4, 18.2 s).
+  Reading: the students' falls at forward COM with drops are mostly a cold-start effect. Starting with an empty
+  state at forward COM the student leaves the teacher's path within the first second (it steps forward where the
+  teacher stands) and stays marginal through the walk start; a dropped tick in that stretch tips it (inference: the
+  drop is a plain disturbance there, as it is for the noisy teacher, 16 against 12). With the start taken away
+  s2g_200 (trained with drops) is left with 1 of 20, s2d_300 (trained without) with 2 to 5 in steady walking.
+  Not established: why the cold start goes wrong (COM not yet inferred from history, or a start state the
+  distillation env does not produce); the handover result with these 20 seeds only.

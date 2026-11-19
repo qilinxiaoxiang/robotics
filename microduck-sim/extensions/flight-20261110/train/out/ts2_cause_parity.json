@@ -1,0 +1,564 @@
+{
+ "reading": [
+  {
+   "point": "last-action slot on the first tick after a skipped tick",
+   "runtime": "the policy's own last output, unchanged by the skip: walk_brain.py:978 sets last_action only when the policy runs, a skipped tick falls through to :1013 (keep the last goal); the slot is read at :968",
+   "training": "the action applied on the dropped tick, which is the held previous action: distill_worker.py:223 (act_s = prev_act), :226 venv.step(applied), env term 'actions' with no delay or noise",
+   "mismatch": "none (runtime 0.0 on the after-skip ticks, env 0.0 on the held ticks). Outside the skip question: half of the training envs carry --act-noise 0.10 on the applied action, so their slot holds the noisy action"
+  },
+  {
+   "point": "joint position and velocity readings",
+   "runtime": "fresh, one tick old: the sensor queue takes a sample every tick whether or not the read is dropped (brain_sim_check.py:1229), the Brain gets sq[0] (:1237, queue length sensor_delay + 1 = 2, :1119)",
+   "training": "joint_pos lag 1 tick, joint_vel lag 2 ticks on every tick (flight_worker.py:138 LOOP_DELAY); the env steps on a dropped tick like on any other, so the reading after it is as fresh as usual",
+   "mismatch": "none at a skip. Constant difference on every tick: velocity is 2 ticks old in training, 1 tick in the runtime simulation (the teacher was trained the same way and does not fall)"
+  },
+  {
+   "point": "IMU fields (gyro, gravity)",
+   "runtime": "same sample as the joints, one tick old (brain_sim_check.py:1237; imu_age :1355)",
+   "training": "base_ang_vel and projected_gravity lag 1 tick (flight_worker.py:138)",
+   "mismatch": "none at a skip"
+  },
+  {
+   "point": "sensor and action delay queues across a skipped tick",
+   "runtime": "sensor queue advances every tick (:1229). Action queue: the Brain returns its held goal (walk_brain.py:1013), which is appended again (brain_sim_check.py:1423) and reaches the servos one tick later (:1424): the goal is repeated once, nothing is lost or reordered",
+   "training": "the held action goes through env.step and the actuator's command lag (4 to 9 physics steps) like any action",
+   "mismatch": "none at a skip"
+  },
+  {
+   "point": "command slot",
+   "runtime": "the turn command is the heading hold's output (walk_brain.py:934-941) and moves every tick; the skipped tick does not run it (:849 gate, turn_t at :920), so the step to the next called tick is larger",
+   "training": "the twist command is constant between resamplings",
+   "mismatch": "the only difference found at a skip: the turn command steps by a median 0.040 rad/s after a skip against 0.022 on other ticks (max 0.104 against 0.063). It is also present with drops off, where the students do not fall"
+  }
+ ],
+ "runtime": {
+  "s2g_200": {
+   "file": "eval/cz_s2g_200_shadow.json",
+   "last_action_slot": {
+    "after_skip": {
+     "n": 17,
+     "max_abs_diff_to_student_last_output": 0.0
+    },
+    "no_skip": {
+     "n": 546,
+     "max_abs_diff_to_student_last_output": 0.0
+    }
+   },
+   "joint_reading_age": {
+    "after_skip": {
+     "residual_at_0_ticks_old": 0.34426,
+     "residual_at_1_ticks_old": 0.00163,
+     "residual_at_2_ticks_old": 0.29966,
+     "residual_at_3_ticks_old": 0.54864
+    },
+    "no_skip": {
+     "residual_at_0_ticks_old": 0.25454,
+     "residual_at_1_ticks_old": 0.00107,
+     "residual_at_2_ticks_old": 0.25617,
+     "residual_at_3_ticks_old": 0.50744
+    }
+   },
+   "gravity_reading_age": {
+    "after_skip": {
+     "residual_at_0_ticks_old": 0.02672,
+     "residual_at_1_ticks_old": 0.00343,
+     "residual_at_2_ticks_old": 0.02555,
+     "residual_at_3_ticks_old": 0.04429
+    },
+    "no_skip": {
+     "residual_at_0_ticks_old": 0.01973,
+     "residual_at_1_ticks_old": 0.00244,
+     "residual_at_2_ticks_old": 0.02017,
+     "residual_at_3_ticks_old": 0.0397
+    }
+   },
+   "command_slot": {
+    "after_skip": {
+     "n": 17,
+     "median_change_from_previous_called_tick": 0.0395,
+     "max_change": 0.1044
+    },
+    "no_skip": {
+     "n": 546,
+     "median_change_from_previous_called_tick": 0.0218,
+     "max_change": 0.0629
+    }
+   },
+   "example": {
+    "seed": 1,
+    "tick_before_skip": 176,
+    "skipped_tick": 177,
+    "first_tick_after": 178,
+    "obs_before": [
+     0.8485000133514404,
+     -1.0367000102996826,
+     -0.3598000109195709,
+     0.015200000256299973,
+     0.044599998742341995,
+     -0.9988999962806702,
+     -0.19169999659061432,
+     0.14380000531673431,
+     -0.14640000462532043,
+     -0.7206000089645386,
+     -0.5604000091552734,
+     -0.5515000224113464,
+     0.8551999926567078,
+     0.17180000245571136,
+     0.06599999964237213,
+     0.15649999678134918,
+     -0.03790000081062317,
+     1.0069999694824219,
+     0.5379999876022339,
+     -0.17440000176429749,
+     -0.671500027179718,
+     2.0624001026153564,
+     5.131899833679199,
+     -0.4077000021934509,
+     1.0551999807357788,
+     -0.0,
+     0.5755000114440918,
+     1.5348000526428223,
+     -0.8392999768257141,
+     -2.661900043487549,
+     1.3909000158309937,
+     1.007200002670288,
+     5.251800060272217,
+     2.6138999462127686,
+     -0.37610000371932983,
+     0.10920000076293945,
+     0.2955999970436096,
+     0.057500001043081284,
+     0.2847000062465668,
+     -0.16019999980926514,
+     0.7613000273704529,
+     0.26600000262260437,
+     -0.08590000122785568,
+     0.27090001106262207,
+     -0.08389999717473984,
+     0.44359999895095825,
+     1.9716999530792236,
+     0.7795000076293945,
+     0.25,
+     0.0,
+     0.11209999769926071,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "student_action_before": [
+     -0.33399999141693115,
+     0.06300000101327896,
+     0.009499999694526196,
+     0.5800999999046326,
+     0.3515999913215637,
+     -0.20749999582767487,
+     0.8011000156402588,
+     0.2800999879837036,
+     -0.02459999918937683,
+     0.4122999906539917,
+     -0.10080000013113022,
+     0.43209999799728394,
+     1.8447999954223633,
+     0.7752000093460083
+    ],
+    "obs_after": [
+     1.0679999589920044,
+     -0.08460000157356262,
+     -0.33009999990463257,
+     -0.009999999776482582,
+     -0.003100000089034438,
+     -0.9998999834060669,
+     -0.23469999432563782,
+     0.20669999718666077,
+     0.07760000228881836,
+     -0.6653000116348267,
+     -0.5250999927520752,
+     -0.5468999743461609,
+     0.8705000281333923,
+     0.21629999577999115,
+     0.02449999935925007,
+     0.07819999754428864,
+     -0.00419999985024333,
+     1.0008000135421753,
+     0.8003000020980835,
+     -0.025599999353289604,
+     -1.2230000495910645,
+     0.4077000021934509,
+     4.676300048828125,
+     3.3094000816345215,
+     2.446000099182129,
+     0.024000000208616257,
+     0.5275999903678894,
+     0.743399977684021,
+     -1.007200002670288,
+     -0.503600001335144,
+     -0.1678999960422516,
+     -0.024000000208616257,
+     6.594699859619141,
+     1.7026000022888184,
+     -0.33399999141693115,
+     0.06300000101327896,
+     0.009499999694526196,
+     0.5800999999046326,
+     0.3515999913215637,
+     -0.20749999582767487,
+     0.8011000156402588,
+     0.2800999879837036,
+     -0.02459999918937683,
+     0.4122999906539917,
+     -0.10080000013113022,
+     0.43209999799728394,
+     1.8447999954223633,
+     0.7752000093460083,
+     0.25,
+     0.0,
+     0.15160000324249268,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "student_action_after": [
+     -0.3172000050544739,
+     -0.13490000367164612,
+     -0.2563999891281128,
+     0.8939999938011169,
+     0.5917999744415283,
+     -0.31610000133514404,
+     0.8460999727249146,
+     0.23260000348091125,
+     -0.10260000079870224,
+     0.2542000114917755,
+     0.09880000352859497,
+     0.3513999879360199,
+     1.4394999742507935,
+     0.9413999915122986
+    ],
+    "teacher_action_after": [
+     -0.2897999882698059,
+     -0.08630000054836273,
+     -0.2865999937057495,
+     0.8116000294685364,
+     0.5182999968528748,
+     -0.2919999957084656,
+     0.8162000179290771,
+     0.22509999573230743,
+     -0.07320000231266022,
+     0.2696000039577484,
+     0.015699999406933784,
+     0.33730000257492065,
+     1.5152000188827515,
+     0.9003999829292297
+    ],
+    "slots": "gyro 0-2, gravity 3-5, joint position 6-19, joint velocity 20-33, last action 34-47, command 48-50, head 51-54, body 55-60"
+   }
+  }
+ },
+ "training_env": {
+  "file": "eval/cz_parity_env.json",
+  "delta": "universal4",
+  "loop_delay": {
+   "act_lag": [
+    4,
+    9
+   ],
+   "act_period": 400,
+   "joint_pos_lag": [
+    1,
+    1
+   ],
+   "joint_vel_lag": [
+    2,
+    2
+   ],
+   "imu_lag": [
+    1,
+    1
+   ]
+  },
+  "terms": [
+   "base_ang_vel",
+   "projected_gravity",
+   "joint_pos",
+   "joint_vel",
+   "actions",
+   "command",
+   "head_command",
+   "body_command"
+  ],
+  "dims": [
+   3,
+   3,
+   14,
+   14,
+   14,
+   3,
+   4,
+   6
+  ],
+  "term_info": {
+   "base_ang_vel": {
+    "dim": 3,
+    "delay_min_lag": 1,
+    "delay_max_lag": 1,
+    "noise": "UniformNoiseCfg(operation='add', n_min=-0.03, n_max=0.03)"
+   },
+   "projected_gravity": {
+    "dim": 3,
+    "delay_min_lag": 1,
+    "delay_max_lag": 1,
+    "noise": "UniformNoiseCfg(operation='add', n_min=-0.01, n_max=0.01)"
+   },
+   "joint_pos": {
+    "dim": 14,
+    "delay_min_lag": 1,
+    "delay_max_lag": 1,
+    "noise": "UniformNoiseCfg(operation='add', n_min=-0.001, n_max=0.001)"
+   },
+   "joint_vel": {
+    "dim": 14,
+    "delay_min_lag": 2,
+    "delay_max_lag": 2,
+    "noise": "UniformNoiseCfg(operation='add', n_min=-0.25, n_max=0.25)"
+   },
+   "actions": {
+    "dim": 14,
+    "delay_min_lag": 0,
+    "delay_max_lag": 0,
+    "noise": "None"
+   },
+   "command": {
+    "dim": 3,
+    "delay_min_lag": 0,
+    "delay_max_lag": 0,
+    "noise": "None"
+   },
+   "head_command": {
+    "dim": 4,
+    "delay_min_lag": 0,
+    "delay_max_lag": 0,
+    "noise": "None"
+   },
+   "body_command": {
+    "dim": 6,
+    "delay_min_lag": 0,
+    "delay_max_lag": 0,
+    "noise": "None"
+   }
+  },
+  "hold_ticks": [
+   30,
+   50
+  ],
+  "last_action_slot": {
+   "max_abs_diff_to_applied_action_after_a_held_tick": 0.0,
+   "max_abs_diff_to_applied_action_other_ticks": 0.0,
+   "n_held": 2,
+   "n_other": 64
+  },
+  "joint_reading_age": {
+   "after_hold": {
+    "median_abs_residual_at_0_ticks_old": 0.02138,
+    "median_abs_residual_at_1_ticks_old": 0.00848,
+    "median_abs_residual_at_2_ticks_old": 0.01858,
+    "median_abs_residual_at_3_ticks_old": 0.03812
+   },
+   "other": {
+    "median_abs_residual_at_0_ticks_old": 0.0162,
+    "median_abs_residual_at_1_ticks_old": 0.009,
+    "median_abs_residual_at_2_ticks_old": 0.01433,
+    "median_abs_residual_at_3_ticks_old": 0.03074
+   }
+  },
+  "gravity_reading_age": {
+   "after_hold": {
+    "residual_at_0_ticks_old": 0.08873,
+    "residual_at_1_ticks_old": 0.08872,
+    "residual_at_2_ticks_old": 0.09276,
+    "residual_at_3_ticks_old": 0.10697
+   },
+   "other": {
+    "residual_at_0_ticks_old": 0.08682,
+    "residual_at_1_ticks_old": 0.08627,
+    "residual_at_2_ticks_old": 0.0825,
+    "residual_at_3_ticks_old": 0.07869
+   }
+  },
+  "example": {
+   "tick_before_hold": 29,
+   "held_tick": 30,
+   "first_tick_after": 31,
+   "obs_at_held_tick": [
+    0.51572,
+    -0.02366,
+    0.27117,
+    0.02499,
+    -0.06565,
+    -0.98896,
+    -0.17318,
+    0.31532,
+    -0.09767,
+    -0.52088,
+    -0.38713,
+    -0.36391,
+    0.49255,
+    0.21784,
+    -0.12446,
+    0.1233,
+    -0.06825,
+    0.29475,
+    0.20712,
+    0.08576,
+    -0.21332,
+    0.20058,
+    0.11493,
+    0.92045,
+    1.32832,
+    0.57158,
+    0.16838,
+    -0.02055,
+    0.29328,
+    -0.30099,
+    2.43063,
+    1.01662,
+    6.33997,
+    3.57728,
+    -0.28266,
+    0.00368,
+    0.02889,
+    0.264,
+    0.01661,
+    -0.18286,
+    0.60475,
+    0.55988,
+    -0.19146,
+    -0.03393,
+    0.22012,
+    0.6416,
+    0.86825,
+    0.78831,
+    0.13643,
+    0.00803,
+    0.01035,
+    -0.01278,
+    0.04312,
+    0.0258,
+    0.00239,
+    0.0018,
+    0.0007,
+    -0.00338,
+    -0.04497,
+    -0.02114,
+    -0.03155
+   ],
+   "applied_at_held_tick": [
+    -0.28266,
+    0.00368,
+    0.02889,
+    0.264,
+    0.01661,
+    -0.18286,
+    0.60475,
+    0.55988,
+    -0.19146,
+    -0.03393,
+    0.22012,
+    0.6416,
+    0.86825,
+    0.78831
+   ],
+   "applied_before": [
+    -0.28266,
+    0.00368,
+    0.02889,
+    0.264,
+    0.01661,
+    -0.18286,
+    0.60475,
+    0.55988,
+    -0.19146,
+    -0.03393,
+    0.22012,
+    0.6416,
+    0.86825,
+    0.78831
+   ],
+   "obs_after": [
+    0.2587,
+    -0.01429,
+    0.12583,
+    0.02326,
+    -0.09064,
+    -1.00422,
+    -0.17433,
+    0.29412,
+    -0.09483,
+    -0.47082,
+    -0.33582,
+    -0.36424,
+    0.52307,
+    0.23169,
+    -0.11844,
+    0.11516,
+    -0.04374,
+    0.31001,
+    0.28145,
+    0.11273,
+    -0.14262,
+    -0.31898,
+    0.23002,
+    2.10567,
+    2.0963,
+    -0.21762,
+    1.38291,
+    0.14947,
+    0.49484,
+    -0.42331,
+    1.13866,
+    0.89174,
+    3.86359,
+    1.68054,
+    -0.28266,
+    0.00368,
+    0.02889,
+    0.264,
+    0.01661,
+    -0.18286,
+    0.60475,
+    0.55988,
+    -0.19146,
+    -0.03393,
+    0.22012,
+    0.6416,
+    0.86825,
+    0.78831,
+    0.13643,
+    0.00803,
+    0.01035,
+    -0.01278,
+    0.04312,
+    0.0258,
+    0.00239,
+    0.0018,
+    0.0007,
+    -0.00338,
+    -0.04497,
+    -0.02114,
+    -0.03155
+   ]
+  }
+ }
+}
