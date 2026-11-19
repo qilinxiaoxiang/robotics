@@ -1847,3 +1847,20 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   rides through a held action at forward COM and the students do not. Round 2 ends here on results: teacher A-999
   0 of 100 in selection; best students s2g_140 / s2g_200 6 and s2d_260 / s2d_300 7, all remaining falls at forward
   COM with dropped reads. Any further training is a new direction and waits for Shawn's nod.
+- 2026-11-19 00:10 Cause diagnosis on Shawn's "先查原因" (agent on the Mac mini under the lock; main session read
+  `out/ts2_cause_swap.json`, `ts2_cause_shadow.json`, `ts2_cause_parity.json`; every switch has a fire counter).
+  COM x +10 mm, drop 0.036, seeds 0 to 19, falls of 20 for s2g_200 | s2d_300. Student alone 7 | 8, drops off 0 | 0.
+  Teacher action on the 1 tick after each skipped tick 5 | 11, on 3 ticks 4 | 10, on 3 ticks at random times
+  (control) 8 | 10. Reverse, teacher drives and the student acts on the 3 ticks after each skip 0 | 0. Teacher with
+  Gaussian action noise 0.08 rad 0, with 0.15 rad 16 (12 with drops off). Teacher drives the first 2 s, then the
+  student alone 1 | 2; first 4 s 1 | 5. Shadow log: leg |student - teacher| median / p90 on the first tick after a
+  skip 0.053 / 0.138 against 0.051 / 0.130 with no skip nearby (s2g_200), so skips do not enlarge the difference;
+  falls cluster before 4 s (5 of 7 | 7 of 8), seeds 0 and 11 fall at 0.7 to 0.8 s before the walk command starts
+  at 2.0 s; in the first 2 s at zero command the student walks forward at 0.084 | 0.087 m/s (teacher 0.006).
+  Parity at a skipped tick (last-action slot, joint and IMU reading age, delay queues): no mismatch between
+  runtime simulation and training; only the heading-hold turn command steps more after a skip (median 0.040
+  against 0.022 rad/s), also present with drops off. Verdict: the actions right after a skipped tick are not the
+  cause; the student's start from an empty state at forward COM is (it creeps instead of standing, then meets the
+  walk onset near the edge, where a dropped read tips it). The earlier handover result on s2c_132 (8 and 6 of 20)
+  was a less trained checkpoint. Not settled: whether the start fails for lack of coverage in distillation or
+  because the COM cannot be inferred before motion; follow-up check dispatched (`out/ts2_cause_start.json`).
