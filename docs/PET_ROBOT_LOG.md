@@ -1910,3 +1910,11 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   small pool overwrote what the distillation had taught about shoves and stopping. Next, already running: same
   data, teacher labels only on the first 150 called ticks (3 s), the student's own recorded action as the target
   afterwards (s2r1a). Modal spend for the task about 0.8 USD (round total about 7.1 of 10).
+- 2026-11-19 00:50 DAgger round 2 (agent; main session read `out/dagger/eval_s2r2_4.json`). s2r2_4: pool of rounds
+  1 and 2 (1800 episodes, 911,199 called ticks), teacher labels on the first 150 called ticks with weight 5, the
+  collecting student's own action as the target afterwards. Held-out seeds 0 to 19, falls of 20: none 0, nobatt 1
+  (18.62 s), full 0, COM x 3 (3.20, 5.74, 17.38 s), shove 0, COM x drops off 0, shove drops off 0: seven cells 4
+  (s2g_200 6). Outside the seven: COM x drop 0.072 9 (was 14), landing 5 (was 13), stand-only 0. Zero-command creep
+  at COM x 0.010 m/s (was 0.084). Remaining COM x falls sit about 1 s after the walk command starts, at the edge
+  of the 3 s teacher-label window. Round 3 launched by the agent: 1000 episodes of 10 s, teacher labels on the
+  first 250 ticks. Modal spend for the task about 2.0 to 2.6 of 3.5 USD (agent's estimate).
