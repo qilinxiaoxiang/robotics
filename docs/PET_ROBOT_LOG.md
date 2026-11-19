@@ -1893,3 +1893,11 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   the Mac mini queue: it did because the Modal evaluator could not pass the diagnostic switches; fixed in this
   entry, diagnostics go to Modal from here (agent allowance 1.5 USD). Next, no training: separate what makes the
   empty-state start harmful in the runtime simulation and harmless in the distillation env.
+- 2026-11-18 23:50 Shawn: "不需要我点头吧？你自己排查原因，然后自己去开训就行了。搞快一点，不要搞很久。我们背包其实已经可以装了，
+  材料都到了，就在等你这个模型训练。" The fix round is launched without a further nod; the pack hardware is waiting on
+  this model. Route chosen by the main session: correct the student directly in the runtime simulation (DAgger in
+  the target simulator: the student drives runtime episodes from an empty state on Modal, teacher A-999 labels every
+  tick, fine-tune s2g_200 on the aggregated data, held-out seeds 0 to 19 and 2000 to 2019 for evaluation). It does
+  not need the cause of the env gap; the start-gap diagnosis is cut to the batch already running. Success = held-out
+  COM x 0 to 1 of 20 with the other six cells 0 and zero-command creep under 0.02 m/s; report at once if round 2
+  does not move the COM x cell. Modal allowance for the task 3.5 USD (round total under 10).
