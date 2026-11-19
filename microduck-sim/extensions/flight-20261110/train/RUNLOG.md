@@ -864,7 +864,7 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   `ts2_cause.py` (cells `eval/cz_<dir>_<cell>.json`, not committed, 13-21 MB for the shadow cells),
   `ts2_cause_analyse.py`, `ts2_parity_env.py` + `.sh` (distillation env universal4, 4 envs, a held action on ticks 30
   and 50). Results: `out/ts2_cause_swap.json`, `out/ts2_cause_shadow.json`, `out/ts2_cause_parity.json`.
-  Check 2, causal swap, falls of 20 (s2g_200 | s2d_300); every switch fired (536-664 windows per cell, counters in
+  Check 2, causal swap, falls of 20 (s2g_200 | s2d_300); every switch fired (335-664 windows per cell, counters in
   the file): student alone 7 | 8 (drops off 0 | 0); teacher on the 1 tick after every skip 5 | 11; on the 3 ticks
   after every skip 4 | 10; teacher on 3 ticks at random times at the same rate 8 | 10; reverse (teacher drives,
   student on the 3 ticks after every skip, 10 % of the ticks) 0 | 0. The ticks after a skipped tick are not where
