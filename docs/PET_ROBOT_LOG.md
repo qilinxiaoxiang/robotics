@@ -1837,3 +1837,13 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   rate (1 to 2 against 8) and not at the robot's rate or above. The remaining gap is therefore in how the recurrent
   student carries its state across a skipped tick at forward COM, not in the teacher or the walk itself. Round paid
   total about 5.8 of 10 USD; no live Modal app; Kaggle 20.33 of 30 h; nothing running on Kaggle or the Mac mini.
+- 2026-11-18 23:25 State catch-up diagnostic (agent on the Mac mini under the lock, files `eval/cu_*.json` read by the
+  main session; switch FLIGHT_CATCHUP=1 in `flight_eval.py`, default off): on a call after skipped ticks the
+  recurrent state is first stepped once per skipped tick on the previous observation. Falls of 20 at COM x +10 mm
+  with the switch against without (Modal reference): s2d_300 8 / 7; s2g_140 2 / 4; s2g_200 7 / 6; s2g_200 at drop
+  0.072 13 / 14; s2g_200 plain full-load walk 0 / 0. No effect beyond host noise. The main session's guess (the
+  state standing still over a skipped tick causes the falls) is refuted. Caveat from the agent: no counter confirms
+  the catch-up branch fired; episodes differ from the reference. Still open: why the stateless privileged teacher
+  rides through a held action at forward COM and the students do not. Round 2 ends here on results: teacher A-999
+  0 of 100 in selection; best students s2g_140 / s2g_200 6 and s2d_260 / s2d_300 7, all remaining falls at forward
+  COM with dropped reads. Any further training is a new direction and waits for Shawn's nod.
