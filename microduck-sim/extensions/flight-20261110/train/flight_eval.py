@@ -231,6 +231,30 @@ def install_stateful_policies(b):
 
         def tick(self, *a, **k):
             self._hist_tick += 1
+            # round 3 gap study (2026-11-19; default off): the observation-side switches of the jitter study
+            # (guide/firmware/mac/jitter-20261018/jitter_sim.py, same formulas), usable with recurrent policies.
+            #   FLIGHT_GYRO_NOISE_DQ=K  gyro noise rms per axis = K x rms leg joint speed (rad/s) this tick
+            #   FLIGHT_GYRO_NOISE=S     white gyro noise, rad/s rms per axis
+            #   FLIGHT_OBS_DELAY=N      N extra ticks of delay on the IMU quaternion and gyro (joint reads unchanged)
+            kdq, gn, od = (float(os.environ.get(n, 0) or 0) for n in ("FLIGHT_GYRO_NOISE_DQ", "FLIGHT_GYRO_NOISE", "FLIGHT_OBS_DELAY"))
+            if (kdq or gn or od) and len(a) >= 9 and not k:
+                want, t, pos_t, vel_t, quat, gyro, imu_valid, joint_age, imu_age = a[:9]
+                wb = b.walk_brain
+                if not hasattr(self, "_gap_rng"):
+                    self._gap_rng, self._gap_fifo = np.random.default_rng(1000 + int(DIAG.get("seed") or 0)), []
+                if od:
+                    self._gap_fifo.append((tuple(quat), tuple(gyro)))
+                    while len(self._gap_fifo) > int(od) + 1:
+                        self._gap_fifo.pop(0)
+                    quat, gyro = self._gap_fifo[0]
+                    imu_age = imu_age + 0.02 * (len(self._gap_fifo) - 1)
+                if gn:
+                    gyro = tuple(float(g) + float(x) for g, x in zip(gyro, self._gap_rng.normal(0.0, gn, 3)))
+                if kdq:
+                    legs = [v * wb.VEL_UNIT for n, v in zip(wb.NAMES, vel_t) if n.startswith(("left_", "right_"))]
+                    sd = kdq * float(np.sqrt(np.mean(np.square(legs))))
+                    gyro = tuple(float(g) + float(x) for g, x in zip(gyro, self._gap_rng.normal(0.0, sd, 3)))
+                a = (want, t, pos_t, vel_t, quat, gyro, imu_valid, joint_age, imu_age) + tuple(a[9:])
             return super().tick(*a, **k)
 
     b.Brain = StatefulBrain
@@ -418,6 +442,17 @@ def episode(job):
             d.xfrc_applied[st["trunk"], 0] = (shove_ns / 0.1) if on else 0.0
         orig(m, d)
         st["n"] += 1
+        if os.environ.get("FLIGHT_SLOW_LOOP_MS"):
+            # diagnostics only (round 3 gap study, 2026-11-19; default off): a control loop slower than the probe's
+            # fixed 20 ms tick. After the last physics step of every tick the world runs on for this many more ms with
+            # the servo commands held (the probe's own clock still counts 20 ms per tick): 3.2 = the 43 Hz the robot
+            # ran s2r6_4 at. The servo model is not updated during the extra steps.
+            sub = round(0.02 / m.opt.timestep)
+            if st["n"] % sub == 0:
+                st["slow"] = st.get("slow", 0.0) + float(os.environ["FLIGHT_SLOW_LOOP_MS"]) / 1000.0
+                while st["slow"] >= m.opt.timestep:
+                    orig(m, d)
+                    st["slow"] -= m.opt.timestep
         if d.time <= 2.0 and os.environ.get("FLIGHT_VX02") == "1":
             # diagnostics only (default off): the trunk's forward speed in its own frame over the first 2 s
             Rv = np.zeros(9)
