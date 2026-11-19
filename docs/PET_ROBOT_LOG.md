@@ -1821,3 +1821,19 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   reading: two arms compiling the same kernel cache, not verified); the agent re-pushed `microduck-ts2-mamba-g`
   (ends by 22:50): s2c_132 with drops to iteration 292 (s2g) and s2f_160 with drops to 320 (s2h). Kaggle quota
   18.32 of 30 h, about 23 h if both arms run out.
+- 2026-11-18 22:39 Selection of the dropped-tick continuations (`microduck-ts2-mamba-g`, ended 22:28) on Modal, main
+  session, 2380 episodes, estimate 2.2 USD. Falls of 20 at none / nobatt / full / COM x / shove, then drops off at
+  COM x / shove (`ts2_modal_spec.py --table`). s2g (s2c_132 continued with drops): 140 0/0/0/4/2; 160 0/0/1/7/3;
+  180 1/0/1/10/2; 200 0/0/0/6/0; 220 0/0/2/8/0; 240 0/0/0/7/3; 260 0/0/1/8/2; 280 0/0/1/7/2 (all drops off 0/0);
+  292 1/0/1/9/1 + 20/0. s2h (from scratch with drops, continued to 320): totals over five 15 to 24, COM x 11 to 20,
+  drops off at COM x 20/20 at five of eight. Best s2g_140 and s2g_200 at 6, against no-drop s2d_260 / s2d_300 at 7:
+  no difference beyond the one-in-twenty host noise. No student holds COM x +10 mm with dropped reads (4 to 10 of
+  20 for the s2g line).
+- 2026-11-18 22:55 Dropped-read dose check at COM x +10 mm (Modal, 160 episodes, about 0.15 USD, files
+  `eval/dr_*_comx_{d018,d072}.json`; rate 0 and 0.036 from the selection files). Falls of 20 at drop rate
+  0 / 0.018 / 0.036 / 0.072: teacher A-999 0/0/0/0; s2d_300 (no drops in training) 0/8/7/14; s2g_140 0/1/4/8;
+  s2g_200 0/2/6/14. Reading: the students' falls at forward COM rise with the dropped-read rate and vanish at zero,
+  while the stateless teacher is untouched even at twice the robot's rate; training with drops helps at half the
+  rate (1 to 2 against 8) and not at the robot's rate or above. The remaining gap is therefore in how the recurrent
+  student carries its state across a skipped tick at forward COM, not in the teacher or the walk itself. Round paid
+  total about 5.8 of 10 USD; no live Modal app; Kaggle 20.33 of 30 h; nothing running on Kaggle or the Mac mini.
