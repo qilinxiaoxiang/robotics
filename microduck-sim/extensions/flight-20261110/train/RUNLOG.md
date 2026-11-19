@@ -817,3 +817,27 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   with 3, 4, 1 falls. Round 1's students settled to about the same error; the falls after the push are the gap.
   Comparison table `logs/ts2_compare.log`, `out/ts_compare.json` (uni_a start point, ts_mamba_a, c2a_375 control,
   t2a_999 teacher, s2a_120, s2c_132): failed lines 10, 11, 14, 10, 9, 21.
+- 19:59 `microduck-ts2-mamba-d` COMPLETE (6985 s; no-drop continuation, both arms reached iteration 300). In the
+  training env (`kaggle/out/ts2-mamba-d/runs/*/progress.csv`): Mamba action error 0.0036 at 140 to 0.0030 at 300,
+  falls 1.13-1.20 per env-min, speed 0.23; LSTM 0.0049 to 0.0038, falls 1.22-1.39. The teacher baseline of a resumed
+  run comes from its two warm-up iterations only (0.16 and 0.14 falls per env-min) and is not comparable with the
+  first run's whole-run baseline (1.29). Staged without Mac mini work: `ckpt/s2d_{140..300 step 20}` (Mamba, nine)
+  and `ckpt/l2d_{160..300 step 20}` (LSTM, eight); their selection runs on Modal in the main session. Quota read:
+  17.91 h of 30 used.
+- 20:25 `microduck-ts2-mamba-e` ended as ERROR: the resumed arm on GPU 0 (ts2-mamba-e) died with exit -11 (segfault)
+  69.6 s after its start, while the simulator's GPU kernels were compiling and before the worker reached the student
+  (`kaggle/out/ts2-mamba-e/job_record.json`, `train_ts2-mamba-e.log` ends in the kernel-compile lines). Not the
+  resume code; the same code path ran in the smoke and the two arms compile into one kernel cache at the same time.
+  The from-scratch arm on GPU 1 (ts2-mamba-f, drops 0 to 0.08) finished its 160 iterations in 6682 s: dropped-tick
+  fraction 0.040, action error 0.029 at 20 to 0.0041 at 160 and still falling, falls 1.28 per env-min against the
+  teacher's 1.25, speed 0.229 against 0.232. Staged as `ckpt/s2f_{20..160 step 20}` (eight); selection on Modal in the
+  main session. Quota read: 18.32 h of 30.
+- 20:26:57 pushed `microduck-ts2-mamba-g`: GPU 0 ts2-mamba-g, the lost arm again (Mamba resumed from `s2c_132`, drops,
+  beta 0, to iteration 292, lr 2.46e-4 to 5e-5); GPU 1 ts2-mamba-h, the scratch student continued from `s2f_160`
+  (drops, beta 0, to iteration 320, lr 2e-4 to 5e-5). Saves every 20, 2.3 h cap, expected end by 22:50.
+- 22:28 `microduck-ts2-mamba-g` COMPLETE (7085 s, both arms rc 0, both reached their last iteration; dropped-tick
+  fraction 0.039-0.040). In the training env: ts2-mamba-g (resumed from `s2c_132`, drops) action error 0.0039 at 140
+  to 0.0032 at 292, falls 1.21-1.34 per env-min, speed 0.23; ts2-mamba-h (scratch student continued, drops) 0.0035 at
+  180 to 0.0031 at 320, falls 1.20-1.28, speed 0.23. Staged as `ckpt/s2g_{140..280 step 20, 292}` (nine) and
+  `ckpt/s2h_{180..320 step 20}` (eight); selection on Modal in the main session. Quota read: 20.33 h of 30 used,
+  9.67 h left; nothing is running on Kaggle or on the Mac mini.
