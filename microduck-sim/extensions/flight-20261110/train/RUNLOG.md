@@ -841,3 +841,17 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   180 to 0.0031 at 320, falls 1.20-1.28, speed 0.23. Staged as `ckpt/s2g_{140..280 step 20, 292}` (nine) and
   `ckpt/s2h_{180..320 step 20}` (eight); selection on Modal in the main session. Quota read: 20.33 h of 30 used,
   9.67 h left; nothing is running on Kaggle or on the Mac mini.
+- 22:40-22:45 Diagnostic, no training: does stepping the recurrent state across dropped ticks remove the forward-COM
+  falls? `flight_eval.py` FLIGHT_CATCHUP=1 (recurrent policies only, default off): after g - 1 skipped ticks
+  (1 < g <= 5) the session is first run g - 1 times on the cached previous observation, state fed through, actions
+  discarded. One Mac mini job through the lock (`ts2_catchup.py`, `eval/cu_*.json`, `out/ts2_catchup.json`), walk,
+  `--stand-s 0`, seeds 0-19; swap after it 1679 MB, load 8. Falls of 20 with the switch | without (Modal reference):
+  s2d_300 COM x +10: 8 (1.7, 2.3, 2.6, 2.8, 3.2, 3.2, 3.4, 17.6 s) | 7 (0.7, 0.8, 2.3, 2.4, 2.7, 3.2, 10.3 s)
+  s2g_140 COM x +10: 2 (3.1, 3.4 s) | 4 (3.1, 3.2, 3.4, 7.8 s)
+  s2g_200 COM x +10: 7 (0.8, 1.2, 2.7, 2.8, 2.8, 8.9, 12.0 s) | 6 (0.7, 0.8, 2.7, 3.5, 5.3, 10.7 s)
+  s2g_200 COM x +10, drop 0.072: 13 (0.8 to 12.5 s) | 14 (0.8 to 16.2 s)
+  s2g_200 full pack plain walk: 0 at 0.255 m/s | 0 at 0.250 m/s (the switch does not break normal walking)
+  Answer: no. The counts move by one or two episodes in either direction, which is the host difference and seed
+  noise; the falls still scale with the drop rate. The stale state is not what makes the students fall on dropped
+  ticks; what is left is the held action itself (a 20 ms longer hold that the stateless teacher tolerates and the
+  students do not). Whether the switch fired was not instrumented; the episodes differ from the reference runs.

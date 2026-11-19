@@ -72,6 +72,14 @@ class _StatefulSession:
         entered = gap > RECURRENT_MAX_GAP if self.state_name == "state_in" else gap != 1
         if st is None or entered or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
             st = np.zeros(self.state_shape, dtype=np.float32)
+        elif (os.environ.get("FLIGHT_CATCHUP") == "1" and self.state_name == "state_in" and 1 < gap <= RECURRENT_MAX_GAP
+              and getattr(self, "_last_feed", None) is not None):
+            # diagnostics only (2026-11-18): after g - 1 skipped ticks the state is first stepped g - 1 times on the
+            # previous observation (actions discarded), so it advances one step per control tick as in training
+            for _ in range(gap - 1):
+                st = self.sess.run(None, dict(self._last_feed, **{self.state_name: st}))[1]
+        if self.state_name == "state_in":
+            self._last_feed = {k: np.array(v, copy=True) for k, v in feed.items()}
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
         # diagnostics only (round 2, 2026-11-18): FLIGHT_HANDOVER="<teacher onnx>:<ticks>" lets the privileged teacher
