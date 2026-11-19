@@ -1809,3 +1809,15 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   (s2c_132) to 7 and cleared the shove; the remaining failure is exactly forward COM plus dropped reads, the case
   the dropped-tick run (`microduck-ts2-mamba-e`, ends by 20:55) trains for. LSTM stays unstable between
   checkpoints and is dropped from further selection unless the dropped-tick run changes that.
+- 2026-11-18 20:31 Selection of the dropped-tick Mamba trained from scratch (`microduck-ts2-mamba-e` GPU 1,
+  `--drop-max 0.08`, s2f_20 to s2f_160) on Modal, main session, 1120 episodes, estimate 1.0 USD (round total about
+  3.4 of 10), no live app left. Falls of 20 at none / nobatt / full / COM x / shove, then drops off at COM x / shove
+  (`ts2_modal_spec.py --table`): 20 5/0/6/17/17 + 3/7; 40 0/0/0/9/5 + 0/0; 60 0/0/3/14/5 + 0/0; 80 1/0/0/6/1 + 0/0;
+  100 0/2/3/20/11 + 20/0; 120 0/0/0/8/1 + 0/0; 140 0/0/5/17/4 + 20/0; 160 0/0/3/16/3 + 20/0. Best s2f_80 8 and
+  s2f_120 9, against the no-drop continuation's s2d_260 / s2d_300 at 7. Reading: at 160 iterations training with
+  dropped ticks has not removed the COM x +10 mm failure (6 to 20 of 20) and the checkpoints swing between 8 and
+  36, the same swing the no-drop student showed before iteration 200; it is not yet evidence for or against
+  dropped-tick training. The resume arm of that session (from s2c_132) crashed with a segfault 70 s in (agent's
+  reading: two arms compiling the same kernel cache, not verified); the agent re-pushed `microduck-ts2-mamba-g`
+  (ends by 22:50): s2c_132 with drops to iteration 292 (s2g) and s2f_160 with drops to 320 (s2h). Kaggle quota
+  18.32 of 30 h, about 23 h if both arms run out.
