@@ -1796,3 +1796,16 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   s2a_120 9; adapt_eval of s2c_132 in the training env settles 0.14 to 0.22 s after reset and still falls 4 to 6 of
   64 after a 0.26 m/s push. Reading: the teacher removes nearly all falls but pays with torque at the clamp and
   toe-out; the no-drop student keeps the effort cost and loses the robustness.
+- 2026-11-18 20:11 Selection of the no-drop continuation (`microduck-ts2-mamba-d`, ended 19:59; Mamba s2d_140 to
+  s2d_300 and LSTM l2d_160 to l2d_300, 17 checkpoints) on Modal, main session, 2380 episodes, app
+  ap-JaxWJQfACMbEGfjhlohl9C, estimate 2.2 USD (round total about 2.4 of 10), no live app left. Read from
+  `eval/pk_*` and `eval/bc_*` with `ts2_modal_spec.py --table` (falls of 20 at none / nobatt / full / COM x / shove,
+  then drops off at COM x / shove). Mamba: 140 0/0/4/11/2 + 20/0; 160 0/0/2/20/10 + 0/0; 180 0/0/1/15/1 + 20/0;
+  200 0/0/0/16/6; 220 0/0/0/8/1; 240 0/0/1/7/2; 260 0/0/0/7/0; 280 0/0/0/11/1; 300 0/0/0/7/0 (drops off 0/0 from
+  200 on). LSTM: best l2d_220 16 and l2d_240 22, the rest 23 to 43, drops off 20/20 at five of eight. Best:
+  s2d_260 and s2d_300, 7 falls each, all at COM x +10 mm with dropped ticks (fall times 0.7 to 3.4 s plus late
+  ones at 10 to 15 s); walk 0.23 to 0.34 m/s; leg torque p99 at the 0.538 clamp in every cell, saturation
+  fraction up to 0.18 to 0.21 at COM x. Reading: longer distillation without drops took the Mamba student from 17
+  (s2c_132) to 7 and cleared the shove; the remaining failure is exactly forward COM plus dropped reads, the case
+  the dropped-tick run (`microduck-ts2-mamba-e`, ends by 20:55) trains for. LSTM stays unstable between
+  checkpoints and is dropped from further selection unless the dropped-tick run changes that.
