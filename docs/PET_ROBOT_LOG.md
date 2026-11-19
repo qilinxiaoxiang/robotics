@@ -2011,3 +2011,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
 - Brain started with the new set (`duck_wired_s2r6_1119a.out`, monitor mode, no goals sent): loads without an assertion, 49.7 Hz, IMU 196/s, battery 8.1 V, robot lying on its side.
 - Shawn: the jet pack is not fitted yet; first test is plain standing with the remote. Scope note for him: s2r6_4 replaces stand and walk only; pick, sit and kick are the unchanged deployed policies.
 - CURRENT-STATE.json `walking_policy` carries the trial under `on_trial`.
+
+### 2026-11-19 16:00 s2r6_4 fails on the robot at standstill: action chatter the simulation does not punish
+
+- Robot, no jet pack, Shawn on the remote (log `duck_wired_log_s2r6_1119a.jsonl`; last 9000 rows kept as `microduck-sim/extensions/flight-20261110/train/a7z-20261119/robot_s2r6_4_stand_fall.jsonl`, scripts `an1.py`, `an2.py` beside it). Stand mode held level. Walk mode at zero command (stand61 slot): 192 ticks, 4.4 s, then "STOP -> stand: body tilt over 30.0 deg". 8 skipped ticks.
+- What the policy did: from the first tick the leg actions are 0.5 to 1.1 rad and flip sign every few ticks. 76 tick-to-tick jumps over 0.5 rad in 4.4 s (172 per 10 s), median step 0.40 rad, action rms 0.48 rad, gyro rms 1.2 to 1.5 rad/s, leg current median 0.66 A, peak 3.9 A. Loop 43 to 47 Hz in walk mode (the 2026-11-17 walk61 run on the same board: 46 to 48 Hz).
+- The simulation had the signal and the selection ignored it. `action_jumps` median per 15 s walk episode, no pack: deployed walk61 2, start point ts_start 3, teacher t2a_999 63, s2r6_4 68.5 (118 at COM x +10 mm). Every student inherits the teacher's chatter; torque p99 at the 0.54 N m clamp was the same symptom. CURRENT-STATE.json `walking_policy` already records that candidates with 5 to 27 jumps per 10 s (ft3, t1) fell on this robot while walk61 (0 to 10) walks. Round 2 selected on simulated falls only. This failure was predictable before the robot test and I did not state it.
+- Gap, stated as a mechanism: the simulated servos and floor absorb a 0.4 rad per tick chatter (the robot stays up in simulation), the real ones turn it into trunk motion, which feeds back through the IMU into larger actions.
+- Robot back on the deployed set 15:26 A7Z clock (`~/duck-policy` deleted, brain restarted, monitor mode, upright). A7Z call time and merged runtime stay valid.
+- Not done: the simulated standstill tick log of s2r6_4 for a like-for-like step size (MacBook swap 14.6 of 15.4 GB, Mac mini swap 4.4 GB over the lock's 4.1 GB limit at 15:24).
