@@ -217,6 +217,14 @@ def install_stateful_policies(b):
             self._hist_tick, self._hist_state, self._hist_last = 0, {}, {}
             for key, sess in list(self.sessions.items()):
                 if len(sess.get_inputs()) > 1:
+                    # a walk_brain with its own recurrent support (guide/firmware/mac/walk_brain.py from 2026-11-19,
+                    # Brain.rec): FLIGHT_NATIVE_STATE=1 leaves the state to the Brain (ts2_runtime_parity.py);
+                    # otherwise this wrapper keeps it, as in every evaluation so far
+                    rec = getattr(self, "rec", None)
+                    if rec is not None and key in rec:
+                        if os.environ.get("FLIGHT_NATIVE_STATE") == "1":
+                            continue
+                        del rec[key]
                     path = os.path.join(models, key + "61.onnx")
                     group = hashlib.sha256(open(path, "rb").read()).hexdigest()[:16]
                     self.sessions[key] = _StatefulSession(sess, self, group)

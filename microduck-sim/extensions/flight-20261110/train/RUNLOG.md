@@ -1039,3 +1039,74 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   hip lines load 50 % (p99 0.431, sat 0.0188), 75 % (0.461, 0.0411), batteries out (0.477, 0.0404); toe-out at none,
   batteries out, full. comx-10 stand and walk and the shoved stand, failed by s2r4_1, pass.
   Modal metered 32.49 USD after round 6 and its evaluations (31.17 before; ceiling 35.00). No round 7.
+
+## Robot-trial readiness of s2r6_4 (2026-11-19; repository only, nothing copied to the A7Z, nothing run on the robot)
+
+Runtime support. `guide/firmware/mac/walk_brain.py` now runs a policy file with a second input `state_in` itself
+(lines after the change): `import hashlib` (70), `RECURRENT_MAX_GAP = 5` (243-247), the slot table in
+`Brain.__init__` (460-468), `Brain.run_policy` and `Brain.reset_policy_state` (500-523), the tick counter and the
+`policy_reset` command key at the top of `Brain.tick` (746-750), the policy call (1014). Rules: `state_out` is fed
+back; the state survives up to 5 control ticks without a call (dropped servo reads) and starts from zero after a
+longer gap; slots loaded from the same file (walk61 and stand61) share one state; `reset_policy_state()` empties it,
+and `{"policy_reset": <new value>}` in the command file calls it once per new value. A 61-input policy takes the
+same `sess.run` call as before. `microduck_rl/cmu/mac/walk_brain.py` (team repo copy) is untouched;
+`flight_eval.py` keeps its wrapper unless `FLIGHT_NATIVE_STATE=1`.
+
+Parity (`ts2_runtime_parity.py`, Mac mini, result `out/ts2_runtime_parity.json`): comx+10, nominal with shove, none,
+seeds 0 to 4, default drops, through the wrapper and through the new Brain: 15 episodes, 14,476 policy ticks and 524
+skipped ticks, same ticks and slots, max abs action difference 0.0, falls 0 and 0. Current 61-input walk61 through
+the old and the new walk_brain (none, seeds 0 and 1): max abs difference 0.0, no falls. State rules (fed back, kept
+over a 5-tick gap, zeroed after 6, shared by walk and stand, zeroed by the hook and by a new command id, kept on a
+repeated id): all true.
+
+Cost of one call (`ts2_policy_cost.py`, one thread, 3000 calls, `out/ts2_policy_cost.json`): Mac mini 0.058 ms
+against 0.008 ms for the current walk61 (ratio 7.1); MacBook 0.080 against 0.020 ms (ratio 4.1). The state is 9728
+floats. The A7Z is NOT measured. `walk_brain.session_options` records 0.6 to 1.3 ms per run for a 61-input policy
+on the A7Z (2026-10-20); at these ratios that would be about 2.5 to 9 ms of a 20 ms tick (inference, not a
+measurement), and CURRENT-STATE.json `a7z_closed_head_thermal_and_resets` records the closed head throttling to
+416 MHz with a 23.6 ms loop under a 50 Hz policy load (2026-10-22, before the saddle move). To measure, with
+Shawn's go, brain stopped, after copying the script and the model to the board:
+`ssh a7z '~/.venvs/duck-policy/bin/python ~/policies/s2r6_4/ts2_policy_cost.py ~/policies/s2r6_4/walk61.onnx ~/rt/microduck-sim/hardware-design-20260912/whole-robot-20260912/runtime-overlay/models/walk61.onnx --calls 1000'`
+
+Deployment checklist (for Shawn's go; every robot step is his or the main session's).
+1. Files. Code: `guide/firmware/mac/walk_brain.py` (the one changed file) into the A7Z tree
+   `~/rt/microduck-sim/guide/firmware/mac/` (the route `guide/firmware/a7z/install_teleop.sh` uses; it copies and
+   never restarts a running brain). Keep the old file as a `.bak` beside it. Not verified: that the A7Z tree equals
+   the repository before the copy (the last recorded hash, `policy_goal_guards`, is from 2026-10-23).
+   Models: a new directory on the A7Z, `~/policies/s2r6_4/`, holding
+   `train/ckpt/s2r6_4/walk61.onnx` and `train/ckpt/s2r6_4/stand61.onnx` (the same file twice, sha1 8a63d9f4...), plus,
+   to keep those modes, copies of `groundpick61`, `seepick61`, `sitstand61`, `kick_left61`, `kick_right61` from
+   `hardware-design-20260912/whole-robot-20260912/runtime-overlay/models/` (their `default_joint_pos` equals
+   s2r6_4's, checked 2026-11-19; the Brain asserts it at start). The deployed `runtime-overlay/models` directory
+   is not changed.
+   `microduck_rl/cmu/deploy/deploy_policy.py` cannot be used as it is: its contract step demands a single input.
+2. Layout the brain expects (`Brain.__init__`): `<models>/walk61.onnx` and `<models>/stand61.onnx` are required,
+   the other five are optional and their modes are refused when absent; every file needs obs [1, 61] and the
+   metadata `observation_names`, `joint_names`, `action_scale` 1, `default_joint_pos`.
+3. Switch. `~/duck-policy` on the A7Z holds the models directory; `~/duck-run.sh`
+   (`guide/firmware/a7z/duck-run.sh`) passes it as `--models` at the next brain start. A running brain keeps its
+   policies until it restarts. The brain starts in monitor mode and drives nothing until a command
+   (`a7z_brain_start`).
+4. Way back. Delete `~/duck-policy` and restart the brain: it loads `runtime-overlay/models/walk61.onnx` again
+   (`walking_policy`). The new walk_brain.py runs that policy exactly as the old one (parity above), so the code
+   can stay; to go all the way back, restore the `.bak`.
+5. First checks on the robot, pack fitted, hands near it. (a) Start line of `duck_wired_<suffix>.out` lists the
+   model hashes; walk61 and stand61 must be the same hash. (b) Walk mode at zero command (stand61 slot): it should
+   stand without creeping; in simulation it moves 0.006 m/s forward in the first 2 s at comx+10. (c) Only then a
+   short walk at vx 0.25, 3 to 4 s, then zero command. Simulated walk speed with the pack is 0.24 to 0.30 m/s,
+   above the 0.15 m/s the current policy does on the robot (`walk_speed_vx025`); leave room.
+   Not verified on the robot: anything. The simulation gap of this robot is recorded (ft3 passed in simulation and
+   fell on the robot, `walking_policy`).
+6. Handling. Put it down flat and gently before the policy runs: landing starts (released 2.5 to 3.5 cm, up to
+   5 degrees tilted) are the weakest case, 19 falls of 120 at COM x +10 mm, 10 of 120 at -10 mm, 1 of 20 at nominal.
+   After changing the pack or picking the robot up and putting it down, reset the state: leave walk mode for more
+   than 0.1 s (stand or monitor) and re-enter, or write a new `policy_reset` value into the command file, or
+   restart the brain. A state carried over from another load fell 20 of 20 in simulation.
+7. Watch. Servo temperature and the servo rail: the walk torque p99 sits at 0.54 N m, the model's clamp (0.538,
+   1.47 A), and the hip lines exceed the acceptance limits at loads 50 %, 75 % and batteries out. The rail on the
+   2S pack reads 7.6 V median, 7.2 V lowest per action (`servo_rail_v`, 2026-11-06). Not verified: where the
+   live page shows servo temperature. The walk guards of `walk_wired.py` stay as they are (|action| 1.8 rad in
+   walk, 3.0 hard, tilt 30 degrees).
+Robot facts above are from `microduck-sim/CURRENT-STATE.json` (several entries there show STALE in the session
+notice, including `servo_rail_v`, `walking_policy`, `walk_speed_vx025`); start-up behaviour from
+`guide/firmware/mac/walk_brain.py`, `walk_wired.py` and `guide/firmware/a7z/duck-run.sh`.

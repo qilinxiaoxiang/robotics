@@ -67,6 +67,7 @@ using the sample age the Pi measures for every applied command.
   ~/.venvs/microduck-walk/bin/python walk_brain.py --pi 100.98.47.29
 """
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -239,6 +240,11 @@ FALL_LOOKAHEAD_S = 0.30
 FALL_DEBOUNCE_S = 0.06  # three 50 Hz ticks
 FALLEN_Z = -0.5  # robotd safety fall_gravity_z: lying (60 deg); held FALLEN_DEBOUNCE_S starts the sequence too
 FALLEN_DEBOUNCE_S = 0.2
+# A recurrent policy (second ONNX input named state_in, second output state_out; flight-20261110 TEACHER-STUDENT-PLAN.md)
+# keeps its state over this many control ticks without a call (dropped servo reads skip the policy tick); after a
+# longer gap the next call is an entry into the policy and starts from a zero state, as in its evaluation
+# (extensions/flight-20261110/train/flight_eval.py RECURRENT_MAX_GAP, parity: train/ts2_runtime_parity.py)
+RECURRENT_MAX_GAP = 5
 KP_LIMP = 50  # robotd gain_limp
 LIMP_STILL_RATE = 1.0  # rad/s, |gyro| under this for LIMP_STILL_S ends the limp (robotd limp_fall_still_*)
 LIMP_STILL_S = 0.2
@@ -451,6 +457,15 @@ class Brain:
             assert float(meta.get("action_scale", "1")) == 1.0, k
             assert meta["default_joint_pos"] == self.sessions["walk"].get_modelmeta().custom_metadata_map["default_joint_pos"], k
         self.default = dict(zip(OBSERVATION_DOF_ORDER, [float(v) for v in meta["default_joint_pos"].split(",")]))
+        # recurrent policies: slot -> (file hash, state input name, state shape). Slots loaded from the same file
+        # (walk61 and stand61 of one universal policy) share one state, so the stand/walk switch keeps it.
+        self.rec, self.rec_state, self.rec_last, self.rec_tick, self.rec_reset_id = {}, {}, {}, 0, None
+        for k, sess in self.sessions.items():
+            ins = sess.get_inputs()
+            if len(ins) > 1 and ins[1].name == "state_in":
+                assert sess.get_outputs()[1].name == "state_out", k
+                with open(os.path.join(models, k + "61.onnx"), "rb") as f:
+                    self.rec[k] = (hashlib.sha256(f.read()).hexdigest()[:16], ins[1].name, tuple(ins[1].shape))
         self.comp_cfg = {"delay_compensation": "constant_velocity" if compensation else "none",
                          "prediction_fraction": 1.0, "predict_heading": True}
         self.walk_ramp = walk_ramp
@@ -481,6 +496,30 @@ class Brain:
         self.q = None  # the newest joint positions (model rad)
         self.head_hold = None  # head joint goals to write once in monitor mode after a guard trip
         self._refused = None  # last refusal printed, so a refused command re-read every tick prints once
+
+    def run_policy(self, policy, obs):
+        """One call of the policy in slot policy on the 61 inputs obs; a recurrent policy's state is fed back here."""
+        sess = self.sessions[policy]
+        feed = {sess.get_inputs()[0].name: obs[None]}
+        rec = self.rec.get(policy)
+        if rec is None:
+            return sess.run(None, feed)[0][0]
+        group, name, shape = rec
+        st = self.rec_state.get(group)
+        if st is None or self.rec_tick - self.rec_last.get(group, -10 ** 9) > RECURRENT_MAX_GAP:
+            st = np.zeros(shape, dtype=np.float32)
+        res = sess.run(None, dict(feed, **{name: st}))
+        self.rec_state[group], self.rec_last[group] = res[1], self.rec_tick
+        return res[0][0]
+
+    def reset_policy_state(self, why=""):
+        """Forget every recurrent policy's state: the next call starts from zero. For a changed load (pack swapped,
+        robot picked up and put down): a state from another load fell 20 of 20 in simulation (flight-20261110
+        RUNLOG.md). From the command file: {"policy_reset": <a new value each time>} next to the mode."""
+        if self.rec_state:
+            print(f"recurrent policy state reset{': ' + why if why else ''}", flush=True)
+        self.rec_state.clear()
+        self.rec_last.clear()
 
     def _refuse(self, what, why):
         if self._refused != (what, why):
@@ -704,6 +743,11 @@ class Brain:
 
     def tick(self, want, now, pos_t, vel_t, quat, gyro, imu_valid, joint_age, imu_age):
         """joint_age / imu_age: predicted sample ages (s) at the moment the returned goals reach the servos."""
+        self.rec_tick += 1
+        if self.rec and want.get("policy_reset") != self.rec_reset_id:
+            self.rec_reset_id = want.get("policy_reset")
+            if self.rec_reset_id is not None:
+                self.reset_policy_state(f"command id {self.rec_reset_id!r}")
         q = {n: to_model(n, t) for n, t in zip(NAMES, pos_t)}
         self.q = q
         dq = {n: v * VEL_UNIT * SIGN[n] for n, v in zip(NAMES, vel_t)}
@@ -966,9 +1010,8 @@ class Brain:
                 state = state.copy()
                 state[6 + OBSERVATION_DOF_ORDER.index("head_yaw")] -= yaw_off
             obs = np.concatenate([state, self.last_action, command, head, body]).astype(np.float32)
-            sess = self.sessions[policy]
             info["policy"] = policy
-            action = sess.run(None, {sess.get_inputs()[0].name: obs[None]})[0][0]
+            action = self.run_policy(policy, obs)
             if hold is not None:
                 # goal = default + s * action: the held robot eases toward the default stance instead of fighting the
                 # hand; the observed last action is the applied one, so the policy sees what the servos were given
