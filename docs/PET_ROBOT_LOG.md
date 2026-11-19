@@ -1973,3 +1973,18 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   round's nine candidates range 2 to 15 on the selection group, so only this one beats round 5 and 3 against 5 of
   960 is inside the noise; it is the pick by the stated rule. Collection r6: 3000 episodes, s2r5_8 driving.
   Full acceptance of s2r6_4 running on the Mac mini, report cells on Modal.
+- 2026-11-19 04:50 Final result of the fix round (agent; main session read `logs/accept_score_s2r6_4.log` and
+  `out/dagger/eval60_s2r6_4*.json`). Pick `train/ckpt/s2r6_4` (walk61.onnx, stand61.onnx, model_4.pt). Full
+  acceptance: 9 failed lines (s2r4_1 10, teacher 10, start point 10, s2c_132 21). Falls over the 14 with-pack cases
+  3 (start point 37): nominal landing stand 1, nominal landing walk 1, plus one in a line that still passes
+  against its reference. Forward-COM stand and walk, rear-COM stand and walk, shoved stand and shoved walk, mass
+  +10 %, no pack (80 episodes), head motion at three loads: all pass. Effort and style fail as for the teacher:
+  walk torque p99 0.54 N m (limit 0.48); hip p99 / saturation at load050 0.431 / 1.9 %, load075 0.461 / 4.1 %,
+  nobatt 0.477 / 4.0 %; toe-out at none / nobatt / full (left mean 11.4 to 13.3 deg against 12, p95 up to 17.9
+  against 15). Walk 0.24 to 0.34 m/s. Report cells, falls of 60 on the two seed groups: forward-COM drop 0.072
+  3 | 3, forward-COM landing 10 | 9, rear-COM landing 3 | 7, COM y +10 walk 4 | 2, COM y -10 walk 0 | 0,
+  forward-COM stand 0 | 0. Weakest remaining case: the landing start at forward COM (19 of 120). No round 7.
+  Modal bill 32.52 USD metered against the 28.37 baseline: 4.15 USD for everything since 18:40, under the 10 USD
+  cap; no live app. Open for a later round (teacher retraining): torque and hip effort, toe-out, delay-range
+  robustness. Next, dispatched: runtime support for the recurrent policy in the repository with a tick-for-tick
+  parity test and a deployment checklist; nothing deployed.
