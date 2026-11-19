@@ -1943,3 +1943,15 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   cell; no further training on this pool. Full acceptance, agent-reported: s2r3_3 12 failed lines (s2c_132 21,
   teacher 10, start point 10); s2r4_1 acceptance running on the Mac mini. Bill: metered 30.12 USD (baseline 28.37,
   so about 1.8 USD for the whole round).
+- 2026-11-19 03:45 Full acceptance of s2r4_1 (agent on the Mac mini; main session read
+  `logs/accept_score_s2r4_1.log`): 10 failed lines (teacher 10, start point 10, s2c_132 21, s2r3_3 12). Falls over
+  the 14 with-pack cases 5 (start point 37): rear COM (comx-10) stand 2 and walk 2 of 20, same two seeds at 1.28
+  and 1.66 s in the start; shoved stand 1. Forward COM stand and walk 0, shoved walk 0, both landings 0, mass +10 %
+  0, no-pack 80 episodes 0, head-motion lines pass at all three loads. Effort and style lines fail as for the
+  teacher: walk torque p99 0.54 N m (limit 0.48), hip lines at load050 (saturation 1.4 %), load075 (p99 0.45,
+  3.9 %), nobatt (p99 0.467, 3.6 %), toe-out at none / nobatt / full (left mean up to 13.7 deg against 12, p95 up
+  to 17.5 against 15). Walk 0.25 to 0.34 m/s. New weak point outside the seven selection cells: the start at rear
+  COM (agent's inference: the forward-creep correction took some rear margin; s2g_200 fell 0 of 49 at comx-10 in
+  round-1 collection, s2r3_3 8 of 163 in round 4). Round 5 launched on the main session's decision: nine selection
+  cells (adds comx-10 stand and walk), comx-10 sampled as heavily as comx+10, half learning rate, at least 8
+  evaluated checkpoints, stop at 3 of 540 with no cell above 2 of 60. Bill 30.09 to 30.20 USD metered.
