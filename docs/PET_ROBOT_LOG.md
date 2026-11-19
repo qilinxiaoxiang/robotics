@@ -1918,3 +1918,16 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   at COM x 0.010 m/s (was 0.084). Remaining COM x falls sit about 1 s after the walk command starts, at the edge
   of the 3 s teacher-label window. Round 3 launched by the agent: 1000 episodes of 10 s, teacher labels on the
   first 250 ticks. Modal spend for the task about 2.0 to 2.6 of 3.5 USD (agent's estimate).
+- 2026-11-19 01:25 DAgger round 3 (agent; main session read `out/dagger/eval_s2r3_3.json`, `_s2000.json`,
+  `eval_s2g_200_s2000.json`). s2r3_3: pool of three rounds (2800 episodes, 1,377,296 called ticks), teacher labels
+  on the first 250 ticks, own-action anchor afterwards. Falls of 20, seeds 0 to 19 | 2000 to 2019: none 0 | 0,
+  nobatt 0 | 0, full 0 | 0, COM x 3 | 1, shove 0 | 1, COM x drops off 0 | 0, shove drops off 0 | 0; seven cells
+  3 | 2 (s2g_200: 6 on the first set; COM x 6 and shove 1 on the second). Outside the seven: drop 0.072 5 | 4
+  (s2g_200 14 | 11), landing 4 | 5 (13 | 11), stand-only 0 | 0. Zero-command creep at COM x 0.0095 | 0.008 m/s
+  (0.084 | 0.110). Remaining COM x falls at 15.3 to 17.4 s (late walk and the stop), outside the teacher-labelled
+  window; neighbouring epoch s2r3_6 is worse (COM x 4, shove 2), so the cells are at the noise level of 20 seeds.
+  Bill check by the main session: `modal billing summary` metered 29.33 USD against 28.37 before the first
+  evaluation run at 18:40, so the whole round has really cost about 1 USD; the per-episode estimates in the
+  entries above (totals of 5.8 to 7.1 USD) were about ten times too high. Round 4 on: 3000 full-length episodes
+  per round, teacher labels over the whole episode with a decreasing own-action anchor, selection on 60 held-out
+  seeds per cell; spend tracked by the bill (keep metered under 35.00).
