@@ -1,7 +1,7 @@
 """Presentation renderer for flight.py clips (drawing only; called after the run's outcome row is computed).
 
 flight.py uses it only when one of --video-size, --video-fps, --video-look, --video-caption, --cam-smooth, --cam-fovy
-(or a non-zero --cam-dz) is given; without them flight.py's own render() runs unchanged (640x480, 25 fps, the scene's default look).
+(or --video-label, --video-crf, --cam-dist-end, a non-zero --cam-dz) is given; without them flight.py's own render() runs unchanged (640x480, 25 fps, the scene's default look).
 The replay is the logged qpos of the same run: every frame is the physics state nearest to its time stamp (qpos is
 logged every physics step in this mode, so the time error is at most half a step). Nothing here feeds back into the
 simulation. No thrust plumes, no motion blur.
@@ -74,12 +74,17 @@ def _draw_table(scn, c, half, top_z):
                      [lg, lg, (top_z - 2 * th) / 2], leg)
 
 
-def _caption_overlay(text, W, H):
-    """RGBA strip with the caption, and its top-left position (top-left corner of the frame)."""
+CJK_FONTS = ("/System/Library/Fonts/Hiragino Sans GB.ttc", "/System/Library/Fonts/PingFang.ttc",
+             "/System/Library/Fonts/STHeiti Medium.ttc", "/System/Library/Fonts/Supplemental/Arial Unicode.ttf")
+
+
+def _caption_overlay(text, W, H, lower=False):
+    """RGBA strip with the text, and its top-left position: the frame's top-left corner, or (lower) a lower-third label
+    at 80 % of the frame height. The font size follows the shorter side of the frame."""
     from PIL import Image, ImageDraw, ImageFont
-    size = max(12, round(H * 0.027))
+    size = max(12, round(min(H, W) * 0.027))
     font = None
-    for f in FONTS:
+    for f in (CJK_FONTS if any(ord(ch) > 0x2E7F for ch in text) else ()) + FONTS:
         if Path(f).exists():
             font = ImageFont.truetype(f, size); break
     if font is None:
@@ -92,8 +97,8 @@ def _caption_overlay(text, W, H):
     dr.rounded_rectangle([0, 0, img.width - 1, img.height - 1], radius=round(size * 0.35), fill=(20, 22, 26, 185))
     dr.text((px - x0, py - y0), text, font=font, fill=(255, 255, 255, 255))
     arr = np.asarray(img).astype(np.float32)
-    margin = round(H * 0.033)
-    return arr[..., :3], arr[..., 3:4] / 255.0, margin, margin
+    margin = round(min(H, W) * 0.033)
+    return arr[..., :3], arr[..., 3:4] / 255.0, margin, (round(H * 0.80) if lower else margin)
 
 
 def render(m, d, a, qlog, qdt):
@@ -117,9 +122,12 @@ def render(m, d, a, qlog, qdt):
     draw_table = studio and a.scenario in ("table_up", "table_down")
     if studio:
         m.geom_rgba[table, 3] = 0.0                     # hidden; the drawn table replaces it in the table scenarios
-    cap = _caption_overlay(a.video_caption, W, H) if a.video_caption else None
+    caps = [_caption_overlay(a.video_caption, W, H)] if a.video_caption else []
+    if a.video_label:
+        caps.append(_caption_overlay(a.video_label, W, H, lower=True))
+    ease = [float(v) for v in a.cam_ease.split(",")]
     wr = imageio.get_writer(a.video, fps=fps, codec="libx264", macro_block_size=1, quality=None, pixelformat="yuv420p",
-                            output_params=["-crf", "17", "-preset", "slow", "-movflags", "+faststart"])
+                            output_params=["-crf", f"{a.video_crf:g}", "-preset", "slow", "-movflags", "+faststart"])
     n = int(math_floor((len(qlog) - 1) * qdt * fps)) + 1
     look = None
     last = None
@@ -127,6 +135,9 @@ def render(m, d, a, qlog, qdt):
         q = qlog[min(len(qlog) - 1, int(round(i / fps / qdt)))]
         d.qpos[:] = q
         mujoco.mj_forward(m, d)
+        if a.cam_dist_end is not None:                   # ease the camera distance (smoothstep between the two times)
+            s = float(np.clip((i / fps - ease[0]) / max(1e-6, ease[1] - ease[0]), 0, 1)); s = s * s * (3 - 2 * s)
+            cam.distance = a.cam_dist + (a.cam_dist_end - a.cam_dist) * s
         if a.cam_follow:
             p = d.xpos[trunk].copy()
             if look is None or not a.cam_smooth:
@@ -143,9 +154,9 @@ def render(m, d, a, qlog, qdt):
         if draw_table:
             _draw_table(r.scene, m.geom_pos[table], m.geom_size[table], float(m.geom_pos[table][2] + m.geom_size[table][2]))
         f = r.render()
-        if cap is not None:
-            rgb, al, x, y = cap
+        if caps:
             f = f.copy()
+        for rgb, al, x, y in caps:
             reg = f[y:y + rgb.shape[0], x:x + rgb.shape[1]].astype(np.float32)
             f[y:y + rgb.shape[0], x:x + rgb.shape[1]] = (reg * (1 - al) + rgb * al).astype(np.uint8)
         wr.append_data(f)

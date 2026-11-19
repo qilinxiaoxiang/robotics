@@ -308,7 +308,8 @@ def run(a):
     qlog = []
     # presentation render (sim/render_hd.py) only when one of its options is given; it logs qpos every step (drawing only)
     hd_video = bool(a.video and (a.video_size or a.video_fps or a.video_look != "default" or a.video_caption
-                                 or a.cam_smooth or a.cam_fovy or a.cam_dz))
+                                 or a.cam_smooth or a.cam_fovy or a.cam_dz or a.video_label or a.video_crf != 17.0
+                                 or a.cam_dist_end is not None))
     qstride = 1 if hd_video else 16
     x_est = np.zeros(2); v_est = np.zeros(2)
     flow_v = np.zeros(2); rng_meas = None; rng_jumps = []
@@ -753,6 +754,10 @@ def main():
     ap.add_argument("--cam-smooth", type=float, default=0.0, help="s, lag of the --cam-follow look-at point (0: rigid follow)")
     ap.add_argument("--cam-fovy", type=float, default=None, help="deg, vertical field of view of the video camera")
     ap.add_argument("--cam-dz", type=float, default=0.0, help="m, height offset of the --cam-follow look-at point from the trunk")
+    ap.add_argument("--video-label", default=None, help="text burned in as a lower-third label (same style as the caption)")
+    ap.add_argument("--video-crf", type=float, default=17.0, help="x264 quality of the presentation render (lower = larger file)")
+    ap.add_argument("--cam-dist-end", type=float, default=None, help="m, camera distance eased to from --cam-dist over --cam-ease")
+    ap.add_argument("--cam-ease", default="1,5", help="T0,T1 s: the camera distance eases from --cam-dist to --cam-dist-end between them")
     ap.add_argument("--lean-max", type=float, default=20.0, help="deg, lean angle limit of the position loop (ArduPilot ANGLE_MAX stand-in)")
     ap.add_argument("--start-air", type=float, default=0.0, help="diagnostic: start airborne at this feet height (m), fans at hover speed")
     ap.add_argument("--com-est", choices=("report", "true"), default="report",

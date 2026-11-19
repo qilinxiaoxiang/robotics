@@ -33,6 +33,9 @@ MuJoCo 3.10.0 on the as-built duck (official scene + battery-20261104 manifest) 
   clips (`out/pack_visual_hd/`, studio look, caption, posters, combined cut). Drawing only: flight.py's `--video-size`,
   `--video-fps`, `--video-look`, `--video-caption`, `--cam-smooth`, `--cam-fovy`, `--cam-dz` are optional and the video
   without them is byte-identical to before; the script stops unless each run's row equals `out/pack_visual/full_*.json`.
+  `render_post_videos.sh`: the social-post set beside them (`*_post*`, `post_parts/`): closer floor-to-table camera
+  that eases in (`--cam-dist-end`, `--cam-ease`), lower-third labels (`--video-label`), cross-faded 16:9 and 3:4
+  combined cuts with a silent audio track; `--video-crf` sets the encode quality. Same outcome check.
 - `thrust_assist_literature.md` published work on thrust-assisted walking and the ArduPilot interface questions.
 
 ## Reproduce
