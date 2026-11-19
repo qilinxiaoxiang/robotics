@@ -2020,3 +2020,11 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
 - Gap, stated as a mechanism: the simulated servos and floor absorb a 0.4 rad per tick chatter (the robot stays up in simulation), the real ones turn it into trunk motion, which feeds back through the IMU into larger actions.
 - Robot back on the deployed set 15:26 A7Z clock (`~/duck-policy` deleted, brain restarted, monitor mode, upright). A7Z call time and merged runtime stay valid.
 - Not done: the simulated standstill tick log of s2r6_4 for a like-for-like step size (MacBook swap 14.6 of 15.4 GB, Mac mini swap 4.4 GB over the lock's 4.1 GB limit at 15:24).
+
+### 2026-11-19 16:40 Like-for-like standstill in simulation: the chatter is absent, not under-reported
+
+- Runtime simulation, no pack, stand mode 0.3 s then walk mode at zero command for 20 s, seed 0, default dropped reads (`microduck-sim/extensions/flight-20261110/train/ts3_like.sh`, statistics `ts3_chatter_stats.py`, result `train/out/chatter/like_base_stats.json`, tick logs `like_base_s2r6_4.jsonl`, `like_base_walk61.jsonl`).
+- s2r6_4 simulated: 1 jump over 0.5 rad in 19.7 s (0.5 per 10 s), median step 0.001 rad, p90 0.004, action rms 0.26, gyro rms 0.05 / 0.08 / 0.17 rad/s, no fall, 48.3 policy ticks/s. Robot: 172 per 10 s, median step 0.40 rad, gyro rms 1.2 to 1.5, fall at 4.4 s, 41.6 policy ticks/s (184 in 4.42 s).
+- walk61 simulated: 0 jumps, median step 0.002 rad, action rms 0.08, gyro rms 0.003 / 0.03 / 0.015.
+- The entry is the same in both worlds: first three s2r6_4 actions on joint index 4 are -0.83, -1.14, -1.16 in simulation and -0.77, -1.01, -0.95 on the robot (same stand pose, body gravity x -0.072 against -0.055). After that they part: simulated steps fall to 0.014 rad by 0.5 to 1 s and 0.002 by 2 s; the robot stays at 0.42 to 0.47 rad per tick, eases to 0.27 at 2 to 3 s, then grows to 0.67 and falls.
+- So the simulated loop is stable at standstill and the real loop is not: the policy's start kick decays in simulation and is sustained on the robot (largest spectral line of the busiest joint 2.7 Hz, plus tick-to-tick sign flips). The 68.5 jumps per 15 s in the walking cells measure something else (a rough gait); a standstill jump gate on today's simulation would have passed s2r6_4. Next: find the simulation condition that sustains it.
