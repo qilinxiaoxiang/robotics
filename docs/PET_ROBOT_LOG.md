@@ -1901,3 +1901,12 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   not need the cause of the env gap; the start-gap diagnosis is cut to the batch already running. Success = held-out
   COM x 0 to 1 of 20 with the other six cells 0 and zero-command creep under 0.02 m/s; report at once if round 2
   does not move the COM x cell. Modal allowance for the task 3.5 USD (round total under 10).
+- 2026-11-19 00:16 Runtime-simulation DAgger round 1 (agent; main session read `out/dagger/eval_s2r1_8.json`).
+  s2r1_8 = s2g_200 fine-tuned on 600 runtime episodes (527,955 called ticks, seeds 10000 to 10599, teacher labels
+  on all ticks). Held-out seeds 0 to 19, falls of 20: none 6, nobatt 0, full 0, COM x 20, shove 17, COM x drops off
+  20, shove drops off 20; COM x drop 0.072 20, landing 20, stand-only COM x 0. The start is fixed (zero-command
+  creep at COM x 0.016 m/s against 0.084) and the walk is broken: 0.32 m/s, falls at the shove (8.44 s) and at the
+  end of the walk command (17.22 s). Agent's reading (inference): imitating the teacher on all ticks from this
+  small pool overwrote what the distillation had taught about shoves and stopping. Next, already running: same
+  data, teacher labels only on the first 150 called ticks (3 s), the student's own recorded action as the target
+  afterwards (s2r1a). Modal spend for the task about 0.8 USD (round total about 7.1 of 10).
