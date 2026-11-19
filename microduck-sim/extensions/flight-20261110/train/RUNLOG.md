@@ -928,3 +928,16 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   in the env); B supported (the empty state is necessary for the fault and the state is what holds the load).
   Open: the same empty-state start is harmless in the env and harmful in the runtime simulation; which runtime
   difference does that (start pose or loop timing) is not separated.
+- 23:20-23:50 Warm-up rule without a privileged teacher, no training: refuted. New default-off switches in
+  `flight_eval.py`: FLIGHT_WARMUP="<61-input onnx>:<ticks>" (that policy drives the first ticks while the student
+  sees every observation; counters `warmup_driver_ticks`, `student_ticks`) and FLIGHT_VX02=1 (episode field
+  `vx_0_2s`, trunk forward speed over the first 2 s). Runner and summary `ts2_warmup.py`, result
+  `out/ts2_warmup.json` (Mac mini cells `eval/wu_*`, stopped on the main session's word after s2g_140 lacked only
+  the landing cell; the main session's Modal cells `eval/wm_*` are the complete set). Drivers alone, 20 seeds, drop
+  0.036: start-point policy (`ckpt/ts_start`, same file as uni_a) at comx+10 19 of 20 fall, 5 before 2 s, 0.096 m/s
+  forward in 0-2 s; at full load 0 falls, -0.005 m/s. Runtime overlay stand61/walk61 (`ckpt/overlay_models`, the
+  no-pack robot's policies): 20 of 20 fall at comx+10 (18 before 2 s) and at full load (all before 1.3 s). With the
+  start-point driver, falls of 20 (none, nobatt, full, comx, shove, comx drop 0, shove drop 0, comx drop 0.072,
+  comx landing): s2g_200 N=100 0, 0, 0, 11, 2, 0, 0, 15, 9; N=50 0, 0, 0, 9, 0, 0, 0, 14, 8; s2g_140 N=100 1, 0,
+  0, 7, 6, 0, 0, 11, not run. Without warm-up (pk_/dr_/cz_ records): s2g_200 0, 0, 0, 6, 0, 0 (comx drop 0), 14
+  (drop 0.072), 13 (landing). No deployable 61-input policy we have stands at comx+10, so there is no driver.

@@ -1,0 +1,832 @@
+{
+ "drivers_alone": {
+  "ts_start_comx+10": {
+   "file": "eval/wu_driver_ts_start_comx+10.json",
+   "manifest": "flightpack-comx+10.json",
+   "falls_of_20": 19,
+   "fall_times": [
+    0.86,
+    0.9,
+    0.98,
+    1.12,
+    1.58,
+    2.9,
+    3.72,
+    4.74,
+    4.76,
+    4.82,
+    5.08,
+    7.5,
+    7.98,
+    9.86,
+    13.64,
+    13.66,
+    15.04,
+    16.96,
+    17.4
+   ],
+   "falls_before_2s": 5,
+   "forward_speed_0_2s_mean": 0.0964,
+   "forward_speed_0_2s_max_episode": 0.1682,
+   "walk_speed_median_upright": 0.188,
+   "counters_sum_over_episodes": null
+  },
+  "ts_start_load100": {
+   "file": "eval/wu_driver_ts_start_load100.json",
+   "manifest": "flightpack-load100.json",
+   "falls_of_20": 0,
+   "fall_times": [],
+   "falls_before_2s": 0,
+   "forward_speed_0_2s_mean": -0.0047,
+   "forward_speed_0_2s_max_episode": -0.0025,
+   "walk_speed_median_upright": 0.1727,
+   "counters_sum_over_episodes": null
+  },
+  "overlay_models_comx+10": {
+   "file": "eval/wu_driver_overlay_models_comx+10.json",
+   "manifest": "flightpack-comx+10.json",
+   "falls_of_20": 20,
+   "fall_times": [
+    1.44,
+    1.46,
+    1.48,
+    1.48,
+    1.48,
+    1.48,
+    1.52,
+    1.52,
+    1.52,
+    1.52,
+    1.54,
+    1.56,
+    1.58,
+    1.58,
+    1.58,
+    1.58,
+    1.62,
+    1.74,
+    2.56,
+    2.78
+   ],
+   "falls_before_2s": 18,
+   "forward_speed_0_2s_mean": -0.0015,
+   "forward_speed_0_2s_max_episode": 0.0146,
+   "walk_speed_median_upright": null,
+   "counters_sum_over_episodes": null
+  },
+  "overlay_models_load100": {
+   "file": "eval/wu_driver_overlay_models_load100.json",
+   "manifest": "flightpack-load100.json",
+   "falls_of_20": 20,
+   "fall_times": [
+    1.04,
+    1.06,
+    1.06,
+    1.08,
+    1.12,
+    1.14,
+    1.14,
+    1.14,
+    1.14,
+    1.14,
+    1.14,
+    1.14,
+    1.16,
+    1.16,
+    1.16,
+    1.16,
+    1.16,
+    1.18,
+    1.22,
+    1.28
+   ],
+   "falls_before_2s": 20,
+   "forward_speed_0_2s_mean": -0.0159,
+   "forward_speed_0_2s_max_episode": -0.0038,
+   "walk_speed_median_upright": null,
+   "counters_sum_over_episodes": null
+  }
+ },
+ "warmup": {
+  "ts_start_s2g_200_n100": {
+   "driver": "train/ckpt/ts_start/stand61.onnx",
+   "student": "s2g_200",
+   "warmup_ticks": 100,
+   "cells": {
+    "none": {
+     "file": "eval/wu_ts_start_s2g_200_n100_none.json",
+     "manifest": "flightpack-none.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0016,
+     "forward_speed_0_2s_max_episode": 0.0018,
+     "walk_speed_median_upright": 0.3514,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1644,
+      "student_ticks": 17390
+     }
+    },
+    "nobatt": {
+     "file": "eval/wu_ts_start_s2g_200_n100_nobatt.json",
+     "manifest": "flightpack-nobatt.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.009,
+     "forward_speed_0_2s_max_episode": -0.0075,
+     "walk_speed_median_upright": 0.2945,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 17390
+     }
+    },
+    "full": {
+     "file": "eval/wu_ts_start_s2g_200_n100_full.json",
+     "manifest": "flightpack-load100.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0047,
+     "forward_speed_0_2s_max_episode": -0.0025,
+     "walk_speed_median_upright": 0.2831,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 17390
+     }
+    },
+    "comx": {
+     "file": "eval/wu_ts_start_s2g_200_n100_comx.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 11,
+     "fall_times": [
+      0.86,
+      0.9,
+      0.98,
+      1.12,
+      1.58,
+      4.48,
+      7.98,
+      8.72,
+      11.96,
+      14.48,
+      16.16
+     ],
+     "falls_before_2s": 5,
+     "forward_speed_0_2s_mean": 0.0964,
+     "forward_speed_0_2s_max_episode": 0.1682,
+     "walk_speed_median_upright": 0.3109,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1712,
+      "student_ticks": 10319
+     }
+    },
+    "shove": {
+     "file": "eval/wu_ts_start_s2g_200_n100_shove.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 2,
+     "fall_times": [
+      8.42,
+      8.5
+     ],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0036,
+     "forward_speed_0_2s_max_episode": -0.0014,
+     "walk_speed_median_upright": 0.2865,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 16282
+     }
+    },
+    "comx_d0": {
+     "file": "eval/wu_ts_start_s2g_200_n100_comx_d0.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0816,
+     "forward_speed_0_2s_max_episode": 0.0816,
+     "walk_speed_median_upright": 0.3071,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 2000,
+      "student_ticks": 18000
+     }
+    },
+    "shove_d0": {
+     "file": "eval/wu_ts_start_s2g_200_n100_shove_d0.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0038,
+     "forward_speed_0_2s_max_episode": -0.0038,
+     "walk_speed_median_upright": 0.2917,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 2000,
+      "student_ticks": 18000
+     }
+    },
+    "comx_d072": {
+     "file": "eval/wu_ts_start_s2g_200_n100_comx_d072.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 15,
+     "fall_times": [
+      0.86,
+      0.9,
+      1.0,
+      1.04,
+      1.04,
+      1.74,
+      2.52,
+      3.28,
+      4.58,
+      6.6,
+      7.36,
+      8.62,
+      8.78,
+      10.96,
+      12.58
+     ],
+     "falls_before_2s": 6,
+     "forward_speed_0_2s_mean": 0.1044,
+     "forward_speed_0_2s_max_episode": 0.1712,
+     "walk_speed_median_upright": 0.3167,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1612,
+      "student_ticks": 6383
+     }
+    },
+    "comx_landing": {
+     "file": "eval/wu_ts_start_s2g_200_n100_comx_landing.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 9,
+     "fall_times": [
+      0.46,
+      0.5,
+      0.54,
+      0.58,
+      0.6,
+      0.6,
+      2.64,
+      9.86,
+      12.74
+     ],
+     "falls_before_2s": 6,
+     "forward_speed_0_2s_mean": 0.0663,
+     "forward_speed_0_2s_max_episode": 0.2064,
+     "walk_speed_median_upright": 0.3056,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1511,
+      "student_ticks": 10501
+     }
+    }
+   },
+   "cells_run": 9,
+   "falls_total": 37,
+   "episodes_total": 180
+  },
+  "ts_start_s2g_140_n100": {
+   "driver": "train/ckpt/ts_start/stand61.onnx",
+   "student": "s2g_140",
+   "warmup_ticks": 100,
+   "cells": {
+    "none": {
+     "file": "eval/wu_ts_start_s2g_140_n100_none.json",
+     "manifest": "flightpack-none.json",
+     "falls_of_20": 1,
+     "fall_times": [
+      18.96
+     ],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0016,
+     "forward_speed_0_2s_max_episode": 0.0018,
+     "walk_speed_median_upright": 0.3545,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1644,
+      "student_ticks": 17340
+     }
+    },
+    "nobatt": {
+     "file": "eval/wu_ts_start_s2g_140_n100_nobatt.json",
+     "manifest": "flightpack-nobatt.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.009,
+     "forward_speed_0_2s_max_episode": -0.0075,
+     "walk_speed_median_upright": 0.2891,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 17390
+     }
+    },
+    "full": {
+     "file": "eval/wu_ts_start_s2g_140_n100_full.json",
+     "manifest": "flightpack-load100.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0047,
+     "forward_speed_0_2s_max_episode": -0.0025,
+     "walk_speed_median_upright": 0.2745,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 17390
+     }
+    },
+    "comx": {
+     "file": "eval/wu_ts_start_s2g_140_n100_comx.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 7,
+     "fall_times": [
+      0.86,
+      0.9,
+      0.98,
+      1.12,
+      1.58,
+      13.0,
+      14.88
+     ],
+     "falls_before_2s": 5,
+     "forward_speed_0_2s_mean": 0.0964,
+     "forward_speed_0_2s_max_episode": 0.1682,
+     "walk_speed_median_upright": 0.2908,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1712,
+      "student_ticks": 12444
+     }
+    },
+    "shove": {
+     "file": "eval/wu_ts_start_s2g_140_n100_shove.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 6,
+     "fall_times": [
+      8.38,
+      8.48,
+      8.54,
+      8.6,
+      8.64,
+      10.54
+     ],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0036,
+     "forward_speed_0_2s_max_episode": -0.0014,
+     "walk_speed_median_upright": 0.2812,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1930,
+      "student_ticks": 14174
+     }
+    },
+    "comx_d0": {
+     "file": "eval/wu_ts_start_s2g_140_n100_comx_d0.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0816,
+     "forward_speed_0_2s_max_episode": 0.0816,
+     "walk_speed_median_upright": 0.2951,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 2000,
+      "student_ticks": 18000
+     }
+    },
+    "shove_d0": {
+     "file": "eval/wu_ts_start_s2g_140_n100_shove_d0.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0038,
+     "forward_speed_0_2s_max_episode": -0.0038,
+     "walk_speed_median_upright": 0.2832,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 2000,
+      "student_ticks": 18000
+     }
+    },
+    "comx_d072": {
+     "file": "eval/wu_ts_start_s2g_140_n100_comx_d072.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 11,
+     "fall_times": [
+      0.86,
+      0.9,
+      1.0,
+      1.04,
+      1.04,
+      1.74,
+      2.52,
+      6.16,
+      10.8,
+      12.06,
+      15.84
+     ],
+     "falls_before_2s": 6,
+     "forward_speed_0_2s_mean": 0.1044,
+     "forward_speed_0_2s_max_episode": 0.1712,
+     "walk_speed_median_upright": 0.2961,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1612,
+      "student_ticks": 9295
+     }
+    },
+    "comx_landing": null
+   },
+   "cells_run": 8,
+   "falls_total": 25,
+   "episodes_total": 160
+  },
+  "ts_start_s2g_200_n50": {
+   "driver": "train/ckpt/ts_start/stand61.onnx",
+   "student": "s2g_200",
+   "warmup_ticks": 50,
+   "cells": {
+    "none": {
+     "file": "eval/wu_ts_start_s2g_200_n50_none.json",
+     "manifest": "flightpack-none.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0076,
+     "forward_speed_0_2s_max_episode": 0.0059,
+     "walk_speed_median_upright": 0.3413,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 676,
+      "student_ticks": 18358
+     }
+    },
+    "nobatt": {
+     "file": "eval/wu_ts_start_s2g_200_n50_nobatt.json",
+     "manifest": "flightpack-nobatt.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0047,
+     "forward_speed_0_2s_max_episode": -0.0035,
+     "walk_speed_median_upright": 0.2802,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 962,
+      "student_ticks": 18358
+     }
+    },
+    "full": {
+     "file": "eval/wu_ts_start_s2g_200_n50_full.json",
+     "manifest": "flightpack-load100.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": -0.0007,
+     "forward_speed_0_2s_max_episode": 0.0015,
+     "walk_speed_median_upright": 0.2735,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 962,
+      "student_ticks": 18358
+     }
+    },
+    "comx": {
+     "file": "eval/wu_ts_start_s2g_200_n50_comx.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 9,
+     "fall_times": [
+      0.86,
+      0.9,
+      0.98,
+      1.12,
+      1.78,
+      2.92,
+      3.02,
+      3.08,
+      3.74
+     ],
+     "falls_before_2s": 5,
+     "forward_speed_0_2s_mean": 0.0938,
+     "forward_speed_0_2s_max_episode": 0.1682,
+     "walk_speed_median_upright": 0.2908,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 953,
+      "student_ticks": 10553
+     }
+    },
+    "shove": {
+     "file": "eval/wu_ts_start_s2g_200_n50_shove.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0004,
+     "forward_speed_0_2s_max_episode": 0.0027,
+     "walk_speed_median_upright": 0.2768,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 962,
+      "student_ticks": 18358
+     }
+    },
+    "comx_d0": {
+     "file": "eval/wu_ts_start_s2g_200_n50_comx_d0.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0766,
+     "forward_speed_0_2s_max_episode": 0.0766,
+     "walk_speed_median_upright": 0.2883,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1000,
+      "student_ticks": 19000
+     }
+    },
+    "shove_d0": {
+     "file": "eval/wu_ts_start_s2g_200_n50_shove_d0.json",
+     "manifest": "flightpack-nominal.json",
+     "falls_of_20": 0,
+     "fall_times": [],
+     "falls_before_2s": 0,
+     "forward_speed_0_2s_mean": 0.0002,
+     "forward_speed_0_2s_max_episode": 0.0002,
+     "walk_speed_median_upright": 0.2792,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 1000,
+      "student_ticks": 19000
+     }
+    },
+    "comx_d072": {
+     "file": "eval/wu_ts_start_s2g_200_n50_comx_d072.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 14,
+     "fall_times": [
+      0.86,
+      0.9,
+      1.0,
+      1.04,
+      1.04,
+      2.88,
+      2.94,
+      3.02,
+      3.08,
+      3.1,
+      3.32,
+      3.92,
+      4.3,
+      16.98
+     ],
+     "falls_before_2s": 5,
+     "forward_speed_0_2s_mean": 0.0978,
+     "forward_speed_0_2s_max_episode": 0.171,
+     "walk_speed_median_upright": 0.2822,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 921,
+      "student_ticks": 6903
+     }
+    },
+    "comx_landing": {
+     "file": "eval/wu_ts_start_s2g_200_n50_comx_landing.json",
+     "manifest": "flightpack-comx+10.json",
+     "falls_of_20": 8,
+     "fall_times": [
+      0.46,
+      0.5,
+      0.54,
+      0.58,
+      0.6,
+      0.6,
+      17.98,
+      18.14
+     ],
+     "falls_before_2s": 6,
+     "forward_speed_0_2s_mean": 0.0669,
+     "forward_speed_0_2s_max_episode": 0.2064,
+     "walk_speed_median_upright": 0.2977,
+     "counters_sum_over_episodes": {
+      "warmup_driver_ticks": 837,
+      "student_ticks": 12677
+     }
+    }
+   },
+   "cells_run": 9,
+   "falls_total": 31,
+   "episodes_total": 180
+  }
+ },
+ "without_warmup": {
+  "s2g_200": {
+   "none": {
+    "file": "eval/pk_s2g_200_none.json",
+    "manifest": "flightpack-none.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.3215,
+    "counters_sum_over_episodes": null
+   },
+   "nobatt": {
+    "file": "eval/pk_s2g_200_nobatt.json",
+    "manifest": "flightpack-nobatt.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2324,
+    "counters_sum_over_episodes": null
+   },
+   "full": {
+    "file": "eval/pk_s2g_200_full.json",
+    "manifest": "flightpack-load100.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2495,
+    "counters_sum_over_episodes": null
+   },
+   "comx": {
+    "file": "eval/pk_s2g_200_comx.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 6,
+    "fall_times": [
+     0.7,
+     0.82,
+     2.7,
+     3.48,
+     5.28,
+     10.72
+    ],
+    "falls_before_2s": 2,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2851,
+    "counters_sum_over_episodes": null
+   },
+   "shove": {
+    "file": "eval/pk_s2g_200_shove.json",
+    "manifest": "flightpack-nominal.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2529,
+    "counters_sum_over_episodes": null
+   },
+   "comx_d072": {
+    "file": "eval/dr_s2g_200_comx_d072.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 14,
+    "fall_times": [
+     0.8,
+     0.84,
+     1.1,
+     1.3,
+     1.82,
+     2.84,
+     3.12,
+     3.18,
+     3.22,
+     5.7,
+     11.72,
+     11.76,
+     14.36,
+     16.22
+    ],
+    "falls_before_2s": 5,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2925,
+    "counters_sum_over_episodes": null
+   },
+   "comx_landing": {
+    "file": "eval/cz_s2g_200_landing.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 13,
+    "fall_times": [
+     0.38,
+     0.42,
+     0.44,
+     0.48,
+     0.5,
+     0.52,
+     0.56,
+     0.56,
+     0.6,
+     0.74,
+     0.86,
+     1.1,
+     3.02
+    ],
+    "falls_before_2s": 12,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2601,
+    "counters_sum_over_episodes": {
+     "calls": 7272,
+     "calls_after_skip": 240,
+     "skipped_ticks": 250
+    }
+   },
+   "comx_d0": {
+    "file": "eval/cz_s2g_200_shadow_nodrop.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2785,
+    "counters_sum_over_episodes": {
+     "calls": 20000
+    }
+   }
+  },
+  "s2g_140": {
+   "none": {
+    "file": "eval/pk_s2g_140_none.json",
+    "manifest": "flightpack-none.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.3181,
+    "counters_sum_over_episodes": null
+   },
+   "nobatt": {
+    "file": "eval/pk_s2g_140_nobatt.json",
+    "manifest": "flightpack-nobatt.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2369,
+    "counters_sum_over_episodes": null
+   },
+   "full": {
+    "file": "eval/pk_s2g_140_full.json",
+    "manifest": "flightpack-load100.json",
+    "falls_of_20": 0,
+    "fall_times": [],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2562,
+    "counters_sum_over_episodes": null
+   },
+   "comx": {
+    "file": "eval/pk_s2g_140_comx.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 4,
+    "fall_times": [
+     3.06,
+     3.18,
+     3.42,
+     7.78
+    ],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2601,
+    "counters_sum_over_episodes": null
+   },
+   "shove": {
+    "file": "eval/pk_s2g_140_shove.json",
+    "manifest": "flightpack-nominal.json",
+    "falls_of_20": 2,
+    "fall_times": [
+     1.56,
+     8.78
+    ],
+    "falls_before_2s": 1,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2551,
+    "counters_sum_over_episodes": null
+   },
+   "comx_d072": {
+    "file": "eval/dr_s2g_140_comx_d072.json",
+    "manifest": "flightpack-comx+10.json",
+    "falls_of_20": 8,
+    "fall_times": [
+     2.92,
+     2.96,
+     3.08,
+     3.22,
+     6.64,
+     8.18,
+     14.56,
+     15.36
+    ],
+    "falls_before_2s": 0,
+    "forward_speed_0_2s_mean": null,
+    "forward_speed_0_2s_max_episode": null,
+    "walk_speed_median_upright": 0.2672,
+    "counters_sum_over_episodes": null
+   },
+   "comx_landing": null,
+   "comx_d0": null
+  }
+ }
+}

@@ -152,6 +152,24 @@ class _StatefulSession:
         # diagnostics only (round 2, 2026-11-18): FLIGHT_HANDOVER="<teacher onnx>:<ticks>" lets the privileged teacher
         # drive the first <ticks> control ticks of the episode while the student still sees every observation and
         # builds its state, then the student's own action is used ("released")
+        # diagnostics only (warm-up rule, 2026-11-18; default off): FLIGHT_WARMUP="<61-input onnx>:<ticks>" lets a plain
+        # 61-input policy (no privileged inputs, e.g. a models directory's stand61.onnx) drive the first <ticks> control
+        # ticks of the episode; the recurrent student is run on every called tick and keeps its state, then drives.
+        # Counters: warmup_driver_ticks (the driver's action was applied) and student_ticks (the student's was).
+        wu = os.environ.get("FLIGHT_WARMUP")
+        if wu:
+            if tick <= int(wu.rsplit(":", 1)[1]):
+                if "sess" not in _WARMUP:
+                    import onnxruntime as ort
+                    _WARMUP["sess"] = ort.InferenceSession(wu.rsplit(":", 1)[0])
+                    assert len(_WARMUP["sess"].get_inputs()) == 1, "the warm-up driver must be a plain 61-input policy"
+                    assert (_WARMUP["sess"].get_modelmeta().custom_metadata_map["default_joint_pos"]
+                            == self.sess.get_modelmeta().custom_metadata_map["default_joint_pos"]), "different default pose"
+                    _WARMUP["name"] = _WARMUP["sess"].get_inputs()[0].name
+                obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
+                DIAG["stat"]["warmup_driver_ticks"] = DIAG["stat"].get("warmup_driver_ticks", 0) + 1
+                return _WARMUP["sess"].run(None, {_WARMUP["name"]: obs})[:1]
+            DIAG["stat"]["student_ticks"] = DIAG["stat"].get("student_ticks", 0) + 1
         ho = os.environ.get("FLIGHT_HANDOVER")
         if ho and tick <= int(ho.rsplit(":", 1)[1]):
             if "sess" not in _HANDOVER:
@@ -194,6 +212,7 @@ PRIV = dict(m=None, d=None, kg=0.0, log=[])  # the simulator state the privilege
 # payload kg and trunk COM of the no-pack robot as the teacher reads them (eval/pk_t2a_999_none.json priv_first)
 NOPACK_PRIV = (0.0, -0.0335, 0.0007, 0.0186)
 _HANDOVER = {}
+_WARMUP = {}
 _TEACH = {}
 DIAG = dict(rows=[], stat={}, swap_left=0, rng=None, phys=[])   # cause-study switches, reset per episode
 
@@ -369,6 +388,11 @@ def episode(job):
             d.xfrc_applied[st["trunk"], 0] = (shove_ns / 0.1) if on else 0.0
         orig(m, d)
         st["n"] += 1
+        if d.time <= 2.0 and os.environ.get("FLIGHT_VX02") == "1":
+            # diagnostics only (default off): the trunk's forward speed in its own frame over the first 2 s
+            Rv = np.zeros(9)
+            mujoco.mju_quat2Mat(Rv, d.qpos[3:7])
+            st.setdefault("vx02", []).append(float((Rv.reshape(3, 3).T @ d.qvel[0:3])[0]))
         if os.environ.get("FLIGHT_SHADOW") == "1" and d.time <= 8.2:
             # cause study, check 3: the true joint-angle sum and trunk gravity after every physics step of the first
             # 8 s, so a logged observation can be matched to the time its readings were taken
@@ -428,6 +452,7 @@ def episode(job):
                 trunk_z_m=None if not st.get("z") else dict(min=round(min(st["z"]), 4), median=round(float(np.median(st["z"])), 4)),
                 landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None,
                 priv_first=PRIV["log"] or None,  # a teacher's first privileged inputs (kg, COM xyz, velocity xyz)
+                vx_0_2s=round(float(np.mean(st["vx02"])), 4) if st.get("vx02") else None,
                 diag_stat=dict(DIAG["stat"]) or None, shadow=list(DIAG["rows"]) or None,  # cause-study switches
                 shadow_phys=(list(DIAG["phys"]) or None) if seed < 3 else None,
                 # the probe's own pass-through fields for the bend and quack studies (absent keys stay None)
