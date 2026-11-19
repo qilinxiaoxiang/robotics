@@ -78,7 +78,7 @@ def main(spec: str):
     evals = json.loads(Path(spec).read_text())["evals"]
     jobs = []
     for e in evals:
-        for s in range(e.get("episodes", 20)):
+        for s in range(e.get("seed0", 0), e.get("seed0", 0) + e.get("episodes", 20)):  # "seed0": first seed (default 0)
             jobs.append([e["name"], e["models"], e["manifest"], e["case"], s, e.get("shove_ns", 0.0), e.get("shove_at", 8.0),
                          bool(e.get("landing", False)), list(e.get("extra", [])), dict(e.get("env", {}))])
     print(f"{len(jobs)} episodes in {len(evals)} evals")

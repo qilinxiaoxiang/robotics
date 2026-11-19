@@ -149,6 +149,27 @@ class _StatefulSession:
                 DIAG["rows"].append(row)
             if use_teacher:
                 return [ta]
+        # DAgger collection in the runtime simulation (ts2_dagger_modal.py, 2026-11-18; default off): FLIGHT_DAGGER=<beta>
+        # stores per called tick the observation, the privileged teacher's label and the ticks skipped before the call.
+        # With probability beta, drawn once per episode, the teacher's action is applied from control tick 51 on (the
+        # student still runs on every called tick and keeps its state). Counters dagger_ticks / dagger_teacher_ticks.
+        dg = os.environ.get("FLIGHT_DAGGER")
+        if dg is not None and self.state_name == "state_in":
+            obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
+            ta = _teacher_action(obs)
+            if DIAG.get("dagger") is None:
+                DIAG["dagger"] = dict(obs=[], lab=[], stu=[], skip=[], tick=[], teach=bool(DIAG["rng"].random() < float(dg)))
+            rec = DIAG["dagger"]
+            use = rec["teach"] and tick > 50
+            rec["obs"].append(obs[0].astype(np.float16))
+            rec["lab"].append(ta[0].astype(np.float16))
+            rec["stu"].append(res[0][0].astype(np.float16))
+            rec["skip"].append(min(gap - 1, 127) if 1 < gap < 1000 else 0)
+            rec["tick"].append(int(tick))
+            DIAG["stat"]["dagger_ticks"] = DIAG["stat"].get("dagger_ticks", 0) + 1
+            DIAG["stat"]["dagger_teacher_ticks"] = DIAG["stat"].get("dagger_teacher_ticks", 0) + int(use)
+            if use:
+                return [ta]
         # diagnostics only (round 2, 2026-11-18): FLIGHT_HANDOVER="<teacher onnx>:<ticks>" lets the privileged teacher
         # drive the first <ticks> control ticks of the episode while the student still sees every observation and
         # builds its state, then the student's own action is used ("released")
@@ -331,7 +352,8 @@ def episode(job):
     install_stateful_policies(b)
     install_priv_policies(b)
     none_parts = json.loads((HERE / "manifests/flightpack-none.json").read_text())["parts"]
-    DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed), last_state=None)
+    DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed), last_state=None,
+                dagger=None)
     PRIV.update(m=None, d=None, log=[], kg=sum(p["mass_kg"] for p in json.loads(Path(manifest).read_text())["parts"])
                 - sum(p["mass_kg"] for p in none_parts))
     # diagnostics only (spk3diag, PET_ROBOT_LOG 2026-11-13): JSON {joint: [lo, hi]} replaces walk_brain.JOINT_RANGE
@@ -453,6 +475,11 @@ def episode(job):
                 landing=dict(drop_m=round(drop_h, 4), tilt_deg=np.round(tilt, 2).tolist()) if landing else None,
                 priv_first=PRIV["log"] or None,  # a teacher's first privileged inputs (kg, COM xyz, velocity xyz)
                 vx_0_2s=round(float(np.mean(st["vx02"])), 4) if st.get("vx02") else None,
+                # FLIGHT_DAGGER only: numpy arrays (not JSON; ts2_dagger_modal.py takes them out before any file is written)
+                dagger=None if DIAG.get("dagger") is None else dict(
+                    obs=np.array(DIAG["dagger"]["obs"], np.float16), lab=np.array(DIAG["dagger"]["lab"], np.float16),
+                    stu=np.array(DIAG["dagger"]["stu"], np.float16), skip=np.array(DIAG["dagger"]["skip"], np.int8),
+                    tick=np.array(DIAG["dagger"]["tick"], np.int16), teach=DIAG["dagger"]["teach"]),
                 diag_stat=dict(DIAG["stat"]) or None, shadow=list(DIAG["rows"]) or None,  # cause-study switches
                 shadow_phys=(list(DIAG["phys"]) or None) if seed < 3 else None,
                 # the probe's own pass-through fields for the bend and quack studies (absent keys stay None)
