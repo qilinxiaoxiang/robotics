@@ -29,6 +29,10 @@ MuJoCo 3.10.0 on the as-built duck (official scene + battery-20261104 manifest) 
   fq2 clips with and without the pack and a take-off clip (`out/pack_visual/`, `train/video/*_pack*`).
 - `policy_legs.py`, `fullseq_runs.sh`, `heldcheck.py`, `fullseq_falls.py`, `fullseq_trace.py`, `render_full_videos.sh`:
   the full sequence with the leg policy (next section).
+- `render_hd.py`, `render_full_videos_hd.sh`, `outcome_match.py`: 1080p 60 fps presentation renders of the three full
+  clips (`out/pack_visual_hd/`, studio look, caption, posters, combined cut). Drawing only: flight.py's `--video-size`,
+  `--video-fps`, `--video-look`, `--video-caption`, `--cam-smooth`, `--cam-fovy`, `--cam-dz` are optional and the video
+  without them is byte-identical to before; the script stops unless each run's row equals `out/pack_visual/full_*.json`.
 - `thrust_assist_literature.md` published work on thrust-assisted walking and the ArduPilot interface questions.
 
 ## Reproduce

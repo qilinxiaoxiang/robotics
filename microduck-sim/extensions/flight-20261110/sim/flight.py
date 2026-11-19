@@ -306,6 +306,10 @@ def run(a):
     if a.start_air:
         fans.w[:] = math.sqrt(M * G / 4 / (T_REF * a.thrust)) * W_REF
     qlog = []
+    # presentation render (sim/render_hd.py) only when one of its options is given; it logs qpos every step (drawing only)
+    hd_video = bool(a.video and (a.video_size or a.video_fps or a.video_look != "default" or a.video_caption
+                                 or a.cam_smooth or a.cam_fovy or a.cam_dz))
+    qstride = 1 if hd_video else 16
     x_est = np.zeros(2); v_est = np.zeros(2)
     flow_v = np.zeros(2); rng_meas = None; rng_jumps = []
     # mission
@@ -584,7 +588,7 @@ def run(a):
         if disarm_t is not None and t >= disarm_t:
             stats["tilt_after_disarm"] = max(stats.get("tilt_after_disarm", 0.0), tilt)
             stats["t_last"] = t
-        if k % 16 == 0 and a.video:
+        if k % qstride == 0 and a.video:
             qlog.append(d.qpos.copy())
         if k % 8 == 0:
             log.append([t, *d.qpos[0:3], *rpy, z_est, surf_est, *x_est, tgt["z"], tgt["x"], *u, *Tf, v_bus, i_tot,
@@ -676,7 +680,10 @@ def run(a):
         row["params"]["ctl_thrust_known"] = a.ctl_thrust_known
     if a.log:
         np.savez_compressed(a.log, log=np.array(log, dtype=float))
-    if a.video:
+    if a.video and hd_video:
+        import render_hd
+        render_hd.render(m, d, a, qlog, dt)
+    elif a.video:
         render(m, d, a, qlog)
     return row
 
@@ -737,6 +744,15 @@ def main():
     ap.add_argument("--cam-el", type=float, default=-12.0)
     ap.add_argument("--cam-follow", action="store_true", help="video camera looks at the trunk")
     ap.add_argument("--still-t", type=float, default=None, help="also save the video frame at this time as <video>_t<T>.png")
+    # presentation render (sim/render_hd.py): drawing only; with none of these given the video is the 640x480 25 fps default
+    ap.add_argument("--video-size", default=None, help="WxH, e.g. 1920x1080 (default 640x480)")
+    ap.add_argument("--video-fps", type=float, default=None, help="video frame rate (default 25)")
+    ap.add_argument("--video-look", choices=("default", "studio"), default="default",
+                    help="studio: light matte floor and background, shadow-casting key light, table drawn with legs")
+    ap.add_argument("--video-caption", default=None, help="text burned into the top-left corner of every frame")
+    ap.add_argument("--cam-smooth", type=float, default=0.0, help="s, lag of the --cam-follow look-at point (0: rigid follow)")
+    ap.add_argument("--cam-fovy", type=float, default=None, help="deg, vertical field of view of the video camera")
+    ap.add_argument("--cam-dz", type=float, default=0.0, help="m, height offset of the --cam-follow look-at point from the trunk")
     ap.add_argument("--lean-max", type=float, default=20.0, help="deg, lean angle limit of the position loop (ArduPilot ANGLE_MAX stand-in)")
     ap.add_argument("--start-air", type=float, default=0.0, help="diagnostic: start airborne at this feet height (m), fans at hover speed")
     ap.add_argument("--com-est", choices=("report", "true"), default="report",
