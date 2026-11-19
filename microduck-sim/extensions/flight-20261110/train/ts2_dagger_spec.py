@@ -10,6 +10,7 @@ comx_d0, shove_d0 (--drop 0); then comx_d072 (--drop 0.072), comx_landing (relea
 and comx_stand (zero command for the whole 20 s). Seeds seed0 .. seed0+19 (0 or 2000: never collected for training).
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -20,8 +21,17 @@ CELLS = [("none", "none", "walk", 0.0, False, []), ("nobatt", "nobatt", "walk", 
          ("comx", "comx+10", "walk", 0.0, False, S0), ("shove", "nominal", "walk", 0.5, False, S0),
          ("comx_d0", "comx+10", "walk", 0.0, False, S0 + ["--drop", "0"]), ("shove_d0", "nominal", "walk", 0.5, False, S0 + ["--drop", "0"]),
          ("comx_d072", "comx+10", "walk", 0.0, False, S0 + ["--drop", "0.072"]), ("comx_landing", "comx+10", "walk", 0.0, True, S0),
-         ("comx_stand", "comx+10", "stand", 0.0, False, S0)]
+         ("comx_stand", "comx+10", "stand", 0.0, False, S0),
+         # round 5 on: the rearward COM cells (selection) and three report cells; COM y +-10 mm through the probe's
+         # own --com-y (a 50 g pair on the trunk; there is no comy manifest)
+         ("comxm_stand", "comx-10", "stand", 0.0, False, S0), ("comxm_walk", "comx-10", "walk", 0.0, False, S0),
+         ("comxm_landing", "comx-10", "walk", 0.0, True, S0),
+         ("comyp_walk", "nominal", "walk", 0.0, False, S0 + ["--com-y", "10"]),
+         ("comym_walk", "nominal", "walk", 0.0, False, S0 + ["--com-y", "-10"])]
 SEVEN = [c[0] for c in CELLS[:7]]
+NINE = SEVEN + ["comxm_stand", "comxm_walk"]
+if os.environ.get("DG_CELLS") == "pick":  # only the nine selection cells (candidates); the report cells for the pick
+    CELLS = [c for c in CELLS if c[0] in NINE]
 
 
 def stem(d, seed0):
@@ -63,12 +73,14 @@ elif sys.argv[1] == "--sum60":  # --sum60 <dir> [...]: falls of 60 per cell over
         f = {c[0]: (None if any(per[s0][c[0]] is None for s0 in SETS60) else sum(per[s0][c[0]]["falls_of_20"] for s0 in SETS60)) for c in CELLS}
         seven = None if any(f[k] is None for k in SEVEN) else sum(f[k] for k in SEVEN)
         cr = [per[s0]["comx"]["forward_speed_0_2s_mean"] for s0 in SETS60 if per[s0]["comx"]]
-        out = dict(ckpt=d, seed_sets=list(SETS60), falls_of_60=f, seven_cells_total_of_420=seven,
+        nine = None if any(f.get(k) is None for k in NINE) else sum(f[k] for k in NINE)
+        out = dict(ckpt=d, seed_sets=list(SETS60), falls_of_60=f, seven_cells_total_of_420=seven, nine_cells_total_of_540=nine,
+                   nine_cells_worst=None if nine is None else max(f[k] for k in NINE),
                    creep_comx_0_2s=round(sum(cr) / len(cr), 4) if cr else None,
                    falls_by_seed_set={str(s0): {k: (v["falls_of_20"] if v else None) for k, v in per[s0].items()} for s0 in SETS60},
                    comx_fall_times=sorted(t for s0 in SETS60 if per[s0]["comx"] for t in per[s0]["comx"]["fall_times"]))
         (TRAIN / f"out/dagger/eval60_{d}{SUFFIX}.json").write_text(json.dumps(out, indent=1))
-        print(d, f, "seven", seven, "creep", out["creep_comx_0_2s"])
+        print(d, f, "seven", seven, "nine", nine, "creep", out["creep_comx_0_2s"])
 elif sys.argv[1] == "--table":
     args = sys.argv[2:]
     i = 0

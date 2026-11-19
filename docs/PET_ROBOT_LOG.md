@@ -1955,3 +1955,14 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   round-1 collection, s2r3_3 8 of 163 in round 4). Round 5 launched on the main session's decision: nine selection
   cells (adds comx-10 stand and walk), comx-10 sampled as heavily as comx+10, half learning rate, at least 8
   evaluated checkpoints, stop at 3 of 540 with no cell above 2 of 60. Bill 30.09 to 30.20 USD metered.
+- 2026-11-19 02:54 Clock note: the entry above stamped 03:45 was written at about 02:10. DAgger round 5 (agent; main
+  session read `out/dagger/eval60_s2r5_{2,8,avg}*.json`). Pool r1 to r5, 8800 episodes; learning rate 2.5e-5,
+  gradient clip 1.0, eight checkpoints plus a weight average. Nine cells (the seven plus rear-COM stand and walk),
+  falls of 540, seeds 0/2000/3000 | 4000/5000/6000: s2r5_2 4 | 3, s2r5_8 4 | 4, s2r5_avg 4 | 9, s2r4_1 9 | 13.
+  The seven original cells: s2r5_2 0 | 3 (COM x 2, shove 1), s2r5_8 0 | 2. Rear COM: s2r5_2 2 and 2 | 0 and 0,
+  s2r5_8 2 and 2 | 1 and 1; stand and walk fall on the same episodes before the walk command, so the pair counts
+  one fault twice. Curve over the eight checkpoints 18, 4, 10, 11, 9, 12, 10, 4: still uneven. Report cells for
+  s2r5_avg (60 each, two groups): COM x drop 0.072 8 | 3, forward-COM landing 8 | 6, rear-COM landing 5 | 9, COM y
+  +10 walk 3 | 3, COM y -10 walk 0 | 0. Stop line (3 of 540, confirmed) not met; round 6 running with landing
+  starts at 22 % of episodes, s2r5_8 driving. Main session: round 6 is the last, then pick on the six-group sum and
+  run the full acceptance. Bill 31.17 USD metered (baseline 28.37).

@@ -115,6 +115,7 @@ def main():
                          "only for data collected by the checkpoint given as --init (2026-11-19: plain imitation of the "
                          "teacher on all ticks, s2r1_8, cured the creep but walked 0.32 m/s and fell 83 times in the seven cells)")
     ap.add_argument("--max-minutes", type=float, default=50.0)
+    ap.add_argument("--save-mb", type=int, default=0, help="save a checkpoint every this many minibatches (0: per --save-every epochs)")
     a = ap.parse_args()
     import onnx
     import recurrent as rc
@@ -136,6 +137,23 @@ def main():
           f"start: held-back mse {v0[1]:.5f}, first {a.early_ticks} ticks {v0[2]:.5f}", flush=True)
     rows.append(dict(epoch=0, val_mse=v0[1], val_mse_early=v0[2]))
     t0 = time.time()
+    saved = []
+
+    def save(k, row):
+        d = HERE / f"ckpt/{a.tag}_{k}"
+        d.mkdir(parents=True, exist_ok=True)
+        torch.save(dict(student=student.state_dict(), spec=ck["spec"], iter=k, args=vars(a), init=a.init), d / f"model_{k}.pt")
+        p = str(d / "walk61.onnx")
+        rc.export_onnx(student, p)
+        m, tpl = onnx.load(p), onnx.load(a.template)
+        del m.metadata_props[:]
+        m.metadata_props.extend(tpl.metadata_props)
+        onnx.save(m, p)
+        row["onnx_vs_torch"] = rc.check_onnx(student, p)
+        assert row["onnx_vs_torch"] < 1e-3, row
+        shutil.copyfile(p, d / "stand61.onnx")
+        row["saved"] = d.name
+
     for ep in range(1, a.epochs + 1):
         student.train()
         # minibatches of episodes of similar length (rounds differ: 20 s, 8 s and 10 s episodes), in random order
@@ -144,6 +162,37 @@ def main():
         chunks = [order[i:i + a.mb] for i in range(0, len(order), a.mb)]
         order = torch.cat([chunks[i] for i in torch.randperm(len(chunks)).tolist() if len(chunks[i]) == a.mb]
                           + [c for c in chunks if len(c) != a.mb])
+        if a.save_mb:
+            # round 5 on: a checkpoint every --save-mb minibatches (several per epoch), each with its held-back error,
+            # named <tag>_<k>; after the last one <tag>_avg = the plain mean of the saved weights
+            for g0 in range(0, len(order), a.save_mb * a.mb):
+                student.train()
+                tr = run(student, O, L, V, Z, order[g0:g0 + a.save_mb * a.mb], a, opt)
+                student.eval()
+                with torch.no_grad():
+                    va = run(student, O, L, V, Z, val, a)
+                k = len(saved) + 1
+                row = dict(k=k, epoch=ep, minutes=round((time.time() - t0) / 60, 2), train_loss=tr[0], train_mse=tr[1],
+                           train_mse_early=tr[2], val_mse=va[1], val_mse_early=va[2])
+                save(k, row)
+                saved.append({n: v.clone() for n, v in student.state_dict().items()})
+                rows.append(row)
+                log_p.write_text(json.dumps(dict(args=vars(a), episodes=N, called_ticks=int(V.sum()), rows=rows), indent=1))
+                print("[dagger]", json.dumps(row), flush=True)
+            if ep == a.epochs:
+                last = {n: v.clone() for n, v in student.state_dict().items()}
+                student.load_state_dict({n: (torch.stack([s[n].float() for s in saved]).mean(dim=0).to(saved[0][n].dtype))
+                                         for n in saved[0]})
+                student.eval()
+                with torch.no_grad():
+                    va = run(student, O, L, V, Z, val, a)
+                row = dict(k="avg", averaged=len(saved), val_mse=va[1], val_mse_early=va[2])
+                save("avg", row)
+                rows.append(row)
+                log_p.write_text(json.dumps(dict(args=vars(a), episodes=N, called_ticks=int(V.sum()), rows=rows), indent=1))
+                print("[dagger]", json.dumps(row), flush=True)
+                student.load_state_dict(last)
+            continue
         tr = run(student, O, L, V, Z, order, a, opt)
         student.eval()
         with torch.no_grad():

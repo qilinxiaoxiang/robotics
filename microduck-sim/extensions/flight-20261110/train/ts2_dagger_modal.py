@@ -57,8 +57,13 @@ def main(rnd: int, models: str, beta: float, episodes: int = 600, walk_s: float 
         seed = 10000 * rnd + i
         assert seed >= 1000 and not 2000 <= seed <= 2019
         g = np.random.default_rng([seed, 31])
-        man = MANIFESTS[int(g.integers(len(MANIFESTS)))]
-        case, landing, shove = CASES[int(g.integers(len(CASES)))]
+        # from round 5 on: comx+10 and comx-10 a quarter each (6 + 6 of 24), load100 x3, nominal x2, the seven others x1
+        pool = MANIFESTS if rnd < 5 else (["comx+10", "comx-10"] * 6 + ["load100"] * 3 + ["nominal"] * 2
+                                          + ["none", "nobatt", "load000", "load025", "load050", "load075", "mass+10"])
+        man = pool[int(g.integers(len(pool)))]
+        # from round 6 on the landing start is 22 % (walk 45 %): the landing cells were the weak report cells of round 5
+        cases = CASES if rnd < 6 else CASES[10:] + [("walk", True, False)] * 10
+        case, landing, shove = cases[int(g.integers(len(cases)))]
         drop = round(float(g.uniform(0.0, 0.08)), 4)
         extra = ["--drop", str(drop)]
         if not (man == "none" and g.random() < 0.5):

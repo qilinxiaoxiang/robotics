@@ -1001,3 +1001,21 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   0.48; hip load lines at load 50 %, 75 % and batteries out; toe-out at none, batteries out, full. comx+10 stand
   and walk pass. The rearward COM x -10 mm falls are not in the seven selection cells (in round 1 data s2g_200 fell
   0 of 49 comx-10 episodes; s2r3_3 fell 8 of 163 in round 4 data): the fine-tune traded some rearward-COM margin..
+- 11-19 DAgger round 5 (main session: nine selection cells = the seven plus comx-10 stand and comx-10 walk, 60 seeds
+  per cell on 0-, 2000-, 3000-; lr halved, a save every 33 minibatches, weight average as one more candidate).
+  Reference on the nine cells: s2r4_1 9 of 540 (comx-10 stand 4, walk 4, shove 1), s2g_200 22.
+  Round 5: 3000 episodes (2,813,194 ticks), student s2r4_1, beta 0, comx+10 781 episodes (32 fell), comx-10 745 (42
+  fell), 99 falls in all (`out/dagger/r5.json`). Fine-tune s2r5 from s2r4_1 on r1 to r5 (8800 episodes, 6,984,981
+  ticks), lr 2.5e-5, clip 1.0, anchor after tick 250 weight 1, early weight 5, 2 epochs, 8 saves + `s2r5_avg`
+  (plain mean of the 8 saved weights) (`out/dagger/s2r5_log.json`).
+  Nine cells of 540 per save 1 to 8: 18, 4, 10, 11, 9, 12, 10, 4; s2r5_avg 4 (`out/dagger/eval60_s2r5_*.json`).
+  Save 1 to 2 jumps by 14 (above the 10 line); the other neighbours differ by 1 to 6. Seven cells 0 to 2 from save 2.
+  Never-used seeds (4000-, 5000-, 6000-), nine cells: s2r5_2 3, s2r5_8 4, s2r5_avg 9, s2r4_1 13
+  (`eval60_*_s4000_5000_6000.json`). Six groups together of 1080: s2r5_2 7, s2r5_8 8, s2r5_avg 13, s2r4_1 22.
+  The comx-10 stand and walk cells fall on the same episodes (same seed and time, 0.98 to 1.94 s, before the walk
+  command at 2 s), so the nine-cell sum counts each rearward start fall twice.
+  Report cells of s2r5_avg (selection / never-used, of 60; s2r4_1 selection in brackets): comx+10 drop 0.072 8 / 3 (4),
+  comx+10 landing 8 / 6 (3), comx-10 landing 5 / 9 (3), comy+10 walk 3 / 3 (2), comy-10 walk 0 / 0 (0), comx+10
+  stand 0 / 0. Landing starts are weaker than s2r4_1.
+  Stop rule (nine at most 3 of 540, confirmed) not met: best 4. Modal metered 30.09 before, 31.17 after.
+  Round 6 started: s2r5_8 drives 3000 episodes, landing starts 22 % (walk 45 %), otherwise as round 5.
