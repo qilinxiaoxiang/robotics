@@ -995,4 +995,9 @@ and reads joint positions with no delay. Taking 20 ms out of the runtime loop in
   0.0062); s2g_200 0, 0, 0, 21, 1, 0, 0 | 40, 30, 8 (22, creep 0.093). Stop rule met (seven cells 0 to 2 over 60
   seeds with comx at most 2). Caution: neighbouring epochs differ from 1 to 161 falls, so a checkpoint of this
   fine-tune is only as good as its own held-out run; nothing here says the next epoch is safe.
-  Modal after round 4 and its evaluations: metered 30.20 USD (9,286 further episodes since 29.33).
+  Modal after round 4 and its evaluations: metered 30.20 USD (7,720 further episodes since 29.33: 3,000 collected, 4,720 evaluated)
+  Full acceptance of s2r4_1 (`out/accept_s2r4_1.json`, 36 cases, seeds 0-19, Mac mini): 10 failed lines, 20 pass:
+  comx-10 stand 2 falls of 20, comx-10 walk 2 of 20, nominal stand with shove 1 of 20; walk torque p99 0.54 against
+  0.48; hip load lines at load 50 %, 75 % and batteries out; toe-out at none, batteries out, full. comx+10 stand
+  and walk pass. The rearward COM x -10 mm falls are not in the seven selection cells (in round 1 data s2g_200 fell
+  0 of 49 comx-10 episodes; s2r3_3 fell 8 of 163 in round 4 data): the fine-tune traded some rearward-COM margin..
