@@ -56,10 +56,15 @@ app = modal.App("microduck-flight-eval", image=image)
 
 @app.function(cpu=1.0, memory=1024, timeout=900, retries=1, single_use_containers=True)
 def run_episode(job: list) -> dict:
-    sys.path.insert(0, str(TRAIN))
-    import flight_eval
+    import os
     name, models, manifest, case, seed, shove_ns, shove_at, landing = job[:8]
     extra = job[8] if len(job) > 8 else []
+    # diagnostic switches of flight_eval.py (FLIGHT_WARMUP, FLIGHT_VX02, ...): spec key "env"; a value that starts with
+    # "train/" is a path and is made absolute. One container per episode, so nothing leaks between evals.
+    for k, v in (job[9] if len(job) > 9 else {}).items():
+        os.environ[k] = str(TRAIN.parent / v) if str(v).startswith("train/") else str(v)
+    sys.path.insert(0, str(TRAIN))
+    import flight_eval
     r = flight_eval.episode((str(TRAIN / models), str(TRAIN / manifest), case, seed, shove_ns, shove_at, landing, extra))
     r["eval"] = name
     return r
@@ -75,7 +80,7 @@ def main(spec: str):
     for e in evals:
         for s in range(e.get("episodes", 20)):
             jobs.append([e["name"], e["models"], e["manifest"], e["case"], s, e.get("shove_ns", 0.0), e.get("shove_at", 8.0),
-                         bool(e.get("landing", False)), list(e.get("extra", []))])
+                         bool(e.get("landing", False)), list(e.get("extra", [])), dict(e.get("env", {}))])
     print(f"{len(jobs)} episodes in {len(evals)} evals")
     res = {}
     for r in run_episode.map(jobs, order_outputs=False, return_exceptions=True):

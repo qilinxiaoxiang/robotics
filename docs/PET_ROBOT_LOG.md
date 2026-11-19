@@ -1880,3 +1880,16 @@ papers and the Bartlett/MVDR tutorial are already saved under the course's `Read
   re-warm, because the old pack's state on the new pack falls 20 of 20. Next check dispatched, no training: a
   deployable 61-input policy drives the first 1 to 2 s at zero command while the student builds its state
   (`out/ts2_warmup.json`).
+- 2026-11-18 23:41 Clock correction: the two entries above stamped "2026-11-19 00:10" and "01:00" were written at
+  about 23:05 and 23:30 on 2026-11-18. Warm-up rule on Modal (main session, 540 episodes in about 2 min, about
+  0.5 USD, round total about 6.3 of 10; `flight_eval_modal.py` now passes an "env" dict per eval so FLIGHT_*
+  switches run there; files `eval/wm_ts_start_*.json`). Driver = start-point stand policy for the first N ticks,
+  student shadows, then drives. Falls of 20, N=100, s2g_200 | s2g_140: none 0 | 0, nobatt 0 | 0, full 0 | 0,
+  COM x 12 | 6, shove 4 | 4, COM x drops off 0 | 0, shove drops off 0 | 0, COM x drop 0.072 13 | 9, COM x landing
+  11 | 9. N=50, s2g_200: COM x 10, shove 2, COM x 0.072 15, landing 7. Five COM x falls are at 0.86 to 1.58 s,
+  inside the warm-up: the start-point stand policy itself falls at forward COM with dropped reads. Verdict: the
+  rule is refuted with this driver (worse than no warm-up: 6 and 4 at COM x, 0 at shove), and the robot's current
+  overlay policies fall 20 of 20 with the pack, so no deployable driver exists. Shawn asked why the check sat in
+  the Mac mini queue: it did because the Modal evaluator could not pass the diagnostic switches; fixed in this
+  entry, diagnostics go to Modal from here (agent allowance 1.5 USD). Next, no training: separate what makes the
+  empty-state start harmful in the runtime simulation and harmless in the distillation env.
