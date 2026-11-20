@@ -386,36 +386,37 @@
     },
     {
      "id": "B2",
-     "kind": "baseline",
+     "kind": "change",
      "status": "proposed",
      "sheet_zh": {
-      "title": "B2 带背包的训练基线（只在 fq2 1999 过不了筛子时做）",
-      "note_2026_11_20": "按你 14:55 的决定，这一级只管带背包这一套：不带背包沿用 walk61，不再要求一个模型通吃所有负重。配方等 B1 第二次的结果（fq2 1999 哪些格子不过）再定，定了以后重写这张单并请你批。",
-      "does": "B0 已经查明：第三轮的起点模型 run A 在校验过的尺子下属于上机会摔的一侧（不带背包走路 10 次摔 10 次），所以不再以复现 run A 为基线。这一级改成：用现有训练代码训出一个单帧模型，在校验过的尺子上达到 walk61 的水平。具体配方等 B1 的结果（哪些格子不过）再定，定了以后这张单会重写并请你批。",
-      "does_not": "不加推力；不换网络结构；配方没写清之前不开跑。",
-      "pass": "和 B1 同一条线：每一格 60 次最多摔 6 次，速度和动作突跳达标。",
-      "kill": "2 次都不过：写路线复盘，候选是先做一次机器人辨识把仿真补准。",
-      "budget": "0 美元，Kaggle 4 小时以内，最多 2 次。"
+      "title": "B2 背包模型：训练时变化舵机力度（等你批）",
+      "does": "训一个只在背包形态下用的走路和站立模型，输入和官方模型一样（61 个，机器人上都拿得到）。和 11 月 11 日那个背包模型相比只改一件事：训练时每一回合随机改变舵机力度（0.8 到 2.2 倍）。今天的过筛说明那个模型在正常力度下带背包 0 摔，力度翻倍就几乎全摔，而它训练时力度是固定的。旁边同时训一个对照配方（上一轮学生模型的训练环境，全部换成背着整包），两个配方在 Kaggle 的两张卡上同时跑，只算一份额度。",
+      "does_not": "不加推力（那是下一张单）；不换网络结构；不上机器人；不用不带背包的格子来要求它（不带背包沿用官方模型）。",
+      "pass": "带背包的 12 格（背包一半、四分之三、全重 x 站和走 x 正常和两倍舵机力度），每格 60 次最多摔 6 次；全重走路速度不低于官方模型不背包速度的六成；正常力度下动作突跳不超过官方模型的线。",
+      "kill": "2 次都没有任何一个存档在两倍力度的 6 格里做到每格最多摔 6 次：停下写路线复盘。候选路线是把背包重量和重心作为输入告诉模型，或者先做一次机器人辨识。",
+      "budget": "0 美元；Kaggle 每次一场双卡会话，最长 1.7 小时，最多 2 次，合计不超过 4 小时额度（本周 30 小时，今晚 19:00 恢复）。"
      },
-     "question": "Can today's training code produce a one-frame policy that holds the constant-load cells of FP-R3 on the validated yardstick? (Only if B1 finds none. The recipe is fixed from B1's failing cells before approval is asked.)",
-     "changes_vs_previous": [],
+     "question": "Does fq2's recipe (pack on every environment, 61 inputs, fine-tuned from fq2 iteration 1999) with the servo gain varied in training produce a policy that holds the with-pack cells at the nominal gain and at gain400?",
+     "changes_vs_previous": [
+      "servo gain varied in training: one kp scale per environment, redrawn at every reset, uniform 0.8 to 2.2 on every leg and neck servo (GAIN_DR of microduck_rl/cmu/finetune/flight/flight_worker.py), added to fq2's recipe (delta packwalk_tq, torque hinge weight -12, robot compiled with the pack, 61 inputs); start weights fq2 iteration 1999"
+     ],
      "depends_on": [
       "B0",
       "B1"
      ],
      "reproduces": {
-      "what": "the deployed walk61 and stand61 level in the B0 yardstick, the only policies the robot stands and walks with",
-      "reference_number": "without the pack at gain400 inside the robot-tested window: walk61 2 falls of 60 walking, stand61 0 of 60 standing; nominal walking speed 0.0895 m/s, median action jumps 1.0 per 10 s",
-      "evidence": "train/out/yardstick_b0/summary.json"
+      "what": "fq2 iteration 1999 at the nominal gain with the pack, re-scored today on the B1 cells",
+      "reference_number": "0 window falls of 60 in each of the six nominal with-pack cells (50 %, 75 %, full pack; standing and walking), full-pack walking speed 0.109 m/s; at gain400 53 to 58 of 60 in the same cells",
+      "evidence": "train/out/rescore_b1k/summary.json"
      },
      "pass": {
-      "metric": "last save of one training seed: falls inside the robot-tested window of 60 episodes on seeds 2000 to 2059, in the cells {no pack, 25 %, 50 %, 75 %, full pack} x {standing, walking} x {nominal, gain400}; nominal walking speed; median action jumps per 10 s. Candidates are fed only what the robot can feed (no privileged inputs; a gain flag is fed the value the robot's walk mode would give, not the simulated condition)",
-      "threshold": "the save has at most 6 window falls of 60 in every cell, nominal no-pack walking speed at least 0.6 of walk61's in the same run, and median jumps at most max(1.5 x walk61, walk61 + 2) in the nominal cells",
-      "measured_by": "the B1 script on the Mac mini"
+      "metric": "one save per arm, chosen by a rule fixed here: every save of the arm is screened on 10 episodes per cell (seeds 3000 to 3009) in the six gain400 with-pack cells; the save with the fewest window falls goes on (ties: the earlier save). That save is scored on 60 episodes per cell (seeds 2000 to 2059) in the with-pack cells {50 %, 75 %, full pack} x {standing, walking} x {nominal, gain400}: falls inside the robot-tested window, full-pack nominal walking speed, median action jumps per 10 s. The policy is fed only its 61 inputs.",
+      "threshold": "at most 6 window falls of 60 in each of the 12 cells; full-pack nominal walking speed at least 0.6 of walk61's no-pack nominal speed in the same run; median jumps at most max(1.5 x walk61, walk61 + 2) in the six nominal cells, each held to walk61's no-pack nominal cell of the same case (the B1 rule, unchanged). The stage passes when arm A's save meets it; arm B meeting it alone is reported as a finding and its recipe becomes the next sheet.",
+      "measured_by": "train/b1k_rescore.py cells and verdict code on the Mac mini (a small wrapper for the two saves), zero cloud cost"
      },
      "kill": {
-      "condition": "2 attempts whose last save misses the threshold in any cell",
-      "then": "route review; first candidate is a robot system-identification session so that the nominal simulation reproduces the robot without the gain400 stand-in"
+      "condition": "after 2 attempts no save of either arm has at most 6 window falls of 60 in every gain400 with-pack cell",
+      "then": "route review; candidates: a policy told the pack's known mass and centre of mass with the gain varied and no velocity inputs (the teacher code with four inputs), or a robot system-identification session so the nominal simulation needs no gain400 stand-in"
      },
      "budget": {
       "usd": 0,
@@ -426,8 +427,34 @@
      "attempts": [],
      "route_reviews": [],
      "history": [
-      "2026-11-20: was 'reproduce run A'. Existing files (eval/gate_ts_start_*, 10 episodes, 2026-11-19) show run A at gain400 inside the window: no pack standing 7 of 10 falls, walking 10 of 10, pack walking 10 of 10. Run A is not a known-good result on the validated yardstick, so it cannot be the baseline."
-     ]
+      "2026-11-20: was 'reproduce run A'. Existing files (eval/gate_ts_start_*, 10 episodes, 2026-11-19) show run A at gain400 inside the window: no pack standing 7 of 10 falls, walking 10 of 10, pack walking 10 of 10. Run A is not a known-good result on the validated yardstick, so it cannot be the baseline.",
+      "2026-11-20 16:55: rewritten after B1 attempt 2. fq2 1999 fails the filter on gain alone (nominal with-pack cells 0 of 60, gain400 53 to 58 of 60); its run had no gain randomisation (ENABLE_KP_RANDOMIZATION False, no gain_dr in packwalk_tq). Round 3's teachers, trained with kp scale 0.8 to 2.2, hold every cell with their trained inputs (t3h_750, t3g_500: 0 to 1 of 60) and fall walking with a load when fed only what the robot knows (velocity inputs zero, gain scale 1.0: 50 to 60 of 60). Pass cells are the with-pack group (50 %, 75 %, full pack) by Shawn's two-set decision of 14:55; the no-pack and 25 % cells are no longer required of this policy. The fall, speed and jump lines are unchanged."
+     ],
+     "arms": {
+      "A_main": "delta packwalk_tq plus gain_dr, start fq2 iteration 1999, 1000 iterations, saves every 125: the one change of this stage",
+      "B_control": "delta universal5 (the round 3 students' environment: 61 inputs, gain_dr 0.8 to 2.2, loop delay, UNIVERSAL5 rewards, walk61 anchor) with the full pack on every environment (payload weights full 1.0, others 0), start walk61, 1000 iterations, saves every 125. It differs from arm A in reward set, delay model and start; it is read as a control, not as the stage's change: t3h_750, trained in this environment with eight extra inputs, holds every cell when fed the simulator's values.",
+      "why_two": "a paired Kaggle session runs two jobs on two T4s for one quota hour, so the control costs no extra quota"
+     },
+     "literature": {
+      "failure_mode": "a policy trained at one actuator gain fails when the gain differs (fq2: 0 falls at kp 200, 53 to 58 of 60 at kp 400)",
+      "published_recipe": "randomise actuator strength and latency during training: Tan et al. 2018, Sim-to-Real: Learning Agile Locomotion For Quadruped Robots (motor strength, control latency, mass and friction randomised; arXiv 1804.10332). In this project round 3's teachers trained with kp scale 0.8 to 2.2 hold gain400 (t3h_750 and t3g_500: 0 to 1 window falls of 60 in every cell with their trained inputs, train/out/rescore_b1k, 2026-11-20).",
+      "gap": "those teachers also read the true gain scale and trunk velocity, which the robot cannot supply; fed zeros and 1.0 they fall walking with a load (50 to 60 of 60). Whether a 61-input policy becomes gain-robust with the pack under the same randomisation is the question of this stage; a recurrent student distilled in that environment did not (s3AB_100: 49 of 60 standing at 50 % load, gain400)."
+     },
+     "attempt_1_draft": {
+      "note": "Written 2026-11-20 16:55, before any run and before approval. It moves into attempts with its start time when Shawn approves and the stage starts.",
+      "hypothesis": "fq2 lost walk61's tolerance to servo gain because its 5000 iterations of fine-tuning with a torque hinge ran at one gain. Fine-tuning it further with the gain varied per episode restores the tolerance without losing the with-pack walk.",
+      "prediction": "Arm A: at least one save with at most 6 window falls of 60 in all six gain400 with-pack cells (about 55 % sure); its nominal cells stay at most 3 of 60 (about 80 % sure); its walking jumps stay above the jump line of 3.0 per 10 s (fq2 reads 5.0 to 6.5 today), so the full threshold is missed on jumps even if the falls pass (about 60 % sure). Arm B: at least one save holds the six gain400 cells (about 45 % sure). Either arm holds them: about 70 % sure.",
+      "prediction_zh": "开跑前写下：主配方至少有一个存档在两倍舵机力度的 6 格里每格最多摔 6 次（约五成半把握）；正常力度的格子保持每格最多摔 3 次（约八成把握）；但走路的动作突跳大概仍高于官方模型的线（现在是 5 到 6.5，线是 3），所以即使不摔，完整门槛也可能卡在突跳上（约六成把握）。对照配方做到 6 格不摔的把握约四成半。两个里至少一个做到：约七成把握。",
+      "command": "from microduck_rl: python3 cmu/finetune/flight/kaggle_flight.py push run --run-name b2a-fq2-gain --pair-run-name b2b-uni5-pack -- <arm A worker flags> -- <arm B worker flags>  (both --max-iters 1000 --max-hours 1.7 --save-interval 125, track guard on; the two delta entries and their audit lines are prepared and audited before the push)",
+      "launch_match": [
+       "kaggle_flight\\.py push\\b.*b2a-fq2-gain",
+       "b2_score\\.(sh|py)\\b",
+       "ts3_audit\\.sh\\b.*b2"
+      ],
+      "result": "",
+      "verdict": "running",
+      "evidence": ""
+     }
     },
     {
      "id": "B3",
