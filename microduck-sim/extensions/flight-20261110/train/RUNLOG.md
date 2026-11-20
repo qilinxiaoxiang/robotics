@@ -1126,3 +1126,16 @@ Robot evidence: `docs/PET_ROBOT_LOG.md` 2026-11-19 16:00, `a7z-20261119/robot_s2
   s2r6_4 FAIL 11 lines (G1 1.099); ts_start FAIL 8 (G1 1.454; gain400 standstill 8 falls of 10, walking 10 of 10);
   teacher t2a_999 FAIL 10. walk61 reference: standstill 0 falls 0 jumps in both cells, walking 0 falls 0.75 jumps,
   gain400 walking 2 falls 18.5 jumps. Modal 280 episodes, metered 32.50 to 32.52 USD.
+- Literature note: `CHATTER-LITERATURE.md`. Input sensitivity on walk61's robot walks: Jacobian norm on the joint
+  positions walk61 4.2, ts_start 8.3.
+- Fix design `universal5t` / `universal5` (`microduck_rl/cmu/finetune/flight/flight_worker.py`, `smooth_terms.py`):
+  universal4's env + position-gain scale per env 0.8 to 2.2 + action rate -2 and action acceleration -0.6 + progress
+  14 + walk61 anchor on no-pack rows (beta 2.0, teacher only) + no-pack share 20 %. Reward literal audited against
+  `rm_universal5.json`.
+- 19:18 to 19:24 incentive audit (`ts3_audit.sh`, `out/audit_g2_*.json`): PASS at every load, worst line stepping in
+  place at no pack 0.709. The first try with progress 8 failed on that line at 0.84 (`out/audit_g1_none.json`).
+- 19:24 smoke (`ts3_mini_start.sh ts3smoke smoke_a smoke_b`, detached on the Mac mini): both start policies pass.
+- 19:26 Kaggle `microduck-ts3-teach-a`: `ts3-teach-a` (from ts_start) + `ts3-teach-b` (from walk61), universal5t,
+  1000 iterations, save every 125, `--track-guard 2.0`, `--max-hours 1.6`. Quota before 20.34 h of 30 (ceiling 26).
+  Follow-up `ts3_after_teach.sh` (detached; heartbeat `logs/ts3_teach_heartbeat.txt`): fetch, stage `ckpt/t3a_*`,
+  `ckpt/t3b_*`, gates on Modal.
