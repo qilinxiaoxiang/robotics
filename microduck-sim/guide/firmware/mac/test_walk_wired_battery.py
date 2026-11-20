@@ -113,9 +113,14 @@ class WiredBattery(unittest.TestCase):
                     "--yaw-trim-file", os.path.join(d, "yaw_trim.json"),
                     "--battery-marker", marker, "--supply", supply] + list(extra_args)
             out = io.StringIO()
+            self.poweroffs = []  # (clock s, torque values written to ID1 so far) per poweroff request; never the real one
+
+            def fake_poweroff():
+                self.poweroffs.append((clock.t, [v for a, i, v in world.log if a == ww.ADDR_TORQUE and i == IDS[0]]))
+                return True, "fake systemctl poweroff"
             with mock.patch.object(ww, "time", clock), mock.patch.object(ww, "Link", make_link(world, clock, reads)), \
                     mock.patch.object(ww, "Brain", SpyBrain), mock.patch.object(sys, "argv", argv), \
-                    contextlib.redirect_stdout(out):
+                    mock.patch.object(ww, "request_poweroff", fake_poweroff), contextlib.redirect_stdout(out):
                 with self.assertRaises(Done):
                     ww.main()
             marker_data = None
@@ -255,6 +260,77 @@ class WiredBattery(unittest.TestCase):
         self.assertLess(off_t - floor_t, 6.5)
         self.assertEqual((last_log["battery"], last_log["torque"]), ("floor", False))
         self.assertEqual(marker["stop_at_v"], 6.6)
+
+    def test_the_floor_powers_the_a7z_off_once_after_torque_off(self):
+        # FAULTS.json a7z-power-loss T3: the 2026-11-20 cuts, the pack drained on after the floor's torque off
+        w = World(shutdown=52, hw_err=0x01, volts_dv=76)
+        text, *_ = self.run_wired(w, lambda t: 76 if t < 5 else (65 if t < 12 else 55), {"mode": "walk"}, end=30.0,
+                                  supply="battery")
+        self.assertIn("BATTERY FLOOR: powering the A7Z off in 3 s", text)
+        self.assertIn("BATTERY FLOOR: poweroff requested (fake systemctl poweroff)", text)
+        self.assertEqual(len(self.poweroffs), 1)
+        t_off, torque_writes = self.poweroffs[0]
+        self.assertEqual(torque_writes, [1, 0])  # torque was already off when the poweroff was asked for
+        torque_off_t = next(ln["t"] - 1e9 for ln in self.log_lines
+                            if ln["t"] - 1e9 > self.first("battery", "floor") and not ln["torque"])
+        self.assertGreaterEqual(t_off - torque_off_t, ww.FLOOR_POWEROFF_WAIT_S - 0.05)
+        self.assertLess(t_off - torque_off_t, ww.FLOOR_POWEROFF_WAIT_S + 0.2)
+        # the log was on the card before the request: lines up to the poweroff tick are in the file
+        self.assertGreaterEqual(self.log_lines[-1]["t"] - 1e9, t_off - 0.05)
+
+    def test_auto_supply_on_the_pack_powers_off_too(self):
+        # --supply auto is the default; armed at 7.6 V it is on the pack, the same as --supply battery
+        w = World(shutdown=52, hw_err=0x01, volts_dv=76)
+        self.run_wired(w, lambda t: 76 if t < 5 else (65 if t < 12 else 55), {"mode": "walk"}, end=30.0)
+        self.assertEqual(len(self.poweroffs), 1)
+
+    def test_bench_supply_never_powers_off(self):
+        w = World(shutdown=53, volts_dv=68)
+        text, *_ = self.run_wired(w, lambda t: 68 if t < 3 else 55, {"mode": "stand"}, end=20.0, supply="bench")
+        self.assertNotIn("powering the A7Z off", text)
+        self.assertEqual(self.poweroffs, [])
+        auto_bench = World(shutdown=53, volts_dv=68)  # auto on the bench rail: never armed
+        text, *_ = self.run_wired(auto_bench, lambda t: 68 if t < 3 else 55, {"mode": "stand"}, end=20.0)
+        self.assertEqual(self.poweroffs, [])
+
+    def test_above_the_floor_never_powers_off(self):
+        w = World(shutdown=52, hw_err=0x01, volts_dv=65)
+        text, *_ = self.run_wired(w, lambda t: 65, {"mode": "monitor"}, end=20.0, supply="battery")
+        self.assertIn("BATTERY STOP", text)
+        self.assertNotIn("BATTERY FLOOR", text)
+        self.assertEqual(self.poweroffs, [])
+
+    def test_one_low_read_never_powers_off(self):
+        w = World(shutdown=52, hw_err=0x01, volts_dv=65)
+        self.run_wired(w, lambda t: 55 if 6.0 <= t < 7.0 else 65, {"mode": "monitor"}, end=20.0, supply="battery")
+        self.assertEqual(self.poweroffs, [])
+
+    def test_no_floor_poweroff_flag_keeps_the_a7z_on(self):
+        w = World(shutdown=52, hw_err=0x01, volts_dv=76)
+        text, *_ = self.run_wired(w, lambda t: 76 if t < 5 else (65 if t < 12 else 55), {"mode": "walk"}, end=30.0,
+                                  supply="battery",
+                                  extra_args=("--max-action", "1e9", "--max-walk-action", "1e9", "--hard-max-action",
+                                              "1e9", "--no-floor-poweroff"))
+        self.assertIn("BATTERY FLOOR: 5.5 V", text)
+        self.assertNotIn("powering the A7Z off", text)
+        self.assertEqual(self.poweroffs, [])
+
+    def test_request_poweroff_falls_back_to_sudo_and_reports(self):
+        calls = []
+
+        def run(cmd, **kw):
+            calls.append((cmd, kw.get("stdin")))
+            return mock.Mock(returncode=1 if cmd[0] == "systemctl" else 0, stderr="Access denied")
+        self.assertEqual(ww.request_poweroff(run), (True, "sudo -n systemctl poweroff"))
+        self.assertEqual([c for c, _ in calls], [["systemctl", "--no-ask-password", "poweroff"],
+                                                 ["sudo", "-n", "systemctl", "poweroff"]])
+        self.assertTrue(all(s is ww.subprocess.DEVNULL for _, s in calls))
+
+        def fails(cmd, **kw):
+            raise FileNotFoundError(cmd[0])
+        ok, what = ww.request_poweroff(fails)
+        self.assertFalse(ok)
+        self.assertIn("sudo -n systemctl poweroff", what)
 
     def test_a_low_pack_calls_out_faster_as_it_empties(self):
         w = World(shutdown=52, hw_err=0x01, volts_dv=76)

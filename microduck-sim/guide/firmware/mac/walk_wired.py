@@ -20,7 +20,9 @@ not switched on until the servos read 7.6 V or more (a charged or swapped pack),
 applies the guard from the start; --supply bench switches it off (the bench rail sags under 6.6 V while walking,
 which the guard reads as an empty pack) but keeps the Alert-bit packets and the hardware-error watch. A failed voltage read is a skipped sample and never
 releases torque. After the stop, 6.4 V on three samples (no walking load left to sag) sits the robot down and turns torque
-off, by 6 s at the latest. --supply-file (the phone's backpack switch) changes the guard while running, also while driving. Armed, the loop also reads Hardware Error Status once a second; a fault other than the battery's
+off, by 6 s at the latest; 3 s after that torque off the brain fsyncs its log and powers the A7Z off cleanly
+(systemctl poweroff, then sudo -n), so the camera and name call stop draining the pack (--no-floor-poweroff keeps it
+running). --supply-file (the phone's backpack switch) changes the guard while running, also while driving. Armed, the loop also reads Hardware Error Status once a second; a fault other than the battery's
 input-voltage flag freezes the policy on its last goals, as a dropped status packet does on the bench.
 
 Pickup additions (2026-10-16, walk_brain.py and jaw_ctl.py have the details):
@@ -94,6 +96,7 @@ import json
 import math
 import os
 import struct
+import subprocess
 import sys
 import threading
 import time
@@ -194,17 +197,53 @@ class LogWriter:
     def fileno(self):
         return self.f.fileno()
 
+    def sync(self, timeout: float = 2.0) -> bool:
+        """Block until every line queued so far is written and fsynced (before a poweroff). False on a timeout."""
+        done = threading.Event()
+        self.q.put(done)
+        ok = done.wait(timeout)
+        try:
+            os.fsync(self.fileno())
+        except (OSError, ValueError):
+            return False
+        return ok
+
     def _run(self):
         import queue
         while True:
-            lines = [self.q.get()]
+            items = [self.q.get()]
             try:
-                while len(lines) < 200:
-                    lines.append(self.q.get_nowait())
+                while len(items) < 200:
+                    items.append(self.q.get_nowait())
             except queue.Empty:
                 pass
-            self.f.write("".join(lines))
+            self.f.write("".join(x for x in items if isinstance(x, str)))
             self.f.flush()
+            for x in items:
+                if isinstance(x, threading.Event):
+                    x.set()
+
+
+# BATTERY FLOOR poweroff (FAULTS.json a7z-power-loss T3, H1): after the floor's torque off the A7Z, camera and name call
+# still draw about 1 A from the pack, which fell 6.5 -> 4.5 V in 30 s until the DFR1202 dropped the A7Z (three times on
+# 2026-11-20, over-discharging the pack). So the brain powers the board off cleanly a few seconds after torque off.
+# With the power V2 backpack the systemd-shutdown hook (a7z/power-off-20261120) then pulses the Pololu off as well.
+FLOOR_POWEROFF_WAIT_S = 3.0
+
+
+def request_poweroff(run=subprocess.run):
+    """Ask systemd for a clean poweroff, never waiting for a password. Returns (ok, what happened)."""
+    tried = []
+    for cmd in (["systemctl", "--no-ask-password", "poweroff"], ["sudo", "-n", "systemctl", "poweroff"]):
+        try:
+            r = run(cmd, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=15)
+        except (OSError, subprocess.SubprocessError) as e:
+            tried.append(f"{' '.join(cmd)}: {e}")
+            continue
+        if r.returncode == 0:
+            return True, " ".join(cmd)
+        tried.append(f"{' '.join(cmd)}: exit {r.returncode} {(r.stderr or '').strip()[:200]}")
+    return False, "; ".join(tried)
 
 
 class Link:
@@ -806,6 +845,9 @@ def main():
                     help="battery guard: auto arms at 7.2 V (2S pack), battery from the start, bench off")
     ap.add_argument("--battery-marker", default=STOP_MARKER)
     ap.add_argument("--supply-file", help="backpack switch file (bench or battery), read once a second; it overrides --supply")
+    ap.add_argument("--no-floor-poweroff", action="store_true",
+                    help="at BATTERY FLOOR keep the A7Z running after torque off (default: clean poweroff "
+                         f"{FLOOR_POWEROFF_WAIT_S:.0f} s after torque off, only with the battery guard armed)")
     ap.add_argument("--max-action", type=float, default=MAX_ACTION, help="walk stops into stand above this |action|, rad")
     ap.add_argument("--max-walk-action", type=float, default=MAX_WALK_ACTION,
                     help="the same limit while a walking speed is commanded, rad")
@@ -925,6 +967,7 @@ def main():
     hw_faults, next_hw, last_block = [], time.perf_counter() + 0.5, float("-inf")
     hw_bits = {}  # joint -> Hardware Error Status of a latched fault, for the log
     leash = StandLeash()
+    poweroff_at, poweroff_done = None, False  # BATTERY FLOOR poweroff: due time, and whether it was requested
     while True:
         t0 = time.perf_counter()
         got = link.sync_read(ADDR_CUR, STATE_SIZE, IDS + [JAW_ID], timeout=0.018)  # USB adds a few ms; median 6-11 ms measured
@@ -1334,6 +1377,24 @@ def main():
                       "robot and press the remote's torque-off key, which clears it" if faults
                       else "hardware errors cleared", flush=True)
                 hw_faults = faults
+        # the floor (three samples, never one read) with torque off and the guard armed (a 2S pack, never the bench)
+        if not poweroff_done and not args.no_floor_poweroff:
+            if guard and guard.armed and guard.state == "floor" and not torque_on:
+                if poweroff_at is None:
+                    print(f"BATTERY FLOOR: powering the A7Z off in {FLOOR_POWEROFF_WAIT_S:.0f} s (torque off, "
+                          f"{guard.dv / 10:.1f} V)", flush=True)
+                    log.sync()
+                    poweroff_at = now + FLOOR_POWEROFF_WAIT_S
+                elif now >= poweroff_at:
+                    poweroff_done = True
+                    print("BATTERY FLOOR: powering the A7Z off now", flush=True)
+                    log.sync()
+                    ok, what = request_poweroff()
+                    print(f"BATTERY FLOOR: poweroff requested ({what})" if ok else
+                          f"BATTERY FLOOR: poweroff FAILED ({what}); switch the robot off and charge the pack", flush=True)
+            elif poweroff_at is not None:
+                poweroff_at = None  # torque came back on or the guard was switched off: no poweroff
+                print("BATTERY FLOOR: poweroff cancelled", flush=True)
         if (imu_age > IMU_LOST_S) != imu_lost:
             imu_lost = imu_age > IMU_LOST_S
             print(f"IMU LOST: no IMU sample for {imu_age:.2f} s, the policy holds its last goals; hold the robot. "
