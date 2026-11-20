@@ -16,6 +16,7 @@ MD = HERE.parents[3]                                    # microduck-sim
 BV2 = MD / "guide/print/battery-v2-cad-20261120/build"
 MAC = MD / "guide/firmware/mac"
 PAD_C = np.array([-69.5, 0.0])                          # pad centre, yaw pivot (mm, D)
+EXTRA_TRUNK = []                                        # [(name, (N,3) vertices mm, guide frame)] added to trunk_base
 
 sys.path.insert(0, str(MD / "microduck_rl/cmu/model"))
 import mujoco  # noqa: E402
@@ -75,9 +76,26 @@ def run(dock_boxes=None, seat_pose=None, offset=(0, 0, 0), mu_rail=0.35, floor_m
             spec.body("trunk_base").add_geom(name=f"bp_hull_{k}_geom", type=mujoco.mjtGeom.mjGEOM_MESH,
                                              meshname=f"bp_hull_{k}", contype=1, conaffinity=1, density=0, mass=0,
                                              condim=3, friction=[mu_rail, 0.005, 0.0001], rgba=[1, .5, 0, .3], group=3)
+        # extra convex solids on the backpack (guide frame, mm), e.g. the two low cap screw heads (dock B1 recheck)
+        for k, verts in EXTRA_TRUNK:
+            hm = trimesh.convex.convex_hull(np.asarray(verts) / 1000.0)
+            spec.add_mesh(name=f"bp_extra_{k}", uservert=hm.vertices.ravel().tolist(), userface=hm.faces.ravel().tolist())
+            spec.body("trunk_base").add_geom(name=f"bp_hull_extra_{k}_geom", type=mujoco.mjtGeom.mjGEOM_MESH,
+                                             meshname=f"bp_extra_{k}", contype=1, conaffinity=1, density=0, mass=0,
+                                             condim=3, friction=[mu_rail, 0.005, 0.0001], rgba=[.3, .3, .3, 1], group=3)
         if dock_boxes is not None:
             Rz = np.array([[math.cos(dyaw_w), -math.sin(dyaw_w), 0], [math.sin(dyaw_w), math.cos(dyaw_w), 0], [0, 0, 1]])
             for b in dock_boxes:
+                if "mesh" in b:                                   # convex mesh piece, vertices in D (mm)
+                    v, f = b["mesh"]
+                    spec.add_mesh(name="dockmesh_" + b["name"], uservert=(np.asarray(v, float) / 1000.0).ravel().tolist(),
+                                  userface=np.asarray(f, int).ravel().tolist())
+                    q = np.zeros(4); mujoco.mju_mat2Quat(q, Rz.ravel())
+                    spec.worldbody.add_geom(name="dock_" + b["name"], type=mujoco.mjtGeom.mjGEOM_MESH,
+                                            meshname="dockmesh_" + b["name"], pos=[DW[0, 2] / 1000, DW[1, 2] / 1000, 0.0],
+                                            quat=q.tolist(), contype=1, conaffinity=1, condim=3,
+                                            friction=[mu_rail, 0.005, 0.0001], rgba=[.9, .5, .1, 1])
+                    continue
                 p = DW @ np.array([b["pos"][0], b["pos"][1], 1.0])
                 R = Rz @ np.asarray(b.get("R", np.eye(3)), float)
                 q = np.zeros(4); mujoco.mju_mat2Quat(q, R.ravel())

@@ -1,0 +1,32 @@
+{
+ "schema": "design-contract/1",
+ "status": "DEFERRED 2026-11-20, not released: Shawn: \"我们是不是能先做个更大电池的背包 对准以后再说 充电器就用那个白色头 反正是翘在外面的 是不是简单一点\". The robot is charged by plugging the charger into a jack on the backpack; the dock and its alignment come later. BatteryDock-A1 (../build_dock.py) is still what the guide draws. Open before any release: the B1 sit recheck on the built geometry (funnel-concept/dock_b1_sim.py) never completed; its one finished case, on an earlier B1 with a flat stop-wall crest since removed, hung at a 6 mm rear start.",
+ "design": "BatteryDock-B1: the battery backpack rev B charging dock base with mechanical docking guidance (no camera, no software docking). One printed PLA part (Orange): two side guide rails beside the backpack's lower tier, a 45 deg rear lead-in from the stop face's top edge, the stop face and the two Keystone 5209 leaves as approved on the funnel concept sheet. The dock stays put with foam tape or Dual Lock under the plate; no flexures, no snaps, nothing to hand-machine, nothing new to buy (Keystone 5209 x2, Same Sky PJ-005A x1, charger as in the BOM). Frame: the CAD frame of BatteryDock-A1 (x forward, y left, z above the floor with the robot seated; the robot's backpack back face at x -75.55). The concept sheet draws in the sim frame D, where the whole dock sits 3.0 mm further forward: D x = CAD x + 3.0. So the sheet's stop face x -73.5 is CAD x -76.5 (0.95 mm behind the backpack back face, as in A1) and the sheet's rails x -77..-59 are CAD x -80..-62; y and z are the same in both frames.",
+ "approved": {
+  "by": "Shawn",
+  "date": "2026-11-20",
+  "quotes": [
+   "加摄像头就算了，导轨倒是可以。可以通过工程手段试一下，看看能不能把它对准坐下去。我觉得可以弄。",
+   "出 CAD"
+  ],
+  "history": "2026-11-20: Shawn rejected a camera and asked for rails that align the robot as it sits ('导轨倒是可以 ... 看看能不能把它对准坐下去'). The funnel concept (funnel-concept/concept-sheet.png, variant R1) was simulated with the real Brain sit; it also found that released A1 never charges in the sim (leaf tip behind the pad in all 46 runs). Shawn approved the sheet for CAD the same day ('出 CAD'). One change the CAD stage had to make: the rear lead-in starts at z 12.5 instead of the concept's 14.6, because the two low cap screw heads (1.6 mm proud at z 18.0, y +-9) were not in the sim's backpack hull and would rest on a lead-in that starts at 14.6 (features.json F3)."
+ },
+ "concept_render": "funnel-concept/concept-sheet.png",
+ "load_bearing": [
+  "F1 two side guide rails, x -80..-62 (sheet -77..-59), guide faces 3.0 mm outside the backpack lower tier (y +24.8 and -28.3 for the tier's y +21.8 / -25.3), vertical guide face from the floor to z 12.5, 60 deg lead-in from z 12.5 to z 24.0",
+  "F2 stop face at x -76.5 (sheet -73.5), the Keystone 5209 bodies 2.5 mm forward of the stop face (x -74.0..-60.0)",
+  "F3 45 deg rear lead-in from the stop face's top edge over the stop wall and the tower's side walls; it replaces A1's screw-head relief ledge",
+  "F4 rails end at x -62 (sheet -59), stay below z 24 and inside |y| 41",
+  "one printed PLA part, no flexures or snaps; foam tape or Dual Lock under the plate; nothing new to buy"
+ ],
+ "bought_parts_note": "Keystone 5209, PJ-005A and the Sortfle charger are carted, not ordered (CURRENT-STATE parts_battery_charging, a text fact, so this contract has no 'parts' map); the dock is built from their published drawings, as A1 was.",
+ "geometry": [
+  {"part": "dock_base", "says": "F4: whole part below z 24 (rail tops) and inside |y| 41", "bounds": {"z_max": {"lt": 24.05}, "y_min": {"gt": -41.0}, "y_max": {"lt": 41.0}, "z_min": {"gt": -0.01}}},
+  {"part": "features/rail_left", "says": "F1/F4: left rail x -80..-62, guide face y +24.8, top z 24", "bounds": {"x_min": {"gt": -80.05, "lt": -79.95}, "x_max": {"gt": -62.05, "lt": -61.95}, "y_min": {"gt": 24.75, "lt": 24.85}, "z_max": {"gt": 23.95, "lt": 24.05}}},
+  {"part": "features/rail_right", "says": "F1/F4: right rail x -80..-62, guide face y -28.3, top z 24", "bounds": {"x_min": {"gt": -80.05, "lt": -79.95}, "x_max": {"gt": -62.05, "lt": -61.95}, "y_max": {"gt": -28.35, "lt": -28.25}, "z_max": {"gt": 23.95, "lt": 24.05}}},
+  {"part": "features/stop_wall", "says": "F2: stop face x -76.5", "bounds": {"x_max": {"gt": -76.55, "lt": -76.45}}},
+  {"part": "parts/keystone_5209_plus", "says": "F2: + contact body 2.5 mm forward of the stop face", "bounds": {"x_max": {"gt": -60.05, "lt": -59.5}}},
+  {"part": "parts/keystone_5209_minus", "says": "F2: - contact body 2.5 mm forward of the stop face", "bounds": {"x_max": {"gt": -60.05, "lt": -59.5}}}
+ ],
+ "forbidden_parts": ["camera", "funnel_flexure"]
+}

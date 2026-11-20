@@ -1,0 +1,758 @@
+{
+ "release": "BatteryDock-B1",
+ "supersedes": {
+  "release": "BatteryDock-A1",
+  "git": "dd7fa204",
+  "why": "in the real Brain sit the leaf tip lay behind the pad in all 46 sim runs, even centred (funnel-concept/checks/results.json)"
+ },
+ "frame": "x forward, y left (guide frame), z above the floor with the robot seated, mm; the A1 frame. Sim frame D x = x + 3.0",
+ "z_seated_from_guide": 56.9,
+ "printer_fits": "H2S",
+ "features_built": [
+  "D1-base-plate",
+  "D2-contact-block",
+  "D3-stop-wall",
+  "D4-tower",
+  "F1-side-guide-rails",
+  "F2-forward-datum",
+  "F3-rear-lead-in",
+  "F4-rail-extent",
+  "D2-grooves",
+  "D2-leaf-openings",
+  "D3-insertion-slots",
+  "D4-jack-hole",
+  "D4-tower-open-top"
+ ],
+ "bounds_world": [
+  [
+   -107.9,
+   -37.44,
+   0.0
+  ],
+  [
+   -55.0,
+   33.94,
+   24.0
+  ]
+ ],
+ "volume_cm3": 19.795,
+ "mass_g_solid_pla": 24.5,
+ "source_to_print": [
+  [
+   1.0,
+   0.0,
+   0.0,
+   107.900002
+  ],
+  [
+   0.0,
+   1.0,
+   0.0,
+   37.439529
+  ],
+  [
+   0.0,
+   0.0,
+   1.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0,
+   1.0
+  ]
+ ],
+ "print_pose": "as seated: base plate on the bed, open tower top up, rail slopes up; translation only",
+ "plus_side": {
+  "pad": "contact_pad_plus at y +9 (battery-v2 build_v2.py names the y > 0 pad 'plus')",
+  "dock": "keystone_5209_plus in the y +9 groove",
+  "charger": "Sortfle 8.4 V 1 A, 5.5 x 2.1 plug, centre positive -> PJ-005A centre-pin lug -> + leaf"
+ },
+ "fit": {
+  "groove_thickness": {
+   "class": "press",
+   "function": "print_fit.clearance('press', 'horizontal')",
+   "gap_per_side": 0.05,
+   "groove_h": 0.4,
+   "body_t": 0.3
+  },
+  "groove_width": {
+   "class": "locating",
+   "function": "clearance('locating', 'horizontal')",
+   "gap_per_side": 0.25,
+   "groove_w": 10.5,
+   "wings": 10.0
+  },
+  "leaf_opening": {
+   "class": "locating",
+   "function": "clearance('locating', 'vertical')",
+   "gap_per_side": 0.15,
+   "width": 7.3,
+   "leaf": 7.0
+  },
+  "insertion_slot": {
+   "class": "loose",
+   "function": "clearance('loose', 'horizontal')",
+   "gap_per_side": 0.5,
+   "width": 11.0,
+   "z": [
+    3.8,
+    14.6
+   ]
+  },
+  "jack_hole": {
+   "class": "locating",
+   "function": "clearance('locating', 'horizontal')",
+   "gap_per_side": 0.25,
+   "d": 8.44,
+   "bushing": 7.94,
+   "teardrop": "tip +z"
+  }
+ },
+ "rails": {
+  "x": [
+   -80.0,
+   -62.0
+  ],
+  "x_in_sim_frame_D": [
+   -77.0,
+   -59.0
+  ],
+  "guide_faces_y": {
+   "left": 24.8,
+   "right": -28.3
+  },
+  "outer_faces_y": {
+   "left": 33.94,
+   "right": -37.44
+  },
+  "play_per_side": 3.0,
+  "vertical_face_to_z": 12.5,
+  "lead_in_deg": 60.0,
+  "top_z": 24.0,
+  "top_flat": 2.5,
+  "gap_between_guide_faces": 53.1,
+  "backpack_tier_y": [
+   -25.3,
+   21.8
+  ]
+ },
+ "rear_lead_in": {
+  "deg": 45.0,
+  "from": {
+   "x": -76.5,
+   "z": 12.5
+  },
+  "meets_tower_top_x": -86.0,
+  "concept_start_z": 14.6,
+  "why_lower": "screw heads (1.6 proud at z 18.0) would rest on a plane from 14.6 with the robot against the stop"
+ },
+ "groove": {
+  "x": [
+   -76.5,
+   -60.0
+  ],
+  "width": 10.5,
+  "height": 0.4,
+  "floor_z": 6.0,
+  "closed_end_x": -60.0,
+  "body_x": [
+   -74.0,
+   -60.0
+  ],
+  "empty_behind_body": 2.5,
+  "open_end": "rear, through the stop wall's insertion slot",
+  "leaf_opening_width": 7.3,
+  "centres_y": [
+   9.0,
+   -9.0
+  ]
+ },
+ "leaf": {
+  "body_top_z": 6.3,
+  "free_top_z": 13.899999999999999,
+  "compressed_at_nominal_seat": 3.0,
+  "compressed_at_sim_seat": 3.7,
+  "keystone_working_travel": "about 3 mm below free height (M65p36 AA mounting)"
+ },
+ "block": {
+  "x": [
+   -76.5,
+   -57.5
+  ],
+  "y": [
+   -16.5,
+   16.5
+  ],
+  "top_z": 8.0,
+  "clearance_to_pads": 2.9
+ },
+ "tower": {
+  "stop_face_x": -76.5,
+  "stop_face_in_sim_frame_D": -73.5,
+  "gap_to_backpack_back": 0.95,
+  "x": [
+   -107.89999999999999,
+   -76.5
+  ],
+  "y": [
+   -17.0,
+   17.0
+  ],
+  "top_z": 22.0,
+  "walls": {
+   "stop": 11.1,
+   "sides": 2.0,
+   "rear": 2.5
+  },
+  "insertion_slots": {
+   "y_centres": [
+    9.0,
+    -9.0
+   ],
+   "width": 11.0,
+   "z_from": 3.8,
+   "top": "open through the lead-in"
+  },
+  "stop_face_band_z": [
+   2.0,
+   12.5
+  ],
+  "backpack_contact_band_z": [
+   10.2,
+   12.5
+  ]
+ },
+ "jack": {
+  "part": "Same Sky PJ-005A",
+  "axis": "x",
+  "y": 0.0,
+  "z": 10.0,
+  "hole_d": 8.44,
+  "rear_wall_x": [
+   -107.89999999999999,
+   -105.39999999999999
+  ],
+  "flange_face_x": -105.39999999999999,
+  "lug_end_x": -89.89999999999999,
+  "lugs_z": {
+   "centre pin (+, schematic 1)": 13.8,
+   "sleeve (-, schematic 2)": 10.0,
+   "shunt switch (unused, schematic 3)": 5.6
+  },
+  "nut_outside": "10.8 AF x 2.0 on 0.5 washer, rear (outside) face",
+  "plug": "from behind (-x)",
+  "bushing_left_for_nut": 0.7
+ },
+ "contacts": {
+  "part": "Keystone 5209",
+  "body_x": [
+   -74.0,
+   -60.0
+  ],
+  "tab_x": [
+   -81.0,
+   -74.0
+  ],
+  "tab_end_inside_tower": false
+ },
+ "wires": {
+  "plus": {
+   "colour": "red",
+   "gauge": "20 AWG",
+   "from": "5209 plus tab (y +9)",
+   "to": "PJ-005A centre pin (+, schematic 1) lug",
+   "straight_mm": 17.3,
+   "cut_mm": 35,
+   "strip_each_end_mm": 3.0
+  },
+  "minus": {
+   "colour": "black",
+   "gauge": "20 AWG",
+   "from": "5209 minus tab (y -9)",
+   "to": "PJ-005A sleeve (-, schematic 2) lug",
+   "straight_mm": 15.7,
+   "cut_mm": 35,
+   "strip_each_end_mm": 3.0
+  }
+ },
+ "checks": {
+  "solid": {
+   "bodies": 1,
+   "watertight": true,
+   "status": "Error.NoError",
+   "winding_consistent": true
+  },
+  "collision_pieces": {
+   "names": [
+    "plate",
+    "plate_rail_bridge",
+    "block",
+    "stop_wall",
+    "rail_left",
+    "rail_right",
+    "tower_back",
+    "tower_side_left",
+    "tower_side_right"
+   ],
+   "part_outside_pieces_mm3": 0.0,
+   "pieces_minus_part_mm3": 4330.596,
+   "cuts_mm3": 4330.596,
+   "note": "the sit sim collides with these convex pieces; what they add over the part is only the cuts (grooves, leaf openings, insertion slots, jack hole), none of them on a surface the backpack can reach except the slot mouths in the stop face"
+  },
+  "dock_vs_parts_overlap_mm3": {
+   "keystone_5209_plus": -0.0,
+   "keystone_5209_minus": -0.0,
+   "pj005a": -0.0
+  },
+  "dock_vs_parts_min_gap_mm": {
+   "keystone_5209_plus": 0.0,
+   "keystone_5209_minus": 0.0,
+   "pj005a": 0.0
+  },
+  "designed_contacts": "body front end bears on the groove's closed end (x -60.0); jack flange face on the rear wall's inner face; washer on its outer face; zero-volume touches, not overlaps",
+  "robot": {
+   "nominal seat": {
+    "robot_dx_dz": [
+     0.0,
+     0.0
+    ],
+    "overlap_mm3": {},
+    "min_gap_mm": {
+     "backpack frame": 2.65,
+     "backpack cap": 0.95,
+     "XIAO_USB_C_plug": 6.0,
+     "XIAO_USBminusC_plug": 6.0,
+     "contact_pad_minus": 2.902,
+     "contact_pad_plus": 2.902,
+     "low cap screw head left (seat envelope 4.6)": 4.375,
+     "low cap screw head right (seat envelope 4.6)": 4.375
+    }
+   },
+   "against the stop": {
+    "robot_dx_dz": [
+     -0.94,
+     0.0
+    ],
+    "overlap_mm3": {},
+    "min_gap_mm": {
+     "backpack frame": 1.71,
+     "backpack cap": 0.01,
+     "XIAO_USB_C_plug": 6.0,
+     "XIAO_USBminusC_plug": 6.0,
+     "contact_pad_minus": 2.594,
+     "contact_pad_plus": 2.594,
+     "low cap screw head left (seat envelope 4.6)": 3.998,
+     "low cap screw head right (seat envelope 4.6)": 3.998
+    }
+   },
+   "against the stop, sim seat height": {
+    "robot_dx_dz": [
+     -0.94,
+     -0.7000000000000011
+    ],
+    "overlap_mm3": {},
+    "min_gap_mm": {
+     "backpack frame": 1.71,
+     "backpack cap": 0.01,
+     "XIAO_USB_C_plug": 6.0,
+     "XIAO_USBminusC_plug": 6.0,
+     "contact_pad_minus": 2.202,
+     "contact_pad_plus": 2.202,
+     "low cap screw head left (seat envelope 4.6)": 3.755,
+     "low cap screw head right (seat envelope 4.6)": 3.755
+    }
+   }
+  },
+  "screw_heads_vs_lead_in": {
+   "gaps_mm": {
+    "nominal seat": {
+     "low cap screw head left (seat envelope 4.6)": 4.375,
+     "low cap screw head right (seat envelope 4.6)": 4.375
+    },
+    "against the stop": {
+     "low cap screw head left (seat envelope 4.6)": 3.998,
+     "low cap screw head right (seat envelope 4.6)": 3.998
+    },
+    "against the stop, sim seat height": {
+     "low cap screw head left (seat envelope 4.6)": 3.755,
+     "low cap screw head right (seat envelope 4.6)": 3.755
+    },
+    "against the stop, sim seat height, y -3": {
+     "low cap screw head left": 1.42,
+     "low cap screw head right": 1.42
+    },
+    "against the stop, sim seat height, y +3": {
+     "low cap screw head left": 1.42,
+     "low cap screw head right": 1.42
+    }
+   },
+   "lead_in_start_z": 12.5,
+   "note": "A1 had a 1.5 mm relief across the stop face above z 14.6; F3 replaces it, so the heads must clear the lead-in plane with the backpack against the stop"
+  },
+  "leaf_under_pad": {
+   "plus": {
+    "dock_overlap_mm3": 0.0,
+    "tip_x_at_10_9": -69.882,
+    "free_tip_x": -67.813,
+    "nominal seat": {
+     "pad_x": [
+      -73.85,
+      -65.15
+     ],
+     "pad_z": 10.9,
+     "tip_x": -69.882,
+     "margin": 3.968,
+     "compression": 3.0
+    },
+    "against the stop": {
+     "pad_x": [
+      -74.79,
+      -66.09
+     ],
+     "pad_z": 10.9,
+     "tip_x": -69.882,
+     "margin": 3.792,
+     "compression": 3.0
+    },
+    "against the stop, sim seat height": {
+     "pad_x": [
+      -74.79,
+      -66.09
+     ],
+     "pad_z": 10.2,
+     "tip_x": -70.178,
+     "margin": 4.088,
+     "compression": 3.7
+    },
+    "free_leaf_vs_pad_overlap_mm3 (designed: the seated pad presses the leaf down)": 3.345
+   },
+   "minus": {
+    "dock_overlap_mm3": 0.0,
+    "tip_x_at_10_9": -69.882,
+    "free_tip_x": -67.813,
+    "nominal seat": {
+     "pad_x": [
+      -73.85,
+      -65.15
+     ],
+     "pad_z": 10.9,
+     "tip_x": -69.882,
+     "margin": 3.968,
+     "compression": 3.0
+    },
+    "against the stop": {
+     "pad_x": [
+      -74.79,
+      -66.09
+     ],
+     "pad_z": 10.9,
+     "tip_x": -69.882,
+     "margin": 3.792,
+     "compression": 3.0
+    },
+    "against the stop, sim seat height": {
+     "pad_x": [
+      -74.79,
+      -66.09
+     ],
+     "pad_z": 10.2,
+     "tip_x": -70.178,
+     "margin": 4.088,
+     "compression": 3.7
+    },
+    "free_leaf_vs_pad_overlap_mm3 (designed: the seated pad presses the leaf down)": 3.345
+   }
+  },
+  "block_top_z": 8.0,
+  "rail_section_probe": {
+   "left": [
+    {
+     "z": 3.0,
+     "hit_y": 24.8,
+     "approved_y": 24.8,
+     "ok": 1.0
+    },
+    {
+     "z": 6.0,
+     "hit_y": 24.8,
+     "approved_y": 24.8,
+     "ok": 1.0
+    },
+    {
+     "z": 9.0,
+     "hit_y": 24.8,
+     "approved_y": 24.8,
+     "ok": 1.0
+    },
+    {
+     "z": 12.0,
+     "hit_y": 24.8,
+     "approved_y": 24.8,
+     "ok": 1.0
+    },
+    {
+     "z": 14.0,
+     "hit_y": 25.666,
+     "approved_y": 25.666,
+     "ok": 1.0
+    },
+    {
+     "z": 17.0,
+     "hit_y": 27.398,
+     "approved_y": 27.398,
+     "ok": 1.0
+    },
+    {
+     "z": 20.0,
+     "hit_y": 29.13,
+     "approved_y": 29.13,
+     "ok": 1.0
+    },
+    {
+     "z": 23.0,
+     "hit_y": 30.862,
+     "approved_y": 30.862,
+     "ok": 1.0
+    }
+   ],
+   "right": [
+    {
+     "z": 3.0,
+     "hit_y": -28.3,
+     "approved_y": -28.3,
+     "ok": 1.0
+    },
+    {
+     "z": 6.0,
+     "hit_y": -28.3,
+     "approved_y": -28.3,
+     "ok": 1.0
+    },
+    {
+     "z": 9.0,
+     "hit_y": -28.3,
+     "approved_y": -28.3,
+     "ok": 1.0
+    },
+    {
+     "z": 12.0,
+     "hit_y": -28.3,
+     "approved_y": -28.3,
+     "ok": 1.0
+    },
+    {
+     "z": 14.0,
+     "hit_y": -29.166,
+     "approved_y": -29.166,
+     "ok": 1.0
+    },
+    {
+     "z": 17.0,
+     "hit_y": -30.898,
+     "approved_y": -30.898,
+     "ok": 1.0
+    },
+    {
+     "z": 20.0,
+     "hit_y": -32.63,
+     "approved_y": -32.63,
+     "ok": 1.0
+    },
+    {
+     "z": 23.0,
+     "hit_y": -34.362,
+     "approved_y": -34.362,
+     "ok": 1.0
+    }
+   ]
+  },
+  "lead_in_probe": [
+   {
+    "x": -76.8,
+    "y": 0.0,
+    "top_z": 12.8,
+    "plane_z": 12.8,
+    "ok": 1.0
+   },
+   {
+    "x": -78.0,
+    "y": 0.0,
+    "top_z": 14.0,
+    "plane_z": 14.0,
+    "ok": 1.0
+   },
+   {
+    "x": -77.5,
+    "y": 16.0,
+    "top_z": 13.5,
+    "plane_z": 13.5,
+    "ok": 1.0
+   },
+   {
+    "x": -82.0,
+    "y": 16.0,
+    "top_z": 18.0,
+    "plane_z": 18.0,
+    "ok": 1.0
+   },
+   {
+    "x": -85.5,
+    "y": 16.0,
+    "top_z": 21.5,
+    "plane_z": 21.5,
+    "ok": 1.0
+   },
+   {
+    "x": -84.0,
+    "y": -16.0,
+    "top_z": 20.0,
+    "plane_z": 20.0,
+    "ok": 1.0
+   }
+  ],
+  "legs_vs_dock": {
+   "source": "funnel-concept/checks/pose_points.npz",
+   "frame_shift_x": -3.0,
+   "by_set": {
+    "leg_envelope": {
+     "points_near": 6,
+     "min_mm": 17.866,
+     "at": [
+      -45.1,
+      -43.0,
+      25.5
+     ]
+    },
+    "stand_legs": {
+     "points_near": 0,
+     "min_mm": null
+    },
+    "seated_legs": {
+     "points_near": 0,
+     "min_mm": null
+    }
+   },
+   "note": "the envelope is every leg mesh vertex over stand, sit and stand-up (trunk to 100 mm) of the nominal funnel sim; the B1 sit recheck measures clearance per run"
+  },
+  "soldering_iron_access_mm3_in_dock": {
+   "joints": {
+    "centre-pin lug, 0 deg": 0.0,
+    "centre-pin lug, 30 deg": 0.0,
+    "sleeve lug, 0 deg": 0.0,
+    "sleeve lug, 30 deg": 0.0
+   },
+   "tabs": "the 5209 tabs are soldered off the dock (assembly step 3)"
+  },
+  "wall_check": {
+   "passed": true,
+   "min_wall_mm": 1.2,
+   "min_smoothed_mm": 1.6,
+   "fail_regions": [],
+   "small_thin_patches": 0
+  },
+  "designed_walls_mm": {
+   "base_plate": 2.0,
+   "block_side_walls": 2.25,
+   "block_centre_web": 7.5,
+   "lips": {
+    "width": 1.6,
+    "height": 1.6
+   },
+   "groove_floor_above_plate": 4.0,
+   "stop_wall": 11.1,
+   "stop_wall_centre_post": 7.0,
+   "stop_wall_outer_strip": 2.5,
+   "side_walls": 2.0,
+   "rear_wall": 2.5,
+   "block_front_end": 1.75,
+   "rail_top_flat": 2.5,
+   "rail_base_width": 9.14
+  },
+  "overhang_over_45deg": {
+   "area_mm2": 85.8,
+   "regions": [
+    {
+     "bbox": [
+      [
+       34.5,
+       41.19,
+       6.4
+      ],
+      [
+       47.9,
+       42.79,
+       6.4
+      ]
+     ],
+     "area_mm2": 21.4
+    },
+    {
+     "bbox": [
+      [
+       34.5,
+       50.09,
+       6.4
+      ],
+      [
+       47.9,
+       51.69,
+       6.4
+      ]
+     ],
+     "area_mm2": 21.4
+    },
+    {
+     "bbox": [
+      [
+       34.5,
+       23.19,
+       6.4
+      ],
+      [
+       47.9,
+       24.79,
+       6.4
+      ]
+     ],
+     "area_mm2": 21.4
+    },
+    {
+     "bbox": [
+      [
+       34.5,
+       32.09,
+       6.4
+      ],
+      [
+       47.9,
+       33.69,
+       6.4
+      ]
+     ],
+     "area_mm2": 21.4
+    }
+   ],
+   "note": "lip undersides over the grooves, the remaining insertion-slot gables and the jack teardrop sides; the rails and the lead-in face upward"
+  },
+  "bed_contact_mm2": 2680.8,
+  "print_height_mm": 24.0,
+  "flexures_snaps": "none: every feature is a solid prism, wall or slope; the only sprung parts are the bronze leaves"
+ },
+ "fails": [],
+ "assembly": [
+  "Tools: soldering iron, 20 AWG red and black wire, wire stripper, small flat screwdriver, 11 mm (7/16 in) wrench or pliers.",
+  "Cut one red and one black 20 AWG wire, 35 mm and 35 mm, strip 3 mm at each end.",
+  "Off the dock: solder the red wire through the solder-tab hole of one Keystone 5209 (the + contact) and the black wire to the other (- contact).",
+  "Stand behind the dock (the tower is nearest you, the two rails point away from you). The groove on your left is +, on your right is -.",
+  "Lower the + contact into the open top of the tower, leaf up, leaf end pointing away from you, wire trailing toward you. Feed it through the left slot in the tower's front wall and push the flat body into the left groove until its far end stops against the closed end of the groove.",
+  "Do the same with the - contact in the right slot and groove.",
+  "Check: each leaf springs back when pressed and does not rub the opening's sides; each body does not move when the leaf is pressed.",
+  "Put the PJ-005A in from inside the tower: bushing through the round hole in the rear wall, flange flat on the inside face, centre-pin lug at the top.",
+  "Outside: washer then nut; tighten with the 11 mm wrench while holding the lugs straight.",
+  "Solder red to the centre-pin lug (top), black to the sleeve lug (middle). Leave the bottom lug empty.",
+  "Check with a meter: charger plugged in, the + leaf reads +8.4 V against the - leaf.",
+  "Stick foam tape or Dual Lock under the base plate and put the dock where the robot sits."
+ ]
+}
