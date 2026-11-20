@@ -23,6 +23,8 @@ def main():
     opts = dict(x.split("=") for x in sys.argv[2:] if "=" in x)
     d, seeds = sys.argv[1], [int(s) for s in sys.argv[2:] if "=" not in s]
     kp = ["--kp-rl", opts["kp"]] if "kp" in opts else []
+    if "vth" in opts:  # vth=<rad/s>: a commanded turn while walking (with heading hold off it is the turn command)
+        kp = kp + ["--vtheta", opts["vth"]]
     # first=<teacher dir>:<tick>  the teacher drives up to that tick, then the student (which saw every observation)
     # after=<teacher dir>:<tick>  the student drives up to that tick, then the teacher
     for key, var in (("first", "FLIGHT_HANDOVER"), ("after", "FLIGHT_HANDOVER_AFTER")):

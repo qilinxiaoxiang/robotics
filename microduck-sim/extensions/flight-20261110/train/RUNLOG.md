@@ -1700,3 +1700,58 @@ knee corr 0.94 / 0.95; `ts3_g1_where` layout). Batch script `train/ts3_batch_s3a
   know the gain; later saves fit the average gain of the training range more tightly, which is wrong for gain 200
   in the first second. Not proven; the direct test is a gain flag or a gain-200 share in the sampling.
 - Without the pack the first 2 s are the same for both saves (start jumps 10, falls 0 of 10).
+
+## 2026-11-20 05:38 the turn command saturates only for the student with the pack; gain flag (B) and stop case (A) each help
+
+Mac mini only. Index assertions ran (`ts3_jump_where.check_order` on the walk61 reference, `ts3_g1_where` layout).
+New: `train/ts3_turn_where.py` (turn command and heading drift per 2 s; the drift is the mean world yaw of the two
+feet from the tick diagnostics, the trunk's yaw is not logged), `ts3_stop_where.py vth=<rad/s>`,
+`distill_worker.py --gain-flag-col`, `FLIGHT_OBS_SET` with several columns, batch part `ts3_batch_s3a_f1.sh g1`.
+- Who saturates (gate pack walk, gain 200, heading hold on, seeds 0 and 1): teacher m3s_450 with the pack: turn
+  command mean +0.27 to +0.94 per 2 s, largest 1.44 rad/s, heading drift within about +7 deg, 0 falls of 20.
+  s3a_60 with the pack: the command sits at the limit 2.00 from 6 s (means 1.77 to 1.98) and the heading still
+  drifts to -61 / -91 deg: the student does not turn when told to, the hold winds up. walk61 without the pack:
+  largest 0.44; s3a_60 without the pack: largest 0.37. Only the student with the pack.
+- Are teacher labels usable at +-1.9 (heading hold off, forced turn command, pack, gain 200, 10 seeds):
+  m3s_450 +1.9: 8 falls, -1.9: 10 falls, all but one at 3.3 to 4.0 s; 1.0: 0. t3h_750 +1.9: 1 fall (18.68 s),
+  -1.9: 0, 1.0: 0. m3s_450's labels at +-1.9 are not usable, t3h_750's are.
+- Smoke A is chain c1 of 03:22 (`--stop-share 0.25` is exactly: pack envs, vx 0.25, turn up to +-1.9, then both
+  zero, labelled by t3h_750, same share as the no-pack case rows). Pack walk, heading on, 20 seeds, falls during
+  the walk + after the stop: gain 200: 0 + 16 (control c0 20 + 0); 300: 0 + 0 (c0 13 + 4); 400: 0 + 0 (c0 10 + 4).
+- Smoke B, gain flag (chain g1 05:04:48 to 05:33:12; student column 59 = gain scale - 1, so KP 200 = 0 and the G1
+  robot states carry the right value; same start and stages as c0). Stage lines: pack mse 0.00289 / 0.00283 /
+  0.00273, no-pack distance to walk61 0.336 / 0.295 / 0.286. G1 0.228 (c0 0.194, line 0.25).
+  gain 200: heading on 3 + 5, heading off 0 + 1 (c0 20 + 0 and 0 + 20); gain 300 (flag 0.5): 1 + 1;
+  gain 400 (flag 1.0): 14 + 1 (8 of them at 3.08 to 3.48 s; c0 10 + 4). With the wrong flag (1.0 at gain 200):
+  9 + 9, so the student reads it.
+- Reading (inference): B removes most of the gain-200 falls (over both heading settings c0 fell in 40 of 40
+  episodes, g1 in 9 of 40) but is worse at gain 400 and costs G1 distance; A removes every fall at
+  gain 300 and 400 and the falls during the walk at 200, not the falls after the stop at 200. They help in
+  different places, so A+B runs once: chain h1 from 05:37:12 (`--gain-flag-col 59 --stop-share 0.25`), heartbeat
+  `logs/ts3_anchor_h1_heartbeat.txt` on the Mac mini.
+- Standing without the pack at gain 400, seeds 0 / 1 / 2, jumps (touch-downs): walk61 0 (0); s3h_160 (no anchor,
+  teacher t3h_750) 0 / 0 / 0 (35 / 13 / 33); a2_208 17 / 8 / 12; c0 3 / 2 / 8; f1 0 / 6 / 4; c1 14 / 12 / 11
+  (122 / 125 / 124); g1 with flag 1.0: 50 / 7 / 2 (108 / 111 / 104); s3a_60 78 / 17 / 45 (81 in seed 0). Every
+  student steps in place there, also the unanchored one (small steps, no jump); the anchored ones step harder. So
+  it does not come with the m3s_450 teacher alone, and the anchor does not remove it.
+
+## 2026-11-20 06:10 A+B together (chain h1): not additive at gain 200
+
+Chain h1 05:37:12 to 06:05:25 (`--gain-flag-col 59 --stop-share 0.25`, same start and stages as c0, c1, g1). Stage
+lines: pack mse 0.00312 / 0.00287 / 0.00279, no-pack distance to walk61 0.301 / 0.305 / 0.286. G1 smk_h1_232 0.202.
+Batch part `ts3_batch_s3a_f1.sh h1`; assertions ran (first2s with walk61 first, jump_where reference, g1 layout).
+- Pack walk, heading on, 20 seeds, falls during the walk + after the stop, flag fed for the gain:
+  gain 200: 16 + 4; gain 300: 0 + 5; gain 400: 0 + 0. Heading off, gain 200: 0 + 10.
+  Side by side at gain 200, heading on / off: c0 20+0 / 0+20; A (c1) 0+16 / 0+18; B (g1) 3+5 / 0+1; A+B (h1) 16+4 / 0+10.
+  At gain 300 and 400: c0 13+4 and 10+4; A 0+0 and 0+0; B 1+1 and 14+1; A+B 0+5 and 0+0.
+- Standing without the pack at gain 400 (flag 1.0), seeds 0 / 1 / 2: 0 jumps, 3 / 5 / 5 touch-downs, the quietest of
+  all students (g1 50 / 7 / 2 jumps with 104 to 111 touch-downs).
+- First 2 s with the pack, gain 200, 10 seeds (`ts3_first2s.py 10 walk61 smk_c0_232 smk_c1_232 smk_g1_232
+  smk_h1_232`, file `eval/first2s_walk61.json`): 0 falls in the start window for c0, c1, g1 and h1; falls later in
+  the episode c0 10, c1 7, g1 3, h1 10 of 10.
+- Reading (inference): what repeats over two chains each is that the stop case (A) removes the falls at gain 300
+  and 400 and during the walk under a saturated turn (c1), and that the gain flag changes the gain-200 result
+  strongly in one chain (g1: 9 of 40 episodes fall against 40 of 40) but not in the other (h1: 30 of 40). One
+  chain per variant, three stages of about 8 iterations: the spread between chains of the same kind is as large as
+  the effects, so the smoke does not decide the gain-200 case. Not solved: gain 200 with the pack, with or without
+  the flag. No Modal run launched.
