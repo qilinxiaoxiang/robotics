@@ -1,0 +1,108 @@
+{
+ "schema_version": 1,
+ "contract": {
+  "goal": "Buy every part of the MicroDuck power system V2 / battery backpack rev B that is not owned (Shawn 2026-11-20: \"可以，加购物车\"); cart only, no order.",
+  "chain": {
+   "from": "2S 3000 mAh pack (XT30) and dock contact pads",
+   "to": "Pololu 2813 soft switch -> OpenRB J4 plug 3 and DFR1202, XIAO cutoff, 16 mm LED button"
+  },
+  "allowed_companions": [],
+  "allowed_modifications": [
+   {
+    "id": "solder_pigtails_and_harness",
+    "source": "power-switch-20261119/README.md: XT30 pigtails soldered to the Pololu VIN/VOUT holes; XIAO harness soldered (approved concept rev B)."
+   }
+  ],
+  "requirements": [
+   {
+    "id": "battery",
+    "requirement": "2S LiPo about 3000 mAh, XT30 discharge plug, JST-XH 3-pin balance, at least 8 A continuous, fits the rev B box (72-74 x 34 x 19-20 mm).",
+    "source": "battery-v2-concept-20261119/README.md; power-system-20261119 PV-1"
+   },
+   {
+    "id": "switch",
+    "requirement": "Pololu Big Pushbutton Power Switch HP #2813 (4.5-32 V, ON/OFF pins), 2 units.",
+    "source": "power-switch-20261119 PS-1"
+   },
+   {
+    "id": "button",
+    "requirement": "Adafruit 560: 16 mm momentary, green LED ring lit from 5 V (3-6 V with built-in resistor); the rev B geometry is drawn around this part.",
+    "source": "battery-v2-concept-20261119 rev B"
+   },
+   {
+    "id": "resistors",
+    "requirement": "1/4 W through-hole 100 k x6 and 33 k x3 for the XIAO dividers and OFF pull-down.",
+    "source": "power-switch PS-2; power-system PV-2"
+   },
+   {
+    "id": "xt30_pigtails",
+    "requirement": "Amass XT30 male and female with 16 AWG leads for pack-to-Pololu VIN and Pololu VOUT-to-plug 3.",
+    "source": "concept README BOM"
+   },
+   {
+    "id": "wire_20awg",
+    "requirement": "20 AWG red/black silicone for pads-diode-Pololu and Pololu-DFR1202 runs.",
+    "source": "concept README BOM"
+   },
+   {
+    "id": "wire_26awg",
+    "requirement": "26 AWG silicone, several colours, for the XIAO harness, button lead and OFF line.",
+    "source": "concept README BOM"
+   }
+  ]
+ },
+ "candidates": [
+  {
+   "id": "power_v2_bundle",
+   "primary": "Amazon: B08LZ8L4YD, B0F44KMCWT, B07HGTHTKT, B0C9MB4DTY; DigiKey: 2183-2813-ND x2, 1528-2542-ND, CF14JT100KCT-ND x10, CF14JT33K0CT-ND x10",
+   "chain": "pack XT30 -> pigtail -> Pololu 2813 -> plug 3 / DFR1202; XIAO dividers; button to ON",
+   "companions": [],
+   "modifications": [
+    "solder_pigtails_and_harness"
+   ],
+   "checks": {
+    "battery": {
+     "status": "pass",
+     "observed": "Title 2S 3000mAh XT30/DC5.5; images: XT30, XH2.54-3P, 5C cont (15 A) / 10C burst, drawing 74 x 34 x 19 mm, leads leave one end. $22.99 In Stock (read 2026-11-20). Length 74 mm is 2 mm over the 72 mm used in rev B: final CAD after measuring the part.",
+     "evidence": "Amazon listing title and gallery images read in Chrome 2026-11-20 (amazon_B08LZ8L4YD, https://www.amazon.com/dp/B08LZ8L4YD)"
+    },
+    "switch": {
+     "status": "pass",
+     "observed": "Manufacturer Pololu, MPN 2813, In-Stock 143, $10.14, marketplace shipped by Pololu; qty 2 in cart. Not sold on Amazon (search 2026-11-20).",
+     "evidence": "DigiKey product page and cart readback 2026-11-20 (digikey_2183-2813-ND, https://www.digikey.com/en/products/detail/pololu/2813/10450611)"
+    },
+    "button": {
+     "status": "pass",
+     "observed": "Adafruit 560, SPDT on-mom, green LED 6 V nominal, 16 mm cutout, In-Stock 404, $4.95. Adafruit page: LED 3-6 V with built-in resistor; out of stock at adafruit.com and not on Amazon.",
+     "evidence": "DigiKey product page; adafruit.com/product/560 read 2026-11-20 (digikey_1528-2542-ND, https://www.digikey.com/en/products/detail/adafruit-industries-llc/560/8323986)"
+    },
+    "resistors": {
+     "status": "pass",
+     "observed": "Stackpole CF14JT100K and CF14JT33K0, 5% 1/4 W axial, qty 10 each in cart.",
+     "evidence": "DigiKey cart readback 2026-11-20 (digikey_CF14JT100K_CF14JT33K0, https://www.digikey.com/ordering/shoppingcart)"
+    },
+    "xt30_pigtails": {
+     "status": "pass",
+     "observed": "Original Amass XT30, 3 male + 3 female, 16 AWG silicone 100 mm, pre-tinned, 12 A, $7.59 In Stock.",
+     "evidence": "Amazon listing bullets read 2026-11-20 (amazon_B0F44KMCWT, https://www.amazon.com/dp/B0F44KMCWT)"
+    },
+    "wire_20awg": {
+     "status": "pass",
+     "observed": "BNTECHGO 20 AWG silicone, red and black, 25 ft, $12.48.",
+     "evidence": "Amazon search result title 2026-11-20 (amazon_B07HGTHTKT, https://www.amazon.com/dp/B07HGTHTKT)"
+    },
+    "wire_26awg": {
+     "status": "pass",
+     "observed": "26 AWG silicone wire kit, 6 colours x 20 ft, tinned copper, $9.99.",
+     "evidence": "Amazon search result title 2026-11-20 (amazon_B0C9MB4DTY, https://www.amazon.com/dp/B0C9MB4DTY)"
+    }
+   }
+  }
+ ],
+ "recommended": [
+  "power_v2_bundle"
+ ],
+ "cart": [
+  "power_v2_bundle"
+ ]
+}
