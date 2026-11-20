@@ -157,7 +157,8 @@
      },
      "history": [
       "2026-11-20 after attempt 1: the stage held two questions (ranking and thrust-cell validity), against the one-question rule. Check 3 moved unchanged, and stricter (validation on reference policies added), to stage B0T; nothing was relaxed, and B2 now depends on B0T.",
-      "2026-11-20 14:05: reopened after the independent contract review; attempt 1 no longer counts as a pass, attempt 2 tests specificity on t2b. The full B1 run waits for it."
+      "2026-11-20 14:05: reopened after the independent contract review; attempt 1 no longer counts as a pass, attempt 2 tests specificity on t2b. The full B1 run waits for it.",
+      "2026-11-20 14:25: the B1 script's author found that brain_sim_check.py keeps --kp-rl 400 inside a reused worker process. In both B0 runs the cell order was nominal, gain400, jitter in one pool, so the jitter cells very probably ran at KP 400 as well (not rerun to confirm). The jitter numbers of attempts 1 and 2 are therefore not a fair test of the jitter condition and decide nothing; the nominal and gain400 cells are unaffected. b1_rescore.py resets the gain before every episode and asserts it."
      ],
      "result": {
       "date": "2026-11-20",
