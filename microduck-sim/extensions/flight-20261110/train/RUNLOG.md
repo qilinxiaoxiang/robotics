@@ -1625,3 +1625,32 @@ seeds unless said, student s3h_160 with its teacher t3h_750. Training-side numbe
   case, heartbeat `logs/ts3_anchor_c1_heartbeat.txt`.
 - New diagnostics in `flight_eval.py` (default off): `FLIGHT_STATE_ZERO_TICK`, `FLIGHT_HANDOVER_AFTER`; a 69-input
   teacher can now shadow or take over a student (the gain column is appended).
+
+## 2026-11-20 04:24 stop-case fix: the smoke does not support it; no second Modal run
+
+Pack walk gate episode, walk gain 200, 20 seeds, `ts3_stop_where.py count=20 kp=200`; G1 from `ts3_g1_where.py`
+against t3h_750 (layout assertion ran). All three students are smoke continuations with teacher t3h_750.
+- smk_a2_208 (start of both chains): heading hold on 3 falls, all after the stop; heading hold off 8 after the stop,
+  0 during the walk; G1 0.221.
+- smk_c1_232 (3 more stages WITH `--stop-share 0.25`, chain c1, done 03:52:58): heading on 16 falls, all after the
+  stop (18.10 to 19.26 s); heading off 18, all after the stop; G1 0.207. Stage lines: pack mse to teacher
+  0.00343 / 0.00314 / 0.00292, no-pack distance to walk61 0.311 / 0.300 / 0.297.
+- smk_c0_232 (control: the same 3 stages WITHOUT the stop case, chain c0, 03:53:53 to 04:22:12): heading on 20
+  falls, all during the walk (5.36 to 13.38 s), 0 after the stop; heading off 20, all after the stop (18.40 to
+  19.30 s); G1 0.194. Stage lines: pack mse 0.00299 / 0.00263 / 0.00270, no-pack distance 0.301 / 0.287 / 0.281.
+- Reading (inference): the acceptance (falls after the stop to zero) failed, 16 against a baseline of 3. The
+  control shows that three more smoke stages alone take the student from 3 falls to 20, so the smoke continuation
+  itself degrades the pack walk and the stop case cannot be judged from it. With heading hold off the two differ by
+  18 against 20, no effect. With heading hold on the stop-case student survives the walk (0 falls before 17 s
+  against 20 for the control), which matches its forced long walks under a turn command, but it does not stand
+  after the stop.
+- The smoke students carry a pack mse to the teacher of 0.0027 to 0.0034; the same chain's stage 0 (s3h_160
+  continued 2 iterations without the anchor) reads 0.00112. The anchored continuations are 2.4 to 3 times further
+  from the teacher on pack rows and fall more. Teacher t3h_750 is itself fragile to small input changes (03:25
+  entry). Inference: with this teacher the pack behaviour does not survive a student error of this size, and the
+  anchor costs pack accuracy in short continuations. Whether the full anchored run recovers it is read from run
+  ts3s-m3s-450-a (pack mse 0.00499 at iteration 60, 0.00402 at 80, still falling).
+- Decision: second Modal run not launched; nothing spent. Open: the cause of the falls after the stop is not
+  closed. What is established: training holds stop rows, the student's error there is small, emptying the
+  recurrent state makes it worse, the teacher taking over at the stop gives 0 falls, and the student after a
+  teacher walk still falls (3 of 20 at 17 s, 8 at 15 s).
