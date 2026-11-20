@@ -49,6 +49,11 @@
      "date": "2026-11-20",
      "source": "session 1ebe7a36, fourth message",
      "quote": "我们想要快速出一个成果，先看看在不同重力下，它背了背包有可能会怎么样：第一是把体重给对冲掉，也就是它飞起来后就没体重了；或者它一点也不飞，那就是背上压了个背包。如果我们想在这个姿势下维持平衡、能走路，我们需要做到什么程度？"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, seventh message (about 14:35)",
+     "quote": "我觉得是不是也不用为了递归而递归 我们最初说递归是想做机器人的世界模型 这个背包似乎用不上这个 只是说怎么把负重建模到模型里 有比递归更直观 更容易成功更有效率的方式吗"
     }
    ],
    "acceptance_on_robot": "With the pack fitted the real robot stands and walks at the robot-tested command without a fall or a tilt-protection stop; with the pack off it walks no worse than walk61; with the fans running on the ground at the thrust levels stage B0 fixes for FP-R8, it stays up. Acceptance per requirement is in REQUIREMENTS.json (FP-R3, FP-R8).",
@@ -258,12 +263,18 @@
        "prediction": "Written before any B1 run. Saves with privileged inputs (the teacher families) are excluded, leaving roughly 50 student saves. With the gain flag fed as the robot's walk mode would feed it, fewer than 3 students keep at most 6 window falls of 60 in all four no-pack and full-pack gain400 cells, and none also holds the 25 %, 50 % and 75 % walking cells together with the nominal speed line. B1 does not pass (about 70 % sure). If a save does pass, it is a recurrent student, not a one-frame policy.",
        "prediction_zh": "开跑前写下：190 个存档里，要读仿真内部量的老师模型全部排除，剩下大约 50 个学生模型。按机器人真实能给的输入去喂，能在不带背包和整包的增益调高格里都做到 60 次最多摔 6 次的，不到 3 个；同时守住四分之一、一半、四分之三负重走路格和速度线的，一个都没有。也就是 B1 大概率不过（约七成把握）。",
        "command": "ssh mac-mini 'cd code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110 && nohup zsh train/b1_rescore.sh > /dev/null 2>&1 < /dev/null &'  (screening and a one-episode feed check per save family first, then 60 seeds from 2000 per candidate and cell, under train/mini_lock.sh; heartbeat train/logs/b1_rescore_b1_heartbeat.txt on the Mac mini)",
+       "launch_match": [
+        "b1_rescore\\.(sh|py)\\b"
+       ],
        "result": "",
        "verdict": "running",
        "evidence": ""
       }
      ],
-     "route_reviews": []
+     "route_reviews": [],
+     "history": [
+      "2026-11-20 14:40, after Shawn's seventh message (owner_words): attempt 1 excluded every teacher save because it reads seven simulator values. Four of the seven are not hidden on the robot: payload mass and the loaded trunk centre of mass x y z are constants of the pack state (pack fitted or not, batteries in or out), known from the mass manifest. Only the three trunk linear velocity values are unavailable. Records of round 3 (train/RUNLOG.md): teacher t3h_750 falls 0 of 10 with the pack at gain 400 where the recurrent students fall, and the pack-flag experiment (05:02) showed the student reads a load flag but its remaining falls are a gain problem. Attempt 2, if attempt 1 finds no save, re-scores the best teacher saves fed what the robot can know: nominal payload mass and centre of mass for the cell, the gain value the robot's walk mode gives, and the three velocity inputs set to zero; the as-trained feed is run beside it as the upper bound. Same cells, seeds and pass line."
+     ]
     },
     {
      "id": "B1R",
@@ -453,6 +464,11 @@
      "date": "2026-11-20",
      "source": "session 1ebe7a36, fourth message",
      "quote": "如果能放在一起做，那当然是最好；如果放不在一起做，那就拆开做。拆开做也有两种：一种是我们拆开做的同时，背包模型对未来有用；另一种是以后换了新模型，这个背包模型就没用了，顶多做一个基线。"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, seventh message (about 14:35)",
+     "quote": "我觉得是不是也不用为了递归而递归 我们最初说递归是想做机器人的世界模型 这个背包似乎用不上这个 只是说怎么把负重建模到模型里 有比递归更直观 更容易成功更有效率的方式吗"
     }
    ],
    "acceptance_on_robot": "The recurrent model walks the real duck at least as well as walk61 (no fall in 60 s at the robot-tested command, action jumps no higher than walk61's on the same log measure); it then runs more than one skill from one set of weights; its next-step prediction error on robot logs is reported against the predict-no-change baseline; the eye is added last.",
@@ -493,6 +509,13 @@
      "id": "A0",
      "kind": "baseline",
      "status": "proposed",
+     "approval_on_hold": {
+      "by": "Shawn",
+      "date": "2026-11-20",
+      "words": "批准 A0",
+      "source": "session 1ebe7a36, his sixth message, after the sheet and the training overview (OVERVIEW.html #map) were shown; covers one paired Kaggle session of about 5.5 h per attempt, at most 2 attempts",
+      "held": "2026-11-20 about 14:40, by the agent, not launched: his seventh message (owner_words) says recurrence was meant for the world model and the pack does not need it. A0's recurrent arm was justified by A1 (feel the load through memory), which that message removes. The stage goes back to proposed and is rewritten or dropped with him; nothing ran under this approval."
+     },
      "sheet_zh": {
       "title": "A0 并排对照：官方那种小网络和带递归的新网络，同一套训练",
       "does": "在原来的走路任务上（不带背包），用今天的训练代码从零并排训两个网络，各 4000 轮：一个和官方 walk61 结构完全一样（3 层全连接，约 20 万参数，权重从随机开始，不是官方那份权重）；一个是训练库自带的递归网络（LSTM 加全连接，约 53 万参数）。小的那个是对照：它要是都训不到官方水平，问题在训练代码，和架构无关。",
