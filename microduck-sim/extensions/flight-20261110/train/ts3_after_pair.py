@@ -92,7 +92,37 @@ def main():
     HB.write_text(time.strftime("%Y-%m-%dT%H:%M:%S ") + f"watch START kernel microduck-{kernel}: teacher {t_run} -> {t_tag}_*, "
                   f"student {s_run} -> {s_tag}_*, teacher every {EVERY}\n")
     end, st = time.time() + HOURS * 3600, ""
-    while time.time() < end:
+    if opts.get("modal"):
+        # modal=1: the student run is a Modal app (microduck-flight-<kernel run>, Volume of the same name) instead of
+        # a Kaggle kernel: wait until the app is no longer live, then download its saves to where the staging reads
+        import json
+        vol, dest = f"microduck-flight-{kernel}", T / "kaggle/out" / kernel / "runs" / s_run
+        dest.mkdir(parents=True, exist_ok=True)
+        while time.time() < end:
+            rc, out = sh([MODAL, "app", "list", "--json"], timeout=300)
+            try:
+                live = [x for x in json.loads(out) if x.get("description") == vol and x.get("state") != "stopped"]
+            except (ValueError, TypeError):
+                live = None
+            sh([MODAL, "volume", "get", "--force", vol, f"runs/{s_run}/progress.json", str(dest / "progress.json")])
+            try:
+                pr = json.loads((dest / "progress.json").read_text())
+                st = f"it {pr.get('iter')} it/s {pr.get('it_per_s')} loss {pr.get('loss')} by_load {pr.get('by_load')}"
+            except (OSError, ValueError):
+                st = "no progress.json yet"
+            hb(f"modal {vol} {'live' if live else 'not live' if live is not None else 'app list unread'}; {st}"[:600])
+            if live == []:
+                break
+            time.sleep(300)
+        else:
+            hb(f"FAILED app still live after {HOURS} h")
+            return 1
+        rc, out = sh([MODAL, "volume", "ls", vol, f"runs/{s_run}", "--json"])
+        names = sorted(Path(e["filename"]).name for e in json.loads(out)) if rc == 0 else []
+        for f in [n for n in names if n.startswith("model_") or n in ("progress.json", "progress.csv", "run_record.json")]:
+            sh([MODAL, "volume", "get", "--force", vol, f"runs/{s_run}/{f}", str(dest / f)])
+        hb(f"downloaded {len(list(dest.glob('model_[0-9]*.onnx')))} student saves from {vol}")
+    while not opts.get("modal") and time.time() < end:
         rc, out = sh(["python3", "cmu/finetune/flight/kaggle_flight.py", "status", kernel], cwd=RL, timeout=300)
         st = ([x for x in out.splitlines() if "outdated" not in x] or [""])[-1][:160]
         hb(f"kaggle {st}")
@@ -100,13 +130,15 @@ def main():
             break
         time.sleep(120)
     else:
-        hb(f"FAILED kernel not finished after {HOURS} h")
-        return 1
-    rc, _ = sh(["python3", "cmu/finetune/flight/kaggle_flight.py", "fetch", kernel], cwd=RL, log=T / f"logs/fetch_{kernel}.log",
-               timeout=1800)
-    hb(f"fetch EXIT {rc}")
-    rc, out = sh(["python3", "cmu/finetune/flight/kaggle_flight.py", "quota"], cwd=RL, timeout=300)
-    hb("quota after kernel: " + " ".join(([x for x in out.splitlines() if x.startswith("GPU")] or ["unread"])[0].split()))
+        if not opts.get("modal"):
+            hb(f"FAILED kernel not finished after {HOURS} h")
+            return 1
+    if not opts.get("modal"):
+        rc, _ = sh(["python3", "cmu/finetune/flight/kaggle_flight.py", "fetch", kernel], cwd=RL, log=T / f"logs/fetch_{kernel}.log",
+                   timeout=1800)
+        hb(f"fetch EXIT {rc}")
+        rc, out = sh(["python3", "cmu/finetune/flight/kaggle_flight.py", "quota"], cwd=RL, timeout=300)
+        hb("quota after kernel: " + " ".join(([x for x in out.splitlines() if x.startswith("GPU")] or ["unread"])[0].split()))
     runs = T / "kaggle/out" / kernel / "runs"
     sdirs, tdirs = [], []
     if (runs / s_run).is_dir():

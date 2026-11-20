@@ -54,7 +54,9 @@ image = make_image()
 app = modal.App("microduck-flight-eval", image=image)
 
 
-@app.function(cpu=1.0, memory=1024, timeout=900, retries=1, single_use_containers=True)
+# max_containers: the workspace limit is 100 containers (Modal email 2026-11-20 01:28, a 36-save batch overlapping
+# another); 60 per batch, and gate batches run one at a time under train/gate_lock.py, the training app adds 1
+@app.function(cpu=1.0, memory=1024, timeout=900, retries=1, single_use_containers=True, max_containers=60)
 def run_episode(job: list) -> dict:
     import os
     name, models, manifest, case, seed, shove_ns, shove_at, landing = job[:8]

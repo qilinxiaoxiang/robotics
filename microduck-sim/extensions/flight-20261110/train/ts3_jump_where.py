@@ -92,9 +92,48 @@ def analyse(rows, names):
                 per_second=dict(sorted(Counter(int(j["t"]) for j in jumps).items())), detail=jumps)
 
 
+def check_order(rows, names, wb):
+    """Index check before any joint is named (2026-11-20, after the NAMES mislabel): a knee action moves the knee.
+    The logged action (policy order `names`) of each knee must track that knee's own logged position (rows' "q", servo
+    order wb.NAMES, minus the default pose) a few ticks later better than any other joint's position."""
+    import numpy as np
+    rr = [x for x in rows if x.get("action") is not None and x.get("q")]
+    # steady walking only: while standing and in the stand -> walk change both knees move together, which hides the side
+    tw = next((x["t"] for x in rr if x.get("policy") == "walk"), None)
+    if tw is not None and sum(1 for x in rr if x["t"] >= tw + 1.0) > 100:
+        rr = [x for x in rr if x["t"] >= tw + 1.0]
+    assert len(rr) > 100, f"only {len(rr)} tick rows carry both an action and joint positions"
+    A = np.array([x["action"] for x in rr])
+    Q = np.array([x["q"] for x in rr])
+    said = []
+    for name in ("left_knee", "right_knee"):
+        k = names.index(name)
+        best = None
+        for lag in range(1, 9):  # the servo answers a few ticks late; take the lag at which the best joint is clearest
+            cc = [float(np.corrcoef(A[:-lag, k], Q[lag:, j])[0, 1]) if Q[:, j].std() > 1e-6 else 0.0
+                  for j in range(Q.shape[1])]
+            if best is None or max(cc) > max(best[1]):
+                best = (lag, cc)
+        lag, cc = best
+        j = int(np.argmax(cc))
+        assert wb.NAMES[j] == name and cc[j] > 0.6, (name, wb.NAMES[j], lag, [round(c, 2) for c in cc])
+        said.append(f"{name} action tracks {name} position {lag} ticks later (corr {cc[j]:.2f}, the largest of {Q.shape[1]})")
+    print("[order] assertion ran: " + "; ".join(said), flush=True)
+
+
 def main():
     d, man, vxs, extra = sys.argv[1], sys.argv[2], sys.argv[3].split(","), sys.argv[4:]
     out = {}
+    # the index check runs on the deployed walk61 without the pack, through the same log path: the joint order is a
+    # property of the code, and a policy that chatters (the t3g students) does not move its knees in step with its
+    # actions, so the check cannot be made on the policy under study
+    ref_log = "/tmp/ts3_jump_ordercheck.jsonl"
+    fe.episode((str((HERE / "../../../microduck_rl/cmu/whole/runtime-overlay/models").resolve()),
+                str(HERE / "manifests/flightpack-none.json"), "walk", 0, 0.0, 8.0, False,
+                ["--tick-log", ref_log, "--tick-diag"]))
+    ref_rows = [json.loads(x) for x in open(ref_log)]
+    os.remove(ref_log)
+    check_order(ref_rows, list(sys.modules["walk_brain"].OBSERVATION_DOF_ORDER), sys.modules["walk_brain"])
     for vx in vxs:
         r, rows = run(d, man, float(vx), extra)
         wb = sys.modules.get("walk_brain")

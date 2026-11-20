@@ -1490,3 +1490,90 @@ under 70.00 USD metered (workspace limit 75).
   0.535); m3s_500 0.646 (legs 0.306, head 0.556). The t3g_625 students should therefore be expected near 0.7 and
   fail G1 (inference from the s3h result: student = teacher within 0.23).
 - Even with the head equal to walk61, legs alone are 0.268 (s3h_160) against the 0.25 line.
+
+### 2026-11-20 02:50 correction of the 01:26 entry, walk61 anchor in distillation, students of t3g_625, stop falls
+
+- CORRECTION of 01:26: "all of them at command 0 with head command 0" is wrong. `ts3_g1_where.py` read the command
+  from columns 54:61; the actor layout is twist 48:51, head command 51:55, body command 55:61. The 649 robot
+  states are walking: vx 0.25 on all, turn command -1.867 to 0.206 rad/s (mean size 0.699; 60 % beyond the
+  training range of 0.5), head-pitch command mean 0.154 and up to 0.745; the head command is exactly zero on 7 %
+  and under 0.02 on 59 %. The "robot states all have head command zero" sentence and the standing-case reading
+  fall with it; the distances themselves (0.531, 0.522, 0.227) did not use those columns. Both scripts now carry
+  an index assertion: `ts3_g1_where.py check_layout` (vx 0.25 at column 48 also against the raw log, gravity z at
+  column 5, the left_knee and head_pitch action inputs track their own joint position 4 ticks later, corr 0.89 and
+  0.86, the largest of 14) and `ts3_jump_where.py check_order` (on a deployed-walk61 no-pack episode through the
+  same tick log: each knee action tracks its own knee position 7 ticks later, corr 0.94 and 0.95, the largest of
+  14; the first version ran it on the policy under study and failed on the two chattering t3g students, whose
+  knees do not follow their actions).
+- Container limit (Modal email 01:28:21, 100 containers): the gate `.map` queued, nothing was dropped: all 48 t3k
+  and m3s verdict files hold 10 episodes in every cell. `flight_eval_modal.py` now caps a batch at
+  `max_containers=60`.
+- Arm A (ts3m-b625, universal5tgb) ended DONE at 02:00 after 1000 iterations, 1.13 USD. No save passes. Best:
+  m3s_450, 2 failing lines (pack_walk 1 fall of 10 at 5.46 s; pack_walk jumps 3.75 against 2.75), no no-pack
+  failure, speed lines pass. m3s_100 has 1 failing line but is t3g_625 again (pack_walk jumps 27.5). Saves 800 to
+  999 fail 3 to 5 lines with 10 of 10 pack-walk falls.
+- Students of t3g_625 (Kaggle, 160 iterations each, scored 02:19): all 16 saves fail 5 to 8 lines. G1 0.58 to 0.69
+  (Mamba) and 0.51 to 0.68 (LSTM), as predicted from the teacher's 0.71. Mamba s3m_t3g_625_160: no-pack walk 9
+  falls of 10 at 2.68 to 2.76 s. LSTM: no no-pack fall in any save. 16 lines read MISSING, all of them "walking
+  speed: an episode holds no forward speed" in a pack-walk cell with a fall before the walk command at 2.0 s (0.56
+  to 1.36 s); every one of the 128 cells holds 10 episodes, so none comes from the container limit.
+- Distillation anchor, `distill_worker.py`: on rows with payload at most 0.02 kg the label becomes walk61's own
+  action on the same 61 inputs (`--anchor-onnx --anchor-w 1.0 --anchor-head all`; `--anchor-zero-head` restores
+  the head-command-zeroed target of the teacher anchor); `--case-share 0.25` commands every fourth no-pack env like
+  the robot walks (vx 0.25, turn +-1.9 rad/s, head-pitch command 0 to 0.75); per save `[load]` prints the pack rows'
+  mse to the teacher and the no-pack rows' distance to walk61. The command columns are built from the env's own
+  observation term list and asserted against the command manager.
+- Smoke on the Mac mini (`train/ts3_anchor_smoke.sh`, detached chain, heartbeat
+  `logs/ts3_anchor_<tag>_heartbeat.txt`; continues Mamba s3h_160 with its teacher t3h_750, 512 envs, lr 5e-4).
+  a1 (head command zeroed in the target), after 0 / 8 / 16 / 24 / 32 iterations: no-pack distance to walk61 0.690 /
+  0.317 / 0.276 / 0.264 / 0.237, legs 0.235 / 0.232 / 0.196 / 0.189 / 0.179, pack mse to the teacher 0.00121 /
+  0.00365 / 0.00296 / 0.00256 / 0.00258. G1 on the robot states: 0.531 -> 0.306 (8 it) -> 0.253 (32 it), with
+  0.392 and a head-pitch offset of -0.304 on rows whose head-pitch command exceeds 0.3: the zeroed target leaves
+  the head down where walk61 lifts it.
+  a2 (target = walk61's response to the row as it is, continued from a1's save 192, 16 more iterations): no-pack
+  distance 0.330 (legs 0.222; the unchanged s3h_160 measures 0.779 against this target), pack mse 0.00319.
+  G1 on the robot states with `ckpt/smk_a2_208`: 0.221 (legs 0.164, head 0.143; rows with head-pitch command over
+  0.3: 0.228, head-pitch offset -0.069), `eval/g1_where_smk_a2_208_vs_t3h_750.json`. Under the 0.25 line after 48
+  smoke iterations. Pack mse is 2.6 times the unanchored student's and flat (0.0031, 0.0032 in the two a2 stages).
+- First 2 s after the start and after the stand -> walk change, `train/ts3_first2s.py`, Mac mini, 10 seeds,
+  `eval/first2s_walk61.json` (jumps per 10 s in the start / mode-change / rest windows, falls):
+  no pack: walk61 0 / 3.0 / 0.63, no fall; t3h_750 0 / 10.0 / 0.82, no fall; s3h_160 1.0 / 2.0 / 1.25, no fall;
+  smk_a2_208 1.5 / 10.5 / 1.76, no fall; s3m_t3g_625_160 1.0 / 87.6 / 3.1 with 9 falls of 10 in the mode-change
+  window; s3l_t3g_625_140 5.0 / 7.0 / 3.7, no fall; m3s_450 0 / 0 / 0.19, no fall.
+  pack: t3h_750 0 / 22.5 / 1.19, no fall; s3h_160 0 / 7.5 / 4.38, 1 fall (8.86 s); smk_a2_208 0 / 25.0 / 6.62, 2
+  falls (19.26, 19.84 s); t3g_625 15 / 83.5 / 21.8, no fall; s3m_t3g_625_160 46 / 108 / 40.7, 6 falls;
+  s3l_t3g_625_140 47.5 / 100 / 48.0, 1 fall; m3s_450 0 / 5.0 / 3.89, no fall.
+  The anchored smoke student has no fall in either window with or without the pack. The Mamba fall at the mode
+  change is one run's late saves (s3m_t3g_625 140 and 160), not the architecture: the Mamba students s3h_160 and
+  smk_a2_208 do not have it.
+- Why the t3g students double the teacher's pack-walk jumps (`eval/jump_where_*_nominal.json`, seed 0): rollouts
+  are fully student-driven after iteration 32 (beta 1 -> 0 over 30 iterations), so it is not teacher forcing. The
+  teacher itself steps its knees up to 0.87 rad per tick (mean 0.168, range -1.32 to 1.25); the students reach knee
+  goals of -2.0 to -2.3 rad, clamped on 25 to 35 % of ticks, mean knee step 0.38 to 0.47, and fall at 2.9 s in that
+  seed. They are already above the teacher in the first 2 s (46 to 47.5 against 15 per 10 s), before any walking.
+  Reading (inference): a student reads neither gain nor load, its small errors meet a teacher that answers state
+  errors with large knee steps, and the loop amplifies. A calmer teacher does not show it: the students of t3h_750
+  (teacher 3.5 per 10 s in the gate) score 1.75 to 2.1 in saves 100 to 160, below their teacher. m3s_450 (3.75) is
+  of the calm kind (max knee step 0.62, 3 jumps in the seed-0 episode).
+- NEW, the students' real pack-walk failure: s3h saves pass the pack-walk jump line and fail on falls, and 11 of the
+  12 falls of s3h_120 and s3h_160 come at 18.5 to 19.98 s, after the walk command ends at 17.0 s. `train/
+  ts3_stop_where.py`: the brain stays in walk mode at gain 200 with a zero command; the teacher stops moving (action
+  steps 0.01 to 0.04 rad), the student keeps stepping (0.21 to 0.29) and falls 2 to 3 s later. By walk gain, Mac
+  mini, 20 seeds, s3h_160: gain 200 8 falls (6 after the stop), 250 3 (all after the stop), 300 0, 400 0. smk_a2_208
+  at 200: 3 falls, all after the stop. t3h_750 and m3s_450 at 200: 0. Standing with the pack from the start does
+  not fall (pack_stand 0 of 10 in every s3h save). So the student fails to stand still with the pack at low gain
+  after walking; the teacher reads the gain. Not a lack of standing rows: the distillation env runs with the
+  standing share at its final stage (0.25, `common_step_counter = CURRICULA_DONE_STEP`). Cause not found yet; the
+  anchor does not address it.
+- Env for the full run: `universal5c` = universal5 plus the runtime joint-range cut (`goal_clamp`) that m3s_450 was
+  trained under; distillation reads no reward, so no incentive audit applies. Smoke a3 on the Mac mini (teacher
+  m3s_450, universal5c): builds and steps, `[clamp] position targets cut to the runtime joint ranges (14 joints)`.
+- 02:51 LAUNCHED `zsh train/ts3s_anchor_launch.sh m3s_450 ts3s-m3s-450-a s3a`: Modal T4, app
+  ap-UhoYcYbGzcdqLGWZPogEXw (microduck-flight-ts3s-m3s-450-a), call fc-01M7VYZP1F6J8EEPN3B1JEZHVK, Mamba, 160
+  iterations, saves every 20, anchor w 1.0 on all 14 outputs, case share 0.25, env universal5c, 0.907 USD/h, worker
+  cap 2.0 h, worst case 2.27 USD. Metered 42.00 at 02:43; worst-case sum 42.00 + 2.27 + 0.56 (8 saves scored) =
+  44.83 against 48.5. Scoring follow-up pid 1729 (parent 1, MacBook, lid-dependent), heartbeat
+  `logs/ts3s_m3s_450_a_heartbeat.txt`, saves as `ckpt/s3a_<iteration>`. Teacher choice m3s_450: fewest pack-walk
+  jumps (3.75) of any save with no no-pack failure and passing speed lines. Mamba kept: the launch conditions were
+  measured on a Mamba student; the LSTM's cleaner no-pack record (0 falls in 8 of 8 saves) concerns rows the anchor
+  now labels with walk61.
