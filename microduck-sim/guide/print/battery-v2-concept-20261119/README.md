@@ -106,9 +106,16 @@ on top of the box, the switch pocket and switch window.
 ## Contacts and the dock
 
 Standing, the contact tips are 63.5 mm above the floor (world z 63.5) at x -76.1, facing straight down, 28.9 mm from
-the nearest leg part over the hip sweep; the box bottom is the lowest point of the robot behind its feet. The sim has no sitting keyframe,
-so how far the robot must lower its tail is not computed here; the dock plate height is set from a measured sit
-(scan or IMU pose) when the dock is designed. Spacing 18 mm, so two dock plates 10 mm wide with a 6 mm gap catch one
+the nearest leg part over the hip sweep; the box bottom is the lowest point of the robot behind its feet.
+
+Seated (`sit_clearance.py`, 2026-11-19: the real Brain sit in the current as-built model battery-20261104, 7.0 V, run on
+the Mac mini with `~/.venvs/microduck-dyn`): the trunk drops 55.6 mm (114.7 to 59.1 mm) and stays nearly level (pitch
+-1.7 deg). Lowest point above the floor, standing / seated: today's lower tier 80.9 / 22.9 mm, this concept's lower tier
+59.9 / 1.7 mm, contacts 60.0 / 1.8 mm, upper tier 99.6 / 41.6 mm. The concept's box bottom therefore reaches the floor
+when the robot sits (1.7 mm in a model that is 92 g lighter than the new robot); it fails as drawn. A seated clearance
+of 10 mm or more puts the lower-tier bottom at trunk z -46 or higher, 12 mm lower than today at most. The same numbers
+set the dock: contacts 60 mm up standing and about 2 mm plus the box lift seated, so spring plates about 10 mm tall meet
+the contacts only when the robot sits on the dock. Spacing 18 mm, so two dock plates 10 mm wide with a 6 mm gap catch one
 pin each across about +-4 mm of sideways error; the V funnel does the rest.
 
 ## Flight pack
@@ -180,7 +187,8 @@ Decided by the main session 2026-11-19 (reversible, matches Shawn's stated wish 
 - Pololu 2813 current: the 16 A figure on pololu.com is at a 150 C MOSFET; the design figure stays 6 A at a 55 C rise,
   still 3 times the walking current.
 
-Still Shawn's: question 1 (the box grows down).
+Question 1 is answered by the seated check (section "Contacts and the dock"): 21 mm down puts the box on the floor
+when the robot sits, so the lower tier may grow at most 12 mm down (bottom z -46) and the pack must find its room another way.
 
 ## Proposal items that do not fit as written
 
