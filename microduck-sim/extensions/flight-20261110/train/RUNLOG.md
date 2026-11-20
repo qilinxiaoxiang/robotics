@@ -2151,3 +2151,55 @@ for scoring.
   stepping. Also the imitation term's value for (1) to (3) is reported, since it is part of the loss. If a cell
   fails, the proposal goes back to the coordinator; no reward edit without Shawn's approval.
 - Not proposed: recipe B (restart at teacher cost), prewarm, weight means, prox weighting.
+
+## 2026-11-20 09:30 degenerate-policy audit before PPO on the student: 5 PASS, 3 FAIL; plan stopped, smoke not started
+
+Order: proposal A agreed; code, then audit, then smoke; "any failing cell stops the plan and comes back".
+- Code (default off, uncommitted until this entry): `distill_worker.py` gets `--rl-w` (0 = off), `--bc-w`,
+  `--bc-w-final`, `--rl-clip`, `--rl-gamma`, `--rl-lam`, `--rl-std`, `--rl-vf`, `--rl-critic-lr`,
+  `--rl-critic-warmup`: critic MLP on the teacher's inputs, learned action std, GAE over the 100-tick segment with
+  time-outs bootstrapped, clipped surrogate in the BPTT replay, `[rl] it N` line per iteration. Compiles; it has
+  not run anywhere (the smoke `ts3_rl_smoke.sh` was written and NOT launched).
+- Audit tool: `microduck_rl/cmu/finetune/flight/student_audit.py`, not `flight_audit.py`. Reason: `flight_audit.py`
+  loads policies into the PPO runner's MLP actor and can neither run the recurrent student nor pin a gain. The new
+  script builds the student's own env (`distill_worker.build_env`, delta universal5, pushes and randomisation kept),
+  pins load and gain, forces the forward command, and sums the env's own reward terms (names from the env's reward
+  manager). Chain `ts3_saudit_chain.sh` on the Mac mini, 96 envs x 250 steps per policy, heartbeat
+  `logs/ts3_saudit_heartbeat.txt` (DONE 09:20:35); JSON `out/student_audit_<load>_g<gain>_c<cmd>.json`.
+- Policies: still (zero action), stand61, student_zero (s3AB_140 fed a zero command), shuffle_stu (s3AB_140 fed a
+  0.3 rad/s turn), shuffle_w61 (walk61 fed the same); controls teacher t3h_750 and student s3AB_140. Verdict: at
+  command 0.25 both controls must earn more than every degenerate policy; at command 0 both controls must earn more
+  than both in-place steppers. Ratio = best rival / lower control.
+- Results, reward per second (falls per env-minute; forward speed m/s):
+  - `full_g1.0_c0.25` PASS (ratio 0.53, best rival shuffle_stu): still 2.149 (88.38; -0.1299), stand61 -0.933 (37.25; -0.0643), student_zero 3.352 (25.12; -0.0206), shuffle_stu 3.395 (24.75; -0.0197), shuffle_w61 -0.548 (38.25; -0.0467), teacher 6.792 (15.0; 0.0716), student 6.403 (20.25; 0.0649)
+  - `full_g1.0_c0.0` FAIL (ratio 1.015, best rival shuffle_stu): still 3.604 (88.38; -0.1299), stand61 0.613 (37.25; -0.0643), student_zero 5.004 (25.12; -0.0206), shuffle_stu 4.993 (24.75; -0.0197), shuffle_w61 0.699 (38.25; -0.0467), teacher 4.917 (21.75; -0.0149), student 4.996 (27.38; -0.0257)
+  - `full_g2.0_c0.25` PASS (ratio 0.475, best rival shuffle_stu): still 2.561 (68.62; -0.1184), stand61 -4.57 (31.5; -0.0706), student_zero 3.47 (16.88; -0.0121), shuffle_stu 3.502 (15.25; -0.0114), shuffle_w61 -3.655 (32.62; -0.0564), teacher 7.376 (4.38; 0.0895), student 7.685 (9.25; 0.0883)
+  - `full_g2.0_c0.0` PASS (ratio 0.992, best rival shuffle_stu): still 4.115 (68.62; -0.1184), stand61 -3.007 (31.5; -0.0706), student_zero 4.996 (16.88; -0.0121), shuffle_stu 5.021 (15.25; -0.0114), shuffle_w61 -2.805 (32.62; -0.0564), teacher 5.063 (8.88; -0.0018), student 5.103 (17.88; -0.0145)
+  - `none_g1.0_c0.25` PASS (ratio 0.499, best rival shuffle_stu): still 3.231 (51.88; -0.0495), stand61 2.705 (4.0; -0.0641), student_zero 2.986 (7.0; -0.0501), shuffle_stu 3.345 (7.12; -0.0379), shuffle_w61 3.224 (6.62; -0.0554), teacher 7.967 (3.25; 0.0689), student 6.703 (5.75; 0.0228)
+  - `none_g1.0_c0.0` FAIL (ratio 1.16, best rival shuffle_stu): still 4.527 (51.88; -0.0495), stand61 4.125 (4.0; -0.0641), student_zero 4.044 (7.0; -0.0501), shuffle_stu 4.527 (7.12; -0.0379), shuffle_w61 3.859 (6.62; -0.0554), teacher 3.903 (3.88; -0.0323), student 4.191 (7.38; -0.0493)
+  - `none_g2.0_c0.25` FAIL (ratio 1.809, best rival still): still 3.323 (23.12; -0.0397), stand61 -2.78 (16.62; -0.0856), student_zero 1.653 (8.12; -0.0531), shuffle_stu 1.826 (7.62; -0.0452), shuffle_w61 0.318 (9.0; -0.0784), teacher 8.179 (1.88; 0.0746), student 1.837 (11.38; -0.0235)
+  - `none_g2.0_c0.0` PASS (ratio 0.912, best rival shuffle_stu): still 5.163 (23.12; -0.0397), stand61 -1.623 (16.62; -0.0856), student_zero 2.745 (8.12; -0.0531), shuffle_stu 2.531 (7.62; -0.0452), shuffle_w61 0.402 (9.0; -0.0784), teacher 3.919 (1.88; -0.043), student 2.775 (8.88; -0.0402)
+- What the three failures are:
+  1. `none_g2.0_c0.25` (no pack, gain 400, walk): the reward itself is sound here, the teacher earns 8.179 against
+     3.323 for the best degenerate policy. The failing control is the student: 1.837, forward speed -0.0235, 11.38
+     falls per env-minute; it earns less than zero action. Terms per second, student against teacher: progress 2.223
+     / 4.520, torque margin -2.867 / -0.522, action rate -1.250 / -0.356. Rerun with 15 s windows
+     (`ts3_saudit_long.sh`, 48 envs x 750 steps, `out/saudit_long/`, DONE 09:29:34): same, student 1.767 (11.83;
+     -0.0105), still 3.302, teacher 8.866, ratio 1.869; so it is not the 5 s window from a cold recurrent state.
+     The gate reads the same save differently in its own episode: `logs/gates_s3AB_140_score.log` G3
+     none_g400_walk 0 falls of 10, speed 0.0733. Unresolved (inference): the training env has pushes and
+     randomisation the gate episode lacks, and no 2 s stand phase before the command.
+  2. `none_g1.0_c0.0` (no pack, gain 200, zero command): shuffle_stu 4.527 against teacher 3.903 and student
+     4.191. Stepping in place is not paid less than the teacher's standing: track_linear 2.793 / 2.833 and
+     track_angular 1.500 / 1.401 are the same, and the teacher loses on head_pose_bias (-0.842 against -0.398) and
+     pose (0.486 against 0.611).
+  3. `full_g1.0_c0.0` (pack, gain 200, zero command): shuffle_stu 4.993 against teacher 4.917, student 4.996,
+     student_zero 5.004. All four within 0.09; the reward does not separate them. The two passing zero-command
+     cells are as close (ratios 0.992 and 0.912).
+- Reading (inference): at a walk command the teacher's reward ranks walking far above every degenerate policy in
+  all four cells (ratio 0.47 to 0.53 for the cells where the student walks). At zero command the reward does not
+  rank standing above in-place stepping with a turn input; a PPO term would have no pressure against it there
+  other than the imitation term. "still" (zero action) falls 23 to 88 times per env-minute in this env and still
+  earns 2 to 5 per second.
+- Stopped per the order. Not started: `ts3_rl_smoke.sh`, Kaggle preparation, any Modal job. Rewards unchanged.
+  Mac mini idle, Modal live apps 0, metered 45.56 (bill heartbeat 09:16:54).
