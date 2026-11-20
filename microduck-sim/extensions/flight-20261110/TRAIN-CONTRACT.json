@@ -292,6 +292,21 @@
         "b1_rescore\\.(sh|py)\\b"
        ],
        "result": "",
+       "paused": "2026-11-20 about 15:00, by the agent, after 32 heartbeat lines (the first candidate s3AB_100 already misses the line: 50 % load at gain400, standing 49 of 60 window falls, walking 19 of 60). Its candidates serve the universal-model goal Shawn set aside at 14:55; the with-pack specialist (attempt 2) goes first on the Mac mini. The job keeps finished cells and is resumed with the same command when the Mac mini is free.",
+       "verdict": "running",
+       "evidence": ""
+      },
+      {
+       "n": 2,
+       "started": "2026-11-20T15:02:00-05:00",
+       "hypothesis": "fq2 iteration 1999 is a one-frame policy fine-tuned from walk61 with the pack fitted (2026-11-11). In the old probe at the nominal gain it fell 3 times in 280 with-pack episodes. It was trained without gain randomisation, like ft3, t1 and run A, which the robot dropped or which fail the gain400 filter; t2b, also a fine-tune of walk61, passes it. Nothing on record says which side fq2 is on.",
+       "prediction": "Written before the run. Nominal with-pack cells (50 %, 75 %, full): at most 3 window falls of 60 in each, standing and walking. Gain400 with-pack cells: the walking cells exceed 6 window falls of 60 in at least one of the three loads, so fq2 does not pass the filter (about 60 % sure). No-pack cells: worse than walk61, which does not matter under the two-set decision.",
+       "prediction_zh": "开跑前写下：默认仿真里，带背包的各格（一半、四分之三、整包）站和走都不超过 60 次摔 3 次。增益调高的条件下，带背包走路至少有一格会超过 60 次摔 6 次，也就是它过不了筛子（约六成把握）。理由：它和上机摔过的那几个模型一样，训练时没有随机变化舵机力度。不带背包的格子比 walk61 差，但按两套模型的决定这不要紧。",
+       "command": "ssh mac-mini 'cd code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110 && nohup zsh train/b1k_rescore.sh > /dev/null 2>&1 < /dev/null &'  (phase 1: the reference's four no-pack cells and fq2_1999's 20 cells, 60 seeds from 2000, feed check first; heartbeat train/logs/b1k_rescore_heartbeat.txt; phase 2, the teachers, is started separately later)",
+       "launch_match": [
+        "b1k_rescore\\.(sh|py)\\b"
+       ],
+       "result": "",
        "verdict": "running",
        "evidence": ""
       }
