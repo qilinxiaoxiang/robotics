@@ -29,8 +29,8 @@ T = Path(__file__).resolve().parent
 RL = T.parents[2] / "microduck_rl"
 HB = T / "logs/ts3_distill_heartbeat.txt"
 STATE = T / "logs/ts3_distill_launched.json"
-TAGS = ("t3a", "t3b", "t3c", "t3d", "t3g", "t3h", "t3k", "m3k", "m3p", "m3q", "m3w", "m3g")  # t3g / t3h: the gain-reading pair
-MAX_KERNELS = 1  # 23:30: quota for one more student kernel only; the first passing save of t3k or m3k takes it
+TAGS = ("t3a", "t3b", "t3c", "t3d", "t3g", "t3h", "t3k", "m3k", "m3s", "m3p", "m3q", "m3w", "m3g")  # t3g / t3h: the gain-reading pair
+MAX_KERNELS = 0  # 00:17: the last student kernel went to t3g_625 by hand; a passing save is recorded, nothing is pushed
 MIN_QUOTA_H = 2.4
 FLAGS = ("--distill --delta universal5 --manifest /root/assets/manifests/flightpack-none.json --max-iters 160 "
          "--max-hours 2.2 --save-interval 20 --warmup-iters 2 --beta-iters 30 --bptt-steps 100 --epochs 2 "

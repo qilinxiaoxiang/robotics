@@ -33,7 +33,7 @@ case "$1" in
     rsync -a $T/$RM mac-mini:$REMOTE/smoke-assets/$RM
     ssh mac-mini "cd $REMOTE/$RL && zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs $JOB \
       --cases $CS --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/smoke-assets/$RM)\" --device cpu --num-envs 128 --steps ${TSSTEPS:-250} \
-      --assets $A --policy start=$A/ts_start.onnx --walker start $EX --out /tmp/ts3_audit_${TAG}_$LD 2>&1" \
+      --assets $A --policy start=$A/${TSWALK:-ts_start.onnx} --walker start $EX --out /tmp/ts3_audit_${TAG}_$LD 2>&1" \
       > $T/logs/audit_${TAG}_$LD.log || true
     scp -q mac-mini:/tmp/ts3_audit_${TAG}_$LD/audit.json $T/out/audit_${TAG}_$LD.json || true
     grep -E "\[audit\]|\[gain\]|Traceback|Error" $T/logs/audit_${TAG}_$LD.log | cut -c1-600 | head -12

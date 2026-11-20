@@ -1402,3 +1402,51 @@ under 70.00 USD metered (workspace limit 75).
 - Side finding, not followed up: with the pack 20 % of walking ticks ask a hip-roll goal beyond the joint range
   (+-0.384 rad) and 22 to 42 % a head-roll goal beyond +-0.436; the runtime's `clamp_goal` cuts those, the training
   env does not clamp the command (joint range in the MJCF, wide control range). Knees are never clamped.
+
+### 2026-11-20 00:17 to 00:57: student kernel from t3g_625, ts3m-k625 stopped, big-step arm ts3m-b625 on Modal
+
+- 00:17 Kaggle kernel `microduck-ts3s-t3g-625-m` pushed through `ts3_distill_trigger.launch('t3g_625')`: Mamba
+  `ts3s-t3g-625-m` and LSTM `ts3s-t3g-625-l` from `init/ts3t_t3g_625.onnx`, 160 iterations, `--max-hours 2.2`.
+  Quota before the push 3.74 h (00:16:48), 3.36 h at 00:28 with two sessions running. RUNNING from 00:21. Scoring
+  follow-up `ts3_after_pair.py` (detached, parent 1), heartbeat `logs/ts3s_t3g_625_heartbeat.txt`, folders
+  `ckpt/s3m_t3g_625_<iter>` and `ckpt/s3l_t3g_625_<iter>`, all gates including G1.
+- 00:17 distill trigger restarted record-only (`MAX_KERNELS = 0`, tag m3s added): it records a passing teacher save
+  in `logs/ts3_distill_heartbeat.txt` and pushes nothing.
+- 00:18 ts3m-k625 stopped at iteration 825 of 1000 (`modal app stop -y`), its watcher ended; training cost 1.07 USD
+  of the 1.32 worst case. Saving about 0.25 training plus about 0.1 scoring (estimate). modal_watch 00:18: 0 live
+  apps, CLEAN.
+- Arm A code: `smooth_terms.leg_step_over` (per tick, per leg joint, only the part of |action - previous action|
+  above 0.3 rad, squared, summed over the ten leg joints); delta `universal5tgb` = universal5tg + that term at
+  weight -200 (one 0.65 rad step: 0.35^2 x 200 x 0.02 s = 0.49 reward) + `goal_clamp`.
+- Clamp (coordinator's point C): one config line, `env_cfg.actions["joint_pos"].clip = RUNTIME_JOINT_RANGE`
+  (mjlab `JointPositionActionCfg.clip` cuts the processed absolute targets), a copy of `walk_brain.JOINT_RANGE` for
+  all 14 joints. Included in universal5tgb. The audit and the smoke run with it (`[clamp] position targets cut to
+  the runtime joint ranges (14 joints)`); the audit passes with it.
+- Audit, first try (tag b1, intended walk = ts_start, no clamp, 7 privileged columns): full pack verdict FAIL, every
+  reward negative (intended -1.657 per second, stand -7.583, shuffle -6.394, lean_fwd -7.275, lean_back -4.525).
+  Cause: ts_start itself takes large leg steps with the pack, so the term costs it about 7.7 reward per second.
+  ts_start is not the policy this arm continues.
+- `flight_audit.py` changed: a job's audit env now takes the job's own privileged columns (8 with the gain input)
+  and its `goal_clamp`, so a gain-input teacher loads as the intended walk. `ts3_audit.sh`: `TSWALK=<onnx in
+  smoke-assets>` picks the intended walk (default ts_start.onnx).
+- Audit, tag b2 (intended walk = t3g_625, the arm's start; weight -200; clamp on; 128 envs, 250 steps), reward per
+  second intended / stand / shuffle / lean_fwd / lean_back and stand ratio:
+  full 9.05 / 3.588 / 3.886 / -0.466 / 1.218, ratio 0.396, PASS;
+  none 7.539 / 2.5 / 2.777 / 0.46 / 1.015, ratio 0.332, PASS;
+  nobatt 9.228 / 3.399 / 3.774 / -0.242 / 1.511, ratio 0.368, PASS.
+  The term itself on the intended walk: -1.07 per second full, -0.36 none, -0.80 nobatt. Files
+  `out/audit_b2_{full,none,nobatt}.json`; gate recorded 00:53:31 (`audit_gate.py record universal5tgb`).
+  One run of the full load was lost to a dropped ssh connection to the Mac mini (00:25 to 00:38) and repeated.
+- Smoke 00:53 (Mac mini, 64 envs, 3 iterations, start t3g_625, delta universal5tgb): 69 inputs, padded actor vs
+  start 1.0e-06, export vs torch 4.2e-07, `leg_step_over` in the reward table at -200, clamp line printed.
+  `out/ts3_teacher_smoke.json`.
+- 00:54 launched `zsh train/ts3m_b625.sh`: Modal app `microduck-flight-ts3m-b625` (ap-QouLTAvditiQagoges7wDX, A10,
+  detached spawned call fc-01M7VR9YXPKJQDVW5985Y6P62Z), from t3g_625, 1000 iterations, save every 25,
+  learning-rate cap 5e-5, start noise 0.10 (the term also taxes exploration noise: two draws at 0.15 differ by
+  more than 0.3 rad on 16 % of leg-joint ticks; the audit is deterministic and does not see this), `--max-hours
+  1.0`, `--max-dollars 2.00`. Watcher `ts3m_watch.py` (detached, pid 38977, parent 1): gates on every 50th save
+  from 100, no gate batch once metered reads 47.00, heartbeat `logs/ts3m_b625_heartbeat.txt`, folders
+  `ckpt/m3s_<iter>`. modal_watch 00:57: 1 live app (this one), 0 alert emails, CLEAN.
+- Budget: metered 40.29 at 00:52. Worst case 40.31 + 2.13 (this arm) + 0.60 (its scoring, 19 saves at 0.024
+  measured, rounded up) + 1.3 (t3k teacher and s3h student scoring) + 0.5 (t3g_625 students) = about 44.8, under
+  48.5, so scoring stays at every 50.
