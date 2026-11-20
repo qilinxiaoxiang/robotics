@@ -7,7 +7,7 @@
 
 Concept stage only: rectangular envelopes of the printed parts and listing-size dummies of the bought parts, enough to
 judge layout, size, mass, balance, leg clearance, seated clearance and the flight-pack conflict. Rounded edges, holders
-and pilots come in the CAD stage, after Shawn's nod and after the parts are in hand and measured. Frame: backpack local =
+and pilots come in the CAD stage, after Shawn's nod, from the published part sizes (largest value where sources differ). Frame: backpack local =
 guide frame = sim trunk frame, mm, x forward, y left, z up; stand-world z = guide z + 120.
 Writes concept.json and concept-sheet.png next to this file; reads sit_clearance.json when present.
 """
@@ -45,7 +45,7 @@ LOW_LEG = [[[-75.55, -25.3, -46.0], [-49.0, 20.0, -15.2]], [[-49.0, -24.5, -46.0
 TODAY_LOW = ((-75.55, -18.6, -34.0), (-45.0, 18.6, -15.2))
 TODAY_PLATE = ((-47.0, -18.6, -44.0), (-45.0, 18.6, -34.0))    # today's front plate reaches z -44 (frame STL)
 CAP_SPLIT_X = -73.85                                           # frame open to the back over the full height; cap = back plate
-BAT = ((-69.3, -17.0 + SHIFT_Y, -44.0), (-49.3, 17.0 + SHIFT_Y, 28.0))   # 20 x 34 x 72 listing, leads end UP, on the floor
+BAT = ((-69.3, -17.0 + SHIFT_Y, -44.0), (-49.3, 17.0 + SHIFT_Y, 30.0))   # 20 x 34 x 74: largest published size (listing text 72 x 34 x 20, listing drawing 74 x 34 x 19), leads end UP, on the floor
 BAT_FOAM = ((-70.3, BAT[0][1], -38.0), (-69.3, BAT[1][1], 28.0))          # 1 mm foam behind, notched below z -38 (cap bosses)
 PLAY = 0.3
 RIB_TOP_Z = BAT[1][2] + PLAY                                   # top ribs 0.3 over the pack: it slides in under them
@@ -54,13 +54,13 @@ PADS_Y = (9.0, -9.0)
 PAD_W, PAD_T, PAD_FACE_X = 6.0, 0.5, (-73.85, -65.85)          # L pad: face under the floor, tab up the frame's back face
 PAD_TAB_TOP = -35.0
 PARTS = {   # bought parts (listing sizes), positions chosen here
-    "battery 2S 3000 (B08LZ8L4YD)": dict(box=BAT, g=110.0, src="listing 72 x 34 x 20 mm, 110 g"),
+    "battery 2S 3000 (B08LZ8L4YD)": dict(box=BAT, g=110.0, src="listing text 72 x 34 x 20, drawing 74 x 34 x 19; envelope 74 x 34 x 20; scale photo 107.5 g"),
     "Pololu 2813": dict(box=((-68.0, 26.15, -12.0), (-47.7, 30.35, 13.4)), g=2.7, src="pololu.com 0.8 x 1.0 x 0.16 in, 2.7 g"),
     "DFR1202": dict(box=((-73.6, 14.2, -13.5), (-47.6, 22.2, 16.5)), g=6.0, src="30 x 26 x 8 mm (team README), 6 g manifest"),
     "XIAO SAMD21": dict(box=((-73.3, -30.35, 17.5), (-52.3, -25.85, 35.0)), g=3.0, src="21 x 17.5 mm board, 4.5 mm with USB-C; 3 g estimate"),
     "16 mm LED button (Adafruit 560)": dict(button=dict(c=BTN_C), g=10.0,
                                             src="PM161F family drawing: bezel 18.5, nut 19 AF / 21.8 corners, 20 behind panel; 10 g estimate"),
-    "Schottky 1N5822 (DO-201AD)": dict(box=((-66.0, -14.0, 29.0), (-56.5, -8.7, 34.3)), g=1.1, src="DO-201AD body 9.5 x 5.3, in the top bay on the charge lead"),
+    "Schottky 1N5822 (DO-201AD)": dict(box=((-66.0, -14.0, 31.0), (-56.5, -8.7, 36.3)), g=1.1, src="DO-201AD body 9.5 x 5.3, in the top bay on the charge lead"),
     "contact pad +": dict(pad=PADS_Y[0], g=0.5, src="L contact 6 x 0.5 mm, brass or nickel-plated steel; part not yet chosen"),
     "contact pad -": dict(pad=PADS_Y[1], g=0.5, src="same"),
 }
@@ -394,8 +394,8 @@ def sheet(out, frame, cap, solids, rp):
     ax.plot([PAD_FACE_X[0], PAD_FACE_X[1]], [LOW[0][2] + 0.25] * 2, color=COL["contact"], lw=4)
     ax.plot([PAD_FACE_X[0] + 0.25] * 2, [LOW[0][2], PAD_TAB_TOP], color=COL["contact"], lw=3)
     rect(ax, (CAP_SPLIT_X, 0, -44), (CAP_SPLIT_X + 4.3, 0, -39), 0, 2, fc="#b35900")
-    ax.annotate("battery 72 x 34 x 20\nleads up (110 g)", (-59.3, -10), ha="center", color="w", fontsize=9, weight="bold")
-    ax.annotate("lead bay 13.3 mm:\nXT30 joint, XH, diode", (-60, 33), ha="center", fontsize=8)
+    ax.annotate("battery 74 x 34 x 20\nleads up (110 g)", (-59.3, -10), ha="center", color="w", fontsize=9, weight="bold")
+    ax.annotate("lead bay 11.3 mm:\nXT30 joint, XH, diode", (-60, 33), ha="center", fontsize=8)
     ax.annotate("2 L pads flush with the bottom;\nlower cap screw clamps each tab", (-128, -60), fontsize=8, color="#8a6d00")
     ax.annotate("cap | frame", (CAP_SPLIT_X - 9, 46), fontsize=8, color="#e07000")
     ax.annotate("dashed = today (box z -34, front plate z -44)", (-128, 52), fontsize=8)
@@ -474,7 +474,7 @@ def sheet(out, frame, cap, solids, rp):
     ax.text(0.0, 1.0, txt, family="monospace", fontsize=9, va="top")
 
     # --- numbers
-    ax = fig.add_subplot(2, 4, 6); ax.axis("off"); ax.set_title("Numbers (concept envelopes; CAD after the parts are measured)")
+    ax = fig.add_subplot(2, 4, 6); ax.axis("off"); ax.set_title("Numbers (concept envelopes; CAD from the published sizes)")
     m, o, g = out["mass"], out["outline"], out["gaps_mm"]
     leg = out["leg_clearance_mm (hip pitch +-30, roll +-10)"]
     fl = out["flight_overlap_mm3 (backpack shifted -6.9 x)"]

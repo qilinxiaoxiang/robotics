@@ -102,7 +102,7 @@ and balance-point shift as estimates (shell plus parts).
 ## Features (each answers a problem by number)
 
 - **F1 Lower tier 12 mm lower than today's box, widened to y -25.3, front-right chamfer 3.8 mm** (4, 9). Why: the
-  72 mm pack needs 85.3 mm inside, and z -46 is the lowest bottom that keeps 10 mm seated. Simpler option: a shorter
+  74 mm pack (largest published length) needs 85.3 mm inside, and z -46 is the lowest bottom that keeps 10 mm seated. Simpler option: a shorter
   pack (none of the same capacity under about 60 mm was found). Check: seated 10.9 mm, legs 7.6 mm. Delete or
   shrink if a pack under about 60 mm long is chosen.
 - **F2 Battery column, 6.3 mm right of centre** (4, 2). The pack is boxed by the lower tier's right wall continued up as
@@ -111,7 +111,7 @@ and balance-point shift as estimates (shell plus parts).
   through the 1 mm foam pad as the rear stop, and two 3 mm top ribs 0.3 mm over the pack top. It slides in from the
   open back under the top ribs. No bars, no screws on the pack. Simpler option: the pack centred (layout A), which
   leaves no room for the button.
-- **F3 Lead bay over the pack, 13.3 mm** (4, 6, 7). The XT30 and XH leads rise into it and bend sideways at once; the
+- **F3 Lead bay over the pack, 11.3 mm with the 74 mm envelope (13.3 mm at the listing text's 72 mm)** (4, 6, 7). The XT30 and XH leads rise into it and bend sideways at once; the
   battery XT30 meets the Pololu VIN pigtail here, the XH plug meets the XIAO harness socket, and the 1N5822 sits here on
   the charge lead. The pack's DC5.5 lead is not used: its plug is capped and laid in the bay. Balance charge: cap off
   (four screws), unplug the XH, plug it into the B3.
@@ -125,8 +125,7 @@ and balance-point shift as estimates (shell plus parts).
 - **F7 16 mm panel hole in the cap's upper left** (2): centre y +19.3, z 30.2, beside the pack. Adafruit 560 (green
   ring) or 559 (red): momentary, 1 NO 1 NC, 6 V LED ring with built-in resistor. Body 20 mm behind the panel with
   terminals plus 3 mm for the solder joints; its wires leave sideways. Nut 19 across flats, 21.8 across corners (vendor
-  drawing of the same 16 mm family, Adafruit 3350 datasheet PM161F-10E; Adafruit gives no drawing for 560, confirm on
-  arrival); the box keeps the whole 21.8 mm circle clear, so the nut may stop at any angle.
+  drawing of the same 16 mm family, Adafruit 3350 datasheet PM161F-10E; Adafruit gives no drawing for 560; the CAD takes the published DigiKey 560 drawing); the box keeps the whole 21.8 mm circle clear, so the nut may stop at any angle.
 - **F8 Two fixed contact pads, flush with the bottom** (5). Each pad is an L: a 6 x 8 mm face under the floor
   (x -73.85 to -65.85, at y +9 and -9, 18 mm apart) in a 0.5 mm floor pocket, and a tab up the frame's back face in a
   0.5 mm recess. The dock pushes the face up against the floor; the lower cap screw clamps the tab between the cap and
@@ -252,9 +251,10 @@ Still open on the agent side (no decision needed from Shawn):
 - Seated margin is 0.9 mm over the 10 mm rule, measured in today's model, which is 85 g lighter. The dated sim variant
   with these parts reruns `sit_clearance.py` before release.
 - Several gaps are under 0.5 mm (button body to pack, nut circle to the wing wall and roof, lower bosses to the pack).
-  They hold on listing sizes; each is remeasured on the real parts before CAD.
-- The 13.3 mm lead bay assumes the leads leave the pack's top end and can bend sideways within about 8 mm; confirm on
-  the pack when it arrives.
+  The CAD takes each part's largest published size; no physical measurement gates the design.
+- Battery envelope: 74 x 34 x 20 mm, the largest of the published sizes (listing text 72 x 34 x 20, listing drawing
+  74 x 34 x 19). The listing photos show the XT30, XH and DC5.5 leads all leaving one 34 x 19 end. With 74 mm the
+  lead bay is 11.3 mm and the 1N5822 sits at z 31 to 36.3; concept checks pass (concept.json, 2026-11-20).
 - The pad part (see BOM) is not chosen yet.
 
 ## Proposal items that do not fit as written
