@@ -1,5 +1,5 @@
 {
- "about": "Behaviour and control requirements Shawn stated for the flight pack, in his words. Hardware geometry facts live in cad/DESIGN-CONTRACT.json; part status in ../../CURRENT-STATE.json (parts_flight_pack). Add a requirement here in the turn he states it.",
+ "about": "Behaviour and control requirements Shawn stated for the flight pack, in his words. Hardware geometry facts live in cad/DESIGN-CONTRACT.json; part status in ../../CURRENT-STATE.json (parts_flight_pack). Add a requirement here in the turn he states it. Each requirement carries a coverage object tying it to gate cells and training conditions; python3 requirements_check.py must pass before a training launch.",
  "requirements": [
   {
    "id": "FP-R1",
@@ -14,7 +14,10 @@
    ],
    "acceptance": "Starting in each mode loads that mode's policies and start-up flow, shown on the page; a start with the pack fitted in normal mode, or without it in jetpack mode, is refused or warned before torque comes on.",
    "status": "recorded, not implemented; the with-pack policy exists in simulation only and nothing is deployed to the robot",
-   "open": "resolved by FP-R2: the mode is detected, not chosen by hand"
+   "open": "resolved by FP-R2: the mode is detected, not chosen by hand",
+   "coverage": {
+    "not_applicable": "Mode switch on the remote is the fallback if the universal policy fails; it is runtime UI, not a training condition."
+   }
   },
   {
    "id": "FP-R2",
@@ -24,7 +27,10 @@
    "mechanism_planned": "The flight controller sends a MAVLink heartbeat about once a second on FC UART1 to A7Z pins 16/18 (wiring/wiring.json). Heartbeat seen before torque comes on = jetpack mode; none = normal mode. The page shows the detected mode before torque.",
    "known_gap": "The flight controller is powered only from the flight batteries. Pack fitted but its batteries unplugged gives no heartbeat, so detection alone would pick normal mode with about 1 kg on the back. Needs one of: a detection that works unpowered, or the page showing the detected mode with a manual override as the fallback.",
    "acceptance": "Brain started with the pack powered loads the with-pack policies with no user action and shows 'jetpack mode' on the page; started without the pack shows 'normal mode'; the unpowered-pack case is either detected or visibly flagged before torque.",
-   "status": "recorded, not implemented; the A7Z spare serial port has not been enabled or tested yet"
+   "status": "recorded, not implemented; the A7Z spare serial port has not been enabled or tested yet",
+   "coverage": {
+    "not_applicable": "Pack detection by the A7Z is runtime code and the fallback route; not a training condition."
+   }
   },
   {
    "id": "FP-R3",
@@ -32,7 +38,21 @@
    "words": "或者能不能训练一个能通用的走路和支撑模型？就像人扛着一个重物和不扛重物都能适应，都能适应着走 ... 负重为0或者1公斤在背上都能走，是不是这样会好一点？ / 可以的，对，尽量按照通用模型来试吧。",
    "meaning": "Prefer one universal stand/walk policy that works with any back load from 0 to about 1 kg, so that walking does not depend on mode selection (FP-R1, FP-R2 stay as the fallback and for showing flight controls).",
    "acceptance": "In the existing probe the universal policy is not worse than the with-pack specialist (fq2 1999) with the pack, not worse than stand61/walk61 without it, and holds at intermediate loads; otherwise two policy sets plus detection remain.",
-   "status": "plan requested (train/UNIVERSAL-PLAN.md); no training launched; Shawn sees the plan before any run"
+   "status": "plan requested (train/UNIVERSAL-PLAN.md); no training launched; Shawn sees the plan before any run",
+   "coverage": {
+    "gate_cells": [
+     "none_stand",
+     "none_walk",
+     "pack_stand",
+     "pack_walk",
+     "pack25_walk",
+     "pack50_walk",
+     "pack75_walk"
+    ],
+    "train_terms": [
+     "PAYLOAD5_WEIGHTS"
+    ]
+   }
   },
   {
    "id": "FP-R4",
@@ -44,7 +64,10 @@
     "the flight batteries must be chargeable or swappable without removing the pack",
     "leg servos carry about twice the load all the time: heat and wear under continuous walking are unmeasured"
    ],
-   "status": "recorded; not verified on hardware"
+   "status": "recorded; not verified on hardware",
+   "coverage": {
+    "not_applicable": "The pack staying mounted is a hardware and usage requirement; its training consequence is FP-R3 and FP-R8."
+   }
   },
   {
    "id": "FP-R5",
@@ -52,7 +75,15 @@
    "words": "训练完成以后走路怎么有点外八 有点难看啊。。。 另外弯腰那些还能做吗 头部运动那些",
    "meaning": "With the pack the walk must not look splayed (toes out) compared with the gait he knows; bending for the pickup and head motion must still work with the pack on.",
    "acceptance": "Stance foot heading and step width of the with-pack walk measured against walk61 without the pack and held near it; the pickup bend and the runtime's head pitch/yaw motions run with the pack in the probe without falls and inside the joint torque limit.",
-   "status": "measured in simulation 2026-11-11 (train/out/style_bend_head.json). Toe-out: fq2 1999 with the pack 21.3 / 22.2 deg stance foot yaw and 119 mm step width against walk61's 7.3 / 4.2 deg and 94 mm: NOT met; a foot-heading term is in train/UNIVERSAL-PLAN.md, whose incentive audit does not pass yet. Head motion standing and walking: 0 falls (quack not yet exercised). Bend with the pack: 20 of 20 fall, hip pitch at the torque limit: NOT met; the bend is a separate policy, plan requested (train/BEND-PLAN.md). Geometry clears (cad/checks/accepted.json). No training launched"
+   "status": "measured in simulation 2026-11-11 (train/out/style_bend_head.json). Toe-out: fq2 1999 with the pack 21.3 / 22.2 deg stance foot yaw and 119 mm step width against walk61's 7.3 / 4.2 deg and 94 mm: NOT met; a foot-heading term is in train/UNIVERSAL-PLAN.md, whose incentive audit does not pass yet. Head motion standing and walking: 0 falls (quack not yet exercised). Bend with the pack: 20 of 20 fall, hip pitch at the torque limit: NOT met; the bend is a separate policy, plan requested (train/BEND-PLAN.md). Geometry clears (cad/checks/accepted.json). No training launched",
+   "coverage": {
+    "gate_cells": [
+     "none_walk"
+    ],
+    "train_terms": [
+     "ANCHOR61"
+    ]
+   }
   },
   {
    "id": "FP-R6",
@@ -60,7 +91,10 @@
    "words": "另外仿真里应该把背包画出来看看呀",
    "meaning": "With-pack simulation views and videos show the pack itself (CAD meshes at the CAD pose), not only its mass.",
    "acceptance": "Walk, landing and flight clips show the pack on the duck; visual geoms only, existing probe numbers unchanged.",
-   "status": "dispatched 2026-11-11; not done"
+   "status": "dispatched 2026-11-11; not done",
+   "coverage": {
+    "not_applicable": "Drawing the pack in the simulation view is a viewer requirement, not a training condition."
+   }
   },
   {
    "id": "FP-R7",
@@ -68,15 +102,28 @@
    "words": "捡不起东西了 不能接受",
    "meaning": "The bend exists to pick an item up with the beak (final goal step 4). A bend policy that stays upright but cannot pick the item up is rejected, whatever its posture and torque numbers. Said about bend4 (knee about 1.17 rad, trunk pitch about 28 deg) after its clip.",
    "acceptance": "A pickup test in the runtime simulation with the 12 mm ball: the item is in the beak after the rise and still held after the hand-back to the stand policy, counted per load (full pack, batteries out, no pack), compared with the original pick policy without the pack. Mouth height, trunk pitch and torque lines stay as supporting lines; they cannot pass a bend by themselves.",
-   "status": "NOT met 2026-11-12, now measured. Pickup test = the seeing pick (seepick61, the policy that picks on the robot) in the runtime sim, 12 mm ball and a drawn box, 20 seeds each, held = pinched, off the floor, lifted over 1 cm at the hand-back (train/eval/pk_*.json). No pack, original stander: ball 11 of 20 held at the hand-back (5 still held 3 s later), box 14 (12), 0 falls. No pack, fq2 stander: ball 15 (12), box 16 (16), 1 fall. Batteries out and full pack: 0 of 20 held, 20 of 20 falls (tilt guard over 55 deg) for ball and box. bend4 was fine-tuned from groundpick61, the blind bend that sees no item and is not the policy that picks; the policy that has to work with the pack is seepick61, and it has not been trained with the pack. 2026-11-12 22:20: first training run spk1 (seepick61 fine-tuned with no pack / batteries out / full pack mixed, Modal L4) stopped at iteration 325 for 0.92 USD without learning: held on the pack loads stayed at 0.1-0.5 % and the fall rate rose to 0.99. The start policy already falls at 25 % load (0.239 kg): 0 of 20 held, 18 falls, legs not torque-limited. Next run spk2 grows the load from zero in small steps (docs/PET_ROBOT_LOG.md, entry 2026-11-12 22:20). Still NOT met. 2026-11-13 spk2 (load-scale curriculum, Modal, 3.81 USD) reached pack scale 0.86 in training. Runtime sim, its best policy (train/eval/pk_spk2_best_*_ball.json), held / falls of 20: no pack 1 / 0, 25 % 1 / 0, 50 % 1 / 7, 75 % 2 / 2, batteries out 0 / 17, full 3 / 14. Still NOT met: balance improved on the scaled-pack line, but the pick is lost at every load (the training jaw closes about twice as fast as the runtime jaw, so the policy lifts before the beak has closed) and the batteries-out mass distribution is not in the curriculum. spk3 (training jaw matched to the runtime jaw, start spk2 best) launched 2026-11-13 16:34, app ap-FNHETdeMUdmTJBAQlPUI3m; a later run adds the batteries-out distribution. 2026-11-13 18:50 spk3 stopped at iteration 681 (1.96 USD). Best checkpoint iteration 300 (train/ckpt/spk3_300), runtime sim held (still held 3 s later) / falls of 20: no pack 19 (15) / 0, 25 % 20 (20) / 0, 50 % 19 (18) / 0, 75 % 14 (12) / 3, batteries out 3 / 13, full 5 (1) / 19; the original pick policy without a pack is 15 (12). PARTLY met: the pick works with up to half the pack mass; the two loads the acceptance names (batteries out, full) still fall to the right during the bend. Training reports balance at those loads that the runtime sim does not show; that difference is being diagnosed before the next run. 2026-11-13 19:45: the heavy-load falls depend on the runtime sim's loop delay. At the default (about 44 ms from sample to applied goal) spk3 iteration 600 holds 3 of 20 with the full pack and 12 with batteries out; at about 24 ms (--sensor-delay 0; the robot logs give 16 ms joint age at the brain tick) it holds 19 of 20 at both, 20 at 50 % and 75 %, 20 with no pack. The original pick policy with no pack holds 15 at 44 ms and 6 at 24 ms, so neither setting is shown to be the robot's. Still PARTLY met: FP-R7 is judged at both delays; run spk4 (joint input lag 0 to 1 extra step) is being prepared (docs/PET_ROBOT_LOG.md 2026-11-13 19:37 and 19:45). 2026-11-13 22:50: MET IN THE RUNTIME SIM, not on the robot. spk4 iteration 300 (joint inputs trained with 0 to 1 step of extra lag), 12 mm ball, held of 20 on the dev seeds and on 20 new seeds: at the default delay (44 ms) full pack 13 and 18, batteries out 19 and 18, no pack 18 and 16; at 24 ms full 16 and 16, batteries out 18 and 18, no pack 19 and 20. The original pick policy: no pack 15 and 14, 0 with any pack. Weakest: full pack at 44 ms (5 falls in 40) and still-held-3-s-later with no pack at 44 ms (12 and 9 against 12 and 12). Later checkpoints are worse, so the checkpoint is chosen by this test only. Nothing is deployed; a robot pick with the pack is not done (docs/PET_ROBOT_LOG.md 2026-11-13 22:50)."
+   "status": "NOT met 2026-11-12, now measured. Pickup test = the seeing pick (seepick61, the policy that picks on the robot) in the runtime sim, 12 mm ball and a drawn box, 20 seeds each, held = pinched, off the floor, lifted over 1 cm at the hand-back (train/eval/pk_*.json). No pack, original stander: ball 11 of 20 held at the hand-back (5 still held 3 s later), box 14 (12), 0 falls. No pack, fq2 stander: ball 15 (12), box 16 (16), 1 fall. Batteries out and full pack: 0 of 20 held, 20 of 20 falls (tilt guard over 55 deg) for ball and box. bend4 was fine-tuned from groundpick61, the blind bend that sees no item and is not the policy that picks; the policy that has to work with the pack is seepick61, and it has not been trained with the pack. 2026-11-12 22:20: first training run spk1 (seepick61 fine-tuned with no pack / batteries out / full pack mixed, Modal L4) stopped at iteration 325 for 0.92 USD without learning: held on the pack loads stayed at 0.1-0.5 % and the fall rate rose to 0.99. The start policy already falls at 25 % load (0.239 kg): 0 of 20 held, 18 falls, legs not torque-limited. Next run spk2 grows the load from zero in small steps (docs/PET_ROBOT_LOG.md, entry 2026-11-12 22:20). Still NOT met. 2026-11-13 spk2 (load-scale curriculum, Modal, 3.81 USD) reached pack scale 0.86 in training. Runtime sim, its best policy (train/eval/pk_spk2_best_*_ball.json), held / falls of 20: no pack 1 / 0, 25 % 1 / 0, 50 % 1 / 7, 75 % 2 / 2, batteries out 0 / 17, full 3 / 14. Still NOT met: balance improved on the scaled-pack line, but the pick is lost at every load (the training jaw closes about twice as fast as the runtime jaw, so the policy lifts before the beak has closed) and the batteries-out mass distribution is not in the curriculum. spk3 (training jaw matched to the runtime jaw, start spk2 best) launched 2026-11-13 16:34, app ap-FNHETdeMUdmTJBAQlPUI3m; a later run adds the batteries-out distribution. 2026-11-13 18:50 spk3 stopped at iteration 681 (1.96 USD). Best checkpoint iteration 300 (train/ckpt/spk3_300), runtime sim held (still held 3 s later) / falls of 20: no pack 19 (15) / 0, 25 % 20 (20) / 0, 50 % 19 (18) / 0, 75 % 14 (12) / 3, batteries out 3 / 13, full 5 (1) / 19; the original pick policy without a pack is 15 (12). PARTLY met: the pick works with up to half the pack mass; the two loads the acceptance names (batteries out, full) still fall to the right during the bend. Training reports balance at those loads that the runtime sim does not show; that difference is being diagnosed before the next run. 2026-11-13 19:45: the heavy-load falls depend on the runtime sim's loop delay. At the default (about 44 ms from sample to applied goal) spk3 iteration 600 holds 3 of 20 with the full pack and 12 with batteries out; at about 24 ms (--sensor-delay 0; the robot logs give 16 ms joint age at the brain tick) it holds 19 of 20 at both, 20 at 50 % and 75 %, 20 with no pack. The original pick policy with no pack holds 15 at 44 ms and 6 at 24 ms, so neither setting is shown to be the robot's. Still PARTLY met: FP-R7 is judged at both delays; run spk4 (joint input lag 0 to 1 extra step) is being prepared (docs/PET_ROBOT_LOG.md 2026-11-13 19:37 and 19:45). 2026-11-13 22:50: MET IN THE RUNTIME SIM, not on the robot. spk4 iteration 300 (joint inputs trained with 0 to 1 step of extra lag), 12 mm ball, held of 20 on the dev seeds and on 20 new seeds: at the default delay (44 ms) full pack 13 and 18, batteries out 19 and 18, no pack 18 and 16; at 24 ms full 16 and 16, batteries out 18 and 18, no pack 19 and 20. The original pick policy: no pack 15 and 14, 0 with any pack. Weakest: full pack at 44 ms (5 falls in 40) and still-held-3-s-later with no pack at 44 ms (12 and 9 against 12 and 12). Later checkpoints are worse, so the checkpoint is chosen by this test only. Nothing is deployed; a robot pick with the pack is not done (docs/PET_ROBOT_LOG.md 2026-11-13 22:50).",
+   "coverage": {
+    "not_applicable": "Pickup is a separate policy (seeing pick); its acceptance is train/eval/pk_*.json, outside the stand/walk gates."
+   }
   },
   {
    "id": "FP-R8",
    "date": "2026-11-20",
-   "words": "背包装了以后，它喷气的时候不负重，不是还是会减到0吗？到时候背包喷气一喷，你又不会走路了？",
-   "meaning": "The load on the legs changes inside one run: fan thrust takes it from the full pack weight down to zero at lift-off and back at landing. The universal stand/walk policy (FP-R3) must stay up while the effective load changes, by feeling it; a constant pack-fitted input is not a solution.",
-   "acceptance": "Gate cells with a thrust force on the pack: constant fractions of pack weight, a ramp up and back while standing and while walking, and a take-off style ramp to near whole-robot weight while standing; falls 0 and jumps within the existing stand/walk lines. Training must contain within-episode thrust changes.",
-   "status": "NOT met 2026-11-20: neither the training env (payload.py: one payload class per episode, constant) nor ts3_gates.py contains any thrust. Found only when Shawn pointed it out. Measurement of existing teacher/student under thrust started on the Mac mini; env and gate change follow."
+   "words": "背包装了以后，它喷气的时候不负重，不是还是会减到0吗？到时候背包喷气一喷，你又不会走路了？ / 2026-11-20 later: 而且负载不仅会到0，还会把自己的体重减轻。",
+   "meaning": "The load on the legs changes inside one run. Fan thrust first cancels the pack's weight and then carries the robot's own weight too: the legs go from pack plus body, through body alone, down to nothing at lift-off, and back at landing. The universal stand/walk policy (FP-R3) must stay up through that whole range while it changes, by feeling it; a constant pack-fitted input is not a solution.",
+   "acceptance": "Gate cells with fan thrust on the pack: constant thrust at fractions of whole-robot weight from 0 to just under 1, a ramp up and back while standing and while walking, and a take-off ramp to lift-off and a landing ramp back while standing; falls 0 and jumps within the existing stand/walk lines. Training must contain within-episode thrust changes over the same range.",
+   "status": "NOT met 2026-11-20: neither the training env (payload.py: one payload class per episode, constant) nor ts3_gates.py contains any thrust. Found only when Shawn pointed it out. Measurement of existing teacher/student under thrust started on the Mac mini; env and gate change follow.",
+   "coverage": {
+    "gate_cells": [
+     "thrust_ramp_stand",
+     "thrust_ramp_walk",
+     "thrust_takeoff_stand"
+    ],
+    "train_terms": [
+     "thrust"
+    ]
+   }
   }
  ]
 }
