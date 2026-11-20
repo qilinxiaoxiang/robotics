@@ -20,6 +20,8 @@ from pathlib import Path
 T = Path(__file__).resolve().parent
 MODAL = "/Users/xiangzheng/code/robotics/omx-local/.venv/bin/modal"
 GPY = "/Users/xiangzheng/.venvs/microduck-walk/bin/python"
+sys.path.insert(0, str(T))
+from gate_lock import gate_lock, run_batch  # noqa: E402
 HB = T / "logs/ts3m_heartbeat.txt"
 if sys.argv[1].startswith("hb="):  # a second watcher writes its own heartbeat: hb=<name> -> logs/<name>_heartbeat.txt
     HB = T / f"logs/{sys.argv.pop(1)[3:]}_heartbeat.txt"
@@ -109,7 +111,8 @@ def main():
             if not (dest / "model_0.onnx").exists():
                 hb(f"{arm} model_0.onnx missing on the Volume, cannot stage {new}")
                 continue
-            sh(["zsh", str(T / "ts2_stage.sh"), arm, arm, tag], log=T / f"logs/ts3m_stage_{arm}.log")
+            with gate_lock(f"{arm} stage"):  # staging writes ckpt/, which every gate batch mounts (gate_lock.py)
+                sh(["zsh", str(T / "ts2_stage.sh"), arm, arm, tag], log=T / f"logs/ts3m_stage_{arm}.log")
             dirs = [f"{tag}_{i}" for i in new if (T / f"ckpt/{tag}_{i}/walk61.onnx").exists()]
             if not dirs:
                 hb(f"{arm} staging failed for {new} (logs/ts3m_stage_{arm}.log)")
@@ -125,8 +128,8 @@ def main():
                 hb(f"{arm} gate batch for {dirs} NOT submitted: {before} (stop at {STOP_USD:.2f})")
                 scored[arm] |= set(new) if usd is not None else set()  # over the line: these saves stay unscored
                 continue
-            rc, _ = sh([MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{stamp}.json"],
-                       log=T / f"logs/gates_{stamp}_run.log", cwd=T.parent, timeout=2400)
+            rc = run_batch(sh, [MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{stamp}.json"],
+                           log=T / f"logs/gates_{stamp}_run.log", cwd=T.parent, timeout=2400, who=f"{arm} batch {stamp}")
             hb(f"{arm} {state}; gate episodes for {dirs} EXIT {rc}; {before} -> {metered()}")
             if rc:
                 continue

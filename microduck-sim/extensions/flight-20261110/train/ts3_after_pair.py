@@ -23,6 +23,8 @@ RL = T.parents[2] / "microduck_rl"
 MODAL = "/Users/xiangzheng/code/robotics/omx-local/.venv/bin/modal"
 GPY = "/Users/xiangzheng/.venvs/microduck-walk/bin/python"
 STOP_USD = 50.0
+sys.path.insert(0, str(T))
+from gate_lock import gate_lock, run_batch  # noqa: E402
 
 kernel, t_run, t_tag, s_run, s_tag, name = sys.argv[1:7]
 opts = dict(a.split("=", 1) for a in sys.argv[7:])
@@ -67,8 +69,8 @@ def gates(tag, dirs, teacher):
     if usd is None or usd >= STOP_USD:
         hb(f"gate batch {tag} for {len(dirs)} saves NOT submitted: {before} (stop at {STOP_USD:.2f})")
         return []
-    rc, _ = sh([MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{tag}.json"], cwd=T.parent,
-               log=T / f"logs/gates_{tag}_run.log", timeout=3600)
+    rc = run_batch(sh, [MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{tag}.json"],
+                   cwd=T.parent, log=T / f"logs/gates_{tag}_run.log", timeout=3600, who=f"{name} batch {tag}")
     hb(f"gate episodes {tag} ({len(dirs)} saves) EXIT {rc}; {before} -> {metered()}")
     ok = []
     for d in dirs:
@@ -108,13 +110,15 @@ def main():
     runs = T / "kaggle/out" / kernel / "runs"
     sdirs, tdirs = [], []
     if (runs / s_run).is_dir():
-        rc, out = sh(["python3", "train/ts2_stage_student.py", kernel, s_run, s_tag], cwd=T.parent)
+        with gate_lock(f"{name} stage student"):  # staging writes ckpt/, which every gate batch mounts (gate_lock.py)
+            rc, out = sh(["python3", "train/ts2_stage_student.py", kernel, s_run, s_tag], cwd=T.parent)
         sdirs = out.split() if rc == 0 else []
         hb(f"student staged {len(sdirs)}: {' '.join(sdirs)}" if rc == 0 else f"student staging EXIT {rc}: {out[-200:]}")
     else:
         hb(f"student run {s_run} absent from the kernel output")
     if (runs / t_run).is_dir():
-        rc, out = sh(["zsh", "train/ts2_stage.sh", kernel, t_run, t_tag], cwd=T.parent, timeout=1800)
+        with gate_lock(f"{name} stage teacher"):
+            rc, out = sh(["zsh", "train/ts2_stage.sh", kernel, t_run, t_tag], cwd=T.parent, timeout=1800)
         tdirs = [x for x in out.split() if x.startswith(t_tag + "_")]
         hb(f"teacher staged {len(tdirs)}: {' '.join(tdirs)}")
     else:
@@ -125,7 +129,8 @@ def main():
     if "student2" in opts:  # a second student run in the same kernel: student2=<run>:<tag>
         run2, tag2 = opts["student2"].split(":")
         if (runs / run2).is_dir():
-            rc, out = sh(["python3", "train/ts2_stage_student.py", kernel, run2, tag2], cwd=T.parent)
+            with gate_lock(f"{name} stage student 2"):
+                rc, out = sh(["python3", "train/ts2_stage_student.py", kernel, run2, tag2], cwd=T.parent)
             more = out.split() if rc == 0 else []
             hb(f"student 2 staged {len(more)}: {' '.join(more)}")
             sdirs += more

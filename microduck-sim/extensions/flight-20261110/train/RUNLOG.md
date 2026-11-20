@@ -1450,3 +1450,43 @@ under 70.00 USD metered (workspace limit 75).
 - Budget: metered 40.29 at 00:52. Worst case 40.31 + 2.13 (this arm) + 0.60 (its scoring, 19 saves at 0.024
   measured, rounded up) + 1.3 (t3k teacher and s3h student scoring) + 0.5 (t3g_625 students) = about 44.8, under
   48.5, so scoring stays at every 50.
+
+### 2026-11-20 01:17 to 01:26: gate-batch race and lock; where the student's G1 distance comes from
+
+- 01:17:19 the m3s_350 / m3s_400 gate batch exited 1: Modal aborted the image build because
+  `ckpt/t3k_175/walk61.onnx` "was modified during build process". `flight_eval_modal.py` mounts the whole train
+  directory (ckpt included); the Kaggle follow-up was staging ckpt/t3k_* at that moment. The watcher retried by
+  itself (a failed batch is not marked scored): 01:22:51 one batch for m3s_350, 400, 450, 500, EXIT 0. The app the
+  01:21 modal_watch flagged (ap-95mHmYlCsAClUtgjKHwPMc, 0 tasks seven seconds after start) was that retry; it ran
+  (35 tasks at 01:21:57) and ended, not stuck.
+- Rescored (`logs/gates_m3s_<n>_score.log`), pack_walk falls of 10 / jumps median: 350 8 / 8.8 (speed 0.05 FAIL,
+  pack g400 falls 5); 400 4 / 8.25; 450 1 / 3.75 (its only two failing lines); 500 2 / 11.0 (pack g400 walk falls
+  10 of 10); 550 (01:23:54) 4 failing lines.
+- Fix: `train/gate_lock.py`, one flock (`logs/gate_submit.lock`, outside the mount) taken around every staging step
+  (writes ckpt/) and around every `modal run` of a gate batch, in `ts3m_watch.py` and `ts3_after_pair.py`; batches
+  of different watchers now run one after another. `run_batch` also repeats a build once if it still reports a
+  modified file (a writer outside the watchers, such as an edit of a script in train/). Test: a second holder
+  waited 2.0 s for the first. Watchers restarted with it at 01:23: ts3m_b625 (pid 54657) and the t3g_625 student
+  follow-up (pid 54659; its earlier heartbeat kept as `logs/ts3s_t3g_625_heartbeat_before_0124.txt`). The t3k
+  follow-up (pid 98263) was inside its last batch and was left on the old code; it stages nothing more.
+- G1 breakdown, `train/ts3_g1_where.py` -> `eval/g1_where_<student>_vs_<teacher>.json` (649 logged walk61 robot
+  states, 5 segments; all of them at command 0 with head command 0). s3h_160 against walk61: 0.531 rad over 14
+  joints = legs 0.268 and head 0.448. Head: head_pitch 0.298 (a constant -0.291 offset), head_roll 0.228, head_yaw
+  0.140, neck_pitch 0.077; leg joints 0.042 to 0.094 each.
+- Its teacher t3h_750 on the same states with the robot's case as privileged inputs (payload 0, no-pack trunk COM,
+  velocity 0.09 m/s, gain scale 1.0): 0.522 from walk61 (legs 0.269, head 0.435); gain scale 2.0: 0.518 (legs 0.325,
+  head 0.390); velocity 0: 0.550. Student against that teacher: 0.227 (legs 0.185, head 0.124). The student
+  reproduces the teacher; the distance to walk61 is the teacher's.
+- Not start-up of the recurrent state: state carried across segments 0.529, per segment 0.503 to 0.579, ticks 0 to 4
+  of a segment 0.646 (25 states), later ticks 0.484 to 0.540. Not the inferred gain: the teacher is equally far at
+  gain scale 1.0 and 2.0. A constant offset explains part (norm of the mean difference 0.343, of which head 0.314);
+  with it removed 0.414.
+- Why the anchor did not cover it: `smooth_terms.anchor_batch` weights the ten leg outputs on every no-pack row
+  and the four head outputs only on rows whose head command is exactly zero; the smoke shows a head command above
+  0.3 rad on 63 % of walking steps, and the logged "leg distance to walk61" (0.22 to 0.23) reads the legs only.
+  The robot states all have head command zero, where the teacher's head is free. The legs on robot states (0.27)
+  are close to the training figure.
+- Other teachers on the same states (gain 1.0, velocity 0.09): t3g_625 0.710 (legs 0.373, head 0.593, head_pitch
+  0.535); m3s_500 0.646 (legs 0.306, head 0.556). The t3g_625 students should therefore be expected near 0.7 and
+  fail G1 (inference from the s3h result: student = teacher within 0.23).
+- Even with the head equal to walk61, legs alone are 0.268 (s3h_160) against the 0.25 line.
