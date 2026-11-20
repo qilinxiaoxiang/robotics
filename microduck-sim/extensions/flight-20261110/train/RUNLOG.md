@@ -1139,3 +1139,47 @@ Robot evidence: `docs/PET_ROBOT_LOG.md` 2026-11-19 16:00, `a7z-20261119/robot_s2
   1000 iterations, save every 125, `--track-guard 2.0`, `--max-hours 1.6`. Quota before 20.34 h of 30 (ceiling 26).
   Follow-up `ts3_after_teach.sh` (detached; heartbeat `logs/ts3_teach_heartbeat.txt`): fetch, stage `ckpt/t3a_*`,
   `ckpt/t3b_*`, gates on Modal.
+
+### Round 3 parallel arms (2026-11-19 19:44 budget change)
+
+Shawn 19:44: "kaggle还没用完吗 能并行就并行 资源以用完为限 咱们还有两周就回国了 用不完也是浪费". New limits: Kaggle the
+whole weekly quota (30 h; `kaggle_flight.py quota` at 19:27: 20.34 h used, refreshAt 2026-11-21T00:00:00); Modal at or
+under 70.00 USD metered (workspace limit 75).
+
+- 19:58 Modal smoke `ts3m-smoke` in the launch configuration (A10, 4096 envs, delta universal5t_b6 from ts_start,
+  10 iterations, blocking): exit 0, 0.32 it/s, anchor step ran (leg distance to walk61 on no-pack rows 1.322 rad),
+  save and ONNX written. Metered 32.51 -> 32.59 USD. `logs/ts3m_smoke.log`.
+- GPU choice: A10 at $1.417/h with 4 cores and 16 GiB, measured 0.32 it/s: 1000 iterations 52 min, about $1.25.
+  (Kaggle T4 0.19 it/s; Modal T4 would cost about the same per iteration and take 1.7 times as long.)
+- Arms (each differs from the Kaggle pair on one named value; everything else as `ts3-teach-a` / `-b`: 4096 envs,
+  save every 125, warm-up 100, max lr 1e-4, `--track-guard 2.0`, seed 1). Variants in `flight_worker.py`
+  `ARM_VARIANTS`.
+  - `ts3m-w61long`: start walk61, 2500 iterations instead of 1000 (against `ts3-teach-b`). Question: does the start
+    that is already close to walk61 learn to carry the pack when given the iterations. Estimate 2.2 h, $3.1;
+    `--max-hours 2.6`, worst case (2.6 + 0.5 h) x 1.417 = $4.39.
+  - `ts3m-b05`: start ts_start, anchor weight 0.5 instead of 2.0 (against `ts3-teach-a`). Question: is a weak pull
+    enough to bring the no-pack action to walk61. Estimate 0.87 h, $1.25; `--max-hours 1.1`, worst case $2.27.
+  - `ts3m-b6`: start ts_start, anchor weight 6.0. Question: does a strong pull close the distance without losing the
+    pack. Same estimate and cap as b05.
+  - `ts3m-kp30` (gain scale 0.8 to 3.0) waits for its own incentive audit: a wider randomisation is an incentive
+    change. A second seed waits for the first gate results (it goes to the better arm).
+  - Sum for the three launched now: estimate $5.6, worst case $8.93; metered before launch 32.59.
+- Gate scoring while the arms train: `ts3m_watch.py` (detached, heartbeat `logs/ts3m_heartbeat.txt`) downloads each
+  new save from the arm's Volume, stages it, runs the gate episodes on Modal CPU and scores it (`--teacher`).
+  The Kaggle kernel gives its saves only when it ends (`ts3_after_teach.sh`).
+- 20:02-20:03 launched detached (`ts3m_launch.sh`, spawned calls, apps `microduck-flight-<run>`, Volumes of the same
+  name): `ts3m-w61long` fc-01M7V7MGRH1QGARN75S78EBJ5D (`--max-dollars 3.69`), `ts3m-b05`
+  fc-01M7V7N1EFKTSQXMZTD87TFX8N (1.57), `ts3m-b6` fc-01M7V7NJ51SFB12T55670JW2VW (1.57). 20:06 detachment checked:
+  no local `modal run` process, three apps `ephemeral (detached)` with one task each, each Volume holds
+  `model_0.pt`, `model_0.onnx`, `progress.csv`; modal_watch CLEAN (0 alert mails).
+- 20:03 gate watcher `ts3m_watch.py` started detached (pid 6331, parent 1), tags `m3w`, `m3p`, `m3q`, limit 3.6 h.
+- 20:06 `ts3m-kp30` not launched: its incentive audit at no pack FAILS (`out/audit_kp30_none.json`, Mac mini,
+  128 envs x 250 steps). With the gain scale drawn up to 3.0 the start policy's walk falls 12.1 per env-min (6.5
+  at 0.8 to 2.2) and earns 2.57 per s (6.83), so standing reaches 0.943 of it and stepping in place 1.208. A gain
+  range that the start policy cannot walk in pays for not walking; the gate stays, the arm is dropped.
+- 20:07 Kaggle second kernel `microduck-ts3-teach-c`: `ts3-teach-c` (from ts_start) + `ts3-teach-d` (from walk61),
+  identical to the first pair except `--seed 2` (question: how much of an arm's gate result is the seed).
+  `--max-hours 1.6`. Quota before: 21.01 h used, 8.99 h left, reset 2026-11-21T00:00:00 as printed by
+  `kaggle_flight.py quota` (no zone shown). Plan for the rest: the first pair needs about 1.1 h more, this pair about
+  1.8 h, leaving about 6 h for two student kernels (about 2 h each) before the reset.
+  Follow-up `ts3_after_kaggle.sh` (detached, pid 8519, parent 1; heartbeat `logs/ts3_teach_cd_heartbeat.txt`).
