@@ -1,7 +1,7 @@
 # Battery backpack V2: concept for approval (2026-11-19, rev B "sits down")
 
 Status: concept for Shawn's nod. Not approved, no DESIGN-CONTRACT.json, no print files. Envelopes and listing sizes
-only; the CAD is drawn after the bought parts are in hand and measured. Power design: `../../../build-pack-20260913/power/power-system-20261119/README.md`
+only; the CAD is drawn from the published part sizes (largest value where sources differ), in ../battery-v2-cad-20261120/ Power design: `../../../build-pack-20260913/power/power-system-20261119/README.md`
 and `../../../build-pack-20260913/power/power-switch-20261119/README.md`.
 
 Rev B replaces rev A (commit 67b785de), whose lower tier reached z -55 and sat 1.7 mm above the floor when the robot
