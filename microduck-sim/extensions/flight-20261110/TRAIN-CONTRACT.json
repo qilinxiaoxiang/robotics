@@ -57,8 +57,13 @@
     },
     {
      "date": "2026-11-20",
-     "source": "session 1ebe7a36, eighth message (about 14:50), after the load-as-input route was put to him",
+     "source": "session 1ebe7a36, eighth message (about 14:39), after the load-as-input route was put to him",
      "quote": "我觉得是可以的 背包自重我们知道 四个涵道电机的出力我们也知道 就能算出一些东西 作为输入给到机器人 剩下的你看就是做标定也好 坐domain randomilization也行"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, ninth message (14:41), answering whether A0 still runs tonight",
+     "quote": "先不开 我们要先做一个能用背包走路和起飞的模型起来"
     }
    ],
    "acceptance_on_robot": "With the pack fitted the real robot stands and walks at the robot-tested command without a fall or a tilt-protection stop; with the pack off it walks no worse than walk61; with the fans running on the ground at the thrust levels stage B0 fixes for FP-R8, it stays up. Acceptance per requirement is in REQUIREMENTS.json (FP-R3, FP-R8).",
@@ -278,7 +283,8 @@
      ],
      "route_reviews": [],
      "history": [
-      "2026-11-20 14:40, after Shawn's seventh message (owner_words): attempt 1 excluded every teacher save because it reads seven simulator values. Four of the seven are not hidden on the robot: payload mass and the loaded trunk centre of mass x y z are constants of the pack state (pack fitted or not, batteries in or out), known from the mass manifest. Only the three trunk linear velocity values are unavailable. Records of round 3 (train/RUNLOG.md): teacher t3h_750 falls 0 of 10 with the pack at gain 400 where the recurrent students fall, and the pack-flag experiment (05:02) showed the student reads a load flag but its remaining falls are a gain problem. Attempt 2, if attempt 1 finds no save, re-scores the best teacher saves fed what the robot can know: nominal payload mass and centre of mass for the cell, the gain value the robot's walk mode gives, and the three velocity inputs set to zero; the as-trained feed is run beside it as the upper bound. Same cells, seeds and pass line."
+      "2026-11-20 14:40, after Shawn's seventh message (owner_words): attempt 1 excluded every teacher save because it reads seven simulator values. Four of the seven are not hidden on the robot: payload mass and the loaded trunk centre of mass x y z are constants of the pack state (pack fitted or not, batteries in or out), known from the mass manifest. Only the three trunk linear velocity values are unavailable. Records of round 3 (train/RUNLOG.md): teacher t3h_750 falls 0 of 10 with the pack at gain 400 where the recurrent students fall, and the pack-flag experiment (05:02) showed the student reads a load flag but its remaining falls are a gain problem. Attempt 2, if attempt 1 finds no save, re-scores the best teacher saves fed what the robot can know: nominal payload mass and centre of mass for the cell, the gain value the robot's walk mode gives, and the three velocity inputs set to zero; the as-trained feed is run beside it as the upper bound. Same cells, seeds and pass line.",
+      "2026-11-20 14:45, after Shawn's ninth message (walk with the pack and take off first): attempt 2 also scores fq2 iteration 1999 (train/ckpt/fq2_1999), the with-pack specialist of 2026-11-11: a plain 61-input one-frame policy fine-tuned from walk61, 3 falls in 280 with-pack probe episodes, the leg policy of the full take-off and landing sequence in sim/flight.py (nominal thrust 9 of 9; docs/PET_ROBOT_LOG.md lines 707 and 715). It was never scored on the B0 filter and never run on the robot. Its with-pack cells and no-pack cells are reported separately, because REQUIREMENTS.json FP-R3 keeps 'two policy sets plus detection' as the fallback when no universal policy passes."
      ]
     },
     {
@@ -519,7 +525,8 @@
       "date": "2026-11-20",
       "words": "批准 A0",
       "source": "session 1ebe7a36, his sixth message, after the sheet and the training overview (OVERVIEW.html #map) were shown; covers one paired Kaggle session of about 5.5 h per attempt, at most 2 attempts",
-      "held": "2026-11-20 about 14:40, by the agent, not launched: his seventh message (owner_words) says recurrence was meant for the world model and the pack does not need it. A0's recurrent arm was justified by A1 (feel the load through memory), which that message removes. The stage goes back to proposed and is rewritten or dropped with him; nothing ran under this approval."
+      "owner_confirmed_hold": "2026-11-20 14:41 Shawn: \"先不开 我们要先做一个能用背包走路和起飞的模型起来\". A0 stays proposed until he asks for it again; line B (walk with the pack, take off) comes first.",
+      "held": "2026-11-20 about 14:36, by the agent, not launched: his seventh message (owner_words) says recurrence was meant for the world model and the pack does not need it. A0's recurrent arm was justified by A1 (feel the load through memory), which that message removes. The stage goes back to proposed and is rewritten or dropped with him; nothing ran under this approval."
      },
      "sheet_zh": {
       "title": "A0 并排对照：官方那种小网络和带递归的新网络，同一套训练",
