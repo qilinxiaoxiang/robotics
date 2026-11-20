@@ -69,6 +69,11 @@
    "says": "every printed fit takes its numbers from cad-practice/print_fit.py (H2S: M2 clear vertical 2.5, pilot 1.95, locating 0.15/side, loose horizontal 0.5/side, 0.4 bed chamfer)",
    "source": "cad-practice/PRINT-FIT.md"
   },
+  "P-INSERT": {
+   "rev": 1,
+   "says": "with the frame screwed on the robot, the boards, the battery with its foam, the diode and the pads go in from the open back along the guide's paths, then the cap with the button; no fixed feature may stand in those paths",
+   "source": "guide print gate steps_audit bv2-battery failure on rev B1 (commit e33bd450) and the coordinator's fix brief 2026-11-20; checked by the insertion sweep in checks.py"
+  },
   "P-ACCESS": {
    "rev": 1,
    "says": "each screw has a 4 mm driver corridor over 60 mm and no screw hole runs parallel and close to a wall",
@@ -303,25 +308,43 @@
   },
   {
    "id": "F11-bosses",
-   "what": "four cap screw bosses dia 5: high left (29, 19) and high right (-29, 39) 5 mm long; low (+-9, -38.9) 3.5 mm plus the 0.81 tab recess, with feet to the floor",
+   "what": "two high cap screw bosses dia 5, 5 mm long: left (29, 19) and right (-29, 39)",
    "problems": [
     "the cap must be held without snaps"
    ],
-   "purpose": "screw bosses for the cap",
+   "purpose": "screw bosses for the cap's two upper M2 x 8",
    "premises": [
     "P-ROBUST",
     "P-SCREWS",
-    "P-PAD",
     "P-FIT",
-    "P-FLIGHT"
+    "P-FLIGHT",
+    "P-INSERT"
    ],
    "simpler": "snaps or a slide-on cap are banned; tape cannot be reopened",
-   "validation": "fit_check engagement; access_check; battery gap 0.24 at the low bosses",
+   "validation": "fit_check engagement; access_check; insertion sweep (outside every part's path)",
    "change_when": "the cap fixing changes"
   },
   {
+   "id": "F11-low-columns",
+   "what": "two full-depth columns from the front wall to the back face carrying the low cap screws: lower-left wing y 15.1..20.15, z -30.5..-25.5 (screw at 17.6, -28) joined to the side wall; right wing y -30.4..-25.25, z -13.55..-4.5 (screw at -27.825, -8) from wall to column wall on the step floor",
+   "problems": [
+    "the cap's lower half must be screwed without a boss in the battery's path"
+   ],
+   "purpose": "low cap screw anchors beside the battery column, clear of the battery, board, diode and pad paths",
+   "premises": [
+    "P-INSERT",
+    "P-ROBUST",
+    "P-SCREWS",
+    "P-ACCESS",
+    "P-FIT"
+   ],
+   "simpler": "a short boss hanging off the back face would be a 5 mm overhang in the front-down print pose; rev B1 low bosses behind the pack (+-9, -38.9) blocked the battery's floor push",
+   "validation": "insertion sweep; access_check on fix y+16.1 z-36.5 and the cap screws; wall check",
+   "change_when": "a wing is needed for another part or the fixing screw moves"
+  },
+  {
    "id": "F11-pilots",
-   "what": "M2 pilot 1.95 through each boss, 0.4 mouth chamfers",
+   "what": "M2 pilot 1.95, 0.4 mouth chamfers: through the high bosses, 10 mm blind in the low columns (print_fit pilot depth 9.3)",
    "problems": [
     "the cap screws need thread engagement"
    ],
@@ -355,7 +378,7 @@
    "problems": [
     "the dock must reach charging contacts under the seated robot"
    ],
-   "purpose": "seat the two Keystone 615 L pads flush under the floor, tab clamped by the cap",
+   "purpose": "seat the two Keystone 615 L pads flush under the floor, tab located by the cap pins (F8-cap-pad-pins); open at the back so the pads slide in after the battery",
    "premises": [
     "P-PAD",
     "P-SEAT",
@@ -470,6 +493,23 @@
    "change_when": "the bosses move"
   },
   {
+   "id": "F8-cap-pad-pins",
+   "what": "two pins dia 3.4, 2.5 long from the cap face with a 0.4 tip chamfer, at (+-9, -38.9) through the pad tabs' 3.7 holes",
+   "problems": [
+    "the pads must not drop out of their open-backed pockets or slide sideways"
+   ],
+   "purpose": "locate each pad tab against the cap; the floor pocket takes the horizontal leg, the cap face holds the tab with 0.5 mm play to the pocket end",
+   "premises": [
+    "P-PAD",
+    "P-FIT",
+    "P-INSERT",
+    "P-ROBUST"
+   ],
+   "simpler": "rev B1 clamped each tab with an M2 x 6 into a low boss, which stood in the battery's path; a 3.4 pin is solid (no flexure) and prints vertical in the cap's back-down pose",
+   "validation": "fit_check pair (locating 0.15/side); insertion sweep cap-with-button; wall check",
+   "change_when": "the pad part or its hole changes"
+  },
+  {
    "id": "F7-button-hole",
    "what": "16.3 mm hole at (y 19.3, z 30.2) for the E-Switch PV6F240SS-331; the box keeps 22 mm behind the cap face free for its body, terminals and 2 mm wires, and a 22 x 3 nut circle",
    "problems": [
@@ -500,6 +540,9 @@
    "change_when": "the XIAO moves"
   }
  ],
+ "removed": {
+  "rev-B1 low cap bosses (+-9, -38.9), their floor feet and pilots": "3.5 mm bosses behind the pack clamped the pad tabs with M2 x 6; with the pads in they and the tabs blocked the battery's floor push (steps_audit bv2-battery, 2026-11-20). Replaced by F11-low-columns in the wings and F8-cap-pad-pins; the pads now go in after the battery."
+ },
  "no_printed_feature": {
   "F9": "Schottky 1N5822 on the charge lead, heat-shrunk and laid in the F3 lead bay; its envelope is checked for overlap, no printed holder",
   "F12": "the third MR30 pin carries the A7Z OFF line; wiring only"

@@ -17,6 +17,10 @@ Changes from the concept envelopes, each forced by a rule the concept did not ap
   exit in the middle of the pack's top face (the concept's full-width ribs would block the leads when the pack slides in).
 - high left cap screw z 17 -> 19 (its head would touch the flight-pack harness crossing at z 16).
 - XIAO USB-C window turned to 7.5 (y) x 13 (z): the receptacle's long side runs along z with the board on the wall.
+- low cap screws moved from bosses behind the pack (+-9, -38.9, through the pad tabs) to full-depth columns in the wings
+  (17.6, -28) and (-27.825, -8); the pad tabs are located by two 3.4 pins on the cap and the pads go in after the battery.
+  The guide print gate (steps_audit bv2-battery, 2026-11-20) found the rev B1 bosses and tabs blocking the battery's
+  floor push; checks.py now sweeps every part pushed in after the frame is on the robot.
 
 Writes build/: battery_v2_frame-world.stl, battery_v2_cap-world.stl, *-print.stl, parts (bought-part envelopes,
 world frame) and build.json (geometry numbers, features built, print poses).
@@ -85,11 +89,24 @@ SCREWS = [(16.1, 26.0), (-16.1, 26.0), (16.1, -36.5), (-16.1, -36.5)]
 HEAD_D, HEAD_H = 3.8, 1.6
 # cap screws from behind into frame bosses: two M2 x 8 high, two M2 x 6 low through the pad tabs
 BOSS_D = 5.0
-CAP_SCREWS = [dict(id="cap-high-left", yz=(29.0, 19.0), L=8, boss=5.0, tab=False),
-              dict(id="cap-high-right", yz=(-29.0, 39.0), L=8, boss=5.0, tab=False),
-              dict(id="cap-low-left", yz=(PADS_Y[0], -46.0 + PAD_HOLE_Z), L=6, boss=3.5, tab=True),
-              dict(id="cap-low-right", yz=(PADS_Y[1], -46.0 + PAD_HOLE_Z), L=6, boss=3.5, tab=True)]
-# low boss 3.5 (+ the 0.81 tab recess) ends 0.24 mm behind the pack; an M2 x 6 ends at the boss end (6 - 1.7 cap - 0.81 tab)
+# Every boss sits outside the paths of the parts pushed in from the open back after the frame is on the robot (battery,
+# boards, diode, pads: insertion sweep in checks.py). The low screws are in the wings beside the battery column, on
+# full-depth columns from the front wall (vertical in the front-down print pose, so no support): rev B1 had them on
+# low bosses behind the pack, which blocked the battery's floor push (guide gate steps_audit bv2-battery, 2026-11-20).
+COL_PILOT = 10.0             # blind pilot in the low columns: print_fit.pilot_depth(M2, 1.7 cap) = 9.3 for the longest M2
+CAP_SCREWS = [dict(id="cap-high-left", yz=(29.0, 19.0), L=8, boss=5.0, pilot="through", column=None),
+              dict(id="cap-high-right", yz=(-29.0, 39.0), L=8, boss=5.0, pilot="through", column=None),
+              # lower-left wing, above the lower-left fixing screw's driver lane (16.1, -36.5): 6.0 mm from its axis
+              dict(id="cap-low-left", yz=(17.6, -28.0), L=6, boss=None, pilot=COL_PILOT,
+                   column=((15.1, -30.5), (LOW_Y_LEFT - WALL + 0.05, -25.5))),
+              # right wing under the XIAO ledge, wall to column wall, standing on the step floor
+              dict(id="cap-low-right", yz=(-27.825, -8.0), L=6, boss=None, pilot=COL_PILOT,
+                   column=((UP[0][1] + WALL - 0.05, UP[0][2] + WALL - 0.05), (LOW[0][1] + 0.05, -4.5)))]
+# contact pad tabs: located by two pins on the cap through their 3.7 holes (no screw; the horizontal leg sits in its
+# floor pocket, the cap face holds the tab against the pocket's front end with 0.5 mm play)
+PIN_D = round(PAD_HOLE_D - 2 * F.clearance("locating"), 2)     # 3.4: locating 0.15/side in the bought 3.7 hole
+PIN_L = 2.5                                                     # from the cap face: through the 0.81 tab, 1.69 past it,
+                                                                # tip 1.05 behind the foam (x -70.3)
 CLEAR_D = F.clear("M2", "vertical", printer=PRINTER)            # 2.5 (cap holes, front-wall holes; both vertical in print)
 PILOT_D = F.pilot("M2", "vertical", printer=PRINTER)            # 1.95 (boss pilots, vertical in print)
 MOUTH = F.BED_CHAMFER                                           # 0.4 x 45 deg mouth chamfer on every hole end
@@ -228,17 +245,22 @@ def build():
     feat("F4-pololu-ribs")
     add.append(box((XIAO[0][0] + 0.5, UP[0][1] + WALL - 0.01, 15.8), (XIAO[1][0] - 3.0, XIAO[0][1] + 2.0, XIAO[0][2] - 0.2)))
     feat("F6-xiao-ledge")
-    # F11 cap screw bosses (frame side), pilots through
+    # F11 cap screw bosses (frame side): high bosses 5 mm with through pilots, low columns full depth with blind pilots
     for s in CAP_SCREWS:
-        add.append(cyl_x(s["yz"], BOSS_D / 2, SPLIT_X, SPLIT_X + s["boss"] + (PAD_T if s["tab"] else 0)))
-        if s["tab"]:   # foot: the low bosses stand on the floor (a tangent circle alone leaves the boss a separate body)
-            y, z = s["yz"]
-            add.append(box((SPLIT_X, y - BOSS_D / 2, LOW[0][2] + FLOOR - 0.01), (SPLIT_X + s["boss"] + PAD_T, y + BOSS_D / 2, z)))
-    feat("F11-bosses")
+        if s["column"] is None:
+            add.append(cyl_x(s["yz"], BOSS_D / 2, SPLIT_X, SPLIT_X + s["boss"]))
+        else:
+            (y0, z0), (y1, z1) = s["column"]
+            add.append(box((SPLIT_X, y0, z0), (X_IN + 0.01, y1, z1)))
+    feat("F11-bosses"); feat("F11-low-columns")
     frame = body + U(add)
     cuts = []
     for s in CAP_SCREWS:
-        cuts.append(hole_x(s["yz"], PILOT_D, SPLIT_X, SPLIT_X + s["boss"] + (PAD_T if s["tab"] else 0)))
+        if s["pilot"] == "through":
+            cuts.append(hole_x(s["yz"], PILOT_D, SPLIT_X, SPLIT_X + s["boss"]))
+        else:   # blind: mouth chamfer at the back face only
+            cuts.append(U([cyl_x(s["yz"], PILOT_D / 2, SPLIT_X - 0.5, SPLIT_X + s["pilot"]),
+                           cyl_x(s["yz"], PILOT_D / 2 + MOUTH + 0.5, SPLIT_X - 0.5, SPLIT_X + MOUTH, r1=PILOT_D / 2)]))
     feat("F11-pilots")
     for y, z in SCREWS:
         cuts.append(hole_x((y, z), CLEAR_D, X_IN, UP[1][0]))
@@ -260,6 +282,11 @@ def build():
         ribs.append(box((SPLIT_X - 0.01, y0, -34.0), (FOAM[0][0], y1, BAT[1][2] + PLAY + 3.0)))    # rear stop through the foam
         ribs.append(box((SPLIT_X - 0.01, y0, BAT[1][2] + PLAY), (-66.0, y1, BAT[1][2] + PLAY + 3.0)))  # rear top stop over the pack
     feat("F2-cap-ribs"); feat("F2-cap-top-tabs")
+    for y in PADS_Y:   # pad pins, 0.4 tip chamfer
+        z = LOW[0][2] + PAD_HOLE_Z
+        ribs.append(cyl_x((y, z), PIN_D / 2, SPLIT_X - 0.01, SPLIT_X + PIN_L - 0.4))
+        ribs.append(cyl_x((y, z), PIN_D / 2, SPLIT_X + PIN_L - 0.4, SPLIT_X + PIN_L, r1=PIN_D / 2 - 0.4))
+    feat("F8-cap-pad-pins")
     cap = cap + U(ribs)
     ccuts = [hole_x(s["yz"], CLEAR_D, UP[0][0], SPLIT_X) for s in CAP_SCREWS]
     feat("F11-cap-holes")
@@ -315,7 +342,7 @@ def main():
     info = dict(frame="guide/trunk frame, mm", printer_fits=PRINTER, features_built=FEATURES,
                 params=dict(BTN_PART='E-Switch PV6F240SS-331', BTN_THREAD_D=BTN_THREAD_D, BTN_HOLE_D=BTN_HOLE_D, BTN_DEPTH=BTN_DEPTH, BTN_BODY_L=BTN_BODY_L,BTN_NUT_CLEAR_D=BTN_NUT_CLEAR_D, BTN_NUT_T=BTN_NUT_T, BTN_C=BTN_C,
                             PAD_W=PAD_W, PAD_FACE_L=PAD_FACE_L, PAD_T=PAD_T, PAD_TAB_H=PAD_TAB_H, PAD_HOLE_D=PAD_HOLE_D, PAD_HOLE_Z=PAD_HOLE_Z,
-                            PADS_Y=PADS_Y, LOW_Y_LEFT=LOW_Y_LEFT, CLEAR_D=CLEAR_D, PILOT_D=PILOT_D, LOOSE=LOOSE),
+                            PADS_Y=PADS_Y, PIN_D=PIN_D, PIN_L=PIN_L, COL_PILOT=COL_PILOT, LOW_Y_LEFT=LOW_Y_LEFT, CLEAR_D=CLEAR_D, PILOT_D=PILOT_D, LOOSE=LOOSE),
                 outline=dict(UP=UP, LOW=LOW, SPLIT_X=SPLIT_X, X_IN=X_IN), battery=BAT, screws=SCREWS, cap_screws=CAP_SCREWS)
     solids = {}
     for name, M in (("battery_v2_frame", frame), ("battery_v2_cap", cap)):

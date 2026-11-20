@@ -7,7 +7,8 @@ Checks: one closed body per part; zero overlap with the robot's mating parts (sh
 the bought-part envelopes, parts pairwise and frame against cap; robot trunk mesh points (duck_poses.json, today's
 backpack excluded) inside or within 1 mm of the new parts; the flight pack (backpack 6.9 mm back on its wing plate,
 screw heads included); wall thickness (release pipeline wall_check, 1.2 mm over 2 mm2); fits against PRINT-FIT for the
-H2S and the X1C; screwdriver access for the four fixing and four cap screws; the design contract; the feature registry.
+H2S and the X1C; screwdriver access for the four fixing and four cap screws; insertion paths of every part pushed in
+after the frame is on the robot (STEPS); the design contract; the feature registry.
 """
 import base64, json, subprocess, sys
 from pathlib import Path
@@ -27,6 +28,62 @@ fails = []
 
 
 def load(p): return B.load_mf(p)
+
+
+# Every part that goes in after the frame is screwed on the robot, in build order (guide chapter 12 steps bv2-boards,
+# bv2-battery, bv2-pads, bv2-cap; bench step bv2-button), with the path the guide animates: offsets ending at the
+# seated pose (a vector v is the straight path v -> 0). Obstacles are the frame, the robot's mating parts and every part
+# already in. The Pololu goes in before the DFR1202: its rear rib makes it enter 6 mm off the wall, inside the DFR's lane.
+STEPS = [
+    ("pololu", ["Pololu 2813", "Pololu tape"], [[-25, -6, 0], [0, -6, 0], [0, 0, 0]], "frame"),
+    ("dfr1202", ["DFR1202", "DFR1202 tape"], [-25, 0, 0], "frame"),
+    ("xiao", ["XIAO SAMD21", "XIAO tape"], [-25, 0, 0], "frame"),
+    ("battery", ["battery 2S 3000 (B08LZ8L4YD)", "battery foam pad"], [-40, 0, 0], "frame"),
+    ("diode", ["Schottky 1N5822 (DO-201AD)"], [-30, 0, 0], "frame"),
+    ("pad-plus", ["contact pad plus"], [-15, 0, 0], "frame"),
+    ("pad-minus", ["contact pad minus"], [-15, 0, 0], "frame"),
+    ("button-into-cap (bench, nut off)", ["button without nut"], [-25, 0, 0], "cap"),
+    ("cap-with-button", ["cap", "16 mm LED button (E-Switch PV6F240SS-331)"], [-25, 0, 0], "frame"),
+]
+N_SWEEP = 41
+
+
+def path_points(p):
+    p = np.array(p, float)
+    if p.ndim == 1: p = np.vstack([p, np.zeros(3)])
+    seg = np.linalg.norm(np.diff(p, axis=0), axis=1); s = np.concatenate([[0], np.cumsum(seg)])
+    out = []
+    for u in np.linspace(0, s[-1], N_SWEEP):
+        i = min(int(np.searchsorted(s, u, side="right")) - 1, len(seg) - 1)
+        out.append(p[i] + (p[i + 1] - p[i]) * ((u - s[i]) / seg[i] if seg[i] else 0.0))
+    return out
+
+
+def insertion(frame, cap, mating, parts):
+    """Sweep each part along its path against what is already in; a collision is any sample whose overlap exceeds the
+    seated overlap by more than 0.01 mm3. Also reports the narrowest gap met on the way (search 3 mm)."""
+    y, z = B.BTN_C; x0 = B.UP[0][0]
+    lib = dict(parts); lib["cap"] = cap
+    lib["button without nut"] = B.U([B.cyl_x((y, z), B.BTN_BEZEL[0] / 2, x0 - B.BTN_BEZEL[1], x0),
+                                     B.cyl_x((y, z), B.BTN_BODY_D / 2, x0, x0 + B.BTN_BODY_L)])
+    robot = [mating[k] for k in ("shell_left", "shell_right", "rear_pack", "openrb-board-upright") if k in mating]
+    installed = [frame] + robot
+    res = []
+    for sid, names, path, base in STEPS:
+        mover = B.U([lib[n] for n in names])
+        obst = B.U(installed) if base == "frame" else cap
+        seated = (mover ^ obst).volume()
+        worst, at, gap = 0.0, None, 99.0
+        pts = path_points(path)
+        for k, off in enumerate(pts):
+            m = mover.translate(tuple(off))
+            v = (m ^ obst).volume() - seated
+            if v > worst: worst, at = v, [r3(c) for c in off]
+            if v <= 0.01 and k < len(pts) - 1: gap = min(gap, m.min_gap(obst, 3.0))   # on the way (0 = sliding contact)
+        res.append(dict(id=sid, parts=names, path=path, samples=N_SWEEP, seated_overlap_mm3=r3(seated),
+                        max_overlap_mm3=r3(worst), worst_offset=at, narrowest_gap_mm=r3(gap), collides=bool(worst > 0.01)))
+        if base == "frame" and sid != "cap-with-button": installed.append(mover)
+    return res
 
 
 def main():
@@ -120,12 +177,17 @@ def main():
         fits.append(dict(id=f"fix-clear y{y:+.1f} z{z:+.1f}", type="clear", part="battery_v2_frame", screw="M2", d=B.CLEAR_D,
                          axis=[1, 0, 0], teardrop=None, at_bed=True, chamfer=B.MOUTH))
     for s in B.CAP_SCREWS:
-        clamped = B.BACK + (B.PAD_T if s["tab"] else 0.0)
+        clamped = B.BACK
+        length = s["boss"] if s["pilot"] == "through" else s["pilot"]
         fits.append(dict(id=f"{s['id']}-clear", type="clear", part="battery_v2_cap", screw="M2", d=B.CLEAR_D, axis=[1, 0, 0],
                          teardrop=None, at_bed=True, chamfer=B.MOUTH))
         fits.append(dict(id=f"{s['id']}-pilot", type="pilot", part="battery_v2_frame", screw="M2", kind="any", d=B.PILOT_D,
                          axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=B.MOUTH,
-                         engagement=round(min(s["L"] - clamped, s["boss"]), 2), depth="through", clamped=clamped))
+                         engagement=round(min(s["L"] - clamped, length), 2), depth=s["pilot"], clamped=clamped))
+    for y in B.PADS_Y:
+        fits.append(dict(id=f"pad-pin y{y:+.0f}", type="pair", fit_class="locating",
+                         female=dict(part=None, d=B.PAD_HOLE_D, axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=0.0),
+                         male=dict(part="battery_v2_cap", d=B.PIN_D, axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=0.4)))
     fits.append(dict(id="button-panel-hole", type="pair", fit_class="locating",
                      female=dict(part="battery_v2_cap", d=B.BTN_HOLE_D, axis=[1, 0, 0], teardrop=None, at_bed=True, chamfer=B.MOUTH),
                      male=dict(part=None, d=B.BTN_THREAD_D, axis=[1, 0, 0], teardrop=None)))
@@ -161,12 +223,16 @@ def main():
     for s in B.CAP_SCREWS:
         screws.append(dict(id=s["id"], step="close the cap (everything fitted)", spec=f"M2 x {s['L']}", where="from behind into the frame boss",
                            seat=[B.UP[0][0], s["yz"][0], s["yz"][1]], axis=[1, 0, 0], head_d=B.HEAD_D, head_h=B.HEAD_H, length=s["L"],
-                           through_mm=B.BACK + (B.PAD_T if s["tab"] else 0), drive="phillips", present=every, movable=[], table_z=None))
+                           through_mm=B.BACK, drive="phillips", present=every, movable=[], table_z=None))
     (HERE / "SCREWS.json").write_text(json.dumps(dict(mesh_dir="build", meshes=meshes, screws=screws), indent=1))
     r = subprocess.run([sys.executable, str(ROB / "cad-practice/access_check.py"), str(HERE / "SCREWS.json"), "--json", str(CK / "access.json")],
                        capture_output=True, text=True)
     out["access"] = dict(exit=r.returncode, lines=r.stdout.strip().splitlines())
     if r.returncode: fails.append("access_check: a screw is blocked")
+    # ---------------------------------------------------------------- insertion paths
+    out["insertion"] = insertion(frame, cap, mating, parts)
+    for r in out["insertion"]:
+        if r["collides"]: fails.append(f"insertion {r['id']}: {r['max_overlap_mm3']} mm3 at {r['worst_offset']}")
     # ---------------------------------------------------------------- contract and registry
     lines = []
     rc = DC.check(HERE, out=lines.append)
@@ -186,7 +252,7 @@ def main():
     (CK / "checks.json").write_text(json.dumps(out, indent=1, default=float, ensure_ascii=False))
     print(json.dumps({k: out[k] for k in ("solids", "mating_overlap_mm3", "mating_min_gap_mm (search 5)", "frame_cap_overlap_mm3",
                                           "part_part_overlap_mm3", "trunk_points", "flight_overlap_mm3 (backpack 6.9 back, cap screw heads included)",
-                                          "fit_check", "design_contract", "feature_registry")}, indent=1, default=float, ensure_ascii=False))
+                                          "fit_check", "insertion", "design_contract", "feature_registry")}, indent=1, default=float, ensure_ascii=False))
     print("\n".join(out["access"]["lines"]))
     print({k: len(v["fail_regions"]) for k, v in wc.items()})
     print("FAILS" if fails else "PASS", json.dumps(fails, ensure_ascii=False))

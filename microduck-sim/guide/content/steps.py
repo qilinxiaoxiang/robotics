@@ -435,7 +435,7 @@ def build(ctx):
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
          prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see the BatteryV2-B1 and BatteryDock-A1 plate pictures (Orange-plate.png in each delivery folder), PARTS-SHEET-V1.38.html, PARTS-SHEET-V1.37.html, PARTS-SHEET-V1.36.html, PARTS-SHEET-V1.33.html, PARTS-SHEET-V1.30.html, PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
                   {'item': 'BatteryV2-B1 package: zhengxia_MicroDuck_BatteryV2-B1 folder (one orange plate: the battery backpack V2 rev B frame and cap)', 'qty': 1, 'kind': 'printed',
-                   'note': 'Battery backpack V2 rev B (approved by Shawn 2026-11-20, print/battery-v2-cad-20261120/): the 2S 3000 mAh pack stands upright in the frame, the Pololu 2813 soft switch, the DFR1202 and the XIAO SAMD21 cutoff sit on foam tape, the 16 mm LED button sits in the cap, two brass pads under the floor take dock charging. The frame screws straight onto the four pack posts (the Dual Lock back plate is not used). One orange plate, no supports: X1C 1 h 27 min, 43.4 g; Elegoo Centauri Carbon 1 h 34 min; H2S 1 h 31 min. Replaces the V1.40 and V1.41 backpack prints (frame, cap, hatch) and the two retainer bars.'},
+                   'note': 'Battery backpack V2 rev B (approved by Shawn 2026-11-20, print/battery-v2-cad-20261120/): the 2S 3000 mAh pack stands upright in the frame, the Pololu 2813 soft switch, the DFR1202 and the XIAO SAMD21 cutoff sit on foam tape, the 16 mm LED button sits in the cap, two brass pads under the floor take dock charging. The frame screws straight onto the four pack posts (the Dual Lock back plate is not used). One orange plate: X1C 1 h 31 min, 44.7 g; Elegoo Centauri Carbon 1 h 37 min, 44.4 g; H2S 1 h 36 min, 43.7 g. Replaces the V1.40 and V1.41 backpack prints (frame, cap, hatch) and the two retainer bars.'},
                   {'item': 'BatteryDock-A1 package: zhengxia_MicroDuck_BatteryDock-A1 folder (one orange plate: the charging dock base)', 'qty': 1, 'kind': 'printed',
                    'note': 'The dock base the robot sits on to charge (print/battery-dock-20261120/): two Keystone 5209 leaves under the backpack pads and a PJ-005A jack in its rear tower. One orange plate, no supports: X1C 30 min, 11.2 g; Elegoo Centauri Carbon 25 min, 10.7 g; H2S 32 min, 10.7 g.'},
                   {'item': 'V1.39 package: zhengxia_MicroDuck_V1.39 folder (the Dual Lock back plate; not printed any more)', 'qty': 0, 'kind': 'printed',
@@ -2099,21 +2099,10 @@ def build(ctx):
              checks=['框架贴住盒子，往后拉不晃。'],
              warnings=['框架一定要空着拧：电池和板子装进去以后螺丝刀就够不到了。'])
 
-        step('bv2-pads', 'backpack', '把两片触点放进框架底板下的槽里，线向上走',
-             add=bv2_pads, approach={'bv2_pad_plus': [-15, 0, 0], 'bv2_pad_minus': [-15, 0, 0]},
-             camera=ctx.cam(ctx.keys('bv2_frame') + bv2_pads, direction=(-1.0, -0.5, -0.6), margin=1.4),
-             instructions=[
-                 '完成后：两片触点的平面平贴在框架底板下面的两个浅槽里，与底面齐平；竖片贴在框架背面的凹槽里，竖片上的孔对准下面两个螺丝凸台；红胶带那片（+）在机器人左边。',
-                 '整套线束（Pololu、DFR1202、XIAO、按钮和后盖）放在机器人背后的桌面上托着，不要吊着。',
-                 '+ 触点（红胶带）从后面推进左边的底槽，平面朝下，竖片朝上贴住框架背面。',
-                 '− 触点推进右边的底槽。',
-                 '两根触点线贴着电池柱后面向上走。',
-             ],
-             checks=['两片平面都和底板平齐，手指摸不出台阶。', '竖片上的孔对准螺丝凸台。'])
-
         step('bv2-boards', 'backpack', '插头 3、4 的线压进左翼底槽，贴好三块板子',
-             # the Pololu's rear rib stands in its straight path: it comes in 6 mm inboard, then steps out onto the wall
-             # (swept clear against the frame, 2026-11-20)
+             # the Pololu's rear rib stands in its straight path: it comes in 6 mm inboard, then steps out onto the wall.
+             # That inboard lane is the DFR1202's place, so the Pololu goes in first (battery-v2-cad checks.py insertion
+             # sweep: Pololu after the DFR collides 1573 mm3, before it 0; 2026-11-20)
              add=bv2_boards, approach={k: ([[-25, -6, 0], [0, -6, 0], [0, 0, 0]] if k.startswith('bv2_pololu') else [-25, 0, 0])
                                        for k in bv2_boards},
              camera=frame_cam,
@@ -2123,15 +2112,16 @@ def build(ctx):
                  '完成后：插头 3 和插头 4 的线压在左翼底部台阶上那条 3.5 mm 的槽里，从背包左下后方伸出约 4 cm；DFR1202 贴在电池柱左边的肋上，坐在下面的小台阶上；Pololu 贴在左翼外墙的里面，靠着后肋和底台阶；XIAO 贴在右翼外墙里面高处，坐在小台阶上，USB-C 朝后。',
                  '用异丙醇擦干净三处贴胶的面。',
                  '把插头 3 和插头 4 的线从后面压进左翼底部的槽，两个插头留在背包左下后方外面约 4 cm。',
-                 'DFR1202 背面贴泡沫胶，元件朝外，下边坐在小台阶上，贴到电池柱左肋上压 10 秒。',
-                 'Pololu 背面贴泡沫胶，按钮朝里。后肋挡着直推的路：先离外墙约 6 mm 伸进去，越过后肋以后再向外贴到左翼外墙里面，靠住后肋和底台阶，压 10 秒。',
+                 '先贴 Pololu（DFR1202 贴上以后就挡住它的路）：背面贴泡沫胶，按钮朝里。后肋挡着直推的路：先离外墙约 6 mm 伸进去，越过后肋以后再向外贴到左翼外墙里面，靠住后肋和底台阶，压 10 秒。',
+                 '再贴 DFR1202：背面贴泡沫胶，元件朝外，下边坐在小台阶上，贴到电池柱左肋上压 10 秒。',
                  'XIAO 背面贴泡沫胶，USB-C 朝后，坐在右翼小台阶上，贴到右翼外墙里面压 10 秒。',
              ],
              checks=['三块板子用手推不动。', '从后面看，XIAO 的 USB-C 口正对后盖上的小方窗位置。', '电池柱里没有线挡着。'])
 
         step('bv2-battery', 'backpack', '电池贴泡沫垫后推进电池柱，接 XT30 和平衡头，放好二极管',
-             # the battery path is the real one and collides: the CAD's low cap-screw bosses and the back-bottom lip block it at
-             # floor height, the front top pillars when lifted (battery-v2 rev B defect found by this gate, 2026-11-20)
+             # straight floor push from the open back: rev B1's low cap-screw bosses and the pad tabs stood in this path (found
+             # by this gate 2026-11-20); the low screws moved into the wing columns and the pads now go in after the battery
+             # (battery-v2-cad checks.py insertion sweep)
              add=bv2_pack, approach={'bv2_battery': [-40, 0, 0], 'bv2_foam': [-40, 0, 0], 'bv2_diode': [-30, 0, 0]},
              camera=frame_cam,
              prepare=[e('Crazepony 2S 3000 mAh 锂电池（Amazon B08LZ8L4YD），XT30 + XH-3P 平衡头 + DC5.5 公头', 1, '上一步试过的那块。'),
@@ -2140,7 +2130,7 @@ def build(ctx):
                  '完成后：电池竖着站在电池柱里，引线朝上，背面贴着泡沫垫；XT30、平衡头和包好的 DC5.5 都弯在电池上方的线舱里；1N5822 躺在线舱里。',
                  '先拔开电池的 XT30（试电时插着的）。',
                  '泡沫胶贴在电池背面（远离 OpenRB 的那个大面），外面的离型纸不撕。',
-                 '电池引线朝上，从后面把电池平推进电池柱，推到前面的挡块。',
+                 '电池引线朝上，从后面贴着底板把电池平推进电池柱，推到前面的挡块。',
                  '平衡头插回 B3B-XH-A，弯进线舱。',
                  '包好的 DC5.5 线弯进线舱放平。',
                  '1N5822 放平在线舱里电池上方。',
@@ -2149,22 +2139,35 @@ def build(ctx):
              checks=['电池站在底上，顶上和线舱屋顶之间留着空，没有压到线。', '所有线都在线舱和电池柱后面，没有一根伸出框架后沿。'],
              warnings=['锂电池压坏或短路会起火：不要硬塞，不要压引线和平衡头。'])
 
-        step('bv2-cap', 'backpack', '盖上后盖：上面两颗 M2 × 8，下面两颗 M2 × 6 压住触点竖片',
+        step('bv2-pads', 'backpack', '把两片触点从后面推进框架底板下的槽里，竖片立在电池后面',
+             # after the battery: each tab stands at the back face, in the battery's push path
+             add=bv2_pads, approach={'bv2_pad_plus': [-15, 0, 0], 'bv2_pad_minus': [-15, 0, 0]},
+             camera=ctx.cam(ctx.keys('bv2_frame') + bv2_pads, direction=(-1.0, -0.5, -0.6), margin=1.4),
+             instructions=[
+                 '完成后：两片触点的平面平贴在框架底板下面的两个浅槽里，与底面齐平；竖片立在框架背面、电池泡沫垫后面；红胶带那片（+）在机器人左边。竖片上的孔等一下套在后盖的两根小销子上。',
+                 '触点要在电池之后装：竖片站在电池推进来的路上。',
+                 '整套线束（Pololu、DFR1202、XIAO、按钮和后盖）放在机器人背后的桌面上托着，不要吊着。',
+                 '+ 触点（红胶带）从后面推进左边的底槽，平面朝下，竖片朝上贴住框架背面。',
+                 '− 触点推进右边的底槽。',
+                 '两根触点线贴着电池泡沫垫后面向上走。',
+             ],
+             checks=['两片平面都和底板平齐，手指摸不出台阶。', '竖片站直贴着框架背面，不碰电池泡沫垫。'])
+
+        step('bv2-cap', 'backpack', '盖上后盖：上面两颗 M2 × 8，两翼两颗 M2 × 6，销子套住触点竖片',
              add=bv2_capset, group={'label': '后盖和按钮', 'approach': [-25, 0, 0]}, camera=rear_cam,
              prepare=[tap(2, 'M2 × 8'), tap(2, 'M2 × 6'), t('细杆螺丝刀（杆径不超过 4 mm）')],
              screwNotes={'M2 × 8 TAP': '上面两颗：左上（y 29, z 19）和右上（y −29, z 39），穿过后盖 2.5 mm 的孔，拧进框架 5 mm 长的凸台。',
-                         'M2 × 6 TAP': '下面两颗（y ±9, z −38.9）：穿过后盖和触点竖片的孔，拧进 3.5 mm 的低凸台，把竖片压住。'},
+                         'M2 × 6 TAP': '两翼两颗：左下（y 17.6, z −28）和右边中间（y −27.8, z −8），穿过后盖 2.5 mm 的孔，拧进框架两翼里的柱子（导孔 10 mm 深）。'},
              instructions=[
-                 '完成后：后盖盖住整个背面，四颗螺丝拧紧：上面两颗 M2 × 8，下面两颗 M2 × 6 同时压住两片触点的竖片。按钮在左上，XIAO 的 USB-C 从小方窗露出来。',
+                 '完成后：后盖盖住整个背面，四颗螺丝拧紧：上面两颗 M2 × 8，两翼两颗 M2 × 6；后盖下面两根小销子穿在两片触点竖片的孔里。按钮在左上，XIAO 的 USB-C 从小方窗露出来。',
                  '按钮线连着后盖：把后盖翻到框架背后，按钮在左上，线顺进框架里面不打折。',
-                 '后盖平推上去贴住框架后沿，下面两个孔对准触点竖片上的孔。',
-                 '下面两颗用 M2 × 6，穿过后盖和触点竖片拧进低凸台。',
+                 '后盖平推上去贴住框架后沿，下面两根小销子对准并穿进两片触点竖片上的孔。',
+                 '两翼两颗用 M2 × 6，拧进两翼的柱子。',
                  '上面两颗用 M2 × 8，拧进高凸台。',
                  '四颗都先带上，再拧紧到后盖贴死。',
              ],
-             checks=['后盖四边都贴住框架，按一下不晃。', '透过小方窗看得到 XIAO 的 USB-C 口。', '两片触点在底面上不松动。'],
-             warnings=['下面两个孔绝对不能用 M2 × 8：长的那颗会顶穿低凸台，扎到电池。',
-                       '后盖边上不能夹到任何线。'])
+             checks=['后盖四边都贴住框架，按一下不晃。', '透过小方窗看得到 XIAO 的 USB-C 口。', '两片触点在底面上不松动，竖片套在销子上。'],
+             warnings=['后盖边上不能夹到任何线。'])
 
         step('bv2-plugs', 'backpack', '接上插头 3 和插头 4',
              camera=ctx.cam(ctx.keys('bv2_frame', 'bv2_cap') + pack, direction=(-1.0, 0.8, -0.3), margin=1.3),

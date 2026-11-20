@@ -7,7 +7,7 @@ Idempotent: run it again and the file comes out the same.
   the Dual Lock change (git commit e8e7b0c7^), and the screws inside the bench box (records tagged 'duallock') moved back
   +8.7 mm in x with their box (to_guide_world.py writes the box in its screwed pose again).
 - Added: BV2-fix-01..04 (step 'bv2-frame': backpack frame to the pack posts, four M2 x 6 from inside) and BV2-cap-01..04
-  (step 'bv2-cap': two M2 x 8 high, two M2 x 6 low through the Keystone 615 pad tabs), from SCREWS.json and build.json.
+  (step 'bv2-cap': two M2 x 8 into the high bosses, two M2 x 6 into the wing columns), from SCREWS.json and build.json.
     python3 update_fasteners.py"""
 import json, subprocess
 from pathlib import Path
@@ -41,22 +41,21 @@ def bv2_records():
                        '0.8 mm of pilot past the tip. Driver lanes checked in checks/access.json.',
                        'Backpack frame front wall to the pack post, from inside the empty frame.'))
     cap = [s for s in S if s['id'].startswith('cap')]
+    spec = {c['id']: c for c in json.loads((HERE / 'build' / 'build.json').read_text())['cap_screws']}
     for i, s in enumerate(cap, 1):
-        tab = s['id'].startswith('cap-low')
+        c = spec[s['id']]
         L = s['length']
-        thru = ['bv2_cap', 'bv2_pad_plus' if s['seat'][1] > 0 else 'bv2_pad_minus'] if tab else ['bv2_cap']
-        boss = 3.5 if tab else 5.0
-        through = 2.51 if tab else 1.7
-        stack = [{'part': 'bv2_cap', 'fromMm': 0.0, 'toMm': 1.7, 'holeDiameterRangeMm': [2.5, 2.5]}]
-        if tab:
-            stack.append({'part': thru[1], 'fromMm': 1.7, 'toMm': 2.51, 'holeDiameterRangeMm': [3.7, 3.7]})
-        stack.append({'part': 'bv2_frame', 'fromMm': through, 'toMm': through + boss, 'holeDiameterRangeMm': [1.95, 1.95]})
-        out.append(rec(f'BV2-cap-0{i}', 'bv2-cap', f'M2 x {L}', L, list(map(float, s['seat'])), thru, 'bv2_frame',
+        through = 1.7
+        blind = c['pilot'] != 'through'
+        boss = c['pilot'] if blind else c['boss']
+        stack = [{'part': 'bv2_cap', 'fromMm': 0.0, 'toMm': 1.7, 'holeDiameterRangeMm': [2.5, 2.5]},
+                 {'part': 'bv2_frame', 'fromMm': through, 'toMm': through + boss, 'holeDiameterRangeMm': [1.95, 1.95]}]
+        out.append(rec(f'BV2-cap-0{i}', 'bv2-cap', f'M2 x {L}', L, list(map(float, s['seat'])), ['bv2_cap'], 'bv2_frame',
                        round(min(L - through, boss) - 0.3, 2), stack,
-                       f'build_v2.py CAP_SCREWS {s["id"]}: head seat x -75.55, cap plate 1.7 (2.5 clearance)'
-                       + (', Keystone 615 tab 0.81 (3.7 hole)' if tab else '')
-                       + f', frame boss {boss} mm with a 1.95 through pilot (H2S print_fit).',
-                       'Cap to the frame boss' + (', clamping the contact pad tab.' if tab else '.')))
+                       f'build_v2.py CAP_SCREWS {s["id"]}: head seat x -75.55, cap plate 1.7 (2.5 clearance), '
+                       + (f'frame wing column with a {boss:g} mm blind 1.95 pilot (H2S print_fit).' if blind
+                          else f'frame boss {boss:g} mm with a 1.95 through pilot (H2S print_fit).'),
+                       'Cap to the frame ' + ('wing column.' if blind else 'boss.')))
     return out
 
 
