@@ -169,14 +169,18 @@ To buy:
 
 1. The box grows 21 mm down (tail 63.5 mm above the floor standing, today 86) and the lower tier 1.4 mm wider each
    side. It is the only direction the 72 mm pack fits. Accept?
-2. Button behaviour: in this concept the button wires to the Pololu ON pin, so a press only switches on; switching off
-   is the A7Z shutdown, the XIAO cutoff, or holding the button 2 s (the XIAO asks the A7Z to shut down). The proposal
-   wired it to A/B, where a second press switches off, so a fall onto the back could cut power mid-walk. Accept the change?
-3. Button on the back, upper left (seen from behind), LED ring facing back. Good place?
-4. Springs on the robot (as asked) or fixed brass pads on the robot and the springs on the dock plates? Fixed pads have
-   no moving part on the walking robot.
-5. Which free A7Z header pin carries OFF (open in the switch proposal).
-6. Should the XIAO report cell voltages to the A7Z? There is no wire for it in this concept (the third MR30 pin carries OFF).
+Decided by the main session 2026-11-19 (reversible, matches Shawn's stated wish "按一下亮灯，关机后自动灭灯"):
+- Button to the Pololu ON pin (press = on only; off = A7Z shutdown, XIAO cutoff, or hold 2 s). A fall onto the back
+  cannot switch the robot off mid-walk.
+- Button on the back upper left, ring facing back, as drawn.
+- Contacts: fixed brass pads on the robot, springs on the dock plates (no moving part on the walking robot, "皮实");
+  the robot buys no spring contacts.
+- The A7Z OFF pin is picked from the head pin map at CAD time.
+- No cell-voltage report to the A7Z in v1; the XIAO acts on its own.
+- Pololu 2813 current: the 16 A figure on pololu.com is at a 150 C MOSFET; the design figure stays 6 A at a 55 C rise,
+  still 3 times the walking current.
+
+Still Shawn's: question 1 (the box grows down).
 
 ## Proposal items that do not fit as written
 
@@ -187,4 +191,4 @@ To buy:
 - The listing text says XT60 while the photo shows XT30, and the face the leads leave from is not given; the concept
   assumes XT30 on the 34 x 20 end. An XT60 needs an adapter pigtail or a new Pololu VIN plug.
 - The proposal buys an SB560; RoboClub's 1N5822 is the same package and enough for 2 A.
-- The proposal says Pololu 2813 is 6 A continuous; pololu.com now says up to about 16 A continuous for the HP version.
+- Pololu 2813: 6 A continuous at a 55 C rise (16 A is the 150 C figure); 6 A stays the design figure.
