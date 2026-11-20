@@ -18,7 +18,7 @@ battery backpack (`../battery-backpack-20261015/README.md` section 4).
 battery XT30 --> Pololu #2813 VIN    VOUT --> OpenRB J4 (servos) and DFR1202 (A7Z 5 V), as today
                  A/B   <-- panel momentary button (LED ring lit from VOUT)
                  OFF   <-- A7Z GPIO, one high pulse at the end of shutdown (100 k pull-down on the board)
-                 OFF   <-- XIAO pulse when VOUT stays under 6.0 V for 3 s (diode-OR with the A7Z line)
+                 OFF   <-- XIAO pulse when VOUT stays under 6.3 V for 3 s (diode-OR with the A7Z line)
 ```
 
 Feature registry (ID, problem, why, simpler option considered, validation, when to change or delete):
@@ -29,17 +29,19 @@ Feature registry (ID, problem, why, simpler option considered, validation, when 
   all servos stalled 25-29 A briefly (`../battery-backpack-20261015/README.md` section 2), inside its 90 A maximum.
   Simpler option: keep the REV switch and rely on memory; that is the failure being fixed. Validation: bench rail
   current walk test, MOSFET temperature after 10 min walking. Change if a sustained load above 6 A appears.
-- **PS-2 Hardware cutoff: Seeed XIAO SAMD21 on VOUT (fed by a small 5 V buck), reading VOUT through a 100 k / 33 k
-  divider and pulsing the switch's OFF pin through a 1N4148 (A7Z GPIO joins OFF through a second 1N4148, 100 k
-  pull-down on OFF).** Problem 1 when the brain is not running. Cutoff 6.0 V (3.0 V per cell) held for 3 s, so a
-  foot-strike sag does not trip it, with a 3 s grace after power-on; the software guard (6.6 V stop, 6.2 V floor,
-  `guide/firmware/pi/battery.py`) still acts first. Pressing the button on a flat pack switches on and off again
+- **PS-2 Hardware cutoff: Seeed XIAO SAMD21 (RoboClub drawer: 3 sealed, inventory 2026-10-20) powered from the
+  DFR1202's 5 V lead, reading VOUT through a 100 k / 33 k divider and pulsing the switch's OFF pin through a 1N4148
+  (A7Z GPIO joins OFF through a second 1N4148, 100 k pull-down on OFF).** Problem 1 when the brain is not running.
+  No separate buck: the DFR1202 runs from 6 V input up, so the cutoff sits above that at 6.3 V (3.15 V per cell),
+  held for 3 s so a foot-strike sag does not trip it, with a 3 s grace after power-on. The software guard acts first;
+  its floor moves from 6.2 V to 6.4 V (`FLOOR_AT_DV` 62 -> 64 in `guide/firmware/pi/battery.py`) so the robot has
+  sat down before the hardware cut. Pressing the button on a flat pack switches on and off again
   after the grace, so a flat pack cannot be drained further. The XIAO is powered after the switch, so it draws
   nothing when off. A TPS3710 supervisor with an RC on SENSE was the first draft and is rejected: the RC holds SENSE
   low for about 2 s after power-on, so the supervisor would switch the robot off at every press. Simpler options rejected: a per-cell
   2S BMS (HX-2S-JH20: 2.4-2.6 V per cell, 10 A trip, below the 8 A sit-to-stand peak margin and the stall current,
   and it needs the balance plug on the robot); off-the-shelf LVD modules start at 10-12 V. Validation: bench supply
-  ramp, trip at 6.0 V +-0.1 V, no trip on a 0.3 s dip to 5.5 V.
+  ramp, trip at 6.3 V +-0.1 V, no trip on a 0.3 s dip to 5.8 V.
 - **PS-3 Software power-off: one A7Z GPIO to OFF, pulsed by a systemd-shutdown hook after the filesystems are
   read-only.** Problem 3; the battery guard's shutdown then also removes power. Needs a pin that stays low through
   boot (pull-down on the board). Validation: `sudo poweroff` ends with the LED dark and zero rail current.
@@ -51,5 +53,5 @@ Feature registry (ID, problem, why, simpler option considered, validation, when 
 ## Open before CAD
 
 - The free A7Z header pin for OFF (head wiring uses the inner row, memory `microduck-a7z-head`).
-- PS-2 is modules and through-hole parts only (XIAO, buck, two resistors, two diodes): no PCB, no SMD.
+- PS-2 is modules and through-hole parts only (XIAO, two resistors, two diodes): no PCB, no SMD.
 - XT30 pigtails soldered to the Pololu's large VIN/VOUT holes.
