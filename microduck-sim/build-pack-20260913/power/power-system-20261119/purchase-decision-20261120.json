@@ -26,8 +26,8 @@
    },
    {
     "id": "button",
-    "requirement": "Adafruit 560: 16 mm momentary, green LED ring lit from 5 V (3-6 V with built-in resistor); the rev B geometry is drawn around this part.",
-    "source": "battery-v2-concept-20261119 rev B"
+    "requirement": "E-Switch PV6F240SS-331: 16 mm momentary SPST-NO, green LED ring (2.8 V 20 mA, 120 ohm from 5 V), body 20.0 mm to terminal tips; rev B CAD drawn around it (Adafruit 560 rejected: 35.3 mm deep does not fit the 28.55 mm box).",
+    "source": "battery-v2-cad-20261120 (build_v2.py, report 2026-11-20)"
    },
    {
     "id": "resistors",
@@ -48,13 +48,23 @@
     "id": "wire_26awg",
     "requirement": "26 AWG silicone, several colours, for the XIAO harness, button lead and OFF line.",
     "source": "concept README BOM"
+   },
+   {
+    "id": "xh_header",
+    "requirement": "JST B3B-XH-A 3-pin XH header for the balance plug on the XIAO harness",
+    "source": "guide chapter 12 bv2-harness"
+   },
+   {
+    "id": "resistor_10k",
+    "requirement": "10 k 1/4 W for the ON line",
+    "source": "guide chapter 12 bv2-harness"
    }
   ]
  },
  "candidates": [
   {
    "id": "power_v2_bundle",
-   "primary": "Amazon: B08LZ8L4YD; DigiKey: 2183-2813-ND x2, 1528-2542-ND, CF14JT100KCT-ND x10, CF14JT33K0CT-ND x10; RoboClub stock (Shawn 2026-11-20): XT30 plugs, 16/20/26 AWG silicone wire",
+   "primary": "Amazon: B08LZ8L4YD; DigiKey: 2183-2813-ND x1 (+1 spare), EG4731-ND, CF14JT100KCT-ND x10, CF14JT33K0CT-ND x10, CF14JT10K0CT-ND x10, 455-2248-ND x2; RoboClub stock (Shawn 2026-11-20): XT30 plugs, 16/20/26 AWG silicone wire",
    "chain": "pack XT30 -> pigtail -> Pololu 2813 -> plug 3 / DFR1202; XIAO dividers; button to ON",
    "companions": [],
    "modifications": [
@@ -73,8 +83,8 @@
     },
     "button": {
      "status": "pass",
-     "observed": "Adafruit 560, SPDT on-mom, green LED 6 V nominal, 16 mm cutout, In-Stock 404, $4.95. Adafruit page: LED 3-6 V with built-in resistor; out of stock at adafruit.com and not on Amazon.",
-     "evidence": "DigiKey product page; adafruit.com/product/560 read 2026-11-20 (digikey_1528-2542-ND, https://www.digikey.com/en/products/detail/adafruit-industries-llc/560/8323986)"
+     "observed": "E-Switch PV6F240SS-331, DigiKey EG4731-ND, $14.67, 2,077 in stock (read 2026-11-20); datasheet 6.16.2021: M16x1, cutout 16.00 +0.2, bezel 18.0, body 16.5, 20.0 to terminal tips, LED 2.8 V 20 mA no resistor; nut 19.00 AF per E-Switch PVA6-HEX16 drawing.",
+     "evidence": "DigiKey EG4731-ND page and E-Switch PV6 datasheet; PVA6-HEX16 drawing https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/562/PVA6L-PVA6-HEX16_Ds.pdf"
     },
     "resistors": {
      "status": "pass",
@@ -95,14 +105,26 @@
      "status": "pass",
      "observed": "26 AWG silicone wire kit, 6 colours x 20 ft, tinned copper, $9.99. Removed from the Amazon cart 2026-11-20: RoboClub stock per Shawn (\"XT30，RoboClub应该也是有的，不需要再买\"); check the drawer before soldering.",
      "evidence": "Amazon search result title 2026-11-20 (amazon_B0C9MB4DTY, https://www.amazon.com/dp/B0C9MB4DTY)"
+    },
+    "xh_header": {
+     "status": "pass",
+     "observed": "JST B3B-XH-A, DigiKey 455-2248-ND, header vertical 3 pos 2.50 mm, through hole, in stock (read 2026-11-20).",
+     "evidence": "https://www.digikey.com/en/products/detail/jst-sales-america-inc/B3B-XH-A/1651046"
+    },
+    "resistor_10k": {
+     "status": "pass",
+     "observed": "Stackpole CF14JT10K0, 10 k 5% 1/4 W axial, DigiKey CF14JT10K0CT-ND.",
+     "evidence": "https://www.digikey.com/en/products/detail/stackpole-electronics-inc/CF14JT10K0/1741265"
     }
    },
    "bom_items": [
     "B08LZ8L4YD",
     "2183-2813-ND",
-    "1528-2542-ND",
+    "EG4731-ND",
     "CF14JT100KCT-ND",
-    "CF14JT33K0CT-ND"
+    "CF14JT33K0CT-ND",
+    "CF14JT10K0CT-ND",
+    "455-2248-ND"
    ]
   }
  ],
@@ -117,13 +139,13 @@
    "id": "guide_complete",
    "user_words": "重新设计完以后，你发现没问题了，所有东西都全了，再把东西都加到购物车里就好了",
    "source": "Shawn in chat 2026-11-19; restated 2026-11-20: 拼装指南要先做完，才能加购物车。不然拼装指南拼一半发现缺东西怎么办呢",
-   "evidence": "../../../../guide/print/battery-v2-cad-20261120/assembly-guide-ch12.json"
+   "evidence": "../../../guide/print/battery-v2-cad-20261120/assembly-guide-ch12.json"
   },
   {
    "id": "bom_from_guide",
    "user_words": "所有东西都全了，再把东西都加到购物车里",
    "source": "Shawn in chat 2026-11-19",
-   "evidence": "../../../../guide/print/battery-v2-cad-20261120/BOM.json",
+   "evidence": "../../../guide/print/battery-v2-cad-20261120/BOM.json",
    "bom": true
   }
  ]

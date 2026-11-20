@@ -17,16 +17,18 @@ CHAPTER = 'backpack'
 
 # (substring of the guide item text, source). First match wins, so specific rules come first.
 SOURCES = [
-    ('PV6F240SS-331', 'DigiKey EG4731-ND (E-Switch PV6F240SS-331); not yet in purchase-decision-20261120.json, which still lists the superseded Adafruit 560'),
+    ('PV6F240SS-331', 'DigiKey EG4731-ND (purchase-decision-20261120.json)'),
     ('Pololu 2813', 'DigiKey 2183-2813-ND (purchase-decision-20261120.json)'),
     ('Crazepony', 'Amazon B08LZ8L4YD (purchase-decision-20261120.json)'),
     ('100 kΩ', 'DigiKey CF14JT100KCT-ND (purchase-decision-20261120.json)'),
     ('33 kΩ', 'DigiKey CF14JT33K0CT-ND (purchase-decision-20261120.json)'),
-    ('10 kΩ', 'RoboClub cabinet D, listed as "10K?" (INVENTORY.md); reading to be checked at the bench'),
+    ('10 kΩ', 'DigiKey CF14JT10K0CT-ND (purchase-decision-20261120.json)'),
     ('120 Ω', 'RoboClub cabinet D (INVENTORY.md: 120 Ω)'),
     ('1N4148', 'RoboClub cabinet F, "small-signal 100 V 0.2 A" (INVENTORY.md); marking to be checked'),
     ('1N5822', 'RoboClub cabinet F (INVENTORY.md: 1N5822 Schottky 40 V 3 A)'),
-    ('B3B-XH-A', None),
+    ('B3B-XH-A', 'DigiKey 455-2248-ND (purchase-decision-20261120.json)'),
+    ('异丙醇', 'consumable already used in earlier guide chapters (Isopropyl alcohol and a tissue)'),
+    ('扳手或尖嘴钳', 'needle-nose pliers: RoboClub tool wall (not listed in INVENTORY.md)'),
     ('XIAO SAMD21', 'RoboClub cabinet C drawer, 3 sealed (inventory 2026-10-20)'),
     ('Keystone 615', 'DigiKey 36-615-ND (purchase-decision-20261120-charging.json)'),
     ('Keystone 5209', 'DigiKey 36-5209-ND (purchase-decision-20261120-charging.json)'),
