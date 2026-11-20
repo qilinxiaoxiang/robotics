@@ -1,0 +1,44 @@
+{
+  "status": "concept, sim-tested, not CAD; awaiting Shawn's approval of concept-sheet.png",
+  "owner_words": "加摄像头就算了，导轨倒是可以。可以通过工程手段试一下，看看能不能把它对准坐下去。我觉得可以弄。 (2026-11-20)",
+  "sim_evidence": "checks/results.json (from checks/axes2.jsonl, rails3.jsonl, check4.jsonl)",
+  "features": [
+    {
+      "id": "F1",
+      "name": "Two side guide rails beside the backpack's lower tier",
+      "geometry": "vertical guide face to z 12.5, 60 deg lead-in to z 24, 3 mm play per side (gap 53.1 for the 47.1 mm tier), x -77..-59 only, 2.5 mm thick plus base",
+      "need": "Problem 1: the robot sits down off to one side and a pad misses its leaf",
+      "why": "Without rails the sim passes only y -3..0 mm; with rails y -15..0 mm (5 seeds). The tier walls are the only flat, vertical surfaces on the backpack low enough to guide before the pads touch.",
+      "simpler": "Wider leaves or wider pads: the leaf-to-other-leaf gap (y +-9 +-3.5) forbids a wider leaf without shorting risk; pads are fixed on the backpack. A floor V-groove for the feet was rejected because the feet lift off during the sit.",
+      "validation": "MuJoCo grid with the real Brain sit, --model asbuilt --manifest current; rail clearance to legs and feet >= 7 mm in stand, sit and rise",
+      "change_when": "backpack lower-tier width or pad position changes, or the robot test shows a hang on the lead-in"
+    },
+    {
+      "id": "F2",
+      "name": "Datum moved 3 mm forward (stop face and leaves), leaves a further 2.5 mm forward of the stop",
+      "need": "Problem 2: the released A1 leaf tip sits behind the 8.7 mm pad; 0 of 46 sim runs pass on x, even at nominal",
+      "why": "The sim seat is 1.9 deg nose-up, which moves the pad forward of where A1 expects it",
+      "simpler": "Leave A1 as is: fails every case on x",
+      "validation": "x window -6..+3 mm without rails, -9..+3 mm with rails (x -6 fails 1 of 5 seeds)",
+      "change_when": "the real robot's seated pad position is measured on the dock and differs from the sim by more than 1 mm"
+    },
+    {
+      "id": "F3",
+      "name": "45 deg rear lead-in from the stop face's top edge over the stop wall and tower side walls",
+      "need": "Problem 3: a robot that starts 3 to 6 mm back lands on the stop wall's relief ledge (z 14.6) or the tower top (z 22) and hangs",
+      "why": "A slope turns a landing on top into a slide down to the stop face",
+      "simpler": "A taller stop wall: it would catch the tail higher and still leave a flat top to hang on",
+      "validation": "x -9 start passes with F1 to F3; replaces the screw-head relief ledge, so screw access must be re-checked in CAD",
+      "change_when": "the dock's tower or the screw layout changes"
+    },
+    {
+      "id": "F4",
+      "name": "Rail extent limits: rails end at x -59, below z 24, inside |y| 41",
+      "need": "Problem 4: rails must not touch legs or feet during stand, sit and stand-up",
+      "why": "The left foot comes down at x -51 at the end of the stand-up; legs never come behind x -40 while standing or sitting",
+      "simpler": "Full-length rails: the long-rail variant R3 touched the legs in 8 runs",
+      "validation": "clearance >= 7 mm in stand, sit and rise phases in every R1 run; after the stand-up the sim robot steps back onto the rails (-4 mm), reported as a risk",
+      "change_when": "the stand-up motion or foot placement changes"
+    }
+  ]
+}
