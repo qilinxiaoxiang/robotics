@@ -115,6 +115,14 @@ class _StatefulSession:
             DIAG["stat"]["warm_state_loaded"] = DIAG["stat"].get("warm_state_loaded", 0) + 1
         elif st is None or entered or os.environ.get("FLIGHT_HIST_REPEAT") == "1":
             st = np.zeros(self.state_shape, dtype=np.float32)
+            # experiment only (2026-11-20, cold start; default off): FLIGHT_PREWARM=<N> steps the empty state N times
+            # on the entry observation (actions discarded) before the first action is taken: no second policy
+            pw = int(os.environ.get("FLIGHT_PREWARM") or 0)
+            if pw and self.state_name == "state_in":
+                for _ in range(pw):
+                    st = self.sess.run(None, dict(feed, **{self.state_name: st}))[1]
+                DIAG["stat"]["prewarm_entries"] = DIAG["stat"].get("prewarm_entries", 0) + 1
+                DIAG["stat"]["prewarm_steps"] = DIAG["stat"].get("prewarm_steps", 0) + pw
         elif (os.environ.get("FLIGHT_CATCHUP") == "1" and self.state_name == "state_in" and 1 < gap <= RECURRENT_MAX_GAP
               and getattr(self, "_last_feed", None) is not None):
             # diagnostics only (2026-11-18): after g - 1 skipped ticks the state is first stepped g - 1 times on the

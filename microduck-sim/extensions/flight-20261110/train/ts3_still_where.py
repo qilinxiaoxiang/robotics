@@ -35,6 +35,8 @@ def main():
     extra = ["--kp-rl", kp] + (["--drop", opts["drop"]] if "drop" in opts else [])
     os.environ["FLIGHT_SHADOW61"] = W61
     os.environ["FLIGHT_STATE_EMPTY"] = "1"
+    if "prewarm" in opts:  # prewarm=<N>: flight_eval FLIGHT_PREWARM (the student steps its own empty state N times)
+        os.environ["FLIGHT_PREWARM"] = opts["prewarm"]
     if "first" in opts:
         os.environ["FLIGHT_HANDOVER"] = W61 + ":" + opts["first"]
     if "after" in opts:
@@ -47,6 +49,10 @@ def main():
         print(f"{d} none stand kp {kp} {' '.join(f'{k}={v}' for k, v in opts.items() if k != 'kp')} seed {seed}: fell at "
               f"{r['fell_at']}; gate jumps {r['action_jumps']}; policy calls {len(rows)}; handover ticks "
               f"{fe.DIAG['stat'].get('handover_ticks', 0)}; gain flag {fe.DIAG['stat'].get('gain_flag_value')}", flush=True)
+        f0 = [np.array(v) for v in rows[0][1:4]]   # the first call: applied action, walk61, the student from an empty state
+        print(f"  first call: applied-walk61 rms {float(((f0[0] - f0[1]) ** 2).mean()) ** 0.5:.3f}  empty-walk61 rms "
+              f"{float(((f0[2] - f0[1]) ** 2).mean()) ** 0.5:.3f}; prewarm entries {fe.DIAG['stat'].get('prewarm_entries', 0)} "
+              f"steps {fe.DIAG['stat'].get('prewarm_steps', 0)}", flush=True)
         per = {}
         for i in range(1, len(rows)):
             tk, stu, ref, cold = rows[i][0], np.array(rows[i][1]), np.array(rows[i][2]), np.array(rows[i][3])

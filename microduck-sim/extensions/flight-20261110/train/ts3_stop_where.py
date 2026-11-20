@@ -23,6 +23,8 @@ def main():
     opts = dict(x.split("=") for x in sys.argv[2:] if "=" in x)
     d, seeds = sys.argv[1], [int(s) for s in sys.argv[2:] if "=" not in s]
     kp = ["--kp-rl", opts["kp"]] if "kp" in opts else []
+    if "prewarm" in opts:  # prewarm=<N>: flight_eval FLIGHT_PREWARM
+        os.environ["FLIGHT_PREWARM"] = opts["prewarm"]
     if "vth" in opts:  # vth=<rad/s>: a commanded turn while walking (with heading hold off it is the turn command)
         kp = kp + ["--vtheta", opts["vth"]]
     # first=<teacher dir>:<tick>  the teacher drives up to that tick, then the student (which saw every observation)
@@ -79,7 +81,7 @@ def main():
         if "zero" in opts:
             print(f"  state emptied at tick {fe.DIAG['stat'].get('state_zeroed_at_tick')} of the last episode", flush=True)
         print(f"  switches {[f'{k}={opts[k]}' for k in ('first', 'after') if k in opts]}; last episode's counters "
-              f"{ {k: v for k, v in fe.DIAG['stat'].items() if 'handover' in k or 'obs_set' in k or 'gain_flag' in k} }", flush=True)
+              f"{ {k: v for k, v in fe.DIAG['stat'].items() if 'handover' in k or 'obs_set' in k or 'gain_flag' in k or 'prewarm' in k} }", flush=True)
         print(f"{d} pack walk, walk gain {opts.get('kp', 'default 200')}{', state emptied at tick ' + opts['zero'] if 'zero' in opts else ''}: {len(ft)} falls of {len(falls)}; "
               f"{sum(1 for f in ft if f >= 17.0)} after the stop at 17.0 s; times {ft}", flush=True)
         return

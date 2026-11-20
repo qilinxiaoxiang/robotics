@@ -1828,3 +1828,21 @@ Chain k1 06:18:45 to 06:46:47. Stage 3: pack mse 0.00308, no-pack distance to wa
 - Pack walk, heading on, 20 seeds: gain 200 6 + 7 (during the walk + after the stop), gain 400 2 + 2. G1 0.219.
 - Run AB at 06:45: iteration 20, 0.0242 it/s (160 iterations in about 1.84 h, cap 2.0 h), pack mse 0.01385,
   no-pack distance 0.611 (beta still above 0); metered 44.19 at 06:45. modal_watch 06:48: 1 live app, 1 task.
+
+## 2026-11-20 06:51 self-prewarm removes the stepping in place; it does not remove s3a_160's pack falls at the start
+
+Evaluation only, no training: `flight_eval` FLIGHT_PREWARM=<N> steps the student's empty state N times on the entry
+observation and discards the actions (`ts3_still_where.py ... prewarm=N`, `ts3_stop_where.py ... prewarm=N`;
+counters prewarm_entries 1, prewarm_steps N per episode). No second policy.
+- First call, distance to walk61 (rms over the 14 joints, no pack, gain 400): empty state s3a_60 0.204, s3a_160
+  0.200; after 10 self-steps 0.029 and 0.031; after 25: 0.029 and 0.024; after 50: 0.028 and 0.021.
+- Standing without the pack at gain 400, gate jumps, seeds 0 / 1 / 2: without prewarm s3a_60 82 / 17 / 45 (fell at
+  15.8 s in seed 0), s3a_160 25 / 43 / 35; with prewarm 10, 25 or 50: 0 / 0 / 0 for both saves, no fall.
+- s3a_160 with the pack at gain 200, 10 seeds: without prewarm 10 falls (9 at 0.82 to 1.32 s); prewarm 10: 9 falls
+  (8 at 0.94 to 1.32 s); prewarm 25: 10 falls at 0.88 to 0.92 s; prewarm 50: 10 falls at 0.86 to 1.16 s. Not
+  the same fault: a state warmed on one resting observation carries nothing about load or gain.
+- So the stepping in place is a cold-start fault of the recurrent state and 10 self-steps cure it in 6 of 6
+  episodes; the late saves' pack falls in the first second are something else (open).
+- Training-side route under test: `distill_worker.py --state-reset-p 0.01` (each policy call empties the state
+  with probability 1/100, loss unweighted). Smoke chain r1 from 06:50:30, same start and stages as c0, heartbeat
+  `logs/ts3_anchor_r1_heartbeat.txt` on the Mac mini.
