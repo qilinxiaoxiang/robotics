@@ -25,7 +25,7 @@ with gate_lock("teacher asset " + sys.argv[2]):   # train/init is inside the gat
 EOF
 cd $RL
 FLIGHT_RUN=$RUN FLIGHT_HOURS=2.0 MICRODUCK_GPU=T4 $MODAL run --detach cmu/finetune/flight/flight_modal.py::run -- \
-  --distill --delta universal5c --teacher-onnx /root/assets/init/ts3t_$TE.onnx \
+  --distill --delta ${TSDELTA:-universal5c} --teacher-onnx /root/assets/init/ts3t_$TE.onnx \
   --manifest /root/assets/manifests/flightpack-none.json --max-iters ${TSMAXIT:-160} --max-hours 2.0 --save-interval 20 \
   --warmup-iters 2 --beta-iters 30 --bptt-steps 100 --epochs 2 --mb-envs 256 --stop-after ${TSSTOPAFTER:-100} --seed 1 \
   --drop-max 0.08 --core mamba --anchor-onnx /root/assets/walk61.onnx --anchor-w 1.0 --anchor-head all \

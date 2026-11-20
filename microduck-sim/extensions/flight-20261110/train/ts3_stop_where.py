@@ -79,7 +79,7 @@ def main():
         if "zero" in opts:
             print(f"  state emptied at tick {fe.DIAG['stat'].get('state_zeroed_at_tick')} of the last episode", flush=True)
         print(f"  switches {[f'{k}={opts[k]}' for k in ('first', 'after') if k in opts]}; last episode's counters "
-              f"{ {k: v for k, v in fe.DIAG['stat'].items() if 'handover' in k or 'obs_set' in k} }", flush=True)
+              f"{ {k: v for k, v in fe.DIAG['stat'].items() if 'handover' in k or 'obs_set' in k or 'gain_flag' in k} }", flush=True)
         print(f"{d} pack walk, walk gain {opts.get('kp', 'default 200')}{', state emptied at tick ' + opts['zero'] if 'zero' in opts else ''}: {len(ft)} falls of {len(falls)}; "
               f"{sum(1 for f in ft if f >= 17.0)} after the stop at 17.0 s; times {ft}", flush=True)
         return

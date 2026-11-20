@@ -49,6 +49,11 @@ class _StatefulSession:
         self.sess, self.brain, self.group = sess, brain, group
         ins = sess.get_inputs()
         self.state_name, self.state_shape = ins[1].name, tuple(ins[1].shape)
+        # experiment 2026-11-20: a student distilled with --gain-flag-col <c> carries gain_flag_col in its file; every
+        # call then gets the runtime's gain scale minus 1 in actor column c (KP_RL 200 = 0, --kp-rl 400 = 1.0), the
+        # same number priv_now gives a gain-reading teacher. The robot-log states of G1 carry 0 there (KP 200).
+        gc = sess.get_modelmeta().custom_metadata_map.get("gain_flag_col")
+        self.gain_col = int(gc) if gc not in (None, "") else None
 
     def get_inputs(self):
         return self.sess.get_inputs()[:1]
@@ -60,6 +65,7 @@ class _StatefulSession:
         return self.sess.get_modelmeta()
 
     def run(self, out, feed):
+        feed_raw = feed
         b, tick = self.brain, self.brain._hist_tick
         st = b._hist_state.get(self.group)
         # FLIGHT_HIST_REPEAT=1 (--hist-repeat): always pass an empty state, so the graph fills all slots with the
@@ -75,6 +81,15 @@ class _StatefulSession:
         # an episode without a fall) instead of an empty one
         # experiment only (2026-11-20, pack-fitted flag; default off): FLIGHT_OBS_SET="<col>:<value>" overwrites one
         # actor column of the recurrent policy's input on every call (distill_worker --pack-flag-col)
+        if self.gain_col is not None and self.state_name == "state_in" and not os.environ.get("FLIGHT_OBS_SET"):
+            import walk_brain
+            gv = float(walk_brain.KP_RL) / 200.0 - 1.0
+            feed = {k: np.array(v, copy=True) for k, v in feed.items()}
+            for k in feed:
+                if feed[k].ndim == 2 and feed[k].shape[1] == 61:
+                    feed[k][:, self.gain_col] = gv
+                    DIAG["stat"]["gain_flag_calls"] = DIAG["stat"].get("gain_flag_calls", 0) + 1
+                    DIAG["stat"]["gain_flag_value"] = gv
         oset = os.environ.get("FLIGHT_OBS_SET")
         if oset and self.state_name == "state_in":
             feed = {k: np.array(v, copy=True) for k, v in feed.items()}   # several columns: "60:1.0,59:0.5"
@@ -111,6 +126,25 @@ class _StatefulSession:
             self._last_feed = {k: np.array(v, copy=True) for k, v in feed.items()}
         res = self.sess.run(None, dict(feed, **{self.state_name: st}))
         b._hist_state[self.group], b._hist_last[self.group] = res[1], tick
+        # diagnostics only (2026-11-20, stepping in place without the pack at gain 400): FLIGHT_SHADOW61=<61-input
+        # onnx> computes that plain policy's action on the observation of every call (as the Brain built it, before
+        # any flag column is written) and logs per call [tick, the student's action, the plain policy's action] in
+        # DIAG["stat"]["sh61"]; nothing of the plain policy is applied. FLIGHT_STATE_EMPTY=1 additionally computes
+        # the student's action from an EMPTY state on the same observation (logged as a fourth item, not applied).
+        s61 = os.environ.get("FLIGHT_SHADOW61")
+        if s61 and self.state_name == "state_in":
+            if "sess" not in _SHADOW61:
+                import onnxruntime as ort
+                _SHADOW61["sess"] = ort.InferenceSession(s61, providers=["CPUExecutionProvider"])
+                assert len(_SHADOW61["sess"].get_inputs()) == 1, "FLIGHT_SHADOW61 must be a plain 61-input policy"
+                _SHADOW61["name"] = _SHADOW61["sess"].get_inputs()[0].name
+            o_raw = np.asarray(feed_raw[self.sess.get_inputs()[0].name], dtype=np.float32)
+            ref = _SHADOW61["sess"].run(None, {_SHADOW61["name"]: o_raw})[0][0]
+            row = [int(tick), [float(v) for v in res[0][0]], [float(v) for v in ref]]
+            if os.environ.get("FLIGHT_STATE_EMPTY") == "1":
+                cold = self.sess.run(None, dict(feed, **{self.state_name: np.zeros(self.state_shape, dtype=np.float32)}))
+                row.append([float(v) for v in cold[0][0]])
+            DIAG["stat"].setdefault("sh61", []).append(row)
         if os.environ.get("FLIGHT_STATE_DUMP"):
             DIAG["last_state"] = res[1]
         # diagnostics only (round 2 cause study, 2026-11-18; both default off). The student always runs and keeps its
@@ -225,6 +259,9 @@ class _StatefulSession:
                 PRIV["width"] = 69
             obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
             DIAG["stat"]["handover_ticks"] = DIAG["stat"].get("handover_ticks", 0) + 1
+            if int(_HANDOVER["sess"].get_inputs()[0].shape[1]) == 61:  # a plain policy (walk61) takes over or starts
+                o_raw = np.asarray(feed_raw[self.sess.get_inputs()[0].name], dtype=np.float32)
+                return _HANDOVER["sess"].run(None, {_HANDOVER["name"]: o_raw})[:1]
             return _HANDOVER["sess"].run(None, {_HANDOVER["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[:1]
         return res[:1]
 
@@ -292,6 +329,7 @@ PRIV = dict(m=None, d=None, kg=0.0, log=[])  # the simulator state the privilege
 NOPACK_PRIV = (0.0, -0.0335, 0.0007, 0.0186)
 _HANDOVER = {}
 _WARMUP = {}
+_SHADOW61 = {}
 _TEACH = {}
 DIAG = dict(rows=[], stat={}, swap_left=0, rng=None, phys=[])   # cause-study switches, reset per episode
 

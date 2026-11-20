@@ -1755,3 +1755,64 @@ Batch part `ts3_batch_s3a_f1.sh h1`; assertions ran (first2s with walk61 first, 
   chain per variant, three stages of about 8 iterations: the spread between chains of the same kind is as large as
   the effects, so the smoke does not decide the gain-200 case. Not solved: gain 200 with the pack, with or without
   the flag. No Modal run launched.
+
+## 2026-11-20 06:16 pre-launch estimate for the full runs A and AB (coordinator's order)
+
+- Metered 43.71 at 06:10 and 06:14 (`modal billing summary` through `ts3_bill_guard.metered`). Bill guard restarted
+  06:14:47, pid 50310, parent pid 1, 6 h, heartbeat `logs/ts3_bill_heartbeat.txt`.
+- One full student run as ts3s-m3s-450-a (160 iterations, cap 2.0 h, T4): worst case 2.27 USD for the training and
+  0.56 for scoring 8 saves (the 02:43 figures) = 2.83. Measured for ts3s-m3s-450-a: 42.00 before, 43.71 after
+  training and scoring = 1.71.
+- Two runs, worst case: 43.71 + 2 x 2.83 = 49.37, above the 48.5 line. One run: 43.71 + 2.83 = 46.54. By the
+  coordinator's rule only AB is launched. (At the measured 1.71 per run two runs would end near 47.1; that is an
+  expectation, not the worst case.)
+- Run AB: `TSDELTA=universal5 TSEXTRA="--stop-share 0.25 --gain-flag-col 59" zsh train/ts3s_anchor_launch.sh
+  t3h_750 ts3s-t3h-750-ab s3AB`: teacher t3h_750, env universal5 (the env of every t3h smoke), Mamba, 160
+  iterations, saves every 20, anchor w 1.0 all outputs, case share 0.25, pack stop case 0.25, gain flag in student
+  column 59. Saves are scored as s3AB_<iteration>; heartbeat `logs/ts3s_t3h_750_ab_heartbeat.txt`.
+- Gain flag in the gates without touching `ts3_gates.py`: the student's file carries `gain_flag_col` in its ONNX
+  metadata (written by `distill_worker.export`), and `flight_eval._StatefulSession` then writes
+  `walk_brain.KP_RL / 200 - 1` into that column on every call (0 in the nominal cells, 1.0 with `--kp-rl 400`),
+  counters `gain_flag_calls` / `gain_flag_value`. G1: the 649 robot states as `ts3_gates.rebuild` builds them have
+  column 59 = 0.0 on every row (body columns 55:61 all 0.0), read 06:13, which is the flag for KP 200.
+- No reward and no randomisation range changes (distillation reads no reward); the command mix on pack envs changes
+  (a quarter of them walk at vx 0.25 with a turn up to +-1.9 for 4 to 15 s, then stand 4 s).
+- Gain-flag feed checked on one cell per gain before the launch (Mac mini 06:16, a 2-iteration gain-flag student
+  `ckpt/smk_m0` whose file carries `gain_flag_col: 59`): pack walk at `--kp-rl 200`: gain_flag_calls 963, value
+  0.0; at `--kp-rl 400`: value 1.0; a student without the key (smk_c0_232): no counter.
+- 06:15:18 launched run AB: Modal T4 app ap-b2XMRZrMZhJuEwa2pXwKXi (`microduck-flight-ts3s-t3h-750-ab`, call
+  fc-01M7WAP52MKDWAC8GCHGE34V2C, detached), rate 0.907 USD/h, cap 2.0 h, worst case 2.27. Follow-up scorer pid
+  50701, parent pid 1 (`ts3_after_pair.py ... modal=1 hours=3.2`). modal_watch 06:17: 1 live app, 1 task.
+  Run A not launched (worst-case sum above the line).
+
+## 2026-11-20 06:20 why the students step in place without the pack at gain 400: the first calls from an empty state
+
+`train/ts3_still_where.py` (new; `flight_eval` FLIGHT_SHADOW61 / FLIGHT_STATE_EMPTY, and a plain 61-input policy
+can now take the handover): the gate's none standing episode with the deployed walk61 computed on every
+observation the student sees. No joint index used.
+- s3a_60, gain 400, seed 0 (82 gate jumps, fell 15.8 s): over the whole episode the student is CLOSE to walk61 on
+  its own states (rms 0.06 to 0.15 rad per 2 s) and walk61 on those states steps as hard as the student (mean
+  largest tick-to-tick change 0.26 to 0.51 against the student's 0.25 to 0.46). The student copies walk61; on a
+  stepping robot at gain 400 walk61's own label is to keep stepping.
+- Same episode at gain 200: still (steps 0.002 to 0.003 both), rms 0.033.
+- walk61 takes over from the stepping student at tick 400 (`after=400`): the stepping goes on (seed 0: jumps in
+  every later 2 s window, 85 in all; seeds 1 and 2 fall at 9.90 and 11.46 s). walk61 has two regimes at gain 400
+  without the pack, still and stepping, and does not come back from the second.
+- walk61 drives the first calls, then the student (`first=<ticks>`, seeds 0 / 1 / 2, s3a_60 and s3a_160): 9 to 10
+  walk61 calls (first=25) are enough: 0 jumps in all 6 episodes, and with 34 and 82 calls too; with none (first=5
+  ends inside the stand phase) 82 / 17 / 45 and 25 / 43 / 35 jumps. After such a start the student stays at rms
+  0.02 to 0.03 from walk61 for the rest of the episode.
+- The student's action from an EMPTY state on the same observations is 0.14 to 0.24 rad rms from walk61 (0.39 in
+  the window of the fall) against 0.03 warm; in the first 2 s of the unassisted episode the driving student is at
+  0.097 with 4 jumps.
+- Not the dropped reads: with `--drop 0` still 22 jumps. Not the observation noise: the anchor's target is computed
+  on the student's own noisy inputs (`distill_worker`, `tgt = anchor(o0)`), both see the same.
+- Cause (supported by the handover in both directions): the student's first about 10 calls after an empty
+  recurrent state are wrong enough to start the robot stepping, and at gain 400 walk61, hence its faithful copy,
+  keeps a stepping robot stepping. Episode starts are about 1 call in 1000 in training, so the empty-state
+  output is barely trained.
+- Fix under test (training side): `distill_worker.py --cold-weight W --cold-ticks N`, loss weight W on the first N
+  policy calls after the state was empty. Smoke chain k1 from 06:18:45 (`--cold-weight 20 --cold-ticks 25`, same
+  start and stages as c0), heartbeat `logs/ts3_anchor_k1_heartbeat.txt` on the Mac mini. Runtime-side alternative
+  (not ours to decide): let walk61 drive the first 10 calls after entering the policy (`first=25` above).
+  Run AB was launched before this was found and does not have the weight.
