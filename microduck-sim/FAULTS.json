@@ -618,6 +618,29 @@
         "status": "hypothesis",
         "summary": "Factory reset of single XL330s, twice after the robot sat on a draining pack (H1); not proven."
       }
+    },
+    "a7z-power-loss": {
+      "symptom": "The A7Z loses power with no shutdown line in the journal or kernel log; the last blackbox snapshot is normal and on time, so power vanished in under 0.1 s. The robot is offline until the pack is swapped or the switch cycled.",
+      "required_recovery": "The A7Z never browns out on a draining pack (it shuts down cleanly first), and a jolt or fall never cuts its power.",
+      "occurrences": [
+        {"when": "2026-11-20 16:19:59 (A7Z clock, boot b0110)", "what": "161928.out BATTERY LOW 6.6 V then BATTERY FLOOR 6.1 V, sit, torque off; servos 0.23 A; battery_dv 6.5 -> 6.0 -> 5.2 -> 4.6 V in 30 s, servo_v 4.5 at the last row 16:19:59.85", "running": "brain in monitor after the floor, A7Z and camera/namecall still on the same 2S Tattu 650"},
+        {"when": "2026-11-20 16:55:19 (boot b0111)", "what": "165314 started at 6.6 V (rested depleted pack, probably the same one); stop then floor, servos 0 mA; 6.6 -> 4.5 V in 30 s, last row 45 dV", "running": "brain after the floor"},
+        {"when": "2026-11-20 17:01:38 (boot b0112)", "what": "165711.jsonl: pack 7.2-7.3 V; the robot fell (body g z -0.97 -> -0.28, 15 -> 74 deg in 0.6 s); summed servo current 4.0 A at 38.47 (left hip roll ID7 2.10 A, ID8 1.08 A), servo_v sag to 6.3 V; the A7Z ran 10 more ticks with the current back at 0.19 A and died at about 74 deg tilt, at or just before impact. Same pack read 7.2 V after the 17:02:39 boot", "running": "brain switching stand/walk, b4-seed1-best flight policy set loaded (~/duck-policy)"},
+        {"when": "2026-11-20 17:09:38 (boot b0113)", "what": "brain app1120-ours55 started 17:07:58 at 7.0 V; its last status line reads battery 4.6 V floor: the pack used for cut 3 ran flat about 7 minutes after reading 7.3 V rested, far faster than a full 650 mAh pack at about 0.6 A (budget about 50 min), so that pack is weak or was not charged", "running": "brain in monitor, torque off, robot lying; an agent's idle-priority log copy over Wi-Fi was running"}
+      ],
+      "hypotheses": [
+        {"id": "H1-guard-leaves-a7z-on", "claim": "At BATTERY FLOOR the brain sits the robot down and turns torque off, but the A7Z, camera and name call keep drawing about 1 A from the same pack; a 2S LiPo past its knee falls from 6.5 to 4.5 V in about 30 s and the DFR1202 (6 V minimum input) drops the A7Z. The pack is over-discharged to about 2.25 V per cell each time (likely link to servo-factory-reset H1 and the 11-19 dead Tattu cell).", "status": "supported by cuts 1, 2 and 4 (voltage traces); fix not built"},
+        {"id": "H2-contact-jolt", "claim": "Cut 3: an intermittent contact jolted by the fall (XT30 inline switch, MR30 5 V plug, or pack leads in the foam-taped backpack) cut the A7Z with a full pack.", "status": "favoured: the board survived 4 A here and 6.7-6.9 A peaks with rail dips to 6.1-6.3 V on 2026-11-11 (robot-runs-20261111-seepick run1/run2) and died at 0.19 A during the fall"},
+        {"id": "H3-current-brownout", "claim": "Cut 3: the 4 A servo spike sagged the DFR1202 input or the shared ground and reset the A7Z.", "status": "against: death came 10 ticks after the peak at 0.19 A; larger peaks passed on 11-11"}
+      ],
+      "tests": [
+        {"id": "T1-servo-torque-after-cut3", "what": "read the head of duck_wired_app1120-170239.out on the A7Z: servos still torqued at the 17:02:39 start means only the 5 V branch dropped (MR30 or DFR1202 output); torque off means the main XT30 path", "status": "queued", "blocker": "A7Z powered off by Shawn 2026-11-20 evening; runs at its next boot"},
+        {"id": "T2-wiggle", "what": "A7Z booted on a fresh pack, robot lying still, blackbox running and a live 5 V readout visible to Shawn: flex and tap the XT30 switch, then the MR30 plug, then the pack leads; the part that drops the board is replaced or strain-relieved", "status": "queued", "blocker": "needs the robot on and Shawn at it; separates H2 from H3"},
+        {"id": "T3-floor-poweroff", "what": "fix for H1: at BATTERY FLOOR, after torque off, the brain powers the A7Z off cleanly (systemctl poweroff) so the pack stops at about 6.1 V; acceptance: a bench run with a falling supply ends with a clean journal shutdown and the last battery_dv at or above 60", "status": "queued", "blocker": "not built; the Power V2 XIAO cutoff (guide/firmware/xiao-cutoff-20261120) is the hardware version and is not fitted"}
+      ],
+      "mitigations": ["Swap the pack at about 6.6 V (BATTERY LOW); a pack that hit the floor is recharged before reuse."],
+      "recovery": {"self_recovers": false, "verified_by_induced_fault": false, "evidence": "Manual pack swap or switch cycle each time"},
+      "cause": {"status": "hypothesis", "summary": "Cuts 1, 2, 4: battery guard leaves the A7Z running on a flat pack (H1). Cut 3: contact jolted by a fall (H2), not yet separated by T1/T2."}
     }
   }
 }
