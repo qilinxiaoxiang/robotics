@@ -13,7 +13,8 @@ only (1 - thrust share) of the weight. Whether standing at 0.75 and 0.9 can be h
 the legs out of the question (cell group 0).
 
 Cells (contract threshold items 0 to 3; 60 episodes each on seeds seed0..seed0+59):
-  (0) lock_t000 .. lock_t090   sim/flight.py with --legs held (legs at the stand pose, stand-mode gain 400), pack fitted
+  (0) lock_t000 .. lock_t090   sim/flight.py with --legs held --rigid-legs (leg joints locked at the stand pose by joint
+      limits; attempt 1 used servo-held legs at gain 400, which tip backward without any thrust), pack fitted
       (sim/out/manifest_pack_nominal.json), the settings of the recorded full-sequence rows (sim/batch.py FIX and the
       ARE_nominal fan), and the new --ground-hold option: the robot settles for 2.0 s, the fans then ramp in 0.5 s to
       0, 0.25, 0.5, 0.75 or 0.9 of the weight and hold it for 10 s with the ground attitude loop of flight.py (target
@@ -22,10 +23,10 @@ Cells (contract threshold items 0 to 3; 60 episodes each on seeds seed0..seed0+5
       or trunk lower than 0.04 m) AND the trunk has moved less than 0.10 m from where it stood at thrust start (the
       12:55 review: the fall rule counted a robot drifting at 0.35 m/s as upright). Both counts are written.
       Seeds change only the sensor noise and gyro bias here: 60 episodes of one cell are close to one result repeated.
-      Not in the verdict, 20 episodes each at 0.75 and 0.9: diag_gi_* (attitude integrator running on the ground),
-      diag_rigid_* (leg joints locked by joint limits instead of servos), and diag_gi_slow_t090 (integrator running and
-      the thrust raised to 0.9 over 8 s instead of 0.5 s). They say what would have to change if a level of group 0
-      does not hold.
+      Not in the verdict, 20 episodes each: diag_gi_* at 0.75 and 0.9 (locked legs, attitude integrator running on the
+      ground), diag_gi_slow_t090 (the same with the thrust raised to 0.9 over 8 s instead of 0.5 s), and diag_servo_* at
+      0 and 0.75 (legs held by the servos at gain 400 instead of locked). They say what would have to change if a level
+      of group 0 does not hold.
       Expected from statics, written before any run (held pose: trunk about 4.1 deg nose down, weight line about 35 mm
       behind the toe edge and 15 mm ahead of the heel edge in sim/out/ground rows, centre of mass about 0.147 m up):
       the fans push forward with share x weight x sin(lean), so the feet must carry their load farther forward by
@@ -310,14 +311,19 @@ def cells():
                     flags=["--scenario", "hover", "--case", "b0t", "--legs", "held", "--arm-at", str(SETTLE_S), "--ground-hold", str(f),
                            "--ground-hold-s", str(HOLD_S), "--ground-hold-ramp", str(ramp)] + FIX + FAN + list(more))
 
+    # Attempt 2 (2026-11-20): "locked" means the leg joints locked by joint limits (--rigid-legs). Attempt 1's smoke showed
+    # the servo-held open-loop pose with the pack sagging about 2.8 deg nose-up in 2.6 s and tipping backward at 3.39 s with
+    # the fans never armed, so a servo-held leg cannot be the control of a thrust question. It stays as diag_servo_*.
+    lock = ["--rigid-legs"]
     for f in LEVELS:
-        c[f"lock_{tag(f)}"] = hold(f, "item 0", SEEDS)
+        c[f"lock_{tag(f)}"] = hold(f, "item 0", SEEDS, lock)
     c["fq2_fullseq"] = dict(path="flight", role="item 2", n=len(SCEN) * FS_PER, frac=None, ramp=None,
                             flags=["--case", "ARE_nominal", "--legs", "handover"] + FIX + FAN)
     for f in (0.75, 0.9):
-        c[f"diag_gi_{tag(f)}"] = hold(f, "diagnostic", DIAG, ["--ground-i"])
-        c[f"diag_rigid_{tag(f)}"] = hold(f, "diagnostic", DIAG, ["--rigid-legs"])
-    c["diag_gi_slow_t090"] = hold(0.9, "diagnostic", DIAG, ["--ground-i"], ramp=SLOW_RAMP_S)
+        c[f"diag_gi_{tag(f)}"] = hold(f, "diagnostic", DIAG, lock + ["--ground-i"])
+    for f in (0.0, 0.75):
+        c[f"diag_servo_{tag(f)}"] = hold(f, "diagnostic", DIAG)
+    c["diag_gi_slow_t090"] = hold(0.9, "diagnostic", DIAG, lock + ["--ground-i"], ramp=SLOW_RAMP_S)
     gate = dict(path="gate", n=SEEDS, extra=[], thrust=None, ep_s=20.0, t0=2.0, th=2.0, cmd=None)
     c[REF] = dict(gate, role="item 1 and the calm line", models=str(DEPLOYED), manifest=str(NONE), case="stand")
     c["walk61_none_walk"] = dict(gate, role="beside item 1", models=str(DEPLOYED), manifest=str(NONE), case="walk")

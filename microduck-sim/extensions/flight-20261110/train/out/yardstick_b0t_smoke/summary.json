@@ -1,0 +1,1817 @@
+{
+ "stage": "B0T",
+ "threshold": "(0) well-posedness: legs locked at the stand pose (sim/flight.py --legs held), pack fitted, attitude loop on: 60 of 60 episodes stand 10 s at each of thrust 0, 0.25, 0.5, 0.75 and 0.9; and a calm line is fixed from walk61 standing at zero thrust without the pack (median action jumps per 10 s and joint travel per 10 s; a standing cell counts as flailing above max(1.5 x reference, reference + 2) jumps); (1) walk61 without the pack at zero thrust: 0 falls of 60; (2) fq2 iteration 1999 with the pack: 0 falls of 60 at zero thrust and at least 54 of 60 successes in the full take-off and landing sequence of sim/flight.py (its recorded result is 9 of 9, sim/out/fullseq_handover); (3) walk61 with the pack at thrust 0.40 and 0.50 from 0 s: fall rates inside the 95 % interval of sim/out/walk/summary.json (0 of 10 and 2 of 10), that is at most 15 of 60 and between 2 and 33 of 60; (4) every cell left in the gate is listed with its PASS line in train/ts3_gates.py under the names REQUIREMENTS.json coverage uses",
+ "settings": {
+  "fix": [
+   "--com-est",
+   "true",
+   "--ground-pitch",
+   "level",
+   "--takeoff-twr",
+   "1.6",
+   "--takeoff-ramp",
+   "0.1"
+  ],
+  "fan": [
+   "--fan",
+   "areswei"
+  ],
+  "settle_s": 2.0,
+  "ramp_s": 0.5,
+  "hold_s": 10.0,
+  "drift_max_m": 0.1,
+  "fall_rule": "tilt over 45 deg or trunk_base lower than 0.04 m (brain_sim_check)"
+ },
+ "inputs": {
+  "model_files_sha256_16": {
+   "deployed": {
+    "walk61.onnx": "e36332d383997d51",
+    "stand61.onnx": "1569268713e40dee"
+   },
+   "fq2_1999": {
+    "walk61.onnx": "6aaae79c25c405e5",
+    "stand61.onnx": "6aaae79c25c405e5"
+   }
+  },
+  "pack_kg": {
+   "gate_path_manifest": 0.9387,
+   "manifest": "train/manifests/flightpack-nominal.json",
+   "flight_path_manifest": 0.9551,
+   "flight_manifest": "sim/out/manifest_pack_nominal.json"
+  },
+  "robot_gains": {
+   "walk_kp_rl": 200,
+   "stand_kp": 400,
+   "source": "/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/CURRENT-STATE.json facts.walking_policy"
+  },
+  "flight_py": {
+   "sha256_16": "ea193f5bfbe844a2",
+   "fan_geometry_from_cad": false,
+   "fans": [
+    {
+     "name": "1 RF",
+     "p_m": [
+      0.02,
+      -0.11,
+      0.0717
+     ],
+     "axis": [
+      -0.1045,
+      0.0,
+      0.9945
+     ]
+    },
+    {
+     "name": "2 LR",
+     "p_m": [
+      -0.044,
+      0.11,
+      0.0717
+     ],
+     "axis": [
+      0.1045,
+      0.0,
+      0.9945
+     ]
+    },
+    {
+     "name": "3 LF",
+     "p_m": [
+      0.02,
+      0.11,
+      0.0717
+     ],
+     "axis": [
+      -0.1045,
+      0.0,
+      0.9945
+     ]
+    },
+    {
+     "name": "4 RR",
+     "p_m": [
+      -0.044,
+      -0.11,
+      0.0717
+     ],
+     "axis": [
+      0.1045,
+      0.0,
+      0.9945
+     ]
+    }
+   ],
+   "hold_flags": {
+    "fix": [
+     "--com-est",
+     "true",
+     "--ground-pitch",
+     "level",
+     "--takeoff-twr",
+     "1.6",
+     "--takeoff-ramp",
+     "0.1"
+    ],
+    "fan": [
+     "--fan",
+     "areswei"
+    ],
+    "settle_s": 2.0,
+    "ramp_s": 0.5,
+    "hold_s": 10.0,
+    "drift_max_m": 0.1,
+    "fall_rule": "tilt over 45 deg or trunk_base lower than 0.04 m (brain_sim_check)"
+   }
+  }
+ },
+ "seeds": 3,
+ "seed0": 4000,
+ "cells_planned": {
+  "lock_t000": {
+   "role": "item 0",
+   "path": "flight",
+   "episodes": 3
+  },
+  "lock_t025": {
+   "role": "item 0",
+   "path": "flight",
+   "episodes": 3
+  },
+  "lock_t050": {
+   "role": "item 0",
+   "path": "flight",
+   "episodes": 3
+  },
+  "lock_t075": {
+   "role": "item 0",
+   "path": "flight",
+   "episodes": 3
+  },
+  "lock_t090": {
+   "role": "item 0",
+   "path": "flight",
+   "episodes": 3
+  },
+  "fq2_fullseq": {
+   "role": "item 2",
+   "path": "flight",
+   "episodes": 3
+  },
+  "diag_gi_t075": {
+   "role": "diagnostic",
+   "path": "flight",
+   "episodes": 1
+  },
+  "diag_rigid_t075": {
+   "role": "diagnostic",
+   "path": "flight",
+   "episodes": 1
+  },
+  "diag_gi_t090": {
+   "role": "diagnostic",
+   "path": "flight",
+   "episodes": 1
+  },
+  "diag_rigid_t090": {
+   "role": "diagnostic",
+   "path": "flight",
+   "episodes": 1
+  },
+  "diag_gi_slow_t090": {
+   "role": "diagnostic",
+   "path": "flight",
+   "episodes": 1
+  },
+  "walk61_none_stand": {
+   "role": "item 1 and the calm line",
+   "path": "gate",
+   "episodes": 3
+  },
+  "walk61_none_walk": {
+   "role": "beside item 1",
+   "path": "gate",
+   "episodes": 3
+  },
+  "fq2_pack_stand": {
+   "role": "item 2",
+   "path": "gate",
+   "episodes": 3
+  },
+  "fq2_pack_walk": {
+   "role": "beside item 2",
+   "path": "gate",
+   "episodes": 3
+  },
+  "walk61_pack_t040": {
+   "role": "item 3",
+   "path": "gate",
+   "episodes": 3
+  },
+  "walk61_pack_t050": {
+   "role": "item 3",
+   "path": "gate",
+   "episodes": 3
+  }
+ },
+ "step_log": {
+  "folder": "steps",
+  "rows_every_physics_steps": 8,
+  "cols": [
+   "t_s",
+   "roll_deg",
+   "pitch_deg",
+   "tilt_deg",
+   "cop_fwd_mm",
+   "cop_left_mm",
+   "heel_margin_mm",
+   "toe_margin_mm",
+   "side_margin_mm",
+   "normal_share",
+   "thrust_share",
+   "thrust_up_share",
+   "x_m",
+   "y_m",
+   "z_m",
+   "leg_travel_rad",
+   "feet_on",
+   "other_contact_share"
+  ]
+ },
+ "cells": {
+  "lock_t000": {
+   "cell": "lock_t000",
+   "role": "item 0",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.0",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": 0.0,
+   "secs_per_episode_median": 8.48,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 3,
+   "falls_wilson95": [
+    0.438,
+    1.0
+   ],
+   "fall_times": [
+    3.393,
+    3.393,
+    3.393
+   ],
+   "fall_dirs": {
+    "backward": 3
+   },
+   "falls_per_block_of_10": [
+    3
+   ],
+   "falls_with_feet_on_floor": 3,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -41.17,
+   "mixer_saturated_s_max": 0.0,
+   "leg_travel_rad_per_10s_median": 0.904,
+   "leg_travel_rad_per_10s_quartiles": [
+    0.904,
+    0.904
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -3.87,
+   "pitch_min_deg": -41.17,
+   "pitch_max_deg": 1.33,
+   "roll_min_deg": -0.11,
+   "roll_max_deg": 0.44,
+   "tilt_max_deg": 41.17,
+   "cop_fwd_mean_mm_median": -10.4,
+   "cop_left_mean_mm_median": -1.9,
+   "heel_margin_min_mm": 6.8,
+   "toe_margin_min_mm": 7.1,
+   "side_margin_min_mm": 62.2,
+   "heel_margin_min_mm_median": 6.8,
+   "toe_margin_min_mm_median": 7.1,
+   "normal_share_mean_median": 0.949,
+   "thrust_share_mean_median": 0.0,
+   "thrust_share_peak_max": 0.0,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 0.078,
+   "drift_net_m_max": 0.078,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "lock_t025": {
+   "cell": "lock_t025",
+   "role": "item 0",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.25",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": 0.25,
+   "secs_per_episode_median": 8.88,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 3,
+   "falls_wilson95": [
+    0.438,
+    1.0
+   ],
+   "fall_times": [
+    3.575,
+    3.595,
+    3.598
+   ],
+   "fall_dirs": {
+    "backward": 3
+   },
+   "falls_per_block_of_10": [
+    3
+   ],
+   "falls_with_feet_on_floor": 2,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -41.65,
+   "mixer_saturated_s_max": 1.47,
+   "leg_travel_rad_per_10s_median": 3.102,
+   "leg_travel_rad_per_10s_quartiles": [
+    3.092,
+    3.43
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -4.84,
+   "pitch_min_deg": -45.41,
+   "pitch_max_deg": 1.33,
+   "roll_min_deg": 0.14,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 45.41,
+   "cop_fwd_mean_mm_median": -9.9,
+   "cop_left_mean_mm_median": -1.7,
+   "heel_margin_min_mm": 5.7,
+   "toe_margin_min_mm": 4.8,
+   "side_margin_min_mm": 60.9,
+   "heel_margin_min_mm_median": 5.8,
+   "toe_margin_min_mm_median": 5.2,
+   "normal_share_mean_median": 0.678,
+   "thrust_share_mean_median": 0.291,
+   "thrust_share_peak_max": 0.709,
+   "thrust_over_cmd_median": 1.164,
+   "drift_net_m_median": 0.098,
+   "drift_net_m_max": 0.107,
+   "feet_any_share_min": 0.987,
+   "other_contact_share_max": 0.0
+  },
+  "lock_t050": {
+   "cell": "lock_t050",
+   "role": "item 0",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.5",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": 0.5,
+   "secs_per_episode_median": 8.76,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 3,
+   "falls_wilson95": [
+    0.438,
+    1.0
+   ],
+   "fall_times": [
+    3.75,
+    3.8,
+    3.815
+   ],
+   "fall_dirs": {
+    "backward": 3
+   },
+   "falls_per_block_of_10": [
+    3
+   ],
+   "falls_with_feet_on_floor": 1,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -42.71,
+   "mixer_saturated_s_max": 1.27,
+   "leg_travel_rad_per_10s_median": 3.013,
+   "leg_travel_rad_per_10s_quartiles": [
+    2.836,
+    3.09
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -4.32,
+   "pitch_min_deg": -44.61,
+   "pitch_max_deg": 1.33,
+   "roll_min_deg": 0.22,
+   "roll_max_deg": 0.38,
+   "tilt_max_deg": 44.61,
+   "cop_fwd_mean_mm_median": -10.4,
+   "cop_left_mean_mm_median": -2.0,
+   "heel_margin_min_mm": 6.1,
+   "toe_margin_min_mm": 5.1,
+   "side_margin_min_mm": 58.6,
+   "heel_margin_min_mm_median": 6.2,
+   "toe_margin_min_mm_median": 5.2,
+   "normal_share_mean_median": 0.472,
+   "thrust_share_mean_median": 0.502,
+   "thrust_share_peak_max": 0.729,
+   "thrust_over_cmd_median": 1.004,
+   "drift_net_m_median": 0.101,
+   "drift_net_m_max": 0.106,
+   "feet_any_share_min": 0.989,
+   "other_contact_share_max": 0.0
+  },
+  "lock_t075": {
+   "cell": "lock_t075",
+   "role": "item 0",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.75",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": 0.75,
+   "secs_per_episode_median": 6.24,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 3,
+   "falls_wilson95": [
+    0.438,
+    1.0
+   ],
+   "fall_times": [
+    4.013,
+    4.242,
+    5.67
+   ],
+   "fall_dirs": {
+    "forward": 1,
+    "backward": 2
+   },
+   "falls_per_block_of_10": [
+    3
+   ],
+   "falls_with_feet_on_floor": 3,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -42.45,
+   "mixer_saturated_s_max": 1.21,
+   "leg_travel_rad_per_10s_median": 3.282,
+   "leg_travel_rad_per_10s_quartiles": [
+    1.996,
+    3.551
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -3.4,
+   "pitch_min_deg": -44.13,
+   "pitch_max_deg": 42.86,
+   "roll_min_deg": 0.05,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 44.13,
+   "cop_fwd_mean_mm_median": -10.6,
+   "cop_left_mean_mm_median": -3.0,
+   "heel_margin_min_mm": 5.0,
+   "toe_margin_min_mm": 3.9,
+   "side_margin_min_mm": 51.9,
+   "heel_margin_min_mm_median": 6.2,
+   "toe_margin_min_mm_median": 4.3,
+   "normal_share_mean_median": 0.245,
+   "thrust_share_mean_median": 0.741,
+   "thrust_share_peak_max": 0.796,
+   "thrust_over_cmd_median": 0.988,
+   "drift_net_m_median": 0.107,
+   "drift_net_m_max": 0.112,
+   "feet_any_share_min": 0.982,
+   "other_contact_share_max": 0.0
+  },
+  "lock_t090": {
+   "cell": "lock_t090",
+   "role": "item 0",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.9",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": 0.9,
+   "secs_per_episode_median": 5.58,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 3,
+   "falls_wilson95": [
+    0.438,
+    1.0
+   ],
+   "fall_times": [
+    3.53,
+    3.54,
+    3.555
+   ],
+   "fall_dirs": {
+    "forward": 3
+   },
+   "falls_per_block_of_10": [
+    3
+   ],
+   "falls_with_feet_on_floor": 3,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": 43.21,
+   "mixer_saturated_s_max": 1.17,
+   "leg_travel_rad_per_10s_median": 5.025,
+   "leg_travel_rad_per_10s_quartiles": [
+    4.939,
+    5.138
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": 7.72,
+   "pitch_min_deg": 0.9,
+   "pitch_max_deg": 44.84,
+   "roll_min_deg": 0.07,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 44.84,
+   "cop_fwd_mean_mm_median": 0.8,
+   "cop_left_mean_mm_median": -3.8,
+   "heel_margin_min_mm": 1.6,
+   "toe_margin_min_mm": 6.3,
+   "side_margin_min_mm": 44.6,
+   "heel_margin_min_mm_median": 2.3,
+   "toe_margin_min_mm_median": 6.5,
+   "normal_share_mean_median": 0.124,
+   "thrust_share_mean_median": 0.879,
+   "thrust_share_peak_max": 0.899,
+   "thrust_over_cmd_median": 0.977,
+   "drift_net_m_median": 0.148,
+   "drift_net_m_max": 0.157,
+   "feet_any_share_min": 0.896,
+   "other_contact_share_max": 0.0
+  },
+  "fq2_fullseq": {
+   "cell": "fq2_fullseq",
+   "role": "item 2",
+   "path": "flight",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--case",
+    "ARE_nominal",
+    "--legs",
+    "handover",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei"
+   ],
+   "thrust": null,
+   "secs_per_episode_median": 7.38,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "successes": 1,
+   "successes_wilson95": [
+    0.061,
+    0.792
+   ],
+   "airborne_successes": 3,
+   "by_scenario": {
+    "hover": {
+     "successes": 1,
+     "of": 1
+    },
+    "table_up": {
+     "successes": 0,
+     "of": 1
+    },
+    "table_down": {
+     "successes": 0,
+     "of": 1
+    }
+   },
+   "failed": [
+    {
+     "key": "table_down_s4000",
+     "fell45_at": null,
+     "fell45_phase": null,
+     "phase_end": "disarmed",
+     "airborne_success": true,
+     "nacelle_hit_at": 10.713
+    },
+    {
+     "key": "table_up_s4000",
+     "fell45_at": 10.625,
+     "fell45_phase": "disarmed",
+     "phase_end": "disarmed",
+     "airborne_success": true,
+     "nacelle_hit_at": null
+    }
+   ],
+   "takeoff_pitch_excursion_deg_max": 9.8,
+   "mass_g": 1915.6,
+   "leg_travel_rad_per_10s_median": 24.937,
+   "leg_travel_rad_per_10s_quartiles": [
+    14.949,
+    28.678
+   ],
+   "pitch_before_deg_median": null,
+   "pitch_mean_deg_median": -1.23,
+   "pitch_min_deg": -32.6,
+   "pitch_max_deg": 16.75,
+   "roll_min_deg": -175.92,
+   "roll_max_deg": 176.4,
+   "tilt_max_deg": 174.08,
+   "cop_fwd_mean_mm_median": -12.8,
+   "cop_left_mean_mm_median": -5.3,
+   "heel_margin_min_mm": -49.3,
+   "toe_margin_min_mm": -95.5,
+   "side_margin_min_mm": -62.9,
+   "heel_margin_min_mm_median": -4.6,
+   "toe_margin_min_mm_median": 5.4,
+   "normal_share_mean_median": 0.395,
+   "thrust_share_mean_median": 0.605,
+   "thrust_share_peak_max": 1.388,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 0.498,
+   "drift_net_m_max": 0.717,
+   "feet_any_share_min": 0.158,
+   "other_contact_share_max": 3.223
+  },
+  "diag_gi_t075": {
+   "cell": "diag_gi_t075",
+   "role": "diagnostic",
+   "path": "flight",
+   "seeds": 1,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.75",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei",
+    "--ground-i"
+   ],
+   "thrust": 0.75,
+   "secs_per_episode_median": 6.36,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 1,
+   "falls_wilson95": [
+    0.207,
+    1.0
+   ],
+   "fall_times": [
+    3.743
+   ],
+   "fall_dirs": {
+    "backward": 1
+   },
+   "falls_per_block_of_10": [
+    1
+   ],
+   "falls_with_feet_on_floor": 1,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -44.07,
+   "mixer_saturated_s_max": 1.18,
+   "leg_travel_rad_per_10s_median": 4.222,
+   "leg_travel_rad_per_10s_quartiles": [
+    4.222,
+    4.222
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -4.45,
+   "pitch_min_deg": -44.07,
+   "pitch_max_deg": 1.33,
+   "roll_min_deg": 0.07,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 44.07,
+   "cop_fwd_mean_mm_median": -9.7,
+   "cop_left_mean_mm_median": -2.2,
+   "heel_margin_min_mm": 6.3,
+   "toe_margin_min_mm": 4.0,
+   "side_margin_min_mm": 59.4,
+   "heel_margin_min_mm_median": 6.3,
+   "toe_margin_min_mm_median": 4.0,
+   "normal_share_mean_median": 0.243,
+   "thrust_share_mean_median": 0.737,
+   "thrust_share_peak_max": 0.8,
+   "thrust_over_cmd_median": 0.983,
+   "drift_net_m_median": 0.113,
+   "drift_net_m_max": 0.113,
+   "feet_any_share_min": 0.989,
+   "other_contact_share_max": 0.0
+  },
+  "diag_rigid_t075": {
+   "cell": "diag_rigid_t075",
+   "role": "diagnostic",
+   "path": "flight",
+   "seeds": 1,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.75",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei",
+    "--rigid-legs"
+   ],
+   "thrust": 0.75,
+   "secs_per_episode_median": 7.61,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.793
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "stood": 1,
+   "stood_no_fall": 1,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": 4.16,
+   "mixer_saturated_s_max": 0.07,
+   "leg_travel_rad_per_10s_median": 0.031,
+   "leg_travel_rad_per_10s_quartiles": [
+    0.031,
+    0.031
+   ],
+   "pitch_before_deg_median": 3.91,
+   "pitch_mean_deg_median": 4.15,
+   "pitch_min_deg": 3.88,
+   "pitch_max_deg": 4.2,
+   "roll_min_deg": 0.0,
+   "roll_max_deg": 0.03,
+   "tilt_max_deg": 4.2,
+   "cop_fwd_mean_mm_median": 12.1,
+   "cop_left_mean_mm_median": -1.6,
+   "heel_margin_min_mm": 13.8,
+   "toe_margin_min_mm": 8.3,
+   "side_margin_min_mm": 57.3,
+   "heel_margin_min_mm_median": 13.8,
+   "toe_margin_min_mm_median": 8.3,
+   "normal_share_mean_median": 0.253,
+   "thrust_share_mean_median": 0.748,
+   "thrust_share_peak_max": 0.75,
+   "thrust_over_cmd_median": 0.997,
+   "drift_net_m_median": 0.019,
+   "drift_net_m_max": 0.019,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "diag_gi_t090": {
+   "cell": "diag_gi_t090",
+   "role": "diagnostic",
+   "path": "flight",
+   "seeds": 1,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.9",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei",
+    "--ground-i"
+   ],
+   "thrust": 0.9,
+   "secs_per_episode_median": 5.75,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 1,
+   "falls_wilson95": [
+    0.207,
+    1.0
+   ],
+   "fall_times": [
+    3.618
+   ],
+   "fall_dirs": {
+    "forward": 1
+   },
+   "falls_per_block_of_10": [
+    1
+   ],
+   "falls_with_feet_on_floor": 0,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": 45.18,
+   "mixer_saturated_s_max": 1.18,
+   "leg_travel_rad_per_10s_median": 4.933,
+   "leg_travel_rad_per_10s_quartiles": [
+    4.933,
+    4.933
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": 7.8,
+   "pitch_min_deg": 0.87,
+   "pitch_max_deg": 45.18,
+   "roll_min_deg": 0.07,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 45.18,
+   "cop_fwd_mean_mm_median": 0.3,
+   "cop_left_mean_mm_median": -3.0,
+   "heel_margin_min_mm": -0.5,
+   "toe_margin_min_mm": 6.4,
+   "side_margin_min_mm": 48.6,
+   "heel_margin_min_mm_median": -0.5,
+   "toe_margin_min_mm_median": 6.4,
+   "normal_share_mean_median": 0.122,
+   "thrust_share_mean_median": 0.881,
+   "thrust_share_peak_max": 0.899,
+   "thrust_over_cmd_median": 0.979,
+   "drift_net_m_median": 0.162,
+   "drift_net_m_max": 0.162,
+   "feet_any_share_min": 0.889,
+   "other_contact_share_max": 0.0
+  },
+  "diag_rigid_t090": {
+   "cell": "diag_rigid_t090",
+   "role": "diagnostic",
+   "path": "flight",
+   "seeds": 1,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.9",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "0.5",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei",
+    "--rigid-legs"
+   ],
+   "thrust": 0.9,
+   "secs_per_episode_median": 3.33,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 1,
+   "falls_wilson95": [
+    0.207,
+    1.0
+   ],
+   "fall_times": [
+    3.24
+   ],
+   "fall_dirs": {
+    "forward": 1
+   },
+   "falls_per_block_of_10": [
+    1
+   ],
+   "falls_with_feet_on_floor": 0,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": 44.91,
+   "mixer_saturated_s_max": 1.19,
+   "leg_travel_rad_per_10s_median": 0.328,
+   "leg_travel_rad_per_10s_quartiles": [
+    0.328,
+    0.328
+   ],
+   "pitch_before_deg_median": 3.91,
+   "pitch_mean_deg_median": 10.31,
+   "pitch_min_deg": 3.88,
+   "pitch_max_deg": 44.91,
+   "roll_min_deg": -0.05,
+   "roll_max_deg": 0.02,
+   "tilt_max_deg": 44.91,
+   "cop_fwd_mean_mm_median": 8.7,
+   "cop_left_mean_mm_median": -2.1,
+   "heel_margin_min_mm": 0.8,
+   "toe_margin_min_mm": 6.0,
+   "side_margin_min_mm": 29.3,
+   "heel_margin_min_mm_median": 0.8,
+   "toe_margin_min_mm_median": 6.0,
+   "normal_share_mean_median": 0.134,
+   "thrust_share_mean_median": 0.87,
+   "thrust_share_peak_max": 0.897,
+   "thrust_over_cmd_median": 0.967,
+   "drift_net_m_median": 0.126,
+   "drift_net_m_max": 0.126,
+   "feet_any_share_min": 0.903,
+   "other_contact_share_max": 0.0
+  },
+  "diag_gi_slow_t090": {
+   "cell": "diag_gi_slow_t090",
+   "role": "diagnostic",
+   "path": "flight",
+   "seeds": 1,
+   "seed0": 4000,
+   "flags": [
+    "--scenario",
+    "hover",
+    "--case",
+    "b0t",
+    "--legs",
+    "held",
+    "--arm-at",
+    "2.0",
+    "--ground-hold",
+    "0.9",
+    "--ground-hold-s",
+    "10.0",
+    "--ground-hold-ramp",
+    "8.0",
+    "--com-est",
+    "true",
+    "--ground-pitch",
+    "level",
+    "--takeoff-twr",
+    "1.6",
+    "--takeoff-ramp",
+    "0.1",
+    "--fan",
+    "areswei",
+    "--ground-i"
+   ],
+   "thrust": 0.9,
+   "secs_per_episode_median": 1.69,
+   "kp_rl": [],
+   "cop_margins_logged": true,
+   "falls": 1,
+   "falls_wilson95": [
+    0.207,
+    1.0
+   ],
+   "fall_times": [
+    3.415
+   ],
+   "fall_dirs": {
+    "backward": 1
+   },
+   "falls_per_block_of_10": [
+    1
+   ],
+   "falls_with_feet_on_floor": 1,
+   "stood": 0,
+   "stood_no_fall": 0,
+   "lifted_off": 0,
+   "mass_g": 1915.6,
+   "pitch_end_deg_median": -41.34,
+   "mixer_saturated_s_max": 2.2,
+   "leg_travel_rad_per_10s_median": 3.849,
+   "leg_travel_rad_per_10s_quartiles": [
+    3.849,
+    3.849
+   ],
+   "pitch_before_deg_median": 1.52,
+   "pitch_mean_deg_median": -5.41,
+   "pitch_min_deg": -41.34,
+   "pitch_max_deg": 1.33,
+   "roll_min_deg": 0.19,
+   "roll_max_deg": 0.37,
+   "tilt_max_deg": 41.34,
+   "cop_fwd_mean_mm_median": null,
+   "cop_left_mean_mm_median": null,
+   "heel_margin_min_mm": 5.9,
+   "toe_margin_min_mm": 5.3,
+   "side_margin_min_mm": 60.2,
+   "heel_margin_min_mm_median": 5.9,
+   "toe_margin_min_mm_median": 5.3,
+   "normal_share_mean_median": null,
+   "thrust_share_mean_median": null,
+   "thrust_share_peak_max": 0.68,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 0.097,
+   "drift_net_m_max": 0.097,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "walk61_none_stand": {
+   "cell": "walk61_none_stand",
+   "role": "item 1 and the calm line",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [],
+   "thrust": null,
+   "secs_per_episode_median": 8.07,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.562
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 0.0,
+   "jumps_per_10s_quartiles": [
+    0.0,
+    0.0
+   ],
+   "speed_mean_upright": 0.0001,
+   "max_tilt": 2.2,
+   "leg_travel_rad_per_10s_median": 0.279,
+   "leg_travel_rad_per_10s_quartiles": [
+    0.279,
+    0.28
+   ],
+   "pitch_before_deg_median": 0.35,
+   "pitch_mean_deg_median": 0.42,
+   "pitch_min_deg": 0.26,
+   "pitch_max_deg": 0.51,
+   "roll_min_deg": -0.12,
+   "roll_max_deg": -0.04,
+   "tilt_max_deg": 0.51,
+   "cop_fwd_mean_mm_median": -10.3,
+   "cop_left_mean_mm_median": 0.5,
+   "heel_margin_min_mm": 13.2,
+   "toe_margin_min_mm": 33.8,
+   "side_margin_min_mm": 60.4,
+   "heel_margin_min_mm_median": 13.3,
+   "toe_margin_min_mm_median": 34.3,
+   "normal_share_mean_median": 1.0,
+   "thrust_share_mean_median": 0.0,
+   "thrust_share_peak_max": 0.0,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 0.003,
+   "drift_net_m_max": 0.003,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "walk61_none_walk": {
+   "cell": "walk61_none_walk",
+   "role": "beside item 1",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [],
+   "thrust": null,
+   "secs_per_episode_median": 7.8,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.562
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 0.5,
+   "jumps_per_10s_quartiles": [
+    0.5,
+    1.0
+   ],
+   "speed_mean_upright": 0.0899,
+   "max_tilt": 6.6,
+   "leg_travel_rad_per_10s_median": 80.727,
+   "leg_travel_rad_per_10s_quartiles": [
+    80.111,
+    81.254
+   ],
+   "pitch_before_deg_median": 0.35,
+   "pitch_mean_deg_median": 1.75,
+   "pitch_min_deg": -1.41,
+   "pitch_max_deg": 4.65,
+   "roll_min_deg": -6.2,
+   "roll_max_deg": 4.75,
+   "tilt_max_deg": 6.58,
+   "cop_fwd_mean_mm_median": -7.2,
+   "cop_left_mean_mm_median": 0.0,
+   "heel_margin_min_mm": 6.0,
+   "toe_margin_min_mm": 8.9,
+   "side_margin_min_mm": 6.2,
+   "heel_margin_min_mm_median": 6.1,
+   "toe_margin_min_mm_median": 8.9,
+   "normal_share_mean_median": 1.0,
+   "thrust_share_mean_median": 0.0,
+   "thrust_share_peak_max": 0.0,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 1.367,
+   "drift_net_m_max": 1.369,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "fq2_pack_stand": {
+   "cell": "fq2_pack_stand",
+   "role": "item 2",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--stand-s",
+    "0"
+   ],
+   "thrust": null,
+   "secs_per_episode_median": 5.56,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.562
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 1.0,
+   "jumps_per_10s_quartiles": [
+    0.5,
+    1.0
+   ],
+   "speed_mean_upright": 0.0001,
+   "max_tilt": 7.5,
+   "leg_travel_rad_per_10s_median": 0.421,
+   "leg_travel_rad_per_10s_quartiles": [
+    0.358,
+    0.449
+   ],
+   "pitch_before_deg_median": 6.2,
+   "pitch_mean_deg_median": 6.12,
+   "pitch_min_deg": 5.97,
+   "pitch_max_deg": 6.32,
+   "roll_min_deg": -1.12,
+   "roll_max_deg": -0.62,
+   "tilt_max_deg": 6.41,
+   "cop_fwd_mean_mm_median": -9.3,
+   "cop_left_mean_mm_median": -0.7,
+   "heel_margin_min_mm": 13.5,
+   "toe_margin_min_mm": 32.0,
+   "side_margin_min_mm": 60.1,
+   "heel_margin_min_mm_median": 13.5,
+   "toe_margin_min_mm_median": 32.0,
+   "normal_share_mean_median": 1.0,
+   "thrust_share_mean_median": 0.0,
+   "thrust_share_peak_max": 0.0,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 0.001,
+   "drift_net_m_max": 0.001,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "fq2_pack_walk": {
+   "cell": "fq2_pack_walk",
+   "role": "beside item 2",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--stand-s",
+    "0"
+   ],
+   "thrust": null,
+   "secs_per_episode_median": 4.99,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.562
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 5.5,
+   "jumps_per_10s_quartiles": [
+    4.0,
+    6.5
+   ],
+   "speed_mean_upright": 0.1092,
+   "max_tilt": 11.0,
+   "leg_travel_rad_per_10s_median": 132.955,
+   "leg_travel_rad_per_10s_quartiles": [
+    132.457,
+    133.719
+   ],
+   "pitch_before_deg_median": 6.2,
+   "pitch_mean_deg_median": 5.95,
+   "pitch_min_deg": -0.69,
+   "pitch_max_deg": 9.88,
+   "roll_min_deg": -6.26,
+   "roll_max_deg": 2.5,
+   "tilt_max_deg": 11.04,
+   "cop_fwd_mean_mm_median": -5.8,
+   "cop_left_mean_mm_median": 2.3,
+   "heel_margin_min_mm": 6.7,
+   "toe_margin_min_mm": 8.7,
+   "side_margin_min_mm": -2.7,
+   "heel_margin_min_mm_median": 7.0,
+   "toe_margin_min_mm_median": 8.7,
+   "normal_share_mean_median": 1.0,
+   "thrust_share_mean_median": 0.0,
+   "thrust_share_peak_max": 0.0,
+   "thrust_over_cmd_median": null,
+   "drift_net_m_median": 1.637,
+   "drift_net_m_max": 1.674,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  },
+  "walk61_pack_t040": {
+   "cell": "walk61_pack_t040",
+   "role": "item 3",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--stand-s",
+    "0",
+    "--walk-at",
+    "3",
+    "--walk-s",
+    "17"
+   ],
+   "thrust": {
+    "unit": "whole",
+    "pts": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.4
+     ]
+    ],
+    "att_wn": 4.0
+   },
+   "secs_per_episode_median": 7.62,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 1,
+   "falls_wilson95": [
+    0.061,
+    0.792
+   ],
+   "fall_times": [
+    17.86
+   ],
+   "fall_dirs": {
+    "left": 1
+   },
+   "falls_per_block_of_10": [
+    1
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 43.0,
+   "jumps_per_10s_quartiles": [
+    42.6,
+    54.3
+   ],
+   "speed_mean_upright": 0.0278,
+   "max_tilt": 47.4,
+   "fan_sum_over_commanded_mean": 0.996,
+   "fan_peak_share_max": 0.405,
+   "leg_travel_rad_per_10s_median": 86.048,
+   "leg_travel_rad_per_10s_quartiles": [
+    81.194,
+    92.064
+   ],
+   "pitch_before_deg_median": null,
+   "pitch_mean_deg_median": 1.07,
+   "pitch_min_deg": -5.18,
+   "pitch_max_deg": 41.04,
+   "roll_min_deg": -32.56,
+   "roll_max_deg": 3.32,
+   "tilt_max_deg": 44.42,
+   "cop_fwd_mean_mm_median": -3.6,
+   "cop_left_mean_mm_median": -1.8,
+   "heel_margin_min_mm": 6.3,
+   "toe_margin_min_mm": -69.4,
+   "side_margin_min_mm": -58.7,
+   "heel_margin_min_mm_median": 6.3,
+   "toe_margin_min_mm_median": 7.4,
+   "normal_share_mean_median": 0.602,
+   "thrust_share_mean_median": 0.398,
+   "thrust_share_peak_max": 0.402,
+   "thrust_over_cmd_median": 0.995,
+   "drift_net_m_median": 0.322,
+   "drift_net_m_max": 0.787,
+   "feet_any_share_min": 0.993,
+   "other_contact_share_max": 1.218
+  },
+  "walk61_pack_t050": {
+   "cell": "walk61_pack_t050",
+   "role": "item 3",
+   "path": "gate",
+   "seeds": 3,
+   "seed0": 4000,
+   "flags": [
+    "--stand-s",
+    "0",
+    "--walk-at",
+    "3",
+    "--walk-s",
+    "17"
+   ],
+   "thrust": {
+    "unit": "whole",
+    "pts": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.5
+     ]
+    ],
+    "att_wn": 4.0
+   },
+   "secs_per_episode_median": 5.2,
+   "kp_rl": [
+    200
+   ],
+   "cop_margins_logged": true,
+   "falls": 0,
+   "falls_wilson95": [
+    0.0,
+    0.562
+   ],
+   "fall_times": [],
+   "fall_dirs": {},
+   "falls_per_block_of_10": [
+    0
+   ],
+   "falls_with_feet_on_floor": 0,
+   "jumps_per_10s_median": 40.0,
+   "jumps_per_10s_quartiles": [
+    37.8,
+    40.0
+   ],
+   "speed_mean_upright": 0.0057,
+   "max_tilt": 9.0,
+   "fan_sum_over_commanded_mean": 0.998,
+   "fan_peak_share_max": 0.503,
+   "leg_travel_rad_per_10s_median": 75.802,
+   "leg_travel_rad_per_10s_quartiles": [
+    75.37,
+    76.044
+   ],
+   "pitch_before_deg_median": null,
+   "pitch_mean_deg_median": 2.05,
+   "pitch_min_deg": -4.43,
+   "pitch_max_deg": 8.88,
+   "roll_min_deg": -2.45,
+   "roll_max_deg": 2.32,
+   "tilt_max_deg": 8.99,
+   "cop_fwd_mean_mm_median": -0.5,
+   "cop_left_mean_mm_median": -1.5,
+   "heel_margin_min_mm": 6.2,
+   "toe_margin_min_mm": 6.7,
+   "side_margin_min_mm": 8.3,
+   "heel_margin_min_mm_median": 6.2,
+   "toe_margin_min_mm_median": 7.1,
+   "normal_share_mean_median": 0.503,
+   "thrust_share_mean_median": 0.498,
+   "thrust_share_peak_max": 0.5,
+   "thrust_over_cmd_median": 0.996,
+   "drift_net_m_median": 0.097,
+   "drift_net_m_max": 0.228,
+   "feet_any_share_min": 1.0,
+   "other_contact_share_max": 0.0
+  }
+ },
+ "verdict": {
+  "0_locked_legs_stand": {
+   "complete": false,
+   "pass": false,
+   "stood_10s": {
+    "t000": 0,
+    "t025": 0,
+    "t050": 0,
+    "t075": 0,
+    "t090": 0
+   },
+   "no_fall": {
+    "t000": 0,
+    "t025": 0,
+    "t050": 0,
+    "t075": 0,
+    "t090": 0
+   },
+   "of": {
+    "t000": 3,
+    "t025": 3,
+    "t050": 3,
+    "t075": 3,
+    "t090": 3
+   },
+   "fall_dirs": {
+    "t000": {
+     "backward": 3
+    },
+    "t025": {
+     "backward": 3
+    },
+    "t050": {
+     "backward": 3
+    },
+    "t075": {
+     "forward": 1,
+     "backward": 2
+    },
+    "t090": {
+     "forward": 3
+    }
+   },
+   "fall_times_median": {
+    "t000": 3.393,
+    "t025": 3.595,
+    "t050": 3.8,
+    "t075": 4.242,
+    "t090": 3.54
+   },
+   "toe_margin_min_mm": {
+    "t000": 7.1,
+    "t025": 4.8,
+    "t050": 5.1,
+    "t075": 3.9,
+    "t090": 6.3
+   },
+   "heel_margin_min_mm": {
+    "t000": 6.8,
+    "t025": 5.7,
+    "t050": 6.1,
+    "t075": 5.0,
+    "t090": 1.6
+   },
+   "drift_net_m_max": {
+    "t000": 0.078,
+    "t025": 0.107,
+    "t050": 0.106,
+    "t075": 0.112,
+    "t090": 0.157
+   },
+   "calm_line": {
+    "cell": "walk61_none_stand",
+    "seeds": 3,
+    "jumps_per_10s_median": 0.0,
+    "jumps_per_10s_quartiles": [
+     0.0,
+     0.0
+    ],
+    "flail_limit_jumps_per_10s": 2.0,
+    "leg_travel_rad_per_10s_median": 0.279,
+    "leg_travel_rad_per_10s_quartiles": [
+     0.279,
+     0.28
+    ]
+   },
+   "diagnostics_not_in_the_verdict": {
+    "diag_gi_t075": {
+     "stood": 0,
+     "no_fall": 0,
+     "of": 1,
+     "fall_dirs": {
+      "backward": 1
+     }
+    },
+    "diag_rigid_t075": {
+     "stood": 1,
+     "no_fall": 1,
+     "of": 1,
+     "fall_dirs": {}
+    },
+    "diag_gi_t090": {
+     "stood": 0,
+     "no_fall": 0,
+     "of": 1,
+     "fall_dirs": {
+      "forward": 1
+     }
+    },
+    "diag_rigid_t090": {
+     "stood": 0,
+     "no_fall": 0,
+     "of": 1,
+     "fall_dirs": {
+      "forward": 1
+     }
+    },
+    "diag_gi_slow_t090": {
+     "stood": 0,
+     "no_fall": 0,
+     "of": 1,
+     "fall_dirs": {
+      "backward": 1
+     }
+    }
+   }
+  },
+  "1_walk61_no_pack": {
+   "complete": false,
+   "pass": false,
+   "standing_falls": 0,
+   "of": 3,
+   "walking_falls_beside_it": 0,
+   "pass_if_walking_counts_too": false
+  },
+  "2_fq2_with_pack": {
+   "complete": false,
+   "pass": false,
+   "standing_falls": 0,
+   "full_sequence_successes": 1,
+   "full_sequence_by_scenario": {
+    "hover": {
+     "successes": 1,
+     "of": 1
+    },
+    "table_up": {
+     "successes": 0,
+     "of": 1
+    },
+    "table_down": {
+     "successes": 0,
+     "of": 1
+    }
+   },
+   "full_sequence_needed": 54,
+   "of": 60,
+   "walking_falls_beside_it": 0,
+   "pass_if_walking_counts_too": false
+  },
+  "3_walk_reference": {
+   "complete": false,
+   "pass": false,
+   "falls_at_040": 1,
+   "limit_at_040": "at most 15 of 60",
+   "falls_at_050": 0,
+   "limit_at_050": "between 2 and 33 of 60",
+   "reference": "sim/out/walk/summary.json thrust40|stand 0 of 10, thrust50|stand 2 of 10"
+  },
+  "4_gate_lists_the_cells": {
+   "complete": true,
+   "pass": false,
+   "names": [
+    "thrust_ramp_stand",
+    "thrust_ramp_walk",
+    "thrust_takeoff_stand"
+   ],
+   "listed_in_ts3_gates": {
+    "thrust_ramp_stand": false,
+    "thrust_ramp_walk": false,
+    "thrust_takeoff_stand": false
+   },
+   "note": "checks the names only; a PASS line per cell in ts3_gates.py is read by a person"
+  },
+  "flailing_of_standing_policy_cells": {
+   "fq2_pack_stand": {
+    "jumps_per_10s_median": 1.0,
+    "limit": 2.0,
+    "flailing": false,
+    "leg_travel_rad_per_10s_median": 0.421,
+    "leg_travel_over_reference": 1.51
+   },
+   "walk61_pack_t040": {
+    "jumps_per_10s_median": 43.0,
+    "limit": 2.0,
+    "flailing": true,
+    "leg_travel_rad_per_10s_median": 86.048,
+    "leg_travel_over_reference": 308.42
+   },
+   "walk61_pack_t050": {
+    "jumps_per_10s_median": 40.0,
+    "limit": 2.0,
+    "flailing": true,
+    "leg_travel_rad_per_10s_median": 75.802,
+    "leg_travel_over_reference": 271.69
+   }
+  },
+  "complete": false,
+  "pass": false
+ }
+}
