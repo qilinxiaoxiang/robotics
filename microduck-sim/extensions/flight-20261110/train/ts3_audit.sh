@@ -40,7 +40,7 @@ case "$1" in
   smoke)
     IT=${2:-3}; NE=${3:-64}
     ssh mac-mini "cd $REMOTE/$RL && FLIGHT_MANIFESTS=\$HOME/$REMOTE/$FL/train/manifests FLIGHT_ANCHOR_ONNX=$A/ts3_walk61.onnx zsh $LK run timeout 590 \
-      .venv/bin/python cmu/finetune/flight/teacher_smoke.py --init $A/${TSINIT:-ts_start.onnx} --envs $NE --iters $IT --delta universal5t \
+      .venv/bin/python cmu/finetune/flight/teacher_smoke.py --init $A/${TSINIT:-ts_start.onnx} --envs $NE --iters $IT --delta ${TSDELTA:-universal5t} \
       --outdir /tmp/ts3_teacher_smoke 2>&1" > $T/logs/ts3_teacher_smoke.log || true
     scp -q mac-mini:/tmp/ts3_teacher_smoke/teacher_smoke.json $T/out/ts3_teacher_smoke.json || true
     grep -E "\[smoke\]|\[teacher\]|\[anchor\]|\[gain\]|Error|Traceback" $T/logs/ts3_teacher_smoke.log | cut -c1-500 | head -40

@@ -1261,3 +1261,33 @@ under 70.00 USD metered (workspace limit 75).
   gain scale is drawn 0.8 to 2.2 and is not among the teacher's privileged inputs, so one behaviour has to serve a
   2.75-fold gain range and it has settled on the stiff end. w61g at 250 and 375: 2 failed lines each, the nominal
   pack fall at 0.76 and 0.70 s; its low-command speed is 0.007 m/s at 500 (not walking yet, grace until 1000).
+- 20:53 `ts3_relaunch_w61.sh` stopped (coordinator: no seeds 2 and 3 of the walk61 arm; the freed session goes to
+  the arm most likely to pass).
+- 20:54 gain split, the test of the reading above (`ts3_gain_split.py`, runtime simulation, walking, 10 seeds per
+  cell, `--kp-rl` 160 to 440 = scale 0.8 to 2.2; 280 episodes on Modal CPU, metered 36.56 -> 36.57;
+  `out/gain_split.json`, `logs/gain_split.log`). Falls of 10 at scale 0.8, 1.0, 1.25, 1.5, 1.75, 2.0, 2.2:
+  - `m3p_875` pack: 10, 10, 5, 4, 2, 3, 2.   no pack: 0, 0, 0, 0, 0, 2, 4.
+  - `m3q_750` pack: 10, 10, 4, 1, 3, 4, 4.   no pack: 0 in every cell.
+  - Action jumps (median per episode, as flight_eval counts them): no pack highest at 0.8 (62 and 61) and lowest
+    in the middle (m3q 1.5 to 3 from 1.25 up); with the pack 16 to 155 in every cell.
+  The pack failures concentrate at the low end: at the robot's own gain and below every episode falls, from 1.25
+  up most survive. The reading is supported for the pack. It is not the whole story: with the pack no gain is
+  clean (1 to 5 falls and 64 to 155 jumps even at the best scale), and b05 also falls without the pack at the
+  stiff end.
+- 20:57 delta `universal5tg`: universal5t plus the env's gain scale as the teacher's eighth privileged input
+  (`teacher.enable_gain`, normaliser mean 1.5 std 0.4; a 61-input start loads with zero weight on it). Rewards and
+  randomisation are those of universal5t, so the audit record is copied (`audit_gate.py record universal5tg`, same
+  three files). The runtime simulation feeds a 69-input teacher `KP_RL / 200` (`flight_eval.py`); the student env
+  stays universal5 (the student infers the gain, as it does the load). Smoke on the Mac mini from both starts
+  (`TSDELTA=universal5tg ts3_audit.sh smoke 5 64`): actor obs 69, privileged columns equal `priv_obs`, 5 PPO
+  iterations, export within 1e-6; a 69-input export stands in the runtime simulation (`ts3_first_second.py tg_smoke`).
+- 20:58 `ts3_push_tg.sh` started detached (pid 31769, parent 1; heartbeat `logs/ts3_push_tg_heartbeat.txt`): pushes
+  `microduck-ts3-teach-g` (ts3-teach-g from ts_start, ts3-teach-h from walk61 with `--track-grace 700`; 1000
+  iterations, `--max-hours 1.6`, seed 1) into the first free session; a manual try at 20:59 was refused only for
+  "Maximum batch GPU session count of 2 reached". Its follow-up writes `logs/ts3_teach_gh_heartbeat.txt`, folders
+  `ckpt/t3g_*`, `t3h_*`. Student trigger restarted (pid 31767) with those tags.
+- Kaggle quota 20:57: 22.68 h used, 7.32 h left (two sessions running, so it falls 2 h per hour). Plan: first
+  kernel ends about 21:10 (0.2 h), second about 21:50 (0.9 h), gain pair about 1.7 h: 4.5 h left for students, one
+  student kernel 2.2 h at most, 2.3 h after it. `refreshAt` is "2026-11-21T00:00:00" in the CLI's JSON, with no
+  zone; 2026-11-21 is a Saturday. Read as UTC that is Friday 2026-11-20 19:00 Eastern, read as local time five
+  hours later; a search did not settle which (not verified), the plan uses the earlier one.

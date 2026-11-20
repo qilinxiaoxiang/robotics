@@ -315,6 +315,11 @@ def priv_now():
         p[1] += mod.get("comx_add", 0.0)
         if mod.get("vel_zero"):
             p[4:] = 0.0
+    if PRIV.get("width") == 69:
+        # a universal5tg teacher (round 3): its eighth privileged input is the position-gain scale, 1.0 = the
+        # runtime's KP_RL 200 (--kp-rl 400 = 2.0)
+        import walk_brain
+        p = np.concatenate([p, [walk_brain.KP_RL / 200.0]]).astype(np.float32)
     if len(PRIV["log"]) < 3:
         PRIV["log"].append([round(float(x), 4) for x in p])
     return p
@@ -367,7 +372,8 @@ def install_priv_policies(b):
         @staticmethod
         def InferenceSession(path, *a, **k):
             sess = real.InferenceSession(path, *a, **k)
-            if len(sess.get_inputs()) == 1 and sess.get_inputs()[0].shape == [1, 68]:
+            if len(sess.get_inputs()) == 1 and sess.get_inputs()[0].shape in ([1, 68], [1, 69]):
+                PRIV["width"] = sess.get_inputs()[0].shape[1]  # 69: with the gain scale (priv_now)
                 return _PrivSession(sess, wb.OBS_NAMES)
             return sess
 
