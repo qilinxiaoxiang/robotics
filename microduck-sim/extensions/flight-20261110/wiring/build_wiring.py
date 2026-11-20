@@ -387,7 +387,7 @@ for nm, side in (('R', -1), ('L', +1)):
                  length_basis=f'CAD routed {BAT_LEN[nm]["route_mm"]} mm + 20 mm ({"cross harness behind the backpack cap" if side > 0 else "FC plate lead window, up between plate and ESC"}); own polyline estimate {BAT_LEN[nm]["own_estimate_mm"]} mm',
                  source='12 AWG silicone: RoboClub stock (Shawn 2026-11-10 "XT60和线"; gauge in stock not confirmed)'),
             ['mico_esc_img', 'powerstream', 'lead_lengths'], True,
-            'both pigtails land on the same ESC tab (parallel packs); twist the pair' + ('; runs in the cross harness' if side > 0 else ''),
+            ('both pigtails land on the same ESC tab pair (parallel packs), one per face: right pigtail on the back (bracket-side) face, left on the component face (CAD 2026-11-19: 12 AWG cannot be twisted or stacked well on a 4 x 5 mm tab)') + ('; runs in the cross harness' if side > 0 else ''),
             f'{"左" if side > 0 else "右"}尾线{"红 +" if pol == "+" else "黑 −"}：XT60 公头焊杯 → ESC {"+" if pol == "+" else "−"} 片')
 for pol, col in (('+', 'red'), ('-', 'black')):
     add(f'cap_{"p" if pol == "+" else "n"}', 'power',
@@ -422,7 +422,7 @@ for i, (e, f) in enumerate(zip(BOARDS['esc']['connectors']['FC']['pins'], BOARDS
         end('esc', 'FC', i + 1, e, 'JST-SH 8-pin', 'plug on the lead', 'plugged'),
         end('fc', 'ESC', i + 1, f, 'JST-SH 8-pin', 'plug on the lead', 'plugged'),
         dict(gauge_awg=28, colour='kit lead (any colour)', length_mm=50, length_basis='ESC socket (bottom edge, x -83) to FC socket (bottom edge, x -96), round the board edge',
-             source='lead from the stack box if included (not listed); else SH kit 5 cm double-crimped leads + 2 x 8-pin housings (Pyrodrone cart)'),
+             source='the stack box: SH1.0-8P cable 3 cm (For ESC) x1 (MicoAir package list, Rotorama gallery); spare: SH kit leads + 8-pin housings'),
         ['mico_esc_img', 'ap_ports', 'mico_esc_wiring', 'stack_listing', 'sh_kit'], True,
         'straight lead: housing position n to position n' + ('; ESC NC lands on FC RX7 (no ESC telemetry; harmless)' if e == 'NC' else ''),
         f'8 针排线第 {i + 1} 位：ESC {e} ↔ 飞控 {f}')

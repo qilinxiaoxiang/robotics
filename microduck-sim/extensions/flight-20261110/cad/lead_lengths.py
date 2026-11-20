@@ -75,8 +75,8 @@ def main():
             routes["fan RR"] = (longest(lambda r0: [r0] + [(-55.0, -77.5, 24.0), (-66.0, -77.5, 27.0), (-75.5, -79.0, 29.0), PAD["M2"]], "rear", s),
                                 "arm bay outer end, round the FC plate outboard edge, ESC pad set 2")
             # up in the 10 mm gap between the plate (x -67) and the ESC front (x -77), not against the ESC
-            routes["battery R"] = ([(-58.2, -61.0, 45.0), (-60.0, -61.0, 31.0), (-72.0, -61.0, 31.0), (-72.0, -61.0, 56.5), (-80.0, -59.0, 61.0)],
-                                   "lead window, arm bay, FC plate lead window (passes the XT60), up between plate and ESC, tabs from the side")
+            routes["battery R"] = ([(-58.2, -61.0, 45.0), (-60.0, -61.0, 31.0), (-72.0, -61.0, 31.0), (-72.0, -61.0, 52.0), (-75.7, -60.6, 56.0), (-75.7, -60.6, 61.0)],
+                                   "lead window, arm bay, FC plate lead window (passes the XT60), up between plate and ESC, onto the back face of the tabs")
     cap_end = (CAP_AXIS["x0"] - Pm.CAP["h"], CAP_AXIS["y"], WING["arm_z"][1] + Pm.CAP["d"] / 2)
     out = dict(rules=__doc__.split("Rules: ")[1].strip(), leads={})
     mass = {"left": 0.0, "right": 0.0}

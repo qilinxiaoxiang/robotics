@@ -56,10 +56,13 @@ FC_BOSS = 4.0                                                        # M3 stando
 FCB_WINDOW_Z = (25.5, 43.0)
 # ESC input capacitor (12.5 x 20 mm, keep-out d 13 x 25 with the leg roots) lies along x on the right top flange with its
 # legs toward the ESC battery tabs (x -80, y -60.6 / -51.5, z 60.6; wiring/wiring.json esc_tabs_world), so its own legs
-# reach the tabs (about 8.5 mm end face to tab). Body x -50.6..-75.6, y -62.5..-49.5 (outboard of the head reach near
-# y -47), resting on the flange (x -64..-50.2) and the FC plate top edge (x -67..-64). One zip tie through two flange
-# slots at x -55.5..-52.5 (the upper FC bosses fill x -64..-56); the soldered legs hold the far end.
-CAP_AXIS = dict(x0=-50.6, y=-56.0)
+# reach the tabs. Body x -48.6..-73.6, y -62.5..-49.5 (outboard of the head reach near y -47), resting on the flange
+# (x -64..-50.2) and the FC plate top edge (x -67..-64). 2026-11-19: moved 2 mm forward (was x -50.6..-75.6) so the
+# right battery pigtail, which comes up the plate-to-ESC gap, is soldered on the BACK (+x) face of each tab and the left
+# pigtail on the front face, one 12 AWG lead per face: at the old position the can end sat 1.4 mm off the back face and a
+# 12 AWG core (d 2.6) on it reached 0.7 mm into the can. Tabs per the maker drawing: 5 mm past the board edge
+# (z 58..63), about 4.2 mm wide. Held by foam tape (CAP_TAPE) and its soldered legs.
+CAP_AXIS = dict(x0=-48.6, y=-56.0)
 CAP_SLOTS = [(-66.0, -62.5), (-49.5, -46.0)]                         # (y0, y1) of the two tie slots
 CAP_SLOT_X = (-55.5, -52.5)
 # Stack spacing (x, rear = -x). Sources: MicoAir 55A ESC dimension drawing (wiring/sources/micoair-55a-esc-dimensions.png:
