@@ -29,6 +29,8 @@ SOURCES = [
     ('B3B-XH-A', 'DigiKey 455-2248-ND (purchase-decision-20261120.json)'),
     ('异丙醇', 'consumable already used in earlier guide chapters (Isopropyl alcohol and a tissue)'),
     ('扳手或尖嘴钳', 'needle-nose pliers: RoboClub tool wall (not listed in INVENTORY.md)'),
+    ('USB-C 数据线', 'owned: the USB-A to USB-C cable from the OMX-AI kit (chapter 1 list; used to flash the OpenRB)'),
+    ('杜邦线 30 cm', 'owned: 30 cm jumper wires (chapter 1 list, head 5 V lead stock)'),
     ('XIAO SAMD21', 'RoboClub cabinet C drawer, 3 sealed (inventory 2026-10-20)'),
     ('Keystone 615', 'DigiKey 36-615-ND (purchase-decision-20261120-charging.json)'),
     ('Keystone 5209', 'DigiKey 36-5209-ND (purchase-decision-20261120-charging.json)'),
