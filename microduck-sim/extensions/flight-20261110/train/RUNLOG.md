@@ -1860,3 +1860,13 @@ counters prewarm_entries 1, prewarm_steps N per episode). No second policy.
 - 06:51:59 started, both detached with parent pid 1: `s3aw` (s3a_60 -> s3aw_60, pid 67191, heartbeat
   `logs/s3aw_heartbeat.txt`) and `s3ABw` (s3AB_<it> -> s3ABw_<it> for the 8 saves, pid 67193, waits for DONE in
   `logs/ts3s_t3h_750_ab_heartbeat.txt`, heartbeat `logs/s3ABw_heartbeat.txt`).
+- 06:52:35 PREWARM READING s3aw_60 (evidence, not a gate pass; `logs/gates_s3aw_60_score.log`; metered 44.29 ->
+  44.32): 4 failed and 1 missing line, but different ones from the standard score of s3a_60.
+  Now passing: G3 none_g400_stand falls 0 of 10 and jumps median 0.0 (standard: 1 fall, median 15.0).
+  Now failing: G4 pack_stand falls 10 of 10 at 0.90 to 1.52 s and jumps median 22.2 (standard: 0 falls);
+  G4 pack_walk falls 10 of 10 at the same times (standard: 10 of 10, 9 of them after the stop), jumps median 22.2,
+  walking speed missing (no episode reaches the walk). G5 pack_g400_stand passes (0 falls, jumps 0.0).
+  Reading (inference): ten self-steps on a resting observation put the state where the student acts as walk61
+  without a pack; with the pack at gain 200 that start falls within a second, as s3a_160 does without any
+  prewarm. Self-prewarm trades the no-pack gain-400 stepping for pack falls at gain 200: it is not a loader fix
+  on its own for a save like s3a_60.
