@@ -1,8 +1,13 @@
-"""Leg clearance to candidate backpack envelopes over hip pitch +-30, roll +-10 (trunk frame = guide frame, mm)."""
+"""Leg clearance to candidate backpack envelopes over hip pitch +-30, roll +-10 (trunk frame = guide frame, mm).
+
+argv[1]: JSON {name: box} or {name: [box, box, ...]} (min over the boxes; a staircase stands in for a chamfer),
+box = [[x0, y0, z0], [x1, y1, z1]]. Run with ~/.venvs/microduck-dyn (MuJoCo).
+"""
 import json, sys
+from pathlib import Path
 import mujoco, numpy as np
 
-SCENE = "/Users/xiangzheng/code/robotics/microduck-sim/microduck_rl/cmu/model/scenes/scene_battery-20261104.xml"
+SCENE = str(Path(__file__).resolve().parents[3] / "microduck_rl/cmu/model/scenes/scene_battery-20261104.xml")
 BOXES = json.loads(sys.argv[1])
 m = mujoco.MjModel.from_xml_path(SCENE); d = mujoco.MjData(m)
 mujoco.mj_resetDataKeyframe(m, d, 1); mujoco.mj_forward(m, d)
@@ -20,23 +25,28 @@ def qadr(n): return m.jnt_qposadr[m.joint(n).id]
 def box_dist(P, lo, hi):
     q = np.maximum(np.maximum(np.array(lo) - P, P - np.array(hi)), 0.0)
     return np.sqrt((q * q).sum(1))
+# leg vertices in the trunk frame for every pose of the sweep, computed once
+POSES = []
+for side in ("left", "right"):
+    for dp in range(-30, 31, 5):
+        for dr in range(-10, 11, 5):
+            d.qpos[:] = q0
+            d.qpos[qadr(f"{side}_hip_pitch")] += np.radians(dp)
+            d.qpos[qadr(f"{side}_hip_roll")] += np.radians(dr)
+            mujoco.mj_kinematics(m, d)
+            Rt = d.xmat[trunk].reshape(3, 3); pt = d.xpos[trunk]
+            for g in geoms[side]:
+                R = d.geom_xmat[g].reshape(3, 3); p = d.geom_xpos[g]
+                T = ((V[g] @ R.T + p) - pt) @ Rt * 1000.0          # trunk frame, mm
+                POSES.append((T, dict(side=side, pitch=dp, roll=dr, body=m.body(m.geom_bodyid[g]).name)))
 out = {}
-for name, (lo, hi) in BOXES.items():
+for name, val in BOXES.items():
+    parts = val if isinstance(val[0][0], list) else [val]
     best = (1e9, None)
-    for side in ("left", "right"):
-        for dp in range(-30, 31, 5):
-            for dr in range(-10, 11, 5):
-                d.qpos[:] = q0
-                d.qpos[qadr(f"{side}_hip_pitch")] += np.radians(dp)
-                d.qpos[qadr(f"{side}_hip_roll")] += np.radians(dr)
-                mujoco.mj_kinematics(m, d)
-                Rt = d.xmat[trunk].reshape(3, 3); pt = d.xpos[trunk]
-                for g in geoms[side]:
-                    R = d.geom_xmat[g].reshape(3, 3); p = d.geom_xpos[g]
-                    W = V[g] @ R.T + p
-                    T = (W - pt) @ Rt * 1000.0          # trunk frame, mm
-                    dist = box_dist(T, lo, hi).min()
-                    if dist < best[0]:
-                        best = (float(dist), dict(side=side, pitch=dp, roll=dr, body=m.body(m.geom_bodyid[g]).name))
+    for lo, hi in parts:
+        for T, at in POSES:
+            dist = box_dist(T, lo, hi).min()
+            if dist < best[0]:
+                best = (float(dist), at)
     out[name] = dict(min_mm=round(best[0], 2), at=best[1])
 print(json.dumps(out, indent=1))
