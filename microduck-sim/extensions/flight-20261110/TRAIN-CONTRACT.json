@@ -22,8 +22,11 @@
  "lines": [
   {
    "id": "B",
-   "goal_zh": "带着喷气背包能站能走，不用换模型；喷气改变腿上负载时不摔。",
-   "goal": "The duck stands and walks with the jet-pack fitted without a model swap, and stays up while fan thrust changes the load on its legs.",
+   "goal_zh": "两套模型：不带背包沿用 walk61；带背包自成一套，能站能走，风扇出力当输入，喷气改变腿上负载时不摔、不乱动，能完成起飞和降落。要不要融合成一个以后再说。",
+   "goal": "Two policy sets by Shawn's 2026-11-20 decision: without the pack the deployed walk61 and stand61 unchanged; with the pack a set of its own that stands and walks, takes the fans' output as an input, stays up and calm while fan thrust changes the load on its legs, and gets through take-off and landing. Merging the two into one model is a later question.",
+   "goal_history": [
+    "until 2026-11-20 14:55: 'The duck stands and walks with the jet-pack fitted without a model swap, and stays up while fan thrust changes the load on its legs.' (FP-R3's universal model; its own acceptance kept 'two policy sets plus detection' as the fallback)"
+   ],
    "owner_words": [
     {
      "date": "2026-11-11",
@@ -64,6 +67,11 @@
      "date": "2026-11-20",
      "source": "session 1ebe7a36, ninth message (14:41), answering whether A0 still runs tonight",
      "quote": "先不开 我们要先做一个能用背包走路和起飞的模型起来"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, about 14:55",
+     "quote": "背包的四个电机出力是不是也得作为输入和输出了这次 我觉得可以分成两个模型来训 走路的就不带涵道电机输入和输出 沿用walk61 背包形态自成一套 后面再考虑要不要融合"
     }
    ],
    "acceptance_on_robot": "With the pack fitted the real robot stands and walks at the robot-tested command without a fall or a tilt-protection stop; with the pack off it walks no worse than walk61; with the fans running on the ground at the thrust levels stage B0 fixes for FP-R8, it stays up. Acceptance per requirement is in REQUIREMENTS.json (FP-R3, FP-R8).",
@@ -334,7 +342,8 @@
      "kind": "baseline",
      "status": "proposed",
      "sheet_zh": {
-      "title": "B2 训练基线（只在 B1 没找到合格模型时做）",
+      "title": "B2 带背包的训练基线（只在 fq2 1999 过不了筛子时做）",
+      "note_2026_11_20": "按你 14:55 的决定，这一级只管带背包这一套：不带背包沿用 walk61，不再要求一个模型通吃所有负重。配方等 B1 第二次的结果（fq2 1999 哪些格子不过）再定，定了以后重写这张单并请你批。",
       "does": "B0 已经查明：第三轮的起点模型 run A 在校验过的尺子下属于上机会摔的一侧（不带背包走路 10 次摔 10 次），所以不再以复现 run A 为基线。这一级改成：用现有训练代码训出一个单帧模型，在校验过的尺子上达到 walk61 的水平。具体配方等 B1 的结果（哪些格子不过）再定，定了以后这张单会重写并请你批。",
       "does_not": "不加推力；不换网络结构；配方没写清之前不开跑。",
       "pass": "和 B1 同一条线：每一格 60 次最多摔 6 次，速度和动作突跳达标。",
@@ -378,16 +387,20 @@
      "kind": "change",
      "status": "proposed",
      "sheet_zh": {
-      "title": "B3 加推力",
-      "does": "在通过了 B1 或 B2 的那个模型的训练里只加一样：背包风扇的推力在一次运行中变化（范围和变化方式由 B0T 定）。网络、输入、奖励、算法都不变。",
-      "does_not": "不用老师学生；不换架构；不给模型加新的输入。",
-      "pass": "两次独立训练的最后存档：B0T 留下的每个推力格和 B1 的每个恒定负重格都达标（60 次最多摔 6 次；起降流程 60 次至少成功 54 次）。",
-      "kill": "2 次之后，推力不超过整机重量一半的格子里仍有某次训练摔 6 次以上：写路线复盘。第一候选是把风扇油门作为输入告诉模型，这一条需要你点头。",
+      "title": "B3 背包模型加推力（待 B0T 和 B1 结果后定稿，再请你批）",
+      "does": "从带背包的基线模型（过了筛子的 fq2 1999，或 B2 训出的那个）接着练，训练里加上风扇推力，推力在一次运行中变化。一个会话两张显卡并排练两个版本：一个不知道风扇出力多大，一个把风扇总出力当作一个输入数字告诉它（新输入的权重从 0 开始，所以起点和基线完全一样）。腿部模型只输出 14 个关节，不控制风扇；风扇仍由背包的飞控管。",
+      "does_not": "不用老师学生；不用递归；模型不输出风扇指令；不带背包的走路不动，仍是 walk61。",
+      "pass": "最后存档：带背包的恒定负重格达标；站立在风扇出力 0、四分之一、一半、四分之三、九成各档 60 次最多摔 6 次且不乱动；走路到一半出力达标；起降流程 60 次至少成功 54 次。两个版本都报，被告知出力的那个应当更好。",
+      "kill": "2 次之后两个版本在出力不超过一半的格子里仍摔 12 次以上：写路线复盘。",
       "budget": "0 美元，Kaggle 8 小时以内，最多 2 次。"
      },
-     "question": "Does adding thrust that changes inside an episode to the baseline's training make the one-frame policy hold the thrust cells B0T kept, without losing the constant-load cells?",
+     "question": "Fine-tuned from the with-pack baseline with fan thrust that changes inside an episode, does the pack-mode one-frame policy hold the thrust cells of B0T (standing calm at every level, walking up to 0.5, take-off and landing) without losing the with-pack constant-load cells, and does telling it the fans' collective output as an input beat not telling it?",
+     "arms": [
+      "blind: the baseline's 61 inputs, thrust only in the environment",
+      "told: one extra input, the fans' collective output as a fraction of whole-robot weight (zero initial weights on the new column); on the robot the value comes from the pack's flight controller"
+     ],
      "changes_vs_previous": [
-      "the training environment gains a fan thrust force on the pack that changes within an episode (range and profile fixed by B0T); network, observations, rewards and PPO settings stay as in the baseline that passed B1 or B2"
+      "the training environment gains a fan thrust force on the pack that changes within an episode (range and profile fixed by B0T); rewards and PPO settings stay as in the with-pack baseline; the two arms differ only in the one thrust input"
      ],
      "depends_on": [
       "B0T",
@@ -400,8 +413,11 @@
      },
      "kill": {
       "condition": "after 2 attempts any seed still has more than 12 window falls of 60 in a ground cell at thrust up to 0.5 of whole-robot weight",
-      "then": "route review; first candidate is the throttle input route, which needs Shawn's word"
+      "then": "route review"
      },
+     "history": [
+      "2026-11-20 14:55: rewritten after Shawn's words (owner_words): two policy sets, the pack set takes the fans' output as an input. Whether the model also outputs fan commands was his question; the agent's answer recorded here: not in this stage, the fans stay with the pack's flight controller (ArduPilot; sim/thrust_assist_literature.md section 6), because the attitude loop runs at 400 Hz against the policy's 50 Hz and real fan thrust is the least certain part of the simulation (sim/README.md 'What the simulation cannot show'). Earlier text forbade new inputs and kept the throttle input as a later candidate needing his word."
+     ],
      "budget": {
       "usd": 0,
       "gpu_hours": 8,
