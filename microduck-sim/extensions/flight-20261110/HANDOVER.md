@@ -1,5 +1,7 @@
 # Flight training: handover to an executing session (Opus 5.5)
 
+**Draft, not in force (2026-11-20).** Shawn: "等有了结果再写交接清单". No session takes over from this file yet. It is completed after the thrust validation result is in and he has decided on the whole route; the approved stages and the queue are written in then.
+
 This file tells a session that runs approved training stages what is fixed, what it may decide, how to run one stage, and when to stop and hand the work back to a Fable session. It holds no numbers of its own: goals, stages, pass and kill lines, budgets and results live in `TRAIN-CONTRACT.json` in this folder, and the status Shawn reads is `train/OVERVIEW.html`.
 
 Handover starts only when Shawn has approved the stage to run. His approval is in the stage's `approval` field with his words. A stage that is `proposed` is not yours to start.
