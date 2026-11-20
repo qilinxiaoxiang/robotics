@@ -1654,3 +1654,49 @@ against t3h_750 (layout assertion ran). All three students are smoke continuatio
   closed. What is established: training holds stop rows, the student's error there is small, emptying the
   recurrent state makes it worse, the teacher taking over at the stop gives 0 falls, and the student after a
   teacher walk still falls (3 of 20 at 17 s, 8 at 15 s).
+
+## 2026-11-20 05:02 pack flag does not remove the falls; the failures sit at gain 200; s3a_60 and s3a_160 read
+
+Mac mini only, nothing on Modal. Index assertions ran (`ts3_jump_where.check_order` on the walk61 reference episode,
+knee corr 0.94 / 0.95; `ts3_g1_where` layout). Batch script `train/ts3_batch_s3a_f1.sh`.
+- Pack-flag experiment (`distill_worker.py --pack-flag-col 60`: 1 with payload over 0.02 kg, else 0, in the student's
+  input only; eval `FLIGHT_OBS_SET=60:1.0`, counter obs_set_calls 226 in the last episode). Chain f1 04:25:50 to
+  04:54:10: smk_a2_208 continued 3 stages, teacher t3h_750, anchor as a2; the equal-training control is c0. Stage
+  lines f1: pack mse 0.00299 / 0.00209 / 0.00201 (c0 0.00299 / 0.00263 / 0.00270), no-pack distance to walk61
+  0.301 / 0.264 / 0.241. G1 smk_f1_232 0.179 (c0 0.194).
+  Pack walk, gain 200, 20 seeds, falls during the walk + after the stop:
+  f1 flag fed, heading on 18 + 2; heading off 20 + 0 (19 of them at 4.0 to 7.5 s);
+  c0 heading on 20 + 0; heading off 0 + 20;
+  f1 with the flag NOT fed: 20 falls at 0.96 to 1.10 s, so the student does read the flag.
+  The flag does not remove the falls at gain 200.
+- Split by walk gain, heading on, 20 seeds, falls during the walk + after the stop:
+  f1 (flag fed) 200: 18 + 2, 300: 0 + 7, 400: 2 + 3;  c0 200: 20 + 0, 300: 13 + 4, 400: 10 + 4;
+  s3a_60 200: 2 + 18, 300: 0 + 1, 400: 0 + 0;  s3a_160 (10 seeds) 200: 10 + 0 (9 before 1.4 s), 300: 7 + 1, 400: 2 + 2.
+  Reading (inference): the pack failures are a gain-200 problem. With the load told to the student the falls stay
+  at gain 200 and mostly go at 300 and 400, so what the student lacks is the gain, not the load. Gain 200 is scale
+  1.0 in a training range of 0.8 to 2.2.
+- s3a_60 at the stop (gain 200, 20 seeds): heading on 20 falls, 18 after the stop at 17.70 to 18.36 s; heading off 3
+  falls (3.78, 4.20, 19.22), 1 after the stop. Traces (seeds 0, 1): with heading hold on the walk runs at a turn
+  command of 1.84 to 1.92 rad/s and 13 to 15 cm per second; after the stop the trunk moves 3.0 to 3.4 cm in the
+  first second (it does stop walking), the mean pitch goes from about -6 deg to +3.7 / +7.5 and then +20 deg and it
+  tips over within 0.7 to 1.4 s. Not the s3h_160 picture (that one kept stepping and, with heading hold off, fell
+  during the walk 20 of 20): s3a_60 falls when a 1.9 rad/s turn and the walk end together; without the turn
+  command it stands after the stop in 19 of 20.
+- s3a_60, no pack, gain 400, standing (`TS3_KIND=stand ts3_jump_where.py s3a_60 none 0 --kp-rl 400`): seed 0: 78
+  jumps, 81 touch-downs, fell at 15.8 s; the joints that step are the legs (left_knee 24, right_hip_pitch 23,
+  right_knee 18, right_ankle 16, left_hip_pitch 15, left_ankle 7), head joints 2 to 4 each; seeds 1 and 2: 17 and 45
+  jumps. walk61 in the same cell: 0 jumps, 0 touch-downs, every action step 0.00 to 0.01 rad. The student steps
+  in place where walk61 stands still. Training does contain these rows: the gain scale is drawn per env per
+  episode from 0.8 to 2.2 whatever the payload (`flight_worker.py` randomize_kp_scale), and no-pack rows are
+  labelled with walk61's action on the same inputs. So it is not a missing condition; the student does not
+  reproduce walk61's stillness there (cause open; the smoke students at the same cell: a2_208 17 / 8 / 12 jumps,
+  c0 3 / 2 / 8, f1 0 / 6 / 4 over seeds 0 to 2). Files `eval/jump_where_s3a_60_none_g400.json` (last seed written),
+  `eval/jump_where_walk61_none_g400.json`.
+- s3a_160 against s3a_60 in the first seconds with the pack (`ts3_first2s.py 10 s3a_60 s3a_160`,
+  `eval/first2s_s3a_60.json`): s3a_60 0 falls in the first 2 s, s3a_160 9 of 10 at 0.82 to 1.32 s, at a zero
+  command, gain 200, policy slot stand, from an empty recurrent state. Shadowed by the teacher m3s_450 the student
+  is closer to it in second 0 at save 160 than at save 60 (mse 0.00338 against 0.00521) and still falls; at gain
+  300 and 400 s3a_160 does not fall in the first 2.8 s. Reading (inference): with no history the student cannot
+  know the gain; later saves fit the average gain of the training range more tightly, which is wrong for gain 200
+  in the first second. Not proven; the direct test is a gain flag or a gain-200 share in the sampling.
+- Without the pack the first 2 s are the same for both saves (start jumps 10, falls 0 of 10).

@@ -73,6 +73,16 @@ class _StatefulSession:
         # diagnostics only (cold-start study, 2026-11-18; default off): FLIGHT_WARM=<dir> starts the episode with the
         # recurrent state saved by an earlier episode of the same seed (FLIGHT_STATE_DUMP=<dir>, written at the end of
         # an episode without a fall) instead of an empty one
+        # experiment only (2026-11-20, pack-fitted flag; default off): FLIGHT_OBS_SET="<col>:<value>" overwrites one
+        # actor column of the recurrent policy's input on every call (distill_worker --pack-flag-col)
+        oset = os.environ.get("FLIGHT_OBS_SET")
+        if oset and self.state_name == "state_in":
+            c_, v_ = oset.split(":")
+            feed = {k: np.array(v, copy=True) for k, v in feed.items()}
+            for k in feed:
+                if feed[k].ndim == 2 and feed[k].shape[1] == 61:
+                    feed[k][:, int(c_)] = float(v_)
+                    DIAG["stat"]["obs_set_calls"] = DIAG["stat"].get("obs_set_calls", 0) + 1
         # diagnostics only (2026-11-20, falls after the walk command ends; default off): FLIGHT_STATE_ZERO_TICK=<n>
         # empties the recurrent state once, at the first policy call at or after control tick n of the episode
         zt = os.environ.get("FLIGHT_STATE_ZERO_TICK")

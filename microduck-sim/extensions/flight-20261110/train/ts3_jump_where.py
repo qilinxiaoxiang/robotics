@@ -28,6 +28,8 @@ def default_pose(d):
     """joint -> default angle from the policy file's metadata (the runtime's goal is default + action)"""
     import onnxruntime as ort
     p = HERE / "ckpt" / d / "walk61.onnx"
+    if d == "walk61":  # the deployed policy
+        p = HERE / "../../../microduck_rl/cmu/whole/runtime-overlay/models/walk61.onnx"
     meta = ort.InferenceSession(str(p), providers=["CPUExecutionProvider"]).get_modelmeta().custom_metadata_map
     if "joint_names" not in meta:  # a save without metadata: the family shares the deployed walk61's default pose
         p = HERE / "../../../microduck_rl/cmu/whole/runtime-overlay/models/walk61.onnx"
@@ -37,8 +39,13 @@ def default_pose(d):
 
 def run(d, man, vx, extra):
     log = f"/tmp/ts3_jump_{d}_{vx}.jsonl"
-    r = fe.episode((str(HERE / "ckpt" / d), str(HERE / f"manifests/flightpack-{man}.json"), "walk", 0, 0.0, 8.0, False,
-                    list(extra) + ["--vx", str(vx), "--tick-log", log, "--tick-diag"]))
+    # TS3_KIND=stand: the gate's standing episode instead of the walk (the speed argument is then not passed);
+    # TS3_SEED=<n>: another seed
+    kind = os.environ.get("TS3_KIND", "walk")
+    mdir = (HERE / "../../../microduck_rl/cmu/whole/runtime-overlay/models").resolve() if d == "walk61" else HERE / "ckpt" / d
+    r = fe.episode((str(mdir), str(HERE / f"manifests/flightpack-{man}.json"), kind,
+                    int(os.environ.get("TS3_SEED", 0)), 0.0, 8.0, False,
+                    list(extra) + (["--vx", str(vx)] if kind == "walk" else []) + ["--tick-log", log, "--tick-diag"]))
     rows = [json.loads(x) for x in open(log)]
     os.remove(log)
     return r, rows
