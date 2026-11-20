@@ -1,0 +1,464 @@
+{
+ "chapter": "backpack",
+ "generated_from": "guide/data/guide-data.json",
+ "guide_data_sha256": "c0659115fbb773618ba3078d5c20ec7111700681fdee859ae61e724a68ed6cd9",
+ "items": [
+  {
+   "part": "机器人背后现在装的旧电池背包（V1.40/V1.41）或后部转换盒",
+   "kind": "other",
+   "source": "owned: on the robot now (CURRENT-STATE backpack_swap_plugs)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-strip"
+   ],
+   "note": "只留下：DFR1202（连同它的插头 4 引线，MR30 母头）和固定框架的四颗 M2 × 6。旧框架、旧后盖、两根压条、舱盖、Swann 39 摇头开关和 Tattu 650 电池都不再装回。"
+  },
+  {
+   "part": "电池背包后盖（BatteryV2-B1 打印件，橙色）",
+   "kind": "printed",
+   "source": "print: BatteryV2-B1 Orange plate (battery-v2-cad-20261120/slices)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-button"
+   ]
+  },
+  {
+   "part": "E-Switch PV6F240SS-331 16 mm 按钮（绿色 LED 灯环，自复位，常开；DigiKey EG4731-ND）",
+   "kind": "electronic",
+   "source": "DigiKey EG4731-ND (E-Switch PV6F240SS-331); not yet in purchase-decision-20261120.json, which still lists the superseded Adafruit 560",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-button"
+   ],
+   "note": "带一个 19.00 mm 对边的螺母。灯是 2.8 V 20 mA，里面没有限流电阻，所以下一步要串 120 Ω。"
+  },
+  {
+   "part": "19 mm 扳手或尖嘴钳",
+   "kind": "tool",
+   "source": null,
+   "qty": 1,
+   "used_in_step": [
+    "bv2-button"
+   ]
+  },
+  {
+   "part": "Pololu 2813 大按钮电源开关（带反接保护，HP 版）",
+   "kind": "electronic",
+   "source": "DigiKey 2183-2813-ND (purchase-decision-20261120.json)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "DigiKey 2183-2813-ND。不要焊板上附带的接线端子。"
+  },
+  {
+   "part": "DFR1202 5 V 降压板（上一步拆下来的，带插头 4 引线）",
+   "kind": "electronic",
+   "source": "owned: on the robot now, kept from the old backpack",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu"
+   ]
+  },
+  {
+   "part": "XT30 公头（Amass XT30U）",
+   "kind": "electronic",
+   "source": "RoboClub stock (brief 2026-11-20: XT30 plugs from RoboClub)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "电池引线：接电池的 XT30 母头。RoboClub 库存。"
+  },
+  {
+   "part": "XT30 母头（Amass XT30U）",
+   "kind": "electronic",
+   "source": "RoboClub stock (brief 2026-11-20: XT30 plugs from RoboClub)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "新插头 3：插到机器人 J4 的 XT30 公头上。RoboClub 库存。"
+  },
+  {
+   "part": "16 AWG 硅胶线，红、黑各 50 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "电池引线。"
+  },
+  {
+   "part": "16 AWG 硅胶线，红、黑各 150 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "插头 3 引线。"
+  },
+  {
+   "part": "20 AWG 硅胶线，红、黑各 90 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-pololu"
+   ],
+   "note": "DFR1202 供电线（RoboClub 没有 22 AWG）。"
+  },
+  {
+   "part": "电烙铁、焊锡和助焊剂（RoboClub 焊接台）",
+   "kind": "tool",
+   "source": "RoboClub soldering bench (INVENTORY.md)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu",
+    "bv2-harness",
+    "bv2-charge",
+    "dock-solder"
+   ]
+  },
+  {
+   "part": "热缩管 3 mm 和 5 mm",
+   "kind": "other",
+   "source": "RoboClub soldering bench; not listed in INVENTORY.md, to be checked",
+   "qty": "每个焊点约 15 mm",
+   "used_in_step": [
+    "bv2-pololu",
+    "bv2-harness",
+    "bv2-charge",
+    "dock-solder"
+   ],
+   "note": "RoboClub 焊接台（INVENTORY.md 没有列出，先去看一眼）。"
+  },
+  {
+   "part": "剥线钳",
+   "kind": "tool",
+   "source": "chapter 1 tools: wire stripper for 18 to 28 AWG",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-pololu"
+   ]
+  },
+  {
+   "part": "Seeed XIAO SAMD21",
+   "kind": "electronic",
+   "source": "RoboClub cabinet C drawer, 3 sealed (inventory 2026-10-20)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "RoboClub C 柜抽屉（2026-10-20 盘点有 3 块未拆封）。"
+  },
+  {
+   "part": "电阻 100 kΩ 1/4 W",
+   "kind": "electronic",
+   "source": "DigiKey CF14JT100KCT-ND (purchase-decision-20261120.json)",
+   "qty": 6,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "A0、A2、A3 的上臂，A1 的上下两臂，OFF 下拉。DigiKey CF14JT100KCT-ND。"
+  },
+  {
+   "part": "电阻 33 kΩ 1/4 W",
+   "kind": "electronic",
+   "source": "DigiKey CF14JT33K0CT-ND (purchase-decision-20261120.json)",
+   "qty": 3,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "A0、A2、A3 的下臂。DigiKey CF14JT33K0CT-ND。"
+  },
+  {
+   "part": "电阻 10 kΩ 1/4 W",
+   "kind": "electronic",
+   "source": "RoboClub cabinet D, listed as \"10K?\" (INVENTORY.md); reading to be checked at the bench",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "按钮到 ON 脚的限流电阻。RoboClub D 柜写的是“10K?”，用万用表确认读数 9.5 到 10.5 kΩ。"
+  },
+  {
+   "part": "电阻 120 Ω 1/4 W",
+   "kind": "electronic",
+   "source": "RoboClub cabinet D (INVENTORY.md: 120 Ω)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "按钮灯的限流电阻（5 V − 2.8 V = 2.2 V，约 18 mA）。RoboClub D 柜。"
+  },
+  {
+   "part": "1N4148 小信号二极管",
+   "kind": "electronic",
+   "source": "RoboClub cabinet F, \"small-signal 100 V 0.2 A\" (INVENTORY.md); marking to be checked",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "RoboClub F 柜“small-signal 100 V 0.2 A”，确认管身印着 1N4148 或 1N914。"
+  },
+  {
+   "part": "JST B3B-XH-A 3 针 XH 插座（直插）",
+   "kind": "electronic",
+   "source": null,
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "电池平衡头插在它上面。只焊中间一针。"
+  },
+  {
+   "part": "26 AWG 硅胶线，每根 80 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 7,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "XIAO 线束：5V、GND、A0、A1、A2、A3、D6。"
+  },
+  {
+   "part": "26 AWG 硅胶线，每根 100 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 4,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "按钮线：公共端、常开端、灯+、灯−。"
+  },
+  {
+   "part": "26 AWG 硅胶线，100 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "A7Z 关机线：插头 4 的 MR30 第 3 针到 OFF 二极管。"
+  },
+  {
+   "part": "万用表（直流电压档）",
+   "kind": "tool",
+   "source": "chapter 1 tools: multimeter with continuity beep",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness",
+    "bv2-bench-test",
+    "bv2-power-up",
+    "dock-charge"
+   ]
+  },
+  {
+   "part": "标签纸和笔",
+   "kind": "tool",
+   "source": "chapter 1 tools: marker pen and masking tape",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-harness"
+   ],
+   "note": "每根 26 AWG 线两头贴上名字。"
+  },
+  {
+   "part": "Keystone 615 L 形电池触点片",
+   "kind": "electronic",
+   "source": "DigiKey 36-615-ND (purchase-decision-20261120-charging.json)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-charge"
+   ],
+   "note": "DigiKey 36-615-ND。平面贴在底板下，竖片贴在框架背面。"
+  },
+  {
+   "part": "1N5822 肖特基二极管（3 A 40 V，DO-201AD）",
+   "kind": "electronic",
+   "source": "RoboClub cabinet F (INVENTORY.md: 1N5822 Schottky 40 V 3 A)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-charge"
+   ],
+   "note": "RoboClub F 柜。"
+  },
+  {
+   "part": "20 AWG 硅胶线，红、黑各 130 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-charge"
+   ],
+   "note": "触点到二极管和 Pololu。"
+  },
+  {
+   "part": "Crazepony 2S 3000 mAh 锂电池（Amazon B08LZ8L4YD），XT30 + XH-3P 平衡头 + DC5.5 公头",
+   "kind": "electronic",
+   "source": "Amazon B08LZ8L4YD (purchase-decision-20261120.json)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-bench-test",
+    "bv2-battery"
+   ],
+   "note": "先用万用表量 XT30：7.0 到 8.4 V。DC5.5 那根线不用。"
+  },
+  {
+   "part": "胶布或 DC5.5 母头保护帽",
+   "kind": "other",
+   "source": "chapter 1 tools: electrical tape",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-bench-test"
+   ],
+   "note": "把电池的 DC5.5 公头包起来，免得金属头碰到别的东西。"
+  },
+  {
+   "part": "电池背包框架（BatteryV2-B1 打印件，橙色）",
+   "kind": "printed",
+   "source": "print: BatteryV2-B1 Orange plate (battery-v2-cad-20261120/slices)",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-frame"
+   ]
+  },
+  {
+   "part": "细杆螺丝刀（杆径不超过 4 mm）",
+   "kind": "tool",
+   "source": "chapter 1 tools: Phillips #0 and #1 screwdrivers",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-frame",
+    "bv2-cap",
+    "bv2-balance"
+   ]
+  },
+  {
+   "part": "3M 泡沫双面胶（Shawn 的库存）",
+   "kind": "other",
+   "source": "Shawn's stock 3M foam tape",
+   "qty": "三块，各剪到板子背面大小",
+   "used_in_step": [
+    "bv2-boards"
+   ]
+  },
+  {
+   "part": "异丙醇和布",
+   "kind": "other",
+   "source": null,
+   "qty": 1,
+   "used_in_step": [
+    "bv2-boards"
+   ]
+  },
+  {
+   "part": "3M 泡沫胶 1 mm，剪成电池背面大小",
+   "kind": "other",
+   "source": "Shawn's stock 3M foam tape",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-battery"
+   ],
+   "note": "贴在电池背面，外面一层离型纸不撕。"
+  },
+  {
+   "part": "Keystone 5209 弹片",
+   "kind": "electronic",
+   "source": "DigiKey 36-5209-ND (purchase-decision-20261120-charging.json)",
+   "qty": 2,
+   "used_in_step": [
+    "dock-solder"
+   ],
+   "note": "DigiKey 36-5209-ND。"
+  },
+  {
+   "part": "Same Sky PJ-005A 直流插座（5.5 × 2.1，面板安装，带螺母和垫圈）",
+   "kind": "electronic",
+   "source": "DigiKey CP-5-ND (purchase-decision-20261120-charging.json)",
+   "qty": 1,
+   "used_in_step": [
+    "dock-solder"
+   ],
+   "note": "DigiKey CP-5-ND。"
+  },
+  {
+   "part": "20 AWG 硅胶线，红、黑各 30 mm，两头各剥 3 mm",
+   "kind": "cable",
+   "source": "RoboClub stock silicone wire (brief 2026-11-20: 16/20/26 AWG from RoboClub)",
+   "qty": 2,
+   "used_in_step": [
+    "dock-solder"
+   ]
+  },
+  {
+   "part": "充电座底座（BatteryDock-A1 打印件，橙色）",
+   "kind": "printed",
+   "source": "print: BatteryDock-A1 Orange plate (battery-dock-20261120/slices)",
+   "qty": 1,
+   "used_in_step": [
+    "dock-build"
+   ]
+  },
+  {
+   "part": "11 mm 扳手或尖嘴钳",
+   "kind": "tool",
+   "source": null,
+   "qty": 1,
+   "used_in_step": [
+    "dock-build"
+   ]
+  },
+  {
+   "part": "3M 泡沫胶或 Dual Lock",
+   "kind": "other",
+   "source": "Shawn's stock 3M foam tape",
+   "qty": "两条",
+   "used_in_step": [
+    "dock-build"
+   ],
+   "note": "把底座贴在地上或桌上，不让它被机器人推走。"
+  },
+  {
+   "part": "Sortfle 8.4 V 1 A 充电器（Amazon B07J4CLKZ7，5.5 × 2.1 插头，中心正）",
+   "kind": "electronic",
+   "source": "Amazon B07J4CLKZ7 (purchase-decision-20261120-charging.json)",
+   "qty": 1,
+   "used_in_step": [
+    "dock-charge"
+   ]
+  },
+  {
+   "part": "HTRC B3 平衡充电器",
+   "kind": "electronic",
+   "source": "owned: Shawn's HTRC B3 balance charger",
+   "qty": 1,
+   "used_in_step": [
+    "bv2-balance"
+   ],
+   "note": "Shawn 已有。"
+  },
+  {
+   "part": "M2 × 6 self-tapping screw (TAP)",
+   "kind": "fastener",
+   "source": "reused: the four M2 x 6 of the old backpack plus two from the M2 screw stock (even lengths 4/6/8/10)",
+   "qty": 6,
+   "used_in_step": [
+    "bv2-frame",
+    "bv2-cap"
+   ]
+  },
+  {
+   "part": "M2 × 8 self-tapping screw (TAP)",
+   "kind": "fastener",
+   "source": "M2 screw stock (even lengths 4/6/8/10)",
+   "qty": 2,
+   "used_in_step": [
+    "bv2-cap"
+   ]
+  }
+ ]
+}

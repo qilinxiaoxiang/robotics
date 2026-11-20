@@ -53,7 +53,6 @@ HERE = Path(__file__).resolve().parent
 GUIDE = HERE.parent
 SRC = GUIDE / 'data' / 'sources' / 'full-build-data-current.json'
 PRINT = GUIDE / 'print'
-DUALLOCK_WORLD = PRINT / 'back-plate' / 'duallock-plate-20261031' / 'guide-world.json'   # backpack Dual Lock pose
 OUT = GUIDE / 'data' / 'guide-data.json'
 FASTENERS = HERE / 'fasteners.json'
 REUSED_SCREWS = HERE / 'reused-leg-screws.json'   # hip screws the torso chapter takes out and puts back
@@ -90,8 +89,8 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'battery_backpack_frame', 'battery_backpack_cap', 'battery_hatch', 'saddle_body', 'saddle_lid', 'duallock_plate'],
-    'purchased': ['duallock_strips', 'imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
+                  'bv2_frame', 'bv2_cap', 'dock_base', 'saddle_body', 'saddle_lid'],
+    'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
 
@@ -420,35 +419,30 @@ def build_parts() -> dict:
                 v, f = decimate(v, f, 25000, key)
             parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': module,
                           'status': status, 'v': v, 'f': f, 'source': str(path)}
-    # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/, release V1.39): 3 mm orange plate with the
-    # V1.8 cover outline, screwed for good to the four pack posts (M2 x 6); both backpacks stick to its rear face (x -48) with
-    # 3M Dual Lock (mated pair drawn as two pads, 5.7 mm assumed, size not measured) and sit 8.7 mm further back than when screwed.
-    for key, (name, status, color) in {
-            'duallock_plate': ('Dual Lock back plate (new print), on the four pack posts', 'new-print', None),
-            'duallock_strips': ('3M Dual Lock, mated pair (two strips; drawn as their area, 5.7 mm thick assumed)', 'purchased', '#2b2b2b')}.items():
-        path = first_existing(world / f'{key}.stl')
-        if path:
-            v, f = load_stl(path)
-            parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': 'torso',
-                          'status': status, 'v': v, 'f': f, 'source': str(path)}
-    # 2026-10-15 battery backpack (D-010, print/back-plate/battery-backpack-20261015/): the swap alternative to the rear converter
-    # box, since 2026-10-31 on the Dual Lock back plate (above), no longer on the four cover screws. Frame and cap print orange; the Swann 39 switch rocker-down in the floor pocket, the
-    # Tattu 2S 650 upright behind it, the DFR1202 clipped behind the front plate, the battery and feed XT30 joints (plugs 1, 2)
-    # with the balance plug, and the two swap plugs (XT30 servo, MR30 A7Z) standing in the pack channel. guide-data
-    # 'alternates' names the two sets: never on the robot together, so the gate skips pairs and cables across them.
-    # 2026-11-01 (print/back-plate/battery-backpack-v140/guide-world.json): the backpack Shawn builds next is the battery-on-cap
-    # redesign (D-037, qilinxiaoxiang/microduck_rl 8bce48af) with the V1.40 roof opening and tool-free hatch
-    # (print/battery-quickswap-20261101/): the battery stands in a cradle on the cap behind two screwed bars; plug 1 and the
-    # balance plug lie on top of the box (team checks.json parking boxes, approximate), plug 2 in the front bay.
-    BACKPACK_PARTS = {'battery_backpack_frame': ('Battery backpack frame (V1.40 print, roof open over the battery)', 'torso', 'new-print', None),
-                      'battery_backpack_cap': ('Battery backpack cap with the battery cradle (V1.40 print)', 'torso', 'new-print', None),
-                      'battery_hatch': ('Battery hatch (V1.40 print): two front tabs under the frame roof, back flap snapping into the cap', 'torso', 'new-print', None),
-                      'battery_backpack_bars': ('Two battery retainer bars across the battery front face (printed with the D-037 backpack, reused)', 'torso', 'printed', None),
-                      'bp_switch': ('Swann 39 rocker switch on its soldered switch lead, rocker down in the backpack floor', 'controller', 'purchased', '#26282b'),
-                      'bp_battery': ('Tattu 2S 650 mAh 75C LiPo, XT30 (listing size 57 x 31 x 12 mm), upright in the cradle on the cap', 'controller', 'purchased', '#3a6b35'),
-                      'bp_dfr1202': ('DFRobot DFR1202 5 V converter for the A7Z, clipped behind the backpack front plate', 'controller', 'owned', '#1f3f8f'),
-                      'bp_plug2': ('Plug 2 (switch lead to the DFR1202 feed, XT30) in the front bay', 'controller', 'purchased', '#f2c14e'),
-                      'bp_plugs': ('Plug 1 (battery to switch lead, XT30) and the battery balance plug, lying on top of the box', 'controller', 'purchased', '#f2c14e')}
+    # 2026-11-20 battery backpack V2 rev B (print/battery-v2-cad-20261120/, DESIGN-CONTRACT.json approved by Shawn 2026-11-20;
+    # world files from its to_guide_world.py): the frame screws straight onto the four OpenRB pack posts (the Dual Lock back
+    # plate is not fitted, CURRENT-STATE backpack_swap_plugs); the 2S 3000 pack stands upright in the frame column, the Pololu
+    # 2813, DFR1202 and XIAO SAMD21 sit on foam tape, the E-Switch PV6 button in the cap, two Keystone 615 pads under the floor.
+    # The dock base (print/battery-dock-20261120/) is drawn under the tail, 4 mm below its seated position. guide-data
+    # 'alternates' keeps the backpack and the bench box apart (never on the robot together).
+    BACKPACK_PARTS = {'bv2_frame': ('电池背包框架（BatteryV2-B1 打印件，橙色）', 'torso', 'new-print', None),
+                      'bv2_cap': ('电池背包后盖（BatteryV2-B1 打印件，橙色，带按钮孔和 USB-C 窗）', 'torso', 'new-print', None),
+                      'bv2_battery': ('2S 3000 mAh 电池（Crazepony B08LZ8L4YD），竖立在框架电池柱里', 'controller', 'purchased', '#3a6b35'),
+                      'bv2_foam': ('电池背面的 1 mm 泡沫垫（3M 泡沫胶，外侧保留离型纸）', 'controller', 'purchased', '#d9d0b8'),
+                      'bv2_pololu': ('Pololu 2813 软电源开关，贴在左翼外壁内侧', 'controller', 'purchased', '#1f6f3f'),
+                      'bv2_pololu_tape': ('Pololu 2813 背后的 3M 泡沫胶', 'controller', 'purchased', '#d9d0b8'),
+                      'bv2_dfr1202': ('DFRobot DFR1202 5 V 降压板（A7Z 供电），贴在电池柱左肋上', 'controller', 'owned', '#1f3f8f'),
+                      'bv2_dfr_tape': ('DFR1202 背后的 3M 泡沫胶', 'controller', 'owned', '#d9d0b8'),
+                      'bv2_xiao': ('Seeed XIAO SAMD21 低压切断板，贴在右翼内壁高处，USB-C 朝后', 'controller', 'purchased', '#2b2b2b'),
+                      'bv2_xiao_tape': ('XIAO 背后的 3M 泡沫胶', 'controller', 'purchased', '#d9d0b8'),
+                      'bv2_button': ('E-Switch PV6F240SS-331 16 mm 绿灯环按钮，装在后盖左上', 'controller', 'purchased', '#9aa0a6'),
+                      'bv2_diode': ('1N5822 肖特基二极管（充电线上，热缩包好，放在电池上方的线舱）', 'controller', 'purchased', '#3b3b3b'),
+                      'bv2_pad_plus': ('Keystone 615 触点片（+，y +9），平面在底板下、竖片贴后面', 'controller', 'purchased', '#c9a227'),
+                      'bv2_pad_minus': ('Keystone 615 触点片（−，y −9），平面在底板下、竖片贴后面', 'controller', 'purchased', '#c9a227'),
+                      'dock_base': ('充电座底座（BatteryDock-A1 打印件，橙色）', 'torso', 'new-print', None),
+                      'dock_leaf_plus': ('Keystone 5209 弹片（+，y +9 槽）', 'controller', 'purchased', '#b8b8b8'),
+                      'dock_leaf_minus': ('Keystone 5209 弹片（−，y −9 槽）', 'controller', 'purchased', '#b8b8b8'),
+                      'dock_jack': ('Same Sky PJ-005A 直流插座（充电座后墙）', 'controller', 'purchased', '#3b3b3b')}
     # The swap plugs (plug 3 servo XT30, plug 4 A7Z MR30) leave the backpack at its lower left rear (CURRENT-STATE
     # backpack_swap_plugs, 2026-10-31); they are no longer drawn in the pack channel (bp_swap_plugs.stl is a record).
     for key, (name, module, status, color) in BACKPACK_PARTS.items():
@@ -590,15 +584,9 @@ def build_cables(routes: dict) -> tuple[list, dict]:
     R = dict(routes['routes'])
     L: dict[str, float] = {}
     cab = []
-    # 2026-10-31 Dual Lock back plate (print/back-plate/duallock-plate-20261031/guide-world.json): the bench box sits on the
-    # Dual Lock behind the plate, shiftMm further back than its screwed pose, so its four wires move with it wherever they
-    # lie behind the old seat (x < oldSeatX); the pack-side part of each route stays. dl_extra: added length per cable.
-    dl = json.loads(DUALLOCK_WORLD.read_text())
-    dl_extra = {}
-    for cid in dl['cableShift']['cables']:
-        old = R[cid]
-        R[cid] = [[p[0] + dl['shiftMm'][0], p[1], p[2]] if p[0] < dl['cableShift']['pointsWithXBelow'] else list(p) for p in old]
-        dl_extra[cid] = polyline_length(R[cid]) - polyline_length(old)
+    # 2026-11-20: the Dual Lock back plate is not fitted (CURRENT-STATE backpack_swap_plugs), so the bench box screws onto the
+    # pack posts again and its four wires keep their routes.json paths (the 2026-10-31 Dual Lock shift is gone).
+    dl_extra: dict = {}
 
     def add(cid, label, kind, color, path, frm, to, note='', radius=None, slack=0.0):
         path = [[round(float(x), 1) for x in p] for p in path]
@@ -773,9 +761,10 @@ ALTERNATES = [
     {'id': 'bench-box', 'label': 'Rear converter box (USB-C bench supply, D-007)',
      'parts': ['rear_frame', 'rear_lid', 'xl4015_top', 'xl4015_mid', 'pd5991'],
      'cables': ['pw-15v', 'pw-15v-link', 'pw-7v', 'pi-lead']},
-    {'id': 'battery-backpack', 'label': 'Battery backpack (2S LiPo, D-010; battery on the cap D-037, V1.40 hatch)',
-     'parts': ['battery_backpack_frame', 'battery_backpack_cap', 'battery_hatch', 'battery_backpack_bars', 'bp_switch', 'bp_battery',
-               'bp_dfr1202', 'bp_plug2', 'bp_plugs'],
+    {'id': 'battery-backpack', 'label': 'Battery backpack V2 rev B (2S 3000 mAh, Pololu 2813 soft switch, XIAO cutoff, dock pads) and its dock base',
+     'parts': ['bv2_frame', 'bv2_cap', 'bv2_battery', 'bv2_foam', 'bv2_pololu', 'bv2_pololu_tape', 'bv2_dfr1202', 'bv2_dfr_tape',
+               'bv2_xiao', 'bv2_xiao_tape', 'bv2_button', 'bv2_diode', 'bv2_pad_plus', 'bv2_pad_minus',
+               'dock_base', 'dock_leaf_plus', 'dock_leaf_minus', 'dock_jack'],
      'cables': []},
 ]
 
@@ -819,8 +808,8 @@ def main() -> None:
     data = {
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
-        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the 2S battery backpack',
-        'revision': 'guide-20261101-v140-backpack',
+        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the battery backpack V2 rev B (2S 3000 mAh, soft switch, dock charging)',
+        'revision': 'guide-20261120-battery-v2-b1',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

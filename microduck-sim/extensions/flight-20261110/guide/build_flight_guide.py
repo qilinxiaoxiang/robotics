@@ -777,7 +777,7 @@ def standalone() -> dict:
 # with the whole robot: printed parts read from guide/print/world (copies of cad/build/*-world.stl), bought parts and the
 # backpack in its flight pose under fp_ keys (the backpack moves 1.8 mm forward from the guide's Dual Lock pose: no back plate,
 # CAD P-BACKPACK rev 2), duck parts by their guide keys. The first robot step takes the guide's backpack and Dual Lock plate off.
-BOUGHT = list(FANS) + ['esc', 'fc', 'mtf01', 'capacitor', 'battery_L', 'battery_R']
+BOUGHT = list(FANS) + ['esc', 'fc', 'mtf01', 'capacitor', 'cap_tape', 'battery_L', 'battery_R']
 REMOUNT = BACKPACK_BODY + ['battery_backpack_frame', 'bp_dfr1202', 'bp_switch', 'bp_plug2']
 GUIDE_BACKPACK = ['battery_backpack_frame', 'battery_backpack_cap', 'battery_hatch', 'battery_backpack_bars', 'bp_switch', 'bp_battery',
                   'bp_dfr1202', 'bp_plug2', 'bp_plugs', 'duallock_plate', 'duallock_strips']

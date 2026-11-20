@@ -1,0 +1,116 @@
+{
+ "part": "dock_base (BatteryDock-A1, Orange, one printed part)",
+ "needs": {
+  "N1": "a seated robot's two pads must each meet one sprung contact: + under the y +9 pad, - under the y -9 pad",
+  "N2": "the contacts must be held as Keystone intends (5209 body pressed into a housing groove), with nothing printed that bends",
+  "N3": "the robot must be stopped in x so its pads land over the leaves",
+  "N4": "the charger plug must enter a panel jack wired to the two contacts with short soldered wires",
+  "N5": "the dock must stay where it is put"
+ },
+ "premises": {
+  "P-SEAT": "seated backpack bottom flat at z 10.9 (battery-v2 rev B, pad STL z -46 + 56.9); sim Brain sit puts the pads at 10.2 with -1.9 deg pitch (battery-v2-cad-20261120/checks/legsit.json)",
+  "P-PADS": "Keystone 615 pad faces 7.1 x 8.7 at x -73.85..-65.15, y +-9 (battery-v2 build/parts/contact_pad_*-world.stl); plus = y +9 (build_v2.py names the y > 0 pad 'plus')",
+  "P-BACK": "backpack back face x -75.55; the two low cap screws (M2 x 6, pan head 4.0 x 1.6 proud) at y +-9, z 18.0 seated",
+  "P-5209": "Keystone 5209 (M65p15): 0.30 bronze, body 14.0 x 10.0 (wings) / 7.0, leaf 7.0 wide, 10.9 REF, free 7.6 MIN, tab 5.0 x 7.0 jogged 1.6; press fit into a housing groove; working travel about 3 mm (M65p36)",
+  "P-JACK": "Same Sky PJ-005A rev 1.09: bushing 7.94 x 5.7, flange 10.8, housing 10.0, 15.5 to lug ends, nut 10.8 AF x 2.0, washer 10.9 x 0.5; centre-pin lug 3.8 above the axis, sleeve lug on the axis, shunt lug 4.4 below",
+  "P-FIT": "cad-practice/print_fit.py, H2S"
+ },
+ "features": [
+  {
+   "id": "D1-base-plate",
+   "what": "2.0 mm plate x -100..-55, y -20..20, z 0..2",
+   "need": "N3, N5",
+   "why": "ties the contact block to the stop tower so the stop and the leaves keep their 0.95 mm / pad-centre relation; its 1800 mm2 underside takes foam tape or Dual Lock (N5 has no printed feature)",
+   "simpler": "block and tower as two loose parts: their relative position would be set by hand each time",
+   "validation": "one closed body; bounds in build.json; front edge x -55 stays inside the backpack footprint (x -75.55..-45, y -25.3..21.8), where the backpack bottom at 10.9 is the robot's lowest point",
+   "change_when": "the dock gains a funnel or floor fixing that needs a larger footprint; the brief's x -108 rear extension was not built because no need asked for plate behind the jack wall"
+  },
+  {
+   "id": "D2-contact-block",
+   "what": "solid block x -76.5..-58, |y| <= 16, top z 8.0",
+   "need": "N1, N2",
+   "why": "carries the two grooves at the pad positions; top 2.9 mm under the seated pads so only the leaves touch them",
+   "simpler": "contacts glued to the plate: Keystone's mount is a press groove and glue is not on the bench rule list",
+   "validation": "block top 8.0 <= 8.5; min gap to the pads 2.90; footprint inside the seated backpack bottom",
+   "change_when": "the pads move or the seat height changes"
+  },
+  {
+   "id": "D2-grooves",
+   "what": "two grooves along x at y +-9: 10.50 wide, 0.40 tall, floor z 6.0, x -76.5..-62.5, closed at the front end, open at the rear through the stop wall",
+   "need": "N2",
+   "why": "press fit as Keystone intends: thickness print_fit press class with the horizontal adder (+0.05/side, two 0.2 layers over the 0.30 bronze); width locating, horizontal (+0.25/side over the 10.0 wings). The closed front end takes the forward drag the pad puts on the leaf while the robot sits down (the leaf tip slides rearward under the pad); the body front bears on it",
+   "simpler": "a groove open at the front with tab-first insertion: the forward drag at every sit would walk the body out of the open end",
+   "validation": "fit_check.py FITS.json (press, locating) OK; zero overlap between the dock and the contact envelopes",
+   "change_when": "a bench print shows the 0.40 slot too loose or too tight (lip sag decides it); write the result into PRINT-FIT.md the same day",
+   "known_boundary": "print_fit's press class is written for vertical pins; a horizontal sheet-metal press slot has no bench evidence yet"
+  },
+  {
+   "id": "D2-leaf-openings",
+   "what": "7.30 wide openings in the block top over each groove, from the rear to 0.75 past the leaf root; lips 1.6 wide x 1.6 tall over the wings",
+   "need": "N1, N2",
+   "why": "the leaf rises through it to the pad; locating fit (+0.15/side, vertical walls) keeps 1.35 mm of each wing under its lip",
+   "simpler": "fully open groove top: nothing would hold the body down",
+   "validation": "compressed leaf (pad at 10.9) overlaps the dock 0; free and compressed leaf tips (x -70.31, -72.38) lie under the pad (x -73.85..-65.15)",
+   "change_when": "the contact part changes"
+  },
+  {
+   "id": "D3-stop-wall",
+   "what": "tower front wall x -79.7..-76.5, |y| <= 17, z 0..22; stop face x -76.5, 0.95 behind the backpack back face",
+   "need": "N3",
+   "why": "places the backpack so the pads land over the leaves; the robot's back face meets it over z 10.9..14.6",
+   "simpler": "no stop: the robot would have to place an 8.7 mm pad within a few mm by dead reckoning",
+   "validation": "min gap to the backpack cap 0.95; to the frame 2.65",
+   "change_when": "the backpack back face moves"
+  },
+  {
+   "id": "D3-insertion-slots",
+   "what": "two 11.0 wide slots through the stop wall at y +-9 from z 3.8, roof a 45 deg gable from z 13.1 (apex 18.6), still 8.0 wide at z 14.6 for the leaf",
+   "need": "N2",
+   "why": "the contact slides in from inside the tower, leaf root first, into its groove (loose class, horizontal: passes the 10.0 body and the 7.6 leaf); the slot floor at 3.8 passes the tab whichever way its 1.6 jog goes; the tab stays inside the tower",
+   "simpler": "groove open at the front (see D2-grooves); a flat 11 mm roof drew tree support in the Elegoo slice (first BatteryDock-A1 run), the gable prints without it",
+   "validation": "zero overlap with the contact envelopes; tab end x -83.5 is inside the tower (inner face -79.7); slicer review support extrusion 0 on all three printers",
+   "change_when": "the contact part or its insertion direction changes"
+  },
+  {
+   "id": "D3-screw-head-relief",
+   "what": "1.5 mm deep recess across the stop face from z 14.6 to the top",
+   "need": "N3",
+   "why": "the two low cap screw heads stand 1.6 proud of the backpack back face at z 18.0, y +-9 and would otherwise hit the stop first; across the full width so a robot off sideways still clears them",
+   "simpler": "two round pockets: a robot a few mm off in y would land on the heads",
+   "validation": "head envelopes (4.6 seat diameter, 1.6 proud) overlap 0, gap 0.85; 1.7 mm wall left behind the recess",
+   "change_when": "the cap screws move or get countersunk"
+  },
+  {
+   "id": "D4-tower",
+   "what": "hollow tower x -100..-76.5, |y| <= 17, z 0..22, side walls 2.0, rear wall 2.5, open top",
+   "need": "N4",
+   "why": "holds the jack on the x axis and shelters the tab-to-lug wires; the open top gives the soldering iron access",
+   "simpler": "jack in the block: no room under z 8 for a 10.8 flange and its lugs",
+   "validation": "jack envelope overlaps 0; lug ends 2.3 mm from the stop wall's inner face",
+   "change_when": "the jack part changes"
+  },
+  {
+   "id": "D4-tower-open-top",
+   "what": "tower interior x -97.5..-79.7, |y| <= 15, from the plate up, open at the top",
+   "need": "N4",
+   "why": "contacts go in and lugs are soldered from above",
+   "simpler": "closed tower: the jack lugs could not be reached",
+   "validation": "visual",
+   "change_when": "a lid is wanted"
+  },
+  {
+   "id": "D4-jack-hole",
+   "what": "8.44 hole in the rear wall on the x axis at y 0, z 10, teardrop tip +z",
+   "need": "N4",
+   "why": "PJ-005A bushing 7.94 through a 2.5 mm panel, nut and washer outside, plug from behind; locating fit with the horizontal adder (+0.25/side); teardrop because the axis lies in the layer plane (PRINT-FIT Teardrops); z 10 keeps the nut corners 3.76 above the floor and the flange 4.6 above the plate",
+   "simpler": "none",
+   "validation": "fit_check.py jack-hole OK (tip +z in the print pose); 0.7 mm of bushing left past the nut",
+   "change_when": "the jack part changes"
+  }
+ ],
+ "not_built": [
+  {"what": "docking funnel or side rails", "why": "docking guidance is later software work (brief 2026-11-20)"},
+  {"what": "floor screw holes", "why": "N5 is met by foam tape or Dual Lock under the plate"},
+  {"what": "plate behind the jack wall (brief: to about x -108)", "why": "no numbered need asks for it; floor tape resists the robot pushing the stop"}
+ ]
+}

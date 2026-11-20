@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "generated": "2026-10-09",
- "updated": "2026-11-01",
+ "updated": "2026-11-20",
  "frame": "robot frame, mm; x forward, y left, z up",
  "conventions": {
   "center": "head seat point (underside of the head) measured on the full-resolution V1.6 meshes",
@@ -21,7 +21,7 @@
   }
  },
  "counts": {
-  "total": 105,
+  "total": 106,
   "byStep": {
    "torso-fasten": 6,
    "neck-lower-fasten": 10,
@@ -34,7 +34,6 @@
    "head-bottom": 4,
    "close": 3,
    "board": 4,
-   "duallock-plate": 4,
    "box-xl4015": 6,
    "box-5991": 2,
    "box-lid": 4,
@@ -42,21 +41,22 @@
    "imu-board": 2,
    "roof-screws": 2,
    "face": 2,
-   "bp-cap": 3,
    "saddle-board": 4,
    "saddle-lid": 2,
    "camera": 4,
    "jaw-bench": 1,
-   "bp-bars": 4
+   "box-frame": 4,
+   "bv2-frame": 4,
+   "bv2-cap": 4
   },
   "bySpec": {
    "M2 × 10 TAP": 19,
-   "M2 × 8 TAP": 9,
+   "M2 × 8 TAP": 8,
    "M2.6 × 6 TAP": 9,
-   "M2 × 6 TAP": 57,
+   "M2 × 6 TAP": 59,
    "M2 × 4 TAP": 11
   },
-  "verified": 87,
+  "verified": 91,
   "fullMeshHit": 83,
   "guideMeshHit": 83,
   "guideSpecMatches": 85
@@ -4826,278 +4826,6 @@
    "source": "print/rear-pack/build_rear_pack.py (pads), print/rear-pack/checks.json (assembly, screwdriver); guide/data/sources/openrb-drawing.png"
   },
   {
-   "id": "DL-plate-01",
-   "step": "duallock-plate",
-   "spec": "M2 × 6 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 6.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -48.0,
-    -16.1,
-    26.0
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "duallock_plate",
-   "throughParts": [
-    "duallock_plate"
-   ],
-   "intoPart": "rear_pack",
-   "engagementMm": 2.7,
-   "verified": false,
-   "evidence": "Dual Lock plate build.json (2026-10-31): plate x -48..-45, dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5), thread_in_post 3.0; post pilot x -45..-40.2 dia 1.6 from the C-rear_frame ray cast of 2026-10-14 (posts unchanged). 3.0 mm of thread less 0.3 mm lead-in = 2.7 mm, 1.8 mm of pilot past the tip. Pan head (dia 4.0, x -49.5..-48) on the rear face outside the Dual Lock area (|y| <= 13.5). Not ray cast on the plate mesh.",
-   "note": "Dual Lock plate corner to the pack post, the V1.8 cover screw reused; screwed for good.",
-   "role": "Dual Lock back plate to pack post",
-   "stack": [
-    {
-     "part": "duallock_plate",
-     "fromMm": 0.0,
-     "toMm": 3.0,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
-     "part": "rear_pack",
-     "fromMm": 3.0,
-     "toMm": 6.0,
-     "holeDiameterRangeMm": [
-      1.6,
-      1.6
-     ]
-    }
-   ],
-   "pilotDiameterRangeMm": [
-    1.6,
-    1.6
-   ],
-   "tipMarginMm": 1.8,
-   "checks": {
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true
-   },
-   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
-   "guideSpecMatches": true,
-   "source": "print/back-plate/duallock-plate-20261031/build_plate.py (outline = rear-pack build_cover(), posts unchanged)",
-   "reuseNote": "The same four M2 x 6 the V1.8 pack cover and the box front plates used.",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py)"
-  },
-  {
-   "id": "DL-plate-02",
-   "step": "duallock-plate",
-   "spec": "M2 × 6 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 6.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -48.0,
-    16.1,
-    26.0
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "duallock_plate",
-   "throughParts": [
-    "duallock_plate"
-   ],
-   "intoPart": "rear_pack",
-   "engagementMm": 2.7,
-   "verified": false,
-   "evidence": "Dual Lock plate build.json (2026-10-31): plate x -48..-45, dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5), thread_in_post 3.0; post pilot x -45..-40.2 dia 1.6 from the C-rear_frame ray cast of 2026-10-14 (posts unchanged). 3.0 mm of thread less 0.3 mm lead-in = 2.7 mm, 1.8 mm of pilot past the tip. Pan head (dia 4.0, x -49.5..-48) on the rear face outside the Dual Lock area (|y| <= 13.5). Not ray cast on the plate mesh.",
-   "note": "Dual Lock plate corner to the pack post, the V1.8 cover screw reused; screwed for good.",
-   "role": "Dual Lock back plate to pack post",
-   "stack": [
-    {
-     "part": "duallock_plate",
-     "fromMm": 0.0,
-     "toMm": 3.0,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
-     "part": "rear_pack",
-     "fromMm": 3.0,
-     "toMm": 6.0,
-     "holeDiameterRangeMm": [
-      1.6,
-      1.6
-     ]
-    }
-   ],
-   "pilotDiameterRangeMm": [
-    1.6,
-    1.6
-   ],
-   "tipMarginMm": 1.8,
-   "checks": {
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true
-   },
-   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
-   "guideSpecMatches": true,
-   "source": "print/back-plate/duallock-plate-20261031/build_plate.py (outline = rear-pack build_cover(), posts unchanged)",
-   "reuseNote": "The same four M2 x 6 the V1.8 pack cover and the box front plates used.",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py)"
-  },
-  {
-   "id": "DL-plate-03",
-   "step": "duallock-plate",
-   "spec": "M2 × 6 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 6.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -48.0,
-    -16.1,
-    -36.5
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "duallock_plate",
-   "throughParts": [
-    "duallock_plate"
-   ],
-   "intoPart": "rear_pack",
-   "engagementMm": 2.7,
-   "verified": false,
-   "evidence": "Dual Lock plate build.json (2026-10-31): plate x -48..-45, dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5), thread_in_post 3.0; post pilot x -45..-40.2 dia 1.6 from the C-rear_frame ray cast of 2026-10-14 (posts unchanged). 3.0 mm of thread less 0.3 mm lead-in = 2.7 mm, 1.8 mm of pilot past the tip. Pan head (dia 4.0, x -49.5..-48) on the rear face outside the Dual Lock area (|y| <= 13.5). Not ray cast on the plate mesh.",
-   "note": "Dual Lock plate corner to the pack post, the V1.8 cover screw reused; screwed for good.",
-   "role": "Dual Lock back plate to pack post",
-   "stack": [
-    {
-     "part": "duallock_plate",
-     "fromMm": 0.0,
-     "toMm": 3.0,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
-     "part": "rear_pack",
-     "fromMm": 3.0,
-     "toMm": 6.0,
-     "holeDiameterRangeMm": [
-      1.6,
-      1.6
-     ]
-    }
-   ],
-   "pilotDiameterRangeMm": [
-    1.6,
-    1.6
-   ],
-   "tipMarginMm": 1.8,
-   "checks": {
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true
-   },
-   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
-   "guideSpecMatches": true,
-   "source": "print/back-plate/duallock-plate-20261031/build_plate.py (outline = rear-pack build_cover(), posts unchanged)",
-   "reuseNote": "The same four M2 x 6 the V1.8 pack cover and the box front plates used.",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py)"
-  },
-  {
-   "id": "DL-plate-04",
-   "step": "duallock-plate",
-   "spec": "M2 × 6 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 6.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -48.0,
-    16.1,
-    -36.5
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "duallock_plate",
-   "throughParts": [
-    "duallock_plate"
-   ],
-   "intoPart": "rear_pack",
-   "engagementMm": 2.7,
-   "verified": false,
-   "evidence": "Dual Lock plate build.json (2026-10-31): plate x -48..-45, dia 2.2 holes at (+-16.1, 26.0) and (+-16.1, -36.5), thread_in_post 3.0; post pilot x -45..-40.2 dia 1.6 from the C-rear_frame ray cast of 2026-10-14 (posts unchanged). 3.0 mm of thread less 0.3 mm lead-in = 2.7 mm, 1.8 mm of pilot past the tip. Pan head (dia 4.0, x -49.5..-48) on the rear face outside the Dual Lock area (|y| <= 13.5). Not ray cast on the plate mesh.",
-   "note": "Dual Lock plate corner to the pack post, the V1.8 cover screw reused; screwed for good.",
-   "role": "Dual Lock back plate to pack post",
-   "stack": [
-    {
-     "part": "duallock_plate",
-     "fromMm": 0.0,
-     "toMm": 3.0,
-     "holeDiameterRangeMm": [
-      2.2,
-      2.2
-     ]
-    },
-    {
-     "part": "rear_pack",
-     "fromMm": 3.0,
-     "toMm": 6.0,
-     "holeDiameterRangeMm": [
-      1.6,
-      1.6
-     ]
-    }
-   ],
-   "pilotDiameterRangeMm": [
-    1.6,
-    1.6
-   ],
-   "tipMarginMm": 1.8,
-   "checks": {
-    "throughClearanceOk": true,
-    "pilotInTapRange": true,
-    "engagementOk": true,
-    "noBottoming": true
-   },
-   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
-   "guideSpecMatches": true,
-   "source": "print/back-plate/duallock-plate-20261031/build_plate.py (outline = rear-pack build_cover(), posts unchanged)",
-   "reuseNote": "The same four M2 x 6 the V1.8 pack cover and the box front plates used.",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py)"
-  },
-  {
    "id": "C-xl4015-02",
    "step": "box-xl4015",
    "spec": "M2 × 4 TAP",
@@ -5109,7 +4837,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     28.25,
     17.7
    ],
@@ -5167,8 +4895,7 @@
    },
    "guideCurrentlySays": "M2 × 4 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-xl4015-04",
@@ -5182,7 +4909,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     -28.25,
     17.7
    ],
@@ -5240,8 +4967,7 @@
    },
    "guideCurrentlySays": "M2 × 4 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-xl4015-05",
@@ -5255,7 +4981,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     28.25,
     10.1
    ],
@@ -5313,8 +5039,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-xl4015-06",
@@ -5328,7 +5053,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     28.25,
     -10.9
    ],
@@ -5386,8 +5111,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-xl4015-07",
@@ -5401,7 +5125,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     -28.25,
     10.1
    ],
@@ -5459,8 +5183,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-xl4015-08",
@@ -5474,7 +5197,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.505,
+    -51.805,
     -28.25,
     -10.9
    ],
@@ -5532,8 +5255,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py xl_bosses(); CAD hand-back 2026-10-14 17:20 (bosses 5.0 mm at z 38.7 and -10.9, 4.2 mm at z 10.1, 3.2 mm at z 17.7)"
   },
   {
    "id": "C-pd5991-02",
@@ -5547,7 +5269,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.3,
+    -51.6,
     11.37,
     -31.9
    ],
@@ -5605,8 +5327,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py pd_bosses()",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py pd_bosses()"
   },
   {
    "id": "C-pd5991-04",
@@ -5620,7 +5341,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -60.3,
+    -51.6,
     -11.37,
     -31.9
    ],
@@ -5678,8 +5399,7 @@
    },
    "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py pd_bosses()",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py pd_bosses()"
   },
   {
    "id": "C-rear_lid-01",
@@ -5693,7 +5413,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -64.8,
+    -56.1,
     11.367,
     -16.667
    ],
@@ -5761,8 +5481,7 @@
    },
    "guideCurrentlySays": "M2 × 10 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py cap_screw_axis() and cap_features() (four hidden cap screws, 2026-10-15)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py cap_screw_axis() and cap_features() (four hidden cap screws, 2026-10-15)"
   },
   {
    "id": "C-rear_lid-02",
@@ -5776,7 +5495,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -64.8,
+    -56.1,
     -11.366,
     -16.54
    ],
@@ -5844,8 +5563,7 @@
    },
    "guideCurrentlySays": "M2 × 10 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py cap_screw_axis(CAP_SCREW_HOLE_2) and cap_features() (fourth screw, Shawn 2026-10-15)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py cap_screw_axis(CAP_SCREW_HOLE_2) and cap_features() (fourth screw, Shawn 2026-10-15)"
   },
   {
    "id": "C-rear_lid-03",
@@ -5859,7 +5577,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -64.3,
+    -55.6,
     28.25,
     38.7
    ],
@@ -5927,8 +5645,7 @@
    },
    "guideCurrentlySays": "M2 × 10 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py top_screw_axes() and cap_features() top columns (Shawn 2026-10-15: screws instead of tongues)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py top_screw_axes() and cap_features() top columns (Shawn 2026-10-15: screws instead of tongues)"
   },
   {
    "id": "C-rear_lid-04",
@@ -5942,7 +5659,7 @@
    "nut": null,
    "washer": null,
    "center": [
-    -64.3,
+    -55.6,
     -28.25,
     38.7
    ],
@@ -6010,8 +5727,7 @@
    },
    "guideCurrentlySays": "M2 × 10 self-tapping screw (TAP)",
    "guideSpecMatches": true,
-   "source": "print/back-plate/layout-F/build_f.py top_screw_axes() and cap_features() top columns (Shawn 2026-10-15: screws instead of tongues)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box"
+   "source": "print/back-plate/layout-F/build_f.py top_screw_axes() and cap_features() top columns (Shawn 2026-10-15: screws instead of tongues)"
   },
   {
    "id": "P-passive_tab-01",
@@ -6610,114 +6326,6 @@
    "tipMarginMm": 3.3,
    "source": "print/face-a7z/build_face_a7z.py, README.md (Screws)",
    "a7z": true
-  },
-  {
-   "id": "BP-cap-01",
-   "step": "bp-cap",
-   "spec": "M2 × 8 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 8.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -79.85,
-    27.0,
-    24.0
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "battery_backpack_cap",
-   "throughParts": [
-    "battery_backpack_cap"
-   ],
-   "intoPart": "battery_backpack_frame",
-   "engagementMm": 4.7,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-69.75, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
-   "note": "Battery backpack cap to the frame boss.",
-   "role": "Battery backpack cap to frame",
-   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
-   "tipMarginMm": 1.2,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
-  },
-  {
-   "id": "BP-cap-02",
-   "step": "bp-cap",
-   "spec": "M2 × 8 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 8.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -79.85,
-    -27.0,
-    24.0
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "battery_backpack_cap",
-   "throughParts": [
-    "battery_backpack_cap"
-   ],
-   "intoPart": "battery_backpack_frame",
-   "engagementMm": 4.7,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-69.75, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
-   "note": "Battery backpack cap to the frame boss.",
-   "role": "Battery backpack cap to frame",
-   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
-   "tipMarginMm": 1.2,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
-  },
-  {
-   "id": "BP-cap-03",
-   "step": "bp-cap",
-   "spec": "M2 × 8 TAP",
-   "kind": "TAP",
-   "diameterMm": 2.0,
-   "lengthMm": 8.0,
-   "headDiameterMm": 4.0,
-   "headHeightMm": 1.5,
-   "nut": null,
-   "washer": null,
-   "center": [
-    -79.85,
-    0.0,
-    -26.5
-   ],
-   "axis": [
-    1.0,
-    0.0,
-    0.0
-   ],
-   "throughPart": "battery_backpack_cap",
-   "throughParts": [
-    "battery_backpack_cap"
-   ],
-   "intoPart": "battery_backpack_frame",
-   "engagementMm": 4.7,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: cap column floor x -79.85..-76.85 (head seat -79.85), frame boss x -76.85..-70.1, pilot closed from x -70.65; M2 x 8 tip x -71.85: 5.0 mm of thread less 0.3 mm lead-in, 1.2 mm of pilot past the tip.",
-   "note": "Battery backpack cap to the frame boss.",
-   "role": "Battery backpack cap to frame",
-   "source": "print/battery-quickswap-20261101/build (V1.40 frame and cap; screw positions of the D-037 redesign, unchanged from V1.20)",
-   "duallock": "Dual Lock mount 2026-10-31 (print/back-plate/duallock-plate-20261031/update_fasteners.py): moved -8.7 mm in x with its box",
-   "tipMarginMm": 1.2,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
   },
   {
    "id": "SD-board-01",
@@ -7426,8 +7034,8 @@
    "source": "print/jaw-ring-screw-20261029/build_jaw_ring.py"
   },
   {
-   "id": "BP-bar-01",
-   "step": "bp-bars",
+   "id": "C-rear_frame-01",
+   "step": "box-frame",
    "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
@@ -7437,33 +7045,70 @@
    "nut": null,
    "washer": null,
    "center": [
-    -68.95,
-    18.6,
-    24.0
+    -47.0,
+    -16.1,
+    26.0
    ],
    "axis": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
-   "throughPart": "battery_backpack_bars",
+   "throughPart": "rear_frame",
    "throughParts": [
-    "battery_backpack_bars"
+    "rear_frame"
    ],
-   "intoPart": "battery_backpack_cap",
-   "engagementMm": 4.2,
-   "tipMarginMm": 1.0,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
-   "note": "Battery retainer bar to its cap boss.",
-   "role": "Battery retainer bar to cap",
-   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
-   "reuse": true,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": true,
+   "evidence": "Ray cast 2026-10-14 on the final layout F meshes of 17:20 (guide/print/world/rear_frame.stl sha256 dc9fcdac…, rear_lid.stl 5773e28d…, rear_pack-v18.stl) along the screw axis and on a 1.0 mm ring around it: frame plate x -47..-45 with a 2.2 mm clearance hole, rear_pack-v18 post pilot from x -45 to -40.2; 4.0 mm of thread less 0.3 mm lead-in = 3.7 mm, 0.8 mm of pilot past the tip. Head envelope (dia 4.0, x -48.5..-47): 0 of 216 samples inside the frame or the lid; driver axis clear of the frame to radius 1.94 mm behind the head.",
+   "note": "Layout F frame plate upper -Y corner to the pack post, the V1.8 cover screw reused.",
+   "role": "Rear box frame (cover plate) to pack post",
+   "stack": [
+    {
+     "part": "rear_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.6
+   ],
+   "tipMarginMm": 0.8,
+   "driverClearAtStepMm": "1.94",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
+   "guideSpecMatches": true,
+   "source": "print/back-plate/layout-F/build_f.py (cover plate = rear-pack build_cover(), posts unchanged)",
+   "reuseNote": "The same four M2 x 6 the V1.8 pack cover used."
   },
   {
-   "id": "BP-bar-02",
-   "step": "bp-bars",
+   "id": "C-rear_frame-02",
+   "step": "box-frame",
    "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
@@ -7473,33 +7118,70 @@
    "nut": null,
    "washer": null,
    "center": [
-    -68.95,
-    -18.6,
-    24.0
+    -47.0,
+    16.1,
+    26.0
    ],
    "axis": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
-   "throughPart": "battery_backpack_bars",
+   "throughPart": "rear_frame",
    "throughParts": [
-    "battery_backpack_bars"
+    "rear_frame"
    ],
-   "intoPart": "battery_backpack_cap",
-   "engagementMm": 4.2,
-   "tipMarginMm": 1.0,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
-   "note": "Battery retainer bar to its cap boss.",
-   "role": "Battery retainer bar to cap",
-   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
-   "reuse": true,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": true,
+   "evidence": "Ray cast 2026-10-14 on the final layout F meshes of 17:20 (guide/print/world/rear_frame.stl sha256 dc9fcdac…, rear_lid.stl 5773e28d…, rear_pack-v18.stl) along the screw axis and on a 1.0 mm ring around it: frame plate x -47..-45 with a 2.2 mm clearance hole, rear_pack-v18 post pilot from x -45 to -40.2; 4.0 mm of thread less 0.3 mm lead-in = 3.7 mm, 0.8 mm of pilot past the tip. Head envelope (dia 4.0, x -48.5..-47): 0 of 216 samples inside the frame or the lid; driver axis clear of the frame to radius 1.94 mm behind the head.",
+   "note": "Layout F frame plate upper +Y corner to the pack post, the V1.8 cover screw reused.",
+   "role": "Rear box frame (cover plate) to pack post",
+   "stack": [
+    {
+     "part": "rear_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.6
+   ],
+   "tipMarginMm": 0.8,
+   "driverClearAtStepMm": "1.94",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
+   "guideSpecMatches": true,
+   "source": "print/back-plate/layout-F/build_f.py (cover plate = rear-pack build_cover(), posts unchanged)",
+   "reuseNote": "The same four M2 x 6 the V1.8 pack cover used."
   },
   {
-   "id": "BP-bar-03",
-   "step": "bp-bars",
+   "id": "C-rear_frame-03",
+   "step": "box-frame",
    "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
@@ -7509,33 +7191,70 @@
    "nut": null,
    "washer": null,
    "center": [
-    -68.95,
-    18.6,
-    -8.0
+    -47.0,
+    -16.1,
+    -36.5
    ],
    "axis": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
-   "throughPart": "battery_backpack_bars",
+   "throughPart": "rear_frame",
    "throughParts": [
-    "battery_backpack_bars"
+    "rear_frame"
    ],
-   "intoPart": "battery_backpack_cap",
-   "engagementMm": 4.2,
-   "tipMarginMm": 1.0,
-   "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
-   "note": "Battery retainer bar to its cap boss.",
-   "role": "Battery retainer bar to cap",
-   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
-   "reuse": true,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": true,
+   "evidence": "Ray cast 2026-10-14 on the final layout F meshes of 17:20 (guide/print/world/rear_frame.stl sha256 dc9fcdac…, rear_lid.stl 5773e28d…, rear_pack-v18.stl) along the screw axis and on a 1.0 mm ring around it: frame plate x -47..-45 with a 2.2 mm clearance hole, rear_pack-v18 post pilot from x -45 to -40.2; 4.0 mm of thread less 0.3 mm lead-in = 3.7 mm, 0.8 mm of pilot past the tip. Head envelope (dia 4.0, x -48.5..-47): 0 of 216 samples inside the frame or the lid (the dia 4.4 head lane clears the bottom-tier corner); driver axis clear of the frame to radius 1.94 mm behind the head.",
+   "note": "Layout F frame plate lower -Y corner to the pack post, the V1.8 cover screw reused.",
+   "role": "Rear box frame (cover plate) to pack post",
+   "stack": [
+    {
+     "part": "rear_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.6
+   ],
+   "tipMarginMm": 0.8,
+   "driverClearAtStepMm": "1.94",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
+   "guideSpecMatches": true,
+   "source": "print/back-plate/layout-F/build_f.py (cover plate = rear-pack build_cover(), posts unchanged)",
+   "reuseNote": "The same four M2 x 6 the V1.8 pack cover used."
   },
   {
-   "id": "BP-bar-04",
-   "step": "bp-bars",
+   "id": "C-rear_frame-04",
+   "step": "box-frame",
    "spec": "M2 × 6 TAP",
    "kind": "TAP",
    "diameterMm": 2.0,
@@ -7545,29 +7264,510 @@
    "nut": null,
    "washer": null,
    "center": [
-    -68.95,
-    -18.6,
-    -8.0
+    -47.0,
+    16.1,
+    -36.5
    ],
    "axis": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
-   "throughPart": "battery_backpack_bars",
+   "throughPart": "rear_frame",
    "throughParts": [
-    "battery_backpack_bars"
+    "rear_frame"
    ],
-   "intoPart": "battery_backpack_cap",
-   "engagementMm": 4.2,
-   "tipMarginMm": 1.0,
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": true,
+   "evidence": "Ray cast 2026-10-14 on the final layout F meshes of 17:20 (guide/print/world/rear_frame.stl sha256 dc9fcdac…, rear_lid.stl 5773e28d…, rear_pack-v18.stl) along the screw axis and on a 1.0 mm ring around it: frame plate x -47..-45 with a 2.2 mm clearance hole, rear_pack-v18 post pilot from x -45 to -40.2; 4.0 mm of thread less 0.3 mm lead-in = 3.7 mm, 0.8 mm of pilot past the tip. Head envelope (dia 4.0, x -48.5..-47): 0 of 216 samples inside the frame or the lid (the dia 4.4 head lane clears the bottom-tier corner); driver axis clear of the frame to radius 1.94 mm behind the head.",
+   "note": "Layout F frame plate lower +Y corner to the pack post, the V1.8 cover screw reused.",
+   "role": "Rear box frame (cover plate) to pack post",
+   "stack": [
+    {
+     "part": "rear_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.2,
+      2.2
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "pilotDiameterRangeMm": [
+    1.6,
+    1.6
+   ],
+   "tipMarginMm": 0.8,
+   "driverClearAtStepMm": "1.94",
+   "checks": {
+    "fullMeshHit": true,
+    "guideMeshHit": true,
+    "seatWithin0_3mm": true,
+    "throughClearanceOk": true,
+    "pilotInTapRange": true,
+    "engagementOk": true,
+    "noBottoming": true,
+    "noIntrusion": true,
+    "noHeadClash": true
+   },
+   "guideCurrentlySays": "M2 × 6 self-tapping screw (TAP)",
+   "guideSpecMatches": true,
+   "source": "print/back-plate/layout-F/build_f.py (cover plate = rear-pack build_cover(), posts unchanged)",
+   "reuseNote": "The same four M2 x 6 the V1.8 pack cover used."
+  },
+  {
+   "id": "BV2-fix-01",
+   "step": "bv2-frame",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -47.0,
+    16.1,
+    26.0
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_frame",
+   "throughParts": [
+    "bv2_frame"
+   ],
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
    "verified": false,
-   "evidence": "V1.40 world STLs ray cast 2026-11-01: bar x -70.45..-68.95 (hole radius 1.15), cap boss column to x -70.45 (pilot radius 0.8), pilot closed behind x -75.95; M2 x 6 tip x -74.95: 4.5 mm of thread less 0.3 mm lead-in.",
-   "note": "Battery retainer bar to its cap boss.",
-   "role": "Battery retainer bar to cap",
-   "source": "qilinxiaoxiang/microduck_rl 8bce48af cmu/hardware/battery-redesign/README.md (bars: 2 x M2 x 6 each into the boss pilots)",
-   "reuse": true,
-   "v140": "V1.40 battery backpack 2026-11-01 (print/back-plate/battery-backpack-v140/update_fasteners.py)"
+   "evidence": "build_v2.py SCREWS (+-16.1, 26) and (+-16.1, -36.5): front wall x -47..-45 (2.0 mm, 2.5 clearance), pack post pilot x -45..-40.2 dia 1.6 (C-rear_frame ray cast 2026-10-14, posts unchanged): 4.0 mm of thread less 0.3 mm lead-in, 0.8 mm of pilot past the tip. Driver lanes checked in checks/access.json.",
+   "note": "Backpack frame front wall to the pack post, from inside the empty frame.",
+   "stack": [
+    {
+     "part": "bv2_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-fix-02",
+   "step": "bv2-frame",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -47.0,
+    -16.1,
+    26.0
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_frame",
+   "throughParts": [
+    "bv2_frame"
+   ],
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": false,
+   "evidence": "build_v2.py SCREWS (+-16.1, 26) and (+-16.1, -36.5): front wall x -47..-45 (2.0 mm, 2.5 clearance), pack post pilot x -45..-40.2 dia 1.6 (C-rear_frame ray cast 2026-10-14, posts unchanged): 4.0 mm of thread less 0.3 mm lead-in, 0.8 mm of pilot past the tip. Driver lanes checked in checks/access.json.",
+   "note": "Backpack frame front wall to the pack post, from inside the empty frame.",
+   "stack": [
+    {
+     "part": "bv2_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-fix-03",
+   "step": "bv2-frame",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -47.0,
+    16.1,
+    -36.5
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_frame",
+   "throughParts": [
+    "bv2_frame"
+   ],
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": false,
+   "evidence": "build_v2.py SCREWS (+-16.1, 26) and (+-16.1, -36.5): front wall x -47..-45 (2.0 mm, 2.5 clearance), pack post pilot x -45..-40.2 dia 1.6 (C-rear_frame ray cast 2026-10-14, posts unchanged): 4.0 mm of thread less 0.3 mm lead-in, 0.8 mm of pilot past the tip. Driver lanes checked in checks/access.json.",
+   "note": "Backpack frame front wall to the pack post, from inside the empty frame.",
+   "stack": [
+    {
+     "part": "bv2_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-fix-04",
+   "step": "bv2-frame",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -47.0,
+    -16.1,
+    -36.5
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_frame",
+   "throughParts": [
+    "bv2_frame"
+   ],
+   "intoPart": "rear_pack",
+   "engagementMm": 3.7,
+   "verified": false,
+   "evidence": "build_v2.py SCREWS (+-16.1, 26) and (+-16.1, -36.5): front wall x -47..-45 (2.0 mm, 2.5 clearance), pack post pilot x -45..-40.2 dia 1.6 (C-rear_frame ray cast 2026-10-14, posts unchanged): 4.0 mm of thread less 0.3 mm lead-in, 0.8 mm of pilot past the tip. Driver lanes checked in checks/access.json.",
+   "note": "Backpack frame front wall to the pack post, from inside the empty frame.",
+   "stack": [
+    {
+     "part": "bv2_frame",
+     "fromMm": 0.0,
+     "toMm": 2.0,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "rear_pack",
+     "fromMm": 2.0,
+     "toMm": 6.0,
+     "holeDiameterRangeMm": [
+      1.6,
+      1.6
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-cap-01",
+   "step": "bv2-cap",
+   "spec": "M2 × 8 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 8.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -75.55,
+    29.0,
+    19.0
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_cap",
+   "throughParts": [
+    "bv2_cap"
+   ],
+   "intoPart": "bv2_frame",
+   "engagementMm": 4.7,
+   "verified": false,
+   "evidence": "build_v2.py CAP_SCREWS cap-high-left: head seat x -75.55, cap plate 1.7 (2.5 clearance), frame boss 5.0 mm with a 1.95 through pilot (H2S print_fit).",
+   "note": "Cap to the frame boss.",
+   "stack": [
+    {
+     "part": "bv2_cap",
+     "fromMm": 0.0,
+     "toMm": 1.7,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "bv2_frame",
+     "fromMm": 1.7,
+     "toMm": 6.7,
+     "holeDiameterRangeMm": [
+      1.95,
+      1.95
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-cap-02",
+   "step": "bv2-cap",
+   "spec": "M2 × 8 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 8.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -75.55,
+    -29.0,
+    39.0
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_cap",
+   "throughParts": [
+    "bv2_cap"
+   ],
+   "intoPart": "bv2_frame",
+   "engagementMm": 4.7,
+   "verified": false,
+   "evidence": "build_v2.py CAP_SCREWS cap-high-right: head seat x -75.55, cap plate 1.7 (2.5 clearance), frame boss 5.0 mm with a 1.95 through pilot (H2S print_fit).",
+   "note": "Cap to the frame boss.",
+   "stack": [
+    {
+     "part": "bv2_cap",
+     "fromMm": 0.0,
+     "toMm": 1.7,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "bv2_frame",
+     "fromMm": 1.7,
+     "toMm": 6.7,
+     "holeDiameterRangeMm": [
+      1.95,
+      1.95
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-cap-03",
+   "step": "bv2-cap",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -75.55,
+    9.0,
+    -38.9
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_cap",
+   "throughParts": [
+    "bv2_cap",
+    "bv2_pad_plus"
+   ],
+   "intoPart": "bv2_frame",
+   "engagementMm": 3.19,
+   "verified": false,
+   "evidence": "build_v2.py CAP_SCREWS cap-low-left: head seat x -75.55, cap plate 1.7 (2.5 clearance), Keystone 615 tab 0.81 (3.7 hole), frame boss 3.5 mm with a 1.95 through pilot (H2S print_fit).",
+   "note": "Cap to the frame boss, clamping the contact pad tab.",
+   "stack": [
+    {
+     "part": "bv2_cap",
+     "fromMm": 0.0,
+     "toMm": 1.7,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "bv2_pad_plus",
+     "fromMm": 1.7,
+     "toMm": 2.51,
+     "holeDiameterRangeMm": [
+      3.7,
+      3.7
+     ]
+    },
+    {
+     "part": "bv2_frame",
+     "fromMm": 2.51,
+     "toMm": 6.01,
+     "holeDiameterRangeMm": [
+      1.95,
+      1.95
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
+  },
+  {
+   "id": "BV2-cap-04",
+   "step": "bv2-cap",
+   "spec": "M2 × 6 TAP",
+   "kind": "TAP",
+   "diameterMm": 2.0,
+   "lengthMm": 6.0,
+   "headDiameterMm": 4.0,
+   "headHeightMm": 1.5,
+   "nut": null,
+   "washer": null,
+   "center": [
+    -75.55,
+    -9.0,
+    -38.9
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "throughPart": "bv2_cap",
+   "throughParts": [
+    "bv2_cap",
+    "bv2_pad_minus"
+   ],
+   "intoPart": "bv2_frame",
+   "engagementMm": 3.19,
+   "verified": false,
+   "evidence": "build_v2.py CAP_SCREWS cap-low-right: head seat x -75.55, cap plate 1.7 (2.5 clearance), Keystone 615 tab 0.81 (3.7 hole), frame boss 3.5 mm with a 1.95 through pilot (H2S print_fit).",
+   "note": "Cap to the frame boss, clamping the contact pad tab.",
+   "stack": [
+    {
+     "part": "bv2_cap",
+     "fromMm": 0.0,
+     "toMm": 1.7,
+     "holeDiameterRangeMm": [
+      2.5,
+      2.5
+     ]
+    },
+    {
+     "part": "bv2_pad_minus",
+     "fromMm": 1.7,
+     "toMm": 2.51,
+     "holeDiameterRangeMm": [
+      3.7,
+      3.7
+     ]
+    },
+    {
+     "part": "bv2_frame",
+     "fromMm": 2.51,
+     "toMm": 6.01,
+     "holeDiameterRangeMm": [
+      1.95,
+      1.95
+     ]
+    }
+   ],
+   "source": "print/battery-v2-cad-20261120/build_v2.py",
+   "bv2": "battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)"
   }
  ],
  "unassignedHoles": [
