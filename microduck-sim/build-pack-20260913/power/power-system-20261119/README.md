@@ -22,7 +22,10 @@ robot: two contacts under the tail -> Schottky diode -> pack node
 
 ## Parts and reasons
 
-- **PV-1 Battery: STRIX Power Stix 2S1P 18650 Li-ion 3200 mAh, XT30, model STX-170042.** Problem 3. ReadyMadeRC
+- **PV-1 Battery (chosen 2026-11-19, Amazon): Crazepony/ALIENMODEL 2S 3000 mAh LiPo, B08LZ8L4YD**, $22.99, In
+  Stock with two-day delivery, 110 g, 72 x 34 x 20 mm, 5C continuous (15 A) / 10C burst (30 A), XT30 and DC5.5
+  leads plus JST-XH balance (listing photo shows XT30). Higher current rating than the STRIX below and on Amazon.
+  Alternative: **STRIX Power Stix 2S1P 18650 Li-ion 3200 mAh, XT30, model STX-170042.** Problem 3. ReadyMadeRC
   (Ohio) $21.99, In Stock, page read 2026-11-19: 101 g, 69 x 37 x 19.2 mm, 10 A continuous, XT30 16 AWG, XH balance
   lead, 4.2 V per cell, charge up to 3.2 A, 23.68 Wh. Runtime scaled from the Tattu 650 (43 g) as measured by
   Shawn: 3200 / 650 = 4.9 times, so about 1.5-2 h walking and about 3 h mostly idle, less some for Li-ion sag under
