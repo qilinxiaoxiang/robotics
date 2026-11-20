@@ -3,6 +3,7 @@
  "effort": "flight-20261110",
  "purpose": "Stages, pass and kill numbers, budgets and attempts of the MicroDuck flight training effort. Checked by ~/code/claude-config/scripts/train_contract_check.py; the launch guard denies launches no ready stage covers. Status for Shawn: train/OVERVIEW.html.",
  "overview_page": "train/OVERVIEW.html",
+ "handover": "HANDOVER.md",
  "requirements": "REQUIREMENTS.json",
  "launch_roots": [
   "train",
@@ -428,7 +429,8 @@
      "route_reviews": [],
      "history": [
       "2026-11-20: was 'reproduce run A'. Existing files (eval/gate_ts_start_*, 10 episodes, 2026-11-19) show run A at gain400 inside the window: no pack standing 7 of 10 falls, walking 10 of 10, pack walking 10 of 10. Run A is not a known-good result on the validated yardstick, so it cannot be the baseline.",
-      "2026-11-20 16:55: rewritten after B1 attempt 2. fq2 1999 fails the filter on gain alone (nominal with-pack cells 0 of 60, gain400 53 to 58 of 60); its run had no gain randomisation (ENABLE_KP_RANDOMIZATION False, no gain_dr in packwalk_tq). Round 3's teachers, trained with kp scale 0.8 to 2.2, hold every cell with their trained inputs (t3h_750, t3g_500: 0 to 1 of 60) and fall walking with a load when fed only what the robot knows (velocity inputs zero, gain scale 1.0: 50 to 60 of 60). Pass cells are the with-pack group (50 %, 75 %, full pack) by Shawn's two-set decision of 14:55; the no-pack and 25 % cells are no longer required of this policy. The fall, speed and jump lines are unchanged."
+      "2026-11-20 16:55: rewritten after B1 attempt 2. fq2 1999 fails the filter on gain alone (nominal with-pack cells 0 of 60, gain400 53 to 58 of 60); its run had no gain randomisation (ENABLE_KP_RANDOMIZATION False, no gain_dr in packwalk_tq). Round 3's teachers, trained with kp scale 0.8 to 2.2, hold every cell with their trained inputs (t3h_750, t3g_500: 0 to 1 of 60) and fall walking with a load when fed only what the robot knows (velocity inputs zero, gain scale 1.0: 50 to 60 of 60). Pass cells are the with-pack group (50 %, 75 %, full pack) by Shawn's two-set decision of 14:55; the no-pack and 25 % cells are no longer required of this policy. The fall, speed and jump lines are unchanged.",
+      "2026-11-20 about 17:10: Shawn on the approval question: \"之后有了全景图再定吧\". Stage stays proposed. Preparation done without any launch: delta entries packwalk_tq_gain and universal5_pack in microduck_rl/cmu/finetune/flight/flight_worker.py, audit-table line in kaggle_flight.py, audit case mapping in flight_audit.py (uncommitted in the nested repository). Open before a launch: the audit record for arm A (audit_gate.py expects three loads, a pack-only delta has one)."
      ],
      "arms": {
       "A_main": "delta packwalk_tq plus gain_dr, start fq2 iteration 1999, 1000 iterations, saves every 125: the one change of this stage",
@@ -450,11 +452,16 @@
        "kaggle_flight\\.py push\\b.*b2a-fq2-gain",
        "b2_score\\.(sh|py)\\b",
        "ts3_audit\\.sh\\b.*b2",
-        "flight_audit\\.py\\b.*packwalk_tq_gain"
+       "flight_audit\\.py\\b.*packwalk_tq_gain"
       ],
       "result": "",
       "verdict": "running",
       "evidence": ""
+     },
+     "owner_decision": {
+      "asked": "2026-11-20 about 17:00: start this training tonight at 19:00, or wait for the thrust sheet",
+      "words": "之后有了全景图再定吧",
+      "reading": "no approval yet; he decides when the whole picture (this sheet, the thrust validation result and the thrust training sheet, in one overview) is in front of him. Nothing is launched before that."
      }
     },
     {
