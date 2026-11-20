@@ -1355,3 +1355,16 @@ under 70.00 USD metered (workspace limit 75).
   m/s) and fail only on pack-walk jumps (16.5, 27.75).
 - The follow-up (`ts3_after_pair.py`) calls `ts3_gates.py score` as a subprocess when the kernel returns and the
   student trigger reads the verdicts that call writes, so both use the new line without a restart.
+- 23:26 coordinator lifted "no new Modal training arms" for one arm: the same continuation on the faster teacher,
+  without waiting for the Kaggle kernel. `ts3m_k625.sh`: Modal A10, detached spawned call
+  fc-01M7VK8FWTMAT506QC45H84EJZ, run `ts3m-k625` (app `microduck-flight-ts3m-k625`), from t3g_625
+  (`init/ts3t_t3g_625.onnx`) under universal5tgs (audit record of 23:16; rewards and ranges unchanged),
+  `--max-lr 0.00005 --init-std 0.15 --warmup-iters 100 --track-guard 2.0`, 1000 iterations, save every 25,
+  `--max-hours 1.0`, `--max-dollars 2.00`; rate 1.417 USD/h, worst case if the app hangs to its timeout 2.13.
+  Watcher `ts3m_watch.py` pid 2437 (detached, 2.5 h; new options `min=`, `stopusd=`, `note=`): gates on every 50th
+  save from 100 on plus the last (about 19), no gate batch once metered reads 47.00 or more; heartbeat
+  `logs/ts3m_k625_heartbeat.txt`, folders `ckpt/m3k_<iter>`. Budget: metered 38.91 before + training 2.00 at most
+  (about 1.10 expected at 0.36 it/s) + scoring 1.90 at most = 43.0 worst case for this arm; t3k and s3h scoring 2
+  to 4.5 on top: 47.5 worst case in all, under the 50.00 stop and the 51.00 line. Student trigger restarted (pid
+  2439): tags t3k and m3k, one student kernel in all (`MAX_KERNELS = 1`), the first passing save of either arm
+  takes it.

@@ -27,6 +27,17 @@ EVERY = {}
 for _a in [a for a in sys.argv if a.startswith("every=")]:
     sys.argv.remove(_a)
     EVERY[_a[6:].split(":")[0]] = int(_a.split(":")[1])
+# min=<iter>: saves below this iteration are not scored; stopusd=<x>: no gate batch once metered reads x or more
+# (default 50.00, the line for everything); note=<text>: appended to the START line (the budget arithmetic)
+MIN_IT, STOP_USD, NOTE = 0, 50.0, ""
+for _a in [a for a in sys.argv if a.startswith(("min=", "stopusd=", "note="))]:
+    sys.argv.remove(_a)
+    if _a.startswith("min="):
+        MIN_IT = int(_a[4:])
+    elif _a.startswith("stopusd="):
+        STOP_USD = float(_a[8:])
+    else:
+        NOTE = _a[5:]
 
 
 def hb(msg):
@@ -59,7 +70,7 @@ def main():
     scored = {a: set() for a in arms}   # iterations already scored
     stopped = {a: False for a in arms}
     last = {a: (None, time.time()) for a in arms}  # last iteration seen and when it changed
-    hb(f"watch START arms {arms} for {hours} h")
+    hb(f"watch START arms {arms} for {hours} h" + (f"; {NOTE}" if NOTE else ""))
     rnd = 0
     while time.time() < t_end:
         rnd += 1
@@ -75,7 +86,8 @@ def main():
             # a save already scored by an earlier watcher (out/gates/gates_<tag>_<n>.json) is not scored again;
             # every=<arm>:<step> scores only the saves at multiples of <step> and the last one (bill, 2026-11-19 20:50)
             scored[arm] |= {i for i in its if (T / f"out/gates/gates_{tag}_{i}.json").exists()}
-            new = [i for i in its if i > 0 and i not in scored[arm] and (i % EVERY.get(arm, 1) in (0, EVERY.get(arm, 1) - 1))]
+            new = [i for i in its if i > 0 and i >= MIN_IT and i not in scored[arm]
+                   and (i % EVERY.get(arm, 1) in (0, EVERY.get(arm, 1) - 1))]
             for f in ["model_0.onnx", "progress.json"] + [f"model_{i}.pt" for i in new]:
                 if f in names and (f == "progress.json" or not (dest / f).exists()):
                     sh([MODAL, "volume", "get", "--force", vol, f"runs/{arm}/{f}", str(dest / f)])
@@ -109,8 +121,9 @@ def main():
                 usd = float(before.split()[-1])
             except ValueError:
                 usd = None
-            if usd is None or usd >= 50.0:
-                hb(f"{arm} gate batch for {dirs} NOT submitted: {before} (stop at 50.00)")
+            if usd is None or usd >= STOP_USD:
+                hb(f"{arm} gate batch for {dirs} NOT submitted: {before} (stop at {STOP_USD:.2f})")
+                scored[arm] |= set(new) if usd is not None else set()  # over the line: these saves stay unscored
                 continue
             rc, _ = sh([MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{stamp}.json"],
                        log=T / f"logs/gates_{stamp}_run.log", cwd=T.parent, timeout=2400)
