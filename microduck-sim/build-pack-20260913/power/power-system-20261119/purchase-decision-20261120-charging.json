@@ -1,0 +1,144 @@
+{
+ "schema_version": 1,
+ "contract": {
+  "goal": "Buy every part the battery backpack rev B dock charging path still lacks, chosen from published drawings and listings: two fixed robot contact pads, two dock spring contacts, the dock DC jack and a ready-made 2S Li-ion wall charger (Shawn: no charger modules to assemble). Not carted until the rev B assembly guide chapter and its BOM exist (prerequisites); then cart only, never order.",
+  "chain": {
+   "from": "wall charger 8.4 V CC/CV, 5.5 x 2.1 mm plug",
+   "to": "dock panel jack -> two dock leaf contacts -> two robot L pads under the backpack floor -> 1N5822 -> Pololu 2813 VIN (pack node)"
+  },
+  "allowed_companions": [],
+  "allowed_modifications": [
+   {
+    "id": "solder_wires",
+    "source": "battery-v2-concept-20261119/README.md F8/F9 and assembly step 1: pad wires soldered to the pad tabs, charge lead to the Pololu VIN/GND pads. Soldering a wire to a solder tab or lug is its intended use, not a change to the part."
+   }
+  ],
+  "requirements": [
+   {
+    "id": "robot_pads",
+    "requirement": "Two fixed L contacts (plus spares), bought ready-shaped (no bending or cutting): a flat face about 6 x 8 mm under the floor and a tab about 11 mm up the frame back face with a hole of 2.4 mm or more for the M2 cap screw (or narrow enough to clamp beside it); conductive plated metal; drawing published so the CAD can adapt.",
+    "source": "battery-v2-concept-20261119/README.md F8, BOM 'Contact pads, 2'"
+   },
+   {
+    "id": "dock_contacts",
+    "requirement": "Two spring contacts for the dock that reach about 12-13 mm above the floor and give a few mm of travel against the robot pads seated at 10.9 mm; wide enough for sideways error; published drawing; carry at least the charger's 1 A.",
+    "source": "concept README 'Contacts and the dock'; main-session brief 2026-11-20"
+   },
+   {
+    "id": "dock_jack",
+    "requirement": "Panel DC barrel jack that mates the charger's 5.5 x 2.1 mm plug, rated at least 1 A (prefer more), solder terminals, published drawing with panel hole and nut.",
+    "source": "main-session brief 2026-11-20"
+   },
+   {
+    "id": "charger",
+    "requirement": "Ready-made 2S Li-ion wall charger, 8.4 V CC/CV output (never above 4.2 V per cell), 1-2 A, 5.5 x 2.1 mm plug with published polarity, AC 100-240 V, in stock.",
+    "source": "main-session brief 2026-11-20 (Shawn does not want to assemble charger modules)"
+   },
+   {
+    "id": "charge_voltage_safety",
+    "requirement": "Charger plus the 1N5822 in series never put the pack above 8.4 V; the resulting end voltage is stated.",
+    "source": "main-session brief 2026-11-20; power-system PV-3"
+   }
+  ]
+ },
+ "candidates": [
+  {
+   "id": "charging_bundle",
+   "primary": "DigiKey: Keystone 615 x6 (36-615-ND), Keystone 5209 x6 (36-5209-ND), Same Sky PJ-005A x1 (CP-5-ND); Amazon: Sortfle 8.4V 1A charger B07J4CLKZ7 x1; 1N5822 from RoboClub",
+   "chain": "B07J4CLKZ7 (center +) -> PJ-005A on the dock wall -> 5209 leaves in dock grooves -> 615 L pads on the robot -> 1N5822 -> Pololu VIN",
+   "companions": [],
+   "modifications": [
+    "solder_wires"
+   ],
+   "checks": {
+    "robot_pads": {
+     "status": "pass",
+     "observed": "Keystone 615 universal clear-hole right-angle bracket, brass, tin plate, T 0.81 mm: H 10.7 (vertical leg), L 8.7 (horizontal leg), W 7.1, D 7.1 (vertical-leg hole centre above the horizontal leg's outer face), D hole dia 3.7, E 5.2 (horizontal-leg hole centre from the vertical leg's outer face), E hole dia 3.3. Face 7.1 x 8.7 vs envelope 6 x 8; tab 10.7 vs 11; 3.7 mm hole passes M2. DigiKey In-Stock 4,088, $0.38 each (1), 'Manufacturer Standard Lead Time 11 Weeks' applies only beyond stock. CAD adapts: pocket 0.81 deep, low cap screw axis 7.1 mm above the box bottom (z -38.9 instead of -41.5).",
+     "evidence": "Keystone catalog page K75p129 (https://www.keyelco.com/userAssets/file/K75p129.pdf), table 'Universal clear hole brackets' and figure; DigiKey product page read in Chrome 2026-11-20 (https://www.digikey.com/en/products/detail/keystone-electronics/615/316537)"
+    },
+    "dock_contacts": {
+     "status": "pass",
+     "observed": "Keystone 5209 slide-in leaf battery contact, 0.30 mm phosphor bronze, nickel plate: base 10.0 wide with groove wings, leaf 7.0 wide, overall 21.0 tall, leaf 10.9 REF long, free height 7.6 mm MIN above the base, base 15.5 from leaf root to tab end, tab 5.0 wide with a 2.01 mm solder hole, 'press fit into housing groove'. Mounting table (catalog p36, Fig. 3): two 5209 hold an AA (50.3 mm) at L 59.4 mm, so each leaf works at about 4.5 mm, about 3 mm below its free height: that is the working travel. No current rating is published (Keystone gives none for battery contacts); section 7.0 x 0.30 mm = 2.1 mm2 phosphor bronze, four times a 20 AWG wire, carrying 1 A. DigiKey In-Stock 63,146, $0.73 each.",
+     "evidence": "Keystone catalog pages M65p15 (https://www.keyelco.com/userAssets/file/M65p15.pdf) and M65p36 (https://www.keyelco.com/userAssets/file/M65p36.pdf); DigiKey page read in Chrome 2026-11-20 (https://www.digikey.com/en/products/detail/keystone-electronics/5209/299941)"
+    },
+    "dock_jack": {
+     "status": "pass",
+     "observed": "Same Sky PJ-005A panel DC jack: 2.0 mm centre pin, 5.70 mm sleeve, 5 A 24 VDC, 30 mOhm, 5/16\"-32 threaded bushing 5.7 long, flange dia 10.8, nut 10.8 across flats x 2 thick, washer 10.9/8.4 x 0.5, 10.0 body behind the flange, 15.5 overall, three solder lugs, mating plug dia 5.5 with 10.1 mm insertion depth. The 5.5 x 2.1 mm plug fits: its 2.1 mm bore takes the 2.0 mm pin and its 5.5 mm sleeve meets the jack's 5.5 mating diameter (DigiKey class 2.00 mm ID). Panel hole: 5/16\" = 7.94 mm thread; panel up to about 3.2 mm (5.7 thread - 2 nut - 0.5 washer). DigiKey In-Stock 16,623, $3.13.",
+     "evidence": "Same Sky datasheet rev 1.09 2026-05-27 (https://www.sameskydevices.com/product/resource/pj-005a.pdf), page 2 drawing; DigiKey page read in Chrome 2026-11-20 (https://www.digikey.com/en/products/detail/same-sky-formerly-cui-devices/PJ-005A/165838)"
+    },
+    "charger": {
+     "status": "pass",
+     "observed": "Sortfle 8.4V 1A charger: listing bullets 'Provides 8.4V DC output at up to 1A' for 7.4V/2S Li-ion, '5.5mm outer diameter x 2.1mm inner diameter DC connector with center-positive polarity', LED charging indicator, 10 ft cord, input 100-240 V. $20.99, In Stock, 4.5 stars (76 ratings), sold by Sortfle.",
+     "evidence": "Amazon listing read in Chrome 2026-11-20 (https://www.amazon.com/dp/B07J4CLKZ7)"
+    },
+    "charge_voltage_safety": {
+     "status": "pass",
+     "observed": "1N5822 max forward voltage 0.390 V at 1.0 A (onsemi datasheet). Charger CV 8.4 V minus the diode puts the pack at about 8.0 V during the 1 A phase and about 8.1-8.2 V as the current tapers (4.05-4.1 V per cell, roughly 90 % of capacity). The diode can only lower the pack voltage; if it shorted, the pack would see the charger's 8.4 V, still 4.2 V per cell. Accept: a higher-voltage supply to cancel the drop would push the pack above 8.4 V as the current and the diode drop fall to zero.",
+     "evidence": "onsemi 1N5820-D datasheet (https://www.onsemi.com/download/data-sheet/pdf/1n5820-d.pdf), Maximum Instantaneous Forward Voltage table; power-system README PV-3"
+    }
+   },
+   "bom_items": [
+    "36-615-ND",
+    "36-5209-ND",
+    "CP-5-ND",
+    "B07J4CLKZ7"
+   ]
+  },
+  {
+   "id": "icreatin_charger",
+   "primary": "Amazon: iCreatin 8.4V 1A charger B083PQQYP1 ($9.98) / B07N75MMG6 ($9.99)",
+   "chain": "charger -> dock jack (as above)",
+   "companions": [],
+   "modifications": [],
+   "checks": {
+    "robot_pads": {
+     "status": "pass",
+     "observed": "Not part of this candidate; same pads as charging_bundle.",
+     "evidence": "see charging_bundle"
+    },
+    "dock_contacts": {
+     "status": "pass",
+     "observed": "Not part of this candidate; same contacts as charging_bundle.",
+     "evidence": "see charging_bundle"
+    },
+    "dock_jack": {
+     "status": "pass",
+     "observed": "Plug 5.5 x 2.1 mm (gallery image 'DC Jack Size 2.1*5.5mm'), mates PJ-005A.",
+     "evidence": "Amazon gallery image 41cf3p-OeDL read 2026-11-20 (https://www.amazon.com/dp/B083PQQYP1)"
+    },
+    "charger": {
+     "status": "unknown",
+     "observed": "Output 8.4 V 1 A, LED red to green, 5.5 x 2.1 mm, 4.6 stars (204). Polarity is not stated in the bullets, description or any of the five gallery images, and no review mentions it; the dock wiring would depend on a meter reading at the bench.",
+     "evidence": "Amazon listing, description and gallery images read 2026-11-20 (https://www.amazon.com/dp/B083PQQYP1, https://www.amazon.com/dp/B07N75MMG6)"
+    },
+    "charge_voltage_safety": {
+     "status": "pass",
+     "observed": "Same 8.4 V CV as charging_bundle.",
+     "evidence": "see charging_bundle"
+    }
+   },
+   "bom_items": [
+    "B083PQQYP1"
+   ]
+  }
+ ],
+ "recommended": [
+  "charging_bundle"
+ ],
+ "cart": [],
+ "prerequisites": [
+  {
+   "id": "guide_complete",
+   "user_words": "重新设计完以后，你发现没问题了，所有东西都全了，再把东西都加到购物车里就好了",
+   "source": "Shawn in chat 2026-11-19; restated 2026-11-20: 拼装指南要先做完，才能加购物车。不然拼装指南拼一半发现缺东西怎么办呢",
+   "evidence": "../../../../guide/print/battery-v2-cad-20261120/assembly-guide-ch12.json"
+  },
+  {
+   "id": "bom_from_guide",
+   "user_words": "所有东西都全了，再把东西都加到购物车里",
+   "source": "Shawn in chat 2026-11-19",
+   "evidence": "../../../../guide/print/battery-v2-cad-20261120/BOM.json",
+   "bom": true
+  }
+ ]
+}
