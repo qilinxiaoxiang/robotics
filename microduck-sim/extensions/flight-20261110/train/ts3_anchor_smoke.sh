@@ -27,17 +27,22 @@ COMMON=(--distill --root $OUT --teacher-onnx ${TSTEACHER:-$A/ts3t_t3h_750.onnx} 
 export FLIGHT_MANIFESTS=$FL/train/manifests
 # stage 0: the student as it is
 zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_worker.py $COMMON --run-name base \
-  --resume-pt $A/s3h_160.pt --max-iters 163 --save-interval 3 --lr 0 --lr-final 0 --anchor-w 0 \
+  --resume-pt ${TSBASEPT:-$A/s3h_160.pt} --max-iters ${TSBASEMAX:-163} --save-interval ${TSBASEN:-3} --lr 0 --lr-final 0 --anchor-w 0 ${=TSEXTRA} \
   --case-share $SHARE --max-hours 0.15 > $OUT/stage0.log 2>&1
 hb "stage 0 exit $?: $(grep -E '^\[load\]' $OUT/stage0.log | tail -1 | cut -c1-600)"
 grep -qE "Traceback|Error" $OUT/stage0.log && { hb "FAILED stage 0: $(grep -E 'Error' $OUT/stage0.log | tail -1 | cut -c1-300)"; exit 1; }
+hb "stage 0 stop rows: $(grep -E '^\[stop\]' $OUT/stage0.log | tail -1 | cut -c1-1500)"
+# TSBASEPT / TSBASEMAX / TSBASEN: stage 0's student save, last iteration and save interval; TSEXTRA: extra worker
+# flags for every stage; <stages> 0 = stage 0 only
+[ "$STAGES" = 0 ] && { hb "DONE stage 0 only"; exit 0; }
 PT=${TSPT:-$A/s3h_160.pt}   # TSPT=<model_<it>.pt> continues another smoke's save; TSZERO=1 zeroes the head command
 ZH=(); [ -n "$TSZERO" ] && ZH=(--anchor-zero-head)   # in the anchor target (smoke a1 ran that way, then the default)
 for S in $(seq 1 $STAGES); do
   zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_worker.py $COMMON --run-name anch \
     --resume-pt $PT --max-iters 400 --save-interval 2 --lr $LR --lr-final $LR --anchor-w $W --anchor-head $HEADROWS \
-    --case-share $SHARE --max-hours 0.13 $ZH > $OUT/stage$S.log 2>&1
+    --case-share $SHARE --max-hours 0.13 $ZH ${=TSEXTRA} > $OUT/stage$S.log 2>&1
   RC=$?
+  hb "stage $S stop rows: $(grep -E '^\[stop\]' $OUT/stage$S.log | tail -1 | cut -c1-1500)"
   LAST=$(ls $OUT/anch/model_*.pt 2>/dev/null | grep -v best | sed -E 's/.*model_([0-9]+)\.pt/\1/' | sort -n | tail -1)
   hb "stage $S exit $RC last save $LAST: $(grep -E '^\[load\]' $OUT/stage$S.log | tail -1 | cut -c1-600)"
   hb "stage $S speed: $(grep -E '^\[cap\]' $OUT/stage$S.log | tail -1 | cut -c1-200)"

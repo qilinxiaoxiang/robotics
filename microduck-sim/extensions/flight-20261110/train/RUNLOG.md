@@ -1577,3 +1577,51 @@ under 70.00 USD metered (workspace limit 75).
   jumps (3.75) of any save with no no-pack failure and passing speed lines. Mamba kept: the launch conditions were
   measured on a Mamba student; the LSTM's cleaner no-pack record (0 falls in 8 of 8 saves) concerns rows the anchor
   now labels with walk61.
+
+### 2026-11-20 03:25 why the students fall after the walk command ends (Mac mini, free)
+
+All gate-side numbers: `train/ts3_stop_where.py`, pack walk cell (nominal pack, `--stand-s 0`), walk gain 200, 20
+seeds unless said, student s3h_160 with its teacher t3h_750. Training-side numbers: `[stop]` lines of
+`distill_worker.py` in the smokes b0 and b1 (`/tmp/ts3_anchor_b0|b1/stage0.log` on the Mac mini, s3h_160 unchanged,
+512 envs, 8 iterations).
+
+1. Distillation does show walk-to-stop changes with the pack. The standing flag is redrawn at every command resample
+   (mjlab `velocity_command.py` line 84, resample every 3 to 8 s, episode 20 s, standing share 0.25 because the
+   env starts with its curricula done). Smoke b0, 306,316 student-driven pack rows: 9,629 lie within 3 s after a
+   non-zero to zero command change (3.1 %), 2,872 of them at gain scale up to 1.2 (0.94 %); the walk before the stop
+   lasted 6 to 7 s on average.
+2. On those rows the student is as close to its teacher as everywhere else: mse 0.0008 to 0.0013 (all pack rows
+   0.0012), action step per tick 0.14 falling to 0.075 for both. Fall rates in the training env do not separate
+   student and teacher on any row kind (b1: after a stop at low gain 0 to 23 per env-minute for the student, 0 to 28
+   for the teacher on 190 to 630 rows per bin; walking at low gain 14.1 against 13.4). So training does not show
+   the failure; the gate does. In the gate the student also stays close to the teacher's label on its own states
+   (teacher shadowing through `FLIGHT_DAGGER=0`: mse 0.0028 in the last walking seconds, 0.0012 one second after
+   the stop, in the episodes that fall as in those that stand).
+3. The recurrent state is not a gait oscillator that the zero command fails to switch off: emptying the state at
+   the stop (tick 850) gives 13 falls after the stop instead of 6; emptying it at tick 700 gives 9.
+4. Who drives when: student walks, teacher takes over at the stop: 0 falls after the stop. Teacher walks to 17 s,
+   student from the stop: 3. Teacher to 15 s, then the student: 8. So the state at the stop is recoverable and the
+   student's control after the stop is what fails, whoever walked before.
+5. What the teacher has and the student lacks: the teacher is extremely sensitive to its privileged inputs. With
+   its velocity inputs zeroed it falls in 20 of 20 episodes at 3.0 s; with the trunk COM x 4 mm too far forward 20
+   of 20 at 0.8 s (4 mm back: 0); with the payload read 20 % low 12 of 20. It balances on exact knowledge of
+   velocity and load; the student has to estimate both.
+6. The difference between gate and training, named: in the gate the walk command is constant for 15 s; in training
+   it changes every 3 to 8 s. With the heading hold off (turn command 0, the trained range) s3h_160 falls in 20 of
+   20 episodes during the walk, at 7.3 to 15.9 s, never earlier: its speed creeps up (13.3 cm/s at 3 to 5 s, 15 to
+   16 cm/s at 8 to 11 s), the forward pitch grows from -4.5 to -6 degrees, then it runs away (step 1.0 rad, 19 to 21
+   cm/s) and falls forward. The teacher on the same cell holds 9 to 12 cm/s and -3.7 degrees for 15 s (it reads its
+   speed): 2 falls of 20, m3s_450 0 of 20. At gain 400 the student falls 3 of 20. With the heading hold on (the
+   gate), the pack walk runs under a turn command of 1.2 to 1.9 rad/s (training range 0.5), the robot advances at
+   6 cm/s, the run-away does not develop within 15 s, and the falls come after the stop instead. The anchored smoke
+   student smk_a2_208 with the heading hold off: 0 falls during the walk, 8 of 20 after the stop (heading hold on:
+   3 of 20).
+   Reading (inference): a student that cannot read its speed drifts on a long constant command; training never
+   holds a command long enough for the drift to appear in the rows, so DAgger never labels the drifted states.
+- Fix under test, `distill_worker.py`: `--stop-share 0.25` commands every fourth env, while it carries the pack,
+  like the gate: vx 0.25 with a constant turn command (half within +-0.29, half within +-1.9 rad/s) for 4 to 15 s,
+  then a zero command for 4 s, repeated, at every gain scale; `--stop-weight` (loss weight of the 3 s after a stop,
+  1 = off). Smoke chain c1 on the Mac mini from 03:22: smk_a2_208 continued 3 stages with the anchor and the stop
+  case, heartbeat `logs/ts3_anchor_c1_heartbeat.txt`.
+- New diagnostics in `flight_eval.py` (default off): `FLIGHT_STATE_ZERO_TICK`, `FLIGHT_HANDOVER_AFTER`; a 69-input
+  teacher can now shadow or take over a student (the gain column is appended).

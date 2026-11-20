@@ -73,6 +73,14 @@ class _StatefulSession:
         # diagnostics only (cold-start study, 2026-11-18; default off): FLIGHT_WARM=<dir> starts the episode with the
         # recurrent state saved by an earlier episode of the same seed (FLIGHT_STATE_DUMP=<dir>, written at the end of
         # an episode without a fall) instead of an empty one
+        # diagnostics only (2026-11-20, falls after the walk command ends; default off): FLIGHT_STATE_ZERO_TICK=<n>
+        # empties the recurrent state once, at the first policy call at or after control tick n of the episode
+        zt = os.environ.get("FLIGHT_STATE_ZERO_TICK")
+        if zt and st is not None and self.state_name == "state_in" and not DIAG["stat"].get("state_zeroed_at_tick"):
+            DIAG["stat"].setdefault("tick0", tick)   # DIAG["stat"] is emptied at every episode start
+            if tick - DIAG["stat"]["tick0"] >= int(zt):
+                st = np.zeros(self.state_shape, dtype=np.float32)
+                DIAG["stat"]["state_zeroed_at_tick"] = tick - DIAG["stat"]["tick0"]
         warm = os.environ.get("FLIGHT_WARM")
         warm_file = os.path.join(warm, f"state_{DIAG.get('seed')}.npy") if warm else None
         if st is None and warm_file and self.state_name == "state_in" and os.path.exists(warm_file):
@@ -192,11 +200,18 @@ class _StatefulSession:
                 return _WARMUP["sess"].run(None, {_WARMUP["name"]: obs})[:1]
             DIAG["stat"]["student_ticks"] = DIAG["stat"].get("student_ticks", 0) + 1
         ho = os.environ.get("FLIGHT_HANDOVER")
+        # diagnostics only (2026-11-20, falls after the walk command ends): FLIGHT_HANDOVER_AFTER="<teacher onnx>:<tick>"
+        # is the reverse, the student drives up to that control tick and the teacher from then on
+        hoa = os.environ.get("FLIGHT_HANDOVER_AFTER")
+        if hoa and tick > int(hoa.rsplit(":", 1)[1]):
+            ho = hoa.rsplit(":", 1)[0] + ":1000000000"
         if ho and tick <= int(ho.rsplit(":", 1)[1]):
             if "sess" not in _HANDOVER:
                 import onnxruntime as ort
                 _HANDOVER["sess"] = ort.InferenceSession(ho.rsplit(":", 1)[0])
                 _HANDOVER["name"] = _HANDOVER["sess"].get_inputs()[0].name
+            if int(_HANDOVER["sess"].get_inputs()[0].shape[1]) == 69:  # a gain-reading teacher: priv_now adds the gain
+                PRIV["width"] = 69
             obs = np.asarray(feed[self.sess.get_inputs()[0].name], dtype=np.float32)
             DIAG["stat"]["handover_ticks"] = DIAG["stat"].get("handover_ticks", 0) + 1
             return _HANDOVER["sess"].run(None, {_HANDOVER["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[:1]
@@ -276,6 +291,9 @@ def _teacher_action(obs):
         import onnxruntime as ort
         _TEACH["sess"] = ort.InferenceSession(os.environ.get("FLIGHT_TEACHER") or str(HERE / "ckpt/ts2a999_teacher/teacher.onnx"))
         _TEACH["name"] = _TEACH["sess"].get_inputs()[0].name
+        _TEACH["width"] = int(_TEACH["sess"].get_inputs()[0].shape[1])
+    if _TEACH.get("width") == 69:  # a gain-reading teacher shadowing a student: priv_now appends the gain scale
+        PRIV["width"] = 69
     return _TEACH["sess"].run(None, {_TEACH["name"]: np.concatenate([obs, priv_now()[None]], axis=1)})[0]
 
 
