@@ -1904,3 +1904,40 @@ pack and gain is Shawn's decision; this is an experiment.
   repeated observation with the pack flag set leave a state the student falls from at once.
 - Answer to the question: flags plus prewarm do NOT remove both; flags alone (cold) do remove both start faults in
   this smoke, and prewarm must then not be used. One chain of three stages; the walk at gain 200 stays open.
+
+## 2026-11-20 08:21 run AB (stop share 0.25 + gain flag, teacher t3h_750): all 8 saves scored, no GATE PASS
+
+Run `ts3s-t3h-750-ab` (Modal T4, launched 06:15:18) is DONE (`logs/ts3s_t3h_750_ab_heartbeat.txt`, 08:14:52). The
+standard gate score is the verdict of record: `logs/gates_s3AB_<iter>_score.log`. The prewarmed tables
+(`logs/gates_s3ABw_<iter>_score.log`, FLIGHT_PREWARM=10, `logs/s3ABw_heartbeat.txt` DONE 08:19:23) are evidence
+about a loader change, NOT a gate pass. `ts3_gates.py` unchanged. Metered 45.60 at 08:21 (cap 50.00); no live Modal
+app; bill guard pid 50310 alive.
+
+Standard score, failed lines per save (G1 distance in brackets):
+- s3AB_20 (0.297): 3 failed, 1 missing. G1 0.297 > 0.25; G4 pack_stand and pack_walk fall 10 of 10 at 0.80 to
+  0.82 s; pack speed missing.
+- s3AB_40 (0.238): 4. G4 pack_walk falls 6 of 10 at [4.8, 5.54, 18.7, 19.02, 19.04, 19.48], jumps 3.75, speed
+  0.0442 < 0.0535; G5 pack_g400_walk falls 6 of 10 at 3.1 to 6.86 s.
+- s3AB_60 (0.201): 3. G4 pack_walk falls 10 of 10 at 6.36 to 10.68 s, jumps 19.1, speed 0.0156.
+- s3AB_80 (0.184): 5. G2 none_stand jumps 4.0; G3 none_g400_stand jumps 3.5; G4 pack_walk falls 6 of 10 at 18.52
+  to 19.14 s, jumps 8.0; G5 pack_g400_walk falls 4 of 10 at 3.12 to 4.28 s.
+- s3AB_100 (0.176): 3. G2 none_stand jumps 4.0; G3 none_g400_stand jumps 7.75; G4 pack_walk falls 3 of 10 at
+  [6.96, 18.34, 18.76].
+- s3AB_120 (0.164): 4. G3 none_g400_stand jumps 7.25; G4 pack_walk falls 10 of 10 at 5.58 to 6.20 s, jumps 5.2,
+  speed 0.0058.
+- s3AB_140 (0.169): 2, the fewest. G4 pack_walk falls 4 of 10 at 19.04 to 19.62 s (after the walk command ends at
+  17.0 s); G5 pack_g400_walk falls 6 of 10 at 3.10 to 3.28 s.
+- s3AB_160 (0.159): 4. G3 none_g400_stand jumps 6.5; G4 pack_walk falls 10 of 10 at 5.58 to 6.62 s, jumps 8.45,
+  speed 0.0071.
+
+Pack start, cold against prewarmed (AB has the gain flag, no pack flag):
+- Cold: pack_stand and pack_g400_stand pass (0 falls of 10) from save 40 on; only save 20 falls at the start.
+- Prewarmed: every save fails the pack start. G4 pack_stand and pack_walk 10 of 10 at 0.56 to 1.04 s; G5
+  pack_g400_stand and pack_g400_walk 10 of 10 (9 of 10 for save 20) at 0.66 to 0.98 s; speed lines missing because
+  nothing walks. The expected result holds, and prewarm makes the pack start worse than cold.
+- Prewarm still removes the no-pack gain-400 stepping: G3 none_g400_stand fails cold for saves 80, 100, 120, 160 and
+  passes prewarmed for 80 to 160. G2 none_stand jumps still fail prewarmed for 80 (5.5) and 100 (2.75).
+
+Reading: the gain flag did not close the walk with the pack; which saves fall mid-walk (60, 120, 160: 10 of 10 near
+6 s) and which fall only after the stop (140) changes from save to save, so no save is a candidate. Same trade as
+s3aw_60 and smoke p1: prewarm cures the no-pack stepping and breaks the pack start.
