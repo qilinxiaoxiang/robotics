@@ -1816,3 +1816,15 @@ observation the student sees. No joint index used.
   start and stages as c0), heartbeat `logs/ts3_anchor_k1_heartbeat.txt` on the Mac mini. Runtime-side alternative
   (not ours to decide): let walk61 drive the first 10 calls after entering the policy (`first=25` above).
   Run AB was launched before this was found and does not have the weight.
+
+## 2026-11-20 06:49 cold-start weight smoke (k1): no effect in three stages
+
+Chain k1 06:18:45 to 06:46:47. Stage 3: pack mse 0.00308, no-pack distance to walk61 0.324 (c0 0.00270, 0.281).
+- Standing without the pack at gain 400, seeds 0 / 1 / 2, gate jumps: k1 13 / 27 / 28, control c0 3 / 2 / 8. The
+  student's action from an empty state against walk61 in the first 2 s: k1 0.131 / 0.123 / 0.130 rad rms, c0
+  0.130 / 0.123 / 0.121: unchanged. The weight (20 on the first 25 calls) did not move the empty-state output in
+  about 24 iterations, so the smoke does not support it; the cause finding (06:20) stands on the handover tests,
+  not on this.
+- Pack walk, heading on, 20 seeds: gain 200 6 + 7 (during the walk + after the stop), gain 400 2 + 2. G1 0.219.
+- Run AB at 06:45: iteration 20, 0.0242 it/s (160 iterations in about 1.84 h, cap 2.0 h), pack mse 0.01385,
+  no-pack distance 0.611 (beta still above 0); metered 44.19 at 06:45. modal_watch 06:48: 1 live app, 1 task.
