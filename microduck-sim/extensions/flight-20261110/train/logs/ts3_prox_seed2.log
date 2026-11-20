@@ -1,0 +1,271 @@
+[mdp] Patches 1-2 active: NaN-safe reward/advantage
+[mdp] Patch 4 active: ONNX export filters passive_* joints
+[mdp] Patch 5 active: MICRODUCK_WARM_START=1 restarts curricula after checkpoint load
+[style] reward mods {'cmd_ranges': {'lin_vel_x': [-0.05, 0.3], 'lin_vel_y': [-0.05, 0.05], 'ang_vel_z': [-0.5, 0.5]}, 'weights': {'air_time': 6.0, 'track_linear_velocity': 3.0, 'upright': 0.5, 'head_pose_tracking': 1.0, 'action_rate_l2': -2.0}, 'pose_std_walking': {'.*hip_yaw.*': 0.15}, 'foot_heading_weight': -8.0, 'push_x': [-0.35, 0.35], 'com_x_whole_m': 0.012, 'step_width': {'limit': 0.1, 'weight': -15.0}, 'torque_margin_weight': -20.0, 'progress': {'weight': 14.0, 'min_cmd': 0.1}, 'action_acc': {'weight': -0.6}}
+[payload] pack rest 0.6531 kg + batteries 0.3020 kg from /Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110/train/manifests; weights {'full': 0.35, 'nobatt': 0.2, 'none': 0.2, 'scaled': 0.25}, smax 1.15
+[delay] loop delay {'act_lag': [4, 9], 'act_period': 400, 'joint_pos_lag': [1, 1], 'joint_vel_lag': [2, 2], 'imu_lag': [1, 1]}: command lag [(4, 9, 400, None)], joint_pos (1, 1), joint_vel (2, 2), base_ang_vel (1, 1), projected_gravity (1, 1)
+[gain] position-gain scale per env per episode [0.8, 2.2]
+[pack] delta applied: {'drop_z': (0.12, 0.15), 'torque_margin': {'limit': 0.45, 'weight': -12.0}, 'reward_mods': {'cmd_ranges': {'lin_vel_x': [-0.05, 0.3], 'lin_vel_y': [-0.05, 0.05], 'ang_vel_z': [-0.5, 0.5]}, 'weights': {'air_time': 6.0, 'track_linear_velocity': 3.0, 'upright': 0.5, 'head_pose_tracking': 1.0, 'action_rate_l2': -2.0}, 'pose_std_walking': {'.*hip_yaw.*': 0.15}, 'foot_heading_weight': -8.0, 'push_x': [-0.35, 0.35], 'com_x_whole_m': 0.012, 'step_width': {'limit': 0.1, 'weight': -15.0}, 'torque_margin_weight': -20.0, 'progress': {'weight': 14.0, 'min_cmd': 0.1}, 'action_acc': {'weight': -0.6}}, 'loop_delay': {'act_lag': [4, 9], 'act_period': 400, 'joint_pos_lag': [1, 1], 'joint_vel_lag': [2, 2], 'imu_lag': [1, 1]}, 'gain_dr': {'kp': [0.8, 2.2]}}
+/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/microduck_rl/.venv/lib/python3.12/site-packages/mjlab/entity/entity.py:149: UserWarning: Actuator config matched 14 joint(s) but the same expressions also match 7 site(s): imu, left_foot, head_camera, tof, head_imu, mouth_tip, right_foot. Add a separate config with transmission_type=TransmissionType.SITE if those should be actuated too.
+  self._add_actuators()
+Setting seed: 2
+Warp 1.12.0 initialized:
+   CUDA not enabled in this build
+   Devices:
+     "cpu"      : "arm"
+   Kernel cache:
+     /Users/shawnxiang/Library/Caches/warp/1.12.0
+[asbuilt] body masses patched: {'bearing_roll': {'before_g': 23.0, 'after_g': 28.2}, 'hip_l': {'before_g': 6.2, 'after_g': 7.4}, 'hip_l_2': {'before_g': 6.2, 'after_g': 7.4}, 'jaw_soft': {'before_g': 188.8, 'after_g': 203.3}, 'leg': {'before_g': 21.6, 'after_g': 24.2}, 'leg_2': {'before_g': 21.6, 'after_g': 25.3}, 'neck': {'before_g': 36.8, 'after_g': 47.5}, 'neck_pitch': {'before_g': 5.7, 'after_g': 11.7}, 'trunk_base': {'before_g': 199.2, 'after_g': 352.3}, 'upper_leg_left': {'before_g': 48.2, 'after_g': 55.8}, 'upper_leg_right': {'before_g': 48.2, 'after_g': 54.8}, 'yaw2roll': {'before_g': 23.0, 'after_g': 28.6}, 'yaw_roll_motion': {'before_g': 48.6, 'after_g': 53.8}}
+[asbuilt] total mass 737.2 g -> 960.5 g
+[BamActuator] model='m6' joints=14 kt=0.3660 R=2.8114 vin=range=(6.5, 8.2) drop_gain_range=(0.0, 0.2) force_limit=±1.07Nm friction_base=0.0048 friction_viscous=0.0054 envs=512 device=cpu
+Module mujoco_warp._src.render_util 3cd330a load on device 'cpu' took 0.71 ms  (cached)
+Module mujoco_warp._src.bvh e843d00 load on device 'cpu' took 0.47 ms  (cached)
+
++--------------------------------+
+|        Base Environment        |
++------------------------+-------+
+| Property               | Value |
++------------------------+-------+
+| Number of environments | 512   |
+| Environment device     | cpu   |
+| Environment seed       | 2     |
+| Physics step-size      | 0.005 |
+| Environment step-size  | 0.02  |
++------------------------+-------+
+
+[INFO] <EventManager> contains 3 active terms.
++-------------------------------------+
+| Active Event Terms in Mode: 'reset' |
++-------+-----------------------------+
+| Index | Name                        |
++-------+-----------------------------+
+|   0   | reset_base                  |
+|   1   | reset_robot_joints          |
+|   2   | reset_action_history        |
+|   3   | randomize_com               |
+|   4   | randomize_head_com          |
+|   5   | randomize_joint_friction    |
+|   6   | randomize_armature          |
+|   7   | randomize_kp_scale          |
++-------+-----------------------------+
++----------------------------------------------+
+|    Active Event Terms in Mode: 'interval'    |
++-------+------------+-------------------------+
+| Index | Name       | Interval time range (s) |
++-------+------------+-------------------------+
+|   0   | push_robot |        (3.0, 6.0)       |
++-------+------------+-------------------------+
++---------------------------------------+
+| Active Event Terms in Mode: 'startup' |
++-------+-------------------------------+
+| Index | Name                          |
++-------+-------------------------------+
+|   0   | foot_friction                 |
+|   1   | encoder_bias                  |
+|   2   | base_com                      |
+|   3   | expand_bam_friction_fields    |
++-------+-------------------------------+
++-----------------------------+
+| Domain Randomization Fields |
++-------+---------------------+
+| Index | Field Name          |
++-------+---------------------+
+|   0   | geom_friction       |
+|   1   | body_ipos           |
+|   2   | body_subtreemass    |
+|   3   | dof_invweight0      |
+|   4   | body_invweight0     |
+|   5   | tendon_length0      |
+|   6   | tendon_invweight0   |
+|   7   | dof_frictionloss    |
+|   8   | dof_damping         |
+|   9   | body_mass           |
+|   10  | body_inertia        |
+|   11  | body_iquat          |
+|   12  | dof_armature        |
++-------+---------------------+
+
+Module repeat_array_kernel_39317a34 8b94c13 load on device 'cpu' took 0.41 ms  (cached)
+Module repeat_array_kernel_39317a34 83c495b load on device 'cpu' took 0.39 ms  (cached)
+Module repeat_array_kernel_39317a34 024b13f load on device 'cpu' took 0.12 ms  (cached)
+Module repeat_array_kernel_39317a34 c14a6b4 load on device 'cpu' took 0.12 ms  (cached)
+[INFO] <CommandManager> contains 3 active terms.
++------------------------------------------------+
+|              Active Command Terms              |
++-------+-----------+----------------------------+
+| Index | Name      |            Type            |
++-------+-----------+----------------------------+
+|   0   | twist     | VelocityCommandCommandOnly |
+|   1   | head_pose |     UniformPoseCommand     |
+|   2   | body_pose |     UniformPoseCommand     |
++-------+-----------+----------------------------+
+
+[INFO] <ActionManager> contains 1 active terms.
++---------------------------------+
+| Active Action Terms (shape: 14) |
++-------+-----------+-------------+
+| Index | Name      |   Dimension |
++-------+-----------+-------------+
+|   0   | joint_pos |          14 |
++-------+-----------+-------------+
+
+[INFO] <ObservationManager> contains 2 groups.
++-----------------------------------------------------------+
+| Active Observation Terms in Group: 'actor' (shape: (61,)) |
++-----------+----------------------------------+------------+
+|   Index   | Name                             |   Shape    |
++-----------+----------------------------------+------------+
+|     0     | base_ang_vel                     |    (3,)    |
+|     1     | projected_gravity                |    (3,)    |
+|     2     | joint_pos                        |   (14,)    |
+|     3     | joint_vel                        |   (14,)    |
+|     4     | actions                          |   (14,)    |
+|     5     | command                          |    (3,)    |
+|     6     | head_command                     |    (4,)    |
+|     7     | body_command                     |    (6,)    |
++-----------+----------------------------------+------------+
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'critic' (shape: (80,)) |
++----------+------------------------------------+------------+
+|  Index   | Name                               |   Shape    |
++----------+------------------------------------+------------+
+|    0     | base_lin_vel                       |    (3,)    |
+|    1     | base_ang_vel                       |    (3,)    |
+|    2     | projected_gravity                  |    (3,)    |
+|    3     | joint_pos                          |   (14,)    |
+|    4     | joint_vel                          |   (14,)    |
+|    5     | actions                            |   (14,)    |
+|    6     | command                            |    (3,)    |
+|    7     | foot_height                        |    (2,)    |
+|    8     | foot_air_time                      |    (2,)    |
+|    9     | foot_contact                       |    (2,)    |
+|    10    | foot_contact_forces                |    (6,)    |
+|    11    | head_command                       |    (4,)    |
+|    12    | body_command                       |    (6,)    |
+|    13    | payload                            |    (4,)    |
++----------+------------------------------------+------------+
+
+[INFO] <TerminationManager> contains 4 active terms.
++------------------------------------------+
+|         Active Termination Terms         |
++-------+-----------------------+----------+
+| Index | Name                  | Time Out |
++-------+-----------------------+----------+
+|   0   | time_out              |   True   |
+|   1   | fell_over             |  False   |
+|   2   | out_of_terrain_bounds |   True   |
+|   3   | nan_state             |  False   |
++-------+-----------------------+----------+
+
+[INFO] <RewardManager> contains 21 active terms.
++-----------------------------------------+
+|           Active Reward Terms           |
++-------+------------------------+--------+
+| Index | Name                   | Weight |
++-------+------------------------+--------+
+|   0   | track_linear_velocity  |    3.0 |
+|   1   | track_angular_velocity |    2.0 |
+|   2   | upright                |    0.5 |
+|   3   | pose                   |    1.0 |
+|   4   | body_ang_vel           |  -0.05 |
+|   5   | angular_momentum       |  -0.02 |
+|   6   | dof_pos_limits         |   -1.0 |
+|   7   | action_rate_l2         |   -2.0 |
+|   8   | air_time               |    6.0 |
+|   9   | foot_clearance         |   -2.0 |
+|   10  | foot_swing_height      |  -0.25 |
+|   11  | foot_slip              |   -0.1 |
+|   12  | self_collisions        |   -1.0 |
+|   13  | head_pose_tracking     |    1.0 |
+|   14  | body_pose_tracking     |    0.0 |
+|   15  | head_pose_bias         |    0.0 |
+|   16  | torque_margin          |  -20.0 |
+|   17  | stance_foot_heading    |   -8.0 |
+|   18  | step_width_over        |  -15.0 |
+|   19  | progress_along_cmd     |   14.0 |
+|   20  | action_acc_l2          |   -0.6 |
++-------+------------------------+--------+
+
+[INFO] <CurriculumManager> contains 7 active terms.
++-------------------------------+
+|    Active Curriculum Terms    |
++-------+-----------------------+
+| Index | Name                  |
++-------+-----------------------+
+|   0   | action_rate_weight    |
+|   1   | standing_envs         |
+|   2   | head_pose_range       |
+|   3   | body_pose_range       |
+|   4   | com_range             |
+|   5   | head_com_range        |
+|   6   | head_pose_bias_weight |
++-------+-----------------------+
+
+[INFO] <MetricsManager> contains 1 active terms.
++-------------------------+
+|   Active Metrics Terms  |
++-------+-----------------+
+| Index | Name            |
++-------+-----------------+
+|   0   | mean_action_acc |
++-------+-----------------+
+
+[INFO] <NullRecorderManager> (inactive)
+Module mujoco_warp._src.io 0374352 load on device 'cpu' took 0.39 ms  (cached)
+Module mujoco_warp._src.smooth 8731313 load on device 'cpu' took 1.65 ms  (cached)
+Module _tile_cholesky_factorize__locals__cholesky_factorize_a02b7349 70689db load on device 'cpu' took 0.33 ms  (cached)
+Module _tile_cholesky_solve__locals__cholesky_solve_8c82e9f1 b8f2819 load on device 'cpu' took 0.30 ms  (cached)
+Module reset_data__locals__reset_xfrc_applied_e7898c5c 1f5e12c load on device 'cpu' took 0.22 ms  (cached)
+Module reset_data__locals__reset_qM_10d3c793 f59ca3c load on device 'cpu' took 0.13 ms  (cached)
+Module reset_data__locals__reset_mocap_ff71f630 d0e4e7e load on device 'cpu' took 0.13 ms  (cached)
+Module reset_data__locals__reset_contact_df686d47 3af0a2f load on device 'cpu' took 0.38 ms  (cached)
+Module reset_data__locals__reset_nworld_6e0d904e aef9a67 load on device 'cpu' took 0.16 ms  (cached)
+[payload] 512 envs {'full': 172, 'nobatt': 112, 'none': 109, 'scaled': 119}; payload kg min 0.000 mean 0.582 max 1.086; first 8: [0.511, 0.0, 0.653, 0.772, 0.0, 0.928, 0.955, 0.653]
+Module mujoco_warp._src.collision_driver eed4cf3 load on device 'cpu' took 0.31 ms  (cached)
+Module _nxn_broadphase__locals__kernel_e73b1315 157cf89 load on device 'cpu' took 0.35 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_079dfa94 f710486 load on device 'cpu' took 1.32 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_b282a07a b20db85 load on device 'cpu' took 0.32 ms  (cached)
+Module mujoco_warp._src.constraint 02b3f03 load on device 'cpu' took 1.03 ms  (cached)
+Module _efc_contact_init__locals__kernel_fda71e14 d197232 load on device 'cpu' took 0.14 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_7974b597 a581aa2 load on device 'cpu' took 0.28 ms  (cached)
+Module _efc_contact_update__locals__kernel_90315d53 49b5115 load on device 'cpu' took 0.16 ms  (cached)
+Module mujoco_warp._src.sensor 93435cc load on device 'cpu' took 1.05 ms  (cached)
+Module mujoco_warp._src.forward 5dcb54e load on device 'cpu' took 1.26 ms  (cached)
+Module mujoco_warp._src.passive 12b3435 load on device 'cpu' took 0.69 ms  (cached)
+Module mujoco_warp._src.support fda47c6 load on device 'cpu' took 1.08 ms  (cached)
+Module _tile_cholesky_factorize_solve__locals__cholesky_factorize_solve_b16bf393 cd62458 load on device 'cpu' took 1.19 ms  (cached)
+Module mujoco_warp._src.solver 2f1f5c6 load on device 'cpu' took 0.81 ms  (cached)
+Module solve_init_jaref__locals__kernel_5208712d fbe27e4 load on device 'cpu' took 0.38 ms  (cached)
+Module mul_m_dense__locals___mul_m_dense_b66df345 db44421 load on device 'cpu' took 0.11 ms  (cached)
+Module update_constraint_efc__locals__kernel_32935e9d 7127a83 load on device 'cpu' took 0.28 ms  (cached)
+Module update_constraint_gauss_cost__locals__kernel_baf8e129 efdabd1 load on device 'cpu' took 0.13 ms  (cached)
+Module update_gradient_JTDAJ_dense_tiled__locals__kernel_9404d42c 6b42f96 load on device 'cpu' took 0.13 ms  (cached)
+Module update_gradient_cholesky__locals__kernel_5ee47d83 702e3ec load on device 'cpu' took 0.21 ms  (cached)
+Module linesearch_jv_fused__locals__kernel_7bf09094 6b3208c load on device 'cpu' took 0.33 ms  (cached)
+Module linesearch_prepare_gauss__locals__kernel_97347d38 0cadf6d load on device 'cpu' took 0.46 ms  (cached)
+Module update_constraint_efc__locals__kernel_3c1a9816 0242ddf load on device 'cpu' took 0.32 ms  (cached)
+Module _contact_sort__locals__contact_sort_304c86df 71fdfff load on device 'cpu' took 0.35 ms  (cached)
+Module mujoco_warp._src.ray abbcfd9 load on device 'cpu' took 0.46 ms  (cached)
+[teacher] /Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/ts3t_t3h_750.onnx: 69 inputs, torch rebuild vs ONNX max |diff| 4.2e-07
+[distill] student {'core': 'mamba', 'd': 128, 'layers': 2, 'state_dim': 9728, 'params': 277134, 'target_slots': 8}; segment 100 ticks (2.00 s), 512 envs, 2 epochs x minibatches of 128 envs
+[distill] resumed from /Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110/train/ckpt/s3AB_140/model_140.pt at iteration 140; optimizer state loaded
+[distill] actor columns: twist (48, 51), head command (51, 55); action legs [0, 1, 2, 3, 4, 9, 10, 11, 12, 13], head [5, 6, 7, 8] (['neck_pitch', 'head_pitch', 'head_yaw', 'head_roll'])
+[teacher] /Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/ts3_walk61.onnx: 61 inputs, torch rebuild vs ONNX max |diff| 3.6e-07
+[distill] anchor /Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/smoke-assets/ts3_walk61.onnx: no-pack rows (payload <= 0.02 kg) labelled 1.0 of the way to it (on the row as it is), legs on every such row, head on rows 'all'
+[distill] case: every 4th env, while it carries no pack, is commanded from {'vx': [0.25, 0.25], 'vy': [0.0, 0.0], 'turn': [-1.9, 1.9], 'head': [[0.0, 0.0], [0.0, 0.75], [0.0, 0.0], [0.0, 0.0]]}
+[distill] stop case: every 4th env (offset 1), while it carries the pack, walks vx 0.25 with a turn command within +-1.9 for 4,15 s, then stands 4 s on a zero command; rows in the 3 s after a stop weigh 1.0
+[distill] model_0.onnx: obs [1, 61] + state_in [1, 9728]; ONNX vs torch over a sequence 6.0e-07
+Module mujoco_warp._src.derivative 77f0d4f load on device 'cpu' took 1.70 ms  (cached)
+[style] stance_foot_heading: site axes [(0, 1.0), (0, 1.0)], start-pose refs (deg) [0.07, -0.32], targets (deg) [7.3, 4.2]
+/Users/shawnxiang/code/flight-train-mirror/robotics/microduck-sim/microduck_rl/cmu/finetune/flight/distill_worker.py:529: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  win_loss = 0.9 * win_loss + 0.1 * float(loss) if win_loss else float(loss)
+[load] it 144 {'pack_rows': 114920, 'pack_mse_to_teacher': 0.00202, 'nopack_rows': 32414, 'nopack_mse_to_teacher': 0.02684, 'nopack_dist14_to_walk61': 0.26857, 'nopack_legdist_to_walk61': 0.18622, 'case_rows': 7177, 'case_dist14_to_walk61': 0.24981, 'case_command_as_forced': 0.99582}
+[stop] it 144 {"low0": {"rows": 552, "mse": 0.0021, "stu_step": 0.1734, "tea_step": 0.1787, "falls_per_env_min": 21.74, "walked_s": 3.56}, "low1": {"rows": 284, "mse": 0.00104, "stu_step": 0.0618, "tea_step": 0.0623, "falls_per_env_min": 10.56, "walked_s": 2.29}, "low2": {"rows": 308, "mse": 0.00086, "stu_step": 0.0734, "tea_step": 0.0747, "falls_per_env_min": 9.74, "walked_s": 1.89}, "low_still": {"rows": 3458, "mse": 0.00293, "stu_step": 0.0964, "tea_step": 0.0949, "falls_per_env_min": 22.56, "walked_s": 0.49}, "low_walk": {"rows": 21313, "mse": 0.00266, "stu_step": 0.202, "tea_step": 0.2063, "falls_per_env_min": 14.92, "walked_s": 0.14}, "high0": {"rows": 1735, "mse": 0.00176, "stu_step": 0.15, "tea_step": 0.1557, "falls_per_env_min": 15.56, "walked_s": 4.14}, "high1": {"rows": 951, "mse": 0.00156, "stu_step": 0.0786, "tea_step": 0.078, "falls_per_env_min": 12.62, "walked_s": 3.33}, "high2": {"rows": 1043, "mse": 0.00246, "stu_step": 0.0674, "tea_step": 0.07, "falls_per_env_min": 5.75, "walked_s": 1.45}, "high_still": {"rows": 9889, "mse": 0.00145, "stu_step": 0.0842, "tea_step": 0.0821, "falls_per_env_min": 17.29, "walked_s": 0.27}, "high_walk": {"rows": 72664, "mse": 0.00186, "stu_step": 0.1794, "tea_step": 0.182, "falls_per_env_min": 8.05, "walked_s": 0.09}, "T_low0": {"rows": 259, "mse": 0.00168, "stu_step": 0.1107, "tea_step": 0.1089, "falls_per_env_min": 57.92, "walked_s": 0.18}, "T_low1": {"rows": 95, "mse": 0.00019, "stu_step": 0.0298, "tea_step": 0.0295, "falls_per_env_min": 0.0, "walked_s": 0.02}, "T_low2": {"rows": 0}, "T_low_still": {"rows": 487, "mse": 0.00213, "stu_step": 0.0943, "tea_step": 0.0892, "falls_per_env_min": 55.44, "walked_s": 0.01}, "T_low_walk": {"rows": 8505, "mse": 0.00195, "stu_step": 0.1524, "tea_step": 0.151, "falls_per_env_min": 19.75, "walked_s": 0.0}, "T_high0": {"rows": 1105, "mse": 0.00125, "stu_step": 0.0654, "tea_step": 0.0616, "falls_per_env_min": 8.14, "walked_s": 0.08}, "T_high1": {"rows": 770, "mse": 0.00037, "stu_step": 0.0292, "tea_step": 0.0281, "falls_per_env_min": 3.9, "walked_s": 0.06}, "T_high2": {"rows": 0}, "T_high_still": {"rows": 1767, "mse": 0.00085, "stu_step": 0.053, "tea_step": 0.0496, "falls_per_env_min": 16.98, "walked_s": 0.02}, "T_high_walk": {"rows": 24833, "mse": 0.00144, "stu_step": 0.1378, "tea_step": 0.1346, "falls_per_env_min": 9.42, "walked_s": 0.0}}
+[prox] it 144 {"nopack": {"far": {"rows": 14536, "mse": 0.01921}, "s05_10": {"rows": 1146, "mse": 0.03627}, "s00_05": {"rows": 1522, "mse": 0.12472}, "unclassified": {"rows": 15210, "mse": 0.02362}}, "pack_low_still": {"far": {"rows": 1250, "mse": 0.00158}, "s05_10": {"rows": 176, "mse": 0.00469}, "s00_05": {"rows": 562, "mse": 0.00815}, "unclassified": {"rows": 1507, "mse": 0.00201}}, "pack_low_onset": {"far": {"rows": 1729, "mse": 0.00315}, "s05_10": {"rows": 337, "mse": 0.00351}, "s00_05": {"rows": 1330, "mse": 0.004}, "unclassified": {"rows": 2378, "mse": 0.00367}}, "pack_low_walk": {"far": {"rows": 7125, "mse": 0.0019}, "s05_10": {"rows": 643, "mse": 0.00232}, "s00_05": {"rows": 877, "mse": 0.00759}, "unclassified": {"rows": 7010, "mse": 0.00216}}, "pack_low_stop3s": {"far": {"rows": 477, "mse": 0.00105}, "s05_10": {"rows": 57, "mse": 0.00129}, "s00_05": {"rows": 106, "mse": 0.00358}, "unclassified": {"rows": 504, "mse": 0.00151}}, "pack_low_stopped": {"far": {"rows": 75, "mse": 0.00071}, "s05_10": {"rows": 30, "mse": 0.00057}, "s00_05": {"rows": 47, "mse": 0.00401}, "unclassified": {"rows": 194, "mse": 0.00097}}, "pack_high_still": {"far": {"rows": 3725, "mse": 0.00105}, "s05_10": {"rows": 535, "mse": 0.00249}, "s00_05": {"rows": 1285, "mse": 0.00279}, "unclassified": {"rows": 4437, "mse": 0.0014}}, "pack_high_onset": {"far": {"rows": 6302, "mse": 0.00203}, "s05_10": {"rows": 467, "mse": 0.00368}, "s00_05": {"rows": 2118, "mse": 0.00285}, "unclassified": {"rows": 6847, "mse": 0.00253}}, "pack_high_walk": {"far": {"rows": 26453, "mse": 0.00136}, "s05_10": {"rows": 1341, "mse": 0.00205}, "s00_05": {"rows": 2023, "mse": 0.00731}, "unclassified": {"rows": 27365, "mse": 0.00166}}, "pack_high_stop3s": {"far": {"rows": 1630, "mse": 0.00083}, "s05_10": {"rows": 182, "mse": 0.00381}, "s00_05": {"rows": 345, "mse": 0.00961}, "unclassified": {"rows": 1572, "mse": 0.00112}}, "pack_high_stopped": {"far": {"rows": 623, "mse": 0.00151}, "s05_10": {"rows": 85, "mse": 0.00064}, "s00_05": {"rows": 73, "mse": 0.00315}, "unclassified": {"rows": 1098, "mse": 0.00126}}}
+[cap] it 144 elapsed 4.1 min it/s 0.0164 beta 0.00 loss 0.00314 dropped ticks 0.0402 (drawn 0..0.08) student mse 0.00748 student {'env_min': 51.2, 'falls_per_env_min': 9.746, 'speed': 0.0565, 'low_speed': 0.0517} teacher {'env_min': 17.07, 'falls_per_env_min': 10.371, 'speed': 0.0606, 'low_speed': 0.0572} onnx 6.0e-07
+[load] it 148 {'pack_rows': 153256, 'pack_mse_to_teacher': 0.00251, 'nopack_rows': 43327, 'nopack_mse_to_teacher': 0.03018, 'nopack_dist14_to_walk61': 0.23296, 'nopack_legdist_to_walk61': 0.17895, 'case_rows': 9609, 'case_dist14_to_walk61': 0.22973, 'case_command_as_forced': 0.99625}
+[stop] it 148 {"low0": {"rows": 734, "mse": 0.00323, "stu_step": 0.1624, "tea_step": 0.1702, "falls_per_env_min": 8.17, "walked_s": 5.47}, "low1": {"rows": 690, "mse": 0.00308, "stu_step": 0.1018, "tea_step": 0.105, "falls_per_env_min": 4.35, "walked_s": 4.72}, "low2": {"rows": 421, "mse": 0.00263, "stu_step": 0.0814, "tea_step": 0.0821, "falls_per_env_min": 28.5, "walked_s": 4.37}, "low_still": {"rows": 3458, "mse": 0.0018, "stu_step": 0.0928, "tea_step": 0.0916, "falls_per_env_min": 27.76, "walked_s": 1.39}, "low_walk": {"rows": 24233, "mse": 0.00345, "stu_step": 0.2017, "tea_step": 0.2069, "falls_per_env_min": 16.34, "walked_s": 1.03}, "high0": {"rows": 3832, "mse": 0.0028, "stu_step": 0.1444, "tea_step": 0.1496, "falls_per_env_min": 10.96, "walked_s": 6.73}, "high1": {"rows": 2733, "mse": 0.00139, "stu_step": 0.0825, "tea_step": 0.0854, "falls_per_env_min": 16.47, "walked_s": 6.58}, "high2": {"rows": 2147, "mse": 0.00102, "stu_step": 0.0694, "tea_step": 0.0706, "falls_per_env_min": 16.77, "walked_s": 6.35}, "high_still": {"rows": 16276, "mse": 0.00187, "stu_step": 0.0934, "tea_step": 0.0911, "falls_per_env_min": 16.4, "walked_s": 1.28}, "high_walk": {"rows": 94987, "mse": 0.00245, "stu_step": 0.1914, "tea_step": 0.1949, "falls_per_env_min": 8.78, "walked_s": 0.91}, "T_low0": {"rows": 0}, "T_low1": {"rows": 0}, "T_low2": {"rows": 0}, "T_low_still": {"rows": 0}, "T_low_walk": {"rows": 0}, "T_high0": {"rows": 0}, "T_high1": {"rows": 0}, "T_high2": {"rows": 0}, "T_high_still": {"rows": 0}, "T_high_walk": {"rows": 0}}
+[prox] it 148 {"nopack": {"far": {"rows": 18993, "mse": 0.02259}, "s05_10": {"rows": 1725, "mse": 0.04564}, "s00_05": {"rows": 2392, "mse": 0.12434}, "unclassified": {"rows": 20217, "mse": 0.02484}}, "pack_low_still": {"far": {"rows": 1245, "mse": 0.00112}, "s05_10": {"rows": 192, "mse": 0.00227}, "s00_05": {"rows": 697, "mse": 0.00261}, "unclassified": {"rows": 1364, "mse": 0.00213}}, "pack_low_onset": {"far": {"rows": 2501, "mse": 0.00402}, "s05_10": {"rows": 327, "mse": 0.00365}, "s00_05": {"rows": 1571, "mse": 0.00311}, "unclassified": {"rows": 2806, "mse": 0.00455}}, "pack_low_walk": {"far": {"rows": 7343, "mse": 0.00255}, "s05_10": {"rows": 992, "mse": 0.00337}, "s00_05": {"rows": 1378, "mse": 0.00949}, "unclassified": {"rows": 7445, "mse": 0.00276}}, "pack_low_stop3s": {"far": {"rows": 682, "mse": 0.00328}, "s05_10": {"rows": 118, "mse": 0.00248}, "s00_05": {"rows": 165, "mse": 0.00393}, "unclassified": {"rows": 880, "mse": 0.00276}}, "pack_low_stopped": {"far": {"rows": 252, "mse": 0.00334}, "s05_10": {"rows": 46, "mse": 0.00098}, "s00_05": {"rows": 50, "mse": 0.00123}, "unclassified": {"rows": 182, "mse": 0.00621}}, "pack_high_still": {"far": {"rows": 6396, "mse": 0.00149}, "s05_10": {"rows": 805, "mse": 0.00202}, "s00_05": {"rows": 2114, "mse": 0.00444}, "unclassified": {"rows": 7101, "mse": 0.00154}}, "pack_high_onset": {"far": {"rows": 9311, "mse": 0.00245}, "s05_10": {"rows": 605, "mse": 0.00499}, "s00_05": {"rows": 2687, "mse": 0.00431}, "unclassified": {"rows": 10595, "mse": 0.00245}}, "pack_high_walk": {"far": {"rows": 32302, "mse": 0.00185}, "s05_10": {"rows": 2359, "mse": 0.00289}, "s00_05": {"rows": 3138, "mse": 0.01131}, "unclassified": {"rows": 34334, "mse": 0.00201}}, "pack_high_stop3s": {"far": {"rows": 3459, "mse": 0.00126}, "s05_10": {"rows": 562, "mse": 0.00152}, "s00_05": {"rows": 923, "mse": 0.00498}, "unclassified": {"rows": 3768, "mse": 0.00184}}, "pack_high_stopped": {"far": {"rows": 1084, "mse": 0.00098}, "s05_10": {"rows": 121, "mse": 0.0008}, "s00_05": {"rows": 174, "mse": 0.00235}, "unclassified": {"rows": 1182, "mse": 0.00177}}}
+[cap] it 148 elapsed 8.3 min it/s 0.0159 beta 0.00 loss 0.00317 dropped ticks 0.0401 (drawn 0..0.08) student mse 0.00861 student {'env_min': 68.27, 'falls_per_env_min': 10.532, 'speed': 0.0643, 'low_speed': 0.0603} teacher {'env_min': 17.07, 'falls_per_env_min': 10.371, 'speed': 0.0606, 'low_speed': 0.0572} onnx 6.0e-07
+[done] max_iters reached; final iter 148; best {'iter': 144, 'falls': 9.746, 'speed': 0.0565}; 8.3 min; onnx /tmp/ts3_prox/seed2/seed2.onnx

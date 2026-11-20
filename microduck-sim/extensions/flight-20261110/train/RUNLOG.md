@@ -2000,3 +2000,154 @@ supported by this test; nothing to change in the launch line on that account.
 4. Pack start, cold against prewarmed: in the entry above (08:21). Prewarm is not a candidate fix.
 
 No Modal or Kaggle job. Metered 45.60 at 08:21.
+
+## 2026-11-20 08:33 literature pass: how published work gets a deployable recurrent student that survives (nothing launched)
+
+Rule `literature-before-experiments`. Public sources only, searched 2026-11-20 through web search and the papers'
+arXiv pages; generic queries, no project details. Lines marked (memory) are from recall and were not fetched today.
+Our failure mode in one line: about 40 saves in four families, imitation error falls smoothly, the teachers do not
+fall, every student falls in a rare closed-loop moment and which moment flips between neighbouring saves.
+
+A. RL fine-tuning of the student after distillation.
+- Recipe: (1) privileged teacher by PPO; (2) student by behaviour cloning or DAgger on its own rollouts; (3) PPO
+  on the student with the task reward, low learning rate, tighter clip, sometimes with the imitation term kept.
+- Sources. Zhao et al. 2025, "Towards Adaptive Humanoid Control via Multi-Behavior Distillation and Reinforced
+  Fine-Tuning", https://arxiv.org/abs/2511.06371 : DAgger 4,000 iterations, then PPO 10,000 iterations at 4,096
+  envs with lr 1e-4 ("reduced from 1e-3 because the original rate often caused training failures"); success of the
+  distilled policy against the fine-tuned one on slopes 0.160 -> 0.975, hurdles 0.756 -> 0.922, discrete 0.702 ->
+  0.969, flat 0.993 -> 0.992 (their Table 1, single runs). "Walk the PLANC", https://arxiv.org/abs/2601.06286 :
+  teacher, behaviour-cloning warm start, then PPO with lr 1e-4, clip 0.1 (from 0.2), entropy 0.003 (from 0.008),
+  no teacher term; plain asymmetric actor-critic from scratch "failed to converge" on their task. Zhang et al.
+  2025, "Distillation-PPO", https://arxiv.org/abs/2503.08299 : one loss, 0.5 x action MSE to the teacher + 0.5 x
+  PPO, no annealing; only a qualitative table against distillation alone. SLIM, https://arxiv.org/abs/2501.09905 :
+  RL objective next to the distillation loss (search summary, not read in full).
+- Cost: as much again as the teacher or more (10,000 PPO iterations at 4,096 envs in the first source). For us a
+  T4 does 0.026 it/s on the distillation worker; a PPO pass on a recurrent actor is new code with unknown speed.
+- Gap in ours: we stop at step 2. Our loss is the mean action error over rows; nothing in it sees a fall. The flat
+  case in the first source (0.993 before fine-tuning) says distillation alone suffices where failures are not
+  rare-state events; their slope case is our picture.
+
+B. Train the deployable actor directly with a privileged critic (no distillation).
+- Recipe: PPO; the actor sees only deployable inputs plus history or memory; the critic sees the full state; often
+  an auxiliary estimator of the hidden quantities trained beside it.
+- Sources. DreamWaQ, https://arxiv.org/abs/2301.10602 : asymmetric actor-critic with a context estimator; argues
+  that behaviour cloning bounds the student by the teacher and that two stages waste data. CTS, Wang et al. 2024,
+  https://arxiv.org/abs/2405.10830 : teacher and student trained at once with one shared policy head, privileged
+  encoder by policy gradient, proprioceptive encoder by reconstruction; "up to 20 %" lower velocity-tracking
+  error than two-stage in simulation. Siekmann et al. 2020, https://arxiv.org/abs/2006.02402 : recurrent PPO
+  policy on the biped Cassie, memory plus dynamics randomisation transfers, memory without it does not. RMA,
+  Kumar et al. 2021, https://arxiv.org/abs/2107.04034 (memory): the hidden parameters include payload; an
+  adaptation module estimates their encoding from a history of states and actions.
+- Cost: one PPO run of teacher size (ours: 750 to 1000 iterations for a teacher).
+- Gap in ours: the round-1/2 "universal" family was this recipe with a memoryless 61-input actor
+  (`UNIVERSAL-PLAN.md`), which cannot know the load; a recurrent actor under PPO has not been tried here. The PLANC
+  source warns that this route can collapse to standing still on a hard task, which is our incentive-audit case.
+
+C. DAgger variants that put the data or the teacher where failure is near.
+- Recipe: a gate (learned error predictor, ensemble disagreement, or a risk estimate) decides per state whether
+  the expert acts; expert labels are gathered mostly on those states; the learner drives elsewhere.
+- Sources. SafeDAgger, Zhang and Cho 2016, https://arxiv.org/abs/1605.06450 : a safety policy predicts where the
+  learner will deviate and hands control to the reference there. HG-DAgger, Kelly et al. 2019,
+  https://arxiv.org/abs/1810.02890 : the expert takes over in dangerous states; a risk threshold is learned from
+  the interventions. ThriftyDAgger, Hoque et al. 2021, https://arxiv.org/abs/2109.08273 : hand-over when the state
+  is novel or risky (risk = estimated probability of failing from here). TGRL, Shenfeld et al. 2023,
+  https://arxiv.org/abs/2307.03186 : the weight between imitation and reward is set automatically; teacher
+  supervision is used only where it beats learning from reward; motivated by privileged teachers a student
+  cannot copy exactly. Weihs et al. 2021, "Bridging the imitation gap by adaptive insubordination" (memory, cited
+  by TGRL): per-state weight on the imitation loss.
+- Cost: none beyond the distillation run; a risk estimate needs fall labels, which a simulator gives for free.
+- Gap in ours: every student-driven row has weight 1 (except the stop rows' optional weight); rows shortly before
+  a fall are not marked, not weighted and not over-sampled, and the teacher never takes over. These papers gate to
+  save expert queries; our teacher is free, so only the weighting and the take-over part applies. No source found
+  that reports loss weighting of pre-failure rows for a legged student: that part is our inference, to be tested
+  by the measurement and smoke below.
+
+D. Cold recurrent state and context known at run time.
+- Cold state. R2D2, Kapturowski et al. 2019, https://openreview.net/forum?id=r1lyTjAqYX (link from memory; content from
+  secondary summaries found today) : train sequences start
+  from the stored recurrent state plus a burn-in prefix (20 to 40 steps in their ablation) because a zero start
+  state is off-distribution. Miki et al. 2022, https://arxiv.org/abs/2201.08117 : recurrent belief encoder in the
+  student, trained by behaviour cloning plus a reconstruction loss (memory: sequences from episode starts).
+  Ours: the state is carried across segments and emptied at resets, so cold rows exist only at episode starts;
+  cold weighting and random resets did not help (06:49, 07:20), prewarm trades one fault for another (06:51).
+- Known context. RMA estimates the hidden parameters; when a quantity is known at run time the published
+  practice is to give it to the policy as an input, as with commanded gait and body parameters in Margolis and
+  Agrawal 2022, "Walk These Ways", https://arxiv.org/abs/2212.03238 (memory). Ours: the both-flags smoke p1 gave a
+  clean cold start with and without the pack (07:51); whether the robot is told is Shawn's decision.
+
+Reading for the next run: the literature's main answer to "the student imitates well and still fails where the
+teacher does not" is A (reward on the student, imitation kept as a regulariser), with C as the cheap step inside
+distillation. B is a restart at teacher cost.
+
+## 2026-11-20 08:48 failure-proximal rows in the training data now: 20 % of the rows, error 2 to 4 times; not the lever
+
+Mac mini chain `train/ts3_prox_measure.sh` (detached, heartbeat `logs/ts3_prox_heartbeat.txt`, START 08:30:52, DONE
+08:47:33; logs `logs/ts3_prox_seed{1,2}.log`, `[prox]` lines). Student s3AB_140 (`ckpt/s3AB_140/model_140.pt`),
+learning rate 0, under run AB's own sampler (env universal5, teacher t3h_750, case share 0.25, stop share 0.25,
+gain flag, dropped ticks to 0.08, action noise on half the envs), 512 envs, 7 student-driven iterations of 100
+ticks per seed, two seeds. New in `distill_worker.py`: `--prox-diag` (a row is proximal when its env falls within
+the next 50 ticks of the same segment; rows in a segment's last 50 ticks with no fall after them are left out) and
+`--prox-weight` (not used). No index is involved: the cases come from the payload, the env's gain scale and the
+command columns the worker already uses (twist 48:51, asserted at start by the worker's layout line).
+
+- Share: 20.3 % of the 372,242 classified student-driven rows lie within 1 s before a fall. By case (share of all
+  rows / proximal share inside the case): no pack 21.7 % / 16.8 %; pack low gain standing 2.2 % / 40.1 %, first
+  1.5 s of a walk 4.2 % / 43.3 %, walking later 9.3 % / 20.4 %, first 3 s after a stop 1.0 % / 26.4 %, stopped
+  longer 0.3 % / 30.0 %; pack high gain standing 7.6 % / 31.1 %, walk onset 11.6 % / 27.8 %, walking later 36.5 % /
+  13.0 %, first 3 s after a stop 4.1 % / 24.2 %, stopped longer 1.4 % / 24.0 %.
+- Student error to the teacher (mse), rows far from a fall / 0.5 to 1.0 s before / last 0.5 s: all rows 0.0061 /
+  0.0121 / 0.0252; pack low gain walk onset 0.0031 / 0.0046 / 0.0043; pack low gain first 3 s after a stop 0.0020
+  / 0.0020 / 0.0038; pack high gain walk onset 0.0023 / 0.0052 / 0.0034; pack high gain walking 0.0017 / 0.0029 /
+  0.0090; no pack 0.021 / 0.043 / 0.129 (against the teacher; the no-pack label is walk61).
+- Falls in this sampler: student 10.8 and 10.5 per env-minute, the teacher on its own share of envs 9.8 (seed 1).
+  In the training env the teacher falls almost as often as the student.
+- Answer: the test "error several times the average on well under 1 % of the rows" fails on both counts. The rows
+  are a fifth of the data and the error is 1.5 to 2 times (0.5 to 1 s before) and up to 4 times (last 0.5 s, when
+  the robot is already going down). Weighting these rows would mostly weight falls the randomised env causes and
+  the teacher shares. No weighting smoke was started.
+- What it shows instead (inference): the training env is far harder than the gate cells (the teacher falls 9.8
+  times per env-minute there and 0 of 10 in the gate's pack cells), so the gate's situations (nominal pack, no
+  disturbance, 2 s standing then a 15 s walk under the heading hold's own turn command, then a stop) are a thin
+  slice of the rows, and neither the training readings nor the loss can tell a student that survives them from
+  one that does not.
+
+## 2026-11-20 08:50 proposal for the next run (nothing launched, nothing queued)
+
+Facts for the sizing. Modal metered 45.56 at 08:48 (`ts3_bill_guard.metered`); one 160-iteration T4 student run
+plus standard scoring is 2.83 worst case (measured 1.71 and 1.80), scoring 8 saves alone 0.56 worst case; line
+48.5, so headroom 2.94. Kaggle (`kaggle quota` through `kaggle_flight.py quota`, 08:32 EST): GPU 29.16 h used,
+0.84 h left of 30, refreshAt 2026-11-21T00:00:00. Zone: the CLI prints no zone; the installed client
+(`kagglesdk/kaggle_object.py`, `DateTimeSerializer._from_str`) strips a trailing "Z" from the API's timestamp and
+writes "Z" back when it serialises, so the value is UTC: the quota resets 2026-11-20 19:00 EST (local clock EST,
+`date` and `date -u` differ by 5 h). 21 November 2026 is a Saturday.
+
+Proposal: reward on the student (recipe A), imitation kept; run on Kaggle after the reset; Modal's headroom kept
+for scoring.
+- What: continue a distilled recurrent student with PPO in the same env and with the teacher's own reward
+  (universal5, no reward term or range changed), privileged critic (the 61 actor inputs plus the worker's privileged block `teacher.priv_obs`), loss
+  0.5 x action error to the teacher + 0.5 x PPO (Distillation-PPO's weights), learning rate 1e-4 and clip 0.1 (the
+  two fine-tuning sources), 160 student iterations of 100 ticks at 4,096 envs, saves every 20, stop on the task
+  metric (falls per env-minute and speed against the teacher), never on reward. Start: s3AB_140's weights. Second
+  T4 of the same session: the same with imitation weight annealed 0.5 -> 0.1, so the pair costs one quota hour per
+  hour.
+- Evidence: the fine-tuning sources (distilled 0.160 -> 0.975 on their hard case); here 40 saves show imitation
+  error cannot rank or fix survival, weight means and prox weighting are ruled out (08:28, 08:48).
+- Size (b), Kaggle after 19:00 EST: a paired session of about 2.5 h (1.72 h measured for 160 distillation
+  iterations on a Modal T4, plus the critic; estimate, to be replaced by the smoke's it/s) = 2.5 h of 30. Scoring of
+  2 x 8 saves on Modal: 1.12 worst case -> 46.68.
+- Size (a), Modal now: I would not spend the 2.83 on a fifth distillation variant. If a run must go before the
+  reset, the only variant with evidence is distillation with both flags (p1: clean cold start in both cases) plus
+  the stop share, worst case 45.56 + 2.83 = 48.39; it does not address the walk at gain 200, so I do not recommend
+  it. The RL fine-tune itself does not fit (a): it needs new code and a smoke first.
+- New code (before anything is queued): a PPO term in `distill_worker.py` on the same 100-tick segments (value net
+  on the privileged inputs, learned action std, GAE over the segment with the carried state), behind a flag,
+  default off. Mac mini smoke as c0 (same start and stages), two chains per variant: must run NaN-free, value
+  loss falling, imitation error not rising above 2x its start, falls per env-minute not above the start.
+- Degenerate-policy audit plan (required: RL on the student): with `flight_audit.py` under the student's env and
+  sampler (universal5 + case share + stop share + gain 0.8 to 2.2), per cell none / pack x gain 200 / 400 x
+  command 0 / 0.25: reward per step of (1) stand still at the default pose, (2) the stand policy under a walk
+  command, (3) shuffle in place, against (4) teacher t3h_750 and (5) s3AB_140 as they are. Pass: at a walk
+  command (4) and (5) earn more than (1) to (3) in every cell, and at zero command standing earns more than
+  stepping. Also the imitation term's value for (1) to (3) is reported, since it is part of the loss. If a cell
+  fails, the proposal goes back to the coordinator; no reward edit without Shawn's approval.
+- Not proposed: recipe B (restart at teacher cost), prewarm, weight means, prox weighting.
