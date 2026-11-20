@@ -117,7 +117,9 @@ class _StatefulSession:
             st = np.zeros(self.state_shape, dtype=np.float32)
             # experiment only (2026-11-20, cold start; default off): FLIGHT_PREWARM=<N> steps the empty state N times
             # on the entry observation (actions discarded) before the first action is taken: no second policy
-            pw = int(os.environ.get("FLIGHT_PREWARM") or 0)
+            # A policy folder holding a file named "prewarm" (its text = N) is evaluated that way without the
+            # environment variable: the second, separately named gate reading (ckpt/<tag>w_<iter>, ts3_prewarm_score.py)
+            pw = int(os.environ.get("FLIGHT_PREWARM") or DIAG.get("prewarm") or 0)
             if pw and self.state_name == "state_in":
                 for _ in range(pw):
                     st = self.sess.run(None, dict(feed, **{self.state_name: st}))[1]
@@ -465,6 +467,8 @@ def episode(job):
     install_stateful_policies(b)
     install_priv_policies(b)
     none_parts = json.loads((HERE / "manifests/flightpack-none.json").read_text())["parts"]
+    pwf = Path(models) / "prewarm"
+    DIAG["prewarm"] = int(pwf.read_text().strip()) if pwf.exists() else 0
     DIAG.update(rows=[], stat={}, swap_left=0, rng=np.random.default_rng(int(seed) + 977), phys=[], seed=int(seed), last_state=None,
                 dagger=None)
     PRIV.update(m=None, d=None, log=[], kg=sum(p["mass_kg"] for p in json.loads(Path(manifest).read_text())["parts"])

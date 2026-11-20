@@ -1846,3 +1846,17 @@ counters prewarm_entries 1, prewarm_steps N per episode). No second policy.
 - Training-side route under test: `distill_worker.py --state-reset-p 0.01` (each policy call empties the state
   with probability 1/100, loss unweighted). Smoke chain r1 from 06:50:30, same start and stages as c0, heartbeat
   `logs/ts3_anchor_r1_heartbeat.txt` on the Mac mini.
+
+## 2026-11-20 06:52 second gate reading with self-prewarm 10 (evidence about a loader change, NOT a gate pass)
+
+- `train/ts3_prewarm_score.py` (new): copies ckpt/<src> to ckpt/<dst>, adds a file `prewarm` holding 10, and sends
+  <dst> through the same gate path (ts3_gates.py spec and score unchanged, flight_eval_modal.py, gate lock, 60
+  containers). `flight_eval.episode` reads the file and steps the empty state 10 times on the entry observation
+  in every cell. G1 is the gate's own computation and is not prewarmed. The verdict of record stays the standard
+  score of <src>; the heartbeat writes "PREWARM READING", never "GATE PASS".
+- Budget: metered 44.19 at 06:45 with run AB live. Worst case: 43.71 (before AB) + 2.27 (AB training) + 0.56 (AB
+  standard scoring, 8 saves) + 0.56 (AB prewarmed reading, 8 saves) + 0.07 (s3a_60 prewarmed, one save at 0.56 / 8)
+  = 47.17, under 48.5, so every AB save gets both tables.
+- 06:51:59 started, both detached with parent pid 1: `s3aw` (s3a_60 -> s3aw_60, pid 67191, heartbeat
+  `logs/s3aw_heartbeat.txt`) and `s3ABw` (s3AB_<it> -> s3ABw_<it> for the 8 saves, pid 67193, waits for DONE in
+  `logs/ts3s_t3h_750_ab_heartbeat.txt`, heartbeat `logs/s3ABw_heartbeat.txt`).
