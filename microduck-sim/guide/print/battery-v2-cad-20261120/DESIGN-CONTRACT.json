@@ -1,0 +1,25 @@
+{
+ "schema": "design-contract/1",
+ "design": "Battery backpack V2 rev B ('sits down'), printable frame and cap, both Orange. The 2S 3000 mAh pack (74 x 34 x 20 envelope) stands upright, leads up, 6.3 mm right of centre in a column of the frame; the lower tier ends at z -46 so the seated robot keeps 10 mm or more under the backpack; nothing grows behind today's x -75.55, above z 43 or wider than |y| 32.05. The 16 mm LED button sits in the cap's upper left beside the pack; the Pololu 2813 is taped to the left wing's outer wall, the DFR1202 to the battery column's left rib on the left wing, the XIAO SAMD21 high on the right wing wall with its USB-C behind a window in the cap. Two fixed L contact pads lie flush under the floor at y +-9; the cap is a back plate over both tiers, held by two M2 x 8 (high) and two M2 x 6 (low, through the pad tabs) into frame bosses. The frame screws onto the OpenRB pack posts with the four M2 x 6 as today. No snaps, hooks, flexures or latches.",
+ "approved": {
+  "by": "Shawn",
+  "date": "2026-11-20",
+  "quotes": [
+   "亚马逊上没有是吧？拼装指南你都看一下呗，然后电池背包也得重新设计，对吧？重新设计完以后，你发现没问题了，所有东西都全了，再把东西都加到购物车里就好了。不然到时候做方案时，又发现少了这个、少了那个。",
+   "会影响坐下吗",
+   "可以，加购物车"
+  ],
+  "history": "2026-11-20 02:15: Shawn asked for a complete power plan and a redesigned backpack, with the cart filled only when the design is complete. 03:29 he asked whether rev A (lower tier to z -55) affects sitting down; it did (1.7 mm off the floor seated), so the concept was reworked to rev B (bottom z -46, 10.9 mm seated; ../battery-v2-concept-20261119/concept-sheet.png). 05:46 he approved rev B with '可以，加购物车'. This CAD follows that concept; the changes the CAD stage had to make (lower-tier left wall 1.8 mm further out for the driver corridor, front wall cut round the shell lips, top stops as pillars and cap tabs, high-left cap screw at z 19) are in build_v2.py's docstring and features.json."
+ },
+ "concept_render": "../battery-v2-concept-20261119/concept-sheet.png",
+ "geometry": [
+  {"part": "battery_v2_frame", "says": "sits down: lowest point z -46.0 or higher (10 mm seated)", "bounds": {"z_min": {"gt": -46.05}}},
+  {"part": "battery_v2_cap", "says": "sits down: lowest point z -46.0 or higher", "bounds": {"z_min": {"gt": -46.05}}},
+  {"part": "battery_v2_frame", "says": "front face on the OpenRB pack at x -45, unchanged", "bounds": {"x_max": {"gt": -45.05, "lt": -44.95}}},
+  {"part": "battery_v2_cap", "says": "no depth added: back at today's x -75.55", "bounds": {"x_min": {"gt": -75.6, "lt": -75.5}}},
+  {"part": "battery_v2_frame", "says": "no depth added: frame inside the cap", "bounds": {"x_min": {"gt": -75.6}}},
+  {"part": "battery_v2_frame", "says": "upper tier |y| <= 32.05, top z <= 43", "bounds": {"y_min": {"gt": -32.1}, "y_max": {"lt": 32.1}, "z_max": {"lt": 43.05}}},
+  {"part": "battery_v2_cap", "says": "upper tier |y| <= 32.05, top z <= 43", "bounds": {"y_min": {"gt": -32.1}, "y_max": {"lt": 32.1}, "z_max": {"lt": 43.05}}}
+ ],
+ "forbidden_parts": ["battery_hatch", "battery_backpack_bar"]
+}

@@ -1,0 +1,507 @@
+{
+ "schema": "design-rationale/1",
+ "design": "MicroDuck battery backpack V2 rev B, printable frame and cap (build_v2.py). Every built feature and hole is listed with its reason; checks.py fails on a built feature missing here, an entry not built, an empty field or an unknown premise.",
+ "premises": {
+  "P-BAT": {
+   "rev": 1,
+   "says": "2S 3000 mAh pack, envelope 74 x 34 x 20 mm (largest published size: listing text 72 x 34 x 20, listing drawing 74 x 34 x 19), leads out of the middle of one end face",
+   "source": "Amazon B08LZ8L4YD listing text and drawing; ../battery-v2-concept-20261119/README.md"
+  },
+  "P-POLOLU": {
+   "rev": 1,
+   "says": "Pololu 2813 Big Pushbutton Power Switch HP, 0.8 x 1.0 x 0.16 in (20.3 x 25.4 x 4.2 mm with parts)",
+   "source": "pololu.com product 2813 dimensions"
+  },
+  "P-DFR": {
+   "rev": 1,
+   "says": "DFRobot DFR1202 5 V buck, 30 x 26 x 8 mm",
+   "source": "DFRobot DFR1202 wiki; concept README F5"
+  },
+  "P-XIAO": {
+   "rev": 1,
+   "says": "Seeed XIAO SAMD21 21 x 17.5 mm, 4.5 mm with the USB-C receptacle (8.94 x 3.2) on the top face",
+   "source": "Seeed XIAO SAMD21 wiki drawing"
+  },
+  "P-BTN": {
+   "rev": 2,
+   "says": "E-Switch PV6F240SS-331 (DigiKey EG4731-ND): M16 x 1.0, panel cutout 16.00 +0.20/-0, panel 1-10 mm, bezel 18.0 x 1.50 above the panel, 20.0 mm body plus terminals behind the panel face, green LED 2.8 V 20 mA without a resistor; the nut is not dimensioned, the box keeps a 22 x 3 mm sweep circle",
+   "source": "E-Switch PV6 datasheet 6.16.2021 pp. 1-3 (https://cdn.components.ru/media/PDF/209450.pdf, also DigiKey 'PV6 Datasheet'); DigiKey EG4731-ND page read 2026-11-20",
+   "superseded": "rev 1 Adafruit 560 (35.3 mm behind the panel, does not fit; coordinator 2026-11-20)"
+  },
+  "P-PAD": {
+   "rev": 2,
+   "says": "Keystone 615 right-angle bracket: brass 0.81, width 7.1, vertical leg 10.7, horizontal leg 8.7, vertical-leg hole 3.7 centred 7.1 above the horizontal leg's outer face, horizontal-leg hole 3.3 centred 5.2 from the vertical leg's outer face",
+   "source": "Keystone catalog K75p129; power-system-20261119/purchase-decision-20261120-charging.json",
+   "superseded": "rev 1 concept placeholder 6 x 8 x 0.5, tab 11, hole 2.4"
+  },
+  "P-DIODE": {
+   "rev": 1,
+   "says": "1N5822 in DO-201AD, 9.5 x 5.3 mm body, in the lead bay",
+   "source": "onsemi 1N5820-D datasheet; concept README"
+  },
+  "P-POSTS": {
+   "rev": 1,
+   "says": "the backpack fixes to the OpenRB pack posts with four M2 x 6 at (y, z) (+-16.1, 26) and (+-16.1, -36.5), front face x -45",
+   "source": "microduck_rl/cmu/hardware/battery-backpack (today's frame and mating parts)"
+  },
+  "P-SHELL": {
+   "rev": 1,
+   "says": "the shell rear lips reach behind x -45 (to x -46.39): side lips |y| 20-29.7 z 7-31, top lip z 31-36 |y| < 28",
+   "source": "battery-backpack/mating/shell_left.stl, shell_right.stl (probe 2026-11-20)"
+  },
+  "P-SEAT": {
+   "rev": 1,
+   "says": "the seated robot (Brain sit) must keep 10 mm or more under the backpack: lowest point z -46.0",
+   "source": "Shawn 2026-11-20 '会影响坐下吗'; concept rev B"
+  },
+  "P-ENV": {
+   "rev": 1,
+   "says": "no growth behind x -75.55, above z 43 or wider than |y| 32.05 (today's printed upper tier)",
+   "source": "DESIGN-CONTRACT.json; concept README F1"
+  },
+  "P-LEGS": {
+   "rev": 1,
+   "says": "the legs swing beside the lower tier; leg clearance at least the approved concept B's 7.6 mm (hip pitch +-30, roll +-10)",
+   "source": "concept leg_check result; legsit.py"
+  },
+  "P-FIT": {
+   "rev": 1,
+   "says": "every printed fit takes its numbers from cad-practice/print_fit.py (H2S: M2 clear vertical 2.5, pilot 1.95, locating 0.15/side, loose horizontal 0.5/side, 0.4 bed chamfer)",
+   "source": "cad-practice/PRINT-FIT.md"
+  },
+  "P-ACCESS": {
+   "rev": 1,
+   "says": "each screw has a 4 mm driver corridor over 60 mm and no screw hole runs parallel and close to a wall",
+   "source": "cad-practice/access_check.py; Shawn's screw-access rule (robotics memory)"
+  },
+  "P-SCREWS": {
+   "rev": 1,
+   "says": "only even M2 lengths 4/6/8/10 are in stock",
+   "source": "robotics memory microduck-screw-stock"
+  },
+  "P-ROBUST": {
+   "rev": 1,
+   "says": "no snaps, flexures, hooks or latches and nothing under 1.2 mm on a part that rides on the robot; boards are held by foam tape and ribs",
+   "source": "claude-config rule printed-latch-and-exit-checks.md"
+  },
+  "P-FLIGHT": {
+   "rev": 1,
+   "says": "the flight pack sits on the backpack 6.9 mm back on its wing plate; nothing may touch its harness or plates; its wing plate has cheeks 1.55 mm behind its back face at |y| 18.9-32.1, z -1 to 42.5",
+   "source": "extensions/flight-20261110/cad/build"
+  },
+  "P-PLUGS": {
+   "rev": 1,
+   "says": "plug 3 (XT30) and plug 4 (MR30) leads leave the backpack to the robot through the left wing's step floor",
+   "source": "concept README F10"
+  },
+  "P-PRINT": {
+   "rev": 1,
+   "says": "both parts print in Orange on the X1C, Elegoo or H2S without supports",
+   "source": "robotics memory print-delivery-format; concept README"
+  }
+ },
+ "frame": [
+  {
+   "id": "F1-lower-tier",
+   "what": "lower tier x -75.55..-45, y -25.3..21.8, z -46..-15.2 under today's upper tier",
+   "problems": [
+    "the 74 mm pack does not fit today's 77 mm-tall box with lead room"
+   ],
+   "purpose": "holds the upright pack's lower part while the seated robot keeps 10 mm under it",
+   "premises": [
+    "P-BAT",
+    "P-SEAT",
+    "P-ENV",
+    "P-LEGS"
+   ],
+   "simpler": "pack lying lengthwise (concept D) adds 48.5 mm depth; growing upward breaks z 43",
+   "validation": "contract z_min > -46.05; legsit.py seated and leg clearances",
+   "change_when": "a shorter pack is chosen or the sit pose changes"
+  },
+  {
+   "id": "F1-chamfer",
+   "what": "3.8 mm chamfer on the lower tier's front-right vertical edge (2.5 inside)",
+   "problems": [
+    "the right leg's swing passes the lower tier's front-right corner"
+   ],
+   "purpose": "leg clearance without narrowing the pack column",
+   "premises": [
+    "P-LEGS",
+    "P-BAT"
+   ],
+   "simpler": "a narrower lower tier would cut into the pack column",
+   "validation": "legsit.py leg clearance",
+   "change_when": "leg clearance passes without it"
+  },
+  {
+   "id": "F1-chamfer-left",
+   "what": "1.8 mm chamfer on the lower tier's front-left vertical edge (x -45, y 21.8)",
+   "problems": [
+    "the left leg (hip pitch +30, roll -10) passed the square front-left bottom corner at 7.41 mm after the lower tier was widened 1.8 mm for the driver corridor, under the approved concept's 7.6"
+   ],
+   "purpose": "restore the left leg clearance without giving back the driver corridor",
+   "premises": [
+    "P-LEGS",
+    "P-ACCESS"
+   ],
+   "simpler": "narrowing the lower tier again closes the lower-left fixing screw's 4 mm corridor",
+   "validation": "legsit.py leg clearance; wall check (1.34 mm at the inner corner)",
+   "change_when": "the lower tier width or the leg sweep changes"
+  },
+  {
+   "id": "upper-tier",
+   "what": "today's upper tier outline x -75.55..-45, |y| 32.05, z -15.2..43, walls 1.7, roof 1.7, front wall 2.0",
+   "problems": [
+    "the backpack must keep today's footprint on the robot"
+   ],
+   "purpose": "the shell that carries the boards, the button and the pack's upper part",
+   "premises": [
+    "P-ENV",
+    "P-FLIGHT"
+   ],
+   "simpler": "it is today's printed outline, unchanged",
+   "validation": "contract bounds; flight-pack overlap 0",
+   "change_when": "the robot's back or the flight pack changes"
+  },
+  {
+   "id": "F3-lead-bay",
+   "what": "11.2 mm free height between the pack top (z 30.1 + 0.3 play) and the roof (z 41.3), over the whole column",
+   "problems": [
+    "the pack leads (main and balance) exit the middle of its top face and the 1N5822 sits there"
+   ],
+   "purpose": "room to bend the leads and place the diode without pressing the pack",
+   "premises": [
+    "P-BAT",
+    "P-DIODE",
+    "P-ENV"
+   ],
+   "simpler": "a lower roof would crush the leads; a higher roof breaks z 43",
+   "validation": "diode envelope overlap 0 (checks.py); top stops clear of the lead exit",
+   "change_when": "the pack or its lead exit changes"
+  },
+  {
+   "id": "F2-column-right-wall",
+   "what": "inner wall y -25.3..-23.6, x -70.3..-47, from the step floor to z 17",
+   "problems": [
+    "the pack must not shift right into the XIAO wing"
+   ],
+   "purpose": "right side of the battery column in the upper tier",
+   "premises": [
+    "P-BAT",
+    "P-XIAO",
+    "P-ROBUST"
+   ],
+   "simpler": "full height would block the XIAO (z 17.5-35) and the fingers fitting it",
+   "validation": "battery and XIAO overlap 0; wall check",
+   "change_when": "the XIAO moves"
+  },
+  {
+   "id": "F2-left-rib",
+   "what": "1.5 mm rib y 11.0..12.5: floor stub to z -41.5 and upper part z -32..17",
+   "problems": [
+    "the pack must not shift left into the DFR1202 wing"
+   ],
+   "purpose": "left side of the battery column, split around the lower-left fixing screw's driver corridor",
+   "premises": [
+    "P-BAT",
+    "P-ACCESS",
+    "P-ROBUST"
+   ],
+   "simpler": "a full rib blocks the lower-left driver corridor",
+   "validation": "access_check on fix y+16.1 z-36.5; battery overlap 0",
+   "change_when": "the fixing screw moves"
+  },
+  {
+   "id": "F5-dfr-rib",
+   "what": "rib thickened to y 13.2 over the DFR1202's height",
+   "problems": [
+    "the DFR1202 needs a flat face to take its foam tape"
+   ],
+   "purpose": "tape face for the DFR1202 at y 13.2",
+   "premises": [
+    "P-DFR",
+    "P-ROBUST"
+   ],
+   "simpler": "taping to the 1.5 rib alone leaves the board loose in y",
+   "validation": "DFR1202 and tape overlap 0",
+   "change_when": "the DFR1202 moves"
+  },
+  {
+   "id": "F2-front-stop",
+   "what": "floor block x -49.3..-47, y -12..8, z to -41",
+   "problems": [
+    "the pack must not slide forward onto the fixing screw heads"
+   ],
+   "purpose": "front stop at the pack's bottom",
+   "premises": [
+    "P-BAT",
+    "P-POSTS"
+   ],
+   "simpler": "the front wall alone lets the pack hit the screw heads",
+   "validation": "battery overlap 0, screw access pass",
+   "change_when": "the pack size changes"
+  },
+  {
+   "id": "F2-front-top-pillars",
+   "what": "two pillars x -52.3..-49.3, y -8..-4 and 1..5, from the pack top + play to the roof",
+   "problems": [
+    "the pack must not lift on a fall"
+   ],
+   "purpose": "front top stops clear of the lead exit in the middle of the pack top",
+   "premises": [
+    "P-BAT",
+    "P-ROBUST"
+   ],
+   "simpler": "full-width ribs (concept) block the leads when the pack slides in",
+   "validation": "battery overlap 0; lead exit open",
+   "change_when": "the pack's lead exit moves"
+  },
+  {
+   "id": "F5-dfr-ledge",
+   "what": "ledge under the DFR1202, z -15..-13.6",
+   "problems": [
+    "the DFR1202 must not slide down on its tape"
+   ],
+   "purpose": "carries the DFR1202's weight",
+   "premises": [
+    "P-DFR",
+    "P-ROBUST"
+   ],
+   "simpler": "tape alone creeps under load",
+   "validation": "DFR1202 overlap 0",
+   "change_when": "the DFR1202 moves"
+  },
+  {
+   "id": "F4-pololu-ribs",
+   "what": "rear rib and bottom ledge for the Pololu 2813 on the left outer wall",
+   "problems": [
+    "the Pololu must not slide on its tape"
+   ],
+   "purpose": "locates the Pololu in x and z",
+   "premises": [
+    "P-POLOLU",
+    "P-ROBUST"
+   ],
+   "simpler": "tape alone",
+   "validation": "Pololu overlap 0",
+   "change_when": "the Pololu moves"
+  },
+  {
+   "id": "F6-xiao-ledge",
+   "what": "ledge under the XIAO on the right wing wall",
+   "problems": [
+    "the XIAO must not slide down on its tape and its USB-C must stay at the cap window"
+   ],
+   "purpose": "carries and locates the XIAO",
+   "premises": [
+    "P-XIAO",
+    "P-ROBUST"
+   ],
+   "simpler": "tape alone moves the USB-C off the window",
+   "validation": "XIAO overlap 0; USB plug clear",
+   "change_when": "the XIAO moves"
+  },
+  {
+   "id": "F11-bosses",
+   "what": "four cap screw bosses dia 5: high left (29, 19) and high right (-29, 39) 5 mm long; low (+-9, -38.9) 3.5 mm plus the 0.81 tab recess, with feet to the floor",
+   "problems": [
+    "the cap must be held without snaps"
+   ],
+   "purpose": "screw bosses for the cap",
+   "premises": [
+    "P-ROBUST",
+    "P-SCREWS",
+    "P-PAD",
+    "P-FIT",
+    "P-FLIGHT"
+   ],
+   "simpler": "snaps or a slide-on cap are banned; tape cannot be reopened",
+   "validation": "fit_check engagement; access_check; battery gap 0.24 at the low bosses",
+   "change_when": "the cap fixing changes"
+  },
+  {
+   "id": "F11-pilots",
+   "what": "M2 pilot 1.95 through each boss, 0.4 mouth chamfers",
+   "problems": [
+    "the cap screws need thread engagement"
+   ],
+   "purpose": "self-tapping pilot for the M2 cap screws",
+   "premises": [
+    "P-FIT",
+    "P-SCREWS"
+   ],
+   "simpler": "inserts are not in this design's fit practice for M2 in PLA",
+   "validation": "fit_check H2S and X1C",
+   "change_when": "PRINT-FIT changes"
+  },
+  {
+   "id": "fixing-holes",
+   "what": "four M2 clearance holes 2.5 through the front wall at the pack post positions",
+   "problems": [
+    "the backpack must fix to the OpenRB pack posts"
+   ],
+   "purpose": "pass the four M2 x 6 into the posts",
+   "premises": [
+    "P-POSTS",
+    "P-FIT"
+   ],
+   "simpler": "these are today's fixing points",
+   "validation": "fit_check; access_check fix screws",
+   "change_when": "the posts move"
+  },
+  {
+   "id": "F8-pad-pockets",
+   "what": "floor pocket 7.1 + 1.0 wide, 8.7 + 0.5 long, 0.81 deep, and back-face tab recess to 11.2 high, at y +-9",
+   "problems": [
+    "the dock must reach charging contacts under the seated robot"
+   ],
+   "purpose": "seat the two Keystone 615 L pads flush under the floor, tab clamped by the cap",
+   "premises": [
+    "P-PAD",
+    "P-SEAT",
+    "P-FIT"
+   ],
+   "simpler": "pads glued on the floor stand 0.81 proud and come off",
+   "validation": "pad overlap 0; wall check (floor 2.1 leaves 1.29 under the pocket)",
+   "change_when": "the pad part changes"
+  },
+  {
+   "id": "F10-lead-slot",
+   "what": "3.5 mm slot in the left wing's step floor, y 22.6..26.1, open to the back to x -60",
+   "problems": [
+    "plug 3 and plug 4 leads must leave the box without threading a connector through a hole"
+   ],
+   "purpose": "leads laid in from behind",
+   "premises": [
+    "P-PLUGS"
+   ],
+   "simpler": "a closed hole needs the plug threaded through",
+   "validation": "bought parts clear of the slot",
+   "change_when": "the plug route changes"
+  },
+  {
+   "id": "shell-keepout",
+   "what": "front-wall cut around the shell rear lips' projection, grown 0.5",
+   "problems": [
+    "the shell lips reach behind x -45 where the front wall sits"
+   ],
+   "purpose": "no overlap with the shells",
+   "premises": [
+    "P-SHELL"
+   ],
+   "simpler": "today's front plate shape (taken from the shells, 0.5 gap)",
+   "validation": "mating overlap 0",
+   "change_when": "the shells change"
+  },
+  {
+   "id": "flight-keepout",
+   "what": "front-wall cut around the wing plate cheeks' (y, z) footprint, grown 0.5, through x -47.5..-44",
+   "problems": [
+    "in flight the backpack sits 6.9 mm back on the wing plate, whose cheeks reach 1.55 mm into the frame's front wall"
+   ],
+   "purpose": "no overlap with the flight pack's wing plate",
+   "premises": [
+    "P-FLIGHT"
+   ],
+   "simpler": "today's frame front shape (it has the same opening; the concept checked only boxes)",
+   "validation": "checks.py flight overlap 0",
+   "change_when": "the wing plate changes"
+  }
+ ],
+ "cap": [
+  {
+   "id": "F11-cap-plate",
+   "what": "back plate x -75.55..-73.85 over both tiers with the lower tier's chamfer",
+   "problems": [
+    "the box must close over the pack and boards"
+   ],
+   "purpose": "the cap",
+   "premises": [
+    "P-ENV",
+    "P-ROBUST"
+   ],
+   "simpler": "an open back leaves the pack exposed",
+   "validation": "contract x_min; frame-cap overlap 0",
+   "change_when": "the outline changes"
+  },
+  {
+   "id": "F2-cap-ribs",
+   "what": "two ribs y -19..-17 and 6..8 from z -34 to the pack top, through the foam to x -70.3",
+   "problems": [
+    "the pack must not move back"
+   ],
+   "purpose": "rear stop of the pack through its foam pad",
+   "premises": [
+    "P-BAT",
+    "P-ROBUST"
+   ],
+   "simpler": "foam alone lets the pack move on a fall",
+   "validation": "battery overlap 0",
+   "change_when": "the pack size changes"
+  },
+  {
+   "id": "F2-cap-top-tabs",
+   "what": "tabs on the ribs over the pack top to x -66",
+   "problems": [
+    "the pack must not lift on a fall (rear side)"
+   ],
+   "purpose": "rear top stops clear of the lead exit",
+   "premises": [
+    "P-BAT",
+    "P-ROBUST"
+   ],
+   "simpler": "full-width ribs block the leads",
+   "validation": "battery overlap 0",
+   "change_when": "the lead exit moves"
+  },
+  {
+   "id": "F11-cap-holes",
+   "what": "four M2 clearance holes 2.5 at the boss positions, 0.4 mouth chamfers",
+   "problems": [
+    "the cap screws pass the cap"
+   ],
+   "purpose": "clearance for the cap screws",
+   "premises": [
+    "P-FIT",
+    "P-SCREWS"
+   ],
+   "simpler": "none",
+   "validation": "fit_check; access_check",
+   "change_when": "the bosses move"
+  },
+  {
+   "id": "F7-button-hole",
+   "what": "16.3 mm hole at (y 19.3, z 30.2) for the E-Switch PV6F240SS-331; the box keeps 22 mm behind the cap face free for its body, terminals and 2 mm wires, and a 22 x 3 nut circle",
+   "problems": [
+    "the robot needs a lit power button on the back"
+   ],
+   "purpose": "panel hole for the button, ring facing back",
+   "premises": [
+    "P-BTN",
+    "P-FIT",
+    "P-POSTS"
+   ],
+   "simpler": "the Adafruit 560 needs 35.3 mm behind the panel (fits nowhere without growth)",
+   "validation": "button envelope overlap 0 with the frame and fixing screw heads; fit_check locating pair",
+   "change_when": "the button part changes"
+  },
+  {
+   "id": "F6-usb-window",
+   "what": "7.5 (y) x 13 (z) window at the XIAO USB-C",
+   "problems": [
+    "the XIAO must be flashed without opening the cap"
+   ],
+   "purpose": "USB-C plug access",
+   "premises": [
+    "P-XIAO"
+   ],
+   "simpler": "opening the cap for each flash",
+   "validation": "USB plug envelope overlap 0",
+   "change_when": "the XIAO moves"
+  }
+ ],
+ "no_printed_feature": {
+  "F9": "Schottky 1N5822 on the charge lead, heat-shrunk and laid in the F3 lead bay; its envelope is checked for overlap, no printed holder",
+  "F12": "the third MR30 pin carries the A7Z OFF line; wiring only"
+ }
+}
