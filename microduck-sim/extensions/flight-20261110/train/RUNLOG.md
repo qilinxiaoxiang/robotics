@@ -1941,3 +1941,62 @@ Pack start, cold against prewarmed (AB has the gain flag, no pack flag):
 Reading: the gain flag did not close the walk with the pack; which saves fall mid-walk (60, 120, 160: 10 of 10 near
 6 s) and which fall only after the stop (140) changes from save to save, so no save is a candidate. Same trade as
 s3aw_60 and smoke p1: prewarm cures the no-pack stepping and breaks the pack start.
+
+## 2026-11-20 08:28 run AB read: two separate pack faults, the saves differ in which one they have; weight means do not help
+
+Mac mini chain `train/ts3_ab_chain.sh` (detached, heartbeat `logs/ts3_ab_chain_heartbeat.txt`, START 08:24:09, DONE
+08:27:09; outputs `logs/ts3_ab_chain_{avg,cells,s140,mode}.out`, copied back). Evaluation only. Index rule: the
+joint names come from the tick rows and the policy metadata; the `[order]` assertion of `ts3_jump_where.py` ran in
+every jump read (left_knee and right_knee action against position, corr 0.94 / 0.95).
+
+1. s3AB_140, the two failed lines (local episodes = the gate's episode; gain 400 reproduces the gate exactly).
+- Gain 200, heading hold on, 20 seeds: 7 falls, 4 during the walk (8.14, 9.6, 9.62, 11.4), 3 after the stop (18.64,
+  18.66, 18.98). Heading hold off: 10 falls, all after the stop (18.14 to 19.16). So the after-stop fall does not
+  need the turn command; it is there with a zero turn command, 1.1 to 2.2 s after the walk command ends.
+- Gain 400, 20 seeds: 12 falls, all at 3.08 to 3.28 s; heading hold off 14 falls at 3.10 to 3.40 s. The gain flag
+  arrives (`gain_flag_value` 1.0; 0.0 at gain 200). The walk policy starts at 2.0 s, the robot covers 9 to 11 cm in
+  the first second, then within three ticks (3.00 to 3.06 s), just after a touch-down, left_knee, right_knee,
+  left_hip_pitch, left_ankle and right_hip_pitch jump by 0.5 to 1.09 rad and it falls at 3.14 s (seeds 0, 1; 6
+  touch-downs before the fall). Seeds that pass 3.3 s walk on to the end (seeds 2, 3).
+- Same as the m3s-family teachers? Not the same picture. Gate records: m3s_550 to m3s_999 fall 10 of 10 at 3.8 to
+  5.8 s with the pack at gain 400, but AB's own teacher t3h_750 falls 0 of 10 there. One trace each (seed 0):
+  m3s_650 falls at 3.88 s after 22 touch-downs in 1.9 s with one 0.50 rad knee step (fast patter, no burst);
+  s3AB_140 has 6 touch-downs and a multi-joint burst. The 3.1 s fall is a student fault (inference from one trace
+  each plus the tables). It recurs across runs and saves: s3AB_40 (3.1 to 3.82), s3AB_80 (3.12 to 4.28), s3a_20
+  (2.92 to 3.74), s3a_160 (2.86).
+
+2. Why the saves swing.
+- Schedule actually used (`kaggle/out/ts3s-t3h-750-ab/runs/ts3s-t3h-750-ab/progress.json`): lr falls linearly from
+  1e-3 to 2e-4 over 160 iterations: 5e-4 at 100, 4e-4 at 120, 3e-4 at 140, 2e-4 at 160. Never near zero.
+- Student-driven share: 60 % at save 20 (beta 0.4), 100 % from save 40 on.
+- Training readings are smooth and monotone, they do not show the swing: pack mse 0.0139 / 0.0050 / 0.0034 / 0.0028
+  / 0.0024 / 0.0023 / 0.0021 / 0.0020 (saves 20 to 160); rows in the first second after a stop, low gain: 0.0148 /
+  0.0066 / 0.0044 / 0.0035 / 0.0029 / 0.0030 / 0.0026 / 0.0027, high gain 0.0136 down to 0.0018; no-pack turn-case
+  distance to walk61 0.650 down to 0.227; student speed 0.036 up to 0.066 (teacher 0.082); falls per env-minute
+  23.2 down to 10.3 (teacher 8.0). The worker has no separate reading for pack rows with a turn command; they are
+  inside the pack walk rows.
+- s3AB_120 and s3AB_160 "not walking" is not a standing mode. Traces at gain 200 (seeds 0, 1): they walk 8 to 12 cm
+  per second for two seconds, the heading hold's turn command reaches its limit 2.0 rad/s in second 4, the trunk
+  pitches back (mean pitch +12 to +23 deg) and they fall at 5.66 to 6.34 s. The gate's speed 0.006 is the speed of
+  episodes that fell. s3AB_140 gets the same saturated turn command (2.00 in second 4, 1.9 for five seconds) and
+  walks through it at 6 to 7 cm per second.
+- So there are two faults and each late save has one of them: the saturated turn at gain 200 (120, 160; the same
+  fault as s3a_60, RUNLOG 05:02) or the burst one second after walk onset at gain 400 plus the after-stop fall
+  (140). Saves 20 iterations apart sit on different sides (inference: lr 3e-4 to 5e-4 is still large enough to move
+  between them; the training readings cannot see either fault).
+
+3. Weight means (`train/ts3_avg_saves.py`, plain mean of the float tensors, exported like a save; relative spread
+of the saves around the mean: median 0.034 for four saves, 0.023 for three). G1: s3ABm4_160 (100 to 160) 0.163,
+s3ABm3_160 (120 to 160) 0.161; members 0.176 / 0.164 / 0.169 / 0.159. Gate cells, 10 seeds each on the Mac mini:
+- pack walk gain 200: m4 8 falls (6.34 to 8.64 and 18.24), m3 10 falls (6.04 to 14.36); s3AB_140 2 falls (9.6,
+  18.98; the gate's own 10 episodes gave 4, all after the stop).
+- pack walk gain 400: m4 2 falls (3.26, 17.96), m3 1 fall (3.18); s3AB_140 6 falls (3.10 to 3.28).
+- no pack standing gain 400, jumps per episode: m4 17 12 14 22 6 31 8 0 0 15 (seed 5 fell at 3.28 s), m3 29 8 15 17
+  19 0 17 0 0 6; s3AB_140 0 in all ten.
+The means are not steadier than their members: they take the gain-200 turn fall and the standing stepping from 120
+and 160, and only the gain-400 start improves. A weight average over the run plus lr to zero is therefore not
+supported by this test; nothing to change in the launch line on that account.
+
+4. Pack start, cold against prewarmed: in the entry above (08:21). Prewarm is not a candidate fix.
+
+No Modal or Kaggle job. Metered 45.60 at 08:21.
