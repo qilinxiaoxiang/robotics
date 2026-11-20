@@ -2245,3 +2245,35 @@ audit cell disagree; then run the smoke with two added pass conditions on steppi
   `logs/ts3_rl_heartbeat.txt`. Added to it: `zcmd`, stepping at a zero command (no pack / pack x gain 200 / 400,
   two env seeds) for the start and each chain's last save (annealed chains: imitation weight 0.1 there). First
   PPO iteration ran: `[rl] it 141` rows 49247, value loss 1.473, imitation loss 0.00309, actor frozen (stage 0).
+
+## 2026-11-20 12:27 PPO smoke read; Modal run ts3rl-a1 launched on the coordinator's order (annealed variant)
+
+- Smoke `ts3_rl_smoke.sh` DONE 12:26:09 (`logs/ts3_rl_heartbeat.txt`, stage logs `logs/ts3_rl_*`). No NaN in any
+  stage. Gate cells on each chain's last save (iteration 169, 24 PPO iterations from s3AB_140), 10 seeds; the
+  start s3AB_140 has pack walk 4 of 10 at gain 200 and 6 of 10 at gain 400 (`logs/gates_s3AB_140_score.log`):
+  - f1 (fixed 0.5 / 0.5, seed 1): gain 200 8 of 10, gain 400 1 of 10; no-pack stand jumps 0 0 0 0 0 0 2 0 0 1
+  - f2 (fixed, seed 2): gain 200 5 of 10, gain 400 2 of 10; jumps 0 1 1 0 1 0 1 3 0 1
+  - a1 (imitation 0.5 -> 0.1, seed 1): gain 200 1 of 10, gain 400 0 of 10; jumps 0 0 3 0 0 0 0 0 0 0
+  - a2 (annealed, seed 2): gain 200 7 of 10, gain 400 0 of 10; jumps 0 0 0 0 0 0 1 0 0 0
+  Gain 400 improved in all four; gain 200 is worse than the start in three of four, and the two seeds of one
+  variant differ more (1 and 7) than the variants do. The smoke does not separate annealed from fixed.
+- Stepping at a zero command (`out/rl_zcmd/`, footfalls per env-second, seeds 1 / 2; start in brackets). No pack,
+  gain 200 [1.701 / 1.692]: f1 1.805 / 1.723, f2 1.736 / 1.710, a1 1.600 / 1.609, a2 1.630 / 1.924. No pack, gain
+  400 [1.969 / 2.095]: f1 2.668 / 2.245, f2 1.963 / 1.841, a1 1.696 / 1.436, a2 2.377 / 2.479. Pack, gain 200
+  [0.151 / 0.183]: f1 0.133 / 0.192, f2 0.173 / 0.186, a1 0.183 / 0.206, a2 0.174 / 0.109. Pack, gain 400 [0.196 /
+  0.219]: f1 0.181 / 0.172, f2 0.198 / 0.219, a1 0.230 / 0.223, a2 0.240 / 0.219. Above the start's band at no
+  pack / gain 400 in f1 and a2 (one seed of each variant), not in f2 and a1.
+- Speed: Mac mini CPU, 512 envs, 64 s per iteration with the PPO term (0.0156 it/s).
+- Coordinator 12:20 (Shawn: use the compute): launch the annealed variant on Modal now, do not hold for a2 unless
+  NaN or 8 or more falls of 10 at gain 200 (a2: 7). Launched 12:24:08 with `ts3_rl_modal_launch.sh`: app
+  ap-yKde88yk8nbGBBc9f3n1kI (microduck-flight-ts3rl-a1), call fc-01M7WZSGVKWKHAX09WVEAQSW3P, T4, from
+  `init/s3AB_140.pt`, iterations 140 to 300, save every 20, imitation 0.5 -> 0.1 + PPO 0.5, lr 1e-4, clip 0.1,
+  5 critic-only iterations, env universal5, rewards unchanged. `flight_modal.py` now ships `init/*.pt`.
+- Limits in the cloud job: --max-iters 300, --max-hours 2.5, --max-dollars 2.2, function timeout 3.0 h per attempt
+  = 2.72 USD at 0.907 USD/h. The function has retries=2 and the worker's clock restarts per attempt, so a crashed
+  attempt can start another 3.0 h one; that case is bounded only by the local bill guard.
+- Worst case: 45.54 + 2.72 + 8 saves x 0.07 = 48.82 (one attempt), under 49.5.
+- Bill guard restarted 12:23:41 for 6 h (pid 35987; the old one had written DONE 12:14:58). Watcher
+  `ts3_rl_watch.py` (new; pid 37407, parent 1) scores every save as it lands, heartbeat
+  `logs/ts3rl_a1_heartbeat.txt`; caffeinate holds idle sleep off while it lives (a closed lid still suspends it).
+  modal_watch 12:26: live apps 1 (this one).
