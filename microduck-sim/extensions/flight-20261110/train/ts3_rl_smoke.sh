@@ -12,6 +12,9 @@
 #             stages + PPO 0.5 (seeds 1, 2). Each: 3 stages of at most 9 minutes resuming the last save, lr 1e-4,
 #             clip 0.1. Then the gate cells s3AB_140 fails or must keep, on the last save (10 seeds each): pack
 #             walk at gain 200 and 400, no pack standing at gain 400.
+#   zcmd      coordinator's addition 09:31: stepping at a zero command (footfalls, action step per tick) in the
+#             training env for no pack / pack x gain 200 / 400, for the start and each chain's last save, two env
+#             seeds each -> train/out/rl_zcmd/, logs train/logs/ts3_rl_zcmd_*.log, one heartbeat line each.
 # Output /tmp/ts3_rl/<tag>/ (model_<it>.pt/.onnx, progress.csv), stage logs /tmp/ts3_rl/<tag>_stage<k>.log (copied to
 # train/logs/ts3_rl_<tag>_stage<k>.log), cells train/logs/ts3_rl_<tag>_cells.out, heartbeat
 # train/logs/ts3_rl_heartbeat.txt (last line DONE or FAILED).
@@ -42,12 +45,28 @@ stage() {  # stage <log name> <worker flags...>
   grep -qE "Traceback|Error" $OUT/$name.log && { hb "FAILED $name: $(grep -E 'Error' $OUT/$name.log | tail -1 | cut -c1-300)"; exit 1; }
   return 0
 }
+MODELS=$M/microduck_rl/cmu/whole/runtime-overlay/models
+zcmd() {  # zcmd <label> <student .pt>: stepping at a ZERO command in the training env (student_audit.py, student only),
+          # no pack / pack x gain 200 / 400, seeds 1 and 2: footfalls per env-second and action step per tick
+  local LABEL=$1 PT=$2
+  cd $M/microduck_rl
+  for LOAD in none full; do for GAIN in 1.0 2.0; do for SD in 1 2; do
+    zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/student_audit.py --out $FL/train/out/rl_zcmd \
+      --load $LOAD --gain $GAIN --cmd 0.0 --teacher-onnx $A/ts3t_t3h_750.onnx --student-pt $PT \
+      --stand-onnx $MODELS/stand61.onnx --walk-onnx $MODELS/walk61.onnx --gain-flag-col 59 \
+      --manifest $FL/train/manifests/flightpack-none.json --audit $A/existing-model-mass-audit.json \
+      --policies student --tag _${LABEL}_s$SD --seed $SD --num-envs 96 --steps 500 \
+      > $FL/train/logs/ts3_rl_zcmd_${LABEL}_${LOAD}_g${GAIN}_s$SD.log 2>&1
+    hb "zcmd $LABEL $LOAD gain $GAIN seed $SD: $(grep -E '^\[saudit\] (none|full)' $FL/train/logs/ts3_rl_zcmd_${LABEL}_${LOAD}_g${GAIN}_s$SD.log | sed -E 's/.*student: //' | cut -c1-200)"
+  done; done; done
+}
 last() { ls $OUT/$1/model_*.pt 2>/dev/null | grep -v best | sed -E 's/.*model_([0-9]+)\.pt/\1/' | sort -n | tail -1; }
 
 stage base_stage0 --run-name base --seed 1 --resume-pt $FL/train/ckpt/s3AB_140/model_140.pt --max-iters 145 \
   --save-interval 5 --lr 0 --lr-final 0 --bc-w 0.5 --rl-critic-warmup 100 --max-hours 0.15
 B=$(last base)
 [ -z "$B" ] && { hb "FAILED stage 0: no save"; exit 1; }
+zcmd start $FL/train/ckpt/s3AB_140/model_140.pt
 
 for TAG in f1 a1 f2 a2; do
   SEED=${TAG[2]}
@@ -70,6 +89,7 @@ for TAG in f1 a1 f2 a2; do
   cp $OUT/$TAG/model_$L.onnx $FL/train/ckpt/$D/walk61.onnx
   cp $OUT/$TAG/model_$L.onnx $FL/train/ckpt/$D/stand61.onnx
   cp $OUT/$TAG/model_$L.pt $FL/train/ckpt/$D/model_$L.pt
+  zcmd $TAG $FL/train/ckpt/$D/model_$L.pt   # annealed chains: the last save is the lowest imitation weight reached
   cd $FL
   {
     for K in 200 400; do zsh $LK run $PY train/ts3_stop_where.py $D count=10 kp=$K 2>&1 | tail -2 | cut -c1-400; done

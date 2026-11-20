@@ -2203,3 +2203,45 @@ Order: proposal A agreed; code, then audit, then smoke; "any failing cell stops 
   earns 2 to 5 per second.
 - Stopped per the order. Not started: `ts3_rl_smoke.sh`, Kaggle preparation, any Modal job. Rewards unchanged.
   Mac mini idle, Modal live apps 0, metered 45.56 (bill heartbeat 09:16:54).
+
+## 2026-11-20 09:53 failing walk cell explained: gain flag was fed (1.0); the env's action lag is what stops the student; PPO smoke started
+
+Coordinator 09:31: check the gain flag in `student_audit.py`; if correct, find why the gate's none_g400_walk and the
+audit cell disagree; then run the smoke with two added pass conditions on stepping at a zero command.
+- Gain flag (`logs/saudit_abl_flag.log`, env 0, ticks 0, 1, 120, 121 of the no pack / gain 400 / command 0.25
+  cell): column 59 lies in the obs term `body_command` (name from the env's observation manager); the raw obs
+  value there was 0.0437 and 0.0292; the value fed to the student was 1.0000 at every printed tick, min and max
+  over all envs 1.0000 / 1.0000, with `env._kp_scale[0]` 2.0000. Same line of code as the worker
+  (`o[:, col] = env._kp_scale - 1`). The audit's gain-400 student numbers stand.
+- Ablation (`ts3_saudit_abl.sh`, `out/saudit_abl/`, 64 envs x 750 steps, student and teacher only, heartbeat
+  `logs/ts3_saudit_abl_heartbeat.txt` DONE 09:50:23). Base = pushes zero, friction / encoder bias / COM / joint
+  friction / armature draws pinned to the middle, observation noise off, the delta's `loop_delay` removed, and a
+  2 s stand61 lead-in at zero command after every reset (the gate episode's shape; the student starts cold after
+  it). Then one factor back on at a time. Reward per second, falls per env-minute, forward speed (3 s or more
+  after the command):
+  - a0 all off + lead-in: student 7.947, 0.52, 0.0513; teacher 10.610, 0.29, 0.1110
+  - a1 + pushes: student 7.597, 1.15, 0.0507; teacher 9.809, 0.22, 0.0973
+  - a2 + randomisation: student 7.913, 0.75, 0.0526; teacher 10.547, 0.29, 0.1106
+  - a3 + observation noise: student 8.684, 0.52, 0.0595; teacher 10.497, 0.22, 0.1082
+  - a4 + loop delay (action lag 4 to 9 physics steps, `loop_delay` of universal5): student 1.036, 17.78, 0.0241;
+    teacher 10.328, 1.85, 0.1100. stand61 itself fell 72 times in the lead-ins of the student pass (10 without).
+  - a5 + head commands: numbers identical to a0, so the `--fixed-head` switch changed nothing in the env; head
+    commands were in effect on in every stage and the student walks with them.
+  - a6 all off, no lead-in: student 7.747, 0.31, 0.0422; teacher 10.766, 0.00, 0.1025
+  - a7 everything on + lead-in: student -0.653, 21.47, -0.0172; teacher 8.960, 5.48, 0.1051
+- Reading: the student walks without the pack at gain 400 in the training env once the action lag is removed,
+  with or without the stand lead-in, pushes, randomisation or noise. The action lag alone stops it; the teacher
+  holds under the same lag. So the cell is a real weakness of s3AB_140 in its own training env, and the reward
+  ranks the teacher far above every degenerate policy there. Inference, not measured: the gate's probe models the
+  loop timing differently (its own delay and dropped reads), under which this save walks.
+- Kaggle preparation done (no push): `kaggle_flight.py` whitelist gets run AB's flags and the `--rl-*` / `--bc-w*`
+  flags; asset `init/s3AB_140.pt`. The follow-up `ts3_after_pair.py` already takes a second student run
+  (`student2=<run>:<tag>`). Earlier Kaggle Mamba student (ts3s-t3h-750-m, 4096 envs, T4): 160 iterations in
+  6889 s = 43 s per iteration (`kaggle/out/ts3-teach-k/runs/ts3s-t3h-750-m/run_record.json`).
+- `student_audit.py` additions: `--policies`, `--tag`, `--seed`, the ablation switches, `--print-flag`, and per
+  policy footfalls per env-second (first contacts of the air-time reward's own foot sensor) and action step per
+  tick (largest tick-to-tick action change), both from 0.5 s after a reset on.
+- Smoke `ts3_rl_smoke.sh` started on the Mac mini 09:50:49 (pid 38110, parent 1), heartbeat
+  `logs/ts3_rl_heartbeat.txt`. Added to it: `zcmd`, stepping at a zero command (no pack / pack x gain 200 / 400,
+  two env seeds) for the start and each chain's last save (annealed chains: imitation weight 0.1 there). First
+  PPO iteration ran: `[rl] it 141` rows 49247, value loss 1.473, imitation loss 0.00309, actor frozen (stage 0).
