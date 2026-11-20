@@ -1886,3 +1886,21 @@ Chain r1 06:50:30 to 07:18:27 (`--state-reset-p 0.01`, same start and stages as 
   file's `pack_flag_col` metadata (1.0 when the episode's manifest carries more than 0.02 kg) like the gain flag,
   also during prewarm calls. Evidence only: whether the robot is told pack and gain is Shawn's decision.
 - Run AB at 07:16: iteration 80, 0.0245 it/s, pack mse 0.00282, no-pack distance to walk61 0.263.
+
+## 2026-11-20 07:51 both flags (smoke p1, evidence only): the cold start is clean in both cases; prewarm then hurts
+
+Chain p1 07:19:48 to about 07:47 (pack flag column 60, gain flag column 59, pack stop case; same start and stages
+as c0). Flags fed from the file's metadata (counters in the output: pack_flag_value 1.0 with the pack, gain_flag_value
+0.0 / 0.5 / 1.0 at gain 200 / 300 / 400). G1 0.184. Batch part `ts3_batch_s3a_f1.sh p1`. Whether the robot is told
+pack and gain is Shawn's decision; this is an experiment.
+- Cold (no prewarm). Standing without the pack at gain 400, seeds 0 / 1 / 2: 0 / 0 / 0 gate jumps, no fall; first
+  call from the empty state 0.055 rad rms from walk61 (c0 0.133, s3a_60 0.204). Pack, first 2 s: 0 falls of 20 at
+  gain 200, 300 and 400. So with both flags neither start fault appears, without any prewarm.
+- Cold, pack walk, heading on, 20 seeds, falls during the walk + after the stop: gain 200: 12 + 7 (first at
+  6.86 s); gain 300: 7 + 2; gain 400: 0 + 0. Heading off, gain 200: 0 + 14. The gain-200 walk and stop are not
+  solved by the flags in three stages.
+- Prewarm 10 with the flags fed during the prewarm calls: without the pack the same 0 / 0 / 0 jumps (first call
+  0.033); with the pack 20 falls of 20 at 0.60 to 0.64 s at every gain and with heading hold off. Ten calls on one
+  repeated observation with the pack flag set leave a state the student falls from at once.
+- Answer to the question: flags plus prewarm do NOT remove both; flags alone (cold) do remove both start faults in
+  this smoke, and prewarm must then not be used. One chain of three stages; the walk at gain 200 stays open.
