@@ -103,7 +103,7 @@ def main():
                 continue
             for d in dirs:
                 rc, out = sh([GPY, "train/ts3_gates.py", "score", d, "--teacher"], log=T / f"logs/gates_{d}_score.log", cwd=T.parent)
-                fails = sum(1 for line in out.splitlines() if " FAIL" in line and "verdict" not in line)
+                fails = sum(1 for line in out.splitlines() if line.startswith("FAIL"))
                 hb(f"GATE {'PASS' if rc == 0 else 'FAIL'} {d}" + ("" if rc == 0 else f" {fails} lines") + f" (logs/gates_{d}_score.log)")
                 scored[arm].add(int(d.rsplit("_", 1)[1]))
         if all(stopped.values()):

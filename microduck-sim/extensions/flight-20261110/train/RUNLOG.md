@@ -1183,3 +1183,18 @@ under 70.00 USD metered (workspace limit 75).
   `kaggle_flight.py quota` (no zone shown). Plan for the rest: the first pair needs about 1.1 h more, this pair about
   1.8 h, leaving about 6 h for two student kernels (about 2 h each) before the reset.
   Follow-up `ts3_after_kaggle.sh` (detached, pid 8519, parent 1; heartbeat `logs/ts3_teach_cd_heartbeat.txt`).
+- 20:18 student path smoked in the `universal5` env on the Mac mini (`ts_round.sh distill mamba 3 64 100
+  ckpt/m3p_125/walk61.onnx universal5`): gain range applied, 3 iterations, ONNX within 3e-7 of the torch student.
+  `logs/distill_smoke_mamba.log`.
+- 20:12-20:21 first gate results, saves 125 and 250 of the three Modal arms (teacher gates G2 to G5, 10 seeds;
+  `out/gates/gates_m3{w,p,q}_{125,250}.json`, `logs/gates_m3*_score.log`). No save passes yet; the warm-up ends at
+  100, so these are 25 and 150 actor iterations.
+  - `m3w_250` (walk61 start): every no-pack line passes, the gain400 lines included (walking 2 falls of 10 or fewer,
+    as walk61), and both gain400 pack lines pass. It fails only the nominal-gain pack cells: 10 of 10 falls at
+    0.76 s in both. (`m3w_125`: 9 lines, pack falls 10 of 10 everywhere.)
+  - `m3p_250` (anchor 0.5) and `m3q_250` (anchor 6.0), ts_start start: 5 failed lines each; standstill passes in
+    all four cells (at 125 gain400 standstill fell 6 and 5 of 10), walking fails: no-pack gain400 9 and 8 falls of
+    10, pack 10 and 8 of 10, pack gain400 5 and 7 of 10. At 125 pack walking still had 0 falls: the first 150 actor
+    iterations made walking with the pack worse in both.
+  - The watcher's "0 lines" in the heartbeat was a counting error (fixed in the file; the running copy keeps it);
+    the score logs hold the lines.
