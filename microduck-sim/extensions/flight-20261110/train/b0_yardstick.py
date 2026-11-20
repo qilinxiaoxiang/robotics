@@ -48,7 +48,10 @@ NONE = str(HERE / "manifests/flightpack-none.json")
 POL = {"deployed": (str(OVERLAY / "models"), ("stand", "walk")),
        "s2r6_4": (str(HERE / "ckpt/s2r6_4"), ("stand", "walk")),
        "ft3": (str(OVERLAY / "models-ft3-it999"), ("walk",)),
-       "t1": (str(HERE / "ckpt/ref_t1"), ("walk",))}
+       "t1": (str(HERE / "ckpt/ref_t1"), ("walk",)),
+       # attempt 2, specificity: t2b iteration 850 walked calmly on the robot with the default head on 2026-10-30
+       # (1.67 jumps/s, 8.7 deg, no fall; jitter-20261018/README.md). Not part of verdict(); run with only=t2b.
+       "t2b": (str(HERE / "ckpt/ref_t2b"), ("walk",))}
 COND = {"nominal": ([], {}),
         "gain400": (["--kp-rl", "400"], {}),
         "jitter": (["--bam-friction-scale", "1.4"], {"FLIGHT_GYRO_NOISE_DQ": "0.25"})}

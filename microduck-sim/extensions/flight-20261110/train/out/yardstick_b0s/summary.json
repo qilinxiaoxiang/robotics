@@ -1,0 +1,237 @@
+{
+ "stage": "B0",
+ "rule": {
+  "good_max_falls_in_window": 6,
+  "bad_min_extra_falls": 12,
+  "windows_s": {
+   "walk": 6.0,
+   "stand": 12.0
+  },
+  "jumps_limit": "max(1.5 x deployed, deployed + 2)"
+ },
+ "model_files_sha256_16": {
+  "deployed": {
+   "walk61.onnx": "e36332d383997d51",
+   "stand61.onnx": "1569268713e40dee"
+  },
+  "s2r6_4": {
+   "walk61.onnx": "3b509e76fb33fc30",
+   "stand61.onnx": "3b509e76fb33fc30"
+  },
+  "ft3": {
+   "walk61.onnx": "c94c5e21d39c6adf",
+   "stand61.onnx": "1569268713e40dee"
+  },
+  "t1": {
+   "walk61.onnx": "8ce165fd2f1a02e8",
+   "stand61.onnx": "1569268713e40dee"
+  },
+  "t2b": {
+   "walk61.onnx": "94480e971e9bf4fb",
+   "stand61.onnx": "1569268713e40dee"
+  }
+ },
+ "conditions": {
+  "nominal": {
+   "flags": [],
+   "env": {}
+  },
+  "gain400": {
+   "flags": [
+    "--kp-rl",
+    "400"
+   ],
+   "env": {}
+  },
+  "jitter": {
+   "flags": [
+    "--bam-friction-scale",
+    "1.4"
+   ],
+   "env": {
+    "FLIGHT_GYRO_NOISE_DQ": "0.25"
+   }
+  }
+ },
+ "cells": {
+  "t2b_nominal_walk": {
+   "cell": "t2b_nominal_walk",
+   "seeds": 60,
+   "seed0": 3000,
+   "window_s": 6.0,
+   "falls_in_window": 0,
+   "falls_whole_episode": 0,
+   "fall_times": [],
+   "falls_in_window_per_block_of_10": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "falls_in_window_wilson95": [
+    0.0,
+    0.06
+   ],
+   "jumps_per_10s_median": 2.0,
+   "jumps_per_10s_quartiles": [
+    1.5,
+    2.5
+   ],
+   "speed_mean_upright": 0.1198,
+   "max_tilt": 7.6
+  },
+  "t2b_gain400_walk": {
+   "cell": "t2b_gain400_walk",
+   "seeds": 60,
+   "seed0": 3000,
+   "window_s": 6.0,
+   "falls_in_window": 4,
+   "falls_whole_episode": 25,
+   "fall_times": [
+    3.96,
+    4.7,
+    4.82,
+    5.06,
+    6.14,
+    6.28,
+    6.48,
+    7.74,
+    9.8,
+    11.88,
+    12.2,
+    13.4,
+    13.6,
+    14.02,
+    16.9,
+    17.2,
+    17.86,
+    18.58,
+    18.62,
+    18.66,
+    18.7,
+    19.08,
+    19.32,
+    19.38,
+    19.8
+   ],
+   "falls_in_window_per_block_of_10": [
+    0,
+    1,
+    0,
+    1,
+    0,
+    2
+   ],
+   "falls_in_window_wilson95": [
+    0.026,
+    0.159
+   ],
+   "jumps_per_10s_median": 25.5,
+   "jumps_per_10s_quartiles": [
+    21.5,
+    35.5
+   ],
+   "speed_mean_upright": 0.0712,
+   "max_tilt": 56.4
+  },
+  "t2b_jitter_walk": {
+   "cell": "t2b_jitter_walk",
+   "seeds": 60,
+   "seed0": 3000,
+   "window_s": 6.0,
+   "falls_in_window": 22,
+   "falls_whole_episode": 57,
+   "fall_times": [
+    2.98,
+    3.16,
+    3.62,
+    3.94,
+    4.1,
+    4.18,
+    4.22,
+    4.22,
+    4.24,
+    4.26,
+    4.42,
+    4.44,
+    4.48,
+    4.62,
+    4.64,
+    4.72,
+    5.08,
+    5.12,
+    5.36,
+    5.5,
+    5.68,
+    5.98,
+    6.08,
+    6.12,
+    6.4,
+    6.52,
+    6.74,
+    6.86,
+    6.88,
+    6.9,
+    7.32,
+    7.4,
+    8.0,
+    8.22,
+    8.26,
+    8.3,
+    8.7,
+    8.72,
+    8.94,
+    9.1,
+    9.4,
+    10.0,
+    10.52,
+    10.7,
+    10.74,
+    10.78,
+    11.36,
+    12.32,
+    12.56,
+    13.12,
+    13.68,
+    13.96,
+    15.0,
+    15.72,
+    15.74,
+    16.06,
+    19.1
+   ],
+   "falls_in_window_per_block_of_10": [
+    4,
+    1,
+    2,
+    6,
+    6,
+    3
+   ],
+   "falls_in_window_wilson95": [
+    0.256,
+    0.493
+   ],
+   "jumps_per_10s_median": 139.0,
+   "jumps_per_10s_quartiles": [
+    118.7,
+    152.1
+   ],
+   "speed_mean_upright": 0.0786,
+   "max_tilt": 55.3
+  }
+ },
+ "verdict": {
+  "nominal": {
+   "complete": false
+  },
+  "gain400": {
+   "complete": false
+  },
+  "jitter": {
+   "complete": false
+  }
+ }
+}

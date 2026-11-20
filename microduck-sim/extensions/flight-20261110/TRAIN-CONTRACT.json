@@ -44,6 +44,11 @@
      "date": "2026-11-20",
      "quote": "背包装了以后，它喷气的时候不负重，不是还是会减到0吗？到时候背包喷气一喷，你又不会走路了？ / 而且负载不仅会到0，还会把自己的体重减轻。",
      "source": "REQUIREMENTS.json FP-R8"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, fourth message",
+     "quote": "我们想要快速出一个成果，先看看在不同重力下，它背了背包有可能会怎么样：第一是把体重给对冲掉，也就是它飞起来后就没体重了；或者它一点也不飞，那就是背上压了个背包。如果我们想在这个姿势下维持平衡、能走路，我们需要做到什么程度？"
     }
    ],
    "acceptance_on_robot": "With the pack fitted the real robot stands and walks at the robot-tested command without a fall or a tilt-protection stop; with the pack off it walks no worse than walk61; with the fans running on the ground at the thrust levels stage B0 fixes for FP-R8, it stays up. Acceptance per requirement is in REQUIREMENTS.json (FP-R3, FP-R8).",
@@ -88,7 +93,7 @@
       "title": "B0 校验评测（量尺子）",
       "does": "用机器人已经分过好坏的 5 个模型（walk61、stand61 能用；ft3、t1、s2r6_4 摔过），在三种仿真条件下各跑 60 次，看哪种条件的排名和机器人一致；量每一格的波动。",
       "does_not": "不训练任何模型；不花云端额度；不上机器人。",
-      "pass": "有一种条件把 5 个模型全部分对：能用的那组 60 次里最多摔 6 次；摔过的三个各自比 walk61 多摔 12 次以上，或动作突跳超过 walk61 的 1.5 倍。",
+      "pass": "有一种条件把 5 个模型全部分对：能用的那组 60 次里最多摔 6 次；摔过的三个各自比 walk61 多摔 12 次以上，或动作突跳超过 walk61 的 1.5 倍。 复核后加一条（第 2 次开跑前写下）：上机走得稳、但不是官方模型的 t2b，在这个条件下 60 次也最多摔 6 次，证明筛子不会误杀好模型。",
       "kill": "试 2 次仍没有任何条件能分对：仿真评测不再作为 B 线的验收依据，由你决定是做一次机器人辨识，还是只按上机结果验收。",
       "budget": "0 美元，0 GPU 小时，Mac mini 6 小时以内，最多 2 次。"
      },
@@ -97,7 +102,7 @@
      "depends_on": [],
      "pass": {
       "metric": "three checks: (1) robot agreement without the pack on the five policies the robot has already ranked (CURRENT-STATE.json walking_policy and walking_stability): walk61 and stand61 work on the robot; ft3 (fell at 2.5 to 4 s in three walks, 2026-10-18), t1 (fell at 3.4 s, 2026-10-30) and s2r6_4 (tilt stop at 4.4 s standing, 2026-11-19) do not. The 'gain400' cell was chosen on 2026-11-19 from walk61 and s2r6_4 only, so ft3, t1 and stand61 are the held-out test of it; (2) repeat spread of every deciding cell; (3) every FP-R8 cell left in the gate is well-posed",
-      "threshold": "(1) 60 episodes per policy and cell on seeds not used before, falls counted inside the robot-tested window (first 4 s of a walk at vx 0.25, first 10 s of standing at zero command). In one candidate condition (nominal, gain400, or the 2026-10-30 jitter-matched condition) all of this must hold: the deployed set (walk61 walking, stand61 and walk61 standing) has at most 6 falls of 60, and each of ft3, t1 and s2r6_4 fails in the mode where the robot dropped it (ft3 and t1 walking, s2r6_4 standing) by at least 12 more falls of 60 than walk61 in that cell or by median action jumps above max(1.5 x walk61, walk61 + 2). A condition that puts a held-out policy on the wrong side is not a yardstick; (2) each deciding cell scored on 60 episodes with its spread and smallest resolvable difference written down; (3) 0 ill-posed cells in the gate, each dropped or redefined cell listed with its reason",
+      "threshold": "(1) 60 episodes per policy and cell on seeds not used before, falls counted inside the robot-tested window (first 4 s of a walk at vx 0.25, first 10 s of standing at zero command). In one candidate condition (nominal, gain400, or the 2026-10-30 jitter-matched condition) all of this must hold: the deployed set (walk61 walking, stand61 and walk61 standing) has at most 6 falls of 60, and each of ft3, t1 and s2r6_4 fails in the mode where the robot dropped it (ft3 and t1 walking, s2r6_4 standing) by at least 12 more falls of 60 than walk61 in that cell or by median action jumps above max(1.5 x walk61, walk61 + 2). A condition that puts a held-out policy on the wrong side is not a yardstick; (2) each deciding cell scored on 60 episodes with its spread and smallest resolvable difference written down; (3) 0 ill-posed cells in the gate, each dropped or redefined cell listed with its reason Added 2026-11-20 after review, before attempt 2 (specificity): t2b iteration 850 walking, which the robot walked calmly with, has at most 6 window falls of 60 in the chosen condition; and the condition is used only to reject, never to accept, outside what the robot has confirmed.",
       "measured_by": "train/flight_eval.py cells as used by train/ts3_gates.py, and train/ts3_thrust_gap.py after its review, run on the Mac mini; results under train/out/yardstick_b0/"
      },
      "kill": {
@@ -124,27 +129,43 @@
        "prediction": "Written before the run. nominal: deployed walk 0 to 1 window falls of 60, deployed stand 0, ft3 0 to 2, t1 0 to 2, s2r6_4 stand 0 to 1; t1 may trip the jump limit, ft3 does not, so nominal is not a yardstick. gain400: deployed walk 0 to 6, deployed stand 0, s2r6_4 stand 35 to 50, t1 walk 20 or more, ft3 walk 20 or more (least sure, about 60 %): gain400 separates all five. jitter: s2r6_4 stand stays quiet (0 to 3), so jitter alone is not a yardstick; ft3 and t1 walking at least 12 above deployed. If ft3 stays on the wrong side under gain400, the stand-in is specific to s2r6_4 and attempt 2 looks for the walking mechanism instead.",
        "command": "ssh mac-mini 'cd code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110 && nohup zsh train/b0_yardstick.sh > /dev/null 2>&1 < /dev/null &'  (18 cells x 60 seeds from 1000, 7 workers, under train/mini_lock.sh; heartbeat train/logs/b0_yardstick_b0_heartbeat.txt on the Mac mini)",
        "result": "Done 13:40:59 on the Mac mini: 18 cells x 60 episodes, seeds 1000 to 1059, none used before. Falls inside the robot-tested window, of 60 (median action jumps per 10 s). nominal: stand61 0 (0.0), walk61 0 (1.0), s2r6_4 standing 0 (0.5), ft3 walking 0 (2.5, limit 3.0), t1 walking 0 (6.5): ft3 and s2r6_4 land on the wrong side, so nominal is not a yardstick. gain400: stand61 0, walk61 2, s2r6_4 standing 40, ft3 walking 41, t1 walking 54: all five on the robot's side, including ft3, t1 and stand61, which had no part in choosing gain400. jitter: stand61 0, walk61 17 (limit 6), s2r6_4 standing 41, ft3 52, t1 54: fails because it drops the policy the robot walks with. Predictions: every nominal and gain400 prediction held; the jitter prediction for s2r6_4 standing (0 to 3) was wrong (41). Check 2: blocks of 10 inside one cell ranged 4 to 9 (s2r6_4 gain400 standing) and 6 to 8 (ft3), so a 10-episode cell cannot resolve less than about 5 of 10; at 60 episodes the 95 % interval is about +-0.12 and the smallest gap in a deciding cell was 38 of 60. Check 3: an independent review of the 12:55 thrust measurement found 56 of its 116 cells ill-posed (constant 0.75 and 0.9, the ramp that holds 0.9 for 3 s, the open-loop take-off): the stand-in attitude loop has 4 % of the toppling stiffness, the fall rule counts tilting in the air, and the real pack never dwells on the ground above 0.5. They are dropped from the candidate gate and their replacement is stage B0T. Limits of this yardstick: checked without the pack only, and only inside the window the robot was tested in; over the whole 15 s walk walk61 itself falls 23 of 60 at gain400 and walks 0.04 m/s, so gain400 says nothing about speed or long walks (speed is read in the nominal cell).",
-       "verdict": "pass",
+       "verdict": "invalid",
        "evidence": "train/out/yardstick_b0/summary.json (sha256 b21ab26fc706164f...), 18 cell files beside it, train/logs/b0_yardstick_b0_heartbeat.txt; thrust review: agent report of 2026-11-20 13:41 summarised in train/RUNLOG.md",
        "result_zh": "18 格各 60 次，种子都是没用过的。只数机器人真测过的时间窗里的摔倒（走路头 4 秒，站立头 10 秒）。默认仿真：5 个模型全是 0 次，分不出 ft3 和 s2r6_4，不能当尺子。增益调高（gain400）：stand61 0 次、walk61 2 次；s2r6_4 站立 40 次、ft3 走路 41 次、t1 走路 54 次。5 个全部分对，其中 ft3、t1、stand61 没参与过这个条件的挑选。抖动条件：walk61 自己摔 17 次（上限 6），不合格。开跑前的预测里错了一条：我以为抖动条件下 s2r6_4 站着不会摔，实际摔 41 次。波动：同一格里每 10 次的摔倒数在 4 到 9 之间，所以 10 次一格最多只能分清差 5 次以上的两个模型；60 次时误差约正负 12%。推力测试经独立复核：116 格里 56 格不成立（原地停在 0.75、0.9 倍重量，开环起飞），已从候选验收里拿掉，改由 B0T 重做。这把尺子的边界：只在不带背包、时间窗以内校验过；整段 15 秒走路 walk61 自己在这个条件下摔 23 次，所以它不管速度和长距离，速度看默认仿真那一格。",
-       "prediction_zh": "开跑前写下：默认仿真 5 个模型都几乎不摔（0 到 2 次），t1 可能动作突跳超线，ft3 不会，所以默认仿真当不了尺子。增益调高：能用的那组走路 0 到 6 次、站立 0 次；s2r6_4 站立 35 到 50 次；t1、ft3 走路各 20 次以上（ft3 最没把握，约六成）。抖动条件：s2r6_4 站立基本不摔（0 到 3 次），ft3、t1 比 walk61 多摔 12 次以上。"
+       "prediction_zh": "开跑前写下：默认仿真 5 个模型都几乎不摔（0 到 2 次），t1 可能动作突跳超线，ft3 不会，所以默认仿真当不了尺子。增益调高：能用的那组走路 0 到 6 次、站立 0 次；s2r6_4 站立 35 到 50 次；t1、ft3 走路各 20 次以上（ft3 最没把握，约六成）。抖动条件：s2r6_4 站立基本不摔（0 到 3 次），ft3、t1 比 walk61 多摔 12 次以上。",
+       "review": "2026-11-20 independent review, checked against the sources: the numbers stand, the conclusion was too wide. (1) stand61 was not held out: the reference standstill cell at gain400 had been run on 2026-11-19 when gain400 was chosen (RUNLOG 'walk61 0 of 10'); only ft3 and t1 were held out. (2) The robot has not only been tested for 4 s: the walk ledger (Mac mini ~/duck-walks/episodes.jsonl) holds 19 walks longer than 10 s between 2026-11-02 and 2026-11-12 at KP 200, 18 upright, two of 191 s and 287 s; gain400 makes walk61 fall 23 of 60 within 15 s, so beyond the 4 s window gain400 contradicts the robot. (3) All three rejected policies are this project's fine-tunes and both accepted ones are the upstream pair, so the run shows the filter rejects known-bad policies and says nothing on whether it also rejects a good policy that is not walk61. (4) The jitter condition was tuned on robot rows that include T1, so t1 was not held out for it. The pre-written threshold was met by the letter; the attempt is marked invalid as a pass because the threshold did not test specificity.",
+       "review_zh": "独立复核后改判：数字没问题，结论说大了。第一，stand61 并不是没见过的考题，11 月 19 日挑这个条件时它的站立格已经跑过，真正没见过的只有 ft3 和 t1。第二，机器人并不是只测过 4 秒：台账里 11 月 2 日到 12 日有 19 次超过 10 秒的行走，18 次没摔，最长 191 秒和 287 秒；而这个条件下 walk61 在 15 秒内 60 次摔 23 次，所以 4 秒以外它和机器人对不上。第三，被判坏的三个全是我们自己接着练的模型，被判好的两个都是官方模型，这一轮只证明了它能筛掉坏的，没有证明它不会误杀“好的但不是官方的”模型。按事先写的线它是过了，但那条线本身没有考“会不会误杀”，所以这一次不算过关。"
+      },
+      {
+       "n": 2,
+       "started": "2026-11-20T14:05:00-05:00",
+       "hypothesis": "If gain400 inside the 4 s window measures robot stability and not likeness to walk61, a policy that is not the upstream checkpoint but walked calmly on the robot must also survive it. The only such policy on record is t2b iteration 850 with the default head (2026-10-30: 1.67 action jumps per second, 8.7 degrees peak tilt, no fall; T1 fine-tune with a behaviour-cloning anchor to walk61).",
+       "prediction": "Written before the run. t2b walking at gain400 has more than 6 window falls of 60 (about 60 % sure; my guess is 10 to 30), which would mean the filter also rejects a robot-good policy. In the nominal simulation t2b has 0 to 2 falls.",
+       "prediction_zh": "开跑前写下：t2b（10 月 30 日在机器人上默认抬头走得很稳、没摔，但不是官方模型）在增益调高条件下 60 次会摔 6 次以上（约六成把握，我猜 10 到 30 次）。如果是这样，说明这个筛子连上机没问题的模型也会筛掉。",
+       "command": "ssh mac-mini 'cd code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110 && nohup zsh train/b0_yardstick.sh out=yardstick_b0s only=t2b seed0=3000 > /dev/null 2>&1 < /dev/null &'  (3 cells x 60 seeds from 3000; heartbeat train/logs/b0_yardstick_b0s_heartbeat.txt)",
+       "result": "Done 14:01:32, 3 cells x 60 episodes, seeds 3000 to 3059. t2b walking: nominal 0 window falls (jumps 2.0, speed 0.12 m/s); gain400 4 window falls of 60 (blocks 0,1,0,1,0,2; whole episode 25; jumps 25.5 against walk61's 24.0); jitter 22. The prediction (more than 6 at gain400) was wrong: the filter keeps the one robot-good policy that is not the upstream checkpoint, at walk61's level (2 of 60). Jitter rejects it (22), as it rejects walk61 (17).",
+       "verdict": "pass",
+       "evidence": "train/out/yardstick_b0s/ (three cell files, summary.json), train/logs/b0_yardstick_b0s_heartbeat.txt on the Mac mini",
+       "result_zh": "t2b 在增益调高条件下 60 次只摔 4 次（walk61 是 2 次），在筛子的“好”一侧。我的预测（会摔 6 次以上）错了，这是好消息：筛子没有误杀这个上机走得稳、但不是官方的模型。抖动条件把它判坏（22 次），和它把 walk61 判坏（17 次）一样，所以抖动条件不能用。"
       }
      ],
      "route_reviews": [],
-     "result": {
-      "date": "2026-11-20",
-      "number": "gain400 with falls counted inside the robot-tested window puts all five robot-ranked policies on the robot's side at 60 episodes each (deployed 0 and 2 falls; s2r6_4 40, ft3 41, t1 54); nominal and jitter do not. Valid without the pack and inside the window only.",
-      "number_zh": "把增益调高、只数机器人测过的时间窗，这个条件把 5 个真机上有结论的模型全部分对（能用的摔 0 和 2 次，摔过的摔 40、41、54 次，各 60 次）。默认仿真和抖动条件都不行。只在不带背包时校验过。",
-      "evidence": "train/out/yardstick_b0/summary.json"
-     },
      "yardstick": {
       "repeat_spread": "blocks of 10 inside one 60-episode cell ranged 4 to 9 falls (s2r6_4 gain400 standing) and 6 to 8 (ft3 gain400 walking); a 60-episode fall count has a 95 % interval of about +-0.12",
       "min_effect": "at 60 episodes per cell two policies are told apart when their fall counts differ by about 12 of 60 or more (the threshold used); a 10-episode cell resolves only about 5 of 10",
-      "robot_agreement": "gain400 (--kp-rl 400), falls counted in the first 4 s of a walk at vx 0.25 and the first 10 s of standing, no pack: walk61 2 of 60 and stand61 0 of 60 (the robot walks and stands with them), ft3 41, t1 54 walking and s2r6_4 40 standing (the robot dropped all three). Held-out for the choice of gain400: ft3, t1, stand61. Not validated: pack cells, thrust cells, speed, walks longer than 4 s"
+      "robot_agreement": "gain400 (--kp-rl 400), falls counted in the first 4 s of a walk at vx 0.25 and the first 10 s of standing, no pack: walk61 2 of 60 and stand61 0 of 60 (the robot walks and stands with them), ft3 41, t1 54 walking and s2r6_4 40 standing (the robot dropped all three). Held-out for the choice of gain400: ft3 and t1 only. Not validated: pack cells, thrust cells, speed, walks longer than 4 s Attempt 2: t2b iteration 850 (robot-good, not the upstream checkpoint) 4 of 60: kept. Use as a reject filter only."
      },
      "history": [
-      "2026-11-20 after attempt 1: the stage held two questions (ranking and thrust-cell validity), against the one-question rule. Check 3 moved unchanged, and stricter (validation on reference policies added), to stage B0T; nothing was relaxed, and B2 now depends on B0T."
-     ]
+      "2026-11-20 after attempt 1: the stage held two questions (ranking and thrust-cell validity), against the one-question rule. Check 3 moved unchanged, and stricter (validation on reference policies added), to stage B0T; nothing was relaxed, and B2 now depends on B0T.",
+      "2026-11-20 14:05: reopened after the independent contract review; attempt 1 no longer counts as a pass, attempt 2 tests specificity on t2b. The full B1 run waits for it."
+     ],
+     "result": {
+      "date": "2026-11-20",
+      "number": "gain400, falls inside the first 4 s of a walk and the first 10 s of standing, no pack, is a reject filter: robot-good walk61 2, stand61 0, t2b 4 of 60; robot-dropped s2r6_4 40, ft3 41, t1 54 of 60. Held out: ft3, t1, t2b. It does not accept: beyond 4 s it contradicts the robot (walk61 falls 23 of 60 in 15 s there; the robot's ledger has 18 of 19 long walks upright), and pack and thrust cells have no robot record.",
+      "number_zh": "得到的是一个“筛子”：增益调高、只数走路头 4 秒和站立头 10 秒、不带背包。上机没问题的三个（walk61、stand61、t2b）摔 2、0、4 次；上机摔过的三个摔 40、41、54 次（各 60 次）。它只能用来筛掉坏模型，不能用来判合格：4 秒以后它和机器人对不上，带背包和有推力的情况也没有真机记录可对。合格与否最终只认上机。",
+      "evidence": "train/out/yardstick_b0/summary.json",
+      "evidence_more": "train/out/yardstick_b0s/summary.json"
+     }
     },
     {
      "id": "B0T",
@@ -193,7 +214,7 @@
       "title": "B1 复查现有存档",
       "does": "用校验过的尺子重新给第三轮已有的 190 个存档打分：先筛出只用机器人上真有的输入的那些，再把候选的每一格跑 60 次（不带背包、四分之一、一半、四分之三、整包；站和走；默认仿真和增益调高两种条件）。回答一个问题：我们手里是不是已经有一个合格的通用模型。",
       "does_not": "不训练；不花云端额度；不上机器人；不改任何过关线。",
-      "pass": "至少有一个存档同时满足：只用机器人有的输入；每一格在时间窗里 60 次最多摔 6 次（walk61 自己不带背包的水平）；默认仿真下走路速度不低于 walk61 的六成，动作突跳不超线。",
+      "pass": "至少有一个存档通过筛子：只用机器人有的输入；每一格在时间窗里 60 次最多摔 6 次；速度和动作突跳达标。通过筛子只说明值得上机一试（B1R），不等于合格。",
       "kill": "一个都没有：说明训练流程到现在还没有产出过上得了机器人的模型。下一步是训练基线（B2），先定配方再请你批。",
       "budget": "0 美元，0 GPU 小时，Mac mini 6 小时以内，最多 2 次。"
      },
@@ -399,7 +420,7 @@
   },
   {
    "id": "A",
-   "goal_zh": "鸭子快系统的雏形：每一帧用 CNN 或 ViT 解析，帧与帧之间用递归网络（Mamba 或 LSTM），一个模型管多个技能，并且能预测下一帧。",
+   "goal_zh": "一个带递归的、比官方模型大的模型：能保持平衡、能走路，平衡时头部能保持指定姿势，还能负重；每一帧用 CNN 或 ViT 解析，并且能预测下一帧。",
    "goal": "A prototype of the duck's fast system: each frame read by a CNN or ViT, a recurrent core (Mamba or LSTM) across frames, one model for several skills, and an output that predicts the next frame as the first step toward a world model.",
    "owner_words": [
     {
@@ -421,6 +442,16 @@
      "date": "2026-11-20",
      "quote": "每一帧都用一种结构去解析，比如ViT或者CNN，帧与帧之间用循环神经网络或者递归神经网络去做 ... 想做一个机器人预测下一帧事件模型的雏形 ... 我以为至少不会比普通的模型网络差",
      "source": "session 1ebe7a36, his first message on 2026-11-20"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, fourth message",
+     "quote": "我们不是打算训一个包罗万象、比现有模型大100倍，同时能把头部之类的全部囊括进来的模型吗？ ... 就是比官方模型大100倍，然后能够保持平衡、能走路，保持平衡时头部还能维持某个固定姿势，并且还能负重。我本身的想法就是训一个大模型，并且包含递归在内。"
+    },
+    {
+     "date": "2026-11-20",
+     "source": "session 1ebe7a36, fourth message",
+     "quote": "如果能放在一起做，那当然是最好；如果放不在一起做，那就拆开做。拆开做也有两种：一种是我们拆开做的同时，背包模型对未来有用；另一种是以后换了新模型，这个背包模型就没用了，顶多做一个基线。"
     }
    ],
    "acceptance_on_robot": "The recurrent model walks the real duck at least as well as walk61 (no fall in 60 s at the robot-tested command, action jumps no higher than walk61's on the same log measure); it then runs more than one skill from one set of weights; its next-step prediction error on robot logs is reported against the predict-no-change baseline; the eye is added last.",
@@ -462,14 +493,14 @@
      "kind": "baseline",
      "status": "proposed",
      "sheet_zh": {
-      "title": "A0 用现有代码从零重训官方小模型",
-      "does": "用今天的训练代码和团队仓库里的官方走路配方（不带背包，不改奖励），从零训练一个和 walk61 一样大的全连接小模型，训 4000 轮，看它在校验过的尺子上能不能达到 walk61 的水平。walk61 是官方给的现成文件，我们自己从来没有从零复现过它；之前所有自己训的模型都是在它上面接着练，上机全摔。",
-      "does_not": "不换网络；不加背包；不改奖励；不接着任何旧存档练。",
-      "pass": "最后一个存档，不带背包：增益调高条件下，走路和站立在时间窗里 60 次各最多摔 6 次；默认仿真 60 次摔 0 次，速度不低于 walk61 的九成，动作突跳不超线。",
-      "kill": "2 次都不过：说明现有训练代码按官方配方训不出官方的水平。停下来查代码和官方当时的差别（训练轮数，以及配置里标着“以前是开的”那两项增益随机化），不换架构。",
-      "budget": "0 美元。Kaggle 每次约 5.5 小时（T4 上实测约每秒 0.21 轮，4000 轮），最多 2 次共 12 小时；每周额度 30 小时。"
+      "title": "A0 并排对照：官方那种小网络和带递归的新网络，同一套训练",
+      "does": "在原来的走路任务上（不带背包），用今天的训练代码从零并排训两个网络，各 4000 轮：一个和官方 walk61 结构完全一样（3 层全连接，约 20 万参数，权重从随机开始，不是官方那份权重）；一个是训练库自带的递归网络（LSTM 加全连接，约 53 万参数）。小的那个是对照：它要是都训不到官方水平，问题在训练代码，和架构无关。",
+      "does_not": "不带背包；没有头部指令；没有眼睛；不接着任何旧存档练；不上机器人。",
+      "pass": "对照（小网络）通过筛子并达到 walk61 的速度线：说明训练代码没问题。递归网络同样通过：说明可以在它上面往下加东西。",
+      "kill": "2 次之后小网络仍不过：停下来查训练代码和官方当时的差别（训练轮数、被关掉的两项增益随机化），不动架构。小网络过而递归不过：只查递归的训练设置。",
+      "budget": "0 美元。Kaggle 一个会话两张显卡并排，约 5.5 小时；如果额度按显卡计就是 11 小时。最多 2 次。每周额度 30 小时。"
      },
-     "question": "Does today's training code, with the team repository's walking recipe unchanged (velocity task, 61-512-256-128-14 MLP, 4096 environments, 4000 iterations, no pack), train from scratch a policy at the deployed walk61's level on the validated yardstick?",
+     "question": "Trained from scratch by today's code on the unchanged walking task (no pack, 4000 iterations, same environment), does (a) the upstream MLP architecture reach the deployed walk61's level on the B0 filter, and (b) the library's recurrent policy reach it too?",
      "changes_vs_previous": [],
      "depends_on": [
       "B0"
@@ -490,7 +521,7 @@
      },
      "budget": {
       "usd": 0,
-      "gpu_hours": 12,
+      "gpu_hours": 22,
       "wall_hours": 16,
       "max_attempts": 2
      },
@@ -498,6 +529,10 @@
      "route_reviews": [],
      "history": [
       "2026-11-20: added after B0. The old A1 changed two things against the known-good walk61 at once (trained by this project from scratch, and a recurrent core). Training-speed basis: RUNLOG records about 0.21 iterations per second on a Kaggle T4 at 4096 environments, so 4000 iterations take about 5.3 h; the recipe file's own max_iterations is 50,000 (about 66 T4 hours), which does not fit the weekly 30 h, and the repository's job example uses 4000."
+     ],
+     "arms": [
+      "control: 61-512-256-128-14 MLP, 197,896 parameters, random initial weights",
+      "recurrent: rsl_rl RNNModel, LSTM core plus MLP head, about 527,600 parameters"
      ]
     },
     {
@@ -505,16 +540,16 @@
      "kind": "change",
      "status": "proposed",
      "sheet_zh": {
-      "title": "A1 只把网络换成递归的",
-      "does": "在 A0 的训练里只换一样：把全连接小模型换成训练库自带的递归网络（LSTM 加全连接，约 53 万参数，是 walk61 的 2.7 倍）。任务、奖励、训练轮数都和 A0 一样，不带背包。",
+      "title": "A1 加上头部姿势和负重（待 A0 结果后定稿）",
+      "does": "在 A0 的训练里加任务：平衡和走路时头部保持指定姿势，背上有随机的负重（0 到整个背包）。两个网络继续并排。这是递归网络应该赢的地方：背上有多重不在那 61 个读数里，只能靠记住前面几步自己的反应来感觉出来，单帧小网络没有记忆。",
       "does_not": "没有眼睛；没有预测下一帧；不用模仿老师；不碰背包；还不用手写的 Mamba。",
-      "pass": "两次独立训练都达到 A0 的那条线（增益调高条件下 60 次最多摔 6 次；默认仿真摔 0 次，速度和动作突跳达标）。另外量出它在 A7Z 上算一步的时间。",
-      "kill": "2 次之后仍有一次训练不过线：写路线复盘（候选：时序回传长度、延迟模型、改用带短历史的全连接网络）。",
+      "pass": "递归网络在每个负重格都通过筛子，头部姿势误差达标；并且在负重格明显好于小网络（差距超过 60 次里 12 次），否则说明递归没起作用。",
+      "kill": "2 次之后递归网络在负重格不比小网络好：写路线复盘（候选：给模型一小段历史读数、把风扇油门作为输入）。",
       "budget": "0 美元。Kaggle 每次不超过 8 小时，最多 2 次；开头 15 分钟先量训练速度，算出来超时就停下来报告。"
      },
-     "question": "With everything else as in A0, does replacing the MLP by the library's recurrent policy still reach A0's line on the validated yardstick?",
+     "question": "With head-pose commands and a random back load (0 to the full pack) added to A0's task, does the recurrent policy hold every load cell on the filter and beat the one-frame MLP trained beside it?",
      "changes_vs_previous": [
-      "the actor and critic MLP is replaced by the training library's recurrent model (rsl_rl RNNModel: LSTM core plus MLP head, about 527,600 parameters); environment, rewards, iteration count and all PPO settings other than recurrent batching stay as in A0"
+      "the task gains head-pose commands and a random constant back load per episode (0 to the full pack); networks, PPO settings and iteration count stay as in A0"
      ],
      "depends_on": [
       "B0",
@@ -649,6 +684,9 @@
      "attempts": [],
      "route_reviews": []
     }
+   ],
+   "history": [
+    "2026-11-20 14:10: Shawn's fourth message puts head-pose hold and load carrying inside this line's one model. The earlier split left load to line B's one-frame network; from now on line B's lasting outputs are the filter, the load and thrust environment and the robot procedures, and its network is a control arm. Stage sheets A0 and A1 were rewritten for this; A2 to A4 still carry their earlier wording and are rewritten before they are proposed for approval."
    ]
   }
  ]
