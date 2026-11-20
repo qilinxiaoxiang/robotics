@@ -1198,3 +1198,16 @@ under 70.00 USD metered (workspace limit 75).
     iterations made walking with the pack worse in both.
   - The watcher's "0 lines" in the heartbeat was a counting error (fixed in the file; the running copy keeps it);
     the score logs hold the lines.
+- 20:16 `ts3m-w61long` stopped itself at iteration 250 (13.1 min, $0.31) on the tracking guard: speed along the
+  command -0.035 against a warm-up value of -0.040, low-command speed -0.039 under the 0.03 floor on two saves.
+  Cause: walk61 does not walk in this env at all (the pack is on 80 % of resets: warm-up episode length 66 steps,
+  speed -0.04), so the "is it still stepping" check fails from the first save; the guard assumed a start policy
+  that walks. The same guard runs in the Kaggle walk61-start arms (`ts3-teach-b`, `-d`), so they are expected to
+  have stopped at 250 too (read when the kernels return). At its stop the arm was the closest to passing (above)
+  and its leg distance to walk61 on no-pack rows was 0.278 rad (0.44 at the start).
+- 20:22 relaunched as `ts3m-w61g` (fc-01M7V8RW1B51K49WVN4BWRJSX2, app and Volume `microduck-flight-ts3m-w61g`):
+  the same arm with `--track-grace 1000` (new worker flag, `finetune_worker.py`): until iteration 1000 only the
+  tracking-error part of the guard applies, from 1000 on the policy must step at 0.03 m/s or the run stops.
+  2500 iterations, `--max-hours 2.6`, `--max-dollars 3.69`, worst case $4.39; metered before 34.07. 20:25 app
+  detached with one task, Volume written, modal_watch CLEAN. Its watcher: `ts3m_watch.py hb=ts3m2` (pid 17644,
+  parent 1), heartbeat `logs/ts3m2_heartbeat.txt`, folders `ckpt/m3g_<iter>`.

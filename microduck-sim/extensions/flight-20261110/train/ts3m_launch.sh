@@ -10,5 +10,5 @@ cd $RL
 FLIGHT_RUN=$1 FLIGHT_HOURS=$5 MICRODUCK_GPU=A10 $MODAL run --detach cmu/finetune/flight/flight_modal.py::run -- \
   --delta $2 --onnx /root/assets/init/$3 --manifest /root/assets/manifests/flightpack-none.json \
   --max-iters $4 --max-hours $5 --save-interval 125 --warmup-iters 100 --max-lr 0.0001 --guard-fraction 0.0 \
-  --track-guard 2.0 --seed ${6:-1} > $LOG 2>&1
+  --track-guard 2.0 --seed ${6:-1} ${@:7} > $LOG 2>&1   # further worker flags after the seed, e.g. --track-grace 1000
 grep -E "rate \\$|spawned" $LOG | cut -c1-400

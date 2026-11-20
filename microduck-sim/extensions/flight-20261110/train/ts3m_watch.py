@@ -21,6 +21,8 @@ T = Path(__file__).resolve().parent
 MODAL = "/Users/xiangzheng/code/robotics/omx-local/.venv/bin/modal"
 GPY = "/Users/xiangzheng/.venvs/microduck-walk/bin/python"
 HB = T / "logs/ts3m_heartbeat.txt"
+if sys.argv[1].startswith("hb="):  # a second watcher writes its own heartbeat: hb=<name> -> logs/<name>_heartbeat.txt
+    HB = T / f"logs/{sys.argv.pop(1)[3:]}_heartbeat.txt"
 
 
 def hb(msg):
