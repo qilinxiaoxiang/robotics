@@ -268,7 +268,7 @@ class WiredBattery(unittest.TestCase):
 
     def test_above_the_floor_torque_stays_on_after_a_stop(self):
         w = World(shutdown=52, hw_err=0x01, volts_dv=76)
-        text, *_ = self.run_wired(w, lambda t: 76 if t < 5 else 63, {"mode": "walk"}, end=20.0)
+        text, *_ = self.run_wired(w, lambda t: 76 if t < 5 else 65, {"mode": "walk"}, end=20.0)
         self.assertIn("BATTERY STOP", text)
         self.assertNotIn("BATTERY FLOOR", text)
         self.assertEqual({v for a, i, v in w.log if a == ww.ADDR_TORQUE}, {1})
