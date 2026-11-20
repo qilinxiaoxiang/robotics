@@ -191,7 +191,7 @@ class Hook(unittest.TestCase):
 
     def hook(self, *args):
         env = dict(os.environ, DUCK_POWER_OFF_PY=os.path.join(HERE, "duck_power_off.py"))
-        return subprocess.run(["sh", os.path.join(HERE, "duck-power-off"), *args], env=env,
+        return subprocess.run(["sh", os.path.join(HERE, "duck-power-off.sh"), *args], env=env,
                               capture_output=True, text=True)
 
     def test_hook_poweroff_and_reboot(self):
@@ -203,7 +203,7 @@ class Hook(unittest.TestCase):
         self.assertIn("power stays on", r.stderr)
 
     def test_hook_is_executable_and_unit_points_at_installed_script(self):
-        for f in ("duck-power-off", "duck_power_off.py"):
+        for f in ("duck-power-off.sh", "duck_power_off.py"):
             self.assertTrue(os.access(os.path.join(HERE, f), os.X_OK), f)
         with open(os.path.join(HERE, "duck-power-off-check.service")) as fh:
             unit = fh.read()

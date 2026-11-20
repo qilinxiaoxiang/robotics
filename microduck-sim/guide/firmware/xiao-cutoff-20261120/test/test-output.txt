@@ -1,0 +1,12 @@
+healthy pack, 60 s: no cut
+slow sag 7.0 -> 6.0 V over 100 s: cut 3 s after crossing 6.3 V
+one weak cell: cell 1 sags to 3.0 V while the pack stays 7.1 V: cut on the cell
+brief dips under 3 s: 0.3 s to 5.8 V and 2.9 s to 6.1 V: no cut; 3.2 s to 6.1 V: cut
+charging on the dock: pack node held at 8.2 V by the dock, contacts 8.6 V: no cut, charging flag
+flat pack switched on: no cut inside the 3 s grace, cut right after it
+button: power-on press held 3 s does nothing; later 2.5 s hold then release cuts on release
+button: short presses (a knock, 1.5 s) never cut
+button: released-state leakage (A3 reading the Pololu ON pin through 10 k) is not a press
+balance lead unplugged (middle tap 0 V): no cell cut, pack cut still works
+cut latches even if the voltage recovers
+21 checks, 0 failed

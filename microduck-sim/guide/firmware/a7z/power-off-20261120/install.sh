@@ -8,7 +8,7 @@ SRC=/home/radxa/rt/microduck-sim/guide/firmware/a7z/power-off-20261120
 sudo apt-get install -y gpiod python3-libgpiod
 sudo install -d /usr/local/lib/duck
 sudo install -m 0755 "$SRC/duck_power_off.py" /usr/local/lib/duck/duck_power_off.py
-sudo install -m 0755 "$SRC/duck-power-off" /usr/lib/systemd/system-shutdown/duck-power-off
+sudo install -m 0755 "$SRC/duck-power-off.sh" /usr/lib/systemd/system-shutdown/duck-power-off
 sudo install -m 0644 "$SRC/duck-power-off-check.service" /etc/systemd/system/duck-power-off-check.service
 sudo systemctl daemon-reload
 sudo systemctl enable duck-power-off-check.service

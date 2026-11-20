@@ -17,7 +17,7 @@ the pack check stays. A2 (charge contacts) only sets the `chg` flag. The rules a
 - `xiao_cutoff/cutoff_logic.h`: the decision logic, no Arduino dependency.
 - `test/run_tests.sh`: builds and runs `test/test_cutoff_logic.cpp` with g++ (healthy, slow sag, weak cell bottom and
   top, dips under 3 s, hysteresis band, charging on the dock, flat pack at power-on, button, balance lead unplugged, latch).
-- `compile.log`: the arduino-cli compile for the Seeeduino XIAO.
+- `compile-log.txt`: the arduino-cli compile for the Seeeduino XIAO; `test/test-output.txt`: the last host test run.
 
 ## Flash (on the Mac, the XIAO on its own USB-C cable, before it is soldered into the harness)
 
