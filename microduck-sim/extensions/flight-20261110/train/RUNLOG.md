@@ -1368,3 +1368,37 @@ under 70.00 USD metered (workspace limit 75).
   to 4.5 on top: 47.5 worst case in all, under the 50.00 stop and the 51.00 line. Student trigger restarted (pid
   2439): tags t3k and m3k, one student kernel in all (`MAX_KERNELS = 1`), the first passing save of either arm
   takes it.
+- 00:11 the Modal continuation does not lower pack-walk jumps: m3k saves 100 to 700 read 29.0, 67.4, 65.6, 53.4,
+  52.8, 40.6, 41.8, 67.5, 31.8, 38.3, 44.0, 41.0, 65.5 per 10 s against t3g_625's 27.75 (line 2.75), with both
+  smoothness weights doubled. The 23:03 reading (speed bought with jumps at too low a smoothness weight) does not
+  hold as the cause.
+- 00:13 CORRECTION of the 23:05 entry: the joint names there are wrong. `ts3_jump_where.py` labelled the logged
+  action with `walk_brain.NAMES` (servo-ID order); the action is in the policy's order
+  (`walk_brain.OBSERVATION_DOF_ORDER`: left leg, neck/head, right leg). What was reported as head_yaw is the
+  right knee, right_hip_roll is the left knee, right_hip_yaw the left ankle, head_roll the right ankle. The counts,
+  times and speeds stand. Script fixed, the five mislabelled files deleted, all runs repeated
+  (`eval/jump_where_<dir>_<manifest>[_g400].json`). The head does not jump at all (largest head step per tick 0.22
+  to 0.41 rad in every run) and there is no one-sided habit.
+- 00:15 where the jumps are, correctly (one pack walk, seed 0, vx 0.25): t3h_750 5 jumps: right knee 4, left knee 1,
+  left ankle 1. t3h_875 41: right knee 27, left knee 10, left ankle 6. t3h_999 158: left knee 80, right knee 58,
+  left ankle 28, right ankle 17. t3g_625 51: left knee 40, right knee 10, hip pitch 3; about 3 per second through
+  the whole walk, 31 of 51 within 60 ms before a foot lifts. m3k_500 55: right knee 31, left knee 21, right hip
+  pitch 7. So they are knee commands, once per stride or so, at the hand-over between stance and swing.
+- 00:15 what makes them: load at low gain, measured three ways on t3g_625 at the same speed (0.19 m/s).
+  Pack, gain 200: knee action range -1.32 to +1.25 rad about the default pose, largest step 0.87, 51 jumps.
+  Pack, gain 400: range -1.05 to +0.58 / -0.43 to +1.02, largest step 0.55, 3 jumps. No pack, gain 200: -0.85 to
+  +0.81, largest step 0.62, 6 jumps. The same holds in the gate cells of every late save (`out/gates`, median jumps
+  per 10 s, no-pack / pack / pack at gain400): t3g_500 2.25 / 16.5 / 1.25; t3g_625 2.75 / 27.75 / 2.25; t3h_875
+  2.75 / 20.25 / 3.5; t3h_999 2.0 / 68.5 / 5.25; m3k_500 1.0 / 31.75 / 1.0; m3k_700 3.0 / 65.5 / 9.0. Reading: the
+  servo torque is gain x (goal - angle), so the action is a torque command in units of 1/gain. Carrying the pack
+  at gain 200 needs knee goal swings about 1.5 times larger than without it, and the stance/swing torque reversal
+  then crosses 0.5 rad in one tick; at gain 400 half the swing gives the same torque and the count drops by ten.
+  The jump count is a gain-dependent measure of torque reversal here, not chatter.
+- Why doubling the weights did nothing: action_rate_l2 and action_acc_l2 are sums of squares over all 14 raw
+  actions (mjlab action_rate_l2, `smooth_terms.action_acc_l2`), the same quantity the gate reads (raw action, scale
+  1.0, no clipping before either), with the head in at the same scale. One 0.65 rad knee step costs 0.65^2 x 4 x
+  0.02 s = 0.034 reward at weight -4 against about 6 reward per second for walking: three per second cost 1.7 %.
+  The term mostly taxes the many 0.1 to 0.2 rad steps, not the few large ones the gate counts.
+- Side finding, not followed up: with the pack 20 % of walking ticks ask a hip-roll goal beyond the joint range
+  (+-0.384 rad) and 22 to 42 % a head-roll goal beyond +-0.436; the runtime's `clamp_goal` cuts those, the training
+  env does not clamp the command (joint range in the MJCF, wide control range). Knees are never clamped.

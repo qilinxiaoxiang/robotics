@@ -21,6 +21,18 @@ sys.path.insert(0, str(HERE))
 import flight_eval as fe  # noqa: E402
 
 LOADED_N = 0.5  # a foot counts as on the floor at or above this floor force
+BRAIN_DEFAULT = {}
+
+
+def default_pose(d):
+    """joint -> default angle from the policy file's metadata (the runtime's goal is default + action)"""
+    import onnxruntime as ort
+    p = HERE / "ckpt" / d / "walk61.onnx"
+    meta = ort.InferenceSession(str(p), providers=["CPUExecutionProvider"]).get_modelmeta().custom_metadata_map
+    if "joint_names" not in meta:  # a save without metadata: the family shares the deployed walk61's default pose
+        p = HERE / "../../../microduck_rl/cmu/whole/runtime-overlay/models/walk61.onnx"
+        meta = ort.InferenceSession(str(p), providers=["CPUExecutionProvider"]).get_modelmeta().custom_metadata_map
+    return dict(zip(meta["joint_names"].split(","), [float(v) for v in meta["default_joint_pos"].split(",")]))
 
 
 def run(d, man, vx, extra):
@@ -53,14 +65,30 @@ def analyse(rows, names):
             continue
         who = [names[k] if k < len(names) else str(k) for k, v in enumerate(dlt) if v > 0.5]
         joints.update(who)
+        moves = {names[k]: [round(acts[i - 1][1][k], 3), round(a[k], 3)] for k, v in enumerate(dlt) if v > 0.5}
         after_down = [e for e in events if e[2] == "down" and 0.0 <= t - e[0] <= 0.06]
         before_up = [e for e in events if e[2] == "up" and 0.0 <= e[0] - t <= 0.06]
         tag = "after_touch_down" if after_down else ("before_lift_off" if before_up else "mid_stance_or_swing")
         near[tag] += 1
-        jumps.append(dict(t=t, joints=who, size=round(max(dlt), 3), phase=tag,
+        jumps.append(dict(t=t, joints=who, size=round(max(dlt), 3), phase=tag, action_from_to=moves,
                           feet_n=None if not dg else [dg["left"]["fn"], dg["right"]["fn"]]))
     steps = sum(1 for e in events if e[2] == "down")
-    return dict(ticks=len(acts), jumps=len(jumps), joints=dict(joints), phase=dict(near), touch_downs=steps,
+    # per joint over the walking part (t >= 2.5 s): the action's range and mean |tick-to-tick change|, and the share of
+    # ticks whose servo goal (default + action) lies outside the runtime's joint range, where clamp_goal cuts it
+    wb = sys.modules.get("walk_brain")
+    walk = [a for t, a, _ in acts if t >= 2.5]
+    per = {}
+    for k, n in enumerate(names):
+        col = [a[k] for a in walk]
+        if not col:
+            continue
+        d1 = [abs(x - y) for x, y in zip(col[1:], col[:-1])]
+        lo, hi = wb.JOINT_RANGE.get(n, (-9, 9))
+        dflt = BRAIN_DEFAULT.get(n, 0.0)
+        per[n] = dict(min=round(min(col), 2), max=round(max(col), 2), mean_step=round(sum(d1) / max(len(d1), 1), 3),
+                      max_step=round(max(d1), 2) if d1 else 0.0,
+                      clamped=round(sum(1 for v in col if dflt + v < lo or dflt + v > hi) / len(col), 3))
+    return dict(ticks=len(acts), jumps=len(jumps), joints=dict(joints), phase=dict(near), touch_downs=steps, per_joint=per,
                 per_second=dict(sorted(Counter(int(j["t"]) for j in jumps).items())), detail=jumps)
 
 
@@ -70,17 +98,21 @@ def main():
     for vx in vxs:
         r, rows = run(d, man, float(vx), extra)
         wb = sys.modules.get("walk_brain")
-        names = list(getattr(wb, "NAMES", []))
-        if rows and rows[0].get("action") is not None and len(names) != len(rows[0]["action"]):
-            names = names[:len(rows[0]["action"])]
+        # the logged action is in the policy's joint order (walk_brain.OBSERVATION_DOF_ORDER), NOT in servo-ID order
+        # (walk_brain.NAMES): the first version of this script labelled with NAMES and named the wrong joints
+        names = list(wb.OBSERVATION_DOF_ORDER)
+        BRAIN_DEFAULT.update(default_pose(d))
         a = analyse(rows, names)
         a.update(fell_at=r["fell_at"], speed=r["speed"], gate_action_jumps=r["action_jumps"], max_tilt=r["max_tilt"])
         out[vx] = a
-        print(json.dumps(dict(vx=vx, **{k: v for k, v in a.items() if k != "detail"})))
-        for j in a["detail"][:12]:
+        print(json.dumps(dict(vx=vx, **{k: v for k, v in a.items() if k not in ("detail", "per_joint")})))
+        for n, v in a["per_joint"].items():
+            print("  J", n, json.dumps(v))
+        for j in a["detail"][:8]:
             print("   ", json.dumps(j))
     (HERE / "eval").mkdir(exist_ok=True)
-    (HERE / "eval" / f"jump_where_{d}.json").write_text(json.dumps(out, indent=1))
+    tag = man + ("_g400" if "400" in extra else "")
+    (HERE / "eval" / f"jump_where_{d}_{tag}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
