@@ -58,6 +58,21 @@ case "$1" in
     done
     $PY train/ts3_first2s.py 10 walk61 smk_c0_232 smk_c1_232 smk_g1_232 smk_h1_232 2>&1 | grep -v Warning | grep nominal | cut -c1-400
     ;;
+  r1)
+    # reset-heavy student smk_r1_232 against the control: the reads of k1
+    for D in smk_r1_232 smk_c0_232; do $PY train/ts3_still_where.py $D 0,1,2 2>&1 | grep -E "seed|first call" | cut -c1-175; done
+    for K in 200 400; do $PY train/ts3_stop_where.py smk_r1_232 count=20 kp=$K 2>&1 | tail -1; done
+    ;;
+  p1)
+    # both-flags student smk_p1_232 (pack flag column 60, gain flag column 59, both fed from the file's metadata),
+    # cold and with prewarm 10 (the flags are in the prewarm calls' input too)
+    for W in "" prewarm=10; do
+      echo "== smk_p1_232 ${W:-cold}"
+      for K in 200 300 400; do $PY train/ts3_stop_where.py smk_p1_232 count=20 kp=$K $W 2>&1 | tail -2 | cut -c1-330; done
+      echo "heading hold off, gain 200"; FLIGHT_BRAIN_SET=$OFF $PY train/ts3_stop_where.py smk_p1_232 count=20 kp=200 $W 2>&1 | tail -1
+      $PY train/ts3_still_where.py smk_p1_232 0,1,2 $W 2>&1 | grep -E "seed|first call" | cut -c1-175
+    done
+    ;;
   first)
     $PY train/ts3_first2s.py 10 s3a_60 s3a_160 2>&1 | grep -v Warning | cut -c1-600
     ;;

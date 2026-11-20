@@ -54,6 +54,9 @@ class _StatefulSession:
         # same number priv_now gives a gain-reading teacher. The robot-log states of G1 carry 0 there (KP 200).
         gc = sess.get_modelmeta().custom_metadata_map.get("gain_flag_col")
         self.gain_col = int(gc) if gc not in (None, "") else None
+        # the same for --pack-flag-col: 1.0 when the episode's manifest carries more than 0.02 kg of payload, else 0.0
+        pc = sess.get_modelmeta().custom_metadata_map.get("pack_flag_col")
+        self.pack_col = int(pc) if pc not in (None, "") else None
 
     def get_inputs(self):
         return self.sess.get_inputs()[:1]
@@ -90,6 +93,14 @@ class _StatefulSession:
                     feed[k][:, self.gain_col] = gv
                     DIAG["stat"]["gain_flag_calls"] = DIAG["stat"].get("gain_flag_calls", 0) + 1
                     DIAG["stat"]["gain_flag_value"] = gv
+        if self.pack_col is not None and self.state_name == "state_in" and not os.environ.get("FLIGHT_OBS_SET"):
+            pv_ = 1.0 if float(PRIV.get("kg") or 0.0) > 0.02 else 0.0
+            feed = {k: np.array(v, copy=True) for k, v in feed.items()}
+            for k in feed:
+                if feed[k].ndim == 2 and feed[k].shape[1] == 61:
+                    feed[k][:, self.pack_col] = pv_
+                    DIAG["stat"]["pack_flag_calls"] = DIAG["stat"].get("pack_flag_calls", 0) + 1
+                    DIAG["stat"]["pack_flag_value"] = pv_
         oset = os.environ.get("FLIGHT_OBS_SET")
         if oset and self.state_name == "state_in":
             feed = {k: np.array(v, copy=True) for k, v in feed.items()}   # several columns: "60:1.0,59:0.5"

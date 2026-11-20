@@ -1870,3 +1870,19 @@ counters prewarm_entries 1, prewarm_steps N per episode). No second policy.
   without a pack; with the pack at gain 200 that start falls within a second, as s3a_160 does without any
   prewarm. Self-prewarm trades the no-pack gain-400 stepping for pack falls at gain 200: it is not a loader fix
   on its own for a save like s3a_60.
+
+## 2026-11-20 07:20 reset-heavy smoke (r1): the empty-state output moves a little, the stepping does not go
+
+Chain r1 06:50:30 to 07:18:27 (`--state-reset-p 0.01`, same start and stages as c0). G1 0.187 (c0 0.194).
+- First call from the empty state against walk61 (no pack, gain 400): r1 0.104 rad rms, c0 0.133.
+- Standing without the pack at gain 400, gate jumps, seeds 0 / 1 / 2: r1 6 / 14 / 4, c0 3 / 2 / 8. No clear change.
+- Pack walk, heading on, 20 seeds: gain 200: 17 during the walk (2 at 1.14 and 1.26 s, 15 at 3.32 to 4.02 s) + 1
+  after the stop; gain 400: 0 + 0.
+- Reading: one reset per 100 calls moved the empty-state output by a quarter in about 24 iterations; not enough
+  to judge, and by the prewarmed reading of s3a_60 an empty-state output equal to walk61 would bring the pack
+  start falls at gain 200 with it. The start needs the load and gain as inputs: smoke p1 below.
+- 07:19:48 chain p1 started on the Mac mini (`--pack-flag-col 60 --gain-flag-col 59 --stop-share 0.25`, same start
+  and stages as c0), heartbeat `logs/ts3_anchor_p1_heartbeat.txt`. `flight_eval` now feeds the pack flag from the
+  file's `pack_flag_col` metadata (1.0 when the episode's manifest carries more than 0.02 kg) like the gain flag,
+  also during prewarm calls. Evidence only: whether the robot is told pack and gain is Shawn's decision.
+- Run AB at 07:16: iteration 80, 0.0245 it/s, pack mse 0.00282, no-pack distance to walk61 0.263.
