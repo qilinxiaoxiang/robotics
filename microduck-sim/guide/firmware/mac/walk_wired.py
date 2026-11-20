@@ -19,7 +19,7 @@ the simulation), stand mode returns to plain STAND, torque stays on, and once th
 not switched on until the servos read 7.6 V or more (a charged or swapped pack), which deletes it. --supply battery
 applies the guard from the start; --supply bench switches it off (the bench rail sags under 6.6 V while walking,
 which the guard reads as an empty pack) but keeps the Alert-bit packets and the hardware-error watch. A failed voltage read is a skipped sample and never
-releases torque. After the stop, 6.2 V on three samples (no walking load left to sag) sits the robot down and turns torque
+releases torque. After the stop, 6.4 V on three samples (no walking load left to sag) sits the robot down and turns torque
 off, by 6 s at the latest. --supply-file (the phone's backpack switch) changes the guard while running, also while driving. Armed, the loop also reads Hardware Error Status once a second; a fault other than the battery's
 input-voltage flag freezes the policy on its last goals, as a dropped status packet does on the bench.
 

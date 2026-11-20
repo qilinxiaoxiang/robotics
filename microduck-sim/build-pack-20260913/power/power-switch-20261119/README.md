@@ -52,6 +52,8 @@ Feature registry (ID, problem, why, simpler option considered, validation, when 
 
 ## Open before CAD
 
-- The free A7Z header pin for OFF (head wiring uses the inner row, memory `microduck-a7z-head`).
+- The free A7Z header pin for OFF: chosen 2026-11-20, header pin 22 (PL5, 3.3 V bank, no UART function); reasons and
+  sources in `guide/firmware/a7z/power-off-20261120/duck_power_off.py`. XIAO firmware:
+  `guide/firmware/xiao-cutoff-20261120/`. PS-5 (idle timeout) is not written yet.
 - PS-2 is modules and through-hole parts only (XIAO, two resistors, two diodes): no PCB, no SMD.
 - XT30 pigtails soldered to the Pololu's large VIN/VOUT holes.

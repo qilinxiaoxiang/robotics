@@ -27,7 +27,9 @@ ALERT_BIT = 0x80           # status packet error field: Hardware Error Status is
 BATTERY_WINDOW_DV = (64, 84)   # check_voltage_limit.py --rail battery: 6.4-8.4 V
 WARN_BELOW_DV = 70             # 3.5 V per cell under load: warn
 STOP_AT_DV = 66                # 3.3 V per cell: stop walking, hold a standing pose, signal shutdown
-FLOOR_AT_DV = 62               # 3.1 V per cell, after the stop (no walking load, so no sag): sit down, then torque off
+FLOOR_AT_DV = 64               # 3.2 V per cell, after the stop (no walking load, so no sag): sit down, then torque off;
+                               # above the power V2 XIAO hardware cut (6.3 V or a cell 3.1 V for 3 s, PS-2/PV-2) so the
+                               # robot has sat down before the hardware removes power
 FLOOR_CONFIRM = 3              # consecutive samples at the floor
 FLOOR_SIT_S = 6.0              # sit prep 0.8 s + glide 2 s + margin; torque goes off by then even without a seat
 ALARM_S = {"warn": 10.0, "stop": 3.0, "floor": 1.5}  # s between duck calls, sound only: Shawn wants it heard (2026-11-02)

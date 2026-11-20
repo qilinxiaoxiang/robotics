@@ -1,0 +1,11 @@
+[Unit]
+Description=MicroDuck power-off line check (header pin 22 free for the shutdown hook; result in the journal)
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/duck/duck_power_off.py --check
+# the hook itself is /usr/lib/systemd/system-shutdown/duck-power-off; this unit only reports at boot
+
+[Install]
+WantedBy=multi-user.target

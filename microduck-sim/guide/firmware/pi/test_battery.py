@@ -161,6 +161,16 @@ class Guard(unittest.TestCase):
         self.assertEqual(events, [None, "warn", None, None, "stop", None, None])
         self.assertEqual((g.state, g.stop_t), ("stop", 4.0))
 
+    def test_floor_is_6_4v_above_the_xiao_hardware_cut(self):
+        # power V2 (PS-2/PV-2): the XIAO cuts at 6.3 V held 3 s, so the guard sits the robot down at 6.4 V first
+        self.assertEqual(bt.FLOOR_AT_DV, 64)
+        g = bt.BatteryGuard("battery")
+        feed(g, [6.6, 6.6, 6.6])
+        self.assertEqual(g.state, "stop")
+        self.assertEqual(feed(g, [6.5, 6.5, 6.5], t0=3.0), [None, None, None])  # 6.5 V is above the floor
+        self.assertEqual(feed(g, [6.4, 6.4, 6.4], t0=6.0), [None, None, "floor"])
+        self.assertEqual(g.floor_t, 8.0)
+
     def test_a_good_sample_restarts_the_count(self):
         g = bt.BatteryGuard("battery")
         events = feed(g, [6.6, 6.6, 7.1, 6.6, 6.6, 6.6])

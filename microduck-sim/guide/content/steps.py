@@ -2001,7 +2001,8 @@ def build(ctx):
 
         step('bv2-harness', 'backpack', '焊 XIAO 低压切断线束和按钮线（全部电阻和二极管）',
              add=ctx.keys('bv2_xiao'), show=ctx.keys('bv2_pololu', 'bv2_dfr1202') + bv2_capset, context=[], bench=True, camera=bench_cam,
-             prepare=[e('Seeed XIAO SAMD21', 1, 'RoboClub C 柜抽屉（2026-10-20 盘点有 3 块未拆封）。'),
+             prepare=[e('Seeed XIAO SAMD21', 1, 'RoboClub C 柜抽屉（2026-10-20 盘点有 3 块未拆封）。焊进线束之前先烧好低压切断固件（本步第一件事）。'),
+                      o('USB-C 数据线（Mac 到 XIAO）', 1),
                       e('电阻 100 kΩ 1/4 W', 6, 'A0、A2、A3 的上臂，A1 的上下两臂，OFF 下拉。DigiKey CF14JT100KCT-ND。'),
                       e('电阻 33 kΩ 1/4 W', 3, 'A0、A2、A3 的下臂。DigiKey CF14JT33K0CT-ND。'),
                       e('电阻 10 kΩ 1/4 W', 1, '按钮到 ON 脚的限流电阻。RoboClub D 柜写的是“10K?”，用万用表确认读数 9.5 到 10.5 kΩ。'),
@@ -2014,6 +2015,8 @@ def build(ctx):
                       iron, shrink, meter, t('标签纸和笔', '每根 26 AWG 线两头贴上名字。')],
              instructions=[
                  '完成后：XIAO 的 5V 和 GND 接在 DFR1202 的 5 V 输出上；A0 读 Pololu VOUT，A1 读电池中间节，A2 读充电触点，A3 读按钮；D6 经一个 1N4148 接 Pololu OFF；插头 4 的第 3 针经另一个 1N4148 也接 OFF；按钮把 VIN 经 10 kΩ 接到 ON，灯环经 120 Ω 接 5 V。',
+                 '先烧固件（XIAO 还没焊任何线）：XIAO 用 USB-C 线插到 Mac。终端里进入 ~/code/robotics/microduck-sim/guide/firmware/xiao-cutoff-20261120，运行 arduino-cli compile --fqbn Seeeduino:samd:seeed_XIAO_m0 --output-dir build xiao_cutoff，再运行 arduino-cli board list 找到 /dev/cu.usbmodem 开头的口，然后 arduino-cli upload --fqbn Seeeduino:samd:seeed_XIAO_m0 -p 那个口 --input-dir build。第一次用要先装 Seeed 的板子包，命令在同一目录的 README.md。用 Arduino IDE 也行：板子选 Seeeduino XIAO，打开 xiao_cutoff/xiao_cutoff.ino，点上传。',
+                 '烧完马上看结果：arduino-cli monitor -p 那个口 -c baudrate=115200 每半秒打一行状态。只插 USB 时没有电池电压，约 3 秒后打出 cut=1 reason=pack_low，XIAO 上的橙色小灯常亮：这就是对的。拔掉 USB。',
                  '电源：一根 80 mm 线把 DFR1202 的 5 V 输出“+”焊盘接到 XIAO 的 5V 焊盘，另一根把 5 V 输出“−”焊盘接到 XIAO 的 GND 焊盘。插头 4 引线还焊在这两个焊盘上，新线一起焊进去。',
                  'A0（读 VOUT）：一根 80 mm 线从 Pololu VOUT 剩下的 0.1″ 小孔焊出来，另一头焊一只 100 kΩ，100 kΩ 另一脚焊到 XIAO A0；A0 再焊一只 33 kΩ 到 XIAO GND。',
                  'A1（读中间节）：一根 80 mm 线焊在 B3B-XH-A 中间那一针上，套 3 mm 热缩管，两边两针空着；线的另一头焊一只 100 kΩ 到 A1；A1 再焊一只 100 kΩ 到 GND。',
@@ -2021,7 +2024,7 @@ def build(ctx):
                  'A3（读按钮）：一根 80 mm 线一头先空着，等下焊在 10 kΩ 的按钮一侧；另一头焊 100 kΩ 到 A3，A3 再焊 33 kΩ 到 GND。',
                  '把 A0、A2、A3 的三只 33 kΩ 和 A1 的下臂 100 kΩ 的接地脚拧在一起，和 GND 线一起焊到 XIAO 的 GND 焊盘上。',
                  'OFF 线：一根 80 mm 线一头焊 XIAO D6，另一头焊一只 1N4148 的阳极（没有色环那端），1N4148 的阴极（有黑色环那端）焊进 Pololu OFF 孔。',
-                 'A7Z 关机线：100 mm 线一头焊到插头 4 MR30 母头的第 3 个焊杯，另一头焊第二只 1N4148 的阳极，阴极也焊进 Pololu OFF 孔。',
+                 'A7Z 关机线：100 mm 线一头焊到插头 4 MR30 母头的第 3 个焊杯，另一头焊第二只 1N4148 的阳极，阴极也焊进 Pololu OFF 孔。机器人一侧，这一针通到 A7Z 排针 22 号针（第一次开机那一步接）。',
                  'OFF 下拉：一只 100 kΩ 一脚焊进 Pololu OFF 孔，另一脚焊到 DFR1202 供电线黑线在 Pololu GND 小孔的那一端。',
                  '按钮线：四根 100 mm 线分别焊在按钮的四个焊片上（公共端 C、常开端 NO、灯 +、灯 −，焊片旁边有印字），每个焊点套 3 mm 热缩管。',
                  '公共端 C 线焊进 Pololu VIN 剩下的 0.1″ 小孔。常开端 NO 线焊一只 10 kΩ，10 kΩ 另一脚焊进 Pololu ON 孔；A3 线焊在 10 kΩ 靠 NO 线的那一脚上。',
@@ -2032,7 +2035,8 @@ def build(ctx):
                      '两只 1N4148 的黑色环都朝 Pololu OFF。',
                      'MR30 第 3 针和第 1、2 针之间不导通。'],
              warnings=['XIAO 的模拟脚最高 3.3 V。分压电阻焊反（33 kΩ 在上面）会把 8.4 V 的三分之二加到脚上，烧坏 XIAO。通电前再看一次。',
-                       'Pololu 的 CTRL 脚空着，什么都不接。'])
+                       'Pololu 的 CTRL 脚空着，什么都不接。',
+                       '焊进线束以后，XIAO 的 5V 焊盘就是 USB 的 5 V，和 DFR1202 的 5 V 连在一起：插着 USB 时，Mac 会给灯环和插头 4 供电。线束里的 XIAO 只在插头 4 没接 A7Z 时才插 USB 读状态，插着 USB 时灯亮不代表开机。'])
 
         step('bv2-charge', 'backpack', '焊充电线：两片触点、1N5822 和 Pololu VIN/GND',
              add=bv2_pads + ctx.keys('bv2_diode'), show=ctx.keys('bv2_pololu', 'bv2_dfr1202', 'bv2_xiao') + bv2_capset, context=[], bench=True,
@@ -2061,18 +2065,24 @@ def build(ctx):
                         '先用万用表量 XT30：7.0 到 8.4 V。DC5.5 那根线不用。'),
                       meter, o('胶布或 DC5.5 母头保护帽', 1, '把电池的 DC5.5 公头包起来，免得金属头碰到别的东西。')],
              instructions=[
-                 '完成后：电池接上、按一下按钮，绿灯环马上亮；插头 3 量到电池电压，插头 4 的第 1、2 针量到 5 V。',
+                 '完成后：电池接上、按一下按钮，绿灯环马上亮；插头 3 量到电池电压，插头 4 的第 1、2 针量到 5 V；XIAO 的橙色小灯每秒闪一下；按住按钮 2 秒再松手，灯环灭。',
                  '用胶布把电池的 DC5.5 公头包好。',
                  '电池的 XH 平衡头插到 B3B-XH-A 上。',
                  '电池的 XT30 母头插到电池引线的 XT30 公头上。这时灯不亮，插头 3 量不到电压。',
                  '按一下按钮：绿灯环立刻亮起。',
                  '量插头 3：等于电池电压。量插头 4 的第 1、2 针：5.0 V 左右。',
-                 '拔下电池 XT30，灯灭。',
+                 '看 XIAO：橙色小灯每秒短闪一下，表示它在看电压、一切正常（快闪是低电压在计时，常亮是正在切电）。',
+                 '关机试验：按住按钮，心里数到 3，松手。松手的一刻绿灯环灭，插头 3 量不到电压。',
+                 '再按一下按钮开机，灯亮；轻点一下（不到 1 秒）不会关机。',
+                 '要看电压读数：先确认插头 4 没接任何东西，XIAO 插 USB 到 Mac，运行 arduino-cli monitor -p /dev/cu.usbmodem 开头的口 -c baudrate=115200。每半秒一行：pack 和万用表量的电池电压相差不超过 0.1 V，c1、c2 是两节电芯，各在 3.5 到 4.2 V，xh=1。差得多就按 README.md 的“Calibrate”改 PACK_TRIM、MID_TRIM 再烧一次。看完拔 USB。',
+                 '最后按住 2 秒松手关机，再拔下电池 XT30。',
              ],
              checks=['不按按钮时灯不亮、插头 3 没电；按一下就亮、就有电。',
+                     'XIAO 橙色小灯每秒闪一下。',
+                     '按住 2 秒再松手，灯环灭；轻点不灭。',
                      '插头 4 第 3 针对地量不到电压。'],
-             warnings=['XIAO 低压切断固件还没有写好（本章缺项）：XIAO 现在不会切电，按住 2 秒也不能关机。关电只能拔电池 XT30。固件写好前，低电压只靠 A7Z 上的电池守护程序。',
-                       '灯不亮或插头 4 不是 5 V：马上拔电池，回去查按钮线和 DFR1202 供电线。'])
+             warnings=['灯不亮或插头 4 不是 5 V：马上拔电池，回去查按钮线和 DFR1202 供电线。',
+                       '一开机 3 秒左右就自己灭：XIAO 读到的电压低于 6.3 V。先量电池（低于 6.6 V 就先充电），再查 A0 和 A1 的分压电阻。'])
 
         step('bv2-frame', 'backpack', '用四颗 M2 × 6 把新框架拧到 OpenRB 盒子的柱子上',
              add=ctx.keys('bv2_frame'), approach={'bv2_frame': [-30, 0, 0]}, camera=frame_cam,
@@ -2168,21 +2178,28 @@ def build(ctx):
 
         step('bv2-power-up', 'backpack', '第一次用电池开机：按一下，绿灯亮，A7Z 启动',
              camera=rear_cam,
-             prepare=[meter],
+             prepare=[meter, iron, shrink,
+                      o('杜邦线 30 cm 母对公（和头里插 A7Z 的线同一种）', 1, '剪掉公头，留母头那一端，做机器人一侧的关机线。')],
              instructions=[
-                 '完成后：按一下按钮，绿灯环立刻亮，A7Z 开机能连上；舵机电压在 7.0 到 8.4 V；A7Z 关机后灯不会自己灭（关机线还没接，见下面的警告）。',
+                 '完成后：机器人一侧 MR30 公头的第 3 针有一根线插在 A7Z 排针 22 号针上；A7Z 装好关机钩子；按一下按钮，绿灯环立刻亮，A7Z 开机能连上；舵机电压在 7.0 到 8.4 V；在 A7Z 上关机，灯环自己灭。',
+                 '机器人一侧的关机线：拔开插头 4。A7Z 供电线的 MR30 公头现在只用第 1、2 针（5 V 红、GND 黑），第 3 针的焊杯空着。杜邦线剪掉公头，剥 3 mm 上锡，焊进第 3 针焊杯，套 3 mm 热缩管吹紧。',
+                 '这根线贴着 A7Z 的 5 V 红黑线走到背包座，母头插在 A7Z 排针 22 号针上：外排（靠板边那排），从 2 号针往 39、40 那头数第 11 根；它旁边的 20 号针是 GND，24 号针空着。',
+                 '插回插头 4。万用表通断档：MR30 第 3 针和第 1、2 针之间不导通。',
                  '开机前在 Mac 上确认每个舵机的 Shutdown 已经是 52（第 11 章）：运行 guide/firmware/pi/set_shutdown.py --check。满电 8.4 V 高于舵机 7.0 V 的最高电压限制。',
                  '确认 A7Z 上的电池守护程序会随 walk_wired.py 一起启动（guide/firmware/pi/battery.py）。',
                  '让机器人侧躺在桌上（不要站着开机）。',
                  '按一下按钮。绿灯环马上亮起：这就是“已经上电”。',
                  '等 A7Z 启动：手机遥控页面或 ssh 能连上。',
                  '读一次舵机电压：在 7.0 到 8.4 V 之间。',
-                 '关机：先让 A7Z 关机，再拔掉插头 3 和插头 4，灯灭。',
+                 '装关机钩子（只装一次）：在 Mac 的 ~/code/robotics/microduck-sim 里运行 scp -r guide/firmware/a7z/power-off-20261120 a7z:rt/microduck-sim/guide/firmware/a7z/，再运行 ssh a7z \'bash ~/rt/microduck-sim/guide/firmware/a7z/power-off-20261120/install.sh\'。最后几行要有 “ok: line … free” 和 “dry run: poweroff: would drive … (header pin 22)”。',
+                 '关机试验：运行 ssh a7z sudo poweroff。A7Z 关完机（约 10 到 20 秒），绿灯环自己灭，插头 3 量不到电压。',
+                 '以后关机就这样：在 A7Z 上关机（手机页面或 ssh），灯灭就是断电了。按住按钮 2 秒再松手也能关，但那是直接断电，A7Z 来不及关机，只在 A7Z 连不上时用。',
              ],
-             checks=['按下按钮的同一时刻绿灯亮。', 'A7Z 启动并能连上。', '舵机读到的电压在 7.0 到 8.4 V。'],
-             warnings=['本章缺项一：XIAO 低压切断固件还没有，XIAO 不会切电。',
-                       '本章缺项二：A7Z 的 OFF 引脚和关机钩子还没选定，机器人一侧 MR30 第 3 针到 A7Z 排针的线也没有接。所以 A7Z 关机以后 Pololu 不会自己断电，灯一直亮着，电池会被慢慢放空。用完一定要拔插头 3 和 4。',
-                       '电池守护程序现在的下限仍是 6.2 V（battery.py 的 FLOOR_AT_DV = 62）；新设计要求 6.4 V，改代码之前不要把电池用到底。'])
+             checks=['按下按钮的同一时刻绿灯亮。', 'A7Z 启动并能连上。', '舵机读到的电压在 7.0 到 8.4 V。',
+                     'sudo poweroff 以后灯环自己灭。', '接上关机线以后开机，灯不会在 A7Z 启动途中自己灭。'],
+             warnings=['A7Z 启动途中灯自己灭：22 号针在开机时被拉高了。拔掉 22 号针上的线，先不用关机线（这一针要换一根）。',
+                       'sudo poweroff 以后灯一直亮：查 22 号针上的线和 MR30 第 3 针，再看 A7Z 上 journalctl -u duck-power-off-check 的结果。查好之前用完拔插头 3 和 4。',
+                       '电池守护程序的下限是 6.4 V（battery.py 的 FLOOR_AT_DV = 64），比 XIAO 的 6.3 V 硬件切电高，机器人先坐下再断电。'])
 
         step('dock-solder', 'backpack', '充电座：把两片 5209 弹片和 PJ-005A 插座用两根短线焊好',
              add=ctx.keys('dock_leaf_plus', 'dock_leaf_minus', 'dock_jack'), show=[], context=[], bench=True, camera=dock_cam,
