@@ -595,7 +595,7 @@
         {
           "id": "H1-flat-pack-brownout",
           "claim": "A slow supply sag while the servo is powered (pack running flat with the robot left on) corrupts or clears the EEPROM, so the servo boots with factory defaults.",
-          "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried). Shawn 2026-11-13, a guess, not an observation: \"可能是电池放空过，我猜\""
+          "status": "open: the 11-02 event followed a logged flat pack; for 11-13 the rail history before the boot has not been read (A7Z offline when it was tried). Shawn 2026-11-13, a guess, not an observation: \"可能是电池放空过，我猜\". Supporting evidence 2026-11-19: one Tattu 2S 650 has a cell that will not charge (B3 charger photo IMG_7387: cell 1 green full, cell 2 red forever) and on the robot lights the OpenRB but not the A7Z (pack under the DFR1202's 6 V minimum input), so that pack was deeply discharged at least once. Chain: pack under 6 V -> DFR1202 drops the A7Z -> brain and battery guard stop -> OpenRB and 15 servos (about 0.26 A standby) stay on the switch and drain the pack slowly through the servo brownout range. Not yet tied to a dated occurrence."
         }
       ],
       "tests": [
