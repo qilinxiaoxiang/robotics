@@ -189,25 +189,25 @@
      "status": "proposed",
      "sheet_zh": {
       "title": "B0T 重做推力测试（量推力这把尺子）",
-      "does": "把推力测试改成物理上成立的样子：鸭子站稳或走起来以后再加推力；在地面上恒定推力只测到整机重量的一半；一半以上只按真实的起飞和降落流程测（背包自己的飞控保持姿态，大约 0.14 秒就穿过去）；每格 60 次，站立格加位移线。然后先用三个已知结论的参考模型校验它。",
+      "does": "按你 11-20 的决定重做推力测试。站立：风扇托住体重的 0、四分之一、一半、四分之三、九成，每一档都考，要求不摔，也不乱动、不挣扎。走路：只考到一半，四分之三和九成不考。另外考完整的起飞和降落。鸭子先站稳再加推力，背包自己的飞控像真机一样开着稳姿态，每格 60 次。考模型之前先校验考题本身：把腿锁在站姿不动，看它在四分之三和九成能不能站住；锁着腿都站不住，说明考题搭错了，先修考题。",
       "does_not": "不训练；不花云端额度；不上机器人。",
-      "pass": "三个参考结果都复现：walk61 不带背包、零推力 60 次摔 0 次；背包专用模型 fq2 带背包零推力摔 0 次，完整起降流程成功率不低于原来的 9 次里 9 次（60 次里至少 54 次）；walk61 带背包、推力 0.4 和 0.5 倍时的摔倒率落在旧研究结果（10 次里 0 次和 2 次）的误差范围内。",
-      "kill": "2 次都复现不了：恒定推力格不进验收，FP-R8 只按完整起降流程验收。",
+      "pass": "考题成立：腿锁在站姿时，五档推力下 60 次都站满 10 秒；walk61 不带背包零推力 60 次摔 0 次；背包专用模型 fq2 带背包零推力摔 0 次，完整起降成功率不低于 60 次里 54 次；walk61 带背包、推力 0.4 和 0.5 倍时的摔倒率落在旧研究结果的误差范围内。“不乱动”有了一条量出来的线（以 walk61 零推力站立时的动作突跳和关节活动量为基准）。",
+      "kill": "2 次之后腿锁着在四分之三或九成仍站不住：不删这两档，把物理原因和需要飞控补什么报给你定。",
       "budget": "0 美元，0 GPU 小时，Mac mini 6 小时以内，最多 2 次。"
      },
-     "question": "Is the redefined thrust test a valid measure: with thrust applied after the robot has settled, constant thrust on the ground only up to 0.5 of whole-robot weight, and higher thrust only inside the full take-off and landing sequence under the pack's flight controller, does it reproduce the known results of the reference policies?",
+     "question": "Is the thrust test a valid measure under Shawn's 2026-11-20 decision (standing at constant thrust 0, 0.25, 0.5, 0.75 and 0.9 of whole-robot weight must not fall and must not flail; walking is tested up to 0.5 only; plus the full take-off and landing sequence): with thrust applied after the robot has settled and the pack's attitude loop on as on the real pack, do legs locked at the stand pose hold every standing cell, and does the test reproduce the known results of the reference policies?",
      "changes_vs_previous": [],
      "depends_on": [
       "B0"
      ],
      "pass": {
       "metric": "reproduction of three known results at 60 episodes per cell, with trunk pitch, roll, centre of pressure and actual thrust logged per step and thrust summarised per episode",
-      "threshold": "(1) walk61 without the pack at zero thrust: 0 falls of 60; (2) fq2 iteration 1999 with the pack: 0 falls of 60 at zero thrust and at least 54 of 60 successes in the full take-off and landing sequence of sim/flight.py (its recorded result is 9 of 9, sim/out/fullseq_handover); (3) walk61 with the pack at thrust 0.40 and 0.50 from 0 s: fall rates inside the 95 % interval of sim/out/walk/summary.json (0 of 10 and 2 of 10), that is at most 15 of 60 and between 2 and 33 of 60; (4) every cell left in the gate is listed with its PASS line in train/ts3_gates.py under the names REQUIREMENTS.json coverage uses",
+      "threshold": "(0) well-posedness: legs locked at the stand pose (sim/flight.py --legs held), pack fitted, attitude loop on: 60 of 60 episodes stand 10 s at each of thrust 0, 0.25, 0.5, 0.75 and 0.9; and a calm line is fixed from walk61 standing at zero thrust without the pack (median action jumps per 10 s and joint travel per 10 s; a standing cell counts as flailing above max(1.5 x reference, reference + 2) jumps); (1) walk61 without the pack at zero thrust: 0 falls of 60; (2) fq2 iteration 1999 with the pack: 0 falls of 60 at zero thrust and at least 54 of 60 successes in the full take-off and landing sequence of sim/flight.py (its recorded result is 9 of 9, sim/out/fullseq_handover); (3) walk61 with the pack at thrust 0.40 and 0.50 from 0 s: fall rates inside the 95 % interval of sim/out/walk/summary.json (0 of 10 and 2 of 10), that is at most 15 of 60 and between 2 and 33 of 60; (4) every cell left in the gate is listed with its PASS line in train/ts3_gates.py under the names REQUIREMENTS.json coverage uses",
       "measured_by": "train/ts3_thrust_gap.py after the changes listed in the 2026-11-20 review (RUNLOG), run on the Mac mini under train/mini_lock.sh"
      },
      "kill": {
-      "condition": "after 2 attempts a reference result is not reproduced",
-      "then": "constant-thrust cells stay out of acceptance; FP-R8 is accepted on the full take-off and landing sequence alone"
+      "condition": "after 2 attempts a reference result is not reproduced, or locked legs do not hold a standing cell at 0.75 or 0.9",
+      "then": "the standing cells are not dropped (Shawn 2026-11-20: standing must hold): the physical cause and what the pack's flight controller must add go to Shawn for a decision"
      },
      "budget": {
       "usd": 0,
@@ -215,11 +215,18 @@
       "wall_hours": 6,
       "max_attempts": 2
      },
-     "needs_owner_word": "FP-R8's acceptance sentence 'constant thrust at fractions of whole-robot weight from 0 to just under 1' (written by the agent on 2026-11-20, not Shawn's words) changes to 'constant thrust on the ground up to 0.5; above 0.5 only inside the real take-off and landing sequence'. Reason: at 0.75 and 0.9 the feet can restore 0.12 and 0.05 N m, so the trunk must stay within 3.3 and 1.1 degrees, and the pack's own controller never dwells there (about 0.14 s between 0.5 and 1.0).",
+     "owner_decision": {
+      "date": "2026-11-20",
+      "asked": "Whether standing still on the ground while the fans carry three quarters or nine tenths of the weight stays in the test (the agent proposed dropping both constant-thrust levels and testing only the take-off and landing sequence above one half).",
+      "words": "站着不摔是肯定要的 而且也不能乱动和挣扎 走路可以不考",
+      "source": "session 1ebe7a36, about 14:50",
+      "reading": "Standing cells stay at every thrust level including 0.75 and 0.9, with a second criterion: no flailing. Walking at 0.75 and 0.9 is not tested. The agent reads 'walking need not be tested' as applying to the two levels the question was about; walking up to 0.5 stays (his earlier words in REQUIREMENTS.json FP-R8: '到时候背包喷气一喷，你又不会走路了？')."
+     },
      "attempts": [],
      "route_reviews": [],
      "history": [
-      "2026-11-20: the previous session's thrust measurement of 12:55 (116 cells x 10 episodes) was reviewed read-only: 60 cells are a coarse reading, 56 are ill-posed. It is not an attempt of this stage and decides nothing."
+      "2026-11-20: the previous session's thrust measurement of 12:55 (116 cells x 10 episodes) was reviewed read-only: 60 cells are a coarse reading, 56 are ill-posed. It is not an attempt of this stage and decides nothing.",
+      "2026-11-20 about 14:50: Shawn decided the open point (owner_decision). The stage keeps the standing cells at 0.75 and 0.9, adds the no-flailing criterion and a well-posedness reference (legs locked at the stand pose), drops walking above 0.5, and its kill no longer removes cells."
      ]
     },
     {
