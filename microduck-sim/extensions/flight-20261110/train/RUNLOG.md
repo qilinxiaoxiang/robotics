@@ -1211,3 +1211,20 @@ under 70.00 USD metered (workspace limit 75).
   2500 iterations, `--max-hours 2.6`, `--max-dollars 3.69`, worst case $4.39; metered before 34.07. 20:25 app
   detached with one task, Volume written, modal_watch CLEAN. Its watcher: `ts3m_watch.py hb=ts3m2` (pid 17644,
   parent 1), heartbeat `logs/ts3m2_heartbeat.txt`, folders `ckpt/m3g_<iter>`.
+- 20:27 `m3w_250`'s two failing lines (nominal pack, nominal gain, 10 of 10 falls at 0.76 s) are a real fall, not a
+  gate artifact. Episode records (`eval/gate_m3w_250_pack_stand.json`): every seed falls backward, largest tilt 46.6
+  to 47.7 deg (the seeds differ, the fall is fast enough to land on the same 20 ms tick), 0 action jumps, peak leg
+  force 0.45 to 0.49 N m, no stop reason other than the tilt. Standing and walking read the same because the fall
+  comes before the walk command acts. First second of seed 0 on the Mac mini (`ts3_first_second.py`,
+  `logs/ts3_first_second.log`): the policy holds walk61's stance and the legs give way under the pack: left hip
+  pitch -0.40 to -0.17 rad, knee 0.08 to 0.26, ankle 0.46 to 0.78 by 0.7 s, while the leg actuator force stays near
+  0.07 to 0.14 N m; trunk pitch 0.3, 1.7, 9.9, 24.5 deg at 0.1, 0.4, 0.6, 0.7 s. At gain400 the same policy keeps
+  the joints where they are (hip -0.436, ankle 0.45, tilt 5.9 deg at most), which is why those lines pass. The
+  pack-carrying `m3p_250` crouches in the first 0.3 s instead (hip pitch to 0, knee 0.37) and stands. So at 250 the
+  walk61-start arm has not learned the pack stance; it stands with the pack only where the stiffer servo does the
+  work. No rescoring.
+- 20:27 `ts3_relaunch_w61.sh` started detached (pid 19360, parent 1; heartbeat
+  `logs/ts3_relaunch_w61_heartbeat.txt`): when the first kernel is fetched it reads `ts3-teach-b`'s last iteration;
+  under 900 it pushes `microduck-ts3-teach-e` (walk61 start, `--track-grace 700`, seeds 2 and 3, 1000 iterations,
+  `--max-hours 1.6`) into the freed session and starts its follow-up (heartbeat `logs/ts3_teach_ef_heartbeat.txt`,
+  folders `ckpt/t3e_*`, `t3f_*`). Quota at 20:27: 21.68 h used, 8.32 h left.
