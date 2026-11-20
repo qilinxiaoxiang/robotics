@@ -1228,3 +1228,36 @@ under 70.00 USD metered (workspace limit 75).
   under 900 it pushes `microduck-ts3-teach-e` (walk61 start, `--track-grace 700`, seeds 2 and 3, 1000 iterations,
   `--max-hours 1.6`) into the freed session and starts its follow-up (heartbeat `logs/ts3_teach_ef_heartbeat.txt`,
   folders `ckpt/t3e_*`, `t3f_*`). Quota at 20:27: 21.68 h used, 8.32 h left.
+- 20:33-20:43 the MacBook lid was closed: every watcher paused (they run here), Modal and Kaggle kept training; the
+  watchers caught up by themselves from 20:44. The Mac mini cannot take them: no Modal and no Kaggle token there
+  (`~/.modal.toml`, `~/.kaggle/kaggle.json` missing; checked 20:44). Clients installed there in `~/.venvs/cloud-cli`
+  (modal 1.6.4, kaggle); the two logins are Shawn's: `HANDOFF-mac-mini-cloud-login.md`.
+- 20:50 Modal budget corrected by the coordinator: 18.45 USD of grant credit left (billing page, Credits tab), so
+  metered must stay at or under 51.00 USD; no new Modal training arms (second seed cancelled); students train on
+  Kaggle, only gate scoring on Modal.
+  - Sum at 20:49 (metered 36.37; arm state from each Volume's progress.json): b05 at 875 of 1000 (0.36 it/s) needs
+    about 6 min = $0.14; b6 at 750 (0.31 it/s) 13 min = $0.32; w61g at 500 of 2500 (0.352 it/s) 95 min = $2.24
+    expected, $3.10 at its `--max-dollars` 3.69 ($0.59 spent). Gate scoring: 80 episodes per save in 1-core 1-GiB
+    containers ($0.0000153 per s); at 60 to 90 s per container $0.07 to $0.11 per save, taken as $0.10 (estimate,
+    not read from a bill). Saves left: b05 2, b6 3, w61g 17 (9 when every second one is scored), Kaggle teachers
+    36 (a, c, e, f 8 each, b and d 2 each). Students reserved $4.00.
+    Every save: 36.37 + 0.46 + 3.10 + 2.2 + 3.6 + 4.0 = 49.73 worst case (48.87 expected): under 51.00 but at the
+    50.00 stop. First cut applied, w61g scored every 250 iterations: 48.93 worst case, 48.07 expected.
+  - `ts3_bill_guard.py` (detached, heartbeat `logs/ts3_bill_heartbeat.txt`): reads the bill every 2 min; at 50.00
+    it stops every `microduck-flight*` Modal app and this work's watchers. `ts3m_watch.py` also refuses a gate batch
+    from 50.00 on or when the bill is unread; restarted 20:50 as one watcher for b05, b6 and w61g
+    (`every=ts3m-w61g:250`, skips saves that already have `out/gates/gates_<folder>.json`), heartbeat
+    `logs/ts3m_heartbeat.txt` (`ts3m2_heartbeat.txt` is closed).
+  - `ts3_distill_trigger.py` (detached, heartbeat `logs/ts3_distill_heartbeat.txt`): on the first passing save of
+    an arm it pushes one Kaggle kernel `microduck-ts3s-<folder>-m` with a Mamba and an LSTM student of that teacher
+    (env universal5, 160 iterations, dropped ticks to 0.08, `--max-hours 2.2`), at most two kernels, none under
+    2.4 h of quota; a refused push is retried every minute. The student path was smoked at full size on Modal T4
+    before the budget change (`ts3s-smoke`, 3 iterations, exit 0, 0.025 it/s, `logs/ts3s_smoke.log`) and on the
+    Mac mini.
+- 20:45-20:51 saves scored after the pause (`logs/gates_m3*_score.log`): still no pass. ts_start arms: failed lines
+  b05 3, 3, 5, 5 at 500, 625, 750, 875; b6 3, 3 at 500, 625. From 500 on the remaining failures are walking with the
+  pack at nominal gain (8 to 10 falls of 10 at 3 to 4 s, 48 to 124 jumps per 10 s) and no-pack walking jumps (3.25
+  to 13.5 against a limit of 2.75); the same saves pass pack walking at gain400 until 625. Reading (inference): the
+  gain scale is drawn 0.8 to 2.2 and is not among the teacher's privileged inputs, so one behaviour has to serve a
+  2.75-fold gain range and it has settled on the stiff end. w61g at 250 and 375: 2 failed lines each, the nominal
+  pack fall at 0.76 and 0.70 s; its low-command speed is 0.007 m/s at 500 (not walking yet, grace until 1000).

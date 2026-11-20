@@ -23,6 +23,10 @@ GPY = "/Users/xiangzheng/.venvs/microduck-walk/bin/python"
 HB = T / "logs/ts3m_heartbeat.txt"
 if sys.argv[1].startswith("hb="):  # a second watcher writes its own heartbeat: hb=<name> -> logs/<name>_heartbeat.txt
     HB = T / f"logs/{sys.argv.pop(1)[3:]}_heartbeat.txt"
+EVERY = {}
+for _a in [a for a in sys.argv if a.startswith("every=")]:
+    sys.argv.remove(_a)
+    EVERY[_a[6:].split(":")[0]] = int(_a.split(":")[1])
 
 
 def hb(msg):
@@ -68,7 +72,10 @@ def main():
             dest = T / f"kaggle/out/{arm}/runs/{arm}"
             dest.mkdir(parents=True, exist_ok=True)
             its = sorted(int(n[6:-3]) for n in names if n.startswith("model_") and n.endswith(".pt") and n[6:-3].isdigit())
-            new = [i for i in its if i > 0 and i not in scored[arm]]
+            # a save already scored by an earlier watcher (out/gates/gates_<tag>_<n>.json) is not scored again;
+            # every=<arm>:<step> scores only the saves at multiples of <step> and the last one (bill, 2026-11-19 20:50)
+            scored[arm] |= {i for i in its if (T / f"out/gates/gates_{tag}_{i}.json").exists()}
+            new = [i for i in its if i > 0 and i not in scored[arm] and (i % EVERY.get(arm, 1) in (0, EVERY.get(arm, 1) - 1))]
             for f in ["model_0.onnx", "progress.json"] + [f"model_{i}.pt" for i in new]:
                 if f in names and (f == "progress.json" or not (dest / f).exists()):
                     sh([MODAL, "volume", "get", "--force", vol, f"runs/{arm}/{f}", str(dest / f)])
@@ -98,6 +105,13 @@ def main():
             stamp = f"{tag}_{new[-1]}"
             sh(["python3", "train/ts3_gates.py", "spec", stamp] + dirs, log=T / f"logs/gates_{stamp}_spec.log", cwd=T.parent)
             before = metered()
+            try:  # Modal line 51.00 USD metered: no gate batch from 50.00 on, or when the bill cannot be read
+                usd = float(before.split()[-1])
+            except ValueError:
+                usd = None
+            if usd is None or usd >= 50.0:
+                hb(f"{arm} gate batch for {dirs} NOT submitted: {before} (stop at 50.00)")
+                continue
             rc, _ = sh([MODAL, "run", "train/flight_eval_modal.py", "--spec", f"train/eval/spec_gate_{stamp}.json"],
                        log=T / f"logs/gates_{stamp}_run.log", cwd=T.parent, timeout=2400)
             hb(f"{arm} {state}; gate episodes for {dirs} EXIT {rc}; {before} -> {metered()}")
