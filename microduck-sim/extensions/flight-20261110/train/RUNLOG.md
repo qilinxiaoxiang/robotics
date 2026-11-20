@@ -1341,3 +1341,17 @@ under 70.00 USD metered (workspace limit 75).
   restarted (pid 98103, 10 h, tag t3k added): on the first passing t3k save it pushes the Mamba + LSTM student
   kernel and now also starts that kernel's own scoring follow-up (`logs/ts3s_<folder>_heartbeat.txt`). All of these
   run on the MacBook (lid-dependent) until the Mac mini has the Modal and Kaggle logins.
+- 23:24 gate hole closed (coordinator: a policy that stands still with the pack would pass G4 and G5). `ts3_gates.py`
+  has a walking-speed line on every walk cell of G2 to G5: mean over the seeds of the episode's forward speed
+  (distance along x during the 15 s walk command / 15 s, already in every gate episode) at least 0.6 x walk61's in
+  the no-pack cell of the same gain. Nothing else changed. All 66 teacher saves rescored from their existing
+  episodes (`ts3_rescore.py`, no Modal spend): none passes, 54 walking-speed lines FAIL. walk61 reference:
+  none_walk 0.0891 m/s (limit 0.0535), none_g400_walk 0.037 m/s (limit 0.0222; walk61 falls 2 of 10 there, so this
+  level is low). The line catches real standing saves: t3h_375, t3h_500 and t3h_625 passed both older pack_g400_walk
+  lines at 0.000 m/s. It does NOT fail t3h_750 with the pack: 0.0679 m/s (range 0.0623 to 0.0723) is 0.76 of
+  walk61's 0.0891, because walk61 itself covers only 0.089 m/s at the 0.25 command in this simulation. So the 23:05
+  wording "barely walks" was against the command; against walk61 it walks three quarters as fast. t3h_750 still
+  fails on its jump line only. The ts_start gain-input saves walk fast with the pack (t3g_500 0.168, t3g_625 0.190
+  m/s) and fail only on pack-walk jumps (16.5, 27.75).
+- The follow-up (`ts3_after_pair.py`) calls `ts3_gates.py score` as a subprocess when the kernel returns and the
+  student trigger reads the verdicts that call writes, so both use the new line without a restart.

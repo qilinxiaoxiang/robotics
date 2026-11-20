@@ -20,6 +20,9 @@ action jumps over 0.5 rad per 10 s of upright time, median over the seeds):
   G4  nominal pack, simulation as it is: 0 falls; jumps within the G2 limits (walk61 cannot carry the pack, so its
       no-pack numbers are the level).
   G5  nominal pack, gain400: falls no more than walk61's no-pack gain400 cells; jumps within the G3 limits.
+  Every walk cell of G2 to G5 also has a walking-speed line (added 2026-11-19 23:30): mean forward speed over the
+  walking part at the gate's 0.25 m/s command at least 0.6 x walk61's speed in the no-pack cell of the same gain,
+  so a policy that stands still with the pack cannot pass.
 A privileged teacher (68 inputs) has no G1 (its extra inputs are not in a robot log); the line reads MISSING and the
 verdict of a teacher rests on G2 to G5 (--teacher).
 """
@@ -44,6 +47,7 @@ REF_CELLS = [c for c in CELLS if c.startswith("none")]
 LEVEL = {"pack_stand": "none_stand", "pack_walk": "none_walk", "pack_g400_stand": "none_g400_stand",
          "pack_g400_walk": "none_g400_walk"}
 DIST_GATE = 0.25
+SPEED_FRACTION = 0.6  # walk cells: mean forward speed at least this share of walk61's in the no-pack cell of the same gain
 LOG = TRAIN / "gates/walk61_see_walks.jsonl"
 NAMES = ['right_ankle', 'right_knee', 'right_hip_pitch', 'right_hip_roll', 'right_hip_yaw', 'left_ankle', 'left_knee',
          'left_hip_pitch', 'left_hip_roll', 'left_hip_yaw', 'head_pitch', 'neck_pitch', 'head_yaw', 'head_roll']
@@ -63,8 +67,13 @@ def read(d, cell):
         return None
     per = sorted(round(e["action_jumps"] / max(e["fell_at"] if e["fell_at"] is not None else 20.0, 0.5) * 10, 1) for e in eps)
     med = per[len(per) // 2] if len(per) % 2 else round((per[len(per) // 2 - 1] + per[len(per) // 2]) / 2, 2)
+    # forward speed over the walking part (flight_eval: distance along x in the 15 s of the walk command / 15 s; an
+    # episode that fell counts the distance it covered), mean over the seeds; None when an episode lacks it
+    sp = [e.get("speed") for e in eps]
+    speed = None if any(v is None for v in sp) else round(sum(sp) / len(sp), 4)
     return dict(episodes=len(eps), falls=sum(e["fell_at"] is not None for e in eps),
-                fall_times=sorted(e["fell_at"] for e in eps if e["fell_at"] is not None), jumps_per_10s=per, jumps_median=med)
+                fall_times=sorted(e["fell_at"] for e in eps if e["fell_at"] is not None), jumps_per_10s=per, jumps_median=med,
+                speed_mean=speed, speed_range=None if speed is None else [round(min(sp), 4), round(max(sp), 4)])
 
 
 def rebuild(ref_order, ref_default):
@@ -165,6 +174,14 @@ def score(d, teacher=False):
         add(f"{grp} {cell} jumps per 10 s", c["jumps_median"] <= lim,
             f"median {c['jumps_median']} (range {c['jumps_per_10s'][0]} to {c['jumps_per_10s'][-1]}) against at most {lim} "
             f"(walk61 {lvl}: median {r['jumps_median']})")
+        if cell.endswith("_walk"):  # a policy that stands still with the pack must not pass (2026-11-19 23:30)
+            if c["speed_mean"] is None or r["speed_mean"] is None:
+                add(f"{grp} {cell} walking speed", None, "an episode holds no forward speed")
+            else:
+                need = round(SPEED_FRACTION * r["speed_mean"], 4)
+                add(f"{grp} {cell} walking speed", c["speed_mean"] >= need,
+                    f"mean {c['speed_mean']} m/s (range {c['speed_range'][0]} to {c['speed_range'][1]}) at the 0.25 m/s command "
+                    f"against at least {need} = {SPEED_FRACTION} x walk61 {lvl}: {r['speed_mean']} m/s")
     fails = [x for x in lines if x["result"] == "FAIL"]
     missing = [x for x in lines if x["result"] == "MISSING" and not (teacher and x["line"].startswith("G1"))]
     out = dict(models=d, seeds=SEEDS, verdict="PASS" if not fails and not missing else "FAIL", failed_lines=len(fails),

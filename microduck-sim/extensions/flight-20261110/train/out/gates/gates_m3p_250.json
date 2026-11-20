@@ -2,7 +2,7 @@
  "models": "m3p_250",
  "seeds": 10,
  "verdict": "FAIL",
- "failed_lines": 5,
+ "failed_lines": 6,
  "missing_lines": 0,
  "lines": [
   {
@@ -31,6 +31,11 @@
    "detail": "median 4.5 (range 3.0 to 7.5) against at most 2.75 (walk61 none_walk: median 0.75)"
   },
   {
+   "line": "G2 none_walk walking speed",
+   "result": "PASS",
+   "detail": "mean 0.1381 m/s (range 0.1342 to 0.1413) at the 0.25 m/s command against at least 0.0535 = 0.6 x walk61 none_walk: 0.0891 m/s"
+  },
+  {
    "line": "G3 none_g400_stand falls",
    "result": "PASS",
    "detail": "0 of 10 at [] against at most 0 (walk61 none_g400_stand: 0)"
@@ -49,6 +54,11 @@
    "line": "G3 none_g400_walk jumps per 10 s",
    "result": "PASS",
    "detail": "median 10.5 (range 1.7 to 42.6) against at most 27.75 (walk61 none_g400_walk: median 18.5)"
+  },
+  {
+   "line": "G3 none_g400_walk walking speed",
+   "result": "PASS",
+   "detail": "mean 0.0895 m/s (range 0.0175 to 0.1765) at the 0.25 m/s command against at least 0.0222 = 0.6 x walk61 none_g400_walk: 0.037 m/s"
   },
   {
    "line": "G4 pack_stand falls",
@@ -71,6 +81,11 @@
    "detail": "median 56.05 (range 35.0 to 74.3) against at most 2.75 (walk61 none_walk: median 0.75)"
   },
   {
+   "line": "G4 pack_walk walking speed",
+   "result": "FAIL",
+   "detail": "mean 0.0011 m/s (range -0.0035 to 0.011) at the 0.25 m/s command against at least 0.0535 = 0.6 x walk61 none_walk: 0.0891 m/s"
+  },
+  {
    "line": "G5 pack_g400_stand falls",
    "result": "PASS",
    "detail": "0 of 10 at [] against at most 0 (walk61 none_g400_stand: 0)"
@@ -89,6 +104,11 @@
    "line": "G5 pack_g400_walk jumps per 10 s",
    "result": "PASS",
    "detail": "median 10.5 (range 5.0 to 69.6) against at most 27.75 (walk61 none_g400_walk: median 18.5)"
+  },
+  {
+   "line": "G5 pack_g400_walk walking speed",
+   "result": "PASS",
+   "detail": "mean 0.0992 m/s (range 0.0265 to 0.1521) at the 0.25 m/s command against at least 0.0222 = 0.6 x walk61 none_g400_walk: 0.037 m/s"
   }
  ],
  "distance": null,
@@ -109,7 +129,12 @@
     0.0,
     0.0
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": -0.0001,
+   "speed_range": [
+    -0.0001,
+    -0.0001
+   ]
   },
   "none_walk": {
    "episodes": 10,
@@ -127,7 +152,12 @@
     7.5,
     7.5
    ],
-   "jumps_median": 4.5
+   "jumps_median": 4.5,
+   "speed_mean": 0.1381,
+   "speed_range": [
+    0.1342,
+    0.1413
+   ]
   },
   "none_g400_stand": {
    "episodes": 10,
@@ -145,7 +175,12 @@
     0.0,
     0.0
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": 0.0079,
+   "speed_range": [
+    -0.0,
+    0.0152
+   ]
   },
   "none_g400_walk": {
    "episodes": 10,
@@ -173,7 +208,12 @@
     37.3,
     42.6
    ],
-   "jumps_median": 10.5
+   "jumps_median": 10.5,
+   "speed_mean": 0.0895,
+   "speed_range": [
+    0.0175,
+    0.1765
+   ]
   },
   "pack_stand": {
    "episodes": 10,
@@ -191,7 +231,12 @@
     0.5,
     0.5
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": 0.0001,
+   "speed_range": [
+    -0.0001,
+    0.0001
+   ]
   },
   "pack_walk": {
    "episodes": 10,
@@ -220,7 +265,12 @@
     65.2,
     74.3
    ],
-   "jumps_median": 56.05
+   "jumps_median": 56.05,
+   "speed_mean": 0.0011,
+   "speed_range": [
+    -0.0035,
+    0.011
+   ]
   },
   "pack_g400_stand": {
    "episodes": 10,
@@ -238,7 +288,12 @@
     0.0,
     0.0
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": -0.0002,
+   "speed_range": [
+    -0.0003,
+    -0.0
+   ]
   },
   "pack_g400_walk": {
    "episodes": 10,
@@ -262,7 +317,12 @@
     46.1,
     69.6
    ],
-   "jumps_median": 10.5
+   "jumps_median": 10.5,
+   "speed_mean": 0.0992,
+   "speed_range": [
+    0.0265,
+    0.1521
+   ]
   }
  },
  "walk61": {
@@ -282,7 +342,12 @@
     0.0,
     0.0
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": 0.0001,
+   "speed_range": [
+    0.0001,
+    0.0001
+   ]
   },
   "none_walk": {
    "episodes": 10,
@@ -300,7 +365,12 @@
     2.0,
     2.0
    ],
-   "jumps_median": 0.75
+   "jumps_median": 0.75,
+   "speed_mean": 0.0891,
+   "speed_range": [
+    0.0871,
+    0.0907
+   ]
   },
   "none_g400_stand": {
    "episodes": 10,
@@ -318,7 +388,12 @@
     0.0,
     0.0
    ],
-   "jumps_median": 0.0
+   "jumps_median": 0.0,
+   "speed_mean": 0.0001,
+   "speed_range": [
+    0.0,
+    0.0001
+   ]
   },
   "none_g400_walk": {
    "episodes": 10,
@@ -339,7 +414,12 @@
     25.5,
     72.7
    ],
-   "jumps_median": 18.5
+   "jumps_median": 18.5,
+   "speed_mean": 0.037,
+   "speed_range": [
+    0.0088,
+    0.0489
+   ]
   }
  }
 }
