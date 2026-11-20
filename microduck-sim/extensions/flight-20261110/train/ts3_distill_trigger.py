@@ -29,7 +29,7 @@ T = Path(__file__).resolve().parent
 RL = T.parents[2] / "microduck_rl"
 HB = T / "logs/ts3_distill_heartbeat.txt"
 STATE = T / "logs/ts3_distill_launched.json"
-TAGS = ("t3a", "t3b", "t3c", "t3d", "t3g", "t3h", "m3p", "m3q", "m3w", "m3g")  # t3g / t3h: the gain-reading pair
+TAGS = ("t3a", "t3b", "t3c", "t3d", "t3g", "t3h", "t3k", "m3p", "m3q", "m3w", "m3g")  # t3g / t3h: the gain-reading pair
 MAX_KERNELS = 2
 MIN_QUOTA_H = 2.4
 FLAGS = ("--distill --delta universal5 --manifest /root/assets/manifests/flightpack-none.json --max-iters 160 "
@@ -83,6 +83,12 @@ def launch(folder):
     if "successfully pushed" not in out:
         why = [x for x in out.splitlines() if re.search("error|gate|refus|maximum", x, re.I)]
         return f"push of {base} refused: {(why[0] if why else out[-160:])[:160]}"
+    # the students are scored on all gates by a detached follow-up of their own (heartbeat logs/<base>_heartbeat.txt)
+    hbname = base.replace("-", "_")
+    pid = subprocess.run(["python3", str(T / "detach.py"), str(T / f"logs/{hbname}.out"), "python3", str(T / "ts3_after_pair.py"),
+                          f"{base}-m", "-", "-", f"{base}-m", "s3m_" + folder, hbname, f"student2={base}-l:s3l_{folder}"],
+                         capture_output=True, text=True).stdout.strip()
+    hb(f"student follow-up pid {pid}, heartbeat logs/{hbname}_heartbeat.txt")
     return (f"STUDENT LAUNCHED kernel microduck-{base}-m from {folder}: Mamba {base}-m + LSTM {base}-l, 160 iterations, "
             f"--max-hours 2.2, Kaggle quota left before {q} h")
 

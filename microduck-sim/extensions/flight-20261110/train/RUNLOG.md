@@ -1291,3 +1291,53 @@ under 70.00 USD metered (workspace limit 75).
   student kernel 2.2 h at most, 2.3 h after it. `refreshAt` is "2026-11-21T00:00:00" in the CLI's JSON, with no
   zone; 2026-11-21 is a Saturday. Read as UTC that is Friday 2026-11-20 19:00 Eastern, read as local time five
   hours later; a search did not settle which (not verified), the plan uses the earlier one.
+- 23:01 every teacher arm DONE, 66 saves scored, no GATE PASS (`logs/gates_*_score.log`). The gain-input pair is the
+  best: t3h_750 (walk61 start) fails one line, G4 pack_walk jumps median 3.5 (range 2.5 to 4.0) against 2.75, zero
+  falls in every cell; t3g_500, t3g_625, t3h_875 also fail only that line (16.5, 27.75, 20.25); t3h_999 5 pack falls
+  of 10 and 68.5 jumps. ts3-teach-b and ts3-teach-d (walk61 start, no grace) did stop at iteration 250 on the
+  tracking guard (`kaggle/out/ts3-teach-a/runs/ts3-teach-b/progress.json`, `ts3-teach-c/runs/ts3-teach-d`).
+  Kaggle quota 23:01:57: 25.28 h used, 4.72 h left.
+- 23:03 why the t3h saves get worse after 750 (`ts3_curve_read.py` on `kaggle/out/ts3-teach-g/train_ts3-teach-h.log`,
+  62-iteration means from 500 to 999). It is a one-way drift, not noise around a good point. From the window at 748
+  to the one at 996: track_linear_velocity 0.66 -> 0.86, progress_along_cmd 0.62 -> 1.07, air_time 0.40 -> 0.50,
+  while action_rate_l2 -0.43 -> -0.62, action_acc_l2 -0.32 -> -0.46, torque_margin -0.27 -> -0.39; action noise
+  0.150 -> 0.160 (entropy term -6.8 -> -5.6), value loss 1.31 -> 1.78. The anchor does not move: loss 0.123 to 0.129
+  and distance to walk61 on no-pack rows 0.22 to 0.23 rad at every save, and the no-pack gates pass at every save
+  from 500 on, so the anchor is not fighting the pack rows. The learning rate sat on the 1e-4 clamp the whole run
+  (the log prints no KL). Reading: on pack rows, which have no anchor, each further unit of speed is bought with
+  action jumps, and at weights -2.0 / -0.6 the speed terms pay more (+0.65 per episode over this stretch) than the
+  two smoothness terms cost (-0.33).
+- 23:05 where the jumps are (`ts3_jump_where.py`, Mac mini, one pack-walk episode, seed 0, the gate's code path with
+  the tick log; `eval/jump_where_t3h_{750,875,999}.json`). t3h_750 at vx 0.25: 5 jumps, 4 of them head_yaw alone,
+  1 right_hip_yaw / right_hip_roll; 4 of 5 between 2.8 and 3.05 s, the first second after the walk command at 2.0 s,
+  none tied to a foot touching down (62 touch-downs in the episode); speed 0.069 m/s for a 0.25 command. At vx 0.15:
+  0 jumps, 0.061 m/s; at vx 0.10: 0 jumps, does not walk (2 touch-downs). t3h_875: 41 jumps, head_yaw 27,
+  right_hip_roll 10, right_hip_yaw 6, spread over the whole walk, 3 of 41 after a touch-down, speed 0.137.
+  t3h_999: 158 jumps, right_hip_roll 80, head_yaw 58, right_hip_yaw 28, head_roll 17, speed 0.198. So the jumps
+  are not foot-strike chatter: they sit in head yaw and the right hip (one side), and they grow with the speed the
+  teacher reaches with the pack. t3h_750 passes only because it barely walks with the pack.
+- 23:06 to 23:16 the change the diagnosis names is a reward change, so it was audited first: delta `universal5tgs`
+  = universal5tg with action_rate_l2 -2.0 -> -4.0 and action_acc -0.6 -> -1.2 (`rm_universal5s.json`,
+  `UNIVERSAL5S_MODS`). A lower learning rate alone would only slow the same drift. Incentive audit on the Mac mini
+  (`TSRM=rm_universal5s.json ts3_audit.sh gate <load> s2`, intended walk ts_start against stand, shuffle, lean
+  forward, lean back): PASS at all three loads, intended wins every case; standing earns 0.651 of the walk's reward
+  without the pack (0.612 under the old weights), 0.397 with the full pack, 0.465 batteries out
+  (`out/audit_s2_{none,full,nobatt}.json`, recorded in `out/audit_gate.json`).
+- 23:16 to 23:18 smokes on the Mac mini: Mamba distillation from the 69-input t3h_750 under universal5 (3
+  iterations, export within 3e-7; `logs/distill_smoke_mamba.log`); teacher continuation from the 69-input t3h_750
+  under universal5tgs (loaded as "teacher policy (69 inputs)", start export equal to the save, 3 PPO iterations,
+  action_rate_l2 -4.0 and action_acc_l2 -1.2 in the reward table; `teacher_smoke.py` compared a 69-input start on 61
+  columns and stopped, fixed to use the start's own width).
+- 23:18 pushed ONE Kaggle kernel `microduck-ts3-teach-k` (`ts3_push_k.sh`, heartbeat `logs/ts3_push_k_heartbeat.txt`,
+  DONE): GPU 0 `ts3-teach-k`, teacher continuation from t3h_750 under universal5tgs, `--max-lr 0.00005`,
+  `--init-std 0.15` (the noise t3h had at 750), 100 critic warm-up iterations, 1000 iterations in all, save every
+  25, `--track-guard 2.0`, `--max-hours 1.9` -> `ckpt/t3k_<iter>`; GPU 1 `ts3s-t3h-750-m`, Mamba student from
+  t3h_750 as it is, 160 iterations, save every 20 -> `ckpt/s3h_<iter>`. Quota before the push 4.72 h left; the
+  kernel is one session of about 2 h (the student sets its length), so about 2.7 h should remain (estimate; the
+  follow-up writes the measured number).
+- Follow-up `ts3_after_pair.py` (pid 98263, detached, parent 1; heartbeat `logs/ts3_pair_k_heartbeat.txt`): waits
+  for the kernel, fetches, stages, scores the student saves first on all gates including G1 (no `--teacher`), then
+  the teacher saves from iteration 125 on (`--teacher`); no gate batch at metered 50.00 or more. Student trigger
+  restarted (pid 98103, 10 h, tag t3k added): on the first passing t3k save it pushes the Mamba + LSTM student
+  kernel and now also starts that kernel's own scoring follow-up (`logs/ts3s_<folder>_heartbeat.txt`). All of these
+  run on the MacBook (lid-dependent) until the Mac mini has the Modal and Kaggle logins.

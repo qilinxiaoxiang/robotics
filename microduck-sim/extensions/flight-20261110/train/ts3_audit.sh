@@ -29,9 +29,10 @@ case "$1" in
   diag|gate)
     LD=$2; TAG=$3
     if [ "$1" = "diag" ]; then CS=pol_chat; EX="--diag --policy chat=$A/ts3_chat.onnx"; else CS=stand,shuffle,lean_fwd,lean_back; EX=""; fi
-    rsync -a $T/rm_universal5.json mac-mini:$REMOTE/smoke-assets/rm_universal5.json
+    RM=${TSRM:-rm_universal5.json}  # TSRM=rm_universal5s.json audits the doubled smoothness weights (universal5tgs)
+    rsync -a $T/$RM mac-mini:$REMOTE/smoke-assets/$RM
     ssh mac-mini "cd $REMOTE/$RL && zsh $LK run timeout 590 .venv/bin/python cmu/finetune/flight/flight_audit.py --jobs $JOB \
-      --cases $CS --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/smoke-assets/rm_universal5.json)\" --device cpu --num-envs 128 --steps ${TSSTEPS:-250} \
+      --cases $CS --loads $LD --reward-mods \"\$(cat \$HOME/$REMOTE/smoke-assets/$RM)\" --device cpu --num-envs 128 --steps ${TSSTEPS:-250} \
       --assets $A --policy start=$A/ts_start.onnx --walker start $EX --out /tmp/ts3_audit_${TAG}_$LD 2>&1" \
       > $T/logs/audit_${TAG}_$LD.log || true
     scp -q mac-mini:/tmp/ts3_audit_${TAG}_$LD/audit.json $T/out/audit_${TAG}_$LD.json || true
