@@ -41,6 +41,7 @@ except Exception:
 STATE = json.loads((SIMROOT / "CURRENT-STATE.json").read_text())["facts"]
 SERVO_V = float(STATE["servo_rail_v"]["value"])          # 7.6 V, verified 2026-11-06
 G = 9.81
+STEP_HOOK = None       # optional callable(m, d, t) after every physics step (train/b0t_thrust.py logs from it); None = no effect
 
 # ---------------------------------------------------------------- fan (vendor point: racer.lt QX table, read 2026-11-10)
 T_REF = 0.950 * G      # N, 950 g at 16.2 V, 34 A, 550.8 W, QF2611 4000KV 50 mm 12-blade
@@ -319,6 +320,8 @@ def run(a):
     after_s = a.after_s if a.after_s is not None else (6.0 if a.legs != "held" else None)
     if after_s is not None:   # full sequence: run on until after_s past the disarm (the cap only stops a run that never lands)
         T_end += 15.0
+    if a.ground_hold is not None:   # --ground-hold: no mission; the run ends when the hold on the ground ends
+        T_end = a.arm_at + a.ground_hold_ramp + a.ground_hold_s
     armed_at, armed = a.arm_at, False
     phase = "idle"; t_phase = 0.0
     land_t = None; disarm_t = None; contact_t = None; spool = 0.0
@@ -388,8 +391,9 @@ def run(a):
         if not armed and a.start_air:       # airborne start: the mission continues from the climb (hover: climb to 0.3 m, hold)
             armed, phase, t_phase = True, "climb", t
             tgt["z"] = surface0 + SENS0 + a.start_air
-        if not armed and t >= armed_at:
-            armed, phase, t_phase = True, "spool", t
+        if not armed and t >= armed_at and not (a.ground_hold is not None and a.ground_hold <= 0):
+            # --ground-hold F > 0: phase "ghold" (fans carry F x weight on the ground, never a climb); F = 0: never armed
+            armed, phase, t_phase = True, ("spool" if a.ground_hold is None else "ghold"), t
         if phase == "spool" and t - t_phase > a.spool_s:
             phase, t_phase = "climb", t
         if phase == "climb":
@@ -437,7 +441,7 @@ def run(a):
                 ex = np.array([tgt["x"], tgt["y"]]) - x_est
                 vd = np.clip(ctl.kp_pos * ex, -0.5, 0.5)
                 ev_ = vd - v_est
-                on_ground = (phase == "spool") or (phase == "climb" and first_air is None)
+                on_ground = (phase == "spool") or (phase == "climb" and first_air is None) or phase == "ghold"
                 if not on_ground:
                     ctl.i_vel = np.clip(ctl.i_vel + ev_ * dt, -0.5, 0.5)
                 acc = ctl.kp_vel * ev_ + ctl.ki_vel * ctl.i_vel
@@ -475,7 +479,11 @@ def run(a):
                 if phase == "spooldown":
                     # fans carry spool_down_frac of the weight with the attitude loop on for settle_s, then ramp to zero
                     Fz = ctl.m * G * a.spool_down_frac * max(0.0, 1 - max(0.0, t - t_phase - a.settle_s) / a.spool_down)
-                Mb = ctl.attitude([roll_d, pitch_d, yaw0], rpy_s, gyro_s, dt, freeze_i=on_ground or phase == "spooldown")
+                if phase == "ghold":   # --ground-hold: ramp to F x weight in --ground-hold-ramp s, then constant
+                    Fz = ctl.m * G * a.ground_hold * min(1.0, (t - t_phase) / max(a.ground_hold_ramp, 1e-9))
+                # --ground-i (diagnostic): the attitude integrator also runs on the ground (default: frozen there)
+                Mb = ctl.attitude([roll_d, pitch_d, yaw0], rpy_s, gyro_s, dt,
+                                  freeze_i=(on_ground and not a.ground_i) or phase == "spooldown")
                 T, sat = ctl.mix(Fz, Mb, t_max_est)
                 if sat: stats["sat_s"] += dt
                 u = np.sqrt(np.clip(T / t_max_est, 0, 1))
@@ -521,6 +529,8 @@ def run(a):
             legs.tick(t, want_l)
         c.update()
         mujoco.mj_step(m, d)
+        if STEP_HOOK is not None:
+            STEP_HOOK(m, d, t)
         # ---- readback
         tilt = math.degrees(math.acos(max(-1, min(1, R[2, 2]))))
         ycur = math.degrees(((rpy[2] - yaw0 + math.pi) % (2 * math.pi)) - math.pi)
@@ -594,7 +604,7 @@ def run(a):
         if k % 8 == 0:
             log.append([t, *d.qpos[0:3], *rpy, z_est, surf_est, *x_est, tgt["z"], tgt["x"], *u, *Tf, v_bus, i_tot,
                         rng_true, float(np.abs(d.actuator_force[leg_act]).max()), ["idle", "spool", "climb", "hold1", "move", "hold2", "hover",
-                        "land", "spooldown", "disarmed", "cut"].index(phase)] + (ctl_row if a.log_ctl else []))
+                        "land", "spooldown", "disarmed", "cut", "ghold"].index(phase)] + (ctl_row if a.log_ctl else []))
         if a.scenario == "cut" and phase == "cut" and stats.get("cut_t") is None:
             stats["cut_t"] = round(t, 3)
         if a.scenario == "cut" and stats.get("cut_t") and t > stats["cut_t"] + 2.0:
@@ -679,6 +689,11 @@ def run(a):
                            table_gap=a.table_gap, spool_down_frac=a.spool_down_frac, lean_max=a.lean_max))
     if a.ctl_thrust_known != 1.0:      # recorded only when used, so default rows stay field-identical to earlier ones
         row["params"]["ctl_thrust_known"] = a.ctl_thrust_known
+    if a.ground_hold is not None:      # the standing cell of stage B0T (2026-11-20); recorded only when used
+        row["ground_hold"] = dict(frac=a.ground_hold, hold_s=a.ground_hold_s, ramp_s=a.ground_hold_ramp, arm_at=a.arm_at,
+                                  armed=bool(armed), t_end=round(t + dt, 3), first_air=first_air)
+    if a.ground_i:
+        row["params"]["ground_i"] = True
     if a.log:
         np.savez_compressed(a.log, log=np.array(log, dtype=float))
     if a.video and hd_video:
@@ -795,6 +810,15 @@ def main():
                          "(ArduPilot MOT_THST_HOVER learned)")
     ap.add_argument("--log-ctl", action="store_true", help="--log: append roll_d, pitch_d, Fz demand, commanded T x4, "
                     "mixer saturated, vz_est, i_vz, gyro_y (columns 26-36)")
+    # stage B0T (2026-11-20, train/b0t_thrust.py). Without these four options every row is as before.
+    ap.add_argument("--ground-hold", type=float, default=None,
+                    help="standing test instead of a mission: from --arm-at the fans carry this fraction of the weight on the "
+                         "ground with the ground attitude loop (--ground-pitch), ramped in --ground-hold-ramp s and held for "
+                         "--ground-hold-s s; no climb. 0 = the fans are never armed. The run ends when the hold ends")
+    ap.add_argument("--ground-hold-s", type=float, default=10.0, help="s at the --ground-hold thrust after the ramp")
+    ap.add_argument("--ground-hold-ramp", type=float, default=0.5, help="s, thrust ramp from zero to --ground-hold")
+    ap.add_argument("--ground-i", action="store_true",
+                    help="diagnostic: the attitude integrator also runs while the feet are on the ground (default: frozen)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--log", default=None)
     ap.add_argument("--video", default=None)

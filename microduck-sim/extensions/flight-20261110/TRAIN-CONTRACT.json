@@ -230,11 +230,33 @@
       "source": "session 1ebe7a36, about 14:50",
       "reading": "Standing cells stay at every thrust level including 0.75 and 0.9, with a second criterion: no flailing. Walking at 0.75 and 0.9 is not tested. The agent reads 'walking need not be tested' as applying to the two levels the question was about; walking up to 0.5 stays (his earlier words in REQUIREMENTS.json FP-R8: '到时候背包喷气一喷，你又不会走路了？')."
      },
+     "approval": {
+      "by": "Shawn",
+      "date": "2026-11-20",
+      "words": "如果你觉得这轮已经比较完善了，那你就负责后续推进工作。",
+      "source": "session 1ebe7a36, his third message on 2026-11-20; read as covering simulation evaluation that costs no cloud quota and touches no robot, as for B1. What the test must contain is his own decision of about 14:50 (owner_decision)."
+     },
+     "attempt_1_draft": {
+      "note": "Written 2026-11-20 15:35, before any run. It moves into attempts, with its start time, when B1 is closed: the contract allows one approved or running stage per line.",
+      "n": 1,
+      "started": "",
+      "hypothesis": "The 12:55 thrust test (train/ts3_thrust_gap.py) made every policy fall because it held 0.75 to 1.05 of the weight on the fans for seconds with the feet on the floor, behind a stand-in attitude loop of 0.12 N m/rad that kept the lean the robot had at thrust start; the way the fan forces were applied was the same as in sim/flight.py (preparation agent, from the code and train/out/thrust_gap). With thrust applied to a settled robot and sim/flight.py's ground attitude loop (target level, four times stiffer, integrator frozen on the ground), the test is well-posed up to half thrust. Above it, statics says the legs alone cannot hold: the thrust turns with the trunk, the held pose leans about 4.1 deg nose down, and the fans push the robot forward by share x weight x sin(lean), so the feet must carry their load 31 mm farther forward at 0.75 and 92 mm at 0.9 against about 35 mm of toe margin.",
+      "prediction": "Written before any run (the code has only been compiled, never run). Legs locked: 60 of 60 stand 10 s at thrust 0, 0.25 and 0.5; at 0.75 it holds (about 60 % sure); at 0.9 it tips forward in most episodes (about 75 % sure), so threshold item 0 fails at 0.9. Diagnostic cell with the attitude integrator running on the ground and the thrust raised over 8 s: holds at 0.9 (about 50 % sure). References: walk61 without the pack 0 falls of 60; fq2 with the pack 0 falls of 60 at zero thrust and at least 54 of 60 in the full take-off and landing sequence (about 70 % sure); walk61 with the pack at 0.40 and 0.50 inside the recorded intervals (about 70 % sure). Item 4 (thrust cells listed in train/ts3_gates.py) is known to be unmet today and is done after the result fixes which cells stay.",
+      "prediction_zh": "开跑前写下（代码只编译过，没跑过）：腿锁在站姿时，风扇托 0、四分之一、一半体重，60 次都站得住；四分之三大概站得住（约六成把握）；九成时多数会向前倒（约七成半把握），因为推力跟着躯干转，站姿本来前倾约 4 度，风扇会把鸭子往前推，脚掌前沿的余量不够。诊断格（姿态控制在地面也积累修正量，推力用 8 秒慢慢加）九成时能站住（约五成把握）。参照：官方模型不背包 0 摔；11 月 11 日的背包模型零推力 0 摔，完整起降 60 次至少成 54 次（约七成把握）。",
+      "command": "ssh mac-mini 'cd code/flight-train-mirror/robotics/microduck-sim/extensions/flight-20261110 && nohup zsh train/b0t_thrust.sh > /dev/null 2>&1 < /dev/null &'  (a 3-seed smoke first: the same script with seeds=3 diag=1 out=yardstick_b0t_smoke; 17 cells, 820 episodes, seeds from 4000; heartbeat train/logs/b0t_thrust_heartbeat.txt; results train/out/yardstick_b0t/)",
+      "launch_match": [
+       "b0t_thrust\\.(sh|py)\\b"
+      ],
+      "result": "",
+      "verdict": "running",
+      "evidence": ""
+     },
      "attempts": [],
      "route_reviews": [],
      "history": [
       "2026-11-20: the previous session's thrust measurement of 12:55 (116 cells x 10 episodes) was reviewed read-only: 60 cells are a coarse reading, 56 are ill-posed. It is not an attempt of this stage and decides nothing.",
-      "2026-11-20 about 14:50: Shawn decided the open point (owner_decision). The stage keeps the standing cells at 0.75 and 0.9, adds the no-flailing criterion and a well-posedness reference (legs locked at the stand pose), drops walking above 0.5, and its kill no longer removes cells."
+      "2026-11-20 about 14:50: Shawn decided the open point (owner_decision). The stage keeps the standing cells at 0.75 and 0.9, adds the no-flailing criterion and a well-posedness reference (legs locked at the stand pose), drops walking above 0.5, and its kill no longer removes cells.",
+      "2026-11-20 15:30: the preparation agent's reading of the 12:55 all-fall result (from the code and the files, nothing was run): the force application was right and the fans delivered 0.90 to 0.96 of the commanded share; the test held 0.75 to 1.05 of the weight on the ground for seconds, a condition the real sequence passes in 0.10 s at take-off and about 0.34 s at landing (sim/out/fullseq_handover); its attitude loop was 0.121 N m/rad around the starting lean against a gravity tipping stiffness of about 2.76 N m/rad; the old take-off cell had no height or position loop and its 10 seeds were counted as falls while tilting in the air at 8.48 s. Script train/b0t_thrust.py and sim/flight.py options --ground-hold, --ground-hold-s, --ground-hold-ramp, --ground-i (rows without them are unchanged). Three choices of the agent kept: a 0.10 m stay-in-place rule beside the fall count in group 0, items 1 and 2 read on the standing cell with the walking cell written beside it, five diagnostic cells outside the verdict. Limits: group 3 uses the 938.6 g pack snapshot; locked-leg seeds change only sensor noise."
      ]
     },
     {
