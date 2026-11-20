@@ -1,4 +1,4 @@
-"""Bring guide/content/fasteners.json to the battery backpack V2 rev B and the screwed bench box (2026-11-20).
+"""Bring guide/content/fasteners.json to the battery backpack V2 (rev M since 2026-11-20; same screw positions as rev B) and the screwed bench box.
 Idempotent: run it again and the file comes out the same.
 
 - Removed: BP-cap-01..03 and BP-bar-01..04 (V1.40 backpack, replaced) and DL-plate-01..04 (the Dual Lock back plate is not
@@ -18,7 +18,7 @@ FAST = HERE.parents[1] / 'content' / 'fasteners.json'
 PRE_DL = 'e8e7b0c7^:microduck-sim/guide/content/fasteners.json'
 DL_SHIFT = 8.7
 DROP_PREFIX = ('BP-cap-', 'BP-bar-', 'DL-plate-', 'BV2-')
-TAG = 'battery V2 rev B guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)'
+TAG = 'battery V2 rev M guide 2026-11-20 (print/battery-v2-cad-20261120/update_fasteners.py)'
 S = json.loads((HERE / 'SCREWS.json').read_text())['screws']
 
 

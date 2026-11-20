@@ -87,6 +87,7 @@ ALLOWLIST = {
     "/Zero2W-Sensor-Wiring.png": "Zero2W-Sensor-Wiring.png",
     "/FIVE-SYSTEMS.html": "FIVE-SYSTEMS.html",   # five-systems talk for a designer (source output/five-systems/)
     "/FLIGHT-PACK-BUILD.html": "FLIGHT-PACK-BUILD.html",   # jet pack (FlightPack-D1) assembly guide, source extensions/flight-20261110/guide/
+    "/BATTERY-PACK-BUILD.html": "BATTERY-PACK-BUILD.html",   # battery backpack V2 rev M assembly guide, source guide/print/battery-v2-cad-20261120/guide/
     "/FLIGHT-PACK-DESIGN.html": "FLIGHT-PACK-DESIGN.html",   # jet pack design overview (zh), source extensions/flight-20261110/build_design.py
     "/FLIGHT-PACK-DESIGN-EN.html": "FLIGHT-PACK-DESIGN-EN.html",   # same page in English, same facts
     "/WIRE-TIES.html": "WIRE-TIES.html",

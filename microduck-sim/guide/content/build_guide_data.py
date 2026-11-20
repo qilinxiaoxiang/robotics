@@ -89,7 +89,7 @@ STATUS = {
                 'neck_link_a', 'neck_link_b', 'head_yaw_link', 'head_roll_ring_a', 'head_roll_ring_b',
                 'idler11', 'idler12', 'idler_cap11', 'idler_cap12'],
     'new-print': ['shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'neck_pitch', 'head_bottom', 'face_panel', 'head_cap', 'eye_trim', 'jaw_support', 'mouth_sliding_ring', 'jaw_frame', 'neck_pitch_ring',
-                  'bv2_frame', 'bv2_cap', 'dock_base', 'saddle_body', 'saddle_lid'],
+                  'bv2_frame', 'bv2_cap', 'saddle_body', 'saddle_lid'],
     'purchased': ['imu_board', 'imu_sh4_receiving', 'speaker', 'amplifier', 'mic_left', 'mic_right', 'mic_back'],
 }
 STATUS_OF = {k: s for s, ks in STATUS.items() for k in ks}
@@ -419,30 +419,23 @@ def build_parts() -> dict:
                 v, f = decimate(v, f, 25000, key)
             parts[key] = {'key': key, 'name': name, 'color': color or parts['head_cap']['color'], 'module': module,
                           'status': status, 'v': v, 'f': f, 'source': str(path)}
-    # 2026-11-20 battery backpack V2 rev B (print/battery-v2-cad-20261120/, DESIGN-CONTRACT.json approved by Shawn 2026-11-20;
-    # world files from its to_guide_world.py): the frame screws straight onto the four OpenRB pack posts (the Dual Lock back
-    # plate is not fitted, CURRENT-STATE backpack_swap_plugs); the 2S 3000 pack stands upright in the frame column, the Pololu
-    # 2813, DFR1202 and XIAO SAMD21 sit on foam tape, the E-Switch PV6 button in the cap, two Keystone 615 pads under the floor.
-    # The dock base (print/battery-dock-20261120/) is drawn under the tail, 4 mm below its seated position. guide-data
-    # 'alternates' keeps the backpack and the bench box apart (never on the robot together).
-    BACKPACK_PARTS = {'bv2_frame': ('电池背包框架（BatteryV2-B1 打印件，橙色）', 'torso', 'new-print', None),
-                      'bv2_cap': ('电池背包后盖（BatteryV2-B1 打印件，橙色，带按钮孔和 USB-C 窗）', 'torso', 'new-print', None),
+    # 2026-11-20 battery backpack V2 rev M, the minimal backpack (print/battery-v2-cad-20261120/, DESIGN-CONTRACT.json,
+    # Shawn 2026-11-20 "就是把电池换大 然后重做背包 ... 最小改造"; world files from its to_guide_world.py): the frame screws
+    # straight onto the four OpenRB pack posts (the Dual Lock back plate is not fitted, CURRENT-STATE backpack_swap_plugs);
+    # the 2S 3000 pack stands upright in the frame column, the DFR1202 moves over from the old backpack onto the column rib,
+    # the old Swann 39 rocker switch snaps into the cap with its rocker facing back, plug 1 (XT30) sits above the battery and
+    # the battery's white XH-3P balance plug comes out through the cap notch for charging on the HTRC B3. No dock.
+    # guide-data 'alternates' keeps the backpack and the bench box apart (never on the robot together).
+    BACKPACK_PARTS = {'bv2_frame': ('电池背包框架（BatteryV2-M1 打印件，橙色）', 'torso', 'new-print', None),
+                      'bv2_cap': ('电池背包后盖（BatteryV2-M1 打印件，橙色，左上方开关方孔、右上角充电插头缺口）', 'torso', 'new-print', None),
                       'bv2_battery': ('2S 3000 mAh 电池（Crazepony B08LZ8L4YD），竖立在框架电池柱里', 'controller', 'purchased', '#3a6b35'),
-                      'bv2_foam': ('电池背面的 1 mm 泡沫垫（3M 泡沫胶，外侧保留离型纸）', 'controller', 'purchased', '#d9d0b8'),
-                      'bv2_pololu': ('Pololu 2813 软电源开关，贴在左翼外壁内侧', 'controller', 'purchased', '#1f6f3f'),
-                      'bv2_pololu_tape': ('Pololu 2813 背后的 3M 泡沫胶', 'controller', 'purchased', '#d9d0b8'),
-                      'bv2_dfr1202': ('DFRobot DFR1202 5 V 降压板（A7Z 供电），贴在电池柱左肋上', 'controller', 'owned', '#1f3f8f'),
+                      'bv2_foam': ('电池背面的 1 mm 泡沫垫（3M 泡沫胶，外侧保留离型纸）', 'controller', 'owned', '#d9d0b8'),
+                      'bv2_dfr1202': ('DFRobot DFR1202 5 V 降压板（A7Z 供电，从旧背包拆来），贴在电池柱左肋上', 'controller', 'owned', '#1f3f8f'),
                       'bv2_dfr_tape': ('DFR1202 背后的 3M 泡沫胶', 'controller', 'owned', '#d9d0b8'),
-                      'bv2_xiao': ('Seeed XIAO SAMD21 低压切断板，贴在右翼内壁高处，USB-C 朝后', 'controller', 'purchased', '#2b2b2b'),
-                      'bv2_xiao_tape': ('XIAO 背后的 3M 泡沫胶', 'controller', 'purchased', '#d9d0b8'),
-                      'bv2_button': ('E-Switch PV6F240SS-331 16 mm 绿灯环按钮，装在后盖左上', 'controller', 'purchased', '#9aa0a6'),
-                      'bv2_diode': ('1N5822 肖特基二极管（充电线上，热缩包好，放在电池上方的线舱）', 'controller', 'purchased', '#3b3b3b'),
-                      'bv2_pad_plus': ('Keystone 615 触点片（+，y +9），平面在底板下、竖片贴后面', 'controller', 'purchased', '#c9a227'),
-                      'bv2_pad_minus': ('Keystone 615 触点片（−，y −9），平面在底板下、竖片贴后面', 'controller', 'purchased', '#c9a227'),
-                      'dock_base': ('充电座底座（BatteryDock-A1 打印件，橙色）', 'torso', 'new-print', None),
-                      'dock_leaf_plus': ('Keystone 5209 弹片（+，y +9 槽）', 'controller', 'purchased', '#b8b8b8'),
-                      'dock_leaf_minus': ('Keystone 5209 弹片（−，y −9 槽）', 'controller', 'purchased', '#b8b8b8'),
-                      'dock_jack': ('Same Sky PJ-005A 直流插座（充电座后墙）', 'controller', 'purchased', '#3b3b3b')}
+                      'bv2_switch': ('船型开关（Swann 39，从旧背包拆来），卡进后盖左上方孔，按键朝后', 'controller', 'owned', '#2b2b2b'),
+                      'bv2_plug1': ('插头 1（XT30 一对：电池线接背包线），放在电池上方右侧', 'controller', 'owned', '#e0c020'),
+                      'bv2_plug2': ('插头 2（XT30 一对：开关线接 DFR1202 输入线），竖着放在 DFR1202 外侧', 'controller', 'owned', '#e0c020'),
+                      'bv2_balance': ('电池白色 3 针平衡插头（JST XH-3P），从后盖右上缺口露出，充电时插 B3', 'controller', 'purchased', '#f2f2f2')}
     # The swap plugs (plug 3 servo XT30, plug 4 A7Z MR30) leave the backpack at its lower left rear (CURRENT-STATE
     # backpack_swap_plugs, 2026-10-31); they are no longer drawn in the pack channel (bp_swap_plugs.stl is a record).
     for key, (name, module, status, color) in BACKPACK_PARTS.items():
@@ -761,10 +754,8 @@ ALTERNATES = [
     {'id': 'bench-box', 'label': 'Rear converter box (USB-C bench supply, D-007)',
      'parts': ['rear_frame', 'rear_lid', 'xl4015_top', 'xl4015_mid', 'pd5991'],
      'cables': ['pw-15v', 'pw-15v-link', 'pw-7v', 'pi-lead']},
-    {'id': 'battery-backpack', 'label': 'Battery backpack V2 rev B (2S 3000 mAh, Pololu 2813 soft switch, XIAO cutoff, dock pads) and its dock base',
-     'parts': ['bv2_frame', 'bv2_cap', 'bv2_battery', 'bv2_foam', 'bv2_pololu', 'bv2_pololu_tape', 'bv2_dfr1202', 'bv2_dfr_tape',
-               'bv2_xiao', 'bv2_xiao_tape', 'bv2_button', 'bv2_diode', 'bv2_pad_plus', 'bv2_pad_minus',
-               'dock_base', 'dock_leaf_plus', 'dock_leaf_minus', 'dock_jack'],
+    {'id': 'battery-backpack', 'label': 'Battery backpack V2 rev M (2S 3000 mAh, the old rocker switch in the cap, balance plug out for B3 charging)',
+     'parts': ['bv2_frame', 'bv2_cap', 'bv2_battery', 'bv2_foam', 'bv2_dfr1202', 'bv2_dfr_tape', 'bv2_switch', 'bv2_plug1', 'bv2_plug2', 'bv2_balance'],
      'cables': []},
 ]
 
@@ -808,8 +799,8 @@ def main() -> None:
     data = {
         'schemaVersion': 1,
         'title': 'MicroDuck build guide: torso, neck, head and wiring',
-        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the battery backpack V2 rev B (2S 3000 mAh, soft switch, dock charging)',
-        'revision': 'guide-20261120-battery-v2-b1',
+        'subtitle': 'USB-C powered build: 15 V from an Adafruit 5991, 7.4 V (the 7 V rail) for the servos and 5.0 V for the A7Z from two XL4015 converters stacked in a rear converter box, the OpenRB-150 in a printed rear pack behind the hip motors, BNO085 on its front rib, the Radxa Cubie A7Z with the Radxa Heatsink 6530B on the floor bosses of a printed roof saddle taped to the torso roof, its sockets through the rear wall and its header at the front (D-028), speaker, amplifier, microphones and touch pads in the head, the U20CAM USB camera on the face (D-023), head wires free down the left side of the neck; chapter 12 swaps in the battery backpack V2 rev M (2S 3000 mAh, the old rocker switch, charging through the battery balance plug on the HTRC B3)',
+        'revision': 'guide-20261120-battery-v2-m1',
         'units': 'mm',
         'frame': 'x forward, y left, z up',
         'parts': out_parts,

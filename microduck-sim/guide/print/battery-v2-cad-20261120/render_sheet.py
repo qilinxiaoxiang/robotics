@@ -1,4 +1,4 @@
-"""Sheet of the built battery backpack V2 rev B (build/ STLs and bought-part envelopes): back view (what you see behind the
+"""Sheet of the built battery backpack V2 rev M (build/ STLs and bought-part envelopes): back view (what you see behind the
 robot), front view (the face on the OpenRB pack), a side section through the battery column (y -6.3) and the bought parts
 placed in the frame with the cap off. Numbers in the footer come from checks/checks.json and checks/legsit.json.
 
@@ -16,9 +16,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE)); import build_v2 as B  # noqa: E402
 BUILD = HERE / "build"
 ORANGE, CAPC = (0.96, 0.55, 0.20), (0.93, 0.66, 0.38)
-PC = {"battery": (0.25, 0.45, 0.80), "Pololu": (0.15, 0.6, 0.3), "DFR1202": (0.55, 0.25, 0.65), "XIAO": (0.1, 0.55, 0.65),
-      "button": (0.2, 0.2, 0.2), "contact": (0.85, 0.7, 0.1), "Schottky": (0.4, 0.4, 0.4), "foam": (0.7, 0.7, 0.7), "tape": (0.8, 0.8, 0.6),
-      "plug": (0.5, 0.5, 0.5)}
+PC = {"battery": (0.25, 0.45, 0.80), "DFR1202": (0.55, 0.25, 0.65), "Swann": (0.2, 0.2, 0.2), "balance": (0.95, 0.95, 0.95),
+      "foam": (0.7, 0.7, 0.7), "tape": (0.8, 0.8, 0.6), "plug": (0.85, 0.7, 0.1)}
 
 
 def col(n):
@@ -51,12 +50,12 @@ def main():
     ck = json.loads((HERE / "checks/checks.json").read_text())
     ls = json.loads((HERE / "checks/legsit.json").read_text()) if (HERE / "checks/legsit.json").exists() else None
     fig = plt.figure(figsize=(18, 13), dpi=110, facecolor="white")
-    ax = fig.add_subplot(2, 2, 1, projection="3d"); setup(ax, "Back view (from behind the robot): cap, PV6 button, USB-C window", 12, 200)
+    ax = fig.add_subplot(2, 2, 1, projection="3d"); setup(ax, "Back view (from behind the robot): cap, Swann 39 rocker, balance-plug notch", 12, 200)
     draw(ax, frame, ORANGE, light=(-1, 0.3, 0.5)); draw(ax, cap, CAPC, light=(-1, 0.3, 0.5))
-    draw(ax, parts["16 mm LED button (E-Switch PV6F240SS-331)"], PC["button"], light=(-1, 0.3, 0.5))
-    ax = fig.add_subplot(2, 2, 2, projection="3d"); setup(ax, "Front view (face on the OpenRB pack), pads under the floor", 12, 20)
+    for n in ("Swann 39 switch", "Swann 39 snap wings"): draw(ax, parts[n], PC["Swann"], light=(-1, 0.3, 0.5))
+    draw(ax, parts["balance plug (JST XH-3P)"], PC["balance"], light=(-1, 0.3, 0.5))
+    ax = fig.add_subplot(2, 2, 2, projection="3d"); setup(ax, "Front view (face on the OpenRB pack)", 12, 20)
     draw(ax, frame, ORANGE, light=(1, 0.3, 0.5))
-    for n in ("contact pad plus", "contact pad minus"): draw(ax, parts[n], PC["contact"], light=(1, 0.3, 0.5))
     # side section through the battery column
     ax = fig.add_subplot(2, 2, 3); y0 = (B.BAT[0][1] + B.BAT[1][1]) / 2
     for t, c in ((frame, ORANGE), (cap, CAPC)):
@@ -77,7 +76,6 @@ def main():
     ax = fig.add_subplot(2, 2, 4, projection="3d"); setup(ax, "Parts placed, cap off (frame translucent)", 22, 215)
     draw(ax, frame, ORANGE, alpha=0.25)
     for n, t in parts.items():
-        if "plug" in n: continue
         draw(ax, t, col(n), alpha=0.95)
     hs = [plt.Rectangle((0, 0), 1, 1, color=c) for c in PC.values()]
     ax.legend(hs, list(PC), fontsize=7, loc="upper left")
@@ -85,8 +83,8 @@ def main():
     foot = (f"Frame {s['frame']['volume_cm3']} cm3, cap {s['cap']['volume_cm3']} cm3 (solid); overlaps with robot, bought parts, "
             f"flight pack: 0; wall check fails: {sum(len(v['fail_regions']) for v in ck['wall_check'].values())}; fits: "
             f"{ck['fit_check']['H2S']['tail'][-1]}; seated clearance {ls['seated_min_mm'] if ls else '?'} mm; legs "
-            f"{', '.join(f'{k} {v['min_mm']} mm' for k, v in legs.items())}. Button E-Switch PV6F240SS-331, pads Keystone 615.")
-    fig.suptitle("MicroDuck battery backpack V2 rev B: built frame and cap (battery-v2-cad-20261120)", fontsize=14)
+            f"{', '.join(f'{k} {v['min_mm']} mm' for k, v in legs.items())}. Switch Swann 39 (moved over), charging on the HTRC B3 through the balance plug.")
+    fig.suptitle("MicroDuck battery backpack V2 rev M (minimal): built frame and cap (battery-v2-cad-20261120)", fontsize=14)
     fig.text(0.02, 0.01, foot, fontsize=9)
     fig.tight_layout(rect=(0, 0.03, 1, 0.97)); fig.savefig(HERE / "sheet.png"); plt.close(fig)
     print(HERE / "sheet.png")

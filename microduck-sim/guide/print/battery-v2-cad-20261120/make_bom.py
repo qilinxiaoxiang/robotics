@@ -1,9 +1,11 @@
-"""Write BOM.json and assembly-guide-ch12.json for the battery backpack V2 rev B from the built guide itself (2026-11-20).
+"""Write BOM.json and assembly-guide-ch12.json for the battery backpack V2 rev M from the built guide itself (2026-11-20).
 
 BOM.json lists every item that a chapter 12 ('backpack') step of guide/data/guide-data.json puts in its prepare list, with
 its quantity and the steps that use it, and nothing else. The source of each item comes from SOURCES below (purchase
 records purchase-decision-20261120*.json, roboclub/INVENTORY.md, CURRENT-STATE); an item no rule matches gets
 "source": null and is printed as UNSOURCED, so a part named in the guide without a source cannot pass silently.
+Rev M buys only the battery; the dock items of the deferred dock (battery-dock-20261120) are listed under "later_dock",
+not in the chapter.
     python3 make_bom.py [--live-url URL]"""
 import argparse, hashlib, json
 from pathlib import Path
@@ -17,6 +19,8 @@ CHAPTER = 'backpack'
 
 # (substring of the guide item text, source). First match wins, so specific rules come first.
 SOURCES = [
+    ('船型开关', 'owned: the Swann 39 rocker switch on the robot now (RoboClub), moved over from the old backpack'),
+    ('BatteryV2-M1', 'print: BatteryV2-M1 Orange plate (battery-v2-cad-20261120/slices/release-BatteryV2-M1)'),
     ('PV6F240SS-331', 'DigiKey EG4731-ND (purchase-decision-20261120.json)'),
     ('Pololu 2813', 'DigiKey 2183-2813-ND (purchase-decision-20261120.json)'),
     ('Crazepony', 'Amazon B08LZ8L4YD (purchase-decision-20261120.json)'),
@@ -109,9 +113,15 @@ def main():
         items[it]['qty'] += 1
         if r['step'] not in items[it]['used_in_step']:
             items[it]['used_in_step'].append(r['step'])
+    later = [{'part': 'Keystone 615 contact pad', 'qty': 2, 'source': 'DigiKey 36-615-ND (purchase-decision-20261120-charging.json)'},
+             {'part': 'Keystone 5209 contact leaf', 'qty': 2, 'source': 'DigiKey 36-5209-ND (purchase-decision-20261120-charging.json)'},
+             {'part': 'Same Sky PJ-005A DC jack', 'qty': 1, 'source': 'DigiKey CP-5-ND (purchase-decision-20261120-charging.json)'},
+             {'part': 'Sortfle 8.4 V 1 A charger', 'qty': 1, 'source': 'Amazon B07J4CLKZ7 (purchase-decision-20261120-charging.json)'},
+             {'part': 'dock base print', 'qty': 1, 'source': 'print: battery-dock-20261120 (deferred, not released)'}]
     out = {'chapter': CHAPTER, 'generated_from': str(DATA.relative_to(GUIDE.parent)),
            'guide_data_sha256': hashlib.sha256(DATA.read_bytes()).hexdigest(),
-           'items': [{k: v for k, v in items[i].items() if v is not None or k == 'source'} for i in order]}
+           'items': [{k: v for k, v in items[i].items() if v is not None or k == 'source'} for i in order],
+           'later_dock': later}
     (HERE / 'BOM.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     chap = next(c for c in d['chapters'] if c['id'] == CHAPTER)
     receipt = json.loads(RECEIPT.read_text()) if RECEIPT.exists() else {}

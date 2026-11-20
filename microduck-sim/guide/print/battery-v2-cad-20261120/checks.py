@@ -30,20 +30,18 @@ fails = []
 def load(p): return B.load_mf(p)
 
 
-# Every part that goes in after the frame is screwed on the robot, in build order (guide chapter 12 steps bv2-boards,
-# bv2-battery, bv2-pads, bv2-cap; bench step bv2-button), with the path the guide animates: offsets ending at the
-# seated pose (a vector v is the straight path v -> 0). Obstacles are the frame, the robot's mating parts and every part
-# already in. The Pololu goes in before the DFR1202: its rear rib makes it enter 6 mm off the wall, inside the DFR's lane.
+# Every part that goes in after the frame is screwed on the robot, in build order (guide chapter 12 rev M steps), with
+# the path the guide animates: offsets ending at the seated pose (a vector v is the straight path v -> 0). Obstacles are
+# the frame, the robot's mating parts and every part already in. The switch goes into the cap on the bench, body first
+# from behind (wings squeezed: its insertion is checked without the wings), then the cap with the switch closes the box.
 STEPS = [
-    ("pololu", ["Pololu 2813", "Pololu tape"], [[-25, -6, 0], [0, -6, 0], [0, 0, 0]], "frame"),
     ("dfr1202", ["DFR1202", "DFR1202 tape"], [-25, 0, 0], "frame"),
-    ("xiao", ["XIAO SAMD21", "XIAO tape"], [-25, 0, 0], "frame"),
+    ("plug2", ["plug 2 (XT30 pair)"], [-25, 0, 0], "frame"),
     ("battery", ["battery 2S 3000 (B08LZ8L4YD)", "battery foam pad"], [-40, 0, 0], "frame"),
-    ("diode", ["Schottky 1N5822 (DO-201AD)"], [-30, 0, 0], "frame"),
-    ("pad-plus", ["contact pad plus"], [-15, 0, 0], "frame"),
-    ("pad-minus", ["contact pad minus"], [-15, 0, 0], "frame"),
-    ("button-into-cap (bench, nut off)", ["button without nut"], [-25, 0, 0], "cap"),
-    ("cap-with-button", ["cap", "16 mm LED button (E-Switch PV6F240SS-331)"], [-25, 0, 0], "frame"),
+    ("plug1", ["plug 1 (XT30 pair)"], [-25, 0, 0], "frame"),
+    ("balance-plug", ["balance plug (JST XH-3P)"], [-25, 0, 0], "frame"),
+    ("switch-into-cap (bench)", ["Swann 39 switch"], [-35, 0, 0], "cap"),
+    ("cap-with-switch", ["cap", "Swann 39 switch", "Swann 39 snap wings"], [-25, 0, 0], "frame"),
 ]
 N_SWEEP = 41
 
@@ -62,10 +60,7 @@ def path_points(p):
 def insertion(frame, cap, mating, parts):
     """Sweep each part along its path against what is already in; a collision is any sample whose overlap exceeds the
     seated overlap by more than 0.01 mm3. Also reports the narrowest gap met on the way (search 3 mm)."""
-    y, z = B.BTN_C; x0 = B.UP[0][0]
     lib = dict(parts); lib["cap"] = cap
-    lib["button without nut"] = B.U([B.cyl_x((y, z), B.BTN_BEZEL[0] / 2, x0 - B.BTN_BEZEL[1], x0),
-                                     B.cyl_x((y, z), B.BTN_BODY_D / 2, x0, x0 + B.BTN_BODY_L)])
     robot = [mating[k] for k in ("shell_left", "shell_right", "rear_pack", "openrb-board-upright") if k in mating]
     installed = [frame] + robot
     res = []
@@ -82,7 +77,7 @@ def insertion(frame, cap, mating, parts):
             if v <= 0.01 and k < len(pts) - 1: gap = min(gap, m.min_gap(obst, 3.0))   # on the way (0 = sliding contact)
         res.append(dict(id=sid, parts=names, path=path, samples=N_SWEEP, seated_overlap_mm3=r3(seated),
                         max_overlap_mm3=r3(worst), worst_offset=at, narrowest_gap_mm=r3(gap), collides=bool(worst > 0.01)))
-        if base == "frame" and sid != "cap-with-button": installed.append(mover)
+        if base == "frame" and sid != "cap-with-switch": installed.append(mover)
     return res
 
 
@@ -125,6 +120,7 @@ def main():
         for b in names[i + 1:]:
             if "tape" in a and b.startswith(a.split(" tape")[0]) or "tape" in b and a.startswith(b.split(" tape")[0]): continue
             if {"battery 2S 3000 (B08LZ8L4YD)", "battery foam pad"} == {a, b}: continue
+            if {"Swann 39 switch", "Swann 39 snap wings"} == {a, b}: continue
             v = (parts[a] ^ parts[b]).volume()
             if v > 0.01: pp[f"{a} | {b}"] = r3(v); fails.append(f"overlap {a} | {b} {v:.2f}")
     out["parts_overlap_mm3"] = pov; out["parts_min_gap_mm (search 3)"] = pgap; out["part_part_overlap_mm3"] = pp
@@ -153,7 +149,7 @@ def main():
     out["trunk_points"] = res
     # ---------------------------------------------------------------- flight pack
     heads = B.U([B.cyl_x(s["yz"], B.HEAD_D / 2, B.UP[0][0] - B.HEAD_H, B.UP[0][0]) for s in B.CAP_SCREWS])
-    bp = (frame + cap + heads).translate((-6.9, 0, 0))
+    bp = (frame + cap + heads + parts["Swann 39 switch"] + parts["balance plug (JST XH-3P)"]).translate((-6.9, 0, 0))
     fl = {}
     for f in sorted((FLIGHT / "cad/build").glob("*-world.stl")):
         if "wing_plate" in f.name and f.name != "wing_plate-world.stl": continue
@@ -184,17 +180,9 @@ def main():
         fits.append(dict(id=f"{s['id']}-pilot", type="pilot", part="battery_v2_frame", screw="M2", kind="any", d=B.PILOT_D,
                          axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=B.MOUTH,
                          engagement=round(min(s["L"] - clamped, length), 2), depth=s["pilot"], clamped=clamped))
-    for y in B.PADS_Y:
-        fits.append(dict(id=f"pad-pin y{y:+.0f}", type="pair", fit_class="locating",
-                         female=dict(part=None, d=B.PAD_HOLE_D, axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=0.0),
-                         male=dict(part="battery_v2_cap", d=B.PIN_D, axis=[1, 0, 0], teardrop=None, at_bed=False, chamfer=0.4)))
-    fits.append(dict(id="button-panel-hole", type="pair", fit_class="locating",
-                     female=dict(part="battery_v2_cap", d=B.BTN_HOLE_D, axis=[1, 0, 0], teardrop=None, at_bed=True, chamfer=B.MOUTH),
-                     male=dict(part=None, d=B.BTN_THREAD_D, axis=[1, 0, 0], teardrop=None)))
-    for y in B.PADS_Y:
-        fits.append(dict(id=f"pad-pocket y{y:+.0f}", type="pair", fit_class="loose",
-                         female=dict(part="battery_v2_frame", d=round(B.PAD_W + 2 * B.LOOSE, 3), axis=[0, 0, 1], teardrop=None, at_bed=False, chamfer=0.0),
-                         male=dict(part=None, d=B.PAD_W, axis=[0, 0, 1], teardrop=None)))
+    # the switch cutout is the maker's panel cutout (Swann catalogue 27.4 x 12.3, today's floor panel 27.5 x 12.3), not a
+    # print_fit class: it is recorded and checked against the body here (0.1 / 0.4 mm per side)
+    out["switch_cutout"] = dict(cut_yz=B.SW_CUT, body_yz=[27.3, 11.5], per_side=[r3((B.SW_CUT[0] - 27.3) / 2), r3((B.SW_CUT[1] - 11.5) / 2)])
     fres = {}
     for printer in ("H2S", "X1C"):
         spec = dict(printer=printer, poses=rot, fits=fits)
@@ -219,7 +207,7 @@ def main():
                            seat=[B.X_IN, y, z], axis=[1, 0, 0], head_d=B.HEAD_D, head_h=B.HEAD_H, length=6, through_mm=B.PLATE,
                            drive="phillips", present=["frame"] + robot, movable=[], table_z=None,
                            note="robot held on the bench, back up; the frame is empty when these are driven"))
-    every = [k for k in meshes if k != "XIAO_USB_C_plug"]
+    every = list(meshes)
     for s in B.CAP_SCREWS:
         screws.append(dict(id=s["id"], step="close the cap (everything fitted)", spec=f"M2 x {s['L']}", where="from behind into the frame boss",
                            seat=[B.UP[0][0], s["yz"][0], s["yz"][1]], axis=[1, 0, 0], head_d=B.HEAD_D, head_h=B.HEAD_H, length=s["L"],

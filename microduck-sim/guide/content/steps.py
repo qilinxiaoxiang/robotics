@@ -227,7 +227,7 @@ def build(ctx):
     # slack folds into the gap between the speaker and the amplifier board.
     spk_cut = r5(max(L.get('spk-plus', 10), L.get('spk-minus', 10)) + 15)
 
-    new_prints = ctx.keys('shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'bv2_frame', 'bv2_cap', 'dock_base', 'head_cap', 'head_bottom', 'jaw_frame', 'face_panel', 'eye_trim',
+    new_prints = ctx.keys('shell_left', 'shell_right', 'rear_pack', 'rear_frame', 'rear_lid', 'bv2_frame', 'bv2_cap', 'head_cap', 'head_bottom', 'jaw_frame', 'face_panel', 'eye_trim',
                           'jaw_support', 'mouth_sliding_ring', 'neck_pitch', 'neck_pitch_ring',
                           'ankle', 'right_ankle', 'ankle_cheek', 'right_ankle_cheek', 'lower', 'right_lower', 'foot', 'right_foot',
                           'saddle_body', 'saddle_lid')
@@ -258,7 +258,7 @@ def build(ctx):
         {'id': 'power-up', 'title': '11. First power-up and saddle lid',
          'summary': 'Unpowered checks, A7Z configuration, a readback of both converter voltages before the OpenRB and the A7Z are connected to them, 15/15 servo scan and the servo voltage-limit check, sensors and the heatsink blower, then the saddle lid over the heatsink (the header strip stays open), current, and weigh the robot.'},
         {'id': 'backpack', 'title': '12. Battery backpack',
-         'summary': '（本章为中文。）电池背包 V2 rev B：先在工作台上焊好 Pololu 2813 软开关、DFR1202 供电线、XIAO SAMD21 低压切断线束、按钮和充电线；再把新框架用四颗 M2 × 6 直接拧到 OpenRB 盒子的四根柱子上（不装 Dual Lock 背板），装两片底部触点、三块板子和 2S 3000 mAh 电池，盖上后盖（两颗 M2 × 8、两颗 M2 × 6），接插头 3 和 4。按一下按钮开机并亮绿灯；坐到充电座上就充电；每月开盖用 B3 做一次平衡充电。最后做充电座。'},
+         'summary': '（本章为中文。）电池背包 V2 rev M（最小改造）：只换大电池、重做背包。拆下旧背包，留下船型开关、DFR1202 和全部插头线（不剪、不焊）；新框架用四颗 M2 × 6 直接拧到 OpenRB 盒子的四根柱子上，贴好 DFR1202，竖着放进 2S 3000 mAh 电池；开关卡进新后盖，接好插头 2 和插头 1，盖上后盖（两颗 M2 × 8、两颗 M2 × 6），接插头 3 和 4。充电：关开关，把电池的白色 3 针插头从后盖右上缺口勾出来，直接插到 HTRC B3 上，不开盖。'},
     ]
 
     steps = []
@@ -299,10 +299,9 @@ def build(ctx):
         'range': 'range-of-motion check by hand with torque off',
         'current': 'current measurement, no part moves',
         'bv2-strip': 'the old backpack or bench box comes off; nothing new goes on',
-        'bv2-button': 'button pushed in by hand with its nut off; the drawn button includes the nut envelope',
         'bv2-plugs': 'plugs 3 and 4 mated behind the backpack, no part moves',
-        'bv2-power-up': 'first battery power-up and readbacks, no part moves',
-        'bv2-balance': 'monthly balance charge with the cap off and put back, no part is added',
+        'bv2-power-up': 'battery power-up and readbacks, no part moves',
+        'bv2-charge': 'charging through the balance plug with the switch off, no part moves',
     }
 
     def step(sid, chapter, title, *, add=(), show=None, context=None, approach=None, camera=None, prepare=(), instructions=(),
@@ -433,11 +432,9 @@ def build(ctx):
     step('prints', 'start', f'Print the {len(new_prints)} new parts',
          show=[], add=new_prints, context=LEGS + TORSO, bench=True,
          camera=ctx.cam(new_prints, direction=FRONT, margin=1.05),
-         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see the BatteryV2-B1 and BatteryDock-A1 plate pictures (Orange-plate.png in each delivery folder), PARTS-SHEET-V1.38.html, PARTS-SHEET-V1.37.html, PARTS-SHEET-V1.36.html, PARTS-SHEET-V1.33.html, PARTS-SHEET-V1.30.html, PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
-                  {'item': 'BatteryV2-B1 package: zhengxia_MicroDuck_BatteryV2-B1 folder (one orange plate: the battery backpack V2 rev B frame and cap)', 'qty': 1, 'kind': 'printed',
-                   'note': 'Battery backpack V2 rev B (approved by Shawn 2026-11-20, print/battery-v2-cad-20261120/): the 2S 3000 mAh pack stands upright in the frame, the Pololu 2813 soft switch, the DFR1202 and the XIAO SAMD21 cutoff sit on foam tape, the 16 mm LED button sits in the cap, two brass pads under the floor take dock charging. The frame screws straight onto the four pack posts (the Dual Lock back plate is not used). One orange plate: X1C 1 h 31 min, 44.7 g; Elegoo Centauri Carbon 1 h 37 min, 44.4 g; H2S 1 h 36 min, 43.7 g. Replaces the V1.40 and V1.41 backpack prints (frame, cap, hatch) and the two retainer bars.'},
-                  {'item': 'BatteryDock-A1 package: zhengxia_MicroDuck_BatteryDock-A1 folder (one orange plate: the charging dock base)', 'qty': 1, 'kind': 'printed',
-                   'note': 'The dock base the robot sits on to charge (print/battery-dock-20261120/): two Keystone 5209 leaves under the backpack pads and a PJ-005A jack in its rear tower. One orange plate, no supports: X1C 30 min, 11.2 g; Elegoo Centauri Carbon 25 min, 10.7 g; H2S 32 min, 10.7 g.'},
+         prepare=[{'item': 'PLA, 0.4 mm nozzle (Bambu X1C or Elegoo Centauri Carbon)', 'qty': 'see the BatteryV2-M1 plate picture (Orange-plate.png in its delivery folder), PARTS-SHEET-V1.38.html, PARTS-SHEET-V1.37.html, PARTS-SHEET-V1.36.html, PARTS-SHEET-V1.33.html, PARTS-SHEET-V1.30.html, PARTS-SHEET-V1.28.html, PARTS-SHEET-V1.24.html, PARTS-SHEET-V1.22.html, PARTS-SHEET-V1.19.html, PARTS-SHEET-V1.18.html, PARTS-SHEET-V1.17.html, PARTS-SHEET-V1.9.html and PARTS-SHEET-V1.8.html', 'kind': 'other'},
+                  {'item': 'BatteryV2-M1 package: zhengxia_MicroDuck_BatteryV2-M1 folder (one orange plate: the battery backpack V2 rev M frame and cap)', 'qty': 1, 'kind': 'printed',
+                   'note': 'Battery backpack V2 rev M, the minimal backpack (Shawn 2026-11-20 "最小改造", print/battery-v2-cad-20261120/): the 2S 3000 mAh pack stands upright in the frame, the DFR1202 and the Swann 39 rocker switch move over from the old backpack (the switch snaps into the cap), and the battery\'s white balance plug sits behind a notch in the cap for charging on the HTRC B3 without opening it. The frame screws straight onto the four pack posts (the Dual Lock back plate is not used). One orange plate: X1C (Cool Plate) 1 h 26 min, 42.9 g; Elegoo Centauri Carbon 1 h 32 min, 42.4 g; H2S 1 h 31 min, 42.0 g. Replaces the V1.40 and V1.41 backpack prints (frame, cap, hatch) and the two retainer bars.'},
                   {'item': 'V1.39 package: zhengxia_MicroDuck_V1.39 folder (the Dual Lock back plate; not printed any more)', 'qty': 0, 'kind': 'printed',
                    'note': 'The Dual Lock back plate is not fitted (2026-11-10): the rear converter box and the battery backpack both screw straight onto the four pack posts with the four M2 × 6.'},
                   {'item': 'V1.38 package: zhengxia_MicroDuck_V1.38 folder (one orange plate: the rear converter box cap)', 'qty': 1, 'kind': 'printed',
@@ -458,7 +455,7 @@ def build(ctx):
                    'note': 'V1.24 replaces the V1.22 orange ankle base and side. Each ankle is the stock bracket cut in half at mid shaft: the outer half screws to the servo horn, the inner half runs on the sleeve ring of the lower link, and the slip-fit foot holds both: its socket wraps the two halves and the toe M2 × 6, which sits on the cut, holds both down. No posts and no M2 × 8. The V1.22 yellow feet stay. One plate with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus a picture; PARTS-SHEET-V1.24.html shows the parts.'},
                   {'item': 'V1.22 package: zhengxia_MicroDuck_V1.22 folder (yellow plate: the slip-fit feet; its black sleeves are replaced by V1.28 and its orange plate by V1.24)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.22 replaces the one-piece orange ankle brackets, their black 9.65 mm sleeves and the yellow feet on both legs. The one-piece bracket is a closed fork that had to be spread over the lower link and its servo, and the old foot pressed onto the bracket so hard that it could not come off; each fitting loaded the ankle servo. The 10.4 mm sleeve turns freely on the link, and the foot slides on from below by hand and is held by its toe M2 × 6. Its orange plate (the split-ankle base and side) is replaced by V1.24 and its black sleeves by the V1.28 links; print only its yellow plate. Three plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.22.html shows the parts and the parts they replace. The hot-glue sole molds (V1.21) were printed in black on 2026-10-19 and are not in V1.22.'},
-                  {'item': 'V1.19 package: zhengxia_MicroDuck_V1.19 folder (one orange plate: the new rear converter box cap and the new battery backpack cap; not printed any more: its box cap is replaced by V1.38 and its backpack cap by the BatteryV2-B1 backpack)', 'qty': 0, 'kind': 'printed',
+                  {'item': 'V1.19 package: zhengxia_MicroDuck_V1.19 folder (one orange plate: the new rear converter box cap and the new battery backpack cap; not printed any more: its box cap is replaced by V1.38 and its backpack cap by the BatteryV2-M1 backpack)', 'qty': 0, 'kind': 'printed',
                    'note': 'V1.19 holds only the two caps. Each now seats its screw heads on a 3.0 mm printed floor: the 1.0 mm floors of the V1.17 box cap tore through when it came off. The new box cap takes the same four M2 × 10 and fits the V1.17 box frame; the new backpack cap takes three M2 × 8 and fits the V1.18 backpack frame. Replace both old caps; the frames stay. The frame is the cover plate with the bench box width, top and step and a box 26.75 mm deep behind it, printed on its open back rim like the box frame; the cap prints on its flat back face. One plate with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), tree support, no brim; PARTS-SHEET-V1.18.html shows both parts.'},
                   {'item': 'V1.17 package: zhengxia_MicroDuck_V1.17 folder (one orange plate: rear converter box frame and cap and the A7Z cap wire clip; one white plate: both torso shells, the A7Z head cap, the A7Z face panel and both thighs)', 'qty': 1, 'kind': 'printed',
                    'note': 'V1.17 is all of V1.16 plus the three head parts for the Radxa Cubie A7Z and its camera: the A7Z head cap (the V1.9 cap with the board rails cut back to a round pad at each screw hole and a slot at each end, for the camera connector and the microSD card; replaced by the V1.33 cap, keep it as a spare), the A7Z face panel (four bosses for the Radxa Camera 13M 214) and the A7Z cap wire clip (a notch over the micro HDMI socket). The eye trim is unchanged. Two plates, each with a Bambu X1C file (folder X1C) and an Elegoo Centauri Carbon file (folder Elegoo), plus one picture per plate; PARTS-SHEET-V1.17.html shows the parts and the parts they replace. Orange plate: the box frame is one piece, the old cover plate at the front (solid, no wire slot; a 9 mm notch in its top edge and in the front edge of the box top wall lets the four wires drop in from the box top) and behind it a box with two wide tiers for the converters and a narrow bottom tier for the 5991; the cap with rounded edges and nothing sticking out pushes straight onto the back of the box and is held by four hidden M2 × 10, each through a column inside the cap: two at the top corners through the 7 V converter\'s upper holes, two low through the 5991\'s upper holes. No tongues, no hook. The frame prints on its open back rim and the cap on its flat back face, with tree support and no brim. White plate (about 4 h): the V2.0 shells screw down into the V1.9 pack and have no cross tunnel; the cap is the V1.9 cap printed white, unchanged, so it closes with the same three ROBOTIS M2.6 × 6. The thighs are the 10/1 thighs in white, a colour change only: fit them only when a leg is apart anyway. Print the cap roof down with its 4 mm outer brim. Either printer works; the X1C prints the strip on top of the head on the smooth Cool Plate, the Centauri on textured PEI. Both iron the support under the crown, but expect a matte band where the crown printed on support: sand it lightly.'},
@@ -468,8 +465,8 @@ def build(ctx):
                   {'item': 'V1.6 print package: zhengxia_MicroDuck_V1.6_8-files.zip', 'qty': 1, 'kind': 'printed', 'note': 'Two parts still come from it: jaw support and neck pitch bracket (its mouth sliding ring is replaced by the V1.37 capped jaw ring). Its speaker cradle, speaker keeper, IMU holder, IMU rear cover and OpenRB tray are not used in this build. The V1.7 package is not needed at all: its cap is replaced by the V1.8 cap and its tray is retired.'}],
          instructions=[
              'Everything else comes from the 10/1 batch of 89 parts you already printed.',
-             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap and both torso shells (white); the A7Z roof saddle body and lid (V3, D-028; orange for now, white when restocked); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap (BatteryV2-B1), the charging dock base (BatteryDock-A1), and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, capped jaw ring (V1.37), neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
-             'Print the BatteryV2-B1 package (one orange plate: the battery backpack frame and cap) and the BatteryDock-A1 package (one orange plate: the dock base). Skip the V1.40 and V1.41 backpack parts, the V1.19 package (its box cap is replaced by the V1.38 cap and its backpack cap by the BatteryV2-B1 cap), the V1.18 package (its battery backpack frame is replaced by the BatteryV2-B1 frame) and the V1.39 package (the Dual Lock back plate is not fitted). Print the V1.38 package (one orange plate: the rear converter box cap), the V1.37 package (one black plate: the cup jaw ring), the V1.33 package (one white, one yellow and one black plate), the eye trim and the two loose exit-clamp halves from the black V1.30 plate, the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap, its speaker retainer and its four wire clips, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the jaw support and neck pitch bracket from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the V1.33 cap (the A7Z cap in white with relieved rails and two end slots) has a plain roof with no amplifier posts and no speaker collar, an ear with a sound hole and a microphone locator in each side wall, the same sound hole and locator for an optional third microphone in the back wall, and no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
+             f'Print the {len(new_prints)} parts: lower head shell, jaw frame and the two slip-fit feet (yellow); face panel, head cap and both torso shells (white); the A7Z roof saddle body and lid (V3, D-028; orange for now, white when restocked); rear electronics pack, rear converter box frame and lid, battery backpack frame and cap (BatteryV2-M1), and the two ankle outer halves and two ankle inner halves (orange, V1.24); eye trim, jaw support, capped jaw ring (V1.37), neck pitch bracket, neck pitch ring and the two one-piece lower-leg links (black, V1.28).',
+             'Print the BatteryV2-M1 package (one orange plate: the battery backpack frame and cap). Skip the V1.40 and V1.41 backpack parts, the V1.19 package (its box cap is replaced by the V1.38 cap and its backpack cap by the BatteryV2-M1 cap), the V1.18 package (its battery backpack frame is replaced by the BatteryV2-M1 frame) and the V1.39 package (the Dual Lock back plate is not fitted). Print the V1.38 package (one orange plate: the rear converter box cap), the V1.37 package (one black plate: the cup jaw ring), the V1.33 package (one white, one yellow and one black plate), the eye trim and the two loose exit-clamp halves from the black V1.30 plate, the V1.17 package (its box cap is replaced by the V1.19 cap) (its orange plate and its white plate), the V1.9 orange set without its cap, its speaker retainer and its four wire clips, the White, Yellow and Black plates from the V1.8 package (the Black plate carries the eye trim, the neck pitch ring and its two optional shims; skip its pack cover) and the jaw support and neck pitch bracket from the V1.6 package. The V1.8 ring is 4.9 mm thick; the 4 mm ring from the 10/1 batch left a 0.9 mm gap under the head-yaw servo and did nothing. If you already printed earlier versions of the head parts, reprint them: the A7Z face holds the Radxa camera on four bosses, the V1.8 eye trim has the two pilots its own two screws thread into, the V1.8 lower shell has no window in its roof behind the face and carries the upper lip, the V1.8 jaw frame carries the lower lip so nothing in the beak is glued, and the V1.33 cap (the A7Z cap in white with relieved rails and two end slots) has a plain roof with no amplifier posts and no speaker collar, an ear with a sound hole and a microphone locator in each side wall, the same sound hole and locator for an optional third microphone in the back wall, and no rear notch. The V1.9 rear pack and the rear converter box together replace the integrated power support, the regulator insert, the OpenRB tray, the fuse carrier, the IMU holder and the IMU rear cover; the V1.9 pack differs from the V1.8 pack only on the plate front, where a rib with two pilot holes replaces the IMU slot and shelf.',
              'The lower head shell and the head cap print lying flat, as in the 10/1 batch; do not reuse the older on-edge files. The rear pack prints standing on its floor, upright as it sits in the robot; the box frame stands on its open back rim and the box cap lies on its flat back face. Peel off any brim, including the 4 mm brim round the cap.',
              'Remove all support material, including thin strands in screw holes, before assembly. On the head cap, push a needle through the dia 1.6 sound hole of each ear from the outside, and pick any stringing out of the two horseshoe locators round them inside. On the lower head shell, push a 2.5 mm drill by hand through the twelve sound holes in the floor of the speaker pocket. On the eye trim, make sure the two small pilot holes in its rear face are open. On the rear pack, open the four pilot holes in the round board pads, the four pilot holes in the ends of the two back posts, the USB-C slot in the floor, the window in the left (+Y) wall and the two pilot holes in the rib on the front of the plate. On the box frame, take out every support, open the eight pilot holes in the converter bosses, the four in the 5991 bosses, the two slots in the top wall, the small notch at the top edge of the 5991 terminal window and the wire notch at the front edge of the top wall and in the top edge of the front plate, and clear the four converter windows and the 5991 terminal window in the side walls, and the USB-C window low in the left-hand wall. On each wire clip, run a 2 mm drill or a needle through the screw hole in the tab and make sure the slot into the channel is open along its whole length. On each white torso shell, the small hole in the floor of the round counterbore on top prints on its side: check that an M2 screw drops through it, and if it does not, turn a 2 mm drill through it by hand; pick any support out of the seven horn-screw counterbores on the sides so each screw head seats flat.',
              'These screw seats print over support, so clean them to a flat seat: the three cap-screw tabs on the lower head shell and the four screw seats on the jaw support. On the neck pitch bracket, pick the support out of the shallow round recess in the centre of the horn face so the bracket sits flat on the horn; the thin skin above that recess matches the original part and can stay.',
@@ -485,7 +482,7 @@ def build(ctx):
                  'It is the V1.8 lower shell: its roof just behind the face is closed on the right-hand side (the earlier shell has a window there).',
                  'The rear pack is one piece: a flat plate with a wide T-shaped top and a notch in its top edge, two screw tabs on each side, a vertical rib with two pilot holes on its front face, four round pads with pilot holes on its back, and behind them an open box with a floor, two side walls, a window in the left (+Y) wall and two tall posts at the back corners.',
                  'The box frame, seen from behind: a front plate with four holes near its corners and a thin lip along its top edge; behind it a box 64 mm wide and 79 mm tall that is open at the back. Its upper part is full width and holds the two converters, one above the other; its bottom part is a narrower tier, 31 mm wide, for the 5991. Each side wall of the upper part has two rectangular windows, one at the height of each converter, cut in from the open back edge; the bottom tier has one window in its right wall (the 5991 terminal) and a taller one in its left wall (the USB-C plug). The front plate has no slot. Inside: eight round bosses for the converters and four standoff bosses for the 5991. At the front edge of the top wall, left of the centre, a 9 mm wide notch continues down into the top edge of the front plate: the four power wires drop through it into the pack. The lid is a cap with rounded edges and nothing sticking out, with four round holes in its back: two at the top corners and two low in its narrow bottom part. Each leads into a column inside the cap for one lid screw. The windows for the converter and 5991 terminals are cut in the side walls of the cap.',
-                 'The battery backpack frame (BatteryV2-B1) is open at the back: a front wall with four screw holes, a tall upper part 64 mm wide and a narrower lower part that reaches 12 mm lower than the old backpack, an upright column for the battery right of centre, two small 0.8 mm deep pockets in the underside of the floor for the brass pads, a narrow slot at the lower left for the plug 3 and 4 wires, and four bosses for the cap screws. The cap (BatteryV2-B1) is a flat back plate over both parts with a round 16.3 mm hole at the upper left (button), a small rectangular window at the upper right (XIAO USB-C) and four screw holes.'],
+                 'The battery backpack frame (BatteryV2-M1) is open at the back: a front wall with four screw holes, a tall upper part 64 mm wide and a narrower lower part that reaches 12 mm lower than the old backpack, an upright column for the battery right of centre, a narrow slot at the lower left for the plug 3 and 4 wires, and four bosses for the cap screws. The cap (BatteryV2-M1) is a flat back plate over both parts with a 27.5 × 12.3 mm rectangular hole at the upper left (the rocker switch snaps into it), an open-top notch at the upper right edge (the balance plug comes out through it for charging) and four screw holes.'],
          warnings=['These parts are no longer used: from the 10/1 batch, the upper lip pad (now printed as part of the lower head shell), the jaw frame and the lower lip pad (now printed as one yellow part), the integrated power support, the open regulator insert, the eleven-fuse carrier, the old head cap with USB window, old lower head shell, old face panel with Pi mount, old eye outer ring, old neck U bracket, coaxial jaw motor support, old torso IMU clamp, old IMU rear cover, small-regulator cover, camera tilt foot, camera cradle, audio carrier and the original PCB retaining strip; from the V1.6 package, the camera retainer, the IMU holder, the IMU rear cover, the speaker cradle and the speaker keeper; and the V1.6 or V1.7 OpenRB tray (PARTS-SHEET-V1.8.html shows each one); the V1.8 pack cover, which the rear converter box frame replaces; the orange torso shells and thighs from the 10/1 batch and the orange V1.9 cap, which the V1.17 white plate replaces (keep these as spares); with the move to the A7Z, the V1.8 face panel and the V1.9 cap wire clip, which the V1.17 A7Z face and clip replace; and, with D-025, the V1.9 speaker retainer and its two screws, and the V1.17 A7Z cap, which the V1.33 cap replaces (keep it as a spare). Set them aside so they do not get mixed up with the new prints.'])
 
     step('tools', 'start', 'Tools and consumables', show=LEGS, camera=ctx.cam(LEGS, direction=FRONT, margin=1.2),
@@ -1902,272 +1899,143 @@ def build(ctx):
          camera=ctx.cam(['head_cap', 'face_panel', 'head_bottom'], direction=FRONT, margin=1.1),
          prepare=[{'item': 'Kitchen scale, 0.1 g', 'qty': 1, 'kind': 'tool'}],
          instructions=['Let the jaw close onto the upper lip.',
-                       'Weigh the robot and note where it balances. Without the battery the torso is lighter than the training model; record the new mass for the simulation team before training a new policy. With the chapter 12 battery backpack V2 the robot is about 1045 g (concept estimate: backpack about 188 g, balance point about 4 mm further back); weigh it again then, and the simulation model gets a dated variant with the backpack before any walking.'],
+                       'Weigh the robot and note where it balances. Without the battery the torso is lighter than the training model; record the new mass for the simulation team before training a new policy. With the chapter 12 battery backpack V2 rev M the backpack is about 75 g heavier than today\'s (178 g against 103 g, the 110 g battery replacing the 43 g one) and its own balance point moves about 7 mm lower and 2 mm forward (print/battery-v2-cad-20261120/checks/mass_com.json); weigh the robot again then, and the simulation model gets a dated variant with the backpack before any walking.'],
          checks=['The mouth closes without force.', 'Mass and balance point are recorded.'])
 
-    # ------------------------------------------------------------------ 12. Battery backpack V2 rev B (2026-11-20)
-    # Sources: print/battery-v2-cad-20261120/ (build_v2.py, features.json, SCREWS.json, DESIGN-CONTRACT.json; rev B approved by
-    # Shawn 2026-11-20 "可以，加购物车"), print/battery-v2-concept-20261119/README.md (wiring, cut lengths, assembly order),
-    # build-pack-20260913/power/power-switch-20261119/README.md (PS-1..PS-5), print/battery-dock-20261120/build/build.json
-    # (dock). World files: battery-v2-cad-20261120/to_guide_world.py; screws: its update_fasteners.py (BV2-fix, BV2-cap).
-    # Guide frame = backpack frame (x forward, y left, z up): the frame's front face x -45 sits on the four OpenRB pack posts,
-    # screwed straight on; no Dual Lock plate (CURRENT-STATE backpack_swap_plugs 2026-11-10). Pololu 2813 pads (pololu.com,
-    # read 2026-11-20): VIN, VOUT and GND each have one large hole and two 0.1" holes; ON or OFF take a high pulse > 1 V.
-    # Button on ON through 10 k from VIN (press = on only, concept decision 2026-11-19). The chapter text is Chinese (rule
-    # assembly-guides-chinese-foolproof); the rest of the guide stays English.
+    # ------------------------------------------------------------------ 12. Battery backpack V2 rev M (2026-11-20)
+    # Sources: print/battery-v2-cad-20261120/ (build_v2.py, features.json, SCREWS.json, DESIGN-CONTRACT.json, checks.py insertion
+    # sweep). Rev M, the minimal backpack: Shawn 2026-11-20 "就是把电池换大 然后重做背包 充电用电池的3针头直接插在充电器上充
+    # 这样也不用拆包 最小改造". Only the battery is new; the Swann 39 rocker switch with its switch lead (plug 1, plug 2), the
+    # DFR1202 with its feed lead and the swap leads (plug 3 servo XT30, plug 4 A7Z MR30) move over unchanged from today's
+    # backpack (build-pack-20260913/power/battery-backpack-20261015/README.md section 5: nothing to solder). No dock, no
+    # Pololu, XIAO, LED button or contact pads. World files: battery-v2-cad-20261120/to_guide_world.py; screws: its
+    # update_fasteners.py (BV2-fix, BV2-cap). Guide frame = backpack frame (x forward, y left, z up): the frame's front face
+    # x -45 sits on the four OpenRB pack posts, screwed straight on; no Dual Lock plate (CURRENT-STATE backpack_swap_plugs
+    # 2026-11-10). The same steps make the standalone page (battery-v2-cad-20261120/guide/build_backpack_guide.py). The chapter
+    # text is Chinese (rule assembly-guides-chinese-foolproof); the rest of the guide stays English.
     if ctx.has('bv2_frame'):
-        bv2_boards = ctx.keys('bv2_pololu_tape', 'bv2_pololu', 'bv2_dfr_tape', 'bv2_dfr1202', 'bv2_xiao_tape', 'bv2_xiao')
-        bv2_pads = ctx.keys('bv2_pad_plus', 'bv2_pad_minus')
-        bv2_pack = ctx.keys('bv2_foam', 'bv2_battery', 'bv2_diode')
-        bv2_capset = ctx.keys('bv2_cap', 'bv2_button')
-        bv2_elec = ctx.keys('bv2_pololu', 'bv2_dfr1202', 'bv2_xiao', 'bv2_button', 'bv2_diode') + bv2_pads
-        dock = ctx.keys('dock_base', 'dock_leaf_plus', 'dock_leaf_minus', 'dock_jack')
-        bench_cam = ctx.cam(ctx.keys('bv2_pololu', 'bv2_dfr1202', 'bv2_xiao', 'bv2_cap'), direction=(-1.0, -0.45, 0.35), margin=1.3)
+        bv2_capset = ctx.keys('bv2_cap', 'bv2_switch')
         frame_cam = ctx.cam(ctx.keys('bv2_frame'), direction=(-1.0, -0.45, 0.35), margin=1.35)
         rear_cam = ctx.cam(ctx.keys('bv2_frame', 'bv2_cap') + pack, direction=REAR, margin=1.3)
-        dock_cam = ctx.cam(dock, direction=(-1.0, -0.6, 0.7), margin=1.3)
-        w = lambda item, qty, note=None: {'item': item, 'qty': qty, 'kind': 'cable', **({'note': note} if note else {})}
-        e = lambda item, qty, note=None: {'item': item, 'qty': qty, 'kind': 'electronic', **({'note': note} if note else {})}
         o = lambda item, qty, note=None: {'item': item, 'qty': qty, 'kind': 'other', **({'note': note} if note else {})}
+        e = lambda item, qty, note=None: {'item': item, 'qty': qty, 'kind': 'electronic', **({'note': note} if note else {})}
         t = lambda item, note=None: {'item': item, 'qty': 1, 'kind': 'tool', **({'note': note} if note else {})}
-        iron = t('电烙铁、焊锡和助焊剂（RoboClub 焊接台）')
-        shrink = o('热缩管 3 mm 和 5 mm', '每个焊点约 15 mm', 'RoboClub 焊接台（INVENTORY.md 没有列出，先去看一眼）。')
-        meter = t('万用表（直流电压档）')
+        driver = t('细杆螺丝刀（杆径不超过 4 mm）')
+        battery = e('Crazepony 2S 3000 mAh 锂电池（Amazon B08LZ8L4YD）', 1,
+                    '带三根线：红黑粗线上的 XT30 母头（主电源）、白色 3 针平衡插头（充电用）、一根 DC5.5 圆头线（不用）。到货先用万用表量 XT30：7.0 到 8.4 V。')
 
         bench_box = [k for k in box if k in installed]
-        step('bv2-strip', 'backpack', '拆下机器人背后的旧电池背包（或后部转换盒），留下 DFR1202 和四颗 M2 × 6',
+        step('bv2-strip', 'backpack', '拆下旧电池背包，留下开关、DFR1202、全部插头线和四颗 M2 × 6',
              remove=bench_box, show=[k for k in installed if k not in bench_box],
              camera=ctx.cam(pack, direction=REAR, margin=1.6),
-             prepare=[o('机器人背后现在装的旧电池背包（V1.40/V1.41）或后部转换盒', 1,
-                        '只留下：DFR1202（连同它的插头 4 引线，MR30 母头）和固定框架的四颗 M2 × 6。旧框架、旧后盖、两根压条、舱盖、Swann 39 摇头开关和 Tattu 650 电池都不再装回。')],
+             prepare=[o('机器人背后现在装的旧电池背包（V1.40 框架、V1.41 后盖）', 1,
+                        '要留下的东西：船型开关（连着它的开关线，两头各一个 XT30）、DFR1202（连着它的输入线和插头 3、插头 4 两根线）和固定框架的四颗 M2 × 6。旧框架、旧后盖、两根压条和舱盖不再装回；Tattu 650 电池留作备用。'),
+                      driver],
              instructions=[
-                 '完成后：机器人背后只剩 OpenRB 盒子，四根柱子上的螺孔空着；DFR1202 带着插头 4 引线放在工作台上。',
-                 '本章需要机器人一侧已有两个插头：OpenRB J4 上的 XT30 公头舵机输入，和 A7Z 供电线上的 MR30 公头（build-pack-20260913/power/battery-backpack-20261015/README.md 第 5 节）。机器人上现在已经有这两个插头。',
-                 '先让 A7Z 关机，再按旧背包底下的摇头开关关电。',
-                 '拔下背包顶上的插头 1，再拔下背包左下后方伸出来的插头 3（XT30）和插头 4（MR30）。',
+                 '完成后：机器人背后只剩 OpenRB 盒子，四根柱子上的螺孔空着；工作台上放着开关（带开关线）和 DFR1202（带输入线、插头 3 线和插头 4 线），一根线都没有剪、没有焊。',
+                 '先让 A7Z 关机（手机页面或 ssh 运行 sudo shutdown -h now），等 15 秒，扶住机器人，再按旧背包底下的船型开关关电。',
+                 '拔下背包左下后方伸出来的插头 3（XT30）和插头 4（MR30）。',
                  '拧下旧后盖背面的三颗 M2 × 8，把后盖连同电池和压条一起向后拉下来。',
-                 '在前舱拔开插头 2（开关线和 DFR1202 输入线之间的 XT30）。',
-                 '把 DFR1202 两条长边从两对卡唇里轻轻撬出，从框架开口后面抽出来。',
+                 '拔开插头 1（电池的 XT30 和开关线之间那一对），电池放到一边。',
+                 '在框架里拔开插头 2（开关线的另一头和 DFR1202 输入线之间那一对 XT30）。',
+                 '取开关：在框架里面用两个手指捏住开关两侧的弹片，把开关从底板向外（向下）推出来。',
+                 '把 DFR1202 两条长边从两对卡唇里轻轻撬出，连同它的三根线一起从框架开口后面抽出来。',
                  '从空框架里面拧下前板上的四颗 M2 × 6，把框架向后取下。四颗螺丝留着，下面装新框架要用。',
-                 '用烙铁把 DFR1202 VIN 焊盘上的两组旧线（插头 2 输入线和插头 3 舵机线）拆下来。插头 4 引线留在 5 V 输出焊盘上不动。',
-                 '如果机器人上装的是后部转换盒：拔掉 USB-C 线，按第 5 章“Fit the rear box frame”反过来拧下四颗 M2 × 6，拔出它的 XT30 和 MR30，整盒取下。',
+                 '如果机器人上装的是后部转换盒：拔掉 USB-C 线，按第 5 章“Fit the rear box frame”反过来拧下四颗 M2 × 6，拔出它的 XT30 和 MR30，整盒取下。开关和 DFR1202 这时从旧电池背包上拆（同上）。',
              ],
              checks=['机器人背后的四个柱子螺孔都空着，插头 3 和插头 4 的机器人一侧公头完好。',
-                     'DFR1202 上只剩插头 4 引线，VIN 焊盘干净。'],
+                     '开关两头的 XT30 和 DFR1202 的三根线都完好，焊点没有被扯松。'],
              warnings=['不要拽着引线拔零件。锂电池引线被扯断或短路会起火。'])
-
-        step('bv2-button', 'backpack', '把按钮装进新后盖，背面拧上螺母',
-             # no approach: the drawn button carries its 22 mm nut envelope, which cannot pass the 16.3 mm hole; the real button
-             # goes in with the nut off (STILL['bv2-button'])
-             add=ctx.keys('bv2_cap', 'bv2_button'), show=[], context=[], bench=True,
-             camera=ctx.cam(bv2_capset, direction=(1.0, -0.6, 0.5), margin=1.4),
-             prepare=[{'item': '电池背包后盖（BatteryV2-B1 打印件，橙色）', 'qty': 1, 'kind': 'printed'},
-                      e('E-Switch PV6F240SS-331 16 mm 按钮（绿色 LED 灯环，自复位，常开；DigiKey EG4731-ND）', 1,
-                        '带一个 19.00 mm 对边的螺母。灯是 2.8 V 20 mA，里面没有限流电阻，所以下一步要串 120 Ω。'),
-                      t('19 mm 扳手或尖嘴钳')],
-             instructions=[
-                 '完成后：按钮从后盖外面插进左上角的 16.3 mm 圆孔，灯环朝后，螺母在后盖里面拧紧，四个焊片朝前。',
-                 '后盖外面朝上放在桌上。左上角（机器人左侧）那个圆孔就是按钮孔，另一个小方窗是 XIAO 的 USB-C 窗。',
-                 '把螺母从按钮上拧下来，按钮从外面插进圆孔，灯环贴住后盖外面。',
-                 '翻过来，在里面把螺母拧到按钮上，拧紧到按钮转不动为止。',
-             ],
-             checks=['按钮在孔里不晃不转，按下去能自己弹回。'])
-
-        step('bv2-pololu', 'backpack', '在 Pololu 2813 上焊电池引线、插头 3 引线和 DFR1202 供电线',
-             add=ctx.keys('bv2_pololu', 'bv2_dfr1202'), show=bv2_capset, context=[], bench=True, camera=bench_cam,
-             prepare=[e('Pololu 2813 大按钮电源开关（带反接保护，HP 版）', 1, 'DigiKey 2183-2813-ND。不要焊板上附带的接线端子。'),
-                      e('DFR1202 5 V 降压板（上一步拆下来的，带插头 4 引线）', 1),
-                      e('XT30 公头（Amass XT30U）', 1, '电池引线：接电池的 XT30 母头。RoboClub 库存。'),
-                      e('XT30 母头（Amass XT30U）', 1, '新插头 3：插到机器人 J4 的 XT30 公头上。RoboClub 库存。'),
-                      w('16 AWG 硅胶线，红、黑各 50 mm', 2, '电池引线。'),
-                      w('16 AWG 硅胶线，红、黑各 150 mm', 2, '插头 3 引线。'),
-                      w('20 AWG 硅胶线，红、黑各 90 mm', 2, 'DFR1202 供电线（RoboClub 没有 22 AWG）。'),
-                      iron, shrink, t('剥线钳')],
-             instructions=[
-                 '完成后：Pololu 的 VIN 大孔焊着电池引线红线，VOUT 大孔焊着插头 3 红线，GND 大孔焊着两根 16 AWG 黑线；VOUT 和 GND 各有一个 0.1″ 小孔焊着去 DFR1202 的 20 AWG 线。',
-                 '所有线两头各剥 5 mm，先上锡。',
-                 '电池引线：50 mm 红、黑线一头焊到 XT30 公头上（红线焊在“+”那一脚），每个焊点套 5 mm 热缩管吹紧。',
-                 '插头 3 引线：150 mm 红、黑线一头焊到 XT30 母头上（红线焊在“+”那一脚），套热缩管吹紧。',
-                 '电池引线红线从元件面插进 Pololu 的 VIN 大孔，背面焊牢。',
-                 '插头 3 红线插进 VOUT 大孔，背面焊牢。',
-                 '把电池引线黑线和插头 3 黑线拧成一股，插进 GND 大孔，背面焊牢。插不进去时，先把两根黑线在离板 15 mm 处并焊，套 5 mm 热缩管，再只把一头插进 GND 大孔。',
-                 'DFR1202 供电线：90 mm 红线一头焊到 Pololu VOUT 的一个 0.1″ 小孔，黑线焊到 GND 的一个 0.1″ 小孔；另一头红线焊到 DFR1202 的 VIN+ 焊盘，黑线焊到 VIN− 焊盘。',
-                 '每个 VIN、VOUT、GND 节点还剩一个小孔不用焊：下一步给按钮线、电压采样线和充电线用。',
-             ],
-             checks=['每个焊点光亮、饱满，没有线芯散出来。',
-                     '用万用表通断档量：VIN、VOUT、GND 三个节点之间互不导通。',
-                     'XT30 的红线都在“+”脚上。'],
-             warnings=['这些焊点要过舵机电流（行走 1.3 到 2.2 A，起身瞬间约 8 A）。冷焊点走路时会发热。'])
-
-        step('bv2-harness', 'backpack', '焊 XIAO 低压切断线束和按钮线（全部电阻和二极管）',
-             add=ctx.keys('bv2_xiao'), show=ctx.keys('bv2_pololu', 'bv2_dfr1202') + bv2_capset, context=[], bench=True, camera=bench_cam,
-             prepare=[e('Seeed XIAO SAMD21', 1, 'RoboClub C 柜抽屉（2026-10-20 盘点有 3 块未拆封）。焊进线束之前先烧好低压切断固件（本步第一件事）。'),
-                      o('USB-C 数据线（Mac 到 XIAO）', 1),
-                      e('电阻 100 kΩ 1/4 W', 6, 'A0、A2、A3 的上臂，A1 的上下两臂，OFF 下拉。DigiKey CF14JT100KCT-ND。'),
-                      e('电阻 33 kΩ 1/4 W', 3, 'A0、A2、A3 的下臂。DigiKey CF14JT33K0CT-ND。'),
-                      e('电阻 10 kΩ 1/4 W', 1, '按钮到 ON 脚的限流电阻。RoboClub D 柜写的是“10K?”，用万用表确认读数 9.5 到 10.5 kΩ。'),
-                      e('电阻 120 Ω 1/4 W', 1, '按钮灯的限流电阻（5 V − 2.8 V = 2.2 V，约 18 mA）。RoboClub D 柜。'),
-                      e('1N4148 小信号二极管', 2, 'RoboClub F 柜“small-signal 100 V 0.2 A”，确认管身印着 1N4148 或 1N914。'),
-                      e('JST B3B-XH-A 3 针 XH 插座（直插）', 1, '电池平衡头插在它上面。只焊中间一针。'),
-                      w('26 AWG 硅胶线，每根 80 mm', 7, 'XIAO 线束：5V、GND、A0、A1、A2、A3、D6。'),
-                      w('26 AWG 硅胶线，每根 100 mm', 4, '按钮线：公共端、常开端、灯+、灯−。'),
-                      w('26 AWG 硅胶线，100 mm', 1, 'A7Z 关机线：插头 4 的 MR30 第 3 针到 OFF 二极管。'),
-                      iron, shrink, meter, t('标签纸和笔', '每根 26 AWG 线两头贴上名字。')],
-             instructions=[
-                 '完成后：XIAO 的 5V 和 GND 接在 DFR1202 的 5 V 输出上；A0 读 Pololu VOUT，A1 读电池中间节，A2 读充电触点，A3 读按钮；D6 经一个 1N4148 接 Pololu OFF；插头 4 的第 3 针经另一个 1N4148 也接 OFF；按钮把 VIN 经 10 kΩ 接到 ON，灯环经 120 Ω 接 5 V。',
-                 '先烧固件（XIAO 还没焊任何线）：XIAO 用 USB-C 线插到 Mac。终端里进入 ~/code/robotics/microduck-sim/guide/firmware/xiao-cutoff-20261120，运行 arduino-cli compile --fqbn Seeeduino:samd:seeed_XIAO_m0 --output-dir build xiao_cutoff，再运行 arduino-cli board list 找到 /dev/cu.usbmodem 开头的口，然后 arduino-cli upload --fqbn Seeeduino:samd:seeed_XIAO_m0 -p 那个口 --input-dir build。第一次用要先装 Seeed 的板子包，命令在同一目录的 README.md。用 Arduino IDE 也行：板子选 Seeeduino XIAO，打开 xiao_cutoff/xiao_cutoff.ino，点上传。',
-                 '烧完马上看结果：arduino-cli monitor -p 那个口 -c baudrate=115200 每半秒打一行状态。只插 USB 时没有电池电压，约 3 秒后打出 cut=1 reason=pack_low，XIAO 上的橙色小灯常亮：这就是对的。拔掉 USB。',
-                 '电源：一根 80 mm 线把 DFR1202 的 5 V 输出“+”焊盘接到 XIAO 的 5V 焊盘，另一根把 5 V 输出“−”焊盘接到 XIAO 的 GND 焊盘。插头 4 引线还焊在这两个焊盘上，新线一起焊进去。',
-                 'A0（读 VOUT）：一根 80 mm 线从 Pololu VOUT 剩下的 0.1″ 小孔焊出来，另一头焊一只 100 kΩ，100 kΩ 另一脚焊到 XIAO A0；A0 再焊一只 33 kΩ 到 XIAO GND。',
-                 'A1（读中间节）：一根 80 mm 线焊在 B3B-XH-A 中间那一针上，套 3 mm 热缩管，两边两针空着；线的另一头焊一只 100 kΩ 到 A1；A1 再焊一只 100 kΩ 到 GND。',
-                 'A2（读充电触点）：一根 80 mm 线一头先空着，下一步焊在 1N5822 的进线端（没有色环的一端）；另一头焊 100 kΩ 到 A2，A2 再焊 33 kΩ 到 GND。',
-                 'A3（读按钮）：一根 80 mm 线一头先空着，等下焊在 10 kΩ 的按钮一侧；另一头焊 100 kΩ 到 A3，A3 再焊 33 kΩ 到 GND。',
-                 '把 A0、A2、A3 的三只 33 kΩ 和 A1 的下臂 100 kΩ 的接地脚拧在一起，和 GND 线一起焊到 XIAO 的 GND 焊盘上。',
-                 'OFF 线：一根 80 mm 线一头焊 XIAO D6，另一头焊一只 1N4148 的阳极（没有色环那端），1N4148 的阴极（有黑色环那端）焊进 Pololu OFF 孔。',
-                 'A7Z 关机线：100 mm 线一头焊到插头 4 MR30 母头的第 3 个焊杯，另一头焊第二只 1N4148 的阳极，阴极也焊进 Pololu OFF 孔。机器人一侧，这一针通到 A7Z 排针 22 号针（第一次开机那一步接）。',
-                 'OFF 下拉：一只 100 kΩ 一脚焊进 Pololu OFF 孔，另一脚焊到 DFR1202 供电线黑线在 Pololu GND 小孔的那一端。',
-                 '按钮线：四根 100 mm 线分别焊在按钮的四个焊片上（公共端 C、常开端 NO、灯 +、灯 −，焊片旁边有印字），每个焊点套 3 mm 热缩管。',
-                 '公共端 C 线焊进 Pololu VIN 剩下的 0.1″ 小孔。常开端 NO 线焊一只 10 kΩ，10 kΩ 另一脚焊进 Pololu ON 孔；A3 线焊在 10 kΩ 靠 NO 线的那一脚上。',
-                 '灯 + 线焊一只 120 Ω，120 Ω 另一脚焊到 XIAO 5V 焊盘；灯 − 线焊到 XIAO GND 焊盘。',
-                 '每只电阻和二极管都整只套上 3 mm 热缩管吹紧，只露出两头焊点之外不留裸铜。',
-             ],
-             checks=['对照上面每一行，用万用表量一遍：A0 到 GND 约 33 kΩ，A1 到 GND 约 100 kΩ，OFF 到 GND 约 100 kΩ。',
-                     '两只 1N4148 的黑色环都朝 Pololu OFF。',
-                     'MR30 第 3 针和第 1、2 针之间不导通。'],
-             warnings=['XIAO 的模拟脚最高 3.3 V。分压电阻焊反（33 kΩ 在上面）会把 8.4 V 的三分之二加到脚上，烧坏 XIAO。通电前再看一次。',
-                       'Pololu 的 CTRL 脚空着，什么都不接。',
-                       '焊进线束以后，XIAO 的 5V 焊盘就是 USB 的 5 V，和 DFR1202 的 5 V 连在一起：插着 USB 时，Mac 会给灯环和插头 4 供电。线束里的 XIAO 只在插头 4 没接 A7Z 时才插 USB 读状态，插着 USB 时灯亮不代表开机。'])
-
-        step('bv2-charge', 'backpack', '焊充电线：两片触点、1N5822 和 Pololu VIN/GND',
-             add=bv2_pads + ctx.keys('bv2_diode'), show=ctx.keys('bv2_pololu', 'bv2_dfr1202', 'bv2_xiao') + bv2_capset, context=[], bench=True,
-             camera=bench_cam,
-             prepare=[e('Keystone 615 L 形电池触点片', 2, 'DigiKey 36-615-ND。平面贴在底板下，竖片贴在框架背面。'),
-                      e('1N5822 肖特基二极管（3 A 40 V，DO-201AD）', 1, 'RoboClub F 柜。'),
-                      w('20 AWG 硅胶线，红、黑各 130 mm', 2, '触点到二极管和 Pololu。'),
-                      iron, shrink],
-             instructions=[
-                 '完成后：+ 触点（装在机器人左侧 y +9）红线经 1N5822 焊进 Pololu VIN 的小孔，− 触点（右侧 y −9）黑线焊进 Pololu GND 的小孔。A2 采样线焊在 1N5822 的进线端。',
-                 '分清两片触点：装上后靠机器人左边的是 +，右边的是 −。先在 + 触点上贴一小块红色胶带。',
-                 '130 mm 红线一头焊在 + 触点竖片的最上端；焊点薄而小，不要碰到竖片上的螺丝孔（那里要被后盖压住）。',
-                 '130 mm 黑线一头同样焊在 − 触点竖片的最上端。',
-                 '红线另一头剪到正好够到 1N5822 的无色环端，焊上；把 A2 采样线也焊在这一端。整只二极管套 8 mm 热缩管吹紧。',
-                 '1N5822 有色环的一端焊一段剩下的红线，焊进 Pololu VIN 的小孔。',
-                 '黑线另一头焊进 Pololu GND 剩下的小孔。',
-             ],
-             checks=['1N5822 的色环朝 Pololu VIN。',
-                     '电池不接的时候，两片触点之间量不到电压。接上电池以后也量不到：二极管挡住了，触点碰到手和桌面都安全。'],
-             warnings=['二极管焊反，电池会通过触点直接短路。焊完先用万用表二极管档确认方向。'])
-
-        step('bv2-bench-test', 'backpack', '在工作台上通电试一次：按一下按钮，绿灯亮',
-             show=ctx.keys('bv2_pololu', 'bv2_dfr1202', 'bv2_xiao', 'bv2_diode') + bv2_pads + bv2_capset, add=ctx.keys('bv2_battery'), context=[], bench=True,
-             camera=bench_cam,
-             prepare=[e('Crazepony 2S 3000 mAh 锂电池（Amazon B08LZ8L4YD），XT30 + XH-3P 平衡头 + DC5.5 公头', 1,
-                        '先用万用表量 XT30：7.0 到 8.4 V。DC5.5 那根线不用。'),
-                      meter, o('胶布或 DC5.5 母头保护帽', 1, '把电池的 DC5.5 公头包起来，免得金属头碰到别的东西。')],
-             instructions=[
-                 '完成后：电池接上、按一下按钮，绿灯环马上亮；插头 3 量到电池电压，插头 4 的第 1、2 针量到 5 V；XIAO 的橙色小灯每秒闪一下；按住按钮 2 秒再松手，灯环灭。',
-                 '用胶布把电池的 DC5.5 公头包好。',
-                 '电池的 XH 平衡头插到 B3B-XH-A 上。',
-                 '电池的 XT30 母头插到电池引线的 XT30 公头上。这时灯不亮，插头 3 量不到电压。',
-                 '按一下按钮：绿灯环立刻亮起。',
-                 '量插头 3：等于电池电压。量插头 4 的第 1、2 针：5.0 V 左右。',
-                 '看 XIAO：橙色小灯每秒短闪一下，表示它在看电压、一切正常（快闪是低电压在计时，常亮是正在切电）。',
-                 '关机试验：按住按钮，心里数到 3，松手。松手的一刻绿灯环灭，插头 3 量不到电压。',
-                 '再按一下按钮开机，灯亮；轻点一下（不到 1 秒）不会关机。',
-                 '要看电压读数：先确认插头 4 没接任何东西，XIAO 插 USB 到 Mac，运行 arduino-cli monitor -p /dev/cu.usbmodem 开头的口 -c baudrate=115200。每半秒一行：pack 和万用表量的电池电压相差不超过 0.1 V，c1、c2 是两节电芯，各在 3.5 到 4.2 V，xh=1。差得多就按 README.md 的“Calibrate”改 PACK_TRIM、MID_TRIM 再烧一次。看完拔 USB。',
-                 '最后按住 2 秒松手关机，再拔下电池 XT30。',
-             ],
-             checks=['不按按钮时灯不亮、插头 3 没电；按一下就亮、就有电。',
-                     'XIAO 橙色小灯每秒闪一下。',
-                     '按住 2 秒再松手，灯环灭；轻点不灭。',
-                     '插头 4 第 3 针对地量不到电压。'],
-             warnings=['灯不亮或插头 4 不是 5 V：马上拔电池，回去查按钮线和 DFR1202 供电线。',
-                       '一开机 3 秒左右就自己灭：XIAO 读到的电压低于 6.3 V。先量电池（低于 6.6 V 就先充电），再查 A0 和 A1 的分压电阻。'])
 
         step('bv2-frame', 'backpack', '用四颗 M2 × 6 把新框架拧到 OpenRB 盒子的柱子上',
              add=ctx.keys('bv2_frame'), approach={'bv2_frame': [-30, 0, 0]}, camera=frame_cam,
-             prepare=[{'item': '电池背包框架（BatteryV2-B1 打印件，橙色）', 'qty': 1, 'kind': 'printed'},
-                      tap(4, 'M2 × 6'), t('细杆螺丝刀（杆径不超过 4 mm）')],
-             screwNotes={'M2 × 6 TAP': '从空框架里面向前拧：穿过前墙 2.5 mm 的孔，拧进 OpenRB 盒子柱子的 1.6 mm 导孔，吃进 3.7 mm 螺纹。用旧背包拆下来的四颗。'},
+             prepare=[{'item': '电池背包框架（BatteryV2-M1 打印件，橙色）', 'qty': 1, 'kind': 'printed'},
+                      tap(4, 'M2 × 6'), driver],
+             screwNotes={'M2 × 6 TAP': '从空框架里面向前拧：穿过前墙 2.5 mm 的孔，拧进 OpenRB 盒子柱子的 1.6 mm 导孔。用旧背包拆下来的四颗。'},
              instructions=[
                  '完成后：框架前面贴在 OpenRB 盒子背面，四颗 M2 × 6 从框架里面拧进四根柱子。框架里面是空的。',
-                 '框架开口朝后，前墙贴到 OpenRB 盒子背面，前墙上四个孔对准四根柱子。',
-                 '上面两颗：螺丝刀从开口后面伸进空的电池柱，直着拧进去。',
+                 '框架开口朝后、宽的一层在上，前墙贴到 OpenRB 盒子背面，前墙上四个孔对准四根柱子。',
+                 '上面两颗：螺丝刀从开口后面伸进框架，直着拧进去。',
                  '下面两颗：螺丝刀从下层空腔伸进去，直着拧进去。',
                  '四颗都先带上，再一颗一颗拧紧到前墙贴死。',
              ],
              checks=['框架贴住盒子，往后拉不晃。'],
              warnings=['框架一定要空着拧：电池和板子装进去以后螺丝刀就够不到了。'])
 
-        step('bv2-boards', 'backpack', '插头 3、4 的线压进左翼底槽，贴好三块板子',
-             # the Pololu's rear rib stands in its straight path: it comes in 6 mm inboard, then steps out onto the wall.
-             # That inboard lane is the DFR1202's place, so the Pololu goes in first (battery-v2-cad checks.py insertion
-             # sweep: Pololu after the DFR collides 1573 mm3, before it 0; 2026-11-20)
-             add=bv2_boards, approach={k: ([[-25, -6, 0], [0, -6, 0], [0, 0, 0]] if k.startswith('bv2_pololu') else [-25, 0, 0])
-                                       for k in bv2_boards},
+        step('bv2-dfr', 'backpack', '插头 3、4 的线压进左下的槽，DFR1202 贴到电池柱左边的肋上',
+             add=ctx.keys('bv2_dfr_tape', 'bv2_dfr1202'), approach={'bv2_dfr_tape': [-25, 0, 0], 'bv2_dfr1202': [-25, 0, 0]},
              camera=frame_cam,
-             prepare=[o('3M 泡沫双面胶（Shawn 的库存）', '三块，各剪到板子背面大小'),
+             prepare=[e('DFR1202 5 V 降压板（上一步拆下来的，带三根线）', 1),
+                      o('3M 泡沫双面胶（Shawn 的库存）', 1, '剪一块，和 DFR1202 背面一样大。'),
                       o('异丙醇和布', 1)],
              instructions=[
-                 '完成后：插头 3 和插头 4 的线压在左翼底部台阶上那条 3.5 mm 的槽里，从背包左下后方伸出约 4 cm；DFR1202 贴在电池柱左边的肋上，坐在下面的小台阶上；Pololu 贴在左翼外墙的里面，靠着后肋和底台阶；XIAO 贴在右翼外墙里面高处，坐在小台阶上，USB-C 朝后。',
-                 '用异丙醇擦干净三处贴胶的面。',
+                 '完成后：DFR1202 元件朝外，贴在框架中间那根竖柱（电池柱）的左边，下边坐在小台阶上；插头 3 和插头 4 的线压在左翼底部那条窄槽里，两个插头从背包左下后方伸出约 4 cm；DFR1202 的输入线（末端是 XT30 公头）留在框架后面，等一下接插头 2。',
+                 '用异丙醇擦干净电池柱左边的肋。',
                  '把插头 3 和插头 4 的线从后面压进左翼底部的槽，两个插头留在背包左下后方外面约 4 cm。',
-                 '先贴 Pololu（DFR1202 贴上以后就挡住它的路）：背面贴泡沫胶，按钮朝里。后肋挡着直推的路：先离外墙约 6 mm 伸进去，越过后肋以后再向外贴到左翼外墙里面，靠住后肋和底台阶，压 10 秒。',
-                 '再贴 DFR1202：背面贴泡沫胶，元件朝外，下边坐在小台阶上，贴到电池柱左肋上压 10 秒。',
-                 'XIAO 背面贴泡沫胶，USB-C 朝后，坐在右翼小台阶上，贴到右翼外墙里面压 10 秒。',
+                 'DFR1202 背面贴泡沫胶，元件朝外（朝机器人左边），从后面平推进去，下边坐在小台阶上，贴到电池柱左肋上，压 10 秒。',
              ],
-             checks=['三块板子用手推不动。', '从后面看，XIAO 的 USB-C 口正对后盖上的小方窗位置。', '电池柱里没有线挡着。'])
+             checks=['DFR1202 用手推不动。', '电池柱里面（DFR1202 右边的竖槽）没有线挡着。'])
 
-        step('bv2-battery', 'backpack', '电池贴泡沫垫后推进电池柱，接 XT30 和平衡头，放好二极管',
-             # straight floor push from the open back: rev B1's low cap-screw bosses and the pad tabs stood in this path (found
-             # by this gate 2026-11-20); the low screws moved into the wing columns and the pads now go in after the battery
-             # (battery-v2-cad checks.py insertion sweep)
-             add=bv2_pack, approach={'bv2_battery': [-40, 0, 0], 'bv2_foam': [-40, 0, 0], 'bv2_diode': [-30, 0, 0]},
+        step('bv2-battery', 'backpack', '电池背面贴泡沫垫，竖着推进电池柱',
+             add=ctx.keys('bv2_foam', 'bv2_battery'), group={'label': '电池和贴在它背面的泡沫垫', 'approach': [-40, 0, 0]},
              camera=frame_cam,
-             prepare=[e('Crazepony 2S 3000 mAh 锂电池（Amazon B08LZ8L4YD），XT30 + XH-3P 平衡头 + DC5.5 公头', 1, '上一步试过的那块。'),
-                      o('3M 泡沫胶 1 mm，剪成电池背面大小', 1, '贴在电池背面，外面一层离型纸不撕。')],
+             prepare=[battery,
+                      o('3M 泡沫胶 1 mm，剪成电池背面大小', 1, '贴在电池背面，外面一层离型纸不撕。'),
+                      o('胶布', 1, '把电池的 DC5.5 圆头包起来，免得金属头碰到别的东西。')],
              instructions=[
-                 '完成后：电池竖着站在电池柱里，引线朝上，背面贴着泡沫垫；XT30、平衡头和包好的 DC5.5 都弯在电池上方的线舱里；1N5822 躺在线舱里。',
-                 '先拔开电池的 XT30（试电时插着的）。',
+                 '完成后：电池竖着站在电池柱里，三根线朝上，背面贴着泡沫垫；三根线都伸在框架后面，还没有接。',
+                 '用胶布把电池的 DC5.5 圆头包好。这根线不用。',
                  '泡沫胶贴在电池背面（远离 OpenRB 的那个大面），外面的离型纸不撕。',
-                 '电池引线朝上，从后面贴着底板把电池平推进电池柱，推到前面的挡块。',
-                 '平衡头插回 B3B-XH-A，弯进线舱。',
-                 '包好的 DC5.5 线弯进线舱放平。',
-                 '1N5822 放平在线舱里电池上方。',
-                 '最后把电池 XT30 母头插到电池引线 XT30 公头上，弯进线舱。灯不会亮：要按按钮才开机。',
+                 '电池三根线朝上，从后面贴着底板把电池平推进电池柱，推到前面的挡块。',
+                 '三根线先拉到框架后面放着。',
              ],
-             checks=['电池站在底上，顶上和线舱屋顶之间留着空，没有压到线。', '所有线都在线舱和电池柱后面，没有一根伸出框架后沿。'],
-             warnings=['锂电池压坏或短路会起火：不要硬塞，不要压引线和平衡头。'])
+             checks=['电池站在底上，顶上没有压到线。'],
+             warnings=['锂电池压坏或短路会起火：不要硬塞，不要压引线和平衡插头。'])
 
-        step('bv2-pads', 'backpack', '把两片触点从后面推进框架底板下的槽里，竖片立在电池后面',
-             # after the battery: each tab stands at the back face, in the battery's push path
-             add=bv2_pads, approach={'bv2_pad_plus': [-15, 0, 0], 'bv2_pad_minus': [-15, 0, 0]},
-             camera=ctx.cam(ctx.keys('bv2_frame') + bv2_pads, direction=(-1.0, -0.5, -0.6), margin=1.4),
+        step('bv2-switch', 'backpack', '在桌上把开关从外面按进新后盖左上角的方孔',
+             # bench: the switch goes in from the back face of the cap, its two XT30 ends first (checks.py "switch-into-cap")
+             add=bv2_capset, approach={'bv2_switch': [-35, 0, 0]}, show=[], context=[], bench=True,
+             camera=ctx.cam(bv2_capset, direction=(-1.0, 0.6, 0.5), margin=1.4),
+             prepare=[{'item': '电池背包后盖（BatteryV2-M1 打印件，橙色）', 'qty': 1, 'kind': 'printed'},
+                      e('船型开关（Swann 39，旧背包上拆下来的，连着开关线）', 1)],
              instructions=[
-                 '完成后：两片触点的平面平贴在框架底板下面的两个浅槽里，与底面齐平；竖片立在框架背面、电池泡沫垫后面；红胶带那片（+）在机器人左边。竖片上的孔等一下套在后盖的两根小销子上。',
-                 '触点要在电池之后装：竖片站在电池推进来的路上。',
-                 '整套线束（Pololu、DFR1202、XIAO、按钮和后盖）放在机器人背后的桌面上托着，不要吊着。',
-                 '+ 触点（红胶带）从后面推进左边的底槽，平面朝下，竖片朝上贴住框架背面。',
-                 '− 触点推进右边的底槽。',
-                 '两根触点线贴着电池泡沫垫后面向上走。',
+                 '完成后：开关从后盖外面卡在左上角的长方孔里，按键露在外面，开关线的两个 XT30 从后盖里面伸出来。',
+                 '后盖外面朝上放在桌上（外面是平的，里面有几条筋）。左上角那个长方孔（机器人左边、靠上）是开关孔；右上角边上开口的小缺口是充电插头用的。',
+                 '开关线的两头（两个 XT30）从外面穿进长方孔，从后盖里面拉出来。',
+                 '开关按键朝外、长边沿着长方孔的长边，把开关推进孔里，推到两侧弹片“咔”一下卡住，按键边框贴住后盖外面。',
              ],
-             checks=['两片平面都和底板平齐，手指摸不出台阶。', '竖片站直贴着框架背面，不碰电池泡沫垫。'])
+             checks=['开关在孔里推不回去，也拔不出来。', '按键能按到两边。'])
 
-        step('bv2-cap', 'backpack', '盖上后盖：上面两颗 M2 × 8，两翼两颗 M2 × 6，销子套住触点竖片',
-             add=bv2_capset, group={'label': '后盖和按钮', 'approach': [-25, 0, 0]}, camera=rear_cam,
-             prepare=[tap(2, 'M2 × 8'), tap(2, 'M2 × 6'), t('细杆螺丝刀（杆径不超过 4 mm）')],
-             screwNotes={'M2 × 8 TAP': '上面两颗：左上（y 29, z 19）和右上（y −29, z 39），穿过后盖 2.5 mm 的孔，拧进框架 5 mm 长的凸台。',
-                         'M2 × 6 TAP': '两翼两颗：左下（y 17.6, z −28）和右边中间（y −27.8, z −8），穿过后盖 2.5 mm 的孔，拧进框架两翼里的柱子（导孔 10 mm 深）。'},
+        step('bv2-plugs-inside', 'backpack', '后盖托在背包后面，接插头 2 和插头 1，充电插头放到右上缺口后面',
+             add=ctx.keys('bv2_plug2', 'bv2_plug1', 'bv2_balance'),
+             approach={'bv2_plug2': [-25, 0, 0], 'bv2_plug1': [-25, 0, 0], 'bv2_balance': [-25, 0, 0]},
+             camera=ctx.cam(ctx.keys('bv2_frame', 'bv2_plug1', 'bv2_plug2', 'bv2_balance'), direction=(-1.0, -0.2, 0.45), margin=1.35),
              instructions=[
-                 '完成后：后盖盖住整个背面，四颗螺丝拧紧：上面两颗 M2 × 8，两翼两颗 M2 × 6；后盖下面两根小销子穿在两片触点竖片的孔里。按钮在左上，XIAO 的 USB-C 从小方窗露出来。',
-                 '按钮线连着后盖：把后盖翻到框架背后，按钮在左上，线顺进框架里面不打折。',
-                 '后盖平推上去贴住框架后沿，下面两根小销子对准并穿进两片触点竖片上的孔。',
+                 '完成后：插头 2（开关线的 XT30 母头插 DFR1202 输入线的 XT30 公头）竖着站在 DFR1202 左边、框架左墙里面；插头 1（电池的 XT30 母头插开关线的 XT30 公头）横躺在电池顶上靠右；白色 3 针平衡插头躺在框架右上角，正对后盖右上的缺口；包好的 DC5.5 线塞在电池顶上靠右。开关这时还在“关”。',
+                 '先确认开关按在“关”的一侧（和你平时关机时按的同一侧）。',
+                 '后盖托在框架后面，里面朝框架，开关在左上。开关线挂着，不要让后盖吊在线上：放在机器人背后的桌面上托住。',
+                 '插头 2：开关线的 XT30 母头插到 DFR1202 输入线的 XT30 公头上，插到底，竖着塞进 DFR1202 左边、框架左墙里面的空位。',
+                 '插头 1：电池的 XT30 母头插到开关线的 XT30 公头上，插到底，横着放在电池顶上靠右。',
+                 '白色平衡插头放在框架右上角，插头头部朝后，正对后盖右上的缺口。',
+                 '包好的 DC5.5 线弯好，塞在电池顶上靠右。',
+             ],
+             checks=['两个 XT30 都插到底，拉一下不掉。', '所有线都在框架里面，没有一根伸出框架后沿。'],
+             warnings=['XT30 只能一种方向插进去，插不进就翻过来，不要硬插。'])
+
+        step('bv2-cap', 'backpack', '盖上后盖：上面两颗 M2 × 8，两翼两颗 M2 × 6',
+             add=bv2_capset, group={'label': '后盖和开关', 'approach': [-25, 0, 0]}, camera=rear_cam,
+             prepare=[tap(2, 'M2 × 8'), tap(2, 'M2 × 6'), driver],
+             screwNotes={'M2 × 8 TAP': '上面两颗：左上和右上，穿过后盖的孔，拧进框架 5 mm 长的凸台。',
+                         'M2 × 6 TAP': '两翼两颗：左下和右边中间，穿过后盖的孔，拧进框架两翼里的柱子。'},
+             instructions=[
+                 '完成后：后盖盖住整个背面，四颗螺丝拧紧：上面两颗 M2 × 8，两翼两颗 M2 × 6。开关在左上，按键朝后；白色平衡插头就在后盖右上缺口的正里面，从缺口看得见。',
+                 '后盖平推上去贴住框架后沿，开关线顺进框架里面不打折，白色平衡插头留在右上缺口正里面。',
                  '两翼两颗用 M2 × 6，拧进两翼的柱子。',
                  '上面两颗用 M2 × 8，拧进高凸台。',
                  '四颗都先带上，再拧紧到后盖贴死。',
              ],
-             checks=['后盖四边都贴住框架，按一下不晃。', '透过小方窗看得到 XIAO 的 USB-C 口。', '两片触点在底面上不松动，竖片套在销子上。'],
-             warnings=['后盖边上不能夹到任何线。'])
+             checks=['后盖四边都贴住框架，按一下不晃。', '后盖边上没有夹到线。', '用手指从右上缺口能把白色插头勾出来，不用开盖。'],
+             warnings=['下面两个孔绝对不能用 M2 × 8：太长，会顶到里面。'])
 
         step('bv2-plugs', 'backpack', '接上插头 3 和插头 4',
              camera=ctx.cam(ctx.keys('bv2_frame', 'bv2_cap') + pack, direction=(-1.0, 0.8, -0.3), margin=1.3),
@@ -2179,96 +2047,33 @@ def build(ctx):
              ],
              checks=['两个插头都插到底，拉一下不掉。', '插头和线都不在腿的活动范围里。'])
 
-        step('bv2-power-up', 'backpack', '第一次用电池开机：按一下，绿灯亮，A7Z 启动',
-             camera=rear_cam,
-             prepare=[meter, iron, shrink,
-                      o('杜邦线 30 cm 母对公（和头里插 A7Z 的线同一种）', 1, '剪掉公头，留母头那一端，做机器人一侧的关机线。')],
+        step('bv2-power-up', 'backpack', '开机：按开关，A7Z 启动，舵机电压正常',
+             camera=rear_cam, prepare=[t('万用表（直流电压档）')],
              instructions=[
-                 '完成后：机器人一侧 MR30 公头的第 3 针有一根线插在 A7Z 排针 22 号针上；A7Z 装好关机钩子；按一下按钮，绿灯环立刻亮，A7Z 开机能连上；舵机电压在 7.0 到 8.4 V；在 A7Z 上关机，灯环自己灭。',
-                 '机器人一侧的关机线：拔开插头 4。A7Z 供电线的 MR30 公头现在只用第 1、2 针（5 V 红、GND 黑），第 3 针的焊杯空着。杜邦线剪掉公头，剥 3 mm 上锡，焊进第 3 针焊杯，套 3 mm 热缩管吹紧。',
-                 '这根线贴着 A7Z 的 5 V 红黑线走到背包座，母头插在 A7Z 排针 22 号针上：外排（靠板边那排），从 2 号针往 39、40 那头数第 11 根；它旁边的 20 号针是 GND，24 号针空着。',
-                 '插回插头 4。万用表通断档：MR30 第 3 针和第 1、2 针之间不导通。',
-                 '开机前在 Mac 上确认每个舵机的 Shutdown 已经是 52（第 11 章）：运行 guide/firmware/pi/set_shutdown.py --check。满电 8.4 V 高于舵机 7.0 V 的最高电压限制。',
-                 '确认 A7Z 上的电池守护程序会随 walk_wired.py 一起启动（guide/firmware/pi/battery.py）。',
+                 '完成后：按下开关，A7Z 开机能连上，舵机读到的电压在 7.0 到 8.4 V。',
+                 '新电池到货一般只有一半电：第一次开机前先按下一步“充电”充满。',
                  '让机器人侧躺在桌上（不要站着开机）。',
-                 '按一下按钮。绿灯环马上亮起：这就是“已经上电”。',
+                 '把开关按到“开”的一侧。',
                  '等 A7Z 启动：手机遥控页面或 ssh 能连上。',
                  '读一次舵机电压：在 7.0 到 8.4 V 之间。',
-                 '装关机钩子（只装一次）：在 Mac 的 ~/code/robotics/microduck-sim 里运行 scp -r guide/firmware/a7z/power-off-20261120 a7z:rt/microduck-sim/guide/firmware/a7z/，再运行 ssh a7z \'bash ~/rt/microduck-sim/guide/firmware/a7z/power-off-20261120/install.sh\'。最后几行要有 “ok: line … free” 和 “dry run: poweroff: would drive … (header pin 22)”。',
-                 '关机试验：运行 ssh a7z sudo poweroff。A7Z 关完机（约 10 到 20 秒），绿灯环自己灭，插头 3 量不到电压。',
-                 '以后关机就这样：在 A7Z 上关机（手机页面或 ssh），灯灭就是断电了。按住按钮 2 秒再松手也能关，但那是直接断电，A7Z 来不及关机，只在 A7Z 连不上时用。',
+                 '关机还和以前一样：先在 A7Z 上关机（sudo shutdown -h now），等 15 秒，扶住机器人，再把开关按到“关”。',
              ],
-             checks=['按下按钮的同一时刻绿灯亮。', 'A7Z 启动并能连上。', '舵机读到的电压在 7.0 到 8.4 V。',
-                     'sudo poweroff 以后灯环自己灭。', '接上关机线以后开机，灯不会在 A7Z 启动途中自己灭。'],
-             warnings=['A7Z 启动途中灯自己灭：22 号针在开机时被拉高了。拔掉 22 号针上的线，先不用关机线（这一针要换一根）。',
-                       'sudo poweroff 以后灯一直亮：查 22 号针上的线和 MR30 第 3 针，再看 A7Z 上 journalctl -u duck-power-off-check 的结果。查好之前用完拔插头 3 和 4。',
-                       '电池守护程序的下限是 6.4 V（battery.py 的 FLOOR_AT_DV = 64），比 XIAO 的 6.3 V 硬件切电高，机器人先坐下再断电。'])
+             checks=['A7Z 启动并能连上。', '舵机读到的电压在 7.0 到 8.4 V。'],
+             warnings=['开机后 A7Z 连不上：马上关开关，开盖查插头 1、插头 2 有没有插到底。'])
 
-        step('dock-solder', 'backpack', '充电座：把两片 5209 弹片和 PJ-005A 插座用两根短线焊好',
-             add=ctx.keys('dock_leaf_plus', 'dock_leaf_minus', 'dock_jack'), show=[], context=[], bench=True, camera=dock_cam,
-             prepare=[e('Keystone 5209 弹片', 2, 'DigiKey 36-5209-ND。'),
-                      e('Same Sky PJ-005A 直流插座（5.5 × 2.1，面板安装，带螺母和垫圈）', 1, 'DigiKey CP-5-ND。'),
-                      w('20 AWG 硅胶线，红、黑各 30 mm，两头各剥 3 mm', 2),
-                      iron, shrink],
+        step('bv2-charge', 'backpack', '充电：关开关，白色 3 针插头直接插到 HTRC B3 上',
+             camera=ctx.cam(ctx.keys('bv2_cap', 'bv2_balance', 'bv2_switch'), direction=(-1.0, -0.6, 0.5), margin=1.6),
+             prepare=[e('HTRC B3 平衡充电器（Shawn 已有）', 1, '用它的 3 针（2S）口。')],
              instructions=[
-                 '完成后：红线把 + 弹片的尾片接到插座最上面那个焊片（中心针，+），黑线把 − 弹片的尾片接到插座中间那个焊片（外套，−）。第三个焊片空着。',
-                 '在 + 弹片上贴一小块红色胶带。',
-                 '红线一头焊在 + 弹片的尾片上，另一头焊在 PJ-005A 最上面的焊片（中心针）上。',
-                 '黑线一头焊在 − 弹片的尾片上，另一头焊在 PJ-005A 中间的焊片（外套）上。',
-                 '两个插座焊点套 3 mm 热缩管吹紧。',
+                 '完成后：开关在“关”，白色平衡插头插在 B3 的 3 针口上，B3 的灯显示充满以后拔下，插头放回后盖右上缺口里面。整个过程不开盖、不拔任何插头。',
+                 '先让 A7Z 关机，等 15 秒，再把开关按到“关”。开关开着充不进电：电池会同时给机器人供电。',
+                 '机器人放在 B3 旁边，放在不可燃的桌面上。',
+                 '用手指从后盖右上缺口把白色 3 针平衡插头勾出来，插到 B3 的 3 针口上。线不够长就把机器人挪到紧挨着 B3。',
+                 'B3 插上电源，开始充电。',
+                 '等 B3 的灯显示充满，先拔 B3 电源，再拔下白色插头，放回缺口里面。',
              ],
-             checks=['插座最下面那个焊片（开关脚）没有焊线。', '充电器插进插座，量红线对黑线是正电压（约 8.4 V）；量完拔掉充电器。'])
-
-        step('dock-build', 'backpack', '充电座：插座装进后墙，弹片推进槽里，底下贴胶',
-             add=ctx.keys('dock_base'), show=ctx.keys('dock_leaf_plus', 'dock_leaf_minus', 'dock_jack'), context=[], bench=True,
-             approach={'dock_leaf_plus': [-20, 0, 0], 'dock_leaf_minus': [-20, 0, 0], 'dock_jack': [20, 0, 0]}, camera=dock_cam,
-             prepare=[{'item': '充电座底座（BatteryDock-A1 打印件，橙色）', 'qty': 1, 'kind': 'printed'},
-                      t('11 mm 扳手或尖嘴钳'),
-                      o('3M 泡沫胶或 Dual Lock', '两条', '把底座贴在地上或桌上，不让它被机器人推走。')],
-             instructions=[
-                 '完成后：PJ-005A 从里面穿出后墙的 8.44 mm 圆孔，外面拧着垫圈和螺母；两片弹片分别躺在底座前面两条槽里（+ 在左，y +9），前端顶到槽的尽头，弯起的弹片从槽上的开口露出来。',
-                 '底座开口朝上，后面（高的方塔）朝你。',
-                 '插座从塔的开口放进去，螺纹筒从里面穿出后墙的圆孔，焊片朝上。',
-                 '在外面套上垫圈，用手拧上螺母，再用 11 mm 扳手拧紧。',
-                 '+ 弹片（红胶带）从塔里面穿过挡墙左边的插入口，沿左边的槽一直推到前端顶死。',
-                 '− 弹片同样推进右边的槽。',
-                 '两条线塞在塔里，不要压在弹片下面。',
-                 '底座下面贴两条泡沫胶，放到机器人平时坐下的地方，压牢。',
-             ],
-             checks=['两片弹片在槽里推不动，弯起部分从开口露出来，手指按下去会弹回。',
-                     '插座拧紧不转。'],
-             warnings=['弹片在槽里的夹紧力还没有在实物上试过：如果推进去就松，在弹片下面垫一小块泡沫胶，不要改打印件。'])
-
-        step('dock-charge', 'backpack', '坐到充电座上充电，确认在充',
-             add=dock, show=[k for k in installed if k not in dock], camera=ctx.cam(ctx.keys('bv2_frame', 'bv2_cap') + dock, direction=(-1.0, -0.8, 0.3), margin=1.3),
-             prepare=[e('Sortfle 8.4 V 1 A 充电器（Amazon B07J4CLKZ7，5.5 × 2.1 插头，中心正）', 1), meter],
-             instructions=[
-                 '完成后：充电器插在充电座后墙，机器人坐在座上，两片触点压在两片弹片上，电池在充电。',
-                 '充电器插进墙上插座，圆插头插进充电座后墙的插座。',
-                 '先量一次：弹片 + 对弹片 − 是正电压（约 8.4 V）。',
-                 '让机器人背对充电座坐下去，屁股贴住塔前面的挡墙。',
-                 '看充电器上的指示灯：坐上去以后颜色变了，就是在充电；不变就是触点没压上，往后挪一点再坐。',
-                 '充满后充电器灯再变回去。电池在座上最多充到约 8.2 V（二极管压降），这是有意的。',
-             ],
-             checks=['坐上去和离开时，充电器指示灯颜色会变。', '站起来走开以后，弹片不碰到触点。'],
-             warnings=['只用 8.4 V 的 2S 锂电池充电器，插头中心正。别的电压的充电器绝对不能插。'])
-
-        step('bv2-balance', 'backpack', '每月一次：开后盖，用 HTRC B3 做平衡充电',
-             show=[k for k in installed if k not in dock + bv2_capset],
-             camera=rear_cam,
-             prepare=[e('HTRC B3 平衡充电器', 1, 'Shawn 已有。'), t('细杆螺丝刀（杆径不超过 4 mm）')],
-             instructions=[
-                 '完成后：两节电芯电压一致（差不超过 0.02 V），后盖装回，平衡头插回 B3B-XH-A。',
-                 '先让 A7Z 关机，拔下插头 3 和插头 4。',
-                 '拧下后盖的四颗螺丝：上面两颗 M2 × 8，下面两颗 M2 × 6，分开放。',
-                 '后盖向后拿开，挂在按钮线上，不要拽线。',
-                 '电池的平衡头从 B3B-XH-A 上拔下来，插到 B3 上，B3 插上电源。',
-                 '等 B3 的灯显示充满，拔下平衡头，插回 B3B-XH-A。',
-                 '按“盖上后盖”一步装回：下面两颗一定是 M2 × 6。',
-             ],
-             checks=['平衡头插回去了。', '下面两个孔用的是 M2 × 6。'],
-             warnings=['B3 充电时人不要走开，电池放在不可燃的表面上。',
-                       '下面两个孔绝对不能用 M2 × 8。'])
+             checks=['充电时开关在“关”。', '充完白色插头放回缺口里面，线没有被后盖夹住。'],
+             warnings=['充电时人不要走开。', '只用 B3 的 3 针口（2S），不要插 4 针口。'])
 
     legend = [
         {'kind': 'dxl', 'color': '#6a3df0', 'label': 'DYNAMIXEL bus (X3P kit cables)'},

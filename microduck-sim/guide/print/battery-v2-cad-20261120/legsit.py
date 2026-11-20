@@ -6,7 +6,7 @@ Legs: the concept's sweep (../battery-v2-concept-20261119/leg_check.py: hip pitc
 both legs, stand keyframe, current model scene battery-20261104), distance from every leg mesh vertex to the frame and
 cap surfaces (surface sampled at 0.4 mm, KD-tree; reported distance is within 0.3 mm of the true one, low side).
 Sit: the real Brain sit as in ../battery-v2-concept-20261119/sit_clearance.py (brain_sim_check.py --model asbuilt
---manifest current), every 50th physics step the frame, cap and contact-pad vertices are placed with trunk_base's pose
+--manifest current), every 50th physics step the frame, cap and switch vertices are placed with trunk_base's pose
 and their lowest world z is recorded. Writes checks/legsit.json; exit 1 if seated clearance < 10 mm or legs < 8 mm.
 """
 import contextlib, io, json, os, runpy, sys
@@ -33,7 +33,7 @@ def surface_points(paths, step=0.4):
 
 
 def legs():
-    S = surface_points([BUILD / "battery_v2_frame-world.stl", BUILD / "battery_v2_cap-world.stl"])
+    S = surface_points([BUILD / "battery_v2_frame-world.stl", BUILD / "battery_v2_cap-world.stl", BUILD / "parts/Swann_39_switch-world.stl"])
     tree = cKDTree(S)
     m = mujoco.MjModel.from_xml_path(str(SCENE)); d = mujoco.MjData(m)
     mujoco.mj_resetDataKeyframe(m, d, 1); mujoco.mj_forward(m, d)
@@ -69,11 +69,8 @@ def legs():
 def sit():
     V = {}
     for k, f in (("frame", "battery_v2_frame-world.stl"), ("cap", "battery_v2_cap-world.stl"),
-                 ("pads", None)):
-        if f:
-            V[k] = trimesh.load(BUILD / f, force="mesh").vertices / 1000.0
-        else:
-            V[k] = np.vstack([trimesh.load(p, force="mesh").vertices for p in sorted((BUILD / "parts").glob("contact_pad_*-world.stl"))]) / 1000.0
+                 ("switch", "parts/Swann_39_switch-world.stl")):
+        V[k] = trimesh.load(BUILD / f, force="mesh").vertices / 1000.0
     samples = []; n = [0]; _step = mujoco.mj_step
     def step(m, d, *a):
         _step(m, d, *a); n[0] += 1
@@ -113,7 +110,7 @@ def main():
     fails = []
     for s, v in out["legs"].items():
         if v["min_mm"] < LEG_MIN_MM: fails.append(f"leg {s} {v['min_mm']} mm < {LEG_MIN_MM}")
-    seat = min(out["sit"]["seated"][k] for k in ("frame", "cap", "pads")) if out["sit"]["seated"] else None
+    seat = min(out["sit"]["seated"][k] for k in ("frame", "cap", "switch")) if out["sit"]["seated"] else None
     out["seated_min_mm"] = seat
     if seat is None or seat < SEAT_MIN_MM: fails.append(f"seated clearance {seat} mm < {SEAT_MIN_MM}")
     if out["sit"]["fell"]: fails.append("robot fell in the sit run")
